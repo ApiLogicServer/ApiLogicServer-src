@@ -1,0 +1,132 @@
+import os
+from shutil import copyfile
+
+from api_logic_server_cli.cli_args_project import Project
+import create_from_model.api_logic_server_utils as create_utils
+
+
+def get_windows_path_with_slashes(url: str) -> str:
+    """ idiotic fix for windows (\ --> \\\\)
+    https://stackoverflow.com/questions/1347791/unicode-error-unicodeescape-codec-cant-decode-bytes-cannot-open-text-file
+    """
+    return url.replace('\\', '\\\\')
+
+
+def update_config_and_copy_sqlite_db_FIXME(project: Project, msg: str) -> str:
+    """
+
+    1. If sqlite, copy db to database folder
+
+    2. Add project.db_url to config 
+
+    3. Update database/bind_databases.py
+
+    Parameters:
+
+    :arg: msg print this, e.g., ".. ..Adding Database [{self.bind_key}] to existing project"
+    :arg: project project setting object
+    """
+    print(msg)
+    bind_key_upper = project.bind_key.upper()  # configs insist on all caps
+    return_abs_db_url = project.abs_db_url
+    config_uri_value = "'" + return_abs_db_url + "'"
+
+
+    """ **********************
+    sqlite? copy to database/
+    **************************  """
+    if "sqlite" in project.abs_db_url:
+        """ sqlite - copy the db (relative fails, since cli-dir != project-dir)
+        """
+        print(f'.. .. ..Copying sqlite database to: database/{project.bind_key}_db.sqlite')
+        db_loc = project.abs_db_url.replace("sqlite:///", "")
+        target_db_loc_actual = str(project.project_directory_path.joinpath(f'database/{project.bind_key}_db.sqlite'))
+        copyfile(db_loc, target_db_loc_actual)
+
+        if os.name == "nt":  # windows
+            # 'C:\\\\Users\\\\val\\\\dev\\\\servers\\\\api_logic_server\\\\database\\\\db.sqlite'
+            target_db_loc_actual = get_windows_path_with_slashes(target_db_loc_actual)
+        return_abs_db_url = f'sqlite:///{target_db_loc_actual}'
+        # build this:  SQLALCHEMY_DATABASE_URI_AUTHENTICATION = f'sqlite:///{str(project_abs_dir.joinpath("database/authentication_db.sqlite"))}'
+        # into  this:  {CONFIG_URI} = '{config_uri_value}'
+        file_name = f'"database/{project.bind_key}_db.sqlite"'
+        config_uri_value = "f'sqlite:///{str(project_abs_dir.joinpath(" + file_name + "))}'"
+        print(f'.. .. ..From {db_loc}')
+
+
+    """ **********************
+    add url to config
+    **************************  """
+    # db_uri = config_uri  # return_abs_db_url
+    if os.name == "nt":  # windows
+        # 'C:\\\\Users\\\\val\\\\dev\\\\servers\\\\api_logic_server\\\\database\\\\db.sqlite'
+        target_db_loc_actual = get_windows_path_with_slashes(target_db_loc_actual)
+    CONFIG_URI = f'SQLALCHEMY_DATABASE_URI_{bind_key_upper}'
+
+    config_insert = f"""
+    {CONFIG_URI} = {config_uri_value}
+    app_logger.info(f'config.py - {CONFIG_URI}: <CONFIG_URI_VALUE>\\n')
+
+    # as desired, use env variable: export SQLALCHEMY_DATABASE_URI='sqlite:////Users/val/dev/servers/docker_api_logic_project/database/db.sqliteXX'
+    if os.getenv('{CONFIG_URI}'):
+        {CONFIG_URI} = os.getenv('{CONFIG_URI}')
+        app_logger.debug(f'.. overridden from env variable: {CONFIG_URI}')
+
+"""
+    config_insert = config_insert.replace("<CONFIG_URI_VALUE>", "{" + f'{CONFIG_URI}' + "}")
+    config_file = f'{project.project_directory}/config.py'
+    config_built = create_utils.does_file_contain(search_for=CONFIG_URI, in_file=config_file)
+    if not config_built:
+        create_utils.insert_lines_at(lines=config_insert,
+                                    at="# End Multi-Database URLs (from ApiLogicServer add-db...)",
+                                    file_name=f'{project.project_directory}/config.py')
+        print(f'.. ..Updating config.py file with {CONFIG_URI}...')
+    else:
+        print(f'.. ..Not updating config.py file with {CONFIG_URI}... (already present)')
+
+
+    """ **********************
+    update bind_databases.py
+    **************************  """
+    # NB: must do all binds in 1 call (not 1 call / db): https://www.youtube.com/watch?v=SB5BfYYpXjE
+
+    bind_insert_urls = """
+    from api import <project.bind_key>_expose_api_models
+    from database import <project.bind_key>_models
+
+    # flask_app.config.update(SQLALCHEMY_BINDS = \\
+    #     {'<project.bind_key>': flask_app.config['SQLALCHEMY_DATABASE_URI_<bind_key_upper>']})
+    
+    app_logger.debug(f"\\n<project.bind_key> Config complete - database/<project.bind_key>_models.py"
+        + f'\\n -- with bind: <project.bind_key>'
+        + f'\\n -- len(database.<project.bind_key>_models.<project.bind_key>.metadata.tables) tables loaded')
+    
+    <project.bind_key>_expose_api_models.expose_models(safrs_api, method_decorators= method_decorators)
+
+""" # not f-string since it contains {}
+
+    flask_app_config__update = \
+        f"\t\t'{project.bind_key}': flask_app.config['SQLALCHEMY_DATABASE_URI_{bind_key_upper}']\n"
+
+    bind_insert_urls = bind_insert_urls.replace('<project.bind_key>', f'{project.bind_key}')
+    bind_insert_urls = bind_insert_urls.replace('<bind_key_upper>', f'{bind_key_upper}')
+    binds_databases_file = f'{project.project_directory}/database/bind_databases.py'
+    binds_built = create_utils.does_file_contain( \
+        search_for=bind_key_upper, in_file=binds_databases_file)
+    some_configs_built = create_utils.does_file_contain( \
+        search_for='flask_app.config[', in_file=binds_databases_file)
+    if some_configs_built:
+        flask_app_config__update = ', ' + flask_app_config__update
+    if not binds_built:
+        create_utils.insert_lines_at(lines=bind_insert_urls,
+                                    at="# End Bind URLs",
+                                    file_name=binds_databases_file)
+        # 'Todo': flask_app.config['SQLALCHEMY_DATABASE_URI_TODO'],
+        create_utils.insert_lines_at(lines=flask_app_config__update,
+                                    at="# make multiple databases available",
+                                    file_name=binds_databases_file)
+        print(f'.. ..Updating database/bind_databases.py with {CONFIG_URI}...')
+    else:
+        print(f'.. ..Not updating database/bind_databases.py with {CONFIG_URI} (already present)')
+
+    return return_abs_db_url

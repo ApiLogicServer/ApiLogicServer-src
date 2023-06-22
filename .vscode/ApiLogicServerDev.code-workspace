@@ -1,0 +1,113 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../servers"
+		},
+		{
+			"path": "../../Org-ApiLogicServer/Docs"
+		}
+	],
+	"settings": {
+		"git.ignoreLimitWarning": true,
+		"sqltools.connections": [
+			{
+				"previewLimit": 50,
+				"server": "localhost",
+				"port": 5432,
+				"driver": "PostgreSQL",
+				"name": "Postgres",
+				"group": "G",
+				"username": "postgres",
+				"password": "p",
+				"database": "postgres"
+			},
+			{
+				"mssqlOptions": {
+					"appName": "SQLTools",
+					"useUTC": true,
+					"encrypt": true
+				},
+				"previewLimit": 50,
+				"server": "localhost",
+				"port": 1433,
+				"driver": "MSSQL",
+				"name": "Sql/Server",
+				"group": "G",
+				"database": "NORTHWND",
+				"username": "sa",
+				"password": "posey3861"
+			},
+			{
+				"previewLimit": 50,
+				"driver": "SQLite",
+				"name": "LogicBank - allocation",
+				"group": "G",
+				"database": "/Users/val/dev/servers/install/ApiLogicServer/Allocation/database/db.sqlite"
+			},
+			{
+				"previewLimit": 50,
+				"driver": "SQLite",
+				"name": "Allocation",
+				"group": "G",
+				"database": "${workspaceFolder:servers}/install/ApiLogicServer/Allocation/database/db.sqlite"
+			},
+			{
+				"previewLimit": 50,
+				"driver": "SQLite",
+				"name": "nw",
+				"group": "G",
+				"database": "${workspaceFolder:ApiLogicServer}/api_logic_server_cli/project_prototype_nw/database/nw.sqlite"
+			},
+			{
+				"previewLimit": 50,
+				"driver": "SQLite",
+				"name": "nw-gold-plus",
+				"group": "G",
+				"database": "${workspaceFolder:ApiLogicServer}/api_logic_server_cli/database/nw-gold-plus.sqlite"
+			},
+			{
+				"mysqlOptions": {
+					"authProtocol": "default"
+				},
+				"previewLimit": 50,
+				"server": "localhost",
+				"port": 3306,
+				"driver": "MySQL",
+				"name": "MySQL",
+				"group": "G",
+				"database": "Chinook",
+				"username": "root",
+				"password": "p"
+			},
+			{
+				"previewLimit": 50,
+				"driver": "SQLite",
+				"name": "nw-gold",
+				"group": "G",
+				"database": "${workspaceFolder:ApiLogicServer}/api_logic_server_cli/database/nw-gold.sqlite"
+			},
+			{
+				"previewLimit": 50,
+				"driver": "SQLite",
+				"name": "unique-keys",
+				"group": "G",
+				"database": "${workspaceFolder:ApiLogicServer}/tests/sqlite-databases/unique_keys.sqlite"
+			}
+		],
+		"sqltools.useNodeRuntime": true,
+		"workbench.preferredDarkColorTheme": "Darcula Pycharm with Light GUI",
+		"workbench.preferredLightColorTheme": "Blue Light Theme 2022",
+		"workbench.colorTheme": "Blue Light Theme 2022",
+		"search.exclude": {
+			"**api_logic_server_cli/ApiLogicProject/": true,
+			"**api_logic_server_cli/create_from_model/safrs-react-admin-npm-build": true
+		},
+		"window.autoDetectColorScheme": true,
+		"workbench.editorAssociations": {
+			"*.md": "vscode.markdown.preview.editor"
+		}
+	}
+}

@@ -1,0 +1,82 @@
+This project is hand-edited, for models & venv.  It runs.
+
+Same *generated* project runs, many creation errors.  This is to analyze why.  Dialects are a likely factor.
+
+All issues so far have been SQLAlchemy2
+    https://docs.sqlalchemy.org/en/20/changelog/migration_20.html
+
+Observations:
+
+    Gen models missing:
+
+        t_sqlite_sequence table
+
+        import NullType
+
+        OrderDetailList = relationship('OrderDetail', cascade='all, delete', cascade_backrefs=False, backref='Order')  # manual fix
+            ==> this is the only issue - fixing it makes Behave run (with Security).  Same for GA.
+            sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) NOT NULL constraint failed: OrderDetail.OrderId
+            Gen: OrderDetailList = relationship('OrderDetail', cascade_backrefs=False, backref='Order')
+            Schema col defined as: OrderId INTEGER not null references "Order" on delete cascade,
+            https://docs.sqlalchemy.org/en/20/orm/cascades.html#cascades
+            https://esmithy.net/2020/06/20/sqlalchemy-cascade-delete/  (seems to be 1.4)
+            DB Cascade
+                Sqlite
+                    Cascade Delete is set (!)
+                    disabled by default https://www.sqlite.org/foreignkeys.html
+                Other DBs: no cascasdes declared on other DBs
+            Reason: fix_database_models() does string replace using "cascade_backrefs=True"
+                And cascade_backrefs was changed False for SQLAlchemy2
+                Fixed fix_database_models()
+
+        CategoriesSvc/getCats fails
+            util.py @ 219: attributeError: module 'sqlalchemy.engine.row' has no attribute 'LegacyRow'
+            fixed with patch to util.py (needs review)
+
+        Rebuild test fails
+            Since rebuild_test/models.py had cascade_backrefs=True
+            fixed
+
+        sqlite classicmodels failed
+            How...
+                #Failed to get col type for productlines.image
+                ImportError: cannot import name 'NullType' from 'sqlalchemy' (/Users/val/dev/servers/install/ApiLogicServer/venv/lib/python3.11/site-packages/sqlalchemy/__init__.py)
+                Bug in ImportCollector.add_import
+                    sqlalchemy.__all__ not in SQLAlchemy2
+                    risky work-around to compute package
+
+        tvf tests fail /api_logic_server_cli/extended_builder.py", line 184
+            ValueError: dictionary update sequence element #0 has length 8; 2 is required
+            drowning - tvf run config does not run on big mac, so cannot compare
+            it appears the result is no longer a dict??? 
+                Gasp - it is sqlalchemy.engine.row.Row
+                You cannot be serious.
+            so fixed extended_builder.py
+
+            now it fails on execution
+                even recoding to engine.connection fails:
+                    Connection.execute() got an unexpected keyword argument 'location'
+                
+
+
+        imports differ
+            Gen:
+                from sqlalchemy import Boolean, Column, DECIMAL, Date, Float, Double, ForeignKey, ForeignKeyConstraint, Integer, String, Table, Text, text
+            GA:
+                from sqlalchemy import Boolean, Column, DECIMAL, Date, Float, ForeignKey, ForeignKeyConstraint, Integer, String, Table, Text, text
+                Order.Discount has no Double...  was Float in GA/RC2, Double in Gen
+                It's DOUBLE in the database, but reported differently in _get_adapted_type - wrong coltype class
+                    GA meta reporting it FLOAT, Gen reporting in DOUBLE
+                    Gen was seeing SQLiteDialect...
+                    Gen actually seems right, maybe its innocuous
+                        FIXME - ignore for now
+
+        Manually apply these, and Behave runs
+
+    Gen creating VARCHAR instead of String - fixed
+
+    Creation log: Excluded single field fl on Order.Country
+
+    Several pip freeze differences
+    
+        gen is newer -- safrs using "latest" versions?

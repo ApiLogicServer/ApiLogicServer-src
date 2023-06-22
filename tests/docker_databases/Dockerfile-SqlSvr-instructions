@@ -1,0 +1,23 @@
+# create a SqlSvr that stores data in the container, not a volume
+
+# ref: https://www.microsoft.com/en-us/sql-server/developer-get-started/python/mac
+
+# docker pull mcr.microsoft.com/mssql/server
+# docker run --name sqlsvr -e 'HOMEBREW_NO_ENV_FILTERING=1' -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=posey3861' -p 1433:1433 -d mcr.microsoft.com/mssql/server
+
+
+# Now set up your sqlsvr database using Azure Data Studio
+
+#    northwind - thanks, Doug: https://douglaskline.blogspot.com/2020/09/restoring-sql-server-db-backup-to.html
+#       paste test data from tests/sql_server/northwind.sql
+#    SampleDB
+#       from tests/sql_server/SampleDB.sql
+
+
+# Now convert container to image
+
+# docker commit sqlsvr-container sqlsvr-image
+# docker tag sqlsvr-image apilogicserver/sqlsvr:version2.0.1
+# docker push apilogicserver/sqlsvr:version2.0.1
+
+

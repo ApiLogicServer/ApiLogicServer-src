@@ -1,0 +1,80 @@
+For the app_fiddle, the readme / section 1 is replaced by app_fiddle.md
+
+
+Walk-throughs
+
+    * app_fiddle is for general learning --> ALS
+
+    * tutorial is for ALS - reinforce "or else"... cloud (Express Eval) or local
+
+
+submissions: https://pycoders.com/submissions
+
+pycoders: https://pycoders.com
+    95 on Tues, 128 on Thurs (same on Wed), 115 on Mon (47 unique)
+
+dzone: https://dzone.com/articles/learn-flask-with-an-app-fiddle (tutorial)
+    55 on Thurs, 48
+    115 unique
+    
+Careful - browser launch is different for local (tutorial) vs. codespaces
+
+App Fiddle to learn Flask/SQLAlchemy, Discover API Logic Server
+
+App Fiddle to learn Flask/SQLAlchemy, API Logic Server     x
+
+App Fiddle: Learn Flask/SQLAlchemy “In Action"
+
+Use this App Fiddle to learn Flask/SQLAlchemy, using a running app in Codespaces.  Then, discover API Logic Server - an Open Source CLI to create executable projects with a single command.  Customize projects in your IDE, including powerful spreadsheet-like rules for logic and security - 40X more concise than manual code.
+
+Use this App Fiddle to learn Flask/SQLAlchemy, using a running app in Codespaces.  Use VSCode in your Browser to explore, customize and debug a complete project, including a database.  Then, discover API Logic Server - automate the creation of Flask/SQLAlchemy projects with 1 command.
+
+
+Fiddle Link (now pre-loaded - 60 sec):
+https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=594296622
+
+Tutorial Link (100 sec):
+https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=593459232
+
+Learning Link:
+https://apilogicserver.github.io/Docs/Tech-Learning-Flask/
+https://apilogicserver.github.io/Docs/Tech-Learning/
+
+
+Hi! 
+
+I am the creator of API Logic Server, which creates Flask/SQLAlchemy projects from a database.  Open Source on git.  Recently, I came up with the notion of an "App Fiddle" - an online ability to fiddle with a complete app - full project, database - via the Browser.  See the link below.  
+
+I see you are very active in the area of instruction, especially Flask/SQLAlchemy.  I am writing to see if you'd like to discuss how this might support your endeavors.  
+
+Regards, Val  
+
+Access it via codespaces:  https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=594296622
+
+
+Rule.constraint(validate=models.Customer,       # logic design translates directly into rules
+    as_condition=lambda row: row.Balance <= row.CreditLimit,
+    error_msg="balance ({row.Balance}) exceeds credit ({row.CreditLimit})")
+
+Rule.sum(derive=models.Customer.Balance,        # adjust iff AmountTotal or ShippedDate or CustomerID changes
+    as_sum_of=models.Order.AmountTotal,
+    where=lambda row: row.ShippedDate is None)  # adjusts - *not* a sql select sum...
+
+Rule.sum(derive=models.Order.AmountTotal,       # adjust iff Amount or OrderID changes
+    as_sum_of=models.OrderDetail.Amount)
+
+Rule.formula(derive=models.OrderDetail.Amount,  # compute price * qty
+    as_expression=lambda row: row.UnitPrice * row.Quantity)
+
+Rule.copy(derive=models.OrderDetail.UnitPrice,  # get Product Price (e,g., on insert, or ProductId change)
+    from_parent=models.Product.UnitPrice)
+
+
+Darkwind
+    - mypy checks
+    - pytest
+
+
+Tyler
+    - missing "="s
+    - onboard credit card issuers and support credit card ranges - 1440 tables

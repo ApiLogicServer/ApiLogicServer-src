@@ -1,0 +1,2 @@
+# from db_types -- Postgres type provisions
+bpchar = db.String

@@ -1,0 +1,272 @@
+api_root: http://localhost:5656/api
+resources:
+  Category:
+    columns:
+    - name: Id
+    - name: CategoryName
+    - name: Description
+    label: Category - label
+    relationships: []
+    type: Category
+    user_key: CategoryName
+  Customer:
+    columns:
+    - name: Id
+    - name: CompanyName
+    - name: ContactName
+    - name: ContactTitle
+    - name: Address
+    - name: City
+    - name: Region
+    - name: PostalCode
+    - name: Country
+    - name: Phone
+    - name: Fax
+    - name: Balance
+    - name: CreditLimit
+    - name: OrderCount
+    - name: UnpaidOrderCount
+    label: Customer - label
+    relationships:
+    - direction: tomany
+      fks:
+      - CustomerTypeId
+      name: CustomerCustomerDemoList
+      target: CustomerCustomerDemo
+    - direction: tomany
+      fks:
+      - CustomerId
+      name: OrderList
+      target: Order
+    type: Customer
+    user_key: CompanyName
+  CustomerCustomerDemo:
+    columns:
+    - name: Id
+    - name: CustomerTypeId
+    label: CustomerCustomerDemo - label
+    relationships:
+    - direction: toone
+      fks:
+      - CustomerTypeId
+      name: Customer
+      target: Customer
+    type: CustomerCustomerDemo
+    user_key: Id
+  CustomerDemographic:
+    columns:
+    - name: Id
+    - name: CustomerDesc
+    label: CustomerDemographic - label
+    relationships: []
+    type: CustomerDemographic
+    user_key: Id
+  Employee:
+    columns:
+    - name: Id
+    - name: LastName
+    - name: FirstName
+    - name: Title
+    - name: TitleOfCourtesy
+    - name: BirthDate
+    - name: HireDate
+    - name: Address
+    - name: City
+    - name: Region
+    - name: PostalCode
+    - name: Country
+    - name: HomePhone
+    - name: Extension
+    - name: Photo
+    - name: Notes
+    - name: ReportsTo
+    - name: PhotoPath
+    - name: IsCommissioned
+    - name: Salary
+    label: Employee - label
+    relationships:
+    - direction: tomany
+      fks:
+      - EmployeeId
+      name: EmployeeAuditList
+      target: EmployeeAudit
+    - direction: tomany
+      fks:
+      - EmployeeId
+      name: EmployeeTerritoryList
+      target: EmployeeTerritory
+    - direction: tomany
+      fks:
+      - EmployeeId
+      name: OrderList
+      target: Order
+    type: Employee
+    user_key: LastName
+  EmployeeAudit:
+    columns:
+    - name: Id
+    - name: Title
+    - name: Salary
+    - name: LastName
+    - name: FirstName
+    - name: EmployeeId
+    - name: CreatedOn
+    label: EmployeeAudit - label
+    relationships:
+    - direction: toone
+      fks:
+      - EmployeeId
+      name: Employee
+      target: Employee
+    type: EmployeeAudit
+    user_key: LastName
+  EmployeeTerritory:
+    columns:
+    - name: Id
+    - name: EmployeeId
+    - name: TerritoryId
+    label: EmployeeTerritory - label
+    relationships:
+    - direction: toone
+      fks:
+      - EmployeeId
+      name: Employee
+      target: Employee
+    - direction: toone
+      fks:
+      - TerritoryId
+      name: Territory
+      target: Territory
+    type: EmployeeTerritory
+    user_key: Id
+  Order:
+    columns:
+    - name: Id
+    - name: CustomerId
+    - name: EmployeeId
+    - name: OrderDate
+    - name: RequiredDate
+    - name: ShippedDate
+    - name: ShipVia
+    - name: Freight
+    - name: ShipName
+    - name: ShipAddress
+    - name: ShipCity
+    - name: ShipRegion
+    - name: ShipPostalCode
+    - name: ShipCountry
+    - name: AmountTotal
+    label: Order - label
+    relationships:
+    - direction: tomany
+      fks:
+      - OrderId
+      name: OrderDetailList
+      target: OrderDetail
+    - direction: toone
+      fks:
+      - CustomerId
+      name: Customer
+      target: Customer
+    - direction: toone
+      fks:
+      - EmployeeId
+      name: Employee
+      target: Employee
+    type: Order
+    user_key: ShipName
+  OrderDetail:
+    columns:
+    - name: Id
+    - name: OrderId
+    - name: ProductId
+    - name: UnitPrice
+    - name: Quantity
+    - name: Discount
+    - name: Amount
+    - name: ShippedDate
+    label: OrderDetail - label
+    relationships:
+    - direction: toone
+      fks:
+      - OrderId
+      name: Order
+      target: Order
+    - direction: toone
+      fks:
+      - ProductId
+      name: Product
+      target: Product
+    type: OrderDetail
+    user_key: Id
+  Product:
+    columns:
+    - name: Id
+    - name: ProductName
+    - name: SupplierId
+    - name: CategoryId
+    - name: QuantityPerUnit
+    - name: UnitPrice
+    - name: UnitsInStock
+    - name: UnitsOnOrder
+    - name: ReorderLevel
+    - name: Discontinued
+    - name: UnitsShipped
+    label: Product - label
+    relationships:
+    - direction: tomany
+      fks:
+      - ProductId
+      name: OrderDetailList
+      target: OrderDetail
+    type: Product
+    user_key: ProductName
+  Region:
+    columns:
+    - name: Id
+    - name: RegionDescription
+    label: Region - label
+    relationships: []
+    type: Region
+    user_key: RegionDescription
+  Shipper:
+    columns:
+    - name: Id
+    - name: CompanyName
+    - name: Phone
+    label: Shipper - label
+    relationships: []
+    type: Shipper
+    user_key: CompanyName
+  Supplier:
+    columns:
+    - name: Id
+    - name: CompanyName
+    - name: ContactName
+    - name: ContactTitle
+    - name: Address
+    - name: City
+    - name: Region
+    - name: PostalCode
+    - name: Country
+    - name: Phone
+    - name: Fax
+    - name: HomePage
+    label: Supplier - label
+    relationships: []
+    type: Supplier
+    user_key: CompanyName
+  Territory:
+    columns:
+    - name: Id
+    - name: TerritoryDescription
+    - name: RegionId
+    label: Territory - label
+    relationships:
+    - direction: tomany
+      fks:
+      - TerritoryId
+      name: EmployeeTerritoryList
+      target: EmployeeTerritory
+    type: Territory
+    user_key: TerritoryDescription
