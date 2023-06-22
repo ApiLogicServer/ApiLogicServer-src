@@ -45,17 +45,27 @@ def find_valid_python_name() -> str:
 
 def get_api_logic_server_path() -> Path:
     """
-    :return: ApiLogicServer dir, eg, /Users/val/dev/ApiLogicServer
+    :return: ApiLogicServer dir, eg, /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org/ApiLogicServer-src
     """
     file_path = Path(os.path.abspath(__file__))
     api_logic_server_path = file_path.parent.parent.parent
     return api_logic_server_path
 
-def get_servers_install_path() -> Path:
-    """ Path: /Users/val/dev/servers/install """
+def get_servers_build_and_test_path() -> Path:
+    """
+
+    We build a venv here, and create test projects.
+
+    Presumes
+    * dev_path is ~/dev/ApiLogicServer/ApiLogicServer-dev
+    * {dev_path}/build_and_test
+
+    Returns:
+        Path:  /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test 
+    """
     api_logic_server_path = get_api_logic_server_path()
-    dev_path = Path(api_logic_server_path).parent
-    rtn_path = dev_path.joinpath("servers").joinpath("install")
+    dev_path = Path(api_logic_server_path).parent.parent
+    rtn_path = dev_path.joinpath("build_and_test")
     return rtn_path
 
 def delete_dir(dir_path, msg):
@@ -186,7 +196,7 @@ def start_api_logic_server(project_name: str, env_list = None):
     """ start server at path [with env], and wait a few moments """
     import stat
 
-    install_api_logic_server_path = get_servers_install_path().joinpath("ApiLogicServer")
+    install_api_logic_server_path = get_servers_build_and_test_path().joinpath("ApiLogicServer")
     path = install_api_logic_server_path.joinpath(project_name)
     print(f'\n\nStarting Server {project_name}... from  {install_api_logic_server_path}\venv\n')
     pipe = None
@@ -266,7 +276,7 @@ def multi_database_tests():
     print(f'Multi-Database Tests')
 
     current_path = Path(os.path.abspath(__file__))
-    install_api_logic_server_path = get_servers_install_path().joinpath("ApiLogicServer")
+    install_api_logic_server_path = get_servers_build_and_test_path().joinpath("ApiLogicServer")
     api_logic_project_path = install_api_logic_server_path.joinpath('MultiDB')
 
     result_create = run_command(f'{set_venv} && ApiLogicServer create --project_name=MultiDB --db_url=nw-',
@@ -297,7 +307,7 @@ def rebuild_tests():
     print(f'Rebuild tests')
 
     current_path = Path(os.path.abspath(__file__))
-    install_api_logic_server_path = get_servers_install_path().joinpath("ApiLogicServer")
+    install_api_logic_server_path = get_servers_build_and_test_path().joinpath("ApiLogicServer")
     api_logic_project_path = install_api_logic_server_path.joinpath('Rebuild')
     admin_merge_yaml_path = api_logic_project_path.joinpath('ui').joinpath('admin').joinpath('admin-merge.yaml')
     new_model_path = current_path.parent.parent.joinpath('rebuild_tests').joinpath('models.py')
@@ -357,7 +367,7 @@ def verify_include_models( project_name : str ='include_exclude',
     Returns:
         bool: True means all found
     """
-    model_file_str = str(get_servers_install_path().joinpath(f'ApiLogicServer/{project_name}/database/models.py'))
+    model_file_str = str(get_servers_build_and_test_path().joinpath(f'ApiLogicServer/{project_name}/database/models.py'))
     for each_term in check_for:
         is_in_file = does_file_contain(in_file = model_file_str, search_for=each_term)
         if verify_found and not is_in_file:
@@ -402,7 +412,7 @@ def docker_creation_tests(api_logic_server_tests_path):
         msg=f'\nBuild ApiLogicServer Docker Container at: {str(api_logic_server_home_path)}')
     print('built container')
     src = api_logic_server_tests_path.joinpath('creation_tests').joinpath('docker-commands.sh')
-    dest = get_servers_install_path().joinpath('ApiLogicServer').joinpath('dockers')
+    dest = get_servers_build_and_test_path().joinpath('ApiLogicServer').joinpath('dockers')
     shutil.copy(src, dest)
     build_projects_cmd = (
         f'docker run -it --name api_logic_server --rm '
@@ -609,7 +619,7 @@ else:
 set_venv = Config.set_venv
 db_ip = Config.docker_database_ip
 
-install_api_logic_server_path = get_servers_install_path().joinpath("ApiLogicServer")   # eg /Users/val/dev/servers/install/ApiLogicServer
+install_api_logic_server_path = get_servers_build_and_test_path().joinpath("ApiLogicServer")   # eg /Users/val/dev/servers/install/ApiLogicServer
 api_logic_project_path = install_api_logic_server_path.joinpath('ApiLogicProject')
 api_logic_server_tests_path = Path(os.path.abspath(__file__)).parent.parent
 
