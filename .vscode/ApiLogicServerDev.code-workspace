@@ -4,10 +4,7 @@
 			"path": ".."
 		},
 		{
-			"path": "../../servers"
-		},
-		{
-			"path": "../../Org-ApiLogicServer/Docs"
+			"path": "../../Docs"
 		}
 	],
 	"settings": {
