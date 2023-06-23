@@ -47,8 +47,8 @@ if [ $# -eq 0 ]
     cd ApiLogicServer-dev
     mkdir servers    # good place to create ApiLogicProjects
     mkdir build_and_test
-    mkdir org  # git clones from org ApiLogicServer here
-    cd org
+    mkdir org_git  # git clones from org ApiLogicServer here
+    cd org_git
 
     if [ "$clonedocs" = true ]
       then
@@ -62,10 +62,12 @@ if [ $# -eq 0 ]
           echo $ostype does not contain ubuntu
           source venv/bin/activate   # windows venv\Scripts\activate
         fi
+        pip install -r requirements.txt
+        cd ..
     fi
 
     # pwd
-    # read -p "Ready to acquire - verify at ApiLogicServer-dev/org> "
+    # read -p "Ready to acquire - verify at ApiLogicServer-dev/org_git> "
     # get sra runtime as ApiLogicServer-dev/build
     curl https://github.com/thomaxxl/safrs-react-admin/releases/download/0.1.2/safrs-react-admin-0.1.2.zip -LO
     echo "unzipping sra to build.."
@@ -76,9 +78,10 @@ if [ $# -eq 0 ]
     git clone https://github.com/ApiLogicServer/ApiLogicServer-src.git
     cd ApiLogicServer-src
     # pwd
-    # read -p "\nVerify at org/ApiLogicServer-src> "
+    # read -p "\nVerify at org_git/ApiLogicServer-src> "
     echo "\ncopying build (sra - safrs-react-admin) --> ApiLogicServer"
     cp -r ../build api_logic_server_cli/create_from_model/safrs-react-admin-npm-build
+    rm -r ../build
     #
     #
     # read -p "Installed - ready to launch IDE..."
