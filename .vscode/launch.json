@@ -73,7 +73,7 @@
             "program": "cli.py",
             "redirectOutput": true,
             "args": ["create",
-                "--project_name=../../servers/demo",
+                "--project_name=../../../servers/demo",
                 "--db_url=nw"],
             "stopOnEntry": false,
             "justMyCode": false,
@@ -102,7 +102,7 @@
             "cwd": "${workspaceFolder}/api_logic_server_cli",
             "program": "cli.py",
             "redirectOutput": true,
-            "args": ["create-and-run","--project_name=../../servers/ApiLogicProject","--db_url="],
+            "args": ["create-and-run","--project_name=../../../servers/ApiLogicProject","--db_url="],
             "stopOnEntry": false,
             "justMyCode": false,
             "console": "integratedTerminal"
@@ -115,7 +115,7 @@
             "env": {"APILOGICSERVER_DEBUG": "True"},
             "program": "cli.py",
             "redirectOutput": true,
-            "args": ["create","--project_name=../../servers/ApiLogicProject","--db_url="],
+            "args": ["create","--project_name=../../../../servers/ApiLogicProject","--db_url="],
             "console": "integratedTerminal"
         },
         {
@@ -179,7 +179,7 @@
             "redirectOutput": true,
             "argsExpansion": "none",
             "args": ["create",
-                "--project_name=../../servers/SqlServer",
+                "--project_name=../../../servers/SqlServer",
                 "--db_url=mssql+pyodbc://sa:Posey3861@localhost:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no"],
             "console": "internalConsole" // allows special char '?' -- output goes to DEBUG CONSOLE
         },
@@ -192,7 +192,7 @@
             "redirectOutput": true,
             "argsExpansion": "none",
             "args": ["create",
-                "--project_name=../../servers/SqlServer",
+                "--project_name=../../../servers/SqlServer",
                 "--db_url=mssql+pyodbc://sa:Posey3861@10.0.0.77:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no"],
             "console": "internalConsole" 
         },
@@ -204,7 +204,7 @@
             "justMyCode": false,
             "program": "cli.py",
             "redirectOutput": true,
-            "args": ["create","--project_name=../../servers/postgres",
+            "args": ["create","--project_name=../../../servers/postgres",
                 "--db_url=postgresql://postgres:p@localhost/postgres"],
             "console": "integratedTerminal"
         },
@@ -225,7 +225,7 @@
             "program": "cli.py",
             "redirectOutput": true,
             "argsExpansion": "none",
-            "args": ["create","--project_name=../../servers/classicmodels","--db_url=mysql+pymysql://root:p@localhost:3306/classicmodels"],
+            "args": ["create","--project_name=../../../servers/classicmodels","--db_url=mysql+pymysql://root:p@localhost:3306/classicmodels"],
             "console": "integratedTerminal"
         },
         {
@@ -236,7 +236,7 @@
             "program": "cli.py",
             "redirectOutput": true,
             "argsExpansion": "none",
-            "args": ["create","--project_name=../../servers/BadDB","--db_url=mysql+pymysql://root:p@localhost:3306/classicmodelsXX"],
+            "args": ["create","--project_name=../../../servers/BadDB","--db_url=mysql+pymysql://root:p@localhost:3306/classicmodelsXX"],
             "console": "integratedTerminal"
         },
         {
@@ -247,7 +247,7 @@
             "program": "cli.py",
             "redirectOutput": true,
             "argsExpansion": "none",
-            "args": ["create","--project_name=../../servers/classicmodels","--db_url=mysql+pymysql://root:p@10.0.0.77:3306/classicmodels"],
+            "args": ["create","--project_name=../../../servers/classicmodels","--db_url=mysql+pymysql://root:p@10.0.0.77:3306/classicmodels"],
             "console": "integratedTerminal"
         },
         {
@@ -259,7 +259,7 @@
             "program": "cli.py",
             "redirectOutput": true,
             "argsExpansion": "none",
-            "args": ["create-and-run","--project_name=../../servers/classicmodels_sqllite","--db_url={install}/classicmodels.sqlite"],
+            "args": ["create-and-run","--project_name=../../../servers/classicmodels_sqllite","--db_url={install}/classicmodels.sqlite"],
             "console": "integratedTerminal"
         },
         {
@@ -271,7 +271,7 @@
             "program": "cli.py",
             "redirectOutput": true,
             "argsExpansion": "none",
-            "args": ["create-and-run","--project_name=../../servers/classicmodels","--db_url=mysql+pymysql://root:p@localhost:3306/classicmodels"],
+            "args": ["create-and-run","--project_name=../../../servers/classicmodels","--db_url=mysql+pymysql://root:p@localhost:3306/classicmodels"],
             "console": "integratedTerminal"
         },
         {
@@ -283,7 +283,7 @@
             "program": "cli.py",
             "redirectOutput": true,
             "argsExpansion": "none",
-            "args": ["create-and-run","--project_name=../../servers/classicmodels","--db_url=mysql+pymysql://root:p@10.0.0.77:3306/classicmodels"],
+            "args": ["create-and-run","--project_name=../../../servers/classicmodels","--db_url=mysql+pymysql://root:p@10.0.0.77:3306/classicmodels"],
             "console": "integratedTerminal"
         },
         {
@@ -293,7 +293,7 @@
             "cwd": "${workspaceFolder}/api_logic_server_cli",
             "program": "cli.py",
             "redirectOutput": true,
-            "args": ["create", "--db_url=nw-", "--project_name=../../servers/NW_NoCust"],
+            "args": ["create", "--db_url=nw-", "--project_name=../../../servers/NW_NoCust"],
             "console": "integratedTerminal"
         },
         {
@@ -303,7 +303,7 @@
             "cwd": "${workspaceFolder}/api_logic_server_cli",
             "program": "cli.py",
             "redirectOutput": true,
-            "args": ["add-auth","--project_name=../../servers/NW_NoCust"],
+            "args": ["add-auth","--project_name=../../../servers/NW_NoCust"],
             "console": "integratedTerminal"
         },
         {
@@ -313,7 +313,7 @@
             "cwd": "${workspaceFolder}/api_logic_server_cli",
             "program": "cli.py",
             "redirectOutput": true,
-            "args": ["add-cust","--project_name=../../servers/NW_NoCust"],
+            "args": ["add-cust","--project_name=../../../servers/NW_NoCust"],
             "console": "integratedTerminal"
         },
         {
@@ -323,7 +323,7 @@
             "cwd": "${workspaceFolder}/api_logic_server_cli",
             "program": "cli.py",
             "redirectOutput": true,
-            "args": ["create","--project_name=../../servers/ApiLogicProject","--db_url=nw+"],
+            "args": ["create","--project_name=../../../servers/ApiLogicProject","--db_url=nw+"],
             "console": "integratedTerminal"
         },
         {
@@ -335,7 +335,7 @@
             "program": "cli.py",
             "redirectOutput": true,
             "argsExpansion": "none",
-            "args": ["create-and-run","--project_name=../../servers/chinook","--db_url=mysql+pymysql://root:p@localhost:3306/Chinook"],
+            "args": ["create-and-run","--project_name=../../../servers/chinook","--db_url=mysql+pymysql://root:p@localhost:3306/Chinook"],
             "console": "integratedTerminal"
         },
         {
@@ -347,7 +347,7 @@
             "program": "cli.py",
             "redirectOutput": true,
             "argsExpansion": "none",
-            "args": ["create-and-run","--project_name=../../servers/chinook_sqllite","--db_url={install}/Chinook_Sqlite.sqlite"],
+            "args": ["create-and-run","--project_name=../../../servers/chinook_sqllite","--db_url={install}/Chinook_Sqlite.sqlite"],
             "console": "integratedTerminal"
         },
         {
@@ -359,7 +359,7 @@
             "program": "cli.py",
             "redirectOutput": true,
             "argsExpansion": "none",
-            "args": ["create","--project_name=../../servers/allocation","--db_url=allocation"],
+            "args": ["create","--project_name=../../../servers/allocation","--db_url=allocation"],
             "console": "integratedTerminal"
         },
         {
@@ -371,7 +371,7 @@
             "program": "cli.py",
             "redirectOutput": true,
             "argsExpansion": "none",
-            "args": ["create-and-run","--project_name=../../servers/chinook_sqllite","--db_url=chinook"],
+            "args": ["create-and-run","--project_name=../../../servers/chinook_sqllite","--db_url=chinook"],
             "console": "integratedTerminal"
         },
         {
@@ -381,7 +381,7 @@
             "cwd": "${workspaceFolder}/api_logic_server_cli",
             "program": "cli.py",
             "redirectOutput": true,
-            "args": ["create","--project_name=../../servers/docker_api_logic_project","--db_url="],
+            "args": ["create","--project_name=../../../servers/docker_api_logic_project","--db_url="],
             "console": "integratedTerminal"
         },
         {
@@ -403,7 +403,7 @@
             "program": "cli.py",
             "redirectOutput": true,
             "argsExpansion": "none",
-            "args": ["create-and-run","--project_name=../../servers/SqlServer","--db_url=mssql+pyodbc://sa:Posey3861@localhost:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no"],
+            "args": ["create-and-run","--project_name=../../../servers/SqlServer","--db_url=mssql+pyodbc://sa:Posey3861@localhost:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no"],
             "console": "integratedTerminal"
         },
         {
@@ -415,7 +415,7 @@
             "redirectOutput": true,
             "argsExpansion": "none",
             "args": ["create",
-                "--project_name=../../servers/cloud/nwlogic",
+                "--project_name=../../../servers/cloud/nwlogic",
                 "--db_url=sqlsvr-nwlogic"
             ],
             "console": "integratedTerminal"
@@ -429,7 +429,7 @@
             "redirectOutput": true,
             "argsExpansion": "none",
             "args": ["create",
-                "--project_name=../../servers/sqlserver-types",
+                "--project_name=../../../servers/sqlserver-types",
                 "--db_url=sqlsvr-sample",
                 "--extended_builder=*"],
             "console": "integratedTerminal"
@@ -441,7 +441,7 @@
             "cwd": "${workspaceFolder}/api_logic_server_cli",
             "program": "cli.py",
             "redirectOutput": true,
-            "args": ["create","--project_name=../../servers/PythonAnywhere/ApiLogicProject",
+            "args": ["create","--project_name=../../../servers/PythonAnywhere/ApiLogicProject",
                     "--host=ApiLogicServer.pythonanywhere.com", "--port=", "--db_url="],
             "console": "integratedTerminal"
         },
@@ -452,7 +452,7 @@
             "cwd": "${workspaceFolder}/api_logic_server_cli",
             "program": "cli.py",
             "redirectOutput": true,
-            "args": ["create","--project_name=../../servers/install/ApiLogicServer/dockers/CheckIP",
+            "args": ["create","--project_name=../../../servers/install/ApiLogicServer/dockers/CheckIP",
                     "--swagger_host=10.0.0.77", "--db_url="],
             "console": "integratedTerminal"
         },
@@ -463,7 +463,7 @@
             "cwd": "${workspaceFolder}/api_logic_server_cli",
             "program": "cli.py",
             "redirectOutput": true,
-            "args": ["create","--project_name=../../servers/CopyChildren","--db_url=sqlite:////Users/val/dev/LogicBank/LogicBank/examples/copy_children/db/database-gold.db"],
+            "args": ["create","--project_name=../../../servers/CopyChildren","--db_url=sqlite:////Users/val/dev/LogicBank/LogicBank/examples/copy_children/db/database-gold.db"],
             "console": "integratedTerminal"
         },
         {
@@ -475,7 +475,7 @@
             "program": "cli.py",
             "redirectOutput": true,
             "args": ["create-and-run",
-                "--project_name=../../servers/unique_keys",
+                "--project_name=../../../servers/unique_keys",
                 "--db_url=sqlite:////Users/val/dev/ApiLogicServer/tests/sqlite-databases/unique_keys.sqlite".
                 "--infer_primary_key"],
             "console": "integratedTerminal"
@@ -489,7 +489,7 @@
             "program": "cli.py",
             "redirectOutput": true,
             "args": ["create-and-run",
-                "--project_name=../../servers/unique_keys",
+                "--project_name=../../../servers/unique_keys",
                 "--db_url=sqlite:////Users/val/dev/ApiLogicServer/tests/sqlite-databases/unique_keys.sqlite"],
             "console": "integratedTerminal"
         },
@@ -521,7 +521,7 @@
             "cwd": "${workspaceFolder}/api_logic_server_cli",
             "program": "cli.py",
             "redirectOutput": true,
-            "args": ["create","--project_name=../../servers/megapilos","--db_url="],
+            "args": ["create","--project_name=../../../servers/megapilos","--db_url="],
             "console": "integratedTerminal"
         },
         {
@@ -539,7 +539,7 @@
             "cwd": "${workspaceFolder}/api_logic_server_cli",
             "program": "cli.py",
             "redirectOutput": true,
-            "args": ["create","--project_name=../../servers/NewProject","--db_url=new"],
+            "args": ["create","--project_name=../../../servers/NewProject","--db_url=new"],
             "console": "integratedTerminal"
         },
         {
@@ -549,7 +549,7 @@
             "cwd": "${workspaceFolder}/api_logic_server_cli",
             "program": "cli.py",
             "redirectOutput": true,
-            "args": ["create","--project_name=../../servers/table_filters_tests",
+            "args": ["create","--project_name=../../../servers/table_filters_tests",
                     "--db_url=table_filters_tests",
                     "--include_tables=database/table_filters_tests.yml"],
             "console": "integratedTerminal"
@@ -561,7 +561,7 @@
             "cwd": "${workspaceFolder}/api_logic_server_cli",
             "program": "cli.py",
             "redirectOutput": true,
-            "args": ["create","--project_name=../../servers/table_filters_tests",
+            "args": ["create","--project_name=../../../servers/table_filters_tests",
                     "--db_url=table_filters_tests",
                     "--include_tables=database/table_filters_tests_typical.yml"],
             "console": "integratedTerminal"
@@ -573,7 +573,7 @@
             "cwd": "${workspaceFolder}/api_logic_server_cli",
             "program": "cli.py",
             "redirectOutput": true,
-            "args": ["create","--project_name=../../servers/table_filters_nw",
+            "args": ["create","--project_name=../../../servers/table_filters_nw",
                     "--db_url=nw-",
                     "--include_tables=database/table_filters_tests_nw.yml"],
             "console": "integratedTerminal"
@@ -593,7 +593,7 @@
             "cwd": "${workspaceFolder}/api_logic_server_cli",
             "program": "cli.py",
             "redirectOutput": true,
-            "args": ["rebuild-from-model","--project_name=../../servers/sqlserver-types","--db_url="],
+            "args": ["rebuild-from-model","--project_name=../../../servers/sqlserver-types","--db_url="],
             "console": "integratedTerminal"
         },
         {
@@ -603,7 +603,7 @@
             "cwd": "${workspaceFolder}/api_logic_server_cli",
             "program": "cli.py",
             "redirectOutput": true,
-            "args": ["rebuild-from-database","--project_name=../../servers/ApiLogicProject","--db_url="],
+            "args": ["rebuild-from-database","--project_name=../../../servers/ApiLogicProject","--db_url="],
             "console": "integratedTerminal"
         },
         {
@@ -613,7 +613,7 @@
             "cwd": "${workspaceFolder}/api_logic_server_cli",
             "program": "cli.py",
             "redirectOutput": true,
-            "args": ["rebuild-from-model","--project_name=../../servers/ApiLogicProject","--db_url="],
+            "args": ["rebuild-from-model","--project_name=../../../servers/ApiLogicProject","--db_url="],
             "console": "integratedTerminal"
         },
         {
@@ -638,7 +638,7 @@
         "args": ["add-db",
                 "--bind_key=Todo",
                 "--db_url=todo",
-                "--project_name=../../servers/ApiLogicProject"],
+                "--project_name=../../../servers/ApiLogicProject"],
         "console": "integratedTerminal"
     },
     {
@@ -649,7 +649,7 @@
             "cwd": "${workspaceFolder}/api_logic_server_cli",
             "program": "cli.py",
             "redirectOutput": true,
-            "args": ["create-and-run","--project_name='../../servers/install/ApiLogicServer/spaces name/ApiLogicProject'","--db_url="],
+            "args": ["create-and-run","--project_name='../../../servers/install/ApiLogicServer/spaces name/ApiLogicProject'","--db_url="],
             "stopOnEntry": false,
             "justMyCode": false,
             "console": "integratedTerminal"

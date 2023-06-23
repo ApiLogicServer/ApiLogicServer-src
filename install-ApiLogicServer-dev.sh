@@ -15,6 +15,9 @@ fi
 #   echo $ostype contains ubuntu
 # fi
 
+# normally true, use false for skipping long clone during testing 
+clonedocs=false
+
 if [ $# -eq 0 ]
   then
     echo " "
@@ -22,48 +25,61 @@ if [ $# -eq 0 ]
     echo "Installs dev version of ApiLogicServer and safrs-react-admin on $ostype (version 7.0.15)"
     echo "   .. vscode option creates venv, and starts vscode on workspace"
     echo " "
-    echo " IMPORTANT - run this from empty folder"
-    echo "   .. will create the ApiLogicServer directory for you"
+    echo " IMPORTANT - run instructions"
+    echo "   > mkdir ApiLogicServer"
+    echo "   > python3 -m venv venv; . venv/bin/activate;"
+    echo "   > pip install ApiLogicServer  # just like any user"
     echo " "
-    echo "  sh Install-ApiLogicServer-Dev [ vscode | charm | x ]"
+    echo "   > sh Install-ApiLogicServer-Dev [ vscode | charm | x ]"
     echo " "
     exit 0
   else
     ls
     echo " "
-    read -p "Verify directory is empty, and [Enter] install *dev* version of ApiLogicServer for $1> "
+    read -p "Verify ApiLogicServer-dev does not exist, and [Enter] install *dev* version of ApiLogicServer for $1> "
+    if [ -d "ApiLogicServer-dev" ] 
+    then
+        echo "\nReally, ApiLogicServer-dev must not exist\n" 
+        exit 1
+    fi
     set -x
+    mkdir ApiLogicServer-dev
+    cd ApiLogicServer-dev
     mkdir servers    # good place to create ApiLogicProjects
-    mkdir Org-ApiLogicServer  # app-fiddle is built here
+    mkdir build_and_test
+    mkdir org  # git clones from org ApiLogicServer here
+    cd org
 
-    # get sra runtime as build folder
+    if [ "$clonedocs" = true ]
+      then
+        git clone https://github.com/ApiLogicServer/Docs
+        cd Docs
+        python3 -m venv venv       # may require python -m venv venv
+        if contains "ubuntu" $ostype; then
+          echo $ostype contains ubuntu
+          . venv/bin/activate
+        else
+          echo $ostype does not contain ubuntu
+          source venv/bin/activate   # windows venv\Scripts\activate
+        fi
+    fi
+
+    pwd
+    read -p "Ready to acquire - verify at ApiLogicServer-dev/org> "
+    # get sra runtime as ApiLogicServer-dev/build
     curl https://github.com/thomaxxl/safrs-react-admin/releases/download/0.1.2/safrs-react-admin-0.1.2.zip -LO
     echo "unzipping sra to build.."
     set +x
     unzip safrs-react-admin-0.1.2.zip
     set -x
     
-    git clone https://github.com/valhuber/ApiLogicServer
-    git clone https://github.com/thomaxxl/safrs-react-admin
-    # git clone https://github.com/valhuber/Docs-ApiLogicServer
-    cd Org-ApiLogicServer
-    git clone https://github.com/ApiLogicServer/Docs
+    git clone https://github.com/ApiLogicServer/ApiLogicServer-src.git
+    # NO git clone https://github.com/thomaxxl/safrs-react-admin
+    # NO git clone https://github.com/valhuber/Docs-ApiLogicServer
 
-    cd Docs
-    python3 -m venv venv       # may require python -m venv venv
-    if contains "ubuntu" $ostype; then
-      echo $ostype contains ubuntu
-      . venv/bin/activate
-    else
-      echo $ostype does not contain ubuntu
-      source venv/bin/activate   # windows venv\Scripts\activate
-    fi
-    
-    cd ..
-    cd ..
-
-    cd ApiLogicServer
+    cd ApiLogicServer-src
     pwd
+    read -p "\nVerify at org/ApiLogicServer-src> "
     echo "\ncopying build (sra - safrs-react-admin) --> ApiLogicServer"
     cp -r ../build api_logic_server_cli/create_from_model/safrs-react-admin-npm-build
     #
