@@ -16,7 +16,7 @@ fi
 # fi
 
 # normally true, use false for skipping long clone during testing 
-clonedocs=false
+clonedocs=true
 
 if [ $# -eq 0 ]
   then
