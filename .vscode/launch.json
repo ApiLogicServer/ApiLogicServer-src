@@ -115,7 +115,7 @@
             "env": {"APILOGICSERVER_DEBUG": "True"},
             "program": "cli.py",
             "redirectOutput": true,
-            "args": ["create","--project_name=../../../../servers/ApiLogicProject","--db_url="],
+            "args": ["create","--project_name=../../../servers/ApiLogicProject","--db_url="],
             "console": "integratedTerminal"
         },
         {
