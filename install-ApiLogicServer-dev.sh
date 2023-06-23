@@ -81,7 +81,10 @@ if [ $# -eq 0 ]
     # read -p "\nVerify at org_git/ApiLogicServer-src> "
     echo "\ncopying build (sra - safrs-react-admin) --> ApiLogicServer"
     cp -r ../build api_logic_server_cli/create_from_model/safrs-react-admin-npm-build
+
     rm -r ../build
+    rm ../safrs-react-admin-0.1.2.zip
+    
     #
     #
     # read -p "Installed - ready to launch IDE..."
