@@ -29,7 +29,7 @@ class Category(Base):
     __bind_key__ = 'None'
 
     Id = Column(Integer, primary_key=True)
-    CategoryName = Column(String(8000))
+    CategoryName = Column('CategoryName_ColumnName', String(8000))  # logical name
     Description = Column(String(8000))
     Client_id = Column(Integer)
 
@@ -57,7 +57,7 @@ class Customer(Base):
     Client_id = Column(Integer)
     allow_client_generated_ids = True
 
-    OrderList = relationship('Order', cascade_backrefs=True, backref='Customer')
+    OrderList = relationship('Order', cascade_backrefs=False, backref='Customer')
 
 
 class CustomerDemographic(Base):
@@ -79,11 +79,11 @@ class Department(Base):
     DepartmentId = Column(ForeignKey('Department.Id'))
     DepartmentName = Column(String(100))
 
-    # see backref on parent: Department = relationship('Department', remote_side=[Id], cascade_backrefs=True, backref='DepartmentList')
+    # see backref on parent: Department = relationship('Department', remote_side=[Id], cascade_backrefs=False, backref='DepartmentList')
 
-    Department = relationship('Department', remote_side=[Id], cascade_backrefs=True, backref='DepartmentList')  # special handling for self-relationships
-    EmployeeList = relationship('Employee', primaryjoin='Employee.OnLoanDepartmentId == Department.Id', cascade_backrefs=True, backref='Department')
-    EmployeeList1 = relationship('Employee', primaryjoin='Employee.WorksForDepartmentId == Department.Id', cascade_backrefs=True, backref='Department1')
+    Department = relationship('Department', remote_side=[Id], cascade_backrefs=False, backref='DepartmentList')  # special handling for self-relationships
+    EmployeeList = relationship('Employee', primaryjoin='Employee.OnLoanDepartmentId == Department.Id', cascade_backrefs=False, backref='Department')
+    EmployeeList1 = relationship('Employee', primaryjoin='Employee.WorksForDepartmentId == Department.Id', cascade_backrefs=False, backref='Department1')
 
 
 class Location(Base):
@@ -96,7 +96,7 @@ class Location(Base):
     notes = Column(String(256))
     allow_client_generated_ids = True
 
-    OrderList = relationship('Order', cascade_backrefs=True, backref='Location')
+    OrderList = relationship('Order', cascade_backrefs=False, backref='Location')
 
 
 class Product(Base):
@@ -116,7 +116,7 @@ class Product(Base):
     Discontinued = Column(Integer, nullable=False)
     UnitsShipped = Column(Integer)
 
-    OrderDetailList = relationship('OrderDetail', cascade_backrefs=True, backref='Product')
+    OrderDetailList = relationship('OrderDetail', cascade_backrefs=False, backref='Product')
 
 
 class Region(Base):
@@ -159,7 +159,7 @@ class Supplier(Base):
     Address = Column(String(8000))
     City = Column(String(8000))
     Region = Column(String(8000))
-    PostalCode = Column(String(8000))
+    ShipZip = Column('ShipPostalCode', String(8000))  # manual fix - alias
     Country = Column(String(8000))
     Phone = Column(String(8000))
     Fax = Column(String(8000))
@@ -176,7 +176,7 @@ class Territory(Base):
     RegionId = Column(Integer, nullable=False)
     allow_client_generated_ids = True
 
-    EmployeeTerritoryList = relationship('EmployeeTerritory', cascade_backrefs=True, backref='Territory')
+    EmployeeTerritoryList = relationship('EmployeeTerritory', cascade_backrefs=False, backref='Territory')
 
 
 class Union(Base):
@@ -187,7 +187,7 @@ class Union(Base):
     Id = Column(Integer, primary_key=True)
     Name = Column(String(80))
 
-    EmployeeList = relationship('Employee', cascade_backrefs=True, backref='Union')
+    EmployeeList = relationship('Employee', cascade_backrefs=False, backref='Union')
 
 
 t_sqlite_sequence = Table(
@@ -216,7 +216,6 @@ class Employee(Base):
     Country = Column(String(8000))
     HomePhone = Column(String(8000))
     Extension = Column(String(8000))
-    Photo = Column(LargeBinary)
     Notes = Column(String(8000))
     ReportsTo = Column(Integer, index=True)
     PhotoPath = Column(String(8000))
@@ -227,13 +226,13 @@ class Employee(Base):
     UnionId = Column(ForeignKey('Union.Id'))
     Dues = Column(DECIMAL)
 
-    # see backref on parent: Department = relationship('Department', primaryjoin='Employee.OnLoanDepartmentId == Department.Id', cascade_backrefs=True, backref='EmployeeList')
-    # see backref on parent: Union = relationship('Union', cascade_backrefs=True, backref='EmployeeList')
-    # see backref on parent: Department1 = relationship('Department', primaryjoin='Employee.WorksForDepartmentId == Department.Id', cascade_backrefs=True, backref='EmployeeList_Department1')
+    # see backref on parent: Department = relationship('Department', primaryjoin='Employee.OnLoanDepartmentId == Department.Id', cascade_backrefs=False, backref='EmployeeList')
+    # see backref on parent: Union = relationship('Union', cascade_backrefs=False, backref='EmployeeList')
+    # see backref on parent: Department1 = relationship('Department', primaryjoin='Employee.WorksForDepartmentId == Department.Id', cascade_backrefs=False, backref='EmployeeList_Department1')
 
-    EmployeeAuditList = relationship('EmployeeAudit', cascade_backrefs=True, backref='Employee')
-    EmployeeTerritoryList = relationship('EmployeeTerritory', cascade_backrefs=True, backref='Employee')
-    OrderList = relationship('Order', cascade_backrefs=True, backref='Employee')
+    EmployeeAuditList = relationship('EmployeeAudit', cascade_backrefs=False, backref='Employee')
+    EmployeeTerritoryList = relationship('EmployeeTerritory', cascade_backrefs=False, backref='Employee')
+    OrderList = relationship('Order', cascade_backrefs=False, backref='Employee')
 
 
 class EmployeeAudit(Base):
@@ -249,7 +248,7 @@ class EmployeeAudit(Base):
     EmployeeId = Column(ForeignKey('Employee.Id'))
     CreatedOn = Column(Text)
 
-    # see backref on parent: Employee = relationship('Employee', cascade_backrefs=True, backref='EmployeeAuditList')
+    # see backref on parent: Employee = relationship('Employee', cascade_backrefs=False, backref='EmployeeAuditList')
 
 
 class EmployeeTerritory(Base):
@@ -262,8 +261,8 @@ class EmployeeTerritory(Base):
     TerritoryId = Column(ForeignKey('Territory.Id'))
     allow_client_generated_ids = True
 
-    # see backref on parent: Employee = relationship('Employee', cascade_backrefs=True, backref='EmployeeTerritoryList')
-    # see backref on parent: Territory = relationship('Territory', cascade_backrefs=True, backref='EmployeeTerritoryList')
+    # see backref on parent: Employee = relationship('Employee', cascade_backrefs=False, backref='EmployeeTerritoryList')
+    # see backref on parent: Territory = relationship('Territory', cascade_backrefs=False, backref='EmployeeTerritoryList')
 
 
 class Order(Base):
@@ -286,7 +285,7 @@ class Order(Base):
     ShipAddress = Column(String(8000))
     ShipCity = Column(String(8000))
     ShipRegion = Column(String(8000))
-    ShipPostalCode = Column(String(8000))
+    ShipZip = Column('ShipPostalCode', String(8000))  # manual fix - alias
     ShipCountry = Column(String(8000))
     AmountTotal = Column(DECIMAL(10, 2))
     Country = Column(String(50))
@@ -295,13 +294,13 @@ class Order(Base):
     OrderDetailCount = Column(Integer, server_default=text("0"))
     CloneFromOrder = Column(ForeignKey('Order.Id'))
 
-    # see backref on parent: parent = relationship('Order', remote_side=[Id], cascade_backrefs=True, backref='OrderList')
-    # see backref on parent: Location = relationship('Location', cascade_backrefs=True, backref='OrderList')
-    # see backref on parent: Customer = relationship('Customer', cascade_backrefs=True, backref='OrderList')
-    # see backref on parent: Employee = relationship('Employee', cascade_backrefs=True, backref='OrderList')
+    # see backref on parent: parent = relationship('Order', remote_side=[Id], cascade_backrefs=False, backref='OrderList')
+    # see backref on parent: Location = relationship('Location', cascade_backrefs=False, backref='OrderList')
+    # see backref on parent: Customer = relationship('Customer', cascade_backrefs=False, backref='OrderList')
+    # see backref on parent: Employee = relationship('Employee', cascade_backrefs=False, backref='OrderList')
 
-    parent = relationship('Order', remote_side=[Id], cascade_backrefs=True, backref='OrderList')  # special handling for self-relationships
-    OrderDetailList = relationship('OrderDetail', cascade='all, delete', cascade_backrefs=True, backref='Order')  # manual fix
+    parent = relationship('Order', remote_side=[Id], cascade_backrefs=False, backref='OrderList')  # special handling for self-relationships
+    OrderDetailList = relationship('OrderDetail', cascade='all, delete', cascade_backrefs=False, backref='Order')  # manual fix
 
 
 class OrderDetail(Base):
@@ -318,5 +317,5 @@ class OrderDetail(Base):
     Amount = Column(DECIMAL)
     ShippedDate = Column(String(8000))
 
-    # see backref on parent: Order = relationship('Order', cascade_backrefs=True, backref='OrderDetailList')
-    # see backref on parent: Product = relationship('Product', cascade_backrefs=True, backref='OrderDetailList')
+    # see backref on parent: Order = relationship('Order', cascade_backrefs=False, backref='OrderDetailList')
+    # see backref on parent: Product = relationship('Product', cascade_backrefs=False, backref='OrderDetailList')
