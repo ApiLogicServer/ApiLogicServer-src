@@ -212,7 +212,7 @@ def tutorial(ctx, create):
     """
     project_name=os.getcwd()
     if project_name == get_api_logic_server_dir():  # for ApiLogicServer dev (from |> Run and Debug )
-        project_name = str(Path(project_name).parent.parent.joinpath("Org-ApiLogicServer"))
+        project_name = str(Path(project_name).parent.parent)  #  .joinpath("Org-ApiLogicServer"))
     else:
         project_name = str(Path(project_name))
 
