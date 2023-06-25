@@ -31,12 +31,12 @@ class Roles():
 Grant(  on_entity = models.Category,    # illustrate multi-tenant - u1 shows only row 1
         to_role = Roles.tenant,
         can_delete=False,
-        filter =  models.Category.Client_id == 2) #Security.current_user().client_id)  # User table attributes
+        filter =  models.Category.Client_id == Security.current_user().client_id)  # User table attributes
 
 Grant(  on_entity = models.Category,    # u2 has both roles - should return client_id 2 (2, 3, 4), and 5
         to_role = Roles.manager,
         can_delete=False,
-        filter =  models.Category.Id == 5)
+        filter =  models.Category.Id in (2,3,4,5))
 
 Grant(  on_entity = models.Customer,    # ro has only read only access and should only return 1 Customer Row - override update
         to_role = Roles.Readonly,
@@ -49,4 +49,4 @@ Grant(  on_entity = models.Customer,    # full has full access - cannot delete c
         to_role = Roles.Fullaccess)
 
 app_logger.debug("Declare Security complete - security/declare_security.py"
-    + f' -- {len(database.authentication_models.metadata.tables)} tables loaded')
+        + f' -- {len(database.authentication_models.metadata.tables)} tables loaded')

@@ -86,7 +86,7 @@ class RoleDef():
     """
     Role Definition (override per entity using Grant) - Users will have 1 or more roles
     readOnly = RoleDef(role_name="ReadOnly",can_read=True, can_update=False,can_insert=False,can_delete=False)
-     Args
+    Args
         :role_name: str role name
         :can_read: bool = True,
         :can_insert: bool = True,
@@ -115,12 +115,12 @@ class Grant:
         Example
         =======
         Grant(  on_entity = models.Category,  # use code completion
-                to_role = Roles.tenant,
-                can_delete = False,
-                can_update = False,
-                can_insert = False,
-                can_read = False,
-                filter = models.Category.Id == Security.current_user().client_id)  # User table attributes TODO
+            to_role = Roles.tenant,
+            can_delete = False,
+            can_update = False,
+            can_insert = False,
+            can_read = False,
+            filter = models.Category.Id == Security.current_user().client_id) 
         Args
         ----
             :on_entity: a class from models.py
