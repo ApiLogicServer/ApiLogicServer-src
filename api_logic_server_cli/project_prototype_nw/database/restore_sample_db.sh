@@ -1,1 +1,0 @@
-cp db-backup.sqlite db.sqlite
