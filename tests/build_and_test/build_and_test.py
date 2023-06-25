@@ -150,15 +150,12 @@ def check_command(command_result):
         if command_result.stderr is not None:
             result_stderr = str(command_result.stderr)
 
-    if "Trace" in result_stderr or \
+    if ("Trace" in result_stderr or \
         "Error" in result_stderr or \
         "allocation failed" in result_stdout or \
         "error" in result_stderr or \
         "Cannot connect" in result_stderr or \
-        "Traceback" in result_stderr:
-        if 'alembic.runtime.migration' in result_stderr:
-            pass
-        else:
+        "Traceback" in result_stderr) and 'alembic.runtime.migration' not in result_stderr:
             print_byte_string("\n\n==> Command Failed - Console Log:", command_result.stdout)
             print_byte_string("\n\n==> Error Log:", command_result.stderr)
             raise ValueError("Traceback detected")

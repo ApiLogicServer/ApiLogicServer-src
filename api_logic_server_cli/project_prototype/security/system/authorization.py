@@ -193,7 +193,6 @@ class Grant:
             security_logger.debug(f"no user - ok (eg, system initialization) error: {ex}")
             return
         # start out full restricted - any True will turn on access
-       
         for each_user_role in user.UserRoleList:
             # if False or True returns True for each role
             can_read =  can_read or each_user_role.can_read
@@ -261,5 +260,5 @@ def receive_do_orm_execute(orm_execute_state):
         elif  session._proxied._flushing:  # type: ignore
             security_logger.debug('No grants during logic processing')
         else:
-            #security_logger.info(f"ORM Listener table: {table_name} is_select: {orm_execute_state.is_select}")    
+            security_logger.info(f"ORM Listener on table: {table_name} is_select: {orm_execute_state.is_select}")    
             Grant.exec_grants(table_name, "is_select" , orm_execute_state)

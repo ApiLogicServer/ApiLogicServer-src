@@ -6,9 +6,29 @@ from logic_bank.logic_bank import Rule
 from database import models
 import api.system.opt_locking.opt_locking as opt_locking
 import logging
+from security.system.authorization import Grant
+from config import Config
 
 app_logger = logging.getLogger(__name__)
 
+def exec_grants(logic_row: LogicRow):
+    """
+    The Grant/UserRole will be called if security is enabled for insert/update/delete
+    Args:
+        logic_row (LogicRow): 
+    """
+    if Config.SECURITY_ENABLED: 
+        entity_name = logic_row.name 
+        #select is handled by orm_execution_state
+        event_state = ""
+        if logic_row.is_updated():
+            event_state = 'is_update'
+        elif logic_row.is_inserted():
+            event_state = 'is_insert'
+        elif logic_row.is_deleted(): 
+            event_state = 'is_delete'
+        Grant.exec_grants(entity_name, event_state, None)
+        
 def declare_logic():
     ''' Declarative multi-table derivations and constraints, extensible with Python. 
 
@@ -36,6 +56,8 @@ def declare_logic():
             if logic_row.ins_upd_dlt == "ins" and hasattr(row, "CreatedOn"):
                 row.CreatedOn = datetime.datetime.now()
                 logic_row.log("early_row_event_all_classes - handle_all sets 'Created_on"'')
+         exec_grants(logic_row=logic_row)
+         
     Rule.early_row_event_all_classes(early_row_event_all_classes=handle_all)
 
 
