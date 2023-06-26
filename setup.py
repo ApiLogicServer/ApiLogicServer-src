@@ -25,16 +25,16 @@ def desc():
 
 
 project_urls = {
-  'Docs': 'https://valhuber.github.io/ApiLogicServer/'
+  'Docs': 'https://apilogicserver.github.io/Docs/'
 }
 
 setup(
     name="ApiLogicServer",
     version=version,
-    url="https://github.com/valhuber/ApiLogicServer",
+    url="https://github.com/ApiLogicServer/ApiLogicServer-src",
     license="BSD",
     author="Val Huber",
-    author_email="valjhuber@gmail.com",
+    author_email="apilogicserver@gmail.com",
     project_urls=project_urls,
     description=(
         "Create JSON:API and Web App from database, with LogicBank -- "

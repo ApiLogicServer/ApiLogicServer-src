@@ -75,7 +75,7 @@
             "program": "cli.py",
             "redirectOutput": true,
             "args": ["create",
-                "--project_name=../../Org-ApiLogicServer/demo",
+                "--project_name=../../demo",
                 "--db_url=nw"],
             "stopOnEntry": false,
             "justMyCode": false,
