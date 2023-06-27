@@ -17,6 +17,7 @@ import safrs
 from sqlalchemy import event, MetaData
 from sqlalchemy.orm import with_loader_criteria, DeclarativeMeta
 from database import models
+from logic_bank.exec_row_logic.logic_row import LogicRow
 import logging, sys
 from safrs.errors import JsonapiError
 from http import HTTPStatus
@@ -77,34 +78,12 @@ class GrantSecurityException(JsonapiError):
             print("Constraint raised: " + str(ce))
 
     """
-    def __init__(self, message, status_code=HTTPStatus.BAD_REQUEST):
+    def __init__(self, user, entity_name, access, status_code=HTTPStatus.UNAUTHORIZED):
         super().__init__()
-        self.message = message
-        self.status_code = status_code
+        self.message = f"User: {user.id} with roles: [{user.UserRoleList}] does not have {access} access on entity: {entity_name}"
+        self.status_code = status_code.value
 
-class RoleDef():
-    """
-    Role Definition (override per entity using Grant) - Users will have 1 or more roles
-    readOnly = RoleDef(role_name="ReadOnly",can_read=True, can_update=False,can_insert=False,can_delete=False)
-    Args
-        :role_name: str role name
-        :can_read: bool = True,
-        :can_insert: bool = True,
-        :can_update: bool = True,
-        :can_delete: bool = True,
-    """
-    def __init__(self,
-        role_name: str = "",
-        can_read: bool = True,
-        can_insert: bool = True,
-        can_update: bool = True,
-        can_delete: bool = True):
 
-        self.role_name : str = role_name
-        self.can_read = can_read
-        self.can_insert = can_insert
-        self.can_update = can_update
-        self.can_delete = can_delete
 
 class Grant:
     """
@@ -115,12 +94,12 @@ class Grant:
         Example
         =======
         Grant(  on_entity = models.Category,  # use code completion
-            to_role = Roles.tenant,
-            can_delete = False,
-            can_update = False,
-            can_insert = False,
-            can_read = False,
-            filter = models.Category.Id == Security.current_user().client_id) 
+                to_role = Roles.tenant,
+                can_delete = False,
+                can_update = False,
+                can_insert = False,
+                can_read = False,
+                filter = models.Category.Id == Security.current_user().client_id)  # User table attributes 
         Args
         ----
             :on_entity: a class from models.py
@@ -135,6 +114,7 @@ class Grant:
     """
 
     grants_by_table : Dict[str, list['Grant']] = {}
+    grants_by_role : Dict[str, list['Grant']] = {}
     '''
     Dict keyed by Table name (obtained from class name), value is a (role, filter)
     '''
@@ -142,12 +122,15 @@ class Grant:
     def __init__(self, on_entity: DeclarativeMeta, 
         to_role: str = None,
         can_read: bool = True,
-        can_insert: bool = True,
-        can_update: bool = True,
-        can_delete: bool = True,
+        can_insert: bool = False,
+        can_update: bool = False,
+        can_delete: bool = False,
         filter: object = None):
-
-        self.class_name : str = on_entity._s_class_name  # type: ignore
+        
+        if isinstance(on_entity, str):
+            self.class_name = on_entity
+        else:
+            self.class_name : str = on_entity._s_class_name  # type: ignore
         self.role_name : str = to_role
         self.filter = filter
         self.entity :DeclarativeMeta = on_entity 
@@ -156,17 +139,50 @@ class Grant:
         self.can_update = can_update
         self.can_delete = can_delete
         self.orm_execute_state = None # used by filter
-        self.table_name : str = on_entity.__tablename__  # type: ignore
-        self._entity_name:str = on_entity._s_type # Class Name
-        if (self._entity_name not in self.grants_by_table):
-            Grant.grants_by_table[self._entity_name] = []
-        Grant.grants_by_table[self._entity_name].append( self )
+        self.table_name : str = None if isinstance(on_entity, str) else on_entity.__tablename__   # type: ignore
+        self.update_CRUD()
+        self._entity_name:str = None if isinstance(on_entity, str) else on_entity._s_type # Class Name
+        if self._entity_name is not None:
+            if self._entity_name not in self.grants_by_table:
+                Grant.grants_by_table[self._entity_name] = []
+            Grant.grants_by_table[self._entity_name].append( self )
+        else:
+            if self.role_name not in self.grants_by_role:
+                Grant.grants_by_role[self.role_name] = []
+            Grant.grants_by_role[self.role_name].append( self )
+        
         
         def current_user():
             return Security.current_user() if Config.SECURITY_ENABLED else None
+        
+    def update_CRUD(self):
+        if self.class_name in ["ALL", "A"]:
+            self._updateCRUD(True, True, True, True)
+        elif self.class_name in ["None", "N"]:
+            self._updateCRUD(False, False, False, False)
+        elif self.class_name == "CRU":
+            self._updateCRUD(True, True, True, False)
+        elif self.class_name == "CU":
+            self._updateCRUD(True, True, True, False)
+        elif self.class_name == "U":
+            self._updateCRUD(True, False, True, False)
+        elif self.class_name == "D":
+            self._updateCRUD(True, False, False, True)
+        elif self.class_name == "C":
+            self._updateCRUD(True, True, False, False)
+        elif self.class_name == "R":
+            self._updateCRUD(True, False, False, False)
 
+
+    def _updateCRUD(self, read, create, update, delete):
+        self.can_read = read
+        self.can_insert = create
+        self.can_update = update
+        self.can_delete = delete
+        
+            
     @staticmethod
-    def exec_grants(entity_name: str,crud_state: str, orm_execute_state: any = None):
+    def exec_grants(entity_name: str,crud_state: str, orm_execute_state: any = None) -> None:
         '''
         SQLAlchemy select event for current user's roles, append that role's grant filter to the SQL before execute 
 
@@ -176,29 +192,39 @@ class Grant:
 
         u2 is a manager and a tenant
         '''
-        if not Config.SECURITY_ENABLED:
+        user = Security.current_user()
+        
+        if not Config.SECURITY_ENABLED or not user:
             return
         
-        user = Security.current_user()
+       
         can_read = False
         can_insert = False
         can_delete = False
         can_update = False
         try:
             from flask import g
-            if g.isSA or user.id == 'sa':
+            if user.id == 'sa':
                 security_logger.debug("sa (eg, set_user_sa()) - no grants apply")
                 return
         except Exception as ex:
             security_logger.debug(f"no user - ok (eg, system initialization) error: {ex}")
             return
+        
         # start out full restricted - any True will turn on access
+        for each_role in Grant.grants_by_role:
+            for each_user_role in user.UserRoleList:
+                if each_role == each_user_role.role_name:
+            #if Security.current_user_has_role(each_role):
+                    for grant_role in Grant.grants_by_role[each_role]:
+                        can_read = can_read or grant_role.can_read
+                        can_insert = can_insert or grant_role.can_insert
+                        can_delete = can_delete or grant_role.can_delete
+                        can_update = can_update or grant_role.can_update
+                        print(f"Grant on role: {each_role} Read: {can_read}, Update: {can_update}, Insert: {can_insert}, Delete: {can_delete}")
+                    
         for each_user_role in user.UserRoleList:
             # if False or True returns True for each role
-            can_read =  can_read or each_user_role.can_read
-            can_insert =  can_insert or each_user_role.can_insert
-            can_delete =  can_delete or each_user_role.can_delete
-            can_update =  can_delete or each_user_role.can_update
             if entity_name in Grant.grants_by_table:
                 grant_list = []
                 grant_entity = None
@@ -213,34 +239,54 @@ class Grant:
                         can_delete = can_delete or each_grant.can_delete
                         can_update = can_update or each_grant.can_update
                         
-                        if each_grant.filter is not None and orm_execute_state is not None:
-                            grant_list.append(each_grant.filter)
-                            
-                if grant_list and crud_state == "is_select":
+                        if each_grant.filter is not None \
+                            and orm_execute_state is not None:
+                            grant_list.append(each_grant.filter())
+                security_logger.debug(f"Grants applied for entity {entity_name}")
+                if grant_entity is not None \
+                    and grant_list and crud_state == "is_select":
                     grant_filter = or_(*grant_list)
-                    """
-                    with_loader_criteria(
-                        SecurityRole,
-                        lambda cls: cls.role.in_(['some_role']),
-                        include_aliases=True
-                        )
-                    """
+                    # apply filter(s) (additional where clause) for row security on select
                     orm_execute_state.statement = orm_execute_state.statement.options(
-                        with_loader_criteria(entity_or_base=grant_entity, where_criteria=grant_filter))
-                
-            security_logger.debug(f"Grants applied for entity {entity_name}")
-        else:
-            security_logger.debug(f"No Grants for entity {entity_name}")
+                        with_loader_criteria(grant_entity,grant_filter))
+            else:
+                security_logger.debug(f"No Grants for entity {entity_name}")
             
         if not can_read and crud_state == 'is_select':
-            raise GrantSecurityException(message=f"User {user.id} with roles [{user.UserRoleList}] does not have read access on {entity_name}")
+            raise GrantSecurityException(user=user,entity_name=entity_name,access="read")
         elif not can_update and crud_state == 'is_update':
-                raise GrantSecurityException(message=f"User {user.id} with roles [{user.UserRoleList}] does not have update access on {entity_name}")
+                raise GrantSecurityException(user=user,entity_name=entity_name,access="update")
         elif not can_insert and crud_state == 'is_insert':
-                raise GrantSecurityException(message=f"User {user.id} with roles [{user.UserRoleList}] does not have insert access on {entity_name}")
+                raise GrantSecurityException(user=user,entity_name=entity_name,access="insert")
         elif not can_delete and crud_state == 'is_delete':
-                raise GrantSecurityException(message=f"User {user.id} with roles [{user.UserRoleList}] does not have delete access on {entity_name}")
-
+                raise GrantSecurityException(user=user,entity_name=entity_name,access="delete")
+    
+    @staticmethod
+    class process_updates():
+        #cls, logic_row: LogicRow):
+        """
+        This will be called from logic/declare_logic.py handle all row events
+        if security is enabled for insert/update/delete
+        Args:
+            logic_row (LogicRow): 
+        """
+        def __init__(self,
+            logic_row:LogicRow):
+        
+            self.logic_row = logic_row
+        
+            if Config.SECURITY_ENABLED: 
+                entity_name = self.logic_row.name 
+                #select is handled by orm_execution_state
+                _event_state = ""
+                if self.logic_row.is_updated():
+                    _event_state = 'is_update'
+                elif self.logic_row.is_inserted():
+                    _event_state = 'is_insert'
+                elif self.logic_row.is_deleted(): 
+                    _event_state = 'is_delete'
+                    
+                Grant.exec_grants(entity_name, _event_state, None)
 
 @event.listens_for(session, 'do_orm_execute')
 def receive_do_orm_execute(orm_execute_state):
@@ -260,5 +306,5 @@ def receive_do_orm_execute(orm_execute_state):
         elif  session._proxied._flushing:  # type: ignore
             security_logger.debug('No grants during logic processing')
         else:
-            security_logger.info(f"ORM Listener on table: {table_name} is_select: {orm_execute_state.is_select}")    
+            #security_logger.info(f"ORM Listener table: {table_name} is_select: {orm_execute_state.is_select}")    
             Grant.exec_grants(table_name, "is_select" , orm_execute_state)

@@ -14,19 +14,13 @@ from dataclasses import dataclass
 class DataClassUserRole:
     """
     Role Definition (override per entity using Grant) - Users will have 1 or more roles
-    readOnly = DataClassUserRole(role_name="ReadOnly",can_read=True, can_update=False,can_insert=False,can_delete=False)
+    readOnly = DataClassUserRole(role_name="ReadOnly")
     Args
-    :role_name: str role name
-    :can_read: bool = True,
-    :can_insert: bool = True,
-    :can_update: bool = True,
-    :can_delete: bool = True,
+    :role_name: str 
+    
     """
     role_name: str
-    can_read: bool = True
-    can_insert: bool = True
-    can_update: bool = True
-    can_delete: bool = True
+    
 
 @dataclass
 class DataClassUser:
@@ -83,7 +77,7 @@ sam_role_list = [DataClassUserRole(role_name="manager")]
 sam.UserRoleList = sam_role_list
 
 aneu = add_user("aneu", 1, "p")
-aneu_role_list = [DataClassUserRole(role_name="manager"), DataClassUserRole(role_name="tenant")]
+aneu_role_list = DataClassUserRole(role_name="renter")
 aneu.UserRoleList = aneu_role_list
 
 c1 = add_user("u1", 1, "p")
@@ -99,11 +93,11 @@ m_role_list = [DataClassUserRole(role_name="manager"), DataClassUserRole(role_na
 m.UserRoleList = c1_role_list
 
 m = add_user("ro", 6, "p")
-m_role_list = [ DataClassUserRole(role_name="readonly",can_read=True, can_update=False, can_delete=False,can_insert=False)]
+m_role_list = DataClassUserRole(role_name="readonly")
 m.UserRoleList = c1_role_list
 
 m = add_user("full", 7, "p")
-m_role_list = [DataClassUserRole(role_name="full")]
+m_role_list = DataClassUserRole(role_name="full")
 m.UserRoleList = c1_role_list
 
 sam_row = Authentication_Provider.get_user("sam", "")
