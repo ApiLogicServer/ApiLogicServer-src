@@ -197,7 +197,7 @@ class Grant:
         if not Config.SECURITY_ENABLED or not user:
             return
         
-       
+    
         can_read = False
         can_insert = False
         can_delete = False
