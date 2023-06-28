@@ -6,7 +6,8 @@ from logic_bank.logic_bank import Rule
 from database import models
 import api.system.opt_locking.opt_locking as opt_locking
 import logging
-
+from config import Config
+from security.system.authorization import Grant
 
 preferred_approach = True
 """ Some examples below contrast a preferred approach with a more manual one """
@@ -261,6 +262,9 @@ def declare_logic():
             if logic_row.ins_upd_dlt == "ins" and hasattr(row, "CreatedOn"):
                 row.CreatedOn = datetime.datetime.now()
                 logic_row.log("early_row_event_all_classes - handle_all sets 'Created_on"'')
+        
+        Grant.process_updates(logic_row=logic_row)
+    
     Rule.early_row_event_all_classes(early_row_event_all_classes=handle_all)
     
     app_logger.debug("..logic/declare_logic.py (logic == rules + code)")
