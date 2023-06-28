@@ -8,7 +8,7 @@ It creates the `models.py` file by calling this method.
     1. It calls `create_models_memstring`:
         * It returns the `models_py` text to be written to the projects' `database/models.py`.
         * It uses a modification of [sqlacodgen](https://github.com/agronholm/sqlacodegen), by Alex Grönholm -- many thanks!
-            * An important consideration is disambiguating multiple relationships between the same w tables
+            * An important consideration is disambiguating multiple relationships between the same 2 tables
                 * See `nw-plus` relationships between `Department` and `Employee`.
                 * [See here](https://apilogicserver.github.io/Docs/Sample-Database/) for a database diagram.
             * It transforms database names to resource names - capitalized, singular

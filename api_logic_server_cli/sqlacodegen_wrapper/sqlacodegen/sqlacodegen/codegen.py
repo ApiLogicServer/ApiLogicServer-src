@@ -292,7 +292,12 @@ class ModelClass(Model):
         self.attributes = OrderedDict()
         self.foreign_key_relationships = list()
         self.rendered_model = ""                # ApiLogicServer
+        self.rendered_child_relationships = ""
+        """ child relns for this model (eg, OrderList accessor for Customer) """
+        self.rendered_parent_relationships = ""
+        """ parent relns for this model (eg, Customer accessor for Order) """
         self.rendered_model_relationships = ""  # appended at end ( render() )
+        """ child relns for this model - appended during render() REMOVE ME """
 
         # Assign attribute names for columns
         for column in table.columns:
@@ -300,22 +305,28 @@ class ModelClass(Model):
 
         # Add many-to-one relationships (to parent)
         pk_column_names = set(col.name for col in table.primary_key.columns)
+        parent_accessors = []
+        if self.name == "Employee":
+            debug_stop = "nice breakpoint"
         for constraint in sorted(table.constraints, key=_get_constraint_sort_key):
             if isinstance(constraint, ForeignKeyConstraint):
                 target_cls = self._tablename_to_classname(constraint.elements[0].column.table.name,
                                                           inflect_engine)
                 this_included = code_generator.is_table_included(self.table.name)
                 target_included = code_generator.is_table_included(constraint.elements[0].column.table.name)
-                if (detect_joined and self.parent_name == 'Base' and
-                        set(_get_column_names(constraint)) == pk_column_names):
-                    self.parent_name = target_cls
+                if (detect_joined and self.parent_name == 'Base' and set(_get_column_names(constraint)) == pk_column_names):
+                    self.parent_name = target_cls  # evidently not called for ApiLogicServer
                 else:
+                    multi_reln = False
+                    if target_cls in parent_accessors:
+                        multi_reln = True
                     relationship_ = ManyToOneRelationship(self.name, target_cls, constraint,
-                                                        inflect_engine)
+                                                        inflect_engine, multi_reln)
+                    parent_accessors.append(relationship_.parent_accessor_name)
                     if this_included and target_included:
                         self._add_attribute(relationship_.preferred_name, relationship_)
                     else:
-                        log.debug(f"Parent Relationship excluded: {relationship_.preferred_name}")
+                        log.debug(f"Parent Relationship excluded: {relationship_.preferred_name}")  # never occurs?
 
         # Add many-to-many relationships
         for association_table in association_tables:
@@ -359,11 +370,13 @@ class ModelClass(Model):
         return result
 
     def _add_attribute(self, attrname, value):
-        """ add table column/relationship to attributes
+        """ add table column AND parent-relationship to attributes
 
         disambiguate relationship accessor names (append tablename with 1, 2...)
         """
         attrname = tempname = self._convert_to_valid_identifier(attrname)
+        if self.name == "Employee" and attrname == "Department":
+            debug_stop = "nice breakpoint"
         counter = 1
         while tempname in self.attributes:
             tempname = attrname + str(counter)
@@ -386,12 +399,15 @@ class Relationship(object):
     def __init__(self, source_cls, target_cls):
         super(Relationship, self).__init__()
         self.source_cls = source_cls
+        """ for API Logic Server, the child class """
+
         self.target_cls = target_cls
+        """ for API Logic Server, the parent class """
         self.kwargs = OrderedDict()
 
 
 class ManyToOneRelationship(Relationship):
-    def __init__(self, source_cls, target_cls, constraint, inflect_engine):
+    def __init__(self, source_cls, target_cls, constraint, inflect_engine, multi_reln):
         super(ManyToOneRelationship, self).__init__(source_cls, target_cls)
 
         column_names = _get_column_names(constraint)
@@ -416,9 +432,20 @@ class ManyToOneRelationship(Relationship):
                 self.preferred_name = colname[:-2]
             else:
                 self.preferred_name = "parent"  # hmm, why not just table name
+                self.preferred_name = self.target_cls  # FIXME why "parent", (for Order)
             pk_col_names = [col.name for col in constraint.table.primary_key]
             self.kwargs['remote_side'] = '[{0}]'.format(', '.join(pk_col_names))
 
+        self.parent_accessor_name = self.preferred_name
+        """ parent accessor (typically parent (target_cls)) """
+        # assert self.target_cls == self.preferred_name, "preferred name <> parent"
+
+        self.child_accessor_name = self.source_cls + "List"
+        """ child accessor (typically child (target_class) + "List") """
+
+        if multi_reln:
+            self.parent_accessor_name += "1"
+            self.child_accessor_name = self.source_cls + "1List"
         # If the two tables share more than one foreign key constraint,
         # SQLAlchemy needs an explicit primaryjoin to figure out which column(s) to join with
         common_fk_constraints = self.get_common_fk_constraints(
@@ -584,10 +611,12 @@ class CodeGenerator(object):
         self.noindexes = noindexes
         self.noconstraints = noconstraints
         self.nojoined = nojoined
+        """ not used by API Logic Server """
         self.noinflect = noinflect
         self.noclasses = noclasses
         self.model_creation_services = model_creation_services  # type: ModelCreationServices
         self.generate_relationships_on = "parent"  # "child"
+        """ FORMELRY, relns were genned ONLY on parent (== 'parent') """
         self.indentation = indentation
         self.model_separator = model_separator
         self.ignored_tables = ignored_tables
@@ -700,7 +729,7 @@ class CodeGenerator(object):
             unique_constraint_class = model_creation_services.project.infer_primary_key and has_unique_constraint
             if unique_constraint_class == False and (noclasses or not table.primary_key or table.name in association_tables):
                 model = self.table_model(table)
-            else:
+            else:  # create ModelClass() instance
                 model = self.class_model(table, links[table.name], self.inflect_engine, not nojoined)  # computes attrs (+ roles)
                 self.classes[model.name] = model
 
@@ -761,7 +790,10 @@ from flask_login import UserMixin
 import safrs, flask_sqlalchemy
 from safrs import jsonapi_attr
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import relationship
+from sqlalchemy.orm import Mapped
 from sqlalchemy.sql.sqltypes import NullType
+from typing import List
 
 db = SQLAlchemy() 
 Base = declarative_base()  # type: flask_sqlalchemy.model.DefaultMeta
@@ -1168,117 +1200,227 @@ from sqlalchemy.dialects.mysql import *
 
 
         # Render relationships (declared in parent class, backref to child)
+        """
+
+        FORMERLY genned for parent.getChildren (only),
+        For child, generated a comment attr
+        For parent, appended to parent_model.rendered_model_relationships, eg:
+        * <children-accessor> = reln('child-class', backref='<parent>'), eg
+            * OrderList = relationship('Order', cascade_backrefs=False, backref='Customer')
+        * except
+            * Department = relationship('Department', remote_side=[Id], backref='DepartmentList')  # special handling for self-relationships
+
+
+        Update for SQLAlchemy 2 typing 
+
+        https://docs.sqlalchemy.org/en/20/tutorial/orm_related_objects.html#tutorial-orm-related-objects
+
+        e.g. for single field relns:
+
+        # children (in customer...)
+        OrderList : Mapped[List['Order']] = relationship(back_populates="Customer")
+
+        # parent (in order...)
+        Customer : Mapped["Customer"] = relationship(back_populates="OrderList")
+        """
+
         if any(isinstance(value, Relationship) for value in model.attributes.values()):
             rendered += '\n'
-        backrefs = {}
-        for attr, relationship in model.attributes.items():
-            if isinstance(relationship, Relationship):  # ApiLogicServer changed to insert backref
-                attr_to_render = attr
-                if self.generate_relationships_on != "child":
-                    attr_to_render = "# see backref on parent: " + attr  # relns not created on child; comment out
-                rel_render = "{0}{1} = {2}\n".format(self.indentation, attr_to_render, self.render_relationship(relationship))
-                rel_parts = rel_render.split(")")  # eg, Department = relationship(\'Department\', remote_side=[Id]
-                backref_name = model.name + "List"
-                """ disambiguate multi-relns, eg, in the Employee child class, 2 relns to Department:
-                        Department =  relationship('Department', primaryjoin='Employee.OnLoanDepartmentId == Department.Id', cascade_backrefs=True, backref='EmployeeList')
-                        Department1 = relationship('Department', primaryjoin='Employee.WorksForDepartmentId == Department.Id', cascade_backrefs=True, backref='EmployeeList_Department1')
-                    cascade_backrefs=True, backref='EmployeeList_Department1'   <== need to append that "1"
-                """
-                unique_name = relationship.target_cls + '.' + backref_name
-                if unique_name in backrefs:  # disambiguate
-                    backref_name += "_" + attr
-                back_ref = f', cascade_backrefs=False, backref=\'{backref_name}\''
-                rel_render_with_backref = rel_parts[0] + \
-                                          back_ref + \
-                                          ")" + rel_parts[1]
-                # rendered += "{0}{1} = {2}\n".format(self.indentation, attr, self.render_relationship(relationship))
 
-                """ disambiguate multi-relns, eg, in the Department parent class, 2 relns to Employee:
-                        EmployeeList =  relationship('Employee', primaryjoin='Employee.OnLoanDepartmentId == Department.Id', cascade_backrefs=True, backref='Department')
-                        EmployeeList1 = relationship('Employee', primaryjoin='Employee.WorksForDepartmentId == Department.Id', cascade_backrefs=True, backref='Department1')
-                    cascade_backrefs=True, backref='EmployeeList_Department1'   <== need to append that "1"
-                """
-                if relationship.target_cls not in self.classes:
-                    print(f'.. .. ..ERROR - {model.name} -- missing parent class: {relationship.target_cls}')
-                    print(f'.. .. .. .. Parent Class may be missing Primary Key and Unique Column')
-                    print(f'.. .. .. .. Attempting to continue - you may need to repair model, or address database design')
-                    continue
-                parent_model = self.classes[relationship.target_cls]  # eg, Department
-                parent_relationship_def = self.render_relationship_on_parent(relationship)
-                parent_relationship_def = parent_relationship_def[:-1]
-                # eg, for Dept: relationship('Employee', primaryjoin='Employee.OnLoanDepartmentId == Department.Id')
-                child_role_name = model.name + "List"
-                parent_role_name = attr
-                if unique_name in backrefs:  # disambiguate
-                    child_role_name += '1'  # FIXME - fails for 3 relns
-                if model.name != parent_model.name:
-                    parent_relationship = f'{child_role_name} = {parent_relationship_def}, cascade_backrefs=False, backref=\'{parent_role_name}\')'
-                else:  # work-around for self relns
+        old_relns = True
+        if old_relns:
+            backrefs = {}
+            """ <class>.<children-accessor: <children-accessor """
+            for attr, relationship in model.attributes.items():  # this list has parents only, order random
+                if isinstance(relationship, Relationship):  # ApiLogicServer changed to insert backref
+                    reln_accessor_to_render = attr
+                    if self.generate_relationships_on != "child":
+                        reln_accessor_to_render = "# z see backref on parent: " + attr  # relns not created on child; comment out
+                        parent_accessor = f'    # {attr} : Mapped["{attr}"] = relationship(back_populates={model.name}List)"\n'
+                        # model.rendered_parent_relationships += parent_accessor
+                        # reln_accessor_to_render = f'# {attr} : Mapped["{attr}"] = relationship(back_populates={model.name}List)"'
+                    rel_render = "{0}{1} = {2}\n".format(self.indentation, reln_accessor_to_render, self.render_relationship(relationship))
+                    rel_parts = rel_render.split(")")  # eg, Department = relationship(\'Department\', remote_side=[Id]
+                    backref_name = model.name + "List"
+                    """ disambiguate multi-relns, eg, in the Employee child class, 2 relns to Department:
+                            Department =  relationship('Department', primaryjoin='Employee.OnLoanDepartmentId == Department.Id', cascade_backrefs=True, backref='EmployeeList')
+                            Department1 = relationship('Department', primaryjoin='Employee.WorksForDepartmentId == Department.Id', cascade_backrefs=True, backref='EmployeeList_Department1')
+                        cascade_backrefs=True, backref='EmployeeList_Department1'   <== need to append that "1"
                     """
-                    special case self relns:
-                        not DepartmentList = relationship('Department', remote_side=[Id], cascade_backrefs=True, backref='Department')
-                        but Department     = relationship('Department', remote_side=[Id], cascade_backrefs=True, backref='DepartmentList')
+                    unique_name = relationship.target_cls + '.' + backref_name
+                    if unique_name in backrefs:  # disambiguate
+                        backref_name += "_" + attr
+                    back_ref = f', cascade_backrefs=False, backref=\'{backref_name}\''
+                    rel_render_with_backref = rel_parts[0] + \
+                                            back_ref + \
+                                            ")" + rel_parts[1]
+                    # rendered += "{0}{1} = {2}\n".format(self.indentation, attr, self.render_relationship(relationship))
+
+                    """ disambiguate multi-relns, eg, in the Department parent class, 2 relns to Employee:
+                            EmployeeList =  relationship('Employee', primaryjoin='Employee.OnLoanDepartmentId == Department.Id', cascade_backrefs=True, backref='Department')
+                            EmployeeList1 = relationship('Employee', primaryjoin='Employee.WorksForDepartmentId == Department.Id', cascade_backrefs=True, backref='Department1')
+                        cascade_backrefs=True, backref='EmployeeList_Department1'   <== need to append that "1"
                     """
-                    parent_relationship = f'{parent_role_name} = {parent_relationship_def}, cascade_backrefs=False, backref=\'{child_role_name}\')'
-                    parent_relationship += "  # special handling for self-relationships"
-                if self.generate_relationships_on != "parent":  # relns not created on parent; comment out
-                    parent_relationship = "# see backref on child: " + parent_relationship
-                parent_model.rendered_model_relationships += "    " + parent_relationship + "\n"
-                if model.name == "OrderDetail":
-                    debug_str = "nice breakpoint"
-                rendered += rel_render_with_backref
-                backrefs[unique_name] = backref_name
-                if relationship.source_cls.startswith("Ab"):
+                    if relationship.target_cls not in self.classes:
+                        print(f'.. .. ..ERROR - {model.name} -- missing parent class: {relationship.target_cls}')
+                        print(f'.. .. .. .. Parent Class may be missing Primary Key and Unique Column')
+                        print(f'.. .. .. .. Attempting to continue - you may need to repair model, or address database design')
+                        continue
+                    parent_model = self.classes[relationship.target_cls]  # eg, Department
+                    parent_relationship_def = self.render_relationship_on_parent(relationship)
+                    parent_relationship_def = parent_relationship_def[:-1]
+                    # eg, for Dept: relationship('Employee', primaryjoin='Employee.OnLoanDepartmentId == Department.Id')
+                    child_role_name = model.name + "List"
+                    parent_role_name = attr
+                    if unique_name in backrefs:  # disambiguate
+                        child_role_name += '1'  # FIXME - fails for 3 relns
+                    if model.name != parent_model.name:
+                        parent_relationship = f'{child_role_name} = {parent_relationship_def}, cascade_backrefs=False, backref=\'{parent_role_name}\')'
+                    else:  # work-around for self relns
+                        """
+                        special case self relns:
+                            not DepartmentList = relationship('Department', remote_side=[Id], cascade_backrefs=True, backref='Department')
+                            but Department     = relationship('Department', remote_side=[Id], cascade_backrefs=True, backref='DepartmentList')
+                        """
+                        parent_relationship = f'{parent_role_name} = {parent_relationship_def}, cascade_backrefs=False, backref=\'{child_role_name}\')'
+                        parent_relationship += "  # special handling for self-relationships"
+                    
+                    # want: OrderList : Mapped[List['Order']] = relationship(back_populates="Customer")
+                    # got:  OrderList : Mapped[List["Order"]] = relationship(back_populates="Customer")
+                    parent_model.rendered_model_relationships += "    # z " + parent_relationship + "\n"
+                    child_accessor = f'    # {child_role_name} : Mapped[List["{model.name}"]] = relationship(back_populates="{parent_model.name}")\n'
+                    # parent_model.rendered_child_relationships += child_accessor
+                    if model.name == "Employee":  # Emp has Department and Department1
+                        debug_str = "nice breakpoint"
+                    rendered += rel_render_with_backref  # FIXME the class, without the relns
+                    backrefs[unique_name] = backref_name
+                    if relationship.source_cls.startswith("Ab"):
+                        pass
+                    elif isinstance(relationship, ManyToManyRelationship):  # eg, chinook:PlayList->PlayListTrack
+                        print(f'many to many should not occur on: {model.name}.{unique_name}')
+                    else:  # fixme dump all this, right?
+                        use_old_code = False  # so you can elide this
+                        if use_old_code:
+                            resource = self.model_creation_services.resource_list[relationship.source_cls]
+                            resource_relationship = ResourceRelationship(parent_role_name = attr,
+                                                                        child_role_name = backref_name)
+                            resource_relationship.child_resource = relationship.source_cls
+                            resource_relationship.parent_resource = relationship.target_cls
+                            # gen key pairs
+                            for each_pair in relationship.foreign_key_constraint.elements:
+                                pair = ( str(each_pair.column.name), str(each_pair.parent.name) )
+                                resource_relationship.parent_child_key_pairs.append(pair)
+
+                                resource.parents.append(resource_relationship)
+                                parent_resource = self.model_creation_services.resource_list[relationship.target_cls]
+                                parent_resource.children.append(resource_relationship)
+                                if use_old_code:
+                                    if relationship.source_cls not in self.parents_map:   # todo old code remove
+                                        self.parents_map[relationship.source_cls] = list()
+                                    self.parents_map[relationship.source_cls].append(
+                                        (
+                                            attr,          # to parent, eg, Department, Department1
+                                            backref_name,  # to children, eg, EmployeeList, EmployeeList_Department1
+                                            relationship.foreign_key_constraint
+                                        ) )
+                                    if relationship.target_cls not in self.children_map:
+                                        self.children_map[relationship.target_cls] = list()
+                                    self.children_map[relationship.target_cls].append(
+                                        (
+                                            attr,          # to parent, eg, Department, Department1
+                                            backref_name,  # to children, eg, EmployeeList, EmployeeList_Department1
+                                            relationship.foreign_key_constraint
+                                        ) )
                     pass
-                elif isinstance(relationship, ManyToManyRelationship):  # eg, chinook:PlayList->PlayListTrack
-                    print(f'many to many should not occur on: {model.name}.{unique_name}')
-                else:  # fixme dump all this, right?
-                    use_old_code = False  # so you can elide this
-                    if use_old_code:
-                        resource = self.model_creation_services.resource_list[relationship.source_cls]
-                        resource_relationship = ResourceRelationship(parent_role_name = attr,
-                                                                     child_role_name = backref_name)
-                        resource_relationship.child_resource = relationship.source_cls
-                        resource_relationship.parent_resource = relationship.target_cls
-                        # gen key pairs
-                        for each_pair in relationship.foreign_key_constraint.elements:
-                            pair = ( str(each_pair.column.name), str(each_pair.parent.name) )
-                            resource_relationship.parent_child_key_pairs.append(pair)
-
-                            resource.parents.append(resource_relationship)
-                            parent_resource = self.model_creation_services.resource_list[relationship.target_cls]
-                            parent_resource.children.append(resource_relationship)
-                            if use_old_code:
-                                if relationship.source_cls not in self.parents_map:   # todo old code remove
-                                    self.parents_map[relationship.source_cls] = list()
-                                self.parents_map[relationship.source_cls].append(
-                                    (
-                                        attr,          # to parent, eg, Department, Department1
-                                        backref_name,  # to children, eg, EmployeeList, EmployeeList_Department1
-                                        relationship.foreign_key_constraint
-                                    ) )
-                                if relationship.target_cls not in self.children_map:
-                                    self.children_map[relationship.target_cls] = list()
-                                self.children_map[relationship.target_cls].append(
-                                    (
-                                        attr,          # to parent, eg, Department, Department1
-                                        backref_name,  # to children, eg, EmployeeList, EmployeeList_Department1
-                                        relationship.foreign_key_constraint
-                                    ) )
-                pass
+        
+        self.render_relns(model = model)
 
         # Render subclasses
         for child_class in model.children:
             rendered += self.model_separator + self.render_class(child_class)
         # rendered += "\n    # END RENDERED CLASS\n"  # useful for debug, as required
         return rendered
+    
+    def render_relns(self, model: ModelClass):
+        """ accrue 
+
+        FORMERLY genned for parent.getChildren (only),
+        For child, generated a comment attr
+        For parent, appended to parent_model.rendered_model_relationships, eg:
+        * <children-accessor> = reln('child-class', backref='<parent>'), eg
+                * OrderList = relationship('Order', cascade_backrefs=False, backref='Customer')
+        * except
+                * Department = relationship('Department', remote_side=[Id], backref='DepartmentList')  # special handling for self-relationships
+        * special case - FORMERLY
+
+                * EmployeeList = relationship('Employee', primaryjoin='Employee.OnLoanDepartmentId == Department.Id', backref='Department')
+                * EmployeeList1 = relationship('Employee', primaryjoin='Employee.WorksForDepartmentId == Department.Id', backref='Department1')
+
+        * now:
+                * DepartmentList : Mapped[List["Department"]] = relationship(remote_side=[Id], back_populates="Department")
+                * EmployeeList : Mapped[List["Employee"]] = relationship(back_populates="Department")
+                * Employee1List : Mapped[List["Employee"]] = relationship(back_populates="Department1")
+
+
+        Update for SQLAlchemy 2 typing 
+
+        https://docs.sqlalchemy.org/en/20/tutorial/orm_related_objects.html#tutorial-orm-related-objects
+
+        e.g. for single field relns:
+
+        children (in customer...)
+            * OrderList : Mapped[List['Order']] = relationship(back_populates="Customer")
+
+        parent (in order...)
+            * Customer : Mapped["Customer"] = relationship(back_populates="OrderList")
+        
+        Args:
+            model (ModelClass): gen reln accessors for this model
+
+        Returns:
+            Just updates model.rendered_parent_relationships
+        """
+
+        backrefs = {}
+        """ <class>.<children-accessor: <children-accessor """
+
+        # TODO mult-reln https://docs.sqlalchemy.org/en/20/orm/join_conditions.html#handling-multiple-join-paths
+
+        for attr, relationship in model.attributes.items():  # this list has parents only, order random
+            if isinstance(relationship, Relationship):
+
+                reln: ManyToOneRelationship = relationship  # for typing; each parent for model child
+                parent_accessor_name = reln.parent_accessor_name
+                # assert parent_accessor_name in (attr, attr + "1", attr[0 : len(attr)-1], "parent", "Order"), "parent accessor bad"
+                if parent_accessor_name not in (attr, attr + "1", attr[0 : len(attr)-1], "parent", "Order"):
+                    print(f'unexpected parent accessor name: {parent_accessor_name} for attr: {attr}')
+                multi_reln_fix = ""
+                if "primaryjoin" in reln.kwargs:
+                    multi_reln_fix = f'foreign_keys={reln.kwargs["primaryjoin"]}, '
+                    print(multi_reln_fix)
+                parent_accessor = f'    {attr} : Mapped["{reln.target_cls}"] = relationship({multi_reln_fix}back_populates=("{reln.child_accessor_name}"))\n'
+
+                child_accessor_name = reln.child_accessor_name
+                # assert child_accessor_name == reln.child_accessor_name, "child accessor bad"
+                parent_model = self.classes[reln.target_cls]
+                self_reln_fix = "remote_side=[Id], " \
+                    if model.name == parent_model.name else ""
+                child_accessor = f'    {child_accessor_name} : Mapped[List["{reln.source_cls}"]] = '\
+                                 f'relationship({self_reln_fix}back_populates="{reln.parent_accessor_name}")\n'
+
+                if model.name == "Employee":  # Emp has Department and Department1
+                    debug_str = "nice breakpoint"
+                model.rendered_parent_relationships += parent_accessor
+                parent_model.rendered_child_relationships += child_accessor
+
+
 
     def render(self, outfile=sys.stdout):
         """ create model from db, and write models.py file to in-memory buffer (outfile)
 
             relns created from not-yet-seen children, so
             * save *all* class info,
-            * then append rendered_model_relationships
+            * then append rendered_model_relationships (since we might see parent before or after child)
         """
         for model in self.models:  # class, with __tablename__ & __collection_name__ cls variables, attrs
             if isinstance(model, self.class_model):
@@ -1288,10 +1430,21 @@ from sqlalchemy.dialects.mysql import *
         rendered_models = []  # now append the rendered_model + rendered_model_relationships
         for model in self.models:
             if isinstance(model, self.class_model):
-                # rendered_models.append(self.render_class(model))
-                if model.rendered_model_relationships != "":  # child relns (OrderDetailList etc)
-                    model.rendered_model_relationships = "\n" + model.rendered_model_relationships
-                rendered_models.append(model.rendered_model + model.rendered_model_relationships)
+                rendered_models.append(model.rendered_model)
+                if model.name == "Customer":
+                    debug_str = "nice breakpoint"
+
+                rendered_models.append("    # parent relationships (access parent)")
+                # if model.rendered_parent_relationships != "":  # parent relns (Customer, etc)
+                #     model.rendered_parent_relationships = "\n" + model.rendered_parent_relationships
+                rendered_models.append(model.rendered_parent_relationships)
+
+                rendered_models.append("    # child relationships (access children)")
+                # if model.rendered_model_relationships != "":  # child relns (OrderDetailList etc)
+                #    model.rendered_model_relationships = "\n" + model.rendered_model_relationships
+                rendered_models.append(model.rendered_model_relationships)
+                rendered_models.append(model.rendered_child_relationships)
+                
                 rendered_models.append(self.model_creation_services.opt_locking)
             elif isinstance(model, self.table_model):  # eg, views, database id generators, etc
                 rendered_models.append(self.render_table(model))
