@@ -5,7 +5,7 @@ import safrs
 import logging
 
 """
-Illustrates declarative security - role-based authorization to database rows.
+Illustrates declarative security - role-based authorization to database rows..
 
 * See [documentation](https://apilogicserver.github.io/Docs/Security-Overview/)
 
