@@ -78,19 +78,19 @@ c1.UserRoleList = c1_role_list
 
 c2 = add_user("u2", 2, "p")
 c2_role_list = [DataClassUserRole(role_name="manager"), DataClassUserRole(role_name="renter")]
-c2.UserRoleList = c1_role_list
+c2.UserRoleList = c2_role_list
 
 m = add_user("mary", 5, "p")
 m_role_list = [DataClassUserRole(role_name="manager"), DataClassUserRole(role_name="tenant")]
-m.UserRoleList = c1_role_list
+m.UserRoleList = m_role_list
 
-m = add_user("ro", 6, "p")
-m_role_list = DataClassUserRole(role_name="readonly")
-m.UserRoleList = c1_role_list
+r = add_user("ro", 6, "p")
+r_role_list = DataClassUserRole(role_name="readonly")
+r.UserRoleList = r_role_list
 
-m = add_user("full", 7, "p")
-m_role_list = DataClassUserRole(role_name="full")
-m.UserRoleList = c1_role_list
+f = add_user("full", 7, "p")
+f_role_list = DataClassUserRole(role_name="full")
+f.UserRoleList = f_role_list
 
 sam_row = Authentication_Provider.get_user("sam", "")
 print(f'Sam: {sam_row}')
