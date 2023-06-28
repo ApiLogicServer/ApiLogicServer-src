@@ -19,12 +19,12 @@ session = db.session
 
 
 class Roles():
-    """ Define Roles here, so can use code completion (Roles.tenant) """
-    tenant = "tenant"
-    renter = "renter"
-    manager = "manager"
-    readonly = "readonly"
-    fullaccess = "fullaccess"
+        """ Define Roles here, so can use code completion (Roles.tenant) """
+        tenant = "tenant"
+        renter = "renter"
+        manager = "manager"
+        readonly = "readonly"
+        fullaccess = "fullaccess"
 
 # Configure each Role for default global permission using CRUD, All, or None
 Grant(on_entity="ALL",to_role=Roles.manager)
@@ -55,4 +55,4 @@ Grant(  on_entity = models.Customer,    # user full has full access - cannot del
 
 
 app_logger.debug("Declare Security complete - security/declare_security.py"
-    + f' -- {len(database.authentication_models.metadata.tables)} tables loaded')
+        + f' -- {len(database.authentication_models.metadata.tables)} tables loaded')
