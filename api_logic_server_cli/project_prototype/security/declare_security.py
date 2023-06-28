@@ -53,6 +53,5 @@ Grant(  on_entity = models.Customer,    # user full has full access - cannot del
         can_delete=False,
         to_role = Roles.fullaccess)
 
-
 app_logger.debug("Declare Security complete - security/declare_security.py"
-        + f' -- {len(database.authentication_models.metadata.tables)} tables loaded')
+        + f' -- {len(Grant.grants_by_table)} Grants by tables loaded and {len(Grant.grants_by_role)} Grants by role loaded.')
