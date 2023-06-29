@@ -77,11 +77,11 @@ class GrantSecurityException(JsonapiError):
             print("Constraint raised: " + str(ce))
 
     """
-    def __init__(self, user, entity_name, access, status_code=HTTPStatus.UNAUTHORIZED):
+    def __init__(self, user, entity_name, access, status_code=HTTPStatus.BAD_REQUEST):
         super().__init__()
-        self.message = f"User: {user.id} with roles: [{user.UserRoleList}] does not have {access} access on entity: {entity_name}"
+        self.message = f"Grant Security Error on User: {user.id} with roles: [{user.UserRoleList}] does not have {access} access on entity: {entity_name}"
         self.status_code = status_code.value
-
+        security_logger.error(f"Grant Security Error on User: {user.id} with roles: [{user.UserRoleList}] does not have {access} access on entity: {entity_name}")
 
 
 class Grant:
@@ -121,9 +121,9 @@ class Grant:
     def __init__(self, on_entity: DeclarativeMeta, 
         to_role: str = None,
         can_read: bool = True,
-        can_insert: bool = False,
-        can_update: bool = False,
-        can_delete: bool = False,
+        can_insert: bool = True,
+        can_update: bool = True,
+        can_delete: bool = True,
         filter: object = None):
         
         if isinstance(on_entity, str):
@@ -278,11 +278,11 @@ class Grant:
                 entity_name = self.logic_row.name 
                 #select is handled by orm_execution_state
                 _event_state = ""
-                if self.logic_row.is_updated():
+                if self.logic_row.ins_upd_dlt == "upd":
                     _event_state = 'is_update'
-                elif self.logic_row.is_inserted():
+                elif self.logic_row.ins_upd_dlt == "ins":
                     _event_state = 'is_insert'
-                elif self.logic_row.is_deleted(): 
+                elif self.logic_row.ins_upd_dlt == "dlt": 
                     _event_state = 'is_delete'
                     
                 Grant.exec_grants(entity_name, _event_state, None)
@@ -296,7 +296,6 @@ def receive_do_orm_execute(orm_execute_state):
         and not orm_execute_state.is_column_load
         and not orm_execute_state.is_relationship_load
     ):            
-        security_logger.debug('receive_do_orm_execute alive')
         mapper = orm_execute_state.bind_arguments['mapper']
         table_name = mapper.class_.__name__   # mapper.mapped_table.fullname disparaged
         if table_name == "User":
@@ -305,5 +304,6 @@ def receive_do_orm_execute(orm_execute_state):
         elif  session._proxied._flushing:  # type: ignore
             security_logger.debug('No grants during logic processing')
         else:
+            security_logger.debug('receive_do_orm_execute alive')
             #security_logger.info(f"ORM Listener table: {table_name} is_select: {orm_execute_state.is_select}")    
             Grant.exec_grants(table_name, "is_select" , orm_execute_state)
