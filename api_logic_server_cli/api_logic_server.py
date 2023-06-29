@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "09.00.02"
+__version__ = "09.00.03"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t06/26/2023 - 09.00.02: SQLAlchemy 2 typing \n"\
+    "\t06/29/2023 - 09.00.03: SQLAlchemy 2 typed-relns \n"\
     "\t06/24/2023 - 09.00.01: PyMysql \n"\
     "\t06/22/2023 - 09.00.00: Optimistic Locking, safrs 310, SQLAlchemy 2.0.15 \n"\
     "\t05/15/2023 - 08.04.05: column alias example, readme link to rules report, fiddle, codespaces log fix \n"\
@@ -452,8 +452,8 @@ def fix_database_models(project_directory: str, db_types: str, nw_db_status: str
     if nw_db_status in ["nw", "nw+"] or (is_tutorial and nw_db_status == "nw-"):  # no manual fixups for nw-
         log.debug(f'.. .. ..Setting cascade delete and column alias for sample database database/models.py')
         create_utils.replace_string_in_file(in_file=models_file_name,
-            search_for="OrderDetailList = relationship('OrderDetail', cascade_backrefs=False, backref='Order')",
-            replace_with="OrderDetailList = relationship('OrderDetail', cascade='all, delete', cascade_backrefs=False, backref='Order')  # manual fix")
+            search_for='OrderDetailList : Mapped[List["OrderDetail"]] = relationship(back_populates="Order")',
+            replace_with='OrderDetailList : Mapped[List["OrderDetail"]] = relationship(cascade="all, delete", back_populates="Order")  # manual fix')
         create_utils.replace_string_in_file(in_file=models_file_name,
             search_for="ShipPostalCode = Column(String(8000))",
             replace_with="ShipZip = Column('ShipPostalCode', String(8000))  # manual fix - alias")

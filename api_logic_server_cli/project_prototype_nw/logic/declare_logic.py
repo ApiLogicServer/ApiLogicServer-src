@@ -237,7 +237,7 @@ def declare_logic():
     def clone_order(row: models.Order, old_row: models.Order, logic_row: LogicRow):
         if row.CloneFromOrder is not None and logic_row.nest_level == 0:
             which = ["OrderDetailList"]
-            logic_row.copy_children(copy_from=row.parent,
+            logic_row.copy_children(copy_from=row.Order,
                                     which_children=which)
     Rule.row_event(on_class=models.Order, calling=clone_order)
 

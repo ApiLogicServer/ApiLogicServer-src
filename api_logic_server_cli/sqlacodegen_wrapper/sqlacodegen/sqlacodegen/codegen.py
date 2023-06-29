@@ -305,7 +305,8 @@ class ModelClass(Model):
 
         # Add many-to-one relationships (to parent)
         pk_column_names = set(col.name for col in table.primary_key.columns)
-        parent_accessors = []
+        parent_accessors = {}
+        """ dict of parent_table, current count (0, 1, 2...   >1 ==> multi-reln) """
         if self.name == "Employee":
             debug_stop = "nice breakpoint"
         for constraint in sorted(table.constraints, key=_get_constraint_sort_key):
@@ -317,12 +318,14 @@ class ModelClass(Model):
                 if (detect_joined and self.parent_name == 'Base' and set(_get_column_names(constraint)) == pk_column_names):
                     self.parent_name = target_cls  # evidently not called for ApiLogicServer
                 else:
-                    multi_reln = False
+                    multi_reln_count = 0
                     if target_cls in parent_accessors:
-                        multi_reln = True
+                        multi_reln_count = parent_accessors[target_cls] + 1
+                        parent_accessors.update({target_cls: multi_reln_count})
+                    else:
+                        parent_accessors[target_cls] = multi_reln_count
                     relationship_ = ManyToOneRelationship(self.name, target_cls, constraint,
-                                                        inflect_engine, multi_reln)
-                    parent_accessors.append(relationship_.parent_accessor_name)
+                                                        inflect_engine, multi_reln_count)
                     if this_included and target_included:
                         self._add_attribute(relationship_.preferred_name, relationship_)
                     else:
@@ -407,7 +410,7 @@ class Relationship(object):
 
 
 class ManyToOneRelationship(Relationship):
-    def __init__(self, source_cls, target_cls, constraint, inflect_engine, multi_reln):
+    def __init__(self, source_cls, target_cls, constraint, inflect_engine, multi_reln_count):
         super(ManyToOneRelationship, self).__init__(source_cls, target_cls)
 
         column_names = _get_column_names(constraint)
@@ -432,7 +435,7 @@ class ManyToOneRelationship(Relationship):
                 self.preferred_name = colname[:-2]
             else:
                 self.preferred_name = "parent"  # hmm, why not just table name
-                self.preferred_name = self.target_cls  # FIXME why "parent", (for Order)
+                self.preferred_name = self.target_cls  # FIXME why was "parent", (for Order)
             pk_col_names = [col.name for col in constraint.table.primary_key]
             self.kwargs['remote_side'] = '[{0}]'.format(', '.join(pk_col_names))
 
@@ -443,9 +446,9 @@ class ManyToOneRelationship(Relationship):
         self.child_accessor_name = self.source_cls + "List"
         """ child accessor (typically child (target_class) + "List") """
 
-        if multi_reln:
-            self.parent_accessor_name += "1"
-            self.child_accessor_name = self.source_cls + "1List"
+        if multi_reln_count > 0:  # disambiguate multi_reln
+            self.parent_accessor_name += str(multi_reln_count)
+            self.child_accessor_name += str(multi_reln_count)
         # If the two tables share more than one foreign key constraint,
         # SQLAlchemy needs an explicit primaryjoin to figure out which column(s) to join with
         common_fk_constraints = self.get_common_fk_constraints(
@@ -453,6 +456,13 @@ class ManyToOneRelationship(Relationship):
         if len(common_fk_constraints) > 1:
             self.kwargs['primaryjoin'] = "'{0}.{1} == {2}.{3}'".format(
                 source_cls, column_names[0], target_cls, constraint.elements[0].column.name)
+            # eg, 'Employee.OnLoanDepartmentId == Department.Id'
+            # and, for SQLAlchemy 2, neds foreign_keys: foreign_keys='[Employee.OnLoanDepartmentId]'
+            foreign_keys = "'["
+            for each_column_name in column_names:
+                foreign_keys += source_cls + "." + each_column_name + ", "
+            self.kwargs['foreign_keys'] = foreign_keys[0 : len(foreign_keys)-2] + "]'"
+            pass
 
     @staticmethod
     def get_common_fk_constraints(table1, table2):
@@ -1373,6 +1383,15 @@ from sqlalchemy.dialects.mysql import *
 
         parent (in order...)
             * Customer : Mapped["Customer"] = relationship(back_populates="OrderList")
+
+        specials:
+            * self-relns: https://docs.sqlalchemy.org/en/20/orm/self_referential.html
+            * multi-relns: https://docs.sqlalchemy.org/en/20/orm/join_conditions.html#handling-multiple-join-paths
+                    * suggests foreign_keys=[] on child only, *but* parent too (eg, Dept)
+                    * https://github.com/sqlalchemy/sqlalchemy/discussions/10034
+                    * Department : Mapped["Department"] = relationship("Department", foreign_keys='[Employee.OnLoanDepartmentId]', back_populates=("EmployeeList"))
+                    * EmployeeList : Mapped[List["Employee"]] = relationship("Employee", foreign_keys='[Employee.OnLoanDepartmentId]', back_populates="Department")
+
         
         Args:
             model (ModelClass): gen reln accessors for this model
@@ -1390,23 +1409,24 @@ from sqlalchemy.dialects.mysql import *
             if isinstance(relationship, Relationship):
 
                 reln: ManyToOneRelationship = relationship  # for typing; each parent for model child
+                multi_reln_fix = ""
+                if "foreign_keys" in reln.kwargs:
+                    multi_reln_fix = 'foreign_keys=' + reln.kwargs["foreign_keys"] + ', '
+                    pass
+
+                parent_model = self.classes[reln.target_cls]
                 parent_accessor_name = reln.parent_accessor_name
                 # assert parent_accessor_name in (attr, attr + "1", attr[0 : len(attr)-1], "parent", "Order"), "parent accessor bad"
                 if parent_accessor_name not in (attr, attr + "1", attr[0 : len(attr)-1], "parent", "Order"):
                     print(f'unexpected parent accessor name: {parent_accessor_name} for attr: {attr}')
-                multi_reln_fix = ""
-                if "primaryjoin" in reln.kwargs:
-                    multi_reln_fix = f'foreign_keys={reln.kwargs["primaryjoin"]}, '
-                    print(multi_reln_fix)
-                parent_accessor = f'    {attr} : Mapped["{reln.target_cls}"] = relationship({multi_reln_fix}back_populates=("{reln.child_accessor_name}"))\n'
+                self_reln_fix = "remote_side=[Id], " \
+                    if model.name == parent_model.name else ""  # FIXME attr name, no?
+                parent_accessor = f'    {attr} : Mapped["{reln.target_cls}"] = relationship({multi_reln_fix}{self_reln_fix}back_populates=("{reln.child_accessor_name}"))\n'
 
                 child_accessor_name = reln.child_accessor_name
                 # assert child_accessor_name == reln.child_accessor_name, "child accessor bad"
-                parent_model = self.classes[reln.target_cls]
-                self_reln_fix = "remote_side=[Id], " \
-                    if model.name == parent_model.name else ""
                 child_accessor = f'    {child_accessor_name} : Mapped[List["{reln.source_cls}"]] = '\
-                                 f'relationship({self_reln_fix}back_populates="{reln.parent_accessor_name}")\n'
+                                 f'relationship({multi_reln_fix}back_populates="{reln.parent_accessor_name}")\n'
 
                 if model.name == "Employee":  # Emp has Department and Department1
                     debug_str = "nice breakpoint"
