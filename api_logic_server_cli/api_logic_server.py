@@ -522,47 +522,47 @@ def update_api_logic_server_run(project):
     api_logic_server_run_py = f'{project.project_directory}/api_logic_server_run.py'
     config_py = f'{project.project_directory}/config.py'
     create_utils.replace_string_in_file(search_for="\"api_logic_server_project_name\"",  # fix logic_bank_utils.add_python_path
-                           replace_with='"' + os.path.basename(project.project_name) + '"',
-                           in_file=api_logic_server_run_py)
+                        replace_with='"' + os.path.basename(project.project_name) + '"',
+                        in_file=api_logic_server_run_py)
     create_utils.replace_string_in_file(search_for="ApiLogicServer hello",
-                           replace_with="ApiLogicServer generated at:" +
+                        replace_with="ApiLogicServer generated at:" +
                                         str(datetime.datetime.now().strftime("%B %d, %Y %H:%M:%S")),
-                           in_file=api_logic_server_run_py)
+                        in_file=api_logic_server_run_py)
     project_directory_fix = project.project_directory_actual
     if os.name == "nt":  # windows
         project_directory_fix = get_windows_path_with_slashes(str(project.project_directory_actual))
     create_utils.replace_string_in_file(search_for="\"api_logic_server_project_dir\"",  # for logging project location
-                           replace_with='"' + project_directory_fix + '"',
-                           in_file=api_logic_server_run_py)
+                        replace_with='"' + project_directory_fix + '"',
+                        in_file=api_logic_server_run_py)
     create_utils.replace_string_in_file(search_for="api_logic_server_api_name",  # last node of server url
-                           replace_with=project.api_name,
-                           in_file=api_logic_server_run_py)
+                        replace_with=project.api_name,
+                        in_file=api_logic_server_run_py)
     create_utils.replace_string_in_file(search_for="api_logic_server_host",
-                           replace_with=project.host,
-                           in_file=config_py)
+                        replace_with=project.host,
+                        in_file=config_py)
     create_utils.replace_string_in_file(search_for="api_logic_server_swagger_host",
-                           replace_with=project.swagger_host,
-                           in_file=config_py)
+                        replace_with=project.swagger_host,
+                        in_file=config_py)
     replace_port = f', port="{project.port}"' if project.port else ""  # TODO: consider reverse proxy
 
     create_utils.replace_string_in_file(search_for="api_logic_server_version",
-                           replace_with=__version__,
-                           in_file=api_logic_server_run_py)
+                        replace_with=__version__,
+                        in_file=api_logic_server_run_py)
 
     create_utils.replace_string_in_file(search_for="api_logic_server_created_on",
-                           replace_with=str(datetime.datetime.now().strftime("%B %d, %Y %H:%M:%S")),
-                           in_file=api_logic_server_run_py)
+                        replace_with=str(datetime.datetime.now().strftime("%B %d, %Y %H:%M:%S")),
+                        in_file=api_logic_server_run_py)
 
     create_utils.replace_string_in_file(search_for="api_logic_server_port",   # server port
-                           replace_with=project.port,
-                           in_file=config_py)
+                        replace_with=project.port,
+                        in_file=config_py)
 
     create_utils.replace_string_in_file(search_for="api_logic_server_port",   # server port
-                           replace_with=project.port,
-                           in_file=api_logic_server_run_py)
+                        replace_with=project.port,
+                        in_file=api_logic_server_run_py)
     create_utils.replace_string_in_file(search_for="api_logic_server_host",
-                           replace_with=project.host,
-                           in_file=api_logic_server_run_py)
+                        replace_with=project.host,
+                        in_file=api_logic_server_run_py)
     pass
 
 
@@ -573,16 +573,16 @@ def fix_host_and_ports(msg, project):
     # replace_with = host + replace_port
     in_file = f'{project.project_directory}/api/customize_api.py'
     create_utils.replace_string_in_file(search_for="api_logic_server_host",
-                           replace_with=project.host,
-                           in_file=in_file)
+                        replace_with=project.host,
+                        in_file=in_file)
     create_utils.replace_string_in_file(search_for="api_logic_server_port",
-                           replace_with=replace_port,
-                           in_file=in_file)
+                        replace_with=replace_port,
+                        in_file=in_file)
     log.debug(f' d.   Updated customize_api_py with port={project.port} and host={project.host}')
     full_path = project.project_directory_actual
     create_utils.replace_string_in_file(search_for="python_anywhere_path",
-                           replace_with=full_path,
-                           in_file=f'{project.project_directory}/devops/python-anywhere/python_anywhere_wsgi.py')
+            replace_with=full_path,
+            in_file=f'{project.project_directory}/devops/python-anywhere/python_anywhere_wsgi.py')
     log.debug(f' e.   Updated python_anywhere_wsgi.py with {full_path}')
 
 
@@ -593,12 +593,12 @@ def fix_build_docker_image(msg, project: Project):
     # replace_with = host + replace_port
     in_file = f'{project.project_directory}/devops/docker/build_image.sh'
     create_utils.replace_string_in_file(search_for="apilogicserver_project_name_lower",
-                           replace_with=project.project_name_last_node.lower(),
-                           in_file=in_file)
+            replace_with=project.project_name_last_node.lower(),
+            in_file=in_file)
     in_file = f'{project.project_directory}/devops/docker/run_image.sh'
     create_utils.replace_string_in_file(search_for="apilogicserver_project_name_lower",
-                           replace_with=project.project_name_last_node.lower(),
-                           in_file=in_file)
+            replace_with=project.project_name_last_node.lower(),
+            in_file=in_file)
 
 
 def start_open_with(open_with: str, project_name: str):
@@ -645,32 +645,32 @@ def invoke_creators(model_creation_services: ModelCreationServices):
 class ProjectRun(Project):
     """ Main Class - instantiate / create_project to run CLI functions """
     def __init__(self, command: str, project_name: str, 
-                     db_url: str,
-                     api_name: str="api",
-                     host: str='localhost', 
-                     port: str='5656', 
-                     swagger_host: str="localhost", 
-                     not_exposed: str="ProductDetails_V",
-                     from_git: str="", 
-                     db_types: str=None, 
-                     open_with: str="", 
-                     run: bool=False, 
-                     use_model: str="", 
-                     admin_app: bool=True,
-                     flask_appbuilder: bool=False, 
-                     favorites: str="name description", 
-                     non_favorites: str="id", 
-                     react_admin: bool=True,
-                     extended_builder: str="", 
-                     include_tables: str="",
-                     multi_api: bool=False, 
-                     infer_primary_key: bool=False, 
-                     bind_key_url_separator: str=default_bind_key_url_separator,
-                     bind_key: str="",
-                     execute: bool=True,
-                     opt_locking: str=OptLocking.OPTIONAL.value,
-                     opt_locking_attr: str="S_CheckSum",
-                     id_column_alias: str="Id"):
+        db_url: str,
+        api_name: str="api",
+        host: str='localhost', 
+        port: str='5656', 
+        swagger_host: str="localhost", 
+        not_exposed: str="ProductDetails_V",
+        from_git: str="", 
+        db_types: str=None, 
+        open_with: str="", 
+        run: bool=False, 
+        use_model: str="", 
+        admin_app: bool=True,
+        flask_appbuilder: bool=False, 
+        favorites: str="name description", 
+        non_favorites: str="id", 
+        react_admin: bool=True,
+        extended_builder: str="", 
+        include_tables: str="",
+        multi_api: bool=False, 
+        infer_primary_key: bool=False, 
+        bind_key_url_separator: str=default_bind_key_url_separator,
+        bind_key: str="",
+        execute: bool=True,
+        opt_locking: str=OptLocking.OPTIONAL.value,
+        opt_locking_attr: str="S_CheckSum",
+        id_column_alias: str="Id"):
         super(ProjectRun, self).__init__()
         self.project_name = project_name
         self.db_url = db_url
@@ -1200,10 +1200,10 @@ def check_ports():
             port_is_available = False
         if not port_is_available:
             msg = "\nWarning - port 5656 does not appear to be available\n" \
-                  "  Version 3.30 has changed port assignments to avoid port conflicts\n" \
-                  "  For example, docker start:\n" \
-                  "    docker run -it --name api_logic_server --rm -p 5656:5656 -p 5002:5002 -v ${PWD}:/localhost apilogicserver/api_logic_server \n" \
-                  "Ports are sometimes freed slowly, you may need to re-issue this command.\n\n"
+                "  Version 3.30 has changed port assignments to avoid port conflicts\n" \
+                "  For example, docker start:\n" \
+                "    docker run -it --name api_logic_server --rm -p 5656:5656 -p 5002:5002 -v ${PWD}:/localhost apilogicserver/api_logic_server \n" \
+                "Ports are sometimes freed slowly, you may need to re-issue this command.\n\n"
             log.warning(msg)
             # sys.exit(msg)
         s.close()
