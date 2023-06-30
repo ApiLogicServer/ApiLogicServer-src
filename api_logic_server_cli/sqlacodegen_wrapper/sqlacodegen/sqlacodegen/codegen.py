@@ -1320,10 +1320,10 @@ from sqlalchemy.dialects.mysql import *
                 if self.model_creation_services.project.nw_db_status in ["nw", "nw+"]:
                     if model.name == "Employee":
                         reln_accessors = "\n    # parent relationships (access parent) -- example: multiple join paths\n"
-                        reln_accessors += "\n    .. https://docs.sqlalchemy.org/en/20/orm/join_conditions.html#handling-multiple-join-paths"
+                        reln_accessors += "    # .. https://docs.sqlalchemy.org/en/20/orm/join_conditions.html#handling-multiple-join-paths\n"
                     elif model.name == "Department":
                         reln_accessors = "\n    # parent relationships (access parent) -- example: self-referential\n"
-                        reln_accessors += "\n    .. https://docs.sqlalchemy.org/en/20/orm/self_referential.html"
+                        reln_accessors += "    # .. https://docs.sqlalchemy.org/en/20/orm/self_referential.html\n"
                 each_rendered_model += reln_accessors
                 each_rendered_model += model.rendered_parent_relationships
 
