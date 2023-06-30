@@ -222,16 +222,15 @@ class Grant:
                         can_update = can_update or grant_role.can_update
                         print(f"Grant on role: {each_role} Read: {can_read}, Update: {can_update}, Insert: {can_insert}, Delete: {can_delete}")
                     
-        for each_user_role in user.UserRoleList:
-            # if False or True returns True for each role
-            if entity_name in Grant.grants_by_table:
-                grant_list = []
-                grant_entity = None
-                for each_grant in Grant.grants_by_table[entity_name]:
-                    grant_entity = each_grant.entity
+        if entity_name in Grant.grants_by_table:
+            grant_list = []
+            grant_entity = None
+            for each_grant in Grant.grants_by_table[entity_name]:
+                grant_entity = each_grant.entity
+                for each_user_role in user.UserRoleList:
                     if each_grant.role_name == each_user_role.role_name:
                         security_logger.debug(f'Amend Grant for class / role: {entity_name} / {each_grant.role_name} - {each_grant.filter}')
-                        print(f"Grant on entity: {entity_name} Read: {each_grant.can_read}, Update: {each_grant.can_update}, Insert: {each_grant.can_insert}, Delete: {each_grant.can_delete}")
+                        print(f"Grant on entity: {entity_name} Role: {each_user_role.role_name:} Read: {each_grant.can_read}, Update: {each_grant.can_update}, Insert: {each_grant.can_insert}, Delete: {each_grant.can_delete}")
                         # 
                         can_read = can_read or each_grant.can_read 
                         can_insert = can_insert or each_grant.can_insert
@@ -241,16 +240,18 @@ class Grant:
                         if each_grant.filter is not None \
                             and orm_execute_state is not None:
                             grant_list.append(each_grant.filter())
-                security_logger.debug(f"Grants applied for entity {entity_name}")
-                if grant_entity is not None \
-                    and grant_list and crud_state == "is_select":
-                    grant_filter = or_(*grant_list)
-                    # apply filter(s) (additional where clause) for row security on select
-                    orm_execute_state.statement = orm_execute_state.statement.options(
-                        with_loader_criteria(grant_entity,grant_filter))
-            else:
-                security_logger.debug(f"No Grants for entity {entity_name}")
+            security_logger.debug(f"Grants applied for entity {entity_name}")
+            if grant_entity is not None \
+                and grant_list and crud_state == "is_select":
+                grant_filter = or_(*grant_list)
+                # apply filter(s) (additional where clause) for row security on select
+                orm_execute_state.statement = orm_execute_state.statement.options(
+                    with_loader_criteria(grant_entity,grant_filter))
+        else:
+            security_logger.debug(f"No Grants for entity {entity_name}")
             
+        print(f"user:{user} crud:{crud_state},r:{can_read},c:{can_insert},u:{can_update},d:{can_delete}")   
+        
         if not can_read and crud_state == 'is_select':
             raise GrantSecurityException(user=user,entity_name=entity_name,access="read")
         elif not can_update and crud_state == 'is_update':
@@ -304,6 +305,6 @@ def receive_do_orm_execute(orm_execute_state):
         elif  session._proxied._flushing:  # type: ignore
             security_logger.debug('No grants during logic processing')
         else:
-            security_logger.debug('receive_do_orm_execute alive')
+            #security_logger.debug('receive_do_orm_execute alive')
             #security_logger.info(f"ORM Listener table: {table_name} is_select: {orm_execute_state.is_select}")    
             Grant.exec_grants(table_name, "is_select" , orm_execute_state)
