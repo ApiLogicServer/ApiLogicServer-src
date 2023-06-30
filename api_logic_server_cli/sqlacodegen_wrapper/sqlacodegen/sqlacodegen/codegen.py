@@ -776,14 +776,21 @@ class CodeGenerator(object):
 
         render_imports_result = '\n'.join('from {0} import {1}'.format(package, ', '.join(sorted(names)))
                          for package, names in self.collector.items())
-        if sqlalchemy_2_db == True:
-            print("render_imports - result")
         return render_imports_result
 
 
     def render_metadata_declarations(self):
-        api_logic_server_imports = """
-########################################################################################################################
+        nw_info = ""
+        if self.model_creation_services.project.nw_db_status in ["nw", "nw+"]:
+            nw_info = """#
+# Sample Database (Northwind) -- https://apilogicserver.github.io/Docs/Sample-Database/
+#
+#   Search:
+#     manual  - illustrates you can make manual changes to models.py
+#     example - more complex cases (explore in database/db_debug.py)
+"""
+
+        api_logic_server_imports = f"""########################################################################################################################
 # Classes describing database for SqlAlchemy ORM, initially created by schema introspection.
 #
 # Alter this file per your database maintenance policy
@@ -794,6 +801,7 @@ class CodeGenerator(object):
 # Dialect:
 #
 # mypy: ignore-errors
+{nw_info}########################################################################################################################
 
 from safrs import SAFRSBase
 from flask_login import UserMixin
@@ -813,7 +821,6 @@ metadata = Base.metadata
 #TIMESTAMP= db.TIMESTAMP
 
 from sqlalchemy.dialects.mysql import *
-########################################################################################################################
 """
         
         if self.model_creation_services.project.bind_key != "":
@@ -1232,24 +1239,6 @@ from sqlalchemy.dialects.mysql import *
     def render_relns(self, model: ModelClass):
         """ accrue 
 
-        FORMERLY genned for parent.getChildren (only),
-        For child, generated a comment attr
-        For parent, appended to parent_model.rendered_model_relationships, eg:
-        * <children-accessor> = reln('child-class', backref='<parent>'), eg
-                * OrderList = relationship('Order', cascade_backrefs=False, backref='Customer')
-        * except
-                * Department = relationship('Department', remote_side=[Id], backref='DepartmentList')  # special handling for self-relationships
-        * special case - FORMERLY
-
-                * EmployeeList = relationship('Employee', primaryjoin='Employee.OnLoanDepartmentId == Department.Id', backref='Department')
-                * EmployeeList1 = relationship('Employee', primaryjoin='Employee.WorksForDepartmentId == Department.Id', backref='Department1')
-
-        * now:
-                * DepartmentList : Mapped[List["Department"]] = relationship(remote_side=[Id], back_populates="Department")
-                * EmployeeList : Mapped[List["Employee"]] = relationship(back_populates="Department")
-                * Employee1List : Mapped[List["Employee"]] = relationship(back_populates="Department1")
-
-
         Update for SQLAlchemy 2 typing 
 
         https://docs.sqlalchemy.org/en/20/tutorial/orm_related_objects.html#tutorial-orm-related-objects
@@ -1326,18 +1315,19 @@ from sqlalchemy.dialects.mysql import *
         for model in self.models:
             if isinstance(model, self.class_model):
                 each_rendered_model = model.rendered_model
-                if model.name == "Customer":
-                    debug_str = "nice breakpoint"
 
-                each_rendered_model += "\n    # parent relationships (access parent)\n"
-                # if model.rendered_parent_relationships != "":  # parent relns (Customer, etc)
-                #     model.rendered_parent_relationships = "\n" + model.rendered_parent_relationships
+                reln_accessors = "\n    # parent relationships (access parent)\n"
+                if self.model_creation_services.project.nw_db_status in ["nw", "nw+"]:
+                    if model.name == "Employee":
+                        reln_accessors = "\n    # parent relationships (access parent) -- example: multiple join paths\n"
+                        reln_accessors += "\n    .. https://docs.sqlalchemy.org/en/20/orm/join_conditions.html#handling-multiple-join-paths"
+                    elif model.name == "Department":
+                        reln_accessors = "\n    # parent relationships (access parent) -- example: self-referential\n"
+                        reln_accessors += "\n    .. https://docs.sqlalchemy.org/en/20/orm/self_referential.html"
+                each_rendered_model += reln_accessors
                 each_rendered_model += model.rendered_parent_relationships
 
                 each_rendered_model += "\n    # child relationships (access children)\n"
-                # if model.rendered_model_relationships != "":  # child relns (OrderDetailList etc)
-                #    model.rendered_model_relationships = "\n" + model.rendered_model_relationships
-                # rendered_models.append(model.rendered_model_relationships)
                 each_rendered_model += model.rendered_child_relationships
                 
                 each_rendered_model += "\n" + self.model_creation_services.opt_locking
