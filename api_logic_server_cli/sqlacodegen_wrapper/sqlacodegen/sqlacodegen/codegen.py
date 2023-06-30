@@ -1285,15 +1285,12 @@ from sqlalchemy.dialects.mysql import *
 
                 parent_model = self.classes[reln.target_cls]
                 parent_accessor_name = reln.parent_accessor_name
-                # assert parent_accessor_name in (attr, attr + "1", attr[0 : len(attr)-1], "parent", "Order"), "parent accessor bad"
-                if parent_accessor_name not in (attr, attr + "1", attr[0 : len(attr)-1], "parent", "Order"):
-                    print(f'unexpected parent accessor name: {parent_accessor_name} for attr: {attr}')
-                self_reln_fix = "remote_side=[Id], " \
-                    if model.name == parent_model.name else ""  # FIXME attr name, no?
+                self_reln_fix = ""
+                if "remote_side" in reln.kwargs:
+                    self_reln_fix = 'remote_side=' + reln.kwargs["remote_side"] + ', '
                 parent_accessor = f'    {attr} : Mapped["{reln.target_cls}"] = relationship({multi_reln_fix}{self_reln_fix}back_populates=("{reln.child_accessor_name}"))\n'
 
                 child_accessor_name = reln.child_accessor_name
-                # assert child_accessor_name == reln.child_accessor_name, "child accessor bad"
                 child_accessor = f'    {child_accessor_name} : Mapped[List["{reln.source_cls}"]] = '\
                                  f'relationship({multi_reln_fix}back_populates="{reln.parent_accessor_name}")\n'
 
