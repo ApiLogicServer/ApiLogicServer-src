@@ -34,13 +34,15 @@ with Session(e) as session:
     https://stackoverflow.com/questions/34122949/working-outside-of-application-context-flask
     """
     order_id = 10643
-    order = session.query(models.Order).filter(models.Order.Id == order_id).one()
-    print(f'Order 10643: {order}\n\n')
+    order : models.Order = session.query(models.Order).filter(models.Order.Id == order_id).one()
+    # hover to view code completion...
+    print(f'Order: {order.Id}, AmountTotal: {order.AmountTotal}, ready: {order.Ready}, Required: {order.RequiredDate}, Customer: {order.CustomerId}, Balance: {order.Customer.Balance}\n\n')
+    order.AmountTotal
 
     departments = session.query(models.Department).all()
     for each_dept in departments:
         print(f'\nDept: {each_dept}')
-        for each_works_for_emp in each_dept.Employee1List:
+        for each_works_for_emp in each_dept.EmployeeList1:
             print(f'...each_works_for_emp: {each_works_for_emp}')
         print("")
         for each_on_loan_emp in each_dept.EmployeeList:
