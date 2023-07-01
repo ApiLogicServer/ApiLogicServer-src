@@ -372,7 +372,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "SQL Server nw (for vsc)",
+            "name": "SQL Server nw (bypass vsc bug)",
             "type": "python",
             "request": "launch",
             "cwd": "${workspaceFolder}/api_logic_server_cli",
@@ -380,7 +380,7 @@
             "redirectOutput": true,
             "argsExpansion": "none",
             "args": ["create",
-                "--project_name=../../../servers/cloud/nwlogic",
+                "--project_name=../../../servers/sqlsvr_nw",
                 "--db_url=sqlsvr-nw"
             ],
             "console": "integratedTerminal"
@@ -394,7 +394,7 @@
             "redirectOutput": true,
             "argsExpansion": "none",
             "args": ["create",
-                "--project_name=../../../servers/cloud/nwlogic",
+                "--project_name=../../../servers/sqlsvr_nwlogic",
                 "--db_url=sqlsvr-nwlogic"
             ],
             "console": "integratedTerminal"
@@ -408,13 +408,13 @@
             "redirectOutput": true,
             "argsExpansion": "none",
             "args": ["create",
-                "--project_name=../../../servers/sqlserver-types",
+                "--project_name=../../../servers/sqlsvr_sample",
                 "--db_url=sqlsvr-sample",
                 "--extended_builder=*"],
             "console": "integratedTerminal"
         },
         {
-            "name": "  - Sql/Server -- vsc fails url",
+            "name": "  - Sql/Server -- vsc bug - fails url parse",
             "type": "python",
             "request": "launch",
             "env": {"APILOGICSERVER_HOME": "${workspaceFolder}"},
