@@ -29,7 +29,7 @@ from api_logic_server_cli.create_from_model.model_creation_services import Model
 log = logging.getLogger(__name__)
 
 sqlalchemy_2_hack = True
-""" exploring migration failures """
+""" exploring migration failures (True) """
 
 sqlalchemy_2_db = True
 """ prints / debug stops """
@@ -113,7 +113,7 @@ class ImportCollector(OrderedDict):
                     pkgname = 'sqlalchemy.sql.sqltypes'
                 if type_.__name__.startswith("Null"):  # troublemakes: Double, NullType
                     if sqlalchemy_2_db == True:
-                        print(f'Debug Stop: ImportCollector - target type_name: {type_.__name__}')
+                        debug_stop = f'Debug Stop: ImportCollector - target type_name: {type_.__name__}'
             else:  # FIXME HORRID HACK commented out: sqlalchemy.__all__ not in SQLAlchemy2
                 """
                 in SQLAlchemy 1.4, sqlalchemy.__all__ contained: 
@@ -149,7 +149,7 @@ class Model(object):
         for column in table.columns:
             try:
                 if table.name == "OrderDetail" and column.name == "Discount":
-                    print(f'Model.__init__ target column -- Float in GA/RC2, Double in Gen')
+                    debug_stop = f'Model.__init__ target column -- Float in GA/RC2, Double in Gen'
                 column.type = self._get_adapted_type(column.type, bind)  # SQLAlchemy2 (was column.table.bind)
             except Exception as e:
                 # remains unchanged, eg. NullType()
@@ -175,7 +175,7 @@ class Model(object):
         compiled_type = coltype.compile(bind.dialect)  # OrderDetai.Discount: FLOAT (not DOUBLE); coltype is DOUBLE
         if compiled_type == "DOUBLE":
             if sqlalchemy_2_db == True:
-                print("Debug stop - _get_adapted_type, target compiled_type")
+                debug_stop = "Debug stop - _get_adapted_type, target compiled_type"
         for supercls in coltype.__class__.__mro__:
             if not supercls.__name__.startswith('_') and hasattr(supercls, '__visit_name__'):
                 # Hack to fix adaptation of the Enum class which is broken since SQLAlchemy 1.2
@@ -216,7 +216,7 @@ class Model(object):
                     break
         if coltype == "NullType":  # troublemakers: Double(), NullType
             if sqlalchemy_2_db == True:
-                print("Debug stop - _get_adapted_type, target returned coltype")
+                debug_stop = "Debug stop - _get_adapted_type, target returned coltype"
         return coltype
 
     def add_imports(self, collector):
@@ -226,7 +226,7 @@ class Model(object):
         for column in self.table.columns:
             if self.table.name == "productlines" and column.name == "image":
                 if sqlalchemy_2_db:
-                    print(f'add_imports - target column stop - {column.type}')
+                    debug_stop = f'add_imports - target column stop - {column.type}'
             collector.add_import(column.type)
             if column.server_default:
                 if Computed and isinstance(column.server_default, Computed):
@@ -734,7 +734,7 @@ class CodeGenerator(object):
                 for each_constraint in table.constraints:
                     if isinstance(each_constraint, sqlalchemy.sql.schema.UniqueConstraint):
                         has_unique_constraint = True
-                        print(f'\n*** ApiLogicServer -- {table.name} has unique constraint, no primary_key')
+                        print(f'\n*** ApiLogicServer -- Note: {table.name} has unique constraint, no primary_key')
                 #  print(f'\nTEST *** {table.name} not table.primary_key = {not table.primary_key}, has_unique_constraint = {has_unique_constraint}')
             unique_constraint_class = model_creation_services.project.infer_primary_key and has_unique_constraint
             if unique_constraint_class == False and (noclasses or not table.primary_key or table.name in association_tables):
@@ -979,7 +979,7 @@ from sqlalchemy.dialects.mysql import *
         # itself
         render_coltype = not dedicated_fks or any(fk.column is column for fk in dedicated_fks)
         if 'DataTypes.char_type DEBUG ONLY' == str(column):
-            print("Debug Stop: Column")  # char_type = Column(CHAR(1, 'SQL_Latin1_General_CP1_CI_AS'))
+            debug_stop = "Debug Stop: Column"  # char_type = Column(CHAR(1, 'SQL_Latin1_General_CP1_CI_AS'))
 
         if column.key != column.name:
             kwarg.append('key')
@@ -1088,18 +1088,18 @@ from sqlalchemy.dialects.mysql import *
         table_name = model.name
         bad_chars = r"$-+ "
         if any(elem in table_name for elem in bad_chars):
-            print("sys error")
+            print(f"Alert: invalid characters in {table_name}")
 
         table_name = table_name.replace("$", "_S_")
         table_name = table_name.replace(" ", "_")
         table_name = table_name.replace("+", "_")
         if model.table.name == "Plus+Table":
-            print("Debug Stop on table")
+            debug_stop = "Debug Stop on table"
         rendered = "t_{0} = Table(\n{1}{0!r}, metadata,\n".format(table_name, self.indentation)
 
         for column in model.table.columns:
             if column.name == "char_type DEBUG ONLY":
-                print("Debug Stop - column")
+                debug_stop = "Debug Stop - column"
             rendered += '{0}{1},\n'.format(self.indentation, self.render_column(column, True))
 
         for constraint in sorted(model.table.constraints, key=_get_constraint_sort_key):
@@ -1340,4 +1340,4 @@ from sqlalchemy.dialects.mysql import *
             imports=self.render_imports(),
             metadata_declarations=self.render_metadata_declarations(),
             models=self.model_separator.join(rendered_models).rstrip('\n'))
-        print(output, file=outfile)
+        print(output, file=outfile)  # write the in-mem class file

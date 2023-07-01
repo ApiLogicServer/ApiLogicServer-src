@@ -122,21 +122,6 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "Codespaces-ApiLogicServer (disparaged)",
-            "type": "python",
-            "request": "launch",
-            "program": "api_logic_server_run.py",
-            "redirectOutput": true,
-            "justMyCode": false,
-            "args": [
-                "--flask_host=localhost", "--port=5656", "--verbose=True",
-                "--swagger_host=valhuber-tutorial-apilogicproject-jjr5qwg72vxg-5656.githubpreview.dev", 
-                "--swagger_port=443", "--http_type=https"
-            ],
-            "console": "internalConsole",
-            "internalConsoleOptions": "openOnSessionStart"
-        },
-        {
             "name": "Basic Server Test",
             "type": "python",
             "request": "launch",
@@ -165,7 +150,7 @@
             "console": "internalConsole"
         },
         {
-            "name": "db-debug",
+            "name": "db-debug - explore SQLAlchemy",
             "type": "python",
             "request": "launch",
             "cwd": "${workspaceFolder}/test/api_logic_server_behave",

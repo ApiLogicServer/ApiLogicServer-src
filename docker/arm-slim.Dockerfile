@@ -1,14 +1,15 @@
 # docker build -f docker/arm-slim.Dockerfile -t apilogicserver/arm-slim --rm .
-# docker tag apilogicserver/arm-slim apilogicserver/arm-slim:9.00.01
-# docker push apilogicserver/arm-slim:9.00.01
+# docker tag apilogicserver/arm-slim apilogicserver/arm-slim:9.00.07
+# docker push apilogicserver/arm-slim:9.00.07
 
-# cd ~/dev/servers/install/ApiLogicServer/dockers
+# cd ~/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/dockers
 # docker run -it --name api_logic_server-arm-slim --rm --net dev-network -p 5656:5656 -p 5002:5002 -v ${PWD}:/localhost apilogicserver/arm-slim
-# works, fast, 869MB
+# cd ~/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/dockers; docker run -it --name api_logic_server-arm-slim --rm --net dev-network -p 5656:5656 -p 5002:5002 -v ${PWD}:/localhost apilogicserver/arm-slim
+# works, fast, 595MB
 
 # if builds fails, check for renamed targets by breaking up Run commands
 
-FROM python:3.10.4-slim-bullseye
+FROM python:3.11-slim-bookworm
 
 USER root
 RUN apt-get update
