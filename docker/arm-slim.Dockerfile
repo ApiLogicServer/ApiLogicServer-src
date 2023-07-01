@@ -9,7 +9,7 @@
 
 # if builds fails, check for renamed targets by breaking up Run commands
 
-FROM python:3.11-slim-bookworm
+FROM python:3.11-slim-bullseye
 
 USER root
 RUN apt-get update
