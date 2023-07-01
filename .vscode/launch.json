@@ -15,7 +15,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "  BUILD ONLY",
+            "name": "  - BUILD ONLY",
             "type": "python",
             "request": "launch",
             "cwd": "${workspaceFolder}/tests/build_and_test",
@@ -39,7 +39,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "  Create tutorial",
+            "name": "  - Create tutorial",
             "type": "python",
             "request": "launch",
             "env": {"PYTHONPATH": "${workspaceFolder}${pathSeparator}${env:PYTHONPATH}"},
@@ -67,7 +67,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "  Create demo",
+            "name": "  - Create demo",
             "type": "python",
             "request": "launch",
             "env": {"PYTHONPATH": "${workspaceFolder}${pathSeparator}${env:PYTHONPATH}"},
@@ -284,7 +284,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "  Add Security to NW_NoCust - sqlite-database-authentication",
+            "name": "  - Add Security to NW_NoCust - sqlite-database-authentication",
             "type": "python",
             "request": "launch",
             "cwd": "${workspaceFolder}/api_logic_server_cli",
@@ -294,7 +294,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "  Add Northwind Customizations to NW-NoCust",
+            "name": "  - Add Northwind Customizations to NW-NoCust",
             "type": "python",
             "request": "launch",
             "cwd": "${workspaceFolder}/api_logic_server_cli",
@@ -326,7 +326,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "  Create and run Chinook MySQL",
+            "name": "  - Create and run Chinook MySQL",
             "type": "python",
             "request": "launch",
             "env": {"APILOGICSERVER_HOME": "${workspaceFolder}"},
@@ -338,7 +338,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "  Create and run Chinook Sqlite",
+            "name": "  - Create and run Chinook Sqlite",
             "type": "python",
             "request": "launch",
             "env": {"APILOGICSERVER_HOME": "${workspaceFolder}"},
@@ -384,7 +384,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "  SQL Server nwlogic",
+            "name": "  - SQL Server nwlogic",
             "type": "python",
             "request": "launch",
             "cwd": "${workspaceFolder}/api_logic_server_cli",
@@ -398,7 +398,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "  SQL Server Types [TVF]",
+            "name": "  - SQL Server Types [TVF]",
             "type": "python",
             "request": "launch",
             "cwd": "${workspaceFolder}/api_logic_server_cli",
@@ -458,7 +458,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "unique_keys_NO_INFER",
+            "name": "  - unique_keys_NO_INFER",
             "type": "python",
             "request": "launch",
             "env": {"APILOGICSERVER_HOME": "${workspaceFolder}"},
@@ -481,7 +481,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "  megapilos run",
+            "name": "  - megapilos run",
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/../servers/megapilos/api_logic_server_run.py",
@@ -511,7 +511,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "  Table Filters Test All-Tables",
+            "name": "  - Table Filters Test All-Tables",
             "type": "python",
             "request": "launch",
             "cwd": "${workspaceFolder}/api_logic_server_cli",
@@ -523,7 +523,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "  Table Filters Test NW Subset",
+            "name": "  - Table Filters Test NW Subset",
             "type": "python",
             "request": "launch",
             "cwd": "${workspaceFolder}/api_logic_server_cli",
@@ -553,7 +553,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "Rebuild-from-database",
+            "name": "  - Rebuild-from-database",
             "type": "python",
             "request": "launch",
             "cwd": "${workspaceFolder}/api_logic_server_cli",
@@ -563,7 +563,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "Rebuild-from-model",
+            "name": "  - Rebuild-from-model",
             "type": "python",
             "request": "launch",
             "cwd": "${workspaceFolder}/api_logic_server_cli",
@@ -585,7 +585,7 @@
           "console": "integratedTerminal"
       },
       {
-        "name": "Add-database - explicit location",
+        "name": "  - Add-database - explicit location",
         "type": "python",
         "request": "launch",
         "cwd": "${workspaceFolder}/api_logic_server_cli",
