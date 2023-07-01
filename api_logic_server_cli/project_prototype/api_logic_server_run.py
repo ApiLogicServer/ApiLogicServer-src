@@ -1,22 +1,21 @@
 #!/usr/bin/env python3
 
-"""
-==============================================================================
+###############################################################################
+#
+#    This file initializes and starts the API Logic Server (v api_logic_server_version, api_logic_server_created_on):
+#        $ python3 api_logic_server_run.py [--help]
+#
+#    Then, access the Admin App and API via the Browser, eg:  
+#        http://api_logic_server_host:api_logic_server_port
+#
+#    You typically do not customize this file,
+#        except to override Creation Defaults and Logging, below.
+#
+#    See Main Code (at end).
+#        Use log messages to understand API and Logic activation.
+#
+###############################################################################
 
-    This file initializes and starts the API Logic Server (v api_logic_server_version, api_logic_server_created_on):
-        $ python3 api_logic_server_run.py [--help]
-
-    Then, access the Admin App and API via the Browser, eg:  
-        http://api_logic_server_host:api_logic_server_port
-
-    You typically do not customize this file,
-        except to override Creation Defaults and Logging, below.
-
-    See Main Code (at end).
-        Use log messages to understand API and Logic activation.
-
-==============================================================================
-"""
 
 import traceback
 try:
