@@ -129,8 +129,12 @@ def get_abs_db_url(msg, project: Project):
         rtn_abs_db_url = 'mssql+pyodbc://sa:Posey3861@localhost:1433/nwlogic?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'
     elif project.db_url.startswith('sqlsvr-nw'):  # work-around - VSCode run config arg parsing
         rtn_abs_db_url = 'mssql+pyodbc://sa:Posey3861@localhost:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'
-    elif project.db_url.startswith('sqlsvr-nw-ip'):  # work-around - VSCode run config arg parsing
-        rtn_abs_db_url = 'mssql+pyodbc://sa:Posey3861@127.0.0.1:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'
+    elif project.db_url.startswith('sqlsvr-nw-docker'):  # work-around - VSCode run config arg parsing
+        rtn_abs_db_url = 'mssql+pyodbc://sa:Posey3861@HOST_IP:1433/NORTHWND?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=no'
+        host_ip = "127.0.0.1"
+        if os.getenv('HOST_IP'):
+            host_ip = os.getenv('HOST_IP')  # type: ignore # type: str
+        rtn_abs_db_url = rtn_abs_db_url.replace("HOST_IP", host_ip)
     model_file_name = "models.py"
     if project.bind_key != "":
         model_file_name = project.bind_key + "_" + "models.py"
