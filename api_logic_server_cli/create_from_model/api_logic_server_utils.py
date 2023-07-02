@@ -123,15 +123,15 @@ def get_abs_db_url(msg, project: Project):
         url = project.db_url[10: len(project.db_url)]
         rtn_abs_db_url = abspath(url)
         rtn_abs_db_url = 'sqlite:///' + rtn_abs_db_url
-    elif project.db_url.startswith('sqlsvr-sample'):  # work-around - VSCode run config arg parsing
+    elif project.db_url == 'sqlsvr-sample':  # work-around - VSCode run config arg parsing
         rtn_abs_db_url = 'mssql+pyodbc://sa:Posey3861@localhost:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'
-    elif project.db_url.startswith('sqlsvr-nwlogic'):  # work-around - VSCode run config arg parsing
+    elif project.db_url == 'sqlsvr-nwlogic':  # work-around - VSCode run config arg parsing
         rtn_abs_db_url = 'mssql+pyodbc://sa:Posey3861@localhost:1433/nwlogic?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'
-    elif project.db_url.startswith('sqlsvr-nw'):  # work-around - VSCode run config arg parsing
+    elif project.db_url == 'sqlsvr-nw':  # work-around - VSCode run config arg parsing
         rtn_abs_db_url = 'mssql+pyodbc://sa:Posey3861@localhost:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'
-    elif project.db_url.startswith('sqlsvr-nw-docker'):  # work-around - VSCode run config arg parsing
+    elif project.db_url == 'sqlsvr-nw-docker':  # work-around - VSCode run config arg parsing
         rtn_abs_db_url = 'mssql+pyodbc://sa:Posey3861@HOST_IP:1433/NORTHWND?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=no'
-        host_ip = "127.0.0.1"
+        host_ip = "10.0.0.234"  # ApiLogicServer create  --project_name=/localhost/sqlsvr-nw-docker --db_url=sqlsvr-nw-docker
         if os.getenv('HOST_IP'):
             host_ip = os.getenv('HOST_IP')  # type: ignore # type: str
         rtn_abs_db_url = rtn_abs_db_url.replace("HOST_IP", host_ip)
