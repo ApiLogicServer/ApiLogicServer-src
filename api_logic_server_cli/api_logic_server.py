@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "09.00.09"
+__version__ = "09.00.10"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t07/01/2023 - 09.00.09: SQLAlchemy 2 typed-relns, cleanup, remote_side, typed attrs, hdr cmts \n"\
+    "\t07/02/2023 - 09.00.10: SQLAlchemy 2 typed-relns/attrs, hdr cmts, sqlsvr \n"\
     "\t06/24/2023 - 09.00.01: PyMysql \n"\
     "\t06/22/2023 - 09.00.00: Optimistic Locking, safrs 310, SQLAlchemy 2.0.15 \n"\
     "\t05/15/2023 - 08.04.05: column alias example, readme link to rules report, fiddle, codespaces log fix \n"\
