@@ -1,4 +1,4 @@
-# docker build -f docker/api_logic_server_x.Dockerfile -t apilogicserver/api_logic_server_x --rm .
+# docker build -f docker/api_logic_server_y.Dockerfile -t apilogicserver/api_logic_server_x --rm .
 # docker tag apilogicserver/api_logic_server_x apilogicserver/api_logic_server_x:09.00.08
 # docker push apilogicserver/api_logic_server_x:09.00.08
 
@@ -21,7 +21,7 @@
 #   Shantanu        https://forum.astronomer.io/t/how-to-pip-install-pyodbc-in-the-dockerfile/983
 #   Piotr Maślewski https://medium.com/swlh/dockerize-your-python-command-line-program-6a273f5c5544
 
-# python:3.9-slim-bullseye (Debian Linux 11) is 638MB, with SqlServer (here) is 1.04G
+# python:3.11-bullseye (Debian Linux 11) is 638MB, with SqlServer (here) is 814M
 
 # if builds fails, check for renamed targets by breaking up Run commands
 
@@ -45,7 +45,7 @@ RUN apt-get update \
 
 RUN apt-get -y install unixodbc-dev \
   && apt-get -y install python3-pip \
-  && pip install pyodbc
+  && pip install pyodbc==4.0.34
 
 RUN useradd --create-home --shell /bin/bash api_logic_server
 WORKDIR /home/api_logic_server
