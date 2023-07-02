@@ -20,6 +20,7 @@
 #   Max Tardiveau   https://www.galliumdata.com/
 #   Shantanu        https://forum.astronomer.io/t/how-to-pip-install-pyodbc-in-the-dockerfile/983
 #   Piotr Maślewski https://medium.com/swlh/dockerize-your-python-command-line-program-6a273f5c5544
+#   MS:             https://github.com/microsoft/vscode-dev-containers/tree/main/containers/python-3
 
 # Runs with SqlServer, 1.77G
 
