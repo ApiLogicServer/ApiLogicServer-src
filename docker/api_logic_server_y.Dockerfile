@@ -21,7 +21,7 @@
 #   Shantanu        https://forum.astronomer.io/t/how-to-pip-install-pyodbc-in-the-dockerfile/983
 #   Piotr Maślewski https://medium.com/swlh/dockerize-your-python-command-line-program-6a273f5c5544
 
-# python:3.11-bullseye (Debian Linux 11) is 638MB, with SqlServer (here) is 814M
+# Runs with SqlServer, 1.77G
 
 # if builds fails, check for renamed targets by breaking up Run commands
 
