@@ -92,6 +92,10 @@ f = add_user("full", 7, "p")
 f_role_list = DataClassUserRole(role_name="full")
 f.UserRoleList = f_role_list
 
+rt = add_user("renter", 7, "p")
+rt_role_list = DataClassUserRole(role_name="renter")
+rt.UserRoleList = rt_role_list
+
 sam_row = Authentication_Provider.get_user("sam", "")
 print(f'Sam: {sam_row}')
 
