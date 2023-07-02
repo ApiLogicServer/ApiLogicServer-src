@@ -618,6 +618,7 @@ else:
 
 set_venv = Config.set_venv
 db_ip = Config.docker_database_ip
+""" in docker, we cannot connect on localhost - must use the ip """
 
 install_api_logic_server_path = get_servers_build_and_test_path().joinpath("ApiLogicServer")   # eg /Users/val/dev/servers/install/ApiLogicServer
 api_logic_project_path = install_api_logic_server_path.joinpath('ApiLogicProject')
