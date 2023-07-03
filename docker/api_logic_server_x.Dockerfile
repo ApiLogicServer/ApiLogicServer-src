@@ -1,6 +1,6 @@
 # docker build -f docker/api_logic_server_x.Dockerfile -t apilogicserver/api_logic_server_x --rm .
-# docker tag apilogicserver/api_logic_server_x apilogicserver/api_logic_server_x:09.00.10
-# docker push apilogicserver/api_logic_server_x:09.00.10
+# docker tag apilogicserver/api_logic_server_x apilogicserver/api_logic_server_x:09.00.12
+# docker push apilogicserver/api_logic_server_x:09.00.12
 
 # docker run -it --name api_logic_server --rm -p 5656:5656 -p 5002:5002 -v ~/dev/servers:/localhost apilogicserver/api_logic_server_x
 #   docker run -it --name api_logic_server --rm --net dev-network -p 5656:5656 -p 5002:5002 -v ${PWD}:/localhost apilogicserver/api_logic_server_x
@@ -11,9 +11,7 @@
 # The software auto-prompts you for the next steps (assuming {"HOST_IP": "10.0.0.234"}):
 # ApiLogicServer run --project_name=/localhost/api_logic_server --db_url=
 #   ApiLogicServer create  --project_name=/localhost/sqlsvr-nw-docker --db_url=sqlsvr-nw-docker
-#   ApiLogicServer create --project_name=/localhost/sqlserver --db_url=mssql+pyodbc://sa:Posey3861@10.0.0.234:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no
-#   ==> above fails: certificate verify failed:self signed certificate
-#   ==> maybe: https://stackoverflow.com/questions/71798420/why-i-get-ssl-errors-while-installing-packages-on-dockeron-mac
+#   ApiLogicServer create --project_name=/localhost/sqlserver --db_url='mssql+pyodbc://sa:Posey3861@10.0.0.234:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'
 #   ApiLogicServer create --project_name=/localhost/classicmodels --db_url=mysql+pymysql://root:p@mysql-container:3306/classicmodels
 #   ApiLogicServer create --project_name=/localhost/postgres --db_url=postgresql://postgres:p@postgresql-container/postgres
 #   python /localhost/api_logic_server/api_logic_server_run.py
