@@ -23,6 +23,8 @@
 #   Piotr Maślewski         https://medium.com/swlh/dockerize-your-python-command-line-program-6a273f5c5544
 #   MS:                     https://github.com/microsoft/vscode-dev-containers/tree/main/containers/python-3
 #   itamar@pythonspeed.com  https://pythonspeed.com/articles/base-image-python-docker-images/
+#   Julie Perilla Garcia    https://levelup.gitconnected.com/alpine-slim-stretch-bookworm-bullseye-buster-jessie-which-docker-image-should-i-choose-500f8c15c8cf
+
 
 # Runs with SqlServer, 895M
 
