@@ -15,6 +15,7 @@
 FROM --platform=linux/amd64 python:3.11.4-slim-bullseye
 
 USER root
+
 RUN apt-get update
 RUN apt-get install -y curl
 RUN apt-get install -y git

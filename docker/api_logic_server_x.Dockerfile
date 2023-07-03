@@ -8,11 +8,13 @@
 #   docker run -it --name api_logic_server --rm -p 5656:5656 -p 5002:5002 -v ${PWD}:/localhost apilogicserver/api_logic_server-x
 #   docker run -it --name api_logic_server --rm --net dev-network -p 5656:5656 -p 5002:5002 -v ${PWD}:/localhost apilogicserver/api_logic_server_x sh /localhost/Start.sh hullo
 
-# The software auto-prompts you for the next steps:
+# The software auto-prompts you for the next steps (assuming {"HOST_IP": "10.0.0.234"}):
 # ApiLogicServer run --project_name=/localhost/api_logic_server --db_url=
 #   ApiLogicServer create  --project_name=/localhost/sqlsvr-nw-docker --db_url=sqlsvr-nw-docker
+#   ApiLogicServer create --project_name=/localhost/sqlserver --db_url=mssql+pyodbc://sa:Posey3861@10.0.0.234:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no
+#   ==> above fails: certificate verify failed:self signed certificate
+#   ==> maybe: https://stackoverflow.com/questions/71798420/why-i-get-ssl-errors-while-installing-packages-on-dockeron-mac
 #   ApiLogicServer create --project_name=/localhost/classicmodels --db_url=mysql+pymysql://root:p@mysql-container:3306/classicmodels
-#   fails ApiLogicServer create --project_name=/localhost/sqlserver --db_url=mssql+pyodbc://sa:posey386\!@sqlsvr-container:1433/NORTHWND?driver=ODBC+Driver+17+for+SQL+Server\?trusted_connection=no
 #   ApiLogicServer create --project_name=/localhost/postgres --db_url=postgresql://postgres:p@postgresql-container/postgres
 #   python /localhost/api_logic_server/api_logic_server_run.py
 
@@ -29,24 +31,23 @@
 # if builds fails, check for renamed targets by breaking up Run commands
 
 FROM python:3.11.4-slim-bullseye
+#    python:3.11-slim-bullseye - runs  sqlsvr-nw-docker, 838M
 #    python:3.11-slim-bookworm - fails sqlsvr-nw-docker
-#    python:3.11-slim-bullseye - runs  sqlsvr-nw-docker, 834M
 #    python:3.11.4             - fails sqlsvr-nw-docker, 1.4G
 #    mcr.microsoft.com/devcontainers/python:3.11-bullseye - runs  sqlsvr-nw-docker, 1.77G
 
 USER root
+
 RUN apt-get update \
   && apt-get install -y curl \
-  && apt-get install -y git \
-  && apt-get -y install gcc gnupg2 \
-  && curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
-  && curl https://packages.microsoft.com/config/debian/10/prod.list > /etc/apt/sources.list.d/mssql-release.list \
-  && apt install -y \
-		libltdl7 libodbc1 odbcinst odbcinst1debian2 unixodbc wget \
-  && wget http://archive.ubuntu.com/ubuntu/pool/main/g/glibc/multiarch-support_2.27-3ubuntu1.5_amd64.deb \
-  && apt-get install ./multiarch-support_2.27-3ubuntu1.5_amd64.deb \
-  && wget https://packages.microsoft.com/debian/10/prod/pool/main/m/msodbcsql17/msodbcsql17_17.8.1.1-1_amd64.deb \
-  && ACCEPT_EULA=Y dpkg -i msodbcsql17_17.8.1.1-1_amd64.deb;
+  && apt-get install -y git
+
+RUN apt-get update
+RUN apt-get install -y curl gnupg
+RUN curl -sSL https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
+RUN curl -sSL https://packages.microsoft.com/config/debian/10/prod.list > /etc/apt/sources.list.d/mssql-release.list
+RUN apt-get update
+RUN ACCEPT_EULA=Y apt-get install -y msodbcsql18
 
 # TODO RUN wget https://packages.microsoft.com/debian/10/prod/pool/main/m/mssql-tools/mssql-tools_17.8.1.1-1_amd64.deb;
 

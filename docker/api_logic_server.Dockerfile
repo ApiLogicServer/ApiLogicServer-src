@@ -1,6 +1,6 @@
 # docker build -f docker/api_logic_server.Dockerfile -t apilogicserver/api_logic_server --rm .
-# docker tag apilogicserver/api_logic_server apilogicserver/api_logic_server:09.00.10
-# docker push apilogicserver/api_logic_server:09.00.10
+# docker tag apilogicserver/api_logic_server apilogicserver/api_logic_server:09.00.11
+# docker push apilogicserver/api_logic_server:09.00.11
 
 # docker run -it --name api_logic_server --rm -p 5656:5656 -p 5002:5002 -v ~/dev/servers:/localhost apilogicserver/api_logic_server
 #   docker run -it --name api_logic_server --rm --net dev-network -p 5656:5656 -p 5002:5002 -v ${PWD}:/localhost apilogicserver/api_logic_server
@@ -8,11 +8,11 @@
 #   docker run -it --name api_logic_server --rm -p 5656:5656 -p 5002:5002 -v ${PWD}:/localhost apilogicserver/api_logic_server
 #   docker run -it --name api_logic_server --rm --net dev-network -p 5656:5656 -p 5002:5002 -v ${PWD}:/localhost apilogicserver/api_logic_server sh /localhost/Start.sh hullo
 
-# The software auto-prompts you for the next steps:
+# The software auto-prompts you for the next steps (assuming {"HOST_IP": "10.0.0.234"}):
 # ApiLogicServer run --project_name=/localhost/api_logic_server --db_url=
 #   ApiLogicServer create  --project_name=/localhost/sqlsvr-nw-docker --db_url=sqlsvr-nw-docker
+#   ApiLogicServer create  --project_name=/localhost/sqlserver --db_url='mssql+pyodbc://sa:Posey3861@10.0.0.234:1433/NORTHWND?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=no'
 #   ApiLogicServer create --project_name=/localhost/classicmodels --db_url=mysql+pymysql://root:p@mysql-container:3306/classicmodels
-#   fails ApiLogicServer create --project_name=/localhost/sqlserver --db_url=mssql+pyodbc://sa:posey386\!@sqlsvr-container:1433/NORTHWND?driver=ODBC+Driver+17+for+SQL+Server\?trusted_connection=no
 #   ApiLogicServer create --project_name=/localhost/postgres --db_url=postgresql://postgres:p@postgresql-container/postgres
 #   python /localhost/api_logic_server/api_logic_server_run.py
 
