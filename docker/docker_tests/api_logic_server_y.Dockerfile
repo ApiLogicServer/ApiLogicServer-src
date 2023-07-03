@@ -10,23 +10,29 @@
 
 # The software auto-prompts you for the next steps:
 # ApiLogicServer run --project_name=/localhost/api_logic_server --db_url=
+#   ApiLogicServer create  --project_name=/localhost/sqlsvr-nw-docker --db_url=sqlsvr-nw-docker
 #   ApiLogicServer create --project_name=/localhost/classicmodels --db_url=mysql+pymysql://root:p@mysql-container:3306/classicmodels
 #   fails ApiLogicServer create --project_name=/localhost/sqlserver --db_url=mssql+pyodbc://sa:posey386\!@sqlsvr-container:1433/NORTHWND?driver=ODBC+Driver+17+for+SQL+Server\?trusted_connection=no
 #   ApiLogicServer create --project_name=/localhost/postgres --db_url=postgresql://postgres:p@postgresql-container/postgres
 #   python /localhost/api_logic_server/api_logic_server_run.py
 
 # shout outs...
-#   Thmomas Pollet  https://github.com/thomaxxl/safrs-react-admin -- safrs, safrs-react-admin
-#   Max Tardiveau   https://www.galliumdata.com/
-#   Shantanu        https://forum.astronomer.io/t/how-to-pip-install-pyodbc-in-the-dockerfile/983
-#   Piotr Maślewski https://medium.com/swlh/dockerize-your-python-command-line-program-6a273f5c5544
-#   MS:             https://github.com/microsoft/vscode-dev-containers/tree/main/containers/python-3
+#   Thmomas Pollet          https://github.com/thomaxxl/safrs-react-admin -- safrs, safrs-react-admin
+#   Max Tardiveau           https://www.galliumdata.com/
+#   Shantanu                https://forum.astronomer.io/t/how-to-pip-install-pyodbc-in-the-dockerfile/983
+#   Piotr Maślewski         https://medium.com/swlh/dockerize-your-python-command-line-program-6a273f5c5544
+#   MS:                     https://github.com/microsoft/vscode-dev-containers/tree/main/containers/python-3
+#   itamar@pythonspeed.com  https://pythonspeed.com/articles/base-image-python-docker-images/
 
-# Runs with SqlServer, 1.77G
+# Runs with SqlServer, 895M
 
 # if builds fails, check for renamed targets by breaking up Run commands
 
-FROM mcr.microsoft.com/devcontainers/python:3.11-bullseye
+FROM python:3.11-slim-bullseye
+#    python:3.11-slim-bookworm - fails sqlsvr-nw-docker
+#    python:3.11-slim-bullseye - runs  sqlsvr-nw-docker, 834M
+#    python:3.11.4             - fails sqlsvr-nw-docker, 1.4G
+#    mcr.microsoft.com/devcontainers/python:3.11-bullseye - runs  sqlsvr-nw-docker, 1.77G
 
 USER root
 RUN apt-get update \
@@ -65,6 +71,7 @@ RUN chmod +x bin/ApiLogicServer \
 USER api_logic_server
 
 ENV APILOGICSERVER_RUNNING=DOCKER
+ENV APILOGICSERVER_FROM=python:3.11-slim-bullseye
 
 # RUN chmod a+rwx -R api_logic_server_cli/api_logic_server_info.yaml
 CMD ["bash"]

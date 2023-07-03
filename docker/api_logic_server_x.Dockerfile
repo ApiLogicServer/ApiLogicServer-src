@@ -1,31 +1,38 @@
 # docker build -f docker/api_logic_server_x.Dockerfile -t apilogicserver/api_logic_server_x --rm .
-# docker tag apilogicserver/api_logic_server_x apilogicserver/api_logic_server_x:08.04.30
-# docker push apilogicserver/api_logic_server_x:08.04.30
+# docker tag apilogicserver/api_logic_server_x apilogicserver/api_logic_server_x:09.00.10
+# docker push apilogicserver/api_logic_server_x:09.00.10
 
 # docker run -it --name api_logic_server --rm -p 5656:5656 -p 5002:5002 -v ~/dev/servers:/localhost apilogicserver/api_logic_server_x
 #   docker run -it --name api_logic_server --rm --net dev-network -p 5656:5656 -p 5002:5002 -v ${PWD}:/localhost apilogicserver/api_logic_server_x
 #   docker image inspect apilogicserver/api_logic_server
 #   docker run -it --name api_logic_server --rm -p 5656:5656 -p 5002:5002 -v ${PWD}:/localhost apilogicserver/api_logic_server-x
-#   docker run -it --name api_logic_server --rm --net dev-network -p 5656:5656 -p 5002:5002 -v ${PWD}:/localhost apilogicserver/api_logic_server sh /localhost/Start.sh hullo
+#   docker run -it --name api_logic_server --rm --net dev-network -p 5656:5656 -p 5002:5002 -v ${PWD}:/localhost apilogicserver/api_logic_server_x sh /localhost/Start.sh hullo
 
 # The software auto-prompts you for the next steps:
 # ApiLogicServer run --project_name=/localhost/api_logic_server --db_url=
+#   ApiLogicServer create  --project_name=/localhost/sqlsvr-nw-docker --db_url=sqlsvr-nw-docker
 #   ApiLogicServer create --project_name=/localhost/classicmodels --db_url=mysql+pymysql://root:p@mysql-container:3306/classicmodels
-#   ApiLogicServer create --project_name=/localhost/sqlserver --db_url=mssql+pyodbc://sa:posey386\!@sqlsvr-container:1433/NORTHWND?driver=ODBC+Driver+17+for+SQL+Server\?trusted_connection=no
+#   fails ApiLogicServer create --project_name=/localhost/sqlserver --db_url=mssql+pyodbc://sa:posey386\!@sqlsvr-container:1433/NORTHWND?driver=ODBC+Driver+17+for+SQL+Server\?trusted_connection=no
 #   ApiLogicServer create --project_name=/localhost/postgres --db_url=postgresql://postgres:p@postgresql-container/postgres
 #   python /localhost/api_logic_server/api_logic_server_run.py
 
 # shout outs...
-#   Thmomas Pollet  https://github.com/thomaxxl/safrs-react-admin -- safrs, safrs-react-admin
-#   Max Tardiveau   https://www.galliumdata.com/
-#   Shantanu        https://forum.astronomer.io/t/how-to-pip-install-pyodbc-in-the-dockerfile/983
-#   Piotr Maślewski https://medium.com/swlh/dockerize-your-python-command-line-program-6a273f5c5544
+#   Thmomas Pollet          https://github.com/thomaxxl/safrs-react-admin -- safrs, safrs-react-admin
+#   Max Tardiveau           https://www.galliumdata.com/
+#   Shantanu                https://forum.astronomer.io/t/how-to-pip-install-pyodbc-in-the-dockerfile/983
+#   Piotr Maślewski         https://medium.com/swlh/dockerize-your-python-command-line-program-6a273f5c5544
+#   MS:                     https://github.com/microsoft/vscode-dev-containers/tree/main/containers/python-3
+#   itamar@pythonspeed.com  https://pythonspeed.com/articles/base-image-python-docker-images/
 
-# python:3.9-slim-bullseye (Debian Linux 11) is 638MB, with SqlServer (here) is 1.04G
+# Runs with SqlServer, 895M
 
 # if builds fails, check for renamed targets by breaking up Run commands
 
-FROM python:3.9-slim-bullseye
+FROM python:3.11-slim-bullseye
+#    python:3.11-slim-bookworm - fails sqlsvr-nw-docker
+#    python:3.11-slim-bullseye - runs  sqlsvr-nw-docker, 834M
+#    python:3.11.4             - fails sqlsvr-nw-docker, 1.4G
+#    mcr.microsoft.com/devcontainers/python:3.11-bullseye - runs  sqlsvr-nw-docker, 1.77G
 
 USER root
 RUN apt-get update \
@@ -45,7 +52,7 @@ RUN apt-get update \
 
 RUN apt-get -y install unixodbc-dev \
   && apt-get -y install python3-pip \
-  && pip install pyodbc
+  && pip install pyodbc==4.0.34
 
 RUN useradd --create-home --shell /bin/bash api_logic_server
 WORKDIR /home/api_logic_server
@@ -64,6 +71,7 @@ RUN chmod +x bin/ApiLogicServer \
 USER api_logic_server
 
 ENV APILOGICSERVER_RUNNING=DOCKER
+ENV APILOGICSERVER_FROM=python:3.11-slim-bullseye
 
 # RUN chmod a+rwx -R api_logic_server_cli/api_logic_server_info.yaml
 CMD ["bash"]
