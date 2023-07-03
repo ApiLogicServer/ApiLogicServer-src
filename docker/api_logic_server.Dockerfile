@@ -28,7 +28,7 @@
 
 # if builds fails, check for renamed targets by breaking up Run commands
 
-FROM python:3.11-slim-bullseye
+FROM python:3.11.4-slim-bullseye
 #    python:3.11-slim-bookworm - fails sqlsvr-nw-docker
 #    python:3.11-slim-bullseye - runs  sqlsvr-nw-docker, 834M
 #    python:3.11.4             - fails sqlsvr-nw-docker, 1.4G
@@ -71,7 +71,7 @@ RUN chmod +x bin/ApiLogicServer \
 USER api_logic_server
 
 ENV APILOGICSERVER_RUNNING=DOCKER
-ENV APILOGICSERVER_FROM=python:3.11-slim-bullseye
+ENV APILOGICSERVER_FROM=python:3.11.4-slim-bullseye
 
 # RUN chmod a+rwx -R api_logic_server_cli/api_logic_server_info.yaml
 CMD ["bash"]
