@@ -1,6 +1,6 @@
 # docker build -f docker/api_logic_server_arm.Dockerfile -t apilogicserver/api_logic_server_arm --rm .
-# docker tag apilogicserver/api_logic_server_arm apilogicserver/api_logic_server_arm:9.00.14
-# docker push apilogicserver/api_logic_server_arm:9.00.14
+# docker tag apilogicserver/api_logic_server_arm apilogicserver/api_logic_server_arm:9.01.00
+# docker push apilogicserver/api_logic_server_arm:9.01.00
 
 # cd ~/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/dockers
 # docker run -it --name api_logic_server-arm-slim --rm --net dev-network -p 5656:5656 -p 5002:5002 -v ${PWD}:/localhost apilogicserver/arm-slim

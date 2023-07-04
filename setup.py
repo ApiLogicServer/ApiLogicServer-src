@@ -37,7 +37,7 @@ setup(
     author_email="apilogicserver@gmail.com",
     project_urls=project_urls,
     description=(
-        "Create JSON:API and Web App from database, with LogicBank -- "
+        "Create JSON:API and Admin Web App from database, with LogicBank -- "
         "40X more concise, Python for extensibility."
     ),
     long_description=desc(),
