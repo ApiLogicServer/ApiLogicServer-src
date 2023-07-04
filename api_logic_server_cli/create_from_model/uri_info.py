@@ -7,8 +7,7 @@ uri_info = [
     '  ApiLogicServer create-and-run --db_url=sqlite:///c:\ApiLogicServer\\nw.sqlite --project_name=nw',
     '  ApiLogicServer create-and-run --db_url=mysql+pymysql://root:p@mysql-container:3306/classicmodels '
     '--project_name=/localhost/docker_db_project',
-    '  ApiLogicServer create-and-run --db_url=mssql+pyodbc://sa:Posey3861@localhost:1433/NORTHWND?'
-    'driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=no',
+    '  ApiLogicServer create-and-run --db_url=\'mssql+pyodbc://sa:Posey3861@localhost:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no\'',
     '  ApiLogicServer create-and-run --db_url=postgresql://postgres:p@10.0.0.234/postgres',
     '  ApiLogicServer create --project_name=my_schema --db_url=postgresql://postgres:p@localhost/my_schema',
     '  ApiLogicServer create --db_url=postgresql+psycopg2:'

@@ -1,6 +1,6 @@
 # docker build -f docker/arm-slim.Dockerfile -t apilogicserver/arm-slim --rm .
-# docker tag apilogicserver/arm-slim apilogicserver/arm-slim:9.00.11
-# docker push apilogicserver/arm-slim:9.00.11
+# docker tag apilogicserver/arm-slim apilogicserver/arm-slim:9.00.14
+# docker push apilogicserver/arm-slim:9.00.14
 
 # cd ~/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/dockers
 # docker run -it --name api_logic_server-arm-slim --rm --net dev-network -p 5656:5656 -p 5002:5002 -v ${PWD}:/localhost apilogicserver/arm-slim
@@ -15,6 +15,7 @@
 FROM --platform=linux/amd64 python:3.11.4-slim-bullseye
 
 USER root
+
 RUN apt-get update
 RUN apt-get install -y curl
 RUN apt-get install -y git
