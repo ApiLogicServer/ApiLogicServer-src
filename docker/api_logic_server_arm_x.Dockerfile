@@ -13,6 +13,7 @@
 # else:   ERROR: failed to solve: process "/bin/sh -c ACCEPT_EULA=Y apt-get install -y msodbcsql18" did not complete successfully: exit code: 100
 
 FROM --platform=linux/amd64 python:3.11.4-slim-bullseye
+# ARG TARGETPLATFORM=linux/arm/v7 VSC fails to load Python; this doesn't help
 
 USER root
 
