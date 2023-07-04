@@ -52,7 +52,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "Create LOCAL demo",
+            "name": "Create LOCAL servers/demo",
             "type": "python",
             "request": "launch",
             "env": {"PYTHONPATH": "${workspaceFolder}${pathSeparator}${env:PYTHONPATH}"},
@@ -67,7 +67,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "  - Create demo",
+            "name": "  - Create demo (?)",
             "type": "python",
             "request": "launch",
             "env": {"PYTHONPATH": "${workspaceFolder}${pathSeparator}${env:PYTHONPATH}"},
