@@ -9,8 +9,10 @@
 
 # if builds fails, check for renamed targets by breaking up Run commands
 
-# thanks: https://stackoverflow.com/questions/71414579/how-to-install-msodbcsql-in-debian-based-dockerfile-with-an-apple-silicon-host
+# odbc fails if enabled... 
 # else:   ERROR: failed to solve: process "/bin/sh -c ACCEPT_EULA=Y apt-get install -y msodbcsql18" did not complete successfully: exit code: 100
+# thanks: https://stackoverflow.com/questions/71414579/how-to-install-msodbcsql-in-debian-based-dockerfile-with-an-apple-silicon-host
+# see:    api_logic_server_arm_x
 
 FROM python:3.11.4-slim-bullseye
 
