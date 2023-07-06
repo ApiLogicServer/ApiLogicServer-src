@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "09.01.01"
+__version__ = "09.01.02"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t07/05/2023 - 09.01.01: Issue ## - devcontainer creation \n"\
+    "\t07/06/2023 - 09.01.02: Issue 01 - arch-based devcontainer creation \n"\
     "\t07/04/2023 - 09.01.00: SQLAlchemy 2 typed-relns/attrs, Docker: Python 3.11.4 & odbc18 \n"\
     "\t06/24/2023 - 09.00.01: PyMysql \n"\
     "\t06/22/2023 - 09.00.00: Optimistic Locking, safrs 310, SQLAlchemy 2.0.15 \n"\
@@ -59,6 +59,7 @@ import datetime
 from typing import NewType
 import sys
 import os
+import platform
 import importlib
 
 
@@ -342,15 +343,14 @@ def create_project_with_nw_samples(project, msg: str) -> str:
         create_utils.replace_string_in_file(search_for="replace_opt_locking_attr",
                             replace_with=f'{project.opt_locking_attr}',
                             in_file=f'{project.project_directory}/api/system/opt_locking/opt_locking.py')
-
         do_fix_docker_for_vscode_dockerfile = True
-        """
         if do_fix_docker_for_vscode_dockerfile:
-            if arch.get_platform():
+            print(f'\n> Created for platform.machine(): {platform.machine()}\n')
+            if platform.machine() in('arm64', 'aarch64'):  #  in ("i386", "AMD64", "x86_64")
+                print(f'\n>> .. arm - {platform.machine()}\n')
                 create_utils.replace_string_in_file(search_for="apilogicserver/api_logic_server",
-                                    replace_with=f'apilogicserver/arm-slim',
-                                    in_file=f'{project_directory}/For_VSCode.dockerfile')
-        """
+                                    replace_with=f'apilogicserver/api_logic_server_arm',
+                                    in_file=f'{project.project_directory}/.devcontainer/For_VSCode.dockerfile')
 
         return_abs_db_url = project.abs_db_url
         copy_sqlite = True

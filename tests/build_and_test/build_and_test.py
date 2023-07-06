@@ -404,7 +404,7 @@ def docker_creation_tests(api_logic_server_tests_path):
     import platform
     machine = platform.machine()
     api_logic_server_home_path = api_logic_server_tests_path.parent
-    build_cmd = 'docker build -f docker/arm-slim.Dockerfile -t apilogicserver/arm-slim --rm .'
+    build_cmd = 'docker build -f docker/api_logic_server_arm.Dockerfile -t apilogicserver/api_logic_server_arm --rm .'
     if machine != "arm64":
         build_cmd = 'docker build -f docker/api_logic_server.Dockerfile -t apilogicserver/api_logic_server --rm .'
     build_container = run_command(build_cmd,
@@ -417,10 +417,10 @@ def docker_creation_tests(api_logic_server_tests_path):
     build_projects_cmd = (
         f'docker run -it --name api_logic_server --rm '
         f'--net dev-network -p 5656:5656 -p 5002:5002 ' 
-        f'-v {str(dest)}:/localhost apilogicserver/arm-slim ' 
+        f'-v {str(dest)}:/localhost apilogicserver/api_logic_server_arm ' 
         f'sh -c "export PATH=$PATH:/home/api_logic_server/bin && /bin/sh /localhost/docker-commands.sh"'
     )
-    if machine != "arm64":
+    if machine != "arm64":  # amd
         build_projects_cmd = (
             f'docker run -it --name api_logic_server --rm '
             f'--net dev-network -p 5656:5656 -p 5002:5002 ' 
