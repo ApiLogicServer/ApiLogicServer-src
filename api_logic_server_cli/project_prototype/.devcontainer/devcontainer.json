@@ -10,13 +10,22 @@
 	"dockerFile": "For_VSCode.dockerfile",
 
 	// Set *default* container specific settings.json values on container create.
-	"settings": {},
+	// "settings": {},
 
 	// add network -- enable this as required, e.g., https://apilogicserver.github.io/Docs/Database-Connectivity/
 	// "runArgs": ["--network=dev-network"],
 
 	// Add the IDs of extensions you want installed when the container is created.
-	"extensions": ["ms-python.python"],
+	// "extensions": [],   **** Note - Python added in customizations (autoloads Python in devcontainer)
+
+	"customizations": {
+		// Configure properties specific to VS Code.
+		"vscode": {
+			// Set default container specific settings.json values on container create.
+			"settings": {},
+			"extensions": ["ms-python.python"]
+		}
+	},
 	
 	"portsAttributes": {
 		"5656": {
@@ -32,9 +41,6 @@
 	  },
 
 	"postAttachCommand": "/bin/bash .devcontainer/setup.sh"
-
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
 
 	// Uncomment the next line to run commands after the container is created - for example installing curl.
 	// "postCreateCommand": "apt-get update && apt-get install -y curl",
