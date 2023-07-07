@@ -10,7 +10,7 @@
 	"dockerFile": "For_VSCode.dockerfile",
 
 	// Set *default* container specific settings.json values on container create.
-	"settings": {},
+	// "settings": {},
 
 	// add network -- enable this as required, e.g., https://apilogicserver.github.io/Docs/Database-Connectivity/
 	// "runArgs": ["--network=dev-network"],
