@@ -80,18 +80,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "1 - Create ApiLogicProject",
-            "type": "python",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/api_logic_server_cli",
-            "env": {"APILOGICSERVER_DEBUG": "True"},
-            "program": "cli.py",
-            "redirectOutput": true,
-            "args": ["create","--project_name=../../../servers/ApiLogicProject","--db_url="],
-            "console": "integratedTerminal"
-        },
-        {
-            "name": "  - 1.1 - Create ApiLogicProject HERE",
+            "name": "1 - Create cli/ApiLogicProject HERE",
             "type": "python",
             "request": "launch",
             "cwd": "${workspaceFolder}/api_logic_server_cli",
@@ -102,30 +91,33 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "1.2 - Run ApiLogicProject",
+            "name": "     - Debug cli/ApiLogicProject HERE",
             "type": "python",
             "request": "launch",
+            "cwd": "${workspaceFolder}/api_logic_server_cli/ApiLogicProject",
             "env": {"APILOGICSERVER_HOME": "${workspaceFolder}"},
-            "program": "${workspaceFolder}/../servers/ApiLogicProject/api_logic_server_run.py",
-            "redirectOutput": true,
-            "console": "integratedTerminal"
-        },
-        {
-            "name": "2 - Debug ApiLogicProject",
-            "type": "python",
-            "request": "launch",
-            "env": {"APILOGICSERVER_HOME": "${workspaceFolder}"},
-            "program": "${workspaceFolder}/../servers/ApiLogicProject/api_logic_server_run.py",
+            "program": "api_logic_server_run.py",
             "justMyCode": false,
             "redirectOutput": true,
             "console": "integratedTerminal"
         },
         {
-            "name": "  - 2a - Debug servers/installApiLogicProject",
+            "name": "2 - Create servers/ApiLogicProject",
+            "type": "python",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/api_logic_server_cli",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "program": "cli.py",
+            "redirectOutput": true,
+            "args": ["create","--project_name=../../../servers/ApiLogicProject","--db_url="],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "     - Debug servers/ApiLogicProject",
             "type": "python",
             "request": "launch",
             "env": {"APILOGICSERVER_HOME": "${workspaceFolder}"},
-            "program": "${workspaceFolder}/../servers/install/ApiLogicServer/ApiLogicProject/api_logic_server_run.py",
+            "program": "${workspaceFolder}/../servers/ApiLogicProject/api_logic_server_run.py",
             "justMyCode": false,
             "redirectOutput": true,
             "console": "integratedTerminal"
