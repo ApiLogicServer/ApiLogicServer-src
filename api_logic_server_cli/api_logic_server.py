@@ -1040,9 +1040,9 @@ from database import <project.bind_key>_models
             shutil.move(src = str(target_project_path.joinpath(f"{create}/3. Logic")),
                         dst = str(target_project_path.joinpath(f"{create}/2. Learn JSON_API using API Logic Server")))
         else:
-            # remove logic and database customizations from "2. Customized"
-            shutil.rmtree(str(target_project_path.joinpath(f"{create}/2. Customized/logic")))
-            shutil.rmtree(str(target_project_path.joinpath(f"{create}/2. Customized/database")))
+            # remove logic and database customizations from "2. Customized" (win requires: ignore_errors=True)
+            shutil.rmtree(str(target_project_path.joinpath(f"{create}/2. Customized/logic")), ignore_errors=True)
+            shutil.rmtree(str(target_project_path.joinpath(f"{create}/2. Customized/database")), ignore_errors=True)
             shutil.copytree(dirs_exist_ok=True,
                 src=str(target_project_path.joinpath(f"{create}/1. Instant_Creation/logic")),
                 dst=str(target_project_path.joinpath(f"{create}/2. Customized/logic")))
