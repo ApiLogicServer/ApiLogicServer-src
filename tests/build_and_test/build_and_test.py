@@ -472,6 +472,7 @@ def validate_nw():
         "Failed to get Id=1 from CategoriesEndPoint/get_cats"
 
     try:
+        print("\nBehave tests starting..\n")
         api_logic_project_behave_path = api_logic_project_path.joinpath('test').joinpath('api_logic_server_behave')
         api_logic_project_logs_path = api_logic_project_behave_path.joinpath('logs').joinpath('behave.log')
         result_behave = run_command(f'{python} behave_run.py --outfile={str(api_logic_project_logs_path)}',

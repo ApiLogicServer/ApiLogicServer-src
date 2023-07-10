@@ -23,12 +23,12 @@ if __name__ == "__main__":
         
     date_time = str(datetime.datetime.now().strftime("%B %d, %Y %H:%M:%S"))
     if log_file_name is None:
-        sys.stdout.write(f'\nCompleted at {date_time}')
+        sys.stdout.write(f'\n{__file__} completed at {date_time} (no log)')
     else:
         with open(log_file_name, 'a') as log_file:
             log_file.write(f'')
             log_file.write(f'&nbsp;&nbsp;')
             log_file.write(f'')
-            log_file.write(f'\nCompleted at {date_time}')
+            log_file.write(f'\n{__file__} completed at {date_time}')
     print(f'\ndebug_behave exit at {date_time}\n\n')
     sys.exit(behave_result)
