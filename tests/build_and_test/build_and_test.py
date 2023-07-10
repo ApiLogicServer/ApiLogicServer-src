@@ -482,12 +482,15 @@ def validate_nw():
         if result_behave.returncode != 0:
             raise Exception("Behave Run Error")
         print("\nBehave tests run - now run report..\n")
-        prepend_wiki = f'reports/Behave Logic Report Intro.md'
+        """
+        prepend_wiki = f'reports/Behave Logic Report Intro.md'  # unix ok, but...
         wiki = f'reports/Behave Logic Report.md'
-        if platform == "win32":
+        if platform == "win32":                                 # win: arg parse fails
             prepend_wiki = prepend_wiki.replace('/', '\\\\')
             wiki = wiki.replace('/', '\\\\')
         result_behave_report = run_command(f"{python} behave_logic_report.py run --prepend_wiki={prepend_wiki} --wiki={wiki}",
+        """
+        result_behave_report = run_command(f"{python} behave_logic_report.py run",
             cwd=api_logic_project_behave_path,
             msg="\nBehave Logic Report",
             show_output=True)  # note: report lost due to rebuild tests
