@@ -482,11 +482,16 @@ def validate_nw():
         if result_behave.returncode != 0:
             raise Exception("Behave Run Error")
         print("\nBehave tests run - now run report..\n")
-        result_behave_report = run_command(f"{python} behave_logic_report.py run --prepend_wiki='reports/Behave Logic Report Intro.md' --wiki='reports/Behave Logic Report.md'",
+        prepend_wiki = f'reports/Behave Logic Report Intro.md'
+        wiki = f'reports/Behave Logic Report.md'
+        if platform == "win32":
+            prepend_wiki = prepend_wiki.replace('/', '\\\\')
+            wiki = wiki.replace('/', '\\\\')
+        result_behave_report = run_command(f"{python} behave_logic_report.py run --prepend_wiki={prepend_wiki} --wiki={wiki}",
             cwd=api_logic_project_behave_path,
             msg="\nBehave Logic Report",
             show_output=True)  # note: report lost due to rebuild tests
-        if result_behave.returncode != 0:
+        if result_behave_report.returncode != 0:
             raise Exception("Behave Report Error")
     except:
         print(f'\n\n** Behave Test failed\nHere is log from: {str(api_logic_project_logs_path)}\n\n')
