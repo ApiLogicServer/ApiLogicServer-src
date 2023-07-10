@@ -30,5 +30,5 @@ if __name__ == "__main__":
             log_file.write(f'&nbsp;&nbsp;')
             log_file.write(f'')
             log_file.write(f'\n{__file__} completed at {date_time}')
-    print(f'\ndebug_behave exit at {date_time}\n\n')
+    print(f'\n{__file__} exit at {date_time}, result: {behave_result}\n\n')
     sys.exit(behave_result)
