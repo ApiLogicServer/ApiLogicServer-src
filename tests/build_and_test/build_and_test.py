@@ -141,7 +141,7 @@ def print_byte_string(msg, byte_string):
     for line in byte_string.decode('utf-8').split('\n'):
         print (line)
 
-def check_command(command_result):
+def check_command(command_result, special_message: str=""):
     result_stdout = ""
     result_stderr = ''
     if command_result is not None:
@@ -161,6 +161,8 @@ def check_command(command_result):
         else:
             print_byte_string("\n\n==> Command Failed - Console Log:", command_result.stdout)
             print_byte_string("\n\n==> Error Log:", command_result.stderr)
+            if special_message != "":
+                print(f'{special_message}')
             raise ValueError("Traceback detected")
 
 def run_command(cmd: str, msg: str = "", new_line: bool=False, 
@@ -180,7 +182,11 @@ def run_command(cmd: str, msg: str = "", new_line: bool=False,
         result = subprocess.run(cmd, cwd=cwd, shell=True, capture_output=True)
         if show_output:
             print_byte_string(f'{msg} Output:', result.stdout)
-        check_command(result)
+        special_message = msg
+        if special_message.startswith('\nCreate MySQL classicmodels'):
+            msg += "\n\nOften caused by docker DBs not running: see https://apilogicserver.github.io/Docs/Architecture-Internals/#do_docker_database"
+
+        check_command(result, msg)
         """
         if "Traceback" in result_stderr:
             print_run_output("Traceback detected - stdout", result_stdout)
@@ -790,7 +796,7 @@ if Config.do_docker_mysql:
         f"{set_venv} && ApiLogicServer create --project_name=classicmodels --db_url=mysql+pymysql://root:p@{db_ip}:3306/classicmodels",
         cwd=install_api_logic_server_path,
         msg=f'\nCreate MySQL classicmodels at: {str(install_api_logic_server_path)}')
-    check_command(result_docker_mysql_classic)
+    check_command(result_docker_mysql_classic) 
     start_api_logic_server(project_name='classicmodels')
     stop_server(msg="classicmodels\n")
     
