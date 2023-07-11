@@ -415,4 +415,6 @@ else:
         msg += f' (running locally at flask_host: {flask_host})\n'
     app_logger.info(f'\n{msg}')
     app_logger.info(f'API Logic Project (name: {project_name}) starting:\n'
-            f'..Explore data and API at swagger_host: {http_scheme}://{swagger_host}:{port}/\n')
+                f'..Explore data and API at http_scheme://swagger_host:port {http_scheme}://{swagger_host}:{port}\n'
+                f'.... with flask_host: {flask_host}\n'
+                f'.... and  swagger_port: {swagger_port}')
