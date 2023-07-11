@@ -43,9 +43,33 @@ basedir = path.abspath(path.dirname(__file__))
 load_dotenv(path.join(basedir, "default.env"))
 app_logger = logging.getLogger('api_logic_server_app')
 
+def is_docker() -> bool:
+    """ running docker?  dir exists: /home/api_logic_server """
+    path = '/home/api_logic_server'
+    path_result = os.path.isdir(path)  # this *should* exist only on docker
+    env_result = "DOCKER" == os.getenv('APILOGICSERVER_RUNNING')
+    # assert path_result == env_result
+    return path_result
 
 class Config:
     """Set Flask configuration from .env file."""
+
+    # Project Creation Defaults (overridden from args, env variables)
+    CREATED_API_PREFIX = "/api"
+    CREATED_FLASK_HOST   = "api_logic_server_host"
+    """ where clients find  the API (eg, cloud server addr)"""
+
+    CREATED_SWAGGER_HOST = "api_logic_server_swagger_host"
+    """ where swagger (and other clients) find the API """
+    if CREATED_SWAGGER_HOST == "":
+        CREATED_SWAGGER_HOST = CREATED_FLASK_HOST  # 
+    if is_docker and CREATED_FLASK_HOST == "localhost":
+        CREATED_FLASK_HOST = "0.0.0.0"  # enables docker run.sh (where there are no args)
+    CREATED_PORT = "api_logic_server_port"
+    CREATED_SWAGGER_PORT = CREATED_PORT
+    """ for codespaces - see values in launch config """
+    CREATED_HTTP_SCHEME = "http"
+
 
     # General Config
     SECRET_KEY = environ.get("SECRET_KEY")

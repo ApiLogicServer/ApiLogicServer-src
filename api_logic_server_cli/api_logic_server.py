@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "09.01.05"
+__version__ = "09.01.06"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t07/10/2023 - 09.01.05: Issue 01 - arch-based devcontainer creation, behave msgs, win report \n"\
+    "\t07/10/2023 - 09.01.06: Issue 01 - arch-based devcontainer creation, behave msgs, win report, env \n"\
     "\t07/04/2023 - 09.01.00: SQLAlchemy 2 typed-relns/attrs, Docker: Python 3.11.4 & odbc18 \n"\
     "\t06/24/2023 - 09.00.01: PyMysql \n"\
     "\t06/22/2023 - 09.00.00: Optimistic Locking, safrs 310, SQLAlchemy 2.0.15 \n"\
@@ -515,11 +515,12 @@ def fix_database_models__import_customize_models(project_directory: str, msg: st
 
 def update_api_logic_server_run(project):
     """
-    Updates project_name, ApiLogicServer hello, project_dir in api_logic_server_run_py
+    Updates project_name, ApiLogicServer hello, project_dir in config.py
 
     Note project_directory is from user, and may be relative (and same as project_name)
     """
     api_logic_server_run_py = f'{project.project_directory}/api_logic_server_run.py'
+    config_py = f'{project.project_directory}/config.py'
     create_utils.replace_string_in_file(search_for="\"api_logic_server_project_name\"",  # fix logic_bank_utils.add_python_path
                            replace_with='"' + os.path.basename(project.project_name) + '"',
                            in_file=api_logic_server_run_py)
@@ -538,10 +539,10 @@ def update_api_logic_server_run(project):
                            in_file=api_logic_server_run_py)
     create_utils.replace_string_in_file(search_for="api_logic_server_host",
                            replace_with=project.host,
-                           in_file=api_logic_server_run_py)
+                           in_file=config_py)
     create_utils.replace_string_in_file(search_for="api_logic_server_swagger_host",
                            replace_with=project.swagger_host,
-                           in_file=api_logic_server_run_py)
+                           in_file=config_py)
     replace_port = f', port="{project.port}"' if project.port else ""  # TODO: consider reverse proxy
 
     create_utils.replace_string_in_file(search_for="api_logic_server_version",
@@ -554,6 +555,13 @@ def update_api_logic_server_run(project):
 
     create_utils.replace_string_in_file(search_for="api_logic_server_port",   # server port
                            replace_with=project.port,
+                           in_file=config_py)
+
+    create_utils.replace_string_in_file(search_for="api_logic_server_port",   # server port
+                           replace_with=project.port,
+                           in_file=api_logic_server_run_py)
+    create_utils.replace_string_in_file(search_for="api_logic_server_host",
+                           replace_with=project.host,
                            in_file=api_logic_server_run_py)
     pass
 
