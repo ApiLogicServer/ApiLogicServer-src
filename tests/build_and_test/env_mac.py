@@ -39,7 +39,7 @@ class Config:
     #   platform specific
     # ***********************
 
-    set_venv = '. venv/bin/activate'
+    set_venv = 'source ${install_api_logic_server_path}/venv/bin/activate'
     '''typical source "venv/bin/activate" does not persist over cmds, see...
         https://github.com/valhuber/ubuntu-script-venv/blob/main/use-in-script.sh '''
 
