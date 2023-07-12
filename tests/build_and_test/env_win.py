@@ -38,7 +38,7 @@ class Config:
     #   platform specific
     # ***********************
 
-    set_venv = "venv\\Scripts\\activate"
+    set_venv = "${install_api_logic_server_path}\\venv\\Scripts\\activate"
     '''double slashes... '''
 
     docker_database_ip = '10.0.0.77'

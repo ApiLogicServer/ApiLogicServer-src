@@ -113,6 +113,28 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "     - Run cli/test_project_dev (curr IDE) ARGTEST",
+            "type": "python",
+            "env": {
+                "PYTHONPATH": "", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICPROJECT_FLASK_HOST": "flaskhost-e",
+                "APILOGICPROJECT_PORT": "port-e",
+                "APILOGICPROJECT_SWAGGER_HOST": "swaggerhost-e",
+                "APILOGICPROJECT_SWAGGER_PORT": "swaggerport-e",
+                "APILOGICPROJECT_HTTP_SCHEME": "httpscheme-e",
+                "APILOGICPROJECT_API_PREFIX": "apiprefix-e"
+                },
+            "request": "launch",
+            "cwd": "${workspaceFolder}/api_logic_server_cli/test_project_dev",
+            "program": "api_logic_server_run.py",
+            "redirectOutput": true,
+            "justMyCode": false,
+            "args": ["--flask_host=flaskhost-a", "--port=p5656-a", "--swagger_host=swaggerhost-a", "--swagger_port=swaggerport-a", "--verbose=True"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
             "name": "     - Run cli/test_project_dev (curr IDE)",
             "type": "python",
             "request": "launch",

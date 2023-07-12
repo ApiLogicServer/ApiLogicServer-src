@@ -193,8 +193,10 @@ def run_command(cmd: str, msg: str = "", new_line: bool=False,
             print_run_output("stderr", result_stderr)
             raise ValueError("Traceback detected")
         """
-    except:
-        print(f'\n\n*** Failed on {cmd}')
+    except Exception as err:
+        print(f'\n\n*** Failed {err} on {cmd}')
+        print_byte_string("\n\n==> run_command Console Log:", result.stdout)
+        print_byte_string("\n\n==> Error Log:", result.stderr)
         raise
     return result
 
@@ -347,10 +349,10 @@ def rebuild_tests():
     else:
         raise ValueError('System Error - admin-merge.yaml does not contain "new_resources: " ')
 
-    result_create = run_command(f'alembic revision --autogenerate -m "Added Tables and Columns"',
+    result_create = run_command(f'{set_venv} && alembic revision --autogenerate -m "Added Tables and Columns"',
         cwd=models_py_path.parent,
         msg=f'\nalembic revision')
-    result_create = run_command(f'alembic upgrade head',
+    result_create = run_command(f'{set_venv} && alembic upgrade head',
         cwd=models_py_path.parent,
         msg=f'\nalembic upgrade head')
 
@@ -438,7 +440,7 @@ def docker_creation_tests(api_logic_server_tests_path):
         msg=f'\nBuilding projects from Docker container at: {str(api_logic_server_home_path)}')
     print('built projects from container')
 
-def validate_nw():
+def validate_nw(api_logic_server_install_path, set_venv):
     """
     With NW open, verifies:
     * Behave test
@@ -478,13 +480,15 @@ def validate_nw():
         "Failed to get Id=1 from CategoriesEndPoint/get_cats"
 
     try:
+        result_behave = None
+        result_behave_report = None
         print("\nBehave tests starting..\n")
         api_logic_project_behave_path = api_logic_project_path.joinpath('test').joinpath('api_logic_server_behave')
         api_logic_project_logs_path = api_logic_project_behave_path.joinpath('logs').joinpath('behave.log')
-        result_behave = run_command(f'{python} behave_run.py --outfile={str(api_logic_project_logs_path)}',
-            cwd=api_logic_project_behave_path,
-            msg="\nBehave Test Run",
-            show_output=True)
+        behave_command = f'{set_venv} && {python} behave_run.py --outfile={str(api_logic_project_logs_path)}'
+        result_behave = run_command(behave_command, 
+                                    cwd=str(api_logic_project_behave_path),
+                                    msg="\nBehave Test Run", show_output=True)
         if result_behave.returncode != 0:
             raise Exception("Behave Run Error")
         print("\nBehave tests run - now run report..\n")
@@ -496,19 +500,26 @@ def validate_nw():
             wiki = wiki.replace('/', '\\\\')
         result_behave_report = run_command(f"{python} behave_logic_report.py run --prepend_wiki={prepend_wiki} --wiki={wiki}",
         """
-        result_behave_report = run_command(f"{python} behave_logic_report.py run",
+        result_behave_report = run_command(f"{set_venv} && {python} behave_logic_report.py run",
             cwd=api_logic_project_behave_path,
             msg="\nBehave Logic Report",
-            show_output=True)  # note: report lost due to rebuild tests
+            show_output=True)  # note: report lost due to rebuild tests that run later
         if result_behave_report.returncode != 0:
             raise Exception("Behave Report Error")
-    except:
-        print(f'\n\n** Behave Test failed\nHere is log from: {str(api_logic_project_logs_path)}\n\n')
+    except Exception as err:
+        print(f'\n\n** Behave Test failed\n\n')
+        print(f'Behave Failure\nHere is err: {err}\n\n')
+        print(f'Behave Failure\nHere is log from: {str(api_logic_project_logs_path)}\n\n')
         f = open(str(api_logic_project_logs_path), 'r')
         file_contents = f.read()
         print (file_contents)
         f.close()
-        exit(result_behave.returncode)
+        rtn_code = 1
+        if result_behave_report:
+            rtn_code = result_behave_report.returncode
+        elif result_behave:
+            rtn_code = result_behave.returncode
+        exit(rtn_code)
 
     
     print("\nBehave tests & report - Success...\n")
@@ -631,10 +642,6 @@ elif platform.startswith("linux"):
 else:
     print("unknown platform")
 
-set_venv = Config.set_venv
-db_ip = Config.docker_database_ip
-""" in docker, we cannot connect on localhost - must use the ip """
-
 install_api_logic_server_path = get_servers_build_and_test_path().joinpath("ApiLogicServer")   # eg /Users/val/dev/servers/install/ApiLogicServer
 api_logic_project_path = install_api_logic_server_path.joinpath('ApiLogicProject')
 api_logic_server_tests_path = Path(os.path.abspath(__file__)).parent.parent
@@ -644,6 +651,11 @@ api_logic_server_cli_path = get_api_logic_server_path().\
 
 with io.open(str(api_logic_server_cli_path), "rt", encoding="utf8") as f:
     api_logic_server_version = re.search(r"__version__ = \"(.*?)\"", f.read()).group(1)
+
+set_venv = Config.set_venv
+set_venv = set_venv.replace("${install_api_logic_server_path}", str(install_api_logic_server_path))
+db_ip = Config.docker_database_ip
+""" in docker, we cannot connect on localhost - must use the ip """
 
 print(f"\n\n{__file__} 1.1 running")
 print(f'  Builds / Installs API Logic Server to install_api_logic_server_path: {install_api_logic_server_path}')
@@ -708,7 +720,7 @@ if Config.do_run_api_logic_project:  # so you can start and set breakpoint, then
     
 if Config.do_test_api_logic_project:
     validate_opt_locking()
-    validate_nw()
+    validate_nw(install_api_logic_server_path, set_venv)
     stop_server(msg="*** NW TESTS COMPLETE ***\n")
 
 if Config.do_multi_database_test:

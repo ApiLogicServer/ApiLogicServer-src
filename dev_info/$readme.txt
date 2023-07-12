@@ -1,10 +1,14 @@
-Updated venv/setup, no FAB, threaded, nw-, add-auth/cust, app-lite docker, std log, tut, org-docs, logic, safrs 3 \n"\
+Updated http_type
 
-debug wrapping
-  2 screen shots use terminal - fixable
-  so, could just use internalConsole
-    maybe good since provides interpreter
-    it does preserve the browser launch
+work out of flask_app.config?  (flask_host etc)
+  use flask load_env for overrides
+  create flask_app early
+  in Config, use non-prefix name (eg, flask_port)
+  migrate args to using config
+  chase down security, optlock references to Config., --> flask_app.config["xx"]
+  delete args struc
+  convert get_args
+  hmm - lose of code competion
 
 nw_readme.md -> README.md
     * remove internal IDE links
@@ -25,7 +29,6 @@ https://raw.githubusercontent.com/valhuber/ApiLogicServer/main/images/docker/VSC
 
 https://github.com/community/community/discussions/30205
 
-https://github.com/valhuber/ApiLogicServer.wiki.git
 
 Creating the ApiLogicServer dev environment
 

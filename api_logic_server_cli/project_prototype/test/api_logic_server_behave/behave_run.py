@@ -7,7 +7,14 @@
 
 import sys, os
 import datetime
-from behave.__main__ import main as behave_main  # behave is pip'd...
+
+try:
+    from behave.__main__ import main as behave_main  # behave is pip'd...
+except:
+    python_path = ""
+    for p in sys.path:
+        python_path += f'..{p}\n'
+    raise Exception(f"\nbehave_run - unable to find behave.  PYTHONPATH..\n{python_path}") 
 
 if __name__ == "__main__":
     print("\nbehave_run started at:", os.getcwd())

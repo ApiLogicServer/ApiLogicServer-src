@@ -127,3 +127,218 @@ class Config:
             exit(1)
         app_logger.debug(f'Opt Locking .. overridden from env variable: {OPT_LOCKING}')
 
+
+
+class Args():
+    """ accessors for Config values 
+
+    The source of truth is the flask_app.config
+
+    Set from created values, overwritten from cli args then APILOGICPROJECT_ variables
+
+    This class provides **typed** access
+    """
+    def __init__(self, flask_app):
+        self.flask_app = flask_app
+        self.api_prefix = Config.CREATED_API_PREFIX
+        self.flask_host   = Config.CREATED_FLASK_HOST
+        self.swagger_host = Config.CREATED_SWAGGER_HOST
+        self.port = Config.CREATED_PORT
+        self.swagger_port = Config.CREATED_PORT
+        self.http_scheme = Config.CREATED_HTTP_SCHEME
+
+        self.verbose = False
+        self.create_and_run = False
+
+    @property
+    def port(self):
+        """ meow a if a < b else b """
+        return self.flask_app.config["PORT"]  # if "PORT" in self.flask_app.config else self.__port
+    
+    @port.setter
+    def port(self, a):
+        self.flask_app.config["PORT"] = a
+
+
+    @property
+    def swagger_port(self):
+        """ meow a if a < b else b """
+        return self.flask_app.config["SWAGGER_PORT"]
+    
+    @swagger_port.setter
+    def swagger_port(self, a):
+        self.flask_app.config["SWAGGER_PORT"] = a
+
+
+    @property
+    def swagger_host(self):
+        return self.flask_app.config["SWAGGER_HOST"]
+    
+    @swagger_host.setter
+    def swagger_host(self, a):
+        self.flask_app.config["SWAGGER_HOST"] = a
+
+
+    @property
+    def flask_host(self):
+        return self.flask_app.config["FLASK_HOST"]
+    
+    @flask_host.setter
+    def flask_host(self, a):
+        self.flask_app.config["FLASK_HOST"] = a
+
+
+    @property
+    def api_prefix(self):
+        return self.flask_app.config["API_PREFIX"]
+    
+    @api_prefix.setter
+    def api_prefix(self, a):
+        self.flask_app.config["API_PREFIX"] = a
+
+
+    @property
+    def http_scheme(self):
+        return self.flask_app.config["HTTP_SCHEME"]
+    
+    @http_scheme.setter
+    def http_scheme(self, a):
+        self.flask_app.config["HTTP_SCHEME"] = a
+
+
+    @property
+    def create_and_run(self):
+        return self.flask_app.config["CREATE_AND_RUN"]
+    
+    @create_and_run.setter
+    def create_and_run(self, a):
+        self.flask_app.config["CREATE_AND_RUN"] = a
+
+
+    @property
+    def verbose(self):
+        return self.flask_app.config["VERBOSE"]
+    
+    @verbose.setter
+    def verbose(self, a):
+        self.flask_app.config["VERBOSE"] = a
+
+    
+    def __str__(self) -> str:
+        rtn =  f'.. flask_host: {self.flask_host}, port: {self.port}, \n'\
+               f'.. swagger_host: {self.swagger_host}, swagger_port: {self.swagger_port}, \n'\
+               f'.. http_scheme: {self.http_scheme}, api_prefix: {self.api_prefix}, \n'\
+               f'.. | verbose: {self.verbose}, create_and_run: {self.create_and_run}'
+        return rtn
+
+
+    def get_cli_args(self, args: 'Args', dunder_name: str):
+        """
+        returns tuple of start args:
+        
+        (flask_host, swagger_host, port, swagger_port, http_scheme, verbose, create_and_run)
+        """
+
+        import socket
+        import warnings
+        import sys
+
+        # global flask_host, swagger_host, port, swagger_port, http_scheme, verbose, create_and_run
+
+        network_diagnostics = True
+        hostname = socket.gethostname()
+        try:
+            local_ip = socket.gethostbyname(hostname)
+        except:
+            local_ip = f"Warning - Failed local_ip = socket.gethostbyname(hostname) with hostname: {hostname}"
+            app_logger.debug(f"Failed local_ip = socket.gethostbyname(hostname) with hostname: {hostname}")
+
+        app_logger.debug(f"Getting cli args, with hostname={hostname} on local_ip={local_ip}")
+        args.verbose = False
+        args.create_and_run = False
+
+        def make_wide(formatter, w=120, h=36):
+            """ Return a wider HelpFormatter, if possible."""
+            try:
+                # https://stackoverflow.com/a/5464440
+                # beware: "Only the name of this class is considered a public API."
+                kwargs = {'width': w, 'max_help_position': h}
+                formatter(None, **kwargs)
+                return lambda prog: formatter(prog, **kwargs)
+            except TypeError:
+                warnings.warn("argparse help formatter failed, falling back.")
+                return formatter
+
+        if dunder_name != "__main__":  
+            app_logger.debug(f"WSGI - no args, using creation default host/port..  sys.argv = {sys.argv}\n")
+        else:   # gunicorn-friendly host/port settings ()
+            # thanks to https://www.geeksforgeeks.org/command-line-arguments-in-python/#argparse
+            import argparse
+            # Initialize parser
+            if len(sys.argv) == 1:
+                app_logger.debug("No arguments - using creation default host/port")
+            else:
+                msg = "API Logic Project"
+                parser = argparse.ArgumentParser(
+                    formatter_class=make_wide(argparse.ArgumentDefaultsHelpFormatter))
+                parser.add_argument("--port",
+                                    help = f'port (Flask)', default = args.port)
+                parser.add_argument("--flask_host", 
+                                    help = f'ip to which flask will be bound', 
+                                    default = args.flask_host)
+                parser.add_argument("--swagger_host", 
+                                    help = f'ip clients use to access API',
+                                    default = args.swagger_host)
+                parser.add_argument("--swagger_port", 
+                                    help = f'swagger port (eg, 443 for codespaces)',
+                                    default = args.port)
+                parser.add_argument("--http_scheme", 
+                                    help = f'http or https',
+                                    default = "http")
+                parser.add_argument("--verbose", 
+                                    help = f'for more logging',
+                                    default = False)
+                parser.add_argument("--create_and_run", 
+                                    help = f'system use - log how to open project',
+                                    default = False)
+                
+                parser.add_argument("flask_host_p", nargs='?', default = args.flask_host)
+                parser.add_argument("port_p", nargs='?', default = args.port)
+                parser.add_argument("swagger_host_p", nargs='?', default = args.swagger_host)
+                
+                parse_args = parser.parse_args()
+
+                """
+                    accepting both positional (compatibility) and keyword args... 
+                    cases that matter:
+                        no args
+                        kw only:        argv[1] starts with -
+                        pos only
+                    positional values always override keyword, so decide which parsed values to use...
+                """
+                if sys.argv[1].startswith("-"):     # keyword arguments
+                    args.port = parse_args.port
+                    args.flask_host = parse_args.flask_host
+                    args.swagger_host = parse_args.swagger_host
+                    args.swagger_port = parse_args.swagger_port
+                    args.http_scheme = parse_args.http_scheme
+                    args.verbose = parse_args.verbose in ["True", "true"]
+                    args.create_and_run = parse_args.create_and_run
+                else:                               # positional arguments (compatibility)
+                    args.port = parse_args.port_p
+                    args.flask_host = parse_args.flask_host_p
+                    args.swagger_host = parse_args.swagger_host_p
+            if args.swagger_host.startswith("https://"):
+                args.swagger_host = args.swagger_host[8:]
+            if args.swagger_host.endswith("/"):
+                args.swagger_host = args.swagger_host[0:len(args.swagger_host)-1]
+
+        use_codespace_defaulting = True  # experimental support to run default launch config
+        if use_codespace_defaulting and os.getenv('CODESPACES') and args.swagger_host == 'localhost':
+            app_logger.info('\n Applying Codespaces default port settings')
+            args.swagger_host = os.getenv('CODESPACE_NAME') + '-5656.githubpreview.dev'
+            args.swagger_port = 443
+            args.http_scheme = 'https'
+
+        return
+   
