@@ -94,7 +94,7 @@ if debug_value is not None:  # > export APILOGICPROJECT_DEBUG=True
     else:
         app_logger.setLevel(logging.DEBUG)
         app_logger.debug(f'\nDEBUG level set from env\n')
-app_logger.info(f'\nAPI Logic Project ({project_name}) Starting with args: \n.. {args}\n')
+app_logger.info(f'\nAPI Logic Project ({project_name}) Starting with CLI args: \n.. {args}\n')
 app_logger.info(f'Created api_logic_server_created_on at {str(current_path)}\n')
 
 
