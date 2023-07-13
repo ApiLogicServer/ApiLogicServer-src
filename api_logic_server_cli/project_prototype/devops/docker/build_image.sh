@@ -20,7 +20,7 @@ debug "build_image here 1.0"
 if [ $# -eq 0 ]; then
   echo "\nBuilds docker image for API Logic Project\n"
   echo "  cd <project home directory>"
-  echo "  sh devops/docker/build_container.sh [ . | <docker-id> ]"
+  echo "  sh devops/docker/build_image.sh [ . | <docker-id> ]"
   echo "    . means use defaults:"
   echo "        ${repositoryname}/${projectname}:${version}"
   echo "    <docker-id> means use explicit args: <repository-name> <project-name> <version> eg,"
@@ -43,8 +43,9 @@ docker build -f devops/docker/build_image.dockerfile -t ${repositoryname}/${proj
 
 status=$?
 if [ $status -eq 0 ]; then
-  echo "\nImage built successfully.. test (omit bash to run directly):\n"
-  echo "  devops/docker/sh run_image.sh"
+  echo "\nImage built successfully.. test:\n"
+  echo "  sh devops/docker/sh run_image.sh"
+  echo " "
   echo "\nNext steps:"
   echo "  docker tag ${repositoryname}/${projectname} ${repositoryname}/${projectname}:${version}"
   echo "  docker push ${repositoryname}/${projectname}:${version}  # requires docker login"\"
