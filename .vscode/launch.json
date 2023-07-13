@@ -80,29 +80,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "1 - Create cli/test_project (curr IDE)",
-            "type": "python",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/api_logic_server_cli",
-            "env": {"APILOGICSERVER_DEBUG": "True"},
-            "program": "cli.py",
-            "redirectOutput": true,
-            "args": ["create","--project_name=test_project","--db_url="],
-            "console": "integratedTerminal"
-        },
-        {
-            "name": "     - Debug cli/test_project (curr IDE)",
-            "type": "python",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/api_logic_server_cli/test_project",
-            "env": {"APILOGICSERVER_HOME": "${workspaceFolder}"},
-            "program": "api_logic_server_run.py",
-            "justMyCode": false,
-            "redirectOutput": true,
-            "console": "integratedTerminal"
-        },
-        {
-            "name": "     - Create cli/test_project_dev (curr IDE)",
+            "name": "1 - Create cli/test_project_dev (curr IDE)",
             "type": "python",
             "request": "launch",
             "cwd": "${workspaceFolder}/api_logic_server_cli",
@@ -110,6 +88,17 @@
             "program": "cli.py",
             "redirectOutput": true,
             "args": ["create","--project_name=test_project_dev","--db_url="],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "     - Run cli/test_project_dev (curr IDE)",
+            "type": "python",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/api_logic_server_cli/test_project_dev",
+            "env": {"APILOGICSERVER_HOME": "${workspaceFolder}"},
+            "program": "api_logic_server_run.py",
+            "justMyCode": false,
+            "redirectOutput": true,
             "console": "integratedTerminal"
         },
         {
@@ -135,10 +124,21 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "     - Run cli/test_project_dev (curr IDE)",
+            "name": "     * Create cli/test_project (curr IDE)",
             "type": "python",
             "request": "launch",
-            "cwd": "${workspaceFolder}/api_logic_server_cli/test_project_dev",
+            "cwd": "${workspaceFolder}/api_logic_server_cli",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "program": "cli.py",
+            "redirectOutput": true,
+            "args": ["create","--project_name=test_project","--db_url="],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "     - Debug cli/test_project (curr IDE)",
+            "type": "python",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/api_logic_server_cli/test_project",
             "env": {"APILOGICSERVER_HOME": "${workspaceFolder}"},
             "program": "api_logic_server_run.py",
             "justMyCode": false,

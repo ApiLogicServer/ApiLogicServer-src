@@ -134,11 +134,26 @@ class Args():
 
     The source of truth is the flask_app.config
 
-    Set from created values, overwritten from cli args then APILOGICPROJECT_ variables
+    Set from created values, overwritten from cli args, then APILOGICPROJECT_ env variables
 
     This class provides **typed** access
     """
     def __init__(self, flask_app):
+        """
+
+        Create args object with CREATED_ defaults.
+
+        Defaults assigned to flask_app.config[name]
+
+        1. flask_app.config names do not have suffix (e.g. flask_app.config["FLASK_HOST"])
+
+        2. Override with CLI arguments (use -h to see names)
+
+        3. Then override with env variables (prefixed, e.g., APILOGICPROJECT_FLASK_HOST)
+
+        Args:
+            flask_app (_type_): created flask_app
+        """
         self.flask_app = flask_app
         self.api_prefix = Config.CREATED_API_PREFIX
         self.flask_host   = Config.CREATED_FLASK_HOST

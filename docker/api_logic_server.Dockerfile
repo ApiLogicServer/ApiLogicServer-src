@@ -71,8 +71,8 @@ RUN chmod +x bin/ApiLogicServer \
 # CMD ["ApiLogicServer"]
 USER api_logic_server
 
-ENV APILOGICSERVER_RUNNING=DOCKER
+
 ENV APILOGICSERVER_FROM=python:3.11.4-slim-bullseye
 
-# RUN chmod a+rwx -R api_logic_server_cli/api_logic_server_info.yaml
+# RUN chmod a+rwxENV APILOGICSERVER_RUNNING=DOCKER -R api_logic_server_cli/api_logic_server_info.yaml
 CMD ["bash"]

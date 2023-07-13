@@ -241,28 +241,23 @@ def api_logic_server_setup(flask_app, args):
 
 flask_app = Flask("API Logic Server", template_folder='ui/templates')  # templates to load ui/admin/admin.yaml
 
-args = Args(flask_app=flask_app)
-args.verbose = True
-if os.getenv('VERBOSE'):
-    args.verbose = True  # type: ignore # type: str
+args = Args(flask_app=flask_app)                                # creation defaults
+
+flask_app.config.from_object("config.Config")
+app_logger.debug(f"\nConfig args: \n{args}")                    # config file (e.g., db uri's)
+
+args.get_cli_args(dunder_name=__name__, args=args)
+app_logger.debug(f"\nCLI args: \n{args}")
+
+flask_app.config.from_prefixed_env(prefix="APILOGICPROJECT")    # env overrides (e.g., docker)
+app_logger.debug(f"\nENV args: \n{args}\n\n")
+
 if args.verbose:
     app_logger.setLevel(logging.DEBUG)
     safrs.log.setLevel(logging.DEBUG)  # notset 0, debug 10, info 20, warn 30, error 40, critical 50
 if app_logger.getEffectiveLevel() == logging.DEBUG:
     util.sys_info()
-app_logger.debug(f"\nCreation args: \n{args}")
-
-flask_app.config.from_object("config.Config")
-app_logger.debug(f"\nConfig args: \n{args}")  # db uri's
-
-args.get_cli_args(dunder_name=__name__, args=args)
-app_logger.debug(f"\nCLI args: \n{args}")
-
-flask_app.config.from_prefixed_env(prefix="APILOGICPROJECT")  # overrides (e.g., docker)
-app_logger.debug(f"\nENV args: {args}")
-
-if os.getenv('SWAGGER_HOST'):
-    assert os.getenv('SWAGGER_HOST') == args.swagger_host  ## remove
+app_logger.debug(f"\nCreation args: \n{args}\n\n")
 
 api_logic_server_setup(flask_app, args)
 
