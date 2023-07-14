@@ -1,14 +1,22 @@
 # docker build -f docker/api_logic_server_all.Dockerfile -t apilogicserver/api_logic_server_all --rm .
 # docker tag apilogicserver/api_logic_server_all apilogicserver/api_logic_server_all:9.00.14
 # docker push apilogicserver/api_logic_server_all:9.00.14
-# docker buildx etc
 
-# docker buildx create --use --name mybuild node-amd64
 
-# docker buildx create --use --name mybuild node-amd64
+# docker buildx create --name mybuilder
+# ok!
 
-# docker buildx create --append --name mybuild node-arm64
+# docker buildx create --use --name mybuilder node-amd64
+# --> existing instance for "mybuilder" but no append mode, specify --node to make changes for existing instances
+
+# docker buildx create --name mybuilder --append node-amd64
+# --> no such host (with or without --use)
+
+# docker buildx create --name mybuilder --append --node node-amd64
+# --> invalid duplicate endpoint desktop-linux
+
 # docker buildx build --platform linux/amd64,linux/arm64 .
+# --> Multiple platforms feature is currently not supported for docker driver
 
 # then, each build...
 # docker buildx build --platform linux/amd64,linux/arm64 -f docker/api_logic_server_all.Dockerfile --push -t apilogicserver/api_logic_server_all:9.1.1
