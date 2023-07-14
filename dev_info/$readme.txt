@@ -4,6 +4,7 @@ release?
   Tyler's expose db uri
   TP proxy port
   Multi-Arch dockers
+  log: 0 authentication tables loaded
 
 nw_readme.md -> README.md
     * remove internal IDE links
