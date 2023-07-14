@@ -218,7 +218,8 @@ def api_logic_server_setup(flask_app, args):
             if Config.SECURITY_ENABLED:
                 from security import declare_security  # activate security
                 app_logger.info("..declare security - security/declare_security.py"
-                    + f' -- {len(database.authentication_models.metadata.tables)} authentication tables loaded')
+                    # not accurate: + f' -- {len(database.authentication_models.metadata.tables)}'
+                    + ' authentication tables loaded')
 
             from api.system.opt_locking import opt_locking
             from config import OptLocking
