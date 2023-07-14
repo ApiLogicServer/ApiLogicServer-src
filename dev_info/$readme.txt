@@ -1,14 +1,9 @@
 Updated http_type
 
-work out of flask_app.config?  (flask_host etc)
-  use flask load_env for overrides
-  create flask_app early
-  in Config, use non-prefix name (eg, flask_port)
-  migrate args to using config
-  chase down security, optlock references to Config., --> flask_app.config["xx"]
-  delete args struc
-  convert get_args
-  hmm - lose of code competion
+release?
+  Tyler's expose db uri
+  TP proxy port
+  Multi-Arch dockers
 
 nw_readme.md -> README.md
     * remove internal IDE links
