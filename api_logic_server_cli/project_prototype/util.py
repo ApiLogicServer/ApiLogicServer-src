@@ -227,7 +227,7 @@ def rows_to_dict(result: flask_sqlalchemy.BaseQuery) -> list:
     return rows
 
 
-def sys_info():  
+def sys_info(flask_app_config):  
     """
     Print env and path
     """  
@@ -238,7 +238,12 @@ def sys_info():
     for each_variable in os.environ:
             print(f'.. {each_variable} = {env[each_variable]}')
 
-    print("\nPYTHONPATH..")
+    print(f'\n\nflask_app.config: \n\t')
+    flask_app_config_str = str(flask_app_config)
+    flask_app_config_str = flask_app_config_str.replace(', ', ',\n\t')
+    print((flask_app_config_str))
+
+    print("\n\nPYTHONPATH..")
     for p in sys.path:
         print(".." + p)
         
