@@ -256,7 +256,7 @@ app_logger.debug(f"\nENV args: \n{args}\n\n")
 if args.verbose:
     app_logger.setLevel(logging.DEBUG)
     safrs.log.setLevel(logging.DEBUG)  # notset 0, debug 10, info 20, warn 30, error 40, critical 50
-if app_logger.getEffectiveLevel() == logging.DEBUG:
+if app_logger.getEffectiveLevel() <= logging.DEBUG:
     util.sys_info()
 app_logger.debug(f"\nENV args: \n{args}\n\n")
 
