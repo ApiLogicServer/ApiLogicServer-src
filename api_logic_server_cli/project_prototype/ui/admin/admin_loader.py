@@ -6,6 +6,7 @@
 import logging, sys, io
 from flask import Flask, redirect, send_from_directory, send_file
 from config import Config
+from config import Args
 from pathlib import Path
 import os, inspect
 from safrs import ValidationError
@@ -45,7 +46,7 @@ def get_sra_directory() -> str:
     return directory
 
 
-def admin_events(flask_app: Flask, swagger_host: str, swagger_port: str, API_PREFIX: str, validation_error: ValidationError, http_type: str):
+def admin_events(flask_app: Flask, args: Args, validation_error: ValidationError):
     """ events for serving minified safrs-admin, using admin.yaml
     """
 
@@ -92,7 +93,9 @@ def admin_events(flask_app: Flask, swagger_host: str, swagger_port: str, API_PRE
         """ Step 3 - return admin file response (to now-running safrs-react-admin app)
             and text-substitutes to get url args from startup args (avoid specify twice for *both* server & admin.yaml)
 
-            api_root: {http_type}://{swagger_host}:{swagger_port} (from ui_admin_creator)
+            api_root: {http_type}://{swagger_host}:{port}/{api} (from ui_admin_creator)
+
+            auth/endpoint: {http_type}://{swagger_host}:{port}/api/auth/login
 
             e.g. http://localhost:5656/ui/admin/admin.yaml
         """
@@ -100,10 +103,17 @@ def admin_events(flask_app: Flask, swagger_host: str, swagger_port: str, API_PRE
         if use_type == "mem":
             with open(f'ui/admin/{path}', "r") as f:  # path is admin.yaml for default url/app
                 content = f.read()
-            content = content.replace("{http_type}", http_type)
-            content = content.replace("{swagger_host}", swagger_host)
-            content = content.replace("{port}", str(swagger_port))  # note - codespaces requires 443 here (typically via args)
-            content = content.replace("{api}", API_PREFIX[1:])
+            if args.client_uri is not None:
+                content = content.replace(
+                    '{http_type}://{swagger_host}:{port}',
+                    args.client_uri
+                )
+                content = content.replace("{api}", args.api_prefix[1:])
+            else:
+                content = content.replace("{http_type}", args.http_scheme)
+                content = content.replace("{swagger_host}", args.swagger_host)
+                content = content.replace("{port}", str(args.swagger_port))  # note - codespaces requires 443 here (typically via args)
+                content = content.replace("{api}", args.api_prefix[1:])
             if Config.SECURITY_ENABLED == False:
                 content = content.replace("authentication", 'no-authentication')
             admin_logger.debug(f'loading ui/admin/admin.yaml')

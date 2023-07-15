@@ -167,7 +167,7 @@ class Args():
 
     @property
     def port(self):
-        """ meow a if a < b else b """
+        """ port to which flask will be bound """
         return self.flask_app.config["PORT"]  # if "PORT" in self.flask_app.config else self.__port
     
     @port.setter
@@ -177,7 +177,7 @@ class Args():
 
     @property
     def swagger_port(self):
-        """ meow a if a < b else b """
+        """ swagger port (eg, 443 for codespaces) """
         return self.flask_app.config["SWAGGER_PORT"]
     
     @swagger_port.setter
@@ -187,6 +187,7 @@ class Args():
 
     @property
     def swagger_host(self):
+        """ ip clients use to access API """
         return self.flask_app.config["SWAGGER_HOST"]
     
     @swagger_host.setter
@@ -196,6 +197,7 @@ class Args():
 
     @property
     def flask_host(self):
+        """ ip to which flask will be bound """
         return self.flask_app.config["FLASK_HOST"]
     
     @flask_host.setter
@@ -205,6 +207,7 @@ class Args():
 
     @property
     def api_prefix(self):
+        """ uri node for this project (e.g, /api) """
         return self.flask_app.config["API_PREFIX"]
     
     @api_prefix.setter
@@ -214,6 +217,7 @@ class Args():
 
     @property
     def http_scheme(self):
+        """ http or https """
         return self.flask_app.config["HTTP_SCHEME"]
     
     @http_scheme.setter
@@ -223,6 +227,7 @@ class Args():
 
     @property
     def create_and_run(self):
+        """ internal use: ApiLogicServer create-and-run """
         return self.flask_app.config["CREATE_AND_RUN"]
     
     @create_and_run.setter
@@ -232,13 +237,25 @@ class Args():
 
     @property
     def verbose(self):
+        """ activate key loggers for debug """
         return self.flask_app.config["VERBOSE"]
     
     @verbose.setter
     def verbose(self, a):
         self.flask_app.config["VERBOSE"] = a
 
+
+    @property
+    def client_uri(self):
+        """ in prod env, port might be omitted (e.g., nginx) """
+        return self.flask_app.config["CLIENT_URI"] if "CLIENT_URI" in self.flask_app.config \
+            else None
     
+    @client_uri.setter
+    def client_uri(self, a):
+        self.flask_app.config["CLIENT_URI"] = a
+
+
     def __str__(self) -> str:
         rtn =  f'.. flask_host: {self.flask_host}, port: {self.port}, \n'\
                f'.. swagger_host: {self.swagger_host}, swagger_port: {self.swagger_port}, \n'\
