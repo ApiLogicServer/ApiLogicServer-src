@@ -1,13 +1,10 @@
 # docker build -f docker/api_logic_server_all.Dockerfile -t apilogicserver/api_logic_server_all --rm .
-# docker tag apilogicserver/api_logic_server_all apilogicserver/api_logic_server_all:9.01.11
-# docker push apilogicserver/api_logic_server_all:9.01.11
+# docker tag apilogicserver/api_logic_server_all apilogicserver/api_logic_server_all:9.00.14
+# docker push apilogicserver/api_logic_server_all:9.00.14
 
 
 # docker buildx create --name mybuilder
 # ok!
-
-# ApiLogicServer-src % docker build -f docker/api_logic_server_all.Dockerfile -t apilogicserver/api_logic_server_all --rm .
-# worked?  started on arm
 
 # docker buildx create --use --name mybuilder node-amd64
 # --> existing instance for "mybuilder" but no append mode, specify --node to make changes for existing instances
@@ -70,7 +67,7 @@ RUN apt-get install -y git
 RUN apt-get update
 RUN apt-get install -y curl gnupg
 
-# ODBC: https://learn.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server?view=sql-server-ver16&tabs=debian18-install%2Calpine17-install%2Cdebian8-install%2Credhat7-13-install%2Crhel7-offline
+
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
 
 #Debian 11
@@ -82,6 +79,8 @@ RUN ACCEPT_EULA=Y apt-get install -y msodbcsql18
 # optional: for bcp and sqlcmd
 RUN apt-get install apt-utils
 
+RUN ACCEPT_EULA=Y apt-get install -y mssql-tools18
+RUN echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bashrc
 
 RUN apt-get -y install unixodbc-dev \
   && apt-get -y install python3-pip \

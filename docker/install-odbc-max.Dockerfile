@@ -22,7 +22,7 @@ RUN apt-get install apt-utils
 
 RUN ACCEPT_EULA=Y apt-get install -y mssql-tools18
 RUN echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bashrc
-RUN ~/.bashrc
+# RUN ~/.bashrc
 # optional: for unixODBC development headers
 # RUN apt-get install -y unixodbc-dev
 # optional: kerberos library for debian-slim distributions
