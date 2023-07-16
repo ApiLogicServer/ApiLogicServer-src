@@ -6,8 +6,11 @@
 # docker buildx create --name mybuilder
 # ok!
 
-# ApiLogicServer-src % docker build -f docker/api_logic_server_all.Dockerfile -t apilogicserver/api_logic_server_all --rm .
-# worked?  started on arm
+# docker buildx build --platform linux/amd64,linux/arm64 -f docker/api_logic_server_all.Dockerfile -t apilogicserver/api_logic_server_all:9.1.11 .
+# worked?
+
+# docker run -it --name api_logic_server --rm --net dev-network -p 5656:5656 -p 5002:5002 -v ${PWD}:/localhost apilogicserver/api_logic_server_all:latest
+# started on arm, built/ran sqlite
 
 # docker buildx create --use --name mybuilder node-amd64
 # --> existing instance for "mybuilder" but no append mode, specify --node to make changes for existing instances
