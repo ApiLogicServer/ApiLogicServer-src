@@ -1,6 +1,6 @@
 # docker build -f docker/api_logic_server_all.Dockerfile -t apilogicserver/api_logic_server_all --rm .
-# docker tag apilogicserver/api_logic_server_all apilogicserver/api_logic_server_all:9.01.11
-# docker push apilogicserver/api_logic_server_all:9.01.11
+# docker tag apilogicserver/api_logic_server_all apilogicserver/api_logic_server_all:9.01.12
+# docker push apilogicserver/api_logic_server_all:9.01.12
 
 
 # docker buildx create --name mybuilder
