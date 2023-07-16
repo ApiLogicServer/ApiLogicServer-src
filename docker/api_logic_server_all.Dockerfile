@@ -9,8 +9,13 @@
 # docker buildx create --use --name mybuilder node-amd64
 # --> existing instance for "mybuilder" but no append mode, specify --node to make changes for existing instances
 
+# docker context use default
+
+
 # docker buildx create --name mybuilder --append node-amd64
 # --> no such host (with or without --use)
+
+# docker buildx create --name mybuilder --append mybuilder
 
 # docker buildx create --name mybuilder --append --node node-amd64
 # --> invalid duplicate endpoint desktop-linux
@@ -19,9 +24,21 @@
 # --> Multiple platforms feature is currently not supported for docker driver
 
 # then, each build...
+# docker buildx build --platform linux/amd64,linux/arm64 -f docker/api_logic_server_all.Dockerfile -t apilogicserver/api_logic_server_all:9.1.11 .
+# lookup node-amd64: no such host
+
 # docker buildx build --platform linux/amd64,linux/arm64 -f docker/api_logic_server_all.Dockerfile --push -t apilogicserver/api_logic_server_all:9.1.1
 # this will run docker for each (10-11) arch
 # docker run -it --name api_logic_server --rm --net dev-network -p 5656:5656 -p 5002:5002 -v ${PWD}:/localhost apilogicserver/api_logic_server_all:9.1.1
+
+# ***************
+
+# docker buildx create --use --name buildx_instance
+# docker buildx build --platform linux/amd64,linux/arm64 -f docker/api_logic_server_all.Dockerfile -t apilogicserver/api_logic_server_all:9.1.11 .
+
+# https://learn.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server?view=sql-server-ver16&tabs=alpine18-install%2Calpine17-install%2Cdebian8-install%2Credhat7-13-install%2Crhel7-offline
+# from scratch?
+# docker run -it --name docker-test --rm python:3.11.4-slim-bullseye bash
 
 
 # cd ~/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/dockers
@@ -49,10 +66,31 @@ RUN apt-get install -y git
 
 RUN apt-get update
 RUN apt-get install -y curl gnupg
+
+
 RUN curl -sSL https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
 RUN curl -sSL https://packages.microsoft.com/config/debian/10/prod.list > /etc/apt/sources.list.d/mssql-release.list
 RUN apt-get update
-RUN ACCEPT_EULA=Y apt-get install -y msodbcsql18
+# RUN ACCEPT_EULA=Y apt-get install -y msodbcsql18
+
+# https://learn.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server?view=sql-server-ver16&tabs=alpine18-install%2Calpine17-install%2Cdebian8-install%2Credhat7-13-install%2Crhel7-offline
+#Download the desired package(s)
+RUN curl -O https://download.microsoft.com/download/1/f/f/1fffb537-26ab-4947-a46a-7a45c27f6f77/msodbcsql18_18.2.2.1-1_${TARGETARCH}.apk
+RUN curl -O https://download.microsoft.com/download/1/f/f/1fffb537-26ab-4947-a46a-7a45c27f6f77/mssql-tools18_18.2.1.1-1_${TARGETARCH}.apk
+
+
+#(Optional) Verify signature, if 'gpg' is missing install it using 'apk add gnupg':
+RUN curl -O https://download.microsoft.com/download/1/f/f/1fffb537-26ab-4947-a46a-7a45c27f6f77/msodbcsql18_18.2.2.1-1_${TARGETARCH}.sig
+RUN curl -O https://download.microsoft.com/download/1/f/f/1fffb537-26ab-4947-a46a-7a45c27f6f77/mssql-tools18_18.2.1.1-1_${TARGETARCH}.sig
+
+RUN curl https://packages.microsoft.com/keys/microsoft.asc  | gpg --import -
+# RUN gpg --verify msodbcsql18_18.2.2.1-1_${TARGETARCH}.sig msodbcsql18_18.2.1.1-1_${TARGETARCH}.apk
+# RUN gpg --verify mssql-tools18_18.2.1.1-1_${TARGETARCH}.sig mssql-tools18_18.2.1.1-1_${TARGETARCH}.apk
+
+
+#Install the package(s)
+RUN apk add --allow-untrusted msodbcsql18_18.2.2.1-1_${TARGETARCH}.apk
+RUN apk add --allow-untrusted mssql-tools18_18.2.1.1-1_${TARGETARCH}.apk
 
 RUN apt-get -y install unixodbc-dev \
   && apt-get -y install python3-pip \
