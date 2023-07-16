@@ -1,0 +1,118 @@
+val@Vals-MPB-14 dockers % docker image inspect 0b85a3d2b045
+[
+    {
+        "Id": "sha256:0b85a3d2b045624d301fcdf3fe6ca2708a3edf9bd41470a4037a04bf420ce241",
+        "RepoTags": [
+            "apilogicserver/api_logic_server_all:9.01.12",
+            "apilogicserver/api_logic_server_all:latest"
+        ],
+        "RepoDigests": [
+            "apilogicserver/api_logic_server_all@sha256:977ea7a3509de7d6984224a1ad80a58648e42853223f5c2f55c304549a237e06"
+        ],
+        "Parent": "",
+        "Comment": "buildkit.dockerfile.v0",
+        "Created": "2023-07-16T18:25:02.672798668Z",
+        "Container": "",
+        "ContainerConfig": {
+            "Hostname": "",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": null,
+            "Cmd": null,
+            "Image": "",
+            "Volumes": null,
+            "WorkingDir": "",
+            "Entrypoint": null,
+            "OnBuild": null,
+            "Labels": null
+        },
+        "DockerVersion": "",
+        "Author": "",
+        "Config": {
+            "Hostname": "",
+            "Domainname": "",
+            "User": "api_logic_server",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "LANG=C.UTF-8",
+                "GPG_KEY=A035C8C19219BA821ECEA86B64E628F8D684696D",
+                "PYTHON_VERSION=3.11.4",
+                "PYTHON_PIP_VERSION=23.1.2",
+                "PYTHON_SETUPTOOLS_VERSION=65.5.1",
+                "PYTHON_GET_PIP_URL=https://github.com/pypa/get-pip/raw/0d8570dc44796f4369b652222cf176b3db6ac70e/public/get-pip.py",
+                "PYTHON_GET_PIP_SHA256=96461deced5c2a487ddc65207ec5a9cffeca0d34e7af7ea1afc470ff0d746207",
+                "APILOGICSERVER_RUNNING=DOCKER",
+                "APILOGICSERVER_FROM=python:3.11.4-slim-bullseye"
+            ],
+            "Cmd": [
+                "bash"
+            ],
+            "ArgsEscaped": true,
+            "Image": "",
+            "Volumes": null,
+            "WorkingDir": "/home/api_logic_server",
+            "Entrypoint": null,
+            "OnBuild": null,
+            "Labels": {
+                "ApiLogicServer-9.00.14": "arm64"
+            }
+        },
+        "Architecture": "arm64",
+        "Variant": "v8",
+        "Os": "linux",
+        "Size": 823316901,
+        "VirtualSize": 823316901,
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/l0pgz1yytdlgfpmkkdbrbvg9p/diff:/var/lib/docker/overlay2/ipo0i1507itodygmw5o8sdf7y/diff:/var/lib/docker/overlay2/v75kpyi9nmcv6mwx6u4x3meyl/diff:/var/lib/docker/overlay2/qmvw7g356kn3a1kc0hdcov61x/diff:/var/lib/docker/overlay2/ch5533aw7c6bf9te5c8cr5dpi/diff:/var/lib/docker/overlay2/ds84c6xhodgec0d3ukz8edteb/diff:/var/lib/docker/overlay2/g9adrna779inra0qlafnb3h36/diff:/var/lib/docker/overlay2/wqz1ttpc5biv1j73dcxod7lrz/diff:/var/lib/docker/overlay2/mmb9yp33qirzd6sdpr41waykm/diff:/var/lib/docker/overlay2/z4czaz0z2k2s7ffgcl6nzlt1g/diff:/var/lib/docker/overlay2/r674log7115kciqiz5f1oc2q6/diff:/var/lib/docker/overlay2/20wtvfnny2bjpkyndgx69tz6f/diff:/var/lib/docker/overlay2/n2ybdokoafawavurvx896kyy9/diff:/var/lib/docker/overlay2/lnh6xadmwna5bdh06cmk42jdf/diff:/var/lib/docker/overlay2/ry44zpqdt9lsiqcnyw8hs4prr/diff:/var/lib/docker/overlay2/swp3pdhhux0m9hfkwm5542vhv/diff:/var/lib/docker/overlay2/845178b476b4dc9b78a53a2f63a080770334bd7a52214d1ae21bdd3ca48ff649/diff:/var/lib/docker/overlay2/3a572861253674fe28af7f3c67925e61b00b58ae5a2ae0fe1f0596420e819b8a/diff:/var/lib/docker/overlay2/ddb8b869c8f642c0417782857594e58c1c205f5272febf6f9162976d1a6effe7/diff:/var/lib/docker/overlay2/0755edb64e8dd189c8fb5e0a1f62b97d2996a3596df66261f36dbab4be8b897a/diff:/var/lib/docker/overlay2/64baadd091ce6026514206df7c0a30e2cbe8a003c50ca2742db5cf9deaba7b61/diff",
+                "MergedDir": "/var/lib/docker/overlay2/5lne5rm01abo5ktjh5uvimu7b/merged",
+                "UpperDir": "/var/lib/docker/overlay2/5lne5rm01abo5ktjh5uvimu7b/diff",
+                "WorkDir": "/var/lib/docker/overlay2/5lne5rm01abo5ktjh5uvimu7b/work"
+            },
+            "Name": "overlay2"
+        },
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:e04fc77e4dd676d751b616be4b41b61f6d97e2bb0365de3940a8a9a4febd3fad",
+                "sha256:2caad429798be11271d15aacb365421c7cad6bf054ceb816be51837574c9de83",
+                "sha256:e720129779bc1b84c3cb9bfa1684121b5f9643eb18fda409232764e32aba033b",
+                "sha256:73d88f1e513911a9e395f0a5b39a5ba1d92f24147075d57516c07291fe46ffec",
+                "sha256:7f0ab6113e113942468e582ea486d6c71689fb5df56bbfa43dfc32afc5361cdf",
+                "sha256:d5b79f93ec6d82a9ca2ff7f7cf291860a672d9e342889f68297f10416fa687bf",
+                "sha256:333feec2fc9512c70aa99530648d231e34188e3ac0017cc0897ddc55c41572df",
+                "sha256:be30f4dd0dd5ea63217e1cc7ec3ad5615d48420e12db5b74bda8f76c3f67e8bd",
+                "sha256:1bb1b54ee61daf2724d83bb499c0144d0eb9c3f7ac47d900ae671b7443956e59",
+                "sha256:e82636052a7dbbfcae963c65cef9d6ba5f72ab1473cfb2a5e997e8a306840559",
+                "sha256:df18aacb815f3953155cc61a9d256acdfd1a778d0e31d5f752e34a5f99baa0e6",
+                "sha256:d1362878acee2f4f18877340929cd7ef9d5795302d099f68644f21a0fa85a577",
+                "sha256:5717f936e9e4987ae5c6cd9ba775d43e70e465fed0dda06b27efa392c341816f",
+                "sha256:f45de4f6617d6c72a7ea28400a0357948f59d88c40ee5c6c486b450e1e5a62c2",
+                "sha256:4d49677997d36666b34527c9fb62125d4367e3db3985ec6ea2cb251bcbeb8824",
+                "sha256:2f94ea750dc45a71d26ea1d4568ac1e8e1e75ab444cfe134f910acdf598b4c22",
+                "sha256:ecea0a7f2885aa9d0d8b69324cee9611f57b6c614eb8774c9e24be37238fbb54",
+                "sha256:5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+                "sha256:887720376864b3a1f89892fbdfb89aa1b69445913d0a641c9262fe85ad46469d",
+                "sha256:197398c30487e4e05479965e888f657a3c7a9681641821c75ece8714691cbb6d",
+                "sha256:f3a44fbba5a2b0b9a9ca403e88a1d7f13d09cc1f621228df5a9d942e61638102",
+                "sha256:9bc62d3f0aaf5e4e9c470125695748d9b2f7455da23eb4cd4c5925a24376882c"
+            ]
+        },
+        "Metadata": {
+            "LastTagTime": "2023-07-16T19:19:01.338176877Z"
+        }
+    }
+]
+val@Vals-MPB-14 dockers % 
