@@ -33,7 +33,7 @@ from config import Args
 from security.authentication_provider.abstract_authentication_provider import Abstract_Authentication_Provider
 
 authentication_provider : Abstract_Authentication_Provider = config.Config.SECURITY_PROVIDER  # type: ignore
-
+# note: direct config access is disparaged, but used since args not set up when this imported
 
 security_logger = logging.getLogger(__name__)
 

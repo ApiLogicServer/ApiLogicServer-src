@@ -244,16 +244,9 @@ class Args():
 
 
     @property
-    def security_provider(self) -> bool:
-        """ is security enabled.  Stored as string, returned as bool """
-        return_security = self.flask_app.config["SECURITY_ENABLED"]
-        if isinstance(return_security, str):
-            security = return_security.lower()  # type: ignore
-            if security in ["false", "no"]:  # NO SEC
-                return_security = False
-            else:
-                return_security = True
-        return return_security
+    def security_provider(self):
+        """ class for auth provider (unused - see auth_provider) """
+        return self.flask_app.config["SECURITY_PROVIDER"]
 
     
     @security_provider.setter
@@ -263,7 +256,7 @@ class Args():
 
     @property
     def opt_locking(self) -> str:
-        """ is security enabled () """
+        """ values: ignored, optional, required """
         return self.flask_app.config["OPT_LOCKING"]
 
     

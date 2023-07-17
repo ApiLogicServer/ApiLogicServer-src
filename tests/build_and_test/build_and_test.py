@@ -397,48 +397,52 @@ def delete_build_directories(install_api_logic_server_path):
         print(f"Unable to create directory {install_api_logic_server_path} -- Windows dir exists?")
 
 def docker_creation_tests(api_logic_server_tests_path):
-    """ start docker, cp docker_coammands.sh, create projects at dev/servers/install/ApiLogicServer/dockers """
     """
-        Yay!
-        docker run -it --name api_logic_server --rm --net dev-network -p 5656:5656 -p 5002:5002 -v /Users/val/dev/servers/install/ApiLogicServer/dockers:/localhost apilogicserver/arm-slim sh -c "export PATH=$PATH:/home/api_logic_server/bin && /bin/sh /localhost/docker-commands.sh"
+    Tests *local* docker - multi-arch docker builds AND pushes, so we test with local
+    
+        docker -> apilogicserver/api_logic_server_local (preserving x to test codespaces with tutorial)
 
-        this runs:
-        docker run -it --name api_logic_server --rm --net dev-network -p 5656:5656 -p 5002:5002 -v /Users/val/dev/servers/install/ApiLogicServer/dockers:/localhost apilogicserver/arm-slim /home/api_logic_server/bin/ApiLogicServer welcome
-        docker run -it --name api_logic_server --rm --net dev-network -p 5656:5656 -p 5002:5002 -v /Users/val/dev/servers/install/ApiLogicServer/dockers:/localhost apilogicserver/arm-slim ls /localhost/
+    1. Build *local* docker image
+
+            run_command docker build -f docker/api_logic_server_all.Dockerfile -t apilogicserver/api_logic_server_local --rm .
+    
+    2. Then, use that to create 2 projects at dev/servers/install/ApiLogicServer/dockers
+
+            docker run -it --name api_logic_server_local --rm --net dev-network -p 5656:5656 -p 5002:5002 -v ~/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/dockers:/localhost apilogicserver/api_logic_server_local sh -c "export PATH=$PATH:/home/api_logic_server/bin && /bin/sh /localhost/docker-commands.sh"
+
+    3. Ensure hello-world (manual??)
+
+            docker run -it --name api_logic_server --rm --net dev-network -p 5656:5656 -p 5002:5002 -v /Users/val/dev/servers/install/ApiLogicServer/dockers:/localhost apilogicserver/api_logic_server_local /home/api_logic_server/bin/ApiLogicServer welcome
+            docker run -it --name api_logic_server --rm --net dev-network -p 5656:5656 -p 5002:5002 -v /Users/val/dev/servers/install/ApiLogicServer/dockers:/localhost apilogicserver/api_logic_server_local ls /localhost/
+    
+    Args:
+        api_logic_server_tests_path (_type_): _description_
     """
-    """
-    run_command docker build -f docker/api_logic_server.Dockerfile -t apilogicserver/api_logic_server --rm .
-    """
+
     import platform
     machine = platform.machine()
     api_logic_server_home_path = api_logic_server_tests_path.parent
-    build_cmd = 'docker build -f docker/api_logic_server_arm.Dockerfile -t apilogicserver/api_logic_server_arm --rm .'
-    if machine != "arm64":
-        build_cmd = 'docker build -f docker/api_logic_server.Dockerfile -t apilogicserver/api_logic_server --rm .'
+    build_cmd = 'run_command docker build -f docker/api_logic_server_all.Dockerfile -t apilogicserver/api_logic_server_local --rm .'
+    print(f'\n\ndocker_creation_tests: 1. Create local docker image: {build_cmd}')
     build_container = run_command(build_cmd,
         cwd=api_logic_server_home_path,
         msg=f'\nBuild ApiLogicServer Docker Container at: {str(api_logic_server_home_path)}')
     print('built container (FIXME, not tested return code!)')
+
     src = api_logic_server_tests_path.joinpath('creation_tests').joinpath('docker-commands.sh')
     dest = get_servers_build_and_test_path().joinpath('ApiLogicServer').joinpath('dockers')
     shutil.copy(src, dest)
     build_projects_cmd = (
-        f'docker run -it --name api_logic_server --rm '
+        f'docker run -it --name api_logic_server_local --rm '
         f'--net dev-network -p 5656:5656 -p 5002:5002 ' 
         f'-v {str(dest)}:/localhost apilogicserver/api_logic_server_arm ' 
         f'sh -c "export PATH=$PATH:/home/api_logic_server/bin && /bin/sh /localhost/docker-commands.sh"'
     )
-    if machine != "arm64":  # amd
-        build_projects_cmd = (
-            f'docker run -it --name api_logic_server --rm '
-            f'--net dev-network -p 5656:5656 -p 5002:5002 ' 
-            f'-v /Users/val/dev/servers/install/ApiLogicServer/dockers:/localhost apilogicserver/api_logic_server ' 
-            f'sh -c "export PATH=$PATH:/home/api_logic_server/bin && /bin/sh /localhost/docker-commands.sh"'
-        )
+    print(f'\n\ndocker_creation_tests: 2. build projects: {build_projects_cmd}')
     build_projects = run_command(build_projects_cmd,
         cwd=api_logic_server_home_path,
         msg=f'\nBuilding projects from Docker container at: {str(api_logic_server_home_path)}')
-    print('built projects from container')
+    print('ndocker_creation_tests: Built projects from container\n\n')
 
 def validate_nw(api_logic_server_install_path, set_venv):
     """

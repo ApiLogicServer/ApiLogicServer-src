@@ -343,7 +343,7 @@ def create_project_with_nw_samples(project, msg: str) -> str:
         create_utils.replace_string_in_file(search_for="replace_opt_locking_attr",
                             replace_with=f'{project.opt_locking_attr}',
                             in_file=f'{project.project_directory}/api/system/opt_locking/opt_locking.py')
-        do_fix_docker_for_vscode_dockerfile = True
+        do_fix_docker_for_vscode_dockerfile = False  # not required - multi-arch docker
         if do_fix_docker_for_vscode_dockerfile:
             # print(f'\n> Created for platform.machine(): {platform.machine()}\n')
             if platform.machine() in('arm64', 'aarch64'):  #  in ("i386", "AMD64", "x86_64")
