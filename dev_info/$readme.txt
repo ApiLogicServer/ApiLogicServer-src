@@ -2,14 +2,17 @@ Breaking changes
   Updated http_type?
 
 release?
-  Tyler's expose db uri - yes, and remove all Config. references (eg, security)
+  Tyler's expose db uri - yes
+  
+  Bug: remove all Config. references (eg, security)
     explore security_enabled, and provider, in config
+
   TP
-    proxy port for swagger
-    
+    proxy port for swagger - will add client_url arg to safrs
+
   Tyler verb auth?
   TC: if I set APILOGICPROJECT_PORT as an env var and also have it set in env.list which one takes precedence?
-  Remove docker - apilogicserver/api_logic_server_arm (unified target)
+  x Remove docker - apilogicserver/api_logic_server_arm (unified target)
   x Codespaces ready -> devcontainer loaded
   x Multi-Arch dockers
   x log: 0 authentication tables loaded
