@@ -2,9 +2,11 @@ Updated http_type
 
 release?
   Tyler's expose db uri
-  TP proxy port
-  Multi-Arch dockers
-  log: 0 authentication tables loaded
+  TP proxy port for swagger
+  x Codespaces ready -> devcontainer loaded
+  x Multi-Arch dockers
+  x log: 0 authentication tables loaded
+
 
 nw_readme.md -> README.md
     * remove internal IDE links
