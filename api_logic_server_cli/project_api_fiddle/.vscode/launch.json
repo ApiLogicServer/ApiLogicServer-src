@@ -29,13 +29,15 @@
         {
             "name": "2. Learn JSON_API using API Logic Server",
             "type": "python",
-            "env": {"APILOGICPROJECT": "False"},
+            "env": {
+                "APILOGICPROJECT": "False", 
+                "SECURITY_ENABLED": "False",
+            },
             "request": "launch",
             "cwd": "${workspaceFolder}/2. Learn JSON_API using API Logic Server",
             "program": "api_logic_server_run.py",
             "redirectOutput": true,
             "justMyCode": false,
-            "env": {"SECURITY_ENABLED": "False"},
             "args": ["--flask_host=localhost", "--port=5656", "--swagger_host=localhost", "--verbose=False"],
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
@@ -43,6 +45,12 @@
         {
             "name": "2a. JSON_API With Security",
             "type": "python",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "True", 
+                "PYTHONHASHSEED": "0", 
+                "OPT_LOCKING": "optional"
+            },
             "request": "launch",
             "cwd": "${workspaceFolder}/2. Learn JSON_API using API Logic Server",
             "program": "api_logic_server_run.py",
@@ -117,7 +125,7 @@
             "name": "Behave Run",
             "type": "python",
             "request": "launch",
-            "cwd": "${workspaceFolder}/3. ApiLogicProject_Logic/test/api_logic_server_behave",
+            "cwd": "${workspaceFolder}/2. Learn JSON_API using API Logic Server/test/api_logic_server_behave",
             "program": "behave_run.py",
             "redirectOutput": true,
             "args": [ "--outfile=logs/behave.log"],
@@ -129,7 +137,7 @@
             "name": "Behave Scenario",
             "type": "python",
             "request": "launch",
-            "cwd": "${workspaceFolder}/3. ApiLogicProject_Logic/test/api_logic_server_behave",
+            "cwd": "${workspaceFolder}/2. Learn JSON_API using API Logic Server/test/api_logic_server_behave",
             "program": "behave_run.py",
             "redirectOutput": true,
             "args": [ "--outfile=logs/behave.log",
@@ -142,7 +150,7 @@
             "name": "Behave Logic Report",
             "type": "python",
             "request": "launch",
-            "cwd": "${workspaceFolder}/3. ApiLogicProject_Logic/test/api_logic_server_behave",
+            "cwd": "${workspaceFolder}/2. Learn JSON_API using API Logic Server/test/api_logic_server_behave",
             "program": "behave_logic_report.py",
             "redirectOutput": true,
             "justMyCode": false,            
