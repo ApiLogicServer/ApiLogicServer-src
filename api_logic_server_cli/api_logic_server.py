@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "09.01.14"
+__version__ = "09.01.16"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t07/16/2023 - 09.01.14: Issue 01 - arch-based devcontainer creation, behave msgs, win rpt, env objs, dockerbldx, client_uri \n"\
+    "\t07/17/2023 - 09.01.16: Issue 01 - arch-based .devcontainer, behave msgs, win rpt, env objs > config, dockerbldx, client_uri \n"\
     "\t07/04/2023 - 09.01.00: SQLAlchemy 2 typed-relns/attrs, Docker: Python 3.11.4 & odbc18 \n"\
     "\t06/24/2023 - 09.00.01: PyMysql \n"\
     "\t06/22/2023 - 09.00.00: Optimistic Locking, safrs 310, SQLAlchemy 2.0.15 \n"\
@@ -488,7 +488,7 @@ def final_project_fixup(msg, project) -> str:
         pass
     else:
         log.debug(f' b.   Update api_logic_server_run.py with '
-              f'project_name={project.project_name} and api_name, host, port')
+            f'project_name={project.project_name} and api_name, host, port')
         
         update_api_logic_server_run(project)
 
@@ -1146,7 +1146,7 @@ from database import <project.bind_key>_models
                 log.info("\nRun API Logic Server:")
                 if os.getenv('CODESPACES'):
                     # log.debug(f'  Add port 5656, with Public visibility') - automated in .devcontainer.json
-                    log.info(f'  Execute using Launch Configuration "ApiLogicServer"')
+                    log.info('  Execute using Launch Configuration "ApiLogicServer"')
                 else:
                     log.info(f'  cd {self.project_name};  python api_logic_server_run.py')
         if self.command.startswith("add_"):

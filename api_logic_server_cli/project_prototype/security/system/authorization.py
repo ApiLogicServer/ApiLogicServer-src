@@ -21,11 +21,10 @@ from logic_bank.exec_row_logic.logic_row import LogicRow
 import logging, sys
 from safrs.errors import JsonapiError
 from http import HTTPStatus
-from config import Config
 from flask_jwt_extended import current_user
 
-from config import Config
-authentication_provider = Config.SECURITY_PROVIDER
+from config import Args
+authentication_provider = Args.security_provider
 
 security_logger = logging.getLogger(__name__)
 
@@ -152,10 +151,10 @@ class Grant:
         
         
         def current_user():
-            return Security.current_user() if Config.SECURITY_ENABLED else None
+            return Security.current_user() if Args.security_enabled else None
         
     def update_CRUD(self):
-        if self.class_name in ["ALL", "A"]:
+        if self.class_name in ["ALL", "A", "CRUD"]:
             self._updateCRUD(True, True, True, True)
         elif self.class_name in ["None", "N"]:
             self._updateCRUD(False, False, False, False)
@@ -191,12 +190,12 @@ class Grant:
 
         u2 is a manager and a tenant
         '''
-        user = Security.current_user()
         
-        if not Config.SECURITY_ENABLED or not user:
+        if not Args.security_enabled:
             return
         
-       
+        user = Security.current_user()
+        
         can_read = False
         can_insert = False
         can_delete = False
@@ -275,7 +274,7 @@ class Grant:
         
             self.logic_row = logic_row
         
-            if Config.SECURITY_ENABLED: 
+            if Args.security_enabled: 
                 entity_name = self.logic_row.name 
                 #select is handled by orm_execution_state
                 _event_state = ""
@@ -292,8 +291,8 @@ class Grant:
 def receive_do_orm_execute(orm_execute_state):
     "listen for the 'do_orm_execute' event from SQLAlchemy"
     if (
-        Config.SECURITY_ENABLED
-        and orm_execute_state.is_select 
+        Args.security_enabled
+        and orm_execute_state.is_select
         and not orm_execute_state.is_column_load
         and not orm_execute_state.is_relationship_load
     ):            
@@ -304,7 +303,5 @@ def receive_do_orm_execute(orm_execute_state):
             security_logger.debug('No grants - avoid recursion on User table')
         elif  session._proxied._flushing:  # type: ignore
             security_logger.debug('No grants during logic processing')
-        else:
-            #security_logger.debug('receive_do_orm_execute alive')
-            #security_logger.info(f"ORM Listener table: {table_name} is_select: {orm_execute_state.is_select}")    
+        else:   
             Grant.exec_grants(table_name, "is_select" , orm_execute_state)

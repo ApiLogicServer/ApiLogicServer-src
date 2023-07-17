@@ -1,8 +1,15 @@
-Updated http_type
+Breaking changes
+  Updated http_type?
 
 release?
-  Tyler's expose db uri
-  TP proxy port for swagger
+  Tyler's expose db uri - yes, and remove all Config. references (eg, security)
+    explore security_enabled, and provider, in config
+  TP
+    proxy port for swagger
+    
+  Tyler verb auth?
+  TC: if I set APILOGICPROJECT_PORT as an env var and also have it set in env.list which one takes precedence?
+  Remove docker - apilogicserver/api_logic_server_arm (unified target)
   x Codespaces ready -> devcontainer loaded
   x Multi-Arch dockers
   x log: 0 authentication tables loaded
@@ -12,43 +19,25 @@ nw_readme.md -> README.md
     * remove internal IDE links
     just a note
 
-git 120af3a
-https://stackoverflow.com/questions/53653083/how-to-correctly-set-pythonpath-for-visual-studio-code
-path_test = True
-if path_test:
-    current_path = Path(__file__)
-    cli_path = Path(str(current_path.parent.absolute()))
-    api_logic_server_path_str = str(cli_path.parent.absolute())
-    sys.path.append(api_logic_server_path_str)
-    # project_dir = str(api_logic_server_path)
-    os.chdir(api_logic_server_path_str)  # so admin app can find images, code
-
-https://raw.githubusercontent.com/valhuber/ApiLogicServer/main/images/docker/VSCode/nw-readme/cust-api.png
 
 https://github.com/community/community/discussions/30205
 
 
+
 Creating the ApiLogicServer dev environment
+===========================================
+
 
     Directory Presumption
     ---------------------
 
-
-    dev
-    |-- ApiLogicServer (this project, with ApiLogicServer/venv)
-    |-- safrs-react-admin
-    |-- servers
+    See https://apilogicserver.github.io/Docs/Architecture-Internals/#how-to-install-it
 
 
     Creating ApiLogicServer
     -----------------------
-    cd dev
-    git clone https://github.com/valhuber/ApiLogicServer.git
-    python3 -m venv venv       # may require python -m venv venv
-    source venv/bin/activate   # windows: venv\Scripts\activate
-    pip install -r requirements.txt
-    code ApiLogicServer
-        use launch configs to create servers/api_logic_server, and then run it
+
+    see link above
 
 
     Creating safrs-react-admin (only required if you are changing it)
