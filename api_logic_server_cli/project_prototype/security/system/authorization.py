@@ -21,8 +21,8 @@ import logging, sys
 
 from flask_jwt_extended import current_user
 
-from config import Config
-authentication_provider = Config.SECURITY_PROVIDER
+from config import Args
+authentication_provider = Args.security_provider
 
 security_logger = logging.getLogger(__name__)
 
@@ -147,7 +147,7 @@ class Grant:
 def receive_do_orm_execute(orm_execute_state):
     "listen for the 'do_orm_execute' event from SQLAlchemy"
     if (
-        Config.SECURITY_ENABLED
+        Args.security_enabled
         and orm_execute_state.is_select
         and not orm_execute_state.is_column_load
         and not orm_execute_state.is_relationship_load

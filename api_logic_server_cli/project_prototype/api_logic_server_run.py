@@ -31,7 +31,6 @@ except:
 from flask_sqlalchemy import SQLAlchemy
 import json
 from pathlib import Path
-from config import Config
 from config import Args
 
 def is_docker() -> bool:
@@ -119,7 +118,7 @@ class ValidationErrorExt(ValidationError):
 #   - Setup API, Logic, Security, Optimistic Locking 
 # ==========================================================
 
-def api_logic_server_setup(flask_app, args):
+def api_logic_server_setup(flask_app: Flask, args: Args):
     """
     API Logic Server Setup
 
@@ -210,12 +209,12 @@ def api_logic_server_setup(flask_app, args):
             app_logger.info(f'Declare   API - api/expose_api_models, endpoint for each table on {args.swagger_host}:{args.swagger_port}, customizing...')
             customize_api.expose_services(flask_app, safrs_api, project_dir, swagger_host=args.swagger_host, PORT=args.port)  # custom services
 
-            if Config.SECURITY_ENABLED:
+            if args.security_enabled:
                 configure_auth(flask_app, database, method_decorators)
 
             multi_db.expose_db_apis(flask_app, session, safrs_api, method_decorators)
 
-            if Config.SECURITY_ENABLED:
+            if args.security_enabled:
                 from security import declare_security  # activate security
                 app_logger.info("..declare security - security/declare_security.py"
                     # not accurate: + f' -- {len(database.authentication_models.metadata.tables)}'
@@ -223,7 +222,7 @@ def api_logic_server_setup(flask_app, args):
 
             from api.system.opt_locking import opt_locking
             from config import OptLocking
-            if Config.OPT_LOCKING == OptLocking.IGNORED.value:
+            if args.opt_locking == OptLocking.IGNORED.value:
                 app_logger.info("\nOptimistic Locking: ignored")
             else:
                 opt_locking.opt_locking_setup(session)
@@ -248,7 +247,7 @@ flask_app.config.from_object("config.Config")
 app_logger.debug(f"\nConfig args: \n{args}")                    # config file (e.g., db uri's)
 
 args.get_cli_args(dunder_name=__name__, args=args)
-app_logger.debug(f"\nCLI args: \n{args}")
+app_logger.debug(f"\nCLI args: \n{args}")                       # api_logic_server_run cl args
 
 flask_app.config.from_prefixed_env(prefix="APILOGICPROJECT")    # env overrides (e.g., docker)
 app_logger.debug(f"\nENV args: \n{args}\n\n")

@@ -16,7 +16,7 @@ from safrs.errors import JsonapiError
 from http import HTTPStatus
 
 from config import OptLocking
-from config import Config
+from config import Args as args
 
 logger = logging.getLogger(__name__)
 
@@ -133,7 +133,7 @@ def opt_lock_patch(logic_row: LogicRow):
             logger.info(f"optimistic lock failure - as-read vs current: {as_read_checksum} vs {old_row_checksum}")
             raise ALSError(message="Sorry, row altered by another user - please note changes, cancel and retry")
     else:
-        if Config.OPT_LOCKING == OptLocking.OPTIONAL.value:
+        if args.opt_locking == OptLocking.OPTIONAL.value:
             logger.debug(f'No CheckSum -- ok, configured as optional')
         else:
             raise ALSError("Optimistic Locking error - required CheckSum not present")

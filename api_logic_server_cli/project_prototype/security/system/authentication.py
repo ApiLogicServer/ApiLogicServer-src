@@ -29,9 +29,11 @@ from flask_jwt_extended import create_access_token
 from datetime import timedelta
 from functools import wraps
 import config
+from config import Args
 from security.authentication_provider.abstract_authentication_provider import Abstract_Authentication_Provider
 
 authentication_provider : Abstract_Authentication_Provider = config.Config.SECURITY_PROVIDER  # type: ignore
+
 
 security_logger = logging.getLogger(__name__)
 

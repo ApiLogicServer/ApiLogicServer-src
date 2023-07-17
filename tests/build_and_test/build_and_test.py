@@ -418,7 +418,7 @@ def docker_creation_tests(api_logic_server_tests_path):
     build_container = run_command(build_cmd,
         cwd=api_logic_server_home_path,
         msg=f'\nBuild ApiLogicServer Docker Container at: {str(api_logic_server_home_path)}')
-    print('built container')
+    print('built container (FIXME, not tested return code!)')
     src = api_logic_server_tests_path.joinpath('creation_tests').joinpath('docker-commands.sh')
     dest = get_servers_build_and_test_path().joinpath('ApiLogicServer').joinpath('dockers')
     shutil.copy(src, dest)
