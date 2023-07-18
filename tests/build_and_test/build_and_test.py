@@ -442,7 +442,10 @@ def docker_creation_tests(api_logic_server_tests_path):
     build_projects = run_command(build_projects_cmd,
         cwd=api_logic_server_home_path,
         msg=f'\nBuilding projects from Docker container at: {str(api_logic_server_home_path)}')
-    print('ndocker_creation_tests: Built projects from container\n\n')
+    print('\n\ndocker_creation_tests: Built projects from container\n\n')
+    print('==> Verify manually - run sqlserver')
+    print('\n\n')
+
 
 def validate_nw(api_logic_server_install_path, set_venv):
     """
