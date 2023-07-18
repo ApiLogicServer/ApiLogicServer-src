@@ -4,7 +4,7 @@ Breaking changes
 release?
   Tyler's expose db uri - yes
   
-  Bug: remove all Config. references (eg, security)
+  x Bug: remove all Config. references (eg, security)
     explore security_enabled, and provider, in config
 
   TP
