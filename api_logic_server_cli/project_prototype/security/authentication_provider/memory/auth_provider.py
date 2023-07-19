@@ -134,14 +134,6 @@ m = add_user("mary", 5, "p")
 m_role_list = [DataClassUserRole(role_name="manager"), DataClassUserRole(role_name="tenant")]
 m.UserRoleList = c1_role_list
 
-m = add_user("ro", 6, "p")
-m_role_list = [DataClassUserRole(role_name="readonly"]
-m.UserRoleList = c1_role_list
-
-m = add_user("full", 7, "p")
-m_role_list = [DataClassUserRole(role_name="full")]
-m.UserRoleList = c1_role_list
-
 sam_row = Authentication_Provider.get_user("sam", "")
 print(f'Sam: {sam_row}')
 

@@ -36,7 +36,6 @@ def declare_logic():
             if logic_row.ins_upd_dlt == "ins" and hasattr(row, "CreatedOn"):
                 row.CreatedOn = datetime.datetime.now()
                 logic_row.log("early_row_event_all_classes - handle_all sets 'Created_on"'')
-          Grant.process_updates(logic_row=logic_row)
     Rule.early_row_event_all_classes(early_row_event_all_classes=handle_all)
 
 
