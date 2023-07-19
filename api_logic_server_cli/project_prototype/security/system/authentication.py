@@ -22,6 +22,7 @@ def login():
 
 import logging, sys
 from flask import Flask
+from flask_cors import CORS, cross_origin
 from flask import jsonify, request
 from flask_jwt_extended import JWTManager
 from flask_jwt_extended import jwt_required as jwt_required_ori
@@ -68,7 +69,8 @@ def configure_auth(flask_app: Flask, database: object, method_decorators: list[o
     flask_app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=30)
     jwt = JWTManager(flask_app)
     
-    @flask_app.route("/api/auth/login", methods=["POST"])
+    @flask_app.route("/api/auth/login", methods=['POST','OPTIONS'])
+    @cross_origin(supports_credentials=False)
     def login():
         """
         Post id/password, returns token to be placed in header of subsequent requests.
@@ -76,6 +78,9 @@ def configure_auth(flask_app: Flask, database: object, method_decorators: list[o
         Returns:
             string: access token
         """
+        if request.method == 'OPTIONS':
+            return jsonify(success=True)
+
         username = request.json.get("username", None)
         password = request.json.get("password", None)
 
