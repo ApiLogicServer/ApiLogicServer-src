@@ -43,12 +43,6 @@ Grant(  on_entity = models.Category,    # u2 has both roles - should return clie
         can_delete=False,
         filter = lambda : models.Category.Id == 5)
 
-Grant(  on_entity = models.Customer,    # user ro has only read only access and should only return 1 Customer Row - override update
-        to_role = Roles.readonly,
-        can_update=True,
-        can_delete=False,
-        filter = lambda: models.Customer.Id == 'ALFKI')
-
 Grant(  on_entity = models.Customer,    # user full has full access - cannot delete customer
         can_delete=False,
         to_role = Roles.fullaccess)

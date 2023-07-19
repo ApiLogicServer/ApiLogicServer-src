@@ -21,6 +21,11 @@ from logic_bank.exec_row_logic.logic_row import LogicRow
 import logging, sys
 from safrs.errors import JsonapiError
 from http import HTTPStatus
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> fc01c21 (merge latest security)
 from flask_jwt_extended import current_user
 
 from config import Args
@@ -97,7 +102,11 @@ class Grant:
                 can_update = False,
                 can_insert = False,
                 can_read = False,
+<<<<<<< HEAD
                 filter = models.Category.Id == Security.current_user().client_id)  # User table attributes 
+=======
+                filter = models.Category.Id == Security.current_user().client_id)  # User table attributes TODO
+>>>>>>> fc01c21 (merge latest security)
         Args
         ----
             :on_entity: a class from models.py
@@ -154,7 +163,11 @@ class Grant:
             return Security.current_user() if Args.security_enabled else None
         
     def update_CRUD(self):
+<<<<<<< HEAD
         if self.class_name in ["ALL", "A", "CRUD"]:
+=======
+        if self.class_name in ["ALL", "A"]:
+>>>>>>> fc01c21 (merge latest security)
             self._updateCRUD(True, True, True, True)
         elif self.class_name in ["None", "N"]:
             self._updateCRUD(False, False, False, False)
@@ -190,6 +203,10 @@ class Grant:
 
         u2 is a manager and a tenant
         '''
+<<<<<<< HEAD
+=======
+       
+>>>>>>> fc01c21 (merge latest security)
         
         if not Args.security_enabled:
             return
@@ -303,5 +320,10 @@ def receive_do_orm_execute(orm_execute_state):
             security_logger.debug('No grants - avoid recursion on User table')
         elif  session._proxied._flushing:  # type: ignore
             security_logger.debug('No grants during logic processing')
+<<<<<<< HEAD
         else:   
+=======
+        else:
+            #security_logger.info(f"ORM Listener table: {table_name} is_select: {orm_execute_state.is_select}")    
+>>>>>>> fc01c21 (merge latest security)
             Grant.exec_grants(table_name, "is_select" , orm_execute_state)
