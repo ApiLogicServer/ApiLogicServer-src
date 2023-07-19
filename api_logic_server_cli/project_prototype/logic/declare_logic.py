@@ -37,9 +37,12 @@ def declare_logic():
             if logic_row.ins_upd_dlt == "ins" and hasattr(row, "CreatedOn"):
                 row.CreatedOn = datetime.datetime.now()
                 logic_row.log("early_row_event_all_classes - handle_all sets 'Created_on"'')
+<<<<<<< HEAD
 
         Grant.process_updates(logic_row=logic_row)
 
+=======
+>>>>>>> c72778a (Revert "merge latest security")
     Rule.early_row_event_all_classes(early_row_event_all_classes=handle_all)
 
 

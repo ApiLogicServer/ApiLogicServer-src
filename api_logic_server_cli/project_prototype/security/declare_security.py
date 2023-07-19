@@ -5,7 +5,7 @@ import safrs
 import logging
 
 """
-Illustrates declarative security - role-based authorization to database rows..
+Illustrates declarative security - role-based authorization to database rows.
 
 * See [documentation](https://apilogicserver.github.io/Docs/Security-Overview/)
 
@@ -33,10 +33,11 @@ Grant(on_entity="R",to_role=Roles.readonly)
 Grant(on_entity="RU",to_role=Roles.tenant)
 Grant(on_entity="N",to_role=Roles.renter)
 
-Grant(  on_entity = models.Category    # illustrate multi-tenant - u1 shows only row 1
-        , to_role = Roles.tenant
-        , can_delete=False
-        , filter = lambda :  models.Category.Client_id == Security.current_user().client_id)  # User table attributes
+#Grant to role for specific model entity with row filter
+Grant(  on_entity = models.Category,    # illustrate multi-tenant - u1 shows only row 1
+        to_role = Roles.tenant,
+        can_delete=False,
+        filter =  lambda: models.Category.Client_id == Security.current_user().client_id)  # User table attributes
 
 Grant(  on_entity = models.Category,    # u2 has both roles - should return client_id 2 (2, 3, 4), and 5
         to_role = Roles.manager,
@@ -56,3 +57,4 @@ Grant(  on_entity = models.Customer,    # user full has full access - cannot ins
 
 app_logger.debug("Declare Security complete - security/declare_security.py"
         + f' -- {len(Grant.grants_by_table)} Grants by tables loaded and {len(Grant.grants_by_role)} Grants by role loaded.')
+
