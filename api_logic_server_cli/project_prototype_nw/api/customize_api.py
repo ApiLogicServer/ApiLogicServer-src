@@ -49,7 +49,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
     api.expose_object(ServicesEndPoint)  # Swagger-visible services
     api.expose_object(CategoriesEndPoint)
 
-    @app.route('/hello_world')
+    @app.route('/hello_world', methods=["GET"])
     def hello_world():
         """        
         Illustrates:
@@ -103,7 +103,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         return wrapper
 
 
-    @app.route('/filters_cats')
+    @app.route('/filters_cats',methods=["GET"])
     @admin_required()
     def filters_cats():
         """
@@ -142,7 +142,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         return jsonify({ "success": True, "result":  return_result})
 
 
-    @app.route('/raw_sql_cats')
+    @app.route('/raw_sql_cats', methods=["GET"])
     @admin_required()
     def raw_sql_cats():
         """
@@ -164,7 +164,8 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         return response
 
 
-    @app.route('/order_nested_objects')
+    @app.route('/order_nested_objects', methods=["GET","POST","OPTIONS"])
+    @admin_required()
     def order_nested_objects():
         """
         Illustrates:
@@ -177,6 +178,10 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
             curl -X GET "http://localhost:5656/order_nested_objects?Id=10643"
 
         """
+        
+        if request.method == 'OPTIONS':
+            return jsonify(success=True)
+        
         order_id = request.args.get('Id')
         db = safrs.DB         # Use the safrs.DB, not db!
         session = db.session  # sqlalchemy.orm.scoping.scoped_session
@@ -212,7 +217,7 @@ class ServicesEndPoint(safrs.JABase):
     """
 
     @classmethod
-    @jsonapi_rpc(http_methods=["POST"])
+    @jsonapi_rpc(http_methods=["POST","OPTIONS"])
     def add_order(self, *args, **kwargs):  # yaml comment => swagger description
         """ # yaml creates Swagger description
             args :
@@ -234,7 +239,10 @@ class ServicesEndPoint(safrs.JABase):
         session = db.session  # sqlalchemy.orm.scoping.scoped_session
         new_order = models.Order()
         session.add(new_order)
-
+        
+        if request.method == 'OPTIONS':
+            return jsonify(success=True)
+        
         util.json_to_entities(kwargs, new_order)  # generic function - any db object
         return {"Thankyou For Your Order"}  # automatic commit, which executes transaction logic
 
