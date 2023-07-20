@@ -53,7 +53,7 @@ Grant(  on_entity = models.Customer,    # user full has full access - cannot del
         can_delete=False,
         to_role = Roles.fullaccess)
 
-Grant(  on_entity = models.Category,    # user full has full access - cannot delete customer
+Grant(  on_entity = models.Category,    # user full has read access - cannot delete , insert, or update
         can_delete=False,
         can_read=True,
         can_insert=False,
