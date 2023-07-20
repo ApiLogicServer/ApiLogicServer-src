@@ -67,6 +67,7 @@ class Security:
                 return True
         return False
 
+
 class GrantSecurityException(JsonapiError):
     """
     enables clients to identify "any grant constraint"
@@ -83,6 +84,7 @@ class GrantSecurityException(JsonapiError):
         self.message = f"Grant Security Error on User: {user.id} with roles: [{user.UserRoleList}] does not have {access} access on entity: {entity_name}"
         self.status_code = status_code.value
         security_logger.error(f"Grant Security Error on User: {user.id} with roles: [{user.UserRoleList}] does not have {access} access on entity: {entity_name}")
+
 
 class DefaultRolePermission:
     """_summary_
@@ -114,6 +116,8 @@ class DefaultRolePermission:
         if self.role_name not in self.grants_by_role:
             DefaultRolePermission.grants_by_role[self.role_name] = []
         DefaultRolePermission.grants_by_role[self.role_name].append( self )
+
+
 class Grant:
     """
     Invoke these to declare Role Permissions.
@@ -146,7 +150,9 @@ class Grant:
     grants_by_table : Dict[str, list['Grant']] = {}
 
     '''
-    Dict keyed by Table name (obtained from class name), value is a (role, filter)
+    Dict keyed by Table name (obtained from class name), value is a (role, filter).
+    
+    Single system instance.
     '''
 
     def __init__(self, on_entity: DeclarativeMeta, 
