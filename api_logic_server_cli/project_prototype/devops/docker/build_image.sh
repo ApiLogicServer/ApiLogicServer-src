@@ -4,7 +4,9 @@
 #    create / customize your project as your normally would
 #    edit this file: change your_account/your_repository as appropriate
 #    in terminal (not in VSCode docker - docker is not installed there), cd to your project
-#    build a container for your project: `sh build_container.sh`
+#    in terminal (not in VSCode docker - docker is not installed there)
+#    $ cd <your project>
+#    $ sh build_image.sh
 
 projectname="apilogicserver_project_name_lower"  # lower case, only
 repositoryname="apilogicserver"
