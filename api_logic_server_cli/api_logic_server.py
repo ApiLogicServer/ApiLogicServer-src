@@ -987,9 +987,7 @@ from database import <project.bind_key>_models
         Contains 3 projects: basic_app, ApiLogicProject, ApiLogicProject_Logic
         
         example: 
-\b    
         cd ApiLogicProject  # any empty folder, perhaps where ApiLogicServer is installed
-\b
 
         Args:
             msg (str): eg: ApiLogicProject customizable project created.  Adding Security:")
