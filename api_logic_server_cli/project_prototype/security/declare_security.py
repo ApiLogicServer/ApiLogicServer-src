@@ -26,6 +26,8 @@ class Roles():
         readonly = "readonly"
         fullaccess = "fullaccess"
 
+# FIXME - how about a default-default?
+
 # Configure each Role for default global permission using CRUD, All, or None
 DefaultRolePermission(to_role=Roles.manager,can_read=True, can_update=True, can_insert=True,can_delete=True)
 DefaultRolePermission(to_role=Roles.fullaccess,can_read=True, can_update=True, can_insert=True,can_delete=True)
