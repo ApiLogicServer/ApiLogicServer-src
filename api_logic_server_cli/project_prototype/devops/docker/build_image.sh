@@ -46,7 +46,7 @@ docker build -f devops/docker/build_image.dockerfile -t ${repositoryname}/${proj
 status=$?
 if [ $status -eq 0 ]; then
   echo "\nImage built successfully.. test:\n"
-  echo "  sh devops/docker/sh run_image.sh"
+  echo "  sh devops/docker/run_image.sh"
   echo " "
   echo "\nNext steps:"
   echo "  docker tag ${repositoryname}/${projectname} ${repositoryname}/${projectname}:${version}"
