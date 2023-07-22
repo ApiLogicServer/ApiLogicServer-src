@@ -89,14 +89,14 @@ class GrantSecurityException(JsonapiError):
 class DefaultRolePermission:
     """_summary_
         DefaultRolePermission(
-                to_role = Roles.tenant,
-                can_delete = False,
-                can_update = False,
-                can_insert = False,
-                can_read = False)
+                to_role = Roles.roleName,
+                can_delete = True,
+                can_update = True,
+                can_insert = True,
+                can_read = True)
     Raises:
         GrantSecurityException: 
-       
+    
     """
     grants_by_role : Dict[str, list['Grant']] = {}
     
@@ -116,7 +116,6 @@ class DefaultRolePermission:
         if self.role_name not in self.grants_by_role:
             DefaultRolePermission.grants_by_role[self.role_name] = []
         DefaultRolePermission.grants_by_role[self.role_name].append( self )
-
 
 class Grant:
     """
@@ -144,7 +143,7 @@ class Grant:
             :filter: where clause to be added to each select
         
         per calls from declare_security.py
-      
+    
     """
 
     grants_by_table : Dict[str, list['Grant']] = {}
@@ -197,7 +196,7 @@ class Grant:
 
         u2 is a manager and a tenant
         '''
-       
+
         
         if not Args.security_enabled:
             return

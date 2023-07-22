@@ -68,8 +68,8 @@ def declare_logic():
                 ====================
 
     You can use a BDD approach to doc/run test suites
-         See test/api_logic_server/behave/features/place_order.feature
-         See https://apilogicserver.github.io/Docs/Behave/
+        See test/api_logic_server/behave/features/place_order.feature
+        See https://apilogicserver.github.io/Docs/Behave/
 
     SCENARIO: Bad Order Custom Service
         When Order Placed with excessive quantity
@@ -117,7 +117,7 @@ def declare_logic():
                 logic_row.log("no manager for this order's salesrep")
             else:
                 logic_row.log(f'Hi, {sales_rep.Manager.FirstName} - '
-                              f'Congratulate {sales_rep.FirstName} on their new order')
+                            f'Congratulate {sales_rep.FirstName} on their new order')
             category_1 = logic_row.session.query(models.Category).filter(models.Category.Id == 1).one()
             logic_row.log("Illustrate database access (not subject to authorization)")  # not granted for user: u2
 
