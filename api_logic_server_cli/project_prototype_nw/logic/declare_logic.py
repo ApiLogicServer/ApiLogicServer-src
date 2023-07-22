@@ -118,7 +118,9 @@ def declare_logic():
                 logic_row.log(f'Hi, {sales_rep.Manager.FirstName} - '
                               f'Congratulate {sales_rep.FirstName} on their new order')
             category_1 = logic_row.session.query(models.Category).filter(models.Category.Id == 1).one()
-            logic_row.log("Illustrate database access (not subject to authorization)")  # not granted for user: u2
+            logic_row.log("Illustrate database access")  # not granted for user: u2
+            # Note: *Client* access is subject to authorization
+            #       *Logic* is system code, not subject to authorization
 
     Rule.commit_row_event(on_class=models.Order, calling=congratulate_sales_rep)
 
