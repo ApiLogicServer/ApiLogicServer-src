@@ -96,7 +96,7 @@
             "request": "launch",
             "cwd": "${workspaceFolder}/api_logic_server_cli/test_project_dev",
             "env": {
-                "APILOGICSERVER_HOME": "${workspaceFolder}",
+                "APILOGICPROJECT_APILOGICSERVER_HOME": "${workspaceFolder}",
                 "APILOGICPROJECT_VERBOSE": "True"
             },
             "program": "api_logic_server_run.py",
@@ -142,7 +142,7 @@
             "type": "python",
             "request": "launch",
             "cwd": "${workspaceFolder}/api_logic_server_cli/test_project",
-            "env": {"APILOGICSERVER_HOME": "${workspaceFolder}"},
+            "env": {"APILOGICPROJECT_VERBOSE": "true", "APILOGICPROJECT_APILOGICSERVER_HOME": "${workspaceFolder}"},
             "program": "api_logic_server_run.py",
             "justMyCode": false,
             "redirectOutput": true,

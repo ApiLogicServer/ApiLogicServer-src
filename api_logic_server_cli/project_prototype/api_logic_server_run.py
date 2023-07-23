@@ -70,7 +70,7 @@ import socket
 import warnings
 from flask import Flask, redirect, send_from_directory, send_file
 from safrs import ValidationError, SAFRSBase, SAFRSAPI
-from ui.admin.admin_loader import admin_events
+import ui.admin.admin_loader as AdminLoader
 from security.system.authentication import configure_auth
 import database.multi_db as multi_db
 
@@ -261,9 +261,7 @@ app_logger.debug(f"\nENV args: \n{args}\n\n")
 
 api_logic_server_setup(flask_app, args)
 
-# admin_events(flask_app = flask_app, swagger_host = args.swagger_host, swagger_port = args.swagger_port,
-#     API_PREFIX=args.api_prefix, validation_error=ValidationError, http_type = args.http_scheme)
-admin_events(flask_app = flask_app, args = args, validation_error = ValidationError)
+AdminLoader.admin_events(flask_app = flask_app, args = args, validation_error = ValidationError)
 
 if __name__ == "__main__":
     msg = f'API Logic Project loaded (not WSGI), version api_logic_server_version\n'
