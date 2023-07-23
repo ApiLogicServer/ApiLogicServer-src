@@ -15,13 +15,15 @@ admin_logger = logging.getLogger(__name__)  # log levels: critical < error < war
 
 did_send_spa = False
 
-def get_sra_directory() -> str:
+def get_sra_directory(args: Args) -> str:
     """
     return location of minified sra, which can be...
 
     1. in the venv (from install or Docker) -- the normal case (small projects, less git)
     2. local to project: ui/safrs-react-admin
-    3. for internal dev use, in env(APILOGICSERVER_HOME) (dev venv does not contain ALS)
+    3. in env(APILOGICSERVER_HOME | APILOGICPROJECT_APILOGICSERVER_HOME)
+    
+    This enables the sra code to be re-used, reducing app size 32MB -> 2.5 MB
     """
     directory = 'ui/safrs-react-admin'  # local project sra typical API Logic Server path (index.yaml)
     if Path(directory).joinpath('robots.txt').is_file():
@@ -34,9 +36,13 @@ def get_sra_directory() -> str:
             if dev_home:
                 admin_logger.debug("ApiLogicServer not in venv, trying APILOGICSERVER_HOME")
             else:
-                dev_home = os.getenv('HOME')
-                if not dev_home:
-                    raise Exception('ApiLogicServer not in venv, env APILOGICSERVER_HOME or HOME must be set')
+                dev_home = args.api_logic_server_home
+                if dev_home:
+                    admin_logger.debug("ApiLogicServer not in venv, trying APILOGICPROJECT_APILOGICSERVER_HOME")
+                else:
+                    dev_home = os.getenv('HOME')
+                    if not dev_home:
+                        raise Exception('ApiLogicServer not in venv, env APILOGICSERVER_HOME or HOME must be set')
             sys.path.append(dev_home)
             from api_logic_server_cli.create_from_model import api_logic_server_utils as api_logic_server_utils
         admin_logger.debug("return_spa - install directory")
@@ -60,7 +66,7 @@ def admin_events(flask_app: Flask, args: Args, validation_error: ValidationError
         if True or not did_send_spa:
             did_send_spa = True
             admin_logger.info(f'\nStart Custom App ({path}): return spa "ui/safrs-react-admin", "index.html"\n')
-        directory = get_sra_directory()
+        directory = get_sra_directory(args)
         return send_from_directory(directory, 'index.html')  # unsure how admin finds custom url
 
     @flask_app.route('/')
@@ -79,7 +85,7 @@ def admin_events(flask_app: Flask, args: Args, validation_error: ValidationError
         if path == "home.js":
             directory = "ui/admin"
         else:
-            directory = get_sra_directory()
+            directory = get_sra_directory(args)
 
         if not did_send_spa:
             did_send_spa = True

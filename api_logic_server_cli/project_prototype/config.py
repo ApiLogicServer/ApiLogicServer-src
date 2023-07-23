@@ -255,6 +255,17 @@ class Args():
 
 
     @property
+    def api_logic_server_home(self):
+        """ location of ApiLogicServer-src (for admin_loader) """
+        return self.flask_app.config["APILOGICSERVER_HOME"]
+
+    
+    @api_logic_server_home.setter
+    def api_logic_server_home(self, a):
+        self.flask_app.config["APILOGICSERVER_HOME"] = a
+
+
+    @property
     def opt_locking(self) -> str:
         """ values: ignored, optional, required """
         return self.flask_app.config["OPT_LOCKING"]
