@@ -97,6 +97,7 @@
             "cwd": "${workspaceFolder}/api_logic_server_cli/test_project_dev",
             "env": {
                 "APILOGICPROJECT_APILOGICSERVER_HOME": "${workspaceFolder}",
+                "APILOGICPROJECT_SECURITY_ENABLED": "True",
                 "APILOGICPROJECT_VERBOSE": "True"
             },
             "program": "api_logic_server_run.py",
@@ -127,21 +128,21 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "     * Create cli/test_project (curr IDE)",
+            "name": "     * Create cli/test_project_ref (curr IDE)",
             "type": "python",
             "request": "launch",
             "cwd": "${workspaceFolder}/api_logic_server_cli",
             "env": {"APILOGICSERVER_DEBUG": "True"},
             "program": "cli.py",
             "redirectOutput": true,
-            "args": ["create","--project_name=test_project","--db_url="],
+            "args": ["create","--project_name=test_project_ref","--db_url="],
             "console": "integratedTerminal"
         },
         {
-            "name": "     - Debug cli/test_project (curr IDE)",
+            "name": "     - Debug cli/test_project_ref (curr IDE)",
             "type": "python",
             "request": "launch",
-            "cwd": "${workspaceFolder}/api_logic_server_cli/test_project",
+            "cwd": "${workspaceFolder}/api_logic_server_cli/test_project_ref",
             "env": {"APILOGICPROJECT_VERBOSE": "true", "APILOGICPROJECT_APILOGICSERVER_HOME": "${workspaceFolder}"},
             "program": "api_logic_server_run.py",
             "justMyCode": false,

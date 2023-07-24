@@ -61,6 +61,7 @@ project_name = os.path.basename(os.path.normpath(current_path))
 
 from typing import TypedDict
 import safrs  # fails without venv - see https://apilogicserver.github.io/Docs/Project-Env/
+from safrs import ValidationError, SAFRSBase, SAFRSAPI as _SAFRSAPI
 from logic_bank.logic_bank import LogicBank
 from logic_bank.exec_row_logic.logic_row import LogicRow
 from logic_bank.rule_type.constraint import Constraint
@@ -73,6 +74,23 @@ from safrs import ValidationError, SAFRSBase, SAFRSAPI
 import ui.admin.admin_loader as AdminLoader
 from security.system.authentication import configure_auth
 import database.multi_db as multi_db
+
+
+class SAFRSAPI(_SAFRSAPI):
+    """
+    Extends SAFRSAPI to handle client_uri
+
+    Args:
+        _SAFRSAPI (_type_): _description_
+    """
+
+    def __init__(self, *args, **kwargs):
+        client_uri = kwargs.pop('client_uri', None)
+        if client_uri:
+            kwargs['port'] = None
+            kwargs['host'] = client_uri
+        super().__init__(*args, **kwargs)
+
 
 
 # ==================================
@@ -175,7 +193,7 @@ def api_logic_server_setup(flask_app: Flask, args: Args):
 
             with open(Path(current_path).joinpath('security/system/custom_swagger.json')) as json_file:
                 custom_swagger = json.load(json_file)
-            safrs_api = SAFRSAPI(flask_app, app_db= db, host=args.swagger_host, port=args.swagger_port, 
+            safrs_api = SAFRSAPI(flask_app, app_db= db, host=args.swagger_host, port=args.swagger_port, client_uri=args.client_uri,
                                  prefix = args.api_prefix, custom_swagger=custom_swagger)
 
             db = safrs.DB  # valid only after is initialized, above
