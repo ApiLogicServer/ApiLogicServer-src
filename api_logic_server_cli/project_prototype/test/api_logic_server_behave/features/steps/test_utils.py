@@ -23,6 +23,7 @@ def prt(msg: any, test: str= None) -> None:
 
 SECURITY_ENABLED = True  # you must also: ApiLogicServer add-db --db_url=auth --bind_key=authentication
 if os.getenv('SECURITY_ENABLED'):  # e.g. export SECURITY_ENABLED=true
+    # config.Args not available - config not loaded, no Flask
     security_export = os.getenv('SECURITY_ENABLED')  # type: ignore # type: str
     security_export = security_export.lower()  # type: ignore
     if security_export in ["false", "no"]:  # NO SEC
