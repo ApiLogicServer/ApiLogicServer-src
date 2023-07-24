@@ -86,11 +86,9 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         return jsonify({ "success": True, "message": "Server is shutting down..." })
 
 
-    def admin_required():
+    def bypass_security():
         """
         Support option to bypass security (see cats, below).
-
-        See: https://flask-jwt-extended.readthedocs.io/en/stable/custom_decorators/
         """
         def wrapper(fn):
             @wraps(fn)
@@ -104,7 +102,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
 
 
     @app.route('/filters_cats')
-    @admin_required()
+    @bypass_security()
     def filters_cats():
         """
         Illustrates:
@@ -120,7 +118,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
             filter_type = "multiple filters"
         db = safrs.DB           # Use the safrs.DB, not db!
         session = db.session    # sqlalchemy.orm.scoping.scoped_session
-        Security.set_user_sa()  # an endpoint that requires no auth header (see also @admin_required)
+        Security.set_user_sa()  # an endpoint that requires no auth header (see also @bypass_security)
 
         if filter_type.startswith("n"):
             results = session.query(models.Category)    # .filter(models.Category.Id > 1)
@@ -143,7 +141,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
 
 
     @app.route('/raw_sql_cats')
-    @admin_required()
+    @bypass_security()
     def raw_sql_cats():
         """
         Illustrates:
@@ -260,7 +258,6 @@ class CategoriesEndPoint(safrs.JABase):
     def get_cats():
         db = safrs.DB
         session = db.session
-        # Security.set_user_sa()  # use to bypass authorization (also requires @admin_required)
 
         result = session.query(models.Category)
         for each_row in result:
