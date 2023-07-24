@@ -1,4 +1,4 @@
-from security.system.authorization import Grant, Security
+from security.system.authorization import Grant, Security, DefaultRolePermission
 from database import models
 import database
 import safrs
@@ -19,18 +19,44 @@ session = db.session
 
 
 class Roles():
-    """ Define Roles here, so can use code completion (Roles.tenant) """
-    tenant = "tenant"
-    renter = "renter"
-    manager = "manager"
+        """ Define Roles here, so can use code completion (Roles.tenant) """
+        tenant = "tenant"
+        renter = "renter"
+        manager = "manager"
+        readonly = "readonly"
+        fullaccess = "fullaccess"
 
+# Configure each Role for default global permission using CRUD, All, or None
+DefaultRolePermission(to_role=Roles.manager,can_read=True, can_update=True, can_insert=True,can_delete=True)
+DefaultRolePermission(to_role=Roles.fullaccess,can_read=True, can_update=True, can_insert=True,can_delete=True)
+DefaultRolePermission(to_role=Roles.readonly,can_read=True, can_update=False, can_insert=False,can_delete=False)
+DefaultRolePermission(to_role=Roles.tenant,can_read=True, can_update=True, can_insert=False,can_delete=False)
+DefaultRolePermission(to_role=Roles.renter,can_read=False, can_update=False, can_insert=False,can_delete=False)
+
+#Grant to role for specific model entity with row filter
 Grant(  on_entity = models.Category,    # illustrate multi-tenant - u1 shows only row 1
         to_role = Roles.tenant,
-        filter = lambda : models.Category.Client_id == Security.current_user().client_id)  # User table attributes
+        can_delete=False,
+        filter =  lambda: models.Category.Client_id == Security.current_user().client_id)  # User table attributes
 
 Grant(  on_entity = models.Category,    # u2 has both roles - should return client_id 2 (2, 3, 4), and 5
         to_role = Roles.manager,
+        can_delete=False,
         filter = lambda : models.Category.Id == 5)
 
+Grant(  on_entity = models.Customer,    # user full has full access - cannot delete customer
+        can_delete=False,
+        to_role = Roles.fullaccess)
+
+Grant(  on_entity = models.Customer,    # user renter - cannot insert,update, or delete customer
+        can_read=True,
+        can_delete=False,
+        can_update=False,
+        can_insert=False,
+        to_role = Roles.renter)
+
+Grant(on_entity=models.Category,can_read=True,to_role=Roles.renter) # user renter - cannot insert,update, or delete category
+
 app_logger.debug("Declare Security complete - security/declare_security.py"
-    + f' -- {len(database.authentication_models.metadata.tables)} tables loaded')
+        + f' -- {len(Grant.grants_by_table)} Grants by tables loaded and {len(DefaultRolePermission.grants_by_role)} Grants by role loaded.')
+

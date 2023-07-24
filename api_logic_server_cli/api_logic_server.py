@@ -1146,7 +1146,7 @@ from database import <project.bind_key>_models
                 log.info("\nRun API Logic Server:")
                 if os.getenv('CODESPACES'):
                     # log.debug(f'  Add port 5656, with Public visibility') - automated in .devcontainer.json
-                    log.info(f'  Execute using Launch Configuration "ApiLogicServer"')
+                    log.info('  Execute using Launch Configuration "ApiLogicServer"')
                 else:
                     log.info(f'  cd {self.project_name};  python api_logic_server_run.py')
         if self.command.startswith("add_"):

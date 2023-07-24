@@ -6,7 +6,8 @@ from logic_bank.logic_bank import Rule
 from database import models
 import api.system.opt_locking.opt_locking as opt_locking
 import logging
-
+from config import Config
+from security.system.authorization import Grant
 
 preferred_approach = True
 """ Some examples below contrast a preferred approach with a more manual one """
@@ -67,8 +68,8 @@ def declare_logic():
                 ====================
 
     You can use a BDD approach to doc/run test suites
-         See test/api_logic_server/behave/features/place_order.feature
-         See https://apilogicserver.github.io/Docs/Behave/
+        See test/api_logic_server/behave/features/place_order.feature
+        See https://apilogicserver.github.io/Docs/Behave/
 
     SCENARIO: Bad Order Custom Service
         When Order Placed with excessive quantity
@@ -116,7 +117,7 @@ def declare_logic():
                 logic_row.log("no manager for this order's salesrep")
             else:
                 logic_row.log(f'Hi, {sales_rep.Manager.FirstName} - '
-                              f'Congratulate {sales_rep.FirstName} on their new order')
+                            f'Congratulate {sales_rep.FirstName} on their new order')
             category_1 = logic_row.session.query(models.Category).filter(models.Category.Id == 1).one()
             logic_row.log("Illustrate database access")  # not granted for user: u2
             # Note: *Client* access is subject to authorization
@@ -263,6 +264,9 @@ def declare_logic():
             if logic_row.ins_upd_dlt == "ins" and hasattr(row, "CreatedOn"):
                 row.CreatedOn = datetime.datetime.now()
                 logic_row.log("early_row_event_all_classes - handle_all sets 'Created_on"'')
+        
+        Grant.process_updates(logic_row=logic_row)
+    
     Rule.early_row_event_all_classes(early_row_event_all_classes=handle_all)
     
     app_logger.debug("..logic/declare_logic.py (logic == rules + code)")

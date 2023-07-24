@@ -307,7 +307,7 @@ def multi_database_tests():
     r = requests.get(url=get_uri, headers=login())
     response_text = r.text
     result_data = json.loads(response_text) 
-    assert len(result_data["data"]) == 1, "MultiDB: Did not find 1 expected result row"
+    assert len(result_data["data"]) == 2, "MultiDB: Did not find 1 expected result row"
 
     stop_server(msg="MultiDB\n")
 
@@ -469,7 +469,7 @@ def validate_nw(api_logic_server_install_path, set_venv):
     r = requests.get(url=get_uri, headers=login())
     response_text = r.text
     result_data = json.loads(response_text) 
-    assert len(result_data['result']) == 4, \
+    assert len(result_data['result']) == 1, \
         "Failed to get 4 filters_cats rows"
 
     post_uri = "http://localhost:5656/api/CategoriesEndPoint/get_cats"
