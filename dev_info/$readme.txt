@@ -17,6 +17,33 @@ release?
   x Multi-Arch dockers
   x log: 0 authentication tables loaded
 
+9.1 changes
+  Self-reln parent name is class, not 'parent'
+ 
+multi-field key
+    Location country, city
+    Order Country, City
+
+aneu Categories - 1 row in main, 2 in security
+  aneu roles
+    security  - tenant, manager
+    main      - tenant  <not mgr>
+
+postgres issues
+  - no bpchar
+    ApiLogicServer create --project_name=postgres --db_url=postgresql://postgres:p@localhost/postgres
+    create: no message
+  - bpchar
+    ApiLogicServer create --project_name=postgres_bpchar --db_url=postgresql://postgres:p@localhost/postgres_bpchar
+    create messages (also Tom Peters)
+      Did not recognize type 'bpchar' of column 'customer_id' (and others)
+      #Failed to get col type for customers.customer_id - NULL
+  
+
+
+http://localhost:5656/filters_cats
+  security  - 4 rows (2:5)
+  main      - 
 
 nw_readme.md -> README.md
     * remove internal IDE links
