@@ -1,0 +1,6 @@
+https://www.tutorialspoint.com/postgresql/postgresql_select_database.htm
+
+psql -h localhost -U postgres
+
+\c Northwind;
+
