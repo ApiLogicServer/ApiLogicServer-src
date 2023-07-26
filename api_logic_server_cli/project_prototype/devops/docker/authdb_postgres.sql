@@ -2,6 +2,11 @@ DROP DATABASE IF EXISTS authdb;
 CREATE DATABASE authdb;
 \c authdb;
 
+-- in docker container/terminal
+-- psql--username=postgres
+-- \l
+-- \dt
+
 
 --
 -- Table structure for table Role
