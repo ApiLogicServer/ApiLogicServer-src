@@ -17,6 +17,7 @@ services:
           - SECURITY_ENABLED=false
           - PYTHONPATH=/app/ApiLogicProject 
           - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI=postgresql://postgres:p@nw_postgres/postgres
+          - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI_AUTHENTICATION=postgresql://postgres:p@nw_postgres/authdb
           # - APILOGICSERVER_HOME=/src/apilogicserver
         build:
             context: ../..
