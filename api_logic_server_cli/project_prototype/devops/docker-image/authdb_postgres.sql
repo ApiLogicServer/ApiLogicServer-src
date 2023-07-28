@@ -38,7 +38,7 @@ CREATE TABLE "User" (
 -- Dumping data for table User
 --
 
-INSERT INTO "User" VALUES ('Administrator',NULL,1,'admin','Admin User','admin@corp.com','p');
+INSERT INTO "User" VALUES ('Administrator',NULL,'admin','Admin User','admin@corp.com','p');
 
 
 --
