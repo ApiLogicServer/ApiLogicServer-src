@@ -1,0 +1,54 @@
+# cd postgres-docker-compose
+# docker-compose -f ./devops/docker-compose/docker-compose.yml up
+# --> builds, runs at localhost
+
+# from: https://github.com/thomaxxl/als-docker
+
+# FIXME: would be better to load www (admin app) from <where>
+
+version: "3.5"
+
+services:
+    api-logic-server:
+        environment:
+          #- APILOGICPROJECT_API_PREFIX=/sqlite-api
+          # configure-me
+          - APILOGICPROJECT_CLIENT_URI=//10.0.0.77
+          - SECURITY_ENABLED=false
+          - PYTHONPATH=/app/ApiLogicProject 
+          - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI=postgresql://postgres:p@nw_postgres/postgres
+          # - APILOGICSERVER_HOME=/src/apilogicserver
+        build:
+            context: ../..
+            dockerfile: ./devops/docker-compose/Dockerfile.dockerfile
+        expose:
+            - 5000
+        volumes:
+            # configure-me
+            - /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/servers/docker_compose_tests/postgres-docker-compose:/app
+            - /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/servers/docker_compose_tests/postgres-docker-compose:/mm
+            # see APILOGICSERVER_HOME (09.01.19) - ./ApiLogicProject/ui/safrs-react-admin:/src/apilogicserver/api_logic_server_cli/create_from_model/safrs-react-admin-npm-build
+        #command: /usr/local/bin/gunicorn --reload --workers 4 --worker-connections 4 --access-logfile=- --pythonpath /app/ApiLogicProject -b :5000 api_logic_server_run:flask_app 
+        command:  bash /mm/start.sh #/app/ApiLogicProject/start.sh
+        # working_dir:  /app/ApiLogicProject  FIXME - why fix below??
+        working_dir: /app/ApiLogicProject 
+
+    nginx:
+        restart: always
+        image: nginx:latest
+        ports:
+            - "80:8080"
+            - "443:443"
+        volumes:
+            - ./www:/www:ro
+            - ./etc/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+            - ./etc/ssl:/etc/ssl:ro
+
+    nw_postgres:
+        image: apilogicserver/postgres:latest
+        restart: always
+        environment:
+          - PGDATA=/pgdata
+          - POSTGRES_PASSWORD=p
+        ports:
+          - "5432:5432"
