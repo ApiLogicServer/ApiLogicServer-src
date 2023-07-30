@@ -191,8 +191,8 @@ def insert_lines_at(lines: str, at: str, file_name: str, after: bool = False):
                 break
             insert_line += 1
         if not found:
-            raise Exception(f'Internal error - unable to find insert:'
-                            f'.. seeking {at}'
+            raise Exception(f'Internal error - unable to find insert:\n'
+                            f'.. seeking {at}\n'
                             f'.. in {file_name}')
         if after:
             insert_line = insert_line + 1

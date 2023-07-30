@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "09.01.24"
+__version__ = "09.01.25"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t07/29/2023 - 09.01.24: Issue 01 - arch-based .devcontainer, behave msgs, win rpt, env objs > config w/ home, dockerbldx m1, client_uri \n"\
+    "\t07/30/2023 - 09.01.25: Issue 01 - arch-based .devcontainer, behave msgs, win rpt, env objs > config w/ home, dockerbldx m1, client_uri \n"\
     "\t07/04/2023 - 09.01.00: SQLAlchemy 2 typed-relns/attrs, Docker: Python 3.11.4 & odbc18 \n"\
     "\t06/24/2023 - 09.00.01: PyMysql \n"\
     "\t06/22/2023 - 09.00.00: Optimistic Locking, safrs 310, SQLAlchemy 2.0.15 \n"\
@@ -898,7 +898,7 @@ from database import <project.bind_key>_models
         save_db_url = self.db_url
         self.command = "add_db"
         self.bind_key = "authentication"
-        if self.db_url in  ["", "nw", "nw-"]:
+        if is_nw or self.nw_db_status ==  "nw":
             self.db_url = "auth"  # shorthand for api_logic_server_cli/database/auth...
         self.run = False
         self.create_project()  # not creating project, but using model creation svcs
@@ -950,20 +950,22 @@ from database import <project.bind_key>_models
             log.debug("==================================================================\n\n")
 
 
-    def add_nw_customizations(self, do_show_messages: bool = True):
+    def add_nw_customizations(self, do_show_messages: bool = True, do_security: bool = True):
         """_summary_
 
         1. add-sqlite-security
 
-        2. deep copy project_prototype_nw
+        2. deep copy project_prototype_nw (adds logic)
 
         Args:
         """
+
         log.debug("\n\n==================================================================")
         nw_messages = ""
-        if do_show_messages:
-            nw_messages = "Add northwind customizations - enabling security"
-        self.add_sqlite_security(is_nw=True, msg=nw_messages)
+        if do_security:
+            if do_show_messages:
+                nw_messages = "Add northwind customizations - enabling security"
+            self.add_sqlite_security(is_nw=True, msg=nw_messages)
 
         nw_path = (self.api_logic_server_dir_path).\
             joinpath('project_prototype_nw')  # /Users/val/dev/ApiLogicServer/api_logic_server_cli/project_prototype
@@ -1029,7 +1031,7 @@ from database import <project.bind_key>_models
         
         self.project_name = with_cust
         self.command = "add-cust"
-        self.add_nw_customizations(do_show_messages=False)
+        self.add_nw_customizations(do_show_messages=False, do_security=False)
         self.run = save_run
 
         log.info(f"\nCreating Logic\n")
