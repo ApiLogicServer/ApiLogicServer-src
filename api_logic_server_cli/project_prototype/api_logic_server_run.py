@@ -44,6 +44,9 @@ def is_docker() -> bool:
 
 current_path = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(current_path)
+if is_docker():
+    sys.path.append(os.path.abspath('/home/api_logic_server'))
+
 project_dir = str(current_path)
 os.chdir(project_dir)  # so admin app can find images, code
 import util as util
