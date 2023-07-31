@@ -11,27 +11,23 @@ version: "3.5"
 services:
     api-logic-server:
         environment:
-          #- APILOGICPROJECT_API_PREFIX=/sqlite-api
+          - APILOGICPROJECT_VERBOSE=true
           # configure-me
           - APILOGICPROJECT_CLIENT_URI=//10.0.0.77
-          - SECURITY_ENABLED=false
+          - SECURITY_ENABLED=true
           - PYTHONPATH=/app/ApiLogicProject 
           - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI=postgresql://postgres:p@nw_postgres/postgres
           - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI_AUTHENTICATION=postgresql://postgres:p@nw_postgres/authdb
-          # - APILOGICSERVER_HOME=/src/apilogicserver
         build:
             context: ../..
             dockerfile: ./devops/docker-compose/Dockerfile.dockerfile
         expose:
             - 5000
         volumes:
-            # configure-me
-            - /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/servers/docker_compose_tests/postgres-docker-compose:/app
-            - /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/servers/docker_compose_tests/postgres-docker-compose:/mm
-            # see APILOGICSERVER_HOME (09.01.19) - ./ApiLogicProject/ui/safrs-react-admin:/src/apilogicserver/api_logic_server_cli/create_from_model/safrs-react-admin-npm-build
+            # relative path - thanks https://stackoverflow.com/questions/46907558/docker-compose-relative-paths-vs-docker-volume
+            - ./../..:/app
         #command: /usr/local/bin/gunicorn --reload --workers 4 --worker-connections 4 --access-logfile=- --pythonpath /app/ApiLogicProject -b :5000 api_logic_server_run:flask_app 
-        command:  bash /mm/start.sh #/app/ApiLogicProject/start.sh
-        # working_dir:  /app/ApiLogicProject  FIXME - why fix below??
+        command:  bash /app/start.sh #/app/ApiLogicProject/start.sh
         working_dir: /app/ApiLogicProject 
 
     nginx:
