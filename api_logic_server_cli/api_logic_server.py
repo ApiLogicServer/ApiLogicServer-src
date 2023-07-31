@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "09.01.26"
+__version__ = "09.01.27"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t07/30/2023 - 09.01.26: Issue 01 - arch-based .devcontainer, behave msgs, win rpt, env objs > config w/ home, dockerbldx m1, client_uri \n"\
+    "\t07/31/2023 - 09.01.27: Issue 01 - arch-based .devcontainer, behave msgs, win rpt, env objs > config w/ home, dockerbldx m1, client_uri \n"\
     "\t07/04/2023 - 09.01.00: SQLAlchemy 2 typed-relns/attrs, Docker: Python 3.11.4 & odbc18 \n"\
     "\t06/24/2023 - 09.00.01: PyMysql \n"\
     "\t06/22/2023 - 09.00.00: Optimistic Locking, safrs 310, SQLAlchemy 2.0.15 \n"\
@@ -888,9 +888,10 @@ from database import <project.bind_key>_models
             is_nw (bool): is northwind, which means we add the nw security logic
         """
 
+        database_path = self.project_directory_path.joinpath("database")
         log.debug("\n\n==================================================================")
         if msg != "":
-            log.info(msg)
+            log.info(msg + f" to project: {str(database_path.parent)}")
             log.info("  1. ApiLogicServer add-db --db_url=auth --bind_key=authentication")
         log.debug("==================================================================5\n")
         save_run = self.run

@@ -636,6 +636,10 @@ def add_security_cmd(ctx, bind_key_url_separator: str, db_url: str, project_name
     project.project_directory_path = Path(project.project_directory_actual)
     models_py_path = project.project_directory_path.joinpath('database/models.py')
     project.abs_db_url, project.nw_db_status, project.model_file_name = create_utils.get_abs_db_url("0. Using Sample DB", project)
+    if not models_py_path.exists():
+        log.info(f'... Error - does not appear to be a project: {str(project.project_directory_path)}')
+        log.info(f'... Typical usage - cd into project, use --project_name=. \n')
+        exit (1)
     is_nw = False
     if create_utils.does_file_contain(search_for="CategoryTableNameTest", in_file=models_py_path):
         is_nw = True

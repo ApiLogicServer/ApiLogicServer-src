@@ -17,6 +17,12 @@ release?
   x Multi-Arch dockers
   x log: 0 authentication tables loaded
 
+docker-compose test
+  build postgres
+  containerize
+  docker-compose (per IP?)
+  start (then run admin manually)
+
 9.1 changes
   Self-reln parent name is class, not 'parent'
  
