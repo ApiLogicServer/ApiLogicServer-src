@@ -8,7 +8,6 @@ EXPOSE 5000
 USER root
 
 # user api_logic_server comes from apilogicserver/api_logic_server
-# WORKDIR /home/api_logic_project
 WORKDIR /app/ApiLogicProject
 USER api_logic_server
 COPY ../../../ .
