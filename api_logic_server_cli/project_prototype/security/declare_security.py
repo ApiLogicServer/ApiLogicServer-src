@@ -33,14 +33,14 @@ class Roles():
         tenant = "tenant"
         renter = "renter"
         manager = "manager"
-        readonly = "readonly"
+        read_only = "readonly"
         full_access = "fullaccess"
 
 
 # Configure each Role for default global permission using CRUD, All, or None
 DefaultRolePermission(to_role=Roles.manager,can_read=True, can_update=True, can_insert=True,can_delete=True)
 DefaultRolePermission(to_role=Roles.full_access,can_read=True, can_update=True, can_insert=True,can_delete=True)
-DefaultRolePermission(to_role=Roles.readonly,can_read=True, can_update=False, can_insert=False,can_delete=False)
+DefaultRolePermission(to_role=Roles.read_only,can_read=True, can_update=False, can_insert=False,can_delete=False)
 DefaultRolePermission(to_role=Roles.tenant,can_read=True, can_update=True, can_insert=False,can_delete=False)
 DefaultRolePermission(to_role=Roles.renter,can_read=False, can_update=False, can_insert=False,can_delete=False)
 
