@@ -20,7 +20,7 @@
 import traceback
 try:
     import os, logging, logging.config, sys, yaml  # failure here means venv probably not set
-except:
+except Exception:
     track = traceback.format_exc()
     print(" ")
     print(track)
@@ -29,6 +29,7 @@ except:
     exit(1)
 
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 import json
 from pathlib import Path
 from config import Args
@@ -37,7 +38,7 @@ def is_docker() -> bool:
     """ running docker?  dir exists: /home/api_logic_server """
     path = '/home/api_logic_server'
     path_result = os.path.isdir(path)  # this *should* exist only on docker
-    env_result = "DOCKER" == os.getenv('APILOGICSERVER_RUNNING')
+    env_result = os.getenv('APILOGICSERVER_RUNNING') == "DOCKER"
     # assert path_result == env_result
     return path_result
 
@@ -258,7 +259,8 @@ def api_logic_server_setup(flask_app: Flask, args: Args):
 
 
 flask_app = Flask("API Logic Server", template_folder='ui/templates')  # templates to load ui/admin/admin.yaml
-
+#CORS(flask_app, resources=[{r"/api/*": {"origins": "*"}}],allow_headers=[
+#            "Content-Type", "Authorization", "Access-Control-Allow-Credentials"],supports_credentials=True)
 args = Args(flask_app=flask_app)                                # creation defaults
 
 flask_app.config.from_object("config.Config")

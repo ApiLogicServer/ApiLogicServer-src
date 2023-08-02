@@ -269,11 +269,11 @@ def login(user: str='aneu'):
     response_text = r.text
     status_code = r.status_code
     if status_code > 300:
-        raise Exception(f'POST login failed - status_code = {status_code}, with response text {r.text}')
+        raise requests.RequestException(f'POST login failed - status_code = {status_code}, with response text {r.text}')
     result_data = json.loads(response_text)
     result_map = DotMap(result_data)
     token = result_map.access_token
-    header = {'Authorization': 'Bearer {}'.format(f'{token}')}
+    header = {'Authorization': f'Bearer {token}'}
     return header
 
 def multi_database_tests():

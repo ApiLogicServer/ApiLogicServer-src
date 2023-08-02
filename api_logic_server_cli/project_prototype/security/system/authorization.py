@@ -66,6 +66,7 @@ class Security:
             if role_name == each_role.name:
                 return True
         return False
+<<<<<<< HEAD
 
 
 class GrantSecurityException(JsonapiError):
@@ -116,7 +117,56 @@ class DefaultRolePermission:
         if self.role_name not in self.grants_by_role:
             DefaultRolePermission.grants_by_role[self.role_name] = []
         DefaultRolePermission.grants_by_role[self.role_name].append( self )
+=======
+>>>>>>> 131dd7d (wip)
 
+class GrantSecurityException(JsonapiError):
+    """
+    enables clients to identify "any grant constraint"
+
+    Constraint failures raise GrantSecurityException, e.g.:
+        try:
+            session.commit()
+        except GrantSecurityException as ce:
+        self.message = message
+        self.status_code = status_code
+
+    """
+    def __init__(self, user, entity_name, access, status_code=HTTPStatus.BAD_REQUEST):
+        super().__init__()
+        self.message = f"Grant Security Error on User: {user.id} with roles: [{user.UserRoleList}] does not have {access} access on entity: {entity_name}"
+        self.status_code = status_code.value
+        security_logger.error(f"Grant Security Error on User: {user.id} with roles: [{user.UserRoleList}] does not have {access} access on entity: {entity_name}")
+
+class DefaultRolePermission:
+    """_summary_
+        DefaultRolePermission(
+                to_role = Roles.tenant,
+                can_delete = False,
+                can_update = False,
+                can_insert = False,
+                can_read = False)
+    Raises:
+        GrantSecurityException: 
+    """
+    grants_by_role : Dict[str, list['Grant']] = {}
+    
+    def __init__(self,
+        to_role: str = None,
+        can_read: bool = True,
+        can_insert: bool = True,
+        can_update: bool = True,
+        can_delete: bool = True):
+        
+        self.role_name : str = to_role
+        self.can_read = can_read
+        self.can_insert = can_insert
+        self.can_update = can_update
+        self.can_delete = can_delete
+
+        if self.role_name not in self.grants_by_role:
+            DefaultRolePermission.grants_by_role[self.role_name] = []
+        DefaultRolePermission.grants_by_role[self.role_name].append( self )
 class Grant:
     """
     Invoke these to declare Role Permissions.
@@ -143,15 +193,22 @@ class Grant:
             :filter: where clause to be added to each select
         
         per calls from declare_security.py
+<<<<<<< HEAD
     
+=======
+>>>>>>> 131dd7d (wip)
     """
 
     grants_by_table : Dict[str, list['Grant']] = {}
 
     '''
+<<<<<<< HEAD
     Dict keyed by Table name (obtained from class name), value is a (role, filter).
     
     Single system instance.
+=======
+    Dict keyed by Table name (obtained from class name), value is a (role, filter)
+>>>>>>> 131dd7d (wip)
     '''
 
     def __init__(self, on_entity: DeclarativeMeta, 
@@ -196,7 +253,10 @@ class Grant:
 
         u2 is a manager and a tenant
         '''
+<<<<<<< HEAD
 
+=======
+>>>>>>> 131dd7d (wip)
         
         if not Args.security_enabled:
             return
@@ -209,8 +269,13 @@ class Grant:
         can_update = False
         try:
             from flask import g
+<<<<<<< HEAD
             if user.id == 'sa':
                 security_logger.debug("sa (eg, set_user_sa()) - no grants apply")
+=======
+            if  g.isSA:
+                security_logger.debug("sa (eg, Security.set_user_sa()) - no grants apply")
+>>>>>>> 131dd7d (wip)
                 return
         except Exception as ex:
             security_logger.debug(f"no user - ok (eg, system initialization) error: {ex}")
@@ -220,7 +285,10 @@ class Grant:
         for each_role in DefaultRolePermission.grants_by_role:
             for each_user_role in user.UserRoleList:
                 if each_role == each_user_role.role_name:
+<<<<<<< HEAD
             #if Security.current_user_has_role(each_role):
+=======
+>>>>>>> 131dd7d (wip)
                     for grant_role in DefaultRolePermission.grants_by_role[each_role]:
                         can_read = can_read or grant_role.can_read
                         can_insert = can_insert or grant_role.can_insert

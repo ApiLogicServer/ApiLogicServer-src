@@ -33,24 +33,24 @@ def login(user:str = 'aneu'):
     global SECURITY_ENABLED
     if SECURITY_ENABLED == False:
         return {}
-
-    post_uri = 'http://localhost:5656/api/auth/login'
-    post_data = {"username": user, "password": "p"}
-    r = requests.post(url=post_uri, json = post_data)
-    response_text = r.text
-    status_code = r.status_code
-    if status_code > 300:
-        raise requests.ConnectionError(f'POST login failed with {r.text}')
-    result_data = json.loads(response_text)
-    result_map = DotMap(result_data)
-    token = result_map.access_token
-    # https://stackoverflow.com/questions/19069701/python-requests-library-how-to-pass-authorization-header-with-single-token
-    header = {'Authorization': f'Bearer {token}'}
-    save_for_session = True
-    if save_for_session:
-        s = requests.Session()
-        s.headers.update(header)
-    return header
+    else:
+        post_uri = 'http://localhost:5656/api/auth/login'
+        post_data = {"username": user, "password": "p"}
+        r = requests.post(url=post_uri, json = post_data)
+        response_text = r.text
+        status_code = r.status_code
+        if status_code > 300:
+            raise Exception(f'POST login failed with {r.text}')
+        result_data = json.loads(response_text)
+        result_map = DotMap(result_data)
+        token = result_map.access_token
+        # https://stackoverflow.com/questions/19069701/python-requests-library-how-to-pass-authorization-header-with-single-token
+        header = {'Authorization': f'Bearer {token}'}
+        save_for_session = True
+        if save_for_session:
+            s = requests.Session()
+            s.headers.update(header)
+        return header
 
 
 if __name__ == "__main__":

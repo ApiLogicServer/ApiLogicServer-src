@@ -136,4 +136,8 @@ def step_impl(context):
             }}
     r = requests.patch(url=patch_cat_uri, json=patch_args, headers= test_utils.login('ro'))
     if 'Grant Security Error' not in r.text:
+<<<<<<< HEAD
         assert f"user ro update category 1 error: {r.text}"
+=======
+        assert f"user ro update category 1 error: {r.text}"
+>>>>>>> 131dd7d (wip)
