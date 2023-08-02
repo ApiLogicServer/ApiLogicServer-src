@@ -12,8 +12,8 @@ CREATE DATABASE authdb;
 -- Table structure for table Role
 --
 
-DROP TABLE IF EXISTS Role;
-CREATE TABLE Role (
+DROP TABLE IF EXISTS "Role";
+CREATE TABLE "Role" (
   name varchar(64) NOT NULL,
   PRIMARY KEY (name)
 );
@@ -27,7 +27,6 @@ DROP TABLE IF EXISTS "User";
 CREATE TABLE "User" (
   name varchar(128) DEFAULT NULL,
   notes text,
-  client_id int DEFAULT NULL,
   id varchar(64) NOT NULL,
   username varchar(128) DEFAULT NULL,
   email varchar(128) DEFAULT NULL,
@@ -46,13 +45,13 @@ INSERT INTO "User" VALUES ('Administrator',NULL,1,'admin','Admin User','admin@co
 -- Table structure for table UserRole
 --
 
-DROP TABLE IF EXISTS UserRole;
-CREATE TABLE UserRole (
+DROP TABLE IF EXISTS "UserRole";
+CREATE TABLE "UserRole" (
   user_id varchar(64) NOT NULL,
   notes text,
   role_name varchar(32) NOT NULL,
   PRIMARY KEY (user_id,role_name),
   CONSTRAINT in_client FOREIGN KEY (user_id) REFERENCES "User" (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT in_role FOREIGN KEY (role_name) REFERENCES Role (name) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT in_role FOREIGN KEY (role_name) REFERENCES "Role" (name) ON DELETE CASCADE ON UPDATE CASCADE
 );
 

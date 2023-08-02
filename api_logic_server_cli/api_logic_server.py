@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "09.01.20"
+__version__ = "09.01.22"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t07/23/2023 - 09.01.20: Issue 01 - arch-based .devcontainer, behave msgs, win rpt, env objs > config w/ home, dockerbldx m1, client_uri \n"\
+    "\t07/27/2023 - 09.01.22: Issue 01 - arch-based .devcontainer, behave msgs, win rpt, env objs > config w/ home, dockerbldx m1, client_uri \n"\
     "\t07/04/2023 - 09.01.00: SQLAlchemy 2 typed-relns/attrs, Docker: Python 3.11.4 & odbc18 \n"\
     "\t06/24/2023 - 09.00.01: PyMysql \n"\
     "\t06/22/2023 - 09.00.00: Optimistic Locking, safrs 310, SQLAlchemy 2.0.15 \n"\
@@ -494,7 +494,7 @@ def final_project_fixup(msg, project) -> str:
 
         fix_host_and_ports(" c.   Fixing api/expose_services - port, host", project)
 
-        fix_build_docker_image(" d.   Fixing devops/docker/build_image.sh - project name", project)
+        fix_build_docker_image(" d.   Fixing devops/docker-image/build_image.sh - project name", project)
 
         api_logic_server_info_file_dict["last_created_project_name"] = project.project_directory  # project_name - twiddle
         api_logic_server_info_file_dict["last_created_date"] = str(datetime.datetime.now().strftime("%B %d, %Y %H:%M:%S"))
@@ -587,15 +587,15 @@ def fix_host_and_ports(msg, project):
 
 
 def fix_build_docker_image(msg, project: Project):
-    """  d.   Fixing devops/docker/build_image.sh - project name """
-    log.debug(msg)  #  d.   Fixing devops/docker/build_image.sh - project name
+    """  d.   Fixing devops/docker-image/build_image.sh - project name """
+    log.debug(msg)  #  d.   Fixing devops/docker-image/build_image.sh - project name
     replace_port = f':{project.port}' if project.port else ""
     # replace_with = host + replace_port
-    in_file = f'{project.project_directory}/devops/docker/build_image.sh'
+    in_file = f'{project.project_directory}/devops/docker-image/build_image.sh'
     create_utils.replace_string_in_file(search_for="apilogicserver_project_name_lower",
                            replace_with=project.project_name_last_node.lower(),
                            in_file=in_file)
-    in_file = f'{project.project_directory}/devops/docker/run_image.sh'
+    in_file = f'{project.project_directory}/devops/docker-image/run_image.sh'
     create_utils.replace_string_in_file(search_for="apilogicserver_project_name_lower",
                            replace_with=project.project_name_last_node.lower(),
                            in_file=in_file)
@@ -898,7 +898,8 @@ from database import <project.bind_key>_models
         save_db_url = self.db_url
         self.command = "add_db"
         self.bind_key = "authentication"
-        self.db_url = "auth"  # shorthand for api_logic_server_cli/database/auth...
+        if self.db_url in  ["", "nw", "nw-"]:
+            self.db_url = "auth"  # shorthand for api_logic_server_cli/database/auth...
         self.run = False
         self.create_project()  # not creating project, but using model creation svcs
         self.run = save_run

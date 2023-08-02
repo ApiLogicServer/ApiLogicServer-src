@@ -47,7 +47,8 @@ sys.path.append(api_logic_server_path)
 from create_from_model.model_creation_services import ModelCreationServices
 import create_from_model.api_logic_server_utils as create_utils
 import api_logic_server_cli.create_from_model.uri_info as uri_info
-import api_logic_server_cli.api_logic_server as PR  # ProjectRun (main class)
+import api_logic_server_cli.api_logic_server as PR
+''' ProjectRun (main class) '''
 from api_logic_server_cli.cli_args_base import OptLocking
 
 api_logic_server_info_file_name = get_api_logic_server_dir() + "/api_logic_server_info.yaml"
@@ -595,11 +596,15 @@ def add_db(ctx, db_url: str, bind_key: str, bind_key_url_separator: str, api_nam
 @click.option('--project_name',
               default=f'',
               help="Project location")
+@click.option('--db_url',
+              default=f'auth',
+              prompt="SQLAlchemy Database URI",
+              help="SQLAlchemy Database URL - see above\n")
 @click.option('--api_name',
               default="api",
               help="api prefix name")
 @click.pass_context
-def add_security_cmd(ctx, bind_key_url_separator: str, api_name: str, project_name: str):
+def add_security_cmd(ctx, bind_key_url_separator: str, db_url: str, project_name: str, api_name: str):
     """
     Adds authorization/authentication to curr project.
     
@@ -607,7 +612,7 @@ def add_security_cmd(ctx, bind_key_url_separator: str, api_name: str, project_na
 
     cd existing_project
 
-    ApiLogicServer add-auth
+    ApiLogicServer add-auth project_name=.
     
     """
     if project_name == "":
@@ -616,7 +621,6 @@ def add_security_cmd(ctx, bind_key_url_separator: str, api_name: str, project_na
             project_name = str(
                 Path(project_name).parent.parent.joinpath("servers").joinpath("ApiLogicProject")
             )
-    db_url = "auth"
     bind_key = "authentication"
     project = PR.ProjectRun(command="add_security", 
               project_name=project_name, 
