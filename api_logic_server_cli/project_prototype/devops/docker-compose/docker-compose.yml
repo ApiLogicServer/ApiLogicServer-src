@@ -1,10 +1,15 @@
+# preferred
+# cd <project> (or use IDE terminal)
+# cd devops/docker-compose
+# sh docker-compose.sh
+
+# or, for debug / more logging
+# set APILOGICPROJECT_CLIENT_URI, and use "for testing", below
 # cd postgres-docker-compose
 # docker-compose -f ./devops/docker-compose/docker-compose.yml up
 # --> builds, runs at localhost
 
-# from: https://github.com/thomaxxl/als-docker
-
-# FIXME: would be better to load www (admin app) from <where>
+# TODO: would be better to load www (admin app) from <where>
 
 version: "3.5"
 
@@ -12,8 +17,9 @@ services:
     api-logic-server:
         environment:
           - APILOGICPROJECT_VERBOSE=true
-          # configure-me
+          # for testing
           # - APILOGICPROJECT_CLIENT_URI=//10.0.0.77
+          # HOST_IP set in docker-compose.sh/ps1
           - APILOGICPROJECT_CLIENT_URI=//${HOST_IP}
           - SECURITY_ENABLED=true
           - PYTHONPATH=/app/ApiLogicProject 
@@ -27,8 +33,9 @@ services:
         volumes:
             # relative path - thanks https://stackoverflow.com/questions/46907558/docker-compose-relative-paths-vs-docker-volume
             - ./../..:/app
-        # FIXME command: /usr/local/bin/gunicorn --reload --workers 4 --worker-connections 4 --access-logfile=- --pythonpath /app/ApiLogicProject -b :5000 api_logic_server_run:flask_app 
-        command:  bash /app/start.sh
+        # https://stackoverflow.com/questions/39460892/gunicorn-no-module-named-myproject
+        command: /usr/local/bin/gunicorn --reload --workers 2 --worker-connections 2 --access-logfile=- --pythonpath /app -b :5000 api_logic_server_run:flask_app 
+        # command:  bash /app/start.sh
         working_dir: /app/ApiLogicProject 
 
     nginx:
