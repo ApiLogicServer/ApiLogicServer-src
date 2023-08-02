@@ -225,32 +225,7 @@
             "type": "python",
             "request": "launch",
             "env": {"APILOGICSERVER_HOME": "${workspaceFolder}"},
-<<<<<<< HEAD
-            "program": "${workspaceFolder}/../servers/postgres/api_logic_server_run.py",
-            "redirectOutput": true,
-            "console": "integratedTerminal"
-        },
-        {
-            "name": "  - 5b - Create Postgres_bpchar",
-            "type": "python",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/api_logic_server_cli",
-            "justMyCode": false,
-            "program": "cli.py",
-            "redirectOutput": true,
-            "args": ["create","--project_name=../../../servers/postgres_bpchar",
-                "--db_url=postgresql://postgres:p@localhost/postgres"],
-            "console": "integratedTerminal"
-        },
-        {
-            "name": "  - 5c - Debug Postgres_bpchar",
-            "type": "python",
-            "request": "launch",
-            "env": {"APILOGICSERVER_HOME": "${workspaceFolder}"},
-            "program": "${workspaceFolder}/../../servers/postgres_bpchar/api_logic_server_run.py",
-=======
-            "program": "${workspaceFolder}/../../servers/postgres/api_logic_server_run.py",
->>>>>>> 80dc19a (security fixes for pg auth)
+            "program": "${workspaceFolder}/../servers/install/ApiLogicServer/postgres/api_logic_server_run.py",
             "redirectOutput": true,
             "console": "integratedTerminal"
         },
@@ -655,18 +630,18 @@
             "console": "integratedTerminal"
         },
         {
-          "name": "Add-database",
-          "type": "python",
-          "request": "launch",
-          "cwd": "${workspaceFolder}/api_logic_server_cli",
-          "program": "cli.py",
-          "redirectOutput": true,
-          "args": ["add-db",
-                  "--bind_key=Todo",
-                  "--db_url=todo"],
-          "console": "integratedTerminal"
-      },
-      {
+            "name": "Add-database",
+            "type": "python",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/api_logic_server_cli",
+            "program": "cli.py",
+            "redirectOutput": true,
+            "args": ["add-db",
+                    "--bind_key=Todo",
+                    "--db_url=todo"],
+            "console": "integratedTerminal"
+        },
+        {
         "name": "  - Add-database - explicit location",
         "type": "python",
         "request": "launch",
