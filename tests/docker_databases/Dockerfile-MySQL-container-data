@@ -21,8 +21,8 @@
 # Now convert container to image, and push to docker hub
 
 # docker commit mysql-container mysql-image
-# docker tag mysql-image apilogicserver/mysql8.0:version1.0.7
-# docker push apilogicserver/mysql8.0:version1.0.7
+# docker tag mysql-image apilogicserver/mysql8.0:version1.0.8
+# docker push apilogicserver/mysql8.0:version1.0.8
 
 # thanks - https://medium.com/@stevenlandow/persist-share-dev-mysql-data-in-a-docker-image-with-commit-f9aa9910be0a
 
