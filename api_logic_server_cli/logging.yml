@@ -21,8 +21,8 @@ handlers:
         formatter: simple
 
 root:
-  level: INFO
-  handlers: [console]
+    level: INFO
+    handlers: [console]
 
 loggers:
 

@@ -469,7 +469,7 @@ def validate_nw(api_logic_server_install_path, set_venv):
     r = requests.get(url=get_uri, headers=login())
     response_text = r.text
     result_data = json.loads(response_text) 
-    assert len(result_data['result']) == 1, \
+    assert len(result_data['result']) == 4, \
         "Failed to get 4 filters_cats rows"
 
     post_uri = "http://localhost:5656/api/CategoriesEndPoint/get_cats"

@@ -48,11 +48,11 @@ Grant(  on_entity = models.Category,    # u2 has both roles - should return clie
         can_delete=False,
         filter = lambda : models.Category.Id == 5)
 
-Grant(  on_entity = models.Customer,    # user full has full access - cannot delete customer
+Grant(  on_entity = models.Customer,    # user tenant has update access - cannot delete customer
         can_delete=False,
-        to_role = Roles.full_access)
+        to_role = Roles.tenant)
 
-Grant(  on_entity = models.Customer,    # user renter - cannot insert,update, or delete customer
+Grant(  on_entity = models.Customer,    # user renter - cannot insert,update, or delete and only can see Customer
         can_read=True,
         can_delete=False,
         can_update=False,

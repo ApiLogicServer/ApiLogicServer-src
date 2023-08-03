@@ -229,8 +229,9 @@ class Grant:
                 security_logger.debug("sa (eg, Security.set_user_sa()) - no grants apply")
                 return
         except Exception as ex:
-            security_logger.debug(f"no user - ok (eg, system initialization) error: {ex}")
-            return
+            if not user:
+                security_logger.debug(f"no user - ok (eg, system initialization) error: {ex}")
+                return
         
         # start out full restricted - any True will turn on access
         for each_role in DefaultRolePermission.grants_by_role:
