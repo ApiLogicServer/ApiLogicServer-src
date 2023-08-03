@@ -4,6 +4,10 @@
 -- ------------------------------------------------------
 -- Server version	8.0.32
 
+-- mysql -u root -p
+-- use authdb
+-- 
+
 DROP DATABASE IF EXISTS `authdb`;
 CREATE DATABASE `authdb`;
 USE `authdb`;
@@ -51,7 +55,6 @@ DROP TABLE IF EXISTS `User`;
 CREATE TABLE `User` (
   `name` varchar(128) DEFAULT NULL,
   `notes` text,
-  `client_id` int DEFAULT NULL,
   `id` varchar(64) NOT NULL,
   `username` varchar(128) DEFAULT NULL,
   `email` varchar(128) DEFAULT NULL,
@@ -66,7 +69,7 @@ CREATE TABLE `User` (
 
 LOCK TABLES `User` WRITE;
 /*!40000 ALTER TABLE `User` DISABLE KEYS */;
-INSERT INTO `User` VALUES ('Administrator',NULL,1,'admin','Admin User','admin@corp.com','p');
+INSERT INTO `User` VALUES ('Administrator',NULL,'admin','Admin User','admin@corp.com','p');
 /*!40000 ALTER TABLE `User` ENABLE KEYS */;
 UNLOCK TABLES;
 

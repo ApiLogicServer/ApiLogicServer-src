@@ -3,8 +3,10 @@ import sqlalchemy as sqlalchemy
 import database.authentication_models as authentication_models
 from flask import Flask
 import safrs
+from safrs.errors import JsonapiError
 from dotmap import DotMap  # a dict, but you can say aDict.name instead of aDict['name']... like a row
 from sqlalchemy import inspect
+from http import HTTPStatus
 
 # **********************
 # sql auth provider
@@ -12,6 +14,16 @@ from sqlalchemy import inspect
 
 db = None
 session = None
+
+
+
+class ALSError(JsonapiError):
+    
+    def __init__(self, message, status_code=HTTPStatus.BAD_REQUEST):
+        super().__init__()
+        self.message = message
+        self.status_code = status_code
+
 
 class Authentication_Provider(Abstract_Authentication_Provider):
 
@@ -47,7 +59,10 @@ class Authentication_Provider(Abstract_Authentication_Provider):
             db = safrs.DB         # Use the safrs.DB for database access
             session = db.session  # sqlalchemy.orm.scoping.scoped_session
 
-        user = session.query(authentication_models.User).filter(authentication_models.User.id == id).one()
+        try:
+            user = session.query(authentication_models.User).filter(authentication_models.User.id == id).one()
+        except:
+            raise ALSError(f"User {id} is not authorized for this system")
         use_db_row = True
         if use_db_row:
             return user

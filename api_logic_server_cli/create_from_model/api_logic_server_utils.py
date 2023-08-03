@@ -51,7 +51,7 @@ def get_project_directory_and_api_name(project):
         if rtn_project_directory == get_api_logic_server_dir():
             rtn_project_directory = str( Path(get_api_logic_server_dir()) / 'ApiLogicProject' )
             msg = ' <dev>'
-        log.debug(f'1. Merge into project prototype: {rtn_project_directory}{msg}')
+        log.debug(f'1. Merge into project prototype / current project: {rtn_project_directory}{msg}')
     project_path = Path(rtn_project_directory)
     project_path_last_node = project_path.parts[-1]
     if project.multi_api or project.api_name == ".":

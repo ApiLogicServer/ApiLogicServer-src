@@ -43,7 +43,7 @@ class Project(CliArgsBase):  # extend user-visible args with internal values
         self.project_name_last_node = "TBD"
 
         running_at = Path(__file__)
-        self.api_logic_server_dir_path = running_at.parent.absolute()  # ne abspath(f'{abspath(get_api_logic_server_dir())}'))
+        self.api_logic_server_dir_path = running_at.parent.absolute()  # no abspath(f'{abspath(get_api_logic_server_dir())}'))
 
         self.is_codespaces = os.getenv('CODESPACES')
 

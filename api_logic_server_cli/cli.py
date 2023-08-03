@@ -604,7 +604,7 @@ def add_db(ctx, db_url: str, bind_key: str, bind_key_url_separator: str, api_nam
               default="api",
               help="api prefix name")
 @click.pass_context
-def add_security_cmd(ctx, bind_key_url_separator: str, db_url: str, project_name: str, api_name: str):
+def add_auth_cmd(ctx, bind_key_url_separator: str, db_url: str, project_name: str, api_name: str):
     """
     Adds authorization/authentication to curr project.
     
@@ -643,7 +643,7 @@ def add_security_cmd(ctx, bind_key_url_separator: str, db_url: str, project_name
     is_nw = False
     if create_utils.does_file_contain(search_for="CategoryTableNameTest", in_file=models_py_path):
         is_nw = True
-    project.add_sqlite_security(msg="Adding Security", is_nw=is_nw)
+    project.add_auth(msg="Adding Security", is_nw=is_nw)
     log.info("")
 
 

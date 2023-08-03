@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "09.01.28"
+__version__ = "09.01.29"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t08/01/2023 - 09.01.28: Issue 01 - arch-based .devcontainer, behave msgs, win rpt, env objs > config w/ home, dockerbldx m1, client_uri \n"\
+    "\t08/02/2023 - 09.01.29: Issue 01 - arch-based .devcontainer, behave msgs, win rpt, env objs > config w/ home, dockerbldx m1, client_uri \n"\
     "\t07/04/2023 - 09.01.00: SQLAlchemy 2 typed-relns/attrs, Docker: Python 3.11.4 & odbc18 \n"\
     "\t06/24/2023 - 09.00.01: PyMysql \n"\
     "\t06/22/2023 - 09.00.00: Optimistic Locking, safrs 310, SQLAlchemy 2.0.15 \n"\
@@ -700,9 +700,6 @@ class ProjectRun(Project):
         self.opt_locking_attr = opt_locking_attr
         self.id_column_alias = id_column_alias
 
-        name_nodes = self.project_name.split("/") # type: str
-        self.project_name_last_node = name_nodes[len(name_nodes) - 1]
-
         if execute:
             self.create_project()
 
@@ -872,16 +869,16 @@ from database import <project.bind_key>_models
         return return_abs_db_url
 
 
-    def add_sqlite_security(self, msg: str, is_nw: bool = False):
+    def add_auth(self, msg: str, is_nw: bool = False):
         """_summary_
 
-        1. add-db --db_url=auth
+        1. add-db --db_url= [ auth | db_url ]
 
         2. add user.login endpoint
 
         3. Set SECURITY_ENABLED in config.py
 
-        4. Adding Sample authorization to security/declare_security.py, or user TODO
+        4. Adding Sample authorization to security/declare_security.py, or user
 
         Args:
             msg (str): eg: ApiLogicProject customizable project created.  Adding Security:")
@@ -899,7 +896,8 @@ from database import <project.bind_key>_models
         save_db_url = self.db_url
         self.command = "add_db"
         self.bind_key = "authentication"
-        if is_nw or self.nw_db_status ==  "nw":
+        is_northwind = is_nw or self.nw_db_status ==  "nw"  # nw_db_status altered in create_project
+        if is_northwind:  # is_nw or self.nw_db_status ==  "nw":
             self.db_url = "auth"  # shorthand for api_logic_server_cli/database/auth...
         self.run = False
         self.create_project()  # not creating project, but using model creation svcs
@@ -934,16 +932,16 @@ from database import <project.bind_key>_models
         create_utils.replace_string_in_file(search_for="SECURITY_ENABLED = False  #",
                             replace_with='SECURITY_ENABLED = True  #',
                             in_file=f'{self.project_directory}/config.py')
-        if is_nw:
+        if is_northwind:  # is_nw or self.nw_db_status ==  "nw":
             log.debug("\n==================================================================")
-        if msg != "":
             if msg != "":
-                log.info("  4. Adding Sample authorization to security/declare_security.py")
-            log.debug("==================================================================\n\n")
-            nw_declare_security_py_path = self.api_logic_server_dir_path.\
-                joinpath('project_prototype_nw/security/declare_security.py')
-            declare_security_py_path = self.project_directory_path.joinpath('security/declare_security.py')
-            shutil.copyfile(nw_declare_security_py_path, declare_security_py_path)
+                if msg != "":
+                    log.info("  4. Adding Sample authorization to security/declare_security.py")
+                log.debug("==================================================================\n\n")
+                nw_declare_security_py_path = self.api_logic_server_dir_path.\
+                    joinpath('project_prototype_nw/security/declare_security.py')
+                declare_security_py_path = self.project_directory_path.joinpath('security/declare_security.py')
+                shutil.copyfile(nw_declare_security_py_path, declare_security_py_path)
         else:
             log.debug("\n==================================================================")
             if msg != "":
@@ -966,7 +964,7 @@ from database import <project.bind_key>_models
         if do_security:
             if do_show_messages:
                 nw_messages = "Add northwind customizations - enabling security"
-            self.add_sqlite_security(is_nw=True, msg=nw_messages)
+            self.add_auth(is_nw=True, msg=nw_messages)
 
         nw_path = (self.api_logic_server_dir_path).\
             joinpath('project_prototype_nw')  # /Users/val/dev/ApiLogicServer/api_logic_server_cli/project_prototype
@@ -1108,6 +1106,10 @@ from database import <project.bind_key>_models
         self.project_directory_actual = os.path.abspath(self.project_directory)  # make path absolute, not relative (no /../)
         self.project_directory_path = Path(self.project_directory_actual)
 
+        name_nodes = self.project_directory_actual.split("/") # type: str
+        self.project_name_last_node = name_nodes[len(name_nodes) - 1]  # for prototype, project_name='.'
+
+
         if self.command.startswith("rebuild") or self.command == "add_db":
             log.debug("1. Not Deleting Existing Project")
             log.debug("2. Using Existing Project")
@@ -1132,7 +1134,7 @@ from database import <project.bind_key>_models
             start_open_with(open_with=self.open_with, project_name=self.project_name)
 
         if self.nw_db_status in ["nw", "nw+"] and self.command != "add_db":
-            self.add_sqlite_security("\nApiLogicProject customizable project created.  Adding Security:")
+            self.add_auth("\nApiLogicProject customizable project created.  Adding Security:")
             
         if self.command.startswith("add_"):
             pass  # keep silent for add-db, add-auth...
@@ -1235,5 +1237,5 @@ def key_module_map():
     api_expose_api_models_creator.create()                  # creates api/expose_api_models.py, key input to SAFRS        
     ui_admin_creator.create()                               # creates ui/admin/admin.yaml from resource_list
     ProjectRun.update_config_and_copy_sqlite_db()           # adds db (model, binds, api, app) to curr project
-    ProjectRun.add_sqlite_security()                        # add_db(auth), adds nw declare_security, upd config
+    ProjectRun.add_auth()                                   # add_db(auth), adds nw declare_security, upd config
     ProjectRun.tutorial()                                   # creates basic, nw, nw + cust
