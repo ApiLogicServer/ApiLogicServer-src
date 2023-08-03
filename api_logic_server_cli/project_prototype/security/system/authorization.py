@@ -243,9 +243,9 @@ class Grant:
                         can_update = can_update or grant_role.can_update
                         print(f"Grant on role: {each_role} Read: {can_read}, Update: {can_update}, Insert: {can_insert}, Delete: {can_delete}")
                     
+        grant_list = []
+        grant_entity = None
         if entity_name in Grant.grants_by_table:
-            grant_list = []
-            grant_entity = None
             for each_grant in Grant.grants_by_table[entity_name]:
                 grant_entity = each_grant.entity
                 for each_user_role in user.UserRoleList:
@@ -262,12 +262,6 @@ class Grant:
                             and orm_execute_state is not None:
                             grant_list.append(each_grant.filter())
             security_logger.debug(f"Grants applied for entity {entity_name}")
-            if grant_entity is not None \
-                and grant_list and crud_state == "is_select":
-                grant_filter = or_(*grant_list)
-                # apply filter(s) (additional where clause) for row security on select
-                orm_execute_state.statement = orm_execute_state.statement.options(
-                    with_loader_criteria(grant_entity,grant_filter))
         else:
             security_logger.debug(f"No Grants for entity {entity_name}")
             
@@ -281,6 +275,13 @@ class Grant:
                 raise GrantSecurityException(user=user,entity_name=entity_name,access="insert")
         elif not can_delete and crud_state == 'is_delete':
                 raise GrantSecurityException(user=user,entity_name=entity_name,access="delete")
+    
+        if grant_entity is not None \
+            and grant_list and crud_state == "is_select":
+            grant_filter = or_(*grant_list)
+            # apply filter(s) (additional where clause) for row security on select
+            orm_execute_state.statement = orm_execute_state.statement.options(
+                with_loader_criteria(grant_entity,grant_filter))
     
     @staticmethod
     class process_updates():
