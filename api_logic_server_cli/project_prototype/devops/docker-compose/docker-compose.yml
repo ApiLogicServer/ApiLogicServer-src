@@ -5,7 +5,7 @@
 
 # or, for debug / more logging
 # set APILOGICPROJECT_CLIENT_URI, and use "for testing", below
-# cd postgres-docker-compose
+# cd <proejct>
 # docker-compose -f ./devops/docker-compose/docker-compose.yml up
 # --> builds, runs at localhost
 
@@ -23,8 +23,8 @@ services:
           - APILOGICPROJECT_CLIENT_URI=//${HOST_IP}
           - SECURITY_ENABLED=true
           - PYTHONPATH=/app/ApiLogicProject 
-          - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI=postgresql://postgres:p@nw_postgres/postgres
-          - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI_AUTHENTICATION=postgresql://postgres:p@nw_postgres/authdb
+          - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI=mysql+pymysql://root:p@mysql-service:3306/classicmodels
+          - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI=mysql+pymysql://root:p@mysql-service:3306/authdb
         build:
             context: ../..
             dockerfile: ./devops/docker-compose/Dockerfile.dockerfile
@@ -49,11 +49,20 @@ services:
             - ./etc/nginx.conf:/etc/nginx/conf.d/default.conf:ro
             - ./etc/ssl:/etc/ssl:ro
 
-    nw_postgres:
-        image: apilogicserver/postgres:latest
+    mysql-service:
+        image: apilogicserver/mysql8.0:version1.0.7
         restart: always
         environment:
-          - PGDATA=/pgdata
-          - POSTGRES_PASSWORD=p
+            # MYSQL_DATABASE: 'db'
+            # So you don't have to use root, but you can if you like
+            MYSQL_USER: 'root'
+            # You can use whatever password you like
+            MYSQL_PASSWORD: 'p'
+            # Password for root access
+            MYSQL_ROOT_PASSWORD: 'p'
         ports:
-          - "5432:5432"
+            # <Port exposed> : <MySQL Port running inside container>
+            - '3306:3306'
+        expose:
+            # Opens port 3306 on the container
+            - '3306'
