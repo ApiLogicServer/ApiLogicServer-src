@@ -48,8 +48,7 @@ RUN apt-get install apt-utils
 
 RUN apt-get -y install unixodbc-dev \
   && apt-get -y install python3-pip \
-  && pip install pyodbc==4.0.34 \
-  && pip install PyMySQL[rsa]
+  && pip install pyodbc==4.0.34
 
 RUN useradd --create-home --shell /bin/bash api_logic_server
 WORKDIR /home/api_logic_server

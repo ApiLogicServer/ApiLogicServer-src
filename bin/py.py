@@ -74,9 +74,18 @@ def python_status():
 
 
     import socket
-    hostname = socket.gethostname()
-    local_ip = socket.gethostbyname(hostname)
-    if cli:
+    try:
+        hostname = socket.gethostname()
+        local_ip = socket.gethostbyname(hostname)
+    except:
+        local_ip = f"cannot get local ip from {hostname}"
+        print(f"{local_ip}")
+    api_logic_server_version = None
+    try:
+        api_logic_server_version = cli.__version__
+    except:
+        pass
+    if api_logic_server_version:
         print_at('ApiLogicServer version', cli.__version__)
     else:
         print_at('ApiLogicServer version', f'*** ApiLogicServer not installed in this environment ***')

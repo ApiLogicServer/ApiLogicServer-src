@@ -3,6 +3,12 @@
 # docker build -t apilogicserver/mysql --file Dockerfile-MySQL --rm .
 # docker run --name mysql-container --net dev-network -p 3306:3306 -d -e MYSQL_ROOT_PASSWORD=p apilogicserver/mysql
 
+# using mysql
+# you can use Docker Desktop, select container > terminal, and:
+# -- mysql -u root -p
+# -- use authdb
+# -- 
+
 
 # Now set up your mysql database.
 
