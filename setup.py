@@ -66,7 +66,6 @@ setup(
         "SQLAlchemy-Utils==0.38.2",
         "logicbankutils==0.6.0",
         "inflect==5.0.2",
-        "cryptography==36.0.1",
 
         # from safrs, but stipulate version#s
          "Flask==2.3.2",
@@ -94,6 +93,8 @@ setup(
         # https://stackoverflow.com/questions/71354710/cryptography-package-is-required-for-sha256-password-or-caching-sha2-password
         # "PyMySQL==1.0.3[rsa]", 
         # "PyMySQL==1.0.3+rsa",
+        "cryptography==36.0.1",
+        "rsa",
         "PyMySQL==1.0.3", 
         "requests==2.27.1",
         "gunicorn==20.1.0",

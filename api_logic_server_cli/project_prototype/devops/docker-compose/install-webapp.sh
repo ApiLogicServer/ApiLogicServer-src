@@ -19,4 +19,5 @@ unzip safrs-react-admin-0.1.2.zip
 set -x
 
 echo "\nrenaming to wwwadmin-app"
+mkdir www
 mv build www/admin-app
