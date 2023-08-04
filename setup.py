@@ -91,8 +91,10 @@ setup(
         "python-dotenv==0.15.0",
         "email-validator==1.1.1",
         "LogicBank>=1.08.04",
-        # "PyMySQL==1.0.3[rsa]",
-        "PyMySQL==1.0.3+rsa",
+        # https://stackoverflow.com/questions/71354710/cryptography-package-is-required-for-sha256-password-or-caching-sha2-password
+        # "PyMySQL==1.0.3[rsa]", 
+        # "PyMySQL==1.0.3+rsa",
+        "PyMySQL==1.0.3", 
         "requests==2.27.1",
         "gunicorn==20.1.0",
         "psycopg2-binary==2.9.5",
