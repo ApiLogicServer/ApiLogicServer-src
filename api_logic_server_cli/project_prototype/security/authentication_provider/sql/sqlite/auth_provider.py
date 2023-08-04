@@ -7,6 +7,7 @@ from safrs.errors import JsonapiError
 from dotmap import DotMap  # a dict, but you can say aDict.name instead of aDict['name']... like a row
 from sqlalchemy import inspect
 from http import HTTPStatus
+import logging
 
 # **********************
 # sql auth provider
@@ -15,7 +16,7 @@ from http import HTTPStatus
 db = None
 session = None
 
-
+logger = logging.getLogger(__name__)
 
 class ALSError(JsonapiError):
     
@@ -61,7 +62,10 @@ class Authentication_Provider(Abstract_Authentication_Provider):
 
         try:
             user = session.query(authentication_models.User).filter(authentication_models.User.id == id).one()
-        except:
+        except Exception as e:
+            logger.info(f'*****\nauth_provider FAILED looking for: {id}\n*****\n')
+            logger.info(f'excp: {str(e)}\n')
+            # raise e
             raise ALSError(f"User {id} is not authorized for this system")
         use_db_row = True
         if use_db_row:

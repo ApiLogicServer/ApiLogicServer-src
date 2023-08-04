@@ -18,5 +18,5 @@ set +x
 unzip safrs-react-admin-0.1.2.zip
 set -x
 
-echo "\nrenaming to www"
-mv build www
+echo "\nrenaming to wwwadmin-app"
+mv build www/admin-app
