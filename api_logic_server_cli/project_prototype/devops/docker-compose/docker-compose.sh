@@ -13,9 +13,21 @@ cat ./env-docker-compose.env
 echo ""
 
 read -p "Verify IP above is correct, then press ENTER to proceed> "
-if [ -d "ApiLogicServer-dev" ] 
+if [ ! -d "./www/admin-app" ] 
 then
-    echo "\nYou need to install the etc/www directories first - see readme\n" 
+    echo "\nYou need to install the etc/www directories first - use sh install-webapp.sh\n" 
+    exit 1
+else
+    echo "\n... starting\n"
+fi
+
+if [ ! -f "./../../database/authentication_models.py" ] 
+then
+    echo "\nYou need to activate security first.  With mysql-container running...\n" 
+    echo "pushd ./../../"
+    echo "ApiLogicServer add-auth --project_name=. --db_url=mysql+pymysql://root:p@localhost:3306/authdb"
+    echo "popd"
+    echo "then stop mysql-container"
     exit 1
 else
     echo "\n... starting\n"
@@ -25,6 +37,6 @@ pushd ../../
 # ls  # verify project root docker-compose --env-file project/myproject/.env up
 # https://stackoverflow.com/questions/65484277/access-env-file-variables-in-docker-compose-file
 
-docker-compose -f ./devops/docker-compose/docker-compose.yml --env-file ./devops/docker-compose/env-docker-compose.env up
+docker compose -f ./devops/docker-compose/docker-compose.yml --env-file ./devops/docker-compose/env-docker-compose.env up
 
 popd

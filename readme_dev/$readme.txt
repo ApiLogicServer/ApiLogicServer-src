@@ -22,6 +22,13 @@ release?
   x Multi-Arch dockers
   x log: 0 authentication tables loaded
 
+Multi-container Azure deployement
+  Note: docker-compose -> docker compose
+  https://learn.microsoft.com/en-us/azure/app-service/quickstart-multi-container
+  https://code.visualstudio.com/docs/containers/docker-compose
+  https://docs.docker.com/cloud/aci-integration/
+    Umm... Docker Compose’s integration for ECS and ACI is retiring in November 2023
+
 add-auth test?  for classicmodels?
 
 docker-compose test?

@@ -6,7 +6,7 @@
 # or, for debug / more logging
 # set APILOGICPROJECT_CLIENT_URI, and use "for testing", below
 # cd <project>
-# docker-compose -f ./devops/docker-compose/docker-compose.yml --env-file ./devops/docker-compose/env-docker-compose.env up
+# docker compose -f ./devops/docker-compose/docker-compose.yml --env-file ./devops/docker-compose/env-docker-compose.env up
 # --> builds, runs at localhost
 
 version: "3.5"
