@@ -790,7 +790,7 @@ class ProjectRun(Project):
         # db_uri = config_uri  # return_abs_db_url
         if os.name == "nt":  # windows
             # 'C:\\\\Users\\\\val\\\\dev\\\\servers\\\\api_logic_server\\\\database\\\\db.sqlite'
-            target_db_loc_actual = get_windows_path_with_slashes(self.abs_db_url
+            target_db_loc_actual = get_windows_path_with_slashes(self.abs_db_url)
         CONFIG_URI = f'SQLALCHEMY_DATABASE_URI_{bind_key_upper}'
 
         config_insert = f"""
