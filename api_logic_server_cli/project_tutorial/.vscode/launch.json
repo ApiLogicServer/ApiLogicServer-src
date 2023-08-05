@@ -109,11 +109,11 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "Execute nw-",
+            "name": "Execute Classic Models",
             "type": "python",
             "request": "launch",
-            "cwd": "${workspaceFolder}/nw-",
             "env": {"PYTHONPATH": "", "PYTHONHASHSEED": "0", "APILOGICPROJECT_DEBUG": "False"},
+            "cwd": "${workspaceFolder}/classicmodels",
             "program": "api_logic_server_run.py",
             "redirectOutput": true,
             "justMyCode": false,
@@ -122,11 +122,11 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "Execute Classic Models",
+            "name": "ToDo",
             "type": "python",
             "request": "launch",
             "env": {"PYTHONPATH": "", "PYTHONHASHSEED": "0", "APILOGICPROJECT_DEBUG": "False"},
-            "cwd": "${workspaceFolder}/classicmodels",
+            "cwd": "${workspaceFolder}/todo",
             "program": "api_logic_server_run.py",
             "redirectOutput": true,
             "justMyCode": false,

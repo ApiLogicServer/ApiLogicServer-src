@@ -1,5 +1,9 @@
 Breaking changes
   Updated http_type?
+9.1 changes
+  Self-reln parent name is class, not 'parent'
+
+remove the _x stuff
 
 release?
   Tyler's expose db uri - yes
@@ -8,23 +12,21 @@ release?
     explore security_enabled, and provider, in config
 
   TP
-    proxy port for swagger - will add client_url arg to safrs
+  x proxy port for swagger - will add client_url arg to safrs
 
   Tyler verb auth?
+
   TC: if I set APILOGICPROJECT_PORT as an env var and also have it set in env.list which one takes precedence?
   x Remove docker - apilogicserver/api_logic_server_arm (unified target)
   x Codespaces ready -> devcontainer loaded
   x Multi-Arch dockers
   x log: 0 authentication tables loaded
 
-docker-compose test
-  build postgres
+docker-compose test?
+  build mysql
   containerize
   docker-compose (per IP?)
   start (then run admin manually)
-
-9.1 changes
-  Self-reln parent name is class, not 'parent'
  
 multi-field key
     Location country, city
