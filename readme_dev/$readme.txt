@@ -3,7 +3,7 @@ Breaking changes
 9.1 changes
   Self-reln parent name is class, not 'parent'
 
-remove the _x stuff
+x remove the _x stuff
 
 release?
   Tyler's expose db uri - yes

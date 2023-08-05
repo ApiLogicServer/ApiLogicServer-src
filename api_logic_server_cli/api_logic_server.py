@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "09.01.34"
+__version__ = "09.02.00"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t08/04/2023 - 09.01.34: Issue 01 - arch-based .devcontainer, behave msgs, win rpt, env objs > config w/ home, dockerbldx m1, client_uri \n"\
+    "\t08/05/2023 - 09.02.00: Devops container/compose, Multi-arch dockers, add-auth with db_url, auth docker dbs \n"\
     "\t07/04/2023 - 09.01.00: SQLAlchemy 2 typed-relns/attrs, Docker: Python 3.11.4 & odbc18 \n"\
     "\t06/24/2023 - 09.00.01: PyMysql \n"\
     "\t06/22/2023 - 09.00.00: Optimistic Locking, safrs 310, SQLAlchemy 2.0.15 \n"\
@@ -349,7 +349,7 @@ def create_project_with_nw_samples(project, msg: str) -> str:
             if platform.machine() in('arm64', 'aarch64'):  #  in ("i386", "AMD64", "x86_64")
                 log.debug(f'\n>> .. arm - {platform.machine()}\n')
                 create_utils.replace_string_in_file(search_for="apilogicserver/api_logic_server",
-                                    replace_with=f'apilogicserver/api_logic_server_arm',
+                                    replace_with=f'apilogicserver/api_logic_server_local',
                                     in_file=f'{project.project_directory}/.devcontainer/For_VSCode.dockerfile')
 
         return_abs_db_url = project.abs_db_url
