@@ -1106,9 +1106,7 @@ from database import <project.bind_key>_models
         self.project_directory_actual = os.path.abspath(self.project_directory)  # make path absolute, not relative (no /../)
         self.project_directory_path = Path(self.project_directory_actual)
 
-        name_nodes = self.project_directory_actual.split("/") # type: str
-        self.project_name_last_node = name_nodes[len(name_nodes) - 1]  # for prototype, project_name='.'
-
+        self.project_name_last_node = Path(self.project_directory_path).name  # for prototype, project_name='.'
 
         if self.command.startswith("rebuild") or self.command == "add_db":
             log.debug("1. Not Deleting Existing Project")
