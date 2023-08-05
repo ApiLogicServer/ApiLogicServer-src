@@ -22,6 +22,8 @@ release?
   x Multi-Arch dockers
   x log: 0 authentication tables loaded
 
+add-auth test?  for classicmodels?
+
 docker-compose test?
   build mysql
   containerize
