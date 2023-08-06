@@ -37,10 +37,10 @@ The docker files in this directory are from the MySQL project.  To adapt them to
 
 ## docker-image
 
-These scripts simplify creating and running docker containers for your project.
+These scripts simplify creating and running docker containers for your project.  Their use is illustrated in the links above.
 
 &nbsp;
 
 ## More information
 
-For more information, see [DevOps Documentation](https://apilogicserver.github.io/Docs/DevOps-Containers/).\
+For more information, see [DevOps Documentation](https://apilogicserver.github.io/Docs/DevOps-Containers/).
