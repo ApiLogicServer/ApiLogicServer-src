@@ -599,6 +599,10 @@ def fix_build_docker_image(msg, project: Project):
     create_utils.replace_string_in_file(search_for="apilogicserver_project_name_lower",
                            replace_with=project.project_name_last_node.lower(),
                            in_file=in_file)
+    in_file = f'{project.project_directory}/devops/docker-compose/docker-compose.yml'
+    create_utils.replace_string_in_file(search_for="apilogicserver_project_name_lower",
+                           replace_with=project.project_name_last_node.lower(),
+                           in_file=in_file)
 
 
 def start_open_with(open_with: str, project_name: str):

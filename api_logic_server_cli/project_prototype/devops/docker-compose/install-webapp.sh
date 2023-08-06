@@ -1,13 +1,16 @@
 #!/bin/bash
 
+# typically run from project root
+# sh ./devops/docker-compose/install-webapp.sh
+
 # obtain the web directories
 
 if [ -d "etc" ] 
 then
     echo "\n... starting\n"
 else
-    echo "\nPlease cd to <project>/devops/docker-compose - see readme\n" 
-    exit 1
+    echo "\n.. cd ./devops/docker-compose \n" 
+    cd ./devops/docker-compose
 fi
 
 read -p "Ready to obtain web app files, press ENTER to proceed> "

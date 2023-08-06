@@ -40,6 +40,8 @@ else
   version="$3"
 fi
 
+echo "Building ${repositoryname}/${projectname}\n"
+
 docker build -f devops/docker-image/build_image.dockerfile -t ${repositoryname}/${projectname} --rm .
 
 status=$?
