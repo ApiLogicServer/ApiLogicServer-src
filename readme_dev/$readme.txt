@@ -1,7 +1,16 @@
 Breaking changes
   Updated http_type?
+
 9.1 changes
   Self-reln parent name is class, not 'parent'
+
+Fix image failures
+  x postgres
+  SqlServer - FAILS - incompatible type
+
+Cloud deploy
+  az script
+  https
 
 x remove the _x stuff
 
@@ -29,33 +38,20 @@ Multi-container Azure deployement
   https://docs.docker.com/cloud/aci-integration/
     Umm... Docker Compose’s integration for ECS and ACI is retiring in November 2023
 
-add-auth test?  for classicmodels?
+New tests
 
-docker-compose test?
-  build mysql
-  containerize
-  docker-compose (per IP?)
-  start (then run admin manually)
- 
-multi-field key
-    Location country, city
-    Order Country, City
+  add-auth test?  for classicmodels?
 
-aneu Categories - 1 row in main, 2 in security
-  aneu roles
-    security  - tenant, manager
-    main      - tenant  <not mgr>
-
-postgres issues
-  - no bpchar
-    ApiLogicServer create --project_name=postgres --db_url=postgresql://postgres:p@localhost/postgres
-    create: no message
-  - bpchar
-    ApiLogicServer create --project_name=postgres_bpchar --db_url=postgresql://postgres:p@localhost/postgres_bpchar
-    create messages (also Tom Peters)
-      Did not recognize type 'bpchar' of column 'customer_id' (and others)
-      #Failed to get col type for customers.customer_id - NULL
+  docker-compose test?
+    build mysql
+    containerize
+    docker-compose (per IP?)
+    start (then run admin manually)
   
+  multi-field key
+      Location country, city
+      Order Country, City
+
 
 
 http://localhost:5656/filters_cats

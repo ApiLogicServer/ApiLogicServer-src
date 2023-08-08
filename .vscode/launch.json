@@ -196,7 +196,7 @@
             "console": "internalConsole" // allows special char '?' -- output goes to DEBUG CONSOLE
         },
         {
-            "name": "4 - Create Sql/Server - remote",
+            "name": "  - Create Sql/Server - remote",
             "type": "python",
             "request": "launch",
             "cwd": "${workspaceFolder}/api_logic_server_cli",

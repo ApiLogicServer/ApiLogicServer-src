@@ -205,14 +205,16 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
     @app.route('/metadata')
     def metadata():
         """
+        Swagger provides typical API discovery.  This is for tool providers
+        requiring programmatic access to api definition, e.g., 
+        to drive artifact code generation.
 
-        Returns json for list of resources, with optional attribute name/type, eg
+        Returns json for list of 1 / all resources, with optional attribute name/type, eg
 
         curl -X GET "http://localhost:5656/metadata?resource=Category&include=attributes"
 
         curl -X GET "http://localhost:5656/metadata?include=attributes"
         """
-        from typing import List, Dict
         import inspect
         import sys
         from sqlalchemy.ext.declarative import declarative_base
