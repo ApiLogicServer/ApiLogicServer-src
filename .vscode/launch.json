@@ -250,7 +250,8 @@
             "program": "cli.py",
             "redirectOutput": true,
             "argsExpansion": "none",
-            "args": ["create","--project_name=../../../servers/classicmodels","--db_url=mysql+pymysql://root:p@localhost:3306/classicmodels"],
+            "args": ["create","--project_name=../../../servers/classicmodels",
+            "--db_url=mysql+pymysql://root:p@localhost:3306/classicmodels"],
             "console": "integratedTerminal"
         },
         {
@@ -261,7 +262,8 @@
             "program": "cli.py",
             "redirectOutput": true,
             "argsExpansion": "none",
-            "args": ["create","--project_name=../../../servers/classicmodels","--db_url=mysql+pymysql://root:p@10.0.0.77:3306/classicmodels"],
+            "args": ["create","--project_name=../../../servers/classicmodels",
+            "--db_url=mysql+pymysql://root:p@10.0.0.77:3306/classicmodels"],
             "console": "integratedTerminal"
         },
         {
@@ -296,30 +298,6 @@
             "redirectOutput": true,
             "argsExpansion": "none",
             "args": ["create-and-run","--project_name=../../../servers/classicmodels_sqllite","--db_url={install}/classicmodels.sqlite"],
-            "console": "integratedTerminal"
-        },
-        {
-            "name": "7 - Create and run MySql - classic models",
-            "type": "python",
-            "request": "launch",
-            "env": {"APILOGICSERVER_HOME": "${workspaceFolder}"},
-            "cwd": "${workspaceFolder}/api_logic_server_cli",
-            "program": "cli.py",
-            "redirectOutput": true,
-            "argsExpansion": "none",
-            "args": ["create-and-run","--project_name=../../../servers/classicmodels","--db_url=mysql+pymysql://root:p@localhost:3306/classicmodels"],
-            "console": "integratedTerminal"
-        },
-        {
-            "name": "  - 7a - Create and run MySql - classic models (remote)",
-            "type": "python",
-            "request": "launch",
-            "env": {"APILOGICSERVER_HOME": "${workspaceFolder}"},
-            "cwd": "${workspaceFolder}/api_logic_server_cli",
-            "program": "cli.py",
-            "redirectOutput": true,
-            "argsExpansion": "none",
-            "args": ["create-and-run","--project_name=../../../servers/classicmodels","--db_url=mysql+pymysql://root:p@10.0.0.77:3306/classicmodels"],
             "console": "integratedTerminal"
         },
         {

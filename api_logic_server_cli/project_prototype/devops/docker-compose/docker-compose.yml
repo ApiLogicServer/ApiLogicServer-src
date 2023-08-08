@@ -13,11 +13,11 @@ version: "3.5"
 
 services:
     api-logic-server:
-        build:
-            context: ../..
-            dockerfile: ./devops/docker-compose/Dockerfile.dockerfile
-        # instead of rebuilding the image, uncomment the following to use existing image
-        # image: apilogicserver/apilogicserver_project_name_lower
+        image: apilogicserver/apilogicserver_project_name_lower
+        # instead using a built image, uncomment the following to build the image dynamically
+        # build:
+        #     context: ../..
+        #     dockerfile: ./devops/docker-compose/Dockerfile.dockerfile
         environment:
           - APILOGICPROJECT_VERBOSE=true
           # for testing

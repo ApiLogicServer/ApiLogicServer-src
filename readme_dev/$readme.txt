@@ -1,5 +1,5 @@
 Breaking changes
-  Updated http_type?
+  Updated http_type APILOGICPROJECT_HTTP_SCHEME=http
 
 9.1 changes
   Self-reln parent name is class, not 'parent'
