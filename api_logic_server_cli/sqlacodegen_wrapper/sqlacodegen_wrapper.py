@@ -305,6 +305,11 @@ def create_models_memstring(args) -> str:
         # ==> Connection.execution_options() takes 1 positional argument but 2 were given
         '''
 
+    
+    ########################################
+    # call sqlacodegen
+    ########################################
+
     from sqlalchemy.orm import sessionmaker
     Session = sessionmaker(engine)  # SQLAlchemy2
     args.model_creation_services.session = Session()

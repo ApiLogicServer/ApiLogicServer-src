@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "09.02.01"
+__version__ = "09.02.02"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t08/05/2023 - 09.02.01: Devops container/compose, Multi-arch dockers, add-auth with db_url, auth docker dbs \n"\
+    "\t08/07/2023 - 09.02.02: Devops container/compose, Multi-arch dockers, add-auth with db_url, auth docker dbs \n"\
     "\t07/04/2023 - 09.01.00: SQLAlchemy 2 typed-relns/attrs, Docker: Python 3.11.4 & odbc18 \n"\
     "\t06/24/2023 - 09.00.01: PyMysql \n"\
     "\t06/22/2023 - 09.00.00: Optimistic Locking, safrs 310, SQLAlchemy 2.0.15 \n"\

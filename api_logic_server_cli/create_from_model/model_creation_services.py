@@ -678,9 +678,20 @@ class ModelCreationServices(object):
         if self.engine:
             self.engine.dispose()
 
+
+    #############################
+    # get meta data
+    #############################
+
     def create_resource_list(self, models_file, msg):
         """
-        creates self.resource_list via dynamic import of models.py  (drives create_from_model modules)
+        Creates self.resource_list:
+         
+        1. Dynamic import of models.py
+
+        2. Safrs metadata
+
+        self.resource_list then used to drive create_from_model modules - API, UI
         
         :param models_file name of file for output
         :param msg e.g. .. .. ..Create resource_list - dynamic import database/models.py, inspect
