@@ -1,14 +1,15 @@
 #!/bin/bash
 
 # typically run from project root
-# sh ./devops/docker-compose/docker-compose.sh
+# sh ./devops/docker-compose-dev-local-nginx/docker-compose.sh
+# runs at http://localhost/
 
 if [ -d "etc" ] 
 then
     echo "\n... starting\n"
 else
-    echo "\n.. cd ./devops/docker-compose \n" 
-    cd ./devops/docker-compose
+    echo "\n.. cd ./devops/docker-compose-dev-local-nginx \n" 
+    cd ./devops/docker-compose-dev-local-nginx
 fi
 
 pwd
@@ -28,7 +29,7 @@ echo ""
 read -p "Verify IP above is correct, then press ENTER to proceed> "
 if [ ! -d "./www/admin-app" ] 
 then
-    echo "\nYou need to install the etc/www directories first - use sh devops/docker-compose/install-webapp.sh\n" 
+    echo "\nYou need to install the etc/www directories first - use sh devops/docker-compose-dev-local-nginx/install-webapp.sh\n" 
     exit 1
 else
     echo "\n... starting\n"
@@ -48,5 +49,5 @@ pushd ./../../
 # ls  # verify project root docker-compose --env-file project/myproject/.env up
 # https://stackoverflow.com/questions/65484277/access-env-file-variables-in-docker-compose-file
 
-docker compose -f ./devops/docker-compose/docker-compose.yml --env-file ./devops/docker-compose/env-docker-compose.env up
+docker compose -f ./devops/docker-compose-dev-local-nginx/docker-compose-dev-local-nginx.yml --env-file ./devops/docker-compose-dev-local-nginx/env-docker-compose.env up
 popd

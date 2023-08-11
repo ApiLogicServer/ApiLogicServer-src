@@ -1,10 +1,12 @@
 These resources are designed to provide useful starting point for sometimes-tricky devops operations.
 
+You can run some aspects of this with the demo, but we encourage the use the docker sample classic models.  To see how to start it, [click here](https://apilogicserver.github.io/Docs/Database-Docker/#classicmodels-mysql-docker).
+
 &nbsp;
 
 ## auth-db
 
-After creating projects, you can add role-based security:
+After creating projects, you add role-based security:
 
 ```bash
 cd <your project>
@@ -21,6 +23,18 @@ To help you get started, the `auth-db` folder provides starter kits for creating
 
 &nbsp;
 
+## docker-image
+
+These scripts simplify creating and running docker containers for your project.  Their use is illustrated in the links above.
+
+Important Notes:
+
+1. The docker compose steps use the created image, so you must perform this step first
+
+2. The image must contain the security models created in the step above
+
+&nbsp;
+
 ## docker-compose
 
 Use docker compose to choreograph multiple services (e.g, your application, database and web server) for a multi-tiered system.
@@ -31,13 +45,7 @@ Here is an example using MySQL / `classicmodels` - [click here](https://github.c
 
 For an example using postgres / `Northwind`, [click here](https://github.com/ApiLogicServer/docker-compose-nw-postgres).  In this example, you use an existing github project.
 
-The docker files in this directory are from the MySQL project.  To adapt them to your own project, you will need to update the database section of `docker-compose.yml`.
-
-&nbsp;
-
-## docker-image
-
-These scripts simplify creating and running docker containers for your project.  Their use is illustrated in the links above.
+The docker files in this directory are from the MySQL project.  To adapt them to your own project, you will need to update the database section of the docker-compose files.
 
 &nbsp;
 

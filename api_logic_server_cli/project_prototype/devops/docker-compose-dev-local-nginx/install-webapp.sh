@@ -9,8 +9,8 @@ if [ -d "etc" ]
 then
     echo "\n... starting\n"
 else
-    echo "\n.. cd ./devops/docker-compose \n" 
-    cd ./devops/docker-compose
+    echo "\n.. cd ./devops/docker-compose-dev-local-nginx \n" 
+    cd ./devops/docker-compose-dev-local-nginx
 fi
 
 read -p "Ready to obtain web app files, press ENTER to proceed> "
