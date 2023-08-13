@@ -1,0 +1,44 @@
+version: "3.5"
+
+# see ./build-instructions.sh for notes on how to run
+
+services:
+
+    api-logic-server:
+        image: apilogicserver/apilogicserver_project_name_lower
+        environment:
+          - APILOGICPROJECT_VERBOSE=true
+          - SECURITY_ENABLED=true
+          - APILOGICPROJECT_CLIENT_URI=//apilogicserver_project_name_lower.azurewebsites.net
+          # - APILOGICPROJECT_HTTP_SCHEME=https
+          - PYTHONPATH=/app/ApiLogicProject 
+          ## specify Database uri's:
+          - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI=postgresql://postgres:p@postgres-service/postgres
+          - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI_AUTHENTICATION=postgresql://postgres:p@postgres-service/authdb
+
+        expose:
+           - 5656
+        ports:
+            - 5656:5656
+        volumes:
+            - ${WEBAPP_STORAGE_HOME}/classicmodels:/app
+        # container should start automatically - command:  api_logic_server_run.py
+        working_dir: /home/api_logic_project
+
+    postgres-service:
+        image: apilogicserver/postgres:latest
+        restart: always
+        environment:
+            # MYSQL_DATABASE: 'db'
+            # So you don't have to use root, but you can if you like
+            - MYSQL_USER=root
+            # You can use whatever password you like
+            - MYSQL_PASSWORD=p
+            # Password for root access
+            - MYSQL_ROOT_PASSWORD=p
+        ports:
+            # <Port exposed> : <MySQL Port running inside container>
+            - '3306:3306'
+        expose:
+            # Opens port 3306 on the container
+            - '3306'

@@ -1,0 +1,51 @@
+# First, build image: sh devops/docker-image/build_image.sh .
+
+# ALERT - this is a pre-configured for the mysql classicmodels sample database
+# see https://apilogicserver.github.io/Docs/Database-Docker/#classicmodels-mysql-docker
+# you will need to alter APILOGICPROJECT_SQLALCHEMY_DATABASE_URI (2 lines) for your database & auth
+# and, in the case of demo (sqlite), comment them out
+
+# cd <project>  
+# sh ./devops/docker-compose-dev-local/docker-compose.sh
+# --> builds, runs at localhost:5656
+
+version: "3.5"
+
+services:
+
+    postgres-service:
+        image: apilogicserver/postgres:latest
+        restart: always
+        environment:
+            # MYSQL_DATABASE: 'db'
+            # So you don't have to use root, but you can if you like
+            - MYSQL_USER=root
+            # You can use whatever password you like
+            - MYSQL_PASSWORD=p
+            # Password for root access
+            - MYSQL_ROOT_PASSWORD=p
+        ports:
+            # <Port exposed> : <MySQL Port running inside container>
+            - '3306:3306'
+        expose:
+            # Opens port 3306 on the container
+            - '3306'
+
+    api-logic-server:
+        image: apilogicserver/apilogicserver_project_name_lower
+        environment:
+          - APILOGICPROJECT_VERBOSE=true
+          # for testing
+          # - APILOGICPROJECT_CLIENT_URI=//10.0.0.77
+          # HOST_IP set in docker-compose.sh/ps1
+          # - APILOGICPROJECT_CLIENT_URI=//${HOST_IP}
+          - SECURITY_ENABLED=true
+          ## - APILOGICPROJECT_HTTP_SCHEME=https
+          ## - PYTHONPATH=/app/ApiLogicProject 
+          ## database uri's:
+          - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI=postgresql://postgres:p@postgres-service/postgres
+          - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI_AUTHENTICATION=postgresql://postgres:p@postgres-service/authdb
+        expose:
+          - 5656
+        ports:
+          - 5656:5656
