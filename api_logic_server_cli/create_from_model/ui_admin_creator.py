@@ -557,7 +557,7 @@ class AdminCreator(object):
 
         if self.mod_gen.project.nw_db_status in ["nw"] and self.mod_gen.project.api_name == "api":
             if not self.mod_gen.project.command.startswith("rebuild"):
-                src = os.path.join(self.mod_gen.project.api_logic_server_dir_path, Path(f'project_prototype_nw/ui/admin/admin.yaml'))
+                src = os.path.join(self.mod_gen.project.api_logic_server_dir_path, Path(f'prototypes/nw/ui/admin/admin.yaml'))
                 dest = os.path.join(Path(self.mod_gen.project_directory), Path(f'ui/admin/admin.yaml'))
                 shutil.copyfile(src, dest)
 

@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "09.02.04"
+__version__ = "09.02.05"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t08/11/2023 - 09.02.04: Devops container/compose, Multi-arch dockers, add-auth with db_url, auth docker dbs, meta api \n"\
+    "\t08/12/2023 - 09.02.05: Devops container/compose, Multi-arch dockers, add-auth with db_url, auth docker dbs, meta api \n"\
     "\t07/04/2023 - 09.01.00: SQLAlchemy 2 typed-relns/attrs, Docker: Python 3.11.4 & odbc18 \n"\
     "\t06/24/2023 - 09.00.01: PyMysql \n"\
     "\t06/22/2023 - 09.00.00: Optimistic Locking, safrs 310, SQLAlchemy 2.0.15 \n"\
@@ -232,7 +232,7 @@ def create_nw_tutorial(project_name, api_logic_server_dir_str):
 
     project_readme_file_path = project_name + '/readme.md'  # brief 'go read tutorial' - add std readme
     standard_readme_file_path = str(Path(api_logic_server_dir_str).\
-        joinpath('project_prototype').joinpath("readme.md"))
+        joinpath('prototypes/base').joinpath("readme.md"))
     with open(project_readme_file_path, 'a') as project_readme_file:
         with open(standard_readme_file_path) as standard_readme_file:
             project_readme_file.write(standard_readme_file.read())
@@ -275,7 +275,7 @@ def create_project_with_nw_samples(project, msg: str) -> str:
         else:
             if from_dir == "":
                 from_dir = (Path(api_logic_server_dir_str)).\
-                    joinpath('project_prototype')  # /Users/val/dev/ApiLogicServer/project_prototype
+                    joinpath('prototypes/base')  # /Users/val/dev/ApiLogicServer/project_prototype
             log.debug(f'{msg} {os.path.realpath(project.project_directory)}')
             log.debug(f'.. ..Clone from {from_dir} ')
             cloned_from = from_dir
@@ -305,22 +305,34 @@ def create_project_with_nw_samples(project, msg: str) -> str:
         if project.nw_db_status in ["nw", "nw+"]:
             log.debug(".. ..Copy in nw customizations: logic, custom api, readme, tests, admin app")
             nw_dir = (Path(api_logic_server_dir_str)).\
-                joinpath('project_prototype_nw')  # /Users/val/dev/ApiLogicServer/api_logic_server_cli/project_prototype
+                joinpath('prototypes/nw')  # /Users/val/dev/ApiLogicServer/api_logic_server_cli/project_prototype
             recursive_overwrite(nw_dir, project.project_directory)
 
             create_nw_tutorial(project.project_directory, api_logic_server_dir_str)
 
-        if project.db_url in ["allocation"]:
-            log.debug(".. ..Copy in allocation customizations: readme, logic, tests")
-            nw_dir = (Path(api_logic_server_dir_str)).\
-                joinpath('project_prototype_allocation')  # /Users/val/dev/ApiLogicServer/project_prototype_allocation
-            recursive_overwrite(nw_dir, project.project_directory)
-
         if project.nw_db_status in ["nw-"]:
             log.debug(".. ..Copy in nw- customizations: readme, perform_customizations")
             nw_dir = (Path(api_logic_server_dir_str)).\
-                joinpath('project_prototype_nw_no_cust')  # /Users/val/dev/ApiLogicServer/project_prototype_nw_no_cust
+                joinpath('prototypes/nw_no_cust')  # /Users/val/dev/ApiLogicServer/project_prototype_nw_no_cust
             recursive_overwrite(nw_dir, project.project_directory)
+
+        if project.db_url in ["allocation"]:
+            log.debug(".. ..Copy in allocation customizations: readme, logic, tests")
+            nw_dir = (Path(api_logic_server_dir_str)).\
+                joinpath('prototypes/allocation')  # /Users/val/dev/ApiLogicServer/project_prototype_allocation
+            recursive_overwrite(nw_dir, project.project_directory)
+
+        if project.db_url == "mysql+pymysql://root:p@localhost:3306/classicmodels":
+            log.debug(".. ..Copy in classicmodels customizations")
+            proto_dir = (Path(api_logic_server_dir_str)).\
+                joinpath('prototypes/classicmodels')
+            recursive_overwrite(proto_dir, project.project_directory)
+
+        if project.db_url == "postgresql://postgres:p@localhost/postgres":
+            log.debug(".. ..Copy in postgres customizations")
+            proto_dir = (Path(api_logic_server_dir_str)).\
+                joinpath('prototypes/postgres')
+            recursive_overwrite(proto_dir, project.project_directory)
 
         create_utils.replace_string_in_file(search_for="creation-date",
                             replace_with=str(datetime.datetime.now().strftime("%B %d, %Y %H:%M:%S")),
@@ -951,7 +963,7 @@ from database import <project.bind_key>_models
                     log.info("  4. Adding Sample authorization to security/declare_security.py")
                 log.debug("==================================================================\n\n")
                 nw_declare_security_py_path = self.api_logic_server_dir_path.\
-                    joinpath('project_prototype_nw/security/declare_security.py')
+                    joinpath('prototypes/nw/security/declare_security.py')
                 declare_security_py_path = self.project_directory_path.joinpath('security/declare_security.py')
                 shutil.copyfile(nw_declare_security_py_path, declare_security_py_path)
         else:
@@ -979,7 +991,7 @@ from database import <project.bind_key>_models
             self.add_auth(is_nw=True, msg=nw_messages)
 
         nw_path = (self.api_logic_server_dir_path).\
-            joinpath('project_prototype_nw')  # /Users/val/dev/ApiLogicServer/api_logic_server_cli/project_prototype
+            joinpath('prototypes/nw')  # /Users/val/dev/ApiLogicServer/api_logic_server_cli/project_prototype
         recursive_overwrite(nw_path, self.project_directory)
 
         create_nw_tutorial(self.project_directory, str(self.api_logic_server_dir_path))
@@ -1019,7 +1031,7 @@ from database import <project.bind_key>_models
         #    os.mkdir(self.project_directory_path, mode = 0o777)
         
         log.info(f"\nCreating {create}")
-        workspace_name = 'project_tutorial' if create == "tutorial" else "project_api_fiddle"
+        workspace_name = 'prototypes/tutorial' if create == "tutorial" else "prototypes/fiddle"
         shutil.copytree(dirs_exist_ok=True,
             src=self.api_logic_server_dir_path.joinpath(workspace_name),
             dst=target_project_path.joinpath(create))  # project named from arg create

@@ -330,7 +330,7 @@ def rebuild_tests():
 
     result_create = run_command(f'{set_venv} && ApiLogicServer rebuild-from-database --project_name=Rebuild --db_url=',
         cwd=install_api_logic_server_path,
-        msg=f'\nCreate ApiLogicProject at: {str(install_api_logic_server_path)}')
+        msg=f'\nCreate project Rebuild at: {str(install_api_logic_server_path)}')
     if not admin_merge_yaml_path.is_file():
         raise ValueError('System Error - admin-merge.yaml does not exist on rebuild-from-database')
     if does_file_contain(in_file=admin_merge_yaml_path, search_for="new_resources:"):

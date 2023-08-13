@@ -81,7 +81,7 @@ def create_expose_api_models(model_creation_services: create_from_model.ModelCre
             joinpath('api/expose_api_models_created.py')
         log.debug(f'.. .. ..Rebuild - new api at api/expose_api_models_created (merge/replace expose_api_models as nec)')
         src = model_creation_services.project.api_logic_server_dir_path
-        src = src.joinpath("project_prototype/api/expose_api_models.py")
+        src = src.joinpath("prototypes/base/api/expose_api_models.py")
         assert src.is_file()
         shutil.copyfile(src, expose_api_models_path)
         expose_api_models_file = open(expose_api_models_path, 'a')
@@ -92,7 +92,7 @@ def create_expose_api_models(model_creation_services: create_from_model.ModelCre
             expose_api_models_path = Path(model_creation_services.project_directory).\
                 joinpath(f'api/{model_creation_services.project.bind_key}_expose_api_models.py')
             src = model_creation_services.project.api_logic_server_dir_path.\
-                    joinpath('project_prototype/api/expose_api_models.py')
+                    joinpath('prototypes/base/api/expose_api_models.py')
             dest = expose_api_models_path
             copyfile(src, dest)
         expose_api_models_file = open(expose_api_models_path, 'a')
