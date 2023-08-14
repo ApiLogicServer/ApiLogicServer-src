@@ -216,7 +216,7 @@
             "justMyCode": false,
             "program": "cli.py",
             "redirectOutput": true,
-            "args": ["create","--project_name=../../../servers/postgres",
+            "args": ["create","--project_name=../../../servers/postgres-nw",
                 "--db_url=postgresql://postgres:p@localhost/postgres"],
             "console": "integratedTerminal"
         },
@@ -225,7 +225,7 @@
             "type": "python",
             "request": "launch",
             "env": {"APILOGICSERVER_HOME": "${workspaceFolder}"},
-            "program": "${workspaceFolder}/../../servers/postgres/api_logic_server_run.py",
+            "program": "${workspaceFolder}/../../servers/postgres-nw/api_logic_server_run.py",
             "redirectOutput": true,
             "console": "integratedTerminal"
         },
@@ -238,7 +238,7 @@
             "redirectOutput": true,
             "args": [
                 "add-auth",
-                "--project_name=../../../servers/postgres",
+                "--project_name=../../../servers/postgres-nw",
                 "--db_url=postgresql://postgres:p@localhost/authdb"],
             "console": "integratedTerminal"
         },
