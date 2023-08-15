@@ -17,43 +17,43 @@ version="1.0.0"
 # cd apilogicserver_project_name_lower
 # sh devops/docker-compose-dev-azure/azure-deploy.sh
 
-debug() {
-  debug="disabled"
-  # echo "$1"
-}
-
 echo " "
-if [ "$1" = "." ]; then
-  debug "..using defaults"
+if [ "$#" -eq 0 ]; then
+  echo "..using defaults - press ctl+C to stop run"
 else
-  debug "using arg overrides"
-  projectname="$1"
-  githubaccount="$2"
-  dockerrepositoryname="$3"
-  resourcegroup="$4"
+  if [ "$1" = "." ]; then
+    echo "..using defaults"
+  else
+    echo "using arg overrides"
+    projectname="$1"
+    githubaccount="$2"
+    dockerrepositoryname="$3"
+    resourcegroup="$4"
+  fi
 fi
 
-debug "\n"
-debug "Azure Deploy here, 1.0"
-echo "\nAzure Portal CLI commands to deploy project\n"
 echo " "
-echo "Steps performed on Azure Portal CLI to enable running these commands:"
-echo " # we really only need the docker compose file"
-echo " git clone https://github.com/$githubaccount/$projectname.git"
-echo " cd classicmodels"
+echo "Azure Deploy here - Azure Portal CLI commands to deploy project, 1.0"
 echo " "
 echo "Prereqs"
 echo "  1. You have published your project to GitHub: https://github.com/${githubaccount}/${projectname}.git"
 echo "  2. You have built your project image, and pushed it to DockerHub: ${dockerrepositoryname}/${projectname}"
 echo " "
+echo "Steps performed on Azure Portal CLI to enable running these commands:"
+echo "  # we really only need the docker compose file"
+echo "  git clone https://github.com/$githubaccount/$projectname.git"
 echo "  cd classicmodels"
-echo "  sh devops/docker/docker-compose-dev-azure/azure-deploy.sh [ . | args ]"
+echo " "
+echo "Then, in Azure CLI:"
+echo "  sh devops/docker-compose-dev-azure/azure-deploy.sh [ . | args ]"
 echo "    . means use defaults:"
 echo "        ${dockerrepositoryname}/${projectname}:${version}"
 echo "    <args> = projectname githubaccount dockerrepositoryname resourcegroupname"
 echo " "
 
 read -p "Verify settings above, then press ENTER to proceed> "
+
+set -x  # echo commands
 
 # create container group
 az group create --name $resourcegroup --location "westus"
@@ -64,12 +64,13 @@ az appservice plan create --name myAppServicePlan --resource-group $resourcegrou
 # create docker compose app
 az webapp create --resource-group $resourcegroup --plan myAppServicePlan --name apilogicserver_project_name_lower --multicontainer-config-type compose --multicontainer-config-file devops/docker-compose-dev-azure/docker-compose-dev-azure.yml
 
-# enable logging: https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs#enable-application-logging-linuxcontainer
+set +x # reset echo
 
-#    To enable web server logging for Windows apps in the Azure portal, navigate to your app and select App Service logs.
-#    For Web server logging, select Storage to store logs on blob storage, or File System to store logs on the App Service file system.
+echo "enable logging: https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs#enable-application-logging-linuxcontainer"
+echo "   To enable web server logging for Windows apps in the Azure portal, navigate to your app and select App Service logs"
+echo "   For Web server logging, select Storage to store logs on blob storage, or File System to store logs on the App Service file system"
 
-echo "\n Completed.  Browse to the app:" 
+echo " "
+echo "Completed.  Browse to the app:" 
 echo "https://$projectname.azurewebsites.net"
 echo " "
-
