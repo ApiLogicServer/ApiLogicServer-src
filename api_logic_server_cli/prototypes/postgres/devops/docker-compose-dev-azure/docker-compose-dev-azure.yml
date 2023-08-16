@@ -1,6 +1,6 @@
 version: "3.5"
 
-# see ./build-instructions.sh for notes on how to run
+# see ./azure-deploy.sh for notes on how to run
 
 services:
 

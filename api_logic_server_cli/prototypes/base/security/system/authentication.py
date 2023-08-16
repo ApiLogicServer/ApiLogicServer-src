@@ -31,6 +31,7 @@ from functools import wraps
 import config
 from config import Args
 from security.authentication_provider.abstract_authentication_provider import Abstract_Authentication_Provider
+from flask_cors import CORS, cross_origin
 
 authentication_provider : Abstract_Authentication_Provider = config.Config.SECURITY_PROVIDER  # type: ignore
 # note: direct config access is disparaged, but used since args not set up when this imported
@@ -69,6 +70,7 @@ def configure_auth(flask_app: Flask, database: object, method_decorators: list[o
     jwt = JWTManager(flask_app)
     
     @flask_app.route("/api/auth/login", methods=["POST"])
+    @cross_origin(supports_credentials=False)
     def login():
         """
         Post id/password, returns token to be placed in header of subsequent requests.
@@ -76,6 +78,8 @@ def configure_auth(flask_app: Flask, database: object, method_decorators: list[o
         Returns:
             string: access token
         """
+        if request.method == 'OPTIONS':
+            return jsonify(success=True)        
         username = request.json.get("username", None)
         password = request.json.get("password", None)
 

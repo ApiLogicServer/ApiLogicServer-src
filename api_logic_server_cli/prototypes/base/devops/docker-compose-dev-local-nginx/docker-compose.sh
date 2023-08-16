@@ -32,7 +32,7 @@ then
     echo "\nYou need to install the etc/www directories first - use sh devops/docker-compose-dev-local-nginx/install-webapp.sh\n" 
     exit 1
 else
-    echo "\n... starting\n"
+    echo "\n... web app check complete\n"
 fi
 
 if [ ! -f "./../../database/authentication_models.py" ] 
@@ -42,7 +42,7 @@ then
     echo "then stop mysql-container\n"
     exit 1
 else
-    echo "\n... starting\n"
+    echo "\n... security check complete\n"
 fi
 
 pushd ./../../

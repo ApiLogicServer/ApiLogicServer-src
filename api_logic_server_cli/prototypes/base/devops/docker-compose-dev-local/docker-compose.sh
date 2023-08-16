@@ -10,7 +10,7 @@
 
 if [ -d "etc" ] 
 then
-    echo "\n... starting\n"
+    echo "\n... web app check complete\n"
 else
     echo "\n.. cd ./devops/docker-compose-dev-local \n" 
     cd ./devops/docker-compose-dev-local
@@ -26,12 +26,9 @@ then
     echo "\nThen, stop mysql-container\n"
     exit 1
 else
-    echo "\n... starting\n"
+    echo "\n... security check complete\n"
 fi
 
 pushd ./../../
-# ls  # verify project root docker-compose --env-file project/myproject/.env up
-# https://stackoverflow.com/questions/65484277/access-env-file-variables-in-docker-compose-file
-
 docker compose -f ./devops/docker-compose-dev-local/docker-compose-dev-local.yml up
 popd

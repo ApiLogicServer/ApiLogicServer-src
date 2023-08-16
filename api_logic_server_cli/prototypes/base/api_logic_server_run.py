@@ -73,6 +73,7 @@ from sqlalchemy.orm import Session
 import socket
 import warnings
 from flask import Flask, redirect, send_from_directory, send_file
+from flask_cors import CORS
 from safrs import ValidationError, SAFRSBase, SAFRSAPI
 import ui.admin.admin_loader as AdminLoader
 from security.system.authentication import configure_auth
@@ -261,6 +262,10 @@ def api_logic_server_setup(flask_app: Flask, args: Args):
 
 
 flask_app = Flask("API Logic Server", template_folder='ui/templates')  # templates to load ui/admin/admin.yaml
+
+CORS(flask_app, resources=[{r"/api/*": {"origins": "*"}}],
+     allow_headers=["Content-Type", "Authorization", "Access-Control-Allow-Credentials"],supports_credentials=True)
+
 
 args = Args(flask_app=flask_app)                                # creation defaults
 
