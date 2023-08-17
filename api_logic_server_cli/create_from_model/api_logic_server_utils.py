@@ -161,7 +161,7 @@ def get_api_logic_server_dir() -> str:
 
 def does_file_contain(search_for: str, in_file: str) -> bool:
     """ returns True if <search_for> is <in_file> """
-    with open(in_file, 'r+') as fp:
+    with open(Path(in_file), 'r+') as fp:
         file_lines = fp.readlines()  # lines is list of lines, each element '...\n'
         found = False
         insert_line = 0
@@ -172,7 +172,7 @@ def does_file_contain(search_for: str, in_file: str) -> bool:
         return found
 
 def replace_string_in_file(search_for: str, replace_with: str, in_file: str):
-    with open(in_file, 'r') as file:
+    with open(Path(in_file), 'r') as file:
         file_data = file.read()
         file_data = file_data.replace(search_for, replace_with)
     with open(in_file, 'w') as file:
@@ -181,7 +181,7 @@ def replace_string_in_file(search_for: str, replace_with: str, in_file: str):
 
 def insert_lines_at(lines: str, at: str, file_name: str, after: bool = False):
     """ insert <lines> into file_name after line with <str> """
-    with open(file_name, 'r+') as fp:
+    with open(Path(file_name), 'r+') as fp:
         file_lines = fp.readlines()  # lines is list of lines, each element '...\n'
         found = False
         insert_line = 0

@@ -1,13 +1,7 @@
-# preferred...
-# cd <project> (or use IDE terminal)
-# cd devops/docker-compose
-# sh devops/docker-compose-dev-local-nginx/docker-compose.sh
-
-# or, for debug / more logging
-# set APILOGICPROJECT_CLIENT_URI, and use "for testing", below
 # cd <project>
-# docker compose -f ./devops/docker-compose/docker-compose.yml --env-file ./devops/docker-compose/env-docker-compose.env up
-# --> builds, runs at localhost
+# sh devops/docker-compose-dev-azure-nginx/docker-compose.sh
+
+# FIXME ports
 
 version: "3.5"
 
@@ -16,21 +10,19 @@ services:
         image: apilogicserver/apilogicserver_project_name_lower
         environment:
           - APILOGICPROJECT_VERBOSE=true
-          # for testing
-          # - APILOGICPROJECT_CLIENT_URI=//10.0.0.77
-          # HOST_IP set in docker-compose.sh/ps1
           - APILOGICPROJECT_CLIENT_URI=//${HOST_IP}
           - SECURITY_ENABLED=true
           - PYTHONPATH=/app/ApiLogicProject 
-          ## FIXME specify Database uri's here, e.g.:
-          # - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI=mysql+pymysql://root:p@mysql-service:3306/classicmodels
-          # - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI_AUTHENTICATION=mysql+pymysql://root:p@mysql-service:3306/authdb
+          # Specify database uri's:
+          - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI=mysql+pymysql://root:p@mysql-service:3306/classicmodels
+          - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI_AUTHENTICATION=mysql+pymysql://root:p@mysql-service:3306/authdb
         expose:
             - 5000
         volumes:
             # relative path - thanks https://stackoverflow.com/questions/46907558/docker-compose-relative-paths-vs-docker-volume
             # - /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/docker-compose-nw-postgres:/app
-            - ./../..:/app
+            # - ./../..:/app
+            - ${WEBAPP_STORAGE_HOME}/apilogicserver_project_name_lower/devops/docker-compose-dev-azure-nginx:/app
         # https://stackoverflow.com/questions/39460892/gunicorn-no-module-named-myproject
         command: /usr/local/bin/gunicorn --reload --workers 2 --worker-connections 2 --access-logfile=- --pythonpath /app -b :5000 api_logic_server_run:flask_app 
         # command:  bash /app/start.sh
@@ -51,12 +43,8 @@ services:
         image: apilogicserver/mysql8.0:latest
         restart: always
         environment:
-            # MYSQL_DATABASE: 'db'
-            # So you don't have to use root, but you can if you like
             - MYSQL_USER=root
-            # You can use whatever password you like
             - MYSQL_PASSWORD=p
-            # Password for root access
             - MYSQL_ROOT_PASSWORD=p
         ports:
             # <Port exposed> : <MySQL Port running inside container>
