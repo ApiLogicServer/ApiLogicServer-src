@@ -12,6 +12,7 @@ services:
           - APILOGICPROJECT_CLIENT_URI=//apilogicserver_project_name_lower.azurewebsites.net
           # - APILOGICPROJECT_HTTP_SCHEME=https
           - PYTHONPATH=/app/ApiLogicProject 
+          # FIXME - override the following classicmodel examples for your own system
           - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI=mysql+pymysql://root:p@mysql-service:3306/classicmodels
           - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI_AUTHENTICATION=mysql+pymysql://root:p@mysql-service:3306/authdb
         expose:
@@ -27,12 +28,8 @@ services:
         image: apilogicserver/mysql8.0:latest
         restart: always
         environment:
-            # MYSQL_DATABASE: 'db'
-            # So you don't have to use root, but you can if you like
             - MYSQL_USER=root
-            # You can use whatever password you like
             - MYSQL_PASSWORD=p
-            # Password for root access
             - MYSQL_ROOT_PASSWORD=p
         ports:
             # <Port exposed> : <MySQL Port running inside container>

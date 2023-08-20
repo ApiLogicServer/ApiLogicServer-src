@@ -1,7 +1,6 @@
 # preferred...
 # cd <project> (or use IDE terminal)
-# cd devops/docker-compose
-# sh docker-compose.sh
+# sh devops/docker-compose-dev-local-nginx/docker-compose.sh
 
 # or, for debug / more logging
 # set APILOGICPROJECT_CLIENT_URI, and use "for testing", below
@@ -20,9 +19,6 @@ services:
         #     dockerfile: ./devops/docker-compose/Dockerfile.dockerfile  FIXME rename
         environment:
           - APILOGICPROJECT_VERBOSE=true
-          # for testing
-          # - APILOGICPROJECT_CLIENT_URI=//10.0.0.77
-          # HOST_IP set in docker-compose.sh/ps1
           - APILOGICPROJECT_CLIENT_URI=//${HOST_IP}
           - SECURITY_ENABLED=true
           - PYTHONPATH=/app/ApiLogicProject 
@@ -37,7 +33,6 @@ services:
             - ./../..:/app
         # https://stackoverflow.com/questions/39460892/gunicorn-no-module-named-myproject
         command: /usr/local/bin/gunicorn --reload --workers 2 --worker-connections 2 --access-logfile=- --pythonpath /app -b :5000 api_logic_server_run:flask_app 
-        # command:  bash /app/start.sh
         working_dir: /app/ApiLogicProject 
 
     nginx:
@@ -55,12 +50,8 @@ services:
         image: apilogicserver/mysql8.0:latest
         restart: always
         environment:
-            # MYSQL_DATABASE: 'db'
-            # So you don't have to use root, but you can if you like
             - MYSQL_USER=root
-            # You can use whatever password you like
             - MYSQL_PASSWORD=p
-            # Password for root access
             - MYSQL_ROOT_PASSWORD=p
         ports:
             # <Port exposed> : <MySQL Port running inside container>

@@ -1,7 +1,7 @@
 # add security to your project with commands like
 # ApiLogicServer add-auth --project_name=. --db_url=mysql+pymysql://root:p@localhost:3306/authdb
 
-# You can create your own security database, as a super set of those shown here
+# You can create your *own* security database, as a super set of those shown here
 # That enables you to use additional columns in Grant declarations.
 
 # For more information, see https://apilogicserver.github.io/Docs/Security-Activation/
@@ -49,8 +49,6 @@
 # create the Dockers' MySql authdb as above, using auth-db.sql
 # cd my_project
 # ApiLogicServer add-auth
-# update config.py: SQLALCHEMY_DATABASE_URI_AUTHENTICATION = f'mysql+pymysql://root:p@localhost:3306/authdb'
-# comment out sample lines in security/declare_security.py (lines around 27 or so)
 # you should now be able to start server, login and access data
 # add users via http://localhost:5656/admin/authentication_admin/
 

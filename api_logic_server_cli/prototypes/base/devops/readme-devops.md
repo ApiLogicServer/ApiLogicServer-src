@@ -6,13 +6,13 @@ Use these directories to rapidly deploy your system to the cloud.  This means yo
 
 These directories simplify the sometimes-tricky deployment to the cloud. 
 
-1. Use `auth-db` to prepare a docker image that includes test database data 
+1. Use `auth-db` to prepare a docker image that includes test database data, including security
 
 2. Start with `docker-image` to create an image for deployment
 
 3. Use `docker-compose-dev-local` to verify multi-container (application, database) execution
 
-4. Use `docker-compose-dev-localazure` to deploy this multi-container system to azure
+4. Use `docker-compose-dev-azure` to deploy this multi-container system to azure
 
 5. Optionally, use `docker-compose-dev-local-nginx` to explore an additional web server container - nginx
 
