@@ -145,6 +145,8 @@ class AdminCreator(object):
         """ self.admin_yaml.resources += resource DotMap for given resource
         """
         resource_name = resource.name
+        if resource_name == "ProductXXX":
+            debug_stop = "good breakpoint"
         if self.do_process_resource(resource_name):
             new_resource = DotMap()
             self.num_pages_generated += 1

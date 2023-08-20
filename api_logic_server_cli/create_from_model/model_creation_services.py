@@ -27,6 +27,7 @@ MetaDataTable = NewType('MetaDataTable', object)
 
 
 class ResourceAttribute():
+    """ instances added to Resource """
     def __init__(self, each_attribute: object, resource: Type['Resource']):
         self.name = str(each_attribute.name)
         if self.name == "Ready":
@@ -52,7 +53,7 @@ class ResourceAttribute():
             else:
                 debug_str = "Alpha Pkey"  # nothing to do, this for debug verification
         lower_name = self.name.lower()
-        non_favs = resource.create_from_model._non_favorite_names_list
+        non_favs = resource.model_creation_services.project.non_favorites  #  FIMXE not _non_favorite_names_list
         for each_non_fav in non_favs:
             if lower_name.endswith(each_non_fav):
                 self.non_favorite = True
@@ -83,14 +84,14 @@ class ResourceRelationship():
 
 
 class Resource():
-    def __init__(self, name: str, create_from_model):
+    def __init__(self, name: str, model_creation_services):
         self.name = name        # class name (which != safrs resource name)
         self.table_name = name  # safrs resource name; this is just default, overridden in create_model
         self.type = name        # just default, overridden in create_model
         self.children: List[ResourceRelationship] = list()
         self.parents: List[ResourceRelationship] = list()
         self.attributes: List[ResourceAttribute] = list()
-        self.create_from_model = create_from_model  # to find favorite names etc.
+        self.model_creation_services = model_creation_services  # to find favorite names etc.
 
     def __str__(self):
         return f'Resource: {self.name}, table_name: {self.table_name}, type: {self.type}'
@@ -108,7 +109,8 @@ class Resource():
              Returns
                  string of column name that is favorite (e.g., first in list)
          """
-        favorite_names = self.create_from_model._favorite_names_list
+        self_model_creation_services = self.model_creation_services
+        favorite_names = self.model_creation_services.project.favorites  # FIXME not _favorite_names_list
         for each_favorite_name in favorite_names:
             for each_attribute in self.attributes:
                 attribute_name = each_attribute.name.lower()
@@ -135,7 +137,7 @@ class ModelCreationServices(object):
     result_views = ""
     result_apis = ""
 
-    _favorite_names_list = []  #: ["name", "description"]
+    #  _favorite_names_list = []  #: ["name", "description"]  FIXME use .project.favorites
     """
         array of substrings used to find favorite column name
 
@@ -145,7 +147,7 @@ class ModelCreationServices(object):
             name in English
             nom in French
     """
-    _non_favorite_names_list = []
+    # _non_favorite_names_list = []
     non_favorite_names = "id"
 
     _indent = "   "
@@ -160,6 +162,9 @@ class ModelCreationServices(object):
                  my_children_list: dict = None,
                  my_parents_list: dict = None,
                  version: str = "0.0.0"):
+        """
+        Called from main driver (create_project) to open db, build resource_list
+        """
         self.project = project
         self.project_directory = None
         if project_directory:
@@ -178,9 +183,9 @@ class ModelCreationServices(object):
         self.resource_list_complete = False
         self.version = version
         self.my_children_list = my_children_list
-        """ key is table name, value is list of (parent-role-name, child-role-name, relationship) ApiLogicServer """
+        """ for key table name, value is list of (parent-role-name, child-role-name, relationship) ApiLogicServer """
         self.my_parents_list = my_parents_list
-        """ key is table name, value is list of (parent-role-name, child-role-name, relationship) ApiLogicServer """
+        """ for key table name, value is list of (parent-role-name, child-role-name, relationship) ApiLogicServer """
 
         self.table_to_class_map = {}
         """ keys are table[.column], values are class / attribute """
@@ -191,6 +196,13 @@ class ModelCreationServices(object):
         self.app = None
         self.opt_locking = ""
         """ optimistic locking virtuals (jsonattrs) appended to each class """
+
+
+        ####################################
+        # Introspect data mdel (sqlacodegen)
+        # create resource_list
+        ####################################
+
         model_file_name, msg = sqlacodegen_wrapper.create_models_py(
             model_creation_services = self,
             abs_db_url= self.project.abs_db_url,
@@ -354,7 +366,7 @@ class ModelCreationServices(object):
         if a_resource.name == "OrderDetail":
             result += "\n"  # just for debug stop
 
-        favorite_attribute_name = self.favorite_attribute_name(a_resource)
+        favorite_attribute_name = self.favorite_attribute_name(a_resource)  # FIXME why never called
         column_count = 1
         result += '"' + favorite_attribute_name + '"'  # todo hmm: emp territory
         processed_attribute_names.add(favorite_attribute_name)
@@ -621,7 +633,7 @@ class ModelCreationServices(object):
             Returns
                 string of column name that is favorite (e.g., first in list)
         """
-        favorite_names = self._favorite_names_list
+        favorite_names = self.project.favorites  #  FIXME not _favorite_names_list
         for each_favorite_name in favorite_names:
             attributes = resource.attributes
             for each_attribute in attributes:
@@ -685,13 +697,13 @@ class ModelCreationServices(object):
 
     def create_resource_list(self, models_file, msg):
         """
-        Creates self.resource_list:
+        Creates self.resource_list (ie, ModelCreationServices.resource_list)
          
         1. Dynamic import of models.py
 
-        2. Safrs metadata
+        2. Use Safrs metadata to create ModelCreationServices.resource_list
 
-        self.resource_list then used to drive create_from_model modules - API, UI
+        self.resource_list later used to drive create_from_model modules - API, UI
         
         :param models_file name of file for output
         :param msg e.g. .. .. ..Create resource_list - dynamic import database/models.py, inspect
@@ -735,6 +747,7 @@ class ModelCreationServices(object):
         else:
             try:
                 resource_list: Dict[str, Resource] = dict()
+                """ will be assigned to ModelCreationServices.resource_list """
                 cls_members = inspect.getmembers(sys.modules[models_name], inspect.isclass)
                 for each_cls_member in cls_members:
                     each_class_def_str = str(each_cls_member)
@@ -746,7 +759,7 @@ class ModelCreationServices(object):
                         table_name = resource_class._s_collection_name
                         if table_name == "Todo":
                             debug_str = "Excellent breakpoint"
-                        resource = Resource(name=resource_name, create_from_model=self)
+                        resource = Resource(name=resource_name, model_creation_services=self)
                         self.metadata = resource_class.metadata
                         self.table_to_class_map.update({table_name: resource_name})   # required for ui_basic_web_app
                         if resource_name not in resource_list:
@@ -789,7 +802,7 @@ class ModelCreationServices(object):
                                 parent_resource_name = rel.mapper.class_._s_class_name
                                 relationship.parent_resource = parent_resource_name
                                 if parent_resource_name not in resource_list:
-                                    parent_resource = Resource(name=parent_resource_name, create_from_model=self)
+                                    parent_resource = Resource(name=parent_resource_name, model_creation_services=self)
                                     resource_list[parent_resource_name] = parent_resource
                                 parent_resource = resource_list[parent_resource_name]
                                 parent_resource.children.append(relationship)

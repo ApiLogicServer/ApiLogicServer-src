@@ -1,3 +1,12 @@
+# add security to your project with commands like
+# ApiLogicServer add-auth --project_name=. --db_url=mysql+pymysql://root:p@localhost:3306/authdb
+
+# You can create your own security database, as a super set of those shown here
+# That enables you to use additional columns in Grant declarations.
+
+# For more information, see https://apilogicserver.github.io/Docs/Security-Activation/
+
+# the apilogicserver sample
 # create a mysql that stores data in the container, not a volume (simpler, for dev env)
 # create database for auth
 
