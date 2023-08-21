@@ -110,7 +110,7 @@ class Config:
             SECURITY_ENABLED = True
         app_logger.debug(f'Security .. overridden from env variable: {SECURITY_ENABLED}')
     if SECURITY_ENABLED:
-        from security.authentication_provider.sql.sqlite.auth_provider import Authentication_Provider
+        from security.authentication_provider.sql.auth_provider import Authentication_Provider
         SECURITY_PROVIDER = Authentication_Provider
         app_logger.debug(f'config.py - security enabled')
     else:

@@ -12,7 +12,7 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "09.02.16"
+__version__ = "09.02.17"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
     "\t08/21/2023 - 09.02.16: Devops container/compose, Multi-arch dockers, add-auth with db_url, auth docker dbs, meta api \n"\

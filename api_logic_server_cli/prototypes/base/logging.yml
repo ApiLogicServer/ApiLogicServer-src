@@ -91,7 +91,7 @@ loggers:
         handlers: [console]
         propagate: no
 
-    security.authentication_provider.sql.sqlite.auth_provider:   
+    security.authentication_provider.sql.auth_provider:   
         level: INFO
         handlers: [console]
         propagate: no
