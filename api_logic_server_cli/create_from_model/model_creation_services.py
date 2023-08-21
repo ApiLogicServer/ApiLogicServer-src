@@ -110,8 +110,10 @@ class Resource():
                  string of column name that is favorite (e.g., first in list)
          """
         self_model_creation_services = self.model_creation_services
-        favorite_names = self.model_creation_services.project.favorites  # FIXME not _favorite_names_list
-        for each_favorite_name in favorite_names:
+        if self.name == 'ActionPlanScenario':
+            debug = "compute favorite attribute"
+        favorite_names = self.model_creation_services.project.favorites.split()  # FIXME not _favorite_names_list
+        for each_favorite_name in favorite_names:  # FIXME - tokenize!
             for each_attribute in self.attributes:
                 attribute_name = each_attribute.name.lower()
                 if attribute_name == each_favorite_name:
@@ -366,7 +368,7 @@ class ModelCreationServices(object):
         if a_resource.name == "OrderDetail":
             result += "\n"  # just for debug stop
 
-        favorite_attribute_name = self.favorite_attribute_name(a_resource)  # FIXME why never called
+        favorite_attribute_name = self.favorite_attribute_name(a_resource)  # FIXME old code, not called
         column_count = 1
         result += '"' + favorite_attribute_name + '"'  # todo hmm: emp territory
         processed_attribute_names.add(favorite_attribute_name)
@@ -633,6 +635,8 @@ class ModelCreationServices(object):
             Returns
                 string of column name that is favorite (e.g., first in list)
         """
+        return resource.get_favorite_attribute()
+        """
         favorite_names = self.project.favorites  #  FIXME not _favorite_names_list
         for each_favorite_name in favorite_names:
             attributes = resource.attributes
@@ -646,6 +650,7 @@ class ModelCreationServices(object):
                     return each_attribute.name
         for each_attribute in resource.attributes:  # no favorites, just return 1st
             return each_attribute.name
+        """
 
     def add_table_to_class_map(self, orm_class) -> str:
         """ given class, find table (hide your eyes), add table/class to table_to_class_map """

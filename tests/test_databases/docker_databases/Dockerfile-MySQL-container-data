@@ -30,6 +30,8 @@
 # docker tag mysql-image apilogicserver/mysql8.0:version1.0.8
 # docker push apilogicserver/mysql8.0:version1.0.8
 
+# docker run --name mysql-container-sam --net dev-network -p 3306:3306 -d -e MYSQL_ROOT_PASSWORD=p apilogicserver/mysam
+
 # thanks - https://medium.com/@stevenlandow/persist-share-dev-mysql-data-in-a-docker-image-with-commit-f9aa9910be0a
 
 FROM mysql:8.0

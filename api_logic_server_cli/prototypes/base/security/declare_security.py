@@ -9,7 +9,10 @@ session = db.session
 app_logger = logging.getLogger(__name__)
 
 """
-Declare Security here, for example:
+
+First, Activate Security: https://apilogicserver.github.io/Docs/Security-Activation/
+
+Then, Declare Security here, for example:
 
 class Roles():
     ''' Define Roles here, so can use code completion (Roles.tenant) '''
