@@ -130,9 +130,17 @@ class ModelCreationServices(object):
     """
     Model creation and shared services (favorite attributes, etc)
 
-    Create models/expose_api_models.py, services for ui/basic_web_app/views.py and api/expose_api_models.py
+    Create database/models.py, services for api/ui creation.
 
-    Key logic is initiated when a (single) object is created.  The `__init__` calls `create_models`.
+    Key logic is `__init__` (for singleton) calls `create_models`.
+
+    Much later, create_from_model creators (api, ui) then call helpers
+
+    * get get resources, favorite attributes, etc etc
+
+    Note this is about Logical Objects (classes), not tables
+
+    * Ignore old to-be-deleted code regarding tables and columns
     """
 
     from api_logic_server_cli.cli_args_project import Project
@@ -200,10 +208,10 @@ class ModelCreationServices(object):
         """ optimistic locking virtuals (jsonattrs) appended to each class """
 
 
-        ####################################
-        # Introspect data mdel (sqlacodegen)
+        #################################################################
+        # Introspect data mdel (sqlacodegen) & create database/models.py
         # create resource_list
-        ####################################
+        #################################################################
 
         model_file_name, msg = sqlacodegen_wrapper.create_models_py(
             model_creation_services = self,
