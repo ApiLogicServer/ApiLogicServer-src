@@ -22,9 +22,8 @@ import yaml
 import datetime
 
 # The generic ARRAY type was introduced in SQLAlchemy 1.1
-from api_logic_server_cli.create_from_model.model_creation_services import Resource, ResourceRelationship, \
-    ResourceAttribute
 from api_logic_server_cli.create_from_model.model_creation_services import ModelCreationServices
+from api_logic_server_cli.create_from_model.meta_model import Resource, ResourceRelationship, ResourceAttribute
 
 log = logging.getLogger(__name__)
 

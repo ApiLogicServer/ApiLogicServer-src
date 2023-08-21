@@ -15,7 +15,7 @@ import api_logic_server_cli.create_from_model.model_creation_services as create_
 import api_logic_server_cli.create_from_model.api_logic_server_utils as create_utils
 from dotmap import DotMap
 
-from api_logic_server_cli.create_from_model.model_creation_services import Resource
+from api_logic_server_cli.create_from_model.meta_model import Resource
 
 log = logging.getLogger(__file__)
 log.setLevel(logging.INFO)
