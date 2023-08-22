@@ -1,57 +1,25 @@
-# Setup and Run
+# Using this readme
+
+This readme contains the following sections:
+
+
+| Section                  | Info                               |
+|:-------------------------|:-----------------------------------|
+| [1. Setup and Run](#1-setup-and-run) | Information about API Logic Server, and setting up your venv     |
+| [2. Deployment](#2-deployment) | Deploy early previews to the cloud - enable team collaboration     |
+| [3. Key Customization Files](#3-key-customization-files) | Quick idea of the key files you'll alter        |
+| [4. Project Requirements](#4-project-requirements)     | Options for capturing requirements |
+| [5. Project Information](#5-project-information)                | Creation dates, versions          |
+| [Appendix - Key Technologies](#appendix-key-technologies)    | Doc links of key libraries         |
+
+&nbsp;
+
+# 1. Setup and Run
 
 To run your project, the system requires various runtime systems for data access, api, and logic.  These are included with API Logic Server ([architecture doc here](https://apilogicserver.github.io/Docs/Architecture-What-Is/)).  So, to run your project ([instructions here](#setup-instructions)):
 
 1.  __Establish your Python Environment__ to activate these runtime systems
 2. __Run__
-
-&nbsp;
-
-# Key Customization Files
-
-Your project is ready to run, but it's likely you'll want to customize it - declare logic, new endpoints, etc.
-
-The ___Key Customization Files___ listed in the table below are created as stubs, intended for you to add customizations that extend
-the created API, Logic and Web App.
-
-* Since they are separate files, the project can be
-[rebuilt](https://apilogicserver.github.io/Docs/Project-Rebuild/) (e.g., synchronized with a revised schema), preserving your customizations.
-
-Please see the `nw` sample for examples of typical customizations.  You can open it in GitHub (use Shift + "." to view in project mode) - [click here](https://github.com/ApiLogicServer/demo).
-
-| Directory | Usage                         | Key Customization File             | Typical Customization                                                                 |
-|:-------------- |:------------------------------|:-----------------------------------|:--------------------------------------------------------------------------------------|
-| ```api``` | **JSON:API**<br>*Ready to Run*                    | ```api/customize_api.py```         | Add new end points / services                                                         |
-| ```ui``` | **Multi-Page Admin App**<br>*Ready to Run*  | ```ui/admin/admin.yaml```          | Control field display - order, captions etc.                                          |
-| ```database``` | SQLAlchemy Data Model Classes | ```database/customize_models.py``` | Add derived attributes, and relationships missing in the schema                       |
-| ```logic``` | **Transactional Logic**<br>spreadsheet-like rules   | ```logic/declare_logic.py```       | Declare multi-table derivations, constraints, and Python events such as send mail / messages |
-| ```security``` | Authentication, Authorization   | ```security/declare_security.py```          | Control login, role-based row access         |
-| ```tests``` | Behave Test Suite              | ```tests/api_logic_server_behave/features```          | Declare and implement [Behave Tests](https://apilogicserver.github.io/Docs/Behave/)                                          |
-
-&nbsp;
-
-# Project Requirements
-
-Optionally, you can **document requirements** as part of an **executable test plan**.  Test plan execution creates documentation (in markdown), including **requirements traceability** into implementation.  [See example here](test/api_logic_server_behave/reports/Behave%20Logic%20Report%20Sample.md).
-
-&nbsp;
-
-# Project Information
-
-This API Logic Project was created with the `ApiLogicServer create` command.
-For information on Managing API Logic Projects, [click here](https://apilogicserver.github.io/Docs/Project-Structure).
-
-| About                    | Info                               |
-|:-------------------------|:-----------------------------------|
-| Created                  | creation-date                      |
-| API Logic Server Version | api_logic_server_version           |
-| Created in directory     | api_logic_server_project_directory |
-| API Name                 | api_logic_server_api_name          |
-| Execution begins with    | `api_logic_server_run.py`          |
-
-&nbsp;
-
-# Setup Instructions
 
 Setup your Python environment, according to whether you did a *local install*, or *Docker*.  Choose the appropriate section, then run.
 
@@ -72,6 +40,8 @@ Notes:
 * See also the `venv_setup` directory in this API Logic Project.
 
 * If using SqlServer, install `pyodbc`.  Not required for docker-based projects.  For local installs, see the [Quick Start](https://apilogicserver.github.io/Docs/Install-pyodbc/).
+
+* If you are creating multiple projects, you may wish to use a [Shared venv](https://apilogicserver.github.io/Docs/Project-Env/).
 
 &nbsp;
 
@@ -98,6 +68,58 @@ As shown above:
     * And your API (via Swagger)
 
 ![Admin App](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/ui-admin/run-admin-app.png?raw=true)
+
+&nbsp;
+
+# 2. Deployment
+
+The `devops` directory contains several scripts for creating container images, testing them, and deploying them.
+
+Since API Logic Server creates working software (UI, API), you can do this after creating your project, to [collaborate with your team](https://apilogicserver.github.io/Docs/DevOps-Containers-Preview/).
+
+&nbsp;
+
+# 3. Key Customization Files
+
+Your project is ready to run, but it's likely you'll want to customize it - declare logic, new endpoints, etc.
+
+The ___Key Customization Files___ listed in the table below are created as stubs, intended for you to add customizations that extend
+the created API, Logic and Web App.
+
+* Since they are separate files, the project can be
+[rebuilt](https://apilogicserver.github.io/Docs/Project-Rebuild/) (e.g., synchronized with a revised schema), preserving your customizations.
+
+Please see the `nw` sample for examples of typical customizations.  You can open it in GitHub (use Shift + "." to view in project mode) - [click here](https://github.com/ApiLogicServer/demo).
+
+| Directory | Usage                         | Key Customization File             | Typical Customization                                                                 |
+|:-------------- |:------------------------------|:-----------------------------------|:--------------------------------------------------------------------------------------|
+| ```api``` | **JSON:API**<br>*Ready to Run*                    | ```api/customize_api.py```         | Add new end points / services                                                         |
+| ```ui``` | **Multi-Page Admin App**<br>*Ready to Run*  | ```ui/admin/admin.yaml```          | Control field display - order, captions etc.                                          |
+| ```database``` | SQLAlchemy Data Model Classes | ```database/customize_models.py``` | Add derived attributes, and relationships missing in the schema                       |
+| ```logic``` | **Transactional Logic**<br>spreadsheet-like rules   | ```logic/declare_logic.py```       | Declare multi-table derivations, constraints, and Python events such as send mail / messages |
+| ```security``` | Authentication, Authorization   | ```security/declare_security.py```          | Control login, role-based row access         |
+| ```tests``` | Behave Test Suite              | ```tests/api_logic_server_behave/features```          | Declare and implement [Behave Tests](https://apilogicserver.github.io/Docs/Behave/)                                          |
+
+&nbsp;
+
+# 4. Project Requirements
+
+Optionally, you can **document requirements** as part of an **executable test plan**.  Test plan execution creates documentation (in markdown), including **requirements traceability** into implementation.  [See example here](test/api_logic_server_behave/reports/Behave%20Logic%20Report%20Sample.md).
+
+&nbsp;
+
+# 5. Project Information
+
+This API Logic Project was created with the `ApiLogicServer create` command.
+For information on Managing API Logic Projects, [click here](https://apilogicserver.github.io/Docs/Project-Structure).
+
+| About                    | Info                               |
+|:-------------------------|:-----------------------------------|
+| Created                  | creation-date                      |
+| API Logic Server Version | api_logic_server_version           |
+| Created in directory     | api_logic_server_project_directory |
+| API Name                 | api_logic_server_api_name          |
+| Execution begins with    | `api_logic_server_run.py`          |
 
 
 &nbsp;

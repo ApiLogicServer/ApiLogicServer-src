@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "09.02.17"
+__version__ = "09.02.18"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t08/21/2023 - 09.02.17: Devops container/compose, Multi-arch dockers, add-auth with db_url, auth docker dbs, meta api \n"\
+    "\t08/22/2023 - 09.02.18: Devops container/compose, Multi-arch dockers, add-auth with db_url, auth docker dbs, meta api \n"\
     "\t07/04/2023 - 09.01.00: SQLAlchemy 2 typed-relns/attrs, Docker: Python 3.11.4 & odbc18 \n"\
     "\t06/24/2023 - 09.00.01: PyMysql \n"\
     "\t06/22/2023 - 09.00.00: Optimistic Locking, safrs 310, SQLAlchemy 2.0.15 \n"\
@@ -212,22 +212,16 @@ def recursive_overwrite(src, dest, ignore=None):
 
 def create_nw_tutorial(project_name, api_logic_server_dir_str):
     """ copy tutorial from docs, and link to it from readme.md 
+
+    1. prototype/nw/readme.md is the short preamble to "go see tutorial"
+
+    2. append the standard readme
     
-    Alert: 2 copies:
-    * ~/dev/ApiLogicServer/api_logic_server_cli/project_prototype_nw/Tutorial.md
+    Alert: 2 copies of the Tutorial:
+    * ~/dev/ApiLogicServer/api_logic_server_cli/prototypes/nw/Tutorial.md
     * ~/dev/Org-ApiLogicServer/Docs/docs/Tutorial.md
     * cli version is master -->
     * cp api_logic_server_cli/project_prototype_nw/Tutorial.md ../Org-ApiLogicServer/Docs/docs/Tutorial.md
-    """
-
-    """
-    tutorial_file_proj = open(project_name + '/Tutorial.md', 'w')
-    tutorial_file_docs_path = Path(api_logic_server_dir_str).\
-        joinpath('docs/Tutorial.md')
-    tutorial_file_docs = open(tutorial_file_docs_path)
-    tutorial_readme = tutorial_file_docs.read()
-    tutorial_file_proj.write(tutorial_readme)
-    tutorial_file_proj.close()
     """
 
     project_readme_file_path = project_name + '/readme.md'  # brief 'go read tutorial' - add std readme
