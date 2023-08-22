@@ -999,8 +999,8 @@ from database import <project.bind_key>_models
             self.add_auth(is_nw=True, msg=nw_messages)
 
         nw_path = (self.api_logic_server_dir_path).\
-            joinpath('prototypes/nw')  # /Users/val/dev/ApiLogicServer/api_logic_server_cli/project_prototype
-        recursive_overwrite(nw_path, self.project_directory)
+            joinpath('prototypes/nw')  # PosixPath('/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/nw')
+        recursive_overwrite(nw_path, self.project_directory)  # '/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/tutorial/1. Instant_Creation'
 
         create_nw_tutorial(self.project_directory, str(self.api_logic_server_dir_path))
 
@@ -1053,9 +1053,11 @@ from database import <project.bind_key>_models
         log.info(f"\nCreating ApiLogicProject")
         self.create_project()
 
+
         log.info(f"\nCreating Customized\n")
-        no_cust = self.project_name
+        no_cust = self.project_name  # 1. Instant_Creation
         with_cust = str(target_project_path.joinpath(f"{create}/2. Customized"))
+        self.project_directory = with_cust
         shutil.copytree(dirs_exist_ok=True,
             src=no_cust,
             dst=with_cust)
@@ -1063,7 +1065,8 @@ from database import <project.bind_key>_models
         self.project_name = with_cust
         self.command = "add-cust"
         self.add_nw_customizations(do_show_messages=False, do_security=False)
-        self.run = save_run
+        self.run = save_run  # remove logic below
+
 
         log.info(f"\nCreating Logic\n")
         no_cust = self.project_name

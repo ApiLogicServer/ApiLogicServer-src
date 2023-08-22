@@ -265,7 +265,7 @@ This project is the customized version of _1. Instant_Creation_, above.  The tab
 
 | Customization Area           | Try It                                                                                                                                                                                            | Click to Explore Code                                                                                  | Notes                |
 |:-----------------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------------------------------------------------------------------------------------|:---------------------|
-| **New API endpoint <--**         | Use Swagger for endpoint: *CategoriesEndPoint/get_cats* | [```api/customize_api.py```](2.%20Customized/api/customize_api.py)                 | Standard Flask/SQLAlchemy  |
+| **New API endpoint <--**         | `curl -X GET "http://localhost:5656/filters_cats"` | [```api/customize_api.py```](2.%20Customized/api/customize_api.py)                 | Standard Flask/SQLAlchemy  |
 | **Admin App <--**  | Observe **help text** describes features    |   [```ui/admin/admin.yaml```](2.%20Customized/ui/admin/admin.yaml)                  | Not complex JS, HTML                     |
 
 &nbsp;
