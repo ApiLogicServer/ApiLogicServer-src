@@ -186,22 +186,20 @@ def format_nested_object(row
         row (safrs.DB.Model): models instance (object + related objects)
         replace_attribute_tag (str): replace _attribute_ tag with this name
         remove_links_relationships (bool): remove these tags
-
     Example: in sample nw project, see customize_api: order()
-
     Returns:
         _type_: row suitable for safrs response (a dict)
     """
-
     row_as_dict = jsonify(row).json
     log(f'row_to_dict: {row_as_dict}')
     if replace_attribute_tag != "":
         row_as_dict[replace_attribute_tag] = row_as_dict.pop('attributes')
     if remove_links_relationships:
-        row_as_dict.pop('links')
-        row_as_dict.pop('relationships')
+        if "links" in row_as_dict:
+            row_as_dict.pop('links')
+        if "relationships" in row_as_dict:
+            row_as_dict.pop('relationships')
     return row_as_dict
-
 
 def rows_to_dict(result: flask_sqlalchemy.BaseQuery) -> list:
     """
