@@ -32,7 +32,7 @@ services:
         environment:
           - APILOGICPROJECT_VERBOSE=true
           - SECURITY_ENABLED=true
-          ## database uri's:
+          ## todid - database uri's:
           - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI=mysql+pymysql://root:p@mysql-service:3306/classicmodels
           - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI_AUTHENTICATION=mysql+pymysql://root:p@mysql-service:3306/authdb
         expose:

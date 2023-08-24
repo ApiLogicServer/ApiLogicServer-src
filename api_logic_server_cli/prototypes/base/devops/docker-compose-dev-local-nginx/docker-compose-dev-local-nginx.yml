@@ -47,6 +47,7 @@ services:
             - ./etc/ssl:/etc/ssl:ro
 
     mysql-service:
+        # TODO - specify your own database
         image: apilogicserver/mysql8.0:latest
         restart: always
         environment:

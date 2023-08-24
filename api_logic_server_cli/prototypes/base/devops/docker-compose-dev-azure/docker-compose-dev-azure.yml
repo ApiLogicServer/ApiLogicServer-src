@@ -25,6 +25,7 @@ services:
         working_dir: /home/api_logic_project
 
     mysql-service:
+        # TODO - change to your own database
         image: apilogicserver/mysql8.0:latest
         restart: always
         environment:

@@ -22,7 +22,7 @@ services:
           - APILOGICPROJECT_CLIENT_URI=//${HOST_IP}
           - SECURITY_ENABLED=true
           - PYTHONPATH=/app/ApiLogicProject 
-          ## database uri's:
+          ## todid - database uri's:
           - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI=postgresql://postgres:p@postgres-service/postgres
           - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI_AUTHENTICATION=postgresql://postgres:p@postgres-service/authdb
         expose:

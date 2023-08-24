@@ -12,7 +12,7 @@ services:
           - APILOGICPROJECT_CLIENT_URI=//apilogicserver_project_name_lower.azurewebsites.net
           # - APILOGICPROJECT_HTTP_SCHEME=https
           - PYTHONPATH=/app/ApiLogicProject 
-          ## specify Database uri's:
+          ## todid - specify Database uri's:
           - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI=postgresql://postgres:p@postgres-service/postgres
           - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI_AUTHENTICATION=postgresql://postgres:p@postgres-service/authdb
 
