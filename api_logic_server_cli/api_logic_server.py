@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "09.02.18"
+__version__ = "09.02.19"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t08/24/2023 - 09.02.19: Extended Build arg change, fix table_to_class_map \n"\
     "\t08/22/2023 - 09.02.18: Devops container/compose, Multi-arch dockers, add-auth with db_url, auth docker dbs, meta api \n"\
     "\t07/04/2023 - 09.01.00: SQLAlchemy 2 typed-relns/attrs, Docker: Python 3.11.4 & odbc18 \n"\
     "\t06/24/2023 - 09.00.01: PyMysql \n"\
@@ -640,12 +641,12 @@ def start_open_with(open_with: str, project_name: str):
     create_utils.run_command(f'{open_with} {project_name}', None, "no-msg")
 
 
-def invoke_extended_builder(builder_path, db_url, project_directory):
+def invoke_extended_builder(builder_path, db_url, project_directory, model_creation_services):
     # spec = importlib.util.spec_from_file_location("module.name", "/path/to/file.py")
     spec = importlib.util.spec_from_file_location("module.name", builder_path)
     extended_builder = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(extended_builder)  # runs "bare" module code (e.g., initialization)
-    extended_builder.extended_builder(db_url, project_directory)  # extended_builder.MyClass()
+    extended_builder.extended_builder(db_url, project_directory, model_creation_services)  # extended_builder.MyClass()
 
 
 def invoke_creators(model_creation_services: ModelCreationServices):
@@ -1155,11 +1156,12 @@ from database import <project.bind_key>_models
         log.debug(f'3. Create/verify database/{self.model_file_name}, then use that to create api/ and ui/ models')
         model_creation_services = ModelCreationServices(project = self,   # Create database/models.py from db
             project_directory=self.project_directory)
+        # ext builder can read alter the models.py
         fix_database_models(self.project_directory, self.db_types, self.nw_db_status, self.is_tutorial)
         invoke_creators(model_creation_services)  # MAJOR! creates api/expose_api_models, ui/admin & basic_web_app
         if self.extended_builder is not None and self.extended_builder != "":
             log.debug(f'4. Invoke extended_builder: {self.extended_builder}, ({self.db_url}, {self.project_directory})')
-            invoke_extended_builder(self.extended_builder, self.abs_db_url, self.project_directory)
+            invoke_extended_builder(self.extended_builder, self.abs_db_url, self.project_directory, model_creation_services)
 
         final_project_fixup("4. Final project fixup", self)
 

@@ -298,7 +298,7 @@ metadata = Base.metadata
         project_directory - the created project... create / alter files here
     """
 
-def extended_builder(db_url: str, project_directory: str):
+def extended_builder(db_url: str, project_directory: str, model_creation_services):
     """
     Illustrate Extended Builder -- CLI calls EB to create / update project files.
 
