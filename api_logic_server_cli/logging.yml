@@ -47,3 +47,7 @@ loggers:
         handlers: [console]
         propagate: no
 
+    ModelMigrator:   
+        level: DEBUG
+        handlers: [console]
+        propagate: no

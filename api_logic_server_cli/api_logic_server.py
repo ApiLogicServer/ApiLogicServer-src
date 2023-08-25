@@ -1137,6 +1137,10 @@ from database import <project.bind_key>_models
             self.extended_builder = abspath(f'{self.api_logic_server_dir_path}/extended_builder.py')
             log.debug(f'0. Using default extended_builder: {self.extended_builder}')
 
+        if self.extended_builder == "model_migrator":
+            self.extended_builder = abspath(f'{self.api_logic_server_dir_path}/model_migrator/model_migrator_start.py')
+            log.debug(f'0. Using model migrator: {self.extended_builder}')
+
         self.project_directory, self.api_name, self.merge_into_prototype = \
             create_utils.get_project_directory_and_api_name(self)
         self.project_directory_actual = os.path.abspath(self.project_directory)  # make path absolute, not relative (no /../)
