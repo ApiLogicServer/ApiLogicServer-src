@@ -174,6 +174,10 @@ update OrderDetail
 2156 rows
 Id 10643; OrderDetails are blank on load.  ugh
 
+select CompanyName, Balance from Customer where Id="ALFKI";
+
+update Customer set Balance = (select AmountTotal from "Order" where Customer.Id = CustomerId and ShippedDate is null);
+
 {
   "data": {
     "attributes": {

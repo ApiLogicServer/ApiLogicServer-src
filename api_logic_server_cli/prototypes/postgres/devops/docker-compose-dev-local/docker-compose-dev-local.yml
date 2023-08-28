@@ -19,11 +19,24 @@ services:
         environment:
           - PGDATA=/pgdata
           - POSTGRES_PASSWORD=p
+        # healthcheck:
+        #  test: pg_isready -U myuser -d db_prod
+        #  interval: 10s
+        #  timeout: 3s
+        #  retries: 3
         ports:
           - "5432:5432"
 
     api-logic-server:
         image: apilogicserver/apilogicserver_project_name_lower
+        # depends_on:
+        #  postgres-container:
+        #    condition: service_healthy
+        # healthcheck:
+        #  test: ["CMD", "curl", "-f", "http://localhost:5656/hello_world"]
+        #  interval: 200s
+        #  timeout: 200s
+        #  retries: 5
         environment:
           - APILOGICPROJECT_VERBOSE=true
           - SECURITY_ENABLED=true
