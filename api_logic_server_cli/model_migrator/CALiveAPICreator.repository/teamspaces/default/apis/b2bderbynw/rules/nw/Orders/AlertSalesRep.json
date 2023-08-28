@@ -1,0 +1,19 @@
+{
+  "name": "AlertSalesRep",
+  "entity": "Orders",
+  "isActive": true,
+  "ruleType": "commitEvent",
+  "asynchronous": false,
+  "appliesTo": {
+    "insert": true,
+    "update": true,
+    "delete": true
+  },
+  "codeType": "JavaScript",
+  "isAutoTitle": false,
+  "title": "Alert SalesRep",
+  "comments": null,
+  "topics": [
+    "eMail Alerts"
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "name": "SalesRep",
+  "description": null,
+  "siblingRank": 100,
+  "resourceType": "TableBased",
+  "prefix": "nw",
+  "entity": "Employees",
+  "join": "\"EmployeeID\" = [EmployeeID]",
+  "isCollection": false,
+  "isCombined": false,
+  "filter": null,
+  "order": null,
+  "useSchemaAttributes": false,
+  "attributes": [
+    {
+      "attribute": "fullName",
+      "alias": "fullName",
+      "description": null,
+      "isKey": false
+    },
+    {
+      "attribute": "Region",
+      "alias": "Region",
+      "description": null,
+      "isKey": false
+    }
+  ]
+}

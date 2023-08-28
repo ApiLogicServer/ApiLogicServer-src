@@ -1,0 +1,9 @@
+<h2>Business Requirement</h2>
+
+<p>When a row is posted (inserted) into <code>EmployeeRaises</code>, the system should update the corresponding Employee&#39;s salary. &nbsp;This is an example of the <a href="http://martinfowler.com/eaaDev/EventSourcing.html">Event Source Pattern</a>.</p>
+
+<p>&nbsp;</p>
+
+<h2>Technical Approach</h2>
+
+<p>Provide an Event on EmployeeSalaries that uses <code>B2B.copyAttributes</code>, a generic routine that copies like-named attributes from source to a target, and updates the target.</p>

@@ -1,0 +1,63 @@
+{
+  "name": "ShipperAPIDef",
+  "description": "Used by Orders.ShipperAlert to transform Orders row, to alert Shipper.\n\nObserve Resources are useful for defining Mapping/transformation logic (i.e.,\n * API independent of schema).which columns / aliases,\n * What related objects, etc.",
+  "siblingRank": 100,
+  "resourceType": "TableBased",
+  "prefix": "nw",
+  "entity": "Orders",
+  "isCollection": true,
+  "isCombined": false,
+  "filter": null,
+  "order": null,
+  "useSchemaAttributes": false,
+  "attributes": [
+    {
+      "attribute": "OrderID",
+      "alias": "OrderNumber",
+      "description": null,
+      "isKey": false
+    },
+    {
+      "attribute": "RequiredDate",
+      "alias": "RequiredDate",
+      "description": null,
+      "isKey": false
+    },
+    {
+      "attribute": "ShipName",
+      "alias": "ShipName",
+      "description": null,
+      "isKey": false
+    },
+    {
+      "attribute": "ShipAddress",
+      "alias": "ShipAddress",
+      "description": null,
+      "isKey": false
+    },
+    {
+      "attribute": "ShipCity",
+      "alias": "ShipCity",
+      "description": null,
+      "isKey": false
+    },
+    {
+      "attribute": "ShipRegion",
+      "alias": "ShipRegion",
+      "description": null,
+      "isKey": false
+    },
+    {
+      "attribute": "ShipPostalCode",
+      "alias": "ShipPostalCode",
+      "description": null,
+      "isKey": false
+    },
+    {
+      "attribute": "ShipCountry",
+      "alias": "ShipCountry",
+      "description": null,
+      "isKey": false
+    }
+  ]
+}

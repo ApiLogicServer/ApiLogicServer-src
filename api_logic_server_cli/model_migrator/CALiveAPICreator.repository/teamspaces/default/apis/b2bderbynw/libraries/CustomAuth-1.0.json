@@ -1,0 +1,10 @@
+{
+  "name": "CustomAuth",
+  "version": "1.0",
+  "isUsedByProject": true,
+  "title": "B2BAuthProvider",
+  "description": "AuthProvider using REST on Employees Table (requires install)",
+  "groupName": "newlib",
+  "docsURL": "",
+  "referenceURL": ""
+}

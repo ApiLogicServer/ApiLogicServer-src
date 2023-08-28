@@ -1,0 +1,16 @@
+{
+  "name": "region",
+  "fullname": "User with specified region",
+  "email": null,
+  "isActive": true,
+  "comments": null,
+  "keyLifetimeSeconds": null,
+  "passwordHash": "ymw8M9MOrz2jwjZGiu8T7IUOv5NAtxthu/CNUWRWltELTgbGY1bJ/MWdjrzIrkUpHlXMP+qmBJc84q1BtoTzpg==",
+  "passwordSalt": "zXFH3Uwdim9r3YGzl8NhnQa1CUdgkLx5/fT98w6u",
+  "roles": [
+    "Authorized per region"
+  ],
+  "globals": {
+    "UserRegion": "OR"
+  }
+}

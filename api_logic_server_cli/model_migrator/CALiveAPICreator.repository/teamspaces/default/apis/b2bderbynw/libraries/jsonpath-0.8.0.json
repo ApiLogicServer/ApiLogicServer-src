@@ -1,0 +1,10 @@
+{
+  "name": "jsonpath",
+  "version": "0.8.0",
+  "isUsedByProject": true,
+  "title": "JsonPathLib",
+  "description": "Used by InsertActionsLib",
+  "groupName": "newlib",
+  "docsURL": "",
+  "referenceURL": ""
+}

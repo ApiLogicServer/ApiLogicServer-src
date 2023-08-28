@@ -1,0 +1,15 @@
+{
+  "name": "Pavlov Supplier",
+  "authToken": "pavlovAuth",
+  "description": "AuthTokens are usually obtained by posting to @authenticate, but you can create them manually for testing.\n\nUse this in the RestLab for SupplierInfo, compare to Admin AuthToken.",
+  "userIdentifier": "pavlov",
+  "isActive": true,
+  "expiration": null,
+  "logging": "*=FINE",
+  "roles": [
+    "Supplier"
+  ],
+  "globals": {
+    "ID": "7"
+  }
+}

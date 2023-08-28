@@ -1,0 +1,16 @@
+{
+  "name": "formula_discountedAmount",
+  "entity": "Orders",
+  "isActive": true,
+  "ruleType": "formula",
+  "attribute": "discountedAmount",
+  "codeType": "JavaScript",
+  "isJIT": false,
+  "isAutoTitle": false,
+  "title": "discountedAmount: 1% discount if healthyCount > 3",
+  "comments": null,
+  "topics": [
+    "Check Credit",
+    "Healthy Food Discount"
+  ]
+}

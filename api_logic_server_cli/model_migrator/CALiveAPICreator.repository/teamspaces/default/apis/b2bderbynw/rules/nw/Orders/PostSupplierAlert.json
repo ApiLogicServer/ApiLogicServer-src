@@ -1,0 +1,19 @@
+{
+  "name": "PostSupplierAlert",
+  "entity": "Orders",
+  "isActive": true,
+  "ruleType": "commitEvent",
+  "asynchronous": false,
+  "appliesTo": {
+    "insert": true,
+    "update": true,
+    "delete": true
+  },
+  "codeType": "JavaScript",
+  "isAutoTitle": false,
+  "title": "Post SupplierAlert to accrued Supplier WebHooks",
+  "comments": "for each WebHook accrued in Order Items, post -- B2B.transformToWebHook(logicContext, \"SupplierAlert\", url)",
+  "topics": [
+    "Supplier Alert"
+  ]
+}

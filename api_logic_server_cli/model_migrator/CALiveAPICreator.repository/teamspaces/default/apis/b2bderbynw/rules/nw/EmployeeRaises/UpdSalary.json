@@ -1,0 +1,19 @@
+{
+  "name": "UpdSalary",
+  "entity": "EmployeeRaises",
+  "isActive": true,
+  "ruleType": "event",
+  "asynchronous": false,
+  "appliesTo": {
+    "insert": true,
+    "update": true,
+    "delete": true
+  },
+  "codeType": "JavaScript",
+  "isAutoTitle": false,
+  "title": "Update salary from Posted data",
+  "comments": "On insert, this copies the row.Salary to the Employees.Salary (the only like-named attribute between them), and updates Employees.\n  (logicContext wraps the row object; B2B.copyAttributes copies like named attributes from logicContext.row to row for arg #2).\nTo test, Post this: {\"EmployeeID\": 1, \"Salary\": 100000.02}",
+  "topics": [
+    "Salary Event Source"
+  ]
+}

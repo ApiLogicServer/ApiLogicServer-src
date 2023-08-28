@@ -1,0 +1,32 @@
+<h2>Business Background</h2>
+
+<p>&nbsp;</p>
+
+<h3>Story: Place Order</h3>
+
+<p>As a Business Owner,&nbsp;</p>
+
+<p>I want to enable Partners to Place Orders via RESTful APIs and Web/Mobile Appis,</p>
+
+<p>So that they can self-serve to&nbsp;reduce&nbsp;their / our Adminstration Costs, and reduce delays.</p>
+
+<p>&nbsp;</p>
+
+<hr />
+<h3>Acceptance Criteria: Supplier Alert</h3>
+
+<p>Given a Supplier (such as Pavlov) that has reqistered a Webhook (in <code>Supplier.URL)</code>,</p>
+
+<p>When an order is placed containing any of their products,</p>
+
+<p>Then ensure that the system Posts a message to the Supplier in an agreed-upon API format (per <code>SupplierAlert</code>).</p>
+
+<p>&nbsp;</p>
+
+<hr />
+<h2>Technical Approach:</h2>
+
+<ol>
+	<li>On each Order Details, accrue the webHook URLs, using <code>B2B.putPropertyMap</code></li>
+	<li>On Order, process each accrued WebHook URL,&nbsp;by calling <code>B2B.transformToWebHook</code></li>
+</ol>

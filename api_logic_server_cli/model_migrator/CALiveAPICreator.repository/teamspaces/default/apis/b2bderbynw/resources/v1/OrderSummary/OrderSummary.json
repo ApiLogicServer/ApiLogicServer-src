@@ -1,0 +1,51 @@
+{
+  "name": "OrderSummary",
+  "description": "Used by Partners to create an order, per our API agreement; observe\n * column selection / rename - see OrderSummary attributes.\n * uses Non-persistent Attributes (NPAs) - SalesRep's fullName.\n * uses Combined Resources - see Product.",
+  "siblingRank": 100,
+  "resourceType": "TableBased",
+  "prefix": "nw",
+  "entity": "Orders",
+  "isCollection": true,
+  "isCombined": false,
+  "filter": null,
+  "order": null,
+  "useSchemaAttributes": false,
+  "attributes": [
+    {
+      "attribute": "OrderID",
+      "alias": "OrderID",
+      "description": null,
+      "isKey": false
+    },
+    {
+      "attribute": "CustomerID",
+      "alias": "CustomerID",
+      "description": null,
+      "isKey": false
+    },
+    {
+      "attribute": "OrderDate",
+      "alias": "OrderDate",
+      "description": null,
+      "isKey": false
+    },
+    {
+      "attribute": "AmountTotal",
+      "alias": "AmountTotal",
+      "description": null,
+      "isKey": false
+    },
+    {
+      "attribute": "healthyCount",
+      "alias": "healthyCount",
+      "description": null,
+      "isKey": false
+    },
+    {
+      "attribute": "discountedAmount",
+      "alias": "discountedAmount",
+      "description": null,
+      "isKey": false
+    }
+  ]
+}

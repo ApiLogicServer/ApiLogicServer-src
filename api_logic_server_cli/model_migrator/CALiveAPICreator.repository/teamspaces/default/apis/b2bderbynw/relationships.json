@@ -1,0 +1,212 @@
+[
+  {
+    "parentEntity": "nw:Categories",
+    "childEntity": "nw:Products",
+    "roleToParent": "Categories",
+    "roleToChild": "Products_List",
+    "deleteRule": "Cascade",
+    "updateRule": "No Action",
+    "parentColumns": [
+      "CategoryID"
+    ],
+    "childColumns": [
+      "CategoryID"
+    ]
+  },
+  {
+    "parentEntity": "nw:CustomerDemographics",
+    "childEntity": "nw:CustomerCustomerDemo",
+    "roleToParent": "CustomerCustomerDemo",
+    "roleToChild": "CustomerCustomerDemoList",
+    "deleteRule": "Cascade",
+    "updateRule": "No Action",
+    "parentColumns": [
+      "CustomerTypeID"
+    ],
+    "childColumns": [
+      "CustomerTypeID"
+    ]
+  },
+  {
+    "parentEntity": "nw:Customers",
+    "childEntity": "nw:CustomerCustomerDemo",
+    "roleToParent": "CustomerCustomerDemo_Customers",
+    "roleToChild": "CustomerCustomerDemoList",
+    "deleteRule": "Cascade",
+    "updateRule": "No Action",
+    "parentColumns": [
+      "CustomerID"
+    ],
+    "childColumns": [
+      "CustomerID"
+    ]
+  },
+  {
+    "parentEntity": "nw:Customers",
+    "childEntity": "nw:Orders",
+    "roleToParent": "Customers",
+    "roleToChild": "Orders_List",
+    "deleteRule": "Cascade",
+    "updateRule": "No Action",
+    "parentColumns": [
+      "CustomerID"
+    ],
+    "childColumns": [
+      "CustomerID"
+    ]
+  },
+  {
+    "parentEntity": "nw:Employees",
+    "childEntity": "nw:EmployeeRaises",
+    "roleToParent": "Employees",
+    "roleToChild": "EmployeeRaises_List",
+    "deleteRule": "Cascade",
+    "updateRule": "No Action",
+    "parentColumns": [
+      "EmployeeID"
+    ],
+    "childColumns": [
+      "EmployeeID"
+    ]
+  },
+  {
+    "parentEntity": "nw:Employees",
+    "childEntity": "nw:Employees",
+    "roleToParent": "Employees_via_ReportsTo",
+    "roleToChild": "Employees_List_via_ReportsTo",
+    "deleteRule": "Set NULL",
+    "updateRule": "No Action",
+    "parentColumns": [
+      "EmployeeID"
+    ],
+    "childColumns": [
+      "ReportsTo"
+    ]
+  },
+  {
+    "parentEntity": "nw:Employees",
+    "childEntity": "nw:EmployeeTerritories",
+    "roleToParent": "Employees",
+    "roleToChild": "EmployeeTerritories_List",
+    "deleteRule": "Cascade",
+    "updateRule": "No Action",
+    "parentColumns": [
+      "EmployeeID"
+    ],
+    "childColumns": [
+      "EmployeeID"
+    ]
+  },
+  {
+    "parentEntity": "nw:Employees",
+    "childEntity": "nw:Orders",
+    "roleToParent": "Employees",
+    "roleToChild": "Orders_List",
+    "deleteRule": "Cascade",
+    "updateRule": "No Action",
+    "parentColumns": [
+      "EmployeeID"
+    ],
+    "childColumns": [
+      "EmployeeID"
+    ]
+  },
+  {
+    "parentEntity": "nw:Orders",
+    "childEntity": "nw:Order Details",
+    "roleToParent": "Orders",
+    "roleToChild": "OrderDetails_List",
+    "deleteRule": "Cascade",
+    "updateRule": "No Action",
+    "parentColumns": [
+      "OrderID"
+    ],
+    "childColumns": [
+      "OrderID"
+    ]
+  },
+  {
+    "parentEntity": "nw:Products",
+    "childEntity": "nw:Order Details",
+    "roleToParent": "Products",
+    "roleToChild": "OrderDetails_List",
+    "deleteRule": "Cascade",
+    "updateRule": "No Action",
+    "parentColumns": [
+      "ProductID"
+    ],
+    "childColumns": [
+      "ProductID"
+    ]
+  },
+  {
+    "parentEntity": "nw:Region",
+    "childEntity": "nw:Territories",
+    "roleToParent": "Region",
+    "roleToChild": "Territories_List",
+    "deleteRule": "Cascade",
+    "updateRule": "No Action",
+    "parentColumns": [
+      "RegionID"
+    ],
+    "childColumns": [
+      "RegionID"
+    ]
+  },
+  {
+    "parentEntity": "nw:Shippers",
+    "childEntity": "nw:Orders",
+    "roleToParent": "Shippers",
+    "roleToChild": "Orders_List",
+    "deleteRule": "Cascade",
+    "updateRule": "No Action",
+    "parentColumns": [
+      "ShipperID"
+    ],
+    "childColumns": [
+      "ShipVia"
+    ]
+  },
+  {
+    "parentEntity": "nw:Suppliers",
+    "childEntity": "nw:Products",
+    "roleToParent": "Suppliers",
+    "roleToChild": "Products_List",
+    "deleteRule": "Cascade",
+    "updateRule": "No Action",
+    "parentColumns": [
+      "SupplierID"
+    ],
+    "childColumns": [
+      "SupplierID"
+    ]
+  },
+  {
+    "parentEntity": "nw:Suppliers",
+    "childEntity": "promos:promotions",
+    "roleToParent": "PromotionSupplier",
+    "roleToChild": "PromotionsList",
+    "deleteRule": "No Action",
+    "updateRule": "No Action",
+    "parentColumns": [
+      "SupplierID"
+    ],
+    "childColumns": [
+      "SupplierID"
+    ]
+  },
+  {
+    "parentEntity": "nw:Territories",
+    "childEntity": "nw:EmployeeTerritories",
+    "roleToParent": "Territories",
+    "roleToChild": "EmployeeTerritories_List",
+    "deleteRule": "Cascade",
+    "updateRule": "No Action",
+    "parentColumns": [
+      "TerritoryID"
+    ],
+    "childColumns": [
+      "TerritoryID"
+    ]
+  }
+]

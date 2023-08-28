@@ -1,0 +1,19 @@
+{
+  "name": "accrueWebHooks",
+  "entity": "Order Details",
+  "isActive": true,
+  "ruleType": "event",
+  "asynchronous": false,
+  "appliesTo": {
+    "insert": true,
+    "update": true,
+    "delete": true
+  },
+  "codeType": "JavaScript",
+  "isAutoTitle": false,
+  "title": "Accrue WebHooks for registered Suppliers",
+  "comments": "if orderDetails' products' supplier has a WebHook URL, B2B.putPropertyMap(logicContext, \"order.supplierHooks\", supplier.CompanyName, supplier.URL);",
+  "topics": [
+    "Supplier Alert"
+  ]
+}

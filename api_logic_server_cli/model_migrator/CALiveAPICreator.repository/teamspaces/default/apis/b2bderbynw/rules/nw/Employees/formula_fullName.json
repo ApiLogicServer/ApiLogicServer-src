@@ -1,0 +1,14 @@
+{
+  "name": "formula_fullName",
+  "entity": "Employees",
+  "isActive": true,
+  "ruleType": "formula",
+  "attribute": "fullName",
+  "codeType": "JavaScript",
+  "isJIT": false,
+  "isAutoTitle": false,
+  "title": "fullName = TitleOfCourtesy + FirstName + LastName",
+  "comments": null,
+  "topics": [
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "Partner",
+  "authToken": "partnerAuth",
+  "description": null,
+  "userIdentifier": "Partner",
+  "isActive": true,
+  "expiration": null,
+  "logging": "*=FINE",
+  "roles": [
+    "Full access"
+  ],
+  "globals": {
+  }
+}

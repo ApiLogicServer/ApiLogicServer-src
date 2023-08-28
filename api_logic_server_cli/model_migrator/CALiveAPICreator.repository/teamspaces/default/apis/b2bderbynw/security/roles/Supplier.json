@@ -1,0 +1,73 @@
+{
+  "name": "Supplier",
+  "description": "Login as pavlov.\nThe Custom Auth Provider filters supplier rows, using userData.\nRest Endpoints are limited (click tab above).",
+  "defaultTablePermission": "N",
+  "defaultViewPermission": "N",
+  "defaultFunctionPermission": "N",
+  "globals": {
+  },
+  "apiVisibility": {
+    "table": {
+      "isRestricted": true,
+      "restrictedTo": [
+        "nw:Suppliers",
+        "promos:promotions"
+      ]
+    },
+    "view": {
+      "isRestricted": true,
+      "restrictedTo": [
+      ]
+    },
+    "resource": {
+      "isRestricted": true,
+      "restrictedTo": [
+        "v1/SupplierAlert",
+        "v1/SupplierInfo"
+      ]
+    },
+    "procedure": {
+      "isRestricted": true,
+      "restrictedTo": [
+      ]
+    },
+    "metatable": {
+      "isRestricted": false,
+      "restrictedTo": null
+    },
+    "function": {
+      "isRestricted": true,
+      "restrictedTo": [
+      ]
+    }
+  },
+  "entityPermission": {
+    "Only My Supplier": {
+      "entity": "nw:Suppliers",
+      "description": null,
+      "accessLevels": [
+        "READ",
+        "UPDATE"
+      ],
+      "rowFilter": "\"SupplierID\" = @{ID}",
+      "columnFilter": {
+        "isRestricted": false,
+        "restrictedTo": null
+      }
+    },
+    "Promotions": {
+      "entity": "promos:promotions",
+      "description": null,
+      "accessLevels": [
+        "READ"
+      ],
+      "rowFilter": null,
+      "columnFilter": {
+        "isRestricted": false,
+        "restrictedTo": null
+      }
+    }
+  },
+  "functionPermission": {
+  }
+}

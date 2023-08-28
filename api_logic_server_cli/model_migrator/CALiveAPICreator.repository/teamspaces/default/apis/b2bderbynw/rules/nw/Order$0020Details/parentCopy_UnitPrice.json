@@ -1,0 +1,15 @@
+{
+  "name": "parentCopy_UnitPrice",
+  "entity": "Order Details",
+  "isActive": true,
+  "ruleType": "parentCopy",
+  "attribute": "UnitPrice",
+  "roleToParent": "Products",
+  "parentAttribute": "UnitPrice",
+  "isAutoTitle": true,
+  "title": "UnitPrice = parentcopy(Products.UnitPrice)",
+  "comments": "Obtain the price from the product.\nCopy means subsequent changes to Products.UnitPrice do not affect existing Order Details.\n  You could also use a formula for row.Products.UnitPrice if you *do* want to cascade changes.\n\nYou can change the Rule name (at the top) to be more friendly, or specify a more suitable Foreign Key name, such as Product__OrderDetails.",
+  "topics": [
+    "Check Credit"
+  ]
+}

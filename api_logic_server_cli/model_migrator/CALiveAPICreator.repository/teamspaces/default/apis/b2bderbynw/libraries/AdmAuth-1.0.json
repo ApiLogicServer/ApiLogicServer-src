@@ -1,0 +1,10 @@
+{
+  "name": "AdmAuth",
+  "version": "1.0",
+  "isUsedByProject": true,
+  "title": "AdminAuthProvider",
+  "description": "AuthProvider for Developer Access (not used, example only)",
+  "groupName": "newlib",
+  "docsURL": "",
+  "referenceURL": ""
+}

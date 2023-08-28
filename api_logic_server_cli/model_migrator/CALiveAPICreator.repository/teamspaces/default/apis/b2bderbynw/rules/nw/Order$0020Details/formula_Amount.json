@@ -1,0 +1,15 @@
+{
+  "name": "formula_Amount",
+  "entity": "Order Details",
+  "isActive": true,
+  "ruleType": "formula",
+  "attribute": "Amount",
+  "codeType": "JavaScript",
+  "isJIT": false,
+  "isAutoTitle": false,
+  "title": "Amount = Quantity * UnitPrice -- (discounted)",
+  "comments": "JavaScript is used to express logic,\nproviding access to libraries for date arithmetic (etc.), or your own.\nReactive logic recomputes Amount in response to changes Quantity, Price (and, per logic chaining, the ProductId)",
+  "topics": [
+    "Check Credit"
+  ]
+}

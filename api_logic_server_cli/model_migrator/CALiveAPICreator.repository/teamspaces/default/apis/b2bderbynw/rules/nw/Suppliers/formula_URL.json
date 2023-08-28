@@ -1,0 +1,15 @@
+{
+  "name": "formula_URL",
+  "entity": "Suppliers",
+  "isActive": true,
+  "ruleType": "formula",
+  "attribute": "URL",
+  "codeType": "JavaScript",
+  "isJIT": false,
+  "isAutoTitle": false,
+  "title": "Derive URL for WebHook posting",
+  "comments": "normally entered, here just computed to illustrate derived, non-persistent attributes.",
+  "topics": [
+    "Supplier Alert"
+  ]
+}

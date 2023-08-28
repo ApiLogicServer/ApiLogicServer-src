@@ -1,0 +1,9 @@
+{
+  "name": "testMergeInsert",
+  "isActive": true,
+  "comments": "Suppliers can create / update their information - self service.\n\nPosts through the SupplierSelfService can result in either:\n   * a set of inserts if the new data does not exist\n   * a set of updates if the data already exists, per \"Part of Defined Key\" (see SupplierSelfService attributes).\n\nThis is termed \"Merge Insert\".  It is activated by the metadata action tag MERGE_INSERT.\n\nSince it is unreasonable for clients to supply such a tag, this API inserts via a Request Event.",
+  "returnType": "{\n  \"description\": \"This is an example of the type of data returned by this function\"\n}\n",
+  "extendedProperties": null,
+  "parameters": null,
+  "functionType": "apiLevel"
+}

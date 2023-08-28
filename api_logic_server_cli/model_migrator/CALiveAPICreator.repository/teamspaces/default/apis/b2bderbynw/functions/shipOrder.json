@@ -1,0 +1,12 @@
+{
+  "name": "shipOrder",
+  "isActive": true,
+  "comments": "All objects have a \"life cycle\" of create, update and delete operations, visible as RESTful APIs.  Sometimes, it's more complicated.  Some objects have additional operations, such as 'ship' an order.\n\nFunctions enable to express such operations as swagger-visible RESTful APIs.",
+  "returnType": "[ {\"status\": \"Success\"}, {\"AmountTotal\": 100} ]",
+  "extendedProperties": null,
+  "parameters": null,
+  "functionType": "rowLevel",
+  "appliesTo": [
+    "nw:Orders"
+  ]
+}

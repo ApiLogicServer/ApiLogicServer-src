@@ -51,6 +51,9 @@ class ModelMigrator(object):
         log.debug(f'.. ModelMigrator.run() - running')
         import api_logic_server_cli.model_migrator.migrator as migrator
         migrator.hello()
+        import api_logic_server_cli.model_migrator.reposreader as repo_reader
+        print(self.model_creation_services.table_to_class_map)
+        repo_reader.start(self.db_url, self.project_directory) # need repos location and project api name
         log.debug(f'.. ModelMigrator.run() - done')
 
 

@@ -1,0 +1,46 @@
+{
+  "name": "promotionsChild",
+  "description": "Generated sample resource",
+  "siblingRank": 100,
+  "resourceType": "TableBased",
+  "prefix": "promos",
+  "entity": "promotions",
+  "join": "\"SupplierID\" = [SupplierID]",
+  "isCollection": true,
+  "isCombined": false,
+  "filter": null,
+  "order": null,
+  "useSchemaAttributes": false,
+  "attributes": [
+    {
+      "attribute": "ident",
+      "alias": "ident",
+      "description": null,
+      "isKey": false
+    },
+    {
+      "attribute": "SupplierID",
+      "alias": "SupplierID",
+      "description": null,
+      "isKey": false
+    },
+    {
+      "attribute": "remarks",
+      "alias": "remarks",
+      "description": null,
+      "isKey": false
+    },
+    {
+      "attribute": "begin_date",
+      "alias": "begin_date",
+      "description": null,
+      "isKey": false
+    },
+    {
+      "attribute": "end_date",
+      "alias": "end_date",
+      "description": null,
+      "isKey": false
+    }
+  ]
+}

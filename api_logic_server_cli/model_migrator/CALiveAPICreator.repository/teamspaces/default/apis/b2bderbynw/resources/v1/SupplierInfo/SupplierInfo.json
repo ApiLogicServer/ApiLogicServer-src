@@ -1,0 +1,51 @@
+{
+  "name": "SupplierInfo",
+  "description": "Integrates multiple databases, joining data from promotions,\nand Row Level Security (try RestLab using Pavlov's Supplier Key)",
+  "siblingRank": 100,
+  "resourceType": "TableBased",
+  "prefix": "nw",
+  "entity": "Suppliers",
+  "isCollection": true,
+  "isCombined": false,
+  "filter": null,
+  "order": null,
+  "useSchemaAttributes": false,
+  "attributes": [
+    {
+      "attribute": "CompanyName",
+      "alias": "Supplier",
+      "description": null,
+      "isKey": false
+    },
+    {
+      "attribute": "ContactName",
+      "alias": "Contact",
+      "description": null,
+      "isKey": false
+    },
+    {
+      "attribute": "ContactTitle",
+      "alias": "ContactTitle",
+      "description": null,
+      "isKey": false
+    },
+    {
+      "attribute": "Address",
+      "alias": "Address",
+      "description": null,
+      "isKey": false
+    },
+    {
+      "attribute": "City",
+      "alias": "City",
+      "description": null,
+      "isKey": false
+    },
+    {
+      "attribute": "Region",
+      "alias": "Region",
+      "description": null,
+      "isKey": false
+    }
+  ]
+}

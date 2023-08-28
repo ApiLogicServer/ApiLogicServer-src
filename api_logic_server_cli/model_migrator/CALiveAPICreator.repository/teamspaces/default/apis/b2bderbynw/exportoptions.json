@@ -1,0 +1,8 @@
+{
+  "passwordStyle": "ENCRYPTED",
+  "apiOptionStyle": "SKIP_DEFAULT",
+  "authTokenStyle": "SKIP_AUTO_INACTIVE_OR_EXPIRED",
+  "skipUrlFragmentWrapping": false,
+  "libraryStyle": "EMIT_ALL",
+  "schemaCacheStyle": "EMIT_JSON"
+}

@@ -1,0 +1,40 @@
+{
+  "name": "Authorized per region",
+  "description": "Click the Permissions tab.",
+  "defaultTablePermission": "A",
+  "defaultViewPermission": "A",
+  "defaultFunctionPermission": "X",
+  "globals": {
+  },
+  "apiVisibility": {
+    "table": {
+      "isRestricted": false,
+      "restrictedTo": null
+    },
+    "view": {
+      "isRestricted": false,
+      "restrictedTo": null
+    },
+    "resource": {
+      "isRestricted": false,
+      "restrictedTo": null
+    },
+    "procedure": {
+      "isRestricted": false,
+      "restrictedTo": null
+    },
+    "metatable": {
+      "isRestricted": false,
+      "restrictedTo": null
+    },
+    "function": {
+      "isRestricted": true,
+      "restrictedTo": [
+      ]
+    }
+  },
+  "entityPermission": {
+  },
+  "functionPermission": {
+  }
+}

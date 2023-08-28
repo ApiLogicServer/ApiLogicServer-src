@@ -1,0 +1,22 @@
+{
+  "name": "Supplier",
+  "description": null,
+  "siblingRank": 100,
+  "resourceType": "TableBased",
+  "prefix": "nw",
+  "entity": "Suppliers",
+  "join": "\"SupplierID\" = [SupplierID]",
+  "isCollection": false,
+  "isCombined": true,
+  "filter": null,
+  "order": null,
+  "useSchemaAttributes": false,
+  "attributes": [
+    {
+      "attribute": "CompanyName",
+      "alias": "SupplierName",
+      "description": null,
+      "isKey": false
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "name": "PartnerOrder",
+  "description": "Create order by posting this from Partner,\nwith attribute aliases for \"Mapping/transformation logic\" (i.e., API independent of schema).\n\nAlso see Request Events, which inserts metadata tags for LOOKUP of ProductNumbers, given a ProductName.  The \"Part of Defined Key\" property identifies the fields used for the LOOKUP - see the Subresources Product and Shipper.\n\nPerhaps initiated by code, web hook, UI.... or for our testing, RestLab.",
+  "siblingRank": 100,
+  "resourceType": "TableBased",
+  "prefix": "nw",
+  "entity": "Orders",
+  "isCollection": true,
+  "isCombined": false,
+  "filter": null,
+  "order": null,
+  "useSchemaAttributes": false,
+  "attributes": [
+    {
+      "attribute": "CustomerID",
+      "alias": "CustomerNumber",
+      "description": null,
+      "isKey": false
+    },
+    {
+      "attribute": "OrderID",
+      "alias": "OrderNumber",
+      "description": null,
+      "isKey": false
+    }
+  ]
+}

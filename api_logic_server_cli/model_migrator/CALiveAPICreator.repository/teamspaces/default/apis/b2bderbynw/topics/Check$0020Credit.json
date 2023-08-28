@@ -1,0 +1,5 @@
+{
+  "name": "Check Credit",
+  "color": "#98fb3a",
+  "summary": "Balance < CreditLimit -- 5 rules vs hundreds of lines of code"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "formula_isHealthy",
+  "entity": "Order Details",
+  "isActive": true,
+  "ruleType": "formula",
+  "attribute": "isHealthy",
+  "codeType": "JavaScript",
+  "isJIT": false,
+  "isAutoTitle": false,
+  "title": "isHealthy = product category fruit or fish?",
+  "comments": null,
+  "topics": [
+    "Check Credit",
+    "Healthy Food Discount"
+  ]
+}

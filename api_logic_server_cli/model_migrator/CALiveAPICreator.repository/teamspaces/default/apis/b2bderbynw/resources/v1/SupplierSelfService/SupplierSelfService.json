@@ -1,0 +1,87 @@
+{
+  "name": "SupplierSelfService",
+  "description": "Suppliers can create / update their information - self service.\n\nPosts through this resource can result in either:\n   * a set of inserts if the new data does not exist\n   * a set of updates if the data already exists, per \"Part of Defined Key\" (see SupplierSelfService attributes).\n\nThis is termed \"Merge Insert\".  It is activated by the metadata action tag MERGE_INSERT.\n\nSince it is unreasonable for clients to supply such a tag, this API inserts via a Request Event, per Extended Properties.",
+  "siblingRank": 100,
+  "resourceType": "TableBased",
+  "prefix": "nw",
+  "entity": "Suppliers",
+  "isCollection": true,
+  "isCombined": false,
+  "filter": null,
+  "order": null,
+  "useSchemaAttributes": false,
+  "attributes": [
+    {
+      "attribute": "CompanyName",
+      "alias": "CompanyName",
+      "description": null,
+      "isKey": true
+    },
+    {
+      "attribute": "ContactName",
+      "alias": "ContactName",
+      "description": null,
+      "isKey": false
+    },
+    {
+      "attribute": "ContactTitle",
+      "alias": "ContactTitle",
+      "description": null,
+      "isKey": false
+    },
+    {
+      "attribute": "Address",
+      "alias": "Address",
+      "description": null,
+      "isKey": false
+    },
+    {
+      "attribute": "City",
+      "alias": "City",
+      "description": null,
+      "isKey": false
+    },
+    {
+      "attribute": "Region",
+      "alias": "Region",
+      "description": null,
+      "isKey": false
+    },
+    {
+      "attribute": "PostalCode",
+      "alias": "PostalCode",
+      "description": null,
+      "isKey": false
+    },
+    {
+      "attribute": "Country",
+      "alias": "Country",
+      "description": null,
+      "isKey": false
+    },
+    {
+      "attribute": "Phone",
+      "alias": "Phone",
+      "description": null,
+      "isKey": false
+    },
+    {
+      "attribute": "Fax",
+      "alias": "Fax",
+      "description": null,
+      "isKey": false
+    },
+    {
+      "attribute": "HomePage",
+      "alias": "HomePage",
+      "description": null,
+      "isKey": false
+    },
+    {
+      "attribute": "URL",
+      "alias": "URL",
+      "description": null,
+      "isKey": false
+    }
+  ]
+}

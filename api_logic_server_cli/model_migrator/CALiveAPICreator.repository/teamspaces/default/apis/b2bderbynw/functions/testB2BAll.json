@@ -1,0 +1,9 @@
+{
+  "name": "testB2BAll",
+  "isActive": true,
+  "comments": "This is a skeleton function, you should most likely:\n1 - Give it a proper name (the default is a randomly generated 5-letter name)\n2 - Give it a proper comment\n3 - Change the code to do something useful",
+  "returnType": "{\n  \"description\": \"This is an example of the type of data returned by this function\"\n}\n",
+  "extendedProperties": null,
+  "parameters": null,
+  "functionType": "apiLevel"
+}

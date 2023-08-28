@@ -1,0 +1,22 @@
+[
+  {
+    "entity_name": "admin:resources",
+    "description": "Resource SupplierSelfService.promotionsChild is defined for table promotions, which does not exist in the database.",
+    "parameters": "SupplierSelfService.promotionsChild,promotions",
+    "status": "O",
+    "problemType": "Resource defined for non-existent table",
+    "rootObject": "promotionsChild",
+    "objectName": "SupplierSelfService",
+    "resolution": null
+  },
+  {
+    "entity_name": "admin:resources",
+    "description": "Resource SupplierInfo.PromotionsList is defined for table promotions, which does not exist in the database.",
+    "parameters": "SupplierInfo.PromotionsList,promotions",
+    "status": "O",
+    "problemType": "Resource defined for non-existent table",
+    "rootObject": "PromotionsList",
+    "objectName": "SupplierInfo",
+    "resolution": null
+  }
+]

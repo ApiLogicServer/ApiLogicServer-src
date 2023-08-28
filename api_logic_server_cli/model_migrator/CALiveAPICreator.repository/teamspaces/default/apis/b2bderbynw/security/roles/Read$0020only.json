@@ -1,0 +1,40 @@
+{
+  "name": "Read only",
+  "description": "Read-only access to everything in this project",
+  "defaultTablePermission": "R",
+  "defaultViewPermission": "R",
+  "defaultFunctionPermission": "N",
+  "globals": {
+  },
+  "apiVisibility": {
+    "table": {
+      "isRestricted": false,
+      "restrictedTo": null
+    },
+    "view": {
+      "isRestricted": false,
+      "restrictedTo": null
+    },
+    "resource": {
+      "isRestricted": false,
+      "restrictedTo": null
+    },
+    "procedure": {
+      "isRestricted": false,
+      "restrictedTo": null
+    },
+    "metatable": {
+      "isRestricted": false,
+      "restrictedTo": null
+    },
+    "function": {
+      "isRestricted": true,
+      "restrictedTo": [
+      ]
+    }
+  },
+  "entityPermission": {
+  },
+  "functionPermission": {
+  }
+}

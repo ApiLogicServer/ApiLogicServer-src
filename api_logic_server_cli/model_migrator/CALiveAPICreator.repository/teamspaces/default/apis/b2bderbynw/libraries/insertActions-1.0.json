@@ -1,0 +1,10 @@
+{
+  "name": "insertActions",
+  "version": "1.0",
+  "isUsedByProject": true,
+  "title": "InsertActionsLib",
+  "description": "Inject @metadata Action tags (e.g., Lookup), for Request Events",
+  "groupName": "newlib",
+  "docsURL": "",
+  "referenceURL": ""
+}

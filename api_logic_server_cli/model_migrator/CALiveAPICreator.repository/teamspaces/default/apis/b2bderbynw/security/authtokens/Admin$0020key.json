@@ -1,0 +1,14 @@
+{
+  "name": "Admin key",
+  "authToken": "Bzn8jVyfOTiIpW6UQCgy",
+  "description": "Created as part of this API. Feel free to change or delete this auth token.",
+  "userIdentifier": null,
+  "isActive": true,
+  "expiration": null,
+  "logging": "*=FINE",
+  "roles": [
+    "Full access"
+  ],
+  "globals": {
+  }
+}

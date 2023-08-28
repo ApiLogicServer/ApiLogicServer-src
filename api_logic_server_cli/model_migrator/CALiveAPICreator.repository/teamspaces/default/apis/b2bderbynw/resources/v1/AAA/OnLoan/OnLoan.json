@@ -1,0 +1,14 @@
+{
+  "name": "OnLoan",
+  "description": null,
+  "siblingRank": 100,
+  "resourceType": "TableBased",
+  "prefix": "nw",
+  "entity": "Employee",
+  "join": "\"Id\" = [\"OnLoanDepartmentId\"]",
+  "isCollection": false,
+  "isCombined": false,
+  "filter": null,
+  "order": null,
+  "useSchemaAttributes": true
+}

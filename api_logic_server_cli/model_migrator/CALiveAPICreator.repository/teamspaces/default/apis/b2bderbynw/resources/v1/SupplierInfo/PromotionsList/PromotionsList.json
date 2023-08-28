@@ -1,0 +1,34 @@
+{
+  "name": "PromotionsList",
+  "description": null,
+  "siblingRank": 100,
+  "resourceType": "TableBased",
+  "prefix": "promos",
+  "entity": "promotions",
+  "join": "\"SupplierID\" = [SupplierID]",
+  "isCollection": true,
+  "isCombined": false,
+  "filter": null,
+  "order": null,
+  "useSchemaAttributes": false,
+  "attributes": [
+    {
+      "attribute": "remarks",
+      "alias": "remarks",
+      "description": null,
+      "isKey": false
+    },
+    {
+      "attribute": "begin_date",
+      "alias": "BeganOn",
+      "description": null,
+      "isKey": false
+    },
+    {
+      "attribute": "end_date",
+      "alias": "EndedOn",
+      "description": null,
+      "isKey": false
+    }
+  ]
+}

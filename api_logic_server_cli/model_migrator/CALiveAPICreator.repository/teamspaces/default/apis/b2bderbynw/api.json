@@ -1,0 +1,7 @@
+{
+  "name": "B2B Northwind",
+  "urlFragment": "b2bderbynw",
+  "comments": "Business to Business (B2B) Sample. Explore in conjunction with the documentation:\n   * Run the Data Explorer - the Intro (top right) will illustrate features.\n   * Examine Rules > Topics to explore logic.\n   * Also examine the Functions, and Libraries (tab above).  Run testB2BAll for a quick test, and in Data Explorer.\nFor LAC version 5.\n Checkout the functions for API testing",
+  "isEnabled": true,
+  "authProviderName": "Built-in authentication"
+}

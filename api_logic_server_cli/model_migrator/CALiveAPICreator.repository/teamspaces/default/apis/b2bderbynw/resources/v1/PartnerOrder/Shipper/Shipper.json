@@ -1,0 +1,22 @@
+{
+  "name": "Shipper",
+  "description": null,
+  "siblingRank": 100,
+  "resourceType": "TableBased",
+  "prefix": "nw",
+  "entity": "Shippers",
+  "join": "\"ShipperID\" = [ShipVia]",
+  "isCollection": false,
+  "isCombined": false,
+  "filter": null,
+  "order": null,
+  "useSchemaAttributes": false,
+  "attributes": [
+    {
+      "attribute": "CompanyName",
+      "alias": "CompanyName",
+      "description": null,
+      "isKey": true
+    }
+  ]
+}

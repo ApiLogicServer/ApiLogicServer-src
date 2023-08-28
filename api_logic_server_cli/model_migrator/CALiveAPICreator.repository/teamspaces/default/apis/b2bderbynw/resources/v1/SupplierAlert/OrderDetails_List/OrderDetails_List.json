@@ -1,0 +1,22 @@
+{
+  "name": "OrderDetails_List",
+  "description": null,
+  "siblingRank": 100,
+  "resourceType": "TableBased",
+  "prefix": "nw",
+  "entity": "Order Details",
+  "join": "\"OrderID\" = [OrderID]",
+  "isCollection": true,
+  "isCombined": false,
+  "filter": null,
+  "order": null,
+  "useSchemaAttributes": false,
+  "attributes": [
+    {
+      "attribute": "Quantity",
+      "alias": "Quantity",
+      "description": null,
+      "isKey": false
+    }
+  ]
+}

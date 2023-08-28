@@ -1,0 +1,13 @@
+{
+  "name": "Menu",
+  "isActive": true,
+  "description": "You can paste the url shown above into your Browser, to see a simple menu page.",
+  "requiresAuthentication": false,
+  "urlPattern": "B2B.*",
+  "appliesTo": {
+    "get": true,
+    "put": true,
+    "post": true,
+    "delete": true
+  }
+}

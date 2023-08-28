@@ -1,0 +1,26 @@
+<p>5 rules == several hundred lines of code, and transparent to business users, to enforce...</p>
+
+<ul>
+	<li>Balance is sum of unshipped PurchaseOrder AmountTotals</li>
+	<li>PurchaseOrder AmountTotal is sum of Order Detail Amounts.</li>
+	<li>Order Detail Amount is discounted Quantity * Price (from the Product).</li>
+</ul>
+
+<p>Across Use Cases:</p>
+
+<ul>
+	<li>Delete Order - the balance is reduced</li>
+	<li>Pay Order - the balance is reduced</li>
+	<li>UnPay the Order - balance is increased</li>
+	<li>Reassign Order to a new customer - new customer balance increased, old balance decreased (for unpaid Orders)</li>
+	<li>Reassign a Line Item to a different Product - adjusts the order&#39;s amount total</li>
+	<li>Add a Line Item</li>
+	<li>Delete a Line Item</li>
+	<li>Change Line Item Quantity</li>
+	<li>Reassign Product to Line Item</li>
+	<li>Do&nbsp;<em>multiple</em>&nbsp;of these, in combination (&quot;no, 2 hammers, not 1 shovel&quot;)</li>
+</ul>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>

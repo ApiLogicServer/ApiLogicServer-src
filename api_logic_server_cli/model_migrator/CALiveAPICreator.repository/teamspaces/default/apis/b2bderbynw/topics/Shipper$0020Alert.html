@@ -1,0 +1,31 @@
+<h2>Business Background</h2>
+
+<p>&nbsp;</p>
+
+<h3>Story: Place Order</h3>
+
+<p>As a Business Owner,&nbsp;</p>
+
+<p>I want to enable Partners to Place Orders via RESTful APIs and Web/Mobile Appis,</p>
+
+<p>So that they can self-serve to&nbsp;reduce&nbsp;their / our Adminstration Costs, and reduce delays.</p>
+
+<p>&nbsp;</p>
+
+<hr />
+<h3>Acceptance Criteria: Shipper Alert</h3>
+
+<p>Given a Shipper that has reqistered a Webhook (in <code>shipper.webHookURL)</code>,</p>
+
+<p>When an order is placed for a registered Shipper (identified by the Orders <code>ShipTo</code>),</p>
+
+<p>Then ensure that the system Posts a message to the Shipper in an agreed-upon API format (per <code>ShipperAPIDef</code>).</p>
+
+<p>&nbsp;</p>
+
+<hr />
+<h2>Technical Approach:</h2>
+
+<p>Some orders have a ShipTo, denoting who ships the order. &nbsp;Shippers can register for WebHooks, by supplying a URL stored in <code>Shipper.OrderChangeWebHook</code>.</p>
+
+<p>Tech approach: <code>Commit Event</code>, invoking&nbsp;<code>B2B.transformToWebHook</code></p>

@@ -1,0 +1,10 @@
+{
+  "name": "b2bB2B",
+  "version": "1.0",
+  "isUsedByProject": true,
+  "title": "B2BLib",
+  "description": "Various B2B services (invoked from JavaScript Logic)",
+  "groupName": "newlib",
+  "docsURL": "",
+  "referenceURL": ""
+}

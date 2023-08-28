@@ -1,0 +1,13 @@
+{
+  "name": "version",
+  "isActive": true,
+  "description": "You may find it helpful to provide a version for each API, to be certain which version is actually running.",
+  "requiresAuthentication": false,
+  "urlPattern": "_version",
+  "appliesTo": {
+    "get": true,
+    "put": false,
+    "post": false,
+    "delete": false
+  }
+}

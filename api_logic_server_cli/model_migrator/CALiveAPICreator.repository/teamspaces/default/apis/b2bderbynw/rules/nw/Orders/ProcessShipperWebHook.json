@@ -1,0 +1,19 @@
+{
+  "name": "ProcessShipperWebHook",
+  "entity": "Orders",
+  "isActive": true,
+  "ruleType": "commitEvent",
+  "asynchronous": false,
+  "appliesTo": {
+    "insert": true,
+    "update": true,
+    "delete": true
+  },
+  "codeType": "JavaScript",
+  "isAutoTitle": false,
+  "title": "Process Shipper WebHook",
+  "comments": "If this order shipped by an external Shipper, alert the shipper via their web hook (if any).\n\nShipper registers for web hook by self-service access to webHookURL, protected by row-level security to only their Supplier record.\n\nNote: webHookURLs are null for sample data, so no action is taken per URL null checking in B2B.sendToWebhook.",
+  "topics": [
+    "Shipper Alert"
+  ]
+}

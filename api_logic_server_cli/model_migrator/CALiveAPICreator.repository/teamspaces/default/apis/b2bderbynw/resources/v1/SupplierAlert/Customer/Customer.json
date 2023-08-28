@@ -1,0 +1,22 @@
+{
+  "name": "Customer",
+  "description": null,
+  "siblingRank": 100,
+  "resourceType": "TableBased",
+  "prefix": "nw",
+  "entity": "Customers",
+  "join": "\"CustomerID\" = [CustomerID]",
+  "isCollection": false,
+  "isCombined": true,
+  "filter": null,
+  "order": null,
+  "useSchemaAttributes": false,
+  "attributes": [
+    {
+      "attribute": "CompanyName",
+      "alias": "CompanyName",
+      "description": null,
+      "isKey": false
+    }
+  ]
+}

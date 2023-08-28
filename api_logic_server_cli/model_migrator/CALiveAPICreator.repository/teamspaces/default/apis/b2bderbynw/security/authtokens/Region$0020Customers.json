@@ -1,0 +1,15 @@
+{
+  "name": "Region Customers",
+  "authToken": "RegCusts",
+  "description": "Use this key in the REST Lab, and observe that Customers returns fewer rows.\n\nThis is due to the defined Role, which uses the Global variable defined on the Details tab.",
+  "userIdentifier": null,
+  "isActive": true,
+  "expiration": null,
+  "logging": "*=FINE",
+  "roles": [
+    "Authorized per region"
+  ],
+  "globals": {
+    "UserRegion": "OR"
+  }
+}

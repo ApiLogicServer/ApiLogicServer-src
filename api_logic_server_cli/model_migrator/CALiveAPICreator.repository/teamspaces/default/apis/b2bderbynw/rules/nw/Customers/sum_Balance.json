@@ -1,0 +1,18 @@
+{
+  "name": "sum_Balance",
+  "entity": "Customers",
+  "isActive": true,
+  "ruleType": "sum",
+  "attribute": "Balance",
+  "roleToChildren": "Orders_List",
+  "childAttribute": "discountedAmount",
+  "qualification": "null === ShippedDate",
+  "isJIT": false,
+  "isAutoTitle": true,
+  "title": "Balance = sum(Orders_List.discountedAmount where null === ShippedDate)",
+  "comments": "adjust the balance to be the sum(Orders_List.AmountTotal) for unshipped orders.\nAdjusts Balance by *reacting* to changes in Orders_List.AmountTotal,\nincluding other changes noted in Table/Column help.",
+  "topics": [
+    "Check Credit",
+    "Healthy Food Discount"
+  ]
+}
