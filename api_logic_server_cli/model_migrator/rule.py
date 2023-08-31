@@ -15,7 +15,7 @@ class DotDict(dict):
     __delattr__ = dict.__delitem__
 class RuleObj:
     
-    def __init__(self, jsonObj: object, jsObj: str = None, sqlObj: str = None): 
+    def __init__(self, jsonObj: object, jsObj: str = None, sqlObj: str = None, table_to_class: dict = None): 
         if not jsonObj:
             raise ValueError("RuleObj(jsonObj) JSON Object required")
         self.name = jsonObj["name"]
@@ -24,6 +24,7 @@ class RuleObj:
         self.jsonObj =jsonObj
         self.jsObj = jsObj
         self.sqlObj = sqlObj
+        self.table_to_class = table_to_class
         
     def __str__(self):
         # switch statement for each ruleType
@@ -44,6 +45,11 @@ class RuleObj:
         entity = ""
         if j.entity is not None:
             entity = to_camel_case(j.entity)
+            if self.table_to_class:
+                for t in self.table_to_class:
+                    if t.lower == entity.lower():
+                        entity = t
+            
         ruleType = ""
         if j.ruleType is not None:
             ruleType = j.ruleType

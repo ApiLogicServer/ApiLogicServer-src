@@ -72,7 +72,7 @@ reposLocation = f"{running_at.parent}/CALiveAPICreator.repository"
 base_path = f"{reposLocation}/{api_root}/{projectName}"
 version = "5.4"
 command = "not set"
-section = "resources" # all is default or resources, rules, security, pipeline_events, data_sources , tests, etc.
+section = "all" # all is default or resources, rules, security, pipeline_events, data_sources , tests, etc.
 
 def start(repos_location:str, project_directory:str, project_name,  table_to_class: dict):
     #listDirs(repos_location, section, apiurl, table_to_class)
@@ -170,10 +170,10 @@ def listFiles(path: Path):
                     log(f"     SQL: {entry.name}")
 
 
-def dataSource(path: Path, no_print: bool = False):
-    # log("#=========================")
-    # log("#        SQL Tables ")
-    # log("#=========================")
+def dataSource(path: Path, version: str, no_print: bool = False):
+    # ("#=========================")
+    # ("#        SQL Tables ")
+    # ("#=========================")
     if not no_print:
         log("# This is informational only of the database schema, tables, columns")
     tableList = []
@@ -436,7 +436,7 @@ def printDir(thisPath: Path):
         for f in files:
             if f in ["ReadMe.md", ".DS_Store", "apiversions.json"]:
                 continue
-            log("|", len(path) * "---", "F", f)
+            print("|", len(path) * "---", "F", f)
             fname = os.path.join(dirpath, f)
             if fname.endswith(".json"):
                 with open(fname) as myfile:
@@ -503,10 +503,10 @@ def functionList(thisPath: str):
                     log(f"     {fn}")
 
 
-def rules(thisPath) -> list:
-    # log("=========================")
-    # log("        RULES ")
-    # log("=========================")
+def create_rules(thisPath, table_to_class) -> list:
+    # ("=========================")
+    # ("        RULES ")
+    # ("=========================")
     '''
     Collect all of the rules definitions and JS info and stash in a list of RuleObj objects
     The object itself (rule.py) has print functions that do the transforms
@@ -526,7 +526,7 @@ def rules(thisPath) -> list:
                 with open(fname) as myfile:
                     data = myfile.read()
                     jsonData = json.loads(data)
-                    rule = RuleObj(jsonData, None)
+                    rule = RuleObj(jsonData, table_to_class=table_to_class)
                     fn = f.split(".")[0] + ".js"
                     javaScriptFile = findInFiles(dirpath, files, fn)
                     rule.jsObj = javaScriptFile
@@ -662,7 +662,7 @@ def listDirs(path: Path, section: str = "all", apiURL: str="", table_to_class: d
     for entry in os.listdir(path):
         # for dirpath, dirs, files in os.walk(base_path):
         if section == "tests":
-            gen_tests(path, apiURL)
+            gen_tests(path, apiURL, version, table_to_class=table_to_class)
             break
         
         if section.lower() != "all" and entry != section:
@@ -687,11 +687,11 @@ def listDirs(path: Path, section: str = "all", apiURL: str="", table_to_class: d
             continue
 
         if entry == "rules":
-            gen_rules(filePath)
+            gen_rules(filePath, table_to_class)
             continue
 
         if entry == "data_sources":
-            tableList = dataSource(filePath)
+            tableList = dataSource(filePath, version)
             printTableAsResource(tableList)
             continue
 
@@ -718,7 +718,7 @@ def listDirs(path: Path, section: str = "all", apiURL: str="", table_to_class: d
         
         printDir(f"{base_path}{os.sep}{entry}")
 
-def gen_tests(path, api_url, table_to_class):
+def gen_tests(path, api_url, version:str, table_to_class:dict):
     log("")
     log("#===========================================================")
     log("#    ALS Command Line tests for each Resource endpoint")
@@ -729,7 +729,7 @@ def gen_tests(path, api_url, table_to_class):
     for res in resList:
         printTests(res, apiURL=api_url)
     fp = f"{path}{os.sep}data_sources"
-    tableList = dataSource(fp, no_print=True)
+    tableList = dataSource(fp, version, no_print=True)
     printTableTestCLI(tableList=tableList)
 
 def gen_security(filePath):
@@ -746,8 +746,8 @@ def gen_security(filePath):
     log("")
     securityUsers(filePath)
 
-def gen_rules(filePath):
-    rulesList = rules(filePath)
+def gen_rules(filePath, table_to_class):
+    rulesList = create_rules(filePath, table_to_class)
     entities = entityList(rulesList)
     for entity in entities:
         entityName = to_camel_case(entity)
