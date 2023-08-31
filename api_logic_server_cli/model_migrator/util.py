@@ -124,3 +124,7 @@ def fixupSQL(sql):
     sql = sql.replace("\"","\\\"",40)
     # dealing with double quotes and single quotes
     return f"{sql}"
+
+def get_os_url(url: str) -> str:
+    """ idiotic fix for windows (\ --> \\\\) """
+    return url.replace('\\', '\\\\')

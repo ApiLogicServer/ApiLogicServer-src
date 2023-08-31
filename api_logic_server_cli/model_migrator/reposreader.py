@@ -72,7 +72,7 @@ reposLocation = f"{running_at.parent}/CALiveAPICreator.repository"
 base_path = f"{reposLocation}/{api_root}/{projectName}"
 version = "5.4"
 command = "not set"
-section = "all" # all is default or resources, rules, security, pipeline_events, data_sources , tests, etc.
+section = "rules" # all is default or resources, rules, security, pipeline_events, data_sources , tests, etc.
 
 def start(repos_location:str, project_directory:str, project_name,  table_to_class: dict):
     #listDirs(repos_location, section, apiurl, table_to_class)
@@ -94,7 +94,8 @@ class ModelMigrationService(object):
     def generate(self):
         api_root = "teamspaces/default/apis"
         base_path = f"{self.repos_path}/{api_root}/{self.project_name}"
-        listDirs(base_path, self.section, self.api_url, self.table_to_class)
+        api_url = f"/rest/default/{self.project_name}/v1"
+        listDirs(base_path, section=self.section, apiURL=api_url, table_to_class=self.table_to_class, project_directory=self.project_directory)
 
 def printTransform():
     log("def transform(style:str, key:str, result: dict) -> dict:")
@@ -385,7 +386,7 @@ def getRootResources(resourceList: object):
     return [r for r in resourceList if r.parentName == 'v1']
 
 
-def buildResourceList(resPath: str, table_to_class: dict, no_print:bool = False):
+def buildResourceList(resPath: str, table_to_class: dict, project_dir: str, no_print:bool = False):
     # ("=========================")
     # ("       RESOURCES ")
     # ("=========================")
@@ -410,7 +411,7 @@ def buildResourceList(resPath: str, table_to_class: dict, no_print:bool = False)
                     if not no_print:
                         print("|", len(path) * "---", "F", f, "Entity:", printCols(jsonObj))
                     drName = ','.join(path[:-1])
-                    resObj = ResourceObj(parentName=parentName, parentDir=drName, jsonObj=jsonObj, table_to_class=table_to_class)
+                    resObj = ResourceObj(parentName=parentName, parentDir=drName, jsonObj=jsonObj, table_to_class=table_to_class, project_directory=project_dir)
                     resources.append(resObj)
                     fn = jsonObj["name"].split(".")[0] + ".sql"
                     resObj.jsSQL = findInFiles(dirpath, files, fn)
@@ -503,7 +504,7 @@ def functionList(thisPath: str):
                     log(f"     {fn}")
 
 
-def create_rules(thisPath, table_to_class) -> list:
+def create_rules(thisPath, table_to_class:dict , project_directory: str) -> list:
     # ("=========================")
     # ("        RULES ")
     # ("=========================")
@@ -526,7 +527,7 @@ def create_rules(thisPath, table_to_class) -> list:
                 with open(fname) as myfile:
                     data = myfile.read()
                     jsonData = json.loads(data)
-                    rule = RuleObj(jsonData, table_to_class=table_to_class)
+                    rule = RuleObj(jsonData, table_to_class=table_to_class,project_directory=project_directory)
                     fn = f.split(".")[0] + ".js"
                     javaScriptFile = findInFiles(dirpath, files, fn)
                     rule.jsObj = javaScriptFile
@@ -656,7 +657,7 @@ def printTests(resObj: ResourceObj, apiURL: str):
         log("")
 
 
-def listDirs(path: Path, section: str = "all", apiURL: str="", table_to_class: dict = None):
+def listDirs(path: Path, section: str = "all", apiURL: str="", table_to_class: dict = None,project_directory: str = ""):
     version = getVersion(path)
     log(f"# LAC Version: {version}")
     for entry in os.listdir(path):
@@ -683,11 +684,11 @@ def listDirs(path: Path, section: str = "all", apiURL: str="", table_to_class: d
         print(f"       {entry.upper()} ")
         print("=========================")
         if entry == "resources":
-            gen_resources(path, apiURL, entry, table_to_class)
+            gen_resources(path, apiURL, entry, table_to_class, project_directory)
             continue
 
         if entry == "rules":
-            gen_rules(filePath, table_to_class)
+            gen_rules(filePath, table_to_class, project_directory)
             continue
 
         if entry == "data_sources":
@@ -746,33 +747,46 @@ def gen_security(filePath):
     log("")
     securityUsers(filePath)
 
-def gen_rules(filePath, table_to_class):
-    rulesList = create_rules(filePath, table_to_class)
+def gen_rules(filePath, table_to_class: dict, project_directory:str):
+    rulesList = create_rules(filePath, table_to_class, project_directory)
     entities = entityList(rulesList)
+    content = ""
     for entity in entities:
         entityName = to_camel_case(entity)
         log(f"# ENTITY: {entityName}")
         log("")
         for rule in rulesList:
             if rule.entity == entity:
-                RuleObj.ruleTypes(rule)
+                content += RuleObj.ruleTypes(rule)
+    for r in rulesList:
+        r.append_imports()
+        r.append_content(content)
+        break;
 
-def gen_resources(path, apiURL, entry, table_to_class):
+def gen_resources(path, apiURL, entry, table_to_class, project_dir):
     log("#Copy this section to ALS api/customize_api.py")
     log("from flask_cors import cross_origin")
     log("from api.system.custom_endpoint import CustomEndpoint, DotDict")
     log('from api.system.free_sql import FreeSQL')
     log("")
-    resList: list['ResourceObj'] = buildResourceList(f"{path}{os.sep}{entry}", table_to_class=table_to_class, no_print=True)
+    content = ""
+    resList: list['ResourceObj'] = buildResourceList(f"{path}{os.sep}{entry}", table_to_class=table_to_class, project_dir=project_dir, no_print=True)
     for resObj in resList:
-        resObj.PrintResource(version, apiURL)
+        content += resObj.PrintResource(version, apiURL)
                 
     for resObj in resList:
-        resObj.PrintResourceFunctions(resObj._name, version)
+        content += resObj.PrintResourceFunctions(resObj._name, version)
             
     log("#FreeSQL section to ALS api/customize_api.py")
     for resObj in resList:
-        resObj.printFreeSQL(apiURL)
+        if cont := resObj.PrintFreeSQL(apiURL):
+            content += cont
+        
+    #Print the import and content
+    for resObj in resList:
+        resObj.append_imports()
+        resObj.append_content(content)
+        break;
 
 
 if __name__ == "__main__":

@@ -49,15 +49,16 @@ class ModelMigrator(object):
         """ call by ApiLogicServer CLI -- migrate LAC model to ALS
 
         """
-        log.debug('.. ModelMigrator.run() - running')
-        import api_logic_server_cli.model_migrator.reposreader as repo_reader
         table_to_class = self.model_creation_services.table_to_class_map
-        # need repos location and project api name (teamspaces/api/{project_name})
-        running_at = Path(__file__)
-        repos_location = f"{running_at.parent}/CALiveAPICreator.repository"
-        project_name = "b2bderbynw"
-        repo_reader.start(repos_location, self.project_directory, project_name, table_to_class ) 
-        log.debug('.. ModelMigrator.run() - done')
+        if "UserRole" not in table_to_class:
+            log.debug('.. ModelMigrator.run() - running')
+            import api_logic_server_cli.model_migrator.reposreader as repo_reader
+            # need repos location and project api name (teamspaces/api/{project_name})
+            running_at = Path(__file__)
+            repos_location = f"{running_at.parent}/CALiveAPICreator.repository"
+            project_name = "b2bderbynw"
+            repo_reader.start(repos_location, self.project_directory, project_name, table_to_class ) 
+            log.debug('.. ModelMigrator.run() - done')
 
 
 def extended_builder(db_url: str, project_directory: str, model_creation_services):
