@@ -4,6 +4,7 @@ from sqlalchemy.sql import text
 from typing import List
 import sqlalchemy
 from dotmap import DotMap
+from pathlib import Path
 
 
 def log(msg: any) -> None:
@@ -48,13 +49,15 @@ class ModelMigrator(object):
         """ call by ApiLogicServer CLI -- migrate LAC model to ALS
 
         """
-        log.debug(f'.. ModelMigrator.run() - running')
-        import api_logic_server_cli.model_migrator.migrator as migrator
-        migrator.hello()
+        log.debug('.. ModelMigrator.run() - running')
         import api_logic_server_cli.model_migrator.reposreader as repo_reader
-        print(self.model_creation_services.table_to_class_map)
-        repo_reader.start(self.db_url, self.project_directory) # need repos location and project api name
-        log.debug(f'.. ModelMigrator.run() - done')
+        table_to_class = self.model_creation_services.table_to_class_map
+        # need repos location and project api name (teamspaces/api/{project_name})
+        running_at = Path(__file__)
+        repos_location = f"{running_at.parent}/CALiveAPICreator.repository"
+        project_name = "b2bderbynw"
+        repo_reader.start(repos_location, self.project_directory, project_name, table_to_class ) 
+        log.debug('.. ModelMigrator.run() - done')
 
 
 def extended_builder(db_url: str, project_directory: str, model_creation_services):

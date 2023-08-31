@@ -37,10 +37,11 @@ class ResourceObj:
         parentName: str,
         parentDir: str,
         jsonObj: dict,
+        table_to_class: dict = None,
         jsObj: str = None,
         sqlObj: str = None,
         getJsObj: str = None,
-        childObj: list[object] = None,
+        childObj: list[object] = None
     ):
         if not jsonObj:
             raise ValueError("JSON Object [dict] is required for ResourceObj")
@@ -48,9 +49,10 @@ class ResourceObj:
         self.parentName = parentName
         self.parentDir = parentDir
         self._name = jsonObj["name"]
+        self.table_to_class = table_to_class
         entity = to_camel_case(self._name)
         if "entity" in jsonObj:
-            entity = to_camel_case(jsonObj["entity"])
+            entity = self.lookup_entity(jsonObj["entity"])
         self.entity = entity
         self.ResourceType = jsonObj["resourceType"]
         self._jsObj = None if jsObj is None else jsObj
@@ -60,6 +62,13 @@ class ResourceObj:
         self.childObj = [] if childObj is None else childObj
         self._parentEntity = None
 
+    def lookup_entity(self, entity_name) -> str:
+        if self.table_to_class:
+            for t in self.table_to_class:
+                if t.lower() == entity_name.lower():
+                    return t
+        return entity_name
+    
     @property
     def name(self):
         return self._name
