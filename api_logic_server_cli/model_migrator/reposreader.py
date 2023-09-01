@@ -17,7 +17,7 @@ import logging
 from api_logic_server_cli.model_migrator.rule import RuleObj
 from api_logic_server_cli.model_migrator.resourceobj import ResourceObj
 from api_logic_server_cli.model_migrator.role_security import Role
-from api_logic_server_cli.model_migrator.util import to_camel_case, fixup
+from api_logic_server_cli.model_migrator.util import to_camel_case, fixup, get_os_url
 
 global version
 global tableAlias
@@ -57,7 +57,7 @@ def main(calling_args=None):
         model_service = ModelMigrationService(base_path, project_name=projectName, table_to_class=table_to_class, section=sections, api_url=api_url, version="5.4")
     try:
         table_to_class = readTranslationTable("table_to_class.json")
-        #listDirs(base_path, sections, apiURL, table_to_class)
+        #transform_respos(base_path, sections, apiURL, table_to_class)
         model_service.generate()
         
     except Exception as ex:
@@ -72,10 +72,10 @@ reposLocation = f"{running_at.parent}/CALiveAPICreator.repository"
 base_path = f"{reposLocation}/{api_root}/{projectName}"
 version = "5.4"
 command = "not set"
-section = "security" # all is default or resources, rules, security, pipeline_events, data_sources , tests, etc.
+section = "all" # all is default or resources, rules, security, pipeline_events, data_sources , tests, etc.
 
 def start(repos_location:str, project_directory:str, project_name,  table_to_class: dict):
-    #listDirs(repos_location, section, apiurl, table_to_class)
+    #transform_respos(repos_location, section, apiurl, table_to_class)
     version = getVersion(repos_location)
     model_service = ModelMigrationService(repos_path=repos_location, project_name=project_name,project_directory=project_directory, table_to_class=table_to_class, section=section, version=version)
     model_service.generate()
@@ -95,8 +95,13 @@ class ModelMigrationService(object):
         api_root = "teamspaces/default/apis"
         base_path = f"{self.repos_path}/{api_root}/{self.project_name}"
         api_url = f"/rest/default/{self.project_name}/v1"
-        listDirs(base_path, section=self.section, apiURL=api_url, table_to_class=self.table_to_class, project_directory=self.project_directory)
+        transform_respos(base_path, section=self.section, apiURL=api_url, table_to_class=self.table_to_class, project_directory=self.project_directory)
 
+def append_content(content: str, project_directory: str):
+        file_name = get_os_url(f'{project_directory}')
+        with open(file_name, 'a') as expose_services_file:
+            expose_services_file.write(content)
+            
 def printTransform():
     log("def transform(style:str, key:str, result: dict) -> dict:")
     log(f"\t# use this to change the output (pipeline) of the result")
@@ -275,33 +280,34 @@ def dataSource(path: Path, version: str, no_print: bool = False):
     return tableList
 
 def printTableAsResource(tableList):
-    log("#=============================================================================================")
-    log("#    ALS may change the name of tables (entity) - so create a endpoint with original name" )
-    log("#    copy to als api/customize_api.py" )
-    log("#=============================================================================================")
-    log("")
+    content = "#=============================================================================================\n"
+    content += "#    ALS may change the name of tables (entity) - so create a endpoint with original name\n"
+    content += "#    copy to als api/customize_api.py\n"
+    content += "#=============================================================================================\n"
+    content += "\n"
     for name in tableList:
         entity_name = to_camel_case(name)
         entity_name = entity_name[:1].upper() + entity_name[1:]
-        log(f"@app.route('{apiurl}/{name}', methods=['GET', 'POST','PUT','OPTIONS'])")
-        log("@admin_required()")
-        log(f"def {name}():")
-        log(f'\troot = CustomEndpoint(model_class=models.{entity_name})')
-        log(f"\tresult = root.execute(request)")
-        log(f"\treturn root.transform('LAC', '{name.lower()}', result)")
-        log("")
+        content += f"@app.route('{apiurl}/{name}', methods=['GET', 'POST','PUT','OPTIONS'])\n"
+        content += "@admin_required()\n"
+        content += f"def {name}():\n"
+        content += f'\troot = CustomEndpoint(model_class=models.{entity_name})\n'
+        content += f"\tresult = root.execute(request)\n"
+        content += f"\treturn root.transform('LAC', '{name.lower()}', result)\n"
+        content += "\n"
+    return content
 
-def printTableTestCLI(tableList):
-    log("#=============================================================================================")
-    log("#    als command line tests for each table endpoint ?page[limit]=10&page[offset]=00&filter[key]=value")
-    log("#=============================================================================================")
-    log("")
+def printTableTestCLI(tableList:dict, table_to_class: dict, project_directory: str):
+    content = "#=============================================================================================\n"
+    content += "#    als command line tests for each table endpoint ?page[limit]=10&page[offset]=00&filter[key]=value\n"
+    content += "#=============================================================================================\n"
+    content += "\n\n"
     for tbl in tableList:
         name = singular(tbl)
-        log(f"# als calling endpoint: {name}?page[limit]=1")
-        log(f'als get \"{apiurl}/{name}?page%5Blimit%5D=1\" -m json')
-        log("")
-        log("")
+        content += f"# als calling endpoint: {name}?page[limit]=1\n"
+        content += f'als get \"{apiurl}/{name}?page%5Blimit%5D=1\" -m json\n'
+        content += "\n\n"
+    append_content(content, f"{project_directory}/test/test_tables_cli.sh")
 
 def singular(name: str) -> str:
     #return name[:-1] if name.endswith("s") else name  # singular names only
@@ -645,25 +651,25 @@ def pipeline(thisPath):
                         log("")
                         pipelines.append(name)
 
-def printTests(resObj: ResourceObj, apiURL: str):
-    log("")
+def printCLITests(resObj: ResourceObj, apiURL: str):
     #log("ALS Command Line TESTS")
+    _content = ""
     if resObj.isActive:
         name = resObj.name.lower()
         entity = resObj.entity
         filter_by = "?page%5Blimit%5D=1" # page[offset]=0&filter[key]=value"
-        log(f"# als get calling Entity {entity} using: {apiURL}/{name}{filter_by}")
-        log(f'als get \"{apiURL}/{name}{filter_by}\" -k 1 -m json')
-        log("")
+        _content = f"# als get calling Entity {entity} using: {apiURL}/{name}{filter_by}\n"
+        _content  += f'als get \"{apiURL}/{name}{filter_by}\" -k 1 -m json\n'
+        _content += "\n"
+    return _content
 
-
-def listDirs(path: Path, section: str = "all", apiURL: str="", table_to_class: dict = None,project_directory: str = ""):
+def transform_respos(path: Path, section: str = "all", apiURL: str="", table_to_class: dict = None,project_directory: str = ""):
     version = getVersion(path)
     log(f"# LAC Version: {version}")
     for entry in os.listdir(path):
         # for dirpath, dirs, files in os.walk(base_path):
         if section == "tests":
-            gen_tests(path, apiURL, version, table_to_class=table_to_class)
+            gen_tests(path, apiURL, version, table_to_class=table_to_class, project_directory=project_directory)
             break
         
         if section.lower() != "all" and entry != section:
@@ -693,7 +699,8 @@ def listDirs(path: Path, section: str = "all", apiURL: str="", table_to_class: d
 
         if entry == "data_sources":
             tableList = dataSource(filePath, version)
-            printTableAsResource(tableList)
+            content = printTableAsResource(tableList)
+            append_content(content, f"{project_directory}/api/customize_api_tables.py.gen")
             continue
 
         if entry in ["request_events" ,"pipelines", "libraries"]:
@@ -719,19 +726,20 @@ def listDirs(path: Path, section: str = "all", apiURL: str="", table_to_class: d
         
         printDir(f"{base_path}{os.sep}{entry}")
 
-def gen_tests(path, api_url, version:str, table_to_class:dict):
-    log("")
-    log("#===========================================================")
-    log("#    ALS Command Line tests for each Resource endpoint")
-    log("#===========================================================")
-    log("als login http://localhost:5656 -u u1 -p p -a nw")
-    log("")
-    resList: ResourceObj = buildResourceList(f"{path}{os.sep}resources", no_print=True)
+def gen_tests(path, api_url, version:str, table_to_class: dict, project_directory: str):
+    content  = "\n"
+    content += "#===========================================================\n"
+    content += "#    ALS Command Line tests for each Resource endpoint\n"
+    content += "#===========================================================\n"
+    content += "als login http://localhost:5656 -u u1 -p p -a nw\n"
+    content += "\n\n"
+    resList: ResourceObj = buildResourceList(f"{path}{os.sep}resources", table_to_class=table_to_class, project_dir=project_directory, no_print=True)
     for res in resList:
-        printTests(res, apiURL=api_url)
+        content += printCLITests(res, apiURL=api_url)
+    append_content(content, f"{project_directory}/test/test_resource_cli.sh")
     fp = f"{path}{os.sep}data_sources"
     tableList = dataSource(fp, version, no_print=True)
-    printTableTestCLI(tableList=tableList)
+    printTableTestCLI(tableList=tableList, table_to_class=table_to_class, project_directory=project_directory)
 
 def gen_security(filePath, project_directory: str, table_to_class:dict):
     securityRoleList = securityRoles(filePath, project_directory, table_to_class)
@@ -802,6 +810,6 @@ if __name__ == "__main__":
 #else:  
 #    local testing and debugging
     table_to_class = readTranslationTable("table_to_class.json")
-    listDirs(base_path, section, apiurl, table_to_class)
+    transform_respos(base_path, section, apiurl, table_to_class)
     #model_service = ModelMigrationService(base_path, project_name=projectName,project_directory="", table_to_class=table_to_class, section=section, version="5.4")
     #model_service.generate()
