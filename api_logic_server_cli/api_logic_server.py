@@ -135,6 +135,7 @@ if is_docker():
 #  MetaData = NewType('MetaData', object)
 MetaDataTable = NewType('MetaDataTable', object)
 
+''' unused code 9/1/2023 - delete
 def create_app(config_filename=None, host="localhost"):
     import safrs
 
@@ -144,7 +145,7 @@ def create_app(config_filename=None, host="localhost"):
     db = safrs.DB
     db.init_app(app)
     return app
-
+'''
 
 def delete_dir(dir_path, msg):
     """
