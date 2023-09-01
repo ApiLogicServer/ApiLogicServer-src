@@ -72,7 +72,7 @@ reposLocation = f"{running_at.parent}/CALiveAPICreator.repository"
 base_path = f"{reposLocation}/{api_root}/{projectName}"
 version = "5.4"
 command = "not set"
-section = "rules" # all is default or resources, rules, security, pipeline_events, data_sources , tests, etc.
+section = "security" # all is default or resources, rules, security, pipeline_events, data_sources , tests, etc.
 
 def start(repos_location:str, project_directory:str, project_name,  table_to_class: dict):
     #listDirs(repos_location, section, apiurl, table_to_class)
@@ -312,9 +312,9 @@ def resourceType(resource: object):
     log(resource)
 
 
-def securityRoles(thisPath) -> list:
+def securityRoles(thisPath, project_directory: str, table_to_class:dict) -> list:
     path = f"{thisPath}/roles"
-    roleList = []
+    securityRoleList = []
     log("=============================================================================================")
     log("    Grant and Role based Access Control for user Security" )
     log("    copy to security/declare_security.py" )
@@ -331,10 +331,10 @@ def securityRoles(thisPath) -> list:
                     data = myfile.read()
                     j = json.loads(data)
                     name = j["name"]
-                    role = Role(roleName=name)
+                    role = Role(roleName=name, project_directory=project_directory, table_to_class=table_to_class)
                     role.loadEntities(j)
-                    roleList.append(role)
-    return roleList
+                    securityRoleList.append(role)
+    return securityRoleList
 
 def securityUsers(thisPath) -> list:
     path = f"{thisPath}/users"
@@ -706,7 +706,7 @@ def listDirs(path: Path, section: str = "all", apiURL: str="", table_to_class: d
             continue
 
         if entry == "security":
-            gen_security(filePath)
+            gen_security(filePath, project_directory, table_to_class)
             continue
 
         if entry == "pipeline_events":
@@ -733,18 +733,26 @@ def gen_tests(path, api_url, version:str, table_to_class:dict):
     tableList = dataSource(fp, version, no_print=True)
     printTableTestCLI(tableList=tableList)
 
-def gen_security(filePath):
-    roleList = securityRoles(filePath)
-    log("class Roles():")
-    for r in roleList:
-        r.printRole()
-    log("")
-    for r in roleList:
-        r.printGrants()
-    log("")
-    for r in roleList:
-        r.printTablePermission()
-    log("")
+def gen_security(filePath, project_directory: str, table_to_class:dict):
+    securityRoleList = securityRoles(filePath, project_directory, table_to_class)
+    content = "class Roles():\n"
+    for sr in securityRoleList:
+        content += sr.printRole()
+    content += "\n"
+    
+    for srl in securityRoleList:
+        content += srl.printTablePermission()
+    content += "\n"    
+    
+    for rl in securityRoleList:
+        content += rl.printGrants()
+    content += "\n"
+    
+    for r in securityRoleList:
+        r.append_imports()
+        r.append_content(content)
+        break;
+    
     securityUsers(filePath)
 
 def gen_rules(filePath, table_to_class: dict, project_directory:str):

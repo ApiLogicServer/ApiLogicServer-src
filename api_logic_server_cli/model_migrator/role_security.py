@@ -7,7 +7,7 @@
 This is a utility to read the CA Live API Creator file based repository and print a report that can be used to help migrate 
 to API Logic Server (a Python API open-source tool) https://apilogicserver.github.io/Docs/
 """
-from api_logic_server_cli.model_migrator.util import to_camel_case
+from api_logic_server_cli.model_migrator.util import to_camel_case, get_os_url
 class DotDict(dict):
     """ dot.notation access to dictionary attributes """
     # thanks: https://stackoverflow.com/questions/2352181/how-to-use-a-dot-to-access-members-of-dictionary/28463329
@@ -36,7 +36,9 @@ class Role():
     
     def __init__ (
         self,
-        roleName: str
+        roleName: str,
+        project_directory: str, 
+        table_to_class:dict
         ):
         
         self.roleName = roleName
@@ -45,30 +47,35 @@ class Role():
         self.functionPermission = ""
         self.apiVisibility = {}
         self.entityRoleList: list["entityRole"] = []
+        self.project_directory = f"{project_directory}/security/declare_security.py.new"
+        self.table_to_class = table_to_class
+        self._content = ""
         
-    def printRole(self):
+    def printRole(self) -> str:
         roleName = self.roleName.replace(" ","",2)
-        print(f"\t{roleName} = '{self.roleName}'")
+        self.add_content(f"\t{roleName} = '{self.roleName}'")
+        return self._content
         
-    def printTablePermission(self):
+    def printTablePermission(self) -> str:
         roleName = self.roleName.replace(" ","",2)
-        print(f"#Role: {roleName} TablePermission: {self.tablePermission}")
+        self.add_content(f"#Role: {roleName} TablePermission: {self.tablePermission}")
         can_read, can_insert, can_update, can_delete = self.getTablePerm()
-        print(f"DefaultRolePermission(to_role='{roleName}', can_read={can_read}, can_insert={can_insert} , can_update={can_update} , can_delete={can_delete})")
-        print("")
+        self.add_content(f"DefaultRolePermission(to_role='{roleName}', can_read={can_read}, can_insert={can_insert} , can_update={can_update} , can_delete={can_delete})")
+        self.add_content("")
+        return self._content
         
     def getTablePerm(self):
         tp = self.tablePermission
         if tp == "A":
-            return True,True,True,True
+            return True,True,True,True # All
         elif tp == 'R':
-            return True,False,False,False
+            return True,False,False,False # Read Only
         return False,False,False,False # N - None
     
-    def printGrants(self):
+    def printGrants(self) -> str:
         roleName = self.roleName.replace(" ","",2)
         for erl in self.entityRoleList:
-            print(f"#Access Levels: {erl.accessLevels} TablePermissions: {self.tablePermission} description: {erl.description}")
+            self.add_content(f"#Access Levels: {erl.accessLevels} TablePermissions: {self.tablePermission} description: {erl.description}")
             grants = ""
             sep = ","
             grants = f"{sep} can_read = {self.contains(erl, 'READ')}"
@@ -79,10 +86,11 @@ class Role():
                 grants = ""
             rowFilter = erl.rowFilter 
             grants = "," if not grants else f"{grants},"
-            print(f"Grant(on_entity=models.{to_camel_case(erl.entityName)} {grants} to_role=Roles.{roleName})")
+            self.add_content(f"Grant(on_entity=models.{to_camel_case(erl.entityName)} {grants} to_role=Roles.{roleName})")
             if rowFilter is not None:
-                print(f"# filter= lambda: {rowFilter}) # TODO fixme")
-            print("")
+                self.add_content(f"\t#filter= lambda: {rowFilter}) # TODO fixme")
+            self.add_content("")
+        return self._content if len(self.entityRoleList) > 0 else ""
         
     def loadEntities(self, jsonObj: dict):
         jsonDict = DotDict(jsonObj)
@@ -105,3 +113,35 @@ class Role():
             return True
         except Exception:
             return False
+    
+    def append_imports(self):
+        """ append import to -> append_expose_services_file """
+        import_statement = "\n"
+        import_statement += "from database import models\n"
+        import_statement += "import database\n"
+        import_statement += "import safrs\n"
+        import_statement += "import logging\n"
+        import_statement += "from security.system.authorization import Grant, Security, DefaultRolePermission\n\n"
+        import_statement += "db = safrs.DB\n"
+        import_statement += "session = db.session\n\n"
+        import_statement += "app_logger = logging.getLogger(__name__)\n\n"
+
+        file_name = get_os_url(f'{self.project_directory}')
+        with open(file_name, 'a') as expose_services_file:
+            expose_services_file.write(import_statement)
+    
+    def append_content(self, content):
+        file_name = get_os_url(f'{self.project_directory}')
+        with open(file_name, 'a') as expose_services_file:
+            expose_services_file.write(content)
+    
+    def add_content(self, *values: object):
+        #print(f'{values}')
+        space = "\t"
+        if isinstance(values, str):
+            self._content += f'{values}'
+        elif isinstance(values, tuple):
+            for t, v in enumerate(values):
+                self._content += t * f"{space}"
+                self._content += f"{v}"
+        self._content += "\n"
