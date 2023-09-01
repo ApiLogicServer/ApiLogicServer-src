@@ -62,7 +62,7 @@ class ResourceObj:
         self.isActive = True
         self.childObj = [] if childObj is None else childObj
         self._parentEntity = None
-        self.project_directory = f'{project_directory}/api/customize_api.py.new'
+        self.project_directory = f'{project_directory}/api/customize_api.py.gen'
         self._content = ""
 
     def lookup_entity(self, entity_name) -> str:

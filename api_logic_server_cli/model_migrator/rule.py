@@ -25,7 +25,7 @@ class RuleObj:
         self.jsObj = jsObj
         self.sqlObj = sqlObj
         self.table_to_class = table_to_class
-        self.project_directory = f"{project_directory}/logic/declare_security.py.new"
+        self.project_directory = f"{project_directory}/logic/declare_security.py.gen"
         self._content = ""
         
     def __str__(self):

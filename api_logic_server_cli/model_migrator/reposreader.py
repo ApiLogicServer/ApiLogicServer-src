@@ -756,9 +756,9 @@ def gen_security(filePath, project_directory: str, table_to_class:dict):
         content += rl.printGrants()
     content += "\n"
     
-    for r in securityRoleList:
-        r.append_imports()
-        r.append_content(content)
+    for srl in securityRoleList:
+        srl.append_imports()
+        srl.append_content(content)
         break;
     
     securityUsers(filePath)

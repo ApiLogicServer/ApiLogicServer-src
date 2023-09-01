@@ -47,14 +47,13 @@ class Role():
         self.functionPermission = ""
         self.apiVisibility = {}
         self.entityRoleList: list["entityRole"] = []
-        self.project_directory = f"{project_directory}/security/declare_security.py.new"
+        self.project_directory = f"{project_directory}/security/declare_security.py.gen"
         self.table_to_class = table_to_class
         self._content = ""
         
     def printRole(self) -> str:
         roleName = self.roleName.replace(" ","",2)
-        self.add_content(f"\t{roleName} = '{self.roleName}'")
-        return self._content
+        return f"\t{roleName} = '{self.roleName}'\n"
         
     def printTablePermission(self) -> str:
         roleName = self.roleName.replace(" ","",2)
