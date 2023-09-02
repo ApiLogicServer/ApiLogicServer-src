@@ -14,6 +14,7 @@ import sys
 import argparse
 from pathlib import Path
 import logging
+from shutil import copyfile
 from api_logic_server_cli.model_migrator.rule import RuleObj
 from api_logic_server_cli.model_migrator.resourceobj import ResourceObj
 from api_logic_server_cli.model_migrator.role_security import Role
@@ -96,15 +97,26 @@ class ModelMigrationService(object):
         base_path = f"{self.repos_path}/{api_root}/{self.project_name}"
         api_url = f"/rest/default/{self.project_name}/v1"
         transform_respos(base_path, section=self.section, apiURL=api_url, table_to_class=self.table_to_class, project_directory=self.project_directory)
+        copy_system_folders(self.project_directory)
 
 def append_content(content: str, project_directory: str):
         file_name = get_os_url(f'{project_directory}')
         with open(file_name, 'a') as expose_services_file:
             expose_services_file.write(content)
             
+def copy_system_folders(project_directory: str):
+    # copy ./system to project_directory/api/system
+    running_at = Path(__file__)
+    src = f"{running_at.parent}/system/custom_endpoint.py"
+    dst = f"{project_directory}/api/system/custom_endpoint.py"
+    copyfile(src, dst)
+    src = f"{running_at.parent}/system/free_sql.py"
+    dst = f"{project_directory}/api/system/free_sql.py"
+    copyfile(src, dst)
+
 def printTransform():
-    log("def transform(style:str, key:str, result: dict) -> dict:")
-    log(f"\t# use this to change the output (pipeline) of the result")
+    #log("def transform(style:str, key:str, result: dict) -> dict:")
+    #log(f"\t# use this to change the output (pipeline) of the result")
     # use this to change the output (pipeline) of the result
     code = "\
     try: \n\
@@ -321,11 +333,11 @@ def resourceType(resource: object):
 def securityRoles(thisPath, project_directory: str, table_to_class:dict) -> list:
     path = f"{thisPath}/roles"
     securityRoleList = []
-    log("=============================================================================================")
-    log("    Grant and Role based Access Control for user Security" )
-    log("    copy to security/declare_security.py" )
-    log("=============================================================================================")
-    log(" ")
+    #log("=============================================================================================")
+    #log("    Grant and Role based Access Control for user Security" )
+    #log("    copy to security/declare_security.py" )
+    #log("=============================================================================================")
+    #log(" ")
     for dirpath, dirs, files in os.walk(path):
         path = dirpath.split("/")
         for f in files:
@@ -455,10 +467,10 @@ def printDir(thisPath: Path):
 
 
 def relationships(relFile: str):
-    log("# This is informational only")
-    # log("=========================")
-    # log("    RELATIONSHIPS ")
-    # log("=========================")
+    # ("# This is informational only")
+    # ("=========================")
+    # ("    RELATIONSHIPS ")
+    # ("=========================")
     with open(relFile) as myfile:
         d = myfile.read()
         js = json.loads(d)
