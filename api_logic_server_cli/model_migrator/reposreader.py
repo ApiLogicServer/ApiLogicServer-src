@@ -15,7 +15,7 @@ import argparse
 from pathlib import Path
 import logging
 from shutil import copyfile
-from api_logic_server_cli.model_migrator.rule import RuleObj
+from api_logic_server_cli.model_migrator.rule_obj import RuleObj
 from api_logic_server_cli.model_migrator.resourceobj import ResourceObj
 from api_logic_server_cli.model_migrator.role_security import Role
 from api_logic_server_cli.model_migrator.util import to_camel_case, fixup, get_os_url
@@ -791,10 +791,12 @@ def gen_rules(filePath, table_to_class: dict, project_directory:str):
         log("")
         for rule in rulesList:
             if rule.entity == entity:
-                content += RuleObj.ruleTypes(rule)
+                if rt := RuleObj.ruleTypes(rule):
+                    content += rt
     for r in rulesList:
         r.append_imports()
         r.append_content(content)
+        r.append_handle_all()
         break;
 
 def gen_resources(path, apiURL, entry, table_to_class, project_dir):

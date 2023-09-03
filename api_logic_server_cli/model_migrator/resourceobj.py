@@ -150,7 +150,7 @@ class ResourceObj:
 
     def PrintResource(self, version: str, apiURL: str = "") -> str:
         if not self.isActive or self.ResourceType != "TableBased":
-            self.printFreeSQL(apiURL)
+            self.PrintFreeSQL(apiURL)
         else:
             space = "\t"
             name = self.name.lower()
@@ -344,5 +344,5 @@ if __name__ == "__main__":
     resObj = ResourceObj(parentName="v1", parentDir="", jsonObj=jsonObj)
     resObj.PrintResource("5.4","/rest/default/nw/v1")
     resObj.PrintResourceFunctions("root", "5.4")
-    resObj.printFreeSQL("/rest/default/nw/v1")
+    resObj.PrintFreeSQL("/rest/default/nw/v1")
 

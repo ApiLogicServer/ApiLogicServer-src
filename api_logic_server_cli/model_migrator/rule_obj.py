@@ -59,6 +59,17 @@ class RuleObj:
         with open(file_name, 'a') as expose_services_file:
             expose_services_file.write(content)
     
+    def append_handle_all(self):
+        """ append import to -> declare_logic.py.gen """
+        content = "\n"
+        content += "\tdef handle_all(logic_row: LogicRow):\n"
+        content += "\t\tGrant.process_updates(logic_row=logic_row)\n"
+        content += "\n"
+        content += "\tRule.early_row_event_all_classes(early_row_event_all_classes=handle_all)\n"
+        content += "\n"
+        content += '\tapp_logger.debug("..logic/declare_logic.py (logic == rules + code)")\n'
+        self.append_content(content)
+        
     def add_content(self, *values: object):
         #print(f'{values}')
         space = "\t"
