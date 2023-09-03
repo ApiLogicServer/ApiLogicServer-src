@@ -80,7 +80,9 @@ def start(repos_location:str, project_directory:str, project_name,  table_to_cla
     version = getVersion(repos_location)
     model_service = ModelMigrationService(repos_path=repos_location, project_name=project_name,project_directory=project_directory, table_to_class=table_to_class, section=section, version=version)
     model_service.generate()
-    
+    from api_logic_server_cli.model_migrator.gen_behave_tests import GenBehaveTests
+    gen_behave_test = GenBehaveTests(repos_path=repos_location, project_name=project_name,project_directory=project_directory, table_to_class=table_to_class, section=section, version=version)
+    gen_behave_test.start()
 class ModelMigrationService(object):
     
     def __init__(self, repos_path: str, project_name: str,project_directory: str, table_to_class: dict, section: str = 'all', api_url:str = "/rest/default/{project_name}/v1", version: str = '5.4'):
@@ -98,6 +100,7 @@ class ModelMigrationService(object):
         api_url = f"/rest/default/{self.project_name}/v1"
         transform_respos(base_path, section=self.section, apiURL=api_url, table_to_class=self.table_to_class, project_directory=self.project_directory)
         copy_system_folders(self.project_directory)
+        #gen_behave_tests(base_path, section=self.section, apiURL=api_url, table_to_class=self.table_to_class, project_directory=self.project_directory)
 
 def append_content(content: str, project_directory: str):
         file_name = get_os_url(f'{project_directory}')
