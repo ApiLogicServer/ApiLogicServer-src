@@ -157,7 +157,7 @@ class GenBehaveTests:
             Then Enforce business policies with Logic (rules + code)
         """
         self.add_content("#this is the api_test.feature")
-        self.add_content("Feature: API GET Testing")
+        self.add_content(f"Feature: API {method_name} Testing")
         self.add_content("")
         for tbl in self.list_of_tables:
             self.print_scenario(tbl, method_name)
@@ -195,13 +195,20 @@ class GenBehaveTests:
         return [self.table_to_class[clz] for clz in self.table_to_class]
         
     def start(self):
-        self.gen_api_feature("GET")
-        file_dir_name = f"{self.project_directory}/test/api_logic_server_behave/features/api_get.feature"
+        self.gen_behave_tests("GET",'api_get')
+        self.gen_behave_tests("PATCH",'api_patch')
+
+    def gen_behave_tests(self,gen_type:str,gen_name:str):
+        project_directory =f"{self.project_directory}/test/api_logic_server_behave/features/"
+        self.gen_api_feature(f"{gen_type}")
+        file_dir_name = f"{project_directory}{gen_name}.feature"
         self.append_content(self._content, file_dir_name) 
         self._content = ""
-        self.gen_behave_steps("GET")
-        file_dir_name = f"{self.project_directory}/test/api_logic_server_behave/features/steps/api_get.py"
-        self.append_content(self._content, file_dir_name) 
+        project_directory =f"{self.project_directory}/test/api_logic_server_behave/features/steps/"
+        self.gen_behave_steps(f"{gen_type}")
+        file_dir_name = f"{project_directory}{gen_name}.py"
+        self.append_content(self._content, file_dir_name)
+        self._content = ""
     
 def main():
     print("run start...")
