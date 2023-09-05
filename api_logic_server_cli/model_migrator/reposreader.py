@@ -93,14 +93,371 @@ class ModelMigrationService(object):
         self.section = section
         self.version = version
         self.api_url = f"{api_url}"
+        self._content = ""
         
     def generate(self):
         api_root = "teamspaces/default/apis"
         base_path = f"{self.repos_path}/{api_root}/{self.project_name}"
         api_url = f"/rest/default/{self.project_name}/v1"
-        transform_respos(base_path, section=self.section, apiURL=api_url, table_to_class=self.table_to_class, project_directory=self.project_directory)
+        self.transform_respos(base_path, section=self.section, apiURL=api_url, table_to_class=self.table_to_class, project_directory=self.project_directory)
         copy_system_folders(self.project_directory)
-        #gen_behave_tests(base_path, section=self.section, apiURL=api_url, table_to_class=self.table_to_class, project_directory=self.project_directory)
+        append_content(self._content, f"{self.project_directory}/model_migration.txt")
+
+    def transform_respos(self, path: Path, section: str = "all", apiURL: str="", table_to_class: dict = None,project_directory: str = ""):
+        version = getVersion(path)
+        self.add_content(f"# LAC Version: {version}")
+        self.add_content(f"# Model Migration for LAC project {self.project_name} ")
+        self.add_content("\n")
+        for entry in os.listdir(path):
+            # for dirpath, dirs, files in os.walk(base_path):
+            if section == "tests":
+                self.gen_tests(path, apiURL, version, table_to_class=table_to_class, project_directory=project_directory)
+                break
+            
+            if section.lower() != "all" and entry != section:
+                continue
+
+            if entry in [
+                "api.json",
+                "issues.json",
+                "apioptions.json",
+                "exportoptions.json",
+                ".DS_Store",
+            ]:
+                continue
+            
+            filePath = f"{path}{os.sep}{entry}"
+            self.add_content("")
+            self.add_content("=========================")
+            self.add_content(f"       {entry.upper()} ")
+            self.add_content("=========================")
+            
+            if entry in ["sorts", "timers","applications","topics", "listeners", "custom_endpoints", "filters"]:
+                self.add_content("# migration not supported")
+                continue
+            
+            if entry == "resources":
+                self.add_content("# see api/customize_api.py.gen")
+                self.gen_resources(path, apiURL, entry, table_to_class, project_directory)
+                continue
+
+            if entry == "rules":
+                self.add_content("# see logic/declare_logic.py.gen")
+                self.gen_rules(filePath, table_to_class, project_directory)
+                continue
+
+            if entry == "data_sources":
+                self.add_content("# see api/customize_api_tables.py.gen for table based resource API")
+                tableList = self.dataSources(filePath, version)
+                content = printTableAsResource(tableList)
+                append_content(content, f"{project_directory}/api/customize_api_tables.py.gen")
+                continue
+
+            if entry in ["request_events" ,"pipelines", "libraries"]:
+                log(f"# These are JavaScript {entry} can be called by rules and resources")
+                self.functionList(filePath)
+                continue
+
+            if entry == "relationships.json":
+                self.relationships(f"{path}{os.sep}relationships.json")
+                continue
+
+            if entry == "security":
+                self.add_content("# see security/system/declare_security.py.gen")
+                self.gen_security(filePath, project_directory, table_to_class)
+                continue
+
+            if entry == "pipeline_events":
+                pipeline(filePath)
+                continue
+            
+            if entry == "functions":
+                self.lac_functions(filePath)
+                continue
+            
+            printDir(f"{base_path}{os.sep}{entry}")
+
+    def gen_tests(self, path, api_url, version:str, table_to_class: dict, project_directory: str):
+        content  = "\n"
+        content += "#===========================================================\n"
+        content += "#    ALS Command Line tests for each Resource endpoint\n"
+        content += "#===========================================================\n"
+        content += "als login http://localhost:5656 -u u1 -p p -a nw\n"
+        content += "\n\n"
+        resList: ResourceObj = buildResourceList(f"{path}{os.sep}resources", table_to_class=table_to_class, project_dir=project_directory, no_print=True)
+        for res in resList:
+            content += printCLITests(res, apiURL=api_url)
+        append_content(content, f"{project_directory}/test/test_resource_cli.sh")
+        fp = f"{path}{os.sep}data_sources"
+        tableList = dataSource(fp, version, no_print=True)
+        printTableTestCLI(tableList=tableList, table_to_class=table_to_class, project_directory=project_directory)
+
+    def gen_security(self, filePath, project_directory: str, table_to_class:dict):
+        securityRoleList = securityRoles(filePath, project_directory, table_to_class)
+        content = "class Roles():\n"
+        for sr in securityRoleList:
+            content += sr.printRole()
+        content += "\n"
+        
+        for srl in securityRoleList:
+            content += srl.printTablePermission()
+        content += "\n"    
+        
+        for rl in securityRoleList:
+            content += rl.printGrants()
+        content += "\n"
+        
+        for srl in securityRoleList:
+            srl.append_imports()
+            srl.append_content(content)
+            break;
+        
+        securityUsers(filePath)
+
+    def gen_rules(self, filePath, table_to_class: dict, project_directory:str):
+        rulesList = create_rules(filePath, table_to_class, project_directory)
+        entities = entityList(rulesList)
+        content = ""
+        for entity in entities:
+            entityName = to_camel_case(entity)
+            content += f"# ENTITY: {entityName}\n"
+            for rule in rulesList:
+                if rule.entity == entity:
+                    if rt := RuleObj.ruleTypes(rule):
+                        content += rt
+        for r in rulesList:
+            r.append_imports()
+            r.append_content(content)
+            r.append_handle_all()
+            break;
+
+    def gen_resources(self, path, apiURL, entry, table_to_class, project_dir):
+        #log("#Copy this section to ALS api/customize_api.py")
+        #log("from flask_cors import cross_origin")
+        #log("from api.system.custom_endpoint import CustomEndpoint, DotDict")
+        #log('from api.system.free_sql import FreeSQL')
+        #log("")
+        content = ""
+        resList: list['ResourceObj'] = buildResourceList(f"{path}{os.sep}{entry}", table_to_class=table_to_class, project_dir=project_dir, no_print=True)
+        for resObj in resList:
+            content += resObj.PrintResource(version, apiURL)
+                    
+        for resObj in resList:
+            content += resObj.PrintResourceFunctions(resObj._name, version)
+                
+        content += "#FreeSQL section to ALS api/customize_api.py\n"
+        for resObj in resList:
+            if cont := resObj.PrintFreeSQL(apiURL):
+                content += cont
+            
+        #Print the import and content
+        for resObj in resList:
+            resObj.append_imports()
+            resObj.append_content(content)
+            break;
+
+    def add_content(self, *values: object):
+        #print(f'{values}')
+        space = "\t"
+        if isinstance(values, str):
+            self._content += f'{values}'
+        elif isinstance(values, tuple):
+            for t, v in enumerate(values):
+                self._content += t * f"{space}"
+                self._content += f"{v}"
+        self._content += "\n"
+    
+    def lac_functions(self, thisPath):
+        path = f"{thisPath}"
+        lac_func = []
+        for dirpath, dirs, files in os.walk(path):
+            path = dirpath.split("/")
+            for f in files:
+                if f in ["ReadMe.md", ".DS_Store"]:
+                    continue
+                fname = os.path.join(dirpath, f)
+                if fname.endswith(".json"):
+                    with open(fname) as myfile:
+                        d = myfile.read()
+                        j = json.loads(d)
+                        isActive = j["isActive"]
+                        if isActive:
+                            func_type = j["functionType"]
+                            if func_type == "rowLevel":
+                                comments = j["comments"]
+                                if comments != "":
+                                    self.add_content('"""')
+                                    self.add_content(f"comments: {comments}")
+                                    self.add_content('"""')
+                                name = j["name"]
+                                appliesTo = j["appliesTo"]
+                                params = j["parameters"]
+                                self.add_content(f"#RowLevel Function: {name} appliesTo: {appliesTo} params: {params}")
+                                fn = f.split(".")[0] + ".js"
+                                javaScriptFile = findInFiles(dirpath, files, fn)
+                                self.add_content(f"def fn_rowlevel_{name}(params: any) -> dict:")
+                                self.add_content("'''")
+                                self.add_content(fixup(javaScriptFile))
+                                self.add_content("'''")
+                                self.add_content("")
+                                lac_func.append(name)
+        return lac_func
+    
+    def functionList(self, thisPath: str):
+        """
+        LAC has many different JavaScript functions, libraries, pipelines (aka request_response)
+        Many of these cannot be converted directly since they may use utilities or functions
+        not available (e.g. SysUtility) or expect state information (logic_row) 
+        Recommendation: refactor the JS to match the desired result in ALS
+        Args:
+            thisPath (str): 
+        """
+        for dirpath, dirs, files in os.walk(thisPath):
+            path = dirpath.split(os.sep)
+            for f in files:
+                if f in [
+                    "ReadMe.md",
+                    ".DS_Store",
+                    "prefixes.json",
+                    "api.json",
+                    "apioptions.json",
+                ]:
+                    continue
+                fname = os.path.join(dirpath, f)
+                if fname.endswith(".js"):
+                    with open(fname) as myfile:
+                        fn = myfile.read()
+                        self.add_content("")
+                        fn = fixup(fn)
+                        funName = "fn_" + f.split(".")[0]
+                        self.add_content(f"def {funName}(row: models.TableName, old_row: models.TableName, logic_row: LogicRow):")
+                        #self.add_content("     return")
+                        self.add_content(f"     {fn}")
+    def dataSources(self, path: Path, version: str, no_print: bool = False):
+        self.add_content("#=========================")
+        self.add_content("#        SQL Tables ")
+        self.add_content("#=========================")
+        if not no_print:
+            self.add_content("# This is informational only of the database schema, tables, columns")
+        tableList = []
+        with os.scandir(path) as entries:
+            for f in entries:
+                if f in ["ReadMe.md", ".DS_Store"]:
+                    continue
+                # print ('|', len(path)*'---', f)
+                fname = os.path.join(path, f)
+                if fname.endswith(".json"):
+                    with open(fname) as myfile:
+                        d = myfile.read()
+                        j = json.loads(d)
+                        db = j["databaseType"]
+                        url = j["url"]
+                        uname = j["username"]
+                        schema = j["schema"]
+                        if not no_print:
+                            self.add_content(
+                                "------------------------------------------------------------"
+                            )
+                            self.add_content(f"Database: {db} ")
+                            self.add_content(f"  URL:{url} ")
+                            self.add_content(f"  User: {uname} Schema: {schema}")
+                            ti = j["tableIncludes"]
+                            te = j["tableExcludes"]
+                            if ti != None:
+                                self.add_content(f"  TableIncludes: {ti}")
+                            if te != None:
+                                self.add_content(f"  TableExcludes: {te}")
+                            self.add_content(
+                                "------------------------------------------------------------"
+                            )
+                        # ["metaHolder"] was prior to 5.4
+                        tables = (
+                            j["schemaCache"]["tables"]
+                            if version == "5.4"
+                            else j["schemaCache"]["metaHolder"]["tables"]
+                        )
+                        for t in tables:
+                            if not no_print:
+                                self.add_content(" ")
+                            name = t["name"] if version == "5.4" else t["entity"]
+                            tableList.append(name)
+                            if not no_print:
+                                self.add_content(f"create table {schema}.{name} (")
+                            sep = ""
+                            for c in t["columns"]:
+                                name = c["name"]
+                                autoIncr = ""
+                                if "isAutoIncrement" in c:
+                                    autoIncr = (
+                                        "AUTO_INCREMENT"
+                                        if c["isAutoIncrement"] == True
+                                        else ""
+                                    )
+                                baseType = (
+                                    c["attrTypeName"]
+                                    if version == "5.4"
+                                    else c["baseTypeName"]
+                                )
+                                # l = c["len"]
+                                nullable = (
+                                    ""  # 'not null' if c["nullable"] == False else ''
+                                )
+                                if not no_print:
+                                    self.add_content(f"   {sep}{name} {baseType} {nullable} {autoIncr}")
+                                    sep = ","
+                                    
+                            for k in t["keys"]:
+                                c = k["columns"]
+                                cols = f"{c}"
+                                cols = cols.replace("[", "")
+                                cols = cols.replace("]", "")
+                                if not no_print:
+                                    self.add_content(")")
+                                    self.add_content("")
+                                    self.add_content(f"# PRIMARY KEY({cols})")
+                                    self.add_content("")
+                        # ["metaHolder"] was prior to 5.4
+                        if version == "5.4":
+                            fkeys = j["schemaCache"]["foreignKeys"]
+                        else:
+                            fkeys = j["schemaCache"]["metaHolder"]["foreignKeys"]
+                        for fk in fkeys:
+                            name = fk["name"] if version == "5.4" else fk["entity"]
+                            parent = fk["parent"]["name"] if version == "5.4" else fk["parent"]["object"]
+                            child = fk["child"]["name"] if version == "5.4" else fk["child"]["object"]
+                            parentCol = fk["columns"][0]["parent"]
+                            childCol = fk["columns"][0]["child"]
+                            if not no_print:
+                                self.add_content("")
+                                self.add_content(
+                                    f"  ALTER TABLE ADD CONSTRAINT fk_{name} FOREIGN KEY {child}({childCol}) REFERENCES {parent}({parentCol})"
+                                )
+                                self.add_content("")
+
+        return tableList
+    
+    def relationships(self, relFile: str):
+        self.add_content("# This is informational only")
+        # ("=========================")
+        # ("    RELATIONSHIPS ")
+        # ("=========================")
+        with open(relFile) as myfile:
+            d = myfile.read()
+            js = json.loads(d)
+            for rel in js:
+                parent = rel["parentEntity"]
+                child = rel["childEntity"]
+                roleToParent = rel["roleToParent"]
+                roleToChild = rel["roleToChild"]
+                parentColumns = rel["parentColumns"][0]
+                childColumns = rel["childColumns"][0]
+                # primaryjoin
+                self.add_content(
+                    f"{roleToParent} = relationship('{parent}, remote_side=[{childColumns}] ,cascade_backrefs=True, backref='{child}')"
+                )
+                self.add_content(
+                    f"{roleToChild} = relationship('{child}, remote_side=[{parentColumns}] ,cascade_backrefs=True, backref='{parent}')"
+                )
 
 def append_content(content: str, project_directory: str):
         file_name = get_os_url(f'{project_directory}')
@@ -165,7 +522,6 @@ def getVersion(path: Path) -> str:
         "5.x",
     )
 
-
 def listDir(path: Path):
     if path in [".DS_Store"]:
         return
@@ -193,109 +549,6 @@ def listFiles(path: Path):
                 if entry.name.endswith(".sql"):
                     log(f"     SQL: {entry.name}")
 
-
-def dataSource(path: Path, version: str, no_print: bool = False):
-    # ("#=========================")
-    # ("#        SQL Tables ")
-    # ("#=========================")
-    if not no_print:
-        log("# This is informational only of the database schema, tables, columns")
-    tableList = []
-    with os.scandir(path) as entries:
-        for f in entries:
-            if f in ["ReadMe.md", ".DS_Store"]:
-                continue
-            # print ('|', len(path)*'---', f)
-            fname = os.path.join(path, f)
-            if fname.endswith(".json"):
-                with open(fname) as myfile:
-                    d = myfile.read()
-                    j = json.loads(d)
-                    db = j["databaseType"]
-                    url = j["url"]
-                    uname = j["username"]
-                    schema = j["schema"]
-                    if not no_print:
-                        log(
-                            "------------------------------------------------------------"
-                        )
-                        log(f"Database: {db} ")
-                        log(f"  URL:{url} ")
-                        log(f"  User: {uname} Schema: {schema}")
-                        ti = j["tableIncludes"]
-                        te = j["tableExcludes"]
-                        if ti != None:
-                            log(f"  TableIncludes: {ti}")
-                        if te != None:
-                            log(f"  TableExcludes: {te}")
-                        log(
-                            "------------------------------------------------------------"
-                        )
-                    # ["metaHolder"] was prior to 5.4
-                    tables = (
-                        j["schemaCache"]["tables"]
-                        if version == "5.4"
-                        else j["schemaCache"]["metaHolder"]["tables"]
-                    )
-                    for t in tables:
-                        if not no_print:
-                            log(" ")
-                        name = t["name"] if version == "5.4" else t["entity"]
-                        tableList.append(name)
-                        if not no_print:
-                            log(f"create table {schema}.{name} (")
-                        sep = ""
-                        for c in t["columns"]:
-                            name = c["name"]
-                            autoIncr = ""
-                            if "isAutoIncrement" in c:
-                                autoIncr = (
-                                    "AUTO_INCREMENT"
-                                    if c["isAutoIncrement"] == True
-                                    else ""
-                                )
-                            baseType = (
-                                c["attrTypeName"]
-                                if version == "5.4"
-                                else c["baseTypeName"]
-                            )
-                            # l = c["len"]
-                            nullable = (
-                                ""  # 'not null' if c["nullable"] == False else ''
-                            )
-                            if not no_print:
-                                log(f"   {sep}{name} {baseType} {nullable} {autoIncr}")
-                                sep = ","
-                                
-                        for k in t["keys"]:
-                            c = k["columns"]
-                            cols = f"{c}"
-                            cols = cols.replace("[", "")
-                            cols = cols.replace("]", "")
-                            if not no_print:
-                                log(")")
-                                log("")
-                                log(f"# PRIMARY KEY({cols})")
-                                log("")
-                    # ["metaHolder"] was prior to 5.4
-                    if version == "5.4":
-                        fkeys = j["schemaCache"]["foreignKeys"]
-                    else:
-                        fkeys = j["schemaCache"]["metaHolder"]["foreignKeys"]
-                    for fk in fkeys:
-                        name = fk["name"] if version == "5.4" else fk["entity"]
-                        parent = fk["parent"]["name"] if version == "5.4" else fk["parent"]["object"]
-                        child = fk["child"]["name"] if version == "5.4" else fk["child"]["object"]
-                        parentCol = fk["columns"][0]["parent"]
-                        childCol = fk["columns"][0]["child"]
-                        if not no_print:
-                            log("")
-                            log(
-                                f"  ALTER TABLE ADD CONSTRAINT fk_{name} FOREIGN KEY {child}({childCol}) REFERENCES {parent}({parentCol})"
-                            )
-                            log("")
-
-    return tableList
 
 def printTableAsResource(tableList):
     content = "#=============================================================================================\n"
@@ -421,7 +674,7 @@ def buildResourceList(resPath: str, table_to_class: dict, project_dir: str, no_p
         parentName = path[-1] if path[-1] == 'v1' else path[-2]
         if not no_print:
             dirName = path[len(path) - 1]
-            #print("|", len(path) * "--", "D",dirName)
+            #self.add_content("|", len(path) * "--", "D",dirName)
         for f in files:
             if f in ["ReadMe.md", ".DS_Store"]:
                 continue
@@ -433,7 +686,7 @@ def buildResourceList(resPath: str, table_to_class: dict, project_dir: str, no_p
                     if "isActive" in jsonObj and jsonObj["isActive"] == False:
                         continue
                     if not no_print:
-                        print("|", len(path) * "---", "F", f, "Entity:", printCols(jsonObj))
+                        self.add_content("|", len(path) * "---", "F", f, "Entity:", printCols(jsonObj))
                     drName = ','.join(path[:-1])
                     resObj = ResourceObj(parentName=parentName, parentDir=drName, jsonObj=jsonObj, table_to_class=table_to_class, project_directory=project_dir)
                     resources.append(resObj)
@@ -471,63 +724,6 @@ def printDir(thisPath: Path):
 
     return objList
 
-
-def relationships(relFile: str):
-    # ("# This is informational only")
-    # ("=========================")
-    # ("    RELATIONSHIPS ")
-    # ("=========================")
-    with open(relFile) as myfile:
-        d = myfile.read()
-        js = json.loads(d)
-        for rel in js:
-            parent = rel["parentEntity"]
-            child = rel["childEntity"]
-            roleToParent = rel["roleToParent"]
-            roleToChild = rel["roleToChild"]
-            parentColumns = rel["parentColumns"][0]
-            childColumns = rel["childColumns"][0]
-            # primaryjoin
-            log(
-                f"{roleToParent} = relationship('{parent}, remote_side=[{childColumns}] ,cascade_backrefs=True, backref='{child}')"
-            )
-            log(
-                f"{roleToChild} = relationship('{child}, remote_side=[{parentColumns}] ,cascade_backrefs=True, backref='{parent}')"
-            )
-
-
-def functionList(thisPath: str):
-    """
-    LAC has many different JavaScript functions, libraries, pipelines (aka request_response)
-    Many of these cannot be converted directly since they may use utilities or functions
-    not available (e.g. SysUtility) or expect state information (logic_row) 
-    Recommendation: refactor the JS to match the desired result in ALS
-    Args:
-        thisPath (str): 
-    """
-    for dirpath, dirs, files in os.walk(thisPath):
-        path = dirpath.split(os.sep)
-        for f in files:
-            if f in [
-                "ReadMe.md",
-                ".DS_Store",
-                "prefixes.json",
-                "api.json",
-                "apioptions.json",
-            ]:
-                continue
-            fname = os.path.join(dirpath, f)
-            if fname.endswith(".js"):
-                with open(fname) as myfile:
-                    fn = myfile.read()
-                    log("")
-                    fn = fixup(fn)
-                    funName = "fn_" + f.split(".")[0]
-                    log(f"def {funName}(row: models.TableName, old_row: models.TableName, logic_row: LogicRow):")
-                    #log("     return")
-                    log(f"     {fn}")
-
-
 def create_rules(thisPath, table_to_class:dict , project_directory: str) -> list:
     # ("=========================")
     # ("        RULES ")
@@ -536,10 +732,6 @@ def create_rules(thisPath, table_to_class:dict , project_directory: str) -> list
     Collect all of the rules definitions and JS info and stash in a list of RuleObj objects
     The object itself (rule.py) has print functions that do the transforms
     '''
-    log("#===========================================================")
-    log("#     Copy rules section to ALS logic/declare_logic.py")
-    log("#===========================================================")
-    log("")
     rules = []
     for dirpath, dirs, files in os.walk(thisPath):
         for f in files:
@@ -603,42 +795,6 @@ def printChild(self):
         else:
             return f"Name: {self.name} Entity: {self.entity}  ResourceType: {self.ResourceType} ChildName: {self.childObj[0].name}"  # {log(childObj[0]) for i in childObj: log(childObj[i])}
 
-def lac_functions(thisPath):
-    path = f"{thisPath}"
-    lac_func = []
-    for dirpath, dirs, files in os.walk(path):
-        path = dirpath.split("/")
-        for f in files:
-            if f in ["ReadMe.md", ".DS_Store"]:
-                continue
-            fname = os.path.join(dirpath, f)
-            if fname.endswith(".json"):
-                with open(fname) as myfile:
-                    d = myfile.read()
-                    j = json.loads(d)
-                    isActive = j["isActive"]
-                    if isActive:
-                        func_type = j["functionType"]
-                        if func_type == "rowLevel":
-                            comments = j["comments"]
-                            if comments != "":
-                                log('"""')
-                                log(f"comments: {comments}")
-                                log('"""')
-                            name = j["name"]
-                            appliesTo = j["appliesTo"]
-                            params = j["parameters"]
-                            log(f"#RowLevel Function: {name} appliesTo: {appliesTo} params: {params}")
-                            fn = f.split(".")[0] + ".js"
-                            javaScriptFile = findInFiles(dirpath, files, fn)
-                            log(f"def fn_rowlevel_{name}(params: any) -> dict:")
-                            log("'''")
-                            log(fixup(javaScriptFile))
-                            log("'''")
-                            log("")
-                            lac_func.append(name)
-    return lac_func
-
 def pipeline(thisPath):
     path = f"{thisPath}"
     pipelines = []
@@ -680,150 +836,6 @@ def printCLITests(resObj: ResourceObj, apiURL: str):
         _content  += f'als get \"{apiURL}/{name}{filter_by}\" -k 1 -m json\n'
         _content += "\n"
     return _content
-
-def transform_respos(path: Path, section: str = "all", apiURL: str="", table_to_class: dict = None,project_directory: str = ""):
-    version = getVersion(path)
-    log(f"# LAC Version: {version}")
-    for entry in os.listdir(path):
-        # for dirpath, dirs, files in os.walk(base_path):
-        if section == "tests":
-            gen_tests(path, apiURL, version, table_to_class=table_to_class, project_directory=project_directory)
-            break
-        
-        if section.lower() != "all" and entry != section:
-            continue
-
-        if entry in [
-            "api.json",
-            "issues.json",
-            "apioptions.json",
-            "exportoptions.json",
-            ".DS_Store",
-        ]:
-            continue
-        
-        filePath = f"{path}{os.sep}{entry}"
-        print("")
-        print("=========================")
-        print(f"       {entry.upper()} ")
-        print("=========================")
-        if entry == "resources":
-            gen_resources(path, apiURL, entry, table_to_class, project_directory)
-            continue
-
-        if entry == "rules":
-            gen_rules(filePath, table_to_class, project_directory)
-            continue
-
-        if entry == "data_sources":
-            tableList = dataSource(filePath, version)
-            content = printTableAsResource(tableList)
-            append_content(content, f"{project_directory}/api/customize_api_tables.py.gen")
-            continue
-
-        if entry in ["request_events" ,"pipelines", "libraries"]:
-            log(f"# These are JavaScript {entry} can be called by rules and resources")
-            functionList(filePath)
-            continue
-
-        if entry == "relationships.json":
-            relationships(f"{path}{os.sep}relationships.json")
-            continue
-
-        if entry == "security":
-            gen_security(filePath, project_directory, table_to_class)
-            continue
-
-        if entry == "pipeline_events":
-            pipeline(filePath)
-            continue
-        
-        if entry == "functions":
-            lac_functions(filePath)
-            continue
-        
-        printDir(f"{base_path}{os.sep}{entry}")
-
-def gen_tests(path, api_url, version:str, table_to_class: dict, project_directory: str):
-    content  = "\n"
-    content += "#===========================================================\n"
-    content += "#    ALS Command Line tests for each Resource endpoint\n"
-    content += "#===========================================================\n"
-    content += "als login http://localhost:5656 -u u1 -p p -a nw\n"
-    content += "\n\n"
-    resList: ResourceObj = buildResourceList(f"{path}{os.sep}resources", table_to_class=table_to_class, project_dir=project_directory, no_print=True)
-    for res in resList:
-        content += printCLITests(res, apiURL=api_url)
-    append_content(content, f"{project_directory}/test/test_resource_cli.sh")
-    fp = f"{path}{os.sep}data_sources"
-    tableList = dataSource(fp, version, no_print=True)
-    printTableTestCLI(tableList=tableList, table_to_class=table_to_class, project_directory=project_directory)
-
-def gen_security(filePath, project_directory: str, table_to_class:dict):
-    securityRoleList = securityRoles(filePath, project_directory, table_to_class)
-    content = "class Roles():\n"
-    for sr in securityRoleList:
-        content += sr.printRole()
-    content += "\n"
-    
-    for srl in securityRoleList:
-        content += srl.printTablePermission()
-    content += "\n"    
-    
-    for rl in securityRoleList:
-        content += rl.printGrants()
-    content += "\n"
-    
-    for srl in securityRoleList:
-        srl.append_imports()
-        srl.append_content(content)
-        break;
-    
-    securityUsers(filePath)
-
-def gen_rules(filePath, table_to_class: dict, project_directory:str):
-    rulesList = create_rules(filePath, table_to_class, project_directory)
-    entities = entityList(rulesList)
-    content = ""
-    for entity in entities:
-        entityName = to_camel_case(entity)
-        log(f"# ENTITY: {entityName}")
-        log("")
-        for rule in rulesList:
-            if rule.entity == entity:
-                if rt := RuleObj.ruleTypes(rule):
-                    content += rt
-    for r in rulesList:
-        r.append_imports()
-        r.append_content(content)
-        r.append_handle_all()
-        break;
-
-def gen_resources(path, apiURL, entry, table_to_class, project_dir):
-    log("#Copy this section to ALS api/customize_api.py")
-    log("from flask_cors import cross_origin")
-    log("from api.system.custom_endpoint import CustomEndpoint, DotDict")
-    log('from api.system.free_sql import FreeSQL')
-    log("")
-    content = ""
-    resList: list['ResourceObj'] = buildResourceList(f"{path}{os.sep}{entry}", table_to_class=table_to_class, project_dir=project_dir, no_print=True)
-    for resObj in resList:
-        content += resObj.PrintResource(version, apiURL)
-                
-    for resObj in resList:
-        content += resObj.PrintResourceFunctions(resObj._name, version)
-            
-    log("#FreeSQL section to ALS api/customize_api.py")
-    for resObj in resList:
-        if cont := resObj.PrintFreeSQL(apiURL):
-            content += cont
-        
-    #Print the import and content
-    for resObj in resList:
-        resObj.append_imports()
-        resObj.append_content(content)
-        break;
-
 
 if __name__ == "__main__":
 #    main()
