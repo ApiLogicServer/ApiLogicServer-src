@@ -212,7 +212,7 @@ class ModelMigrationService(object):
             srl.append_content(content)
             break;
         
-        securityUsers(filePath)
+        self.securityUsers(filePath)
 
     def gen_rules(self, filePath, table_to_class: dict, project_directory:str):
         rulesList = create_rules(filePath, table_to_class, project_directory)
@@ -458,6 +458,25 @@ class ModelMigrationService(object):
                 self.add_content(
                     f"{roleToChild} = relationship('{child}, remote_side=[{parentColumns}] ,cascade_backrefs=True, backref='{parent}')"
                 )
+                
+    def securityUsers(self, thisPath) -> list:
+        path = f"{thisPath}/users"
+        userList = []
+        for dirpath, dirs, files in os.walk(path):
+            path = dirpath.split("/")
+            for f in files:
+                if f in ["ReadMe.md", ".DS_Store"]:
+                    continue
+                fname = os.path.join(dirpath, f)
+                if fname.endswith(".json"):
+                    with open(fname) as myfile:
+                        d = myfile.read()
+                        j = json.loads(d)
+                        name = j["name"]
+                        roles = j["roles"]
+                        self.add_content(f"# User: {name} Role: {roles}")
+                        userList.append(name)
+        return userList
 
 def append_content(content: str, project_directory: str):
         file_name = get_os_url(f'{project_directory}')
@@ -508,7 +527,7 @@ def readTableAlias():
 def readTranslationTable(tableName):
     with open(tableName) as user_file:
         file_contents = user_file.read()
-        log(file_contents)
+        #log(file_contents)
         return json.loads(file_contents)
 
 def getVersion(path: Path) -> str:
@@ -612,26 +631,6 @@ def securityRoles(thisPath, project_directory: str, table_to_class:dict) -> list
                     role.loadEntities(j)
                     securityRoleList.append(role)
     return securityRoleList
-
-def securityUsers(thisPath) -> list:
-    path = f"{thisPath}/users"
-    userList = []
-    for dirpath, dirs, files in os.walk(path):
-        path = dirpath.split("/")
-        for f in files:
-            if f in ["ReadMe.md", ".DS_Store"]:
-                continue
-            fname = os.path.join(dirpath, f)
-            if fname.endswith(".json"):
-                with open(fname) as myfile:
-                    d = myfile.read()
-                    j = json.loads(d)
-                    name = j["name"]
-                    roles = j["roles"]
-                    log(f"User: {name} Role: {roles}")
-                    userList.append(name)
-    return userList
-
 
 def printCols(jsonObj: object):
     entity = "" if jsonObj["resourceType"] != "TableBased" else jsonObj["entity"]
