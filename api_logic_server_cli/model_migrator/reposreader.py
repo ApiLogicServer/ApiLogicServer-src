@@ -132,7 +132,7 @@ class ModelMigrationService(object):
             self.add_content(f"       {entry.upper()} ")
             self.add_content("=========================")
             
-            if entry in ["sorts", "timers","applications","topics", "listeners", "custom_endpoints", "filters"]:
+            if entry in ["sorts", "timers","applications","topics", "listeners", "filters"]:
                 self.add_content("# migration not supported")
                 continue
             
@@ -168,7 +168,12 @@ class ModelMigrationService(object):
                 continue
 
             if entry == "pipeline_events":
-                pipeline(filePath)
+                self.pipeline(filePath)
+                continue
+            
+            if entry == "custom_endpoints":
+                self.add_content("# add a custom endpoint to /api/customize_api_tables.py")
+                self.pipeline(filePath)
                 continue
             
             if entry == "functions":
@@ -478,6 +483,36 @@ class ModelMigrationService(object):
                         userList.append(name)
         return userList
 
+    def pipeline(self,thisPath):
+        path = f"{thisPath}"
+        pipelines = []
+        for dirpath, dirs, files in os.walk(path):
+            path = dirpath.split("/")
+            for f in files:
+                if f in ["ReadMe.md", ".DS_Store"]:
+                    continue
+                fname = os.path.join(dirpath, f)
+                if fname.endswith(".json"):
+                    with open(fname) as myfile:
+                        d = myfile.read()
+                        j = json.loads(d)
+                        isActive = j["isActive"]
+                        if isActive:
+                            name = j["name"]
+                            _type = j["eventType"] if 'eventType' in j else 'unknown'
+                            appliesTo = j["appliesTo"]
+                            isRestricted = j["isRestricted"] if "isRestricted" in j else False
+                            restrictedTo = j["restrictedTo"] if isRestricted else ""
+                            self.add_content(f"#Pipeline: {name} type: {_type} appliesTo: {appliesTo} restrictedTo: {restrictedTo}")
+                            fn = f.split(".")[0] + ".js"
+                            javaScriptFile = findInFiles(dirpath, files, fn)
+                            self.add_content("def fn_pipeline_{name}(result: dict) -> dict:")
+                            self.add_content("'''")
+                            self.add_content(fixup(javaScriptFile))
+                            self.add_content("'''")
+                            self.add_content("")
+                            pipelines.append(name)
+
 def append_content(content: str, project_directory: str):
         file_name = get_os_url(f'{project_directory}')
         with open(file_name, 'a') as expose_services_file:
@@ -497,8 +532,8 @@ def copy_system_folders(project_directory: str):
     copyfile(src, dst)
 
 def printTransform():
-    #log("def transform(style:str, key:str, result: dict) -> dict:")
-    #log(f"\t# use this to change the output (pipeline) of the result")
+    #self.add_content("def transform(style:str, key:str, result: dict) -> dict:")
+    #self.add_content(f"\t# use this to change the output (pipeline) of the result")
     # use this to change the output (pipeline) of the result
     code = "\
     try: \n\
@@ -793,36 +828,6 @@ def printChild(self):
             return f"Name: {self.name} Entity: {self.entity} ResourceType: {self.ResourceType}"
         else:
             return f"Name: {self.name} Entity: {self.entity}  ResourceType: {self.ResourceType} ChildName: {self.childObj[0].name}"  # {log(childObj[0]) for i in childObj: log(childObj[i])}
-
-def pipeline(thisPath):
-    path = f"{thisPath}"
-    pipelines = []
-    for dirpath, dirs, files in os.walk(path):
-        path = dirpath.split("/")
-        for f in files:
-            if f in ["ReadMe.md", ".DS_Store"]:
-                continue
-            fname = os.path.join(dirpath, f)
-            if fname.endswith(".json"):
-                with open(fname) as myfile:
-                    d = myfile.read()
-                    j = json.loads(d)
-                    isActive = j["isActive"]
-                    if isActive:
-                        name = j["name"]
-                        _type = j["eventType"]
-                        appliesTo = j["appliesTo"]
-                        isRestricted = j["isRestricted"]
-                        restrictedTo = j["restrictedTo"] if isRestricted else ""
-                        log(f"#Pipeline: {name} type: {_type} appliesTo: {appliesTo} restrictedTo: {restrictedTo}")
-                        fn = f.split(".")[0] + ".js"
-                        javaScriptFile = findInFiles(dirpath, files, fn)
-                        log("def fn_pipeline_{name}(result: dict) -> dict:")
-                        log("'''")
-                        log(fixup(javaScriptFile))
-                        log("'''")
-                        log("")
-                        pipelines.append(name)
 
 def printCLITests(resObj: ResourceObj, apiURL: str):
     #log("ALS Command Line TESTS")
