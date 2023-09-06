@@ -53,11 +53,11 @@ class ModelMigrator(object):
         if "UserRole" not in table_to_class:
             log.debug('.. ModelMigrator.run() - running')
             import api_logic_server_cli.model_migrator.reposreader as repo_reader
-            # need repos location and project api name (teamspaces/api/{project_name})
+            # need repos location and project api name (teamspaces/api/{lac_project_name})
             running_at = Path(__file__)
             repos_location = f"{running_at.parent}/CALiveAPICreator.repository"
-            project_name = "b2bderbynw"
-            repo_reader.start(repos_location, self.project_directory, project_name, table_to_class ) 
+            lac_project_name = "ucf" # pass as args.lac_project_name TODO
+            repo_reader.start(repos_location, self.project_directory, lac_project_name, table_to_class ) 
             log.debug('.. ModelMigrator.run() - done')
 
 

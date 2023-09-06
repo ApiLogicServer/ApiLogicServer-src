@@ -518,7 +518,7 @@
             "argsExpansion": "none",
             "args": ["create",
                 "--project_name=../../../servers/model_migrator_project",
-                "--db_url=nw",
+                "--db_url=mysql+pymysql://root:password@127.0.0.1:3308/ffghpalive",
                 "--extended_builder=model_migrator"],
             "console": "integratedTerminal"
         },

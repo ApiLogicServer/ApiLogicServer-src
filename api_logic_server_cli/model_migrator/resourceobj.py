@@ -51,10 +51,7 @@ class ResourceObj:
         self.parentDir = parentDir
         self._name = jsonObj["name"]
         self.table_to_class = table_to_class
-        entity = to_camel_case(self._name)
-        if "entity" in jsonObj:
-            entity = self.lookup_entity(jsonObj["entity"])
-        self.entity = entity
+        self.entity = self.find_entity(self._name)
         self.ResourceType = jsonObj["resourceType"]
         self._jsObj = None if jsObj is None else jsObj
         self._getJSObj = None if getJsObj is None else getJsObj
@@ -72,6 +69,16 @@ class ResourceObj:
                     return t
         return entity_name
     
+    def find_entity(self, entity: str):
+        if entity:
+            entity = to_camel_case(entity)
+            if entity.endswith("List") or entity.endswith("list"):
+                entity = entity[:-4]
+            if self.table_to_class:
+                for t in self.table_to_class:
+                    if t.lower() == entity.lower():
+                        return self.table_to_class[t]
+        return entity
     @property
     def name(self):
         return self._name
@@ -153,7 +160,7 @@ class ResourceObj:
             self.PrintFreeSQL(apiURL)
         else:
             space = "\t"
-            name = self.name.lower()
+            name = self._name
             entity = self.entity
             self.add_content(f"@app.route('{apiURL}/{name}', methods=['GET','POST','PUT','OPTIONS'])")
             self.add_content("@admin_required()")

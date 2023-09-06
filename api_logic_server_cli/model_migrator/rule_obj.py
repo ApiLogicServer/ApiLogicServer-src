@@ -82,8 +82,7 @@ class RuleObj:
         self._content += "\n"
 
     def ruleTypes(self: object):
-        """
-
+        """ Create ALS rules from LAC JSON 
         Args:
             RuleObj (object): _description_
         """
@@ -93,12 +92,8 @@ class RuleObj:
             return
         name = j.name
         entity = ""
-        if j.entity is not None:
-            entity = to_camel_case(j.entity)
-            if self.table_to_class:
-                for t in self.table_to_class:
-                    if t.lower == entity.lower():
-                        entity = t
+        if j.entity:
+            entity = self.find_entity(j.entity)
             
         ruleType = ""
         if j.ruleType is not None:
@@ -115,19 +110,19 @@ class RuleObj:
         # Define a function to use in the rule 
         ruleJSObj = None if self.jsObj is None else fixup(self.jsObj)
         tab = "\t\t"
-        self.add_content(f"# RuleType: {ruleType}")
-        self.add_content(f"# Title: {title}")
-        self.add_content(f"# Name: {name}")
-        self.add_content(f"# Entity: {entity}")
-        self.add_content(f"# Comments: {comments}")
+        self.add_content(f"\t# RuleType: {ruleType}")
+        self.add_content(f"\t# Title: {title}")
+        self.add_content(f"\t# Name: {name}")
+        self.add_content(f"\t# Entity: {entity}")
+        self.add_content(f"\t# Comments: {comments}")
         self.add_content("")
         if ruleJSObj is not None:
             entityLower = entity.lower()
-            funName =  f"fn_{entityLower}_{ruleType}_{name}"
+            funName =  f"\tfn_{entityLower}_{ruleType}_{name}"
             if len(ruleJSObj) < 80 and ruleType == "formula":
                 pass
             else:
-                self.add_content(f"def {funName}(row: models.{entity}, old_row: models.{entity}, logic_row: LogicRow):")
+                self.add_content(f"\tdef {funName}(row: models.{entity}, old_row: models.{entity}, logic_row: LogicRow):")
                 ## self.add_content("     if LogicRow.isInserted():")
                 if len(appliesTo) > 0:
                     self.add_content(f"\t#AppliesTo: {appliesTo}")
@@ -135,12 +130,13 @@ class RuleObj:
         match ruleType:
             case "sum":
                 attr = j["attribute"]
-                roleToChildren = to_camel_case(j.roleToChildren).replace("_","")
+                rtj = j.roleToChildren.replace("_","")
+                roleToChildren = self.find_entity(rtj)
                 childAttr = j.childAttribute
                 qualification = j.qualification
                 paren = ")" if qualification is None else ","
-                self.add_content(f"Rule.sum(derive=models.{entity}.{attr}, ")
-                self.add_content(f"{tab}as_sum_of=models.{roleToChildren}.{childAttr}{paren}")
+                self.add_content(f"\tRule.sum(derive=models.{entity}.{attr}, ")
+                self.add_content(f"\t   {tab}as_sum_of=models.{roleToChildren}.{childAttr}{paren}")
                 if qualification != None:
                     qualification = qualification.replace("!=", "is not")
                     qualification = qualification.replace("==", "is")
@@ -148,7 +144,7 @@ class RuleObj:
                     self.add_content(f"{tab}where=lambda row: {qualification})")
             case "formula":
                 attr = j.attribute
-                self.add_content(f"Rule.formula(derive=models.{entity}.{attr},")
+                self.add_content(f"\tRule.formula(derive=models.{entity}.{attr},")
                 if ruleJSObj is not None and len(ruleJSObj) > 80:
                     self.add_content(f"{tab}calling={funName})")
                 else:
@@ -162,34 +158,45 @@ class RuleObj:
                     qualification = qualification.replace("!=", "is not")
                     qualification = qualification.replace("==", "is")
                     qualification = qualification.replace("null", "None")
-                    self.add_content(f"Rule.count(derive=models.{entity}.{attr},")
+                    self.add_content(f"\tRule.count(derive=models.{entity}.{attr},")
                     self.add_content(f"{tab}as_count_of=models.{roleToChildren},")
                     self.add_content(f"{tab}where=Lambda row: {qualification})")
                 else:
-                    self.add_content(f"Rule.count(derive=models.{entity}.{attr},")
+                    self.add_content(f"\tRule.count(derive=models.{entity}.{attr},")
                     self.add_content(f"{tab}as_count_of=models.{roleToChildren})")
             case "validation":
                 errorMsg = j.errorMessage
-                self.add_content(f"Rule.constraint(validate=models.{entity},")
+                self.add_content(f"\tRule.constraint(validate=models.{entity},")
                 self.add_content(f"{tab}calling={funName},")
                 self.add_content(f"{tab}error_msg=\"{errorMsg}\")")
             case "event":
-                self.add_content(f"Rule.row_event(on_class=models.{entity},")
+                self.add_content(f"\tRule.row_event(on_class=models.{entity},")
                 self.add_content(f"{tab}calling={funName})")
             case "commitEvent":
-                self.add_content(f"Rule.commit_row_event(on_class=models.{entity},")
+                self.add_content(f"\tRule.commit_row_event(on_class=models.{entity},")
                 self.add_content(f"{tab}calling={funName})")
             case "parentCopy":
                 attr = j.attribute
                 roleToParent = to_camel_case(j.roleToParent).replace("_","")
                 parentAttr = j.parentAttribute
-                self.add_content(f"Rule.copy(derive=models.{entity}.{attr},")
+                self.add_content(f"\tRule.copy(derive=models.{entity}.{attr},")
                 self.add_content(f"{tab}from_parent=models.{roleToParent}.{parentAttr})")
             case _: 
-                self.add_content(f"#Rule.{ruleType}(...TODO...)")
+                self.add_content(f"\t#Rule.{ruleType}(...TODO...)")
             
         self.add_content("")
         return self._content
+
+    def find_entity(self, entity: str):
+        if entity:
+            entity = to_camel_case(entity)
+            if entity.endswith("List") or entity.endswith("list"):
+                entity = entity[:-4]
+            if self.table_to_class:
+                for t in self.table_to_class:
+                    if t.lower() == entity.lower():
+                        return self.table_to_class[t]
+        return entity
 
 if __name__ == "__main__":
     jsonObj ={

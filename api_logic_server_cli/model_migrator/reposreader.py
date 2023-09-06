@@ -330,7 +330,7 @@ class ModelMigrationService(object):
         content = ""
         for entity in entities:
             entityName = to_camel_case(entity)
-            content += f"# ENTITY: {entityName}\n"
+            content += f"\t# ENTITY: {entityName}\n"
             for rule in rulesList:
                 if rule.entity == entity:
                     if rt := RuleObj.ruleTypes(rule):
@@ -1023,10 +1023,20 @@ def printCLITests(resObj: ResourceObj, apiURL: str):
 
 
 if __name__ == "__main__":
+    projectName = "b2bderbynw"
+    apiurl = f"/rest/default/{projectName}/v1"  # this is used for building the resource URL
+    api_root = "teamspaces/default/apis"
+    running_at = Path(__file__)
+    reposLocation = f"{running_at.parent}/CALiveAPICreator.repository"
+    base_path = f"{reposLocation}/{api_root}/{projectName}"
+    version = "5.4"
+    command = "not set"
+    section = "all"  # all is default or resources, rules, security, pipeline_events, data_sources , tests, etc.
+
     #    main()
     # else:
     #    local testing and debugging
-    table_to_class = readTranslationTable("table_to_class.json")
-    transform_respos(base_path, section, apiurl, table_to_class)
-    # model_service = ModelMigrationService(base_path, project_name=projectName,project_directory="", table_to_class=table_to_class, section=section, version="5.4")
-    # model_service.generate()
+    #table_to_class = readTranslationTable("table_to_class.json")
+    #transform_respos(base_path, section, apiurl, table_to_class)
+    model_service = ModelMigrationService(base_path, project_name=projectName,project_directory="./", section=section, version="5.4")
+    model_service.generate()
