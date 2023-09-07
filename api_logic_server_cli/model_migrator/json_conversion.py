@@ -5,7 +5,7 @@ from util import to_camel_case, fixup
 
 running_at = Path(__file__)
 repos_location = f"{running_at.parent}{os.sep}CALiveAPICreator.repository"
-project_name = "fedex"
+project_name = "chkn"
 api_root = f"teamspaces{os.sep}default{os.sep}apis"
 running_at = Path(__file__)
 reposLocation = f"{running_at.parent}{os.sep}CALiveAPICreator.repository"

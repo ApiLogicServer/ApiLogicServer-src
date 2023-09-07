@@ -7,6 +7,7 @@ Raises:
 Returns:
     _type_: RuleObj
 """
+import os
 class DotDict(dict):
     """ dot.notation access to dictionary attributes """
     # thanks: https://stackoverflow.com/questions/2352181/how-to-use-a-dot-to-access-members-of-dictionary/28463329
@@ -25,7 +26,7 @@ class RuleObj:
         self.jsObj = jsObj
         self.sqlObj = sqlObj
         self.table_to_class = table_to_class
-        self.project_directory = f"{project_directory}/logic/declare_security.py.gen"
+        self.project_directory = f"{project_directory}{os.sep}logic{os.sep}declare_security.py.gen"
         self._content = ""
         
     def __str__(self):

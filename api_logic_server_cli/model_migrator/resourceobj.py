@@ -1,5 +1,6 @@
 from api_logic_server_cli.model_migrator.util import to_camel_case, fixup, fixupSQL, get_os_url
 import json
+import os
 """
 Resources defined in LAC - TableBased only (SQL and JS)
 
@@ -59,7 +60,7 @@ class ResourceObj:
         self.isActive = True
         self.childObj = [] if childObj is None else childObj
         self._parentEntity = None
-        self.project_directory = f'{project_directory}/api/customize_api.py.gen'
+        self.project_directory = f'{project_directory}{os.sep}api{os.sep}customize_api.py.gen'
         self._content = ""
 
     def lookup_entity(self, entity_name) -> str:

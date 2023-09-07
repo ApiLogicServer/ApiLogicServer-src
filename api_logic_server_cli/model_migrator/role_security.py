@@ -8,6 +8,7 @@ This is a utility to read the CA Live API Creator file based repository and prin
 to API Logic Server (a Python API open-source tool) https://apilogicserver.github.io/Docs/
 """
 from api_logic_server_cli.model_migrator.util import to_camel_case, get_os_url
+import os
 class DotDict(dict):
     """ dot.notation access to dictionary attributes """
     # thanks: https://stackoverflow.com/questions/2352181/how-to-use-a-dot-to-access-members-of-dictionary/28463329
@@ -47,7 +48,7 @@ class Role():
         self.functionPermission = ""
         self.apiVisibility = {}
         self.entityRoleList: list["entityRole"] = []
-        self.project_directory = f"{project_directory}/security/declare_security.py.gen"
+        self.project_directory = f"{project_directory}{os.sep}security{os.sep}declare_security.py.gen"
         self.table_to_class = table_to_class
         self._content = ""
         

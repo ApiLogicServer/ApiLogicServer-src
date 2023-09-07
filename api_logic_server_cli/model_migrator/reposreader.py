@@ -156,8 +156,8 @@ class ModelMigrationService(object):
         self._content = ""
 
     def generate(self):
-        api_root = "teamspaces/default/apis"
-        base_path = f"{self.repos_path}/{api_root}/{self.project_name}"
+        api_root = f"teamspaces{os.sep}default{os.sep}apis"
+        base_path = f"{self.repos_path}{os.sep}{api_root}{os.sep}{self.project_name}"
         api_url = f"/rest/default/{self.project_name}/v1"
         self.transform_respos(
             base_path,
@@ -167,7 +167,7 @@ class ModelMigrationService(object):
             project_directory=self.project_directory,
         )
         copy_system_folders(self.project_directory)
-        append_content(self._content, f"{self.project_directory}/model_migration.txt")
+        append_content(self._content, f"{self.project_directory}{os.sep}model_migration.txt")
 
     def transform_respos(
         self,
@@ -241,7 +241,7 @@ class ModelMigrationService(object):
                 tableList = self.dataSources(filePath, version)
                 content = printTableAsResource(tableList)
                 append_content(
-                    content, f"{project_directory}/api/customize_api_tables.py.gen"
+                    content, f"{project_directory}{os.sep}api{os.sep}customize_api_tables.py.gen"
                 )
                 continue
 
@@ -294,7 +294,7 @@ class ModelMigrationService(object):
         )
         for res in resList:
             content += printCLITests(res, apiURL=api_url)
-        append_content(content, f"{project_directory}/test/test_resource_cli.sh")
+        append_content(content, f"{project_directory}{os.sep}test{os.sep}test_resource_cli.sh")
         fp = f"{path}{os.sep}data_sources"
         tableList = dataSource(fp, version, no_print=True)
         printTableTestCLI(
@@ -366,11 +366,17 @@ class ModelMigrationService(object):
             if cont := resObj.PrintFreeSQL(apiURL):
                 content += cont
 
+        printTableTestCLI(
+            tableList=table_to_class.keys,
+            table_to_class=table_to_class,
+            project_directory=project_dir,
+        )
         # Print the import and content
         for resObj in resList:
             resObj.append_imports()
             resObj.append_content(content)
             break
+        
 
     def add_content(self, *values: object):
         # print(f'{values}')
@@ -774,12 +780,13 @@ def printTableTestCLI(tableList: dict, table_to_class: dict, project_directory: 
     content += "#    als command line tests for each table endpoint ?page[limit]=10&page[offset]=00&filter[key]=value\n"
     content += "#=============================================================================================\n"
     content += "\n\n"
-    for tbl in tableList:
+    content += "als login http://localhost:5656 -u u1 -p p\n\n"
+    for tbl in table_to_class:
         name = singular(tbl)
         content += f"# als calling endpoint: {name}?page[limit]=1\n"
-        content += f'als get "{apiurl}/{name}?page%5Blimit%5D=1" -m json\n'
+        content += f'als get "{apiurl}{os.sep}{name}?page%5Blimit%5D=1" -m json\n'
         content += "\n\n"
-    append_content(content, f"{project_directory}/test/test_tables_cli.sh")
+    append_content(content, f"{project_directory}{os.sep}test{os.sep}test_tables_cli.sh")
 
 
 def singular(name: str) -> str:
