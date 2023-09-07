@@ -39,7 +39,7 @@ class ModelMigrator(object):
         """ append import to -> append_expose_services_file """
         import_statement = f'\n\n    from api import tvf\n'
         import_statement += f'    tvf.expose_tvfs(api)\n'
-        file_name = self.get_os_url(self.project_directory + '/api/customize_api.py')
+        file_name = self.get_os_url(f"{self.project_directory}/api/customize_api.py")
         expose_services_file = open(file_name, 'a')
         expose_services_file.write(import_statement)
         expose_services_file.close()
@@ -56,7 +56,7 @@ class ModelMigrator(object):
             # need repos location and project api name (teamspaces/api/{lac_project_name})
             running_at = Path(__file__)
             repos_location = f"{running_at.parent}/CALiveAPICreator.repository"
-            lac_project_name = "ucf" # pass as args.lac_project_name TODO
+            lac_project_name = "fedex" # pass as args.lac_project_name TODO
             repo_reader.start(repos_location, self.project_directory, lac_project_name, table_to_class ) 
             log.debug('.. ModelMigrator.run() - done')
 

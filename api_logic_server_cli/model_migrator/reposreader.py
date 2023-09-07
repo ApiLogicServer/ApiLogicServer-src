@@ -96,11 +96,12 @@ def main(calling_args=None):
 
 
 ## Defaults ###
-projectName = "b2bderbynw"
+projectName = "fedex"
 apiurl = f"/rest/default/{projectName}/v1"  # this is used for building the resource URL
 api_root = "teamspaces/default/apis"
 running_at = Path(__file__)
 reposLocation = f"{running_at.parent}/CALiveAPICreator.repository"
+current_path = os.path.abspath(os.path.dirname(__file__))
 base_path = f"{reposLocation}/{api_root}/{projectName}"
 version = "5.4"
 command = "not set"
@@ -494,79 +495,80 @@ class ModelMigrationService(object):
                             self.add_content(
                                 "------------------------------------------------------------"
                             )
-                        # ["metaHolder"] was prior to 5.4
-                        tables = (
-                            j["schemaCache"]["tables"]
-                            if version == "5.4"
-                            else j["schemaCache"]["metaHolder"]["tables"]
-                        )
-                        for t in tables:
-                            if not no_print:
-                                self.add_content(" ")
-                            name = t["name"] if version == "5.4" else t["entity"]
-                            tableList.append(name)
-                            if not no_print:
-                                self.add_content(f"create table {schema}.{name} (")
-                            sep = ""
-                            for c in t["columns"]:
-                                name = c["name"]
-                                autoIncr = ""
-                                if "isAutoIncrement" in c:
-                                    autoIncr = (
-                                        "AUTO_INCREMENT"
-                                        if c["isAutoIncrement"] == True
-                                        else ""
-                                    )
-                                baseType = (
-                                    c["attrTypeName"]
-                                    if version == "5.4"
-                                    else c["baseTypeName"]
-                                )
-                                # l = c["len"]
-                                nullable = (
-                                    ""  # 'not null' if c["nullable"] == False else ''
-                                )
+                        if "schemaCache" in j:
+                            # ["metaHolder"] was prior to 5.4
+                            tables = (
+                                j["schemaCache"]["tables"]
+                                if version == "5.4"
+                                else j["schemaCache"]["metaHolder"]["tables"]
+                            )
+                            for t in tables:
                                 if not no_print:
-                                    self.add_content(
-                                        f"   {sep}{name} {baseType} {nullable} {autoIncr}"
+                                    self.add_content(" ")
+                                name = t["name"] if version == "5.4" else t["entity"]
+                                tableList.append(name)
+                                if not no_print:
+                                    self.add_content(f"create table {schema}.{name} (")
+                                sep = ""
+                                for c in t["columns"]:
+                                    name = c["name"]
+                                    autoIncr = ""
+                                    if "isAutoIncrement" in c:
+                                        autoIncr = (
+                                            "AUTO_INCREMENT"
+                                            if c["isAutoIncrement"] == True
+                                            else ""
+                                        )
+                                    baseType = (
+                                        c["attrTypeName"]
+                                        if version == "5.4"
+                                        else c["baseTypeName"]
                                     )
-                                    sep = ","
+                                    # l = c["len"]
+                                    nullable = (
+                                        ""  # 'not null' if c["nullable"] == False else ''
+                                    )
+                                    if not no_print:
+                                        self.add_content(
+                                            f"   {sep}{name} {baseType} {nullable} {autoIncr}"
+                                        )
+                                        sep = ","
 
-                            for k in t["keys"]:
-                                c = k["columns"]
-                                cols = f"{c}"
-                                cols = cols.replace("[", "")
-                                cols = cols.replace("]", "")
-                                if not no_print:
-                                    self.add_content(")")
-                                    self.add_content("")
-                                    self.add_content(f"# PRIMARY KEY({cols})")
-                                    self.add_content("")
-                        # ["metaHolder"] was prior to 5.4
-                        if version == "5.4":
-                            fkeys = j["schemaCache"]["foreignKeys"]
-                        else:
-                            fkeys = j["schemaCache"]["metaHolder"]["foreignKeys"]
-                        for fk in fkeys:
-                            name = fk["name"] if version == "5.4" else fk["entity"]
-                            parent = (
-                                fk["parent"]["name"]
-                                if version == "5.4"
-                                else fk["parent"]["object"]
-                            )
-                            child = (
-                                fk["child"]["name"]
-                                if version == "5.4"
-                                else fk["child"]["object"]
-                            )
-                            parentCol = fk["columns"][0]["parent"]
-                            childCol = fk["columns"][0]["child"]
-                            if not no_print:
-                                self.add_content("")
-                                self.add_content(
-                                    f"  ALTER TABLE ADD CONSTRAINT fk_{name} FOREIGN KEY {child}({childCol}) REFERENCES {parent}({parentCol})"
+                                for k in t["keys"]:
+                                    c = k["columns"]
+                                    cols = f"{c}"
+                                    cols = cols.replace("[", "")
+                                    cols = cols.replace("]", "")
+                                    if not no_print:
+                                        self.add_content(")")
+                                        self.add_content("")
+                                        self.add_content(f"# PRIMARY KEY({cols})")
+                                        self.add_content("")
+                            # ["metaHolder"] was prior to 5.4
+                            if version == "5.4":
+                                fkeys = j["schemaCache"]["foreignKeys"]
+                            else:
+                                fkeys = j["schemaCache"]["metaHolder"]["foreignKeys"]
+                            for fk in fkeys:
+                                name = fk["name"] if version == "5.4" else fk["entity"]
+                                parent = (
+                                    fk["parent"]["name"]
+                                    if version == "5.4"
+                                    else fk["parent"]["object"]
                                 )
-                                self.add_content("")
+                                child = (
+                                    fk["child"]["name"]
+                                    if version == "5.4"
+                                    else fk["child"]["object"]
+                                )
+                                parentCol = fk["columns"][0]["parent"]
+                                childCol = fk["columns"][0]["child"]
+                                if not no_print:
+                                    self.add_content("")
+                                    self.add_content(
+                                        f"  ALTER TABLE ADD CONSTRAINT fk_{name} FOREIGN KEY {child}({childCol}) REFERENCES {parent}({parentCol})"
+                                    )
+                                    self.add_content("")
 
         return tableList
 

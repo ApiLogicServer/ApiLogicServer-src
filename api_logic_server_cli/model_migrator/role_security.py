@@ -69,14 +69,16 @@ class Role():
             return True,True,True,True # All
         elif tp == 'R':
             return True,False,False,False # Read Only
+        elif tp == "RIU":
+            return True,True,True,False
         return False,False,False,False # N - None
     
     def printGrants(self) -> str:
         roleName = self.roleName.replace(" ","",2)
+        sep = ","
         for erl in self.entityRoleList:
             self.add_content(f"#Access Levels: {erl.accessLevels} TablePermissions: {self.tablePermission} description: {erl.description}")
             grants = ""
-            sep = ","
             grants = f"{sep} can_read = {self.contains(erl, 'READ')}"
             grants += f"{sep} can_update = {self.contains(erl,'UPDATE')}"
             grants += f"{sep} can_insert = {self.contains(erl,'INSERT')}"

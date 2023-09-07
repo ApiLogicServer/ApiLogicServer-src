@@ -119,10 +119,11 @@ def fixupSQL(sql):
     @(ORDER) - s/b :@order
     @{arg_attrname} - s/b :@attrName
     """
-    sql = sql.replace("}","",40)
-    sql = sql.replace("@{",":",40)
-    sql = sql.replace("\"","\\\"",40)
-    # dealing with double quotes and single quotes
+    if sql:
+        sql = sql.replace("}","",40)
+        sql = sql.replace("@{",":",40)
+        sql = sql.replace("\"","\\\"",40)
+        # dealing with double quotes and single quotes
     return f"{sql}"
 
 def get_os_url(url: str) -> str:
