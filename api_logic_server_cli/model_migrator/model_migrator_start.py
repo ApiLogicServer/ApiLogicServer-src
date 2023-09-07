@@ -56,7 +56,7 @@ class ModelMigrator(object):
             # need repos location and project api name (teamspaces/api/{lac_project_name})
             running_at = Path(__file__)
             repos_location = f"{running_at.parent}{os.sep}CALiveAPICreator.repository"
-            lac_project_name = "chkn" # pass as args.lac_project_name TODO
+            lac_project_name = "fedex" # pass as args.lac_project_name TODO
             repo_reader.start(repos_location, self.project_directory, lac_project_name, table_to_class ) 
             log.debug('.. ModelMigrator.run() - done')
 

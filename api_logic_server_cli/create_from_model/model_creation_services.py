@@ -66,12 +66,12 @@ class ModelCreationServices(object):
     num_related = 0
 
     def __init__(self,
-                 project: Project,
-                 project_directory: str = "~/Desktop/my_project",
-                 copy_to_project_directory: str = "",
-                 my_children_list: dict = None,
-                 my_parents_list: dict = None,
-                 version: str = "0.0.0"):
+            project: Project,
+            project_directory: str = "~/Desktop/my_project",
+            copy_to_project_directory: str = "",
+            my_children_list: dict = None,
+            my_parents_list: dict = None,
+            version: str = "0.0.0"):
         """
         Called from main driver (create_project) to open db, build resource_list
         """

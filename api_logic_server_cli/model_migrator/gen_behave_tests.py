@@ -3,7 +3,6 @@ from sqlalchemy import create_engine, inspect, MetaData
 import requests
 from dotmap import DotMap
 import json
-import models
 from api_logic_server_cli.model_migrator.util import to_camel_case, fixup, get_os_url
 
 host = "localhost"
