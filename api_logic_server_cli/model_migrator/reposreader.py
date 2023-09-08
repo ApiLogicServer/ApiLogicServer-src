@@ -845,8 +845,9 @@ def printCols(jsonObj: object):
         attributes = jsonObj["attributes"]
         sep = ""
         for a in attributes:
-            attrs += sep + a["attribute"]
-            sep = ","
+            if "attribute" in a:
+                attrs += sep + a["attribute"] if a["attribute"] else ""
+                sep = ","
         attrs = f"Attrs: ({attrs})"
     if "isCollection" in jsonObj:
         isParent = "" if jsonObj["isCollection"] else "isParent=True"

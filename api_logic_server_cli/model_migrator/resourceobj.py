@@ -125,6 +125,7 @@ class ResourceObj:
         import_statement += "from api.system.custom_endpoint import CustomEndpoint, DotDict\n"
         import_statement += "from security.system.authorization import Security\n"
         import_statement += "from api.system.free_sql import FreeSQL\n"
+        import_statement += "from api.system.javascript import JavaScript\n"
         import_statement += "from config import Args\n"
         import_statement += "import json\n\n\n"
         
@@ -159,6 +160,7 @@ class ResourceObj:
     def PrintResource(self, version: str, apiURL: str = "") -> str:
         if not self.isActive or self.ResourceType != "TableBased":
             self.PrintFreeSQL(apiURL)
+            self.PrintJavaScript(apiURL)
         else:
             space = "\t"
             name = self._name
@@ -334,6 +336,30 @@ class ResourceObj:
         self.add_content(f'{space}"""')
         self.add_content("")
         return self._content
+		
+    def PrintJavaScript(self, apiURL: str = ""):
+        # Return the SQL statement used by a JavaScript query
+        if self.ResourceType not in ["JavaScript"] or not self.isActive:
+            return
+        self.add_content(f"#ResourceType: {self.ResourceType} ResourceName: {self._name} isActive: {self.isActive}")
+        name = self.name.lower()
+        space = "\t"
+        self.add_content(f"@app.route('{apiURL}/{name}', methods=['GET','OPTIONS'])")
+        self.add_content("@jwt_required()")
+        self.add_content("@cross_origin(supports_credentials=True)")
+        self.add_content(f"def {name}():")
+        self.add_content(f'{space}js = get_{self.name}(request)')
+        self.add_content(f'{space}return JavaScript(javaScript=js).execute(request)')
+        self.add_content("")
+    
+        self.add_content(f"def get_{name}(request):")
+        self.add_content(f'{space}pass')
+        self.add_content(f"{space}args = request.args")
+        self.add_content(f'{space}#argValue = args.get("argValueName")')
+        self.add_content(f'{space}"""')
+        self.add_content(f"{space}return {self._jsObj}")
+        self.add_content(f'{space}"""')
+        self.add_content("")
 
 if __name__ == "__main__":
     jsonObj = {
@@ -353,4 +379,5 @@ if __name__ == "__main__":
     resObj.PrintResource("5.4","/rest/default/nw/v1")
     resObj.PrintResourceFunctions("root", "5.4")
     resObj.PrintFreeSQL("/rest/default/nw/v1")
+    resObj.PrintJavaScript("/rest/default/nw/v1")
 

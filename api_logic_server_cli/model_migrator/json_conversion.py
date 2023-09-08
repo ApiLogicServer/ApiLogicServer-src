@@ -5,7 +5,7 @@ from util import to_camel_case, fixup
 
 running_at = Path(__file__)
 repos_location = f"{running_at.parent}{os.sep}CALiveAPICreator.repository"
-project_name = "chkn"
+project_name = "fedex"
 api_root = f"teamspaces{os.sep}default{os.sep}apis"
 running_at = Path(__file__)
 reposLocation = f"{running_at.parent}{os.sep}CALiveAPICreator.repository"
@@ -18,6 +18,8 @@ def readJSONReposFile(fileName):
 
 def create_directory(dir_name: str, json_rows: any):
     # Create directory if not exists "{basepath}/{dir_name}"
+    if len(dir_name) > 3:
+        dir_name = dir_name.replace("/v1/$003",'/v1/') if "/v1/$003" in dir_name else dir_name
     print("directory", dir_name)
     #path = f"{basepath}{os.sep}{dir_name}"
     isExist = os.path.exists(dir_name)
@@ -34,6 +36,7 @@ def create_directory(dir_name: str, json_rows: any):
                 create_file(file_dir, l[3:], json_rows[l])
 
 def create_file(parent_dir:str, file_name: str, content: str):
+    file_name =  file_name[4:] if file_name.startswith("$003") else file_name
     if file_name.endswith(".js"):
         content = fixup(content)
     print(parent_dir, file_name, content)
