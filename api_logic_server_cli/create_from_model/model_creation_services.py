@@ -90,7 +90,9 @@ class ModelCreationServices(object):
         self.command = command
         """
         self.resource_list : Dict[str, Resource] = dict()
-        self.resource_list_complete = False
+        self.schema_loaded = False
+        """ means entities loaded - READY to build resour"""
+
         self.version = version
         self.my_children_list = my_children_list
         """ for key table name, value is list of (parent-role-name, child-role-name, relationship) ApiLogicServer """

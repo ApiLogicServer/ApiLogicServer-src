@@ -306,8 +306,8 @@ class ModelClass(Model):
         pk_column_names = set(col.name for col in table.primary_key.columns)
         parent_accessors = {}
         """ dict of parent_table, current count (0, 1, 2...   >1 ==> multi-reln) """
-        if self.name == "Employee":
-            debug_stop = "nice breakpoint"
+        if self.name == "ARI023SHIPMENT":
+            debug_stop = "nice breakpoint for relationships"
         for constraint in sorted(table.constraints, key=_get_constraint_sort_key):
             if isinstance(constraint, ForeignKeyConstraint):
                 target_cls = self._tablename_to_classname(constraint.elements[0].column.table.name,
@@ -318,20 +318,20 @@ class ModelClass(Model):
                     debug_stop = "interesting breakpoint"
                 if (detect_joined and self.parent_name == 'Base' and set(_get_column_names(constraint)) == pk_column_names):
                     self.parent_name = target_cls  # evidently not called for ApiLogicServer
-                    self.parent_name = 'Base'
+                    log.debug(f"Foreign Key is Primary Key: {self.name}")
+                    self.parent_name = 'Base'  # ApiLogicServer - not sub-table, process anyway
+                multi_reln_count = 0
+                if target_cls in parent_accessors:
+                    multi_reln_count = parent_accessors[target_cls] + 1
+                    parent_accessors.update({target_cls: multi_reln_count})
                 else:
-                    multi_reln_count = 0
-                    if target_cls in parent_accessors:
-                        multi_reln_count = parent_accessors[target_cls] + 1
-                        parent_accessors.update({target_cls: multi_reln_count})
-                    else:
-                        parent_accessors[target_cls] = multi_reln_count
-                    relationship_ = ManyToOneRelationship(self.name, target_cls, constraint,
-                                                        inflect_engine, multi_reln_count)
-                    if this_included and target_included:
-                        self._add_attribute(relationship_.preferred_name, relationship_)
-                    else:
-                        log.debug(f"Parent Relationship excluded: {relationship_.preferred_name}")  # never occurs?
+                    parent_accessors[target_cls] = multi_reln_count
+                relationship_ = ManyToOneRelationship(self.name, target_cls, constraint,
+                                                    inflect_engine, multi_reln_count)
+                if this_included and target_included:
+                    self._add_attribute(relationship_.preferred_name, relationship_)
+                else:
+                    log.debug(f"Parent Relationship excluded: {relationship_.preferred_name}")  # never occurs?
 
         # Add many-to-many relationships
         for association_table in association_tables:
@@ -628,7 +628,7 @@ class CodeGenerator(object):
         self.noclasses = noclasses
         self.model_creation_services = model_creation_services  # type: ModelCreationServices
         self.generate_relationships_on = "parent"  # "child"
-        """ FORMELRY, relns were genned ONLY on parent (== 'parent') """
+        """ FORMERLY, relns were genned ONLY on parent (== 'parent') """
         self.indentation = indentation
         self.model_separator = model_separator
         self.ignored_tables = ignored_tables

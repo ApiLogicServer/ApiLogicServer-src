@@ -235,7 +235,7 @@ def create_models_py(model_creation_services: ModelCreationServices, abs_db_url:
             log.debug(f'.. .. ..For database:  {abs_db_url}')
             models_mem, num_models = create_models_memstring(code_gen_args)  # calls sqlcodegen
             write_models_py(model_full_file_name, models_mem)
-            model_creation_services.resource_list_complete = True
+            model_creation_services.schema_loaded = True
         else:  # use pre-existing (or repaired) existing model file
             model_full_file_name = str(Path(project_directory).joinpath('database/models.py'))
             use_model_path = Path(model_creation_services.project.use_model).absolute()

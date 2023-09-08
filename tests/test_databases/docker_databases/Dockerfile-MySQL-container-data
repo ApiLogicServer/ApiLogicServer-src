@@ -9,6 +9,8 @@
 # -- use authdb
 # -- 
 
+# mysqldump -u root -p CSAMTEST_SCHEMA > CSAMTEST_SCHEMA.sql;
+
 
 # Now set up your mysql database.
 
