@@ -314,8 +314,11 @@ class ModelClass(Model):
                                                           inflect_engine)
                 this_included = code_generator.is_table_included(self.table.name)
                 target_included = code_generator.is_table_included(constraint.elements[0].column.table.name)
+                if self.name == 'ARI023SHIPMENT':
+                    debug_stop = "interesting breakpoint"
                 if (detect_joined and self.parent_name == 'Base' and set(_get_column_names(constraint)) == pk_column_names):
                     self.parent_name = target_cls  # evidently not called for ApiLogicServer
+                    self.parent_name = 'Base'
                 else:
                     multi_reln_count = 0
                     if target_cls in parent_accessors:
