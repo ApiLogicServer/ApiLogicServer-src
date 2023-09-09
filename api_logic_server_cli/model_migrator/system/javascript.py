@@ -25,6 +25,16 @@ class SysUtility:
         #resp = requests.post(post_url=post_url, headers=header_settings, data=request_data)
         pass
 
+    @classmethod
+    def restPut(
+        cls,
+        patch_url: str,
+        some_str: str = "",
+        header_settings: str = None,
+        request_data: str = None,
+    ):
+        #resp = requests.patch(patch_url=patch_url, headers=header_settings, data=request_data)
+        pass
     @staticmethod
     @classmethod
     def restGet(

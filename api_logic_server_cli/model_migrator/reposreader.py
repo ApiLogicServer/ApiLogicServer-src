@@ -239,7 +239,7 @@ class ModelMigrationService(object):
                     "# see api/customize_api_tables.py.gen for table based resource API"
                 )
                 tableList = self.dataSources(filePath, version)
-                content = printTableAsResource(tableList)
+                content = printTableAsResource(tableList,table_to_class)
                 append_content(
                     content, f"{project_directory}{os.sep}api{os.sep}customize_api_tables.py.gen"
                 )
@@ -757,21 +757,21 @@ def listFiles(path: Path):
                     log(f"     SQL: {entry.name}")
 
 
-def printTableAsResource(tableList):
+def printTableAsResource(tableList,table_to_class):
     content = "#=============================================================================================\n"
     content += "#    ALS may change the name of tables (entity) - so create a endpoint with original name\n"
     content += "#    copy to als api/customize_api.py\n"
     content += "#=============================================================================================\n"
     content += "\n"
-    for name in tableList:
-        entity_name = to_camel_case(name)
+    for name in table_to_class:
+        entity_name = to_camel_case(name).lower
         entity_name = entity_name[:1].upper() + entity_name[1:]
         content += (
             f"@app.route('{apiurl}/{name}', methods=['GET', 'POST','PUT','OPTIONS'])\n"
         )
         content += "@admin_required()\n"
-        content += f"def {name}():\n"
-        content += f"\troot = CustomEndpoint(model_class=models.{entity_name})\n"
+        content += f"def {entity_name}():\n"
+        content += f"\troot = CustomEndpoint(model_class=models.{name})\n"
         content += f"\tresult = root.execute(request)\n"
         content += f"\treturn root.transform('LAC', '{name.lower()}', result)\n"
         content += "\n"
