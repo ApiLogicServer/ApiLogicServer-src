@@ -764,16 +764,18 @@ def printTableAsResource(tableList,table_to_class):
     content += "#=============================================================================================\n"
     content += "\n"
     for name in table_to_class:
-        entity_name = to_camel_case(name).lower
-        entity_name = entity_name[:1].upper() + entity_name[1:]
+        entity_name = table_to_class[name] # to_camel_case(name).lower
+        #entity_name = entity_name[:1].upper() + entity_name[1:]
         content += (
             f"@app.route('{apiurl}/{name}', methods=['GET', 'POST','PUT','OPTIONS'])\n"
         )
         content += "@admin_required()\n"
+        content += "@jwt_required()\n"
+        content += "@cross_origin(supports_credentials=True)\n"
         content += f"def {entity_name}():\n"
-        content += f"\troot = CustomEndpoint(model_class=models.{name})\n"
+        content += f"\troot = CustomEndpoint(model_class=models.{entity_name})\n"
         content += f"\tresult = root.execute(request)\n"
-        content += f"\treturn root.transform('LAC', '{name.lower()}', result)\n"
+        content += f"\treturn root.transform('LAC', '{entity_name.lower()}', result)\n"
         content += "\n"
     return content
 
