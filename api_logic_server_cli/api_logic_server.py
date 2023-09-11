@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "09.02.23"
+__version__ = "09.02.24"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t09/09/2023 - 09.02.24: Cleanup of table vs. class \n"\
     "\t09/08/2023 - 09.02.23: Fix Issue 16 - Incorrect admin.yml when table name <> class name \n"\
     "\t08/24/2023 - 09.02.21: Extended Build arg change, fix table_to_class_map, devops todo's \n"\
     "\t08/22/2023 - 09.02.18: Devops container/compose, Multi-arch dockers, add-auth with db_url, auth docker dbs, meta api \n"\

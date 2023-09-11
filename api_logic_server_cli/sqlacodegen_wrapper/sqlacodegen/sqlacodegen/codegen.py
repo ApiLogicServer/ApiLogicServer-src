@@ -594,7 +594,92 @@ class CodeGenerator(object):
                         if table_inclusion_db:
                             log.debug(f"table not excluded: {table_name}")
         return table_included
+
+
+    def table_has_primary_key(self, table) -> bool:
+        """_summary_
+
+        Args:
+            table (_type_): SQLAlchemy table
+
+        Returns:
+            bool: if has pkey AND table.primary_key.columns > 0
+        """
+        if table.primary_key is None:
+            return False
+        return len(table.primary_key.columns) > 0
     
+
+    def is_model_not_table(self, table, association_tables, noclasses) -> bool:
+        """
+
+        Determine whether to create table (no api, no rules, no admin) or class
+
+        Test with Run Config: unique_yes, and verify...
+
+        Table               Result
+
+        KeyTest_unique      Class
+        NoKey_no_unique     Table
+        unique_col_no_key   Class
+        unique_no_key_alt   Class             
+        unique_with_key     Class
+
+        users, user_notes, SampleDBVersion
+
+        Args:
+            table (_type_): table class instance
+            has_unique_constraint (bool): 
+            association_tables (_type_): set of association tables
+            noclasses (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+
+        if noclasses:  # not sure what this is
+            log.debug(f'\t\t .. .. .. ..Create {table.name} as table, because noclasses')
+            return False
+        if table.name in association_tables:
+            log.debug(f'\t\t .. .. .. ..Create {table.name} as table, because table.name in association_tables')
+            return False
+        
+        table_name = table.name + ""
+        test_classes = ['KeyTest_unique', 'unique_no_key_alt', 'NoKey_no_unique', 'unique_col_no_key', 'unique_with_key']
+        if table_name in test_classes:
+            debug_stop = "good breakpoint"  # table.indexes
+
+        if self.table_has_primary_key(table):
+            return True  # normal path
+
+        has_unique_constraint = False
+        for each_constraint in table.constraints:
+            if isinstance(each_constraint, sqlalchemy.sql.schema.UniqueConstraint):
+                has_unique_constraint = True  # eg, ??
+                break
+            if isinstance(each_constraint, sqlalchemy.sql.schema.PrimaryKeyConstraint):  # FIXME same instance?
+                # has_unique_constraint = True  # eg, KeyTest_unique
+                pkey_columns = len(each_constraint.columns)
+                pass  # eg, KeyTest_unique
+        
+        for each_index in table.indexes:
+            if each_index.unique == 1:
+                has_unique_constraint = True
+                break
+            else:
+                debug_stop = "found non-unique index"
+        
+        if has_unique_constraint:
+            if self.model_creation_services.project.infer_primary_key:
+                log.debug(f'\t\t .. .. .. ..Create {table.name} as class (no primary_key, but --infer_primary_key')
+                return True 
+            else:
+                log.debug(f'\t\t .. .. .. ..Create {table.name} as table, because no primary key; has unique key, but --infer_primary_key is not set')
+                return False
+
+        log.info(f"\t\t .. .. .. ..Create {table.name} as table, because no Unique Constraint   ")
+        return False
+
 
     def __init__(self, metadata, noindexes=False, noconstraints=False, nojoined=False,
                  noinflect=False, noclasses=False, model_creation_services = None,
@@ -728,22 +813,12 @@ class CodeGenerator(object):
             # Tables vs. Classes ********
             # Only form model classes for tables that have a primary key and are not association
             # tables
-            if "productvariantsoh-20190423" in (table.name + "") or "unique_no_key" in (table.name + ""):
-                debug_str = "target table located"
             """ create classes iff unique col - CAUTION: fails to run """
-            has_unique_constraint = False
-            if not table.primary_key:
-                for each_constraint in table.constraints:
-                    if isinstance(each_constraint, sqlalchemy.sql.schema.UniqueConstraint):
-                        has_unique_constraint = True
-                        print(f'\n*** ApiLogicServer -- Note: {table.name} has unique constraint, no primary_key')
-                #  print(f'\nTEST *** {table.name} not table.primary_key = {not table.primary_key}, has_unique_constraint = {has_unique_constraint}')
-            unique_constraint_class = model_creation_services.project.infer_primary_key and has_unique_constraint
-            if unique_constraint_class == False and (noclasses or not table.primary_key or table.name in association_tables):
-                model = self.table_model(table)
-            else:  # create ModelClass() instance
+            if self.is_model_not_table(table, association_tables, noclasses):
                 model = self.class_model(table, links[table.name], self.inflect_engine, not nojoined)  # computes attrs (+ roles)
                 self.classes[model.name] = model
+            else:  # table, not model - no api, no rules, no admin
+                model = self.table_model(table)
 
             self.models.append(model)
             model.add_imports(self.collector)  # end mega-loop for table in metadata.sorted_tables
