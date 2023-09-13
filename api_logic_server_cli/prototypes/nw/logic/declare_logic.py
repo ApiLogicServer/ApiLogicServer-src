@@ -31,7 +31,7 @@ def declare_logic():
                     https://apilogicserver.github.io/Docs/Logic/
                     https://apilogicserver.github.io/Docs/Logic-Tutorial/
 
-        *Activation* occurs in api_logic_server_run.py:
+        *Activation* occurs automatically in api_logic_server_run.py:
             LogicBank.activate(session=session, activator=declare_logic, constraint_event=constraint_handler)
 
         Logic *runs* automatically, in response to transaction commits (typically via the API),
