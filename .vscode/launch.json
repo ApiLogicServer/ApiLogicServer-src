@@ -424,6 +424,17 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "7 - ORACLE",
+            "type": "python",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/api_logic_server_cli",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "program": "cli.py",
+            "redirectOutput": true,
+            "args": ["create","--project_name=../../../servers/Oracle","--db_url="],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "Allocation  (abbr)",
             "type": "python",
             "request": "launch",
