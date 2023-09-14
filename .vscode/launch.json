@@ -431,7 +431,10 @@
             "env": {"APILOGICSERVER_DEBUG": "True"},
             "program": "cli.py",
             "redirectOutput": true,
-            "args": ["create","--project_name=../../../servers/Oracle","--db_url="],
+            "args": [
+                "create",
+                "--project_name=../../../servers/Oracle",
+                "--db_url=oracle-hr"],
             "console": "integratedTerminal"
         },
         {
