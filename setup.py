@@ -96,6 +96,7 @@ setup(
         "cryptography==36.0.1",
         "rsa",
         "PyMySQL==1.0.3", 
+        "oracledb==1.4.1",
         "requests==2.27.1",
         "gunicorn==20.1.0",
         "psycopg2-binary==2.9.5",
