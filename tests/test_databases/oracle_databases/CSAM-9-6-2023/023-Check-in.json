@@ -1,0 +1,1152 @@
+{
+  "{f}api.json": {
+    "name": "023-Check-in",
+    "urlFragment": "chkn",
+    "comments": "CSAPPS_OWNER DEV 023 Check-in",
+    "isEnabled": true,
+    "authProviderName": null
+  },
+  "{f}ReadMe.md": "# API\nThis folder contains the content of your API definition.\nName: 023-Check-in\nURL Fragment: chkn\nComments: CSAPPS_OWNER DEV 023 Check-in\n",
+  "{f}exportoptions.json": {
+    "passwordStyle": "SKIP",
+    "apiOptionStyle": "SKIP_DEFAULT",
+    "authTokenStyle": "SKIP_AUTO",
+    "skipUrlFragmentWrapping": true,
+    "libraryStyle": "EMIT_ALL",
+    "schemaCacheStyle": "DO_NOT_EMIT"
+  },
+  "{f}apioptions.json": {
+    "Permit Authorization parameter in URL": {
+      "dataType": "boolean",
+      "value": true,
+      "defaultValue": false
+    }
+  },
+  "{d}connections": {
+    "{f}ReadMe.md": "# CONNECTIONS\nThis folder contains definitions for connections.\n"
+  },
+  "{d}listeners": {
+    "{f}ReadMe.md": "# LISTENERS\nThis folder contains definitions for listeners.\n"
+  },
+  "{d}custom_endpoints": {
+    "{f}ReadMe.md": "# CUSTOM_ENDPOINTS\nThis folder contains definitions for custom_endpoints.\n"
+  },
+  "{f}relationships.json": [
+    {
+      "parentEntity": "main:ARI_023_SHIPMENTS",
+      "childEntity": "main:ARI_023_NOTES",
+      "roleToParent": "ARI_023_SHIPMENTS",
+      "roleToChild": "ARI_023_NOTES_List",
+      "deleteRule": "No Action",
+      "updateRule": "No Action",
+      "parentColumns": [
+        "SHIPID"
+      ],
+      "childColumns": [
+        "SHIPID"
+      ]
+    }
+  ],
+  "{d}data_sources": {
+    "{f}ReadMe.md": "# DATA SOURCES\nThis folder contains definitions for data sources.\n",
+    "{f}CSAPPS_PROGRAMS.json": {
+      "name": "CSAPPS_PROGRAMS",
+      "prefix": "main",
+      "title": null,
+      "databaseType": "ORACLE",
+      "comments": null,
+      "isActive": true,
+      "isLogErrors": false,
+      "isSchemaEditable": false,
+      "isSupportBoolean": false,
+      "useDefinedModel": false,
+      "isReadOnly": false,
+      "useJNDIDataSource": false,
+      "url": "jdbc:oracle:thin:@ldap://eusoud.prod.fedex.com/CSAM_CAN_DEV_COLO_SVC,cn=OracleContext",
+      "catalog": null,
+      "schema": "CSAMDEV_SCHEMA",
+      "username": "CSAMDEV_APP",
+      "maximumConnections": 20,
+      "tableExcludes": null,
+      "tableIncludes": "ARI_023_NOTES\nARI_023_SHIPMENTS",
+      "procedureExcludes": null,
+      "procedureIncludes": null,
+      "nonPersistentAttributes": {
+      },
+      "tableInfos": {
+      },
+      "viewInfos": {
+        "V_A023_SHPMT_NOTES": {
+          "autoNumColumns": [
+          ],
+          "virtualPrimaryKeyColumns": [
+            "SHIPID"
+          ],
+          "sequenceUsage": {
+          },
+          "extendedProperties": null
+        }
+      },
+      "procedureInfos": {
+      }
+    }
+  },
+  "{d}filters": {
+    "{f}ReadMe.md": "# FILTERS\nThis folder contains definitions for filters.\n",
+    "{f}arrDtBetween.json": {
+      "name": "arrDtBetween",
+      "description": "Filter : Arrival Date Between dates",
+      "isRestricted": true,
+      "appliesTo": [
+        "023_SHIPMENTS"
+      ]
+    },
+    "{f}arrDtBetween.sql": "to_char(arrivaldate, 'yyyymmdd') between {yyyymmdd_from} and {yyyymmdd_to}\n"
+  },
+  "{d}functions": {
+    "{f}ReadMe.md": "# FUNCTIONS\nThis folder contains definitions for functions.\n"
+  },
+  "{d}libraries": {
+    "{f}ReadMe.md": "# LIBRARIES\nThis folder contains definitions for libraries and whether they are used.\n",
+    "{f}SystemLibraryUsage.json": [
+      "Moment.js (with Locales)"
+    ],
+    "{f}csamPerson-1.0.json": {
+      "name": "csamPerson",
+      "version": "1.0",
+      "isUsedByProject": true,
+      "title": "csamPerson",
+      "description": "library to make accessing PERSON records easy.",
+      "groupName": "newlib",
+      "docsURL": null,
+      "referenceURL": null
+    },
+    "{f}csamPerson-1.0.js": "// getCommonPersonColumns\n// getPersonByFedExIdNbr\n// getPersonsByJobNbrs\n// getPersonsByOrgCdJobNbrPairs\n// getPersonJobTypeForPerson(personRow)\n\n/**\n * return most commonly used person columns\n */\nfunction getCommonPersonColumns() {\n  return ['FEDEX_ID_NBR', 'FIRST_NM', 'LAST_NM', 'PREF_NM', 'ORG_CD', 'JOB_NBR', 'EMP_CAT_CD2', 'COMIL_NBR', 'EMAIL_DESC', 'MGR_EMP_NBR'];\n}\n\n/** find a single person given fedex id number\n * nbr - fedex id number of wanted person\n * allColumns - if provided and truthy, all columns are returned, o.w. just the common ones\n * throwIfNotFound - if truthy, throw and error when not found instead of returning null\n * Commonly Fields\n * FEDEX_ID_NBR\n * FIRST_NM\n * LAST_NM\n * PREF_NM\n * ORG_CD\n * JOB_NBR\n * EMP_CAT_CD2\n * COMIL_NBR (aka centre)\n * EMAIL_DESC\n */\nfunction getPersonByFedExIdNbr(nbr, allColumns, throwIfNotFound) {\n  var params = {\n    columns: allColumns ? null : getCommonPersonColumns(),\n    usingValues: {\n      FEDEX_ID_NBR: nbr\n    }\n  };\n\n  var p = SysUtilityV2.findEntities('dss:PERSON', params);\n  if (null === p || 0 === p.length) {\n    if (throwIfNotFound) {\n      throw 'Cannot find employee ' + nbr;\n    }\n    return null;\n  }\n\n  p[0].Full_Name = preferredFullNameFromRow(p[0]);\n\n  return p[0];\n}\n\n/**\n * find all person records given an array of jobNbrs\n */\nfunction getPersonsByJobNbrs(jobNbrs, allColumns, includeTerminated) {\n  jobNbrs = toArray(jobNbrs);\n  if (!jobNbrs || 0 === jobNbrs.length) {\n    return null;\n  }\n\n  var where = 'JOB_NBR in (\\'' + jobNbrs.join('\\',\\'') + '\\')';\n\n  if (!includeTerminated) {\n    where += '\\n      and EMP_CAT_CD2 != \\'T\\'';\n  }\n\n  var params = {\n    columns: allColumns ? null : getCommonPersonColumns(),\n    whereClause: where\n  };\n\n  var p = SysUtilityV2.findEntities('dss:PERSON', params);\n  for (var idx = 0; idx < p.length; ++idx) {\n    p[idx].Full_Name = preferredFullNameFromRow(p[idx]);\n  }\n\n  return p;\n}\n\n/**\n * find all person records given an array of orgCd, jobNbr paiars\n */\nfunction getPersonsByOrgCdJobNbrPairs(orgCdjobNbrPairs, allColumns, includeTerminated) {\n  if (!orgCdjobNbrPairs || 0 === orgCdjobNbrPairs.length) {\n    return [];\n  }\n\n  var where = '      (';\n\n  for (var i = 0; i < orgCdjobNbrPairs.length; ++i) {\n    var pair = orgCdjobNbrPairs[i];\n    where += (0 === i) ? '      ' : '\\n  or ';\n    where += '(ORG_CD = \\'' + pair.ORG_CD + '\\' and JOB_NBR = \\'' + pair.JOB_NBR + '\\')';\n  }\n\n  where += '\\n      )';\n\n  if (!includeTerminated) {\n    where += '\\n      and EMP_CAT_CD2 != \\'T\\'';\n  }\n\n  var params = {\n    columns: allColumns ? null : getCommonPersonColumns(),\n    whereClause: where\n  };\n\n  var p = SysUtilityV2.findEntities('dss:PERSON', params);\n  for (var idx = 0; idx < p.length; ++idx) {\n    p[idx].Full_Name = preferredFullNameFromRow(p[idx]);\n  }\n\n  return p;\n}\n\nfunction getPersonJobTypeForPerson(person) {\n  var params = {\n    columns: null,\n    usingValues: {\n      JOB_NBR: person.JOB_NBR,\n      ORG_CD: person.ORG_CD\n    }\n  };\n\n  var p = SysUtilityV2.findEntities('main:PERSON_JOB_TYPE', params);\n  return p.length > 0 ? p[0] : null;\n}\n",
+    "{f}csamSendEmail-1.0.json": {
+      "name": "csamSendEmail",
+      "version": "1.0",
+      "isUsedByProject": true,
+      "title": "csamSendEmail",
+      "description": null,
+      "groupName": "newlib",
+      "docsURL": null,
+      "referenceURL": null
+    },
+    "{f}csamSendEmail-1.0.js": "/**\n * posts to /cscom/v1/cs_REQUEST which logs and sends an email\n * to - array of email addresses, such as ['David Hewitt <david.hewitt.osv@fedex.com', 'Wynford Rees <wynford.rees@fedex.com']\n * cc - optional array of cc email addresses\n * bcc - optional array of bcc email addresses\n * from - currently ignored, future db schema change, use null for now\n * subject - text of subject\n * body - text of body\n * attachments - optional array of attachments.\n * such as\n *  [\n *   {\n *     name: 'foo.csv',\n *     contents: 'now,is\\nthe,time\\n0,1',\n *     mimeType: 'text/csv'\n *   },\n *   {\n *     name: 'foo.csv',\n *     contents: java byte array,\n *     mimeType: 'application/octet-stream'\n *   }\n * ]\n */\nfunction sendEmailViaRequest(req, to, cc, bcc, from, subject, body, attachments) {\n  // provides Base64Util.encodeString, encodeBytes, decodeBytes, decodeString\n  var Base64Util = Java.type('com.kahuna.server.util.Base64Util');\n\n  var emailTo = toArray(to).join(',');\n  var emailCC = null === cc ? null : toArray(cc).join(',');\n  var emailBCC = null === bcc ? null : toArray(bcc).join(',');\n\n  var baseUrl = getBaseUrl(req);\n  baseUrl = baseUrl.replace('/http/', '/rest/');\n\n  var key = req.apiKey.apiKey;\n  var headerSettings = {\n    headers: {\n      Authorization: 'CALiveAPICreator ' + key + ':1'\n    }\n  };\n\n  var eventPostURL = baseUrl + '/cscom/v1/cs_REQUEST';\n\n  var requestData = {\n    EMAIL_TO_DESC: emailTo,\n    EMAIL_SUBJECT_DESC: subject,\n    EMAIL_BODY_DESC: body\n  };\n\n  if (null !== emailCC) {\n    requestData.EMAIL_CC_DESC = emailCC;\n  }\n\n  if (null !== emailBCC) {\n    requestData.EMAIL_BC_DESC = emailBCC;\n  }\n\n  if (null !== attachments) {\n    requestData.ATTACHMENTS = [];\n    for (var idx = 0; idx < attachments.length; ++idx) {\n      var attachment = attachments[idx];\n      var mimeType = attachment.mimeType || 'application/octet-stream';\n      var attachmentName = attachment.name || 'NotProvided';\n      var contents = attachment.contents;\n      var attachmentDefn = {\n        NAME: attachmentName,\n        MIME_TYPE: mimeType\n      };\n      if ('string' === typeof contents) {\n        attachmentDefn.CONTENTS_TEXT = contents;\n      }\n      else {\n        // assume byte array\n        attachmentDefn.CONTENTS_BINARY = 'b64:' + Base64Util.encodeBytes(contents);\n      }\n\n      requestData.ATTACHMENTS.push(attachmentDefn);\n    }\n  }\n\n  var retJson = SysUtility.restPost(eventPostURL, '', headerSettings, requestData);\n  var resultObject = JSON.parse(retJson);\n  return resultObject;\n}\n",
+    "{f}csamUtils-1.0.json": {
+      "name": "csamUtils",
+      "version": "1.0",
+      "isUsedByProject": true,
+      "title": "csamUtils",
+      "description": "Small common utilities",
+      "groupName": "newlib",
+      "docsURL": null,
+      "referenceURL": null
+    },
+    "{f}csamUtils-1.0.js": "// Common Functions:\n// nullToBlank()\n// toArray()\n// getBaseUrl(req)\n// encodeHtml(s)\n// emailNewlineFixup(s)\n// preferredFullName(lastName, firstName, preferredName)\n// preferredFullNameFromRow(row)\n\n/**\n * return the empty string for null or undefined\n */\nfunction nullToBlank(s) {\n  return (null === s || undefined === s) ? \"\" : s;\n}\n\nfunction toArray(obj) {\n  if (null === obj || undefined === obj) {\n    return obj;\n  }\n  else if (Array.isArray(obj)) {\n    return obj;\n  }\n  else {\n    return [obj];\n  }\n}\n\nfunction getBaseUrl(req) {\n  var baseUrl = String(req.fullBaseURL);\n  baseUrl = baseUrl.substr(0, baseUrl.indexOf('/' + req.project.urlName + '/'));\n  return baseUrl;\n}\n\n/**\n * Given an optional string, encode html entities\n * should be expanded overtime to include more entities.\n */\nfunction encodeHtml(s) {\n  if (null === s) {\n    return null;\n  }\n\n  var result = '';\n  for (var idx = 0; idx < s.length; ++idx) {\n    var chr = s.charAt(idx);\n    switch (chr) {\n    case '<':\n      result += '&lt;';\n      break;\n    case '>':\n      result += '&gt;';\n      break;\n    case '&':\n      result += '&amp;';\n      break;\n    default:\n      result += chr;\n      break;\n    }\n  }\n\n  return result;\n}\n\n/**\n * Given an optional string, replace 'newlines' with <br> suitable for email\n */\nfunction emailNewLineFixup(s) {\n  if (null === s) {\n    return null;\n  }\n\n  s = s.replaceAll('\\r\\n', '\\n');\n  s = s.replaceAll('\\r', '\\n');\n\n  return s;\n}\n\n/**\n * generate a 'full name', using preferred name if given\n */\nfunction preferredFullName(lastName, firstName, preferredName) {\n  lastName = (lastName || 'unknown').trim();\n  firstName = (firstName || '').trim();\n  preferredName = (preferredName || '').trim();\n  return (('' !== preferredName ? preferredName : firstName) + ' ' + lastName).trim();\n}\n\nfunction preferredFullNameFromRow(row) {\n  var lastName = row.LAST_NM;\n  var firstName = row.FIRST_NM;\n  var preferredName = row.PREF_NM;\n  return preferredFullName(lastName, firstName, preferredName);\n}\n",
+    "{f}runtimeConfig-1.0.json": {
+      "name": "runtimeConfig",
+      "version": "1.0",
+      "isUsedByProject": true,
+      "title": "RuntimeConfiguration",
+      "description": "Returns the deployment runtime configuration in the Common project cscom/runtime/configuration resource.  It is stored in the extendedProperties.js (a json file) of the runtime/configuration resource of cscom.\n\nCall as commonRuntimeConfiguration();",
+      "groupName": "newlib",
+      "docsURL": null,
+      "referenceURL": null
+    },
+    "{f}runtimeConfig-1.0.js": "function commonRuntimeConfiguration() {\n  var RestRequest = Java.type('com.kahuna.server.rest.RestRequest');\n  var req = RestRequest.getCurrentRestRequest();\n  var Project = Java.type(\"com.kahuna.admin.entity.Project\");\n  var Resource = Java.type(\"com.kahuna.admin.entity.Resource\");\n\n  var accountIdent = req.account.ident;\n  var commonProject = Project.getByUrlName(accountIdent, \"cscom\");\n  var resource = Resource.getByName(commonProject, \"runtime\", \"configuration\");\n\n  return JSON.parse(resource.getExtendedPropertiesJSON());\n}\n"
+  },
+  "{d}pipeline_events": {
+    "{f}ReadMe.md": "# PIPELINE EVENTS\nThis folder contains definitions for pipeline events.\n"
+  },
+  "{d}resources": {
+    "{f}ReadMe.md": "# RESOURCES\nThis folder contains definitions for resources.\n",
+    "{f}apiversions.json": {
+      "v1": {
+        "name": "v1",
+        "comments": null
+      }
+    },
+    "{d}v1": {
+      "{d}$003023_FLIGHTS": {
+        "{f}$003023_FLIGHTS.json": {
+          "name": "023_FLIGHTS",
+          "description": null,
+          "siblingRank": 100,
+          "resourceType": "JavaScript",
+          "isCollection": true,
+          "joinCondition": null
+        },
+        "{f}get_event.js": null,
+        "{f}put_post_event.js": null,
+        "{f}extended_properties.js": null,
+        "{f}$003023_FLIGHTS.js": "return [\n  { value: '140', viewValue: 'FLT 140 (OAK-YVR)' },\n  { value: '142', viewValue: 'FLT 142 (MEM-YVR)' },\n  { value: '128', viewValue: 'FLT 128 (MEM-YYZ)' },\n  { value: '132', viewValue: 'FLT 132 (MEM-YYZ)' },\n  { value: '150', viewValue: 'FLT 150 (IND-YYZ)' },\n  { value: '160', viewValue: 'FLT 160 (EWR-YYZ)' },\n  { value: '232', viewValue: 'FLT 232 (MEM-YYZ)' },\n  { value: '130', viewValue: 'FLT 130 (MEM-YMX)' },\n  { value: '152', viewValue: 'FLT 152 (IND-YMX)' },\n  { value: '138', viewValue: 'FLT 138 (MEM-YYC)' },\n  { value: '236', viewValue: 'FLT 236 (MEM-YYC)' },\n  { value: '120', viewValue: 'FLT 120 (MEM-YEG)' },\n  { value: '8065', viewValue: 'FLT 8065 (MEM-YWG)' },\n  { value: 'MC216', viewValue: 'FLT MC216 (MEM-YWG)' }\n];\n"
+      },
+      "{d}$003023_LOCATIONS": {
+        "{f}$003023_LOCATIONS.json": {
+          "name": "023_LOCATIONS",
+          "description": null,
+          "siblingRank": 100,
+          "resourceType": "JavaScript",
+          "isCollection": true,
+          "joinCondition": null
+        },
+        "{f}get_event.js": null,
+        "{f}put_post_event.js": null,
+        "{f}extended_properties.js": null,
+        "{f}$003023_LOCATIONS.js": "var values = [\n  \"YVR\"\n ,\"YYC\"\n ,\"YYZ\"\n ,\"YMX\"\n ,\"YEG\"\n ,\"YWG\"\n];\n\nvar results = [];\nfor (var idx = 0; idx < values.length; ++idx) {\n  var v = values[idx];\n  results.push({value: v, viewValue: v});\n}\n\nreturn results;\n"
+      },
+      "{d}$003023_NOTES": {
+        "{f}$003023_NOTES.json": {
+          "name": "023_NOTES",
+          "description": null,
+          "siblingRank": 100,
+          "resourceType": "TableBased",
+          "prefix": "main",
+          "entity": "ARI_023_NOTES",
+          "isCollection": true,
+          "filter": null,
+          "order": null,
+          "useSchemaAttributes": false,
+          "attributes": [
+            {
+              "name": "Note_ID",
+              "attribute": "NOTESID",
+              "description": "Note ID",
+              "isKey": false
+            },
+            {
+              "name": "Ship_ID",
+              "attribute": "SHIPID",
+              "description": "Shipment ID",
+              "isKey": false
+            },
+            {
+              "name": "NOTES",
+              "attribute": "NOTES",
+              "description": "Notes/Instructions",
+              "isKey": false
+            },
+            {
+              "name": "CREATE_TMSTP",
+              "attribute": "CREATE_TMSTP",
+              "description": null,
+              "isKey": false
+            },
+            {
+              "name": "CREATE_TMSTP_ET",
+              "attribute": null,
+              "description": "CREATE_TMSTP in America/Toronto",
+              "jsonType": "string",
+              "isHidden": false
+            },
+            {
+              "name": "CREATE_UID",
+              "attribute": "CREATE_UID",
+              "description": null,
+              "isKey": false
+            }
+          ]
+        },
+        "{f}get_event.js": "var DateTimeFormatter = Java.type('java.time.format.DateTimeFormatter');\nvar OffsetDateTime = Java.type('java.time.OffsetDateTime');\nvar ZoneId = Java.type('java.time.ZoneId');\n\nvar dtStr = row.CREATE_TMSTP.truncateFractional(0).asSQLServerTimestampOffsetFormat();\nvar dtm = OffsetDateTime.parse(dtStr, DateTimeFormatter.ofPattern('yyyy-MM-dd HH:mm:ss xxx'));\nvar etTS = dtm.toInstant().atZone(ZoneId.of('America/Toronto'));\n\nvar fmt = DateTimeFormatter.ofPattern('yyyy-MM-dd HH:mm');\nvirtuals.CREATE_TMSTP_ET = fmt.format(etTS);\n",
+        "{f}put_post_event.js": null,
+        "{f}extended_properties.js": null
+      },
+      "{d}$003023_SEARCH_FLIGHTS": {
+        "{f}$003023_SEARCH_FLIGHTS.json": {
+          "name": "023_SEARCH_FLIGHTS",
+          "description": null,
+          "siblingRank": 100,
+          "resourceType": "JavaScript",
+          "isCollection": true,
+          "joinCondition": null
+        },
+        "{f}get_event.js": null,
+        "{f}put_post_event.js": null,
+        "{f}extended_properties.js": null,
+        "{f}$003023_SEARCH_FLIGHTS.js": "var flightData = [\n  '140 OAK YVR',\n  '142 MEM YVR',\n  '128 MEM YYZ',\n  '132 MEM YYZ',\n  '150 IND YYZ',\n  '160 EWR YYZ',\n  '232 MEM YYZ',\n  '130 MEM YMX',\n  '152 IND YMX',\n  '138 IND YMX',\n  '236 MEM YYC',\n  '120 MEM YEG',\n  '8065 MEM YWG',\n  'MC216 MEM YWG'\n];\n\nvar destFlights = getDestinations(flightData);\n\nvar results = [];\n\nfor (var dest in destFlights) {\n  var flights = destFlights[dest];\n\n  // emit the 'all' version\n  var all = {\n    value: 'all' + dest.toLowerCase(),\n    viewValue: '--- All ' + dest.toUpperCase() + ' Flights (' + flights.length + ') ---',\n    search: genSearch(flights)\n  };\n\n  results.push(all);\n\n  for (var idx = 0; idx < flights.length; ++idx) {\n    var f = flights[idx];\n    var flightName = 'FLT ' + f.flight + ' (' + f.departure + '-' + f.destination + ')';\n    results.push({\n      value: f.flight,\n      viewValue: flightName,\n      search: genSearch([f])\n    });\n  }\n}\n\nreturn results;\n\n\nfunction getDestinations(flightData) {\n  var r = {};\n\n  for (var idx = 0; idx < flightData.length; ++idx) {\n    var x = flightData[idx].split(' ');\n    var f = {\n      flight: x[0],\n      departure: x[1],\n      destination: x[2]\n    };\n    r[f.destination] = (r[f.destination] || []);\n    r[f.destination].push(f);\n  }\n\n  return r;\n}\n\nfunction genSearch(flights) {\n  if (1 === flights.length) {\n    return 'equal(\\'FLT\\':\\'' + flights[0].flight + '\\')';\n  }\n\n  var s = '';\n\n  for (var idx = 0; idx < flights.length; ++idx) {\n     var f = flights[idx];\n     s += 0 === idx ? '' : ',';\n     s += \"'FLT':'\" + f.flight + \"'\";\n  }\n\n  return 'equal_or(' + s + ')';\n}\n"
+      },
+      "{d}$003023_SHIPMENTS": {
+        "{f}$003023_SHIPMENTS.json": {
+          "name": "023_SHIPMENTS",
+          "description": null,
+          "siblingRank": 100,
+          "resourceType": "TableBased",
+          "prefix": "main",
+          "entity": "ARI_023_SHIPMENTS",
+          "isCollection": true,
+          "filter": null,
+          "order": "order by ARRIVALDATE asc, LOCATION, FLT, SHIPID",
+          "useSchemaAttributes": false,
+          "attributes": [
+            {
+              "name": "Ship_ID",
+              "attribute": "SHIPID",
+              "description": "Shipment ID",
+              "isKey": false
+            },
+            {
+              "name": "Arr_Date",
+              "attribute": "ARRIVALDATE",
+              "description": "Arrival Date",
+              "isKey": false
+            },
+            {
+              "name": "Port",
+              "attribute": "LOCATION",
+              "description": "Airport Code",
+              "isKey": false
+            },
+            {
+              "name": "Flt_Nbr",
+              "attribute": "FLT",
+              "description": "Flight Number",
+              "isKey": false
+            },
+            {
+              "name": "AWB",
+              "attribute": "AWBNUM",
+              "description": "Airwaybill",
+              "isKey": false
+            },
+            {
+              "name": "PCs",
+              "attribute": "PC",
+              "description": "Pieces",
+              "isKey": false
+            },
+            {
+              "name": "Admit_Status",
+              "attribute": "STATUS",
+              "description": "Admissibility Status",
+              "isKey": false
+            },
+            {
+              "name": "Recvd",
+              "attribute": "REC",
+              "description": "Received",
+              "isKey": false
+            }
+          ]
+        },
+        "{f}get_event.js": null,
+        "{f}put_post_event.js": null,
+        "{f}extended_properties.js": null,
+        "{d}$003023_NOTES": {
+          "{f}$003023_NOTES.json": {
+            "name": "023_NOTES",
+            "description": null,
+            "siblingRank": 100,
+            "resourceType": "TableBased",
+            "prefix": "main",
+            "entity": "ARI_023_NOTES",
+            "join": "\"SHIPID\" = [\"SHIPID\"]",
+            "isCollection": true,
+            "filter": null,
+            "order": null,
+            "useSchemaAttributes": false,
+            "attributes": [
+              {
+                "name": "Note_ID",
+                "attribute": "NOTESID",
+                "description": "Note ID",
+                "isKey": false
+              },
+              {
+                "name": "Ship_ID",
+                "attribute": "SHIPID",
+                "description": "Shipment ID",
+                "isKey": false
+              },
+              {
+                "name": "NOTES",
+                "attribute": "NOTES",
+                "description": "Notes/Instructions",
+                "isKey": false
+              },
+              {
+                "name": "CREATE_TMSTP",
+                "attribute": "CREATE_TMSTP",
+                "description": null,
+                "isKey": false
+              },
+              {
+                "name": "CREATE_TMSTP_ET",
+                "attribute": null,
+                "description": "CREATE_TMSTP in America/Toronto",
+                "jsonType": "string",
+                "isHidden": false
+              },
+              {
+                "name": "CREATE_UID",
+                "attribute": "CREATE_UID",
+                "description": null,
+                "isKey": false
+              }
+            ]
+          },
+          "{f}get_event.js": "var DateTimeFormatter = Java.type('java.time.format.DateTimeFormatter');\nvar OffsetDateTime = Java.type('java.time.OffsetDateTime');\nvar ZoneId = Java.type('java.time.ZoneId');\n\nvar dtStr = row.CREATE_TMSTP.truncateFractional(0).asSQLServerTimestampOffsetFormat();\nvar dtm = OffsetDateTime.parse(dtStr, DateTimeFormatter.ofPattern('yyyy-MM-dd HH:mm:ss xxx'));\nvar etTS = dtm.toInstant().atZone(ZoneId.of('America/Toronto'));\n\nvar fmt = DateTimeFormatter.ofPattern('yyyy-MM-dd HH:mm');\nvirtuals.CREATE_TMSTP_ET = fmt.format(etTS);\n",
+          "{f}put_post_event.js": null,
+          "{f}extended_properties.js": null
+        }
+      },
+      "{d}$003023_SHIPMENTS_TABLEDUMP": {
+        "{f}$003023_SHIPMENTS_TABLEDUMP.json": {
+          "name": "023_SHIPMENTS_TABLEDUMP",
+          "description": null,
+          "siblingRank": 100,
+          "resourceType": "FreeSQL",
+          "prefix": "main",
+          "isCollection": true
+        },
+        "{f}get_event.js": null,
+        "{f}put_post_event.js": null,
+        "{f}extended_properties.js": null,
+        "{f}$003023_SHIPMENTS_TABLEDUMP.sql": "select shp.shipid as \"ShipID\"\n      ,to_char(shp.arrivaldate, 'yyyy-mm-dd') as \"ArrivalDate\"\n      ,shp.location as \"Location\"\n      ,shp.flt as \"Flight\"\n      ,shp.awbnum as \"Airwaybill\"\n      ,shp.pc as \"PieceCount\"\n      ,trim(shp.rec) as \"Received\"\n      ,nts.create_uid as \"EmpNbr\"\n      ,to_char(nts.create_tmstp at time zone 'America/Toronto', 'yyyy-mm-dd HH24:MI:SS') as \"Entered(ET)\"\n      ,nts.notes as \"Notes\"\n  from @{SCHEMA}.ARI_023_SHIPMENTS shp\n      ,@{SCHEMA}.ARI_023_NOTES nts\n where shp.shipid = nts.shipid (+)\n   and to_char(shp.arrivaldate, 'yyyymmdd') >= '@{arg_yyyymmdd_from}'\n   and to_char(shp.arrivaldate, 'yyyymmdd') <= '@{arg_yyyymmdd_to}'\n order by shp.arrivaldate\n      ,shp.shipid\n      ,nts.create_tmstp\n"
+      }
+    }
+  },
+  "{d}rules": {
+    "{f}ReadMe.md": "# RULES\nThis folder contains definitions for rules.\n",
+    "{f}prefixes.json": {
+      "main": "main"
+    },
+    "{d}main": {
+      "{f}ReadMe.md": "# RULES\nThis folder contains rules for entities in prefix main.\n",
+      "{d}ARI_023_NOTES": {
+        "{f}CREATE_UID.json": {
+          "name": "CREATE_UID",
+          "entity": "ARI_023_NOTES",
+          "isActive": true,
+          "ruleType": "formula",
+          "attribute": "CREATE_UID",
+          "codeType": "JavaScript",
+          "isJIT": false,
+          "isAutoTitle": false,
+          "title": "CREATE_UID",
+          "comments": null,
+          "topics": [
+            "UID"
+          ]
+        },
+        "{f}CREATE_UID.js": "switch (logicContext.initialVerb) {\ncase 'INSERT':\n  return req.apiKey.userIdentifier || 999999;\ncase 'UPDATE':\n  return oldRow.CREATE_UID;\ncase 'DELETE':\n  return row.CREATE_UID;\n}\n",
+        "{f}UPDATE_UID.json": {
+          "name": "UPDATE_UID",
+          "entity": "ARI_023_NOTES",
+          "isActive": true,
+          "ruleType": "formula",
+          "attribute": "UPDATE_UID",
+          "codeType": "JavaScript",
+          "isJIT": false,
+          "isAutoTitle": false,
+          "title": "UPDATE_UID",
+          "comments": null,
+          "topics": [
+            "UID"
+          ]
+        },
+        "{f}UPDATE_UID.js": "switch (logicContext.initialVerb) {\ncase 'INSERT':\ncase 'UPDATE':\n  return req.apiKey.userIdentifier || 999999;\ndefault:\n  return row.UPDATE_UID;\n}\n"
+      },
+      "{d}ARI_023_SHIPMENTS": {
+        "{f}CREATE_UID.json": {
+          "name": "CREATE_UID",
+          "entity": "ARI_023_SHIPMENTS",
+          "isActive": true,
+          "ruleType": "formula",
+          "attribute": "CREATE_UID",
+          "codeType": "JavaScript",
+          "isJIT": false,
+          "isAutoTitle": false,
+          "title": "CREATE_UID",
+          "comments": null,
+          "topics": [
+            "UID"
+          ]
+        },
+        "{f}CREATE_UID.js": "switch (logicContext.initialVerb) {\ncase 'INSERT':\n  return req.apiKey.userIdentifier || 999999;\ncase 'UPDATE':\n  return oldRow.CREATE_UID;\ncase 'DELETE':\n  return row.CREATE_UID;\n}\n",
+        "{f}UPDATE_UID.json": {
+          "name": "UPDATE_UID",
+          "entity": "ARI_023_SHIPMENTS",
+          "isActive": true,
+          "ruleType": "formula",
+          "attribute": "UPDATE_UID",
+          "codeType": "JavaScript",
+          "isJIT": false,
+          "isAutoTitle": false,
+          "title": "UPDATE_UID",
+          "comments": null,
+          "topics": [
+            "UID"
+          ]
+        },
+        "{f}UPDATE_UID.js": "switch (logicContext.initialVerb) {\ncase 'INSERT':\ncase 'UPDATE':\n  return req.apiKey.userIdentifier || 999999;\ndefault:\n  return row.UPDATE_UID;\n}\n"
+      }
+    }
+  },
+  "{d}security": {
+    "{f}ReadMe.md": "# SECURITY\nThis folder contains definitions for security.\n",
+    "{d}roles": {
+      "{f}ReadMe.md": "# ROLES\nThis contains Roles defined for the project.\nRoles define which server features are available and what the permissions\non each feature is enabled.\n",
+      "{f}API$0020Documentation.json": {
+        "name": "API Documentation",
+        "description": "This role is special and is used when generating OpenAPI(Swagger) documentation. It is recognized by the name special name 'API Documentation' and used only for documentation calls.\n Any Resources, Tables, Views, Procedures etc. that are defined and enabled by this role are used to generate the OpenAPI(Swagger) documentation.\n If this role is assigned to a user it will NOT be used for execution permissions.\n If this role is removed or otherwise unavailable, the Swagger/OpenAPI documentation will be nothing more that a name and version.",
+        "defaultTablePermission": "A",
+        "defaultViewPermission": "R",
+        "defaultFunctionPermission": "X",
+        "globals": [
+        ],
+        "apiVisibility": {
+          "table": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "view": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "resource": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "procedure": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "metatable": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "function": {
+            "isRestricted": false,
+            "restrictedTo": null
+          }
+        },
+        "entityPermission": {
+        },
+        "functionPermission": {
+        }
+      },
+      "{f}CS_ADMIN.json": {
+        "name": "CS_ADMIN",
+        "description": "Ops Agent Admin",
+        "defaultTablePermission": "RIU",
+        "defaultViewPermission": "RIU",
+        "defaultFunctionPermission": "X",
+        "globals": [
+        ],
+        "apiVisibility": {
+          "table": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "view": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "resource": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "procedure": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "metatable": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "function": {
+            "isRestricted": false,
+            "restrictedTo": null
+          }
+        },
+        "entityPermission": {
+        },
+        "functionPermission": {
+        }
+      },
+      "{f}CS_BDG_MGR.json": {
+        "name": "CS_BDG_MGR",
+        "description": null,
+        "defaultTablePermission": "RIU",
+        "defaultViewPermission": "RIU",
+        "defaultFunctionPermission": "X",
+        "globals": [
+        ],
+        "apiVisibility": {
+          "table": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "view": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "resource": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "procedure": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "metatable": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "function": {
+            "isRestricted": false,
+            "restrictedTo": null
+          }
+        },
+        "entityPermission": {
+        },
+        "functionPermission": {
+        }
+      },
+      "{f}CS_FOC_MGR.json": {
+        "name": "CS_FOC_MGR",
+        "description": null,
+        "defaultTablePermission": "RIU",
+        "defaultViewPermission": "RIU",
+        "defaultFunctionPermission": "X",
+        "globals": [
+        ],
+        "apiVisibility": {
+          "table": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "view": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "resource": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "procedure": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "metatable": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "function": {
+            "isRestricted": false,
+            "restrictedTo": null
+          }
+        },
+        "entityPermission": {
+        },
+        "functionPermission": {
+        }
+      },
+      "{f}CS_FSD_ADMIN.json": {
+        "name": "CS_FSD_ADMIN",
+        "description": null,
+        "defaultTablePermission": "RIU",
+        "defaultViewPermission": "RIU",
+        "defaultFunctionPermission": "X",
+        "globals": [
+        ],
+        "apiVisibility": {
+          "table": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "view": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "resource": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "procedure": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "metatable": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "function": {
+            "isRestricted": false,
+            "restrictedTo": null
+          }
+        },
+        "entityPermission": {
+        },
+        "functionPermission": {
+        }
+      },
+      "{f}CS_FSD_MGR.json": {
+        "name": "CS_FSD_MGR",
+        "description": null,
+        "defaultTablePermission": "RIU",
+        "defaultViewPermission": "N",
+        "defaultFunctionPermission": "X",
+        "globals": [
+        ],
+        "apiVisibility": {
+          "table": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "view": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "resource": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "procedure": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "metatable": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "function": {
+            "isRestricted": false,
+            "restrictedTo": null
+          }
+        },
+        "entityPermission": {
+        },
+        "functionPermission": {
+        }
+      },
+      "{f}CS_FSD_USER.json": {
+        "name": "CS_FSD_USER",
+        "description": null,
+        "defaultTablePermission": "RIU",
+        "defaultViewPermission": "RIU",
+        "defaultFunctionPermission": "X",
+        "globals": [
+        ],
+        "apiVisibility": {
+          "table": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "view": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "resource": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "procedure": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "metatable": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "function": {
+            "isRestricted": false,
+            "restrictedTo": null
+          }
+        },
+        "entityPermission": {
+        },
+        "functionPermission": {
+        }
+      },
+      "{f}CS_MAS.json": {
+        "name": "CS_MAS",
+        "description": "Manager Assist Specialist",
+        "defaultTablePermission": "RIU",
+        "defaultViewPermission": "RIU",
+        "defaultFunctionPermission": "X",
+        "globals": [
+        ],
+        "apiVisibility": {
+          "table": {
+            "isRestricted": true,
+            "restrictedTo": [
+            ]
+          },
+          "view": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "resource": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "procedure": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "metatable": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "function": {
+            "isRestricted": false,
+            "restrictedTo": null
+          }
+        },
+        "entityPermission": {
+        },
+        "functionPermission": {
+        }
+      },
+      "{f}CS_MGR.json": {
+        "name": "CS_MGR",
+        "description": "Mgr Customer Service",
+        "defaultTablePermission": "RIU",
+        "defaultViewPermission": "RIU",
+        "defaultFunctionPermission": "X",
+        "globals": [
+        ],
+        "apiVisibility": {
+          "table": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "view": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "resource": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "procedure": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "metatable": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "function": {
+            "isRestricted": false,
+            "restrictedTo": null
+          }
+        },
+        "entityPermission": {
+        },
+        "functionPermission": {
+        }
+      },
+      "{f}CS_SRCSS.json": {
+        "name": "CS_SRCSS",
+        "description": null,
+        "defaultTablePermission": "RIU",
+        "defaultViewPermission": "RIU",
+        "defaultFunctionPermission": "X",
+        "globals": [
+        ],
+        "apiVisibility": {
+          "table": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "view": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "resource": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "procedure": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "metatable": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "function": {
+            "isRestricted": false,
+            "restrictedTo": null
+          }
+        },
+        "entityPermission": {
+        },
+        "functionPermission": {
+        }
+      },
+      "{f}CS_SRMGR.json": {
+        "name": "CS_SRMGR",
+        "description": "Sr Mgr Customer Service",
+        "defaultTablePermission": "RIU",
+        "defaultViewPermission": "RIU",
+        "defaultFunctionPermission": "X",
+        "globals": [
+        ],
+        "apiVisibility": {
+          "table": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "view": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "resource": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "procedure": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "metatable": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "function": {
+            "isRestricted": false,
+            "restrictedTo": null
+          }
+        },
+        "entityPermission": {
+        },
+        "functionPermission": {
+        }
+      },
+      "{f}CS_WFM.json": {
+        "name": "CS_WFM",
+        "description": null,
+        "defaultTablePermission": "RIU",
+        "defaultViewPermission": "RIU",
+        "defaultFunctionPermission": "X",
+        "globals": [
+        ],
+        "apiVisibility": {
+          "table": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "view": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "resource": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "procedure": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "metatable": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "function": {
+            "isRestricted": false,
+            "restrictedTo": null
+          }
+        },
+        "entityPermission": {
+        },
+        "functionPermission": {
+        }
+      },
+      "{f}Full$0020access.json": {
+        "name": "Full access",
+        "description": "Full access to everything in this project",
+        "defaultTablePermission": "A",
+        "defaultViewPermission": "R",
+        "defaultFunctionPermission": "X",
+        "globals": [
+        ],
+        "apiVisibility": {
+          "table": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "view": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "resource": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "procedure": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "metatable": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "function": {
+            "isRestricted": false,
+            "restrictedTo": null
+          }
+        },
+        "entityPermission": {
+        },
+        "functionPermission": {
+        }
+      },
+      "{f}IT_TEST_ADMIN.json": {
+        "name": "IT_TEST_ADMIN",
+        "description": null,
+        "defaultTablePermission": "RIU",
+        "defaultViewPermission": "RIU",
+        "defaultFunctionPermission": "X",
+        "globals": [
+        ],
+        "apiVisibility": {
+          "table": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "view": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "resource": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "procedure": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "metatable": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "function": {
+            "isRestricted": false,
+            "restrictedTo": null
+          }
+        },
+        "entityPermission": {
+        },
+        "functionPermission": {
+        }
+      },
+      "{f}IT_TEST_USER.json": {
+        "name": "IT_TEST_USER",
+        "description": null,
+        "defaultTablePermission": "RIU",
+        "defaultViewPermission": "RIU",
+        "defaultFunctionPermission": "X",
+        "globals": [
+        ],
+        "apiVisibility": {
+          "table": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "view": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "resource": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "procedure": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "metatable": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "function": {
+            "isRestricted": false,
+            "restrictedTo": null
+          }
+        },
+        "entityPermission": {
+        },
+        "functionPermission": {
+        }
+      },
+      "{f}Read$0020only.json": {
+        "name": "Read only",
+        "description": "Read-only access to everything in this project",
+        "defaultTablePermission": "R",
+        "defaultViewPermission": "R",
+        "defaultFunctionPermission": "X",
+        "globals": [
+        ],
+        "apiVisibility": {
+          "table": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "view": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "resource": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "procedure": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "metatable": {
+            "isRestricted": false,
+            "restrictedTo": null
+          },
+          "function": {
+            "isRestricted": false,
+            "restrictedTo": null
+          }
+        },
+        "entityPermission": {
+        },
+        "functionPermission": {
+        }
+      }
+    },
+    "{d}authtokens": {
+      "{f}ReadMe.md": "# AUTHTOKENS\nThis contains statically defined API Keys (Auth Tokens) for this project.\nDynamically created keys (using @authentication service) are NOT exported.\n",
+      "{f}Admin$0020key.json": {
+        "name": "Admin key",
+        "authToken": "LACadminAuth",
+        "description": null,
+        "userIdentifier": null,
+        "isActive": true,
+        "expiration": null,
+        "logging": "*=FINE",
+        "roles": [
+          "Full access"
+        ],
+        "globals": {
+        }
+      }
+    },
+    "{d}users": null
+  },
+  "{d}sorts": {
+    "{f}ReadMe.md": "# SORTS\nThis folder contains definitions for sorts.\n"
+  },
+  "{d}timers": {
+    "{f}ReadMe.md": "# TIMERS\nThis folder contains definitions for timers.\n"
+  },
+  "{d}topics": {
+    "{f}ReadMe.md": "# TOPICS\nThis folder contains definitions for topics.\n",
+    "{f}UID.json": {
+      "name": "UID",
+      "color": "#faf89c",
+      "summary": "Maintain CREATE_UID, UPDATE_UID"
+    },
+    "{f}UID.html": "<p>Maintain UID fields</p>\n"
+  },
+  "{f}issues.json": [
+  ]
+}
