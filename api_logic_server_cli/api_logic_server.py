@@ -12,7 +12,7 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "09.03."
+__version__ = "09.03.00"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
     "\t09/14/2023 - 09.03.00: Oracle support \n"\
