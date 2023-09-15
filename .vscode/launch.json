@@ -424,7 +424,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "7 - ORACLE",
+            "name": "7 - ORACLE-HR",
             "type": "python",
             "request": "launch",
             "cwd": "${workspaceFolder}/api_logic_server_cli",
@@ -433,7 +433,7 @@
             "redirectOutput": true,
             "args": [
                 "create",
-                "--project_name=../../../servers/Oracle",
+                "--project_name=../../../servers/oracle-hr",
                 "--db_url=oracle-hr"],
             "console": "integratedTerminal"
         },
