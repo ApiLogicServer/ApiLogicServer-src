@@ -127,6 +127,10 @@ class ImportCollector(OrderedDict):
                 """
                 pkgname = 'sqlalchemy' if type_.__name__ in sqlalchemy.__all__ else type_.__module__
         type_name = type_.__name__
+        if type_name == "CHAR":  
+            # render_column_type() uses String for CHAR (e.g., oracle hr.countries)
+            self.add_literal_import(pkgname, 'String') 
+            debug_stop = "target type"
         self.add_literal_import(pkgname, type_name)  # (sqlalchemy, Column | Integer | String...)
 
     def add_literal_import(self, pkgname, name):
@@ -224,6 +228,9 @@ class Model(object):
 
         for column in self.table.columns:
             if self.table.name == "productlines" and column.name == "image":
+                if sqlalchemy_2_db:
+                    debug_stop = f'add_imports - target column stop - {column.type}'
+            if self.table.name == "countries" and column.name == "country_id":
                 if sqlalchemy_2_db:
                     debug_stop = f'add_imports - target column stop - {column.type}'
             collector.add_import(column.type)
