@@ -242,6 +242,8 @@ There are a few articles that provide some orientation to API Logic Server:
 
 ### Change Log
 
+09/08/2023 - 09.03.00: Oracle support
+
 09/08/2023 - 09.02.23: Fix Issue 16 - Incorrect admin.yml when table name <> class name
 
 08/22/2023 - 09.02.18: Devops container/compose, Multi-arch dockers, add-auth with db_url, auth docker dbs
