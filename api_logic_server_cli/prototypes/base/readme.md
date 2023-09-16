@@ -188,3 +188,9 @@ This generated project also contains a React Admin app:
 * Multi-table - master / details (with tab sheets)
 * Intelligent layout - favorite fields first, predictive joins, etc
 * Logic Aware - updates are monitored by business logic
+
+&nbsp;
+
+### Python Tips
+
+If you are new to Python, check out [these tips](https://apilogicserver.github.io/Docs/Tech-Python/).
