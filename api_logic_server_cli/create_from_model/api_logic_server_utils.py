@@ -66,6 +66,8 @@ def get_abs_db_url(msg, project: Project):
 
     handle db_url abbreviations (nw, nw-, todo, allocation, etc)
 
+         * https://apilogicserver.github.io/Docs/Data-Model-Examples/
+
     but NB: we copy sqlite db to <project>/database - see create_project_with_nw_samples (below)
 
     also: compute physical nw db name (usually nw-gold) to be used for copy

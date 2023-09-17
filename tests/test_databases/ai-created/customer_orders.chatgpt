@@ -1,0 +1,6 @@
+Create a database for customers, orders, items and product.  
+
+Create a few rows of customer and product data.
+
+Maintain the customer's balance as the sum of the unshipped orders, and ensure it does not exceed the credit limit.  Derive items price from the product unit price.
+

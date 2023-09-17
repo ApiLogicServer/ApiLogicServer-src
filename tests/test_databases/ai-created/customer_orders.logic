@@ -1,0 +1,33 @@
+CREATE OR REPLACE FUNCTION update_customer_balance()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.ShipDate IS NULL THEN
+        -- Calculate and update the customer's balance for unshipped orders
+        UPDATE Customers
+        SET Balance = Balance + (
+            SELECT SUM(Products.UnitPrice * OrderItems.Quantity)
+            FROM OrderItems
+            INNER JOIN Products ON OrderItems.ProductID = Products.ProductID
+            WHERE OrderItems.OrderID = NEW.OrderID
+        )
+        WHERE Customers.CustomerID = NEW.CustomerID;
+
+        -- Check if the updated balance exceeds the credit limit
+        IF NEW.Balance + (
+            SELECT SUM(Products.UnitPrice * OrderItems.Quantity)
+            FROM OrderItems
+            INNER JOIN Products ON OrderItems.ProductID = Products.ProductID
+            WHERE OrderItems.OrderID = NEW.OrderID
+        ) > NEW.CreditLimit THEN
+            RAISE EXCEPTION 'Customer exceeds credit limit.';
+        END IF;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_customer_balance_trigger
+BEFORE INSERT OR UPDATE ON Orders
+FOR EACH ROW
+EXECUTE FUNCTION update_customer_balance();

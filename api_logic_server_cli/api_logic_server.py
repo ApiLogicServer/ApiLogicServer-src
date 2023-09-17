@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "09.03.01"
+__version__ = "09.03.03"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t09/15/2023 - 09.03.01: Python readme link \n"\
+    "\t09/16/2023 - 09.03.03: Sqlite chatgpt cust_orders, Python readme link, class creation cleanup \n"\
     "\t09/14/2023 - 09.03.00: Oracle support \n"\
     "\t09/09/2023 - 09.02.24: Cleanup of table vs. class \n"\
     "\t09/08/2023 - 09.02.23: Fix Issue 16 - Incorrect admin.yml when table name <> class name \n"\
@@ -333,6 +333,12 @@ def create_project_with_nw_samples(project, msg: str) -> str:
             proto_dir = (Path(api_logic_server_dir_str)).\
                 joinpath('prototypes/postgres')
             recursive_overwrite(proto_dir, project.project_directory)
+
+        if "sqlite" in project.db_url:
+            log.debug(".. ..Copy in sqlite devops")
+            proto_dir = (Path(api_logic_server_dir_str)).\
+                joinpath('prototypes/sqlite')
+            recursive_overwrite(proto_dir, project.project_directory)        
 
         create_utils.replace_string_in_file(search_for="creation-date",
                             replace_with=str(datetime.datetime.now().strftime("%B %d, %Y %H:%M:%S")),
@@ -1274,9 +1280,8 @@ def key_module_map():
     create_project_with_nw_samples()                        # clone project, overlay nw
     model_creation_services = ModelCreationServices()       # creates resource_list (python db model); ctor calls...
     def and_the_ctor_calls():
-        sqlacodegen_wrapper.create_models_py({})            # creates models.py via *sqlacodegen*
-        sqlacodegen_wrapper.CodeGenerator.render_class()    # sqlacodegen - creates models_py as string
-        model_creation_services.create_resource_list()      # creates resource_list via *dynamic import* of models.py
+        model_creation_services.create_model_classes_and_resource_list()  # which uses..
+        sqlacodegen_wrapper.create_models_memstring()       # open db, call sqlacodegen
     invoke_creators(model_creation_services)                # creates api & ui, via create_from_model...
     api_expose_api_models_creator.create()                  # creates api/expose_api_models.py, key input to SAFRS        
     ui_admin_creator.create()                               # creates ui/admin/admin.yaml from resource_list

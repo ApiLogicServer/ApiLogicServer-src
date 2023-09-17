@@ -91,7 +91,7 @@ class ModelCreationServices(object):
         """
         self.resource_list : Dict[str, Resource] = dict()
         self.schema_loaded = False
-        """ means entities loaded - READY to build resour"""
+        """ means entities loaded - READY to build resources """
 
         self.version = version
         self.my_children_list = my_children_list
@@ -115,11 +115,15 @@ class ModelCreationServices(object):
         # create resource_list
         #################################################################
 
-        model_file_name, msg = sqlacodegen_wrapper.create_models_py(
-            model_creation_services = self,
-            abs_db_url= self.project.abs_db_url,
-            project_directory = project_directory)
-        self.create_resource_list(model_file_name, msg)  # whether created or used, build resource_list
+        old_way = False
+        if old_way:
+            model_file_name, msg = sqlacodegen_wrapper.create_models_py(
+                model_creation_services = self,
+                abs_db_url= self.project.abs_db_url,
+                project_directory = project_directory)
+            self.create_resource_list(model_file_name, msg)  # whether created or used, build resource_list
+        else:
+            self.resource_list = self.create_model_classes_and_resource_list()
 
 
     @staticmethod
@@ -162,17 +166,6 @@ class ModelCreationServices(object):
         if os.name == "nt":
             result = path.replace('/', '\\')
         return result
-
-    @staticmethod
-    def create_app_zzz(config_filename=None, host="localhost"):
-        import safrs
-
-        app = Flask("API Logic Server")
-        import api_logic_server_cli.config as app_logic_server_config
-        app.config.from_object(app_logic_server_config.Config)
-        db = safrs.DB
-        db.init_app(app)
-        return app
 
     def list_columns(self, a_table_def: MetaDataTable) -> str:
         """
@@ -606,9 +599,9 @@ class ModelCreationServices(object):
             self.engine.dispose()
 
 
-    #############################
-    # get meta data
-    #############################
+    ##############################
+    # get meta data  TODO OLD CODE
+    ##############################
 
     def create_resource_list(self, models_file, msg):
         """
@@ -736,3 +729,170 @@ class ModelCreationServices(object):
                 traceback.print_exc()
                 pass
     
+
+    def dynamic_import_model(self, msg) -> bool:
+        """
+
+        Dynamic import of database/models.py (importlib.import_module(models_name)
+
+        msg is for console log:
+
+             * '.. .. ..Create resource_list - dynamic import database/models.py, inspect 17 classes'
+
+             * '.. .. ..Create resource_list - dynamic import database/authentication_models.py, inspect 4 classes'
+
+        Args:
+            msg (str): console log message (see above)
+
+        Returns:
+            bool: model successfully imported
+            str:  models file name ('models', 'authentication_models')
+        """
+
+        project_path = self.project_directory
+        debug_dynamic_loader = False
+        if debug_dynamic_loader:
+            log.debug(f'\n\n ### INSTALL cwd = {os.getcwd()}')
+            log.debug(f'\n*** DEBUG/import - self.project_directory={self.project_directory}')
+            log.debug(f'*** DEBUG/import - project_abs_path={project_path}')
+        model_imported = False
+        path_to_add = project_path if self.project.command == "create-ui" else \
+            project_path + "/database"  # for Api Logic Server projects
+        sys.path.insert(0, self.project_directory)    # e.g., /Users/val/dev/servers/install/ApiLogicServer
+        sys.path.insert(0, path_to_add)    # e.g., /Users/val/dev/servers/install/ApiLogicServer/database
+        log.debug(msg + " in <project>/database")  #  + path_to_add)
+        # sys.path.insert( 0, '/Users/val/dev/servers/install/ApiLogicServer/ApiLogicProject/database')
+        # sys.path.insert( 0, '/Users/val/dev/servers/install/ApiLogicServer/ApiLogicProject')  # AH HA!!
+        # sys.path.insert( 0, 'ApiLogicProject')  # or, AH HA!!
+        # log.debug(f'*** DEBUG - sys.path={sys.path}')
+        try:
+            # credit: https://www.blog.pythonlibrary.org/2016/05/27/python-201-an-intro-to-importlib/
+            models_name = 'models'
+            if self.project.bind_key is not None and self.project.bind_key != "":
+              models_name = self.project.bind_key + "_" + models_name
+            importlib.import_module(models_name)
+            model_imported = True
+        except:
+            log.info(f'\n===> ERROR - Dynamic model import failed in {path_to_add} - project run will fail')
+            log.info(  f'===>         Typically caused by unexpected data types - compare schema to models.py')
+            traceback.print_exc()
+            pass  # try to continue to enable manual fixup
+        return model_imported, models_name
+
+    
+    def resource_list_from_safrs_metadata(self, models_name: str):
+        """
+        1. Inspect imported models.py (inspect.getmembers)
+
+        2. Create/return resource_list using safrs meta data
+
+                * Iterate cls_members, access safrs meta data
+        
+        Args:
+            models_name (str): models file name ('models', 'authentication_models')
+
+        Returns:
+            Dict[str, Resource]: resource_list
+        """
+
+        resource_list: Dict[str, Resource] = dict()
+        """ will be returned and assigned to ModelCreationServices.resource_list """
+        
+        orm_class = None
+
+        cls_members = inspect.getmembers(sys.modules[models_name], inspect.isclass)
+        for each_cls_member in cls_members:
+            each_class_def_str = str(each_cls_member)
+            #  such as ('Category', <class 'models.Category'>)
+            if (f"'{models_name}." in str(each_class_def_str) and
+                    "Ab" not in str(each_class_def_str)):
+                resource_name = each_cls_member[0]
+                resource_class = each_cls_member[1]
+                table_name = resource_class.__tablename__  # FIXME _s_collection_name
+                if table_name.startswith("Category"):
+                    debug_str = "Excellent breakpoint"
+                resource = Resource(name=resource_name, model_creation_services=self)
+                self.metadata = resource_class.metadata
+                self.table_to_class_map.update({table_name: resource_name})   # required for ui_basic_web_app
+                if resource_name not in resource_list:
+                    resource_list[resource_name] = resource
+                resource = resource_list[resource_name]
+                resource.table_name = table_name
+                resource_data = {"type": resource_class._s_type}  # todo what's this?
+                resource_data = {"type": resource_name}
+                for each_attribute in resource_class._s_columns:
+                    attr_type = str(each_attribute.type)
+                    resource_attribute = ResourceAttribute(each_attribute=each_attribute,
+                                                            resource=resource)
+                for rel_name, rel in resource_class._s_relationships.items():
+                    # relation = {}
+                    # relation["direction"] = "toone" if rel.direction == MANYTOONE else "tomany"
+                    if rel.direction == ONETOMANY:  # process only parents of this child
+                        debug_str = "onetomany"
+                    else:  # many to one (parent for this child) - version <= 3.50.43
+                        debug_rel = False
+                        if debug_rel:
+                            debug_rel_str = f'Debug resource_class._s_relationships {resource_name}: ' \
+                                            f'parent_role_name (aka rel_name): {rel_name},    ' \
+                                            f'child_role_name (aka rel.back_populates): {rel.back_populates}'
+                            log.debug(debug_rel_str)
+
+                        parent_role_name = rel_name
+                        child_role_name = rel.back_populates
+                        do_patch_self_reln = False  # roles backward for self-relns, but addressed in codegen
+                        if do_patch_self_reln and resource_name == rel.mapper.class_._s_class_name:
+                            parent_role_name = rel.back_populates
+                            child_role_name = rel_name
+                        relationship = ResourceRelationship(parent_role_name=parent_role_name,
+                                                            child_role_name=child_role_name)
+                        for each_fkey in rel._calculated_foreign_keys:
+                            pair = ("?", each_fkey.description)
+                            relationship.parent_child_key_pairs.append(pair)
+                        resource.parents.append(relationship)
+                        relationship.child_resource = resource_name
+                        parent_resource_name = str(rel.target.name)
+                        parent_resource_name = rel.mapper.class_._s_class_name
+                        relationship.parent_resource = parent_resource_name
+                        if parent_resource_name not in resource_list:
+                            parent_resource = Resource(name=parent_resource_name, model_creation_services=self)
+                            resource_list[parent_resource_name] = parent_resource
+                        parent_resource = resource_list[parent_resource_name]
+                        parent_resource.children.append(relationship)
+            pass
+        pass
+        # debug_str = f'setting resource_list: {str(resource_list)}'
+        # self.resource_list = resource_list  # model loaded - excellent breakpoint location
+
+        if orm_class is not None:
+            log.debug(f'.. .. ..Dynamic model import successful '
+                        f'({len(self.table_to_class_map)} classes'
+                        f') -'
+                        f' getting metadata from {str(orm_class)}')
+        return resource_list
+
+    
+    #################################################################
+    # Introspect data model (sqlacodegen) & create database/models.py
+    # create/return  resource_list
+    #################################################################
+
+    def create_model_classes_and_resource_list(self):
+        """ 
+        1. Invoke sqlacodegen_wrapper.create_models_py to create models classes in database/models.py
+
+              * Main code: sqlacodegen_wrapper.create_models_memstring() 
+
+        2. Dynamic import of models.py
+
+        3. Use Safrs metadata to create ModelCreationServices.resource_list
+
+        self.resource_list later used to drive create_from_model modules - API, UI
+        """
+
+        model_file_name, msg = sqlacodegen_wrapper.create_models_py(
+            model_creation_services = self,
+            abs_db_url= self.project.abs_db_url,
+            project_directory = self.project_directory)
+        model_imported, models_name = self.dynamic_import_model(msg)
+        return_resource_list = self.resource_list_from_safrs_metadata(models_name=models_name)  # whether created or used, build resource_list
+        return return_resource_list

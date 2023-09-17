@@ -1,0 +1,39 @@
+# First, build image: sh devops/docker-image/build_image.sh .
+
+# ALERT - this is a pre-configured for the sqlite databases
+# see https://apilogicserver.github.io/Docs/Database-Docker/#classicmodels-mysql-docker
+# and, in the case of demo (sqlite), comment them out
+
+# cd <project>  
+# sh ./devops/docker-compose-dev-local/docker-compose.sh
+# --> builds, runs at localhost:5656
+
+version: "3.5"
+
+services:
+
+    sqlite3:
+      image: nouchka/sqlite3:latest
+      stdin_open: true
+      tty: true
+      volumes:
+        # local:path-in-container (I guess sql presumes /root/db?)
+        - ../../database/:/root/db/
+        # - /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/servers/customer_orders/database:/root/db/
+      # thanks: https://stackoverflow.com/questions/65811608/how-to-connect-flask-app-to-sqlite-db-running-in-docker
+
+    api-logic-server:
+        image: apilogicserver/customer_orders
+        environment:
+          - APILOGICPROJECT_VERBOSE=true
+          - SECURITY_ENABLED=false
+          ## todid - database uri's:
+          - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI=sqlite:////my/sqlite/path/db.sqlite
+          # - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI_AUTHENTICATION=postgresql://postgres:p@postgres-service/authdb
+        expose:
+          - 5656
+        ports:
+          - 5656:5656
+        volumes:
+          - ../:/app
+          - ../../database/:/my/sqlite/path/

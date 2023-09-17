@@ -233,9 +233,11 @@ def create_models_py(model_creation_services: ModelCreationServices, abs_db_url:
                 # model_full_file_name = "/".join(model_file_name.split("/")[:-1]) + "/" + model_creation_services.project.bind_key + "_" + model_file_name.split("/")[-1]
             log.debug(f' a.  Create Models - create database/{project.model_file_name}, using sqlcodegen')
             log.debug(f'.. .. ..For database:  {abs_db_url}')
+
             models_mem, num_models = create_models_memstring(code_gen_args)  # calls sqlcodegen
             write_models_py(model_full_file_name, models_mem)
             model_creation_services.schema_loaded = True
+            
         else:  # use pre-existing (or repaired) existing model file
             model_full_file_name = str(Path(project_directory).joinpath('database/models.py'))
             use_model_path = Path(model_creation_services.project.use_model).absolute()
@@ -254,7 +256,13 @@ def create_models_py(model_creation_services: ModelCreationServices, abs_db_url:
 
 
 def create_models_memstring(args) -> str:
-    """ Get models as string, using codegen & SQLAlchemy metadata
+    """ 
+    
+    Returns models as string
+    
+    Opens Database (create_engine)
+
+    Calls sqlacodegen, which uses SQLAlchemy metadata
 
     Args:
         args (_type_): dict of codegen args (url etc)
@@ -319,6 +327,7 @@ def create_models_memstring(args) -> str:
     args.model_creation_services.session = Session()
     capture = StringIO()  # generate and return the model
     # outfile = io.open(args.outfile, 'w', encoding='utf-8') if args.outfile else capture # sys.stdout
+
     generator = CodeGenerator(metadata, args.noindexes, args.noconstraints,
                               args.nojoined, args.noinflect, args.noclasses, args.model_creation_services)
     args.model_creation_services.metadata = generator.metadata
