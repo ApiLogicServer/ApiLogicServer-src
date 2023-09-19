@@ -422,7 +422,7 @@ def docker_creation_tests(api_logic_server_tests_path):
     import platform
     machine = platform.machine()
     api_logic_server_home_path = api_logic_server_tests_path.parent
-    build_cmd = 'run_command docker build -f docker/api_logic_server_all.Dockerfile -t apilogicserver/api_logic_server_local --rm .'
+    build_cmd = 'run_command docker build -f docker/api_logic_server.Dockerfile -t apilogicserver/api_logic_server_local --rm .'
     print(f'\n\ndocker_creation_tests: 1. Create local docker image: {build_cmd}')
     build_container = run_command(build_cmd,
         cwd=api_logic_server_home_path,

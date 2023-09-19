@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "09.03.04"
+__version__ = "09.03.05"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t09/19/2023 - 09.03.05: Sqlite relative path \n"\
     "\t09/18/2023 - 09.03.04: Sqlite chatgpt cust_orders, Python readme link, class creation cleanup \n"\
     "\t09/14/2023 - 09.03.00: Oracle support \n"\
     "\t09/09/2023 - 09.02.24: Cleanup of table vs. class \n"\
@@ -394,6 +395,7 @@ def create_project_with_nw_samples(project, msg: str) -> str:
             # build this:  SQLALCHEMY_DATABASE_URI = sqlite:///{str(project_abs_dir.joinpath('database/db.sqlite'))}
             # into  this:  SQLALCHEMY_DATABASE_URI = f"replace_db_url"
             replace_db_url_value = "sqlite:///{str(project_abs_dir.joinpath('database/db.sqlite'))}"
+            replace_db_url_value = f"sqlite:///../database/db.sqlite"  # relative for portable sqlite
 
             if os.name == "nt":  # windows
                 target_db_loc_actual = get_windows_path_with_slashes(target_db_loc_actual)
@@ -827,6 +829,7 @@ class ProjectRun(Project):
             # into  this:  {CONFIG_URI} = '{config_uri_value}'
             file_name = f'"database/{self.bind_key}_db.sqlite"'
             config_uri_value = "f'sqlite:///{str(project_abs_dir.joinpath(" + file_name + "))}'"
+            config_uri_value = f"'sqlite:///../database/authentication_db.sqlite'"  # portable sqlite
             log.debug(f'.. .. ..From {db_loc}')
 
 

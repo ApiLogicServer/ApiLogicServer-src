@@ -22,9 +22,9 @@ services:
           - APILOGICPROJECT_CLIENT_URI=//apilogicserver_project_name_lower.azurewebsites.net
           # - APILOGICPROJECT_HTTP_SCHEME=https
           - PYTHONPATH=/app/ApiLogicProject 
-          ## todid - database uri's:
-          - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI=sqlite:////my/sqlite/path/db.sqlite
-          - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI_AUTHENTICATION=sqlite:////my/sqlite/path/authentication_db.sqlite
+          ## todid - use default database uri's:
+          # - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI=sqlite:////my/sqlite/path/db.sqlite
+          # - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI_AUTHENTICATION=sqlite:////my/sqlite/path/authentication_db.sqlite
 
         expose:
            - 5656

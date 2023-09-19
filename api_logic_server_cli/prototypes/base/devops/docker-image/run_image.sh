@@ -4,6 +4,10 @@
 # then run to start container
 # see https://stackoverflow.com/questions/30494050/how-do-i-pass-environment-variables-to-docker-containers
 
+#    in terminal (not in VSCode docker - docker is not installed there)
+#    $ cd <your project>
+#    $ sh devops/docker-image/run_image.sh .
+
 # Start container, but with bash (does not run app)
 # Then, explore your container - e.g.
 #    env # see environment variables
