@@ -250,9 +250,13 @@ def sys_info(flask_app_config):
 
     print("")
     hostname = socket.gethostname()
+    IPAddr = 'unknown'
     try:
         local_ip = socket.gethostbyname(hostname)
+        IPAddr=socket.gethostbyname(hostname) 
     except:
         local_ip = f"Warning - Failed local_ip = socket.gethostbyname(hostname) with hostname: {hostname}"
 
-    print(f"hostname={hostname} on local_ip={local_ip}\n\n")
+    print(f"hostname={hostname} on local_ip={local_ip}, IPAddr={IPAddr}\n\n")
+
+    print(f"os.getcwd()={os.getcwd()}\n\n")

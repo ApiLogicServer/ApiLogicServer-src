@@ -433,8 +433,8 @@
             "argsExpansion": "none",
             "args": ["create",
             "--infer_primary_key",
-            "--project_name=../../../servers/customer_orders",
-                "--db_url=sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/tests/test_databases/ai-created/customer_orders.sqlite"],
+            "--project_name=../../../servers/ai_customer_orders",
+                "--db_url=sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/tests/test_databases/ai-created/ai_customer_orders.sqlite"],
             "console": "integratedTerminal"
         },
         {

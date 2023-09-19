@@ -12,6 +12,7 @@ version: "3.5"
 services:
 
     sqlite3:
+      # hmm... runs, but not access; SQLAlchemy syntax for sqlite service?  (it's just files below)
       image: nouchka/sqlite3:latest
       stdin_open: true
       tty: true
@@ -25,8 +26,8 @@ services:
           - APILOGICPROJECT_VERBOSE=true
           - SECURITY_ENABLED=true
           ## todid - database uri's:
-          - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI=sqlite:////my/sqlite/path/db.sqlite
-          - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI_AUTHENTICATION=sqlite:////my/sqlite/path/authentication_db.sqlite
+          - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI=sqlite:///../database/db.sqlite
+          - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI_AUTHENTICATION=sqlite:///../database/authentication_db.sqlite
         expose:
           - 5656
         ports:

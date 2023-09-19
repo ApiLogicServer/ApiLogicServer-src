@@ -1,0 +1,301 @@
+Requesting a Cloud Shell.Succeeded. 
+Connecting terminal...
+
+Storage fileshare subscription 7cbce59a-9dd7-4133-9534-62bd6d8b299e is not registered to Microsoft.CloudShell Namespace. Please follow these instructions "https://aka.ms/RegisterCloudShell" to register. In future, unregistered subscriptions will have restricted access to CloudShell service.
+
+val [ ~ ]$ cd ai_customer_orders/
+val [ ~/ai_customer_orders ]$ ls
+api                      config.py  default.env  logging.yml  mypy.ini   requirements.txt  run.sh    templates  ui       venv_setup
+api_logic_server_run.py  database   devops       logic        readme.md  run.ps1           security  test       util.py
+val [ ~/ai_customer_orders ]$ sh devops/docker-compose-dev-azure/azure-deploy.sh
+ 
+..using defaults - press ctl+C to stop run
+ 
+Azure Deploy here - Azure Portal CLI commands to deploy project, 1.0
+ 
+Prereqs
+  1. You have published your project to GitHub: https://github.com/apilogicserver/aicustomerorders.git
+  2. You have built your project image, and pushed it to DockerHub: apilogicserver/aicustomerorders
+ 
+Steps performed on Azure Portal CLI to enable running these commands:
+  # we really only need the docker compose file
+  git clone https://github.com/apilogicserver/aicustomerorders.git
+  cd classicmodels
+ 
+Then, in Azure CLI:
+  sh devops/docker-compose-dev-azure/azure-deploy.sh [ . | args ]
+    . means use defaults:
+        apilogicserver/aicustomerorders:1.0.0
+    <args> = projectname githubaccount dockerrepositoryname resourcegroupname
+ 
+\n... security check complete\n
+Verify settings above, then press ENTER to proceed> 
++ az group create --name aicustomerorders_rg --location westus
+{
+  "id": "/subscriptions/7cbce59a-9dd7-4133-9534-62bd6d8b299e/resourceGroups/aicustomerorders_rg",
+  "location": "westus",
+  "managedBy": null,
+  "name": "aicustomerorders_rg",
+  "properties": {
+    "provisioningState": "Succeeded"
+  },
+  "tags": null,
+  "type": "Microsoft.Resources/resourceGroups"
+}
++ az appservice plan create --name myAppServicePlan --resource-group aicustomerorders_rg --sku S1 --is-linux
+{
+  "elasticScaleEnabled": false,
+  "extendedLocation": null,
+  "freeOfferExpirationTime": null,
+  "geoRegion": "West US",
+  "hostingEnvironmentProfile": null,
+  "hyperV": false,
+  "id": "/subscriptions/7cbce59a-9dd7-4133-9534-62bd6d8b299e/resourceGroups/aicustomerorders_rg/providers/Microsoft.Web/serverfarms/myAppServicePlan",
+  "isSpot": false,
+  "isXenon": false,
+  "kind": "linux",
+  "kubeEnvironmentProfile": null,
+  "location": "westus",
+  "maximumElasticWorkerCount": 1,
+  "maximumNumberOfWorkers": 10,
+  "name": "myAppServicePlan",
+  "numberOfSites": 1,
+  "numberOfWorkers": 1,
+  "perSiteScaling": false,
+  "provisioningState": "Succeeded",
+  "reserved": true,
+  "resourceGroup": "aicustomerorders_rg",
+  "sku": {
+    "capabilities": null,
+    "capacity": 1,
+    "family": "S",
+    "locations": null,
+    "name": "S1",
+    "size": "S1",
+    "skuCapacity": null,
+    "tier": "Standard"
+  },
+  "spotExpirationTime": null,
+  "status": "Ready",
+  "subscription": "7cbce59a-9dd7-4133-9534-62bd6d8b299e",
+  "tags": null,
+  "targetWorkerCount": 0,
+  "targetWorkerSizeId": 0,
+  "type": "Microsoft.Web/serverfarms",
+  "workerTierName": null,
+  "zoneRedundant": false
+}
++ az webapp create --resource-group aicustomerorders_rg --plan myAppServicePlan --name aicustomerorders --multicontainer-config-type compose --multicontainer-config-file devops/docker-compose-dev-azure/docker-compose-dev-azure.yml
+Webapp 'aicustomerorders' already exists. The command will use the existing app's settings.
+{
+  "availabilityState": "Normal",
+  "clientAffinityEnabled": true,
+  "clientCertEnabled": false,
+  "clientCertExclusionPaths": null,
+  "clientCertMode": "Required",
+  "cloningInfo": null,
+  "containerSize": 0,
+  "customDomainVerificationId": "318FE0D0D7F9CFB0E2619FA24C9F6DBFACC9A49BD2773B7A90985638ADED8417",
+  "dailyMemoryTimeQuota": 0,
+  "defaultHostName": "aicustomerorders.azurewebsites.net",
+  "enabled": true,
+  "enabledHostNames": [
+    "aicustomerorders.azurewebsites.net",
+    "aicustomerorders.scm.azurewebsites.net"
+  ],
+  "extendedLocation": null,
+  "ftpPublishingUrl": "ftps://waws-prod-bay-217.ftp.azurewebsites.windows.net/site/wwwroot",
+  "hostNameSslStates": [
+    {
+      "certificateResourceId": null,
+      "hostType": "Standard",
+      "ipBasedSslResult": null,
+      "ipBasedSslState": "NotConfigured",
+      "name": "aicustomerorders.azurewebsites.net",
+      "sslState": "Disabled",
+      "thumbprint": null,
+      "toUpdate": null,
+      "toUpdateIpBasedSsl": null,
+      "virtualIp": null
+    },
+    {
+      "certificateResourceId": null,
+      "hostType": "Repository",
+      "ipBasedSslResult": null,
+      "ipBasedSslState": "NotConfigured",
+      "name": "aicustomerorders.scm.azurewebsites.net",
+      "sslState": "Disabled",
+      "thumbprint": null,
+      "toUpdate": null,
+      "toUpdateIpBasedSsl": null,
+      "virtualIp": null
+    }
+  ],
+  "hostNames": [
+    "aicustomerorders.azurewebsites.net"
+  ],
+  "hostNamesDisabled": false,
+  "hostingEnvironmentProfile": null,
+  "httpsOnly": false,
+  "hyperV": false,
+  "id": "/subscriptions/7cbce59a-9dd7-4133-9534-62bd6d8b299e/resourceGroups/aicustomerorders_rg/providers/Microsoft.Web/sites/aicustomerorders",
+  "identity": null,
+  "inProgressOperationId": null,
+  "isDefaultContainer": null,
+  "isXenon": false,
+  "keyVaultReferenceIdentity": "SystemAssigned",
+  "kind": "app,linux,container",
+  "lastModifiedTimeUtc": "2023-09-18T23:33:40.836666",
+  "location": "West US",
+  "maxNumberOfWorkers": null,
+  "name": "aicustomerorders",
+  "outboundIpAddresses": "20.237.250.92,20.237.250.103,20.237.250.117,20.237.250.145,20.237.250.155,20.237.250.224,40.112.243.103",
+  "possibleOutboundIpAddresses": "20.237.250.92,20.237.250.103,20.237.250.117,20.237.250.145,20.237.250.155,20.237.250.224,20.237.250.71,20.237.251.43,20.237.251.54,20.237.251.56,20.237.250.68,20.237.251.71,20.237.251.140,20.237.251.151,20.237.251.35,20.237.251.98,20.237.251.209,20.237.251.179,20.237.252.48,20.237.252.108,20.237.252.129,20.237.252.162,20.237.249.220,20.237.251.162,40.112.243.103",
+  "publicNetworkAccess": null,
+  "redundancyMode": "None",
+  "repositorySiteName": "aicustomerorders",
+  "reserved": true,
+  "resourceGroup": "aicustomerorders_rg",
+  "scmSiteAlsoStopped": false,
+  "serverFarmId": "/subscriptions/7cbce59a-9dd7-4133-9534-62bd6d8b299e/resourceGroups/aicustomerorders_rg/providers/Microsoft.Web/serverfarms/myAppServicePlan",
+  "siteConfig": {
+    "acrUseManagedIdentityCreds": false,
+    "acrUserManagedIdentityId": null,
+    "alwaysOn": true,
+    "antivirusScanEnabled": null,
+    "apiDefinition": null,
+    "apiManagementConfig": null,
+    "appCommandLine": null,
+    "appSettings": null,
+    "autoHealEnabled": null,
+    "autoHealRules": null,
+    "autoSwapSlotName": null,
+    "azureMonitorLogCategories": null,
+    "azureStorageAccounts": null,
+    "connectionStrings": null,
+    "cors": null,
+    "customAppPoolIdentityAdminState": null,
+    "customAppPoolIdentityTenantState": null,
+    "defaultDocuments": null,
+    "detailedErrorLoggingEnabled": null,
+    "documentRoot": null,
+    "elasticWebAppScaleLimit": 0,
+    "experiments": null,
+    "fileChangeAuditEnabled": null,
+    "ftpsState": null,
+    "functionAppScaleLimit": null,
+    "functionsRuntimeScaleMonitoringEnabled": null,
+    "handlerMappings": null,
+    "healthCheckPath": null,
+    "http20Enabled": true,
+    "http20ProxyFlag": null,
+    "httpLoggingEnabled": null,
+    "ipSecurityRestrictions": [
+      {
+        "action": "Allow",
+        "description": "Allow all access",
+        "headers": null,
+        "ipAddress": "Any",
+        "name": "Allow all",
+        "priority": 2147483647,
+        "subnetMask": null,
+        "subnetTrafficTag": null,
+        "tag": null,
+        "vnetSubnetResourceId": null,
+        "vnetTrafficTag": null
+      }
+    ],
+    "ipSecurityRestrictionsDefaultAction": null,
+    "javaContainer": null,
+    "javaContainerVersion": null,
+    "javaVersion": null,
+    "keyVaultReferenceIdentity": null,
+    "limits": null,
+    "linuxFxVersion": "COMPOSE|dmVyc2lvbjogIjMuNSIKCiMgc2VlIC4vYXp1cmUtZGVwbG95LnNoIGZvciBub3RlcyBvbiBob3cgdG8gcnVuCgpzZXJ2aWNlczoKCiAgICBzcWxpdGUzOgogICAgICAjIGhtbS4uLiBydW5zLCBidXQgbm90IGFjY2VzczsgU1FMQWxjaGVteSBzeW50YXggZm9yIHNxbGl0ZSBzZXJ2aWNlPyAgKGl0J3MganVzdCBmaWxlcyBiZWxvdykKICAgICAgaW1hZ2U6IG5vdWNoa2Evc3FsaXRlMzpsYXRlc3QKICAgICAgc3RkaW5fb3BlbjogdHJ1ZQogICAgICB0dHk6IHRydWUKICAgICAgdm9sdW1lczoKICAgICAgICAtICR7V0VCQVBQX1NUT1JBR0VfSE9NRX0vLi4vLi4vZGF0YWJhc2UvOi9yb290L2RiLwogICAgICAjIHRoYW5rcyAoPyk6IGh0dHBzOi8vc3RhY2tvdmVyZmxvdy5jb20vcXVlc3Rpb25zLzY1ODExNjA4L2hvdy10by1jb25uZWN0LWZsYXNrLWFwcC10by1zcWxpdGUtZGItcnVubmluZy1pbi1kb2NrZXIKICAgICAgIyBodHRwczovL2xlYXJuLm1pY3Jvc29mdC5jb20vZW4tdXMvYXp1cmUvZGV2ZWxvcGVyL3B5dGhvbi90dXRvcmlhbC1jb250YWluZXJpemUtc2ltcGxlLXdlYi1hcHA/dGFicz13ZWItYXBwLWZsYXNrCgogICAgYXBpLWxvZ2ljLXNlcnZlcjoKICAgICAgICBpbWFnZTogYXBpbG9naWNzZXJ2ZXIvYWljdXN0b21lcm9yZGVycwogICAgICAgIGVudmlyb25tZW50OgogICAgICAgICAgLSBBUElMT0dJQ1BST0pFQ1RfVkVSQk9TRT10cnVlCiAgICAgICAgICAtIFNFQ1VSSVRZX0VOQUJMRUQ9dHJ1ZQogICAgICAgICAgLSBBUElMT0dJQ1BST0pFQ1RfQ0xJRU5UX1VSST0vL2FpY3VzdG9tZXJvcmRlcnMuYXp1cmV3ZWJzaXRlcy5uZXQKICAgICAgICAgICMgLSBBUElMT0dJQ1BST0pFQ1RfSFRUUF9TQ0hFTUU9aHR0cHMKICAgICAgICAgIC0gUFlUSE9OUEFUSD0vYXBwL0FwaUxvZ2ljUHJvamVjdCAKICAgICAgICAgICMjIHRvZGlkIC0gZGF0YWJhc2UgdXJpJ3M6CiAgICAgICAgICAtIEFQSUxPR0lDUFJPSkVDVF9TUUxBTENIRU1ZX0RBVEFCQVNFX1VSST1zcWxpdGU6Ly8vLi4vZGF0YWJhc2UvZGIuc3FsaXRlCiAgICAgICAgICAtIEFQSUxPR0lDUFJPSkVDVF9TUUxBTENIRU1ZX0RBVEFCQVNFX1VSSV9BVVRIRU5USUNBVElPTj1zcWxpdGU6Ly8vLi4vZGF0YWJhc2UvYXV0aGVudGljYXRpb25fZGIuc3FsaXRlCgogICAgICAgIGV4cG9zZToKICAgICAgICAgICAtIDU2NTYKICAgICAgICBwb3J0czoKICAgICAgICAgICAgLSA1NjU2OjU2NTYKICAgICAgICB2b2x1bWVzOgogICAgICAgICAgICAtICR7V0VCQVBQX1NUT1JBR0VfSE9NRX0vYWljdXN0b21lcm9yZGVyczovYXBwCiAgICAgICAgICAgIC0gJHtXRUJBUFBfU1RPUkFHRV9IT01FfS9ob21lL2FwaV9sb2dpY19wcm9qZWN0L2RhdGFiYXNlLzovbXkvc3FsaXRlL3BhdGgvCiAgICAgICAgIyBjb250YWluZXIgc2hvdWxkIHN0YXJ0IGF1dG9tYXRpY2FsbHkgLSBjb21tYW5kOiAgYXBpX2xvZ2ljX3NlcnZlcl9ydW4ucHkKICAgICAgICB3b3JraW5nX2RpcjogL2hvbWUvYXBpX2xvZ2ljX3Byb2plY3QK",
+    "loadBalancing": null,
+    "localMySqlEnabled": null,
+    "logsDirectorySizeLimit": null,
+    "machineKey": null,
+    "managedPipelineMode": null,
+    "managedServiceIdentityId": null,
+    "metadata": null,
+    "minTlsCipherSuite": null,
+    "minTlsVersion": null,
+    "minimumElasticInstanceCount": 0,
+    "netFrameworkVersion": null,
+    "nodeVersion": null,
+    "numberOfWorkers": 1,
+    "phpVersion": null,
+    "powerShellVersion": null,
+    "preWarmedInstanceCount": null,
+    "publicNetworkAccess": null,
+    "publishingPassword": null,
+    "publishingUsername": null,
+    "push": null,
+    "pythonVersion": null,
+    "remoteDebuggingEnabled": null,
+    "remoteDebuggingVersion": null,
+    "requestTracingEnabled": null,
+    "requestTracingExpirationTime": null,
+    "routingRules": null,
+    "runtimeADUser": null,
+    "runtimeADUserPassword": null,
+    "scmIpSecurityRestrictions": [
+      {
+        "action": "Allow",
+        "description": "Allow all access",
+        "headers": null,
+        "ipAddress": "Any",
+        "name": "Allow all",
+        "priority": 2147483647,
+        "subnetMask": null,
+        "subnetTrafficTag": null,
+        "tag": null,
+        "vnetSubnetResourceId": null,
+        "vnetTrafficTag": null
+      }
+    ],
+    "scmIpSecurityRestrictionsDefaultAction": null,
+    "scmIpSecurityRestrictionsUseMain": null,
+    "scmMinTlsVersion": null,
+    "scmType": null,
+    "sitePort": null,
+    "storageType": null,
+    "supportedTlsCipherSuites": null,
+    "tracingOptions": null,
+    "use32BitWorkerProcess": null,
+    "virtualApplications": null,
+    "vnetName": null,
+    "vnetPrivatePortsCount": null,
+    "vnetRouteAllEnabled": null,
+    "webSocketsEnabled": null,
+    "websiteTimeZone": null,
+    "winAuthAdminState": null,
+    "winAuthTenantState": null,
+    "windowsConfiguredStacks": null,
+    "windowsFxVersion": null,
+    "xManagedServiceIdentityId": null
+  },
+  "slotSwapStatus": null,
+  "state": "Stopped",
+  "storageAccountRequired": false,
+  "suspendedTill": null,
+  "tags": null,
+  "targetSwapSlot": null,
+  "trafficManagerHostNames": null,
+  "type": "Microsoft.Web/sites",
+  "usageState": "Normal",
+  "virtualNetworkSubnetId": null,
+  "vnetContentShareEnabled": false,
+  "vnetImagePullEnabled": false,
+  "vnetRouteAllEnabled": false
+}
++ set +x
+enable logging: https://learn.microsoft.com/en-us/azure/app-service/troubleshoot-diagnostic-logs#enable-application-logging-linuxcontainer
+   To enable web server logging for Windows apps in the Azure portal, navigate to your app and select App Service logs
+   For Web server logging, select Storage to store logs on blob storage, or File System to store logs on the App Service file system
+ 
+Completed.  Browse to the app:
+https://aicustomerorders.azurewebsites.net
+ 
+val [ ~/ai_customer_orders ]$ 

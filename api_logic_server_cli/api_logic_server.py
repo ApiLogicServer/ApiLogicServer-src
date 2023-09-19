@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "09.03.03"
+__version__ = "09.03.04"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t09/16/2023 - 09.03.03: Sqlite chatgpt cust_orders, Python readme link, class creation cleanup \n"\
+    "\t09/18/2023 - 09.03.04: Sqlite chatgpt cust_orders, Python readme link, class creation cleanup \n"\
     "\t09/14/2023 - 09.03.00: Oracle support \n"\
     "\t09/09/2023 - 09.02.24: Cleanup of table vs. class \n"\
     "\t09/08/2023 - 09.02.23: Fix Issue 16 - Incorrect admin.yml when table name <> class name \n"\
@@ -609,39 +609,41 @@ def fix_build_docker_image(msg, project: Project):
     log.debug(msg)  #  d.   Fixing devops/docker-image/build_image.sh - project name
     replace_port = f':{project.port}' if project.port else ""
     # replace_with = host + replace_port
+    valid_azure_resource_name = project.project_name_last_node.lower()
+    valid_azure_resource_name = valid_azure_resource_name.replace("_","")
     in_file = f'{project.project_directory}/devops/docker-image/build_image.sh'
     create_utils.replace_string_in_file(search_for="apilogicserver_project_name_lower",
-                           replace_with=project.project_name_last_node.lower(),
+                           replace_with=valid_azure_resource_name,
                            in_file=in_file)
     in_file = f'{project.project_directory}/devops/docker-image/run_image.sh'
     create_utils.replace_string_in_file(search_for="apilogicserver_project_name_lower",
-                           replace_with=project.project_name_last_node.lower(),
+                           replace_with=valid_azure_resource_name,
                            in_file=in_file)
     in_file = f'{project.project_directory}/devops/docker-compose-dev-local-nginx/docker-compose-dev-local-nginx.yml'
     create_utils.replace_string_in_file(search_for="apilogicserver_project_name_lower",
-                           replace_with=project.project_name_last_node.lower(),
+                           replace_with=valid_azure_resource_name,
                            in_file=in_file)
     in_file = f'{project.project_directory}/devops/docker-compose-dev-local/docker-compose-dev-local.yml'
     create_utils.replace_string_in_file(search_for="apilogicserver_project_name_lower",
-                           replace_with=project.project_name_last_node.lower(),
+                           replace_with=valid_azure_resource_name,
                            in_file=in_file)
     in_file = f'{project.project_directory}/devops/docker-compose-dev-azure/docker-compose-dev-azure.yml'
     create_utils.replace_string_in_file(search_for="apilogicserver_project_name_lower",
-                           replace_with=project.project_name_last_node.lower(),
+                           replace_with=valid_azure_resource_name,
                            in_file=in_file)
     in_file = f'{project.project_directory}/devops/docker-compose-dev-azure/azure-deploy.sh'
     create_utils.replace_string_in_file(search_for="apilogicserver_project_name_lower",
-                           replace_with=project.project_name_last_node.lower(),
+                           replace_with=valid_azure_resource_name,
                            in_file=in_file)
     
     in_file = f'{project.project_directory}/devops/docker-compose-dev-azure-nginx/azure-deploy.sh'
     if Path(in_file).is_file():
         create_utils.replace_string_in_file(search_for="apilogicserver_project_name_lower",
-                            replace_with=project.project_name_last_node.lower(),
+                            replace_with=valid_azure_resource_name,
                             in_file=in_file)
         in_file = f'{project.project_directory}/devops/docker-compose-dev-azure-nginx/docker-compose-dev-azure-nginx.yml'
         create_utils.replace_string_in_file(search_for="apilogicserver_project_name_lower",
-                            replace_with=project.project_name_last_node.lower(),
+                            replace_with=valid_azure_resource_name,
                             in_file=in_file)
 
 
