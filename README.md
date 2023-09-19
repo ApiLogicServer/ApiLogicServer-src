@@ -242,6 +242,8 @@ There are a few articles that provide some orientation to API Logic Server:
 
 ### Change Log
 
+09/08/2023 - 09.03.04: AI Driven Automation (preview)
+
 09/08/2023 - 09.03.00: Oracle support
 
 09/08/2023 - 09.02.23: Fix Issue 16 - Incorrect admin.yml when table name <> class name
