@@ -12,9 +12,11 @@ services:
           - APILOGICPROJECT_CLIENT_URI=//apilogicserver_project_name_lower.azurewebsites.net
           # - APILOGICPROJECT_HTTP_SCHEME=https
           - PYTHONPATH=/app/ApiLogicProject 
-          # TODO - override the following classicmodel examples for your own system
-          - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI=mysql+pymysql://root:p@mysql-service:3306/classicmodels
-          - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI_AUTHENTICATION=mysql+pymysql://root:p@mysql-service:3306/authdb
+          ## TODO: verify Database uri's here, 
+          # if-postgres - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI=postgresql://postgres:p@postgresql-service/apilogicserver_database_name
+          # if-postgres - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI_AUTHENTICATION=postgresql://postgres:p@postgresql-service/authdb
+          # if-mysql - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI=mysql+pymysql://root:p@mysql-service:3306/apilogicserver_database_name
+          # if-mysql - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI_AUTHENTICATION=mysql+pymysql://root:p@mysql-service:3306/authdb
         expose:
            - 5656
         ports:

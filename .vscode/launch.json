@@ -251,7 +251,8 @@
             "redirectOutput": true,
             "argsExpansion": "none",
             "args": ["create","--project_name=../../../servers/classicmodels",
-            "--db_url=mysql+pymysql://root:p@localhost:3306/classicmodels"],
+                "--db_url=mysql+pymysql://root:p@localhost:3306/classicmodels"
+            ],
             "console": "integratedTerminal"
         },
         {
@@ -423,7 +424,37 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "8 - Create Sqlite - CHATGPT - ai_customer_orders",
+            "name": "8 - Create MySQL - CHATGPT - ai_customer_orders_mysql",
+            "type": "python",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "cwd": "${workspaceFolder}/api_logic_server_cli",
+            "program": "cli.py",
+            "redirectOutput": true,
+            "argsExpansion": "none",
+            "args": ["create",
+                "--project_name=../../../servers/ai_customer_orders_mysql",
+                "--db_url=mysql+pymysql://root:p@localhost:3306/ai_customer_orders"
+            ],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "    - Add Security to ai_customer_orders_mysql",
+            "type": "python",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "cwd": "${workspaceFolder}/api_logic_server_cli",
+            "program": "cli.py",
+            "redirectOutput": true,
+            "args": [
+                "add-auth",
+                "--project_name=../../../servers/ai_customer_orders_mysql",
+                "--db_url=mysql+pymysql://root:p@localhost:3306/authdb"
+            ],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "    - Create Sqlite - CHATGPT - ai_customer_orders",
             "type": "python",
             "request": "launch",
             "env": {"APILOGICSERVER_DEBUG": "True"},

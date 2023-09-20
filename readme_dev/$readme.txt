@@ -1,4 +1,12 @@
-'project_
+failing on server
+  -rw-r--r-- 1 root root 24576 Sep 20 00:42 db.sqlite  in image
+  -rw-r--r--@ 1 val  staff  24576 Sep 19 17:42 db.sqlite in mac
+
+working on git
+  -rw-r--r-- 1 root root 24576 Sep 20 00:42 db.sqlite  in image
+  -rw-r--r--@ 1 val  staff  24576 Sep 18 12:47 db.sqlite in mac
+  -rw-r--r--                                              im image docker term
+
 
 Breaking changes
   Updated http_type APILOGICPROJECT_HTTP_SCHEME=http

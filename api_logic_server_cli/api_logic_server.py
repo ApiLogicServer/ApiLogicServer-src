@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "09.03.05"
+__version__ = "09.03.06"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t09/19/2023 - 09.03.05: Sqlite relative path \n"\
+    "\t09/19/2023 - 09.03.06: Sqlite relative path, mysql/postgres devops automation \n"\
     "\t09/18/2023 - 09.03.04: Sqlite chatgpt cust_orders, Python readme link, class creation cleanup \n"\
     "\t09/14/2023 - 09.03.00: Oracle support \n"\
     "\t09/09/2023 - 09.02.24: Cleanup of table vs. class \n"\
@@ -67,6 +67,7 @@ import sys
 import os
 import platform
 import importlib
+import fnmatch
 
 
 def is_docker() -> bool:
@@ -216,6 +217,50 @@ def recursive_overwrite(src, dest, ignore=None):
     else:
         shutil.copyfile(src, dest)
 
+def find_replace_recursive(directory, find, replace, filePattern):
+    """
+
+    find_replace_recursive("some_dir", "find this", "replace with this", "*.txt")
+
+    thanks: https://stackoverflow.com/questions/4205854/recursively-find-and-replace-string-in-text-files
+
+    Args:
+        directory (_type_): _description_
+        find (_type_): _description_
+        replace (_type_): _description_
+        filePattern (_type_): _description_
+    """
+    for path, dirs, files in os.walk(os.path.abspath(directory)):
+        for filename in fnmatch.filter(files, filePattern):
+            filepath = os.path.join(path, filename)
+            with open(filepath) as f:
+                s = f.read()
+            s = s.replace(find, replace)
+            with open(filepath, "w") as f:
+                f.write(s)
+
+def fixup_devops_for_postgres_mysql(project: 'ProjectRun'):
+    """_summary_
+
+    Args:
+        project (ProjectRun): project instance
+    """
+    db_type = "mysql" if "mysql" in project.db_url else "postgres"
+    url_nodes = project.db_url.split("/")
+    db_name = url_nodes[len(url_nodes) - 1]
+    project_devops_dir = project.project_directory
+    find_replace_recursive(project_devops_dir, "apilogicserver_database_name", db_name, "*.yml")
+    find_replace_recursive(project_devops_dir, "apilogicserver_database_name", db_name, "*.list")
+    if db_type == "mysql":
+        find_replace_recursive(project_devops_dir, "# if-mysql ", "", "*.yml")
+        find_replace_recursive(project_devops_dir, "# if-postgres ", "# ", "*.yml")
+        find_replace_recursive(project_devops_dir, "# if-mysql ", "", "*.list")
+        find_replace_recursive(project_devops_dir, "# if-postgres ", "# ", "*.list")
+    elif db_type == "postgres":
+        find_replace_recursive(project_devops_dir, "# if-postgres ", "", "*.yml")
+        find_replace_recursive(project_devops_dir, "# if-mysql ", "# ", "*.yml")
+        find_replace_recursive(project_devops_dir, "# if-postgres ", "", "*.list")
+        find_replace_recursive(project_devops_dir, "# if-mysql ", "# ", "*.list")
 
 def create_nw_tutorial(project_name, api_logic_server_dir_str):
     """ copy tutorial from docs, and link to it from readme.md 
@@ -337,9 +382,11 @@ def create_project_with_nw_samples(project, msg: str) -> str:
 
         if "sqlite" in project.db_url:
             log.debug(".. ..Copy in sqlite devops")
-            proto_dir = (Path(api_logic_server_dir_str)).\
-                joinpath('prototypes/sqlite')
-            recursive_overwrite(proto_dir, project.project_directory)        
+            proto_dir = (Path(api_logic_server_dir_str)).joinpath('prototypes/sqlite')
+            recursive_overwrite(proto_dir, project.project_directory)
+
+        if "postgres" or "mysql" in project.db_url:
+            fixup_devops_for_postgres_mysql(project)
 
         create_utils.replace_string_in_file(search_for="creation-date",
                             replace_with=str(datetime.datetime.now().strftime("%B %d, %Y %H:%M:%S")),

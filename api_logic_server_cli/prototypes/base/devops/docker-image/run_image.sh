@@ -16,3 +16,7 @@
 
 # Start container and run the app
 docker run --env-file devops/docker-image/env.list -it --name api_logic_project --rm --net dev-network -p 5656:5656 -p 5002:5002 apilogicserver/apilogicserver_project_name_lower
+
+# Or, start the container in bash
+# docker run --env-file devops/docker-image/env.list -it --name api_logic_project --rm --net dev-network -p 5656:5656 -p 5002:5002 apilogicserver/aicustomerorders /bin/bash
+

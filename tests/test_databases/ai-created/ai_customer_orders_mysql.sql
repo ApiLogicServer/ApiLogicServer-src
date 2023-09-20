@@ -4,8 +4,14 @@
 -- ApiLogicServer create --project_name=ai_customer_orders --db_url=sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/tests/test_databases/ai-created/ai_customer_orders.sqlite
 -- SELECT COUNT(*) FROM sqlite_sequence;
 
+DROP DATABASE IF EXISTS ai_customer_orders;
+
+CREATE DATABASE ai_customer_orders;
+
+USE ai_customer_orders;
+
 CREATE TABLE IF NOT EXISTS Customers (
-    CustomerID INTEGER PRIMARY KEY AUTOINCREMENT,
+    CustomerID INT AUTO_INCREMENT PRIMARY KEY,
     FirstName TEXT,
     LastName TEXT,
     Email TEXT,
@@ -14,13 +20,13 @@ CREATE TABLE IF NOT EXISTS Customers (
 );
 
 CREATE TABLE IF NOT EXISTS Products (
-    ProductID INTEGER PRIMARY KEY AUTOINCREMENT,
+    ProductID INT AUTO_INCREMENT PRIMARY KEY,
     ProductName TEXT,
     UnitPrice REAL
 );
 
 CREATE TABLE IF NOT EXISTS Orders (
-    OrderID INTEGER PRIMARY KEY AUTOINCREMENT,
+    OrderID INT AUTO_INCREMENT PRIMARY KEY,
     CustomerID INTEGER,
     AmountTotal DECIMAL,
     OrderDate DATE,
@@ -29,7 +35,7 @@ CREATE TABLE IF NOT EXISTS Orders (
 );
 
 CREATE TABLE IF NOT EXISTS OrderItems (
-    OrderItemID INTEGER PRIMARY KEY AUTOINCREMENT,
+    OrderItemID INT AUTO_INCREMENT PRIMARY KEY,
     OrderID INTEGER,
     ProductID INTEGER,
     Quantity INTEGER,
