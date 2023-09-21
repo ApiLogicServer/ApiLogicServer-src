@@ -1,16 +1,25 @@
-Create a sqlite database for customers, orders, items and product, with automun keys.  
+
+Create a mysql database for customers, orders, items and product, with autonum keys and Decimal types.  
 
 Create a few rows of customer and product data.
 
-Maintain the customer's balance as the sum of the unshipped orders, and ensure it does not exceed the credit limit.  Derive the items unitprice from the product.  Derive items amount as unitprice * quantity.
+Enforce the following logic:
+
+Customer.Balance <= CreditLimit
+Customer.Balance = Sum(Order.AmountTotal where unshipped)
+Order.AmountTotal = Sum(Items.Amount)
+Items.Amount = Quantity * UnitPrice
+Items.UnitPrice = copy from Product
+
+
+Text fixed to address Issues:
+1. Use Decimal not real
+2. Add Order.AmountTotal
+3. Add OrderItem.Amount
+
 
 -- sqlite3 ai_customer_orders.sqlite < ai_customer_orders.sql
 -- sqlite3 ai_customer_orders.sqlite
 -- commands such as .schema
 -- ApiLogicServer create --project_name=ai_customer_orders --db_url=sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/tests/test_databases/ai-created/ai_customer_orders.sqlite
 -- SELECT COUNT(*) FROM sqlite_sequence;
-
-Issues:
-1. Use Decimal not real
-2. Add Order.AmountTotal
-3. Add OrderItem.Amount

@@ -1,58 +1,37 @@
--- sqlite3 ai_customer_orders.sqlite < ai_customer_orders.sql
--- sqlite3 ai_customer_orders.sqlite
--- commands such as .schema
--- ApiLogicServer create --project_name=ai_customer_orders_mysql --db_url=mysql+pymysql://root:p@localhost:3306/ai_customer_orders
--- SELECT COUNT(*) FROM sqlite_sequence;
-
-DROP DATABASE IF EXISTS ai_customer_orders;
-
-CREATE DATABASE ai_customer_orders;
-
+CREATE DATABASE IF NOT EXISTS ai_customer_orders;
 USE ai_customer_orders;
 
 CREATE TABLE IF NOT EXISTS Customers (
     CustomerID INT AUTO_INCREMENT PRIMARY KEY,
-    FirstName TEXT,
-    LastName TEXT,
-    Email TEXT,
-    CreditLimit DECIMAL,
-    Balance DECIMAL DEFAULT 0.0
+    FirstName VARCHAR(255),
+    LastName VARCHAR(255),
+    Email VARCHAR(255),
+    CreditLimit DECIMAL(10, 2),
+    Balance DECIMAL(10, 2) DEFAULT 0.0
 );
 
 CREATE TABLE IF NOT EXISTS Products (
     ProductID INT AUTO_INCREMENT PRIMARY KEY,
-    ProductName TEXT,
-    UnitPrice REAL
+    ProductName VARCHAR(255),
+    UnitPrice DECIMAL(10, 2)
 );
 
 CREATE TABLE IF NOT EXISTS Orders (
     OrderID INT AUTO_INCREMENT PRIMARY KEY,
-    CustomerID INTEGER,
-    AmountTotal DECIMAL,
+    CustomerID INT,
     OrderDate DATE,
     ShipDate DATE,
+    AmountTotal DECIMAL(10, 2) DEFAULT 0.0,
     FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID)
 );
 
 CREATE TABLE IF NOT EXISTS OrderItems (
     OrderItemID INT AUTO_INCREMENT PRIMARY KEY,
-    OrderID INTEGER,
-    ProductID INTEGER,
-    Quantity INTEGER,
-    ItemPrice DECIMAL,
-    Amount DECIMAL,
+    OrderID INT,
+    ProductID INT,
+    Quantity INT,
+    UnitPrice DECIMAL(10, 2),
+    Amount DECIMAL(10, 2),
     FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
     FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
 );
-
-
--- Insert customer data
-INSERT INTO Customers (FirstName, LastName, Email, CreditLimit) VALUES
-    ('John', 'Doe', 'john@example.com', 1000.00),
-    ('Jane', 'Smith', 'jane@example.com', 1500.00);
-
--- Insert product data
-INSERT INTO Products (ProductName, UnitPrice) VALUES
-    ('Product A', 10.00),
-    ('Product B', 15.00),
-    ('Product C', 8.50);

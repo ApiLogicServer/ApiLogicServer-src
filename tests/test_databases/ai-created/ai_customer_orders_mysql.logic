@@ -1,4 +1,5 @@
 -- Trigger to enforce customer balance and credit limit
+DELIMITER //
 CREATE TRIGGER enforce_customer_balance_and_credit_limit
 AFTER INSERT ON Orders
 FOR EACH ROW
@@ -11,24 +12,27 @@ BEGIN
     -- Check if customer balance exceeds credit limit
     IF (SELECT Balance FROM Customers WHERE CustomerID = NEW.CustomerID) > (SELECT CreditLimit FROM Customers WHERE CustomerID = NEW.CustomerID) THEN
         DELETE FROM Orders WHERE OrderID = NEW.OrderID;
-        RAISE(ABORT, 'Customer exceeds credit limit.');
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Customer exceeds credit limit.';
     END IF;
 END;
+//
 
 -- Trigger to update order amount total based on item amounts
 CREATE TRIGGER update_order_amount_total
-AFTER INSERT ON Items
+AFTER INSERT ON OrderItems
 FOR EACH ROW
 BEGIN
     -- Update the order amount total with the sum of item amounts
     UPDATE Orders
-    SET AmountTotal = (SELECT SUM(Amount) FROM Items WHERE OrderID = NEW.OrderID)
+    SET AmountTotal = (SELECT SUM(Amount) FROM OrderItems WHERE OrderID = NEW.OrderID)
     WHERE OrderID = NEW.OrderID;
 END;
+//
 
 -- Trigger to update item amount and unit price based on product information
 CREATE TRIGGER update_item_amount_and_unit_price
-BEFORE INSERT ON Items
+BEFORE INSERT ON OrderItems
 FOR EACH ROW
 BEGIN
     -- Update the item unit price by copying from the corresponding product
@@ -37,3 +41,5 @@ BEGIN
     -- Calculate the item amount as quantity * unit price
     SET NEW.Amount = NEW.Quantity * NEW.UnitPrice;
 END;
+//
+DELIMITER ;

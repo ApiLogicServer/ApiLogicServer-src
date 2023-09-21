@@ -54,10 +54,12 @@ echo " "
 # security assumed; disable this if you are not using security
 if [ ! -f "./database/authentication_models.py" ] 
 then
-    echo "\nYou need to activate security first.  With mysql-container running...\n" 
-    echo "ApiLogicServer add-auth --project_name=. --db_url=mysql+pymysql://root:p@localhost:3306/authdb"
+    echo "\nYou need to activate security first.  With you database running, ...\n" 
+    echo "ApiLogicServer add-auth --project_name=. --db_url=mysql+pymysql://root:p@localhost:3306/authdb, or..."
+    echo "ApiLogicServer add-auth --project_name=. --db_url=postgresql://postgres:p@localhost/authdb", or...
+    echo "ApiLogicServer add-auth --project_name=. --db_url=authdb"
     echo "\nRebuild your image"
-    echo "\nThen, stop mysql-container\n"
+    echo "\nThen, stop mysql/postgres containers to avoid port conflicts with services\n"
     exit 1
 else
     echo "\n... security check complete\n"
