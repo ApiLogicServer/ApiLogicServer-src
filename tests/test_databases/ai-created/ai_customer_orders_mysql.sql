@@ -1,7 +1,7 @@
 -- sqlite3 ai_customer_orders.sqlite < ai_customer_orders.sql
 -- sqlite3 ai_customer_orders.sqlite
 -- commands such as .schema
--- ApiLogicServer create --project_name=ai_customer_orders --db_url=sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/tests/test_databases/ai-created/ai_customer_orders.sqlite
+-- ApiLogicServer create --project_name=ai_customer_orders_mysql --db_url=mysql+pymysql://root:p@localhost:3306/ai_customer_orders
 -- SELECT COUNT(*) FROM sqlite_sequence;
 
 DROP DATABASE IF EXISTS ai_customer_orders;
