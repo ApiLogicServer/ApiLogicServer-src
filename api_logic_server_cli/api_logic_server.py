@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "09.03.07"
+__version__ = "09.03.08"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t09/22/2023 - 09.03.07: Sqlite relative path, mysql/postgres devops automation, sqlite fix \n"\
+    "\t09/22/2023 - 09.03.08: Sqlite deploy with relative path, mysql/postgres devops automation \n"\
     "\t09/18/2023 - 09.03.04: Sqlite chatgpt cust_orders, Python readme link, class creation cleanup \n"\
     "\t09/14/2023 - 09.03.00: Oracle support \n"\
     "\t09/09/2023 - 09.02.24: Cleanup of table vs. class \n"\
@@ -381,7 +381,7 @@ def create_project_with_nw_samples(project, msg: str) -> str:
                 joinpath('prototypes/postgres')
             recursive_overwrite(proto_dir, project.project_directory)
 
-        if "sqlite" in project.db_url:
+        if "sqlite" in project.db_url or project.nw_db_status in ["nw", "nw+"]:
             log.debug(".. ..Copy in sqlite devops")
             proto_dir = (Path(api_logic_server_dir_str)).joinpath('prototypes/sqlite')
             recursive_overwrite(proto_dir, project.project_directory)
@@ -389,7 +389,6 @@ def create_project_with_nw_samples(project, msg: str) -> str:
             delete_dir(realpath(path_to_delete), "")
             file_to_delete = project.project_directory_path.joinpath('devops/docker-compose-dev-azure/docker-compose-dev-azure.yml')
             os.remove(file_to_delete)
-
 
 
         if "postgres" or "mysql" in project.db_url:
