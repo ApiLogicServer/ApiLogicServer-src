@@ -73,12 +73,8 @@ az group create --name $resourcegroup --location "westus"
 # create service plan
 az appservice plan create --name myAppServicePlan --resource-group $resourcegroup --sku S1 --is-linux
 
-# DO NOT create multi-container docker compose app
-az webapp create --resource-group $resourcegroup --plan myAppServicePlan --name apilogicserver_project_name_lower --multicontainer-config-type compose --multicontainer-config-file devops/docker-compose-dev-azure/docker-compose-dev-azure.yml
-
 # create single-container app
-# eg. az container create --resource-group aicustomerorders_rg --name aicustomerorderscontainer --image apilogicserver/aicustomerorders:latest --dns-name-label aicustomerorderscontainer --ports 5656 --environment-variables 'VERBOSE'='True'
-az container create --resource-group $resourcegroup --name apilogicserver_project_name_lower --image ${repositoryname}/${projectname}:latest --dns-name-label apilogicserver_project_name_lower --ports 5656 --environment-variables 'VERBOSE'='True'
+az container create --resource-group $resourcegroup --name ${dockerrepositoryname}/apilogicserver_project_name_lower --image ${dockerrepositoryname}/${projectname}:latest --dns-name-label apilogicserver_project_name_lower.io --ports 5656 --environment-variables 'VERBOSE'='True'  'APILOGICPROJECT_CLIENT_URI'='//apilogicserver_project_name_lower.westus.azurecontainer.io:5656'
 
 set +x # reset echo
 

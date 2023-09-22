@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "09.03.06"
+__version__ = "09.03.07"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t09/19/2023 - 09.03.06: Sqlite relative path, mysql/postgres devops automation \n"\
+    "\t09/22/2023 - 09.03.07: Sqlite relative path, mysql/postgres devops automation, sqlite fix \n"\
     "\t09/18/2023 - 09.03.04: Sqlite chatgpt cust_orders, Python readme link, class creation cleanup \n"\
     "\t09/14/2023 - 09.03.00: Oracle support \n"\
     "\t09/09/2023 - 09.02.24: Cleanup of table vs. class \n"\
@@ -156,6 +156,7 @@ def create_app(config_filename=None, host="localhost"):
 def delete_dir(dir_path, msg):
     """
     :param dir_path: delete this folder
+    :param dir_path: msg prefix (e.g., '1. ')
     :return:
     """
     use_shutil_debug = True
@@ -384,6 +385,12 @@ def create_project_with_nw_samples(project, msg: str) -> str:
             log.debug(".. ..Copy in sqlite devops")
             proto_dir = (Path(api_logic_server_dir_str)).joinpath('prototypes/sqlite')
             recursive_overwrite(proto_dir, project.project_directory)
+            path_to_delete = project.project_directory_path.joinpath('devops/docker-compose-dev-local-nginx')
+            delete_dir(realpath(path_to_delete), "")
+            file_to_delete = project.project_directory_path.joinpath('devops/docker-compose-dev-azure/docker-compose-dev-azure.yml')
+            os.remove(file_to_delete)
+
+
 
         if "postgres" or "mysql" in project.db_url:
             fixup_devops_for_postgres_mysql(project)
@@ -669,17 +676,19 @@ def fix_build_docker_image(msg, project: Project):
                            replace_with=valid_azure_resource_name,
                            in_file=in_file)
     in_file = f'{project.project_directory}/devops/docker-compose-dev-local-nginx/docker-compose-dev-local-nginx.yml'
-    create_utils.replace_string_in_file(search_for="apilogicserver_project_name_lower",
-                           replace_with=valid_azure_resource_name,
-                           in_file=in_file)
+    if os.path.isfile(in_file):
+        create_utils.replace_string_in_file(search_for="apilogicserver_project_name_lower",
+                            replace_with=valid_azure_resource_name,
+                            in_file=in_file)
     in_file = f'{project.project_directory}/devops/docker-compose-dev-local/docker-compose-dev-local.yml'
     create_utils.replace_string_in_file(search_for="apilogicserver_project_name_lower",
                            replace_with=valid_azure_resource_name,
                            in_file=in_file)
     in_file = f'{project.project_directory}/devops/docker-compose-dev-azure/docker-compose-dev-azure.yml'
-    create_utils.replace_string_in_file(search_for="apilogicserver_project_name_lower",
-                           replace_with=valid_azure_resource_name,
-                           in_file=in_file)
+    if os.path.isfile(in_file):
+        create_utils.replace_string_in_file(search_for="apilogicserver_project_name_lower",
+                            replace_with=valid_azure_resource_name,
+                            in_file=in_file)
     in_file = f'{project.project_directory}/devops/docker-compose-dev-azure/azure-deploy.sh'
     create_utils.replace_string_in_file(search_for="apilogicserver_project_name_lower",
                            replace_with=valid_azure_resource_name,
