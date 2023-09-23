@@ -9,7 +9,11 @@ USER root
 
 # user api_logic_server comes from apilogicserver/api_logic_server
 WORKDIR /home/api_logic_project
-USER api_logic_server
+# USER api_logic_server
 COPY ../../ .
+
+# enables docker to write into container, for sqlite
+RUN chown -R api_logic_server /home/api_logic_project
+
 
 CMD [ "python", "./api_logic_server_run.py" ]
