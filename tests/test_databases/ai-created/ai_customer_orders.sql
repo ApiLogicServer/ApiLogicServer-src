@@ -32,3 +32,15 @@ CREATE TABLE IF NOT EXISTS Items (
     FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
     FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
 );
+
+
+-- Insert customer data
+INSERT INTO Customers (FirstName, LastName, Email, CreditLimit) VALUES
+    ('John', 'Doe', 'john@example.com', 1000.00),
+    ('Jane', 'Smith', 'jane@example.com', 1500.00);
+
+-- Insert product data
+INSERT INTO Products (ProductName, UnitPrice) VALUES
+    ('Product A', 10.00),
+    ('Product B', 15.00),
+    ('Product C', 8.50);
