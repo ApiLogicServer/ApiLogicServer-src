@@ -1,4 +1,3 @@
--- Create the Customers table
 CREATE TABLE Customers (
     CustomerID INTEGER PRIMARY KEY AUTOINCREMENT,
     Name TEXT NOT NULL,
@@ -19,6 +18,7 @@ CREATE TABLE Orders (
     CustomerID INTEGER NULL,
     AmountTotal DECIMAL(10, 2) NULL,
     ShippedDate DATE NULL,
+    Notes TEXT NULL,
     FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID)
 );
 
@@ -33,8 +33,6 @@ CREATE TABLE Items (
     FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
     FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
 );
-
-
 -- Insert sample customers
 INSERT INTO Customers (Name, Balance, CreditLimit) VALUES
     ('Customer 1', 1000.00, 2000.00),
