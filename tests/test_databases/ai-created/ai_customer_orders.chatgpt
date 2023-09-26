@@ -1,21 +1,28 @@
 
-Create a mysql database for customers, orders, items and product, with autonum keys and Decimal types.  
+Create a sqlite database for customers, orders, items and product, with autonum keys, null-allowed columns, Decimal types, and foreign keys.
 
 Create a few rows of customer and product data.
 
-Enforce the following logic:
+Enforce the Check Credit requirement:
 
 Customer.Balance <= CreditLimit
-Customer.Balance = Sum(Order.AmountTotal where unshipped)
+Customer.Balance = Sum(Order.AmountTotal where date shipped is null)
 Order.AmountTotal = Sum(Items.Amount)
 Items.Amount = Quantity * UnitPrice
-Items.UnitPrice = copy from Product
+Store the Items.UnitPrice as a copy from Product.UnitPrice
 
 
 Text fixed to address Issues:
 1. Use Decimal not real
 2. Add Order.AmountTotal
 3. Add OrderItem.Amount
+
+Worse on 9/25
+1. nullable
+2. Foreign keys
+3. Item.UnitPrice 
+4. Shipped became boolean
+5. Refuses to allow null
 
 
 -- sqlite3 ai_customer_orders.sqlite < ai_customer_orders.sql

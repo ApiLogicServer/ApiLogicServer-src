@@ -254,7 +254,7 @@ class AdminCreator(object):
         admin_attribute.name = str(attribute_name)
         if required:
             admin_attribute.required = True
-        if attribute_name == "xShippedDate":
+        if attribute_name == "UnitPrice":
             log.debug("Good breakpoint location")
         if isinstance(resource_attribute, str) == True:
             log.debug("Just a string")

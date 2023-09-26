@@ -8,7 +8,7 @@ class ResourceAttribute():
     """ instances added to Resource """
     def __init__(self, each_attribute: object, resource: Type['Resource']):
         self.name = str(each_attribute.name)
-        if self.name == "Ready":
+        if self.name == "UnitPrice":
             debug_str = "Nice breakpoint"
         # self.nullable = each_attribute.nullable
         type = str(each_attribute.type)

@@ -822,6 +822,8 @@ class ModelCreationServices(object):
                 resource_data = {"type": resource_name}
                 for each_attribute in resource_class._s_columns:
                     attr_type = str(each_attribute.type)
+                    if table_name.startswith("Items") and each_attribute.name == "UnitPrice":
+                        debug_str = "Excellent breakpoint"
                     resource_attribute = ResourceAttribute(each_attribute=each_attribute,
                                                             resource=resource)
                 for rel_name, rel in resource_class._s_relationships.items():
