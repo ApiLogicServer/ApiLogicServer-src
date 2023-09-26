@@ -1,35 +1,35 @@
 -- Create the Customers table
 CREATE TABLE Customers (
     CustomerID INTEGER PRIMARY KEY AUTOINCREMENT,
-    Name TEXT,
-    Balance DECIMAL(10, 2),
-    CreditLimit DECIMAL(10, 2)
+    Name TEXT NOT NULL,
+    Balance DECIMAL(10, 2) NULL,
+    CreditLimit DECIMAL(10, 2) NULL
 );
 
 -- Create the Products table
 CREATE TABLE Products (
     ProductID INTEGER PRIMARY KEY AUTOINCREMENT,
-    Name TEXT,
-    UnitPrice DECIMAL(10, 2)
+    Name TEXT NOT NULL,
+    UnitPrice DECIMAL(10, 2) NULL
 );
 
 -- Create the Orders table
 CREATE TABLE Orders (
     OrderID INTEGER PRIMARY KEY AUTOINCREMENT,
-    CustomerID INTEGER,
-    AmountTotal DECIMAL(10, 2),
-    ShippedDate DATE,
+    CustomerID INTEGER NULL,
+    AmountTotal DECIMAL(10, 2) NULL,
+    ShippedDate DATE NULL,
     FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID)
 );
 
 -- Create the Items table
 CREATE TABLE Items (
     ItemID INTEGER PRIMARY KEY AUTOINCREMENT,
-    OrderID INTEGER,
-    ProductID INTEGER,
-    Quantity INTEGER,
-    Amount DECIMAL(10, 2),
-    UnitPrice DECIMAL(10, 2),
+    OrderID INTEGER NULL,
+    ProductID INTEGER NULL,
+    Quantity INTEGER NULL,
+    Amount DECIMAL(10, 2) NULL,
+    UnitPrice DECIMAL(10, 2) NULL,
     FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
     FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
 );
