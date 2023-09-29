@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "09.03.09"
+__version__ = "09.03.10"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t09/22/2023 - 09.03.09: Sqlite docker deploy with relative path, mysql/postgres devops automation \n"\
+    "\t09/22/2023 - 09.03.09: Sqlite docker deploy with relative path, mysql/postgres devops automation, lb 1.8.5 \n"\
     "\t09/18/2023 - 09.03.04: Sqlite chatgpt cust_orders, Python readme link, class creation cleanup \n"\
     "\t09/14/2023 - 09.03.00: Oracle support \n"\
     "\t09/09/2023 - 09.02.24: Cleanup of table vs. class \n"\

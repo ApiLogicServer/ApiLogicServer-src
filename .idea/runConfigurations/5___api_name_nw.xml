@@ -7,13 +7,13 @@
       <env name="PYTHONUNBUFFERED" value="1" />
     </envs>
     <option name="SDK_HOME" value="" />
-    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/api_logic_server_cli" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../../ApiLogicServer-src/api_logic_server_cli" />
     <option name="IS_MODULE_SDK" value="true" />
     <option name="ADD_CONTENT_ROOTS" value="true" />
     <option name="ADD_SOURCE_ROOTS" value="true" />
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
     <option name="SCRIPT_NAME" value="$PROJECT_DIR$/api_logic_server_cli/cli.py" />
-    <option name="PARAMETERS" value="create-and-run --project_name=~/dev/servers/nw_project --db_url=sqlite:///nw.sqlite --api_name=." />
+    <option name="PARAMETERS" value="create-and-run --project_name=~/dev/ApiLogicServer/ApiLogicServer-dev/servers/nw_project --db_url=sqlite:///nw.sqlite --api_name=." />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />
     <option name="MODULE_MODE" value="false" />
