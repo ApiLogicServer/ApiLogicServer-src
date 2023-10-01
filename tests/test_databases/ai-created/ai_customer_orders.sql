@@ -17,7 +17,7 @@ CREATE TABLE Orders (
     OrderID INTEGER PRIMARY KEY AUTOINCREMENT,
     CustomerID INTEGER NULL,
     AmountTotal DECIMAL(10, 2) NULL,
-    ShippedDate DATE NULL,
+    ShipDate DATE NULL,
     Notes TEXT NULL,
     FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID)
 );
