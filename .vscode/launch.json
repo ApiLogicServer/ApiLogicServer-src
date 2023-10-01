@@ -209,7 +209,7 @@
             "console": "internalConsole" 
         },
         {
-            "name": "5 - Create Postgres",
+            "name": "5 - Create Postgres (servers)",
             "type": "python",
             "request": "launch",
             "cwd": "${workspaceFolder}/api_logic_server_cli",
@@ -243,7 +243,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "6 - Create MySql - classic models",
+            "name": "6 - Create MySql (servers) - classic models",
             "type": "python",
             "request": "launch",
             "cwd": "${workspaceFolder}/api_logic_server_cli",
