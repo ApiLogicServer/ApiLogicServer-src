@@ -1,12 +1,13 @@
-failing on server
-  -rw-r--r-- 1 root root 24576 Sep 20 00:42 db.sqlite  in image
-  -rw-r--r--@ 1 val  staff  24576 Sep 19 17:42 db.sqlite in mac
+Pleased and excited to announce API Logic Server 9.4, leveraging AI using ChatGPT:
 
-working on git
-  -rw-r--r-- 1 root root 24576 Sep 20 00:42 db.sqlite  in image
-  -rw-r--r--@ 1 val  staff  24576 Sep 18 12:47 db.sqlite in mac
-  -rw-r--r--                                              im image docker term
+* Use ChatGPT to create a database
+* Instant Working Software, using API Logic Server to create an API and Admin App -- 1 CLI command
+* Automated business logic, with spreadsheet-like rules (40x more concise than code)
+* Automated deployment for collaboration, with created scripts (e.g., create container, deploy to Azure)
+* Iterate, by adding rules and Python
 
+Check it out at:
+https://apilogicserver.github.io/Docs/Tutorial-AI/
 
 Breaking changes
   Updated http_type APILOGICPROJECT_HTTP_SCHEME=http
