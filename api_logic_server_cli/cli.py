@@ -3,6 +3,14 @@
 '''
 CLICK functions for API Logic Server CLI
 
+To add a new arg:
+
+    * update cli_args_base.py
+    
+    * add args here (arg, and call to Project.run)
+
+    * update Project.run() 
+
 Main code is api_logic_server.py (PR)
 '''
 

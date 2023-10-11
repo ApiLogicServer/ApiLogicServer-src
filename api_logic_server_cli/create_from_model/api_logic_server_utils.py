@@ -107,7 +107,7 @@ def get_abs_db_url(msg, project: Project):
         rtn_abs_db_url = f'sqlite:///{str(project.api_logic_server_dir_path.joinpath("database/nw-gold-plus.sqlite"))}'
         rtn_nw_db_status = "nw+"
         log.debug(f'{msg} from: {rtn_abs_db_url}')
-    elif project.db_url == "auth" or project.db_url == "authorization":
+    elif project.db_url == "auth" or project.db_url == "authorization"or project.db_url == "add-auth":
         rtn_abs_db_url = f'sqlite:///{str(project.api_logic_server_dir_path.joinpath("database/authentication.sqlite"))}'
     elif project.db_url == "chinook":
         rtn_abs_db_url = f'sqlite:///{str(project.api_logic_server_dir_path.joinpath("database/Chinook_Sqlite.sqlite"))}'
