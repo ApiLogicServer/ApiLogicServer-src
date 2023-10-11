@@ -14,7 +14,7 @@ uri_info = [
     '//postgres:password@localhost:5432/postgres?options=-csearch_path%3Dmy_db_schema',
     '  ApiLogicServer create --project_name=Chinook \\',
     '    --host=ApiLogicServer.pythonanywhere.com --port= \\',
-    '    --db_url=mysql+pymysql://ApiLogicServer:***@ApiLogicServer.mysql.pythonanywhere-services.com/ApiLogicServer\$Chinook',
+    '    --db_url=mysql+pymysql://ApiLogicServer:@ApiLogicServer.mysql.pythonanywhere-services.com/ApiLogicServer\$Chinook',
     '',
     'Where --db_url is one of...',
     '   <default>                     Sample DB                    - https://apilogicserver.github.io/Docs/Sample-Database/',
