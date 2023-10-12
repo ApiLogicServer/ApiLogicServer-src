@@ -97,7 +97,7 @@ class DefaultRolePermission:
                 can_insert = False,
                 can_read = False)
     Raises:
-        GrantSecurityException: 
+        execute GrantSecurityException: 
     
     """
     grants_by_role : Dict[str, list['Grant']] = {}
@@ -118,6 +118,28 @@ class DefaultRolePermission:
         if self.role_name not in self.grants_by_role:
             DefaultRolePermission.grants_by_role[self.role_name] = []
         DefaultRolePermission.grants_by_role[self.role_name].append( self )
+        
+class GlobalTenantFilter():
+    """Apply a single global select to all tables to enforce multi-tenant
+
+        :tenant_id - name of the attribute found in any entity
+        :filter -e.g. lambda row: row.emp_id == Security.current_user().emp_id
+
+    """
+    grants_by_tenant : Dict[str, list['GlobalTenantFilter']] = {}
+    '''
+        Dictionary of filters applied to each entity with a tenant_id
+    '''
+    def __init__(self,
+        tenant_id: str,
+        filter: object = None):
+        
+        self.tenant_id = tenant_id
+        self.filter=filter
+        
+        if self.tenant_id not in GlobalTenantFilter.grants_by_tenant[tenant_id]:
+            GlobalTenantFilter.grants_by_tenant[self.tenant_id] = []
+        GlobalTenantFilter.grants_by_tenant[self.tenant_id].append(self)
 class Grant:
     """
     Invoke these to declare Role Permissions.
@@ -141,13 +163,12 @@ class Grant:
             :can_insert: bool = True,
             :can_update: bool = True,
             :can_delete: bool = True,
-            :filter: where clause to be added to each select
+            :filter: where clause to be added to each select e.g.: lambda row: row.clientId == Security.current_user().client_id
         
         per calls from declare_security.py
     """
 
     grants_by_table : Dict[str, list['Grant']] = {}
-
     '''
     Dict keyed by Table name (obtained from class name), value is a (role, filter)
     '''
@@ -213,7 +234,12 @@ class Grant:
             if not user:
                 security_logger.debug(f"no user - ok (eg, system initialization) error: {ex}")
                 return
-        
+            
+        # Apply tenant level security 
+        for each_tenant in GlobalTenantFilter.grants_by_tenant:
+            if entity_has_attribute(entity_name, each_tenant.tenant_id):
+                grant_list.append(each_tenant.filter())
+                
         # start out full restricted - any True will turn on access
         for each_role in DefaultRolePermission.grants_by_role:
             for each_user_role in user.UserRoleList:
@@ -239,7 +265,7 @@ class Grant:
                         can_insert = can_insert or each_grant.can_insert
                         can_delete = can_delete or each_grant.can_delete
                         can_update = can_update or each_grant.can_update
-                        
+                            
                         if each_grant.filter is not None \
                             and orm_execute_state is not None:
                             grant_list.append(each_grant.filter())
@@ -291,7 +317,14 @@ class Grant:
                     _event_state = 'is_delete'
                     
                 Grant.exec_grants(entity_name, _event_state, None)
+entity_list = Dict[str, list['str']] = {}              
+def entity_has_attribute(entity_name: str, tenant_id:str) -> bool:
+    if tenant_id not in entity_list[entity_name]:
+        entity_list[entity_name] = {}
+        #TODO get list attributes 
+    return  tenant_id in entity_list[entity_name]
 
+    
 @event.listens_for(session, 'do_orm_execute')
 def receive_do_orm_execute(orm_execute_state):
     "listen for the 'do_orm_execute' event from SQLAlchemy"
