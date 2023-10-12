@@ -30,7 +30,7 @@ resource_logger = logging.getLogger("api.customize_api")
 db = safrs.DB 
 """this is a safrs db not DB"""
 session = db.session  # type: sqlalchemy.orm.scoping.scoped_session
-TENANT_ID =  "clientId"
+
 class DotDict(dict):
     """ dot.notation access to dictionary attributes """
     # thanks: https://stackoverflow.com/questions/2352181/how-to-use-a-dot-to-access-members-of-dictionary/28463329
@@ -754,7 +754,7 @@ class CustomEndpoint():
             filter=fieldName=value and fieldName=value
             
             """
-            clientId = Security.current_user().clientId if Args.security_enabled else "-1"
+            
             if _sys_filter:
                 if _sys_filter.startswith("equal("):
                     f = _sys_filter[6:-1].split(":")
@@ -762,20 +762,14 @@ class CustomEndpoint():
                     value = f[1]
             elif _filter:
                 f = _filter.split("=")
-                if (f[0] != TENANT_ID or f[1] != 'undefined') and f[0] == self.primaryKey:
+                if f[0] == self.primaryKey:
                     pkey = f[0]
                     value = f[1]
-                if f[0] == TENANT_ID and f[1] == 'undefined':
-                    _filter = _filter.replace('clientId=undefined', f"clientId={clientId}")
+
         limit = args.get("page[limit]") or args.get("pagesize") or 20
         offset = args.get("page[offset]") or args.get("offset")  or 0
         sort = args.get("sort")
-        # for k in self._model_class._s_columns: print(k.key == 'clientId')
-        if TENANT_ID in self._columnNames and  (_filter is not None and TENANT_ID not in _filter):
-            tenant_filter = f"{TENANT_ID}={clientId}"
-            tenant_filter = f"{tenant_filter} and {_filter}" if _filter is not None else tenant_filter
-        else:
-            tenant_filter = _filter if  _filter is not None else "1=1"
+        tenant_filter = _filter if  _filter is not None else "1=1"
 
         return pkey, value, limit, offset, sort, tenant_filter
     
