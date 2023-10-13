@@ -14,8 +14,8 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import session
 from sqlalchemy import event, MetaData, and_, or_
 import safrs
-from sqlalchemy import event, MetaData
-from sqlalchemy.orm import with_loader_criteria, DeclarativeMeta
+from sqlalchemy import event, MetaData, text
+from sqlalchemy.orm import with_loader_criteria, DeclarativeMeta, ColumnProperty
 from database import models
 from logic_bank.exec_row_logic.logic_row import LogicRow
 import logging, sys
@@ -122,24 +122,28 @@ class DefaultRolePermission:
 class GlobalTenantFilter():
     """Apply a single global select to all tables to enforce multi-tenant
 
-        :tenant_id - name of the attribute found in any entity
-        :filter -e.g. lambda row: row.emp_id == Security.current_user().emp_id
+        :tenant_id:str - name of the attribute found in any entity
+        :filter:str -e.g.filter='{entity_name}.EMPID == Security.current_user().emp_id'
 
     """
-    grants_by_tenant : Dict[str, list['GlobalTenantFilter']] = {}
+    grants_by_tenant : Dict[str, 'GlobalTenantFilter'] = {}
     '''
         Dictionary of filters applied to each entity with a tenant_id
     '''
     def __init__(self,
         tenant_id: str,
-        filter: object = None):
+        filter: str):
         
         self.tenant_id = tenant_id
-        self.filter=filter
+        self.filter = filter
         
-        if self.tenant_id not in GlobalTenantFilter.grants_by_tenant[tenant_id]:
-            GlobalTenantFilter.grants_by_tenant[self.tenant_id] = []
-        GlobalTenantFilter.grants_by_tenant[self.tenant_id].append(self)
+        if self.tenant_id not in GlobalTenantFilter.grants_by_tenant:
+            GlobalTenantFilter.grants_by_tenant[self.tenant_id] = self
+
+    def getLambdaFunction(self, entity_name) -> object:
+        lambda_fn = self.filter.replace("{entity_name}",f"models.{entity_name}")
+        return text(lambda_fn)
+            
 class Grant:
     """
     Invoke these to declare Role Permissions.
@@ -169,6 +173,8 @@ class Grant:
     """
 
     grants_by_table : Dict[str, list['Grant']] = {}
+    entity_list : Dict[str, list['str']] = {}    
+
     '''
     Dict keyed by Table name (obtained from class name), value is a (role, filter)
     '''
@@ -203,6 +209,20 @@ class Grant:
         
         def current_user():
             return Security.current_user() if Args.security_enabled else None
+    
+    @staticmethod
+    def entity_has_attribute(entity_name: str, tenant_id:str, property_list) -> bool:
+        if tenant_id not in Grant.entity_list:
+            Grant.entity_list[entity_name] = {}
+            attr_list = [
+                each_property.class_attribute.key
+                for each_property in property_list
+                    if isinstance(
+                        each_property, ColumnProperty
+                    )
+            ]
+            Grant.entity_list[entity_name] = attr_list
+        return  tenant_id in Grant.entity_list[entity_name]
             
     @staticmethod
     def exec_grants(entity_name: str,crud_state: str, orm_execute_state: any = None, property_list: any = None) -> None:
@@ -234,14 +254,19 @@ class Grant:
             if not user:
                 security_logger.debug(f"no user - ok (eg, system initialization) error: {ex}")
                 return
-            
+
         grant_list = []
+        grant_entity = entity_name 
         # Apply Global tenant level security 
         if crud_state == "is_select" and property_list:
-            for each_tenant in GlobalTenantFilter.grants_by_tenant:
-                if entity_has_attribute(entity_name, each_tenant.tenant_id, property_list):
-                    grant_list.append(each_tenant.filter())
-                
+            grant_list.extend(
+                GlobalTenantFilter.grants_by_tenant[each_tenant].getLambdaFunction(entity_name)
+                for each_tenant in GlobalTenantFilter.grants_by_tenant
+                if Grant.entity_has_attribute(
+                    grant_entity, each_tenant, property_list
+                )
+            )
+                    
         # start out full restricted - any True will turn on access
         for each_role in DefaultRolePermission.grants_by_role:
             for each_user_role in user.UserRoleList:
@@ -253,7 +278,7 @@ class Grant:
                         can_delete = can_delete or grant_role.can_delete
                         can_update = can_update or grant_role.can_update
                         print(f"Grant on role: {each_role} Read: {can_read}, Update: {can_update}, Insert: {can_insert}, Delete: {can_delete}")
-        grant_entity = None           
+
         if entity_name in Grant.grants_by_table:
             for each_grant in Grant.grants_by_table[entity_name]:
                 grant_entity = each_grant.entity
@@ -318,19 +343,6 @@ class Grant:
                     _event_state = 'is_delete'
                     
                 Grant.exec_grants(entity_name, _event_state, None)
-entity_list = Dict[str, list['str']] = {}              
-def entity_has_attribute(entity_name: str, tenant_id:str, property_list) -> bool:
-    if tenant_id not in entity_list[entity_name]:
-        entity_list[entity_name] = {}
-        attr_list = [
-            each_property.class_attribute.key
-            for each_property in property_list
-                if isinstance(
-                    each_property, sqlalchemy.orm.properties.ColumnProperty
-                )
-        ]
-        entity_list[entity_name] = attr_list
-    return  tenant_id in entity_list[entity_name]
 
     
 @event.listens_for(session, 'do_orm_execute')
@@ -344,7 +356,6 @@ def receive_do_orm_execute(orm_execute_state):
     ):            
         mapper = orm_execute_state.bind_arguments['mapper']
         table_name = mapper.class_.__name__   # mapper.mapped_table.fullname disparaged
-        attrs = mapper.iterate_properties
         if table_name == "User":
             #pass
             security_logger.debug('No grants - avoid recursion on User table')
@@ -352,4 +363,5 @@ def receive_do_orm_execute(orm_execute_state):
             security_logger.debug('No grants during logic processing')
         else:
             #security_logger.info(f"ORM Listener table: {table_name} is_select: {orm_execute_state.is_select}")    
-            Grant.exec_grants(table_name, "is_select" , orm_execute_state, attrs)
+            property_list = mapper.iterate_properties
+            Grant.exec_grants(table_name, "is_select" , orm_execute_state, property_list)
