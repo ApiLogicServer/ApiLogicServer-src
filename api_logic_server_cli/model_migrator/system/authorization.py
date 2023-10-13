@@ -89,7 +89,7 @@ class GrantSecurityException(JsonapiError):
         security_logger.error(f"Grant Security Error on User: {user.id} with roles: [{user.UserRoleList}] does not have {access} access on entity: {entity_name}")
 
 class DefaultRolePermission:
-    """_summary_
+    """Each Role can have a default set of CRUD settings
         DefaultRolePermission(
                 to_role = Roles.tenant,
                 can_delete = False,
@@ -205,7 +205,7 @@ class Grant:
             return Security.current_user() if Args.security_enabled else None
             
     @staticmethod
-    def exec_grants(entity_name: str,crud_state: str, orm_execute_state: any = None) -> None:
+    def exec_grants(entity_name: str,crud_state: str, orm_execute_state: any = None, property_list: any = None) -> None:
         '''
         SQLAlchemy select event for current user's roles, append that role's grant filter to the SQL before execute 
 
@@ -235,10 +235,12 @@ class Grant:
                 security_logger.debug(f"no user - ok (eg, system initialization) error: {ex}")
                 return
             
-        # Apply tenant level security 
-        for each_tenant in GlobalTenantFilter.grants_by_tenant:
-            if entity_has_attribute(entity_name, each_tenant.tenant_id):
-                grant_list.append(each_tenant.filter())
+        grant_list = []
+        # Apply Global tenant level security 
+        if crud_state == "is_select" and property_list:
+            for each_tenant in GlobalTenantFilter.grants_by_tenant:
+                if entity_has_attribute(entity_name, each_tenant.tenant_id, property_list):
+                    grant_list.append(each_tenant.filter())
                 
         # start out full restricted - any True will turn on access
         for each_role in DefaultRolePermission.grants_by_role:
@@ -251,7 +253,6 @@ class Grant:
                         can_delete = can_delete or grant_role.can_delete
                         can_update = can_update or grant_role.can_update
                         print(f"Grant on role: {each_role} Read: {can_read}, Update: {can_update}, Insert: {can_insert}, Delete: {can_delete}")
-        grant_list = []
         grant_entity = None           
         if entity_name in Grant.grants_by_table:
             for each_grant in Grant.grants_by_table[entity_name]:
@@ -318,10 +319,17 @@ class Grant:
                     
                 Grant.exec_grants(entity_name, _event_state, None)
 entity_list = Dict[str, list['str']] = {}              
-def entity_has_attribute(entity_name: str, tenant_id:str) -> bool:
+def entity_has_attribute(entity_name: str, tenant_id:str, property_list) -> bool:
     if tenant_id not in entity_list[entity_name]:
         entity_list[entity_name] = {}
-        #TODO get list attributes 
+        attr_list = [
+            each_property.class_attribute.key
+            for each_property in property_list
+                if isinstance(
+                    each_property, sqlalchemy.orm.properties.ColumnProperty
+                )
+        ]
+        entity_list[entity_name] = attr_list
     return  tenant_id in entity_list[entity_name]
 
     
@@ -336,6 +344,7 @@ def receive_do_orm_execute(orm_execute_state):
     ):            
         mapper = orm_execute_state.bind_arguments['mapper']
         table_name = mapper.class_.__name__   # mapper.mapped_table.fullname disparaged
+        attrs = mapper.iterate_properties
         if table_name == "User":
             #pass
             security_logger.debug('No grants - avoid recursion on User table')
@@ -343,4 +352,4 @@ def receive_do_orm_execute(orm_execute_state):
             security_logger.debug('No grants during logic processing')
         else:
             #security_logger.info(f"ORM Listener table: {table_name} is_select: {orm_execute_state.is_select}")    
-            Grant.exec_grants(table_name, "is_select" , orm_execute_state)
+            Grant.exec_grants(table_name, "is_select" , orm_execute_state, attrs)
