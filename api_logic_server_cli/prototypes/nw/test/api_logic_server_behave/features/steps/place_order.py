@@ -171,6 +171,12 @@ def step_impl(context):
     context.alfki_after = after
     assert before.Balance + expected_adjustment == after.Balance, \
         f'On delete, Before balance {before.Balance} + {expected_adjustment} != new Balance {after.Balance}'
+    # this test has failed due to cascade delete and security
+    #
+    # cascade delete needs to be 'forced' for sqlite, using models.py patch in project creation
+    # find '# manual fix' in models.py
+    #
+    # the test is for aneu, a tenant, so delete is required for this role
 
     assert True is not False
 

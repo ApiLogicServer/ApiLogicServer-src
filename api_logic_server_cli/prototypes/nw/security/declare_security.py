@@ -1,4 +1,4 @@
-from security.system.authorization import Grant, Security
+from security.system.authorization import Grant, Security, DefaultRolePermission, GlobalTenantFilter
 from database import models
 import database
 import safrs
@@ -23,6 +23,27 @@ class Roles():
     tenant = "tenant"
     renter = "renter"
     manager = "manager"
+
+DefaultRolePermission(to_role = Roles.tenant, can_read=True, can_delete=True)
+
+DefaultRolePermission(to_role = Roles.renter, can_read=True, can_delete=False)
+
+DefaultRolePermission(to_role = Roles.manager, can_read=True, can_delete=False)
+
+
+use_global_tenant_filter = True
+if use_global_tenant_filter:
+        GlobalTenantFilter(multi_tenant_attribute_name = "Client_id",
+                           roles_non_multi_tenant = ["sa"],
+                           filter = '{entity_class}.Client_id == Security.current_user().client_id')
+
+use_normal_grant = False
+if use_normal_grant:
+        # prove same filter works   1) as a normal Grant, and   2) using lambda variable
+        filter_lambda = lambda :  models.Customer.Client_id == 1  #n SQLAlchemy "binary expression"
+        Grant(  on_entity = models.Customer, 
+                to_role = Roles.tenant,
+                filter = filter_lambda) # lambda : models.Customer.Client_id == 1)
 
 Grant(  on_entity = models.Category,    # illustrate multi-tenant - u1 shows only row 1
         to_role = Roles.tenant,
