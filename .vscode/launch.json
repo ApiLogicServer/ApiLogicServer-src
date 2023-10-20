@@ -321,6 +321,19 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "  - Create MySql - BudgetApp",
+            "type": "python",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/api_logic_server_cli",
+            "program": "cli.py",
+            "redirectOutput": true,
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "argsExpansion": "none",
+            "args": ["create","--project_name=../../../servers/BudgetApp",
+            "--db_url=mysql+pymysql://root:p@localhost:3306/BudgetApp"],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "  - Create MySql - classic models BAD DB",
             "type": "python",
             "request": "launch",
