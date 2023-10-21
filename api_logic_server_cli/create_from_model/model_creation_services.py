@@ -809,7 +809,7 @@ class ModelCreationServices(object):
                 resource_name = each_cls_member[0]
                 resource_class = each_cls_member[1]
                 table_name = resource_class.__tablename__  # FIXME _s_collection_name
-                if table_name.startswith("Category"):
+                if table_name.startswith("account"):
                     debug_str = "Excellent breakpoint"
                 resource = Resource(name=resource_name, model_creation_services=self)
                 self.metadata = resource_class.metadata

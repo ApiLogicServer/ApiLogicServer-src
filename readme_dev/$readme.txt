@@ -1,3 +1,23 @@
+sqlalchemy.exc.ArgumentError: reverse_property 'user' on relationship User.QtrTotalList references relationship QtrTotal.user, which does not reference mapper Mapper[User(users)]
+
+QtrTotal has parents:
+    # parent relationships (access parent)
+    account : Mapped["Account"] = relationship(back_populates=("QtrTotalList"))
+    category : Mapped["Category"] = relationship(back_populates=("QtrTotalList"))
+    user : Mapped["YrTotal"] = relationship(back_populates=("QtrTotalList"))   <--- huh??
+    user1 : Mapped["User"] = relationship(back_populates=("QtrTotalList"))
+and ddl:
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (account_id) REFERENCES accounts(account_id),
+    FOREIGN KEY (category_id) REFERENCES categories(category_id),
+    FOREIGN KEY (user_id, category_id, account_id, year_id) REFERENCES yr_total(user_id, category_id, account_id, year_id),
+
+    PRIMARY KEY(user_id, category_id, account_id, year_id, qtr_id)
+
+the parent-role-name looked for '_id' suffix (odd not to use id too, maybe too big a net)
+  - did that not affect nw Employee depts - no underscore
+  - why were classicmodels not ??
+
 Pleased and excited to announce API Logic Server 9.4, leveraging AI using ChatGPT:
 
 * Use ChatGPT to create a database

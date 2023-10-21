@@ -313,7 +313,7 @@ class ModelClass(Model):
         pk_column_names = set(col.name for col in table.primary_key.columns)
         parent_accessors = {}
         """ dict of parent_table, current count (0, 1, 2...   >1 ==> multi-reln) """
-        if self.name == "ARI023SHIPMENT":
+        if self.name == "QtrTotal":
             debug_stop = "nice breakpoint for relationships"
         for constraint in sorted(table.constraints, key=_get_constraint_sort_key):
             if isinstance(constraint, ForeignKeyConstraint):
@@ -321,8 +321,6 @@ class ModelClass(Model):
                                                           inflect_engine)
                 this_included = code_generator.is_table_included(self.table.name)
                 target_included = code_generator.is_table_included(constraint.elements[0].column.table.name)
-                if self.name == 'ARI023SHIPMENT':
-                    debug_stop = "interesting breakpoint"
                 if (detect_joined and self.parent_name == 'Base' and set(_get_column_names(constraint)) == pk_column_names):
                     self.parent_name = target_cls  # evidently not called for ApiLogicServer
                     log.debug(f"Foreign Key is Primary Key: {self.name}")
@@ -333,6 +331,8 @@ class ModelClass(Model):
                     parent_accessors.update({target_cls: multi_reln_count})
                 else:
                     parent_accessors[target_cls] = multi_reln_count
+                if self.name == 'QtrTotal' and target_cls == 'YrTotal':
+                    debug_stop = "interesting breakpoint"
                 relationship_ = ManyToOneRelationship(self.name, target_cls, constraint,
                                                     inflect_engine, multi_reln_count)
                 if this_included and target_included:
@@ -422,14 +422,16 @@ class ManyToOneRelationship(Relationship):
     def __init__(self, source_cls, target_cls, constraint, inflect_engine, multi_reln_count):
         super(ManyToOneRelationship, self).__init__(source_cls, target_cls)
 
+        if source_cls == 'QtrTotal' and target_cls == 'YrTotal':
+            debug_stop = "interesting breakpoint"
         column_names = _get_column_names(constraint)
         colname = column_names[0]
         tablename = constraint.elements[0].column.table.name
         self.foreign_key_constraint = constraint
-        if not colname.endswith('_id'):
-            self.preferred_name = inflect_engine.singular_noun(tablename) or tablename
-        else:
+        if colname.endswith('_id') and len(column_names) == 1:
             self.preferred_name = colname[:-3]
+        else:
+            self.preferred_name = inflect_engine.singular_noun(tablename) or tablename
 
         # Add uselist=False to One-to-One relationships
         if any(isinstance(c, (PrimaryKeyConstraint, UniqueConstraint)) and
@@ -1425,3 +1427,9 @@ from sqlalchemy.dialects.mysql import *
             metadata_declarations=self.render_metadata_declarations(),
             models=self.model_separator.join(rendered_models).rstrip('\n'))
         print(output, file=outfile)  # write the in-mem class file
+
+
+def key_module_map():
+    pass
+    read_tables = CodeGenerator.__init__()
+    calls_class = ModelClass.__init__()     # gets attrs, roles
