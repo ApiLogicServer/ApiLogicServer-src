@@ -20,7 +20,7 @@ resources:
             <li>On the personalization icon (upper right), click the (?) toggle to see info on the page</li>
             <li>In the admin.yaml, set <span style="font-family:'Courier New'">info_toggle_checked</span></li>
           </ul>
-          Suggestion - visit the Customer and Employee pages.<br><br>
+          Suggestion - visit the Customer, Department and Employee pages.<br><br>
           <h2>Authorization</h2>
           The table includes 8 rows (login as 'admin' with password 'p', upper right).<br><br>
           But, logout and login as 'u1' -- only 1 is shown, per <a target="_blank" href="https://apilogicserver.github.io/Docs/Security-Authorization/">authorization</a>.
@@ -124,6 +124,10 @@ resources:
     type: CustomerDemographic
     user_key: Id
   Department:
+    info_list: <h1>Tour - Authorization</h1>
+          <h2>Global Security Filters</h2>
+          Only role sa & manager can view SecurityLevel > 0 - see security/declare_security.py
+          <br><br>
     attributes:
       - label: ' Department Name*'
         name: DepartmentName
@@ -131,6 +135,7 @@ resources:
         sort: true
       - name: DepartmentId
       - name: Id
+      - name: SecurityLevel
     tab_groups:
       - direction: tomany
         fks:

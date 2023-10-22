@@ -53,5 +53,9 @@ Grant(  on_entity = models.Category,    # u2 has both roles - should return clie
         to_role = Roles.manager,
         filter = lambda : models.Category.Id == 5)
 
+GlobalTenantFilter(multi_tenant_attribute_name = "SecurityLevel",  # filters Department 'Eng Area 54'
+                        roles_non_multi_tenant = ["sa", "manager"],
+                        filter = '{entity_class}.SecurityLevel == 0')
+
 app_logger.debug("Declare Security complete - security/declare_security.py"
     + f' -- {len(database.authentication_models.metadata.tables)} tables loaded')

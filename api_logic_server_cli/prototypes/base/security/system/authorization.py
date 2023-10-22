@@ -125,13 +125,15 @@ class DefaultRolePermission:
 
 class GlobalTenantFilter():
     """
-    Apply a single global select to all tables to enforce multi-tenant
-
-    TODO: why no role?  Admin would require a client_id, and alter it to look at account?
+    Apply a single global select to all tables to enforce multi-tenant, security, soft-delete etc
 
     Example
         GlobalTenantFilter(tenant_id = "Client_id",
-                           filter = '{entity_class}.Client_id == 1')
+            filter = '{entity_class}.Client_id == 1')
+
+        GlobalTenantFilter(multi_tenant_attribute_name = "SecurityLevel",
+            roles_non_multi_tenant = ["sa", "manager"],
+            filter = '{entity_class}.SecurityLevel==0')
 
     Args:
         :tenant_id:str - name of the attribute found in any entity
@@ -151,13 +153,10 @@ class GlobalTenantFilter():
         self.multi_tenant_attribute_name = multi_tenant_attribute_name
         self.filter_str = filter
         self.class_name = None
+        self.roles_non_multi_tenant = roles_non_multi_tenant
         
-        # if self.tenant_id not in GlobalTenantFilter.grants_by_multi_tenant_attribute_name:
-        #    GlobalTenantFilter.grants_by_multi_tenant_attribute_name[self.multi_tenant_attribute_name] = self
-
         models_name = 'database.models'
         cls_members = inspect.getmembers(sys.modules[models_name], inspect.isclass)
-
 
         if self.class_name is None:  # add filter for all models (?) with tentant_id attr
             for each_cls_member in cls_members:
@@ -182,7 +181,7 @@ class GlobalTenantFilter():
                             security_logger.debug(f"adding Global tenant filter for {self.class_name}: {self.lambda_str}")
                             self.lambda_filter = eval(self.lambda_str)
                             assert self.lambda_filter is not None, "exec failed to set self.lambda_filter"
-                            grant_str = f'Grant (on_entity=models.{self.class_name}, to_role="*", filter={self.lambda_str})'
+                            grant_str = f'Grant (on_entity=models.{self.class_name}, to_role="*", filter={self.lambda_str}, global_tenant_filter=self)'
                             security_logger.debug(f".. using explict lambda {grant_str}")
                             exec(grant_str)  # create a 'standard' grant
                             break  # next resource class
@@ -230,7 +229,8 @@ class Grant:
         can_update: bool = True,
         can_delete: bool = True,
         filter: object = None,
-        filter_debug: str = ""):
+        filter_debug: str = "",
+        global_tenant_filter: GlobalTenantFilter=None):
         
         
         self.class_name = on_entity
@@ -246,46 +246,15 @@ class Grant:
         self.orm_execute_state = None # used by filter
         self.table_name : str = on_entity.__tablename__   # type: ignore
         self.filter_debug = filter_debug
+        self.global_tenant_filter = global_tenant_filter
         
         self._entity_name:str =  on_entity._s_type # Class Name
         if self._entity_name is not None:
             if self._entity_name not in self.grants_by_table:
                 Grant.grants_by_table[self._entity_name] = []
             Grant.grants_by_table[self._entity_name].append( self )
-        
-        
-        def current_user():
-            return Security.current_user() if Args.security_enabled else None
-    
-    @staticmethod
-    def entity_has_attribute(entity_name: str, tenant_id:str, property_list) -> bool:
-        """returns true if tenant_id is property_list
 
-        Args:
-            entity_name (str): _description_
-            tenant_id (str): _description_
-            property_list (_type_): eg, from mapper.iterate_properties -- you only get 1 shot
 
-        Returns:
-            bool: _description_
-        """
-        if tenant_id not in Grant.entity_list:
-            Grant.entity_list[entity_name] = {}
-            db_list_properties = False  # FIXME True eats the property_list, so never finds attrs
-            if db_list_properties:
-                security_logger.debug(f'\nentity_has_attribute {entity_name}')
-                for each_property in property_list:
-                    security_logger.debug(f'.. {each_property}')
-            attr_list = [
-                each_property.class_attribute.key
-                for each_property in property_list
-                    if isinstance(
-                        each_property, ColumnProperty
-                    )
-            ]
-            Grant.entity_list[entity_name] = attr_list
-        return  tenant_id in Grant.entity_list[entity_name]
-            
     @staticmethod
     def exec_grants(entity_name: str, crud_state: str, orm_execute_state: any = None, property_list: any = None) -> None:
         """
@@ -362,8 +331,13 @@ class Grant:
         if entity_name in Grant.grants_by_table:
             for each_grant in Grant.grants_by_table[entity_name]:
                 grant_entity = each_grant.entity
-                if each_grant.role_name == "*":
-                    if each_grant.filter is not None \
+                if each_grant.global_tenant_filter is not None:
+                    excluded_role = False
+                    for each_user_role in user.UserRoleList:
+                        if each_user_role.role_name in each_grant.global_tenant_filter.roles_non_multi_tenant:
+                            excluded_role = True
+                            break
+                    if excluded_role == False and each_grant.filter is not None \
                         and orm_execute_state is not None:
                         grant_list.append(each_grant.filter())
                         security_logger.debug(f".. Accruing global grant for entity {entity_name}: {each_grant.filter_debug} ({each_grant.filter})")
