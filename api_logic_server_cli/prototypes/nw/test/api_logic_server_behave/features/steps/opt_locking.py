@@ -17,15 +17,15 @@ def step_impl(context):
     r = requests.get(url=get_cat1, headers= test_utils.login())
     response_text = r.text
     cat1 = json.loads(response_text)  # 'str' object has no attribute 'read'
-    context.cat1 = cat1  # checksum: -4130312969102546939
+    context.cat1 = cat1
     pass
 
 @then('Expected Cat1 Checksum')
 def step_impl(context):
     cat1 = context.cat1
-    expected_checksum = "-4130312969102546939"
+    expected_checksum = "-4130312969102546939"  # requires export PYTHONHASHSEED=0
     checksum = cat1["data"]["attributes"]["S_CheckSum"]
-    assert checksum == "-4130312969102546939", f'Unexpected Checksum[{checksum}, expected {expected_checksum}]'
+    assert checksum == expected_checksum, f'Unexpected Checksum[{checksum}, expected {expected_checksum}]'
 
 
 @when('Patch Valid Checksum')

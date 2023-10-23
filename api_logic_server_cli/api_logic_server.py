@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "09.04.03"
+__version__ = "09.04.04"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t10/22/2023 - 09.04.03: Security - global filters w/ roles, crud permissions, bug fix (18) \n"\
+    "\t10/22/2023 - 09.04.03: Security - global filters w/ roles & tests, crud permissions, bug fix (18) \n"\
     "\t10/19/2023 - 09.04.01: Security - global filters, crud permissions (b&t runs)\n"\
     "\t09/29/2023 - 09.04.00: Enhanced devops automation (sqlite, MySql, Postgres) \n"\
     "\t09/18/2023 - 09.03.04: Sqlite chatgpt cust_orders, Python readme link, class creation cleanup \n"\

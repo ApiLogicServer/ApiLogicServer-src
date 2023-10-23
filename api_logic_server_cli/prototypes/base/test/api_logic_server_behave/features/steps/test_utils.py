@@ -31,13 +31,21 @@ if os.getenv('SECURITY_ENABLED'):  # e.g. export SECURITY_ENABLED=true
     else:
         SECURITY_ENABLED = True
 
-def login():
+def login(user: str = 'aneu'):
+    """ login (default aneu), return header with token
+
+    Raises:
+        Exception: _description_
+
+    Returns:
+        _type_: _description_
+    """
     global SECURITY_ENABLED
     if SECURITY_ENABLED == False:
         return {}
     else:
         post_uri = 'http://localhost:5656/api/auth/login'
-        post_data = {"username": "aneu", "password": "p"}
+        post_data = {"username": user, "password": "p"}
         r = requests.post(url=post_uri, json = post_data)
         response_text = r.text
         status_code = r.status_code
