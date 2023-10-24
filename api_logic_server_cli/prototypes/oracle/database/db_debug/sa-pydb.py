@@ -48,11 +48,11 @@ if use_env:
         f'oracle+oracledb://{username}:{password}@{cp.host}:{cp.port}/?service_name={cp.service_name}',
         thick_mode=thick_mode)
 else:
-    username = "my_user_name"
-    password = "my_password"
-    host = "my_host"
-    port ="1526"
-    service_name ="my_service_name"  # might see... Not a socket?  Not registered as listener?
+    username = "hr"
+    password = "tiger"
+    host = "localhost"
+    port ="1521"
+    service_name ="ORCL"  # might see... Not a socket?  Not registered as listener?
     engine = create_engine(
         f'oracle+oracledb://{username}:{password}@{host}:{port}/?service_name={service_name}',
         thick_mode=thick_mode)

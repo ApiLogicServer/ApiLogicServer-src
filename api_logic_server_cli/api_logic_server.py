@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "09.04.04"
+__version__ = "09.04.05"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t10/22/2023 - 09.04.03: Security - global filters w/ roles & tests, crud permissions, bug fix (18) \n"\
+    "\t10/23/2023 - 09.04.03: Security - global filters w/ roles & tests, crud permissions, bug fix (18), sa-pydb \n"\
     "\t10/19/2023 - 09.04.01: Security - global filters, crud permissions (b&t runs)\n"\
     "\t09/29/2023 - 09.04.00: Enhanced devops automation (sqlite, MySql, Postgres) \n"\
     "\t09/18/2023 - 09.03.04: Sqlite chatgpt cust_orders, Python readme link, class creation cleanup \n"\
@@ -365,6 +365,12 @@ def create_project_with_nw_samples(project, msg: str) -> str:
                 joinpath('prototypes/nw_no_cust')  # /Users/val/dev/ApiLogicServer/project_prototype_nw_no_cust
             recursive_overwrite(nw_dir, project.project_directory)
 
+        if 'oracle' in project.db_url:
+            log.debug(".. ..Copy in oracle customizations: sa_pydb")
+            nw_dir = (Path(api_logic_server_dir_str)).\
+                joinpath('prototypes/oracle')  # /Users/val/dev/ApiLogicServer/prototypes/oracle
+            recursive_overwrite(nw_dir, project.project_directory)
+
         if project.db_url in ["allocation"]:
             log.debug(".. ..Copy in allocation customizations: readme, logic, tests")
             nw_dir = (Path(api_logic_server_dir_str)).\
@@ -438,7 +444,7 @@ def create_project_with_nw_samples(project, msg: str) -> str:
                                 in_file=f'{project.project_directory}/database/alembic.ini')
             create_utils.replace_string_in_file(search_for="replace_db_url",
                                 replace_with=db_uri,
-                                in_file=f'{project.project_directory}/database/db_debug.py')
+                                in_file=f'{project.project_directory}/database/db_debug/db_debug.py')
         else:
             """ sqlite - copy the db (relative fails, since cli-dir != project-dir)
             """
@@ -1339,7 +1345,7 @@ def key_module_map():
 
     ProjectRun.create_project()                             # main driver, calls...
     create_utils.get_abs_db_url()                           # nw set here, dbname, db abbrevs
-    create_project_with_nw_samples()                        # clone project, overlay nw
+    create_project_with_nw_samples()                        # clone project, overlay nw etc
     model_creation_services = ModelCreationServices()       # creates resource_list (python db model); ctor calls...
     def and_the_ctor_calls():
         model_creation_services.create_model_classes_and_resource_list()  # which uses..
