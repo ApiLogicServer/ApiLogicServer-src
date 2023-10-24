@@ -873,7 +873,7 @@ class CodeGenerator(object):
 #
 #   Search:
 #     manual  - illustrates you can make manual changes to models.py
-#     example - more complex cases (explore in database/db_debug.py)
+#     example - more complex cases (explore in database/db_debug/db_debug.py)
 """
 
         api_logic_server_imports = f"""########################################################################################################################
@@ -1299,7 +1299,7 @@ from sqlalchemy.dialects.mysql import *
                     if model.name not in["User", "Api"]:
                         log.info(f'** Warning: id columns will not be included in API response - '
                                 f'{model.name}.id\n')
-                attr_typing = True  # verify this in nw database/db_debug.py
+                attr_typing = True  # verify this in nw database/db_debug/db_debug.py
                 if attr_typing:
                     if "= Column(DECIMAL" in rendered_column:
                         rendered_column = rendered_column.replace(

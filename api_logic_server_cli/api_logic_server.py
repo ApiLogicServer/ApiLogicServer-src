@@ -470,7 +470,7 @@ def create_project_with_nw_samples(project, msg: str) -> str:
                                 in_file=f'{project.project_directory}/database/alembic.ini')
             create_utils.replace_string_in_file(search_for="replace_db_url",
                                 replace_with=return_abs_db_url,
-                                in_file=f'{project.project_directory}/database/db_debug.py')
+                                in_file=f'{project.project_directory}/database/db_debug/db_debug.py')
 
             log.debug(f'.. ..Sqlite database setup {target_db_loc_actual}...')
             log.debug(f'.. .. ..From {db_loc}')
