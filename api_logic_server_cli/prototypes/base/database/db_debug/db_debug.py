@@ -1,11 +1,20 @@
 import sqlalchemy
 from sqlalchemy import create_engine, inspect, MetaData
 from sqlalchemy.orm import Session
-import models
+import os, sys
 
-    # *******************************************
-    # Use this to inspect SQLAlchemy2 connection
-    # *******************************************
+from pathlib import Path
+
+running_at = Path(__file__)
+project_dir = running_at.parent.parent.parent
+sys.path.append(str(project_dir))
+os.chdir(str(project_dir))  # so admin app can find images, code
+
+import database.models as models
+
+# *******************************************
+# Use this to inspect SQLAlchemy2 connection
+# *******************************************
 
 def print_meta(meta):
     print("\n\nmeta.sorted_tables (meta = models.metadata.sorted_tables)\n")
@@ -14,8 +23,10 @@ def print_meta(meta):
         for each_column in each_table.columns:
             print(f'\t{each_column.name}')
 
+db_loc = str(project_dir.joinpath('database/db.sqlite'))
 db_url = "sqlite:////Users/val/dev/servers/ApiLogicProject/database/db.sqlite"
-db_url = "sqlite:////Users/val/dev/servers/ApiLogicProject/database/nw-gold.sqlite"
+db_url = f"sqlite:///{db_loc}"
+# db_url = "sqlite:////Users/val/dev/servers/ApiLogicProject/database/nw-gold.sqlite"
 
 e = sqlalchemy.create_engine(db_url)
 inspector = inspect(e)
