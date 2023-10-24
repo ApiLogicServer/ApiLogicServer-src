@@ -1,11 +1,10 @@
 # sa-pydb.py - for debugging oracle connections
 #
-# thanks to https://gist.github.com/cjbj/b060bb09adc83f29a1afab1e665d9222
-# https://medium.com/oracledevs/using-the-development-branch-of-sqlalchemy-2-0-with-python-oracledb-d6e89090899c
-#
-# Using SQLAlchemy 2.0 with python-oracledb
-#
 # https://oracle.github.io/python-oracledb/
+#
+# thanks to https://gist.github.com/cjbj/b060bb09adc83f29a1afab1e665d9222
+# Using SQLAlchemy 2.0 with python-oracledb
+# https://medium.com/oracledevs/using-the-development-branch-of-sqlalchemy-2-0-with-python-oracledb-d6e89090899c
 
 import os
 

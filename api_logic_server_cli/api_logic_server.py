@@ -293,7 +293,7 @@ def create_project_with_nw_samples(project, msg: str) -> str:
 
     update config.py - SQLALCHEMY_DATABASE_URI
 
-    if nw/nw+, inject sample logic/declare_logic and api/customize_api.
+    if nw/nw+/allocation/BudgetApp, inject sample logic/declare_logic and api/customize_api.
 
     nw, allocation etc databases are resolved in api_logic_server_utils.get_abs_db_url()
 
@@ -354,7 +354,7 @@ def create_project_with_nw_samples(project, msg: str) -> str:
         if project.nw_db_status in ["nw", "nw+"]:
             log.debug(".. ..Copy in nw customizations: logic, custom api, readme, tests, admin app")
             nw_dir = (Path(api_logic_server_dir_str)).\
-                joinpath('prototypes/nw')  # /Users/val/dev/ApiLogicServer/api_logic_server_cli/project_prototype
+                joinpath('prototypes/nw')  # api_logic_server_cli/prototypes/nw
             recursive_overwrite(nw_dir, project.project_directory)
 
             create_nw_tutorial(project.project_directory, api_logic_server_dir_str)
@@ -362,19 +362,25 @@ def create_project_with_nw_samples(project, msg: str) -> str:
         if project.nw_db_status in ["nw-"]:
             log.debug(".. ..Copy in nw- customizations: readme, perform_customizations")
             nw_dir = (Path(api_logic_server_dir_str)).\
-                joinpath('prototypes/nw_no_cust')  # /Users/val/dev/ApiLogicServer/project_prototype_nw_no_cust
+                joinpath('prototypes/nw_no_cust')
             recursive_overwrite(nw_dir, project.project_directory)
 
         if 'oracle' in project.db_url:
             log.debug(".. ..Copy in oracle customizations: sa_pydb")
             nw_dir = (Path(api_logic_server_dir_str)).\
-                joinpath('prototypes/oracle')  # /Users/val/dev/ApiLogicServer/prototypes/oracle
+                joinpath('prototypes/oracle')
             recursive_overwrite(nw_dir, project.project_directory)
 
         if project.db_url in ["allocation"]:
             log.debug(".. ..Copy in allocation customizations: readme, logic, tests")
             nw_dir = (Path(api_logic_server_dir_str)).\
-                joinpath('prototypes/allocation')  # /Users/val/dev/ApiLogicServer/project_prototype_allocation
+                joinpath('prototypes/allocation')
+            recursive_overwrite(nw_dir, project.project_directory)
+
+        if project.db_url in ["BudgetApp"]:
+            log.debug(".. ..Copy in allocation customizations: readme, logic, tests")
+            nw_dir = (Path(api_logic_server_dir_str)).\
+                joinpath('prototypes/BudgetApp')
             recursive_overwrite(nw_dir, project.project_directory)
 
         if project.db_url == "mysql+pymysql://root:p@localhost:3306/classicmodels":
