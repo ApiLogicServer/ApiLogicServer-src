@@ -988,7 +988,7 @@ from database import <project.bind_key>_models
 
 
     def add_auth(self, msg: str, is_nw: bool = False):
-        """_summary_
+        """add authentication models to project, update config; leverage multi-db support.  kat
 
         1. add-db --db_url= [ auth | db_url ]
 
