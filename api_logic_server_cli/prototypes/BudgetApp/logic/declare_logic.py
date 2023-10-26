@@ -45,13 +45,21 @@ def declare_logic():
     Rule.sum(derive=models.YrTotal.budget_total, as_sum_of=models.QtrTotal.budget_total)
     Rule.sum(derive=models.QtrTotal.budget_total, as_sum_of=models.MonthTotal.budget_total)
     Rule.sum(derive=models.MonthTotal.budget_total, as_sum_of=models.Budget.amount)
+    Rule.sum(derive=models.MonthTotal.actual_amount, as_sum_of=models.Budget.actual_amount)
+    Rule.sum(derive=models.Budget.actual_amount, as_sum_of=models.Transaction.amount)
     Rule.copy(derive=models.Budget.is_expense,from_parent=models.Category.is_expense)
     
     # Roll up actual transaction amounts
     Rule.sum(derive=models.YrTotal.actual_amount, as_sum_of=models.QtrTotal.actual_amount)
     Rule.sum(derive=models.QtrTotal.actual_amount, as_sum_of=models.MonthTotal.actual_amount)
-    Rule.sum(derive=models.MonthTotal.actual_amount, as_sum_of=models.Transaction.amount)
+    Rule.sum(derive=models.MonthTotal.actual_amount, as_sum_of=models.Budget.actual_amount)
     Rule.copy(derive=models.Transaction.is_expense,from_parent=models.Category.is_expense)
+    
+    Rule.copy(derive=models.Transaction.category_id,from_parent=models.Budget.category_id)
+    Rule.copy(derive=models.Transaction.user_id,from_parent=models.Budget.user_id)
+    Rule.copy(derive=models.Transaction.year_id,from_parent=models.Budget.year_id)
+    Rule.copy(derive=models.Transaction.qtr_id,from_parent=models.Budget.qtr_id)
+    Rule.copy(derive=models.Transaction.month_id,from_parent=models.Budget.month_id)
     
     
     app_logger.debug("..logic/declare_logic.py (logic == rules + code)")
