@@ -41,8 +41,13 @@ def declare_logic():
 
     Rule.early_row_event_all_classes(early_row_event_all_classes=handle_all)
 
+    use_parent_insert = True
+
     # Roll up budget amounts
-    Rule.sum(derive=models.YrTotal.budget_total, as_sum_of=models.QtrTotal.budget_total)
+    if use_parent_insert:
+        Rule.sum(derive=models.YrTotal.budget_total, as_sum_of=models.QtrTotal.budget_total, insert_parent=True)
+    else:
+        Rule.sum(derive=models.YrTotal.budget_total, as_sum_of=models.QtrTotal.budget_total)
     Rule.sum(derive=models.QtrTotal.budget_total, as_sum_of=models.MonthTotal.budget_total)
     Rule.sum(derive=models.MonthTotal.budget_total, as_sum_of=models.Budget.amount)
     Rule.sum(derive=models.MonthTotal.actual_amount, as_sum_of=models.Budget.actual_amount)
