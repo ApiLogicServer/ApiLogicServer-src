@@ -169,7 +169,7 @@ def declare_logic():
             return True
     Rule.constraint(validate=models.Category,
                     calling=valid_category_description,
-                    error_msg="{row.Description} cannot be 'x'")
+                    error_msg="Description cannot be 'x'")
 
 
     """

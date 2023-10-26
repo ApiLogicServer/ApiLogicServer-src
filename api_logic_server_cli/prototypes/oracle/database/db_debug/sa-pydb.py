@@ -55,6 +55,8 @@ else:
     engine = create_engine(
         f'oracle+oracledb://{username}:{password}@{host}:{port}/?service_name={service_name}',
         thick_mode=thick_mode)
+    
+conn = oracledb.connect(user=username, password=password, dsn=service_name)  # without SQLAlchemy
 
 with engine.connect() as connection:
     print(connection.scalar(text("""SELECT UNIQUE CLIENT_DRIVER
