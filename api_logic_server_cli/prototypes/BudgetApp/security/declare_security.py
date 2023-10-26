@@ -36,4 +36,4 @@ class Roles():
     
 GlobalTenantFilter(multi_tenant_attribute_name="user_id",
                 roles_non_multi_tenant = ["sa", "manager"],   
-                filter="{entity_class}.user_id -- Security.current_user().id")
+                filter="{entity_class}.user_id == Security.current_user().id")
