@@ -44,19 +44,22 @@ def declare_logic():
     use_parent_insert = True
 
     # Roll up budget amounts
-
+    
     Rule.sum(derive=models.YrTotal.budget_total, as_sum_of=models.QtrTotal.budget_total,insert_parent=use_parent_insert)
     Rule.sum(derive=models.QtrTotal.budget_total, as_sum_of=models.MonthTotal.budget_total,insert_parent=use_parent_insert)
     Rule.sum(derive=models.MonthTotal.budget_total, as_sum_of=models.Budget.amount,insert_parent=use_parent_insert)
-    Rule.sum(derive=models.MonthTotal.actual_amount, as_sum_of=models.Budget.actual_amount,insert_parent=use_parent_insert)
     Rule.sum(derive=models.Budget.actual_amount, as_sum_of=models.Transaction.amount,insert_parent=use_parent_insert)
     Rule.copy(derive=models.Budget.is_expense,from_parent=models.Category.is_expense)
+    Rule.count(derive=models.Budget.count_transactions,as_count_of=models.Transaction)
     
-    # Roll up actual transaction amounts
+    # Roll up actual transaction amounts into Budget
+    
     Rule.sum(derive=models.YrTotal.actual_amount, as_sum_of=models.QtrTotal.actual_amount,insert_parent=use_parent_insert)
     Rule.sum(derive=models.QtrTotal.actual_amount, as_sum_of=models.MonthTotal.actual_amount,insert_parent=use_parent_insert)
     Rule.sum(derive=models.MonthTotal.actual_amount, as_sum_of=models.Budget.actual_amount,insert_parent=use_parent_insert)
     Rule.copy(derive=models.Transaction.is_expense,from_parent=models.Category.is_expense)
+
+    # Copy Budget (parent) values 
     
     Rule.copy(derive=models.Transaction.category_id,from_parent=models.Budget.category_id)
     Rule.copy(derive=models.Transaction.user_id,from_parent=models.Budget.user_id)
