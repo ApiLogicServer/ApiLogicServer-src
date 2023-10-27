@@ -1,7 +1,7 @@
 # Budget App
 
 This is an example of how rules can be used to do a multi table rollup 
-(budget .> month -> qtr -> yr) - it also introduces the flag on sum and count (insert_parent=True).
+(budget -> month -> qtr -> yr) - it also introduces the rule flag on sum and count (insert_parent=True).
 This allows the child to trigger the creation of the parent before doing the sum or count aggregation.
 
 ## Data Model
@@ -91,3 +91,5 @@ The rules are un-ordered bu represent the rollup (sums) of budget and actual tra
 As each budget entry is posted via API (/ServiceEndpoint/insert_budget) the logic trace shows how the rules are fired.
 
 ![Logic Trace](./images/LogicTrace.png)
+
+## Behave Testing
