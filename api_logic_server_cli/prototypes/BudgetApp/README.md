@@ -66,19 +66,25 @@ curl -X 'POST' \
 ## Declarative Logic
 The rules are un-ordered bu represent the rollup (sums) of budget and actual transactions. 
 ```
- # Roll up budget amounts
-    Rule.sum(derive=models.YrTotal.budget_total, as_sum_of=models.QtrTotal.budget_total)
-    Rule.sum(derive=models.QtrTotal.budget_total, as_sum_of=models.MonthTotal.budget_total)
-    Rule.sum(derive=models.MonthTotal.budget_total, as_sum_of=models.Budget.amount)
-    Rule.sum(derive=models.MonthTotal.actual_amount, as_sum_of=models.Budget.actual_amount)
-    Rule.sum(derive=models.Budget.actual_amount, as_sum_of=models.Transaction.amount)
-    Rule.copy(derive=models.Budget.is_expense,from_parent=models.Category.is_expense)
+     use_parent_insert = True
+
+    # Roll up budget amounts
     
-    # Roll up actual transaction amounts
-    Rule.sum(derive=models.YrTotal.actual_amount, as_sum_of=models.QtrTotal.actual_amount)
-    Rule.sum(derive=models.QtrTotal.actual_amount, as_sum_of=models.MonthTotal.actual_amount)
-    Rule.sum(derive=models.MonthTotal.actual_amount, as_sum_of=models.Budget.actual_amount)
+    Rule.sum(derive=models.YrTotal.budget_total, as_sum_of=models.QtrTotal.budget_total,insert_parent=use_parent_insert)
+    Rule.sum(derive=models.QtrTotal.budget_total, as_sum_of=models.MonthTotal.budget_total,insert_parent=use_parent_insert)
+    Rule.sum(derive=models.MonthTotal.budget_total, as_sum_of=models.Budget.amount,insert_parent=use_parent_insert)
+    Rule.sum(derive=models.Budget.actual_amount, as_sum_of=models.Transaction.amount,insert_parent=use_parent_insert)
+    Rule.copy(derive=models.Budget.is_expense,from_parent=models.Category.is_expense)
+    Rule.count(derive=models.Budget.count_transactions,as_count_of=models.Transaction)
+    
+    # Roll up actual transaction amounts into Budget
+    
+    Rule.sum(derive=models.YrTotal.actual_amount, as_sum_of=models.QtrTotal.actual_amount,insert_parent=use_parent_insert)
+    Rule.sum(derive=models.QtrTotal.actual_amount, as_sum_of=models.MonthTotal.actual_amount,insert_parent=use_parent_insert)
+    Rule.sum(derive=models.MonthTotal.actual_amount, as_sum_of=models.Budget.actual_amount,insert_parent=use_parent_insert)
     Rule.copy(derive=models.Transaction.is_expense,from_parent=models.Category.is_expense)
+
+    # Copy Budget (parent) values 
     
     Rule.copy(derive=models.Transaction.category_id,from_parent=models.Budget.category_id)
     Rule.copy(derive=models.Transaction.user_id,from_parent=models.Budget.user_id)
@@ -93,3 +99,6 @@ As each budget entry is posted via API (/ServiceEndpoint/insert_budget) the logi
 ![Logic Trace](./images/LogicTrace.png)
 
 ## Behave Testing
+The behave test is run after starting the server (no security) - this will attempt to insert a budget and transaction and see if the YR_TOTAL values change.
+Run Behave Test (no security) and then review the behave.log
+See the directory test/api_logic_server_behave features/budget.features and steps/budget.py.
