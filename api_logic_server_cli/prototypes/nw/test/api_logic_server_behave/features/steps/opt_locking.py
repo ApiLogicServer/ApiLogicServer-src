@@ -48,7 +48,7 @@ def step_impl(context):
 @then('Valid Checksum, Invalid Description')
 def step_impl(context):
     response_text = context.response.text
-    assert "x cannot be" in response_text,\
+    assert "Description cannot be" in response_text,\
     "Opt Locking Failed: Matching Checksum test"
 
 

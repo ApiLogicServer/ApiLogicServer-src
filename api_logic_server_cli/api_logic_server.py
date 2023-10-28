@@ -383,6 +383,12 @@ def create_project_with_nw_samples(project, msg: str) -> str:
                 joinpath('prototypes/BudgetApp')
             recursive_overwrite(nw_dir, project.project_directory)
 
+        if project.db_url in ["basic_demo"]:
+            log.debug(".. ..Copy in basic_demo customizations: readme, logic, tests")
+            nw_dir = (Path(api_logic_server_dir_str)).\
+                joinpath('prototypes/basic_demo')
+            recursive_overwrite(nw_dir, project.project_directory)
+
         if project.db_url == "mysql+pymysql://root:p@localhost:3306/classicmodels":
             log.debug(".. ..Copy in classicmodels customizations")
             proto_dir = (Path(api_logic_server_dir_str)).\

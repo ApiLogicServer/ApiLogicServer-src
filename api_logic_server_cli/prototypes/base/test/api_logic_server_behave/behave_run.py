@@ -37,5 +37,5 @@ if __name__ == "__main__":
             log_file.write(f'&nbsp;&nbsp;')
             log_file.write(f'')
             log_file.write(f'\n{__file__} completed at {date_time}')
-    print(f'\nSUCCESSFUL EXIT -- {__file__} at {date_time}, result: {behave_result}\n\n')
+    print(f'\Behave Run Exit -- {__file__} at {date_time}, result: {behave_result}\n\n')
     sys.exit(behave_result)
