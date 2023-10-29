@@ -292,11 +292,11 @@ class Grant:
         can_insert = False
         can_delete = False
         can_update = False
-        super_users = ['sa']  #, 'admin']
+        super_users = ['sa']  # admin not required here, has role 'sa'
         try:
             from flask import g
             is_sa = Security.current_user_has_role('sa')
-            if user.id in super_users or g.isSA or Security.current_user_has_role('sa'):
+            if user.id in super_users or is_sa or g.isSA:
                 security_logger.debug("super user (e,g, sa) - no grants apply")
                 return
         except Exception as ex:
