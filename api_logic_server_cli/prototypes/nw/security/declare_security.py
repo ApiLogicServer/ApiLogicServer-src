@@ -61,5 +61,12 @@ GlobalTenantFilter(multi_tenant_attribute_name = "SecurityLevel",  # filters Dep
                         roles_non_multi_tenant = ["sa", "manager"],
                         filter = '{entity_class}.SecurityLevel == 0')
 
+by_region = False
+if by_region:
+        Grant(  on_entity = models.Customer,    # 
+                to_role = Roles.renter,
+                filter_debug="by region",
+                filter = lambda : models.Customer.Region == Security.current_user().region)
+
 app_logger.debug("Declare Security complete - security/declare_security.py"
     + f' -- {len(database.authentication_models.metadata.tables)} tables loaded')

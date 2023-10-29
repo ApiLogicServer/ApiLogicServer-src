@@ -702,6 +702,13 @@ if Config.do_install_api_logic_server:
 
     delete_build_directories(install_api_logic_server_path)
 
+    if Config.do_logicbank_test != "":
+        test_py = f"python -m pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple logicbank=={Config.do_logicbank_test}"
+        rule_bank_test = run_command(
+            test_py,
+            cwd=install_api_logic_server_path,
+            msg=f'\nInstall testpy logicbank')
+
     if platform == "win32":
         print("not for windows")  # https://github.com/mkleehammer/pyodbc/issues/1010
     else:

@@ -11,7 +11,8 @@ class Config:
 
     default_setting = True  # simplify enable / disable most
 
-    do_install_api_logic_server = default_setting   # verify build wheel and local install
+    do_install_api_logic_server = default_setting   # verify build wheel and local 
+    do_logicbank_test = ""                          # use this testpy version (or '')
     
     do_create_api_logic_project = default_setting   # create the default project
     do_run_api_logic_project = default_setting      # start the server 
