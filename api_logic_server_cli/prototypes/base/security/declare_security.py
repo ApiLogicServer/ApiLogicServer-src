@@ -1,4 +1,4 @@
-from security.system.authorization import Grant, Security
+from security.system.authorization import Grant, Security, Security, DefaultRolePermission, GlobalTenantFilter
 import logging
 from database import models
 import safrs
@@ -18,6 +18,19 @@ class Roles():
     ''' Define Roles here, so can use code completion (Roles.tenant) '''
     tenant = "tenant"
     renter = "renter"
+    manager = "manager"
+
+
+DefaultRolePermission(to_role = Roles.tenant, can_read=True, can_delete=True)
+
+DefaultRolePermission(to_role = Roles.renter, can_read=True, can_delete=False)
+
+DefaultRolePermission(to_role = Roles.manager, can_read=True, can_delete=False)
+
+GlobalTenantFilter(multi_tenant_attribute_name = "Client_id",
+                    roles_non_multi_tenant = ["sa"],
+                    filter = '{entity_class}.Client_id == Security.current_user().client_id')
+
 
 Grant(  on_entity = models.Category,    # illustrate multi-tenant
         to_role = Roles.tenant,
