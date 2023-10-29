@@ -20,9 +20,9 @@ session = db.session
 
 class Roles():
     """ Define Roles here, so can use code completion (Roles.tenant) """
-    tenant = "tenant"
-    renter = "renter"
-    manager = "manager"
+    tenant = "tenant"           # aneu, u1, u2
+    renter = "renter"           # r1
+    manager = "manager"         # u2, sam
 
 DefaultRolePermission(to_role = Roles.tenant, can_read=True, can_delete=True)
 
@@ -52,6 +52,10 @@ Grant(  on_entity = models.Category,    # illustrate multi-tenant - u1 shows onl
 Grant(  on_entity = models.Category,    # u2 has both roles - should return client_id 2 (2, 3, 4), and 5
         to_role = Roles.manager,
         filter = lambda : models.Category.Id == 5)
+
+Grant(  on_entity = models.Customer,    # 
+        to_role = Roles.tenant,
+        filter = lambda : models.Customer.Region == Security.current_user().region)
 
 GlobalTenantFilter(multi_tenant_attribute_name = "SecurityLevel",  # filters Department 'Eng Area 54'
                         roles_non_multi_tenant = ["sa", "manager"],

@@ -315,6 +315,11 @@ app_logger.debug(f"\nENV args: \n{args}\n\n")
 if args.verbose:
     app_logger.setLevel(logging.DEBUG)
     safrs.log.setLevel(logging.DEBUG)  # notset 0, debug 10, info 20, warn 30, error 40, critical 50
+    authentication_logger = logging.getLogger('security.system.authentication')
+    authentication_logger.setLevel(logging.DEBUG)
+    authorization_logger = logging.getLogger('security.system.authorization')
+    authorization_logger.setLevel(logging.DEBUG)
+
 if app_logger.getEffectiveLevel() <= logging.DEBUG:
     util.sys_info(flask_app.config)
 app_logger.debug(f"\nENV args: \n{args}\n\n")
