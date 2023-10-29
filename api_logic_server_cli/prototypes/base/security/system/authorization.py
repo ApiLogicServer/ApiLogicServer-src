@@ -60,19 +60,23 @@ class Security:
         """
         return current_user
 
-    @staticmethod
     @classmethod
     def current_user_has_role(cls, role_name: str) -> bool: 
-        '''
-        Helper, e.g. rules can determine if update allowed
+        """_summary_
 
-        If user has role xyz, then for update authorization s/he can... 
-        '''
-        result = False
-        return any(
-            role_name == each_role.name
-            for each_role in Security.current_user().UserRoleList
-        )
+        Args:
+            role_name (str): name of role to search for
+
+        Note: UserRoleList is not a regular list, so "item in list" fails
+
+        Returns:
+            bool: True if role_name in Security.current_user().UserRoleList
+        """
+        roles = Security.current_user().UserRoleList
+        for each_role in roles:
+            if each_role.role_name == role_name:
+                return True
+        return False
 
 class GrantSecurityException(JsonapiError):
     """
@@ -288,10 +292,12 @@ class Grant:
         can_insert = False
         can_delete = False
         can_update = False
+        super_users = ['sa']  #, 'admin']
         try:
             from flask import g
-            if user.id == 'sa' or g.isSA:
-                security_logger.debug("sa (eg, set_user_sa()) - no grants apply")
+            is_sa = Security.current_user_has_role('sa')
+            if user.id in super_users or g.isSA or Security.current_user_has_role('sa'):
+                security_logger.debug("super user (e,g, sa) - no grants apply")
                 return
         except Exception as ex:
             if not user:
