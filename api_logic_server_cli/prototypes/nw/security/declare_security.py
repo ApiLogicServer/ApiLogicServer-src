@@ -38,26 +38,23 @@ DefaultRolePermission(to_role = Roles.manager, can_read=True, can_delete=False)
 DefaultRolePermission(to_role = Roles.sales, can_read=True, can_delete=False)
 
 
-use_global_tenant_filter = True
-if use_global_tenant_filter:
-        GlobalFilter(   global_filter_attribute_name = "Client_id",
-                        roles_not_filtered = ["sa"],
-                        filter = '{entity_class}.Client_id == Security.current_user().client_id')
+GlobalFilter(   global_filter_attribute_name = "Client_id",  # try customers & categories for u1 vs u2
+                roles_not_filtered = ["sa"],
+                filter = '{entity_class}.Client_id == Security.current_user().client_id')
 
 
 GlobalFilter(   global_filter_attribute_name = "SecurityLevel",  # filters Department 'Eng Area 54'
                 roles_not_filtered = ["sa", "manager"],
                 filter = '{entity_class}.SecurityLevel == 0')
 
-by_region = True
-if by_region:
-        GlobalFilter(   global_filter_attribute_name = "Region",  # sales see only British Isles (9 rows)
-                        roles_not_filtered = ["sa", "manager", "tenant", "renter"],  # for sales
-                        filter = '{entity_class}.Region == Security.current_user().region')
 
-############################
-# Observer Grants are OR'd
-############################
+#############################################
+# Observe: Filters are AND'd, Grants are OR'd 
+#############################################
+GlobalFilter(   global_filter_attribute_name = "Region",  # sales see only British Isles (9 rows)
+                roles_not_filtered = ["sa", "manager", "tenant", "renter"],  # for sales
+                filter = '{entity_class}.Region == Security.current_user().region')
+        
 Grant(  on_entity = models.Customer,
         to_role = Roles.sales,
         filter = lambda : models.Customer.CreditLimit > 300,
@@ -70,6 +67,7 @@ Grant(  on_entity = models.Customer,
 
 # so user s1 sees the CTWSR row, per the resulting where from 2 global filters and 2 Grants:
 # where (Client_id=2 and region="British Isles") and (CreditLimit>300 or ContactName="Mike")
+#       <---- Filters AND'd ------------------->     <--- Grants OR'd --------------------->
 
 
 app_logger.debug("Declare Security complete - security/declare_security.py"
