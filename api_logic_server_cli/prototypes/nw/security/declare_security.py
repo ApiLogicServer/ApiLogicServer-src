@@ -51,21 +51,21 @@ GlobalFilter(   global_filter_attribute_name = "SecurityLevel",  # filters Depar
 #############################################
 # Observe: Filters are AND'd, Grants are OR'd 
 #############################################
-GlobalFilter(   global_filter_attribute_name = "Region",  # sales see only British Isles (9 rows)
-                roles_not_filtered = ["sa", "manager", "tenant", "renter"],  # for sales
+GlobalFilter(   global_filter_attribute_name = "Region",  # sales see only Customers in British Isles (9 rows)
+                roles_not_filtered = ["sa", "manager", "tenant", "renter"],  # ie, just sales
                 filter = '{entity_class}.Region == Security.current_user().region')
         
 Grant(  on_entity = models.Customer,
         to_role = Roles.sales,
         filter = lambda : models.Customer.CreditLimit > 300,
-        filter_debug = "Credit > 300... filters out CTWTR, but *passes* ContactName")
+        filter_debug = "CreditLimit > 300")     # this eliminates all rows, but...
 
 Grant(  on_entity = models.Customer,
         to_role = Roles.sales,
         filter = lambda : models.Customer.ContactName == "Mike",
-        filter_debug = "ContactName Mike granted (grants are OR'd)")
+        filter_debug = "ContactName == Mike (see security/declare_security.py)")
 
-# so user s1 sees the CTWSR row, per the resulting where from 2 global filters and 2 Grants:
+# so user s1 sees the CTWSR customer row, per the resulting where from 2 global filters and 2 Grants:
 # where (Client_id=2 and region="British Isles") and (CreditLimit>300 or ContactName="Mike")
 #       <---- Filters AND'd ------------------->     <--- Grants OR'd --------------------->
 

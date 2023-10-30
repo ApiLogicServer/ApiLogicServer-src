@@ -287,6 +287,10 @@ class Grant:
             return
         
         user = Security.current_user()
+        sql_select = "not a SELECT"
+        if orm_execute_state is not None:
+            sql_select = str(orm_execute_state.statement)
+        security_logger.info(f"\nSQL Select -- Begin authorization processing for {sql_select}")   
         
         can_read = False
         can_insert = False
@@ -349,12 +353,12 @@ class Grant:
                     if excluded_role == False and each_grant.filter is not None \
                         and orm_execute_state is not None:
                         global_filter_list.append(each_grant.filter())
-                        security_logger.debug(f".. Accruing global filter for entity {entity_name}: {each_grant.filter_debug} ({each_grant.filter})")
+                        security_logger.info(f"+ Global Filter: {each_grant.filter_debug}")
                 else:
                     for each_user_role in user.UserRoleList:
                         if each_grant.role_name == each_user_role.role_name:
                             security_logger.debug(f'Amend Grant for class / role: {entity_name} / {each_grant.role_name} - {each_grant.filter}')
-                            print(f"Grant on entity: {entity_name} Role: {each_user_role.role_name:} Read: {each_grant.can_read}, Update: {each_grant.can_update}, Insert: {each_grant.can_insert}, Delete: {each_grant.can_delete}")
+                            security_logger.debug(f"Grant on entity: {entity_name} Role: {each_user_role.role_name:} Read: {each_grant.can_read}, Update: {each_grant.can_update}, Insert: {each_grant.can_insert}, Delete: {each_grant.can_delete}")
                             # 
                             can_read = can_read or each_grant.can_read 
                             can_insert = can_insert or each_grant.can_insert
@@ -364,12 +368,12 @@ class Grant:
                             if each_grant.filter is not None \
                                 and orm_execute_state is not None:
                                 grant_list.append(each_grant.filter())
-                                security_logger.debug(f".. Accruing grant for entity {entity_name}: {each_grant.filter_debug} ({each_grant.filter})")
+                                security_logger.info(f"+ Grant: {each_grant.filter_debug}")
             security_logger.debug(f"Grants accrued for entity {entity_name}")
         else:
             security_logger.debug(f"No Grants for entity {entity_name}")
             
-        security_logger.debug(f"user:{user} state:{crud_state}, read:{can_read}, insert:{can_insert}, update:{can_update}, delete:{can_delete}")   
+        security_logger.debug(f"Security Permissions for user:{user} state:{crud_state}, read:{can_read}, insert:{can_insert}, update:{can_update}, delete:{can_delete}")   
         
         if not can_read and crud_state == 'is_select':
             raise GrantSecurityException(user=user,entity_name=entity_name,access="read")
@@ -387,16 +391,19 @@ class Grant:
             # grant_filter = or_(*grant_list)
             grants_filter = or_(*grant_list)
             global_filter = and_(*global_filter_list)
-            # filter AND (each)
-            # grant_filter = and_(*global_filter_list)  # .or_(*grant_list)
-            # grant_filter = or_(*grant_list).and_(*global_filter_list)
-            # grant_filter = filter(or_(*grant_list), and_(*global_filter_list))
-            # apply filter(s) (additional where clause) for row security on select
             orm_execute_state.statement = orm_execute_state.statement.options(
                 with_loader_criteria(grant_entity, grants_filter))
             orm_execute_state.statement = orm_execute_state.statement.options(
                 with_loader_criteria(grant_entity, global_filter))
-            security_logger.debug(f"Filter(s) applied for entity {entity_name} ")   
+            security_logger.debug(f"Filter(s) applied for entity {entity_name} ") 
+        
+        security_logger.info(f"+ Authorization complete for user: {user} state:{crud_state}, read:{can_read}, insert:{can_insert}, update:{can_update}, delete:{can_delete}") 
+        sql_select = "not a SELECT"
+        if orm_execute_state is not None:
+            sql_select = str(orm_execute_state.statement)
+        security_logger.info(f"SQL Select: End authorization processing for: {sql_select}")   
+
+
 
     @staticmethod
     class process_updates():

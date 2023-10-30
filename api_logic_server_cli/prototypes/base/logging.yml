@@ -87,7 +87,7 @@ loggers:
         propagate: no
 
     security.system.authorization:   
-#        level: DEBUG
+        level: INFO
         handlers: [console]
         propagate: no
 
