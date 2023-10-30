@@ -170,7 +170,7 @@ class GlobalFilter():
                         "Ab" not in str(each_class_def_str)):
                     self.class_name = each_cls_member[0]
                     self.classs = each_cls_member[1]
-                    table_name = self.classs.__tablename__  # FIXME _s_collection_name
+                    table_name = self.classs.__tablename__
                     columns = self.classs._s_columns._all_columns
                     for each_column in columns:
                         if each_column.name == global_filter_attribute_name:
@@ -443,7 +443,7 @@ def receive_do_orm_execute(orm_execute_state: ORMExecuteState ):
     ):            
         mapper = orm_execute_state.bind_arguments['mapper']
         class_name = mapper.class_.__name__   # mapper.mapped_table.fullname disparaged
-        if class_name == "Users":  # TODO: table_name?
+        if class_name == "Users":
             #pass
             security_logger.debug('No grants - avoid recursion on User table')
         elif  session._proxied._flushing:  # type: ignore
