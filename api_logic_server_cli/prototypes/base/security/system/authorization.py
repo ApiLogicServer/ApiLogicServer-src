@@ -127,16 +127,16 @@ class DefaultRolePermission:
         DefaultRolePermission.grants_by_role[self.role_name].append( self )
 
 
-class GlobalTenantFilter():
+class GlobalFilter():
     """
     Apply a single global select to all tables to enforce multi-tenant, security, soft-delete etc
 
     Example
-        GlobalTenantFilter(tenant_id = "Client_id",
+        GlobalFilter(tenant_id = "Client_id",
             filter = '{entity_class}.Client_id == 1')
 
-        GlobalTenantFilter(multi_tenant_attribute_name = "SecurityLevel",
-            roles_non_multi_tenant = ["sa", "manager"],
+        GlobalFilter(global_filter_attribute_name = "SecurityLevel",
+            roles_not_filtered = ["sa", "manager"],
             filter = '{entity_class}.SecurityLevel==0')
 
     Args:
@@ -145,19 +145,19 @@ class GlobalTenantFilter():
 
     """
 
-    globals_by_class_name : Dict[str, list['GlobalTenantFilter']] = {}
-    """ key by class_name, return list['GlobalTenantFilter'] """
+    globals_by_class_name : Dict[str, list['GlobalFilter']] = {}
+    """ key by class_name, return list['GlobalFilter'] """
 
     def __init__(self,
-                 multi_tenant_attribute_name: str,      # eg. Client_id, Is_soft_deleted
+                 global_filter_attribute_name: str,     # eg. Client_id, Is_soft_deleted
                  filter: str,                           # will be exec'd into lambda
-                 roles_non_multi_tenant: list[str],     # filter not applied to these roles
+                 roles_not_filtered: list[str],         # filter not applied to these roles
                  class_name: str = None):               # internal use only
         
-        self.multi_tenant_attribute_name = multi_tenant_attribute_name
+        self.global_filter_attribute_name = global_filter_attribute_name
         self.filter_str = filter
         self.class_name = None
-        self.roles_non_multi_tenant = roles_non_multi_tenant
+        self.roles_not_filtered = roles_not_filtered
         
         models_name = 'database.models'
         cls_members = inspect.getmembers(sys.modules[models_name], inspect.isclass)
@@ -173,7 +173,7 @@ class GlobalTenantFilter():
                     table_name = self.classs.__tablename__  # FIXME _s_collection_name
                     columns = self.classs._s_columns._all_columns
                     for each_column in columns:
-                        if each_column.name == multi_tenant_attribute_name:
+                        if each_column.name == global_filter_attribute_name:
                             if table_name.startswith("Category"):
                                 debug_str = "Excellent breakpoint"
                             # prove same filter works   1) as a normal Grant, and   2) using lambda variable
@@ -182,10 +182,10 @@ class GlobalTenantFilter():
                             self.lambda_str = self.filter_str.replace("{entity_class}", f"lambda : models.{self.class_name}")
                             filter_lambda = eval(self.lambda_str)
                             # eval('filter_lambda = lambda :  models.Customer.Client_id == 1')
-                            security_logger.debug(f"adding Global tenant filter for {self.class_name}: {self.lambda_str}")
+                            security_logger.debug(f"adding Global filter for {self.class_name}: {self.lambda_str}")
                             self.lambda_filter = eval(self.lambda_str)
                             assert self.lambda_filter is not None, "exec failed to set self.lambda_filter"
-                            grant_str = f'Grant (on_entity=models.{self.class_name}, to_role="*", filter={self.lambda_str}, global_tenant_filter=self)'
+                            grant_str = f'Grant (on_entity=models.{self.class_name}, to_role="*", filter={self.lambda_str}, global_filter=self, filter_debug="{self.lambda_str}")'
                             security_logger.debug(f".. using explict lambda {grant_str}")
                             exec(grant_str)  # create a 'standard' grant
                             break  # next resource class
@@ -234,7 +234,7 @@ class Grant:
         can_delete: bool = True,
         filter: object = None,
         filter_debug: str = "",
-        global_tenant_filter: GlobalTenantFilter=None):
+        global_filter: GlobalFilter=None):
         
         
         self.class_name = on_entity
@@ -250,7 +250,7 @@ class Grant:
         self.orm_execute_state = None # used by filter
         self.table_name : str = on_entity.__tablename__   # type: ignore
         self.filter_debug = filter_debug
-        self.global_tenant_filter = global_tenant_filter
+        self.global_filter = global_filter
         
         self._entity_name:str =  on_entity._s_type # Class Name
         if self._entity_name is not None:
@@ -305,7 +305,10 @@ class Grant:
                 return
 
         grant_list = []
-        """ grant filters for this query; can be > 1, since users have > 1 role, and global tenant filters """
+        """ grant filters or'd into this query; can be > 1, since users have > 1 role, and global tenant filters """
+
+        global_filter_list = []
+        """ global filters and'd onto this query """
 
         grant_entity = entity_name 
                     
@@ -337,16 +340,16 @@ class Grant:
         if entity_name in Grant.grants_by_table:
             for each_grant in Grant.grants_by_table[entity_name]:
                 grant_entity = each_grant.entity
-                if each_grant.global_tenant_filter is not None:
+                if each_grant.global_filter is not None:
                     excluded_role = False
                     for each_user_role in user.UserRoleList:
-                        if each_user_role.role_name in each_grant.global_tenant_filter.roles_non_multi_tenant:
+                        if each_user_role.role_name in each_grant.global_filter.roles_not_filtered:
                             excluded_role = True
                             break
                     if excluded_role == False and each_grant.filter is not None \
                         and orm_execute_state is not None:
-                        grant_list.append(each_grant.filter())
-                        security_logger.debug(f".. Accruing global grant for entity {entity_name}: {each_grant.filter_debug} ({each_grant.filter})")
+                        global_filter_list.append(each_grant.filter())
+                        security_logger.debug(f".. Accruing global filter for entity {entity_name}: {each_grant.filter_debug} ({each_grant.filter})")
                 else:
                     for each_user_role in user.UserRoleList:
                         if each_grant.role_name == each_user_role.role_name:
@@ -376,12 +379,23 @@ class Grant:
                 raise GrantSecurityException(user=user,entity_name=entity_name,access="insert")
         elif not can_delete and crud_state == 'is_delete':
                 raise GrantSecurityException(user=user,entity_name=entity_name,access="delete")
-    
-        if grant_entity is not None and grant_list and crud_state == "is_select":
-            grant_filter = or_(*grant_list)
+
+        ##############
+        # Apply Grants
+        ##############
+        if grant_entity is not None and (grant_list or global_filter_list) and crud_state == "is_select":
+            # grant_filter = or_(*grant_list)
+            grants_filter = or_(*grant_list)
+            global_filter = and_(*global_filter_list)
+            # filter AND (each)
+            # grant_filter = and_(*global_filter_list)  # .or_(*grant_list)
+            # grant_filter = or_(*grant_list).and_(*global_filter_list)
+            # grant_filter = filter(or_(*grant_list), and_(*global_filter_list))
             # apply filter(s) (additional where clause) for row security on select
             orm_execute_state.statement = orm_execute_state.statement.options(
-                with_loader_criteria(grant_entity,grant_filter))
+                with_loader_criteria(grant_entity, grants_filter))
+            orm_execute_state.statement = orm_execute_state.statement.options(
+                with_loader_criteria(grant_entity, global_filter))
             security_logger.debug(f"Filter(s) applied for entity {entity_name} ")   
 
     @staticmethod
@@ -414,6 +428,8 @@ class Grant:
 @event.listens_for(session, 'do_orm_execute')
 def receive_do_orm_execute(orm_execute_state: ORMExecuteState ):
     """listen for the 'do_orm_execute' event from SQLAlchemy
+
+    See: https://docs.sqlalchemy.org/en/20/orm/session_events.html#session-execute-events
 
     Args:
         orm_execute_state (_type_): _description_

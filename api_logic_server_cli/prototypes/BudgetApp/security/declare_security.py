@@ -34,6 +34,6 @@ class Roles():
     renter = "renter"
     manager = "manager"
     
-GlobalTenantFilter(multi_tenant_attribute_name="user_id",
-                roles_non_multi_tenant = ["sa", "manager"],   
+GlobalFilter(global_filter_attribute_name="user_id",
+                roles_not_filtered = ["sa", "manager"],   
                 filter="{entity_class}.user_id == Security.current_user().id")

@@ -119,14 +119,14 @@ class DefaultRolePermission:
             DefaultRolePermission.grants_by_role[self.role_name] = []
         DefaultRolePermission.grants_by_role[self.role_name].append( self )
         
-class GlobalTenantFilter():
+class GlobalFilter():
     """Apply a single global select to all tables to enforce multi-tenant
 
         :tenant_id:str - name of the attribute found in any entity
         :filter:str -e.g.filter='{entity_name}.EMPID == Security.current_user().emp_id'
 
     """
-    grants_by_tenant : Dict[str, 'GlobalTenantFilter'] = {}
+    grants_by_tenant : Dict[str, 'GlobalFilter'] = {}
     '''
         Dictionary of filters applied to each entity with a tenant_id
     '''
@@ -137,8 +137,8 @@ class GlobalTenantFilter():
         self.tenant_id = tenant_id
         self.filter = filter
         
-        if self.tenant_id not in GlobalTenantFilter.grants_by_tenant:
-            GlobalTenantFilter.grants_by_tenant[self.tenant_id] = self
+        if self.tenant_id not in GlobalFilter.grants_by_tenant:
+            GlobalFilter.grants_by_tenant[self.tenant_id] = self
 
     def getLambdaFunction(self, entity_name) -> object:
         lambda_fn = self.filter.replace("{entity_name}",f"models.{entity_name}")
@@ -260,8 +260,8 @@ class Grant:
         # Apply Global tenant level security 
         if crud_state == "is_select" and property_list:
             grant_list.extend(
-                GlobalTenantFilter.grants_by_tenant[each_tenant].getLambdaFunction(entity_name)
-                for each_tenant in GlobalTenantFilter.grants_by_tenant
+                GlobalFilter.grants_by_tenant[each_tenant].getLambdaFunction(entity_name)
+                for each_tenant in GlobalFilter.grants_by_tenant
                 if Grant.entity_has_attribute(
                     grant_entity, each_tenant, property_list
                 )

@@ -36,12 +36,12 @@ def step_impl(context):
     context.response = response
     pass
 
-@then('only 2 are returned')
+@then('only 3 are returned')
 def step_impl(context):
     response = context.response
     response_text = response.text
     result_data = json.loads(response_text)
-    assert len(result_data['data']) == 2
+    assert len(result_data['data']) == 3
     pass
 
 

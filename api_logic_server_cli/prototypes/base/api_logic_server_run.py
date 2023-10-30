@@ -319,6 +319,10 @@ if args.verbose:
     authentication_logger.setLevel(logging.DEBUG)
     authorization_logger = logging.getLogger('security.system.authorization')
     authorization_logger.setLevel(logging.DEBUG)
+    auth_provider_logger = logging.getLogger('security.authentication_provider.sql.auth_provider')
+    auth_provider_logger.setLevel(logging.DEBUG)
+    # sqlachemy_logger = logging.getLogger('sqlalchemy.engine')
+    # sqlachemy_logger.setLevel(logging.DEBUG)
 
 if app_logger.getEffectiveLevel() <= logging.DEBUG:
     util.sys_info(flask_app.config)

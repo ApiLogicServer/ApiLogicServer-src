@@ -1,4 +1,4 @@
-from security.system.authorization import Grant, Security, Security, DefaultRolePermission, GlobalTenantFilter
+from security.system.authorization import Grant, Security, Security, DefaultRolePermission, GlobalFilter
 import logging
 from database import models
 import safrs
@@ -27,8 +27,8 @@ DefaultRolePermission(to_role = Roles.renter, can_read=True, can_delete=False)
 
 DefaultRolePermission(to_role = Roles.manager, can_read=True, can_delete=False)
 
-GlobalTenantFilter(multi_tenant_attribute_name = "Client_id",
-                    roles_non_multi_tenant = ["sa"],
+GlobalFilter(global_filter_attribute_name = "Client_id",
+                    roles_not_filtered = ["sa"],
                     filter = '{entity_class}.Client_id == Security.current_user().client_id')
 
 

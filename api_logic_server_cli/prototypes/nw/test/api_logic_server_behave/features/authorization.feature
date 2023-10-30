@@ -10,7 +10,7 @@ Feature: Authorization
   Scenario: Multi-tenant
      Given NW Test Database
       When sam GETs Customers
-      Then only 2 are returned
+      Then only 3 are returned
 
 
   Scenario: Global Filters
