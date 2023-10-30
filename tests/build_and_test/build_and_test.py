@@ -798,6 +798,26 @@ if Config.do_include_exclude:
     stop_server(msg="include_exclude_typical\n")
 
 
+if Config.do_budget_app_test:
+    budget_app_project_path = install_api_logic_server_path.joinpath('BudgetApp')
+    run_command(f'{set_venv} && ApiLogicServer create --project_name=BudgetApp --db_url=BudgetApp',
+            cwd=install_api_logic_server_path,
+            msg=f'\nCreate BudgetApp at: {str(install_api_logic_server_path)}')    
+    start_api_logic_server(project_name="BudgetApp")
+
+    try:
+        print("\nProceeding with Allocation tests...\n")
+        budget_app_tests_path = budget_app_project_path.joinpath('test')
+        run_command(f'sh test.sh',
+            cwd=budget_app_tests_path,
+            msg="\BudgetApp Test")
+    except:
+        print(f'\n\n** BudgetApp Test failed\n\n')
+        exit(1)
+    print("\BudgetApp tests - Success...\n")
+    stop_server(msg="*** BudgetApp TEST COMPLETE ***\n")
+
+
 if Config.do_allocation_test:
     allocation_project_path = install_api_logic_server_path.joinpath('Allocation')
     run_command(f'{set_venv} && ApiLogicServer create --project_name=Allocation --db_url=allocation',
