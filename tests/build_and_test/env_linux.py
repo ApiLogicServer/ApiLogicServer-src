@@ -24,6 +24,8 @@ class Config:
     
     do_allocation_test = default_setting            # create / run / test allocation project
 
+    do_do_budget_app_test = default_setting         # insert_parent test
+    
     do_other_sqlite_databases = default_setting     # classic models
 
     do_include_exclude = default_setting            # --db_url=table_filters_tests

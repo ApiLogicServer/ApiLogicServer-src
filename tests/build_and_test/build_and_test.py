@@ -806,7 +806,7 @@ if Config.do_budget_app_test:
     start_api_logic_server(project_name="BudgetApp")
 
     try:
-        print("\nProceeding with Allocation tests...\n")
+        print("\nProceeding with BudgetApp tests...\n")
         budget_app_tests_path = budget_app_project_path.joinpath('test')
         run_command(f'sh test.sh',
             cwd=budget_app_tests_path,
