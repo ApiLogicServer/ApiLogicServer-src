@@ -1,11 +1,19 @@
 # Budget App
 
 This is an example of how rules can be used to do a multi table rollup 
-(budget -> month -> qtr -> yr) - it also introduces the rule flag on sum and count (insert_parent=True).
+(budget -> category -> month -> yr) - it also introduces the rule flag on sum and count (insert_parent=True).
 This allows the child to trigger the creation of the parent before doing the sum or count aggregation.
 
+## Install
+This will create the sample application to run - press f5 (no security)
+```
+$ApiLogicServer create --project_name=BudgetApp --db_url=BudgetApp
+
+$cd BudgetApp
+$code .
+```
 ## Data Model
-The Budget table holds the monthly values by category, tenant_user, and date.  This will rollup into Month then Qtr then Yr.  The Transactions table holds the actual values (one to many) so import from a CSV using the API will allow comparison with budget values. The database folder has the schema for both MySQL and SQLite.
+The Budget table holds the monthly values by category, tenant_user, and date.  This will rollup into Category, Month, and Yr.  The Transactions table holds the actual values (one to many) so import from a CSV using the API will allow comparison with budget values. The database folder has the schema for both MySQL and SQLite.  
 
 ![Budget DataModel](./images/Budget.png)
 ![Category DataModel](./images/BudgetCategory.png)
@@ -13,11 +21,13 @@ The Budget table holds the monthly values by category, tenant_user, and date.  T
 The ability to filter users (tenant) to see only their own data is implemented in the declarative_security.py. The login user_id should match the tenant_user user_id.
 
 ```
-DeclareGlobalTenant(tenant='user_id', filter="{entity_class}.user_id == Security.current_user().id")
+GlobalFilter(global_filter_attribute_name='user_id', 
+     roles_not_filtered = ['sa'],
+     filter="{entity_class}.user_id == Security.current_user().id")
 ```
 
 ## Budget API
-The api folder (customize_api.py) has 2 user defined endpoints that can be used to insert budget amounts. 
+The api folder (api/customize_api.py) has user defined endpoints that can be used to insert budget and transaction amounts. This demonstrates how to customize and create new REST endpoints.
 
 ```
 curl -X 'POST' \
@@ -33,12 +43,10 @@ curl -X 'POST' \
       "month_id": 1,
       "user_id": 1,
       "category_id": 1,
-      "actual_amount": 0,
       "amount": 100,
-      "is_expense": 1,
       "description": "Budget  insert"
     }
-  }
+  }'
 ```
 
 
@@ -54,10 +62,9 @@ curl -X 'POST' \
   "meta": {
     "method": "transaction_insert",
     "args": {
-      "budget_id": 2,
+      "budget_id": 1,
       "amount": 100,
       "category_id": 1,
-      "is_expense": 0,
       "description": "test transaction insert"
     }
   }
