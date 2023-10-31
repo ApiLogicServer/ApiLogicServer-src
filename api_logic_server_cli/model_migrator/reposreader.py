@@ -672,9 +672,6 @@ def copy_system_folders(project_directory: str):
     src = f"{running_at.parent}/system/free_sql.py"
     dst = f"{project_directory}/api/system/free_sql.py"
     copyfile(src, dst)
-    src = f"{running_at.parent}/system/authorization.py"
-    dst = f"{project_directory}/security/system/authorization.py.gen"
-    copyfile(src, dst)
     src = f"{running_at.parent}/system/javascript.py"
     dst = f"{project_directory}/api/system/javascript.py"
     copyfile(src, dst)
