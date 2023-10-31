@@ -19,22 +19,16 @@ def getYrTotal(year_id: str) -> any:
     result_data = json.loads(response_text)
     return result_data["data"]["attributes"]
 
-@given('Budget Entry')
-def step_impl(context):
-    context.yr = getYrTotal('2023_1')
-    print(context.yr)
-
-@when('Budget Transactions submitted')
-def step_impl(context):
+def insert_budget(amount:int, category_id: int) -> any:
     budget = {
         "data": {
             "attributes": {
                 "year_id": 2023,
-                "month_id": 10,
+                "month_id": 1,
                 "user_id": 1,
-                "category_id": 1,
+                "category_id": category_id,
                 "description": "Budget Test",
-                "amount": 100,
+                "amount": amount,
             },
             "type": "Budget"
         }
@@ -46,7 +40,17 @@ def step_impl(context):
     print(response_text)
     if status_code > 300:
         raise requests.HTTPError(f'POST budget failed with {response_text}')
-    context.budget = response_text
+    return response_text
+
+@given('Budget Entry')
+def step_impl(context):
+    insert_budget(0,1)
+    context.yr = getYrTotal('2023_1')
+    print(context.yr)
+
+@when('Budget Transactions submitted')
+def step_impl(context):
+    context.budget = insert_budget(100, 1)
 
 @then('Year Total reflects budget change')
 def step_impl(context):
@@ -58,7 +62,7 @@ def step_impl(context):
     
 @given('Transaction Entry')
 def step_impl(context):
-    #yr = session.query(models.YrTotal).filter(models.YrTotal.year_id == year_id).one()
+    insert_budget(0,1)
     context.yr = getYrTotal('2023_1')
     print(context.yr)
 
