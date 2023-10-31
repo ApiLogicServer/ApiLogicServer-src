@@ -2,13 +2,14 @@ import sys
 
 uri_info = [
     'Examples:',
+    '  ApiLogicServer create',
     '  ApiLogicServer create-and-run',
-    '  ApiLogicServer create-and-run --db_url=sqlite:////Users/val/dev/todo_example/todos.db --project_name=todo',
-    '  ApiLogicServer create-and-run --db_url=sqlite:///c:\ApiLogicServer\\nw.sqlite --project_name=nw',
-    '  ApiLogicServer create-and-run --db_url=mysql+pymysql://root:p@mysql-container:3306/classicmodels '
+    '  ApiLogicServer create --db_url=sqlite:////Users/val/dev/todo_example/todos.db --project_name=todo',
+    '  ApiLogicServer create --db_url=sqlite:///c:\ApiLogicServer\\nw.sqlite --project_name=nw',
+    '  ApiLogicServer create --db_url=mysql+pymysql://root:p@mysql-container:3306/classicmodels '
     '--project_name=/localhost/docker_db_project',
-    '  ApiLogicServer create-and-run --db_url=\'mssql+pyodbc://sa:Posey3861@localhost:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no\'',
-    '  ApiLogicServer create-and-run --db_url=postgresql://postgres:p@10.0.0.234/postgres',
+    '  ApiLogicServer create --db_url=\'mssql+pyodbc://sa:Posey3861@localhost:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no\'',
+    '  ApiLogicServer create --db_url=postgresql://postgres:p@10.0.0.234/postgres',
     '  ApiLogicServer create --project_name=my_schema --db_url=postgresql://postgres:p@localhost/my_schema',
     '  ApiLogicServer create --db_url=postgresql+psycopg2:'
     '//postgres:password@localhost:5432/postgres?options=-csearch_path%3Dmy_db_schema',
@@ -18,9 +19,9 @@ uri_info = [
     '',
     'Where --db_url is one of...',
     '   <default>                     Sample DB                    - https://apilogicserver.github.io/Docs/Sample-Database/',
-    '   nw-                           Sample DB, no customizations - add later with perform_customizations.py',
+    '   <db_url abbreviation>         Other Samples                - https://apilogicserver.github.io/Docs/Data-Model-Examples/',
     '   <SQLAlchemy Database URI>     Your own database            - https://docs.sqlalchemy.org/en/14/core/engines.html',
-    '                                      Other URI examples:     - https://apilogicserver.github.io/Docs/Database-Connectivity//',
+    '                                 Other URI examples:          - https://apilogicserver.github.io/Docs/Database-Connectivity/',
     ' ',
     'Docs: https://apilogicserver.github.io/Docs/'
 ]
