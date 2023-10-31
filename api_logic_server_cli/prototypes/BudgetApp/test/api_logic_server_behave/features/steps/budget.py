@@ -1,84 +1,92 @@
 from behave import *
-import requests, pdb
+import requests
 import test_utils
 import json
-import safrs
 import requests
 from flask import jsonify
 
-db = safrs.DB  # valid only after is initialized, above
-session = db.session
 headers = {'Content-Type': 'application/json','accept': 'application/vnd.api+json'}
 
-def getYrTotal(year_id: int) -> any: 
-    url = "'http://localhost:5656/api/YrTotal/2023"
-    yr = requests.get(url, headers=headers)
-    print(yr)
-    return jsonify(yr).json
+def getYrTotal(year_id: str) -> any: 
+    url = f"http://localhost:5656/api/YrTotal/{year_id}/"
+    r = requests.get(url, headers=headers)
+    response_text = r.text
+    status_code = r.status_code
+    print(response_text)
+    if status_code > 300:
+        raise requests.HTTPError(f'GET YrTotal failed with {response_text}')
+    #j = jsonify(response_text).json
+    result_data = json.loads(response_text)
+    return result_data["data"]["attributes"]
 
 @given('Budget Entry')
 def step_impl(context):
-    context.yr = getYrTotal(2023)
-    assert True
+    context.yr = getYrTotal('2023_1')
+    print(context.yr)
 
 @when('Budget Transactions submitted')
 def step_impl(context):
     budget = {
-    "meta": {
-        "method": "budget_insert",
-        "args": {
-            "year_id": 2023,
-            "qtr_id": 1,
-            "month_id": 1,
-            "user_id": 1,
-            "category_id": 1,
-            "actual_amount": 0,
-            "amount": 10,
-            "is_expense": 1,
-            "description": "test insert"
-            }
+        "data": {
+            "attributes": {
+                "year_id": 2023,
+                "month_id": 10,
+                "user_id": 1,
+                "category_id": 1,
+                "description": "Budget Test",
+                "amount": 100,
+            },
+            "type": "Budget"
         }
     }
-    url = 'http://localhost:5656/api/ServicesEndPoint/budget_insert' 
-    ret = requests.post(url=url, headers=headers, data=budget)
-    print(ret)
-    context.budget = jsonify(ret).json
+    url = 'http://localhost:5656/api/Budget' 
+    r = requests.post(url=url, headers=headers, json=budget)
+    response_text = r.text
+    status_code = r.status_code
+    print(response_text)
+    if status_code > 300:
+        raise requests.HTTPError(f'POST budget failed with {response_text}')
+    context.budget = response_text
 
 @then('Year Total reflects budget change')
 def step_impl(context):
-    scenario = "Budget Transaction Processing"
+    scenario = "Budget Processing"
     #test_utils.prt(f'Rules Report', scenario)
     budget_total = context.yr["budget_total"] 
-    assert budget_total == budget_total + 10
+    after = getYrTotal('2023_1')
+    assert after["budget_total"] - budget_total ==  100
     
 @given('Transaction Entry')
 def step_impl(context):
     #yr = session.query(models.YrTotal).filter(models.YrTotal.year_id == year_id).one()
-    url = "'http://localhost:5656/api/YrTotal/2023"
-    yr = requests.get(url, headers=headers)
-    print(yr)
-    return jsonify(yr).json
+    context.yr = getYrTotal('2023_1')
+    print(context.yr)
 
 @when('Transactions submitted')
 def step_impl(context):
     trans = {
-        "meta": {
-            "method": "transaction_insert",
-            "args": {
-            "budget_id": 1,
-            "amount": 10,
-            "category_id": 1,
-            "is_expense": 0,
-            "description": "test transaction insert"
-            }
+        "data": {
+            "attributes": {
+                "budget_id": 1,
+                "account_id": 1,
+                "description": "Behave Transaction",
+                "amount": 100
+            },
+            "type": "Transaction"
         }
     }
-    url = 'http://localhost:5656/api/ServicesEndPoint/transaction_insert' 
-    ret = requests.post(url=url, headers=headers, data=trans)
-    print(ret)
+    url = 'http://localhost:5656/api/Transaction' 
+    r = requests.post(url=url, headers=headers, json=trans)
+    response_text = r.text
+    status_code = r.status_code
+    print(response_text)
+    if status_code > 300:
+        raise requests.HTTPError(f'POST transaction failed with {response_text}')
+    context.transaction = response_text
 
 @then('Year Total reflects actual change')
 def step_impl(context):
     scenario = "Transaction Processing"
-    total = context.yr["actual_total"] 
-    assert total == total + 10
+    total = context.yr["actual_amount"] 
+    after = getYrTotal('2023_1')
+    assert after["actual_amount"] - total == 100
