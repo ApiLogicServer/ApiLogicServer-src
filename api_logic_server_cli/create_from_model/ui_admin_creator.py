@@ -36,13 +36,11 @@ admin_relationships_with_parents = True
 import errno, shutil
 orig_copyxattr = shutil._copyxattr
 
-
 def patched_copyxattr(src, dst, *, follow_symlinks=True):
     try:
         orig_copyxattr(src, dst, follow_symlinks=follow_symlinks)
     except OSError as ex:
         if ex.errno != errno.EACCES: raise
-
 
 shutil._copyxattr = patched_copyxattr
 
@@ -145,12 +143,14 @@ class AdminCreator(object):
         """ self.admin_yaml.resources += resource DotMap for given resource
         """
         resource_name = resource.name
-        if resource_name == "ARI023NOTE":
+        if self.mod_gen.project.bind_key != "":
+            resource_name = self.mod_gen.project.bind_key + '-' + resource_name
+        if resource.name == "Role":
             debug_stop = "good breakpoint"
-        if self.do_process_resource(resource_name):
+        if self.do_process_resource(resource.name):
             new_resource = DotMap()
             self.num_pages_generated += 1
-            new_resource.type = str(resource.name)
+            new_resource.type = str(resource_name)  # this is the name of the resource
             new_resource.user_key = str(self.mod_gen.favorite_attribute_name(resource))
 
             self.create_attributes_in_owner(new_resource, resource, None)
@@ -158,7 +158,7 @@ class AdminCreator(object):
             if child_tabs:
                 new_resource.tab_groups = child_tabs
             # self.admin_yaml.resources[resource.table_name] = new_resource.toDict()
-            self.admin_yaml.resources[resource.name] = new_resource.toDict()
+            self.admin_yaml.resources[resource_name] = new_resource.toDict()
 
     def create_attributes_in_owner(self, owner: DotMap, resource: Resource, owner_resource) -> Dict[None, Resource]:
         """ create attributes in owner (owner is a DotMap -- of resource, or tab)
@@ -359,7 +359,10 @@ class AdminCreator(object):
             for each_pair in each_resource_relationship.parent_child_key_pairs:
                 each_resource_tab.fks.append(str(each_pair[1]))
             each_child_resource = self.mod_gen.resource_list[each_child]
-            each_resource_tab.resource = each_child_resource.name # table_name
+            each_child_resource_name = each_child_resource.name # class name
+            if self.mod_gen.project.bind_key != "":
+                each_child_resource_name = self.mod_gen.project.bind_key + '-' + each_child_resource_name
+            each_resource_tab.resource = each_child_resource_name
             each_resource_tab.direction = "tomany"
             each_resource_tab.name = each_resource_relationship.child_role_name
             each_child_resource = self.mod_gen.resource_list[each_child]
@@ -372,7 +375,10 @@ class AdminCreator(object):
                 each_parent = each_resource_relationship.parent_resource
                 each_resource_tab.resource = str(each_parent)
                 each_parent_resource = self.mod_gen.resource_list[each_parent]
-                each_resource_tab.resource = each_parent_resource.name # table_name
+                each_parent_resource_name = each_parent_resource.name
+                if self.mod_gen.project.bind_key != "":
+                    each_parent_resource_name = self.mod_gen.project.bind_key + '-' + each_parent_resource_name
+                each_resource_tab.resource = each_parent_resource_name
                 each_resource_tab.direction = "toone"
                 each_resource_tab.fks = []
                 for each_pair in each_resource_relationship.parent_child_key_pairs:

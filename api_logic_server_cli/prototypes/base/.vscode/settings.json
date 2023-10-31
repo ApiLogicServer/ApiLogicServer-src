@@ -13,6 +13,7 @@
     "[Log]": {
         "editor.wordWrap": "off"
     },
+    "debug.console.wordWrap": false,    
     "workbench.editorAssociations": {
         "*.md": "vscode.markdown.preview.editor"
     }

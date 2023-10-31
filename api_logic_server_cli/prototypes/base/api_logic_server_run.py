@@ -200,11 +200,15 @@ def api_logic_server_setup(flask_app: Flask, args: Args):
         db_logger = logging.getLogger('sqlalchemy')
         db_log_level = db_logger.getEffectiveLevel()
         safrs_init_logger = logging.getLogger("safrs.safrs_init")
+        authorization_logger = logging.getLogger('security.system.authorization')
+        authorization_log_level = authorization_logger.getEffectiveLevel()
         do_hide_chatty_logging = True and not args.verbose
+        # eg, system startup health check: read on API and relationship - hide many log entries
         if do_hide_chatty_logging and app_logger.getEffectiveLevel() <= logging.INFO:
             safrs.log.setLevel(logging.WARN)  # notset 0, debug 10, info 20, warn 30, error 40, critical 50
             db_logger.setLevel(logging.WARN)
             safrs_init_logger.setLevel(logging.WARN)
+            authorization_logger.setLevel(logging.WARN)
 
         multi_db.bind_dbs(flask_app)
 
@@ -288,6 +292,8 @@ def api_logic_server_setup(flask_app: Flask, args: Args):
         
         safrs.log.setLevel(safrs_log_level)
         db_logger.setLevel(db_log_level)
+        authorization_logger.setLevel(authorization_log_level)
+
 
 
 # ==================================
