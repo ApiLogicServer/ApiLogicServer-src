@@ -172,7 +172,7 @@ def server_log(request, jsonify):
         add_file_handler(logic_logger, test, Path(os.getcwd()).joinpath(dir))
     if msg == "Rules Report":
         rules_report()
-        logic_logger.info(f'Logic Bank {__version__} - {rule_count} rules loaded')
+        logic_logger.info(f'Logic Bank - {rule_count} rules loaded')
     else:
         app_logger.info(f'{msg}')
     return jsonify({"result": f'ok'})
