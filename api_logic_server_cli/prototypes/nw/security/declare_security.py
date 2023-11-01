@@ -25,18 +25,13 @@ class Roles():
     manager = "manager"         # u2, sam
     sales="sales"               # s1
 
-                                # user_id = 1 -- aneu
-                                        # many customers
-                                        # 1 category
-                                # user_id = 2 -- u2, sam, s1, r1
-                                        # 3 customers
-                                        # 3 categories
+                                # user_id = 1 -- aneu              many customers, 1 category
+                                # user_id = 2 -- u2, sam, s1, r1   3    customers, 3 categories
 
 DefaultRolePermission(to_role = Roles.tenant, can_read=True, can_delete=True)
 DefaultRolePermission(to_role = Roles.renter, can_read=True, can_delete=False)
 DefaultRolePermission(to_role = Roles.manager, can_read=True, can_delete=False)
 DefaultRolePermission(to_role = Roles.sales, can_read=True, can_delete=False)
-
 
 GlobalFilter(   global_filter_attribute_name = "Client_id",  # try customers & categories for u1 vs u2
                 roles_not_filtered = ["sa"],
@@ -46,7 +41,6 @@ GlobalFilter(   global_filter_attribute_name = "Client_id",  # try customers & c
 GlobalFilter(   global_filter_attribute_name = "SecurityLevel",  # filters Department 'Eng Area 54'
                 roles_not_filtered = ["sa", "manager"],
                 filter = '{entity_class}.SecurityLevel == 0')
-
 
 #############################################
 # Observe: Filters are AND'd, Grants are OR'd 
