@@ -242,6 +242,8 @@ There are a few articles that provide some orientation to API Logic Server:
 
 ### Change Log
 
+10/31/2023 - 09.05.00: Enhanced Security (global filter, permissions), Logic (Insert Parent)
+
 09/29/2023 - 09.04.00: Enhanced devops automation (sqlite, MySql, Postgres)
 
 09/08/2023 - 09.03.04: AI Driven Automation (preview)
