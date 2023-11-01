@@ -1,14 +1,18 @@
 # GA release
-# docker buildx build --push -f docker/api_logic_server.Dockerfile --tag apilogicserver/api_logic_server:9.04.00 -o type=image --platform=linux/arm64,linux/amd64 .
+# docker buildx build --push -f docker/api_logic_server.Dockerfile --tag apilogicserver/api_logic_server:9.05.00 -o type=image --platform=linux/arm64,linux/amd64 .
 # docker buildx build --push -f docker/api_logic_server.Dockerfile --tag apilogicserver/api_logic_server:latest -o type=image --platform=linux/arm64,linux/amd64 .
 
 # Beta - test codespaces with tutorial, API_Fiddle (change .devcontainer.json -> apilogicserver/api_logic_server_x)
-# docker buildx build --push -f docker/api_logic_server.Dockerfile --tag apilogicserver/api_logic_server_x:9.02.18 -o type=image --platform=linux/arm64,linux/amd64 .
+# docker buildx build --push -f docker/api_logic_server.Dockerfile --tag apilogicserver/api_logic_server_x:9.05.00 -o type=image --platform=linux/arm64,linux/amd64 .
 
 # Internal - verify what is done with build_and_test
 # docker build -f docker/api_logic_server.Dockerfile -t apilogicserver/api_logic_server_local --rm .
 # docker tag apilogicserver/api_logic_server_local apilogicserver/api_logic_server_local:latest
 # repeat with latest
+
+# docker run -it --name api_logic_server_local --rm --net dev-network -p 5656:5656 -p 5002:5002 -v .:/localhost apilogicserver/api_logic_server_arm 
+# docker run -it --name api_logic_server_local --rm --net dev-network -p 5656:5656 -p 5002:5002 -v {str(dest)}:/localhost apilogicserver/api_logic_server_arm sh -c "export PATH=$PATH:/home/api_logic_server/bin && /bin/sh /localhost/docker-commands.sh"
+
 
 # cd ~/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/dockers
 # docker run -it --name api_logic_server --rm --net dev-network -p 5656:5656 -p 5002:5002 -v ${PWD}:/localhost apilogicserver/api_logic_server
