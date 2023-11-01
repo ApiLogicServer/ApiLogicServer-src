@@ -807,16 +807,22 @@ if Config.do_budget_app_test:
 
     try:
         print("\nProceeding with BudgetApp tests...\n")
-        budget_app_tests_path = budget_app_project_path.joinpath('test')
-        run_command(f'sh test.sh',  # FIXME
-            cwd=budget_app_tests_path,
-            msg="\BudgetApp Test")
+        result_behave = None
+        print("\nBehave tests starting..\n")
+        budget_app_behave_path = budget_app_project_path.joinpath('test').joinpath('api_logic_server_behave')
+        budget_app_logs_path = budget_app_behave_path.joinpath('logs').joinpath('behave.log')
+        behave_command = f'{set_venv} && {python} behave_run.py --outfile={str(budget_app_logs_path)}'
+        result_behave = run_command(behave_command, 
+                                    cwd=str(budget_app_behave_path),
+                                    msg="\nBehave Test Run", show_output=True)
+        if result_behave.returncode != 0:
+            raise Exception("Behave Run Error - Budget App")
+        print("\nBudget tests run\n")
     except:
         print(f'\n\n** BudgetApp Test failed\n\n')
         exit(1)
     print("\BudgetApp tests - Success...\n")
     stop_server(msg="*** BudgetApp TEST COMPLETE ***\n")
-
 
 if Config.do_allocation_test:
     allocation_project_path = install_api_logic_server_path.joinpath('Allocation')
