@@ -1,7 +1,11 @@
-Pleased and excited to announce API Logic Server 9.5, with security enhancements:
+Note project name is in project (devops etc)
 
-* crud permissions
-* global filters
+Home page video is ai_, but without the ai
+
+New article
+  * basic_demo
+  * readme has logic/security
+  * iteration too?
 
 Check it out at:
 https://apilogicserver.github.io/Docs/Tutorial-AI/
