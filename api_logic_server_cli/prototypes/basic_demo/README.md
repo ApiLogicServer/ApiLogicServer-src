@@ -20,7 +20,7 @@ $ ApiLogicServer create --project_name=basic_demo --db_url=basic_demo
 
 This creates a project you can open with VSCode by reading your schema.  The database looks like this:
 
-<img src="images/basic_demo_data_model.jpeg" height="400rm">
+<img src="https://github.com/ApiLogicServer/ApiLogicServer-src/blob/main/api_logic_server_cli/prototypes/basic_demo/images/basic_demo_data_model.jpeg?raw=true" height="400rm">
 
 Establish your `venv`, and run it via the first pre-built Run Configuration.  To establish your venv:
 
@@ -36,13 +36,13 @@ pip install -r requirements.txt
 
 The system creates an API with end points for each table, with filtering, sorting, pagination, optimistic locking and related data access -- self-serve, ready for custom app dev.
 
-![API](./images/api-swagger.jpeg)
+<img src="https://github.com/ApiLogicServer/ApiLogicServer-src/blob/main/api_logic_server_cli/prototypes/basic_demo/images/api-swagger.jpeg?raw=true">
 
 ### Admin App
 
 It also creates an Admin App: multi-page, multi-table apps -- ready for business user agile collaboration.  This complements custom UIs created with the API.
 
-![Admin App](./images/admin-app-initial.jpeg)
+<img src="https://github.com/ApiLogicServer/ApiLogicServer-src/blob/main/api_logic_server_cli/prototypes/basic_demo/images/admin-app-initial.jpeg?raw=true">
 
 ## 2. Customize - add declarative security and logic
 
@@ -177,7 +177,7 @@ Note we rebuilt the project from our altered database, without losing customizat
 
 ## Summary
 
-![summary](images/summary.jpeg)
+<img src="https://github.com/ApiLogicServer/ApiLogicServer-src/blob/main/api_logic_server_cli/prototypes/basic_demo/images/summary.jpeg?raw=true">
 
 In minutes, you've used API Logic Server to convert an idea into working software, deployed for collaboration, and iterated to meet new requirements.
 
