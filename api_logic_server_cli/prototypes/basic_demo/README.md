@@ -141,11 +141,13 @@ Use your IDE to merge `/ui/admin/admin-merge.yml` -> `/ui/admin/admin.yml`.`
 
 &nbsp;
 
+## Logic Significance
+
 This simple example illustrates some significant aspects of iteration.
 
 &nbsp;
 
-### Maintenance: Logic Ordering
+### a. Maintenance: Automatic Logic Ordering
 
 Along with perhaps documentation, one of the tasks programmers most loathe is maintenance.  That’s because it’s not about writing code, but it’s mainly archaeology - deciphering code someone else wrote, just so you can add 4 or 5 lines they’ll hopefully be called and function correctly.
 
@@ -153,15 +155,15 @@ Rules change that, since they self-order their execution (and pruning) based on 
 
 &nbsp;
 
-### Extensibility: Rules Plus Python
+### b. Extensibility: Rules Plus Python
 
-In this case, we needed to do some if/else testing, and it was more convenient to add a dash of Python.  While you have the full object-oriented power of Python, this is simpler, more like Python as a 4GL.  
+In this case, we needed to do some if/else testing, and it was more convenient to add a dash of Python.  While you have the full object-oriented power of Python, this is simpler -- more like Python as a 4GL.  
 
 What’s important is that once you are in such functions, you can utilize Python libraries, invoke shared code, make web service calls, send email or messages, etc.  You have all the power of rules, plus the unrestricted flexibility of Python.
 
 &nbsp;
 
-### Debugging: IDE, Logging
+### c. Debugging: IDE, Logging
 
 The screen shot above illustrates that debugging logic is what you’d expect: use your IDE's debugger.
 
@@ -169,9 +171,21 @@ In addition, the Logic Log lists every rule that fires, with indents for multi-t
 
 &nbsp;
 
-### Rebuild: Customizations Preserved
+### d. Rebuild: Customizations Preserved
 
 Note we rebuilt the project from our altered database, without losing customizations.
+
+&nbsp;
+
+## API Customization
+
+Of course, we all know that all businesses the world over depend on the `hello world` app.  This is provided in `api/customize_api`.  Observe that it's:
+
+* standard Python
+
+* using Flask
+
+* and, for database access, SQLAlchemy.  Note all updates from custom APIs also enforce your logic.
 
 &nbsp;
 
