@@ -2,21 +2,13 @@
 
 This illustrates:
 
-1. Automation - instant collaboration for business users, UI developers
-2. Declarative Logic and Security
-3. Extensibility with Python
-4. Iteration
-
+1. Automation - instant project providing API, Admin web app
+2. Customize - add declarative security and logic
+3. Iterate -  Rules and Python
 
 &nbsp;
 
-## Data Model
-
-![DataModel](./images/basic_demo_data_model.jpeg)
-
-&nbsp;
-
-## 1. Use CLI command to create executable, customizable projects
+## 1. Automation - instant project providing API, Admin web app
 
 This project was created with a command like:
 
@@ -26,7 +18,11 @@ $ ApiLogicServer create --project_name=basic_demo --db_url=basic_demo
 
 > Note: the `db_url` value is [an abbreviation](https://apilogicserver.github.io/Docs/Data-Model-Examples/).  You would normally supply a SQLAlchemy URI.
 
-This creates a project you can open with VSCode.  Establish your `venv`, and run it via the first pre-built Run Configuration.  To establish your venv:
+This creates a project you can open with VSCode by reading your schema.  The database looks like this:
+
+<img src="images/basic_demo_data_model.jpeg" height="400rm">
+
+Establish your `venv`, and run it via the first pre-built Run Configuration.  To establish your venv:
 
 ```bash
 python -m venv venv; venv\Scripts\activate     # win
@@ -48,13 +44,13 @@ It also creates an Admin App: multi-page, multi-table apps -- ready for business
 
 ![Admin App](./images/admin-app-initial.jpeg)
 
-## 2. Customize - add security and logic
+## 2. Customize - add declarative security and logic
 
 While automation is always welcomed, it's critical to add logic and security.  Here's how.
 
 &nbsp;
 
-### Add Security
+### Declare Security
 
 In a terminal window for your project:
 
@@ -181,7 +177,7 @@ Note we rebuilt the project from our altered database, without losing customizat
 
 ## Summary
 
-![ai-driven-automation](images/ai-driven-automation/summary.png)
+![summary](images/summary.jpeg)
 
 In minutes, you've used API Logic Server to convert an idea into working software, deployed for collaboration, and iterated to meet new requirements.
 
