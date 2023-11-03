@@ -264,7 +264,23 @@ def fixup_devops_for_postgres_mysql(project: 'ProjectRun'):
         find_replace_recursive(project_devops_dir, "# if-mysql ", "# ", "*.yml")
         find_replace_recursive(project_devops_dir, "# if-postgres ", "", "*.list")
         find_replace_recursive(project_devops_dir, "# if-mysql ", "# ", "*.list")
-    
+
+
+def fix_idea_configs(project: 'ProjectRun'):
+    """ in runConfigs, replace real project name into <module name="ApiLogicProject" />
+
+    Args:
+        project (ProjectRun):project object
+    """
+    idea_configs_path = project.project_directory_path.joinpath('.idea/runConfigurations')
+    fix_files = ['ApiLogicServer', 'Report_Behave_Logic', 'run___No_Security',
+                 'Run_Behave', 'Windows_Run_Behave']  # note not run_docker
+    for each_config in fix_files:
+        file_path = idea_configs_path.joinpath(f'{each_config}.xml')
+        create_utils.replace_string_in_file(search_for="ApiLogicProject",
+                                            replace_with=project.project_name_last_node,
+                                            in_file=str(file_path))
+    pass
 
 def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "README.md"):
     project_path = project.project_directory_path
@@ -273,7 +289,7 @@ def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "R
     from_doc_file_path = docs_path.joinpath(f'Docs/docs/{from_doc_file}')
 
     copyfile(src = from_doc_file_path, dst = to_file)
-    
+
 
 def create_nw_tutorial(project_name, api_logic_server_dir_str):
     """ copy tutorial from docs, and link to it from readme.md 
@@ -297,13 +313,14 @@ def create_nw_tutorial(project_name, api_logic_server_dir_str):
             project_readme_file.write(standard_readme_file.read())
 
 
-def create_project_with_nw_samples(project, msg: str) -> str:
+def create_project_and_overlay_prototypes(project, msg: str) -> str:
     """
     clone prototype to  project directory, copy sqlite db, and remove git folder
 
     update config.py - SQLALCHEMY_DATABASE_URI
 
-    if nw/nw+/allocation/BudgetApp, inject sample logic/declare_logic and api/customize_api.
+    process /prototypes directories (eg, nw/nw+/allocation/BudgetApp/basic_demo),
+       * inject sample logic/declare_logic and api/customize_api, etc (merge copy over)
 
     nw, allocation etc databases are resolved in api_logic_server_utils.get_abs_db_url()
 
@@ -504,6 +521,7 @@ def create_project_with_nw_samples(project, msg: str) -> str:
             # delete_dir(realpath(Path(str(tmpdirname))), "")
             # os.removedirs(Path(str(tmpdirname)))
             # tmpdirname.cleanup()
+        fix_idea_configs(project=project)
     return return_abs_db_url
 
 
@@ -1258,7 +1276,7 @@ from database import <project.bind_key>_models
                 self.abs_db_url = self.update_config_and_copy_sqlite_db(
                     f".. ..Adding Database [{self.bind_key}] to existing project")
         else:                                                                            # normal path - clone, [overlay nw]
-            self.abs_db_url = create_project_with_nw_samples(self, "2. Create Project:")
+            self.abs_db_url = create_project_and_overlay_prototypes(self, "2. Create Project:")
 
         log.debug(f'3. Create/verify database/{self.model_file_name}, then use that to create api/ and ui/ models')
         model_creation_services = ModelCreationServices(project = self,   # Create database/models.py from db
@@ -1369,7 +1387,7 @@ def key_module_map():
 
     ProjectRun.create_project()                             # main driver, calls...
     create_utils.get_abs_db_url()                           # nw set here, dbname, db abbrevs
-    create_project_with_nw_samples()                        # clone project, overlay nw etc
+    create_project_and_overlay_prototypes()                 # clone project, overlay nw etc
     model_creation_services = ModelCreationServices()       # creates resource_list (python db model); ctor calls...
     def and_the_ctor_calls():
         model_creation_services.create_model_classes_and_resource_list()  # which uses..
