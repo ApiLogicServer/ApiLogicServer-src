@@ -264,6 +264,16 @@ def fixup_devops_for_postgres_mysql(project: 'ProjectRun'):
         find_replace_recursive(project_devops_dir, "# if-mysql ", "# ", "*.yml")
         find_replace_recursive(project_devops_dir, "# if-postgres ", "", "*.list")
         find_replace_recursive(project_devops_dir, "# if-mysql ", "# ", "*.list")
+    
+
+def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "README.md"):
+    project_path = project.project_directory_path
+    to_file = project_path.joinpath(to_project_file)
+    docs_path = Path(get_api_logic_server_dir()).parent.parent
+    from_doc_file_path = docs_path.joinpath(f'Docs/docs/{from_doc_file}')
+
+    copyfile(src = from_doc_file_path, dst = to_file)
+    
 
 def create_nw_tutorial(project_name, api_logic_server_dir_str):
     """ copy tutorial from docs, and link to it from readme.md 
@@ -388,6 +398,8 @@ def create_project_with_nw_samples(project, msg: str) -> str:
             nw_dir = (Path(api_logic_server_dir_str)).\
                 joinpath('prototypes/basic_demo')
             recursive_overwrite(nw_dir, project.project_directory)
+            copy_md(project = project, from_doc_file="Tech-Basic-Demo.md")
+
 
         if project.db_url == "mysql+pymysql://root:p@localhost:3306/classicmodels":
             log.debug(".. ..Copy in classicmodels customizations")
