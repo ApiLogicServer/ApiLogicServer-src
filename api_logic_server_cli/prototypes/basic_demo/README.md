@@ -1,6 +1,6 @@
 ---
 title: Instant Microservices - with Logic and Security
-notes: gold is proto (-- doc)
+notes: gold is proto (-- doc); alert for apostrophe
 ---
 
 See how to build a complete database system -- in minutes instead of weeks or months:
@@ -150,7 +150,7 @@ SQL overhead is minimized by pruning, and by elimination of expensive aggregate 
 
 ## 3. Iterate with Rules and Python
 
-Not only are spreadsheet-like rules 40X more concise, they meaningfully simplify maintenance.  Let’s take an example.
+Not only are spreadsheet-like rules 40X more concise, they meaningfully simplify maintenance.  Let's take an example.
 
 >> Give a 10% discount for carbon-neutral products for 10 items or more.
 
@@ -160,13 +160,15 @@ Automation still applies; we execute the steps below.
 
 **a. Add a Database Column**
 
-We've already added a database column (see Appendix); acquire it as follows:
+We've already created a revised database with a new column `Pruduct.CarbonNeutral` (see Appendix); acquire it as follows:
 
 1. Copy `customizations/db.sqlite` over `database/db.sqlite`
 
 &nbsp;
 
 **b. Rebuild the project, preserving customizations**
+
+In your IDE terminal window:
 
 ```bash
 cd ..  #  project parent directory
@@ -192,7 +194,7 @@ In `logic/declare_logic.py`, replace the formula for `models.Item.Amount` with t
            amount = amount * Decimal(0.9)  # breakpoint here
         return amount
 
-   Rule.formula(derive=models.Item.Amount, calling=derive_amount)
+    Rule.formula(derive=models.Item.Amount, calling=derive_amount)
 ```
 
 &nbsp;
@@ -213,9 +215,9 @@ This simple example illustrates some significant aspects of iteration, described
 
 ### a. Maintenance Automation
 
-Along with perhaps documentation, one of the tasks programmers most loathe is maintenance.  That’s because it’s not about writing code, but it’s mainly archaeology - deciphering code someone else wrote, just so you can add 4 or 5 lines they’ll hopefully be called and function correctly.
+Along with perhaps documentation, one of the tasks programmers most loathe is maintenance.  That's because it's not about writing code, but it's mainly archaeology - deciphering code someone else wrote, just so you can add 4 or 5 lines they'll hopefully be called and function correctly.
 
-Rules change that, since they self-order their execution (and pruning) based on system-discovered dependencies.  So, to alter logic, you just “drop a new rule in the bucket”, and the system will ensure it’s called in the proper order, and re-used over all the Use Cases to which it applies.
+Rules change that, since they self-order their execution (and pruning) based on system-discovered dependencies.  So, to alter logic, you just "drop a new rule in the bucket", and the system will ensure it's called in the proper order, and re-used over all the Use Cases to which it applies.
 
 &nbsp;
 
@@ -223,13 +225,13 @@ Rules change that, since they self-order their execution (and pruning) based on 
 
 In this case, we needed to do some if/else testing, and it was more convenient to add a dash of Python.  While you have the full object-oriented power of Python, this is simpler -- more like Python as a 4GL.  
 
-What’s important is that once you are in such functions, you can utilize Python libraries, invoke shared code, make web service calls, send email or messages, etc.  You have all the power of rules, plus the unrestricted flexibility of Python.
+What's important is that once you are in such functions, you can utilize Python libraries, invoke shared code, make web service calls, send email or messages, etc.  You have all the power of rules, plus the unrestricted flexibility of Python.
 
 &nbsp;
 
 ### c. Debugging: IDE, Logging
 
-The screen shot above illustrates that debugging logic is what you’d expect: use your IDE's debugger.
+The screen shot above illustrates that debugging logic is what you'd expect: use your IDE's debugger.
 
 In addition, the Logic Log lists every rule that fires, with indents for multi-table chaining (not visible in this screenshot).  Each line shows the old/new values of every attribute, so the transaction state is transparent.
 
@@ -269,11 +271,15 @@ In minutes, you've used API Logic Server to convert an idea into working softwar
 
 ## Appendix: Procedures
 
-You can use either VSCode or Pycharm.  You will need to:
+Specific procedures for running the demo are here, so they do not interrupt the conceptual discussion above.
+
+You can use either VSCode or Pycharm.
+
+For further details, see [this video](https://www.youtube.com/watch?v=sD6RFp8S6Fg).
 
 &nbsp;
 
-**Establish your Virtual Environment**
+**1. Establish your Virtual Environment**
 
 Python employs a virtual environment for project-specific dependencies.  Create one as shown below, depending on your IDE.
 
@@ -284,6 +290,7 @@ Establish your `venv`, and run it via the first pre-built Run Configuration.  To
 ```bash
 python -m venv venv; venv\Scripts\activate     # win
 python3 -m venv venv; . venv/bin/activate      # mac/linux
+
 pip install -r requirements.txt
 ```
 
@@ -293,7 +300,7 @@ See [here](https://apilogicserver.github.io/Docs/Install-Express/) for more info
 
 &nbsp;
 
-**Start and Stop the Server**
+**2. Start and Stop the Server**
 
 Both IDEs provide Run Configurations to start programs.  These are pre-built by `ApiLogicServer create`.
 
@@ -302,6 +309,41 @@ For VSCode, start the Server with F5, Stop with Shift-F5 or the red stop button.
 For PyCharm, start the server with CTL-D, Stop with red stop button.
 
 &nbsp;
+
+**3. Entering a new Order**
+
+To enter a new Order:
+
+1. Click `Customer 1``
+
+2. Click `+ ADD NEW ORDER`
+
+3. Set `Notes` to "hurry", and press `SAVE AND SHOW`
+
+4. Click `+ ADD NEW ITEM`
+
+5. Enter Quantity 1, lookup "Product 1", and click `SAVE AND ADD ANOTHER`
+
+6. Enter Quantity 2000, lookup "Product 2", and click `SAVE`
+
+7. Observe the constraint error, triggered by rollups from the `Item` to the `Order` and `Customer`
+
+8. Correct the quantity to 2, and click `Save`
+
+
+**4. Update the Order**
+
+To explore our new logic for green products:
+
+1. Access the previous order, and `ADD NEW ITEM`
+
+2. Enter quantity 11, lookup product `Green`, and click `Save`.
+
+
+
+&nbsp;
+
+
 
 ## Appendix: Containerize, Deploy for Collaboration
 
@@ -315,7 +357,7 @@ API Logic Server also creates scripts for deployment.  While these are ***not re
 
 ## Appendix: Add Database Column
 
-The database here is SQLite.  You can use the SQLite CLI to add a column using the terminal windows of your IDE:
+The database here is SQLite.  You can use the SQLite CLI to add a column using the terminal window of your IDE:
 
 ```bash
 $ sqlite3 database/db.sqlite
