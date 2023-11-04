@@ -3,7 +3,7 @@ title: Instant Microservices - with Logic and Security
 notes: gold is proto (-- doc)
 ---
 
-Learn how build a complete database system -- in minutes instead of weeks or months:
+See how to build a complete database system -- in minutes instead of weeks or months:
 
 1. **An API**, and, we'll add ui and logic to make it a microservice...
 2. **Logic and Security:** multi-table constraints and derivations, and role-based security
@@ -31,13 +31,13 @@ $ ApiLogicServer create --project_name=basic_demo --db_url=basic_demo
 
 > Note: the `db_url` value is [an abbreviation](https://apilogicserver.github.io/Docs/Data-Model-Examples/).  You would normally supply a SQLAlchemy URI.
 
-This creates a project you can open with VSCode by reading your schema.  The database is Customer, Orders, Items and Product, as shown in the Appendix.
+This creates a project by reading your schema.  The database is Customer, Orders, Items and Product, as shown in the Appendix.  
 
-You can run as follows:
+You can open with VSCode, and run it as follows:
 
 1. **Virtual Environment:** create one as shown in the Appendix.
 
-2. **Start the Server:** also described in the Appendix
+2. **Start the Server:** F5 (also described in the Appendix).
 
 3. **Start the Admin App:** either use the links provided in the IDE console, or click [http://localhost:5656/](http://localhost:5656/)
 
@@ -55,11 +55,13 @@ The system creates an API with end points for each table, with filtering, sortin
 
 It also creates an Admin App: multi-page, multi-table apps -- ready for **[business user agile collaboration](https://apilogicserver.github.io/Docs/Tech-AI/),** and back office data maintenance.  This complements custom UIs created with the API.
 
+You can click Customer 2, see their Orders, and Items.
+
 <img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/basic_demo/admin-app-initial.jpeg?raw=true">
 
 ## 2. Customize in your IDE
 
-While automation is always welcomed, it's critical to add logic and security.  Here's how.
+While api/UI automation is a great start, it's critical to enforce logic and security.  Here's how.
 
 &nbsp;
 
@@ -67,7 +69,7 @@ While automation is always welcomed, it's critical to add logic and security.  H
 
 To add security:
 
-**1. Stop the Server** (see Appendix)
+**1. Stop the Server** (Red Stop button, or Shift-F5 -- see Appendix)
 
 **2. Add Security**
 
@@ -84,9 +86,9 @@ At this point, you'd use your IDE to declare grants and filters.  Simulate this 
 
 To see security in action:
 
-**4. Start the Server**
+**4. Start the Server**  F5
 
-**5. Start the Admin App:** either use the links provided in the IDE console, or click [http://localhost:5656/](http://localhost:5656/)
+**5. Start the Admin App:** [http://localhost:5656/](http://localhost:5656/)
 
 **6. Login** as `s1`, password `p`
 
@@ -100,19 +102,19 @@ In the IDE Console Log, observe the logging assists in debugging:
 
 ### Declare Logic
 
-Logic (multi-table derivations and constraints) is typically a significant portion of a system, nearly half.  API Logic server provides spreadsheet-like rules that dramatically simplify and accelerate logic development.
+Logic (multi-table derivations and constraints) is a significant portion of a system, typically nearly half.  API Logic server provides **spreadsheet-like rules** that dramatically simplify and accelerate logic development.
 
 Rules are declared in Python, simplified with IDE code completion.  Simulate this as follows:
 
 **1. Stop the Server**
 
-At this point, you'd use your IDE to declare grants and filters.  Simulate this as follows:
+At this point, you'd use your IDE to declare logic.  Simulate this as follows for **Check Credit Logic:**
 
 **2. Declare Logic:** Copy `customomizations/declare_logic` over `logic/declare_logic`
 
-Rules are an executable design.  Use your IDE (code completion, etc), to replace 280 lines of code with the 5 spreadsheet-like rules in `logic/declare_logic.py`.  Note they map exactly to our natural language design.
+Rules are an executable design.  Note they map exactly to our natural language design (shown in comments) - readable by business users.
 
-**3. Test using the Admin App - add an Order and Item**
+**3. Test: Start the Server, and use the Admin App to add an Order and Item**
 
 Observe the rules firing in the console log, as shown in the next screen shot.
 
@@ -158,23 +160,17 @@ Automation still applies; we execute the steps below.
 
 **a. Add a Database Column**
 
-```bash
-$ sqlite3 database/db.sqlite
->   alter table Products Add CarbonNeutral Boolean;
->   .exit
-```
+We've already added a database column (see Appendix); acquire it as follows:
 
-The SQLite DBMS is installed with API Logic Server, but the **CLI** is not provided on all systems.  If it's not installed:
-
-1. Copy `database/basic_demo.sqlite` over `database/db.sqlite`
+1. Copy `customizations/db.sqlite` over `database/db.sqlite`
 
 &nbsp;
 
 **b. Rebuild the project, preserving customizations**
 
 ```bash
-cd ..  project parent directory
-ApiLogicServer rebuild-from-database --project_name=ai_customer_orders --db_url=sqlite:///ai_customer_orders/database/db.sqlite
+cd ..  #  project parent directory
+ApiLogicServer rebuild-from-database --project_name=basic_demo --db_url=sqlite:///basic_demo/database/db.sqlite
 ```
 
 &nbsp;
@@ -185,18 +181,29 @@ Use your IDE to merge `/ui/admin/admin-merge.yml` -> `/ui/admin/admin.yml`.`
 
 &nbsp;
 
-
 **d. Declare logic**
 
+In `logic/declare_logic.py`, replace the formula for `models.Item.Amount` with this (you may need to use the IDE for proper indents):
+
 ```python
-   def derive_amount(row: models.Item, old_row: models.Item, logic_row: LogicRow):
-       amount = row.Quantity * row.UnitPrice
-       if row.Product.CarbonNeutral and row.Quantity >= 10:
+    def derive_amount(row: models.Item, old_row: models.Item, logic_row: LogicRow):
+        amount = row.Quantity * row.UnitPrice
+        if row.Product.CarbonNeutral and row.Quantity >= 10:
            amount = amount * Decimal(0.9)  # breakpoint here
-       return amount
+        return amount
 
    Rule.formula(derive=models.Item.Amount, calling=derive_amount)
 ```
+
+&nbsp;
+
+**e. Set the breakpoint as shown**
+
+&nbsp;
+
+**f. Test: Start the Server, and use the Admin App to update your Order by adding a `green` Item**
+
+At the breakpoint, note you can use debugger services to debug your logic (examine `Item` attributes, step, etc).
 
 &nbsp;
 
@@ -304,3 +311,16 @@ API Logic Server also creates scripts for deployment.  While these are ***not re
 2. Upload to Docker Hub, and
 3. Deploy for agile collaboration.
 
+&nbsp;
+
+## Appendix: Add Database Column
+
+The database here is SQLite.  You can use the SQLite CLI to add a column using the terminal windows of your IDE:
+
+```bash
+$ sqlite3 database/db.sqlite
+>   alter table Products Add CarbonNeutral Boolean;
+>   .exit
+```
+
+The SQLite DBMS is installed with API Logic Server, but the **CLI** is not provided on all systems.  If it's not installed, [you can install it like this](https://apilogicserver.github.io/Docs/Database-Connectivity/#sqlite).
