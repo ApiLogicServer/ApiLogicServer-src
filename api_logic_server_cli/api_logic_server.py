@@ -269,8 +269,10 @@ def fixup_devops_for_postgres_mysql(project: 'ProjectRun'):
 def fix_idea_configs(project: 'ProjectRun'):
     """ in runConfigs, replace real project name into <module name="ApiLogicProject" />
 
+    eg, see api_logic_server_cli/prototypes/base/.idea/runConfigurations/ApiLogicServer.xml
+
     Args:
-        project (ProjectRun):project object
+        project (ProjectRun): project object
     """
     idea_configs_path = project.project_directory_path.joinpath('.idea/runConfigurations')
     fix_files = ['ApiLogicServer', 'Report_Behave_Logic', 'run___No_Security',
