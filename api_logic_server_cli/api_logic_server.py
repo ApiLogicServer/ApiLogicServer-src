@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "09.05.01"
+__version__ = "09.05.02"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t10/31/2023 - 09.05.01: security merge \n"\
+    "\t11/03/2023 - 09.05.02: security merge, basic_demo \n"\
     "\t10/31/2023 - 09.05.00: Security - global filters, crud permissions, ins parent, bug fix (18, 20), sa-pydb \n"\
     "\t09/29/2023 - 09.04.00: Enhanced devops automation (sqlite, MySql, Postgres) \n"\
     "\t09/18/2023 - 09.03.04: Sqlite chatgpt cust_orders, Python readme link, class creation cleanup \n"\
@@ -285,6 +285,15 @@ def fix_idea_configs(project: 'ProjectRun'):
     pass
 
 def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "README.md"):
+    """ Unused - copy readme files from docs.
+
+    Fails since dependent on Docs dir (duh), so only works in Dev Env.  Not useful.
+
+    Args:
+        project (ProjectRun): _description_
+        from_doc_file (str): _description_
+        to_project_file (str, optional): _description_. Defaults to "README.md".
+    """
     project_path = project.project_directory_path
     to_file = project_path.joinpath(to_project_file)
     docs_path = Path(get_api_logic_server_dir()).parent.parent
@@ -417,7 +426,7 @@ def create_project_and_overlay_prototypes(project, msg: str) -> str:
             nw_dir = (Path(api_logic_server_dir_str)).\
                 joinpath('prototypes/basic_demo')
             recursive_overwrite(nw_dir, project.project_directory)
-            copy_md(project = project, from_doc_file="Tech-Basic-Demo.md")
+            # copy_md(project = project, from_doc_file="Tech-Basic-Demo.md")
 
 
         if project.db_url == "mysql+pymysql://root:p@localhost:3306/classicmodels":
