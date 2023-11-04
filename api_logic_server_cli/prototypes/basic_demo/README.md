@@ -266,7 +266,7 @@ You can use either VSCode or Pycharm.  You will need to:
 
 &nbsp;
 
-** Establish your Virtual Environment**
+**Establish your Virtual Environment**
 
 Python employs a virtual environment for project-specific dependencies.  Create one as shown below, depending on your IDE.
 
@@ -286,7 +286,7 @@ See [here](https://apilogicserver.github.io/Docs/Install-Express/) for more info
 
 &nbsp;
 
-** Start and Stop the Server **
+**Start and Stop the Server**
 
 Both IDEs provide Run Configurations to start programs.  These are pre-built by `ApiLogicServer create`.
 
