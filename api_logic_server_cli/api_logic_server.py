@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "09.05.05"
+__version__ = "09.05.06"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t11/04/2023 - 09.05.05: security merge, basic_demo w/ customization \n"\
+    "\t11/05/2023 - 09.05.06: security merge, basic_demo w/ customization \n"\
     "\t10/31/2023 - 09.05.00: Security - global filters, crud permissions, ins parent, bug fix (18, 20), sa-pydb \n"\
     "\t09/29/2023 - 09.04.00: Enhanced devops automation (sqlite, MySql, Postgres) \n"\
     "\t09/18/2023 - 09.03.04: Sqlite chatgpt cust_orders, Python readme link, class creation cleanup \n"\
@@ -287,11 +287,9 @@ def fix_idea_configs(project: 'ProjectRun'):
 def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "README.md"):
     """ Copy readme files from:
     
-    1. github (acquire more recent version since release)
+    1. github (to acquire more recent version since release)
     
-    2. dev docs, if exists (gold version there).
-
-    Fails since dependent on Docs dir (duh), so only works in Dev Env.  Not useful.
+    2. dev docs, if exists (gold version in docs, not prototypes).
 
     Args:
         project (ProjectRun): project object (project name, etc)
@@ -311,6 +309,9 @@ def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "R
             readme_data = r.content.decode('utf-8')
             with open(str(to_file), "w") as readme_file:
                 readme_file.write(readme_data)
+    except requests.exceptions.ConnectionError as conerr: 
+        # without this, windows fails if network is down
+        pass    # just fall back to using the pip-installed version
     except:     # do NOT fail 
         pass    # just fall back to using the pip-installed version
 
