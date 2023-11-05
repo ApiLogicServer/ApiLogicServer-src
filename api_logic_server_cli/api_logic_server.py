@@ -15,7 +15,7 @@ Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 __version__ = "09.05.06"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t11/05/2023 - 09.05.06: security merge, basic_demo w/ customization \n"\
+    "\t11/05/2023 - 09.05.06: basic demo enhancements, bug fix (22, 23) \n"\
     "\t10/31/2023 - 09.05.00: Security - global filters, crud permissions, ins parent, bug fix (18, 20), sa-pydb \n"\
     "\t09/29/2023 - 09.04.00: Enhanced devops automation (sqlite, MySql, Postgres) \n"\
     "\t09/18/2023 - 09.03.04: Sqlite chatgpt cust_orders, Python readme link, class creation cleanup \n"\
