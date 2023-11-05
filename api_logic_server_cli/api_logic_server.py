@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "09.05.04"
+__version__ = "09.05.05"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t11/04/2023 - 09.05.04: security merge, basic_demo w/ customization \n"\
+    "\t11/04/2023 - 09.05.05: security merge, basic_demo w/ customization \n"\
     "\t10/31/2023 - 09.05.00: Security - global filters, crud permissions, ins parent, bug fix (18, 20), sa-pydb \n"\
     "\t09/29/2023 - 09.04.00: Enhanced devops automation (sqlite, MySql, Postgres) \n"\
     "\t09/18/2023 - 09.03.04: Sqlite chatgpt cust_orders, Python readme link, class creation cleanup \n"\
@@ -285,13 +285,17 @@ def fix_idea_configs(project: 'ProjectRun'):
     pass
 
 def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "README.md"):
-    """ Unused - copy readme files from docs.
+    """ Copy readme files from:
+    
+    1. github (acquire more recent version since release)
+    
+    2. dev docs, if exists (gold version there).
 
     Fails since dependent on Docs dir (duh), so only works in Dev Env.  Not useful.
 
     Args:
-        project (ProjectRun): _description_
-        from_doc_file (str): _description_
+        project (ProjectRun): project object (project name, etc)
+        from_doc_file (str): eg, Tech-Basic_Demo.md
         to_project_file (str, optional): _description_. Defaults to "README.md".
     """
     project_path = project.project_directory_path
@@ -301,13 +305,15 @@ def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "R
 
     import requests
     file_src = "https://raw.githubusercontent.com/ApiLogicServer/ApiLogicServer-src/main/api_logic_server_cli/prototypes/basic_demo/README.md"
+    file_src = f"https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/{from_doc_file}"
     r = requests.get(file_src)  # , params=params)
     if r.status_code == 200:
         readme_data = r.content.decode('utf-8')
         with open(str(to_file), "w") as readme_file:
             readme_file.write(readme_data)
 
-    copyfile(src = from_doc_file_path, dst = to_file)
+    if os.path.isfile(from_doc_file_path):
+        copyfile(src = from_doc_file_path, dst = to_file)
 
 
 def create_nw_tutorial(project_name, api_logic_server_dir_str):
