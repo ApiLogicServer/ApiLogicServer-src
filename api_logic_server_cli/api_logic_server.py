@@ -293,7 +293,7 @@ def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "R
 
     Args:
         project (ProjectRun): project object (project name, etc)
-        from_doc_file (str): eg, Tech-Basic_Demo.md
+        from_doc_file (str): eg, Sample-Basic_Demo.md
         to_project_file (str, optional): _description_. Defaults to "README.md".
     """
     project_path = project.project_directory_path
@@ -443,7 +443,7 @@ def create_project_and_overlay_prototypes(project, msg: str) -> str:
             nw_dir = (Path(api_logic_server_dir_str)).\
                 joinpath('prototypes/basic_demo')
             recursive_overwrite(nw_dir, project.project_directory)
-            copy_md(project = project, from_doc_file="Tech-Basic-Demo.md")
+            copy_md(project = project, from_doc_file="Sample-Basic-Demo.md")
 
 
         if project.db_url == "mysql+pymysql://root:p@localhost:3306/classicmodels":
