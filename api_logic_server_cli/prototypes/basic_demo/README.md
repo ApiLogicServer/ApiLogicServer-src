@@ -1,7 +1,7 @@
 ---
 title: Instant Microservices - with Logic and Security
 notes: gold is proto (-- doc); alert for apostrophe
-from: proto
+version: 0.2 from pip
 ---
 
 See how to build a complete database system -- in minutes instead of weeks or months:
@@ -113,8 +113,6 @@ At this point, you'd use your IDE to declare logic.  Simulate this as follows fo
 
 **2. Declare Logic:** Copy `customomizations/declare_logic` over `logic/declare_logic`
 
-Rules are an executable design.  Note they map exactly to our natural language design (shown in comments) - readable by business users.
-
 **3. Test: Start the Server, and use the Admin App to add an Order and Item**
 
 Observe the rules firing in the console log, as shown in the next screen shot.
@@ -146,6 +144,12 @@ The logic above, perhaps conceived for Place order, applies automatically to all
 #### d. Automatic Optimizations
 
 SQL overhead is minimized by pruning, and by elimination of expensive aggregate queries.  These can result in orders of magnitude impact.
+
+&nbsp;
+
+#### 3. Transparent
+
+Rules are an executable design.  Note they map exactly to our natural language design (shown in comments) - readable by business users.  Optionally, you can use the Behave TDD approach to define tests, including the rules that execute.  For more information, [click here](https://apilogicserver.github.io/Docs/Behave/).
 
 &nbsp;
 

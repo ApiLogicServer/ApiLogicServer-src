@@ -304,15 +304,17 @@ def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "R
     from_doc_file_path = docs_path.joinpath(f'Docs/docs/{from_doc_file}')
 
     import requests
-    file_src = "https://raw.githubusercontent.com/ApiLogicServer/ApiLogicServer-src/main/api_logic_server_cli/prototypes/basic_demo/README.md"
     file_src = f"https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/{from_doc_file}"
-    r = requests.get(file_src)  # , params=params)
-    if r.status_code == 200:
-        readme_data = r.content.decode('utf-8')
-        with open(str(to_file), "w") as readme_file:
-            readme_file.write(readme_data)
+    try:
+        r = requests.get(file_src)  # , params=params)
+        if r.status_code == 200:
+            readme_data = r.content.decode('utf-8')
+            with open(str(to_file), "w") as readme_file:
+                readme_file.write(readme_data)
+    except:     # do NOT fail 
+        pass    # just fall back to using the pip-installed version
 
-    if os.path.isfile(from_doc_file_path):
+    if os.path.isfile(from_doc_file_path):  # if in dev, use the latest latest
         copyfile(src = from_doc_file_path, dst = to_file)
 
 
