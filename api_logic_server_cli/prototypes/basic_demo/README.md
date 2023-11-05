@@ -1,6 +1,7 @@
 ---
 title: Instant Microservices - with Logic and Security
 notes: gold is proto (-- doc); alert for apostrophe
+from: proto
 ---
 
 See how to build a complete database system -- in minutes instead of weeks or months:

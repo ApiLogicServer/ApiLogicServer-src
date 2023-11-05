@@ -299,6 +299,14 @@ def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "R
     docs_path = Path(get_api_logic_server_dir()).parent.parent
     from_doc_file_path = docs_path.joinpath(f'Docs/docs/{from_doc_file}')
 
+    import requests
+    file_src = "https://raw.githubusercontent.com/ApiLogicServer/ApiLogicServer-src/main/api_logic_server_cli/prototypes/basic_demo/README.md"
+    r = requests.get(file_src)  # , params=params)
+    if r.status_code == 200:
+        readme_data = r.content.decode('utf-8')
+        with open(str(to_file), "w") as readme_file:
+            readme_file.write(readme_data)
+
     copyfile(src = from_doc_file_path, dst = to_file)
 
 
@@ -426,7 +434,7 @@ def create_project_and_overlay_prototypes(project, msg: str) -> str:
             nw_dir = (Path(api_logic_server_dir_str)).\
                 joinpath('prototypes/basic_demo')
             recursive_overwrite(nw_dir, project.project_directory)
-            # copy_md(project = project, from_doc_file="Tech-Basic-Demo.md")
+            copy_md(project = project, from_doc_file="Tech-Basic-Demo.md")
 
 
         if project.db_url == "mysql+pymysql://root:p@localhost:3306/classicmodels":
