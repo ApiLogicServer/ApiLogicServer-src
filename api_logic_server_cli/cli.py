@@ -238,7 +238,7 @@ def tutorial(ctx, create):
 @click.option('--project_name',
               default=f'{default_project_name}',
               prompt="Project to create",
-              help="Create new directory here")  # option text shown on create --help
+              help="Create new directory named this")  # option text shown on create --help
 @click.option('--db_url',
               default=f'{default_db}',
               prompt="SQLAlchemy Database URI",
@@ -347,7 +347,7 @@ def create(ctx, project_name: str, db_url: str, not_exposed: str, api_name: str,
 @click.option('--project_name',
               default=f'{default_project_name}',
               prompt="Project to create",
-              help="Create new directory here")
+              help="Create new directory named this")
 @click.option('--db_url',
               default=f'{default_db}',
               prompt="SQLAlchemy Database URI",
@@ -456,7 +456,7 @@ def create_and_run(ctx, project_name: str, db_url: str, not_exposed: str, api_na
 @click.option('--project_name',
               default=f'{default_project_name}',
               prompt="Project to create",
-              help="Create new directory here")
+              help="Create new directory named this")
 @click.option('--db_url',
               default=f'{default_db}',
               prompt="SQLAlchemy Database URI",
@@ -707,7 +707,7 @@ def add_cust(ctx, bind_key_url_separator: str, api_name: str, project_name: str)
 @click.option('--project_name',
               default=f'{default_project_name}',
               prompt="Project to create",
-              help="Create new directory here")
+              help="Create new directory named this")
 @click.option('--db_url',
               default=f'{default_db}',
               prompt="SQLAlchemy Database URI",
