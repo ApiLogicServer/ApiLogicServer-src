@@ -1,7 +1,7 @@
 ---
 title: Instant Microservices - with Logic and Security
 notes: gold is proto (-- doc); alert for apostrophe
-version: 0.2 from pip
+version: 0.7 from pip
 ---
 
 See how to build a complete database system -- in minutes instead of weeks or months:
@@ -10,15 +10,23 @@ See how to build a complete database system -- in minutes instead of weeks or mo
 2. **Logic and Security:** multi-table constraints and derivations, and role-based security
 3. **An Admin App:** and finally, a multi-page, multi-table web app
 
-We'll use API Logic Server, providing:
+We'll use API Logic Server (open source), providing:
 
 | Key Feature | Providing | Why It Matters|
 | :--- |:---|:---|
-| **Automation** | Instant Project Creation, providing...<br>An API and an Admin web app  | Unblock UI App Dev<br>Instant Agile Collaboration |
-| **Customization** | Declarative logic and security <br> 5 rules vs. 200 lines of Python | Half the effort reduced 40X |
+| **Automation** | Instant Project Creation:<br>An API and an Admin web app  | Unblock UI App Dev<br>Instant Agile Collaboration |
+| **Customization** | Declarative logic and security <br> 5 rules vs. 200 lines of Python | 40X less backend code |
 | **Iteration** | Revising the data model, and <br>Adding rules plus Python | Iterative development <br> Extensiblity with Python |
 
-The entire process takes 5 minutes, instead of several weeks using traditional  development.
+The entire process takes 10 minutes, instead of several weeks using traditional development.
+
+You can use this article in several ways:
+
+* Conceptual Overview - focus on the basic process.  Operational details are moved to the Appendix to retain focus on the concepts.
+
+* Self-demo - you can create this system yourself.
+
+* Self-demo with video - you can also use [this video](https://www.youtube.com/watch?v=sD6RFp8S6Fg) (it's the same system, but the database is created with ChatGPT).
 
 &nbsp;
 
@@ -36,13 +44,13 @@ This creates a project by reading your schema.  The database is Customer, Orders
 
 You can open with VSCode, and run it as follows:
 
-1. **Virtual Environment:** create one as shown in the Appendix.
+1. **Create Virtual Environment:** as shown in the Appendix.
 
 2. **Start the Server:** F5 (also described in the Appendix).
 
-3. **Start the Admin App:** either use the links provided in the IDE console, or click [http://localhost:5656/](http://localhost:5656/)
+3. **Start the Admin App:** either use the links provided in the IDE console, or click [http://localhost:5656/](http://localhost:5656/).  The screen shown below should appear in your Browser.
 
-The sections below describe what has been created.
+The sections below explore the system that has been created (which would be similar for your own database).
 
 &nbsp;
 
@@ -62,40 +70,40 @@ You can click Customer 2, see their Orders, and Items.
 
 ## 2. Customize in your IDE
 
-While api/UI automation is a great start, it's critical to enforce logic and security.  Here's how.
+While API/UI automation is a great start, it's critical to enforce logic and security.  Here's how.
 
+The follwing `apply_customizations` process simuluates adding security to your project, and using your IDE to declare logic and security in `logic/declare_logic.sh` and `security/declare_security.py`.  You can diff these files to their created versions, and/or examine the declared logic.
+
+In a terminal window for your project:
+
+**1. Stop the Server** (Red Stop button, or Shift-F5 -- see Appendix)
+
+**2. Apply Customizations**
+
+```bash
+# mac, linux
+sh apply_customizations.sh
+
+#windows
+./apply_customizations.ps1
+```
 &nbsp;
 
 ### Declare Security
 
-To add security:
-
-**1. Stop the Server** (Red Stop button, or Shift-F5 -- see Appendix)
-
-**2. Add Security**
-
-In a terminal window for your project:
-
-```bash
-ApiLogicServer add-auth --project_name=. --db_url=auth
-```
-&nbsp;
-
-At this point, you'd use your IDE to declare grants and filters.  Simulate this as follows:
-
-**3. Declare Grants:** Copy `customomizations/declare_security` over `security/declare_security`
+The `apply_customizations` process above has simulated the `ApiLogicServer add-auth` command, and using your IDE to declare security in `logic/declare_logic.sh`.
 
 To see security in action:
 
-**4. Start the Server**  F5
+**1. Start the Server**  F5
 
-**5. Start the Admin App:** [http://localhost:5656/](http://localhost:5656/)
+**2. Start the Admin App:** [http://localhost:5656/](http://localhost:5656/)
 
-**6. Login** as `s1`, password `p`
+**3. Login** as `s1`, password `p`
 
-**7. Click Customers**
+**4. Click Customers**
 
-In the IDE Console Log, observe the logging assists in debugging:
+In the IDE Console Log, observe the how the logging assists in debugging, by showing which Grants (`+ Grant:`) are applied:
 
 <img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/basic_demo/security-filters.jpeg?raw=true">
 
@@ -105,17 +113,15 @@ In the IDE Console Log, observe the logging assists in debugging:
 
 Logic (multi-table derivations and constraints) is a significant portion of a system, typically nearly half.  API Logic server provides **spreadsheet-like rules** that dramatically simplify and accelerate logic development.
 
-Rules are declared in Python, simplified with IDE code completion.  Simulate this as follows:
+Rules are declared in Python, simplified with IDE code completion.  The screen below shows the 5 rules for **Check Credit Logic.**
 
-**1. Stop the Server**
+The `apply_customizations` process above has simulated the process of using your IDE to declare logic in `logic/declare_logic.sh`.
 
-At this point, you'd use your IDE to declare logic.  Simulate this as follows for **Check Credit Logic:**
+To see logic in action:
 
-**2. Declare Logic:** Copy `customomizations/declare_logic` over `logic/declare_logic`
+**1. Test: Start the Server, and use the Admin App to add an Order and Item**
 
-**3. Test: Start the Server, and use the Admin App to add an Order and Item**
-
-Observe the rules firing in the console log, as shown in the next screen shot.
+Observe the rules firing in the console log, as shown in the next screenshot.
 
 Logic provides significant improvements over procedural logic, as described below.
 
@@ -123,15 +129,15 @@ Logic provides significant improvements over procedural logic, as described belo
 
 #### a. Complexity Scaling
 
-The screen below shows our logid declarations, and the logging for inserting an `Item`.  Each line represents a rule firing, and shows the complete state of the row.
+The screenshot below shows our logic declarations, and the logging for inserting an `Item`.  Each line represents a rule firing, and shows the complete state of the row.
 
-Note that it's `Multi-Table Transaction`, as indicating by the indentation.  This is because **rules automatically chain, *including across tables.***
+Note that it's `Multi-Table Transaction`, as indicating by the indentation.  This is because - like a spreadsheet - **rules automatically chain, *including across tables.***
 
 <img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/basic_demo/logic-chaining.jpeg?raw=true">
 
 #### b. 40X More Concise
 
-Spreadsheet-like rules [40X more concise](https://github.com/valhuber/LogicBank/wiki/by-code).
+The 5 spreadsheet-like rules represent the same logic as 200 lines of code, [shown here](https://github.com/valhuber/LogicBank/wiki/by-code).  That's a remarkable 40X decrease in the backend half of the system.
 
 &nbsp;
 
@@ -147,15 +153,17 @@ SQL overhead is minimized by pruning, and by elimination of expensive aggregate 
 
 &nbsp;
 
-#### 3. Transparent
+#### e. Transparent
 
-Rules are an executable design.  Note they map exactly to our natural language design (shown in comments) - readable by business users.  Optionally, you can use the Behave TDD approach to define tests, including the rules that execute.  For more information, [click here](https://apilogicserver.github.io/Docs/Behave/).
+Rules are an executable design.  Note they map exactly to our natural language design (shown in comments) - readable by business users.  
+
+Optionally, you can use the Behave TDD approach to define tests, and the Rules Report will show the rules that execute for each test.  For more information, [click here](https://apilogicserver.github.io/Docs/Behave-Logic-Report/).
 
 &nbsp;
 
 ## 3. Iterate with Rules and Python
 
-Not only are spreadsheet-like rules 40X more concise, they meaningfully simplify maintenance.  Let's take an example.
+Not only are spreadsheet-like rules 40X more concise, they meaningfully simplify maintenance.  Let's take an example:
 
 >> Give a 10% discount for carbon-neutral products for 10 items or more.
 
@@ -163,7 +171,7 @@ Automation still applies; we execute the steps below.
 
 &nbsp;
 
-**a. Add a Database Column**
+**1. Add a Database Column**
 
 We've already created a revised database with a new column `Pruduct.CarbonNeutral` (see Appendix); acquire it as follows:
 
@@ -171,7 +179,7 @@ We've already created a revised database with a new column `Pruduct.CarbonNeutra
 
 &nbsp;
 
-**b. Rebuild the project, preserving customizations**
+**2. Rebuild the project, preserving customizations**
 
 In your IDE terminal window:
 
@@ -182,15 +190,15 @@ ApiLogicServer rebuild-from-database --project_name=basic_demo --db_url=sqlite:/
 
 &nbsp;
 
-**c. Update your admin app**
+**3. Update your admin app**
 
 Use your IDE to merge `/ui/admin/admin-merge.yml` -> `/ui/admin/admin.yml`.`
 
 &nbsp;
 
-**d. Declare logic**
+**4. Declare logic**
 
-In `logic/declare_logic.py`, replace the formula for `models.Item.Amount` with this (you may need to use the IDE for proper indents):
+In `logic/declare_logic.py`, replace the 2 lines for the `models.Item.Amount` formula with this:
 
 ```python
     def derive_amount(row: models.Item, old_row: models.Item, logic_row: LogicRow):
@@ -202,15 +210,17 @@ In `logic/declare_logic.py`, replace the formula for `models.Item.Amount` with t
     Rule.formula(derive=models.Item.Amount, calling=derive_amount)
 ```
 
-&nbsp;
-
-**e. Set the breakpoint as shown**
+> Note: you may need to use the IDE to ensure proper indents
 
 &nbsp;
 
-**f. Test: Start the Server, and use the Admin App to update your Order by adding a `green` Item**
+**5. Set the breakpoint as shown**
 
-At the breakpoint, note you can use debugger services to debug your logic (examine `Item` attributes, step, etc).
+&nbsp;
+
+**6. Test: Start the Server, and use the Admin App to update your Order by adding a `green` Item**
+
+At the breakpoint, note you can use standard debugger services to debug your logic (examine `Item` attributes, step, etc).
 
 &nbsp;
 
@@ -220,35 +230,33 @@ This simple example illustrates some significant aspects of iteration, described
 
 ### a. Maintenance Automation
 
-Along with perhaps documentation, one of the tasks programmers most loathe is maintenance.  That's because it's not about writing code, but it's mainly archaeology - deciphering code someone else wrote, just so you can add 4 or 5 lines they'll hopefully be called and function correctly.
+Along with perhaps documentation, one of the tasks programmers most loathe is maintenance.  That's because it's not about writing code, but it's mainly archaeology - deciphering code someone else wrote, just so you can add 4 or 5 lines that will hopefully be called and function correctly.
 
-Rules change that, since they self-order their execution (and pruning) based on system-discovered dependencies.  So, to alter logic, you just "drop a new rule in the bucket", and the system will ensure it's called in the proper order, and re-used over all the Use Cases to which it applies.
+Rules change that, since they **self-order their execution** (and pruning) based on system-discovered dependencies.  So, to alter logic, you just "drop a new rule in the bucket", and the system will ensure it's called in the proper order, and re-used over all the Use Cases to which it applies.
 
 &nbsp;
 
 ### b. Extensibile with Python
 
-In this case, we needed to do some if/else testing, and it was more convenient to add a dash of Python.  While you have the full object-oriented power of Python, this is simpler -- more like Python as a 4GL.  
+In this case, we needed to do some if/else testing, and it was convenient to add a pinch of Python. Using "Python as a 4GL" is remarkably simple, even if you are new to Python.
 
-What's important is that once you are in such functions, you can utilize Python libraries, invoke shared code, make web service calls, send email or messages, etc.  You have all the power of rules, plus the unrestricted flexibility of Python.
+Of course, you have the full object-oriented power of Python and its many libraries, so there are *no automation penalty* restrictions.  
 
 &nbsp;
 
 ### c. Debugging: IDE, Logging
 
-The screen shot above illustrates that debugging logic is what you'd expect: use your IDE's debugger.
-
-In addition, the Logic Log lists every rule that fires, with indents for multi-table chaining (not visible in this screenshot).  Each line shows the old/new values of every attribute, so the transaction state is transparent.
+The screenshot above illustrates that debugging logic is what you'd expect: use your IDE's debugger.  This "standard-based" approach applies to other development activities, such as source code management, and container-based deployment.
 
 &nbsp;
 
 ### d. Customizations Retained
 
-Note we rebuilt the project from our altered database, illustrating we can **iterate preserving customizations.**
+Note we rebuilt the project from our altered database, illustrating we can **iterate, while *preserving customizations.***
 
 &nbsp;
 
-## API Customization: Standard
+## 4. API Customization: Standard
 
 Of course, we all know that all businesses the world over depend on the `hello world` app.  This is provided in `api/customize_api`.  Observe that it's:
 
@@ -260,13 +268,26 @@ Of course, we all know that all businesses the world over depend on the `hello w
 
 &nbsp;
 
+## 5. Deploy Containers: Collaborate
+
+API Logic Server also creates scripts for deployment.  While these are ***not required at this demo,*** this means you can enable collaboration with Business Users:
+
+1. Create a container from your project -- see `devops/docker-image/build_image.sh`
+2. Upload to Docker Hub, and
+3. Deploy for agile collaboration.
+&nbsp;
+
 ## Summary
 
 <img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/basic_demo/summary.jpeg?raw=true">
 
-In minutes, you've used API Logic Server to convert an idea into working software, deployed for collaboration, and iterated to meet new requirements.
+In minutes - not days or weeks - you've used API Logic Server to convert an idea into **working software,** added **logic and security,** and **iterated** to meet new requirements.
+
+To dive deeper, you can install [API Logic Server](https://apilogicserver.github.io/Docs) and execute this demo - or create a system from your own databases.
 
 &nbsp;
+
+---
 
 ## Appendix: Database Schema
 
@@ -279,8 +300,6 @@ In minutes, you've used API Logic Server to convert an idea into working softwar
 Specific procedures for running the demo are here, so they do not interrupt the conceptual discussion above.
 
 You can use either VSCode or Pycharm.
-
-For further details, see [this video](https://www.youtube.com/watch?v=sD6RFp8S6Fg).
 
 &nbsp;
 
@@ -343,20 +362,6 @@ To explore our new logic for green products:
 1. Access the previous order, and `ADD NEW ITEM`
 
 2. Enter quantity 11, lookup product `Green`, and click `Save`.
-
-
-
-&nbsp;
-
-
-
-## Appendix: Containerize, Deploy for Collaboration
-
-API Logic Server also creates scripts for deployment.  While these are ***not required at this demo,*** this means you can enable collaboration with Business Users:
-
-1. Create a container from your project -- see `devops/docker-image/build_image.sh`
-2. Upload to Docker Hub, and
-3. Deploy for agile collaboration.
 
 &nbsp;
 
