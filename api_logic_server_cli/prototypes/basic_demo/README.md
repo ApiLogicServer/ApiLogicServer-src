@@ -72,7 +72,7 @@ You can click Customer 2, see their Orders, and Items.
 
 While API/UI automation is a great start, it's critical to enforce logic and security.  Here's how.
 
-The follwing `apply_customizations` process simuluates adding security to your project, and using your IDE to declare logic and security in `logic/declare_logic.sh` and `security/declare_security.py`.  You can diff these files to their created versions, and/or examine the declared logic.
+The follwing `apply_customizations` process simulates adding security to your project, and using your IDE to declare logic and security in `logic/declare_logic.sh` and `security/declare_security.py`.  You can diff these files to their created versions, and/or examine the declared logic.
 
 In a terminal window for your project:
 
@@ -167,38 +167,13 @@ Not only are spreadsheet-like rules 40X more concise, they meaningfully simplify
 
 >> Give a 10% discount for carbon-neutral products for 10 items or more.
 
-Automation still applies; we execute the steps below.
+The follwing `apply_iteration` process simulates an iteration:
 
-&nbsp;
+* acquires a new database with `Product.CarbonNeutral`
 
-**1. Add a Database Column**
+* and a revised `ui/admin/admin.yaml` that shows this new column
 
-We've already created a revised database with a new column `Pruduct.CarbonNeutral` (see Appendix); acquire it as follows:
-
-1. Copy `customizations/db.sqlite` over `database/db.sqlite`
-
-&nbsp;
-
-**2. Rebuild the project, preserving customizations**
-
-In your IDE terminal window:
-
-```bash
-cd ..  #  project parent directory
-ApiLogicServer rebuild-from-database --project_name=basic_demo --db_url=sqlite:///basic_demo/database/db.sqlite
-```
-
-&nbsp;
-
-**3. Update your admin app**
-
-Use your IDE to merge `/ui/admin/admin-merge.yml` -> `/ui/admin/admin.yml`.`
-
-&nbsp;
-
-**4. Declare logic**
-
-In `logic/declare_logic.py`, replace the 2 lines for the `models.Item.Amount` formula with this:
+* revised logic - in `logic/declare_logic.py`, we replace the 2 lines for the `models.Item.Amount` formula with this (next screenshot shows revised logic executing with breakpoint):
 
 ```python
     def derive_amount(row: models.Item, old_row: models.Item, logic_row: LogicRow):
@@ -210,17 +185,32 @@ In `logic/declare_logic.py`, replace the 2 lines for the `models.Item.Amount` fo
     Rule.formula(derive=models.Item.Amount, calling=derive_amount)
 ```
 
-> Note: you may need to use the IDE to ensure proper indents
+* issues the `ApiLogicServer rebuild-from-database` command that rebuilds your project (the database models, the api), while preserving the customizations we made above.
+
+In a terminal window for your project:
+
+**1. Stop the Server** (Red Stop button, or Shift-F5 -- see Appendix)
+
+**2. Apply Iteration**
+
+```bash
+# mac, linux
+sh apply_iteration.sh
+
+#windows
+./apply_iteration.ps1
+```
+&nbsp;
+
+**3. Set the breakpoint as shown**
 
 &nbsp;
 
-**5. Set the breakpoint as shown**
-
-&nbsp;
-
-**6. Test: Start the Server, and use the Admin App to update your Order by adding a `green` Item**
+**4. Test: Start the Server, and use the Admin App to update your Order by adding a `Green` Item**
 
 At the breakpoint, note you can use standard debugger services to debug your logic (examine `Item` attributes, step, etc).
+
+<img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/basic_demo/logic-debugging.jpeg?raw=true">
 
 &nbsp;
 
@@ -275,6 +265,7 @@ API Logic Server also creates scripts for deployment.  While these are ***not re
 1. Create a container from your project -- see `devops/docker-image/build_image.sh`
 2. Upload to Docker Hub, and
 3. Deploy for agile collaboration.
+
 &nbsp;
 
 ## Summary

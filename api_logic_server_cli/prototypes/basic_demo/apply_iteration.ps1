@@ -6,10 +6,10 @@ $Ready = Read-Host -Prompt "Stop Server, and press RETURN to apply iteration, or
 
 Set-PSDebug   -Trace 1
 
-# get database with Product.CarbonNeutral, rebuilt ui/admin/admin-merge.yaml
+# get database with Product.CarbonNeutral, rebuilt ui/admin/admin.yaml
 cp -r -Force iteration/* .
 
-cd ..  #  project parent directory
+cd ..  #  rebuild project from new database, preserving customizations
 ApiLogicServer rebuild-from-database --project_name=basic_demo --db_url=sqlite:///basic_demo\database\db.sqlite
 cd basic_demo
 
