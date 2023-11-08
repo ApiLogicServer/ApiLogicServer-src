@@ -1,0 +1,105 @@
+about:
+  date: November 07, 2023 19:47:04
+  merged:
+    at: November 07, 2023 19:48:02
+    new_attributes: 'Product.CarbonNeutral '
+    new_resources: ''
+    new_tab_groups: ''
+  recent_changes: works with modified safrs-react-admin
+  version: 0.0.0
+api_root: '{http_type}://{swagger_host}:{port}/{api}'
+authentication:
+  endpoint: '{http_type}://{swagger_host}:{port}/api/auth/login'
+info:
+  number_relationships: 3
+  number_tables: 4
+resources:
+  Customer:
+    attributes:
+    - label: ' Name*'
+      name: Name
+      required: true
+      search: true
+      sort: true
+    - name: Balance
+    - name: CreditLimit
+    - name: Region
+    - name: ContactName
+    - name: CustomerID
+    tab_groups:
+    - direction: tomany
+      fks:
+      - CustomerID
+      name: OrderList
+      resource: Order
+    type: Customer
+    user_key: Name
+  Item:
+    attributes:
+    - label: ' Item I D*'
+      name: ItemID
+      search: true
+      sort: true
+    - name: OrderID
+    - name: ProductID
+    - name: Quantity
+    - name: Amount
+    - name: UnitPrice
+    tab_groups:
+    - direction: toone
+      fks:
+      - OrderID
+      name: Order
+      resource: Order
+    - direction: toone
+      fks:
+      - ProductID
+      name: Product
+      resource: Product
+    type: Item
+    user_key: ItemID
+  Order:
+    attributes:
+    - label: ' Order I D*'
+      name: OrderID
+      search: true
+      sort: true
+    - name: CustomerID
+    - name: AmountTotal
+    - name: ShipDate
+      type: DATE
+    - name: Notes
+    tab_groups:
+    - direction: tomany
+      fks:
+      - OrderID
+      name: ItemList
+      resource: Item
+    - direction: toone
+      fks:
+      - CustomerID
+      name: Customer
+      resource: Customer
+    type: Order
+    user_key: OrderID
+  Product:
+    attributes:
+    - label: ' Name*'
+      name: Name
+      required: true
+      search: true
+      sort: true
+    - name: UnitPrice
+    - name: ProductID
+    - name: CarbonNeutral
+    tab_groups:
+    - direction: tomany
+      fks:
+      - ProductID
+      name: ItemList
+      resource: Item
+    type: Product
+    user_key: Name
+settings:
+  HomeJS: http://localhost:5656/admin-app/home.js
+  max_list_columns: 8

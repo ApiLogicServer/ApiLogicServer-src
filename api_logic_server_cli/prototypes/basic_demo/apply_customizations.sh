@@ -9,5 +9,6 @@ set -x
 ApiLogicServer add-auth --project_name=. --db_url=auth
 
 cp -r customizations/ .
+set +x
 
 echo "\n Customizations applied\n\n"
