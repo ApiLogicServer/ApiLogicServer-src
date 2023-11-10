@@ -422,26 +422,28 @@ def docker_creation_tests(api_logic_server_tests_path):
     import platform
     machine = platform.machine()
     api_logic_server_home_path = api_logic_server_tests_path.parent
-    build_cmd = 'run_command docker build -f docker/api_logic_server.Dockerfile -t apilogicserver/api_logic_server_local --rm .'
+    image_name = 'apilogicserver/api_logic_server_local'
+    build_cmd = f'docker build -f docker/api_logic_server.Dockerfile -t {image_name} --rm .'
     print(f'\n\ndocker_creation_tests: 1. Create local docker image: {build_cmd}')
     build_container = run_command(build_cmd,
         cwd=api_logic_server_home_path,
         msg=f'\nBuild ApiLogicServer Docker Container at: {str(api_logic_server_home_path)}')
-    print('built container (FIXME, not tested return code!)')
-
+    assert build_container.returncode == 0, f'Docker build failed: {build_cmd}'
+    
     src = api_logic_server_tests_path.joinpath('creation_tests').joinpath('docker-commands.sh')
     dest = get_servers_build_and_test_path().joinpath('ApiLogicServer').joinpath('dockers')
     shutil.copy(src, dest)
     build_projects_cmd = (
         f'docker run -it --name api_logic_server_local --rm '
         f'--net dev-network -p 5656:5656 -p 5002:5002 ' 
-        f'-v {str(dest)}:/localhost apilogicserver/api_logic_server_arm ' 
+        f'-v {str(dest)}:/localhost {image_name} ' 
         f'sh -c "export PATH=$PATH:/home/api_logic_server/bin && /bin/sh /localhost/docker-commands.sh"'
     )
     print(f'\n\ndocker_creation_tests: 2. build projects: {build_projects_cmd}')
     build_projects = run_command(build_projects_cmd,
         cwd=api_logic_server_home_path,
         msg=f'\nBuilding projects from Docker container at: {str(api_logic_server_home_path)}')
+    assert build_projects.returncode == 0, f'Docker build projects failed: {build_projects}'
     print('\n\ndocker_creation_tests: Built projects from container\n\n')
     print('==> Verify manually - run sqlserver')
     print('\n\n')
