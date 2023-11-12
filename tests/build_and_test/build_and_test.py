@@ -673,7 +673,7 @@ set_venv = set_venv.replace("${install_api_logic_server_path}", str(install_api_
 db_ip = Config.docker_database_ip
 """ in docker, we cannot connect on localhost - must use the ip """
 
-print(f"\n\n{__file__} 1.1 running")
+print(f"\n\n{__file__} 1.2 running")
 print(f'  Builds / Installs API Logic Server to install_api_logic_server_path: {install_api_logic_server_path}')
 print(f'  Creates Sample project (nw), starts server and runs Behave Tests')
 print(f'  Rebuild tests')
@@ -684,7 +684,7 @@ print('\n')
 if not os.path.isdir(install_api_logic_server_path):
     os.makedirs(install_api_logic_server_path)
 
-# stop_server(msg="BEGIN TESTS\n")  # just in case server left running
+# fails if server left running.  You can stop it with the Admin App at http://localhost:5656/
 
 debug_script = False
 if debug_script:
@@ -696,7 +696,7 @@ if debug_script:
         msg=f'\nInstall ApiLogicServer at: {str(api_logic_server_install_path)}')
     print(result_venv.stdout.decode())  # should say pyodbc==4.0.34
 
-if Config.do_install_api_logic_server:
+if Config.do_install_api_logic_server:  # verify the build process - rebuild, and use that for tests
     delete_dir(dir_path=str(install_api_logic_server_path), msg=f"delete install: {install_api_logic_server_path} ")
     delete_build_directories(install_api_logic_server_path)
 
@@ -914,3 +914,4 @@ print(f"{python} -m twine upload  --username vhuber --password PypiPassword --sk
 print(f"\n\nUse this build?")
 print(f"..  Settings > venv path >  {str(install_api_logic_server_path)}\n")
 
+# find main code
