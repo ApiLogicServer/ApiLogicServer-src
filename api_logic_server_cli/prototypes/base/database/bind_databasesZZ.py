@@ -13,6 +13,6 @@ def open_databases(flask_app, session, safrs_api, method_decorators):
 
     # End Bind URLs
 
-    flask_app.config.update(SQLALCHEMY_BINDS = {
+    flask_app.config.update(SQLALCHEMY_BINDS = {  # make multiple databases available
     })  # make multiple databases available to SQLAlchemy
     return

@@ -392,6 +392,20 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "  - Add-database to NW_NoCust",
+            "type": "python",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "cwd": "${workspaceFolder}/api_logic_server_cli",
+            "program": "cli.py",
+            "redirectOutput": true,
+            "args": ["add-db",
+                    "--bind_key=Todo",
+                    "--db_url=todo",
+                    "--project_name=../../../servers/NW_NoCust"],
+            "console": "integratedTerminal"
+        },
+            {
             "name": "  - Add Northwind Customizations to NW-NoCust",
             "type": "python",
             "request": "launch",
@@ -402,6 +416,31 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "Add-database",
+            "type": "python",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/api_logic_server_cli",
+            "program": "cli.py",
+            "redirectOutput": true,
+            "args": ["add-db",
+                    "--bind_key=Todo",
+                    "--db_url=todo"],
+            "console": "integratedTerminal"
+        },
+        {
+          "name": "  - Add-database - explicit location - ApiLogicProject",
+          "type": "python",
+          "request": "launch",
+          "cwd": "${workspaceFolder}/api_logic_server_cli",
+          "program": "cli.py",
+          "redirectOutput": true,
+          "args": ["add-db",
+                  "--bind_key=Todo",
+                  "--db_url=todo",
+                  "--project_name=../../../servers/ApiLogicProject"],
+          "console": "integratedTerminal"
+      },
+          {
             "name": "Chinook - Create and run Chinook Sqlite (abbr)",
             "type": "python",
             "request": "launch",
@@ -811,31 +850,6 @@
             "args": ["rebuild-from-model","--project_name=../../../servers/ApiLogicProject","--db_url="],
             "console": "integratedTerminal"
         },
-        {
-          "name": "Add-database",
-          "type": "python",
-          "request": "launch",
-          "cwd": "${workspaceFolder}/api_logic_server_cli",
-          "program": "cli.py",
-          "redirectOutput": true,
-          "args": ["add-db",
-                  "--bind_key=Todo",
-                  "--db_url=todo"],
-          "console": "integratedTerminal"
-      },
-      {
-        "name": "  - Add-database - explicit location",
-        "type": "python",
-        "request": "launch",
-        "cwd": "${workspaceFolder}/api_logic_server_cli",
-        "program": "cli.py",
-        "redirectOutput": true,
-        "args": ["add-db",
-                "--bind_key=Todo",
-                "--db_url=todo",
-                "--project_name=../../../servers/ApiLogicProject"],
-        "console": "integratedTerminal"
-    },
     {
             "name": "Spaces in project dir",
             "type": "python",

@@ -291,7 +291,7 @@ def multi_database_tests():
         cwd=install_api_logic_server_path,
         msg=f'\nCreate MultiDB at: {str(install_api_logic_server_path)}')
 
-    result_create = run_command(f'{set_venv} && ApiLogicServer add-db --db_url=todo --bind_key=todo --project_name=MultiDB',
+    result_create = run_command(f'{set_venv} && ApiLogicServer add-db --db_url=todo --bind_key=Todo --project_name=MultiDB',
         cwd=install_api_logic_server_path,
         msg=f'\nAdd ToDoDB at: {str(install_api_logic_server_path)}')
 
@@ -302,12 +302,19 @@ def multi_database_tests():
 
     env = [("SECURITY_ENABLED", "true")]
     start_api_logic_server(project_name='MultiDB', env_list=env)  # , env='export SECURITY_ENABLED=true')
+    headers = login()
     # verify 1 Category row (validates multi-db <auth>, and security)
     get_uri = "http://localhost:5656/api/Category/?fields%5BCategory%5D=Id%2CCategoryName%2CDescription&page%5Boffset%5D=0&page%5Blimit%5D=10&sort=id"
-    r = requests.get(url=get_uri, headers=login())
+    r = requests.get(url=get_uri, headers=headers)
     response_text = r.text
     result_data = json.loads(response_text) 
-    assert len(result_data["data"]) == 1, "MultiDB: Did not find 1 expected result row"
+    assert len(result_data["data"]) == 1, "MultiDB: Did not find 1 expected Category result row"
+
+    get_uri = "http://localhost:5656/api/Todo-Todo/?fields%5BTodo%5D=task%2Ccategory%2Cdate_added%2Cdate_completed%2Cstatus%2Cposition%2C_check_sum_%2CS_CheckSum&page%5Boffset%5D=0&page%5Blimit%5D=10&sort=id"
+    r = requests.get(url=get_uri, headers=headers)
+    response_text = r.text
+    result_data = json.loads(response_text) 
+    assert len(result_data["data"]) > 0, "MultiDB: Did not find 1 expected TODO result row"
 
     stop_server(msg="MultiDB\n")
 

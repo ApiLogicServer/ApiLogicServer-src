@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "09.05.07"
+__version__ = "09.05.08"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t11/11/2023 - 09.05.08: multi-db bug fix (24) \n"\
     "\t11/07/2023 - 09.05.07: basic_demo: scripted customizations, iteration \n"\
     "\t11/05/2023 - 09.05.06: basic demo enhancements, bug fix (22, 23) \n"\
     "\t10/31/2023 - 09.05.00: Security - global filters, crud permissions, ins parent, bug fix (18, 20), sa-pydb \n"\
@@ -953,6 +954,8 @@ class ProjectRun(Project):
             log.debug(f'.. .. ..Copying sqlite database to: database/{self.bind_key}_db.sqlite')
             db_loc = self.abs_db_url.replace("sqlite:///", "")
             target_db_loc_actual = str(self.project_directory_path.joinpath(f'database/{self.bind_key}_db.sqlite'))
+            # target: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/servers/NW_NoCust/database/Todo_db.sqlite
+            # e.g.,   /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/servers/NW_NoCust/database
             copyfile(db_loc, target_db_loc_actual)
 
             if os.name == "nt":  # windows
@@ -961,10 +964,14 @@ class ProjectRun(Project):
             return_abs_db_url = f'sqlite:///{target_db_loc_actual}'
             # build this:  SQLALCHEMY_DATABASE_URI_AUTHENTICATION = f'sqlite:///{str(project_abs_dir.joinpath("database/authentication_db.sqlite"))}'
             # into  this:  {CONFIG_URI} = '{config_uri_value}'
-            file_name = f'"database/{self.bind_key}_db.sqlite"'
-            config_uri_value = "f'sqlite:///{str(project_abs_dir.joinpath(" + file_name + "))}'"
-            config_uri_value = f"'sqlite:///../database/authentication_db.sqlite'"  # portable sqlite
+            # sqlite_file_name = f'"database/{self.bind_key}_db.sqlite"'
+            sqlite_file_name = f'database/{self.bind_key}_db.sqlite'
+            # config_uri_value = "f'sqlite:///{str(project_abs_dir.joinpath(" + sqlite_file_name + "))}'"
+            # config_uri_value = f"'sqlite:///../database/authentication_db.sqlite'"  # portable sqlite  FIXME
+            config_uri_value = f"'sqlite:///../{sqlite_file_name}'"   # portable sqlite
+            # eg, 'sqlite:///../database/Todo_db.sqlite'  (insert a string constant)
             log.debug(f'.. .. ..From {db_loc}')
+            log.debug(f'.. .. ..URI {config_uri_value}')
 
 
         # **********************
@@ -1026,25 +1033,25 @@ from database import <project.bind_key>_models
         imports = imports.replace('<project.bind_key>', f'{self.bind_key}')
         imports = imports.replace('<bind_key_upper>', f'{bind_key_upper}')
 
-        binds_databases_file = f'{self.project_directory}/database/multi_db.py'
+        multi_db_file_name = f'{self.project_directory}/database/multi_db.py'
         binds_built = create_utils.does_file_contain( \
-            search_for=bind_key_upper, in_file=binds_databases_file)
+            search_for=bind_key_upper, in_file=multi_db_file_name)
         some_configs_built = create_utils.does_file_contain( \
-            search_for='flask_app.config[', in_file=binds_databases_file)
+            search_for='flask_app.config[', in_file=multi_db_file_name)
         if some_configs_built:
             flask_app_config__bind_update = ', ' + flask_app_config__bind_update
         if not binds_built:
             create_utils.insert_lines_at(lines=flask_app_config__bind_update,
                                         at="# make multiple databases available",
-                                        file_name=binds_databases_file)
+                                        file_name=multi_db_file_name)
             
             create_utils.insert_lines_at(lines=expose_apis,
                                         at="# Begin Expose APIs", after=True,
-                                        file_name=binds_databases_file)
+                                        file_name=multi_db_file_name)
             
             create_utils.insert_lines_at(lines=imports,
                                         at="# additional per-database imports", after=True,
-                                        file_name=binds_databases_file)
+                                        file_name=multi_db_file_name)
             log.debug(f'.. ..Updated database/multi_db.py with {CONFIG_URI}...')
         else:
             log.debug(f'.. ..Not updating database/multi_db.py with {CONFIG_URI} (already present)')
@@ -1424,6 +1431,6 @@ def key_module_map():
     invoke_creators(model_creation_services)                # creates api & ui, via create_from_model...
     api_expose_api_models_creator.create()                  # creates api/expose_api_models.py, key input to SAFRS        
     ui_admin_creator.create()                               # creates ui/admin/admin.yaml from resource_list
-    ProjectRun.update_config_and_copy_sqlite_db()           # adds db (model, binds, api, app) to curr project
+    ProjectRun.update_config_and_copy_sqlite_db()           # adds db (model, multi-db binds, api, app) to curr project
     ProjectRun.add_auth()                                   # add_db(auth), adds nw declare_security, upd config
     ProjectRun.tutorial()                                   # creates basic, nw, nw + cust
