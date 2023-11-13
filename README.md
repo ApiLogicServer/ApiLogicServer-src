@@ -242,6 +242,8 @@ There are a few articles that provide some orientation to API Logic Server:
 
 ### Change Log
 
+11/12/2023 - 09.05.08: multi-db bug fix (24)
+
 11/07/2023 - 09.05.07: Basic-demo: simplify customization process
 
 11/05/2023 - 09.05.06: Basic-demo enhancements, bug fixes (22, 23)
