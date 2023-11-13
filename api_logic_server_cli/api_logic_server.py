@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "09.05.08"
+__version__ = "09.05.09"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t11/13/2023 - 09.05.09: Run Config: Create servers/ApiLogicProject (new IDE) -- nw+ \n"\
     "\t11/12/2023 - 09.05.08: multi-db bug fix (24) \n"\
     "\t11/07/2023 - 09.05.07: basic_demo: scripted customizations, iteration \n"\
     "\t11/05/2023 - 09.05.06: basic demo enhancements, bug fix (22, 23) \n"\
@@ -343,7 +344,7 @@ def create_nw_tutorial(project_name, api_logic_server_dir_str):
             project_readme_file.write(standard_readme_file.read())
 
 
-def create_project_and_overlay_prototypes(project, msg: str) -> str:
+def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> str:
     """
     clone prototype to  project directory, copy sqlite db, and remove git folder
 
@@ -415,6 +416,17 @@ def create_project_and_overlay_prototypes(project, msg: str) -> str:
             recursive_overwrite(nw_dir, project.project_directory)
 
             create_nw_tutorial(project.project_directory, api_logic_server_dir_str)
+
+        if project.nw_db_status in ["nw+"]:
+            log.debug(".. ..Copy in nw+ customizations: readme, perform_customizations")
+            nw_dir = (Path(api_logic_server_dir_str)).\
+                joinpath('prototypes/nw_plus')
+            recursive_overwrite(nw_dir, project.project_directory)
+            custom_services_dir = (Path(api_logic_server_dir_str)).\
+                joinpath('model_migrator/system')
+            project_api_system_dir = project.project_directory_path.\
+                joinpath("api/system")
+            recursive_overwrite(custom_services_dir, project_api_system_dir)
 
         if project.nw_db_status in ["nw-"]:
             log.debug(".. ..Copy in nw- customizations: readme, perform_customizations")
@@ -1086,7 +1098,7 @@ from database import <project.bind_key>_models
         save_db_url = self.db_url
         self.command = "add_db"
         self.bind_key = "authentication"
-        is_northwind = is_nw or self.nw_db_status ==  "nw"  # nw_db_status altered in create_project
+        is_northwind = is_nw or self.nw_db_status in ["nw", "nw+"]  # nw_db_status altered in create_project
         if is_northwind:  # is_nw or self.nw_db_status ==  "nw":
             self.db_url = "auth"  # shorthand for api_logic_server_cli/database/auth...
         self.run = False
@@ -1312,7 +1324,8 @@ from database import <project.bind_key>_models
                 self.abs_db_url = self.update_config_and_copy_sqlite_db(
                     f".. ..Adding Database [{self.bind_key}] to existing project")
         else:                                                                            # normal path - clone, [overlay nw]
-            self.abs_db_url = create_project_and_overlay_prototypes(self, "2. Create Project:")
+            self.abs_db_url = create_project_and_overlay_prototypes(self, f"2. Create Project:")
+        log.debug(f'.. ..project_directory_actual: {self.project_directory_actual}')
 
         log.debug(f'3. Create/verify database/{self.model_file_name}, then use that to create api/ and ui/ models')
         model_creation_services = ModelCreationServices(project = self,   # Create database/models.py from db
