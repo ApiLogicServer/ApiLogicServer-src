@@ -253,7 +253,7 @@ def login_and_get_token(user: str, password: str) -> str:
               help="Users Password")  # option text shown on create --help
 def login(ctx, user: str, password: str):
     """
-        Login and save token
+        Login and save token for curl command.
     """
     log.info(f"\nLogging in as {user}, {password}")
     token = login_and_get_token(user=user, password=password)
@@ -268,7 +268,7 @@ def login(ctx, user: str, password: str):
 @click.argument('curl_command', nargs=-1, type=click.UNPROCESSED)
 def curl(ctx, curl_command: str):
     """
-        Execute cURL command.
+        Execute cURL command, providing auth headers from login.
     """
     # https://click.palletsprojects.com/en/8.1.x/advanced/#forwarding-unknown-options
     auth = f"-H 'accept: application/vnd.api+json' "
