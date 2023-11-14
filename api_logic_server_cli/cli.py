@@ -255,12 +255,12 @@ def login(ctx, user: str, password: str):
     """
         Login and save token
     """
-    log.info(f"\nLogging in as {user}, {password} -> api_logic_server_info_file.yaml")
+    log.info(f"\nLogging in as {user}, {password}")
     token = login_and_get_token(user=user, password=password)
     api_logic_server_info_file_dict["last_login_token"] = token
     with open(api_logic_server_info_file_name, 'w') as api_logic_server_info_file_file:
         yaml.dump(api_logic_server_info_file_dict, api_logic_server_info_file_file, default_flow_style=False)
-    pass
+    log.info("Success - stored internally in api_logic_server_info_file.yaml\n")
 
 
 @main.command("curl")
