@@ -13,7 +13,7 @@ This app is an investigation of using Custom Resources to create a new message-b
 
 To generate this app, *either:*
 
-1. Use Dev IDE, Run Config `Create servers/ApiLogicProject (new IDE) -- nw+`, *or*
+1. Use Dev IDE, Run Config `Create servers/ApiLogicProject (new IDE) -- nw+` (it's near the top, under *2*), *or*
 2. Use Preview Build, and:
 
 ```
@@ -42,11 +42,13 @@ ApiLogicServer login --user=admin --password=p
 ApiLogicServer curl http://localhost:5656/CustomAPI/Customer/
 ```
 
+![run](images/test-with-curl.png)
+
 &nbsp;
 
 # Status
 
-Minor bug in comments: 
+Minor bug inherited from comments: 
 
 ```log
 AttributeError: module \'database.models\' has no attribute \'OrderAudit\'
