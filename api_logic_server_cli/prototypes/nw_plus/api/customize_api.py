@@ -296,7 +296,9 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
                     Quantity: 2
                     Discount: 0
         """
-        # curl -v -k "http://localhost:5656/CustomAPI/Customer/"
+
+        # ApiLogicServer login --user=admin --password=p
+        # ApiLogicServer curl "http://localhost:5656/CustomAPI/Customer/"
         customer = CustomEndpoint(model_class=models.Customer, alias="Customer"
         , fields = [(models.Customer.CompanyName, "Customer Name")] 
         , children = [
