@@ -20,6 +20,7 @@ import yaml
 
 temp_created_project = "temp_created_project"   # see copy_if_mounted
 
+import subprocess, os, time, requests, sys, re, io
 import socket
 import subprocess
 from os.path import abspath
@@ -28,6 +29,9 @@ from pathlib import Path
 from shutil import copyfile
 import shutil
 import importlib.util
+from pathlib import Path
+from dotmap import DotMap
+import json
 
 from flask import Flask
 
@@ -38,6 +42,16 @@ import sys
 import os
 import importlib
 import click
+
+
+def get_api_logic_server_path() -> Path:
+    """
+    :return: ApiLogicServer path, eg, /Users/val/dev/ApiLogicServer
+    """
+    running_at = Path(__file__)
+    python_path = running_at.parent.absolute()
+    return python_path
+
 
 def get_api_logic_server_dir() -> str:
     """
@@ -59,7 +73,7 @@ import api_logic_server_cli.api_logic_server as PR
 ''' ProjectRun (main class) '''
 from api_logic_server_cli.cli_args_base import OptLocking
 
-api_logic_server_info_file_name = get_api_logic_server_dir() + "/api_logic_server_info.yaml"
+api_logic_server_info_file_name = str(get_api_logic_server_path().joinpath("api_logic_server_info.yaml"))
 
 api_logic_server_info_file_dict = {}  # last-run (debug, etc) info
 """ contains last-run info, debug switches to show args, etc """
@@ -76,6 +90,7 @@ default_project_name = "ApiLogicProject"
 default_fab_host = "localhost"
 os_cwd = os.getcwd()
 default_bind_key_url_separator = "-"  # admin app fails with "/" or ":" (json issues?)
+last_login_token = api_logic_server_info_file_dict.get("last_login_token","")
 
 if os.path.exists('/home/api_logic_server'):  # docker?
     default_project_name = "/localhost/ApiLogicProject"
@@ -201,6 +216,69 @@ def welcome(ctx):
     """
         Just print version and exit.
     """
+
+def login_and_get_token(user: str, password: str) -> str:
+    """
+
+    Login as <specified user>, password <specified password>
+
+    Raises:
+        Exception: if login fails
+
+    Returns:
+        _type_: str token
+    """
+    post_uri = 'http://localhost:5656/api/auth/login'
+    post_data = {"username": user, "password": password}
+    r = requests.post(url=post_uri, json = post_data)
+    response_text = r.text
+    status_code = r.status_code
+    if status_code > 300:
+        raise Exception(f'POST login failed - status_code = {status_code}, with response text {r.text}')
+    result_data = json.loads(response_text)
+    result_map = DotMap(result_data)
+    token = result_map.access_token
+    return token
+
+
+@main.command("login")
+@click.pass_context
+@click.option('--user',
+              default=f'admin',
+              prompt="User Name",
+              help="Name of Authorized User")  # option text shown on create --help
+@click.option('--password',
+              default=f'p',
+              prompt="Password",
+              help="Users Password")  # option text shown on create --help
+def login(ctx, user: str, password: str):
+    """
+        Login and save token
+    """
+    log.info(f"\nLogging in as {user}, {password} - TODO store this in file for curl cmd")
+    token = login_and_get_token(user=user, password=password)
+    api_logic_server_info_file_dict["last_login_token"] = token
+    with open(api_logic_server_info_file_name, 'w') as api_logic_server_info_file_file:
+        yaml.dump(api_logic_server_info_file_dict, api_logic_server_info_file_file, default_flow_style=False)
+    pass
+
+
+@main.command("curl")
+@click.pass_context
+@click.argument('curl_command', nargs=-1, type=click.UNPROCESSED)
+def curl(ctx, curl_command: str):
+    """
+        Execute cURL command.
+    """
+    # https://click.palletsprojects.com/en/8.1.x/advanced/#forwarding-unknown-options
+    auth = f"-H 'accept: application/vnd.api+json' "
+    auth += f" -H 'Content-Type: application/vnd.api+json'"
+    auth += f" -H 'Authorization: Bearer {last_login_token}'"
+    command_with_auth = f"curl {curl_command[0]} {auth}"
+    log.info(f"\ncurl {curl_command[0]} {auth}")
+    result = create_utils.run_command(f'{command_with_auth}', msg="Run curl command with auth", new_line=True)
+    print(result)
+    pass
 
 
 @main.command("tutorial")

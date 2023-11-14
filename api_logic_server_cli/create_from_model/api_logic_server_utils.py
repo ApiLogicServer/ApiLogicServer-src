@@ -282,4 +282,4 @@ def run_command(cmd: str, env=None, msg: str = "", new_line: bool=False) -> str:
         pass
     elif result != "" and result != "Downloaded the skeleton app, good coding!":
         log.debug(f'{log_msg} {cmd} result: {spaces}{result}')
-    return result
+    return result.replace('\\n','\n')
