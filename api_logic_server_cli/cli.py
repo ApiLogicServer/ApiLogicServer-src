@@ -234,6 +234,9 @@ def login_and_get_token(user: str, password: str) -> str:
     response_text = r.text
     status_code = r.status_code
     if status_code > 300:
+        if 'is not authorized for this system' in r.text:
+            log.info('\n*** Login Failed: User not Authorized ***\n')
+            exit(1)
         raise Exception(f'POST login failed - status_code = {status_code}, with response text {r.text}')
     result_data = json.loads(response_text)
     result_map = DotMap(result_data)
@@ -260,7 +263,13 @@ def login(ctx, user: str, password: str):
     api_logic_server_info_file_dict["last_login_token"] = token
     with open(api_logic_server_info_file_name, 'w') as api_logic_server_info_file_file:
         yaml.dump(api_logic_server_info_file_dict, api_logic_server_info_file_file, default_flow_style=False)
-    log.info("Success - stored internally in api_logic_server_info_file.yaml\n")
+
+    log.info("Success - stored internally in api_logic_server_info_file.yaml - curl header now:\n")
+    # log.info("-H 'accept: application/vnd.api+json' ")
+    # log.info(f"-H 'Content-Type: application/vnd.api+json'")
+    log.info(f"-H 'Authorization: Bearer {last_login_token}'")
+    log.info("\nNow run ApiLogicServer curl <curl command>\n")
+
 
 
 @main.command("curl")
@@ -271,11 +280,12 @@ def curl(ctx, curl_command: str):
         Execute cURL command, providing auth headers from login.
     """
     # https://click.palletsprojects.com/en/8.1.x/advanced/#forwarding-unknown-options
-    auth = f"-H 'accept: application/vnd.api+json' "
-    auth += f" -H 'Content-Type: application/vnd.api+json'"
+    auth = ""
+    # auth += f"-H 'accept: application/vnd.api+json' "
+    # auth += f" -H 'Content-Type: application/vnd.api+json'"
     auth += f" -H 'Authorization: Bearer {last_login_token}'"
     command_with_auth = f"curl {curl_command[0]} {auth}"
-    log.info(f"\ncurl {curl_command[0]} {auth}")
+    log.info(f"\ncurl {curl_command[0]} {auth}\n")
     result = create_utils.run_command(f'{command_with_auth}', msg="Run curl command with auth", new_line=True)
     print(result)
     pass
