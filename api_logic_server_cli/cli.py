@@ -284,7 +284,8 @@ def curl(ctx, curl_command: str):
     # auth += f"-H 'accept: application/vnd.api+json' "
     # auth += f" -H 'Content-Type: application/vnd.api+json'"
     auth += f" -H 'Authorization: Bearer {last_login_token}'"
-    command_with_auth = f"curl {curl_command[0]} {auth}"
+    command_parseable = curl_command[0].replace("?", "\?")
+    command_with_auth = f"curl {command_parseable} {auth}"
     log.info(f"\ncurl {curl_command[0]} {auth}\n")
     result = create_utils.run_command(f'{command_with_auth}', msg="Run curl command with auth", new_line=True)
     print(result)

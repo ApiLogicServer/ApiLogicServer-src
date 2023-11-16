@@ -47,6 +47,8 @@ ApiLogicServer curl 'http://localhost:5656/CustomAPI/Customer?Id=ALFKI'
 ApiLogicServer curl 'http://localhost:5656/CustomAPI/Customer?Id=ALFKI&Limit=1'
 ```
 
+> Note: curl commands with '?' fail to parse in VSCode Run Launcher...
+
 ![run](images/test-with-curl.png)
 
 &nbsp;
