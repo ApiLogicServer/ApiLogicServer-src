@@ -43,7 +43,8 @@ Test using the new support for curl:
 
 ```bash
 ApiLogicServer login --user=admin --password=p
-ApiLogicServer curl http://localhost:5656/CustomAPI/Customer/
+ApiLogicServer curl 'http://localhost:5656/CustomAPI/Customer?Id=ALFKI'
+ApiLogicServer curl 'http://localhost:5656/CustomAPI/Customer?Id=ALFKI&Limit=1'
 ```
 
 ![run](images/test-with-curl.png)
