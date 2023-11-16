@@ -283,23 +283,12 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
     @jwt_required()
     @cross_origin(supports_credentials=True)
     def CustomAPICustomer():
-        """ # yaml creates Swagger description
-            args :
-                CustomerId: ALFKI
-                EmployeeId: 1
-                Freight: 10
-                OrderDetailList :
-                  - ProductId: 1
-                    Quantity: 1
-                    Discount: 0
-                  - ProductId: 2
-                    Quantity: 2
-                    Discount: 0
+        """ 
+        start the server (f5) and in the terminal window:
+        $(venv)ApiLogicServer login --user=admin --password=p
+        $(venv)ApiLogicServer curl "http://localhost:5656/CustomAPI/Customer?Id=ALFKI"
         """
-
-        # ApiLogicServer login --user=admin --password=p
-        # ApiLogicServer curl "http://localhost:5656/CustomAPI/Customer/"
-        customer = CustomEndpoint(model_class=models.Customer, alias="Customer"
+        customer = CustomEndpoint(model_class=models.Customer, alias="customers"
         , fields = [(models.Customer.CompanyName, "Customer Name")] 
         , children = [
             CustomEndpoint(model_class=models.Order, alias = "orders"
@@ -308,20 +297,21 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
                 , children = CustomEndpoint(model_class=models.OrderDetail, alias="details"
                     , join_on=models.OrderDetail.OrderId
                     , fields = [models.OrderDetail.Quantity, models.OrderDetail.Amount]
-                    , children = CustomEndpoint(model_class=models.Product, alias="data"
+                    , children = CustomEndpoint(model_class=models.Product, alias="product"
                         , join_on=models.OrderDetail.ProductId
                         , fields=[models.Product.UnitPrice, models.Product.UnitsInStock]
-                        , isParent=False
+                        , isParent=True
                         , isCombined=False
                     )
-                    )
-                ),
-            CustomEndpoint(model_class=models.OrderAudit, alias="orderAudit")  # sibling child
+                )
+            )
             ]
+        # CustomEndpoint(model_class=models.OrderAudit, alias="orderAudit")  # sibling child
         )
-        result = customer.execute(customer,"", "ALFKI")
+        result = customer.execute(request)
         # or
         #result = customer.get(request,"OrderList&OrderList.OrderDetailList&OrderList.OrderDetailList.Product", "ALFKI")
+        return result
 
 class ServicesEndPoint(safrs.JABase):
     """
