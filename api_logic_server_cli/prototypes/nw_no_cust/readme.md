@@ -7,9 +7,17 @@ This is the _no-customizations_ version of the Northwind Sample project.  It ena
 
 To introduce customizations, use the terminal and run:
 
-```
+```bash
 ApiLogicServer add-cust
 ```
+
+You can add functionality to your project:
+```bash
+ApiLogicServer add-db --bind_key=Todo --db_url=todo
+ApiLogicServer add-auth --db_url=auth
+ApiLogicServer rebuild-from-database --db_url=
+```
+
 
 &nbsp;&nbsp;
 

@@ -97,6 +97,25 @@ if os.path.exists('/home/api_logic_server'):  # docker?
     default_fab_host = "0.0.0.0"
 
 
+def resolve_blank_project_name(project_name: str, as_project: str = "ApiLogicProject") -> str:
+    """if project_name is "", and running from dev, resolve to as_project
+
+    Args:
+        project_name (str): project_name provided to CLI
+        as_project (str, optional): project name to use. Defaults to "ApiLogicProject".
+
+    Returns:
+        str: str of full resolved path
+    """
+    if project_name == "":
+        project_name=os.getcwd()
+        if project_name == get_api_logic_server_dir():  # for ApiLogicServer dev (from |> Run and Debug )
+            project_name = str(
+                Path(project_name).parent.parent.joinpath("servers").joinpath(as_project)
+            )
+    return project_name
+
+
 def is_docker() -> bool:
     """ running docker?  dir exists: /home/api_logic_server """
     path = '/home/api_logic_server'
@@ -544,8 +563,7 @@ def create_and_run(ctx, project_name: str, db_url: str, not_exposed: str, api_na
 
 @main.command("rebuild-from-database")
 @click.option('--project_name',
-              default=f'{default_project_name}',
-              prompt="Project to create",
+              default=f'.',
               help="Create new directory named this")
 @click.option('--db_url',
               default=f'{default_db}',
@@ -652,7 +670,7 @@ def rebuild_from_database(ctx, project_name: str, db_url: str, api_name: str, no
               default=default_bind_key_url_separator,
               help="bindkey / class name url separator")
 @click.option('--project_name',
-              default=f'',
+              default=f'.',
               help="Project location")
 @click.option('--api_name',
               default="api",
@@ -669,12 +687,7 @@ def add_db(ctx, db_url: str, bind_key: str, bind_key_url_separator: str, api_nam
     ApiLogicServer add-db --db-url="todo" --bind-key="Todo"
     
     """
-    if project_name == "":
-        project_name=os.getcwd()
-        if project_name == get_api_logic_server_dir():  # for ApiLogicServer dev (from |> Run and Debug )
-            project_name = str(
-                Path(project_name).parent.parent.joinpath("servers").joinpath("ApiLogicProject")
-            )
+    project_name == resolve_blank_project_name(project_name)
     if db_url == "auth":
         bind_key = "authentication"
     PR.ProjectRun(command="add_db", 
@@ -692,7 +705,7 @@ def add_db(ctx, db_url: str, bind_key: str, bind_key_url_separator: str, api_nam
               default=default_bind_key_url_separator,
               help="bindkey / class name url separator")
 @click.option('--project_name',
-              default=f'',
+              default=f'.',
               help="Project location")
 @click.option('--db_url',
               default=f'auth',
@@ -713,12 +726,7 @@ def add_auth_cmd(ctx, bind_key_url_separator: str, db_url: str, project_name: st
     ApiLogicServer add-auth project_name=.
     
     """
-    if project_name == "":
-        project_name=os.getcwd()
-        if project_name == get_api_logic_server_dir():  # for ApiLogicServer dev (from |> Run and Debug )
-            project_name = str(
-                Path(project_name).parent.parent.joinpath("servers").joinpath("ApiLogicProject")
-            )
+    project_name == resolve_blank_project_name(project_name)
     bind_key = "authentication"
     project = PR.ProjectRun(command="add_security", 
               project_name=project_name, 
@@ -765,12 +773,7 @@ def add_cust(ctx, bind_key_url_separator: str, api_name: str, project_name: str)
     ApiLogicServer add-cust
     
     """
-    if project_name == "":
-        project_name=os.getcwd()
-        if project_name == get_api_logic_server_dir():  # for ApiLogicServer dev (from |> Run and Debug )
-            project_name = str(
-                Path(project_name).parent.parent.joinpath("servers").joinpath("NW_NoCust")
-            )
+    project_name == resolve_blank_project_name(project_name, as_project="NW_NoCust")
     db_url = "auth"
     bind_key = "authentication"
     project = PR.ProjectRun(command="add_cust", 
@@ -795,8 +798,7 @@ def add_cust(ctx, bind_key_url_separator: str, api_name: str, project_name: str)
 
 @main.command("rebuild-from-model")
 @click.option('--project_name',
-              default=f'{default_project_name}',
-              prompt="Project to create",
+              default=f'.',
               help="Create new directory named this")
 @click.option('--db_url',
               default=f'{default_db}',

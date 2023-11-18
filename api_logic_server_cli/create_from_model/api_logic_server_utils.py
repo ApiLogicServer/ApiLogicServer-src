@@ -32,7 +32,7 @@ def get_project_directory_and_api_name(project):
     :param multi_api: cli arg - e.g., set by alsdock
 
     :return:
-            rtn_project_directory -- /users/you/Desktop/a.b (removes the ~)
+            rtn_project_directory -- /users/you/Desktop/a.b (removes the ~); handles 'curr' (. ./)
 
             rtn_api_name -- api_name, or last node of project_name if multi_api or api_name is "."
 
@@ -51,7 +51,7 @@ def get_project_directory_and_api_name(project):
         if rtn_project_directory == get_api_logic_server_dir():
             rtn_project_directory = str( Path(get_api_logic_server_dir()) / 'ApiLogicProject' )
             msg = ' <dev>'
-        log.debug(f'1. Merge into project prototype / current project: {rtn_project_directory}{msg}')
+        log.debug(f'1. Update current project: {rtn_project_directory}{msg}')
     project_path = Path(rtn_project_directory)
     project_path_last_node = project_path.parts[-1]
     if project.multi_api or project.api_name == ".":
