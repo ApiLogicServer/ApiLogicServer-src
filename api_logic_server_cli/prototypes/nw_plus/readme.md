@@ -3,9 +3,9 @@
 This app is an investigation of using Custom Resources to create a new message-based demo:
 
 1. API - partner posts B2B Order (existing add_order API, or better a new Custom API) to NW
-2. NW Order logic uses Custom Resources to format message representing the new Order, and sends with Kafka to Accounting.
+2. NW Order logic uses Custom Resources to format message representing the new Order, and sends with Kafka to Shipping.
     * This may be new functionality on CustomResource
-3. Accounting (new sample app) listens on kafka, and stores the message which updates <whatever> using logic
+3. Shipping (new sample app) listens on kafka, and stores the message which updates <whatever> using logic
 
 &nbsp;
 
