@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "09.05.12"
+__version__ = "09.05.14"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t11/18/2023 - 09.05.12: Run Config: Create servers/ApiLogicProject (new IDE) -- nw+, curl & args, curr-proj \n"\
+    "\t11/19/2023 - 09.05.14: Run Config: Create servers/ApiLogicProject (new IDE) -- nw+, curl, curr-proj \n"\
     "\t11/12/2023 - 09.05.08: multi-db bug fix (24) \n"\
     "\t11/07/2023 - 09.05.07: basic_demo: scripted customizations, iteration \n"\
     "\t11/05/2023 - 09.05.06: basic demo enhancements, bug fix (22, 23) \n"\
@@ -288,7 +288,7 @@ def fix_idea_configs(project: 'ProjectRun'):
     pass
 
 def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "README.md"):
-    """ Copy readme files from:
+    """ Copy readme files (and remove !!) from:
     
     1. github (to acquire more recent version since release)
     
@@ -320,6 +320,27 @@ def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "R
 
     if os.path.isfile(from_doc_file_path):  # if in dev, use the latest latest
         copyfile(src = from_doc_file_path, dst = to_file)
+    
+    # now remove the !!, and unindent (mkdocs features fail in a readme)
+    with open(str(to_file), "r") as readme_file:
+        readme_lines_mkdocs = readme_file.readlines()    
+    readme_lines_md = []
+    in_mkdocs_block = False
+    for each_line in readme_lines_mkdocs:
+        if "from docsite" in each_line:
+            each_line = each_line.replace("from docsite", "from docsite, for readme")
+        if each_line.startswith('!!'):
+            in_mkdocs_block = True
+        else:
+            if in_mkdocs_block and each_line.startswith('    '):
+                each_line = each_line[4:]
+            readme_lines_md.append(each_line)
+            if each_line.startswith('&nbsp;'):
+                in_mkdocs_block = False
+    with open(str(to_file), "w") as readme_file:
+        readme_file.writelines(readme_lines_md)
+    pass
+    
 
 
 def create_nw_tutorial(project_name, api_logic_server_dir_str):

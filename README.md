@@ -242,6 +242,8 @@ There are a few articles that provide some orientation to API Logic Server:
 
 ### Change Log
 
+11/19/2023 - 09.05.14: ApiLogicServer curl, optional project_name arg on add-auth, add-db, rebuild
+
 11/12/2023 - 09.05.08: multi-db bug fix (24)
 
 11/07/2023 - 09.05.07: Basic-demo: simplify customization process
