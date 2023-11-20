@@ -331,6 +331,10 @@ def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "R
             each_line = each_line.replace("from docsite", "from docsite, for readme")
         if each_line.startswith('!!'):
             in_mkdocs_block = True
+            key_takeaway = each_line[7 + each_line.index('":bulb:'): ]
+            key_takeaway = key_takeaway[0: len(key_takeaway)-2]
+            readme_lines_md.append(f"\n&nbsp;\n")
+            readme_lines_md.append(f"**Key Takeways - {key_takeaway}**")
         else:
             if in_mkdocs_block and each_line.startswith('    '):
                 each_line = each_line[4:]
