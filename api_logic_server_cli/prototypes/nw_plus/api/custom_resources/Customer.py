@@ -46,7 +46,7 @@ class Customer(CustomEndpoint):
         row_as_dict = {}
         for each_field in custom_endpoint.fields:
             if isinstance(each_field, tuple):
-                row_as_dict[each_field[0].name] = getattr(row, each_field[0].name)
+                row_as_dict[each_field[1]] = getattr(row, each_field[0].name)
             else:
                 if isinstance(each_field, str):
                     print("Coding error - you need to use TUPLE for attr/alias")
