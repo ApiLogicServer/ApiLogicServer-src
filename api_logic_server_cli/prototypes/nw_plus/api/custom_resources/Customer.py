@@ -9,25 +9,24 @@ class Customer(CustomEndpoint):
             model_class=models.Customer
             , alias="customers"
             , fields = [(models.Customer.CompanyName, "Customer Name")] 
-            , children = [
+            , children = 
                 CustomEndpoint(model_class=models.Order
                     , alias = "orders"
                     , join_on=models.Order.CustomerId
                     , fields = [(models.Order.AmountTotal, "Total"), (models.Order.ShippedDate, "Ship Date")]
-                    , children = [CustomEndpoint(model_class=models.OrderDetail, alias="details"
+                    , children = CustomEndpoint(model_class=models.OrderDetail, alias="details"
                         , join_on=models.OrderDetail.OrderId
                         , fields = [models.OrderDetail.Quantity, models.OrderDetail.Amount]
-                        , children = [CustomEndpoint(model_class=models.Product, alias="product"
+                        , children = CustomEndpoint(model_class=models.Product, alias="product"
                             , join_on=models.OrderDetail.ProductId
                             , fields=[models.Product.UnitPrice, models.Product.UnitsInStock]
                             , isParent=True
                             , isCombined=False
-                        )]
-                    )]
+                        )
+                    )
                 )
-                ]
+            )
         # CustomEndpoint(model_class=models.OrderAudit, alias="orderAudit")  # sibling child
-        )
         return customer
     
     def to_dict(self, row: object, current_endpoint: CustomEndpoint = None) -> dict:
@@ -52,11 +51,15 @@ class Customer(CustomEndpoint):
                     print("Coding error - you need to use TUPLE for attr/alias")
                 row_as_dict[each_field.name] = getattr(row, each_field.name)
         
-        for each_child_def in custom_endpoint.children:
+        list_of_children = custom_endpoint.children
+        if isinstance(list_of_children, list) is False:
+            list_of_children = []
+            list_of_children.append(custom_endpoint.children)
+        for each_child_def in list_of_children:
             child_property_name = "OrderList"  # FIXME this should be in CustomEndpoint
             all_children = getattr(row, child_property_name)
-            row_as_dict[child_property_name] = []
+            row_as_dict[each_child_def.alias] = []
             for each_child in all_children:
                 each_child_to_dict = self.to_dict(row = each_child, current_endpoint = each_child_def)
-                row_as_dict[child_property_name].append(each_child_to_dict)
+                row_as_dict[each_child_def.alias].append(each_child_to_dict)
         return row_as_dict
