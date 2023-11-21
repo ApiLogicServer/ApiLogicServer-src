@@ -16,6 +16,8 @@ from api.system.custom_endpoint import CustomEndpoint, DotDict
 from config import Args
 from flask_cors import cross_origin
 from logic_bank.rule_bank.rule_bank import RuleBank
+from api.custom_resources.Customer import Customer
+
 
 # Customize this file to add endpoints/services, using SQLAlchemy as required
 #     Separate from expose_api_models.py, to simplify merge if project rebuilt
@@ -288,30 +290,41 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         $(venv)ApiLogicServer login --user=admin --password=p
         $(venv)ApiLogicServer curl "http://localhost:5656/CustomAPI/Customer?Id=ALFKI"
         """
-        customer = CustomEndpoint(model_class=models.Customer, alias="customers"
-        , fields = [(models.Customer.CompanyName, "Customer Name")] 
-        , children = [
-            CustomEndpoint(model_class=models.Order, alias = "orders"
-                , join_on=models.Order.CustomerId
-                , fields = [models.Order.AmountTotal, "Total", models.Order.ShippedDate, "Ship Date"]
-                , children = CustomEndpoint(model_class=models.OrderDetail, alias="details"
-                    , join_on=models.OrderDetail.OrderId
-                    , fields = [models.OrderDetail.Quantity, models.OrderDetail.Amount]
-                    , children = CustomEndpoint(model_class=models.Product, alias="product"
-                        , join_on=models.OrderDetail.ProductId
-                        , fields=[models.Product.UnitPrice, models.Product.UnitsInStock]
-                        , isParent=True
-                        , isCombined=False
-                    )
-                )
-            )
-            ]
-        # CustomEndpoint(model_class=models.OrderAudit, alias="orderAudit")  # sibling child
-        )
-        result = customer.execute(request)
-        # or
+        customer = Customer()
+        result = customer.execute(request)  # query for each level
+        # or, 1 big safrs call
         #result = customer.get(request,"OrderList&OrderList.OrderDetailList&OrderList.OrderDetailList.Product", "ALFKI")
-        return result
+        return result  # note calling: for each row (add'l attrs)
+    
+
+    @app.route('/customer')
+    @bypass_security()
+    def customer():
+        """
+        Illustrates:
+        * Retrieving object, and then returns it as custom resource 
+        
+        Test:
+            curl "http://localhost:5656/customer?Id=ALFKI"
+            # ApiLogicServer login --user=admin --password=p not needed
+            # ApiLogicServer curl "http://localhost:5656/customer?Id=ALFKI"
+        """
+
+        from sqlalchemy import and_, or_
+        filter_id = request.args.get('Id')
+        db = safrs.DB           # Use the safrs.DB, not db!
+        session = db.session    # sqlalchemy.orm.scoping.scoped_session
+        Security.set_user_sa()  # an endpoint that requires no auth header (see also @bypass_security)
+
+        the_customer = session.query(models.Customer).filter(models.Customer.Id == filter_id).one()
+        result = the_customer
+        print(f'the_customer: {the_customer}')
+
+        customer = Customer()
+        result = customer.to_dict(row = the_customer)
+
+        return jsonify({ "success": True, "result":  result})
+
 
 class ServicesEndPoint(safrs.JABase):
     """
