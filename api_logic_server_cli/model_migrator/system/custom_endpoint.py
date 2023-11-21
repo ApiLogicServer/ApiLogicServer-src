@@ -105,6 +105,10 @@ class CustomEndpoint():
         self._model_class = model_class
         self.alias = alias or model_class._s_type.lower()
         self.role_name = role_name
+        if role_name == '':
+            self.role_name = model_class._s_class_name
+            if not isParent:
+                self.role_name = self.role_name + "List"
         self.fields = fields
         self.children = children or []
         self.calling = calling
