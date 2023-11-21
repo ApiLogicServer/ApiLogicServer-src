@@ -42,26 +42,26 @@ class CustomEndpoint():
     """
     Nested CustomEndpoint Definition
 
-        customer = CustomEndpoint(model_class=models.Customer, alias="Customer"
-        , fields = [(models.Customer.CompanyName, "Customer Name")] 
-        , children = [
-            CustomEndpoint(model_class=models.Order, alias = "orders"
-                , join_on=models.Order.CustomerId
-                , fields = [models.Order.AmountTotal, "Total", models.Order.ShippedDate, "Ship Date"]
-                , children = CustomEndpoint(model_class=models.OrderDetail, alias="details"
-                    , join_on=models.OrderDetail.OrderId
-                    , fields = [models.OrderDetail.Quantity, models.OrderDetail.Amount]
-                    , children = CustomEndpoint(model_class=models.Product, alias="data"
-                        , join_on=models.OrderDetail.ProductId
-                        , fields=[models.Product.UnitPrice, models.Product.UnitsInStock]
-                        , isParent=False
-                        , isCombined=False
+        customer = CustomEndpoint(model_class=models.Customer
+            , alias="customers"
+            , fields = [(models.Customer.CompanyName, "Customer Name")] 
+            , children = 
+                CustomEndpoint(model_class=models.Order
+                    , alias = "orders"
+                    , join_on=models.Order.CustomerId
+                    , fields = [(models.Order.AmountTotal, "Total"), (models.Order.ShippedDate, "Ship Date")]
+                    , children = CustomEndpoint(model_class=models.OrderDetail, alias="details"
+                        , join_on=models.OrderDetail.OrderId
+                        , fields = [models.OrderDetail.Quantity, models.OrderDetail.Amount]
+                        , children = CustomEndpoint(model_class=models.Product, alias="product"
+                            , join_on=models.OrderDetail.ProductId
+                            , fields=[models.Product.UnitPrice, models.Product.UnitsInStock]
+                            , isParent=True
+                            , isCombined=False
+                        )
                     )
-                    )
-                ),
-            CustomEndpoint(model_class=models.OrderAudit, alias="orderAudit")  # sibling child
-            ]
-        )
+                )
+            )
         result = customer.execute(customer,"", "ALFKI")
         # or
         #result = customer.get(request,"OrderList&OrderList.OrderDetailList&OrderList.OrderDetailList.Product", "ALFKI")
@@ -70,6 +70,7 @@ class CustomEndpoint():
     def __init__(self
             , model_class: DeclarativeMeta | None
             , alias: str = ""
+            , role_name: str = ""
             , fields: list[tuple[Column, str] | Column] = []
             , children: list[CustomEndpoint] | CustomEndpoint = []
             , join_on: list[tuple[Column] | Column] = None
@@ -103,6 +104,7 @@ class CustomEndpoint():
 
         self._model_class = model_class
         self.alias = alias or model_class._s_type.lower()
+        self.role_name = role_name
         self.fields = fields
         self.children = children or []
         self.calling = calling

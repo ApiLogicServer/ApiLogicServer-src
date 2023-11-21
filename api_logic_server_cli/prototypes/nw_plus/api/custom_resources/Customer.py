@@ -12,6 +12,7 @@ class Customer(CustomEndpoint):
             , children = 
                 CustomEndpoint(model_class=models.Order
                     , alias = "orders"
+                    , role_name = "OrderList"
                     , join_on=models.Order.CustomerId
                     , fields = [(models.Order.AmountTotal, "Total"), (models.Order.ShippedDate, "Ship Date")]
                     , children = CustomEndpoint(model_class=models.OrderDetail, alias="details"
@@ -56,7 +57,9 @@ class Customer(CustomEndpoint):
             list_of_children = []
             list_of_children.append(custom_endpoint.children)
         for each_child_def in list_of_children:
-            child_property_name = "OrderList"  # FIXME this should be in CustomEndpoint
+            child_property_name = each_child_def.role_name
+            if child_property_name == '':
+                child_property_name = "OrderList"  # FIXME default from class name
             all_children = getattr(row, child_property_name)
             row_as_dict[each_child_def.alias] = []
             for each_child in all_children:
