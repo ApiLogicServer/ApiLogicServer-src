@@ -74,6 +74,7 @@ setup(
          "flask-restful-swagger-2>=0.35",
          "Flask-SQLAlchemy==3.0.3",
          "flask-swagger-ui>=4.11.1",
+         "flask_bcrypt==1.0.1",
          "itsdangerous==2.1.2",
          "Jinja2==3.1.2",
          "MarkupSafe==2.1.3",
