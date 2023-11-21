@@ -236,7 +236,7 @@ class CustomEndpoint():
                     api = "api" # TODO Args.api_prefix()
                     serverURL = f"{request.host_url}{api}"
                     url = f"{serverURL}/{self._model_class_name}"
-                    return self.handlePayload(method, payload, url, jwt)
+                    return self.handlePayload(method=method, payload=payload, url=url, jwt=jwt, altKey=altKey)
                 except Exception as ex:
                     raise ValidationError( f'{method} error on entity {self._model_class_name} msg: {ex}') from ex
         serverURL = f"{request.host_url}api"
@@ -622,7 +622,7 @@ class CustomEndpoint():
                 self.children._parentResource = self
                 self.children.processIncludedRows(included)
                 
-    def handlePayload(self, method: str, payload: any, url: str, jwt: str) -> any:
+    def handlePayload(self, method: str, payload: any, url: str, jwt: str,altKey: str = None) -> any:
         """ tests
             stmt = ""
             if method == 'POST':
@@ -635,11 +635,11 @@ class CustomEndpoint():
             # db.session.select().filter_by().one()
             return db.engine.execute(f"select * from {self._model_class_name} limit 1").one()
         """
-        j = self.create_args(payload)
+        j = self.create_args(payload, altKey)
         # check payload for a single row
         clz = self._model_class
         #key = self.populateClass(clz, payload)
-        key = payload[self.primaryKey] if self.primaryKey in payload else "-1"
+        key = altKey if altKey else payload[self.primaryKey] if self.primaryKey in payload else "-1"
         if Args.security_enabled:
             header = {"Authorization": jwt,"Content-Type": "application/json","accept": "application/vnd.api+json"}
             response = (
@@ -648,11 +648,12 @@ class CustomEndpoint():
                     else requests.patch(url=f"{url}/{key}", json=j, headers=header)
             )
         else:
-            response = (
-                requests.post(url=url, json=j) 
-                if method == "POST" 
-                    else requests.patch(url=f"{url}/{key}", data=j) 
-                )
+            response = {}
+            if method == "POST":
+                response = requests.post(url=url, json=j) 
+            elif method in ["PUT","PATCH" ]:
+                response = requests.patch(url=f"{url}/{key}", data=j) 
+                
         return json.dumps(json.loads(response.text)["data"]["attributes"]) if response.status_code < 301 else response.content
 
     def populateClass(self, clz, payload):
@@ -660,8 +661,8 @@ class CustomEndpoint():
             clz(p = payload[p])
         return clz[self.primaryKey]
     
-    def create_args(self, attributes):
-        key = attributes[self.primaryKey] if self.primaryKey in attributes else None
+    def create_args(self, attributes, altKey:str = None):
+        key = altKey if altKey else attributes[self.primaryKey] if self.primaryKey in attributes else None
         result = None
         if key is None:
             result =  \
@@ -675,7 +676,7 @@ class CustomEndpoint():
                 { "data": {
                     "attributes": self.move_metadata(attributes),
                     "type": self._model_class_name,
-                    "id": key
+                    "id": int(key) if self.primaryKeyType.python_type == int else key
                 }
             }
         v =  str(result)
