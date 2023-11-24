@@ -290,7 +290,7 @@ class Grant:
         sql_select = "not a SELECT"
         if orm_execute_state is not None:
             sql_select = str(orm_execute_state.statement)
-        security_logger.info(f"\nSQL Select -- Begin authorization processing for {sql_select}")   
+            security_logger.info(f"\nSQL Select -- Begin authorization processing for {sql_select}")   
         
         can_read = False
         can_insert = False
@@ -344,7 +344,7 @@ class Grant:
         if entity_name in Grant.grants_by_table:
             for each_grant in Grant.grants_by_table[entity_name]:
                 grant_entity = each_grant.entity
-                if each_grant.global_filter is not None:
+                if each_grant.global_filter is not None:    # Global Filters
                     excluded_role = False
                     for each_user_role in user.UserRoleList:
                         if each_user_role.role_name in each_grant.global_filter.roles_not_filtered:
@@ -354,7 +354,7 @@ class Grant:
                         and orm_execute_state is not None:
                         global_filter_list.append(each_grant.filter())
                         security_logger.info(f"+ Global Filter: {each_grant.filter_debug}")
-                else:
+                else:                                       # Grant Permissions
                     for each_user_role in user.UserRoleList:
                         if each_grant.role_name == each_user_role.role_name:
                             security_logger.debug(f'Amend Grant for class / role: {entity_name} / {each_grant.role_name} - {each_grant.filter}')
@@ -414,23 +414,22 @@ class Grant:
         Args:
             logic_row (LogicRow): 
         """
-        def __init__(self,
-            logic_row:LogicRow):
+        def __init__(self, logic_row:LogicRow):
         
             self.logic_row = logic_row
         
             if Args.security_enabled: 
                 entity_name = self.logic_row.name 
                 #select is handled by orm_execution_state
-                _event_state = ""
+                crud_state = ""
                 if self.logic_row.ins_upd_dlt == "upd":
-                    _event_state = 'is_update'
+                    crud_state = 'is_update'
                 elif self.logic_row.ins_upd_dlt == "ins":
-                    _event_state = 'is_insert'
+                    crud_state = 'is_insert'
                 elif self.logic_row.ins_upd_dlt == "dlt": 
-                    _event_state = 'is_delete'
+                    crud_state = 'is_delete'
                     
-                Grant.exec_grants(entity_name, _event_state, None)
+                Grant.exec_grants(entity_name=entity_name, crud_state=crud_state, orm_execute_state=None)
 
 @event.listens_for(session, 'do_orm_execute')
 def receive_do_orm_execute(orm_execute_state: ORMExecuteState ):

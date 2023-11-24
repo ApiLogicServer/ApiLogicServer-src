@@ -271,13 +271,18 @@ def declare_logic():
     def send_order_to_shipping(row: models.Order, old_row: models.Order, logic_row: LogicRow):
         from flask import request, jsonify
         from api.custom_resources.Order import Order
+        import safrs
+        db = safrs.DB         # Use the safrs.DB, not db!
+        session = db.session  # sqlalchemy.orm.scoping.scoped_session
+        # session.flush()
+        # session.no_autoflush
         order = Order()
         result = order.to_dict(row = row)
-        json_order = jsonify({"order", "result", result})
-        print(f'\n\nSend to Shipping:\n{json_order}')
-        assert False, "what got printed"
-        return jsonify({ "success": True, "result":  result})
+        # json_order = jsonify({"order", "result", result})
+        # print(f'\n\nSend to Shipping:\n{json_order}')
+        # assert False, "what got printed"
+        return jsonify({ "success": True, "result":  "STUB"})
 
-    Rule.commit_row_event(on_class=models.Order, calling=send_order_to_shipping)
+    Rule.after_flush_row_event(on_class=models.Order, calling=send_order_to_shipping)
     
     app_logger.debug("..logic/declare_logic.py (logic == rules + code)")
