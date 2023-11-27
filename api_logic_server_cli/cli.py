@@ -294,7 +294,10 @@ def login(ctx, user: str, password: str):
 @main.command("curl")
 @click.pass_context
 @click.argument('curl_command', nargs=-1, type=click.UNPROCESSED)
-def curl(ctx, curl_command: str):
+@click.option('--data',
+              default=f'',
+              help="Payload for Post, Patch\n")
+def curl(ctx, curl_command: str, data: str=""):
     """
         Execute cURL command, providing auth headers from login.
     """
@@ -307,7 +310,11 @@ def curl(ctx, curl_command: str):
     # command_parseable = command_parseable.replace("?", "\?")
     command_with_auth = f"curl '{command_parseable}' {auth}"
     log.info(f"\n{command_with_auth}\n")
-    result = create_utils.run_command(f'{command_with_auth}', msg="Run curl command with auth", new_line=True)
+    command_complete = command_with_auth
+    if data != "":
+        command_complete += f" --data '{data}'"
+    log.info(f"\nNow executing:\n{command_complete}\n")
+    result = create_utils.run_command(f'{command_complete}', msg="Run curl command with auth", new_line=True)
     print(result)
     pass
 

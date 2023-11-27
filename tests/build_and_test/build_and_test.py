@@ -400,8 +400,10 @@ def delete_build_directories(install_api_logic_server_path):
     try:
         os.mkdir(install_api_logic_server_path, mode = 0o777)
         os.mkdir(install_api_logic_server_path.joinpath('dockers'), mode = 0o777)
-    except:
-        print(f"Unable to create directory {install_api_logic_server_path} -- Windows dir exists?")
+    except Exception as e:
+        print(f"Unable to create directory {install_api_logic_server_path} -- Windows dir exists?  Excp:")
+        print(f"{e}")
+        exit(1)
 
 def docker_creation_tests(api_logic_server_tests_path):
     """
@@ -709,7 +711,7 @@ if Config.do_install_api_logic_server:  # verify the build process - rebuild, an
         cwd=install_api_logic_server_path,
         msg=f'\nInstall ApiLogicServer at: {str(install_api_logic_server_path)}')
 
-    delete_build_directories(install_api_logic_server_path)
+    # delete_build_directories(install_api_logic_server_path)
 
     if Config.do_logicbank_test != "":
         test_py = f"python -m pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple logicbank=={Config.do_logicbank_test}"

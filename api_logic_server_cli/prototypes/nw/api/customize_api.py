@@ -12,7 +12,12 @@ from safrs import jsonapi_rpc, SAFRSAPI
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import object_mapper
 from database import models
+from api.system.custom_endpoint import CustomEndpoint
+from config import Args
+from flask_cors import cross_origin
 from logic_bank.rule_bank.rule_bank import RuleBank
+from api.custom_resources.Customer import Customer
+from api.custom_resources.OrderById import OrderById
 
 # Customize this file to add endpoints/services, using SQLAlchemy as required
 #     Separate from expose_api_models.py, to simplify merge if project rebuilt
@@ -258,6 +263,38 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         return_result = {"resources": resource_objs}
         return jsonify(return_result)
 
+  
+    def admin_required():
+        """
+        Support option to bypass security (see cats, below).
+
+        See: https://flask-jwt-extended.readthedocs.io/en/stable/custom_decorators/
+        """
+        def wrapper(fn):
+            @wraps(fn)
+            def decorator(*args, **kwargs):
+                if Args.security_enabled == False:
+                    return fn(*args, **kwargs)
+                verify_jwt_in_request(True)  # must be issued if security enabled
+                return fn(*args, **kwargs)
+            return decorator
+        return wrapper
+
+    @app.route('/CustomAPI/Customer', methods=['GET','OPTIONS'])
+    @admin_required()
+    @jwt_required()
+    @cross_origin(supports_credentials=True)
+    def CustomAPICustomer():
+        """ 
+        start the server (f5) and in the terminal window:
+        $(venv)ApiLogicServer login --user=admin --password=p
+        $(venv)ApiLogicServer curl "http://localhost:5656/CustomAPI/Customer?Id=ALFKI"
+        """
+        customer = Customer()
+        result = customer.execute(request)  # query for each level
+        # or, 1 big safrs call
+        #result = customer.get(request,"OrderList&OrderList.OrderDetailList&OrderList.OrderDetailList.Product", "ALFKI")
+        return result  # note calling: for each row (add'l attrs)
 
 class ServicesEndPoint(safrs.JABase):
     """
@@ -292,6 +329,78 @@ class ServicesEndPoint(safrs.JABase):
 
         util.json_to_entities(kwargs, new_order)  # generic function - any db object
         return {"Thankyou For Your Order"}  # automatic commit, which executes transaction logic
+        """
+        curl -X 'POST' \
+            'http://localhost:5656/api/ServicesEndPoint/add_order' \
+            -H 'accept: application/vnd.api+json' \
+            -H 'Content-Type: application/json' \
+            -d '{
+            "meta": {
+                "method": "add_order",
+                "args": {
+                "CustomerId": "ALFKI",
+                "EmployeeId": 1,
+                "Freight": 10,
+                "OrderDetailList": [
+                    {
+                    "ProductId": 1,
+                    "Quantity": 1,
+                    "Discount": 0
+                    },
+                    {
+                    "ProductId": 2,
+                    "Quantity": 2,
+                    "Discount": 0
+                    }
+                ]
+                }
+            }
+            }'
+        """
+
+
+    @classmethod
+    @jsonapi_rpc(http_methods=["POST"])
+    def add_b2b_order(self, *args, **kwargs):  # yaml comment => swagger description
+        """ # yaml creates Swagger description
+            args :
+                AccountId: ALFKI
+                Items :
+                  - ProductName: "Chai"
+                    QuantityOrdered: 1
+                  - ProductName: "Chang"
+                    QuantityOrdered: 2
+        """
+
+        # test using swagger -> try it out (includes sample data, above)
+
+        db = safrs.DB         # Use the safrs.DB, not db!
+        session = db.session  # sqlalchemy.orm.scoping.scoped_session
+        new_order = models.Order()
+        session.add(new_order)
+
+        util.json_to_entities(kwargs, new_order)  # generic function - any db object
+        return {"Thankyou For Your Order"}  # automatic commit, which executes transaction logic
+    
+    @classmethod
+    @jwt_required()
+    @jsonapi_rpc(http_methods=["POST"])
+    def add_order_by_id(self, *args, **kwargs):  # yaml comment => swagger description
+        """ # yaml creates Swagger description
+            args :
+                AccountId: ALFKI
+                Items :
+                  - ProductId: 1
+                    QuantityOrdered: 1
+                  - ProductId: 2
+                    QuantityOrdered: 2
+        """
+
+        # test using swagger -> try it out (includes sample data, above)
+
+        order_id_def = OrderById()
+        result = order_id_def.execute(request = kwargs)
+        pass
 
 
 class CategoriesEndPoint(safrs.JABase):

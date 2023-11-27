@@ -7,6 +7,8 @@ from database import models
 import api.system.opt_locking.opt_locking as opt_locking
 from security.system.authorization import Grant
 import logging
+from flask import jsonify
+from api.custom_resources.OrderShipping import OrderShipping
 
 
 preferred_approach = True
@@ -265,7 +267,30 @@ def declare_logic():
                 row.CreatedOn = datetime.datetime.now()
                 logic_row.log("early_row_event_all_classes - handle_all sets 'Created_on"'')
         Grant.process_updates(logic_row=logic_row)
-        
+    
     Rule.early_row_event_all_classes(early_row_event_all_classes=handle_all)
+        
+    Rule.formula(derive=models.Order.OrderDate, 
+                 as_expression=lambda row: datetime.datetime.now())
+
+    def send_order_to_shipping(row: models.Order, old_row: models.Order, logic_row: LogicRow):
+        """
+
+        Format row per shipping requirements, and send (e.g., a message)
+
+        NB: the after_flush event makes Order.Id avaible.  Contrast to congratulate_sales_rep().
+
+        Args:
+            row (models.Order): inserted Order
+            old_row (models.Order): n/a
+            logic_row (LogicRow): bundles curr/old row, with ins/upd/dlt logic
+        """
+
+        order_def = OrderShipping()
+        json_order = order_def.to_dict(row = row)
+        # json_order = jsonify({"order", "result", result})
+        print(f'\n\nSend to Shipping:\n{json_order}')
+
+    Rule.after_flush_row_event(on_class=models.Order, calling=send_order_to_shipping)
     
     app_logger.debug("..logic/declare_logic.py (logic == rules + code)")
