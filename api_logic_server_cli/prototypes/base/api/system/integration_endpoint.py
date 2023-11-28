@@ -1,11 +1,11 @@
 from database import models
 from flask import request, jsonify
 from sqlalchemy import Column
-from api.system.custom_endpoint_base import CustomEndpointBase
+from api.system.custom_endpoint_base_def import CustomEndpointBaseDef
 
-class CustomEndpoint(CustomEndpointBase):
+class IntegrationEndpoint(CustomEndpointBaseDef):
     
-    def to_dict(self, row: object, current_endpoint: 'CustomEndpoint' = None) -> dict:
+    def to_dict(self, row: object, current_endpoint: 'IntegrationEndpoint' = None) -> dict:
         """returns row as dict per custom resource definition, with subobjects
 
         Args:
@@ -48,3 +48,15 @@ class CustomEndpoint(CustomEndpointBase):
                     each_child_to_dict = self.to_dict(row = each_child, current_endpoint = each_child_def)
                     row_as_dict[each_child_def.alias].append(each_child_to_dict)
         return row_as_dict
+    
+    def to_row(self, dict: dict, current_endpoint: 'IntegrationEndpoint' = None) -> object:
+        """Translate dict to SQLAlchemy row / sub-rows
+
+        Args:
+            dict (dict): dict of row / sub-rows
+            current_endpoint (IntegrationEndpoint, optional): _description_. Defaults to None.
+
+        Returns:
+            object: SQLAlchemy row / sub-rows, ready to insert
+        """
+        pass

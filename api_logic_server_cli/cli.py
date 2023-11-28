@@ -262,6 +262,54 @@ def login_and_get_token(user: str, password: str) -> str:
     token = result_map.access_token
     return token
 
+def login_exec(user: str, password: str):
+    """For direct debug (since VSCode WILL NOT support args with quotes etc)
+
+    Args:
+        user (str): _description_
+        password (str): _description_
+    """
+    log.info(f"\nLogging in as {user}, {password}")
+    token = login_and_get_token(user=user, password=password)
+    api_logic_server_info_file_dict["last_login_token"] = token
+    with open(api_logic_server_info_file_name, 'w') as api_logic_server_info_file_file:
+        yaml.dump(api_logic_server_info_file_dict, api_logic_server_info_file_file, default_flow_style=False)
+
+    log.info("Success - stored internally in api_logic_server_info_file.yaml - curl header now:\n")
+    # log.info("-H 'accept: application/vnd.api+json' ")
+    # log.info(f"-H 'Content-Type: application/vnd.api+json'")
+    log.info(f"-H 'Authorization: Bearer {last_login_token}'")
+    log.info("\nNow run ApiLogicServer curl <curl command>\n")
+
+
+def curl_exec(curl_command: [], data: str="", security: bool=True):
+    auth = ""
+    # auth += f"-H 'accept: application/vnd.api+json' "
+    # auth += f" -H 'Content-Type: application/vnd.api+json'"
+    auth += f" -H 'Authorization: Bearer {last_login_token}'"
+        
+    command_parseable = curl_command[0]
+    log.info(f"\nReceived command:\n{command_parseable}\n")
+
+    # command_parseable = command_parseable.replace("?", "\?")
+    command_with_auth = f"curl {command_parseable}"
+    if security:
+        command_with_auth = f"curl '{command_parseable}' {auth}"
+        if data != "":  # updates seem to have extra quotes
+            command_with_auth = f"curl {command_parseable} {auth}"
+    log.info(f"\nPreparing command with security: {security}\ncmd stripped: {command_with_auth}\n")
+
+    command_complete = command_with_auth
+    if data != "":
+        command_complete = command_complete.replace('curl', 'curl -X ')
+        command_complete += f" -H 'accept: application/vnd.api+json'"
+        command_complete += f" -H 'Content-Type: application/json'"
+        command_complete += f" -d '{data}'"
+    log.info(f"\nNow executing:\n{command_complete}\n")
+    result = create_utils.run_command(f'{command_complete}', msg="Run curl command with auth", new_line=True)
+    print(result)
+    pass
+
 
 @main.command("login")
 @click.pass_context
@@ -277,17 +325,7 @@ def login(ctx, user: str, password: str):
     """
         Login and save token for curl command.
     """
-    log.info(f"\nLogging in as {user}, {password}")
-    token = login_and_get_token(user=user, password=password)
-    api_logic_server_info_file_dict["last_login_token"] = token
-    with open(api_logic_server_info_file_name, 'w') as api_logic_server_info_file_file:
-        yaml.dump(api_logic_server_info_file_dict, api_logic_server_info_file_file, default_flow_style=False)
-
-    log.info("Success - stored internally in api_logic_server_info_file.yaml - curl header now:\n")
-    # log.info("-H 'accept: application/vnd.api+json' ")
-    # log.info(f"-H 'Content-Type: application/vnd.api+json'")
-    log.info(f"-H 'Authorization: Bearer {last_login_token}'")
-    log.info("\nNow run ApiLogicServer curl <curl command>\n")
+    login_exec(user=user, password=password)
 
 
 
@@ -297,26 +335,58 @@ def login(ctx, user: str, password: str):
 @click.option('--data',
               default=f'',
               help="Payload for Post, Patch\n")
-def curl(ctx, curl_command: str, data: str=""):
+@click.option('--security/--no_security',
+              default=True, is_flag=True,
+              help="Include -H Bearer xxx")
+def curl(ctx, curl_command: str, data: str="", security: click.BOOL=False):
     """
         Execute cURL command, providing auth headers from login.
     """
     # https://click.palletsprojects.com/en/8.1.x/advanced/#forwarding-unknown-options
-    auth = ""
-    # auth += f"-H 'accept: application/vnd.api+json' "
-    # auth += f" -H 'Content-Type: application/vnd.api+json'"
-    auth += f" -H 'Authorization: Bearer {last_login_token}'"
-    command_parseable = curl_command[0]
-    # command_parseable = command_parseable.replace("?", "\?")
-    command_with_auth = f"curl '{command_parseable}' {auth}"
-    log.info(f"\n{command_with_auth}\n")
-    command_complete = command_with_auth
-    if data != "":
-        command_complete += f" --data '{data}'"
-    log.info(f"\nNow executing:\n{command_complete}\n")
-    result = create_utils.run_command(f'{command_complete}', msg="Run curl command with auth", new_line=True)
-    print(result)
-    pass
+    curl_exec(curl_command=curl_command, data=data, security=security)
+
+
+@main.command("curl-test")
+@click.pass_context
+@click.option('--message',
+              default=f'cURL Test',
+              help="Proceed\n")
+def curl_test(ctx, message):
+    """
+        Test curl commands (nw only; must be r)
+    """
+    # https://click.palletsprojects.com/en/8.1.x/advanced/#forwarding-unknown-options
+
+    do_get = True
+    if do_get:
+        login_exec(user="admin", password="p")
+        curl_exec(curl_command=["http://localhost:5656/CustomAPI/Customer?Id=ALFKI", None])
+        pass
+
+    do_post = True
+    if do_post:
+        data = """ {"meta": {
+                "method": "add_order_by_id",
+                "args": {
+                "AccountId": "ALFKI",
+                "Items": [
+                    {
+                    "ProductId": 1,
+                    "QuantityOrdered": 1
+                    },
+                    {
+                    "ProductId": 2,
+                    "QuantityOrdered": 2
+                    }
+                ]
+                }
+                }
+            }"""
+        command = [" 'POST' 'http://localhost:5656/api/ServicesEndPoint/add_order_by_id' ", None]
+        curl_exec(curl_command = command, security = False, data = data)
+
+
+
 
 
 @main.command("tutorial")

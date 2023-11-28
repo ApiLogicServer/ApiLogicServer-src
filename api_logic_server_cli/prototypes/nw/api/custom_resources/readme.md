@@ -33,6 +33,39 @@ ApiLogicServer create --project_name=nw_plus --db_url=nw
 
 &nbsp;
 
+## Existing `add_order`
+
+```bash
+        curl -X 'POST' \
+            'http://localhost:5656/api/ServicesEndPoint/add_order' \
+            -H 'accept: application/vnd.api+json' \
+            -H 'Content-Type: application/json' \
+            -d '{
+            "meta": {
+                "method": "add_order",
+                "args": {
+                "CustomerId": "ALFKI",
+                "EmployeeId": 1,
+                "Freight": 10,
+                "OrderDetailList": [
+                    {
+                    "ProductId": 1,
+                    "Quantity": 1,
+                    "Discount": 0
+                    },
+                    {
+                    "ProductId": 2,
+                    "Quantity": 2,
+                    "Discount": 0
+                    }
+                ]
+                }
+            }
+            }'
+```
+
+&nbsp;
+
 ## Verify create json from business object
 
 1. Swagger: `ServicesEndPoint`` > `add_order`
@@ -44,22 +77,16 @@ ApiLogicServer create --project_name=nw_plus --db_url=nw
 
 1. Swagger: `ServicesEndPoint` > `add_order_by_id`
 
-Fails: **'dict' object has no attribute 'headers'**
-
 &nbsp;
 
-Or (currently failing since `-d` is not an option)
+Or... 
 
 ```bash
-ApiLogicServer login --user=admin --password=p
-
-ApiLogicServer curl 'POST' \
+curl -X 'POST' \
   'http://localhost:5656/api/ServicesEndPoint/add_order_by_id' \
-  --data '{"meta": {"method": "add_order_by_id","args": {"AccountId": "ALFKI","Items": [{ "ProductId": 1,"QuantityOrdered": 1},{"ProductId": 2,"QuantityOrdered": 2}]}}}'
-
-ApiLogicServer curl 'POST' \
-  'http://localhost:5656/api/ServicesEndPoint/add_order_by_id' \
-  --data '{
+  -H 'accept: application/vnd.api+json' \
+  -H 'Content-Type: application/json' \
+  -d '{
   "meta": {
     "method": "add_order_by_id",
     "args": {
@@ -78,6 +105,30 @@ ApiLogicServer curl 'POST' \
   }
 }'
 ```
+
+Or, use the ApiLogicServer cur
+
+```
+ApiLogicServer curl "'POST' 'http://localhost:5656/api/ServicesEndPoint/add_order_by_id'" --data '
+{"meta": {
+                "method": "add_order_by_id",
+                "args": {
+                "AccountId": "ALFKI",
+                "Items": [
+                    {
+                    "ProductId": 1,
+                    "QuantityOrdered": 1
+                    },
+                    {
+                    "ProductId": 2,
+                    "QuantityOrdered": 2
+                    }
+                ]
+                }
+              }
+            }'
+```
+
 
 ## With Lookup
 

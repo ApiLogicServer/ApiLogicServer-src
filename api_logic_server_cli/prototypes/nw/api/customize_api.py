@@ -12,7 +12,7 @@ from safrs import jsonapi_rpc, SAFRSAPI
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import object_mapper
 from database import models
-from api.system.custom_endpoint import CustomEndpoint
+from api.system.integration_endpoint import IntegrationEndpoint
 from config import Args
 from flask_cors import cross_origin
 from logic_bank.rule_bank.rule_bank import RuleBank
@@ -383,7 +383,7 @@ class ServicesEndPoint(safrs.JABase):
         return {"Thankyou For Your Order"}  # automatic commit, which executes transaction logic
     
     @classmethod
-    @jwt_required()
+    # @jwt_required()
     @jsonapi_rpc(http_methods=["POST"])
     def add_order_by_id(self, *args, **kwargs):  # yaml comment => swagger description
         """ # yaml creates Swagger description
@@ -399,7 +399,7 @@ class ServicesEndPoint(safrs.JABase):
         # test using swagger -> try it out (includes sample data, above)
 
         order_id_def = OrderById()
-        result = order_id_def.execute(request = kwargs)
+        result = order_id_def.to_row(request)
         pass
 
 
