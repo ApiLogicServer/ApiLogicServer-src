@@ -24,18 +24,22 @@ class CustomEndpointBaseDef():
     """
     Nested CustomEndpoint Definition
 
-        customer = CustomEndpoint(model_class=models.Customer
+class Customer(LacEndpoint):
+    def __init__(self):
+        customer = super(Customer, self).__init__(
+            model_class=models.Customer
             , alias="customers"
             , fields = [(models.Customer.CompanyName, "Customer Name")] 
             , children = 
-                CustomEndpoint(model_class=models.Order
+                LacEndpoint(model_class=models.Order
                     , alias = "orders"
+                    # , role_name = "OrderList"
                     , join_on=models.Order.CustomerId
                     , fields = [(models.Order.AmountTotal, "Total"), (models.Order.ShippedDate, "Ship Date")]
-                    , children = CustomEndpoint(model_class=models.OrderDetail, alias="details"
+                    , children = LacEndpoint(model_class=models.OrderDetail, alias="details"
                         , join_on=models.OrderDetail.OrderId
                         , fields = [models.OrderDetail.Quantity, models.OrderDetail.Amount]
-                        , children = CustomEndpoint(model_class=models.Product, alias="product"
+                        , children = LacEndpoint(model_class=models.Product, alias="product"
                             , join_on=models.OrderDetail.ProductId
                             , fields=[models.Product.UnitPrice, models.Product.UnitsInStock]
                             , isParent=True
@@ -44,9 +48,8 @@ class CustomEndpointBaseDef():
                     )
                 )
             )
-        result = customer.execute(customer,"", "ALFKI")
-        # or
-        #result = customer.get(request,"OrderList&OrderList.OrderDetailList&OrderList.OrderDetailList.Product", "ALFKI")
+        # CustomEndpoint(model_class=models.OrderAudit, alias="orderAudit")  # sibling child
+        return customer
     """
 
     def __init__(self
