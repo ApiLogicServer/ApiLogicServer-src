@@ -387,7 +387,7 @@ class ServicesEndPoint(safrs.JABase):
     @jsonapi_rpc(http_methods=["POST"])
     def add_order_by_id(self, *args, **kwargs):  # yaml comment => swagger description
         """ # yaml creates Swagger description
-            args :
+            order :
                 AccountId: ALFKI
                 SalesRepId: 1
                 Items :
@@ -402,7 +402,7 @@ class ServicesEndPoint(safrs.JABase):
         order_id_def = OrderById()
         request_dict_str = request.data.decode('utf-8')
         request_dict = eval(request_dict_str)
-        request_dict_data = request_dict["order"]  # FIXME - meta?
+        request_dict_data = request_dict["order"]
         sql_alchemy_row = order_id_def.to_row(request_dict_data)
 
         db = safrs.DB         # Use the safrs.DB, not db!
