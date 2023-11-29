@@ -389,6 +389,7 @@ class ServicesEndPoint(safrs.JABase):
         """ # yaml creates Swagger description
             args :
                 AccountId: ALFKI
+                SalesRepId: 1
                 Items :
                   - ProductId: 1
                     QuantityOrdered: 1
@@ -399,7 +400,14 @@ class ServicesEndPoint(safrs.JABase):
         # test using swagger -> try it out (includes sample data, above)
 
         order_id_def = OrderById()
-        result = order_id_def.to_row(request)
+        request_dict_str = request.data.decode('utf-8')
+        request_dict = eval(request_dict_str)
+        request_dict_data = request_dict["order"]  # FIXME - meta?
+        sql_alchemy_row = order_id_def.to_row(request_dict_data)
+
+        db = safrs.DB         # Use the safrs.DB, not db!
+        session = db.session  # sqlalchemy.orm.scoping.scoped_session
+        session.add(sql_alchemy_row)
         pass
 
 

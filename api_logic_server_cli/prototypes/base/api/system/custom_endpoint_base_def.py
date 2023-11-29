@@ -1,29 +1,11 @@
 from __future__ import annotations  # enables Resource self reference
 import sqlalchemy
-from sqlalchemy import update, insert
 import logging
-import contextlib
 from sqlalchemy import Column, Table, ForeignKey
 from sqlalchemy.orm.decl_api import DeclarativeMeta #sqlalchemy.orm.decl_api.DeclarativeMeta
-from sqlalchemy.orm import relationships, relationship
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy_utils import get_referencing_foreign_keys
-from sqlalchemy import event, MetaData, and_, or_
 from sqlalchemy.inspection import inspect
-from sqlalchemy import select
-from sqlalchemy.sql import text
-from flask import jsonify
-from sqlalchemy_utils.query_chain import QueryChain
-import flask_sqlalchemy
 import safrs
-from safrs.errors import JsonapiError, ValidationError
-from security.system.authorization import Security
 from typing import List, Dict, Tuple
-import util
-import json 
-import requests
-from config import Config
-from config import Args
 
 resource_logger = logging.getLogger("api.customize_api")
 
@@ -103,12 +85,13 @@ class CustomEndpointBaseDef():
         #    raise ValueError("join_on= is required if using children (child column)")
 
         self._model_class = model_class
-        self.alias = alias or model_class._s_type.lower()
         self.role_name = role_name
+        """ class_name || 'List' """
         if role_name == '':
             self.role_name = model_class._s_class_name
             if not isParent:
                 self.role_name = self.role_name + "List"
+        self.alias = alias or self.role_name
         self.fields = fields
         self.children = children or []
         self.calling = calling
