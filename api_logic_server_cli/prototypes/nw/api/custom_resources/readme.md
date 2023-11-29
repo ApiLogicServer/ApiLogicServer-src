@@ -21,7 +21,7 @@ To generate this app, *either:*
     * Then, create as usual
 
 ```
-ApiLogicServer create --project_name=nw_plus --db_url=nw
+ApiLogicServer create --project_name=ApiLogicProject --db_url=nw
 ```
 
 &nbsp;
@@ -34,6 +34,8 @@ ApiLogicServer create --project_name=nw_plus --db_url=nw
 &nbsp;
 
 ## Existing `add_order`
+
+Here, the attribute names must exactly match the database / model names:
 
 ```bash
         curl -X 'POST' \
@@ -82,90 +84,73 @@ ApiLogicServer create --project_name=nw_plus --db_url=nw
 Or... 
 
 ```bash
-curl -X 'POST' \
-  'http://localhost:5656/api/ServicesEndPoint/add_order_by_id' \
-  -H 'accept: application/vnd.api+json' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "meta": {
-    "method": "add_order_by_id",
-    "args": {
-      "AccountId": "ALFKI",
-      "Items": [
-        {
-          "ProductId": 1,
-          "QuantityOrdered": 1
-        },
-        {
-          "ProductId": 2,
-          "QuantityOrdered": 2
-        }
-      ]
-    }
-  }
+curl -X  'POST' 'http://localhost:5656/api/ServicesEndPoint/add_order_by_id'  -H 'accept: application/vnd.api+json' -H 'Content-Type: application/json' -d '
+{"order": {
+            "AccountId": "ALFKI",
+            "SalesRepId": 1,
+            "Items": [
+                {
+                "ProductId": 1,
+                "QuantityOrdered": 1
+                },
+                {
+                "ProductId": 2,
+                "QuantityOrdered": 2
+                }
+                ]
+            }
 }'
 ```
 
-Or, use the ApiLogicServer cur
+Or, use the ApiLogicServer curl
 
-```
+```bash
 ApiLogicServer curl "'POST' 'http://localhost:5656/api/ServicesEndPoint/add_order_by_id'" --data '
-{"meta": {
-                "method": "add_order_by_id",
-                "args": {
-                "AccountId": "ALFKI",
-                "Items": [
-                    {
-                    "ProductId": 1,
-                    "QuantityOrdered": 1
-                    },
-                    {
-                    "ProductId": 2,
-                    "QuantityOrdered": 2
-                    }
-                ]
+{"order": {
+            "AccountId": "ALFKI",
+            "SalesRepId": 1,
+            "Items": [
+                {
+                "ProductId": 1,
+                "QuantityOrdered": 1
+                },
+                {
+                "ProductId": 2,
+                "QuantityOrdered": 2
                 }
-              }
-            }'
+                ]
+            }
+}'
 ```
 
 
 ## With Lookup
 
+This is a TODO item.
+
     """
-        curl -X 'POST' \
-            'http://localhost:5656/api/ServicesEndPoint/add_order' \
-            -H 'accept: application/vnd.api+json' \
-            -H 'Content-Type: application/json' \
-            -d '{
-            "meta": {
-                "method": "add_order",
-                "args": {
-                "CustomerId": "ALFKI",
-                "EmployeeId": 1,
-                "Freight": 10,
-                "OrderDetailList": [
-                    {
-                    "ProductId": 1,
-                    "Quantity": 1,
-                    "Discount": 0
-                    },
-                    {
-                    "ProductId": 2,
-                    "Quantity": 2,
-                    "Discount": 0
-                    }
-                ]
+ApiLogicServer curl "'POST' 'http://localhost:5656/api/ServicesEndPoint/add_b2b_order'" --data '
+{"order": {
+            "AccountId": "ALFKI",
+            "SalesRep": "??",
+            "Items": [
+                {
+                "ProductName": "Chai",
+                "QuantityOrdered": 1
+                },
+                {
+                "ProductName": "Chang",
+                "QuantityOrdered": 2
                 }
+                ]
             }
-            }'
+}'
         """
-
-
 
 &nbsp;
 
 # Status
 
+11/28/2003 - `add_order_by_id` runs, printing stub message for shipping
 
 &nbsp;

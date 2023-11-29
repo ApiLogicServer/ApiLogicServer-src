@@ -15,8 +15,9 @@ class OrderB2B(IntegrationEndpoint):
             , alias = "order"
             # , role_name = "OrderList"
             # , join_on=models.Order.CustomerId
-            , fields = (models.Order.CustomerId, "AccountId")
-            , children = IntegrationEndpoint(model_class=models.OrderDetail, alias="Items"
+            , fields = [(models.Order.CustomerId, "AccountId"), (models.Order.Employee.Name, 'SalesRep')]
+            , children = IntegrationEndpoint(model_class=models.OrderDetail
+                , alias="Items"
                 , join_on=models.OrderDetail.OrderId
                 , fields = [(models.OrderDetail.Quantity, "QuantityOrdered"), (models.OrderDetail.Product.Name, "ProductName")]
             )

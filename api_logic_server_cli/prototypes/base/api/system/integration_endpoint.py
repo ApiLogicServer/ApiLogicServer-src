@@ -9,6 +9,7 @@ class IntegrationEndpoint(CustomEndpointBaseDef):
     Args:
         CustomEndpointBaseDef (_type_): _description_
     """
+
     '''
 ApiLogicServer curl "'POST' 'http://localhost:5656/api/ServicesEndPoint/add_order_by_id'" --data '
 {"order": {
@@ -25,28 +26,25 @@ ApiLogicServer curl "'POST' 'http://localhost:5656/api/ServicesEndPoint/add_orde
                 }
                 ]
             }
-}'    
+}'
 
-    
-ApiLogicServer curl "'POST' 'http://localhost:5656/api/ServicesEndPoint/add_order_by_id'" --data '
-{"meta": {
-                "method": "add_order_by_id",
-                "args": {
-                "AccountId": "ALFKI",
-                "SalesRepId": 1,
-                "Items": [
-                    {
-                    "ProductId": 1,
-                    "QuantityOrdered": 1
-                    },
-                    {
-                    "ProductId": 2,
-                    "QuantityOrdered": 2
-                    }
-                ]
+ApiLogicServer curl "'POST' 'http://localhost:5656/api/ServicesEndPoint/add_b2b_order'" --data '
+{"order": {
+            "AccountId": "ALFKI",
+            "SalesRep": "??",
+            "Items": [
+                {
+                "ProductName": "Chai",
+                "QuantityOrdered": 1
+                },
+                {
+                "ProductName": "Chang",
+                "QuantityOrdered": 2
                 }
-              }
-            }'    
+                ]
+            }
+}'
+
     '''
     
     def to_dict(self, row: object, current_endpoint: 'IntegrationEndpoint' = None) -> dict:
