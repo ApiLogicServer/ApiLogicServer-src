@@ -18,6 +18,7 @@ from flask_cors import cross_origin
 from logic_bank.rule_bank.rule_bank import RuleBank
 from api.custom_resources.Customer import Customer
 from api.custom_resources.OrderById import OrderById
+from api.custom_resources.OrderB2B import OrderB2B
 
 # Customize this file to add endpoints/services, using SQLAlchemy as required
 #     Separate from expose_api_models.py, to simplify merge if project rebuilt
@@ -104,6 +105,76 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
                 return fn(*args, **kwargs)
             return decorator
         return wrapper
+
+  
+    def admin_required():
+        """
+        Support option to bypass security (see cats, below).
+
+        See: https://flask-jwt-extended.readthedocs.io/en/stable/custom_decorators/
+        """
+        def wrapper(fn):
+            @wraps(fn)
+            def decorator(*args, **kwargs):
+                if Args.security_enabled == False:
+                    return fn(*args, **kwargs)
+                verify_jwt_in_request(True)  # must be issued if security enabled
+                return fn(*args, **kwargs)
+            return decorator
+        return wrapper
+
+
+    @app.route('/CustomAPI/Customer', methods=['GET','OPTIONS'])
+    @admin_required()
+    @jwt_required()
+    @cross_origin(supports_credentials=True)
+    def CustomAPICustomer():
+        """ 
+        start the server (f5) and in the terminal window:
+        $(venv)ApiLogicServer login --user=admin --password=p
+        $(venv)ApiLogicServer curl "http://localhost:5656/CustomAPI/Customer?Id=ALFKI"
+        """
+        request_id = request.args.get('Id')
+        if request_id is None:
+            request_id = 'ALFKI'
+
+        db = safrs.DB           # Use the safrs.DB, not db!
+        session = db.session    # sqlalchemy.orm.scoping.scoped_session
+        # Security.set_user_sa()  # an endpoint that requires no auth header (see also @bypass_security)
+        the_customer : models.Customer = session.query(models.Customer) \
+                .filter(models.Customer.Id == request_id).one()
+        
+        customer_def = Customer()
+        dict_row = customer_def.to_dict(row = the_customer)
+        return jsonify({"Customer with related data":  dict_row})
+
+
+    @app.route('/join_order')
+    @bypass_security()
+    def join_order():
+        """
+        Illustrates: SQLAlchemy join fields
+
+        $(venv)ApiLogicServer curl "http://localhost:5656/join_order?id=11078"
+
+        Returns:
+            _type_: _description_
+        """
+
+        request_id = request.args.get('id')
+        if request_id is None:
+            request_id = 11078
+        db = safrs.DB           # Use the safrs.DB, not db!
+        session = db.session    # sqlalchemy.orm.scoping.scoped_session
+        Security.set_user_sa()  # an endpoint that requires no auth header (see also @bypass_security)
+        the_order : models.Order = session.query(models.Order) \
+                .filter(models.Order.Id == request_id).one()
+        
+        dict_row = {}
+        dict_row["id"] = the_order.Id
+        dict_row["AmountTotal"] = the_order.AmountTotal
+        dict_row["SalesRepLastName"] = the_order.Employee.LastName
+        return jsonify({"order_with_join_attr":  dict_row})
 
 
     @app.route('/filters_cats')
@@ -263,39 +334,6 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         return_result = {"resources": resource_objs}
         return jsonify(return_result)
 
-  
-    def admin_required():
-        """
-        Support option to bypass security (see cats, below).
-
-        See: https://flask-jwt-extended.readthedocs.io/en/stable/custom_decorators/
-        """
-        def wrapper(fn):
-            @wraps(fn)
-            def decorator(*args, **kwargs):
-                if Args.security_enabled == False:
-                    return fn(*args, **kwargs)
-                verify_jwt_in_request(True)  # must be issued if security enabled
-                return fn(*args, **kwargs)
-            return decorator
-        return wrapper
-
-    @app.route('/CustomAPI/Customer', methods=['GET','OPTIONS'])
-    @admin_required()
-    @jwt_required()
-    @cross_origin(supports_credentials=True)
-    def CustomAPICustomer():
-        """ 
-        start the server (f5) and in the terminal window:
-        $(venv)ApiLogicServer login --user=admin --password=p
-        $(venv)ApiLogicServer curl "http://localhost:5656/CustomAPI/Customer?Id=ALFKI"
-        """
-        customer = Customer()
-        result = customer.execute(request)  # query for each level
-        # or, 1 big safrs call
-        #result = customer.get(request,"OrderList&OrderList.OrderDetailList&OrderList.OrderDetailList.Product", "ALFKI")
-        return result  # note calling: for each row (add'l attrs)
-
 class ServicesEndPoint(safrs.JABase):
     """
     Illustrates
@@ -364,7 +402,9 @@ class ServicesEndPoint(safrs.JABase):
     def add_b2b_order(self, *args, **kwargs):  # yaml comment => swagger description
         """ # yaml creates Swagger description
             args :
-                AccountId: ALFKI
+                AccountId: "ALFKI"
+                Given: "xx"
+                Surname: "yy"
                 Items :
                   - ProductName: "Chai"
                     QuantityOrdered: 1
@@ -372,15 +412,16 @@ class ServicesEndPoint(safrs.JABase):
                     QuantityOrdered: 2
         """
 
-        # test using swagger -> try it out (includes sample data, above)
+        order_id_def = OrderB2B()
+        request_dict_str = request.data.decode('utf-8')
+        request_dict = eval(request_dict_str)
+        request_dict_data = request_dict["order"]
+        sql_alchemy_row = order_id_def.to_row(request_dict_data)
 
         db = safrs.DB         # Use the safrs.DB, not db!
         session = db.session  # sqlalchemy.orm.scoping.scoped_session
-        new_order = models.Order()
-        session.add(new_order)
-
-        util.json_to_entities(kwargs, new_order)  # generic function - any db object
-        return {"Thankyou For Your Order"}  # automatic commit, which executes transaction logic
+        session.add(sql_alchemy_row)
+        return {"Thankyou For Your OrderB2B"}  # automatic commit, which executes transaction logic
     
     @classmethod
     # @jwt_required()
@@ -402,13 +443,13 @@ class ServicesEndPoint(safrs.JABase):
         order_id_def = OrderById()
         request_dict_str = request.data.decode('utf-8')
         request_dict = eval(request_dict_str)
-        request_dict_data = request_dict["order"]
+        request_dict_data = request_dict["order"] 
         sql_alchemy_row = order_id_def.to_row(request_dict_data)
 
         db = safrs.DB         # Use the safrs.DB, not db!
         session = db.session  # sqlalchemy.orm.scoping.scoped_session
         session.add(sql_alchemy_row)
-        pass
+        return {"Thankyou For Your OrderById"}  # automatic commit, which executes transaction logic
 
 
 class CategoriesEndPoint(safrs.JABase):

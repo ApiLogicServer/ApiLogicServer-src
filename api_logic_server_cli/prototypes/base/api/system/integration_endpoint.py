@@ -31,7 +31,8 @@ ApiLogicServer curl "'POST' 'http://localhost:5656/api/ServicesEndPoint/add_orde
 ApiLogicServer curl "'POST' 'http://localhost:5656/api/ServicesEndPoint/add_b2b_order'" --data '
 {"order": {
             "AccountId": "ALFKI",
-            "SalesRep": "??",
+            "Surname": "Buchanan",
+            "Given": "James",
             "Items": [
                 {
                 "ProductName": "Chai",
@@ -69,10 +70,10 @@ ApiLogicServer curl "'POST' 'http://localhost:5656/api/ServicesEndPoint/add_b2b_
                     print("Coding error - you need to use TUPLE for attr/alias")
                 row_as_dict[each_field.name] = getattr(row, each_field.name)
         
-        custom_endpoint_child_list = custom_endpoint.children
+        custom_endpoint_child_list = custom_endpoint.related
         if isinstance(custom_endpoint_child_list, list) is False:
             custom_endpoint_child_list = []
-            custom_endpoint_child_list.append(custom_endpoint.children)
+            custom_endpoint_child_list.append(custom_endpoint.related)
         for each_child_def in custom_endpoint_child_list:
             child_property_name = each_child_def.role_name
             if child_property_name == '':
@@ -117,10 +118,10 @@ ApiLogicServer curl "'POST' 'http://localhost:5656/api/ServicesEndPoint/add_b2b_
                     print("Coding error - you need to use TUPLE for attr/alias")
                 setattr(sql_alchemy_row, each_field.name, row_dict[each_field.name])
         
-        custom_endpoint_child_list = custom_endpoint.children
+        custom_endpoint_child_list = custom_endpoint.related
         if isinstance(custom_endpoint_child_list, list) is False:
             custom_endpoint_child_list = []
-            custom_endpoint_child_list.append(custom_endpoint.children)
+            custom_endpoint_child_list.append(custom_endpoint.related)
         for each_child_def in custom_endpoint_child_list:
             child_property_name = each_child_def.alias
             if child_property_name.startswith('Items'):

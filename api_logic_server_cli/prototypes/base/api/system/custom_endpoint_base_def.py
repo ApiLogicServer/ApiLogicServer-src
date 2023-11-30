@@ -24,22 +24,18 @@ class CustomEndpointBaseDef():
     """
     Nested CustomEndpoint Definition
 
-class Customer(LacEndpoint):
-    def __init__(self):
-        customer = super(Customer, self).__init__(
-            model_class=models.Customer
+        customer = CustomEndpoint(model_class=models.Customer
             , alias="customers"
             , fields = [(models.Customer.CompanyName, "Customer Name")] 
-            , children = 
-                LacEndpoint(model_class=models.Order
+            , related = 
+                CustomEndpoint(model_class=models.Order
                     , alias = "orders"
-                    # , role_name = "OrderList"
                     , join_on=models.Order.CustomerId
                     , fields = [(models.Order.AmountTotal, "Total"), (models.Order.ShippedDate, "Ship Date")]
-                    , children = LacEndpoint(model_class=models.OrderDetail, alias="details"
+                    , related = CustomEndpoint(model_class=models.OrderDetail, alias="details"
                         , join_on=models.OrderDetail.OrderId
                         , fields = [models.OrderDetail.Quantity, models.OrderDetail.Amount]
-                        , children = LacEndpoint(model_class=models.Product, alias="product"
+                        , related = CustomEndpoint(model_class=models.Product, alias="product"
                             , join_on=models.OrderDetail.ProductId
                             , fields=[models.Product.UnitPrice, models.Product.UnitsInStock]
                             , isParent=True
@@ -48,8 +44,9 @@ class Customer(LacEndpoint):
                     )
                 )
             )
-        # CustomEndpoint(model_class=models.OrderAudit, alias="orderAudit")  # sibling child
-        return customer
+        result = customer.execute(customer,"", "ALFKI")
+        # or
+        #result = customer.get(request,"OrderList&OrderList.OrderDetailList&OrderList.OrderDetailList.Product", "ALFKI")
     """
 
     def __init__(self
@@ -57,7 +54,8 @@ class Customer(LacEndpoint):
             , alias: str = ""
             , role_name: str = ""
             , fields: list[tuple[Column, str] | Column] = []
-            , children: list[CustomEndpointBaseDef] | CustomEndpointBaseDef = []
+            , lookup: list[tuple[Column, Column] ] = None
+            , related: list[CustomEndpointBaseDef] | CustomEndpointBaseDef = []
             , join_on: list[tuple[Column] | Column] = None
             , calling: callable = None
             , filter_by: str = None
@@ -73,7 +71,7 @@ class Customer(LacEndpoint):
             :model_class (DeclarativeMeta | None): model.TableName
             :alias (str, optional): _description_. Defaults to "".
             :fields (list[tuple[Column, str]  |  Column], optional): model.Table.Column. Defaults to [].
-            :children (list[CustomEndpoint] | CustomEndpoint, optional): CustomEndpoint(). Defaults to []. (OneToMany)
+            :related (list[CustomEndpoint] | CustomEndpoint, optional): CustomEndpoint(). Defaults to []. (OneToMany)
             join_on: list[tuple[Column, Column]] - this is a tuple of parent/child multiple field joins 
             :calling - name of function (passing row for virtual attributes or modification)
             :filter_by is string object in SQL format (e.g. '"ShipDate" != null')
@@ -84,8 +82,8 @@ class Customer(LacEndpoint):
         """
         if not model_class:
             raise ValueError("CustomEndpoint model_class=models.EntityName is required")
-        #if join_on is None and children is not None or parent is not None:
-        #    raise ValueError("join_on= is required if using children (child column)")
+        #if join_on is None and related is not None or parent is not None:
+        #    raise ValueError("join_on= is required if using related (child column)")
 
         self._model_class = model_class
         self.role_name = role_name
@@ -96,7 +94,8 @@ class Customer(LacEndpoint):
                 self.role_name = self.role_name + "List"
         self.alias = alias or self.role_name
         self.fields = fields
-        self.children = children or []
+        self.lookup = lookup
+        self.related = related or []
         self.calling = calling
         self.filter_by = filter_by
         self.order_by = order_by

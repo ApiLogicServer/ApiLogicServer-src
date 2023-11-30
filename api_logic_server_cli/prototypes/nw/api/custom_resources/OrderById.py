@@ -14,7 +14,7 @@ class OrderById(IntegrationEndpoint):
             model_class=models.Order
             , alias = "order"
             , fields = [(models.Order.CustomerId, "AccountId"), (models.Order.EmployeeId, 'SalesRepId')]
-            , children = IntegrationEndpoint(model_class=models.OrderDetail
+            , related = IntegrationEndpoint(model_class=models.OrderDetail
                 , alias="Items"
                 , join_on=models.OrderDetail.OrderId
                 , fields = [(models.OrderDetail.Quantity, "QuantityOrdered"), (models.OrderDetail.ProductId, "ProductId")]

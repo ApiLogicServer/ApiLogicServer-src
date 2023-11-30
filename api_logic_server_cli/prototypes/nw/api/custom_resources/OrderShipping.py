@@ -11,10 +11,10 @@ class OrderShipping(IntegrationEndpoint):
             # , role_name = "OrderList"
             # , join_on=models.Order.CustomerId
             , fields = [models.Order.Id, (models.Order.AmountTotal, "Total"), (models.Order.OrderDate, "Order Date"), models.Order.Ready]
-            , children = IntegrationEndpoint(model_class=models.OrderDetail, alias="Items"
+            , related = IntegrationEndpoint(model_class=models.OrderDetail, alias="Items"
                 , join_on=models.OrderDetail.OrderId
                 , fields = [models.OrderDetail.OrderId, models.OrderDetail.Quantity, models.OrderDetail.Amount]
-                , children = IntegrationEndpoint(model_class=models.Product, alias="product"
+                , related = IntegrationEndpoint(model_class=models.Product, alias="product"
                     , join_on=models.OrderDetail.ProductId
                     , fields=[models.Product.ProductName, models.Product.UnitPrice, models.Product.UnitsInStock]
                     , isParent=True
