@@ -9,21 +9,21 @@ class Customer(IntegrationEndpoint):
         customer = super(Customer, self).__init__(
             model_class=models.Customer
             , alias="customers"
-            , fields = [(models.Customer.CompanyName, "Customer Name")] 
+            , fields = [models.Customer.Id, (models.Customer.CompanyName, "Customer Name")] 
             , related = 
                 IntegrationEndpoint(model_class=Order
                     , alias = "orders"
                     # , role_name = "OrderList"
                     , join_on=Order.CustomerId
-                    , fields = [(Order.AmountTotal, "Total"), (Order.ShippedDate, "Ship Date")]  # FIXME fails , Order.Employee.LastName]
+                    , fields = [Order.Id, (Order.AmountTotal, "Total"), (Order.ShippedDate, "Ship Date")]  # FIXME fails , Order.Employee.LastName]
                     , related = IntegrationEndpoint(model_class=models.OrderDetail, alias="details"
                         , join_on=models.OrderDetail.OrderId
                         , fields = [models.OrderDetail.Quantity, models.OrderDetail.Amount]
                         , related = IntegrationEndpoint(model_class=models.Product, alias="product"
                             , join_on=models.OrderDetail.ProductId
-                            , fields=[models.Product.UnitPrice, models.Product.UnitsInStock]
+                            , fields=[models.Product.ProductName, models.Product.UnitPrice, models.Product.UnitsInStock]
                             , isParent=True
-                            , isCombined=False
+                            , isCombined=True
                         )
                     )
                 )

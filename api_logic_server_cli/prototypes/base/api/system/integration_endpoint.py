@@ -70,26 +70,30 @@ ApiLogicServer curl "'POST' 'http://localhost:5656/api/ServicesEndPoint/add_b2b_
                     print("Coding error - you need to use TUPLE for attr/alias")
                 row_as_dict[each_field.name] = getattr(row, each_field.name)
         
-        custom_endpoint_child_list = custom_endpoint.related
-        if isinstance(custom_endpoint_child_list, list) is False:
-            custom_endpoint_child_list = []
-            custom_endpoint_child_list.append(custom_endpoint.related)
-        for each_child_def in custom_endpoint_child_list:
-            child_property_name = each_child_def.role_name
+        custom_endpoint_related_list = custom_endpoint.related
+        if isinstance(custom_endpoint_related_list, list) is False:
+            custom_endpoint_related_list = []
+            custom_endpoint_related_list.append(custom_endpoint.related)
+        for each_related in custom_endpoint_related_list:
+            child_property_name = each_related.role_name
             if child_property_name == '':
                 child_property_name = "OrderList"  # FIXME default from class name
             if child_property_name.startswith('Product'):
                 debug = 'good breakpoint'
             row_dict_child_list = getattr(row, child_property_name)
-            row_as_dict[each_child_def.alias] = []
-            if each_child_def.isParent:
+            if each_related.isParent:
                 the_parent = getattr(row, child_property_name)
-                the_parent_to_dict = self.to_dict(row = the_parent, current_endpoint = each_child_def)
-                row_as_dict[each_child_def.alias].append(the_parent_to_dict)
+                the_parent_to_dict = self.to_dict(row = the_parent, current_endpoint = each_related)
+                if each_related.isCombined:
+                    for each_attr_name, each_attr_value in the_parent_to_dict.items():
+                        row_as_dict[each_attr_name] = each_attr_value
+                else:
+                    row_as_dict[each_related.alias] = the_parent_to_dict
             else:
+                row_as_dict[each_related.alias] = []
                 for each_child in row_dict_child_list:
-                    each_child_to_dict = self.to_dict(row = each_child, current_endpoint = each_child_def)
-                    row_as_dict[each_child_def.alias].append(each_child_to_dict)
+                    each_child_to_dict = self.to_dict(row = each_child, current_endpoint = each_related)
+                    row_as_dict[each_related.alias].append(each_child_to_dict)
         return row_as_dict
     
 
@@ -118,24 +122,24 @@ ApiLogicServer curl "'POST' 'http://localhost:5656/api/ServicesEndPoint/add_b2b_
                     print("Coding error - you need to use TUPLE for attr/alias")
                 setattr(sql_alchemy_row, each_field.name, row_dict[each_field.name])
         
-        custom_endpoint_child_list = custom_endpoint.related
-        if isinstance(custom_endpoint_child_list, list) is False:
-            custom_endpoint_child_list = []
-            custom_endpoint_child_list.append(custom_endpoint.related)
-        for each_child_def in custom_endpoint_child_list:
-            child_property_name = each_child_def.alias
+        custom_endpoint_related_list = custom_endpoint.related
+        if isinstance(custom_endpoint_related_list, list) is False:
+            custom_endpoint_related_list = []
+            custom_endpoint_related_list.append(custom_endpoint.related)
+        for each_related in custom_endpoint_related_list:
+            child_property_name = each_related.alias
             if child_property_name.startswith('Items'):
                 debug = 'good breakpoint'
             if child_property_name in row_dict:
                 row_dict_child_list = row_dict[child_property_name]
-                # row_as_dict[each_child_def.alias] = []  # set up row_dict child array
-                if each_child_def.isParent:  # FIXME not support (but TODO Lookup!)
+                # row_as_dict[each_related.alias] = []  # set up row_dict child array
+                if each_related.isParent:  # FIXME not support (but TODO Lookup!)
                     the_parent = getattr(row, child_property_name)
-                    the_parent_to_dict = self.to_dict(row = the_parent, current_endpoint = each_child_def)
-                    row_as_dict[each_child_def.alias].append(the_parent_to_dict)
+                    the_parent_to_dict = self.to_dict(row = the_parent, current_endpoint = each_related)
+                    row_as_dict[each_related.alias].append(the_parent_to_dict)
                 else:
                     for each_row_dict_child in row_dict_child_list:  # recurse for each_child
-                        each_child_row = self.to_row(row_dict = each_row_dict_child, current_endpoint = each_child_def)
-                        child_list = getattr(sql_alchemy_row, each_child_def.role_name)
+                        each_child_row = self.to_row(row_dict = each_row_dict_child, current_endpoint = each_related)
+                        child_list = getattr(sql_alchemy_row, each_related.role_name)
                         child_list.append(each_child_row)
         return sql_alchemy_row

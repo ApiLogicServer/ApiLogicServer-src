@@ -287,8 +287,9 @@ def declare_logic():
         """
 
         order_def = OrderShipping()
-        json_order = order_def.to_dict(row = row)
-        # json_order = jsonify({"order", "result", result})
+        order_dict = order_def.to_dict(row = row)
+        json_order_response = jsonify({"order": order_dict})
+        json_order = json_order_response.data.decode('utf-8')
         print(f'\n\nSend to Shipping:\n{json_order}')
 
     Rule.after_flush_row_event(on_class=models.Order, calling=send_order_to_shipping)

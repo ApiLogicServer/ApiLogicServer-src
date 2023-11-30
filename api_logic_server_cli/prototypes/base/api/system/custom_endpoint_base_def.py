@@ -61,7 +61,7 @@ class CustomEndpointBaseDef():
             , filter_by: str = None
             , order_by: Column = None
             , isParent: bool = False
-            , isCombined: bool = False
+            , isCombined: bool = True
             ):
         """
 

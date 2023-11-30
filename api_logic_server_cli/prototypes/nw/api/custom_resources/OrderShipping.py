@@ -18,7 +18,6 @@ class OrderShipping(IntegrationEndpoint):
                     , join_on=models.OrderDetail.ProductId
                     , fields=[models.Product.ProductName, models.Product.UnitPrice, models.Product.UnitsInStock]
                     , isParent=True
-                    , isCombined=False
                 )
             )
         )
