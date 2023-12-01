@@ -1,13 +1,22 @@
 # Purpose
 
-This app is an investigation of using Custom Resources to create a new message-based demo:
+This app illustrates using Custom Resources to create a new message-based system:
 
-1. API - partner posts B2B Order (existing add_order API, or better a new Custom API) to NW
-2. NW Order logic uses Custom Resources to format message representing the new Order, and sends with Kafka to Shipping.
-    * This may be new functionality on CustomResource
-3. Shipping (new sample app) listens on kafka, and stores the message which updates <whatever> using logic
+There are 2 **transaction sources:**
 
-![overview](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/messages/overview.png?raw=true)
+1. B2B partners
+2. Internal UI
+
+The **Northwind API Logic Server** provides APIs and the underlying logic for both transaction sources:
+1. API - a self-serve API, here used by UI developers to build the Order Entry UI
+2. Order Logic: shared over both transaction sources, this logic
+
+    1. Enforces database integrity (checks credit, reorders products)
+    2. Provides application integration services to format an order to alert shipping with a Kafka message.  Unlike APIs, messages are lost if the receiving server (Shipping) is down
+
+The **Shipping API Logic Server** listens on kafka, and stores the message which updates <whatever> using logic
+
+![overview](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/messages/overview.jpg?raw=true)
 
 &nbsp;
 
