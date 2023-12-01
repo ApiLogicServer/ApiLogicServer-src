@@ -140,8 +140,8 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         SQLAlchemy row retrieval, reformat as multi-table dict => json
 
         start the server (f5) and in the terminal window:
-        $(venv)ApiLogicServer login --user=admin --password=p
-        $(venv)ApiLogicServer curl "http://localhost:5656/CustomAPI/Customer?Id=ALFKI"
+        $(venv) ApiLogicServer login --user=admin --password=p
+        $(venv) ApiLogicServer curl "http://localhost:5656/CustomAPI/Customer?Id=ALFKI"
         """
         request_id = request.args.get('Id')
         if request_id is None:
@@ -164,7 +164,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         """
         Illustrates: SQLAlchemy join fields
 
-        $(venv)ApiLogicServer curl "http://localhost:5656/join_order?id=11077"
+        $(venv) ApiLogicServer curl "http://localhost:5656/join_order?id=11077"
 
         Returns:
             _type_: _description_
@@ -220,7 +220,8 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         """ 
         SQLAlchemy row retrieval, reformat as multi-table dict => json
 
-        ApiLogicServer curl "http://localhost:5656/join_order_b2b?id=11077"
+        $(venv) ApiLogicServer login --user=admin --password=p
+        $(venv) ApiLogicServer curl "http://localhost:5656/join_order_b2b?id=11077"
 
         """
         request_id = request.args.get('id')
