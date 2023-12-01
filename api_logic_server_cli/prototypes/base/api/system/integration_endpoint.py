@@ -32,7 +32,7 @@ ApiLogicServer curl "'POST' 'http://localhost:5656/api/ServicesEndPoint/add_b2b_
 {"order": {
             "AccountId": "ALFKI",
             "Surname": "Buchanan",
-            "Given": "James",
+            "Given": "Steven",
             "Items": [
                 {
                 "ProductName": "Chai",
@@ -97,7 +97,7 @@ ApiLogicServer curl "'POST' 'http://localhost:5656/api/ServicesEndPoint/add_b2b_
         return row_as_dict
     
 
-    def to_row(self, row_dict: dict, current_endpoint: 'IntegrationEndpoint' = None) -> object:
+    def to_row(self, row_dict: dict, session: object, current_endpoint: 'IntegrationEndpoint' = None) -> object:
         """Returns SQLAlchemy row(s), converted from safrs-request per subclass custom resource
 
         Args:
@@ -128,18 +128,52 @@ ApiLogicServer curl "'POST' 'http://localhost:5656/api/ServicesEndPoint/add_b2b_
             custom_endpoint_related_list.append(custom_endpoint.related)
         for each_related in custom_endpoint_related_list:
             child_property_name = each_related.alias
-            if child_property_name.startswith('Items'):
+            if child_property_name.startswith('SalesRep'):
                 debug = 'good breakpoint'
-            if child_property_name in row_dict:
-                row_dict_child_list = row_dict[child_property_name]
-                # row_as_dict[each_related.alias] = []  # set up row_dict child array
-                if each_related.isParent:  # FIXME not support (but TODO Lookup!)
-                    the_parent = getattr(row, child_property_name)
-                    the_parent_to_dict = self.to_dict(row = the_parent, current_endpoint = each_related)
-                    row_as_dict[each_related.alias].append(the_parent_to_dict)
-                else:
+            if each_related.isParent:  # lookup
+                    self.lookup_parent(child_row_dict = row_dict, 
+                                       lookup_parent_endpoint = each_related, 
+                                       child_row = sql_alchemy_row,
+                                       session = session)
+            else:
+                if child_property_name in row_dict:
+                    row_dict_child_list = row_dict[child_property_name]
+                    # row_as_dict[each_related.alias] = []  # set up row_dict child array
                     for each_row_dict_child in row_dict_child_list:  # recurse for each_child
-                        each_child_row = self.to_row(row_dict = each_row_dict_child, current_endpoint = each_related)
+                        each_child_row = self.to_row(row_dict = each_row_dict_child, 
+                                                        session = session,
+                                                        current_endpoint = each_related)
                         child_list = getattr(sql_alchemy_row, each_related.role_name)
                         child_list.append(each_child_row)
         return sql_alchemy_row
+    
+
+    def lookup_parent(self, child_row_dict: dict, child_row: object,
+                      session: object, lookup_parent_endpoint: 'IntegrationEndpoint' = None):
+        parent_class = lookup_parent_endpoint._model_class
+        # parent_dict = getattr(row_dict, child_property_name)
+        # filter = []
+        query = session.query(parent_class)
+        if lookup_parent_endpoint.lookup is not None:
+            lookup_param_fields = lookup_parent_endpoint.lookup
+            if isinstance(lookup_param_fields, str):
+                lookup_param_fields = lookup_parent_endpoint.fields
+            for each_lookup_param_field in lookup_param_fields:
+                attr_name = each_lookup_param_field
+                if isinstance(each_lookup_param_field, tuple):
+                    col_def = each_lookup_param_field[0]
+                    attr_name = each_lookup_param_field[1]
+                else:
+                    col_def = each_lookup_param_field
+                    attr_name = each_lookup_param_field.name
+                filter_parm = child_row_dict[attr_name]
+                filter_val = child_row_dict[attr_name]
+                query = query.filter(col_def == filter_val)
+                pass
+            parent_rows = query.all()
+            if parent_rows is not None:
+                if len(parent_rows) > 1:
+                    raise ValueError('Lookup failed: multiple parents', child_row, str(lookup_parent_endpoint)) 
+                parent_row = parent_rows[0]
+                setattr(child_row, lookup_parent_endpoint.role_name, parent_row)
+        return

@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "09.05.19"
+__version__ = "09.05.20"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t11/30/2023 - 09.05.19: Custom endpoint order parents, No sql logging in rules, nw msgs, curl post \n"\
+    "\t12/01/2023 - 09.05.19: Add order - map & lookup, No sql logging in rules, nw msgs, curl post \n"\
     "\t11/19/2023 - 09.05.14: Run Config: Create servers/ApiLogicProject (new IDE) -- nw+, curl, curr-proj \n"\
     "\t11/12/2023 - 09.05.08: multi-db bug fix (24) \n"\
     "\t11/07/2023 - 09.05.07: basic_demo: scripted customizations, iteration \n"\

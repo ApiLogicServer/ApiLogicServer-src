@@ -21,12 +21,30 @@ class OrderB2B(IntegrationEndpoint):
             # , role_name = "OrderList"
             # , join_on=models.Order.CustomerId
             , fields = [(models.Order.CustomerId, "AccountId")]
-            , lookup = ( models.Employee, [(models.Employee.LastName, 'Surname'), (models.Employee.FirstName, 'Given')] )
-            , related = IntegrationEndpoint(model_class=models.OrderDetail
-                , alias="Items"
-                , join_on=models.OrderDetail.OrderId
-                , fields = [(models.OrderDetail.Quantity, "QuantityOrdered")]
-            )
+            , related = [
+                (IntegrationEndpoint(model_class=models.OrderDetail
+                    , alias="Items"
+                    , join_on=models.OrderDetail.OrderId
+                    , fields = [(models.OrderDetail.Quantity, "QuantityOrdered")]
+                    , related = [
+                        (IntegrationEndpoint(model_class=models.Product
+                        , alias="Product"
+                        , isParent = True
+                        , fields = [models.Product.ProductName]
+                        , lookup = "*" ) 
+                        )                       
+                    ]
+                    )
+                )
+                , (IntegrationEndpoint(model_class=models.Employee
+                    , alias="SalesRep"
+                    , isParent = True
+                    , join_on=models.Employee.Id
+                    , fields = [(models.Employee.LastName, 'Surname'), (models.Employee.FirstName, 'Given')]
+                    , lookup = [(models.Employee.LastName, 'Surname'), (models.Employee.FirstName, 'Given')] 
+                    )
+                )
+            ]
         )
 
         # CustomEndpoint(model_class=models.OrderAudit, alias="orderAudit")  # sibling child

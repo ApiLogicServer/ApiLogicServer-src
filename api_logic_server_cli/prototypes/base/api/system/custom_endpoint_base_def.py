@@ -54,7 +54,7 @@ class CustomEndpointBaseDef():
             , alias: str = ""
             , role_name: str = ""
             , fields: list[tuple[Column, str] | Column] = []
-            , lookup: list[tuple[Column, Column] ] = None
+            , lookup: list[tuple[Column, str] ] = None
             , related: list[CustomEndpointBaseDef] | CustomEndpointBaseDef = []
             , join_on: list[tuple[Column] | Column] = None
             , calling: callable = None
@@ -125,6 +125,5 @@ class CustomEndpointBaseDef():
         self._columnNames = [k.key for k in self._model_class._s_columns]
 
     def __str__(self):
-            print(
-                f"Alias {self.alias} Model: {self._model_class.__name__} PrimaryKey: {self.primaryKey} FilterBy: {self.filter_by} OrderBy: {self.order_by}")
+            return f"Alias {self.alias} -- Model: {self._model_class.__name__} PrimaryKey: {self.primaryKey} FilterBy: {self.filter_by} OrderBy: {self.order_by}"
 

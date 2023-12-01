@@ -194,13 +194,10 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         """ 
         SQLAlchemy row retrieval, reformat as multi-table dict => json
 
-        ApiLogicServer curl "http://localhost:5656/join_order_custom?id=11077"
+        $(venv) ApiLogicServer login --user=admin --password=p
+        $(venv) ApiLogicServer curl "http://localhost:5656/join_order_custom?id=11077"
 
         """
-        request_id = request.args.get('Id')
-        if request_id is None:
-            request_id = 'ALFKI'
-
         request_id = request.args.get('id')
         if request_id is None:
             request_id = 11078
@@ -211,6 +208,31 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
                 .filter(models.Order.Id == request_id).one()
         
         order_def = OrderShipping()
+        dict_row = order_def.to_dict(row = the_order)
+        return jsonify({"Order with related data":  dict_row})
+
+
+    @app.route('/join_order_b2b', methods=['GET','OPTIONS'])
+    @admin_required()
+    @jwt_required()
+    @cross_origin(supports_credentials=True)
+    def join_order_b2b():
+        """ 
+        SQLAlchemy row retrieval, reformat as multi-table dict => json
+
+        ApiLogicServer curl "http://localhost:5656/join_order_b2b?id=11077"
+
+        """
+        request_id = request.args.get('id')
+        if request_id is None:
+            request_id = 11078
+        db = safrs.DB           # Use the safrs.DB, not db!
+        session = db.session    # sqlalchemy.orm.scoping.scoped_session
+        Security.set_user_sa()  # an endpoint that requires no auth header (see also @bypass_security)
+        the_order : models.Order = session.query(models.Order) \
+                .filter(models.Order.Id == request_id).one()
+        
+        order_def = OrderB2B()
         dict_row = order_def.to_dict(row = the_order)
         return jsonify({"Order with related data":  dict_row})
 
@@ -450,14 +472,15 @@ class ServicesEndPoint(safrs.JABase):
                     QuantityOrdered: 2
         """
 
+        db = safrs.DB         # Use the safrs.DB, not db!
+        session = db.session  # sqlalchemy.orm.scoping.scoped_session
+
         order_id_def = OrderB2B()
         request_dict_str = request.data.decode('utf-8')
         request_dict = eval(request_dict_str)
         request_dict_data = request_dict["order"]
-        sql_alchemy_row = order_id_def.to_row(request_dict_data)
+        sql_alchemy_row = order_id_def.to_row(row_dict = request_dict_data, session = session)
 
-        db = safrs.DB         # Use the safrs.DB, not db!
-        session = db.session  # sqlalchemy.orm.scoping.scoped_session
         session.add(sql_alchemy_row)
         return {"Thankyou For Your OrderB2B"}  # automatic commit, which executes transaction logic
     
@@ -478,14 +501,15 @@ class ServicesEndPoint(safrs.JABase):
 
         # test using swagger -> try it out (includes sample data, above)
 
+        db = safrs.DB         # Use the safrs.DB, not db!
+        session = db.session  # sqlalchemy.orm.scoping.scoped_session
+
         order_id_def = OrderById()
         request_dict_str = request.data.decode('utf-8')
         request_dict = eval(request_dict_str)
         request_dict_data = request_dict["order"] 
-        sql_alchemy_row = order_id_def.to_row(request_dict_data)
+        sql_alchemy_row = order_id_def.to_row(row_dict = request_dict_data, session = session)
 
-        db = safrs.DB         # Use the safrs.DB, not db!
-        session = db.session  # sqlalchemy.orm.scoping.scoped_session
         session.add(sql_alchemy_row)
         return {"Thankyou For Your OrderById"}  # automatic commit, which executes transaction logic
 
