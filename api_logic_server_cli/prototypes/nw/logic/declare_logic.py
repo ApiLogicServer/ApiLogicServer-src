@@ -8,7 +8,7 @@ import api.system.opt_locking.opt_locking as opt_locking
 from security.system.authorization import Grant
 import logging
 from flask import jsonify
-from api.custom_resources.OrderShipping import OrderShipping
+from api.integration_defs.OrderShipping import OrderShipping
 
 
 preferred_approach = True

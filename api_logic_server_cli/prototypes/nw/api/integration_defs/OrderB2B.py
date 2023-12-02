@@ -1,4 +1,4 @@
-from api.system.integration_endpoint import IntegrationEndpoint
+from api.system.integration_services import IntegrationServices
 from database import models
 from database.models import Employee
 from flask import request, jsonify
@@ -8,7 +8,7 @@ models.Order.Employee.label
 
 models.Employee.LastName
 
-class OrderB2B(IntegrationEndpoint):
+class OrderB2B(IntegrationServices):
     def __init__(self):
         """TODO
 
@@ -22,12 +22,12 @@ class OrderB2B(IntegrationEndpoint):
             # , join_on=models.Order.CustomerId
             , fields = [(models.Order.CustomerId, "AccountId")]
             , related = [
-                (IntegrationEndpoint(model_class=models.OrderDetail
+                (IntegrationServices(model_class=models.OrderDetail
                     , alias="Items"
                     , join_on=models.OrderDetail.OrderId
                     , fields = [(models.OrderDetail.Quantity, "QuantityOrdered")]
                     , related = [
-                        (IntegrationEndpoint(model_class=models.Product
+                        (IntegrationServices(model_class=models.Product
                         , alias="Product"
                         , isParent = True
                         , fields = [models.Product.ProductName]
@@ -36,7 +36,7 @@ class OrderB2B(IntegrationEndpoint):
                     ]
                     )
                 )
-                , (IntegrationEndpoint(model_class=models.Employee
+                , (IntegrationServices(model_class=models.Employee
                     , alias="SalesRep"
                     , isParent = True
                     , join_on=models.Employee.Id

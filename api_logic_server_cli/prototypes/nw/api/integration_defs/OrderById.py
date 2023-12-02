@@ -1,9 +1,9 @@
-from api.system.integration_endpoint import IntegrationEndpoint
+from api.system.integration_services import IntegrationServices
 from database import models
 from flask import request, jsonify
 from sqlalchemy import Column
 
-class OrderById(IntegrationEndpoint):
+class OrderById(IntegrationServices):
     def __init__(self):
         """TODO
 
@@ -14,7 +14,7 @@ class OrderById(IntegrationEndpoint):
             model_class=models.Order
             , alias = "order"
             , fields = [(models.Order.CustomerId, "AccountId"), (models.Order.EmployeeId, 'SalesRepId')]
-            , related = IntegrationEndpoint(model_class=models.OrderDetail
+            , related = IntegrationServices(model_class=models.OrderDetail
                 , alias="Items"
                 , join_on=models.OrderDetail.OrderId
                 , fields = [(models.OrderDetail.Quantity, "QuantityOrdered"), (models.OrderDetail.ProductId, "ProductId")]

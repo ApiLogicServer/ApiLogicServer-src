@@ -20,7 +20,7 @@ class DotDict(dict):
     __setattr__ = dict.__setitem__
     __delattr__ = dict.__delitem__
     
-class CustomEndpointBaseDef():
+class IntegrationDef():
     """
     Nested CustomEndpoint Definition
 

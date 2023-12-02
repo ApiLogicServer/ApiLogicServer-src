@@ -12,14 +12,14 @@ from safrs import jsonapi_rpc, SAFRSAPI
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import object_mapper
 from database import models
-from api.system.integration_endpoint import IntegrationEndpoint
 from config import Args
 from flask_cors import cross_origin
 from logic_bank.rule_bank.rule_bank import RuleBank
-from api.custom_resources.Customer import Customer
-from api.custom_resources.OrderById import OrderById
-from api.custom_resources.OrderB2B import OrderB2B
-from api.custom_resources.OrderShipping import OrderShipping
+from api.integration_defs.Customer import Customer
+from api.integration_defs.OrderById import OrderById
+from api.integration_defs.OrderB2B import OrderB2B
+from api.integration_defs.OrderShipping import OrderShipping
+
 
 # Customize this file to add endpoints/services, using SQLAlchemy as required
 #     Separate from expose_api_models.py, to simplify merge if project rebuilt

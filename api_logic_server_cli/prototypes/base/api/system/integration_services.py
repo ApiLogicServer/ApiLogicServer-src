@@ -1,9 +1,9 @@
 from database import models
 from flask import request, jsonify
 from sqlalchemy import Column
-from api.system.custom_endpoint_base_def import CustomEndpointBaseDef
+from api.system.integration_def import IntegrationDef
 
-class IntegrationEndpoint(CustomEndpointBaseDef):
+class IntegrationServices(IntegrationDef):
     """Services to support App Integration as described in api.custom_resources.readme
 
     Args:
@@ -48,7 +48,7 @@ ApiLogicServer curl "'POST' 'http://localhost:5656/api/ServicesEndPoint/add_b2b_
 
     '''
     
-    def to_dict(self, row: object, current_endpoint: 'IntegrationEndpoint' = None) -> dict:
+    def to_dict(self, row: object, current_endpoint: 'IntegrationServices' = None) -> dict:
         """returns row as dict per custom resource definition, with subobjects
 
         Args:
