@@ -195,12 +195,12 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         SQLAlchemy row retrieval, reformat as multi-table dict => json
 
         $(venv) ApiLogicServer login --user=admin --password=p
-        $(venv) ApiLogicServer curl "http://localhost:5656/join_order_custom?id=11077"
+        $(venv) ApiLogicServer curl "http://localhost:5656/join_order_custom?id=10643"
 
         """
         request_id = request.args.get('id')
         if request_id is None:
-            request_id = 11078
+            request_id = 10643
         db = safrs.DB           # Use the safrs.DB, not db!
         session = db.session    # sqlalchemy.orm.scoping.scoped_session
         Security.set_user_sa()  # an endpoint that requires no auth header (see also @bypass_security)
@@ -472,6 +472,8 @@ class ServicesEndPoint(safrs.JABase):
                   - ProductName: "Chang"
                     QuantityOrdered: 2
         """
+
+        # See: https://apilogicserver.github.io/Docs/Sample-Integration/
 
         db = safrs.DB         # Use the safrs.DB, not db!
         session = db.session  # sqlalchemy.orm.scoping.scoped_session

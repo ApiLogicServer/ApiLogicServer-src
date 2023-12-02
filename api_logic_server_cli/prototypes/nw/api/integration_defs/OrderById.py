@@ -4,11 +4,17 @@ from flask import request, jsonify
 from sqlalchemy import Column
 
 class OrderById(IntegrationServices):
+    
     def __init__(self):
-        """TODO
+        """ Illustrates poor API definition.
+
+        Undesirable that client must provide SalesRepId and ProductId.
+
+        * Requires they 'lookup' the IDs from the name
+        * Better: use the automated lookup function: @see OrderB2B.
 
         Returns:
-            _type_: _description_
+            _type_: IntegrationServices object
         """
         order = super(OrderById, self).__init__(
             model_class=models.Order
@@ -16,10 +22,8 @@ class OrderById(IntegrationServices):
             , fields = [(models.Order.CustomerId, "AccountId"), (models.Order.EmployeeId, 'SalesRepId')]
             , related = IntegrationServices(model_class=models.OrderDetail
                 , alias="Items"
-                , join_on=models.OrderDetail.OrderId
                 , fields = [(models.OrderDetail.Quantity, "QuantityOrdered"), (models.OrderDetail.ProductId, "ProductId")]
             )
         )
 
-        # CustomEndpoint(model_class=models.OrderAudit, alias="orderAudit")  # sibling child
         return order

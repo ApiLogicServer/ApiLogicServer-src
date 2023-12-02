@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "09.05.21"
+__version__ = "09.05.22"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t12/01/2023 - 09.05.21: Add order: map & lookup, No sql logging in rules, nw msgs, curl post \n"\
+    "\t12/02/2023 - 09.05.22: Add order: map & lookup, No sql logging in rules, nw msgs, curl post \n"\
     "\t11/19/2023 - 09.05.14: Run Config: Create servers/ApiLogicProject (new IDE) -- nw+, curl, curr-proj \n"\
     "\t11/12/2023 - 09.05.08: multi-db bug fix (24) \n"\
     "\t11/07/2023 - 09.05.07: basic_demo: scripted customizations, iteration \n"\
@@ -443,16 +443,16 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
 
             create_nw_tutorial(project.project_directory, api_logic_server_dir_str)
 
+            copy_md(project = project,
+                    from_doc_file="Sample-Integration.md",
+                    to_project_file='api/integration_defs/readme.md')
+            
+
         if project.nw_db_status in ["nw+"]:
             log.debug(".. ..Copy in nw+ customizations: readme, perform_customizations")
             nw_dir = (Path(api_logic_server_dir_str)).\
                 joinpath('prototypes/nw_plus')
             recursive_overwrite(nw_dir, project.project_directory)
-            custom_services_dir = (Path(api_logic_server_dir_str)).\
-                joinpath('model_migrator/system')
-            project_api_system_dir = project.project_directory_path.\
-                joinpath("api/system")
-            recursive_overwrite(custom_services_dir, project_api_system_dir)
 
         if project.nw_db_status in ["nw-"]:
             log.debug(".. ..Copy in nw- customizations: readme, perform_customizations")
