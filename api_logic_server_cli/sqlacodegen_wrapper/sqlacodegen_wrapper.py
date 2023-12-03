@@ -52,6 +52,7 @@ import os, sys
 from pathlib import Path
 from os.path import abspath
 from api_logic_server_cli.cli_args_project import Project
+import oracledb
 
 log = logging.getLogger(__name__)
 
@@ -279,16 +280,17 @@ def create_models_memstring(args) -> str:
         str: to be written to models.py
     """
 
-    thick_mode = None  # requires install: https://python-oracledb.readthedocs.io/en/latest/user_guide/installation.html#installing-python-oracledb-on-macos
-    oracle_thick = ""  # installs to, eg, /Users/val/Downloads/instantclient_19_16
     if os.getenv('APILOGICSERVER_ORACLE_THICK'):
-        oracle_thick = os.getenv('APILOGICSERVER_ORACLE_THICK')
-    if oracle_thick != "":
-        thick_mode = {"lib_dir": oracle_thick}
-        engine = create_engine(args.url, thick_mode=thick_mode)  # type _engine.Engine
-    else:  # SQLAlchemy complains if using thick_mode on non-oracle
-        engine = create_engine(args.url)  # type _engine.Engine
+        oracledb.init_oracle_client(lib_dir=os.getenv('APILOGICSERVER_ORACLE_THICK'))
+    engine = create_engine(args.url)  # type _engine.Engine
+
     metadata = MetaData()
+    if os.getenv('APILOGICSERVER_ORACLE_THICK'):
+        with engine.connect() as connection:
+            log.debug(connection.scalar(text("""SELECT UNIQUE CLIENT_DRIVER
+                                            FROM V$SESSION_CONNECT_INFO
+                                            WHERE SID = SYS_CONTEXT('USERENV', 'SID')""")))
+
 
     try:
         metadata.reflect(bind=engine)  # loads metadata.tables

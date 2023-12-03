@@ -32,7 +32,9 @@ if use_env:
 # To use python-oracledb Thick mode on macOS (Intel x86).
 # follow: https://python-oracledb.readthedocs.io/en/latest/user_guide/installation.html#installing-python-oracledb-on-macos
 # installs to: /Users/val/Downloads/instantclient_19_16 (change next line as required)
-thick_mode = {"lib_dir": os.environ.get("HOME")+"/Downloads/instantclient_19_16"}
+if thick_mode:
+    oracledb.init_oracle_client(lib_dir=os.environ.get("HOME")+"/Downloads/instantclient_19_16")
+
 
 # To use python-oracledb Thick mode on Windows
 #thick_mode = {"lib_dir": r"C:\oracle\instantclient_19_15"}
@@ -59,8 +61,8 @@ else:
 
     if use_sql_alchemy:
         engine = create_engine(
-            f'oracle+oracledb://{username}:{password}@{host}:{port}/?service_name={service_name}',
-                thick_mode=thick_mode)
+            f'oracle+oracledb://{username}:{password}@{host}:{port}/?service_name={service_name}')
+            # thick_mode=thick_mode) not required due to oracledb.init_oracle_client
         with engine.connect() as connection:
             print(connection.scalar(text("""SELECT UNIQUE CLIENT_DRIVER
                                             FROM V$SESSION_CONNECT_INFO
