@@ -464,8 +464,8 @@ class ServicesEndPoint(safrs.JABase):
         """ # yaml creates Swagger description
             args :
                 AccountId: "ALFKI"
-                Given: "xx"
-                Surname: "yy"
+                Given: "Buchanan"
+                Surname: "Steven"
                 Items :
                   - ProductName: "Chai"
                     QuantityOrdered: 1
@@ -478,11 +478,11 @@ class ServicesEndPoint(safrs.JABase):
         db = safrs.DB         # Use the safrs.DB, not db!
         session = db.session  # sqlalchemy.orm.scoping.scoped_session
 
-        order_id_def = OrderB2B()
+        order_b2b_def = OrderB2B()
         request_dict_str = request.data.decode('utf-8')
         request_dict = eval(request_dict_str)
         request_dict_data = request_dict["order"]
-        sql_alchemy_row = order_id_def.to_row(row_dict = request_dict_data, session = session)
+        sql_alchemy_row = order_b2b_def.to_row(row_dict = request_dict_data, session = session)
 
         session.add(sql_alchemy_row)
         return {"Thankyou For Your OrderB2B"}  # automatic commit, which executes transaction logic
