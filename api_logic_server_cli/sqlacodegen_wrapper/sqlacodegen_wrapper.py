@@ -285,7 +285,9 @@ def create_models_memstring(args) -> str:
         oracle_thick = os.getenv('APILOGICSERVER_ORACLE_THICK')
     if oracle_thick != "":
         thick_mode = {"lib_dir": oracle_thick}
-    engine = create_engine(args.url, thick_mode=thick_mode)  # type _engine.Engine
+        engine = create_engine(args.url, thick_mode=thick_mode)  # type _engine.Engine
+    else:  # SQLAlchemy complains if using thick_mode on non-oracle
+        engine = create_engine(args.url)  # type _engine.Engine
     metadata = MetaData()
 
     try:
