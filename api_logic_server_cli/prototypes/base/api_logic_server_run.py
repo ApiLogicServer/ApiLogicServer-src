@@ -79,6 +79,7 @@ from safrs import ValidationError, SAFRSBase, SAFRSAPI
 import ui.admin.admin_loader as AdminLoader
 from security.system.authentication import configure_auth
 import database.multi_db as multi_db
+import oracledb
 
 
 class SAFRSAPI(_SAFRSAPI):
@@ -243,6 +244,7 @@ def api_logic_server_setup(flask_app: Flask, args: Args):
                 oracle_thick = os.getenv('APILOGICSERVER_ORACLE_THICK')
             if oracle_thick != "":  # eg, /Users/val/Downloads/instantclient_19_16
                 thick_mode = {"lib_dir": oracle_thick}
+                oracledb.init_oracle_client(lib_dir=oracle_thick)
                 # engine = create_engine(args.url, thick_mode=thick_mode)  # type _engine.Engine
 
             db = safrs.DB  # valid only after is initialized, above
