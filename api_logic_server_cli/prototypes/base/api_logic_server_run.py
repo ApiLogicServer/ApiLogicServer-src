@@ -238,6 +238,13 @@ def api_logic_server_setup(flask_app: Flask, args: Args):
             safrs_api = SAFRSAPI(flask_app, app_db= db, host=args.swagger_host, port=args.swagger_port, client_uri=args.client_uri,
                                  prefix = args.api_prefix, custom_swagger=custom_swagger)
 
+            oracle_thick = ""
+            if os.getenv('APILOGICSERVER_ORACLE_THICK'):
+                oracle_thick = os.getenv('APILOGICSERVER_ORACLE_THICK')
+            if oracle_thick != "":  # eg, /Users/val/Downloads/instantclient_19_16
+                thick_mode = {"lib_dir": oracle_thick}
+                # engine = create_engine(args.url, thick_mode=thick_mode)  # type _engine.Engine
+
             db = safrs.DB  # valid only after is initialized, above
             session: Session = db.session
 

@@ -279,11 +279,16 @@ def create_models_memstring(args) -> str:
         str: to be written to models.py
     """
 
-    engine = create_engine(args.url)  # type _engine.Engine
-    metadata = MetaData()  # SQLAlchemy 1.4: metadata = MetaData(engine)
+    thick_mode = None  # requires install: https://python-oracledb.readthedocs.io/en/latest/user_guide/installation.html#installing-python-oracledb-on-macos
+    oracle_thick = ""  # installs to, eg, /Users/val/Downloads/instantclient_19_16
+    if os.getenv('APILOGICSERVER_ORACLE_THICK'):
+        oracle_thick = os.getenv('APILOGICSERVER_ORACLE_THICK')
+    if oracle_thick != "":
+        thick_mode = {"lib_dir": oracle_thick}
+    engine = create_engine(args.url, thick_mode=thick_mode)  # type _engine.Engine
+    metadata = MetaData()
 
     try:
-        # metadata.reflect(engine, args.schema, not args.noviews, tables)  # load metadata - this opens the db
         metadata.reflect(bind=engine)  # loads metadata.tables
     except:
         track = traceback.format_exc()
@@ -292,7 +297,6 @@ def create_models_memstring(args) -> str:
         # log.info(f'.. See example above\n')
         # print_uri_info()
         log.info(f'\n...see https://apilogicserver.github.io/Docs/Troubleshooting/#database-failed-to-open \n\n')
-        # log.info(f'\n***** Database failed to open: {args.url} -- see examples above *****\n')
         exit(1)
 
     if "sqlite" in args.url: # db.session.bind.dialect.name == "sqlite":   FIXME
