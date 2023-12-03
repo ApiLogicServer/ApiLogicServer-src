@@ -83,7 +83,7 @@ setup(
          "SQLAlchemy==2.0.15",
          "Werkzeug==2.3.3",
 
-        "safrs>=3.1.1",
+        "safrs>=3.1.3",
         "Flask-Admin==1.5.7",
         "Flask-JWT-Extended==4.4.4",
         "Flask-Login==0.6.2",
