@@ -835,7 +835,7 @@ def add_auth_cmd(ctx, bind_key_url_separator: str, db_url: str, project_name: st
               default=default_bind_key_url_separator,
               help="bindkey / class name url separator")
 @click.option('--project_name',
-              default=f'',
+              default=f'.',
               help="Project location")
 @click.option('--api_name',
               default="api",

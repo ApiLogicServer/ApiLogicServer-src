@@ -473,6 +473,26 @@ class ServicesEndPoint(safrs.JABase):
                     QuantityOrdered: 2
         """
 
+        """ Or, from command line
+        $(venv) ApiLogicServer login --user=admin --password=p
+        $(venv) ApiLogicServer curl "'POST' 'http://localhost:5656/api/ServicesEndPoint/add_b2b_order'" --data '
+{"order": {
+    "AccountId": "ALFKI",
+    "Surname": "Buchanan",
+    "Given": "Steven",
+    "Items": [
+        {
+        "ProductName": "Chai",
+        "QuantityOrdered": 1
+        },
+        {
+        "ProductName": "Chang",
+        "QuantityOrdered": 2
+        }
+        ]
+    }
+}'
+        """
         # See: https://apilogicserver.github.io/Docs/Sample-Integration/
 
         db = safrs.DB         # Use the safrs.DB, not db!

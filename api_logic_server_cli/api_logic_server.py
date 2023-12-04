@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "09.05.27"
+__version__ = "09.05.28"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t12/03/2023 - 09.05.27: Thick, Add order: map & lookup, No sql logging in rules, nw msgs, curl post \n"\
+    "\t12/03/2023 - 09.05.28: Thick, Add order: map & lookup, No sql logging in rules, nw msgs, curl post \n"\
     "\t11/19/2023 - 09.05.14: Run Config: Create servers/ApiLogicProject (new IDE) -- nw+, curl, curr-proj \n"\
     "\t11/12/2023 - 09.05.08: multi-db bug fix (24) \n"\
     "\t11/07/2023 - 09.05.07: basic_demo: scripted customizations, iteration \n"\
@@ -146,18 +146,6 @@ if is_docker():
 
 #  MetaData = NewType('MetaData', object)
 MetaDataTable = NewType('MetaDataTable', object)
-
-''' unused code 9/1/2023 - delete
-def create_app(config_filename=None, host="localhost"):
-    import safrs
-
-    app = Flask("API Logic Server")
-    import api_logic_server_cli.config as app_logic_server_config
-    app.config.from_object(app_logic_server_config.Config)
-    db = safrs.DB
-    db.init_app(app)
-    return app
-'''
 
 def delete_dir(dir_path, msg):
     """
@@ -436,16 +424,8 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
                     f'.. Verify the --project_name argument\n'
                     f'.. If you are using Docker, verify the -v argument\n\n')
         if project.nw_db_status in ["nw", "nw+"]:
-            log.debug(".. ..Copy in nw customizations: logic, custom api, readme, tests, admin app")
-            nw_dir = (Path(api_logic_server_dir_str)).\
-                joinpath('prototypes/nw')  # api_logic_server_cli/prototypes/nw
-            recursive_overwrite(nw_dir, project.project_directory)
-
-            create_nw_tutorial(project.project_directory, api_logic_server_dir_str)
-
-            copy_md(project = project,
-                    from_doc_file="Sample-Integration.md",
-                    to_project_file='api/integration_defs/readme.md')
+            log.debug(".. ..Copying nw customizations: logic, custom api, readme, tests, admin app")
+            project.add_nw_customizations(do_security=False, do_show_messages=False)
             
 
         if project.nw_db_status in ["nw+"]:
@@ -1178,11 +1158,13 @@ from database import <project.bind_key>_models
 
 
     def add_nw_customizations(self, do_show_messages: bool = True, do_security: bool = True):
-        """_summary_
+        """ Add customizations to nw (default creation)
 
-        1. add-sqlite-security
+        1. Add-sqlite-security (optionally - not used for initial creation)
 
-        2. deep copy project_prototype_nw (adds logic)
+        2. Deep copy project_prototype_nw (adds logic)
+
+        3. Create readme files: Tutorial, api/integration_defs/readme.md
 
         Args:
         """
@@ -1199,6 +1181,10 @@ from database import <project.bind_key>_models
         recursive_overwrite(nw_path, self.project_directory)  # '/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/tutorial/1. Instant_Creation'
 
         create_nw_tutorial(self.project_directory, str(self.api_logic_server_dir_path))
+
+        copy_md(project = self,
+                from_doc_file="Sample-Integration.md",
+                to_project_file='api/integration_defs/readme.md')
 
         if do_show_messages:
             log.info("\nExplore key customization files:")
