@@ -460,7 +460,7 @@ class ServicesEndPoint(safrs.JABase):
 
     @classmethod
     @jsonapi_rpc(http_methods=["POST"])
-    def add_b2b_order(self, *args, **kwargs):  # yaml comment => swagger description
+    def OrderB2B(self, *args, **kwargs):  # yaml comment => swagger description
         """ # yaml creates Swagger description
             args :
                 AccountId: "ALFKI"
@@ -475,7 +475,7 @@ class ServicesEndPoint(safrs.JABase):
 
         """ Or, from command line
         $(venv) ApiLogicServer login --user=admin --password=p
-        $(venv) ApiLogicServer curl "'POST' 'http://localhost:5656/api/ServicesEndPoint/add_b2b_order'" --data '
+        $(venv) ApiLogicServer curl "'POST' 'http://localhost:5656/api/ServicesEndPoint/OrderB2B'" --data '
 {"order": {
     "AccountId": "ALFKI",
     "Surname": "Buchanan",
