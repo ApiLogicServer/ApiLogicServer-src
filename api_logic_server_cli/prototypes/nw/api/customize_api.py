@@ -15,10 +15,10 @@ from database import models
 from config import Args
 from flask_cors import cross_origin
 from logic_bank.rule_bank.rule_bank import RuleBank
-from api.integration_defs.Customer import Customer
-from api.integration_defs.OrderById import OrderById
-from api.integration_defs.OrderB2B import OrderB2B
-from api.integration_defs.OrderShipping import OrderShipping
+from integration.integration_services.CustomerService import CustomerService
+from integration.integration_services.OrderById import OrderById
+from integration.integration_services.OrderB2B import OrderB2B
+from integration.integration_services.OrderShipping import OrderShipping
 
 
 # Customize this file to add endpoints/services, using SQLAlchemy as required
@@ -153,8 +153,8 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         the_customer : models.Customer = session.query(models.Customer) \
                 .filter(models.Customer.Id == request_id).one()
         
-        customer_def = Customer()
-        dict_row = customer_def.to_dict(row = the_customer)
+        customer_def = CustomerService()
+        dict_row = customer_def.row_to_dict(row = the_customer)
         return jsonify({"Customer with related data":  dict_row})
 
 
@@ -208,7 +208,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
                 .filter(models.Order.Id == request_id).one()
         
         order_def = OrderShipping()
-        dict_row = order_def.to_dict(row = the_order)
+        dict_row = order_def.row_to_dict(row = the_order)
         return jsonify({"Order with related data":  dict_row})
 
 
@@ -234,7 +234,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
                 .filter(models.Order.Id == request_id).one()
         
         order_def = OrderB2B()
-        dict_row = order_def.to_dict(row = the_order)
+        dict_row = order_def.row_to_dict(row = the_order)
         return jsonify({"Order with related data":  dict_row})
 
 
@@ -502,7 +502,7 @@ class ServicesEndPoint(safrs.JABase):
         request_dict_str = request.data.decode('utf-8')
         request_dict = eval(request_dict_str)
         request_dict_data = request_dict["order"]
-        sql_alchemy_row = order_b2b_def.to_row(row_dict = request_dict_data, session = session)
+        sql_alchemy_row = order_b2b_def.dict_to_row(row_dict = request_dict_data, session = session)
 
         session.add(sql_alchemy_row)
         return {"Thankyou For Your OrderB2B"}  # automatic commit, which executes transaction logic
@@ -531,7 +531,7 @@ class ServicesEndPoint(safrs.JABase):
         request_dict_str = request.data.decode('utf-8')
         request_dict = eval(request_dict_str)
         request_dict_data = request_dict["order"] 
-        sql_alchemy_row = order_id_def.to_row(row_dict = request_dict_data, session = session)
+        sql_alchemy_row = order_id_def.dict_to_row(row_dict = request_dict_data, session = session)
 
         session.add(sql_alchemy_row)
         return {"Thankyou For Your OrderById"}  # automatic commit, which executes transaction logic

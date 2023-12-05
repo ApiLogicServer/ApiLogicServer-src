@@ -1184,7 +1184,7 @@ from database import <project.bind_key>_models
 
         copy_md(project = self,
                 from_doc_file="Sample-Integration.md",
-                to_project_file='api/integration_defs/readme.md')
+                to_project_file='integration/integration_services_readme.md')
 
         if do_show_messages:
             log.info("\nExplore key customization files:")

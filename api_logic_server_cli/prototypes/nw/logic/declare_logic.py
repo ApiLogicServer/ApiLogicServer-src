@@ -8,7 +8,7 @@ import api.system.opt_locking.opt_locking as opt_locking
 from security.system.authorization import Grant
 import logging
 from flask import jsonify
-from api.integration_defs.OrderShipping import OrderShipping
+from integration.integration_services.OrderShipping import OrderShipping
 
 
 preferred_approach = True
@@ -287,7 +287,7 @@ def declare_logic():
         """
 
         order_def = OrderShipping()
-        order_dict = order_def.to_dict(row = row)
+        order_dict = order_def.row_to_dict(row = row)
         json_order_response = jsonify({"order": order_dict})
         json_order = json_order_response.data.decode('utf-8')
         print(f'\n\nSend to Shipping:\n{json_order}')

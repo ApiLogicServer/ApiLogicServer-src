@@ -1,4 +1,4 @@
-from api.system.integration_services import IntegrationServices
+from integration.system.integration_service import IntegrationService
 from database import models
 from database.models import Employee
 from flask import request, jsonify
@@ -8,7 +8,7 @@ models.Order.Employee.label
 
 models.Employee.LastName
 
-class OrderB2B(IntegrationServices):
+class OrderB2B(IntegrationService):
 
     def __init__(self):
         """
@@ -24,11 +24,11 @@ class OrderB2B(IntegrationServices):
             , alias = "order"
             , fields = [(models.Order.CustomerId, "AccountId")]
             , related = [
-                (IntegrationServices(model_class=models.OrderDetail
+                (IntegrationService(model_class=models.OrderDetail
                     , alias="Items"
                     , fields = [(models.OrderDetail.Quantity, "QuantityOrdered")]
                     , related = [
-                        (IntegrationServices(model_class=models.Product
+                        (IntegrationService(model_class=models.Product
                         , alias="Product"
                         , isParent = True
                         , fields = [models.Product.ProductName]
@@ -37,7 +37,7 @@ class OrderB2B(IntegrationServices):
                     ]
                     )
                 )
-                , (IntegrationServices(model_class=models.Employee
+                , (IntegrationService(model_class=models.Employee
                     , alias="SalesRep"
                     , isParent = True
                     , fields = [(models.Employee.LastName, 'Surname'), (models.Employee.FirstName, 'Given')]
@@ -46,6 +46,4 @@ class OrderB2B(IntegrationServices):
                 )
             ]
         )
-
-        # CustomEndpoint(model_class=models.OrderAudit, alias="orderAudit")  # sibling child
         return order

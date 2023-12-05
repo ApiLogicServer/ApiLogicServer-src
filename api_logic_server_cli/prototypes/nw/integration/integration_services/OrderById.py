@@ -1,9 +1,9 @@
-from api.system.integration_services import IntegrationServices
+from integration.system.integration_service import IntegrationService
 from database import models
 from flask import request, jsonify
 from sqlalchemy import Column
 
-class OrderById(IntegrationServices):
+class OrderById(IntegrationService):
     
     def __init__(self):
         """ Illustrates poor API definition.
@@ -20,7 +20,7 @@ class OrderById(IntegrationServices):
             model_class=models.Order
             , alias = "order"
             , fields = [(models.Order.CustomerId, "AccountId"), (models.Order.EmployeeId, 'SalesRepId')]
-            , related = IntegrationServices(model_class=models.OrderDetail
+            , related = IntegrationService(model_class=models.OrderDetail
                 , alias="Items"
                 , fields = [(models.OrderDetail.Quantity, "QuantityOrdered"), (models.OrderDetail.ProductId, "ProductId")]
             )
