@@ -81,6 +81,11 @@ loggers:
         handlers: [console]
         propagate: no
 
+    integration.system.integration_service:   
+        level: DEBUG
+        handlers: [console]
+        propagate: no
+
     security.system.authentication:   
 #        level: DEBUG
         handlers: [console]

@@ -6,6 +6,14 @@ from sqlalchemy import Column
 class OrderShipping(IntegrationService):
     
     def __init__(self):
+        """
+        Declares message format advising Shipping of new Orders.
+
+        Used in: logic/declare_logic.py -- send_order_to_shipping
+
+        Returns:
+            _type_: OrderShipping object (eg, provides row_to_dict and dict_to_row)
+        """
         order = super(OrderShipping, self).__init__(
             model_class=models.Order
             , alias = "order"

@@ -12,12 +12,14 @@ class OrderB2B(IntegrationService):
 
     def __init__(self):
         """
-        Declares format of partner APIs that Post Orders.
+        Declares API format enabling B2B partners to POST Orders.
+
+        Used in - api/customize_api.py -- OrderB2B
 
         See: https://apilogicserver.github.io/Docs/Sample-Integration/
         
         Returns:
-            _type_: IntegrationServices object.
+            _type_: OrderB2B object (eg, provides row_to_dict and dict_to_row)
         """
         order = super(OrderB2B, self).__init__(
             model_class=models.Order

@@ -4,25 +4,24 @@ from sqlalchemy import Column
 from sqlalchemy.ext.declarative import declarative_base
 from flask_sqlalchemy.model import DefaultMeta
 from typing import Self
+import logging
+
+logger = logging.getLogger(__name__)
 
 class IntegrationService():
     """Services to support App Integration as described in api.custom_resources.readme
 
     See: https://apilogicserver.github.io/Docs/Sample-Integration/
 
-    Args:
-        CustomEndpointBaseDef (_type_): _description_
     """
+
     def __init__(self
             , model_class: type[DefaultMeta] | None
             , alias: str = ""
             , role_name: str = ""
             , fields: list[tuple[Column, str] | Column] = []
-            , lookup: list[tuple[Column, str] ] = None
+            , lookup: list[tuple[Column, str] | Column] = None
             , related: list[Self] | Self = []
-            , calling: callable = None
-            , filter_by: str = None
-            , order_by: Column = None
             , isParent: bool = False
             , isCombined: bool = True
             ):
@@ -30,17 +29,17 @@ class IntegrationService():
 
         Declare a user shaped dict based on a SQLAlchemy model class.
 
+        See: https://apilogicserver.github.io/Docs/Sample-Integration/
+
         Args:
-            :model_class (DeclarativeMeta | None): model.TableName
-            :alias (str, optional): _description_. Defaults to "".
-            :fields (list[tuple[Column, str]  |  Column], optional): model.Table.Column. Defaults to [].
-            :related (list[CustomEndpoint] | CustomEndpoint, optional): CustomEndpoint(). Defaults to []. (OneToMany)
-            :calling - name of function (passing row for virtual attributes or modification)
-            :filter_by is string object in SQL format (e.g. '"ShipDate" != null')
-            :order_by is Column object used to sort aac result (e.g. order_by=models.Customer.Name)
-            :isParent = if True - use parent foreign key to join single lookup (ManyToOne)
-            :isCombined =  combine the fields of the isParent = routeTrue with the _parentResource (flatten) 
-            
+            :model_class (DeclarativeMeta | None): model.Class
+            :alias (str, optional): name of this level in dict
+            :role_name (str, optional): disambiguate multiple relationships between 2 tables
+            :fields (list[tuple[Column, str]  |  Column], optional): fields, use tuple for alias
+            :lookup (list[tuple[Column, str]  |  Column], optional): Foreign Key Lookups
+            :related (list[IntegrationService] | IntegrationService): Nested objects in multi-table dict
+            :isParent (bool): is ManyToOne
+            :isCombined (bool):  combine the fields of the containing parent 
         """
         if not model_class:
             raise ValueError("CustomEndpoint model_class=models.EntityName is required")
@@ -56,22 +55,20 @@ class IntegrationService():
         self.fields = fields
         self.lookup = lookup
         self.related = related or []
-        self.calling = calling
-        self.filter_by = filter_by
-        self.order_by = order_by
         self.isCombined = isCombined
         self.isParent= isParent 
     
+
     def __str__(self):
-            return f"Alias {self.alias} -- Model: {self._model_class.__name__} PrimaryKey: {self.primaryKey} FilterBy: {self.filter_by} OrderBy: {self.order_by}"
+            return f"Alias {self.alias} -- Model: {self._model_class.__name__}"
 
 
-    
     def row_to_dict(self, row: object, current_endpoint: 'IntegrationService' = None) -> dict:
-        """returns row as dict per custom resource definition, with subobjects
+        """returns row as dict per IntegrationService definition, with subobjects
 
         Args:
             row (_type_): a SQLAlchemy row
+            current_endpoint(Self): omit (internal recursion use)
 
         Returns:
             dict: row formatted as dict
@@ -85,7 +82,7 @@ class IntegrationService():
                 row_as_dict[each_field[1]] = getattr(row, each_field[0].name)
             else:
                 if isinstance(each_field, str):
-                    print("Coding error - you need to use TUPLE for attr/alias")
+                    logger.info("Coding error - you need to use TUPLE for attr/alias")
                 row_as_dict[each_field.name] = getattr(row, each_field.name)
         
         custom_endpoint_related_list = custom_endpoint.related
@@ -116,17 +113,18 @@ class IntegrationService():
     
 
     def dict_to_row(self, row_dict: dict, session: object, current_endpoint: 'IntegrationService' = None) -> object:
-        """Returns SQLAlchemy row(s), converted from safrs-request per subclass custom resource
+        """Returns SQLAlchemy row(s), converted from dict per IntegrationService definition
 
         Args:
-            safrs_request: a 
-            current_endpoint (IntegrationEndpoint, optional): _description_. Defaults to None.
+            row_dict (dict): multi-object dict, typically from request data
+            session (session): FlaskSQLAlchemy session
+            current_endpoint (IntegrationService, optional): omit (internal recursion use)
 
         Returns:
             object: SQLAlchemy row / sub-rows, ready to insert
         """
 
-        print( f"to_row receives row_dict: {row_dict}" )
+        logger.debug( f"to_row receives row_dict: {row_dict}" )
 
         custom_endpoint = self
         if current_endpoint is not None:
@@ -137,7 +135,7 @@ class IntegrationService():
                 setattr(sql_alchemy_row, each_field[0].name, row_dict[each_field[1]])
             else:
                 if isinstance(each_field, str):
-                    print("Coding error - you need to use TUPLE for attr/alias")
+                    logger.info("Coding error - you need to use TUPLE for attr/alias")
                 setattr(sql_alchemy_row, each_field.name, row_dict[each_field.name])
         
         custom_endpoint_related_list = custom_endpoint.related
@@ -149,7 +147,7 @@ class IntegrationService():
             if child_property_name.startswith('SalesRep'):
                 debug = 'good breakpoint'
             if each_related.isParent:  # lookup
-                    self.lookup_parent(child_row_dict = row_dict, 
+                    self._lookup_parent(child_row_dict = row_dict, 
                                        lookup_parent_endpoint = each_related, 
                                        child_row = sql_alchemy_row,
                                        session = session)
@@ -166,7 +164,7 @@ class IntegrationService():
         return sql_alchemy_row
     
 
-    def lookup_parent(self, child_row_dict: dict, child_row: object,
+    def _lookup_parent(self, child_row_dict: dict, child_row: object,
                       session: object, lookup_parent_endpoint: 'IntegrationService' = None):
         parent_class = lookup_parent_endpoint._model_class
         query = session.query(parent_class)
@@ -190,6 +188,8 @@ class IntegrationService():
             if parent_rows is not None:
                 if len(parent_rows) > 1:
                     raise ValueError('Lookup failed: multiple parents', child_row, str(lookup_parent_endpoint)) 
+                if len(parent_rows) == 0:
+                    raise ValueError('Lookup failed: missing parent', child_row, str(lookup_parent_endpoint)) 
                 parent_row = parent_rows[0]
                 setattr(child_row, lookup_parent_endpoint.role_name, parent_row)
         return
