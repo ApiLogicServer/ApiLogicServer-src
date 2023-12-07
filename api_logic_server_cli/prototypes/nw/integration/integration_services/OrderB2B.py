@@ -4,10 +4,6 @@ from database.models import Employee
 from flask import request, jsonify
 from sqlalchemy import Column
 
-models.Order.Employee.label
-
-models.Employee.LastName
-
 class OrderB2B(IntegrationService):
 
     def __init__(self):
