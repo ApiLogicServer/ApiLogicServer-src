@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "09.06.00"
+__version__ = "09.06.01"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t12/07/2023 - 09.06.01: Fix MySQL CHAR/String \n"\
     "\t12/06/2023 - 09.06.00: Oracle Thick, Integration Sample, No sql logging in rules, curl post \n"\
     "\t11/19/2023 - 09.05.14: Run Config: Create servers/ApiLogicProject (new IDE) -- nw+, curl, curr-proj \n"\
     "\t11/12/2023 - 09.05.08: multi-db bug fix (24) \n"\
