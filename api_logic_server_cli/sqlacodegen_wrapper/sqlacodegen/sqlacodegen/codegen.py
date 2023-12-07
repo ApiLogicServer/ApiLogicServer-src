@@ -129,7 +129,7 @@ class ImportCollector(OrderedDict):
         type_name = type_.__name__
         if type_name == "CHAR":  
             # render_column_type() uses String for CHAR (e.g., oracle hr.countries)
-            self.add_literal_import(pkgname, 'String') 
+            self.add_literal_import("sqlalchemy", 'String') 
             debug_stop = "target type"
         self.add_literal_import(pkgname, type_name)  # (sqlalchemy, Column | Integer | String...)
 
