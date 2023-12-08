@@ -36,7 +36,7 @@ def opt_locking_setup(session):
 def checksum(list_arg: list) -> str:
     """
     Args:
-        list_arg (list): list of (rows') attribute values
+        list_arg (list): list of (rows') attribute values (tuple-ize and call hash)
 
     Returns:
         int: hash(list values), with special handling for None
@@ -49,7 +49,17 @@ def checksum(list_arg: list) -> str:
             if each_entry is None:
                 real_tuple.append(13)
             else:
-                real_tuple.append(each_entry)
+                if isinstance(each_entry, list):
+                    list_hash = checksum(each_entry)
+                    real_tuple.append(list_hash)
+                elif isinstance(each_entry, dict):
+                    dict_tuple = []
+                    for each_key, each_value in each_entry.items():
+                        dict_tuple.append(each_value)
+                    dict_hash = checksum(dict_tuple)
+                    real_tuple.append(dict_hash)
+                else:
+                    real_tuple.append(each_entry)
     result = hash(tuple(real_tuple))
     # print(f'checksum[{result}] from row: {list_arg})')
     result = str(result)  # maxint 870744036720833075 https://stackoverflow.com/questions/47188449/json-max-int-number

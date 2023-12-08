@@ -431,7 +431,7 @@
             "program": "cli.py",
             "redirectOutput": true,
             "argsExpansion": "none",
-            "args": ["create","--project_name=../../../servers/stress",
+            "args": ["create","--project_name=../../../servers/MySQL_stress",
             "--db_url=mysql+pymysql://root:p@10.0.0.77:3306/stress"],
             "console": "integratedTerminal"
         },
