@@ -52,6 +52,10 @@ def checksum(list_arg: list) -> str:
                 if isinstance(each_entry, list):
                     list_hash = checksum(each_entry)
                     real_tuple.append(list_hash)
+                elif isinstance(each_entry, set):
+                    list_from_set = list(each_entry)
+                    list_hash = checksum(list_from_set)
+                    real_tuple.append(list_hash)
                 elif isinstance(each_entry, dict):
                     dict_tuple = []
                     for each_key, each_value in each_entry.items():
