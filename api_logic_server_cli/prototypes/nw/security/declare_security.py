@@ -49,14 +49,18 @@ GlobalFilter(   global_filter_attribute_name = "Region",  # sales see only Custo
                 roles_not_filtered = ["sa", "manager", "tenant", "renter"],  # ie, just sales
                 filter = '{entity_class}.Region == Security.current_user().region')
         
+GlobalFilter(   global_filter_attribute_name = "Discontinued",  # hide discontinued products
+                roles_not_filtered = ["sa", "manager"],         # except for admin and managers
+                filter = '{entity_class}.Discontinued == 0')
+        
 Grant(  on_entity = models.Customer,
         to_role = Roles.sales,
         filter = lambda : models.Customer.CreditLimit > 300,
-        filter_debug = "CreditLimit > 300")     # this eliminates all rows, but...
+        filter_debug = "CreditLimit > 300")     # this eliminates all British Isle rows, but...
 
 Grant(  on_entity = models.Customer,
         to_role = Roles.sales,
-        filter = lambda : models.Customer.ContactName == "Mike",
+        filter = lambda : models.Customer.ContactName == "Mike",  # Mike sees his contacts
         filter_debug = "ContactName == Mike (see security/declare_security.py)")
 
 # so user s1 sees the CTWSR customer row, per the resulting where from 2 global filters and 2 Grants:
