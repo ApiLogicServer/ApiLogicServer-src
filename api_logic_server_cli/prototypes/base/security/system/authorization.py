@@ -290,7 +290,7 @@ class Grant:
         sql_select = "not a SELECT"
         if orm_execute_state is not None:
             sql_select = str(orm_execute_state.statement)
-            security_logger.info(f"\nSQL Select -- Begin authorization processing for {sql_select}")   
+            security_logger.debug(f"\nSQL Select -- Begin authorization processing for {sql_select}")   
         
         can_read = False
         can_insert = False
@@ -397,11 +397,11 @@ class Grant:
                 with_loader_criteria(grant_entity, global_filter))
             security_logger.debug(f"Filter(s) applied for entity {entity_name} ") 
         
-        security_logger.info(f"+ Authorization complete for user: {user} state:{crud_state}, read:{can_read}, insert:{can_insert}, update:{can_update}, delete:{can_delete}") 
+        security_logger.debug(f"+ Authorization complete for user: {user} state:{crud_state}, read:{can_read}, insert:{can_insert}, update:{can_update}, delete:{can_delete}") 
         sql_select = "not a SELECT"
         if orm_execute_state is not None:
             sql_select = str(orm_execute_state.statement)
-        security_logger.info(f"SQL Select: End authorization processing for: {sql_select}")   
+        security_logger.debug(f"SQL Select: End authorization processing for: {sql_select}")   
 
 
 
