@@ -24,6 +24,7 @@ class Roles():
     renter = "renter"           # r1
     manager = "manager"         # u2, sam
     sales="sales"               # s1
+    customer="customer"         # ALFKI
 
                                 # user_id = 1 -- aneu              many customers, 1 category
                                 # user_id = 2 -- u2, sam, s1, r1   3    customers, 3 categories
@@ -52,6 +53,11 @@ GlobalFilter(   global_filter_attribute_name = "Region",  # sales see only Custo
 GlobalFilter(   global_filter_attribute_name = "Discontinued",  # hide discontinued products
                 roles_not_filtered = ["sa", "manager"],         # except for admin and managers
                 filter = '{entity_class}.Discontinued == 0')
+        
+Grant(  on_entity = models.Customer,
+        to_role = Roles.customer,
+        filter = lambda : models.Customer.Id == Security.current_user().id,
+        filter_debug = "Id == Security.current_user().id")     # customers can only see their own account
         
 Grant(  on_entity = models.Customer,
         to_role = Roles.sales,
