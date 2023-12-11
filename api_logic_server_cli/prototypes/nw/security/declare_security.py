@@ -24,7 +24,7 @@ class Roles():
     renter = "renter"           # r1
     manager = "manager"         # u2, sam
     sales="sales"               # s1
-    customer="customer"         # ALFKI
+    customer="customer"         # ALFKI, ANATR
 
                                 # user_id = 1 -- aneu              many customers, 1 category
                                 # user_id = 2 -- u2, sam, s1, r1   3    customers, 3 categories
