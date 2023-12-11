@@ -180,7 +180,7 @@ class AdminCreator(object):
         owner.attributes = []
         attributes_dict = []  # DotMap()
         processed_attributes = set()
-        if resource.name == "Categoryxx":
+        if resource.name == "STRESSCHAR":
             log.debug(f'ui_admin_creator.create_attributes_in_owner: {resource.name}')
 
         # Step 1 - favorite attribute
@@ -228,6 +228,8 @@ class AdminCreator(object):
         for each_attribute in resource.attributes:
             if each_attribute.name not in processed_attributes:
                 if not each_attribute.non_favorite:
+                    if each_attribute.name.startswith('xchar'):
+                        debug_str = 'good breakpoiont'
                     processed_attributes.add(each_attribute.name)
                     admin_attribute = self.create_admin_attribute(each_attribute)
                     if admin_attribute is not None:
