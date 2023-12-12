@@ -1,6 +1,16 @@
+https://www.linkedin.com/pulse/local-kafka-setup-using-docker-sandeep-khurana/
+    docker compose -f kafka/docker_compose/bit-nami.docker-compose up
+    in terminal:
+      kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 3  --topic ordershipping
+      kafka-topics.sh --bootstrap-server localhost:9092 --list
+
+
+
+
 https://hellokube.dev/posts/three-ways-zookeepeerless-kafka/
 
 docker run -it --name kafka-zkless -p 9092:9092 -e LOG_DIR=/tmp/logs quay.io/strimzi/kafka:latest-kafka-2.8.1-amd64 /bin/sh -c 'export CLUSTER_ID=$(bin/kafka-storage.sh random-uuid) && bin/kafka-storage.sh format -t $CLUSTER_ID -c config/kraft/server.properties && bin/kafka-server-start.sh config/kraft/server.properties'
+  strimzi is redhat
 
 docker run -it --name kafka-zkless \
   -p 9092:9092 \
@@ -18,15 +28,26 @@ config/kraft/server.properties
 
 topics are the key
   https://dattell.com/data-architecture-blog/what-is-a-kafka-topic/#:~:text=Kafka%20topics%20are%20the%20categories,consumers%20read%20data%20from%20topics.
-  doc suggest to list topics:
-    bin/kafka-topics.sh –describe
-  –bootstrap-server localhost:9092
+  doc has wrong dashes etc for docker/Linux
 
-    bin/kafka-topics.sh –-list --bootstrap-server localhost:9092  ?? unk command
-    bin/kafka-topics.sh –-describe ??
-    ./bin/kafka-topics.sh --bootstrap-server=localhost:9092 --list  ?? java excp
-    ./bin/kafka-topics.sh --list --bootstrap-server=localhost:9092 # ok, no topics (geesh)
+    bin/kafka-topics.sh –create –bootstrap-server localhost:9092 –replication-factor 10 –partitions 3 –topic test
+
+    bin/kafka-topics.sh –-create –-bootstrap-server localhost:9092 –-replication-factor 10 –-partitions 3 -–topic "ordershipping"
+
+    bin/kafka-topics.sh –-create –-bootstrap-server localhost:9092 –-replication-factor 1 –-partitions 1 -–topic ordershipping
+
+    docker exec -t -i kafka-zkless /bin/bash
+
+    bin/kafka-topics.sh --list --bootstrap-server=localhost:9092 # ok, no topics (geesh)
 
 12/11 - starts and runs, but...
   -- if you stop, it terminates after 15 secs when restarted  
       -- seems to require docker run (and delete container first)?
+  -- create topics fails complaining about a ? (or - if using docker exec -t -i...)
+
+
+
+Other articles:
+  https://www.morling.dev/blog/exploring-zookeeper-less-kafka/  fails git clone -- public key
+  https://stackoverflow.com/questions/65682557/kafka-docker-image-that-works-without-zookeeper (2 brokers, bitnami)
+
