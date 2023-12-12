@@ -1,0 +1,11 @@
+https://hellokube.dev/posts/three-ways-zookeepeerless-kafka/
+
+docker run -it --name kafka-zkless -p 9092:9092 -e LOG_DIR=/tmp/logs quay.io/strimzi/kafka:latest-kafka-2.8.1-amd64 /bin/sh -c 'export CLUSTER_ID=$(bin/kafka-storage.sh random-uuid) && bin/kafka-storage.sh format -t $CLUSTER_ID -c config/kraft/server.properties && bin/kafka-server-start.sh config/kraft/server.properties'
+
+docker run -it --name kafka-zkless \
+  -p 9092:9092 \
+  -e LOG_DIR=/tmp/logs quay.io/strimzi/kafka:latest-kafka-2.8.1-amd64 /bin/sh \
+  -c 'export CLUSTER_ID=$(bin/kafka-storage.sh random-uuid) && bin/kafka-storage.sh format -t $CLUSTER_ID -c config/kraft/server.properties && bin/kafka-server-start.sh config/kraft/server.properties'
+
+12/11 - starts and runs, but if you stop, it terminates after 15 secs when restarted.  
+  -- seems to require docker run (and delete container first)?
