@@ -4,8 +4,29 @@ docker run -it --name kafka-zkless -p 9092:9092 -e LOG_DIR=/tmp/logs quay.io/str
 
 docker run -it --name kafka-zkless \
   -p 9092:9092 \
-  -e LOG_DIR=/tmp/logs quay.io/strimzi/kafka:latest-kafka-2.8.1-amd64 /bin/sh \
-  -c 'export CLUSTER_ID=$(bin/kafka-storage.sh random-uuid) && bin/kafka-storage.sh format -t $CLUSTER_ID -c config/kraft/server.properties && bin/kafka-server-start.sh config/kraft/server.properties'
+  -e LOG_DIR=/tmp/logs quay.io/strimzi/kafka:latest-kafka-2.8.1-amd64 \
+  /bin/sh -c 'export CLUSTER_ID=$(bin/kafka-storage.sh random-uuid) && bin/kafka-storage.sh format -t $CLUSTER_ID -c config/kraft/server.properties && bin/kafka-server-start.sh config/kraft/server.properties'
 
-12/11 - starts and runs, but if you stop, it terminates after 15 secs when restarted.  
-  -- seems to require docker run (and delete container first)?
+the last command is:
+  export CLUSTER_ID=$(bin/kafka-storage.sh random-uuid) && \
+  bin/kafka-storage.sh format -t $CLUSTER_ID -c config/kraft/server.properties && \
+  bin/kafka-server-start.sh config/kraft/server.properties'
+
+config/kraft/server.properties
+  is really(?): /opt/kafka/config/server.properties
+  is shown in containing directory
+
+topics are the key
+  https://dattell.com/data-architecture-blog/what-is-a-kafka-topic/#:~:text=Kafka%20topics%20are%20the%20categories,consumers%20read%20data%20from%20topics.
+  doc suggest to list topics:
+    bin/kafka-topics.sh –describe
+  –bootstrap-server localhost:9092
+
+    bin/kafka-topics.sh –-list --bootstrap-server localhost:9092  ?? unk command
+    bin/kafka-topics.sh –-describe ??
+    ./bin/kafka-topics.sh --bootstrap-server=localhost:9092 --list  ?? java excp
+    ./bin/kafka-topics.sh --list --bootstrap-server=localhost:9092 # ok, no topics (geesh)
+
+12/11 - starts and runs, but...
+  -- if you stop, it terminates after 15 secs when restarted  
+      -- seems to require docker run (and delete container first)?
