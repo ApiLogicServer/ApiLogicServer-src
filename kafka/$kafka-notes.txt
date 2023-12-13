@@ -6,6 +6,11 @@ https://www.linkedin.com/pulse/local-kafka-setup-using-docker-sandeep-khurana/
 
 https://towardsdatascience.com/kafka-python-explained-in-10-lines-of-code-800e3e07dad1
 
+send fails: DNS lookup failed for broker1:9092, exception was [Errno 8] nodename nor servname provided, or not known. Is your advertised.listeners (called advertised.host.name before Kafka 9) correct and resolvable?
+
+is this the answer?
+https://stackoverflow.com/questions/55993611/why-kafka-producer-is-showing-me-error-kafka-conndns-lookup-failed-for-contain
+
 
 
 https://hellokube.dev/posts/three-ways-zookeepeerless-kafka/
