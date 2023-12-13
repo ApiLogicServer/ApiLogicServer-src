@@ -16,6 +16,14 @@ preferred_approach = True
 
 app_logger = logging.getLogger(__name__)
 
+# from kafka import producer
+# conf = {'bootstrap.servers': 'localhostd:9092'}
+
+from kafka import KafkaProducer
+
+producer = KafkaProducer(bootstrap_servers=['localhost:9092'],
+                         value_serializer=lambda x: 
+                         dumps(x).encode('utf-8'))
 
 def declare_logic():
     """ 
@@ -291,7 +299,14 @@ def declare_logic():
         json_order_response = jsonify({"order": order_dict})
         json_order = json_order_response.data.decode('utf-8')
         print(f'\n\nSend to Shipping:\n{json_order}')
-
-    Rule.after_flush_row_event(on_class=models.Order, calling=send_order_to_shipping)
+        use_kafka = True
+        if use_kafka:
+            # fails: DNS lookup failed for broker1:9092, exception was [Errno 8] nodename nor servname provided, or not known. Is your advertised.listeners (called advertised.host.name before Kafka 9) correct and resolvable?
+            producer.send(topic="OrderShipping", 
+                key=row.Id,
+                value=json_order)
+            
+    Rule.after_flush_row_event(on_class=models.Order, 
+                               calling=send_order_to_shipping)  # see above
     
     app_logger.debug("..logic/declare_logic.py (logic == rules + code)")

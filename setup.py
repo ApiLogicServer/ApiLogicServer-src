@@ -105,7 +105,8 @@ setup(
         "WTForms==2.3.3",
         "behave==1.2.6",
         "alembic==1.7.7",
-        "GeoAlchemy2==0.12.5"
+        "GeoAlchemy2==0.12.5",
+        "kafka-python==2.0.2"
     ],
     classifiers=[
         "Development Status :: 5 - Production/Stable",
