@@ -4,6 +4,7 @@ https://www.linkedin.com/pulse/local-kafka-setup-using-docker-sandeep-khurana/
       kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 3  --topic ordershipping
       kafka-topics.sh --bootstrap-server localhost:9092 --list
 
+https://towardsdatascience.com/kafka-python-explained-in-10-lines-of-code-800e3e07dad1
 
 
 
@@ -51,3 +52,23 @@ Other articles:
   https://www.morling.dev/blog/exploring-zookeeper-less-kafka/  fails git clone -- public key
   https://stackoverflow.com/questions/65682557/kafka-docker-image-that-works-without-zookeeper (2 brokers, bitnami)
 
+
+
+Hi, Sandeep
+
+I quite liked your article: https://www.linkedin.com/pulse/local-kafka-setup-using-docker-sandeep-khurana/.
+
+I am trying to use it to demonstrate api/message application integration: https://apilogicserver.github.io/Docs/Sample-Integration/
+
+I plan to publish this, probably Dzone.  It has number of novel aspects which you may find intriguing... Would you like to co-author?
+
+I was able to get the Kafka server running and create a topic, but unable to send to it. 
+
+It fails with: DNS lookup failed for broker1:9092, exception was [Errno 8] nodename nor servname provided, or not known. Is your advertised.listeners (called advertised.host.name before Kafka 9) correct and resolvable?
+
+I am the author of API Logic Server, but know little of Kafka.  I'd be grateful for help or suggestions.
+
+Regards,
+Val Huber
+
+valjhuber@gmail.com
