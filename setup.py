@@ -106,7 +106,7 @@ setup(
         "behave==1.2.6",
         "alembic==1.7.7",
         "GeoAlchemy2==0.12.5",
-        "kafka-python==2.0.2"
+        "confluent-kafka==2.3.0"
     ],
     classifiers=[
         "Development Status :: 5 - Production/Stable",

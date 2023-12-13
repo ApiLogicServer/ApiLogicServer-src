@@ -11,9 +11,10 @@
 #   docker compose -f integration/kafka/bit-nami.docker-compose up
 #
 # in docker terminal, create a topic and verify it exists
-#   kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 3  --topic ordershipping
+#   kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 3  --topic order_shipping
 #   kafka-topics.sh --bootstrap-server localhost:9092 --list
 #
+#   kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic order_shipping --from-beginning
 # start als, and run the sample trans (see integration_services_readme.md -- test it)
 #
 # send fails: DNS lookup failed for broker1:9092, exception was [Errno 8] nodename nor servname provided, or not known. Is your advertised.listeners (called advertised.host.name before Kafka 9) correct and resolvable?
@@ -26,7 +27,7 @@ services:
 
   kafka:
     restart: always
-    image: docker.io/bitnami/kafka:3.3
+    image: docker.io/bitnami/kafka:latest
     volumes:
       - ./.volumes/kafka/data://Users/val/dev/kafka/volume
     ports:
