@@ -2,24 +2,17 @@
 #  https://www.linkedin.com/pulse/local-kafka-setup-using-docker-sandeep-khurana/
 #  https://towardsdatascience.com/kafka-python-explained-in-10-lines-of-code-800e3e07dad1
 
-# edit volumes, below
-#
-# update your venv
-#   pip install kafka-python
 # 
 # start kafka (uses this file)
-#   docker compose -f integration/kafka/bit-nami.docker-compose up
+#   docker compose -f integration/kafka/docker_compose_start_kafka up
 #
-# in docker terminal, create a topic and verify it exists
+# in docker terminal, create a topic, list topics, monitor order_shipping
 #   kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 3  --topic order_shipping
 #   kafka-topics.sh --bootstrap-server localhost:9092 --list
-#
 #   kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic order_shipping --from-beginning
+#
 # start als, and run the sample trans (see integration_services_readme.md -- test it)
 #
-# send fails: DNS lookup failed for broker1:9092, exception was [Errno 8] nodename nor servname provided, or not known. Is your advertised.listeners (called advertised.host.name before Kafka 9) correct and resolvable?
-#   is this the answer?
-#    https://stackoverflow.com/questions/55993611/why-kafka-producer-is-showing-me-error-kafka-conndns-lookup-failed-for-contain
 
 version: "3"
 
@@ -29,7 +22,7 @@ services:
     restart: always
     image: docker.io/bitnami/kafka:latest
     volumes:
-      - ./.volumes/kafka/data://Users/val/dev/kafka/volume
+      - ./.volumes/kafka/data:/integration/kafka/volume
     ports:
       - 9092:9092
       - 9093:9093

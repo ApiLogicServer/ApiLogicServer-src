@@ -80,6 +80,8 @@ import ui.admin.admin_loader as AdminLoader
 from security.system.authentication import configure_auth
 import database.multi_db as multi_db
 import oracledb
+import integration.kafka.kafka_connect as kafka
+
 
 
 class SAFRSAPI(_SAFRSAPI):
@@ -290,6 +292,8 @@ def api_logic_server_setup(flask_app: Flask, args: Args):
                 app_logger.info("\nOptimistic Locking: ignored")
             else:
                 opt_locking.opt_locking_setup(session)
+
+            kafka.kafka_connect()
 
             SAFRSBase._s_auto_commit = False
             session.close()

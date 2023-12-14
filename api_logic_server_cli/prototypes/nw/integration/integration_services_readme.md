@@ -172,7 +172,44 @@ To apply customizations, in a terminal window for your project:
 ```bash
 ApiLogicServer add-cust
 ```
+
+**3. Enable and Start Kafka:**
+
 &nbsp;
+
+<details markdown>
+
+<summary>Enable and Start Kafka</summary>
+
+To enable Kafka:
+
+1. In `config.py`, find and comment out: `KAFKA_CONNECT = None  # comment out to enable Kafka`
+
+2. Update your `etc/conf` to include the lines shown below (e.g., `sudo nano /etc/hosts`).
+
+```
+##
+# Host Database
+#
+# localhost is used to configure the loopback interface
+# when the system is booting.  Do not change this entry.
+##
+
+# for kafka
+127.0.0.1       broker1
+::1             localhost
+255.255.255.255 broadcasthost
+::1             localhost
+
+127.0.0.1       localhost
+# Added by Docker Desktop
+# To allow the same kube context to work on the host and the container:
+127.0.0.1 kubernetes.docker.internal
+# End of section
+```
+3. Start Kafks: in a terminal window: `docker compose -f integration/kafka/docker_compose_start_kafka up`
+
+</details>
 
 ### Declare Security
 

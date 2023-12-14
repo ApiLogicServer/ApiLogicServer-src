@@ -283,7 +283,7 @@ class Grant:
             GrantSecurityException: _description_
         """
         
-        if not Args.security_enabled:
+        if not Args.security_enabled:  # FIXME check for use of Args.instance
             return
         
         user = Security.current_user()

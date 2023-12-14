@@ -6,6 +6,8 @@ import typing
 from dotenv import load_dotenv
 import logging
 from enum import Enum
+import socket
+import json
 
 #  for complete flask_sqlachemy config parameters and session handling,
 #  read: file flask_sqlalchemy/__init__.py AND flask/config.py
@@ -124,7 +126,10 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     PROPAGATE_EXCEPTIONS = False
 
-    OPT_LOCKING = "replace_opt_locking"
+    KAFKA_CONNECT = '{"bootstrap.servers": "localhost:9092"}'  #  , "client.id": "aaa.b.c.d"}'
+    # KAFKA_CONNECT = None  # comment out to enable Kafka
+
+    OPT_LOCKING = "optional"
     if os.getenv('OPT_LOCKING'):  # e.g. export OPT_LOCKING=required
         opt_locking_export = os.getenv('OPT_LOCKING')  # type: ignore # type: str
         opt_locking = opt_locking_export.lower()  # type: ignore
@@ -147,6 +152,10 @@ class Args():
     Set from created values in Config, overwritten by cli args, then APILOGICPROJECT_ env variables.
 
     This class provides **typed** access.
+
+    eg.
+
+        Args.instance.kafka_connect  # note you need to access the instance
     """
 
     values = None
@@ -180,6 +189,7 @@ class Args():
         self.port = Config.CREATED_PORT
         self.swagger_port = Config.CREATED_PORT
         self.http_scheme = Config.CREATED_HTTP_SCHEME
+        self.kafka_connect = Config.KAFKA_CONNECT
 
         self.verbose = False
         self.create_and_run = False
@@ -334,6 +344,19 @@ class Args():
     @client_uri.setter
     def client_uri(self, a):
         self.flask_app.config["CLIENT_URI"] = a
+
+
+    @property
+    def kafka_connect(self) -> dict:
+        """ kafka connect string """
+        if "KAFKA_CONNECT" in self.flask_app.config:
+            return json.loads(self.flask_app.config["KAFKA_CONNECT"])
+        else:
+            return None
+    
+    @kafka_connect.setter
+    def kafka_connect(self, a: str):
+        self.flask_app.config["KAFKA_CONNECT"] = a
 
 
     def __str__(self) -> str:
