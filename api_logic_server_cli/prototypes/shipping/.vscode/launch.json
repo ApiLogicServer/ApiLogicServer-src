@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "ApiLogicServer",
+            "name": "Shipping",
             "type": "python",
             "env": {
                 "PYTHONPATH": "", 
@@ -15,7 +15,7 @@
             "program": "api_logic_server_run.py",
             "redirectOutput": true,
             "justMyCode": false,
-            "args": ["--flask_host=localhost", "--port=5656", "--swagger_port=5656", "--swagger_host=localhost", "--verbose=False"],
+            "args": ["--flask_host=localhost", "--port=5757", "--swagger_port=5757", "--swagger_host=localhost", "--verbose=False"],
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
         },

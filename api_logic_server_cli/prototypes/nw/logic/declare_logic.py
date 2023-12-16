@@ -10,7 +10,7 @@ import logging
 from flask import jsonify
 from integration.integration_services.OrderShipping import OrderShipping
 from confluent_kafka import Producer, KafkaException
-import integration.kafka.kafka_connect as kafka
+import integration.kafka.kafka_producer as kafka_producer
 
 preferred_approach = True
 """ Some examples below contrast a preferred approach with a more manual one """
@@ -292,8 +292,8 @@ def declare_logic():
         json_order_response = jsonify({"order": order_dict})
         json_order = json_order_response.data.decode('utf-8')
         producer : Producer = None
-        if kafka.producer:
-            producer = kafka.producer
+        if kafka_producer.producer:
+            producer = kafka_producer.producer
             try:
                 producer.produce(topic="order_shipping", 
                     key= str(row.Id),

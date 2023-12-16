@@ -66,16 +66,16 @@ class Config:
 
     # Project Creation Defaults (overridden from args, env variables)
     CREATED_API_PREFIX = "/api"
-    CREATED_FLASK_HOST   = "api_logic_server_host"
+    CREATED_FLASK_HOST   = "localhost"
     """ where clients find  the API (eg, cloud server addr)"""
 
-    CREATED_SWAGGER_HOST = "api_logic_server_swagger_host"
+    CREATED_SWAGGER_HOST = "localhost"
     """ where swagger (and other clients) find the API """
     if CREATED_SWAGGER_HOST == "":
         CREATED_SWAGGER_HOST = CREATED_FLASK_HOST  # 
     if is_docker and CREATED_FLASK_HOST == "localhost":
         CREATED_FLASK_HOST = "0.0.0.0"  # enables docker run.sh (where there are no args)
-    CREATED_PORT = "api_logic_server_port"
+    CREATED_PORT = "5656"
     CREATED_SWAGGER_PORT = CREATED_PORT
     """ for codespaces - see values in launch config """
     CREATED_HTTP_SCHEME = "http"
@@ -91,7 +91,7 @@ class Config:
     project_abs_dir = running_at.parent.absolute()
 
     # Database
-    SQLALCHEMY_DATABASE_URI : typing.Optional[str] = f"replace_db_url"
+    SQLALCHEMY_DATABASE_URI : typing.Optional[str] = f"sqlite:///../database/db.sqlite"
     # override SQLALCHEMY_DATABASE_URI here as required
 
     app_logger.debug(f'config.py - SQLALCHEMY_DATABASE_URI: {SQLALCHEMY_DATABASE_URI}')
@@ -129,7 +129,7 @@ class Config:
     KAFKA_PRODUCER = '{"bootstrap.servers": "localhost:9092"}'  #  , "client.id": "aaa.b.c.d"}'
     # KAFKA_PRODUCER = None  # comment out to enable Kafka  TODO change default off
     KAFKA_CONSUMER = '{"bootstrap.servers": "localhost:9092", "group.id": "als-default-group1"}'
-    KAFKA_CONSUMER = None  # comment out to enable Kafka consumer
+    # KAFKA_CONSUMER = False  # comment out to enable Kafka consumer
 
     OPT_LOCKING = "optional"
     if os.getenv('OPT_LOCKING'):  # e.g. export OPT_LOCKING=required

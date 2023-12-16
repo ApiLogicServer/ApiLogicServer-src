@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "09.06.04"
+__version__ = "09.06.05"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t12/13/2023 - 09.06.04: Kafka pub, Fix MySQL CHAR/String, list/hash/set types \n"\
+    "\t12/14/2023 - 09.06.05: Kafka pub/sub(wip), Fix MySQL CHAR/String, list/hash/set types \n"\
     "\t12/06/2023 - 09.06.00: Oracle Thick, Integration Sample, No sql logging in rules, curl post \n"\
     "\t11/19/2023 - 09.05.14: Run Config: Create servers/ApiLogicProject (new IDE) -- nw+, curl, curr-proj \n"\
     "\t11/12/2023 - 09.05.08: multi-db bug fix (24) \n"\
@@ -439,6 +439,12 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
             log.debug(".. ..Copy in nw- customizations: readme, perform_customizations")
             nw_dir = (Path(api_logic_server_dir_str)).\
                 joinpath('prototypes/nw_no_cust')
+            recursive_overwrite(nw_dir, project.project_directory)
+
+        if project.db_url in ['shipping', 'Shipping']:
+            log.debug(".. ..Copy in oracle customizations: sa_pydb")
+            nw_dir = (Path(api_logic_server_dir_str)).\
+                joinpath('prototypes/shipping')
             recursive_overwrite(nw_dir, project.project_directory)
 
         if 'oracle' in project.db_url:
@@ -1185,7 +1191,7 @@ from database import <project.bind_key>_models
 
         copy_md(project = self,
                 from_doc_file="Sample-Integration.md",
-                to_project_file='integration/integration_services_readme.md')
+                to_project_file='integration/Sample-Integration.md')
 
         if do_show_messages:
             log.info("\nExplore key customization files:")

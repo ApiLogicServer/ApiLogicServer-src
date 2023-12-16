@@ -80,7 +80,8 @@ import ui.admin.admin_loader as AdminLoader
 from security.system.authentication import configure_auth
 import database.multi_db as multi_db
 import oracledb
-import integration.kafka.kafka_connect as kafka
+import integration.kafka.kafka_producer as kafka_producer
+import integration.kafka.kafka_consumer as kafka_consumer
 
 
 
@@ -293,7 +294,8 @@ def api_logic_server_setup(flask_app: Flask, args: Args):
             else:
                 opt_locking.opt_locking_setup(session)
 
-            kafka.kafka_connect()
+            kafka_producer.kafka_producer()
+            kafka_consumer.kafka_consumer(flask_app)
 
             SAFRSBase._s_auto_commit = False
             session.close()

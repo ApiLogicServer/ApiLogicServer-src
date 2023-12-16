@@ -197,6 +197,17 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "     - Shipping",
+            "type": "python",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/api_logic_server_cli",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "program": "cli.py",
+            "redirectOutput": true,
+            "args": ["create","--project_name=../../../servers/Shipping","--db_url=shipping"],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "3 - Run Last Project",
             "type": "python",
             "request": "launch",

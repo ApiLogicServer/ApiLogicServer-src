@@ -124,6 +124,8 @@ def get_abs_db_url(msg, project: Project):
         rtn_abs_db_url = f'sqlite:///{str(project.api_logic_server_dir_path.joinpath("database/allocation.sqlite"))}'
     elif project.db_url == "BudgetApp":
         rtn_abs_db_url = f'sqlite:///{str(project.api_logic_server_dir_path.joinpath("database/BudgetApp.sqlite"))}'
+    elif project.db_url in ["shipping", "Shipping"]:
+        rtn_abs_db_url = f'sqlite:///{str(project.api_logic_server_dir_path.joinpath("database/basic_demo.sqlite"))}'
     elif project.db_url == "basic_demo":
         rtn_abs_db_url = f'sqlite:///{str(project.api_logic_server_dir_path.joinpath("database/basic_demo.sqlite"))}'
     elif project.db_url.startswith('sqlite:///'):

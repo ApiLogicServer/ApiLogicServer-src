@@ -81,7 +81,7 @@ loggers:
         handlers: [console]
         propagate: no
 
-    integration.system.integration_service:   
+    integration.kafka:   
         level: DEBUG
         handlers: [console]
         propagate: no
