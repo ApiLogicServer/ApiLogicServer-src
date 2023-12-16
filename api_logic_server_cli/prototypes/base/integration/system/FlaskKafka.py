@@ -39,13 +39,13 @@ class FlaskKafka():
 
     def _run_handlers(self, msg):
         try:
-            handlers = self.handlers[msg.topic]
+            handlers = self.handlers[msg.topic()]
             for handler in handlers:
                 handler(msg)
-            self.consumer.commit()
+            # self.consumer.commit()
         except Exception as e:
             logger.critical(str(e), exc_info=1)
-            self.consumer.close()
+            # self.consumer.close()
             sys.exit("Exited due to exception")
 
     def signal_term_handler(self, signal, frame):
@@ -62,7 +62,7 @@ class FlaskKafka():
 
         logger.info(" - KafkaConnect._start: begin polling")
         consumer = Consumer(self.conf)
-        use_decorator = True
+        use_decorator = True  # working 9.06.06
         if use_decorator:
             topics = self.handlers.keys()
             consumer.subscribe(topics=list(topics))
@@ -75,14 +75,17 @@ class FlaskKafka():
                 continue
             if msg.error():
                 pass  # Handle errors as needed pass
-            else:  # stub - just print them for now
-                message_data = msg.value() .decode("utf-8")
-                # Assuming the JSON message has a 'message_id' and 'message data' f
-                json_message = json.loads(message_data)
-                message_id = json_message.get('message_id')
-                message_data = json_message.get( 'message_data' )
-                # Create a new KafkaMessage instance and persist it to the database
-                print(f'Received and persisted message with ID: (message_data)')
+            else:
+                if use_decorator:
+                    self._run_handlers(msg)
+                else:
+                    message_data = msg.value() .decode("utf-8")
+                    # Assuming the JSON message has a 'message_id' and 'message data' f
+                    json_message = json.loads(message_data)
+                    message_id = json_message.get('message_id')
+                    message_data = json_message.get( 'message_data' )
+                    # Create a new KafkaMessage instance and persist it to the database
+                    print(f'Received and persisted message with ID: (message_data)')
 
         while True:
             logger.info(" - KafkaConnect._start: wakeup")

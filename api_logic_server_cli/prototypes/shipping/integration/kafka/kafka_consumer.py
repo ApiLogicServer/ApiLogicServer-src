@@ -65,7 +65,14 @@ def kafka_consumer(flask_app: Flask):
 
     @bus.handle('order_shipping')
     def order_shipping(msg):
-        print("consumed {} from order_shipping topic consumer".format(msg))
+        logger.debug("consumed {} from order_shipping topic consumer".format(msg))
+        message_data = msg.value() .decode("utf-8")
+        # Assuming the JSON message has a 'message_id' and 'message data' f
+        json_message = json.loads(message_data)
+        message_id = json_message.get('message_id')
+        message_data = json_message.get( 'message_data' )
+        # TODO: create/use an IntegrationService to map message and insert row
+        logger.debug(f'Received and persisted message with ID: (message_data)')
         pass
 
     # FIXME multiple topics fail -- @bus.handle('another_topic')
