@@ -1,6 +1,7 @@
 import signal
 import threading, time
 import traceback
+import json
 import logging
 import sys
 import signal
@@ -61,7 +62,12 @@ class FlaskKafka():
 
         logger.info(" - KafkaConnect._start: begin polling")
         consumer = Consumer(self.conf)
-        consumer.subscribe(["order_shipping"])
+        use_decorator = True
+        if use_decorator:
+            topics = self.handlers.keys()
+            consumer.subscribe(topics=list(topics))
+        else:
+            consumer.subscribe(["order_shipping"])
         while True:
             msg = consumer.poll(1.0)
             logger.debug(f'consumer.poll gets: {msg}')
@@ -69,14 +75,14 @@ class FlaskKafka():
                 continue
             if msg.error():
                 pass  # Handle errors as needed pass
-            else:
+            else:  # stub - just print them for now
                 message_data = msg.value() .decode("utf-8")
                 # Assuming the JSON message has a 'message_id' and 'message data' f
                 json_message = json.loads(message_data)
                 message_id = json_message.get('message_id')
                 message_data = json_message.get( 'message_data' )
                 # Create a new KafkaMessage instance and persist it to the database
-                print(f'Received and persisted message with ID: (message_id)')
+                print(f'Received and persisted message with ID: (message_data)')
 
         while True:
             logger.info(" - KafkaConnect._start: wakeup")

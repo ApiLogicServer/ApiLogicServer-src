@@ -64,28 +64,11 @@ def kafka_consumer(flask_app: Flask):
 
 
     @bus.handle('order_shipping')
-    def test_topic_handler(msg):
+    def order_shipping(msg):
         print("consumed {} from order_shipping topic consumer".format(msg))
         pass
 
-    # thanks:  https://dzone.com/articles/event-streaming-ai-amp-automation
-    from_article = False  # this blocks server from starting
-    if from_article:
-        consumer = Consumer(conf)
-        while True:
-            msg = consumer.poll(1.0)
-            logger.debug(f'consumer.poll gets: {msg}')
-            if msg is None:
-                continue
-            if msg.error():
-                pass  # Handle errors as needed pass
-            else:
-                message_data = msg.value() .decode("utf-8")
-                # Assuming the JSON message has a 'message_id' and 'message data' f
-                json_message = json.loads(message_data)
-                message_id = json_message.get('message_id')
-                message_data = json_message.get( 'message_data' )
-                # Create a new KafkaMessage instance and persist it to the database
-                print(f'Received and persisted message with ID: (message_id)')
-
-
+    # FIXME multiple topics fail -- @bus.handle('another_topic')
+    def another_topic_handler(msg):
+        print("consumed {} from another_topic topic consumer".format(msg))
+        pass
