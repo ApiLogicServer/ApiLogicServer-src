@@ -21,7 +21,7 @@ class OrderToShip(RowDictMapper):
             , related = RowDictMapper(model_class=models.Item, alias="Items"
                 , fields = [models.Item.Quantity, models.Item.Amount]
                 , related = RowDictMapper(model_class=models.Product
-                    , fields=[models.Product.Name]
+                    , fields=[(models.Product.Name, 'ProductName')]
                     , lookup="*"
                     , isParent=True
                 )

@@ -67,15 +67,17 @@ def kafka_consumer(safrs_api: safrs.SAFRSAPI = None):
         logger.debug(f' * Processing message: [{str(order_dict)}')
         pass
 
-        db = safrs.DB         # Use the safrs.DB, not db!
-        session = db.session  # sqlalchemy.orm.scoping.scoped_session
+        with safrs_api.app.app_context():
+            db = safrs.DB         # Use the safrs.DB, not db!
+            session = db.session  # sqlalchemy.orm.scoping.scoped_session
+            safrs_api.app
 
-        order_b2b_def = OrderToShip()
-        sql_alchemy_row = order_b2b_def.dict_to_row(row_dict = order_dict, session = session)
+            order_b2b_def = OrderToShip()
+            sql_alchemy_row = order_b2b_def.dict_to_row(row_dict = order_dict, session = session)
 
-        session.add(sql_alchemy_row)
-        session.commit()
-        logger.debug(f' * Committed Message')
+            session.add(sql_alchemy_row)
+            session.commit()
+            logger.debug(f' * Committed Message')
 
 
     # FIXME multiple topics fail -- @bus.handle('another_topic')
