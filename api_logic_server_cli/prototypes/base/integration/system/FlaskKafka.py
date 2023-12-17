@@ -14,11 +14,12 @@ from confluent_kafka import Producer, KafkaException, Consumer
 logger = logging.getLogger('integration.kafka')
 
 class FlaskKafka():
-    def __init__(self, interrupt_event, conf: dict, **kw):
+    def __init__(self, interrupt_event: object, conf: dict, safrs_api: object, **kw):
         self.consumer = None  # create consumer KafkaConsumer(**kw)
         self.handlers={}
         self.interrupt_event = interrupt_event
         self.conf = conf
+        self.safrs_api = safrs_api
 
 
     def _add_handler(self, topic, handler):
@@ -41,7 +42,7 @@ class FlaskKafka():
         try:
             handlers = self.handlers[msg.topic()]
             for handler in handlers:
-                handler(msg)
+                handler(msg = msg, safrs_api = self.safrs_api)
             # self.consumer.commit()
         except Exception as e:
             logger.critical(str(e), exc_info=1)
@@ -87,22 +88,13 @@ class FlaskKafka():
                     # Create a new KafkaMessage instance and persist it to the database
                     print(f'Received and persisted message with ID: (message_data)')
 
-        while True:
-            logger.info(" - KafkaConnect._start: wakeup")
-            time.sleep(5)
 
-        do_consume = False
-        if do_consume:
-            self.consumer.subscribe(topics=tuple(self.handlers.keys()))
 
-            for msg in self.consumer:
-                logger.debug("TOPIC: {}, PAYLOAD: {}".format(msg.topic, msg.value))
-                self._run_handlers(msg)
-                # stop the consumer
-                if self.interrupt_event.is_set():
-                    self.interrupted_process()
-                    self.interrupt_event.clear()
-
+    def listen_kill_server(self):
+        signal.signal(signal.SIGTERM, self.interrupted_process)
+        signal.signal(signal.SIGINT, self.interrupted_process)
+        signal.signal(signal.SIGQUIT, self.interrupted_process)
+        signal.signal(signal.SIGHUP, self.interrupted_process)
             
     def interrupted_process(self, *args):
         logger.info("closing consumer")

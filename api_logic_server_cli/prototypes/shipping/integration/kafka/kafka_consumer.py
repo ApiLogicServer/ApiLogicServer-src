@@ -11,7 +11,7 @@ import signal
 import logging
 import json
 import socket
-from flask import Flask, redirect, send_from_directory, send_file
+import safrs
 from threading import Event
 from integration.system.FlaskKafka import FlaskKafka
 
@@ -23,11 +23,11 @@ logger.debug("kafka_producer imported")
 pass
 
 
-def kafka_consumer(flask_app: Flask):
+def kafka_consumer(safrs_api: safrs.SAFRSAPI = None):
     """
     Called by api_logic_server_run to listen on kafka
 
-    Enabled by config.KAFKA_LISTEN
+    Enabled by config.KAFKA_CONSUMER
 
     Args:
         app (Flask): flask_app
@@ -50,21 +50,15 @@ def kafka_consumer(flask_app: Flask):
 
     INTERRUPT_EVENT = Event()
 
-    bus = FlaskKafka(INTERRUPT_EVENT, conf)
+    bus = FlaskKafka(interrupt_event=INTERRUPT_EVENT, conf=conf, safrs_api=safrs_api)
     
     bus.run()
 
     logger.debug(f'Kafka Listener activated {bus}')
 
-    def listen_kill_server():
-        signal.signal(signal.SIGTERM, bus.interrupted_process)
-        signal.signal(signal.SIGINT, bus.interrupted_process)
-        signal.signal(signal.SIGQUIT, bus.interrupted_process)
-        signal.signal(signal.SIGHUP, bus.interrupted_process)
-
 
     @bus.handle('order_shipping')
-    def order_shipping(msg):
+    def order_shipping(msg: object, safrs_api: safrs.SAFRSAPI):
         logger.debug("consumed {} from order_shipping topic consumer".format(msg))
         message_data = msg.value() .decode("utf-8")
         # Assuming the JSON message has a 'message_id' and 'message data' f

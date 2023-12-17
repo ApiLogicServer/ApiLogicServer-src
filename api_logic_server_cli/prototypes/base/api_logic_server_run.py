@@ -295,7 +295,7 @@ def api_logic_server_setup(flask_app: Flask, args: Args):
                 opt_locking.opt_locking_setup(session)
 
             kafka_producer.kafka_producer()
-            kafka_consumer.kafka_consumer(flask_app)
+            kafka_consumer.kafka_consumer(safrs_api = safrs_api)
 
             SAFRSBase._s_auto_commit = False
             session.close()
