@@ -8,7 +8,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-class IntegrationService():
+class RowDictMapper():
     """Services to support App Integration as described in api.custom_resources.readme
 
     See: https://apilogicserver.github.io/Docs/Sample-Integration/
@@ -37,7 +37,7 @@ class IntegrationService():
             :role_name (str, optional): disambiguate multiple relationships between 2 tables
             :fields (list[tuple[Column, str]  |  Column], optional): fields, use tuple for alias
             :lookup (list[tuple[Column, str]  |  Column], optional): Foreign Key Lookups
-            :related (list[IntegrationService] | IntegrationService): Nested objects in multi-table dict
+            :related (list[RowDictMapper] | RowDictMapper): Nested objects in multi-table dict
             :isParent (bool): is ManyToOne
             :isCombined (bool):  combine the fields of the containing parent 
         """
@@ -63,8 +63,8 @@ class IntegrationService():
             return f"Alias {self.alias} -- Model: {self._model_class.__name__}"
 
 
-    def row_to_dict(self, row: object, current_endpoint: 'IntegrationService' = None) -> dict:
-        """returns row as dict per IntegrationService definition, with subobjects
+    def row_to_dict(self, row: object, current_endpoint: 'RowDictMapper' = None) -> dict:
+        """returns row as dict per RowDictMapper definition, with subobjects
 
         Args:
             row (_type_): a SQLAlchemy row
@@ -112,13 +112,13 @@ class IntegrationService():
         return row_as_dict
     
 
-    def dict_to_row(self, row_dict: dict, session: object, current_endpoint: 'IntegrationService' = None) -> object:
-        """Returns SQLAlchemy row(s), converted from dict per IntegrationService definition
+    def dict_to_row(self, row_dict: dict, session: object, current_endpoint: 'RowDictMapper' = None) -> object:
+        """Returns SQLAlchemy row(s), converted from dict per RowDictMapper definition
 
         Args:
             row_dict (dict): multi-object dict, typically from request data
             session (session): FlaskSQLAlchemy session
-            current_endpoint (IntegrationService, optional): omit (internal recursion use)
+            current_endpoint (RowDictMapper, optional): omit (internal recursion use)
 
         Returns:
             object: SQLAlchemy row / sub-rows, ready to insert
@@ -165,7 +165,7 @@ class IntegrationService():
     
 
     def _lookup_parent(self, child_row_dict: dict, child_row: object,
-                      session: object, lookup_parent_endpoint: 'IntegrationService' = None):
+                      session: object, lookup_parent_endpoint: 'RowDictMapper' = None):
         parent_class = lookup_parent_endpoint._model_class
         query = session.query(parent_class)
         if lookup_parent_endpoint.lookup is not None:

@@ -97,7 +97,7 @@
 		"sqltools.useNodeRuntime": true,
 		"workbench.preferredDarkColorTheme": "One Dark Pro Flat",
 		"workbench.preferredLightColorTheme": "IntelliJ IDEA New UI",
-		"workbench.colorTheme": "IntelliJ IDEA New UI",
+		"workbench.colorTheme": "One Dark Pro Flat",
 		"search.exclude": {
 			"**api_logic_server_cli/ApiLogicProject/": true,
 			"**api_logic_server_cli/create_from_model/safrs-react-admin-npm-build": true

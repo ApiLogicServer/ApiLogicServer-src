@@ -1,10 +1,10 @@
-from integration.system.integration_service import IntegrationService
+from integration.system.RowDictMapper import RowDictMapper
 from database import models
 from database.models import Employee
 from flask import request, jsonify
 from sqlalchemy import Column
 
-class OrderB2B(IntegrationService):
+class OrderB2B(RowDictMapper):
 
     def __init__(self):
         """
@@ -22,11 +22,11 @@ class OrderB2B(IntegrationService):
             , alias = "order"
             , fields = [(models.Order.CustomerId, "AccountId")]
             , related = [
-                (IntegrationService(model_class=models.OrderDetail
+                (RowDictMapper(model_class=models.OrderDetail
                     , alias="Items"
                     , fields = [(models.OrderDetail.Quantity, "QuantityOrdered")]
                     , related = [
-                        (IntegrationService(model_class=models.Product
+                        (RowDictMapper(model_class=models.Product
                         , alias="Product"
                         , isParent = True
                         , fields = [models.Product.ProductName]
@@ -35,7 +35,7 @@ class OrderB2B(IntegrationService):
                     ]
                     )
                 )
-                , (IntegrationService(model_class=models.Employee
+                , (RowDictMapper(model_class=models.Employee
                     , alias="SalesRep"
                     , isParent = True
                     , fields = [(models.Employee.LastName, 'Surname'), (models.Employee.FirstName, 'Given')]

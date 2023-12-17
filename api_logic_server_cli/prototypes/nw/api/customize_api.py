@@ -15,9 +15,9 @@ from database import models
 from config import Args
 from flask_cors import cross_origin
 from logic_bank.rule_bank.rule_bank import RuleBank
-from integration.integration_services.OrderById import OrderById
-from integration.integration_services.OrderShipping import OrderShipping
-from integration.integration_services.OrderB2B import OrderB2B
+from integration.row_dict_maps.OrderById import OrderById
+from integration.row_dict_maps.OrderShipping import OrderShipping
+from integration.row_dict_maps.OrderB2B import OrderB2B
 
 # Customize this file to add endpoints/services, using SQLAlchemy as required
 #     Separate from expose_api_models.py, to simplify merge if project rebuilt

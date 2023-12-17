@@ -1,9 +1,9 @@
-from integration.system.integration_service import IntegrationService
+from integration.system.RowDictMapper import RowDictMapper
 from database import models
 from flask import request, jsonify
 from sqlalchemy import Column
 
-class OrderById(IntegrationService):
+class OrderById(RowDictMapper):
     
     def __init__(self):
         """ Illustrates poor API definition.
@@ -14,13 +14,13 @@ class OrderById(IntegrationService):
         * Better: use the automated lookup function: @see OrderB2B.
 
         Returns:
-            _type_: IntegrationServices object
+            _type_: RowDictMapper object
         """
         order = super(OrderById, self).__init__(
             model_class=models.Order
             , alias = "order"
             , fields = [(models.Order.CustomerId, "AccountId"), (models.Order.EmployeeId, 'SalesRepId')]
-            , related = IntegrationService(model_class=models.OrderDetail
+            , related = RowDictMapper(model_class=models.OrderDetail
                 , alias="Items"
                 , fields = [(models.OrderDetail.Quantity, "QuantityOrdered"), (models.OrderDetail.ProductId, "ProductId")]
             )

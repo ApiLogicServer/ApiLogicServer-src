@@ -8,7 +8,7 @@ import api.system.opt_locking.opt_locking as opt_locking
 from security.system.authorization import Grant
 import logging
 from flask import jsonify
-from integration.integration_services.OrderShipping import OrderShipping
+from integration.row_dict_maps.OrderShipping import OrderShipping
 from confluent_kafka import Producer, KafkaException
 import integration.kafka.kafka_producer as kafka_producer
 
