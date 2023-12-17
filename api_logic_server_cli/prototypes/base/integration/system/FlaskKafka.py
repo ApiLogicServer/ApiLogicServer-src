@@ -66,7 +66,7 @@ class FlaskKafka():
         use_decorator = True  # working 9.06.06
         if use_decorator:
             topics = self.handlers.keys()
-            consumer.subscribe(topics=list(topics))
+            consumer.subscribe(topics=list(topics))  # restart often corrects "Failed to set subscription"
         else:
             consumer.subscribe(["order_shipping"])
         while True:

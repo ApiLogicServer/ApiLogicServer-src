@@ -60,10 +60,11 @@ def kafka_consumer(safrs_api: safrs.SAFRSAPI = None):
 
     @bus.handle('order_shipping')
     def order_shipping(msg: object, safrs_api: safrs.SAFRSAPI):
-        logger.debug("kafka_consumer#order_shipping receives".format(msg))
+        logger.debug("kafka_consumer#order_shipping receives msg..")
         message_data = msg.value().decode("utf-8")
-        order_dict = json.loads(message_data)
-        logger.debug(f' * Processing message: (order_dict)')
+        msg_dict = json.loads(message_data)
+        order_dict = msg_dict['order']
+        logger.debug(f' * Processing message: [{str(order_dict)}')
         pass
 
         db = safrs.DB         # Use the safrs.DB, not db!

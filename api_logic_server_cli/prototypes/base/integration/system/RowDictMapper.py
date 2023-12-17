@@ -6,7 +6,7 @@ from flask_sqlalchemy.model import DefaultMeta
 from typing import Self
 import logging
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('integration.kafka')
 
 class RowDictMapper():
     """Services to support App Integration as described in api.custom_resources.readme
@@ -130,14 +130,24 @@ class RowDictMapper():
         if current_endpoint is not None:
             custom_endpoint = current_endpoint
         sql_alchemy_row = custom_endpoint._model_class()     # new instance
+        error_count = 0
         for each_field in custom_endpoint.fields:           # attr mapping  FIXME 1 field, not array
             if isinstance(each_field, tuple):
-                setattr(sql_alchemy_row, each_field[0].name, row_dict[each_field[1]])
+                try:
+                    setattr(sql_alchemy_row, each_field[0].name, row_dict[each_field[1]])
+                except:
+                    logger.info(f'Unable to find either {each_field[1]} in row_dict, or {each_field[0].name} in {custom_endpoint._model_class.__name__} row')
+                    error_count += 1
             else:
                 if isinstance(each_field, str):
                     logger.info("Coding error - you need to use TUPLE for attr/alias")
-                setattr(sql_alchemy_row, each_field.name, row_dict[each_field.name])
-        
+                try:
+                    setattr(sql_alchemy_row, each_field.name, row_dict[each_field.name])
+                except:
+                    logger.info(f'Unable to find {each_field.name} in either row_dict or {custom_endpoint._model_class.name.__name__} row')        
+                    error_count += 1
+        if error_count > 0:
+            raise ValueError(" * dict_to_row() failed - see above")
         custom_endpoint_related_list = custom_endpoint.related
         if isinstance(custom_endpoint_related_list, list) is False:
             custom_endpoint_related_list = []
