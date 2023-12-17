@@ -14,6 +14,7 @@ import socket
 import safrs
 from threading import Event
 from integration.system.FlaskKafka import FlaskKafka
+from integration.row_dict_maps.OrderToShip import OrderToShip
 
 
 conf = None
@@ -59,15 +60,22 @@ def kafka_consumer(safrs_api: safrs.SAFRSAPI = None):
 
     @bus.handle('order_shipping')
     def order_shipping(msg: object, safrs_api: safrs.SAFRSAPI):
-        logger.debug("consumed {} from order_shipping topic consumer".format(msg))
-        message_data = msg.value() .decode("utf-8")
-        # Assuming the JSON message has a 'message_id' and 'message data' f
-        json_message = json.loads(message_data)
-        message_id = json_message.get('message_id')
-        message_data = json_message.get( 'message_data' )
-        # TODO: create/use an IntegrationService to map message and insert row
-        logger.debug(f'Received and persisted message with ID: (message_data)')
+        logger.debug("kafka_consumer#order_shipping receives".format(msg))
+        message_data = msg.value().decode("utf-8")
+        order_dict = json.loads(message_data)
+        logger.debug(f' * Processing message: (order_dict)')
         pass
+
+        db = safrs.DB         # Use the safrs.DB, not db!
+        session = db.session  # sqlalchemy.orm.scoping.scoped_session
+
+        order_b2b_def = OrderToShip()
+        sql_alchemy_row = order_b2b_def.dict_to_row(row_dict = order_dict, session = session)
+
+        session.add(sql_alchemy_row)
+        session.commit()
+        logger.debug(f' * Committed Message')
+
 
     # FIXME multiple topics fail -- @bus.handle('another_topic')
     def another_topic_handler(msg):
