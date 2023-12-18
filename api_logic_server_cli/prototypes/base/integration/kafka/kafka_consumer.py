@@ -10,7 +10,7 @@ from config import Args
 from confluent_kafka import Producer, KafkaException, Consumer
 import signal
 import logging
-import json
+import safrs
 import socket
 from flask import Flask, redirect, send_from_directory, send_file
 from threading import Event
@@ -24,7 +24,7 @@ logger.debug("kafka_producer imported")
 pass
 
 
-def kafka_consumer(flask_app: Flask):
+def kafka_consumer(safrs_api: safrs.SAFRSAPI = None):
     """
     Called by api_logic_server_run to listen on kafka
 

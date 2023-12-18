@@ -4,7 +4,7 @@
 
 # 
 # start kafka (uses this file)
-#   docker compose -f integration/kafka/dockecompose_start_kafka.yml up
+#   docker compose -f integration/kafka/dockercompose_start_kafka.yml up
 #
 # in docker terminal, create a topic, list topics, monitor order_shipping
 #   kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 3  --topic order_shipping

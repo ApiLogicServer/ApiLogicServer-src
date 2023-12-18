@@ -130,7 +130,7 @@ class RowDictMapper():
         if current_endpoint is not None:
             custom_endpoint = current_endpoint
         sql_alchemy_row = custom_endpoint._model_class()     # new instance
-        error_count = 0
+        error_count = 0                                     # FIXME - dates fail in sqlite
         for each_field in custom_endpoint.fields:           # attr mapping  FIXME 1 field, not array
             if isinstance(each_field, tuple):
                 try:
