@@ -15,7 +15,7 @@ import socket
 import safrs
 from threading import Event
 from integration.system.FlaskKafka import FlaskKafka
-from integration.row_dict_maps.OrderToShip import OrderToShip
+
 
 conf = None
 
