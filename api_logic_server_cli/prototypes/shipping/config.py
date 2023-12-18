@@ -128,7 +128,7 @@ class Config:
 
     KAFKA_PRODUCER = '{"bootstrap.servers": "localhost:9092"}'  #  , "client.id": "aaa.b.c.d"}'
     # KAFKA_PRODUCER = None  # comment out to enable Kafka  TODO change default off
-    KAFKA_CONSUMER = '{"bootstrap.servers": "localhost:9092", "group.id": "als-default-group1"}'
+    KAFKA_CONSUMER = '{"bootstrap.servers": "localhost:9092", "group.id": "als-default-group1", "auto.offset.reset":"smallest"}'
     # KAFKA_CONSUMER = False  # comment out to enable Kafka consumer
 
     OPT_LOCKING = "optional"

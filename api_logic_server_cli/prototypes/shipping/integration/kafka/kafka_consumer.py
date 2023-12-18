@@ -38,7 +38,7 @@ def kafka_consumer(safrs_api: safrs.SAFRSAPI = None):
         return
 
     conf = Args.instance.kafka_consumer
-    #  eg, KAFKA_CONSUMER = '{"bootstrap.servers": "localhost:9092", "group.id": "als-default-group1"}'
+    #  eg, KAFKA_CONSUMER = '{"bootstrap.servers": "localhost:9092", "group.id": "als-default-group1", "auto.offset.reset":"smallest"}'
     logger.debug(f'\nKafka Consumer configured, starting')
 
     INTERRUPT_EVENT = Event()
@@ -68,9 +68,10 @@ def kafka_consumer(safrs_api: safrs.SAFRSAPI = None):
         """
         logger.debug("kafka_consumer#order_shipping receives msg..")
         message_data = msg.value().decode("utf-8")
+        message_id = msg.key()
         msg_dict = json.loads(message_data)
         order_dict = msg_dict['order']
-        logger.debug(f' * Processing message: [{str(order_dict)}')
+        logger.debug(f' * Processing message - id: {message_id} msg_dict: {str(order_dict)}')
 
         with safrs_api.app.app_context():
             db = safrs.DB         # Use the safrs.DB, not db!

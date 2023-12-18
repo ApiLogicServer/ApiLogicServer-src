@@ -45,24 +45,24 @@ class RowDictMapper():
             raise ValueError("CustomEndpoint model_class=models.EntityName is required")
 
         self._model_class = model_class
+        self.isCombined = isCombined
+        self.isParent= isParent 
+        if lookup is not None:
+            self.isParent = True
         self.role_name = role_name
         """ class_name || 'List' """
         if role_name == '':
             self.role_name = model_class._s_class_name
-            if not isParent:
+            if not self.isParent:
                 self.role_name = self.role_name + "List"
         self.alias = alias or self.role_name
         self.fields = fields
         self.lookup = lookup
         self.related = related or []
-        self.isCombined = isCombined
-        self.isParent= isParent 
-        if lookup is not None:
-            self.isParent = True
     
 
     def __str__(self):
-            return f"Alias {self.alias} -- Model: {self._model_class.__name__}"
+            return f"Alias {self.alias} -- Model: {self._model_class.__name__}, lookup: {self.lookup}, is_parent: {self.isParent}" 
 
 
     def row_to_dict(self, row: object, current_endpoint: 'RowDictMapper' = None) -> dict:
@@ -126,7 +126,7 @@ class RowDictMapper():
             object: SQLAlchemy row / sub-rows, ready to insert
         """
 
-        logger.debug( f"to_row receives row_dict: {row_dict}" )
+        logger.debug( f"RowDictMapper.dict_to_row() receives row_dict: {row_dict}" )
 
         custom_endpoint = self
         if current_endpoint is not None:
@@ -181,6 +181,8 @@ class RowDictMapper():
         parent_class = lookup_parent_endpoint._model_class
         query = session.query(parent_class)
         if lookup_parent_endpoint.lookup is not None:
+            if self._model_class.__name__ in ['Product']:
+                logging.debug(f'Lookup {parent_class.__name__} with {lookup_parent_endpoint.lookup}' )
             lookup_param_fields = lookup_parent_endpoint.lookup
             if isinstance(lookup_param_fields, str):
                 lookup_param_fields = lookup_parent_endpoint.fields
