@@ -11,8 +11,12 @@ class OrderToShip(RowDictMapper):
 
         Used in: logic/declare_logic.py -- send_order_to_shipping
 
+        Sample Data:
+
+         * Processing message: [{'CustomerId': 'ALFKI', 'Id': 11079, 'Items': [{'Amount': 18.0, 'OrderId': 11079, 'ProductName': 'Chai', 'Quantity': 1, 'UnitPrice': 18.0, 'UnitsInStock': 37}, {'Amount': 38.0, 'OrderId': 11079, 'ProductName': 'Chang', 'Quantity': 2, 'UnitPrice': 19.0, 'UnitsInStock': 13}], 'Order Date': '2023-12-17 19:14:10.573881', 'Total': 56.0}
+
         Returns:
-            _type_: OrderShipping object (eg, provides row_to_dict and dict_to_row)
+            _type_: OrderShipping object (eg, provides dict_to_row)
         """
         order = super(OrderToShip, self).__init__(
             model_class=models.Order
@@ -22,7 +26,6 @@ class OrderToShip(RowDictMapper):
                 RowDictMapper (model_class=models.Customer
                     , fields = [(models.Customer.Name, 'CustomerId')]
                     , lookup = "*"
-                    , isParent=True
                 ),
                 RowDictMapper(model_class=models.Item
                     , alias="Items"
@@ -31,7 +34,6 @@ class OrderToShip(RowDictMapper):
                         RowDictMapper(model_class=models.Product
                             , fields=[(models.Product.Name, 'ProductName')]
                             , lookup="*"
-                            , isParent=True
                         )
                 )
             ]

@@ -36,9 +36,9 @@ class RowDictMapper():
             :alias (str, optional): name of this level in dict
             :role_name (str, optional): disambiguate multiple relationships between 2 tables
             :fields (list[tuple[Column, str]  |  Column], optional): fields, use tuple for alias
-            :lookup (list[tuple[Column, str]  |  Column], optional): Foreign Key Lookups
+            :lookup (list[tuple[Column, str]  |  Column], optional): Foreign Key Lookups ("*" means use fields)
             :related (list[RowDictMapper] | RowDictMapper): Nested objects in multi-table dict
-            :isParent (bool): is ManyToOne
+            :isParent (bool): is ManyToOne (defaults True if lookup)
             :isCombined (bool):  combine the fields of the containing parent 
         """
         if not model_class:
@@ -57,6 +57,8 @@ class RowDictMapper():
         self.related = related or []
         self.isCombined = isCombined
         self.isParent= isParent 
+        if lookup is not None:
+            self.isParent = True
     
 
     def __str__(self):
