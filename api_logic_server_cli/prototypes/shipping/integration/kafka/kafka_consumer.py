@@ -85,7 +85,7 @@ def kafka_consumer(safrs_api: safrs.SAFRSAPI = None):
             logger.debug(f' * Committed Message')
 
 
-    # FIXME multiple topics fail -- @bus.handle('another_topic')
+    @bus.handle('another_topic')
     def another_topic_handler(msg):
         print("consumed {} from another_topic topic consumer".format(msg))
         pass
