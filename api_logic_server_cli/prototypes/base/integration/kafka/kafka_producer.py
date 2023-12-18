@@ -4,6 +4,8 @@ Invoked at server start (api_logic_server_run.py)
 
 Connect to Kafka, if KAFKA_CONNECT specified in Config.py
 
+You do not normally need to alter this file
+
 """
 from config import Args
 from confluent_kafka import Producer
@@ -19,7 +21,6 @@ conf = None
 
 logger = logging.getLogger('integration.kafka')
 logger.debug("kafka_connect imported")
-pass
 
 def kafka_producer():
     """

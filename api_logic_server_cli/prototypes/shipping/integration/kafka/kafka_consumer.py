@@ -1,10 +1,11 @@
 """
-
 Invoked at server start (api_logic_server_run.py)
 
-Connect to Kafka, if KAFKA_CONNECT specified in Config.py
+Listen/consume Kafka topis, if KAFKA_CONSUMER specified in Config.py
 
+Alter this file to add handlers for consuming kafka topics
 """
+
 from config import Args
 from confluent_kafka import Producer, KafkaException, Consumer
 import signal
@@ -16,12 +17,10 @@ from threading import Event
 from integration.system.FlaskKafka import FlaskKafka
 from integration.row_dict_maps.OrderToShip import OrderToShip
 
-
 conf = None
 
 logger = logging.getLogger('integration.kafka')
-logger.debug("kafka_producer imported")
-pass
+logger.debug("kafka_consumer imported")
 
 
 def kafka_consumer(safrs_api: safrs.SAFRSAPI = None):
@@ -31,7 +30,7 @@ def kafka_consumer(safrs_api: safrs.SAFRSAPI = None):
     Enabled by config.KAFKA_CONSUMER
 
     Args:
-        app (Flask): flask_app
+        app (safrs.SAFRSAPI): safrs_api
     """
 
     if not Args.instance.kafka_consumer:
@@ -39,15 +38,8 @@ def kafka_consumer(safrs_api: safrs.SAFRSAPI = None):
         return
 
     conf = Args.instance.kafka_consumer
-    # conf = {'bootstrap.servers': 'localhost:9092', 'client.id': socket.gethostname()}
-    logger.debug(f'\nKafka producer configured')
-
-    
-    if "client.id" not in conf:
-        conf["client.id"] = socket.gethostname()
-    # conf = {'bootstrap.servers': 'localhost:9092', 'client.id': socket.gethostname()}
-    logger.debug(f'\nKafka producer starting')
-
+    #  eg, KAFKA_CONSUMER = '{"bootstrap.servers": "localhost:9092", "group.id": "als-default-group1"}'
+    logger.debug(f'\nKafka Consumer configured, starting')
 
     INTERRUPT_EVENT = Event()
 
@@ -55,22 +47,34 @@ def kafka_consumer(safrs_api: safrs.SAFRSAPI = None):
     
     bus.run()
 
-    logger.debug(f'Kafka Listener activated {bus}')
+    logger.debug(f'Kafka Listener thread activated {bus}')
+
+    ###
+    # Define topic handlers here
+    ###
 
 
     @bus.handle('order_shipping')
     def order_shipping(msg: object, safrs_api: safrs.SAFRSAPI):
+        """
+        Defining this annotated method:
+
+        1. Identifies Kafka topic to listen on
+        2. Handles a message instance (here, saves order for shipping)
+
+        Args:
+            msg (object): Kafka Message
+            safrs_api (safrs.SAFRSAPI): activated safrs server (in Flask)
+        """
         logger.debug("kafka_consumer#order_shipping receives msg..")
         message_data = msg.value().decode("utf-8")
         msg_dict = json.loads(message_data)
         order_dict = msg_dict['order']
         logger.debug(f' * Processing message: [{str(order_dict)}')
-        pass
 
         with safrs_api.app.app_context():
             db = safrs.DB         # Use the safrs.DB, not db!
             session = db.session  # sqlalchemy.orm.scoping.scoped_session
-            safrs_api.app
 
             order_b2b_def = OrderToShip()
             sql_alchemy_row = order_b2b_def.dict_to_row(row_dict = order_dict, session = session)
