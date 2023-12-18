@@ -18,17 +18,23 @@ class OrderToShip(RowDictMapper):
         Returns:
             _type_: OrderShipping object (eg, provides dict_to_row)
         """
-
         order = super(OrderToShip, self).__init__(
             model_class=models.Order
             , alias = "order"
             , fields = [(models.Order.NWRefId, "Id")]
-            , parent_lookups = [ ( models.Customer, [(models.Customer.Name, 'CustomerId')] ) ]
             , related = [
+                RowDictMapper (model_class=models.Customer
+                    , fields = [(models.Customer.Name, 'CustomerId')]
+                    , lookup = "*"
+                ),
                 RowDictMapper(model_class=models.Item
                     , alias="Items"
                     , fields = [models.Item.Quantity, models.Item.Amount]
-                    , parent_lookups = [ (models.Product, [ (models.Product.Name, 'ProductName') ]) ]
+                    , related = 
+                        RowDictMapper(model_class=models.Product
+                            , fields=[(models.Product.Name, 'ProductName')]
+                            , lookup="*"
+                        )
                 )
             ]
         )

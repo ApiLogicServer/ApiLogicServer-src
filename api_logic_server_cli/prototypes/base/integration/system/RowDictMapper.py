@@ -20,6 +20,9 @@ class RowDictMapper():
             , alias: str = ""
             , role_name: str = ""
             , fields: list[tuple[Column, str] | Column] = []
+            # , parent_lookup: tuple(DefaultMeta, list[tuple[Column, str]]) = None
+            # , parent_lookups: list[tuple(DefaultMeta, list[tuple[Column, str]])] |  tuple(DefaultMeta, list[tuple[Column, str]]) = None
+            , parent_lookups: list[object] = None
             , lookup: list[tuple[Column, str] | Column] = None
             , related: list[Self] | Self = []
             , isParent: bool = False
@@ -36,6 +39,7 @@ class RowDictMapper():
             :alias (str, optional): name of this level in dict
             :role_name (str, optional): disambiguate multiple relationships between 2 tables
             :fields (list[tuple[Column, str]  |  Column], optional): fields, use tuple for alias
+            :parent_lookups (tuple(DeclarativeMeta, list[tuple[Column, str]  |  Column]))
             :lookup (list[tuple[Column, str]  |  Column], optional): Foreign Key Lookups ("*" means use fields)
             :related (list[RowDictMapper] | RowDictMapper): Nested objects in multi-table dict
             :isParent (bool): is ManyToOne (defaults True if lookup)
@@ -59,6 +63,7 @@ class RowDictMapper():
         self.fields = fields
         self.lookup = lookup
         self.related = related or []
+        self.parent_lookups = parent_lookups
     
 
     def __str__(self):
@@ -126,7 +131,8 @@ class RowDictMapper():
             object: SQLAlchemy row / sub-rows, ready to insert
         """
 
-        logger.debug( f"RowDictMapper.dict_to_row() receives row_dict: {row_dict}" )
+        logger.debug( f"RowDictMapper.dict_to_row(): {str(self)}" )
+        logger.debug( f"  ..row_dict: {row_dict}" )
 
         custom_endpoint = self
         if current_endpoint is not None:
@@ -150,6 +156,18 @@ class RowDictMapper():
                     error_count += 1
         if error_count > 0:
             raise ValueError(" * dict_to_row() failed - see above")
+        
+        parent_lookup_list = self.parent_lookups
+        if isinstance(parent_lookup_list, tuple):
+            parent_lookup_list = []
+            parent_lookup_list.append(self.parent_lookups)
+        for each_parent_lookup in parent_lookup_list:
+            self._parent_lookup_from_child(child_row_dict = row_dict, 
+                                           lookup_fields = each_parent_lookup[1],
+                                           parent_class = each_parent_lookup[0],
+                                           child_row = sql_alchemy_row,
+                                           session = session)
+        
         custom_endpoint_related_list = custom_endpoint.related
         if isinstance(custom_endpoint_related_list, list) is False:
             custom_endpoint_related_list = []
@@ -168,9 +186,9 @@ class RowDictMapper():
                     row_dict_child_list = row_dict[child_property_name]
                     # row_as_dict[each_related.alias] = []  # set up row_dict child array
                     for each_row_dict_child in row_dict_child_list:  # recurse for each_child
-                        each_child_row = self.dict_to_row(row_dict = each_row_dict_child, 
-                                                        session = session,
-                                                        current_endpoint = each_related)
+                        each_child_row = each_related.dict_to_row(row_dict = each_row_dict_child, 
+                                                          session = session,
+                                                          current_endpoint = each_related)
                         child_list = getattr(sql_alchemy_row, each_related.role_name)
                         child_list.append(each_child_row)
         return sql_alchemy_row
@@ -178,6 +196,18 @@ class RowDictMapper():
 
     def _lookup_parent(self, child_row_dict: dict, child_row: object,
                       session: object, lookup_parent_endpoint: 'RowDictMapper' = None):
+        """ Used when parent is in related
+
+        Args:
+            child_row_dict (dict): _description_
+            child_row (object): _description_
+            session (object): _description_
+            lookup_parent_endpoint (RowDictMapper, optional): _description_. Defaults to None.
+
+        Raises:
+            ValueError: _description_
+            ValueError: _description_
+        """
         parent_class = lookup_parent_endpoint._model_class
         query = session.query(parent_class)
         if lookup_parent_endpoint.lookup is not None:
@@ -206,4 +236,51 @@ class RowDictMapper():
                     raise ValueError('Lookup failed: missing parent', child_row, str(lookup_parent_endpoint)) 
                 parent_row = parent_rows[0]
                 setattr(child_row, lookup_parent_endpoint.role_name, parent_row)
+        return
+    
+
+    def _parent_lookup_from_child(self, child_row_dict: dict, child_row: object,
+                      session: object, 
+                      parent_class: DefaultMeta,
+                      lookup_fields: list[object]):
+        """ Used from child -- parent_lookups
+
+        Args:
+            child_row_dict (dict): _description_
+            child_row (object): _description_
+            session (object): _description_
+            lookup_parent_endpoint (RowDictMapper, optional): _description_. Defaults to None.
+
+        Raises:
+            ValueError: _description_
+            ValueError: _description_
+        """
+
+        query = session.query(parent_class)
+
+        if parent_class.__name__ in ['Product', 'Customer']:
+            logging.debug(f'_parent_lookup_from_child {parent_class.__name__}' )
+        for each_lookup_param_field in lookup_fields:
+            attr_name = each_lookup_param_field
+            if isinstance(each_lookup_param_field, tuple):
+                col_def = each_lookup_param_field[0]
+                attr_name = each_lookup_param_field[1]
+            else:
+                col_def = each_lookup_param_field
+                attr_name = each_lookup_param_field.name
+            filter_parm = child_row_dict[attr_name]
+            filter_val = child_row_dict[attr_name]
+            query = query.filter(col_def == filter_val)
+            pass
+
+        parent_rows = query.all()
+        if parent_rows is not None:
+            if len(parent_rows) > 1:
+                raise ValueError(f'Lookup failed: multiple parents', child_row, parent_class.__name__) 
+            if len(parent_rows) == 0:
+                raise ValueError('Lookup failed: missing parent', child_row, parent_class.__name__) 
+            
+            parent_row = parent_rows[0]
+            setattr(child_row, parent_class.__name__, parent_row)
+
         return
