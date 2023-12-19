@@ -127,7 +127,7 @@ class Config:
     PROPAGATE_EXCEPTIONS = False
 
     KAFKA_PRODUCER = '{"bootstrap.servers": "localhost:9092"}'  #  , "client.id": "aaa.b.c.d"}'
-    KAFKA_PRODUCER = None  # comment out to enable Kafka 
+    KAFKA_PRODUCER = None  # comment out to enable Kafka producer
     KAFKA_CONSUMER = '{"bootstrap.servers": "localhost:9092", "group.id": "als-default-group1"}'
     KAFKA_CONSUMER = None  # comment out to enable Kafka consumer
 
@@ -366,8 +366,7 @@ class Args():
         if "KAFKA_CONSUMER" in self.flask_app.config:
             if self.flask_app.config["KAFKA_CONSUMER"] is not None:
                 return json.loads(self.flask_app.config["KAFKA_CONSUMER"])
-        else:
-            return False
+        return None
     
     @kafka_consumer.setter
     def kafka_consumer(self, a: str):
