@@ -277,7 +277,7 @@ class RowDictMapper():
             if len(parent_rows) > 1:
                 raise ValueError(f'Lookup failed: multiple parents', child_row, parent_class.__name__) 
             if len(parent_rows) == 0:
-                raise ValueError('Lookup failed: missing parent', child_row, parent_class.__name__) 
+                raise ValueError('Lookup failed: missing parent', child_row, parent_class.__name__, str(child_row_dict)) 
             
             parent_row = parent_rows[0]
             setattr(child_row, parent_class.__name__, parent_row)

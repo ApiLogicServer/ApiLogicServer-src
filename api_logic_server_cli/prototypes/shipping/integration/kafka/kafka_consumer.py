@@ -89,6 +89,5 @@ def kafka_consumer(safrs_api: safrs.SAFRSAPI = None):
 
 
     @bus.handle('another_topic')
-    def another_topic_handler(msg):
-        print("consumed {} from another_topic topic consumer".format(msg))
-        pass
+    def another_topic_handler(msg: object, safrs_api: safrs.SAFRSAPI):
+        print("consumed key: {}, message:{} from another_topic topic consumer".format(msg.key(),msg.value()))
