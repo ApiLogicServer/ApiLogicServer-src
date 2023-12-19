@@ -9,7 +9,7 @@ class OrderToShip(RowDictMapper):
         """
         Declares message format advising Shipping of new Orders.
 
-        Used in: logic/declare_logic.py -- send_order_to_shipping
+        Used in: integration.kafka.kafka_consumer
 
         Sample Data:
 

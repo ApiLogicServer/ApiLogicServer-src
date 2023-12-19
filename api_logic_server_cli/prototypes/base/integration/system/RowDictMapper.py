@@ -20,9 +20,7 @@ class RowDictMapper():
             , alias: str = ""
             , role_name: str = ""
             , fields: list[tuple[Column, str] | Column] = []
-            # , parent_lookup: tuple(DefaultMeta, list[tuple[Column, str]]) = None
-            # , parent_lookups: list[tuple(DefaultMeta, list[tuple[Column, str]])] |  tuple(DefaultMeta, list[tuple[Column, str]]) = None
-            , parent_lookups: list[object] = None
+            , parent_lookups: list[tuple[DefaultMeta, list[tuple[Column, str]]]] |  tuple[DefaultMeta, list[tuple[Column, str]]] = None
             , lookup: list[tuple[Column, str] | Column] = None
             , related: list[Self] | Self = []
             , isParent: bool = False
@@ -39,7 +37,7 @@ class RowDictMapper():
             :alias (str, optional): name of this level in dict
             :role_name (str, optional): disambiguate multiple relationships between 2 tables
             :fields (list[tuple[Column, str]  |  Column], optional): fields, use tuple for alias
-            :parent_lookups (tuple(DeclarativeMeta, list[tuple[Column, str]  |  Column]))
+            :parent_lookups list[tuple[DefaultMeta, list[tuple[Column, str]]]] |  tuple[DefaultMeta, list[tuple[Column, str]]]
             :lookup (list[tuple[Column, str]  |  Column], optional): Foreign Key Lookups ("*" means use fields)
             :related (list[RowDictMapper] | RowDictMapper): Nested objects in multi-table dict
             :isParent (bool): is ManyToOne (defaults True if lookup)
