@@ -82,7 +82,10 @@ def kafka_consumer(safrs_api: safrs.SAFRSAPI = None):
 
             session.add(sql_alchemy_row)
             session.commit()
-            logger.debug(f' * Committed Message')
+            logger.debug(f' * processing completed - id: {message_id} msg_dict: {str(order_dict)}')
+            logger.debug(f' * sql_alchemy_row  OrderID: {sql_alchemy_row.OrderID}, CustomerID: {sql_alchemy_row.Customer.CustomerID}, Customer.Balance: {sql_alchemy_row.Customer.Balance}')
+
+        logger.debug(f' * kafka_consumer#order_shipping completed\n')
 
 
     @bus.handle('another_topic')

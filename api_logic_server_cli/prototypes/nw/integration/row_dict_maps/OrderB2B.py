@@ -21,25 +21,13 @@ class OrderB2B(RowDictMapper):
             model_class=models.Order
             , alias = "order"
             , fields = [(models.Order.CustomerId, "AccountId")]
+            , parent_lookups = [( models.Employee, 
+                                  [(models.Employee.LastName, 'Surname'), (models.Employee.FirstName, 'Given')] )]
             , related = [
                 (RowDictMapper(model_class=models.OrderDetail
                     , alias="Items"
                     , fields = [(models.OrderDetail.Quantity, "QuantityOrdered")]
-                    , related = [
-                        (RowDictMapper(model_class=models.Product
-                        , alias="Product"
-                        , isParent = True
-                        , fields = [models.Product.ProductName]
-                        , lookup = "*" ) 
-                        )                       
-                    ]
-                    )
-                )
-                , (RowDictMapper(model_class=models.Employee
-                    , alias="SalesRep"
-                    , isParent = True
-                    , fields = [(models.Employee.LastName, 'Surname'), (models.Employee.FirstName, 'Given')]
-                    , lookup = [(models.Employee.LastName, 'Surname'), (models.Employee.FirstName, 'Given')] 
+                    , parent_lookups = [( models.Product, [models.Product.ProductName] )]
                     )
                 )
             ]

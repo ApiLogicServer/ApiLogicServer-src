@@ -132,7 +132,7 @@ class RowDictMapper():
         logger.debug( f"RowDictMapper.dict_to_row(): {str(self)}" )
         logger.debug( f"  ..row_dict: {row_dict}" )
 
-        custom_endpoint = self
+        custom_endpoint = self  # FIXME just use self
         if current_endpoint is not None:
             custom_endpoint = current_endpoint
         sql_alchemy_row = custom_endpoint._model_class()     # new instance
@@ -156,15 +156,16 @@ class RowDictMapper():
             raise ValueError(" * dict_to_row() failed - see above")
         
         parent_lookup_list = self.parent_lookups
-        if isinstance(parent_lookup_list, tuple):
-            parent_lookup_list = []
-            parent_lookup_list.append(self.parent_lookups)
-        for each_parent_lookup in parent_lookup_list:
-            self._parent_lookup_from_child(child_row_dict = row_dict, 
-                                           lookup_fields = each_parent_lookup[1],
-                                           parent_class = each_parent_lookup[0],
-                                           child_row = sql_alchemy_row,
-                                           session = session)
+        if parent_lookup_list:
+            if isinstance(parent_lookup_list, tuple):
+                parent_lookup_list = []
+                parent_lookup_list.append(self.parent_lookups)
+            for each_parent_lookup in parent_lookup_list:
+                self._parent_lookup_from_child(child_row_dict = row_dict, 
+                                            lookup_fields = each_parent_lookup[1],
+                                            parent_class = each_parent_lookup[0],
+                                            child_row = sql_alchemy_row,
+                                            session = session)
         
         custom_endpoint_related_list = custom_endpoint.related
         if isinstance(custom_endpoint_related_list, list) is False:
