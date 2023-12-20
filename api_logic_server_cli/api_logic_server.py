@@ -329,6 +329,7 @@ def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "R
         else:
             if in_mkdocs_block and each_line.startswith('    '):
                 each_line = each_line[4:]
+            each_line = each_line.replace('{:target="_blank" rel="noopener"}', '')
             readme_lines_md.append(each_line)
             if each_line.startswith('&nbsp;'):
                 in_mkdocs_block = False
