@@ -242,6 +242,8 @@ There are a few articles that provide some orientation to API Logic Server:
 
 ### Change Log
 
+12/19/2023 - 10.00.00: Kafka pub/sub, Data Type Fixes
+
 12/06/2023 - 09.06.00: Oracle Thick Client, Safrs 3.1.1, Integration Sample, No rule sql logging, curl Post
 
 11/19/2023 - 09.05.14: ApiLogicServer curl, optional project_name arg on add-auth, add-db, rebuild
