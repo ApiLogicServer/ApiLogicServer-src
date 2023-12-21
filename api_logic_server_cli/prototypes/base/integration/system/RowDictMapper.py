@@ -3,7 +3,7 @@ from flask import request, jsonify
 from sqlalchemy import Column
 from sqlalchemy.ext.declarative import declarative_base
 from flask_sqlalchemy.model import DefaultMeta
-from typing import Self
+from typing_extensions import Self  # from typing import Self  # requires python 3.11
 import logging
 
 logger = logging.getLogger('integration.kafka')
