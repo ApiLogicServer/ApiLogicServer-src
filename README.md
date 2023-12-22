@@ -1,5 +1,5 @@
 ---
-title:
+title: API Logic Server
 ---
 
 [![Downloads](https://pepy.tech/badge/apilogicserver)](https://pepy.tech/project/apilogicserver)
