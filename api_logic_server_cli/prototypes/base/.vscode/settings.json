@@ -14,6 +14,7 @@
         "editor.wordWrap": "off"
     },
     "debug.console.wordWrap": false,    
+    "python.defaultInterpreterPath": "./../venv/bin/python",
     "workbench.editorAssociations": {
         "*.md": "vscode.markdown.preview.editor"
     }
