@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.00.01"
+__version__ = "10.00.03"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t12/25/2023 - 10.00.01: default interp \n"\
     "\t12/21/2023 - 10.00.01: Fix < Python 3.11 \n"\
     "\t12/19/2023 - 10.00.00: Kafka pub/sub, Fix MySQL CHAR/String, list/hash/set types \n"\
     "\t12/06/2023 - 09.06.00: Oracle Thick, Integration Sample, No sql logging in rules, curl post \n"\
@@ -961,6 +962,8 @@ class ProjectRun(Project):
 
         3. Update database/multi_db.py - bind & expose APIs
 
+        4. Compute VSCode setting: python.defaultInterpreterPath
+
         Parameters:
 
         :arg: msg log.debug this, e.g., ".. ..Adding Database [{self.bind_key}] to existing project"
@@ -1082,6 +1085,24 @@ from database import <project.bind_key>_models
             log.debug(f'.. ..Updated database/multi_db.py with {CONFIG_URI}...')
         else:
             log.debug(f'.. ..Not updating database/multi_db.py with {CONFIG_URI} (already present)')
+
+
+        # **********************************
+        # set python.defaultInterpreterPath
+        # **********************************
+
+        defaultInterpreterPath_str = sys.executable
+        if 'org_git' in str(self.api_logic_server_dir_path):
+            # FIXME mac only
+            defaultInterpreterPath = self.api_logic_server_dir_path.parent.parent.parent.joinpath('build_and_test/ApiLogicServer/venv/bin/python')
+            defaultInterpreterPath_str = str(defaultInterpreterPath)
+        # ApiLogicServerPython
+        vscode_settings_path = (self.project_directory_path).joinpath('.vscode/settings.json')
+        create_utils.replace_string_in_file(search_for = 'ApiLogicServerPython',
+                                            replace_with=defaultInterpreterPath_str,
+                                            in_file=vscode_settings_path)
+        log.debug(f'.. ..Updated .vscode/settings.json with "python.defaultInterpreterPath": "{defaultInterpreterPath_str}"...')
+
 
         return return_abs_db_url
 

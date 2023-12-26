@@ -14,7 +14,7 @@
         "editor.wordWrap": "off"
     },
     "debug.console.wordWrap": false,    
-    "python.defaultInterpreterPath": "./../venv/bin/python",
+    "python.defaultInterpreterPath": "ApiLogicServerPython",
     "workbench.editorAssociations": {
         "*.md": "vscode.markdown.preview.editor"
     }

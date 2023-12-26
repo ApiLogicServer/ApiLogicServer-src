@@ -34,7 +34,7 @@ class Project(CliArgsBase):  # extend user-visible args with internal values
         self.model_file_name = "models.py"
         """ name of models file being processed """
 
-        self. default_db = "default = nw.sqlite, ? for help"
+        self.default_db = "default = nw.sqlite, ? for help"
         self.default_project_name = "ApiLogicProject"
         self.default_fab_host = "localhost"
         self.default_bind_key_url_separator = "-"  # admin 
