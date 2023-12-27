@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.00.03"
+__version__ = "10.00.04"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t12/25/2023 - 10.00.01: default interp \n"\
+    "\t12/27/2023 - 10.00.04: default interp \n"\
     "\t12/21/2023 - 10.00.01: Fix < Python 3.11 \n"\
     "\t12/19/2023 - 10.00.00: Kafka pub/sub, Fix MySQL CHAR/String, list/hash/set types \n"\
     "\t12/06/2023 - 09.06.00: Oracle Thick, Integration Sample, No sql logging in rules, curl post \n"\
@@ -1090,19 +1090,26 @@ from database import <project.bind_key>_models
         # **********************************
         # set python.defaultInterpreterPath
         # **********************************
-
-        defaultInterpreterPath_str = sys.executable
-        if 'org_git' in str(self.api_logic_server_dir_path):
-            # FIXME mac only
-            defaultInterpreterPath = self.api_logic_server_dir_path.parent.parent.parent.joinpath('build_and_test/ApiLogicServer/venv/bin/python')
-            defaultInterpreterPath_str = str(defaultInterpreterPath)
-        # ApiLogicServerPython
-        vscode_settings_path = (self.project_directory_path).joinpath('.vscode/settings.json')
-        create_utils.replace_string_in_file(search_for = 'ApiLogicServerPython',
-                                            replace_with=defaultInterpreterPath_str,
-                                            in_file=vscode_settings_path)
-        log.debug(f'.. ..Updated .vscode/settings.json with "python.defaultInterpreterPath": "{defaultInterpreterPath_str}"...')
-
+        default_interpreter_path = True
+        if default_interpreter_path:
+            defaultInterpreterPath_str = sys.executable
+            if 'org_git' in str(self.api_logic_server_dir_path):  # apilogicserver dev is special case
+                if os.name == "nt":
+                    defaultInterpreterPath = self.api_logic_server_dir_path.parent.parent.parent.joinpath('build_and_test/ApiLogicServer/venv/scripts/python.exe')
+                else:
+                    defaultInterpreterPath = self.api_logic_server_dir_path.parent.parent.parent.joinpath('build_and_test/ApiLogicServer/venv/bin/python')
+                defaultInterpreterPath_str = str(defaultInterpreterPath)
+            # ApiLogicServerPython
+            vscode_settings_path = (self.project_directory_path).joinpath('.vscode/settings.json')
+            if os.name == "nt":
+                defaultInterpreterPath_str = get_windows_path_with_slashes(url=defaultInterpreterPath_str)
+                # vscode_settings_path = get_windows_path_with_slashes(url=vscode_settings_path)
+            create_utils.replace_string_in_file(search_for = 'ApiLogicServerPython',
+                                                replace_with=defaultInterpreterPath_str,
+                                                in_file=vscode_settings_path)
+            log.debug(f'.. ..Updated .vscode/settings.json with "python.defaultInterpreterPath": "{defaultInterpreterPath_str}"...')
+        else:
+            log.debug(f'.. ..Updated .vscode/settings.json NOT SET')
 
         return return_abs_db_url
 
