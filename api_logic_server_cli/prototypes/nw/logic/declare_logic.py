@@ -286,23 +286,23 @@ def declare_logic():
             old_row (models.Order): n/a
             logic_row (LogicRow): bundles curr/old row, with ins/upd/dlt logic
         """
-
-        order_def = OrderShipping()
-        order_dict = order_def.row_to_dict(row = row)
-        json_order_response = jsonify({"order": order_dict})
-        json_order = json_order_response.data.decode('utf-8')
-        producer : Producer = None
-        if kafka_producer.producer:
-            producer = kafka_producer.producer
-            try:
-                producer.produce(topic="order_shipping", 
-                    key= str(row.Id),
-                    value=json_order)
-                logic_row.log("Kafka producer sent message")
-            except KafkaException as ke:
-                logic_row.log("Kafka produce message {row.id} error: {ke}")
-            
-        print(f'\n\nSend to Shipping:\n{json_order}')
+        if logic_row.is_inserted():
+            order_def = OrderShipping()
+            order_dict = order_def.row_to_dict(row = row)
+            json_order_response = jsonify({"order": order_dict})
+            json_order = json_order_response.data.decode('utf-8')
+            producer : Producer = None
+            if kafka_producer.producer:
+                producer = kafka_producer.producer
+                try:
+                    producer.produce(topic="order_shipping", 
+                        key= str(row.Id),
+                        value=json_order)
+                    logic_row.log("Kafka producer sent message")
+                except KafkaException as ke:
+                    logic_row.log("Kafka produce message {row.id} error: {ke}")
+                
+            print(f'\n\nSend to Shipping:\n{json_order}')
             
     Rule.after_flush_row_event(on_class=models.Order, 
                             calling=send_order_to_shipping)  # see above

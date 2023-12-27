@@ -290,7 +290,7 @@ class Grant:
         sql_select = "not a SELECT"
         if orm_execute_state is not None:
             sql_select = str(orm_execute_state.statement)
-            security_logger.debug(f"\nSQL Select -- Begin authorization processing for {sql_select}")   
+            security_logger.info(f"\nSQL Select -- Begin authorization processing for {sql_select}")   
         
         can_read = False
         can_insert = False
@@ -401,7 +401,7 @@ class Grant:
         sql_select = "not a SELECT"
         if orm_execute_state is not None:
             sql_select = str(orm_execute_state.statement)
-        security_logger.debug(f"SQL Select: End authorization processing for: {sql_select}")   
+        security_logger.info(f"SQL Select: End authorization processing for: {sql_select}")   
 
 
 
