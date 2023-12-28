@@ -689,7 +689,7 @@ def final_project_fixup(msg, project) -> str:
     # **********************************
     # set python.defaultInterpreterPath
     # **********************************
-    default_interpreter_path = True
+    default_interpreter_path = True  # compute startup (only) python / venv location, from creating venv (here)
     if default_interpreter_path:
         defaultInterpreterPath_str = sys.executable
         if 'org_git' in str(project.api_logic_server_dir_path):  # apilogicserver dev is special case
