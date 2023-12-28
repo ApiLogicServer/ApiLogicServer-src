@@ -7,6 +7,7 @@ import os, sys
 import subprocess
 from pathlib import Path
 
+__version__ = 4.5
 
 def print_at(label: str, value: str):
     tab_to = 24 - len(label)
@@ -37,7 +38,7 @@ def get_api_logic_server_dir() -> str:
 
 def python_status():
     print(" ")
-    print("\nPython Status here, 4.3\n")
+    print(f"\nPython Status here, {__version__}\n")
     dir = get_api_logic_server_dir()
     test_env = "/workspaces/../home/api_logic_server/"
     if os.path.exists(test_env):
@@ -69,6 +70,8 @@ def python_status():
         for p in sys.path:
             print(".." + p)
             
+        print(f'Python Intepreter (sys.executable): {sys.executable}')
+
         print("")
         print(f'sys.prefix (venv): {sys.prefix}\n\n')
 
