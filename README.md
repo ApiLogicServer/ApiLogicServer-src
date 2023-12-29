@@ -242,6 +242,8 @@ There are a few articles that provide some orientation to API Logic Server:
 
 ### Change Log
 
+12/29/2023 - 10.00.10: Default Interpreter for VS Code
+
 12/21/2023 - 10.00.01: Fix < Python 3.11
 
 12/19/2023 - 10.00.00: Kafka pub/sub, Data Type Fixes
