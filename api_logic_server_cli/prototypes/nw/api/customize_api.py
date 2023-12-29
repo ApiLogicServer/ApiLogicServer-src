@@ -23,7 +23,7 @@ from integration.row_dict_maps.OrderB2B import OrderB2B
 #     Separate from expose_api_models.py, to simplify merge if project rebuilt
 # Called by api_logic_server_run.py
 
-app_logger = logging.getLogger("api_logic_server_app")  # only for create-and-run, no?
+app_logger = logging.getLogger("api_logic_server_app")
 
 def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
     """ 
@@ -62,7 +62,11 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
     
     """
 
-    app_logger.info("..api/expose_service.py, exposing custom services: hello_world, add_order")
+    app_logger.debug("api/customize_api.py - expose custom services")
+
+    #########################
+    # Define custom apis here
+    #########################    
 
     api.expose_object(ServicesEndPoint)  # Swagger-visible services
     api.expose_object(CategoriesEndPoint)

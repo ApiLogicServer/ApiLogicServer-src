@@ -19,6 +19,10 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
     
     app_logger.debug("api/customize_api.py - expose custom services")
 
+    #########################
+    # Define custom apis here
+    #########################    
+
     @app.route('/hello_world')
     def hello_world():  # test it with: http://api_logic_server_host:api_logic_server_port/hello_world?user=ApiLogicServer
         """
