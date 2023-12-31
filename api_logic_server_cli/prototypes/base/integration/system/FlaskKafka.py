@@ -1,7 +1,5 @@
 import signal
 import threading, time
-import traceback
-import json
 import logging
 import sys
 import signal
@@ -59,35 +57,20 @@ class FlaskKafka():
         """ thread target (from _run) """
 
         # thanks: https://www.reddit.com/r/learnpython/comments/gfg97m/how_do_i_run_a_function_every_5_seconds_inside_a/
-        logger.info("starting consumer...registered signterm")
 
         logger.info(" - KafkaConnect._start: begin polling")
         consumer = Consumer(self.conf)
-        use_decorator = True  # working 9.06.06
-        if use_decorator:
-            topics = self.handlers.keys()
-            consumer.subscribe(topics=list(topics))  # restart often corrects "Failed to set subscription"
-        else:
-            consumer.subscribe(["order_shipping"])
+        topics = self.handlers.keys()
+        consumer.subscribe(topics=list(topics))
         while True:
             msg = consumer.poll(1.0)
-            logger.debug(f'consumer.poll gets: {msg}')
+            logger.debug(f' - KafkaConnect._start - consuming: {msg}')
             if msg is None:
                 continue
             if msg.error():
-                pass  # Handle errors as needed pass
+                pass  # Handle errors as needed
             else:
-                if use_decorator:
-                    self._run_handlers(msg)
-                else:
-                    message_data = msg.value() .decode("utf-8")
-                    # Assuming the JSON message has a 'message_id' and 'message data' f
-                    json_message = json.loads(message_data)
-                    message_id = json_message.get('message_id')
-                    message_data = json_message.get( 'message_data' )
-                    # Create a new KafkaMessage instance and persist it to the database
-                    print(f'Received and persisted message with ID: (message_data)')
-
+                self._run_handlers(msg)  # accrued per annotations
 
 
     def listen_kill_server(self):
@@ -103,11 +86,14 @@ class FlaskKafka():
 
     
     def _run(self):
-        logger.info(" * The flask Kafka application is consuming")
+        logger.info(" * The flask Kafka thread started")
         t = threading.Thread(target=self._start)
         t.start()
 
 
     # run the consumer application
     def run(self):
+        """
+        Kafka consumption, threading, handler annotations
+        """
         self._run()

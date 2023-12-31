@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.00.10"
+__version__ = "10.00.11"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t12/29/2023 - 10.00.10: Default Interpreter for VS Code \n"\
+    "\t12/31/2023 - 10.00.11: Default Interpreter for VS Code \n"\
     "\t12/21/2023 - 10.00.01: Fix < Python 3.11 \n"\
     "\t12/19/2023 - 10.00.00: Kafka pub/sub, Fix MySQL CHAR/String, list/hash/set types \n"\
     "\t12/06/2023 - 09.06.00: Oracle Thick, Integration Sample, No sql logging in rules, curl post \n"\

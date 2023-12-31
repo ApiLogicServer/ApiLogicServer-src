@@ -45,11 +45,14 @@ def kafka_consumer(safrs_api: safrs.SAFRSAPI = None):
 
     bus = FlaskKafka(interrupt_event=INTERRUPT_EVENT, conf=conf, safrs_api=safrs_api)
     
-    bus.run()
+    bus.run()  # Kafka consumption, threading, handler annotations
 
     logger.debug(f'Kafka Listener thread activated {bus}')
 
-    ###
-    # Define topic handlers here
-    ###
+    '''   Define topic handlers here, e.g.
+
+    @bus.handle('order_shipping')
+    def order_shipping(msg: object, safrs_api: safrs.SAFRSAPI):
+
+    '''
 
