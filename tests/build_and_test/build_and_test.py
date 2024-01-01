@@ -911,9 +911,9 @@ print("\n\nSUCCESS -- END OF TESTS")
 print(f"\n\nRelease {api_logic_server_version}?\n")
 print(f'cd {str(get_api_logic_server_path())}')
 print(f"{python} setup.py sdist bdist_wheel")
-print(f"{python} -m twine upload  --username vhuber --password PypiPassword --skip-existing dist/*")
+print(f"{python} -m twine upload  --skip-existing dist/* ")
 
-print(f"\n\nUse this build?")
-print(f"..  Settings > venv path >  {str(install_api_logic_server_path)}\n")
+# print(f"\n\nUse this build?")
+# print(f"..  Settings > venv path >  {str(install_api_logic_server_path)}\n")
 
 # find main code
