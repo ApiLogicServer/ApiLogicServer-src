@@ -97,7 +97,7 @@ class RowDictMapper():
         for each_related in custom_endpoint_related_list:
             child_property_name = each_related.role_name
             if child_property_name == '':
-                child_property_name = "OrderList"  # FIXME default from class name
+                child_property_name = "OrderList"  # TODO default from class name
             if child_property_name.startswith('Product'):
                 debug = 'good breakpoint'
             row_dict_child_list = getattr(row, child_property_name)
@@ -132,12 +132,16 @@ class RowDictMapper():
         logger.debug( f"RowDictMapper.dict_to_row(): {str(self)}" )
         logger.debug( f"  ..row_dict: {row_dict}" )
 
-        custom_endpoint = self  # FIXME just use self
+        custom_endpoint = self  # TODO just use self
         if current_endpoint is not None:
             custom_endpoint = current_endpoint
         sql_alchemy_row = custom_endpoint._model_class()     # new instance
-        error_count = 0                                     # FIXME - dates fail in sqlite
-        for each_field in custom_endpoint.fields:           # attr mapping  FIXME 1 field, not array
+        error_count = 0                                     # TODO - dates fail in sqlite
+        fields = custom_endpoint.fields
+        if not isinstance(fields, list):
+            fields_list = []
+            fields = fields_list.append(fields)
+        for each_field in fields:
             if isinstance(each_field, tuple):
                 try:
                     setattr(sql_alchemy_row, each_field[0].name, row_dict[each_field[1]])

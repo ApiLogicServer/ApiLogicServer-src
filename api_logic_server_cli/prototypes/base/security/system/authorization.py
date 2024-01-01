@@ -283,7 +283,7 @@ class Grant:
             GrantSecurityException: _description_
         """
         
-        if not Args.security_enabled:  # FIXME check for use of Args.instance
+        if not Args.instance.security_enabled:
             return
         
         user = Security.current_user()
@@ -418,7 +418,7 @@ class Grant:
         
             self.logic_row = logic_row
         
-            if Args.security_enabled: 
+            if Args.instance.security_enabled: 
                 entity_name = self.logic_row.name 
                 #select is handled by orm_execution_state
                 crud_state = ""
@@ -442,7 +442,7 @@ def receive_do_orm_execute(orm_execute_state: ORMExecuteState ):
     """
 
     if (
-        Args.security_enabled
+        Args.instance.security_enabled
         and orm_execute_state.is_select
         and not orm_execute_state.is_column_load
         and not orm_execute_state.is_relationship_load

@@ -111,7 +111,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         def wrapper(fn):
             @wraps(fn)
             def decorator(*args, **kwargs):
-                if Args.security_enabled == False:
+                if Args.instance.security_enabled == False:
                     return fn(*args, **kwargs)
                 verify_jwt_in_request(True)  # must be issued if security enabled
                 return fn(*args, **kwargs)
