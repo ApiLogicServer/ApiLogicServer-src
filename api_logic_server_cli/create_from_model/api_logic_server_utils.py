@@ -152,7 +152,7 @@ def get_abs_db_url(msg, project: Project):
         if os.getenv('HOST_IP'):
             host_ip = os.getenv('HOST_IP')  # type: ignore # type: str
         rtn_abs_db_url = rtn_abs_db_url.replace("HOST_IP", host_ip)
-    elif project.db_url == 'oracle-hr':  # work-around - VSCode run config arg parsing
+    elif project.db_url == 'oracle-hr':  # work-around - VSCode run config arg parsing (dbviz HR)
         rtn_abs_db_url = 'oracle+oracledb://hr:tiger@localhost:1521/?service_name=ORCL'
         host_ip = "10.0.0.77"  # ApiLogicServer create  --project_name=/localhost/sqlsvr-nw-docker --db_url=sqlsvr-nw-docker-arm
         if os.getenv('HOST_IP'):
