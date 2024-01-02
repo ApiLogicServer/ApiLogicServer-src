@@ -313,8 +313,10 @@ class ModelClass(Model):
         pk_column_names = set(col.name for col in table.primary_key.columns)
         parent_accessors = {}
         """ dict of parent_table, current count (0, 1, 2...   >1 ==> multi-reln) """
-        if self.name == "QtrTotal":
-            debug_stop = "nice breakpoint for relationships"
+        if self.name in ["QtrTotal", "StressBinaryDouble", "STRESSAllChar"]:
+            # table name is 'stress_binary_double', should match Oracle STRESS_BINARY_DOUBLE
+            # table name is 'STRESS_AllChars', matches Oracle STRESS_AllChars
+            debug_stop = "nice breakpoint for class names"
         for constraint in sorted(table.constraints, key=_get_constraint_sort_key):
             if isinstance(constraint, ForeignKeyConstraint):
                 target_cls = self._tablename_to_classname(constraint.elements[0].column.table.name,
@@ -714,6 +716,7 @@ class CodeGenerator(object):
         """ instance of CodeGenerator - access to model_creation_services, meta etc """
         code_generator = self
         self.metadata = metadata
+        """ SQLAlchemy metadata """
         self.noindexes = noindexes
         self.noconstraints = noconstraints
         self.nojoined = nojoined
@@ -1213,6 +1216,8 @@ from sqlalchemy.dialects.mysql import *
     def render_class(self, model):
         """ returns string for model class, written into model.py by sqlacodegen_wrapper """
         super_classes = model.parent_name
+        if model.name in ["QtrTotal", "StressBinaryDouble", "STRESSAllChar"]:
+            debug_stop = "nice breakpoint for class rendering"
         if self.model_creation_services.project.bind_key != "":
             super_classes = f'Base{self.model_creation_services.project.bind_key}, db.Model, UserMixin'
             rendered = 'class {0}(SAFRSBase, {1}):  # type: ignore\n'.format(model.name, super_classes)   # ApiLogicServer
@@ -1220,6 +1225,7 @@ from sqlalchemy.dialects.mysql import *
         else:
             rendered = 'class {0}(SAFRSBase, {1}):\n'.format(model.name, super_classes)   # ApiLogicServer
         rendered += '{0}__tablename__ = {1!r}\n'.format(self.indentation, model.table.name)
+
         end_point_name = model.name
         if self.model_creation_services.project.bind_key != "":
             if self.model_creation_services.project.model_gen_bind_msg == False:
