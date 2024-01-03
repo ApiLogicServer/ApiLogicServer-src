@@ -40,3 +40,16 @@ lools like all cols must be quoted:
     fails: select STRESS_BINARY_DOUBLE.id from STRESS_BINARY_DOUBLE;
 
 Note the ddl uses quoted col names, maybe that makes them required for dml
+    yes, that enables STRESS_AllChars to Run
+
+
+Failures after quote
+====================
+
+Table                   Results
+=====                   =======
+
+StressBinaryDouble      swagger runs, admin fails: undefined is not an object (evaluating 't.meta')
+StressInterval          swagger runs (mostly null); admin fails:  Pagination Overflow Error
+StressTimeStampWithTime Oracle fails due to thin
+StressVarray            Oracle fails - illegal use of LONG datatype (ok in dbviz)
