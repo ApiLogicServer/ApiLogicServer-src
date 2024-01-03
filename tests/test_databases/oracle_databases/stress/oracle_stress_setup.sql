@@ -43,6 +43,7 @@ Note the ddl uses quoted col names, maybe that makes them required for dml
     yes, that enables STRESS_AllChars to Run
 
 
+
 Failures after quote
 ====================
 

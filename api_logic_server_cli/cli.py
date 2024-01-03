@@ -569,6 +569,9 @@ def create(ctx, project_name: str, db_url: str, not_exposed: str, api_name: str,
 @click.option('--admin_app/--no_admin_app',
               default=True, is_flag=True,
               help="Creates ui/react app (yaml model)")
+@click.option('--quote', is_flag=True,
+              default=False,
+              help="Use Quoted column names")
 @click.option('--flask_appbuilder/--no_flask_appbuilder',
               default=False, is_flag=True,
               help="Creates ui/basic_web_app")
@@ -614,6 +617,7 @@ def create_and_run(ctx, project_name: str, db_url: str, not_exposed: str, api_na
         admin_app: click.BOOL,
         flask_appbuilder: click.BOOL,
         react_admin: click.BOOL,
+        quote: click.BOOL,
         use_model: str,
         host: str,
         port: str,
@@ -634,7 +638,7 @@ def create_and_run(ctx, project_name: str, db_url: str, not_exposed: str, api_na
                     not_exposed=not_exposed,
                     run=run, use_model=use_model, from_git=from_git, db_types=db_types,
                     flask_appbuilder=flask_appbuilder,  host=host, port=port, swagger_host=swagger_host,
-                    react_admin=react_admin, admin_app=admin_app,
+                    react_admin=react_admin, admin_app=admin_app, quote=quote,
                     favorites=favorites, non_favorites=non_favorites, open_with=open_with,
                     extended_builder=extended_builder, include_tables=include_tables,
                     multi_api=multi_api, infer_primary_key=infer_primary_key,
@@ -677,6 +681,9 @@ def create_and_run(ctx, project_name: str, db_url: str, not_exposed: str, api_na
 @click.option('--react_admin/--no_react_admin',
               default=False, is_flag=True,
               help="Creates ui/react_admin app")
+@click.option('--quote', is_flag=True,
+              default=False,
+              help="Use Quoted column names")
 @click.option('--favorites',
               default="name description",
               help="Columns named like this displayed first")
@@ -710,6 +717,7 @@ def rebuild_from_database(ctx, project_name: str, db_url: str, api_name: str, no
            admin_app: click.BOOL,
            flask_appbuilder: click.BOOL,
            react_admin: click.BOOL,
+           quote: click.BOOL,
            use_model: str,
            host: str,
            port: str,
@@ -732,7 +740,7 @@ def rebuild_from_database(ctx, project_name: str, db_url: str, api_name: str, no
                     not_exposed=not_exposed,
                     run=run, use_model=use_model, from_git=from_git, db_types=db_types,
                     flask_appbuilder=flask_appbuilder,  host=host, port=port, swagger_host=swagger_host,
-                    react_admin=react_admin, admin_app=admin_app,
+                    react_admin=react_admin, admin_app=admin_app, quote=quote,
                     favorites=favorites, non_favorites=non_favorites, open_with=open_with,
                     extended_builder=extended_builder, multi_api=False, infer_primary_key=infer_primary_key,
                     id_column_alias=id_column_alias)
@@ -750,6 +758,9 @@ def rebuild_from_database(ctx, project_name: str, db_url: str, api_name: str, no
 @click.option('--bind_key_url_separator',
               default=default_bind_key_url_separator,
               help="bindkey / class name url separator")
+@click.option('--quote', is_flag=True,
+              default=False,
+              help="Use Quoted column names")
 @click.option('--project_name',
               default=f'.',
               help="Project location")
@@ -757,7 +768,8 @@ def rebuild_from_database(ctx, project_name: str, db_url: str, api_name: str, no
               default="api",
               help="api prefix name")
 @click.pass_context # Kat
-def add_db(ctx, db_url: str, bind_key: str, bind_key_url_separator: str, api_name: str, project_name: str):
+def add_db(ctx, db_url: str, bind_key: str, bind_key_url_separator: str, api_name: str, project_name: str,
+           quote: click.BOOL):
     """
     Adds db (model, binds, api, app) to curr project.
     
@@ -775,6 +787,7 @@ def add_db(ctx, db_url: str, bind_key: str, bind_key_url_separator: str, api_nam
               project_name=project_name, 
               api_name=api_name, 
               db_url=db_url, 
+              quote=quote,
               bind_key=bind_key,
               bind_key_url_separator=bind_key_url_separator
               )
