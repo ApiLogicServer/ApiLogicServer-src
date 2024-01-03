@@ -34,3 +34,9 @@ __tablename__ has odd mixed case
 STRESS_BINARY_DOUBLE --> StressBinaryDouble.__tablename__ = 'stress_binary_double'
 
 STRESS_AllChars --> STRESSAllChar.__tablename__ = 'STRESS_AllChars'
+
+lools like all cols must be quoted:
+    works: select STRESS_BINARY_DOUBLE."id" from STRESS_BINARY_DOUBLE;
+    fails: select STRESS_BINARY_DOUBLE.id from STRESS_BINARY_DOUBLE;
+
+Note the ddl uses quoted col names, maybe that makes them required for dml

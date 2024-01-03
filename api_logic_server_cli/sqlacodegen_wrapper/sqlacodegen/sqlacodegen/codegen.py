@@ -1042,6 +1042,9 @@ from sqlalchemy.dialects.mysql import *
         global code_generator
         fk_debug = False
         kwarg = []
+        do_show_name = show_name
+        if self.model_creation_services.project.quote:
+            do_show_name = True
         is_sole_pk = column.primary_key and len(column.table.primary_key) == 1
         dedicated_fks_old = [c for c in column.foreign_keys if len(c.constraint.columns) == 1]
         dedicated_fks = []  # c for c in column.foreign_keys if len(c.constraint.columns) == 1
@@ -1112,18 +1115,19 @@ from sqlalchemy.dialects.mysql import *
         comment = getattr(column, 'comment', None)
         if (column.name + "") == "xx_id":
             print(f"render_column target: {column.table.name}.{column.name}")  # ApiLogicServer fix for putting this at end:  index=True
-        if show_name and column.table.name != 'sqlite_sequence':
+        if do_show_name and column.table.name != 'sqlite_sequence':
             log.debug(f"render_column show name is true: {column.table.name}.{column.name}")  # researching why
         rendered_col_type = self.render_column_type(column.type) if render_coltype else ""
-        rendered_name = repr(column.name) if show_name else ""
+        rendered_name = repr(column.name) if do_show_name else ""
         render_result = 'Column({0})'.format(', '.join(
-            ([repr(column.name)] if show_name else []) +
+            ([repr(column.name)] if do_show_name else []) +
             ([self.render_column_type(column.type)] if render_coltype else []) +
             [self.render_constraint(x) for x in dedicated_fks] +
             [repr(x) for x in column.constraints] +
             ([server_default] if server_default else []) +
             ['{0}={1}'.format(k, repr(getattr(column, k))) for k in kwarg] +
-            (['comment={!r}'.format(comment)] if comment and not self.nocomments else [])
+            (['comment={!r}'.format(comment)] if comment and not self.nocomments else []) + 
+            (['quote = True'] if self.model_creation_services.project.quote else [])
             ))
         
         """

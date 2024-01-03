@@ -81,3 +81,4 @@ class Project(CliArgsBase):  # extend user-visible args with internal values
             print(f'  --infer_primary_key={self.infer_primary_key}')
             print(f'  --opt_locking={self.opt_locking}')
             print(f'  --opt_locking={self.opt_locking_attr}')
+            print(f'  --quote={self.quote}')

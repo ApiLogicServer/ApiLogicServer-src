@@ -354,6 +354,7 @@
             "redirectOutput": true,
             "args": [
                 "create",
+                "--quote",
                 "--project_name=../../../servers/oracle_stress",
                 "--db_url=oracle-stress"],
             "console": "integratedTerminal"

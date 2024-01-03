@@ -59,3 +59,4 @@ class CliArgsBase():
         self.id_column_alias = None  # type: str
         """ safrs reserves id as property, so use this alias for db cols with that name """
         self.opt_locking_attr = None # type: str
+        self.quote = None # type: bool
