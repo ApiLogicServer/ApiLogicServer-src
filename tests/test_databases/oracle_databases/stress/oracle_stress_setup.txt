@@ -4,7 +4,7 @@
 2. load db from oracle_stress.sql
 
 3. Run Config: ORACLE-STRESS, or
-    ApiLogicServer create --project_name=oracle_stress --db_url='oracle+oracledb://stress:tiger@localhost:1521/?service_name=ORCL'
+    ApiLogicServer create --project_name=oracle_stress --quote --db_url='oracle+oracledb://stress:tiger@localhost:1521/?service_name=ORCL'
 
 
 
