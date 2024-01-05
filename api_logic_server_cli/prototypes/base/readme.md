@@ -27,6 +27,8 @@ Setup your Python environment, according to whether you did a *local install*, o
 
 ## Establish Your Python Environment - Local Install
 
+VSCode projects automatically use installed API Logic Server `venv`, so this step is not required until you want to create a local `venv` for additional packages.
+
 You `requirements.txt` has already been created, so...
 
 ```bash title="Install API Logic Server in a Virtual Environment"
@@ -98,6 +100,7 @@ Please see the `nw` sample for examples of typical customizations.  You can open
 | ```database``` | SQLAlchemy Data Model Classes | ```database/customize_models.py``` | Add derived attributes, and relationships missing in the schema                       |
 | ```logic``` | **Transactional Logic**<br>spreadsheet-like rules   | ```logic/declare_logic.py```       | Declare multi-table derivations, constraints, and Python events such as send mail / messages |
 | ```security``` | Authentication, Authorization   | ```security/declare_security.py```          | Control login, role-based row access         |
+| ```integration``` | Consume Kafka Messages             | ```integration/kafka/kafka_consumer.py```          |  [Application Integration](https://apilogicserver.github.io/Docs/Sample-Integration/)                                          |
 | ```tests``` | Behave Test Suite              | ```tests/api_logic_server_behave/features```          | Declare and implement [Behave Tests](https://apilogicserver.github.io/Docs/Behave/)                                          |
 
 &nbsp;

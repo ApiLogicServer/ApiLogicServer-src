@@ -230,7 +230,7 @@ def declare_logic():
     else:
         def audit_by_event(row: models.Employee, old_row: models.Employee, logic_row: LogicRow):
             tedious = False  # tedious code to repeat for every audited class
-            if tedious:      # see instead the following RuleExtension.copy_row below (you can create similar rule extensions)
+            if tedious:      # see instead the RuleExtension.copy_row above (you can create similar rule extensions)
                 if logic_row.ins_upd_dlt == "upd" and logic_row.are_attributes_changed([models.Employee.Salary, models.Employee.Title]):
                     copy_to_logic_row = logic_row.new_logic_row(models.EmployeeAudit)
                     copy_to_logic_row.link(to_parent=logic_row)
