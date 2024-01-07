@@ -86,12 +86,12 @@ def python_status():
         print_at('on hostname', hostname)
         print_at('python sys.version', sys.version)
     if not command.startswith("welcome"):
-        print("Typical API Logic Server commands:")
-        print("  ApiLogicServer create-and-run --project_name=/localhost/api_logic_server --db_url=")
-        print("  ApiLogicServer run-api        --project_name=/localhost/api_logic_server")
-        print("  ApiLogicServer run-ui         --project_name=/localhost/api_logic_server   # login admin, p")
-        print("  ApiLogicServer sys-info")
-        print("  ApiLogicServer version")
+        print("\nTypical API Logic Server commands:")
+        print("  ApiLogicServer create         --project_name=/localhost/api_logic_server --db_url=")
+        print("  ApiLogicServer add-db         --db_url=xx")
+        print("  ApiLogicServer add-auth       --db_url=auth")
+        print("  ApiLogicServer about")
+        print("  ApiLogicServer welcome")
     print(f'\nApiLogicServer {api_logic_server_version} -- Press F5 to start server, review readme\n')
 
     if command.startswith("welcome"):  # don't annoy

@@ -86,16 +86,16 @@ def python_status():
         print_at('on hostname', hostname)
         print_at('python sys.version', sys.version)
     if not command.startswith("welcome"):
-        print("Typical API Logic Server commands:")
-        print("  ApiLogicServer create-and-run --project_name=/localhost/api_logic_server --db_url=")
-        print("  ApiLogicServer run-api        --project_name=/localhost/api_logic_server")
-        print("  ApiLogicServer run-ui         --project_name=/localhost/api_logic_server   # login admin, p")
-        print("  ApiLogicServer sys-info")
-        print("  ApiLogicServer version")
-    print(f'\nApiLogicServer {api_logic_server_version} -- Press F5 to start server\n')
+        print("\nTypical API Logic Server commands:")
+        print("  ApiLogicServer create         --project_name=/localhost/api_logic_server --db_url=")
+        print("  ApiLogicServer add-db         --db_url=xx")
+        print("  ApiLogicServer add-auth       --db_url=auth")
+        print("  ApiLogicServer about")
+        print("  ApiLogicServer welcome")
+    print(f'\nApiLogicServer {api_logic_server_version} -- Press F5 to start server, review readme\n')
 
     if command.startswith("welcome"):  # don't annoy
-        if command.startswith("welcome-once"):
+        if command.startswith("welcome-first-time"):
             tasks_json_path = Path(__file__).parent.parent.joinpath('.vscode/tasks.json')
             if not os.path.exists(str(tasks_json_path)):
                 print("..warning - unable to update / rename .vscode/tasks.json (file does not exist)")
@@ -103,13 +103,13 @@ def python_status():
                 use_input = True if platform == "darwin" else False
                 if use_input == False:
                     print('..to disable this message, rename .vscode/tasks.json')
-                    print('..or to keep, alter tasks.json, replacing "welcome-once" with "welcome"')
+                    print('..or to keep, alter tasks.json, replacing "welcome-first-time" with "welcome"')
                 else:  # special case: mac (Darwin) can do input during startup
                     everytime = input("Show this next time? (y/n) ")
                     if everytime == "y":
-                        print("..changing .vscode/tasks.json: replace 'welcome-once' with 'welcome'")
+                        print("..changing .vscode/tasks.json: replace 'welcome-first-time' with 'welcome'")
                         data = tasks_json_path.read_text() 
-                        data = data.replace('welcome-once', 'welcome') 
+                        data = data.replace('welcome-first-time', 'welcome') 
                         tasks_json_path.write_text(data) 
                     else:
                         print("..renaming .vscode/tasks.json to .vscode/tasks.json-disabled")
