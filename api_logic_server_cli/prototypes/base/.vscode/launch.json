@@ -195,6 +195,16 @@
             "args": ["--flask_host=localhost", "--port=5656", "--swagger_port=5656", "--swagger_host=localhost", "--verbose=True"],
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "Sys Info",
+            "type": "python",
+            "request": "launch",
+            "program": "venv_setup/py.py",
+            "redirectOutput": true,
+            "args": ["sys-info"],
+            "justMyCode": false,
+            "console": "integratedTerminal"
         }
     ]
 }

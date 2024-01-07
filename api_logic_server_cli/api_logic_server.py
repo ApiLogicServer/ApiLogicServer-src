@@ -12,10 +12,11 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.01.01"
+__version__ = "10.01.04"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t01/03/2024 - 10.01.01: Quoted col names, Default Interpreter for VS Code, allocation fix \n"\
+    "\t01/07/2024 - 10.01.04: Default Interpreter for VS Code, allocation fix, F5 note \n"\
+    "\t01/03/2024 - 10.01.00: Quoted col names \n"\
     "\t12/21/2023 - 10.00.01: Fix < Python 3.11 \n"\
     "\t12/19/2023 - 10.00.00: Kafka pub/sub, Fix MySQL CHAR/String, list/hash/set types \n"\
     "\t12/06/2023 - 09.06.00: Oracle Thick, Integration Sample, No sql logging in rules, curl post \n"\
@@ -1135,7 +1136,10 @@ from database import <project.bind_key>_models
         log.debug("\n\n==================================================================")
         if msg != "":
             log.info(msg + f" to project: {str(database_path.parent)}")
-            log.info("  1. ApiLogicServer add-db --db_url=auth --bind_key=authentication")
+            log.info(" .. TODO: Declare authorization in security/declare_security.py")
+            log.info(" .. docs: https://apilogicserver.github.io/Docs/Security-Activation/")
+
+            log.debug("  1. ApiLogicServer add-db --db_url=auth --bind_key=authentication")
         log.debug("==================================================================5\n")
         save_run = self.run
         save_command = self.command
@@ -1153,7 +1157,7 @@ from database import <project.bind_key>_models
         
         log.debug("\n==================================================================")
         if msg != "":
-            log.info("  2. Add User.Login endpoint")
+            log.debug("  2. Add User.Login endpoint")
         log.debug("==================================================================\n")
         login_endpoint_filename = f'{self.api_logic_server_dir_path.joinpath("templates/login_endpoint.txt")}'
         auth_models_file_name = f'{self.project_directory_path.joinpath("database/authentication_models.py")}'
@@ -1173,7 +1177,7 @@ from database import <project.bind_key>_models
 
         log.debug("\n==================================================================")
         if msg != "":
-            log.info("  3. Set SECURITY_ENABLED in config.py")
+            log.debug("  3. Set SECURITY_ENABLED in config.py")
         log.debug("==================================================================\n")
         create_utils.replace_string_in_file(search_for="SECURITY_ENABLED = False  #",
                             replace_with='SECURITY_ENABLED = True  #',
@@ -1182,7 +1186,7 @@ from database import <project.bind_key>_models
             log.debug("\n==================================================================")
             if msg != "":
                 if msg != "":
-                    log.info("  4. Adding Sample authorization to security/declare_security.py")
+                    log.debug("  4. Adding Sample authorization to security/declare_security.py")
                 log.debug("==================================================================\n\n")
                 nw_declare_security_py_path = self.api_logic_server_dir_path.\
                     joinpath('prototypes/nw/security/declare_security.py')
@@ -1191,7 +1195,7 @@ from database import <project.bind_key>_models
         else:
             log.debug("\n==================================================================")
             if msg != "":
-                log.info("  4. TODO: Declare authorization in security/declare_security.py")
+                log.debug("  4. TODO: Declare authorization in security/declare_security.py")
             log.debug("==================================================================\n\n")
 
 
@@ -1327,7 +1331,7 @@ from database import <project.bind_key>_models
         log.info(f"Tutorial project successfully created.  Next steps:\n")
         log.info(f'  Open the tutorial project in your VSCode\n')
         if is_docker() == False:
-            log.info(f'  Establish your Python environment - see https://apilogicserver.github.io/Docs/Project-Env/')
+            log.debug(f'  Establish your Python environment - see https://apilogicserver.github.io/Docs/Project-Env/')
             docker_info = """
         cd tutorial
         python3 -m venv venv       # may require python -m venv venv
@@ -1393,7 +1397,7 @@ from database import <project.bind_key>_models
             start_open_with(open_with=self.open_with, project_name=self.project_name)
 
         if self.nw_db_status in ["nw", "nw+"] and self.command != "add_db":
-            self.add_auth("\nApiLogicProject customizable project created.  Adding Security:")
+            self.add_auth("\nApiLogicProject customizable project created.  \nAdding Security:")
             
         if self.command.startswith("add_"):
             pass  # keep silent for add-db, add-auth...
@@ -1404,16 +1408,16 @@ from database import <project.bind_key>_models
             disp_url = self.db_url
             if disp_url == "":
                 disp_url = "nw"
-            log.info(f"\n\nCustomizable project {self.project_name} created from database {disp_url}.  Next steps:\n")
+            log.debug(f"\n\nCustomizable project {self.project_name} created from database {disp_url}.  Next steps:\n")
             if self.multi_api:
                 log.debug(f'Server already running.  To Access: Configuration > Load > //localhost:5656/{self.api_name}')
             else:
-                log.info("\nRun API Logic Server:")
+                log.debug("\nRun API Logic Server:")
                 if os.getenv('CODESPACES'):
                     # log.debug(f'  Add port 5656, with Public visibility') - automated in .devcontainer.json
                     log.info(f'  Execute using Launch Configuration "ApiLogicServer"')
                 else:
-                    log.info(f'  cd {self.project_name};  python api_logic_server_run.py')
+                    log.debug(f'  cd {self.project_name};  python api_logic_server_run.py')
         if self.command.startswith("add_"):
             pass  # keep silent for add-db, add-auth...
         elif self.is_tutorial:
@@ -1434,8 +1438,8 @@ from database import <project.bind_key>_models
                     log.info(f'  code {docker_project_name}  # e.g., open VSCode on created project')
             else:
                 log.info(f'\nCustomize using your IDE:')
-                log.info(f'  code {self.project_name}  # e.g., open VSCode on created project')
-                log.info(f'  Establish your Python environment - see https://apilogicserver.github.io/Docs/IDE-Execute/#execute-prebuilt-launch-configurations\n')
+                log.info(f'  code {self.project_name}  # e.g., open VSCode on created project\n')
+                log.debug(f'  Establish your Python environment - see https://apilogicserver.github.io/Docs/IDE-Execute/#execute-prebuilt-launch-configurations\n')
 
         if self.run:  # synchronous run of server - does not return
             run_file = os.path.abspath(f'{resolve_home(self.project_name)}/api_logic_server_run.py')
@@ -1496,4 +1500,5 @@ def key_module_map():
     ui_admin_creator.create()                               # creates ui/admin/admin.yaml from resource_list
     ProjectRun.update_config_and_copy_sqlite_db()           # adds db (model, multi-db binds, api, app) to curr project
     ProjectRun.add_auth()                                   # add_db(auth), adds nw declare_security, upd config
+    final_project_fixup('done', project=None)               # update config, etc
     ProjectRun.tutorial()                                   # creates basic, nw, nw + cust
