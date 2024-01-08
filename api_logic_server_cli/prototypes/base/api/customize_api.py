@@ -11,7 +11,7 @@ from database import models
 app_logger = logging.getLogger(__name__)
 
 def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
-    """ #als: Customize API - new end points for services 
+    """ Customize API - new end points for services 
     
         Brief background: see readme_customize_api.md
 

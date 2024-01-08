@@ -366,15 +366,15 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         return jsonify({ "success": True, "message": "Server is shutting down..." })
 
 
-class ServicesEndPoint(safrs.JABase):
-    """
-    Illustrates #als: custom end point with swagger, RowDictMapper
+"""
+Illustrates #als: custom end point with swagger, RowDictMapper
 
-    * Custom service - visible in swagger
-    * Services *not* requiring authentication (contrast to CategoriesEndPoint, below)
-    * Use OrderB2B (extends RowDictMapper) to map json to rows
-    * Recall business logic is not in service, but encapsulated for reuse in logic/declare_logic.py
-    """
+* Custom service - visible in swagger
+* Services *not* requiring authentication (contrast to CategoriesEndPoint, below)
+* Use OrderB2B (extends RowDictMapper) to map json to rows
+* Recall business logic is not in service, but encapsulated for reuse in logic/declare_logic.py
+"""
+class ServicesEndPoint(safrs.JABase):
 
 
     @classmethod
@@ -498,20 +498,20 @@ class ServicesEndPoint(safrs.JABase):
 
 
 
+"""
+Illustrates #als: auth required
+* Swagger-visible RPC that requires authentication (@jwt_required()).
+* Row Security
+
+Test in swagger (auth required)
+* Post to endpoint auth to obtain <access_token> value - copy to clipboard
+        * Row Security - Users determines results
+        * u1 - 1 row, u2 - 4 rows, admin - 9 rows
+* Authorize (top of swagger), using Bearer <access_token>
+* Post to CategoriesEndPoint/get_cats, observe results depend on login
+
+"""
 class CategoriesEndPoint(safrs.JABase):
-    """
-    Illustrates #als: auth required
-    * Swagger-visible RPC that requires authentication (@jwt_required()).
-    * Row Security
-
-    Test in swagger (auth required)
-    * Post to endpoint auth to obtain <access_token> value - copy to clipboard
-            * Row Security - Users determines results
-            * u1 - 1 row, u2 - 4 rows, admin - 9 rows
-    * Authorize (top of swagger), using Bearer <access_token>
-    * Post to CategoriesEndPoint/get_cats, observe results depend on login
-
-    """
 
     @staticmethod
     @jwt_required()

@@ -3,7 +3,7 @@ import requests, pdb
 import test_utils
 import json
 
-#als: implement behave tests
+# Implement Behave Tests -- your code goes here
 
 @given('Sample Database')
 def step_impl(context):

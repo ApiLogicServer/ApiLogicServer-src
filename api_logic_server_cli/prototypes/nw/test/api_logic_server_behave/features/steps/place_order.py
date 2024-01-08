@@ -8,11 +8,9 @@ from dotmap import DotMap
 logic_logs_dir = "logs/scenario_logic_logs"
 
 """
-#als: implement behave tests
+Implement behave tests - Your Code Goes Here
 
 These tests can be re-run -- they restore the data to original state.
-
-#als: Good illustrations of API calls from Python.
 
 Rows used for testing:
 * customer: ALFKI, with a balance of 2102
@@ -85,6 +83,8 @@ def step_impl(context):
     Events are passed the `row` and `old_row`, as well as `logic_row` which enables you to test the actual operation, chaining nest level, etc.
 
     You can set breakpoints in events, and inspect these.
+
+    #als: Behave Test, Invoking API from Python
 
     """
     scenario_name = 'Good Order Custom Service'
