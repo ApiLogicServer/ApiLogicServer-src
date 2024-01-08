@@ -49,7 +49,9 @@ def kafka_consumer(safrs_api: safrs.SAFRSAPI = None):
 
     logger.debug(f'Kafka Listener thread activated {bus}')
 
-    '''   Define topic handlers here
+    '''   Your Code Goes Here
+    
+    #als: consume Kafka messages
     '''
 
 

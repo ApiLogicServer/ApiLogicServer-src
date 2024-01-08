@@ -23,13 +23,15 @@ To run your project, the system requires various runtime systems for data access
 
 Setup your Python environment, according to whether you did a *local install*, or *Docker*.  Choose the appropriate section, then run.
 
+API Logic Server CLI provides commands you can use to ugrade your project, e.g., to add security.  Discover the CLI commands with `ApiLogicServer`.
+
 &nbsp;
 
 ## Establish Your Python Environment - Local Install
 
-VSCode projects automatically use installed API Logic Server `venv`, so this step is not required until you want to create a local `venv` for additional packages.
+> VSCode projects automatically use installed API Logic Server `venv`, so this step is ***not required*** until you want to create a local `venv` for additional packages.
 
-You `requirements.txt` has already been created, so...
+Your `requirements.txt` has already been created, so...
 
 ```bash title="Install API Logic Server in a Virtual Environment"
 python -m venv venv                        # may require python3 -m venv venv
@@ -42,8 +44,6 @@ Notes:
 * See also the `venv_setup` directory in this API Logic Project.
 
 * If using SqlServer, install `pyodbc`.  Not required for docker-based projects.  For local installs, see the [Quick Start](https://apilogicserver.github.io/Docs/Install-pyodbc/).
-
-* If you are creating multiple projects, you may wish to use a [Shared venv](https://apilogicserver.github.io/Docs/Project-Env/).
 
 &nbsp;
 
@@ -92,6 +92,8 @@ the created API, Logic and Web App.
 [rebuilt](https://apilogicserver.github.io/Docs/Project-Rebuild/) (e.g., synchronized with a revised schema), preserving your customizations.
 
 Please see the `nw` sample for examples of typical customizations.  You can open it in GitHub (use Shift + "." to view in project mode) - [click here](https://github.com/ApiLogicServer/demo).
+
+Search for `Your Code Goes Here`.  Key files summarized below:
 
 | Directory | Usage                         | Key Customization File             | Typical Customization                                                                 |
 |:-------------- |:------------------------------|:-----------------------------------|:--------------------------------------------------------------------------------------|

@@ -19,8 +19,11 @@ app_logger = logging.getLogger(__name__)
 
 
 def declare_logic():
-    """ 
-        Declare logic (rules and code) for multi-table derivations and constraints on API updates
+    """ Declarative multi-table derivations and constraints, extensible with Python.
+ 
+    Brief background: see readme_declare_logic.md
+    
+    Your Code Goes Here - Use code completion (Rule.) to declare rules
     """
 
     """         HOW TO USE RULES
@@ -87,7 +90,7 @@ def declare_logic():
         OrderDetail.UnitPrice = copy from Product
     """
 
-    if preferred_approach:
+    if preferred_approach:     #als: basic rules
         Rule.constraint(validate=models.Customer,       # logic design translates directly into rules
             as_condition=lambda row: row.Balance <= row.CreditLimit,
             error_msg="balance ({round(row.Balance, 2)}) exceeds credit ({round(row.CreditLimit, 2)})")
@@ -108,7 +111,7 @@ def declare_logic():
         pass  # 5 rules above, or these 200 lines of code: https://github.com/valhuber/LogicBank/wiki/by-code
 
     """
-        Demonstrate that logic == Rules + Python (for extensibility)
+        #als: Demonstrate that logic == Rules + Python (for extensibility)
     """
     def congratulate_sales_rep(row: models.Order, old_row: models.Order, logic_row: LogicRow):
         """ use events for sending email, messages, etc. """
@@ -205,7 +208,7 @@ def declare_logic():
 
 
     """
-        STATE TRANSITION LOGIC, using old_row
+        #als: STATE TRANSITION LOGIC, using old_row
     """
     def raise_over_20_percent(row: models.Employee, old_row: models.Employee, logic_row: LogicRow):
         if logic_row.ins_upd_dlt == "upd" and row.Salary > old_row.Salary:
@@ -222,7 +225,7 @@ def declare_logic():
             Events, plus *generic* event handlers
     """
     
-    if preferred_approach:  # AUDITING can be as simple as 1 rule
+    if preferred_approach:  # #als: AUDITING can be as simple as 1 rule
         RuleExtension.copy_row(copy_from=models.Employee,
                             copy_to=models.EmployeeAudit,
                             copy_when=lambda logic_row: logic_row.ins_upd_dlt == "upd" and 
@@ -241,6 +244,13 @@ def declare_logic():
 
 
     def clone_order(row: models.Order, old_row: models.Order, logic_row: LogicRow):
+        """ #als: clone multi-row business object
+
+        Args:
+            row (models.Order): _description_
+            old_row (models.Order): _description_
+            logic_row (LogicRow): _description_
+        """
         if row.CloneFromOrder is not None and logic_row.nest_level == 0:
             which = ["OrderDetailList"]
             logic_row.copy_children(copy_from=row.Order,
@@ -248,7 +258,7 @@ def declare_logic():
     Rule.row_event(on_class=models.Order, calling=clone_order)
 
 
-    def handle_all(logic_row: LogicRow):  # OPTIMISTIC LOCKING, [TIME / DATE STAMPING]
+    def handle_all(logic_row: LogicRow):  # #als: TIME / DATE STAMPING, OPTIMISTIC LOCKING
         """
         This is generic - executed for all classes.
 
@@ -275,7 +285,7 @@ def declare_logic():
                  as_expression=lambda row: datetime.datetime.now())
 
     def send_order_to_shipping(row: models.Order, old_row: models.Order, logic_row: LogicRow):
-        """
+        """ #als: send Kafka message
 
         Format row per shipping requirements, and send (e.g., a message)
 

@@ -11,17 +11,15 @@ from database import models
 app_logger = logging.getLogger(__name__)
 
 def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
-    """ Customize API - new end points for services 
+    """ #als: Customize API - new end points for services 
     
         Brief background: see readme_customize_api.md
+
+        Your Code Goes Here
     
     """
     
     app_logger.debug("api/customize_api.py - expose custom services")
-
-    #########################
-    # Define custom apis here
-    #########################    
 
     @app.route('/hello_world')
     def hello_world():  # test it with: http://api_logic_server_host:api_logic_server_port/hello_world?user=ApiLogicServer

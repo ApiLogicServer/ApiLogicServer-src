@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.01.04"
+__version__ = "10.01.05"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t01/07/2024 - 10.01.04: Default Interpreter for VS Code, allocation fix, F5 note \n"\
+    "\t01/07/2024 - 10.01.05: Default Interpreter for VS Code, allocation fix, F5 note, #als \n"\
     "\t01/03/2024 - 10.01.00: Quoted col names \n"\
     "\t12/21/2023 - 10.00.01: Fix < Python 3.11 \n"\
     "\t12/19/2023 - 10.00.00: Kafka pub/sub, Fix MySQL CHAR/String, list/hash/set types \n"\
@@ -341,23 +341,22 @@ def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "R
     
 
 
-def create_nw_tutorial(project_name, api_logic_server_dir_str):
-    """ copy tutorial from docs, and link to it from readme.md 
-
-    1. prototype/nw/readme.md is the short preamble to "go see tutorial"
-
-    2. append the standard readme
+def create_nw_tutorial_and_readme(project: 'ProjectRun'):
+    """ append standard readme to nw readme, and copy Tutorial from docs
     
     Alert: 2 copies of the Tutorial:
     * ~/dev/ApiLogicServer/api_logic_server_cli/prototypes/nw/Tutorial.md
     * ~/dev/Org-ApiLogicServer/Docs/docs/Tutorial.md
-    * cli version is master -->
+    * docs version is master -->
     * cp api_logic_server_cli/project_prototype_nw/Tutorial.md ../Org-ApiLogicServer/Docs/docs/Tutorial.md
     """
 
-    project_readme_file_path = project_name + '/readme.md'  # brief 'go read tutorial' - add std readme
-    standard_readme_file_path = str(Path(api_logic_server_dir_str).\
-        joinpath('prototypes/base').joinpath("readme.md"))
+    copy_md(project = project,
+            from_doc_file="Tutorial.md",
+            to_project_file='Tutorial.md')
+
+    project_readme_file_path = project.project_directory + '/readme.md'  # brief 'go read tutorial' - add std readme
+    standard_readme_file_path = project.api_logic_server_dir_path.joinpath('prototypes/base').joinpath("readme.md")
     with open(project_readme_file_path, 'a') as project_readme_file:
         with open(standard_readme_file_path) as standard_readme_file:
             project_readme_file.write(standard_readme_file.read())
@@ -428,11 +427,11 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
                     f'Suggestions:\n'
                     f'.. Verify the --project_name argument\n'
                     f'.. If you are using Docker, verify the -v argument\n\n')
+
         if project.nw_db_status in ["nw", "nw+"]:
             log.debug(".. ..Copying nw customizations: logic, custom api, readme, tests, admin app")
             project.add_nw_customizations(do_security=False, do_show_messages=False)
             
-
         if project.nw_db_status in ["nw+"]:
             log.debug(".. ..Copy in nw+ customizations: readme, perform_customizations")
             nw_dir = (Path(api_logic_server_dir_str)).\
@@ -1206,7 +1205,7 @@ from database import <project.bind_key>_models
 
         2. Deep copy project_prototype_nw (adds logic)
 
-        3. Create readme files: Tutorial, api/integration_defs/readme.md
+        3. Create readme files: Tutorial (copy_md), api/integration_defs/readme.md
 
         Args:
         """
@@ -1222,7 +1221,7 @@ from database import <project.bind_key>_models
             joinpath('prototypes/nw')  # PosixPath('/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/nw')
         recursive_overwrite(nw_path, self.project_directory)  # '/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/tutorial/1. Instant_Creation'
 
-        create_nw_tutorial(self.project_directory, str(self.api_logic_server_dir_path))
+        create_nw_tutorial_and_readme(project = self)
 
         copy_md(project = self,
                 from_doc_file="Sample-Integration.md",

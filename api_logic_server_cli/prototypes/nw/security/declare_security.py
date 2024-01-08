@@ -5,7 +5,17 @@ import safrs
 import logging
 
 """
-Illustrates declarative security - role-based authorization to database rows.
+First, Activate Security: https://apilogicserver.github.io/Docs/Security-Activation/
+
+Then, Declare Security here: https://apilogicserver.github.io/Docs/Security-Authorization/
+
+See documentation: https://apilogicserver.github.io/Docs/Security-Overview/
+
+Security is invoked on server start (api_logic_server_run), per activation in `config.py`
+
+Your Code Goes Here
+
+#als: Illustrates declarative security - role-based authorization to database rows.
 
 * See [documentation](https://apilogicserver.github.io/Docs/Security-Overview/)
 

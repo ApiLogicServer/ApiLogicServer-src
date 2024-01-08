@@ -1,3 +1,9 @@
+---
+title: Detailed Tutorial
+notes: from create (gold is in docs)
+version: 1.00 from create
+---
+
 ## About this Detailed Tutorial
 
 This Detailed Tutorial is designed for these scenarios:

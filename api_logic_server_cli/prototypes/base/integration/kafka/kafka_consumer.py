@@ -49,7 +49,9 @@ def kafka_consumer(safrs_api: safrs.SAFRSAPI = None):
 
     logger.debug(f'Kafka Listener thread activated {bus}')
 
-    '''   Define topic handlers here, e.g.
+    '''   Your Code Goes Here
+    
+    Define topic handlers here, e.g.
 
     @bus.handle('order_shipping')
     def order_shipping(msg: object, safrs_api: safrs.SAFRSAPI):

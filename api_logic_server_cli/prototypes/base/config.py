@@ -9,9 +9,12 @@ from enum import Enum
 import socket
 import json
 
-#  for complete flask_sqlachemy config parameters and session handling,
-#  read: file flask_sqlalchemy/__init__.py AND flask/config.py
 '''
+#als: configuration settings
+
+For complete flask_sqlachemy config parameters and session handling,
+  see: file flask_sqlalchemy/__init__.py AND flask/config.py
+
 app.config.setdefault('SQLALCHEMY_DATABASE_URI', 'sqlite:///:memory:')
 app.config.setdefault('SQLALCHEMY_BINDS', None)
 app.config.setdefault('SQLALCHEMY_NATIVE_UNICODE', None)

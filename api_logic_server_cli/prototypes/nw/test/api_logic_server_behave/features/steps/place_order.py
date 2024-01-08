@@ -8,9 +8,11 @@ from dotmap import DotMap
 logic_logs_dir = "logs/scenario_logic_logs"
 
 """
+#als: implement behave tests
+
 These tests can be re-run -- they restore the data to original state.
 
-Good illustrations of API calls from Python.
+#als: Good illustrations of API calls from Python.
 
 Rows used for testing:
 * customer: ALFKI, with a balance of 2102

@@ -26,8 +26,13 @@ from integration.row_dict_maps.OrderB2B import OrderB2B
 app_logger = logging.getLogger("api_logic_server_app")
 
 def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
-    """ 
-    #### Illustrates Customized APIs and Data Access.
+    """ #als: Customize API - new end points for services 
+    
+    Brief background: see readme_customize_api.md
+
+    Your Code Goes Here
+    
+    Illustrates Customized APIs and Data Access.
 
     1. Observe that APIs not limited to database objects, but are extensible.
     2. See: https://apilogicserver.github.io/Docs/Sample-Integration/
@@ -63,10 +68,6 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
     """
 
     app_logger.debug("api/customize_api.py - expose custom services")
-
-    #########################
-    # Define custom apis here
-    #########################    
 
     api.expose_object(ServicesEndPoint)  # Swagger-visible services
     api.expose_object(CategoriesEndPoint)
@@ -367,9 +368,11 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
 
 class ServicesEndPoint(safrs.JABase):
     """
-    Illustrates
+    Illustrates #als: custom end point with swagger, RowDictMapper
+
     * Custom service - visible in swagger
     * Services *not* requiring authentication (contrast to CategoriesEndPoint, below)
+    * Use OrderB2B (extends RowDictMapper) to map json to rows
     * Recall business logic is not in service, but encapsulated for reuse in logic/declare_logic.py
     """
 
@@ -497,7 +500,7 @@ class ServicesEndPoint(safrs.JABase):
 
 class CategoriesEndPoint(safrs.JABase):
     """
-    Illustrates
+    Illustrates #als: auth required
     * Swagger-visible RPC that requires authentication (@jwt_required()).
     * Row Security
 

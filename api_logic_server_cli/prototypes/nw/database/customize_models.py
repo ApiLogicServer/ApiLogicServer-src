@@ -6,9 +6,15 @@ from functools import wraps # This convenience func preserves name and docstring
 import decimal as decimal
 
 """
-    If you wish to drive models from the database schema,
-    you can use this file to customize your schema (add relationships, derived attributes),
-    and preserve customizations over iterations (regenerations of models.py).
+If you wish to drive models from the database schema,
+you can use this file to customize your schema (add relationships, derived attributes),
+and preserve customizations over iterations (regenerations of models.py).
+
+Called from models.py (classes describing schema, per introspection).
+
+Your Code Goes Here
+
+#als: Add virtual attributes, relationships to data model
 """
 
 app_logger = logging.getLogger(__name__)
