@@ -139,7 +139,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         request_id = request.args.get('id')
         if request_id is None:
             request_id = 10643
-        db = safrs.DB           # Use the safrs.DB, not db!
+        db = safrs.DB           # #als: SQLAlchemy retrieval
         session = db.session    # sqlalchemy.orm.scoping.scoped_session
         Security.set_user_sa()  # an endpoint that requires no auth header (see also @bypass_security)
         the_order : models.Order = session.query(models.Order) \

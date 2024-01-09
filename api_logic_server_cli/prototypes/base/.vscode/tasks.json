@@ -6,7 +6,7 @@
         "type": "shell",
         "command": "python venv_setup/py.py welcome-first-time",
         "windows": {
-          "command": "python venv_setup\\py.py welcome-first-time"
+          "command": "code -r readme.md"
         },
         "presentation": {
           "reveal": "always",

@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.01.05"
+__version__ = "10.01.07"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t01/07/2024 - 10.01.05: Default Interpreter for VS Code, allocation fix, F5 note, #als \n"\
+    "\t01/08/2024 - 10.01.07: Default Interpreter for VS Code, Allocation fix, F5 Note, #als \n"\
     "\t01/03/2024 - 10.01.00: Quoted col names \n"\
     "\t12/21/2023 - 10.00.01: Fix < Python 3.11 \n"\
     "\t12/19/2023 - 10.00.00: Kafka pub/sub, Fix MySQL CHAR/String, list/hash/set types \n"\
@@ -355,11 +355,28 @@ def create_nw_tutorial_and_readme(project: 'ProjectRun'):
             from_doc_file="Tutorial.md",
             to_project_file='Tutorial.md')
 
+    new_way = True
     project_readme_file_path = project.project_directory + '/readme.md'  # brief 'go read tutorial' - add std readme
-    standard_readme_file_path = project.api_logic_server_dir_path.joinpath('prototypes/base').joinpath("readme.md")
-    with open(project_readme_file_path, 'a') as project_readme_file:
-        with open(standard_readme_file_path) as standard_readme_file:
-            project_readme_file.write(standard_readme_file.read())
+    if new_way:
+        pass
+        with open(project_readme_file_path,'r') as txt:
+            text=txt.readlines()
+            each_line = 0
+            fix_line = -1
+            for each_line_str in text:
+                if "Tip: create the sample" in text[each_line]:
+                    fix_line = each_line
+                    break
+                each_line += 1
+            if fix_line >= 0:
+                text[fix_line] = "[Open the Tutorial](Tutorial.md).\n"
+        with open(project_readme_file_path,'w') as txt:
+            txt.writelines(text)
+    else:
+        standard_readme_file_path = project.api_logic_server_dir_path.joinpath('prototypes/base').joinpath("readme.md")
+        with open(project_readme_file_path, 'a') as project_readme_file:
+            with open(standard_readme_file_path) as standard_readme_file:
+                project_readme_file.write(standard_readme_file.read())
 
 
 def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> str:
@@ -1135,8 +1152,11 @@ from database import <project.bind_key>_models
         log.debug("\n\n==================================================================")
         if msg != "":
             log.info(msg + f" to project: {str(database_path.parent)}")
-            log.info(" .. TODO: Declare authorization in security/declare_security.py")
-            log.info(" .. docs: https://apilogicserver.github.io/Docs/Security-Activation/")
+            if is_nw or "ApiLogicProject customizable project created" in msg:
+                pass
+            else:
+                log.info(" .. TODO: Declare authorization in security/declare_security.py")
+                log.info(" .. docs: https://apilogicserver.github.io/Docs/Security-Activation/")
 
             log.debug("  1. ApiLogicServer add-db --db_url=auth --bind_key=authentication")
         log.debug("==================================================================5\n")

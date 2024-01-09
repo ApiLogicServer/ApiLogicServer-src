@@ -1,3 +1,15 @@
+# Quick Start
+
+For VSCode Users
+1. `Press F5 to Run` (your venv is defaulted)  
+2. Disable the startup message by renaming `.vscode/tasks.json`
+
+For other IDEs, please follow the [Setup and Run](#1-setup-and-run) procedure, below.
+
+> Tip: create the sample app for customization examples: `ApiLogicServer create --project_name=ApiLogicProject --db_url=`
+
+&nbsp;
+
 # Using this readme
 
 This readme contains the following sections:

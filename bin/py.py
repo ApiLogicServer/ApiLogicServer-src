@@ -8,7 +8,7 @@ import subprocess
 from pathlib import Path
 from sys import platform
 
-__version__ = 5.0
+__version__ = 5.02
 
 def print_at(label: str, value: str):
     tab_to = 24 - len(label)
@@ -94,11 +94,12 @@ def python_status():
             if not os.path.exists(str(tasks_json_path)):
                 print("..warning - unable to update / rename .vscode/tasks.json (file does not exist)")
             else:
-                use_input = True if platform == "darwin" else False
+                use_input = False  # fails even on Mac if Welcome used.  True if platform == "darwin" else False
                 if use_input == False:
-                    print('..to disable this message, rename .vscode/tasks.json')
-                    print('..or to keep, alter tasks.json, replacing "welcome-first-time" with "welcome"')
-                else:  # special case: mac (Darwin) can do input during startup
+                    pass  # readme explains how to disable start message
+                    # print('..to disable this message, rename .vscode/tasks.json')
+                    # print('..or to keep, alter tasks.json, replacing "welcome-first-time" with "welcome"')
+                else:  # disabled, saved for future reference
                     everytime = input("Show this next time? (y/n) ")
                     if everytime == "y":
                         print("..changing .vscode/tasks.json: replace 'welcome-first-time' with 'welcome'")
