@@ -50,7 +50,7 @@ if is_docker():
 
 project_dir = str(current_path)
 os.chdir(project_dir)  # so admin app can find images, code
-import api.system.util as util
+import api.system.api_utils as api_utils
 logic_logger_activate_debug = False
 """ True prints all rules on startup """
 
@@ -342,7 +342,7 @@ if args.verbose:
     # sqlachemy_logger.setLevel(logging.DEBUG)
 
 if app_logger.getEffectiveLevel() <= logging.DEBUG:
-    util.sys_info(flask_app.config)
+    api_utils.sys_info(flask_app.config)
 app_logger.debug(f"\nENV args: \n{args}\n\n")
 validate_db_uri(flask_app)
 

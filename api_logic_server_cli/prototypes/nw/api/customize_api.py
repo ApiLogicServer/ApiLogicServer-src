@@ -3,7 +3,7 @@ import logging
 from flask_jwt_extended import get_jwt, jwt_required, verify_jwt_in_request
 from config.config import Config, Args
 from security.system.authorization import Security
-import api.system.util as util
+import api.system.api_utils as api_utils
 from typing import List
 import safrs
 import sqlalchemy
@@ -14,6 +14,7 @@ from sqlalchemy.orm import object_mapper
 from database import models
 from flask_cors import cross_origin
 from logic_bank.rule_bank.rule_bank import RuleBank
+import integration.system.RowDictMapper as row_dict_mapper
 from integration.row_dict_maps.OrderById import OrderById
 from integration.row_dict_maps.OrderShipping import OrderShipping
 from integration.row_dict_maps.OrderB2B import OrderB2B
@@ -53,13 +54,13 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
             * Illustrates: SQLAlchemy parent join fields
 
     2. CategoriesEndPoint get_cats() - swagger, row security
-            * Uses util.rows_to_dict            (-> row.to_dict())
+            * Uses row_dict_mapper.rows_to_dict            (-> row.to_dict())
 
     3. filters_cats() - model query with filters
             * Uses manual result creation (not util)
 
     4. raw_sql_cats() - raw sql (non-modeled objects)
-            * Uses util.rows_to_dict            (-> iterate attributes)
+            * Uses row_dict_mapper.rows_to_dict            (-> iterate attributes)
     
     """
 
@@ -236,7 +237,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         sql_query = DB.text("SELECT * FROM CategoryTableNameTest")
         with DB.engine.begin() as connection:
             query_result = connection.execute(sql_query).all()
-            rows_to_dict_rows = util.rows_to_dict(query_result)
+            rows_to_dict_rows = row_dict_mapper.rows_to_dict(query_result)
         response = {"result": rows_to_dict_rows} 
         return response
 
@@ -250,7 +251,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         """
         Used by test/*.py - enables client app to log msg into server's console log
         """
-        return util.server_log(request, jsonify)
+        return api_utils.server_log(request, jsonify)
 
     
     @app.route('/metadata')
@@ -457,7 +458,7 @@ class ServicesEndPoint(safrs.JABase):
         new_order = models.Order()
         session.add(new_order)
 
-        util.json_to_entities(kwargs, new_order)  # generic function - any db object
+        row_dict_mapper.json_to_entities(kwargs, new_order)  # generic function - any db object
         return {"Thankyou For Your Order"}  # automatic commit, which executes transaction logic
 
 
@@ -487,6 +488,6 @@ class CategoriesEndPoint(safrs.JABase):
         result = session.query(models.Category)
         for each_row in result:
             app_logger.debug(f'each_row: {each_row}')
-        rows = util.rows_to_dict(result)
+        rows = row_dict_mapper.rows_to_dict(result)
         response = {"result": rows}
         return response

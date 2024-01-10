@@ -61,7 +61,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from flask_sqlalchemy import SQLAlchemy
 from safrs import SAFRSAPI, jsonapi_rpc
 from safrs import JABase, DB
-import api.system.util as util
+import integration.system.RowDictMapper as row_dict_mapper
 
 ########################################################################################################################
 # Classes describing database for SqlAlchemy ORM, initially created by schema introspection.
@@ -123,7 +123,7 @@ metadata = Base.metadata
                     return response
                 with DB.engine.begin() as connection:
                     query_result = connection.execute(sql_query, dict(location=location)).all()
-                    rows = util.rows_to_dict(query_result)
+                    rows = row_dict_mapper.rows_to_dict(query_result)
                     return {"result": rows}
         '''
         if args[0].ObjectName not in self.tvf_services:
@@ -176,7 +176,7 @@ metadata = Base.metadata
                     if arg_number < len(args):
                         self.tvf_contents += ", "
             self.tvf_contents += ")).all()\n" 
-            self.tvf_contents += "\t\t\trows = util.rows_to_dict(query_result)\n" 
+            self.tvf_contents += "\t\t\trows = row_dict_mapper.rows_to_dict(query_result)\n" 
             self.tvf_contents += '\t\t\tresponse = {"result": rows}\n'
             self.tvf_contents += f'\t\treturn response\n'
             self.tvf_contents += f'\n\n'

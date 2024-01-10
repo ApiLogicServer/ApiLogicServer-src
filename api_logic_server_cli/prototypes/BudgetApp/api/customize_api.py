@@ -1,5 +1,5 @@
 import logging
-import api.system.util as util
+import api.system.api_utils as api_utils
 import safrs
 from flask import request, jsonify
 from safrs import jsonapi_rpc
@@ -58,7 +58,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
 
         Special support for the msg parameter -- Rules Report
         """
-        return util.server_log(request, jsonify)
+        return api_utils.server_log(request, jsonify)
     @app.route('/metadata')
     def metadata():
         """
@@ -145,7 +145,7 @@ class ServicesEndPoint(safrs.JABase):
         budget.amount = 100
         budget.is_expense = 1
         budget.description = 'test insert'
-        util.json_to_entities(kwargs, budget)
+        api_utils.json_to_entities(kwargs, budget)
         session.add(budget)
         return {"budget insert done"}
         
@@ -172,6 +172,6 @@ class ServicesEndPoint(safrs.JABase):
         trans.category_id = 1 
         trans.description = 'test insert'
         session.add(trans)
-        util.json_to_entities(kwargs, trans)
+        api_utils.json_to_entities(kwargs, trans)
         
         return {"transaction insert done"}

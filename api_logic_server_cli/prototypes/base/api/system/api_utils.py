@@ -6,10 +6,6 @@ from os import path
 import logging
 import sys
 from typing import Any, Optional, Tuple
-import sqlalchemy
-from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import object_mapper
-import flask_sqlalchemy
 from logic_bank.rule_bank.rule_bank import RuleBank
 
 app_logger = logging.getLogger(__name__)
@@ -32,60 +28,6 @@ def dbpath(dbname: str) -> str:
     PATH: str = path.join(ROOT, dbname)
     log('DBPATH: '+PATH)
     return PATH
-
-
-def json_to_entities(from_row: str or object, to_row):
-    """
-    transform json object to SQLAlchemy rows, for save & logic
-
-    :param from_row: json service payload: dict - e.g., Order and OrderDetailsList
-    :param to_row: instantiated mapped object (e.g., Order)
-    :return: updates to_row with contents of from_row (recursively for lists)
-    """
-
-    def get_attr_name(mapper, attr)-> Tuple[Optional[Any], str]:
-        """ returns name, type of SQLAlchemy attr metadata object """
-        attr_name = None
-        attr_type = "attr"
-        if hasattr(attr, "key"):
-            attr_name = attr.key
-        elif isinstance(attr, hybrid_property):
-            attr_name = attr.__name__
-        elif hasattr(attr, "__name__"):
-            attr_name = attr.__name__
-        elif hasattr(attr, "name"):
-            attr_name = attr.name
-        if attr_name == "OrderDetailListX" or attr_name == "CustomerX":
-            print("Debug Stop")
-        if isinstance(attr, sqlalchemy.orm.relationships.RelationshipProperty):   # hasattr(attr, "impl"):   # sqlalchemy.orm.relationships.RelationshipProperty
-            if attr.uselist:
-                attr_type = "list"
-            else: # if isinstance(attr.impl, sqlalchemy.orm.attributes.ScalarObjectAttributeImpl):
-                attr_type = "object"
-        return attr_name, attr_type
-
-    row_mapper = object_mapper(to_row)
-    for each_attr_name in from_row:
-        if hasattr(to_row, each_attr_name):
-            for each_attr in row_mapper.attrs:
-                mapped_attr_name, mapped_attr_type = get_attr_name(row_mapper, each_attr)
-                if mapped_attr_name == each_attr_name:
-                    if mapped_attr_type == "attr":
-                        value = from_row[each_attr_name]
-                        setattr(to_row, each_attr_name, value)
-                    elif mapped_attr_type == "list":
-                        child_from = from_row[each_attr_name]
-                        for each_child_from in child_from:
-                            child_class = each_attr.entity.class_
-                            # eachOrderDetail = OrderDetail(); order.OrderDetailList.append(eachOrderDetail)
-                            child_to = child_class()  # instance of child (e.g., OrderDetail)
-                            json_to_entities(each_child_from, child_to)
-                            child_list = getattr(to_row, each_attr_name)
-                            child_list.append(child_to)
-                            pass
-                    elif mapped_attr_type == "object":
-                        log("a parent object - skip (future - lookups here?)")
-                    break
 
 rule_count = 0
 from flask import request, jsonify
@@ -182,29 +124,6 @@ def server_log(request, jsonify):
         if "Server Log: Behave Run Successfully Completed" in msg:
             logic_logger.info(f'\n\n*** {msg}\n\n***\n\n')
     return jsonify({"result": f'ok'})
-
-def rows_to_dict(result: flask_sqlalchemy.BaseQuery) -> list:
-    """
-    Converts SQLAlchemy result (mapped or raw) to dict array of un-nested rows
-
-    Args:
-        result (object): list of serializable objects (e.g., dict)
-
-    Returns:
-        list of rows as dicts
-    """
-    rows = []
-    for each_row in result:
-        row_as_dict = {}
-        log(f'type(each_row): {type(each_row)}')
-        if isinstance (each_row, sqlalchemy.engine.row.Row):  # raw sql, eg, sample catsql
-            key_to_index = each_row._key_to_index             # note: SQLAlchemy 2 specific
-            for name, value in key_to_index.items():
-                row_as_dict[name] = each_row[value]
-        else:
-            row_as_dict = each_row.to_dict()                  # safrs helper
-        rows.append(row_as_dict)
-    return rows
 
 
 def sys_info(flask_app_config):  
