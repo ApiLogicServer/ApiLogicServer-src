@@ -7,7 +7,7 @@ class OrderShipping(RowDictMapper):
     
     def __init__(self):
         """
-        Declares message format advising Shipping of new Orders.
+        RowDictMapper: Declares message format advising Shipping of new Orders.
 
         Used in: logic/declare_logic.py -- send_order_to_shipping
 

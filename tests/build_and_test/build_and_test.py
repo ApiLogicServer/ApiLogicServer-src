@@ -462,19 +462,8 @@ def validate_nw(api_logic_server_install_path, set_venv):
     """
     With NW open, verifies:
     * Behave test
-    * order nested
     * get_cats RPC
     """
-
-    get_uri = "http://localhost:5656/order_nested_objects?Id=10643"
-    r = requests.get(url=get_uri, headers=login())
-    response_text = r.text
-    result_data = json.loads(response_text) 
-    assert result_data['data']['Id'] == 10643, \
-        "order endpoint failed to find 10643"
-    assert result_data['data']['OrderDetailListAsDicts'][1]['data']['ProductName'] == 'Chartreuse verte', \
-        "OrderDetail does not contain 'Chartreuse verte'"
-
 
     get_uri = "http://localhost:5656/filters_cats"
     r = requests.get(url=get_uri, headers=login())

@@ -1,5 +1,5 @@
 import logging
-import util
+import api.system.util as util
 import safrs
 from flask import request, jsonify
 from safrs import jsonapi_rpc

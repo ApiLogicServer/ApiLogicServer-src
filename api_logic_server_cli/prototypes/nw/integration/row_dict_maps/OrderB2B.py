@@ -8,7 +8,7 @@ class OrderB2B(RowDictMapper):
 
     def __init__(self):
         """
-        Declares API format enabling B2B partners to POST Orders.
+        RowDictMapper: Declares API format enabling B2B partners to POST Orders.
 
         Used in - api/customize_api.py -- OrderB2B
 

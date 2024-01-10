@@ -1,9 +1,9 @@
 from functools import wraps
 import logging
 from flask_jwt_extended import get_jwt, jwt_required, verify_jwt_in_request
-from config import Config
+from config.config import Config, Args
 from security.system.authorization import Security
-import util
+import api.system.util as util
 from typing import List
 import safrs
 import sqlalchemy
@@ -12,7 +12,6 @@ from safrs import jsonapi_rpc, SAFRSAPI
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import object_mapper
 from database import models
-from config import Args
 from flask_cors import cross_origin
 from logic_bank.rule_bank.rule_bank import RuleBank
 from integration.row_dict_maps.OrderById import OrderById
@@ -50,19 +49,16 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
 
     #### Illustrate Using Flask and SQLAlchemy
 
-    1. order_nested_objects() - 
-            * Illustrates: Uses util.format_nested_objects() (-> jsonify(row).json)
-
-    2. join_order() - 
+    1. join_order() - 
             * Illustrates: SQLAlchemy parent join fields
 
-    3. CategoriesEndPoint get_cats() - swagger, row security
+    2. CategoriesEndPoint get_cats() - swagger, row security
             * Uses util.rows_to_dict            (-> row.to_dict())
 
-    4. filters_cats() - model query with filters
+    3. filters_cats() - model query with filters
             * Uses manual result creation (not util)
 
-    5. raw_sql_cats() - raw sql (non-modeled objects)
+    4. raw_sql_cats() - raw sql (non-modeled objects)
             * Uses util.rows_to_dict            (-> iterate attributes)
     
     """
@@ -126,7 +122,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
     @cross_origin(supports_credentials=True)
     def OrderShipping_Test():
         """ 
-        Illustrates
+        Illustrates  redundant (declare_logic)
         
         1. SQLAlchemy row retrieval
         
@@ -160,7 +156,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         """
         Illustrates: SQLAlchemy join fields, by manual code
 
-        Better: use IntegrationService (next example)
+        Better: use IntegrationService (below)
 
         $(venv) ApiLogicServer curl "http://localhost:5656/join_order?id=11077"
 
@@ -180,7 +176,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         dict_row = {}
         dict_row["id"] = the_order.Id
         dict_row["AmountTotal"] = the_order.AmountTotal
-        dict_row["SalesRepLastName"] = the_order.Employee.LastName
+        dict_row["SalesRepLastName"] = the_order.Employee.LastName  # access join field
         return jsonify({"order_with_join_attr":  dict_row})
 
 
@@ -228,7 +224,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
     def raw_sql_cats():
         """
         Illustrates:
-        * "Raw" SQLAlchemy table queries (non-mapped objects)
+        * #als: "Raw" SQLAlchemy table queries (non-mapped objects)
         * Observe phyical column name: CategoryName_ColumnName
               * Contrast to models.py, get_cats()
         
@@ -243,38 +239,6 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
             rows_to_dict_rows = util.rows_to_dict(query_result)
         response = {"result": rows_to_dict_rows} 
         return response
-
-
-    @app.route('/order_nested_objects')
-    def order_nested_objects():
-        """
-        Illustrates:
-        * Returning a nested result set response
-        * Using SQLAlchemy to obtain data, and related data
-        * Restructuring row results to desired json (e.g., for tool such as Sencha)
-
-        Test (auth optional):
-            http://localhost:5656/order_nested_objects?Id=10643
-            curl -X GET "http://localhost:5656/order_nested_objects?Id=10643"
-
-        """
-        order_id = request.args.get('Id')
-        db = safrs.DB         # Use the safrs.DB, not db!
-        session = db.session  # sqlalchemy.orm.scoping.scoped_session
-        order = session.query(models.Order).filter(models.Order.Id == order_id).one()
-
-        result_std_dict = util.format_nested_object(order
-                                        , replace_attribute_tag='data'
-                                        , remove_links_relationships=True)
-        result_std_dict['data']['Customer_Name'] = order.Customer.CompanyName # eager fetch
-        result_std_dict['data']['OrderDetailListAsDicts'] = []
-        for each_order_detail in order.OrderDetailList:       # lazy fetch
-            each_order_detail_dict = util.format_nested_object(row=each_order_detail
-                                                    , replace_attribute_tag='data'
-                                                    , remove_links_relationships=True)
-            each_order_detail_dict['data']['ProductName'] = each_order_detail.Product.ProductName
-            result_std_dict['data']['OrderDetailListAsDicts'].append(each_order_detail_dict)
-        return result_std_dict
 
 
     ###################

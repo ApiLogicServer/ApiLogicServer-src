@@ -28,8 +28,8 @@ from flask_jwt_extended import jwt_required as jwt_required_ori
 from flask_jwt_extended import create_access_token
 from datetime import timedelta
 from functools import wraps
-import config
-from config import Args
+import config.config as config
+from config.config import Args
 from security.authentication_provider.abstract_authentication_provider import Abstract_Authentication_Provider
 from flask_cors import CORS, cross_origin
 

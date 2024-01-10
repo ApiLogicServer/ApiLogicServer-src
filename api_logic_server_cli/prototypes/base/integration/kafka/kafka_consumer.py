@@ -6,7 +6,7 @@ Listen/consume Kafka topis, if KAFKA_CONSUMER specified in Config.py
 Alter this file to add handlers for consuming kafka topics
 """
 
-from config import Args
+from config.config import Args
 from confluent_kafka import Producer, KafkaException, Consumer
 import signal
 import logging

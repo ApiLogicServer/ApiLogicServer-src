@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.01.07"
+__version__ = "10.01.08"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t01/09/2024 - 10.01.08: Reduce Sample size, examples \n"\
     "\t01/08/2024 - 10.01.07: Default Interpreter for VS Code, Allocation fix, F5 Note, #als \n"\
     "\t01/03/2024 - 10.01.00: Quoted col names \n"\
     "\t12/21/2023 - 10.00.01: Fix < Python 3.11 \n"\
@@ -383,7 +384,7 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
     """
     clone prototype to  project directory, copy sqlite db, and remove git folder
 
-    update config.py - SQLALCHEMY_DATABASE_URI
+    update config/config/config.py - SQLALCHEMY_DATABASE_URI
 
     process /prototypes directories (eg, nw/nw+/allocation/BudgetApp/basic_demo),
        * inject sample logic/declare_logic and api/customize_api, etc (merge copy over)
@@ -535,7 +536,7 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
                             in_file=f'{project.project_directory}/readme.md')
         create_utils.replace_string_in_file(search_for="replace_opt_locking",
                             replace_with=f'{project.opt_locking}',
-                            in_file=f'{project.project_directory}/config.py')
+                            in_file=f'{project.project_directory}/config/config.py')
         create_utils.replace_string_in_file(search_for="replace_opt_locking_attr",
                             replace_with=f'{project.opt_locking_attr}',
                             in_file=f'{project.project_directory}/api/system/opt_locking/opt_locking.py')
@@ -554,7 +555,7 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
             db_uri = get_windows_path_with_slashes(project.abs_db_url)
             create_utils.replace_string_in_file(search_for="replace_db_url",
                                 replace_with=db_uri,
-                                in_file=f'{project.project_directory}/config.py')
+                                in_file=f'{project.project_directory}/config/config.py')
             create_utils.replace_string_in_file(search_for="replace_db_url",
                                 replace_with=db_uri,
                                 in_file=f'{project.project_directory}/database/alembic.ini')
@@ -580,7 +581,7 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
             return_abs_db_url = f'sqlite:///{target_db_loc_actual}'
             create_utils.replace_string_in_file(search_for="replace_db_url",
                                 replace_with=replace_db_url_value,
-                                in_file=f'{project.project_directory}/config.py')
+                                in_file=f'{project.project_directory}/config/config.py')
             create_utils.replace_string_in_file(search_for="replace_db_url",
                                 replace_with=return_abs_db_url,
                                 in_file=f'{project.project_directory}/database/alembic.ini')
@@ -590,7 +591,7 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
 
             log.debug(f'.. ..Sqlite database setup {target_db_loc_actual}...')
             log.debug(f'.. .. ..From {db_loc}')
-            log.debug(f'.. .. ..db_uri set to: {return_abs_db_url} in <project>/config.py')
+            log.debug(f'.. .. ..db_uri set to: {return_abs_db_url} in <project>/config/config.py')
         if project.merge_into_prototype:
             recursive_overwrite(str(tmpdirname), project.project_directory)
             # delete_dir(realpath(Path(str(tmpdirname))), "")
@@ -745,7 +746,7 @@ def update_api_logic_server_run(project):
     Note project_directory is from user, and may be relative (and same as project_name)
     """
     api_logic_server_run_py = f'{project.project_directory}/api_logic_server_run.py'
-    config_py = f'{project.project_directory}/config.py'
+    config_py = f'{project.project_directory}/config/config.py'
     create_utils.replace_string_in_file(search_for="\"api_logic_server_project_name\"",  # fix logic_bank_utils.add_python_path
                            replace_with='"' + os.path.basename(project.project_name) + '"',
                            in_file=api_logic_server_run_py)
@@ -1068,12 +1069,12 @@ class ProjectRun(Project):
 
     """
         config_insert = config_insert.replace("<CONFIG_URI_VALUE>", "{" + f'{CONFIG_URI}' + "}")
-        config_file = f'{self.project_directory}/config.py'
+        config_file = f'{self.project_directory}/config/config.py'
         config_built = create_utils.does_file_contain(search_for=CONFIG_URI, in_file=config_file)
         if not config_built:
             create_utils.insert_lines_at(lines=config_insert,
                                         at="# End Multi-Database URLs (from ApiLogicServer add-db...)",
-                                        file_name=f'{self.project_directory}/config.py')
+                                        file_name=f'{self.project_directory}/config/config.py')
             log.debug(f'.. ..Updating config.py file with {CONFIG_URI}...')
         else:
             log.debug(f'.. ..Not updating config.py file with {CONFIG_URI}... (already present)')
@@ -1200,7 +1201,7 @@ from database import <project.bind_key>_models
         log.debug("==================================================================\n")
         create_utils.replace_string_in_file(search_for="SECURITY_ENABLED = False  #",
                             replace_with='SECURITY_ENABLED = True  #',
-                            in_file=f'{self.project_directory}/config.py')
+                            in_file=f'{self.project_directory}/config/config.py')
         if is_northwind:  # is_nw or self.nw_db_status ==  "nw":
             log.debug("\n==================================================================")
             if msg != "":
@@ -1343,7 +1344,7 @@ from database import <project.bind_key>_models
                 dst=str(target_project_path.joinpath(f"{create}/2. Customized/database")))
             create_utils.replace_string_in_file(search_for="SECURITY_ENABLED = True",
                     replace_with='SECURITY_ENABLED = False',
-                    in_file=str(target_project_path.joinpath(f"{create}/2. Customized/config.py")))
+                    in_file=str(target_project_path.joinpath(f"{create}/2. Customized/config/config.py")))
             shutil.copyfile(src=self.api_logic_server_dir_path.joinpath('templates/admin.yaml'),
                             dst=str(target_project_path.joinpath(f"{create}/2. Customized/ui/admin/admin.yaml")))
 

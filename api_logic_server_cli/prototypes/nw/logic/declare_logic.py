@@ -285,7 +285,7 @@ def declare_logic():
                  as_expression=lambda row: datetime.datetime.now())
 
     def send_order_to_shipping(row: models.Order, old_row: models.Order, logic_row: LogicRow):
-        """ #als: send Kafka message
+        """ #als: Send Kafka message formatted by RowDictMapper
 
         Format row per shipping requirements, and send (e.g., a message)
 

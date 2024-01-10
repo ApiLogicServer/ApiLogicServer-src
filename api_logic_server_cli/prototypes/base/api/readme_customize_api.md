@@ -96,7 +96,6 @@ The samples also illustrate several forms of data access, summarized in the tabl
 
 | Function | Auth required                         | Illustrates             | Util Usage  |
 |:-------------- |:------------------------------|:-----------------------------------|:--------------------------------------------------------------------------------------|
-| ```order_nested_objects()``` |    | Nested Model Objects         | util.format_nested_objects() jsoniify(row).json   |
 | ```get_cats()``` |  Y  | Model query      |Util.rows_to_dict<br>..row.to_dict   |
 | ```filters_cats()``` |  Y  | Model query, filters         | No: No  - Manual {} creation   |
 | ```raw_sql_cats()``` |    | Raw sql        | Util.rows_to_dict<br>..fields iterator   |

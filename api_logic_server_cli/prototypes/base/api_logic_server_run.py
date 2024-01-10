@@ -32,7 +32,7 @@ except:
 from flask_sqlalchemy import SQLAlchemy
 import json
 from pathlib import Path
-from config import Args
+from config.config import Args
 
 def is_docker() -> bool:
     """ running docker?  dir exists: /home/api_logic_server """
@@ -50,7 +50,7 @@ if is_docker():
 
 project_dir = str(current_path)
 os.chdir(project_dir)  # so admin app can find images, code
-import util as util
+import api.system.util as util
 logic_logger_activate_debug = False
 """ True prints all rules on startup """
 
@@ -107,7 +107,7 @@ class SAFRSAPI(_SAFRSAPI):
 # ================================== 
 
 current_path = os.path.abspath(os.path.dirname(__file__))
-with open(f'{current_path}/logging.yml','rt') as f:  # see also logic/declare_logic.py
+with open(f'{current_path}/config/logging.yml','rt') as f:  # see also logic/declare_logic.py
         config=yaml.safe_load(f.read())
         f.close()
 logging.config.dictConfig(config)  # log levels: notset 0, debug 10, info 20, warn 30, error 40, critical 50
@@ -288,7 +288,7 @@ def api_logic_server_setup(flask_app: Flask, args: Args):
                     + ' authentication tables loaded')
 
             from api.system.opt_locking import opt_locking
-            from config import OptLocking
+            from config.config import OptLocking
             if args.opt_locking == OptLocking.IGNORED.value:
                 app_logger.info("\nOptimistic Locking: ignored")
             else:
@@ -319,7 +319,8 @@ CORS(flask_app, resources=[{r"/api/*": {"origins": "*"}}],
 
 args = Args(flask_app=flask_app)                                # creation defaults
 
-flask_app.config.from_object("config.Config")
+import config.config as config
+flask_app.config.from_object(config.Config)
 app_logger.debug(f"\nConfig args: \n{args}")                    # config file (e.g., db uri's)
 
 args.get_cli_args(dunder_name=__name__, args=args)

@@ -28,7 +28,7 @@ from http import HTTPStatus
 
 from flask_jwt_extended import current_user
 
-from config import Args
+from config.config import Args
 authentication_provider = Args.security_provider
 
 security_logger = logging.getLogger(__name__)

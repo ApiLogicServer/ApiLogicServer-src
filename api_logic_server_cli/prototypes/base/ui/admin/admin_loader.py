@@ -5,8 +5,8 @@
 
 import logging, sys, io
 from flask import Flask, redirect, send_from_directory, send_file
-from config import Config
-from config import Args
+from config.config import Config
+from config.config import Args
 from pathlib import Path
 import os, inspect
 from safrs import ValidationError

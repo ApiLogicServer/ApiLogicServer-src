@@ -61,7 +61,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from flask_sqlalchemy import SQLAlchemy
 from safrs import SAFRSAPI, jsonapi_rpc
 from safrs import JABase, DB
-import util
+import api.system.util as util
 
 ########################################################################################################################
 # Classes describing database for SqlAlchemy ORM, initially created by schema introspection.

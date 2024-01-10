@@ -28,9 +28,11 @@ def step_impl(context):
 
     """
     scenario_name = 'Run Configuration: Behave Tests'
+    context.scenario_name = 'Run Configuration: Behave Tests' 
 
 
 @then("No Errors")
 def step_impl(context):
     print("\n\n Behave Run Successfully Completed")
     print("..(console log stacktraces are successful negative tests)")
+    test_utils.prt("\n\n Server Log: Behave Run Successfully Completed - now run Behave Logic Report", context.scenario_name)

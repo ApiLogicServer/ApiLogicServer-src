@@ -15,8 +15,8 @@ from safrs.util import classproperty
 from safrs.errors import JsonapiError
 from http import HTTPStatus
 
-from config import OptLocking
-from config import Args as args
+from config.config import OptLocking
+from config.config import Args as args
 
 logger = logging.getLogger(__name__)
 

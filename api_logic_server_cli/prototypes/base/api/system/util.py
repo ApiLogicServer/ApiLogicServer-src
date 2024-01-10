@@ -109,7 +109,9 @@ def rules_report():
 
 def server_log(request, jsonify):
     """
-    Used by test/*.py - enables client app to log msg into server
+    Used by test/*.py - enables client apps (the behave tests) to...
+    *  log msg into server, and 
+    * test/api_logic_server_behave/logs
     """
     import os
     import datetime
@@ -163,6 +165,8 @@ def server_log(request, jsonify):
 
     msg = request.args.get('msg')
     test = request.args.get('test')
+    if "Server Log: Behave Run Successfully Completed" in msg:
+        debug_stop = 'good breakpoint'
     if test is not None and test != "None":
         if test == "None":
             print(f'None for msg: {msg}')
@@ -175,31 +179,9 @@ def server_log(request, jsonify):
         logic_logger.info(f'Logic Bank - {rule_count} rules loaded')
     else:
         app_logger.info(f'{msg}')
+        if "Server Log: Behave Run Successfully Completed" in msg:
+            logic_logger.info(f'\n\n*** {msg}\n\n***\n\n')
     return jsonify({"result": f'ok'})
-
-
-def format_nested_object(row
-                , replace_attribute_tag: str = ""
-                , remove_links_relationships: bool = False) -> dict:
-    """
-    Args:
-        row (safrs.DB.Model): models instance (object + related objects)
-        replace_attribute_tag (str): replace _attribute_ tag with this name
-        remove_links_relationships (bool): remove these tags
-    Example: in sample nw project, see customize_api: order()
-    Returns:
-        _type_: row suitable for safrs response (a dict)
-    """
-    row_as_dict = jsonify(row).json
-    log(f'row_to_dict: {row_as_dict}')
-    if replace_attribute_tag != "":
-        row_as_dict[replace_attribute_tag] = row_as_dict.pop('attributes')
-    if remove_links_relationships:
-        if "links" in row_as_dict:
-            row_as_dict.pop('links')
-        if "relationships" in row_as_dict:
-            row_as_dict.pop('relationships')
-    return row_as_dict
 
 def rows_to_dict(result: flask_sqlalchemy.BaseQuery) -> list:
     """

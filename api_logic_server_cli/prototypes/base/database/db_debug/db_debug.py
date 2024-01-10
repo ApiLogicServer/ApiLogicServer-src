@@ -28,7 +28,7 @@ db_loc = str(project_dir.joinpath('database/db.sqlite'))
 db_url = "sqlite:////Users/val/dev/servers/ApiLogicProject/database/db.sqlite"
 db_url = f"sqlite:///{db_loc}"
 # db_url = "sqlite:////Users/val/dev/servers/ApiLogicProject/database/nw-gold.sqlite"
-from config import Config
+from config.config import Config
 db_url = Config.SQLALCHEMY_DATABASE_URI
 
 if 'oracle' in db_url:
