@@ -14,12 +14,16 @@ import logging
 logger = logging.getLogger('integration.kafka')
 
 
-
 def json_to_entities(from_row: str or object, to_row):
     """
-    transform json object to SQLAlchemy rows, for save & logic
+    Transform json object to SQLAlchemy rows, for save & logic
 
-    :param from_row: json service payload: dict - e.g., Order and OrderDetailsList
+    This and rows_to_dict() do not provide attribute renaming or lookups.
+    * In most cases, extend RowDictMapper, which provides these services.
+    * See: https://apilogicserver.github.io/Docs/Integration-Map/
+    * And: https://apilogicserver.github.io/Docs/Sample-Integration/
+
+        :param from_row: json service payload: dict - e.g., Order and OrderDetailsList
     :param to_row: instantiated mapped object (e.g., Order)
     :return: updates to_row with contents of from_row (recursively for lists)
     """
@@ -94,9 +98,11 @@ def rows_to_dict(result: flask_sqlalchemy.BaseQuery) -> list:
 
 
 class RowDictMapper():
-    """Services to support App Integration as described in api.custom_resources.readme
+    """
+    Services to support App Integration -- Column renames, Joins, Foreign Keys Lookups, etc.
 
-    See: https://apilogicserver.github.io/Docs/Sample-Integration/
+    * See: https://apilogicserver.github.io/Docs/Integration-Map/
+    * And: https://apilogicserver.github.io/Docs/Sample-Integration/
 
     """
 
@@ -115,7 +121,8 @@ class RowDictMapper():
 
         Declare a user shaped dict based on a SQLAlchemy model class.
 
-        See: https://apilogicserver.github.io/Docs/Sample-Integration/
+        * See: https://apilogicserver.github.io/Docs/Integration-Map/
+        * And: https://apilogicserver.github.io/Docs/Sample-Integration/
 
         Args:
             :model_class (DeclarativeMeta | None): model.Class
