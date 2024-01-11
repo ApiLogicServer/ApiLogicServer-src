@@ -140,14 +140,16 @@ def opt_lock_patch(logic_row: LogicRow):
         ALSError: "Optimistic Locking error - required CheckSum not present"
     """
     logger.debug(f'Opt Lock Patch')
-    if hasattr(logic_row.row, "replace_opt_locking_attr"):
+    if args.instance.opt_locking == OptLocking.IGNORED.value:
+        pass
+    elif hasattr(logic_row.row, "S_CheckSum"):
         as_read_checksum = logic_row.row.replace_opt_locking_attr
         old_row_checksum = checksum_old_row(logic_row)
         if as_read_checksum != old_row_checksum:
             logger.info(f"optimistic lock failure - as-read vs current: {as_read_checksum} vs {old_row_checksum}")
             raise ALSError(message="Sorry, row altered by another user - please note changes, cancel and retry")
     else:
-        if args.opt_locking == OptLocking.OPTIONAL.value:
+        if args.instance.opt_locking == OptLocking.OPTIONAL.value:
             logger.debug(f'No CheckSum -- ok, configured as optional')
         else:
             raise ALSError("Optimistic Locking error - required CheckSum not present")
