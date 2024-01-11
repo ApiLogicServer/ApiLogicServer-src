@@ -51,7 +51,6 @@ setup(
               'api_logic_server_cli.prototypes.base.database',
               'api_logic_server_cli.prototypes.base.logic',
               'api_logic_server_cli.prototypes.base.test',
-              'api_logic_server_cli.prototypes.base.templates',
               'api_logic_server_cli.prototypes.base.ui',
               'api_logic_server_cli.create_from_model'],
     entry_points={
