@@ -7,6 +7,7 @@
         {
             "name": "ApiLogicServer",
             "type": "python",
+            "cwd": "${workspaceFolder}",
             "env": {
                 "PYTHONPATH": "", 
                 "PYTHONHASHSEED": "0", 
@@ -25,6 +26,7 @@
             "request": "launch",
             "program": "api_logic_server_run.py",
             "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
             "env": {
                 "PYTHONPATH": "", 
                 "SECURITY_ENABLED": "False", 
@@ -41,6 +43,7 @@
             "request": "launch",
             "program": "api_logic_server_run.py",
             "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
             "env": {
                 "PYTHONPATH": "", 
                 "SECURITY_ENABLED": "False", 
@@ -133,6 +136,7 @@
         {
             "name": "ApiLogicServer ENV",
             "type": "python",
+            "cwd": "${workspaceFolder}",
             "env": {
                 "APILOGICPROJECT_DEBUG": "False",
                 "VERBOSE": "true",
@@ -150,7 +154,8 @@
             "name": "Basic Server Test",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/test/basic/server_test.py",
+            "cwd": "${workspaceFolder}",
+            "program": "test/basic/server_test.py",
             "redirectOutput": true,
             "justMyCode": false,
             "args": ["go"],
@@ -178,7 +183,8 @@
             "name": "db-debug - explore SQLAlchemy",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/database/db_debug/db_debug.py",
+            "cwd": "${workspaceFolder}",
+            "program": "database/db_debug/db_debug.py",
             "redirectOutput": true,
             "justMyCode": false,            
             "console": "internalConsole",
@@ -188,6 +194,7 @@
             "name": "DB API Logic Server",
             "type": "python",
             "request": "launch",
+            "cwd": "${workspaceFolder}",
             "program": "api_logic_server_run.py",
             "redirectOutput": true,
             "env": {"PYTHONPATH": "", "SECURITY_ENABLED": "False", "PYTHONHASHSEED": "0", "OPT_LOCKING": "optional"},
@@ -200,6 +207,7 @@
             "name": "Sys Info",
             "type": "python",
             "request": "launch",
+            "cwd": "${workspaceFolder}",
             "program": "venv_setup/py.py",
             "redirectOutput": true,
             "args": ["sys-info"],

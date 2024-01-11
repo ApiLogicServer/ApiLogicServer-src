@@ -26,7 +26,7 @@ def server_tests(host, port, version):
             port - server port
             version - ApiLogicServer version
     """
-    pass
+    pass  # Your Code Goes Here
 
 if __name__ == "__main__":
    # only to run when not called via 'import' here
