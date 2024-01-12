@@ -28,20 +28,18 @@ This readme contains the following sections:
 
 # 1. Setup and Run
 
-To run your project, the system requires various runtime systems for data access, api, and logic.  These are included with API Logic Server ([architecture doc here](https://apilogicserver.github.io/Docs/Architecture-What-Is/)).  So, to run your project ([instructions here](#setup-instructions)):
+To run your project, the system requires various runtime systems for data access, api, and logic.  These are included with API Logic Server ([architecture doc here](https://apilogicserver.github.io/Docs/Architecture-What-Is/)).  
 
-1.  __Establish your Python Environment__ 
-    * Docker or VSCode - nothing to do
-    * Otherwise, [click here](#establish-your-python-environment--other-environments) to activate these runtime systems
-2. __Run__
+So, to run your project ([instructions here](#setup-instructions)):
 
-Setup your Python environment, according to your environment.  Choose the appropriate section, then run.
-
-API Logic Server CLI provides commands you can use to ugrade your project, e.g., to add security.  Discover the CLI commands with `ApiLogicServer`.
+*  __1.1 Establish your Python Environment__ 
+    * Docker or VSCode - [nothing to do](#docker-or-vscode---nothing-to-do)
+    * Otherwise, [Establish Your Python Environment](#establish-your-python-environment---other-environments) to activate these runtime systems
+* __[1.2 Run](#1.2-run)__
 
 &nbsp;
 
-## Establish Your Python Environment - Other Environments
+## 1.1 Establish Your Python Environment - Other Environments
 
 Your `requirements.txt` has already been created, so...
 
@@ -57,7 +55,7 @@ Notes:
 
 * If using SqlServer, install `pyodbc`.  Not required for docker-based projects.  For local installs, see the [Quick Start](https://apilogicserver.github.io/Docs/Install-pyodbc/).
 
-### Why Not Required for Docker or VSCode
+### Docker or VSCode - nothing to do
 
 Nothing to do here:
 
@@ -71,7 +69,7 @@ Nothing to do here:
 
 &nbsp;
 
-## Run
+## 1.2 Run
 
 To run your project
 
@@ -121,6 +119,8 @@ Search for `Your Code Goes Here`.  Key files summarized below:
 | ```security``` | Authentication, Authorization   | ```security/declare_security.py```          | Control login, role-based row access         |
 | ```integration``` | Consume Kafka Messages             | ```integration/kafka/kafka_consumer.py```          |  [Application Integration](https://apilogicserver.github.io/Docs/Sample-Integration/)                                          |
 | ```tests``` | Behave Test Suite              | ```tests/api_logic_server_behave/features```          | Declare and implement [Behave Tests](https://apilogicserver.github.io/Docs/Behave/)                                          |
+
+> Note: API Logic Server CLI provides commands you can use to ugrade your project, e.g., to add security.  Discover the CLI commands with `ApiLogicServer`.
 
 &nbsp;
 
