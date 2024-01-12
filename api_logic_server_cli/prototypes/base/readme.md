@@ -1,10 +1,10 @@
 # Quick Start
 
-For VSCode Users
+For **VSCode** Users
 1. `Press F5 to Run` (your venv is defaulted)  
 2. Disable the startup message by renaming `.vscode/tasks.json`
 
-For other IDEs, please follow the [Setup and Run](#1-setup-and-run) procedure, below.
+For **other IDEs,** please follow the [Setup and Run](#1-setup-and-run) procedure, below.
 
 > Tip: create the sample app for customization examples: `ApiLogicServer create --project_name=ApiLogicProject --db_url=`
 
@@ -30,12 +30,12 @@ This readme contains the following sections:
 
 To run your project, the system requires various runtime systems for data access, api, and logic.  These are included with API Logic Server ([architecture doc here](https://apilogicserver.github.io/Docs/Architecture-What-Is/)).  
 
-So, to run your project ([instructions here](#setup-instructions)):
+So, to run your project:
 
 *  __1.1 Establish your Python Environment__ 
     * Docker or VSCode - [nothing to do](#docker-or-vscode---nothing-to-do)
     * Otherwise, [Establish Your Python Environment](#establish-your-python-environment---other-environments) to activate these runtime systems
-* __[1.2 Run](#1.2-run)__
+* __[1.2 Run](#12-run)__
 
 &nbsp;
 
@@ -55,6 +55,8 @@ Notes:
 
 * If using SqlServer, install `pyodbc`.  Not required for docker-based projects.  For local installs, see the [Quick Start](https://apilogicserver.github.io/Docs/Install-pyodbc/).
 
+&nbsp;
+
 ### Docker or VSCode - nothing to do
 
 Nothing to do here:
@@ -71,7 +73,10 @@ Nothing to do here:
 
 ## 1.2 Run
 
-To run your project
+The `ApiLogicServer create` command creates Run Configurations for PyCharm and VSCode:
+
+* For PyCharm, press Ctl-D
+* For VSCode, &nbsp;press F5:
 
 ![Start Project](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/tutorial/2-apilogicproject-nutshell.png?raw=true)
 
@@ -100,8 +105,7 @@ Since API Logic Server creates working software (UI, API), you can do this after
 
 Your project is ready to run, but it's likely you'll want to customize it - declare logic, new endpoints, etc.
 
-The ___Key Customization Files___ listed in the table below are created as stubs, intended for you to add customizations that extend
-the created API, Logic and Web App.
+The ___Key Customization Files___ listed in the table below are created as stubs, intended for you to add customizations that extend the created API, Logic and Web App.
 
 * Since they are separate files, the project can be
 [rebuilt](https://apilogicserver.github.io/Docs/Project-Rebuild/) (e.g., synchronized with a revised schema), preserving your customizations.
