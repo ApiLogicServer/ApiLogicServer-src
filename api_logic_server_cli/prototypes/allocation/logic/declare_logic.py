@@ -10,6 +10,7 @@ import logging
 
 from logic_bank.extensions.allocate import Allocate
 
+declare_logic_message = "Sample Rules  Loaded"
 
 def unpaid_orders(provider: LogicRow):
     """ returns Payments' Customers' Orders, where AmountOwed > 0, by OrderDate """

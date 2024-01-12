@@ -48,6 +48,11 @@ sys.path.append(current_path)
 if is_docker():
     sys.path.append(os.path.abspath('/home/api_logic_server'))
 
+logic_alerts = True
+""" Set False to silence startup message """
+declare_logic_message = ""
+declare_security_message = "ALERT:  *** Security Not Enabled ***"
+
 project_dir = str(current_path)
 os.chdir(project_dir)  # so admin app can find images, code
 import api.system.api_utils as api_utils
@@ -196,7 +201,7 @@ def api_logic_server_setup(flask_app: Flask, args: Args):
 
     from sqlalchemy import exc as sa_exc
 
-    global logic_logger_activate_debug
+    global logic_logger_activate_debug, declare_logic_message, declare_security_message
 
     with warnings.catch_warnings():
 
@@ -260,6 +265,7 @@ def api_logic_server_setup(flask_app: Flask, args: Args):
             from database import customize_models
 
             from logic import declare_logic
+            declare_logic_message = declare_logic.declare_logic_message
             logic_logger = logging.getLogger('logic_logger')
             logic_logger_level = logic_logger.getEffectiveLevel()
             if logic_logger_activate_debug == False:
@@ -286,6 +292,7 @@ def api_logic_server_setup(flask_app: Flask, args: Args):
                 app_logger.info("..declare security - security/declare_security.py"
                     # not accurate: + f' -- {len(database.authentication_models.metadata.tables)}'
                     + ' authentication tables loaded')
+                declare_security_message = declare_security.declare_security_message
 
             from api.system.opt_locking import opt_locking
             from config.config import OptLocking
@@ -371,6 +378,10 @@ if __name__ == "__main__":
                 f'..Explore data and API at http_scheme://swagger_host:port {args.http_scheme}://{args.swagger_host}:{args.port}\n'
                 f'.... with flask_host: {args.flask_host}\n'
                 f'.... and  swagger_port: {args.swagger_port}')
+    if logic_alerts:
+        app_logger.info('\nImportant: Declaring logic and security is **Critical** to unlocking value')
+        app_logger.info(f'.. see logic.declare_logic.py       -- {declare_logic_message}')
+        app_logger.info(f'.. see security.declare_security.py -- {declare_security_message}\n')
 
     flask_app.run(host=args.flask_host, threaded=True, port=args.port)
 else:

@@ -24,6 +24,8 @@ Your Code Goes Here
 
 app_logger = logging.getLogger(__name__)
 
+declare_security_message = "Sample Grants Loaded"
+
 db = safrs.DB
 session = db.session
 

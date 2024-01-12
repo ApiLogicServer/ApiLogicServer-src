@@ -17,6 +17,7 @@ preferred_approach = True
 
 app_logger = logging.getLogger(__name__)
 
+declare_logic_message = "Sample Rules  Loaded"
 
 def declare_logic():
     """ Declarative multi-table derivations and constraints, extensible with Python.

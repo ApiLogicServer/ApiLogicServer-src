@@ -54,13 +54,13 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
             * Illustrates: SQLAlchemy parent join fields
 
     2. CategoriesEndPoint get_cats() - swagger, row security
-            * Uses row_dict_mapper.rows_to_dict            (-> row.to_dict())
+            * Uses row_dict_mapper.rows_to_dict
 
     3. filters_cats() - model query with filters
             * Uses manual result creation (not util)
 
     4. raw_sql_cats() - raw sql (non-modeled objects)
-            * Uses row_dict_mapper.rows_to_dict            (-> iterate attributes)
+            * Uses row_dict_mapper.rows_to_dict
     
     """
 
@@ -127,7 +127,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         
         1. SQLAlchemy row retrieval
         
-        2. IntegationService to reformat row as multi-table dict, and then json
+        2. RowDictMapper to reformat row as multi-table dict, and then json
 
         $(venv) ApiLogicServer login --user=admin --password=p
         $(venv) ApiLogicServer curl "http://localhost:5656/OrderShipping_Test?id=10643"
@@ -157,7 +157,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         """
         Illustrates: SQLAlchemy join fields, by manual code
 
-        Better: use IntegrationService (below)
+        Better: use RowDictMapper (see OrderB2B, below)
 
         $(venv) ApiLogicServer curl "http://localhost:5656/join_order?id=11077"
 
@@ -336,7 +336,7 @@ Illustrates #als: custom end point with swagger, RowDictMapper
 
 * Custom service - visible in swagger
 * Services *not* requiring authentication (contrast to CategoriesEndPoint, below)
-* Use OrderB2B (extends RowDictMapper) to map json to rows
+* Use OrderB2B (extends RowDictMapper) to map json to rows with aliasing, joins and lookups
 * Recall business logic is not in service, but encapsulated for reuse in logic/declare_logic.py
 """
 class ServicesEndPoint(safrs.JABase):

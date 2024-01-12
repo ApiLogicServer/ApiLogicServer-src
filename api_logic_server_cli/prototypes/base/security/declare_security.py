@@ -8,6 +8,8 @@ session = db.session
 
 app_logger = logging.getLogger(__name__)
 
+declare_security_message = "No Grants Yet"  # printed in api_logic_server.py
+
 """
 First, Activate Security: https://apilogicserver.github.io/Docs/Security-Activation/
 

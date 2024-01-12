@@ -18,12 +18,12 @@ def json_to_entities(from_row: str or object, to_row):
     """
     Transform json object to SQLAlchemy rows, for save & logic
 
-    This and rows_to_dict() do not provide attribute renaming or lookups.
+    This and rows_to_dict() do not provide attribute renaming, joins or lookups.
     * In most cases, extend RowDictMapper, which provides these services.
     * See: https://apilogicserver.github.io/Docs/Integration-Map/
     * And: https://apilogicserver.github.io/Docs/Sample-Integration/
 
-        :param from_row: json service payload: dict - e.g., Order and OrderDetailsList
+    :param from_row: json service payload: dict - e.g., Order and OrderDetailsList
     :param to_row: instantiated mapped object (e.g., Order)
     :return: updates to_row with contents of from_row (recursively for lists)
     """
@@ -77,8 +77,13 @@ def rows_to_dict(result: flask_sqlalchemy.BaseQuery) -> list:
     """
     Converts SQLAlchemy result (mapped or raw) to dict array of un-nested rows
 
+    This does not provide attribute renaming, joins or lookups.
+    * In most cases, extend RowDictMapper, which provides these services.
+    * See: https://apilogicserver.github.io/Docs/Integration-Map/
+    * And: https://apilogicserver.github.io/Docs/Sample-Integration/
+
     Args:
-        result (object): list of serializable objects (e.g., dict)
+        result (object): query result
 
     Returns:
         list of rows as dicts

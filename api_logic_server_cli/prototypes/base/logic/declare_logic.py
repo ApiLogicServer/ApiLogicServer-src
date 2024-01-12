@@ -10,6 +10,8 @@ import logging
 
 app_logger = logging.getLogger(__name__)
 
+declare_logic_message = "ALERT:  *** No Rules Yet ***"  # printed in api_logic_server.py
+
 def declare_logic():
     ''' Declarative multi-table derivations and constraints, extensible with Python.
  

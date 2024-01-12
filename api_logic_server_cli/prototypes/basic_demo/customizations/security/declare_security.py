@@ -14,6 +14,8 @@ Illustrates declarative security - role-based authorization to database rows.
 
 app_logger = logging.getLogger(__name__)
 
+declare_logic_message = "Sample Grants Loaded"
+
 db = safrs.DB
 session = db.session
 
