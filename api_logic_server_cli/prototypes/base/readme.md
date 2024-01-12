@@ -30,18 +30,18 @@ This readme contains the following sections:
 
 To run your project, the system requires various runtime systems for data access, api, and logic.  These are included with API Logic Server ([architecture doc here](https://apilogicserver.github.io/Docs/Architecture-What-Is/)).  So, to run your project ([instructions here](#setup-instructions)):
 
-1.  __Establish your Python Environment__ to activate these runtime systems
+1.  __Establish your Python Environment__ 
+    * Docker or VSCode - nothing to do
+    * Otherwise, [click here](#establish-your-python-environment--other-environments) to activate these runtime systems
 2. __Run__
 
-Setup your Python environment, according to whether you did a *local install*, or *Docker*.  Choose the appropriate section, then run.
+Setup your Python environment, according to your environment.  Choose the appropriate section, then run.
 
 API Logic Server CLI provides commands you can use to ugrade your project, e.g., to add security.  Discover the CLI commands with `ApiLogicServer`.
 
 &nbsp;
 
-## Establish Your Python Environment - Local Install
-
-> VSCode projects automatically use installed API Logic Server `venv`, so this step is ***not required*** until you want to create a local `venv` for additional packages.
+## Establish Your Python Environment - Other Environments
 
 Your `requirements.txt` has already been created, so...
 
@@ -57,12 +57,17 @@ Notes:
 
 * If using SqlServer, install `pyodbc`.  Not required for docker-based projects.  For local installs, see the [Quick Start](https://apilogicserver.github.io/Docs/Install-pyodbc/).
 
+### Why Not Required for Docker or VSCode
+
+Nothing to do here:
+
+* **VSCode:** projects automatically use installed API Logic Server `venv`, so this step is ***not required*** until you want to create a local `venv` for additional packages.
+
+* **Docker:** Your runtime systems are part of Dev Container, which you probably activated when you [opened the project](https://apilogicserver.github.io/Docs/IDE-Execute/).  
+
+    * If you did not accept the "Open in Container" option when you started VSCode, use __View > Command Palette > Remote-Containers: Reopen in Container__.
+
 &nbsp;
-
-## Establish Your Python Environment - Docker
-
-Your runtime systems are part of Dev Container, which you probably activated when you [opened the project](https://apilogicserver.github.io/Docs/IDE-Execute/).  
- * If you did not accept the "Open in Container" option when you started VSCode, use __View > Command Palette > Remote-Containers: Reopen in Container__.
 
 &nbsp;
 
