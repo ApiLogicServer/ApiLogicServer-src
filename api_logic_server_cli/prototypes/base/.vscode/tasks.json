@@ -4,7 +4,7 @@
       {
         "label": "Run welcome on startup",
         "type": "shell",
-        "command": "echo '     *** F5 to run... Review readme ***\n\n'",
+        "command": "#     *** F5 to run... Review readme ***",
         "windows": {
           "command": "code -r readme.md"
         },
