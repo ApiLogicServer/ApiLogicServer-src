@@ -1,6 +1,6 @@
 # Quick Start
 
-For **VSCode** Users
+For **VSCode** Users, you are ready to run:
 1. `Press F5 to Run` (your venv is defaulted)  
 2. Disable the startup message by renaming `.vscode/tasks.json`
 
@@ -57,7 +57,7 @@ Notes:
 
 &nbsp;
 
-### Docker or VSCode - nothing to do
+#### Docker or VSCode - nothing to do
 
 Nothing to do here:
 
@@ -104,6 +104,8 @@ Since API Logic Server creates working software (UI, API), you can do this after
 # 3. Key Customization Files
 
 Your project is ready to run, but it's likely you'll want to customize it - declare logic, new endpoints, etc.
+
+>> Tip: in particular, use the sample app to explore the value of ___declarative logic and security.___  Unique to API Logic Server, this is critical to unlocking the full value of API Logic Server.
 
 The ___Key Customization Files___ listed in the table below are created as stubs, intended for you to add customizations that extend the created API, Logic and Web App.
 
