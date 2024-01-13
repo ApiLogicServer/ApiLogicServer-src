@@ -82,12 +82,12 @@ The `ApiLogicServer create` command creates Run Configurations for PyCharm and V
 
 As shown above:
 
-1. Use the pre-supplied Run Configuration; use either:
-    * `**ApiLogicServer - No Security (e.g., for behave tests** to run *with security* (recommended initially)
-    * `**ApiLogicServer** to run [with security](https://apilogicserver.github.io/Docs/Security-Swagger/)
+1. Use the pre-supplied Run Configurations; use either...
+    * `ApiLogicServer` to run [with security](https://apilogicserver.github.io/Docs/Security-Swagger/)
+    * `ApiLogicServer - No Security` (simplifies use of Swagger)
 2. Click the url in the console to start the Admin App
-    * Use it to explore your data (shown below)
-    * And your API (via Swagger)
+    * Use it to explore your **data** (shown below)
+    * And your **API** (via Swagger)
 
 ![Admin App](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/ui-admin/run-admin-app.png?raw=true)
 
@@ -112,9 +112,11 @@ The ___Key Customization Files___ listed in the table below are created as stubs
 * Since they are separate files, the project can be
 [rebuilt](https://apilogicserver.github.io/Docs/Project-Rebuild/) (e.g., synchronized with a revised schema), preserving your customizations.
 
-Please see the `nw` sample for examples of typical customizations.  You can open it in GitHub (use Shift + "." to view in project mode) - [click here](https://github.com/ApiLogicServer/demo).
+To explore customization, see the `nw` sample for examples of typical customizations.  You can open it in GitHub (use Shift + "." to view in project mode) - [click here](https://github.com/ApiLogicServer/demo), or create it locally (`ApiLogicServer create` - accept defaults).
 
-Search for `Your Code Goes Here`.  Key files summarized below:
+To make customizations easy to explore, **search for:**
+* `#als` will reveal key customization examples
+* `Your Code Goes Here` to find key files to customize, summarized below:
 
 | Directory | Usage                         | Key Customization File             | Typical Customization                                                                 |
 |:-------------- |:------------------------------|:-----------------------------------|:--------------------------------------------------------------------------------------|
