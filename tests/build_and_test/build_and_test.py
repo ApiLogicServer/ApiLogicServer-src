@@ -722,7 +722,7 @@ if len(sys.argv) > 1 and sys.argv[1] == 'build-only':
     exit (0)
 
 if Config.do_create_api_logic_project:
-    result_create = run_command(f'{set_venv} && ApiLogicServer create --project_name=ApiLogicProject --db_url=',
+    result_create = run_command(f'{set_venv} && ApiLogicServer create --project_name=ApiLogicProject --db_url=nw+',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate ApiLogicProject at: {str(install_api_logic_server_path)}')
     result_create = run_command(f'{set_venv} && ApiLogicServer tutorial',

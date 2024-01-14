@@ -13,6 +13,7 @@ uri_info = [
     '  ApiLogicServer create --project_name=my_schema --db_url=postgresql://postgres:p@localhost/my_schema',
     '  ApiLogicServer create --db_url=postgresql+psycopg2:'
     '//postgres:password@localhost:5432/postgres?options=-csearch_path%3Dmy_db_schema',
+    '  ApiLogicServer create --project_name=oracle_hr --db_url=\'oracle+oracledb://hr:tiger@localhost:1521/?service_name=ORCL\'',
     '  ApiLogicServer create --project_name=Chinook \\',
     '    --host=ApiLogicServer.pythonanywhere.com --port= \\',
     '    --db_url=mysql+pymysql://ApiLogicServer:@ApiLogicServer.mysql.pythonanywhere-services.com/ApiLogicServer\$Chinook',

@@ -95,7 +95,7 @@ def get_abs_db_url(msg, project: Project):
 
     if project.db_url in [project.default_db, "", "nw", "sqlite:///nw.sqlite"]:     # nw-gold:      default sample
         rtn_abs_db_url = f'sqlite:///{str(project.api_logic_server_dir_path.joinpath("database/nw-gold.sqlite"))}'
-        rtn_nw_db_status = "nw"  # api_logic_server_dir_path
+        rtn_nw_db_status = "nw-"  # api_logic_server_dir_path
         # see also create_project_with_nw_samples for overlaying other project files
         log.debug(f'{msg} from: {rtn_abs_db_url}')  # /Users/val/dev/ApiLogicServer/api_logic_server_cli/database/nw-gold.sqlite
     elif project.db_url == "nw-":                                           # nw:           just in case

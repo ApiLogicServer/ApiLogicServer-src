@@ -38,6 +38,7 @@ def step_impl(context):
 
 @then('only 3 are returned')
 def step_impl(context):
+    """ ALFKI, ANATR, CTWTR """
     response = context.response
     response_text = response.text
     result_data = json.loads(response_text)

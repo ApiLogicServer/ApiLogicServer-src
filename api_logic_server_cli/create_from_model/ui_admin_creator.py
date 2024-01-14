@@ -566,7 +566,7 @@ class AdminCreator(object):
             with open(yaml_created_file_name, 'w') as yaml_created_file:
                 yaml_created_file.write(admin_yaml_dump)
 
-        if self.mod_gen.project.nw_db_status in ["nw"] and self.mod_gen.project.api_name == "api":
+        if self.mod_gen.project.nw_db_status in ["nw", "nw+"] and self.mod_gen.project.api_name == "api":
             if not self.mod_gen.project.command.startswith("rebuild"):
                 src = os.path.join(self.mod_gen.project.api_logic_server_dir_path, Path(f'prototypes/nw/ui/admin/admin.yaml'))
                 dest = os.path.join(Path(self.mod_gen.project_directory), Path(f'ui/admin/admin.yaml'))

@@ -12,6 +12,8 @@ class Project(CliArgsBase):  # extend user-visible args with internal values
 
         self.os_cwd = os.getcwd()
         self.abs_db_url = None
+        self.user_db_url = None
+        """ retain the actual db_url specified by the user """
         
         self.nw_db_status = None
         """ '', nw, nw+, nw- """
@@ -20,7 +22,7 @@ class Project(CliArgsBase):  # extend user-visible args with internal values
         """ string - may have relative /../ """
 
         self.project_directory_actual = None
-        """ string - no relative /../ """
+        """ string - not relative /../ """
 
         self.project_directory_path = None
         """ Path (project_directory_actual) """

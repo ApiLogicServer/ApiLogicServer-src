@@ -33,6 +33,7 @@ class CliArgsBase():
         self.project_name = None # type: str
         """ full nodal name """
         self.db_url = None # type: str
+        """ not what was intially specified (e,g, tutorial uses nw, nw-) """
         self.bind_key = None # type: str
         self.bind_key_url_separator = None # type: str
         self.api_name = None # type: str

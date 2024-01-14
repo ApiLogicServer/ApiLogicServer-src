@@ -171,18 +171,24 @@ def main(ctx):
     """
     Creates [and runs] logic-enabled Python database API Logic Projects.
 
-\b
-    Doc: https://apilogicserver.github.io/Docs
+\b    
+        Creation is from your database (--db_url identifies a SQLAlchemy database)
 
 \b
-    Examples:
+        Doc: https://apilogicserver.github.io/Docs
+        And: https://apilogicserver.github.io/Docs/Database-Connectivity/
 
 \b
-        ApiLogicServer create-and-run --db_url= project_name=  # defaults to Northwind
-        ApiLogicServer tutorial                                # guided walk-through
-        ApiLogicServer create                                  # prompts for project name, db url
+    1. Create a project; examples:
 
-    Then, customize created API Logic Project in your IDE
+\b
+        ApiLogicServer create --db_url= --project_name=     # defaults to Northwind sample
+        ApiLogicServer tutorial                             # guided walk-through
+        ApiLogicServer create                               # prompts for project name, db url
+
+    2. Open the created API Logic Project in your IDE to run, customize.
+
+        Recommendation: use the Northwind sample to see customizations.
     """
     # click.echo("main - called iff commands supplied")
 

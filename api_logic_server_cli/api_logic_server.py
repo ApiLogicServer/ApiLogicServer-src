@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.01.15"
+__version__ = "10.01.16"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t01/11/2024 - 10.01.15: Cleanup, logic reminder \n"\
+    "\t01/11/2024 - 10.01.16: Cleanup, logic reminder, nw tutorial fix \n"\
     "\t01/10/2024 - 10.01.12: Optlock ignored [35], Reduce Sample size, examples, consistent naming, run/cwd \n"\
     "\t01/08/2024 - 10.01.07: Default Interpreter for VS Code, Allocation fix, F5 Note, #als \n"\
     "\t01/03/2024 - 10.01.00: Quoted col names \n"\
@@ -340,45 +340,6 @@ def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "R
     with open(str(to_file), "w") as readme_file:
         readme_file.writelines(readme_lines_md)
     pass
-    
-
-
-def create_nw_tutorial_and_readme(project: 'ProjectRun'):
-    """ append standard readme to nw readme, and copy Tutorial from docs
-    
-    Alert: 2 copies of the Tutorial:
-    * ~/dev/ApiLogicServer/api_logic_server_cli/prototypes/nw/Tutorial.md
-    * ~/dev/Org-ApiLogicServer/Docs/docs/Tutorial.md
-    * docs version is master -->
-    * cp api_logic_server_cli/project_prototype_nw/Tutorial.md ../Org-ApiLogicServer/Docs/docs/Tutorial.md
-    """
-
-    copy_md(project = project,
-            from_doc_file="Tutorial.md",
-            to_project_file='Tutorial.md')
-
-    new_way = True
-    project_readme_file_path = project.project_directory + '/readme.md'  # brief 'go read tutorial' - add std readme
-    if new_way:
-        pass
-        with open(project_readme_file_path,'r') as txt:
-            text=txt.readlines()
-            each_line = 0
-            fix_line = -1
-            for each_line_str in text:
-                if "Tip: create the sample" in text[each_line]:
-                    fix_line = each_line
-                    break
-                each_line += 1
-            if fix_line >= 0:
-                text[fix_line] = "[Open the Tutorial](Tutorial.md).\n"
-        with open(project_readme_file_path,'w') as txt:
-            txt.writelines(text)
-    else:
-        standard_readme_file_path = project.api_logic_server_dir_path.joinpath('prototypes/base').joinpath("readme.md")
-        with open(project_readme_file_path, 'a') as project_readme_file:
-            with open(standard_readme_file_path) as standard_readme_file:
-                project_readme_file.write(standard_readme_file.read())
 
 
 def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> str:
@@ -458,10 +419,13 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
             recursive_overwrite(nw_dir, project.project_directory)
 
         if project.nw_db_status in ["nw-"]:
-            log.debug(".. ..Copy in nw- customizations: readme, perform_customizations")
+            log.debug(".. ..Copy in nw- customizations: readme")
             nw_dir = (Path(api_logic_server_dir_str)).\
                 joinpath('prototypes/nw_no_cust')
             recursive_overwrite(nw_dir, project.project_directory)
+
+        if project.nw_db_status in ["nw", "nw+", "nw-"]:
+            project.update_readme()
 
         if project.db_url in ['shipping', 'Shipping']:
             log.debug(".. ..Copy in oracle customizations: sa_pydb")
@@ -932,6 +896,7 @@ class ProjectRun(Project):
         super(ProjectRun, self).__init__()
         self.project_name = project_name
         self.db_url = db_url
+        self.user_db_url = db_url  # retained for debug
         self.bind_key = bind_key
         self.api_name = api_name
         self.host = host
@@ -1219,6 +1184,42 @@ from database import <project.bind_key>_models
                 log.debug("  4. TODO: Declare authorization in security/declare_security.py")
             log.debug("==================================================================\n\n")
 
+    def update_readme(self):
+        """ open tutorial (default was to create it) """
+        project_readme_file_path = self.project_directory + '/readme.md'
+        with open(project_readme_file_path,'r') as txt:
+            text=txt.readlines()
+            each_line = 0
+            fix_line = -1
+            for each_line_str in text:
+                if "Tip: create the sample" in text[each_line]:
+                    fix_line = each_line
+                    break
+                each_line += 1
+            if fix_line >= 0:
+                text[fix_line] = "[Open the Tutorial](Tutorial.md).\n"
+        with open(project_readme_file_path,'w') as txt:
+            txt.writelines(text)
+
+    def create_nw_tutorial_and_readme(self):
+        """ append standard readme to nw readme, and copy Tutorial from docs
+        
+        Alert: 2 copies of the Tutorial:
+        * ~/dev/ApiLogicServer/api_logic_server_cli/prototypes/nw/Tutorial.md
+        * ~/dev/Org-ApiLogicServer/Docs/docs/Tutorial.md
+        * docs version is master -->
+        * cp api_logic_server_cli/project_prototype_nw/Tutorial.md ../Org-ApiLogicServer/Docs/docs/Tutorial.md
+
+        Alert: 2 usages of tutorial
+        * tutorial: 3 projects in 1, to show no-als, als-no-customizations, als-customized
+        * nw-tutorial: 
+        """
+
+        if self.is_tutorial:
+            copy_md(project = self,
+                    from_doc_file="Tutorial.md",
+                    to_project_file='Tutorial.md')
+
 
     def add_nw_customizations(self, do_show_messages: bool = True, do_security: bool = True):
         """ Add customizations to nw (default creation)
@@ -1243,7 +1244,7 @@ from database import <project.bind_key>_models
             joinpath('prototypes/nw')  # PosixPath('/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/nw')
         recursive_overwrite(nw_path, self.project_directory)  # '/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/tutorial/1. Instant_Creation'
 
-        create_nw_tutorial_and_readme(project = self)
+        self.create_nw_tutorial_and_readme()
 
         copy_md(project = self,
                 from_doc_file="Sample-Integration.md",

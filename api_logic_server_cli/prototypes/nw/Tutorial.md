@@ -1,22 +1,10 @@
 ---
-title: Detailed Tutorial
-notes: from create (gold is in docs)
+title: Detailed Northwind-only Tutorial
+notes: from create
 version: 1.00 from create
 ---
 
 ## About this Detailed Tutorial
-
-This Detailed Tutorial is designed for these scenarios:
-
-* You are using **codespaces** / VSCode, open to either the [tutorial project](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=593459232), or [app_fiddle](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=594296622).
-
-* You are using a **local install** (pip install) version of API Logic Server, and have reviewed the [tutorial readme](https://github.com/ApiLogicServer/tutorial#readme).
-
-* You are using a **docker version** of API Logic Server, and have reviewed the [tutorial readme](https://github.com/ApiLogicServer/tutorial#readme).
-
-   * Projects are pre-configured for VS Code with `.devcontainer` and `launch configurations,` so these instructions are oriented around VS Code.
-
-* You are reviewing the docs, and want to get a sense of the software
 
 In this tutorial, we will explore:
 
@@ -60,7 +48,7 @@ The diagram above summarizes the create / run / customize process.  When you iss
 
 After creation, you must establish your Python environment:
 
-* This is already complete for Codespace users
+* This is ***already complete*** for Codespace, Docker and VSCode users
 * Other users - please  see [Quick Start > Express Install](https://valhuber.github.io/ApiLogicServer/IDE-Execute/).  Note there are different instructions, depending on how your install / IDE.
 
 
@@ -72,7 +60,7 @@ After creation, you must establish your Python environment:
 
 Now (see *Show me how*, below, for details):
 
-1. Start the server with **Run and Debug >> *2. API Logic Project: Instant, Open***, and then 
+1. Start the server with **Run and Debug >> **No Security ApiLogicServer (e.g., simpler swagger)**, and then 
 2. Start the Browser at localhost:5656 by **clicking the url shown in the console log.**
 
 <details markdown>
@@ -86,7 +74,7 @@ To run the ApiLogicProject app:
 1. Start the Server:
 
     1. Click **Run and Debug**
-    2. Use the dropdown to select **3. API Logic Project: Logic**, and
+    2. Use the dropdown to select **No Security ApiLogicServer (e.g., simpler swagger)**, and
     3. Click the green button to start the server
 <br><br>
 
@@ -162,10 +150,10 @@ Let's examine how API Logic Server projects can be customized for both APIs and 
 To run the customized app:
 
 1. Stop the server
-2. Restart the server with **Run and Debug >> *3. API Logic Project: Logic***, and then
+2. Restart the server with **Run and Debug >> *ApiLogicServer***, and then
 3. Start the Browser at localhost:5656 by **clicking the url shown in the console log.**
 4. Re-access the swagger, and authorize (see below):
-   * Click "2. API with __oas/Swagger__" to see the swagger (as you did above)
+   * Click "**ApiLogicServer**" to see the swagger (as you did above)
    * Get an **access_token** and **authorize** (see Show me how, below)
 
 <details markdown>
@@ -196,7 +184,7 @@ To run the customized app:
 &nbsp;
 
 ### Project Structure
-Use VS Code's **Project Explorer** to see the project structure under *3. ApiLogicProject_Logic*:
+Use VS Code's **Project Explorer** to see the project structure:
 
 | Directory | Usage                         | Key Customization File             | Typical Customization                                                                 |
 |:-------------- |:------------------------------|:-----------------------------------|:--------------------------------------------------------------------------------------|
@@ -213,7 +201,7 @@ Let's now explore some examples.
 ### Admin App Customization
 There is no code for the Admin app - it's behavior is declared in the `admin.yaml` model file.  Alter this file to control labels, hide fields, change display order, etc:
 
-1. In your IDE, open **Explorer > 3. ApiLogicProject_Logic/ui/admin/admin.yaml**
+1. In your IDE, open **Explorer > ui/admin/admin.yaml**
    * Find and alter the string `- label: 'Placed Order List'` (e.g, make it plural)
    * Click Save
 3. Load the updated configuration: in the running Admin App, click __Configuration > Reset__ and __Apply__
@@ -232,7 +220,7 @@ While a standards-based API is a great start, sometimes you need custom endpoint
 
 To review the implementation: 
 
-1. In your IDE, open **Explorer > 3. ApiLogicProject_Logic/api/customize_api.py**:
+1. In your IDE, open **Explorer > api/customize_api.py**:
 3. Set the breakpoint as shown in `add_order`
 4. Use the swagger to access the `ServicesEndPoint > add_order`, and
    1. **Try it out**, then 
@@ -256,7 +244,7 @@ The *logic* portion of API *Logic* server is a declarative approach - you declar
 
 [Logic](https://valhuber.github.io/ApiLogicServer/Logic-Why/) consists of rules **and** conventional Python code.  Explore it like this:
 
-1. Open **Explorer > 3. ApiLogicProject_Logic/logic/declare_logic.py**:
+1. Open **Explorer > logic/declare_logic.py**:
    * Observe the 5 rules highlighted in the diagram below.  These are built with code completion.
 2. Set a breakpoint as shown in `congratulate_sales_rep`
    * This event illustrates that logic is mainly _rules,_ customizable with standard _Python code_
