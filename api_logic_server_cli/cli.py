@@ -188,7 +188,7 @@ def main(ctx):
 
     2. Open the created API Logic Project in your IDE to run, customize.
 
-        Recommendation: use the Northwind sample to see customizations.
+        Recommendation: Start with first example.
     """
     # click.echo("main - called iff commands supplied")
 

@@ -425,7 +425,7 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
             recursive_overwrite(nw_dir, project.project_directory)
 
         if project.nw_db_status in ["nw", "nw+", "nw-"]:
-            project.update_readme()
+            project.insert_tutorial_into_readme()
 
         if project.db_url in ['shipping', 'Shipping']:
             log.debug(".. ..Copy in oracle customizations: sa_pydb")
@@ -1184,8 +1184,8 @@ from database import <project.bind_key>_models
                 log.debug("  4. TODO: Declare authorization in security/declare_security.py")
             log.debug("==================================================================\n\n")
 
-    def update_readme(self):
-        """ open tutorial (default was to create it) """
+    def insert_tutorial_into_readme(self):
+        """ insert fragments/tutorial.md into readme at --> Tip: create the sample """
         project_readme_file_path = self.project_directory + '/readme.md'
         with open(project_readme_file_path,'r') as txt:
             text=txt.readlines()
@@ -1197,7 +1197,11 @@ from database import <project.bind_key>_models
                     break
                 each_line += 1
             if fix_line >= 0:
-                text[fix_line] = "[Open the Tutorial](Tutorial.md).\n"
+                # insert the Tutorial file
+                tutorial_file_path = self.api_logic_server_dir_path.joinpath('fragments/Tutorial.md')
+                with open(tutorial_file_path,'r') as tutorial_data:
+                    tutorial_text = tutorial_data.readlines()
+                    text[fix_line:fix_line+1] = tutorial_text
         with open(project_readme_file_path,'w') as txt:
             txt.writelines(text)
 

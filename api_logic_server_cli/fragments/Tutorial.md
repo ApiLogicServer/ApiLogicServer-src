@@ -1,20 +1,21 @@
----
-title: API Logic Tutorial
----
 
+&nbsp;
 
-# About this Detailed Tutorial
+# API Logic Server Sample Tutorial
+
+Welcome to API Logic Server - thanks for giving it a try!
+
+This is the sample app.  It was created from the pre-installed sqlite [Northwind database](https://apilogicserver.github.io/Docs/Sample-Database/) (Customer, Order, OrderDetail, Product, etc.).
 
 In this tutorial, we will explore:
 
-* **create** - we will briefly review what actually happens during the create process.
+* **create** - we will briefly review what actually happened during the create process.
 
-* **run** - we will first run the Admin App and the JSON:API.  These will illustrate how automation creates an app and API from a data model.  Use this to infer what you'd get for one of your databases.
+* **run** - we will first run the Admin App and the JSON:API.  These will illustrate how automation creates an app and API from a database.  Use this to infer what you'd get for one of your databases.
 
-* **customize** - we will then explore customizing the API and logic, and how to debug them.
+* **customize** - we will then explore customizing and debugging the project.
 
-&nbsp;&nbsp;
-
+&nbsp;
 
 ### Key Underlying Concepts
 This tutorial illustrates some key concepts:
@@ -45,7 +46,7 @@ The diagram above summarizes the create / run / customize process.
 
 ## 1. Create: Instant Project
 
-The CLI command below creates an `ApiLogicProject` by reading your schema.  The database is [Northwind](https://apilogicserver.github.io/Docs/Sample-Database/) (Customer, Orders, Items and Product).  Note: the `db_url` value is [an abbreviation](https://apilogicserver.github.io/Docs/Data-Model-Examples/); you would normally supply a SQLAlchemy URL.  
+The CLI command below creates an `ApiLogicProject` by reading your schema.  Note: the `db_url` value is [an abbreviation](https://apilogicserver.github.io/Docs/Data-Model-Examples/); you would normally supply a SQLAlchemy URL.  
 
 ```bash
 $ ApiLogicServer create --project_name= --db_url=    # create ApiLogicProject
@@ -346,6 +347,12 @@ ApiLogicServer curl "'POST' 'http://localhost:5656/api/ServicesEndPoint/OrderB2B
 
 After the Tutorial, these are excellent next steps:
 
+* Further explore Application Integration - to see how to _consume_ Kafaka messages, [open the Sample Integration tutorial](integration/Sample-Integration.md)
+    * You've already created most of it, so...
+        * Scan the intro
+        * See _Show me how -- apply customizations, start Kafka_
+        * And _Consuming Messages_
 * Try other databases - here are [some installed samples](https://valhuber.github.io/ApiLogicServer/Data-Model-Examples/), and try your own
 * Explore the [Logic Tutorial](https://valhuber.github.io/ApiLogicServer/Logic-Tutorial/).
 
+The standard readme now follows.
