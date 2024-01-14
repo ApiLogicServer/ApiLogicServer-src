@@ -1355,15 +1355,7 @@ from database import <project.bind_key>_models
                             dst=str(target_project_path.joinpath(f"{create}/2. Customized/ui/admin/admin.yaml")))
 
         log.info(f"Tutorial project successfully created.  Next steps:\n")
-        log.info(f'  Open the tutorial project in your VSCode\n')
-        if is_docker() == False:
-            log.debug(f'  Establish your Python environment - see https://apilogicserver.github.io/Docs/Project-Env/')
-            docker_info = """
-        cd tutorial
-        python3 -m venv venv       # may require python -m venv venv
-        source venv/bin/activate   # windows venv\Scripts\\activate
-        python3 -m pip install -r requirements.txt"""
-            log.info(f'{docker_info}\n')
+        log.info(f'  Open the tutorial project in your VSCode: code Tutorial\n')
 
 
     def create_project(self):

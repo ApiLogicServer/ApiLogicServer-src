@@ -298,16 +298,7 @@ You can use either VSCode or Pycharm.
 
 Python employs a virtual environment for project-specific dependencies.  Create one as shown below, depending on your IDE.
 
-For VSCode:
-
-Establish your `venv`, and run it via the first pre-built Run Configuration.  To establish your venv:
-
-```bash
-python -m venv venv; venv\Scripts\activate     # win
-python3 -m venv venv; . venv/bin/activate      # mac/linux
-
-pip install -r requirements.txt
-```
+For VSCode, there is nothing to do.  Your `venv` has been created automatically.
 
 For PyCharm, you will get a dialog requesting to create the `venv`; say yes.
 
