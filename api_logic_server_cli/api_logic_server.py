@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.01.16"
+__version__ = "10.01.17"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t01/11/2024 - 10.01.16: Cleanup, logic reminder, nw tutorial fix \n"\
+    "\t01/13/2024 - 10.01.17: Cleanup, logic reminder, nw tutorial fix \n"\
     "\t01/10/2024 - 10.01.12: Optlock ignored [35], Reduce Sample size, examples, consistent naming, run/cwd \n"\
     "\t01/08/2024 - 10.01.07: Default Interpreter for VS Code, Allocation fix, F5 Note, #als \n"\
     "\t01/03/2024 - 10.01.00: Quoted col names \n"\
@@ -144,6 +144,7 @@ if Path(api_logic_server_info_file_name).is_file():
 last_created_project_name = api_logic_server_info_file_dict.get("last_created_project_name","")
 default_db = "default = nw.sqlite, ? for help"
 default_project_name = "ApiLogicProject"
+""" ApiLogicProject """
 os_cwd = os.getcwd()
 default_bind_key_url_separator = "-"  # admin app fails with "/" or ":" (json issues?)
 
@@ -895,6 +896,8 @@ class ProjectRun(Project):
                      id_column_alias: str="Id"):
         super(ProjectRun, self).__init__()
         self.project_name = project_name
+        if self.project_name == "":
+            self.project_name = default_project_name
         self.db_url = db_url
         self.user_db_url = db_url  # retained for debug
         self.bind_key = bind_key
