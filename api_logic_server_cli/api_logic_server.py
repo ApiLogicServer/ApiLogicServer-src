@@ -372,7 +372,7 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
                 delete_dir(realpath(project.project_directory), "1.")
 
         from_dir = project.from_git
-        api_logic_server_dir_str = str(get_api_logic_server_dir())  # fixme not req'd
+        api_logic_server_dir_str = str(get_api_logic_server_dir())  # todo not req'd
         if project.from_git.startswith("https://"):
             cmd = 'git clone --quiet https://github.com/valhuber/ApiLogicServerProto.git ' + project.project_directory
             cmd = f'git clone --quiet {project.from_gitfrom_git} {project.project_directory}'
@@ -1011,7 +1011,7 @@ class ProjectRun(Project):
             # sqlite_file_name = f'"database/{self.bind_key}_db.sqlite"'
             sqlite_file_name = f'database/{self.bind_key}_db.sqlite'
             # config_uri_value = "f'sqlite:///{str(project_abs_dir.joinpath(" + sqlite_file_name + "))}'"
-            # config_uri_value = f"'sqlite:///../database/authentication_db.sqlite'"  # portable sqlite  FIXME
+            # config_uri_value = f"'sqlite:///../database/authentication_db.sqlite'"  # portable sqlite  TODO
             config_uri_value = f"'sqlite:///../{sqlite_file_name}'"   # portable sqlite
             # eg, 'sqlite:///../database/Todo_db.sqlite'  (insert a string constant)
             log.debug(f'.. .. ..From {db_loc}')
@@ -1188,8 +1188,8 @@ from database import <project.bind_key>_models
             log.debug("==================================================================\n\n")
 
     def insert_tutorial_into_readme(self):
-        """ insert fragments/tutorial.md into readme at --> Tip: create the sample """
-        project_readme_file_path = self.project_directory + '/readme.md'
+        """ insert docs tutorial.md into readme at --> Tip: create the sample """
+        project_readme_file_path = self.project_directory_path.joinpath('readme.md')
         with open(project_readme_file_path,'r') as txt:
             text=txt.readlines()
             each_line = 0
@@ -1200,11 +1200,13 @@ from database import <project.bind_key>_models
                     break
                 each_line += 1
             if fix_line >= 0:
-                # insert the Tutorial file
-                tutorial_file_path = self.api_logic_server_dir_path.joinpath('fragments/Tutorial.md')
+                copy_md(project=self, from_doc_file="Tutorial.md", to_project_file="Tutorial.md")  # survives network down
+                tutorial_file_path = self.project_directory_path.joinpath('Tutorial.md')
                 with open(tutorial_file_path,'r') as tutorial_data:
                     tutorial_text = tutorial_data.readlines()
-                    text[fix_line:fix_line+1] = tutorial_text
+                    tutorial_text.insert(0, '&nbsp;<br><br>\n')
+                    text[fix_line:fix_line] = tutorial_text
+                os.remove(str(tutorial_file_path))
         with open(project_readme_file_path,'w') as txt:
             txt.writelines(text)
 
@@ -1218,13 +1220,13 @@ from database import <project.bind_key>_models
         * cp api_logic_server_cli/project_prototype_nw/Tutorial.md ../Org-ApiLogicServer/Docs/docs/Tutorial.md
 
         Alert: 2 usages of tutorial
-        * tutorial: 3 projects in 1, to show no-als, als-no-customizations, als-customized
-        * nw-tutorial: 
+        * tutorial-3: 3 projects in 1, to show no-als, als-no-customizations, als-customized
+        * tutorial: 1 project, use add_cust
         """
 
         if self.is_tutorial:
             copy_md(project = self,
-                    from_doc_file="Tutorial.md",
+                    from_doc_file="Tutorial-3.md",
                     to_project_file='Tutorial.md')
 
 
@@ -1458,8 +1460,8 @@ from database import <project.bind_key>_models
                     log.info(f'  exit  # exit the Docker container ')
                     log.info(f'  code {docker_project_name}  # e.g., open VSCode on created project')
             else:
-                log.info(f'\nCustomize using your IDE:')
-                log.info(f'  code {self.project_name}  # e.g., open VSCode on created project\n')
+                log.info(f'\nProject Created At: {str(self.project_directory_path)}\n  Customize using your IDE, e.g., open with VSCode:')
+                log.info(f'  code {self.project_name}\n')
                 log.debug(f'  Establish your Python environment - see https://apilogicserver.github.io/Docs/IDE-Execute/#execute-prebuilt-launch-configurations\n')
 
         if self.run:  # synchronous run of server - does not return
