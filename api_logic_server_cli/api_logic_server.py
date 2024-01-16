@@ -314,7 +314,8 @@ def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "R
     except:     # do NOT fail 
         pass    # just fall back to using the pip-installed version
 
-    if os.path.isfile(from_doc_file_path):  # if in dev, use the latest latest
+    use_git = False
+    if use_git and os.path.isfile(from_doc_file_path):  # if in dev, use the latest latest
         copyfile(src = from_doc_file_path, dst = to_file)
     
     # now remove the !!, and unindent (mkdocs features fail in a readme)
