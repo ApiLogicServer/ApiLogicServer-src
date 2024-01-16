@@ -15,8 +15,7 @@ Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 __version__ = "10.01.18"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t01/14/2024 - 10.01.18: Minor internal tutorial location \n"\
-    "\t01/13/2024 - 10.01.17: Cleanup, logic reminder, nw tutorial fix \n"\
+    "\t01/15/2024 - 10.01.18: Cleanup, logic reminder, nw tutorial fixes \n"\
     "\t01/10/2024 - 10.01.12: Optlock ignored [35], Reduce Sample size, examples, consistent naming, run/cwd \n"\
     "\t01/08/2024 - 10.01.07: Default Interpreter for VS Code, Allocation fix, F5 Note, #als \n"\
     "\t01/03/2024 - 10.01.00: Quoted col names \n"\

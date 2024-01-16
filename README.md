@@ -242,6 +242,8 @@ There are a few articles that provide some orientation to API Logic Server:
 
 ### Change Log
 
+01/15/2024 - 10.01.18: Cleanup, logic reminder, nw tutorial fixes
+
 01/08/2024 - 10.01.07: Default Interpreter for VS Code, Allocation fix, F5 note fix, #als signposts
 
 01/03/2024 - 10.01.00: Quoted col names, Default Interpreter for VS Code
