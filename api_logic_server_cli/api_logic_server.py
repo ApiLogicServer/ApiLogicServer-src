@@ -1205,7 +1205,11 @@ from database import <project.bind_key>_models
                 tutorial_file_path = self.project_directory_path.joinpath('Tutorial.md')
                 with open(tutorial_file_path,'r') as tutorial_data:
                     tutorial_text = tutorial_data.readlines()
-                    tutorial_text.insert(0, '&nbsp;<br><br>\n')
+                    tutorial_text[0] = '&nbsp;<br>\n'
+                    tutorial_text[1] = '\n'
+                    tutorial_text[2] = ''
+                    tutorial_text[3] = ''
+                    tutorial_text[4] = ''
                     text[fix_line:fix_line] = tutorial_text
                 os.remove(str(tutorial_file_path))
         with open(project_readme_file_path,'w') as txt:
