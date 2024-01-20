@@ -91,7 +91,7 @@ def declare_logic():
         OrderDetail.UnitPrice = copy from Product
     """
 
-    if preferred_approach:     #als: basic rules
+    if preferred_approach:     #als: basic rules - 5 rules vs 200 lines of code: https://github.com/valhuber/LogicBank/wiki/by-code
         Rule.constraint(validate=models.Customer,       # logic design translates directly into rules
             as_condition=lambda row: row.Balance <= row.CreditLimit,
             error_msg="balance ({round(row.Balance, 2)}) exceeds credit ({round(row.CreditLimit, 2)})")
@@ -108,12 +108,35 @@ def declare_logic():
 
         Rule.copy(derive=models.OrderDetail.UnitPrice,  # get Product Price (e,g., on insert, or ProductId change)
             from_parent=models.Product.UnitPrice)
-    else:
-        pass  # 5 rules above, or these 200 lines of code: https://github.com/valhuber/LogicBank/wiki/by-code
 
-    """
-        #als: Demonstrate that logic == Rules + Python (for extensibility)
-    """
+    #als: Demonstrate that logic == Rules + Python (for extensibility)
+
+    def send_order_to_shipping(row: models.Order, old_row: models.Order, logic_row: LogicRow):
+        """ #als: Send Kafka message formatted by OrderShipping RowDictMapper
+
+        Format row per shipping requirements, and send (e.g., a message)
+
+        NB: the after_flush event makes Order.Id avaible.  Contrast to congratulate_sales_rep().
+
+        Args:
+            row (models.Order): inserted Order
+            old_row (models.Order): n/a
+            logic_row (LogicRow): bundles curr/old row, with ins/upd/dlt logic
+        """
+        if logic_row.is_inserted():
+            order_dict = OrderShipping().row_to_dict(row = row)
+            json_order = jsonify({"order": order_dict}).data.decode('utf-8')
+            if kafka_producer.producer:  # enabled in config/config.py?
+                try:
+                    kafka_producer.producer.produce(value=json_order, topic="order_shipping", key= str(row.Id))
+                    logic_row.log("Kafka producer sent message")
+                except KafkaException as ke:
+                    logic_row.log("Kafka.produce message {row.id} error: {ke}")                
+            print(f'\n\nSend to Shipping:\n{json_order}')
+            
+    Rule.after_flush_row_event(on_class=models.Order, calling=send_order_to_shipping)  # see above
+
+
     def congratulate_sales_rep(row: models.Order, old_row: models.Order, logic_row: LogicRow):
         """ use events for sending email, messages, etc. """
         if logic_row.ins_upd_dlt == "ins":  # logic engine fills parents for insert
@@ -284,38 +307,5 @@ def declare_logic():
         
     Rule.formula(derive=models.Order.OrderDate, 
                  as_expression=lambda row: datetime.datetime.now())
-
-    def send_order_to_shipping(row: models.Order, old_row: models.Order, logic_row: LogicRow):
-        """ #als: Send Kafka message formatted by RowDictMapper
-
-        Format row per shipping requirements, and send (e.g., a message)
-
-        NB: the after_flush event makes Order.Id avaible.  Contrast to congratulate_sales_rep().
-
-        Args:
-            row (models.Order): inserted Order
-            old_row (models.Order): n/a
-            logic_row (LogicRow): bundles curr/old row, with ins/upd/dlt logic
-        """
-        if logic_row.is_inserted():
-            order_def = OrderShipping()
-            order_dict = order_def.row_to_dict(row = row)
-            json_order_response = jsonify({"order": order_dict})
-            json_order = json_order_response.data.decode('utf-8')
-            producer : Producer = None
-            if kafka_producer.producer:
-                producer = kafka_producer.producer
-                try:
-                    producer.produce(topic="order_shipping", 
-                        key= str(row.Id),
-                        value=json_order)
-                    logic_row.log("Kafka producer sent message")
-                except KafkaException as ke:
-                    logic_row.log("Kafka produce message {row.id} error: {ke}")
-                
-            print(f'\n\nSend to Shipping:\n{json_order}')
-            
-    Rule.after_flush_row_event(on_class=models.Order, 
-                            calling=send_order_to_shipping)  # see above
     
     app_logger.debug("..logic/declare_logic.py (logic == rules + code)")
