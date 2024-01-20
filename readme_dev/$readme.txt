@@ -11,37 +11,9 @@ Check it out at:
 https://apilogicserver.github.io/Docs/Tutorial-AI/
 
 Breaking changes
-  Updated http_type APILOGICPROJECT_HTTP_SCHEME=http
+  config
 
-9.1 changes
-  Self-reln parent name is class, not 'parent'
 
-Fix image failures
-  x postgres
-  SqlServer - FAILS - incompatible type
-
-Cloud deploy
-  az script
-  https
-
-x remove the _x stuff
-
-release?
-  Tyler's expose db uri - yes
-  
-  x Bug: remove all Config. references (eg, security)
-    explore security_enabled, and provider, in config
-
-  TP
-  x proxy port for swagger - will add client_url arg to safrs
-
-  Tyler verb auth?
-
-  TC: if I set APILOGICPROJECT_PORT as an env var and also have it set in env.list which one takes precedence?
-  x Remove docker - apilogicserver/api_logic_server_arm (unified target)
-  x Codespaces ready -> devcontainer loaded
-  x Multi-Arch dockers
-  x log: 0 authentication tables loaded
 
 Multi-container Azure deployement
   Note: docker-compose -> docker compose
@@ -76,7 +48,6 @@ nw_readme.md -> README.md
 
 
 https://github.com/community/community/discussions/30205
-
 
 
 Creating the ApiLogicServer dev environment
@@ -281,3 +252,24 @@ code ApiLogicProject
 
 
 ApiLogicServer create-and-run --project_name=/localhost/CheckIP --db_url=  --swagger_host=10.0.0.77
+
+
+Tech Marketing
+==============
+
+ADX: Automation, Declarative, Extensible
+XDA
+Instant Ad Hoc Integration using API Automation
+  API Automation: Instant Ad Hoc Integration, App Dev Backends
+Instant Bus Relationships using API and Logic Automation
+
+Hyperautomation: AI + Declarative, DSLs -- Instant Ad Hoc Integration
+  https://www.informationweek.com/machine-learning-ai/could-your-organization-benefit-from-hyperautomation-
+
+Home Page?
+API Logic Server - API and Logic Automation
+Instant Integration, App Dev Backends
+
+API - 1 command server
+Logic - rules 40x
+Standards
