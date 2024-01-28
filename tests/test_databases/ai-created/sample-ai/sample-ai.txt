@@ -1,0 +1,99 @@
+See prototypes/sample-ai.  Stale historical info follows (ignore).
+
+New take on Tech_AI.md
+
+Move focus from agile (iteration) to 1 day project,
+    so no need to build custom api,
+    just use the Admin app
+And just speak to iteration, deployment, API (/custom)
+
+sqlite3 ai_customer_orders.sqlite < ai_customer_order.sql
+
+pbpaste > ai_customer_orders.sql 
+sqlite3  ai_customer_orders.sqlite < ai_customer_orders.sql
+ApiLogicServer create --project_name=ai_customer_orders --db_url=sqlite:///ai_customer_orders.sqlite
+
+Showing different results from Nov - closest is this:
+
+    Create a sqlite database for customers, orders, items and product
+    
+    Hints: use autonum keys, allow nulls, Decimal types, foreign keys, no check constraints.
+
+    Include a notes field for orders.
+
+    Create a few rows of only customer and product data.
+
+    Enforce the Check Credit requirement (do not generate check constraints):
+
+    1. Customer.Balance <= CreditLimit
+    2. Customer.Balance = Sum(Order.AmountTotal where date shipped is null)
+    3. Order.AmountTotal = Sum(Items.Amount)
+    4. Items.Amount = Quantity * UnitPrice
+    5. Store the Items.UnitPrice as a copy from Product.UnitPrice
+
+-- Create Customers table
+CREATE TABLE Customers (
+    CustomerID INTEGER PRIMARY KEY AUTOINCREMENT,
+    CustomerName TEXT NOT NULL,
+    Address TEXT,
+    Phone TEXT,
+    Balance DECIMAL(10, 2),
+    CreditLimit DECIMAL(10, 2) NOT NULL
+);
+
+-- Create Products table
+CREATE TABLE Products (
+    ProductID INTEGER PRIMARY KEY AUTOINCREMENT,
+    ProductName TEXT NOT NULL,
+    UnitPrice DECIMAL(10, 2) NOT NULL
+);
+
+-- Create Orders table
+CREATE TABLE Orders (
+    OrderID INTEGER PRIMARY KEY AUTOINCREMENT,
+    CustomerID INTEGER,
+    OrderDate DATETIME DEFAULT CURRENT_TIMESTAMP,
+    Notes TEXT,
+    ShipDate DATETIME,
+    AmountTotal DECIMAL(10, 2),
+    FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID)
+);
+
+-- Create Items table
+CREATE TABLE Items (
+    ItemID INTEGER PRIMARY KEY AUTOINCREMENT,
+    OrderID INTEGER,
+    ProductID INTEGER,
+    Quantity INTEGER NOT NULL,
+    UnitPrice DECIMAL(10, 2),
+    Amount DECIMAL(10, 2),
+    FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
+    FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
+);
+
+-- Insert sample data into Customers table
+INSERT INTO Customers (CustomerName, Address, Phone, Balance, CreditLimit) VALUES
+    ('John Doe', '123 Main St', '555-1234', 1000.00, 5000.00),
+    ('Jane Smith', '456 Oak Ave', '555-5678', 500.00, 2000.00);
+
+-- Insert sample data into Products table
+INSERT INTO Products (ProductName, UnitPrice) VALUES
+    ('Widget A', 19.99),
+    ('Gadget B', 29.99);
+
+-- Insert sample data into Orders table
+INSERT INTO Orders (CustomerID, Notes, ShipDate, AmountTotal) VALUES
+    (1, 'Order 1', NULL, 0.00),
+    (2, 'Order 2', NULL, 0.00);
+
+-- Update Items.UnitPrice as a copy from Product.UnitPrice
+UPDATE Items
+SET UnitPrice = (SELECT UnitPrice FROM Products WHERE Products.ProductID = Items.ProductID);
+
+-- Update Order.AmountTotal as Sum(Items.Amount)
+UPDATE Orders
+SET AmountTotal = (SELECT SUM(Quantity * UnitPrice) FROM Items WHERE Items.OrderID = Orders.OrderID);
+
+-- Update Customer.Balance as Sum(Order.AmountTotal) where ShipDate is null
+UPDATE Customers
+SET Balance = (SELECT SUM(AmountTotal) FROM Orders WHERE Orders.CustomerID = Customers.CustomerID AND Orders.ShipDate IS NULL);

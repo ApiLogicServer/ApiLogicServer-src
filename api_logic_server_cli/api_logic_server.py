@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.01.19"
+__version__ = "10.01.22"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t01/20/2024 - 10.01.19: Better rules example \n"\
+    "\t01/27/2024 - 10.01.22: Better rules example, open_with for pycharm, LB fix, ai \n"\
     "\t01/15/2024 - 10.01.18: Cleanup, logic reminder, nw tutorial fixes \n"\
     "\t01/10/2024 - 10.01.12: Optlock ignored [35], Reduce Sample size, examples, consistent naming, run/cwd \n"\
     "\t01/08/2024 - 10.01.07: Default Interpreter for VS Code, Allocation fix, F5 Note, #als \n"\
@@ -675,9 +675,10 @@ def final_project_fixup(msg, project) -> str:
     # **********************************
     # set python.defaultInterpreterPath
     # **********************************
-    default_interpreter_path = True  # compute startup (only) python / venv location, from creating venv (here)
-    if default_interpreter_path:
+    do_default_interpreter_path = True  # compute startup (only) python / venv location, from creating venv (here)
+    if do_default_interpreter_path:
         defaultInterpreterPath_str = sys.executable
+        defaultInterpreterPath = Path(defaultInterpreterPath_str)
         if 'org_git' in str(project.api_logic_server_dir_path):  # apilogicserver dev is special case
             if os.name == "nt":
                 defaultInterpreterPath = self.api_logic_server_dir_path.parent.parent.parent.joinpath('build_and_test/ApiLogicServer/venv/scripts/python.exe')
@@ -686,6 +687,7 @@ def final_project_fixup(msg, project) -> str:
             defaultInterpreterPath_str = str(defaultInterpreterPath)
         # ApiLogicServerPython
         vscode_settings_path = (project.project_directory_path).joinpath('.vscode/settings.json')
+        project.defaultInterpreterPath = defaultInterpreterPath
         if os.name == "nt":
             defaultInterpreterPath_str = get_windows_path_with_slashes(url=defaultInterpreterPath_str)
             # vscode_settings_path = get_windows_path_with_slashes(url=vscode_settings_path)
@@ -825,11 +827,15 @@ def fix_build_docker_image(msg, project: Project):
                             in_file=in_file)
 
 
-def start_open_with(open_with: str, project_name: str):
+def start_open_with(project: Project):
     """ Creation complete.  Opening {open_with} at {project_name} """
-    log.debug(f'\nCreation complete - Opening {open_with} at {project_name}')
+    log.info(f'\nCreation complete - Opening {project.open_with} at {project.project_name}')
     log.debug(".. See the readme for install / run instructions")
-    create_utils.run_command(f'{open_with} {project_name}', None, "no-msg")
+    create_utils.run_command(
+        cmd=f'{project.open_with} {project.project_name}',
+        env=None, 
+        msg="no-msg", 
+        project=project)
 
 
 def invoke_extended_builder(builder_path, db_url, project_directory, model_creation_services):
@@ -1275,6 +1281,44 @@ from database import <project.bind_key>_models
                 log.info(".. complete\n")
 
 
+
+    def add_sample_ai_customizations(self, do_show_messages: bool = True, do_security: bool = True):
+        """ Add customizations to sample_ai (default creation)
+
+        1. Deep copy prototypes/sample_ai (adds logic)
+
+        2. Create readme files: Sample-AO (copy_md), api/integration_defs/readme.md
+
+        Args:
+        """
+
+        log.debug("\n\n==================================================================")
+        nw_messages = ""
+        if do_security:
+            if do_show_messages:
+                nw_messages = "Add sample_ai customizations - enabling security"
+            self.add_auth(is_nw=True, msg=nw_messages)
+
+        nw_path = (self.api_logic_server_dir_path).\
+            joinpath('prototypes/sample_ai')  # PosixPath('/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/nw')
+        recursive_overwrite(nw_path, self.project_directory)  # '/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/tutorial/1. Instant_Creation'
+
+        # self.create_nw_tutorial_and_readme()
+
+        copy_md(project = self,
+                from_doc_file="Sample-AI.md",
+                to_project_file='Sample-AI.md')
+
+        if do_show_messages:
+            log.info("\nExplore key customization files:")
+            log.info(f'..api/customize_api.py')
+            log.info(f'..database/customize_models.py')
+            log.info(f'..logic/declare_logic.py')
+            log.info(f'..security/declare_security.py\n')
+            if self.is_tutorial == False:
+                log.info(".. complete\n")
+
+
     def tutorial(self, msg: str="", create: str='tutorial'):
         """
         Creates (overwrites) Tutorial (`api_logic_server_cli/project_tutorial`)
@@ -1423,7 +1467,7 @@ from database import <project.bind_key>_models
         final_project_fixup("4. Final project fixup", self)
 
         if self.open_with != "":  # open project with open_with (vscode, charm, atom) -- NOT for docker!!
-            start_open_with(open_with=self.open_with, project_name=self.project_name)
+            start_open_with(project = self)
 
         if self.nw_db_status in ["nw", "nw+"] and self.command != "add_db":
             self.add_auth("\nApiLogicProject customizable project created.  \nAdding Security:")

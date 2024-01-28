@@ -49,6 +49,9 @@ class Project(CliArgsBase):  # extend user-visible args with internal values
 
         self.is_codespaces = os.getenv('CODESPACES')
 
+        self.defaultInterpreterPath = None
+        """ set near end - see final_project_fixup """
+
 
     def print_options(self):
         """ Creating ApiLogicServer with options: (or uri helo) """

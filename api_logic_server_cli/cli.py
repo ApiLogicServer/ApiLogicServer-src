@@ -896,6 +896,49 @@ def add_cust(ctx, bind_key_url_separator: str, api_name: str, project_name: str)
     project.add_nw_customizations()
 
 
+
+@main.command("sample-ai") 
+@click.option('--bind_key_url_separator',
+              default=default_bind_key_url_separator,
+              help="bindkey / class name url separator")
+@click.option('--project_name',
+              default=f'.',
+              help="Project location")
+@click.option('--api_name',
+              default="api",
+              help="api prefix name")
+@click.pass_context
+def sample_ai(ctx, bind_key_url_separator: str, api_name: str, project_name: str):
+    """
+    Adds customizations to current sample_ai project.
+    
+    example - in IDE terminal window: 
+    ApiLogicServer sample_ai
+    
+    """
+    project_name == resolve_blank_project_name(project_name, as_project="sample_ai")
+    db_url = "auth"
+    bind_key = "authentication"
+    project = PR.ProjectRun(command="add_cust", 
+              project_name=project_name, 
+              api_name=api_name, 
+              db_url=db_url,
+              execute=False
+              )
+    project.project_directory, project.api_name, project.merge_into_prototype = \
+        create_utils.get_project_directory_and_api_name(project)
+    project.project_directory_actual = os.path.abspath(project.project_directory)  # make path absolute, not relative (no /../)
+    project.project_directory_path = Path(project.project_directory_actual)
+    models_py_path = project.project_directory_path.joinpath('database/models.py')
+    project.abs_db_url, project.nw_db_status, project.model_file_name = create_utils.get_abs_db_url("0. Using Sample DB", project)
+    is_nw = False
+    if create_utils.does_file_contain(search_for="CustomerName = Column(Text", in_file=models_py_path):
+        is_nw = True
+    else:
+        raise Exception("Customizations are sample-ai specific - this does not appear to be a northwind database")
+    project.add_sample_ai_customizations()
+
+
 @main.command("rebuild-from-model")
 @click.option('--project_name',
               default=f'.',

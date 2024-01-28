@@ -89,7 +89,7 @@ setup(
         "Flask-OpenID==1.3.0",
         "python-dotenv==0.15.0",
         "email-validator==1.1.1",
-        "LogicBank>=1.20.0",
+        "LogicBank>=1.20.1",
         # https://stackoverflow.com/questions/71354710/cryptography-package-is-required-for-sha256-password-or-caching-sha2-password
         # "PyMySQL==1.0.3[rsa]", 
         # "PyMySQL==1.0.3+rsa",
@@ -100,6 +100,7 @@ setup(
         "requests==2.27.1",
         "gunicorn==20.1.0",
         "psycopg2-binary==2.9.5",
+        # "psycopg-binary==3.1.17",
         "dotmap==1.3.25",
         "WTForms==2.3.3",
         "behave==1.2.6",

@@ -129,9 +129,17 @@ def get_abs_db_url(msg, project: Project):
     elif project.db_url == "basic_demo":
         rtn_abs_db_url = f'sqlite:///{str(project.api_logic_server_dir_path.joinpath("database/basic_demo.sqlite"))}'
     elif project.db_url.startswith('sqlite:///'):
-        url = project.db_url[10: len(project.db_url)]
-        rtn_abs_db_url = abspath(url)
-        rtn_abs_db_url = 'sqlite:///' + rtn_abs_db_url
+        if project.db_url == 'sqlite:///sample_ai.sqlite':  # work-around - VSCode run config arg parsing (dbviz STRESS)
+            rtn_abs_db_url = project.db_url
+            db_path = Path(rtn_abs_db_url)
+            if db_path.exists():
+                pass # file exists
+            else:
+                rtn_abs_db_url = f'sqlite:///{str(project.api_logic_server_dir_path.joinpath("prototypes/sample_ai/database/chatgpt/sample_ai.sqlite"))}'
+        else:
+            url = project.db_url[10: len(project.db_url)]
+            rtn_abs_db_url = abspath(url)
+            rtn_abs_db_url = 'sqlite:///' + rtn_abs_db_url
     elif project.db_url == 'sqlsvr-sample':  # work-around - VSCode run config arg parsing
         rtn_abs_db_url = 'mssql+pyodbc://sa:Posey3861@localhost:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'
     elif project.db_url == 'sqlsvr-nwlogic':  # work-around - VSCode run config arg parsing
@@ -164,6 +172,7 @@ def get_abs_db_url(msg, project: Project):
         if os.getenv('HOST_IP'):
             host_ip = os.getenv('HOST_IP')  # type: ignore # type: str
         rtn_abs_db_url = rtn_abs_db_url.replace("HOST_IP", host_ip)
+
     model_file_name = "models.py"
     if project.bind_key != "":
         model_file_name = project.bind_key + "_" + "models.py"
@@ -244,7 +253,7 @@ def find_valid_python_name() -> str:
         return "python"
 
 
-def run_command(cmd: str, env=None, msg: str = "", new_line: bool=False) -> str:
+def run_command(cmd: str, env=None, msg: str = "", new_line: bool=False, project: Project = None) -> str:
     """ run shell command
 
     :param cmd: string of command to execute
@@ -277,17 +286,25 @@ def run_command(cmd: str, env=None, msg: str = "", new_line: bool=False) -> str:
         else:
             use_env["PYTHONPATH"] = python_path
             # log.debug("created PYTHONPATH: " + str(use_env["PYTHONPATH"]))
+    cmd_to_run = cmd
+    if cmd.startswith("charm"):
+        # export PYCHARM_PYTHON_PATH=/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/bin/python && charm ai5
+        # export PYCHARM_PYTHON_PATH=/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/bin/python && charm ../../../servers/demo
+
+        defaultInterpreterPath_str = str(project.defaultInterpreterPath)
+        cmd_to_run = f'export PYCHARM_PYTHON_PATH={defaultInterpreterPath_str} && {cmd}'
     use_env_debug = False  # not able to get this working
     if use_env_debug:
-        result_b = subprocess.check_output(cmd, shell=True, env=use_env)
+        result_b = subprocess.check_output(cmd_to_run, shell=True, env=use_env)
     else:
-        result_b = subprocess.check_output(cmd, shell=True) # , stderr=subprocess.STDOUT)  # causes hang on docker
-    result = str(result_b)  # b'pyenv 1.2.21\n'  # this code never gets reached...
+        result_b = subprocess.check_output(cmd_to_run, shell=True) # , stderr=subprocess.STDOUT)  # causes hang on docker
+        log.debug(f'{log_msg} {cmd_to_run}')
+    result = str(result_b)  # b'pyenv 1.2.21\n'  # this code never gets reached when running app...
     result = result[2: len(result) - 3]
     tab_to = 20 - len(cmd)
     spaces = ' ' * tab_to
     if msg == "no-msg":
         pass
     elif result != "" and result != "Downloaded the skeleton app, good coding!":
-        log.debug(f'{log_msg} {cmd} result: {spaces}{result}')
+        log.debug(f'{log_msg} {cmd_to_run} result: {spaces}{result}')
     return result.replace('\\n','\n')
