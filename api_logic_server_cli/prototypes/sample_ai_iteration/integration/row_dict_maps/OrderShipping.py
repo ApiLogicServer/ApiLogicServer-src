@@ -17,11 +17,11 @@ class OrderShipping(RowDictMapper):
         order = super(OrderShipping, self).__init__(
             model_class=models.Order
             , alias = "order"
-            , fields = [models.Order.Id, (models.Order.AmountTotal, "Total"), (models.Order.OrderDate, "Order Date"), models.Order.CustomerId]
-            , related = RowDictMapper(model_class=models.OrderDetail, alias="Items"
-                , fields = [models.OrderDetail.OrderId, models.OrderDetail.Quantity, models.OrderDetail.Amount]
+            , fields = [models.Order.OrderID, (models.Order.AmountTotal, "Total"), (models.Order.OrderDate, "Order Date"), models.Order.CustomerID]
+            , related = RowDictMapper(model_class=models.Item, alias="Items"
+                , fields = [models.Item.OrderID, models.Item.Quantity, models.Item.Amount]
                 , related = RowDictMapper(model_class=models.Product, alias="product"
-                    , fields=[models.Product.ProductName, models.Product.UnitPrice, models.Product.UnitsInStock]
+                    , fields=[models.Product.ProductName, models.Product.UnitPrice]
                     , isParent=True
                 )
             )
