@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.01.22"
+__version__ = "10.01.23"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t01/27/2024 - 10.01.22: Better rules example, open_with for pycharm, LB fix, ai \n"\
+    "\t01/27/2024 - 10.01.23: Better rules example, open_with for pycharm, LB fix, ai++ \n"\
     "\t01/15/2024 - 10.01.18: Cleanup, logic reminder, nw tutorial fixes \n"\
     "\t01/10/2024 - 10.01.12: Optlock ignored [35], Reduce Sample size, examples, consistent naming, run/cwd \n"\
     "\t01/08/2024 - 10.01.07: Default Interpreter for VS Code, Allocation fix, F5 Note, #als \n"\
@@ -1281,7 +1281,6 @@ from database import <project.bind_key>_models
                 log.info(".. complete\n")
 
 
-
     def add_sample_ai_customizations(self, do_show_messages: bool = True, do_security: bool = True):
         """ Add customizations to sample_ai (default creation)
 
@@ -1317,6 +1316,25 @@ from database import <project.bind_key>_models
             log.info(f'..security/declare_security.py\n')
             if self.is_tutorial == False:
                 log.info(".. complete\n")
+
+
+    def add_sample_ai_iteration(self, do_show_messages: bool = True, do_security: bool = True):
+        """ Iterate data model for sample_ai (default creation)
+
+        1. Deep copy prototypes/sample_ai_iteration (adds db, logic)
+
+        Args:
+        """
+
+        log.debug("\n\n==================================================================")
+
+        nw_path = (self.api_logic_server_dir_path).\
+            joinpath('prototypes/sample_ai_iteration')  # PosixPath('/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/nw')
+        recursive_overwrite(nw_path, self.project_directory)  # '/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/tutorial/1. Instant_Creation'
+        if do_show_messages:
+            log.info("\nNext Step:")
+            log.info(f'..ApiLogicServer rebuild-from-database --project_name=./ --db_url=sqlite:///database/db.sqlite')
+            log.info(".. complete\n")
 
 
     def tutorial(self, msg: str="", create: str='tutorial'):

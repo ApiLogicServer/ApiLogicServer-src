@@ -48,7 +48,7 @@ def declare_logic():
 
     def derive_amount(row: models.Item, old_row: models.Item, logic_row: LogicRow):
         amount = row.Quantity * row.UnitPrice
-        if row.Product.CarbonNeutral and row.Quantity >= 10:
+        if row.Product.CarbonNeutral == True and row.Quantity >= 10:
            amount = amount * Decimal(0.9)  # breakpoint here
         return amount
 

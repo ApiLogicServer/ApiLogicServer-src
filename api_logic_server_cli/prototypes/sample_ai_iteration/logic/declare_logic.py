@@ -11,10 +11,14 @@ from database import models
 import api.system.opt_locking.opt_locking as opt_locking
 from security.system.authorization import Grant
 import logging
+from flask import jsonify
+from integration.row_dict_maps.OrderShipping import OrderShipping
+from confluent_kafka import Producer, KafkaException
+import integration.kafka.kafka_producer as kafka_producer
 
 app_logger = logging.getLogger(__name__)
 
-declare_logic_message = "Sample Rules  Customization Loaded"
+declare_logic_message = "Sample Rules  Iteration Loaded"
 
 def declare_logic():
 
@@ -48,9 +52,14 @@ def declare_logic():
     Rule.sum(derive=models.Order.AmountTotal,       # adjust iff Amount or OrderID changes
         as_sum_of=models.Item.Amount)
 
-    Rule.formula(derive=models.Item.Amount,    # compute price * qty
-        as_expression=lambda row: row.UnitPrice * row.Quantity)
+    def derive_amount(row: models.Item, old_row: models.Item, logic_row: LogicRow):
+        amount = row.Quantity * row.UnitPrice
+        if row.Product.CarbonNeutral == True and row.Quantity >= 10:
+           amount = amount * Decimal(0.9)  # breakpoint here
+        return amount
 
+    Rule.formula(derive=models.Item.Amount, calling=derive_amount)
+    
     Rule.copy(derive=models.Item.UnitPrice,    # get Product Price (e,g., on insert, or ProductId change)
         from_parent=models.Product.UnitPrice)
 

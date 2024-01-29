@@ -1,0 +1,109 @@
+about:
+  date: January 27, 2024 16:41:35
+  merged:
+    at: January 28, 2024 13:17:27
+    new_attributes: 'Product.CarbonNeutral '
+    new_resources: ''
+    new_tab_groups: ''
+  recent_changes: works with modified safrs-react-admin
+  version: 0.0.0
+api_root: '{http_type}://{swagger_host}:{port}/{api}'
+authentication:
+  endpoint: '{http_type}://{swagger_host}:{port}/api/auth/login'
+info:
+  number_relationships: 3
+  number_tables: 4
+resources:
+  Customer:
+    attributes:
+    - label: ' Customer Name*'
+      name: CustomerName
+      required: true
+      search: true
+      sort: true
+    - name: Address
+    - name: Phone
+    - name: Balance
+    - name: CreditLimit
+      required: true
+    - name: CustomerID
+    tab_groups:
+    - direction: tomany
+      fks:
+      - CustomerID
+      name: OrderList
+      resource: Order
+    type: Customer
+    user_key: CustomerName
+  Item:
+    attributes:
+    - label: ' Item I D*'
+      name: ItemID
+      search: true
+      sort: true
+    - name: OrderID
+    - name: ProductID
+    - name: Quantity
+      required: true
+    - name: UnitPrice
+    - name: Amount
+    tab_groups:
+    - direction: toone
+      fks:
+      - OrderID
+      name: Order
+      resource: Order
+    - direction: toone
+      fks:
+      - ProductID
+      name: Product
+      resource: Product
+    type: Item
+    user_key: ItemID
+  Order:
+    attributes:
+    - label: ' Order I D*'
+      name: OrderID
+      search: true
+      sort: true
+    - name: CustomerID
+    - name: OrderDate
+    - name: Notes
+    - name: ShipDate
+    - name: AmountTotal
+    tab_groups:
+    - direction: tomany
+      fks:
+      - OrderID
+      name: ItemList
+      resource: Item
+    - direction: toone
+      fks:
+      - CustomerID
+      name: Customer
+      resource: Customer
+    type: Order
+    user_key: OrderID
+  Product:
+    attributes:
+    - label: ' Product Name*'
+      name: ProductName
+      required: true
+      search: true
+      sort: true
+    - name: UnitPrice
+      required: true
+    - name: ProductID
+    - name: CarbonNeutral
+      type: Boolean
+    tab_groups:
+    - direction: tomany
+      fks:
+      - ProductID
+      name: ItemList
+      resource: Item
+    type: Product
+    user_key: ProductName
+settings:
+  HomeJS: http://localhost:5656/admin-app/home.js
+  max_list_columns: 8
