@@ -141,6 +141,7 @@ class ServicesEndPoint(safrs.JABase):
             args :
                 order:
                     Account: "Jane Smith"
+                    Notes: "Please Rush"
                     Items :
                     - ProductName: "Widget A"
                       QuantityOrdered: 1

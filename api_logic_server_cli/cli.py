@@ -281,7 +281,7 @@ def login_exec(user: str, password: str):
     with open(api_logic_server_info_file_name, 'w') as api_logic_server_info_file_file:
         yaml.dump(api_logic_server_info_file_dict, api_logic_server_info_file_file, default_flow_style=False)
 
-    log.info("Success - stored internally in api_logic_server_info_file.yaml - curl header now:\n")
+    log.debug("Success - stored internally in api_logic_server_info_file.yaml - curl header now:\n")
     # log.info("-H 'accept: application/vnd.api+json' ")
     # log.info(f"-H 'Content-Type: application/vnd.api+json'")
     log.info(f"-H 'Authorization: Bearer {last_login_token}'")
@@ -295,7 +295,7 @@ def curl_exec(curl_command: [], data: str="", security: bool=True):
     auth += f" -H 'Authorization: Bearer {last_login_token}'"
         
     command_parseable = curl_command[0]
-    log.info(f"\nReceived command:\n{command_parseable}\n")
+    log.debug(f"\nReceived command:\n{command_parseable}\n")
 
     # command_parseable = command_parseable.replace("?", "\?")
     command_with_auth = f"curl {command_parseable}"
@@ -303,7 +303,7 @@ def curl_exec(curl_command: [], data: str="", security: bool=True):
         command_with_auth = f"curl '{command_parseable}' {auth}"
         if data != "":  # updates seem to have extra quotes
             command_with_auth = f"curl {command_parseable} {auth}"
-    log.info(f"\nPreparing command with security: {security}\ncmd stripped: {command_with_auth}\n")
+    log.debug(f"\nPreparing command with security: {security}\ncmd stripped: {command_with_auth}\n")
 
     command_complete = command_with_auth
     if data != "":
@@ -311,9 +311,12 @@ def curl_exec(curl_command: [], data: str="", security: bool=True):
         command_complete += f" -H 'accept: application/vnd.api+json'"
         command_complete += f" -H 'Content-Type: application/json'"
         command_complete += f" -d '{data}'"
-    log.info(f"\nNow executing:\n{command_complete}\n")
-    result = create_utils.run_command(f'{command_complete}', msg="Run curl command with auth", new_line=True)
-    print(result)
+    log.debug(f"\nNow executing:\n{command_complete}\n")
+    try:
+        result = create_utils.run_command(f'{command_complete}', msg="Run curl command with auth", new_line=True)
+    except Exception as e:  # TODO: why does this not catch bad json (async?)
+        print(f'\nFailed: {e}\nCommand:\n{command_complete}\nesult: \n{result}\n')
+    print(f'\nresult: \n{result}\n')
     pass
 
 
