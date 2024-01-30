@@ -140,14 +140,14 @@ class ServicesEndPoint(safrs.JABase):
         """ # yaml creates Swagger description
             args :
                 order:
-                    AccountId: "ALFKI"
-                    Given: "Steven"
-                    Surname: "Buchanan"
+                    Account: "Jane Smith"
                     Items :
-                    - ProductName: "Chai"
+                    - ProductName: "Widget A"
                       QuantityOrdered: 1
-                    - ProductName: "Chang"
+                    - ProductName: "Gadget B"
                       QuantityOrdered: 2
+                    - ProductName: "Green Apples"
+                      QuantityOrdered: 3
             ---
 
         Note attribute alias, Lookup automation in OrderB2B
@@ -164,6 +164,10 @@ class ServicesEndPoint(safrs.JABase):
                 {
                 "ProductName": "Widget A",
                 "QuantityOrdered": 1
+                },
+                {
+                "ProductName": "Gadget B",
+                "QuantityOrdered": 2
                 },
                 {
                 "ProductName": "Gadget B",
