@@ -909,7 +909,7 @@ def add_cust(ctx, bind_key_url_separator: str, api_name: str, project_name: str)
 @click.pass_context
 def sample_ai(ctx, bind_key_url_separator: str, api_name: str, project_name: str):
     """
-    Adds customizations to current sample_ai project.
+    Adds customizations to current sample_ai project. (Create was standard)
     
     example - in IDE terminal window: 
     ApiLogicServer sample-ai

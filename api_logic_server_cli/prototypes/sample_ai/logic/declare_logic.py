@@ -24,20 +24,16 @@ def declare_logic():
 
     Use code completion (Rule.) to declare rules here
 
-    Check Credit - Logic Design:
+    Check Credit - Logic Design (note: translates directly into rules)
 
     1. Customer.Balance <= CreditLimit
-
     2. Customer.Balance = Sum(Order.AmountTotal where unshipped)
-
     3. Order.AmountTotal = Sum(Items.Amount)
-
     4. Items.Amount = Quantity * UnitPrice
-
     5. Items.UnitPrice = copy from Product
     """
 
-    Rule.constraint(validate=models.Customer,       # logic design translates directly into rules
+    Rule.constraint(validate=models.Customer,       # 5 rules vs. 200 lines of Python - https://apilogicserver.github.io/Docs/Logic-Why/
         as_condition=lambda row: row.Balance <= row.CreditLimit,
         error_msg="balance ({round(row.Balance, 2)}) exceeds credit ({round(row.CreditLimit, 2)})")
 

@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.01.23"
+__version__ = "10.01.24"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t01/27/2024 - 10.01.23: Better rules example, open_with for pycharm, LB fix, ai++ \n"\
+    "\t01/27/2024 - 10.01.24: Better rules example, open_with for pycharm, LB fix, ai++ early \n"\
     "\t01/15/2024 - 10.01.18: Cleanup, logic reminder, nw tutorial fixes \n"\
     "\t01/10/2024 - 10.01.12: Optlock ignored [35], Reduce Sample size, examples, consistent naming, run/cwd \n"\
     "\t01/08/2024 - 10.01.07: Default Interpreter for VS Code, Allocation fix, F5 Note, #als \n"\
@@ -296,6 +296,10 @@ def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "R
         from_doc_file (str): eg, Sample-Basic_Demo.md
         to_project_file (str, optional): _description_. Defaults to "README.md".
     """
+    use_utils = True
+    if use_utils:
+        create_utils.copy_md(project = project, from_doc_file = from_doc_file, to_project_file = to_project_file)
+        return
     project_path = project.project_directory_path
     to_file = project_path.joinpath(to_project_file)
     docs_path = Path(get_api_logic_server_dir()).parent.parent
@@ -483,6 +487,10 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
             file_to_delete = project.project_directory_path.joinpath('devops/docker-compose-dev-azure/docker-compose-dev-azure.yml')
             os.remove(file_to_delete)
 
+        if project.db_url == 'sqlite:///sample_ai.sqlite':  # work-around - VSCode run config arg parsing (dbviz STRESS)
+            copy_md(project = project,
+                    from_doc_file="Sample-AI.md",
+                    to_project_file='Sample-AI.md')
 
         if "postgres" or "mysql" in project.db_url:
             fixup_devops_for_postgres_mysql(project)
@@ -1302,12 +1310,6 @@ from database import <project.bind_key>_models
             joinpath('prototypes/sample_ai')  # PosixPath('/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/nw')
         recursive_overwrite(nw_path, self.project_directory)  # '/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/tutorial/1. Instant_Creation'
 
-        # self.create_nw_tutorial_and_readme()
-
-        copy_md(project = self,
-                from_doc_file="Sample-AI.md",
-                to_project_file='Sample-AI.md')
-
         if do_show_messages:
             log.info("\nExplore key customization files:")
             log.info(f'..api/customize_api.py')
@@ -1445,6 +1447,11 @@ from database import <project.bind_key>_models
 
         log.debug(f"\nApiLogicServer {__version__} Creation Log:")
 
+        self.project_directory, self.api_name, self.merge_into_prototype = \
+            create_utils.get_project_directory_and_api_name(self)
+        self.project_directory_actual = os.path.abspath(self.project_directory)  # make path absolute, not relative (no /../)
+        self.project_directory_path = Path(self.project_directory_actual)
+
         self.abs_db_url, self.nw_db_status, self.model_file_name = create_utils.get_abs_db_url("0. Using Sample DB", self)
 
         if self.extended_builder == "*":
@@ -1454,11 +1461,6 @@ from database import <project.bind_key>_models
         if self.extended_builder == "model_migrator":
             self.extended_builder = abspath(f'{self.api_logic_server_dir_path}/model_migrator/model_migrator_start.py')
             log.debug(f'0. Using model migrator: {self.extended_builder}')
-
-        self.project_directory, self.api_name, self.merge_into_prototype = \
-            create_utils.get_project_directory_and_api_name(self)
-        self.project_directory_actual = os.path.abspath(self.project_directory)  # make path absolute, not relative (no /../)
-        self.project_directory_path = Path(self.project_directory_actual)
 
         self.project_name_last_node = Path(self.project_directory_path).name  # for prototype, project_name='.'
 

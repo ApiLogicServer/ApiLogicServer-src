@@ -5,6 +5,7 @@ from pathlib import Path
 from os.path import abspath
 from api_logic_server_cli.cli_args_project import Project
 import logging
+from shutil import copyfile
 
 log = logging.getLogger(__name__)
 
@@ -59,6 +60,73 @@ def get_project_directory_and_api_name(project):
     return rtn_project_directory, \
         rtn_api_name, \
         rtn_merge_into_prototype
+
+def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "README.md"):
+    """ Copy readme files (and remove !!) from:
+    
+    1. github (to acquire more recent version since release)
+    
+    2. dev docs, if exists (gold version in docs, not prototypes).
+
+    Args:
+        project (ProjectRun): project object (project name, etc)
+        from_doc_file (str): eg, Sample-Basic_Demo.md
+        to_project_file (str, optional): _description_. Defaults to "README.md".
+    """
+    project_path = project.project_directory_path
+    to_file = project_path.joinpath(to_project_file)
+    docs_path = Path(get_api_logic_server_dir()).parent.parent
+    from_doc_file_path = docs_path.joinpath(f'Docs/docs/{from_doc_file}')
+
+    import requests
+    file_src = f"https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/{from_doc_file}"
+    try:
+        r = requests.get(file_src)  # , params=params)
+        if r.status_code == 200:
+            readme_data = r.content.decode('utf-8')
+            with open(str(to_file), "w") as readme_file:
+                readme_file.write(readme_data)
+    except requests.exceptions.ConnectionError as conerr: 
+        # without this, windows fails if network is down
+        pass    # just fall back to using the pip-installed version
+    except:     # do NOT fail 
+        pass    # just fall back to using the pip-installed version
+
+    use_git = False
+    if use_git and os.path.isfile(from_doc_file_path):  # if in dev, use the latest latest
+        copyfile(src = from_doc_file_path, dst = to_file)
+    
+    # now remove the !!, and unindent (mkdocs features fail in a readme)
+    with open(str(to_file), "r") as readme_file:
+        readme_lines_mkdocs = readme_file.readlines()    
+    readme_lines_md = []
+    in_mkdocs_block = False
+    for each_line in readme_lines_mkdocs:
+        if "from docsite" in each_line:
+            each_line = each_line.replace("from docsite", "from docsite, for readme")
+        if each_line.startswith('!!'):
+            in_mkdocs_block = True
+            key_takeaway = each_line[7 + each_line.index('":bulb:'): ]
+            key_takeaway = key_takeaway[0: len(key_takeaway)-2]
+            readme_lines_md.append(f"\n&nbsp;\n")
+            readme_lines_md.append(f"**Key Takeways - {key_takeaway}**")
+        else:
+            if in_mkdocs_block and each_line.startswith('    '):
+                each_line = each_line[4:]
+            each_line = each_line.replace('{:target="_blank" rel="noopener"}', '')
+            if each_line.startswith('!['):
+                if "http" not in each_line:
+                    each_line = each_line.replace('images', 'https://github.com/ApiLogicServer/Docs/blob/main/docs/images')
+                    each_line = each_line.replace(')', '?raw=true)')
+                else:
+                    pass # image is absolute - don't alter
+            readme_lines_md.append(each_line)
+            if each_line.startswith('&nbsp;'):
+                in_mkdocs_block = False
+    with open(str(to_file), "w") as readme_file:
+        readme_file.writelines(readme_lines_md)
+    pass
+
 
 
 def get_abs_db_url(msg, project: Project):
