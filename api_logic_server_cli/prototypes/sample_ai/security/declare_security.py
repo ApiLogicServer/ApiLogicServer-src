@@ -44,18 +44,8 @@ GlobalFilter(   global_filter_attribute_name = "Region",  # sales see only Custo
         
 Grant(  on_entity = models.Customer,
         to_role = Roles.sales,
-        filter = lambda : models.Customer.CreditLimit > 300,
-        filter_debug = "CreditLimit > 0")     # this eliminates all rows, but...
-
-Grant(  on_entity = models.Customer,
-        to_role = Roles.sales,
-        filter = lambda : models.Customer.ContactName == "Mike",
-        filter_debug = "ContactName == Mike (see security/declare_security.py)")
-
-# so user s1 sees the CTWSR customer row, per the resulting where from 2 global filters and 2 Grants:
-# where (Client_id=2 and region="British Isles") and (CreditLimit>300 or ContactName="Mike")
-#       <---- Filters AND'd ------------------->     <--- Grants OR'd --------------------->
-
+        filter = lambda : models.Customer.CreditLimit > 3000,
+        filter_debug = "CreditLimit > 3000")
 
 app_logger.debug("Declare Security complete - security/declare_security.py"
     + f' -- {len(database.authentication_models.metadata.tables)} tables loaded')

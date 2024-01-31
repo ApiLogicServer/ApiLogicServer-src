@@ -92,7 +92,7 @@ def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "R
     except:     # do NOT fail 
         pass    # just fall back to using the pip-installed version
 
-    use_git = False
+    use_git = True
     if use_git and os.path.isfile(from_doc_file_path):  # if in dev, use the latest latest
         copyfile(src = from_doc_file_path, dst = to_file)
     
@@ -106,13 +106,20 @@ def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "R
             each_line = each_line.replace("from docsite", "from docsite, for readme")
         if each_line.startswith('!!'):
             in_mkdocs_block = True
-            key_takeaway = each_line[7 + each_line.index('":bulb:'): ]
-            key_takeaway = key_takeaway[0: len(key_takeaway)-2]
-            readme_lines_md.append(f"\n&nbsp;\n")
-            readme_lines_md.append(f"**Key Takeways - {key_takeaway}**")
+            if ':bulb:' in each_line:
+                key_takeaway = each_line[7 + each_line.index('":bulb:'): ]
+                key_takeaway = key_takeaway[0: len(key_takeaway)-2]
+                readme_lines_md.append(f"\n&nbsp;\n")
+                readme_lines_md.append(f"**Key Takeways - {key_takeaway}**")
+                readme_lines_md.append(f"\n&nbsp;\n")
+            else:
+                block_header = each_line[16: len(each_line)-2]
+                readme_lines_md.append(f"\n&nbsp;\n")
+                readme_lines_md.append(f"**{block_header}**")
+                readme_lines_md.append(f"\n&nbsp;\n")
         else:
             if in_mkdocs_block and each_line.startswith('    '):
-                each_line = each_line[4:]
+                pass  # each_line = each_line[4:]
             each_line = each_line.replace('{:target="_blank" rel="noopener"}', '')
             if each_line.startswith('!['):
                 if "http" not in each_line:
@@ -121,7 +128,7 @@ def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "R
                 else:
                     pass # image is absolute - don't alter
             readme_lines_md.append(each_line)
-            if each_line.startswith('&nbsp;'):
+            if each_line.startswith('&nbsp;') and in_mkdocs_block:
                 in_mkdocs_block = False
     with open(str(to_file), "w") as readme_file:
         readme_file.writelines(readme_lines_md)

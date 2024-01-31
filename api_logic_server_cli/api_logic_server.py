@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.01.26"
+__version__ = "10.01.27"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t01/30/2024 - 10.01.26: Better rules example, open_with for pycharm, LB fix, ai++ early \n"\
+    "\t01/30/2024 - 10.01.27: LogicBank fix, sample-ai, better rules example \n"\
     "\t01/15/2024 - 10.01.18: Cleanup, logic reminder, nw tutorial fixes \n"\
     "\t01/10/2024 - 10.01.12: Optlock ignored [35], Reduce Sample size, examples, consistent naming, run/cwd \n"\
     "\t01/08/2024 - 10.01.07: Default Interpreter for VS Code, Allocation fix, F5 Note, #als \n"\
