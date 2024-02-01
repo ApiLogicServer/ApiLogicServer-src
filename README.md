@@ -242,7 +242,7 @@ There are a few articles that provide some orientation to API Logic Server:
 
 ### Change Log
 
-01/30/2024 - 10.01.27: LogicBank fix, sample-ai, better rules example
+01/31/2024 - 10.01.28: LogicBank fix, sample-ai, better rules example
 
 01/15/2024 - 10.01.18: Cleanup, logic reminder, nw tutorial fixes
 

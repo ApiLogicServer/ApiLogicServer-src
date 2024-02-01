@@ -92,7 +92,7 @@ def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "R
     except:     # do NOT fail 
         pass    # just fall back to using the pip-installed version
 
-    use_git = True
+    use_git = True  # FIXME temp debug
     if use_git and os.path.isfile(from_doc_file_path):  # if in dev, use the latest latest
         copyfile(src = from_doc_file_path, dst = to_file)
     
@@ -107,7 +107,7 @@ def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "R
         if each_line.startswith('!!'):
             in_mkdocs_block = True
             if ':bulb:' in each_line:
-                key_takeaway = each_line[7 + each_line.index('":bulb:'): ]
+                key_takeaway = each_line[7 + each_line.index(':bulb:'): ]
                 key_takeaway = key_takeaway[0: len(key_takeaway)-2]
                 readme_lines_md.append(f"\n&nbsp;\n")
                 readme_lines_md.append(f"**Key Takeways - {key_takeaway}**")
