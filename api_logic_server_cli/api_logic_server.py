@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.01.28"
+__version__ = "10.01.29"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t02/04/2024 - 10.01.29: Sample-ai - Cocktail napkin, manual add-auth \n"\
     "\t01/31/2024 - 10.01.28: LogicBank fix, sample-ai, better rules example \n"\
     "\t01/15/2024 - 10.01.18: Cleanup, logic reminder, nw tutorial fixes \n"\
     "\t01/10/2024 - 10.01.12: Optlock ignored [35], Reduce Sample size, examples, consistent naming, run/cwd \n"\
@@ -1289,7 +1290,7 @@ from database import <project.bind_key>_models
                 log.info(".. complete\n")
 
 
-    def add_sample_ai_customizations(self, do_show_messages: bool = True, do_security: bool = True):
+    def add_sample_ai_customizations(self, do_show_messages: bool = True):
         """ Add customizations to sample_ai (default creation)
 
         1. Deep copy prototypes/sample_ai (adds logic)
@@ -1301,6 +1302,7 @@ from database import <project.bind_key>_models
 
         log.debug("\n\n==================================================================")
         nw_messages = ""
+        do_security = False
         if do_security:
             if do_show_messages:
                 nw_messages = "Add sample_ai customizations - enabling security"
@@ -1313,9 +1315,10 @@ from database import <project.bind_key>_models
         if do_show_messages:
             log.info("\nExplore key customization files:")
             log.info(f'..api/customize_api.py')
-            log.info(f'..database/customize_models.py')
             log.info(f'..logic/declare_logic.py')
             log.info(f'..security/declare_security.py\n')
+            log.info(f'Next Steps: activate security')
+            log.info(f'..ApiLogicServer add-auth --db_url=auth')
             if self.is_tutorial == False:
                 log.info(".. complete\n")
 
