@@ -451,10 +451,22 @@ class ManyToOneRelationship(Relationship):
                 self.preferred_name = self.target_cls  # FIXME why was "parent", (for Order)
             pk_col_names = [col.name for col in constraint.table.primary_key]
             self.kwargs['remote_side'] = '[{0}]'.format(', '.join(pk_col_names))
-
+        
+        
         self.parent_accessor_name = self.preferred_name
         """ parent accessor (typically parent (target_cls)) """
         # assert self.target_cls == self.preferred_name, "preferred name <> parent"
+
+        # avoid collision if fkname = parent table name
+        if source_cls == 'Order':
+            log.debug("Special case: avoid collision if fkname = parent table name")
+            debug_stop = "interesting breakpoint"
+        if source_cls == 'Order' and target_cls == 'Customer':   # test database: tests/test_databases/sqlite-databases/nw-fk-getter-collision.sqlite
+            log.debug("Special case: avoid collision if fkname = parent table name")
+            debug_stop = "interesting breakpoint"
+        for each_col in constraint.table.columns:
+            if each_col.name == self.parent_accessor_name:
+                self.parent_accessor_name = self.parent_accessor_name + '1'
 
         self.child_accessor_name = self.source_cls + "List"
         """ child accessor (typically child (target_class) + "List") """

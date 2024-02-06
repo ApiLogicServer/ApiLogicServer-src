@@ -703,6 +703,18 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "  - Northwind NW_Collision_Test",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/api_logic_server_cli",
+            "program": "cli.py",
+            "redirectOutput": true,
+            "args": ["create", 
+                    "--db_url=sqlite:///../tests/test_databases/sqlite-databases/nw-fk-getter-collision.sqlite",
+                    "--project_name=../../../servers/NW_Collision_Test"],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "Add-database",
             "type": "python",
             "request": "launch",
