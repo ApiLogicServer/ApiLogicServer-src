@@ -173,6 +173,8 @@ def get_abs_db_url(msg, project: Project):
         rtn_nw_db_status = "nw-"  # api_logic_server_dir_path
         # see also create_project_with_nw_samples for overlaying other project files
         log.debug(f'{msg} from: {rtn_abs_db_url}')  # /Users/val/dev/ApiLogicServer/api_logic_server_cli/database/nw-gold.sqlite
+        # if project.db_url == "sqlite:///nw.sqlite":
+        #     log.info('.. using installed nw sample database')
     elif project.db_url == "nw-":                                           # nw:           just in case
         rtn_abs_db_url = f'sqlite:///{str(project.api_logic_server_dir_path.joinpath("database/nw-gold.sqlite"))}'
         rtn_nw_db_status = "nw-"
@@ -211,6 +213,15 @@ def get_abs_db_url(msg, project: Project):
                 pass # file exists
             else:
                 rtn_abs_db_url = f'sqlite:///{str(project.api_logic_server_dir_path.joinpath("prototypes/sample_ai/database/chatgpt/sample_ai.sqlite"))}'
+                # log.info('.. using installed nw sample database')
+        elif project.db_url == 'sqlite:///sample_ai_items.sqlite':  # same as above, but with Items for demo
+            rtn_abs_db_url = project.db_url
+            db_path = Path(rtn_abs_db_url)
+            if db_path.exists():
+                pass # file exists
+            else:
+                rtn_abs_db_url = f'sqlite:///{str(project.api_logic_server_dir_path.joinpath("prototypes/sample_ai/database/chatgpt/sample_ai_items.sqlite"))}'
+                # log.info('.. using installed nw sample database')
         else:
             url = project.db_url[10: len(project.db_url)]
             rtn_abs_db_url = abspath(url)
