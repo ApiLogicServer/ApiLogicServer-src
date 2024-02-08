@@ -15,8 +15,7 @@ Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 __version__ = "10.02.00"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t02/06/2024 - 10.01.30: BugFix[38]: fk/getter collision \n"\
-    "\t02/05/2024 - 10.01.30: Improved sample-ai procedure \n"\
+    "\t02/07/2024 - 10.02.00: BugFix[38]: foreign-key/getter collision \n"\
     "\t01/31/2024 - 10.01.28: LogicBank fix, sample-ai, better rules example \n"\
     "\t01/15/2024 - 10.01.18: Cleanup, logic reminder, nw tutorial fixes \n"\
     "\t01/10/2024 - 10.01.12: Optlock ignored [35], Reduce Sample size, examples, consistent naming, run/cwd \n"\
