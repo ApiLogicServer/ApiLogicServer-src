@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.02.00"
+__version__ = "10.02.02"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t02/11/2024 - 10.02.02: kafka_producer.send_kafka_message, sample md fixes \n"\
     "\t02/07/2024 - 10.02.00: BugFix[38]: foreign-key/getter collision \n"\
     "\t01/31/2024 - 10.01.28: LogicBank fix, sample-ai, better rules example \n"\
     "\t01/15/2024 - 10.01.18: Cleanup, logic reminder, nw tutorial fixes \n"\
@@ -285,17 +286,10 @@ def fix_idea_configs(project: 'ProjectRun'):
                                             in_file=str(file_path))
     pass
 
-def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "README.md"):
-    """ Copy readme files (and remove !!) from:
+def z_copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "README.md"):
+    """ Copy readme files (and remove !!!) from:
     
-    1. github (to acquire more recent version since release)
-    
-    2. dev docs, if exists (gold version in docs, not prototypes).
-
-    Args:
-        project (ProjectRun): project object (project name, etc)
-        from_doc_file (str): eg, Sample-Basic_Demo.md
-        to_project_file (str, optional): _description_. Defaults to "README.md".
+    FIXME - Old - replace with create_utils.copy_md
     """
     use_utils = True
     if use_utils:
@@ -464,7 +458,7 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
             nw_dir = (Path(api_logic_server_dir_str)).\
                 joinpath('prototypes/basic_demo')
             recursive_overwrite(nw_dir, project.project_directory)
-            copy_md(project = project, from_doc_file="Sample-Basic-Demo.md")
+            create_utils.copy_md(project = project, from_doc_file = "Sample-Basic-Demo.md")
 
 
         if project.db_url == "mysql+pymysql://root:p@localhost:3306/classicmodels":
@@ -489,9 +483,8 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
             os.remove(file_to_delete)
 
         if project.db_url == 'sqlite:///sample_ai.sqlite':  # work-around - VSCode run config arg parsing (dbviz STRESS)
-            copy_md(project = project,
-                    from_doc_file="Sample-AI.md",
-                    to_project_file='Sample-AI.md')
+            create_utils.copy_md(project = project, from_doc_file = "Sample-AI.md", to_project_file='Sample-AI.md')
+            # z_copy_md(project = project, from_doc_file="Sample-AI.md", to_project_file='Sample-AI.md')
 
         if "postgres" or "mysql" in project.db_url:
             fixup_devops_for_postgres_mysql(project)
@@ -1217,7 +1210,8 @@ from database import <project.bind_key>_models
                     break
                 each_line += 1
             if fix_line >= 0:
-                copy_md(project=self, from_doc_file="Tutorial.md", to_project_file="Tutorial.md")  # survives network down
+                # z_copy_md(project=self, from_doc_file="Tutorial.md", to_project_file="Tutorial.md")  # survives network down
+                create_utils.copy_md(project = self, from_doc_file = "Tutorial.md", to_project_file='Tutorial.md')
                 tutorial_file_path = self.project_directory_path.joinpath('Tutorial.md')
                 with open(tutorial_file_path,'r') as tutorial_data:
                     tutorial_text = tutorial_data.readlines()
@@ -1246,9 +1240,8 @@ from database import <project.bind_key>_models
         """
 
         if self.is_tutorial:
-            copy_md(project = self,
-                    from_doc_file="Tutorial-3.md",
-                    to_project_file='Tutorial.md')
+            create_utils.copy_md(project = self, from_doc_file = "Tutorial-3.md", to_project_file='Tutorial.md')
+            # z_copy_md(project = self, from_doc_file="Tutorial-3.md", to_project_file='Tutorial.md')
 
 
     def add_nw_customizations(self, do_show_messages: bool = True, do_security: bool = True):
@@ -1276,9 +1269,8 @@ from database import <project.bind_key>_models
 
         self.create_nw_tutorial_and_readme()
 
-        copy_md(project = self,
-                from_doc_file="Sample-Integration.md",
-                to_project_file='integration/Sample-Integration.md')
+        # z_copy_md(project = self, from_doc_file="Sample-Integration.md", to_project_file='integration/Sample-Integration.md')
+        create_utils.copy_md(project = self, from_doc_file = "Sample-Integration.md", to_project_file='integration/Sample-Integration.md')
 
         if do_show_messages:
             log.info("\nExplore key customization files:")
@@ -1295,14 +1287,14 @@ from database import <project.bind_key>_models
 
         1. Deep copy prototypes/sample_ai (adds logic)
 
-        2. Create readme files: Sample-AO (copy_md), api/integration_defs/readme.md
+        2. Create readme files: Sample-AO (copy_md), api/integration_defs/readme.md  TODO not done, fix cmts
 
         Args:
         """
 
         log.debug("\n\n==================================================================")
         nw_messages = ""
-        do_security = False
+        do_security = False  # disabled - keep clear what "activate security" means for reader
         if do_security:
             if do_show_messages:
                 nw_messages = "Add sample_ai customizations - enabling security"

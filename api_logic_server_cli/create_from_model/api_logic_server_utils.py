@@ -62,11 +62,19 @@ def get_project_directory_and_api_name(project):
         rtn_merge_into_prototype
 
 def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "README.md"):
-    """ Copy readme files (and remove !!) from:
+    """ Copy readme files (and remove !!!) from:
     
     1. github (to acquire more recent version since release)
     
     2. dev docs, if exists (gold version in docs, not prototypes).
+
+    Used by Sample-AI; Sample-Integration (nw-), Tutorial, Tutorial-3 (3 projects), Sample-Basic-Demo;
+
+    Removing !!! -- special handling
+
+    1. Text remains indented (becomes block quote - renders like code)
+
+    2. Except if 1st line has ## - then remove indents to retain sections
 
     Args:
         project (ProjectRun): project object (project name, etc)
@@ -101,11 +109,14 @@ def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "R
         readme_lines_mkdocs = readme_file.readlines()    
     readme_lines_md = []
     in_mkdocs_block = False
+    db_line_num = 0
     for each_line in readme_lines_mkdocs:
+        db_line_num += 1
         if "from docsite" in each_line:
             each_line = each_line.replace("from docsite", "from docsite, for readme")
         if each_line.startswith('!!'):
             in_mkdocs_block = True
+            in_mkdocs_block_with_sections = False
             if ':bulb:' in each_line:
                 key_takeaway = each_line[7 + each_line.index(':bulb:'): ]
                 key_takeaway = key_takeaway[0: len(key_takeaway)-2]
@@ -118,8 +129,12 @@ def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "R
                 readme_lines_md.append(f"**{block_header}**")
                 readme_lines_md.append(f"\n&nbsp;\n")
         else:
-            if in_mkdocs_block and each_line.startswith('    '):
-                pass  # each_line = each_line[4:]
+            if each_line.startswith('&nbsp;') and in_mkdocs_block:
+                in_mkdocs_block = in_mkdocs_block_with_sections = False
+            if in_mkdocs_block and ("##" in each_line or in_mkdocs_block_with_sections):
+                if len(each_line) >= 4:
+                    each_line = each_line[4:]
+                in_mkdocs_block_with_sections = True
             each_line = each_line.replace('{:target="_blank" rel="noopener"}', '')
             if each_line.startswith('!['):
                 if "http" not in each_line:
@@ -128,8 +143,6 @@ def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "R
                 else:
                     pass # image is absolute - don't alter
             readme_lines_md.append(each_line)
-            if each_line.startswith('&nbsp;') and in_mkdocs_block:
-                in_mkdocs_block = False
     with open(str(to_file), "w") as readme_file:
         readme_file.writelines(readme_lines_md)
     pass

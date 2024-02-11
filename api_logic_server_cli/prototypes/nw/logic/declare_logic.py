@@ -124,15 +124,11 @@ def declare_logic():
             logic_row (LogicRow): bundles curr/old row, with ins/upd/dlt logic
         """
         if logic_row.is_inserted():
-            order_dict = OrderShipping().row_to_dict(row = row)
-            json_order = jsonify({"order": order_dict}).data.decode('utf-8')
-            if kafka_producer.producer:  # enabled in config/config.py?
-                try:
-                    kafka_producer.producer.produce(value=json_order, topic="order_shipping", key= str(row.Id))
-                    logic_row.log("Kafka producer sent message")
-                except KafkaException as ke:
-                    logic_row.log("Kafka.produce message {row.id} error: {ke}")                
-            print(f'\n\nSend to Shipping:\n{json_order}')
+            kafka_producer.send_kafka_message(logic_row=logic_row,
+                                              row_dict_mapper=OrderShipping,
+                                              kafka_topic="order_shipping",
+                                              kafka_key=str(row.Id),
+                                              msg="Sending Order to Shipping")
             
     Rule.after_flush_row_event(on_class=models.Order, calling=send_order_to_shipping)  # see above
 
