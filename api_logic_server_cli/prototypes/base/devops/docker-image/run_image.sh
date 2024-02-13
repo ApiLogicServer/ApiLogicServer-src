@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # edit this file to change apilogicserver to your repository name
+# edit env.list for config settings
 # then run to start container
 # see https://stackoverflow.com/questions/30494050/how-do-i-pass-environment-variables-to-docker-containers
 

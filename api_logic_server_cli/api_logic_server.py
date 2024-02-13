@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.02.02"
+__version__ = "10.02.03"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t02/11/2024 - 10.02.02: kafka_producer.send_kafka_message, sample md fixes \n"\
+    "\t02/12/2024 - 10.02.03: kafka_producer.send_kafka_message, sample md fixes, docker ENV \n"\
     "\t02/07/2024 - 10.02.00: BugFix[38]: foreign-key/getter collision \n"\
     "\t01/31/2024 - 10.01.28: LogicBank fix, sample-ai, better rules example \n"\
     "\t01/15/2024 - 10.01.18: Cleanup, logic reminder, nw tutorial fixes \n"\

@@ -8,11 +8,22 @@
 # Internal - verify what is done with build_and_test
 # docker build -f docker/api_logic_server.Dockerfile -t apilogicserver/api_logic_server_local --rm .
 # docker tag apilogicserver/api_logic_server_local apilogicserver/api_logic_server_local:latest
-# repeat with latest
+#    -- now run locally:
+# docker run -it apilogicserver/api_logic_server_local  # minimal (no ports, no mounts, no network, files protected)
+# cd ~/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/dockers
+# docker run -it --name api_logic_server --rm --net dev-network -p 5656:5656 -p 5002:5002 -v ${PWD}:/localhost apilogicserver/api_logic_server_local
+#    -- but not this (fails complaining about $PATH, tho echo $PATH has /home/api_logic_server/bin
+# docker run -it apilogicserver/api_logic_server_local ApiLogicServer create-and-run --project_name=api_logic_project --db_url=
+# Thos scenario (cd first)...
+# docker run -it --name api_logic_server --rm -v ${PWD}:/localhost apilogicserver/api_logic_server_local ApiLogicServer create --project_name=/localhost/nw --db_url=
+# docker run -it --name api_logic_server --rm -p 5656:5656 -p 5002:5002 -v ${PWD}:/localhost apilogicserver/api_logic_server_local ApiLogicServer run --project_name=/localhost/nw
 
-# docker run -it --name api_logic_server_local --rm --net dev-network -p 5656:5656 -p 5002:5002 -v .:/localhost apilogicserver/api_logic_server_arm 
-# docker run -it --name api_logic_server_local --rm --net dev-network -p 5656:5656 -p 5002:5002 -v {str(dest)}:/localhost apilogicserver/api_logic_server_arm sh -c "export PATH=$PATH:/home/api_logic_server/bin && /bin/sh /localhost/docker-commands.sh"
 
+# docker run -it --name api_logic_server_local --rm --net dev-network -p 5656:5656 -p 5002:5002 -v .:/localhost apilogicserver/api_logic_server_local
+# docker run -it --name api_logic_server_local --rm --net dev-network -p 5656:5656 -p 5002:5002 -v {str(dest)}:/localhost apilogicserver/api_logic_server_local sh -c "export PATH=$PATH:/home/api_logic_server/bin && /bin/sh /localhost/docker-commands.sh"
+
+# dev containers: https://apilogicserver.github.io/Docs/DevOps-Docker/
+# run containers: https://apilogicserver.github.io/Docs/DevOps-Containers-Build/
 
 # cd ~/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/dockers
 # docker run -it --name api_logic_server --rm --net dev-network -p 5656:5656 -p 5002:5002 -v ${PWD}:/localhost apilogicserver/api_logic_server
@@ -67,9 +78,14 @@ USER root
 RUN chmod +x bin/ApiLogicServer \
     && chmod a+rwx -R api_logic_server_cli/api_logic_server_info.yaml \
     && chmod +x bin/py
+RUN mkdir -p /home/api_logic_project \
+    && chown -R api_logic_server /home/api_logic_project
 USER api_logic_server
 
 ENV APILOGICSERVER_RUNNING=DOCKER
 ENV APILOGICSERVER_FROM=python:3.11.4-slim-bullseye
+ENV PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/api_logic_server/bin
+# EXPOSE 5656
+# EXPOSE 5002
 
 CMD ["bash"]
