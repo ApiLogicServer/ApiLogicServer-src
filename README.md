@@ -242,6 +242,8 @@ There are a few articles that provide some orientation to API Logic Server:
 
 ### Change Log
 
+02/13/2024 - 10.02.04: kafka_producer.send_kafka_message, sample md fixes, docker ENV, pg authdb
+
 02/07/2024 - 10.02.00: BugFix[38]: foreign-key/getter collision
 
 01/31/2024 - 10.01.28: LogicBank fix, sample-ai, better rules example
