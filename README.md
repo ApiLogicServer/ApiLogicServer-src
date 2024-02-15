@@ -1,7 +1,3 @@
----
-title: API Logic Server
----
-
 [![Downloads](https://pepy.tech/badge/apilogicserver)](https://pepy.tech/project/apilogicserver)
 [![Latest Version](https://img.shields.io/pypi/v/apilogicserver.svg)](https://pypi.python.org/pypi/apilogicserver/)
 [![Supported Python versions](https://img.shields.io/pypi/pyversions/apilogicserver.svg)](https://pypi.python.org/pypi/apilogicserver/)
@@ -11,11 +7,7 @@ title: API Logic Server
 &nbsp;
 ---
 
-Find the [documentation here](https://apilogicserver.github.io/Docs/).  To explore **(no download, no install),** click...
-
-* here for an [*App Fiddle*](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=594296622) for learning Flask, SQLAlchemy and API Logic Server 
-
-* here for an [Instant Eval](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=593459232)
+Find the [documentation here](https://apilogicserver.github.io/Docs/).
 
 &nbsp;
 
