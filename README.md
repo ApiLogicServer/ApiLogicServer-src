@@ -50,48 +50,7 @@ This is an open source project.  We are open to suggestions.  Some of our ideas 
 
 To get started, please see  the [Architecture.](https://apilogicserver.github.io/Docs/Architecture-Internals/)
 
-&nbsp;
-
-### Acknowledgements
-
-Many thanks to
-
-- [Thomas Pollet](https://www.linkedin.com/in/pollet/), for SAFRS, SAFRS-react-admin, and invaluable design partnership
-- Tyler Band, for leadership on security
-- [Marelab](https://marmelab.com/en/), for [react-admin](https://marmelab.com/react-admin/)
-- Armin Ronacher, for Flask
-- Mike Bayer, for SQLAlchemy
-- Alex Grönholm, for Sqlacodegen
-- Thomas Peters, for review and testing
-- [Meera Datey](https://www.linkedin.com/in/meeradatey/), for React Admin prototyping
-- Denny McKinney, for Tutorial review
-- Achim Götz, for design collaboration and testing
-- Max Tardiveau, for testing and help with Docker
-- Michael Holleran, for design collaboration and testing
-- Nishanth Shyamsundar, for review and testing
-- Gloria Huber and Denny McKinney, for doc review
-
-&nbsp;
-
-### Articles
-
-There are several articles that provide some orientation to API Logic Server:
-
-* [Instant App Backends With API and Logic Automation](https://dzone.com/articles/instant-app-backends-with-api-and-logic-automation)
-* [Instant Integrations With API and Logic Automation](https://dzone.com/articles/instant-integrations-with-api-automation)
-* [AI and Rules for Agile Microservices in Minutes](https://dzone.com/articles/ai-and-rules-for-agile-microserves)
-
-Also:
-* [How Automation Activates Agile](https://modeling-languages.com/logic-model-automation/)
-* [How Automation Activates Agile](https://dzone.com/articles/automation-activates-agile) - providing working software rapidly drives agile collaboration to define systems that meet actual needs, reducing requirements risk
-* [How to create application systems in moments](https://dzone.com/articles/create-customizable-database-app-systems-with-1-command)
-* [Stop coding database backends…Declare them with one command.](https://medium.com/@valjhuber/stop-coding-database-backends-declare-them-with-one-command-938cbd877f6d)
-* [Instant Database Backends](https://dzone.com/articles/instant-api-backends)
-* [Extensible Rules](https://dzone.com/articles/logic-bank-now-extensible-drive-95-automation-even) - defining new rule types, using Python
-* [Declarative](https://dzone.com/articles/agile-design-automation-how-are-rules-different-fr) - exploring _multi-statement_ declarative technology
-* [Automate Business Logic With Logic Bank](https://dzone.com/articles/automate-business-logic-with-logic-bank) - general introduction, discussions of extensibility, manageability and scalability
-* [Agile Design Automation With Logic Bank](https://dzone.com/articles/logical-data-indendence) - focuses on automation, design flexibility and agile iterations
-* [Instant Web Apps](https://dzone.com/articles/instant-db-web-apps) 
+&nbsp; 
 
 
 [^1]:
