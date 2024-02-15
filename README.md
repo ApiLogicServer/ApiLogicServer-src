@@ -33,8 +33,11 @@ API Logic Server provides unique automation **for instant integrations and app b
 
 # Instantly Create and Run
 
-![quick tour](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/nutshell/gif.gif?raw=true)
+<details open>
+  <summary>Click to stop</summary>
 
+![quick tour](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/nutshell/gif.gif?raw=true)
+</details>
 
 &nbsp;
 
