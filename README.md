@@ -75,8 +75,13 @@ Many thanks to
 
 ### Articles
 
-There are a few articles that provide some orientation to API Logic Server:
+There are several articles that provide some orientation to API Logic Server:
 
+* [Instant App Backends With API and Logic Automation](https://dzone.com/articles/instant-app-backends-with-api-and-logic-automation)
+* [Instant Integrations With API and Logic Automation](https://dzone.com/articles/instant-integrations-with-api-automation)
+* [AI and Rules for Agile Microservices in Minutes](https://dzone.com/articles/ai-and-rules-for-agile-microserves)
+
+Also:
 * [How Automation Activates Agile](https://modeling-languages.com/logic-model-automation/)
 * [How Automation Activates Agile](https://dzone.com/articles/automation-activates-agile) - providing working software rapidly drives agile collaboration to define systems that meet actual needs, reducing requirements risk
 * [How to create application systems in moments](https://dzone.com/articles/create-customizable-database-app-systems-with-1-command)
