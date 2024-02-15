@@ -6,7 +6,7 @@ title: API Logic Server
 [![Latest Version](https://img.shields.io/pypi/v/apilogicserver.svg)](https://pypi.python.org/pypi/apilogicserver/)
 [![Supported Python versions](https://img.shields.io/pypi/pyversions/apilogicserver.svg)](https://pypi.python.org/pypi/apilogicserver/)
 
-[![API Logic Server Intro](https://github.com/valhuber/apilogicserver/wiki/images/hero-banner.png?raw=true)](https://apilogicserver.github.io/Docs/ "Single command creates executable, customizable projects")
+![Banner](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/hero-banner.png?raw=true)
 
 &nbsp;
 ---
@@ -21,161 +21,28 @@ Find the [documentation here](https://apilogicserver.github.io/Docs/).  To explo
 
 # Welcome to API Logic Server - Source
 
-API Logic Server creates __customizable database web app projects:__
+For Developers and their organizations seeking to **increase business agility,**
 
-* __Creation is Instant:__ create projects with a single command
+API Logic Server provides ***Microservice Automation:*** create executable projects with 1 command:
 
-* __Projects are Highly Functional:__
+1. ***API Automation:*** crud for each table, with pagination, optimistic locking, filtering and sorting, and
 
-    * __API:__ an endpoint for each table, with filtering, sorting, pagination and related data access
+2.  ***App Automation:*** a multi-page, multi-table Admin App.  <br>
 
-    * __Admin UI:__ multi-page / multi-table apps, with page navigations and automatic joins
+**Customize in your IDE:** use standard tools (Python, Flask, SQLAlchemy, GitHub and Docker), plus<br>
 
-* __Projects are Customizable, using _your IDE_:__ such as VSCode, PyCharm, etc, for familiar edit/debug services
+3. ***Logic Automation:*** unique **rules - 40X** more concise multi-table derivations and constraints.
 
-* __Business Logic Automation:__ using unique rules, extensible with Python
+Unlike frameworks, weeks-to-months of complex development is no longer necessary.  <br>
+API Logic Server provides unique automation **for instant integrations and app backends**.
 
 
 &nbsp;
 
-# Background
-A brief look at why we built it, and what it is.<br><br>
+# Instantly Create and Run
 
-### Motivation - not instant, propietary IDE, no logic automation
+![quick tour](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/nutshell/gif.gif?raw=true)
 
-We looked at approaches for building database systems:   
-
-* __Frameworks:__ Frameworks like Flask or Django enable you to build a single endpoint or _Hello World_ page, but a __multi-endpoint__ API and __multi-page__ application would take __weeks__ or more.
-
-* __Low Code Tools:__ these are great for building great UIs, but
-
-    * Want a multi-page app -- __no screen painting__
-    * Want to __preserve dev tools__ - VSCode, PyCharm, git, etc
-    * Need an answer for __backend logic__ (it's nearly half the effort)<br><br>
-
-
-### Our Approach: Instant, Customizable, Logic Automation
-
-API Logic Server is an open source Python project, consisting of:
-
-* a set of runtimes (SAFRS API, Flask, SQLAlchemy ORM, rule engine) for project execution, plus 
-
-* a CLI (Command Language Interface) to create executable projects, which can be customized in an IDE such as VSCode or PyCharm
-
-It runs as a standard pip install, or under Docker. After installation, you use the CLI create a project like this:
-
-```
-ApiLogicServer create --project_name=ApiLogicProject db_url=
-```
-
-> API Logic Server reads your schema, and creates an executable, customizable project providing the features listed below.  Check it out - __zero install__ - [here, in Codespaces](https://github.com/ApiLogicServer/ApiLogicProject#readme).
-
-&nbsp;
-
-# Feature Summary
-
-|   | Feature    | Providing   | Why it Matters   |
-:-------|:-----------|:------------|:-----------------|
-| __Instant__ | 1. [**Admin App**](https://apilogicserver.github.io/Docs/Admin-Tour/) | Instant **multi-page, multi-table** app  [(running here on PythonAnywhere)](https://apilogicserver.pythonanywhere.com/admin-app/index.html#/Home)              | Engage Business Users<br>Back-office Admin       |
-| | 2. [JSON:**API** and Swagger](https://apilogicserver.github.io/Docs/API/)                     | Endpoint for each table, with... <br>Filtering, pagination, related data                                                                        | Unblock custom App Dev<br>Application Integration                           |
-| | 3. Data Model Class Creation                                                     | Classes for Python-friendly ORM                                                                                                                             | Custom Data Access<br>Used by API                |
-| __Customizable__ | 4. [**Customizable Project**](https://apilogicserver.github.io/Docs/Project-Structure/)                   | Custom Endpoints, Logic <br>Use Python and your IDE  |Customize and run <br>Re-creation *not* required |                                                                                      
-| __Unique Logic__ | 5. [Spreadsheet-like Business Rules](https://apilogicserver.github.io/Docs/Logic-Why/)  &nbsp; :trophy:      | **40X more concise** - compare [legacy code](https://github.com/valhuber/LogicBank/wiki/by-code) | Unique backend automation <br> ... nearly half the system  |
-|  | Extensible with Python      | Familiar Event Model | Eg., Send messages, email  |
-| Testing | 6. [Behave **Test Framework**](https://apilogicserver.github.io/Docs/Behave/)         | Test Suite Automation<br/>Behave Logic Report<br/>Drive Automation with Agile                                                                                                                           | Optimize Automation to get it fast<br/>Agile Collaboration to get it right                |
-
-&nbsp;
-
-# Instant -- Single Command
-
-Use the CLI to create the sample API and Admin App project, with a single command.
-
-&nbsp;
-
-### Create With Docker
-
-Execute the following commands (Windows, use Powershell):
-
-```bash title="Run API Logic Server in Docker"
-# Start the API Logic Server docker container
-docker run -it --name api_logic_server --rm -p 5656:5656 -p 5002:5002 -v ${PWD}:/localhost apilogicserver/api_logic_server
-
-ApiLogicServer create-and-run --project_name=/localhost/ApiLogicProject --db_url=
-```
-&nbsp;
-
-### Or, Create With Local Install
-Presuming Python 3.7+ [is installed](https://apilogicserver.github.io/Docs/Install/), it's typically:
-
-```bash title="Run API Logic Server from a local pip install"
-python -m venv venv                  # may require python3 -m venv venv
-source venv/bin/activate             # windows venv\Scripts\activate
-venv\Scripts\activate                # mac/linux: source venv/bin/activate
-python -m pip install ApiLogicServer
-
-ApiLogicServer create-and-run        # create, or create-and-run; accept defaults
-```
-&nbsp;
-
-## Execute
-
-Your server is running - explore the data and api at [localhost:5656](http://localhost:5656).  Using the defaults provided above, you have started the [Tutorial](https://apilogicserver.github.io/Docs/Tutorial), the recommended quick start for API Logic Server.
-
-&nbsp;
-
-# Customize in IDE
-
-VSCode and PyCharm users can customize and run/debug within their IDE with [these steps](https://apilogicserver.github.io/Docs/IDE-Execute/).  Created projects include Launch and Docker configurations.  
-
-<figure><img src="https://github.com/valhuber/apilogicserver/wiki/images/generated-project.png?raw=true"></figure>
-
-[Rebuild services](https://apilogicserver.github.io/Docs/Project-Rebuild/) are provided to accomodate changes to database structure or ORM classes.
-
-&nbsp;
-
-# Overview Video
-
-Project creation is based on database schema introspection as shown below: identify a database, and the ```ApiLogicServer create``` commands creates an executable, customomizable project.
-
-Click for a video tutorial, showing complete project creation, execution, customization and debugging.
-
-[![Using VS Code](https://github.com/valhuber/apilogicserver/wiki/images/creates-and-runs-video.png?raw=true?raw=true)](https://youtu.be/tOojjEAct4M "Using VS Code with the ApiLogicServer container")
-
-&nbsp;
-
-# Getting Started
-
-### Quick Evaluation - _no install_
-
-You can avoid install hassles by exploring the [Sample Project in Codespaces](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=593459232).  This will enable you to use VSCode - _in your Browser, zero install_ - to:
-
-* see the created project
-* use the Tutorial to run, customize and debug it 
-
-We think you'll find Codespaces pretty amazing - check it out!
-
-### Local Install
-
-API Logic Server is designed to make it easy to get started:
-
-* **Install and run Tutorial** - 
-[install](https://apilogicserver.github.io/Docs/Install-Express/), and explore the [tutorial](https://apilogicserver.github.io/Docs/Tutorial/).  You'll create a complete project using the pre-installed sample database, explore its features, and support for customization and debugging. 
-
-* **Dockerized Test Databases** - 
-then, you might like to try out some of our [dockerized test databases](https://apilogicserver.github.io/Docs/Database-Connectivity/).
-
-* **Your Database** - 
-finally, try your own database.
-
-&nbsp;
-
-# Project Information
-
-### Tutorials
-There are a number of facilities that will quickly enable you to get familiar with API Logic Server:
-
-* [Tutorial](https://apilogicserver.github.io/Docs/Tutorial/) walks you through the steps of creating a server
-* [Video](https://www.youtube.com/watch?v=gVTdu6c0iSI) shows the steps of creating a server
 
 &nbsp;
 
@@ -184,28 +51,21 @@ This is an open source project.  We are open to suggestions.  Some of our ideas 
 
 | Component           | Provides         | Consider Adding                                                                |
 |:---------------------------|:-----------------|:-------------------------------------------------------------------------------|
-| 1. [JSON:**API** and Swagger](#jsonapi---related-data-filtering-sorting-pagination-swagger) | API Execution    | Serverless, Kubernetes                                                                       | 
-| 2. [Transactional **Logic**](#logic)   | Rule Enforcement | New rule types        |
-| 3. This project | API Logic Project Creation | Support for features described above |
+| 1. JSON:**API** and Swagger | API Execution    | Serverless, Kubernetes        | 
+| 2. Transactional **Logic**   | Rule Enforcement | New rule types        |
+| 3. This project | API Logic Project Creation | General support - see issues |
 
 
 To get started, please see  the [Architecture.](https://apilogicserver.github.io/Docs/Architecture-Internals/)
 
 &nbsp;
 
-### Status
-
-We have tested several databases - see [status here.](https://apilogicserver.github.io/Docs/Database-Connectivity/)
-
-We are tracking [issues in git](https://github.com/valhuber/ApiLogicServer/issues).
-
- &nbsp;
-
 ### Acknowledgements
 
 Many thanks to
 
 - [Thomas Pollet](https://www.linkedin.com/in/pollet/), for SAFRS, SAFRS-react-admin, and invaluable design partnership
+- Tyler Band, for leadership on security
 - [Marelab](https://marmelab.com/en/), for [react-admin](https://marmelab.com/react-admin/)
 - Armin Ronacher, for Flask
 - Mike Bayer, for SQLAlchemy
