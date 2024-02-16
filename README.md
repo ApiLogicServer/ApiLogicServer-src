@@ -36,6 +36,16 @@ API Logic Server provides unique automation **for instant integrations and app b
 <details open>
   <summary>Click to stop</summary>
 
+See how **Microservice Automation** creates and runs a microservice - a multi-page app, and an API. 
+
+* This is an uncustomized app, **created / running in real time**
+
+    * It would be similar for your databases
+
+* Then, customize in your IDE with Python and **Logic Automation:** spreadsheet-like rules
+
+<br>
+
 ![quick tour](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/nutshell/gif.gif?raw=true)
 </details>
 
