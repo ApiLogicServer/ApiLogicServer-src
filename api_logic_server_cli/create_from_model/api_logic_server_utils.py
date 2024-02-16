@@ -112,6 +112,8 @@ def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "R
     db_line_num = 0
     for each_line in readme_lines_mkdocs:
         db_line_num += 1
+        if "ai-driven-automation-video" in each_line:
+            debug_str = "Good Breakpoint"
         if "from docsite" in each_line:
             each_line = each_line.replace("from docsite", "from docsite, for readme")
         if each_line.startswith('!!'):
@@ -136,10 +138,10 @@ def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "R
                     each_line = each_line[4:]
                 in_mkdocs_block_with_sections = True
             each_line = each_line.replace('{:target="_blank" rel="noopener"}', '')
-            if each_line.startswith('!['):
-                if "http" not in each_line:
+            if each_line.startswith('![') or each_line.startswith('[!['):
+                if "https://github.com/ApiLogicServer" not in each_line:     # make doc-relative urls absolute...
                     each_line = each_line.replace('images', 'https://github.com/ApiLogicServer/Docs/blob/main/docs/images')
-                    each_line = each_line.replace(')', '?raw=true)')
+                    each_line = each_line.replace('png)', 'png?raw=true)')
                 else:
                     pass # image is absolute - don't alter
             readme_lines_md.append(each_line)

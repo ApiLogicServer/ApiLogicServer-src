@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.02.04"
+__version__ = "10.02.05"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t02/13/2024 - 10.02.04: kafka_producer.send_kafka_message, sample md fixes, docker ENV, pg authdb \n"\
+    "\t02/16/2024 - 10.02.05: kafka_producer.send_kafka_message, sample md fixes, docker ENV, pg authdb, issue 42 \n"\
     "\t02/07/2024 - 10.02.00: BugFix[38]: foreign-key/getter collision \n"\
     "\t01/31/2024 - 10.01.28: LogicBank fix, sample-ai, better rules example \n"\
     "\t01/15/2024 - 10.01.18: Cleanup, logic reminder, nw tutorial fixes \n"\
@@ -1577,6 +1577,7 @@ def key_module_map():
     import sqlacodegen_wrapper.sqlacodegen_wrapper as sqlacodegen_wrapper
 
     ProjectRun.create_project()                             # main driver, calls...
+    create_utils.copy_md()                                  # copy md files
     create_utils.get_abs_db_url()                           # nw set here, dbname, db abbrevs
     create_project_and_overlay_prototypes()                 # clone project, overlay nw etc
     model_creation_services = ModelCreationServices()       # creates resource_list (python db model); ctor calls...
