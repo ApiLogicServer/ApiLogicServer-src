@@ -77,7 +77,7 @@ def declare_logic():
             kafka_producer.send_kafka_message(logic_row=logic_row,
                                               row_dict_mapper=OrderShipping,
                                               kafka_topic="order_shipping",
-                                              kafka_key=str(row.Id),
+                                              kafka_key=str(row.OrderID),
                                               msg="Sending Order to Shipping")
             
     Rule.after_flush_row_event(on_class=models.Order, calling=send_order_to_shipping)  # see above
