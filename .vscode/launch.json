@@ -673,6 +673,7 @@
             "name": "  - rebuild-from-database to servers/NW_NoCust - DOT",
             "type": "python",
             "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
             "cwd": "../../../servers/NW_NoCust",
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,

@@ -530,19 +530,24 @@ class AdminCreator(object):
                 mac:        mac created_time always = modified_time, but can use birthtime
                 linux:      same as mac, but not birthtime -- disable for linux
             '''
-            enable_rebuild_unaltered = True        
-            yaml_file_stats = Path(yaml_file_name).stat()
-            if sys.platform == 'win32':
-                time_diff = abs(yaml_file_stats.st_mtime - yaml_file_stats.st_ctime)  # these are seconds
-            elif sys.platform == 'darwin':
-                time_diff = abs(yaml_file_stats.st_mtime - yaml_file_stats.st_birthtime)
+            enable_rebuild_unaltered = True
+            yaml_file_path =  Path(yaml_file_name)
+            if not yaml_file_path.exists():
+                write_file = "Write"  #  (missing admin.yaml)"
             else:
-                time_diff = 1000  # linux never captures ctime (!), so we must preserve possible chgs
+                yaml_file_stats = Path(yaml_file_name).stat()
+                if sys.platform == 'win32':
+                    time_diff = abs(yaml_file_stats.st_mtime - yaml_file_stats.st_ctime)  # these are seconds
+                elif sys.platform == 'darwin':
+                    time_diff = abs(yaml_file_stats.st_mtime - yaml_file_stats.st_birthtime)
+                else:
+                    time_diff = 1000  # linux never captures ctime (!), so we must preserve possible chgs
 
-            if time_diff >= 5:
-                write_file = "Rebuild - preserve altered admin.yaml"
-            else:
-                write_file = "Rebuild - preserve unaltered admin.yaml (cp admin-merge.yaml admin.yaml)"
+                if time_diff >= 5:
+                    write_file = "Rebuild - preserve altered admin.yaml"
+                else:
+                    write_file = "Rebuild - preserve unaltered admin.yaml (cp admin-merge.yaml admin.yaml)"
+    
 
         if write_file.startswith("Rebuild"):
             yaml_merge_file_name = os.path.join(Path(self.mod_gen.project_directory), Path(f'ui/admin/admin-merge.yaml'))
