@@ -9,7 +9,8 @@
 # -- use authdb
 # -- 
 
-# mysqldump -u root -p CSAMTEST_SCHEMA > CSAMTEST_SCHEMA.sql;
+# docker> mysqldump -u root -p banking > banking.sql;
+# local> docker cp mysql-container:banking.sql ~/Desktop/banking.sql
 
 
 # Now set up your mysql database.
