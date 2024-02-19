@@ -255,9 +255,11 @@ def declare_logic():
             tedious = False  # tedious code to repeat for every audited class
             if tedious:      # see instead the RuleExtension.copy_row above (you can create similar rule extensions)
                 if logic_row.ins_upd_dlt == "upd" and logic_row.are_attributes_changed([models.Employee.Salary, models.Employee.Title]):
+                    # #als: triggered inserts  
                     copy_to_logic_row = logic_row.new_logic_row(models.EmployeeAudit)
                     copy_to_logic_row.link(to_parent=logic_row)
                     copy_to_logic_row.set_same_named_attributes(logic_row)
+                    # copy_to_logic_row.row.attribute_name = value
                     copy_to_logic_row.insert(reason="Manual Copy " + copy_to_logic_row.name)  # triggers rules...
 
         Rule.commit_row_event(on_class=models.Employee, calling=audit_by_event)
