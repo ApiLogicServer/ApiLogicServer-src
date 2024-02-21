@@ -14,14 +14,16 @@ class Config:
     do_install_api_logic_server = default_setting   # verify build wheel and local 
     do_logicbank_test = ""                          # use this testpy version (or '')
     
+
     do_create_api_logic_project = default_setting   # create the default project
     do_run_api_logic_project = default_setting      # start the server 
     do_test_api_logic_project = default_setting     # run the behave tests (test logic, api)
 
     do_create_shipping = default_setting            # run shipping to listen to kafka (might run manually)
     do_run_shipping = False               # run shipping to listen to kafka (might run manually)
-    do_run_nw_kafka = default_setting               # run default project, *with* kafka
-    do_test_nw_kafka = default_setting
+    do_run_nw_kafka = True               # run default project, *with* kafka
+    do_test_nw_kafka = True
+
 
     do_rebuild_tests = default_setting              # rebuild from model, allembic
 
