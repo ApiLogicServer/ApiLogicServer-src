@@ -53,6 +53,6 @@ class Config:
     '''typical source "venv/bin/activate" does not persist over cmds, see...
         https://github.com/valhuber/ubuntu-script-venv/blob/main/use-in-script.sh '''
 
-    docker_database_ip = 'localhost'
+    docker_database_ip = '10.0.0.77'
     ''' for virtual machine access, set this to host IP '''
 

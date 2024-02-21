@@ -49,10 +49,9 @@ class Config:
     #   platform specific
     # ***********************
 
-    set_venv = 'source ${install_api_logic_server_path}/venv/bin/activate'
-    '''typical source "venv/bin/activate" does not persist over cmds, see...
-        https://github.com/valhuber/ubuntu-script-venv/blob/main/use-in-script.sh '''
+    set_venv = "${install_api_logic_server_path}\\venv\\Scripts\\activate"
+    '''double slashes... '''
 
-    docker_database_ip = 'localhost'
+    docker_database_ip = '10.0.0.77'
     ''' for virtual machine access, set this to host IP '''
 
