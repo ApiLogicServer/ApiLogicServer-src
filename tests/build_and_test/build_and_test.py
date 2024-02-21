@@ -693,12 +693,13 @@ set_venv = set_venv.replace("${install_api_logic_server_path}", str(install_api_
 db_ip = Config.docker_database_ip
 """ in docker, we cannot connect on localhost - must use the ip """
 
-print(f"\n\n{__file__} 1.2 running")
+print(f"\n\n{__file__} 10.03.01 running")
 print(f'  Builds / Installs API Logic Server to install_api_logic_server_path: {install_api_logic_server_path}')
 print(f'  Creates Sample project (nw), starts server and runs (many) Behave Tests')
+print(f'  Kafka tests (mac only, per networking)')
 print(f'  Rebuild tests')
 print(f'  Creates other projects')
-print(f'  Creates Docker projects (wip)')
+print(f'  Creates Docker projects ')
 print('\n')
 
 if not os.path.isdir(install_api_logic_server_path):
