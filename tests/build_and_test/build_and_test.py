@@ -38,7 +38,7 @@ def find_valid_python_name() -> str:
         else:
             return "python"
     elif find_by == "os":
-        if platform == "darwin":
+        if platform in ["darwin", "linux"]:
             return 'python3'
         else:
             return 'python'
