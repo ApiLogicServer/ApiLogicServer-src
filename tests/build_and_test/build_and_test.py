@@ -733,6 +733,8 @@ if Config.do_install_api_logic_server:  # verify the build process - rebuild, an
     result_install = run_command(f'{python} -m venv venv && {set_venv} && {python} -m pip install {str(api_logic_server_home_path)}',
         cwd=install_api_logic_server_path,
         msg=f'\nInstall ApiLogicServer at: {str(install_api_logic_server_path)}')
+    assert result_install.returncode == 0, f'Install failed with {result_install}'
+
 
     # delete_build_directories(install_api_logic_server_path)
 
