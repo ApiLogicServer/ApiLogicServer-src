@@ -736,6 +736,8 @@ if Config.do_install_api_logic_server:  # verify the build process - rebuild, an
 
     # delete_build_directories(install_api_logic_server_path)
 
+    # at this point, b&t contains venv and docker
+
     if Config.do_logicbank_test != "":
         test_py = f"python -m pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple logicbank=={Config.do_logicbank_test}"
         rule_bank_test = run_command(
