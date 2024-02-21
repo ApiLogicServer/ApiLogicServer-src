@@ -18,8 +18,10 @@ class Config:
     do_run_api_logic_project = default_setting      # start the server 
     do_test_api_logic_project = default_setting     # run the behave tests (test logic, api)
 
-    do_run_shipping = default_setting               # run shipping to listen to kafka (might run manually)
+    do_create_shipping = default_setting            # run shipping to listen to kafka (might run manually)
+    do_run_shipping = False               # run shipping to listen to kafka (might run manually)
     do_run_nw_kafka = default_setting               # run default project, *with* kafka
+    do_test_nw_kafka = default_setting
 
     do_rebuild_tests = default_setting              # rebuild from model, allembic
 
