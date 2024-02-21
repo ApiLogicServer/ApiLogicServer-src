@@ -2,10 +2,11 @@ from integration.system.RowDictMapper import RowDictMapper
 from database import models
 from flask import request, jsonify
 from sqlalchemy import Column
+from logic_bank.exec_row_logic.logic_row import LogicRow
 
 class OrderById(RowDictMapper):
     
-    def __init__(self):
+    def __init__(self, logic_row: LogicRow = None):
         """ Illustrates poor API definition.
 
         Undesirable that client must provide SalesRepId and ProductId.

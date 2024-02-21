@@ -356,7 +356,12 @@ class Args():
         """ kafka connect string """
         if "KAFKA_PRODUCER" in self.flask_app.config:
             if self.flask_app.config["KAFKA_PRODUCER"] is not None:
-                return json.loads(self.flask_app.config["KAFKA_PRODUCER"])
+                value = self.flask_app.config["KAFKA_PRODUCER"]
+                if isinstance(value, dict):
+                    pass  # eg, from VSCode Run Config: "APILOGICPROJECT_KAFKA_PRODUCER": "{\"bootstrap.servers\": \"localhost:9092\"}",
+                else:
+                    value = json.loads(self.flask_app.config["KAFKA_PRODUCER"])
+                return value
         return None
     
     @kafka_producer.setter

@@ -10,11 +10,13 @@ from typing import Any, Optional, Tuple
 from sqlalchemy.orm import object_mapper
 from typing_extensions import Self  # from typing import Self  # requires python 3.11
 import logging
+from logic_bank.exec_row_logic.logic_row import LogicRow
 
 logger = logging.getLogger('integration.kafka')
 
+# version 1.1
 
-def json_to_entities(from_row: str or object, to_row):
+def json_to_entities(from_row: str | object, to_row):
     """
     Transform json object to SQLAlchemy rows, for save & logic
 
@@ -113,6 +115,7 @@ class RowDictMapper():
 
     def __init__(self
             , model_class: type[DefaultMeta] | None
+            , logic_row: LogicRow = None 
             , alias: str = ""
             , role_name: str = ""
             , fields: list[tuple[Column, str] | Column] = []
@@ -181,7 +184,12 @@ class RowDictMapper():
         row_as_dict = {}
         for each_field in custom_endpoint.fields:
             if isinstance(each_field, tuple):
-                row_as_dict[each_field[1]] = getattr(row, each_field[0].name)
+                value = "unknown"
+                if isinstance(each_field[0], sqlalchemy.orm.attributes.InstrumentedAttribute):
+                    value = getattr(row, each_field[0].name)
+                else:
+                    value = each_field[0]
+                row_as_dict[each_field[1]] = value
             else:
                 if isinstance(each_field, str):
                     logger.info("Coding error - you need to use TUPLE for attr/alias")

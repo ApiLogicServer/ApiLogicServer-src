@@ -6,7 +6,7 @@ Listen/consume Kafka topis, if KAFKA_CONSUMER specified in Config.py
 Alter this file to add handlers for consuming kafka topics
 """
 
-from api_logic_server_cli.prototypes.shipping.config.config import Args
+from config.config import Args
 from confluent_kafka import Producer, KafkaException, Consumer
 import signal
 import logging
@@ -71,7 +71,7 @@ def kafka_consumer(safrs_api: safrs.SAFRSAPI = None):
         message_data = msg.value().decode("utf-8")
         message_id = msg.key()
         msg_dict = json.loads(message_data)
-        order_dict = msg_dict['order']
+        order_dict = msg_dict['Order']  # Class name of producer object
         logger.debug(f' * Processing message - id: {message_id} msg_dict: {str(order_dict)}')
 
         with safrs_api.app.app_context():

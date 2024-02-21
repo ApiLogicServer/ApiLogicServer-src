@@ -3,10 +3,11 @@ from database import models
 from database.models import Employee
 from flask import request, jsonify
 from sqlalchemy import Column
+from logic_bank.exec_row_logic.logic_row import LogicRow
 
 class OrderB2B(RowDictMapper):
 
-    def __init__(self):
+    def __init__(self, logic_row: LogicRow = None):
         """
         RowDictMapper: Declares API format enabling B2B partners to POST Orders.
 

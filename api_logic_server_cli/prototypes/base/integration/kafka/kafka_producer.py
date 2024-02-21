@@ -1,5 +1,7 @@
 """
 
+Version 1.1
+
 Invoked at server start (api_logic_server_run.py)
 
 Connect to Kafka, if KAFKA_CONNECT specified in Config.py
@@ -46,7 +48,8 @@ def kafka_producer():
 
 
 def send_kafka_message(logic_row: LogicRow, row_dict_mapper: RowDictMapper, 
-                       kafka_topic: str, kafka_key: str, msg: str=""):
+                       kafka_topic: str, kafka_key: str, msg: str="",
+                       json_root_name: str = ""):
     """ Send Kafka message regarding logic_row, mapped by row_dict_mapper
 
     * Typically called from declare_logic event
@@ -57,9 +60,13 @@ def send_kafka_message(logic_row: LogicRow, row_dict_mapper: RowDictMapper,
         kafka_topic (str): the kafka topic
         kafka_key (str): the kafka key
         msg (str, optional): string to log
+        json_root_name (str, optional): json name for json payload root; default is logic_row.name
     """
-    row_obj_dict = row_dict_mapper().row_to_dict(row = logic_row.row)
-    json_string = jsonify({f'{logic_row.name}': row_obj_dict}).data.decode('utf-8')
+    row_obj_dict = row_dict_mapper(logic_row=logic_row).row_to_dict(row = logic_row.row)
+    root_name = json_root_name
+    if root_name == "":
+        root_name = logic_row.name
+    json_string = jsonify({f'{root_name}': row_obj_dict}).data.decode('utf-8')
     if producer:  # enabled in config/config.py?
         try:
             producer.produce(value=json_string, topic="order_shipping", key=kafka_key)

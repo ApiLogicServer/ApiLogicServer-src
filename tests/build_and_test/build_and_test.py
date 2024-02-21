@@ -122,8 +122,8 @@ def recursive_overwrite(src: Path, dest: Path, ignore=None):
     else:
         shutil.copyfile(src, dest)
 
-def stop_server(msg: str):
-    URL = "http://localhost:5656/stop"
+def stop_server(msg: str, port: str='5656'):
+    URL = f"http://localhost:{port}/stop"
     PARAMS = {'msg': msg}
     try:
         r = requests.get(url = URL, params = PARAMS)
@@ -200,7 +200,7 @@ def run_command(cmd: str, msg: str = "", new_line: bool=False,
         raise
     return result
 
-def start_api_logic_server(project_name: str, env_list = None):
+def start_api_logic_server(project_name: str, env_list = None, port: str='5656'):
     """ start server at path [with env], and wait a few moments """
     import stat
 
@@ -228,13 +228,13 @@ def start_api_logic_server(project_name: str, env_list = None):
         # what = pipe.stderr.readline()
         raise
     print(f'\n.. Server started - server: {project_name}\n')
-    print("\n.. Waiting for server to start...")
+    URL = f"http://localhost:{port}/hello_world?user=ApiLogicServer"
+    print(f"\n.. Waiting for server to start for: {URL}")
     time.sleep(10) 
 
-    URL = "http://localhost:5656/hello_world?user=ApiLogicServer"
     try:
-        r = requests.get(url = URL)
         print("\n.. Proceeding...\n")
+        r = requests.get(url = URL)
     except:
         print(f".. Ping failed on {project_name}")
         raise
@@ -461,7 +461,7 @@ def docker_creation_tests(api_logic_server_tests_path):
 def validate_nw(api_logic_server_install_path, set_venv):
     """
     With NW open, verifies:
-    * Behave test
+    * Behave test (many self-test transactions, creating behave logs for report)
     * get_cats RPC
     """
 
@@ -528,9 +528,38 @@ def validate_nw(api_logic_server_install_path, set_venv):
             rtn_code = result_behave.returncode
         exit(rtn_code)
 
-    
     print("\nBehave tests & report - Success...\n")
 
+def validate_nw_with_kafka(api_logic_server_install_path, set_venv):
+    """
+    With NW open, verifies:
+    * create sample order, ensure seen in shipping
+    """
+
+    scenario_name = 'Good Order Custom Service'
+    add_order_uri = f'http://localhost:5656/api/ServicesEndPoint/OrderB2B'
+    add_order_args = {
+        "meta": {"args": {"order": {
+            "AccountId": "ALFKI",
+            "Surname": "Buchanan",
+            "Given": "Steven",
+            "Items": [
+                {
+                "ProductName": "Chai",
+                "QuantityOrdered": 1
+                },
+                {
+                "ProductName": "Chang",
+                "QuantityOrdered": 2
+                }
+                ]
+            }
+        }}}
+    r = requests.post(url=add_order_uri, json=add_order_args) # , headers=test_utils.login())
+    if r.status_code > 300:
+        print(str(r.content))
+        status_code = r.status_code
+        raise Exception(f'POST B2BOrder failed - status_code = {status_code}, with response text {r.text}')
 
 def validate_opt_locking():
     """
@@ -666,7 +695,7 @@ db_ip = Config.docker_database_ip
 
 print(f"\n\n{__file__} 1.2 running")
 print(f'  Builds / Installs API Logic Server to install_api_logic_server_path: {install_api_logic_server_path}')
-print(f'  Creates Sample project (nw), starts server and runs Behave Tests')
+print(f'  Creates Sample project (nw), starts server and runs (many) Behave Tests')
 print(f'  Rebuild tests')
 print(f'  Creates other projects')
 print(f'  Creates Docker projects (wip)')
@@ -721,7 +750,13 @@ if len(sys.argv) > 1 and sys.argv[1] == 'build-only':
     print("\nBuild/Install successful\n\n")
     exit (0)
 
-if Config.do_create_api_logic_project:
+
+# ***************************
+#     NORTHWIND TESTS
+# ***************************
+
+
+if Config.do_create_api_logic_project:  # nw+ (with logic)
     result_create = run_command(f'{set_venv} && ApiLogicServer create --project_name=ApiLogicProject --db_url=nw+',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate ApiLogicProject at: {str(install_api_logic_server_path)}')
@@ -731,11 +766,41 @@ if Config.do_create_api_logic_project:
 
 if Config.do_run_api_logic_project:  # so you can start and set breakpoint, then run tests
     start_api_logic_server(project_name="ApiLogicProject")
-    
+
 if Config.do_test_api_logic_project:
     validate_opt_locking()
     validate_nw(install_api_logic_server_path, set_venv)
     stop_server(msg="*** NW TESTS COMPLETE ***\n")
+
+
+if Config.do_create_shipping:  # optionally, start it manually (eg, with breakpoints)
+    result_create = run_command(f'{set_venv} && ApiLogicServer create --project_name=Shipping --db_url=shipping',
+        cwd=install_api_logic_server_path,
+        msg=f'\nCreate Shipping at: {str(install_api_logic_server_path)}')
+if Config.do_run_shipping:
+    """ FIXME Failing when run here, but works if manually run in VSC/Debugger (?)
+      File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/Shipping/integration/system/FlaskKafka.py", line 66, in _start
+    consumer.subscribe(topics=list(topics))
+cimpl.KafkaException: KafkaError{code=_INVALID_ARG,val=-186,str="Failed to set subscription: Local: Invalid argument or configuration"}
+    """
+    on_ports = [("APILOGICPROJECT_PORT", "5757"),
+                ("APILOGICPROJECT_SWAGGER_PORT", "5757"),
+                ("VERBOSE", "True")]    
+    start_api_logic_server(project_name="Shipping", env_list=on_ports, port='5757')
+    pass  # http://localhost:5757/stop
+
+if Config.do_run_nw_kafka:  # so you can start and set breakpoint, then run tests
+    with_kafka = [("APILOGICPROJECT_KAFKA_PRODUCER", "{\"bootstrap.servers\": \"localhost:9092\"}")]    
+    start_api_logic_server(project_name="ApiLogicProject", env_list=with_kafka)
+if Config.do_test_nw_kafka:
+    validate_nw_with_kafka(install_api_logic_server_path, set_venv)
+
+if Config.do_run_shipping:
+    stop_server(msg="*** KAFKA Shipping COMPLETE ***\n", port='5757')
+if Config.do_run_nw_kafka:
+    stop_server(msg="*** KAFKA ApiLogicProject COMPLETE ***\n")
+
+
 
 if Config.do_multi_database_test:
     multi_database_tests()
@@ -897,10 +962,12 @@ if Config.do_docker_creation_tests:
 
 print("\n\nSUCCESS -- END OF TESTS")
 
+print('\n\n Run & verify >1 Order: cd ../../../../build_and_test/ApiLogicServer/Shipping\n\n')
+
 print(f"\n\nRelease {api_logic_server_version}?\n")
 print(f'cd {str(get_api_logic_server_path())}')
 print(f"{python} setup.py sdist bdist_wheel")
-print(f"{python} -m twine upload  --skip-existing dist/* ")
+print(f"{python} -m twine upload  --skip-existing dist/* \n")
 
 # print(f"\n\nUse this build?")
 # print(f"..  Settings > venv path >  {str(install_api_logic_server_path)}\n")

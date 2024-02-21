@@ -10,6 +10,7 @@ from confluent_kafka import Producer, KafkaException, Consumer
 ####
 
 logger = logging.getLogger('integration.kafka')
+__version__ = "1.01"
 
 class FlaskKafka():
     def __init__(self, interrupt_event: object, conf: dict, safrs_api: object, **kw):
@@ -23,6 +24,7 @@ class FlaskKafka():
     def _add_handler(self, topic, handler):
         if self.handlers.get(topic) is None:
             self.handlers[topic] = []
+        logger.debug(f"FlaskKafka._add_handler - topic: {topic}, handler: {handler}")
         self.handlers[topic].append(handler)
 
     def handle(self, topic):
@@ -58,13 +60,13 @@ class FlaskKafka():
 
         # thanks: https://www.reddit.com/r/learnpython/comments/gfg97m/how_do_i_run_a_function_every_5_seconds_inside_a/
 
-        logger.info(" - KafkaConnect._start: begin polling")
-        consumer = Consumer(self.conf)
         topics = self.handlers.keys()
+        logger.info(f" - FlaskKafka._start: begin polling (v {__version__}), with \n -- conf: {self.conf} \n -- topics: {topics}")
+        consumer = Consumer(self.conf)
         consumer.subscribe(topics=list(topics))
         while True:
             msg = consumer.poll(1.0)
-            logger.debug(f' - KafkaConnect._start - consuming: {msg}')
+            logger.debug(f' - KafkaConnect._start - consuming consumer.poll(1.0): {msg}')
             if msg is None:
                 continue
             if msg.error():

@@ -116,7 +116,7 @@ def declare_logic():
 
         Format row per shipping requirements, and send (e.g., a message)
 
-        NB: the after_flush event makes Order.Id avaible.  Contrast to congratulate_sales_rep().
+        NB: the after_flush event makes Order.Id available.  Contrast to congratulate_sales_rep().
 
         Args:
             row (models.Order): inserted Order
