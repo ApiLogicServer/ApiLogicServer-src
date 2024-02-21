@@ -694,7 +694,11 @@ db_ip = Config.docker_database_ip
 """ in docker, we cannot connect on localhost - must use the ip """
 
 print(f"\n\n{__file__} 10.03.01 running")
-print(f'  Builds / Installs API Logic Server to install_api_logic_server_path: {install_api_logic_server_path}')
+print(f'  Builds / Installs API Logic Server, to...')
+print(f'  ..install_api_logic_server_path: {install_api_logic_server_path}')
+print(f'  .. .. will contain: projects, docker, install -- venv')
+# print(f'  ..api_logic_project_path:        {api_logic_project_path}')
+print(f'  ..api_logic_server_tests_path:   {api_logic_server_tests_path}\n')
 print(f'  Creates Sample project (nw), starts server and runs (many) Behave Tests')
 print(f'  Kafka tests (mac only, per networking)')
 print(f'  Rebuild tests')
