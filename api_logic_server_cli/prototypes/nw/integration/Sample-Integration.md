@@ -1,105 +1,52 @@
 ---
 title: Declarative Application Integration
-notes: pip
-version: 0.01 from pip
+version: 10.3.0 from install
 ---
 
 # Purpose
 
-Coming Soon -- see preview.
+**System Requirements**
 
-## System Requirements
+This app illustrates using IntegrationServices for B2B push-style integrations with APIs, and internal integration with messages.  We have the following **Use Cases:**
 
-This app illustrates using IntegrationServices for B2B integrations with APIs, and internal integration with messages.
+1. **Ad Hoc Requests** for information (Sales, Accounting) that cannot be anticipated in advance.
 
-We have the following **Use Cases:**
-
-I. **Ad Hoc Requests** for information (Sales, Accounting) that cannot be anticipated in advance.
-
-II. 2 **Two Transaction Sources:**
-
-1. Order Entry UI for internal users
-2. B2B partners post `OrderB2B` APIs in an agreed-upon format
+2. **Two Transaction Sources:** A) internal Order Entry UI, and B) B2B partner `OrderB2B` API
 
 The **Northwind API Logic Server** provides APIs *and logic* for both transaction sources:
 
-1. **Self-Serve APIs**, to support
+1. **Self-Serve APIs**, to support ad hoc integration and UI dev, providing security (e.g, customers see only their account)
 
-    1. Ad hoc Integration Requests
-    2. UI developers to build the Order Entry UI
-
-2. **Order Logic:** shared over both transaction sources, this logic
-
-    1. Enforces database integrity (checks credit, reorders products)
-    2. Provides Application Integration (alert shipping with a formatted Kafka message)
+2. **Order Logic:** enforcing database integrity and application Integration (alert shipping)
 
 3. A **Custom API**, to match an agreed-upon format for B2B partners
 
-The **Shipping API Logic Server** listens on kafka, and processes the message.
+The **Shipping API Logic Server** listens on kafka, and processes the message.<br><br>
 
 ![overview](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/overview.jpg?raw=true)
 &nbsp;
 
-## Architecture Requirements
+**Self-serve APIs, Shared Logic**
 
-| Requirement | Poor Practice | Good Practice | Best Practice |
-| :--- |:---|:---|:---|
-| **Ad Hoc Integration** | ETL | APIs | **Automated** Self-Serve APIs |
-| **UI App Dev** | Custom API Dev  | Self-Serve APIs | **Automated** Self-Serve APIs<br>**Automated Admin App** <br>.. (where applicable) |
-| **Logic** | Logic in UI | Reusable Logic | **Declarative Business Rules**<br>.. extensible with Python |
-| **Custom Integration** | | Custom APIs | Reusable integration services |
+This sample illustrates some key architectural considerations:
 
-&nbsp;
+| Requirement | Poor Practice | Good Practice | Best Practice | Ideal
+| :--- |:---|:---|:---|:---|
+| **Ad Hoc Integration** | ETL | APIs | **Self-Serve APIs** |  **Automated** Self-Serve APIs |
+| **Logic** | Logic in UI | | **Reusable Logic** | **Declarative Rules**<br>.. Extensible with Python |
+| **Messages** | | | Kafka | **Kafka Logic Integration** |
 
-### Ad Hoc Integration (vs. ETL)
+We'll further expand of these topics as we build the system, but we note some Best Practices:
 
-It would be undesirable to require custom API development for ad integration: the inevitable series of requirements that do not stipulate an API contract.  So, our system should support **self-serve** APIs in addition to custom APIs.
+* **APIs should be self-serve:** not requiring continuing server development
 
-Unlike Custom APIs which require server development, **Self-Serve APIs can be used directly by consumers to retrieve the attributes and related data they require.**  API consumers include:
+    * APIs avoid the overhead of nightly Extract, Transfer and Load (ETL)
 
-* UI Developers - progress no longer blocked on custom server development
+* **Logic should be re-used** over the UI and API transaction sources
 
-* Ad Hoc Integration - remote customers and organizations (Accounting, Sales) can similarly meet their own needs
+    * Logic in UI controls is undesirable, since it cannot be shared with APIs and messages
 
-&nbsp;
-
-> **Avoid ETL:** Tradtional internal integration often involves ETL - Extract, Transfer and Load.  That is, each requesting system runs nightly programs to Extract the needed data, Transfer it to their location, and Load it for local access the next day.  This requires app dev for the extract, considerable bandwidth - all to see stale data.<br><br>In many cases, this might be simply to lookup a client's address.  For such requests, self-serve APIs can avoid ETL overhead, and provide current data.
-
-&nbsp;
-
-### UI App Dev on self-serve APIs
-
-UI apps depend, of course, on APIs.  While these can be custom, the sheer number of such requests places a burden on the server team.  As for ad hoc integrations, a better approach is self-serve APIs.
-
-In many systems, basic *"Admin"* UI apps can be automated, to address requirements when the UI needs are minimal.
-
-&nbsp;
-
-### Logic: Shared, Declarative
-
-A proper architecture must consider where to place business logic (check credit, reorder products).  Such multi-table logic often consitutes nearly half the development effort.
-
-> A poor practice is to place such logic on UI controller buttons.  It can be difficult or impossible to share this with the OrderB2B service, leading to duplication of efforts and inconsistency.
-
-*Shared* logic is thus a requirement, to avoid duplication and ensure consistent results.  Ideally, such logic is declarative: much more concise, and automatically enforced, ordered and optimized.
-
-&nbsp;
-
-### Reusable Integration Services
-
-Custom integrations require attribute map / alias services to transform data from remote formats to match our system objects.  In the sample here, this is required to transform incoming B2B APIs, and outgoing message publishing.
-
-Ideally, our architecture can extract Integration Services for reuse, including attribute map / alias services, Lookups, and Cascade Add.  Details below.
-
-&nbsp;
-
-### Messaging
-
-Note the integration to Shipping is via message, not APIs.  While both APIs and messages may can send data, there is an important difference:
-
-* APIs are **synchronous**: if the remote server is down, the message fails.
-
-* Messages are **async**: systems such as Kafka ensure that messages are delivered *eventually*, when the remote server is brought back online.
+This sample was developed with API Logic Server - [open source, available here](https://apilogicserver.github.io/Docs/).
 
 &nbsp;
 
@@ -107,19 +54,24 @@ Note the integration to Shipping is via message, not APIs.  While both APIs and 
 
 &nbsp;
 
-## 1. Automation: Instant Project
+## 1. Create: Instant Project
 
-This project was created with a command like:
+The command below creates an `ApiLogicProject` by reading your schema.  The database is Northwind (Customer, Orders, Items and Product), as shown in the Appendix.  Note: the `db_url` value is [an abbreviation](https://apilogicserver.github.io/Docs/Data-Model-Examples/); you would normally supply a SQLAlchemy URL.  
 
 ```bash
-$ ApiLogicServer create --project_name= db_url=nw-
+$ ApiLogicServer create --project_name=ApiLogicProject --db_url=nw-    # create ApiLogicProject
 ```
 
-> Note: the `db_url` value is [an abbreviation](https://apilogicserver.github.io/Docs/Data-Model-Examples/).  You would normally supply a SQLAlchemy URI.
+You can then open the project in your IDE, and run it.
 
-This creates a project by reading your schema.  The database is Northwind (Customer, Orders, Items and Product), as shown in the Appendix.  
 
-You can open with VSCode, and run it as follows:
+<details markdown>
+
+<summary> Show me how </summary>
+
+&nbsp;
+
+To run the ApiLogicProject app:
 
 1. **Create Virtual Environment:** as shown in the Appendix.
 
@@ -127,41 +79,57 @@ You can open with VSCode, and run it as follows:
 
 3. **Start the Admin App:** either use the links provided in the IDE console, or click [http://localhost:5656/](http://localhost:5656/).  The screen shown below should appear in your Browser.
 
-The sections below explore the system that has been created (which would be similar for your own database).
+</details>
+
+One command has created meaningful elements of our system:
 <br><br>
 
-!!! pied-piper ":bulb: Automation: Instant API, Admin App (enable UI dev, agile collaboration)"
+!!! pied-piper ":bulb: Instant Self-Serve API - ad hoc integration - and Admin App"
 
-    ### a. Self-Serve API, Swagger
+    ### API: Ad hoc Integration
 
-    The system creates an API with end points for each table, with filtering, sorting, pagination, optimistic locking and related data access -- **[self-serve](https://apilogicserver.github.io/Docs/API-Self-Serve/), ready for ad hoc integration custom app dev.**
+    The system creates an API with end points for each table, providing filtering, sorting, pagination, optimistic locking and related data access.
+    
+    The API is [**self-serve**](https://apilogicserver.github.io/Docs/API-Self-Serve/): consumers can select their own attributes and related data, eliminating reliance on custom API development.  In this sample, our self-serve API meets our needs for Ad Hoc Integration, and Custom UI Dev.
 
     <img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/api-swagger.jpeg?raw=true">
 
-    ### b. Admin App
+    ### Admin App: Order Entry UI
 
-    It also creates an Admin App: multi-page, multi-table -- ready for **[business user agile collaboration](https://apilogicserver.github.io/Docs/Tech-AI/),** and back office data maintenance.  This complements custom UIs created with the API.
+    The `create` command also creates an Admin App: multi-page, multi-table with automatic joins -- ready for **[business user agile collaboration](https://apilogicserver.github.io/Docs/Tech-AI/),** and back office data maintenance.  This complements custom UIs you can create with the API.
 
-    You can click Customer 2, and see their Orders, and Items.
+    You can click the first Customer, and see their Orders, and Items.
 
     <img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/admin-app-initial.jpeg?raw=true">
 
+    !!! pied-piper ":bulb: 1 Command: Ad Hoc Integration Complete"
+
+        With 1 command, we have created an executable project that completes our ad hoc integration with a self-serve API.  We have also unblocked custom UI development.
+
 &nbsp;
 
-## 2. Customize in your IDE
+## 2. Customize: in your IDE
 
-While API/UI automation is a great start, we now require Custom APIs, Logic and Security.  Here's how.
+While API/UI automation is a great start, we now require Custom APIs, Logic and Security.
 
-The following `apply_customizations` process simulates:
+You normally apply such customizations using your IDE, leveraging code completion, etc.  To accelerate this sample, you can apply the customizations with `ApiLogicServer add-cust`.   We'll review the customizations below.
+
+<details markdown>
+
+<summary> Show me how -- apply customizations, start Kafka </summary>
+
+&nbsp;
+
+The following `add-cust` process simulates:
 
 * Adding security to your project using a CLI command, and
 * Using your IDE to:
 
     * declare logic in `logic/declare_logic.sh`
     * declare security in `security/declare_security.py`
-    * implement custom APIs in `api/customize_api.py`, using <br>IntegrationServices declared in `integration/integration_services`
+    * implement custom APIs in `api/customize_api.py`, using <br>`OrderShipping` declared in `integration/row_dict_maps`
 
-> These are shown in the screenshots below.<br>It's quite short - 5 rules, 7 security settings, and 120 lines for application integration.
+> These customizations are shown in the screenshots below.
 
 To apply customizations, in a terminal window for your project:
 
@@ -173,17 +141,17 @@ To apply customizations, in a terminal window for your project:
 ApiLogicServer add-cust
 ```
 
-**3. Enable and Start Kafka:**
-
-&nbsp;
+**3. Enable and Start Kafka**
 
 <details markdown>
 
-<summary>Enable and Start Kafka</summary>
+<summary>Show me how</summary>
+
+&nbsp;
 
 To enable Kafka:
 
-1. In `config.py`, find and comment out: `KAFKA_CONNECT = None  # comment out to enable Kafka`
+1. In `conf/config.py`, find and comment out: `KAFKA_PRODUCER = None  # comment out to enable Kafka`
 
 2. Update your `etc/conf` to include the lines shown below (e.g., `sudo nano /etc/hosts`).
 
@@ -207,147 +175,255 @@ To enable Kafka:
 127.0.0.1 kubernetes.docker.internal
 # End of section
 ```
-3. Start Kafks: in a terminal window: `docker compose -f integration/kafka/docker_compose_start_kafka up`
+3. If you already created the container, you can
+
+    1. Start it in the Docker Desktop, and
+    2. **Skip the next 2 steps;** otherwise...
+
+4. Start Kafka: in a terminal window: `docker compose -f integration/kafka/dockercompose_start_kafka.yml up`
+
+5. Create topic: in Docker: `kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 3  --topic order_shipping`
+
+Here some useful Kafka commands:
+
+```bash
+# use Docker Desktop > exec, or docker exec -it broker1 bash 
+# in docker terminal: set prompt, delete, create, monnitor topic, list all topics
+# to clear topic, delete and create
+
+PS1="kafka > "  # set prompt
+
+kafka-topics.sh --bootstrap-server localhost:9092 --topic order_shipping --delete
+
+kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 3  --topic order_shipping
+
+kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic order_shipping --from-beginning
+
+kafka-topics.sh --bootstrap-server localhost:9092 --list
+```
 
 </details>
 
-### Declare Security
+&nbsp;
 
-The `apply_customizations` process above has simulated the `ApiLogicServer add-auth` command, and using your IDE to declare security in `logic/declare_security.sh`.
+**4. Restart the server, login as `admin`**
 
-To see security in action:
+</details>
 
-**1. Start the Server**  F5
+### Declare UI Customizations
 
-**2. Start the Admin App:** [http://localhost:5656/](http://localhost:5656/)
+The admin app is not built with complex html and javascript.  Instead, it is configured with the ui/admin/admin.yml`, automatically created from your data model by `ApiLogicServer create`.
 
-**3. Login** as `s1`, password `p`
+You can customize this file in your IDE to control which fields are shown (including joins), hide/show conditions, help text etc.  The `add-cust` process above has simulated such customizations.
 
-**4. Click Customers**
+To see customized Admin app in action, with the restarted server:
+
+**1. Start the Admin App:** [http://localhost:5656/](http://localhost:5656/)
+
+**2. Login** as `s1`, password `p`
+
+**3. Click Customers**
 
 &nbsp;
 
-!!! pied-piper ":bulb: Security: Authentication, Role-based Filtering, Logging"
+This makes it convenient to use the Admin App to enter an Order and OrderDetails:
 
-    #### 1. Login now required
+<img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/order-entry-ui.jpg?raw=true">
 
-    #### 2. Role-Based Filtering
 
-    Observe you now see fewer customers, since user `s1` has role `sales`.  This role has a declared filter, as shown in the screenshot below.
-
-    #### 3. Transparent Logging
-
-    The screenhot below illustrates security declaration and operation:
-
-    * The declarative Grants in the upper code panel, and
-
-    *  The logging in the lower panel, to assist in debugging by showing which Grants (`+ Grant:`) are applied:
-
-    <img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/security-filters.jpeg?raw=true">
+Note the automation for **automatic joins** (Product Name, not ProductId) and **lookups** (select from a list of Products to obtain the foreign key).  If we attempt to order too much Chai, the transaction properly fails due to the Check Credit logic, described below.
 
 &nbsp;
 
-### Declare Logic
+### Declare Check Credit Logic
 
 Such logic (multi-table derivations and constraints) is a significant portion of a system, typically nearly half.  API Logic server provides **spreadsheet-like rules** that dramatically simplify and accelerate logic development.
 
-Rules are declared in Python, simplified with IDE code completion.  The screen below shows the 5 rules for our **Check Credit Logic** noted in the initial diagram.
-
-The `apply_customizations` process above has simulated the process of using your IDE to declare logic in `logic/declare_logic.sh`.
-
-To see logic in action:
-
-**1. In the admin app, Logout (upper right), and login as admin, p**
-
-**2. Use the Admin App to add an Order and Item for `Customer 1`** (see Appendix), where the rollup of Item Amount to the Order exceed the credit limit.
-
-Observe the rules firing in the console log, as shown in the next screenshot.
-
-Logic provides significant improvements over procedural logic, as described below.
-
-&nbsp;
-
 !!! pied-piper ":bulb: Logic: Multi-table Derivation and Constraint Rules, 40X More Concise"
 
-    #### a. Complexity Scaling
+    #### IDE: Declare and Debug
 
-    The screenshot below shows our logic declarations, and the logging for inserting an `Item`.  Each line represents a rule firing, and shows the complete state of the row.
+    The 5 check credit rules are shown below.  
 
-    Note that it's a `Multi-Table Transaction`, as indicated by the indentation.  This is because - like a spreadsheet - **rules automatically chain, *including across tables.***
+    !!! pied-piper ":bulb: Rules are 40X More Concise Than Code"
+    
+        Rules are 40X more concise than legacy code, as [shown here](https://github.com/valhuber/LogicBank/wiki/by-code){:target="_blank" rel="noopener"}.
+    
+    Rules are declared in Python, simplified with IDE code completion.  The `add-cust` process above has simulated the process of using your IDE to declare logic.
+    
+    Observe rules can be debugged using standard logging and the debugger:
 
     <img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/logic-chaining.jpeg?raw=true">
 
-    #### b. 40X More Concise
+    Rules operate by handling SQLAlchemy events, so apply to all ORM access, whether by the api engine, or your custom code.  Once declared, you don't need to remember to call them, which promotes quality.
 
-    The 5 spreadsheet-like rules represent the same logic as 200 lines of code, [shown here](https://github.com/valhuber/LogicBank/wiki/by-code).  That's a remarkable 40X decrease in the backend half of the system.
-    <br><br>
+    The rules shown above prevented the too-big order with *multi-table logic* to copy the Product Price, compute the Amount, roll it up to the AmountTotal and Balance, and check the CreditLimit.  
+    
+    These same rules also govern changing orders, deleting them, picking different parts - about 9 transactions, all automated.  Implementing all this by hand would otherwise require about 200 lines of code.<br><br>
+    
+    
+    #### Agility, Quality
 
-    #### c. Automatic Re-use
+    Rules are a unique and significant innovation, providing meaningful improvements over procedural logic:
 
-    The logic above, perhaps conceived for Place order, applies automatically to all transactions: deleting an order, changing items, moving an order to a new customer, etc.  This reduces code, and promotes quality (no missed corner cases).
-    <br><br>
+    | CHARACTERISTIC | PROCEDURAL | DECLARATIVE | WHY IT MATTERS |
+    | :--- |:---|:---|:---|
+    | **Reuse** | Not Automatic | Automatic - all Use Cases | **40X Code Reduction** |
+    | **Invocation** | Passive - only if called  | Active - call not required | Quality |
+    | **Ordering** | Manual | Automatic | Agile Maintenance |
+    | **Optimizations** |Manual | Automatic | Agile Design |
 
-    #### d. Automatic Optimizations
-
-    SQL overhead is minimized by pruning, and by elimination of expensive aggregate queries.  These can result in orders of magnitude impact.
-    <br><br>
-
-    #### e. Transparent
-
-    Rules are an executable design.  Note they map exactly to our natural language design (shown in comments) - readable by business users.  
-
-    Optionally, you can use the Behave TDD approach to define tests, and the Rules Report will show the rules that execute for each test.  For more information, [click here](https://apilogicserver.github.io/Docs/Behave-Logic-Report/).
-
-&nbsp;
-
-## 4. Iterate
-
-**1. Set the breakpoint as shown in the screenshot below**
-
-**2. Test: Start the Server, login as Admin**
-
-At the breakpoint, observe you can use standard debugger services to debug your logic (examine `Item` attributes, step, etc).
-
-<img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/logic-debugging.jpeg?raw=true">
+    > For more on rules, [click here](https://apilogicserver.github.io/Docs/Logic-Why/){:target="_blank" rel="noopener"}.
 
 &nbsp;
 
-This simple example illustrates some significant aspects of iteration, described in the sub-sections below.
+### Declare Security
 
-!!! pied-piper ":bulb: Iteration: Automatic Invocation/Ordering, Extensible, Rebuild Preserves Customizations"
+The `add-cust` process above has simulated the `ApiLogicServer add-auth` command, and using your IDE to declare security in `logic/declare_security.sh`.
 
-    ### a. Dependency Automation
+To see security in action:
 
-    Along with perhaps documentation, one of the tasks programmers most loathe is maintenance.  That's because it's not about writing code, but it's mainly archaeology - deciphering code someone else wrote, just so you can add 4 or 5 lines that will hopefully be called and function correctly.
+**1. Logout (upper right), and Login** as `AFLKI`, password `p`
 
-    Rules change that, since they **self-order their execution** (and pruning) based on system-discovered dependencies.  So, to alter logic, you just "drop a new rule in the bucket", and the system will ensure it's called in the proper order, and re-used over all the Use Cases to which it applies.  Maintenance is **faster, and higher quality.**
-    <br><br>
-
-    ### b. Extensibile with Python
-
-    In this case, we needed to do some if/else testing, and it was convenient to add a pinch of Python. Using "Python as a 4GL" is remarkably simple, even if you are new to Python.
-
-    Of course, you have the full object-oriented power of Python and its many libraries, so there are *no automation penalty* restrictions.  
-    <br>
-
-    ### c. Debugging: IDE, Logging
-
-    The screenshot above illustrates that debugging logic is what you'd expect: use your IDE's debugger.  This "standard-based" approach applies to other development activities, such as source code management, and container-based deployment.
-    <br><br>
-
-    ### d. Customizations Retained
-
-    Note we rebuilt the project from our altered database, illustrating we can **iterate, while *preserving customizations.***
+**2. Click Customer**
 
 &nbsp;
 
-## 4. Integration
+!!! pied-piper ":bulb: Row-Level Security: Customers Filtered"
 
-TODO: pre-supplied integration services
+    #### Login, Row Filtering
 
-![post order](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/post-orderb2b.jpg?raw=true)
+    Declarative row-level security ensures that users see only the rows authorized for their roles.  Observe you now see only customer ALFKI, per the security declared below.  Note the console log at the bottom shows how the filter worked.
+
+    <img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/security-filters.jpg?raw=true">
+
+&nbsp;
+
+## 3. Integrate: B2B and Shipping
+
+We now have a running system - an API, logic, security, and a UI.  Now we must integrate with:
+
+* B2B partners -- we'll create a **B2B Custom Resource**
+* OrderShipping -- we add logic to **Send an OrderShipping Message**
+
+&nbsp;
+
+### B2B Custom Resource
+
+The self-serve API does not conform to the format required for a B2B partnership.  We need to create a custom resource.
+
+You can create custom resources by editing `customize_api.py`, using standard Python, Flask and SQLAlchemy.  A custom `OrderB2B` resource is shown below.
+
+The main task here is to ***map*** a B2B payload onto our logic-enabled SQLAlchemy rows.  API Logic Server provides a declarative `ApplicationIntegration` service you can use as follows:
+
+1. Declare the mapping -- see the `OrderB2B` class in the lower pane
+
+    * Note the support for **lookup**, so partners can send ProductNames, not ProductIds
+
+2. Create the custom API endpoint -- see the upper pane:
+
+    * Add `def OrderB2B` to `customize_api/py` to create a new endpoint
+    * Use the `OrderB2B` class to transform a api request data to SQLAlchemy rows (`dict_to_row`)
+    * The automatic commit initiates the same shared logic described above to check credit and reorder products
+
+![dict to row](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/dict-to-row.jpg?raw=true)
+
+!!! pied-piper ":bulb: Custom Endpoint - 7 lines of code"
+
+    So, our custom endpoint required about 7 lines of code, along with the API specification on the right.  Note the logic is automatically factored out, and re-used for all APIs, both custom and self-serve.
+
+&nbsp;
+
+### Produce `OrderShipping` Message
+
+Successful orders need to be sent to Shipping, again in a predesignated format.
+
+We could certainly POST an API, but Messaging (here, Kafka) provides significant advantages:
+
+* **Async:** Our system will not be impacted if the Shipping system is down.  Kafka will save the message, and deliver it when Shipping is back up.
+* **Multi-cast:** We can send a message that multiple systems (e.g., Accounting) can consume.
+
+The content of the message is a JSON string, just like an API.
+
+Just as you can customize apis, you can complement rule-based logic using Python events:
+
+1. Declare the mapping -- see the `OrderShipping` class in the right pane.  This formats our Kafka message content in the format agreed upon with Shipping.
+
+2. Define a Python `after_flush` event, which invokes `send_order_to_shipping`.  This is called by the logic engine, which passes the SQLAlchemy `models.Order`` row.
+
+3. `send_order_to_shipping` uses the `OrderShipping` class, which maps our SQLAlchemy order row to a dict (`row_to_dict`).
 
 ![send order to shipping](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/order-to-shipping.jpg?raw=true)
+
+!!! pied-piper ":bulb: Extensible Rules, Kafka Message Produced"
+
+    Rule-based logic is extensible with Python, here producing a Kafka message with 20 lines of code.
+
+&nbsp;
+
+## 4. Consuming Messages
+
+The Shipping system illustrates how to consume messages.  This system was [created from AI](Tutorial-AI.md), here customized to add message consumption.
+
+&nbsp;
+
+### Create/Start Shipping
+
+To explore Shipping:
+
+**1. Create the Shipping Project:**
+
+```bash
+ApiLogicServer create --project_name=shipping --db_url=shipping
+```
+
+**2. Start your IDE (e.g., `code shipping`) and establish your `venv`**
+
+**3. Start the Shipping Server: F5** (it's configured to use a different port)
+
+&nbsp;
+
+### Consuming Logic
+
+To consume messages:
+
+**1. Enable Consumption**
+
+Shipping is pre-configured to enable message consumption with a setting in `conf/config.py`:
+
+```python
+KAFKA_CONSUMER = '{"bootstrap.servers": "localhost:9092", "group.id": "als-default-group1", "auto.offset.reset":"smallest"}'
+```
+
+When the server is started in `api_logic_server_run.py`, it invokes `integration/kafka/kafka_consumer.py#flask_consumer`.  This calls the pre-supplied `FlaskKafka`, which takes care of the Kafka listening, thread management, and the `handle` annotation used below.
+
+> `FlaskKafka` was inspired by the work of Nimrod (Kevin) Maina, in [this project](https://pypi.org/project/flask-kafka/).  Many thanks!
+
+&nbsp;
+
+**2. Configure a mapping**
+
+As we did for our OrderB2B Custom Resource, we configure an `OrderToShip` mapping class to map the message onto our SQLAlchemy Order object.
+
+&nbsp;
+
+**3. Provide a Message Handler**
+
+We provide the `order_shipping` handler in `integration/kafka/kafka_consumer.py`:
+
+1. Annotate the topic handler method, providing the topic name.
+
+    * This is used by `FlaskKafka` establish a Kafka listener
+
+2. Provide the topic handler code, leveraging the mapper noted above.  It is called by `Flaskkafka` per the method annotations.
+
+![process in shipping](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/kafka-consumer.jpg?raw=true)
+
+&nbsp;
+
+### Test it
+
+Use your IDE terminal window to simulate a business partner posting a B2BOrder.  You can set breakpoints in the code described above to explore system operation.
 
 ```bash
 ApiLogicServer curl "'POST' 'http://localhost:5656/api/ServicesEndPoint/OrderB2B'" --data '
@@ -369,26 +445,72 @@ ApiLogicServer curl "'POST' 'http://localhost:5656/api/ServicesEndPoint/OrderB2B
 }}}'
 ```
 
-
 &nbsp;
 
-## 5. Deploy Containers: Collaborate
+# Summary
 
-API Logic Server also creates scripts for deployment.  While these are ***not required at this demo,*** this means you can enable collaboration with Business Users:
+These applications have demonstrated several **types of application integration:**
 
-1. Create a container from your project -- see `devops/docker-image/build_image.sh`
-2. Upload to Docker Hub, and
-3. Deploy for agile collaboration.
+* **Ad Hoc Integration** via self-serve APIs
 
-&nbsp;
+* **Custom Integration** via custom APIs, to support business agreements with B2B partners
 
-# Status
+* **Message-Based Integration** to decouple internal systems by reducing dependencies that all systems must always be running
 
-12/02/2003 - runs, messaging is a TODO.
+
+We have also illustrated several technologies noted in the **Ideal** column:
+
+| Requirement | Poor Practice | Good Practice | Best Practice | **Ideal**
+| :--- |:---|:---|:---|:---|
+| **Ad Hoc Integration** | ETL | APIs | **Self-Serve APIs** |  **Automated** Self-Serve APIs |
+| **Logic** | Logic in UI | | **Reusable Logic** | **Declarative Rules**<br>.. Extensible with Python |
+| **Messages** | | | Kafka | **Kafka Logic Integration** |
+
+
+API Logic Server supports the **Ideal Practices** noted above: 
+
+1. **Automation:** instant ad hoc API (and Admin UI) with the `ApiLogicServer create` command
+
+2. **Declarative Rules** - security and multi-table logic, providing a 40X code reduction for backend half of these systems
+
+3. **Kafka Logic Integration**
+
+    * **Send** from logic events
+
+    * **Consume** by extending `kafka_consumer`
+
+    * Services, including:
+
+        * `Mapper` services to transform rows and dict
+
+        * `FlaskKafka` for Kafka listening, threading, and annotation invocation
+
+4. **Standards-based Customization:**
+
+    * Standard packages: Python, Flask, SQLAlchemy, Kafka...
+
+    * Using standard IDEs
+
+As a result, we built 2 non-trivial systems with a remarkably small amount of Python code:
+
+| Type | Code |
+| :--- |:--|
+| Custom B2B API | 10 lines |
+| Check Credit Logic | 5 rules |
+| Row Level Security | 1 security declaration |
+| Send Order to Shipping | 20 lines |
+| Process Order in Shipping | 30 lines |
+| Mapping configurations <br>to transform rows and dicts |  45 lines |
+
+For more information on API Logic Server, [click here](https://apilogicserver.github.io/Docs/).
 
 &nbsp;
 
 # Appendix
+
+## Status
+
+Tested on Mac
 
 ## Apendix: Customizations
 
@@ -439,7 +561,7 @@ For PyCharm, start the server with CTL-D, Stop with red stop button.
 
 To enter a new Order:
 
-1. Click `Customer 1``
+1. Click `ALFKI``
 
 2. Click `+ ADD NEW ORDER`
 
@@ -447,11 +569,11 @@ To enter a new Order:
 
 4. Click `+ ADD NEW ITEM`
 
-5. Enter Quantity 1, lookup "Product 1", and click `SAVE AND ADD ANOTHER`
+5. Enter Quantity 1, lookup "Chai", and click `SAVE AND ADD ANOTHER`
 
-6. Enter Quantity 2000, lookup "Product 2", and click `SAVE`
+6. Enter Quantity 2000, lookup "Chang", and click `SAVE`
 
-7. Observe the constraint error, triggered by rollups from the `Item` to the `Order` and `Customer`
+7. Observe the constraint error, triggered by rollups from the `OrderDetail` to the `Order` and `Customer`
 
 8. Correct the quantity to 2, and click `Save`
 
@@ -462,4 +584,4 @@ To explore our new logic for green products:
 
 1. Access the previous order, and `ADD NEW ITEM`
 
-2. Enter quantity 11, lookup product `Green`, and click `Save`.
+2. Enter quantity 11, lookup product `Chang`, and click `Save`.

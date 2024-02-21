@@ -790,15 +790,17 @@ cimpl.KafkaException: KafkaError{code=_INVALID_ARG,val=-186,str="Failed to set s
     pass  # http://localhost:5757/stop
 
 if Config.do_run_nw_kafka:  # so you can start and set breakpoint, then run tests
+    # same as config/default.env with: 
+    #               APILOGICPROJECT_KAFKA_PRODUCER = "{\"bootstrap.servers\": \"localhost:9092\"}"
     with_kafka = [("APILOGICPROJECT_KAFKA_PRODUCER", "{\"bootstrap.servers\": \"localhost:9092\"}")]    
     start_api_logic_server(project_name="ApiLogicProject", env_list=with_kafka)
 if Config.do_test_nw_kafka:
     validate_nw_with_kafka(install_api_logic_server_path, set_venv)
 
-if Config.do_run_shipping:
-    stop_server(msg="*** KAFKA Shipping COMPLETE ***\n", port='5757')
 if Config.do_run_nw_kafka:
     stop_server(msg="*** KAFKA ApiLogicProject COMPLETE ***\n")
+if Config.do_run_shipping:
+    stop_server(msg="*** KAFKA Shipping COMPLETE ***\n", port='5757')
 
 
 
@@ -962,7 +964,7 @@ if Config.do_docker_creation_tests:
 
 print("\n\nSUCCESS -- END OF TESTS")
 
-print('\n\n Run & verify >1 Order: cd ../../../../build_and_test/ApiLogicServer/Shipping\n\n')
+print('\n\n Run & verify >1 Order: pushd ../../../../build_and_test/ApiLogicServer/Shipping\n\n')
 
 print(f"\n\nRelease {api_logic_server_version}?\n")
 print(f'cd {str(get_api_logic_server_path())}')
