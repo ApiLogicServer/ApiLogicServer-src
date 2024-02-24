@@ -462,7 +462,7 @@ def validate_nw(api_logic_server_install_path, set_venv):
     """
     With NW open, verifies:
     * Behave test (many self-test transactions, creating behave logs for report)
-    * filters_cats, get_cats RPC
+    * get_cats RPC
     """
 
     get_uri = "http://localhost:5656/filters_cats"
@@ -688,8 +688,7 @@ api_logic_server_cli_path = get_api_logic_server_path().\
 with io.open(str(api_logic_server_cli_path), "rt", encoding="utf8") as f:
     api_logic_server_version = re.search(r"__version__ = \"(.*?)\"", f.read()).group(1)
 
-set_venv = Config.set_venv  # val: FIXME
-create_with_python = False
+set_venv = Config.set_venv
 set_venv = set_venv.replace("${install_api_logic_server_path}", str(install_api_logic_server_path))
 db_ip = Config.docker_database_ip
 """ in docker, we cannot connect on localhost - must use the ip """
@@ -726,48 +725,30 @@ if Config.do_install_api_logic_server:  # verify the build process - rebuild, an
     delete_dir(dir_path=str(install_api_logic_server_path), msg=f"delete install: {install_api_logic_server_path} ")
     delete_build_directories(install_api_logic_server_path)
 
-    if create_with_python:
-        api_logic_server_home_path = api_logic_server_tests_path.parent
-        result_build = run_command(f'{python} setup.py sdist bdist_wheel',
-            cwd=api_logic_server_home_path,
-            msg=f'\nBuild ApiLogicServer at: {str(api_logic_server_home_path)}')
-        
-        venv_cmd = f'{python} -m venv venv'    
-        result_venv = run_command(venv_cmd,
-            cwd=install_api_logic_server_path,
-            msg=f'\nInstall ApiLogicServer at: {str(install_api_logic_server_path)}')
-        assert result_venv.returncode == 0, f'Venv create failed with {result_venv}'
+    api_logic_server_home_path = api_logic_server_tests_path.parent
+    result_build = run_command(f'{python} setup.py sdist bdist_wheel',
+        cwd=api_logic_server_home_path,
+        msg=f'\nBuild ApiLogicServer at: {str(api_logic_server_home_path)}')
 
-        # now, we setup for Python in *that* venv
-        python = api_logic_server_home_path.joinpath('venv/bin/python')
-
-        install_cmd = f'{python} -m pip install {str(api_logic_server_home_path)}'    
-        result_install = run_command(install_cmd,
-            cwd=install_api_logic_server_path,
-            msg=f'\nInstall ApiLogicServer at: {str(install_api_logic_server_path)}')
-        assert result_install.returncode == 0, f'Install failed with {result_install}'
-    else:
-        install_cmd = 'sh build_install.sh'
-        result_install = run_command(install_cmd,
-            cwd=current_path,
-            msg=f'\nInstall ApiLogicServer at: {str(install_api_logic_server_path)}')
-        assert result_install.returncode == 0, f'Install failed with {result_install}'
-        pass
+    result_install = run_command(f'{python} -m venv venv && {set_venv} && {python} -m pip install {str(api_logic_server_home_path)}',
+        cwd=install_api_logic_server_path,
+        msg=f'\nInstall ApiLogicServer at: {str(install_api_logic_server_path)}')
+    assert result_install.returncode == 0, f'Install failed with {result_install}'
 
 
     # delete_build_directories(install_api_logic_server_path)
 
     # at this point, b&t contains venv and docker, src contains egg, build and dist
 
-    if Config.do_logicbank_test != "":  # install dev version of LogicBank
+    if Config.do_logicbank_test != "":
         test_py = f"python -m pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple logicbank=={Config.do_logicbank_test}"
         rule_bank_test = run_command(
             test_py,
             cwd=install_api_logic_server_path,
             msg=f'\nInstall testpy logicbank')
 
-    if platform in["win32", "linux"]:  # val: FIXME
-        print("mac only")  # https://github.com/mkleehammer/pyodbc/issues/1010
+    if platform == "win32":
+        print("not for windows")  # https://github.com/mkleehammer/pyodbc/issues/1010
     else:  # upgrade pyodbc==4.0.34 --> pyodbc==5.0.0
         result_pyodbc = run_command(
             f'{set_venv} && {python} -m pip install pyodbc==4.0.34',
@@ -785,22 +766,12 @@ if len(sys.argv) > 1 and sys.argv[1] == 'build-only':
 
 
 if Config.do_create_api_logic_project:  # nw+ (with logic)
-    if create_with_python:
-        result_create = run_command(f'{set_venv} && ApiLogicServer create --project_name=ApiLogicProject --db_url=nw+',
-            cwd=install_api_logic_server_path,
-            msg=f'\nCreate ApiLogicProject at: {str(install_api_logic_server_path)}')
-        assert result_create.returncode == 0, f'NW create failed with {result_create}'
-        result_create = run_command(f'{set_venv} && ApiLogicServer tutorial',
-            cwd=install_api_logic_server_path,
-            msg=f'\nCreate Tutorial at: {str(install_api_logic_server_path)}')
-    else:
-        create_cmd = 'sh create_project.sh ApiLogicProject nw+'
-        result_create = run_command(create_cmd,
-            cwd=current_path,
-            msg=f'\nCreating ApiLogicServer at: {str(install_api_logic_server_path)}')
-        assert result_create.returncode == 0, f'Install failed with {result_create}'
-        pass
-
+    result_create = run_command(f'{set_venv} && ApiLogicServer create --project_name=ApiLogicProject --db_url=nw+',
+        cwd=install_api_logic_server_path,
+        msg=f'\nCreate ApiLogicProject at: {str(install_api_logic_server_path)}')
+    result_create = run_command(f'{set_venv} && ApiLogicServer tutorial',
+        cwd=install_api_logic_server_path,
+        msg=f'\nCreate Tutorial at: {str(install_api_logic_server_path)}')
 
 if Config.do_run_api_logic_project:  # so you can start and set breakpoint, then run tests
     start_api_logic_server(project_name="ApiLogicProject")

@@ -11,13 +11,13 @@ class Config:
 
     default_setting = True  # simplify enable / disable most
 
-    do_install_api_logic_server = default_setting   # verify build wheel and local 
+    do_install_api_logic_server = True   # verify build wheel and local 
     do_logicbank_test = ""                          # use this testpy version (or '')
     
 
-    do_create_api_logic_project = default_setting   # create the default project
-    do_run_api_logic_project = default_setting      # start the server 
-    do_test_api_logic_project = default_setting     # run the behave tests (test logic, api)
+    do_create_api_logic_project = True   # create the default project
+    do_run_api_logic_project = True     # start the server 
+    do_test_api_logic_project = True     # run the behave tests (test logic, api)
 
     do_create_shipping = default_setting            # run shipping to listen to kafka (might run manually)
     do_run_shipping = False               # run shipping to listen to kafka (might run manually)
@@ -39,7 +39,7 @@ class Config:
 
     do_docker_mysql = default_setting               # requires docker database be running
     do_docker_postgres = default_setting            # requires docker database be running
-    do_docker_sqlserver = default_setting           # requires docker database be running
+    do_docker_sqlserver = False           # requires docker database be running
 
     do_docker_creation_tests = False      # build docker image, start it and create projects
 
@@ -50,6 +50,8 @@ class Config:
     # ***********************
 
     set_venv = 'source ${install_api_logic_server_path}/venv/bin/activate'
+    set_venv = 'export VIRTUAL_ENV=${install_api_logic_server_path}/venv'
+    # set_venv = 'echo "using python in venv"'
     '''typical source "venv/bin/activate" does not persist over cmds, see...
         https://github.com/valhuber/ubuntu-script-venv/blob/main/use-in-script.sh '''
 

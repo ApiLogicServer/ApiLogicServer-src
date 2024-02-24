@@ -10,6 +10,7 @@ port = "5656"
 def step_impl(context):
     pass
 
+expected_checksum = "-4130312969102546939"  # requires export PYTHONHASHSEED=0
 
 @when('Get Cat1')
 def step_impl(context):
@@ -22,21 +23,24 @@ def step_impl(context):
 
 @then('Expected Cat1 Checksum')
 def step_impl(context):
+    global expected_checksum
     cat1 = context.cat1
-    expected_checksum = "-4130312969102546939"  # requires export PYTHONHASHSEED=0
+    
     checksum = cat1["data"]["attributes"]["S_CheckSum"]
+    expected_checksum = checksum
     assert checksum == expected_checksum, f'Unexpected Checksum[{checksum}, expected {expected_checksum}]'
 
 
 @when('Patch Valid Checksum')
 def step_impl(context):
+    global expected_checksum
     patch_uri = "http://localhost:5656/api/Category/1/"
     patch_args = \
         {
             "data": {
                 "attributes": {
                     "Description": "x",
-                    "S_CheckSum": "-4130312969102546939"
+                    "S_CheckSum": expected_checksum
                 },
                 "type": "Category",
                 "id": "1"
@@ -54,13 +58,14 @@ def step_impl(context):
 
 @when('Patch Missing Checksum')
 def step_impl(context):
+    global expected_checksum
     patch_uri = "http://localhost:5656/api/Category/1/"
     patch_args = \
         {
             "data": {
                 "attributes": {
                     "Description": "x",
-                    "S_CheckSum": "-4130312969102546939"
+                    "S_CheckSum": expected_checksum
                 },
                 "type": "Category",
                 "id": "1"
