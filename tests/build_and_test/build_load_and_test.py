@@ -671,6 +671,7 @@ def validate_sql_server_types():
 #        MAIN CODE
 # ***************************
 
+__version__ = '10.03.03'
 current_path = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(current_path)
 program_dir = str(current_path)
@@ -707,6 +708,8 @@ stderr = None
 
 set_venv = Config.set_venv
 venv_with_python = False
+if platform == "win32":
+    venv_with_python = True
 """ use cmd_venv.sh to set venv, not failed attempts using Python """
 set_venv = set_venv.replace("${install_api_logic_server_path}", str(install_api_logic_server_path))
 if venv_with_python == False:
@@ -715,7 +718,7 @@ if venv_with_python == False:
 db_ip = Config.docker_database_ip
 """ in docker, we cannot connect on localhost - must use the ip """
 
-print(f"\n\n{__file__} 10.03.01 running")
+print(f"\n\n{__file__} {__version__} running")
 print(f'  Builds / Installs API Logic Server, to...')
 print(f'  ..install_api_logic_server_path: {install_api_logic_server_path}')
 print(f'  .. .. will contain: projects, docker, install -- venv')
@@ -756,13 +759,13 @@ if Config.do_install_api_logic_server:  # verify the build process - rebuild, an
         venv_cmd = f'{python} -m venv venv'    
         result_venv = run_command(venv_cmd,
             cwd=install_api_logic_server_path,
-            msg=f'\nInstall ApiLogicServer at: {str(install_api_logic_server_path)}')
+            msg=f'\Create venv for ApiLogicServer at: {str(install_api_logic_server_path)}')
         assert result_venv.returncode == 0, f'Venv create failed with {result_venv}'
 
         # now, we setup for Python in *that* venv
-        python = api_logic_server_home_path.joinpath('venv/bin/python')
-
-        install_cmd = f'{python} -m pip install {str(api_logic_server_home_path)}'    
+        if platform != "win32":
+            python = api_logic_server_home_path.joinpath('venv/scripts/python')
+        install_cmd = f'{set_venv} && {python} -m pip install {str(api_logic_server_home_path)}'    
         result_install = run_command(install_cmd,
             cwd=install_api_logic_server_path,
             msg=f'\nInstall ApiLogicServer at: {str(install_api_logic_server_path)}')
