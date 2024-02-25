@@ -1,18 +1,11 @@
-Note project name is in project (devops etc)
+sh /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/tests/build_and_test/cmd_venv.sh " ApiLogicServer create --project_name=TVF --extended_builder=* --db_url=\'mssql+pyodbc://sa:Posey3861@localhost:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no\'"
 
-Home page video is ai_, but without the ai
+ApiLogicServer create --project_name=TVF --extended_builder=$ --db_url='mssql+pyodbc://sa:Posey3861@localhost:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'
 
-New article
-  * basic_demo
-  * readme has logic/security
-  * iteration too?
 
-Check it out at:
-https://apilogicserver.github.io/Docs/Tutorial-AI/
+fails to parse url
 
-Breaking changes
-  config
-
+sh cmd_venv.sh " ApiLogicServer create --project_name=TVF --extended_builder=$ --db_url=mssql+pyodbc://sa:Posey3861@localhost:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no"
 
 
 Multi-container Azure deployement

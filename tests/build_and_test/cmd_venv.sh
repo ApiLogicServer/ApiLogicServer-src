@@ -1,15 +1,17 @@
 #!/bin/bash
 
+echo "\ncmd_venv:"
 
 cd "$(dirname "$0")"
 SCRIPT_DIR="$(pwd)"
 
-echo "..Script directory: $SCRIPT_DIR"
+echo "..Script dir: $SCRIPT_DIR"
 
 cd $SCRIPT_DIR/../../../../build_and_test/ApiLogicServer
 INSTALL_DIR=$(pwd)
 
-echo "..Creating in directory: $INSTALL_DIR"
+echo "..Install dir: $INSTALL_DIR"
+echo "..$1"
 
 cd $SCRIPT_DIR
 cd ../..
@@ -26,15 +28,15 @@ if [ $# -eq 0 ]
   then
     echo " "
     # echo "shell: $SHELL"
-    echo "Installs API Logic Project into $INSTALL_DIR"
+    echo "Runs command with venv at $INSTALL_DIR"
     echo " "
     echo " "
-    echo "   > sh create_project.sh project_name db_url"
+    echo "   > sh cmd_with_venv.sh command"
     echo " "
     exit 0
 fi
 
-ApiLogicServer create --project_name=$1 --db_url=$2
+$1
 
-echo "Project $1 created at $INSTALL_DIR.\n\n"
+echo "Command $1 run at $INSTALL_DIR.\n\n"
 exit 0

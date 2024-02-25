@@ -5,21 +5,21 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "BUILD AND TEST",
+            "name": "Build Load & Test",
             "type": "python",
             "request": "launch",
             "cwd": "${workspaceFolder}/tests/build_and_test",
-            "program": "build_and_test.py",
+            "program": "build_load_and_test.py",
             "redirectOutput": true,
             "justMyCode": false,
             "console": "integratedTerminal"
         },
         {
-            "name": "  - BUILD ONLY",
+            "name": "  - BLT, Hold the Tomato",
             "type": "python",
             "request": "launch",
             "cwd": "${workspaceFolder}/tests/build_and_test",
-            "program": "build_and_test.py",
+            "program": "build_load_and_test.py",
             "redirectOutput": true,
             "args": ["build-only"],
             "justMyCode": false,

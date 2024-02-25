@@ -154,6 +154,7 @@ def check_command(command_result, special_message: str=""):
         "Error" in result_stderr or \
         "allocation failed" in result_stdout or \
         "error" in result_stderr or \
+        "not found" in result_stderr or \
         "Cannot connect" in result_stderr or \
         "Traceback" in result_stderr:
         if 'alembic.runtime.migration' in result_stderr:
@@ -167,7 +168,9 @@ def check_command(command_result, special_message: str=""):
 
 def run_command(cmd: str, msg: str = "", new_line: bool=False, 
     cwd: Path=None, show_output: bool=False) -> object:
-    """ run shell command (waits)
+    """ run shell command (waits) - subprocess.run (shell)
+
+    if requires venv, use cmd_venv.sh
 
     :param cmd: string of command to execute
     :param msg: optional message (no-msg to suppress)
@@ -176,10 +179,19 @@ def run_command(cmd: str, msg: str = "", new_line: bool=False,
     :return: dict print(ret.stdout.decode())
     """
 
-    print(f'{msg}, with command: \n{cmd}')
+    cmd_to_run = cmd
+    if cmd_to_run.startswith('!cmd_venv'):
+        cmd_to_run = cmd_to_run.replace('!cmd_venv &&', '')
+        cmd_to_run = f'"{cmd_to_run}"'
+        print(f'{msg}, with command: \nsh cmd_venv.sh {cmd_to_run }')
+        cmd_to_run = f'sh {current_path}/cmd_venv.sh ' + cmd_to_run
+    else:
+        print(f'{msg}, with command: \n{cmd_to_run}')
     try:
+        if 'mssql' in cmd_to_run:
+            debug_string = 'nice breakpoint'
         # result_b = subprocess.run(cmd, cwd=cwd, shell=True, stderr=subprocess.STDOUT)
-        result = subprocess.run(cmd, cwd=cwd, shell=True, capture_output=True)
+        result = subprocess.run(cmd_to_run, cwd=cwd, shell=True, capture_output=True)
         if show_output:
             print_byte_string(f'{msg} Output:', result.stdout)
         special_message = msg
@@ -187,12 +199,6 @@ def run_command(cmd: str, msg: str = "", new_line: bool=False,
             msg += "\n\nOften caused by docker DBs not running: see https://apilogicserver.github.io/Docs/Architecture-Internals/#do_docker_database"
 
         check_command(result, msg)
-        """
-        if "Traceback" in result_stderr:
-            print_run_output("Traceback detected - stdout", result_stdout)
-            print_run_output("stderr", result_stderr)
-            raise ValueError("Traceback detected")
-        """
     except Exception as err:
         print(f'\n\n*** Failed {err} on {cmd}')
         print_byte_string("\n\n==> run_command Console Log:", result.stdout)
@@ -201,9 +207,10 @@ def run_command(cmd: str, msg: str = "", new_line: bool=False,
     return result
 
 def start_api_logic_server(project_name: str, env_list = None, port: str='5656'):
-    """ start server at path [with env], and wait a few moments """
+    """ start server (subprocess.Popen) at path [with env], and wait a few moments """
     import stat
 
+    global stdout, stderr
     install_api_logic_server_path = get_servers_build_and_test_path().joinpath("ApiLogicServer")
     path = install_api_logic_server_path.joinpath(project_name)
     print(f'\n\nStarting Server {project_name}... from  {install_api_logic_server_path}\venv\n')
@@ -222,7 +229,13 @@ def start_api_logic_server(project_name: str, env_list = None, port: str='5656')
             for each_env_name, env_value in env_list:
                 my_env[each_env_name] = env_value
         my_env['PYTHONHASHSEED'] = '0'
-        pipe = subprocess.Popen(start_cmd, cwd=install_api_logic_server_path, env=my_env)  #, stderr=subprocess.PIPE)
+        if 'X ApiLogicProject' in project_name:
+            debug_stop = 'Nice breakpoint'
+        if 'ApiLogicProject' in project_name:
+            pipe = subprocess.Popen(start_cmd, cwd=install_api_logic_server_path, env=my_env,
+                                    stdout=stdout, stderr=stderr)
+        else:
+            pipe = subprocess.Popen(start_cmd, cwd=install_api_logic_server_path, env=my_env)  #, stderr=subprocess.PIPE)
     except:
         print(f"\nsubprocess.Popen failed trying to start server.. with command: \n {start_cmd}")
         # what = pipe.stderr.readline()
@@ -281,7 +294,7 @@ def multi_database_tests():
     NW-, plus todo and security
     """
 
-    print(f'Multi-Database Tests')
+    print(f'\nMulti-Database Tests')
 
     current_path = Path(os.path.abspath(__file__))
     install_api_logic_server_path = get_servers_build_and_test_path().joinpath("ApiLogicServer")
@@ -462,7 +475,7 @@ def validate_nw(api_logic_server_install_path, set_venv):
     """
     With NW open, verifies:
     * Behave test (many self-test transactions, creating behave logs for report)
-    * get_cats RPC
+    * filters_cats, get_cats RPC
     """
 
     get_uri = "http://localhost:5656/filters_cats"
@@ -688,8 +701,17 @@ api_logic_server_cli_path = get_api_logic_server_path().\
 with io.open(str(api_logic_server_cli_path), "rt", encoding="utf8") as f:
     api_logic_server_version = re.search(r"__version__ = \"(.*?)\"", f.read()).group(1)
 
+stdout = None
+""" LONG console log from behave test """
+stderr = None
+
 set_venv = Config.set_venv
+venv_with_python = False
+""" use cmd_venv.sh to set venv, not failed attempts using Python """
 set_venv = set_venv.replace("${install_api_logic_server_path}", str(install_api_logic_server_path))
+if venv_with_python == False:
+    set_venv = '!cmd_venv'
+
 db_ip = Config.docker_database_ip
 """ in docker, we cannot connect on localhost - must use the ip """
 
@@ -725,30 +747,48 @@ if Config.do_install_api_logic_server:  # verify the build process - rebuild, an
     delete_dir(dir_path=str(install_api_logic_server_path), msg=f"delete install: {install_api_logic_server_path} ")
     delete_build_directories(install_api_logic_server_path)
 
-    api_logic_server_home_path = api_logic_server_tests_path.parent
-    result_build = run_command(f'{python} setup.py sdist bdist_wheel',
-        cwd=api_logic_server_home_path,
-        msg=f'\nBuild ApiLogicServer at: {str(api_logic_server_home_path)}')
+    if venv_with_python:
+        api_logic_server_home_path = api_logic_server_tests_path.parent
+        result_build = run_command(f'{python} setup.py sdist bdist_wheel',
+            cwd=api_logic_server_home_path,
+            msg=f'\nBuild ApiLogicServer at: {str(api_logic_server_home_path)}')
+        
+        venv_cmd = f'{python} -m venv venv'    
+        result_venv = run_command(venv_cmd,
+            cwd=install_api_logic_server_path,
+            msg=f'\nInstall ApiLogicServer at: {str(install_api_logic_server_path)}')
+        assert result_venv.returncode == 0, f'Venv create failed with {result_venv}'
 
-    result_install = run_command(f'{python} -m venv venv && {set_venv} && {python} -m pip install {str(api_logic_server_home_path)}',
-        cwd=install_api_logic_server_path,
-        msg=f'\nInstall ApiLogicServer at: {str(install_api_logic_server_path)}')
-    assert result_install.returncode == 0, f'Install failed with {result_install}'
+        # now, we setup for Python in *that* venv
+        python = api_logic_server_home_path.joinpath('venv/bin/python')
+
+        install_cmd = f'{python} -m pip install {str(api_logic_server_home_path)}'    
+        result_install = run_command(install_cmd,
+            cwd=install_api_logic_server_path,
+            msg=f'\nInstall ApiLogicServer at: {str(install_api_logic_server_path)}')
+        assert result_install.returncode == 0, f'Install failed with {result_install}'
+    else:
+        install_cmd = 'sh build_install.sh'
+        result_install = run_command(install_cmd,
+            cwd=current_path,
+            msg=f'\nInstall ApiLogicServer at: {str(install_api_logic_server_path)}')
+        assert result_install.returncode == 0, f'Install failed with {result_install}'
+        pass
 
 
     # delete_build_directories(install_api_logic_server_path)
 
     # at this point, b&t contains venv and docker, src contains egg, build and dist
 
-    if Config.do_logicbank_test != "":
+    if Config.do_logicbank_test != "":  # install dev version of LogicBank
         test_py = f"python -m pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple logicbank=={Config.do_logicbank_test}"
         rule_bank_test = run_command(
             test_py,
             cwd=install_api_logic_server_path,
             msg=f'\nInstall testpy logicbank')
 
-    if platform == "win32":
-        print("not for windows")  # https://github.com/mkleehammer/pyodbc/issues/1010
+    if platform in["win32", "linux"]:  # val: FIXME
+        print("mac only")  # https://github.com/mkleehammer/pyodbc/issues/1010
     else:  # upgrade pyodbc==4.0.34 --> pyodbc==5.0.0
         result_pyodbc = run_command(
             f'{set_venv} && {python} -m pip install pyodbc==4.0.34',
@@ -768,10 +808,11 @@ if len(sys.argv) > 1 and sys.argv[1] == 'build-only':
 if Config.do_create_api_logic_project:  # nw+ (with logic)
     result_create = run_command(f'{set_venv} && ApiLogicServer create --project_name=ApiLogicProject --db_url=nw+',
         cwd=install_api_logic_server_path,
-        msg=f'\nCreate ApiLogicProject at: {str(install_api_logic_server_path)}')
+        msg=f'\nCreate ApiLogicProject')    
+    
     result_create = run_command(f'{set_venv} && ApiLogicServer tutorial',
         cwd=install_api_logic_server_path,
-        msg=f'\nCreate Tutorial at: {str(install_api_logic_server_path)}')
+        msg=f'\nCreate Tutorial')
 
 if Config.do_run_api_logic_project:  # so you can start and set breakpoint, then run tests
     start_api_logic_server(project_name="ApiLogicProject")
@@ -787,7 +828,7 @@ if Config.do_create_shipping:  # optionally, start it manually (eg, with breakpo
         cwd=install_api_logic_server_path,
         msg=f'\nCreate Shipping at: {str(install_api_logic_server_path)}')
 if Config.do_run_shipping:
-    """ FIXME Failing when run here, but works if manually run in VSC/Debugger (?)
+    """ FIXME Failing when run here, but works if manually run in VSC/Debugger (? threads??)
       File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/Shipping/integration/system/FlaskKafka.py", line 66, in _start
     consumer.subscribe(topics=list(topics))
 cimpl.KafkaException: KafkaError{code=_INVALID_ARG,val=-186,str="Failed to set subscription: Local: Invalid argument or configuration"}
@@ -928,22 +969,29 @@ if Config.do_docker_mysql:
     start_api_logic_server(project_name='classicmodels')
     stop_server(msg="classicmodels\n")
     
-if Config.do_docker_sqlserver:
+if Config.do_docker_sqlserver:  # CAUTION: see comments below
+    command = f"{set_venv} && ApiLogicServer create --project_name=TVF --extended_builder=$ --db_url='mssql+pyodbc://sa:Posey3861@{db_ip}:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'"
+    command = f"{set_venv} && ApiLogicServer create --project_name=TVF --extended_builder=$ --db_url=mssql+pyodbc://sa:Posey3861@{db_ip}:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no"
     result_docker_sqlserver = run_command(
-        f"{set_venv} && ApiLogicServer create --project_name=TVF --extended_builder=* --db_url='mssql+pyodbc://sa:Posey3861@{db_ip}:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'",
+        command,
         cwd=install_api_logic_server_path,
         msg=f'\nCreate SqlServer TVF at: {str(install_api_logic_server_path)}')
     start_api_logic_server(project_name='TVF')
     validate_sql_server_types()
     stop_server(msg="TVF\n")
 
+    command = f"{set_venv} && ApiLogicServer create --project_name=sqlserver --db_url='mssql+pyodbc://sa:Posey3861@{db_ip}:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'"
+    command = f"{set_venv} && ApiLogicServer create --project_name=sqlserver --db_url=mssql+pyodbc://sa:Posey3861@{db_ip}:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no"
     result_docker_sqlserver = run_command(
-        f"{set_venv} && ApiLogicServer create --project_name=sqlserver --db_url='mssql+pyodbc://sa:Posey3861@{db_ip}:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'",
+        command,
         cwd=install_api_logic_server_path,
         msg=f'\nCreate SqlServer NORTHWND at: {str(install_api_logic_server_path)}')
     start_api_logic_server(project_name='sqlserver')
     stop_server(msg="sqlserver\n")
     """
+oy, lots of trouble with Python / bash parsing urls
+setting command above, first line for using Python, 2nd for cmd_venv
+
 url above works, but this run config fails:
         {
             "name": "SQL Server Types",
