@@ -13,6 +13,7 @@ Implement behave tests - Your Code Goes Here
 These tests can be re-run -- they restore the data to original state.
 
 Rows used for testing:
+
 * customer: ALFKI, with a balance of 2102
 * order: 10643, with an amount 1086
 * orderdetail: 1040
@@ -186,10 +187,12 @@ def step_impl(context):
 def step_impl(context):
     """
     Familiar logic patterns:
+
     * Constrain a derived result
     * Chain up, to adjust parent sum/count aggregates
 
     Logic Design ("Cocktail Napkin Design")
+
     * Customer.Balance <= CreditLimit
     * Customer.Balance = Sum(Order.AmountTotal where unshipped)
     * Order.AmountTotal = Sum(OrderDetail.Amount)

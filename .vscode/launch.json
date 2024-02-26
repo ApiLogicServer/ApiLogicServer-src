@@ -191,6 +191,17 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "     - add-cust",
+            "type": "python",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/api_logic_server_cli",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "program": "cli.py",
+            "redirectOutput": true,
+            "args": ["add-cust","--project_name=../../../servers/ApiLogicProject"],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "     - Create servers/ApiLogicProject (new IDE) -- nw-",
             "type": "python",
             "request": "launch",

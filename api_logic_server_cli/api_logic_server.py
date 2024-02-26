@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.03.04"
+__version__ = "10.03.05"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t02/26/2024 - 10.03.04: Issue 49 (missing nw models.py manual fix) \n"\
     "\t02/24/2024 - 10.03.04: Issue 45 (RowDictMapper joins), Issue 44 (defaulting), Issue 43 (rebuild no yaml), Tests \n"\
     "\t02/16/2024 - 10.02.05: kafka_producer.send_kafka_message, sample md fixes, docker ENV, pg authdb, issue 42 \n"\
     "\t02/07/2024 - 10.02.00: BugFix[38]: foreign-key/getter collision \n"\
@@ -591,6 +592,23 @@ def resolve_home(name: str) -> str:
         result = str(Path.home()) + result[1:]
     return result
 
+def fix_nw_datamodel(project_directory: str):
+    models_file_name = Path(project_directory).joinpath('database/models.py')
+    log.debug(f'.. .. ..Setting cascade delete and column alias for sample database database/models.py')
+    if create_utils.does_file_contain(search_for="manual fix", in_file=models_file_name):
+        log.debug(f'.. .. .. ..ALREADY SET cascade delete and column alias for sample database database/models.py')
+        pass  # should not occur, just being careful
+    else:
+        create_utils.replace_string_in_file(in_file=models_file_name,
+            search_for='OrderDetailList : Mapped[List["OrderDetail"]] = relationship(back_populates="Order")',
+            replace_with='OrderDetailList : Mapped[List["OrderDetail"]] = relationship(cascade="all, delete", back_populates="Order")  # manual fix')
+        create_utils.replace_string_in_file(in_file=models_file_name,
+            search_for="ShipPostalCode = Column(String(8000))",
+            replace_with="ShipZip = Column('ShipPostalCode', String(8000))  # manual fix - alias")
+        create_utils.replace_string_in_file(in_file=models_file_name,
+            search_for="CategoryName_ColumnName = Column(String(8000))",
+            replace_with="CategoryName = Column('CategoryName_ColumnName', String(8000))  # manual fix - alias")
+
 
 def fix_database_models(project_directory: str, db_types: str, nw_db_status: str, is_tutorial: bool=False):
     """
@@ -606,7 +624,8 @@ def fix_database_models(project_directory: str, db_types: str, nw_db_status: str
         is_tutorial (bool, optional): creating tutorial or api_fiddle. Defaults to False.
     """
 
-    models_file_name = f'{project_directory}/database/models.py'
+    # models_file_name = f'{project_directory}/database/models.py'
+    models_file_name = Path(project_directory).joinpath('database/models.py')
     if db_types is not None and db_types != "":
         log.debug(f'.. .. ..Injecting file {db_types} into database/models.py')
         with open(db_types, 'r') as file:
@@ -615,7 +634,9 @@ def fix_database_models(project_directory: str, db_types: str, nw_db_status: str
                                     at="(typically via --db_types)",
                                     file_name=models_file_name)
     if nw_db_status in ["nw", "nw+"] or (is_tutorial and nw_db_status == "nw-"):  # no manual fixups for nw-
-        log.debug(f'.. .. ..Setting cascade delete and column alias for sample database database/models.py')
+        fix_nw_datamodel(project_directory=project_directory)
+
+"""     log.debug(f'.. .. ..Setting cascade delete and column alias for sample database database/models.py')
         create_utils.replace_string_in_file(in_file=models_file_name,
             search_for='OrderDetailList : Mapped[List["OrderDetail"]] = relationship(back_populates="Order")',
             replace_with='OrderDetailList : Mapped[List["OrderDetail"]] = relationship(cascade="all, delete", back_populates="Order")  # manual fix')
@@ -624,7 +645,7 @@ def fix_database_models(project_directory: str, db_types: str, nw_db_status: str
             replace_with="ShipZip = Column('ShipPostalCode', String(8000))  # manual fix - alias")
         create_utils.replace_string_in_file(in_file=models_file_name,
             search_for="CategoryName_ColumnName = Column(String(8000))",
-            replace_with="CategoryName = Column('CategoryName_ColumnName', String(8000))  # manual fix - alias")
+            replace_with="CategoryName = Column('CategoryName_ColumnName', String(8000))  # manual fix - alias") """
 """         if not "include_exclude" in project_directory and False:  #
             log.debug(f'.. .. ..And Employee Virtual Attributes')
             nw_virtuals_attrs_file_name = Path(get_api_logic_server_dir()).\
@@ -1254,6 +1275,8 @@ from database import <project.bind_key>_models
 
         3. Create readme files: Tutorial (copy_md), api/integration_defs/readme.md
 
+        4. Add database customizations
+
         Args:
         """
 
@@ -1272,6 +1295,8 @@ from database import <project.bind_key>_models
 
         # z_copy_md(project = self, from_doc_file="Sample-Integration.md", to_project_file='integration/Sample-Integration.md')
         create_utils.copy_md(project = self, from_doc_file = "Sample-Integration.md", to_project_file='integration/Sample-Integration.md')
+
+        fix_nw_datamodel(project_directory=self.project_directory)
 
         if do_show_messages:
             log.info("\nExplore key customization files:")
