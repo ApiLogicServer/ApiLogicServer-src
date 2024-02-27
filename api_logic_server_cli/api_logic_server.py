@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.03.05"
+__version__ = "10.03.06"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t02/26/2024 - 10.03.04: Issue 49 (missing nw models.py manual fix) \n"\
+    "\t02/26/2024 - 10.03.06: Issue 49 (missing nw models.py manual fix) \n"\
     "\t02/24/2024 - 10.03.04: Issue 45 (RowDictMapper joins), Issue 44 (defaulting), Issue 43 (rebuild no yaml), Tests \n"\
     "\t02/16/2024 - 10.02.05: kafka_producer.send_kafka_message, sample md fixes, docker ENV, pg authdb, issue 42 \n"\
     "\t02/07/2024 - 10.02.00: BugFix[38]: foreign-key/getter collision \n"\
@@ -593,12 +593,18 @@ def resolve_home(name: str) -> str:
     return result
 
 def fix_nw_datamodel(project_directory: str):
+    """update sqlite data model for cascade delete, aliases
+
+    Args:
+        project_directory (str): project creation dir
+    """
     models_file_name = Path(project_directory).joinpath('database/models.py')
-    log.debug(f'.. .. ..Setting cascade delete and column alias for sample database database/models.py')
-    if create_utils.does_file_contain(search_for="manual fix", in_file=models_file_name):
-        log.debug(f'.. .. .. ..ALREADY SET cascade delete and column alias for sample database database/models.py')
+    do_add_manual = True if models_file_name.is_file() and not create_utils.does_file_contain(search_for="manual fix", in_file=models_file_name) else False
+    if not do_add_manual:
+        log.debug(f'.. .. ..ALREADY SET cascade delete and column alias for sample database database/models.py')
         pass  # should not occur, just being careful
     else:
+        log.debug(f'.. .. ..Setting cascade delete and column alias for sample database database/models.py')
         create_utils.replace_string_in_file(in_file=models_file_name,
             search_for='OrderDetailList : Mapped[List["OrderDetail"]] = relationship(back_populates="Order")',
             replace_with='OrderDetailList : Mapped[List["OrderDetail"]] = relationship(cascade="all, delete", back_populates="Order")  # manual fix')
@@ -636,28 +642,6 @@ def fix_database_models(project_directory: str, db_types: str, nw_db_status: str
     if nw_db_status in ["nw", "nw+"] or (is_tutorial and nw_db_status == "nw-"):  # no manual fixups for nw-
         fix_nw_datamodel(project_directory=project_directory)
 
-"""     log.debug(f'.. .. ..Setting cascade delete and column alias for sample database database/models.py')
-        create_utils.replace_string_in_file(in_file=models_file_name,
-            search_for='OrderDetailList : Mapped[List["OrderDetail"]] = relationship(back_populates="Order")',
-            replace_with='OrderDetailList : Mapped[List["OrderDetail"]] = relationship(cascade="all, delete", back_populates="Order")  # manual fix')
-        create_utils.replace_string_in_file(in_file=models_file_name,
-            search_for="ShipPostalCode = Column(String(8000))",
-            replace_with="ShipZip = Column('ShipPostalCode', String(8000))  # manual fix - alias")
-        create_utils.replace_string_in_file(in_file=models_file_name,
-            search_for="CategoryName_ColumnName = Column(String(8000))",
-            replace_with="CategoryName = Column('CategoryName_ColumnName', String(8000))  # manual fix - alias") """
-"""         if not "include_exclude" in project_directory and False:  #
-            log.debug(f'.. .. ..And Employee Virtual Attributes')
-            nw_virtuals_attrs_file_name = Path(get_api_logic_server_dir()).\
-                                        joinpath('fragments/nw_virtual_attrs.py')
-            with open(nw_virtuals_attrs_file_name, 'r') as file:
-                nw_virtual_attrs = file.read()
-            nw_virtuals_attrs = nw_virtual_attrs[8:]  # first line was for IDE no errors
-            create_utils.insert_lines_at(lines=nw_virtuals_attrs,
-                                        at="OrderList = relationship('Order', cascade_backrefs=True, backref='Employee')",
-                                        file_name=models_file_name,
-                                        after=True)
- """
 
 def final_project_fixup(msg, project) -> str:
     """

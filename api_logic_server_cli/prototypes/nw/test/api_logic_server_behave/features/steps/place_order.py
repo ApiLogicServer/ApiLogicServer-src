@@ -55,6 +55,19 @@ def step_impl(context):
 @when('Good Order Placed')
 def step_impl(context):
     """
+    Familiar logic patterns:
+
+    * Constrain a derived result
+    * Chain up, to adjust parent sum/count aggregates
+
+    Logic Design ("Cocktail Napkin Design")
+
+    * Customer.Balance <= CreditLimit
+    * Customer.Balance = Sum(Order.AmountTotal where unshipped)
+    * Order.AmountTotal = Sum(OrderDetail.Amount)
+    * OrderDetail.Amount = Quantity * UnitPrice
+    * OrderDetail.UnitPrice = copy from Product
+
     We place an Order with an Order Detail.  It's one transaction.
 
     Note how the `Order.OrderTotal` and `Customer.Balance` are *adjusted* as Order Details are processed.
@@ -186,6 +199,8 @@ def step_impl(context):
 @when('Order Placed with excessive quantity')
 def step_impl(context):
     """
+    Reuse the rules for Good Order...
+
     Familiar logic patterns:
 
     * Constrain a derived result
