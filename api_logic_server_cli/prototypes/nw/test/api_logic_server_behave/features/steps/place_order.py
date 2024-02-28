@@ -60,8 +60,9 @@ def step_impl(context):
     """
     Familiar logic patterns:
 
-    * Constrain a derived result
-    * Chain up, to adjust parent sum/count aggregates
+    * Constrain a derived result (Check Credit)
+    * Chain up, to adjust parent sum/count aggregates (AmountTotal, Balance)
+    * Events for Lib Access (Kafka, email messages)
 
     Logic Design ("Cocktail Napkin Design")
 
