@@ -74,7 +74,7 @@ def step_impl(context):
 
     We place an Order with an Order Detail.  It's one transaction.
 
-    Note how the `Order.OrderTotal` and `Customer.Balance` are *adjusted* as Order Details are processed.
+    Note how the `Order.AmountTotal` and `Customer.Balance` are *adjusted* as Order Details are processed.
     Similarly, the `Product.UnitsShipped` is adjusted, and used to recompute `UnitsInStock`
 
     <figure><img src="https://github.com/valhuber/ApiLogicServer/wiki/images/behave/declare-logic.png?raw=true"></figure>
