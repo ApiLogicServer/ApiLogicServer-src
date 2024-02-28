@@ -7,12 +7,19 @@ from pathlib import Path
 
 def prt(msg: any, test: str= None) -> None:
     """
-    print to console, and logic_logger / server_log (see api/customize_api.py, api/system/util.py)
+    Prints msg to...
+
+    1. Server console, and 
+    
+    2. <test>.log in test/api_logic_server_behave/logs/scenario_logic_logs
+
+            * This creates the log file
+            * Log file is appended with subsequent logic logging
 
     @see api/customize_api/py for implementation.
 
     :param msg: message to be written to logs.  Value "Rules Report" writes rules report to logs
-    :param test: name of test (scenario) - directs output to test/logs
+    :param test: name of test (scenario) - directs output to ...logs/test.log
     :return:
     """
     test_val = test
@@ -65,6 +72,17 @@ def login(user: str = 'aneu'):
             s.headers.update(header)
         return header
 
+def does_file_contain(search_for: str, in_file: str) -> bool:
+    """ returns True if <search_for> is <in_file> """
+    with open(Path(in_file), 'r+') as fp:
+        file_lines = fp.readlines()  # lines is list of lines, each element '...\n'
+        found = False
+        insert_line = 0
+        for each_line in file_lines:
+            if search_for in each_line:
+                found = True
+                break
+        return found
 
 if __name__ == "__main__":
     print(f'\n test_services.py, starting')

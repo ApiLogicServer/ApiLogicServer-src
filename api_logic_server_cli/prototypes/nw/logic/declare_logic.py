@@ -132,6 +132,18 @@ def declare_logic():
             
     Rule.after_flush_row_event(on_class=models.Order, calling=send_order_to_shipping)  # see above
 
+    def do_not_ship_empty_orders(row: models.Order, old_row: models.Order, logic_row: LogicRow) -> bool:
+        return_value = True
+        if row.OrderDetailCount == 0:  # an empty order... error if trying to ship...
+            if logic_row.is_inserted() and row.ShippedDate is not None:
+                return_value = False
+            if logic_row.is_updated() and row.ShippedDate is not None:
+                return_value = False
+        return return_value
+    
+    Rule.constraint(validate=models.Order,
+                    calling=do_not_ship_empty_orders,
+                    error_msg="Cannot Ship Empty Orders")
 
     def congratulate_sales_rep(row: models.Order, old_row: models.Order, logic_row: LogicRow):
         """ use events for sending email, messages, etc. """
@@ -305,5 +317,8 @@ def declare_logic():
         
     Rule.formula(derive=models.Order.OrderDate, 
                  as_expression=lambda row: datetime.datetime.now())
+    
+    from api.system import api_utils
+    # api_utils.rules_report()
     
     app_logger.debug("..logic/declare_logic.py (logic == rules + code)")

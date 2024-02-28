@@ -73,4 +73,6 @@ def send_kafka_message(logic_row: LogicRow, row_dict_mapper: RowDictMapper,
             logic_row.log(msg)
         except KafkaException as ke:
             logic_row.log("kafka_producer#send_kafka_message error: {ke}") 
+    else:
+        logic_row.log(msg + ' << not activated >>')
     logger.info(f'\n\n{msg} sends:\n{json_string}')

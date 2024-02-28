@@ -1,5 +1,5 @@
 """
-Utilities for API Logic Server Projects (1.0)
+Utilities for API Logic Server Projects (1.1)
 """
 import sqlite3
 from os import path

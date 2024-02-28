@@ -6,7 +6,14 @@ Feature: Place Order
       Then Logic adjusts Balance (demo: chain up)
       Then Logic adjusts Products Reordered
       Then Logic sends email to salesrep
+      Then Logic sends kafka message
       Then Logic adjusts aggregates down on delete order
+
+
+  Scenario: Bad Ship of Empty Order
+     Given Customer Account: ALFKI
+      When Order Shipped with no Items
+      Then Rejected per Do Not Ship Empty Orders
 
 
   Scenario: Bad Order Custom Service

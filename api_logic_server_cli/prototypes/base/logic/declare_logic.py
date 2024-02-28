@@ -43,6 +43,9 @@ def declare_logic():
 
     Rule.early_row_event_all_classes(early_row_event_all_classes=handle_all)
 
+    #als rules report
+    from api.system import api_utils
+    # api_utils.rules_report()
 
     app_logger.debug("..logic/declare_logic.py (logic == rules + code)")
 
