@@ -13,6 +13,14 @@ def step_impl(context):
 @when('Patch Salary to 200k')
 def step_impl(context):
     """
+    Logic Patterns:
+
+    * Auditing
+
+    Logic Design ("Cocktail Napkin Design")
+
+    * copy_row(copy_to=models.EmployeeAudit...)
+
     Observe the logic log to see that it creates audit rows:
 
     1. **Discouraged:** you can implement auditing with events.  But auditing is a common pattern, and this can lead to repetitive, tedious code
@@ -76,6 +84,14 @@ def step_impl(context):
 @when('Patch Salary to 96k')
 def step_impl(context):
     """
+    Logic Patterns:
+
+    * State Transition Logic
+
+    Logic Design ("Cocktail Napkin Design")
+
+    * Rule.constraint(validate=Employee, calling=raise_over_20_percent...)
+
     Observe the use of `old_row
     `
     > **Key Takeaway:** State Transition Logic enabled per `old_row`

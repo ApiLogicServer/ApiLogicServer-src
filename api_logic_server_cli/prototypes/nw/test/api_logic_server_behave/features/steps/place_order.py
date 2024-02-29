@@ -306,6 +306,7 @@ def step_impl(context):
 
 @then('Rejected per Check Credit')
 def step_impl(context):
+    """"""
     response_text = context.response_text
     print( "one last thing", "by the way", "\n")  # exploring behave
     assert "exceeds credit" in response_text, f'Error - "exceeds credit not in {response_text}'
@@ -382,6 +383,15 @@ def step_impl(context):
 @when('Order ShippedDate altered (2013-10-13)')
 def step_impl(context):
     """
+
+    Logic Patterns:
+
+    * Chain Down
+
+    Logic Design ("Cocktail Napkin Design")
+
+    * Formula: OrderDetail.ShippedDate = Order.ShippedDate
+
     We set `Order.ShippedDate`.
 
     This cascades to the Order Details, per the `derive=models.OrderDetail.ShippedDate` rule.
