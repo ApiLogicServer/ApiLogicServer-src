@@ -1,5 +1,13 @@
 This describes how to use Logic; for more information, [see here](https://apilogicserver.github.io/Docs/Logic-Why).
 
+> Key Takeway -  Logic: Multi-table Derivation and Constraint Rules, Extensible with Python 
+<br>Rules are:
+<br>1. **Declared** in your IDE - 40X more concise
+<br>2. **Activated** on server start
+<br>3. **Executed** - *automatically* -  on updates (using SQLAlchemy events)
+<br>4. **Debugged** in your IDE, and with the console log
+<br>For more on rules, [click here](https://apilogicserver.github.io/Docs/Logic-Why/).
+
 &nbsp;
 
 ## Examples      
