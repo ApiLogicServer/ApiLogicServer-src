@@ -8,7 +8,7 @@ from sqlalchemy import inspect
 def row2dict(row):
     """
 
-    Get dict for row.
+    Get dict for row  (Flask jsonifies dict)
 
     Note mapped rows are *logical*, not physical db table/column names.
 
@@ -76,7 +76,7 @@ def flask_events(app, db):
         # 2. Read data from SQLAlchemy
         order = db.session.query(models.Order).\
             filter(models.Order.Id == order_id).one()
-        app_logger.info(f'\n Breakpoint - examine order in debugger \n')
+        app_logger.info(f'\n Breakpoint - examine order (attributes, including OrderDetailsList) in debugger \n')
 
         # 3. Restructure row results - format as result_std_dict
         result_std_dict = util.format_nested_object(row2dict(order)

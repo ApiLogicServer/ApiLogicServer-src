@@ -52,6 +52,21 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "  - Create tutorial (-> servers)",
+            "type": "python",
+            "request": "launch",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}${pathSeparator}${env:PYTHONPATH}",
+                "APILOGICPROJECT_VERBOSE": "True"},
+            "cwd": "${workspaceFolder}/../../servers/",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["tutorial", "--create=tutorial"],
+            "stopOnEntry": false,
+            "justMyCode": false,
+            "console": "integratedTerminal"
+        },
+        {
             "name": "  - Create servers/demo (then copy to org-git)",
             "type": "python",
             "request": "launch",
