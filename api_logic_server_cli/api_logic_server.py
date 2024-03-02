@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.03.10"
+__version__ = "10.03.11"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t03/01/2024 - 10.03.10: Issue 50 (Numeric defaults), Pattern/Design for Behave examples, fix tutorial dir names \n"\
+    "\t03/01/2024 - 10.03.11: Issue 50 (Numeric defaults), Pattern/Design for Behave examples, fix tutorial dir names \n"\
     "\t02/27/2024 - 10.03.07: LogicBank 1.20.3, behave for kafka & no-ship empty orders \n"\
     "\t02/26/2024 - 10.03.06: Issue 49 (missing nw models.py manual fix) \n"\
     "\t02/24/2024 - 10.03.04: Issue 45 (RowDictMapper joins), Issue 44 (defaulting), Issue 43 (rebuild no yaml), Tests \n"\
@@ -1537,8 +1537,12 @@ from database import <project.bind_key>_models
                     log.info(f'  exit  # exit the Docker container ')
                     log.info(f'  code {docker_project_name}  # e.g., open VSCode on created project')
             else:
-                log.info(f'\nProject Created At: {str(self.project_directory_path)}\n  Customize using your IDE, e.g., open with VSCode:')
-                log.info(f'  code {self.project_name}\n')
+                log.info(f'\nProject Created At: {str(self.project_directory_path)}\n')
+
+                log.info(f'  ApiLogicServer run      # Run created API and Admin App, or\n')
+
+                log.info(f'  charm | code {self.project_name}  # Customize / debug in your IDE\n\n')
+
                 log.debug(f'  Establish your Python environment - see https://apilogicserver.github.io/Docs/IDE-Execute/#execute-prebuilt-launch-configurations\n')
 
         if self.run:  # synchronous run of server - does not return
