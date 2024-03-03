@@ -7,7 +7,9 @@
 &nbsp;
 ---
 
-Find the [documentation here](https://apilogicserver.github.io/Docs/).
+Find the [user documentation here](https://apilogicserver.github.io/Docs/).  Use this for normal installation: create and customize API Logic Projects.
+
+To install the ***dev*** version, [see here](https://apilogicserver.github.io/Docs/Architecture-Internals).  This installs the source of API Logic Server, so you can explore or extend it.
 
 &nbsp;
 
@@ -43,8 +45,6 @@ This is an open source project.  We are open to suggestions.  Some of our ideas 
 | 2. Transactional **Logic**   | Rule Enforcement | New rule types        |
 | 3. This project | API Logic Project Creation | General support - see issues |
 
-
-To get started, please see  the [Architecture.](https://apilogicserver.github.io/Docs/Architecture-Internals/)
 
 &nbsp; 
 
