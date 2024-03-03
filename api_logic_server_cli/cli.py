@@ -896,7 +896,8 @@ def add_cust(ctx, bind_key_url_separator: str, api_name: str, project_name: str)
         is_nw = True
     else:
         raise Exception("Customizations are northwind-specific - this does not appear to be a northwind database")
-    project.add_nw_customizations()
+    project.add_nw_customizations(do_security=False)
+    log.info("\nNext step - add authentication:\n  $ ApiLogicServer add-auth --db_url=auth\n\n")
 
 
 @main.command("sample-ai") 

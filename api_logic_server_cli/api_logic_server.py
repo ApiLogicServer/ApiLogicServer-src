@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.03.11"
+__version__ = "10.03.14"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t03/01/2024 - 10.03.11: Issue 50 (Numeric defaults), Pattern/Design for Behave examples, fix tutorial dir names \n"\
+    "\t03/02/2024 - 10.03.14: Issue 50 (Numeric defaults), Pattern/Design for Behave examples, fix tutorial dir names \n"\
     "\t02/27/2024 - 10.03.07: LogicBank 1.20.3, behave for kafka & no-ship empty orders \n"\
     "\t02/26/2024 - 10.03.06: Issue 49 (missing nw models.py manual fix) \n"\
     "\t02/24/2024 - 10.03.04: Issue 45 (RowDictMapper joins), Issue 44 (defaulting), Issue 43 (rebuild no yaml), Tests \n"\
@@ -1147,7 +1147,13 @@ from database import <project.bind_key>_models
                 log.info(" .. docs: https://apilogicserver.github.io/Docs/Security-Activation/")
 
             log.debug("  1. ApiLogicServer add-db --db_url=auth --bind_key=authentication")
-        log.debug("==================================================================5\n")
+        log.debug("===================================================================\n")
+
+        if create_utils.does_file_contain(search_for="SECURITY_ENABLED = True  #",
+                                          in_file=f'{self.project_directory}/config/config.py'):
+            log.info(f'\nAlready present in config/config.py - no action taken\n')
+            pass
+
         save_run = self.run
         save_command = self.command
         save_db_url = self.db_url
@@ -1528,20 +1534,24 @@ from database import <project.bind_key>_models
                     log.info(f'\nCustomize right here, in Browser/VSCode - just as you would locally')
                     log.info(f'Save customized project to GitHub')
                 else:
-                    log.info(f'\nCustomize Docker project using IDE on local machine:')
+                    log.info(f'\nProject created.  Next steps:\n')
+
+                    log.info(f'  $ ApiLogicServer run      # Run created API and Admin App, or\n')
+
+                    log.info(f'  Customize using IDE on local machine:')
                     docker_project_name = self.project_name
                     if self.project_name.startswith('/localhost/'):
                         docker_project_name = self.project_name[11:]
                     else:
                         docker_project_name = f'<local machine directory for: {self.project_name}>'
-                    log.info(f'  exit  # exit the Docker container ')
-                    log.info(f'  code {docker_project_name}  # e.g., open VSCode on created project')
+                    log.info(f'    exit     # exit the Docker container ')
+                    log.info(f'    code {docker_project_name}  # e.g., open VSCode on created project\n')
             else:
-                log.info(f'\nProject Created At: {str(self.project_directory_path)}\n')
+                log.info(f'\nProject created at: {str(self.project_directory_path)}\n')
 
-                log.info(f'  ApiLogicServer run      # Run created API and Admin App, or\n')
+                log.info(f'  $ ApiLogicServer run      # Run created API and Admin App, or\n')
 
-                log.info(f'  charm | code {self.project_name}  # Customize / debug in your IDE\n\n')
+                log.info(f'  $ charm | code {self.project_name}  # Customize / debug in your IDE\n\n')
 
                 log.debug(f'  Establish your Python environment - see https://apilogicserver.github.io/Docs/IDE-Execute/#execute-prebuilt-launch-configurations\n')
 
