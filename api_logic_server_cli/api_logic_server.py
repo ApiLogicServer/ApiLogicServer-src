@@ -1549,9 +1549,9 @@ from database import <project.bind_key>_models
             else:
                 log.info(f'\nProject created at: {str(self.project_directory_path)}\n')
 
-                log.info(f'  $ ApiLogicServer run      # Run created API and Admin App, or\n')
+                log.info(f'  $ ApiLogicServer run                # Run created API and Admin App, or\n')
 
-                log.info(f'  $ charm | code {self.project_name}  # Customize / debug in your IDE\n\n')
+                log.info(f'  $ charm | code {self.project_name}      # Customize / debug in your IDE\n\n')
 
                 log.debug(f'  Establish your Python environment - see https://apilogicserver.github.io/Docs/IDE-Execute/#execute-prebuilt-launch-configurations\n')
 
