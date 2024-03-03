@@ -27,8 +27,6 @@ if [ $# -eq 0 ]
     echo " "
     echo " IMPORTANT - run instructions"
     echo "   > mkdir ApiLogicServer"
-    echo "   > python3 -m venv venv; . venv/bin/activate;"
-    echo "   > pip install ApiLogicServer  # just like any user"
     echo " "
     echo "   > sh Install-ApiLogicServer-Dev [ vscode | charm | x ]"
     echo " "

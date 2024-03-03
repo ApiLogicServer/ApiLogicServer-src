@@ -28,10 +28,10 @@ def get_sra_directory(args: Args) -> str:
     directory = 'ui/safrs-react-admin'  # local project sra typical API Logic Server path (index.yaml)
     if Path(directory).joinpath('robots.txt').is_file():
         admin_logger.debug("return_spa - using local directory")
-    else:     # else use installed sra - from venv, or, for dev, in APILOGICSERVER_HOME
-        try:  # works for installed, docker, codespaces.  not Azure
+    else:        # else use installed sra - from venv, or, for dev, in APILOGICSERVER_HOME
+        try:     # works for installed, docker, codespaces.  not Azure
             from api_logic_server_cli.create_from_model import api_logic_server_utils as api_logic_server_utils
-        except:
+        except:  # should not occur normally (means: venv does not include cli)
             dev_home = os.getenv('APILOGICSERVER_HOME')
             if dev_home:
                 admin_logger.debug("ApiLogicServer not in venv, trying APILOGICSERVER_HOME")

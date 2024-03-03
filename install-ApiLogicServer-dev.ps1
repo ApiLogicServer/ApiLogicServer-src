@@ -14,8 +14,6 @@ if($IDE -eq "") {
     Write-Output " "
     Write-Output " IMPORTANT - run instructions"
     Write-Output "   > mkdir ApiLogicServer"
-    Write-Output "   > python3 -m venv venv; . venv/bin/activate;"
-    Write-Output "   > pip install ApiLogicServer  # just like any user"
     Write-Output " "
     Write-Output "   > .\Install-ApiLogicServer-Dev [ vscode | charm | x ]"
     Write-Output " "
