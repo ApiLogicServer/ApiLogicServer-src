@@ -22,14 +22,14 @@ if [ $# -eq 0 ]
   then
     echo " "
     # echo "shell: $SHELL"
-    echo "Installs dev version of ApiLogicServer and safrs-react-admin on $ostype (version 7.0.15)"
+    echo "Installs dev version of ApiLogicServer and safrs-react-admin on $ostype (version 7.0.15)\n"
     echo "   .. vscode option creates venv, and starts vscode on workspace"
-    echo ""  .. See: https://apilogicserver.github.io/Docs/Architecture-Internals"
+    echo "  .. See: https://apilogicserver.github.io/Docs/Architecture-Internals"
     echo " "
     echo " IMPORTANT - create a folder, then install"
     echo "   > mkdir ApiLogicServer"
     echo " "
-    echo "   > sh Install-ApiLogicServer-Dev [ vscode | charm | x ]"
+    echo "   > sh Install-ApiLogicServer-Dev.sh [ vscode | charm | x ]"
     echo " "
     exit 0
   else
