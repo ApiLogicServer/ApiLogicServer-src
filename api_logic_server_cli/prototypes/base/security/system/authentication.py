@@ -84,8 +84,8 @@ def configure_auth(flask_app: Flask, database: object, method_decorators: list[o
         password = request.json.get("password", None)
 
         user = authentication_provider.get_user(username, password)
-        if not user or not user.check_password(password):
-            return jsonify("Wrong username or password"), 401
+        if not user or not authentication_provider.check_password(user = user, password = password):
+            return jsonify("Wrong username or password"), 4019
 
         access_token = create_access_token(identity=user)  # serialize and encode
         return jsonify(access_token=access_token)

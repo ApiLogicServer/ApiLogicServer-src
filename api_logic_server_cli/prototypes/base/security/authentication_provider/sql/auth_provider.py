@@ -26,17 +26,30 @@ class ALSError(JsonapiError):
         self.status_code = status_code
 
 
+class DotMapX(DotMap):
+    """
+    A DotMap (provides for extended user-defined attributes)
+
+    Preserving dot notation - callers do use object.attr, *not* object['attr']
+
+    With check_password method
+
+    Args:
+        DotMap (_type_): _description_
+    """
+    def check_password(self, password=None):
+        # print(password)
+        return password == self.password_hash
+
+
 class Authentication_Provider(Abstract_Authentication_Provider):
 
     @staticmethod
     def get_user(id: str, password: str = "") -> object:
         """
-        Must return a row object with attributes:
-        
+        Must return a DotMapX row or SQLAlchemy row, with attributes:        
         * name
-
         * role_list: a list of row objects with attribute name
-
 
         Args:
             id (str): _description_
@@ -44,12 +57,10 @@ class Authentication_Provider(Abstract_Authentication_Provider):
 
         Returns:
             object: row object is a SQLAlchemy row
-
-                * Row Caution: https://docs.sqlalchemy.org/en/14/errors.html#error-bhk3
         """
 
         def row_to_dotmap(row, row_class):
-            rtn_dotmap = DotMap()
+            rtn_dotmap = DotMapX()
             mapper = inspect(row_class)
             for each_column in mapper.columns:
                 rtn_dotmap[each_column.name] = getattr(row, each_column.name)
@@ -67,7 +78,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
             logger.info(f'excp: {str(e)}\n')
             # raise e
             raise ALSError(f"User {id} is not authorized for this system")
-        use_db_row = True
+        use_db_row = False
         if use_db_row:
             return user
         else:
@@ -79,3 +90,20 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                 each_user_role = row_to_dotmap(each_row, authentication_models.UserRole)
                 rtn_user.UserRoleList.append(each_user_role)
             return rtn_user  # returning user fails per caution above
+
+    @staticmethod
+    def check_password(user: object, password: str = "") -> bool:
+        """checks whether user-supplied password matches database
+
+        This hides implementation (eg, delegated or now) from authentication caller
+
+        Args:
+            user (object): DotMap or SQLAlchemy row containing id attribute
+            password (str, optional): password as entered by user. Defaults to "".
+
+        Returns:
+            bool: _description_
+        """
+        # return user.check_password(password = password)  TODO: review
+        return password == user.password_hash
+

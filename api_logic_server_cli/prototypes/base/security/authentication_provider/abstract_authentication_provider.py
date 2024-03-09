@@ -19,3 +19,16 @@ class Abstract_Authentication_Provider():
         return None
         """
 
+    @staticmethod
+    @abstractmethod
+    def check_password(user: object, password: str) -> bool:
+        """_summary_
+
+        Args:
+            user (object): DotMap or SQLAlchemy row containing id and maybe password
+
+        Returns:
+            bool: whether password matches
+        """
+        return True
+
