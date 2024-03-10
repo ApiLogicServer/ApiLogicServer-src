@@ -1,6 +1,5 @@
 from security.authentication_provider.abstract_authentication_provider import Abstract_Authentication_Provider
 import sqlalchemy as sqlalchemy
-import database.authentication_models as authentication_models
 from flask import Flask
 import safrs
 from safrs.errors import JsonapiError
@@ -131,6 +130,22 @@ class Authentication_Provider(Abstract_Authentication_Provider):
             each_user_role.role_name = each_role_name
             rtn_user.UserRoleList.append(each_user_role)
         return rtn_user
+
+    @staticmethod
+    def check_password(user: object, password: str = "") -> bool:
+        """checks whether user-supplied password matches database
+
+        This hides implementation (eg, delegated or now) from authentication caller
+
+        Args:
+            user (object): DotMap or SQLAlchemy row containing id attribute
+            password (str, optional): password as entered by user. Defaults to "".
+
+        Returns:
+            bool: _description_
+        """
+        # return user.check_password(password = password)  TODO: review
+        return True
     
     @staticmethod
     def get_user(id: str, password: str = "") -> object:

@@ -44,6 +44,22 @@ class DotMapX(DotMap):
 
 class Authentication_Provider(Abstract_Authentication_Provider):
 
+    @staticmethod  #val - option for auth provider setup
+    def configure_auth(flask_app: Flask):
+        """ Called by authentication.py on server start, e.g., to 
+        - initialize jwt
+        - establish Flask end points for login.
+
+        Args:
+            flask_app (Flask): _description_
+            database (object): _description_
+            method_decorators (object): _description_
+        Returns:
+            _type_: (no return)
+        """
+        return
+
+ 
     @staticmethod
     def get_user(id: str, password: str = "") -> object:
         """

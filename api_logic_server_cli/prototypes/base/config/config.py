@@ -90,6 +90,11 @@ class Config:
     FLASK_ENV = environ.get("FLASK_ENV")
     DEBUG = environ.get("DEBUG")
 
+    #KEYCLOAK Args
+    kc_base = 'http://localhost:8080'
+    KEYCLOAK_REALM =  'kcals'
+    KEYCLOAK_BASE = f'{kc_base}/realms/{KEYCLOAK_REALM}'
+        
     running_at = Path(__file__)
     project_abs_dir = running_at.parent.absolute()
 
@@ -196,10 +201,28 @@ class Args():
         self.http_scheme = Config.CREATED_HTTP_SCHEME
         self.kafka_producer = Config.KAFKA_PRODUCER
         self.kafka_consumer = Config.KAFKA_CONSUMER
+        self.keycloak_base = Config.KEYCLOAK_BASE
+        self.keycloak_realm = Config.KEYCLOAK_REALM
 
         self.verbose = False
         self.create_and_run = False
 
+    # KEYCLOAK ARGS
+    @property
+    def keycloak_base(self) -> str:
+        return self.flask_app.config["KEYCLOAK_BASE"]
+    
+    @keycloak_base.setter
+    def keycloak_base(self, base):
+        self.flask_app.config["KEYCLOAK_BASE"] = base
+        
+    @property
+    def keycloak_realm(self) -> str:
+        return self.flask_app.config["KEYCLOAK_REALM"]
+    
+    @keycloak_realm.setter
+    def keycloak_realm(self, realm):
+        self.flask_app.config["KEYCLOAK_REALM"] = realm
 
     @property
     def port(self) -> str:

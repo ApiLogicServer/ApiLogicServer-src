@@ -1,15 +1,34 @@
 # Integration: ApiLogicServer + Keycloak
 
-This repo contains a demo for apilogicserver integration with keycloak oidc JWT authentication.  It is an attempt to integrate this more natively into API Logic Server.
+This repo contains a demo for apilogicserver integration with keycloak oidc JWT authentication.  It is an attempt to codegen kc capable apps (though will still required setup as described below).
 
-Status - 3/7:
+* ***kci*** refers to the running KeyCloakIntegration
+
+Status - 3/10:
 
 1. able to access keycloak for login using modified sra at localhost.
-2. not able to obtain jwt data for roles/authorization
+2. kci is running with authentication & authorization (minimal testing)
+3. we can now run a generated app, presuming the Iterim Additional Setup
+
+&nbsp;
+
+## Setup
+
+```bash
+ApiLogicServer add-auth provider_type=keycloak
+```
+
+## Iterim Additional Setup
+
+```bash
+ApiLogicServer add-auth provider_type=keycloak  # if not already done
+cp -r devops/keycloak/nginx/admin-app ui/safrs-react-admin
+```
 
 &nbsp;
 
 ## Run:
+
 ```
 cd devops/keycloak
 docker-compose up
@@ -48,7 +67,7 @@ Login as u1.   Somehow, the `customer` role is assigned, which makes it fail (re
 
 ## Test:
 
-### 1. Keycloak Unit Test
+### 1. Keycloak Login Unit Test
 
 Verify keycloak login with demo, demo
 
