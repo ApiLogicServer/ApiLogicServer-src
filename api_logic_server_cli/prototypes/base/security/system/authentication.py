@@ -63,6 +63,10 @@ def configure_auth(flask_app: Flask, database: object, method_decorators: list[o
     Returns:
         _type_: (no return)
     """
+    from config.config import Config
+
+    Config.SECURITY_PROVIDER.configure_auth(flask_app=flask_app)   # type-specific configuration
+    
     flask_app.config["PROPAGATE_EXCEPTIONS"] = True
     flask_app.config["JWT_SECRET_KEY"] = "ApiLogicServerSecret"  # Change this!
     flask_app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=222)  #  change as you see fit
@@ -97,7 +101,7 @@ def configure_auth(flask_app: Flask, database: object, method_decorators: list[o
     @jwt.user_lookup_loader
     def user_lookup_callback(_jwt_header, jwt_data):
         identity = jwt_data["sub"]
-        return authentication_provider.get_user(identity, "")
+        return authentication_provider.get_user(identity, jwt_data)
 
     method_decorators.append(jwt_required())
     security_logger.info("\nAuthentication loaded -- api calls now require authorization header")

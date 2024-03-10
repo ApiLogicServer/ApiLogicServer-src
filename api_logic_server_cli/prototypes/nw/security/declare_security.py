@@ -86,5 +86,4 @@ Grant(  on_entity = models.Customer,
 #       <---- Filters AND'd ------------------->     <--- Grants OR'd --------------------->
 
 
-app_logger.debug("Declare Security complete - security/declare_security.py"
-    + f' -- {len(database.authentication_models.metadata.tables)} tables loaded')
+app_logger.debug("Declare Security complete - security/declare_security.py")
