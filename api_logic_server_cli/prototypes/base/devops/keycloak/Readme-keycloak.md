@@ -1,6 +1,6 @@
 # Integration: ApiLogicServer + Keycloak
 
-This repo contains a demo for apilogicserver integration with keycloak oidc JWT authentication.  It is an attempt to codegen kc capable apps (though will still required setup as described below).
+This repo contains a demo for apilogicserver integration with keycloak oidc JWT authentication.  We can now codegen kc-capable apps (though will still required setup as described below).
 
 * ***kci*** refers to the running KeyCloakIntegration
 
@@ -15,15 +15,29 @@ Status - 3/10:
 ## Setup
 
 ```bash
-ApiLogicServer add-auth provider_type=keycloak
+ApiLogicServer add-auth --provider_type=keycloak --db_url=
 ```
 
 ## Iterim Additional Setup
 
 ```bash
-ApiLogicServer add-auth provider_type=keycloak  # if not already done
+ApiLogicServer add-auth --provider_type=keycloak --db_url=  # if not already done
 cp -r devops/keycloak/nginx/admin-app ui/safrs-react-admin
 ```
+
+Or, the entire sequence, using the testpy release (aside - the dev ide has run configs for this under **2. Create servers/ApiLogicProject**):
+
+```bash
+ApiLogicServer create --project_name= --db_url=
+code ApiLogicProject  # then, in VSC terminal...
+ApiLogicServer add-cust
+ApiLogicServer add-auth --provider_type=keycloak --db_url=
+cp -r devops/keycloak/nginx/admin-app ui/safrs-react-admin
+cd devops/keycloak
+docker compose up
+# start the server
+```
+
 
 &nbsp;
 
@@ -59,9 +73,9 @@ You must provide the `Token Claim Name`:
 
 ![kc-client-attr-mapper-def](images/kc-client-attr-mapper-def.png)
 
-### Authorization Failing
+### Authorization working
 
-Login as u1.   Somehow, the `customer` role is assigned, which makes it fail (return >1 Category).
+Login as u1.   Observe you only get 1 category.
 
 &nbsp;
 
