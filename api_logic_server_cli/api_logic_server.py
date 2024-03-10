@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.03.17"
+__version__ = "10.03.18"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t03/09/2024 - 10.03.17: Keycloak-ready: hide check_password, DotMapX for User \n"\
+    "\t03/09/2024 - 10.03.18: Keycloak initial inclusion \n"\
     "\t03/03/2024 - 10.03.16: Issue 50 (Numeric defaults), Pattern/Design for Behave examples, fix tutorial dir names \n"\
     "\t02/27/2024 - 10.03.07: LogicBank 1.20.3, behave for kafka & no-ship empty orders \n"\
     "\t02/26/2024 - 10.03.06: Issue 49 (missing nw models.py manual fix) \n"\
@@ -1121,20 +1121,19 @@ from database import <project.bind_key>_models
         return return_abs_db_url
 
 
-    def add_auth(self, msg: str, is_nw: bool = False):
+    def add_auth(self, msg: str, is_nw: bool = False, provider_type: str='sql'):
         """add authentication models to project, update config; leverage multi-db support.  kat
-
+        
+        if provider_type is sql: 
         1. add-db --db_url= [ auth | db_url ]
-
         2. add user.login endpoint
-
         3. Set SECURITY_ENABLED in config.py
-
         4. Adding Sample authorization to security/declare_security.py, or user
 
         Args:
             msg (str): eg: ApiLogicProject customizable project created.  Adding Security:")
             is_nw (bool): is northwind, which means we add the nw security logic
+            provider_type (str): sql or keycloak
         """
 
         database_path = self.project_directory_path.joinpath("database")
@@ -1144,73 +1143,89 @@ from database import <project.bind_key>_models
             if is_nw or "ApiLogicProject customizable project created" in msg:
                 pass
             else:
-                log.info(" .. TODO: Declare authorization in security/declare_security.py")
+                if provider_type == 'sql':
+                    log.info(" .. TODO: Declare authorization in security/declare_security.py")
+                    log.info(" .. docs: https://apilogicserver.github.io/Docs/Security-Activation/")
+            if provider_type == 'sql':
+                log.debug("  1. ApiLogicServer add-db --db_url=auth --bind_key=authentication")
+            elif provider_type == 'keycloak':
+                log.info(" .. for keycloak")
                 log.info(" .. docs: https://apilogicserver.github.io/Docs/Security-Activation/")
-
-            log.debug("  1. ApiLogicServer add-db --db_url=auth --bind_key=authentication")
         log.debug("===================================================================\n")
 
         if create_utils.does_file_contain(search_for="SECURITY_ENABLED = True  #",
                                           in_file=f'{self.project_directory}/config/config.py'):
             log.info(f'\nAlready present in config/config.py - no action taken\n')
-            pass
-
-        save_run = self.run
-        save_command = self.command
-        save_db_url = self.db_url
-        self.command = "add_db"
-        self.bind_key = "authentication"
-        is_northwind = is_nw or self.nw_db_status in ["nw", "nw+"]  # nw_db_status altered in create_project
-        if is_northwind:  # is_nw or self.nw_db_status ==  "nw":
-            self.db_url = "auth"  # shorthand for api_logic_server_cli/database/auth...
-        self.run = False
-        self.create_project()  # not creating project, but using model creation svcs
-        self.run = save_run
-        self.command = save_command
-        self.db_url = save_db_url
+            return
         
-        log.debug("\n==================================================================")
-        if msg != "":
-            log.debug("  2. Add User.Login endpoint")
-        log.debug("==================================================================\n")
-        login_endpoint_filename = f'{self.api_logic_server_dir_path.joinpath("templates/login_endpoint.txt")}'
-        auth_models_file_name = f'{self.project_directory_path.joinpath("database/authentication_models.py")}'
-        with open(login_endpoint_filename, 'r') as file:
-            login_endpoint_data = file.read()
-        create_utils.insert_lines_at(lines=login_endpoint_data, 
-                    at='UserRoleList : Mapped[List["UserRole"]] = relationship(back_populates="user")',
-                    after=True,
-                    file_name=auth_models_file_name)
-        login_endpoint_filename = f'{self.api_logic_server_dir_path.joinpath("templates/login_endpoint_imports.txt")}'
-        auth_models_file_name = f'{self.project_directory_path.joinpath("database/authentication_models.py")}'
-        with open(login_endpoint_filename, 'r') as file:
-            login_endpoint_data = file.read()
-        create_utils.insert_lines_at(lines=login_endpoint_data, 
-                    at="import declarative_base", after=True,
-                    file_name=auth_models_file_name)
-
-        log.debug("\n==================================================================")
-        if msg != "":
-            log.debug("  3. Set SECURITY_ENABLED in config.py")
-        log.debug("==================================================================\n")
-        create_utils.replace_string_in_file(search_for="SECURITY_ENABLED = False  #",
-                            replace_with='SECURITY_ENABLED = True  #',
-                            in_file=f'{self.project_directory}/config/config.py')
-        if is_northwind:  # is_nw or self.nw_db_status ==  "nw":
+        if provider_type == 'keycloak':
             log.debug("\n==================================================================")
             if msg != "":
-                if msg != "":
-                    log.debug("  4. Adding Sample authorization to security/declare_security.py")
-                log.debug("==================================================================\n\n")
-                nw_declare_security_py_path = self.api_logic_server_dir_path.\
-                    joinpath('prototypes/nw/security/declare_security.py')
-                declare_security_py_path = self.project_directory_path.joinpath('security/declare_security.py')
-                shutil.copyfile(nw_declare_security_py_path, declare_security_py_path)
+                log.debug("  1. Set SECURITY_ENABLED in config.py")
+            log.debug("==================================================================\n")
+            create_utils.replace_string_in_file(search_for="SECURITY_ENABLED = False  #",
+                                replace_with='SECURITY_ENABLED = True  #',
+                                in_file=f'{self.project_directory}/config/config.py')
+            create_utils.replace_string_in_file(search_for="security.authentication_provider.sql.auth_provider",
+                                replace_with='security.authentication_provider.keycloak.auth_provider',
+                                in_file=f'{self.project_directory}/config/config.py')
         else:
+            save_run = self.run
+            save_command = self.command
+            save_db_url = self.db_url
+            self.command = "add_db"
+            self.bind_key = "authentication"
+            is_northwind = is_nw or self.nw_db_status in ["nw", "nw+"]  # nw_db_status altered in create_project
+            if is_northwind:  # is_nw or self.nw_db_status ==  "nw":
+                self.db_url = "auth"  # shorthand for api_logic_server_cli/database/auth...
+            self.run = False
+            self.create_project()  # not creating project, but using model creation svcs
+            self.run = save_run
+            self.command = save_command
+            self.db_url = save_db_url
+            
             log.debug("\n==================================================================")
             if msg != "":
-                log.debug("  4. TODO: Declare authorization in security/declare_security.py")
-            log.debug("==================================================================\n\n")
+                log.debug("  2. Add User.Login endpoint")
+            log.debug("==================================================================\n")
+            login_endpoint_filename = f'{self.api_logic_server_dir_path.joinpath("templates/login_endpoint.txt")}'
+            auth_models_file_name = f'{self.project_directory_path.joinpath("database/authentication_models.py")}'
+            with open(login_endpoint_filename, 'r') as file:
+                login_endpoint_data = file.read()
+            create_utils.insert_lines_at(lines=login_endpoint_data, 
+                        at='UserRoleList : Mapped[List["UserRole"]] = relationship(back_populates="user")',
+                        after=True,
+                        file_name=auth_models_file_name)
+            login_endpoint_filename = f'{self.api_logic_server_dir_path.joinpath("templates/login_endpoint_imports.txt")}'
+            auth_models_file_name = f'{self.project_directory_path.joinpath("database/authentication_models.py")}'
+            with open(login_endpoint_filename, 'r') as file:
+                login_endpoint_data = file.read()
+            create_utils.insert_lines_at(lines=login_endpoint_data, 
+                        at="import declarative_base", after=True,
+                        file_name=auth_models_file_name)
+
+            log.debug("\n==================================================================")
+            if msg != "":
+                log.debug("  3. Set SECURITY_ENABLED in config.py")
+            log.debug("==================================================================\n")
+            create_utils.replace_string_in_file(search_for="SECURITY_ENABLED = False  #",
+                                replace_with='SECURITY_ENABLED = True  #',
+                                in_file=f'{self.project_directory}/config/config.py')
+            if is_northwind:  # is_nw or self.nw_db_status ==  "nw":
+                log.debug("\n==================================================================")
+                if msg != "":
+                    if msg != "":
+                        log.debug("  4. Adding Sample authorization to security/declare_security.py")
+                    log.debug("==================================================================\n\n")
+                    nw_declare_security_py_path = self.api_logic_server_dir_path.\
+                        joinpath('prototypes/nw/security/declare_security.py')
+                    declare_security_py_path = self.project_directory_path.joinpath('security/declare_security.py')
+                    shutil.copyfile(nw_declare_security_py_path, declare_security_py_path)
+            else:
+                log.debug("\n==================================================================")
+                if msg != "":
+                    log.debug("  4. TODO: Declare authorization in security/declare_security.py")
+                log.debug("==================================================================\n\n")
 
     def insert_tutorial_into_readme(self):
         """ insert docs tutorial.md into readme at --> Tip: create the sample """
