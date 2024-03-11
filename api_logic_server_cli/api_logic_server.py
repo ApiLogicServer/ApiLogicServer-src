@@ -1169,6 +1169,8 @@ from database import <project.bind_key>_models
             create_utils.replace_string_in_file(search_for="security.authentication_provider.sql.auth_provider",
                                 replace_with='security.authentication_provider.keycloak.auth_provider',
                                 in_file=f'{self.project_directory}/config/config.py')
+            create_utils.copy_md(project = self, from_doc_file = "Keycloak-devnotes.md", 
+                                 to_project_file='devops/keycloak/Readme-keycloak.md')
         else:
             save_run = self.run
             save_command = self.command
