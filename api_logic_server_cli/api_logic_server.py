@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.03.20"
+__version__ = "10.03.21"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t03/09/2024 - 10.03.20: Keycloak initial integration \n"\
+    "\t03/12/2024 - 10.03.21: Keycloak initial integration, option-names \n"\
     "\t03/03/2024 - 10.03.16: Issue 50 (Numeric defaults), Pattern/Design for Behave examples, fix tutorial dir names \n"\
     "\t02/27/2024 - 10.03.07: LogicBank 1.20.3, behave for kafka & no-ship empty orders \n"\
     "\t02/26/2024 - 10.03.06: Issue 49 (missing nw models.py manual fix) \n"\
@@ -692,7 +692,7 @@ def final_project_fixup(msg, project) -> str:
         defaultInterpreterPath = Path(defaultInterpreterPath_str)
         if 'org_git' in str(project.api_logic_server_dir_path):  # apilogicserver dev is special case
             if os.name == "nt":
-                defaultInterpreterPath = self.api_logic_server_dir_path.parent.parent.parent.joinpath('build_and_test/ApiLogicServer/venv/scripts/python.exe')
+                defaultInterpreterPath = project.api_logic_server_dir_path.parent.parent.parent.joinpath('build_and_test/ApiLogicServer/venv/scripts/python.exe')
             else:
                 defaultInterpreterPath = project.api_logic_server_dir_path.parent.parent.parent.joinpath('build_and_test/ApiLogicServer/venv/bin/python')
             defaultInterpreterPath_str = str(defaultInterpreterPath)

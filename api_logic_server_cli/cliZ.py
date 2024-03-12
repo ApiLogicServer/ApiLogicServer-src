@@ -14,7 +14,6 @@ To add a new arg:
 Main code is api_logic_server.py (PR)
 '''
 
-# TODO: https://stackoverflow.com/questions/62182687/custom-help-in-python-click
 from contextlib import closing
 
 import yaml
@@ -158,7 +157,7 @@ def mainZ(ctx):
 
 \b
         ApiLogicServer tutorial                                # *** start here ***
-        ApiLogicServer create-and-run --db-url= project-name=  # defaults to Northwind
+        ApiLogicServer create-and-run --db_url= project_name=  # defaults to Northwind
         ApiLogicServer create                                  # prompts for project, db
 
     Then, customize created API Logic Project in your IDE
@@ -173,7 +172,7 @@ def main(ctx):
     Creates [and runs] logic-enabled Python database API Logic Projects.
 
 \b    
-        Creation is from your database (--db-url identifies a SQLAlchemy database)
+        Creation is from your database (--db_url identifies a SQLAlchemy database)
 
 \b
         Doc: https://apilogicserver.github.io/Docs
@@ -183,7 +182,7 @@ def main(ctx):
     1. Create a project; examples:
 
 \b
-        ApiLogicServer create --db-url= --project-name=     # defaults to Northwind sample
+        ApiLogicServer create --db_url= --project_name=     # defaults to Northwind sample
         ApiLogicServer tutorial                             # guided walk-through
         ApiLogicServer create                               # prompts for project name, db url
 
@@ -348,9 +347,6 @@ def login(ctx, user: str, password: str):
 @click.option('--security/--no_security',
               default=True, is_flag=True,
               help="Include -H Bearer xxx")
-@click.option('--security/--no-security', 'security',
-              default=True, is_flag=True,
-              help="Include -H Bearer xxx")
 def curl(ctx, curl_command: str, data: str="", security: click.BOOL=False):
     """
         Execute cURL command, providing auth headers from login.
@@ -434,49 +430,27 @@ def tutorial(ctx, create):
 
 
 @main.command("create")
-@click.option('--project_name', metavar='',
+@click.option('--project_name',
               default=f'{default_project_name}',
               prompt="Project to create",
-              help="")  # option text shown on create --help
-@click.option('--project-name', 'project_name',
-              default=f'.',
-              help="Project location")
+              help="Create new directory named this")  # option text shown on create --help
 @click.option('--db_url',
-              default=f'{default_db}',
-              prompt="SQLAlchemy Database URI",
-              help="SQLAlchemy Database URL - see above\n")
-@click.option('--db-url', 'db_url',
               default=f'{default_db}',
               prompt="SQLAlchemy Database URI",
               help="SQLAlchemy Database URL - see above\n")
 @click.option('--api_name',
               default=f'api',
               help="Last node of API Logic Server url\n")
-@click.option('--api-name', 'api_name',
-              default=f'api',
-              help="Last node of API Logic Server url\n")
 @click.option('--opt_locking',
-              default=OptLocking.OPTIONAL.value,
-              help="Optimistic Locking [ignore, optional, required]")
-@click.option('--opt-locking', 'opt_locking',
               default=OptLocking.OPTIONAL.value,
               help="Optimistic Locking [ignore, optional, required]")
 @click.option('--opt_locking_attr',
               default="S_CheckSum",
               help="Attribute Name for Optimistic Locking CheckSum (unused)")
-@click.option('--opt-locking-attr', 'opt_locking_attr',
-              default="S_CheckSum",
-              help="Attribute Name for Optimistic Locking CheckSum (unused)")
 @click.option('--id_column_alias',
               default="Id",
               help="Attribute Name for db cols named 'id'")
-@click.option('--id-column-alias', 'id_column_alias',
-              default="Id",
-              help="Attribute Name for db cols named 'id'")
 @click.option('--from_git',
-              default="",
-              help="Template clone-from project (or directory)")
-@click.option('--from-git', 'from_git',
               default="",
               help="Template clone-from project (or directory)")
 @click.option('--run', is_flag=True,
@@ -488,37 +462,19 @@ def tutorial(ctx, create):
 @click.option('--open_with',
               default='',
               help="Open created project (eg, charm, atom)")
-@click.option('--open-with', 'open_with',
-              default='',
-              help="Open created project (eg, charm, atom)")
 @click.option('--not_exposed',
-              default="ProductDetails_V",
-              help="Tables not written to api/expose_api_models")
-@click.option('--not-exposed', 'not_exposed',
               default="ProductDetails_V",
               help="Tables not written to api/expose_api_models")
 @click.option('--admin_app/--no_admin_app',
               default=True, is_flag=True,
               help="Creates ui/react app (yaml model)")
-@click.option('--admin-app/--no-admin-app', 'admin_app',
-              default=True, is_flag=True,
-              help="Creates ui/react app (yaml model)")
 @click.option('--multi_api/--no_multi_api',
-              default=False, is_flag=True,
-              help="Create multiple APIs")
-@click.option('--multi-api/--no-multi-api', 'multi_api',
               default=False, is_flag=True,
               help="Create multiple APIs")
 @click.option('--flask_appbuilder/--no_flask_appbuilder',
               default=False, is_flag=True,
               help="Creates ui/basic_web_app")
-@click.option('--flask-appbuilder/--noflask-appbuilder', 'flask_appbuilder',
-              default=False, is_flag=True,
-              help="Creates ui/basic_web_app")
 @click.option('--react_admin/--no_react_admin',
-              default=False, is_flag=True,
-              help="Creates ui/react_admin app")
-@click.option('--react-admin/--no-react-admin', 'react_admin',
               default=False, is_flag=True,
               help="Creates ui/react_admin app")
 @click.option('--favorites',
@@ -527,13 +483,7 @@ def tutorial(ctx, create):
 @click.option('--non_favorites',
               default="id",
               help="Columns named like this displayed last")
-@click.option('--non-favorites', 'non_favorites',
-              default="id",
-              help="Columns named like this displayed last")
 @click.option('--use_model',
-              default="",
-              help="See ApiLogicServer/wiki/Troubleshooting")
-@click.option('--use-model', 'use_model',
               default="",
               help="See ApiLogicServer/wiki/Troubleshooting")
 @click.option('--host',
@@ -545,25 +495,13 @@ def tutorial(ctx, create):
 @click.option('--swagger_host',
               default=f'localhost',
               help="Swagger hostname (default is localhost)")
-@click.option('--swagger-host', 'swagger_host',
-              default=f'localhost',
-              help="Swagger hostname (default is localhost)")
 @click.option('--extended_builder',
-              default=f'',
-              help="your_code.py for additional build automation")
-@click.option('--extended-builder', 'extended_builder',
               default=f'',
               help="your_code.py for additional build automation")
 @click.option('--include_tables',
               default=f'',
               help="yml for include: exclude:")
-@click.option('--include-tables', 'include_tables',
-              default=f'',
-              help="yml for include: exclude:")
 @click.option('--infer_primary_key/--no_infer_primary_key',
-              default=False, is_flag=True,
-              help="Infer primary_key for unique cols")
-@click.option('--infer-primary-key/--no-infer-primary-key', 'infer_primary_key',
               default=False, is_flag=True,
               help="Infer primary_key for unique cols")
 @click.pass_context
@@ -609,45 +547,23 @@ def create(ctx, project_name: str, db_url: str, not_exposed: str, api_name: str,
               default=f'{default_project_name}',
               prompt="Project to create",
               help="Create new directory named this")
-@click.option('--project-name', 'project_name',
-              default=f'.',
-              help="Project location")
 @click.option('--db_url',
-              default=f'{default_db}',
-              prompt="SQLAlchemy Database URI",
-              help="SQLAlchemy Database URL - see above\n")
-@click.option('--db-url', 'db_url',
               default=f'{default_db}',
               prompt="SQLAlchemy Database URI",
               help="SQLAlchemy Database URL - see above\n")
 @click.option('--api_name',
               default=f'api',
               help="Last node of API Logic Server url\n")
-@click.option('--api-name', 'api_name',
-              default=f'api',
-              help="Last node of API Logic Server url\n")
 @click.option('--opt_locking',
-              default=OptLocking.OPTIONAL.value,
-              help="Optimistic Locking [ignore, optional, required]")
-@click.option('--opt-locking', 'opt_locking',
               default=OptLocking.OPTIONAL.value,
               help="Optimistic Locking [ignore, optional, required]")
 @click.option('--opt_locking_attr',
               default="S_CheckSum",
               help="Attribute Name for Optimistic Locking CheckSum (unused)")
-@click.option('--opt-locking-attr', 'opt_locking_attr',
-              default="S_CheckSum",
-              help="Attribute Name for Optimistic Locking CheckSum (unused)")
 @click.option('--id_column_alias',
               default="Id",
               help="Attribute Name for db cols named 'id'")
-@click.option('--id-column-alias', 'id_column_alias',
-              default="Id",
-              help="Attribute Name for db cols named 'id'")
 @click.option('--from_git',
-              default="",
-              help="Template clone-from project (or directory)")
-@click.option('--from-git', 'from_git',
               default="",
               help="Template clone-from project (or directory)")
 @click.option('--run', is_flag=True,
@@ -656,19 +572,10 @@ def create(ctx, project_name: str, db_url: str, not_exposed: str, api_name: str,
 @click.option('--open_with',
               default='',
               help="Open created project (eg, charm, atom)")
-@click.option('--open-with', 'open_with',
-              default='',
-              help="Open created project (eg, charm, atom)")
 @click.option('--not_exposed',
               default="ProductDetails_V",
               help="Tables not written to api/expose_api_models")
-@click.option('--not-exposed', 'not_exposed',
-              default="ProductDetails_V",
-              help="Tables not written to api/expose_api_models")
 @click.option('--admin_app/--no_admin_app',
-              default=True, is_flag=True,
-              help="Creates ui/react app (yaml model)")
-@click.option('--admin-app/--no-admin-app', 'admin_app',
               default=True, is_flag=True,
               help="Creates ui/react app (yaml model)")
 @click.option('--quote', is_flag=True,
@@ -677,19 +584,10 @@ def create(ctx, project_name: str, db_url: str, not_exposed: str, api_name: str,
 @click.option('--flask_appbuilder/--no_flask_appbuilder',
               default=False, is_flag=True,
               help="Creates ui/basic_web_app")
-@click.option('--flask-appbuilder/--noflask-appbuilder', 'flask_appbuilder',
-              default=False, is_flag=True,
-              help="Creates ui/basic_web_app")
 @click.option('--react_admin/--no_react_admin',
               default=False, is_flag=True,
               help="Creates ui/react_admin app")
-@click.option('--react-admin/--no-react-admin', 'react_admin',
-              default=False, is_flag=True,
-              help="Creates ui/react_admin app")
 @click.option('--multi_api/--no_multi_api',
-              default=False, is_flag=True,
-              help="Create multiple APIs")
-@click.option('--multi-api/--no-multi-api', 'multi_api',
               default=False, is_flag=True,
               help="Create multiple APIs")
 @click.option('--favorites',
@@ -698,13 +596,7 @@ def create(ctx, project_name: str, db_url: str, not_exposed: str, api_name: str,
 @click.option('--non_favorites',
               default="id",
               help="Columns named like this displayed last")
-@click.option('--non-favorites', 'non_favorites',
-              default="id",
-              help="Columns named like this displayed last")
 @click.option('--use_model',
-              default="",
-              help="See ApiLogicServer/wiki/Troubleshooting")
-@click.option('--use-model', 'use_model',
               default="",
               help="See ApiLogicServer/wiki/Troubleshooting")
 @click.option('--host',
@@ -716,25 +608,13 @@ def create(ctx, project_name: str, db_url: str, not_exposed: str, api_name: str,
 @click.option('--swagger_host',
               default=f'localhost',
               help="Swagger hostname (default is localhost)")
-@click.option('--swagger-host', 'swagger_host',
-              default=f'localhost',
-              help="Swagger hostname (default is localhost)")
 @click.option('--extended_builder',
-              default=f'',
-              help="your_code.py for additional build automation")
-@click.option('--extended-builder', 'extended_builder',
               default=f'',
               help="your_code.py for additional build automation")
 @click.option('--include_tables',
               default=f'',
               help="yml for include: exclude:")
-@click.option('--include-tables', 'include_tables',
-              default=f'',
-              help="yml for include: exclude:")
 @click.option('--infer_primary_key/--no_infer_primary_key',
-              default=False, is_flag=True,
-              help="Infer primary_key for unique cols")
-@click.option('--infer-primary-key/--no-infer-primary-key', 'infer_primary_key',
               default=False, is_flag=True,
               help="Infer primary_key for unique cols")
 @click.pass_context
@@ -779,33 +659,17 @@ def create_and_run(ctx, project_name: str, db_url: str, not_exposed: str, api_na
 @click.option('--project_name',
               default=f'.',
               help="Create new directory named this")
-@click.option('--project-name', 'project_name',
-              default=f'.',
-              help="Project location")
 @click.option('--db_url',
-              default=f'{default_db}',
-              prompt="SQLAlchemy Database URI",
-              help="SQLAlchemy Database URL - see above\n")
-@click.option('--db-url', 'db_url',
               default=f'{default_db}',
               prompt="SQLAlchemy Database URI",
               help="SQLAlchemy Database URL - see above\n")
 @click.option('--api_name',
               default=f'api',
               help="Last node of API Logic Server url\n")
-@click.option('--api-name', 'api_name',
-              default=f'api',
-              help="Last node of API Logic Server url\n")
 @click.option('--id_column_alias',
               default="Id",
               help="Attribute Name for db cols named 'id'")
-@click.option('--id-column-alias', 'id_column_alias',
-              default="Id",
-              help="Attribute Name for db cols named 'id'")
 @click.option('--from_git',
-              default="",
-              help="Template clone-from project (or directory)")
-@click.option('--from-git', 'from_git',
               default="",
               help="Template clone-from project (or directory)")
 @click.option('--run', is_flag=True,
@@ -814,31 +678,16 @@ def create_and_run(ctx, project_name: str, db_url: str, not_exposed: str, api_na
 @click.option('--open_with',
               default='',
               help="Open created project (eg, charm, atom)")
-@click.option('--open-with', 'open_with',
-              default='',
-              help="Open created project (eg, charm, atom)")
 @click.option('--not_exposed',
-              default="ProductDetails_V",
-              help="Tables not written to api/expose_api_models")
-@click.option('--not-exposed', 'not_exposed',
               default="ProductDetails_V",
               help="Tables not written to api/expose_api_models")
 @click.option('--admin_app/--no_admin_app',
               default=True, is_flag=True,
               help="Creates ui/react app (yaml model)")
-@click.option('--admin-app/--no-admin-app', 'admin_app',
-              default=True, is_flag=True,
-              help="Creates ui/react app (yaml model)")
 @click.option('--flask_appbuilder/--no_flask_appbuilder',
               default=False, is_flag=True,
               help="Creates ui/basic_web_app")
-@click.option('--flask-appbuilder/--noflask-appbuilder', 'flask_appbuilder',
-              default=False, is_flag=True,
-              help="Creates ui/basic_web_app")
 @click.option('--react_admin/--no_react_admin',
-              default=False, is_flag=True,
-              help="Creates ui/react_admin app")
-@click.option('--react-admin/--no-react-admin', 'react_admin',
               default=False, is_flag=True,
               help="Creates ui/react_admin app")
 @click.option('--quote', is_flag=True,
@@ -850,13 +699,7 @@ def create_and_run(ctx, project_name: str, db_url: str, not_exposed: str, api_na
 @click.option('--non_favorites',
               default="id",
               help="Columns named like this displayed last")
-@click.option('--non-favorites', 'non_favorites',
-              default="id",
-              help="Columns named like this displayed last")
 @click.option('--use_model',
-              default="",
-              help="See ApiLogicServer/wiki/Troubleshooting")
-@click.option('--use-model', 'use_model',
               default="",
               help="See ApiLogicServer/wiki/Troubleshooting")
 @click.option('--host',
@@ -868,19 +711,10 @@ def create_and_run(ctx, project_name: str, db_url: str, not_exposed: str, api_na
 @click.option('--swagger_host',
               default=f'localhost',
               help="Swagger hostname (default is localhost)")
-@click.option('--swagger-host', 'swagger_host',
-              default=f'localhost',
-              help="Swagger hostname (default is localhost)")
 @click.option('--extended_builder',
               default=f'',
               help="your_code.py for additional build automation")
-@click.option('--extended-builder', 'extended_builder',
-              default=f'',
-              help="your_code.py for additional build automation")
 @click.option('--infer_primary_key/--no_infer_primary_key',
-              default=False, is_flag=True,
-              help="Infer primary_key for unique cols")
-@click.option('--infer-primary-key/--no-infer-primary-key', 'infer_primary_key',
               default=False, is_flag=True,
               help="Infer primary_key for unique cols")
 @click.pass_context
@@ -925,19 +759,11 @@ def rebuild_from_database(ctx, project_name: str, db_url: str, api_name: str, no
 @click.option('--db_url',
               default=f'todo',
               prompt="Database url",
-              help="Connect new database here")
-@click.option('--db-url', 'db_url',
-              default=f'{default_db}',
-              prompt="SQLAlchemy Database URI",
-              help="SQLAlchemy Database URL - see above\n")
+              help="Connect new database here") # TODO
 @click.option('--bind_key',
               default=f'Alt',
               prompt="Bind key",
-              help="Add new bind key here")
-@click.option('--bind-key', 'bind_key',
-              default=f'Alt',
-              prompt="Bind key",
-              help="Add new bind key here")
+              help="Add new bind key here") # TODO
 @click.option('--bind_key_url_separator',
               default=default_bind_key_url_separator,
               help="bindkey / class name url separator")
@@ -947,15 +773,9 @@ def rebuild_from_database(ctx, project_name: str, db_url: str, api_name: str, no
 @click.option('--project_name',
               default=f'.',
               help="Project location")
-@click.option('--project-name', 'project_name',
-              default=f'.',
-              help="Project location")
 @click.option('--api_name',
               default="api",
               help="api prefix name")
-@click.option('--api-name', 'api_name',
-              default=f'api',
-              help="Last node of API Logic Server url\n")
 @click.pass_context # Kat
 def add_db(ctx, db_url: str, bind_key: str, bind_key_url_separator: str, api_name: str, project_name: str,
            quote: click.BOOL):
@@ -993,23 +813,13 @@ def add_db(ctx, db_url: str, bind_key: str, bind_key_url_separator: str, api_nam
 @click.option('--project_name',
               default=f'.',
               help="Project location")
-@click.option('--project-name', 'project_name',
-              default=f'.',
-              help="Project location")
 @click.option('--db_url',
               default=f'auth',
-              prompt="SQLAlchemy Database URI",
-              help="SQLAlchemy Database URL - see above\n")
-@click.option('--db-url', 'db_url',
-              default=f'{default_db}',
               prompt="SQLAlchemy Database URI",
               help="SQLAlchemy Database URL - see above\n")
 @click.option('--api_name',
               default="api",
               help="api prefix name")
-@click.option('--api-name', 'api_name',
-              default=f'api',
-              help="Last node of API Logic Server url\n")
 @click.pass_context
 def add_auth_cmd(ctx, bind_key_url_separator: str, provider_type :str, db_url: str, project_name: str, api_name: str):
     """
@@ -1054,18 +864,12 @@ def add_auth_cmd(ctx, bind_key_url_separator: str, provider_type :str, db_url: s
 @click.option('--bind_key_url_separator',
               default=default_bind_key_url_separator,
               help="bindkey / class name url separator")
-@click.option('--project-name', 'project_name',
-              default=f'.',
-              help="Project location")
 @click.option('--project_name',
               default=f'.',
               help="Project location")
 @click.option('--api_name',
               default="api",
               help="api prefix name")
-@click.option('--api-name', 'api_name',
-              default=f'api',
-              help="Last node of API Logic Server url\n")
 @click.pass_context
 def add_cust(ctx, bind_key_url_separator: str, api_name: str, project_name: str):
     """
@@ -1107,15 +911,9 @@ def add_cust(ctx, bind_key_url_separator: str, api_name: str, project_name: str)
 @click.option('--project_name',
               default=f'.',
               help="Project location")
-@click.option('--project-name', 'project_name',
-              default=f'.',
-              help="Project location")
 @click.option('--api_name',
               default="api",
               help="api prefix name")
-@click.option('--api-name', 'api_name',
-              default=f'api',
-              help="Last node of API Logic Server url\n")
 @click.pass_context
 def sample_ai(ctx, bind_key_url_separator: str, api_name: str, project_name: str):
     """
@@ -1155,15 +953,9 @@ def sample_ai(ctx, bind_key_url_separator: str, api_name: str, project_name: str
 @click.option('--project_name',
               default=f'.',
               help="Project location")
-@click.option('--project-name', 'project_name',
-              default=f'.',
-              help="Project location")
 @click.option('--api_name',
               default="api",
               help="api prefix name")
-@click.option('--api-name', 'api_name',
-              default=f'api',
-              help="Last node of API Logic Server url\n")
 @click.pass_context
 def sample_ai_iteration(ctx, bind_key_url_separator: str, api_name: str, project_name: str):
     """
@@ -1199,27 +991,14 @@ def sample_ai_iteration(ctx, bind_key_url_separator: str, api_name: str, project
 @click.option('--project_name',
               default=f'.',
               help="Create new directory named this")
-@click.option('--project-name', 'project_name',
-              default=f'.',
-              help="Project location")
 @click.option('--db_url',
-              default=f'{default_db}',
-              prompt="SQLAlchemy Database URI",
-              help="SQLAlchemy Database URL - see above\n")
-@click.option('--db-url', 'db_url',
               default=f'{default_db}',
               prompt="SQLAlchemy Database URI",
               help="SQLAlchemy Database URL - see above\n")
 @click.option('--api_name',
               default=f'api',
               help="Last node of API Logic Server url\n")
-@click.option('--api-name', 'api_name',
-              default=f'api',
-              help="Last node of API Logic Server url\n")
 @click.option('--from_git',
-              default="",
-              help="Template clone-from project (or directory)")
-@click.option('--from-git', 'from_git',
               default="",
               help="Template clone-from project (or directory)")
 @click.option('--run', is_flag=True,
@@ -1228,31 +1007,16 @@ def sample_ai_iteration(ctx, bind_key_url_separator: str, api_name: str, project
 @click.option('--open_with',
               default='',
               help="Open created project (eg, charm, atom)")
-@click.option('--open-with', 'open_with',
-              default='',
-              help="Open created project (eg, charm, atom)")
 @click.option('--not_exposed',
-              default="ProductDetails_V",
-              help="Tables not written to api/expose_api_models")
-@click.option('--not-exposed', 'not_exposed',
               default="ProductDetails_V",
               help="Tables not written to api/expose_api_models")
 @click.option('--admin_app/--no_admin_app',
               default=True, is_flag=True,
               help="Creates ui/react app (yaml model)")
-@click.option('--admin-app/--no-admin-app', 'admin_app',
-              default=True, is_flag=True,
-              help="Creates ui/react app (yaml model)")
 @click.option('--flask_appbuilder/--no_flask_appbuilder',
               default=False, is_flag=True,
               help="Creates ui/basic_web_app")
-@click.option('--flask-appbuilder/--noflask-appbuilder', 'flask_appbuilder',
-              default=False, is_flag=True,
-              help="Creates ui/basic_web_app")
 @click.option('--react_admin/--no_react_admin',
-              default=False, is_flag=True,
-              help="Creates ui/react_admin app")
-@click.option('--react-admin/--no-react-admin', 'react_admin',
               default=False, is_flag=True,
               help="Creates ui/react_admin app")
 @click.option('--favorites',
@@ -1261,13 +1025,7 @@ def sample_ai_iteration(ctx, bind_key_url_separator: str, api_name: str, project
 @click.option('--non_favorites',
               default="id",
               help="Columns named like this displayed last")
-@click.option('--non-favorites', 'non_favorites',
-              default="id",
-              help="Columns named like this displayed last")
 @click.option('--use_model',
-              default="",
-              help="See ApiLogicServer/wiki/Troubleshooting")
-@click.option('--use-model', 'use_model',
               default="",
               help="See ApiLogicServer/wiki/Troubleshooting")
 @click.option('--host',
@@ -1279,19 +1037,10 @@ def sample_ai_iteration(ctx, bind_key_url_separator: str, api_name: str, project
 @click.option('--swagger_host',
               default=f'localhost',
               help="Swagger hostname (default is localhost)")
-@click.option('--swagger-host', 'swagger_host',
-              default=f'localhost',
-              help="Swagger hostname (default is localhost)")
 @click.option('--extended_builder',
               default=f'',
               help="your_code.py for additional build automation")
-@click.option('--extended-builder', 'extended_builder',
-              default=f'',
-              help="your_code.py for additional build automation")
 @click.option('--infer_primary_key/--no_infer_primary_key',
-              default=False, is_flag=True,
-              help="Infer primary_key for unique cols")
-@click.option('--infer-primary-key/--no-infer-primary-key', 'infer_primary_key',
               default=False, is_flag=True,
               help="Infer primary_key for unique cols")
 @click.pass_context # Kat
@@ -1328,9 +1077,6 @@ def rebuild_from_model(ctx, project_name: str, db_url: str, api_name: str, not_e
               default=f'{last_created_project_name}',
               prompt="Project to run",
               help="Project to run")
-@click.option('--project-name', 'project_name',
-              default=f'.',
-              help="Project location")
 @click.option('--host',
               default=f'localhost',
               help="Server hostname (default is localhost)")
@@ -1338,9 +1084,6 @@ def rebuild_from_model(ctx, project_name: str, db_url: str, api_name: str, not_e
               default=f'5656',
               help="Port (default 5656, or leave empty)")
 @click.option('--swagger_host',
-              default=f'localhost',
-              help="Swagger hostname (default is localhost)")
-@click.option('--swagger-host', 'swagger_host',
               default=f'localhost',
               help="Swagger hostname (default is localhost)")
 @click.pass_context
@@ -1372,16 +1115,10 @@ def run_api(ctx, project_name: str, host: str="localhost", port: str="5656", swa
 @click.option('--use_model',
               default="models.py",
               help="See ApiLogicServer/wiki/Troubleshooting")
-@click.option('--use-model', 'use_model',
-              default="models.py",
-              help="See ApiLogicServer/wiki/Troubleshooting")
 @click.option('--favorites',
               default="name description",
               help="Columns named like this displayed first")
 @click.option('--non_favorites',
-              default="id",
-              help="Columns named like this displayed last")
-@click.option('--non-favorites', 'non_favorites',
               default="id",
               help="Columns named like this displayed last")
 @click.pass_context
