@@ -14,7 +14,6 @@ To add a new arg:
 Main code is api_logic_server.py (PR)
 '''
 
-# TODO: https://stackoverflow.com/questions/62182687/custom-help-in-python-click
 from contextlib import closing
 
 import yaml
@@ -43,6 +42,21 @@ import sys
 import os
 import importlib
 import click
+
+class HideDunderCommand(click.Command):
+    """remove redundant option_name from --help
+    
+    https://stackoverflow.com/questions/62182687/custom-help-in-python-click
+
+    Args:
+        click (_type_): _description_
+    """
+    def format_help(self, ctx, formatter):
+        text = click.Command.format_help(self, ctx, formatter)
+        # text = create.get_help(ctx)
+        text = formatter.buffer
+        pass
+        # click.echo("My custom help message")
 
 
 def get_api_logic_server_path() -> Path:
@@ -433,7 +447,7 @@ def tutorial(ctx, create):
     log.info("")
 
 
-@main.command("create")
+@main.command("create", cls=HideDunderCommand)
 @click.option('--project_name', metavar='',
               default=f'{default_project_name}',
               prompt="Project to create",
