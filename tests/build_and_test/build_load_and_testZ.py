@@ -8,12 +8,6 @@ from pathlib import Path
 from dotmap import DotMap
 import json
 
-db_url = 'db-url'  # db_url or db-rul
-project_name = 'project-name'
-bind_key = 'bind-key'
-include_tables = 'include-tables'
-extended_builder = 'extended-builder'
-
 class DotDict(dict):
     """ APiLogicServer dot.notation access to dictionary attributes """
     # thanks: https://stackoverflow.com/questions/2352181/how-to-use-a-dot-to-access-members-of-dictionary/28463329
@@ -306,16 +300,16 @@ def multi_database_tests():
     install_api_logic_server_path = get_servers_build_and_test_path().joinpath("ApiLogicServer")
     api_logic_project_path = install_api_logic_server_path.joinpath('MultiDB')
 
-    result_create = run_command(f'{set_venv} && ApiLogicServer create --{project_name}=MultiDB --{db_url}=nw-',
+    result_create = run_command(f'{set_venv} && ApiLogicServer create --project_name=MultiDB --db_url=nw-',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate MultiDB at: {str(install_api_logic_server_path)}')
 
-    result_create = run_command(f'{set_venv} && ApiLogicServer add-db --{db_url}=todo --{bind_key}=Todo --{project_name}=MultiDB',
+    result_create = run_command(f'{set_venv} && ApiLogicServer add-db --db_url=todo --bind_key=Todo --project_name=MultiDB',
         cwd=install_api_logic_server_path,
         msg=f'\nAdd ToDoDB at: {str(install_api_logic_server_path)}')
 
     # declare_security
-    result_create = run_command(f'{set_venv} && ApiLogicServer add-auth --{project_name}=MultiDB',
+    result_create = run_command(f'{set_venv} && ApiLogicServer add-auth --project_name=MultiDB',
         cwd=install_api_logic_server_path,
         msg=f'\nAdd AuthDB at: {str(install_api_logic_server_path)}')
 
@@ -348,13 +342,13 @@ def rebuild_tests():
     """ same as models, but adds class: CategoryNew """
     models_py_path = api_logic_project_path.joinpath('database').joinpath('models.py')
 
-    result_create = run_command(f'{set_venv} && ApiLogicServer create --{project_name}=Rebuild --{db_url}=',
+    result_create = run_command(f'{set_venv} && ApiLogicServer create --project_name=Rebuild --db_url=',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate Rebuild at: {str(install_api_logic_server_path)}')
     if admin_merge_yaml_path.is_file():
         raise ValueError('System Error - admin-merge.yaml exists on create')
 
-    result_create = run_command(f'{set_venv} && ApiLogicServer rebuild-from-database --{project_name}=Rebuild --{db_url}=',
+    result_create = run_command(f'{set_venv} && ApiLogicServer rebuild-from-database --project_name=Rebuild --db_url=',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate project Rebuild at: {str(install_api_logic_server_path)}')
     if not admin_merge_yaml_path.is_file():
@@ -365,7 +359,7 @@ def rebuild_tests():
         raise ValueError('System Error - admin-merge.yaml does not contain "new_resources: " ')
 
     copyfile(new_model_path, models_py_path)
-    result_create = run_command(f'{set_venv} && ApiLogicServer rebuild-from-model --{project_name}=Rebuild --{db_url}=',
+    result_create = run_command(f'{set_venv} && ApiLogicServer rebuild-from-model --project_name=Rebuild --db_url=',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate ApiLogicProject at: {str(install_api_logic_server_path)}')
     if not admin_merge_yaml_path.is_file():
@@ -815,7 +809,7 @@ if len(sys.argv) > 1 and sys.argv[1] == 'build-only':
 
 
 if Config.do_create_api_logic_project:  # nw+ (with logic)
-    result_create = run_command(f'{set_venv} && ApiLogicServer create --{project_name}=ApiLogicProject --{db_url}=nw+',
+    result_create = run_command(f'{set_venv} && ApiLogicServer create --project_name=ApiLogicProject --db_url=nw+',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate ApiLogicProject')    
     
@@ -833,7 +827,7 @@ if Config.do_test_api_logic_project:
 
 
 if Config.do_create_shipping:  # optionally, start it manually (eg, with breakpoints)
-    result_create = run_command(f'{set_venv} && ApiLogicServer create --{project_name}=Shipping --{db_url}=shipping',
+    result_create = run_command(f'{set_venv} && ApiLogicServer create --project_name=Shipping --db_url=shipping',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate Shipping at: {str(install_api_logic_server_path)}')
 if Config.do_run_shipping:
@@ -872,15 +866,15 @@ if Config.do_rebuild_tests:
 if Config.do_other_sqlite_databases:
     chinook_path = get_api_logic_server_path().joinpath('api_logic_server_cli').joinpath('database').joinpath('Chinook_Sqlite.sqlite')
     chinook_url = f'sqlite:///{chinook_path}'
-    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=chinook_sqlite --{db_url}={chinook_url}',
+    run_command(f'{set_venv} && ApiLogicServer create --project_name=chinook_sqlite --db_url={chinook_url}',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate chinook_sqlite at: {str(install_api_logic_server_path)}')
-    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=classicmodels_sqlite --{db_url}=classicmodels',
+    run_command(f'{set_venv} && ApiLogicServer create --project_name=classicmodels_sqlite --db_url=classicmodels',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate classicmodels.sqlite at: {str(install_api_logic_server_path)}')
     start_api_logic_server(project_name='classicmodels_sqlite')
     stop_server(msg="classicmodels_sqlite\n")
-    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=todo_sqlite --{db_url}=todo',
+    run_command(f'{set_venv} && ApiLogicServer create --project_name=todo_sqlite --db_url=todo',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate todo.sqlite at: {str(install_api_logic_server_path)}')
     start_api_logic_server(project_name='todo_sqlite')
@@ -889,7 +883,7 @@ if Config.do_other_sqlite_databases:
 if Config.do_include_exclude:
     filter_path = str(get_api_logic_server_path().joinpath('api_logic_server_cli/database'))
 
-    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=include_exclude_nw --{db_url}=nw- --{include_tables}={filter_path}/table_filters_tests_nw.yml',
+    run_command(f'{set_venv} && ApiLogicServer create --project_name=include_exclude_nw --db_url=nw- --include_tables={filter_path}/table_filters_tests_nw.yml',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate include_exclude_typical at: {str(install_api_logic_server_path)}')
     verify_include_models( project_name='include_exclude_nw',
@@ -898,7 +892,7 @@ if Config.do_include_exclude:
     start_api_logic_server(project_name='include_exclude_nw') 
     stop_server(msg="include_exclude_nw\n")
 
-    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=include_exclude_nw_1 --{db_url}=nw- --{include_tables}={filter_path}/table_filters_tests_nw_1.yml',
+    run_command(f'{set_venv} && ApiLogicServer create --project_name=include_exclude_nw_1 --db_url=nw- --include_tables={filter_path}/table_filters_tests_nw_1.yml',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate include_exclude_typical at: {str(install_api_logic_server_path)}')
     verify_include_models( project_name='include_exclude_nw_1',
@@ -907,7 +901,7 @@ if Config.do_include_exclude:
     start_api_logic_server(project_name='include_exclude_nw_1')
     stop_server(msg="include_exclude_nw_1\n")
 
-    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=include_exclude --{db_url}=table_filters_tests --include_tables={filter_path}/table_filters_tests.yml',
+    run_command(f'{set_venv} && ApiLogicServer create --project_name=include_exclude --db_url=table_filters_tests --include_tables={filter_path}/table_filters_tests.yml',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate include_exclude at: {str(install_api_logic_server_path)}')
     verify_include_models( project_name='include_exclude',
@@ -915,7 +909,7 @@ if Config.do_include_exclude:
     start_api_logic_server(project_name='include_exclude')
     stop_server(msg="include_exclude\n")
 
-    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=include_exclude_typical --{db_url}=table_filters_tests --include_tables={filter_path}/table_filters_tests_typical.yml',
+    run_command(f'{set_venv} && ApiLogicServer create --project_name=include_exclude_typical --db_url=table_filters_tests --include_tables={filter_path}/table_filters_tests_typical.yml',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate include_exclude_typical at: {str(install_api_logic_server_path)}')
     verify_include_models( project_name='include_exclude_typical',
@@ -926,7 +920,7 @@ if Config.do_include_exclude:
 
 if Config.do_budget_app_test:
     budget_app_project_path = install_api_logic_server_path.joinpath('BudgetApp')
-    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=BudgetApp --{db_url}=BudgetApp',
+    run_command(f'{set_venv} && ApiLogicServer create --project_name=BudgetApp --db_url=BudgetApp',
             cwd=install_api_logic_server_path,
             msg=f'\nCreate BudgetApp at: {str(install_api_logic_server_path)}')    
     start_api_logic_server(project_name="BudgetApp")
@@ -952,7 +946,7 @@ if Config.do_budget_app_test:
 
 if Config.do_allocation_test:
     allocation_project_path = install_api_logic_server_path.joinpath('Allocation')
-    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=Allocation --{db_url}=allocation',
+    run_command(f'{set_venv} && ApiLogicServer create --project_name=Allocation --db_url=allocation',
             cwd=install_api_logic_server_path,
             msg=f'\nCreate Allocation at: {str(install_api_logic_server_path)}')    
     start_api_logic_server(project_name="Allocation")
@@ -971,7 +965,7 @@ if Config.do_allocation_test:
 
 if Config.do_docker_mysql:
     result_docker_mysql_classic = run_command(
-        f"{set_venv} && ApiLogicServer create --{project_name}=classicmodels --{db_url}=mysql+pymysql://root:p@{db_ip}:3306/classicmodels",
+        f"{set_venv} && ApiLogicServer create --project_name=classicmodels --db_url=mysql+pymysql://root:p@{db_ip}:3306/classicmodels",
         cwd=install_api_logic_server_path,
         msg=f'\nCreate MySQL classicmodels at: {str(install_api_logic_server_path)}')
     check_command(result_docker_mysql_classic) 
@@ -979,8 +973,8 @@ if Config.do_docker_mysql:
     stop_server(msg="classicmodels\n")
     
 if Config.do_docker_sqlserver:  # CAUTION: see comments below
-    command = f"{set_venv} && ApiLogicServer create --{project_name}=TVF --{extended_builder}=$ --{db_url}='mssql+pyodbc://sa:Posey3861@{db_ip}:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'"
-    command = f"{set_venv} && ApiLogicServer create --{project_name}=TVF --{extended_builder}=$ --{db_url}=mssql+pyodbc://sa:Posey3861@{db_ip}:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no"
+    command = f"{set_venv} && ApiLogicServer create --project_name=TVF --extended_builder=$ --db_url='mssql+pyodbc://sa:Posey3861@{db_ip}:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'"
+    command = f"{set_venv} && ApiLogicServer create --project_name=TVF --extended_builder=$ --db_url=mssql+pyodbc://sa:Posey3861@{db_ip}:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no"
     result_docker_sqlserver = run_command(
         command,
         cwd=install_api_logic_server_path,
@@ -989,8 +983,8 @@ if Config.do_docker_sqlserver:  # CAUTION: see comments below
     validate_sql_server_types()
     stop_server(msg="TVF\n")
 
-    command = f"{set_venv} && ApiLogicServer create --{project_name}=sqlserver --{db_url}='mssql+pyodbc://sa:Posey3861@{db_ip}:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'"
-    command = f"{set_venv} && ApiLogicServer create --{project_name}=sqlserver --{db_url}=mssql+pyodbc://sa:Posey3861@{db_ip}:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no"
+    command = f"{set_venv} && ApiLogicServer create --project_name=sqlserver --db_url='mssql+pyodbc://sa:Posey3861@{db_ip}:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'"
+    command = f"{set_venv} && ApiLogicServer create --project_name=sqlserver --db_url=mssql+pyodbc://sa:Posey3861@{db_ip}:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no"
     result_docker_sqlserver = run_command(
         command,
         cwd=install_api_logic_server_path,
@@ -1011,15 +1005,15 @@ url above works, but this run config fails:
             "redirectOutput": true,
             "argsExpansion": "none",
             "args": ["create",
-                "--{project_name}=../../servers/sqlserver-types",
-fails           "--{db_url}=mssql+pyodbc://sa:Posey3861@localhost:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no",
+                "--project_name=../../servers/sqlserver-types",
+fails           "--db_url=mssql+pyodbc://sa:Posey3861@localhost:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no",
 
-works            --{db_url}='mssql+pyodbc://sa:Posey3861@localhost:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'",
+works            --db_url='mssql+pyodbc://sa:Posey3861@localhost:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'",
     """
 
 if Config.do_docker_postgres:
     result_docker_postgres = run_command(
-        f"{set_venv} && ApiLogicServer create --{project_name}=postgres --{db_url}=postgresql://postgres:p@{db_ip}/postgres",
+        f"{set_venv} && ApiLogicServer create --project_name=postgres --db_url=postgresql://postgres:p@{db_ip}/postgres",
         cwd=install_api_logic_server_path,
         msg=f'\nCreate Postgres postgres (nw) at: {str(install_api_logic_server_path)}')
     start_api_logic_server(project_name='postgres')
