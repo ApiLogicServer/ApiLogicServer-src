@@ -1535,5 +1535,8 @@ if __name__ == '__main__':  # debugger & python command line start here
     if len(sys.argv) > 1 and sys.argv[1] not in ["version", "sys-info", "welcome"] and \
             "show-args" in api_logic_server_info_file_dict:
         print_args(commands, f'\nCommand Line Arguments:')
+    python_version = sys.version_info
+    assert python_version[0] >= 3 and python_version[1] in [8,9,10,11], \
+        "... Requires Python >=3.8, !=3.11.0, !=3.11.1"
     main()
 
