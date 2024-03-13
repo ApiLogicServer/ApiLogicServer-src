@@ -45,18 +45,51 @@ import click
 
 class HideDunderCommand(click.Command):
     """remove redundant option_name from --help
-    
     https://stackoverflow.com/questions/62182687/custom-help-in-python-click
-
     Args:
         click (_type_): _description_
+
+Options:
+
+Project Location
+
+  --project-name TEXT
+             
+Project location
+
+SQLAlchemy Database URL - see above
+
+  --db-url TEXT
+                   
+SQLAlchemy Database URL - see above
+
+Last node of API Logic Server url    
     """
     def format_help(self, ctx, formatter):
-        text = click.Command.format_help(self, ctx, formatter)
-        # text = create.get_help(ctx)
-        text = formatter.buffer
+        text = click.Command.format_help(self, ctx, formatter)  # req'd to populate formatter.buffer
+        buffer = formatter.buffer
+        buffer_new = []
+        buffer_line = 0
+        while buffer_line < len(buffer):
+            this_line = buffer[buffer_line]
+            if '--infer_primary_key' in this_line:
+                debug_string = 'nice breakpoint'
+            if "_" in this_line:
+                if '\n' in buffer[buffer_line+1]:
+                    buffer_line += 1
+                buffer_line += 2
+            else:
+                truncate = this_line.find('/ --no')
+                if False and truncate > 0:
+                    debug_string = 'nice breakpoint'
+                    this_line = this_line[0: truncate] + '/ --no..'
+                    buffer_line += 1
+                buffer_new.append(this_line)
+                if 'Show this message and exit' in this_line:
+                    debug_string = 'nice breakpoint'
+            buffer_line += 1
+        formatter.buffer = buffer_new
         pass
-        # click.echo("My custom help message")
 
 
 def get_api_logic_server_path() -> Path:
@@ -448,10 +481,10 @@ def tutorial(ctx, create):
 
 
 @main.command("create", cls=HideDunderCommand)
-@click.option('--project_name', metavar='',
+@click.option('--project_name', 
               default=f'{default_project_name}',
               prompt="Project to create",
-              help="")  # option text shown on create --help
+              help="Project Location")  # option text shown on create --help
 @click.option('--project-name', 'project_name',
               default=f'.',
               help="Project location")
@@ -525,16 +558,16 @@ def tutorial(ctx, create):
               help="Create multiple APIs")
 @click.option('--flask_appbuilder/--no_flask_appbuilder',
               default=False, is_flag=True,
-              help="Creates ui/basic_web_app")
+              help="Creates ui/basic-web-app")
 @click.option('--flask-appbuilder/--noflask-appbuilder', 'flask_appbuilder',
               default=False, is_flag=True,
-              help="Creates ui/basic_web_app")
+              help="Creates ui/basic-web-app")
 @click.option('--react_admin/--no_react_admin',
               default=False, is_flag=True,
-              help="Creates ui/react_admin app")
+              help="Creates ui/react-admin app")
 @click.option('--react-admin/--no-react-admin', 'react_admin',
               default=False, is_flag=True,
-              help="Creates ui/react_admin app")
+              help="Creates ui/react-admin app")
 @click.option('--favorites',
               default="name description",
               help="Columns named like this displayed first")
@@ -576,10 +609,10 @@ def tutorial(ctx, create):
               help="yml for include: exclude:")
 @click.option('--infer_primary_key/--no_infer_primary_key',
               default=False, is_flag=True,
-              help="Infer primary_key for unique cols")
+              help="xInfer primary_key for unique cols")
 @click.option('--infer-primary-key/--no-infer-primary-key', 'infer_primary_key',
               default=False, is_flag=True,
-              help="Infer primary_key for unique cols")
+              help="Infer primary-key for unique cols")
 @click.pass_context
 def create(ctx, project_name: str, db_url: str, not_exposed: str, api_name: str,
            from_git: str,
@@ -618,7 +651,7 @@ def create(ctx, project_name: str, db_url: str, not_exposed: str, api_name: str,
                     id_column_alias=id_column_alias)
 
 
-@main.command("create-and-run")
+@main.command("create-and-run", cls=HideDunderCommand)
 @click.option('--project_name',
               default=f'{default_project_name}',
               prompt="Project to create",
@@ -690,16 +723,16 @@ def create(ctx, project_name: str, db_url: str, not_exposed: str, api_name: str,
               help="Use Quoted column names")
 @click.option('--flask_appbuilder/--no_flask_appbuilder',
               default=False, is_flag=True,
-              help="Creates ui/basic_web_app")
+              help="Creates ui/basic-web-app")
 @click.option('--flask-appbuilder/--noflask-appbuilder', 'flask_appbuilder',
               default=False, is_flag=True,
-              help="Creates ui/basic_web_app")
+              help="Creates ui/basic-web-app")
 @click.option('--react_admin/--no_react_admin',
               default=False, is_flag=True,
-              help="Creates ui/react_admin app")
+              help="Creates ui/react-admin app")
 @click.option('--react-admin/--no-react-admin', 'react_admin',
               default=False, is_flag=True,
-              help="Creates ui/react_admin app")
+              help="Creates ui/react-admin app")
 @click.option('--multi_api/--no_multi_api',
               default=False, is_flag=True,
               help="Create multiple APIs")
@@ -747,10 +780,10 @@ def create(ctx, project_name: str, db_url: str, not_exposed: str, api_name: str,
               help="yml for include: exclude:")
 @click.option('--infer_primary_key/--no_infer_primary_key',
               default=False, is_flag=True,
-              help="Infer primary_key for unique cols")
+              help="Infer primary-key for unique cols")
 @click.option('--infer-primary-key/--no-infer-primary-key', 'infer_primary_key',
               default=False, is_flag=True,
-              help="Infer primary_key for unique cols")
+              help="Infer primary-key for unique cols")
 @click.pass_context
 def create_and_run(ctx, project_name: str, db_url: str, not_exposed: str, api_name: str,
         from_git: str,
@@ -789,7 +822,7 @@ def create_and_run(ctx, project_name: str, db_url: str, not_exposed: str, api_na
                     id_column_alias=id_column_alias)
 
 
-@main.command("rebuild-from-database")
+@main.command("rebuild-from-database", cls=HideDunderCommand)
 @click.option('--project_name',
               default=f'.',
               help="Create new directory named this")
@@ -845,16 +878,16 @@ def create_and_run(ctx, project_name: str, db_url: str, not_exposed: str, api_na
               help="Creates ui/react app (yaml model)")
 @click.option('--flask_appbuilder/--no_flask_appbuilder',
               default=False, is_flag=True,
-              help="Creates ui/basic_web_app")
+              help="Creates ui/basic-web-app")
 @click.option('--flask-appbuilder/--noflask-appbuilder', 'flask_appbuilder',
               default=False, is_flag=True,
-              help="Creates ui/basic_web_app")
+              help="Creates ui/basic-web-app")
 @click.option('--react_admin/--no_react_admin',
               default=False, is_flag=True,
-              help="Creates ui/react_admin app")
+              help="Creates ui/react-admin app")
 @click.option('--react-admin/--no-react-admin', 'react_admin',
               default=False, is_flag=True,
-              help="Creates ui/react_admin app")
+              help="Creates ui/react-admin app")
 @click.option('--quote', is_flag=True,
               default=False,
               help="Use Quoted column names")
@@ -893,10 +926,10 @@ def create_and_run(ctx, project_name: str, db_url: str, not_exposed: str, api_na
               help="your_code.py for additional build automation")
 @click.option('--infer_primary_key/--no_infer_primary_key',
               default=False, is_flag=True,
-              help="Infer primary_key for unique cols")
+              help="Infer primary-key for unique cols")
 @click.option('--infer-primary-key/--no-infer-primary-key', 'infer_primary_key',
               default=False, is_flag=True,
-              help="Infer primary_key for unique cols")
+              help="Infer primary-key for unique cols")
 @click.pass_context
 def rebuild_from_database(ctx, project_name: str, db_url: str, api_name: str, not_exposed: str,
            from_git: str,
@@ -935,7 +968,7 @@ def rebuild_from_database(ctx, project_name: str, db_url: str, api_name: str, no
                     id_column_alias=id_column_alias)
 
 
-@main.command("add-db") 
+@main.command("add-db", cls=HideDunderCommand) 
 @click.option('--db_url',
               default=f'todo',
               prompt="Database url",
@@ -997,7 +1030,7 @@ def add_db(ctx, db_url: str, bind_key: str, bind_key_url_separator: str, api_nam
     print("DB Added")
 
 
-@main.command("add-auth") 
+@main.command("add-auth", cls=HideDunderCommand) 
 @click.option('--bind_key_url_separator',
               default=default_bind_key_url_separator,
               help="bindkey / class name url separator")
@@ -1064,7 +1097,7 @@ def add_auth_cmd(ctx, bind_key_url_separator: str, provider_type :str, db_url: s
     log.info("")
 
 
-@main.command("add-cust") 
+@main.command("add-cust", cls=HideDunderCommand) 
 @click.option('--bind_key_url_separator',
               default=default_bind_key_url_separator,
               help="bindkey / class name url separator")
@@ -1114,7 +1147,7 @@ def add_cust(ctx, bind_key_url_separator: str, api_name: str, project_name: str)
     log.info("\nNext step - add authentication:\n  $ ApiLogicServer add-auth --db_url=auth\n\n")
 
 
-@main.command("sample-ai") 
+@main.command("sample-ai", cls=HideDunderCommand) 
 @click.option('--bind_key_url_separator',
               default=default_bind_key_url_separator,
               help="bindkey / class name url separator")
@@ -1162,7 +1195,7 @@ def sample_ai(ctx, bind_key_url_separator: str, api_name: str, project_name: str
     project.add_sample_ai_customizations()
 
 
-@main.command("sample-ai-iteration") 
+@main.command("sample-ai-iteration", cls=HideDunderCommand) 
 @click.option('--bind_key_url_separator',
               default=default_bind_key_url_separator,
               help="bindkey / class name url separator")
@@ -1209,7 +1242,7 @@ def sample_ai_iteration(ctx, bind_key_url_separator: str, api_name: str, project
     project.add_sample_ai_iteration()
 
 
-@main.command("rebuild-from-model")
+@main.command("rebuild-from-model", cls=HideDunderCommand)
 @click.option('--project_name',
               default=f'.',
               help="Create new directory named this")
@@ -1259,16 +1292,16 @@ def sample_ai_iteration(ctx, bind_key_url_separator: str, api_name: str, project
               help="Creates ui/react app (yaml model)")
 @click.option('--flask_appbuilder/--no_flask_appbuilder',
               default=False, is_flag=True,
-              help="Creates ui/basic_web_app")
+              help="Creates ui/basic-web-app")
 @click.option('--flask-appbuilder/--noflask-appbuilder', 'flask_appbuilder',
               default=False, is_flag=True,
-              help="Creates ui/basic_web_app")
+              help="Creates ui/basic-web-app")
 @click.option('--react_admin/--no_react_admin',
               default=False, is_flag=True,
-              help="Creates ui/react_admin app")
+              help="Creates ui/react-admin app")
 @click.option('--react-admin/--no-react-admin', 'react_admin',
               default=False, is_flag=True,
-              help="Creates ui/react_admin app")
+              help="Creates ui/react-admin app")
 @click.option('--favorites',
               default="name description",
               help="Columns named like this displayed first")
@@ -1304,10 +1337,10 @@ def sample_ai_iteration(ctx, bind_key_url_separator: str, api_name: str, project
               help="your_code.py for additional build automation")
 @click.option('--infer_primary_key/--no_infer_primary_key',
               default=False, is_flag=True,
-              help="Infer primary_key for unique cols")
+              help="Infer primary-key for unique cols")
 @click.option('--infer-primary-key/--no-infer-primary-key', 'infer_primary_key',
               default=False, is_flag=True,
-              help="Infer primary_key for unique cols")
+              help="Infer primary-key for unique cols")
 @click.pass_context # Kat
 def rebuild_from_model(ctx, project_name: str, db_url: str, api_name: str, not_exposed: str,
            from_git: str,
@@ -1337,7 +1370,7 @@ def rebuild_from_model(ctx, project_name: str, db_url: str, api_name: str, not_e
                     extended_builder=extended_builder, multi_api=False, infer_primary_key=infer_primary_key)
 
 
-@main.command("run")
+@main.command("run", cls=HideDunderCommand)
 @click.option('--project_name',
               default=f'{last_created_project_name}',
               prompt="Project to run",
@@ -1382,7 +1415,7 @@ def run_api(ctx, project_name: str, host: str="localhost", port: str="5656", swa
     print("run complete")
 
 
-@main.command("create-ui")
+@main.command("create-ui", cls=HideDunderCommand)
 @click.option('--use_model',
               default="models.py",
               help="See ApiLogicServer/wiki/Troubleshooting")
