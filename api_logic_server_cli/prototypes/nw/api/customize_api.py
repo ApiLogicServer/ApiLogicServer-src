@@ -171,8 +171,12 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         db = safrs.DB           # Use the safrs.DB, not db!
         session = db.session    # sqlalchemy.orm.scoping.scoped_session
         Security.set_user_sa()  # an endpoint that requires no auth header (see also @bypass_security)
-        results = session.query(models.t_ProductDetails_V) \
-                .filter(models.Order.Id == request_id) # .one()
+        try_filter = False
+        if try_filter: # Fails: AttributeError: 'Table' object has no attribute 'Id'
+            results = session.query(models.t_ProductDetails_V) \
+                    .filter(models.t_ProductDetails_V.Id == request_id)
+        else:
+            results = session.query(models.t_ProductDetails_V) 
         
         return_result = []
         for each_result in results:
