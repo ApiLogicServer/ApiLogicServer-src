@@ -293,7 +293,7 @@ def create_models_memstring(args) -> str:
 
 
     try:
-        metadata.reflect(bind=engine)  # loads metadata.tables
+        metadata.reflect(bind=engine, views=True)  # loads metadata.tables, with views
     except:
         track = traceback.format_exc()
         log.info(track)
