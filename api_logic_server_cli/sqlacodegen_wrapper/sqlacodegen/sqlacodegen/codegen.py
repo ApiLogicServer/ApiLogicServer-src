@@ -786,6 +786,9 @@ class CodeGenerator(object):
             if table.name in self.ignored_tables:
                 continue
             
+            if table.name in ['ProductDetails_V']:
+                debug_stop = 'nice breakpoint'
+                
             table_included = self.is_table_included(table_name= table.name)
             if not table_included:
                 log.debug(f"====> table skipped: {table.name}")
@@ -842,7 +845,7 @@ class CodeGenerator(object):
                 model = self.class_model(table, links[table.name], self.inflect_engine, not nojoined)  # computes attrs (+ roles)
                 self.classes[model.name] = model
             else:  # table, not model - no api, no rules, no admin
-                model = self.table_model(table)
+                model = self.table_model(table)  # eg, View: ProductDetails_V
 
             self.models.append(model)
             model.add_imports(self.collector)  # end mega-loop for table in metadata.sorted_tables

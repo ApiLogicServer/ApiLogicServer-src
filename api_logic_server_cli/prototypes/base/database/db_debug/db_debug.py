@@ -3,7 +3,7 @@ from sqlalchemy import create_engine, inspect, MetaData
 from sqlalchemy.orm import Session
 import os, sys
 import oracledb
-
+import traceback
 from pathlib import Path
 
 running_at = Path(__file__)
@@ -30,6 +30,8 @@ db_url = f"sqlite:///{db_loc}"
 # db_url = "sqlite:////Users/val/dev/servers/ApiLogicProject/database/nw-gold.sqlite"
 from config.config import Config
 db_url = Config.SQLALCHEMY_DATABASE_URI
+if '..' in db_url:  # e.g., f"sqlite:///../database/db.sqlite"
+    db_url = db_url.replace('../', '')
 
 if 'oracle' in db_url:
     oracle_thick = False
@@ -37,14 +39,23 @@ if 'oracle' in db_url:
         import oracledb
         oracledb.init_oracle_client()
 
-print(f'\n Attempting connect with:\n{db_url}\n')
+print(f'\ndb_debug 10.03.23\nAttempting connect with:\n{db_url}\n')
 
 e = sqlalchemy.create_engine(db_url)
-inspector = inspect(e)
+try:
+    inspector = inspect(e)
+except:
+    traceback.print_exc()
+    print(f'\nConnection failed with:\n{db_url}\nfrom cwd: {os.getcwd()}\n')
+    exit(0)
 conn = e.connect()
 
 with Session(e) as session:
     print(f'session: {session}')
+    
+    print(f'Tables\n{inspector.get_table_names()}\n')
+    print(f'Views\n{inspector.get_view_names()}')
+
     # metadata = MetaData(bind=e)
     metadata = MetaData()  # SQLAlchemy2
     meta = models.metadata  # tables should show list of db tables
