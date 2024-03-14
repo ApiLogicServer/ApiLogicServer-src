@@ -148,6 +148,40 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
 
 
     #########################################################
+    # Illustrate using SQLAlchemy for views
+    #########################################################
+
+    @app.route('/ProductDetails_View')
+    @bypass_security()
+    def ProductDetails_View():
+        """
+        Illustrates: 
+        
+        * #als: "Raw" SQLAlchemy table queries (non-mapped objects), by manual code
+
+        $(venv) curl "http://localhost:5656/ProductDetails_View?id=11077"
+
+        Returns:
+            _type_: _description_
+        """
+
+        request_id = request.args.get('id')
+        if request_id is None:
+            request_id = 11078
+        db = safrs.DB           # Use the safrs.DB, not db!
+        session = db.session    # sqlalchemy.orm.scoping.scoped_session
+        Security.set_user_sa()  # an endpoint that requires no auth header (see also @bypass_security)
+        results = session.query(models.t_ProductDetails_V) \
+                .filter(models.Order.Id == request_id) # .one()
+        
+        return_result = []
+        for each_result in results:
+            row = { 'id': each_result.Id, 'name': each_result.ProductName}
+            return_result.append(row)
+        return jsonify({ "success": True, "result":  return_result})
+
+
+    #########################################################
     # Illustrate using SQLAlchemy in standard Flask endpoints
     #########################################################
 
