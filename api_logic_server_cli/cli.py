@@ -420,7 +420,7 @@ def curl_test(ctx, message):
     do_get = True
     if do_get:
         login_exec(user="admin", password="p")
-        curl_exec(curl_command=["http://localhost:5656/CustomAPI/Customer?Id=ALFKI", None])
+        curl_exec(curl_command=["http://localhost:5656/ProductDetails_View?id=1", None])
         pass
 
     do_post = True

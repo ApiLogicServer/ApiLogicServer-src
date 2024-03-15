@@ -447,14 +447,17 @@ def receive_do_orm_execute(orm_execute_state: ORMExecuteState ):
         and not orm_execute_state.is_column_load
         and not orm_execute_state.is_relationship_load
     ):            
-        mapper = orm_execute_state.bind_arguments['mapper']
-        class_name = mapper.class_.__name__   # mapper.mapped_table.fullname disparaged
-        if class_name == "Users":
-            #pass
-            security_logger.debug('No grants - avoid recursion on User table')
-        elif  session._proxied._flushing:  # type: ignore
-            security_logger.debug('No grants during logic processing')
+        if 'mapper' in orm_execute_state.bind_arguments:
+            mapper = orm_execute_state.bind_arguments['mapper']
+            class_name = mapper.class_.__name__   # mapper.mapped_table.fullname disparaged
+            if class_name == "Users":
+                #pass
+                security_logger.debug('No grants - avoid recursion on User table')
+            elif  session._proxied._flushing:  # type: ignore
+                security_logger.debug('No grants during logic processing')
+            else:
+                # verbose++ security_logger.debug(f"ORM Listener table: {table_name}, class: {mapper.class_}  is_select: {orm_execute_state.is_select}")    
+                property_list = mapper.iterate_properties
+                Grant.exec_grants(class_name, "is_select" , orm_execute_state, property_list)
         else:
-            # verbose++ security_logger.debug(f"ORM Listener table: {table_name}, class: {mapper.class_}  is_select: {orm_execute_state.is_select}")    
-            property_list = mapper.iterate_properties
-            Grant.exec_grants(class_name, "is_select" , orm_execute_state, property_list)
+            security_logger.info("No mapper - authorization not supported for views")
