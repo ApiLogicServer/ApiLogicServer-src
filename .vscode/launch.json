@@ -231,7 +231,7 @@
             "cwd": "${workspaceFolder}/api_logic_server_cli",
             "env": {"APILOGICSERVER_HOME": "${workspaceFolder}"},
             "program": "cli.py",
-            "args": ["curl", "http://localhost:5656/CustomAPI/Customer"],
+            "args": ["curl", "http://localhost:5656/ProductDetails_View"],
             "justMyCode": false,
             "redirectOutput": true,
             "console": "integratedTerminal"

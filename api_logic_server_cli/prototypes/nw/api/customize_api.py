@@ -159,25 +159,21 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         
         * #als: "Raw" SQLAlchemy table queries (non-mapped objects), by manual code
 
-        $(venv) curl "http://localhost:5656/ProductDetails_View?id=11077"
+        $(venv) ApiLogicServer curl "http://localhost:5656/ProductDetails_View?id=1"
 
         Returns:
-            _type_: _description_
+            json: response
         """
 
         request_id = request.args.get('id')
-        if request_id is None:
-            request_id = 11078
-        db = safrs.DB           # Use the safrs.DB, not db!
-        session = db.session    # sqlalchemy.orm.scoping.scoped_session
+        db = safrs.DB
+        session = db.session
         Security.set_user_sa()  # an endpoint that requires no auth header (see also @bypass_security)
-        try_filter = False
-        if try_filter: # Fails: AttributeError: 'Table' object has no attribute 'Id'
-            results = session.query(models.t_ProductDetails_V) \
-                    .filter(models.t_ProductDetails_V.Id == request_id)
-        else:
-            results = session.query(models.t_ProductDetails_V) 
-        
+        if request_id is None:
+            results = session.query(models.t_ProductDetails_View) 
+        else:                   # observe filter requires view_name.c
+            results = session.query(models.t_ProductDetails_View) \
+                    .filter(models.t_ProductDetails_View.c.Id == request_id)
         return_result = []
         for each_result in results:
             row = { 'id': each_result.Id, 'name': each_result.ProductName}
