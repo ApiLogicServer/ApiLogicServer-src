@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.03.25"
+__version__ = "10.03.26"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t03/19/2024 - 10.03.35: Start onty \n"\
     "\t03/14/2024 - 10.03.25: View support, CLI option-names, Keycloak preview \n"\
     "\t03/03/2024 - 10.03.16: Issue 50 (Numeric defaults), Pattern/Design for Behave examples, fix tutorial dir names \n"\
     "\t02/27/2024 - 10.03.07: LogicBank 1.20.3, behave for kafka & no-ship empty orders \n"\
@@ -101,7 +102,7 @@ def is_docker() -> bool:
 
 def get_api_logic_server_dir() -> str:
     """
-    :return: ApiLogicServer dir, eg, /Users/val/dev/ApiLogicServer
+    :return: ApiLogicServer dir, eg, /Users/val/dev/ApiLogicServer/api_logic_server_cli
     """
     running_at = Path(__file__)
     python_path = running_at.parent.absolute()

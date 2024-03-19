@@ -51,3 +51,8 @@ loggers:
         level: DEBUG
         handlers: [console]
         propagate: no
+
+    ont-app:   
+        level: DEBUG
+        handlers: [console]
+        propagate: no
