@@ -63,10 +63,10 @@ def admin_events(flask_app: Flask, args: Args, validation_error: ValidationError
         """
         global did_send_spa
         admin_logger.debug(f'API Logic Server - Start Custom App, return minified sra')
-        if True or not did_send_spa:
+        if True or not did_send_spa:  # debug info
             did_send_spa = True
             admin_logger.info(f'\nStart Custom App ({path}): return spa "ui/safrs-react-admin", "index.html"\n')
-        directory = get_sra_directory(args)
+        directory = get_sra_directory(args)  # e.g, ...venv/lib/python3.11/site-packages/api_logic_server_cli/create_from_model/safrs-react-admin-npm-build
         return send_from_directory(directory, 'index.html')  # unsure how admin finds custom url
 
     @flask_app.route('/')
