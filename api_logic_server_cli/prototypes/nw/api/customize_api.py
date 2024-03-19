@@ -151,7 +151,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
     # Illustrate using SQLAlchemy for views
     #########################################################
 
-    @app.route('/ProductDetails_View')
+    @app.route('/ProductDetails_View', methods=['GET','OPTIONS'])
     @bypass_security()
     def ProductDetails_View():
         """
