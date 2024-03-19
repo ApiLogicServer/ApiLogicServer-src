@@ -446,6 +446,90 @@ def curl_test(ctx, message):
         curl_exec(curl_command = command, security = False, data = data)
 
 
+@main.command("app-create")
+@click.option('--project-name', 'project_name',
+              default=f'.',
+              help="Project location")
+@click.option('--app',
+              default='app',
+              help="app folder name")
+@click.pass_context
+def app_create(ctx, project_name, app):
+    """
+    Creates Ontomize app folder ui/app, empty except for app-model.yaml
+
+    example: 
+
+    ApiLogicServer create-app —app=name=app1
+    # this creates app1/app-model.yml. — edit that to deselect tables, tweak fields etc
+    """
+    from api_logic_server_cli.create_from_model.ont_create import OntCreator
+
+    global command
+    command = "app-create"
+
+    project_name=os.getcwd()
+    if project_name == get_api_logic_server_dir():  # for ApiLogicServer dev (from |> Run and Debug )
+        project_name = str(Path(project_name).parent.parent)  #  .joinpath("Org-ApiLogicServer"))
+    else:
+        project_name = str(Path(project_name))
+
+    project = PR.ProjectRun(command=command, 
+              project_name=project_name, 
+              db_url="",
+              execute=False
+              )
+    project.project_directory, project.api_name, project.merge_into_prototype = \
+        create_utils.get_project_directory_and_api_name(project)
+    project.project_directory_actual = os.path.abspath(project.project_directory)  # make path absolute, not relative (no /../)
+    project.project_directory_path = Path(project.project_directory_actual)
+
+    ont_creator = OntCreator(project = project, app = app)
+    ont_creator.create_application()
+    log.info("")
+
+
+@main.command("app-build")
+@click.option('--project-name', 'project_name',
+              default=f'.',
+              help="Project location")
+@click.option('--app',
+              default='app',
+              help="app folder name")
+@click.pass_context
+def app_build(ctx, project_name, app):
+    """
+    Creates Ontomize app folder ui/app, empty except for app-model.yaml
+
+    example: 
+
+    ApiLogicServer create-app —app=name=app1
+    # this creates app1/app-model.yml. — edit that to deselect tables, tweak fields etc
+    """
+    from api_logic_server_cli.create_from_model.ont_build import OntBuilder
+
+    global command
+    command = "app-build"
+
+    project_name=os.getcwd()
+    if project_name == get_api_logic_server_dir():  # for ApiLogicServer dev (from |> Run and Debug )
+        project_name = str(Path(project_name).parent.parent)  #  .joinpath("Org-ApiLogicServer"))
+    else:
+        project_name = str(Path(project_name))
+
+    project = PR.ProjectRun(command=command, 
+              project_name=project_name, 
+              db_url="",
+              execute=False
+              )
+    project.project_directory, project.api_name, project.merge_into_prototype = \
+        create_utils.get_project_directory_and_api_name(project)
+    project.project_directory_actual = os.path.abspath(project.project_directory)  # make path absolute, not relative (no /../)
+    project.project_directory_path = Path(project.project_directory_actual)
+
+    ont_creator = OntBuilder(project = project, app = app)
+    ont_creator.build_application()
+    log.info("")
 
 
 
@@ -1447,8 +1531,8 @@ def create_ui(ctx, use_model: str,
     """
     global command
     command = "create-ui"
-    admin_out = resolve_home(use_model.replace("py","yaml"))
-    project_directory, ignore = os.path.split(resolve_home(use_model))
+    admin_out = create_utils.resolve_home(use_model.replace("py","yaml"))
+    project_directory, ignore = os.path.split(create_utils.resolve_home(use_model))
     print(f'1. Loading existing model: {use_model}')
     model_creation_services = ModelCreationServices(  # fills in rsource_list for ui_admin_creator
         use_model=use_model,
