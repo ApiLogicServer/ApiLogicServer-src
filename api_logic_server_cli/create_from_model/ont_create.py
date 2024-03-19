@@ -15,14 +15,19 @@ from api_logic_server_cli.api_logic_server import Project
 from dotmap import DotMap
 from api_logic_server_cli.create_from_model.meta_model import Resource
 
+def get_api_logic_server_cli_dir() -> str:
+    """
+    :return: ApiLogicServer dir, eg, /Users/val/dev/ApiLogicServer/api_logic_server_cli
+    """
+    running_at = Path(__file__)
+    python_path = running_at.parent.parent.absolute()
+    return str(python_path)
 
-log = logging.getLogger(__file__)
-log.setLevel(logging.INFO)
-handler = logging.StreamHandler(sys.stderr)
-formatter = logging.Formatter(f'%(name)s: %(message)s')     # lead tag - '%(name)s: %(message)s')
-handler.setFormatter(formatter)
-log.addHandler(handler)
-log.propagate = True
+with open(f'{get_api_logic_server_cli_dir()}/logging.yml','rt') as f:
+        config=yaml.safe_load(f.read())
+        f.close()
+logging.config.dictConfig(config)
+log = logging.getLogger('ont-app')
 
 
 class OntCreator(object):
