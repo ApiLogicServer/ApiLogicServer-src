@@ -32,9 +32,9 @@ log = logging.getLogger('ont-app')
 
 class OntCreator(object):
     """
-    Iterate over model
+    Iterate over ui/admin/admin.yml
 
-    Create ui/admin/admin.yaml
+    Create ui/<app>, and ui/<app>/app_model.yaml
     """
 
     _favorite_names_list = []  #: ["name", "description"]
@@ -55,14 +55,39 @@ class OntCreator(object):
 
     def __init__(self,
                  project: Project,
+                 admin_app: str,
                  app: str):
         self.project = project
+        self.admin_app = admin_app
         self.app = app
 
     def create_application(self):
-        """ main driver - loop through resources, write admin.yaml - with backup, nw customization
+        """ Iterate over ui/admin/admin.yml, and create app...
+
+        1. ui/<app>, and 
+        2. ui/<app>/app_model.yaml
+
+        User can edit this, then issue ApiLogicServer app-build
+
         """
         log.debug("OntCreator Running")
+
+        admin_app = Path(self.project.project_directory_path).joinpath(f'ui/admin/{self.admin_app}.yaml')
+        if not os.path.exists(admin_app):
+            log.info(f'\nAdmin app ui/admin/{self.app} missing in project - no action taken\n')
+            exit(1)
+
+        app_path = Path(self.project.project_directory_path).joinpath(f'ui/{self.app}')
+        if os.path.exists(app_path):
+            log.info(f'\nApp {self.app} already present in project - no action taken\n')
+            # exit(1)  FIXME remove after debug
+        else:
+            os.mkdir(app_path)              
+
+        with open(f'{admin_app}', "r") as admin_file:  # path is admin.yaml for default url/app
+                admin_dict = yaml.safe_load(admin_file)
+
+        
         pass
 
 '''
