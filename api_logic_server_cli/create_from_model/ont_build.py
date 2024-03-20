@@ -83,7 +83,9 @@ class OntBuilder(object):
             #write_file(entity_name, "home", "-home.component.ts", ts)
             #write_file(entity_name, "home", "-home.component.scss", scss) #TODO
             routing = load_routing("routing.jinja",each_entity)
+            #write_file(entity_name, "", "-routing.ts", routing)
             module = load_module("module.jinja", each_entity)
+            #write_file(entity_name, "", "-module.ts", module)
         pass
 
 current_path = os.path.abspath(os.path.dirname(__file__))
