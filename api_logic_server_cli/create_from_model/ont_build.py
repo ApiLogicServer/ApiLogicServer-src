@@ -74,7 +74,7 @@ class OntBuilder(object):
                 model_dict = yaml.safe_load(model_file)
         app_model = DotMap(model_dict)
         for each_entity_name, each_entity in app_model.entities.items():
-             print(f'entity: {each_entity_name}')
+             print(f'\nentity: {each_entity_name}')
              for each_column in each_entity.columns:
                   print(f'.. column: {each_column}')
         pass

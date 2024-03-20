@@ -107,7 +107,7 @@ class OntCreator(object):
         with open(app_model_path, 'w') as app_model_file:
             yaml.dump(app_model_out_dict, app_model_file)
         pass
-        log.info("\n Edit the add_model.yaml as desired, and ApiLogicServer app-build\n")
+        log.info("\nEdit the add_model.yaml as desired, and ApiLogicServer app-build\n")
 
 '''
 def create(model_creation_services: model_creation_services.ModelCreationServices):
