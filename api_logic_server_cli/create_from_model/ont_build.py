@@ -60,7 +60,21 @@ class OntBuilder(object):
         self.app = app
 
     def build_application(self):
-        """ main driver - loop through resources, write admin.yaml - with backup, nw customization
+        """ main driver - loop through add_model.yaml, ont app
         """
         log.debug("OntBuilder Running")
+
+        app_path = Path(self.project.project_directory_path).joinpath(f'ui/{self.app}')
+        if not os.path.exists(app_path):
+            log.info(f'\nApp {self.app} not present in project - no action taken\n')
+            exit(1)
+
+        app_model_path = app_path.joinpath("app_model.yaml")
+        with open(f'{app_model_path}', "r") as model_file:  # path is admin.yaml for default url/app
+                model_dict = yaml.safe_load(model_file)
+        app_model = DotMap(model_dict)
+        for each_entity_name, each_entity in app_model.entities.items():
+             print(f'entity: {each_entity_name}')
+             for each_column in each_entity.columns:
+                  print(f'.. column: {each_column}')
         pass

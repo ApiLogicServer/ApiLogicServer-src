@@ -34,7 +34,7 @@ class OntCreator(object):
     """
     Iterate over ui/admin/admin.yml
 
-    Create ui/<app>, and ui/<app>/app_model.yaml
+    Create ui/<app>, and ui/<app>/app_model_out.yaml
     """
 
     _favorite_names_list = []  #: ["name", "description"]
@@ -65,7 +65,7 @@ class OntCreator(object):
         """ Iterate over ui/admin/admin.yml, and create app...
 
         1. ui/<app>, and 
-        2. ui/<app>/app_model.yaml
+        2. ui/<app>/app_model_out.yaml
 
         User can edit this, then issue ApiLogicServer app-build
 
@@ -87,23 +87,27 @@ class OntCreator(object):
         with open(f'{admin_app}', "r") as admin_file:  # path is admin.yaml for default url/app
                 admin_dict = yaml.safe_load(admin_file)
 
-        admin_model = DotMap(admin_dict)    # the input
-        app_model = DotMap()                # the output
-        app_model.about = admin_model.about
-        app_model.api_root = admin_model.api_root
-        app_model.authentication = admin_model.authentication
-        app_model.settings = admin_model.settings
-        app_model.entities = DotMap()
-        for each_resource_name, each_resource in admin_model.resources.items():
-             app_model.entities[each_resource_name] = each_resource
-             # app_model.entities[each_resource_name].pop('attributes')
-             app_model.entities[each_resource_name].columns = list()
-             print(f'Resource: {each_resource}')
-             for each_attribute in each_resource.attributes:
-                  print(f'.. Attribute: {each_attribute}')
-                  app_model.entities[each_resource_name].columns.append(each_attribute)
+        admin_model_in = DotMap(admin_dict)    # the input
+        app_model_out = DotMap()                # the output
 
+        app_model_out.about = admin_model_in.about
+        app_model_out.api_root = admin_model_in.api_root
+        app_model_out.authentication = admin_model_in.authentication
+        app_model_out.settings = admin_model_in.settings
+        app_model_out.entities = DotMap()
+        for each_resource_name, each_resource in admin_model_in.resources.items():
+             app_model_out.entities[each_resource_name] = each_resource
+             app_model_out.entities[each_resource_name].columns = list()
+             for each_attribute in each_resource.attributes:
+                  app_model_out.entities[each_resource_name].columns.append(each_attribute)
+             app_model_out.entities[each_resource_name].pop('attributes')
         pass
+        app_model_out_dict = app_model_out.toDict()  # dump(dot_map) is improperly structured
+        app_model_path = app_path.joinpath("app_model.yaml")
+        with open(app_model_path, 'w') as app_model_file:
+            yaml.dump(app_model_out_dict, app_model_file)
+        pass
+        log.info("\n Edit the add_model.yaml as desired, and ApiLogicServer app-build\n")
 
 '''
 def create(model_creation_services: model_creation_services.ModelCreationServices):
