@@ -86,7 +86,9 @@ class OntBuilder(object):
             #write_file(entity_name, "", "-routing.ts", routing)
             module = load_module("module.jinja", each_entity)
             #write_file(entity_name, "", "-module.ts", module)
-        pass
+        entities = app_model.entities.items()
+        sidebar_menu = gen_sidebar_routing("main_routing.jinja",entities=entities)
+        #write_file("main-routing-module.ts", sidebar_menu) # root folder
 
 current_path = os.path.abspath(os.path.dirname(__file__))
 current_cli_path = "/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/ont_app"
@@ -189,3 +191,24 @@ def load_module(template_name: str, entity: any) -> str:
     module = template.render(var)
     print(module)
     return module
+
+def gen_sidebar_routing(template_name:str, entities: any) -> str:
+    template = env.get_template(template_name)
+    children = []
+    t = Template(" '{{ entity }}', loadChildren: () => import('./{{ entity }}/{{ entity }}.module').then(m => m.{{ entity_first_cap }}Module) }")
+    #sep = ","
+    for each_entity_name, each_entity in  entities:
+        name = each_entity_name.lower()
+        entity_first_cap = f"{name[:1].upper()}{name[1:]}"
+        var = {
+            "entity": name,
+            "entity_first_cap":entity_first_cap
+        }
+        child = t.render(var)
+        children.append(child)
+    var = {
+        "children": children
+    }
+    sidebar = template.render(var)
+    print(sidebar)
+    return sidebar
