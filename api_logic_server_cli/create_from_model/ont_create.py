@@ -87,7 +87,22 @@ class OntCreator(object):
         with open(f'{admin_app}', "r") as admin_file:  # path is admin.yaml for default url/app
                 admin_dict = yaml.safe_load(admin_file)
 
-        
+        admin_model = DotMap(admin_dict)    # the input
+        app_model = DotMap()                # the output
+        app_model.about = admin_model.about
+        app_model.api_root = admin_model.api_root
+        app_model.authentication = admin_model.authentication
+        app_model.settings = admin_model.settings
+        app_model.entities = DotMap()
+        for each_resource_name, each_resource in admin_model.resources.items():
+             app_model.entities[each_resource_name] = each_resource
+             # app_model.entities[each_resource_name].pop('attributes')
+             app_model.entities[each_resource_name].columns = list()
+             print(f'Resource: {each_resource}')
+             for each_attribute in each_resource.attributes:
+                  print(f'.. Attribute: {each_attribute}')
+                  app_model.entities[each_resource_name].columns.append(each_attribute)
+
         pass
 
 '''
