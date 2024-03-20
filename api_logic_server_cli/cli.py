@@ -453,8 +453,11 @@ def curl_test(ctx, message):
 @click.option('--app',
               default='app',
               help="app folder name")
+@click.option('--admin-app', 'admin_app',
+              default='admin',
+              help="input admin app")
 @click.pass_context
-def app_create(ctx, project_name, app):
+def app_create(ctx, project_name, app, admin_app):
     """
     Creates Ontomize app folder ui/app, empty except for app-model.yaml
 
@@ -468,15 +471,9 @@ def app_create(ctx, project_name, app):
     global command
     command = "app-create"
 
-    project_name=os.getcwd()
-    if project_name == get_api_logic_server_dir():  # for ApiLogicServer dev (from |> Run and Debug )
-        project_name = str(Path(project_name).parent.parent)  #  .joinpath("Org-ApiLogicServer"))
-    else:
-        project_name = str(Path(project_name))
-
     project = PR.ProjectRun(command=command, 
               project_name=project_name, 
-              db_url="",
+              db_url = "",
               execute=False
               )
     project.project_directory, project.api_name, project.merge_into_prototype = \
@@ -484,7 +481,7 @@ def app_create(ctx, project_name, app):
     project.project_directory_actual = os.path.abspath(project.project_directory)  # make path absolute, not relative (no /../)
     project.project_directory_path = Path(project.project_directory_actual)
 
-    ont_creator = OntCreator(project = project, app = app)
+    ont_creator = OntCreator(project = project, app = app, admin_app = admin_app)
     ont_creator.create_application()
     log.info("")
 
@@ -510,12 +507,6 @@ def app_build(ctx, project_name, app):
 
     global command
     command = "app-build"
-
-    project_name=os.getcwd()
-    if project_name == get_api_logic_server_dir():  # for ApiLogicServer dev (from |> Run and Debug )
-        project_name = str(Path(project_name).parent.parent)  #  .joinpath("Org-ApiLogicServer"))
-    else:
-        project_name = str(Path(project_name))
 
     project = PR.ProjectRun(command=command, 
               project_name=project_name, 

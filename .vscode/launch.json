@@ -167,7 +167,7 @@
             "args": [
                 "app-create",
                 "--project-name=../../../servers/ApiLogicProject",
-                "--app=ont1"
+                "--app=ont_1"
                 ],
             "console": "integratedTerminal"
         },
@@ -180,7 +180,8 @@
             "redirectOutput": true,
             "args": [
                 "app-build",
-                "--project-name=../../../servers/ApiLogicProject"
+                "--project-name=../../../servers/ApiLogicProject",
+                "--app=ont_1"
                 ],
             "console": "integratedTerminal"
         },
