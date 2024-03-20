@@ -33,6 +33,8 @@ class ModelCreationServices(object):
 
     Create database/models.py, services for api/ui creation.
 
+    * Or, project.use_model to use existing model (eg, '.')
+
     Key logic is `__init__` (for singleton) calls `create_models`.
 
     Much later, create_from_model creators (api, ui) then call helpers
@@ -73,7 +75,10 @@ class ModelCreationServices(object):
             my_parents_list: dict = None,
             version: str = "0.0.0"):
         """
-        Called from main driver (create_project) to open db, build resource_list
+        Called from 
+        
+        * main driver (create_project) to open db, build resource_list
+        * from ont_create, for resource data
         """
         self.project = project
         self.project_directory = None
@@ -809,7 +814,7 @@ class ModelCreationServices(object):
                 resource_name = each_cls_member[0]
                 resource_class = each_cls_member[1]
                 table_name = resource_class.__tablename__  # FIXME _s_collection_name
-                if table_name.startswith("STRESS_CHAR"):
+                if table_name.startswith("CategoryTableNameTest"):
                     debug_str = "Excellent breakpoint"
                 resource = Resource(name=resource_name, model_creation_services=self)
                 self.metadata = resource_class.metadata
@@ -824,6 +829,8 @@ class ModelCreationServices(object):
                     attr_type = str(each_attribute.type)
                     if table_name.startswith("STRESS_CHAR") and each_attribute.name.startswith("char"):
                         debug_str = "Excellent breakpoint"
+                    if each_attribute.name == 'CategoryName_ColumnName':
+                        each_attribute.name = 'CategoryName'  # FIXME unable to find aliased name
                     resource_attribute = ResourceAttribute(each_attribute=each_attribute,
                                                             resource=resource)
                 for rel_name, rel in resource_class._s_relationships.items():

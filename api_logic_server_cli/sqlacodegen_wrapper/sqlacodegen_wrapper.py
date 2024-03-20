@@ -225,7 +225,7 @@ def create_models_py(model_creation_services: ModelCreationServices, abs_db_url:
     num_models = 0
     model_full_file_name = "*"
     project = model_creation_services.project
-    if project.command in ('create', 'create-and-run', 'rebuild-from-database', 'add_db'):
+    if project.command in ('create', 'create-and-run', 'rebuild-from-database', 'add_db', 'app-create'):
         if project.use_model is None or model_creation_services.project.use_model == "":
             code_gen_args = get_codegen_args()
             model_full_file_name = code_gen_args.outfile
@@ -241,9 +241,12 @@ def create_models_py(model_creation_services: ModelCreationServices, abs_db_url:
             
         else:  # use pre-existing (or repaired) existing model file
             model_full_file_name = str(Path(project_directory).joinpath('database/models.py'))
-            use_model_path = Path(model_creation_services.project.use_model).absolute()
-            log.debug(f' a.  Use existing {use_model_path} - copy to {project_directory + "/database/models.py"}')
-            copyfile(use_model_path, model_full_file_name)
+            if model_creation_services.project.use_model == '.':
+                log.debug(f' a.  Use existing {model_full_file_name} - no copy')
+            else:
+                use_model_path = Path(model_creation_services.project.use_model).absolute()
+                log.debug(f' a.  Use existing {use_model_path} - copy to {project_directory + "/database/models.py"}')
+                copyfile(use_model_path, model_full_file_name)
     elif project.command == 'create-ui':
         model_full_file_name = model_creation_services.resolve_home(name = model_creation_services.use_model)
     elif project.command == "rebuild-from-model":
