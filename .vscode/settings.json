@@ -2,5 +2,10 @@
     "python.terminal.activateEnvironment": true,
     "python.terminal.activateEnvInCurrentTerminal": true,
     "terminal.integrated.env.osx": 
-        { "PYTHONPATH": "/Users/val/dev/safrx" }
+        {
+            "PYTHONPATH": "/Users/val/dev/safrx"
+        },
+        "cSpell.words": [
+            "protoypes"
+        ]
 }

@@ -15,7 +15,8 @@ from api_logic_server_cli.api_logic_server import Project
 from dotmap import DotMap
 from api_logic_server_cli.create_from_model.meta_model import Resource
 
-
+from jinja2 import Template, Environment, PackageLoader, FileSystemLoader, select_autoescape
+import os
 
 def get_api_logic_server_cli_dir() -> str:
     """
@@ -73,8 +74,116 @@ class OntBuilder(object):
         with open(f'{app_model_path}', "r") as model_file:  # path is admin.yaml for default url/app
                 model_dict = yaml.safe_load(model_file)
         app_model = DotMap(model_dict)
+        global_values = app_model # this will be passed to the template loader
         for each_entity_name, each_entity in app_model.entities.items():
-             print(f'\nentity: {each_entity_name}')
-             for each_column in each_entity.columns:
-                  print(f'.. column: {each_column}')
+            template = load_template("detail_template.html", each_entity)
+            entity_name = each_entity_name.lower()
+            ts = load_ts("template.jinja",each_entity)
+            #write_file(entity_name, "home", "-home.component.html", template)
+            #write_file(entity_name, "home", "-home.component.ts", ts)
+            #write_file(entity_name, "home", "-home.component.scss", scss) #TODO
+            routing = load_routing("routing.jinja",each_entity)
+            module = load_module("module.jinja", each_entity)
         pass
+
+current_path = os.path.abspath(os.path.dirname(__file__))
+current_cli_path = "/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/ont_app"
+env = Environment(
+    #loader=PackageLoader(package_name="APILOGICPROJECT",package_path="/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/nw/ui/templates"),
+    loader = FileSystemLoader(searchpath=f"{current_cli_path}/templates")
+    #autoescape=select_autoescape()
+)
+
+def load_template(template_name: str, entity: any) -> str:
+    template = env.get_template(template_name)
+    cols = get_columns(entity)
+    entity_vars = {
+        'entity': entity['type'],
+        'columns': cols,
+        'visibleColumns': cols,
+        'keys': entity['user_key'],
+        'mode': 'tab',
+        'title':  entity['type'].upper(),
+        'tableAttr': 'customerTable',
+        'service':  entity['type']
+    }
+    cols = []
+    text_template = Template('attr="{{ attr }}" title="{{ title }}" editable="{{ editable }}" required="{{ required }}"')
+    currency_template = Template('attr="{{ attr }}" title="{{ title }}" type="currency" editable="{{ editable }}" required="{{ required }}"')
+    date_template = Template('attr="{{ attr }}" title="{{ title }}" type="currency" editable="{{ editable }}" required="{{ required }}"')
+    for column in entity.columns:
+        #  if hasattr(column, "type"):
+        #   datatype = Date , Time, Decimal
+        col_var = {
+            "attr" : column.name, # name
+            "title": column.label if hasattr(column,"label") and column.label != DotMap() else column.name, # label
+            "editable": "yes",
+            "required": ("yes" if column.required else "no") if hasattr(column,"required") and column.required != DotMap() else "no"
+        }
+        if hasattr(column,"type") and column.type != DotMap():
+            if column.type == 'DECIMAL':
+                rv = currency_template.render(col_var)
+            elif column.type == "DATE":
+                rv = date_template.render(col_var)
+            else:
+                rv = text_template.render(col_var)
+                cols.append(rv)
+        else:
+            rv = text_template.render(col_var)
+            cols.append(rv)
+            
+    entity_vars["row_columns"]=cols
+    rendered_template = template.render(entity_vars)
+    print(rendered_template)
+    return rendered_template
+def load_ts(template_name: str, entity: any) -> str:
+    template = env.get_template(template_name)
+    entity = f"{entity.type.lower()}"
+    entity_upper = f"{entity[:1].upper()}{entity[1:]}"
+    var = {
+        "entity": entity,
+        "Entity": entity_upper,
+        "entity_home": f"{entity}_home",
+        "entity_home_component": f"{entity_upper}HomeComponent"
+    }
+    ts = template.render(var)
+    print(ts)
+    return ts
+def get_columns(entity) -> str:
+    cols = ""
+    sep = ""
+    for column in entity.columns:
+        cols += f"{sep}{column.name}"
+        sep=";"
+    return cols
+
+def load_routing(template_name: str, entity: any) -> str:
+    template = env.get_template(template_name)
+    entity_upper = entity.type.upper()
+    entity = entity.type.lower()
+    entity_first_cap = f"{entity[:1].upper()}{entity[1:]}"
+    var = {
+        "entity_upper": entity_upper,
+        "entity_first_cap": entity_first_cap,
+        "import_module":  "{" + f"{entity_upper}_MODULE_DECLARATIONS, {entity_first_cap}RoutingModule" +"}",
+        "module_from": f" './{entity}-routing.module'",
+        "routing_module": f"{entity_first_cap}RoutingModule"
+    }
+    routing = template.render(var)
+    print(routing)
+    return routing
+def load_module(template_name: str, entity: any) -> str:
+    template = env.get_template(template_name)
+    entity_upper = entity.type.upper()
+    entity = entity.type.lower()
+    entity_first_cap = f"{entity[:1].upper()}{entity[1:]}"
+    var = {
+        "entity_upper": entity_upper,
+        "entity_first_cap": entity_first_cap,
+        "import_module":  "{" + f"{entity_upper}_MODULE_DECLARATIONS, {entity_first_cap}RoutingModule" +"}",
+        "module_from": f" './{entity}-routing.module'",
+        "routing_module": f"{entity_first_cap}RoutingModule"
+    }
+    module = template.render(var)
+    print(module)
+    return module
