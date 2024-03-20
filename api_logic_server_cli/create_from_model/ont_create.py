@@ -14,6 +14,9 @@ import api_logic_server_cli.create_from_model.api_logic_server_utils as create_u
 from api_logic_server_cli.api_logic_server import Project
 from dotmap import DotMap
 from api_logic_server_cli.create_from_model.meta_model import Resource
+from create_from_model.model_creation_services import ModelCreationServices
+from api_logic_server_cli.create_from_model.meta_model import Resource, ResourceAttribute, ResourceRelationship
+
 
 def get_api_logic_server_cli_dir() -> str:
     """
@@ -72,6 +75,11 @@ class OntCreator(object):
         """
         log.debug("OntCreator Running")
 
+        self.project.use_model = "."
+        model_creation_services = ModelCreationServices(project = self.project,   # load models
+            project_directory=self.project.project_directory)
+        resources : Dict[str, Resource] = model_creation_services.resource_list
+
         admin_app = Path(self.project.project_directory_path).joinpath(f'ui/admin/{self.admin_app}.yaml')
         if not os.path.exists(admin_app):
             log.info(f'\nAdmin app ui/admin/{self.app} missing in project - no action taken\n')
@@ -96,11 +104,33 @@ class OntCreator(object):
         app_model_out.settings = admin_model_in.settings
         app_model_out.entities = DotMap()
         for each_resource_name, each_resource in admin_model_in.resources.items():
-             app_model_out.entities[each_resource_name] = each_resource
-             app_model_out.entities[each_resource_name].columns = list()
-             for each_attribute in each_resource.attributes:
-                  app_model_out.entities[each_resource_name].columns.append(each_attribute)
-             app_model_out.entities[each_resource_name].pop('attributes')
+            app_model_out.entities[each_resource_name] = each_resource
+            app_model_out.entities[each_resource_name].columns = list()
+            for each_attribute in each_resource.attributes:
+                if 'type' in each_attribute:
+                    pass
+                else:
+                    each_attribute.type = "text"
+                    compute_type = False  # bugs in aliases, computed attrs, so skip for now
+                    if compute_type:
+                        resource = resources[each_resource_name]
+                        resource_attributes = resource.attributes
+                        resource_attribute : ResourceAttribute = None
+                        for each_resource_attribute in resource_attributes:
+                            if each_resource_attribute.name == 'CategoryName_ColumnName':
+                                each_resource_attribute.name = 'CategoryName'
+                                # FIXME unable to find aliased name
+                                # and, find out why the admin yaml is ok (and, save the initial yaml)
+                            if each_resource_attribute.name == 'ShipPostalCode':
+                                each_resource_attribute.name = 'ShipZip'
+                            if each_resource_attribute.name == each_attribute.name:
+                                resource_attribute = each_resource_attribute
+                                each_attribute.type = resource_attribute.type
+                                break
+                        assert resource_attribute is not None, \
+                            f"Sys Err - unknown resource attr: {each_resource_name}.{each_attribute.name}"
+                app_model_out.entities[each_resource_name].columns.append(each_attribute)
+            app_model_out.entities[each_resource_name].pop('attributes')
         pass
         app_model_out_dict = app_model_out.toDict()  # dump(dot_map) is improperly structured
         app_model_path = app_path.joinpath("app_model.yaml")
