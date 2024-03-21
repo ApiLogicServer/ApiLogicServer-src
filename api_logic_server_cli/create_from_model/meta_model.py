@@ -1,13 +1,16 @@
 from typing import List, Dict
-from typing import NewType, Type
+from typing import NewType, Type, TypeVar
 import logging
 
 log = logging.getLogger(__name__)
 
+DataModelClass = TypeVar("DataModelClass")
+
 class ResourceAttribute():
     """ instances added to Resource """
-    def __init__(self, each_attribute: object, resource: Type['Resource']):
-        self.name = str(each_attribute.name)
+    def __init__(self, each_attribute: object, resource: Type['Resource'], resource_class: Type[DataModelClass]):
+        self.name = resource_class.colname_to_attrname(each_attribute.name)
+        # self.name = str(each_attribute.name)
         if self.name == "UnitPrice":
             debug_str = "Nice breakpoint"
         # self.nullable = each_attribute.nullable

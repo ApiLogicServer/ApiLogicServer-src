@@ -142,18 +142,12 @@ class OntCreator(object):
             pass
         else:
             each_attribute.type = "text"  # TODO remove debug stub
-            compute_type = True  # bugs in aliases, computed attrs, so skip for now
+            compute_type = True
             if compute_type:
                 resource = resources[each_resource_name]
                 resource_attributes = resource.attributes
                 resource_attribute : ResourceAttribute = None
                 for each_resource_attribute in resource_attributes:
-                    if each_resource_attribute.name == 'CategoryName_ColumnName':
-                        each_resource_attribute.name = 'CategoryName'
-                        # FIXME unable to find aliased name
-                        # and, find out why the admin yaml is ok (and, save the initial yaml)
-                    if each_resource_attribute.name == 'ShipPostalCode':
-                        each_resource_attribute.name = 'ShipZip'
                     if each_resource_attribute.name == each_attribute.name:
                         resource_attribute = each_resource_attribute
                         each_attribute.type = resource_attribute.type

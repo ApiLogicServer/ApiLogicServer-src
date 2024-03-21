@@ -608,7 +608,7 @@ class ModelCreationServices(object):
     # get meta data  TODO OLD CODE
     ##############################
 
-    def create_resource_list(self, models_file, msg):
+    def create_resource_listZ(self, models_file, msg):
         """
         Creates self.resource_list (ie, ModelCreationServices.resource_list)
          
@@ -829,10 +829,10 @@ class ModelCreationServices(object):
                     attr_type = str(each_attribute.type)
                     if table_name.startswith("STRESS_CHAR") and each_attribute.name.startswith("char"):
                         debug_str = "Excellent breakpoint"
-                    if each_attribute.name == 'CategoryName_ColumnName':
-                        each_attribute.name = 'CategoryName'  # FIXME unable to find aliased name
+                    if each_attribute.name.startswith('CategoryName'):
+                        debug_str = "alias"
                     resource_attribute = ResourceAttribute(each_attribute=each_attribute,
-                                                            resource=resource)
+                                                            resource=resource, resource_class=resource_class)
                 for rel_name, rel in resource_class._s_relationships.items():
                     # relation = {}
                     # relation["direction"] = "toone" if rel.direction == MANYTOONE else "tomany"
