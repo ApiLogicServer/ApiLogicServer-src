@@ -79,16 +79,17 @@ class OntBuilder(object):
             template = load_template("detail_template.html", each_entity)
             entity_name = each_entity_name.lower()
             ts = load_ts("template.jinja",each_entity)
-            #write_file(entity_name, "home", "-home.component.html", template)
-            #write_file(entity_name, "home", "-home.component.ts", ts)
-            #write_file(entity_name, "home", "-home.component.scss", scss) #TODO
+            write_file(app_path,entity_name, "home", "-home.component.html", template)
+            write_file(app_path, entity_name, "home", "-home.component.ts", ts)
+            write_file(app_path, entity_name, "home", "-home.component.scss", "") #TODO
             routing = load_routing("routing.jinja",each_entity)
-            #write_file(entity_name, "", "-routing.ts", routing)
+            write_file(app_path, entity_name, "", "-routing.module.ts", routing)
             module = load_module("module.jinja", each_entity)
-            #write_file(entity_name, "", "-module.ts", module)
+            write_file(app_path, entity_name, "", ".module.ts", module)
         entities = app_model.entities.items()
         sidebar_menu = gen_sidebar_routing("main_routing.jinja",entities=entities)
-        #write_file("main-routing-module.ts", sidebar_menu) # root folder
+        #write_routing_file(app_path, "main-routing-module.ts", sidebar_menu) # root folder
+
 
 current_path = os.path.abspath(os.path.dirname(__file__))
 current_cli_path = "/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/ont_app"
@@ -98,6 +99,15 @@ env = Environment(
     #autoescape=select_autoescape()
 )
 
+def write_file(app_path: Path, entity_name:str, dir_name:str, ext_name:str, source:str):
+    import pathlib
+    directory = f"{app_path}/src/app/main/{entity_name}/{dir_name}" if dir_name != "" else f"{app_path}/src/app/main/{entity_name}"
+    #if not os.path.exists(directory):
+    #    os.makedirs(directory)
+    pathlib.Path(f"{directory}").mkdir(parents=True, exist_ok=True) 
+    with open(f"{directory}/{entity_name}{ext_name}", "w") as file:
+        file.write(source)
+    
 def load_template(template_name: str, entity: any) -> str:
     template = env.get_template(template_name)
     cols = get_columns(entity)
@@ -195,7 +205,7 @@ def load_module(template_name: str, entity: any) -> str:
 def gen_sidebar_routing(template_name:str, entities: any) -> str:
     template = env.get_template(template_name)
     children = []
-    t = Template(" '{{ entity }}', loadChildren: () => import('./{{ entity }}/{{ entity }}.module').then(m => m.{{ entity_first_cap }}Module) }")
+    t = Template(" '{{ entity }}', loadChildren: () => import('./{{ entity }}/{{ entity }}.module').then(m => m.{{ entity_first_cap }}Module)")
     #sep = ","
     for each_entity_name, each_entity in  entities:
         name = each_entity_name.lower()

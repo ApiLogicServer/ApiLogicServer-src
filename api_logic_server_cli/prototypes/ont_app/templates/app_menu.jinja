@@ -1,0 +1,25 @@
+import { MenuRootItem } from 'ontimize-web-ngx';
+
+
+export const MENU_CONFIG: MenuRootItem[] = [
+  { id: 'home', name: 'HOME', icon: 'dashboard', route: '/main/home' },
+  {
+    id: 'data', name: 'DATA_', icon: 'remove_red_eye', opened: true,
+    items: [
+      {
+        id: 'transactions',
+        name: 'Transactions',
+        tooltip: 'Account Transactions',
+        route: '/main/transactions',
+        icon: 'person',
+        image: 'assets/images/ic_sucursales.png',
+        //component: CustomersCardComponent
+      }
+    ]
+  },
+  { id: 'logout', name: 'LOGOUT', route: '/login', icon: 'power_settings_new', confirm: 'yes' }
+];
+
+export const MENU_COMPONENTS = [
+
+];
