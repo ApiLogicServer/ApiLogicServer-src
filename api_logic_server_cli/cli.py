@@ -448,28 +448,32 @@ def curl_test(ctx, message):
 
 @main.command("app-create")
 @click.option('--project-name', 'project_name',
-              default=f'.',
+              default=f'',
               help="Project location")
 @click.option('--app',
               default='app',
-              help="app folder name")
+              help="App directory name")
 @click.option('--admin-app', 'admin_app',
               default='admin',
-              help="input admin app")
+              help="Input admin app")
 @click.pass_context
 def app_create(ctx, project_name, app, admin_app):
     """
-    Creates Ontomize app folder ui/app, empty except for app-model.yaml
+    Creates Ontomize app model: ui/<app>/app-model.yaml
 
-    example: 
+    Example: 
 
-    ApiLogicServer create-app —app=name=app1
-    # this creates app1/app-model.yml. — edit that to deselect tables, tweak fields etc
+        ApiLogicServer create-app —app=name=app1
+    
+    This creates app1/app-model.yml — edit that to deselect tables, tweak fields etc
     """
+
     from api_logic_server_cli.create_from_model.ont_create import OntCreator
 
     global command
     command = "app-create"
+
+    project_name = resolve_blank_project_name(project_name)
 
     project = PR.ProjectRun(command=command, 
               project_name=project_name, 
@@ -488,25 +492,29 @@ def app_create(ctx, project_name, app, admin_app):
 
 @main.command("app-build")
 @click.option('--project-name', 'project_name',
-              default=f'.',
-              help="Project location")
+              default=f'',
+              help="Project containing App")
 @click.option('--app',
               default='app',
-              help="app folder name")
+              help="App directory name")
 @click.pass_context
 def app_build(ctx, project_name, app):
     """
-    Creates Ontomize app folder ui/app, empty except for app-model.yaml
+    Builds runnable app from: ui/<app>/app-model.yaml
 
     example: 
 
-    ApiLogicServer create-app —app=name=app1
-    # this creates app1/app-model.yml. — edit that to deselect tables, tweak fields etc
+        ApiLogicServer create-app —app=name=app1
+    
+    This creates app1/app-model.yml. — edit that to deselect tables, tweak fields etc
     """
+
     from api_logic_server_cli.create_from_model.ont_build import OntBuilder
 
     global command
     command = "app-build"
+
+    project_name = resolve_blank_project_name(project_name)
 
     project = PR.ProjectRun(command=command, 
               project_name=project_name, 
@@ -558,19 +566,18 @@ def tutorial(ctx, create):
 @main.command("create", cls=HideDunderCommand)
 @click.option('--project_name', 
               default=f'{default_project_name}',
-              prompt="Project to create",
               help="Project Location")  # option text shown on create --help
 @click.option('--project-name', 'project_name',
-              default=f'.',
-              help="Project location")
+              default=f'{default_project_name}',
+              prompt="Project Name",
+              help="Project directory name")
 @click.option('--db_url',
               default=f'{default_db}',
-              prompt="SQLAlchemy Database URI",
-              help="SQLAlchemy Database URL - see above\n")
+              help="SQLAlchemy Database URL\n")
 @click.option('--db-url', 'db_url',
               default=f'{default_db}',
               prompt="SQLAlchemy Database URI",
-              help="SQLAlchemy Database URL - see above\n")
+              help="SQLAlchemy Database URL\n")
 @click.option('--api_name',
               default=f'api',
               help="Last node of API Logic Server url\n")
