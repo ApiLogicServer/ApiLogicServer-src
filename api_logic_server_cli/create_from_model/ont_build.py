@@ -75,8 +75,9 @@ class OntBuilder(object):
                 model_dict = yaml.safe_load(model_file)
         app_model = DotMap(model_dict)
         global_values = app_model # this will be passed to the template loader
+        
         for each_entity_name, each_entity in app_model.entities.items():
-            template = load_template("detail_template.html", each_entity)
+            template = load_template("table_template.html", each_entity)
             entity_name = each_entity_name.lower()
             ts = load_ts("template.jinja",each_entity)
             write_file(app_path,entity_name, "home", "-home.component.html", template)
@@ -86,6 +87,13 @@ class OntBuilder(object):
             write_file(app_path, entity_name, "", "-routing.module.ts", routing)
             module = load_module("module.jinja", each_entity)
             write_file(app_path, entity_name, "", ".module.ts", module)
+            
+            template = load_new_template("new_template.html", each_entity)
+            entity_name = each_entity_name.lower()
+            ts = load_ts("new_component.jinja",each_entity)
+            write_file(app_path,entity_name, "new", "-new.component.html", template)
+            write_file(app_path, entity_name, "new", "-new.component.ts", ts)
+            write_file(app_path, entity_name, "new", "-new.component.scss", "")
         entities = app_model.entities.items()
         sidebar_menu = gen_sidebar_routing("main_routing.jinja",entities=entities)
         write_root_file(app_path, "", "main-routing.module.ts", sidebar_menu) # root folder
@@ -130,7 +138,7 @@ def load_template(template_name: str, entity: any, settings:any = None) -> str:
         'keys': entity['user_key'],
         'mode': 'tab',
         'title':  entity['type'].upper(),
-        'tableAttr': 'customerTable',
+        'tableAttr': f'{name}Table',
         'service': name
     }
     cols = []
@@ -166,11 +174,13 @@ def load_ts(template_name: str, entity: any) -> str:
     template = env.get_template(template_name)
     entity = f"{entity.type.lower()}"
     entity_upper = f"{entity[:1].upper()}{entity[1:]}"
+    entity_first_cap = f"{entity[:1].upper()}{entity[1:]}"
     var = {
         "entity": entity,
         "Entity": entity_upper,
         "entity_home": f"{entity}-home",
-        "entity_home_component": f"{entity_upper}HomeComponent"
+        "entity_home_component": f"{entity_upper}HomeComponent",
+        "entity_first_cap": entity_first_cap
     }
     ts = template.render(var)
     print(ts)
@@ -265,3 +275,49 @@ def gen_app_menu_config(template_name:str, entities: any):
         menuitems.append(menuitem)
     
     return template.render(menuitems=menuitems)
+
+def load_new_template(template_name: str, entity: any, settings:any = None) -> str:
+    template = env.get_template(template_name)
+    cols = get_columns(entity)
+    name = entity['type'].lower()
+    entity_vars = {
+        'entity': name,
+        'columns': cols,
+        'keys': entity['user_key'],
+        'mode': 'tab',
+        'title': name.upper(),
+        'tableAttr': f'{name}Table',
+        'service': name
+    }
+    cols = []
+    text_template = Template('<o-text-input attr="{{ attr }}" read-only="{{ editable }}" required="{{ required }}" width="360px"></o-text-input>')
+    currency_template = Template('<o-currency-input attr="{{ attr }}" editable="{{ editable }}" required="{{ required }}" min-decimal-digits="2" max-decimal-digits="2" ></o-currency-input>')# currency 100,00.00 settings from global
+    date_template = Template('<o-date-input attr="{{ attr }}" editable="{{ editable }}" required="{{ required }}" format="LL" text-input-enabled="no"></o-date-input>') 
+    integer_template = Template('<o-integer-input attr="{{ attr }}" editable="{{ editable }}" required="{{ required }}" min="0"></o-integer-input>')
+    for column in entity.columns:
+        #  if hasattr(column, "type"):
+        #   datatype = Date , Time, Decimal
+        col_var = {
+            "attr" : column.name, # name
+            "title": column.label if hasattr(column,"label") and column.label != DotMap() else column.name, # label
+            "editable": "yes",
+            "required": ("yes" if column.required else "no") if hasattr(column,"required") and column.required != DotMap() else "no"
+        }
+        if hasattr(column,"type") and column.type != DotMap():
+            if column.type == 'DECIMAL':
+                rv = currency_template.render(col_var)
+            elif column.type == "DATE":
+                rv = date_template.render(col_var)
+            elif column.type == "INTEGER":
+                rv = integer_template.render(col_var)
+            else:
+                rv = text_template.render(col_var)
+        else:
+            rv = text_template.render(col_var)
+        
+        cols.append(rv)
+            
+    entity_vars["inputrows"]=cols
+    rendered_template = template.render(entity_vars)
+    print(rendered_template)
+    return rendered_template
