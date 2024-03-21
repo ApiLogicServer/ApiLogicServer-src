@@ -251,7 +251,7 @@ def create_models_py(model_creation_services: ModelCreationServices, abs_db_url:
         model_full_file_name = model_creation_services.resolve_home(name = model_creation_services.use_model)
     elif project.command == "rebuild-from-model":
         log.debug(f' a.  Use existing database/models.py to rebuild api and ui models - verifying')
-        model_full_file_name = project_directory + '/database/models.py'
+        model_full_file_name = '.'   # project_directory + '/database/models.py'
     else:
         error_message = f'System error - unexpected command: {project.command}'
         raise ValueError(error_message)
