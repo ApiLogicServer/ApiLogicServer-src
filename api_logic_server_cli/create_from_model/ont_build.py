@@ -88,10 +88,11 @@ class OntBuilder(object):
             write_file(app_path, entity_name, "", ".module.ts", module)
         entities = app_model.entities.items()
         sidebar_menu = gen_sidebar_routing("main_routing.jinja",entities=entities)
-        write_root_file(app_path, "", "main-routing-module.ts", sidebar_menu) # root folder
+        write_root_file(app_path, "", "main-routing.module.ts", sidebar_menu) # root folder
         app_service_config = gen_app_service_config(entities=entities)
         write_root_file(app_path, "shared", "app.services.config.ts", app_service_config) 
-
+        app_menu_config = gen_app_menu_config("app.menu.config.jinja", entities)
+        write_root_file(app_path=app_path, dir_name="shared",file_name="app.menu.config.ts", source=app_menu_config)
 
 current_path = os.path.abspath(os.path.dirname(__file__))
 current_cli_path = "/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/ont_app"
@@ -117,11 +118,12 @@ def write_file(app_path: Path, entity_name:str, dir_name:str, ext_name:str, sour
     with open(f"{directory}/{entity_name}{ext_name}", "w") as file:
         file.write(source)
     
-def load_template(template_name: str, entity: any) -> str:
+def load_template(template_name: str, entity: any, settings:any = None) -> str:
     template = env.get_template(template_name)
     cols = get_columns(entity)
+    name = entity['type'].lower()
     entity_vars = {
-        'entity': entity['type'],
+        'entity': name,
         'columns': cols,
         'visibleColumns': cols,
         'sortColumns': cols, #TODO
@@ -129,12 +131,12 @@ def load_template(template_name: str, entity: any) -> str:
         'mode': 'tab',
         'title':  entity['type'].upper(),
         'tableAttr': 'customerTable',
-        'service':  entity['type']
+        'service': name
     }
     cols = []
     text_template = Template('attr="{{ attr }}" title="{{ title }}" editable="{{ editable }}" required="{{ required }}"')
-    currency_template = Template('attr="{{ attr }}" title="{{ title }}" type="currency" editable="{{ editable }}" required="{{ required }}"')
-    date_template = Template('attr="{{ attr }}" title="{{ title }}" type="currency" editable="{{ editable }}" required="{{ required }}"')
+    currency_template = Template('attr="{{ attr }}" title="{{ title }}" type="currency" editable="{{ editable }}" required="{{ required }}"')# currency 100,00.00 settings from global
+    date_template = Template('attr="{{ attr }}" title="{{ title }}" type="currency" editable="{{ editable }}" required="{{ required }}"') 
     for column in entity.columns:
         #  if hasattr(column, "type"):
         #   datatype = Date , Time, Decimal
@@ -236,7 +238,7 @@ def gen_sidebar_routing(template_name:str, entities: any) -> str:
     return sidebar
 
 def gen_app_service_config(entities: any) -> str:
-    t = Template("export const SERVICE_CONFIG: Object ={ {{ children }} }")
+    t = Template("export const SERVICE_CONFIG: Object ={ {{ children }} };")
     child_template = Template("'{{ name }}': { 'path': '/{{ name }}' }")
     sep = ""
     config = ""
@@ -251,3 +253,15 @@ def gen_app_service_config(entities: any) -> str:
     }
     t = t.render(var)
     return t
+
+#app.menu.config.jinja
+def gen_app_menu_config(template_name:str, entities: any):
+    template = env.get_template(template_name)
+    child_template = Template("{ id: '{{ name }}', name: '{{ name_upper }}', icon: 'home', route: '/main/{{ name }}' }")
+    menuitems = []
+    for each_entity_name, each_entity in  entities:
+        name = each_entity_name.lower()
+        menuitem = child_template.render(name=name,name_upper=each_entity_name.upper())
+        menuitems.append(menuitem)
+    
+    return template.render(menuitems=menuitems)
