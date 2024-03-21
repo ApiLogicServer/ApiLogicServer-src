@@ -5,8 +5,7 @@ import { {{ entity_first_cap }}HomeComponent } from './home/{{ entity }}-home.co
 const routes: Routes = [
   {
     path: '',
-    component: { entity_first_cap }}HomeComponent
-  },
+    component: {{ entity_first_cap }}HomeComponent,
     data: {
       oPermission: {
         permissionId: '{{ entity }}-detail-permissions'

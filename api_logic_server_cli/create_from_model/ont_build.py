@@ -88,7 +88,9 @@ class OntBuilder(object):
             write_file(app_path, entity_name, "", ".module.ts", module)
         entities = app_model.entities.items()
         sidebar_menu = gen_sidebar_routing("main_routing.jinja",entities=entities)
-        #write_routing_file(app_path, "main-routing-module.ts", sidebar_menu) # root folder
+        write_root_file(app_path, "", "main-routing-module.ts", sidebar_menu) # root folder
+        app_service_config = gen_app_service_config(entities=entities)
+        write_root_file(app_path, "shared", "app.services.config.ts", app_service_config) 
 
 
 current_path = os.path.abspath(os.path.dirname(__file__))
@@ -99,6 +101,13 @@ env = Environment(
     #autoescape=select_autoescape()
 )
 
+def write_root_file(app_path: Path,dir_name:str, file_name:str,source: str):
+    import pathlib
+    directory = f"{app_path}/src/app/main" if dir_name == "main" else f"{app_path}/src/app/{dir_name}"
+    pathlib.Path(f"{directory}").mkdir(parents=True, exist_ok=True) 
+    with open(f"{directory}/{file_name}", "w") as file:
+        file.write(source)
+    
 def write_file(app_path: Path, entity_name:str, dir_name:str, ext_name:str, source:str):
     import pathlib
     directory = f"{app_path}/src/app/main/{entity_name}/{dir_name}" if dir_name != "" else f"{app_path}/src/app/main/{entity_name}"
@@ -115,6 +124,7 @@ def load_template(template_name: str, entity: any) -> str:
         'entity': entity['type'],
         'columns': cols,
         'visibleColumns': cols,
+        'sortColumns': cols, #TODO
         'keys': entity['user_key'],
         'mode': 'tab',
         'title':  entity['type'].upper(),
@@ -157,7 +167,7 @@ def load_ts(template_name: str, entity: any) -> str:
     var = {
         "entity": entity,
         "Entity": entity_upper,
-        "entity_home": f"{entity}_home",
+        "entity_home": f"{entity}-home",
         "entity_home_component": f"{entity_upper}HomeComponent"
     }
     ts = template.render(var)
@@ -177,6 +187,7 @@ def load_routing(template_name: str, entity: any) -> str:
     entity = entity.type.lower()
     entity_first_cap = f"{entity[:1].upper()}{entity[1:]}"
     var = {
+        "entity": entity,
         "entity_upper": entity_upper,
         "entity_first_cap": entity_first_cap,
         "import_module":  "{" + f"{entity_upper}_MODULE_DECLARATIONS, {entity_first_cap}RoutingModule" +"}",
@@ -192,6 +203,7 @@ def load_module(template_name: str, entity: any) -> str:
     entity = entity.type.lower()
     entity_first_cap = f"{entity[:1].upper()}{entity[1:]}"
     var = {
+        "entity": entity,
         "entity_upper": entity_upper,
         "entity_first_cap": entity_first_cap,
         "import_module":  "{" + f"{entity_upper}_MODULE_DECLARATIONS, {entity_first_cap}RoutingModule" +"}",
@@ -222,3 +234,20 @@ def gen_sidebar_routing(template_name:str, entities: any) -> str:
     sidebar = template.render(var)
     print(sidebar)
     return sidebar
+
+def gen_app_service_config(entities: any) -> str:
+    t = Template("export const SERVICE_CONFIG: Object ={ {{ children }} }")
+    child_template = Template("'{{ name }}': { 'path': '/{{ name }}' }")
+    sep = ""
+    config = ""
+    children = ""
+    for each_entity_name, each_entity in  entities:
+        name = each_entity_name.lower()
+        child = child_template.render(name=name)
+        children += f"{sep}{child}\n"
+        sep = ","
+    var = {
+        "children": children
+    }
+    t = t.render(var)
+    return t
