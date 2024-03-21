@@ -111,7 +111,7 @@ class OntCreator(object):
                     pass
                 else:
                     each_attribute.type = "text"
-                    compute_type = False  # bugs in aliases, computed attrs, so skip for now
+                    compute_type = True  # bugs in aliases, computed attrs, so skip for now
                     if compute_type:
                         resource = resources[each_resource_name]
                         resource_attributes = resource.attributes
@@ -129,6 +129,7 @@ class OntCreator(object):
                                 break
                         assert resource_attribute is not None, \
                             f"Sys Err - unknown resource attr: {each_resource_name}.{each_attribute.name}"
+                        each_attribute.type = resource_attribute.db_type
                 app_model_out.entities[each_resource_name].columns.append(each_attribute)
             app_model_out.entities[each_resource_name].pop('attributes')
         pass
