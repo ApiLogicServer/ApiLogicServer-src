@@ -1300,8 +1300,8 @@ from database import <project.bind_key>_models
 
         nw_path = (self.api_logic_server_dir_path).\
             joinpath('prototypes/nw')  # PosixPath('/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/nw')
-        copyfile(src = nw_path.joinpath('ui/admin/admin.yaml'),
-                 dst = nw_path.joinpath('ui/admin/admin_no_customizations.yaml'))
+        copyfile(src = self.project_directory_path.joinpath('ui/admin/admin.yaml'),
+                 dst = self.project_directory_path.joinpath('ui/admin/admin_no_customizations.yaml'))
         recursive_overwrite(nw_path, self.project_directory)  # '/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/tutorial/1. Instant_Creation'
 
         self.create_nw_tutorial_and_readme()

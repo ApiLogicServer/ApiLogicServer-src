@@ -12,7 +12,10 @@ class ResourceAttribute():
             debug_str = "Nice breakpoint"
         # self.nullable = each_attribute.nullable
         type = str(each_attribute.type)
-        self.type = None  # none means not interesting, default display to simple text
+        self.db_type = type
+        """The SQLAlchemy type, e.g. for app_model"""
+        self.type = None
+        """Type for admin app - None for defaulting to simple text"""
         if type == "DECIMAL":
             self.type = "DECIMAL"
         elif type == "DATE":
