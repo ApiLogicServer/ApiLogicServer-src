@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.03.26"
+__version__ = "10.03.36"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t03/19/2024 - 10.03.35: Start onty \n"\
+    "\t03/20/2024 - 10.03.36: App Creator, with types \n"\
     "\t03/14/2024 - 10.03.25: View support, CLI option-names, Keycloak preview \n"\
     "\t03/03/2024 - 10.03.16: Issue 50 (Numeric defaults), Pattern/Design for Behave examples, fix tutorial dir names \n"\
     "\t02/27/2024 - 10.03.07: LogicBank 1.20.3, behave for kafka & no-ship empty orders \n"\
@@ -1300,8 +1300,9 @@ from database import <project.bind_key>_models
 
         nw_path = (self.api_logic_server_dir_path).\
             joinpath('prototypes/nw')  # PosixPath('/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/nw')
-        copyfile(src = nw_path.joinpath('ui/admin/admin.yaml'),
-                 dst = nw_path.joinpath('ui/admin/admin_no_customizations.yaml'))
+        if os.path.isfile(self.project_directory_path.joinpath('ui/admin/admin.yaml')):
+            copyfile(src = self.project_directory_path.joinpath('ui/admin/admin.yaml'),
+                 dst = self.project_directory_path.joinpath('ui/admin/admin_no_customizations.yaml'))
         recursive_overwrite(nw_path, self.project_directory)  # '/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/tutorial/1. Instant_Creation'
 
         self.create_nw_tutorial_and_readme()

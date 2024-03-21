@@ -107,10 +107,37 @@ class OntCreator(object):
             app_model_out.entities[each_resource_name] = each_resource
             app_model_out.entities[each_resource_name].columns = list()
             for each_attribute in each_resource.attributes:
-                app_model_attribute = self.create_model_attribute(
-                    each_attribute=each_attribute, 
-                    each_resource_name=each_resource_name,
-                    resources=resources)
+                use_f = True
+                if use_f:
+                    app_model_attribute = self.create_model_attribute(
+                        each_attribute=each_attribute, 
+                        each_resource_name=each_resource_name,
+                        resources=resources)
+                else:  # TODO remove old code
+                    if 'type' in each_attribute:
+                        pass
+                    else:
+                        each_attribute.type = "text"
+                        compute_type = True  # bugs in aliases, computed attrs, so skip for now
+                        if compute_type:
+                            resource = resources[each_resource_name]
+                            resource_attributes = resource.attributes
+                            resource_attribute : ResourceAttribute = None
+                            for each_resource_attribute in resource_attributes:
+                                if each_resource_attribute.name == 'CategoryName_ColumnName':
+                                    each_resource_attribute.name = 'CategoryName'
+                                    # FIXME unable to find aliased name
+                                    # and, find out why the admin yaml is ok (and, save the initial yaml)
+                                if each_resource_attribute.name == 'ShipPostalCode':
+                                    each_resource_attribute.name = 'ShipZip'
+                                if each_resource_attribute.name == each_attribute.name:
+                                    resource_attribute = each_resource_attribute
+                                    each_attribute.type = resource_attribute.type
+                                    break
+                            assert resource_attribute is not None, \
+                                f"Sys Err - unknown resource attr: {each_resource_name}.{each_attribute.name}"
+                            each_attribute.type = resource_attribute.db_type
+                            app_model_attribute = each_attribute
                 app_model_out.entities[each_resource_name].columns.append(app_model_attribute)
             app_model_out.entities[each_resource_name].pop('attributes')
         pass
@@ -123,25 +150,21 @@ class OntCreator(object):
 
 
     def create_model_attribute(self, each_attribute : DotMap, each_resource_name: str, resources : Dict[str, Resource]) -> DotMap:
-        """ Creates app model attribute from admin attribute
-        
-        Transformations:
-        * adds missing type
-        * others TBD
+        """ Computes type (etc) for Ontimize attributes
 
         Args:
-            each_attribute (DotMap): an Admin App Attribute (eg, with type of None)
+            each_attribute (DotMap): an Admin App Attribute
             each_resource_name (str): name of resource in admin app
             resources ( Dict[str, Resource]): metadata introspected from database/models/py
 
         Returns:
-            DotMap: app model attribute for writing to app_model.py
+            DotMap: model attribute for writing to app_model.py
         """
 
         if 'type' in each_attribute:
             pass
         else:
-            each_attribute.type = "text"  # TODO remove debug stub
+            each_attribute.type = "text"
             compute_type = True  # bugs in aliases, computed attrs, so skip for now
             if compute_type:
                 resource = resources[each_resource_name]
