@@ -172,29 +172,15 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "     - app-createZZ",
-            "type": "python",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/api_logic_server_cli",
-            "program": "cli.py",
-             "redirectOutput": true,
-            "args": [
-                "app-create",
-                "--project-name=../../../servers/ApiLogicProject",
-                "--app=ont_1"
-                ],
-            "console": "integratedTerminal"
-        },
-        {
             "name": "     - app-build",
             "type": "python",
             "request": "launch",
-            "cwd": "${workspaceFolder}/api_logic_server_cli",
-            "program": "cli.py",
+            "cwd": "../../../servers/ApiLogicProject",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "args": [
                 "app-build",
-                "--project-name=../../../servers/ApiLogicProject",
+                "--project-name=",
                 "--app=ont_1"
                 ],
             "console": "integratedTerminal"
