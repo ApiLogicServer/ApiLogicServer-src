@@ -201,7 +201,10 @@ def load_template(template_name: str, entity: any, settings: any = None) -> str:
         'attr="{{ attr }}" title="{{ title }}" type="currency" editable="{{ editable }}" required="{{ required }}"'
     )  # currency 100,00.00 settings from global
     date_template = Template(
-        'attr="{{ attr }}" title="{{ title }}" type="currency" editable="{{ editable }}" required="{{ required }}"'
+        'attr="{{ attr }}" title="{{ title }}" type="date" editable="{{ editable }}" required="{{ required }}"'
+    )
+    integer_template = Template(
+        'attr="{{ attr }}" title="{{ title }}" type="integer" editable="{{ editable }}" required="{{ required }}"'
     )
     for column in entity.columns:
         #  if hasattr(column, "type"):
@@ -223,14 +226,16 @@ def load_template(template_name: str, entity: any, settings: any = None) -> str:
         if hasattr(column, "type") and column.type != DotMap():
             if column.type.startswith("DECIMAL"):
                 rv = currency_template.render(col_var)
+            elif column.type == 'INTEGER':
+                rv = integer_template.render(col_var)
             elif column.type == "DATE":
                 rv = date_template.render(col_var)
             else:
                 rv = text_template.render(col_var)
-                cols.append(rv)
         else:
             rv = text_template.render(col_var)
-            cols.append(rv)
+        
+        cols.append(rv)
 
     entity_vars["row_columns"] = cols
     rendered_template = template.render(entity_vars)
