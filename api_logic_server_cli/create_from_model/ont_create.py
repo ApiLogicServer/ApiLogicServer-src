@@ -32,6 +32,9 @@ with open(f'{get_api_logic_server_cli_dir()}/logging.yml','rt') as f:
 logging.config.dictConfig(config)
 log = logging.getLogger('ont-app')
 
+style_guide = DotMap()
+style_guide.currency = "$"
+style_guide.decimal = "."
 
 class OntCreator(object):
     """
@@ -103,6 +106,7 @@ class OntCreator(object):
         app_model_out.authentication = admin_model_in.authentication
         app_model_out.settings = admin_model_in.settings
         app_model_out.entities = DotMap()
+        app_model_out.settings.style_guide = style_guide
         for each_resource_name, each_resource in admin_model_in.resources.items():
             app_model_out.entities[each_resource_name] = each_resource
             app_model_out.entities[each_resource_name].columns = list()
