@@ -24,8 +24,6 @@ from jinja2 import (
 )
 import os
 
-global env  # slightly evil - referencing funcs should be moved into class
-env: Environment = None
 
 def get_api_logic_server_cli_dir() -> str:
     """
@@ -41,6 +39,7 @@ with open(f"{get_api_logic_server_cli_dir()}/logging.yml", "rt") as f:
     f.close()
 logging.config.dictConfig(config)
 log = logging.getLogger("ont-app")
+
 
 class OntBuilder(object):
     """
@@ -64,15 +63,8 @@ class OntBuilder(object):
     num_related = 0
 
     def __init__(self, project: Project, app: str):
-        global env
         self.project = project
         self.app = app
-        self.env = self.get_environment()
-        env = self.env
-
-        self.pick_list_template = self.env.get_template("list-picker.html")
-        self.combo_list_template = self.env.get_template("combo-picker.html")  # FIXME - odd for just 1 template type...?
-
 
     def build_application(self):
         """main driver - loop through add_model.yaml, ont app"""
@@ -123,7 +115,7 @@ class OntBuilder(object):
             module = load_module("module.jinja", each_entity)
             write_file(app_path, entity_name, "", ".module.ts", module)
 
-            new_template = self.load_new_template("new_template.html", each_entity, entity_favorites)
+            new_template = load_new_template("new_template.html", each_entity, entity_favorites)
             entity_name = each_entity_name.lower()
             ts = load_ts("new_component.jinja", each_entity)
             write_file(app_path, entity_name, "new", "-new.component.html", new_template)
@@ -146,87 +138,14 @@ class OntBuilder(object):
             source=app_menu_config,
         )
 
-    def get_environment(self) -> Environment:
-        # current_path = os.path.abspath(os.path.dirname(__file__))
-        # current_cli_path = "/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/ont_app"
-        current_cli_path = self.project.api_logic_server_dir_path
-        templates_path = current_cli_path.joinpath('prototypes/ont_app/templates')
-        env = Environment(
-            # loader=PackageLoader(package_name="APILOGICPROJECT",package_path="/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/nw/ui/templates"),
-            loader=FileSystemLoader(searchpath=f"{templates_path}")
-            # autoescape=select_autoescape()
-        )
-        return env
 
-
-    def load_new_template(self, template_name: str, entity: any, favorites: any) -> str:
-        template = env.get_template(template_name)
-        cols = get_columns(entity)
-        name = entity["type"].lower()
-        entity_vars = {
-            "entity": name,
-            "columns": cols,
-            "keys": entity["user_key"],
-            "mode": "tab",
-            "title": name.upper(),
-            "tableAttr": f"{name}Table",
-            "service": name,
-        }
-
-        fks = []
-        for fkey in entity.tab_groups:
-            if fkey.direction in ["tomany", "toone"]:
-                # attrType = "int" # get_column_type(entity, fkey.resource, fkey.fks)  # TODO
-                fav_col,attrType = find_favorite(favorites, fkey.resource)
-                fk = {
-                    "attrs": fkey.fks,
-                    "resource": fkey.resource,
-                    "name": fkey.name,
-                    "columns": f"{fkey.fks[0]};{fav_col}", #{entity["user_key"]} of resource
-                    "attrType": attrType
-                }
-                fks.append(fk)
-        rows = []
-        for column in entity.columns:
-            #  if hasattr(column, "type"):
-            #   datatype = Date , Time, Decimal
-            col_var = {
-                "attr": column.name, 
-                "title": (
-                    column.label
-                    if hasattr(column, "label") and column.label != DotMap()
-                    else column.name
-                ), 
-                "editable": "yes",
-                "required": (
-                    ("yes" if column.required else "no")
-                    if hasattr(column, "required") and column.required != DotMap()
-                    else "no"
-                ),
-            }
-            
-            use_list = False
-            # TODO -add template to tab_group  list or combo
-            for fk in fks:
-                if column.name in fk["attrs"]:
-                    use_list = True
-                    col_var["attr"] = fk["attrs"][0]
-                    col_var["service"] = fk["resource"].lower()
-                    col_var["entity"] = fk["resource"].lower()
-                    col_var["attrType"] = attrType
-                    col_var["columns"] = fk["columns"]
-                    # if fk["template"] == "list":
-                    rv = self.pick_list_template.render(col_var)
-                    # rv = combo_list_template.render(col_var)
-            if not use_list:
-                rv = gen_field_template(column, col_var)
-
-            rows.append(rv)
-
-        entity_vars["inputrows"] = rows
-        rendered_template = template.render(entity_vars)
-        print(rendered_template)
-        return rendered_template
+current_path = os.path.abspath(os.path.dirname(__file__))
+current_cli_path = "/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/ont_app"
+env = Environment(
+    # loader=PackageLoader(package_name="APILOGICPROJECT",package_path="/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/nw/ui/templates"),
+    loader=FileSystemLoader(searchpath=f"{current_cli_path}/templates")
+    # autoescape=select_autoescape()
+)
 
 
 def write_root_file(app_path: Path, dir_name: str, file_name: str, source: str):
@@ -439,6 +358,77 @@ def gen_app_menu_config(template_name: str, entities: any):
     return template.render(menuitems=menuitems)
 
 
+pick_list_template = env.get_template("list-picker.html")
+combo_list_template = env.get_template("combo-picker.html")
+
+def load_new_template(template_name: str, entity: any, favorites: any) -> str:
+    template = env.get_template(template_name)
+    cols = get_columns(entity)
+    name = entity["type"].lower()
+    entity_vars = {
+        "entity": name,
+        "columns": cols,
+        "keys": entity["user_key"],
+        "mode": "tab",
+        "title": name.upper(),
+        "tableAttr": f"{name}Table",
+        "service": name,
+    }
+
+    fks = []
+    for fkey in entity.tab_groups:
+        if fkey.direction in ["tomany", "toone"]:
+            # attrType = "int" # get_column_type(entity, fkey.resource, fkey.fks)  # TODO
+            fav_col,attrType = find_favorite(favorites, fkey.resource)
+            fk = {
+                "attrs": fkey.fks,
+                "resource": fkey.resource,
+                "name": fkey.name,
+                "columns": f"{fkey.fks[0]};{fav_col}", #{entity["user_key"]} of resource
+                "attrType": attrType
+            }
+            fks.append(fk)
+    rows = []
+    for column in entity.columns:
+        #  if hasattr(column, "type"):
+        #   datatype = Date , Time, Decimal
+        col_var = {
+            "attr": column.name, 
+            "title": (
+                column.label
+                if hasattr(column, "label") and column.label != DotMap()
+                else column.name
+            ), 
+            "editable": "yes",
+            "required": (
+                ("yes" if column.required else "no")
+                if hasattr(column, "required") and column.required != DotMap()
+                else "no"
+            ),
+        }
+        
+        use_list = False
+        # TODO -add template to tab_group  list or combo
+        for fk in fks:
+            if column.name in fk["attrs"]:
+                use_list = True
+                col_var["attr"] = fk["attrs"][0]
+                col_var["service"] = fk["resource"].lower()
+                col_var["entity"] = fk["resource"].lower()
+                col_var["attrType"] = attrType
+                col_var["columns"] = fk["columns"]
+                # if fk["template"] == "list":
+                rv = pick_list_template.render(col_var)
+                # rv = combo_list_template.render(col_var)
+        if not use_list:
+            rv = gen_field_template(column, col_var)
+
+        rows.append(rv)
+
+    entity_vars["inputrows"] = rows
+    rendered_template = template.render(entity_vars)
+    print(rendered_template)
+    return rendered_template
 
 def find_favorite(entity_favorites: any, entity_name:str):
     for e in entity_favorites: 
