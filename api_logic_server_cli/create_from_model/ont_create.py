@@ -117,7 +117,12 @@ class OntCreator(object):
                     resources=resources)
                 app_model_out.entities[each_resource_name].columns.append(app_model_attribute)
             app_model_out.entities[each_resource_name].pop('attributes')
-        pass
+
+        
+        from_dir = self.project.api_logic_server_dir_path.joinpath('prototypes/ont_app/prototype')
+        to_dir = self.project.project_directory_path
+        shutil.copytree(from_dir, to_dir, dirs_exist_ok=True)  # TODO - stub code, remove later
+
         app_model_out_dict = app_model_out.toDict()  # dump(dot_map) is improperly structured
         app_model_path = app_path.joinpath("app_model.yaml")
         with open(app_model_path, 'w') as app_model_file:
@@ -159,8 +164,40 @@ class OntCreator(object):
                 assert resource_attribute is not None, \
                     f"Sys Err - unknown resource attr: {each_resource_name}.{each_attribute.name}"
                 each_attribute.type = resource_attribute.db_type
+                each_attribute.template = self.compute_field_template(each_attribute)
         return each_attribute
-        
+
+
+    def compute_field_template(self, column: DotMap) -> str:
+        """Compute template name from column.type (the SQLAlchemy type)
+
+        Args:
+            column (DotMap): column attribute, containing type
+
+        Returns:
+            str: template name
+        """
+        if hasattr(column, "type") and column.type != DotMap():
+            col_type = column.type
+            if col_type.startswith("DECIMAL") or col_type.startswith("NUMERIC"):
+                rv = "currency"  # currency_template.render(col_var)
+            elif col_type == "DOUBLE":
+                rv = "real"  # real_template.render(col_var)
+            elif col_type == "DATE":
+                rv = "date"  # date_template.render(col_var)
+            elif col_type == "INTEGER":
+                rv = "integer"  # integer_template.render(col_var)
+            elif col_type == "IMAGE":
+                rv = "image"  # image_template.render(col_var)
+            elif col_type == "TEXTAREA":
+                rv = "textarea"  # textarea_template.render(col_var)
+            else:
+                # VARCHAR - add text area for
+                rv = "text"  # text_template.render(col_var)
+        else:
+            rv = "text"  # text_template.render(col_var)
+        return rv
+
 '''
 def create(model_creation_services: model_creation_services.ModelCreationServices):
     """ called by ApiLogicServer CLI -- creates ui/admin application (ui/admin folder, admin.yaml)
