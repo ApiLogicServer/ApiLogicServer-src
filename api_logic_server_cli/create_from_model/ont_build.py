@@ -88,24 +88,37 @@ class OntBuilder(object):
         
         global_values = app_model  # this will be passed to the template loader
 
+        entity_favorites = []
         for each_entity_name, each_entity in app_model.entities.items():
-            template = load_template("table_template.html", each_entity)
+            datatype = 'integer'
+            for column in each_entity.columns:
+                if column.name == each_entity.user_key:
+                    datatype = column.type if hasattr(column, "type") else 'int'
+            favorite = {
+                "entity": each_entity_name,
+                "favorite": each_entity.user_key,
+                "datatype": datatype
+            }
+            entity_favorites.append(favorite)
+            
+        for each_entity_name, each_entity in app_model.entities.items():
+            home_template = load_template("table_template.html", each_entity)
             entity_name = each_entity_name.lower()
             ts = load_ts("template.jinja", each_entity)
-            write_file(app_path, entity_name, "home", "-home.component.html", template)
+            write_file(app_path, entity_name, "home", "-home.component.html", home_template)
             write_file(app_path, entity_name, "home", "-home.component.ts", ts)
             write_file(
                 app_path, entity_name, "home", "-home.component.scss", ""
-            )  # TODO
+            )
             routing = load_routing("routing.jinja", each_entity)
             write_file(app_path, entity_name, "", "-routing.module.ts", routing)
             module = load_module("module.jinja", each_entity)
             write_file(app_path, entity_name, "", ".module.ts", module)
 
-            template = load_new_template("new_template.html", each_entity)
+            new_template = load_new_template("new_template.html", each_entity, entity_favorites)
             entity_name = each_entity_name.lower()
             ts = load_ts("new_component.jinja", each_entity)
-            write_file(app_path, entity_name, "new", "-new.component.html", template)
+            write_file(app_path, entity_name, "new", "-new.component.html", new_template)
             write_file(app_path, entity_name, "new", "-new.component.ts", ts)
             write_file(app_path, entity_name, "new", "-new.component.scss", "")
         entities = app_model.entities.items()
@@ -208,7 +221,7 @@ def load_template(template_name: str, entity: any, settings: any = None) -> str:
             ),
         }
         if hasattr(column, "type") and column.type != DotMap():
-            if column.type == "DECIMAL":
+            if column.type.startswith("DECIMAL"):
                 rv = currency_template.render(col_var)
             elif column.type == "DATE":
                 rv = date_template.render(col_var)
@@ -290,7 +303,6 @@ def load_module(template_name: str, entity: any) -> str:
     print(module)
     return module
 
-
 def gen_sidebar_routing(template_name: str, entities: any) -> str:
     template = env.get_template(template_name)
     children = []
@@ -344,7 +356,7 @@ def gen_app_menu_config(template_name: str, entities: any):
 pick_list_template = env.get_template("list-picker.html")
 combo_list_template = env.get_template("combo-picker.html")
 
-def load_new_template(template_name: str, entity: any, settings: any = None) -> str:
+def load_new_template(template_name: str, entity: any, favorites: any) -> str:
     template = env.get_template(template_name)
     cols = get_columns(entity)
     name = entity["type"].lower()
@@ -360,13 +372,14 @@ def load_new_template(template_name: str, entity: any, settings: any = None) -> 
 
     fks = []
     for fkey in entity.tab_groups:
-        if fkey.direction == "tomany":
-            attrType = "int" # get_column_type(entity, fkey.resource, fkey.fks)  # TODO
+        if fkey.direction in ["tomany", "toone"]:
+            # attrType = "int" # get_column_type(entity, fkey.resource, fkey.fks)  # TODO
+            fav_col,attrType = find_favorite(favorites, fkey.resource)
             fk = {
                 "attrs": fkey.fks,
                 "resource": fkey.resource,
                 "name": fkey.name,
-                "columns": f"{fkey.fks[0]}", #{entity["user_key"]} of resource
+                "columns": f"{fkey.fks[0]};{fav_col}", #{entity["user_key"]} of resource
                 "attrType": attrType
             }
             fks.append(fk)
@@ -398,7 +411,7 @@ def load_new_template(template_name: str, entity: any, settings: any = None) -> 
                 col_var["service"] = fk["resource"].lower()
                 col_var["entity"] = fk["resource"].lower()
                 col_var["attrType"] = attrType
-                col_var["list_cols"] = fk["columns"]
+                col_var["columns"] = fk["columns"]
                 # if fk["template"] == "list":
                 rv = pick_list_template.render(col_var)
                 # rv = combo_list_template.render(col_var)
@@ -411,6 +424,15 @@ def load_new_template(template_name: str, entity: any, settings: any = None) -> 
     rendered_template = template.render(entity_vars)
     print(rendered_template)
     return rendered_template
+
+def find_favorite(entity_favorites: any, entity_name:str):
+    for e in entity_favorites: 
+        if e["entity"] == entity_name: 
+            datatype = "integer"
+            if  e["datatype"].startswith("VARCHAR"):
+                datatype = "string"
+            return e["favorite"], datatype
+    return "", "integer"
 
 ###  ONTIMIZE Input Templates
 
