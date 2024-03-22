@@ -111,7 +111,7 @@ class OntBuilder(object):
         entities = app_model.entities.items()
         sidebar_menu = gen_sidebar_routing("main_routing.jinja", entities=entities)
         write_root_file(
-            app_path, "", "main-routing.module.ts", sidebar_menu
+            app_path, "main", "main-routing.module.ts", sidebar_menu
         )  # root folder
         app_service_config = gen_app_service_config(entities=entities)
         write_root_file(
@@ -361,15 +361,16 @@ def load_new_template(template_name: str, entity: any, settings: any = None) -> 
     fks = []
     for fkey in entity.tab_groups:
         if fkey.direction == "tomany":
-            attrType = get_column_type(entity, fkey.resource, fkey.fks)  # TODO
+            attrType = "int" # get_column_type(entity, fkey.resource, fkey.fks)  # TODO
             fk = {
                 "attrs": fkey.fks,
                 "resource": fkey.resource,
                 "name": fkey.name,
-                "columns": "",
+                "columns": f"{fkey.fks[0]}", #{entity["user_key"]} of resource
+                "attrType": attrType
             }
             fks.append(fk)
-
+    rows = []
     for column in entity.columns:
         #  if hasattr(column, "type"):
         #   datatype = Date , Time, Decimal
@@ -387,7 +388,7 @@ def load_new_template(template_name: str, entity: any, settings: any = None) -> 
                 else "no"
             ),
         }
-        rows = []
+        
         use_list = False
         # TODO -add template to tab_group  list or combo
         for fk in fks:
@@ -414,7 +415,7 @@ def load_new_template(template_name: str, entity: any, settings: any = None) -> 
 ###  ONTIMIZE Input Templates
 
 text_template = Template(
-    '<o-text-input attr="{{ attr }}" read-only="{{ editable }}" required="{{ required }}" width="360px"></o-text-input>'
+    '<o-text-input attr="{{ attr }}" editable="{{ editable }}" required="{{ required }}" width="360px"></o-text-input>'
 )
 currency_template = Template(
     '<o-currency-input attr="{{ attr }}" editable="{{ editable }}" required="{{ required }}" min-decimal-digits="2" max-decimal-digits="2" currency-symbol="$"></o-currency-input>'
