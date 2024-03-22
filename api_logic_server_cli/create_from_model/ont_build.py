@@ -276,6 +276,8 @@ def gen_app_menu_config(template_name:str, entities: any):
     
     return template.render(menuitems=menuitems)
 
+pick_list_template = env.get_template("list-picker.html")
+combo_list_template = env.get_template("combo-picker.html")
 def load_new_template(template_name: str, entity: any, settings:any = None) -> str:
     template = env.get_template(template_name)
     cols = get_columns(entity)
@@ -290,10 +292,17 @@ def load_new_template(template_name: str, entity: any, settings:any = None) -> s
         'service': name
     }
     cols = []
-    text_template = Template('<o-text-input attr="{{ attr }}" read-only="{{ editable }}" required="{{ required }}" width="360px"></o-text-input>')
-    currency_template = Template('<o-currency-input attr="{{ attr }}" editable="{{ editable }}" required="{{ required }}" min-decimal-digits="2" max-decimal-digits="2" ></o-currency-input>')# currency 100,00.00 settings from global
-    date_template = Template('<o-date-input attr="{{ attr }}" editable="{{ editable }}" required="{{ required }}" format="LL" text-input-enabled="no"></o-date-input>') 
-    integer_template = Template('<o-integer-input attr="{{ attr }}" editable="{{ editable }}" required="{{ required }}" min="0"></o-integer-input>')
+    fks = []
+    for fkey in entity.tab_groups:
+        if fkey.direction == "tomany":
+            fk = {
+                "attrs": fkey.fks,
+                "resource": fkey.resource,
+                "name": fkey.name,
+                "columns": ""
+            }
+            fks.append(fk)
+
     for column in entity.columns:
         #  if hasattr(column, "type"):
         #   datatype = Date , Time, Decimal
@@ -303,17 +312,21 @@ def load_new_template(template_name: str, entity: any, settings:any = None) -> s
             "editable": "yes",
             "required": ("yes" if column.required else "no") if hasattr(column,"required") and column.required != DotMap() else "no"
         }
-        if hasattr(column,"type") and column.type != DotMap():
-            if column.type == 'DECIMAL':
-                rv = currency_template.render(col_var)
-            elif column.type == "DATE":
-                rv = date_template.render(col_var)
-            elif column.type == "INTEGER":
-                rv = integer_template.render(col_var)
-            else:
-                rv = text_template.render(col_var)
-        else:
-            rv = text_template.render(col_var)
+        use_list = False
+        # TODO -add template to tab_group  list or combo
+        for fk in fks:
+            if column.name in fk["attrs"]:
+                use_list = True
+                col_var["attr"] = fk["attrs"][0]
+                col_var["service"] = fk["resource"].lower()
+                col_var["entity"] = fk["resource"].lower()
+                col_var["list_cols"] = fk["columns"]
+                col_var["attrType"] =  "string" # TODO
+                #if fk["template"] == "list":
+                rv = pick_list_template.render(col_var)
+                #rv = combo_list_template.render(col_var)
+        if not use_list:
+            rv = gen_field_template(column, col_var)
         
         cols.append(rv)
             
@@ -321,3 +334,33 @@ def load_new_template(template_name: str, entity: any, settings:any = None) -> s
     rendered_template = template.render(entity_vars)
     print(rendered_template)
     return rendered_template
+
+text_template = Template('<o-text-input attr="{{ attr }}" read-only="{{ editable }}" required="{{ required }}" width="360px"></o-text-input>')
+currency_template = Template('<o-currency-input attr="{{ attr }}" editable="{{ editable }}" required="{{ required }}" min-decimal-digits="2" max-decimal-digits="2" ></o-currency-input>')# currency 100,00.00 settings from global
+date_template = Template('<o-date-input attr="{{ attr }}" editable="{{ editable }}" required="{{ required }}" format="LL" text-input-enabled="no"></o-date-input>') 
+integer_template = Template('<o-integer-input attr="{{ attr }}" editable="{{ editable }}" required="{{ required }}" min="0"></o-integer-input>')
+image_template = Template('<o-image attr="{{ attr }}" data="http://placekitten.com/1920/1080" auto-fit="true" enabled="true" read-only="false" show-controls="true full-screen-button="false" empty-image="./assets/images/no-image.png"></o-image>')
+textarea_template = Template('<o-textarea-input attr="{{ attr }}" label=" {{ title }}" rows="10"></o-textarea-input>')
+real_template = Template('<o-real-input attr="{{ attr }}" label="{{ title }}" min-decimal-digits="2" max-decimal-digits="4" min="30" max="40.0"></o-real-input>')
+
+def gen_field_template(column, col_var):   
+    if hasattr(column,"type") and column.type != DotMap():
+        col_type = column.type
+        if col_type.startswith('DECIMAL') or col_type.startswith('NUMERIC'):
+            rv = currency_template.render(col_var)
+        elif col_type == 'DOUBLE':
+            rv = real_template.render(col_var)
+        elif col_type == "DATE":
+            rv = date_template.render(col_var)
+        elif col_type == "INTEGER":
+            rv = integer_template.render(col_var)
+        elif col_type == "IMAGE":
+            rv = image_template.render(col_var)
+        elif col_type == "TEXTAREA":
+            rv = textarea_template.render(col_var)
+        else:
+            # VARCHAR - add text area for
+            rv = text_template.render(col_var)
+    else:
+        rv = text_template.render(col_var)
+    return rv
