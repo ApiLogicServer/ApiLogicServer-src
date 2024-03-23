@@ -6,7 +6,7 @@
     "configurations": [
         {
             "name": "ApiLogicServer",
-            "type": "python",
+            "type": "debugpy",
             "cwd": "${workspaceFolder}",
             "env": {
                 "PYTHONPATH": "", 
@@ -22,7 +22,7 @@
         },
         {
             "name": "No Security ApiLogicServer (e.g., simpler swagger)",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "api_logic_server_run.py",
             "redirectOutput": true,
@@ -39,7 +39,7 @@
         },
         {
             "name": "No Security ApiLogicServer VERBOSE",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "api_logic_server_run.py",
             "redirectOutput": true,
@@ -57,7 +57,7 @@
         },
         {
             "name": "Behave Run",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "env": {"SECURITY_ENABLED": "True"},
             "cwd": "${workspaceFolder}/test/api_logic_server_behave",
@@ -70,7 +70,7 @@
         },
         {
             "name": "Behave No Security",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "env": {"SECURITY_ENABLED": "False"},
             "cwd": "${workspaceFolder}/test/api_logic_server_behave",
@@ -83,7 +83,7 @@
         },
         {
             "name": "Windows Behave Run (iff Behave Run fails)",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}\\test\\api_logic_server_behave\\features",
             "program": "${workspaceFolder}\\test\\api_logic_server_behave\\behave_run.py",
@@ -95,7 +95,7 @@
         },
         {
             "name": "Behave Scenario",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/test/api_logic_server_behave",
             "program": "${workspaceFolder}/test/api_logic_server_behave/behave_run.py",
@@ -108,7 +108,7 @@
         },
         {
             "name": "Behave Logic Report",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/test/api_logic_server_behave",
             "program": "${workspaceFolder}/test/api_logic_server_behave/behave_logic_report.py",
@@ -123,7 +123,7 @@
         },
         {
             "name": "Perform Customizations - add nw customizations",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "program": "perform_customizations.py",
@@ -135,7 +135,7 @@
         },
         {
             "name": "ApiLogicServer ENV",
-            "type": "python",
+            "type": "debugpy",
             "cwd": "${workspaceFolder}",
             "env": {
                 "APILOGICPROJECT_DEBUG": "False",
@@ -152,7 +152,7 @@
         },
         {
             "name": "Basic Server Test",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "program": "test/basic/server_test.py",
@@ -164,7 +164,7 @@
         },
         {
             "name": "Python: Module",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "redirectOutput": true,
             "justMyCode": false,            
@@ -172,7 +172,7 @@
         },
         {
             "name": "Python: Current File",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${file}",
             "redirectOutput": true,
@@ -181,7 +181,7 @@
         },
         {
             "name": "db-debug - explore SQLAlchemy",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "program": "database/db_debug/db_debug.py",
@@ -192,7 +192,7 @@
         },
         {
             "name": "DB API Logic Server",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "program": "api_logic_server_run.py",
@@ -205,7 +205,7 @@
         },
         {
             "name": "Sys Info",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "program": "venv_setup/py.py",
