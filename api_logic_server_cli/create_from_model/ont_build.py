@@ -76,7 +76,7 @@ class OntBuilder(object):
 
     def build_application(self):
         """main driver - loop through add_model.yaml, ont app"""
-        log.debug("OntBuilder Running")
+        log.debug(f"OntBuild Running at {os.getcwd()}")
 
         app_path = Path(self.project.project_directory_path).joinpath(f"ui/{self.app}")
         if not os.path.exists(app_path):

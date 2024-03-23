@@ -161,7 +161,7 @@
             "name": "     - app-create",
             "type": "debugpy",
             "request": "launch",
-            "cwd": "../../../servers/ApiLogicProject",
+            "cwd": "${workspaceFolder}/../../servers/ApiLogicProject",
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "args": [
@@ -175,7 +175,7 @@
             "name": "     - app-build",
             "type": "debugpy",
             "request": "launch",
-            "cwd": "../../../servers/ApiLogicProject",
+            "cwd": "${workspaceFolder}/../../servers/ApiLogicProject",
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "args": [
