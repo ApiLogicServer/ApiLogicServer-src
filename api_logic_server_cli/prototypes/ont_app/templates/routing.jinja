@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { {{ entity_first_cap }}HomeComponent } from './home/{{ entity }}-home.component';
 import { {{ entity_first_cap }}NewComponent } from './new/{{ entity }}-new.component';
+import { {{ entity_first_cap }}DetailComponent } from './detail/{{ entity }}-detail.component';
 
 const routes: Routes = [
   {
@@ -13,12 +14,14 @@ const routes: Routes = [
       }
     }
  },
- { path: 'new', component: {{ entity_first_cap }}NewComponent }
+ { path: 'new', component: {{ entity_first_cap }}NewComponent },
+ { path: 'detail', component: {{ entity_first_cap }}DetailComponent }
 ];
 
 export const {{ entity_upper}}_MODULE_DECLARATIONS = [
     {{ entity_first_cap }}HomeComponent,
-    {{ entity_first_cap }}NewComponent 
+    {{ entity_first_cap }}NewComponent,
+    {{ entity_first_cap }}DetailComponent 
 ];
 
 

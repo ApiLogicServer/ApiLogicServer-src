@@ -115,20 +115,25 @@ class OntBuilder(object):
             ts = load_ts("template.jinja", each_entity)
             write_file(app_path, entity_name, "home", "-home.component.html", home_template)
             write_file(app_path, entity_name, "home", "-home.component.ts", ts)
-            write_file(
-                app_path, entity_name, "home", "-home.component.scss", ""
-            )
+            write_file(app_path, entity_name, "home", "-home.component.scss", "")
+            
             routing = load_routing("routing.jinja", each_entity)
             write_file(app_path, entity_name, "", "-routing.module.ts", routing)
             module = load_module("module.jinja", each_entity)
             write_file(app_path, entity_name, "", ".module.ts", module)
 
             new_template = self.load_new_template("new_template.html", each_entity, entity_favorites)
-            entity_name = each_entity_name.lower()
             ts = load_ts("new_component.jinja", each_entity)
             write_file(app_path, entity_name, "new", "-new.component.html", new_template)
             write_file(app_path, entity_name, "new", "-new.component.ts", ts)
             write_file(app_path, entity_name, "new", "-new.component.scss", "")
+            
+            detail_template = self.load_new_template("detail_template.html", each_entity, entity_favorites)
+            ts = load_ts("detail_component.jinja", each_entity)
+            write_file(app_path, entity_name, "detail", "-detail.component.html", detail_template)
+            write_file(app_path, entity_name, "detail", "-detail.component.ts", ts)
+            write_file(app_path, entity_name, "detail", "-detail.component.scss", "")
+            
         entities = app_model.entities.items()
         sidebar_menu = gen_sidebar_routing("main_routing.jinja", entities=entities)
         write_root_file(
@@ -225,7 +230,6 @@ class OntBuilder(object):
 
         entity_vars["inputrows"] = rows
         rendered_template = template.render(entity_vars)
-        print(rendered_template)
         return rendered_template
 
 
@@ -320,7 +324,6 @@ def load_template(template_name: str, entity: any, settings: any = None) -> str:
 
     entity_vars["row_columns"] = cols
     rendered_template = template.render(entity_vars)
-    print(rendered_template)
     return rendered_template
 
 
@@ -337,7 +340,6 @@ def load_ts(template_name: str, entity: any) -> str:
         "entity_first_cap": entity_first_cap,
     }
     ts = template.render(var)
-    print(ts)
     return ts
 
 
@@ -366,7 +368,6 @@ def load_routing(template_name: str, entity: any) -> str:
         "routing_module": f"{entity_first_cap}RoutingModule",
     }
     routing = template.render(var)
-    print(routing)
     return routing
 
 
@@ -386,7 +387,6 @@ def load_module(template_name: str, entity: any) -> str:
         "routing_module": f"{entity_first_cap}RoutingModule",
     }
     module = template.render(var)
-    print(module)
     return module
 
 def gen_sidebar_routing(template_name: str, entities: any) -> str:
@@ -404,7 +404,6 @@ def gen_sidebar_routing(template_name: str, entities: any) -> str:
         children.append(child)
     var = {"children": children}
     sidebar = template.render(var)
-    print(sidebar)
     return sidebar
 
 
