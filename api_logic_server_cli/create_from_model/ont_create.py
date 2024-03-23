@@ -76,7 +76,7 @@ class OntCreator(object):
         User can edit this, then issue ApiLogicServer app-build
 
         """
-        log.debug("OntCreator Running")
+        log.debug(f"OntCreate Running at {os.getcwd()}")
 
         self.project.use_model = "."
         model_creation_services = ModelCreationServices(project = self.project,   # load models
