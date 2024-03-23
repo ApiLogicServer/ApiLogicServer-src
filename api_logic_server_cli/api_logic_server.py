@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.03.37"
+__version__ = "10.03.23"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t03/22/2024 - 10.03.37: App Creator (types, proto injection), Builder (templatized, machine-independent)  \n"\
+    "\t03/23/2024 - 10.03.38: App Creator (types, proto injection), Builder (templatized, machine-independent), cwd  \n"\
     "\t03/14/2024 - 10.03.25: View support, CLI option-names, Keycloak preview \n"\
     "\t03/03/2024 - 10.03.16: Issue 50 (Numeric defaults), Pattern/Design for Behave examples, fix tutorial dir names \n"\
     "\t02/27/2024 - 10.03.07: LogicBank 1.20.3, behave for kafka & no-ship empty orders \n"\
