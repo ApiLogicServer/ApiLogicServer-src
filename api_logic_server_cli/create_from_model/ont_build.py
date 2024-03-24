@@ -74,6 +74,8 @@ class OntBuilder(object):
         self.combo_list_template = env.get_template("combo-picker.html")  # FIXME - odd for just 1 template type...?
         self.o_text_input = env.get_template("o_text_input.html")
         self.o_combo_input = env.get_template("o_combo_input.html")
+        
+        self.component_scss = env.get_template("component.scss")
         # Home Grid attributes
         self.text_template = Template(
             'attr="{{ attr }}" title="{{ title }}" editable="{{ editable }}" required="{{ required }}"'
@@ -148,6 +150,12 @@ class OntBuilder(object):
             write_file(app_path, entity_name, "detail", "-detail.component.html", detail_template)
             write_file(app_path, entity_name, "detail", "-detail.component.ts", ts)
             write_file(app_path, entity_name, "detail", "-detail.component.scss", "")
+            
+            card_template = self.load_card_template("card.component.html", each_entity, entity_favorites)
+            ts = self.load_ts("card.component.jinja", each_entity)
+            write_card_file(app_path, entity_name, "-card.component.html", card_template)
+            write_card_file(app_path, entity_name,  "-card.component.ts", ts)
+            write_card_file(app_path, entity_name,  "-card.component.scss", "")
             
         # menu routing and service config
         entities = app_model.entities.items()
@@ -296,10 +304,11 @@ class OntBuilder(object):
                     col_var["entity"] = fk["resource"].lower()
                     col_var["attrType"] = attrType
                     col_var["columns"] = fk["columns"]
+                    col_var["visibleColumn"] = fk["visibleColumn"]
                     # if fk["template"] == "list":
-                    rv = self.pick_list_template.render(col_var)
+                    #rv = self.pick_list_template.render(col_var)
                     #else:
-                        # rv = combo_list_template.render(col_var)
+                    rv = self.combo_list_template.render(col_var)
             if not use_list:
                 rv = gen_field_template(column, col_var)
 
@@ -313,7 +322,7 @@ class OntBuilder(object):
         """
         This is a detail display (detail) 
         """
-        template = env.get_template(template_name)
+        template = self.env.get_template(template_name)
         cols = get_columns(entity)
         name = entity["type"].lower()
         entity_vars = {
@@ -355,10 +364,11 @@ class OntBuilder(object):
                     col_var["entity"] = fk["resource"].lower()
                     col_var["attrType"] = attrType
                     col_var["columns"] = fk["columns"]
+                    col_var["visibleColumn"] = fk["visibleColumn"]
                     # if fk["template"] == "list":
-                    rv = self.pick_list_template.render(col_var)
+                    #rv = self.pick_list_template.render(col_var)
                     #else:
-                        # rv = combo_list_template.render(col_var)
+                    rv = self.combo_list_template.render(col_var)
             if not use_list:
                 rv = gen_field_template(column, col_var)
 
@@ -369,6 +379,20 @@ class OntBuilder(object):
         entity_vars["tab_groups"] = fks
         rendered_template = template.render(entity_vars)
         return rendered_template
+        
+    def load_card_template(self, template_name: str, entity: any, favorites: any) -> str:
+        """
+        This is a card display (card) 
+        """
+        template = self.env.get_template(template_name)
+        entity =  entity["type"].upper()
+        cardTitle = "{{" + f"'{entity}_TYPE' | oTranslate" + "}}"
+        entity_vars = {
+            "cardTitle": cardTitle
+        }
+        return template.render(entity_vars)
+        
+        
         
 def get_foreign_keys(entity:any, favorites:any ) -> any:
     fks = []
@@ -382,11 +406,21 @@ def get_foreign_keys(entity:any, favorites:any ) -> any:
                 "resource": fkey.resource,
                 "name": fkey.name,
                 "columns": f"{fkey.fks[0]};{fav_col}",
-                "attrType": attrType
+                "attrType": attrType,
+                "visibleColumn": fav_col
             }
             fks.append(fk)
     return fks, attrType
+
+def write_card_file(app_path: Path, entity_name: str, file_name: str, source: str):
+    import pathlib
+
+    directory = f"{app_path}/src/app/shared/{entity_name}-card"
     
+    pathlib.Path(f"{directory}").mkdir(parents=True, exist_ok=True)
+    with open(f"{directory}/{entity_name}{file_name}", "w") as file:
+        file.write(source)
+
 def write_root_file(app_path: Path, dir_name: str, file_name: str, source: str):
     import pathlib
 
