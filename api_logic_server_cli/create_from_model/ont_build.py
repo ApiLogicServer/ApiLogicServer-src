@@ -386,7 +386,7 @@ class OntBuilder(object):
         """
         template = self.env.get_template(template_name)
         entity =  entity["type"].upper()
-        cardTitle = "{{" + f"'{entity}_TYPE' | oTranslate" + "}}"
+        cardTitle = "{{" + f"'{entity}_TYPE'" + "}}"
         entity_vars = {
             "cardTitle": cardTitle
         }
@@ -534,16 +534,28 @@ def gen_app_service_config(entities: any) -> str:
 # app.menu.config.jinja
 def gen_app_menu_config(template_name: str, entities: any):
     template = env.get_template(template_name)
-    menu_template = Template(
-        "{ id: '{{ name }}', name: '{{ name_upper }}', icon: 'home', route: '/main/{{ name }}' }"
+    menu_item_template = Template(
+        "{ id: '{{ name }}', name: '{{ name_upper }}', icon: 'info_outline', route: '/main/{{ name }}' }"
     )
+    import_template = Template("import {{ card_component }} from './{{ name }}-card/{{ name }}-card.component';")
     menuitems = []
+    import_cards = []
+    menu_components = []
+    sep = ""
     for each_entity_name, each_entity in entities:
         name = each_entity_name.lower()
-        menuitem = menu_template.render(name=name, name_upper=each_entity_name.upper())
+        name_first_cap = name[:1].upper()+ name[1:]
+        menuitem = menu_item_template.render(name=name, name_upper=each_entity_name.upper())
+        menuitem = f"{sep}{menuitem}"
         menuitems.append(menuitem)
+        card_component = "{ " + f"{name_first_cap}CardComponent" +" }"
+        importTemplate = import_template.render(name=name,card_component=card_component)
+        import_cards.append(importTemplate)
+        menu_components.append(f"{sep}{name_first_cap}CardComponent")
+        sep = ","
+        
 
-    return template.render(menuitems=menuitems)
+    return template.render(menuitems=menuitems, importitems=import_cards,card_components=menu_components)
 
 
 
