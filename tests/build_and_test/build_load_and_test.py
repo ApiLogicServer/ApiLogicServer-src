@@ -796,11 +796,13 @@ if Config.do_install_api_logic_server:  # verify the build process - rebuild, an
             cwd=install_api_logic_server_path,
             msg=f'\nInstall testpy logicbank')
 
+    pyodbc = 'pyodbc==4.0.34'   # pre python 3.12
+    # pyodbc = 'psycopg2-binary'  # python 3.12 upgrade pyodbc==4.0.34 --> pyodbc==5.0.0
     if platform in["win32", "linux"]:  # val: FIXME
-        print("mac only")  # https://github.com/mkleehammer/pyodbc/issues/1010
+        print("mac only")
     else:  # upgrade pyodbc==4.0.34 --> pyodbc==5.0.0
         result_pyodbc = run_command(
-            f'{set_venv} && {python} -m pip install pyodbc==4.0.34',
+            f'{set_venv} && {python} -m pip install {pyodbc}',
             cwd=install_api_logic_server_path,
             msg=f'\nInstall pyodbc')
 
