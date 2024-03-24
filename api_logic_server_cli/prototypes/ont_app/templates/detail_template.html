@@ -1,18 +1,21 @@
-<o-form attr="{{ entity }}_form_insert" service="{{ service }}" entity="{{ entity }}" keys="{{ keys }}" fxLayout="column" show-header="yes" header-actions="R;U;D"
-#oForm after-insert-mode="detail" class="standalone-form-container">
+<o-form-container breadcrumb="yes" breadcrumb-label-columns="" breadcrumb-separator=", " [form]="form">
+  <mat-tab-group fxFill>
+    <mat-tab label="{{ 'DATA' }}">
+      <o-form #form attr="{{ entity }}_form_edit" service="{{ service }}" entity="{{ entity }}" fxLayout="column" show-header="yes" header-actions="R;I;U;D"
+        #oDetailForm keys="{{ keys }}" keys-sql-types="INTEGER" columns="{{ columns }}" show-header-navigation="yes"
+        (onDataLoaded)="onDataLoaded($event)">
 
-<o-row attr="row1" layout-align="start stretch">
 
-  <o-column title="{{ title }}" layout-align="start stretch" fxFlex="60" layout-padding>
+  <o-row attr="row1" layout-align="start stretch">
+    <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
       {% for inputrow in inputrows %}
       <div fxLayout="row" fxLayoutAlign="start center" class="gap">
         {{ inputrow }}
       </div>
       {% endfor %}
-      <div fxFlex></div>
-  </o-column>
-</o-row>
-
-<div layout-padding></div>
-
+    </div>
+  </o-row>
 </o-form>
+</mat-tab>
+</mat-tab-group>
+</o-form-container>

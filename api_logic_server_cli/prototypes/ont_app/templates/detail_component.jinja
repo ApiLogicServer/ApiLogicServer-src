@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Injector, ViewChild, Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { OFormComponent, OntimizeService, OListPickerComponent, OTableComponent, ORealPipe, ONIFInputComponent } from 'ontimize-web-ngx';
+
 
 @Component({
   selector: '{{ entity }}-detail',
@@ -6,5 +8,21 @@ import { Component } from '@angular/core';
   styleUrls: ['./{{ entity }}-detail.component.scss']
 })
 export class {{ entity_first_cap }}DetailComponent {
+  protected service: OntimizeService;
+
+  @ViewChild('oDetailForm') form: OFormComponent;
+
+  ngOnInit() {
+    this.configureService();
+  }
+
+  protected configureService() {
+    const conf = this.service.getDefaultServiceConfiguration();
+    conf['path'] = '/{{ entity }}';
+    this.service.configureService(conf);
+  }
+  onDataLoaded(e: object) {
+
+  }
 
 }
