@@ -1127,10 +1127,9 @@ def add_db(ctx, db_url: str, bind_key: str, bind_key_url_separator: str, api_nam
               help="Project location")
 @click.option('--db_url',
               default=f'auth',
-              prompt="SQLAlchemy Database URI",
               help="SQLAlchemy Database URL - see above\n")
 @click.option('--db-url', 'db_url',
-              default=f'{default_db}',
+              default=f'auth',
               prompt="SQLAlchemy Database URI",
               help="SQLAlchemy Database URL - see above\n")
 @click.option('--api_name',
@@ -1618,7 +1617,7 @@ if __name__ == '__main__':  # debugger & python command line start here
             "show-args" in api_logic_server_info_file_dict:
         print_args(commands, f'\nCommand Line Arguments:')
     python_version = sys.version_info
-    assert python_version[0] >= 3 and python_version[1] in [8,9,10,11], \
-        "... Requires Python >=3.8, !=3.11.0, !=3.11.1"
+    assert python_version[0] >= 3 and python_version[1] in [8,9,10,11,12], \
+        "... Requires Python >=3.8, !=3.11.0, !=3.11.1, 3.12"
     main()
 
