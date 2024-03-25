@@ -535,7 +535,7 @@ def gen_app_service_config(entities: any) -> str:
 def gen_app_menu_config(template_name: str, entities: any):
     template = env.get_template(template_name)
     menu_item_template = Template(
-        "{ id: '{{ name }}', name: '{{ name_upper }}', icon: 'info_outline', route: '/main/{{ name }}' }"
+        "{ id: '{{ name }}', name: '{{ name_upper }}', icon: 'description', route: '/main/{{ name }}' }"
     )
     import_template = Template("import {{ card_component }} from './{{ name }}-card/{{ name }}-card.component';")
     menuitems = []
