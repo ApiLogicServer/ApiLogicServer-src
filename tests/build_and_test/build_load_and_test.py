@@ -685,6 +685,11 @@ os.chdir(program_dir)  # so admin app can find images, code
 
 python = find_valid_python_name()  # geesh - allow for python vs python3
 
+python_version = sys.version_info
+assert python_version[0] >= 3 and python_version[1] in [8,9,10,11], \
+    "... Build for Python 3.12 requires upgrade to toml - no action taken"
+
+
 personal_env_path = Path(current_path).joinpath("env.py")
 """ personal env (excluded in .gitignore)"""
 if os.path.exists(personal_env_path):
