@@ -431,7 +431,7 @@ class OntBuilder(object):
         
 def get_foreign_keys(entity:any, favorites:any ) -> any:
     fks = []
-    attrType = None
+    attrType = "INTEGER"
     for fkey in entity.tab_groups:
         if fkey.direction in ["tomany", "toone"]:
             # attrType = "int" # get_column_type(entity, fkey.resource, fkey.fks)  # TODO
@@ -599,11 +599,11 @@ def gen_app_menu_config(template_name: str, entities: any):
 def find_favorite(entity_favorites: any, entity_name:str):
     for e in entity_favorites: 
         if e["entity"] == entity_name: 
-            datatype = "integer"
+            datatype = "INTEGER"
             if  e["datatype"].startswith("VARCHAR"):
-                datatype = "string"
+                datatype = "VARCHAR"
             return e["favorite"], datatype
-    return "", "integer"
+    return "", "INTEGER"
 
 ###  ONTIMIZE Input Templates
 
