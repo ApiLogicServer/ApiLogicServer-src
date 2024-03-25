@@ -2,13 +2,13 @@
   <mat-tab-group fxFill>
     <mat-tab label="{{ 'DATA' }}">
       <o-form #form attr="{{ entity }}_form_edit" service="{{ service }}" entity="{{ entity }}" fxLayout="column" show-header="yes" header-actions="R;I;U;D"
-        #oDetailForm keys="{{ keys }}" keys-sql-types="INTEGER" columns="{{ columns }}" show-header-navigation="yes"
+        #oDetailForm keys="{{ keys }}" keys-sql-types="{{ keySqlType }}" columns="{{ columns }}" show-header-navigation="yes"
         (onDataLoaded)="onDataLoaded($event)">
 
 
   <o-row attr="row1" layout-align="start stretch">
     <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
-      {% for inputrow in inputrows %}
+      {% for inputrow in row_columns %}
       <div fxLayout="row" fxLayoutAlign="start center" class="gap">
         {{ inputrow }}
       </div>

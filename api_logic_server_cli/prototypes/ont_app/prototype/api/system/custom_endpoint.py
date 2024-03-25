@@ -62,7 +62,7 @@ def parseFilter(filter:dict,sqltypes: any):
     for f in filter:
         if f == '@basic_expression':
             continue
-        q = "" #TODO use sqltypes for name == a
+        q = "" if sqltypes[f] != 12 else "'"
         filter_result += f'{a} "{f}" = {q}{filter[f]}{q}'
         a = " and "
     return None if filter_result == "" else filter_result
