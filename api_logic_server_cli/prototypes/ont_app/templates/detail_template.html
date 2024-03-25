@@ -1,6 +1,6 @@
 <o-form-container breadcrumb="yes" breadcrumb-label-columns="" breadcrumb-separator=", " [form]="form">
   <mat-tab-group fxFill>
-    <mat-tab label="{{ 'DATA' }}">
+    <mat-tab label="{{ title }}">
       <o-form #form attr="{{ entity }}_form_edit" service="{{ service }}" entity="{{ entity }}" fxLayout="column" show-header="yes" header-actions="R;I;U;D"
         #oDetailForm keys="{{ keys }}" keys-sql-types="{{ keySqlType }}" columns="{{ columns }}" show-header-navigation="yes"
         (onDataLoaded)="onDataLoaded($event)">
