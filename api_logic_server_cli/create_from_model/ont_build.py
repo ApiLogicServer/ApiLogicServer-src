@@ -192,13 +192,13 @@ class OntBuilder(object):
         # using the `env.get_template` method, and then processes the template by rendering it with a
         # dictionary of variables.
         template = self.env.get_template(template_name)
-        entity = f"{entity.type.lower()}"
-        entity_upper = f"{entity[:1].upper()}{entity[1:]}"
-        entity_first_cap = f"{entity[:1].upper()}{entity[1:]}"
+        entity_name = f"{entity.type.lower()}"
+        entity_upper = f"{entity_name[:1].upper()}{entity_name[1:]}"
+        entity_first_cap = f"{entity_name[:1].upper()}{entity_name[1:]}"
         var = {
-            "entity": entity,
+            "entity": entity_name,
             "Entity": entity_upper,
-            "entity_home": f"{entity}-home",
+            "entity_home": f"{entity_name}-home",
             "entity_home_component": f"{entity_upper}HomeComponent",
             "entity_first_cap": entity_first_cap,
         }
@@ -463,39 +463,41 @@ def get_columns(entity) -> str:
 def load_routing(template_name: str, entity: any) -> str:
     template = env.get_template(template_name)
     entity_upper = entity.type.upper()
-    entity = entity.type.lower()
-    entity_first_cap = f"{entity[:1].upper()}{entity[1:]}"
+    entity_name = entity.type.lower()
+    entity_first_cap = f"{entity_name[:1].upper()}{entity_name[1:]}"
     var = {
-        "entity": entity,
+        "entity": entity_name,
         "entity_upper": entity_upper,
         "entity_first_cap": entity_first_cap,
         "import_module": "{"
-        + f"{entity_upper}_MODULE_DECLARATIONS, {entity_first_cap}RoutingModule"
-        + "}",
-        "module_from": f" './{entity}-routing.module'",
+            + f"{entity_upper}_MODULE_DECLARATIONS, {entity_first_cap}RoutingModule"
+            + "}",
+        "module_from": f" './{entity_name}-routing.module'",
+        "key": entity["user_key"],
         "routing_module": f"{entity_first_cap}RoutingModule",
     }
-    routing = template.render(var)
-    return routing
+
+    return template.render(var)
 
 
 def load_module(template_name: str, entity: any) -> str:
     template = env.get_template(template_name)
     entity_upper = entity.type.upper()
-    entity = entity.type.lower()
-    entity_first_cap = f"{entity[:1].upper()}{entity[1:]}"
+    entity_name = entity.type.lower()
+    entity_first_cap = f"{entity_name[:1].upper()}{entity_name[1:]}"
     var = {
-        "entity": entity,
+        "entity": entity_name,
         "entity_upper": entity_upper,
         "entity_first_cap": entity_first_cap,
         "import_module": "{"
-        + f"{entity_upper}_MODULE_DECLARATIONS, {entity_first_cap}RoutingModule"
-        + "}",
-        "module_from": f" './{entity}-routing.module'",
-        "routing_module": f"{entity_first_cap}RoutingModule",
+                    + f"{entity_upper}_MODULE_DECLARATIONS, {entity_first_cap}RoutingModule"
+                    + "}",
+        "module_from": f" './{entity_name}-routing.module'",
+        "key": entity["user_key"],
+        "routing_module": f"{entity_first_cap}RoutingModule"
     }
-    module = template.render(var)
-    return module
+
+    return template.render(var)
 
 def gen_sidebar_routing(template_name: str, entities: any) -> str:
     template = env.get_template(template_name)

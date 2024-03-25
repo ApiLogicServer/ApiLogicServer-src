@@ -5,17 +5,15 @@ import { {{ entity_first_cap }}NewComponent } from './new/{{ entity }}-new.compo
 import { {{ entity_first_cap }}DetailComponent } from './detail/{{ entity }}-detail.component';
 
 const routes: Routes = [
-  {
-    path: '',
-    component: {{ entity_first_cap }}HomeComponent,
+  {path: '', component: {{ entity_first_cap }}HomeComponent},
+  { path: 'new', component: {{ entity_first_cap }}NewComponent },
+  { path: ':{{ key }}', component: {{ entity_first_cap }}DetailComponent,
     data: {
       oPermission: {
         permissionId: '{{ entity }}-detail-permissions'
       }
     }
- },
- { path: 'new', component: {{ entity_first_cap }}NewComponent },
- { path: 'detail', component: {{ entity_first_cap }}DetailComponent }
+  }
 ];
 
 export const {{ entity_upper}}_MODULE_DECLARATIONS = [
