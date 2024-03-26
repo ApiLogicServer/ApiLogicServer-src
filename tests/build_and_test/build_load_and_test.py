@@ -765,7 +765,7 @@ if Config.do_install_api_logic_server:  # verify the build process - rebuild, an
         venv_cmd = f'{python} -m venv venv'    
         result_venv = run_command(venv_cmd,
             cwd=install_api_logic_server_path,
-            msg=f'\Create venv for ApiLogicServer at: {str(install_api_logic_server_path)}')
+            msg=f'\nCreate venv for ApiLogicServer at: {str(install_api_logic_server_path)}')
         assert result_venv.returncode == 0, f'Venv create failed with {result_venv}'
 
         # now, we setup for Python in *that* venv
@@ -956,7 +956,7 @@ if Config.do_budget_app_test:
         print(f'\n\n** BudgetApp Test failed\n\n')
         exit(1)
 
-    print("\BudgetApp tests - Success...\n")
+    print("\nBudgetApp tests - Success...\n")
     stop_server(msg="*** BudgetApp TEST COMPLETE ***\n")
 
 if Config.do_allocation_test:
