@@ -1,5 +1,10 @@
-# python3 -m build
-# python3 -m pip install /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src
+# use Run Config 0, or... (e.g., to test)
+#
+#    cd ApiLogicServer-src
+#    $ python3 -m build
+#
+#    cd ApiLogicServer  # with venv
+#    python3 -m pip install /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src
 
 [build-system]
 requires = ["setuptools >= 61.0"]
@@ -75,11 +80,35 @@ dependencies = [
         "confluent-kafka==2.3.0"
 ]
 name = "ApiLogicServer"
+authors = [
+    {name = "Val Huber", email = "apilogicserver@gmail.com"},
+]
 dynamic = ["version"]
 keywords = ["Flask", "SQLAlchemy", "Rules", "WebApp", "Microservice", "ReactAdmin", "Angular"]
 requires-python = ">=3.8"
+# zip_safe=False
+# platforms="any"
+readme = "README.md"
+license = {text = "BSD-3-Clause"}
+classifiers=[
+"Development Status :: 5 - Production/Stable",
+"Environment :: Web Environment",
+"Intended Audience :: Developers",
+"License :: OSI Approved :: BSD License",
+"Operating System :: OS Independent",
+"Programming Language :: Python :: 3.11",
+"Programming Language :: Python :: 3.10",
+"Programming Language :: Python :: 3.9",
+"Programming Language :: Python :: 3.8",
+"Topic :: Software Development :: Libraries :: Python Modules",
+]
 
-# can you add comments
+[project.urls]
+Homepage = "https://apilogicserver.github.io/Docs/"
+Source = "https://github.com/ApiLogicServer/ApiLogicServer-src"
+Issues = "https://github.com/ApiLogicServer/ApiLogicServer-src/issues"
+
+# define CLI entry points
 [project.scripts]
 ApiLogicServer = "api_logic_server_cli.cli:start"
 als = "api_logic_server_cli.cli:start"
