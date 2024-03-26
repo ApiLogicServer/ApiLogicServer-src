@@ -5,6 +5,9 @@
 requires = ["setuptools >= 61.0"]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools.dynamic]
+version = {attr = "api_logic_server_cli.api_logic_server.__version__"}
+
 # this solves the dup-subdirs-at-root problem
 [tool.setuptools]
 package-dir = {"api_logic_server" = "api_logic_server"}
@@ -20,9 +23,6 @@ packages=['api_logic_server_cli',
             'api_logic_server_cli.prototypes.base.ui',
             'api_logic_server_cli.create_from_model']
 
-# [tool.setuptools.packages.find]  Error: dup-subdirs-at-root
-# where = ["api_logic_server_cli"]
-# include = ["api_logic_server_cli"]
 
 [project]
 dependencies = [
