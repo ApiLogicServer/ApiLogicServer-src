@@ -816,8 +816,8 @@ class ModelCreationServices(object):
                 table_name = resource_class.__tablename__  # FIXME _s_collection_name
                 if table_name in ["CategoryTableNameTest"]:
                     debug_str = "Excellent breakpoint"
-                resource = Resource(name=resource_name, model_creation_services=self)
                 self.metadata = resource_class.metadata
+                resource = Resource(name=resource_name, model_creation_services=self)
                 self.table_to_class_map.update({table_name: resource_name})   # required for ui_basic_web_app
                 if resource_name not in resource_list:
                     resource_list[resource_name] = resource
@@ -833,6 +833,7 @@ class ModelCreationServices(object):
                         debug_str = "alias"
                     resource_attribute = ResourceAttribute(each_attribute=each_attribute,
                                                             resource=resource, resource_class=resource_class)
+                resource.compute_primary_key(metadata=self.metadata, resource_class=resource_class)
                 for rel_name, rel in resource_class._s_relationships.items():
                     # relation = {}
                     # relation["direction"] = "toone" if rel.direction == MANYTOONE else "tomany"
