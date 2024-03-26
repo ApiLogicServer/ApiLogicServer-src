@@ -74,6 +74,7 @@ class OntBuilder(object):
         self.combo_list_template = env.get_template("combo-picker.html") 
         self.o_text_input = env.get_template("o_text_input.html")
         self.o_combo_input = env.get_template("o_combo_input.html")
+        self.tab_panel = env.get_template("tab_panel.html")
         
         self.component_scss = env.get_template("component.scss")
         # Home Grid attributes
@@ -357,7 +358,8 @@ class OntBuilder(object):
             "tableAttr": f"{name}Table",
             "service": name,
             "key": key,
-            "keySqlType": keySqlType
+            "keySqlType": keySqlType,
+            "tabs": []
         }
 
         fks, attrType = get_foreign_keys(entity, favorites)
@@ -375,7 +377,7 @@ class OntBuilder(object):
         entity_vars["row_columns"] = row_cols
         entity_vars["has_tabs"] = len(fks) > 0
         entity_vars["tab_groups"] = fks
-
+        entity_vars["tab_panels"] = [] # self.get_tabs(entity, fks)
         return template.render(entity_vars)
 
     def gen_detail_rows(self, column, fks, attrType):
@@ -426,8 +428,16 @@ class OntBuilder(object):
             "cardTitle": cardTitle
         }
         return template.render(entity_vars)
-        
-        
+    
+    def get_tabs(self, entity, fks):
+        panels = []
+        var = {
+            
+        }
+        tab_panel = self.tab_panel
+        tp = tab_panel.render(var)
+        panels.append(tp)
+        return panels
         
 def get_foreign_keys(entity:any, favorites:any ) -> any:
     fks = []
