@@ -9,7 +9,7 @@ DataModelClass = TypeVar("DataModelClass")
 class ResourceAttribute():
     """ instances added to Resource """
     def __init__(self, each_attribute: object, resource: Type['Resource'], resource_class: Type[DataModelClass]):
-        self.name = resource_class.colname_to_attrname(each_attribute.name)
+        self.name = resource_class.colname_to_attrname(each_attribute.name)  # for col alias
         # self.name = str(each_attribute.name)
         if self.name == "UnitPrice":
             debug_str = "Nice breakpoint"
@@ -57,7 +57,7 @@ class ResourceRelationship():
         self.child_role_name = child_role_name
         self.parent_resource = None
         self.child_resource = None
-        self.parent_child_key_pairs = list()
+        self.parent_child_key_pairs = list()  # populated in model_creation_services
 
     def __str__(self):
         return f'ResourceRelationship: ' \
@@ -75,7 +75,23 @@ class Resource():
         self.children: List[ResourceRelationship] = list()
         self.parents: List[ResourceRelationship] = list()
         self.attributes: List[ResourceAttribute] = list()
+        self.primary_key: List[ResourceAttribute] = list()
         self.model_creation_services = model_creation_services  # to find favorite names etc.
+
+    def compute_primary_key(self, metadata: object, resource_class: Type[DataModelClass]):
+        resource_meta = metadata.tables.get(self.table_name)
+        primary_key_list = resource_meta.primary_key
+        for each_column in primary_key_list.columns:
+            col_name = each_column.name
+            attr_name = resource_class.colname_to_attrname(col_name)  # for col alias
+            found = False
+            for each_attribute in self.attributes:
+                if each_attribute.name == attr_name:
+                    self.primary_key.append(each_attribute)
+                    found = True
+                    break
+            assert found == True, f"System error - cannot find {self.name}.{col_name}"
+
 
     def __str__(self):
         return f'Resource: {self.name}, table_name: {self.table_name}, type: {self.type}'
@@ -106,5 +122,5 @@ class Resource():
                 attribute_name = each_attribute.name.lower()
                 if each_favorite_name in attribute_name:
                     return each_attribute
-        for each_attribute in self.attributes:  # no favorites, just return 1st
+        for each_attribute in self.attributes:  # could not find favorite, just return first
             return each_attribute
