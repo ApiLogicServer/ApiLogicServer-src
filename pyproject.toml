@@ -109,10 +109,11 @@ Homepage = "https://apilogicserver.github.io/Docs/"
 Source = "https://github.com/ApiLogicServer/ApiLogicServer-src"
 Issues = "https://github.com/ApiLogicServer/ApiLogicServer-src/issues"
 
+# comment tmb
 # define CLI entry points
 [project.scripts]
 ApiLogicServer = "api_logic_server_cli.cli:start"
-als = "api_logic_server_cli.cli:start"
+als = "api_logic_server_cli.cli:start" 
 
 
 
