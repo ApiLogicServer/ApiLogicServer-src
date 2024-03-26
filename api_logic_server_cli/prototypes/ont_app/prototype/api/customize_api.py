@@ -254,14 +254,12 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         "orderdetail": models.OrderDetail,
         "product": models.Product,
         "supplier": models.Supplier,
-        "sampledbversion": models.SampleDBVersion
-        #"branches": models.Branch,
-        #"accounts": models.Account,
-        #"accounttypes": models.AccountType,
-        #"transactions": models.Transaction,
-        #"reportstory": None,
-        #"customerAccount": models.Account,
-        #"movements": models.Movement
+        "sampledbversion": models.SampleDBVersion,
+        "union": models.Union,
+        "shipper": models.Shipper,
+        "region": models.Region,
+        "territory": models.Territory,
+        "employeeaudit": models.EmployeeAudit
     }
     #customers/customerAccount/search
     # http://localhost:5656/ontimizeweb/services/qsallcomponents-jee/services/rest/customers/customerType/search
