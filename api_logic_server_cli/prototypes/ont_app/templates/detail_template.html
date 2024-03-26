@@ -15,7 +15,11 @@
       {% endfor %}
     </div>
   </o-row>
+  {% for tab_panel in tab_panels %}
+  {{ tab_panel }}
+  {% endfor %}
 </o-form>
 </mat-tab>
+
 </mat-tab-group>
 </o-form-container>
