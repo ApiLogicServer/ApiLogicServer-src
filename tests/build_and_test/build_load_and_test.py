@@ -685,11 +685,6 @@ os.chdir(program_dir)  # so admin app can find images, code
 
 python = find_valid_python_name()  # geesh - allow for python vs python3
 
-python_version = sys.version_info
-assert python_version[0] >= 3 and python_version[1] in [8,9,10,11], \
-    "... Build for Python 3.12 requires upgrade to toml - no action taken"
-
-
 personal_env_path = Path(current_path).joinpath("env.py")
 """ personal env (excluded in .gitignore)"""
 if os.path.exists(personal_env_path):
@@ -782,9 +777,15 @@ if Config.do_install_api_logic_server:  # verify the build process - rebuild, an
             msg=f'\nInstall ApiLogicServer at: {str(install_api_logic_server_path)}')
         assert result_install.returncode == 0, f'Install failed with {result_install}'
     else:
-        install_cmd = 'sh build_install.sh'
+        python_version = sys.version_info
+        assert python_version[0] >= 3 and python_version[1] in [8,9,10,11, 12], \
+            "... Build for Python 3.12 requires upgrade to toml - no action taken"
+        install_cmd = f'sh build_install.sh {python}'
+        if python_version[1] == 12:
+            install_cmd = f'sh build_install_3_12.sh {python}'
         result_install = run_command(install_cmd,
-            cwd=current_path,
+            cwd=current_path,  # ..ApiLogicServer-dev/org_git/ApiLogicServer-src/tests/build_and_test
+
             msg=f'\nInstall ApiLogicServer at: {str(install_api_logic_server_path)}')
         assert result_install.returncode == 0, f'Install failed with {result_install}'
         pass
@@ -954,6 +955,7 @@ if Config.do_budget_app_test:
     except:
         print(f'\n\n** BudgetApp Test failed\n\n')
         exit(1)
+
     print("\BudgetApp tests - Success...\n")
     stop_server(msg="*** BudgetApp TEST COMPLETE ***\n")
 

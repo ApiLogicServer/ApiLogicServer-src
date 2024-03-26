@@ -580,7 +580,8 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
 def get_windows_path_with_slashes(url: str) -> str:
     """ idiotic fix for windows (\ --> \\\\)
 
-    https://stackoverflow.com/questions/1347791/unicode-error-unicodeescape-codec-cant-decode-bytes-cannot-open-text-file"""
+    https://stackoverflow.com/questions/1347791/unicode-error-unicodeescape-codec-cant-decode-bytes-cannot-open-text-file
+    """
     return url.replace('\\', '\\\\')
 
 
