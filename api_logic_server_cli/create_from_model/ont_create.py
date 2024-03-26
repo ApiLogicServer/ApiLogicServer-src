@@ -108,7 +108,9 @@ class OntCreator(object):
         app_model_out.entities = DotMap()
         app_model_out.settings.style_guide = style_guide
         for each_resource_name, each_resource in admin_model_in.resources.items():
-            app_model_out.entities[each_resource_name] = each_resource
+            each_entity = self.create_model_entity(each_resource)
+            app_model_out.entities[each_resource_name] = each_entity
+
             app_model_out.entities[each_resource_name].columns = list()
             for each_attribute in each_resource.attributes:
                 app_model_attribute = self.create_model_attribute(
@@ -117,6 +119,12 @@ class OntCreator(object):
                     resources=resources)
                 app_model_out.entities[each_resource_name].columns.append(app_model_attribute)
             app_model_out.entities[each_resource_name].pop('attributes')
+
+            app_model_out.entities[each_resource_name].primary_key = list()
+            resource_list = model_creation_services.resource_list
+            resource = resource_list[each_resource_name]
+            for each_primary_key_attr in resource.primary_key:
+                app_model_out.entities[each_resource_name].primary_key.append(each_primary_key_attr.name)
 
         
         from_dir = self.project.api_logic_server_dir_path.joinpath('prototypes/ont_app/prototype')
@@ -130,6 +138,11 @@ class OntCreator(object):
         pass
         log.info("\nEdit the add_model.yaml as desired, and ApiLogicServer app-build\n")
 
+
+    def create_model_entity(self, each_resource) -> DotMap:
+        each_resource.favorite = each_resource.user_key
+        each_resource.pop('user_key')
+        return each_resource
 
     def create_model_attribute(self, each_attribute : DotMap, each_resource_name: str, resources : Dict[str, Resource]) -> DotMap:
         """ Creates app model attribute from admin attribute
