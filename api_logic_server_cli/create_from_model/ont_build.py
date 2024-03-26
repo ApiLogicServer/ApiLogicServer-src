@@ -107,6 +107,7 @@ class OntBuilder(object):
         ) as model_file:  # path is admin.yaml for default url/app
             model_dict = yaml.safe_load(model_file)
         app_model = DotMap(model_dict)
+        self.app_model = app_model
         
         from_dir = self.project.api_logic_server_dir_path.joinpath('prototypes/ont_app/ontimize_seed')
         to_dir = self.project.project_directory_path.joinpath(f'ui/{self.app}/')
@@ -118,11 +119,11 @@ class OntBuilder(object):
         for each_entity_name, each_entity in app_model.entities.items():
             datatype = 'integer'
             for column in each_entity.columns:
-                if column.name == each_entity.user_key:
+                if column.name == each_entity.favorite:
                     datatype = column.type if hasattr(column, "type") else 'intiger'
             favorite = {
                 "entity": each_entity_name,
-                "favorite": each_entity.user_key,
+                "favorite": each_entity.favorite,
                 "datatype": datatype
             }
             entity_favorites.append(favorite)
@@ -211,7 +212,7 @@ class OntBuilder(object):
         template = env.get_template(template_name)
         cols = get_columns(entity)
         name = entity["type"].lower()
-        key =  entity["user_key"]
+        key =  entity["favorite"]
         entity_vars = {
             "entity": name,
             "columns": cols,
@@ -274,11 +275,11 @@ class OntBuilder(object):
         template = env.get_template(template_name)
         cols = get_columns(entity)
         name = entity["type"].lower()
-        key = entity["user_key"]
+        key = entity["favorite"]
         entity_vars = {
             "entity": name,
             "columns": cols,
-            "keys": entity["user_key"],
+            "keys": entity["favorite"],
             "mode": "tab",
             "title": name.upper(),
             "tableAttr": f"{name}Table",
@@ -343,7 +344,7 @@ class OntBuilder(object):
         template = self.env.get_template(template_name)
         cols = get_columns(entity)
         name = entity["type"].lower()
-        key = entity["user_key"] #favorite not key
+        key = entity["favorite"] #favorite not key
         keySqlType = "INTEGER"
         for col in entity.columns:
             if col.name.lower() == key.lower():
@@ -376,7 +377,7 @@ class OntBuilder(object):
         entity_vars["row_columns"] = row_cols
         entity_vars["has_tabs"] = len(fks) > 0
         entity_vars["tab_groups"] = fks
-        entity_vars["tab_panels"] = [] # self.get_tabs(entity, fks)
+        entity_vars["tab_panels"] = self.get_tabs(entity, fks)
         return template.render(entity_vars)
 
     def gen_detail_rows(self, column, fks, attrType):
@@ -429,13 +430,22 @@ class OntBuilder(object):
         return template.render(entity_vars)
     
     def get_tabs(self, entity, fks):
+        entity_name = entity.type.lower()
         panels = []
-        var = {
-            
-        }
-        tab_panel = self.tab_panel
-        tp = tab_panel.render(var)
-        panels.append(tp)
+        for fk_tab in fks:
+            if fk_tab["direction"] == "tomany":
+                resource = fk_tab["resource"]
+                resource_name = fk_tab["name"]
+                attrs = fk_tab["attrs"]
+                columns = fk_tab["columns"]
+                attrType = fk_tab["attrType"]
+                visibleColumn = fk_tab["visibleColumn"]
+        
+                for each_entity_name, each_entity in self.app_model.entities.items():
+                    if each_entity_name.lower() == resource.lower():
+                        template = self.load_home_template("table_template.html",each_entity)
+                        panels.append(template)
+
         return panels
         
 def get_foreign_keys(entity:any, favorites:any ) -> any:
@@ -451,7 +461,8 @@ def get_foreign_keys(entity:any, favorites:any ) -> any:
                 "name": fkey.name,
                 "columns": f"{fkey.fks[0]};{fav_col}",
                 "attrType": attrType,
-                "visibleColumn": fav_col
+                "visibleColumn": fav_col,
+                "direction": fkey.direction
             }
             fks.append(fk)
     return fks, attrType
@@ -517,7 +528,7 @@ def load_routing(template_name: str, entity: any) -> str:
             + f"{entity_upper}_MODULE_DECLARATIONS, {entity_first_cap}RoutingModule"
             + "}",
         "module_from": f" './{entity_name}-routing.module'",
-        "key": entity["user_key"],
+        "key": entity["favorite"],
         "routing_module": f"{entity_first_cap}RoutingModule",
     }
 
@@ -537,7 +548,7 @@ def load_module(template_name: str, entity: any) -> str:
                     + f"{entity_upper}_MODULE_DECLARATIONS, {entity_first_cap}RoutingModule"
                     + "}",
         "module_from": f" './{entity_name}-routing.module'",
-        "key": entity["user_key"],
+        "key": entity["favorite"],
         "routing_module": f"{entity_first_cap}RoutingModule"
     }
 
@@ -557,8 +568,8 @@ def gen_sidebar_routing(template_name: str, entities: any) -> str:
         child = t.render(var)
         children.append(child)
     var = {"children": children}
-    sidebar = template.render(var)
-    return sidebar
+
+    return template.render(var)
 
 
 def gen_app_service_config(entities: any) -> str:
