@@ -4,9 +4,9 @@
 <o-row attr="row1" layout-align="start stretch">
 
   <o-column title="{{ title }}" layout-align="start stretch" fxFlex="60" layout-padding>
-      {% for inputrow in row_columns %}
+      {% for row in row_columns %}
       <div fxLayout="row" fxLayoutAlign="start center" class="gap">
-        {{ inputrow }}
+        {{ row }}
       </div>
       {% endfor %}
       <div fxFlex></div>

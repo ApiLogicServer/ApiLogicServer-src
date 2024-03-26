@@ -313,6 +313,7 @@ class OntBuilder(object):
                 if hasattr(column, "required") and column.required != DotMap()
                 else "no"
             ),
+            "tooltip": column.info if hasattr(column,"info") else ""
         }
         
         use_list = False
@@ -342,7 +343,7 @@ class OntBuilder(object):
         template = self.env.get_template(template_name)
         cols = get_columns(entity)
         name = entity["type"].lower()
-        key = entity["user_key"]
+        key = entity["user_key"] #favorite not key
         keySqlType = "INTEGER"
         for col in entity.columns:
             if col.name.lower() == key.lower():
@@ -352,14 +353,12 @@ class OntBuilder(object):
         entity_vars = {
             "entity": name,
             "columns": cols,
-            "keys": entity["user_key"],
+            "keys": key,
             "mode": "tab",
             "title": name.upper(),
             "tableAttr": f"{name}Table",
             "service": name,
-            "key": key,
-            "keySqlType": keySqlType,
-            "tabs": []
+            "keySqlType": keySqlType
         }
 
         fks, attrType = get_foreign_keys(entity, favorites)
