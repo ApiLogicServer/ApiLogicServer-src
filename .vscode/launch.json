@@ -113,7 +113,7 @@
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/api_logic_server_cli",
-            "env": {"APILOGICSERVER_DEBUG": "False"},
+            "env": {"APILOGICSERVER_DEBUG": "True"},
             "program": "cli.py",
             "redirectOutput": true,
             "args": ["create","--project_name=../../../servers/ApiLogicProject","--db_url="],
