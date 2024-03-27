@@ -78,19 +78,50 @@ class OntBuilder(object):
         
         self.component_scss = env.get_template("component.scss")
         # Home Grid attributes
-        self.text_template = Template(
-            'attr="{{ attr }}" title="{{ title }}" editable="{{ editable }}" required="{{ required }}"'
+        self.table_text_template = Template(
+            '<o-table-column attr="{{ attr }}" title="{{ title }}" editable="{{ editable }}" required="{{ required }}" ></o-table-column>'
         )
-        self.currency_template = Template(
-            'attr="{{ attr }}" title="{{ title }}" type="currency" editable="{{ editable }}" required="{{ required }}"'
+        self.table_currency_template = Template(
+            '<o-table-column attr="{{ attr }}" title="{{ title }}" type="currency" editable="{{ editable }}" required="{{ required }}" ></o-table-column>'
         )  # currency 100,00.00 settings from global
-        self.date_template = Template(
-            'attr="{{ attr }}" title="{{ title }}" type="date" editable="{{ editable }}" required="{{ required }}"'
+        self.table_date_template = Template(
+            '<o-table-column attr="{{ attr }}" title="{{ title }}" type="date" editable="{{ editable }}" required="{{ required }}" ></o-table-column>'
         )
-        self.integer_template = Template(
-            'attr="{{ attr }}" title="{{ title }}" type="integer" editable="{{ editable }}" required="{{ required }}"'
+        self.table_integer_template = Template(
+            '<o-table-column attr="{{ attr }}" title="{{ title }}" type="integer" editable="{{ editable }}" required="{{ required }}" ></o-table-column>'
+        )
+        self.table_image_template = Template(
+            '<o-image attr="{{ attr }}" data="http://placekitten.com/1920/1080" auto-fit="true" enabled="true" read-only="false" show-controls="true full-screen-button="false" empty-image="./assets/images/no-image.png"></o-image>'
+        )
+        self.table_textarea_template = Template(
+            '<o-textarea-input attr="{{ attr }}" label=" {{ title }}" rows="10"></o-textarea-input>'
+        )
+        self.table_real_template = Template(
+            '<o-table-column attr="{{ attr }}" label="{{ title }}" type="integer" min-decimal-digits="2" max-decimal-digits="4" min="0" max="1000000.0000"></o-table-column>'
         )
 
+        # Text Input Fields
+        self.text_template = Template(
+            '<o-text-input attr="{{ attr }}" title="{{ title }}" editable="{{ editable }}" required="{{ required }}" ></o-text-input>'
+        )
+        self.currency_template = Template(
+            '<o-text-input attr="{{ attr }}" title="{{ title }}" type="currency" editable="{{ editable }}" required="{{ required }}" ></o-text-input>'
+        )  # currency 100,00.00 settings from global
+        self.date_template = Template(
+            '<o-text-input attr="{{ attr }}" title="{{ title }}" type="date" editable="{{ editable }}" required="{{ required }}" ></o-text-input>'
+        )
+        self.integer_template = Template(
+            '<o-text-input attr="{{ attr }}" title="{{ title }}" type="integer" editable="{{ editable }}" required="{{ required }}" ></o-text-input>'
+        )
+        self.image_template = Template(
+            '<o-image attr="{{ attr }}" data="http://placekitten.com/1920/1080" auto-fit="true" enabled="true" read-only="false" show-controls="true full-screen-button="false" empty-image="./assets/images/no-image.png"></o-image>'
+        )
+        self.textarea_template = Template(
+            '<o-textarea-input attr="{{ attr }}" label=" {{ title }}" rows="10"></o-textarea-input>'
+        )
+        self.real_template = Template(
+            '<o-real-input attr="{{ attr }}" label="{{ title }}" min-decimal-digits="2" max-decimal-digits="4" min="0" max="1000000.0000"></o-real-input>'
+        )
 
     def build_application(self):
         """main driver - loop through add_model.yaml, ont app"""
@@ -117,18 +148,25 @@ class OntBuilder(object):
 
         entity_favorites = []
         for each_entity_name, each_entity in app_model.entities.items():
-            datatype = 'integer'
+            datatype = 'INTEGER'
+            pkey_datatype = 'INTEGER'
+            primary_key = each_entity["primary_key"]
             for column in each_entity.columns:
                 if column.name == each_entity.favorite:
-                    datatype = column.type if hasattr(column, "type") else 'intiger'
+                    datatype = "VARCHAR" if hasattr(column, "type") and column.type.startswith("VARCHAR") else 'INTEGER'
+                if column.name in primary_key:
+                    pkey_datatype = "VARCHAR" if hasattr(column, "type") and column.type.startswith("VARCHAR") else column.type.upper()
             favorite = {
                 "entity": each_entity_name,
                 "favorite": each_entity.favorite,
-                "datatype": datatype
+                "datatype": datatype,
+                "primary_key": primary_key,
+                "pkey_datatype": pkey_datatype
             }
             entity_favorites.append(favorite)
             
         for each_entity_name, each_entity in app_model.entities.items():
+            # HOME - Table Style
             home_template = self.load_home_template("table_template.html", each_entity)
             entity_name = each_entity_name.lower()
             ts = self.load_ts("home_template.jinja", each_entity)
@@ -141,12 +179,14 @@ class OntBuilder(object):
             module = load_module("module.jinja", each_entity)
             write_file(app_path, entity_name, "", ".module.ts", module)
 
+            # New Style for Input
             new_template = self.load_new_template("new_template.html", each_entity, entity_favorites)
             ts = self.load_ts("new_component.jinja", each_entity)
             write_file(app_path, entity_name, "new", "-new.component.html", new_template)
             write_file(app_path, entity_name, "new", "-new.component.ts", ts)
             write_file(app_path, entity_name, "new", "-new.component.scss", "")
             
+            # Detail for Update
             detail_template = self.load_detail_template("detail_template.html", each_entity, entity_favorites)
             ts = self.load_ts("detail_component.jinja", each_entity)
             write_file(app_path, entity_name, "detail", "-detail.component.html", detail_template)
@@ -227,13 +267,8 @@ class OntBuilder(object):
 
         row_cols = []
         for column in entity.columns:
-            if column.name in key:
-                rv = self.gen_home_columns(column)
-                row_cols.append(rv)
-        for column in entity.columns:
-            if column.name not in key:
-                rv = self.gen_home_columns(column)
-                row_cols.append(rv)
+            rv = self.gen_home_columns(column)
+            row_cols.append(rv)
 
         entity_vars["row_columns"] = row_cols
 
@@ -255,16 +290,26 @@ class OntBuilder(object):
             ),
         }
         if hasattr(column, "type") and column.type != DotMap():
-            if column.type.startswith("DECIMAL"):
-                rv = self.currency_template.render(col_var)
+            if column.type.startswith("DECIMAL") or column.type.startswith("NUMERIC"):
+                rv = self.table_currency_template.render(col_var)
             elif column.type == 'INTEGER':
-                rv = self.integer_template.render(col_var)
+                rv = self.table_integer_template.render(col_var)
             elif column.type == "DATE":
-                rv = self.date_template.render(col_var)
+                rv = self.table_date_template.render(col_var)
+            elif column.type == "REAL":
+                rv = self.table_real_template.render(rv)
+            elif column.type == "CURRENCY":
+                rv = self.table_currency_template.render(rv)
             else:
-                rv = self.text_template.render(col_var)
+                if column.template == "textarea":
+                    rv = self.table_textarea_template.render(col_var)
+                else:
+                    rv = self.table_text_template.render(col_var)
         else:
-            rv = self.text_template.render(col_var)
+            if column.template == "textarea":
+                rv = self.table_textarea_template.render(col_var)
+            else:
+                rv = self.table_text_template.render(col_var)
     
         return rv
 
@@ -324,7 +369,7 @@ class OntBuilder(object):
                 col_var["attr"] = fk["attrs"][0]
                 col_var["service"] = fk["resource"].lower()
                 col_var["entity"] = fk["resource"].lower()
-                col_var["attrType"] = attrType
+                col_var["comboColumnType"] = attrType
                 col_var["columns"] = fk["columns"]
                 col_var["visibleColumn"] = fk["visibleColumn"]
                 # if fk["template"] == "list":
@@ -332,7 +377,7 @@ class OntBuilder(object):
                 #else:
                 rv = self.combo_list_template.render(col_var)
         if not use_list:
-            rv = gen_field_template(column, col_var)
+            rv = self.gen_field_template(column, col_var)
 
 
         return rv
@@ -413,10 +458,59 @@ class OntBuilder(object):
                 #else:
                 rv = self.combo_list_template.render(col_var)
         if not use_list:
-            rv = gen_field_template(column, col_var)
+            rv = self.gen_field_template(column, col_var)
 
         return rv
-        
+    def load_tab_template(self, template_name: str, entity: any, template_var: any) -> str:
+        """
+        This is a grid display (tab) 
+            tab_vars = {
+                    'resource': fk_tab["resource"],
+                    'resource_name': fk_tab["name"],
+                    'attrs': fk_tab["attrs"],
+                    'columns': fk_tab["columns"],
+                    'attrType': fk_tab["attrType"],
+                    'visibleColumn': fk_tab["visibleColumn"]
+                }
+        """
+        template = env.get_template(template_name)
+        cols = get_columns(entity)
+        name = entity["type"].lower()
+        key = entity["favorite"]
+        entity_vars = {
+            "entity": name,
+            "columns": cols,
+            "keys": entity["favorite"],
+            "mode": "tab",
+            "title": name.upper(),
+            "tableAttr": f"{name}Table",
+            "service": name,
+        }
+
+        row_cols = []
+        for column in entity.columns:
+            col_var = {
+                "attr": column.name, 
+                "title": (
+                    column.label
+                    if hasattr(column, "label") and column.label != DotMap()
+                    else column.name
+                ), 
+                "editable": "yes",
+                "required": (
+                    ("yes" if column.required else "no")
+                    if hasattr(column, "required") and column.required != DotMap()
+                    else "no"
+                ),
+            }
+            rv = self.gen_field_template(column, col_var)
+            #rv = self.get_new_column(column, fks, attrType)
+            row_cols.append(rv)
+                
+        entity_vars["row_columns"] = row_cols
+        return  template.render(entity_vars)
+
+            
     def load_card_template(self, template_name: str, entity: any, favorites: any) -> str:
         """
         This is a card display (card) 
@@ -434,19 +528,48 @@ class OntBuilder(object):
         panels = []
         for fk_tab in fks:
             if fk_tab["direction"] == "tomany":
-                resource = fk_tab["resource"]
-                resource_name = fk_tab["name"]
-                attrs = fk_tab["attrs"]
-                columns = fk_tab["columns"]
-                attrType = fk_tab["attrType"]
-                visibleColumn = fk_tab["visibleColumn"]
+                tab_name = fk_tab["resource"].lower()
+                tab_vars = {
+                    'resource': fk_tab["resource"],
+                    'resource_name': fk_tab["name"],
+                    'attrs': fk_tab["attrs"],
+                    'columns': fk_tab["columns"],
+                    'attrType': fk_tab["attrType"],
+                    'visibleColumn': fk_tab["visibleColumn"]
+                }
         
                 for each_entity_name, each_entity in self.app_model.entities.items():
-                    if each_entity_name.lower() == resource.lower():
-                        template = self.load_home_template("table_template.html",each_entity)
+                    if each_entity_name.lower() == tab_name:
+                        template = self.load_tab_template("table_template.html",each_entity, tab_vars )
                         panels.append(template)
 
-        return panels
+        return [] #panels
+    
+    
+    def gen_field_template(self,column, col_var):
+        # This is for HOME grid style
+        if hasattr(column, "type") and column.type != DotMap():
+            col_type = column.type
+            if col_type.startswith("DECIMAL") or col_type.startswith("NUMERIC"):
+                rv = self.currency_template.render(col_var)
+            elif col_type == "DOUBLE":
+                rv = self.real_template.render(col_var)
+            elif col_type == "DATE":
+                rv = self.date_template.render(col_var)
+            elif col_type == "INTEGER":
+                rv = self.integer_template.render(col_var)
+            elif col_type == "IMAGE":
+                rv = self.image_template.render(col_var)
+            elif col_type == "TEXTAREA":
+                rv = self.textarea_template.render(col_var)
+            else:
+                # VARCHAR - add text area for
+                rv = self.text_template.render(col_var)
+        else:
+            rv = self.text_template.render(col_var)
+            
+        return rv
+
         
 def get_foreign_keys(entity:any, favorites:any ) -> any:
     fks = []
@@ -454,7 +577,7 @@ def get_foreign_keys(entity:any, favorites:any ) -> any:
     for fkey in entity.tab_groups:
         if fkey.direction in ["tomany", "toone"]:
             # attrType = "int" # get_column_type(entity, fkey.resource, fkey.fks)  # TODO
-            fav_col,attrType = find_favorite(favorites, fkey.resource)
+            fav_col, attrType = find_favorite(favorites, fkey.resource)
             fk = {
                 "attrs": fkey.fks,
                 "resource": fkey.resource,
@@ -617,62 +740,13 @@ def gen_app_menu_config(template_name: str, entities: any):
 
 
 def find_favorite(entity_favorites: any, entity_name:str):
-    for e in entity_favorites: 
-        if e["entity"] == entity_name: 
-            datatype = "INTEGER"
-            if  e["datatype"].startswith("VARCHAR"):
+    for entity_favorite in entity_favorites: 
+        if entity_favorite["entity"] == entity_name: 
+            datatype = entity_favorite["pkey_datatype"]
+            if  entity_favorite["datatype"].startswith("VARCHAR"):
                 datatype = "VARCHAR"
-            return e["favorite"], datatype
-    return "", "INTEGER"
-
-###  ONTIMIZE Input Templates
-
-text_template = Template(
-    '<o-text-input attr="{{ attr }}" editable="{{ editable }}" required="{{ required }}" width="360px"></o-text-input>'
-)
-currency_template = Template(
-    '<o-currency-input attr="{{ attr }}" editable="{{ editable }}" required="{{ required }}" min-decimal-digits="2" max-decimal-digits="2" currency-symbol="$"></o-currency-input>'
-)  # currency $100,00.00 settings from global
-date_template = Template(
-    '<o-date-input attr="{{ attr }}" editable="{{ editable }}" required="{{ required }}" format="LL" text-input-enabled="no"></o-date-input>'
-)
-integer_template = Template(
-    '<o-integer-input attr="{{ attr }}" editable="{{ editable }}" required="{{ required }}" min="0"></o-integer-input>'
-)
-image_template = Template(
-    '<o-image attr="{{ attr }}" data="http://placekitten.com/1920/1080" auto-fit="true" enabled="true" read-only="false" show-controls="true full-screen-button="false" empty-image="./assets/images/no-image.png"></o-image>'
-)
-textarea_template = Template(
-    '<o-textarea-input attr="{{ attr }}" label=" {{ title }}" rows="10"></o-textarea-input>'
-)
-real_template = Template(
-    '<o-real-input attr="{{ attr }}" label="{{ title }}" min-decimal-digits="2" max-decimal-digits="4" min="0" max="1000000.0000"></o-real-input>'
-)
-
-
-def gen_field_template(column, col_var):
-    # This is for HOME grid style
-    if hasattr(column, "type") and column.type != DotMap():
-        col_type = column.type
-        if col_type.startswith("DECIMAL") or col_type.startswith("NUMERIC"):
-            rv = currency_template.render(col_var)
-        elif col_type == "DOUBLE":
-            rv = real_template.render(col_var)
-        elif col_type == "DATE":
-            rv = date_template.render(col_var)
-        elif col_type == "INTEGER":
-            rv = integer_template.render(col_var)
-        elif col_type == "IMAGE":
-            rv = image_template.render(col_var)
-        elif col_type == "TEXTAREA":
-            rv = textarea_template.render(col_var)
-        else:
-            # VARCHAR - add text area for
-            rv = text_template.render(col_var)
-    else:
-        rv = text_template.render(col_var)
-    return rv
-
+            return entity_favorite["favorite"], datatype
+    return "Id", "INTEGER"
 
 def get_column_type(app_model: any, fkey_resource: str, attrs: any) -> str:
     # return datatype (and listcols?)

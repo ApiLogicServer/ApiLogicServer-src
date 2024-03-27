@@ -11,6 +11,10 @@ export class {{ entity_first_cap }}DetailComponent {
   protected service: OntimizeService;
 
   @ViewChild('oDetailForm') form: OFormComponent;
+  
+  constructor(protected injector: Injector) {
+    this.service = this.injector.get(OntimizeService);
+  }
 
   ngOnInit() {
     this.configureService();
