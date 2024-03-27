@@ -72,6 +72,10 @@ class OntBuilder(object):
         env = self.env
         self.combo_style = "list" #"combo" or"list"
         self.style = "light" # "dark"
+        self.currency_symbol = "$" # "€" 
+        self.currency_symbol_position="right" 
+        self.thousand_separator=","
+        self.decimal_separator="."
 
         self.pick_list_template = env.get_template("list-picker.html")
         self.combo_list_template = env.get_template("combo-picker.html") 
@@ -85,7 +89,7 @@ class OntBuilder(object):
             '<o-table-column attr="{{ attr }}" title="{{ title }}" editable="{{ editable }}" required="{{ required }}" ></o-table-column>'
         )
         self.table_currency_template = Template(
-            '<o-table-column attr="{{ attr }}" title="{{ title }}" type="currency" editable="{{ editable }}" required="{{ required }}" ></o-table-column>'
+            '<o-table-column attr="{{ attr }}" title="{{ title }}" type="currency" editable="{{ editable }}" required="{{ required }}" currency-symbol="$" currency-symbol-position="right" thousand-separator=","decimal-separator="."></o-table-column>'
         )  # currency 100,00.00 settings from global
         self.table_date_template = Template(
             '<o-table-column attr="{{ attr }}" title="{{ title }}" type="date" editable="{{ editable }}" required="{{ required }}" ></o-table-column>'
@@ -108,7 +112,7 @@ class OntBuilder(object):
             '<o-text-input attr="{{ attr }}" title="{{ title }}" editable="{{ editable }}" required="{{ required }}" ></o-text-input>'
         )
         self.currency_template = Template(
-            '<o-text-input attr="{{ attr }}" title="{{ title }}" type="currency" editable="{{ editable }}" required="{{ required }}" ></o-text-input>'
+            '<o-text-input attr="{{ attr }}" title="{{ title }}" type="currency" editable="{{ editable }}" required="{{ required }}" currency-symbol="$" currency-symbol-position="right" thousand-separator=","decimal-separator="."></o-text-input>'
         )  # currency 100,00.00 settings from global
         self.date_template = Template(
             '<o-text-input attr="{{ attr }}" title="{{ title }}" type="date" editable="{{ editable }}" required="{{ required }}" ></o-text-input>'
@@ -485,7 +489,7 @@ class OntBuilder(object):
             "columns": cols,
             "keys": entity["favorite"],
             "mode": "tab",
-            "title": name.upper(),
+            "title": f'{template_var["resource_name"].upper()} - {template_var["attrs"][0]}',
             "tableAttr": f"{name}Table",
             "service": name,
         }
@@ -546,7 +550,7 @@ class OntBuilder(object):
                         template = self.load_tab_template("table_template.html",each_entity, tab_vars )
                         panels.append(template)
 
-        return [] #panels
+        return panels
     
     
     def gen_field_template(self,column, col_var):
