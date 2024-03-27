@@ -779,9 +779,9 @@ if Config.do_install_api_logic_server:  # verify the build process - rebuild, an
         python_version = sys.version_info
         assert python_version[0] >= 3 and python_version[1] in [8,9,10,11, 12], \
             f"Python {python_version[0]}.{python_version[1]} is not currently supported\n"
-        install_cmd = f'sh build_install.sh {python}'
-        if python_version[1] == 12:
-            install_cmd = f'sh build_install_3_12.sh {python}'
+        install_cmd = f'sh build_install_3_13.sh {python}'
+        if python_version[1] == 13:  # future...
+            install_cmd = f'sh build_install_3_13.sh {python}'
         result_install = run_command(install_cmd,
             cwd=current_path,  # ..ApiLogicServer-dev/org_git/ApiLogicServer-src/tests/build_and_test
 
