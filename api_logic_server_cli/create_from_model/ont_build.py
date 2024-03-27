@@ -259,7 +259,7 @@ class OntBuilder(object):
             "visibleColumns": cols,
             "sortColumns": cols,  # TODO
             "keys": key,
-            "mode": "tab",
+            "mode": "dialog", # "tab"
             "title": entity["type"].upper(),
             "tableAttr": f"{name}Table",
             "service": name,

@@ -4,11 +4,13 @@
 <o-row attr="row1" layout-align="start stretch">
 
   <o-column title="{{ title }}" layout-align="start stretch" fxFlex="60" layout-padding>
-      {% for row in row_columns %}
+    <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+    {% for row in row_columns %}
       <div fxLayout="row" fxLayoutAlign="start center" class="gap">
         {{ row }}
       </div>
       {% endfor %}
+      </div>
       <div fxFlex></div>
   </o-column>
 </o-row>
