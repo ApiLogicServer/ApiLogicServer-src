@@ -757,9 +757,12 @@ if Config.do_install_api_logic_server:  # verify the build process - rebuild, an
 
     if venv_with_python:  # windows only (sigh... never found way to set venv with Python on Ubuntu)
         api_logic_server_home_path = api_logic_server_tests_path.parent
-        result_build = run_command(f'{python} setup.py sdist bdist_wheel',
+        build_cmd = f'{python} setup.py sdist bdist_wheel'
+        build_cmd = 'python -m build'
+        result_build = run_command(build_cmd,
             cwd=api_logic_server_home_path,
             msg=f'\nBuild ApiLogicServer at: {str(api_logic_server_home_path)}')
+        assert result_build.returncode == 0, f'Install failed with {result_build}'
         
         venv_cmd = f'{python} -m venv venv'    
         result_venv = run_command(venv_cmd,

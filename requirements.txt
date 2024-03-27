@@ -24,7 +24,6 @@ alembic==1.7.7
 
 confluent-kafka==2.3.0
 
-
 Flask-Login==0.6.2
 Flask-Admin==1.5.7
 Flask-JWT-Extended==4.4.4
@@ -52,4 +51,5 @@ six==1.16.0
 SQLAlchemy==2.0.15
 Werkzeug==2.3.3
 
+build
 
