@@ -712,12 +712,11 @@ stdout = None
 """ LONG console log from behave test """
 stderr = None
 
-set_venv = Config.set_venv
-venv_with_python = False
-if platform == "win32":
-    venv_with_python = True
-""" use cmd_venv.sh to set venv, not failed attempts using Python """
-set_venv = set_venv.replace("${install_api_logic_server_path}", str(install_api_logic_server_path))
+set_venv = Config.set_venv.replace("${install_api_logic_server_path}", str(install_api_logic_server_path))
+""" use cmd_venv.sh to set venv, not failed attempts using Python (eg 'source /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/bin/activate')"""
+
+venv_with_python = True if platform == "win32" else False
+""" use python cmd to set venv (windows only), else rely on scripts """
 if venv_with_python == False:
     set_venv = '!cmd_venv'
 
@@ -756,7 +755,7 @@ if Config.do_install_api_logic_server:  # verify the build process - rebuild, an
     delete_dir(dir_path=str(install_api_logic_server_path), msg=f"delete install: {install_api_logic_server_path} ")
     delete_build_directories(install_api_logic_server_path)
 
-    if venv_with_python:
+    if venv_with_python:  # windows only (sigh... never found way to set venv with Python on Ubuntu)
         api_logic_server_home_path = api_logic_server_tests_path.parent
         result_build = run_command(f'{python} setup.py sdist bdist_wheel',
             cwd=api_logic_server_home_path,
@@ -779,7 +778,7 @@ if Config.do_install_api_logic_server:  # verify the build process - rebuild, an
     else:
         python_version = sys.version_info
         assert python_version[0] >= 3 and python_version[1] in [8,9,10,11, 12], \
-            "... Build for Python 3.12 requires upgrade to toml - no action taken"
+            f"Python {python_version[0]}.{python_version[1]} is not currently supported\n"
         install_cmd = f'sh build_install.sh {python}'
         if python_version[1] == 12:
             install_cmd = f'sh build_install_3_12.sh {python}'
