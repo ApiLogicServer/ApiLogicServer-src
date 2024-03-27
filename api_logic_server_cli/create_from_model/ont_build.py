@@ -68,6 +68,7 @@ class OntBuilder(object):
         self.project = project
         self.app = app
         self.env = self.get_environment()
+        self.mode = "tab" # "dialog"
         env = self.env
 
         self.pick_list_template = env.get_template("list-picker.html")
@@ -259,7 +260,7 @@ class OntBuilder(object):
             "visibleColumns": cols,
             "sortColumns": cols,  # TODO
             "keys": key,
-            "mode": "dialog", # "tab"
+            "mode": self.mode,
             "title": entity["type"].upper(),
             "tableAttr": f"{name}Table",
             "service": name,
