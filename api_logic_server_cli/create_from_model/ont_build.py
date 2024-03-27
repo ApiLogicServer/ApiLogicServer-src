@@ -70,6 +70,8 @@ class OntBuilder(object):
         self.env = self.get_environment()
         self.mode = "tab" # "dialog"
         env = self.env
+        self.combo_style = "list" #"combo" or"list"
+        self.style = "light" # "dark"
 
         self.pick_list_template = env.get_template("list-picker.html")
         self.combo_list_template = env.get_template("combo-picker.html") 
@@ -373,10 +375,10 @@ class OntBuilder(object):
                 col_var["comboColumnType"] = attrType
                 col_var["columns"] = fk["columns"]
                 col_var["visibleColumn"] = fk["visibleColumn"]
-                # if fk["template"] == "list":
-                #rv = self.pick_list_template.render(col_var)
-                #else:
-                rv = self.combo_list_template.render(col_var)
+                if self.combo_style == "list": # or fk["template"] == "list":
+                    rv = self.pick_list_template.render(col_var)
+                else:
+                    rv = self.combo_list_template.render(col_var)
         if not use_list:
             rv = self.gen_field_template(column, col_var)
 
@@ -454,10 +456,10 @@ class OntBuilder(object):
                 col_var["visibleColumn"] = fk["visibleColumn"]
                 col_var["keySqlType"] = attrType
                 col_var["width"] = "680px"
-                # if fk["template"] == "list":
-                #rv = self.pick_list_template.render(col_var)
-                #else:
-                rv = self.combo_list_template.render(col_var)
+                if self.combo_style == "list": # or fk["template"] == "list":
+                    rv = self.pick_list_template.render(col_var)
+                else:
+                    rv = self.combo_list_template.render(col_var)
         if not use_list:
             rv = self.gen_field_template(column, col_var)
 
@@ -565,9 +567,15 @@ class OntBuilder(object):
                 rv = self.textarea_template.render(col_var)
             else:
                 # VARCHAR - add text area for
-                rv = self.text_template.render(col_var)
+                if column.template == "textarea":
+                    rv = self.textarea_template.render(col_var)
+                else:
+                    rv = self.text_template.render(col_var)
         else:
-            rv = self.text_template.render(col_var)
+            if column.template == "textarea":
+                rv = self.textarea_template.render(col_var)
+            else:
+                rv = self.text_template.render(col_var)
             
         return rv
 
