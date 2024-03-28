@@ -99,7 +99,7 @@ class OntBuilder(object):
             '<o-table-column attr="{{ attr }}" title="{{ title }}" type="integer" editable="{{ editable }}" required="{{ required }}" ></o-table-column>'
         )
         self.table_image_template = Template(
-            '<o-image attr="{{ attr }}" data="http://placekitten.com/1920/1080" auto-fit="true" enabled="true" read-only="false" show-controls="true full-screen-button="false" empty-image="./assets/images/no-image.png"></o-image>'
+            '<o-image attr="{{ attr }}"  width="350px" empty-image="./assets/images/no-image.png" full-screen-button="true"></o-image>'
         )
         self.table_textarea_template = Template(
             '<o-textarea-input attr="{{ attr }}" label=" {{ title }}" rows="10"></o-textarea-input>'
@@ -122,7 +122,7 @@ class OntBuilder(object):
             '<o-text-input attr="{{ attr }}" title="{{ title }}" type="integer" editable="{{ editable }}" required="{{ required }}" ></o-text-input>'
         )
         self.image_template = Template(
-            '<o-image attr="{{ attr }}" data="http://placekitten.com/1920/1080" auto-fit="true" enabled="true" read-only="false" show-controls="true full-screen-button="false" empty-image="./assets/images/no-image.png"></o-image>'
+            '<o-image attr="{{ attr }}" type="image" auto-fit="true" enabled="true" read-only="false" show-controls="true full-screen-button="false" empty-image="./assets/images/no-image.png"></o-image>'
         )
         self.textarea_template = Template(
             '<o-textarea-input attr="{{ attr }}" label=" {{ title }}" rows="10"></o-textarea-input>'
