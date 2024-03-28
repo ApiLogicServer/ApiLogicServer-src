@@ -226,14 +226,11 @@ class OntBuilder(object):
         )
 
     def get_environment(self) -> Environment:
-        # current_path = os.path.abspath(os.path.dirname(__file__))
-        # current_cli_path = "/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/ont_app"
         current_cli_path = self.project.api_logic_server_dir_path
         templates_path = current_cli_path.joinpath('prototypes/ont_app/templates')
         env = Environment(
-            # loader=PackageLoader(package_name="APILOGICPROJECT",package_path="/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/nw/ui/templates"),
+            # loader=PackageLoader(package_name="APILOGICPROJECT",package_path="/ApiLogicServer/ApiLogicServer-dev/build_and_test/nw/ui/templates"),
             loader=FileSystemLoader(searchpath=f"{templates_path}")
-            # autoescape=select_autoescape()
         )
         return env
     
@@ -524,7 +521,7 @@ class OntBuilder(object):
                 ),
             }
             rv = self.gen_home_columns(column, col_var)
-            #rv = self.get_new_column(column, fks, attrType)
+            #rv = self.get_new_column(column, fks, "INTEGER")
             row_cols.append(rv)
                 
         entity_vars["row_columns"] = row_cols

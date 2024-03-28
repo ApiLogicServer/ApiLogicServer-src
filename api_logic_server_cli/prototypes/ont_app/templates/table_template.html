@@ -3,7 +3,7 @@
         <o-table attr="{{ tableAttr }}" service="{{ service }}" entity="{{ entity }}" keys="{{ keys }}"
             columns="{{ columns }}"
             visible-columns="{{ visibleColumns }}"  sort-columns="{{ sortColumns }}" query-rows="20" quick-filter="yes"
-            row-height="medium" select-all-checkbox="true" pageable="yes"  virtual-scroll="no" edition-mode="click" detail-mode='none'>
+            row-height="small" select-all-checkbox="true" pageable="yes"  virtual-scroll="yes" edition-mode="click" detail-mode='none'>
             <!-- for each column -->
             {% for table_row_column in row_columns %}
                 {{ table_row_column }}
