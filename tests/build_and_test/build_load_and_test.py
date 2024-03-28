@@ -1041,14 +1041,15 @@ if Config.do_docker_creation_tests:
 
 print("\n\nSUCCESS -- END OF TESTS")
 
-print('\n\n Run & verify >1 Order: pushd ../../../../build_and_test/ApiLogicServer/Shipping\n\n')
+print('\n\nRun & verify >1 Order: pushd ../../../../build_and_test/ApiLogicServer/Shipping\n\n')
 
 print(f"\n\nRelease {api_logic_server_version}?\n")
-print(f'cd {str(get_api_logic_server_path())}')
-print(f"{python} setup.py sdist bdist_wheel")
-print(f"{python} -m twine upload  --skip-existing dist/* \n")
+print(f'    cd {str(get_api_logic_server_path())}')
+print(f"    rm -r dist")
+print(f"    {python} -m build")
+print(f"    {python} -m twine upload  --skip-existing dist/*  \n")
 
-# print(f"\n\nUse this build?")
-# print(f"..  Settings > venv path >  {str(install_api_logic_server_path)}\n")
+# print(f"{python} setup.py sdist bdist_wheel")
+# print(f"{python} -m twine upload  --skip-existing dist/* \n")
 
 # find main code
