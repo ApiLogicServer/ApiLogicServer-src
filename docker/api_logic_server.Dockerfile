@@ -1,7 +1,7 @@
 
 # GA release -- DELETE BUILD DIRS FIRST
 
-# docker buildx build --push -f docker/api_logic_server.Dockerfile --tag apilogicserver/api_logic_server:10.03.25 -o type=image --platform=linux/arm64,linux/amd64 .
+# docker buildx build --push -f docker/api_logic_server.Dockerfile --tag apilogicserver/api_logic_server:10.03.45 -o type=image --platform=linux/arm64,linux/amd64 .
 # docker buildx build --push -f docker/api_logic_server.Dockerfile --tag apilogicserver/api_logic_server:latest -o type=image --platform=linux/arm64,linux/amd64 .
 
 # Beta - test codespaces with tutorial, API_Fiddle (change .devcontainer.json -> apilogicserver/api_logic_server_x)
@@ -37,10 +37,10 @@
 
 # if builds fails, check for renamed targets by breaking up Run commands
 
-FROM python:3.11.4-slim-bullseye
+FROM python:3.12.2-slim-bullseye
 ARG TARGETOS
 ARG TARGETARCH
-LABEL ApiLogicServer-9.00.14 ${TARGETARCH}
+LABEL ApiLogicServer-10.03.45 ${TARGETARCH}
 
 USER root
 
@@ -66,7 +66,7 @@ RUN apt-get install apt-utils
 
 RUN apt-get -y install unixodbc-dev \
   && apt-get -y install python3-pip \
-  && pip install pyodbc==4.0.34
+  && pip install pyodbc==5.1.0
 
 RUN useradd --create-home --shell /bin/bash api_logic_server
 WORKDIR /home/api_logic_server
