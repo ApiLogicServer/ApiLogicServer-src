@@ -73,9 +73,10 @@ class OntBuilder(object):
         self.combo_style = "list" #"combo" or"list"
         self.style = "light" # "dark"
         self.currency_symbol = "$" # "€" 
-        self.currency_symbol_position="right" 
-        self.thousand_separator=","
-        self.decimal_separator="."
+        self.currency_symbol_position="left" # "right"
+        self.thousand_separator="," # "."
+        self.decimal_separator="." # ","
+        self.date_format="LL" #not sure what this means
 
         self.pick_list_template = env.get_template("list-picker.html")
         self.combo_list_template = env.get_template("combo-picker.html") 
@@ -89,7 +90,7 @@ class OntBuilder(object):
             '<o-table-column attr="{{ attr }}" title="{{ title }}" editable="{{ editable }}" required="{{ required }}" ></o-table-column>'
         )
         self.table_currency_template = Template(
-            '<o-table-column attr="{{ attr }}" title="{{ title }}" type="currency" editable="{{ editable }}" required="{{ required }}" currency-symbol="$" currency-symbol-position="right" thousand-separator=","decimal-separator="."></o-table-column>'
+            '<o-table-column attr="{{ attr }}" title="{{ title }}" type="currency" editable="{{ editable }}" required="{{ required }}" currency-symbol="$" currency-symbol-position="left" thousand-separator=","decimal-separator="."></o-table-column>'
         )  # currency 100,00.00 settings from global
         self.table_date_template = Template(
             '<o-table-column attr="{{ attr }}" title="{{ title }}" type="date" editable="{{ editable }}" required="{{ required }}" ></o-table-column>'
@@ -112,7 +113,7 @@ class OntBuilder(object):
             '<o-text-input attr="{{ attr }}" title="{{ title }}" editable="{{ editable }}" required="{{ required }}" ></o-text-input>'
         )
         self.currency_template = Template(
-            '<o-text-input attr="{{ attr }}" title="{{ title }}" type="currency" editable="{{ editable }}" required="{{ required }}" currency-symbol="$" currency-symbol-position="right" thousand-separator=","decimal-separator="."></o-text-input>'
+            '<o-text-input attr="{{ attr }}" title="{{ title }}" type="currency" editable="{{ editable }}" required="{{ required }}" currency-symbol="$" currency-symbol-position="left" thousand-separator=","decimal-separator="."></o-text-input>'
         )  # currency 100,00.00 settings from global
         self.date_template = Template(
             '<o-text-input attr="{{ attr }}" title="{{ title }}" type="date" editable="{{ editable }}" required="{{ required }}" ></o-text-input>'
@@ -281,7 +282,7 @@ class OntBuilder(object):
 
         return template.render(entity_vars)
 
-    def gen_home_columns(self, column):
+    def gen_home_columns(self, column, alt_col:any = None):
         col_var = {
             "attr": column.name,  # name
             "title": (
@@ -296,6 +297,8 @@ class OntBuilder(object):
                 else "no"
             ),
         }
+        if alt_col:
+            col_var = alt_col
         if hasattr(column, "type") and column.type != DotMap():
             if column.type.startswith("DECIMAL") or column.type.startswith("NUMERIC"):
                 rv = self.table_currency_template.render(col_var)
@@ -304,9 +307,9 @@ class OntBuilder(object):
             elif column.type == "DATE":
                 rv = self.table_date_template.render(col_var)
             elif column.type == "REAL":
-                rv = self.table_real_template.render(rv)
+                rv = self.table_real_template.render(col_var)
             elif column.type == "CURRENCY":
-                rv = self.table_currency_template.render(rv)
+                rv = self.table_currency_template.render(col_var)
             else:
                 if column.template == "textarea":
                     rv = self.table_textarea_template.render(col_var)
@@ -468,7 +471,7 @@ class OntBuilder(object):
             rv = self.gen_field_template(column, col_var)
 
         return rv
-    def load_tab_template(self, template_name: str, entity: any, template_var: any) -> str:
+    def load_tab_template(self, entity, template_var: any, cntr:int) -> str:
         """
         This is a grid display (tab) 
             tab_vars = {
@@ -479,25 +482,35 @@ class OntBuilder(object):
                     'attrType': fk_tab["attrType"],
                     'visibleColumn': fk_tab["visibleColumn"]
                 }
+                parent-keys="" 
+                keys="ProductId"
+                detail-form-route="" 
+                edit-form-route=""
         """
-        template = env.get_template(template_name)
+        tab_template = self.tab_panel
         cols = get_columns(entity)
         name = entity["type"].lower()
         key = entity["favorite"]
+        primaryKey = entity["primary_key"][0]
         entity_vars = {
             "entity": name,
             "columns": cols,
-            "keys": entity["favorite"],
+            "keys": template_var["attrs"][0],
             "mode": "tab",
             "title": f'{template_var["resource_name"].upper()} - {template_var["attrs"][0]}',
             "tableAttr": f"{name}Table",
             "service": name,
+            'visibleColumns': cols,
+            "parentKeys": f"{primaryKey}",
+            "detailFormRoute": name,
+            "editFormRoute": name,
+            "attrType": "INTEGER"
         }
 
         row_cols = []
         for column in entity.columns:
             col_var = {
-                "attr": column.name, 
+                "attr": f"{column.name}", 
                 "title": (
                     column.label
                     if hasattr(column, "label") and column.label != DotMap()
@@ -510,12 +523,12 @@ class OntBuilder(object):
                     else "no"
                 ),
             }
-            rv = self.gen_field_template(column, col_var)
+            rv = self.gen_home_columns(column, col_var)
             #rv = self.get_new_column(column, fks, attrType)
             row_cols.append(rv)
                 
         entity_vars["row_columns"] = row_cols
-        return  template.render(entity_vars)
+        return  tab_template.render(entity_vars)
 
             
     def load_card_template(self, template_name: str, entity: any, favorites: any) -> str:
@@ -544,11 +557,12 @@ class OntBuilder(object):
                     'attrType': fk_tab["attrType"],
                     'visibleColumn': fk_tab["visibleColumn"]
                 }
-        
+                cnt = 1
                 for each_entity_name, each_entity in self.app_model.entities.items():
                     if each_entity_name.lower() == tab_name:
-                        template = self.load_tab_template("table_template.html",each_entity, tab_vars )
+                        template = self.load_tab_template(each_entity, tab_vars, cnt)
                         panels.append(template)
+                        cnt += 1
 
         return panels
     
