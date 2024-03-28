@@ -757,9 +757,12 @@ if Config.do_install_api_logic_server:  # verify the build process - rebuild, an
 
     if venv_with_python:  # windows only (sigh... never found way to set venv with Python on Ubuntu)
         api_logic_server_home_path = api_logic_server_tests_path.parent
-        result_build = run_command(f'{python} setup.py sdist bdist_wheel',
+        build_cmd = f'{python} setup.py sdist bdist_wheel'
+        build_cmd = 'python -m build'
+        result_build = run_command(build_cmd,
             cwd=api_logic_server_home_path,
             msg=f'\nBuild ApiLogicServer at: {str(api_logic_server_home_path)}')
+        assert result_build.returncode == 0, f'Install failed with {result_build}'
         
         venv_cmd = f'{python} -m venv venv'    
         result_venv = run_command(venv_cmd,
@@ -780,8 +783,8 @@ if Config.do_install_api_logic_server:  # verify the build process - rebuild, an
         assert python_version[0] >= 3 and python_version[1] in [8,9,10,11, 12], \
             f"Python {python_version[0]}.{python_version[1]} is not currently supported\n"
         install_cmd = f'sh build_install.sh {python}'
-        if python_version[1] == 12:
-            install_cmd = f'sh build_install_3_12.sh {python}'
+        if python_version[1] == 13:  # future...
+            install_cmd = f'sh build_install_3_13.sh {python}'
         result_install = run_command(install_cmd,
             cwd=current_path,  # ..ApiLogicServer-dev/org_git/ApiLogicServer-src/tests/build_and_test
 

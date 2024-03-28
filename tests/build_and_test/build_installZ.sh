@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo '\n\nBuilding / installing ApiLogicServer for Python 3.12'
+echo '\n\nBuilding / installing ApiLogicServer'
 
 cd "$(dirname "$0")"
 SCRIPT_DIR="$(pwd)"
@@ -18,26 +18,19 @@ SRC_DIR=$(pwd)
 
 echo "..Installing from: $SRC_DIR"
 
-PY=$1
 
-echo "..Using Python: $PY\n"
-
-cd $SRC_DIR
-$PY -m build
+# exit 1
 
 cd $INSTALL_DIR
 python3 -m venv venv
 
 . venv/bin/activate
 
-# exit 1
-
-# python3 -m pip install -r requirements.txt
+python3 -m pip install -r requirements.txt
 
 # ls $SCRIPT_DIR/../../..
 set -x
-# python3 -m pip install $SRC_DIR
-$PY -m pip install $SRC_DIR
+python3 -m pip install $SRC_DIR
 set +x
 
 echo "Complete.\n\n"
