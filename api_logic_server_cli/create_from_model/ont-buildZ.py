@@ -454,7 +454,7 @@ integer_template = Template(
     '<o-integer-input attr="{{ attr }}" editable="{{ editable }}" required="{{ required }}" min="0"></o-integer-input>'
 )
 image_template = Template(
-    '<o-image attr="{{ attr }}" data="http://placekitten.com/1920/1080" auto-fit="true" enabled="true" read-only="false" show-controls="true full-screen-button="false" empty-image="./assets/images/no-image.png"></o-image>'
+    '<o-image attr="{{ attr }}" auto-fit="true" enabled="true" read-only="false" show-controls="true" width="360px" full-screen-button="false" empty-image="./assets/images/no-image.png"></o-image>'
 )
 textarea_template = Template(
     '<o-textarea-input attr="{{ attr }}" label=" {{ title }}" rows="10"></o-textarea-input>'
