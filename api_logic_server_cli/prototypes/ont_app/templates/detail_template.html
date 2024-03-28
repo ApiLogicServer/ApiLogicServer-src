@@ -1,4 +1,4 @@
-<o-form breadcrumb="yes" breadcrumb-label-columns="" breadcrumb-separator=", " [form]="form">
+<o-form-container breadcrumb="yes" breadcrumb-label-columns="{{ keys }}" breadcrumb-separator=", ">
   <mat-tab-group fxFill>
     <mat-tab label="{{ title }}">
       <o-form #form attr="{{ entity }}_form_edit" service="{{ service }}" entity="{{ entity }}" fxLayout="column" show-header="yes" header-actions="R;I;U;D"
@@ -19,12 +19,11 @@
 </mat-tab>
 </mat-tab-group>
 
-
-<mat-tab-group class="vertical-padding-8">
-
+{% if has_tabs %}
+<mat-tab-group fxFill>
   {% for tab_panel in tab_panels %}
   {{ tab_panel }}
   {% endfor %}
-
 </mat-tab-group>
-</o-form>
+{% endif %}
+</o-form-container>
