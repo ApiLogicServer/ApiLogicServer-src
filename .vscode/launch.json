@@ -186,6 +186,20 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "     - app-build banking",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/../../build_and_test/banking",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": [
+                "app-build",
+                "--project-name=",
+                "--app=ont_1"
+                ],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "     - Create servers/ApiLogicProject (new IDE) -- nw-",
             "type": "debugpy",
             "request": "launch",
