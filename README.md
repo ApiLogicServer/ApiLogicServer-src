@@ -10,9 +10,16 @@
 If you have the Python (version 3.8-3.12), install is standard, typically:
 
 ```bash title="Install API Logic Server in a Virtual Environment"
-python -m venv venv                  # may require python3 -m venv venv
+python3 -m venv venv                 # windows: python -m venv venv
 source venv/bin/activate             # windows: venv\Scripts\activate
 python -m pip install ApiLogicServer
+```
+
+<br>Now, verify it's working - create and run the demo:
+
+```bash title="Create and Run Demo"
+ApiLogicServer create --project-name=sample_ai --db-url=sqlite:///sample_ai.sqlite
+code sample_ai
 ```
 
 Find the [user documentation here](https://apilogicserver.github.io/Docs/).  Use this for normal installation, to create and customize API Logic Projects.
