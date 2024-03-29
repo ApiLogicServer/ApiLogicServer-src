@@ -1,5 +1,5 @@
 
-# ALERT: update setup.py too!
+# ALERT: update pyproject.toml too!
 
 safrs>=3.1.3
 PyJWT==2.6.0
