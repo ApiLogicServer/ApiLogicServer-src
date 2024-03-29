@@ -70,7 +70,7 @@ class OntBuilder(object):
         self.env = self.get_environment()
         self.mode = "tab" # "dialog"
         env = self.env
-        self.combo_style = "list" #"combo" or"list"
+        self.pick_style = "list" #"combo" or"list"
         self.style = "light" # "dark"
         self.currency_symbol = "$" # "€" 
         self.currency_symbol_position="left" # "right"
@@ -129,6 +129,9 @@ class OntBuilder(object):
         )
         self.real_template = Template(
             '<o-real-input attr="{{ attr }}" label="{{ title }}" min-decimal-digits="2" max-decimal-digits="4" min="0" max="1000000.0000"></o-real-input>'
+        )
+        self.sidebarTemplate = Template(
+            " '{{ entity }}', loadChildren: () => import('./{{ entity }}/{{ entity }}.module').then(m => m.{{ entity_first_cap }}Module)"
         )
 
     def build_application(self):
@@ -209,7 +212,7 @@ class OntBuilder(object):
             
         # menu routing and service config
         entities = app_model.entities.items()
-        sidebar_menu = gen_sidebar_routing("main_routing.jinja", entities=entities)
+        sidebar_menu = self.gen_sidebar_routing("main_routing.jinja", entities=entities)
         write_root_file(
             app_path, "main", "main-routing.module.ts", sidebar_menu
         )  # root folder
@@ -239,36 +242,13 @@ class OntBuilder(object):
         # using the `env.get_template` method, and then processes the template by rendering it with a
         # dictionary of variables.
         template = self.env.get_template(template_name)
-        entity_name = f"{entity.type.lower()}"
-        entity_upper = f"{entity_name[:1].upper()}{entity_name[1:]}"
-        entity_first_cap = f"{entity_name[:1].upper()}{entity_name[1:]}"
-        var = {
-            "entity": entity_name,
-            "Entity": entity_upper,
-            "entity_home": f"{entity_name}-home",
-            "entity_home_component": f"{entity_upper}HomeComponent",
-            "entity_first_cap": entity_first_cap,
-        }
-
-        return template.render(var)
+        entity_vars = self.get_entity_vars(entity)
+        return template.render(entity_vars)
 
 
     def load_home_template(self, template_name: str, entity: any, settings: any = None) -> str:
         template = env.get_template(template_name)
-        cols = get_columns(entity)
-        name = entity["type"].lower()
-        key =  entity["favorite"]
-        entity_vars = {
-            "entity": name,
-            "columns": cols,
-            "visibleColumns": cols,
-            "sortColumns": cols,  # TODO
-            "keys": key,
-            "mode": self.mode,
-            "title": entity["type"].upper(),
-            "tableAttr": f"{name}Table",
-            "service": name,
-        }
+        entity_vars = self.get_entity_vars(entity)
 
         row_cols = []
         for column in entity.columns:
@@ -279,6 +259,43 @@ class OntBuilder(object):
 
         return template.render(entity_vars)
 
+    def get_entity_vars(self, entity):
+        cols = get_columns(entity)
+        key =  entity["favorite"]
+        entity_name = f"{entity.type.lower()}"
+        entity_upper = f"{entity_name[:1].upper()}{entity_name[1:]}"
+        entity_first_cap = f"{entity_name[:1].upper()}{entity_name[1:]}"
+        primaryKey = entity["primary_key"][0]
+        keySqlType = next(
+            (
+                "VARCHAR" if col.type.startswith('VARCHAR') else 'INTEGER'
+                for col in entity.columns
+                if col.name.lower() == key.lower()
+            ),
+            "INTEGER",
+        )
+        return {
+            "entity": entity_name,
+            "columns": cols,
+            "visibleColumns": cols,
+            "sortColumns": cols,  # TODO
+            "keys": key,
+            "mode": self.mode,
+            "title": entity_name.upper(),
+            "tableAttr": f"{entity_name}Table",
+            "service": entity_name,
+            "entity": entity_name,
+            "Entity": entity_upper,
+            "entity_home": f"{entity_name}-home",
+            "entity_home_component": f"{entity_upper}HomeComponent",
+            "entity_first_cap": entity_first_cap,
+            "keySqlType": keySqlType,
+            "parentKeys": f"{primaryKey}",
+            "detailFormRoute": entity_name,
+            "editFormRoute": entity_name,
+            "attrType": "INTEGER"
+        }
+        
     def gen_home_columns(self, column, alt_col:any = None):
         col_var = {
             "attr": column.name,  # name
@@ -325,50 +342,18 @@ class OntBuilder(object):
         This is a grid display (new) 
         """
         template = env.get_template(template_name)
-        cols = get_columns(entity)
-        name = entity["type"].lower()
-        key = entity["favorite"]
-        entity_vars = {
-            "entity": name,
-            "columns": cols,
-            "keys": entity["favorite"],
-            "mode": "tab",
-            "title": name.upper(),
-            "tableAttr": f"{name}Table",
-            "service": name,
-        }
-
+        entity_vars = self.get_entity_vars(entity)
         fks, attrType = get_foreign_keys(entity, favorites)
         row_cols = []
         for column in entity.columns:
-            if column.name in key:
-                rv = self.get_new_column(column, fks, attrType)
-                row_cols.append(rv)
-        for column in entity.columns:
-            if column.name not in key:
-                rv = self.get_new_column(column, fks, attrType)
-                row_cols.append(rv)
+            rv = self.get_new_column(column, fks, attrType)
+            row_cols.append(rv)
                 
         entity_vars["row_columns"] = row_cols
         return  template.render(entity_vars)
 
     def get_new_column(self, column, fks, attrType):
-        col_var = {
-            "attr": column.name, 
-            "title": (
-                column.label
-                if hasattr(column, "label") and column.label != DotMap()
-                else column.name
-            ), 
-            "editable": "yes",
-            "required": (
-                ("yes" if column.required else "no")
-                if hasattr(column, "required") and column.required != DotMap()
-                else "no"
-            ),
-            "tooltip": column.info if hasattr(column,"info") else ""
-        }
-        
+        col_var = self.get_column_attrs(column)
         use_list = False
         for fk in fks:
             if column.name in fk["attrs"]:
@@ -379,7 +364,7 @@ class OntBuilder(object):
                 col_var["comboColumnType"] = attrType
                 col_var["columns"] = fk["columns"]
                 col_var["visibleColumn"] = fk["visibleColumn"]
-                if self.combo_style == "list": # or fk["template"] == "list":
+                if self.pick_style == "list": # or fk["template"] == "list":
                     rv = self.pick_list_template.render(col_var)
                 else:
                     rv = self.combo_list_template.render(col_var)
@@ -388,52 +373,8 @@ class OntBuilder(object):
 
 
         return rv
-
-    def load_detail_template(self, template_name: str, entity: any, favorites: any) -> str:
-        """
-        This is a detail display (detail) 
-        """
-        template = self.env.get_template(template_name)
-        cols = get_columns(entity)
-        name = entity["type"].lower()
-        key = entity["favorite"] #favorite not key
-        keySqlType = "INTEGER"
-        for col in entity.columns:
-            if col.name.lower() == key.lower():
-                keySqlType = "VARCHAR" if col.type.startswith('VARCHAR') else 'INTEGER'
-                break
-            
-        entity_vars = {
-            "entity": name,
-            "columns": cols,
-            "keys": key,
-            "mode": "tab",
-            "title": name.upper(),
-            "tableAttr": f"{name}Table",
-            "service": name,
-            "keySqlType": keySqlType
-        }
-
-        fks, attrType = get_foreign_keys(entity, favorites)
-        
-        row_cols = []
-        for column in entity.columns:
-            if column.name in key:
-                rv = self.gen_detail_rows(column, fks, attrType)
-                row_cols.append(rv)
-        for column in entity.columns:
-            if column.name not in key:
-                rv = self.gen_detail_rows(column,fks, attrType)
-                row_cols.append(rv)
-
-        entity_vars["row_columns"] = row_cols
-        entity_vars["has_tabs"] = len(fks) > 0
-        entity_vars["tab_groups"] = fks
-        entity_vars["tab_panels"] = self.get_tabs(entity, fks)
-        return template.render(entity_vars)
-
-    def gen_detail_rows(self, column, fks, attrType):
-        col_var = {
+    def get_column_attrs(self, column) -> dict:
+        return {
             "attr": column.name, 
             "title": (
                 column.label
@@ -446,8 +387,29 @@ class OntBuilder(object):
                 if hasattr(column, "required") and column.required != DotMap()
                 else "no"
             ),
+            "info": column.info if hasattr(column,"info") else "",
+            "tooltip": column.tooltip if hasattr(column,"tooltip") else column.name 
         }
-        
+    def load_detail_template(self, template_name: str, entity: any, favorites: any) -> str:
+        """
+        This is a detail display (detail) 
+        """
+        template = self.env.get_template(template_name)
+        entity_vars = self.get_entity_vars(entity)
+        fks, attrType = get_foreign_keys(entity, favorites)
+        row_cols = []
+        for column in entity.columns:
+            rv = self.gen_detail_rows(column,fks, attrType)
+            row_cols.append(rv)
+
+        entity_vars["row_columns"] = row_cols
+        entity_vars["has_tabs"] = len(fks) > 0
+        entity_vars["tab_groups"] = fks
+        entity_vars["tab_panels"] = self.get_tabs(entity, fks)
+        return template.render(entity_vars)
+
+    def gen_detail_rows(self, column, fks, attrType):
+        col_var = self.get_column_attrs(column)
         use_list = False
         for fk in fks:
             if column.name in fk["attrs"]:
@@ -460,7 +422,7 @@ class OntBuilder(object):
                 col_var["visibleColumn"] = fk["visibleColumn"]
                 col_var["keySqlType"] = attrType
                 col_var["width"] = "680px"
-                if self.combo_style == "list": # or fk["template"] == "list":
+                if self.pick_style == "list": # or fk["template"] == "list":
                     rv = self.pick_list_template.render(col_var)
                 else:
                     rv = self.combo_list_template.render(col_var)
@@ -485,41 +447,10 @@ class OntBuilder(object):
                 edit-form-route=""
         """
         tab_template = self.tab_panel
-        cols = get_columns(entity)
-        name = entity["type"].lower()
-        key = entity["favorite"]
-        primaryKey = entity["primary_key"][0]
-        entity_vars = {
-            "entity": name,
-            "columns": cols,
-            "keys": template_var["attrs"][0],
-            "mode": "tab",
-            "title": f'{template_var["resource_name"].upper()} - {template_var["attrs"][0]}',
-            "tableAttr": f"{name}Table",
-            "service": name,
-            'visibleColumns': cols,
-            "parentKeys": f"{primaryKey}",
-            "detailFormRoute": name,
-            "editFormRoute": name,
-            "attrType": "INTEGER"
-        }
-
+        entity_vars = self.get_entity_vars(entity)
         row_cols = []
         for column in entity.columns:
-            col_var = {
-                "attr": f"{column.name}", 
-                "title": (
-                    column.label
-                    if hasattr(column, "label") and column.label != DotMap()
-                    else column.name
-                ), 
-                "editable": "yes",
-                "required": (
-                    ("yes" if column.required else "no")
-                    if hasattr(column, "required") and column.required != DotMap()
-                    else "no"
-                ),
-            }
+            col_var = self.get_column_attrs(column)
             rv = self.gen_home_columns(column, col_var)
             #rv = self.get_new_column(column, fks, "INTEGER")
             row_cols.append(rv)
@@ -563,7 +494,22 @@ class OntBuilder(object):
 
         return panels
     
-    
+    def gen_sidebar_routing(self, template_name: str, entities: any) -> str:
+        template = env.get_template(template_name)
+        children = []
+
+        sidebarTemplate = self.sidebarTemplate
+        # sep = ","
+        for each_entity_name, each_entity in entities:
+            name = each_entity_name.lower()
+            entity_first_cap = f"{name[:1].upper()}{name[1:]}"
+            var = {"entity": name, "entity_first_cap": entity_first_cap}
+            child = sidebarTemplate.render(var)
+            children.append(child)
+        var = {"children": children}
+
+        return template.render(var)
+
     def gen_field_template(self,column, col_var):
         # This is for HOME grid style
         if hasattr(column, "type") and column.type != DotMap():
@@ -700,24 +646,6 @@ def load_module(template_name: str, entity: any) -> str:
     }
 
     return template.render(var)
-
-def gen_sidebar_routing(template_name: str, entities: any) -> str:
-    template = env.get_template(template_name)
-    children = []
-    t = Template(
-        " '{{ entity }}', loadChildren: () => import('./{{ entity }}/{{ entity }}.module').then(m => m.{{ entity_first_cap }}Module)"
-    )
-    # sep = ","
-    for each_entity_name, each_entity in entities:
-        name = each_entity_name.lower()
-        entity_first_cap = f"{name[:1].upper()}{name[1:]}"
-        var = {"entity": name, "entity_first_cap": entity_first_cap}
-        child = t.render(var)
-        children.append(child)
-    var = {"children": children}
-
-    return template.render(var)
-
 
 def gen_app_service_config(entities: any) -> str:
     t = Template("export const SERVICE_CONFIG: Object ={ {{ children }} };")
