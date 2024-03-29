@@ -5,7 +5,8 @@
 ![Banner](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/hero-banner.png?raw=true)
 
 &nbsp;
----
+
+# Quickstart
 
 If you have the Python (version 3.8-3.12), install is standard, typically:
 
