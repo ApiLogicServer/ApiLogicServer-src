@@ -24,9 +24,6 @@ from jinja2 import (
 )
 import os
 
-global env  # slightly evil - referencing funcs should be moved into class
-env: Environment = None
-
 def get_api_logic_server_cli_dir() -> str:
     """
     :return: ApiLogicServer dir, eg, /Users/val/dev/ApiLogicServer/api_logic_server_cli
@@ -64,10 +61,12 @@ class OntBuilder(object):
     num_related = 0
 
     def __init__(self, project: Project, app: str):
-        global env
         self.project = project
         self.app = app
-        self.env = self.get_environment()
+        self.app_path = Path(self.project.project_directory_path).joinpath(f"ui/{self.app}")
+        t_env = self.get_environment()
+        self.env = t_env[0]
+        self.local_env = t_env[1]
         self.mode = "tab" # "dialog"
         env = self.env
         self.pick_style = "list" #"combo" or"list"
@@ -77,15 +76,17 @@ class OntBuilder(object):
         self.thousand_separator="," # "."
         self.decimal_separator="." # ","
         self.date_format="LL" #not sure what this means
-
-        self.pick_list_template = env.get_template("list-picker.html")
-        self.combo_list_template = env.get_template("combo-picker.html") 
-        self.o_text_input = env.get_template("o_text_input.html")
-        self.o_combo_input = env.get_template("o_combo_input.html")
-        self.tab_panel = env.get_template("tab_panel.html")
+        self.use_keycloak=False # True this will use different templates - defaults to basic auth
         
-        self.component_scss = env.get_template("component.scss")
-        # Home Grid attributes
+
+        self.pick_list_template = self.get_template("list-picker.html")
+        self.combo_list_template = self.get_template("combo-picker.html") 
+        self.o_text_input = self.get_template("o_text_input.html")
+        self.o_combo_input = self.get_template("o_combo_input.html")
+        self.tab_panel = self.get_template("tab_panel.html")
+        
+        self.component_scss = self.get_template("component.scss")
+        # Home Grid attributes 0-table-column
         self.table_text_template = Template(
             '<o-table-column attr="{{ attr }}" title="{{ title }}" editable="{{ editable }}" required="{{ required }}" ></o-table-column>'
         )
@@ -108,7 +109,7 @@ class OntBuilder(object):
             '<o-table-column attr="{{ attr }}" label="{{ title }}" type="integer" min-decimal-digits="2" max-decimal-digits="4" min="0" max="1000000.0000"></o-table-column>'
         )
 
-        # Text Input Fields
+        # Text Input Fields o-text-input
         self.text_template = Template(
             '<o-text-input attr="{{ attr }}" title="{{ title }}" editable="{{ editable }}" required="{{ required }}" ></o-text-input>'
         )
@@ -133,12 +134,31 @@ class OntBuilder(object):
         self.sidebarTemplate = Template(
             " '{{ entity }}', loadChildren: () => import('./{{ entity }}/{{ entity }}.module').then(m => m.{{ entity_first_cap }}Module)"
         )
-
+    def get_template(self, template_name) -> Template:
+        """
+        This will look in the project directory first (local) 
+        if not found - default to global library
+        Args:
+            template_name (_type_): _description_
+        local_env - the copy of templates to override
+        env - default
+        Returns:
+            _type_: Template
+        """
+        t = None
+        try:
+            t = self.local_env.get_template(template_name)
+        except Exception:
+            pass
+        if t is None:
+            t = self.env.get_template(template_name)
+        return t
+    
     def build_application(self):
         """main driver - loop through add_model.yaml, ont app"""
         log.debug(f"OntBuild Running at {os.getcwd()}")
 
-        app_path = Path(self.project.project_directory_path).joinpath(f"ui/{self.app}")
+        app_path = self.app_path
         if not os.path.exists(app_path):
             log.info(f"\nApp {self.app} not present in project - no action taken\n")
             exit(1)
@@ -150,6 +170,13 @@ class OntBuilder(object):
             model_dict = yaml.safe_load(model_file)
         app_model = DotMap(model_dict)
         self.app_model = app_model
+        
+        from_template_dir = self.project.api_logic_server_dir_path.joinpath('prototypes/ont_app/templates')
+        to_template_dir = self.project.project_directory_path.joinpath(f'ui/{self.app}/templates')
+        try:
+            shutil.copytree(from_template_dir, to_template_dir, dirs_exist_ok=False)  # do not create default template files
+        except:
+            pass
         
         from_dir = self.project.api_logic_server_dir_path.joinpath('prototypes/ont_app/ontimize_seed')
         to_dir = self.project.project_directory_path.joinpath(f'ui/{self.app}/')
@@ -185,9 +212,9 @@ class OntBuilder(object):
             write_file(app_path, entity_name, "home", "-home.component.ts", ts)
             write_file(app_path, entity_name, "home", "-home.component.scss", "")
             
-            routing = load_routing("routing.jinja", each_entity)
+            routing = self.load_routing("routing.jinja", each_entity)
             write_file(app_path, entity_name, "", "-routing.module.ts", routing)
-            module = load_module("module.jinja", each_entity)
+            module = self.load_module("module.jinja", each_entity)
             write_file(app_path, entity_name, "", ".module.ts", module)
 
             # New Style for Input
@@ -220,7 +247,7 @@ class OntBuilder(object):
         write_root_file(
             app_path, "shared", "app.services.config.ts", app_service_config
         )
-        app_menu_config = gen_app_menu_config("app.menu.config.jinja", entities)
+        app_menu_config = self.gen_app_menu_config("app.menu.config.jinja", entities)
         write_root_file(
             app_path=app_path,
             dir_name="shared",
@@ -228,26 +255,30 @@ class OntBuilder(object):
             source=app_menu_config,
         )
 
-    def get_environment(self) -> Environment:
+    def get_environment(self) -> tuple:
         current_cli_path = self.project.api_logic_server_dir_path
         templates_path = current_cli_path.joinpath('prototypes/ont_app/templates')
         env = Environment(
             # loader=PackageLoader(package_name="APILOGICPROJECT",package_path="/ApiLogicServer/ApiLogicServer-dev/build_and_test/nw/ui/templates"),
             loader=FileSystemLoader(searchpath=f"{templates_path}")
         )
-        return env
+        local_templates_path = self.app_path.joinpath(f'ui/{self.app}/templates')
+        local_env = Environment (
+            loader=FileSystemLoader(searchpath=f"{local_templates_path}")
+        )
+        return (env,local_env)
     
     def load_ts(self, template_name: str, entity: any) -> str:
         # The above code is a Python function that takes a template name as input, retrieves the template
-        # using the `env.get_template` method, and then processes the template by rendering it with a
+        # using the `self.get_template` method, and then processes the template by rendering it with a
         # dictionary of variables.
-        template = self.env.get_template(template_name)
+        template = self.get_template(template_name)
         entity_vars = self.get_entity_vars(entity)
         return template.render(entity_vars)
 
 
     def load_home_template(self, template_name: str, entity: any, settings: any = None) -> str:
-        template = env.get_template(template_name)
+        template = self.get_template(template_name)
         entity_vars = self.get_entity_vars(entity)
 
         row_cols = []
@@ -275,6 +306,7 @@ class OntBuilder(object):
             "INTEGER",
         )
         return {
+            "use_keycloak": self.use_keycloak,
             "entity": entity_name,
             "columns": cols,
             "visibleColumns": cols,
@@ -341,7 +373,7 @@ class OntBuilder(object):
         """
         This is a grid display (new) 
         """
-        template = env.get_template(template_name)
+        template = self.get_template(template_name)
         entity_vars = self.get_entity_vars(entity)
         fks, attrType = get_foreign_keys(entity, favorites)
         row_cols = []
@@ -394,12 +426,12 @@ class OntBuilder(object):
         """
         This is a detail display (detail) 
         """
-        template = self.env.get_template(template_name)
+        template = self.get_template(template_name)
         entity_vars = self.get_entity_vars(entity)
         fks, attrType = get_foreign_keys(entity, favorites)
         row_cols = []
         for column in entity.columns:
-            rv = self.gen_detail_rows(column,fks, attrType)
+            rv = self.gen_detail_rows(column, fks, attrType)
             row_cols.append(rv)
 
         entity_vars["row_columns"] = row_cols
@@ -412,7 +444,7 @@ class OntBuilder(object):
         col_var = self.get_column_attrs(column)
         use_list = False
         for fk in fks:
-            if column.name in fk["attrs"]:
+            if column.name in fk["attrs"] and fk["direction"] == "toone":
                 use_list = True
                 col_var["attr"] = fk["attrs"][0]
                 col_var["service"] = fk["resource"].lower()
@@ -448,6 +480,8 @@ class OntBuilder(object):
         """
         tab_template = self.tab_panel
         entity_vars = self.get_entity_vars(entity)
+        #entity_vars.update(template_var)
+        template_var.update(entity_vars)
         row_cols = []
         for column in entity.columns:
             col_var = self.get_column_attrs(column)
@@ -455,15 +489,15 @@ class OntBuilder(object):
             #rv = self.get_new_column(column, fks, "INTEGER")
             row_cols.append(rv)
                 
-        entity_vars["row_columns"] = row_cols
-        return  tab_template.render(entity_vars)
+        template_var["row_columns"] = row_cols
+        return  tab_template.render(template_var)
 
             
     def load_card_template(self, template_name: str, entity: any, favorites: any) -> str:
         """
         This is a card display (card) 
         """
-        template = self.env.get_template(template_name)
+        template = self.get_template(template_name)
         entity =  entity["type"].upper()
         cardTitle = "{{" + f"'{entity}_TYPE'" + "}}"
         entity_vars = {
@@ -483,7 +517,9 @@ class OntBuilder(object):
                     'attrs': fk_tab["attrs"],
                     'columns': fk_tab["columns"],
                     'attrType': fk_tab["attrType"],
-                    'visibleColumn': fk_tab["visibleColumn"]
+                    'visibleColumn': fk_tab["visibleColumn"],
+                    "tab_columns": fk_tab["visibleColumn"],
+                    "title": f'{fk_tab["resource"].upper()}-{fk_tab["name"].upper()}'
                 }
                 cnt = 1
                 for each_entity_name, each_entity in self.app_model.entities.items():
@@ -495,7 +531,7 @@ class OntBuilder(object):
         return panels
     
     def gen_sidebar_routing(self, template_name: str, entities: any) -> str:
-        template = env.get_template(template_name)
+        template = self.get_template(template_name)
         children = []
 
         sidebarTemplate = self.sidebarTemplate
@@ -539,8 +575,71 @@ class OntBuilder(object):
                 rv = self.text_template.render(col_var)
             
         return rv
+    def load_routing(self, template_name: str, entity: any) -> str:
+        template = self.get_template(template_name)
+        entity_upper = entity.type.upper()
+        entity_name = entity.type.lower()
+        entity_first_cap = f"{entity_name[:1].upper()}{entity_name[1:]}"
+        var = {
+            "entity": entity_name,
+            "entity_upper": entity_upper,
+            "entity_first_cap": entity_first_cap,
+            "import_module": "{"
+                + f"{entity_upper}_MODULE_DECLARATIONS, {entity_first_cap}RoutingModule"
+                + "}",
+            "module_from": f" './{entity_name}-routing.module'",
+            "key": entity["favorite"],
+            "routing_module": f"{entity_first_cap}RoutingModule",
+        }
 
+        return template.render(var)
+    
+    def load_module(self, template_name: str, entity: any) -> str:
+        template = self.get_template(template_name)
+        entity_upper = entity.type.upper()
+        entity_name = entity.type.lower()
+        entity_first_cap = f"{entity_name[:1].upper()}{entity_name[1:]}"
+        var = {
+            "entity": entity_name,
+            "entity_upper": entity_upper,
+            "entity_first_cap": entity_first_cap,
+            "import_module": "{"
+                        + f"{entity_upper}_MODULE_DECLARATIONS, {entity_first_cap}RoutingModule"
+                        + "}",
+            "module_from": f" './{entity_name}-routing.module'",
+            "key": entity["favorite"],
+            "routing_module": f"{entity_first_cap}RoutingModule"
+        }
+
+        return template.render(var)
         
+
+    # app.menu.config.jinja
+    def gen_app_menu_config(self, template_name: str, entities: any):
+        template = self.get_template(template_name)
+        menu_item_template = Template(
+            "{ id: '{{ name }}', name: '{{ name_upper }}', icon: 'description', route: '/main/{{ name }}' }"
+        )
+        import_template = Template("import {{ card_component }} from './{{ name }}-card/{{ name }}-card.component';")
+        menuitems = []
+        import_cards = []
+        menu_components = []
+        sep = ""
+        for each_entity_name, each_entity in entities:
+            name = each_entity_name.lower()
+            name_first_cap = name[:1].upper()+ name[1:]
+            menuitem = menu_item_template.render(name=name, name_upper=each_entity_name.upper())
+            menuitem = f"{sep}{menuitem}"
+            menuitems.append(menuitem)
+            card_component = "{ " + f"{name_first_cap}CardComponent" +" }"
+            importTemplate = import_template.render(name=name,card_component=card_component)
+            import_cards.append(importTemplate)
+            menu_components.append(f"{sep}{name_first_cap}CardComponent")
+            sep = ","
+            
+
+        return template.render(menuitems=menuitems, importitems=import_cards,card_components=menu_components)
+
 def get_foreign_keys(entity:any, favorites:any ) -> any:
     fks = []
     attrType = "INTEGER"
@@ -607,46 +706,6 @@ def get_columns(entity) -> str:
         sep = ";"
     return cols
 
-
-def load_routing(template_name: str, entity: any) -> str:
-    template = env.get_template(template_name)
-    entity_upper = entity.type.upper()
-    entity_name = entity.type.lower()
-    entity_first_cap = f"{entity_name[:1].upper()}{entity_name[1:]}"
-    var = {
-        "entity": entity_name,
-        "entity_upper": entity_upper,
-        "entity_first_cap": entity_first_cap,
-        "import_module": "{"
-            + f"{entity_upper}_MODULE_DECLARATIONS, {entity_first_cap}RoutingModule"
-            + "}",
-        "module_from": f" './{entity_name}-routing.module'",
-        "key": entity["favorite"],
-        "routing_module": f"{entity_first_cap}RoutingModule",
-    }
-
-    return template.render(var)
-
-
-def load_module(template_name: str, entity: any) -> str:
-    template = env.get_template(template_name)
-    entity_upper = entity.type.upper()
-    entity_name = entity.type.lower()
-    entity_first_cap = f"{entity_name[:1].upper()}{entity_name[1:]}"
-    var = {
-        "entity": entity_name,
-        "entity_upper": entity_upper,
-        "entity_first_cap": entity_first_cap,
-        "import_module": "{"
-                    + f"{entity_upper}_MODULE_DECLARATIONS, {entity_first_cap}RoutingModule"
-                    + "}",
-        "module_from": f" './{entity_name}-routing.module'",
-        "key": entity["favorite"],
-        "routing_module": f"{entity_first_cap}RoutingModule"
-    }
-
-    return template.render(var)
-
 def gen_app_service_config(entities: any) -> str:
     t = Template("export const SERVICE_CONFIG: Object ={ {{ children }} };")
     child_template = Template("'{{ name }}': { 'path': '/{{ name }}' }")
@@ -661,35 +720,6 @@ def gen_app_service_config(entities: any) -> str:
     var = {"children": children}
     t = t.render(var)
     return t
-
-
-# app.menu.config.jinja
-def gen_app_menu_config(template_name: str, entities: any):
-    template = env.get_template(template_name)
-    menu_item_template = Template(
-        "{ id: '{{ name }}', name: '{{ name_upper }}', icon: 'description', route: '/main/{{ name }}' }"
-    )
-    import_template = Template("import {{ card_component }} from './{{ name }}-card/{{ name }}-card.component';")
-    menuitems = []
-    import_cards = []
-    menu_components = []
-    sep = ""
-    for each_entity_name, each_entity in entities:
-        name = each_entity_name.lower()
-        name_first_cap = name[:1].upper()+ name[1:]
-        menuitem = menu_item_template.render(name=name, name_upper=each_entity_name.upper())
-        menuitem = f"{sep}{menuitem}"
-        menuitems.append(menuitem)
-        card_component = "{ " + f"{name_first_cap}CardComponent" +" }"
-        importTemplate = import_template.render(name=name,card_component=card_component)
-        import_cards.append(importTemplate)
-        menu_components.append(f"{sep}{name_first_cap}CardComponent")
-        sep = ","
-        
-
-    return template.render(menuitems=menuitems, importitems=import_cards,card_components=menu_components)
-
-
 
 def find_favorite(entity_favorites: any, entity_name:str):
     for entity_favorite in entity_favorites: 

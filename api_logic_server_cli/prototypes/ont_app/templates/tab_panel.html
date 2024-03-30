@@ -6,7 +6,8 @@
     <div layout-padding>
       <<o-table attr="{{ tableAttr }}" service="{{ service }}" entity="{{ entity }}" keys="{{ keys }}"
       columns="{{ columns }}"
-      visible-columns="{{ visibleColumns }}"  sort-columns="{{ sortColumns }}" query-rows="20" quick-filter="yes"
+      detail-form-route="{{ detailFormRoute }}" edit-form-route="{{ editFormRoute }}"
+      visible-columns="{{ visibleColumns }}"  sort-columns="{{ sortColumns }}" query-rows="8" quick-filter="yes"
       row-height="small" select-all-checkbox="true" pageable="yes"  virtual-scroll="yes" detail-mode='none'
         insert-button="false" delete-button="false" fixed-header="true" class="vertical-padding-8">
         {% for table_column in row_columns %}
