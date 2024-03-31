@@ -213,6 +213,22 @@
             "args": ["sys-info"],
             "justMyCode": false,
             "console": "integratedTerminal"
+        },
+        {
+            "name": "Create DB",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/database",
+            "program": "${workspaceFolder}/database/models.py",
+            "redirectOutput": true,
+            "justMyCode": false,            
+            "args": ["run"
+                ,"--prepend_wiki=reports/Behave Logic Report Intro.md"
+                ,"--wiki=reports/Behave Logic Report.md"
+            ],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
         }
+
     ]
 }

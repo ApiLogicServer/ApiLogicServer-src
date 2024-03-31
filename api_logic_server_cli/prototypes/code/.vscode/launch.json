@@ -1,0 +1,55 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "ApiLogicServer DEBUG",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "{workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "True",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [
+                "--verbose=True"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "Python: Module",
+            "type": "debugpy",
+            "request": "launch",
+            "redirectOutput": true,
+            "justMyCode": false,            
+            "module": "enter-your-module-name"
+        },
+        {
+            "name": "Python: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "redirectOutput": true,
+            "justMyCode": false,            
+            "console": "internalConsole"
+        },
+        {
+            "name": "Sys Info",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "program": "venv_setup/py.py",
+            "redirectOutput": true,
+            "args": ["sys-info"],
+            "justMyCode": false,
+            "console": "integratedTerminal"
+        }
+    ]
+}

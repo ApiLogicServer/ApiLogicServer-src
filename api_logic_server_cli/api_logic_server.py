@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.03.49"
+__version__ = "10.03.54"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t03/30/2024 - 10.03.49: ApiLogicServer create from-model (eg copilot) \n"\
+    "\t03/31/2024 - 10.03.54: ApiLogicServer create from-model (eg copilot) \n"\
     "\t03/28/2024 - 10.03.46: Python 3.12, View support, CLI option-names, Keycloak preview \n"\
     "\t03/14/2024 - 10.03.25: View support, CLI option-names, Keycloak preview \n"\
     "\t03/03/2024 - 10.03.16: Issue 50 (Numeric defaults), Pattern/Design for Behave examples, fix tutorial dir names \n"\
@@ -952,6 +952,9 @@ class ProjectRun(Project):
         self.opt_locking_attr = opt_locking_attr
         self.id_column_alias = id_column_alias
 
+        if os.getenv('APILOGICSERVER_AUTO_OPEN'):
+            self.open_with = os.getenv('APILOGICSERVER_AUTO_OPEN')
+
         if execute:
             self.create_project()
 
@@ -1495,7 +1498,6 @@ from database import <project.bind_key>_models
 
         if self.from_model != "":
             create_db_from_model.create(self)
-
 
         self.abs_db_url, self.nw_db_status, self.model_file_name = create_utils.get_abs_db_url("0. Using Sample DB", self)
 

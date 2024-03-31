@@ -1,0 +1,23 @@
+{
+    "cSpell.words": [
+        "APILOGICSERVER",
+        "sqlalchemy",
+        "backref",
+        "cascade_backrefs",
+        "proxied",
+        "redef",
+        "jsonapi",
+        "jsonify",
+        "sqltypes"
+    ],
+    "[Log]": {
+        "editor.wordWrap": "off"
+    },
+    "debug.console.wordWrap": false,    
+    "python.terminal.activateEnvInCurrentTerminal": true,
+    "python.defaultInterpreterPath": "~/venv/bin/python",
+    "python.terminal.activateEnvironment": true,
+    "workbench.editorAssociations": {
+        "*.md": "vscode.markdown.preview.editor"
+    }
+}

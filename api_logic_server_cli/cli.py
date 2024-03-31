@@ -18,7 +18,7 @@ from contextlib import closing
 
 import yaml
 
-temp_created_project = "temp_created_project"   # see copy_if_mounted
+temp_created_project = "temp_created_project"   # see if_mounted
 
 import subprocess, os, time, requests, sys, re, io
 import socket
@@ -94,7 +94,7 @@ Last node of API Logic Server url
 
 def get_api_logic_server_path() -> Path:
     """
-    :return: ApiLogicServer path, eg, /Users/val/dev/ApiLogicServer
+    :return: ApiLogicServer path, eg, /Users/val/dev/ApiLogicServer/api_logic_server_cli
     """
     running_at = Path(__file__)
     python_path = running_at.parent.absolute()
@@ -213,7 +213,8 @@ def mainZ(ctx):
     print("Never executed")
 '''
 
-@click.group()
+@click.group(invoke_without_command=True)
+# @click.group()
 @click.pass_context
 def main(ctx):
     """
@@ -238,7 +239,49 @@ def main(ctx):
 
         Recommendation: Start with first example.
     """
-    # click.echo("main - called iff commands supplied")
+    pass  # all commands come through here
+    if not ctx.invoked_subcommand:  # no command, per invoke_without_command=True
+        to_dir = os.getcwd()
+        path = Path(__file__)
+        is_dev = False
+        if 'org_git' in str(get_api_logic_server_path()):  # for testing
+            to_dir = get_api_logic_server_path().parent.parent.parent / 'build_and_test/ApiLogicServer'
+            is_dev = True
+        from_dir = get_api_logic_server_path() / 'prototypes/code'
+        to_dir_str = str(to_dir)
+        copied_path = shutil.copytree(src=from_dir, dst=to_dir, dirs_exist_ok=True)
+        log.info(f"copied_path: {copied_path}")
+        pass
+
+        set_defaultInterpreterPath = False
+        if set_defaultInterpreterPath:
+            defaultInterpreterPath_str = sys.executable
+            defaultInterpreterPath = Path(defaultInterpreterPath_str)
+            if is_dev:  # apilogicserver dev is special case
+                if os.name == "nt":
+                    defaultInterpreterPath = project.api_logic_server_dir_path.parent.parent.parent.joinpath('build_and_test/ApiLogicServer/venv/scripts/python.exe')
+                else:
+                    defaultInterpreterPath = to_dir / 'venv/bin/python'
+                defaultInterpreterPath_str = str(defaultInterpreterPath)
+            # ApiLogicServerPython
+            vscode_settings_path = to_dir / '.vscode/settings.json'
+            if os.name == "nt":
+                defaultInterpreterPath_str = get_windows_path_with_slashes(url=defaultInterpreterPath_str)
+                # vscode_settings_path = get_windows_path_with_slashes(url=vscode_settings_path)
+            create_utils.replace_string_in_file(search_for = 'ApiLogicServerPython',
+                                                replace_with=defaultInterpreterPath_str,
+                                                in_file=vscode_settings_path)
+            log.debug(f'.. ..Updated .vscode/settings.json with "python.defaultInterpreterPath": "{defaultInterpreterPath_str}"...')
+        os.putenv("APILOGICSERVER_AUTO_OPEN", "code")
+        os.putenv("APILOGICSERVER_VERBOSE", "false")
+        create_utils.run_command(
+            cmd=f'code {to_dir_str}',
+            env=None, 
+            msg="no-msg", 
+            project=None)
+     
+
+
 
 
 @main.command("about")
@@ -580,7 +623,6 @@ def tutorial(ctx, create):
               help="SQLAlchemy Database URL - see above\n")
 @click.option('--from-model', 'from_model',
               default=f'',
-              prompt="SQLAlchemy Database Model",
               help="SQLAlchemy Database URL\n")
 @click.option('--api_name',
               default=f'api',
