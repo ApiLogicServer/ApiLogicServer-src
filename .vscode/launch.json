@@ -627,7 +627,6 @@
             "cwd": "${workspaceFolder}/api_logic_server_cli",
             "program": "cli.py",
             "redirectOutput": true,
-
             "args": ["create",
                 "--project_name=../../../servers/sample_ai",
                 "--db_url=sqlite:///sample_ai_items.sqlite"],
@@ -654,6 +653,20 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "      -- Create servers/sample_ai_copilot from model",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "cwd": "${workspaceFolder}/../../servers",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["create",
+                "--project_name=sample_ai_copilot",
+                "--from-model=.",
+                "--db_url=sqlite:///sample_ai_copilot.sqlite"],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "    - Create Sqlite - CHATGPT - ai_customer_orders",
             "type": "debugpy",
             "request": "launch",
@@ -661,7 +674,6 @@
             "cwd": "${workspaceFolder}/api_logic_server_cli",
             "program": "cli.py",
             "redirectOutput": true,
-
             "args": ["create",
             "--infer_primary_key",
             "--project_name=../../../servers/ai_customer_orders",
