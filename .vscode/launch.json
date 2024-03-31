@@ -653,7 +653,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "      -- Create servers/sample_ai_copilot from model",
+            "name": "      -- Create servers/sample_ai_copilot from MODEL",
             "type": "debugpy",
             "request": "launch",
             "env": {"APILOGICSERVER_DEBUG": "True"},

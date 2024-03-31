@@ -574,6 +574,10 @@ def tutorial(ctx, create):
 @click.option('--db_url',
               default=f'{default_db}',
               help="SQLAlchemy Database URL\n")
+@click.option('--db-url', 'db_url',
+              default=f'{default_db}',
+              prompt="SQLAlchemy Database URI",
+              help="SQLAlchemy Database URL - see above\n")
 @click.option('--from-model', 'from_model',
               default=f'',
               prompt="SQLAlchemy Database Model",
