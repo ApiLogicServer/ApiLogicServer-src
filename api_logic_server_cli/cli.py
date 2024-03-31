@@ -574,9 +574,9 @@ def tutorial(ctx, create):
 @click.option('--db_url',
               default=f'{default_db}',
               help="SQLAlchemy Database URL\n")
-@click.option('--db-url', 'db_url',
-              default=f'{default_db}',
-              prompt="SQLAlchemy Database URI",
+@click.option('--from-model', 'from_model',
+              default=f'',
+              prompt="SQLAlchemy Database Model",
               help="SQLAlchemy Database URL\n")
 @click.option('--api_name',
               default=f'api',
@@ -697,6 +697,7 @@ def tutorial(ctx, create):
               help="Infer primary-key for unique cols")
 @click.pass_context
 def create(ctx, project_name: str, db_url: str, not_exposed: str, api_name: str,
+           from_model: str,
            from_git: str,
            # db_types: str,
            open_with: str,
@@ -722,7 +723,7 @@ def create(ctx, project_name: str, db_url: str, not_exposed: str, api_name: str,
     global command
     db_types = ""
     PR.ProjectRun(command="create", project_name=project_name, db_url=db_url, api_name=api_name,
-                    not_exposed=not_exposed,
+                    not_exposed=not_exposed, from_model=from_model,
                     run=run, use_model=use_model, from_git=from_git, db_types=db_types,
                     flask_appbuilder=flask_appbuilder,  host=host, port=port, swagger_host=swagger_host,
                     react_admin=react_admin, admin_app=admin_app, quote=quote,

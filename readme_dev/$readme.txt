@@ -8,6 +8,20 @@ fails to parse url
 sh cmd_venv.sh " ApiLogicServer create --project_name=TVF --extended_builder=$ --db_url=mssql+pyodbc://sa:Posey3861@localhost:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no"
 
 
+create from model (eg, copilot)
+
+if __name__ == "__main__":
+    import sqlalchemy
+    from sqlalchemy.orm import Session
+    e = sqlalchemy.create_engine('sqlite:///db.db')
+    conn = e.connect()
+
+    with Session(e) as session:
+        print(f'session: {session}')
+        Base.metadata.create_all(e)
+
+
+
 Multi-container Azure deployement
   Note: docker-compose -> docker compose
   https://learn.microsoft.com/en-us/azure/app-service/quickstart-multi-container

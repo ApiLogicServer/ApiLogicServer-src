@@ -34,6 +34,8 @@ class CliArgsBase():
         """ full nodal name """
         self.db_url = None # type: str
         """ not what was intially specified (e,g, tutorial uses nw, nw-) """
+        self.from_model = None # type
+        """ create database from this model (e.g. model from copiot)"""
         self.bind_key = None # type: str
         self.bind_key_url_separator = None # type: str
         self.api_name = None # type: str
@@ -46,10 +48,13 @@ class CliArgsBase():
         self.open_with = None # type: str
         self.run = None
         self.use_model = None # type: str
+        """ use existing (corrected) database/models.py to create api and app"""
         self.admin_app = None
         self.flask_appbuilder = None
         self.favorites = None # type: str
+        """ names of attributes favored to show first on forms"""
         self.non_favorites = None # type: str
+        """ names of attributes favored to show *last* on forms"""
         self.react_admin = None
         self.extended_builder = None
         self.include_tables = None

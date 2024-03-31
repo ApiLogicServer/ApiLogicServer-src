@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.03.46"
+__version__ = "10.03.47"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t03/30/2024 - 10.03.47: ApiLogicServer create from-model (eg copilot) \n"\
     "\t03/28/2024 - 10.03.46: Python 3.12, View support, CLI option-names, Keycloak preview \n"\
     "\t03/14/2024 - 10.03.25: View support, CLI option-names, Keycloak preview \n"\
     "\t03/03/2024 - 10.03.16: Issue 50 (Numeric defaults), Pattern/Design for Behave examples, fix tutorial dir names \n"\
@@ -89,6 +90,7 @@ import os
 import platform
 import importlib
 import fnmatch
+import create_from_model.create_db_from_model as create_db_from_model
 
 
 def is_docker() -> bool:
@@ -890,6 +892,7 @@ class ProjectRun(Project):
     def __init__(self, command: str, project_name: str, 
                      db_url: str,
                      api_name: str="api",
+                     from_model: str="",
                      host: str='localhost', 
                      port: str='5656', 
                      swagger_host: str="localhost", 
@@ -920,6 +923,7 @@ class ProjectRun(Project):
         if self.project_name == "":
             self.project_name = default_project_name
         self.db_url = db_url
+        self.from_model = from_model
         self.user_db_url = db_url  # retained for debug
         self.bind_key = bind_key
         self.api_name = api_name
@@ -965,8 +969,9 @@ class ProjectRun(Project):
                 creating_or_updating = "Updating"
             log.debug(f'\n\n{creating_or_updating} ApiLogicProject with options:')
             log.debug(f'  --db_url={self.db_url}')
-            log.debug(f'  --bind_key={self.bind_key}')
             log.debug(f'  --project_name={self.project_name}   (pwd: {self.os_cwd})')
+            log.debug(f'  --from_model={self.from_model}')
+            log.debug(f'  --bind_key={self.bind_key}')
             log.debug(f'  --api_name={self.api_name}')
             log.debug(f'  --admin_app={self.admin_app}')
             log.debug(f'  --react_admin={self.react_admin}')
@@ -1488,6 +1493,10 @@ from database import <project.bind_key>_models
         self.project_directory_actual = os.path.abspath(self.project_directory)  # make path absolute, not relative (no /../)
         self.project_directory_path = Path(self.project_directory_actual)
 
+        if self.from_model != "":
+            create_db_from_model.create(self)
+
+
         self.abs_db_url, self.nw_db_status, self.model_file_name = create_utils.get_abs_db_url("0. Using Sample DB", self)
 
         if self.extended_builder == "$":
@@ -1627,6 +1636,7 @@ def key_module_map():
 
     ProjectRun.create_project()                             # main driver, calls...
     create_utils.copy_md()                                  # copy md files
+    ProjectRun.create_from_model()                          # eg, from copilot
     create_utils.get_abs_db_url()                           # nw set here, dbname, db abbrevs
     create_project_and_overlay_prototypes()                 # clone project, overlay nw etc
     model_creation_services = ModelCreationServices()       # creates resource_list (python db model); ctor calls...
