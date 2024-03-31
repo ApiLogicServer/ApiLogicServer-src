@@ -1210,6 +1210,7 @@
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/api_logic_server_cli",
+            "justMyCode": false,
             "program": "cli.py",
             "redirectOutput": true,
             "console": "integratedTerminal"

@@ -1,6 +1,7 @@
 # use Run Config 0, or... (e.g., to test)
 #
 #    cd ApiLogicServer-src
+#    delete the build & dist directories
 #    $ python3 -m build
 #
 #    cd ApiLogicServer  # with venv
