@@ -15,7 +15,7 @@ echo "..Script directory: $SCRIPT_DIR"
 
 pushd $SCRIPT_DIR/../../../../build_and_test/ApiLogicServer
 INSTALL_DIR=$(pwd)
-rm -r $INSTALL_DIR/*
+# rm -r $INSTALL_DIR/*
 popd
 
 mkdir -p $SCRIPT_DIR/../../../../clean/ApiLogicServer
