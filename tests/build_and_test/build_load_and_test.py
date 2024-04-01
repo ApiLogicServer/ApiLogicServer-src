@@ -461,6 +461,8 @@ def docker_creation_tests(api_logic_server_tests_path):
     src = api_logic_server_tests_path.joinpath('creation_tests').joinpath('docker-commands.sh')
     dest = get_servers_build_and_test_path().joinpath('ApiLogicServer').joinpath('dockers')
     shutil.copy(src, dest)
+    assert os.path.isfile(dest / 'docker-commands.sh'), \
+        'Internal error - docker-commands.sh not found in creation_tests'
     build_projects_cmd = (
         f'docker run -it --name api_logic_server_local --rm '
         f'--net dev-network -p 5656:5656 -p 5002:5002 ' 
@@ -470,7 +472,7 @@ def docker_creation_tests(api_logic_server_tests_path):
     print(f'\n\ndocker_creation_tests: 2. build projects: {build_projects_cmd}')
     build_projects = run_command(build_projects_cmd,
         cwd=api_logic_server_home_path,
-        msg=f'\nBuilding projects from Docker container at: {str(api_logic_server_home_path)}')
+        msg=f'\nBuilding projects from Docker container at: {str(api_logic_server_home_path)}\n')
     assert build_projects.returncode == 0, f'Docker build projects failed: {build_projects}'
     print('\n\ndocker_creation_tests: Built projects from container\n\n')
     print('==> Verify manually - run sqlserver')
