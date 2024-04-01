@@ -34,7 +34,7 @@ def create(project: Project):
     spec.loader.exec_module(models_module)  # runs "bare" module code (e.g., initialization)
 
     e = sqlalchemy.create_engine(db_url)
-    metadata = models_module.metadata
+    metadata = models_module.Base.metadata
     assert len(metadata.tables) > 0, f'No tables found in {models_file}'
     with Session(e) as session:
         log.debug(f'session: {session}')
