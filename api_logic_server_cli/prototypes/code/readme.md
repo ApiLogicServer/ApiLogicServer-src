@@ -20,15 +20,39 @@ Then, try your own databases
 
 ## Create from AI
 
+### Using models
+
 You can use Copilot chat (left menu, if extension installed) to:
 
-1. create a model
-2. paste it into a model file
-3. create 
+1. Create a model, eg:
+```
+create a SQLAlchemy model of Employees and Skills
+```
+2. Paste the copilot response into a new `models.py` file
+3. Create your project:
 
 ```bash
 als create --project-name=copilot --from-model=models.py --db-url=sqlite
 ```
+
+&nbsp;
+
+### Using databases
+
+1. Create a database script, eg:
+```
+create a sqlite database of Employees and Skills
+```
+2. Paste the copilot response into a new `models.py` file
+3. Run `models.py` to create the `employee_skills.db` database
+2. Create your project:
+
+```bash
+  als create  --project-name=copilot --db-url=sqlite:///employee_skills.db
+
+```
+
+&nbsp;
 
 ## Environment Variables
 
