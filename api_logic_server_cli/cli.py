@@ -243,10 +243,6 @@ def main(ctx):
     if not ctx.invoked_subcommand:  # no command, per invoke_without_command=True
         to_dir = os.getcwd()
         path = Path(__file__)
-        is_dev = False
-        if 'org_git' in str(get_api_logic_server_path()):  # for testing
-            to_dir = get_api_logic_server_path().parent.parent.parent / 'build_and_test/ApiLogicServer'
-            is_dev = True
         from_dir = get_api_logic_server_path() / 'prototypes/code'
         to_dir_str = str(to_dir)
         copied_path = shutil.copytree(src=from_dir, dst=to_dir, dirs_exist_ok=True)
@@ -257,12 +253,11 @@ def main(ctx):
         if set_defaultInterpreterPath:
             defaultInterpreterPath_str = sys.executable
             defaultInterpreterPath = Path(defaultInterpreterPath_str)
-            if is_dev:  # apilogicserver dev is special case
-                if os.name == "nt":
-                    defaultInterpreterPath = project.api_logic_server_dir_path.parent.parent.parent.joinpath('build_and_test/ApiLogicServer/venv/scripts/python.exe')
-                else:
-                    defaultInterpreterPath = to_dir / 'venv/bin/python'
-                defaultInterpreterPath_str = str(defaultInterpreterPath)
+            if os.name == "nt":
+                defaultInterpreterPath = project.api_logic_server_dir_path.parent.parent.parent.joinpath('build_and_test/ApiLogicServer/venv/scripts/python.exe')
+            else:
+                defaultInterpreterPath = to_dir / 'venv/bin/python'
+            defaultInterpreterPath_str = str(defaultInterpreterPath)
             # ApiLogicServerPython
             vscode_settings_path = to_dir / '.vscode/settings.json'
             if os.name == "nt":

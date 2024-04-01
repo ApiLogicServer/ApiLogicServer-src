@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.03.55"
+__version__ = "10.03.57"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t03/31/2024 - 10.03.55: ApiLogicServer create from-model (eg copilot) \n"\
+    "\t04/01/2024 - 10.03.57: ApiLogicServer create from-model (eg copilot) \n"\
     "\t03/28/2024 - 10.03.46: Python 3.12, View support, CLI option-names, Keycloak preview \n"\
     "\t03/14/2024 - 10.03.25: View support, CLI option-names, Keycloak preview \n"\
     "\t03/03/2024 - 10.03.16: Issue 50 (Numeric defaults), Pattern/Design for Behave examples, fix tutorial dir names \n"\
