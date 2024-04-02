@@ -1333,9 +1333,9 @@ from database import <project.bind_key>_models
     def add_sample_ai_customizations(self, do_show_messages: bool = True):
         """ Add customizations to sample_ai (default creation)
 
-        1. Deep copy prototypes/sample_ai (adds logic)
+        1. Deep copy prototypes/sample_ai (adds logic and security)
 
-        2. Create readme files: Sample-AO (copy_md), api/integration_defs/readme.md  TODO not done, fix cmts
+        2. Create readme files: Sample-AI (copy_md), api/integration_defs/readme.md  TODO not done, fix cmts
 
         Args:
         """

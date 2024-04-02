@@ -29,6 +29,12 @@ You can use Copilot chat (if extension installed):
 ![copilot](images/copilot.png)
 
 1. Create a model, eg:
+
+<details markdown>
+
+<summary> Copilot prompt </summary>
+
+After installing, you can optionally run the first demo, above.  The key training activities are:
 ```
 Use SQLAlchemy to create a sqlite database named sample_ai.sqlite, with customers, orders, items and product
 
@@ -52,6 +58,7 @@ Enforce the Check Credit requirement (do not generate check constraints):
 ```bash
 als create --project-name=sample_ai --from-model=sample_ai.py --db-url=sqlite
 ```
+</details>
 
 4. This will create your database, create an API Logic Project from it, and launch your IDE.
 
@@ -76,5 +83,5 @@ als create  --project-name=copilot --db-url=sqlite:///employee_skills.db
 ## Environment Variables
 
 Check:
-1. `APILOGICSERVER_AUTO_OPEN`
+1. `APILOGICSERVER_AUTO_OPEN` - set to code
 2. `APILOGICSERVER_VERBOSE`
