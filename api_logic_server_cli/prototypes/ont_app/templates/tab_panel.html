@@ -1,18 +1,38 @@
-<mat-tab label="{{ title }}">
+<mat-tab label="{{ tabTitle }}">
   <o-form #form attr="{{ entity }}_form_edit" service="{{ service }}" entity="{{ entity }}" fxLayout="column" show-header="no"
         #oDetailForm keys="{{ keys }}" keys-sql-types="{{ keySqlType }}" columns="{{ columns }}" show-header-navigation="no"
         (onDataLoaded)="onDataLoaded($event)">
 
     <div layout-padding>
-      <<o-table attr="{{ tableAttr }}" service="{{ service }}" entity="{{ entity }}" keys="{{ keys }}"
-      columns="{{ columns }}"
-      detail-form-route="{{ detailFormRoute }}" edit-form-route="{{ editFormRoute }}"
-      visible-columns="{{ visibleColumns }}"  sort-columns="{{ sortColumns }}" query-rows="8" quick-filter="yes"
-      row-height="small" select-all-checkbox="true" pageable="yes"  virtual-scroll="yes" detail-mode='none'
-        insert-button="false" delete-button="false" fixed-header="true" class="vertical-padding-8">
-        {% for table_column in row_columns %}
-            {{ table_column }}
-        {% endfor %}
+      <<o-table 
+        attr="{{ tableAttr }}" 
+        service="{{ service }}" 
+        entity="{{ entity }}" 
+        keys="{{ keys }}"
+        columns="{{ columns }}"  
+        horizontal-scroll="yes"
+        detail-form-route="{{ detailFormRoute }}" 
+        edit-form-route="{{ editFormRoute }}"
+        visible-columns="{{ visibleColumns }}"  
+        sort-columns="{{ sortColumns }}" 
+        query-rows="8" 
+        quick-filter="yes"
+        row-height="small" 
+        select-all-checkbox="true" 
+        pageable="yes"  
+        virtual-scroll="yes" 
+        detail-mode='none'
+        insert-button="false" 
+        delete-button="false" 
+        fixed-header="true" 
+        class="vertical-padding-8"
+        edition-mode="{{ editOnMode }}" horizontal-scroll="yes">
+        {% if editOnMode == 'edit' %}
+          <!-- parent-keys="{{ parentKeys }}" -->
+          {% for table_column in row_columns %}
+              {{ table_column }}
+          {% endfor %}
+        {% endif %}
       </o-table>
     </div>
   </o-form>
