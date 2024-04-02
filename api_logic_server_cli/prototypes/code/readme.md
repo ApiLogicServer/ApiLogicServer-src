@@ -22,13 +22,15 @@ Then, try your own databases
 
 You can use Copilot Chat to create databases.
 
-### Using models
+### AI-Created Models
 
-You can use Copilot chat (left menu, if extension installed) to:
+You can use Copilot chat (if extension installed):
+
+![copilot](images/copilot.png)
 
 1. Create a model, eg:
 ```
-Create a sqlite database for customers, orders, items and product
+Use SQLAlchemy to create a sqlite database named sample_ai.sqlite, with customers, orders, items and product
 
 Hints: use autonum keys, allow nulls, Decimal types, foreign keys, no check constraints.
 
@@ -48,12 +50,14 @@ Enforce the Check Credit requirement (do not generate check constraints):
 3. Create your project:
 
 ```bash
-als create --project-name=copilot --from-model=models.py --db-url=sqlite
+als create --project-name=sample_ai --from-model=sample_ai.py --db-url=sqlite
 ```
+
+4. This will create your database, create an API Logic Project from it, and launch your IDE.
 
 &nbsp;
 
-### Using databases
+### AI-Created Databases
 
 1. Create a database script, eg:
 ```
@@ -61,11 +65,10 @@ create a sqlite database of Employees and Skills
 ```
 2. Paste the copilot response into a new `models.py` file
 3. Run `models.py` to create the `employee_skills.db` database
-2. Create your project:
+4. Create your project:
 
 ```bash
-  als create  --project-name=copilot --db-url=sqlite:///employee_skills.db
-
+als create  --project-name=copilot --db-url=sqlite:///employee_skills.db
 ```
 
 &nbsp;
