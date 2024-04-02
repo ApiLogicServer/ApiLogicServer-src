@@ -1,8 +1,15 @@
-<o-form-container breadcrumb="yes" breadcrumb-label-columns="{{ keys }}" breadcrumb-separator=", ">
+<o-form-container breadcrumb="yes" breadcrumb-label-columns="{{ breadcrumbLabel }}" breadcrumb-separator=", ">
   <mat-tab-group fxFill>
     <mat-tab label="{{ title }}">
-      <o-form #form attr="{{ entity }}_form_edit" service="{{ service }}" entity="{{ entity }}" fxLayout="column" show-header="yes" header-actions="R;I;U;D"
-        #oDetailForm keys="{{ keys }}" keys-sql-types="{{ keySqlType }}" columns="{{ columns }}" show-header-navigation="yes"
+      <o-form #form attr="{{ entity }}_form_edit" 
+        service="{{ service }}" 
+        entity="{{ entity }}" 
+        fxLayout="column" 
+        show-header="yes" 
+        header-actions="R;U;D"
+        #oDetailForm keys="{{ keys }}" 
+        keys-sql-types="{{ keySqlType }}" 
+        columns="{{ columns }}" show-header-navigation="yes"
         (onDataLoaded)="onDataLoaded($event)">
 
 

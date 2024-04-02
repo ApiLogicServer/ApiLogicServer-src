@@ -63,7 +63,10 @@ def parseFilter(filter:dict,sqltypes: any):
         if f == '@basic_expression':
             continue
         q = "" if sqltypes[f] != 12 else "'"
-        filter_result += f'{a} "{f}" = {q}{filter[f]}{q}'
+        value = filter[f]
+        if f == "CategoryName":
+            f = "CategoryName_ColumnName" #hack to use real column name
+        filter_result += f'{a} "{f}" = {q}{value}{q}'
         a = " and "
     return None if filter_result == "" else filter_result
 
