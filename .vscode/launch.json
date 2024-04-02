@@ -1206,12 +1206,12 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "ApiLogicServer <empty>",
+            "name": "ApiLogicServer Manager <empty>",
             "type": "debugpy",
             "request": "launch",
-            "cwd": "${workspaceFolder}/api_logic_server_cli",
+            "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
             "justMyCode": false,
-            "program": "cli.py",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "console": "integratedTerminal"
         },

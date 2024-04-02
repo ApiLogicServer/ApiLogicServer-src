@@ -15,7 +15,7 @@
     },
     "debug.console.wordWrap": false,    
     "python.terminal.activateEnvInCurrentTerminal": true,
-    "python.defaultInterpreterPath": "~/venv/bin/python",
+    "python.defaultInterpreterPath": "./venv/bin/python",
     "python.terminal.activateEnvironment": true,
     "workbench.editorAssociations": {
         "*.md": "vscode.markdown.preview.editor"
