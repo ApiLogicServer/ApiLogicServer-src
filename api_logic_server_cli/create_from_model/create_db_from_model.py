@@ -21,7 +21,6 @@ def create(project: Project):
     path = Path(__file__)
     if 'org_git' in str(path) and str(models_file) == '.':  # for testing
         models_file = path.parent.parent.parent / 'api_logic_server_cli/prototypes/sample_ai/database/chatgpt/sample_ai_models.py'   
-        models_file = path.parent.parent.parent / 'api_logic_server_cli/prototypes/sample_ai/database/chatgpt/copilot_models.py'   
     if 'sqlite' in db_url:
         db_url = str(models_file).replace('py', 'sqlite')
         db_url = 'sqlite:///'+ db_url# relative to cwd, == servers in launch
@@ -34,7 +33,9 @@ def create(project: Project):
     spec.loader.exec_module(models_module)  # runs "bare" module code (e.g., initialization)
 
     e = sqlalchemy.create_engine(db_url)
-    metadata = models_module.metadata
+    if not hasattr(models_module, "Base"):
+        raise ValueError(f'No Base class found in {models_file}.  \n..Perhaps these are sql statements, not SQLAlchemy classes.')
+    metadata = models_module.Base.metadata
     assert len(metadata.tables) > 0, f'No tables found in {models_file}'
     with Session(e) as session:
         log.debug(f'session: {session}')

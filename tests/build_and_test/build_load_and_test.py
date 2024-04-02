@@ -411,11 +411,11 @@ def verify_include_models( project_name : str ='include_exclude',
 
 
 def delete_build_directories(install_api_logic_server_path):
-    if os.path.exists(install_api_logic_server_path):
-        # rm -r ApiLogicServer.egg-info; rm -r build; rm -r dist
-        delete_dir(dir_path=str(get_api_logic_server_path().joinpath('ApiLogicServer.egg-info')), msg="\ndelete egg ")
-        delete_dir(dir_path=str(get_api_logic_server_path().joinpath('build')), msg="delete build ")
-        delete_dir(dir_path=str(get_api_logic_server_path().joinpath('dist')), msg="delete dist ")
+    # if os.path.exists(install_api_logic_server_path):
+    # rm -r ApiLogicServer.egg-info; rm -r build; rm -r dist
+    delete_dir(dir_path=str(get_api_logic_server_path().joinpath('ApiLogicServer.egg-info')), msg="\ndelete egg ")
+    delete_dir(dir_path=str(get_api_logic_server_path().joinpath('build')), msg="delete build ")
+    delete_dir(dir_path=str(get_api_logic_server_path().joinpath('dist')), msg="delete dist ")
     try:
         os.mkdir(install_api_logic_server_path, mode = 0o777)
         os.mkdir(install_api_logic_server_path.joinpath('dockers'), mode = 0o777)

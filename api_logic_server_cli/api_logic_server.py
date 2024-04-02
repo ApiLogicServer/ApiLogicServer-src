@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.03.55"
+__version__ = "10.03.59"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t03/31/2024 - 10.03.55: ApiLogicServer create from-model (eg copilot) \n"\
+    "\t04/01/2024 - 10.03.59: ApiLogicServer create from-model (eg copilot) \n"\
     "\t03/28/2024 - 10.03.46: Python 3.12, View support, CLI option-names, Keycloak preview \n"\
     "\t03/14/2024 - 10.03.25: View support, CLI option-names, Keycloak preview \n"\
     "\t03/03/2024 - 10.03.16: Issue 50 (Numeric defaults), Pattern/Design for Behave examples, fix tutorial dir names \n"\
@@ -492,7 +492,6 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
 
         if project.db_url == 'sqlite:///sample_ai.sqlite':  # work-around - VSCode run config arg parsing (dbviz STRESS)
             create_utils.copy_md(project = project, from_doc_file = "Sample-AI.md", to_project_file='Sample-AI.md')
-            # z_copy_md(project = project, from_doc_file="Sample-AI.md", to_project_file='Sample-AI.md')
 
         if "postgres" or "mysql" in project.db_url:
             fixup_devops_for_postgres_mysql(project)
@@ -580,7 +579,7 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
 
 
 def get_windows_path_with_slashes(url: str) -> str:
-    """ idiotic fix for windows (\ --> \\\\)
+    """ idiotic fix for windows (use 4 slashes to get 1)
 
     https://stackoverflow.com/questions/1347791/unicode-error-unicodeescape-codec-cant-decode-bytes-cannot-open-text-file
     """
