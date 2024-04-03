@@ -392,43 +392,23 @@ class OntBuilder(object):
         """
         template = self.get_template(template_name)
         entity_vars = self.get_entity_vars(entity)
-        fks, attrType = get_foreign_keys(entity, favorites)
+        fks = get_foreign_keys(entity, favorites)
         row_cols = []
         for column in entity.columns:
-            rv = self.get_new_column(column, fks, attrType)
+            rv = self.get_new_column(column, fks, entity)
             row_cols.append(rv)
                 
         entity_vars["row_columns"] = row_cols
         return  template.render(entity_vars)
 
-    def get_new_column(self, column, fks, attrType):
+    def get_new_column(self, column, fks, entity):
         col_var = self.get_column_attrs(column)
-        use_list = False
         for fk in fks:
             fk_entity = self.get_entity(fk["resource"])
-            fk_entity_var = self.get_entity_vars(fk_entity)
-            if column.name in fk["attrs"]:
-                use_list = True
-                fk_column = find_column(fk_entity, fk_entity.primary_key[0])
-                col_var["attr"] = fk["attrs"][0]
-                col_var["service"] = fk["resource"].lower()
-                col_var["entity"] = fk["resource"].lower()
-                col_var["comboColumnType"] = fk_column.type if fk_column else "INTEGER"
-                col_var["columns"] = fk["columns"]
-                col_var["visibleColumns"] = fk_entity_var["favorite"]
-                col_var["valueColumn"] = fk["attrs"][0]
-                col_var["valueColumnType"] = fk_column.type
-                col_var["keys"] = fk["attrs"][0]
-                fk_entity_var.update(col_var)
-                if self.pick_style == "list": # or fk["template"] == "list":
-                    rv = self.pick_list_template.render(col_var)
-                else:
-                    rv = self.combo_list_template.render(col_var)
-        if not use_list:
-            rv = self.gen_field_template(column, col_var)
-
-
-        return rv
+            if column.name in fk["attrs"]  and fk["direction"] == "toone" and len(fk["attrs"]) == 1:
+                return self.gen_pick_list_col(col_var, fk, entity)
+        return self.gen_field_template(column, col_var)
+    
     def get_column_attrs(self, column) -> dict:
         return {
             "attr": column.name, 
@@ -457,10 +437,10 @@ class OntBuilder(object):
         """
         template = self.get_template(template_name)
         entity_vars = self.get_entity_vars(entity)
-        fks, attrType = get_foreign_keys(entity, favorites)
+        fks = get_foreign_keys(entity, favorites)
         row_cols = []
         for column in entity.columns:
-            rv = self.gen_detail_rows(column, fks, attrType)
+            rv = self.gen_detail_rows(column, fks, entity)
             row_cols.append(rv)
 
         entity_vars["row_columns"] = row_cols
@@ -469,33 +449,34 @@ class OntBuilder(object):
         entity_vars["tab_panels"] = self.get_tabs(entity, fks)
         return template.render(entity_vars)
 
-    def gen_detail_rows(self, column, fks, attrType):
+    def gen_detail_rows(self, column, fks, entity):
         col_var = self.get_column_attrs(column)
-        use_list = False
         for fk in fks:
-            fk_entity = self.get_entity(fk["resource"])
-            entity_var = self.get_entity_vars(fk_entity)
             # TODO - not sure how to handle multiple fks attrs - so only support 1 for now
             if column.name in fk["attrs"] and fk["direction"] == "toone" and len(fk["attrs"]) == 1:
-                use_list = True
-                col_var["attr"] = fk["attrs"][0]
-                col_var["service"] = fk["resource"].lower()
-                col_var["entity"] = fk["resource"].lower()
-                col_var["attrType"] = attrType
-                col_var["keySqlType"] = entity_var["primaryKey"]
-                col_var["width"] = "680px"
-                col_var["columns"] = fk["columns"]
-                col_var["visibleColumns"] = entity_var["favorite"]
-                col_var["valueColumn"] = fk["attrs"][0]
-                col_var["valueColumnType"] = attrType
-                col_var["keys"] = fk["attrs"][0]
-                if self.pick_style == "list": # or fk["template"] == "list":
-                    rv = self.pick_list_template.render(col_var)
-                else:
-                    rv = self.combo_list_template.render(col_var)
-        if not use_list:
-            rv = self.gen_field_template(column, col_var)
+                return self.gen_pick_list_col(col_var, fk, entity)
+        return self.gen_field_template(column, col_var)
 
+    def gen_pick_list_col(self, col_var, fk, entity) -> str:
+        fk_entity = self.get_entity(fk["resource"])
+        fk_entity_var = self.get_entity_vars(fk_entity)
+        fk_column = find_column(fk_entity, fk_entity.primary_key[0])
+        pkey = entity["primary_key"][0]
+        col_var["attr"] = fk["attrs"][0]
+        col_var["service"] = fk["resource"].lower()
+        col_var["entity"] = fk["resource"].lower()
+        col_var["comboColumnType"] = fk_column.type if fk_column else "INTEGER"
+        col_var["columns"] = f'{pkey};{fk["columns"]}'
+        col_var["visibleColumns"] = f'{pkey};{fk_entity_var["favorite"]}'
+        col_var["valueColumn"] = pkey
+        col_var["valueColumnType"] = fk["attrType"]
+        col_var["keys"] = pkey
+                
+        if self.pick_style == "list": # or fk["template"] == "list":
+            rv = self.pick_list_template.render(col_var)
+        else:
+            rv = self.combo_list_template.render(col_var)
+        
         return rv
     def load_tab_template(self, entity, template_var: any, parent_pkey:str) -> str:
         tab_template = self.tab_panel
@@ -659,7 +640,7 @@ class OntBuilder(object):
 
         return template.render(menuitems=menuitems, importitems=import_cards,card_components=menu_components)
 
-def get_foreign_keys(entity:any, favorites:any ) -> any:
+def get_foreign_keys(entity:any, favorites:any ) -> list:
     fks = []
     attrType = "INTEGER"
     for fkey in entity.tab_groups:
@@ -676,7 +657,7 @@ def get_foreign_keys(entity:any, favorites:any ) -> any:
                 "direction": fkey.direction
             }
             fks.append(fk)
-    return fks, attrType
+    return fks
 
 def write_card_file(app_path: Path, entity_name: str, file_name: str, source: str):
     import pathlib
