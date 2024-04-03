@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.03.59"
+__version__ = "10.03.60"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t04/01/2024 - 10.03.59: ApiLogicServer create from-model (eg copilot) \n"\
+    "\t04/02/2024 - 10.03.60: ApiLogicServer create from-model (eg copilot) \n"\
     "\t03/28/2024 - 10.03.46: Python 3.12, View support, CLI option-names, Keycloak preview \n"\
     "\t03/14/2024 - 10.03.25: View support, CLI option-names, Keycloak preview \n"\
     "\t03/03/2024 - 10.03.16: Issue 50 (Numeric defaults), Pattern/Design for Behave examples, fix tutorial dir names \n"\
@@ -1333,9 +1333,9 @@ from database import <project.bind_key>_models
     def add_sample_ai_customizations(self, do_show_messages: bool = True):
         """ Add customizations to sample_ai (default creation)
 
-        1. Deep copy prototypes/sample_ai (adds logic)
+        1. Deep copy prototypes/sample_ai (adds logic and security)
 
-        2. Create readme files: Sample-AO (copy_md), api/integration_defs/readme.md  TODO not done, fix cmts
+        2. Create readme files: Sample-AI (copy_md), api/integration_defs/readme.md  TODO not done, fix cmts
 
         Args:
         """
