@@ -458,19 +458,27 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         print(filter, columns, sqltypes, offset, pagesize, orderBy, data)
         return filter, columns, sqltypes, offset, pagesize, orderBy, data
     
-    def parseFilter(filter:dict,sqltypes: any) -> str:
+    def parseFilter(filter:dict,sqltypes: any):
         # {filter":{"@basic_expression":{"lop":"BALANCE","op":"<=","rop":35000}}
         filter_result = ""
         a = ""
-        for db_colname in filter:
-            if db_colname == '@basic_expression':
-                continue
-            q = "" if db_colname in ['OFFICEID','CUSTOMERID','ACCOUNTID','BRANCHID'] else "'" 
-            name = filter[db_colname] 
-            filter_result += f'{a}"{db_colname}" = {q}{name}{q}'
+        for f in filter:
+            value = filter[f]
+            q = "'" 
+            if f == '@basic_expression':
+                #{'lop': 'CustomerId', 'op': 'LIKE', 'rop': '%A%'}}
+                if'lop' in value.keys() and 'rop' in value.keys():
+                    lop = value["lop"]
+                    op  = value["op"]
+                    rop  = f"{q}{value['rop']}{q}"
+                    filter_result = f'"{lop}" {op} {rop}'
+                    return filter_result
+            q = "" if sqltypes[f] != 12 else "'"
+            if f == "CategoryName":
+                f = "CategoryName_ColumnName" #hack to use real column name
+            filter_result += f'{a} "{f}" = {q}{value}{q}'
             a = " and "
-        return None if filter_result == "" else filter_result
-        
+        return None if filter_result == "" else filter_result     
     def parseData(data:dict = None) -> str:
         # convert dict to str
         result = ""
