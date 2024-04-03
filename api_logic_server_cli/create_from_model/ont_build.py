@@ -98,7 +98,7 @@ class OntBuilder(object):
             '<o-table-column attr="{{ attr }}" title="{{ title }}" type="currency" editable="{{ editable }}" required="{{ required }}" currency-symbol="$" currency-symbol-position="left" thousand-separator=","decimal-separator="."></o-table-column>'
         )  # currency 100,00.00 settings from global
         self.table_date_template = Template(
-            '<o-table-column attr="{{ attr }}" title="{{ title }}" type="date" editable="{{ editable }}" required="{{ required }}" ></o-table-column>'
+            '<o-table-column attr="{{ attr }}" title="{{ title }}" type="date" editable="{{ editable }}" required="{{ required }}" format="LL"></o-table-column>'
         )
         self.table_integer_template = Template(
             '<o-table-column attr="{{ attr }}" title="{{ title }}" type="integer" editable="{{ editable }}" required="{{ required }}" ></o-table-column>'
@@ -121,7 +121,7 @@ class OntBuilder(object):
             '<o-text-input attr="{{ attr }}" title="{{ title }}" type="currency" editable="{{ editable }}" required="{{ required }}" currency-symbol="$" currency-symbol-position="left" thousand-separator=","decimal-separator="."></o-text-input>'
         )  # currency 100,00.00 settings from global
         self.date_template = Template(
-            '<o-text-input attr="{{ attr }}" title="{{ title }}" type="date" editable="{{ editable }}" required="{{ required }}" ></o-text-input>'
+            '<o-text-input attr="{{ attr }}" title="{{ title }}" type="date" editable="{{ editable }}" required="{{ required }}" format="LL" ></o-text-input>'
         )
         self.integer_template = Template(
             '<o-text-input attr="{{ attr }}" title="{{ title }}" type="integer" editable="{{ editable }}" required="{{ required }}" ></o-text-input>'
@@ -549,27 +549,28 @@ class OntBuilder(object):
     def gen_field_template(self,column, col_var):
         # This is for HOME grid style
         if hasattr(column, "type") and column.type != DotMap():
-            col_type = column.type
-            if col_type.startswith("DECIMAL") or col_type.startswith("NUMERIC"):
-                rv = self.currency_template.render(col_var)
-            elif col_type == "DOUBLE":
+            col_type = column.type.upper()
+            template_type = column.template.upper() if hasattr(column,"template") and column.template != DotMap() else col_type
+            if col_type.startswith("DECIMAL") or col_type.startswith("NUMERIC") or template_type == "CURRENCY":
+                rv = self.currency_template.render(col_var) #TODO - not all decimal are currency
+            elif col_type == "DOUBLE" or col_type == "REAL":
                 rv = self.real_template.render(col_var)
-            elif col_type == "DATE":
+            elif col_type == "DATE" or template_type == "DATE":
                 rv = self.date_template.render(col_var)
             elif col_type == "INTEGER":
                 rv = self.integer_template.render(col_var)
-            elif col_type == "IMAGE":
+            elif col_type == "IMAGE" or template_type == "IMAGE":
                 rv = self.image_template.render(col_var)
-            elif col_type == "TEXTAREA":
+            elif col_type == "TEXTAREA" or template_type == "TEXTAREA":
                 rv = self.textarea_template.render(col_var)
             else:
                 # VARCHAR - add text area for
-                if column.template == "textarea":
+                if template_type == "TEXTAREA":
                     rv = self.textarea_template.render(col_var)
                 else:
                     rv = self.text_template.render(col_var)
         else:
-            if column.template == "textarea":
+            if template_type == "TEXTAREA":
                 rv = self.textarea_template.render(col_var)
             else:
                 rv = self.text_template.render(col_var)
