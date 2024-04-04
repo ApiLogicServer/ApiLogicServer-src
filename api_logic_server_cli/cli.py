@@ -243,7 +243,7 @@ def main(ctx):
     """
     pass  # all commands come through here
     if not ctx.invoked_subcommand:  # no command, per invoke_without_command=True
-        pass  # we could do something more special here if no command passed
+            sys.stdout.write("    Suggestion: ApiLogicServer manager \n\n\n")
      
 
 @main.command("manager")
