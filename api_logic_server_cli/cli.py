@@ -228,7 +228,9 @@ def main(ctx):
         And: https://apilogicserver.github.io/Docs/Database-Connectivity/
 
 \b
-    1. Create a project; examples:
+    1. als manager  # create and customize API Logic Projects
+\b
+    2. Create a project; examples:
 
 \b
         ApiLogicServer create --db-url= --project-name=     # defaults to Northwind sample
@@ -241,41 +243,48 @@ def main(ctx):
     """
     pass  # all commands come through here
     if not ctx.invoked_subcommand:  # no command, per invoke_without_command=True
-        to_dir = os.getcwd()
-        path = Path(__file__)
-        from_dir = get_api_logic_server_path() / 'prototypes/code'
-        to_dir_str = str(to_dir)
-        copied_path = shutil.copytree(src=from_dir, dst=to_dir, dirs_exist_ok=True)
-        log.info(f"copied_path: {copied_path}")
-        pass
-
-        set_defaultInterpreterPath = False
-        if set_defaultInterpreterPath:
-            defaultInterpreterPath_str = sys.executable
-            defaultInterpreterPath = Path(defaultInterpreterPath_str)
-            if os.name == "nt":
-                defaultInterpreterPath = project.api_logic_server_dir_path.parent.parent.parent.joinpath('build_and_test/ApiLogicServer/venv/scripts/python.exe')
-            else:
-                defaultInterpreterPath = to_dir / 'venv/bin/python'
-            defaultInterpreterPath_str = str(defaultInterpreterPath)
-            # ApiLogicServerPython
-            vscode_settings_path = to_dir / '.vscode/settings.json'
-            if os.name == "nt":
-                defaultInterpreterPath_str = get_windows_path_with_slashes(url=defaultInterpreterPath_str)
-                # vscode_settings_path = get_windows_path_with_slashes(url=vscode_settings_path)
-            create_utils.replace_string_in_file(search_for = 'ApiLogicServerPython',
-                                                replace_with=defaultInterpreterPath_str,
-                                                in_file=vscode_settings_path)
-            log.debug(f'.. ..Updated .vscode/settings.json with "python.defaultInterpreterPath": "{defaultInterpreterPath_str}"...')
-        os.putenv("APILOGICSERVER_AUTO_OPEN", "code")
-        os.putenv("APILOGICSERVER_VERBOSE", "false")
-        create_utils.run_command(
-            cmd=f'code {to_dir_str}',
-            env=None, 
-            msg="no-msg", 
-            project=None)
+        pass  # we could do something more special here if no command passed
      
 
+@main.command("manager")
+@click.pass_context
+def manager(ctx):
+    """
+        Create and Manage API Logic Projects.
+    """
+    to_dir = os.getcwd()
+    path = Path(__file__)
+    from_dir = get_api_logic_server_path() / 'prototypes/code'
+    to_dir_str = str(to_dir)
+    copied_path = shutil.copytree(src=from_dir, dst=to_dir, dirs_exist_ok=True)
+    log.info(f"copied_path: {copied_path}")
+    pass
+
+    set_defaultInterpreterPath = False
+    if set_defaultInterpreterPath:
+        defaultInterpreterPath_str = sys.executable
+        defaultInterpreterPath = Path(defaultInterpreterPath_str)
+        if os.name == "nt":
+            defaultInterpreterPath = project.api_logic_server_dir_path.parent.parent.parent.joinpath('build_and_test/ApiLogicServer/venv/scripts/python.exe')
+        else:
+            defaultInterpreterPath = to_dir / 'venv/bin/python'
+        defaultInterpreterPath_str = str(defaultInterpreterPath)
+        # ApiLogicServerPython
+        vscode_settings_path = to_dir / '.vscode/settings.json'
+        if os.name == "nt":
+            defaultInterpreterPath_str = get_windows_path_with_slashes(url=defaultInterpreterPath_str)
+            # vscode_settings_path = get_windows_path_with_slashes(url=vscode_settings_path)
+        create_utils.replace_string_in_file(search_for = 'ApiLogicServerPython',
+                                            replace_with=defaultInterpreterPath_str,
+                                            in_file=vscode_settings_path)
+        log.debug(f'.. ..Updated .vscode/settings.json with "python.defaultInterpreterPath": "{defaultInterpreterPath_str}"...')
+    os.putenv("APILOGICSERVER_AUTO_OPEN", "code")
+    os.putenv("APILOGICSERVER_VERBOSE", "false")
+    create_utils.run_command(
+        cmd=f'code {to_dir_str} readme.md',
+        env=None, 
+        msg="no-msg", 
+        project=None)
 
 
 
