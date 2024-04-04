@@ -50,7 +50,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "2 - Create servers/ApiLogicProject (new IDE)",
+            "name": "2 - Create servers/ApiLogicProject",
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/api_logic_server_cli",
