@@ -281,7 +281,7 @@ def start(ctx):
     os.putenv("APILOGICSERVER_AUTO_OPEN", "code")
     os.putenv("APILOGICSERVER_VERBOSE", "false")
     create_utils.run_command(
-        cmd=f'code {to_dir_str} readme.md',
+        cmd=f'code {to_dir_str}',  # passing readme here fails - loses project setttings
         env=None, 
         msg="no-msg", 
         project=None)
