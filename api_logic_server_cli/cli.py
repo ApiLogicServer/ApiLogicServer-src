@@ -226,24 +226,16 @@ def main(ctx):
 \b
         Doc: https://apilogicserver.github.io/Docs
         And: https://apilogicserver.github.io/Docs/Database-Connectivity/
+\b
+    Suggestions:
 
 \b
-    1. als start  # create and customize API Logic Projects
-\b
-    2. Create a project; examples:
-
-\b
+        ApiLogicServer start                                # create and manage projects
         ApiLogicServer create --db-url= --project-name=     # defaults to Northwind sample
-        ApiLogicServer tutorial                             # guided walk-through
-        ApiLogicServer create                               # prompts for project name, db url
-
-    2. Open the created API Logic Project in your IDE to run, customize.
-
-        Recommendation: Start with first example.
     """
     pass  # all commands come through here
     if not ctx.invoked_subcommand:  # no command, per invoke_without_command=True
-            sys.stdout.write("    Suggestion: ApiLogicServer manager \n\n\n")
+            sys.stdout.write("    Suggestion: ApiLogicServer start \n\n\n")
      
 
 @main.command("start")
