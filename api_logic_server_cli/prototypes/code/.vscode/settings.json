@@ -19,5 +19,6 @@
     "python.terminal.activateEnvironment": true,
     "workbench.editorAssociations": {
         "*.md": "vscode.markdown.preview.editor"
-    }
+    },
+    "workbench.colorTheme": "Visual Studio Light"
 }
