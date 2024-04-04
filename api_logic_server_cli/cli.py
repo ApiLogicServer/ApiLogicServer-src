@@ -228,7 +228,7 @@ def main(ctx):
         And: https://apilogicserver.github.io/Docs/Database-Connectivity/
 
 \b
-    1. als manager  # create and customize API Logic Projects
+    1. als start  # create and customize API Logic Projects
 \b
     2. Create a project; examples:
 
@@ -246,9 +246,9 @@ def main(ctx):
             sys.stdout.write("    Suggestion: ApiLogicServer manager \n\n\n")
      
 
-@main.command("manager")
+@main.command("start")
 @click.pass_context
-def manager(ctx):
+def start(ctx):
     """
         Create and Manage API Logic Projects.
     """

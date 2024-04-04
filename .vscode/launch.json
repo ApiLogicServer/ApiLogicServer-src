@@ -39,11 +39,11 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "1 - ApiLogicServer Manager",
+            "name": "1 - ApiLogicServer Start",
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
-            "args": ["manager"],
+            "args": ["start"],
             "justMyCode": false,
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
