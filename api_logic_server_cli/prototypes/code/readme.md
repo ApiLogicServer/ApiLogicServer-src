@@ -85,3 +85,11 @@ als create  --project-name=copilot --db-url=sqlite:///employee_skills.db
 Check:
 1. `APILOGICSERVER_AUTO_OPEN` - set to code
 2. `APILOGICSERVER_VERBOSE`
+
+&nbsp;
+
+## Managing Your Projects
+
+Created projects will show up here as directories.  
+
+If you want to customize/run the project, do so in another instance of VSCode.  You may find it helpful to acquire this extension: `Open Folder Context Menus for VS Code`.  It will enable you to open the project in another instance of VSCode.
