@@ -1,6 +1,7 @@
 <mat-tab label="{{ tabTitle }}">
   <o-form #form attr="{{ entity }}_form_edit" service="{{ service }}" entity="{{ entity }}" fxLayout="column" show-header="no"
-        #oDetailForm keys="{{ keys }}" keys-sql-types="{{ keySqlType }}" columns="{{ columns }}" show-header-navigation="no"
+        #oDetailForm keys="{{ keys }}" keys-sql-types="{{ keySqlType }}" 
+        columns="{{ formColumns }}" show-header-navigation="no"
         (onDataLoaded)="onDataLoaded($event)">
 
     <div layout-padding>
