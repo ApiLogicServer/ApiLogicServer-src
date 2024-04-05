@@ -1,40 +1,35 @@
-# Quick Start
+Welcome the the API Logic Server Manager.
 
-## Create from existing database
 
-Try the demo:
+## Create API Logic Projects From Existing Databases
 
-```bash
-ApiLogicServer create --project-name=sample_ai --db-url=sqlite:///sample_ai.sqlite
-```
+Create projects using **Terminal > New Terminal**.  Here are some pre-installed samples:
 
-Or, the tutorial (lots of code & logic samples):
-```bash
-ApiLogicServer create --project-name=sample_ai --db-url=sqlite:///sample_ai.sqlite
-```
+* **Demo:** 
+`ApiLogicServer create --project-name=sample_ai --db-url=sqlite:///sample_ai.sqlite`
+
+* **Tutorial** (lots of code & logic samples):
+`ApiLogicServer create --project-name= --db-url=`
 
 Then, try your own databases
 
 * Find [database url examples here](https://apilogicserver.github.io/Docs/Database-Connectivity/)
 
 
-## Create new database from AI
-
-You can use Copilot Chat to create databases.
-
-### AI-Created Models
+## Create new databases from Copilot AI
 
 You can use Copilot chat (if extension installed):
-
-![copilot](images/copilot.png)
 
 1. Create a model, eg:
 
 <details markdown>
 
-<summary> Copilot prompt </summary>
+<summary> Show Me How to Use Copilot </summary>
 
-After installing, you can optionally run the first demo, above.  The key training activities are:
+&nbsp;
+
+Paste this into the Copilot prompt:
+
 ```
 Use SQLAlchemy to create a sqlite database named sample_ai.sqlite, with customers, orders, items and product
 
@@ -52,36 +47,39 @@ Enforce the Check Credit requirement (do not generate check constraints):
 4. Items.Amount = Quantity * UnitPrice
 5. Store the Items.UnitPrice as a copy from Product.UnitPrice
 ```
+
+![copilot](images/copilot.png)
+</details>
+
+<br>
+
 2. Paste the copilot response into a new `sample_ai.py` file
+
 3. Create your project:
 
 ```bash
 als create --project-name=sample_ai --from-model=sample_ai.py --db-url=sqlite
 ```
-</details>
 
 4. This will create your database, create an API Logic Project from it, and launch your IDE.
 
 &nbsp;
 
-### AI-Created Databases
-
-1. Create a database script, eg:
-```
-create a sqlite database of Employees and Skills
-```
-2. Paste the copilot response into a new `models.py` file
-3. Run `models.py` to create the `employee_skills.db` database
-4. Create your project:
-
-```bash
-als create  --project-name=copilot --db-url=sqlite:///employee_skills.db
-```
 
 &nbsp;
 
-## Environment Variables
+## Notes
+
+### Environment Variables
 
 Check:
 1. `APILOGICSERVER_AUTO_OPEN` - set to code
 2. `APILOGICSERVER_VERBOSE`
+
+&nbsp;
+
+### Managing Your Projects
+
+Created projects will show up here as directories.  (You create projects anywhere, and move them; this is just the default).
+
+If you want to customize/run the project, do so in *another instance* of VSCode.  You may find it helpful to acquire this extension: `Open Folder Context Menus for VS Code`.  It will enable you to open the project in another instance of VSCode.

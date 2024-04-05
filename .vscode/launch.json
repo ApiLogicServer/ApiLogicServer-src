@@ -26,7 +26,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "0 - Create and Run ApiLogicProject",
+            "name": "  - Create and Run ApiLogicProject",
             "type": "debugpy",
             "request": "launch",
             "env": {"PYTHONPATH": "${workspaceFolder}${pathSeparator}${env:PYTHONPATH}"},
@@ -39,77 +39,18 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "1 - Create cli/test_project_dev (curr IDE)",
+            "name": "1 - ApiLogicServer Start",
             "type": "debugpy",
             "request": "launch",
-            "cwd": "${workspaceFolder}/api_logic_server_cli",
-            "env": {"APILOGICSERVER_DEBUG": "True"},
-            "program": "cli.py",
-            "redirectOutput": true,
-            "args": ["create","--project_name=test_project_dev","--db_url="],
-            "console": "integratedTerminal"
-        },
-        {
-            "name": "     - Run cli/test_project_dev (curr IDE)",
-            "type": "debugpy",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/api_logic_server_cli/test_project_dev",
-            "env": {
-                "APILOGICPROJECT_APILOGICSERVER_HOME": "${workspaceFolder}",
-                "APILOGICPROJECT_SECURITY_ENABLED": "True",
-                "APILOGICPROJECT_VERBOSE": "True"
-            },
-            "program": "api_logic_server_run.py",
+            "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
+            "args": ["start"],
             "justMyCode": false,
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "console": "integratedTerminal"
         },
         {
-            "name": "     - Run cli/test_project_dev (curr IDE) ARGTEST",
-            "type": "debugpy",
-            "env": {
-                "PYTHONPATH": "", 
-                "PYTHONHASHSEED": "0", 
-                "APILOGICPROJECT_FLASK_HOST": "flaskhost-e",
-                "APILOGICPROJECT_PORT": "port-e",
-                "APILOGICPROJECT_SWAGGER_HOST": "swaggerhost-e",
-                "APILOGICPROJECT_SWAGGER_PORT": "swaggerport-e",
-                "APILOGICPROJECT_HTTP_SCHEME": "httpscheme-e",
-                "APILOGICPROJECT_API_PREFIX": "apiprefix-e"
-                },
-            "request": "launch",
-            "cwd": "${workspaceFolder}/api_logic_server_cli/test_project_dev",
-            "program": "api_logic_server_run.py",
-            "redirectOutput": true,
-            "justMyCode": false,
-            "args": ["--flask_host=flaskhost-a", "--port=p5656-a", "--swagger_host=swaggerhost-a", "--swagger_port=swaggerport-a", "--verbose=True"],
-            "console": "internalConsole",
-            "internalConsoleOptions": "openOnSessionStart"
-        },
-        {
-            "name": "     * Create cli/test_project_ref (curr IDE)",
-            "type": "debugpy",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/api_logic_server_cli",
-            "env": {"APILOGICSERVER_DEBUG": "True"},
-            "program": "cli.py",
-            "redirectOutput": true,
-            "args": ["create","--project_name=test_project_ref","--db_url="],
-            "console": "integratedTerminal"
-        },
-        {
-            "name": "     - Debug cli/test_project_ref (curr IDE)",
-            "type": "debugpy",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/api_logic_server_cli/test_project_ref",
-            "env": {"APILOGICPROJECT_VERBOSE": "true", "APILOGICPROJECT_APILOGICSERVER_HOME": "${workspaceFolder}"},
-            "program": "api_logic_server_run.py",
-            "justMyCode": false,
-            "redirectOutput": true,
-            "console": "integratedTerminal"
-        },
-        {
-            "name": "2 - Create servers/ApiLogicProject (new IDE)",
+            "name": "2 - Create servers/ApiLogicProject",
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/api_logic_server_cli",
@@ -1206,10 +1147,9 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "ApiLogicServer Manager <empty>",
+            "name": "ApiLogicServer <empty>",
             "type": "debugpy",
             "request": "launch",
-            "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
             "justMyCode": false,
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
@@ -1250,6 +1190,19 @@
                 "--open_with=code",
                 "--project_name=../../../servers/demo",
                 "--db_url=nw"],
+            "stopOnEntry": false,
+            "justMyCode": false,
+            "console": "integratedTerminal"
+        },        
+        {
+            "name": "ApiLogicServer help",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"PYTHONPATH": "${workspaceFolder}${pathSeparator}${env:PYTHONPATH}"},
+            "cwd": "${workspaceFolder}/api_logic_server_cli",
+            "program": "cli.py",
+            "redirectOutput": true,
+            "args": ["--help"],
             "stopOnEntry": false,
             "justMyCode": false,
             "console": "integratedTerminal"
