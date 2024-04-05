@@ -127,6 +127,20 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "     - app-build hr",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "/Users/tylerband/dev/hr",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": [
+                "app-build",
+                "--project-name=",
+                "--app=ont_1"
+                ],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "     - add-auth KEYCLOAK",
             "type": "debugpy",
             "request": "launch",
