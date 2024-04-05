@@ -98,8 +98,8 @@ def is_docker() -> bool:
     path = '/home/api_logic_server'
     path_result = os.path.isdir(path)  # this *should* exist only on docker
     env_result = "DOCKER" == os.getenv('APILOGICSERVER_RUNNING')
-    assert path_result == env_result
-    return path_result
+    # assert path_result == env_result
+    return path_result or env_result
 
 
 def get_api_logic_server_dir() -> str:
@@ -1563,6 +1563,8 @@ from database import <project.bind_key>_models
             log.debug(f"  Proceed as described in the readme\n")
         else:
             if (is_docker()):
+                os.rename(self.project_directory_path / '.devcontainer-option',
+                          self.project_directory_path / '.devcontainer')
                 if os.getenv('CODESPACES'):
                     log.info(f'\nCustomize right here, in Browser/VSCode - just as you would locally')
                     log.info(f'Save customized project to GitHub')

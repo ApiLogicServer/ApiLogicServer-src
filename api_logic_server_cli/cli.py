@@ -169,8 +169,8 @@ def is_docker() -> bool:
     path = '/home/api_logic_server'
     path_result = os.path.isdir(path)  # this *should* exist only on docker
     env_result = "DOCKER" == os.getenv('APILOGICSERVER_RUNNING')
-    assert path_result == env_result
-    return path_result
+    # assert path_result == env_result
+    return path_result or env_result
 
 
 '''  exploring no-args, not a clue
