@@ -67,8 +67,8 @@ class OntBuilder(object):
         t_env = self.get_environment()
         self.env = t_env[0]
         self.local_env = t_env[1]
+        self.global_values = DotMap()
         self.mode = "tab" # "dialog"
-        env = self.env
         self.pick_style = "list" #"combo" or"list"
         self.style = "light" # "dark"
         self.currency_symbol = "$" # "€" 
@@ -95,10 +95,10 @@ class OntBuilder(object):
         )
         # TODO currency_us or currency_eu
         self.table_currency_template = Template(
-            '<o-table-column attr="{{ attr }}" title="{{ title }}" type="currency" editable="{{ editable }}" required="{{ required }}" currency-symbol="$" currency-symbol-position="left" thousand-separator=","decimal-separator="."></o-table-column>'
+            '<o-table-column attr="{{ attr }}" title="{{ title }}" type="currency" editable="{{ editable }}" required="{{ required }}" currency-symbol="{{ currency_symbol }}" currency-symbol-position="{{ currency_symbol_position }}" thousand-separator="{{ thousand_separator }}"decimal-separator="{{ decimal_separator }}"></o-table-column>'
         )  # currency 100,00.00 settings from global
         self.table_date_template = Template(
-            '<o-table-column attr="{{ attr }}" title="{{ title }}" type="date" editable="{{ editable }}" required="{{ required }}" format="LL"></o-table-column>'
+            '<o-table-column attr="{{ attr }}" title="{{ title }}" type="date" editable="{{ editable }}" required="{{ required }}" format="{{ date_format }}"></o-table-column>'
         )
         self.table_integer_template = Template(
             '<o-table-column attr="{{ attr }}" title="{{ title }}" type="integer" editable="{{ editable }}" required="{{ required }}" ></o-table-column>'
@@ -133,7 +133,7 @@ class OntBuilder(object):
             '<o-textarea-input attr="{{ attr }}" label=" {{ title }}" rows="10"></o-textarea-input>'
         )
         self.real_template = Template(
-            '<o-real-input attr="{{ attr }}" label="{{ title }}" min-decimal-digits="2" max-decimal-digits="4" min="0" max="1000000.0000"></o-real-input>'
+            '<o-real-input attr="{{ attr }}" label="{{ title }}" min-decimal-digits="{{ min_decimal_digits }}" max-decimal-digits="{{ max_decimal_digits }}" min="{{ decimal_min }}" max="1{{ decimal_max }}"></o-real-input>'
         )
         self.password_template = Template(
             '<o-password-input attr="{{ attr }}" label="{{ title }}" enabled="true" read-only="false"></o-password-input>'
@@ -196,8 +196,6 @@ class OntBuilder(object):
         from_dir = self.project.api_logic_server_dir_path.joinpath('prototypes/ont_app/ontimize_seed')
         to_dir = self.project.project_directory_path.joinpath(f'ui/{self.app}/')
         shutil.copytree(from_dir, to_dir, dirs_exist_ok=True)  # create default app files
-        
-        global_values = app_model  # this will be passed to the template loader
 
         entity_favorites = []
         for each_entity_name, each_entity in app_model.entities.items():
@@ -218,7 +216,12 @@ class OntBuilder(object):
                 "pkey_datatype": pkey_datatype
             }
             entity_favorites.append(favorite)
-            
+        
+        for setting_name, each_setting in app_model.settings.style_guide.items():
+            #style guide
+            self.set_style(setting_name, each_setting)
+            self.global_values[setting_name] = each_setting
+        
         for each_entity_name, each_entity in app_model.entities.items():
             # HOME - Table Style
             home_template = self.load_home_template("table_template.html", each_entity)
@@ -270,6 +273,10 @@ class OntBuilder(object):
             file_name="app.menu.config.ts",
             source=app_menu_config,
         )
+        
+    def set_style(self, setting_name, each_setting):
+        if getattr(self, setting_name, None) != None:
+            setattr(self,setting_name,each_setting)
     def get_entity(self, entity_name):
         for each_entity_name, each_entity in self.app_model.entities.items():
             if each_entity_name == entity_name:
@@ -328,7 +335,7 @@ class OntBuilder(object):
             ),
             "INTEGER",
         )
-        return {
+        entity_var = {
             "use_keycloak": self.use_keycloak,
             "entity": entity_name,
             "columns": cols,
@@ -355,7 +362,8 @@ class OntBuilder(object):
             "attrType": "INTEGER",
             "editOnMode": self.edit_on_mode
         }
-        
+        entity_var |= self.global_values
+        return entity_var
     def gen_home_columns(self, column, alt_col:any = None):
         col_var = {
             "attr": column.name,  # name
@@ -421,7 +429,7 @@ class OntBuilder(object):
         return self.gen_field_template(column, col_var)
     
     def get_column_attrs(self, column) -> dict:
-        return {
+        col_var =  {
             "attr": column.name, 
             "name": column.name,
             "title": (
@@ -441,7 +449,9 @@ class OntBuilder(object):
             "type": column.type if hasattr(column,"type") else "INTEGER",
             "info": column.info if hasattr(column,"info") and column.into != DotMap() else "",
             "tooltip": column.tooltip if hasattr(column,"tooltip") and column.tooltip != DotMap() else column.name 
-        }
+        } 
+        col_var |= self.global_values
+        return col_var
     def load_detail_template(self, template_name: str, entity: any, favorites: any) -> str:
         """
         This is a detail display (detail) 
@@ -492,7 +502,7 @@ class OntBuilder(object):
     def load_tab_template(self, entity, template_var: any, parent_pkey:str) -> str:
         tab_template = self.tab_panel
         entity_vars = self.get_entity_vars(entity)
-        template_var.update(entity_vars)
+        template_var |= entity_vars
         row_cols = []
         for column in entity.columns:
             col_var = self.get_column_attrs(column)

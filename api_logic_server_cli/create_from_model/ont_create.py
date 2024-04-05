@@ -32,10 +32,6 @@ with open(f'{get_api_logic_server_cli_dir()}/logging.yml','rt') as f:
 logging.config.dictConfig(config)
 log = logging.getLogger('ont-app')
 
-style_guide = DotMap()
-style_guide.currency = "$"
-style_guide.decimal = "."
-
 class OntCreator(object):
     """
     Iterate over ui/admin/admin.yml
@@ -106,12 +102,12 @@ class OntCreator(object):
         app_model_out.authentication = admin_model_in.authentication
         app_model_out.settings = admin_model_in.settings
         app_model_out.entities = DotMap()
-        app_model_out.settings.style_guide = style_guide
+        app_model_out.settings.style_guide = self.style_guide()
         for each_resource_name, each_resource in admin_model_in.resources.items():
             each_entity = self.create_model_entity(each_resource)
             app_model_out.entities[each_resource_name] = each_entity
 
-            app_model_out.entities[each_resource_name].columns = list()
+            app_model_out.entities[each_resource_name].columns = []
             for each_attribute in each_resource.attributes:
                 app_model_attribute = self.create_model_attribute(
                     each_attribute=each_attribute, 
@@ -197,25 +193,43 @@ class OntCreator(object):
         if hasattr(column, "type") and column.type != DotMap():
             col_type = column.type.upper()
             if col_type.startswith("DECIMAL") or col_type.startswith("NUMERIC"):
-                rv = "currency"  # currency_template.render(col_var)
+                rv = "currency"  
             elif col_type == "DOUBLE":
-                rv = "real"  # real_template.render(col_var)
+                rv = "real"  
             elif col_type == "DATE":
-                rv = "date"  # date_template.render(col_var)
+                rv = "date"  
             elif col_type == "FILE":
-                rv = "date"  # date_template.render(col_var)
+                rv = "file"  
             elif col_type == "IMAGE":
-                rv = "integer"  # integer_template.render(col_var)
+                rv = "integer"  
             elif col_type == "IMAGE":
-                rv = "image"  # image_template.render(col_var)
+                rv = "image"  
             elif col_type == "TEXTAREA":
-                rv = "textarea"  # textarea_template.render(col_var)
+                rv = "textarea"  
             else:
-                # VARCHAR - add text area for
-                rv = "text"  # text_template.render(col_var)
+                rv = "text"  
         else:
-            rv = "text"  # text_template.render(col_var)
+            rv = "text"  
         return rv
+    
+    def style_guide(self) -> DotMap:
+        style_guide = DotMap()
+        # GLOBAL Style settings for all forms
+        style_guide.mode = "tab" # "dialog"
+        style_guide.pick_style = "list" #"combo" or"list"
+        style_guide.style = "light" # "dark"
+        style_guide.currency_symbol = "$" # "€" 
+        style_guide.currency_symbol_position="left" # "right"
+        style_guide.thousand_separator="," # "."
+        style_guide.decimal_separator="." # ","
+        style_guide.date_format="LL" #not sure what this means
+        style_guide.use_keycloak=False # True this will use different templates - defaults to basic auth
+        style_guide.edit_on_mode = "dblclick" # edit #click
+        style_guide.min_decimal_digits="2"
+        style_guide.max_decimal_digits="4" 
+        style_guide.decimal_min="0"
+        style_guide.decimal_max="1000000"
+        return style_guide
 
 '''
 def create(model_creation_services: model_creation_services.ModelCreationServices):
