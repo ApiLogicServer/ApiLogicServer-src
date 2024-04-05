@@ -1,9 +1,4 @@
 <mat-tab label="{{ tabTitle }}">
-  <o-form #form attr="{{ entity }}_form_edit" service="{{ service }}" entity="{{ entity }}" fxLayout="column" show-header="no"
-        #oDetailForm keys="{{ keys }}" keys-sql-types="{{ keySqlType }}" 
-        columns="{{ formColumns }}" show-header-navigation="no"
-        (onDataLoaded)="onDataLoaded($event)">
-
     <div layout-padding>
       <<o-table 
         attr="{{ tableAttr }}" 
@@ -22,7 +17,6 @@
         select-all-checkbox="true" 
         pageable="yes"  
         virtual-scroll="yes" 
-        detail-mode='none'
         insert-button="false" 
         delete-button="false" 
         fixed-header="true" 
@@ -36,5 +30,4 @@
         {% endif %}
       </o-table>
     </div>
-  </o-form>
 </mat-tab>

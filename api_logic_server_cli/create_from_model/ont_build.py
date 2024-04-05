@@ -159,7 +159,7 @@ class OntBuilder(object):
         Returns:
             _type_: Template
         """
-        use_system = True #for development of templates - remove for release TODO
+        use_system = False #for development of templates - remove for release TODO
         t = None
         try:
             t = self.local_env.get_template(template_name)
@@ -302,7 +302,6 @@ class OntBuilder(object):
         template = self.get_template(template_name)
         entity_vars = self.get_entity_vars(entity)
         return template.render(entity_vars)
-
 
     def load_home_template(self, template_name: str, entity: any, settings: any = None) -> str:
         template = self.get_template(template_name)
