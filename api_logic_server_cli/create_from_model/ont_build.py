@@ -113,40 +113,19 @@ class OntBuilder(object):
             '<o-table-column attr="{{ attr }}" label="{{ title }}" type="integer" min-decimal-digits="2" max-decimal-digits="4" min="0" max="1000000.0000"></o-table-column>'
         )
 
-        # Text Input Fields o-text-input TODO move to self.get_template rename to text_date or text_image etc
-        self.text_template = Template(
-            '<o-text-input attr="{{ attr }}" title="{{ title }}" editable="{{ editable }}" required="{{ required }}" ></o-text-input>'
-        )
-        self.currency_template = Template(
-            '<o-currency-input attr="{{ attr }}" title="{{ title }}" type="currency" editable="{{ editable }}" required="{{ required }}" currency-symbol="$" currency-symbol-position="left" thousand-separator=","decimal-separator="."></o-currency-input>'
-        )  # currency 100,00.00 settings from global
-        self.date_template = Template(
-            '<o-date-input attr="{{ attr }}" title="{{ title }}" editable="{{ editable }}" required="{{ required }}" format="LL" ></o-date-input>'
-        )
-        self.integer_template = Template(
-            '<o-integer-input attr="{{ attr }}" title="{{ title }}" type="integer" editable="{{ editable }}" required="{{ required }}" ></o-integer-input>'
-        )
-        self.image_template = Template(
-            '<o-image attr="{{ attr }}" type="image" auto-fit="true" enabled="true" read-only="false" show-controls="true"  full-screen-button="false" empty-image="./assets/images/no-image.png"></o-image>'
-        )
-        self.textarea_template = Template(
-            '<o-textarea-input attr="{{ attr }}" label=" {{ title }}" rows="10"></o-textarea-input>'
-        )
-        self.real_template = Template(
-            '<o-real-input attr="{{ attr }}" label="{{ title }}" min-decimal-digits="{{ min_decimal_digits }}" max-decimal-digits="{{ max_decimal_digits }}" min="{{ decimal_min }}" max="1{{ decimal_max }}"></o-real-input>'
-        )
-        self.password_template = Template(
-            '<o-password-input attr="{{ attr }}" label="{{ title }}" enabled="true" read-only="false"></o-password-input>'
-        )
-        self.email_template = Template(
-            '<o-email-input attr="{{ attr }}" label="{{ title }}" enabled="true" read-only="false"></o-email-input>'
-        )
-        self.phone_template = Template(
-            '<o-phone-input attr="{{ attr }}" label="{{ title }}" enabled="true" read-only="false"></o-phone-input>'
-        )
-        self.sidebarTemplate = Template(
-            " '{{ entity }}', loadChildren: () => import('./{{ entity }}/{{ entity }}.module').then(m => m.{{ entity_first_cap }}Module)"
-        )
+        # Text Input Fields o-text-input 
+        self.text_template = self.get_template("text_template.html")
+        self.currency_template = self.get_template("currency_template.html")
+        self.date_template = self.get_template("date_template.html") 
+        self.integer_template = self.get_template("integer_template.html")
+        self.image_template = self.get_template("image_template.html")
+        self.textarea_template = self.get_template("textarea_template.html")
+        self.real_template = self.get_template("real_template.html")
+        self.password_template = self.get_template("password_template.html")
+        self.email_template = self.get_template("email_template.html")
+        self.phone_template = self.get_template("phone_template.html")
+        self.sidebar_template = self.get_template("sidebar_template.html")
+
         
     def get_template(self, template_name) -> Template:
         """
@@ -159,13 +138,11 @@ class OntBuilder(object):
         Returns:
             _type_: Template
         """
-        t = None
         with contextlib.suppress(Exception):
-            t = self.local_env.get_template(template_name)
-    
-        if t is None: 
-            t = self.env.get_template(template_name)
-        return t
+            return self.local_env.get_template(template_name)
+
+        return self.env.get_template(template_name)
+
     
     def build_application(self):
         """main driver - loop through add_model.yaml, ont app"""
@@ -549,7 +526,7 @@ class OntBuilder(object):
         template = self.get_template(template_name)
         children = []
 
-        sidebarTemplate = self.sidebarTemplate
+        sidebarTemplate = self.sidebar_template
         # sep = ","
         for each_entity_name, each_entity in entities:
             name = each_entity_name.lower()
