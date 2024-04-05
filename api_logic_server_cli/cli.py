@@ -248,6 +248,10 @@ def start(ctx):
     path = Path(__file__)
     from_dir = get_api_logic_server_path() / 'prototypes/code'
     to_dir_str = str(to_dir)
+    to_dir_check = Path(to_dir).joinpath('venv')
+    if not to_dir_check.exists():
+        log.info(f"    No action taken - no venv found at: \n      {to_dir}\n\n")
+        exit(1)
     to_dir_check = Path(to_dir).joinpath('.vscode')
     if to_dir_check.exists():
         log.info(f"    Using manager at: {to_dir}]n\n")
