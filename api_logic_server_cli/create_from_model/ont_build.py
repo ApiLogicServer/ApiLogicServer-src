@@ -159,13 +159,11 @@ class OntBuilder(object):
         Returns:
             _type_: Template
         """
-        use_system = False #for development of templates - remove for release TODO
         t = None
-        try:
+        with contextlib.suppress(Exception):
             t = self.local_env.get_template(template_name)
-        except Exception:
-            pass
-        if use_system: 
+    
+        if t is None: 
             t = self.env.get_template(template_name)
         return t
     
@@ -188,10 +186,8 @@ class OntBuilder(object):
         
         from_template_dir = self.project.api_logic_server_dir_path.joinpath('prototypes/ont_app/templates')
         to_template_dir = self.project.project_directory_path.joinpath(f'ui/{self.app}/templates')
-        try:
+        with contextlib.suppress(Exception):
             shutil.copytree(from_template_dir, to_template_dir, dirs_exist_ok=False)  # do not re-create default template files
-        except Exception:
-            pass
         
         from_dir = self.project.api_logic_server_dir_path.joinpath('prototypes/ont_app/ontimize_seed')
         to_dir = self.project.project_directory_path.joinpath(f'ui/{self.app}/')
@@ -207,7 +203,7 @@ class OntBuilder(object):
                     datatype = "VARCHAR" if hasattr(column, "type") and column.type.startswith("VARCHAR") else 'INTEGER'
                 if column.name in primary_key:
                     pkey_datatype = "VARCHAR" if hasattr(column, "type") and column.type.startswith("VARCHAR") else column.type.upper()
-            favorite = {
+            favorite_dict = {
                 "entity": each_entity_name,
                 "favorite": each_entity.favorite,
                 "breadcrumbLabel": each_entity.favorite,
@@ -215,7 +211,7 @@ class OntBuilder(object):
                 "primary_key": primary_key,
                 "pkey_datatype": pkey_datatype
             }
-            entity_favorites.append(favorite)
+            entity_favorites.append(favorite_dict)
         
         for setting_name, each_setting in app_model.settings.style_guide.items():
             #style guide
