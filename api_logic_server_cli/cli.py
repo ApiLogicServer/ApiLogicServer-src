@@ -244,12 +244,16 @@ def start(ctx):
     """
         Create and Manage API Logic Projects.
     """
-    to_dir = os.getcwd()
+    to_dir = Path(os.getcwd())
     path = Path(__file__)
     from_dir = get_api_logic_server_path() / 'prototypes/code'
     to_dir_str = str(to_dir)
-    copied_path = shutil.copytree(src=from_dir, dst=to_dir, dirs_exist_ok=True)
-    log.info(f"copied_path: {copied_path}")
+    to_dir_check = Path(to_dir).joinpath('.vscode')
+    if to_dir_check.exists():
+        log.info(f"    Using manager at: {to_dir}]n\n")
+    else:
+        copied_path = shutil.copytree(src=from_dir, dst=to_dir, dirs_exist_ok=True)
+        log.info(f"    Created manager at: {copied_path}\n\n")
     pass
 
     set_defaultInterpreterPath = False

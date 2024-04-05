@@ -1,7 +1,7 @@
 Welcome the the API Logic Server Manager.
 
 
-## Create API Logic Projects From Existing Databases
+## Create API Logic Projects From *Existing* Databases
 
 Create projects using **Terminal > New Terminal**.  Here are some pre-installed samples:
 
@@ -16,7 +16,7 @@ Then, try your own databases
 * Find [database url examples here](https://apilogicserver.github.io/Docs/Database-Connectivity/)
 
 
-## Create new databases from Copilot AI
+## Create API Logic Projects From *New* Databases, with Copilot
 
 You can use Copilot chat (if extension installed):
 
