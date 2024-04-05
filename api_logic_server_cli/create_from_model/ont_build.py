@@ -118,13 +118,13 @@ class OntBuilder(object):
             '<o-text-input attr="{{ attr }}" title="{{ title }}" editable="{{ editable }}" required="{{ required }}" ></o-text-input>'
         )
         self.currency_template = Template(
-            '<o-text-input attr="{{ attr }}" title="{{ title }}" type="currency" editable="{{ editable }}" required="{{ required }}" currency-symbol="$" currency-symbol-position="left" thousand-separator=","decimal-separator="."></o-text-input>'
+            '<o-currency-input attr="{{ attr }}" title="{{ title }}" type="currency" editable="{{ editable }}" required="{{ required }}" currency-symbol="$" currency-symbol-position="left" thousand-separator=","decimal-separator="."></o-currency-input>'
         )  # currency 100,00.00 settings from global
         self.date_template = Template(
-            '<o-text-input attr="{{ attr }}" title="{{ title }}" type="date" editable="{{ editable }}" required="{{ required }}" format="LL" ></o-text-input>'
+            '<o-date-input attr="{{ attr }}" title="{{ title }}" editable="{{ editable }}" required="{{ required }}" format="LL" ></o-date-input>'
         )
         self.integer_template = Template(
-            '<o-text-input attr="{{ attr }}" title="{{ title }}" type="integer" editable="{{ editable }}" required="{{ required }}" ></o-text-input>'
+            '<o-integer-input attr="{{ attr }}" title="{{ title }}" type="integer" editable="{{ editable }}" required="{{ required }}" ></o-integer-input>'
         )
         self.image_template = Template(
             '<o-image attr="{{ attr }}" type="image" auto-fit="true" enabled="true" read-only="false" show-controls="true"  full-screen-button="false" empty-image="./assets/images/no-image.png"></o-image>'
@@ -135,9 +135,19 @@ class OntBuilder(object):
         self.real_template = Template(
             '<o-real-input attr="{{ attr }}" label="{{ title }}" min-decimal-digits="2" max-decimal-digits="4" min="0" max="1000000.0000"></o-real-input>'
         )
+        self.password_template = Template(
+            '<o-password-input attr="{{ attr }}" label="{{ title }}" enabled="true" read-only="false"></o-password-input>'
+        )
+        self.email_template = Template(
+            '<o-email-input attr="{{ attr }}" label="{{ title }}" enabled="true" read-only="false"></o-email-input>'
+        )
+        self.phone_template = Template(
+            '<o-phone-input attr="{{ attr }}" label="{{ title }}" enabled="true" read-only="false"></o-phone-input>'
+        )
         self.sidebarTemplate = Template(
             " '{{ entity }}', loadChildren: () => import('./{{ entity }}/{{ entity }}.module').then(m => m.{{ entity_first_cap }}Module)"
         )
+        
     def get_template(self, template_name) -> Template:
         """
         This will look in the project directory first (local) 
@@ -323,7 +333,8 @@ class OntBuilder(object):
             "entity": entity_name,
             "columns": cols,
             "visibleColumns": cols,
-            "sortColumns": favorite,  
+            "sortColumns": favorite, 
+            "formColumns": favorite, 
             "keys": favorite,
             "favorite": favorite,
             "favoriteType": fav_column_type,
@@ -486,7 +497,6 @@ class OntBuilder(object):
         for column in entity.columns:
             col_var = self.get_column_attrs(column)
             rv = self.gen_home_columns(column, col_var)
-            #rv = self.get_new_column(column, fks, "INTEGER")
             row_cols.append(rv)
                 
         template_var["row_columns"] = row_cols
@@ -563,6 +573,12 @@ class OntBuilder(object):
                 rv = self.image_template.render(col_var)
             elif col_type == "TEXTAREA" or template_type == "TEXTAREA":
                 rv = self.textarea_template.render(col_var)
+            elif col_type == "EMAIL" or template_type == "EMAIL":
+                rv = self.email_template.render(col_var)
+            elif col_type == "PHONE" or template_type == "PHONE":
+                rv = self.phone_template.render(col_var)
+            elif col_type == "PASSWORD" or template_type == "PASSWORD":
+                rv = self.password_template.render(col_var)
             else:
                 # VARCHAR - add text area for
                 if template_type == "TEXTAREA":

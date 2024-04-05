@@ -174,10 +174,14 @@ class OntCreator(object):
                         resource_attribute = each_resource_attribute
                         each_attribute.type = resource_attribute.type
                         break
-                assert resource_attribute is not None, \
-                    f"Sys Err - unknown resource attr: {each_resource_name}.{each_attribute.name}"
-                each_attribute.type = resource_attribute.db_type
-                each_attribute.template = self.compute_field_template(each_attribute)
+                #assert resource_attribute is not None, \
+                if resource_attribute is None:
+                    log.error(f"Sys Err - unknown resource attr: {each_resource_name}.{each_attribute.name}")
+                    each_attribute.type = "text"
+                    each_attribute.template = "text"
+                else:
+                    each_attribute.type = resource_attribute.db_type
+                    each_attribute.template = self.compute_field_template(each_attribute)
         return each_attribute
 
 
@@ -191,14 +195,16 @@ class OntCreator(object):
             str: template name
         """
         if hasattr(column, "type") and column.type != DotMap():
-            col_type = column.type
+            col_type = column.type.upper()
             if col_type.startswith("DECIMAL") or col_type.startswith("NUMERIC"):
                 rv = "currency"  # currency_template.render(col_var)
             elif col_type == "DOUBLE":
                 rv = "real"  # real_template.render(col_var)
             elif col_type == "DATE":
                 rv = "date"  # date_template.render(col_var)
-            elif col_type == "INTEGER":
+            elif col_type == "FILE":
+                rv = "date"  # date_template.render(col_var)
+            elif col_type == "IMAGE":
                 rv = "integer"  # integer_template.render(col_var)
             elif col_type == "IMAGE":
                 rv = "image"  # image_template.render(col_var)
