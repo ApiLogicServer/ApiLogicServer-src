@@ -953,7 +953,6 @@ class ProjectRun(Project):
 
         if os.getenv('APILOGICSERVER_AUTO_OPEN'):
             self.open_with = os.getenv('APILOGICSERVER_AUTO_OPEN')
-
         if execute:
             self.create_project()
 

@@ -9,6 +9,7 @@
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/tests/build_and_test",
+            "env": {"APILOGICSERVER_AUTO_OPEN": ""},
             "program": "build_load_and_test.py",
             "redirectOutput": true,
             "justMyCode": false,
