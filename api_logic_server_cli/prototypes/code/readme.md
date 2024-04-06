@@ -83,3 +83,9 @@ Check:
 Created projects will show up here as directories.  (You create projects anywhere, and move them; this is just the default).
 
 If you want to customize/run the project, do so in *another instance* of VSCode.  You may find it helpful to acquire this extension: `Open Folder Context Menus for VS Code`.  It will enable you to open the project in another instance of VSCode.
+
+&nbsp;
+
+### Add Notes, Resources
+
+This is a good place to add text notes and resources for using API Logic Server, Python, Flask, SQLAlchemy, etc.
