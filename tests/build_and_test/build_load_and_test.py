@@ -475,7 +475,7 @@ def docker_creation_tests(api_logic_server_tests_path):
         msg=f'\nBuilding projects from Docker container at: {str(api_logic_server_home_path)}\n')
     assert build_projects.returncode == 0, f'Docker build projects failed: {build_projects}'
     print('\n\ndocker_creation_tests: Built projects from container\n\n')
-    print('==> Verify manually - run sqlserver')
+    print('==> Verify manually: start docker; als run --project=/localhost/sqlserver')
     print('\n\n')
 
 
