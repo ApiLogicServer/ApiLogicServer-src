@@ -1,6 +1,5 @@
-{
   "APP_TITLE": "Quickstart",
-  "VERSION": "Version",
+  "VERSION": "Version 1.0",
   "EXAMPLE_LOGIN_INFO": "Use this user and password for login",
   "USERNAME": "Username",
   "PASSWORD": "Password",
@@ -20,5 +19,5 @@
   "REMEMBER_ME": "Remember me",
   "FORGOT_PWD": "Forgot your password?",
   "FOOTER_CREATED_BY": "Created by Imatia Innovation",
-  "FOOTER_RIGHTS": "All rights reserved",
-}
+  "FOOTER_RIGHTS": "All rights reserved (c) 2024",
+  {{ titles }}

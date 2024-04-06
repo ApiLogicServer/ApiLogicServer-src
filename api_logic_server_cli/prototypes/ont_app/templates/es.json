@@ -1,4 +1,3 @@
-{
   "APP_TITLE": "JEE seed",
   "VERSION": "Versión",
   "EXAMPLE_LOGIN_INFO": "Usuario y contraseña de ejemplo",
@@ -19,4 +18,4 @@
   "FORGOT_PWD": "¿Has olvidado tu contraseña?",
   "FOOTER_CREATED_BY": "Creado por Imatia Innovation",
   "FOOTER_RIGHTS": "Todos los derechos reservados",
-}
+  {{ titles }}
