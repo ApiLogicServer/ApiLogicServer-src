@@ -79,6 +79,8 @@ class OntBuilder(object):
         self.use_keycloak=False # True this will use different templates - defaults to basic auth
         self.edit_on_mode = "dblclick" # edit
 
+        self.title_translation = []
+        
         self.pick_list_template = self.get_template("list-picker.html")
         self.combo_list_template = self.get_template("combo-picker.html") 
         self.o_text_input = self.get_template("o_text_input.html")
@@ -247,6 +249,21 @@ class OntBuilder(object):
             source=app_menu_config,
         )
         
+        self.generate_translation_files(app_path)
+
+    def generate_translation_files(self, app_path):
+        #We may have more files in the future - a list from yaml may work here locales["en","es","fr","it"]
+        en_json = self.get_template("en.json")
+        es_json = self.get_template("es.json")
+        titles = ""
+        for v in self.title_translation: # append to assets/i8n/en.json and es.json
+            for k in v: 
+                titles += f'  "{k}": "{v[k]}",\n'
+        rv_en_json = en_json.render(titles=titles)
+        write_json_filename(app_path=app_path, file_name="en.json", source="{" + rv_en_json[:-2] +"\n}")
+        rv_es_json = es_json.render(titles=titles)
+        write_json_filename(app_path=app_path, file_name="es.json", source="{" + rv_es_json[:-2] + "\n}")
+        
     def set_style(self, setting_name, each_setting):
         if getattr(self, setting_name, None) != None:
             setattr(self,setting_name,each_setting)
@@ -307,6 +324,7 @@ class OntBuilder(object):
             ),
             "INTEGER",
         )
+        title =  f'{entity_name.upper()}' 
         entity_var = {
             "use_keycloak": self.use_keycloak,
             "entity": entity_name,
@@ -319,7 +337,7 @@ class OntBuilder(object):
             "favoriteType": fav_column_type,
             "breadcrumbLabel":favorite,
             "mode": self.mode,
-            "title": entity_name.upper(),
+            "title": "{{ '" + title + "' | oTranslate }}",
             "tableAttr": f"{entity_name}Table",
             "service": entity_name,
             "entity": entity_name,
@@ -334,8 +352,15 @@ class OntBuilder(object):
             "attrType": "INTEGER",
             "editOnMode": self.edit_on_mode
         }
+        self.add_title(title, entity_name)
         entity_var |= self.global_values
         return entity_var
+
+    def add_title(self, title, entity_name):
+        for v in self.title_translation:
+            if title in v:
+                return    
+        self.title_translation.append({title: entity_name})
     def gen_home_columns(self, column, alt_col:any = None):
         col_var = {
             "attr": column.name,  # name
@@ -680,9 +705,7 @@ def write_root_file(app_path: Path, dir_name: str, file_name: str, source: str):
         file.write(source)
 
 
-def write_file(
-    app_path: Path, entity_name: str, dir_name: str, ext_name: str, source: str
-):
+def write_file(app_path: Path, entity_name: str, dir_name: str, ext_name: str, source: str):
     import pathlib
 
     directory = (
@@ -694,6 +717,17 @@ def write_file(
     #    os.makedirs(directory)
     pathlib.Path(f"{directory}").mkdir(parents=True, exist_ok=True)
     with open(f"{directory}/{entity_name}{ext_name}", "w") as file:
+        file.write(source)
+
+def write_json_filename(app_path: Path, file_name: str, source: str):
+    import pathlib
+
+    directory = f"{app_path}/src/assets/i18n"
+    
+    # if not os.path.exists(directory):
+    #    os.makedirs(directory)
+    pathlib.Path(f"{directory}").mkdir(parents=True, exist_ok=True)
+    with open(f"{directory}/{file_name}", "w") as file:
         file.write(source)
 
 

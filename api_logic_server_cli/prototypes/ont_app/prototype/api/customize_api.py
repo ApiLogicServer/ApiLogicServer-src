@@ -271,7 +271,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
     def api_search(path):
         s = path.split("/")
         clz_name = s[0]
-        clz_type = s[1] #[2] TODO customerType search advancedSearch defer(photo)customerTypeAggregate
+        clz_type = None if len(s) == 1 else s[1] #[2] TODO customerType search advancedSearch defer(photo)customerTypeAggregate
         
         method = request.method
         rows = []
@@ -279,7 +279,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         if method == "OPTIONS":
             return jsonify(success=True)
         
-        if clz_type == "listReports":
+        if clz_name in ["listReports", "bundle"]:
             return {}
         
         api_clz = api_map.get(clz_name)
