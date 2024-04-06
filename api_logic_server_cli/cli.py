@@ -240,7 +240,10 @@ def main(ctx):
 
 @main.command("start")
 @click.pass_context
-def start(ctx):
+@click.option('--open-with', 'open_with',
+              default='code',
+              help="Input admin app")
+def start(ctx, open_with):
     """
         Create and Manage API Logic Projects.
     """
@@ -254,13 +257,14 @@ def start(ctx):
         exit(1)
     to_dir_check = Path(to_dir).joinpath('.vscode')
     if to_dir_check.exists():
-        log.info(f"    Using manager at: {to_dir}]n\n")
+        log.info(f"    Using manager at: {to_dir}n\n")
     else:
         copied_path = shutil.copytree(src=from_dir, dst=to_dir, dirs_exist_ok=True)
         log.info(f"    Created manager at: {copied_path}\n\n")
     pass
 
     set_defaultInterpreterPath = False
+    defaultInterpreterPath_str = ""
     if set_defaultInterpreterPath:
         defaultInterpreterPath_str = sys.executable
         defaultInterpreterPath = Path(defaultInterpreterPath_str)
@@ -280,11 +284,13 @@ def start(ctx):
         log.debug(f'.. ..Updated .vscode/settings.json with "python.defaultInterpreterPath": "{defaultInterpreterPath_str}"...')
     os.putenv("APILOGICSERVER_AUTO_OPEN", "code")
     os.putenv("APILOGICSERVER_VERBOSE", "false")
+    project = PR.Project()
+    project.defaultInterpreterPath = defaultInterpreterPath_str
     create_utils.run_command(
-        cmd=f'code {to_dir_str}',  # passing readme here fails - loses project setttings
+        cmd=f'{open_with} {to_dir_str}',  # passing readme here fails - loses project setttings
         env=None, 
         msg="no-msg", 
-        project=None)
+        project=project)
 
 
 
@@ -1279,7 +1285,7 @@ def add_cust(ctx, bind_key_url_separator: str, api_name: str, project_name: str)
     log.info("\nNext step - add authentication:\n  $ ApiLogicServer add-auth --db_url=auth\n\n")
 
 
-@main.command("sample-ai", cls=HideDunderCommand) 
+@main.command("sample-ai", cls=HideDunderCommand, hidden=True) 
 @click.option('--bind_key_url_separator',
               default=default_bind_key_url_separator,
               help="bindkey / class name url separator")
@@ -1327,7 +1333,7 @@ def sample_ai(ctx, bind_key_url_separator: str, api_name: str, project_name: str
     project.add_sample_ai_customizations()
 
 
-@main.command("sample-ai-iteration", cls=HideDunderCommand) 
+@main.command("sample-ai-iteration", cls=HideDunderCommand, hidden=True) 
 @click.option('--bind_key_url_separator',
               default=default_bind_key_url_separator,
               help="bindkey / class name url separator")

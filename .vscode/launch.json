@@ -44,7 +44,9 @@
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
-            "args": ["start"],
+                    "args": ["start",
+                    "--open-with=code",
+        ],
             "justMyCode": false,
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
@@ -59,7 +61,9 @@
                     "APILOGICSERVER_RUNNING": "NOT DOCKER"},
             "program": "cli.py",
             "redirectOutput": true,
-            "args": ["create","--project_name=../../../servers/ApiLogicProject","--db_url="],
+            "args": ["create",
+                "--project_name=../../../servers/ApiLogicProject",
+                "--db_url="],
             "console": "integratedTerminal"
         },
         {
