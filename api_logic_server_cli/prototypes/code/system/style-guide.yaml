@@ -1,0 +1,5 @@
+favorite_attribute_names: name description
+non_favorite_attribute_names: id
+currency: $
+# project.manager_style_guide.currency
+currency_with_quote_is_same: '$'

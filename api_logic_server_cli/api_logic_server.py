@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.03.68"
+__version__ = "10.03.69"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t04/06/2024 - 10.03.68: Manager prompts \n"\
+    "\t04/07/2024 - 10.03.69: Manager style guide, prompts for samples \n"\
     "\t04/05/2024 - 10.03.66: ApiLogicServer start, als create from-model (eg copilot) \n"\
     "\t03/28/2024 - 10.03.46: Python 3.12, View support, CLI option-names, Keycloak preview \n"\
     "\t03/14/2024 - 10.03.25: View support, CLI option-names, Keycloak preview \n"\
@@ -91,6 +91,7 @@ import os
 import platform
 import importlib
 import fnmatch
+from dotmap import DotMap
 import create_from_model.create_db_from_model as create_db_from_model
 
 
@@ -953,6 +954,35 @@ class ProjectRun(Project):
         self.opt_locking = opt_locking
         self.opt_locking_attr = opt_locking_attr
         self.id_column_alias = id_column_alias
+
+        defaultInterpreterPath_str = sys.executable
+        defaultInterpreterPath = Path(defaultInterpreterPath_str)
+        if 'ApiLogicServer-dev' in str(self.api_logic_server_dir_path):  # apilogicserver dev is special case
+            if os.name == "nt":
+                defaultInterpreterPath = project.api_logic_server_dir_path.parent.parent.parent.joinpath('build_and_test/ApiLogicServer/venv/scripts/python.exe')
+            else:
+                defaultInterpreterPath = self.api_logic_server_dir_path.parent.parent.parent.parent.joinpath('bin/python')
+                if 'org_git' in str(self.api_logic_server_dir_path):  # running from dev-source
+                    defaultInterpreterPath = self.api_logic_server_dir_path.parent.parent.parent.joinpath('clean/ApiLogicServer/venv/bin/python')
+        self.default_interpreter_path = defaultInterpreterPath
+        self.manager_path = self.default_interpreter_path.parent.parent.parent
+        log.debug(f'.. ..Manager path: {self.manager_path}')  # eg ApiLogicServer/ApiLogicServer-dev/clean/ApiLogicServer
+        log.debug(f'.. ..Interp path: manager_path / venv/bin/python')
+
+        self.manager_style_guide = DotMap()
+        style_guide_path = Path(self.manager_path / 'style-guide.yaml')
+        if style_guide_path.is_file():
+            with open(Path(self.manager_path / 'style-guide.yaml'), 'r') as file:
+                try:
+                    self.manager_style_guide = DotMap(yaml.safe_load(file))
+                    self.favorites = self.manager_style_guide.favorite_attribute_names
+                    self.manager_style_guide.pop('favorite_attribute_names')
+                    self.non_favorites = str(self.manager_style_guide.non_favorite_attribute_names)
+                    self.manager_style_guide.pop('non_favorite_attribute_names')
+                except yaml.YAMLError as e:
+                    log.debug(f'.. ..Error loading style-guide.yaml: {e}')
+        else:
+            log.debug(f'.. ..No style-guide.yaml file found, using defaults')
 
         if os.getenv('APILOGICSERVER_AUTO_OPEN'):
             self.open_with = os.getenv('APILOGICSERVER_AUTO_OPEN')
