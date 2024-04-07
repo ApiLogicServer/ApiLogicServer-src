@@ -378,7 +378,7 @@ def run_command(cmd: str, env=None, msg: str = "", new_line: bool=False, project
     use_env = env
     if env is None:
         project_dir = get_api_logic_server_dir()
-        python_path = str(project_dir) + "/venv/lib/python3.9/site_packages"
+        python_path = str(project_dir) + "/venv/lib/python3.9/site_packages"  # FIXME this cannot be hard-coded
         use_env = os.environ.copy()
         # log.debug("\n\nFixing env for cmd: " + cmd)
         if hasattr(use_env, "PYTHONPATH"):
