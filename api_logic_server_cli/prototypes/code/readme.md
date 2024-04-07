@@ -14,6 +14,7 @@ To create a project, **press F5**, or use the CLI (**Terminal > New Terminal**) 
 Then, try your own databases
 
 * Find [database url examples here](https://apilogicserver.github.io/Docs/Database-Connectivity/)
+* Or, experiment with [these Docker databases](https://apilogicserver.github.io/Docs/Database-Docker/)
 
 
 ## Create API Logic Projects From *New* Databases, with Copilot
