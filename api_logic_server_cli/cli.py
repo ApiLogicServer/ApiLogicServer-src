@@ -243,7 +243,7 @@ def main(ctx):
 @click.option('--open-with', 'open_with',
               default='code',
               help="Input admin app")
-def start(ctx, open_with):
+def create_start_manager(ctx, open_with):
     """
         Create and Manage API Logic Projects.
     """
@@ -263,27 +263,34 @@ def start(ctx, open_with):
         log.info(f"    Created manager at: {copied_path}\n\n")
     pass
 
-    set_defaultInterpreterPath = False
+    set_defaultInterpreterPath = True
     defaultInterpreterPath_str = ""
-    if set_defaultInterpreterPath:  # no, the manager always uses the local venv
+    if set_defaultInterpreterPath:  # if dev-ide, override default venv: ./venv/bin/python
+        project = PR.Project()
+        global api_logic_server_path
+        project.api_logic_server_dir_path = get_api_logic_server_path()  # for compatibility to api_logic_server.py
         defaultInterpreterPath_str = sys.executable
         defaultInterpreterPath = Path(defaultInterpreterPath_str)
-        if os.name == "nt":
-            defaultInterpreterPath = project.api_logic_server_dir_path.parent.parent.parent.joinpath('build_and_test/ApiLogicServer/venv/scripts/python.exe')
-        else:
-            defaultInterpreterPath = to_dir / 'venv/bin/python'
-        defaultInterpreterPath_str = str(defaultInterpreterPath)
-        # ApiLogicServerPython
-        vscode_settings_path = to_dir / '.vscode/settings.json'
-        if os.name == "nt":
-            defaultInterpreterPath_str = get_windows_path_with_slashes(url=defaultInterpreterPath_str)
-            # vscode_settings_path = get_windows_path_with_slashes(url=vscode_settings_path)
-        create_utils.replace_string_in_file(search_for = 'ApiLogicServerPython',
-                                            replace_with=defaultInterpreterPath_str,
-                                            in_file=vscode_settings_path)
-        log.debug(f'.. ..Updated .vscode/settings.json with "python.defaultInterpreterPath": "{defaultInterpreterPath_str}"...')
+        if 'ApiLogicServer-dev' in str(project.api_logic_server_dir_path):  # apilogicserver dev is special case
+            if os.name == "nt":
+                defaultInterpreterPath = project.api_logic_server_dir_path.parent.parent.parent.joinpath('build_and_test/ApiLogicServer/venv/scripts/python.exe')
+            else:
+                defaultInterpreterPath = project.api_logic_server_dir_path.parent.parent.parent.parent.joinpath('bin/python')
+                if 'org_git' in str(project.api_logic_server_dir_path):  # running from dev-source
+                    defaultInterpreterPath = project.api_logic_server_dir_path.parent.parent.parent.joinpath('build_and_test/ApiLogicServer/venv/bin/python')
+            defaultInterpreterPath_str = str(defaultInterpreterPath)
+            # ApiLogicServerPython
+            vscode_settings_path = to_dir / '.vscode/settings.json'
+            if os.name == "nt":
+                defaultInterpreterPath_str = get_windows_path_with_slashes(url=defaultInterpreterPath_str)
+                # vscode_settings_path = get_windows_path_with_slashes(url=vscode_settings_path)
+            create_utils.replace_string_in_file(search_for = './venv/bin/python',
+                                                replace_with=defaultInterpreterPath_str,
+                                                in_file=vscode_settings_path)
+            log.debug(f'.. ..Updated .vscode/settings.json with "python.defaultInterpreterPath": "{defaultInterpreterPath_str}"...')
     os.putenv("APILOGICSERVER_AUTO_OPEN", "code")
     os.putenv("APILOGICSERVER_VERBOSE", "false")
+    os.putenv("APILOGICSERVER_HOME", project.api_logic_server_dir_path.parent )
     project = PR.Project()
     project.defaultInterpreterPath = defaultInterpreterPath_str
     create_utils.run_command(
