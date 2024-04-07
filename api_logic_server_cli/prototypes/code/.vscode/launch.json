@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "ApiLogicServer DEBUG",
+            "name": "ApiLogicServer Create a Project",
             "type": "debugpy",
             "request": "launch",
             "program": "./venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
@@ -15,13 +15,50 @@
                 "PYTHONPATH": "", 
                 "SECURITY_ENABLED": "False", 
                 "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "create",
+                "--project-name=${input:inputProjectName}",
+                "--db-url=${input:inputDBURL}"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "ApiLogicServer Create Tutorial",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "./venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "PYTHONHASHSEED": "0", 
                 "APILOGICSERVER_DEBUG": "True",
                 "OPT_LOCKING": "optional"},
             "justMyCode": false,
             "args": [ "create",
-                "--project-name=copilot",
-                "--from-model=models.py",
-                "--db-url=sqlite"],
+                "--project-name=ApiLogicProject",
+                "--db-url=nw"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "ApiLogicServer Create Tutorial With Customizations",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "./venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "True",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "create",
+                "--project-name=ApiLogicProject_customized",
+                "--db-url=nw+"],
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
         },
@@ -52,6 +89,20 @@
             "args": ["sys-info"],
             "justMyCode": false,
             "console": "integratedTerminal"
+        }
+    ],
+    "inputs": [
+        {
+            "id": "inputProjectName",
+            "type": "promptString",
+            "description": "Project Name (will create directory with this name)",
+            "default": "sample_ai"
+        },
+        {
+            "id": "inputDBURL",
+            "type": "promptString",
+            "description": "Database URL (SQLAlchemy URI)",
+            "default": "sqlite:///sample_ai.sqlite"
         }
     ]
   }

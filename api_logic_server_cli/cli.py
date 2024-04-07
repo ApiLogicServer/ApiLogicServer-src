@@ -265,7 +265,7 @@ def start(ctx, open_with):
 
     set_defaultInterpreterPath = False
     defaultInterpreterPath_str = ""
-    if set_defaultInterpreterPath:
+    if set_defaultInterpreterPath:  # no, the manager always uses the local venv
         defaultInterpreterPath_str = sys.executable
         defaultInterpreterPath = Path(defaultInterpreterPath_str)
         if os.name == "nt":

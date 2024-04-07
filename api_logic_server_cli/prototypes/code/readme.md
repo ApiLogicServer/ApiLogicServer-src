@@ -3,7 +3,7 @@ Welcome the the API Logic Server Manager.
 
 ## Create API Logic Projects From *Existing* Databases
 
-Create projects using **Terminal > New Terminal**.  Here are some pre-installed samples:
+To create a project, **press F5**, or use the CLI (**Terminal > New Terminal**) and try some pre-installed samples:
 
 * **Demo:** 
 `ApiLogicServer create --project-name=sample_ai --db-url=sqlite:///sample_ai.sqlite`
