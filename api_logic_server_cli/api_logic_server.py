@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.03.66"
+__version__ = "10.03.68"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t04/06/2024 - 10.03.68: Manager prompts \n"\
     "\t04/05/2024 - 10.03.66: ApiLogicServer start, als create from-model (eg copilot) \n"\
     "\t03/28/2024 - 10.03.46: Python 3.12, View support, CLI option-names, Keycloak preview \n"\
     "\t03/14/2024 - 10.03.25: View support, CLI option-names, Keycloak preview \n"\
@@ -693,11 +694,13 @@ def final_project_fixup(msg, project) -> str:
     if do_default_interpreter_path:
         defaultInterpreterPath_str = sys.executable
         defaultInterpreterPath = Path(defaultInterpreterPath_str)
-        if 'org_git' in str(project.api_logic_server_dir_path):  # apilogicserver dev is special case
+        if 'ApiLogicServer-dev' in str(project.api_logic_server_dir_path):  # apilogicserver dev is special case
             if os.name == "nt":
                 defaultInterpreterPath = project.api_logic_server_dir_path.parent.parent.parent.joinpath('build_and_test/ApiLogicServer/venv/scripts/python.exe')
-            else:
-                defaultInterpreterPath = project.api_logic_server_dir_path.parent.parent.parent.joinpath('build_and_test/ApiLogicServer/venv/bin/python')
+            else:  # running from dev build, or dev source?
+                defaultInterpreterPath = project.api_logic_server_dir_path.parent.parent.parent.parent.joinpath('bin/python')
+                if 'org_git' in str(project.api_logic_server_dir_path):  # running from dev-source
+                    defaultInterpreterPath = project.api_logic_server_dir_path.parent.parent.parent.joinpath('build_and_test/ApiLogicServer/venv/bin/python')
             defaultInterpreterPath_str = str(defaultInterpreterPath)
         # ApiLogicServerPython
         vscode_settings_path = (project.project_directory_path).joinpath('.vscode/settings.json')
@@ -1531,11 +1534,11 @@ from database import <project.bind_key>_models
 
         final_project_fixup("4. Final project fixup", self)
 
-        if self.open_with != "":  # open project with open_with (vscode, charm, atom) -- NOT for docker!!
-            start_open_with(project = self)
-
         if self.nw_db_status in ["nw", "nw+"] and self.command != "add_db":
             self.add_auth("\nApiLogicProject customizable project created.  \nAdding Security:")
+
+        if self.open_with != "":  # open project with open_with (vscode, charm, atom) -- NOT for docker!!
+            start_open_with(project = self)
             
         if self.command.startswith("add_"):
             pass  # keep silent for add-db, add-auth...
@@ -1585,7 +1588,8 @@ from database import <project.bind_key>_models
 
                 # log.info(f'  $ ApiLogicServer run                # Run created API and Admin App, or\n')
 
-                log.info(f'  $ charm | code {self.project_name}      # Customize / debug in your IDE\n\n')
+                if self.open_with == "":
+                    log.info(f'  $ charm | code {self.project_name}      # Customize / debug in your IDE\n\n')
 
                 log.debug(f'  Establish your Python environment - see https://apilogicserver.github.io/Docs/IDE-Execute/#execute-prebuilt-launch-configurations\n')
 
