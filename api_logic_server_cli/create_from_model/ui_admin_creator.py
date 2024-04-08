@@ -640,8 +640,12 @@ class AdminCreator(object):
             else:
                 home_js = f'http://{self.host}/admin-app/home.js'
         self.admin_yaml.settings.HomeJS = home_js
-        return
 
+        self.admin_yaml.settings.style_guide = DotMap() 
+        for each_name, each_value in self.mod_gen.project.manager_style_guide.items():
+            self.admin_yaml.settings.style_guide[each_name] = each_value
+        return
+        
     def create_about(self):
         self.admin_yaml.about = DotMap()
         self.admin_yaml.about.date = f'{str(datetime.datetime.now().strftime("%B %d, %Y %H:%M:%S"))}'

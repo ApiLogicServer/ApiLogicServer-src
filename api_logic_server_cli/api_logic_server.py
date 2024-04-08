@@ -974,17 +974,19 @@ class ProjectRun(Project):
         self.manager_style_guide = DotMap()
         style_guide_path = self.manager_path.joinpath('style-guide.yaml')
         if style_guide_path.is_file():
-            with open(style_guide_path, 'r') as file:
-                try:
-                    self.manager_style_guide = DotMap(yaml.safe_load(file))
-                    self.favorites = self.manager_style_guide.favorite_attribute_names
-                    self.manager_style_guide.pop('favorite_attribute_names')
-                    self.non_favorites = str(self.manager_style_guide.non_favorite_attribute_names)
-                    self.manager_style_guide.pop('non_favorite_attribute_names')
-                except yaml.YAMLError as e:
-                    log.debug(f'.. ..Error loading style-guide.yaml: {e}')
+            pass
         else:
+            style_guide_path = self.api_logic_server_dir_path.joinpath('prototypes/code/style_guide.yaml')
             log.debug(f'.. ..No style-guide.yaml file found, using defaults')
+        with open(style_guide_path, 'r') as file:
+            try:
+                self.manager_style_guide = DotMap(yaml.safe_load(file))
+                self.favorites = self.manager_style_guide.favorite_attribute_names
+                self.manager_style_guide.pop('favorite_attribute_names')
+                self.non_favorites = str(self.manager_style_guide.non_favorite_attribute_names)
+                self.manager_style_guide.pop('non_favorite_attribute_names')
+            except yaml.YAMLError as e:
+                log.debug(f'.. ..Error loading style-guide.yaml: {e}')
 
         if os.getenv('APILOGICSERVER_AUTO_OPEN'):
             self.open_with = os.getenv('APILOGICSERVER_AUTO_OPEN')
