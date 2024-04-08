@@ -22,6 +22,7 @@
     "@angular/core": "^15.2.9",
     "@angular/flex-layout": "^15.0.0-beta.42",
     "@angular/forms": "^15.2.9",
+    "ontimize-web-ngx-keycloak": "15.0.0",
     "@angular/material": "^15.2.9",
     "@angular/material-moment-adapter": "^15.2.9",
     "@angular/platform-browser": "^15.2.9",

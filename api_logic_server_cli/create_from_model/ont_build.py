@@ -41,7 +41,7 @@ log = logging.getLogger("ont-app")
 
 class OntBuilder(object):
     """
-    Convert app_model.yaml to ontomize app
+    Convert app_model.yaml to ontimize app
     """
 
     _favorite_names_list = []  #: ["name", "description"]
@@ -76,10 +76,11 @@ class OntBuilder(object):
         self.thousand_separator="," # "."
         self.decimal_separator="." # ","
         self.date_format="LL" #not sure what this means
-        self.use_keycloak=False # True this will use different templates - defaults to basic auth
+        self.use_keycloak=True # True this will use different templates - defaults to basic auth
         self.edit_on_mode = "dblclick" # edit
 
         self.title_translation = []
+        self.languages = ["en", "es"] # "fr", "it", "de" etc - used to create i18n json files
         
         self.pick_list_template = self.get_template("list-picker.html")
         self.combo_list_template = self.get_template("combo-picker.html") 
@@ -172,25 +173,7 @@ class OntBuilder(object):
         to_dir = self.project.project_directory_path.joinpath(f'ui/{self.app}/')
         shutil.copytree(from_dir, to_dir, dirs_exist_ok=True)  # create default app files
 
-        entity_favorites = []
-        for each_entity_name, each_entity in app_model.entities.items():
-            datatype = 'INTEGER'
-            pkey_datatype = 'INTEGER'
-            primary_key = each_entity["primary_key"]
-            for column in each_entity.columns:
-                if column.name == each_entity.favorite:
-                    datatype = "VARCHAR" if hasattr(column, "type") and column.type.startswith("VARCHAR") else 'INTEGER'
-                if column.name in primary_key:
-                    pkey_datatype = "VARCHAR" if hasattr(column, "type") and column.type.startswith("VARCHAR") else column.type.upper()
-            favorite_dict = {
-                "entity": each_entity_name,
-                "favorite": each_entity.favorite,
-                "breadcrumbLabel": each_entity.favorite,
-                "datatype": datatype,
-                "primary_key": primary_key,
-                "pkey_datatype": pkey_datatype
-            }
-            entity_favorites.append(favorite_dict)
+        entity_favorites = self.build_entity_favorites(app_model)
         
         for setting_name, each_setting in app_model.settings.style_guide.items():
             #style guide
@@ -248,21 +231,60 @@ class OntBuilder(object):
             file_name="app.menu.config.ts",
             source=app_menu_config,
         )
+        app_module = self.get_template("app.module.jinja")
+        rv_app_modules = app_module.render(use_keycloak=self.use_keycloak) 
+        write_root_file(
+            app_path=app_path,
+            dir_name="app",
+            file_name="app.module.ts",
+            source=rv_app_modules,
+        )
+        
+        main_module = self.get_template("main.module.jinja")
+        rv_main_modules = main_module.render(use_keycloak=self.use_keycloak) 
+        write_root_file(
+            app_path=app_path,
+            dir_name="main",
+            file_name="main.module.ts",
+            source=rv_main_modules,
+        )
         
         self.generate_translation_files(app_path)
+
+    def build_entity_favorites(self, app_model):
+        entity_favorites = []
+        for each_entity_name, each_entity in app_model.entities.items():
+            datatype = 'INTEGER'
+            pkey_datatype = 'INTEGER'
+            primary_key = each_entity["primary_key"]
+            for column in each_entity.columns:
+                if column.name == each_entity.favorite:
+                    datatype = "VARCHAR" if hasattr(column, "type") and column.type.startswith("VARCHAR") else 'INTEGER'
+                if column.name in primary_key:
+                    pkey_datatype = "VARCHAR" if hasattr(column, "type") and column.type.startswith("VARCHAR") else column.type.upper()
+            favorite_dict = {
+                "entity": each_entity_name,
+                "favorite": each_entity.favorite,
+                "breadcrumbLabel": each_entity.favorite,
+                "datatype": datatype,
+                "primary_key": primary_key,
+                "pkey_datatype": pkey_datatype
+            }
+            entity_favorites.append(favorite_dict)
+        return entity_favorites
 
     def generate_translation_files(self, app_path):
         #We may have more files in the future - a list from yaml may work here locales["en","es","fr","it"]
         en_json = self.get_template("en.json")
         es_json = self.get_template("es.json")
         titles = ""
-        for v in self.title_translation: # append to assets/i8n/en.json and es.json
+        for v in self.title_translation: # append to app/assets/i8n/en.json and es.json
             for k in v: 
                 titles += f'  "{k}": "{v[k]}",\n'
         rv_en_json = en_json.render(titles=titles)
-        write_json_filename(app_path=app_path, file_name="en.json", source="{" + rv_en_json[:-2] +"\n}")
+        write_json_filename(app_path=app_path, file_name="en.json", source="{\n" + rv_en_json[:-2] +"\n}")
         rv_es_json = es_json.render(titles=titles)
-        write_json_filename(app_path=app_path, file_name="es.json", source="{" + rv_es_json[:-2] + "\n}")
+        write_json_filename(app_path=app_path, file_name="es.json", source="{\n" + rv_es_json[:-2] + "\n}")
         
     def set_style(self, setting_name, each_setting):
         if getattr(self, setting_name, None) != None:
@@ -273,6 +295,9 @@ class OntBuilder(object):
                 return each_entity
         
     def get_environment(self) -> tuple:
+        """
+        Copy templates folder to project - this allows search local first if found
+        """
         current_cli_path = self.project.api_logic_server_dir_path
         templates_path = current_cli_path.joinpath('prototypes/ont_app/templates')
         env = Environment(
@@ -695,11 +720,14 @@ def write_card_file(app_path: Path, entity_name: str, file_name: str, source: st
 def write_root_file(app_path: Path, dir_name: str, file_name: str, source: str):
     import pathlib
 
-    directory = (
-        f"{app_path}/src/app/main"
-        if dir_name == "main"
-        else f"{app_path}/src/app/{dir_name}"
-    )
+    if dir_name == "app":
+        directory = f"{app_path}/src/app"
+    else:
+        directory = (
+            f"{app_path}/src/app/main"
+            if dir_name == "main"
+            else f"{app_path}/src/app/{dir_name}"
+        )
     pathlib.Path(f"{directory}").mkdir(parents=True, exist_ok=True)
     with open(f"{directory}/{file_name}", "w") as file:
         file.write(source)
