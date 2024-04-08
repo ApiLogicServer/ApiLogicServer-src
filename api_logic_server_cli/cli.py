@@ -249,7 +249,7 @@ def create_start_manager(ctx, open_with):
     """
     to_dir = Path(os.getcwd())
     path = Path(__file__)
-    from_dir = get_api_logic_server_path() / 'prototypes/code'
+    from_dir = get_api_logic_server_path().joinpath('prototypes/code')
     to_dir_str = str(to_dir)
     to_dir_check = Path(to_dir).joinpath('venv')
     if not to_dir_check.exists():
@@ -266,7 +266,7 @@ def create_start_manager(ctx, open_with):
     set_defaultInterpreterPath = False
     defaultInterpreterPath_str = ""
     project = PR.ProjectRun(command= "start", project_name='ApiLogicServer', db_url='sqlite', execute=False)
-    if set_defaultInterpreterPath:  # if dev-ide, override default venv: ./venv/bin/python
+    if set_defaultInterpreterPath:  # FIXME OLD CODE if dev-ide, override default venv: ./venv/bin/python
         global api_logic_server_path
         assert project.api_logic_server_dir_path == get_api_logic_server_path(), "dir mismatch"
         project.api_logic_server_dir_path = get_api_logic_server_path()  # for compatibility to api_logic_server.py

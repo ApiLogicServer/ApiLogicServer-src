@@ -20,7 +20,7 @@ def create(project: Project):
 
     path = Path(__file__)
     if 'org_git' in str(path) and str(models_file) == '.':  # for testing
-        models_file = path.parent.parent.parent / 'api_logic_server_cli/prototypes/sample_ai/database/chatgpt/sample_ai_models.py'   
+        models_file = path.parent.parent.parent.joinpath('api_logic_server_cli/prototypes/sample_ai/database/chatgpt/sample_ai_models.py')   
     if 'sqlite' in db_url:
         db_url = str(models_file).replace('py', 'sqlite')
         db_url = 'sqlite:///'+ db_url# relative to cwd, == servers in launch

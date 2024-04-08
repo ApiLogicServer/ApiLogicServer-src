@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.03.70"
+__version__ = "10.03.71"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t04/07/2024 - 10.03.70: Manager style guide, prompts for samples, create/run from dev-ide \n"\
+    "\t04/08/2024 - 10.03.71: Manager style guide, prompts for samples, create/run from dev-ide, path.joinpath \n"\
     "\t04/05/2024 - 10.03.66: ApiLogicServer start, als create from-model (eg copilot) \n"\
     "\t03/28/2024 - 10.03.46: Python 3.12, View support, CLI option-names, Keycloak preview \n"\
     "\t03/14/2024 - 10.03.25: View support, CLI option-names, Keycloak preview \n"\
@@ -972,9 +972,9 @@ class ProjectRun(Project):
         self.api_logic_server_home = self.api_logic_server_dir_path.parent
 
         self.manager_style_guide = DotMap()
-        style_guide_path = Path(self.manager_path / 'style-guide.yaml')
+        style_guide_path = self.manager_path.joinpath('style-guide.yaml')
         if style_guide_path.is_file():
-            with open(Path(self.manager_path / 'style-guide.yaml'), 'r') as file:
+            with open(style_guide_path, 'r') as file:
                 try:
                     self.manager_style_guide = DotMap(yaml.safe_load(file))
                     self.favorites = self.manager_style_guide.favorite_attribute_names
@@ -1597,8 +1597,8 @@ from database import <project.bind_key>_models
             log.debug(f"  Proceed as described in the readme\n")
         else:
             if (is_docker()):
-                os.rename(self.project_directory_path / '.devcontainer-option',
-                          self.project_directory_path / '.devcontainer')
+                os.rename(self.project_directory_path.joinpath('.devcontainer-option'),
+                          self.project_directory_path.joinpath('.devcontainer'))
                 if os.getenv('CODESPACES'):
                     log.info(f'\nCustomize right here, in Browser/VSCode - just as you would locally')
                     log.info(f'Save customized project to GitHub')
