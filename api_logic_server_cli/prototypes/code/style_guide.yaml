@@ -1,3 +1,5 @@
+favorite_attribute_names: name description
+non_favorite_attribute_names: id
 new_mode : dialog
 detail_mode: tab
 pick_style : list 

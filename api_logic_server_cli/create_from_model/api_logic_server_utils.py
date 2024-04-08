@@ -50,7 +50,7 @@ def get_project_directory_and_api_name(project):
         rtn_merge_into_prototype = True
         msg = ''
         if rtn_project_directory == get_api_logic_server_dir():
-            rtn_project_directory = str( Path(get_api_logic_server_dir()) / 'ApiLogicProject' )
+            rtn_project_directory = str( Path(get_api_logic_server_dir()).joinpath('ApiLogicProject'))
             msg = ' <dev>'
         log.debug(f'1. Update current project: {rtn_project_directory}{msg}')
     project_path = Path(rtn_project_directory)
@@ -282,7 +282,7 @@ def get_abs_db_url(msg, project: Project):
 
 def get_api_logic_server_dir() -> str:
     """
-    :return: ApiLogicServer dir, eg, /Users/val/dev/ApiLogicServer
+    :return: ApiLogicServer dir, eg, ...ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli
     """
     path = Path(__file__)
     parent_path = path.parent
