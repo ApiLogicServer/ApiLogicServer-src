@@ -266,6 +266,27 @@ def create_start_manager(ctx, open_with):
     set_defaultInterpreterPath = False
     defaultInterpreterPath_str = ""
     project = PR.ProjectRun(command= "start", project_name='ApiLogicServer', db_url='sqlite', execute=False)
+    # find cli in subdirectories of the lib path for manager run launches
+    lib_path = project.default_interpreter_path.parent.parent.joinpath('lib')
+    ''' if only 1 puthon, lib contains site-packages, else python3.8, python3.9, etc '''
+    subdirs = [x for x in lib_path.iterdir() if x.is_dir()]
+    for subdir in subdirs:
+        if 'site-packages' in str(subdir):
+            site_packages_dir = lib_path.joinpath('site-packages')
+            break
+        sub_subdirs = [x for x in subdir.iterdir() if x.is_dir()]
+        for sub_subdir in sub_subdirs:
+            assert 'site-packages' in str(sub_subdir)
+            site_packages_dir = sub_subdir  # lib_path.joinpath('site-packages')
+    cli_path = site_packages_dir.joinpath('api_logic_server_cli/cli.py')
+    # replace the path with the site-packages path , eg
+    # "program": "cli_path" --> "program": "./venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+    pass
+    vscode_launch_path = to_dir.joinpath('.vscode/launch.json')
+    create_utils.replace_string_in_file(search_for = 'cli_path',
+                                        replace_with=str(cli_path),
+                                        in_file=vscode_launch_path)
+
     if set_defaultInterpreterPath:  # FIXME OLD CODE if dev-ide, override default venv: ./venv/bin/python
         global api_logic_server_path
         assert project.api_logic_server_dir_path == get_api_logic_server_path(), "dir mismatch"
