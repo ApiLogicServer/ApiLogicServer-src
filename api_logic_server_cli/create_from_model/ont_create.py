@@ -102,7 +102,7 @@ class OntCreator(object):
         app_model_out.authentication = admin_model_in.authentication
         app_model_out.settings = admin_model_in.settings
         app_model_out.entities = DotMap()
-        app_model_out.settings.style_guide = self.style_guide()
+        app_model_out.settings.style_guide = self.style_guide()  # TODO - stub code, remove later
         for each_resource_name, each_resource in admin_model_in.resources.items():
             each_entity = self.create_model_entity(each_resource)
             app_model_out.entities[each_resource_name] = each_entity
