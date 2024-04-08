@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.03.69"
+__version__ = "10.03.70"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t04/07/2024 - 10.03.69: Manager style guide, prompts for samples \n"\
+    "\t04/07/2024 - 10.03.70: Manager style guide, prompts for samples, create/run from dev-ide \n"\
     "\t04/05/2024 - 10.03.66: ApiLogicServer start, als create from-model (eg copilot) \n"\
     "\t03/28/2024 - 10.03.46: Python 3.12, View support, CLI option-names, Keycloak preview \n"\
     "\t03/14/2024 - 10.03.25: View support, CLI option-names, Keycloak preview \n"\
@@ -969,6 +969,8 @@ class ProjectRun(Project):
         log.debug(f'.. ..Manager path: {self.manager_path}')  # eg ApiLogicServer/ApiLogicServer-dev/clean/ApiLogicServer
         log.debug(f'.. ..Interp path: manager_path / venv/bin/python')
 
+        self.api_logic_server_home = self.api_logic_server_dir_path.parent
+
         self.manager_style_guide = DotMap()
         style_guide_path = Path(self.manager_path / 'style-guide.yaml')
         if style_guide_path.is_file():
@@ -1567,7 +1569,7 @@ from database import <project.bind_key>_models
         if self.nw_db_status in ["nw", "nw+"] and self.command != "add_db":
             self.add_auth("\nApiLogicProject customizable project created.  \nAdding Security:")
 
-        if self.open_with != "":  # open project with open_with (vscode, charm, atom) -- NOT for docker!!
+        if self.open_with != "" and 'create' == self.command:  # open project with open_with (vscode, charm, atom) -- NOT for docker!!
             start_open_with(project = self)
             
         if self.command.startswith("add_"):

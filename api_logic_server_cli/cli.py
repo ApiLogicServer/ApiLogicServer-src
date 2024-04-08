@@ -263,11 +263,12 @@ def create_start_manager(ctx, open_with):
         log.info(f"    Created manager at: {copied_path}\n\n")
     pass
 
-    set_defaultInterpreterPath = True
+    set_defaultInterpreterPath = False
     defaultInterpreterPath_str = ""
+    project = PR.ProjectRun(command= "start", project_name='ApiLogicServer', db_url='sqlite', execute=False)
     if set_defaultInterpreterPath:  # if dev-ide, override default venv: ./venv/bin/python
-        project = PR.Project()
         global api_logic_server_path
+        assert project.api_logic_server_dir_path == get_api_logic_server_path(), "dir mismatch"
         project.api_logic_server_dir_path = get_api_logic_server_path()  # for compatibility to api_logic_server.py
         defaultInterpreterPath_str = sys.executable
         defaultInterpreterPath = Path(defaultInterpreterPath_str)
@@ -277,7 +278,7 @@ def create_start_manager(ctx, open_with):
             else:
                 defaultInterpreterPath = project.api_logic_server_dir_path.parent.parent.parent.parent.joinpath('bin/python')
                 if 'org_git' in str(project.api_logic_server_dir_path):  # running from dev-source
-                    defaultInterpreterPath = project.api_logic_server_dir_path.parent.parent.parent.joinpath('build_and_test/ApiLogicServer/venv/bin/python')
+                    defaultInterpreterPath = project.api_logic_server_dir_path.parent.parent.parent.joinpath('clean/ApiLogicServer/venv/bin/python')
             defaultInterpreterPath_str = str(defaultInterpreterPath)
             # ApiLogicServerPython
             vscode_settings_path = to_dir / '.vscode/settings.json'
@@ -291,8 +292,7 @@ def create_start_manager(ctx, open_with):
     os.putenv("APILOGICSERVER_AUTO_OPEN", "code")
     os.putenv("APILOGICSERVER_VERBOSE", "false")
     os.putenv("APILOGICSERVER_HOME", project.api_logic_server_dir_path.parent )
-    project = PR.Project()
-    project.defaultInterpreterPath = defaultInterpreterPath_str
+    # assert defaultInterpreterPath_str == str(project.default_interpreter_path)
     create_utils.run_command(
         cmd=f'{open_with} {to_dir_str}',  # passing readme here fails - loses project setttings
         env=None, 
