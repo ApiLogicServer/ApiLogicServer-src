@@ -46,6 +46,7 @@ class Project(CliArgsBase):  # extend user-visible args with internal values
 
         running_at = Path(__file__)
         self.api_logic_server_dir_path = running_at.parent.absolute()  # no abspath(f'{abspath(get_api_logic_server_dir())}'))
+        """ ...ApiLogicServer-src/api_logic_server_cli """
 
         self.is_codespaces = os.getenv('CODESPACES')
 
