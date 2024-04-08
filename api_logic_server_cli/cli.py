@@ -282,9 +282,12 @@ def create_start_manager(ctx, open_with):
     # replace the path with the site-packages path , eg
     # "program": "cli_path" --> "program": "./venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
     pass
+    cli_str = str(cli_path)
+    if os.name == "nt":
+        cli_str = create_utils.windows_path_fix(dir_str=cli_str)
     vscode_launch_path = to_dir.joinpath('.vscode/launch.json')
     create_utils.replace_string_in_file(search_for = 'cli_path',
-                                        replace_with=str(cli_path),
+                                        replace_with=str(cli_str),
                                         in_file=vscode_launch_path)
 
     if set_defaultInterpreterPath:  # FIXME OLD CODE if dev-ide, override default venv: ./venv/bin/python
@@ -310,9 +313,10 @@ def create_start_manager(ctx, open_with):
                                                 replace_with=defaultInterpreterPath_str,
                                                 in_file=vscode_settings_path)
             log.debug(f'.. ..Updated .vscode/settings.json with "python.defaultInterpreterPath": "{defaultInterpreterPath_str}"...')
+
     os.putenv("APILOGICSERVER_AUTO_OPEN", "code")
     os.putenv("APILOGICSERVER_VERBOSE", "false")
-    os.putenv("APILOGICSERVER_HOME", project.api_logic_server_dir_path.parent )
+    os.putenv("APILOGICSERVER_HOME", str(project.api_logic_server_dir_path.parent) )
     # assert defaultInterpreterPath_str == str(project.default_interpreter_path)
     create_utils.run_command(
         cmd=f'{open_with} {to_dir_str}',  # passing readme here fails - loses project setttings
