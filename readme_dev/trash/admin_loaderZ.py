@@ -1,4 +1,4 @@
-""" flask event handlers for the admin app
+""" flask event handlers for the admin app    OLD WAYS TO GET SRA dir
         * return minified app
         * return admin.yaml file
 """
@@ -32,8 +32,32 @@ def get_sra_directory(args: Args) -> str:
         try:     # works for installed, docker, codespaces.  not Azure
             from api_logic_server_cli.create_from_model import api_logic_server_utils as api_logic_server_utils
         except:  # internal use - enable run from dev-ide
-            als_src_path = Path(sys.executable).parent.parent.parent
-            sys.path.append(str(als_src_path))
+            # fish it out of the venv
+            venv_path = Path(sys.executable).parent.parent
+            lib_path = venv_path.joinpath('lib')
+            lib_contents = os.scandir(lib_path)
+            python_path = None
+            for each_entry in lib_contents:
+                if each_entry.is_dir() and each_entry.name.startswith('python'):
+                    python_path = each_entry.path
+                    break   
+            assert python_path != None
+            als_path = python_path + '/site-packages/api_logic_server_cli'
+            assert Path(als_path).is_dir()
+            sys.path.append(als_path)
+            if False:
+                dev_home = os.getenv('APILOGICSERVER_HOME')
+                if dev_home:
+                    admin_logger.debug("ApiLogicServer not in venv, trying APILOGICSERVER_HOME")
+                else:
+                    dev_home = args.api_logic_server_home
+                    if dev_home:
+                        admin_logger.debug("ApiLogicServer not in venv, trying APILOGICPROJECT_APILOGICSERVER_HOME")
+                    else:
+                        dev_home = os.getenv('HOME')
+                        if not dev_home:
+                            raise Exception('ApiLogicServer not in venv, env APILOGICSERVER_HOME or HOME must be set')
+                sys.path.append(dev_home)
             from api_logic_server_cli.create_from_model import api_logic_server_utils as api_logic_server_utils
         admin_logger.debug("return_spa - install directory")
         utils_str = inspect.getfile(api_logic_server_utils)
