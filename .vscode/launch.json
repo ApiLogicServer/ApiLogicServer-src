@@ -108,6 +108,7 @@
             "cwd": "${workspaceFolder}/../../servers/ApiLogicProject",
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
+            "justMyCode": false,
             "args": [
                 "app-build",
                 "--project-name=",
