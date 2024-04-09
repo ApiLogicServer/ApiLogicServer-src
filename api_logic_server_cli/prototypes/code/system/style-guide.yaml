@@ -1,5 +1,17 @@
 favorite_attribute_names: name description
 non_favorite_attribute_names: id
-currency: $
-# project.manager_style_guide.currency
-currency_with_quote_is_same: '$'
+
+currency_symbol: $
+currency_symbol_position: left
+date_format: LL
+decimal_max: '1000000'
+decimal_min: '0'
+decimal_separator: .
+edit_on_mode: dblclick
+max_decimal_digits: '4'
+min_decimal_digits: '2'
+mode: dialog
+pick_style: list
+style: light
+thousand_separator: ','
+use_keycloak: false

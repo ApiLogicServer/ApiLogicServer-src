@@ -1,21 +1,27 @@
 Welcome the the API Logic Server Manager.
 
-
 ## Create API Logic Projects From *Existing* Databases
 
 To create a project, **press F5**, or use the CLI (**Terminal > New Terminal**) and try some pre-installed samples:
 
-* **Demo:** 
-`ApiLogicServer create --project-name=sample_ai --db-url=sqlite:///sample_ai.sqlite`
+* [**Demo:** ](https://apilogicserver.github.io/Docs/Sample-AI/) created from AI (Copilot)
 
-* **Tutorial** (lots of code & logic samples):
-`ApiLogicServer create --project-name= --db-url=`
+```
+als create --project-name=sample_ai --db-url=sqlite:///sample_ai.sqlite
+```
+
+
+* [**Tutorial:** ](https://apilogicserver.github.io/Docs/Tutorial/) lots of code & logic samples:
+```
+ApiLogicServer create --project-name= --db-url=
+```
 
 Then, try your own databases
 
 * Find [database url examples here](https://apilogicserver.github.io/Docs/Database-Connectivity/)
 * Or, experiment with [these Docker databases](https://apilogicserver.github.io/Docs/Database-Docker/)
 
+&nbsp;
 
 ## Create API Logic Projects From *New* Databases, with Copilot
 
@@ -70,6 +76,10 @@ als create --project-name=sample_ai --from-model=sample_ai.py --db-url=sqlite
 &nbsp;
 
 ## Notes
+
+The [API Logic Server Manager](https://apilogicserver.github.io/Docs/Manager/) simplifies creating and managing projects.
+
+
 
 ### Environment Variables
 
