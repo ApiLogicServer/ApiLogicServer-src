@@ -972,11 +972,11 @@ class ProjectRun(Project):
         self.api_logic_server_home = self.api_logic_server_dir_path.parent
 
         self.manager_style_guide = DotMap()
-        style_guide_path = self.manager_path.joinpath('style-guide.yaml')
+        style_guide_path = self.manager_path.joinpath('system/style-guide.yaml')
         if style_guide_path.is_file():
             pass
         else:
-            style_guide_path = self.api_logic_server_dir_path.joinpath('prototypes/code/style_guide.yaml')
+            style_guide_path = self.api_logic_server_dir_path.joinpath('prototypes/code/system/style-guide.yaml')
             log.debug(f'.. ..No style-guide.yaml file found, using defaults')
         with open(style_guide_path, 'r') as file:
             try:

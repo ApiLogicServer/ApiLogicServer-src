@@ -1,17 +1,17 @@
 favorite_attribute_names: name description
 non_favorite_attribute_names: id
-
-currency_symbol: $
-currency_symbol_position: left
-date_format: LL
-decimal_max: '1000000'
-decimal_min: '0'
-decimal_separator: .
-edit_on_mode: dblclick
-max_decimal_digits: '4'
+new_mode : dialog
+detail_mode: tab
+pick_style : list 
+style : light 
+currency_symbol: '$' 
+currency_symbol_position: left 
+thousand_separator: ',' 
+decimal_separator: '.' 
+date_format: 'LL'
+use_keycloak: 'false' 
+edit_on_mode : 'dblclick' 
 min_decimal_digits: '2'
-mode: dialog
-pick_style: list
-style: light
-thousand_separator: ','
-use_keycloak: false
+max_decimal_digits: '4' 
+decimal_min: '0'
+decimal_max: '1000000'
