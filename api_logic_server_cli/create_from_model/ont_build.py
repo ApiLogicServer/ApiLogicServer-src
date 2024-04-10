@@ -116,7 +116,8 @@ class OntBuilder(object):
         self.table_real_template = Template(
             '<o-table-column attr="{{ attr }}" label="{{ title }}" type="integer" min-decimal-digits="2" max-decimal-digits="4" min="0" max="1000000.0000"></o-table-column>'
         )
-
+        self.o_table_column=self.get_template("o_table_column.html")
+        
         # Text Input Fields o-text-input 
         self.text_template = self.get_template("text_template.html")
         self.currency_template = self.get_template("currency_template.html")
@@ -402,6 +403,7 @@ class OntBuilder(object):
                 if hasattr(column, "required") and column.required != DotMap()
                 else "no"
             ),
+            "type": "text"
         }
         if alt_col:
             col_var = alt_col
