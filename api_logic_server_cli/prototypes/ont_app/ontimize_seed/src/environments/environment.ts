@@ -4,7 +4,7 @@
 
 export const environment = {
   //apiEndpoint: 'https://try.imatia.com/ontimizeweb/services/qsallcomponents-jee/services/rest',
-  apiEndpoint: 'http://localhost:5656/ontimizeweb/services/qsallcomponents-jee/services/rest',
+  apiEndpoint: 'http://localhost:5656/ontimizeweb/services/rest',
   production: false,
   versions: {
     core: '15.0.0-rc.o',

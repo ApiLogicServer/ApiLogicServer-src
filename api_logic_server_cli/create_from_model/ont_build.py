@@ -68,7 +68,8 @@ class OntBuilder(object):
         self.env = t_env[0]
         self.local_env = t_env[1]
         self.global_values = DotMap()
-        self.mode = "tab" # "dialog"
+        self.new_mode = "dialog"
+        self.detail_mode = "tab" 
         self.pick_style = "list" #"combo" or"list"
         self.style = "light" # "dark"
         self.currency_symbol = "$" # "€" 
@@ -361,7 +362,8 @@ class OntBuilder(object):
             "favorite": favorite,
             "favoriteType": fav_column_type,
             "breadcrumbLabel":favorite,
-            "mode": self.mode,
+            "new_mode": self.new_mode,
+            "detail_mode": self.detail_mode,
             "title": "{{ '" + title + "' | oTranslate }}",
             "tableAttr": f"{entity_name}Table",
             "service": entity_name,

@@ -70,7 +70,7 @@ def parseFilter(filter:dict,sqltypes: any):
                 rop  = f"{q}{value['rop']}{q}"
                 filter_result = f'"{lop}" {op} {rop}'
                 return filter_result
-        q = "" if sqltypes[f] != 12 else "'"
+        q = "" if sqltypes and sqltypes[f] != 12 else "'"
         if f == "CategoryName":
             f = "CategoryName_ColumnName" #hack to use real column name
         filter_result += f'{a} "{f}" = {q}{value}{q}'

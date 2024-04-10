@@ -21,7 +21,8 @@
         delete-button="false" 
         fixed-header="true" 
         class="vertical-padding-8"
-        edition-mode="{{ editOnMode }}" horizontal-scroll="yes">
+        edition-mode="{{ editOnMode }}" 
+        horizontal-scroll="yes">
         {% if editOnMode == 'edit' %}
           <!-- parent-keys="{{ parentKeys }}" -->
           {% for table_column in row_columns %}
