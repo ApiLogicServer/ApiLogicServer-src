@@ -95,23 +95,23 @@ class OntBuilder(object):
         # Home Grid attributes 0-table-column TODO move these to self.get_template
         # most of these are the same - only the type changes - should we have 1 table-column?
         self.table_text_template = Template(
-            '<o-table-column attr="{{ attr }}" title="{{ title }}" editable="{{ editable }}" required="{{ required }}" ></o-table-column>'
+            '<o-table-column attr="{{ attr }}" label="{{ title }}" editable="{{ editable }}" required="{{ required }}" ></o-table-column>'
         )
         # TODO currency_us or currency_eu
         self.table_currency_template = Template(
-            '<o-table-column attr="{{ attr }}" title="{{ title }}" type="currency" editable="{{ editable }}" required="{{ required }}" currency-symbol="{{ currency_symbol }}" currency-symbol-position="{{ currency_symbol_position }}" thousand-separator="{{ thousand_separator }}"decimal-separator="{{ decimal_separator }}"></o-table-column>'
+            '<o-table-column attr="{{ attr }}" label="{{ title }}" type="currency" editable="{{ editable }}" required="{{ required }}" currency-symbol="{{ currency_symbol }}" currency-symbol-position="{{ currency_symbol_position }}" thousand-separator="{{ thousand_separator }}"decimal-separator="{{ decimal_separator }}"></o-table-column>'
         )  # currency 100,00.00 settings from global
         self.table_date_template = Template(
-            '<o-table-column attr="{{ attr }}" title="{{ title }}" type="date" editable="{{ editable }}" required="{{ required }}" format="{{ date_format }}"></o-table-column>'
+            '<o-table-column attr="{{ attr }}" label="{{ title }}" type="date" editable="{{ editable }}" required="{{ required }}" format="{{ date_format }}"></o-table-column>'
         )
         self.table_integer_template = Template(
-            '<o-table-column attr="{{ attr }}" title="{{ title }}" type="integer" editable="{{ editable }}" required="{{ required }}" ></o-table-column>'
+            '<o-table-column attr="{{ attr }}" label="{{ title }}" type="integer" editable="{{ editable }}" required="{{ required }}" ></o-table-column>'
         )
         self.table_image_template = Template(
             '<o-image attr="{{ attr }}"  width="350px" empty-image="./assets/images/no-image.png" full-screen-button="true"></o-image>'
         )
         self.table_textarea_template = Template(
-            '<o-textarea-input attr="{{ attr }}" label=" {{ title }}" rows="10"></o-textarea-input>'
+            '<o-textarea-input attr="{{ attr }}" label="{{ title }}" rows="10"></o-textarea-input>'
         )
         self.table_real_template = Template(
             '<o-table-column attr="{{ attr }}" label="{{ title }}" type="integer" min-decimal-digits="2" max-decimal-digits="4" min="0" max="1000000.0000"></o-table-column>'
@@ -510,7 +510,7 @@ class OntBuilder(object):
         col_var["attr"] = fk["attrs"][0]
         col_var["service"] = fk["resource"].lower()
         col_var["entity"] = fk["resource"].lower()
-        col_var["comboColumnType"] = fk_column.type if fk_column else "INTEGER"
+        col_var["comboColumnType"] = "VARCHAR" if fk_column and fk_column.type.startswith("VARCHAR") else fk_column.type if fk_column else "INTEGER"
         col_var["columns"] = f'{pkey};{fk["columns"]}'
         col_var["visibleColumns"] = f'{pkey};{fk_entity_var["favorite"]}'
         col_var["valueColumn"] = pkey
