@@ -55,7 +55,7 @@ Enforce the Check Credit requirement (do not generate check constraints):
 5. Store the Items.UnitPrice as a copy from Product.UnitPrice
 ```
 
-![copilot](images/copilot.png)
+![copilot](system/images/copilot.png)
 </details>
 
 <br>
