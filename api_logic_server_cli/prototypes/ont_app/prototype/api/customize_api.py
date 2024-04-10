@@ -157,77 +157,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         """
         return api_utils.server_log(request, jsonify)
     
-    
-    @app.route("/branch", methods=['POST'])
-    def branch():
-        """
-        curl -X 'POST' http://localhost:5656/branch -d @branch.json \     
-            -H 'accept: application/vnd.api+json' \   
-            -H 'Content-Type: application/vnd.api+json'       
-        """
-        payload = json.loads(request.data)
 
-        for branch_record in payload["data"]:
-            clz = models.Branch()
-            clz.NAME = branch_record["Name"]
-            clz.ADDRESS = branch_record["Address"]
-            clz.OFFICEID = branch_record["Office"]
-            clz.STARTDATE = date.today()
-            session.add(clz)
-            
-            session.commit()
-        return jsonify(status=True)
-    
-    @app.route("/customer", methods=['POST'])
-    def customer():
-        """_summary_
-        curl -X 'POST' http://localhost:5656/customer -d @customer.json \
-            -H 'accept: application/vnd.api+json' \
-            -H 'Content-Type: application/vnd.api+json'
-        """
-        payload = json.loads(request.data)
-        for customer_record in payload["data"]:
-            clz = models.Customer()
-            clz.NAME = customer_record["NAME"]
-            clz.SURNAME = customer_record["SURNAME"]
-            if "ADDRESS" in customer_record:
-                clz.ADDRESS = customer_record["ADDRESS"]
-            if "EMAIL" in customer_record:
-                clz.EMAIL = customer_record["EMAIL"]
-            clz.STARTDATE = date.today()
-            clz.CUSTOMERID = customer_record["CUSTOMERID"]
-            clz.NAME = customer_record["NAME"]
-            clz.BRANCHID = 3 #customer_record["BRANCHID"]
-            
-            session.add(clz)
-            session.commit()
-        return jsonify(status=True)
-    
-    @app.route("/employee", methods=['POST'])
-    def employee():
-        """_summary_
-        curl -X 'POST' http://localhost:5656/employee -d @employee.json \
-            -H 'accept: application/vnd.api+json' \
-            -H 'Content-Type: application/vnd.api+json'
-        """
-        payload = json.loads(request.data)
-        for customer_record in payload["data"]:
-            clz = models.Employee()
-            clz.EMPLOYEENAME = customer_record["EMPLOYEENAME"]
-            clz.EMPLOYEESURNAME = customer_record["EMPLOYEESURNAME"]
-            if "EMPLOYEEADDRESS" in customer_record:
-                clz.EMPLOYEEADDRESS = customer_record["EMPLOYEEADDRESS"]
-            #if "EMPLOYEEEMAIL" in customer_record:
-                #clz. = customer_record["EMPLOYEEEMAIL"]
-            if "EMPLOYEEPHONE" in customer_record:
-                clz.EMPLOYEEPHONE = customer_record["EMPLOYEEPHONE"]
-            clz.EMPLOYEESTARTDATE = date.today()
-            clz.EMPLOYEEID = customer_record["EMPLOYEEID"]
-            clz.OFFICEID  = 3
-
-            session.add(clz)
-            session.commit()
-        return jsonify(status=True)
     
     @app.route("/api/entityList", methods=["GET","OPTIONS"])
     @cross_origin()
@@ -240,6 +170,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         return jsonify(valuesYaml)
 
     
+    # this is a hard coded list to map Northwind entities to model classes
         
     api_map = {
         "employee": models.Employee,
@@ -261,11 +192,11 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         "territory": models.Territory,
         "employeeaudit": models.EmployeeAudit
     }
-    #customers/customerAccount/search
-    # http://localhost:5656/ontimizeweb/services/qsallcomponents-jee/services/rest/customers/customerType/search
+    
+    #http://localhost:5656/ontimizeweb/services/qsallcomponents-jee/services/rest/customers/customerType/search
     #https://try.imatia.com/ontimizeweb/services/qsallcomponents-jee/services/rest/customers/customerType/search
-    @app.route("/ontimizeweb/services/qsallcomponents-jee/services/rest/<path:path>", methods=['POST','PUT','PATCH','DELETE','OPTIONS'])
-    @app.route("/services/rest/<path:path>", methods=['POST','PUT','PATCH','DELETE','OPTIONS'])
+    @app.route("/ontimizeweb/services/rest/<path:path>", methods=['GET','POST','PUT','PATCH','DELETE','OPTIONS'])
+    @app.route("/services/rest/<path:path>", methods=['GET','POST','PUT','PATCH','DELETE','OPTIONS'])
     @admin_required() 
     #@cross_origin(vary_header=True)
     def api_search(path):
@@ -473,7 +404,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
                     rop  = f"{q}{value['rop']}{q}"
                     filter_result = f'"{lop}" {op} {rop}'
                     return filter_result
-            q = "" if sqltypes[f] != 12 else "'"
+            q = "" if sqltypes and sqltypes[f] != 12 else "'"
             if f == "CategoryName":
                 f = "CategoryName_ColumnName" #hack to use real column name
             filter_result += f'{a} "{f}" = {q}{value}{q}'

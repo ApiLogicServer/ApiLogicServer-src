@@ -1,10 +1,10 @@
-<o-form-layout-manager mode="{{ mode }}" title="{{ title }}">
+<o-form-layout-manager mode="{{ new_mode }}" title="{{ title }}">
     <div fxFill fxLayout="column" fxLayoutAlign="start">
         <o-table 
             attr="{{ tableAttr }}" 
             service="{{ service }}" 
             entity="{{ entity }}" 
-            keys="{{ favorite }}"
+            keys="{{ keys }}"
             columns="{{ columns }}" 
             header-actions="R;D"
             visible-columns="{{ visibleColumns }}"  
@@ -15,8 +15,8 @@
             select-all-checkbox="true" 
             pageable="yes"  
             virtual-scroll="yes" 
-            detail-mode='none'
-            edition-mode="{{ editOnMode }}" horizontal-scroll="yes">
+            edition-mode="{{ editOnMode }}" 
+            horizontal-scroll="yes">
             {% if editOnMode == 'edit' %}
                 {% for table_row_column in row_columns %}
                     {{ table_row_column }}
