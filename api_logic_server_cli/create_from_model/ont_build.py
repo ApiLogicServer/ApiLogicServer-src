@@ -68,7 +68,7 @@ class OntBuilder(object):
         self.env = t_env[0]
         self.local_env = t_env[1]
         self.global_values = DotMap()
-        self.new_mode = "dialog"
+        self.new_mode = "tab"
         self.detail_mode = "tab" 
         self.pick_style = "list" #"combo" or"list"
         self.style = "light" # "dark"
@@ -143,8 +143,10 @@ class OntBuilder(object):
         Returns:
             _type_: Template
         """
-        with contextlib.suppress(Exception):
-            return self.local_env.get_template(template_name)
+        use_local=False 
+        if use_local:
+            with contextlib.suppress(Exception):
+                return self.local_env.get_template(template_name)
 
         return self.env.get_template(template_name)
 
@@ -359,7 +361,7 @@ class OntBuilder(object):
             "visibleColumns": cols,
             "sortColumns": favorite, 
             "formColumns": favorite, 
-            "keys": favorite,
+            "keys": primaryKey,
             "favorite": favorite,
             "favoriteType": fav_column_type,
             "breadcrumbLabel":favorite,
@@ -373,7 +375,7 @@ class OntBuilder(object):
             "entity_home": f"{entity_name}-home",
             "entity_home_component": f"{entity_upper}HomeComponent",
             "entity_first_cap": entity_first_cap,
-            "keySqlType": fav_column_type,
+            "keySqlType": keySqlType,
             "primaryKey": f"{primaryKey}",
             "detailFormRoute": entity_name,
             "editFormRoute": entity_name,
@@ -641,7 +643,7 @@ class OntBuilder(object):
                 + f"{entity_upper}_MODULE_DECLARATIONS, {entity_first_cap}RoutingModule"
                 + "}",
             "module_from": f" './{entity_name}-routing.module'",
-            "key": entity["favorite"],
+            "key": entity["primary_key"][0],
             "routing_module": f"{entity_first_cap}RoutingModule",
         }
 
