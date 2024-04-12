@@ -1,6 +1,6 @@
 <mat-tab label="{{ tabTitle }}">
     <div layout-padding>
-      <<o-table 
+      <o-table 
         attr="{{ tableAttr }}" 
         service="{{ service }}" 
         entity="{{ entity }}" 
@@ -17,8 +17,8 @@
         select-all-checkbox="true" 
         pageable="yes"  
         virtual-scroll="yes" 
-        insert-button="false" 
-        delete-button="false" 
+        insert-button="no" 
+        delete-button="no" 
         fixed-header="true" 
         class="vertical-padding-8"
         edition-mode="{{ editOnMode }}" 
