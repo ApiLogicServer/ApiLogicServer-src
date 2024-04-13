@@ -186,7 +186,7 @@ class OntBuilder(object):
         
         for each_entity_name, each_entity in app_model.entities.items():
             # HOME - Table Style
-            home_template = self.load_home_template("table_template.html", each_entity)
+            home_template = self.load_home_template("home_template.html", each_entity)
             entity_name = each_entity_name.lower()
             ts = self.load_ts("home_template.jinja", each_entity)
             write_file(app_path, entity_name, "home", "-home.component.html", home_template)
