@@ -1,6 +1,7 @@
 from functools import wraps
 import logging
 import api.system.api_utils as api_utils
+import contextlib
 import yaml
 from pathlib import Path
 from flask_cors import cross_origin
@@ -231,7 +232,6 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         if method == 'POST':
             if data != None:
                 #this is an insert
-                fix_payload(data, sqltypes)
                 stmt = insert(api_clz).values(data)
                 
             else:
@@ -385,6 +385,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         pagesize:int = payload.get('pageSize') or 99
         orderBy:list = payload.get('orderBy') or []
         data = payload.get('data',None)
+        fix_payload(data, sqltypes)
         
         print(filter, columns, sqltypes, offset, pagesize, orderBy, data)
         return filter, columns, sqltypes, offset, pagesize, orderBy, data
@@ -432,8 +433,9 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         if sqltypes:
             for t in sqltypes:
                 if sqltypes[t] == 91: #Date
-                    my_date = float(data[t])/1000
-                    data[t] = datetime.datetime.fromtimestamp(my_date).strftime('%Y-%m-%d %H:%M:%S')
+                    with contextlib.suppress(Exception):
+                        my_date = float(data[t])/1000
+                        data[t] = datetime.datetime.fromtimestamp(my_date) #.strftime('%Y-%m-%d %H:%M:%S')
 
 def rows_to_dict(result: any) -> list:
     """
