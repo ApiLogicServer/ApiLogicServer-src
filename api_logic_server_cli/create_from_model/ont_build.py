@@ -15,7 +15,7 @@ import api_logic_server_cli.create_from_model.api_logic_server_utils as create_u
 from api_logic_server_cli.api_logic_server import Project
 from dotmap import DotMap
 from api_logic_server_cli.create_from_model.meta_model import Resource
-
+from translate import Translator
 from jinja2 import (
     Template,
     Environment,
@@ -289,7 +289,8 @@ class OntBuilder(object):
                 titles += f'  "{k}": "{v[k]}",\n'
         rv_en_json = en_json.render(titles=titles)
         write_json_filename(app_path=app_path, file_name="en.json", source="{\n" + rv_en_json[:-2] +"\n}")
-        es_titles = translation_service(titles)
+
+        es_titles = translation_service(self.title_translation)
         rv_es_json = es_json.render(titles=es_titles)
         write_json_filename(app_path=app_path, file_name="es.json", source="{\n" + rv_es_json[:-2] + "\n}")
         
@@ -816,10 +817,14 @@ def get_column_type(app_model: any, fkey_resource: str, attrs: any) -> str:
     return "int"
 
     
-def translation_service(key):
-    from translate import Translator
+def translation_service(titles:dict):
     translator = Translator(from_lang="en", to_lang="es")
+    values = []
+    for title in titles:
+        key = list(title.keys())[0]
+        value = list(title.values())[0]
+        result = translator.translate(value)
+        values.append({key: result})
 
-    result = translator.translate(key)
-    print(result)
-    return result
+    print(values)
+    return values
