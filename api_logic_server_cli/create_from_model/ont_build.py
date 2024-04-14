@@ -289,7 +289,8 @@ class OntBuilder(object):
                 titles += f'  "{k}": "{v[k]}",\n'
         rv_en_json = en_json.render(titles=titles)
         write_json_filename(app_path=app_path, file_name="en.json", source="{\n" + rv_en_json[:-2] +"\n}")
-        rv_es_json = es_json.render(titles=titles)
+        es_titles = translation_service(titles)
+        rv_es_json = es_json.render(titles=es_titles)
         write_json_filename(app_path=app_path, file_name="es.json", source="{\n" + rv_es_json[:-2] + "\n}")
         
     def set_style(self, setting_name, each_setting):
@@ -384,6 +385,7 @@ class OntBuilder(object):
             "attrType": "INTEGER",
             "editOnMode": self.edit_on_mode
         }
+
         self.add_title(title, entity_name)
         entity_var |= self.global_values
         return entity_var
@@ -812,3 +814,12 @@ def get_column_type(app_model: any, fkey_resource: str, attrs: any) -> str:
                 if column in attrs:
                     return column.type
     return "int"
+
+    
+def translation_service(key):
+    from translate import Translator
+    translator = Translator(from_lang="en", to_lang="es")
+
+    result = translator.translate(key)
+    print(result)
+    return result
