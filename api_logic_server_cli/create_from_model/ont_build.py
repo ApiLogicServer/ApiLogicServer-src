@@ -82,6 +82,7 @@ class OntBuilder(object):
 
         self.title_translation = []
         self.languages = ["en", "es"] # "fr", "it", "de" etc - used to create i18n json files
+        self.column_translation = [] # entity.attr
         
         self.pick_list_template = self.get_template("list-picker.html")
         self.combo_list_template = self.get_template("combo-picker.html") 
@@ -130,7 +131,8 @@ class OntBuilder(object):
         self.email_template = self.get_template("email_template.html")
         self.phone_template = self.get_template("phone_template.html")
         self.sidebar_template = self.get_template("sidebar_template.html")
-
+        self.slide_toggle_template = self.get_template("o_slide_toggle.html")
+        
         
     def get_template(self, template_name) -> Template:
         """
@@ -328,7 +330,7 @@ class OntBuilder(object):
 
         row_cols = []
         for column in entity.columns:
-            rv = self.gen_home_columns(column)
+            rv = self.gen_home_columns(entity, column)
             row_cols.append(rv)
 
         entity_vars["row_columns"] = row_cols
@@ -391,48 +393,43 @@ class OntBuilder(object):
             if title in v:
                 return    
         self.title_translation.append({title: entity_name})
-    def gen_home_columns(self, column, alt_col:any = None):
-        col_var = {
-            "attr": column.name,  # name
-            "title": (
-                column.label
-                if hasattr(column, "label") and column.label != DotMap()
-                else column.name
-            ),  # label
-            "editable": "yes",
-            "required": (
-                ("yes" if column.required else "no")
-                if hasattr(column, "required") and column.required != DotMap()
-                else "no"
-            ),
-            "type": "text"
-        }
-        if alt_col:
-            col_var = alt_col
-        if hasattr(column, "type") and column.type != DotMap():
-            if column.type.startswith("DECIMAL") or column.type.startswith("NUMERIC"):
-                rv = self.table_currency_template.render(col_var)
-            elif column.type == 'INTEGER':
-                rv = self.table_integer_template.render(col_var)
-            elif column.type == "DATE":
-                rv = self.table_date_template.render(col_var)
-            elif column.type == "REAL":
-                rv = self.table_real_template.render(col_var)
-            elif column.type == "CURRENCY":
-                rv = self.table_currency_template.render(col_var)
-            else:
-                if column.template == "textarea":
-                    rv = self.table_textarea_template.render(col_var)
-                else:
-                    rv = self.table_text_template.render(col_var)
+    def gen_home_columns(self, entity, column):
+        col_var = self.get_column_attrs(column)
+        template_type = self.get_template_type(column)
+
+        if template_type == "CURRENCY":
+            rv = self.table_currency_template.render(col_var)
+        elif template_type == 'INTEGER':
+            rv = self.table_integer_template.render(col_var)
+        elif template_type == "DATE":
+            rv = self.table_date_template.render(col_var)
+        elif template_type== "REAL":
+            rv = self.table_real_template.render(col_var)
         else:
-            if column.template == "textarea":
+            if template_type == "TEXTAREA":
                 rv = self.table_textarea_template.render(col_var)
             else:
                 rv = self.table_text_template.render(col_var)
     
         return rv
 
+    def get_template_type(self, column) -> str:
+        if hasattr(column, "template") and column.template != DotMap():
+            return column.template.upper()
+        if hasattr(column, "type") and column.type != DotMap():
+            if column.type.startswith("DECIMAL") or column.type.startswith("NUMERIC"):
+                return "REAL"
+            elif column.type == 'INTEGER':
+                return "INTEGER"
+            elif column.type == "DATE":
+                return "DATE"
+            elif column.type == "REAL":
+                return "REAL"
+            elif column.type == "CURRENCY":
+                return "CURRENCY"
+            elif column.type in ["BLOB","CLOB", "VARBINARY"]:
+                return "IMAGE"
+        return "TEXT"
     def load_new_template(self, template_name: str, entity: any, favorites: any) -> str:
         """
         This is a grid display (new) 
@@ -451,8 +448,8 @@ class OntBuilder(object):
     def get_new_column(self, column, fks, entity):
         col_var = self.get_column_attrs(column)
         for fk in fks:
-            fk_entity = self.get_entity(fk["resource"])
             if column.name in fk["attrs"]  and fk["direction"] == "toone" and len(fk["attrs"]) == 1:
+                fk_entity = self.get_entity(fk["resource"])
                 return self.gen_pick_list_col(col_var, fk, entity)
         return self.gen_field_template(column, col_var)
     
@@ -479,6 +476,9 @@ class OntBuilder(object):
             "tooltip": column.tooltip if hasattr(column,"tooltip") and column.tooltip != DotMap() else column.name 
         } 
         col_var |= self.global_values
+                #{entity.name}.{col_var["title"]}
+        col_var["label"] =  col_var["title"] # "{{ '" + col_var["title"] + "' | oTranslate }}",
+        #'{{ ' + f'"{col_var["name"]}"' + '| oTranslate }}'
         return col_var
     def load_detail_template(self, template_name: str, entity: any, favorites: any) -> str:
         """
@@ -533,8 +533,7 @@ class OntBuilder(object):
         template_var |= entity_vars
         row_cols = []
         for column in entity.columns:
-            col_var = self.get_column_attrs(column)
-            rv = self.gen_home_columns(column, col_var)
+            rv = self.gen_home_columns(entity, column)
             row_cols.append(rv)
                 
         template_var["row_columns"] = row_cols
@@ -617,6 +616,8 @@ class OntBuilder(object):
                 rv = self.phone_template.render(col_var)
             elif col_type == "PASSWORD" or template_type == "PASSWORD":
                 rv = self.password_template.render(col_var)
+            elif template_type == "TOGGLE":
+                rv = self.slide_toggle_template.render(col_var)
             else:
                 # VARCHAR - add text area for
                 if template_type == "TEXTAREA":
