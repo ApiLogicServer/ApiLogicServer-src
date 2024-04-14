@@ -817,14 +817,14 @@ def get_column_type(app_model: any, fkey_resource: str, attrs: any) -> str:
     return "int"
 
     
-def translation_service(titles:dict):
+def translation_service(titles:dict) -> str:
     translator = Translator(from_lang="en", to_lang="es")
-    values = []
+    values = ""
     for title in titles:
         key = list(title.keys())[0]
         value = list(title.values())[0]
         result = translator.translate(value)
-        values.append({key: result})
+        values += f'"{key}": "{result}",\n'
 
     print(values)
     return values
