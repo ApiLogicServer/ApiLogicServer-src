@@ -26,11 +26,6 @@
                 "input": "node_modules/ontimize-web-ngx/assets",
                 "output": "/assets"
               },
-              {
-                "glob": "**/*",
-                "input": "node_modules/ngx-extended-pdf-viewer/assets",
-                "output": "/assets"
-              },
               "src/manifest.webmanifest"
             ],
             "styles": [
@@ -156,8 +151,7 @@
     ],
     "cache": {
       "enabled": false
-    },
-    "analytics": "dd251805-fa40-42a2-a156-f053df426a76"
+    }
   },
   "schematics": {
     "@angular-eslint/schematics:application": {
