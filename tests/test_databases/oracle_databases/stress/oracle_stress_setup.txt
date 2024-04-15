@@ -54,3 +54,17 @@ StressBinaryDouble      swagger runs, admin fails: undefined is not an object (e
 StressInterval          swagger runs (mostly null); admin fails:  Pagination Overflow Error
 StressTimeStampWithTime Oracle fails due to thin
 StressVarray            Oracle fails - illegal use of LONG datatype (ok in dbviz)
+
+
+
+Failures for oracledb 2.1.2 (4/15/2024)
+===========================
+Table                   Results
+=====                   =======
+
+StressBinaryDouble      swagger runs, admin fails: undefined is not an object (evaluating 't.meta')
+StressBinaryFloat
+StressIntervalDay       swagger & admin fail:  Pagination Overflow Error
+StressIntervalYear      swagger & admin fail:  Interval not supported
+StressTimeStampWithTime Oracle fails due to thin
+StressVarray            Oracle fails - illegal use of LONG datatype (ok in dbviz)
