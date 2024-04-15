@@ -58,7 +58,8 @@ StressVarray            Oracle fails - illegal use of LONG datatype (ok in dbviz
 
 
 Failures for oracledb 2.1.2 (4/15/2024)
-===========================
+=======================================
+
 Table                   Results
 =====                   =======
 
