@@ -79,6 +79,7 @@ class OntBuilder(object):
         self.date_format="LL" #not sure what this means
         self.use_keycloak=True # True this will use different templates - defaults to basic auth
         self.edit_on_mode = "dblclick" # edit
+        self.include_translation = False
 
         self.title_translation = []
         self.languages = ["en", "es"] # "fr", "it", "de" etc - used to create i18n json files
@@ -132,6 +133,7 @@ class OntBuilder(object):
         self.phone_template = self.get_template("phone_template.html")
         self.sidebar_template = self.get_template("sidebar_template.html")
         self.slide_toggle_template = self.get_template("o_slide_toggle.html")
+        self.checkbox_template = self.get_template("o_checkbox.html")
         
         
     def get_template(self, template_name) -> Template:
@@ -289,8 +291,9 @@ class OntBuilder(object):
                 titles += f'  "{k}": "{v[k]}",\n'
         rv_en_json = en_json.render(titles=titles)
         write_json_filename(app_path=app_path, file_name="en.json", source="{\n" + rv_en_json[:-2] +"\n}")
-
-        es_titles = translation_service(self.title_translation)
+        es_titles = titles
+        if self.include_translation:
+            es_titles = translation_service(self.title_translation)
         rv_es_json = es_json.render(titles=es_titles)
         write_json_filename(app_path=app_path, file_name="es.json", source="{\n" + rv_es_json[:-2] + "\n}")
         
@@ -621,6 +624,8 @@ class OntBuilder(object):
                 rv = self.password_template.render(col_var)
             elif template_type == "TOGGLE":
                 rv = self.slide_toggle_template.render(col_var)
+            elif template_type == "CHECKBOX":
+                rv = self.checkbox_template.render(col_var)
             else:
                 # VARCHAR - add text area for
                 if template_type == "TEXTAREA":
@@ -817,14 +822,13 @@ def get_column_type(app_model: any, fkey_resource: str, attrs: any) -> str:
     return "int"
 
     
-def translation_service(titles:dict) -> str:
-    translator = Translator(from_lang="en", to_lang="es")
+def translation_service(titles:dict,from_lang:str="en", to_lang:str="es") -> str:
+    # this is very slow since it does title by title
+    translator = Translator(from_lang=from_lang, to_lang=to_lang)
     values = ""
     for title in titles:
         key = list(title.keys())[0]
         value = list(title.values())[0]
         result = translator.translate(value)
         values += f'"{key}": "{result}",\n'
-
-    print(values)
     return values
