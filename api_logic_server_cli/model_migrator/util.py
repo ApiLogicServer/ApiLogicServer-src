@@ -127,5 +127,5 @@ def fixupSQL(sql):
     return f"{sql}"
 
 def get_os_url(url: str) -> str:
-    """ idiotic fix for windows (\ --> \\\\) """
+    """ idiotic fix for windows (use 4 slashes to get 1) """
     return url.replace('\\', '\\\\')

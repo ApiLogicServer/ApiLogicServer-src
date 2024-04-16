@@ -99,7 +99,7 @@ metadata = Base.metadata
         self.tvf_contents += f'\n\n'
 
     def get_os_url(self, url: str) -> str:
-        """ idiotic fix for windows (\ --> \\\\) """
+        """ idiotic fix for windows (use 4 slashes to get 1) """
         return url.replace('\\', '\\\\')
 
     def build_tvf_service(self, args: List[DotDict]):
