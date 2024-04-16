@@ -28,6 +28,8 @@ def get_project_directory_and_api_name(project):
     """
     user-supplied project_name, less the tilde (which might be in project_name); typically relative to cwd.
 
+    check that docker has a volume for the project directory
+
     :param project_name: a file name, eg, ~/Desktop/a.b
     :param api_name: defaults to 'api'
     :param multi_api: cli arg - e.g., set by alsdock
@@ -42,7 +44,13 @@ def get_project_directory_and_api_name(project):
 
     rtn_project_directory = project.project_name    # eg, '../../servers/ApiLogicProject'
     rtn_api_name = project.api_name                 # typically api
-    rtn_merge_into_prototype = False        
+    rtn_merge_into_prototype = False
+
+    if project.is_docker:
+        if not rtn_project_directory.startswith("/"):
+            log.error(f'\n\nError: Docker requires absolute path for project directory: {rtn_project_directory}\n')
+            exit(1)
+           
     if rtn_project_directory.startswith("~"):
         rtn_project_directory = str(Path.home()) + rtn_project_directory[1:]
     if rtn_project_directory == '.' or rtn_project_directory == './':

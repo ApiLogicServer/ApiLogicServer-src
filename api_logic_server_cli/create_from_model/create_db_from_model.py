@@ -8,7 +8,7 @@ import importlib.util
 
 log = logging.getLogger('create_from_model.model_creation_services')
 
-def create(project: Project):
+def create_db(project: Project):
     """ Create a database from a model file
 
     Args:
