@@ -133,7 +133,7 @@ class ModelCreationServices(object):
 
     @staticmethod
     def get_windows_path_with_slashes(url: str) -> str:
-        """ idiotic fix for windows (\ --> \\\\)
+        """ idiotic fix for windows (use 4 slashes to get 1)
         https://stackoverflow.com/questions/1347791/unicode-error-unicodeescape-codec-cant-decode-bytes-cannot-open-text-file"""
         """ old code
         full_path = os.path.abspath(url)

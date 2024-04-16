@@ -298,7 +298,7 @@ def get_api_logic_server_dir() -> str:
     return str(parent_path)
 
 def windows_path_fix(dir_str: str) -> str:
-    """ idiotic fix for windows (\ --> \\\\) """
+    """ idiotic fix for windows (use 4 slashes to get 1) """
     return dir_str.replace('\\', '\\\\')
 
 def does_file_contain(search_for: str, in_file: str) -> bool:
