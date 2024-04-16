@@ -315,7 +315,7 @@ def multi_database_tests():
         msg=f'\nAdd ToDoDB at: {str(install_api_logic_server_path)}')
 
     # declare_security
-    result_create = run_command(f'{set_venv} && ApiLogicServer add-auth --{project_name}=MultiDB',
+    result_create = run_command(f'{set_venv} && ApiLogicServer add-auth --{project_name}=MultiDB --db_url=add-auth',
         cwd=install_api_logic_server_path,
         msg=f'\nAdd AuthDB at: {str(install_api_logic_server_path)}')
 

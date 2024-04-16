@@ -2,6 +2,7 @@ sh /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/t
 
 ApiLogicServer create --project_name=TVF --extended_builder=$ --db_url='mssql+pyodbc://sa:Posey3861@localhost:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'
 
+ApiLogicServer add-auth --project-name=MultiDB  # hidden input?
 
 fails to parse url
 
