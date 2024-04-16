@@ -148,6 +148,8 @@ def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "R
             each_line = each_line.replace('{:target="_blank" rel="noopener"}', '')
             if each_line.startswith('![') or each_line.startswith('[!['):
                 if "https://github.com/ApiLogicServer" not in each_line:     # make doc-relative urls absolute...
+                    if "creates-and-runs-video" in each_line:
+                        debug_stop = "good stop"
                     each_line = each_line.replace('images', 'https://github.com/ApiLogicServer/Docs/blob/main/docs/images')
                     each_line = each_line.replace('png)', 'png?raw=true)')
                 else:
@@ -203,7 +205,7 @@ def get_abs_db_url(msg, project: Project):
         rtn_nw_db_status = "nw-"
     elif project.db_url == "nw--":                                           # nw:           unused - avoid
         rtn_abs_db_url = f'sqlite:///{str(project.api_logic_server_dir_path.joinpath("database/nw.sqlite"))}'
-        rtn_nw_db_status = "nw-"
+        rtn_nw_db_status = "nw--"
     elif project.db_url == "nw+":                                           # nw-gold-plus: next version
         rtn_abs_db_url = f'sqlite:///{str(project.api_logic_server_dir_path.joinpath("database/nw-gold-plus.sqlite"))}'
         rtn_nw_db_status = "nw+"
