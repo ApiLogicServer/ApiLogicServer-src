@@ -1545,7 +1545,7 @@ def rebuild_from_model(ctx, project_name: str, db_url: str, api_name: str, not_e
               default=f'{last_created_project_name}',
               help="Project to run")
 @click.option('--project-name', 'project_name',
-              default=f'.',
+              default=f'{last_created_project_name}',
               prompt="Project to run",
               help="Project location")
 @click.option('--host',
