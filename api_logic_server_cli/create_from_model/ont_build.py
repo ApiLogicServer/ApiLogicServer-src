@@ -103,9 +103,7 @@ class OntBuilder(object):
         self.table_currency_template = Template(
             '<o-table-column attr="{{ attr }}" label="{{ title }}" type="currency" editable="{{ editable }}" required="{{ required }}" currency-symbol="{{ currency_symbol }}" currency-symbol-position="{{ currency_symbol_position }}" thousand-separator="{{ thousand_separator }}"decimal-separator="{{ decimal_separator }}"></o-table-column>'
         )  # currency 100,00.00 settings from global
-        self.table_date_template = Template(
-            '<o-table-column attr="{{ attr }}" label="{{ title }}" type="date" editable="{{ editable }}" required="{{ required }}" format="{{ date_format }}"></o-table-column>'
-        )
+    
         self.table_integer_template = Template(
             '<o-table-column attr="{{ attr }}" label="{{ title }}" type="integer" editable="{{ editable }}" required="{{ required }}" ></o-table-column>'
         )
@@ -134,6 +132,11 @@ class OntBuilder(object):
         self.sidebar_template = self.get_template("sidebar_template.html")
         self.slide_toggle_template = self.get_template("o_slide_toggle.html")
         self.checkbox_template = self.get_template("o_checkbox.html")
+        self.timestamp_template = self.get_template("timestamp_template.html") 
+        self.percent_template = self.get_template("percent_template.html")
+        self.time_template = self.get_template("time_template.html")
+        self.html_template = self.get_template("html_template.html")
+        self.file_template = self.get_template("file_template.html")
         
         
     def get_template(self, template_name) -> Template:
@@ -404,20 +407,21 @@ class OntBuilder(object):
         template_type = self.get_template_type(column)
 
         if template_type == "CURRENCY":
-            rv = self.table_currency_template.render(col_var)
+            return self.table_currency_template.render(col_var)
         elif template_type == 'INTEGER':
-            rv = self.table_integer_template.render(col_var)
+            return self.table_integer_template.render(col_var)
         elif template_type == "DATE":
-            rv = self.table_date_template.render(col_var)
+            return self.date_template.render(col_var)
+        elif template_type == "TIMESTAMP":
+            return self.timestamp_template.render(col_var)
         elif template_type== "REAL":
-            rv = self.table_real_template.render(col_var)
+            return self.table_real_template.render(col_var)
         else:
             if template_type == "TEXTAREA":
-                rv = self.table_textarea_template.render(col_var)
+                return self.table_textarea_template.render(col_var)
             else:
-                rv = self.table_text_template.render(col_var)
+                return self.table_text_template.render(col_var)
     
-        return rv
 
     def get_template_type(self, column) -> str:
         if hasattr(column, "template") and column.template != DotMap():
@@ -602,17 +606,17 @@ class OntBuilder(object):
     def gen_field_template(self,column, col_var):
         # This is for HOME grid style
         if hasattr(column, "type") and column.type != DotMap():
-            col_type = column.type.upper()
-            template_type = column.template.upper() if hasattr(column,"template") and column.template != DotMap() else col_type
-            if col_type.startswith("DECIMAL") or col_type.startswith("NUMERIC") or template_type == "CURRENCY":
+            col_type = column.type.upper().split("(")[0]
+            template_type = calculate_template(column)
+            if template_type == "CURRENCY":
                 rv = self.currency_template.render(col_var) #TODO - not all decimal are currency
-            elif col_type == "DOUBLE" or col_type == "REAL":
-                rv = self.real_template.render(col_var)
-            elif col_type == "DATE" or template_type == "DATE":
+            elif col_type in ["DATE"] or template_type == "DATE":
                 rv = self.date_template.render(col_var)
-            elif col_type == "INTEGER":
+            elif col_type in ["TIMESTAMP", "DATETIME"] or template_type == "TIMESTAMP":
+                rv = self.timestamp_template.render(col_var)
+            elif col_type in ["INTEGER","INT", "TINYINT", "SMALLINT"] or template_type == "INTEGER":
                 rv = self.integer_template.render(col_var)
-            elif col_type == "IMAGE" or template_type == "IMAGE":
+            elif col_type in ["IMAGE", "BLOB", "CLOB"] or template_type == "IMAGE":
                 rv = self.image_template.render(col_var)
             elif col_type == "TEXTAREA" or template_type == "TEXTAREA":
                 rv = self.textarea_template.render(col_var)
@@ -626,18 +630,23 @@ class OntBuilder(object):
                 rv = self.slide_toggle_template.render(col_var)
             elif template_type == "CHECKBOX":
                 rv = self.checkbox_template.render(col_var)
-            else:
-                # VARCHAR - add text area for
-                if template_type == "TEXTAREA":
-                    rv = self.textarea_template.render(col_var)
-                else:
-                    rv = self.text_template.render(col_var)
-        else:
-            if template_type == "TEXTAREA":
-                rv = self.textarea_template.render(col_var)
+            elif template_type == "PERCENT":
+                rv = self.percent_template.render(col_var)
+            elif template_type == "TIME":
+                rv = self.time_template.render(col_var)
+            elif template_type == "HTML":
+                rv = self.html_template.render(col_var)
+            elif template_type == "FILE":
+                rv = self.file_template.render(col_var)
+            elif col_type in ["DECIMAL","NUMERIC", "DOUBLE","REAL"]:
+                rv = self.real_template.render(col_var)
             else:
                 rv = self.text_template.render(col_var)
-            
+        else:
+                rv = self.text_template.render(col_var)
+                
+        if template_type == "TEXTAREA":
+            rv = self.textarea_template.render(col_var)
         return rv
     def load_routing(self, template_name: str, entity: any) -> str:
         template = self.get_template(template_name)
@@ -703,7 +712,15 @@ class OntBuilder(object):
             
 
         return template.render(menuitems=menuitems, importitems=import_cards,card_components=menu_components)
-
+def calculate_template(column):
+    name = column.name.upper()
+    if name.endswith("AMT") or name.endswith("AMOUNT") or name.endswith("TOTAL") or name in ["BALANCE","CREDITLIMIT","FREIGHT"]:
+        return "CURRENCY"
+    if name.endswith("DT") or name.endswith("DATE"):
+        return "DATE"
+    if name == "DISCOUNT":
+        return "PERCENT"
+    return column.template.upper() if hasattr(column,"template") and column.template != DotMap() else column.type
 def get_foreign_keys(entity:any, favorites:any ) -> list:
     fks = []
     attrType = "INTEGER"
