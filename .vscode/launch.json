@@ -61,7 +61,7 @@
             "redirectOutput": true,
             "args": ["create",
                 "--project_name=../../../servers/ApiLogicProject",
-                "--db_url="],
+                "--db-url="],
             "console": "integratedTerminal"
         },
         {

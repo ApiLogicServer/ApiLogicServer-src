@@ -15,6 +15,7 @@ Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 __version__ = "10.03.76"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t04/16/2024 - 10.03.77: cli issues in create-and-run, run \n"\
     "\t04/15/2024 - 10.03.76: Oracledb 2.1.12 \n"\
     "\t04/10/2024 - 10.03.75: Manager style guide, prompts for samples, create/run from dev-ide, path.joinpath \n"\
     "\t04/05/2024 - 10.03.66: ApiLogicServer start, als create from-model (eg copilot) \n"\
@@ -927,6 +928,7 @@ class ProjectRun(Project):
         if self.project_name == "":
             self.project_name = default_project_name
         self.db_url = db_url
+        self.is_docker = is_docker()
         self.from_model = from_model
         self.user_db_url = db_url  # retained for debug
         self.bind_key = bind_key
@@ -1533,7 +1535,7 @@ from database import <project.bind_key>_models
         self.project_directory_path = Path(self.project_directory_actual)
 
         if self.from_model != "":
-            create_db_from_model.create(self)
+            create_db_from_model.create_db(self)
 
         self.abs_db_url, self.nw_db_status, self.model_file_name = create_utils.get_abs_db_url("0. Using Sample DB", self)
 
@@ -1686,7 +1688,7 @@ def key_module_map():
         sqlacodegen_wrapper.create_models_memstring()       # open db, call sqlacodegen
     invoke_creators(model_creation_services)                # creates api & ui, via create_from_model...
     api_expose_api_models_creator.create()                  # creates api/expose_api_models.py, key input to SAFRS        
-    ui_admin_creator.create()                               # creates ui/admin/admin.yaml from resource_list
+    ui_admin_creator.create_db()                            # creates ui/admin/admin.yaml from resource_list
     ProjectRun.update_config_and_copy_sqlite_db()           # adds db (model, multi-db binds, api, app) to curr project
     ProjectRun.add_auth()                                   # add_db(auth), adds nw declare_security, upd config
     final_project_fixup('done', project=None)               # update config, etc

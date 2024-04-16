@@ -649,7 +649,7 @@ def tutorial(ctx, create):
 
 
 @main.command("create", cls=HideDunderCommand)
-@click.option('--project_name', 
+@click.option('--project_name',   # notice - old _names have no prompt
               default=f'{default_project_name}',
               help="Project Location")  # option text shown on create --help
 @click.option('--project-name', 'project_name',
@@ -660,7 +660,7 @@ def tutorial(ctx, create):
               default=f'{default_db}',
               help="SQLAlchemy Database URL\n")
 @click.option('--db-url', 'db_url',
-              default=f'{default_db}',
+              default=f'{default_db}',  # tho -db_url= comes in as 
               prompt="SQLAlchemy Database URI",
               help="SQLAlchemy Database URL - see above\n")
 @click.option('--from-model', 'from_model',
@@ -825,18 +825,17 @@ def create(ctx, project_name: str, db_url: str, not_exposed: str, api_name: str,
 @main.command("create-and-run", cls=HideDunderCommand)
 @click.option('--project_name',
               default=f'{default_project_name}',
-              prompt="Project to create",
               help="Create new directory named this")
 @click.option('--project-name', 'project_name',
+              prompt="Project to create/run",
               default=f'.',
               help="Project location")
 @click.option('--db_url',
               default=f'{default_db}',
-              prompt="SQLAlchemy Database URI",
               help="SQLAlchemy Database URL - see above\n")
 @click.option('--db-url', 'db_url',
-              default=f'{default_db}',
               prompt="SQLAlchemy Database URI",
+              default=f'{default_db}',
               help="SQLAlchemy Database URL - see above\n")
 @click.option('--api_name',
               default=f'api',
@@ -980,6 +979,7 @@ def create_and_run(ctx, project_name: str, db_url: str, not_exposed: str, api_na
         Creates new project and runs it (overwrites).
     """
     global command  # TODO drop this global
+    log.debug(f"\n\ncreate_and_run: projName={project_name}, dbUrl={db_url}\n") 
     db_types = ""
     PR.ProjectRun(command="create-and-run", project_name=project_name, db_url=db_url, api_name=api_name,
                     not_exposed=not_exposed,
@@ -1543,10 +1543,10 @@ def rebuild_from_model(ctx, project_name: str, db_url: str, api_name: str, not_e
 @main.command("run", cls=HideDunderCommand)
 @click.option('--project_name',
               default=f'{last_created_project_name}',
-              prompt="Project to run",
               help="Project to run")
 @click.option('--project-name', 'project_name',
               default=f'.',
+              prompt="Project to run",
               help="Project location")
 @click.option('--host',
               default=f'localhost',
@@ -1578,8 +1578,10 @@ def run_api(ctx, project_name: str, host: str="localhost", port: str="5656", swa
     proj_dir = project_name
     if proj_dir == "":
         proj_dir = last_created_project_name
+        # print(f'Blank - using last created project: {proj_dir}')
     else:
         proj_dir = os.path.abspath(f'{create_utils.resolve_home(project_name)}')
+        # print(f'Running specified project: {proj_dir}')
     run_file = f'{proj_dir}/api_logic_server_run.py '  # alert: sending args makes it hang: {host} {port} {swagger_host}
     create_utils.run_command(f'python {run_file}', msg="Run Created ApiLogicServer Project", new_line=True)
     print("run complete")
