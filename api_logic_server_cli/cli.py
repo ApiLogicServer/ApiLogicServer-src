@@ -828,7 +828,7 @@ def create(ctx, project_name: str, db_url: str, not_exposed: str, api_name: str,
               help="Create new directory named this")
 @click.option('--project-name', 'project_name',
               prompt="Project to create/run",
-              default=f'.',
+              default=f'{default_project_name}',
               help="Project location")
 @click.option('--db_url',
               default=f'{default_db}',
