@@ -91,8 +91,8 @@ class OntBuilder(object):
         self.o_combo_input = self.get_template("o_combo_input.html")
         self.tab_panel = self.get_template("tab_panel.html")
         
-        #file_html = f"{document_type}_template.html" TODO generalize templates by type home, detail, new, tab, etc
-        #file_css = f"templates/{document_type}_style.css"
+        self.environment_template = self.get_template("environment.jinja")
+        
         self.component_scss = self.get_template("component.scss")
         # Home Grid attributes 0-table-column TODO move these to self.get_template
         # most of these are the same - only the type changes - should we have 1 table-column?
@@ -259,7 +259,15 @@ class OntBuilder(object):
             file_name="main.module.ts",
             source=rv_main_modules,
         )
-        
+        # api_root: '{http_type}://{swagger_host}:{port}/{api}' TODO - need actual values
+        apiEndpoint = "http://localhost:5656/ontimizeweb/services/rest"
+        rv_environment = self.environment_template.render(apiEndpoint=apiEndpoint)
+        write_root_file(
+            app_path=app_path,
+            dir_name="environments",
+            file_name="environment.ts",
+            source=rv_environment,
+        )
         self.generate_translation_files(app_path)
 
     def build_entity_favorites(self, app_model):
@@ -713,14 +721,15 @@ class OntBuilder(object):
 
         return template.render(menuitems=menuitems, importitems=import_cards,card_components=menu_components)
 def calculate_template(column):
+    col_type = column.type.upper().split("(")[0]
     name = column.name.upper()
     if name.endswith("AMT") or name.endswith("AMOUNT") or name.endswith("TOTAL") or name in ["BALANCE","CREDITLIMIT","FREIGHT"]:
         return "CURRENCY"
     if name.endswith("DT") or name.endswith("DATE"):
-        return "DATE"
+        return "DATE" if col_type == "DATE" else "TIMESTAMP"
     if name == "DISCOUNT":
         return "PERCENT"
-    return column.template.upper() if hasattr(column,"template") and column.template != DotMap() else column.type
+    return column.template.upper() if hasattr(column,"template") and column.template != DotMap() else col_type
 def get_foreign_keys(entity:any, favorites:any ) -> list:
     fks = []
     attrType = "INTEGER"
@@ -754,6 +763,8 @@ def write_root_file(app_path: Path, dir_name: str, file_name: str, source: str):
 
     if dir_name == "app":
         directory = f"{app_path}/src/app"
+    elif dir_name == "environments":
+        directory = f"{app_path}/src"
     else:
         directory = (
             f"{app_path}/src/app/main"
