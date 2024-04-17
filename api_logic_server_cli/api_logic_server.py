@@ -15,8 +15,7 @@ Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 __version__ = "10.03.80"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t04/16/2024 - 10.03.80: cli issues in create-and-run, run \n"\
-    "\t04/15/2024 - 10.03.76: Oracledb 2.1.12 \n"\
+    "\t04/16/2024 - 10.03.80: cli issues in create-and-run/run, Oracledb 2.1.12 \n"\
     "\t04/10/2024 - 10.03.75: Manager style guide, prompts for samples, create/run from dev-ide, path.joinpath \n"\
     "\t04/05/2024 - 10.03.66: ApiLogicServer start, als create from-model (eg copilot) \n"\
     "\t03/28/2024 - 10.03.46: Python 3.12, View support, CLI option-names, Keycloak preview \n"\
