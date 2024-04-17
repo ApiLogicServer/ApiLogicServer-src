@@ -764,7 +764,7 @@ def write_root_file(app_path: Path, dir_name: str, file_name: str, source: str):
     if dir_name == "app":
         directory = f"{app_path}/src/app"
     elif dir_name == "environments":
-        directory = f"{app_path}/src"
+        directory = f"{app_path}/src/environments"
     else:
         directory = (
             f"{app_path}/src/app/main"
