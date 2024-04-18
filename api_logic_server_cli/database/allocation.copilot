@@ -1,0 +1,9 @@
+ Use SQLAlchemy to create a sqlite database named allocation.sqlite, with customers, orders, items, products and payments (the intersection of customers and orders).
+
+Hints: use autonum keys, allow nulls, Decimal types, foreign keys, no check constraints.
+
+Include a notes field for orders.
+
+Create a few rows of only customer and product data.
+
+Declare Logic Bank rules to process payment postings, allocating them to unpaid orders (oldest first); each allocation reduces the Order Amount, which reduces the customer balance.
