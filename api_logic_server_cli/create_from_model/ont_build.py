@@ -150,7 +150,7 @@ class OntBuilder(object):
         Returns:
             _type_: Template
         """
-        use_local=False 
+        use_local=True 
         if use_local:
             with contextlib.suppress(Exception):
                 return self.local_env.get_template(template_name)
@@ -180,9 +180,10 @@ class OntBuilder(object):
         with contextlib.suppress(Exception):
             shutil.copytree(from_template_dir, to_template_dir, dirs_exist_ok=False)  # do not re-create default template files
         
-        from_dir = self.project.api_logic_server_dir_path.joinpath('prototypes/ont_app/ontimize_seed')
-        to_dir = self.project.project_directory_path.joinpath(f'ui/{self.app}/')
-        shutil.copytree(from_dir, to_dir, dirs_exist_ok=True)  # create default app files
+        # moved to create - we run this code over and over - no need to seed each time
+        #from_dir = self.project.api_logic_server_dir_path.joinpath('prototypes/ont_app/ontimize_seed')
+        #to_dir = self.project.project_directory_path.joinpath(f'ui/{self.app}/')
+        #shutil.copytree(from_dir, to_dir, dirs_exist_ok=True)  # create default app files
 
         entity_favorites = self.build_entity_favorites(app_model)
         
