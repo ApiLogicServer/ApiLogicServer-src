@@ -173,46 +173,6 @@ def is_docker() -> bool:
     return path_result or env_result
 
 
-'''  exploring no-args, not a clue
-from click_default_group import DefaultGroup
-
-@click.group(cls=DefaultGroup, default='no_args', default_if_no_args=True)
-def main():
-    """
-    wonder if this can just do something
-    """
-    click.echo("group execution (never happens)")
-
-# @click.pass_context
-@main.command()
-@click.option('--config', default=None)
-def no_args(config):
-    print("no args!!")
-
-
-@click.group()
-@click.pass_context
-@main.command("mainZ")
-def mainZ(ctx):
-    """
-    Creates [and runs] logic-enabled Python database API Logic Projects.
-
-\b
-    Doc: https://apilogicserver.github.io/Docs
-
-\b
-    Examples:
-
-\b
-        ApiLogicServer tutorial                                # *** start here ***
-        ApiLogicServer create-and-run --db-url= project-name=  # defaults to Northwind
-        ApiLogicServer create                                  # prompts for project, db
-
-    Then, customize created API Logic Project in your IDE
-    """
-    print("Never executed")
-'''
-
 @click.group(invoke_without_command=True)
 # @click.group()
 @click.pass_context
