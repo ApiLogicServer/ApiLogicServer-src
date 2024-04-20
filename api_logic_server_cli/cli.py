@@ -217,7 +217,7 @@ def create_start_manager(ctx, open_with):
         exit(1)
     to_dir_check = Path(to_dir).joinpath('.vscode')
     if to_dir_check.exists():
-        log.info(f"    Using manager at: {to_dir}n\n")
+        log.info(f"    Using manager at: {to_dir}\n\n")
     else:
         copied_path = shutil.copytree(src=from_dir, dst=to_dir, dirs_exist_ok=True)
         log.info(f"    Created manager at: {copied_path}\n\n")
@@ -278,12 +278,16 @@ def create_start_manager(ctx, open_with):
     os.putenv("APILOGICSERVER_VERBOSE", "false")
     os.putenv("APILOGICSERVER_HOME", str(project.api_logic_server_dir_path.parent) )
     # assert defaultInterpreterPath_str == str(project.default_interpreter_path)
-    create_utils.run_command(
-        cmd=f'{open_with} {to_dir_str}',  # passing readme here fails - loses project setttings
-        env=None, 
-        msg="no-msg", 
-        project=project)
-
+    try:
+        create_utils.run_command(
+            cmd=f'{open_with} {to_dir_str}',  # passing readme here fails - loses project setttings
+            env=None, 
+            msg="no-msg", 
+            project=project)
+    except Exception as e:
+        log.error(f"\n\nError: {e}")
+        log.error(f"\nSuggesion: open code (Ctrl+Shift+P or Command+Shift+P), and run Shell Command\n")
+        exit(1)
 
 
 @main.command("about")
