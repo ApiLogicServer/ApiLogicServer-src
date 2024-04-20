@@ -16,10 +16,7 @@ als create --project-name=sample_ai --db-url=sqlite:///sample_ai.sqlite
 ApiLogicServer create --project-name= --db-url=
 ```
 
-Then, try your own databases
-
-* Find [database url examples here](https://apilogicserver.github.io/Docs/Database-Connectivity/)
-* Or, experiment with [these Docker databases](https://apilogicserver.github.io/Docs/Database-Docker/)
+Then, try your own databases [(db-url examples here)](https://apilogicserver.github.io/Docs/Database-Connectivity/), or experiment with [these Docker databases](https://apilogicserver.github.io/Docs/Database-Docker/).
 
 &nbsp;
 
