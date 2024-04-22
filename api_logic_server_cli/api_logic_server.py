@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.03.81"
+__version__ = "10.03.82"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t04/20/2024 - 10.03.81: cli issues in create-and-run/run, Oracledb 2.1.12 \n"\
+    "\t04/21/2024 - 10.03.82: cli issues in create-and-run/run, Oracledb 2.1.12 \n"\
     "\t04/10/2024 - 10.03.75: Manager style guide, prompts for samples, create/run from dev-ide, path.joinpath \n"\
     "\t04/05/2024 - 10.03.66: ApiLogicServer start, als create from-model (eg copilot) \n"\
     "\t03/28/2024 - 10.03.46: Python 3.12, View support, CLI option-names, Keycloak preview \n"\
