@@ -1322,8 +1322,8 @@ from sqlalchemy.dialects.mysql import *
                               f' Id = Column("id", Integer, primary_key=True)')
                     """
                     if model.name not in["User", "Api"]:
-                        log.info(f'** Warning: id columns will not be included in API response - '
-                                f'{model.name}.id\n')
+                        pass
+                        # log.info(f'** Warning: id columns will not be included in API response - {model.name}.id\n')
                 attr_typing = True  # verify this in nw database/db_debug/db_debug.py
                 if attr_typing:
                     if "= Column(DECIMAL" in rendered_column:
