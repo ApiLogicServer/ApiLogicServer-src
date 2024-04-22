@@ -1,0 +1,16 @@
+Use SQLAlchemy to create a sqlite database named sample_ai_courses.sqlite, with courses, semesters, course_sections, students, instructors, student_course_enrollments and course_section_instructors. The relationships between these objects are as follows:
+
+A course has many course_sections and a course_section has exactly one course.
+Each course_section is offered on a specific semester and has a list of days and times on which the classes for that course_section is taught.
+A student_course_enrollment is associated with exactly one course_section and exactly one student.
+A course_section_instructor is associated with exactly one course_section and one instructor.
+Each semester has a unique semester season label which is one of Winter24, Summer24, Fall24, Winter25, etc.
+Hints: use autonum keys, allow nulls, Decimal types, foreign keys, no check constraints.
+
+Include a notes field for courses, students, instructors and course_sections.
+
+Create a few rows of data for each of courses, students, instructors and semesters.
+
+Enforce the following StudentCourseSectionEnrollment requirement (do not generate check constraints):
+
+A student cannot be enrolled in more than one course_section for the same course.
