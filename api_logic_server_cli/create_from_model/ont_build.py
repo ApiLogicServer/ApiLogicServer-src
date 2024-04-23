@@ -90,6 +90,7 @@ class OntBuilder(object):
         self.o_text_input = self.get_template("o_text_input.html")
         self.o_combo_input = self.get_template("o_combo_input.html")
         self.tab_panel = self.get_template("tab_panel.html")
+        self.app_module = self.get_template("app.module.jinja")
         
         self.environment_template = self.get_template("environment.jinja")
         
@@ -243,8 +244,8 @@ class OntBuilder(object):
             file_name="app.menu.config.ts",
             source=app_menu_config,
         )
-        app_module = self.get_template("app.module.jinja")
-        rv_app_modules = app_module.render(use_keycloak=self.use_keycloak) 
+        
+        rv_app_modules = self.app_module.render(use_keycloak=self.use_keycloak) 
         write_root_file(
             app_path=app_path,
             dir_name="app",
@@ -529,23 +530,25 @@ class OntBuilder(object):
         fk_entity = self.get_entity(fk["resource"])
         fk_entity_var = self.get_entity_vars(fk_entity)
         fk_column = find_column(fk_entity, fk_entity.primary_key[0])
-        pkey = entity["primary_key"][0]
+        fk_pkey =  fk_entity.primary_key[0]
         col_var["attr"] = fk["attrs"][0]
         col_var["service"] = fk["resource"].lower()
         col_var["entity"] = fk["resource"].lower()
-        col_var["comboColumnType"] = "VARCHAR" if fk_column and fk_column.type.startswith("VARCHAR") else fk_column.type if fk_column else "INTEGER"
-        col_var["columns"] = f'{pkey};{fk["columns"]}'
-        col_var["visibleColumns"] = f'{pkey};{fk_entity_var["favorite"]}'
-        col_var["valueColumn"] = pkey
-        col_var["valueColumnType"] = fk["attrType"]
-        col_var["keys"] = pkey
-                
-        if self.pick_style == "list": # or fk["template"] == "list":
-            rv = self.pick_list_template.render(col_var)
+        col_var["comboColumnType"] = self.get_fk_column_type(fk_column)
+        col_var["columns"] = f'{fk_pkey};{fk["columns"]};{fk_entity_var["favorite"]}'
+        col_var["visibleColumns"] = f'{fk_pkey};{fk_entity_var["favorite"]}'
+        col_var["valueColumn"] = fk_pkey
+        col_var["valueColumnType"] = self.get_fk_column_type(fk_column)
+        col_var["keys"] = fk_pkey
+
+        if self.pick_style == "list":
+            return self.pick_list_template.render(col_var)
         else:
-            rv = self.combo_list_template.render(col_var)
-        
-        return rv
+            return self.combo_list_template.render(col_var)
+
+    
+    def get_fk_column_type(self, fk_column) -> str:
+        return "VARCHAR" if fk_column and fk_column.type.startswith("VARCHAR") else fk_column.type if hasattr(fk_column,"type") else "INTEGER"
     def load_tab_template(self, entity, template_var: any, parent_pkey:str) -> str:
         tab_template = self.tab_panel
         entity_vars = self.get_entity_vars(entity)
