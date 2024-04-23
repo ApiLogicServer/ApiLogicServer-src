@@ -126,7 +126,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
                                                         "exception": f"{ex}"}
                                 attr_list.append(attribute_object)
                         resource_object["attributes"] = attr_list
-                        resource_objs[each_resource_name] = {"attributes": attr_list}
+                        resource_objs[each_resource_name] = {"attributes": attr_list, "model": each_resource_class}
         # pick the format you like
         #return_result = {"resources": resource_list}
         return_result = {"resources": resource_objs}
@@ -171,27 +171,8 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         return jsonify(valuesYaml)
 
     
-    # this is a hard coded list to map Northwind entities to model classes
-        
+    # this is a hard coded list to map Northwind entities to model classes        
     api_map = {
-        "employee": models.Employee,
-        "customer": models.Customer,
-        "category": models.Category,
-        "customerdemographic": models.CustomerDemographic,
-        "department": models.Department,
-        "employeaudit": models.EmployeeAudit,
-        "employeeterritory": models.EmployeeTerritory,
-        "location": models.Location,
-        "order": models.Order,
-        "orderdetail": models.OrderDetail,
-        "product": models.Product,
-        "supplier": models.Supplier,
-        "sampledbversion": models.SampleDBVersion,
-        "union": models.Union,
-        "shipper": models.Shipper,
-        "region": models.Region,
-        "territory": models.Territory,
-        "employeeaudit": models.EmployeeAudit
     }
     
     #http://localhost:5656/ontimizeweb/services/qsallcomponents-jee/services/rest/customers/customerType/search
@@ -214,7 +195,8 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         if clz_name in ["listReports", "bundle"]:
             return {}
         
-        api_clz = api_map.get(clz_name)
+        #api_clz = api_map.get(clz_name)
+        api_clz = find_model(clz_name=clz_name)
         if clz_name == 'customers' and clz_type == 'customerAccount':
             api_clz = models.Account
         if clz_name == 'branches' and clz_type == 'account':
@@ -245,7 +227,14 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         session.execute(stmt)
         session.commit()
         return jsonify({"code":0,"message":f"{method}:True","data":{},"sqlTypes":None})   #{f"{method}":True})
-
+    
+    def find_model(clz_name:str) -> any:
+        clz_members = getMetaData()
+        resources = clz_members.get("resources")
+        for r in resources:
+            if r.lower() == clz_name:
+                return resources[r]["model"]
+        return None
     def get_rows_agg(request: any, api_clz, agg_type, filter, columns):
         from sqlalchemy import func
         key = api_clz.__name__
