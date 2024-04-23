@@ -61,15 +61,18 @@ They must be manually added to your ui/admin/admin.yaml, e.g.
 @jsonapi_attr
 def __proper_salary__(self):  # type: ignore [no-redef]
     import database.models as models
+    import decimal
     if isinstance(self, models.Employee):
-        import decimal
         rtn_value = self.Salary
+        if rtn_value is None:
+          rtn_value = decimal.Decimal('0')
         rtn_value = decimal.Decimal('1.25') * rtn_value
         self._proper_salary = int(rtn_value)
         return self._proper_salary
     else:
-        # print("class")
-        return None
+        rtn_value = decimal.Decimal('0')
+        self._proper_salary = int(rtn_value)
+        return self._proper_salary
 
 @add_method(models.Employee)
 @__proper_salary__.setter
