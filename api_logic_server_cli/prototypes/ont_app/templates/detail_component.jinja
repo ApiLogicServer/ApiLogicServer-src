@@ -26,7 +26,7 @@ export class {{ entity_first_cap }}DetailComponent implements OnInit  {
     this.service.configureService(conf);
   }
   onDataLoaded(e: object) {
-
+    console.log(JSON.stringify(e));
   }
 
 }
