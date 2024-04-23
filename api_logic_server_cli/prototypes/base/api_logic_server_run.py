@@ -226,7 +226,8 @@ def api_logic_server_setup(flask_app: Flask, args: Args):
 
         def constraint_handler(message: str, constraint: Constraint, logic_row: LogicRow):
             """ format LogicBank constraint exception for SAFRS """
-            if constraint.error_attributes:
+            if constraint is not None and hasattr(constraint, 'error_attributes'):
+
                 detail = {"model": logic_row.name, "error_attributes": constraint.error_attributes}
             else:
                 detail = {"model": logic_row.name}
