@@ -196,25 +196,40 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
             return {}
         
         #api_clz = api_map.get(clz_name)
-        api_clz = find_model(clz_name=clz_name)
-        if clz_name == 'customers' and clz_type == 'customerAccount':
-            api_clz = models.Account
-        if clz_name == 'branches' and clz_type == 'account':
-            api_clz = models.Account
+        resource = find_model(clz_name)
+        api_attributes = resource["attributes"]
+        api_clz = resource["model"]
+        
             
         payload = json.loads(request.data)
         filter, columns, sqltypes, offset, pagesize, orderBy, data = parsePayload(payload)
-        
+        result = {}
         if method in ['PUT','PATCH']:
-            stmt = update(api_clz).where(text(filter)).values(data)
+            sql_alchemy_row = session.query(api_clz).filter(text(filter)).one()
+            for key in DotDict(data):
+                setattr(sql_alchemy_row, key , DotDict(data)[key])
+            session.add(sql_alchemy_row)
+            result = sql_alchemy_row
+            #stmt = update(api_clz).where(text(filter)).values(data)
+            #session.execute(stmt)
             
         if method == 'DELETE':
-            stmt = delete(api_clz).where(text(filter))
+            #stmt = delete(api_clz).where(text(filter))
+            sql_alchemy_row = session.query(api_clz).filter(text(filter)).one()
+            session.delete(sql_alchemy_row)
+            result = sql_alchemy_row
+            #session.execute(stmt)
             
         if method == 'POST':
             if data != None:
                 #this is an insert
-                stmt = insert(api_clz).values(data)
+                sql_alchemy_row = api_clz()
+                for a in api_attributes:
+                    if hasattr(DotDict(data), a["name"]):
+                        setattr(sql_alchemy_row, a["name"] , DotDict(data)[ a["name"]])
+                session.add(sql_alchemy_row)
+                result = sql_alchemy_row
+                #stmt = insert(api_clz).values(data)
                 
             else:
                 #GET (sent as POST)
@@ -224,9 +239,9 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
                 else:
                     return get_rows(request, api_clz, None, orderBy, columns, pagesize, offset)
                 
-        session.execute(stmt)
         session.commit()
-        return jsonify({"code":0,"message":f"{method}:True","data":{},"sqlTypes":None})   #{f"{method}":True})
+        session.flush()
+        return jsonify({"code":0,"message":f"{method}:True","data":result,"sqlTypes":None})   #{f"{method}":True})
     
     def find_model(clz_name:str) -> any:
         clz_members = getMetaData()
