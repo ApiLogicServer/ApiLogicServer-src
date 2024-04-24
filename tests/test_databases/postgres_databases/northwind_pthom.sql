@@ -1,15 +1,6 @@
 --
--- Revised for als from  https://github.com/pthom/northwind_psql/blob/master/northwind.sql
+-- PostgreSQL database dump  https://github.com/pthom/northwind_psql/blob/master/northwind.sql
 --
-DROP DATABASE IF EXISTS northwind;
-CREATE DATABASE northwind;
-\c northwind;
-
--- in docker container/terminal
--- psql--username=postgres
--- \l
--- \dt
-
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -101,7 +92,7 @@ CREATE TABLE customers (
 --
 
 CREATE TABLE employees (
-    employee_id SERIAL,
+    employee_id smallint NOT NULL,
     last_name character varying(20) NOT NULL,
     first_name character varying(10) NOT NULL,
     title character varying(30),
@@ -127,7 +118,7 @@ CREATE TABLE employees (
 --
 
 CREATE TABLE employee_territories (
-    employee_id SERIAL,
+    employee_id smallint NOT NULL,
     territory_id character varying(20) NOT NULL
 );
 
@@ -152,7 +143,7 @@ CREATE TABLE order_details (
 --
 
 CREATE TABLE orders (
-    order_id serial,
+    order_id smallint NOT NULL,
     customer_id character varying(5),
     employee_id smallint,
     order_date date,
@@ -174,7 +165,7 @@ CREATE TABLE orders (
 --
 
 CREATE TABLE products (
-    product_id SERIAL,
+    product_id smallint NOT NULL,
     product_name character varying(40) NOT NULL,
     supplier_id smallint,
     category_id smallint,
@@ -192,7 +183,7 @@ CREATE TABLE products (
 --
 
 CREATE TABLE region (
-    region_id SERIAL,
+    region_id smallint NOT NULL,
     region_description character varying(60) NOT NULL
 );
 
@@ -202,7 +193,7 @@ CREATE TABLE region (
 --
 
 CREATE TABLE shippers (
-    shipper_id SERIAL,
+    shipper_id smallint NOT NULL,
     company_name character varying(40) NOT NULL,
     phone character varying(24)
 );
@@ -214,7 +205,7 @@ CREATE TABLE shippers (
 --
 
 CREATE TABLE suppliers (
-    supplier_id SERIAL,
+    supplier_id smallint NOT NULL,
     company_name character varying(40) NOT NULL,
     contact_name character varying(30),
     contact_title character varying(30),
@@ -3918,16 +3909,4 @@ ALTER TABLE ONLY employees
 --
 -- PostgreSQL database dump complete
 --
-
---
--- initialize serials
---
-
-SELECT setval('employees_employee_id_seq', (SELECT MAX(employee_id) FROM employees));
-SELECT setval('employee_territories_employee_id_seq', (SELECT MAX(employee_id) FROM employee_territories));
-SELECT setval('orders_order_id_seq', (SELECT MAX(order_id) FROM orders));
-SELECT setval('products_product_id_seq', (SELECT MAX(product_id) FROM products));
-SELECT setval('region_region_id_seq', (SELECT MAX(region_id) FROM region));
-SELECT setval('shippers_shipper_id_seq', (SELECT MAX(shipper_id) FROM shippers));
-SELECT setval('suppliers_supplier_id_seq', (SELECT MAX(supplier_id) FROM suppliers));
 
