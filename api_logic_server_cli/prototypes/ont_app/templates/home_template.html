@@ -17,11 +17,9 @@
             virtual-scroll="yes" 
             edition-mode="{{ editOnMode }}" 
             horizontal-scroll="yes">
-            {% if editOnMode == 'edit' %}
-                {% for table_row_column in row_columns %}
-                    {{ table_row_column }}
-                {% endfor %}
-            {% endif %}
+            {% for table_row_column in row_columns %}
+            {{ table_row_column }}
+            {% endfor %}
             <o-table-context-menu></o-table-context-menu>
             <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
         </o-table>

@@ -68,7 +68,7 @@ class OntBuilder(object):
         self.env = t_env[0]
         self.local_env = t_env[1]
         self.global_values = DotMap()
-        self.new_mode = "tab"
+        self.new_mode = "dialog"
         self.detail_mode = "tab" 
         self.pick_style = "list" #"combo" or"list"
         self.style = "light" # "dark"
@@ -78,7 +78,7 @@ class OntBuilder(object):
         self.decimal_separator="." # ","
         self.date_format="LL" #not sure what this means
         self.use_keycloak=True # True this will use different templates - defaults to basic auth
-        self.edit_on_mode = "dblclick" # edit
+        self.edit_on_mode = "click" # edit
         self.include_translation = False
 
         self.title_translation = []
@@ -98,7 +98,7 @@ class OntBuilder(object):
         # Home Grid attributes 0-table-column TODO move these to self.get_template
         # most of these are the same - only the type changes - should we have 1 table-column?
         self.table_text_template = Template(
-            '<o-table-column attr="{{ attr }}" label="{{ title }}" editable="{{ editable }}" required="{{ required }}" ></o-table-column>'
+            '<o-table-column attr="{{ attr }}" label="{{ title }}" editable="{{ editable }}" required="{{ required }}" content-align="left"></o-table-column>'
         )
         # TODO currency_us or currency_eu
         self.table_currency_template = Template(
@@ -106,16 +106,16 @@ class OntBuilder(object):
         )  # currency 100,00.00 settings from global
     
         self.table_integer_template = Template(
-            '<o-table-column attr="{{ attr }}" label="{{ title }}" type="integer" editable="{{ editable }}" required="{{ required }}" ></o-table-column>'
+            '<o-table-column attr="{{ attr }}" label="{{ title }}" type="integer" editable="{{ editable }}" required="{{ required }}" content-align="center"></o-table-column>'
         )
         self.table_image_template = Template(
             '<o-image attr="{{ attr }}"  width="350px" empty-image="./assets/images/no-image.png" full-screen-button="true"></o-image>'
         )
         self.table_textarea_template = Template(
-            '<o-textarea-input attr="{{ attr }}" label="{{ title }}" rows="10"></o-textarea-input>'
+            '<o-textarea-input attr="{{ attr }}" label="{{ title }}" rows="10" content-align="center"></o-textarea-input>'
         )
         self.table_real_template = Template(
-            '<o-table-column attr="{{ attr }}" label="{{ title }}" type="integer" min-decimal-digits="2" max-decimal-digits="4" min="0" max="1000000.0000"></o-table-column>'
+            '<o-table-column attr="{{ attr }}" label="{{ title }}" type="real" min-decimal-digits="2" max-decimal-digits="4" min="0" max="1000000.0000" content-align="center"></o-table-column>'
         )
         self.o_table_column=self.get_template("o_table_column.html")
         
@@ -305,8 +305,7 @@ class OntBuilder(object):
         rv_en_json = en_json.render(titles=titles)
         write_json_filename(app_path=app_path, file_name="en.json", source="{\n" + rv_en_json[:-2] +"\n}")
         es_titles = titles
-        if getattr(self.global_values,"include_translation", "false") in ["true","True","yes","Yes"]:
-        #if self.include_translation:
+        if self.include_translation:
             es_titles = translation_service(self.title_translation)
         rv_es_json = es_json.render(titles=es_titles)
         write_json_filename(app_path=app_path, file_name="es.json", source="{\n" + rv_es_json[:-2] + "\n}")
@@ -416,8 +415,8 @@ class OntBuilder(object):
         self.title_translation.append({title: entity_name})
     def gen_home_columns(self, entity, column):
         col_var = self.get_column_attrs(column)
-        template_type = self.get_template_type(column)
-
+        #template_type = self.get_template_type(column)
+        template_type = calculate_template(column)
         if template_type == "CURRENCY":
             return self.table_currency_template.render(col_var)
         elif template_type == 'INTEGER':
@@ -426,7 +425,7 @@ class OntBuilder(object):
             return self.date_template.render(col_var)
         elif template_type == "TIMESTAMP":
             return self.timestamp_template.render(col_var)
-        elif template_type== "REAL":
+        elif template_type in ["REAL", "DECIMAL", "NUMERIC"]:
             return self.table_real_template.render(col_var)
         else:
             if template_type == "TEXTAREA":
@@ -735,7 +734,10 @@ def calculate_template(column):
         return "DATE" if col_type == "DATE" else "TIMESTAMP"
     if name == "DISCOUNT":
         return "PERCENT"
-    return column.template.upper() if hasattr(column,"template") and column.template != DotMap() else col_type
+    template = column.template.upper() if hasattr(column,"template") and column.template != DotMap() else col_type
+    if template == "TEXT" and col_type in ["DECIMAL","INTEGER","NUMERIC","REAL","FLOAT"]:
+        return col_type
+    return template
 def get_foreign_keys(entity:any, favorites:any ) -> list:
     fks = []
     attrType = "INTEGER"
