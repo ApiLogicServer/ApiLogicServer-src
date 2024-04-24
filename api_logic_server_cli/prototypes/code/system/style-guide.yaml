@@ -4,12 +4,13 @@ new_mode : dialog
 detail_mode: tab
 pick_style : list 
 style : light 
-currency_symbol: '$' 
+currency_symbol: '$' # "€" 
 currency_symbol_position: left 
 thousand_separator: ',' 
 decimal_separator: '.' 
 date_format: 'LL'
 use_keycloak: 'false' 
+include_translation: false
 edit_on_mode : 'dblclick' 
 min_decimal_digits: '2'
 max_decimal_digits: '4' 

@@ -196,7 +196,7 @@ class OntBuilder(object):
         for each_entity_name, each_entity in app_model.entities.items():
             # HOME - Table Style
             home_template = self.load_home_template("home_template.html", each_entity)
-            entity_name = each_entity_name.lower()
+            entity_name = each_entity_name
             ts = self.load_ts("home_template.jinja", each_entity)
             write_file(app_path, entity_name, "home", "-home.component.html", home_template)
             write_file(app_path, entity_name, "home", "-home.component.ts", ts)
@@ -361,7 +361,7 @@ class OntBuilder(object):
         cols = get_columns(entity)
         fav_column_type = "VARCHAR" if fav_column and fav_column.type.startswith("VARCHAR") else "INTEGER"
         key =  entity["primary_key"][0]
-        entity_name = f"{entity.type.lower()}"
+        entity_name = f"{entity.type}"
         entity_upper = f"{entity_name[:1].upper()}{entity_name[1:]}"
         entity_first_cap = f"{entity_name[:1].upper()}{entity_name[1:]}"
         primaryKey = entity["primary_key"][0]
@@ -532,8 +532,8 @@ class OntBuilder(object):
         fk_column = find_column(fk_entity, fk_entity.primary_key[0])
         fk_pkey =  fk_entity.primary_key[0]
         col_var["attr"] = fk["attrs"][0]
-        col_var["service"] = fk["resource"].lower()
-        col_var["entity"] = fk["resource"].lower()
+        col_var["service"] = fk["resource"]
+        col_var["entity"] = fk["resource"]
         col_var["comboColumnType"] = self.get_fk_column_type(fk_column)
         col_var["columns"] = f'{fk_pkey};{fk["columns"]};{fk_entity_var["favorite"]}'
         col_var["visibleColumns"] = f'{fk_pkey};{fk_entity_var["favorite"]}'
@@ -575,11 +575,11 @@ class OntBuilder(object):
         return template.render(entity_vars)
     
     def get_tabs(self, entity, fks):
-        entity_name = entity.type.lower()
+        entity_name = entity.type
         panels = []
         for fk_tab in fks:
             if fk_tab["direction"] == "tomany":
-                tab_name = fk_tab["resource"].lower()
+                tab_name = fk_tab["resource"]
                 tab_vars = {
                     'resource': fk_tab["resource"],
                     'resource_name': fk_tab["name"],
@@ -593,7 +593,7 @@ class OntBuilder(object):
                 }
                 primaryKey = entity["primary_key"][0]
                 for each_entity_name, each_entity in self.app_model.entities.items():
-                    if each_entity_name.lower() == tab_name:
+                    if each_entity_name == tab_name:
                         template = self.load_tab_template(each_entity, tab_vars, primaryKey )
                         panels.append(template)
 
@@ -606,7 +606,7 @@ class OntBuilder(object):
         sidebarTemplate = self.sidebar_template
         # sep = ","
         for each_entity_name, each_entity in entities:
-            name = each_entity_name.lower()
+            name = each_entity_name
             entity_first_cap = f"{name[:1].upper()}{name[1:]}"
             var = {"entity": name, "entity_first_cap": entity_first_cap}
             child = sidebarTemplate.render(var)
@@ -663,7 +663,7 @@ class OntBuilder(object):
     def load_routing(self, template_name: str, entity: any) -> str:
         template = self.get_template(template_name)
         entity_upper = entity.type.upper()
-        entity_name = entity.type.lower()
+        entity_name = entity.type
         entity_first_cap = f"{entity_name[:1].upper()}{entity_name[1:]}"
         var = {
             "entity": entity_name,
@@ -682,7 +682,7 @@ class OntBuilder(object):
     def load_module(self, template_name: str, entity: any) -> str:
         template = self.get_template(template_name)
         entity_upper = entity.type.upper()
-        entity_name = entity.type.lower()
+        entity_name = entity.type
         entity_first_cap = f"{entity_name[:1].upper()}{entity_name[1:]}"
         var = {
             "entity": entity_name,
@@ -711,7 +711,7 @@ class OntBuilder(object):
         menu_components = []
         sep = ""
         for each_entity_name, each_entity in entities:
-            name = each_entity_name.lower()
+            name = each_entity_name
             name_first_cap = name[:1].upper()+ name[1:]
             menuitem = menu_item_template.render(name=name, name_upper=each_entity_name.upper())
             menuitem = f"{sep}{menuitem}"
@@ -827,7 +827,7 @@ def gen_app_service_config(entities: any) -> str:
     config = ""
     children = ""
     for each_entity_name, each_entity in entities:
-        name = each_entity_name.lower()
+        name = each_entity_name
         child = child_template.render(name=name)
         children += f"{sep}{child}\n"
         sep = ","

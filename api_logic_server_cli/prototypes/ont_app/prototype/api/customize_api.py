@@ -211,14 +211,12 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
             session.add(sql_alchemy_row)
             result = sql_alchemy_row
             #stmt = update(api_clz).where(text(filter)).values(data)
-            #session.execute(stmt)
             
         if method == 'DELETE':
             #stmt = delete(api_clz).where(text(filter))
             sql_alchemy_row = session.query(api_clz).filter(text(filter)).one()
             session.delete(sql_alchemy_row)
             result = sql_alchemy_row
-            #session.execute(stmt)
             
         if method == 'POST':
             if data != None:
@@ -248,12 +246,11 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
     def find_model(clz_name:str) -> any:
         clz_members = getMetaData()
         resources = clz_members.get("resources")
-        for r in resources:
-            if r.lower() == clz_name:
-                return resources[r]
+        for resource in resources:
+            if resource == clz_name:
+                return resources[resource]
         return None
     def get_rows_agg(request: any, api_clz, agg_type, filter, columns):
-        from sqlalchemy import func
         key = api_clz.__name__
         resources = getMetaData(key)
         attributes = resources["resources"][key]["attributes"]
