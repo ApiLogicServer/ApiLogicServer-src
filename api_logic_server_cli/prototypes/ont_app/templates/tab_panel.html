@@ -21,14 +21,12 @@
         delete-button="no" 
         fixed-header="true" 
         class="vertical-padding-8"
-        edition-mode="{{ editOnMode }}" 
+        edition-mode="click" 
         horizontal-scroll="yes">
-        {% if editOnMode == 'edit' %}
-          <!-- parent-keys="{{ parentKeys }}" -->
-          {% for table_column in row_columns %}
-              {{ table_column }}
-          {% endfor %}
-        {% endif %}
+        <!-- parent-keys="{{ parentKeys }}" -->
+        {% for table_column in row_columns %}
+        {{ table_column }}
+        {% endfor %}
       </o-table>
     </div>
 </mat-tab>
