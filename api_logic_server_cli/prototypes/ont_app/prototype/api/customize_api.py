@@ -224,9 +224,11 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
             if data != None:
                 #this is an insert
                 sql_alchemy_row = api_clz()
-                for a in api_attributes:
-                    if hasattr(DotDict(data), a["name"]):
-                        setattr(sql_alchemy_row, a["name"] , DotDict(data)[ a["name"]])
+                row = DotDict(data)
+                for attr in api_attributes:
+                    name = attr["name"]
+                    if getattr(row, name) != None:
+                        setattr(sql_alchemy_row, name , row[name])
                 session.add(sql_alchemy_row)
                 result = sql_alchemy_row
                 #stmt = insert(api_clz).values(data)
@@ -248,7 +250,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         resources = clz_members.get("resources")
         for r in resources:
             if r.lower() == clz_name:
-                return resources[r]["model"]
+                return resources[r]
         return None
     def get_rows_agg(request: any, api_clz, agg_type, filter, columns):
         from sqlalchemy import func
