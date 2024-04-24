@@ -305,7 +305,8 @@ class OntBuilder(object):
         rv_en_json = en_json.render(titles=titles)
         write_json_filename(app_path=app_path, file_name="en.json", source="{\n" + rv_en_json[:-2] +"\n}")
         es_titles = titles
-        if self.include_translation:
+        if getattr(self.global_values,"include_translation", "false") in ["true","True","yes","Yes"]:
+        #if self.include_translation:
             es_titles = translation_service(self.title_translation)
         rv_es_json = es_json.render(titles=es_titles)
         write_json_filename(app_path=app_path, file_name="es.json", source="{\n" + rv_es_json[:-2] + "\n}")
@@ -313,6 +314,7 @@ class OntBuilder(object):
     def set_style(self, setting_name, each_setting):
         if getattr(self, setting_name, None) != None:
             setattr(self,setting_name,each_setting)
+            
     def get_entity(self, entity_name):
         for each_entity_name, each_entity in self.app_model.entities.items():
             if each_entity_name == entity_name:
