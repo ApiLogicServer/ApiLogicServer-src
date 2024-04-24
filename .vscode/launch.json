@@ -331,7 +331,7 @@
             "program": "cli.py",
             "redirectOutput": true,
             "args": ["create","--project_name=../../../servers/postgres-nw",
-                "--db_url=postgresql://postgres:p@localhost/postgres"],
+                "--db_url=postgresql://postgres:p@localhost/northwind"],
             "console": "integratedTerminal"
         },
         {
@@ -367,6 +367,18 @@
                 "create",
                 "--project_name=../../../servers/postgres-stress",
                 "--db_url=postgresql://postgres:p@localhost/stress"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "  - Postgres serial (id)",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/api_logic_server_cli",
+            "justMyCode": false,
+            "program": "cli.py",
+            "redirectOutput": true,
+            "args": ["create","--project_name=../../../servers/postgres-serial",
+                "--db_url=postgresql://postgres:p@localhost/autonum"],
             "console": "integratedTerminal"
         },
         {
