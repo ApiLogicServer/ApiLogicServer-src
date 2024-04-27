@@ -5,7 +5,47 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "ApiLogicServer Create a Project",
+            "name": "GENAI",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/clean/ApiLogicServer/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "genai",
+                "--using=${input:inputGenaiProjectName}"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "GENAI - Retry from repaired model",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/clean/ApiLogicServer/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "create",
+                "--project-name=genai_demo",
+                "--db_url=sqlite",
+                "--from-model=system/genai/temp/model.py"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "ApiLogicServer Create (CLI)",
             "type": "debugpy",
             "request": "launch",
             "program": "cli_path",
@@ -97,6 +137,12 @@
             "type": "promptString",
             "description": "Project Name (will create directory with this name)",
             "default": "sample_ai"
+        },
+        {
+            "id": "inputGenaiProjectName",
+            "type": "promptString",
+            "description": "Project Name (will create directory with this name)",
+            "default": "genai_demo"
         },
         {
             "id": "inputDBURL",

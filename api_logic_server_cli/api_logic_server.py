@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.03.84"
+__version__ = "10.03.86"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t04/27/2024 - 10.03.86: genai w/ restart \n"\
     "\t04/23/2024 - 10.03.84: Fix error handling for db errors (eg, missing parent) \n"\
     "\t04/22/2024 - 10.03.83: cli issues in create-and-run/run, Oracledb 2.1.12, id fields ok \n"\
     "\t04/10/2024 - 10.03.75: Manager style guide, prompts for samples, create/run from dev-ide, path.joinpath \n"\
@@ -1434,6 +1435,16 @@ from database import <project.bind_key>_models
         # https://docs.google.com/document/d/1o0TeNQtuT6moWU1bOq2K20IbSw4YhV1x_aFnKwo_XeU/edit#heading=h.3xmoi7pevsnp
 
         # open and read a file
+        if self.from_genai.endswith('.genai'):
+            self.from_genai.replace('.genai','')
+
+        self.from_model = f'system/genai/temp/model.py' # f'{self.from_genai}.py'
+
+        Path("system/genai/temp/model.py").unlink(missing_ok=True)
+        Path('system/genai/temp/model.py' ).unlink(missing_ok=True)
+        Path('system/genai/temp/model.sqlite').unlink(missing_ok=True)
+        Path('system/genai/temp/chatgpt_debug.txt').unlink(missing_ok=True)
+
         use_api = True  # debug
         if use_api:
             with open(f'{self.from_genai}.genai', 'r') as file:  # todo flexible file name/ext
@@ -1444,7 +1455,14 @@ from database import <project.bind_key>_models
             if os.getenv('APILOGICSERVER_CHATGPT_APIKEY'):
                 openai_api_key = os.getenv('APILOGICSERVER_CHATGPT_APIKEY')
             else:
-                log.error("\n\nMissing env variable: APILOGICSERVER_CHATGPT_APIKEY (Info TBD)\n")
+                log.error("\n\nMissing env variable: APILOGICSERVER_CHATGPT_APIKEY")
+                log.error("... To set an env variable...")
+                log.error("...... Mac: .zprofile")
+                log.error("...... Win: https://www.howtogeek.com/787217/how-to-edit-environment-variables-on-windows-10-or-11/")
+                # https://stackoverflow.com/questions/714877/setting-windows-powershell-environment-variables
+                log.error("... To obtain a key...")
+                log.error("...... 1. Obtain a key: https://platform.openai.com/api-keys")
+                log.error("...... 2. Authorize payments at: https://platform.openai.com/settings/organization/billing/overview\n")
                 exit(1)
 
             url = "https://api.openai.com/v1/chat/completions"
@@ -1471,16 +1489,17 @@ from database import <project.bind_key>_models
 
             # Check if the request was successful
             if response.status_code != 200:
-                print("Error:", response.status_code, response.text)   # You exceeded your current quota     
+                print("Error:", response.status_code, response.text)   # eg, You exceeded your current quota 
 
             response_data = response.json()['choices'][0]['message']['content']
+            with open(f'system/genai/temp/chatgpt_debug.txt', "w") as model_file:  # save for debug
+                model_file.write(response_data)
         else:
-            with open(f'model.txt', 'r') as file:  # todo flexible file name/ext
+            with open(f'system/genai/reference/chatgpt_debug.py', 'r') as file:  # todo flexible file name/ext
                 model_raw = file.read()
             # convert model_raw into string array response_data
             response_data = model_raw  # '\n'.join(model_raw)
         
-        self.from_model = f'{self.from_genai}.py'
         response_array = response_data.split('\n')
         model_class = ""
         line_num = 0

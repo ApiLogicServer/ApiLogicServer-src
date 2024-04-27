@@ -1,4 +1,4 @@
-Use SQLAlchemy to create a sqlite database named sample_ai.sqlite, with customers, orders, items and product
+Use SQLAlchemy to create a sqlite database named system/genai/temp/model.sqlite, with customers, orders, items and product
 
 Hints: use autonum keys, allow nulls, Decimal types, foreign keys, no check constraints.
 
