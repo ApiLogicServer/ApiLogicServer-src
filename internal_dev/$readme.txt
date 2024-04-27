@@ -2,9 +2,14 @@ sh /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/t
 
 ApiLogicServer create --project_name=TVF --extended_builder=$ --db_url='mssql+pyodbc://sa:Posey3861@localhost:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'
 
-ApiLogicServer add-auth --project-name=MultiDB  # hidden input?
+als create --project-name=sample_ai --from-model=sample_ai.py --db-url=sqlite
+als create --gen-ai=sample_ai --db-url=sqlite
+als gen-ai --project-name=sample_ai --db-url=sqlite { env - apikey }
 
-fails to parse url
+  - instant uSvc: app, api
+  - customizable: rules, standards
+  - abstraction stays high (maintain less / dependency management, quickstartuality / clarity)
+  - deployment ready
 
 sh cmd_venv.sh " ApiLogicServer create --project_name=TVF --extended_builder=$ --db_url=mssql+pyodbc://sa:Posey3861@localhost:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no"
 

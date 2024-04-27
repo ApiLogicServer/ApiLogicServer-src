@@ -36,6 +36,8 @@ class CliArgsBase():
         """ not what was intially specified (e,g, tutorial uses nw, nw-) """
         self.from_model = None # type
         """ create database from this model (e.g. model from copiot)"""
+        self.from_genai = None # type
+        """ name of .genai file (ai prompt) to create model, and project """
         self.bind_key = None # type: str
         self.bind_key_url_separator = None # type: str
         self.api_name = None # type: str
@@ -66,3 +68,4 @@ class CliArgsBase():
         """ safrs reserves id as property, so use this alias for db cols with that name """
         self.opt_locking_attr = None # type: str
         self.quote = None # type: bool
+

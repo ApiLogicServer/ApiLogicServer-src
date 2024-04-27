@@ -51,6 +51,19 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "     - genai",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": [
+                "genai",
+                "--using=genai_demo"],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "2 - Create servers/ApiLogicProject",
             "type": "debugpy",
             "request": "launch",

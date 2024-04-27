@@ -612,6 +612,24 @@ def tutorial(ctx, create):
     log.info("")
 
 
+@main.command("genai", cls=HideDunderCommand)
+@click.option('--using',
+              default=f'genai_demo',
+              prompt="Project description file",
+              help="Project description file")
+@click.option('--db-url', 'db_url',
+              default=f'sqlite',
+              help="SQLAlchemy Database URL\n")
+@click.pass_context
+def genai(ctx, using, db_url):
+    """
+        Creates new customizable project (overwrites).
+    """
+    global command
+    db_types = ""
+    PR.ProjectRun(command="create", project_name=using, db_url=db_url, from_genai=using)
+
+
 @main.command("create", cls=HideDunderCommand)
 @click.option('--project_name',   # notice - old _names have no prompt
               default=f'{default_project_name}',
