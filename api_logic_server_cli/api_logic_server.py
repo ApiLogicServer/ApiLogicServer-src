@@ -90,6 +90,7 @@ import datetime
 from typing import NewType
 import sys
 import os
+import requests
 import platform
 import importlib
 import fnmatch
@@ -898,6 +899,7 @@ class ProjectRun(Project):
                      db_url: str,
                      api_name: str="api",
                      from_model: str="",
+                     from_genai: str="",
                      host: str='localhost', 
                      port: str='5656', 
                      swagger_host: str="localhost", 
@@ -930,6 +932,7 @@ class ProjectRun(Project):
         self.db_url = db_url
         self.is_docker = is_docker()
         self.from_model = from_model
+        self.from_genai = from_genai
         self.user_db_url = db_url  # retained for debug
         self.bind_key = bind_key
         self.api_name = api_name
@@ -1421,6 +1424,80 @@ from database import <project.bind_key>_models
             log.info(".. complete\n")
 
 
+    def genai(self):
+        """ Run ChatGPT to create model
+        Issues with reln generation.  Chat does only 1 side and fails compile / test data, copilot does 2 
+        Args:
+        """
+        # Explore interim copilot access
+        # https://stackoverflow.com/questions/76741410/how-to-invoke-github-copilot-programmatically
+        # https://docs.google.com/document/d/1o0TeNQtuT6moWU1bOq2K20IbSw4YhV1x_aFnKwo_XeU/edit#heading=h.3xmoi7pevsnp
+
+        # open and read a file
+        use_api = True  # debug
+        if use_api:
+            with open(f'{self.from_genai}.genai', 'r') as file:  # todo flexible file name/ext
+                prompt = file.read()
+                # print(content) AND, save the rules off for comment insertion later
+
+            pass  # https://community.openai.com/t/how-do-i-call-chatgpt-api-with-python-code/554554
+            if os.getenv('APILOGICSERVER_CHATGPT_APIKEY'):
+                openai_api_key = os.getenv('APILOGICSERVER_CHATGPT_APIKEY')
+            else:
+                log.error("\n\nMissing env variable: APILOGICSERVER_CHATGPT_APIKEY (Info TBD)\n")
+                exit(1)
+
+            url = "https://api.openai.com/v1/chat/completions"
+
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {openai_api_key}"
+            }
+
+            data = {
+                "model": "gpt-3.5-turbo",
+                "messages": [
+                    {
+                        "role": "system",
+                        "content": "You are a helpful assistant."
+                    },
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ]
+            }
+            response = requests.post(url, headers=headers, json=data)
+
+            # Check if the request was successful
+            if response.status_code != 200:
+                print("Error:", response.status_code, response.text)   # You exceeded your current quota     
+
+            response_data = response.json()['choices'][0]['message']['content']
+        else:
+            with open(f'model.txt', 'r') as file:  # todo flexible file name/ext
+                model_raw = file.read()
+            # convert model_raw into string array response_data
+            response_data = model_raw  # '\n'.join(model_raw)
+        
+        self.from_model = f'{self.from_genai}.py'
+        response_array = response_data.split('\n')
+        model_class = ""
+        line_num = 0
+        writing = False
+        for each_line in response_array:
+            line_num += 1
+            if "```python" in each_line:
+                writing = True
+            elif "```" in each_line:
+                writing = False
+            elif writing:
+                model_class += each_line + '\n'
+        with open(f'{self.from_model}', "w") as model_file:
+            model_file.write(model_class)
+        pass
+
+
     def tutorial(self, msg: str="", create: str='tutorial'):
         """
         Creates (overwrites) Tutorial (`api_logic_server_cli/project_tutorial`)
@@ -1534,7 +1611,10 @@ from database import <project.bind_key>_models
         self.project_directory_actual = os.path.abspath(self.project_directory)  # make path absolute, not relative (no /../)
         self.project_directory_path = Path(self.project_directory_actual)
 
-        if self.from_model != "":
+        if self.from_genai != "":
+            self.genai()
+
+        if self.from_model != "" or self.from_genai != "":
             create_db_from_model.create_db(self)
 
         self.abs_db_url, self.nw_db_status, self.model_file_name = create_utils.get_abs_db_url("0. Using Sample DB", self)
