@@ -20,7 +20,38 @@ Then, try your own databases [(db-url examples here)](https://apilogicserver.git
 
 &nbsp;
 
-## Create API Logic Projects From *New* Databases, with Copilot
+## GenAI (Generative AI)
+
+You can also generate projects using AI - Copilot and/or ChatGPT.  These require you signup to paid services.
+
+&nbsp;
+
+### "Hands Free" GenAI Automation, with ChatGPT
+
+This will create and open a project called `genai_demo` from `genai_demo.genai`:
+
+```bash
+als genai --from=genai_demo.genai
+```
+
+This command calls the ChatGPT API to generate the model, which is then automatically submitted to `als create from-model`.  At this point, you should be able to open the project, and run it.
+
+### But it might fail
+AI results are not consistent, so the model file may need corrections.  You can find it at `system/genai/temp/model.py`.  You can correct it, and then run:
+
+```bash
+als create --project-name=genai_demo --from-model=system/genai/temp/model.py --db-url=sqlite
+```
+
+We have seen failures such as:
+
+* duplicate definition of `DECIMAL`
+* unclosed parentheses
+* data type errors in test data creation
+
+&nbsp;
+
+### Create API Logic Projects From *New* Databases, with Copilot
 
 You can use Copilot chat (if extension installed):
 
