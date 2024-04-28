@@ -56,3 +56,8 @@ loggers:
         level: DEBUG
         handlers: [console]
         propagate: no
+
+    genai:   
+        level: DEBUG
+        handlers: [console]
+        propagate: no

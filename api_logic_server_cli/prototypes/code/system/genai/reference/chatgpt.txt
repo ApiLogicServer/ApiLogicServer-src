@@ -56,7 +56,7 @@ class Item(Base):
     order = relationship("Order", back_populates="items")
 
 # Create the SQLite database
-engine = create_engine('sqlite:///genai_demo.sqlite')
+engine = create_engine('sqlite:///system/genai/temp/model.sqlite')
 Base.metadata.create_all(engine)
 ```
 

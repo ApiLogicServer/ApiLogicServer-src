@@ -620,14 +620,17 @@ def tutorial(ctx, create):
 @click.option('--db-url', 'db_url',
               default=f'sqlite',
               help="SQLAlchemy Database URL\n")
+@click.option('--gen-using-file', 'gen_using_file',
+              default='',
+              help="Use ChatGPT API")
 @click.pass_context
-def genai(ctx, using, db_url):
+def genai(ctx, using, db_url, gen_using_file: click.BOOL):
     """
         Creates new customizable project (overwrites).
     """
     global command
     db_types = ""
-    PR.ProjectRun(command="create", project_name=using, db_url=db_url, from_genai=using)
+    PR.ProjectRun(command="create", project_name=using, db_url=db_url, from_genai=using, gen_using_file=gen_using_file)
 
 
 @main.command("create", cls=HideDunderCommand)

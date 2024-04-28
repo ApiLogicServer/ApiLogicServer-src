@@ -24,6 +24,26 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
+            "name": "GENAI - Retry from repaired chatgpt",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/clean/ApiLogicServer/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "genai",
+                "--gen_using_api=True",
+                "--using=${input:inputGenaiProjectName}"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
             "name": "GENAI - Retry from repaired model",
             "type": "debugpy",
             "request": "launch",
