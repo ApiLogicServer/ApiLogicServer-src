@@ -10,7 +10,7 @@ thousand_separator: ','
 decimal_separator: '.' 
 date_format: 'LL'
 use_keycloak: 'false' 
-include_translation: false
+include_translation: 'false'
 edit_on_mode : 'dblclick' 
 min_decimal_digits: '2'
 max_decimal_digits: '4' 

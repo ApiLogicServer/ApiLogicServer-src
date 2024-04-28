@@ -138,7 +138,7 @@ class OntBuilder(object):
         self.time_template = self.get_template("time_template.html")
         self.html_template = self.get_template("html_template.html")
         self.file_template = self.get_template("file_template.html")
-        
+        self.nif_template = self.get_template("o_nif_input.html")
         
     def get_template(self, template_name) -> Template:
         """
@@ -305,7 +305,7 @@ class OntBuilder(object):
         rv_en_json = en_json.render(titles=titles)
         write_json_filename(app_path=app_path, file_name="en.json", source="{\n" + rv_en_json[:-2] +"\n}")
         es_titles = titles
-        if self.include_translation:
+        if self.app_model.settings.style_guide.use_translation:
             es_titles = translation_service(self.title_translation)
         rv_es_json = es_json.render(titles=es_titles)
         write_json_filename(app_path=app_path, file_name="es.json", source="{\n" + rv_es_json[:-2] + "\n}")
@@ -651,6 +651,8 @@ class OntBuilder(object):
                 rv = self.html_template.render(col_var)
             elif template_type == "FILE":
                 rv = self.file_template.render(col_var)
+            elif template_type == "NIF":
+                rv = self.nif_template.render(col_var)
             elif col_type in ["DECIMAL","NUMERIC", "DOUBLE","REAL"]:
                 rv = self.real_template.render(col_var)
             else:
