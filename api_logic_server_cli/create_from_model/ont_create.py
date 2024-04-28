@@ -142,6 +142,7 @@ class OntCreator(object):
 
     def create_model_entity(self, each_resource) -> DotMap:
         each_resource.favorite = each_resource.user_key
+        each_resource.exclude = "false"
         each_resource.pop('user_key')
         return each_resource
 
@@ -160,7 +161,6 @@ class OntCreator(object):
         Returns:
             DotMap: app model attribute for writing to app_model.py
         """
-
         if 'type' in each_attribute:
             pass
         else:
@@ -196,10 +196,10 @@ class OntCreator(object):
             str: template name
         """
         if hasattr(column, "type") and column.type != DotMap():
-            col_type = column.type.upper()
-            if col_type.startswith("DECIMAL") or col_type.startswith("NUMERIC"):
+            col_type = column.type.upper().split("(")[0]
+            if col_type in ["DECIMAL","NUMERIC"]:
                 rv = "currency"  
-            elif col_type == "DOUBLE":
+            elif col_type in ["DOUBLE", "FLOAT"]:
                 rv = "real"  
             elif col_type == "DATE":
                 rv = "date"  
@@ -211,6 +211,8 @@ class OntCreator(object):
                 rv = "image"  
             elif col_type == "TEXTAREA":
                 rv = "textarea"  
+            elif col_type in ["BLOB","CLOB","VARBINARY"]:
+                rv = "textarea"
             else:
                 rv = "text"  
         else:
@@ -234,6 +236,7 @@ class OntCreator(object):
         style_guide.max_decimal_digits="4" 
         style_guide.decimal_min="0"
         style_guide.decimal_max="1000000"
+        style_guide.include_translation=False
         return style_guide
 
 '''
