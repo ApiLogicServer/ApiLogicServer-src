@@ -46,8 +46,14 @@ als create --project-name=genai_demo --from-model=system/genai/temp/model.py --d
 We have seen failures such as:
 
 * duplicate definition of `DECIMAL`
+* use of `Decimal` vs. `DECIMAL` (latter required, work-around in place)
 * unclosed parentheses
 * data type errors in test data creation
+* bogus import: from logic_bank import Engine, constraint
+* bogus test data creation: with Engine() as engine...
+
+Other issues:
+* Numeric seems to result in strings in als creation
 
 &nbsp;
 

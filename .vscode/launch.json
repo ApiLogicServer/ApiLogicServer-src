@@ -64,6 +64,20 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "     - genai NO API",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": [
+                "genai",
+                "--gen-using-file=system/genai/reference/chatgpt_retry.txt",
+                "--using=genai_demo"],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "2 - Create servers/ApiLogicProject",
             "type": "debugpy",
             "request": "launch",
@@ -1139,7 +1153,21 @@
             "args": ["rebuild-from-model","--project_name=../../../servers/ApiLogicProject","--db_url="],
             "console": "integratedTerminal"
         },
-    {
+        {
+            "name": "create from-model",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["create",
+                "--project_name=create_from_model_using_numeric",
+                "--from-model=system/genai/reference/model_using_numeric.py",
+                "--db_url=sqlite:///model_using_numeric_retest.sqlite"],
+            "console": "integratedTerminal"
+        },       
+        {
             "name": "Spaces in project dir",
             "type": "debugpy",
             "request": "launch",

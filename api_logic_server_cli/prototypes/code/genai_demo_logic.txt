@@ -1,0 +1,13 @@
+Use Logic Bank to enforce the Check Credit requirement (do not generate check constraints):
+1. The customer's balance must not exceed the credit limit.
+2. The customer's balance is the sum of all unshipped orders.
+3. The order amount total is the sum of all item amounts.
+4. The item amount is the quantity times the unit price.
+5. The unit price is copied from the product.
+
+Enforce the Check Credit requirement (do not generate check constraints):
+1. Customer.Balance <= CreditLimit
+2. Customer.Balance = Sum(Order.AmountTotal where date shipped is null)
+3. Order.AmountTotal = Sum(Items.Amount)
+4. Items.Amount = Quantity * UnitPrice
+5. Store the Items.UnitPrice as a copy from Product.UnitPrice

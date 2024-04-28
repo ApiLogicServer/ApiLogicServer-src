@@ -25,13 +25,22 @@ def create_db(project: Project):
         db_url = str(models_file).replace('py', 'sqlite')
         db_url = 'sqlite:///'+ db_url# relative to cwd, == servers in launch
         project.db_url = db_url
-    log.debug(f'\ncreate_db_from_model: \n.. models_file: {models_file} \n.. db_url: {db_url}' +
-              f'\n.. cwd: {Path.cwd()}')
-
+    log.debug(f'\ncreate_db_from_model: \n\n.. models_file: {models_file} \n\n.. db_url: {db_url}' +
+              f'\n\n.. cwd: {Path.cwd()}\n\n')
+    assert Path(models_file).exists(), f'\n\nFile not found: {models_file}\n'
     spec = importlib.util.spec_from_file_location("imported_models", models_file)
-    models_module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(models_module)  # runs "bare" module code (e.g., initialization)
+    try:
+        models_module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(models_module)  # runs "bare" module code (e.g., initialization)
+    except Exception as e:
+        log.error(f'Error loading {models_file}: {e}')
+        raise e    
+    # models_module = importlib.util.module_from_spec(spec)
+    # spec.loader.exec_module(models_module)  # runs "bare" module code (e.g., initialization)
 
+    
+    # The model file may create the database, but we ignore that and recreate it per the db_url
+    ####################################
     e = sqlalchemy.create_engine(db_url)
     if not hasattr(models_module, "Base"):
         raise ValueError(f'No Base class found in {models_file}.  \n..Perhaps these are sql statements, not SQLAlchemy classes.')

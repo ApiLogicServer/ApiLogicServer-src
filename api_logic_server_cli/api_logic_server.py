@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.03.86"
+__version__ = "10.03.88"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t04/27/2024 - 10.03.86: genai w/ restart \n"\
+    "\t04/27/2024 - 10.03.88: genai w/ restart, logic insertion \n"\
     "\t04/23/2024 - 10.03.84: Fix error handling for db errors (eg, missing parent) \n"\
     "\t04/22/2024 - 10.03.83: cli issues in create-and-run/run, Oracledb 2.1.12, id fields ok \n"\
     "\t04/10/2024 - 10.03.75: Manager style guide, prompts for samples, create/run from dev-ide, path.joinpath \n"\
@@ -901,6 +901,7 @@ class ProjectRun(Project):
                      api_name: str="api",
                      from_model: str="",
                      from_genai: str="",
+                     gen_using_file: str="",
                      host: str='localhost', 
                      port: str='5656', 
                      swagger_host: str="localhost", 
@@ -934,6 +935,7 @@ class ProjectRun(Project):
         self.is_docker = is_docker()
         self.from_model = from_model
         self.from_genai = from_genai
+        self.gen_using_file = gen_using_file
         self.user_db_url = db_url  # retained for debug
         self.bind_key = bind_key
         self.api_name = api_name
@@ -1425,96 +1427,24 @@ from database import <project.bind_key>_models
             log.info(".. complete\n")
 
 
-    def genai(self):
-        """ Run ChatGPT to create model
-        Issues with reln generation.  Chat does only 1 side and fails compile / test data, copilot does 2 
+    def genai_get_logic(self, prompt: str) -> list[str]:
+        """ Get logic from ChatGPT prompt
         Args:
         """
-        # Explore interim copilot access
-        # https://stackoverflow.com/questions/76741410/how-to-invoke-github-copilot-programmatically
-        # https://docs.google.com/document/d/1o0TeNQtuT6moWU1bOq2K20IbSw4YhV1x_aFnKwo_XeU/edit#heading=h.3xmoi7pevsnp
 
-        # open and read a file
-        if self.from_genai.endswith('.genai'):
-            self.from_genai.replace('.genai','')
-
-        self.from_model = f'system/genai/temp/model.py' # f'{self.from_genai}.py'
-
-        Path("system/genai/temp/model.py").unlink(missing_ok=True)
-        Path('system/genai/temp/model.py' ).unlink(missing_ok=True)
-        Path('system/genai/temp/model.sqlite').unlink(missing_ok=True)
-        Path('system/genai/temp/chatgpt_debug.txt').unlink(missing_ok=True)
-
-        use_api = True  # debug
-        if use_api:
-            with open(f'{self.from_genai}.genai', 'r') as file:  # todo flexible file name/ext
-                prompt = file.read()
-                # print(content) AND, save the rules off for comment insertion later
-
-            pass  # https://community.openai.com/t/how-do-i-call-chatgpt-api-with-python-code/554554
-            if os.getenv('APILOGICSERVER_CHATGPT_APIKEY'):
-                openai_api_key = os.getenv('APILOGICSERVER_CHATGPT_APIKEY')
-            else:
-                log.error("\n\nMissing env variable: APILOGICSERVER_CHATGPT_APIKEY")
-                log.error("... To set an env variable...")
-                log.error("...... Mac: .zprofile")
-                log.error("...... Win: https://www.howtogeek.com/787217/how-to-edit-environment-variables-on-windows-10-or-11/")
-                # https://stackoverflow.com/questions/714877/setting-windows-powershell-environment-variables
-                log.error("... To obtain a key...")
-                log.error("...... 1. Obtain a key: https://platform.openai.com/api-keys")
-                log.error("...... 2. Authorize payments at: https://platform.openai.com/settings/organization/billing/overview\n")
-                exit(1)
-
-            url = "https://api.openai.com/v1/chat/completions"
-
-            headers = {
-                "Content-Type": "application/json",
-                "Authorization": f"Bearer {openai_api_key}"
-            }
-
-            data = {
-                "model": "gpt-3.5-turbo",
-                "messages": [
-                    {
-                        "role": "system",
-                        "content": "You are a helpful assistant."
-                    },
-                    {
-                        "role": "user",
-                        "content": prompt
-                    }
-                ]
-            }
-            response = requests.post(url, headers=headers, json=data)
-
-            # Check if the request was successful
-            if response.status_code != 200:
-                print("Error:", response.status_code, response.text)   # eg, You exceeded your current quota 
-
-            response_data = response.json()['choices'][0]['message']['content']
-            with open(f'system/genai/temp/chatgpt_debug.txt', "w") as model_file:  # save for debug
-                model_file.write(response_data)
-        else:
-            with open(f'system/genai/reference/chatgpt_debug.py', 'r') as file:  # todo flexible file name/ext
-                model_raw = file.read()
-            # convert model_raw into string array response_data
-            response_data = model_raw  # '\n'.join(model_raw)
-        
-        response_array = response_data.split('\n')
-        model_class = ""
+        prompt_array = prompt.split('\n')
+        logic_text = list()
         line_num = 0
+        logic_lines = 0
         writing = False
-        for each_line in response_array:
+        for each_line in prompt_array:
             line_num += 1
-            if "```python" in each_line:
+            if "Enforce" in each_line:
                 writing = True
-            elif "```" in each_line:
-                writing = False
             elif writing:
-                model_class += each_line + '\n'
-        with open(f'{self.from_model}', "w") as model_file:
-            model_file.write(model_class)
-        pass
+                logic_lines += 1
+                logic_text.append(each_line)
+        return logic_text
 
 
     def tutorial(self, msg: str="", create: str='tutorial'):
@@ -1630,13 +1560,18 @@ from database import <project.bind_key>_models
         self.project_directory_actual = os.path.abspath(self.project_directory)  # make path absolute, not relative (no /../)
         self.project_directory_path = Path(self.project_directory_actual)
 
+        gen_ai = None
         if self.from_genai != "":
-            self.genai()
+            from genai import GenAI
+            gen_ai = GenAI(self)
+            # self.genai()
 
         if self.from_model != "" or self.from_genai != "":
             create_db_from_model.create_db(self)
 
         self.abs_db_url, self.nw_db_status, self.model_file_name = create_utils.get_abs_db_url("0. Using Sample DB", self)
+        if gen_ai is not None:
+            gen_ai.insert_logic_into_declare_logic()
 
         if self.extended_builder == "$":
             self.extended_builder = abspath(f'{self.api_logic_server_dir_path}/extended_builder.py')
@@ -1669,6 +1604,8 @@ from database import <project.bind_key>_models
             invoke_extended_builder(self.extended_builder, self.abs_db_url, self.project_directory, model_creation_services)
 
         final_project_fixup("4. Final project fixup", self)
+        if gen_ai is not None:
+            gen_ai.insert_logic_into_declare_logic()
 
         if self.nw_db_status in ["nw", "nw+"] and self.command != "add_db":
             self.add_auth("\nApiLogicProject customizable project created.  \nAdding Security:")
