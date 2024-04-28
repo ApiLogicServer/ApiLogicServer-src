@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.03.88"
+__version__ = "10.03.92"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t04/27/2024 - 10.03.88: genai w/ restart, logic insertion \n"\
+    "\t04/28/2024 - 10.03.92: genai w/ restart, logic insertion, use Numeric, genai-cust \n"\
     "\t04/23/2024 - 10.03.84: Fix error handling for db errors (eg, missing parent) \n"\
     "\t04/22/2024 - 10.03.83: cli issues in create-and-run/run, Oracledb 2.1.12, id fields ok \n"\
     "\t04/10/2024 - 10.03.75: Manager style guide, prompts for samples, create/run from dev-ide, path.joinpath \n"\
@@ -1330,6 +1330,37 @@ from database import <project.bind_key>_models
             # z_copy_md(project = self, from_doc_file="Tutorial-3.md", to_project_file='Tutorial.md')
 
 
+    def add_genai_customizations(self, do_show_messages: bool = True, do_security: bool = True):
+        """ Add customizations to genaiai (default creation)
+
+        1. Deep copy prototypes/genai (adds logic and security)
+
+        Args:
+        """
+
+        log.debug("\n\n==================================================================")
+        nw_messages = ""
+        do_security = False  # disabled - keep clear what "activate security" means for reader
+        if do_security:
+            if do_show_messages:
+                nw_messages = "Add genai customizations - enabling security"
+            self.add_auth(is_nw=True, msg=nw_messages)
+
+        nw_path = (self.api_logic_server_dir_path).\
+            joinpath('prototypes/genai_demo')  # PosixPath('/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/nw')
+        recursive_overwrite(nw_path, self.project_directory)  # '/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/tutorial/1. Instant_Creation'
+
+        if do_show_messages:
+            log.info("\nExplore key customization files:")
+            log.info(f'..api/customize_api.py')
+            log.info(f'..logic/declare_logic.py')
+            log.info(f'..security/declare_security.py\n')
+            log.info(f'Next Steps: activate security')
+            log.info(f'..ApiLogicServer add-auth --db_url=auth')
+            if self.is_tutorial == False:
+                log.info(".. complete\n")
+
+
     def add_nw_customizations(self, do_show_messages: bool = True, do_security: bool = True):
         """ Add customizations to nw (default creation)
 
@@ -1570,8 +1601,6 @@ from database import <project.bind_key>_models
             create_db_from_model.create_db(self)
 
         self.abs_db_url, self.nw_db_status, self.model_file_name = create_utils.get_abs_db_url("0. Using Sample DB", self)
-        if gen_ai is not None:
-            gen_ai.insert_logic_into_declare_logic()
 
         if self.extended_builder == "$":
             self.extended_builder = abspath(f'{self.api_logic_server_dir_path}/extended_builder.py')

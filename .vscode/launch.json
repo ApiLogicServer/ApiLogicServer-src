@@ -44,7 +44,7 @@
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
-            "args": ["start", "--open-with=code",],
+            "args": ["start", "--open-with=code", "--clean"],
             "justMyCode": false,
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
@@ -64,6 +64,16 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "     - genai Customizations - clean/ApiLogicServer/genai_demo",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["genai-cust","--project_name=../../../ApiLogicServer-dev/clean/ApiLogicServer/genai_demo"],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "     - genai NO API",
             "type": "debugpy",
             "request": "launch",
@@ -73,7 +83,7 @@
             "redirectOutput": true,
             "args": [
                 "genai",
-                "--gen-using-file=system/genai/reference/chatgpt_retry.txt",
+                "--gen-using-file=system/genai/temp/chatgpt_retry.txt",
                 "--using=genai_demo"],
             "console": "integratedTerminal"
         },

@@ -49,8 +49,9 @@ We have seen failures such as:
 * use of `Decimal` vs. `DECIMAL` (latter required, work-around in place)
 * unclosed parentheses
 * data type errors in test data creation
-* bogus import: from logic_bank import Engine, constraint
+* wrong engine import: from logic_bank import Engine, constraint
 * bogus test data creation: with Engine() as engine...
+* Numeric --> String (fixed product bug)
 
 Other issues:
 * Numeric seems to result in strings in als creation

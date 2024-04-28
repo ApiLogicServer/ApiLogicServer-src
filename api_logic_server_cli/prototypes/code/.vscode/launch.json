@@ -38,7 +38,6 @@
                 "OPT_LOCKING": "optional"},
             "justMyCode": false,
             "args": [ "genai",
-                "--gen_using_api=True",
                 "--using=${input:inputGenaiProjectName}"],
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
