@@ -103,12 +103,13 @@ def get_args():
 
 
 def fix_generated(code, args):
-    """ minor numeric vs. string replacements
+    """ numeric vs. string replacements
     """
     if "sqlite" in args.url: # db.session.bind.dialect.name == "sqlite":   FIXME review
-        code = code.replace("Numeric", "String")
+        pass
+        # code = code.replace("Numeric", "String")  # removed 10.03.88, tested in chinook
     if "mysql" in args.url:
-        code = code.replace("Numeric", "String")
+        # code = code.replace("Numeric", "String")  # removed 10.03.88, tested in chinook
         code = code.replace(", 'utf8_bin'","")
     if "mssql" in args.url:
         bad_import = "from sqlalchemy.dialects.mysql import *"  # prevents safrs bool not iterable

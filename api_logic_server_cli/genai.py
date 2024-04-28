@@ -25,14 +25,13 @@ class GenAI(object):
             self.project.from_genai.replace('.genai','')
         log.info(f'\ngenai creating database/models from {self.project.from_genai}.genai')
 
-        self.project.from_model = f'system/genai/temp/model.py' # f'{self.project.from_genai}.py'
+        self.project.from_model = f'system/genai/temp/model.py' # we always write the model to this file
 
-        if self.project.gen_using_file != '':
-            Path("system/genai/temp/model.py").unlink(missing_ok=True)
-            Path('system/genai/temp/model.py' ).unlink(missing_ok=True)
-            Path('system/genai/temp/model.sqlite').unlink(missing_ok=True)
+        if self.project.gen_using_file == '':  # clean up unless retrying from chatgpt_retry.txt
             Path('system/genai/temp/chatgpt_original.txt').unlink(missing_ok=True)
             Path('system/genai/temp/chatgpt_retry.txt').unlink(missing_ok=True)
+        Path('system/genai/temp/model.sqlite').unlink(missing_ok=True)
+        Path('system/genai/temp/model.py').unlink(missing_ok=True)
 
         # open and read the project description in natural language
         with open(f'{self.project.from_genai}.genai', 'r') as file:
@@ -43,7 +42,7 @@ class GenAI(object):
         if self.project.gen_using_file == '':
             response_data = self.genai_gen_using_api(prompt)
         else:
-            with open(f'system/genai/reference/chatgpt_retry.txt', 'r') as file:
+            with open(self.project.gen_using_file, 'r') as file:
                 model_raw = file.read()
             # convert model_raw into string array response_data
             response_data = model_raw  # '\n'.join(model_raw)
@@ -56,7 +55,12 @@ class GenAI(object):
         """
 
         prompt_array = prompt.split('\n')
-        logic_text = ""
+        logic_text = """
+    GenAI: Paste the following into Copilot Chat, and paste the result below.
+        
+    Use Logic Bank to enforce these requirements:
+    
+"""
         line_num = 0
         logic_lines = 0
         writing = False
@@ -64,9 +68,9 @@ class GenAI(object):
             line_num += 1
             if "Enforce" in each_line:
                 writing = True
-            elif writing:
+            if writing:
                 logic_lines += 1
-                logic_text += each_line + '\n'
+                logic_text += '    ' + each_line + '\n'
         return logic_text
 
     def insert_logic_into_declare_logic(self):

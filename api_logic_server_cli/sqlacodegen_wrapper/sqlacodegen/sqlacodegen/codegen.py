@@ -389,7 +389,7 @@ class ModelClass(Model):
         disambiguate relationship accessor names (append tablename with 1, 2...)
         """
         attrname = tempname = self._convert_to_valid_identifier(attrname)
-        if self.name == "Employee" and attrname == "Department":
+        if self.name == "Customer" and attrname == "credit_limit":
             debug_stop = "nice breakpoint"
         counter = 1
         while tempname in self.attributes:
@@ -780,6 +780,7 @@ class CodeGenerator(object):
         # Iterate through the tables and create model classes when possible
         self.models = []
         self.collector = ImportCollector()
+        """ collect all the data types used in the models for import generation """
         self.classes = {}
         for table in metadata.sorted_tables:
             # Support for Alembic and sqlalchemy-migrate -- never expose the schema version tables
@@ -972,6 +973,9 @@ from sqlalchemy.dialects.mysql import *
 
     @classmethod
     def render_column_type(cls, coltype):
+        """ Compute the column type, and remember the types for later use in the imports 
+            see render_imports, using self.collector
+        """
         args = []
         kwargs = OrderedDict()
         argspec = cls._getargspec_init(coltype.__class__.__init__)
@@ -1132,6 +1136,8 @@ from sqlalchemy.dialects.mysql import *
             print(f"render_column target: {column.table.name}.{column.name}")  # ApiLogicServer fix for putting this at end:  index=True
         if do_show_name and column.table.name != 'sqlite_sequence':
             log.debug(f"render_column show name is true: {column.table.name}.{column.name}")  # researching why
+        if column.name == "credit_limit" and column.table.name == "customers":
+            debug_stop = "render column breakpoint"
         rendered_col_type = self.render_column_type(column.type) if render_coltype else ""
         rendered_name = repr(column.name) if do_show_name else ""
         render_result = 'Column({0})'.format(', '.join(

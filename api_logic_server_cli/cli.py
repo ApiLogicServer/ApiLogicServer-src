@@ -202,8 +202,11 @@ def main(ctx):
 @click.pass_context
 @click.option('--open-with', 'open_with',
               default='code',
-              help="Input admin app")
-def create_start_manager(ctx, open_with):
+              help="Simplifies creating and managing projects")
+@click.option('--clean/--no-clean', "clean",
+              default=False, is_flag=True,
+              help="Overlay existing manager")
+def create_start_manager(ctx, open_with, clean: click.BOOL = False):
     """
         Create and Manage API Logic Projects.
     """
@@ -212,13 +215,15 @@ def create_start_manager(ctx, open_with):
     from_dir = get_api_logic_server_path().joinpath('prototypes/code')
     to_dir_str = str(to_dir)
     to_dir_check = Path(to_dir).joinpath('venv')
-    if not to_dir_check.exists():
+    if not Path(to_dir).joinpath('venv').exists():
         log.info(f"    No action taken - no venv found at: \n      {to_dir}\n\n")
         exit(1)
     to_dir_check = Path(to_dir).joinpath('.vscode')
-    if to_dir_check.exists():
+    if to_dir_check.exists() and not clean:
         log.info(f"    Using manager at: {to_dir}\n\n")
     else:
+        if to_dir_check.exists():
+            log.info(f"    Cleaning manager at: {to_dir}\n\n")
         copied_path = shutil.copytree(src=from_dir, dst=to_dir, dirs_exist_ok=True)
         log.info(f"    Created manager at: {copied_path}\n\n")
     pass
@@ -1250,6 +1255,60 @@ def add_auth_cmd(ctx, bind_key_url_separator: str, provider_type :str, db_url: s
         is_nw = True
     project.add_auth(msg="Adding Security", is_nw=is_nw, provider_type=provider_type)
     log.info("")
+
+
+
+@main.command("genai-cust", cls=HideDunderCommand) 
+@click.option('--bind_key_url_separator',
+              default=default_bind_key_url_separator,
+              help="bindkey / class name url separator")
+@click.option('--project-name', 'project_name',
+              default=f'.',
+              help="Project location")
+@click.option('--project_name',
+              default=f'.',
+              help="Project location")
+@click.option('--api_name',
+              default="api",
+              help="api prefix name")
+@click.option('--api-name', 'api_name',
+              default=f'api',
+              help="Last node of API Logic Server url\n")
+@click.pass_context
+def genai_cust(ctx, bind_key_url_separator: str, api_name: str, project_name: str):
+    """
+    Adds customizations to genai project.
+    
+    example: 
+    cd existing_project
+    als genai-cust
+    
+    """
+    project_name == resolve_blank_project_name(project_name, as_project="NW_NoCust")
+    db_url = "auth"
+    bind_key = "authentication"
+    project = PR.ProjectRun(command="add_cust", 
+              project_name=project_name, 
+              api_name=api_name, 
+              db_url=db_url,
+              execute=False
+              )
+    project.project_directory, project.api_name, project.merge_into_prototype = \
+        create_utils.get_project_directory_and_api_name(project)
+    project.project_directory_actual = os.path.abspath(project.project_directory)  # make path absolute, not relative (no /../)
+    # eg /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/clean/ApiLogicServer/genai_demo
+    # vs /Users/val/dev/ApiLogicServer/clean/ApiLogicServer/genai_demo'
+    project.project_directory_path = Path(project.project_directory_actual)
+    models_py_path = project.project_directory_path.joinpath('database/models.py')
+    project.abs_db_url, project.nw_db_status, project.model_file_name = create_utils.get_abs_db_url("0. Using Sample DB", project)
+    is_nw = False
+    if create_utils.does_file_contain(search_for="Customer", in_file=models_py_path):
+        is_nw = True
+    else:
+        raise Exception("Customizations are genai-specific - this does not contain 'Customer`")
+    project.add_genai_customizations(do_security=False)
+    log.info("\nNext step - add authentication:\n  $ ApiLogicServer add-auth --db_url=auth\n\n")
+
 
 
 @main.command("add-cust", cls=HideDunderCommand) 
