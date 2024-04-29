@@ -21,9 +21,9 @@ class GenAI(object):
         # https://stackoverflow.com/questions/76741410/how-to-invoke-github-copilot-programmatically
         # https://docs.google.com/document/d/1o0TeNQtuT6moWU1bOq2K20IbSw4YhV1x_aFnKwo_XeU/edit#heading=h.3xmoi7pevsnp
 
-        if self.project.from_genai.endswith('.genai'):
-            self.project.from_genai.replace('.genai','')
-        log.info(f'\ngenai creating database/models from {self.project.from_genai}.genai')
+        if self.project.from_genai.endswith('.prompt'):
+            self.project.from_genai.replace('.prompt','')
+        log.info(f'\ngenai creating database/models from {self.project.from_genai}.promot')
 
         self.project.from_model = f'system/genai/temp/model.py' # we always write the model to this file
 
@@ -34,7 +34,7 @@ class GenAI(object):
         Path('system/genai/temp/model.py').unlink(missing_ok=True)
 
         # open and read the project description in natural language
-        with open(f'{self.project.from_genai}.genai', 'r') as file:
+        with open(f'{self.project.from_genai}.prompt', 'r') as file:
             prompt = file.read()
 
         self.project.genai_logic = self.genai_get_logic(prompt)
