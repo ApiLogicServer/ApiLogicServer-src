@@ -106,18 +106,17 @@ class GenAI(object):
 
     def genai_gen_using_api(self, prompt: str):
         pass  # https://community.openai.com/t/how-do-i-call-chatgpt-api-with-python-code/554554
+        use_dotenv = True
         if os.getenv('APILOGICSERVER_CHATGPT_APIKEY'):
             openai_api_key = os.getenv('APILOGICSERVER_CHATGPT_APIKEY')
         else:
-            log.error("\n\nMissing env variable: APILOGICSERVER_CHATGPT_APIKEY")
-            log.error("... To set an env variable...")
-            log.error("...... Mac: .zprofile")
-            log.error("...... Win: https://www.howtogeek.com/787217/how-to-edit-environment-variables-on-windows-10-or-11/")
-            # https://stackoverflow.com/questions/714877/setting-windows-powershell-environment-variables
-            log.error("... To obtain a key...")
-            log.error("...... 1. Obtain a key: https://platform.openai.com/api-keys")
-            log.error("...... 2. Authorize payments at: https://platform.openai.com/settings/organization/billing/overview\n")
-            exit(1)
+            from dotenv import dotenv_values
+            secrets = dotenv_values(".env")
+            openai_api_key = secrets['APILOGICSERVER_CHATGPT_APIKEY']
+            if openai_api_key == 'your-api-key-here':
+                log.error("\n\nMissing env value: APILOGICSERVER_CHATGPT_APIKEY")
+                log.error("... Check your .env file...")
+                exit(1)
 
         url = "https://api.openai.com/v1/chat/completions"
 
