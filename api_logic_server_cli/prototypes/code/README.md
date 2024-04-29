@@ -52,6 +52,7 @@ We have seen failures such as:
 * wrong engine import: from logic_bank import Engine, constraint
 * bogus test data creation: with Engine() as engine...
 * Numeric --> String (fixed product bug)
+* Bad load code (no session)
 
 Other issues:
 * Numeric seems to result in strings in als creation
