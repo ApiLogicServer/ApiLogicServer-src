@@ -111,11 +111,11 @@ class GenAI(object):
             openai_api_key = os.getenv('APILOGICSERVER_CHATGPT_APIKEY')
         else:
             from dotenv import dotenv_values
-            secrets = dotenv_values(".env")
+            secrets = dotenv_values("system/secrets")
             openai_api_key = secrets['APILOGICSERVER_CHATGPT_APIKEY']
             if openai_api_key == 'your-api-key-here':
                 log.error("\n\nMissing env value: APILOGICSERVER_CHATGPT_APIKEY")
-                log.error("... Check your .env file...")
+                log.error("... Check your system/secrets file...")
                 exit(1)
 
         url = "https://api.openai.com/v1/chat/completions"
