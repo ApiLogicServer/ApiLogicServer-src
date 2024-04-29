@@ -111,7 +111,7 @@ class GenAI(object):
             openai_api_key = os.getenv('APILOGICSERVER_CHATGPT_APIKEY')
         else:
             from dotenv import dotenv_values
-            secrets = dotenv_values("system/secrets")
+            secrets = dotenv_values("system/secrets.txt")
             openai_api_key = secrets['APILOGICSERVER_CHATGPT_APIKEY']
             if openai_api_key == 'your-api-key-here':
                 log.error("\n\nMissing env value: APILOGICSERVER_CHATGPT_APIKEY")
