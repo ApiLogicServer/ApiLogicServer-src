@@ -83,7 +83,6 @@ class OntBuilder(object):
 
         self.title_translation = []
         self.languages = ["en", "es"] # "fr", "it", "de" etc - used to create i18n json files
-        self.column_translation = [] # entity.attr
         
         self.pick_list_template = self.get_template("list-picker.html")
         self.combo_list_template = self.get_template("combo-picker.html") 
@@ -196,11 +195,12 @@ class OntBuilder(object):
         for each_entity_name, each_entity in app_model.entities.items():
             # HOME - Table Style
             home_template = self.load_home_template("home_template.html", each_entity)
+            home_scss = self.get_template("home.scss").render()
             entity_name = each_entity_name
             ts = self.load_ts("home_template.jinja", each_entity)
             write_file(app_path, entity_name, "home", "-home.component.html", home_template)
             write_file(app_path, entity_name, "home", "-home.component.ts", ts)
-            write_file(app_path, entity_name, "home", "-home.component.scss", "")
+            write_file(app_path, entity_name, "home", "-home.component.scss", home_scss)
             
             routing = self.load_routing("routing.jinja", each_entity)
             write_file(app_path, entity_name, "", "-routing.module.ts", routing)
@@ -210,22 +210,25 @@ class OntBuilder(object):
             # New Style for Input
             new_template = self.load_new_template("new_template.html", each_entity, entity_favorites)
             ts = self.load_ts("new_component.jinja", each_entity)
+            new_scss = self.get_template("new.scss").render()
             write_file(app_path, entity_name, "new", "-new.component.html", new_template)
             write_file(app_path, entity_name, "new", "-new.component.ts", ts)
-            write_file(app_path, entity_name, "new", "-new.component.scss", "")
+            write_file(app_path, entity_name, "new", "-new.component.scss", new_scss)
             
             # Detail for Update
             detail_template = self.load_detail_template("detail_template.html", each_entity, entity_favorites)
             ts = self.load_ts("detail_component.jinja", each_entity)
+            detail_scss = self.get_template("detail.scss").render()
             write_file(app_path, entity_name, "detail", "-detail.component.html", detail_template)
             write_file(app_path, entity_name, "detail", "-detail.component.ts", ts)
-            write_file(app_path, entity_name, "detail", "-detail.component.scss", "")
+            write_file(app_path, entity_name, "detail", "-detail.component.scss", detail_scss)
             
             card_template = self.load_card_template("card.component.html", each_entity, entity_favorites)
             ts = self.load_ts("card.component.jinja", each_entity)
+            card_scss = self.get_template("detail.scss").render()
             write_card_file(app_path, entity_name, "-card.component.html", card_template)
             write_card_file(app_path, entity_name,  "-card.component.ts", ts)
-            write_card_file(app_path, entity_name,  "-card.component.scss", "")
+            write_card_file(app_path, entity_name,  "-card.component.scss", card_scss)
             
         # menu routing and service config
         entities = app_model.entities.items()
@@ -270,6 +273,7 @@ class OntBuilder(object):
             file_name="environment.ts",
             source=rv_environment,
         )
+        # Translate all fields from english -> list of languages from settings TODO
         self.generate_translation_files(app_path)
 
     def build_entity_favorites(self, app_model):
@@ -305,7 +309,7 @@ class OntBuilder(object):
         rv_en_json = en_json.render(titles=titles)
         write_json_filename(app_path=app_path, file_name="en.json", source="{\n" + rv_en_json[:-2] +"\n}")
         es_titles = titles
-        if self.app_model.settings.style_guide.use_translation:
+        if self.app_model.settings.style_guide.include_translation:
             es_titles = translation_service(self.title_translation)
         rv_es_json = es_json.render(titles=es_titles)
         write_json_filename(app_path=app_path, file_name="es.json", source="{\n" + rv_es_json[:-2] + "\n}")
@@ -415,6 +419,8 @@ class OntBuilder(object):
         self.title_translation.append({title: entity_name})
     def gen_home_columns(self, entity, column):
         col_var = self.get_column_attrs(column)
+        name = column.label if hasattr(column, "label") and column.label != DotMap() else column.name
+        self.add_title(column["name"], name)
         #template_type = self.get_template_type(column)
         template_type = calculate_template(column)
         if template_type == "CURRENCY":
@@ -468,6 +474,8 @@ class OntBuilder(object):
 
     def get_new_column(self, column, fks, entity):
         col_var = self.get_column_attrs(column)
+        name = column["label"] if  hasattr(column, "label") and column.label != DotMap() else column["name"]
+        self.add_title(column["name"], name)
         for fk in fks:
             if column.name in fk["attrs"]  and fk["direction"] == "toone" and len(fk["attrs"]) == 1:
                 fk_entity = self.get_entity(fk["resource"])
@@ -521,6 +529,8 @@ class OntBuilder(object):
 
     def gen_detail_rows(self, column, fks, entity):
         col_var = self.get_column_attrs(column)
+        name = column.label if  hasattr(column, "label") and column.label != DotMap() else column.name
+        self.add_title(column["name"], name)
         for fk in fks:
             # TODO - not sure how to handle multiple fks attrs - so only support 1 for now
             if column.name in fk["attrs"] and fk["direction"] == "toone" and len(fk["attrs"]) == 1:
