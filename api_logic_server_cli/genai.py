@@ -40,13 +40,16 @@ class GenAI(object):
         self.project.genai_logic = self.genai_get_logic(prompt)
 
         if self.project.gen_using_file == '':
+            log.info(f'\nInvoking AI to obtain response: system/genai/temp/chatgpt_original.txt')
             response_data = self.genai_gen_using_api(prompt)
         else:
+            log.info(f'\nUsing prompt from {self.project.gen_using_file}')
             with open(self.project.gen_using_file, 'r') as file:
                 model_raw = file.read()
             # convert model_raw into string array response_data
             response_data = model_raw  # '\n'.join(model_raw)
-        self.genai_write_model_file(response_data)
+        from_model = self.genai_write_model_file(response_data)
+        log.info(f'\nModel file created: {from_model}')
 
 
     def genai_get_logic(self, prompt: str) -> list[str]:
@@ -103,6 +106,7 @@ class GenAI(object):
                 model_class += each_line + '\n'
         with open(f'{self.project.from_model}', "w") as model_file:
             model_file.write(model_class)
+        return self.project.from_model
 
     def genai_gen_using_api(self, prompt: str):
         pass  # https://community.openai.com/t/how-do-i-call-chatgpt-api-with-python-code/554554
