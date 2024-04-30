@@ -365,19 +365,12 @@ class OntBuilder(object):
         fav_column = find_column(entity,favorite)
         cols = get_columns(entity)
         fav_column_type = "VARCHAR" if fav_column and fav_column.type.startswith("VARCHAR") else "INTEGER"
-        key =  entity["primary_key"][0]
+        key =  make_keys(entity["primary_key"])
         entity_name = f"{entity.type}"
         entity_upper = f"{entity_name[:1].upper()}{entity_name[1:]}"
         entity_first_cap = f"{entity_name[:1].upper()}{entity_name[1:]}"
-        primaryKey = entity["primary_key"][0]
-        keySqlType = next(
-            (
-                "VARCHAR" if col.type.startswith('VARCHAR') else 'INTEGER'
-                for col in entity.columns
-                if col.name.lower() == key.lower()
-            ),
-            "INTEGER",
-        )
+        primaryKey = make_keys(entity["primary_key"])
+        keySqlType = make_sql_types(primaryKey, entity.columns)
         title =  f'{entity_name.upper()}' 
         entity_var = {
             "use_keycloak": self.use_keycloak,
@@ -602,7 +595,7 @@ class OntBuilder(object):
                     "tabTitle": f'{fk_tab["resource"].upper()}-{fk_tab["attrs"][0]}',
                     "parentKeys": fk_tab["columns"],
                 }
-                primaryKey = entity["primary_key"][0]
+                primaryKey = make_keys(entity["primary_key"])
                 for each_entity_name, each_entity in self.app_model.entities.items():
                     if each_entity_name == tab_name:
                         template = self.load_tab_template(each_entity, tab_vars, primaryKey )
@@ -686,7 +679,8 @@ class OntBuilder(object):
                 + f"{entity_upper}_MODULE_DECLARATIONS, {entity_first_cap}RoutingModule"
                 + "}",
             "module_from": f" './{entity_name}-routing.module'",
-            "key": entity["primary_key"][0],
+            "key": make_keys(entity["primary_key"]),
+            "keyPath": make_key_path(entity["primary_key"]),
             "routing_module": f"{entity_first_cap}RoutingModule",
         }
 
@@ -737,6 +731,37 @@ class OntBuilder(object):
             
 
         return template.render(menuitems=menuitems, importitems=import_cards,card_components=menu_components)
+def make_key_path(key_list:list)-> str:
+    #:key1/:key2
+    key_path = ""
+    sep = ""
+    for key in key_list:
+        key_path += f'{sep}{key}/'
+        sep = ":"
+    return key_path[:-1] if key_path[-1:] == "/" else key_path
+def make_keys(key_list:list)-> str:
+    #:key1;key2
+    key_path = ""
+    sep = ""
+    for key in key_list:
+        key_path += f'{sep}{key}'
+        sep = ";"
+        
+    return key_path
+
+def make_sql_types(primaryKeys, columns) -> str:
+    result = ""
+    sep = ""
+    keys = primaryKeys.split(";")
+    for key in keys:
+        for col in columns:
+            if col.name.upper() == key.upper():
+                col_type = "VARCHAR" if col.type.startswith("VARCHAR") else "INTEGER"
+                result += f"{sep}{col_type}"
+                sep = ";"
+    return result
+            
+        
 def calculate_template(column):
     col_type = column.type.upper().split("(")[0]
     name = column.name.upper()
