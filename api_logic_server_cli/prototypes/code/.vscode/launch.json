@@ -8,7 +8,7 @@
             "name": "GENAI",
             "type": "debugpy",
             "request": "launch",
-            "program": "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/clean/ApiLogicServer/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "cwd": "${workspaceFolder}",
             "env": {
@@ -27,7 +27,7 @@
             "name": "GENAI - Retry from repaired chatgpt",
             "type": "debugpy",
             "request": "launch",
-            "program": "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/clean/ApiLogicServer/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "cwd": "${workspaceFolder}",
             "env": {
@@ -46,7 +46,7 @@
             "name": "GENAI - Retry from repaired model",
             "type": "debugpy",
             "request": "launch",
-            "program": "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/clean/ApiLogicServer/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "cwd": "${workspaceFolder}",
             "env": {
@@ -67,7 +67,7 @@
             "name": "ApiLogicServer Create (CLI)",
             "type": "debugpy",
             "request": "launch",
-            "program": "cli_path",
+            "program": "${workspaceFolder}venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "cwd": "${workspaceFolder}",
             "env": {
@@ -87,7 +87,7 @@
             "name": "ApiLogicServer Create Tutorial",
             "type": "debugpy",
             "request": "launch",
-            "program": "cli_path",
+            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "cwd": "${workspaceFolder}",
             "env": {
@@ -106,7 +106,7 @@
             "name": "ApiLogicServer Create Tutorial With Customizations",
             "type": "debugpy",
             "request": "launch",
-            "program": "cli_path",
+            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "cwd": "${workspaceFolder}",
             "env": {
