@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.ext.declarative import declarative_base
 import logging
 import importlib.util
+from api_logic_server_cli.create_from_model import api_logic_server_utils as api_logic_server_utils
 
 log = logging.getLogger('create_from_model.model_creation_services')
 
@@ -38,17 +39,19 @@ def create_db(project: Project):
     # models_module = importlib.util.module_from_spec(spec)
     # spec.loader.exec_module(models_module)  # runs "bare" module code (e.g., initialization)
 
-    
-    # The model file may create the database, but we ignore that and recreate it per the db_url
-    ####################################
-    e = sqlalchemy.create_engine(db_url)
-    if not hasattr(models_module, "Base"):
-        raise ValueError(f'No Base class found in {models_file}.  \n..Perhaps these are sql statements, not SQLAlchemy classes.')
-    metadata = models_module.Base.metadata
-    assert len(metadata.tables) > 0, f'No tables found in {models_file}'
-    with Session(e) as session:
-        log.debug(f'session: {session}')
-        metadata.create_all(e)
+    if api_logic_server_utils.does_file_contain_class(models_file, '.create_all'):
+        log.debug(f'Database already created by importing {models_file}')
+    else:
+        # The model file may create the database, but we ignore that and recreate it per the db_url
+        ####################################
+        e = sqlalchemy.create_engine(db_url)
+        if not hasattr(models_module, "Base"):
+            raise ValueError(f'No Base class found in {models_file}.  \n..Perhaps these are sql statements, not SQLAlchemy classes.')
+        metadata = models_module.Base.metadata
+        assert len(metadata.tables) > 0, f'No tables found in {models_file}'
+        with Session(e) as session:
+            log.debug(f'session: {session}')
+            metadata.create_all(e)
 
-    project.open_with = 'code'
-    log.debug(f'database created, will create project and open in code')
+        project.open_with = 'code'
+        log.debug(f'database created, will create project and open in code')

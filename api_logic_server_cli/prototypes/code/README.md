@@ -36,7 +36,7 @@ als genai --from=genai_demo.genai
 
 This command calls the ChatGPT API to generate the model, which is then automatically submitted to `als create from-model`.  At this point, you should be able to open the project, and run it.
 
-### But it might fail
+#### But it might fail
 AI results are not consistent, so the model file may need corrections.  You can find it at `system/genai/temp/model.py`.  You can correct it, and then run:
 
 ```bash
@@ -58,6 +58,20 @@ Other issues:
 * Numeric seems to result in strings in als creation
 
 &nbsp;
+
+#### Postgresql
+
+Works, with provisos:
+
+* You have to create the database first, but perhaps we can do that: https://stackoverflow.com/questions/76294523/why-cant-create-database-if-not-exists-using-sqlalchemy
+
+* If we re-run the create, it winds up duplicating the test data
+
+    * copilot and drop and create, but not chatgpt-api
+
+    * skip our create if model contains .create_all(engine)?
+
+* It's unclear what happens if the tables already exist, but are not identical
 
 ### Create API Logic Projects From *New* Databases, with Copilot
 
