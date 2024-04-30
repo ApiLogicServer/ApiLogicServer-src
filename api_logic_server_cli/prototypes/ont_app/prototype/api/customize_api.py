@@ -11,12 +11,15 @@ from flask_jwt_extended import get_jwt, jwt_required, verify_jwt_in_request
 from safrs import jsonapi_rpc
 from database import models
 import json
+import sys
 from sqlalchemy import text, select, update, insert, delete
 from sqlalchemy.orm import load_only
 import sqlalchemy
 import requests
 from datetime import date
 from config.config import Args
+import os
+from pathlib import Path
 
 # called by api_logic_server_run.py, to customize api (new end points, services).
 # separate from expose_api_models.py, to simplify merge if project recreated
@@ -25,7 +28,7 @@ app_logger = logging.getLogger(__name__)
 
 db = safrs.DB 
 session = db.session 
-
+_project_dir = None
 class DotDict(dict):
     """ dot.notation access to dictionary attributes """
     # thanks: https://stackoverflow.com/questions/2352181/how-to-use-a-dot-to-access-members-of-dictionary/28463329
@@ -40,10 +43,8 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         Brief background: see readme_customize_api.md
     
     """
-    
+    _project_dir = project_dir
     app_logger.debug("api/customize_api.py - expose custom services")
-
-    api.expose_object(TransferFunds) 
     
     @app.route('/hello_world')
     def hello_world():  # test it with: http://localhost::5656/hello_world?user=ApiLogicServer
@@ -158,6 +159,261 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         """
         return api_utils.server_log(request, jsonify)
     
+        """
+        TODO - add to model
+            about:
+                date: 3/20/2024
+                    recent_changes: api_root, altered Customer/Order/Employee attribute ordering, tab
+                    captions, info, EmpType, dept emps, defaults, show_when, cascade add, toggles,
+                    images, security, login, virtual relns, global filters, no IsCommissioned
+            api_root: '{http_type}://{swagger_host}:{port}/{api}'
+            authentication:
+                endpoint: '{http_type}://{swagger_host}:{port}/api/auth/login'
+            settings:
+            
+            attribute -> show_when ??
+        """
+    @app.route("/getyaml", methods=["GET"])
+    def get_yaml():
+        # Write the JSON back to yaml
+        #GET curl "http://localhost:5656/getyaml"
+        
+        entities = read(models.Entity)
+        attrs = read(models.EntityAttr)
+        tabs =  read(models.TabGroup)
+        settings = read(models.GlobalSetting)
+        #root = read(models.Root)
+        
+        output = build_json(entities, attrs, tabs, settings) #root)
+        fn = "admin_model_merge.yaml"
+        write_file(output, file_name=fn)
+        return jsonify(f"Yaml file written to ui/{fn}")
+    
+    def read(clz) -> list:
+        return rows_to_dict(session.query(clz).all())
+    
+    def build_json(entities: list, attrs:list, tabs:list, settings) -> any:
+        output = {}
+        
+        entity_list = []
+        for entity in entities:
+            entity_name = entity["name"]
+            e = {}
+            
+            e["type"] = entity["title"]
+            e["primary_key"] = convert_list(entity["pkey"]) 
+            if hasattr(entity,"new_template"):
+                e["new_template"] = entity["new_template"]
+            if hasattr(entity,"home_template"):
+                e["home_template"] = entity["home_template"]
+            if hasattr(entity,"detail_template"):
+                e["detail_template"] = entity["detail_template"]
+            if hasattr(entity,"favorite"):
+                e["favorite"] = entity["favorite"]
+            output[entity_name] = e
+            
+            cols = []
+            for attr in attrs:
+                col ={}
+                if attr["entity_name"] == entity_name:
+                    if attr["exclude"] == False:
+                        col["name"] = attr["attr"]
+                        col["label"] = attr["label"]
+                        col["template"] = attr["template_name"]
+                        col["type"] = attr["thistype"]
+                        if attr["issort"]:
+                            col["sort"] = attr["issort"]
+                        if attr["issearch"]:
+                            col["search"] = attr["issearch"]
+                        if attr["isrequired"]:
+                            col["required"] = attr["isrequired"]
+                        if attr["isenabled"] == False:
+                            col["enabled"] = attr["isenabled"]
+                        cols.append(col)         
+            output[entity_name]["columns"] = cols
+            tab_group = []
+            for tab in tabs:
+                tg = {}
+                if tab["entity_name"] == entity_name:
+                    #if tab["exclude"] == False:
+                    tg["direction"] = tab["direction"]
+                    tg["resource"] = tab["tab_entity"]
+                    tg["name"] = tab["label"]
+                    tg["fks"] = convert_list(tab["fkeys"])
+                    tab_group.append(tg)
+            if len(tab_group) > 0:
+                output[entity_name]["tab_groups"] = tab_group
+        
+            
+        output_yaml = {}
+        output_yaml["entities"] = output
+        style_guide = []
+        
+        for s in settings:
+            sg = {}
+            sg[s["name"]] = s["value"]
+            style_guide.append(sg)
+        output["settings"] = {}
+        output["settings"]["style_guide"] = style_guide
+        
+        #TODO root about api_root authentication
+        
+        return output
+    
+    def write_file(source: str,file_name:str):
+
+        with open(f"{_project_dir}/ui/{file_name}", "w") as file:
+            yaml.safe_dump(source, file, default_flow_style=False)
+            #file.write(source)
+        
+    @app.route("/loadyaml", methods=["GET","POST","OPTIONS"])
+    def load_yaml():
+        '''
+            GET curl "http://localhost:5656/loadyaml"
+            POST  curl -X "POST" http://localhost:5656/loadyaml -H "Content-Type: text/x-yaml" -d @app_model.yaml 
+        '''
+        if request.method == "GET":
+            with open(f'{_project_dir}/ui/app_model.yaml','rt') as f:  
+                valuesYaml=yaml.safe_load(f.read())
+                f.close()
+        elif request.method == "POST":
+            data = request.data.decode("utf-8")
+            valuesYaml =json.dumps(data) #TODO - not working yet
+        
+        #Clean the database out - this is destructive 
+        
+        delete_sql(models.TabGroup)
+        delete_sql(models.GlobalSetting)
+        delete_sql(models.EntityAttr)
+        delete_sql(models.Entity)
+        #delete_sql(models.Root)
+        
+        insert_entities(valuesYaml)
+        insert_styles(valuesYaml)
+        
+        #TODO 
+        about = valuesYaml["about"]
+        api_root = valuesYaml["api_root"]
+        authentication = valuesYaml["authentication"]
+        
+        return jsonify(valuesYaml)
+
+    def delete_sql(clz):
+        try:
+            num_rows_deleted = db.session.query(clz).delete()
+            print(clz,num_rows_deleted)
+            db.session.commit()
+        except:
+            db.session.rollback()
+
+        
+    def insert_entities(valuesYaml):
+        entities = valuesYaml["entities"]
+        for entity in entities:
+            m_entity = models.Entity()
+            each_entity = valuesYaml['entities'][entity]
+            print(entity, each_entity)
+            m_entity.name = each_entity["type"]
+            m_entity.title = entity
+            m_entity.favorite = get_value(each_entity,"favorite")
+            m_entity.pkey = str(get_value(each_entity,"primary_key"))
+            m_entity.info_list =get_value(each_entity,"info_list")
+            m_entity.info_show = get_value(each_entity,"info_show")
+            m_entity.exclude = get_value(each_entity,"exclude", False)
+            m_entity.new_template = get_value(each_entity,"new_template","new_template.html")
+            m_entity.home_template = get_value(each_entity,"home_template","home_template.html")
+            m_entity.detail_template = get_value(each_entity,"detail_template","detail_template.html")
+            
+            try:
+                session.add(m_entity)
+                session.commit()
+            except Exception as ex:
+                print(ex)
+            
+            # Attributes
+            for entity in entities:
+                m_entity = models.Entity()
+                each_entity = valuesYaml['entities'][entity]
+                insert_entity_attrs(entity, each_entity)
+                
+            #Tab Groups
+            for entity in entities:
+                m_entity = models.Entity()
+                each_entity = valuesYaml['entities'][entity]
+                insert_tab_groups(entity, each_entity)
+                
+
+    def get_value(obj:any, name:str, default:any = None):
+        try:
+            return obj[name] 
+        except:
+            return default
+    def convert_list(key:str) -> list:
+        k = key.replace("'","",20)
+        k =k.replace("[","")
+        k =k.replace("]","")
+        l = []
+        s = k.split(",")
+        for v in s:
+            l.append(v.strip())
+        return l
+    def insert_tab_groups(entity, each_entity):
+        try:    
+            tab_groups = each_entity["tab_groups"]
+            for tab_group in tab_groups:
+                m_tab_group = models.TabGroup()
+                print(entity, f' tab_group: {tab_group}')
+                m_tab_group.entity_name = entity
+                m_tab_group.direction = tab_group["direction"]
+                m_tab_group.tab_entity = tab_group["resource"]
+                m_tab_group.fkeys = str(tab_group["fks"])
+                m_tab_group.label = tab_group["name"]
+                
+                try:
+                    session.add(m_tab_group)
+                    session.commit()
+                except Exception as ex:
+                    session.rollback()
+                    print(ex)
+        except Exception as ex:
+            print(ex)
+
+    def insert_entity_attrs(entity, each_entity):
+        for attr in each_entity["columns"]:
+            m_entity_attr = models.EntityAttr()
+            print(entity, f': {attr}') #merge metadata into attr
+            m_entity_attr.entity_name = entity
+            m_entity_attr.attr = get_value(attr,"name")
+            m_entity_attr.label = get_value(attr, "label", attr["name"])
+            m_entity_attr.template_name = get_value(attr, "template" , "text")
+            m_entity_attr.thistype = attr["type"]
+            m_entity_attr.isrequired = get_value(attr, "required", False)
+            m_entity_attr.issearch = get_value(attr, "search", False)
+            m_entity_attr.issort = get_value(attr, "sort" , False)
+            m_entity_attr.isenabled = get_value(attr, "enabled", True)
+            m_entity_attr.exclude = get_value(attr, "exclude", False)
+            m_entity_attr.tooltip = get_value(attr, "tooltip", None)
+            
+            try:
+                session.add(m_entity_attr)
+                session.commit()
+            except Exception as ex:
+                session.rollback()
+                print(ex)
+
+    def insert_styles(valuesYaml):
+        style_guide = valuesYaml["settings"]["style_guide"]
+        print(f'style_guide: {style_guide}')
+        for style in style_guide:
+            global_setting = models.GlobalSetting()
+            print(f'{style}:{style_guide[style]}')
+            global_setting.name=style
+            global_setting.value=style_guide[style]
+            session.add(global_setting)
+        try:
+            session.commit()
+        except Exception as ex:
+            print(ex)
 
     
     @app.route("/api/entityList", methods=["GET","OPTIONS"])
@@ -408,7 +664,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
                     rop  = f"{q}{value['rop']}{q}"
                     filter_result = f'"{lop}" {op} {rop}'
                     return filter_result
-            q = "" if sqltypes and sqltypes[f] != 12 else "'"
+            q = "" if sqltypes and hasattr(sqltypes,f) and sqltypes[f] != 12 else "'"
             if f == "CategoryName":
                 f = "CategoryName_ColumnName" #hack to use real column name
             filter_result += f'{a} "{f}" = {q}{value}{q}'
