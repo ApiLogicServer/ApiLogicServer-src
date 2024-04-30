@@ -64,6 +64,26 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
+            "name": "GENAI - Postgresql",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "genai",
+                "--db-url=postgresql://postgres:p@localhost/genai_demo",
+                "--using=${input:inputGenaiProjectName}_pg"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
             "name": "ApiLogicServer Create (CLI)",
             "type": "debugpy",
             "request": "launch",
