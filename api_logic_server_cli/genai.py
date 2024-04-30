@@ -23,7 +23,7 @@ class GenAI(object):
 
         if self.project.from_genai.endswith('.prompt'):
             self.project.from_genai.replace('.prompt','')
-        log.info(f'\ngenai creating database/models from {self.project.from_genai}.promot')
+        log.info(f'\ngenai creating database/models from {self.project.from_genai}.prompt')
 
         self.project.from_model = f'system/genai/temp/model.py' # we always write the model to this file
 
