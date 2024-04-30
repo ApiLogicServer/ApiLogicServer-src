@@ -21,7 +21,7 @@ popd
 mkdir -p $SCRIPT_DIR/../../../../clean/ApiLogicServer
 pushd $SCRIPT_DIR/../../../../clean/ApiLogicServer
 CLEAN_DIR=$(pwd)
-rm -r $CLEAN_DIR/*
+rm -r -h -s $CLEAN_DIR/*
 popd
 
 echo "..Installing to directories: \n....$INSTALL_DIR\n....$CLEAN_DIR\n"

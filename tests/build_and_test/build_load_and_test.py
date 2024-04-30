@@ -698,7 +698,8 @@ elif platform.startswith("linux"):
 else:
     print("unknown platform")
 
-install_api_logic_server_path = get_servers_build_and_test_path().joinpath("ApiLogicServer")   # eg /Users/val/dev/servers/install/ApiLogicServer
+install_api_logic_server_path = get_servers_build_and_test_path().joinpath("ApiLogicServer") 
+install_api_logic_server_clean_path = install_api_logic_server_path.parent.parent.joinpath("clean/ApiLogicServer")
 api_logic_project_path = install_api_logic_server_path.joinpath('ApiLogicProject')
 api_logic_server_tests_path = Path(os.path.abspath(__file__)).parent.parent
 
@@ -752,7 +753,8 @@ if debug_script:
     print(result_venv.stdout.decode())  # should say pyodbc==4.0.34
 
 if Config.do_install_api_logic_server:  # verify the build process - rebuild, and use that for tests
-    delete_dir(dir_path=str(install_api_logic_server_path), msg=f"delete install: {install_api_logic_server_path} ")
+    delete_dir(dir_path=str(install_api_logic_server_path), msg=f"delete install: {install_api_logic_server_path} ")    
+    delete_dir(dir_path=str(install_api_logic_server_clean_path), msg=f"delete clean: {install_api_logic_server_clean_path} ")
     delete_build_directories(install_api_logic_server_path)
 
     if venv_with_python:  # windows only (sigh... never found way to set venv with Python on Ubuntu)

@@ -39,11 +39,10 @@ def create_db(project: Project):
     # models_module = importlib.util.module_from_spec(spec)
     # spec.loader.exec_module(models_module)  # runs "bare" module code (e.g., initialization)
 
-    if api_logic_server_utils.does_file_contain_class(models_file, '.create_all'):
+    if api_logic_server_utils.does_file_contain('.create_all', models_file):
         log.debug(f'Database already created by importing {models_file}')
     else:
-        # The model file may create the database, but we ignore that and recreate it per the db_url
-        ####################################
+        log.debug(f'Creating database from: {models_file}')
         e = sqlalchemy.create_engine(db_url)
         if not hasattr(models_module, "Base"):
             raise ValueError(f'No Base class found in {models_file}.  \n..Perhaps these are sql statements, not SQLAlchemy classes.')
@@ -54,4 +53,4 @@ def create_db(project: Project):
             metadata.create_all(e)
 
         project.open_with = 'code'
-        log.debug(f'database created, will create project and open in code')
+    log.debug(f'Creating project, will open id IDE: {project.open_with}')
