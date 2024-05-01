@@ -18,10 +18,11 @@ This readme contains the following sections:
 | Section                  | Info                               |
 |:-------------------------|:-----------------------------------|
 | [1. Setup and Run](#1-setup-and-run) | Information about API Logic Server, and setting up your venv     |
-| [2. Deployment](#2-deployment) | Deploy early previews to the cloud - enable team collaboration     |
-| [3. Key Customization Files](#3-key-customization-files) | Quick idea of the key files you'll alter        |
-| [4. Project Requirements](#4-project-requirements)     | Options for capturing requirements |
-| [5. Project Information](#5-project-information)                | Creation dates, versions          |
+| [2. Key Customization Files](#2-key-customization-files) | Quick idea of the key files you'll alter        |
+| [3. Procedures](#3-procedures) | Key Procedures        |
+| [4. Deployment](#4-deployment) | Deploy early previews to the cloud - enable team collaboration     |
+| [5. Project Requirements](#5-project-requirements)     | Options for capturing requirements |
+| [6. Project Information](#6-project-information)                | Creation dates, versions          |
 | [Appendix - Key Technologies](#appendix-key-technologies)    | Doc links of key libraries         |
 
 &nbsp;
@@ -91,17 +92,10 @@ As shown above:
 
 ![Admin App](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/ui-admin/run-admin-app.png?raw=true)
 
-&nbsp;
-
-# 2. Deployment
-
-The `devops` directory contains several scripts for creating container images, testing them, and deploying them.
-
-Since API Logic Server creates working software (UI, API), you can do this after creating your project, to [collaborate with your team](https://apilogicserver.github.io/Docs/DevOps-Containers-Preview/).
 
 &nbsp;
 
-# 3. Key Customization Files
+# 2. Key Customization Files
 
 Your project is ready to run, but it's likely you'll want to customize it - declare logic, new endpoints, etc.
 
@@ -132,13 +126,30 @@ To make customizations easy to explore, **search for:**
 
 &nbsp;
 
-# 4. Project Requirements
+# 3. Procedures
+
+See [alembic](database/alembic/readme.md) for database migration procedures.
+
+| Procedures               | Notes                              |
+|:-------------------------|:-----------------------------------|
+| 1. **Database Migration** | See [alembic](database/alembic/readme.md) for database migration procedures.     |
+
+&nbsp;
+
+# 4. Deployment
+
+The `devops` directory contains several scripts for creating container images, testing them, and deploying them.
+
+Since API Logic Server creates working software (UI, API), you can do this after creating your project, to [collaborate with your team](https://apilogicserver.github.io/Docs/DevOps-Containers-Preview/).
+&nbsp;
+
+# 5. Project Requirements
 
 Optionally, you can **document requirements** as part of an **executable test plan**.  Test plan execution creates documentation (in markdown), including **requirements traceability** into implementation.  [See example here](test/api_logic_server_behave/reports/Behave%20Logic%20Report%20Sample.md).
 
 &nbsp;
 
-# 5. Project Information
+# 6. Project Information
 
 This API Logic Project was created with the `ApiLogicServer create` command.
 For information on Managing API Logic Projects, [click here](https://apilogicserver.github.io/Docs/Project-Structure).
