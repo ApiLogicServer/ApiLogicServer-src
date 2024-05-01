@@ -26,10 +26,22 @@
                 "input": "node_modules/ontimize-web-ngx/assets",
                 "output": "/assets"
               },
+              {
+                "glob": "**/*",
+                "input": "node_modules/ontimize-web-ngx-charts/assets",
+                "output": "/assets"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/ontimize-web-ngx-report/assets",
+                "output": "/assets"
+              },
               "src/manifest.webmanifest"
             ],
             "styles": [
               "node_modules/ontimize-web-ngx/ontimize.scss",
+              "node_modules/ontimize-web-ngx-map/styles.scss",
+              "node_modules/ontimize-web-ngx-charts/styles.scss",
               "src/assets/css/app.scss",
               "src/styles.scss"
             ],
@@ -151,7 +163,8 @@
     ],
     "cache": {
       "enabled": false
-    }
+    },
+    "analytics": false
   },
   "schematics": {
     "@angular-eslint/schematics:application": {
