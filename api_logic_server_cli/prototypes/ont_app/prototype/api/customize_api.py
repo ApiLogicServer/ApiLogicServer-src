@@ -431,6 +431,21 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
     api_map = {
     }
     
+    def get_config_csv(col_list:str) -> dict:
+        config = DotDict()
+        #config.input = os.path.join(self.RESOURCES_DIR, 'reports', 'csv.jrxml')
+        #config.output = os.path.join(self.RESOURCES_DIR, 'reports', 'compile_to_file')
+        #config.dataFile = os.path.join(self.RESOURCES_DIR, 'csvExampleHeaders.csv')
+        config.dbType = 'csv'
+        config.csvCharset = "utf-8"
+        config.outCharset = "utf-8"
+        config.csvFieldDel = "|"
+        config.outFieldDel = "|"
+        config.csvRecordDel = "\r\n"
+        config.csvFirstRow = True
+        config.csvColumns = col_list.split(",")
+        return config
+    
     #http://localhost:5656/ontimizeweb/services/qsallcomponents-jee/services/rest/customers/customerType/search
     #https://try.imatia.com/ontimizeweb/services/qsallcomponents-jee/services/rest/customers/customerType/search
     @app.route("/ontimizeweb/services/rest/<path:path>", methods=['GET','POST','PUT','PATCH','DELETE','OPTIONS'])
@@ -448,6 +463,30 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         if method == "OPTIONS":
             return jsonify(success=True)
         
+        if clz_name == "dynamicjasper":
+            ''' Reports
+            {"title":"","groups":[],
+            "entity":"Customer",
+            "path":"/Customer","service":"Customer","vertical":true,"functions":[],
+            "style":{"grid":false,"rowNumber":false,"columnName":true,"backgroundOnOddRows":false,"hideGroupDetails":false,"groupNewPage":false,"firstGroupNewPage":false},
+            "subtitle":"",
+            "columns":[{"id":"Id","name":"Id"},{"id":"CompanyName","name":" Company Name*"}],
+            "orderBy":[],
+            "language":"en",
+            "filters":{"columns":["Id","CompanyName","Balance","CreditLimit","OrderCount","UnpaidOrderCount","Client_id","ContactName","ContactTitle","Address","City","Region","PostalCode","Country","Phone","Fax"],
+            "sqltypes":{"Id":1111,"CompanyName":1111,"Balance":8,"CreditLimit":8,"OrderCount":4,"UnpaidOrderCount":4,"Client_id":4,"ContactName":1111,"ContactTitle":1111,"Address":1111,"City":1111,"Region":1111,"PostalCode":1111,"Country":1111,"Phone":1111,"Fax":1111},
+            "filter":{},"offset":0,"pageSize":20},"advQuery":true}
+            '''
+            payload = json.loads(request.data)
+            filter, columns, sqltypes, offset, pagesize, orderBy, data = parsePayload(payload)
+            print(payload)
+            #rc = get_config_csv("Id,CompanyName")
+            #report = PyReportJasper()
+            #report.compile(write_jasper=True)
+            #instance = Report(rc, rc.input)
+            #instance.fill()
+            #instance.export_jrprint()
+            return jsonify({})
         if clz_name in ["listReports", "bundle"]:
             return {}
         
