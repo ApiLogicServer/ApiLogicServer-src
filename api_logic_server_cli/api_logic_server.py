@@ -853,12 +853,16 @@ def start_open_with(project: Project):
     """ Creation complete.  Opening {open_with} at {project_name} """
     log.info(f'\nCreation complete - Opening {project.open_with} at {project.project_name}')
     log.debug(".. See the readme for install / run instructions")
-    create_utils.run_command(
-        cmd=f'{project.open_with} {project.project_name}',
-        env=None, 
-        msg="no-msg", 
-        project=project)
-
+    try:
+        with_readme = '. readme.md' if project.open_with == "xxcode" else ''  # loses project context
+        create_utils.run_command(
+            cmd=f'{project.open_with} {project.project_name} {with_readme}',
+            env=None, 
+            msg="no-msg", 
+            project=project)
+    except:
+        log.error("\n\n... ...Failed to open project")
+        log.error(f"\n... ... ...Suggestion: open code (Ctrl+Shift+P or Command+Shift+P), and run 'Shell Command'\n")
 
 def invoke_extended_builder(builder_path, db_url, project_directory, model_creation_services):
     # spec = importlib.util.spec_from_file_location("module.name", "/path/to/file.py")
@@ -870,6 +874,8 @@ def invoke_extended_builder(builder_path, db_url, project_directory, model_creat
 
 def invoke_creators(model_creation_services: ModelCreationServices):
     """ MAJOR: uses model_creation_services (resource_list, model iterator functions) to create api, apps
+    
+    rebuild-from-model backs up old expose_api_models, etc
     """
 
     creator_path = abspath(f'{abspath(get_api_logic_server_dir())}/create_from_model')
