@@ -284,14 +284,15 @@ def create_start_manager(ctx, open_with, clean: click.BOOL = False):
     os.putenv("APILOGICSERVER_HOME", str(project.api_logic_server_dir_path.parent) )
     # assert defaultInterpreterPath_str == str(project.default_interpreter_path)
     try:
+        with_readme = '. readme.md' if open_with == "xxcode" else ' '  # loses project context
         create_utils.run_command(
-            cmd=f'{open_with} {to_dir_str}',  # passing readme here fails - loses project setttings
+            cmd=f'{open_with} {to_dir_str} {with_readme}',  # passing readme here fails - loses project setttings
             env=None, 
             msg="no-msg", 
             project=project)
     except Exception as e:
         log.error(f"\n\nError: {e}")
-        log.error(f"\nSuggesion: open code (Ctrl+Shift+P or Command+Shift+P), and run Shell Command\n")
+        log.error(f"\nSuggestion: open code (Ctrl+Shift+P or Command+Shift+P), and run Shell Command\n")
         exit(1)
 
 
@@ -1575,6 +1576,8 @@ def rebuild_from_model(ctx, project_name: str, db_url: str, api_name: str, not_e
         Updates database, api, and ui from changed models.
     """
     db_types = ""
+    if project_name == "":
+        project_name = '.'
     PR.ProjectRun(command="rebuild-from-model", project_name=project_name, db_url=db_url, api_name=api_name,
                     not_exposed=not_exposed,
                     run=run, use_model=use_model, from_git=from_git, db_types=db_types,
