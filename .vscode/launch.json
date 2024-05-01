@@ -98,6 +98,7 @@
             "redirectOutput": true,
             "args": ["create",
                 "--project_name=../../../servers/ApiLogicProject",
+                "--open-with=code",
                 "--db-url="],
             "console": "integratedTerminal"
         },
@@ -1161,6 +1162,16 @@
             "program": "cli.py",
             "redirectOutput": true,
             "args": ["rebuild-from-model","--project_name=../../../servers/ApiLogicProject","--db_url="],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "  - Rebuild-from-model -- servers/ApiLogicProject",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/../../servers/ApiLogicProject",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["rebuild-from-model","--project_name=","--db_url="],
             "console": "integratedTerminal"
         },
         {
