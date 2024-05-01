@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { OntimizeWebModule } from 'ontimize-web-ngx';
-
+import { OChartModule } from 'ontimize-web-ngx-charts';
 import { SharedModule } from '../shared/shared.module';
 import { MainRoutingModule } from './main-routing.module';
 import { MainComponent } from './main.component';
@@ -12,7 +12,8 @@ import { OntimizeKeycloakModule } from 'ontimize-web-ngx-keycloak';
   imports: [
     SharedModule,
     OntimizeWebModule,
-    MainRoutingModule 
+    MainRoutingModule,
+    OChartModule
     {% if use_keycloak %}
     ,OntimizeKeycloakModule
     {% endif %}

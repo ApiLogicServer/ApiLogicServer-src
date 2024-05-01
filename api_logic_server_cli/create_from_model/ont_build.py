@@ -364,6 +364,7 @@ class OntBuilder(object):
         favorite =  entity["favorite"]
         fav_column = find_column(entity,favorite)
         cols = get_columns(entity)
+        visible_columns = get_columns(entity, True)
         fav_column_type = "VARCHAR" if fav_column and fav_column.type.startswith("VARCHAR") else "INTEGER"
         key =  make_keys(entity["primary_key"])
         entity_name = f"{entity.type}"
@@ -376,7 +377,7 @@ class OntBuilder(object):
             "use_keycloak": self.use_keycloak,
             "entity": entity_name,
             "columns": cols,
-            "visibleColumns": cols,
+            "visibleColumns": visible_columns,
             "sortColumns": favorite, 
             "formColumns": favorite, 
             "keys": primaryKey,
@@ -847,12 +848,14 @@ def write_json_filename(app_path: Path, file_name: str, source: str):
         file.write(source)
 
 
-def get_columns(entity) -> str:
+def get_columns(entity,isVisible:bool = True) -> str:
     cols = ""
     sep = ""
     for column in entity.columns:
-        cols += f"{sep}{column.name}"
-        sep = ";"
+        visible = column.visible if hasattr(column, "visible") and column.visible != DotMap() else isVisible
+        if visible:
+            cols += f"{sep}{column.name}"
+            sep = ";"
     return cols
 
 def find_column(entity, column_name) -> any:
