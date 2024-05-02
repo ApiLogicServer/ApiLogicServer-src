@@ -1,41 +1,40 @@
-Welcome the the API Logic Server Manager.
+Welcome the the [API Logic Server Manager](https://apilogicserver.github.io/Docs/Manager/).  This is a good place to manage projects, create notes and resources, etc.
 
-## Create API Logic Projects From *Existing* Databases
+We always recommend creating the [Tutorial](https://apilogicserver.github.io/Docs/Tutorial/) - handy reference for code and logic examples.  
 
-To create a project, **press F5**, or use the CLI (**Terminal > New Terminal**) and try some pre-installed samples:
+1. Open a terminal window (**Terminal > New Terminal**), and paste the following CLI command:
 
-* [**Demo:** ](https://apilogicserver.github.io/Docs/Sample-AI/) created from AI (Copilot)
+```bash
+ApiLogicServer create --project-name= --db-url=
+```
+
+&nbsp;
+
+>  Next, create projects by clicking one of the disclure buttons, below:
+
+<br>
+
+<details markdown>
+
+<summary> Existing Database - pre-installed demo </summary>
+
+<br>To create a project, **press F5**, or use the CLI (**Terminal > New Terminal**) and try the pre-installed [**Demo**](https://apilogicserver.github.io/Docs/Sample-AI/) (original created from AI using Copilot):
 
 ```
 als create --project-name=sample_ai --db-url=sqlite:///sample_ai.sqlite
 ```
 
-
-* [**Tutorial:** ](https://apilogicserver.github.io/Docs/Tutorial/) lots of code & logic samples:
-```
-ApiLogicServer create --project-name= --db-url=
-```
-
 Then, try your own databases [(db-url examples here)](https://apilogicserver.github.io/Docs/Database-Connectivity/), or experiment with [these Docker databases](https://apilogicserver.github.io/Docs/Database-Docker/).
 
-&nbsp;
-
-## Create from AI
-
-You can also generate projects using AI - Copilot and/or ChatGPT.
-
-| Feature | Notes | Signup?   |
-:-------|:-----------|:---- |
-| [ChatGPT/Browser](#chatgpt-in-the-browser) | Rather fiddly - convert ddl to db | None |
-| [Copilot](#create-api-logic-projects-from-new-databases-with-copilot)  | Less Fiddly - all in IDE | Yes - Copilot (~$10/mo) |
-| [GenAI](#genai-automation-with-chatgpt-hands-free) | Elegant - no cli, copy/paste.. | Yes - Copilot and ChatGPT API |
+</details>
 
 &nbsp;
 
-### GenAI Automation, with ChatGPT ("Hands Free")
- 
+<details markdown>
 
-This will create and open a project called `genai_demo` from `genai_demo.prompt`:
+<summary> New Database - using GenAI Automation (Signup optional)</summary>
+
+<br>This will create and open a project called `genai_demo` from `genai_demo.prompt`:
 
 ```bash
 als genai --using=genai_demo.prompt
@@ -43,9 +42,11 @@ als genai --using=genai_demo.prompt
 
 This command calls the ChatGPT API to generate the model, which is then automatically submitted to `als create from-model`.  At this point, you should be able to open the project, and run it.
 
-#### But, it might fail
+<details markdown>
 
-AI results are not consistent, so the model file may need corrections.  You can find it at `system/genai/temp/model.py`.  You can correct the model file, and then run:
+<summary> AI somtimes fails - here's how to recover</summary>
+
+<br>AI results are not consistent, so the model file may need corrections.  You can find it at `system/genai/temp/model.py`.  You can correct the model file, and then run:
 
 ```bash
 als create --project-name=genai_demo --from-model=system/genai/temp/model.py --db-url=sqlite
@@ -68,18 +69,25 @@ We have seen failures such as:
 * Numeric --> String (fixed product bug)
 * Bad load code (no session)
 
+</details>
+
 &nbsp;
 
-#### Postgresql
+** Postgresql Example**
 
 Works, with provisos:
 
 * You have to create the database first, but perhaps we can do that: https://stackoverflow.com/questions/76294523/why-cant-create-database-if-not-exists-using-sqlalchemy
 
+</details>
 
-### Create API Logic Projects From *New* Databases, with Copilot
+&nbsp;
 
-You can use Copilot chat (if extension installed):
+<details markdown>
+
+<summary> New Database - using Copilot (Signup required) </summary>
+
+<br>You can use Copilot chat (if extension installed):
 
 1. Create a model, eg:
 
@@ -87,9 +95,7 @@ You can use Copilot chat (if extension installed):
 
 <summary> Show Me How to Use Copilot </summary>
 
-&nbsp;
-
-Paste this into the Copilot prompt:
+<br>>Paste this into the Copilot prompt:
 
 ```
 Use SQLAlchemy to create a sqlite database named sample_ai.sqlite, with customers, orders, items and product
@@ -124,39 +130,16 @@ als create --project-name=sample_ai --from-model=sample_ai.py --db-url=sqlite
 
 4. This will create your database, create an API Logic Project from it, and launch your IDE.
 
+</details>
+
 &nbsp;
 
-### ChatGPT in the Browser
+<details markdown>
+
+<summary> New Database - using ChatGPT in the Browser </summary>
+
+<br>ChatGPT in the Browser
 
 Please see [this doc](https://apilogicserver.github.io/Docs/Sample-AI-ChatGPT/)
 
-&nbsp;
-
-
-&nbsp;
-
-## Notes
-
-The [API Logic Server Manager](https://apilogicserver.github.io/Docs/Manager/) simplifies creating and managing projects.
-
-
-
-### Environment Variables
-
-Check:
-1. `APILOGICSERVER_AUTO_OPEN` - set to code
-2. `APILOGICSERVER_VERBOSE`
-
-&nbsp;
-
-### Managing Your Projects
-
-Created projects will show up here as directories.  (You create projects anywhere, and move them; this is just the default).
-
-If you want to customize/run the project, do so in *another instance* of VSCode.  You may find it helpful to acquire this extension: `Open Folder Context Menus for VS Code`.  It will enable you to open the project in another instance of VSCode.
-
-&nbsp;
-
-### Add Notes, Resources
-
-This is a good place to add text notes and resources for using API Logic Server, Python, Flask, SQLAlchemy, etc.
+</details>
