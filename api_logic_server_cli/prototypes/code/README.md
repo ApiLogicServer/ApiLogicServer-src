@@ -56,10 +56,21 @@ als genai --using=genai_demo.prompt --gen-using-file=system/genai/temp/chatgpt_r
 
 <summary> What Just Happened?</summary>
 
-<br>This command calls the ChatGPT API to generate the model, which is then automatically submitted to `als create from-model`.  At this point, you should be able to open the project, and run it.
+<br>`genai` processing is shown below (internal steps denoted in grey):
 
-TBD - revise diagram
-![Microservice Automation](system/images/overview.png)]
+1. You create your.prompt file, and invoke `als genai --using=your.prompt`.  genai then creates your project as follows:
+
+    a. Submits your prompt to the `ChatGPT API`
+
+    b. Writes the response to file, so you can correct and retry if anything goes wrong
+
+    c. Extracts model.py from the response
+
+    d. Invokes `als create-from-model` which creates your project
+
+2. Your created project is opened in your IDE, ready to execute and customize
+
+![Microservice Automation](system/images/genai.png)]
 
 </details>
 
@@ -96,11 +107,11 @@ We have seen failures such as:
 
 &nbsp;
 
-** Postgresql Example**
+**Postgresql Example**
 
 Works, with provisos:
 
-* You have to create the database first, but perhaps we can do that: https://stackoverflow.com/questions/76294523/why-cant-create-database-if-not-exists-using-sqlalchemy
+* You have to create the database first; we are considering automating that: https://stackoverflow.com/questions/76294523/why-cant-create-database-if-not-exists-using-sqlalchemy
 
 </details>
 
