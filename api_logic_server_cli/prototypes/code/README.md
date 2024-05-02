@@ -34,13 +34,36 @@ Then, try your own databases [(db-url examples here)](https://apilogicserver.git
 
 <summary> New Database - using GenAI Automation (Signup optional)</summary>
 
-<br>This will create and open a project called `genai_demo` from `genai_demo.prompt`:
+<br>You can do this with or without signup:
+
+1. If you have signed up, this will create and open a project called `genai_demo` from `genai_demo.prompt`:
 
 ```bash
 als genai --using=genai_demo.prompt
 ```
 
-This command calls the ChatGPT API to generate the model, which is then automatically submitted to `als create from-model`.  At this point, you should be able to open the project, and run it.
+
+2. ***Or,*** you can simulate the process using:
+
+
+```bash
+als genai --using=genai_demo.prompt --gen-using-file=system/genai/temp/chatgpt_retry.txt
+```
+
+&nbsp;
+
+<details markdown>
+
+<summary> What Just Happened?</summary>
+
+<br>This command calls the ChatGPT API to generate the model, which is then automatically submitted to `als create from-model`.  At this point, you should be able to open the project, and run it.
+
+TBD - revise diagram
+![Microservice Automation](system/images/overview.png)]
+
+</details>
+
+&nbsp;
 
 <details markdown>
 
