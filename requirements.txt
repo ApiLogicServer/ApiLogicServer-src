@@ -53,5 +53,6 @@ Werkzeug==2.3.3
 #Ontimize translation service
 translate==3.6.1
 libretranslatepy==2.1.1
+reportlab=4.2.0
 build
 
