@@ -1,0 +1,1 @@
+This database obtained from: prototypes/sample_ai/database/chatgpt/sample_ai_items.sqlite
