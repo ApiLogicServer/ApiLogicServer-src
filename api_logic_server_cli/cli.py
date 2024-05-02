@@ -284,7 +284,7 @@ def create_start_manager(ctx, open_with, clean: click.BOOL = False):
     os.putenv("APILOGICSERVER_HOME", str(project.api_logic_server_dir_path.parent) )
     # assert defaultInterpreterPath_str == str(project.default_interpreter_path)
     try:
-        with_readme = '. readme.md' if open_with == "code" else ' '  # loses project context
+        with_readme = '. readme.md' if open_with == "xxcode" else ' '  # loses project context (no readme preview)
         create_utils.run_command(
             cmd=f'{open_with} {to_dir_str} {with_readme}',  # passing readme here fails - loses project setttings
             env=None, 
