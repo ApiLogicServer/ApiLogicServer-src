@@ -38,7 +38,8 @@
                 "OPT_LOCKING": "optional"},
             "justMyCode": false,
             "args": [ "genai",
-                "--using=${input:inputGenaiProjectName}"],
+                "--using=${input:inputGenaiProjectName}",
+                "--gen-using-file=system/genai/temp/chatgpt_retry.txt"],
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
         },
