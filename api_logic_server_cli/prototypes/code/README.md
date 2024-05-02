@@ -20,27 +20,41 @@ Then, try your own databases [(db-url examples here)](https://apilogicserver.git
 
 &nbsp;
 
-## GenAI (Generative AI)
+## Create from AI
 
-You can also generate projects using AI - Copilot and/or ChatGPT.  These require you signup to paid services.
+You can also generate projects using AI - Copilot and/or ChatGPT.
+
+| Feature | Notes | Signup?   |
+:-------|:-----------|:---- |
+| [ChatGPT/Browser](#chatgpt-in-the-browser) | Rather fiddly - convert ddl to db | None |
+| [Copilot](#create-api-logic-projects-from-new-databases-with-copilot)  | Less Fiddly - all in IDE | Yes - Copilot (~$10/mo) |
+| [GenAI](#genai-automation-with-chatgpt-hands-free) | Elegant - no cli, copy/paste.. | Yes - Copilot and ChatGPT API |
 
 &nbsp;
 
-### "Hands Free" GenAI Automation, with ChatGPT
+### GenAI Automation, with ChatGPT ("Hands Free")
+ 
 
-This will create and open a project called `genai_demo` from `genai_demo.genai`:
+This will create and open a project called `genai_demo` from `genai_demo.prompt`:
 
 ```bash
-als genai --from=genai_demo.genai
+als genai --using=genai_demo.prompt
 ```
 
 This command calls the ChatGPT API to generate the model, which is then automatically submitted to `als create from-model`.  At this point, you should be able to open the project, and run it.
 
-#### But it might fail
-AI results are not consistent, so the model file may need corrections.  You can find it at `system/genai/temp/model.py`.  You can correct it, and then run:
+#### But, it might fail
+
+AI results are not consistent, so the model file may need corrections.  You can find it at `system/genai/temp/model.py`.  You can correct the model file, and then run:
 
 ```bash
 als create --project-name=genai_demo --from-model=system/genai/temp/model.py --db-url=sqlite
+```
+
+Or, correct the chatgpt response, and
+
+```bash
+als genai --using=genai_demo.prompt --gen-using-file=system/genai/temp/chatgpt_retry.txt
 ```
 
 We have seen failures such as:
@@ -54,9 +68,6 @@ We have seen failures such as:
 * Numeric --> String (fixed product bug)
 * Bad load code (no session)
 
-Other issues:
-* Numeric seems to result in strings in als creation
-
 &nbsp;
 
 #### Postgresql
@@ -65,13 +76,6 @@ Works, with provisos:
 
 * You have to create the database first, but perhaps we can do that: https://stackoverflow.com/questions/76294523/why-cant-create-database-if-not-exists-using-sqlalchemy
 
-* If we re-run the create, it winds up duplicating the test data
-
-    * copilot and drop and create, but not chatgpt-api
-
-    * skip our create if model contains .create_all(engine)?
-
-* It's unclear what happens if the tables already exist, but are not identical
 
 ### Create API Logic Projects From *New* Databases, with Copilot
 
@@ -119,6 +123,12 @@ als create --project-name=sample_ai --from-model=sample_ai.py --db-url=sqlite
 ```
 
 4. This will create your database, create an API Logic Project from it, and launch your IDE.
+
+&nbsp;
+
+### ChatGPT in the Browser
+
+Please see [this doc](https://apilogicserver.github.io/Docs/Sample-AI-ChatGPT/)
 
 &nbsp;
 

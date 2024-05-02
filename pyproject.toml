@@ -15,20 +15,15 @@ build-backend = "setuptools.build_meta"
 version = {attr = "api_logic_server_cli.api_logic_server.__version__"}
 
 # this solves the dup-subdirs-at-root problem
-[tool.setuptools]
-package-dir = {"api_logic_server" = "api_logic_server"}
-packages=['api_logic_server_cli',
-            'api_logic_server_cli.sqlacodegen_wrapper',
-            'api_logic_server_cli.sqlacodegen_wrapper.sqlacodegen',
-            'api_logic_server_cli.sqlacodegen_wrapper.sqlacodegen.sqlacodegen',
-            'api_logic_server_cli.prototypes.base',
-            'api_logic_server_cli.prototypes.base.api',
-            'api_logic_server_cli.prototypes.base.database',
-            'api_logic_server_cli.prototypes.base.logic',
-            'api_logic_server_cli.prototypes.base.test',
-            'api_logic_server_cli.prototypes.base.ui',
-            'api_logic_server_cli.create_from_model']
+# [tool.setuptools]
+# package-dir = {"api_logic_server" = "api_logic_server"}
+# packages=[find_packages()]
+# packages=find_packages()
 
+# https://stackoverflow.com/questions/75879256/pyproject-toml-package-flat-layout
+[tool.setuptools.packages.find]
+include = ["api_logic_server_cli*"]
+namespaces = true
 
 [project]
 dependencies = [
