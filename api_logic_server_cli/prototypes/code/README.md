@@ -1,16 +1,22 @@
 Welcome the the [API Logic Server Manager](https://apilogicserver.github.io/Docs/Manager/).  This is a good place to manage projects, create notes and resources, etc.
 
-We always recommend creating the [Tutorial](https://apilogicserver.github.io/Docs/Tutorial/) - handy reference for code and logic examples.  
+The system has pre-created the `tutorial` and `sample` projects, as described in the link above.  You may also want to take a look at [training](https://apilogicserver.github.io/Docs/#start-install-samples-training).
 
-1. Open a terminal window (**Terminal > New Terminal**), and paste the following CLI command:
+<details markdown>
 
-```bash
-ApiLogicServer create --project-name= --db-url=
-```
+<summary>Opening projects in the Manager </summary>
+
+<br>If you want to customize/run a project, do so in another instance of VSCode.  You can examine them in *this* instance fo VSCode, but run them in their own instance.
+
+You may find it helpful to acquire this extension: `Open Folder Context Menus for VS Code`. It will enable you to open the project in another instance of VSCode.
+
+</details>
 
 &nbsp;
 
->  Next, create projects by clicking one of the disclure buttons, below:
+#  Explore Creating Projects
+
+Click on the disclosure buttons, below.
 
 <br>
 
@@ -54,7 +60,7 @@ als genai --using=genai_demo.prompt --gen-using-file=system/genai/temp/chatgpt_r
 
 <details markdown>
 
-<summary> What Just Happened?</summary>
+<summary> What Just Happened? &nbsp;&nbsp;&nbsp;Next Steps...</summary>
 
 <br>`genai` processing is shown below (internal steps denoted in grey):
 
@@ -68,7 +74,9 @@ als genai --using=genai_demo.prompt --gen-using-file=system/genai/temp/chatgpt_r
 
     d. Invokes `als create-from-model`, which creates the database and your project
 
-2. Your created project is opened in your IDE, ready to execute and customize.  Review `Sample-Genai.md`.
+2. Your created project is opened in your IDE, ready to execute and customize.  
+
+    a. Review `Sample-Genai.md`, Explore Customizations.
 
 ![GenAI Automation](system/images/genai.png)
 
