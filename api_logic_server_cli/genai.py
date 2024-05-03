@@ -21,8 +21,6 @@ class GenAI(object):
         # https://stackoverflow.com/questions/76741410/how-to-invoke-github-copilot-programmatically
         # https://docs.google.com/document/d/1o0TeNQtuT6moWU1bOq2K20IbSw4YhV1x_aFnKwo_XeU/edit#heading=h.3xmoi7pevsnp
 
-        if self.project.from_genai.endswith('.prompt'):
-            self.project.from_genai.replace('.prompt','')
         log.info(f'\ngenai creating database/models from {self.project.from_genai}.prompt')
 
         self.project.from_model = f'system/genai/temp/model.py' # we always write the model to this file
@@ -119,7 +117,7 @@ class GenAI(object):
             openai_api_key = secrets['APILOGICSERVER_CHATGPT_APIKEY']
             if openai_api_key == 'your-api-key-here':
                 log.error("\n\nMissing env value: APILOGICSERVER_CHATGPT_APIKEY")
-                log.error("... Check your system/secrets file...")
+                log.error("... Check your system/secrets file...\n")
                 exit(1)
 
         url = "https://api.openai.com/v1/chat/completions"
