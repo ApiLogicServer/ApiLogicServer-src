@@ -430,7 +430,16 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
     # this is a hard coded list to map Northwind entities to model classes        
     api_map = {
     }
-
+    def gen_export(request) -> any:
+        payload = json.loads(request.data)
+        filter, columns, sqltypes, offset, pagesize, orderBy, data = parsePayload(payload)
+        print(payload)
+        if len(payload) == 3:
+            return jsonify({})
+        
+        
+        return {}
+    
     def gen_report(request) -> any:
         ''' Report PDF POC https://docs.reportlab.com/
         pip install reportlab 
@@ -552,6 +561,9 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         
         if clz_name in ["listReports", "bundle"]:
             return {}
+        
+        if clz_name == "export":
+            return gen_export(request)
         
         #api_clz = api_map.get(clz_name)
         resource = find_model(clz_name)
