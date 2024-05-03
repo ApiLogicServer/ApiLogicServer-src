@@ -109,9 +109,9 @@ We have seen failures such as:
 
 **Postgresql Example**
 
-You can test this
+You can test this as follows:
 
-1. Use [our docker image] 
+1. Use [our docker image](https://apilogicserver.github.io/Docs/Database-Docker/):
 2. And try:
 
 ```bash
