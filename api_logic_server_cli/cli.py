@@ -636,6 +636,8 @@ def genai(ctx, using, db_url, gen_using_file: click.BOOL):
     """
     global command
     db_types = ""
+    if using.endswith('.prompt'):
+        using = using.replace('.prompt','')
     PR.ProjectRun(command="create", project_name=using, db_url=db_url, from_genai=using, gen_using_file=gen_using_file)
 
 
