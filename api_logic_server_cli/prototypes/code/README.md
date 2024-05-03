@@ -68,9 +68,9 @@ als genai --using=genai_demo.prompt --gen-using-file=system/genai/temp/chatgpt_r
 
     d. Invokes `als create-from-model`, which creates the database and your project
 
-2. Your created project is opened in your IDE, ready to execute and customize
+2. Your created project is opened in your IDE, ready to execute and customize.  Review `Sample-Genai.md`.
 
-![Microservice Automation](system/images/genai.png)]
+![GenAI Automation](system/images/genai.png)
 
 </details>
 
@@ -95,12 +95,10 @@ als genai --using=genai_demo.prompt --gen-using-file=system/genai/temp/chatgpt_r
 We have seen failures such as:
 
 * duplicate definition of `DECIMAL`
-* use of `Decimal` vs. `DECIMAL` (latter required, work-around in place)
 * unclosed parentheses
 * data type errors in test data creation
 * wrong engine import: from logic_bank import Engine, constraint
-* bogus test data creation: with Engine() as engine...
-* Numeric --> String (fixed product bug)
+* bad test data creation: with Engine() as engine...
 * Bad load code (no session)
 
 </details>
