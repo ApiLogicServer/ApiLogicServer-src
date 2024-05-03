@@ -300,63 +300,6 @@ def fix_idea_configs(project: 'ProjectRun'):
                                             in_file=str(file_path))
     pass
 
-def z_copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "README.md"):
-    """ Copy readme files (and remove !!!) from:
-    
-    FIXME - Old - replace with create_utils.copy_md
-    """
-    use_utils = True
-    if use_utils:
-        create_utils.copy_md(project = project, from_doc_file = from_doc_file, to_project_file = to_project_file)
-        return
-    project_path = project.project_directory_path
-    to_file = project_path.joinpath(to_project_file)
-    docs_path = Path(get_api_logic_server_dir()).parent.parent
-    from_doc_file_path = docs_path.joinpath(f'Docs/docs/{from_doc_file}')
-
-    import requests
-    file_src = f"https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/{from_doc_file}"
-    try:
-        r = requests.get(file_src)  # , params=params)
-        if r.status_code == 200:
-            readme_data = r.content.decode('utf-8')
-            with open(str(to_file), "w") as readme_file:
-                readme_file.write(readme_data)
-    except requests.exceptions.ConnectionError as conerr: 
-        # without this, windows fails if network is down
-        pass    # just fall back to using the pip-installed version
-    except:     # do NOT fail 
-        pass    # just fall back to using the pip-installed version
-
-    use_git = False
-    if use_git and os.path.isfile(from_doc_file_path):  # if in dev, use the latest latest
-        copyfile(src = from_doc_file_path, dst = to_file)
-    
-    # now remove the !!, and unindent (mkdocs features fail in a readme)
-    with open(str(to_file), "r") as readme_file:
-        readme_lines_mkdocs = readme_file.readlines()    
-    readme_lines_md = []
-    in_mkdocs_block = False
-    for each_line in readme_lines_mkdocs:
-        if "from docsite" in each_line:
-            each_line = each_line.replace("from docsite", "from docsite, for readme")
-        if each_line.startswith('!!'):
-            in_mkdocs_block = True
-            key_takeaway = each_line[7 + each_line.index('":bulb:'): ]
-            key_takeaway = key_takeaway[0: len(key_takeaway)-2]
-            readme_lines_md.append(f"\n&nbsp;\n")
-            readme_lines_md.append(f"**Key Takeways - {key_takeaway}**")
-        else:
-            if in_mkdocs_block and each_line.startswith('    '):
-                each_line = each_line[4:]
-            each_line = each_line.replace('{:target="_blank" rel="noopener"}', '')
-            readme_lines_md.append(each_line)
-            if each_line.startswith('&nbsp;'):
-                in_mkdocs_block = False
-    with open(str(to_file), "w") as readme_file:
-        readme_file.writelines(readme_lines_md)
-    pass
-
 
 def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> str:
     """
@@ -498,6 +441,9 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
 
         if project.db_url == 'sqlite:///sample_ai.sqlite':  # work-around - VSCode run config arg parsing (dbviz STRESS)
             create_utils.copy_md(project = project, from_doc_file = "Sample-AI.md", to_project_file='Sample-AI.md')
+
+        if project.project_name == 'genai_demo':
+            create_utils.copy_md(project = project, from_doc_file = "Sample-Genai.md", to_project_file='Sample-Genai.md')
 
         if "postgres" or "mysql" in project.db_url:
             fixup_devops_for_postgres_mysql(project)

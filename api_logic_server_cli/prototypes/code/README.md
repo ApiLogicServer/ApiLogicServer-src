@@ -66,11 +66,11 @@ als genai --using=genai_demo.prompt --gen-using-file=system/genai/temp/chatgpt_r
 
     c. Extracts model.py from the response
 
-    d. Invokes `als create-from-model` which creates your project
+    d. Invokes `als create-from-model`, which creates the database and your project
 
-2. Your created project is opened in your IDE, ready to execute and customize
+2. Your created project is opened in your IDE, ready to execute and customize.  Review `Sample-Genai.md`.
 
-![Microservice Automation](system/images/genai.png)]
+![GenAI Automation](system/images/genai.png)
 
 </details>
 
@@ -95,12 +95,10 @@ als genai --using=genai_demo.prompt --gen-using-file=system/genai/temp/chatgpt_r
 We have seen failures such as:
 
 * duplicate definition of `DECIMAL`
-* use of `Decimal` vs. `DECIMAL` (latter required, work-around in place)
 * unclosed parentheses
 * data type errors in test data creation
 * wrong engine import: from logic_bank import Engine, constraint
-* bogus test data creation: with Engine() as engine...
-* Numeric --> String (fixed product bug)
+* bad test data creation: with Engine() as engine...
 * Bad load code (no session)
 
 </details>
@@ -109,7 +107,16 @@ We have seen failures such as:
 
 **Postgresql Example**
 
-Works, with provisos:
+You can test this as follows:
+
+1. Use [our docker image](https://apilogicserver.github.io/Docs/Database-Docker/):
+2. And try:
+
+```bash
+als create --project-name=genai_demo_pg.prompt --db-url=postgresql://postgres:p@localhost/genai_demo
+```
+
+Provisos:
 
 * You have to create the database first; we are considering automating that: https://stackoverflow.com/questions/76294523/why-cant-create-database-if-not-exists-using-sqlalchemy
 
@@ -119,9 +126,9 @@ Works, with provisos:
 
 <details markdown>
 
-<summary> New Database - using Copilot (Signup required) </summary>
+<summary> New Database - using Copilot (Signup optional) </summary>
 
-<br>You can use Copilot chat (if extension installed):
+<br>You can use Copilot chat (if extension installed; if not, skip to step 3):
 
 1. Create a model, eg:
 
