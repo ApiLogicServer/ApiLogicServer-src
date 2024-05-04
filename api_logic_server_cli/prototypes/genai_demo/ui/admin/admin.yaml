@@ -1,5 +1,10 @@
 about:
-  date: April 19, 2024 11:35:24
+  date: January 27, 2024 16:41:35
+  merged:
+    at: January 28, 2024 13:17:27
+    new_attributes: 'Product.CarbonNeutral '
+    new_resources: ''
+    new_tab_groups: ''
   recent_changes: works with modified safrs-react-admin
   version: 0.0.0
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
@@ -89,6 +94,8 @@ resources:
     - name: UnitPrice
       required: true
     - name: ProductID
+    - name: CarbonNeutral
+      type: Boolean
     tab_groups:
     - direction: tomany
       fks:
@@ -100,19 +107,3 @@ resources:
 settings:
   HomeJS: http://localhost:5656/admin-app/home.js
   max_list_columns: 8
-  style_guide:
-    currency_symbol: $
-    currency_symbol_position: left
-    date_format: LL
-    decimal_max: '1000000'
-    decimal_min: '0'
-    decimal_separator: .
-    detail_mode: tab
-    edit_on_mode: dblclick
-    max_decimal_digits: '4'
-    min_decimal_digits: '2'
-    new_mode: dialog
-    pick_style: list
-    style: light
-    thousand_separator: ','
-    use_keycloak: 'false'

@@ -8,6 +8,9 @@ from database.models import Customer, Order, Item, Product
 import api.system.opt_locking.opt_locking as opt_locking
 from security.system.authorization import Grant
 import logging
+from integration.row_dict_maps.OrderShipping import OrderShipping
+from confluent_kafka import Producer, KafkaException
+import integration.kafka.kafka_producer as kafka_producer
 
 app_logger = logging.getLogger(__name__)
 
@@ -46,11 +49,41 @@ def declare_logic():
     # 3. Order.AmountTotal = Sum(Items.Amount)
     Rule.sum(derive=Order.AmountTotal, as_sum_of=Item.Amount)
 
+    def derive_amount(row: models.Item, old_row: models.Item, logic_row: LogicRow):
+        amount = row.Quantity * row.UnitPrice
+        if row.Product.CarbonNeutral == True and row.Quantity >= 10:
+           amount = amount * Decimal(0.9)  # breakpoint here
+        return amount
+
     # 4. Items.Amount = Quantity * UnitPrice
-    Rule.formula(derive=Item.Amount, as_expression=lambda row: row.Quantity * row.UnitPrice)
+    Rule.formula(derive=models.Item.Amount, calling=derive_amount)
 
     # 5. Store the Items.UnitPrice as a copy from Product.UnitPrice
     Rule.copy(Item.UnitPrice, from_parent=Product.UnitPrice)
+
+    #als: Demonstrate that logic == Rules + Python (for extensibility)
+
+    def send_order_to_shipping(row: models.Order, old_row: models.Order, logic_row: LogicRow):
+        """ #als: Send Kafka message formatted by OrderShipping RowDictMapper
+
+        Format row per shipping requirements, and send (e.g., a message)
+
+        NB: the after_flush event makes Order.Id avaible.  Contrast to congratulate_sales_rep().
+
+        Args:
+            row (models.Order): inserted Order
+            old_row (models.Order): n/a
+            logic_row (LogicRow): bundles curr/old row, with ins/upd/dlt logic
+        """
+        if logic_row.is_inserted():
+            kafka_producer.send_kafka_message(logic_row=logic_row,
+                                              row_dict_mapper=OrderShipping,
+                                              kafka_topic="order_shipping",
+                                              kafka_key=str(row.OrderID),
+                                              msg="Sending Order to Shipping")
+            
+    Rule.after_flush_row_event(on_class=models.Order, calling=send_order_to_shipping)  # see above
+
 
 
     def handle_all(logic_row: LogicRow):  # OPTIMISTIC LOCKING, [TIME / DATE STAMPING]

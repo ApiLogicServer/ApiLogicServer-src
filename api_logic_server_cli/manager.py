@@ -41,7 +41,7 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path):
     defaultInterpreterPath_str = ""
     # find cli in subdirectories of the lib path for manager run launches
     lib_path = project.default_interpreter_path.parent.parent.joinpath('lib')
-    ''' if only 1 puthon, lib contains site-packages, else python3.8, python3.9, etc '''
+    ''' if only 1 python, lib contains site-packages, else python3.8, python3.9, etc '''
     subdirs = [x for x in lib_path.iterdir() if x.is_dir()]
     for subdir in subdirs:
         if 'site-packages' in str(subdir):

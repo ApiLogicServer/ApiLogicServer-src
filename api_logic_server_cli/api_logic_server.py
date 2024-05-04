@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.04.00"
+__version__ = "10.04.01"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t05/02/2024 - 10.04.00: genai w/ restart, logic insertion, use Numeric, genai-cust, pg \n"\
+    "\t05/04/2024 - 10.04.01: genai w/ restart, logic insertion, use Numeric, genai-cust, pg, 57 \n"\
     "\t04/23/2024 - 10.03.84: Fix error handling for db errors (eg, missing parent) \n"\
     "\t04/22/2024 - 10.03.83: cli issues in create-and-run/run, Oracledb 2.1.12, id fields ok \n"\
     "\t04/10/2024 - 10.03.75: Manager style guide, prompts for samples, create/run from dev-ide, path.joinpath \n"\
@@ -1292,12 +1292,13 @@ from database import <project.bind_key>_models
 
         log.debug("\n\n==================================================================")
         nw_messages = ""
-        do_security = False  # disabled - keep clear what "activate security" means for reader
+        do_security = True  # other demos can explain security, here just make it work
         if do_security:
             if do_show_messages:
                 nw_messages = "Add genai customizations - enabling security"
             self.add_auth(is_nw=True, msg=nw_messages)
 
+        # overlay genai_demo := sample_ai + sample_ai_iteration
         nw_path = (self.api_logic_server_dir_path).\
             joinpath('prototypes/genai_demo')  # PosixPath('/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/nw')
         recursive_overwrite(nw_path, self.project_directory)  # '/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/tutorial/1. Instant_Creation'
@@ -1307,8 +1308,6 @@ from database import <project.bind_key>_models
             log.info(f'..api/customize_api.py')
             log.info(f'..logic/declare_logic.py')
             log.info(f'..security/declare_security.py\n')
-            log.info(f'Next Steps: activate security')
-            log.info(f'..ApiLogicServer add-auth --db_url=auth')
             if self.is_tutorial == False:
                 log.info(".. complete\n")
 

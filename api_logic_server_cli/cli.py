@@ -210,97 +210,8 @@ def create_start_manager(ctx, open_with, clean: click.BOOL = False):
     """
         Create and Manage API Logic Projects.
     """
-    use_manager = True
-    if use_manager:
-        from api_logic_server_cli.manager import create_manager
-        create_manager(clean=clean, open_with=open_with, api_logic_server_path=get_api_logic_server_path())
-    else:  # old code
-        log = logging.getLogger(__name__)
-        log.info(f"\n\nCreating manager at: {os.getcwd()}\n\n")
-        to_dir = Path(os.getcwd())
-        path = Path(__file__)
-        from_dir = get_api_logic_server_path().joinpath('prototypes/code')
-        to_dir_str = str(to_dir)
-        to_dir_check = Path(to_dir).joinpath('venv')
-        if not Path(to_dir).joinpath('venv').exists():
-            log.info(f"    No action taken - no venv found at: \n      {to_dir}\n\n")
-            exit(1)
-        to_dir_check = Path(to_dir).joinpath('.vscode')
-        if to_dir_check.exists() and not clean:
-            log.info(f"    Using manager at: {to_dir}\n\n")
-        else:
-            if to_dir_check.exists():
-                log.info(f"    Cleaning manager at: {to_dir}\n\n")
-            copied_path = shutil.copytree(src=from_dir, dst=to_dir, dirs_exist_ok=True)
-            log.info(f"    Created manager at: {copied_path}\n\n")
-        pass
-
-        set_defaultInterpreterPath = False
-        defaultInterpreterPath_str = ""
-        project = PR.ProjectRun(command= "start", project_name='ApiLogicServer', db_url='sqlite', execute=False)
-        # find cli in subdirectories of the lib path for manager run launches
-        lib_path = project.default_interpreter_path.parent.parent.joinpath('lib')
-        ''' if only 1 puthon, lib contains site-packages, else python3.8, python3.9, etc '''
-        subdirs = [x for x in lib_path.iterdir() if x.is_dir()]
-        for subdir in subdirs:
-            if 'site-packages' in str(subdir):
-                site_packages_dir = lib_path.joinpath('site-packages')
-                break
-            sub_subdirs = [x for x in subdir.iterdir() if x.is_dir()]
-            for sub_subdir in sub_subdirs:
-                assert 'site-packages' in str(sub_subdir)
-                site_packages_dir = sub_subdir  # lib_path.joinpath('site-packages')
-        cli_path = site_packages_dir.joinpath('api_logic_server_cli/cli.py')
-        # replace the path with the site-packages path , eg
-        # "program": "cli_path" --> "program": "./venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
-        pass
-        cli_str = str(cli_path)
-        if os.name == "nt":
-            cli_str = create_utils.windows_path_fix(dir_str=cli_str)
-        vscode_launch_path = to_dir.joinpath('.vscode/launch.json')
-        create_utils.replace_string_in_file(search_for = 'cli_path',
-                                            replace_with=str(cli_str),
-                                            in_file=vscode_launch_path)
-
-        if set_defaultInterpreterPath:  # FIXME OLD CODE if dev-ide, override default venv: ./venv/bin/python
-            global api_logic_server_path
-            assert project.api_logic_server_dir_path == get_api_logic_server_path(), "dir mismatch"
-            project.api_logic_server_dir_path = get_api_logic_server_path()  # for compatibility to api_logic_server.py
-            defaultInterpreterPath_str = sys.executable
-            defaultInterpreterPath = Path(defaultInterpreterPath_str)
-            if 'ApiLogicServer-dev' in str(project.api_logic_server_dir_path):  # apilogicserver dev is special case
-                if os.name == "nt":
-                    defaultInterpreterPath = project.api_logic_server_dir_path.parent.parent.parent.joinpath('build_and_test/ApiLogicServer/venv/scripts/python.exe')
-                else:
-                    defaultInterpreterPath = project.api_logic_server_dir_path.parent.parent.parent.parent.joinpath('bin/python')
-                    if 'org_git' in str(project.api_logic_server_dir_path):  # running from dev-source
-                        defaultInterpreterPath = project.api_logic_server_dir_path.parent.parent.parent.joinpath('clean/ApiLogicServer/venv/bin/python')
-                defaultInterpreterPath_str = str(defaultInterpreterPath)
-                # ApiLogicServerPython
-                vscode_settings_path = to_dir / '.vscode/settings.json'
-                if os.name == "nt":
-                    defaultInterpreterPath_str = get_windows_path_with_slashes(url=defaultInterpreterPath_str)
-                    # vscode_settings_path = get_windows_path_with_slashes(url=vscode_settings_path)
-                create_utils.replace_string_in_file(search_for = './venv/bin/python',
-                                                    replace_with=defaultInterpreterPath_str,
-                                                    in_file=vscode_settings_path)
-                log.debug(f'.. ..Updated .vscode/settings.json with "python.defaultInterpreterPath": "{defaultInterpreterPath_str}"...')
-
-        os.putenv("APILOGICSERVER_AUTO_OPEN", "code")
-        os.putenv("APILOGICSERVER_VERBOSE", "false")
-        os.putenv("APILOGICSERVER_HOME", str(project.api_logic_server_dir_path.parent) )
-        # assert defaultInterpreterPath_str == str(project.default_interpreter_path)
-        try:
-            with_readme = '. readme.md' if open_with == "xxcode" else ' '  # loses project context (no readme preview)
-            create_utils.run_command(
-                cmd=f'{open_with} {to_dir_str} {with_readme}',  # passing readme here fails - loses project setttings
-                env=None, 
-                msg="no-msg", 
-                project=project)
-        except Exception as e:
-            log.error(f"\n\nError: {e}")
-            log.error(f"\nSuggestion: open code (Ctrl+Shift+P or Command+Shift+P), and run Shell Command\n")
-            exit(1)
+    from api_logic_server_cli.manager import create_manager
+    create_manager(clean=clean, open_with=open_with, api_logic_server_path=get_api_logic_server_path())
 
 
 @main.command("about")
@@ -1317,7 +1228,7 @@ def genai_cust(ctx, bind_key_url_separator: str, api_name: str, project_name: st
     else:
         raise Exception("Customizations are genai-specific - this does not contain 'Customer`")
     project.add_genai_customizations(do_security=False)
-    log.info("\nNext step - add authentication:\n  $ ApiLogicServer add-auth --db_url=auth\n\n")
+    # log.info("\nNext step - add authentication:\n  $ ApiLogicServer add-auth --db_url=auth\n\n")
 
 
 
