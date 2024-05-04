@@ -1,5 +1,5 @@
 # coding: utf-8
-from sqlalchemy import Column, DECIMAL, DateTime, ForeignKey, Integer, Text, text
+from sqlalchemy import Boolean, Column, DECIMAL, DateTime, ForeignKey, Integer, Text, text
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -9,8 +9,8 @@ from sqlalchemy.ext.declarative import declarative_base
 # Alter this file per your database maintenance policy
 #    See https://apilogicserver.github.io/Docs/Project-Rebuild/#rebuilding
 #
-# Created:  April 19, 2024 11:35:24
-# Database: sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/servers/sample_ai/database/db.sqlite
+# Created:  May 03, 2024 22:23:08
+# Database: sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/clean/ApiLogicServer/genai_demo/database/db.sqlite
 # Dialect:  sqlite
 #
 # mypy: ignore-errors
@@ -75,6 +75,7 @@ class Product(SAFRSBase, Base):
     ProductID = Column(Integer, primary_key=True)
     ProductName = Column(Text, nullable=False)
     UnitPrice : DECIMAL = Column(DECIMAL(10, 2), nullable=False)
+    CarbonNeutral = Column(Boolean)
 
     # parent relationships (access parent)
 

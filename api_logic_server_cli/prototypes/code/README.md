@@ -1,14 +1,48 @@
-Welcome the the [API Logic Server Manager](https://apilogicserver.github.io/Docs/Manager/).  This is a good place to manage projects, create notes and resources, etc.
+Welcome to API Logic Server.  It creates ***executable projects*** (APIs and Admin Apps) from a database or description, with 1 command.  The created projects are based on standard Python libraries (Flask, SQLAlchemy), so you can ***customize them with rules and Python in your IDE.***
 
-The system has pre-created the `tutorial` and `sample` projects, as described in the link above.  You may also want to take a look at [training](https://apilogicserver.github.io/Docs/#start-install-samples-training).
+You are in the [API Logic Server Manager](https://apilogicserver.github.io/Docs/Manager/).  This is a good place to manage projects, create notes and resources, etc.
+
+&nbsp;
+
+# Explore Pre-created tutorial and sample
 
 <details markdown>
 
-<summary>Opening projects in the Manager </summary>
+<summary>Pre-created tutorial and sample</summary>
 
-<br>If you want to customize/run a project, do so in another instance of VSCode.  You can examine them in *this* instance fo VSCode, but run them in their own instance.
+<br>The system has pre-created 2 important projects you will want to review at some point:
 
-You may find it helpful to acquire this extension: `Open Folder Context Menus for VS Code`. It will enable you to open the project in another instance of VSCode.
+* [tutorial](https://apilogicserver.github.io/Docs/Tutorial/) - short (< 1 hour) walk-through of using API Logic Server using the northwind (customers, orders...) database
+
+* sample - the completed tutorial.  It's the same database, but with logic/Python ***customizations added***.  It's a great resource for exploring.  
+
+    * Hint: use your IDE to search for `#als`
+
+
+<details markdown>
+
+<summary>You can always re-create the samples</summary>
+
+<br>Re-create them as follows:
+
+1. Open a terminal window (**Terminal > New Terminal**), and paste the following CLI command:
+
+```bash
+ApiLogicServer create --project-name=tutorial --db-url=
+ApiLogicServer create --project-name=sample --db-url=nw+
+```
+</details>
+</details>
+
+&nbsp;
+
+<details markdown>
+
+<summary>How to Run Projects from the Manager </summary>
+
+<br>If you want to customize/run a project, do so in ***another instance of VSCode.***  You can *examine* them in this current instance, but *run* them in their own instance.
+
+To do so, you probably want to acquire this extension: `Open Folder Context Menus for VS Code`. It will enable you to open the sample, tutorial or your own projects in another instance of VSCode.
 
 </details>
 
