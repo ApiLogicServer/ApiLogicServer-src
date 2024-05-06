@@ -16,6 +16,7 @@ from api_logic_server_cli.api_logic_server import Project
 from dotmap import DotMap
 from api_logic_server_cli.create_from_model.meta_model import Resource
 from translate import Translator
+
 from jinja2 import (
     Template,
     Environment,
@@ -80,6 +81,7 @@ class OntBuilder(object):
         self.use_keycloak=True # True this will use different templates - defaults to basic auth
         self.edit_on_mode = "click" # edit
         self.include_translation = False
+        self.row_height = "small"
 
         self.title_translation = []
         self.languages = ["en", "es"] # "fr", "it", "de" etc - used to create i18n json files
@@ -194,6 +196,8 @@ class OntBuilder(object):
         
         for each_entity_name, each_entity in app_model.entities.items():
             # HOME - Table Style
+            if  each_entity.get("exclude", "false") == "true":
+                continue
             home_template = self.load_home_template("home_template.html", each_entity)
             home_scss = self.get_template("home.scss").render()
             entity_name = each_entity_name
@@ -309,11 +313,26 @@ class OntBuilder(object):
         rv_en_json = en_json.render(titles=titles)
         write_json_filename(app_path=app_path, file_name="en.json", source="{\n" + rv_en_json[:-2] +"\n}")
         es_titles = titles
+        #fr = self.translate_list_of_strings(dest_language='fr')
         if self.app_model.settings.style_guide.include_translation:
             es_titles = translation_service(self.title_translation)
         rv_es_json = es_json.render(titles=es_titles)
         write_json_filename(app_path=app_path, file_name="es.json", source="{\n" + rv_es_json[:-2] + "\n}")
-        
+    
+
+    def translate_list_of_strings(self, dest_language:str='en'):
+        translator = Translator(from_lang='en',to_lang=dest_language)
+        translated_strings = []
+        strings = []
+        for v in self.title_translation: # append to app/assets/i8n/en.json and es.json
+            strings.extend(v[k] for k in v)
+        for s in strings:
+            print(s)
+            translation = translator.translate(s)
+            if translation:
+                print(s, translation)
+                translated_strings.append(translation)
+        return translated_strings
     def set_style(self, setting_name, each_setting):
         if getattr(self, setting_name, None) != None:
             setattr(self,setting_name,each_setting)
@@ -353,6 +372,8 @@ class OntBuilder(object):
 
         row_cols = []
         for column in entity.columns:
+            if column.get("exclude", "false") == "true":
+                continue
             rv = self.gen_home_columns(entity, column)
             row_cols.append(rv)
 
@@ -375,6 +396,7 @@ class OntBuilder(object):
         title =  f'{entity_name.upper()}' 
         entity_var = {
             "use_keycloak": self.use_keycloak,
+            "row_height": self.row_height,
             "entity": entity_name,
             "columns": cols,
             "visibleColumns": visible_columns,
@@ -512,6 +534,8 @@ class OntBuilder(object):
         fks = get_foreign_keys(entity, favorites)
         row_cols = []
         for column in entity.columns:
+            if column.get("exclude", "false") == "true":
+                continue
             rv = self.gen_detail_rows(column, fks, entity)
             row_cols.append(rv)
 
@@ -560,6 +584,8 @@ class OntBuilder(object):
         template_var |= entity_vars
         row_cols = []
         for column in entity.columns:
+            if column.get("exclude", "false") == "true":
+                continue
             rv = self.gen_home_columns(entity, column)
             row_cols.append(rv)
                 
@@ -583,11 +609,14 @@ class OntBuilder(object):
         entity_name = entity.type
         panels = []
         for fk_tab in fks:
+            if fk_tab.get("exclude", "false") == "true":
+                continue
             if fk_tab["direction"] == "tomany":
                 tab_name = fk_tab["resource"]
                 tab_vars = {
                     'resource': fk_tab["resource"],
                     'resource_name': fk_tab["name"],
+                    "row_height": self.row_height,
                     'attrs': fk_tab["attrs"],
                     'columns': fk_tab["columns"],
                     'attrType': fk_tab["attrType"],
