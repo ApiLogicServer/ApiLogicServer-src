@@ -44,7 +44,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
     
     """
     _project_dir = project_dir
-    app_logger.debug("api/customize_api.py - expose custom services")
+    app_logger.debug("api/customize_api.py - expose custom services") 
     
     @app.route('/hello_world')
     def hello_world():  # test it with: http://localhost::5656/hello_world?user=ApiLogicServer
@@ -173,18 +173,18 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
             
             attribute -> show_when ??
         """
-    @app.route("/getyaml", methods=["GET"])
-    def get_yaml():
+    @app.route("/dumpyaml", methods=["GET"])
+    def dump_yaml():
         # Write the JSON back to yaml
-        #GET curl "http://localhost:5656/getyaml"
+        #GET curl "http://localhost:5656/dumpyaml"
         
         entities = read(models.Entity)
         attrs = read(models.EntityAttr)
         tabs =  read(models.TabGroup)
         settings = read(models.GlobalSetting)
-        #root = read(models.Root)
+        root = read(models.Root)
         
-        output = build_json(entities, attrs, tabs, settings) #root)
+        output = build_json(entities, attrs, tabs, settings, root)
         fn = "admin_model_merge.yaml"
         write_file(output, file_name=fn)
         return jsonify(f"Yaml file written to ui/{fn}")
@@ -192,71 +192,81 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
     def read(clz) -> list:
         return rows_to_dict(session.query(clz).all())
     
-    def build_json(entities: list, attrs:list, tabs:list, settings) -> any:
+    def build_json(entities: list, attrs:list, tabs:list, settings:list, root: list) -> any:
         output = {}
-        
-        entity_list = []
+        for r in root:
+            output['about']= {"date":r["AboutDate"],"recent_changes": r["AboutChange"]}
+            output['api_root'] = r["ApiRoot"]
+            output['authentication'] = {r["ApiAuthType"]:r["ApiAuth"]}
+            
+        entity_list = {}
         for entity in entities:
             entity_name = entity["name"]
             e = {}
-            
             e["type"] = entity["title"]
             e["primary_key"] = convert_list(entity["pkey"]) 
-            if hasattr(entity,"new_template"):
+            if entity.get("new_template"):
                 e["new_template"] = entity["new_template"]
-            if hasattr(entity,"home_template"):
+            if entity.get("home_template"):
                 e["home_template"] = entity["home_template"]
-            if hasattr(entity,"detail_template"):
+            if entity.get("detail_template"):
                 e["detail_template"] = entity["detail_template"]
-            if hasattr(entity,"favorite"):
-                e["favorite"] = entity["favorite"]
-            output[entity_name] = e
-            
+            if entity.get("favorite"):
+                e["favorite"] = entity.get("favorite")
+            if entity.get("exclude"):
+                e["exclude"] = entity["exclude"]
+            if entity.get("info_list"):
+                e["info_list"] =entity["info_list"]
+            if entity.get("info_show"):
+                e["info_show"] =entity["info_show"]
+            entity_list[entity_name] = e
+        
             cols = []
             for attr in attrs:
                 col ={}
                 if attr["entity_name"] == entity_name:
-                    if attr["exclude"] == False:
-                        col["name"] = attr["attr"]
-                        col["label"] = attr["label"]
-                        col["template"] = attr["template_name"]
-                        col["type"] = attr["thistype"]
-                        if attr["issort"]:
-                            col["sort"] = attr["issort"]
-                        if attr["issearch"]:
-                            col["search"] = attr["issearch"]
-                        if attr["isrequired"]:
-                            col["required"] = attr["isrequired"]
-                        if attr["isenabled"] == False:
-                            col["enabled"] = attr["isenabled"]
-                        cols.append(col)         
-            output[entity_name]["columns"] = cols
+                    col["name"] = attr["attr"]
+                    col["label"] = attr["label"]
+                    col["template"] = attr["template_name"]
+                    col["type"] = attr["thistype"]
+                    col["sort"] = attr.get("issort",False)
+                    col["search"] = attr.get("issearch", False)
+                    col["required"] = attr.get("isrequired", False)
+                    col["enabled"] = attr.get("isenabled", False)
+                    col["exclude"] = attr.get("exclude", False)
+                    cols.append(col)         
+            entity_list[entity_name]["columns"] = cols
             tab_group = []
             for tab in tabs:
                 tg = {}
                 if tab["entity_name"] == entity_name:
-                    #if tab["exclude"] == False:
                     tg["direction"] = tab["direction"]
                     tg["resource"] = tab["tab_entity"]
-                    tg["name"] = tab["label"]
+                    tg["label"] = tab["label"] if tab.get("label") != None else tab.get("name")
+                    tg["name"] = tab.get("name")
                     tg["fks"] = convert_list(tab["fkeys"])
+                    tg["exclude"] = tab.get("exclude", False)
                     tab_group.append(tg)
             if len(tab_group) > 0:
-                output[entity_name]["tab_groups"] = tab_group
+                entity_list[entity_name]["tab_groups"] = tab_group
         
-            
+        output["entities"] = entity_list
+        
         output_yaml = {}
         output_yaml["entities"] = output
-        style_guide = []
-        
+        style_guide = {}
         for s in settings:
             sg = {}
-            sg[s["name"]] = s["value"]
-            style_guide.append(sg)
+            
+            name = s["name"]
+            if name in ["use_keycloak","include_translation"]:
+                sg[name] = s["value"] == "1"
+            else:
+                sg[name] = s["value"]
+            style_guide.update(sg)
+            
         output["settings"] = {}
         output["settings"]["style_guide"] = style_guide
-        
-        #TODO root about api_root authentication
         
         return output
     
@@ -265,7 +275,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         with open(f"{_project_dir}/ui/{file_name}", "w") as file:
             yaml.safe_dump(source, file, default_flow_style=False)
             #file.write(source)
-        
+    
     @app.route("/loadyaml", methods=["GET","POST","OPTIONS"])
     def load_yaml():
         '''
@@ -279,22 +289,22 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         elif request.method == "POST":
             data = request.data.decode("utf-8")
             valuesYaml =json.dumps(data) #TODO - not working yet
-        
+            
+        return _process_yaml(request)
+    
+    def _process_yaml(request):
         #Clean the database out - this is destructive 
-        
+        with open(f'{_project_dir}/ui/app_model.yaml','rt') as f:  
+                valuesYaml=yaml.safe_load(f.read())
+                f.close()
         delete_sql(models.TabGroup)
         delete_sql(models.GlobalSetting)
         delete_sql(models.EntityAttr)
         delete_sql(models.Entity)
-        #delete_sql(models.Root)
         
         insert_entities(valuesYaml)
         insert_styles(valuesYaml)
-        
-        #TODO 
-        about = valuesYaml["about"]
-        api_root = valuesYaml["api_root"]
-        authentication = valuesYaml["authentication"]
+        insert_root(valuesYaml)
         
         return jsonify(valuesYaml)
 
@@ -319,7 +329,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
             m_entity.pkey = str(get_value(each_entity,"primary_key"))
             m_entity.info_list =get_value(each_entity,"info_list")
             m_entity.info_show = get_value(each_entity,"info_show")
-            m_entity.exclude = get_value(each_entity,"exclude", False)
+            m_entity.exclude = get_boolean(each_entity,"exclude", False)
             m_entity.new_template = get_value(each_entity,"new_template","new_template.html")
             m_entity.home_template = get_value(each_entity,"home_template","home_template.html")
             m_entity.detail_template = get_value(each_entity,"detail_template","detail_template.html")
@@ -342,10 +352,36 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
                 each_entity = valuesYaml['entities'][entity]
                 insert_tab_groups(entity, each_entity)
                 
-
+    def insert_root(valuesYaml):
+        about = valuesYaml["about"]
+        api_root = valuesYaml["api_root"]
+        authentication = valuesYaml["authentication"]
+        root = session.query(models.Root).one()
+        #root.Id = 1
+        root.AboutDate = about["date"]
+        root.AboutChange = about["recent_changes"]
+        root.ApiRoot = api_root
+        root.ApiAuthType= "endpoint"
+        root.ApiAuth = authentication["endpoint"]
+        try:
+            session.add(root)
+            session.commit()
+        except Exception as ex:
+            print(ex)
+            session.rollback()
+        
     def get_value(obj:any, name:str, default:any = None):
         try:
             return obj[name] 
+        except:
+            return default
+    
+    def get_boolean(obj:any, name:str, default:bool = True):
+        try:
+            if isinstance(obj[name], bool):
+                return obj[name]
+            else:
+                return obj[name] in ["true", "True", "1"]
         except:
             return default
     def convert_list(key:str) -> list:
@@ -367,7 +403,9 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
                 m_tab_group.direction = tab_group["direction"]
                 m_tab_group.tab_entity = tab_group["resource"]
                 m_tab_group.fkeys = str(tab_group["fks"])
-                m_tab_group.label = tab_group["name"]
+                m_tab_group.name = tab_group.get("name")
+                m_tab_group.label = tab_group.get("label")
+                m_tab_group.exclude = get_boolean(tab_group,"exclude", False)
                 
                 try:
                     session.add(m_tab_group)
@@ -387,11 +425,11 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
             m_entity_attr.label = get_value(attr, "label", attr["name"])
             m_entity_attr.template_name = get_value(attr, "template" , "text")
             m_entity_attr.thistype = attr["type"]
-            m_entity_attr.isrequired = get_value(attr, "required", False)
-            m_entity_attr.issearch = get_value(attr, "search", False)
-            m_entity_attr.issort = get_value(attr, "sort" , False)
-            m_entity_attr.isenabled = get_value(attr, "enabled", True)
-            m_entity_attr.exclude = get_value(attr, "exclude", False)
+            m_entity_attr.isrequired = get_boolean(attr, "required", False)
+            m_entity_attr.issearch = get_boolean(attr, "search", False)
+            m_entity_attr.issort = get_boolean(attr, "sort" , False)
+            m_entity_attr.isenabled = get_boolean(attr, "enabled", True)
+            m_entity_attr.exclude = get_boolean(attr, "exclude", False)
             m_entity_attr.tooltip = get_value(attr, "tooltip", None)
             
             try:
@@ -559,11 +597,18 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         if clz_name == "dynamicjasper":
             return gen_report(request)
         
-        if clz_name in ["listReports", "bundle"]:
-            return {}
+        if clz_name in ["listReports", "bundle", "reportstore"]:
+            return jsonify({"code":0,"data":{},"message": None})
         
         if clz_name == "export":
             return gen_export(request)
+        
+        if clz_type == "loadyaml":
+            return load_yaml()
+        
+        if clz_type == "dumpyaml":
+            return dump_yaml()
+        
         
         #api_clz = api_map.get(clz_name)
         resource = find_model(clz_name)

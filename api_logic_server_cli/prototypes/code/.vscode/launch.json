@@ -189,6 +189,32 @@
             "type": "promptString",
             "description": "Database URL (SQLAlchemy URI)",
             "default": "sqlite:///sample_ai.sqlite"
+        },
+	 {
+            "type": "node",
+            "request": "launch",
+            "name": "Install Ontimize",
+            "cwd": "${workspaceFolder}/ui/ont_1",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": ["install"],
+            "console": "integratedTerminal"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Ontimize",
+            "cwd": "${workspaceFolder}/ui/ont_1",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": ["start"],
+            "port": 4299,
+            "restart": true,
+            "timeout": 30000,
+            "protocol": "inspector",
+            "justMyCode": false,
+            "console": "integratedTerminal",
+            "env": {
+                "NODE_ENV": "development"
+            }
         }
     ]
   }
