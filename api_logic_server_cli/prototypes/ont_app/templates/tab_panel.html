@@ -5,13 +5,14 @@
         service="{{ service }}" 
         entity="{{ entity }}" 
         keys="{{ keys }}"
+        parent-keys="{{ parentKeys }}"
         columns="{{ columns }}"  
         horizontal-scroll="yes"
         detail-form-route="{{ detailFormRoute }}" 
         edit-form-route="{{ editFormRoute }}"
         visible-columns="{{ visibleColumns }}"  
         sort-columns="{{ sortColumns }}" 
-        query-rows="8" 
+        query-rows="25" 
         quick-filter="yes"
         row-height="{{ row_height }}" 
         select-all-checkbox="true" 
@@ -23,10 +24,10 @@
         class="vertical-padding-8"
         edition-mode="click" 
         horizontal-scroll="yes">
-        <!-- parent-keys="{{ parentKeys }}" -->
         {% for table_column in row_columns %}
-        {{ table_column }}
+          {{ table_column }}
         {% endfor %}
+        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
       </o-table>
     </div>
 </mat-tab>

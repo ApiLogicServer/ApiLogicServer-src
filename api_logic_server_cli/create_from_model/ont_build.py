@@ -623,7 +623,7 @@ class OntBuilder(object):
                     'visibleColumn': fk_tab["visibleColumn"],
                     "tab_columns": fk_tab["visibleColumn"],
                     "tabTitle": f'{fk_tab["resource"].upper()}-{fk_tab["attrs"][0]}',
-                    "parentKeys": fk_tab["columns"],
+                    "parentKeys": gen_parent_keys(fk_tab, entity),
                 }
                 primaryKey = make_keys(entity["primary_key"])
                 for each_entity_name, each_entity in self.app_model.entities.items():
@@ -907,6 +907,13 @@ def gen_app_service_config(entities: any) -> str:
     var = {"children": children}
     t = t.render(var)
     return t
+
+def gen_parent_keys(fk_tab, parent_entity):
+    parent_cols = fk_tab["columns"]
+    pkey = parent_entity["primary_key"][0]
+    if fk_tab["direction"] == "tomany":
+        parent_cols = parent_cols.replace(";",":",10)
+    return parent_cols
 
 def find_favorite(entity_favorites: any, entity_name:str):
     for entity_favorite in entity_favorites: 
