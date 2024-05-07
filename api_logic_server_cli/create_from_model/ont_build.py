@@ -909,11 +909,11 @@ def gen_app_service_config(entities: any) -> str:
     return t
 
 def gen_parent_keys(fk_tab, parent_entity):
-    parent_cols = fk_tab["columns"]
-    pkey = parent_entity["primary_key"][0]
     if fk_tab["direction"] == "tomany":
-        parent_cols = parent_cols.replace(";",":",10)
-    return parent_cols
+        pkey = parent_entity["primary_key"][0]
+        for attr in fk_tab["attrs"]:
+            return f'{attr}:{pkey}'
+    return fk_tab["columns"]
 
 def find_favorite(entity_favorites: any, entity_name:str):
     for entity_favorite in entity_favorites: 
