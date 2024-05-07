@@ -1,7 +1,5 @@
 <div class="container">
 <o-form-container breadcrumb="yes" breadcrumb-label-columns="{{ breadcrumbLabel }}" breadcrumb-separator=", ">
-  <mat-tab-group fxFill>
-    <mat-tab label="{{ title }}">
       <o-form #form attr="{{ entity }}_form_edit" 
         service="{{ service }}" 
         entity="{{ entity }}" 
@@ -13,7 +11,6 @@
         show-header-navigation="yes"
         (onDataLoaded)="onDataLoaded($event)">
 
-
   <o-row attr="row1" layout-align="start stretch">
     <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
       {% for inputrow in row_columns %}
@@ -23,16 +20,13 @@
       {% endfor %}
     </div>
   </o-row>
-</o-form>
-</mat-tab>
-</mat-tab-group>
-
-{% if has_tabs %}
-<mat-tab-group fxFill>
-  {% for tab_panel in tab_panels %}
-  {{ tab_panel }}
-  {% endfor %}
-</mat-tab-group>
-{% endif %}
-</o-form-container>
+      {% if has_tabs %}
+      <mat-tab-group fxFill>
+        {% for tab_panel in tab_panels %}
+        {{ tab_panel }}
+        {% endfor %}
+      </mat-tab-group>
+      {% endif %}
+    </o-form>
+  </o-form-container>
 </div>
