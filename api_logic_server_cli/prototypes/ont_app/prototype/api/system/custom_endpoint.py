@@ -61,7 +61,7 @@ def parseFilter(filter:dict,sqltypes: any):
     a = ""
     for f in filter:
         value = filter[f]
-        q = "'" 
+        q = "'" if isinstance(value, str) else ""
         if f == '@basic_expression':
             #{'lop': 'CustomerId', 'op': 'LIKE', 'rop': '%A%'}}
             if'lop' in value.keys() and 'rop' in value.keys():
@@ -70,10 +70,14 @@ def parseFilter(filter:dict,sqltypes: any):
                 rop  = f"{q}{value['rop']}{q}"
                 filter_result = f'"{lop}" {op} {rop}'
                 return filter_result
+        '''
         if sqltypes == None:
             q = "'"
         else:
             q = "" if hasattr(sqltypes,f) and sqltypes[f] != 12 else "'"
+            if hasattr(sqltypes,f) and sqltypes[f] == 4:
+                q = ""
+        '''
         if f == "CategoryName":
             f = "CategoryName_ColumnName" #hack to use real column name
         filter_result += f'{a} "{f}" = {q}{value}{q}'

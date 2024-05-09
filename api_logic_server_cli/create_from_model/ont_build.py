@@ -514,10 +514,10 @@ class OntBuilder(object):
                 if hasattr(column, "label") and column.label != DotMap()
                 else column.name
             ), 
-            "editable": column.editable if hasattr(column, "editable") else "no",
-            "sort": column.sort if hasattr(column,"sort") else "no",
-            "search":  column.search if hasattr(column,"search") else "no",
-            "template": column.template if hasattr(column,"template") else 'text',
+            "editable": column.editable if hasattr(column, "editable") and column.editable != DotMap() else "no",
+            "sort": column.sort if hasattr(column,"sort") and column.sort != DotMap() else "no",
+            "search":  column.search if hasattr(column,"search") and column.search != DotMap() else "no",
+            "template": column.template if hasattr(column,"template") and column.template != DotMap() else 'text',
             "required": (
                 ("yes" if column.required else "no")
                 if hasattr(column, "required") and column.required != DotMap()
