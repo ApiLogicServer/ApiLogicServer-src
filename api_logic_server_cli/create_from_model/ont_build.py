@@ -92,6 +92,7 @@ class OntBuilder(object):
         self.o_combo_input = self.get_template("o_combo_input.html")
         self.tab_panel = self.get_template("tab_panel.html")
         self.app_module = self.get_template("app.module.jinja")
+        self.table_cell_render = self.get_template("table_cell_render.html")
         
         self.environment_template = self.get_template("environment.jinja")
         
@@ -374,7 +375,7 @@ class OntBuilder(object):
         for column in entity.columns:
             if column.get("exclude", "false") == "true":
                 continue
-            rv = self.gen_home_columns(entity, column)
+            rv = self.gen_home_columns(entity, entity, column)
             row_cols.append(rv)
 
         entity_vars["row_columns"] = row_cols
@@ -433,8 +434,14 @@ class OntBuilder(object):
             if title in v:
                 return    
         self.title_translation.append({title: entity_name})
-    def gen_home_columns(self, entity, column):
+    def gen_home_columns(self, entity, parent_entity, column):
         col_var = self.get_column_attrs(column)
+        if getattr(entity,"tab_groups",None) != None:
+                for tg in entity["tab_groups"]:
+                    if tg["direction"] == "toone" and column.name in tg["fks"] and column.name != "Id":
+                        tab_name, tab_var = self.get_tab_attrs(entity=entity, parent_entity=parent_entity, fk_tab=tg)
+                        return self.table_cell_render.render(tab_var)
+                        
         name = column.label if hasattr(column, "label") and column.label != DotMap() else column.name
         self.add_title(column["name"], name)
         #template_type = self.get_template_type(column)
@@ -507,9 +514,9 @@ class OntBuilder(object):
                 if hasattr(column, "label") and column.label != DotMap()
                 else column.name
             ), 
-            "editable": "yes",
-            "sort": "yes" if hasattr(column,"sort") else "no",
-            "search": "yes" if hasattr(column,"search") else "no",
+            "editable": column.editable if hasattr(column, "editable") else "no",
+            "sort": column.sort if hasattr(column,"sort") else "no",
+            "search":  column.search if hasattr(column,"search") else "no",
             "template": column.template if hasattr(column,"template") else 'text',
             "required": (
                 ("yes" if column.required else "no")
@@ -542,7 +549,7 @@ class OntBuilder(object):
         entity_vars["row_columns"] = row_cols
         entity_vars["has_tabs"] = len(fks) > 0
         entity_vars["tab_groups"] = fks
-        entity_vars["tab_panels"] = self.get_tabs(entity, fks)
+        entity_vars["tab_panels"] = self.get_tabs(entity, entity ,fks)
         return template.render(entity_vars)
 
     def gen_detail_rows(self, column, fks, entity):
@@ -578,7 +585,7 @@ class OntBuilder(object):
     
     def get_fk_column_type(self, fk_column) -> str:
         return "VARCHAR" if fk_column and fk_column.type.startswith("VARCHAR") else fk_column.type if hasattr(fk_column,"type") else "INTEGER"
-    def load_tab_template(self, entity, template_var: any, parent_pkey:str) -> str:
+    def load_tab_template(self, entity, parent_entity, template_var: any, parent_pkey:str) -> str:
         tab_template = self.tab_panel
         entity_vars = self.get_entity_vars(entity)
         template_var |= entity_vars
@@ -586,7 +593,7 @@ class OntBuilder(object):
         for column in entity.columns:
             if column.get("exclude", "false") == "true":
                 continue
-            rv = self.gen_home_columns(entity, column)
+            rv = self.gen_home_columns(entity,parent_entity, column)
             row_cols.append(rv)
                 
         template_var["row_columns"] = row_cols
@@ -605,33 +612,62 @@ class OntBuilder(object):
         }
         return template.render(entity_vars)
     
-    def get_tabs(self, entity, fks):
+    def get_tabs(self, entity, parent_entity, fks):
         entity_name = entity.type
         panels = []
         for fk_tab in fks:
             if fk_tab.get("exclude", "false") == "true":
                 continue
             if fk_tab["direction"] == "tomany":
-                tab_name = fk_tab["resource"]
-                tab_vars = {
-                    'resource': fk_tab["resource"],
-                    'resource_name': fk_tab["name"],
-                    "row_height": self.row_height,
-                    'attrs': fk_tab["attrs"],
-                    'columns': fk_tab["columns"],
-                    'attrType': fk_tab["attrType"],
-                    'visibleColumn': fk_tab["visibleColumn"],
-                    "tab_columns": fk_tab["visibleColumn"],
-                    "tabTitle": f'{fk_tab["resource"].upper()}-{fk_tab["attrs"][0]}',
-                    "parentKeys": gen_parent_keys(fk_tab, entity),
-                }
+                tab_name, tab_vars = self.get_tab_attrs(entity, parent_entity, fk_tab)
                 primaryKey = make_keys(entity["primary_key"])
                 for each_entity_name, each_entity in self.app_model.entities.items():
                     if each_entity_name == tab_name:
-                        template = self.load_tab_template(each_entity, tab_vars, primaryKey )
+                        template = self.load_tab_template(each_entity,entity,tab_vars, primaryKey )
                         panels.append(template)
 
         return panels
+
+    def get_tab_attrs(self, entity, parent_entity, fk_tab):
+        direction = fk_tab["direction"]
+        tab_name = fk_tab["resource"]
+        favorite = getattr(entity,"favorite")
+        if direction == "tomany":
+            tab_vars = {
+                        'resource': fk_tab["resource"],
+                        'resource_name': fk_tab["name"],
+                        "row_height": self.row_height,
+                        'attrs': fk_tab["attrs"],
+                        'columns': fk_tab["columns"],
+                        'attrType': fk_tab["attrType"],
+                        'visibleColumn': fk_tab["visibleColumn"],
+                        "tab_columns": fk_tab["visibleColumn"],
+                        "tabTitle": f'{fk_tab["resource"].upper()}-{fk_tab["attrs"][0]}',
+                        "parentKeys": gen_parent_keys(fk_tab, entity),
+                        "favorite": getattr(entity,"favorite")
+                    }
+        else:
+            ''' toone 
+                attr="{{ attr }}" title=" {{ title }}">
+                    service="{{ service }}" entity="{{ entity }}Type" columns="{{ columns}}"
+                    parent-keys="{{ parentKeys }}"
+                value-column="{{ favorite }}" keys="{{ keys }}"
+            '''
+            tab_entity = self.get_entity(tab_name)
+            favorite = getattr(tab_entity,"favorite")
+            fks = fk_tab["fks"][0]
+            tab_vars = {
+                "attr": fks,
+                "title": fks,
+                'entity': tab_name,
+                "service" :tab_name,
+                'visibleColumn': fks,
+                "columns":  fks,
+                "favorite": favorite,
+                "keys": fks,
+                "parentKeys": gen_parent_keys(fk_tab, parent_entity=parent_entity)
+            }
+        return tab_name,tab_vars
     
     def gen_sidebar_routing(self, template_name: str, entities: any) -> str:
         template = self.get_template(template_name)
@@ -804,6 +840,7 @@ def calculate_template(column):
     template = column.template.upper() if hasattr(column,"template") and column.template != DotMap() else col_type
     if template == "TEXT" and col_type in ["DECIMAL","INTEGER","NUMERIC","REAL","FLOAT"]:
         return col_type
+    
     return template
 def get_foreign_keys(entity:any, favorites:any ) -> list:
     fks = []
@@ -909,11 +946,14 @@ def gen_app_service_config(entities: any) -> str:
     return t
 
 def gen_parent_keys(fk_tab, parent_entity):
-    if fk_tab["direction"] == "tomany":
-        pkey = parent_entity["primary_key"][0]
+    direction = fk_tab["direction"]
+    pkey = parent_entity["primary_key"][0]
+    if direction == "tomany":
         for attr in fk_tab["attrs"]:
             return f'{attr}:{pkey}'
-    return fk_tab["columns"]
+    else:
+        for attr in fk_tab["fks"]:
+            return f'{pkey}:{attr}'
 
 def find_favorite(entity_favorites: any, entity_name:str):
     for entity_favorite in entity_favorites: 
