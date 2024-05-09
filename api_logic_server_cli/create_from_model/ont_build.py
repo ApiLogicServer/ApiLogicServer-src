@@ -976,6 +976,7 @@ def get_column_type(app_model: any, fkey_resource: str, attrs: any) -> str:
     
 def translation_service(titles:dict,from_lang:str="en", to_lang:str="es") -> str:
     # this is very slow since it does title by title
+    sys.stdout.write("\nStarting Translation Service (this may take a while)\n\n")
     translator = Translator(from_lang=from_lang, to_lang=to_lang)
     values = ""
     for title in titles:
