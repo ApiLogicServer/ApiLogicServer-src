@@ -2,7 +2,25 @@
 [![Latest Version](https://img.shields.io/pypi/v/apilogicserver.svg)](https://pypi.python.org/pypi/apilogicserver/)
 [![Supported Python versions](https://img.shields.io/pypi/pyversions/apilogicserver.svg)](https://pypi.python.org/pypi/apilogicserver/)
 
-![Banner](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/hero-banner.png?raw=true)
+&nbsp;
+
+<details markdown>
+
+<summary>Video Overview (40 sec)</summary>
+
+&nbsp;
+
+See how **Microservice Automation** creates and runs a microservice - a multi-page app, and an API. 
+
+* Here is a microservice -- api and admin app - **created / running in 5 seconds**
+
+    * It would be similar for your databases
+
+* Then, customize in your IDE with Python and **Logic Automation:** spreadsheet-like rules
+
+![quick tour](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/nutshell/gif.gif?raw=true)
+
+</details>
 
 &nbsp;
 
