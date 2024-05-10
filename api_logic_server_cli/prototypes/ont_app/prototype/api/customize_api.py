@@ -20,6 +20,8 @@ from datetime import date
 from config.config import Args
 import os
 from pathlib import Path
+from api.exression_parser import parsePayload
+from api.gen_pdf_report import gen_report
 
 # called by api_logic_server_run.py, to customize api (new end points, services).
 # separate from expose_api_models.py, to simplify merge if project recreated
@@ -159,20 +161,6 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         """
         return api_utils.server_log(request, jsonify)
     
-        """
-        TODO - add to model
-            about:
-                date: 3/20/2024
-                    recent_changes: api_root, altered Customer/Order/Employee attribute ordering, tab
-                    captions, info, EmpType, dept emps, defaults, show_when, cascade add, toggles,
-                    images, security, login, virtual relns, global filters, no IsCommissioned
-            api_root: '{http_type}://{swagger_host}:{port}/{api}'
-            authentication:
-                endpoint: '{http_type}://{swagger_host}:{port}/api/auth/login'
-            settings:
-            
-            attribute -> show_when ??
-        """
     @app.route("/dumpyaml", methods=["GET"])
     def dump_yaml():
         # Write the JSON back to yaml
@@ -185,7 +173,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         root = read(models.Root)
         
         output = build_json(entities, attrs, tabs, settings, root)
-        fn = "admin_model_merge.yaml"
+        fn = "app_model_merge.yaml"
         write_file(output, file_name=fn)
         return jsonify(f"Yaml file written to ui/{fn}")
     
@@ -478,104 +466,21 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         
         return {}
     
-    def gen_report(request) -> any:
-        ''' Report PDF POC https://docs.reportlab.com/
-        pip install reportlab 
-        Ontimize Payload:
-        {"title":"","groups":[],
-        "entity":"Customer",
-        "path":"/Customer",
-        "service":"Customer",
-        "vertical":true,
-        "functions":[],
-        "style":{"grid":false,"rowNumber":false,"columnName":true,"backgroundOnOddRows":false,"hideGroupDetails":false,"groupNewPage":false,"firstGroupNewPage":false},
-        "subtitle":"",
-        "columns":[{"id":"Id","name":"Id"},{"id":"CompanyName","name":" Company Name*"}],
-        "orderBy":[],
-        "language":"en",
-        "filters":{"columns":["Id","CompanyName","Balance","CreditLimit","OrderCount","UnpaidOrderCount","Client_id","ContactName","ContactTitle","Address","City","Region","PostalCode","Country","Phone","Fax"],
-        "sqltypes":{"Id":1111,"CompanyName":1111,"Balance":8,"CreditLimit":8,"OrderCount":4,"UnpaidOrderCount":4,"Client_id":4,"ContactName":1111,"ContactTitle":1111,"Address":1111,"City":1111,"Region":1111,"PostalCode":1111,"Country":1111,"Phone":1111,"Fax":1111},
-        "filter":{},
-        "offset":0,
-        "pageSize":20},
-        "advQuery":true}
-        '''
+    def _gen_report(request) -> any:
         payload = json.loads(request.data)
-        filter, columns, sqltypes, offset, pagesize, orderBy, data = parsePayload(payload)
+
         print(payload)
         if len(payload) == 3:
             return jsonify({})
         
         entity = payload["entity"]
         resource = find_model(entity)
-        api_attributes = resource["attributes"]
         api_clz = resource["model"]
-        rows = get_rows(request, api_clz, None, orderBy, columns, pagesize, offset)
-        
-        from reportlab.lib import colors
-        from reportlab.lib.pagesizes import letter
-        from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, PageTemplate, Frame, Spacer
-        from reportlab.lib.pagesizes import A4, letter
-        from reportlab.lib.styles import getSampleStyleSheet
-        from reportlab.lib.units import inch
-        from io import BytesIO
+        resources = getMetaData(api_clz.__name__)
+        attributes = resources["resources"][api_clz.__name__]["attributes"]
     
-        buffer = BytesIO()
-        doc = SimpleDocTemplate(buffer, pagesize=letter)
+        return gen_report(api_clz, request, _project_dir, payload, attributes)
         
-        def add_page_number(canvas, doc):
-            page_num = canvas.getPageNumber()
-            text = "Page %s" % page_num
-            canvas.drawRightString(letter[0] - inch, inch, text)
-
-        page_template = PageTemplate(id='my_page_template', frames=[], onPage=add_page_number)
-        #doc.addPageTemplates([page_template])
-        
-        content = []
-
-        # Add title
-        styles = getSampleStyleSheet()
-        title_style = styles["Title"]
-        title = payload["title"] if payload["title"] != '' else f"{entity.upper()} Report"
-        content.append(Paragraph(title, title_style))
-        content.append(Spacer(1, 0.2 * inch)) 
-        # Column Header
-        data = []
-        col_data = []
-        for column in columns:
-            col_data.append(column['name'])
-            
-        # Define table data (entity)
-        data.append(col_data)
-        
-        for row in rows['data']:
-            r = []
-            for col in columns:
-                r.append(row[col["id"]])
-            data.append(r)
-
-        # Create table
-        table = Table(data)
-        table.setStyle(TableStyle([('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-                                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-                                ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-                                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-                                ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-                                ('GRID', (0, 0), (-1, -1), 1, colors.black)]))
-
-        content.append(table)
-        
-        # Build PDF document
-        doc.build(content)  
-
-        with open(f"{_project_dir}/{entity}.pdf", "wb") as binary_file:
-            binary_file.write(buffer.getvalue())
-        
-        from base64 import b64encode
-        output =  b64encode(buffer.getvalue())
-        
-        return {"code": 0,"message": "","data": [{"file":str(output)[2:-1] }],"sqlTypes": None}
     
     #http://localhost:5656/ontimizeweb/services/qsallcomponents-jee/services/rest/customers/customerType/search
     #https://try.imatia.com/ontimizeweb/services/qsallcomponents-jee/services/rest/customers/customerType/search
@@ -595,7 +500,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
             return jsonify(success=True)
         
         if clz_name == "dynamicjasper":
-            return gen_report(request)
+            return _gen_report(request)
         
         if clz_name in ["listReports", "bundle", "reportstore"]:
             return jsonify({"code":0,"data":{},"message": None})
@@ -615,7 +520,6 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         api_attributes = resource["attributes"]
         api_clz = resource["model"]
         
-            
         payload = json.loads(request.data)
         filter, columns, sqltypes, offset, pagesize, orderBy, data = parsePayload(payload)
         result = {}
@@ -788,47 +692,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         
         return rows
                     
-    def parsePayload(payload:str):
-        """
-            employee/advancedSearch
-            {"filter":{},"columns":["EMPLOYEEID","EMPLOYEETYPEID","EMPLOYEENAME","EMPLOYEESURNAME","EMPLOYEEADDRESS","EMPLOYEESTARTDATE","EMPLOYEEEMAIL","OFFICEID","EMPLOYEEPHOTO","EMPLOYEEPHONE"],"sqltypes":{},"offset":0,"pageSize":16,"orderBy":[]}
-            customers/customer/advancedSearch
-            {"filter":{},"columns":["CUSTOMERID","NAME","SURNAME","ADDRESS","STARTDATE","EMAIL"],"sqltypes":{"STARTDATE":93},"offset":0,"pageSize":25,"orderBy":[{"columnName":"SURNAME","ascendent":true}]}
-            
-        """
-        sqltypes = payload.get('sqltypes') or None
-        filter = parseFilter(payload.get('filter', {}),sqltypes)
-        columns:list = payload.get('columns') or []
-        offset:int = payload.get('offset') or 0
-        pagesize:int = payload.get('pageSize') or 99
-        orderBy:list = payload.get('orderBy') or []
-        data = payload.get('data',None)
-        fix_payload(data, sqltypes)
-        
-        print(filter, columns, sqltypes, offset, pagesize, orderBy, data)
-        return filter, columns, sqltypes, offset, pagesize, orderBy, data
-    
-    def parseFilter(filter:dict,sqltypes: any):
-        # {filter":{"@basic_expression":{"lop":"BALANCE","op":"<=","rop":35000}}
-        filter_result = ""
-        a = ""
-        for f in filter:
-            value = filter[f]
-            q = "'" 
-            if f == '@basic_expression':
-                #{'lop': 'CustomerId', 'op': 'LIKE', 'rop': '%A%'}}
-                if'lop' in value.keys() and 'rop' in value.keys():
-                    lop = value["lop"]
-                    op  = value["op"]
-                    rop  = f"{q}{value['rop']}{q}"
-                    filter_result = f'"{lop}" {op} {rop}'
-                    return filter_result
-            q = "" if sqltypes and hasattr(sqltypes,f) and sqltypes[f] != 12 else "'"
-            if f == "CategoryName":
-                f = "CategoryName_ColumnName" #hack to use real column name
-            filter_result += f'{a} "{f}" = {q}{value}{q}'
-            a = " and "
-        return None if filter_result == "" else filter_result     
+      
     def parseData(data:dict = None) -> str:
         # convert dict to str
         result = ""
