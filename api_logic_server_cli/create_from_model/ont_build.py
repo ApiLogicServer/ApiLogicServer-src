@@ -61,7 +61,7 @@ class OntBuilder(object):
     num_pages_generated = 0
     num_related = 0
 
-    def __init__(self, project: Project, app: str):
+    def __init__(self, project: Project, app: str = "app"):
         self.project = project
         self.app = app
         self.app_path = Path(self.project.project_directory_path).joinpath(f"ui/{self.app}")

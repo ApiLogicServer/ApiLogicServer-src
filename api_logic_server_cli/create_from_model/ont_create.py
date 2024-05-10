@@ -57,8 +57,8 @@ class OntCreator(object):
 
     def __init__(self,
                  project: Project,
-                 admin_app: str,
-                 app: str):
+                 admin_app: str = "admin",
+                 app: str = "app"):
         self.project = project
         self.admin_app = admin_app
         self.app = app
