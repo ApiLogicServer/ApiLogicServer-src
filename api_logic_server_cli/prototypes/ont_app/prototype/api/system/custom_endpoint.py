@@ -1,6 +1,5 @@
 from __future__ import annotations  # enables Resource self reference
 import sqlalchemy
-from sqlalchemy import update, insert
 import logging
 import contextlib
 from sqlalchemy import Column, Table, ForeignKey
@@ -10,7 +9,6 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy_utils import get_referencing_foreign_keys
 from sqlalchemy import event, MetaData, and_, or_
 from sqlalchemy.inspection import inspect
-from sqlalchemy import select, insert, update
 from sqlalchemy.sql import text
 from flask import jsonify
 from sqlalchemy_utils.query_chain import QueryChain
@@ -23,6 +21,8 @@ import json
 import requests
 import config.config as config
 from config.config import Args
+from api.exression_parser import parsePayload
+from api.gen_pdf_report import gen_report
 
 resource_logger = logging.getLogger("api.customize_api")
 
@@ -35,55 +35,6 @@ class DotDict(dict):
     __getattr__ = dict.get
     __setattr__ = dict.__setitem__
     __delattr__ = dict.__delitem__
-
-def parsePayload(payload:str):
-    """
-        employee/advancedSearch
-        {"filter":{},"columns":["EMPLOYEEID","EMPLOYEETYPEID","EMPLOYEENAME","EMPLOYEESURNAME","EMPLOYEEADDRESS","EMPLOYEESTARTDATE","EMPLOYEEEMAIL","OFFICEID","EMPLOYEEPHOTO","EMPLOYEEPHONE"],"sqltypes":{},"offset":0,"pageSize":16,"orderBy":[]}
-        customers/customer/advancedSearch
-        {"filter":{},"columns":["CUSTOMERID","NAME","SURNAME","ADDRESS","STARTDATE","EMAIL"],"sqltypes":{"STARTDATE":93},"offset":0,"pageSize":25,"orderBy":[{"columnName":"SURNAME","ascendent":true}]}
-        
-    """
-    sqltypes = payload.get('sqltypes') or None
-    _filter = parseFilter(payload.get('filter', {}),sqltypes)
-    columns:list = payload.get('columns') or []
-    offset:int = payload.get('offset') or 0
-    pagesize:int = payload.get('pageSize') or 75
-    orderBy:list = payload.get('orderBy') or []
-    data = payload.get('data',None)
-    
-    print(_filter, columns, sqltypes, offset, pagesize, orderBy, data)
-    return _filter, columns, sqltypes, offset, pagesize, orderBy, data
-
-def parseFilter(filter:dict,sqltypes: any):
-    # {filter":{"@basic_expression":{"lop":"BALANCE","op":"<=","rop":35000}}
-    filter_result = ""
-    a = ""
-    for f in filter:
-        value = filter[f]
-        q = "'" if isinstance(value, str) else ""
-        if f == '@basic_expression':
-            #{'lop': 'CustomerId', 'op': 'LIKE', 'rop': '%A%'}}
-            if'lop' in value.keys() and 'rop' in value.keys():
-                lop = value["lop"]
-                op  = value["op"]
-                rop  = f"{q}{value['rop']}{q}"
-                filter_result = f'"{lop}" {op} {rop}'
-                return filter_result
-        '''
-        if sqltypes == None:
-            q = "'"
-        else:
-            q = "" if hasattr(sqltypes,f) and sqltypes[f] != 12 else "'"
-            if hasattr(sqltypes,f) and sqltypes[f] == 4:
-                q = ""
-        '''
-        if f == "CategoryName":
-            f = "CategoryName_ColumnName" #hack to use real column name
-        filter_result += f'{a} "{f}" = {q}{value}{q}'
-        a = " and "
-    return None if filter_result == "" else filter_result
-
 class CustomEndpoint():
     """
     Nested CustomEndpoint Definition
