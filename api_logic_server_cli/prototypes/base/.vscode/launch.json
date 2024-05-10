@@ -232,8 +232,8 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Install Ontimize",
-            "cwd": "${workspaceFolder}/ui/ont_1",
+            "name": "Install Ontimize (npm install)",
+            "cwd": "${workspaceFolder}/ui/ontimize",
             "runtimeExecutable": "npm",
             "runtimeArgs": ["install"],
             "console": "integratedTerminal"
@@ -241,8 +241,8 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Ontimize",
-            "cwd": "${workspaceFolder}/ui/ont_1",
+            "name": "Start Ontimize (npm start)",
+            "cwd": "${workspaceFolder}/ui/ontimize",
             "runtimeExecutable": "npm",
             "runtimeArgs": ["start"],
             "port": 4299,
