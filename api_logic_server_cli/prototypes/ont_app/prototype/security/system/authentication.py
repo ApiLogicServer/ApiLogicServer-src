@@ -93,7 +93,7 @@ def configure_auth(flask_app: Flask, database: object, method_decorators: list[o
             username = ''
             password = ''
             auth = request.headers.get("Authorization", None)
-            if auth and auth.startswith("Basic"):
+            if auth and auth.startswith("Basic"):  # support basic auth
                 import base64
                 base64_message = auth[6:]
                 print(f"auth found: {auth}")

@@ -4,7 +4,7 @@ from os.path import abspath
 from pathlib import Path
 import os
 
-class Project(CliArgsBase):  # extend user-visible args with internal values
+class Project(CliArgsBase):  # extends user-visible args with internal values, extended by ProjectRun
     
     def __init__(self):
         
@@ -16,7 +16,7 @@ class Project(CliArgsBase):  # extend user-visible args with internal values
         """ retain the actual db_url specified by the user """
         
         self.nw_db_status = None
-        """ '', nw, nw+, nw- """
+        """ '', nw, nw+, nw-   blank defaults to nw- """
 
         self.project_directory = None
         """ string - may have relative /../ """
@@ -29,6 +29,9 @@ class Project(CliArgsBase):  # extend user-visible args with internal values
 
         self.merge_into_prototype = None
         """ used by codespaces (create project over current) - project_name = ./ """
+
+        self.model_creation_services = None
+        """ access to model (bi-directional link - see model_creation_services.py) """
 
         self.model_gen_bind_msg = False
         """ sqlacodegen/codegen msg printed """

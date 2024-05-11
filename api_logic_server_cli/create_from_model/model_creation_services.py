@@ -81,6 +81,7 @@ class ModelCreationServices(object):
         * from ont_create, for resource data
         """
         self.project = project
+        project.model_creation_services = self
         self.project_directory = None
         if project_directory:
             self.project_directory = self.get_windows_path_with_slashes(project_directory)

@@ -19,5 +19,20 @@ See documentation: https://apilogicserver.github.io/Docs/Security-Overview/
 
 Security is invoked on server start (api_logic_server_run), per activation in `config.py`
 
-Your Code Goes Here
+Your Code Goes Here - alter the starter code below to suit your needs
 """
+
+class Roles():
+    manager = "manager"
+    teller = "teller"
+    tenant = "tenant"
+    customer = "customer"
+    read_only = "readonly"
+    admin = "CS_ADMIN"
+    
+DefaultRolePermission(to_role=Roles.tenant, can_read=True, can_delete=True)
+DefaultRolePermission(to_role=Roles.admin, can_read=True, can_insert=True,can_update=True, can_delete=True)
+DefaultRolePermission(to_role=Roles.manager, can_read=True, can_insert=True,can_update=True, can_delete=False)
+DefaultRolePermission(to_role=Roles.teller, can_read=True, can_insert=True,can_update=True, can_delete=False)
+DefaultRolePermission(to_role=Roles.customer, can_read=True, can_insert=True,can_update=True, can_delete=False)
+DefaultRolePermission(to_role=Roles.read_only, can_read=True, can_insert=False,can_update=False, can_delete=False)

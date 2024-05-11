@@ -168,7 +168,7 @@ def admin_events(flask_app: Flask, args: Args, validation_error: ValidationError
         from security.system.authentication import access_token
         #access_token = request.headers.environ.get("HTTP_AUTHORIZATION")[7:]
         if access_token:
-            response.headers["X-Auth-Token"] = access_token
+            response.headers["X-Auth-Token"] = access_token  # required for Ontimize (kludge alert)
         # Ontimize specific 
         #response.headers["Cache-Control"] = "no-cache, no-store, max-age=0, must-revalidate"
         #response.headers["X-Content-Type-Options"] = "nosniff"

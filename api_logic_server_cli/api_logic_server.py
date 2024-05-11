@@ -15,8 +15,7 @@ Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 __version__ = "10.04.03"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t05/11/2024 - 10.04.03: backout of default ontomize creation \n"\
-    "\t05/10/2024 - 10.04.02: default ontomize creation \n"\
+    "\t05/10/2024 - 10.04.03: default ontomize creation \n"\
     "\t05/04/2024 - 10.04.01: genai w/ restart, logic insertion, use Numeric, genai-cust, pg, 57 \n"\
     "\t04/23/2024 - 10.03.84: Fix error handling for db errors (eg, missing parent) \n"\
     "\t04/22/2024 - 10.03.83: cli issues in create-and-run/run, Oracledb 2.1.12, id fields ok \n"\
@@ -854,6 +853,8 @@ class ProjectRun(Project):
     def __init__(self, command: str, project_name: str, 
                      db_url: str,
                      api_name: str="api",
+                     auth_db_url: str="",
+                     auth_provider_type: str="",
                      from_model: str="",
                      from_genai: str="",
                      gen_using_file: str="",
@@ -887,6 +888,11 @@ class ProjectRun(Project):
         if self.project_name == "":
             self.project_name = default_project_name
         self.db_url = db_url
+        self.auth_db_url = auth_db_url
+        self.auth_provider_type = auth_provider_type
+        self.add_auth_in_progress = False
+        self.nw_db_status :str = None
+        """ '', nw, nw+, nw-   blank defaults to nw- """
         self.is_docker = is_docker()
         self.from_model = from_model
         self.from_genai = from_genai
@@ -1130,20 +1136,31 @@ from database import <project.bind_key>_models
         return return_abs_db_url
 
 
-    def add_auth(self, msg: str, is_nw: bool = False, provider_type: str='sql'):
+    def add_auth(self, msg: str, is_nw: bool = False):
         """add authentication models to project, update config; leverage multi-db support.  kat
         
         if provider_type is sql: 
-        1. add-db --db_url= [ auth | db_url ]
+        1. add-db --auth-db_url= [ auth | db_url ] by calling self.create_project()
         2. add user.login endpoint
         3. Set SECURITY_ENABLED in config.py
         4. Adding Sample authorization to security/declare_security.py, or user
+
+        Alert: complicated self.create_project() non-recursive flow:
+        1. Use model_creation_services to create auth models
+        2. By re-running app_creator (which leaves resources at auth, not db)
+        3. So, save/restore resource_list, bind_key, db_url, abs_db_url
 
         Args:
             msg (str): eg: ApiLogicProject customizable project created.  Adding Security:")
             is_nw (bool): is northwind, which means we add the nw security logic
             provider_type (str): sql or keycloak
         """
+        if self.add_auth_in_progress:
+            return
+        self.add_auth_in_progress = True
+
+        if self.auth_provider_type == '':
+            self.auth_provider_type = 'sql'  # nw+ defaulting
 
         database_path = self.project_directory_path.joinpath("database")
         log.debug("\n\n==================================================================")
@@ -1152,12 +1169,12 @@ from database import <project.bind_key>_models
             if is_nw or "ApiLogicProject customizable project created" in msg:
                 pass
             else:
-                if provider_type == 'sql':
+                if self.auth_provider_type == 'sql':
                     log.info(" .. TODO: Declare authorization in security/declare_security.py")
                     log.info(" .. docs: https://apilogicserver.github.io/Docs/Security-Activation/")
-            if provider_type == 'sql':
+            if self.auth_provider_type == 'sql':
                 log.debug("  1. ApiLogicServer add-db --db_url=auth --bind_key=authentication")
-            elif provider_type == 'keycloak':
+            elif self.auth_provider_type == 'keycloak':
                 log.info(" .. for keycloak")
                 log.info(" .. docs: https://apilogicserver.github.io/Docs/Security-Activation/")
         log.debug("===================================================================\n")
@@ -1167,7 +1184,7 @@ from database import <project.bind_key>_models
             log.info(f'\nAlready present in config/config.py - no action taken\n')
             return
         
-        if provider_type == 'keycloak':
+        if self.auth_provider_type == 'keycloak':
             log.debug("\n==================================================================")
             if msg != "":
                 log.debug("  1. Set SECURITY_ENABLED in config.py")
@@ -1184,16 +1201,30 @@ from database import <project.bind_key>_models
             save_run = self.run
             save_command = self.command
             save_db_url = self.db_url
+            save_abs_db_url = self.abs_db_url
+            save_nw_db_status = self.nw_db_status
+            save_resource_list = None
+            if self.model_creation_services is not None:
+                save_resource_list = self.model_creation_services.resource_list
+            save_bind_key = self.bind_key
             self.command = "add_db"
+            self.db_url = self.auth_db_url
             self.bind_key = "authentication"
             is_northwind = is_nw or self.nw_db_status in ["nw", "nw+"]  # nw_db_status altered in create_project
             if is_northwind:  # is_nw or self.nw_db_status ==  "nw":
                 self.db_url = "auth"  # shorthand for api_logic_server_cli/database/auth...
+            
+            ''' non-recursive call to create_project() '''
             self.run = False
-            self.create_project()  # not creating project, but using model creation svcs
+            self.create_project()  # not creating project, but using model creation svcs to add authdb
+            
             self.run = save_run
             self.command = save_command
             self.db_url = save_db_url
+            self.abs_db_url = save_abs_db_url
+            self.bind_key = save_bind_key
+            self.nw_db_status = save_nw_db_status
+            self.model_creation_services.resource_list = save_resource_list
             
             log.debug("\n==================================================================")
             if msg != "":
@@ -1237,6 +1268,7 @@ from database import <project.bind_key>_models
                 if msg != "":
                     log.debug("  4. TODO: Declare authorization in security/declare_security.py")
                 log.debug("==================================================================\n\n")
+        self.add_auth_in_progress = False
 
     def insert_tutorial_into_readme(self):
         """ insert docs tutorial.md into readme at --> Tip: create the sample """
@@ -1554,7 +1586,15 @@ from database import <project.bind_key>_models
         if self.from_model != "" or self.from_genai != "":
             create_db_from_model.create_db(self)
 
-        self.abs_db_url, self.nw_db_status, self.model_file_name = create_utils.get_abs_db_url("0. Using Sample DB", self)
+        if self.add_auth_in_progress:
+            models_py_path = self.project_directory_path.joinpath('database/models.py')
+            self.abs_db_url, self.nw_db_status, self.model_file_name = \
+                create_utils.get_abs_db_url("0. Using Sample DB", self, is_auth=True)    
+        else:  # normal path
+            self.abs_db_url, self.nw_db_status, self.model_file_name = create_utils.get_abs_db_url("0. Using Sample DB", self)
+            if self.nw_db_status in ["nw", "nw+"]:
+                self.auth_provider_type = 'sql'  # nw+ defaulting
+
 
         if self.extended_builder == "$":
             self.extended_builder = abspath(f'{self.api_logic_server_dir_path}/extended_builder.py')
@@ -1581,7 +1621,10 @@ from database import <project.bind_key>_models
             project_directory=self.project_directory)
         # ext builder can read alter the models.py
         fix_database_models(self.project_directory, self.db_types, self.nw_db_status, self.is_tutorial)
-        invoke_creators(model_creation_services)  # MAJOR! creates api/expose_api_models, ui/admin & basic_web_app
+
+        ''' ****** MAJOR! creates api/expose_api_models, ui/admin & basic_web_app (Microservice Autmation) **** '''
+        invoke_creators(model_creation_services)
+
         if self.extended_builder is not None and self.extended_builder != "":
             log.debug(f'4. Invoke extended_builder: {self.extended_builder}, ({self.db_url}, {self.project_directory})')
             invoke_extended_builder(self.extended_builder, self.abs_db_url, self.project_directory, model_creation_services)
@@ -1590,8 +1633,19 @@ from database import <project.bind_key>_models
         if gen_ai is not None:
             gen_ai.insert_logic_into_declare_logic()
 
-        if self.nw_db_status in ["nw", "nw+"] and self.command != "add_db":
+        if (self.auth_provider_type != '' or self.nw_db_status in ["nw", "nw+"]) and self.command != "add_db":
             self.add_auth("\nApiLogicProject customizable project created.  \nAdding Security:")
+
+            auto_ontimize = True  # debug note - verify the model is user db, not the authdb...
+            if auto_ontimize and self.add_auth_in_progress == False:
+                log.debug(" d.  Create Ontimize from models")
+                from api_logic_server_cli.create_from_model.ont_create import OntCreator
+                ont_creator = OntCreator(project = model_creation_services.project)
+                ont_creator.create_application()
+
+                from api_logic_server_cli.create_from_model.ont_build import OntBuilder
+                ont_creator = OntBuilder(project = model_creation_services.project)
+                ont_creator.build_application()
 
         if self.open_with != "" and 'create' == self.command:  # open project with open_with (vscode, charm, atom) -- NOT for docker!!
             start_open_with(project = self)
