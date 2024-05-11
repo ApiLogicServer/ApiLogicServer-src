@@ -75,7 +75,7 @@ class OntCreator(object):
         log.debug(f"OntCreate Running at {os.getcwd()}")
 
         self.project.use_model = "."
-        model_creation_services = ModelCreationServices(project = self.project,   # load models
+        model_creation_services = ModelCreationServices(project = self.project,   # load models (user db, not auth)
             project_directory=self.project.project_directory)
         resources : Dict[str, Resource] = model_creation_services.resource_list
 
@@ -127,10 +127,16 @@ class OntCreator(object):
             for each_primary_key_attr in resource.primary_key:
                 app_model_out.entities[each_resource_name].primary_key.append(each_primary_key_attr.name)
 
-        
+        ########################
+        # No good, dirty rotten kludge for api emulation
+        ########################
         from_dir = self.project.api_logic_server_dir_path.joinpath('prototypes/ont_app/prototype')
         to_dir = self.project.project_directory_path
         shutil.copytree(from_dir, to_dir, dirs_exist_ok=True)  # TODO - stub code, remove later
+        if self.project.nw_db_status in ["nw", "nw+", "nw-"]:
+            pass # restore file quashed by copytree (geesh)
+            shutil.copyfile(self.project.api_logic_server_dir_path.joinpath('prototypes/nw/security/declare_security.py'), 
+                            to_dir.joinpath('security/declare_security.py'))
 
         app_model_out_dict = app_model_out.toDict()  # dump(dot_map) is improperly structured
         app_model_path = app_path.joinpath("app_model.yaml")

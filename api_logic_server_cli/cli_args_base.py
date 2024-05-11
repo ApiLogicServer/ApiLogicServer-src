@@ -27,6 +27,7 @@ class OptLocking(ExtendedEnum):
     REQUIRED = "required"
 
 class CliArgsBase():
+    """ args provided from CLI; extended by cl_args_project """
     
     def __init__(self):
         self.command = None # type: str
@@ -34,8 +35,12 @@ class CliArgsBase():
         """ full nodal name """
         self.db_url = None # type: str
         """ not what was intially specified (e,g, tutorial uses nw, nw-) """
+        self.auth_db_url = None # type: str
+        """ for creating projects with db_url *and* auth """
+        self.auth_provider_type = None # type: str
+        """ sql (default), or keycloak """
         self.from_model = None # type
-        """ create database from this model (e.g. model from copiot)"""
+        """ create database from this model (e.g. model from copilot)"""
         self.from_genai = None # type
         """ name of .genai file (ai prompt) to create model, and project """
         self.gen_using_file = None
