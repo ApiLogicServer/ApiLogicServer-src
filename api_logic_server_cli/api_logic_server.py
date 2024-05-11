@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.04.03"
+__version__ = "10.04.04"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t05/10/2024 - 10.04.03: default ontomize creation \n"\
+    "\t05/11/2024 - 10.04.04: prep default ontomize creation - create with security \n"\
     "\t05/04/2024 - 10.04.01: genai w/ restart, logic insertion, use Numeric, genai-cust, pg, 57 \n"\
     "\t04/23/2024 - 10.03.84: Fix error handling for db errors (eg, missing parent) \n"\
     "\t04/22/2024 - 10.03.83: cli issues in create-and-run/run, Oracledb 2.1.12, id fields ok \n"\
@@ -1636,7 +1636,8 @@ from database import <project.bind_key>_models
         if (self.auth_provider_type != '' or self.nw_db_status in ["nw", "nw+"]) and self.command != "add_db":
             self.add_auth("\nApiLogicProject customizable project created.  \nAdding Security:")
 
-            auto_ontimize = True  # debug note - verify the model is user db, not the authdb...
+            auto_ontimize = False  # debug note - verify the model is user db, not the authdb...
+            """ disabled for now - api emulation replaces nw customizations, so BLT fails """
             if auto_ontimize and self.add_auth_in_progress == False:
                 log.debug(" d.  Create Ontimize from models")
                 from api_logic_server_cli.create_from_model.ont_create import OntCreator
