@@ -161,7 +161,7 @@ def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "R
 
 
 
-def get_abs_db_url(msg, project: Project):
+def get_abs_db_url(msg, project: Project, is_auth: bool = False):
     """
     non-relative db location - we work with this
 
@@ -193,54 +193,57 @@ def get_abs_db_url(msg, project: Project):
     https://docs.sqlalchemy.org/en/14/dialects/sqlite.html#uri-connections
     """
 
-    if project.db_url in [project.default_db, "", "nw", "sqlite:///nw.sqlite"]:     # nw-gold:      default sample
+    url_to_process = project.db_url
+    if is_auth:
+        url_to_process = project.auth_db_url
+    if url_to_process in [project.default_db, "", "nw", "sqlite:///nw.sqlite"]:     # nw-gold:      default sample
         rtn_abs_db_url = f'sqlite:///{str(project.api_logic_server_dir_path.joinpath("database/nw-gold.sqlite"))}'
         rtn_nw_db_status = "nw-"  # api_logic_server_dir_path
         # see also create_project_with_nw_samples for overlaying other project files
         log.debug(f'{msg} from: {rtn_abs_db_url}')  # /Users/val/dev/ApiLogicServer/api_logic_server_cli/database/nw-gold.sqlite
-        # if project.db_url == "sqlite:///nw.sqlite":
+        # if url_to_process == "sqlite:///nw.sqlite":
         #     log.info('.. using installed nw sample database')
-    elif project.db_url == "nw-":                                           # nw:           just in case
+    elif url_to_process == "nw-":                                           # nw:           just in case
         rtn_abs_db_url = f'sqlite:///{str(project.api_logic_server_dir_path.joinpath("database/nw-gold.sqlite"))}'
         rtn_nw_db_status = "nw-"
-    elif project.db_url == "nw--":                                           # nw:           unused - avoid
+    elif url_to_process == "nw--":                                           # nw:           unused - avoid
         rtn_abs_db_url = f'sqlite:///{str(project.api_logic_server_dir_path.joinpath("database/nw.sqlite"))}'
         rtn_nw_db_status = "nw--"
-    elif project.db_url == "nw+":                                           # nw-gold-plus: next version
+    elif url_to_process == "nw+":                                           # nw-gold-plus: next version
         rtn_abs_db_url = f'sqlite:///{str(project.api_logic_server_dir_path.joinpath("database/nw-gold-plus.sqlite"))}'
         rtn_nw_db_status = "nw+"
         log.debug(f'{msg} from: {rtn_abs_db_url}')
-    elif project.db_url == "auth" or project.db_url == "authorization"or project.db_url == "add-auth":
+    elif url_to_process == "auth" or url_to_process == "authorization" or url_to_process == "add-auth":
         rtn_abs_db_url = f'sqlite:///{str(project.api_logic_server_dir_path.joinpath("database/authentication.sqlite"))}'
-    elif project.db_url == "chinook":
+    elif url_to_process == "chinook":
         rtn_abs_db_url = f'sqlite:///{str(project.api_logic_server_dir_path.joinpath("database/Chinook_Sqlite.sqlite"))}'
-    elif project.db_url == "todo" or project.db_url == "todos":
+    elif url_to_process == "todo" or url_to_process == "todos":
         rtn_abs_db_url = f'sqlite:///{str(project.api_logic_server_dir_path.joinpath("database/todos.sqlite"))}'
-    elif  project.db_url == "new":
+    elif  url_to_process == "new":
         rtn_abs_db_url = f'sqlite:///{str(project.api_logic_server_dir_path.joinpath("database/new.sqlite"))}'
-    elif  project.db_url == "table_filters_tests":
+    elif  url_to_process == "table_filters_tests":
         rtn_abs_db_url = f'sqlite:///{str(project.api_logic_server_dir_path.joinpath("database/table_filters_tests.sqlite"))}'
-    elif project.db_url == "classicmodels":
+    elif url_to_process == "classicmodels":
         rtn_abs_db_url = f'sqlite:///{str(project.api_logic_server_dir_path.joinpath("database/classicmodels.sqlite"))}'
-    elif project.db_url == "allocation":
+    elif url_to_process == "allocation":
         rtn_abs_db_url = f'sqlite:///{str(project.api_logic_server_dir_path.joinpath("database/allocation.sqlite"))}'
-    elif project.db_url == "BudgetApp":
+    elif url_to_process == "BudgetApp":
         rtn_abs_db_url = f'sqlite:///{str(project.api_logic_server_dir_path.joinpath("database/BudgetApp.sqlite"))}'
-    elif project.db_url in ["shipping", "Shipping"]:
+    elif url_to_process in ["shipping", "Shipping"]:
         rtn_abs_db_url = f'sqlite:///{str(project.api_logic_server_dir_path.joinpath("database/shipping.sqlite"))}'
-    elif project.db_url == "basic_demo":
+    elif url_to_process == "basic_demo":
         rtn_abs_db_url = f'sqlite:///{str(project.api_logic_server_dir_path.joinpath("database/basic_demo.sqlite"))}'
-    elif project.db_url.startswith('sqlite:///'):
-        if project.db_url == 'sqlite:///sample_ai.sqlite':  # work-around - VSCode run config arg parsing (dbviz STRESS)
-            rtn_abs_db_url = project.db_url
+    elif url_to_process.startswith('sqlite:///'):
+        if url_to_process == 'sqlite:///sample_ai.sqlite':  # work-around - VSCode run config arg parsing (dbviz STRESS)
+            rtn_abs_db_url = url_to_process
             db_path = Path(rtn_abs_db_url)
             if db_path.exists():
                 pass # file exists
             else:
                 rtn_abs_db_url = f'sqlite:///{str(project.api_logic_server_dir_path.joinpath("prototypes/sample_ai/database/chatgpt/sample_ai.sqlite"))}'
                 # log.info('.. using installed nw sample database')
-        elif project.db_url == 'sqlite:///sample_ai_items.sqlite':  # same as above, but with Items for demo
-            rtn_abs_db_url = project.db_url
+        elif url_to_process == 'sqlite:///sample_ai_items.sqlite':  # same as above, but with Items for demo
+            rtn_abs_db_url = url_to_process
             db_path = Path(rtn_abs_db_url)
             if db_path.exists():
                 pass # file exists
@@ -248,36 +251,36 @@ def get_abs_db_url(msg, project: Project):
                 rtn_abs_db_url = f'sqlite:///{str(project.api_logic_server_dir_path.joinpath("prototypes/sample_ai/database/chatgpt/sample_ai_items.sqlite"))}'
                 # log.info('.. using installed nw sample database')
         else:
-            url = project.db_url[10: len(project.db_url)]
+            url = url_to_process[10: len(url_to_process)]
             rtn_abs_db_url = abspath(url)
             rtn_abs_db_url = 'sqlite:///' + rtn_abs_db_url
-    elif project.db_url == 'sqlsvr-sample':  # work-around - VSCode run config arg parsing
+    elif url_to_process == 'sqlsvr-sample':  # work-around - VSCode run config arg parsing
         rtn_abs_db_url = 'mssql+pyodbc://sa:Posey3861@localhost:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'
-    elif project.db_url == 'sqlsvr-nwlogic':  # work-around - VSCode run config arg parsing
+    elif url_to_process == 'sqlsvr-nwlogic':  # work-around - VSCode run config arg parsing
         rtn_abs_db_url = 'mssql+pyodbc://sa:Posey3861@localhost:1433/nwlogic?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'
-    elif project.db_url == 'sqlsvr-nw':  # work-around - VSCode run config arg parsing
+    elif url_to_process == 'sqlsvr-nw':  # work-around - VSCode run config arg parsing
         rtn_abs_db_url = 'mssql+pyodbc://sa:Posey3861@localhost:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'
 
-    elif project.db_url == 'sqlsvr-nw-docker':  # work-around - VSCode run config arg parsing
+    elif url_to_process == 'sqlsvr-nw-docker':  # work-around - VSCode run config arg parsing
         rtn_abs_db_url = 'mssql+pyodbc://sa:Posey3861@HOST_IP:1433/NORTHWND?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=no'
         rtn_abs_db_url = 'mssql+pyodbc://sa:Posey3861@HOST_IP:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'
         host_ip = "10.0.0.234"  # ApiLogicServer create  --project_name=/localhost/sqlsvr-nw-docker --db_url=sqlsvr-nw-docker
         if os.getenv('HOST_IP'):
             host_ip = os.getenv('HOST_IP')  # type: ignore # type: str
         rtn_abs_db_url = rtn_abs_db_url.replace("HOST_IP", host_ip)
-    elif project.db_url == 'sqlsvr-nw-docker-arm':  # work-around - VSCode run config arg parsing
+    elif url_to_process == 'sqlsvr-nw-docker-arm':  # work-around - VSCode run config arg parsing
         rtn_abs_db_url = 'mssql+pyodbc://sa:Posey3861@10.0.0.77:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'
         host_ip = "10.0.0.77"  # ApiLogicServer create  --project_name=/localhost/sqlsvr-nw-docker --db_url=sqlsvr-nw-docker-arm
         if os.getenv('HOST_IP'):
             host_ip = os.getenv('HOST_IP')  # type: ignore # type: str
         rtn_abs_db_url = rtn_abs_db_url.replace("HOST_IP", host_ip)
-    elif project.db_url == 'oracle-hr':  # work-around - VSCode run config arg parsing (dbviz HR)
+    elif url_to_process == 'oracle-hr':  # work-around - VSCode run config arg parsing (dbviz HR)
         rtn_abs_db_url = 'oracle+oracledb://hr:tiger@localhost:1521/?service_name=ORCL'
         host_ip = "10.0.0.77"  # ApiLogicServer create  --project_name=/localhost/sqlsvr-nw-docker --db_url=sqlsvr-nw-docker-arm
         if os.getenv('HOST_IP'):
             host_ip = os.getenv('HOST_IP')  # type: ignore # type: str
         rtn_abs_db_url = rtn_abs_db_url.replace("HOST_IP", host_ip)
-    elif project.db_url == 'oracle-stress':  # work-around - VSCode run config arg parsing (dbviz STRESS)
+    elif url_to_process == 'oracle-stress':  # work-around - VSCode run config arg parsing (dbviz STRESS)
         rtn_abs_db_url = 'oracle+oracledb://stress:tiger@localhost:1521/?service_name=ORCL'
         host_ip = "10.0.0.77"  # ApiLogicServer create  --project_name=/localhost/sqlsvr-nw-docker --db_url=sqlsvr-nw-docker-arm
         if os.getenv('HOST_IP'):

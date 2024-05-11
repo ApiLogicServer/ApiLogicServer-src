@@ -571,9 +571,15 @@ def genai(ctx, using, db_url, gen_using_file: click.BOOL):
               default=f'{default_db}',
               help="SQLAlchemy Database URL\n")
 @click.option('--db-url', 'db_url',
-              default=f'{default_db}',  # tho -db_url= comes in as 
+              default=f'{default_db}',  # tho -db_url= comes in as nw
               prompt="SQLAlchemy Database URI",
-              help="SQLAlchemy Database URL - see above\n")
+              help="SQLAlchemy Database URL\n")
+@click.option('--auth-db-url', 'auth_db_url',
+              default=f'auth', 
+              help="SQLAlchemy Database URL for authdb\n")
+@click.option('--auth-provider-type', 'auth_provider_type',
+              default=f'',
+              help="Blank means no authentication\n")
 @click.option('--from-model', 'from_model',
               default=f'',
               help="SQLAlchemy Database URL\n")
@@ -696,6 +702,7 @@ def genai(ctx, using, db_url, gen_using_file: click.BOOL):
               help="Infer primary-key for unique cols")
 @click.pass_context
 def create(ctx, project_name: str, db_url: str, not_exposed: str, api_name: str,
+           auth_db_url: str, auth_provider_type: str,
            from_model: str,
            from_git: str,
            # db_types: str,
@@ -722,6 +729,7 @@ def create(ctx, project_name: str, db_url: str, not_exposed: str, api_name: str,
     global command
     db_types = ""
     PR.ProjectRun(command="create", project_name=project_name, db_url=db_url, api_name=api_name,
+                    auth_db_url=auth_db_url, auth_provider_type=auth_provider_type,
                     not_exposed=not_exposed, from_model=from_model,
                     run=run, use_model=use_model, from_git=from_git, db_types=db_types,
                     flask_appbuilder=flask_appbuilder,  host=host, port=port, swagger_host=swagger_host,
@@ -1156,7 +1164,9 @@ def add_auth_cmd(ctx, bind_key_url_separator: str, provider_type :str, db_url: s
     project = PR.ProjectRun(command="add_security", 
               project_name=project_name, 
               api_name=api_name, 
-              db_url=db_url, 
+              db_url="",
+              auth_db_url=db_url, 
+              auth_provider_type=provider_type,
               bind_key=bind_key,
               bind_key_url_separator=bind_key_url_separator,
               execute=False
@@ -1166,7 +1176,8 @@ def add_auth_cmd(ctx, bind_key_url_separator: str, provider_type :str, db_url: s
     project.project_directory_actual = os.path.abspath(project.project_directory)  # make path absolute, not relative (no /../)
     project.project_directory_path = Path(project.project_directory_actual)
     models_py_path = project.project_directory_path.joinpath('database/models.py')
-    project.abs_db_url, project.nw_db_status, project.model_file_name = create_utils.get_abs_db_url("0. Using Sample DB", project)
+    project.abs_db_url, project.nw_db_status, project.model_file_name = \
+        create_utils.get_abs_db_url("0. Using Sample DB", project, is_auth=True)    
     if not models_py_path.exists():
         log.info(f'... Error - does not appear to be a project: {str(project.project_directory_path)}')
         log.info(f'... Typical usage - cd into project, use --project_name=. \n')
@@ -1174,7 +1185,7 @@ def add_auth_cmd(ctx, bind_key_url_separator: str, provider_type :str, db_url: s
     is_nw = False
     if create_utils.does_file_contain(search_for="CategoryTableNameTest", in_file=models_py_path):
         is_nw = True
-    project.add_auth(msg="Adding Security", is_nw=is_nw, provider_type=provider_type)
+    project.add_auth(msg="Adding Security", is_nw=is_nw)
     log.info("")
 
 
