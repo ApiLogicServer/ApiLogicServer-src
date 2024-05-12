@@ -66,6 +66,9 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
 
     app_logger.debug("api/customize_api.py - expose custom services")
 
+    from api.services.auto_discovery import discover_services
+    discover_services(app, api, project_dir, swagger_host, PORT)
+
     api.expose_object(ServicesEndPoint)  # Swagger-visible services
     api.expose_object(CategoriesEndPoint)
 
