@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.04.04"
+__version__ = "10.04.05"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t05/11/2024 - 10.04.04: prep default ontomize creation - create with security \n"\
+    "\t05/11/2024 - 10.04.05: prep default ontomize creation - create with security, svc discovery \n"\
     "\t05/04/2024 - 10.04.01: genai w/ restart, logic insertion, use Numeric, genai-cust, pg, 57 \n"\
     "\t04/23/2024 - 10.03.84: Fix error handling for db errors (eg, missing parent) \n"\
     "\t04/22/2024 - 10.03.83: cli issues in create-and-run/run, Oracledb 2.1.12, id fields ok \n"\
