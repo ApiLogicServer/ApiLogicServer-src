@@ -91,6 +91,9 @@ def declare_logic():
         OrderDetail.UnitPrice = copy from Product
     """
 
+    from logic.logic_discovery.auto_discovery import discover_logic
+    discover_logic()
+
     if preferred_approach:     #als: basic rules - 5 rules vs 200 lines of code: https://github.com/valhuber/LogicBank/wiki/by-code
         Rule.constraint(validate=models.Customer,       # logic design translates directly into rules
             as_condition=lambda row: row.Balance <= row.CreditLimit,
@@ -187,27 +190,6 @@ def declare_logic():
     Rule.early_row_event(on_class=models.Customer, calling=customer_defaults)
     Rule.early_row_event(on_class=models.Order, calling=order_defaults)
     Rule.early_row_event(on_class=models.OrderDetail, calling=order_detail_defaults)
-
-
-    """
-        Simple constraints for error testing 
-    """
-    Rule.constraint(validate=models.Customer,
-        as_condition=lambda row: row.CompanyName != 'x',
-        error_msg="CustomerName cannot be 'x'")
-
-    Rule.constraint(validate=models.Employee,
-        as_condition=lambda row: row.LastName != 'x',
-        error_msg="LastName cannot be 'x'")
-    
-    def valid_category_description(row: models.Category, old_row: models.Category, logic_row: LogicRow):
-        if logic_row.ins_upd_dlt == "upd":
-            return row.Description != 'x'
-        else:
-            return True
-    Rule.constraint(validate=models.Category,
-                    calling=valid_category_description,
-                    error_msg="Description cannot be 'x'")
 
 
     """

@@ -7,7 +7,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str):
     pass
 
     @app.route('/hello_newer_service')
-    def hello_newer_ervice():
+    def hello_newer_service():
         """        
         Illustrates:
         * Use standard Flask, here for non-database endpoints.

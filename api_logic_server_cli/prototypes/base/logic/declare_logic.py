@@ -20,6 +20,9 @@ def declare_logic():
     Your Code Goes Here - Use code completion (Rule.) to declare rules
     '''
 
+    from logic.logic_discovery.auto_discovery import discover_logic
+    discover_logic()
+
     def handle_all(logic_row: LogicRow):  # OPTIMISTIC LOCKING, [TIME / DATE STAMPING]
         """
         This is generic - executed for all classes.
