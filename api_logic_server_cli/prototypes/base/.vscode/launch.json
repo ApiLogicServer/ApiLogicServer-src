@@ -230,19 +230,19 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
+            "name": "Install Ontimize (npm install)",
             "type": "node",
             "request": "launch",
-            "name": "Install Ontimize (npm install)",
-            "cwd": "${workspaceFolder}/ui/ontimize",
+            "cwd": "${workspaceFolder}/ui/app",
             "runtimeExecutable": "npm",
             "runtimeArgs": ["install"],
             "console": "integratedTerminal"
         },
         {
+            "name": "Start Ontimize (npm start)",
             "type": "node",
             "request": "launch",
-            "name": "Start Ontimize (npm start)",
-            "cwd": "${workspaceFolder}/ui/ontimize",
+            "cwd": "${workspaceFolder}/ui/app",
             "runtimeExecutable": "npm",
             "runtimeArgs": ["start"],
             "port": 4299,
