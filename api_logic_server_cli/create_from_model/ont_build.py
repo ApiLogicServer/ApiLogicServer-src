@@ -69,7 +69,7 @@ class OntBuilder(object):
         self.env = t_env[0]
         self.local_env = t_env[1]
         self.global_values = DotMap()
-        self.new_mode = "dialog"
+        self.new_mode = "tab"
         self.detail_mode = "tab" 
         self.pick_style = "list" #"combo" or"list"
         self.style = "light" # "dark"
@@ -93,7 +93,7 @@ class OntBuilder(object):
         self.tab_panel = self.get_template("tab_panel.html")
         self.app_module = self.get_template("app.module.jinja")
         self.table_cell_render = self.get_template("table_cell_render.html")
-        
+        self.detail_route_template = self.get_template("detail_route_template.jinja")
         self.environment_template = self.get_template("environment.jinja")
         
         self.component_scss = self.get_template("component.scss")
@@ -749,7 +749,14 @@ class OntBuilder(object):
             "keyPath": make_key_path(entity["primary_key"]),
             "routing_module": f"{entity_first_cap}RoutingModule",
         }
+        additional_routes = ""
+        for tg in entity.tab_groups:
+            if tg.direction == "tomany":
+                var["tab_name"] = tg.resource
+                var["tab_key"] = tg.fks[0]
+                additional_routes += f",{self.detail_route_template.render(var)}"
 
+        var["additional_routes"] = additional_routes
         return template.render(var)
     
     def load_module(self, template_name: str, entity: any) -> str:
