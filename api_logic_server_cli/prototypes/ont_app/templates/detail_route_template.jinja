@@ -1,0 +1,8 @@
+{
+    path: ':{{ tab_key }}/{{ tab_name }}', loadChildren: () => import('../{{ tab_name }}/{{ tab_name }}.module').then(m => m.{{ tab_name }}Module),
+    data: {
+        oPermission: {
+            permissionId: '{{ tab_name }}-detail-permissions'
+        }
+    }
+}
