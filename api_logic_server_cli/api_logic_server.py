@@ -1636,7 +1636,7 @@ from database import <project.bind_key>_models
         if (self.auth_provider_type != '' or self.nw_db_status in ["nw", "nw+"]) and self.command != "add_db":
             self.add_auth("\nApiLogicProject customizable project created.  \nAdding Security:")
 
-            auto_ontimize = False  # debug note - verify the model is user db, not the authdb...
+            auto_ontimize = True  # debug note - verify the model is user db, not the authdb...
             """ disabled for now - api emulation replaces nw customizations, so BLT fails """
             if auto_ontimize and self.add_auth_in_progress == False:
                 log.debug(" d.  Create Ontimize from models")
