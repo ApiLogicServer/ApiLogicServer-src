@@ -135,7 +135,7 @@
             "args": [
                 "app-create",
                 "--project-name=",
-                "--app=ontimize"
+                "--app=app"
                 ],
             "console": "integratedTerminal"
         },
@@ -150,7 +150,7 @@
             "args": [
                 "app-build",
                 "--project-name=",
-                "--app=ontimize"
+                "--app=app"
                 ],
             "console": "integratedTerminal"
         },
