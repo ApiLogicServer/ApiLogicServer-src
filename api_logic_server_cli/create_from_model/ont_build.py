@@ -199,7 +199,8 @@ class OntBuilder(object):
             # HOME - Table Style
             if  each_entity.get("exclude", "false") == "true":
                 continue
-            home_template = self.load_home_template("home_template.html", each_entity)
+            home_template_name = self.find_template(each_entity, "home_template","home_template.html")
+            home_template = self.load_home_template(home_template_name, each_entity)
             home_scss = self.get_template("home.scss").render()
             entity_name = each_entity_name
             ts = self.load_ts("home_template.jinja", each_entity)
@@ -213,7 +214,8 @@ class OntBuilder(object):
             write_file(app_path, entity_name, "", ".module.ts", module)
 
             # New Style for Input
-            new_template = self.load_new_template("new_template.html", each_entity, entity_favorites)
+            new_template_name = self.find_template(each_entity, "new_template","new_template.html")
+            new_template = self.load_new_template(new_template_name, each_entity, entity_favorites)
             ts = self.load_ts("new_component.jinja", each_entity)
             new_scss = self.get_template("new.scss").render()
             write_file(app_path, entity_name, "new", "-new.component.html", new_template)
@@ -221,7 +223,8 @@ class OntBuilder(object):
             write_file(app_path, entity_name, "new", "-new.component.scss", new_scss)
             
             # Detail for Update
-            detail_template = self.load_detail_template("detail_template.html", each_entity, entity_favorites)
+            detail_template_name = self.find_template(each_entity, "detail_template","detail_template.html")
+            detail_template = self.load_detail_template(detail_template_name, each_entity, entity_favorites)
             ts = self.load_ts("detail_component.jinja", each_entity)
             detail_scss = self.get_template("detail.scss").render()
             write_file(app_path, entity_name, "detail", "-detail.component.html", detail_template)
@@ -281,6 +284,11 @@ class OntBuilder(object):
         # Translate all fields from english -> list of languages from settings TODO
         self.generate_translation_files(app_path)
 
+    def find_template(self, entity, template_name, default_template):
+        if hasattr(entity, template_name) and entity[template_name] != DotMap():
+            return entity[template_name]
+        else:
+            return default_template
     def build_entity_favorites(self, app_model):
         entity_favorites = []
         for each_entity_name, each_entity in app_model.entities.items():
@@ -383,7 +391,7 @@ class OntBuilder(object):
         return template.render(entity_vars)
 
     def get_entity_vars(self, entity):
-        favorite =  entity["favorite"]
+        favorite =  self.find_template(entity,"favorite","")
         fav_column = find_column(entity,favorite)
         cols = get_columns(entity)
         visible_columns = get_columns(entity, True)
@@ -395,6 +403,7 @@ class OntBuilder(object):
         primaryKey = make_keys(entity["primary_key"])
         keySqlType = make_sql_types(primaryKey, entity.columns)
         title =  f'{entity_name.upper()}' 
+        new_mode = self.find_template(entity, "mode", self.new_mode)
         entity_var = {
             "use_keycloak": self.use_keycloak,
             "row_height": self.row_height,
@@ -407,7 +416,7 @@ class OntBuilder(object):
             "favorite": favorite,
             "favoriteType": fav_column_type,
             "breadcrumbLabel":favorite,
-            "new_mode": self.new_mode,
+            "new_mode": new_mode,
             "detail_mode": self.detail_mode,
             "title": "{{ '" + title + "' | oTranslate }}",
             "tableAttr": f"{entity_name}Table",

@@ -152,6 +152,7 @@ class OntCreator(object):
         each_resource.new_template = "new_template.html"
         each_resource.home_template = "home_template.html"
         each_resource.detail_template = "detail_template.html"
+        each_resource.mode = "tab"
         each_resource.pop('user_key')
         return each_resource
 
