@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.04.07"
+__version__ = "10.04.08"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t05/13/2024 - 10.04.07: default ontomize creation (with security), logic/svc discovery \n"\
+    "\t05/13/2024 - 10.04.08: default ontomize creation (with security), logic/svc discovery \n"\
     "\t05/04/2024 - 10.04.01: genai w/ restart, logic insertion, use Numeric, genai-cust, pg, 57 \n"\
     "\t04/23/2024 - 10.03.84: Fix error handling for db errors (eg, missing parent) \n"\
     "\t04/22/2024 - 10.03.83: cli issues in create-and-run/run, Oracledb 2.1.12, id fields ok \n"\
@@ -1208,6 +1208,8 @@ from database import <project.bind_key>_models
                 save_resource_list = self.model_creation_services.resource_list
             save_bind_key = self.bind_key
             self.command = "add_db"
+            if self.auth_db_url == "":
+                self.auth_db_url = 'auth'  # for create manager
             self.db_url = self.auth_db_url
             self.bind_key = "authentication"
             is_northwind = is_nw or self.nw_db_status in ["nw", "nw+"]  # nw_db_status altered in create_project
