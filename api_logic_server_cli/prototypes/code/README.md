@@ -4,19 +4,21 @@ You are in the [API Logic Server Manager](https://apilogicserver.github.io/Docs/
 
 &nbsp;
 
-# Explore Pre-created tutorial and sample
+# Explore Pre-created Samples
 
 <details markdown>
 
-<summary>Pre-created tutorial and sample</summary>
+<summary>Pre-created Samples</summary>
 
-<br>The system has pre-created 2 important projects you will want to review at some point:
+<br>The `samples` folder has pre-created important projects you will want to review at some point:
 
 * [tutorial](https://apilogicserver.github.io/Docs/Tutorial/) - short (< 1 hour) walk-through of using API Logic Server using the northwind (customers, orders...) database
 
 * sample - the completed tutorial.  It's the same database, but with logic/Python ***customizations added***.  It's a great resource for exploring.  
 
     * Hint: use your IDE to search for `#als`
+
+    * The sample is also created without customization (`sample_nocust`).
 
 
 <details markdown>
@@ -51,8 +53,7 @@ To do so, you probably want to acquire this extension: `Open Folder Context Menu
 #  Explore Creating Projects
 
 Click on the disclosure buttons, below.
-
-<br>
+<br><br>
 
 <details markdown>
 
@@ -72,7 +73,7 @@ Then, try your own databases [(db-url examples here)](https://apilogicserver.git
 
 <details markdown>
 
-<summary> New Database - using GenAI Automation (Signup optional)</summary>
+<summary> New Database - using GenAI Microservice Automation (Signup optional)</summary>
 
 <br>You can do this with or without signup:
 

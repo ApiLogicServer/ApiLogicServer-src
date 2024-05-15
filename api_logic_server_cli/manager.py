@@ -34,15 +34,14 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path):
         log.info(f"    Created manager at: {copied_path}\n\n")
 
         tutorial_project = PR.ProjectRun(command="tutorial", 
-                project_name='./', 
+                project_name='./samples', 
                 db_url="",
                 execute=False
                 )
         tutorial_project = tutorial_project.tutorial(msg="Creating:") ##, create='tutorial')
 
-        # tutorial_project = PR.tutorial(msg="Creating:", create='tutorial')
-        samples_project = PR.ProjectRun(command= "create", project_name='sample', db_url='nw+')
-        samples_project = PR.ProjectRun(command= "create", project_name='sample_nocust', db_url='nw')
+        samples_project = PR.ProjectRun(command= "create", project_name='samples/sample', db_url='nw+')
+        samples_project = PR.ProjectRun(command= "create", project_name='samples/sample_nocust', db_url='nw')
     pass
 
     set_defaultInterpreterPath = False
