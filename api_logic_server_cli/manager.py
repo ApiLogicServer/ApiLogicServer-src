@@ -33,8 +33,16 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path):
         copied_path = shutil.copytree(src=from_dir, dst=to_dir, dirs_exist_ok=True)
         log.info(f"    Created manager at: {copied_path}\n\n")
 
-        tutorial_project = PR.ProjectRun(command= "create", project_name='tutorial', db_url='')
+        tutorial_project = PR.ProjectRun(command="tutorial", 
+                project_name='./', 
+                db_url="",
+                execute=False
+                )
+        tutorial_project = tutorial_project.tutorial(msg="Creating:") ##, create='tutorial')
+
+        # tutorial_project = PR.tutorial(msg="Creating:", create='tutorial')
         samples_project = PR.ProjectRun(command= "create", project_name='sample', db_url='nw+')
+        samples_project = PR.ProjectRun(command= "create", project_name='sample_nocust', db_url='nw')
     pass
 
     set_defaultInterpreterPath = False

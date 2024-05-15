@@ -15,7 +15,7 @@ def server_tests(host, port, version):
     """
 
     print(f'\n\n\nVerify ALFKI returned...\n')
-    get_order_uri = f'http://localhost:8080/order?Id=10643'
+    get_order_uri = f'http://localhost:5656/order?Id=10643'
     r = requests.get(url=get_order_uri)
     response_text = r.text
 
@@ -29,4 +29,4 @@ def server_tests(host, port, version):
     
 
 if __name__ == "__main__":
-    server_tests("localhost", "8080", "v0")
+    server_tests("localhost", "5656", "v0")

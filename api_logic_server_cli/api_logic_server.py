@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.04.09"
+__version__ = "10.04.11"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t05/13/2024 - 10.04.00: default ontomize creation (with security), logic/svc discovery \n"\
+    "\t05/14/2024 - 10.04.11: default ontomize creation (with security), logic/svc discovery \n"\
     "\t05/04/2024 - 10.04.01: genai w/ restart, logic insertion, use Numeric, genai-cust, pg, 57 \n"\
     "\t04/23/2024 - 10.03.84: Fix error handling for db errors (eg, missing parent) \n"\
     "\t04/22/2024 - 10.03.83: cli issues in create-and-run/run, Oracledb 2.1.12, id fields ok \n"\
@@ -1485,16 +1485,17 @@ from database import <project.bind_key>_models
         log.info(f'\n{msg} {create}')
         target_project = self.project_name  # eg, /Users/val/dev/Org-ApiLogicServer
         target_project_path = Path(target_project)
-        self.project_directory_path = Path(self.project_name)
+        self.project_directory_path = Path(self.project_name) # create tutorial at this parent dir
         self.project_directory_actual = self.project_directory_path
         # if not self.project_directory_path.exists():
         #    os.mkdir(self.project_directory_path, mode = 0o777)
         
-        log.info(f"\nCreating {create}")
+        dest = target_project_path.joinpath(create)
+        log.info(f"\nCreating {create} at {dest}")
         workspace_name = 'prototypes/tutorial' if create == "tutorial" else "prototypes/fiddle"
         shutil.copytree(dirs_exist_ok=True,
             src=self.api_logic_server_dir_path.joinpath(workspace_name),
-            dst=target_project_path.joinpath(create))  # project named from arg create
+            dst=dest)  # project named from arg create
 
         self.command = "create"
         self.project_name = str(target_project_path.joinpath(f"{create}/1. Instant_Creation"))
