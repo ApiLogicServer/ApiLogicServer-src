@@ -6,7 +6,7 @@
     "configurations": [
         {
             "name": "0. App_Fiddle: Flask / SQLAlchemy",
-            "type": "python",
+            "type": "debugpy",
             "env": {"APILOGICPROJECT": "False"},
             "request": "launch",
             "cwd": "${workspaceFolder}/0. App_Fiddle",
@@ -17,7 +17,7 @@
         },
         {
             "name": "1. Instant Creation",
-            "type": "python",
+            "type": "debugpy",
             "env": {"PYTHONPATH": "", "PYTHONHASHSEED": "0", "APILOGICPROJECT_DEBUG": "False"},
             "request": "launch",
             "cwd": "${workspaceFolder}/1. Instant_Creation",
@@ -30,7 +30,7 @@
         },
         {
             "name": "2. Customized",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "env": {"PYTHONPATH": "", "PYTHONHASHSEED": "0", "APILOGICPROJECT_DEBUG": "False"},
             "cwd": "${workspaceFolder}/2. Customized",
@@ -43,7 +43,7 @@
         },
         {
             "name": "3. Logic",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/3. Logic",
             "env": {"PYTHONPATH": "", "PYTHONHASHSEED": "0", "APILOGICPROJECT_DEBUG": "False"},
@@ -56,7 +56,7 @@
         },
         {
             "name": "3a. Logic: No Security",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "env": {"PYTHONPATH": "", "PYTHONHASHSEED": "0", "APILOGICPROJECT_DEBUG": "False"},
             "cwd": "${workspaceFolder}/3. Logic",
@@ -70,7 +70,7 @@
         },
         {
             "name": "Execute Chinook",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "env": {"PYTHONPATH": "", "PYTHONHASHSEED": "0", "APILOGICPROJECT_DEBUG": "False"},
             "cwd": "${workspaceFolder}/chinook",
@@ -83,7 +83,7 @@
         },
         {
             "name": "Execute nw",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/nw",
             "env": {"PYTHONPATH": "", "PYTHONHASHSEED": "0", "APILOGICPROJECT_DEBUG": "False"},
@@ -96,7 +96,7 @@
         },
         {
             "name": "Execute nw - No Security",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "env": {"PYTHONPATH": "", "PYTHONHASHSEED": "0", "APILOGICPROJECT_DEBUG": "False"},
             "cwd": "${workspaceFolder}/nw",
@@ -110,7 +110,7 @@
         },
         {
             "name": "Execute Classic Models",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "env": {"PYTHONPATH": "", "PYTHONHASHSEED": "0", "APILOGICPROJECT_DEBUG": "False"},
             "cwd": "${workspaceFolder}/classicmodels",
@@ -123,7 +123,7 @@
         },
         {
             "name": "ToDo",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "env": {"PYTHONPATH": "", "PYTHONHASHSEED": "0", "APILOGICPROJECT_DEBUG": "False"},
             "cwd": "${workspaceFolder}/todo",
@@ -136,7 +136,7 @@
         },
         {
             "name": "Behave Run",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/3. Logic/test/api_logic_server_behave",
             "program": "behave_run.py",
@@ -148,7 +148,7 @@
         },
         {
             "name": "Behave Scenario",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/3. Logic/test/api_logic_server_behave",
             "program": "behave_run.py",
@@ -161,7 +161,7 @@
         },
         {
             "name": "Behave Logic Report",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/3. Logic/test/api_logic_server_behave",
             "program": "behave_logic_report.py",
@@ -176,7 +176,7 @@
         },
         {
             "name": "Python: Module",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "redirectOutput": true,
             "justMyCode": false,            
@@ -184,7 +184,7 @@
         },
         {
             "name": "Python: Current File",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${file}",
             "redirectOutput": true,

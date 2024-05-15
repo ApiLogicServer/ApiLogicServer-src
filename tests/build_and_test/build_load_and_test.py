@@ -826,14 +826,18 @@ if len(sys.argv) > 1 and sys.argv[1] == 'build-only':
 # ***************************
 
 
-if Config.do_create_api_logic_project:  # nw+ (with logic)
+if Config.do_create_api_logic_project: 
+    result_manager = run_command(f'{set_venv} && ApiLogicServer start',
+        cwd=install_api_logic_server_path,
+        msg=f'\nCreate Manager')
+        
     result_create = run_command(f'{set_venv} && ApiLogicServer create --{project_name}=ApiLogicProject --{db_url}=nw+',
         cwd=install_api_logic_server_path,
-        msg=f'\nCreate ApiLogicProject')    
+        msg=f'\nCreate ApiLogicProject')     # nw+ (with logic)
     
-    # result_create = run_command(f'{set_venv} && ApiLogicServer tutorial',
-    #     cwd=install_api_logic_server_path,
-    #     msg=f'\nCreate Tutorial')
+    result_create = run_command(f'{set_venv} && ApiLogicServer tutorial',
+        cwd=install_api_logic_server_path,
+        msg=f'\nCreate Tutorial')
 
 if Config.do_run_api_logic_project:  # so you can start and set breakpoint, then run tests
     start_api_logic_server(project_name="ApiLogicProject")

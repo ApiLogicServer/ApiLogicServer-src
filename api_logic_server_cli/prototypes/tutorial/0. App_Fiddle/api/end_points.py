@@ -43,7 +43,7 @@ def flask_events(app, db):
 
         The url suffix is specified in the annotation.
 
-        Test it with: http://localhost:8080/hello_world?user=Basic_App
+        Test it with: http://localhost:5656/hello_world?user=Basic_App
 
         Returns:
             json : a simple string
@@ -65,8 +65,8 @@ def flask_events(app, db):
         4. Use Flask to return nested response json
 
         Test:
-            http://localhost:8080/order?Id=10643
-            curl -X GET "http://localhost:8080/order?Id=10643"
+            http://localhost:5656/order?Id=10643
+            curl -X GET "http://localhost:5656/order?Id=10643"
 
         """
 
@@ -94,7 +94,7 @@ def flask_events(app, db):
     
 
     @app.route('/stop')
-    def stop():  # test it with: http://localhost:8080/stop?msg=API stop - Stop Basic App Server
+    def stop():  # test it with: http://localhost:5656/stop?msg=API stop - Stop Basic App Server
         """
         Use this to stop the server from the Browser.
 

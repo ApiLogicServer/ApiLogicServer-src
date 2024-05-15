@@ -40,7 +40,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "1 - ApiLogicServer Start",
+            "name": "1 - ApiLogicServer Start (Clean)",
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",

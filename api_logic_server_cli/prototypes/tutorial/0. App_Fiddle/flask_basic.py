@@ -38,9 +38,9 @@ import api.end_points as api_end_points
 api_end_points.flask_events(app, db)  # register endpoints
 
 logging.info("Server started: test by copying the cURL commands to a terminal window...")
-logging.info('  curl -X GET "http://localhost:8080/hello_world"')
-logging.info('  curl -X GET "http://localhost:8080/order?Id=10643"')
+logging.info('  curl -X GET "http://localhost:5656/hello_world"')
+logging.info('  curl -X GET "http://localhost:5656/order?Id=10643"')
 logging.info('')
 
-app.run(host="localhost", port=8080, debug=True)  # start the server (does not return)
+app.run(host="localhost", port=5656, debug=True)  # start the server (does not return)
 

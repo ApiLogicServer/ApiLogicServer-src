@@ -33,7 +33,7 @@ REST has emerged as a loose standard for APIs, by leveraging 2 key technology el
 HTTP is invoked with a URL, as shown in the following cURL command, identifies a verb, a server/port, an endpoint (`order`) and arguments:
 
 ```
-curl -X GET "http://localhost:8080/order?Id=10643"
+curl -X GET "http://localhost:5656/order?Id=10643"
 ```
 
 &nbsp;
@@ -43,7 +43,7 @@ curl -X GET "http://localhost:8080/order?Id=10643"
 | HTTP Component |  Designates   | Notes | Example |
 |:----|:--------|:--------|:--------|
 | **Verb** | `Post`, `Get`, `Patch`, `Delete`  | Maps well to ***crud*** | `Get` |
-| Server:port | Identifies server | | http://localhost:8080 | 
+| Server:port | Identifies server | | http://localhost:5656 | 
 | **Endpoint** | Can be series of nodes | Analogous to **table/view** name | `Order` |
 | **Arguments** | Key/values Start with `?`, separate by `&` | E.g., **filter/sort**.  Caution: special characters | `?Id=10643` |
 | Return Code | Success/failure | a number | 200 means success |
