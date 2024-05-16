@@ -379,30 +379,33 @@ class OntBuilder(object):
     def load_home_template(self, template_name: str, entity: any, entity_favorites: any) -> str:
         template = self.get_template(template_name)
         entity_vars = self.get_entity_vars(entity)
-
         entity_vars["row_columns"] = self.get_entity_columns(entity)
-        
         entity_vars["has_tabs"] = False
+        entity_vars["grid_items"] = []
         if template_name.endswith("_expand.html"):
-            fks = get_foreign_keys(entity, entity_favorites)
-            tab_group = get_first_tab_group_entity(entity)
-            if tab_group and  len(fks) > 0:
-                altKey = tab_group["fks"][0]
-                detail_entity = self.get_entity(tab_group["resource"])
-                direction = tab_group["direction"]
-                tab_name, tab_vars = self.get_tab_attrs(detail_entity, entity, tab_group)
-                entity_vars['tableAttr'] = f'{tab_group["resource"]}Table'
-                tab_vars["table_columns"] = self.get_entity_columns(detail_entity)
-                col_vars = self.get_entity_vars(detail_entity)
-                tab_vars |= col_vars
-                tab_vars["tabTitle"] = tab_name
-                tab_vars ["tableAttr"] = f'{tab_group["resource"]}Table'
-                tab_vars ["service"] = tab_group["resource"]
-                tab_vars ["entity"] = tab_group["resource"]
-                tab_vars["parentKeys"] =  gen_parent_keys(direction, altKey, parent_entity=entity)
-                entity_vars["single_tab_panel"] = self.single_tab_panel.render(tab_vars)
-                entity_vars["has_tabs"] = True
+            self.gen_expanded_template(entity, entity_favorites, entity_vars)
+
         return template.render(entity_vars)
+
+    def gen_expanded_template(self, entity, entity_favorites, entity_vars):
+        fks = get_foreign_keys(entity, entity_favorites)
+        tab_group = get_first_tab_group_entity(entity)
+        if tab_group and len(fks) > 0:
+            altKey = tab_group["fks"][0]
+            detail_entity = self.get_entity(tab_group["resource"])
+            direction = tab_group["direction"]
+            tab_name, tab_vars = self.get_tab_attrs(detail_entity, entity, tab_group)
+            entity_vars['tableAttr'] = f'{tab_group["resource"]}Table'
+            tab_vars["table_columns"] = self.get_entity_columns(detail_entity)
+            col_vars = self.get_entity_vars(detail_entity)
+            tab_vars |= col_vars
+            tab_vars["tabTitle"] = tab_name
+            tab_vars ["tableAttr"] = f'{tab_group["resource"]}Table'
+            tab_vars ["service"] = tab_group["resource"]
+            tab_vars ["entity"] = tab_group["resource"]
+            tab_vars["parentKeys"] =  gen_parent_keys(direction, altKey, parent_entity=entity)
+            entity_vars["single_tab_panel"] = self.single_tab_panel.render(tab_vars)
+            entity_vars["has_tabs"] = True
 
     def get_entity_columns(self, entity):
         row_cols = []

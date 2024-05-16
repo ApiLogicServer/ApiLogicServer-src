@@ -60,6 +60,7 @@ entities:
       'p', upper right).<br><br> But, logout and login as 'u1' -- only 1 is shown,
       per <a target="_blank" href="https://apilogicserver.github.io/Docs/Security-Authorization/">authorization</a>.
       <br><br>
+    mode: dialog  
     new_template: new_template.html
     primary_key:
     - Id
@@ -271,6 +272,7 @@ entities:
     detail_template: detail_template.html
     favorite: Id
     home_template: home_template.html
+    exclude: true
     new_template: new_template.html
     primary_key:
     - Id
@@ -708,6 +710,7 @@ entities:
     detail_template: detail_template.html
     favorite: LastName
     home_template: home_template.html
+    exclude: true
     new_template: new_template.html
     primary_key:
     - Id
@@ -803,6 +806,7 @@ entities:
     detail_template: detail_template.html
     favorite: country
     home_template: home_template.html
+    mode: dialog
     new_template: new_template.html
     primary_key:
     - country
@@ -1001,7 +1005,7 @@ entities:
       type: VARCHAR(8000)
     detail_template: detail_template.html
     favorite: Id
-    home_template: home_template.html
+    home_template: home_template_expand.html
     info_show: <h1>Tour</h1> <h3>Automatic Joins</h3> <ul> <li> Observe the Product
       Name in the Order Detail list.</li> <li> In the <a target="_blank" href="https://apilogicserver.github.io/Docs/Sample-Database/">sample
       database,</a> the Order Detail is related to the Product by <span style="font-family:'Courier
@@ -1283,6 +1287,7 @@ entities:
     detail_template: detail_template.html
     favorite: RegionDescription
     home_template: home_template.html
+    mode: dialog
     new_template: new_template.html
     primary_key:
     - Id
@@ -1319,6 +1324,7 @@ entities:
     detail_template: detail_template.html
     favorite: CompanyName
     home_template: home_template.html
+    mode: dialog
     new_template: new_template.html
     primary_key:
     - Id
@@ -1436,6 +1442,7 @@ entities:
     detail_template: detail_template.html
     favorite: CompanyName
     home_template: home_template.html
+    mode: dialog
     new_template: new_template.html
     primary_key:
     - Id
