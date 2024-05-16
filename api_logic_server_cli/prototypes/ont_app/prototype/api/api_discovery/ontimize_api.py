@@ -303,7 +303,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str):
             #MAY need to do upper case compares
             if name in columns:
                 list_of_columns.append(name)
-        print(list_of_columns)
+                
         from api.system.custom_endpoint import CustomEndpoint
         request.method = 'GET'
         r = CustomEndpoint(model_class=api_clz, fields=list_of_columns, filter_by=filter)

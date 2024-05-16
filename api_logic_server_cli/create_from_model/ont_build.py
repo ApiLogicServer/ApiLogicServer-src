@@ -81,7 +81,7 @@ class OntBuilder(object):
         self.use_keycloak=True # True this will use different templates - defaults to basic auth
         self.edit_on_mode = "click" # edit
         self.include_translation = False
-        self.row_height = "small"
+        self.row_height = "medium"
 
         self.title_translation = []
         self.languages = ["en", "es"] # "fr", "it", "de" etc - used to create i18n json files
@@ -91,6 +91,7 @@ class OntBuilder(object):
         self.o_text_input = self.get_template("o_text_input.html")
         self.o_combo_input = self.get_template("o_combo_input.html")
         self.tab_panel = self.get_template("tab_panel.html")
+        self.single_tab_panel = self.get_template("single_tab_panel.html")
         self.app_module = self.get_template("app.module.jinja")
         self.table_cell_render = self.get_template("table_cell_render.html")
         self.detail_route_template = self.get_template("detail_route_template.jinja")
@@ -200,7 +201,7 @@ class OntBuilder(object):
             if  each_entity.get("exclude", "false") == "true":
                 continue
             home_template_name = self.find_template(each_entity, "home_template","home_template.html")
-            home_template = self.load_home_template(home_template_name, each_entity)
+            home_template = self.load_home_template(home_template_name, each_entity, entity_favorites)
             home_scss = self.get_template("home.scss").render()
             entity_name = each_entity_name
             ts = self.load_ts("home_template.jinja", each_entity)
@@ -375,20 +376,42 @@ class OntBuilder(object):
         entity_vars = self.get_entity_vars(entity)
         return template.render(entity_vars)
 
-    def load_home_template(self, template_name: str, entity: any, settings: any = None) -> str:
+    def load_home_template(self, template_name: str, entity: any, entity_favorites: any) -> str:
         template = self.get_template(template_name)
         entity_vars = self.get_entity_vars(entity)
 
+        entity_vars["row_columns"] = self.get_entity_columns(entity)
+        
+        entity_vars["has_tabs"] = False
+        if template_name.endswith("_expand.html"):
+            fks = get_foreign_keys(entity, entity_favorites)
+            tab_group = get_first_tab_group_entity(entity)
+            if tab_group and  len(fks) > 0:
+                altKey = tab_group["fks"][0]
+                detail_entity = self.get_entity(tab_group["resource"])
+                direction = tab_group["direction"]
+                tab_name, tab_vars = self.get_tab_attrs(detail_entity, entity, tab_group)
+                entity_vars['tableAttr'] = f'{tab_group["resource"]}Table'
+                tab_vars["table_columns"] = self.get_entity_columns(detail_entity)
+                col_vars = self.get_entity_vars(detail_entity)
+                tab_vars |= col_vars
+                tab_vars["tabTitle"] = tab_name
+                tab_vars ["tableAttr"] = f'{tab_group["resource"]}Table'
+                tab_vars ["service"] = tab_group["resource"]
+                tab_vars ["entity"] = tab_group["resource"]
+                tab_vars["parentKeys"] =  gen_parent_keys(direction, altKey, parent_entity=entity)
+                entity_vars["single_tab_panel"] = self.single_tab_panel.render(tab_vars)
+                entity_vars["has_tabs"] = True
+        return template.render(entity_vars)
+
+    def get_entity_columns(self, entity):
         row_cols = []
         for column in entity.columns:
             if column.get("exclude", "false") == "true":
                 continue
             rv = self.gen_home_columns(entity, entity, column)
             row_cols.append(rv)
-
-        entity_vars["row_columns"] = row_cols
-
-        return template.render(entity_vars)
+        return row_cols
 
     def get_entity_vars(self, entity):
         favorite =  self.find_template(entity,"favorite","")
@@ -640,8 +663,9 @@ class OntBuilder(object):
     def get_tab_attrs(self, entity, parent_entity, fk_tab):
         direction = fk_tab["direction"]
         tab_name = fk_tab["resource"]
-        favorite = getattr(entity,"favorite")
+        favorite = getattr(entity,"favorite") 
         if direction == "tomany":
+            fks = fk_tab["attrs"][0]
             tab_vars = {
                         'resource': fk_tab["resource"],
                         'resource_name': fk_tab["name"],
@@ -652,7 +676,7 @@ class OntBuilder(object):
                         'visibleColumn': fk_tab["visibleColumn"],
                         "tab_columns": fk_tab["visibleColumn"],
                         "tabTitle": f'{fk_tab["resource"].upper()}-{fk_tab["attrs"][0]}',
-                        "parentKeys": gen_parent_keys(fk_tab, entity),
+                        "parentKeys": gen_parent_keys(direction,fks, parent_entity=parent_entity),
                         "favorite": getattr(entity,"favorite")
                     }
         else:
@@ -665,6 +689,8 @@ class OntBuilder(object):
             tab_entity = self.get_entity(tab_name)
             favorite = getattr(tab_entity,"favorite")
             fks = fk_tab["fks"][0]
+            title= self.find_template(parent_entity , "favorite", tab_name)
+            direction = fk_tab["direction"]
             tab_vars = {
                 "attr": fks,
                 "title": fks,
@@ -674,7 +700,7 @@ class OntBuilder(object):
                 "columns":  fks,
                 "favorite": favorite,
                 "keys": fks,
-                "parentKeys": gen_parent_keys(fk_tab, parent_entity=parent_entity)
+                "parentKeys": gen_parent_keys(direction, fks, parent_entity=parent_entity)
             }
         return tab_name,tab_vars
     
@@ -843,7 +869,13 @@ def make_sql_types(primaryKeys, columns) -> str:
                 sep = ";"
     return result
             
-        
+def get_first_tab_group_entity(entity: any):
+    if hasattr(entity, "tab_groups"):
+        for tg in entity.tab_groups:
+            if tg["direction"] == "tomany":
+                return tg
+    
+    return None       
 def calculate_template(column):
     col_type = column.type.upper().split("(")[0]
     name = column.name.upper()
@@ -961,15 +993,9 @@ def gen_app_service_config(entities: any) -> str:
     t = t.render(var)
     return t
 
-def gen_parent_keys(fk_tab, parent_entity):
-    direction = fk_tab["direction"]
+def gen_parent_keys(direction, altKey, parent_entity:any):
     pkey = parent_entity["primary_key"][0]
-    if direction == "tomany":
-        for attr in fk_tab["attrs"]:
-            return f'{attr}:{pkey}'
-    else:
-        for attr in fk_tab["fks"]:
-            return f'{pkey}:{attr}'
+    return f'{altKey}:{pkey}' if direction == "tomany" else f'{pkey}:{altKey}'
 
 def find_favorite(entity_favorites: any, entity_name:str):
     for entity_favorite in entity_favorites: 
