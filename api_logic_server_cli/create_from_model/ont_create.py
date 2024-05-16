@@ -209,19 +209,17 @@ class OntCreator(object):
             col_type = column.type.upper().split("(")[0]
             if col_type in ["DECIMAL","NUMERIC"]:
                 rv = "currency"  
-            elif col_type in ["DOUBLE", "FLOAT"]:
+            elif col_type in ["DOUBLE", "FLOAT", "REAL"]:
                 rv = "real"  
-            elif col_type == "DATE":
+            elif col_type in ["DATE","DATETIME","TIME","TIMESTAMP"]:
                 rv = "date"  
             elif col_type == "FILE":
                 rv = "file"  
-            elif col_type == "IMAGE":
+            elif col_type in ["INTEGER","TININT","SMALLINT","BIGINT","MEDIUMINT","INT","INT2","INT4"]:
                 rv = "integer"  
             elif col_type == "IMAGE":
                 rv = "image"  
-            elif col_type == "TEXTAREA":
-                rv = "textarea"  
-            elif col_type in ["BLOB","CLOB","VARBINARY"]:
+            elif col_type in ["BLOB","CLOB","VARBINARY","BINARY","BYTEA","LONGBLOB","MEDIUMBLOB","TINYBLOB"]:
                 rv = "textarea"
             else:
                 rv = "text"  

@@ -43,7 +43,7 @@ def parsePayload(payload: str):
     _filter = parseFilter(payload.get("filter", {}), sqltypes)
     columns: list = payload.get("columns") or []
     offset: int = payload.get("offset") or 0
-    pagesize: int = payload.get("pageSize") or 75
+    pagesize: int = payload.get("pageSize") or 100
     orderBy: list = payload.get("orderBy") or []
     data = payload.get("data", None)
 
