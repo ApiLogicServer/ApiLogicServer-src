@@ -105,6 +105,20 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
+            "name": "API Logic Server Run (run project from manager)",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/${input:runProjectName}",
+            "env": {
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "program": "api_logic_server_run.py",
+            "redirectOutput": true,
+            "console": "integratedTerminal"
+        },
+        {
             "name": "ApiLogicServer Create Tutorial",
             "type": "debugpy",
             "request": "launch",
@@ -179,6 +193,12 @@
             "default": "sample_ai"
         },
         {
+            "id": "runProjectName",
+            "type": "promptString",
+            "description": "Project Name (folder) to run",
+            "default": "samples/sample"
+        },
+        {
             "id": "inputGenaiProjectName",
             "type": "promptString",
             "description": "Project Name (will create directory with this name)",
@@ -189,32 +209,6 @@
             "type": "promptString",
             "description": "Database URL (SQLAlchemy URI)",
             "default": "sqlite:///sample_ai.sqlite"
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Install Ontimize (npm install)",
-            "cwd": "${workspaceFolder}/ui/ontimize",
-            "runtimeExecutable": "npm",
-            "runtimeArgs": ["install"],
-            "console": "integratedTerminal"
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Start Ontimize (npm start)",
-            "cwd": "${workspaceFolder}/ui/ontimize",
-            "runtimeExecutable": "npm",
-            "runtimeArgs": ["start"],
-            "port": 4299,
-            "restart": true,
-            "timeout": 30000,
-            "protocol": "inspector",
-            "justMyCode": false,
-            "console": "integratedTerminal",
-            "env": {
-                "NODE_ENV": "development"
-            }
         }
     ]
   }
