@@ -387,23 +387,24 @@ class OntBuilder(object):
 
         return template.render(entity_vars)
 
-    def gen_expanded_template(self, entity, entity_favorites, entity_vars):
-        fks = get_foreign_keys(entity, entity_favorites)
-        tab_group = get_first_tab_group_entity(entity)
+    def gen_expanded_template(self, parent_entity, entity_favorites, entity_vars):
+        fks = get_foreign_keys(parent_entity, entity_favorites)
+        tab_group = get_first_tab_group_entity(parent_entity)
         if tab_group and len(fks) > 0:
             altKey = tab_group["fks"][0]
             detail_entity = self.get_entity(tab_group["resource"])
             direction = tab_group["direction"]
-            tab_name, tab_vars = self.get_tab_attrs(detail_entity, entity, tab_group)
+            resource = tab_group["resource"]
+            tab_name, tab_vars = self.get_tab_attrs(detail_entity, parent_entity, tab_group)
             entity_vars['tableAttr'] = f'{tab_group["resource"]}Table'
             tab_vars["table_columns"] = self.get_entity_columns(detail_entity)
             col_vars = self.get_entity_vars(detail_entity)
             tab_vars |= col_vars
             tab_vars["tabTitle"] = tab_name
             tab_vars ["tableAttr"] = f'{tab_group["resource"]}Table'
-            tab_vars ["service"] = tab_group["resource"]
-            tab_vars ["entity"] = tab_group["resource"]
-            tab_vars["parentKeys"] =  gen_parent_keys(direction, altKey, parent_entity=entity)
+            tab_vars ["service"] = resource
+            tab_vars ["entity"] = resource
+            tab_vars["parentKeys"] =  gen_parent_keys(direction, altKey, parent_entity=parent_entity)
             entity_vars["single_tab_panel"] = self.single_tab_panel.render(tab_vars)
             entity_vars["has_tabs"] = True
 
@@ -473,7 +474,8 @@ class OntBuilder(object):
         col_var = self.get_column_attrs(column)
         if getattr(entity,"tab_groups",None) != None:
                 for tg in entity["tab_groups"]:
-                    if tg["direction"] == "toone" and column.name in tg["fks"] and column.name != "Id":
+                    exclude = tg.get("exclude", "false") == "true"
+                    if tg["direction"] == "toone" and column.name in tg["fks"] and column.name != "Id" and not exclude:
                         tab_name, tab_var = self.get_tab_attrs(entity=entity, parent_entity=parent_entity, fk_tab=tg)
                         return self.table_cell_render.render(tab_var)
                         
@@ -535,7 +537,8 @@ class OntBuilder(object):
         name = column["label"] if  hasattr(column, "label") and column.label != DotMap() else column["name"]
         self.add_title(column["name"], name)
         for fk in fks:
-            if column.name in fk["attrs"]  and fk["direction"] == "toone" and len(fk["attrs"]) == 1:
+            exclude = fk.get("exclude", "false") == "true"
+            if column.name in fk["attrs"]  and fk["direction"] == "toone" and len(fk["attrs"]) == 1 and not exclude:
                 fk_entity = self.get_entity(fk["resource"])
                 return self.gen_pick_list_col(col_var, fk, entity)
         return self.gen_field_template(column, col_var)
@@ -593,7 +596,8 @@ class OntBuilder(object):
         self.add_title(column["name"], name)
         for fk in fks:
             # TODO - not sure how to handle multiple fks attrs - so only support 1 for now
-            if column.name in fk["attrs"] and fk["direction"] == "toone" and len(fk["attrs"]) == 1:
+            exclude = fk.get("exclude", "false") == "true"
+            if column.name in fk["attrs"] and fk["direction"] == "toone" and len(fk["attrs"]) == 1 and not exclude:
                 return self.gen_pick_list_col(col_var, fk, entity)
         return self.gen_field_template(column, col_var)
 
@@ -667,6 +671,9 @@ class OntBuilder(object):
         direction = fk_tab["direction"]
         tab_name = fk_tab["resource"]
         favorite = getattr(entity,"favorite") 
+        exclude = fk_tab.get("exclude", "false") == "true"
+        if exclude:
+            return tab_name, {}
         if direction == "tomany":
             fks = fk_tab["attrs"][0]
             tab_vars = {
@@ -875,7 +882,8 @@ def make_sql_types(primaryKeys, columns) -> str:
 def get_first_tab_group_entity(entity: any):
     if hasattr(entity, "tab_groups"):
         for tg in entity.tab_groups:
-            if tg["direction"] == "tomany":
+            exclude = tg.get("exclude", "false") == "true"
+            if tg["direction"] == "tomany" and not exclude:
                 return tg
     
     return None       

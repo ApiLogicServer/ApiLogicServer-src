@@ -1,8 +1,9 @@
 about:
-  date: 3/20/2024
+  date: 5/17/2024
   recent_changes: custom app_model.yaml, api_root, altered Customer/Order/Employee attribute ordering, tab
     captions, info, EmpType, dept emps, defaults, show_when, cascade add, toggles,
-    images, security, login, virtual relns, global filters, no IsCommissioned
+    images, security, login, virtual relns, global filters, no IsCommissioned, add expand template to Order,
+    add mode: dialog and exclude: true for a few tables
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
 authentication:
   endpoint: '{http_type}://{swagger_host}:{port}/api/auth/login'
