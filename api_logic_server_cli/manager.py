@@ -11,6 +11,22 @@ from pathlib import Path
 import api_logic_server_cli.api_logic_server as PR
 
 def create_manager(clean: bool, open_with: str, api_logic_server_path: Path):
+    """Creates Manager at os.getcwd(), including:
+    1. .vscode, readme
+    2. System folder (GenAI sample prompts / responses, others TBD)
+    3. pre-creted samples
+
+    Example, from CLI in directory containing a `venv` (see https://apilogicserver.github.io/Docs/Manager/)
+        $ als start
+
+    Foundation is deep copy from api_logic_server_cli/prototypes/code
+        Bit tricky to find find cli in subdirectories of the lib path for manager run launches
+
+    Args:
+        clean (bool): True means overwrite api_logic_server_cli/prototypes/code
+        open_with (str): code or pycharm (only code for now)
+        api_logic_server_path (Path): location of api_logic_server install
+    """
     
     log = logging.getLogger(__name__)
     project = PR.ProjectRun(command= "start", project_name='ApiLogicServer', db_url='sqlite', execute=False)
