@@ -95,7 +95,7 @@
 			}
 		],
 		"sqltools.useNodeRuntime": true,
-		"workbench.preferredDarkColorTheme": "Dainty – Pivot",
+		"workbench.preferredDarkColorTheme": "Darcula Pycharm with Light GUI",
 		"workbench.preferredLightColorTheme": "IntelliJ IDEA New UI",
 		"workbench.colorTheme": "IntelliJ IDEA New UI",
 		"search.exclude": {
