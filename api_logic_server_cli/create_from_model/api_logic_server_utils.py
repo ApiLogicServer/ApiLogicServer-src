@@ -113,50 +113,51 @@ def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "R
         copyfile(src = from_doc_file_path, dst = to_file)
     
     # now remove the !!, and unindent (mkdocs features fail in a readme)
-    with open(str(to_file), "r") as readme_file:
-        readme_lines_mkdocs = readme_file.readlines()    
-    readme_lines_md = []
-    in_mkdocs_block = False
-    db_line_num = 0
-    for each_line in readme_lines_mkdocs:
-        db_line_num += 1
-        if "ai-driven-automation-video" in each_line:
-            debug_str = "Good Breakpoint"
-        if "from docsite" in each_line:
-            each_line = each_line.replace("from docsite", "from docsite, for readme")
-        if each_line.startswith('!!'):
-            in_mkdocs_block = True
-            in_mkdocs_block_with_sections = False
-            if ':bulb:' in each_line:
-                key_takeaway = each_line[7 + each_line.index(':bulb:'): ]
-                key_takeaway = key_takeaway[0: len(key_takeaway)-2]
-                readme_lines_md.append(f"\n&nbsp;\n")
-                readme_lines_md.append(f"**Key Takeways - {key_takeaway}**")
-                readme_lines_md.append(f"\n&nbsp;\n")
-            else:
-                block_header = each_line[16: len(each_line)-2]
-                readme_lines_md.append(f"\n&nbsp;\n")
-                readme_lines_md.append(f"**{block_header}**")
-                readme_lines_md.append(f"\n&nbsp;\n")
-        else:
-            if each_line.startswith('&nbsp;') and in_mkdocs_block:
-                in_mkdocs_block = in_mkdocs_block_with_sections = False
-            if in_mkdocs_block and ("##" in each_line or in_mkdocs_block_with_sections):
-                if len(each_line) >= 4:
-                    each_line = each_line[4:]
-                in_mkdocs_block_with_sections = True
-            each_line = each_line.replace('{:target="_blank" rel="noopener"}', '')
-            if each_line.startswith('![') or each_line.startswith('[!['):
-                if "https://github.com/ApiLogicServer" not in each_line:     # make doc-relative urls absolute...
-                    if "creates-and-runs-video" in each_line:
-                        debug_stop = "good stop"
-                    each_line = each_line.replace('images', 'https://github.com/ApiLogicServer/Docs/blob/main/docs/images')
-                    each_line = each_line.replace('png)', 'png?raw=true)')
+    if to_file.exists():
+        with open(str(to_file), "r") as readme_file:
+            readme_lines_mkdocs = readme_file.readlines()    
+        readme_lines_md = []
+        in_mkdocs_block = False
+        db_line_num = 0
+        for each_line in readme_lines_mkdocs:
+            db_line_num += 1
+            if "ai-driven-automation-video" in each_line:
+                debug_str = "Good Breakpoint"
+            if "from docsite" in each_line:
+                each_line = each_line.replace("from docsite", "from docsite, for readme")
+            if each_line.startswith('!!'):
+                in_mkdocs_block = True
+                in_mkdocs_block_with_sections = False
+                if ':bulb:' in each_line:
+                    key_takeaway = each_line[7 + each_line.index(':bulb:'): ]
+                    key_takeaway = key_takeaway[0: len(key_takeaway)-2]
+                    readme_lines_md.append(f"\n&nbsp;\n")
+                    readme_lines_md.append(f"**Key Takeways - {key_takeaway}**")
+                    readme_lines_md.append(f"\n&nbsp;\n")
                 else:
-                    pass # image is absolute - don't alter
-            readme_lines_md.append(each_line)
-    with open(str(to_file), "w") as readme_file:
-        readme_file.writelines(readme_lines_md)
+                    block_header = each_line[16: len(each_line)-2]
+                    readme_lines_md.append(f"\n&nbsp;\n")
+                    readme_lines_md.append(f"**{block_header}**")
+                    readme_lines_md.append(f"\n&nbsp;\n")
+            else:
+                if each_line.startswith('&nbsp;') and in_mkdocs_block:
+                    in_mkdocs_block = in_mkdocs_block_with_sections = False
+                if in_mkdocs_block and ("##" in each_line or in_mkdocs_block_with_sections):
+                    if len(each_line) >= 4:
+                        each_line = each_line[4:]
+                    in_mkdocs_block_with_sections = True
+                each_line = each_line.replace('{:target="_blank" rel="noopener"}', '')
+                if each_line.startswith('![') or each_line.startswith('[!['):
+                    if "https://github.com/ApiLogicServer" not in each_line:     # make doc-relative urls absolute...
+                        if "creates-and-runs-video" in each_line:
+                            debug_stop = "good stop"
+                        each_line = each_line.replace('images', 'https://github.com/ApiLogicServer/Docs/blob/main/docs/images')
+                        each_line = each_line.replace('png)', 'png?raw=true)')
+                    else:
+                        pass # image is absolute - don't alter
+                readme_lines_md.append(each_line)
+        with open(str(to_file), "w") as readme_file:
+            readme_file.writelines(readme_lines_md)
     pass
 
 
