@@ -35,10 +35,10 @@ Click on the disclosure buttons, below.
 
 <summary> Existing Database - pre-installed demo </summary>
 
-<br>To create a project, **press F5**, or use the CLI (**Terminal > New Terminal**) and try the pre-installed [**Demo**](https://apilogicserver.github.io/Docs/Sample-AI/) (original created from AI using Copilot):
+<br>To create a project, **press F5**, or use the CLI (**Terminal > New Terminal**) and try the pre-installed [**nw**](https://apilogicserver.github.io/Docs/Tutorial/):
 
 ```
-als create --project-name=sample_ai --db-url=sqlite:///sample_ai.sqlite
+als create --project-name=nw --db-url=sqlite:///nw.sqlite
 ```
 
 Then, try your own databases [(db-url examples here)](https://apilogicserver.github.io/Docs/Database-Connectivity/), or experiment with [these Docker databases](https://apilogicserver.github.io/Docs/Database-Docker/).
