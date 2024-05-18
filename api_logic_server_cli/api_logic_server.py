@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.04.16"
+__version__ = "10.04.17"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t05/18/2024 - 10.04.16: default ontomize creation (with security), logic/svc discovery, nw app_model_custom.yaml \n"\
+    "\t05/18/2024 - 10.04.17: default ont creation (w/ security), logic/svc discovery, nw+ app_model_custom.yaml \n"\
     "\t05/04/2024 - 10.04.01: genai w/ restart, logic insertion, use Numeric, genai-cust, pg, 57 \n"\
     "\t04/23/2024 - 10.03.84: Fix error handling for db errors (eg, missing parent) \n"\
     "\t04/22/2024 - 10.03.83: cli issues in create-and-run/run, Oracledb 2.1.12, id fields ok \n"\
@@ -1645,7 +1645,7 @@ from database import <project.bind_key>_models
                 log.debug(" d.  Create Ontimize from models")
                 from api_logic_server_cli.create_from_model.ont_create import OntCreator
                 ont_creator = OntCreator(project = model_creation_services.project)
-                ont_creator.create_application()
+                ont_creator.create_application(show_messages=False)
 
                 if self.project_directory_path.joinpath('ui/app_model_custom.yaml').exists():
                     # eg, nw project contains this for demo purposes
@@ -1654,7 +1654,7 @@ from database import <project.bind_key>_models
 
                 from api_logic_server_cli.create_from_model.ont_build import OntBuilder
                 ont_creator = OntBuilder(project = model_creation_services.project)
-                ont_creator.build_application()
+                ont_creator.build_application(show_messages=False)
 
         if self.open_with != "" and 'create' == self.command:  # open project with open_with (vscode, charm, atom) -- NOT for docker!!
             start_open_with(project = self)

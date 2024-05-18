@@ -162,13 +162,14 @@ class OntBuilder(object):
         return self.env.get_template(template_name)
 
     
-    def build_application(self):
+    def build_application(self, show_messages: bool = True):
         """main driver - loop through add_model.yaml, ont app"""
-        log.debug(f"OntBuild Running at {os.getcwd()}")
+        if show_messages:
+            log.debug(f"OntBuild Running at {os.getcwd()}")
 
         app_path = self.app_path
         if not os.path.exists(app_path):
-            log.info(f"\nApp {self.app} not present in project - no action taken\n")
+            log.error(f"\nApp {self.app} not present in project - no action taken\n")
             exit(1)
 
         app_model_path = app_path.joinpath("app_model.yaml")
@@ -570,6 +571,7 @@ class OntBuilder(object):
         col_var["label"] =  col_var["title"] # "{{ '" + col_var["title"] + "' | oTranslate }}",
         #'{{ ' + f'"{col_var["name"]}"' + '| oTranslate }}'
         return col_var
+    
     def load_detail_template(self, template_name: str, entity: any, favorites: any) -> str:
         """
         This is a detail display (detail) 
