@@ -63,7 +63,7 @@ class OntCreator(object):
         self.admin_app = admin_app
         self.app = app
 
-    def create_application(self):
+    def create_application(self, show_messages: bool = True):
         """ Iterate over ui/admin/admin.yml, and create app...
 
         1. ui/<app>, and 
@@ -72,7 +72,8 @@ class OntCreator(object):
         User can edit this, then issue ApiLogicServer app-build
 
         """
-        log.debug(f"OntCreate Running at {os.getcwd()}")
+        if show_messages:
+            log.debug(f"OntCreate Running at {os.getcwd()}")
 
         self.project.use_model = "."
         model_creation_services = ModelCreationServices(project = self.project,   # load models (user db, not auth)
@@ -143,7 +144,8 @@ class OntCreator(object):
         with open(app_model_path, 'w') as app_model_file:
             yaml.dump(app_model_out_dict, app_model_file)
         pass
-        log.info("\nEdit the add_model.yaml as desired, and ApiLogicServer app-build\n")
+        if show_messages:
+            log.info("\nEdit the add_model.yaml as desired, and ApiLogicServer app-build\n")
 
 
     def create_model_entity(self, each_resource) -> DotMap:
@@ -187,7 +189,10 @@ class OntCreator(object):
                         break
                 #assert resource_attribute is not None, \
                 if resource_attribute is None:
-                    log.error(f"Sys Err - unknown resource attr: {each_resource_name}.{each_attribute.name}")
+                    if self.project.nw_db_status == "":
+                        log.error(f"Sys Err - unknown resource attr: {each_resource_name}.{each_attribute.name}")
+                    else:
+                        pass  # nw changed the model, ok to ignore
                     each_attribute.type = "text"
                     each_attribute.template = "text"
                 else:
