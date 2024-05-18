@@ -85,7 +85,7 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "ApiLogicServer Create (CLI)",
+            "name": "ApiLogicServer Create",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
@@ -119,7 +119,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "ApiLogicServer Create Tutorial",
+            "name": "ApiLogicServer Create (nw) sample_nocust",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
@@ -132,13 +132,13 @@
                 "OPT_LOCKING": "optional"},
             "justMyCode": false,
             "args": [ "create",
-                "--project-name=ApiLogicProject",
+                "--project-name=samples/sample_nocust",
                 "--db-url=nw"],
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "ApiLogicServer Create Tutorial With Customizations",
+            "name": "ApiLogicServer Create (nw) sample With Customizations",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
@@ -151,7 +151,7 @@
                 "OPT_LOCKING": "optional"},
             "justMyCode": false,
             "args": [ "create",
-                "--project-name=ApiLogicProject_customized",
+                "--project-name=samples/sample",
                 "--db-url=nw+"],
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
@@ -190,7 +190,7 @@
             "id": "inputProjectName",
             "type": "promptString",
             "description": "Project Name (will create directory with this name)",
-            "default": "sample_ai"
+            "default": "nw"
         },
         {
             "id": "runProjectName",
@@ -208,7 +208,7 @@
             "id": "inputDBURL",
             "type": "promptString",
             "description": "Database URL (SQLAlchemy URI)",
-            "default": "sqlite:///sample_ai.sqlite"
+            "default": "sqlite:///nw.sqlite"
         }
     ]
   }

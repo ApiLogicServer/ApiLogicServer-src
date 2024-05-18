@@ -22,6 +22,7 @@ The `samples` folder has pre-created important projects you will want to review 
 ```bash
 ApiLogicServer create --project-name=tutorial --db-url=
 ApiLogicServer create --project-name=sample --db-url=nw+
+ApiLogicServer create --project-name=sample_nocust --db-url=nw
 ```
 </details>
 </details>

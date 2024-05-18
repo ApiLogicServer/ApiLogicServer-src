@@ -210,8 +210,8 @@ def get_abs_db_url(msg, project: Project, is_auth: bool = False):
     elif url_to_process == "nw--":                                           # nw:           unused - avoid
         rtn_abs_db_url = f'sqlite:///{str(project.api_logic_server_dir_path.joinpath("database/nw.sqlite"))}'
         rtn_nw_db_status = "nw--"
-    elif url_to_process == "nw+":                                           # nw-gold-plus: next version
-        rtn_abs_db_url = f'sqlite:///{str(project.api_logic_server_dir_path.joinpath("database/nw-gold-plus.sqlite"))}'
+    elif url_to_process in ["nw+", "sqlite:///nw+.sqlite"]:                  # nw-gold-plus: with customizations
+        rtn_abs_db_url = f'sqlite:///{str(project.api_logic_server_dir_path.joinpath("database/nw-gold.sqlite"))}'
         rtn_nw_db_status = "nw+"
         log.debug(f'{msg} from: {rtn_abs_db_url}')
     elif url_to_process == "auth" or url_to_process == "authorization" or url_to_process == "add-auth":
