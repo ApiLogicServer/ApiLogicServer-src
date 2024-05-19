@@ -119,7 +119,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "ApiLogicServer Create (nw) sample_nocust",
+            "name": "ApiLogicServer Create nw_sample_nocust",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
@@ -132,13 +132,13 @@
                 "OPT_LOCKING": "optional"},
             "justMyCode": false,
             "args": [ "create",
-                "--project-name=samples/sample_nocust",
+                "--project-name=samples/nw_sample_nocust",
                 "--db-url=nw"],
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "ApiLogicServer Create (nw) sample With Customizations",
+            "name": "ApiLogicServer Create nw_sample With Customizations",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
@@ -151,7 +151,7 @@
                 "OPT_LOCKING": "optional"},
             "justMyCode": false,
             "args": [ "create",
-                "--project-name=samples/sample",
+                "--project-name=samples/nw_sample",
                 "--db-url=nw+"],
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
@@ -196,7 +196,7 @@
             "id": "runProjectName",
             "type": "promptString",
             "description": "Project Name (folder) to run",
-            "default": "samples/sample"
+            "default": "samples/nw"
         },
         {
             "id": "inputGenaiProjectName",
