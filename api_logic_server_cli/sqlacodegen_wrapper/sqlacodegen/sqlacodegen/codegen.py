@@ -692,15 +692,15 @@ class CodeGenerator(object):
             else:
                 debug_stop = "found non-unique index"
         
-        if has_unique_constraint:
+        if has_unique_constraint:    # notset 0, debug 10, info 20, warn 30, error 40, critical 50
             if self.model_creation_services.project.infer_primary_key:
-                log.debug(f'\t\t .. .. .. ..Create {table.name} as class (no primary_key, but --infer_primary_key')
+                log.warn(f'\t\t .. .. .. ..Create {table.name} as class (no primary_key, but --infer_primary_key')
                 return True 
             else:
-                log.debug(f'\t\t .. .. .. ..Create {table.name} as table, because no primary key; has unique key, but --infer_primary_key is not set')
+                log.warn(f'\t\t .. .. .. ..Create {table.name} as table, because no primary key; has unique key, but --infer_primary_key is not set')
                 return False
 
-        log.info(f"\t\t .. .. .. ..Create {table.name} as table, because no Unique Constraint   ")
+        log.warn(f"\t\t .. .. .. ..Create {table.name} as table, because no Unique Constraint   ")
         return False
 
 

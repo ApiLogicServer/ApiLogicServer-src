@@ -44,6 +44,9 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path):
     if to_dir_check.exists() and not clean:
         log.info(f"    Using manager at: {to_dir}\n\n")
     else:
+        codegen_logger = logging.getLogger('sqlacodegen_wrapper.sqlacodegen.sqlacodegen.codegen')
+        codegen_logger_save_level= codegen_logger.level
+        codegen_logger.setLevel(logging.ERROR)
         if to_dir_check.exists():
             log.info(f"    Cleaning manager at: {to_dir}\n\n")
         copied_path = shutil.copytree(src=from_dir, dst=to_dir, dirs_exist_ok=True)
@@ -56,8 +59,9 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path):
                 )
         tutorial_project = tutorial_project.tutorial(msg="Creating:") ##, create='tutorial')
 
-        samples_project = PR.ProjectRun(command= "create", project_name='samples/sample', db_url='nw+')
-        samples_project = PR.ProjectRun(command= "create", project_name='samples/sample_nocust', db_url='nw')
+        samples_project = PR.ProjectRun(command= "create", project_name='samples/nw_sample', db_url='nw+')
+        samples_project = PR.ProjectRun(command= "create", project_name='samples/nw_sample_nocust', db_url='nw')
+        codegen_logger.setLevel(codegen_logger_save_level)
     pass
 
     set_defaultInterpreterPath = False

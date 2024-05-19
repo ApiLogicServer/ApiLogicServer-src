@@ -38,7 +38,13 @@ Click on the disclosure buttons, below.
 <br>To create a project, **press F5**, or use the CLI (**Terminal > New Terminal**) and try the pre-installed [**nw**](https://apilogicserver.github.io/Docs/Tutorial/):
 
 ```
-als create --project-name=nw --db-url=sqlite:///nw.sqlite
+als create --project-name=nw_sample_nocust --db-url=sqlite:///nw.sqlite
+```
+
+Or, see it [with customizations](https://apilogicserver.github.io/Docs/IDE-Customize/):
+
+```
+als create --project-name=nw_sample --db-url=sqlite:///nw+.sqlite
 ```
 
 Then, try your own databases [(db-url examples here)](https://apilogicserver.github.io/Docs/Database-Connectivity/), or experiment with [these Docker databases](https://apilogicserver.github.io/Docs/Database-Docker/).
