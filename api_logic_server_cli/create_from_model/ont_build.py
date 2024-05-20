@@ -564,7 +564,8 @@ class OntBuilder(object):
             ),
             "type": column.type if hasattr(column,"type") else "INTEGER",
             "info": column.info if hasattr(column,"info") and column.into != DotMap() else "",
-            "tooltip": column.tooltip if hasattr(column,"tooltip") and column.tooltip != DotMap() else column.name 
+            "tooltip": column.tooltip if hasattr(column,"tooltip") and column.tooltip != DotMap() else column.name,
+            "enabled":  column.enabled if hasattr(column, "enabled") and column.enabled != DotMap() else "yes"
         } 
         col_var |= self.global_values
                 #{entity.name}.{col_var["title"]}
