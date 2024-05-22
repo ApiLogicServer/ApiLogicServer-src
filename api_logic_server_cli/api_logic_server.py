@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.04.21"
+__version__ = "10.04.22"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t05/20/2024 - 10.04.21: default ont creation (w/ security), logic/svc discovery, nw+ app_model_custom.yaml \n"\
+    "\t05/22/2024 - 10.04.22: default ont creation (w/ security), logic/svc discovery, nw+ app_model_custom.yaml \n"\
     "\t05/04/2024 - 10.04.01: genai w/ restart, logic insertion, use Numeric, genai-cust, pg, 57 \n"\
     "\t04/23/2024 - 10.03.84: Fix error handling for db errors (eg, missing parent) \n"\
     "\t04/22/2024 - 10.03.83: cli issues in create-and-run/run, Oracledb 2.1.12, id fields ok \n"\
@@ -1181,8 +1181,12 @@ from database import <project.bind_key>_models
 
         if create_utils.does_file_contain(search_for="SECURITY_ENABLED = True  #",
                                           in_file=f'{self.project_directory}/config/config.py'):
-            log.info(f'\nAlready present in config/config.py - no action taken\n')
-            return
+            if create_utils.does_file_contain(search_for="sql.auth_provider import Authentication_Provider",
+                                          in_file=f'{self.project_directory}/config/config.py'):
+                pass  # ok to go from sql -> keycloak
+            else:
+                log.info(f'\nAlready present in config/config.py - no action taken\n')
+                return
         
         if self.auth_provider_type == 'keycloak':
             log.debug("\n==================================================================")
