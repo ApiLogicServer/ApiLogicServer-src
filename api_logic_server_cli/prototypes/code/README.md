@@ -25,7 +25,23 @@ You are in the [API Logic Server Manager](https://apilogicserver.github.io/Docs/
 
 &nbsp;
 
+## Using GenAI Microservice Automation
+
 [![GenAI Automation](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/sample-ai/copilot/genai-automation-video.png?raw=true)](https://www.youtube.com/watch?v=LSh7mqGiT0k&t=5s "Microservice Automation")
+
+&nbsp;
+
+## What Is GenAI Microservice Automation
+
+[![Architecture](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/Architecture-What-Is.png?raw=true)](https://apilogicserver.github.io/Docs/Architecture-What-Is/#runtimes-and-cli)
+
+&nbsp;
+
+## Modern Scalable Runtime Architecture
+
+[![Architecture - Runtime](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/Architecture-Runtime-Stack.png?raw=true)](https://apilogicserver.github.io/Docs/Architecture-What-Is/#key-runtime-components)
+
+&nbsp;
 
 </details>
 
