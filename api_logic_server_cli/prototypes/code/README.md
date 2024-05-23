@@ -17,6 +17,17 @@ You are in the [API Logic Server Manager](https://apilogicserver.github.io/Docs/
 2. Or, use the Run/Debug Entry: `API Logic Server Run (run project from manager)`
 
 </details>
+</br>
+
+<details markdown>
+
+<summary>What is GenAI Microservice Automation </summary>
+
+&nbsp;
+
+[![GenAI Automation](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/sample-ai/copilot/genai-automation-video.png?raw=true)](https://www.youtube.com/watch?v=LSh7mqGiT0k&t=5s "Microservice Automation")
+
+</details>
 
 &nbsp;
 
