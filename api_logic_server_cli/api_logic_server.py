@@ -15,7 +15,7 @@ Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 __version__ = "10.04.22"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t05/22/2024 - 10.04.22: default ont creation (w/ security), logic/svc discovery, nw+ app_model_custom.yaml \n"\
+    "\t05/22/2024 - 10.04.23: default ont creation (w/ security), logic/svc discovery, nw+ app_model_custom.yaml \n"\
     "\t05/04/2024 - 10.04.01: genai w/ restart, logic insertion, use Numeric, genai-cust, pg, 57 \n"\
     "\t04/23/2024 - 10.03.84: Fix error handling for db errors (eg, missing parent) \n"\
     "\t04/22/2024 - 10.03.83: cli issues in create-and-run/run, Oracledb 2.1.12, id fields ok \n"\
@@ -1638,7 +1638,7 @@ from database import <project.bind_key>_models
 
         final_project_fixup("4. Final project fixup", self)
         if gen_ai is not None:
-            gen_ai.insert_logic_into_declare_logic()
+            gen_ai.insert_logic_into_created_project()
 
         if (self.auth_provider_type != '' or self.nw_db_status in ["nw", "nw+"]) and self.command != "add_db":
             self.add_auth("\nApiLogicProject customizable project created.  \nAdding Security:")

@@ -1,12 +1,11 @@
 # Quick Start
 
-For **VSCode** Users, you are ready to run:
+**Microservice Automation Complete -- run to verify:** for **VSCode** users:
 1. `Press F5 to Run` (your venv is defaulted)  
-2. Disable the startup message by renaming `.vscode/tasks.json`
 
-For **other IDEs,** please follow the [Setup and Run](#1-setup-and-run) procedure, below.
+&emsp;&emsp;&emsp;&emsp;For **other IDEs,** please follow the [Setup and Run](#1-setup-and-run) procedure, below.
 
-> Tip: create the sample app for customization examples: `ApiLogicServer create --project_name=ApiLogicProject --db_url=`
+> Tip: create the sample app for customization examples: `ApiLogicServer create --project-name=nw_sample --db_url=nw+`
 
 &nbsp;
 
