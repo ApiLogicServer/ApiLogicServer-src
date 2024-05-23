@@ -8,12 +8,26 @@ import create_from_model.api_logic_server_utils as utils
 log = logging.getLogger(__name__)
 
 class GenAI(object):
+    """
+    Create project from genai prompt.  Called from api_logic_server#create_project() -- main driver
+
+    __init__() 
+    
+    1. runs ChatGPT to create model: system/genai/temp/chatgpt_original.txt
+    2. adds prompt logic as comments into model: self.genai_get_logic() & genai_write_model_file()
+    3. write to mgr: system/genai/temp/
+
+    insert_logic_into_declare_logic() - later called to merge logic into declare_logic.py
+
+    Args:
+        object (_type_): _description_
+    """
 
     def __init__(self, project: Project):
 
         self.project = project
 
-        """ Run ChatGPT to create model
+        """ Run ChatGPT to create SQLAlchemy model
         Issues with reln generation.  Chat does only 1 side and fails compile / test data, copilot does 2 
         Args:
         """
@@ -52,7 +66,10 @@ class GenAI(object):
 
     def genai_get_logic(self, prompt: str) -> list[str]:
         """ Get logic from ChatGPT prompt
+
         Args:
+
+        Returns: list[str] of the prompt logic
         """
 
         prompt_array = prompt.split('\n')
@@ -74,15 +91,31 @@ class GenAI(object):
                 logic_text += '    ' + each_line + '\n'
         return logic_text
 
-    def insert_logic_into_declare_logic(self):
+    def insert_logic_into_created_project(self):
+        """Called *after project created* to insert prompt logic into 
+        1. declare_logic.py (as comment)
+        2. readme.md
+        """
+
         logic_file = self.project.project_directory_path.joinpath('logic/declare_logic.py')
         utils.insert_lines_at(lines=self.project.genai_logic, 
                               file_name=logic_file, 
                               at='Your Code Goes Here', 
                               after=True)
 
+        readme_lines = \
+            f'\n**GenAI Microservice Automation:** after verifying, apply logic:\n' +\
+            f'1. Open [logic/declare_logic.py](logic/declare_logic.py) and use Copilot\n' +\
+            f'\n' +\
+            f'&nbsp;\n'
+        readme_file = self.project.project_directory_path.joinpath('readme.md')
+        utils.insert_lines_at(lines=readme_lines, 
+                              file_name=readme_file, 
+                              at='**other IDEs,**', 
+                              after=True)
+
     def genai_write_model_file(self, response_data: str):
-        """break response data into lines, throw away instructions, write model file
+        """break response data into lines, throw away instructions, write model file to self.project.from_model
 
         Args:
             response_data (str): the chatgpt response
@@ -106,7 +139,15 @@ class GenAI(object):
             model_file.write(model_class)
         return self.project.from_model
 
-    def genai_gen_using_api(self, prompt: str):
+    def genai_gen_using_api(self, prompt: str) -> str:
+        """_summary_
+
+        Args:
+            prompt (str): _description_
+
+        Returns:
+            str: ChatGPT response (model with extra stuff)
+        """
         pass  # https://community.openai.com/t/how-do-i-call-chatgpt-api-with-python-code/554554
         use_dotenv = True
         if os.getenv('APILOGICSERVER_CHATGPT_APIKEY'):
