@@ -1,4 +1,4 @@
-Welcome to API Logic Server.  It creates ***executable projects*** (APIs and Admin Apps) from a database or description, with 1 command.  The created projects are based on standard Python libraries (Flask, SQLAlchemy), so you can ***customize them with rules and Python in your IDE.***
+Welcome to API Logic Server.  It creates ***executable microservices*** (APIs and Admin Apps) from a database or description, with 1 command.  The created projects are based on standard Python libraries (Flask, SQLAlchemy), so you can ***customize them with rules and Python in your IDE.***
 
 You are in the [API Logic Server Manager](https://apilogicserver.github.io/Docs/Manager/).  This is a good place to manage projects, create notes and resources, etc.
 
