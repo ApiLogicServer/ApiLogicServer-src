@@ -70,7 +70,13 @@ Click on the disclosure buttons, below.
 
 <summary> 1. Existing Database - pre-installed sample database </summary>
 
-<br>To create a project, use the CLI (**Terminal > New Terminal**) and try the pre-installed [**nw**](https://apilogicserver.github.io/Docs/Tutorial/):
+<br>For a self-demo, use the CLI (**Terminal > New Terminal**) and try the pre-installed [**Basic Demo**](https://apilogicserver.github.io/Docs/Sample-Basic-Demo/):
+
+```
+als create --project-name=basic_demo --db-url=basic_demo
+```
+
+To create a larger project, try the pre-installed [**northwind database**](https://apilogicserver.github.io/Docs/Tutorial/):
 
 ```
 als create --project-name=nw_sample_nocust --db-url=sqlite:///nw.sqlite
