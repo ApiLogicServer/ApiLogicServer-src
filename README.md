@@ -34,11 +34,10 @@ source venv/bin/activate             # windows: venv\Scripts\activate
 python -m pip install ApiLogicServer
 ```
 
-<br>Now, verify it's working - create and run the demo:
+<br>Now, verify it's working - open the Project Manager for instructions and run the demo:
 
-```bash title="Create and Run Demo"
-ApiLogicServer create --project-name=sample_ai --db-url=sqlite:///sample_ai.sqlite
-code sample_ai
+```bash title="Start Manager"
+ApiLogicServer start
 ```
 
 Find the [user documentation here](https://apilogicserver.github.io/Docs/).  Use this for normal installation, to create and customize API Logic Projects.

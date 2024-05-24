@@ -1,5 +1,7 @@
 Welcome to API Logic Server.  It creates ***executable microservices*** (APIs and Admin Apps) from a database or description, with 1 command.  The created projects are based on standard Python libraries (Flask, SQLAlchemy), so you can ***customize them with rules and Python in your IDE.***
 
+> First Step: Explore Creating Projects - Step 1.
+
 You are in the [API Logic Server Manager](https://apilogicserver.github.io/Docs/Manager/).  This is a good place to manage projects, create notes and resources, etc.
 
 <details markdown>
@@ -27,17 +29,23 @@ You are in the [API Logic Server Manager](https://apilogicserver.github.io/Docs/
 
 ## Using GenAI Microservice Automation
 
+Use the CLI (Command Language Interface, in your IDE) to create projects from either existing databases, or GenAI prompts.  This creates a project you can open, run and customize in your IDE.
+
 [![GenAI Automation](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/sample-ai/copilot/genai-automation-video.png?raw=true)](https://www.youtube.com/watch?v=LSh7mqGiT0k&t=5s "Microservice Automation")
 
 &nbsp;
 
-## What Is GenAI Microservice Automation
+## What Is API Logic Server
+
+It's an open source Python project consisting of a CLI to create projects, and runtime libraries to execute them.
 
 [![Architecture](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/Architecture-What-Is.png?raw=true)](https://apilogicserver.github.io/Docs/Architecture-What-Is/#runtimes-and-cli)
 
 &nbsp;
 
 ## Modern Scalable Runtime Architecture
+
+Created projects use standard Flask and SQLAlchemy; automation is provided by Logic Bank (the rule engine) and SAFRS (JSON:APIs).  Scripts are provided to containerize projects, and deploy to Azure.
 
 [![Architecture - Runtime](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/Architecture-Runtime-Stack.png?raw=true)](https://apilogicserver.github.io/Docs/Architecture-What-Is/#key-runtime-components)
 
@@ -60,9 +68,9 @@ Click on the disclosure buttons, below.
 
 <details markdown>
 
-<summary> Existing Database - pre-installed demo </summary>
+<summary> 1. Existing Database - pre-installed sample database </summary>
 
-<br>To create a project, **press F5**, or use the CLI (**Terminal > New Terminal**) and try the pre-installed [**nw**](https://apilogicserver.github.io/Docs/Tutorial/):
+<br>To create a project, use the CLI (**Terminal > New Terminal**) and try the pre-installed [**nw**](https://apilogicserver.github.io/Docs/Tutorial/):
 
 ```
 als create --project-name=nw_sample_nocust --db-url=sqlite:///nw.sqlite
@@ -82,11 +90,11 @@ Then, try your own databases [(db-url examples here)](https://apilogicserver.git
 
 <details markdown>
 
-<summary> New Database - using GenAI Microservice Automation (Signup optional)</summary>
+<summary> 2. New Database - using GenAI Microservice Automation (Signup optional)</summary>
 
 <br>You can do this with or without signup:
 
-1. If you have signed up, this will create and open a project called `genai_demo` from `genai_demo.prompt`:
+1. If you have signed up, this will create and open a project called `genai_demo` from `genai_demo.prompt` (available in left Explorer pane):
 
 ```bash
 als genai --using=genai_demo.prompt
@@ -178,7 +186,7 @@ Provisos:
 
 <details markdown>
 
-<summary> New Database - using Copilot (Signup optional) </summary>
+<summary> 3. New Database - using Copilot (Signup optional) </summary>
 
 <br>You can use Copilot chat (if extension installed; if not, skip to step 3):
 
@@ -229,7 +237,7 @@ als create --project-name=sample_ai --from-model=sample_ai.py --db-url=sqlite
 
 <details markdown>
 
-<summary> New Database - using ChatGPT in the Browser </summary>
+<summary> 4. New Database - using ChatGPT in the Browser </summary>
 
 <br>ChatGPT in the Browser
 
