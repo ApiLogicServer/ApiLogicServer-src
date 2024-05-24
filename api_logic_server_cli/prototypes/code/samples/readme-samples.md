@@ -12,6 +12,8 @@ The `samples` folder has pre-created important projects you will want to review 
 
 * [tutorial](https://apilogicserver.github.io/Docs/Tutorial/) - short (~30 min) walk-through of using API Logic Server using the northwind (customers, orders...) database
 
+</br>
+
 <details markdown>
 
 <summary>You can always re-create the samples</summary>
