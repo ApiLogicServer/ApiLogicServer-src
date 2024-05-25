@@ -1,10 +1,10 @@
 ---
-version info: 0.0 (5/24/2024)
+version info: 0.2 (5/24/2024)
 ---
 
-Welcome to API Logic Server.  It creates ***executable microservices*** (APIs and Admin Apps) from a database or description, with 1 command.  The created projects are based on standard Python libraries (Flask, SQLAlchemy), so you can ***customize them with rules and Python in your IDE.***
+Welcome to API Logic Server: ***one command to create executable microservices*** (APIs and Admin Apps) from a database or GenAI prompt.  The created projects use standard Python libraries (Flask, SQLAlchemy), so you can ***customize them with Rules and Python in your IDE.***
 
-> First Step: Explore Creating Projects - Step 1.
+> **Evaluation Guide: open** "Open 1. Existing Database - pre-installed sample database", below.
 
 You are in the [API Logic Server Manager](https://apilogicserver.github.io/Docs/Manager/).  This is a good place to manage projects, create notes and resources, etc.
 
@@ -61,26 +61,26 @@ Created projects use standard Flask and SQLAlchemy; automation is provided by Lo
 
 # Explore Pre-created Samples
 
-See these [important pre-created sample apps](samples/readme-samples.md).
+See these [important pre-created sample apps](#important-pre-created-sample-apps).
 
 &nbsp;
 
 #  Explore Creating Projects
 
 Click on the disclosure buttons, below.
-<br><br>
+</br>
 
 <details markdown>
 
-<summary> 1. Existing Database - pre-installed sample database </summary>
+<summary> 1. Existing Database - pre-installed sample databases </summary>
 
-<br>For a self-demo, use the CLI (**Terminal > New Terminal**) and try the pre-installed [**Basic Demo**](https://apilogicserver.github.io/Docs/Sample-Basic-Demo/):
+<br>For a self-demo, use the CLI (**Terminal > New Terminal**), and try the pre-installed [**Basic Demo**](https://apilogicserver.github.io/Docs/Sample-Basic-Demo/):
 
 ```
 als create --project-name=basic_demo --db-url=basic_demo
 ```
 
-To create a larger project, try the pre-installed [**northwind database**](https://apilogicserver.github.io/Docs/Tutorial/):
+To create a larger project, try the pre-installed [**northwind database**](https://apilogicserver.github.io/Docs/Tutorial/) (imagine your own database here):
 
 ```
 als create --project-name=nw_sample_nocust --db-url=sqlite:///nw.sqlite
@@ -95,12 +95,11 @@ als create --project-name=nw_sample --db-url=sqlite:///nw+.sqlite
 Then, try your own databases [(db-url examples here)](https://apilogicserver.github.io/Docs/Database-Connectivity/), or experiment with [these Docker databases](https://apilogicserver.github.io/Docs/Database-Docker/).
 
 </details>
-
-&nbsp;
+</br>
 
 <details markdown>
 
-<summary> 2. New Database - using GenAI Microservice Automation (Signup optional)</summary>
+<summary> 2. New Database - using GenAI Microservice Automation (Experiment with AI - Signup optional)</summary>
 
 <br>You can do this with or without signup:
 
@@ -143,8 +142,7 @@ als genai --using=genai_demo.prompt --gen-using-file=system/genai/temp/chatgpt_r
 ![GenAI Automation](system/images/genai.png)
 
 </details>
-
-&nbsp;
+</br>
 
 <details markdown>
 
@@ -172,10 +170,11 @@ We have seen failures such as:
 * Bad load code (no session)
 
 </details>
+</br>
 
-&nbsp;
+<details markdown>
 
-**Postgresql Example**
+<summary> Postgresql Example </summary>
 
 You can test this as follows:
 
@@ -191,8 +190,8 @@ Provisos:
 * You have to create the database first; we are considering automating that: https://stackoverflow.com/questions/76294523/why-cant-create-database-if-not-exists-using-sqlalchemy
 
 </details>
-
-&nbsp;
+</details>
+</br>
 
 <details markdown>
 
@@ -242,8 +241,7 @@ als create --project-name=sample_ai --from-model=sample_ai.py --db-url=sqlite
 4. This will create your database, create an API Logic Project from it, and launch your IDE.
 
 </details>
-
-&nbsp;
+</br>
 
 <details markdown>
 
@@ -254,3 +252,44 @@ als create --project-name=sample_ai --from-model=sample_ai.py --db-url=sqlite
 Please see [this doc](https://apilogicserver.github.io/Docs/Sample-AI-ChatGPT/)
 
 </details>
+
+&nbsp;
+
+&nbsp;
+
+&nbsp;
+
+# Important Pre-created Sample Apps
+
+The `samples` folder has pre-created important projects you will want to review at some point:
+
+* [nw_sample_nocust](https://apilogicserver.github.io/Docs/Tutorial/) - northwind (customers, orders...) database
+
+* [nw_sample](https://apilogicserver.github.io/Docs/Sample-Database/) - same database, but with logic/Python ***customizations added***.  It's a great resource for exploring:
+
+    * Hint: use your IDE to search for `#als`
+
+    * The sample is also created without customization (`sample_nocust`).
+
+* [tutorial](https://apilogicserver.github.io/Docs/Tutorial/) - short (~30 min) walk-through of using API Logic Server using the northwind (customers, orders...) database
+
+</br>
+
+<details markdown>
+
+<summary>You can always re-create the samples</summary>
+
+<br>Re-create them as follows:
+
+1. Open a terminal window (**Terminal > New Terminal**), and paste the following CLI command:
+
+```bash
+ApiLogicServer create --project-name=samples/tutorial --db-url=
+ApiLogicServer create --project-name=samples/nw_sample --db-url=nw+
+ApiLogicServer create --project-name=samples/nw_sample_nocust --db-url=nw
+```
+</details>
+</details>
+
+
+

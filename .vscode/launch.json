@@ -44,7 +44,7 @@
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
-            "args": ["start", "--open-with=charm", "--clean"],
+            "args": ["start", "--clean"],
             "justMyCode": false,
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
