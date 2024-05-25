@@ -203,10 +203,10 @@ def main(ctx):
 @click.pass_context
 @click.option('--open-with', 'open_with',
               default='code',
-              help="Simplifies creating and managing projects")
+              help="Open project with code, charm, etc")
 @click.option('--clean/--no-clean', "clean",
               default=False, is_flag=True,
-              help="Overlay existing manager")
+              help="Overlay existing manager (projects retained)")
 def create_start_manager(ctx, open_with, clean: click.BOOL = False):
     """
         Create and Manage API Logic Projects.
