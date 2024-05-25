@@ -203,7 +203,7 @@ def main(ctx):
 @click.pass_context
 @click.option('--open-with', 'open_with',
               default='code',
-              help="Open project with code, charm, etc")
+              help="Open project with code, charm (mac), pycharm (win), etc")
 @click.option('--clean/--no-clean', "clean",
               default=False, is_flag=True,
               help="Overlay existing manager (projects retained)")
