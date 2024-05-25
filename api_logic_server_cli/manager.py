@@ -70,12 +70,12 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path):
                 project_name='./samples', 
                 db_url="",
                 execute=False,
-                open_with=""
+                open_with="NO_AUTO_OPEN"
                 )
         tutorial_project = tutorial_project.tutorial(msg="Creating:") ##, create='tutorial')
 
-        samples_project = PR.ProjectRun(command= "create", project_name='samples/nw_sample', db_url='nw+', open_with="")
-        samples_project = PR.ProjectRun(command= "create", project_name='samples/nw_sample_nocust', db_url='nw', open_with="")
+        samples_project = PR.ProjectRun(command= "create", project_name='samples/nw_sample', db_url='nw+', open_with="NO_AUTO_OPEN")
+        samples_project = PR.ProjectRun(command= "create", project_name='samples/nw_sample_nocust', db_url='nw', open_with="NO_AUTO_OPEN")
         codegen_logger.setLevel(codegen_logger_save_level)
     pass
 
@@ -105,9 +105,9 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path):
                                         replace_with=str(cli_str),
                                         in_file=vscode_launch_path)
 
-    env_path = to_dir.joinpath('.vscode/launch.json')
+    env_path = to_dir.joinpath('.env')
     create_utils.replace_string_in_file(search_for = 'APILOGICSERVER_AUTO_OPEN=code',
-                                        replace_with=f' APILOGICSERVER_AUTO_OPEN={open_with}',
+                                        replace_with=f'APILOGICSERVER_AUTO_OPEN={open_with}',
                                         in_file=env_path)
 
     os.putenv("APILOGICSERVER_HOME", str(project.api_logic_server_dir_path.parent) )

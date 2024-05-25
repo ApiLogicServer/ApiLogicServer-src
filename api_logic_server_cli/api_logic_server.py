@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.04.25"
+__version__ = "10.04.28"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t05/24/2024 - 10.04.25: mgr: pycharm, load readme from git \n"\
+    "\t05/25/2024 - 10.04.28: mgr: pycharm, load readme from git \n"\
     "\t05/24/2024 - 10.04.24: default ont creation (w/ security), logic/svc discovery, nw+ app_model_custom.yaml \n"\
     "\t05/04/2024 - 10.04.01: genai w/ restart, logic insertion, use Numeric, genai-cust, pg, 57 \n"\
     "\t04/23/2024 - 10.03.84: Fix error handling for db errors (eg, missing parent) \n"\
@@ -930,7 +930,7 @@ class ProjectRun(Project):
         defaultInterpreterPath = Path(defaultInterpreterPath_str)
         if 'ApiLogicServer-dev' in str(self.api_logic_server_dir_path):  # apilogicserver dev is special case
             if os.name == "nt":
-                defaultInterpreterPath = project.api_logic_server_dir_path.parent.parent.parent.joinpath('build_and_test/ApiLogicServer/venv/scripts/python.exe')
+                defaultInterpreterPath = self.project.api_logic_server_dir_path.parent.parent.parent.joinpath('build_and_test/ApiLogicServer/venv/scripts/python.exe')
             else:
                 defaultInterpreterPath = self.api_logic_server_dir_path.parent.parent.parent.parent.joinpath('bin/python')
                 if 'org_git' in str(self.api_logic_server_dir_path):  # running from dev-source
@@ -963,14 +963,22 @@ class ProjectRun(Project):
         load_dotenv(".env")
         pass
 
-        if self.open_with != '' and os.getenv('APILOGICSERVER_AUTO_OPEN'):
+        if self.open_with == 'NO_AUTO_OPEN':  #, eg, for manager.py
+            self.open_with = ''
+            log.debug('.. ... NO_AUTO_OPEN')
+        elif self.open_with == '' and os.getenv('APILOGICSERVER_AUTO_OPEN'):
             self.open_with = os.getenv('APILOGICSERVER_AUTO_OPEN')
+            log.debug(f'.. ... set self.open_with: {self.open_with}')
+            log.debug(f".. ... from os.getenv('APILOGICSERVER_AUTO_OPEN'): {os.getenv('APILOGICSERVER_AUTO_OPEN')}")
+            log.debug(f".. ... from os.getcwd(): {os.getcwd()}")
+        else:
+            log.debug(f'.. ..Not setting open_with: {self.open_with} with env: {os.getenv('APILOGICSERVER_AUTO_OPEN')}')
         if execute:
             self.create_project()
 
 
     def print_options(self):
-        """ Creating ApiLogicProject with options: (or uri helo) """
+        """ Creating ApiLogicProject with options: (or cli --help) """
         if self.db_url == "?":
             uri_info.print_uri_info()
             exit(0)
