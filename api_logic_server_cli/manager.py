@@ -52,8 +52,7 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path):
         copied_path = shutil.copytree(src=from_dir, dst=to_dir, dirs_exist_ok=True)
         log.info(f"    Created manager at: {copied_path}\n\n")
 
-        # https://github.com/ApiLogicServer/ApiLogicServer-src/blob/main/api_logic_server_cli/prototypes/code/README.md
-        file_src = f"https://github.com/ApiLogicServer/ApiLogicServer-src/blob/main/api_logic_server_cli/prototypes/code/README.md"
+        file_src = f"https://raw.githubusercontent.com/ApiLogicServer/ApiLogicServer-src/main/api_logic_server_cli/prototypes/code/README.md"
         readme_path = to_dir.joinpath('README.md')
         try:
             r = requests.get(file_src)  # , params=params)
