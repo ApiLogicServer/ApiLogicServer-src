@@ -31,7 +31,7 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path):
     log = logging.getLogger(__name__)
     project = PR.ProjectRun(command= "start", project_name='ApiLogicServer', db_url='sqlite', execute=False)
 
-    log.info(f"\n\nCreating manager at: {os.getcwd()}\n\n")
+    log.info(f"\n\nCreating manager at: {os.getcwd()}\n\n")  # eg, ...ApiLogicServer-dev/clean/ApiLogicServer
     to_dir = Path(os.getcwd())
     path = Path(__file__)
     from_dir = api_logic_server_path.joinpath('prototypes/code')
