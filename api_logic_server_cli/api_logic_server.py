@@ -930,7 +930,7 @@ class ProjectRun(Project):
         defaultInterpreterPath = Path(defaultInterpreterPath_str)
         if 'ApiLogicServer-dev' in str(self.api_logic_server_dir_path):  # apilogicserver dev is special case
             if os.name == "nt":
-                defaultInterpreterPath = self.project.api_logic_server_dir_path.parent.parent.parent.joinpath('build_and_test/ApiLogicServer/venv/scripts/python.exe')
+                defaultInterpreterPath = self.api_logic_server_dir_path.parent.parent.parent.joinpath('build_and_test/ApiLogicServer/venv/scripts/python.exe')
             else:
                 defaultInterpreterPath = self.api_logic_server_dir_path.parent.parent.parent.parent.joinpath('bin/python')
                 if 'org_git' in str(self.api_logic_server_dir_path):  # running from dev-source
