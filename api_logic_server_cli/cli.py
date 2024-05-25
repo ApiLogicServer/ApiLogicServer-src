@@ -194,6 +194,7 @@ def main(ctx):
         ApiLogicServer create --db-url= --project-name=     # defaults to Northwind sample
     """
     pass  # all commands come through here
+
     if not ctx.invoked_subcommand:  # no command, per invoke_without_command=True
             sys.stdout.write("    Suggestion: ApiLogicServer start \n\n\n")
      

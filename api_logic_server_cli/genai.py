@@ -148,8 +148,8 @@ class GenAI(object):
         Returns:
             str: ChatGPT response (model with extra stuff)
         """
+        
         pass  # https://community.openai.com/t/how-do-i-call-chatgpt-api-with-python-code/554554
-        use_dotenv = True
         if os.getenv('APILOGICSERVER_CHATGPT_APIKEY'):
             openai_api_key = os.getenv('APILOGICSERVER_CHATGPT_APIKEY')
         else:

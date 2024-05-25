@@ -52,15 +52,31 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path):
         copied_path = shutil.copytree(src=from_dir, dst=to_dir, dirs_exist_ok=True)
         log.info(f"    Created manager at: {copied_path}\n\n")
 
+        # https://github.com/ApiLogicServer/ApiLogicServer-src/blob/main/api_logic_server_cli/prototypes/code/README.md
+        file_src = f"https://github.com/ApiLogicServer/ApiLogicServer-src/blob/main/api_logic_server_cli/prototypes/code/README.md"
+        readme_path = to_dir.joinpath('README.md')
+        try:
+            r = requests.get(file_src)  # , params=params)
+            if r.status_code == 200:
+                readme_data = r.content.decode('utf-8')
+                with open(str(readme_path), "w") as readme_file:
+                    readme_file.write(readme_data)
+        except requests.exceptions.ConnectionError as conerr: 
+            # without this, windows fails if network is down
+            pass    # just fall back to using the pip-installed version
+        except:     # do NOT fail 
+            pass    # just fall back to using the pip-installed version
+
         tutorial_project = PR.ProjectRun(command="tutorial", 
                 project_name='./samples', 
                 db_url="",
-                execute=False
+                execute=False,
+                open_with=""
                 )
         tutorial_project = tutorial_project.tutorial(msg="Creating:") ##, create='tutorial')
 
-        samples_project = PR.ProjectRun(command= "create", project_name='samples/nw_sample', db_url='nw+')
-        samples_project = PR.ProjectRun(command= "create", project_name='samples/nw_sample_nocust', db_url='nw')
+        samples_project = PR.ProjectRun(command= "create", project_name='samples/nw_sample', db_url='nw+', open_with="")
+        samples_project = PR.ProjectRun(command= "create", project_name='samples/nw_sample_nocust', db_url='nw', open_with="")
         codegen_logger.setLevel(codegen_logger_save_level)
     pass
 
@@ -90,9 +106,11 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path):
                                         replace_with=str(cli_str),
                                         in_file=vscode_launch_path)
 
+    env_path = to_dir.joinpath('.vscode/launch.json')
+    create_utils.replace_string_in_file(search_for = 'APILOGICSERVER_AUTO_OPEN=code',
+                                        replace_with=f' APILOGICSERVER_AUTO_OPEN={open_with}',
+                                        in_file=env_path)
 
-    os.putenv("APILOGICSERVER_AUTO_OPEN", "code")
-    os.putenv("APILOGICSERVER_VERBOSE", "false")
     os.putenv("APILOGICSERVER_HOME", str(project.api_logic_server_dir_path.parent) )
     # assert defaultInterpreterPath_str == str(project.default_interpreter_path)
     try:

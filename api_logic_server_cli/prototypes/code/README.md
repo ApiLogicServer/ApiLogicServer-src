@@ -1,3 +1,7 @@
+---
+version info: 0.0 (5/24/2024)
+---
+
 Welcome to API Logic Server.  It creates ***executable microservices*** (APIs and Admin Apps) from a database or description, with 1 command.  The created projects are based on standard Python libraries (Flask, SQLAlchemy), so you can ***customize them with rules and Python in your IDE.***
 
 > First Step: Explore Creating Projects - Step 1.
