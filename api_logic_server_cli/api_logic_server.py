@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.04.24"
+__version__ = "10.04.25"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t05/24/2024 - 10.04.25: mgr: pycharm, load read from git \n"\
     "\t05/24/2024 - 10.04.24: default ont creation (w/ security), logic/svc discovery, nw+ app_model_custom.yaml \n"\
     "\t05/04/2024 - 10.04.01: genai w/ restart, logic insertion, use Numeric, genai-cust, pg, 57 \n"\
     "\t04/23/2024 - 10.03.84: Fix error handling for db errors (eg, missing parent) \n"\
@@ -958,7 +959,11 @@ class ProjectRun(Project):
             except yaml.YAMLError as e:
                 log.debug(f'.. ..Error loading style-guide.yaml: {e}')
 
-        if os.getenv('APILOGICSERVER_AUTO_OPEN'):
+        from dotenv import load_dotenv
+        load_dotenv(".env")
+        pass
+
+        if self.open_with != '' and os.getenv('APILOGICSERVER_AUTO_OPEN'):
             self.open_with = os.getenv('APILOGICSERVER_AUTO_OPEN')
         if execute:
             self.create_project()
