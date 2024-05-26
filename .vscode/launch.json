@@ -99,6 +99,17 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "     - ApiLogicServer Start (Clean, code (Win11)",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}\\..\\..\\build_and_test\\ApiLogicServer",
+            "args": ["start", "--clean"],
+            "justMyCode": false,
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "console": "integratedTerminal"
+        },
+        {
             "name": "     - ApiLogicServer Start (Clean, charm (Win11)",
             "type": "debugpy",
             "request": "launch",
