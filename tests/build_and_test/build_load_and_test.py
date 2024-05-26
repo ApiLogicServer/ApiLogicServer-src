@@ -148,6 +148,15 @@ def print_byte_string(msg, byte_string):
         print (line)
 
 def check_command(command_result, special_message: str=""):
+    """Ensure command_result does not contain 'error', 'not found', etc
+
+    Args:
+        command_result (_type_): from run_command
+        special_message (str, optional): _description_. Defaults to "".
+
+    Raises:
+        ValueError: _description_
+    """
     result_stdout = ""
     result_stderr = ''
     if command_result is not None:
