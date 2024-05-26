@@ -5,24 +5,30 @@
 # to test just the build:
 # $ cd tests/build_and_test
 # $ sh build_install.sh python3
+#
+# Used for Mac, Linux (Windows handled in build_install.py, sorry for inconsistency)
+# On Linux, pushd does not work, so just cd only
 
-echo '\n\nBuilding / installing ApiLogicServer for Python 3.12'
+echo '\n\nBuilding / installing ApiLogicServer for supported Pythons'
+
+# for debug....
+# set -x
 
 cd "$(dirname "$0")"
 SCRIPT_DIR="$(pwd)"
 
 echo "..Script directory: $SCRIPT_DIR"
 
-pushd $SCRIPT_DIR/../../../../build_and_test/ApiLogicServer
+cd $SCRIPT_DIR/../../../../build_and_test/ApiLogicServer
 INSTALL_DIR=$(pwd)
 # rm -r $INSTALL_DIR/*
-popd
+cd $SCRIPT_DIR
 
 mkdir -p $SCRIPT_DIR/../../../../clean/ApiLogicServer
-pushd $SCRIPT_DIR/../../../../clean/ApiLogicServer
+cd $SCRIPT_DIR/../../../../clean/ApiLogicServer
 CLEAN_DIR=$(pwd)
 rm -r -h -s $CLEAN_DIR/*
-popd
+cd $SCRIPT_DIR
 
 echo "..Installing to directories: \n....$INSTALL_DIR\n....$CLEAN_DIR\n"
 
