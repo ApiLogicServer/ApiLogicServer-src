@@ -1,5 +1,5 @@
 ---
-version info: 0.2 (5/24/2024)
+version info: 0.3 (5/26/2024)
 ---
 
 Welcome to API Logic Server: ***one command to create executable microservices*** (APIs and Admin Apps) from a database or GenAI prompt.  The created projects use standard Python libraries (Flask, SQLAlchemy), so you can ***customize them with Rules and Python in your IDE.***
@@ -80,17 +80,13 @@ Click on the disclosure buttons, below.
 als create --project-name=basic_demo --db-url=basic_demo
 ```
 
-To create a larger project, try the pre-installed [**northwind database**](https://apilogicserver.github.io/Docs/Tutorial/) (imagine your own database here):
+<br>To create a larger project, try the pre-installed [**northwind database**](https://apilogicserver.github.io/Docs/Tutorial/) (imagine your own database here):
 
 ```
 als create --project-name=nw_sample_nocust --db-url=sqlite:///nw.sqlite
 ```
 
-Or, see it [with customizations](https://apilogicserver.github.io/Docs/IDE-Customize/):
-
-```
-als create --project-name=nw_sample --db-url=sqlite:///nw+.sqlite
-```
+<br>See with **with customizations** in the [pre-created sample apps](#important-pre-created-sample-apps).  This is an **important learning resource**.
 
 Then, try your own databases [(db-url examples here)](https://apilogicserver.github.io/Docs/Database-Connectivity/), or experiment with [these Docker databases](https://apilogicserver.github.io/Docs/Database-Docker/).
 
@@ -265,7 +261,7 @@ The `samples` folder has pre-created important projects you will want to review 
 
 * [nw_sample_nocust](https://apilogicserver.github.io/Docs/Tutorial/) - northwind (customers, orders...) database
 
-* [nw_sample](https://apilogicserver.github.io/Docs/Sample-Database/) - same database, but with logic/Python ***customizations added***.  It's a great resource for exploring:
+* [nw_sample](https://apilogicserver.github.io/Docs/Sample-Database/) - same database, but with ***with [customizations](https://apilogicserver.github.io/Docs/IDE-Customize/) added***.  It's a great resource for exploring:
 
     * Hint: use your IDE to search for `#als`
 
