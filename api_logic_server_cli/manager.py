@@ -111,6 +111,7 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path):
                                         in_file=env_path)
 
     os.putenv("APILOGICSERVER_HOME", str(project.api_logic_server_dir_path.parent) )
+    os.putenv("APILOGICSERVER_AUTO_OPEN", open_with )  # NB: .env does not override env, so MUST set
     # assert defaultInterpreterPath_str == str(project.default_interpreter_path)
     try:
         with_readme = '. readme.md' if open_with == "xxcode" else ' '  # loses project context (no readme preview)
