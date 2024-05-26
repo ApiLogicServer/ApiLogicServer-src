@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.04.32"
+__version__ = "10.04.33"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t05/26/2024 - 10.04.33: mgr: fix missing env \n"\
     "\t05/25/2024 - 10.04.32: mgr: pycharm, load readme from git \n"\
     "\t05/24/2024 - 10.04.24: default ont creation (w/ security), logic/svc discovery, nw+ app_model_custom.yaml \n"\
     "\t05/04/2024 - 10.04.01: genai w/ restart, logic insertion, use Numeric, genai-cust, pg, 57 \n"\
