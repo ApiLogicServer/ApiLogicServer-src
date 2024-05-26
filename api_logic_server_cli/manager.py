@@ -40,9 +40,19 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path):
     if not Path(to_dir).joinpath('venv').exists():
         log.info(f"    No action taken - no venv found at: \n      {to_dir}\n\n")
         exit(1)
+    env_path = to_dir.joinpath('.env')
+
+    manager_exists = False
     to_dir_check = Path(to_dir).joinpath('.vscode')
     if to_dir_check.exists() and not clean:
-        log.info(f"    Using manager at: {to_dir}\n\n")
+        manager_exists = True
+        if env_path.exists():
+            log.info(f"    Using manager at: {to_dir}\n\n")
+        else:
+            log.info(f"    Refreshing .env in manager at: {to_dir}\n\n")
+            src_env = from_dir.joinpath('.env')
+            dst_env = to_dir.joinpath('.env')
+            copied_env = shutil.copy(src=src_env, dst=dst_env)
     else:
         codegen_logger = logging.getLogger('sqlacodegen_wrapper.sqlacodegen.sqlacodegen.codegen')
         codegen_logger_save_level= codegen_logger.level
@@ -79,33 +89,33 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path):
         codegen_logger.setLevel(codegen_logger_save_level)
     pass
 
-    set_defaultInterpreterPath = False
-    defaultInterpreterPath_str = ""
-    # find cli in subdirectories of the lib path for manager run launches
-    lib_path = project.default_interpreter_path.parent.parent.joinpath('lib')
-    ''' if only 1 python, lib contains site-packages, else python3.8, python3.9, etc '''
-    subdirs = [x for x in lib_path.iterdir() if x.is_dir()]
-    for subdir in subdirs:
-        if 'site-packages' in str(subdir):
-            site_packages_dir = lib_path.joinpath('site-packages')
-            break
-        sub_subdirs = [x for x in subdir.iterdir() if x.is_dir()]
-        for sub_subdir in sub_subdirs:
-            assert 'site-packages' in str(sub_subdir)
-            site_packages_dir = sub_subdir  # lib_path.joinpath('site-packages')
-    cli_path = site_packages_dir.joinpath('api_logic_server_cli/cli.py')
-    # replace the path with the site-packages path , eg
-    # "program": "cli_path" --> "program": "./venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
-    pass
-    cli_str = str(cli_path)
-    if os.name == "nt":
-        cli_str = create_utils.windows_path_fix(dir_str=cli_str)
-    vscode_launch_path = to_dir.joinpath('.vscode/launch.json')
-    create_utils.replace_string_in_file(search_for = 'cli_path',
-                                        replace_with=str(cli_str),
-                                        in_file=vscode_launch_path)
+    # find cli in subdirectories of the lib path for manager run launches, and update run/debug config
+    if manager_exists:
+        pass
+    else:
+        lib_path = project.default_interpreter_path.parent.parent.joinpath('lib')
+        ''' if only 1 python, lib contains site-packages, else python3.8, python3.9, etc '''
+        subdirs = [x for x in lib_path.iterdir() if x.is_dir()]
+        for subdir in subdirs:
+            if 'site-packages' in str(subdir):
+                site_packages_dir = lib_path.joinpath('site-packages')
+                break
+            sub_subdirs = [x for x in subdir.iterdir() if x.is_dir()]
+            for sub_subdir in sub_subdirs:
+                assert 'site-packages' in str(sub_subdir)
+                site_packages_dir = sub_subdir  # lib_path.joinpath('site-packages')
+        cli_path = site_packages_dir.joinpath('api_logic_server_cli/cli.py')
+        # replace the path with the site-packages path , eg
+        # "program": "cli_path" --> "program": "./venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+        pass
+        cli_str = str(cli_path)
+        if os.name == "nt":
+            cli_str = create_utils.windows_path_fix(dir_str=cli_str)
+        vscode_launch_path = to_dir.joinpath('.vscode/launch.json')
+        create_utils.replace_string_in_file(search_for = 'cli_path',
+                                            replace_with=str(cli_str),
+                                            in_file=vscode_launch_path)
 
-    env_path = to_dir.joinpath('.env')
     create_utils.replace_string_in_file(search_for = 'APILOGICSERVER_AUTO_OPEN=code',
                                         replace_with=f'APILOGICSERVER_AUTO_OPEN={open_with}',
                                         in_file=env_path)
@@ -113,9 +123,9 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path):
     os.putenv("APILOGICSERVER_HOME", str(project.api_logic_server_dir_path.parent) )
     os.putenv("APILOGICSERVER_AUTO_OPEN", open_with )  # NB: .env does not override env, so MUST set
     # assert defaultInterpreterPath_str == str(project.default_interpreter_path)
-    try:
+    try: # open the manager in open_with
         with_readme = '. readme.md' if open_with == "xxcode" else ' '  # loses project context (no readme preview)
-        create_utils.run_command(
+        create_utils.run_command( 
             cmd=f'{open_with} {to_dir_str} {with_readme}',  # passing readme here fails - loses project setttings
             env=None, 
             msg="no-msg", 
