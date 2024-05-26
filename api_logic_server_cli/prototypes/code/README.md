@@ -61,13 +61,13 @@ Created projects use standard Flask and SQLAlchemy; automation is provided by Lo
 
 # Explore Pre-created Samples
 
-See these [important pre-created sample apps](#important-pre-created-sample-apps).
+See these [important pre-created sample apps](#important-pre-created-sample-apps).  (Important: look for **readme files.**)
 
 &nbsp;
 
 #  Explore Creating Projects
 
-Click on the disclosure buttons, below.
+Click on the disclosure buttons, below.  (Important: look for **readme files.**)
 </br>
 
 <details markdown>
