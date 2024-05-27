@@ -276,6 +276,7 @@ class OntBuilder(object):
         )
         # api_root: '{http_type}://{swagger_host}:{port}/{api}' TODO - need actual values
         apiEndpoint = "http://localhost:5656/ontimizeweb/services/rest"
+        apiEndpoint = "http://localhost:5656/api"
         rv_environment = self.environment_template.render(apiEndpoint=apiEndpoint)
         write_root_file(
             app_path=app_path,

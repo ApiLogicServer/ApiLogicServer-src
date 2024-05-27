@@ -45,10 +45,22 @@ def parsePayload(payload: str):
     offset: int = payload.get("offset") or 0
     pagesize: int = payload.get("pageSize") or 100
     orderBy: list = payload.get("orderBy") or []
-    data = payload.get("data", None)
-
-    #print(_filter, columns, sqltypes, offset, pagesize, orderBy, data)
+    raw_data = payload.get("data", None)
+    data = transform_payload(raw_data,sqltypes)
+    
     return _filter, columns, sqltypes, offset, pagesize, orderBy, data
+
+def transform_payload(raw_data,sqltypes):
+    data = raw_data
+    if data  and sqltypes:
+        for key, value in data.items():
+            if key in sqltypes:
+                if sqltypes[key] == 4:
+                    data[key] = int(value)
+                if sqltypes[key] in [91, 93]:
+                    from datetime import datetime
+                    data[key] = datetime.fromtimestamp(value / 1000) #.strftime("%Y-%m-%d %H:%M:%S")
+    return data
 
 
 def parseFilter(filter: dict, sqltypes: any):

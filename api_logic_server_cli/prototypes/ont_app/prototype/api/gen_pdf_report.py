@@ -1,14 +1,14 @@
 import json 
 import contextlib
 import logging
-from api.exression_parser import parsePayload
+from api.expression_parser import parsePayload
 from base64 import b64encode
 from sqlalchemy.sql import text
 import safrs
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, PageTemplate, Frame, Spacer
-from reportlab.lib.pagesizes import A4, letter
+from reportlab.lib.pagesizes import A4, letter, landscape
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import inch
 from io import BytesIO
@@ -52,7 +52,10 @@ def gen_report(api_clz, request, project_dir, payload, attributes) -> any:
         rows = get_rows(api_clz,request, columns, filter, attributes)
         
         buffer = BytesIO()
-        doc = SimpleDocTemplate(buffer, pagesize=letter)
+        if payload["vertical"] == "true":
+            doc = SimpleDocTemplate(buffer, pagesize=letter)
+        else:
+            doc = SimpleDocTemplate(buffer, pagesize=landscape(letter))
         
         def add_page_number(canvas, doc):
             page_num = canvas.getPageNumber()

@@ -21,7 +21,7 @@ import json
 import requests
 import config.config as config
 from config.config import Args
-from api.exression_parser import parsePayload
+from api.expression_parser import parsePayload
 from api.gen_pdf_report import gen_report
 
 resource_logger = logging.getLogger("api.customize_api")
@@ -251,9 +251,9 @@ class CustomEndpoint():
         elif altKey is not None:
             filter_by = f'"{pkey}" = {self.quoteStr(altKey)}'
             self._pkeyList.append(self.quoteStr(altKey))
-        filter_by = filter_by if filter_ is None else f"{filter_by} and {filter_}" if filter_by is not None else filter_
+        filter_by = filter_by if filter_ is None else f"{filter_by} and {filter_[0]}" if filter_by is not None else filter_[0]
         self._href = f"{request.url_root[:-1]}{request.path}"
-        print(f"limit: {limit}, offset: {offset}, sort: {order_by},filter_by: {filter_by}, add_filter {filter_}")
+        print(f"limit: {limit}, offset: {offset}, sort: {order_by},filter_by: {filter_by}, add_filter {filter_[0]}")
         try:
             self._createRows(limit=limit,offset=offset,order_by=order_by,filter_by=filter_by) 
             self._executeChildren()
@@ -327,7 +327,7 @@ class CustomEndpoint():
             #query = select(self._model_class)
             resource_logger.debug(
                     f"CreateRows on {model_class_name} using filter_by: {self.filter_by} order_by: {self.order_by}")
-            if self.filter_by is not None:
+            if self.filter_by is not None and not isinstance(self.filter_by, tuple):
                 qry = session_qry.filter(text(self.filter_by))
                 if self.order_by is not None:
                     qry = qry.order_by(self.order_by)
@@ -337,7 +337,7 @@ class CustomEndpoint():
                     qry = qry.filter(text(filter_by))
                 rows = qry.limit(limit).offset(offset).all()
             else:
-                if filter_by is not None:
+                if filter_by is not None and filter_by  != '':
                     resource_logger.debug(
                     f"Adding filter_by: {filter_by}")
                     qry = session_qry.filter(text(filter_by))

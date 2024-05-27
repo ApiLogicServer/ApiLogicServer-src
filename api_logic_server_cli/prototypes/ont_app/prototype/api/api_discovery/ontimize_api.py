@@ -20,7 +20,7 @@ from datetime import date
 from config.config import Args
 import os
 from pathlib import Path
-from api.exression_parser import parsePayload
+from api.expression_parser import parsePayload
 from api.gen_pdf_report import gen_report
 
 # called by api_logic_server_run.py, to customize api (new end points, services).
@@ -63,6 +63,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str):
             if (f"'{models_name}." in each_class_def_str and
                             "Ab" not in each_class_def_str):
                 each_resource_name = each_cls_member[0]
+                if each_resource_name == "BaseModel":
+                    continue
                 each_resource_class = each_cls_member[1]
                 each_resource_mapper = each_resource_class.__mapper__
                 if resource_name is None or resource_name == each_resource_name:
@@ -125,7 +127,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str):
     
         return gen_report(api_clz, request, _project_dir, payload, attributes)
         
-    
+    @app.route("/api/<path:path>", methods=['POST','OPTIONS'])
     @app.route("/ontimizeweb/services/rest/<path:path>", methods=['GET','POST','PUT','PATCH','DELETE','OPTIONS'])
     @app.route("/services/rest/<path:path>", methods=['GET','POST','PUT','PATCH','DELETE','OPTIONS'])
     #@cross_origin(vary_header=True)
@@ -140,7 +142,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str):
         if method == "OPTIONS":
             return jsonify(success=True)
         
-        if clz_name == "dynamicjasper":
+        if clz_name in ["dynamicjasper","REPORT"]:
             return _gen_report(request)
         
         if clz_name in ["listReports", "bundle", "reportstore"]:
