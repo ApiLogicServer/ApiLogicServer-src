@@ -1,8 +1,13 @@
 ---
-version info: 0.4 (5/27/2024)
+version info: 0.5 (5/28/2024)
 ---
 
-Welcome to API Logic Server: ***one command to create executable microservices*** (APIs and Admin Apps) from a database or GenAI prompt.  The created projects use standard Python libraries (Flask, SQLAlchemy), so you can ***customize them with Rules and Python in your IDE.***
+Welcome to API Logic Server:
+
+1. ***Instant microservices*** (APIs and Admin Apps) from a database or **GenAI prompt** -- 1 command
+2. ***Customize*** with **Rules** and Python in your IDE: created projects use standard Python libraries (Flask, SQLAlchemy)
+
+</br>
 
 > **Evaluation Guide: open** "Open 1. Existing Database - pre-installed sample database", below.
 
@@ -267,7 +272,7 @@ The `samples` folder has pre-created important projects you will want to review 
 
     * Hint: use your IDE to search for `#als`
 
-    * The sample is also created without customization (`sample_nocust`)
+    * The sample is also created without customization (`sample_nocust`).
 
 * [tutorial](https://apilogicserver.github.io/Docs/Tutorial/) - short (~30 min) walk-through of using API Logic Server using the northwind (customers, orders...) database
 
