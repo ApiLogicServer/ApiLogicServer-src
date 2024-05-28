@@ -2,7 +2,7 @@
 version info: 0.5 (5/28/2024)
 ---
 
-Welcome to API Logic Server:
+## Welcome to API Logic Server
 
 1. ***Instant microservices*** (APIs and Admin Apps) from a database or **GenAI prompt** -- 1 command
 2. ***Customize*** with **Rules** and Python in your IDE: created projects use standard Python libraries (Flask, SQLAlchemy)
@@ -64,13 +64,13 @@ Created projects use standard Flask and SQLAlchemy; automation is provided by Lo
 
 &nbsp;
 
-# Explore Pre-created Samples
+## Explore Pre-created Samples
 
 See these [important pre-created sample apps](#important-pre-created-sample-apps).  (Important: look for **readme files.**)
 
 &nbsp;
 
-#  Explore Creating Projects
+##  Explore Creating Projects
 
 Click on the disclosure buttons, below.  (Important: look for **readme files.**)
 </br>
@@ -260,7 +260,7 @@ Please see [this doc](https://apilogicserver.github.io/Docs/Sample-AI-ChatGPT/)
 
 &nbsp;
 
-# Important Pre-created Sample Apps
+## Important Pre-created Sample Apps
 
 The `samples` folder has pre-created important projects you will want to review at some point:
 
@@ -293,6 +293,3 @@ ApiLogicServer create --project-name=samples/nw_sample_nocust --db-url=nw
 ```
 </details>
 </details>
-
-
-
