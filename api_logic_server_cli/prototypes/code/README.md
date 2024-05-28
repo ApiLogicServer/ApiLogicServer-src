@@ -9,7 +9,7 @@ Welcome to API Logic Server:
 
 </br>
 
-> **Evaluation Guide: open** "Open 1. Existing Database - pre-installed sample database", below.
+> **Evaluation Guide:** open *"1. Existing Database - pre-installed sample database"*, below.
 
 You are in the [API Logic Server Manager](https://apilogicserver.github.io/Docs/Manager/).  This is a good place to manage projects, create notes and resources, etc.
 
