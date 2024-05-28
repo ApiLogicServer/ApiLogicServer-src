@@ -1,7 +1,6 @@
 ---
 version info: 0.5 (5/28/2024)
 ---
-
 ## Welcome to API Logic Server
 
 1. ***Instant microservices*** (APIs and Admin Apps) from a database or **GenAI prompt** -- 1 command
@@ -32,7 +31,7 @@ You are in the [API Logic Server Manager](https://apilogicserver.github.io/Docs/
 
 <details markdown>
 
-<summary>What is GenAI Microservice Automation </summary>
+<summary>How API Logic Server provides GenAI Microservice Automation </summary>
 
 &nbsp;
 
@@ -293,3 +292,6 @@ ApiLogicServer create --project-name=samples/nw_sample_nocust --db-url=nw
 ```
 </details>
 </details>
+
+
+
