@@ -1245,10 +1245,10 @@ from sqlalchemy.dialects.mysql import *
             debug_stop = "nice breakpoint for class rendering"
         if self.model_creation_services.project.bind_key != "":
             super_classes = f'Base{self.model_creation_services.project.bind_key}, db.Model, UserMixin'
-            rendered = 'class {0}(OntBase):  # type: ignore\n'.format(model.name, super_classes)   # ApiLogicServer
+            rendered = 'class {0}(OntBase, Base):  # type: ignore\n'.format(model.name, super_classes)   # ApiLogicServer
         # f'Base{self.model_creation_services.project.bind_key} = declarative_base()'
         else:
-            rendered = 'class {0}(OntBase):\n'.format(model.name, super_classes)   # ApiLogicServer
+            rendered = 'class {0}(OntBase, Base):\n'.format(model.name, super_classes)   # ApiLogicServer
         rendered += '{0}__tablename__ = {1!r}\n'.format(self.indentation, model.table.name)
 
         end_point_name = model.name

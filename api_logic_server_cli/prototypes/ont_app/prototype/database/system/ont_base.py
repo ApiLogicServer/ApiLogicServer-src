@@ -47,6 +47,5 @@ def jsonapi_filter_ontimize(cls):
     
 class OntBase(SAFRSBase, db.Model):
     __abstract__ = True
-    __tablename__ = 'BaseModel'
     jsonapi_filter = jsonapi_filter_ontimize
 
