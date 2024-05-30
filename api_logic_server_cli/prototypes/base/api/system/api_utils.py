@@ -114,8 +114,16 @@ def server_log(request, jsonify):
             print(f'None for msg: {msg}')
         logic_logger = logging.getLogger('logic_logger')  # for debugging user logic
         # logic_logger.info("\n\nLOGIC LOGGER HERE\n")
-        dir = request.args.get('dir')
-        add_file_handler(logic_logger, test, Path(os.getcwd()).joinpath(dir))
+        use_relative = True
+        if use_relative:
+            api_utils_path = Path(__file__)
+            proj_path = api_utils_path.parent.parent.parent
+            log_path = proj_path.joinpath('test/api_logic_server_behave/logs/scenario_logic_logs')
+            print(f'Log Dir: {log_path}')
+            add_file_handler(logic_logger, test, log_path)
+        else:
+            dir = request.args.get('dir')
+            add_file_handler(logic_logger, test, Path(os.getcwd()).joinpath(dir))
     if msg == "Rules Report":
         rules_report()
         logic_logger.info(f'Logic Bank - {rule_count} rules loaded')
