@@ -198,9 +198,13 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str):
                     return get_rows_agg(request, api_clz, clz_type, filter, columns)
                 else:
                     return get_rows(request, api_clz, None, orderBy, columns, pagesize, offset)
-                
-        session.commit()
-        session.flush()
+        try:        
+            session.commit()
+            session.flush()
+        except Exception as ex:
+            session.rollback()
+            return jsonify({"code":1,"message":f"{ex.message}","data":[],"sqlTypes":None}) 
+            
         return jsonify({"code":0,"message":f"{method}:True","data":result,"sqlTypes":None})   #{f"{method}":True})
     
     def find_model(clz_name:str) -> any:
