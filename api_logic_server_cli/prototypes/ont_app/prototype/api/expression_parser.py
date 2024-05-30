@@ -51,7 +51,7 @@ def parsePayload(payload: str):
     offset: int = payload.get("offset") or 0
     pagesize: int = payload.get("pageSize") or 100
     orderBy: list = payload.get("orderBy") or []
-    data = payload.get("data", None)
+    data = fixup_data(payload.get("data", None), sqltypes)
 
     #print(_filter, columns, sqltypes, offset, pagesize, orderBy, data)
     return _filter, columns, sqltypes, offset, pagesize, orderBy, data
@@ -77,9 +77,16 @@ def parseFilter(filter: dict, sqltypes: any):
             q = "" if isinstance(value, int) or isinstance(value, float) else "'"
             sql_where += f'{join} "{f}" = {q}{value}{q}'
             filters.append({"lop": f, "op": "eq", "rop": f"{q}{value}{q}"})
-            join = " OR "
-    return sql_where, filters
+            join = " AND "
+    return sql_where #, filters
 
+def fixup_data(data, sqltypes):
+    if data:
+        for key, value in data.items():
+            if sqltypes and key in sqltypes and isinstance(value, str):
+                if sqltypes[key] in [-5,2,4,5,-6]: #BIGINT, TINYINT, INT, SMALLINT, INTEGER
+                    data[key] = int(value)
+    return data
 
 def _parseFilter(filter: dict, sqltypes: any):
     # {filter":{"@basic_expression":{"lop":"BALANCE","op":"<=","rop":35000}}
