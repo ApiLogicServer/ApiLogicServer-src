@@ -553,7 +553,7 @@ class OntBuilder(object):
                 if hasattr(column, "label") and column.label != DotMap()
                 else column.name
             ), 
-            "editable": column.editable if hasattr(column, "editable") and column.editable != DotMap() else "no",
+            "editable": column.editable if hasattr(column, "editable") and column.editable != DotMap() else "yes",
             "sort": column.sort if hasattr(column,"sort") and column.sort != DotMap() else "no",
             "search":  column.search if hasattr(column,"search") and column.search != DotMap() else "no",
             "template": column.template if hasattr(column,"template") and column.template != DotMap() else 'text',
@@ -565,7 +565,7 @@ class OntBuilder(object):
             "type": column.type if hasattr(column,"type") else "INTEGER",
             "info": column.info if hasattr(column,"info") and column.into != DotMap() else "",
             "tooltip": column.tooltip if hasattr(column,"tooltip") and column.tooltip != DotMap() else column.name,
-            "enabled":  column.enabled if hasattr(column, "enabled") and column.enabled != DotMap() else "yes"
+            "enabled":  "yes" if column.enabled else "no" if hasattr(column, "enabled") and column.enabled != DotMap() else "yes"
         } 
         col_var |= self.global_values
                 #{entity.name}.{col_var["title"]}
