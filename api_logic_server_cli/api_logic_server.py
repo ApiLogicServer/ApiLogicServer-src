@@ -12,67 +12,32 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.04.35"
+__version__ = "10.04.36"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t05/30/2024 - 10.04.35: mgr: fix missing env, blt behave logs \n"\
+    "\t05/30/2024 - 10.04.36: ont feature complete phase I, mgr: fix missing env, BLT behave logs \n"\
     "\t05/25/2024 - 10.04.32: mgr: pycharm, load readme from git \n"\
     "\t05/24/2024 - 10.04.24: default ont creation (w/ security), logic/svc discovery, nw+ app_model_custom.yaml \n"\
     "\t05/04/2024 - 10.04.01: genai w/ restart, logic insertion, use Numeric, genai-cust, pg, 57 \n"\
-    "\t04/23/2024 - 10.03.84: Fix error handling for db errors (eg, missing parent) \n"\
-    "\t04/22/2024 - 10.03.83: cli issues in create-and-run/run, Oracledb 2.1.12, id fields ok \n"\
-    "\t04/10/2024 - 10.03.75: Manager style guide, prompts for samples, create/run from dev-ide, path.joinpath \n"\
     "\t04/05/2024 - 10.03.66: ApiLogicServer start, als create from-model (eg copilot) \n"\
     "\t03/28/2024 - 10.03.46: Python 3.12, View support, CLI option-names, Keycloak preview \n"\
-    "\t03/14/2024 - 10.03.25: View support, CLI option-names, Keycloak preview \n"\
-    "\t03/03/2024 - 10.03.16: Issue 50 (Numeric defaults), Pattern/Design for Behave examples, fix tutorial dir names \n"\
-    "\t02/27/2024 - 10.03.07: LogicBank 1.20.3, behave for kafka & no-ship empty orders \n"\
-    "\t02/26/2024 - 10.03.06: Issue 49 (missing nw models.py manual fix) \n"\
     "\t02/24/2024 - 10.03.04: Issue 45 (RowDictMapper joins), Issue 44 (defaulting), Issue 43 (rebuild no yaml), Tests \n"\
     "\t02/16/2024 - 10.02.05: kafka_producer.send_kafka_message, sample md fixes, docker ENV, pg authdb, issue 42 \n"\
     "\t02/07/2024 - 10.02.00: BugFix[38]: foreign-key/getter collision \n"\
     "\t01/31/2024 - 10.01.28: LogicBank fix, sample-ai, better rules example \n"\
-    "\t01/15/2024 - 10.01.18: Cleanup, logic reminder, nw tutorial fixes \n"\
-    "\t01/10/2024 - 10.01.12: Optlock ignored [35], Reduce Sample size, examples, consistent naming, run/cwd \n"\
-    "\t01/08/2024 - 10.01.07: Default Interpreter for VS Code, Allocation fix, F5 Note, #als \n"\
     "\t01/03/2024 - 10.01.00: Quoted col names \n"\
     "\t12/21/2023 - 10.00.01: Fix < Python 3.11 \n"\
     "\t12/19/2023 - 10.00.00: Kafka pub/sub, Fix MySQL CHAR/String, list/hash/set types \n"\
     "\t12/06/2023 - 09.06.00: Oracle Thick, Integration Sample, No sql logging in rules, curl post \n"\
-    "\t11/19/2023 - 09.05.14: Run Config: Create servers/ApiLogicProject (new IDE) -- nw+, curl, curr-proj \n"\
-    "\t11/12/2023 - 09.05.08: multi-db bug fix (24) \n"\
-    "\t11/07/2023 - 09.05.07: basic_demo: scripted customizations, iteration \n"\
-    "\t11/05/2023 - 09.05.06: basic demo enhancements, bug fix (22, 23) \n"\
-    "\t10/31/2023 - 09.05.00: Security - global filters, crud permissions, ins parent, bug fix (18, 20), sa-pydb \n"\
-    "\t09/29/2023 - 09.04.00: Enhanced devops automation (sqlite, MySql, Postgres) \n"\
-    "\t09/18/2023 - 09.03.04: Sqlite chatgpt cust_orders, Python readme link, class creation cleanup \n"\
     "\t09/14/2023 - 09.03.00: Oracle support \n"\
     "\t09/09/2023 - 09.02.24: Cleanup of table vs. class \n"\
-    "\t09/08/2023 - 09.02.23: Fix Issue 16 - Incorrect admin.yml when table name <> class name \n"\
-    "\t08/24/2023 - 09.02.21: Extended Build arg change, fix table_to_class_map, devops todo's \n"\
-    "\t08/22/2023 - 09.02.18: Devops container/compose, Multi-arch dockers, add-auth with db_url, auth docker dbs, meta api \n"\
-    "\t07/04/2023 - 09.01.00: SQLAlchemy 2 typed-relns/attrs, Docker: Python 3.11.4 & odbc18 \n"\
     "\t06/24/2023 - 09.00.01: PyMysql \n"\
     "\t06/22/2023 - 09.00.00: Optimistic Locking, safrs 310, SQLAlchemy 2.0.15 \n"\
     "\t05/01/2023 - 08.03.06: allocation sample \n"\
     "\t04/26/2023 - 08.03.00: virt attrs (Issue 56), safrs 3.0.2, readme updates, LogicBank 1.8.4 \n"\
     "\t04/13/2023 - 08.02.00: integratedConsole, logic logging (66), table relns fix (65) \n"\
-    "\t04/06/2023 - 08.01.24: create_image, bugfix for excluded table relationships \n"\
     "\t02/15/2023 - 08.00.01: Declarative Authorization and Authentication, Werkzeug==2.2.3 \n"\
-    "\t01/10/2023 - 07.00.04: Portable projects, server_proxy  \n"\
     "\t01/06/2023 - 07.00.00: Multi-db, sqlite test dbs, tests run, security prototype, env config  \n"\
-    "\t12/21/2022 - 06.05.00: Devops, env db uri, api endpoint names, git-push-new-project  \n"\
-    "\t11/22/2022 - 06.03.06: Image, Chkbox, Dialects, run.sh, SQL/Server url change, stop endpoint, Chinook Sqlite \n"\
-    "\t10/02/2022 - 06.02.00: Option infer_primary_key, Oct1 SRA (issue 49), cleanup db/api setup, += postgres dvr \n"\
-    "\t09/15/2022 - 06.01.00: Multi-app Projects \n"\
-    "\t08/28/2022 - 06.00.01: Admin App show_when & cascade add. Simplify Codespaces swagger url & use default config \n"\
-    "\t06/12/2022 - 05.02.22: No pyodbc by default, model customizations simplified, better logging \n"\
-    "\t05/04/2022 - 05.02.03: alembic for database migrations, admin-merge.yaml \n"\
-    "\t04/27/2022 - 05.01.02: copy_children, with support for nesting (children and grandchildren, etc.) \n"\
-    "\t03/27/2022 - 05.00.06: Introducing Behave test framework, LogicBank bugfix \n"\
-    "\t12/26/2021 - 04.00.05: Introducing the admin app, with Readme Tutorial \n"\
-    "\t11/13/2021 - 03.50.01: rebuild-from-database/model, improved relationship support, port conflict msg \n"\
-    "\t09/15/2021 - 03.00.09: auto-create .devcontainer for vscode, configure network, python & debug \n"\
 
 from contextlib import closing
 
