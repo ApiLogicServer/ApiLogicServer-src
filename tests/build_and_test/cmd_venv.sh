@@ -38,5 +38,5 @@ fi
 
 $1
 
-echo "Command $1 run at $INSTALL_DIR.\n\n"
+echo "\nCommand $1 run at $INSTALL_DIR.\n\n"
 exit 0

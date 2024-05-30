@@ -907,8 +907,8 @@ class CodeGenerator(object):
 #
 # mypy: ignore-errors
 {nw_info}########################################################################################################################
-
-from safrs import SAFRSBase
+ 
+from database.system.SAFRSBaseX import SAFRSBaseX
 from flask_login import UserMixin
 import safrs, flask_sqlalchemy
 from safrs import jsonapi_attr
@@ -1245,10 +1245,10 @@ from sqlalchemy.dialects.mysql import *
             debug_stop = "nice breakpoint for class rendering"
         if self.model_creation_services.project.bind_key != "":
             super_classes = f'Base{self.model_creation_services.project.bind_key}, db.Model, UserMixin'
-            rendered = 'class {0}(SAFRSBase, {1}):  # type: ignore\n'.format(model.name, super_classes)   # ApiLogicServer
+            rendered = 'class {0}(SAFRSBaseX, {1}):  # type: ignore\n'.format(model.name, super_classes)   # ApiLogicServer
         # f'Base{self.model_creation_services.project.bind_key} = declarative_base()'
         else:
-            rendered = 'class {0}(SAFRSBase, {1}):\n'.format(model.name, super_classes)   # ApiLogicServer
+            rendered = 'class {0}(SAFRSBaseX, {1}):\n'.format(model.name, super_classes)   # ApiLogicServer
         rendered += '{0}__tablename__ = {1!r}\n'.format(self.indentation, model.table.name)
 
         end_point_name = model.name

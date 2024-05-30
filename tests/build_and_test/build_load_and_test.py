@@ -518,9 +518,10 @@ def validate_nw(api_logic_server_install_path, set_venv):
         result_behave = None
         result_behave_report = None
         print("\nBehave tests starting..\n")
-        api_logic_project_behave_path = api_logic_project_path.joinpath('test').joinpath('api_logic_server_behave')
+        api_logic_project_behave_path = api_logic_project_path.joinpath('test/api_logic_server_behave')
+        behave_run_path = api_logic_project_behave_path.joinpath('behave_run.py')
         api_logic_project_logs_path = api_logic_project_behave_path.joinpath('logs').joinpath('behave.log')
-        behave_command = f'{set_venv} && {python} behave_run.py --outfile={str(api_logic_project_logs_path)}'
+        behave_command = f'{set_venv} && {python} {behave_run_path} --outfile={str(api_logic_project_logs_path)}'
         result_behave = run_command(behave_command, 
                                     cwd=str(api_logic_project_behave_path),
                                     msg="\nBehave Test Run", show_output=True)
@@ -686,7 +687,7 @@ def validate_sql_server_types():
 #        MAIN CODE
 # ***************************
 
-__version__ = '10.03.03'
+__version__ = '10.04.34'  # nw behave tests fix
 current_path = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(current_path)
 program_dir = str(current_path)
