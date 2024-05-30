@@ -26,9 +26,10 @@ if __name__ == "__main__":
     cwd = Path(os.getcwd())
     features_path = cwd.joinpath('features')
     if not features_path.exists():
-        api_logic_server_behave_path = Path('__file__').parent
-        print(f".. fixing cwd to behave_run parent: {str(api_logic_server_behave_path)}")
-        os.chdir(api_logic_server_behave_path)  # fails if does not exist
+        api_logic_server_behave_path = (Path(__file__).parent).absolute()
+        print(f".. Fixing CWD to parent of: {__file__}...")
+        print(f".. .. {api_logic_server_behave_path}")
+        os.chdir(str(api_logic_server_behave_path))  # fails if does not exist
     pass
 
     behave_result = behave_main()
