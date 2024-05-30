@@ -1,9 +1,15 @@
 """
 Advanced Expression Parsing - return SQL Where clause
 """
-
+"""
+JSON:API filtering strategies
+"""
+import sqlalchemy
+import safrs
 import json
-
+from flask import request
+from sqlalchemy.orm import joinedload, Query
+from operator import not_, and_, or_, eq, ne, lt, le, gt, ge
 BASIC_EXPRESSION = "@basic_expression"
 FILTER_EXPRESSION = "@filter_expression"
 LESS = "<"
@@ -53,22 +59,26 @@ def parsePayload(payload: str):
 
 def parseFilter(filter: dict, sqltypes: any):
     # sourcery skip: merge-duplicate-blocks, remove-pass-elif
+    filters = []
     sql_where = ""
     join = ""
     for f, value in filter.items():  
         if f in [BASIC_EXPRESSION]:
             if expr := ExpressionParser(filter, BASIC_EXPRESSION, sqltypes):
                 sql_where += join + expr.get_sql_where()
-                join = " AND "
+                filters = expr.get_filters()
+                join = " OR "
         elif f in [FILTER_EXPRESSION]:
             if expr := ExpressionParser(filter, FILTER_EXPRESSION, sqltypes):
                 sql_where += join + expr.get_sql_where()
-                join = " AND "
+                filters = expr.get_filters()
+                join = " OR "
         else:
-            q = "" if isinstance(value, int) else "'"
+            q = "" if isinstance(value, int) or isinstance(value, float) else "'"
             sql_where += f'{join} "{f}" = {q}{value}{q}'
-            join = " AND "
-    return sql_where
+            filters.append({"lop": f, "op": "eq", "rop": f"{q}{value}{q}"})
+            join = " OR "
+    return sql_where, filters
 
 
 def _parseFilter(filter: dict, sqltypes: any):
@@ -89,9 +99,7 @@ def _parseFilter(filter: dict, sqltypes: any):
         if sqltypes == None:
             q = "'"
         else:
-            q = "" if hasattr(sqltypes, f) and sqltypes[f] != 12 else "'"
-        if f == "CategoryName":
-            f = "CategoryName_ColumnName"  # hack to use real column name
+            q = "'" if isinstance(value, str) else ""
         filter_result += f'{a} "{f}" = {q}{value}{q}'
         a = " and "
     return None if filter_result == "" else filter_result
@@ -104,6 +112,7 @@ class BasicExpression:
         self.sql_where = ""
         self.join_condition = ""
         self.sqltypes = sqltypes
+        self.filters = []
 
         if isinstance(lop, dict):
             _lop = lop["lop"]
@@ -138,7 +147,6 @@ class BasicExpression:
 
         if isinstance(expr.lop, str) and not isinstance(expr.rop, dict):
             self.sql_where += self._parseExpression(expr=expr)
-            print(expr.join_condition)
             self.join_condition = " OR "
 
     def _parseExpression(self, expr) -> str:
@@ -152,13 +160,91 @@ class BasicExpression:
                 else:
                     value = datetime.fromtimestamp(value / 1000).strftime("%Y-%m-%d")
             q = "" if expr.is_numeric(value) else "'"
+            self.filters.append({"lop": expr.lop, "op": expr.op, "rop": f"{q}{value}{q}"})
             return f'{self.join_condition} "{expr.lop}" {expr.op} {q}{value}{q}'
         return ""
 
     def is_numeric(self, value):
-        return False
+        return False if value and isinstance(value, str) else True 
 
+def advancedFilter(cls, args) -> any:
+    filters = []
+    expressions = []
+    from safrs import SAFRSBase, SafrsApi, ValidationError
+    import re
+    import urllib.parse
+    import operator
 
+    for req_arg, val in args.items():
+        if not req_arg.startswith("filter"):
+            continue
+        try:
+            adv_filter = json.loads(val)
+            if isinstance(adv_filter, dict):
+                #TODO - modify this to return expressions (and_ & or_)
+                sqlWhere, filters = parseFilter(adv_filter['filter'], None)
+                continue
+        except Exception as e:
+            print(e)
+            continue
+        #filter[attrname][in|notin]=value
+        filter_attr = re.search(r"filter\[(\w+)\]\[(\w+)\]", req_arg)
+        if filter_attr:
+            name = filter_attr.group(1)
+            op = filter_attr.group(2)
+            if op in ["in", "notin"]:
+                val = json.loads(val)
+            filters.append({"lop": name, "op": op, "rop": val})
+            continue
+
+        #filter[attrname]=value
+        filter_attr = re.search(r"filter\[(\w+)\]", req_arg)
+        if filter_attr:
+            name = filter_attr.group(1)
+            op = "eq"
+            filters.append({"lop": name, "op": op, "rop": val})
+            continue
+        
+        #attrname=value
+        if filter_attr and filter_attr not in ["page","orderBy","pageSize","offset","limit","sort","order","fields","include"]:
+            filters.append({"lop": req_arg, "op": "eq", "rop": val})
+
+    query = cls._s_query
+
+    for filt in filters:
+        attr_name = filt.get("lop")
+        attr_val = filt.get("rop")
+        if attr_name != "id" and attr_name not in cls._s_jsonapi_attrs:
+            raise ValidationError(f'Invalid filter "{filt}", unknown attribute "{attr_name}"')
+
+        op_name = filt.get("op", "").strip("_").lower()
+        attr = cls._s_jsonapi_attrs[attr_name] if attr_name != "id" else cls.id
+        if op_name in ["in"]:
+            op = getattr(attr, op_name + "_")
+            query = query.filter(op(attr_val))
+            #expressions.append(in(attr, clean(attr_val)))
+        elif op_name.lower() in ["like", "ilike", "match"]:
+            # => attr is Column or InstrumentedAttribute
+            like = getattr(attr, op_name)
+            query = query.filter(eq(attr, attr_val))
+        # elif op_name.lower() in ["not like","notlike","notin"]:
+        #    # => attr is Column or InstrumentedAttribute
+        #    notlike = getattr(attr, op_name)
+        #    query = query.filter(notlike(attr, attr_val))
+        elif not hasattr(operator, op_name):
+            raise ValidationError(f'Invalid filter "{filt}", unknown operator "{op_name}"')
+        else:
+            op = getattr(operator, op_name)
+            expressions.append(op(attr, clean(attr_val)))
+    print(*expressions)
+    return expressions #query.filter(or_(*expressions))
+
+def clean(val):
+    if val and isinstance(val, str):
+        if val.startswith('"') and val.endswith('"'):
+            return val[1:-1 ]
+    return val
+            
 class ExpressionParser:
 
     def __init__(self, filter, expression_type, sqltypes=None):
@@ -170,6 +256,10 @@ class ExpressionParser:
         # return self.build_sql_where(self.basic_expr) if self.basic_expr else "1=1"
         self.build_sql_where(self.basic_expr)
 
+    def get_filters(self):
+        return self.basic_expr.filters if self.basic_expr else []
+    
+    
     def parse(self, filter, expression_type):
         if isinstance(filter, dict):
             return next(
@@ -193,43 +283,42 @@ class ExpressionParser:
 
 if __name__ == "__main__":
 
-    filter = {
-        "filter": {
+    filter =  {
             "@basic_expression": {
                 "lop": {
                     "lop": {
                         "lop": {
                             "lop": {
                                 "lop": {
-                                    "lop": "EMPLOYEENAME",
+                                    "lop": "FirstName",
                                     "op": "LIKE",
-                                    "rop": "%empname%",
+                                    "rop": "%St%",
                                 },
                                 "op": "OR",
                                 "rop": {
-                                    "lop": "EMPLOYEESURNAME",
+                                    "lop": "LastName",
                                     "op": "LIKE",
-                                    "rop": "%surname%",
+                                    "rop": "%G%",
                                 },
                             },
                             "op": "OR",
                             "rop": {
-                                "lop": "EMPLOYEEADDRESS",
-                                "op": "LIKE",
-                                "rop": "%address%",
+                                "lop": "City",
+                                "op": "eq",
+                                "rop": "London",
                             },
                         },
                         "op": "OR",
-                        "rop": {"lop": "EMPLOYEEEMAIL", "op": "LIKE", "rop": "%email%"},
+                        "rop": {"lop": "Country", "op": "eq", "rop": "UK"},
                     },
                     "op": "OR",
-                    "rop": {"lop": "OFFICEID", "op": "LIKE", "rop": "%officeid%"},
+                    "rop": {"lop": "Title", "op": "LIKE", "rop": "Sales%"},
                 },
                 "op": "AND",
-                "rop": {"lop": "EMPLOYEENAME", "op": "LIKE", "rop": "%pamella%"},
+                "rop": {"lop": "LastName", "op": "NOT LIKE", "rop": "%B%"},
             }
         }
-    }
+    
     # {'filter': {'@basic_expression': {'lop': {'lop': {'lop': {'lop': {'lop': {'lop': 'EMPLOYEENAME', 'op': 'LIKE', 'rop': '%fort%'}, 'op': 'OR', 'rop': {'lop': 'EMPLOYEESURNAME', 'op': 'LIKE', 'rop': '%fort%'}}, 'op': 'OR', 'rop': {'lop': 'EMPLOYEEADDRESS', 'op': 'LIKE', 'rop': '%fort%'}}, 'op': 'OR', 'rop': {'lop': 'EMPLOYEEEMAIL', 'op': 'LIKE', 'rop': '%fort%'}}, 'op': 'OR', 'rop': {'lop': 'OFFICEID', 'op': 'LIKE', 'rop': '%fort%'}}, 'op': 'AND', 'rop': {'lop': 'EMPLOYEENAME', 'op': 'LIKE', 'rop': '%pamella%'}}}, 'columns': ['EMPLOYEEID', 'EMPLOYEETYPEID', 'EMPLOYEENAME', 'EMPLOYEESURNAME', 'EMPLOYEEADDRESS', 'EMPLOYEESTARTDATE', 'EMPLOYEEEMAIL', 'OFFICEID', 'EMPLOYEEPHOTO', 'EMPLOYEEPHONE', 'NAME'], 'sqltypes': {}, 'offset': 0, 'pageSize': 16, 'orderBy': []}
     simple = {
         "filter": {"@basic_expression": {"lop": "BALANCE", "op": "<=", "rop": 35000}}
@@ -339,5 +428,63 @@ if __name__ == "__main__":
     # print(ep.get_sql_where())
     # ep = ExpressionParser(filter_expr["filter"])
     # print(ep.get_sql_where())
-    filter, columns, sqltypes, offset, pagesize, orderBy, data =  parsePayload(full_expr)
-    print(filter)
+
+    #filter, columns, sqltypes, offset, pagesize, orderBy, data =  parsePayload(full_expr)
+    #print(filter)
+    
+    ''' TEST CASES
+        No Filter
+        filter[AttrName]=Value (numeric) 	
+            where “AttrName” like :parm_1 [Value]
+        filter[AttrName][like]=”%value%” (string)
+        where “AttrName” like :parm_1 [‘%Value%’]
+        filter[AttrName]=value (date or timestamp)
+        where “AttrName” like :parm_1 [‘YYYY-mm-dd’]
+        filter[AttrName][in]=”(a,b,c)”
+        where “AttrName” in :parm_1 [ ‘(a,b,c)’ ]
+        filter[AttrName]=”Value”&filter[AttrName2]=”%Value1%”  
+        where “AttrName” like :parm_1 or “AttrName2” like :parm_2 [Value,Value1]
+        filter={“lop”:”AttrName”,”op”:”eq”,”rop”:”Value”}
+        where “AttrName” = :parm_1 [value]
+
+    '''
+    filter2 = {
+            "@basic_expression": {
+                "lop": {
+                    "lop": {
+                        "lop": {
+                            "lop": {
+                                "lop": {
+                                    "lop": "EMPLOYEENAME",
+                                    "op": "LIKE",
+                                    "rop": "%empname%",
+                                },
+                                "op": "OR",
+                                "rop": {
+                                    "lop": "EMPLOYEESURNAME",
+                                    "op": "LIKE",
+                                    "rop": "%surname%",
+                                },
+                            },
+                            "op": "OR",
+                            "rop": {
+                                "lop": "EMPLOYEEADDRESS",
+                                "op": "LIKE",
+                                "rop": "%address%",
+                            },
+                        },
+                        "op": "OR",
+                        "rop": {"lop": "EMPLOYEEEMAIL", "op": "LIKE", "rop": "%email%"},
+                    },
+                    "op": "OR",
+                    "rop": {"lop": "OFFICEID", "op": "LIKE", "rop": "%officeid%"},
+                },
+                "op": "AND",
+                "rop": {"lop": "EMPLOYEENAME", "op": "LIKE", "rop": "%pamella%"},
+            }
+        }
+
+    import urllib
+    print(urllib.parse.quote(json.dumps(filter)))
+    x = urllib.parse.quote("filter[FirstName][like]A")
+    #print(x)
