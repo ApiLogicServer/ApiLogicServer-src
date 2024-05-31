@@ -19,11 +19,11 @@
         pageable="yes"  
         auto-adjust="true" 
         virtual-scroll="yes" 
-        insert-button="no" 
-        delete-button="no" 
+        insert-button="yes" 
+        delete-button="yes" 
         fixed-header="true" 
         class="vertical-padding-8"
-        edition-mode="click" 
+        edition-mode="dblclick" 
         horizontal-scroll="yes" class="fill-form">
         {% for table_column in row_columns %}
           {{ table_column }}
