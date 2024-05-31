@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, Injector } from '@angular/core';
+import { NavigationService } from 'ontimize-web-ngx';
 
 @Component({
   selector: '{{ entity }}-new',
@@ -6,5 +7,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./{{ entity }}-new.component.scss']
 })
 export class {{ entity_first_cap }}NewComponent {
-
+  constructor(protected injector: Injector) {
+    this.injector.get(NavigationService).initialize();
+  }
 }

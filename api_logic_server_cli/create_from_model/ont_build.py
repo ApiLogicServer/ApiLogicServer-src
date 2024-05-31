@@ -918,7 +918,8 @@ def get_foreign_keys(entity:any, favorites:any ) -> list:
                 "columns": f"{fkey.fks[0]};{fav_col}",
                 "attrType": attrType,
                 "visibleColumn": fav_col,
-                "direction": fkey.direction
+                "direction": fkey.direction,
+                "breadcrumbKeys": fkey.fks[0]
             }
             fks.append(fk)
     return fks
