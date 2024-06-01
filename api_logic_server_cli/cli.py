@@ -1191,7 +1191,7 @@ def add_auth_cmd(ctx, bind_key_url_separator: str, provider_type :str, db_url: s
 
 
 
-@main.command("genai-cust", cls=HideDunderCommand) 
+@main.command("genai-cust", cls=HideDunderCommand, hidden=True) 
 @click.option('--bind_key_url_separator',
               default=default_bind_key_url_separator,
               help="bindkey / class name url separator")
@@ -1210,7 +1210,7 @@ def add_auth_cmd(ctx, bind_key_url_separator: str, provider_type :str, db_url: s
 @click.pass_context
 def genai_cust(ctx, bind_key_url_separator: str, api_name: str, project_name: str):
     """
-    Adds customizations to genai project.  FIXME old code
+    Add genai customizations (disparaged: -> add-cust).  FIXME old code and sample-AI.md
     
     example: 
     cd existing_project
@@ -1286,19 +1286,28 @@ def add_cust(ctx, bind_key_url_separator: str, api_name: str, project_name: str)
     # eg /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/clean/ApiLogicServer/genai_demo
     # vs /Users/val/dev/ApiLogicServer/clean/ApiLogicServer/genai_demo'
     project.project_directory_path = Path(project.project_directory_actual)
+    project.project_name = project.project_directory_path.parent.name if not project.project_directory_path.is_dir() else project.project_directory_path.name
     models_py_path = project.project_directory_path.joinpath('database/models.py')
-    if models_py_path.exists:
-        project.abs_db_url, project.nw_db_status, project.model_file_name = create_utils.get_abs_db_url("0. Using Sample DB", project)
-        is_nw = False
-        if create_utils.does_file_contain(search_for="CategoryTableNameTest", in_file=models_py_path):
-            project.add_nw_customizations(do_security=False)
-            log.info("\nNext step - add authentication:\n  $ ApiLogicServer add-auth --db_url=auth\n\n")
-        elif create_utils.does_file_contain(search_for="Customer", in_file=models_py_path):
-            project.add_genai_customizations(do_security=False)
-        else:
-            raise Exception("Customizations are northwind/genai-specific - models.py has neither CategoryTableNameTest nor Customer")
-    else:
+    if not models_py_path.exists():
         raise Exception("Customizations are northwind/genai-specific - models.py does not exist")
+    
+    project.abs_db_url, project.nw_db_status, project.model_file_name = create_utils.get_abs_db_url("0. Using Sample DB", project)
+    if create_utils.does_file_contain(search_for="CategoryTableNameTest", in_file=models_py_path):
+        project.add_nw_customizations(do_security=False)
+        log.info("\nNext step - add authentication:\n  $ ApiLogicServer add-auth --db_url=auth\n\n")
+    elif project.project_name == 'genai' and create_utils.does_file_contain(search_for="Customer", in_file=models_py_path):  # TODO flimsy test
+        project.add_genai_customizations(do_security=False)
+    elif project.project_name == 'sample_ai' and create_utils.does_file_contain(search_for="CustomerName = Column(Text", in_file=models_py_path):
+        # TODO - verify it's sample_ai
+        
+        cocktail_napkin_path = project.project_directory_path.joinpath('logic/cocktail-napkin.jpg')
+        is_customized = cocktail_napkin_path.exists()
+        if not is_customized:
+            project.add_sample_ai_customizations()
+        else:
+            project.add_sample_ai_iteration()
+    else:
+        raise Exception("Customizations are northwind/genai-specific - models.py has neither CategoryTableNameTest nor Customer")
 
 
 @main.command("sample-ai", cls=HideDunderCommand, hidden=True) 
