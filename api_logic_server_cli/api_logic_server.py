@@ -1317,7 +1317,7 @@ from database import <project.bind_key>_models
         do_security = True  # other demos can explain security, here just make it work
         if do_security:
             if do_show_messages:
-                nw_messages = "Add genai customizations - enabling security"
+                nw_messages = "Add sampleai / genai customizations - enabling security"
             self.add_auth(is_nw=True, msg=nw_messages)
 
         # overlay genai_demo := sample_ai + sample_ai_iteration
@@ -1564,6 +1564,8 @@ from database import <project.bind_key>_models
             create_utils.get_project_directory_and_api_name(self)
         self.project_directory_actual = os.path.abspath(self.project_directory)  # make path absolute, not relative (no /../)
         self.project_directory_path = Path(self.project_directory_actual)
+
+        # TODO - add this?  self.project_name = self.project_directory_path.parent.name if not self.project_directory_path.is_dir() else self.project_directory_path.name
 
         gen_ai = None
         if self.from_genai != "":
