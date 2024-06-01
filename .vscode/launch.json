@@ -51,7 +51,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "     - genai",
+            "name": "     - genai - create clean/ApiLogicServer/genai_demo",
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
@@ -64,13 +64,13 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "     - genai Customizations - clean/ApiLogicServer/genai_demo",
+            "name": "     - genai add-cust - clean/ApiLogicServer/genai_demo",
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
-            "args": ["genai-cust","--project_name=../../../ApiLogicServer-dev/clean/ApiLogicServer/genai_demo"],
+            "args": ["add-cust","--project_name=../../../ApiLogicServer-dev/clean/ApiLogicServer/genai_demo"],
             "console": "integratedTerminal"
         },
         {

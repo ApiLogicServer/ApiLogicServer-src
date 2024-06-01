@@ -1210,7 +1210,7 @@ def add_auth_cmd(ctx, bind_key_url_separator: str, provider_type :str, db_url: s
 @click.pass_context
 def genai_cust(ctx, bind_key_url_separator: str, api_name: str, project_name: str):
     """
-    Adds customizations to genai project.
+    Adds customizations to genai project.  FIXME old code
     
     example: 
     cd existing_project
@@ -1263,7 +1263,7 @@ def genai_cust(ctx, bind_key_url_separator: str, api_name: str, project_name: st
 @click.pass_context
 def add_cust(ctx, bind_key_url_separator: str, api_name: str, project_name: str):
     """
-    Adds customizations to northwind project.
+    Adds customizations to northwind or genai project.
     
     example: 
     cd existing_project
@@ -1282,16 +1282,23 @@ def add_cust(ctx, bind_key_url_separator: str, api_name: str, project_name: str)
     project.project_directory, project.api_name, project.merge_into_prototype = \
         create_utils.get_project_directory_and_api_name(project)
     project.project_directory_actual = os.path.abspath(project.project_directory)  # make path absolute, not relative (no /../)
+    # eg,/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/servers/ApiLogicProject
+    # eg /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/clean/ApiLogicServer/genai_demo
+    # vs /Users/val/dev/ApiLogicServer/clean/ApiLogicServer/genai_demo'
     project.project_directory_path = Path(project.project_directory_actual)
     models_py_path = project.project_directory_path.joinpath('database/models.py')
-    project.abs_db_url, project.nw_db_status, project.model_file_name = create_utils.get_abs_db_url("0. Using Sample DB", project)
-    is_nw = False
-    if create_utils.does_file_contain(search_for="CategoryTableNameTest", in_file=models_py_path):
-        is_nw = True
+    if models_py_path.exists:
+        project.abs_db_url, project.nw_db_status, project.model_file_name = create_utils.get_abs_db_url("0. Using Sample DB", project)
+        is_nw = False
+        if create_utils.does_file_contain(search_for="CategoryTableNameTest", in_file=models_py_path):
+            project.add_nw_customizations(do_security=False)
+            log.info("\nNext step - add authentication:\n  $ ApiLogicServer add-auth --db_url=auth\n\n")
+        elif create_utils.does_file_contain(search_for="Customer", in_file=models_py_path):
+            project.add_genai_customizations(do_security=False)
+        else:
+            raise Exception("Customizations are northwind/genai-specific - models.py has neither CategoryTableNameTest nor Customer")
     else:
-        raise Exception("Customizations are northwind-specific - this does not appear to be a northwind database")
-    project.add_nw_customizations(do_security=False)
-    log.info("\nNext step - add authentication:\n  $ ApiLogicServer add-auth --db_url=auth\n\n")
+        raise Exception("Customizations are northwind/genai-specific - models.py does not exist")
 
 
 @main.command("sample-ai", cls=HideDunderCommand, hidden=True) 
