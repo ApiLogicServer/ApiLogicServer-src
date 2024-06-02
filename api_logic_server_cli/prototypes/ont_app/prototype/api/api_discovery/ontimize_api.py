@@ -303,10 +303,12 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str):
         list_of_columns = []
         for a in attributes:
             name = a["name"]
+            col = a["attr"].columns[0] 
+            desc = col.description
             t = a["type"] #INTEGER or VARCHAR(N)
             #MAY need to do upper case compares
-            if name in columns:
-                list_of_columns.append(name)
+            if desc in columns:
+                list_of_columns.append((col,name))
                 
         from api.system.custom_endpoint import CustomEndpoint
         request.method = 'GET'

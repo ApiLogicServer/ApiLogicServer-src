@@ -512,6 +512,9 @@ class CustomEndpoint():
                 if isinstance(f,str):
                     fieldName = f
                     alias = fieldName
+                if isinstance(f[0], sqlalchemy.sql. schema.Column):
+                    alias = f[0].description 
+                    fieldName = f[1] if isinstance(f, tuple) else fieldName
                 else:
                     fieldName = f[0].key if isinstance(f, tuple) else f.key
                     alias = f[1] if isinstance(f, tuple) else fieldName
