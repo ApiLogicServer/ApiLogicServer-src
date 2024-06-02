@@ -14,6 +14,8 @@ import logging
 
 app_logger = logging.getLogger(__name__)
 
+declare_logic_message = "Sample Rules  Loaded"
+
 def declare_logic():
 
     """ Declarative multi-table derivations and constraints, extensible with Python. 
@@ -49,6 +51,7 @@ def declare_logic():
     def derive_amount(row: models.Item, old_row: models.Item, logic_row: LogicRow):
         amount = row.Quantity * row.UnitPrice
         if row.Product.CarbonNeutral == True and row.Quantity >= 10:
+           logic_row.log("hello from derive_amount")
            amount = amount * Decimal(0.9)  # breakpoint here
         return amount
 
