@@ -174,7 +174,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
             if db is None:
                 db = safrs.DB         # Use the safrs.DB for database access
                 session = db.session  # sqlalchemy.orm.scoping.scoped_session
-        
+            from database.authentication_models import authentication_models
             user = session.query(authentication_models.User).filter(authentication_models.User.id == id).one_or_none()
             if user is None:  #Val - change note to remove try, use 1st user if none (as a temp hack?)
                 logger.info(f'*****\nauth_provider: Create user for: {id}\n*****\n')
