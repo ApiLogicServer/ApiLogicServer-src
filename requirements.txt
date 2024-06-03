@@ -14,6 +14,7 @@ rsa
 PyMySQL==1.0.3
 oracledb==2.1.2
 # pip install PyMySQL[rsa]
+# fix warnings.warn("urllib3
 requests==2.31.0
 gunicorn==20.1.0
 # psycopg2-binary==2.9.5
