@@ -13,6 +13,12 @@ als gen-ai --project-name=sample_ai --db-url=sqlite { env - apikey }
 
 sh cmd_venv.sh " ApiLogicServer create --project_name=TVF --extended_builder=$ --db_url=mssql+pyodbc://sa:Posey3861@localhost:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no"
 
+Docker Manager: https://code.visualstudio.com/docs/devcontainers/containers#_trusting-your-workspace
+
+  $ start docker; als start; exit
+  % code . (and open container)
+  $ sudo chmod a+rwx /workspaces/dockers
+  $ als create --project-name=/workspaces/dockers/nw+ --db-url=nw+
 
 create from model (eg, copilot)
 

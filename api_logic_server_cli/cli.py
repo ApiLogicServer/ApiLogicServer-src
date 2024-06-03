@@ -1263,7 +1263,7 @@ def genai_cust(ctx, bind_key_url_separator: str, api_name: str, project_name: st
 @click.pass_context
 def add_cust(ctx, bind_key_url_separator: str, api_name: str, project_name: str):
     """
-    Adds customizations to northwind or genai project.
+    Adds customizations to northwind, genai, sample_ai, basic_demo.
     
     example: 
     cd existing_project
@@ -1295,17 +1295,22 @@ def add_cust(ctx, bind_key_url_separator: str, api_name: str, project_name: str)
     if create_utils.does_file_contain(search_for="CategoryTableNameTest", in_file=models_py_path):
         project.add_nw_customizations(do_security=False)
         log.info("\nNext step - add authentication:\n  $ ApiLogicServer add-auth --db_url=auth\n\n")
-    elif project_name == 'genai_demo' and create_utils.does_file_contain(search_for="Customer", in_file=models_py_path):  # TODO flimsy test
+    elif project_name == 'genai_demo' and create_utils.does_file_contain(search_for="Customer", in_file=models_py_path):
         project.add_genai_customizations(do_security=False)
     elif project_name == 'sample_ai' and create_utils.does_file_contain(search_for="CustomerName = Column(Text", in_file=models_py_path):
-        # TODO - verify it's sample_ai
-        
         cocktail_napkin_path = project.project_directory_path.joinpath('logic/cocktail-napkin.jpg')
         is_customized = cocktail_napkin_path.exists()
         if not is_customized:
             project.add_sample_ai_customizations()
         else:
             project.add_sample_ai_iteration()
+    elif project_name == 'basic_demo' and create_utils.does_file_contain(search_for="Customer", in_file=models_py_path):
+        cocktail_napkin_path = project.project_directory_path.joinpath('logic/cocktail-napkin.jpg')
+        is_customized = cocktail_napkin_path.exists()
+        if not is_customized:
+            project.add_basic_demo_customizations()
+        else:
+            project.add_basic_demo_iteration()
     else:
         raise Exception("Customizations are northwind/genai-specific - models.py has neither CategoryTableNameTest nor Customer")
 
