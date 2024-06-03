@@ -1286,7 +1286,7 @@ def add_cust(ctx, bind_key_url_separator: str, api_name: str, project_name: str)
     # eg /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/clean/ApiLogicServer/genai_demo
     # vs /Users/val/dev/ApiLogicServer/clean/ApiLogicServer/genai_demo'
     project.project_directory_path = Path(project.project_directory_actual)
-    project.project_name = project.project_directory_path.parent.name if not project.project_directory_path.is_dir() else project.project_directory_path.name
+    project_name = project.project_directory_path.parent.name if not project.project_directory_path.is_dir() else project.project_directory_path.name
     models_py_path = project.project_directory_path.joinpath('database/models.py')
     if not models_py_path.exists():
         raise Exception("Customizations are northwind/genai-specific - models.py does not exist")
@@ -1295,9 +1295,9 @@ def add_cust(ctx, bind_key_url_separator: str, api_name: str, project_name: str)
     if create_utils.does_file_contain(search_for="CategoryTableNameTest", in_file=models_py_path):
         project.add_nw_customizations(do_security=False)
         log.info("\nNext step - add authentication:\n  $ ApiLogicServer add-auth --db_url=auth\n\n")
-    elif project.project_name == 'genai' and create_utils.does_file_contain(search_for="Customer", in_file=models_py_path):  # TODO flimsy test
+    elif project_name == 'genai_demo' and create_utils.does_file_contain(search_for="Customer", in_file=models_py_path):  # TODO flimsy test
         project.add_genai_customizations(do_security=False)
-    elif project.project_name == 'sample_ai' and create_utils.does_file_contain(search_for="CustomerName = Column(Text", in_file=models_py_path):
+    elif project_name == 'sample_ai' and create_utils.does_file_contain(search_for="CustomerName = Column(Text", in_file=models_py_path):
         # TODO - verify it's sample_ai
         
         cocktail_napkin_path = project.project_directory_path.joinpath('logic/cocktail-napkin.jpg')

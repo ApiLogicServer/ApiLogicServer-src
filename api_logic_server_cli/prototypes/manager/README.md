@@ -110,7 +110,7 @@ als genai --using=genai_demo.prompt
 ```
 
 
-2. ***Or,*** you can simulate the process using:
+2. ***Or,*** you can simulate the process (no signup) using:
 
 
 ```bash

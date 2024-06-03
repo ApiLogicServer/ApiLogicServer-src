@@ -466,6 +466,10 @@ def docker_creation_tests(api_logic_server_tests_path):
         cwd=api_logic_server_home_path,
         msg=f'\nBuild ApiLogicServer Docker Container at: {str(api_logic_server_home_path)}')
     assert build_container.returncode == 0, f'Docker build failed: {build_cmd}'
+    tag_cmd = 'docker tag apilogicserver/api_logic_server_local apilogicserver/api_logic_server_local:latest'
+    build_container = run_command(tag_cmd,
+        cwd=api_logic_server_home_path,
+        msg=f'\Tag ApiLogicServer Docker Container at: {str(api_logic_server_home_path)}')
     
     src = api_logic_server_tests_path.joinpath('creation_tests').joinpath('docker-commands.sh')
     dest = get_servers_build_and_test_path().joinpath('ApiLogicServer').joinpath('dockers')
