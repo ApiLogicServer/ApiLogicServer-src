@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.04.38"
+__version__ = "10.04.41"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t05/31/2024 - 10.04.38: ont cascade add, mgr: fix missing env, BLT behave logs, add-cust \n"\
+    "\t06/02/2024 - 10.04.41: ont cascade add, mgr: fix missing env, docker mgr, BLT behave logs, add-cust \n"\
     "\t05/25/2024 - 10.04.32: mgr: pycharm, load readme from git \n"\
     "\t05/24/2024 - 10.04.24: default ont creation (w/ security), logic/svc discovery, nw+ app_model_custom.yaml \n"\
     "\t05/04/2024 - 10.04.01: genai w/ restart, logic insertion, use Numeric, genai-cust, pg, 57 \n"\
@@ -767,16 +767,19 @@ def start_open_with(project: Project):
     """ Creation complete.  Opening {open_with} at {project_name} """
     log.info(f'\nCreation complete - Opening {project.open_with} at {project.project_name}')
     log.debug(".. See the readme for install / run instructions")
-    try:
-        with_readme = '. readme.md' if project.open_with == "xxcode" else ''  # loses project context
-        create_utils.run_command(
-            cmd=f'{project.open_with} {project.project_name} {with_readme}',
-            env=None, 
-            msg="no-msg", 
-            project=project)
-    except:
-        log.error("\n\n... ...Failed to open project")
-        log.error(f"\n... ... ...Suggestion: open code (Ctrl+Shift+P or Command+Shift+P), and run 'Shell Command'\n")
+    if project.is_docker:
+        log.info("... docker unable to start IDE - please run manager on local host")
+    else:
+        try:
+            with_readme = '. readme.md' if project.open_with == "xxcode" else ''  # loses project context
+            create_utils.run_command(
+                cmd=f'{project.open_with} {project.project_name} {with_readme}',
+                env=None, 
+                msg="no-msg", 
+                project=project)
+        except:
+            log.error("\n\n... ...Failed to open project")
+            log.error(f"\n... ... ...Suggestion: open code (Ctrl+Shift+P or Command+Shift+P), and run 'Shell Command'\n")
 
 def invoke_extended_builder(builder_path, db_url, project_directory, model_creation_services):
     # spec = importlib.util.spec_from_file_location("module.name", "/path/to/file.py")
@@ -913,7 +916,7 @@ class ProjectRun(Project):
         if style_guide_path.is_file():
             pass
         else:
-            style_guide_path = self.api_logic_server_dir_path.joinpath('prototypes/code/system/style-guide.yaml')
+            style_guide_path = self.api_logic_server_dir_path.joinpath('prototypes/manager/system/style-guide.yaml')
             log.debug(f'.. ..No style-guide.yaml file found, using defaults')
         with open(style_guide_path, 'r') as file:
             try:
@@ -1317,7 +1320,7 @@ from database import <project.bind_key>_models
         do_security = True  # other demos can explain security, here just make it work
         if do_security:
             if do_show_messages:
-                nw_messages = "Add sampleai / genai customizations - enabling security"
+                nw_messages = "Add sample_ai / genai_demo customizations - enabling security"
             self.add_auth(is_nw=True, msg=nw_messages)
 
         # overlay genai_demo := sample_ai + sample_ai_iteration

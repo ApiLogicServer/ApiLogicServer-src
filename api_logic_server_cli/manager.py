@@ -19,27 +19,38 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path):
     Example, from CLI in directory containing a `venv` (see https://apilogicserver.github.io/Docs/Manager/)
         $ als start
 
-    Foundation is deep copy from api_logic_server_cli/prototypes/code
+    Foundation is deep copy from api_logic_server_cli/prototypes/manager
         Bit tricky to find find cli in subdirectories of the lib path for manager run launches
 
     Args:
-        clean (bool): True means overwrite api_logic_server_cli/prototypes/code
+        clean (bool): True means overwrite api_logic_server_cli/prototypes/manager
         open_with (str): code or pycharm (only code for now)
         api_logic_server_path (Path): location of api_logic_server install
     """
     
     log = logging.getLogger(__name__)
+
     project = PR.ProjectRun(command= "start", project_name='ApiLogicServer', db_url='sqlite', execute=False)
 
-    log.info(f"\n\nCreating manager at: {os.getcwd()}\n\n")  # eg, ...ApiLogicServer-dev/clean/ApiLogicServer
+    if project.is_docker:
+        # set cwd to /localhost, so that the manager is created in the correct location
+        os.chdir('/localhost')
+
+    docker_volume = "/localhost/" if project.is_docker else ""
+    # project.is_docker = True  # for testing
+
+    log.info(f"\n\nStarting manager at: {os.getcwd()}\n\n")  # eg, ...ApiLogicServer-dev/clean/ApiLogicServer
     to_dir = Path(os.getcwd())
     path = Path(__file__)
-    from_dir = api_logic_server_path.joinpath('prototypes/code')
+    from_dir = api_logic_server_path.joinpath('prototypes/manager')
     to_dir_str = str(to_dir)
     to_dir_check = Path(to_dir).joinpath('venv')
     if not Path(to_dir).joinpath('venv').exists():
-        log.info(f"    No action taken - no venv found at: \n      {to_dir}\n\n")
-        exit(1)
+        if project.is_docker:
+            pass
+        else:
+            log.info(f"    No action taken - no venv found at: \n      {to_dir}\n\n")
+            exit(1)
     env_path = to_dir.joinpath('.env')
 
     manager_exists = False
@@ -54,15 +65,20 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path):
             dst_env = to_dir.joinpath('.env')
             copied_env = shutil.copy(src=src_env, dst=dst_env)
     else:
+        mgr_save_level = log.level
         codegen_logger = logging.getLogger('sqlacodegen_wrapper.sqlacodegen.sqlacodegen.codegen')
         codegen_logger_save_level= codegen_logger.level
         codegen_logger.setLevel(logging.ERROR)
+        log.setLevel(mgr_save_level)
         if to_dir_check.exists():
             log.info(f"    Cleaning manager at: {to_dir}\n\n")
         copied_path = shutil.copytree(src=from_dir, dst=to_dir, dirs_exist_ok=True)
         log.info(f"    Created manager at: {copied_path}\n\n")
+        if project.is_docker:
+            from_docker_dir = api_logic_server_path.joinpath('prototypes/manager_docker')
+            copied_path = shutil.copytree(src=from_docker_dir, dst=to_dir, dirs_exist_ok=True)
 
-        file_src = f"https://raw.githubusercontent.com/ApiLogicServer/ApiLogicServer-src/main/api_logic_server_cli/prototypes/code/README.md"
+        file_src = f"https://raw.githubusercontent.com/ApiLogicServer/ApiLogicServer-src/main/api_logic_server_cli//README.md"
         readme_path = to_dir.joinpath('README.md')
         try:
             r = requests.get(file_src)  # , params=params)
@@ -76,22 +92,29 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path):
         except:     # do NOT fail 
             pass    # just fall back to using the pip-installed version
 
-        tutorial_project = PR.ProjectRun(command="tutorial", 
-                project_name='./samples', 
-                db_url="",
-                execute=False,
-                open_with="NO_AUTO_OPEN"
-                )
-        tutorial_project = tutorial_project.tutorial(msg="Creating:") ##, create='tutorial')
+        if project.is_docker:
+            log.debug(f"    tutorial not created for docker\n\n")
+        else:
+            tutorial_project = PR.ProjectRun(command="tutorial", 
+                    project_name='./samples', 
+                    db_url="",
+                    execute=False,
+                    open_with="NO_AUTO_OPEN"
+                    )
+            tutorial_project = tutorial_project.tutorial(msg="Creating:") ##, create='tutorial')
 
-        samples_project = PR.ProjectRun(command= "create", project_name='samples/nw_sample', db_url='nw+', open_with="NO_AUTO_OPEN")
-        samples_project = PR.ProjectRun(command= "create", project_name='samples/nw_sample_nocust', db_url='nw', open_with="NO_AUTO_OPEN")
+        samples_project = PR.ProjectRun(command= "create", project_name=f'{docker_volume}samples/nw_sample', db_url='nw+', open_with="NO_AUTO_OPEN")
+        log.setLevel(mgr_save_level)
+        log.disabled = False  # todo why was it reset?
+        samples_project = PR.ProjectRun(command= "create", project_name=f'{docker_volume}samples/nw_sample_nocust', db_url='nw', open_with="NO_AUTO_OPEN")
+        log.setLevel(mgr_save_level)
+        log.disabled = False
         codegen_logger.setLevel(codegen_logger_save_level)
     pass
 
     # find cli in subdirectories of the lib path for manager run launches, and update run/debug config
-    if manager_exists:
-        pass
+    if manager_exists or project.is_docker:
+        log.debug(f"    docker -- not updating .env and launch.json\n\n")
     else:
         lib_path = project.default_interpreter_path.parent.parent.joinpath('lib')
         ''' if only 1 python, lib contains site-packages, else python3.8, python3.9, etc '''
@@ -123,14 +146,18 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path):
     os.putenv("APILOGICSERVER_HOME", str(project.api_logic_server_dir_path.parent) )
     os.putenv("APILOGICSERVER_AUTO_OPEN", open_with )  # NB: .env does not override env, so MUST set
     # assert defaultInterpreterPath_str == str(project.default_interpreter_path)
-    try: # open the manager in open_with
-        with_readme = '. readme.md' if open_with == "xxcode" else ' '  # loses project context (no readme preview)
-        create_utils.run_command( 
-            cmd=f'{open_with} {to_dir_str} {with_readme}',  # passing readme here fails - loses project setttings
-            env=None, 
-            msg="no-msg", 
-            project=project)
-    except Exception as e:
-        log.error(f"\n\nError: {e}")
-        log.error(f"\nSuggestion: open code (Ctrl+Shift+P or Command+Shift+P), and run Shell Command\n")
-        exit(1)
+
+    if project.is_docker:
+        log.info(f"\n\nDocker Manager created, open code on local host at: {to_dir}\n\n")
+    else:
+        try: # open the manager in open_with
+            with_readme = '. readme.md' if open_with == "xxcode" else ' '  # loses project context (no readme preview)
+            create_utils.run_command( 
+                cmd=f'{open_with} {to_dir_str} {with_readme}',  # passing readme here fails - loses project setttings
+                env=None, 
+                msg="no-msg", 
+                project=project)
+        except Exception as e:
+            log.error(f"\n\nError opening manager with {open_with}: {e}")
+            log.error(f"\nSuggestion: open code (Ctrl+Shift+P or Command+Shift+P), and run Shell Command\n")
+            exit(1)
