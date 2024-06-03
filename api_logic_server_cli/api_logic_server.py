@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.04.41"
+__version__ = "10.04.42"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t06/02/2024 - 10.04.41: ont cascade add, mgr: fix missing env, docker mgr, BLT behave logs, add-cust \n"\
+    "\t06/02/2024 - 10.04.42: ont cascade add, mgr: fix missing env, docker mgr, BLT behave logs, add-cust \n"\
     "\t05/25/2024 - 10.04.32: mgr: pycharm, load readme from git \n"\
     "\t05/24/2024 - 10.04.24: default ont creation (w/ security), logic/svc discovery, nw+ app_model_custom.yaml \n"\
     "\t05/04/2024 - 10.04.01: genai w/ restart, logic insertion, use Numeric, genai-cust, pg, 57 \n"\
@@ -1306,6 +1306,14 @@ from database import <project.bind_key>_models
             create_utils.copy_md(project = self, from_doc_file = "Tutorial-3.md", to_project_file='Tutorial.md')
             # z_copy_md(project = self, from_doc_file="Tutorial-3.md", to_project_file='Tutorial.md')
 
+    '''
+    samples and demos - simulate customizations - https://apilogicserver.github.io/Docs/Doc-Home/#start-install-samples-training
+        1. nw - sample code
+        2. genai_demo - GenAI (ChatGPT to create model, add rules VSC)
+        3. basic_demo - small db, no GenAI (w/ iteration)
+        4. sample_ai - CoPilot, no GenAI (w/ iteration)
+        5. Tech AI - just an article, no automated customizations...
+    '''
 
     def add_genai_customizations(self, do_show_messages: bool = True, do_security: bool = True):
         """ Add customizations to genaiai (default creation)
@@ -1334,7 +1342,7 @@ from database import <project.bind_key>_models
             log.info(f'..logic/declare_logic.py')
             log.info(f'..security/declare_security.py\n')
             if self.is_tutorial == False:
-                log.info(".. complete\n")
+                log.info(".. all customizations complete\n")
 
 
     def add_nw_customizations(self, do_show_messages: bool = True, do_security: bool = True):
@@ -1379,7 +1387,58 @@ from database import <project.bind_key>_models
             log.info(f'..logic/declare_logic.py')
             log.info(f'..security/declare_security.py\n')
             if self.is_tutorial == False:
+                log.info(".. all customizations complete\n")
+
+
+    def add_basic_demo_customizations(self, do_show_messages: bool = True):
+        """ Add customizations to basic_demo (default creation)
+
+        1. Deep copy prototypes/basic_demo (adds logic and security)
+
+        2. Create readme files: Sample-AI (copy_md), api/integration_defs/readme.md  TODO not done, fix cmts
+
+        Args:
+        """
+
+        log.debug("\n\n==================================================================")
+        nw_messages = ""
+        do_security = False  # disabled - keep clear what "activate security" means for reader
+        if do_security:
+            if do_show_messages:
+                nw_messages = "Add basic_demo customizations - enabling security"
+            self.add_auth(is_nw=True, msg=nw_messages)
+
+        nw_path = (self.api_logic_server_dir_path).\
+            joinpath('prototypes/basic_demo/customizations')  # PosixPath('/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/basic_demo/customizations')
+        recursive_overwrite(nw_path, self.project_directory) 
+
+        if do_show_messages:
+            log.info("\nExplore key customization files:")
+            log.info(f'..logic/declare_logic.py')
+            log.info(f'..security/declare_security.py\n')
+            log.info(f'Next Steps: activate security')
+            log.info(f'..ApiLogicServer add-auth --db_url=auth')
+            if self.is_tutorial == False:
                 log.info(".. complete\n")
+
+
+    def add_basic_demo_iteration(self, do_show_messages: bool = True, do_security: bool = True):
+        """ Iterate data model for basic_demo (default creation)
+
+        1. Deep copy prototypes/basic_demo/iteration (adds db, logic)
+
+        Args:
+        """
+
+        log.debug("\n\n==================================================================")
+
+        nw_path = (self.api_logic_server_dir_path).\
+            joinpath('prototypes/basic_demo/iteration')
+        recursive_overwrite(nw_path, self.project_directory)  # '/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/tutorial/1. Instant_Creation'
+        if do_show_messages:
+            log.info("\nNext Step:")
+            log.info(f'..ApiLogicServer rebuild-from-database --db_url=sqlite:///database/db.sqlite')
+            log.info(".. complete\n")
 
 
     def add_sample_ai_customizations(self, do_show_messages: bool = True):
