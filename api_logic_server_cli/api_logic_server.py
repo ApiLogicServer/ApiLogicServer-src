@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.04.42"
+__version__ = "10.04.43"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t06/02/2024 - 10.04.42: ont cascade add, mgr: fix missing env, docker mgr, BLT behave logs, add-cust \n"\
+    "\t06/03/2024 - 10.04.43: ont cascade add, mgr: fix missing env, docker mgr, BLT behave logs, add-cust \n"\
     "\t05/25/2024 - 10.04.32: mgr: pycharm, load readme from git \n"\
     "\t05/24/2024 - 10.04.24: default ont creation (w/ security), logic/svc discovery, nw+ app_model_custom.yaml \n"\
     "\t05/04/2024 - 10.04.01: genai w/ restart, logic insertion, use Numeric, genai-cust, pg, 57 \n"\
@@ -1311,7 +1311,7 @@ from database import <project.bind_key>_models
         1. nw - sample code
         2. genai_demo - GenAI (ChatGPT to create model, add rules VSC)
         3. basic_demo - small db, no GenAI (w/ iteration)
-        4. sample_ai - CoPilot, no GenAI (w/ iteration)
+        4. sample_ai - CoPilot, no GenAI   (w/ iteration)
         5. Tech AI - just an article, no automated customizations...
     '''
 
