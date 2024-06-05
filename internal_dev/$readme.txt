@@ -6,6 +6,16 @@ als create --project-name=sample_ai --from-model=sample_ai.py --db-url=sqlite
 als create --gen-ai=sample_ai --db-url=sqlite
 als gen-ai --project-name=sample_ai --db-url=sqlite { env - apikey }
 
+export APILOGICSERVER_DEBUG=True
+
+docker cp api_logic_server_utils.py zealous_goldwasser://home/api_logic_server/api_logic_server_cli/create_from_model/api_logic_server_utils.py
+
+docker cp cli.py gifted_keller://home/api_logic_server/api_logic_server_cli/cli.py
+
+docker cp manager.py gifted_keller://home/api_logic_server/api_logic_server_cli/manager.py
+
+als start --volume=ApiLogicServer
+
   - instant uSvc: app, api
   - customizable: rules, standards
   - abstraction stays high (maintain less / dependency management, quickstartuality / clarity)
