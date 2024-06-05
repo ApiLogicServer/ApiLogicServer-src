@@ -10,7 +10,7 @@ import create_from_model.api_logic_server_utils as create_utils
 from pathlib import Path
 import api_logic_server_cli.api_logic_server as PR
 
-def create_manager(clean: bool, open_with: str, api_logic_server_path: Path):
+def create_manager(clean: bool, open_with: str, api_logic_server_path: Path, volume: str = ""):
     """Creates Manager at os.getcwd(), including:
     1. .vscode, readme
     2. System folder (GenAI sample prompts / responses, others TBD)
@@ -32,11 +32,12 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path):
 
     project = PR.ProjectRun(command= "start", project_name='ApiLogicServer', db_url='sqlite', execute=False)
 
+    docker_volume = ''
     if project.is_docker:
         # set cwd to /localhost, so that the manager is created in the correct location
-        os.chdir('/localhost')
-
-    docker_volume = "/localhost/" if project.is_docker else ""
+        log.info(f"  ..docker volume: {volume}") 
+        os.chdir(f'/{volume}')
+        docker_volume = volume + '/'
     # project.is_docker = True  # for testing
 
     log.info(f"\n\nStarting manager at: {os.getcwd()}\n\n")  # eg, ...ApiLogicServer-dev/clean/ApiLogicServer

@@ -141,7 +141,7 @@ default_bind_key_url_separator = "-"  # admin app fails with "/" or ":" (json is
 last_login_token = api_logic_server_info_file_dict.get("last_login_token","")
 
 if os.path.exists('/home/api_logic_server'):  # docker?
-    default_project_name = "/localhost/ApiLogicProject"
+    # default_project_name = "/localhost/ApiLogicProject"  # best practice is cd <volume>
     default_fab_host = "0.0.0.0"
 
 
@@ -204,15 +204,19 @@ def main(ctx):
 @click.option('--open-with', 'open_with',
               default='code',
               help="Open project with code, charm (mac), pycharm (win), etc")
+@click.option('--volume',
+              default='ApiLogicServer',
+              help="Docker volume (default = ApiLogicServer)")
 @click.option('--clean/--no-clean', "clean",
               default=False, is_flag=True,
               help="Overlay existing manager (projects retained)")
-def create_start_manager(ctx, open_with, clean: click.BOOL = False):
+def create_start_manager(ctx, open_with, clean: click.BOOL = False, volume: str = "ApiLogicServer"):
     """
         Create and Manage API Logic Projects.
     """
+    print(f'start sees volume={volume}')
     from api_logic_server_cli.manager import create_manager
-    create_manager(clean=clean, open_with=open_with, api_logic_server_path=get_api_logic_server_path())
+    create_manager(clean=clean, open_with=open_with, api_logic_server_path=get_api_logic_server_path(), volume=volume)
 
 
 @main.command("about")
