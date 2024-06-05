@@ -47,9 +47,17 @@ def get_project_directory_and_api_name(project):
     rtn_merge_into_prototype = False
 
     if project.is_docker:
-        if not rtn_project_directory.startswith("/"):
-            log.error(f'\n\nError: Docker requires absolute path for project directory: {rtn_project_directory}\n')
-            exit(1)
+        if rtn_project_directory == '.' or rtn_project_directory == './':
+            log.info(f'  .. docker operation enabled on current project: {rtn_project_directory}')
+        elif rtn_project_directory.startswith("/"):
+            log.info(f'  .. docker operation enabled on volume/path: {rtn_project_directory}')
+        else:
+            log.info(f'  ..cwd: {str(os.getcwd())}\n')
+            rtn_project_directory = str(os.getcwd()) + '/' + rtn_project_directory
+            if rtn_project_directory.startswith("/home/api_logic_server"):  # this is @als - not for projects!
+                log.error(f'\n\nError: Docker requires absolute path for project directory: {rtn_project_directory}\n')
+                exit(1)
+            log.info(f'  ..docker using default directory: {rtn_project_directory}\n')
            
     if rtn_project_directory.startswith("~"):
         rtn_project_directory = str(Path.home()) + rtn_project_directory[1:]
