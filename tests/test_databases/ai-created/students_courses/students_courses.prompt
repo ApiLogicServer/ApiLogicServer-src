@@ -1,0 +1,6 @@
+Use SQLAlchemy to create a sqlite database named system/genai/temp/model.sqlite, 
+with teachers, courses which have offerings, and students who have offerings.
+
+Hints: use autonum keys, allow nulls, Decimal types, foreign keys, no check constraints.
+
+Create a few rows test data.
