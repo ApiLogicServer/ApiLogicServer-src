@@ -78,10 +78,14 @@ class OntBuilder(object):
         self.thousand_separator="," # "."
         self.decimal_separator="." # ","
         self.date_format="LL" #not sure what this means
-        self.use_keycloak=True # True this will use different templates - defaults to basic auth
-        self.edit_on_mode = "click" # edit
+        self.edit_on_mode = "dblclick" # edit or click
         self.include_translation = False
         self.row_height = "medium"
+        #Keycloak settings from global
+        self.use_keycloak=True # True this will use different templates - defaults to basic auth
+        self.keycloak_url= "http://localhost:8080"
+        self.keycloak_realm = "kcals"
+        self.keycloak_client_id = "alsclient"
 
         self.title_translation = []
         self.languages = ["en", "es"] # "fr", "it", "de" etc - used to create i18n json files
@@ -257,8 +261,13 @@ class OntBuilder(object):
             file_name="app.menu.config.ts",
             source=app_menu_config,
         )
-        
-        rv_app_modules = self.app_module.render(use_keycloak=self.use_keycloak) 
+        keycloak_args = {
+            "use_keycloak": self.use_keycloak,
+            "keycloak_url": self.keycloak_url,
+            "keycloak_realm": self.keycloak_realm,
+            "keycloak_client_id": self.keycloak_client_id
+        }
+        rv_app_modules = self.app_module.render(keycloak_args) 
         write_root_file(
             app_path=app_path,
             dir_name="app",
