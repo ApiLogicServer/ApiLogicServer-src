@@ -243,13 +243,16 @@ class OntCreator(object):
         style_guide.thousand_separator="," # "."
         style_guide.decimal_separator="." # ","
         style_guide.date_format="LL" #not sure what this means
-        style_guide.use_keycloak=False # True this will use different templates - defaults to basic auth
         style_guide.edit_on_mode = "dblclick" # edit #click
         style_guide.min_decimal_digits="2"
         style_guide.max_decimal_digits="4" 
         style_guide.decimal_min="0"
         style_guide.decimal_max="1000000"
         style_guide.include_translation=False
+        style_guide.use_keycloak=False # True this will use different templates - defaults to basic auth
+        style_guide.keycloak_url= "http://localhost:8080"
+        style_guide.keycloak_realm = "kcals"
+        style_guide.keycloak_client_id = "alsclient"
         return style_guide
 
 '''
