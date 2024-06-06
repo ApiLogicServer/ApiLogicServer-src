@@ -19,9 +19,9 @@ export const customProviders: any = [
 {% if use_keycloak %}
 const keycloakOptions: KeycloakOptions = {
   config: {
-    url: 'http://localhost:8080',
-    realm: 'kcals',
-    clientId: 'alsclient'
+    url: {{ keyckloak_url }},
+    realm: {{ keycloak_realm }},
+    clientId: {{ keycloak_client_id }}
   },
   initOptions: {
     onLoad: 'login-required'

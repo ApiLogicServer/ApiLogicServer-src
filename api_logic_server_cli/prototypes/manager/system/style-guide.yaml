@@ -9,11 +9,15 @@ currency_symbol_position: left
 thousand_separator: ',' 
 decimal_separator: '.' 
 date_format: 'LL'
-use_keycloak: 'false' 
-include_translation: 'false'
 edit_on_mode : 'dblclick' 
 min_decimal_digits: '2'
 max_decimal_digits: '4' 
 decimal_min: '0'
-decimal_max: '1000000'
-row_height: small
+decimal_max: '10000000'
+row_height: small,
+include_translation: 'false'
+use_keycloak: 'false' 
+keycloak_url: http://localhost:8080
+keycloak_realm: kcals
+keycloak_client_id: alsclient
+
