@@ -135,7 +135,7 @@ def admin_events(flask_app: Flask, args: Args, validation_error: ValidationError
                     sql_auth_config = f'\n  endpoint: {args.http_scheme}://{args.swagger_host}:{args.swagger_port}/{args.api_prefix[1:]}/auth/login\n'
                     content = content.replace("'{system-default}'", sql_auth_config)
                 else:
-                    sys.exit(f"ERROR: unknown security type: {Config.SECURITY_TYPE}")         
+                    sys.exit(f"ERROR[admin_loader]: unknown security type: {Config.SECURITY_PROVIDER}")         
 
             admin_logger.debug(f'loading ui/admin/admin.yaml')
             mem = io.BytesIO(str.encode(content))
