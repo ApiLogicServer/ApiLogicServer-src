@@ -120,6 +120,7 @@ def admin_events(flask_app: Flask, args: Args, validation_error: ValidationError
                 content = content.replace("{api}", args.api_prefix[1:])
 
             if Config.SECURITY_ENABLED == False:
+                content = content.replace("authentication", 'no-authentication')
                 content = content.replace("'{system-default}'", 'no-authentication')
             else:
                 provider_name = str(Config.SECURITY_PROVIDER)
