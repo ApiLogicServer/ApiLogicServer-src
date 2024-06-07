@@ -10,6 +10,9 @@ from database import models
 
 app_logger = logging.getLogger(__name__)
 
+# called by api_logic_server_run.py, to customize api (new end points, services).
+# separate from expose_api_models.py, to simplify merge if project recreated
+
 def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
     """ Customize API - new end points for services 
     

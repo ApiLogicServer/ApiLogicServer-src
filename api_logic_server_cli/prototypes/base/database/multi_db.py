@@ -8,6 +8,7 @@ def bind_dbs(flask_app):
     """ called by api_logic_server_run to open/bind each additional database"""
 
     flask_app.config.update(SQLALCHEMY_BINDS = {
+		'authentication': flask_app.config['SQLALCHEMY_DATABASE_URI_AUTHENTICATION']
     })  # make multiple databases available to SQLAlchemy
 
     return

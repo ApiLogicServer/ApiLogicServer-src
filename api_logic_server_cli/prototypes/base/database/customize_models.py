@@ -5,6 +5,9 @@ import logging
 
 app_logger = logging.getLogger(__name__)
 
+from database.database_discovery.auto_discovery import discover_models
+discover_models()
+
 """
 If you wish to drive models from the database schema,
 you can use this file to customize your schema (add relationships, derived attributes),
