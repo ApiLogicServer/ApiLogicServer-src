@@ -931,9 +931,9 @@ class ProjectRun(Project):
                 log.debug(f'.. ..Error loading style-guide.yaml: {e}')
 
         from dotenv import load_dotenv
-        log.debug(f".. ... BEFORE .ENV os.getenv('APILOGICSERVER_AUTO_OPEN'): {os.getenv('APILOGICSERVER_AUTO_OPEN')}")
+        # log.debug(f".. ... BEFORE .ENV os.getenv('APILOGICSERVER_AUTO_OPEN'): {os.getenv('APILOGICSERVER_AUTO_OPEN')}")
         load_dotenv(".env")
-        log.debug(f".. ... AFTER  .ENV os.getenv('APILOGICSERVER_AUTO_OPEN'): {os.getenv('APILOGICSERVER_AUTO_OPEN')}")
+        # log.debug(f".. ... AFTER  .ENV os.getenv('APILOGICSERVER_AUTO_OPEN'): {os.getenv('APILOGICSERVER_AUTO_OPEN')}")
         pass
 
         if self.open_with == 'NO_AUTO_OPEN':  #, eg, for manager.py
@@ -941,11 +941,12 @@ class ProjectRun(Project):
             log.debug('.. ... NO_AUTO_OPEN')
         elif self.open_with == '' and os.getenv('APILOGICSERVER_AUTO_OPEN'):
             self.open_with = os.getenv('APILOGICSERVER_AUTO_OPEN')
-            log.debug(f'.. ... set self.open_with: {self.open_with}')
-            log.debug(f".. ... from os.getenv('APILOGICSERVER_AUTO_OPEN'): {os.getenv('APILOGICSERVER_AUTO_OPEN')}")
-            log.debug(f".. ... from os.getcwd(): {os.getcwd()}")
+            # log.debug(f'.. ... set self.open_with: {self.open_with}')
+            # log.debug(f".. ... from os.getenv('APILOGICSERVER_AUTO_OPEN'): {os.getenv('APILOGICSERVER_AUTO_OPEN')}")
+            # log.debug(f".. ... from os.getcwd(): {os.getcwd()}")
         else:
-            log.debug(f".. ..Not setting open_with: {self.open_with} with env: {os.getenv('APILOGICSERVER_AUTO_OPEN')}")
+            pass
+            # log.debug(f".. ..Not setting open_with: {self.open_with} with env: {os.getenv('APILOGICSERVER_AUTO_OPEN')}")
         if execute:
             self.create_project()
 
