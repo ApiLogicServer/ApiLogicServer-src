@@ -25,6 +25,9 @@ from integration.row_dict_maps.OrderB2B import OrderB2B
 
 app_logger = logging.getLogger("api_logic_server_app")
 
+# called by api_logic_server_run.py, to customize api (new end points, services).
+# separate from expose_api_models.py, to simplify merge if project recreated
+
 def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
     """ #als: Customize API - new end points for services 
     

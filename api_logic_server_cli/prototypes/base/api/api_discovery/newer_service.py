@@ -3,7 +3,7 @@ import logging
 
 app_logger = logging.getLogger("api_logic_server_app")
 
-def add_service(app, api, project_dir, swagger_host: str, PORT: str):
+def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_decorators ):
     pass
 
     @app.route('/hello_newer_service')
