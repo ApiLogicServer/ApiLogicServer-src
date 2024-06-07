@@ -34,6 +34,7 @@ dependencies = [
         "inflect==5.0.2",
 
         # from safrs, but stipulate version#s
+        # e.g., omit CORS and the build fails
          "Flask==2.3.2",
          "Flask-Cors==3.0.10",
          "Flask-RESTful>=0.3.9",
@@ -47,8 +48,8 @@ dependencies = [
         #  "pyodbc==4.0.34",
          "six==1.16.0",
          "SQLAlchemy==2.0.15",
-         "Werkzeug==2.3.3",
-
+         "Werkzeug>=2.3.8", 
+         # 2.3.3 caused Poetry to fail per safrs conflict (Werkzeug>=2.3.8), 2.3.8 fails to build
         "safrs>=3.1.3",
         "Flask-Admin==1.5.7",
         "Flask-JWT-Extended==4.4.4",
@@ -113,6 +114,3 @@ Issues = "https://github.com/ApiLogicServer/ApiLogicServer-src/issues"
 [project.scripts]
 ApiLogicServer = "api_logic_server_cli.cli:start"
 als = "api_logic_server_cli.cli:start" 
-
-
-

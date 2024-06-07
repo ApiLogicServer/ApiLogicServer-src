@@ -1,0 +1,770 @@
+"Werkzeug>=2.3.3",  # 2.3.3 caused Poetry to fail per safrs conflict (Werkzeug>=2.3.8)
+
+als using Werkzeug 2.3.8 fails BLT (Build, Load and Test), 
+  Note: the pip freeze shows Werkzeug==3.0.3, presumably from safrs Werkzeug>=2.3.8
+  here's the log of BLT:
+
+(venv) val@Vals-MPB-14 build_and_test % 
+(venv) val@Vals-MPB-14 build_and_test % 
+(venv) val@Vals-MPB-14 build_and_test %  cd /Users/val/dev/ApiLogicServer/ApiLogicServer-d
+ev/org_git/ApiLogicServer-src/tests/build_and_test ; /usr/bin/env /Users/val/dev/ApiLogicS
+erver/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/bin/python /Users/val/.vscode/ext
+ensions/ms-python.debugpy-2024.7.11371017/bundled/libs/debugpy/adapter/../../debugpy/launc
+her 49607 -- build_load_and_test.py 
+build_load_and_test.py:472: SyntaxWarning: invalid escape sequence '\T'
+  msg=f'\Tag ApiLogicServer Docker Container at: {str(api_logic_server_home_path)}')
+/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/requests/__init__.py:102: RequestsDependencyWarning: urllib3 (1.26.18) or chardet (5.2.0)/charset_normalizer (2.0.12) doesn't match a supported version!
+  warnings.warn("urllib3 ({}) or chardet ({})/charset_normalizer ({}) doesn't match a supported "
+
+
+build_load_and_test.py 10.04.34 running
+  Builds / Installs API Logic Server, to...
+  ..install_api_logic_server_path: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer
+  .. .. will contain: projects, docker, install -- venv
+  ..api_logic_server_tests_path:   /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/tests
+
+  Creates Sample project (nw), starts server and runs (many) Behave Tests
+  Kafka tests (mac only, per networking)
+  Rebuild tests
+  Creates other projects
+  Creates Docker projects 
+
+
+delete install: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer  Delete dir: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer
+delete clean: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/clean/ApiLogicServer  Delete dir: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/clean/ApiLogicServer
+
+delete egg  Delete dir: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/ApiLogicServer.egg-info
+delete build  Delete dir: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/build
+delete dist  Delete dir: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/dist
+
+Install ApiLogicServer at: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer, with command: 
+sh build_install.sh python3
+
+
+==> Command Failed - Console Log:
+
+
+Building / installing ApiLogicServer for supported Pythons
+..Script directory: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/tests/build_and_test
+..Installing to directories: 
+..../Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer
+..../Users/val/dev/ApiLogicServer/ApiLogicServer-dev/clean/ApiLogicServer
+
+..Installing from: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src
+..Using Python: python3
+
+* Creating isolated environment: venv+pip...
+* Installing packages in isolated environment:
+  - setuptools >= 61.0
+* Getting build dependencies for sdist...
+configuration error: `project.dependencies[17]` must be pep508
+DESCRIPTION:
+    Project dependency specification according to PEP 508
+
+GIVEN VALUE:
+    "Werkzeug=>2.3.8"
+
+OFFENDING RULE: 'format'
+
+DEFINITION:
+    {
+        "$id": "#/definitions/dependency",
+        "title": "Dependency",
+        "type": "string",
+        "format": "pep508"
+    }
+
+For more details about `format` see
+https://validate-pyproject.readthedocs.io/en/latest/api/validate_pyproject.formats.html
+
+
+ERROR Backend subprocess exited when trying to invoke get_requires_for_build_sdist
+Processing /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'error'
+Processing /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'error'
+Complete.
+
+
+
+
+
+==> Error Log:
+rm: illegal option -- h
+usage: rm [-f | -i] [-dIPRrvWx] file ...
+       unlink [--] file
+Traceback (most recent call last):
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/pyproject_hooks/_in_process/_in_process.py", line 373, in <module>
+    main()
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/pyproject_hooks/_in_process/_in_process.py", line 357, in main
+    json_out["return_val"] = hook(**hook_input["kwargs"])
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/pyproject_hooks/_in_process/_in_process.py", line 308, in get_requires_for_build_sdist
+    return hook(config_settings)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/build-env-b8lgx8n1/lib/python3.12/site-packages/setuptools/build_meta.py", line 328, in get_requires_for_build_sdist
+    return self._get_build_requires(config_settings, requirements=[])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/build-env-b8lgx8n1/lib/python3.12/site-packages/setuptools/build_meta.py", line 295, in _get_build_requires
+    self.run_setup()
+  File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/build-env-b8lgx8n1/lib/python3.12/site-packages/setuptools/build_meta.py", line 311, in run_setup
+    exec(code, locals())
+  File "<string>", line 1, in <module>
+  File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/build-env-b8lgx8n1/lib/python3.12/site-packages/setuptools/__init__.py", line 103, in setup
+    return distutils.core.setup(**attrs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/build-env-b8lgx8n1/lib/python3.12/site-packages/setuptools/_distutils/core.py", line 158, in setup
+    dist.parse_config_files()
+  File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/build-env-b8lgx8n1/lib/python3.12/site-packages/setuptools/dist.py", line 632, in parse_config_files
+    pyprojecttoml.apply_configuration(self, filename, ignore_option_errors)
+  File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/build-env-b8lgx8n1/lib/python3.12/site-packages/setuptools/config/pyprojecttoml.py", line 68, in apply_configuration
+    config = read_configuration(filepath, True, ignore_option_errors, dist)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/build-env-b8lgx8n1/lib/python3.12/site-packages/setuptools/config/pyprojecttoml.py", line 133, in read_configuration
+    validate(subset, filepath)
+  File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/build-env-b8lgx8n1/lib/python3.12/site-packages/setuptools/config/pyprojecttoml.py", line 57, in validate
+    raise ValueError(f"{error}\n{summary}") from None
+ValueError: invalid pyproject.toml config: `project.dependencies[17]`.
+configuration error: `project.dependencies[17]` must be pep508
++ python3 -m pip install /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src
+  error: subprocess-exited-with-error
+  
+  × Getting requirements to build wheel did not run successfully.
+  │ exit code: 1
+  ╰─> [53 lines of output]
+      configuration error: `project.dependencies[17]` must be pep508
+      DESCRIPTION:
+          Project dependency specification according to PEP 508
+      
+      GIVEN VALUE:
+          "Werkzeug=>2.3.8"
+      
+      OFFENDING RULE: 'format'
+      
+      DEFINITION:
+          {
+              "$id": "#/definitions/dependency",
+              "title": "Dependency",
+              "type": "string",
+              "format": "pep508"
+          }
+      
+      For more details about `format` see
+      https://validate-pyproject.readthedocs.io/en/latest/api/validate_pyproject.formats.html
+      
+      Traceback (most recent call last):
+        File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 353, in <module>
+          main()
+        File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 335, in main
+          json_out['return_val'] = hook(**hook_input['kwargs'])
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 118, in get_requires_for_build_wheel
+          return hook(config_settings)
+                 ^^^^^^^^^^^^^^^^^^^^^
+        File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/pip-build-env-zh_rhynp/overlay/lib/python3.12/site-packages/setuptools/build_meta.py", line 325, in get_requires_for_build_wheel
+          return self._get_build_requires(config_settings, requirements=['wheel'])
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/pip-build-env-zh_rhynp/overlay/lib/python3.12/site-packages/setuptools/build_meta.py", line 295, in _get_build_requires
+          self.run_setup()
+        File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/pip-build-env-zh_rhynp/overlay/lib/python3.12/site-packages/setuptools/build_meta.py", line 311, in run_setup
+          exec(code, locals())
+        File "<string>", line 1, in <module>
+        File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/pip-build-env-zh_rhynp/overlay/lib/python3.12/site-packages/setuptools/__init__.py", line 103, in setup
+          return distutils.core.setup(**attrs)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/pip-build-env-zh_rhynp/overlay/lib/python3.12/site-packages/setuptools/_distutils/core.py", line 158, in setup
+          dist.parse_config_files()
+        File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/pip-build-env-zh_rhynp/overlay/lib/python3.12/site-packages/setuptools/dist.py", line 632, in parse_config_files
+          pyprojecttoml.apply_configuration(self, filename, ignore_option_errors)
+        File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/pip-build-env-zh_rhynp/overlay/lib/python3.12/site-packages/setuptools/config/pyprojecttoml.py", line 68, in apply_configuration
+          config = read_configuration(filepath, True, ignore_option_errors, dist)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/pip-build-env-zh_rhynp/overlay/lib/python3.12/site-packages/setuptools/config/pyprojecttoml.py", line 133, in read_configuration
+          validate(subset, filepath)
+        File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/pip-build-env-zh_rhynp/overlay/lib/python3.12/site-packages/setuptools/config/pyprojecttoml.py", line 57, in validate
+          raise ValueError(f"{error}\n{summary}") from None
+      ValueError: invalid pyproject.toml config: `project.dependencies[17]`.
+      configuration error: `project.dependencies[17]` must be pep508
+      [end of output]
+  
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+error: subprocess-exited-with-error
+
+× Getting requirements to build wheel did not run successfully.
+│ exit code: 1
+╰─> See above for output.
+
+note: This error originates from a subprocess, and is likely not a problem with pip.
++ set +x
++ python3 -m pip install /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src
+  error: subprocess-exited-with-error
+  
+  × Getting requirements to build wheel did not run successfully.
+  │ exit code: 1
+  ╰─> [53 lines of output]
+      configuration error: `project.dependencies[17]` must be pep508
+      DESCRIPTION:
+          Project dependency specification according to PEP 508
+      
+      GIVEN VALUE:
+          "Werkzeug=>2.3.8"
+      
+      OFFENDING RULE: 'format'
+      
+      DEFINITION:
+          {
+              "$id": "#/definitions/dependency",
+              "title": "Dependency",
+              "type": "string",
+              "format": "pep508"
+          }
+      
+      For more details about `format` see
+      https://validate-pyproject.readthedocs.io/en/latest/api/validate_pyproject.formats.html
+      
+      Traceback (most recent call last):
+        File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/clean/ApiLogicServer/venv/lib/python3.12/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 353, in <module>
+          main()
+        File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/clean/ApiLogicServer/venv/lib/python3.12/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 335, in main
+          json_out['return_val'] = hook(**hook_input['kwargs'])
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/clean/ApiLogicServer/venv/lib/python3.12/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 118, in get_requires_for_build_wheel
+          return hook(config_settings)
+                 ^^^^^^^^^^^^^^^^^^^^^
+        File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/pip-build-env-vfo5mcb2/overlay/lib/python3.12/site-packages/setuptools/build_meta.py", line 325, in get_requires_for_build_wheel
+          return self._get_build_requires(config_settings, requirements=['wheel'])
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/pip-build-env-vfo5mcb2/overlay/lib/python3.12/site-packages/setuptools/build_meta.py", line 295, in _get_build_requires
+          self.run_setup()
+        File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/pip-build-env-vfo5mcb2/overlay/lib/python3.12/site-packages/setuptools/build_meta.py", line 311, in run_setup
+          exec(code, locals())
+        File "<string>", line 1, in <module>
+        File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/pip-build-env-vfo5mcb2/overlay/lib/python3.12/site-packages/setuptools/__init__.py", line 103, in setup
+          return distutils.core.setup(**attrs)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/pip-build-env-vfo5mcb2/overlay/lib/python3.12/site-packages/setuptools/_distutils/core.py", line 158, in setup
+          dist.parse_config_files()
+        File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/pip-build-env-vfo5mcb2/overlay/lib/python3.12/site-packages/setuptools/dist.py", line 632, in parse_config_files
+          pyprojecttoml.apply_configuration(self, filename, ignore_option_errors)
+        File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/pip-build-env-vfo5mcb2/overlay/lib/python3.12/site-packages/setuptools/config/pyprojecttoml.py", line 68, in apply_configuration
+          config = read_configuration(filepath, True, ignore_option_errors, dist)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/pip-build-env-vfo5mcb2/overlay/lib/python3.12/site-packages/setuptools/config/pyprojecttoml.py", line 133, in read_configuration
+          validate(subset, filepath)
+        File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/pip-build-env-vfo5mcb2/overlay/lib/python3.12/site-packages/setuptools/config/pyprojecttoml.py", line 57, in validate
+          raise ValueError(f"{error}\n{summary}") from None
+      ValueError: invalid pyproject.toml config: `project.dependencies[17]`.
+      configuration error: `project.dependencies[17]` must be pep508
+      [end of output]
+  
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+error: subprocess-exited-with-error
+
+× Getting requirements to build wheel did not run successfully.
+│ exit code: 1
+╰─> See above for output.
+
+note: This error originates from a subprocess, and is likely not a problem with pip.
++ set +x
+
+
+Install ApiLogicServer at: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer
+
+
+*** Failed Traceback detected on sh build_install.sh python3
+
+
+==> run_command Console Log:
+
+
+Building / installing ApiLogicServer for supported Pythons
+..Script directory: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/tests/build_and_test
+..Installing to directories: 
+..../Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer
+..../Users/val/dev/ApiLogicServer/ApiLogicServer-dev/clean/ApiLogicServer
+
+..Installing from: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src
+..Using Python: python3
+
+* Creating isolated environment: venv+pip...
+* Installing packages in isolated environment:
+  - setuptools >= 61.0
+* Getting build dependencies for sdist...
+configuration error: `project.dependencies[17]` must be pep508
+DESCRIPTION:
+    Project dependency specification according to PEP 508
+
+GIVEN VALUE:
+    "Werkzeug=>2.3.8"
+
+OFFENDING RULE: 'format'
+
+DEFINITION:
+    {
+        "$id": "#/definitions/dependency",
+        "title": "Dependency",
+        "type": "string",
+        "format": "pep508"
+    }
+
+For more details about `format` see
+https://validate-pyproject.readthedocs.io/en/latest/api/validate_pyproject.formats.html
+
+
+ERROR Backend subprocess exited when trying to invoke get_requires_for_build_sdist
+Processing /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'error'
+Processing /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'error'
+Complete.
+
+
+
+
+
+==> Error Log:
+rm: illegal option -- h
+usage: rm [-f | -i] [-dIPRrvWx] file ...
+       unlink [--] file
+Traceback (most recent call last):
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/pyproject_hooks/_in_process/_in_process.py", line 373, in <module>
+    main()
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/pyproject_hooks/_in_process/_in_process.py", line 357, in main
+    json_out["return_val"] = hook(**hook_input["kwargs"])
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/pyproject_hooks/_in_process/_in_process.py", line 308, in get_requires_for_build_sdist
+    return hook(config_settings)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/build-env-b8lgx8n1/lib/python3.12/site-packages/setuptools/build_meta.py", line 328, in get_requires_for_build_sdist
+    return self._get_build_requires(config_settings, requirements=[])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/build-env-b8lgx8n1/lib/python3.12/site-packages/setuptools/build_meta.py", line 295, in _get_build_requires
+    self.run_setup()
+  File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/build-env-b8lgx8n1/lib/python3.12/site-packages/setuptools/build_meta.py", line 311, in run_setup
+    exec(code, locals())
+  File "<string>", line 1, in <module>
+  File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/build-env-b8lgx8n1/lib/python3.12/site-packages/setuptools/__init__.py", line 103, in setup
+    return distutils.core.setup(**attrs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/build-env-b8lgx8n1/lib/python3.12/site-packages/setuptools/_distutils/core.py", line 158, in setup
+    dist.parse_config_files()
+  File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/build-env-b8lgx8n1/lib/python3.12/site-packages/setuptools/dist.py", line 632, in parse_config_files
+    pyprojecttoml.apply_configuration(self, filename, ignore_option_errors)
+  File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/build-env-b8lgx8n1/lib/python3.12/site-packages/setuptools/config/pyprojecttoml.py", line 68, in apply_configuration
+    config = read_configuration(filepath, True, ignore_option_errors, dist)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/build-env-b8lgx8n1/lib/python3.12/site-packages/setuptools/config/pyprojecttoml.py", line 133, in read_configuration
+    validate(subset, filepath)
+  File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/build-env-b8lgx8n1/lib/python3.12/site-packages/setuptools/config/pyprojecttoml.py", line 57, in validate
+    raise ValueError(f"{error}\n{summary}") from None
+ValueError: invalid pyproject.toml config: `project.dependencies[17]`.
+configuration error: `project.dependencies[17]` must be pep508
++ python3 -m pip install /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src
+  error: subprocess-exited-with-error
+  
+  × Getting requirements to build wheel did not run successfully.
+  │ exit code: 1
+  ╰─> [53 lines of output]
+      configuration error: `project.dependencies[17]` must be pep508
+      DESCRIPTION:
+          Project dependency specification according to PEP 508
+      
+      GIVEN VALUE:
+          "Werkzeug=>2.3.8"
+      
+      OFFENDING RULE: 'format'
+      
+      DEFINITION:
+          {
+              "$id": "#/definitions/dependency",
+              "title": "Dependency",
+              "type": "string",
+              "format": "pep508"
+          }
+      
+      For more details about `format` see
+      https://validate-pyproject.readthedocs.io/en/latest/api/validate_pyproject.formats.html
+      
+      Traceback (most recent call last):
+        File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 353, in <module>
+          main()
+        File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 335, in main
+          json_out['return_val'] = hook(**hook_input['kwargs'])
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 118, in get_requires_for_build_wheel
+          return hook(config_settings)
+                 ^^^^^^^^^^^^^^^^^^^^^
+        File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/pip-build-env-zh_rhynp/overlay/lib/python3.12/site-packages/setuptools/build_meta.py", line 325, in get_requires_for_build_wheel
+          return self._get_build_requires(config_settings, requirements=['wheel'])
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/pip-build-env-zh_rhynp/overlay/lib/python3.12/site-packages/setuptools/build_meta.py", line 295, in _get_build_requires
+          self.run_setup()
+        File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/pip-build-env-zh_rhynp/overlay/lib/python3.12/site-packages/setuptools/build_meta.py", line 311, in run_setup
+          exec(code, locals())
+        File "<string>", line 1, in <module>
+        File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/pip-build-env-zh_rhynp/overlay/lib/python3.12/site-packages/setuptools/__init__.py", line 103, in setup
+          return distutils.core.setup(**attrs)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/pip-build-env-zh_rhynp/overlay/lib/python3.12/site-packages/setuptools/_distutils/core.py", line 158, in setup
+          dist.parse_config_files()
+        File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/pip-build-env-zh_rhynp/overlay/lib/python3.12/site-packages/setuptools/dist.py", line 632, in parse_config_files
+          pyprojecttoml.apply_configuration(self, filename, ignore_option_errors)
+        File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/pip-build-env-zh_rhynp/overlay/lib/python3.12/site-packages/setuptools/config/pyprojecttoml.py", line 68, in apply_configuration
+          config = read_configuration(filepath, True, ignore_option_errors, dist)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/pip-build-env-zh_rhynp/overlay/lib/python3.12/site-packages/setuptools/config/pyprojecttoml.py", line 133, in read_configuration
+          validate(subset, filepath)
+        File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/pip-build-env-zh_rhynp/overlay/lib/python3.12/site-packages/setuptools/config/pyprojecttoml.py", line 57, in validate
+          raise ValueError(f"{error}\n{summary}") from None
+      ValueError: invalid pyproject.toml config: `project.dependencies[17]`.
+      configuration error: `project.dependencies[17]` must be pep508
+      [end of output]
+  
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+error: subprocess-exited-with-error
+
+× Getting requirements to build wheel did not run successfully.
+│ exit code: 1
+╰─> See above for output.
+
+note: This error originates from a subprocess, and is likely not a problem with pip.
++ set +x
++ python3 -m pip install /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src
+  error: subprocess-exited-with-error
+  
+  × Getting requirements to build wheel did not run successfully.
+  │ exit code: 1
+  ╰─> [53 lines of output]
+      configuration error: `project.dependencies[17]` must be pep508
+      DESCRIPTION:
+          Project dependency specification according to PEP 508
+      
+      GIVEN VALUE:
+          "Werkzeug=>2.3.8"
+      
+      OFFENDING RULE: 'format'
+      
+      DEFINITION:
+          {
+              "$id": "#/definitions/dependency",
+              "title": "Dependency",
+              "type": "string",
+              "format": "pep508"
+          }
+      
+      For more details about `format` see
+      https://validate-pyproject.readthedocs.io/en/latest/api/validate_pyproject.formats.html
+      
+      Traceback (most recent call last):
+        File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/clean/ApiLogicServer/venv/lib/python3.12/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 353, in <module>
+          main()
+        File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/clean/ApiLogicServer/venv/lib/python3.12/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 335, in main
+          json_out['return_val'] = hook(**hook_input['kwargs'])
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/clean/ApiLogicServer/venv/lib/python3.12/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py", line 118, in get_requires_for_build_wheel
+          return hook(config_settings)
+                 ^^^^^^^^^^^^^^^^^^^^^
+        File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/pip-build-env-vfo5mcb2/overlay/lib/python3.12/site-packages/setuptools/build_meta.py", line 325, in get_requires_for_build_wheel
+          return self._get_build_requires(config_settings, requirements=['wheel'])
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/pip-build-env-vfo5mcb2/overlay/lib/python3.12/site-packages/setuptools/build_meta.py", line 295, in _get_build_requires
+          self.run_setup()
+        File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/pip-build-env-vfo5mcb2/overlay/lib/python3.12/site-packages/setuptools/build_meta.py", line 311, in run_setup
+          exec(code, locals())
+        File "<string>", line 1, in <module>
+        File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/pip-build-env-vfo5mcb2/overlay/lib/python3.12/site-packages/setuptools/__init__.py", line 103, in setup
+          return distutils.core.setup(**attrs)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/pip-build-env-vfo5mcb2/overlay/lib/python3.12/site-packages/setuptools/_distutils/core.py", line 158, in setup
+          dist.parse_config_files()
+        File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/pip-build-env-vfo5mcb2/overlay/lib/python3.12/site-packages/setuptools/dist.py", line 632, in parse_config_files
+          pyprojecttoml.apply_configuration(self, filename, ignore_option_errors)
+        File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/pip-build-env-vfo5mcb2/overlay/lib/python3.12/site-packages/setuptools/config/pyprojecttoml.py", line 68, in apply_configuration
+          config = read_configuration(filepath, True, ignore_option_errors, dist)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/pip-build-env-vfo5mcb2/overlay/lib/python3.12/site-packages/setuptools/config/pyprojecttoml.py", line 133, in read_configuration
+          validate(subset, filepath)
+        File "/private/var/folders/4k/r69q312d4j788fthspybb88m0000gp/T/pip-build-env-vfo5mcb2/overlay/lib/python3.12/site-packages/setuptools/config/pyprojecttoml.py", line 57, in validate
+          raise ValueError(f"{error}\n{summary}") from None
+      ValueError: invalid pyproject.toml config: `project.dependencies[17]`.
+      configuration error: `project.dependencies[17]` must be pep508
+      [end of output]
+  
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+error: subprocess-exited-with-error
+
+× Getting requirements to build wheel did not run successfully.
+│ exit code: 1
+╰─> See above for output.
+
+note: This error originates from a subprocess, and is likely not a problem with pip.
++ set +x
+
+(venv) val@Vals-MPB-14 build_and_test % 
+(venv) val@Vals-MPB-14 build_and_test % 
+(venv) val@Vals-MPB-14 build_and_test %  cd /Users/val/dev/ApiLogicServer/ApiLogicServer-d
+ev/org_git/ApiLogicServer-src/tests/build_and_test ; /usr/bin/env /Users/val/dev/ApiLogicS
+erver/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/bin/python /Users/val/.vscode/ext
+ensions/ms-python.debugpy-2024.7.11371017/bundled/libs/debugpy/adapter/../../debugpy/launc
+her 49653 -- build_load_and_test.py 
+build_load_and_test.py:472: SyntaxWarning: invalid escape sequence '\T'
+  msg=f'\Tag ApiLogicServer Docker Container at: {str(api_logic_server_home_path)}')
+/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/requests/__init__.py:102: RequestsDependencyWarning: urllib3 (1.26.18) or chardet (5.2.0)/charset_normalizer (2.0.12) doesn't match a supported version!
+  warnings.warn("urllib3 ({}) or chardet ({})/charset_normalizer ({}) doesn't match a supported "
+
+
+build_load_and_test.py 10.04.34 running
+  Builds / Installs API Logic Server, to...
+  ..install_api_logic_server_path: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer
+  .. .. will contain: projects, docker, install -- venv
+  ..api_logic_server_tests_path:   /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/tests
+
+  Creates Sample project (nw), starts server and runs (many) Behave Tests
+  Kafka tests (mac only, per networking)
+  Rebuild tests
+  Creates other projects
+  Creates Docker projects 
+
+
+delete install: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer  Delete dir: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer
+delete clean: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/clean/ApiLogicServer  Delete dir: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/clean/ApiLogicServer
+
+delete egg  Delete dir: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/ApiLogicServer.egg-info
+delete build  Delete dir: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/build
+delete dist  Delete dir: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/dist
+
+Install ApiLogicServer at: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer, with command: 
+sh build_install.sh python3
+
+Install pyodbc, with command: 
+sh cmd_venv.sh " python3 -m pip install pyodbc==5.1.0"
+
+Create Manager, with command: 
+sh cmd_venv.sh " ApiLogicServer start"
+
+
+==> Command Failed - Console Log:
+
+cmd_venv:
+..Script dir: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/tests/build_and_test
+..Install dir: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer
+.. ApiLogicServer start
+
+Welcome to API Logic Server 10.04.48
+
+start sees volume=ApiLogicServer
+
+Command  ApiLogicServer start run at /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer.
+
+
+
+
+
+==> Error Log:
+
+
+Starting manager at: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer
+
+
+    Created manager at: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer
+
+
+
+Creating: tutorial
+
+Creating tutorial at samples/tutorial
+
+Creating ApiLogicProject
+
+===> ERROR - Dynamic model import failed in samples/tutorial/1. Instant_Creation/database - project run will fail
+===>         Typically caused by unexpected data types - compare schema to models.py
+Traceback (most recent call last):
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/api_logic_server_cli/create_from_model/model_creation_services.py", line 779, in dynamic_import_model
+    importlib.import_module(models_name)
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/tutorial/1. Instant_Creation/database/models.py", line 19, in <module>
+    from database.system.SAFRSBaseX import SAFRSBaseX
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/tutorial/1. Instant_Creation/database/system/SAFRSBaseX.py", line 3, in <module>
+    from flask_login import UserMixin
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/flask_login/__init__.py", line 12, in <module>
+    from .login_manager import LoginManager
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/flask_login/login_manager.py", line 33, in <module>
+    from .utils import _create_identifier
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/flask_login/utils.py", line 14, in <module>
+    from werkzeug.urls import url_decode
+ImportError: cannot import name 'url_decode' from 'werkzeug.urls' (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/werkzeug/urls.py)
+Traceback (most recent call last):
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/bin/ApiLogicServer", line 8, in <module>
+    sys.exit(start())
+             ^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py", line 1700, in start
+    main(obj={})
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/click/core.py", line 1157, in __call__
+    return self.main(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/click/core.py", line 1078, in main
+    rv = self.invoke(ctx)
+         ^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/click/core.py", line 1688, in invoke
+    return _process_result(sub_ctx.command.invoke(sub_ctx))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/click/core.py", line 1434, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/click/core.py", line 783, in invoke
+    return __callback(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/click/decorators.py", line 33, in new_func
+    return f(get_current_context(), *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py", line 219, in create_start_manager
+    create_manager(clean=clean, open_with=open_with, api_logic_server_path=get_api_logic_server_path(), volume=volume)
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/api_logic_server_cli/manager.py", line 105, in create_manager
+    tutorial_project = tutorial_project.tutorial(msg="Creating:") ##, create='tutorial')
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/api_logic_server_cli/api_logic_server.py", line 1555, in tutorial
+    self.create_project()
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/api_logic_server_cli/api_logic_server.py", line 1673, in create_project
+    model_creation_services = ModelCreationServices(project = self,   # Create database/models.py from db
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/api_logic_server_cli/create_from_model/model_creation_services.py", line 132, in __init__
+    self.resource_list = self.create_model_classes_and_resource_list()
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/api_logic_server_cli/create_from_model/model_creation_services.py", line 908, in create_model_classes_and_resource_list
+    return_resource_list = self.resource_list_from_safrs_metadata(models_name=models_name)  # whether created or used, build resource_list
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/api_logic_server_cli/create_from_model/model_creation_services.py", line 809, in resource_list_from_safrs_metadata
+    cls_members = inspect.getmembers(sys.modules[models_name], inspect.isclass)
+                                     ~~~~~~~~~~~^^^^^^^^^^^^^
+KeyError: 'models'
+
+
+Create Manager
+
+
+*** Failed Traceback detected on !cmd_venv && ApiLogicServer start
+
+
+==> run_command Console Log:
+
+cmd_venv:
+..Script dir: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/tests/build_and_test
+..Install dir: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer
+.. ApiLogicServer start
+
+Welcome to API Logic Server 10.04.48
+
+start sees volume=ApiLogicServer
+
+Command  ApiLogicServer start run at /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer.
+
+
+
+
+
+==> Error Log:
+
+
+Starting manager at: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer
+
+
+    Created manager at: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer
+
+
+
+Creating: tutorial
+
+Creating tutorial at samples/tutorial
+
+Creating ApiLogicProject
+
+===> ERROR - Dynamic model import failed in samples/tutorial/1. Instant_Creation/database - project run will fail
+===>         Typically caused by unexpected data types - compare schema to models.py
+Traceback (most recent call last):
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/api_logic_server_cli/create_from_model/model_creation_services.py", line 779, in dynamic_import_model
+    importlib.import_module(models_name)
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/tutorial/1. Instant_Creation/database/models.py", line 19, in <module>
+    from database.system.SAFRSBaseX import SAFRSBaseX
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/tutorial/1. Instant_Creation/database/system/SAFRSBaseX.py", line 3, in <module>
+    from flask_login import UserMixin
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/flask_login/__init__.py", line 12, in <module>
+    from .login_manager import LoginManager
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/flask_login/login_manager.py", line 33, in <module>
+    from .utils import _create_identifier
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/flask_login/utils.py", line 14, in <module>
+    from werkzeug.urls import url_decode
+ImportError: cannot import name 'url_decode' from 'werkzeug.urls' (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/werkzeug/urls.py)
+Traceback (most recent call last):
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/bin/ApiLogicServer", line 8, in <module>
+    sys.exit(start())
+             ^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py", line 1700, in start
+    main(obj={})
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/click/core.py", line 1157, in __call__
+    return self.main(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/click/core.py", line 1078, in main
+    rv = self.invoke(ctx)
+         ^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/click/core.py", line 1688, in invoke
+    return _process_result(sub_ctx.command.invoke(sub_ctx))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/click/core.py", line 1434, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/click/core.py", line 783, in invoke
+    return __callback(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/click/decorators.py", line 33, in new_func
+    return f(get_current_context(), *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py", line 219, in create_start_manager
+    create_manager(clean=clean, open_with=open_with, api_logic_server_path=get_api_logic_server_path(), volume=volume)
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/api_logic_server_cli/manager.py", line 105, in create_manager
+    tutorial_project = tutorial_project.tutorial(msg="Creating:") ##, create='tutorial')
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/api_logic_server_cli/api_logic_server.py", line 1555, in tutorial
+    self.create_project()
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/api_logic_server_cli/api_logic_server.py", line 1673, in create_project
+    model_creation_services = ModelCreationServices(project = self,   # Create database/models.py from db
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/api_logic_server_cli/create_from_model/model_creation_services.py", line 132, in __init__
+    self.resource_list = self.create_model_classes_and_resource_list()
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/api_logic_server_cli/create_from_model/model_creation_services.py", line 908, in create_model_classes_and_resource_list
+    return_resource_list = self.resource_list_from_safrs_metadata(models_name=models_name)  # whether created or used, build resource_list
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/api_logic_server_cli/create_from_model/model_creation_services.py", line 809, in resource_list_from_safrs_metadata
+    cls_members = inspect.getmembers(sys.modules[models_name], inspect.isclass)
+                                     ~~~~~~~~~~~^^^^^^^^^^^^^
+KeyError: 'models'
+
