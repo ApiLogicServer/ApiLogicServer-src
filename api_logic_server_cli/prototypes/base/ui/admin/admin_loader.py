@@ -91,14 +91,22 @@ def admin_events(flask_app: Flask, args: Args, validation_error: ValidationError
 
             api_root: {http_type}://{swagger_host}:{port}/{api} (from ui_admin_creator)
 
-            auth/endpoint: {http_type}://{swagger_host}:{port}/api/auth/login
+            authentication:
+                endpoint: {http_type}://{swagger_host}:{port}/api/auth/login     or...
+                    e.g. http://localhost:5656/ui/admin/admin.yaml
 
-            e.g. http://localhost:5656/ui/admin/admin.yaml
+            authentication:
+                keycloak:
+                    url: args.keycloak_url
+                    realm: args.realm
+                    clientId: args.alsclient
+
         """
         use_type = "mem"
         if use_type == "mem":
             with open(f'ui/admin/{path}', "r") as f:  # path is admin.yaml for default url/app
                 content = f.read()
+
             if args.client_uri is not None:
                 content = content.replace(
                     '{http_type}://{swagger_host}:{port}',
@@ -110,8 +118,25 @@ def admin_events(flask_app: Flask, args: Args, validation_error: ValidationError
                 content = content.replace("{swagger_host}", args.swagger_host)
                 content = content.replace("{port}", str(args.swagger_port))  # note - codespaces requires 443 here (typically via args)
                 content = content.replace("{api}", args.api_prefix[1:])
+
             if Config.SECURITY_ENABLED == False:
-                content = content.replace("authentication", 'no-authentication')
+                content = content.replace("'{system-default}'", 'no-authentication')
+            else:
+                provider_name = str(Config.SECURITY_PROVIDER)
+                if "keycloak" in provider_name:
+                    s = (f'\n'
+                        f'  keycloak:\n'
+                        f'    url: {args.keycloak_base_url}\n'
+                        f'    realm: {args.keycloak_realm}\n'
+                        f'    clientId: {args.keycloak_client_id}\n'
+                    )   
+                    content = content.replace("'{system-default}'", s)
+                elif "sql" in provider_name:
+                    sql_auth_config = f'\n  endpoint: {args.http_scheme}://{args.swagger_host}:{args.swagger_port}/{args.api_prefix[1:]}/auth/login\n'
+                    content = content.replace("'{system-default}'", sql_auth_config)
+                else:
+                    sys.exit(f"ERROR: unknown security type: {Config.SECURITY_TYPE}")         
+
             admin_logger.debug(f'loading ui/admin/admin.yaml')
             mem = io.BytesIO(str.encode(content))
             return send_file(mem, mimetype='text/yaml')

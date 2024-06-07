@@ -94,7 +94,9 @@ class Config:
     kc_base = 'http://localhost:8080'
     KEYCLOAK_REALM =  'kcals'
     KEYCLOAK_BASE = f'{kc_base}/realms/{KEYCLOAK_REALM}'
-        
+    KEYCLOAK_BASE_URL = f'{kc_base}'
+    KEYCLOAK_CLIENT_ID = 'als-client'
+            
     running_at = Path(__file__)
     project_abs_dir = running_at.parent.absolute()
 
@@ -203,11 +205,21 @@ class Args():
         self.kafka_consumer = Config.KAFKA_CONSUMER
         self.keycloak_base = Config.KEYCLOAK_BASE
         self.keycloak_realm = Config.KEYCLOAK_REALM
+        self.keycloak_base_url = Config.KEYCLOAK_BASE_URL
+        self.keycloak_client_id = Config.KEYCLOAK_CLIENT_ID
 
         self.verbose = False
         self.create_and_run = False
 
     # KEYCLOAK ARGS
+    @property
+    def keycloak_realm(self) -> str:
+        return self.flask_app.config["KEYCLOAK_REALM"]
+    
+    @keycloak_realm.setter
+    def keycloak_realm(self, realm):
+        self.flask_app.config["KEYCLOAK_REALM"] = realm
+
     @property
     def keycloak_base(self) -> str:
         return self.flask_app.config["KEYCLOAK_BASE"]
@@ -217,12 +229,21 @@ class Args():
         self.flask_app.config["KEYCLOAK_BASE"] = base
         
     @property
-    def keycloak_realm(self) -> str:
-        return self.flask_app.config["KEYCLOAK_REALM"]
+    def keycloak_base_url(self) -> str:
+        return self.flask_app.config["KEYCLOAK_BASE_URL"]
     
-    @keycloak_realm.setter
-    def keycloak_realm(self, realm):
-        self.flask_app.config["KEYCLOAK_REALM"] = realm
+    @keycloak_base_url.setter
+    def keycloak_base_url(self, base):
+        self.flask_app.config["KEYCLOAK_BASE_URL"] = base
+        
+    @property
+    def keycloak_client_id(self) -> str:
+        return self.flask_app.config["KEYCLOAK_CLIENT_ID"]
+    
+    @keycloak_client_id.setter
+    def keycloak_client_id(self, base):
+        self.flask_app.config["KEYCLOAK_CLIENT_ID"] = base
+        
 
     @property
     def port(self) -> str:
