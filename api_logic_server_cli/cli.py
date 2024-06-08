@@ -1292,6 +1292,8 @@ def add_cust(ctx, bind_key_url_separator: str, api_name: str, project_name: str)
     project.project_directory_path = Path(project.project_directory_actual)
     project_name = project.project_directory_path.parent.name if not project.project_directory_path.is_dir() else project.project_directory_path.name
     models_py_path = project.project_directory_path.joinpath('database/models.py')
+
+    log.debug(f"\ncli[add-cust] models_py_path={models_py_path}")
     if not models_py_path.exists():
         raise Exception("Customizations are northwind/genai-specific - models.py does not exist")
     
