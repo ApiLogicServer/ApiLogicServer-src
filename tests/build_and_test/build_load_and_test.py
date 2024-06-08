@@ -428,6 +428,7 @@ def delete_build_directories(install_api_logic_server_path):
     try:
         os.mkdir(install_api_logic_server_path, mode = 0o777)
         os.mkdir(install_api_logic_server_path.joinpath('dockers'), mode = 0o777)
+        os.mkdir(install_api_logic_server_path.joinpath('dockers/ApiLogicServer'), mode = 0o777) # for testing docker manager
     except Exception as e:
         print(f"Unable to create directory {install_api_logic_server_path} -- Windows dir exists?  Excp:")
         print(f"{e}")
@@ -691,7 +692,7 @@ def validate_sql_server_types():
 #        MAIN CODE
 # ***************************
 
-__version__ = '10.04.34'  # nw behave tests fix
+__version__ = '10.04.50'  # creating dockers/ApiLogicServer, for docker manager manual tests
 current_path = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(current_path)
 program_dir = str(current_path)

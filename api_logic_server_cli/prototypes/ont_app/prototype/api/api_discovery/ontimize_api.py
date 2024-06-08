@@ -37,7 +37,9 @@ class DotDict(dict):
     __getattr__ = dict.get
     __setattr__ = dict.__setitem__
     __delattr__ = dict.__delitem__
-def add_service(app, api, project_dir, swagger_host: str, PORT: str):
+
+
+def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_decorators = []):
     pass
     
 #def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
@@ -48,7 +50,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str):
     
     """
     _project_dir = project_dir
-    app_logger.debug("api/api_discovery/ontimize_api.py - expose custom services") 
+    app_logger.debug("api/api_discovery/ontimize_api.py - services for ontimize") 
 
     def getMetaData(resource_name:str = None, include_attributes: bool = True) -> dict:
         import inspect
