@@ -1126,17 +1126,14 @@ from database import <project.bind_key>_models
 
     def add_auth(self, msg: str, is_nw: bool = False):
         """add authentication models to project, update config; leverage multi-db support.  kat
-        
-        if provider_type is sql: 
-        1. add-db --auth-db_url= [ auth | db_url ] by calling self.create_project()
-        2. add user.login endpoint
-        3. Set SECURITY_ENABLED in config.py
-        4. Adding Sample authorization to security/declare_security.py, or user
 
-        Alert: complicated self.create_project() non-recursive flow:
-        1. Use model_creation_services to create auth models
-        2. By re-running app_creator (which leaves resources at auth, not db)
-        3. So, save/restore resource_list, bind_key, db_url, abs_db_url
+        As of 10.04.50, projects are created with full security, but not activated.
+        1. This means you just need to alter config.config.py to:
+            * Activate: just set SECURITY_ENABLED = True
+            * Switching providers (sql, keycloak): ...authentication_provider.sql.auth_provider
+        2. It is more complex to alter the sql database
+            * Change url
+            * Change model to match your db
 
         Args:
             msg (str): eg: ApiLogicProject customizable project created.  Adding Security:")
@@ -1157,15 +1154,80 @@ from database import <project.bind_key>_models
             if is_nw or "ApiLogicProject customizable project created" in msg:
                 pass
             else:
-                if self.auth_provider_type == 'sql':
-                    log.info(" .. TODO: Declare authorization in security/declare_security.py")
-                    log.info(" .. docs: https://apilogicserver.github.io/Docs/Security-Activation/")
-            if self.auth_provider_type == 'sql':
+                log.info(" .. TODO: Declare authorization in security/declare_security.py")
+                log.info(" .. docs: https://apilogicserver.github.io/Docs/Security-Activation/")
+            if self.auth_provider_type == 'sql':  # eg, add-auth cli command
                 log.debug("  1. ApiLogicServer add-db --db_url=auth --bind_key=authentication")
             elif self.auth_provider_type == 'keycloak':
                 log.info(" .. for keycloak")
                 log.info(" .. docs: https://apilogicserver.github.io/Docs/Security-Activation/")
         log.debug("===================================================================\n")
+
+        create_security_from_scratch = False  # prior to 10.04.50
+        if create_security_from_scratch:
+            self.add_auth_from_scratch(msg=msg, is_nw=is_nw)  # old code - ignore
+        else:
+            pass  # based on auth_provider_type, set provider, SECURITY_ENABLED 
+            config_file = f'{self.project_directory}/config/config.py'
+            is_enabled = create_utils.does_file_contain(search_for="SECURITY_ENABLED = True  #",
+                                          in_file=config_file)
+            is_sql = create_utils.does_file_contain(search_for="authentication_provider.sql.auth_provider import",
+                                          in_file=config_file)
+            was_provider_type = "sql" if is_sql else "keycloak"
+            is_enabled_note = "enabled" if is_enabled else "disabled"
+            was_enabled = "True" if is_enabled else "False"
+            provider_note = f"Setting provider type = {self.auth_provider_type} " + \
+                                f'(was: {was_provider_type}, {is_enabled_note})'
+            
+            def set_security_enabled(from_value: str, to_value: str):
+                if from_value == to_value:
+                    log.info(f'\n.. .. .. (enabled unchanged)')
+                else:
+                    create_utils.replace_string_in_file(in_file=config_file,
+                        search_for=f'SECURITY_ENABLED = {from_value}  #',
+                        replace_with=f'SECURITY_ENABLED = {to_value}  #')
+            
+            def set_provider(from_value: str, to_value: str):
+                if from_value == to_value:
+                    log.info(f'\n.. .. .. (provider type unchanged)')
+                else:
+                    create_utils.replace_string_in_file(in_file=config_file,
+                        search_for   =f'authentication_provider.{from_value}.auth_provider import',
+                        replace_with =f'authentication_provider.{to_value}.auth_provider import')
+
+            if self.auth_provider_type == 'none':  # none means diaable
+                if is_enabled:
+                    log.info(f'\n\n.. ..Disabling security for current provider type: {was_provider_type}\n')
+                    set_security_enabled(from_value="True", to_value="False")
+                else:
+                    log.info(f'\n.. .. ..No action taken - already disabled for current provider type: {was_provider_type}\n')
+                return
+
+            log.info(f'\n\n.. ..{provider_note}')  # set enabled, provider in config
+            set_security_enabled(to_value="True", from_value=was_enabled)
+            set_provider(from_value=was_provider_type, to_value=self.auth_provider_type)
+            pass
+        self.add_auth_in_progress = False
+
+    def add_auth_from_scratch(self, msg: str, is_nw: bool = False):
+        """add authentication models to project, update config; leverage multi-db support.  kat
+
+        Prior to 10.04.50, if provider_type is sql: 
+        1. add-db --auth-db_url= [ auth | db_url ] by calling self.create_project()
+        2. add user.login endpoint
+        3. Set SECURITY_ENABLED in config.py
+        4. Adding Sample authorization to security/declare_security.py, or user
+
+        Alert: complicated self.create_project() non-recursive flow:
+        1. Use model_creation_services to create auth models
+        2. By re-running app_creator (which leaves resources at auth, not db)
+        3. So, save/restore resource_list, bind_key, db_url, abs_db_url
+
+        Args:
+            msg (str): eg: ApiLogicProject customizable project created.  Adding Security:")
+            is_nw (bool): is northwind, which means we add the nw security logic
+            provider_type (str): sql or keycloak
+        """
 
         if create_utils.does_file_contain(search_for="SECURITY_ENABLED = True  #",
                                           in_file=f'{self.project_directory}/config/config.py'):
@@ -1263,6 +1325,7 @@ from database import <project.bind_key>_models
                     log.debug("  4. TODO: Declare authorization in security/declare_security.py")
                 log.debug("==================================================================\n\n")
         self.add_auth_in_progress = False
+
 
     def insert_tutorial_into_readme(self):
         """ insert docs tutorial.md into readme at --> Tip: create the sample """

@@ -793,7 +793,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "  - add-auth[KeyCLoak] to servers/NW_NoCust - DOT",
+            "name": "  - add-auth[KeyCloak] to servers/NW_NoCust - DOT",
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/../../servers/NW_NoCust",
@@ -801,6 +801,19 @@
             "redirectOutput": true,
             "args": ["add-auth",
                     "--provider-type=keycloak",
+                    "--project_name=.", 
+                    "--db_url=auth"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "  - add-auth[none] to servers/NW_NoCust - DOT",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/../../servers/NW_NoCust",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["add-auth",
+                    "--provider-type=none",
                     "--project_name=.", 
                     "--db_url=auth"],
             "console": "integratedTerminal"

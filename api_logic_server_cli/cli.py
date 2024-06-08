@@ -1131,7 +1131,7 @@ def add_db(ctx, db_url: str, bind_key: str, bind_key_url_separator: str, api_nam
               help="bindkey / class name url separator")
 @click.option('--provider-type',
               default='sql',
-              help="sql or keycloak")
+              help="sql, keycloak, or none")
 @click.option('--project_name',
               default=f'.',
               help="Project location")
