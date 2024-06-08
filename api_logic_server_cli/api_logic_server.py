@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.04.50"
+__version__ = "10.04.52"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t06/07/2024 - 10.04.50: default-auth creation \n"\
+    "\t06/08/2024 - 10.04.52: default-auth creation, BLT runs \n"\
     "\t06/07/2024 - 10.04.49: fix config-driven security, failing Werkzeug>=2.3.8 \n"\
     "\t06/06/2024 - 10.04.48: config-driven security config for admin.yaml \n"\
     "\t06/04/2024 - 10.04.47: ont cascade add, mgr: fix missing env, docker mgr, BLT behave logs, add-cust \n"\
@@ -1154,13 +1154,12 @@ from database import <project.bind_key>_models
             if is_nw or "ApiLogicProject customizable project created" in msg:
                 pass
             else:
-                log.info(" .. TODO: Declare authorization in security/declare_security.py")
-                log.info(" .. docs: https://apilogicserver.github.io/Docs/Security-Activation/")
+                log.info(".. docs: https://apilogicserver.github.io/Docs/Security-Activation")
             if self.auth_provider_type == 'sql':  # eg, add-auth cli command
                 log.debug("  1. ApiLogicServer add-db --db_url=auth --bind_key=authentication")
             elif self.auth_provider_type == 'keycloak':
-                log.info(" .. for keycloak")
-                log.info(" .. docs: https://apilogicserver.github.io/Docs/Security-Activation/")
+                log.info(".. for keycloak")
+                log.info(".. docs: https://apilogicserver.github.io/Docs/Security-Activation")
         log.debug("===================================================================\n")
 
         create_security_from_scratch = False  # prior to 10.04.50
@@ -1181,7 +1180,7 @@ from database import <project.bind_key>_models
             
             def set_security_enabled(from_value: str, to_value: str):
                 if from_value == to_value:
-                    log.info(f'\n.. .. .. (enabled unchanged)')
+                    log.info(f'.. .. (enabled unchanged)')
                 else:
                     create_utils.replace_string_in_file(in_file=config_file,
                         search_for=f'SECURITY_ENABLED = {from_value}  #',
@@ -1189,7 +1188,7 @@ from database import <project.bind_key>_models
             
             def set_provider(from_value: str, to_value: str):
                 if from_value == to_value:
-                    log.info(f'\n.. .. .. (provider type unchanged)')
+                    log.info(f'.. .. (provider type unchanged)')
                 else:
                     create_utils.replace_string_in_file(in_file=config_file,
                         search_for   =f'authentication_provider.{from_value}.auth_provider import',
@@ -1203,10 +1202,23 @@ from database import <project.bind_key>_models
                     log.info(f'\n.. .. ..No action taken - already disabled for current provider type: {was_provider_type}\n')
                 return
 
-            log.info(f'\n\n.. ..{provider_note}')  # set enabled, provider in config
+            log.info(f'\n..{provider_note}')  # set enabled, provider in config
             set_security_enabled(to_value="True", from_value=was_enabled)
             set_provider(from_value=was_provider_type, to_value=self.auth_provider_type)
-            pass
+
+            is_northwind = is_nw or self.nw_db_status in ["nw", "nw+"]  # nw_db_status altered in create_project
+            if is_northwind:  # is_nw or self.nw_db_status ==  "nw":
+                if msg != "":
+                    if msg != "":
+                        log.info("\n.. Adding Sample authorization to security/declare_security.py")
+                    nw_declare_security_py_path = self.api_logic_server_dir_path.\
+                        joinpath('prototypes/nw/security/declare_security.py')
+                    declare_security_py_path = self.project_directory_path.joinpath('security/declare_security.py')
+                    shutil.copyfile(nw_declare_security_py_path, declare_security_py_path)
+            else:
+                if msg != "":
+                    log.info("\n.. TODO: Declare authorization in security/declare_security.py")
+
         self.add_auth_in_progress = False
 
     def add_auth_from_scratch(self, msg: str, is_nw: bool = False):
