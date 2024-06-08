@@ -19,6 +19,9 @@ Your Code Goes Here
 
 app_logger = logging.getLogger(__name__)
 
+from database.database_discovery.auto_discovery import discover_models
+discover_models()
+
 def add_method(cls):
   """
   Decorator to add method to class, e.g., derived attribute ProperSalary.
