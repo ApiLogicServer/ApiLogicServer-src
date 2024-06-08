@@ -58,4 +58,4 @@ Grant(  on_entity = models.Customer,
 
 
 app_logger.debug("Declare Security complete - security/declare_security.py"
-    + f' -- {len(database.authentication_models.metadata.tables)} tables loaded')
+    + f' -- {len(database.database_discovery.authentication_models.metadata.tables)} tables loaded')

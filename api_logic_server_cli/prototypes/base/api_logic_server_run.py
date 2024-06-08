@@ -291,7 +291,7 @@ def api_logic_server_setup(flask_app: Flask, args: Args):
             if args.security_enabled:
                 from security import declare_security  # activate security
                 app_logger.info("..declare security - security/declare_security.py"
-                    # not accurate: + f' -- {len(database.authentication_models.metadata.tables)}'
+                    # not accurate: + f' -- {len(database.database_discovery.authentication_models.metadata.tables)}'
                     + ' authentication tables loaded')
                 declare_security_message = declare_security.declare_security_message
 

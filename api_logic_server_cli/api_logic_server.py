@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.04.52"
+__version__ = "10.04.53"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t06/08/2024 - 10.04.52: default-auth creation, BLT runs \n"\
+    "\t06/08/2024 - 10.04.53: default-auth creation, BLT runs, basic_demo? \n"\
     "\t06/07/2024 - 10.04.49: fix config-driven security, failing Werkzeug>=2.3.8 \n"\
     "\t06/06/2024 - 10.04.48: config-driven security config for admin.yaml \n"\
     "\t06/04/2024 - 10.04.47: ont cascade add, mgr: fix missing env, docker mgr, BLT behave logs, add-cust \n"\
@@ -1397,7 +1397,7 @@ from database import <project.bind_key>_models
     def add_genai_customizations(self, do_show_messages: bool = True, do_security: bool = True):
         """ Add customizations to genaiai (default creation)
 
-        1. Deep copy prototypes/genai (adds logic and security)
+        1. Deep copy prototypes/genai_demo (adds logic and security)
 
         Args:
         """
