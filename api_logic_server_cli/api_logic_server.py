@@ -1783,10 +1783,14 @@ from database import <project.bind_key>_models
                 ont_creator = OntBuilder(project = model_creation_services.project)
                 ont_creator.build_application(show_messages=False)
 
-        log.debug(" d.  Create Ontimize from models")
-        from api_logic_server_cli.create_from_model.ont_create import OntCreator
-        ont_creator = OntCreator(project = model_creation_services.project)
-        ont_creator.create_application(show_messages=False)
+        if (self.nw_db_status in ["nw+"]):
+            self.add_auth("\nApiLogicProject customizable project created.  \nAdding Security:")
+
+        if self.command != "add_db":
+            log.debug(" d.  Create Ontimize from models")
+            from api_logic_server_cli.create_from_model.ont_create import OntCreator
+            ont_creator = OntCreator(project = model_creation_services.project)
+            ont_creator.create_application(show_messages=False)
 
         if self.project_directory_path.joinpath('ui/app_model_custom.yaml').exists():
             # eg, nw project contains this for demo purposes
