@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.04.55"
+__version__ = "10.04.56"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t06/08/2024 - 10.04.55: default-auth creation, basic_demo+=b2b \n"\
+    "\t06/09/2024 - 10.04.56: default-auth creation, basic_demo+=b2b, ont failing \n"\
     "\t06/06/2024 - 10.04.48: config-driven security config for admin.yaml \n"\
     "\t06/04/2024 - 10.04.47: ont cascade add, mgr: fix missing env, docker mgr, BLT behave logs, add-cust \n"\
     "\t05/25/2024 - 10.04.32: mgr: pycharm, load readme from git \n"\
@@ -1763,7 +1763,7 @@ from database import <project.bind_key>_models
         if gen_ai is not None:
             gen_ai.insert_logic_into_created_project()
 
-        if (self.auth_provider_type != '' or self.nw_db_status in ["nw", "nw+"]) and self.command != "add_db":
+        if False and (self.auth_provider_type != '' or self.nw_db_status in ["nw", "nw+"]) and self.command != "add_db":
             self.add_auth("\nApiLogicProject customizable project created.  \nAdding Security:")
 
             auto_ontimize = True  # debug note - verify the model is user db, not the authdb...
@@ -1782,6 +1782,20 @@ from database import <project.bind_key>_models
                 from api_logic_server_cli.create_from_model.ont_build import OntBuilder
                 ont_creator = OntBuilder(project = model_creation_services.project)
                 ont_creator.build_application(show_messages=False)
+
+        log.debug(" d.  Create Ontimize from models")
+        from api_logic_server_cli.create_from_model.ont_create import OntCreator
+        ont_creator = OntCreator(project = model_creation_services.project)
+        ont_creator.create_application(show_messages=False)
+
+        if self.project_directory_path.joinpath('ui/app_model_custom.yaml').exists():
+            # eg, nw project contains this for demo purposes
+            copyfile (src=self.project_directory_path.joinpath('ui/app_model_custom.yaml'),
+                        dst=self.project_directory_path.joinpath('ui/app/app_model.yaml'))
+
+        from api_logic_server_cli.create_from_model.ont_build import OntBuilder
+        ont_creator = OntBuilder(project = model_creation_services.project)
+        ont_creator.build_application(show_messages=False)
 
         if self.open_with != "" and 'create' == self.command:  # open project with open_with (vscode, charm, atom) -- NOT for docker!!
             start_open_with(project = self)
