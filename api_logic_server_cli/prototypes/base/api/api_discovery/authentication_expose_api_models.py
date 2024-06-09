@@ -4,6 +4,7 @@ import importlib
 import pathlib
 import logging as logging
 from config.config import Args as args
+from config.config import Config
 
 # use absolute path import for easier multi-{app,model,db} support
 database = __import__('database')
@@ -24,7 +25,9 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         You typically do not customize this file 
         - See https://apilogicserver.github.io/Docs/Tutorial/#customize-and-debug 
     """
-    if args.instance.security_enabled:
+
+    provider_name = str(Config.SECURITY_PROVIDER)
+    if "sql" in provider_name and args.instance.security_enabled:
         api.expose_object(database.database_discovery.authentication_models.Api, method_decorators= method_decorators)
         api.expose_object(database.database_discovery.authentication_models.User, method_decorators= method_decorators)
         api.expose_object(database.database_discovery.authentication_models.Role, method_decorators= method_decorators)
