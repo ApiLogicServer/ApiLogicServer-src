@@ -179,25 +179,29 @@ class OntCreator(object):
             each_attribute.type = "text"  # TODO remove debug stub
             compute_type = True
             if compute_type:
-                resource = resources[each_resource_name]
-                resource_attributes = resource.attributes
-                resource_attribute : ResourceAttribute = None
-                for each_resource_attribute in resource_attributes:
-                    if each_resource_attribute.name == each_attribute.name:
-                        resource_attribute = each_resource_attribute
-                        each_attribute.type = resource_attribute.type
-                        break
-                #assert resource_attribute is not None, \
-                if resource_attribute is None:
-                    if self.project.nw_db_status == "":
-                        log.error(f"Sys Err - unknown resource attr: {each_resource_name}.{each_attribute.name}")
-                    else:
-                        pass  # nw changed the model, ok to ignore
-                    each_attribute.type = "text"
-                    each_attribute.template = "text"
+                is_missing = not each_resource_name in resources
+                if is_missing:  # might occur with add-db, using wrong model
+                    sys.exit(f"Sys Err - ont_create missing resource: {each_resource_name}\n\n")
                 else:
-                    each_attribute.type = resource_attribute.db_type
-                    each_attribute.template = self.compute_field_template(each_attribute)
+                    resource = resources[each_resource_name]
+                    resource_attributes = resource.attributes
+                    resource_attribute : ResourceAttribute = None
+                    for each_resource_attribute in resource_attributes:
+                        if each_resource_attribute.name == each_attribute.name:
+                            resource_attribute = each_resource_attribute
+                            each_attribute.type = resource_attribute.type
+                            break
+                    #assert resource_attribute is not None, \
+                    if resource_attribute is None:
+                        if self.project.nw_db_status == "":
+                            log.error(f"Sys Err - unknown resource attr: {each_resource_name}.{each_attribute.name}")
+                        else:
+                            pass  # nw changed the model, ok to ignore
+                        each_attribute.type = "text"
+                        each_attribute.template = "text"
+                    else:
+                        each_attribute.type = resource_attribute.db_type
+                        each_attribute.template = self.compute_field_template(each_attribute)
         return each_attribute
 
 
