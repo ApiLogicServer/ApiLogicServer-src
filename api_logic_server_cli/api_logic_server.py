@@ -1216,7 +1216,7 @@ from database import <project.bind_key>_models
                     shutil.copyfile(nw_declare_security_py_path, declare_security_py_path)
             else:
                 if msg != "":
-                    log.info("\n.. TODO: Declare authorization in security/declare_security.py")
+                    log.info("\n.. Authorization is declared in security/declare_security.py")
 
         self.add_auth_in_progress = False
 

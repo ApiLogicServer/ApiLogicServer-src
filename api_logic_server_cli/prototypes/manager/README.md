@@ -90,7 +90,7 @@ als create --project-name=basic_demo --db-url=basic_demo
 als create --project-name=nw_sample_nocust --db-url=sqlite:///nw.sqlite
 ```
 
-<br>See with **with customizations** in the [pre-created sample apps](#important-pre-created-sample-apps).  This is an **important learning resource**.
+<br>See **with customizations** in the [pre-created sample apps](#important-pre-created-sample-apps).  This is an **important learning resource**.
 
 Then, try your own databases [(db-url examples here)](https://apilogicserver.github.io/Docs/Database-Connectivity/), or experiment with [these Docker databases](https://apilogicserver.github.io/Docs/Database-Docker/).
 
@@ -116,8 +116,7 @@ als genai --using=genai_demo.prompt
 ```bash
 als genai --using=genai_demo.prompt --gen-using-file=system/genai/temp/chatgpt_retry.txt
 ```
-
-&nbsp;
+</br>
 
 <details markdown>
 
@@ -245,9 +244,9 @@ als create --project-name=sample_ai --from-model=sample_ai.py --db-url=sqlite
 
 <details markdown>
 
-<summary> 4. New Database - using ChatGPT in the Browser </summary>
+<summary> 4. New Database - using ChatGPT in the Browser (Signup not required)</summary>
 
-<br>ChatGPT in the Browser
+<br>A final option for GenAI is to use your Browser with ChatGPT.
 
 Please see [this doc](https://apilogicserver.github.io/Docs/Sample-AI-ChatGPT/)
 
