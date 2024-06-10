@@ -1,3 +1,9 @@
+create nw+ at /Users/val/dev/ApiLogicServer
+  admin app runs
+  so does ont - but how?  lucky jwt?
+  (no security diddling)
+
+
 sh /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/tests/build_and_test/cmd_venv.sh " ApiLogicServer create --project_name=TVF --extended_builder=* --db_url=\'mssql+pyodbc://sa:Posey3861@localhost:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no\'"
 
 ApiLogicServer create --project_name=TVF --extended_builder=$ --db_url='mssql+pyodbc://sa:Posey3861@localhost:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'
