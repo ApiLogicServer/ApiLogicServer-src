@@ -31,19 +31,9 @@ def get_sra_directory(args: Args) -> str:
     else:        # else use installed sra - from venv, or, for dev, in APILOGICSERVER_HOME
         try:     # works for installed, docker, codespaces.  not Azure
             from api_logic_server_cli.create_from_model import api_logic_server_utils as api_logic_server_utils
-        except:  # should not occur normally (means: venv does not include cli)
-            dev_home = os.getenv('APILOGICSERVER_HOME')
-            if dev_home:
-                admin_logger.debug("ApiLogicServer not in venv, trying APILOGICSERVER_HOME")
-            else:
-                dev_home = args.api_logic_server_home
-                if dev_home:
-                    admin_logger.debug("ApiLogicServer not in venv, trying APILOGICPROJECT_APILOGICSERVER_HOME")
-                else:
-                    dev_home = os.getenv('HOME')
-                    if not dev_home:
-                        raise Exception('ApiLogicServer not in venv, env APILOGICSERVER_HOME or HOME must be set')
-            sys.path.append(dev_home)
+        except:  # internal use - enable run from dev-ide
+            als_src_path = Path(sys.executable).parent.parent.parent
+            sys.path.append(str(als_src_path))
             from api_logic_server_cli.create_from_model import api_logic_server_utils as api_logic_server_utils
         admin_logger.debug("return_spa - install directory")
         utils_str = inspect.getfile(api_logic_server_utils)
@@ -187,25 +177,6 @@ def admin_events(flask_app: Flask, args: Args, validation_error: ValidationError
         response.headers["Access-Control-Allow-Credentials"] = "true"
         response.headers["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS, PUT, DELETE, PATCH"
         response.headers["Access-Control-Allow-Headers"] = \
-            "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token,  X-Requested-With, X-Auth-Token, Authorization, Access-Control-Allow-Origin"
-            #"access-control-allow-origin, authorization, content-type
-        response.headers["Access-Control-Expose-Headers"] = "X-Auth-Token, Content-disposition, X-Requested-With"
-        #response.headers["Content-Type"] = "application/json, text/html"
-        
-        # This is a short cut to auto login to Ontimize
-        from security.system.authentication import access_token
-        #access_token = request.headers.environ.get("HTTP_AUTHORIZATION")[7:]
-        if access_token:
-            response.headers["X-Auth-Token"] = access_token  # required for Ontimize (kludge alert)
-        # Ontimize specific 
-        #response.headers["Cache-Control"] = "no-cache, no-store, max-age=0, must-revalidate"
-        #response.headers["X-Content-Type-Options"] = "nosniff"
-        #response.headers["X-Xss-Protection"] = "1; mode=block"
-        #response.headers["X-Frame-Options"] = "DENY"
-        #response.headers["Expires"] = 0
-        #response.headers["Access-Control-Max-Age"] = 63072000
-        #response.headers["Strict-Transport-Security"] = "max-age=63072000"
-        #response.headers["Pragma"] = "no-cache"
-        
-        admin_logger.debug(f'cors after_request - response: {str(response)}')
+            "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization"
+        # admin_logger.debug(f'cors after_request - response: {str(response)}')
         return response
