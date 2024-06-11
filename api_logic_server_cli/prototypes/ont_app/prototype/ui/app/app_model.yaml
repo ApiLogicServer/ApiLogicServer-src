@@ -1545,3 +1545,6 @@ settings:
     style: light
     thousand_separator: ','
     use_keycloak: false
+    keycloak_url: http://localhost:8080
+    keycloak_realm: kcals
+    keycloak_client_id: alsclient
