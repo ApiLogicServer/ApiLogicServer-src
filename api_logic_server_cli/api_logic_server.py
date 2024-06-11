@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.04.57"
+__version__ = "10.04.58"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t06/10/2024 - 10.04.57: default-auth creation, basic_demo+=b2b, ont CORS fix \n"\
+    "\t06/11/2024 - 10.04.58: default-auth creation, basic_demo+=b2b, ont CORS fix, basic_demo \n"\
     "\t06/06/2024 - 10.04.48: config-driven admin.yaml security config \n"\
     "\t06/04/2024 - 10.04.47: ont cascade add, mgr: fix missing env, docker mgr, BLT behave logs, add-cust \n"\
     "\t05/25/2024 - 10.04.32: mgr: pycharm, load readme from git \n"\
