@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.04.58"
+__version__ = "10.04.60"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t06/11/2024 - 10.04.58: default-auth creation, basic_demo+=b2b, ont CORS fix, basic_demo \n"\
+    "\t06/11/2024 - 10.04.60: default-auth creation, basic_demo+=b2b, ont CORS fix, basic_demo \n"\
     "\t06/06/2024 - 10.04.48: config-driven admin.yaml security config \n"\
     "\t06/04/2024 - 10.04.47: ont cascade add, mgr: fix missing env, docker mgr, BLT behave logs, add-cust \n"\
     "\t05/25/2024 - 10.04.32: mgr: pycharm, load readme from git \n"\
@@ -1786,7 +1786,7 @@ from database import <project.bind_key>_models
         if (self.nw_db_status in ["nw+"]):
             self.add_auth("\nApiLogicProject customizable project created.  \nAdding Security:")
 
-        if self.command != "add_db":
+        if self.command not in ["add_db", "add_auth", "add-auth", "add-db", "rebuild-from-database", "rebuild-from-model"]:
             log.debug(" d.  Create Ontimize from models")
             from api_logic_server_cli.create_from_model.ont_create import OntCreator
             ont_creator = OntCreator(project = model_creation_services.project)

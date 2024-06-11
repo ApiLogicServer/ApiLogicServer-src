@@ -214,7 +214,7 @@ def create_start_manager(ctx, open_with, clean: click.BOOL = False, volume: str 
     """
         Create and Manage API Logic Projects.
     """
-    print(f'start sees volume={volume}')
+    # print(f'start sees volume={volume}')
     from api_logic_server_cli.manager import create_manager
     create_manager(clean=clean, open_with=open_with, api_logic_server_path=get_api_logic_server_path(), volume=volume)
 
@@ -1061,6 +1061,7 @@ def rebuild_from_database(ctx, project_name: str, db_url: str, api_name: str, no
                     favorites=favorites, non_favorites=non_favorites, open_with=open_with,
                     extended_builder=extended_builder, multi_api=False, infer_primary_key=infer_primary_key,
                     id_column_alias=id_column_alias)
+    print("\nRebuild complete\n")
 
 
 @main.command("add-db", cls=HideDunderCommand) 
@@ -1544,6 +1545,7 @@ def rebuild_from_model(ctx, project_name: str, db_url: str, api_name: str, not_e
                     react_admin=react_admin, admin_app=admin_app,
                     favorites=favorites, non_favorites=non_favorites, open_with=open_with,
                     extended_builder=extended_builder, multi_api=False, infer_primary_key=infer_primary_key)
+    print("\nRebuild complete\n")
 
 
 @main.command("run", cls=HideDunderCommand)
