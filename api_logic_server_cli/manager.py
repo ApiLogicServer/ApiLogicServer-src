@@ -40,7 +40,7 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path, vol
         docker_volume = volume + '/'
     # project.is_docker = True  # for testing
 
-    log.info(f"\n\nStarting manager at: {os.getcwd()}\n\n")  # eg, ...ApiLogicServer-dev/clean/ApiLogicServer
+    log.info(f"\nStarting manager at: {os.getcwd()}")  # eg, ...ApiLogicServer-dev/clean/ApiLogicServer
     to_dir = Path(os.getcwd())
     path = Path(__file__)
     from_dir = api_logic_server_path.joinpath('prototypes/manager')
@@ -74,7 +74,7 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path, vol
         if to_dir_check.exists():
             log.info(f"    Cleaning manager at: {to_dir}\n\n")
         copied_path = shutil.copytree(src=from_dir, dst=to_dir, dirs_exist_ok=True)
-        log.info(f"    Created manager at: {copied_path}\n\n")
+        log.debug(f"    .. created manager\n")
         if project.is_docker:
             from_docker_dir = api_logic_server_path.joinpath('prototypes/manager_docker')
             copied_path = shutil.copytree(src=from_docker_dir, dst=to_dir, dirs_exist_ok=True)
@@ -108,6 +108,7 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path, vol
         log.setLevel(mgr_save_level)
         log.disabled = False  # todo why was it reset?
         samples_project = PR.ProjectRun(command= "create", project_name=f'{docker_volume}samples/nw_sample_nocust', db_url='nw', open_with="NO_AUTO_OPEN")
+        log.info('')
         log.setLevel(mgr_save_level)
         log.disabled = False
         codegen_logger.setLevel(codegen_logger_save_level)

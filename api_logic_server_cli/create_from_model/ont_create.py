@@ -88,7 +88,7 @@ class OntCreator(object):
         app_path = Path(self.project.project_directory_path).joinpath(f'ui/{self.app}')
         if os.path.exists(app_path):
             log.info(f'\nApp {self.app} already present in project - no action taken\n')
-            # exit(1)  FIXME remove after debug
+            exit(1)
         else:
             os.mkdir(app_path)              
 
