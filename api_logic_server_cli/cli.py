@@ -1144,8 +1144,7 @@ def add_db(ctx, db_url: str, bind_key: str, bind_key_url_separator: str, api_nam
               help="SQLAlchemy Database URL - see above\n")
 @click.option('--db-url', 'db_url',
               default=f'auth',
-              prompt="SQLAlchemy Database URI",
-              help="SQLAlchemy Database URL - see above\n")
+              help="SQLAlchemy Database URL - defaults to sqlite\n")
 @click.option('--api_name',
               default="api",
               help="api prefix name")
