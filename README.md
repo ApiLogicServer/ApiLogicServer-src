@@ -12,13 +12,13 @@
 
 See how **Microservice Automation** creates and runs a microservice - a multi-page app, and an API. 
 
-* Here is a microservice -- api and admin app - **created / running in 5 seconds**
+* Here is a microservice -- api and admin app -- **created / running in 5 seconds**
 
     * It would be similar for your databases
 
 * Then, customize in your IDE with Python and **Logic Automation:** spreadsheet-like rules
 
-![quick tour](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/nutshell/gif.gif?raw=true)
+[![GenAI Automation](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/sample-ai/copilot/genai-automation-video.png)](https://www.youtube.com/watch?v=LSh7mqGiT0k&t=5s "Microservice Automation")
 
 </details>
 
@@ -34,7 +34,7 @@ source venv/bin/activate             # windows: venv\Scripts\activate
 python -m pip install ApiLogicServer
 ```
 
-<br>Now, verify it's working - open the Project Manager for instructions and run the demo:
+<br>Now, verify it's working - open the Project Manager for instructions (readme), and run the demo:
 
 ```bash title="Start Manager"
 ApiLogicServer start
@@ -68,17 +68,16 @@ API Logic Server provides unique automation **for instant integrations and app b
 
 For more information, including install procedures, [please see the docs](https://apilogicserver.github.io/Docs/).
 
+&nbsp;
 
 ### Making Contributions
+
 This is an open source project.  We are open to suggestions.  Some of our ideas include:
 
 | Component           | Provides         | Consider Adding                                                                |
 |:---------------------------|:-----------------|:-------------------------------------------------------------------------------|
 | 1. JSON:**API** and Swagger | API Execution    | Serverless, Kubernetes        | 
-| 2. Transactional **Logic**   | Rule Enforcement | New rule types        |
+| 2. Transactional **Logic**   | Rule Enforcement | Recompute Derivations        |
 | 3. This project | API Logic Project Creation | General support - see issues |
 
-
 &nbsp; 
-
-
