@@ -1,6 +1,5 @@
 from security.authentication_provider.abstract_authentication_provider import Abstract_Authentication_Provider
 import sqlalchemy as sqlalchemy
-import database.authentication_models as authentication_models
 from flask import Flask
 import safrs
 from safrs.errors import JsonapiError
@@ -61,8 +60,8 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         Returns:
             _type_: (no return)
         """
+        flask_app.config["JWT_PUBLIC_KEY"] = Authentication_Provider.get_jwt_public_key()
         flask_app.config['JWT_ALGORITHM'] = 'RS256'
-        flask_app.config["JWT_PUBLIC_KEY"] = Authentication_Provider.get_jwt_public_key('RS256')
         do_priv_key = False
         if do_priv_key:
             flask_app.config["JWT_PRIVATE_KEY"] = \
@@ -70,15 +69,14 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         return
 
     @staticmethod
-    def get_jwt_public_key(alg, kid=None):
+    def get_jwt_public_key():
         from flask import jsonify, request
-        jwks_uri = 'https://kc.hardened.be/realms/kcals/protocol/openid-connect/certs'
-        #jwks_uri = 'http://localhost:8080/realms/kcals/protocol/openid-connect/certs'
+        #jwks_uri = 'https://kc.hardened.be/realms/master/protocol/openid-connect/certs'
         # TODO use env variable instead of localhost
-        #jwks_uri = 'http://localhost:8080/realms/kcals/protocol/openid-connect/certs'
+        jwks_uri = 'http://localhost:8080/realms/kcals/protocol/openid-connect/certs'
         for i in range(100):
             try:
-                keys = requests.get(jwks_uri).json()['keys']
+                oidc_jwks_uri = requests.get(jwks_uri, verify=False).json()
                 break
             except:
                 # waiting .. container may still be sleeping
@@ -86,12 +84,9 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         else:
             print(f'Failed to load jwks_uri {jwks_uri}')
             sys.exit(1)
-        for key in keys:
-            if key['alg'] == alg or key['kid'] == kid:
-                logger.info(f"Found JWK: {key['kid']}")
-                return RSAAlgorithm.from_jwk(json.dumps(key))
-        exit(1)
-
+        return_result = RSAAlgorithm.from_jwk(json.dumps(oidc_jwks_uri["keys"][1]))
+        return return_result  # is this an rsa-aware callback??   It's not a jwt
+        
     # @jwt_required   # so, maybe jwt requires no pwd?
     def get_jwt_user(id: str) -> object:  # for experiment: jwt_get_raw_jwt
         from flask_jwt_extended import get_jwt
@@ -123,8 +118,6 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         rtn_user.password_hash = None
 
         # get extended properties (e.g, client_id in sample app)
-        if not "attributes" in jwt_data:
-            return rtn_user
         attributes = jwt_data['attributes']
         for each_name, each_value in attributes.items():
             rtn_user[each_name] = each_value
@@ -137,6 +130,22 @@ class Authentication_Provider(Abstract_Authentication_Provider):
             each_user_role.role_name = each_role_name
             rtn_user.UserRoleList.append(each_user_role)
         return rtn_user
+
+    @staticmethod
+    def check_password(user: object, password: str = "") -> bool:
+        """checks whether user-supplied password matches database
+
+        This hides implementation (eg, delegated or now) from authentication caller
+
+        Args:
+            user (object): DotMap or SQLAlchemy row containing id attribute
+            password (str, optional): password as entered by user. Defaults to "".
+
+        Returns:
+            bool: _description_
+        """
+        # return user.check_password(password = password)  TODO: review
+        return True
     
     @staticmethod
     def get_user(id: str, password: str = "") -> object:
@@ -165,7 +174,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
             if db is None:
                 db = safrs.DB         # Use the safrs.DB for database access
                 session = db.session  # sqlalchemy.orm.scoping.scoped_session
-        
+            from database.database_discovery.authentication_models import authentication_models
             user = session.query(authentication_models.User).filter(authentication_models.User.id == id).one_or_none()
             if user is None:  #Val - change note to remove try, use 1st user if none (as a temp hack?)
                 logger.info(f'*****\nauth_provider: Create user for: {id}\n*****\n')
