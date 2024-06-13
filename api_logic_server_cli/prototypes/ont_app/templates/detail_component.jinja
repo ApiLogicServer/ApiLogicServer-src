@@ -3,9 +3,9 @@ import { OFormComponent, OntimizeService, OListPickerComponent, OTableComponent,
 
 
 @Component({
-  selector: '{{ entity }}-detail',
-  templateUrl: './{{ entity }}-detail.component.html',
-  styleUrls: ['./{{ entity }}-detail.component.scss']
+  selector: '{{ entityName }}-detail',
+  templateUrl: './{{ entityName }}-detail.component.html',
+  styleUrls: ['./{{ entityName }}-detail.component.scss']
 })
 export class {{ entity_first_cap }}DetailComponent implements OnInit  {
   protected service: OntimizeService;
@@ -22,7 +22,7 @@ export class {{ entity_first_cap }}DetailComponent implements OnInit  {
 
   protected configureService() {
     const conf = this.service.getDefaultServiceConfiguration();
-    conf['path'] = '/{{ entity }}';
+    conf['path'] = '/{{ entityName }}';
     this.service.configureService(conf);
   }
   onDataLoaded(e: object) {

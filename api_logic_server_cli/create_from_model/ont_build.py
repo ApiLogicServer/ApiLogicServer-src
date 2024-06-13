@@ -82,8 +82,8 @@ class OntBuilder(object):
         self.include_translation = False
         self.row_height = "medium"
         #Keycloak settings from global
-        self.use_keycloak=True # True this will use different templates - defaults to basic auth
-        self.keycloak_url= "http://localhost:8080"
+        self.use_keycloak=False # True this will use different templates - defaults to basic auth
+        self.keycloak_url = "http://localhost:8080"
         self.keycloak_realm = "kcals"
         self.keycloak_client_id = "alsclient"
 
@@ -205,24 +205,26 @@ class OntBuilder(object):
             # HOME - Table Style
             if  each_entity.get("exclude", "false") == "true":
                 continue
-            home_template_name = self.find_template(each_entity, "home_template","home_template.html")
-            home_template = self.load_home_template(home_template_name, each_entity, entity_favorites)
-            home_scss = self.get_template("home.scss").render()
             entity_name = each_entity_name
-            ts = self.load_ts("home_template.jinja", each_entity)
+            
+            home_template_name = self.find_template(each_entity, "home_template","home_template.html")
+            home_template = self.load_home_template(home_template_name, each_entity, each_entity_name, entity_favorites)
+            home_scss = self.get_template("home.scss").render()
+            
+            ts = self.load_ts("home_template.jinja", each_entity_name, each_entity)
             write_file(app_path, entity_name, "home", "-home.component.html", home_template)
             write_file(app_path, entity_name, "home", "-home.component.ts", ts)
             write_file(app_path, entity_name, "home", "-home.component.scss", home_scss)
             
-            routing = self.load_routing("routing.jinja", each_entity)
+            routing = self.load_routing("routing.jinja", entity_name, each_entity)
             write_file(app_path, entity_name, "", "-routing.module.ts", routing)
-            module = self.load_module("module.jinja", each_entity)
+            module = self.load_module("module.jinja", entity_name=each_entity_name, entity=each_entity)
             write_file(app_path, entity_name, "", ".module.ts", module)
 
             # New Style for Input
             new_template_name = self.find_template(each_entity, "new_template","new_template.html")
-            new_template = self.load_new_template(new_template_name, each_entity, entity_favorites)
-            ts = self.load_ts("new_component.jinja", each_entity)
+            new_template = self.load_new_template(new_template_name, each_entity_name, each_entity, entity_favorites)
+            ts = self.load_ts("new_component.jinja", each_entity_name, each_entity)
             new_scss = self.get_template("new.scss").render()
             write_file(app_path, entity_name, "new", "-new.component.html", new_template)
             write_file(app_path, entity_name, "new", "-new.component.ts", ts)
@@ -230,15 +232,15 @@ class OntBuilder(object):
             
             # Detail for Update
             detail_template_name = self.find_template(each_entity, "detail_template","detail_template.html")
-            detail_template = self.load_detail_template(detail_template_name, each_entity, entity_favorites)
-            ts = self.load_ts("detail_component.jinja", each_entity)
+            detail_template = self.load_detail_template(detail_template_name, each_entity_name, each_entity, entity_favorites)
+            ts = self.load_ts("detail_component.jinja", each_entity_name, each_entity)
             detail_scss = self.get_template("detail.scss").render()
             write_file(app_path, entity_name, "detail", "-detail.component.html", detail_template)
             write_file(app_path, entity_name, "detail", "-detail.component.ts", ts)
             write_file(app_path, entity_name, "detail", "-detail.component.scss", detail_scss)
             
-            card_template = self.load_card_template("card.component.html", each_entity, entity_favorites)
-            ts = self.load_ts("card.component.jinja", each_entity)
+            card_template = self.load_card_template("card.component.html", each_entity_name, entity_favorites)
+            ts = self.load_ts("card.component.jinja", each_entity_name, each_entity)
             card_scss = self.get_template("detail.scss").render()
             write_card_file(app_path, entity_name, "-card.component.html", card_template)
             write_card_file(app_path, entity_name,  "-card.component.ts", ts)
@@ -378,17 +380,17 @@ class OntBuilder(object):
         )
         return (env,local_env)
     
-    def load_ts(self, template_name: str, entity: any) -> str:
+    def load_ts(self, template_name: str, entity_name: str, entity: any) -> str:
         # The above code is a Python function that takes a template name as input, retrieves the template
         # using the `self.get_template` method, and then processes the template by rendering it with a
         # dictionary of variables.
         template = self.get_template(template_name)
-        entity_vars = self.get_entity_vars(entity)
+        entity_vars = self.get_entity_vars(entity_name=entity_name,entity=entity)
         return template.render(entity_vars)
 
-    def load_home_template(self, template_name: str, entity: any, entity_favorites: any) -> str:
+    def load_home_template(self, template_name: str, entity: any, entity_name:str, entity_favorites: any) -> str:
         template = self.get_template(template_name)
-        entity_vars = self.get_entity_vars(entity)
+        entity_vars = self.get_entity_vars(entity_name=entity_name, entity=entity)
         entity_vars["row_columns"] = self.get_entity_columns(entity)
         entity_vars["has_tabs"] = False
         entity_vars["grid_items"] = []
@@ -427,14 +429,14 @@ class OntBuilder(object):
             row_cols.append(rv)
         return row_cols
 
-    def get_entity_vars(self, entity):
+    def get_entity_vars(self, entity_name:str, entity):
         favorite =  self.find_template(entity,"favorite","")
         fav_column = find_column(entity,favorite)
         cols = get_columns(entity)
         visible_columns = get_visible_columns(entity, True)
         fav_column_type = "VARCHAR" if fav_column and fav_column.type.startswith("VARCHAR") else "INTEGER"
         key =  make_keys(entity["primary_key"])
-        entity_name = f"{entity.type}"
+        entity_type = f"{entity.type}"
         entity_upper = f"{entity_name[:1].upper()}{entity_name[1:]}"
         entity_first_cap = f"{entity_name[:1].upper()}{entity_name[1:]}"
         primaryKey = make_keys(entity["primary_key"])
@@ -444,7 +446,8 @@ class OntBuilder(object):
         entity_var = {
             "use_keycloak": self.use_keycloak,
             "row_height": self.row_height,
-            "entity": entity_name,
+            "entity": entity.type,
+            "entityName": entity_name,
             "columns": cols,
             "visibleColumns": visible_columns,
             "sortColumns": favorite, 
@@ -457,8 +460,9 @@ class OntBuilder(object):
             "detail_mode": self.detail_mode,
             "title": "{{ '" + title + "' | oTranslate }}",
             "tableAttr": f"{entity_name}Table",
-            "service": entity_name,
-            "entity": entity_name,
+            "service": entity_type,
+            "entity": entity_type,
+            "entityName": entity_name,
             "Entity": entity_upper,
             "entity_home": f"{entity_name}-home",
             "entity_home_component": f"{entity_upper}HomeComponent",
@@ -467,7 +471,7 @@ class OntBuilder(object):
             "primaryKey": f"{primaryKey}",
             "detailFormRoute": entity_name,
             "editFormRoute": entity_name,
-            "attrType": "INTEGER",
+            "attrType": "INTEGER", #TODO
             "editOnMode": self.edit_on_mode
         }
 
@@ -527,12 +531,12 @@ class OntBuilder(object):
             elif column.type in ["BLOB","CLOB", "VARBINARY"]:
                 return "IMAGE"
         return "TEXT"
-    def load_new_template(self, template_name: str, entity: any, favorites: any) -> str:
+    def load_new_template(self, template_name: str,entity_name: str,  entity: any, favorites: any) -> str:
         """
         This is a grid display (new) 
         """
         template = self.get_template(template_name)
-        entity_vars = self.get_entity_vars(entity)
+        entity_vars = self.get_entity_vars(entity_name, entity)
         fks = get_foreign_keys(entity, favorites)
         row_cols = []
         for column in entity.columns:
@@ -582,12 +586,12 @@ class OntBuilder(object):
         #'{{ ' + f'"{col_var["name"]}"' + '| oTranslate }}'
         return col_var
     
-    def load_detail_template(self, template_name: str, entity: any, favorites: any) -> str:
+    def load_detail_template(self, template_name: str, entity_name:str, entity: any, favorites: any) -> str:
         """
         This is a detail display (detail) 
         """
         template = self.get_template(template_name)
-        entity_vars = self.get_entity_vars(entity)
+        entity_vars = self.get_entity_vars(entity_name, entity)
         fks = get_foreign_keys(entity, favorites)
         row_cols = []
         for column in entity.columns:
@@ -615,7 +619,7 @@ class OntBuilder(object):
 
     def gen_pick_list_col(self, col_var, fk, entity) -> str:
         fk_entity = self.get_entity(fk["resource"])
-        fk_entity_var = self.get_entity_vars(fk_entity)
+        fk_entity_var = self.get_entity_vars(fk_entity.type, fk_entity)
         fk_column = find_column(fk_entity, fk_entity.primary_key[0])
         fk_pkey =  fk_entity.primary_key[0]
         col_var["attr"] = fk["attrs"][0]
@@ -638,7 +642,7 @@ class OntBuilder(object):
         return "VARCHAR" if fk_column and fk_column.type.startswith("VARCHAR") else fk_column.type if hasattr(fk_column,"type") else "INTEGER"
     def load_tab_template(self, entity, parent_entity, template_var: any, parent_pkey:str) -> str:
         tab_template = self.tab_panel
-        entity_vars = self.get_entity_vars(entity)
+        entity_vars = self.get_entity_vars(entity.type, entity)
         template_var |= entity_vars
         row_cols = []
         for column in entity.columns:
@@ -651,13 +655,13 @@ class OntBuilder(object):
         return  tab_template.render(template_var)
 
             
-    def load_card_template(self, template_name: str, entity: any, favorites: any) -> str:
+    def load_card_template(self, template_name: str, entity_name: str, favorites: any) -> str:
         """
         This is a card display (card) 
         """
         template = self.get_template(template_name)
-        entity =  entity["type"].upper()
-        cardTitle = "{{" + f"'{entity}_TYPE'" + "}}"
+        entity =  entity_name.upper()
+        cardTitle = "{{" + f"'{entity_name}_TYPE'" + "}}"
         entity_vars = {
             "cardTitle": cardTitle
         }
@@ -789,10 +793,10 @@ class OntBuilder(object):
         if template_type == "TEXTAREA":
             rv = self.textarea_template.render(col_var)
         return rv
-    def load_routing(self, template_name: str, entity: any) -> str:
+    def load_routing(self, template_name: str,entity_name: str, entity: any) -> str:
         template = self.get_template(template_name)
-        entity_upper = entity.type.upper()
-        entity_name = entity.type
+        entity_upper = entity_name.upper()
+        #entity_name = entity.type
         entity_first_cap = f"{entity_name[:1].upper()}{entity_name[1:]}"
         var = {
             "entity": entity_name,
@@ -816,10 +820,10 @@ class OntBuilder(object):
         var["additional_routes"] = additional_routes
         return template.render(var)
     
-    def load_module(self, template_name: str, entity: any) -> str:
+    def load_module(self, template_name: str, entity_name, entity: any) -> str:
         template = self.get_template(template_name)
-        entity_upper = entity.type.upper()
-        entity_name = entity.type
+        entity_upper = entity_name.upper()
+        #entity_name = entity.type
         entity_first_cap = f"{entity_name[:1].upper()}{entity_name[1:]}"
         var = {
             "entity": entity_name,
@@ -860,7 +864,7 @@ class OntBuilder(object):
             sep = ","
             
 
-        return template.render(menuitems=menuitems, importitems=import_cards,card_components=menu_components)
+        return template.render(menuitems=menuitems, name=name, importitems=import_cards,card_components=menu_components)
 def make_key_path(key_list:list)-> str:
     #:key1/:key2
     key_path = ""
