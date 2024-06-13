@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.04.62"
+__version__ = "10.04.63"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t06/12/2024 - 10.04.63: revised keycloak auth_provider, default config to hardened, kc_base via add-auth \n"\
     "\t06/11/2024 - 10.04.62: default-auth creation, basic_demo+=b2b, ont CORS fix, basic_demo \n"\
     "\t06/06/2024 - 10.04.48: config-driven admin.yaml security config \n"\
     "\t06/04/2024 - 10.04.47: ont cascade add, mgr: fix missing env, docker mgr, BLT behave logs, add-cust \n"\
@@ -1124,7 +1125,7 @@ from database import <project.bind_key>_models
 
 
     def add_auth(self, msg: str, is_nw: bool = False):
-        """add authentication models to project, update config; leverage multi-db support.  kat
+        """add authentication models to project -- update config (not via multi-db support)
 
         As of 10.04.50, projects are created with full security, but not activated.
         1. This means you just need to alter config.config.py to:
@@ -1171,11 +1172,34 @@ from database import <project.bind_key>_models
                                           in_file=config_file)
             is_sql = create_utils.does_file_contain(search_for="authentication_provider.sql.auth_provider import",
                                           in_file=config_file)
+            is_kc_hardened = create_utils.does_file_contain(search_for="kc_base = 'https://kc.hardened.be'  #",
+                                          in_file=config_file)
+            was_hardened = "kc_base = 'https://kc.hardened.be'  #" if is_kc_hardened \
+                else "kc_base = 'http://localhost:8080'  #"
             was_provider_type = "sql" if is_sql else "keycloak"
             is_enabled_note = "enabled" if is_enabled else "disabled"
             was_enabled = "True" if is_enabled else "False"
-            provider_note = f"Setting provider type = {self.auth_provider_type} " + \
+            if self.auth_provider_type == 'keycloak':
+                if self.auth_db_url in[ 'auth', 'hardened']:
+                    self.auth_db_url = "kc_base = 'https://kc.hardened.be'  #"
+                elif self.auth_db_url == 'localhost':
+                    self.auth_db_url = "kc_base = 'http://localhost:8080'  #"
+            elif self.auth_provider_type == 'sql':
+                if self.auth_db_url in[ 'auth']:
+                    self.auth_db_url = "'sqlite:///../database/authentication_db.sqlite'  #"
+   
+            provider_note = f"Setting provider type = {self.auth_provider_type} [@ {self.auth_db_url}] " + \
                                 f'(was: {was_provider_type}, {is_enabled_note})'
+            
+            def set_kc_base(from_value: str, to_value: str):
+                # print(f'.. .. (kc_base: {from_value} -> {to_value})')
+                if from_value == to_value:
+                    log.info(f'.. .. (enabled unchanged)')
+                else:
+                    # print(f'.. .. (kc_base: in: {create_utils.does_file_contain(search_for=f"kc_base = {from_value}", in_file=config_file)})')    
+                    create_utils.replace_string_in_file(in_file=config_file,
+                        search_for=f'{from_value}',
+                        replace_with=f'{to_value}')
             
             def set_security_enabled(from_value: str, to_value: str):
                 if from_value == to_value:
@@ -1204,6 +1228,10 @@ from database import <project.bind_key>_models
             log.info(f'\n..{provider_note}')  # set enabled, provider in config
             set_security_enabled(to_value="True", from_value=was_enabled)
             set_provider(from_value=was_provider_type, to_value=self.auth_provider_type)
+            if self.auth_provider_type == "keycloak":
+                self.auth_db_url = set_kc_base(from_value=was_hardened, to_value=self.auth_db_url)
+            else:
+                pass
 
             is_northwind = is_nw or self.nw_db_status in ["nw", "nw+"]  # nw_db_status altered in create_project
             if is_northwind:  # is_nw or self.nw_db_status ==  "nw":

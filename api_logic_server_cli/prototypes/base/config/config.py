@@ -89,13 +89,6 @@ class Config:
     FLASK_APP = environ.get("FLASK_APP")
     FLASK_ENV = environ.get("FLASK_ENV")
     DEBUG = environ.get("DEBUG")
-
-    #KEYCLOAK Args
-    kc_base = 'http://localhost:8080'
-    KEYCLOAK_REALM =  'kcals'
-    KEYCLOAK_BASE = f'{kc_base}/realms/{KEYCLOAK_REALM}'
-    KEYCLOAK_BASE_URL = f'{kc_base}'
-    KEYCLOAK_CLIENT_ID = 'als-client'
             
     running_at = Path(__file__)
     project_abs_dir = running_at.parent.absolute()
@@ -110,6 +103,19 @@ class Config:
     if os.getenv('SQLALCHEMY_DATABASE_URI'):  # e.g. export SECURITY_ENABLED=true
         SQLALCHEMY_DATABASE_URI = os.getenv('SQLALCHEMY_DATABASE_URI')
         app_logger.debug(f'.. overridden from env variable: {SQLALCHEMY_DATABASE_URI}')
+
+
+    #KEYCLOAK Args
+    # als add-auth --provider-type=keycloak --db-url=hardened
+    kc_base = 'https://kc.hardened.be'  # 'http://localhost:8080' or 'https://kc.hardened.be'
+    ''' keycloak location '''
+    KEYCLOAK_REALM =  'kcals'
+    KEYCLOAK_BASE = f'{kc_base}/realms/{KEYCLOAK_REALM}'
+    KEYCLOAK_BASE_URL = f'{kc_base}'
+    KEYCLOAK_CLIENT_ID = 'alsclient'
+    ''' keycloak client id (no dash for hardened) '''
+    if kc_base == 'http://localhost:8080':
+        KEYCLOAK_CLIENT_ID = 'als-client'
 
     SECURITY_ENABLED = False  # disables security (regardless of SECURITY_PROVIDER)
     SECURITY_PROVIDER = None

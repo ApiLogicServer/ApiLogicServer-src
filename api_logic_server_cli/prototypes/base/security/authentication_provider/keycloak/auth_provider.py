@@ -1,6 +1,6 @@
 from security.authentication_provider.abstract_authentication_provider import Abstract_Authentication_Provider
 import sqlalchemy as sqlalchemy
-import database.authentication_models as authentication_models
+import database.database_discovery.authentication_models as authentication_models
 from flask import Flask
 import safrs
 from safrs.errors import JsonapiError
@@ -39,7 +39,7 @@ class ALSError(JsonapiError):
         self.status_code = status_code
 
 
-class DotMapX(DotMap):
+class DotMapX(DotMap):  # TODO DotMapX fails - use a DataClass 
     """ DotMap, with extended support for auth providers """
     def check_password(self, password=None):
         # print(password)
@@ -123,11 +123,11 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         rtn_user.password_hash = None
 
         # get extended properties (e.g, client_id in sample app)
-        if not "attributes" in jwt_data:
-            return rtn_user
-        attributes = jwt_data['attributes']
-        for each_name, each_value in attributes.items():
-            rtn_user[each_name] = each_value
+        if  "attributes" in jwt_data:
+            # return rtn_user
+            attributes = jwt_data['attributes']
+            for each_name, each_value in attributes.items():
+                rtn_user[each_name] = each_value
 
         rtn_user.UserRoleList = []
         role_names = jwt_data["realm_access"]["roles"]
