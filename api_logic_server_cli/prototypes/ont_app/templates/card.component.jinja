@@ -2,11 +2,11 @@ import { Component, ViewEncapsulation } from '@angular/core';
 
 @Component({
   selector: 'transactions-card',
-  templateUrl: './{{ entity }}-card.component.html',
-  styleUrls: ['./{{ entity }}-card.component.scss'],
+  templateUrl: './{{ entityName }}-card.component.html',
+  styleUrls: ['./{{ entityName }}-card.component.scss'],
   encapsulation: ViewEncapsulation.None,
   host: {
-    '[class.{{ entity }}-card]': 'true'
+    '[class.{{ entityName }}-card]': 'true'
   }
 })
 
