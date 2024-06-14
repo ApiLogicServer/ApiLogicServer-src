@@ -113,9 +113,9 @@ class Config:
     KEYCLOAK_BASE = f'{kc_base}/realms/{KEYCLOAK_REALM}'
     KEYCLOAK_BASE_URL = f'{kc_base}'
     KEYCLOAK_CLIENT_ID = 'alsclient'
-    ''' keycloak client id (no dash for hardened) '''
-    if kc_base == 'http://localhost:8080':
-        KEYCLOAK_CLIENT_ID = 'als-client'
+    ''' keycloak client id '''
+    # if kc_base == 'http://localhost:8080':
+    #    KEYCLOAK_CLIENT_ID = 'alsclient'
 
     SECURITY_ENABLED = False  # disables security (regardless of SECURITY_PROVIDER)
     SECURITY_PROVIDER = None
@@ -129,7 +129,7 @@ class Config:
         app_logger.debug(f'Security .. overridden from env variable: {SECURITY_ENABLED}')
     if SECURITY_ENABLED:
         from security.authentication_provider.sql.auth_provider import Authentication_Provider
-        # or, use keycloak instead of sql
+        # typically, authentication_provider is [ keycloak | sql ]
         SECURITY_PROVIDER = Authentication_Provider
         app_logger.debug(f'config.py - security enabled')
     else:

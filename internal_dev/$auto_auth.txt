@@ -1,68 +1,25 @@
-We want to encourage using auth.
-    It's a big feature
-    But we don't want to affect simplicity
-    
-Simplest is to start with nothing, add sqlite (zero config), then use KC.
+Using basic_demo
+  als create --project-name=basic_demo --db-url=basic_demo
+  als add-cust
+  als add-auth --db_url=auth
 
-So, want to support add-auth sql --> KC, for sure.
-
-Perhaps also KC -> sql, for flexibility...
-
-Auth-switching is simplest if the project creation...
-    - creates auth-sql 
-    - but inactive
-
-The only issue is going sqlite -> some other db.
-    - Is that far less likely, given KC?
+Verify procedure:
+  Login appears
+  Login as admin/p - 4 customers
+  Login as s1/p - 2 customers
 
 
-Todo:
-    1. Move data models login to discovery
+6/13 sra
+  sql auth
+    works - login s1, 2 customers
+
+  keycloak auth hardened - als add-auth --provider-type=keycloak
+    works - login admin, 4 customers
+    fails - login s1 gets: 'DotMapX' is not supported
+      but that appears to be missing extended Attributes not returned in JWT
+
+  keycloak auth local
+    login works, s1 filters to 2 customers -- need to fix client-id
+    logout does not trigger re-login (even when stg cleared)
 
 
-Here is what happens when you add-auth currently....
-
-
-Welcome to API Logic Server 10.04.50
-
-SQLAlchemy Database URI [auth]: 
-.. ..Manager path: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer
-.. ..Interp path: manager_path / venv/bin/python
-
-1. Update current project: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/servers/ApiLogicProject
-
-
-==================================================================
-Adding Security to project: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/servers/ApiLogicProject
-  1. ApiLogicServer add-db --db_url=auth --bind_key=authentication
-===================================================================
-
-
-2. Using Existing Project
-.. ..Adding Database [authentication] to existing project
-.. .. ..Copying sqlite database to: database/authentication_db.sqlite
-.. .. ..From /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/api_logic_server_cli/database/authentication.sqlite
-.. .. ..URI 'sqlite:///../database/authentication_db.sqlite'
-.. ..Updating config.py file with SQLALCHEMY_DATABASE_URI_AUTHENTICATION...
-.. ..Updated database/multi_db.py with SQLALCHEMY_DATABASE_URI_AUTHENTICATION...
-.. ..project_directory_actual: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/servers/ApiLogicProject
-3. Create/verify database/authentication_models.py, then use that to create api/ and ui/ models
- a.  Create Models - create database/authentication_models.py, using sqlcodegen
-.. .. ..For database:  sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/servers/ApiLogicProject/database/authentication_db.sqlite
-.. .. ..Setting bind_key = authentication
-.. .. ..Create resource_list - dynamic import database/authentication_models.py, inspect 4 classes in <project>/database
-
-
-==================================================================
-  2. Add User.Login endpoint
-==================================================================
-
-
-==================================================================
-  3. Set SECURITY_ENABLED in config.py
-==================================================================
-
-
-==================================================================
-  4. Adding Sample authorization to security/declare_security.py
-==================================================================
