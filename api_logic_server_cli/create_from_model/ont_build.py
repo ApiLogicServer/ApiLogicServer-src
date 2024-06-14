@@ -410,7 +410,7 @@ class OntBuilder(object):
             tab_name, tab_vars = self.get_tab_attrs(detail_entity, parent_entity, tab_group)
             entity_vars['tableAttr'] = f'{tab_group["resource"]}Table'
             tab_vars["table_columns"] = self.get_entity_columns(detail_entity)
-            col_vars = self.get_entity_vars(detail_entity)
+            col_vars = self.get_entity_vars(detail_entity.type,detail_entity)
             tab_vars |= col_vars
             tab_vars["tabTitle"] = tab_name
             tab_vars ["tableAttr"] = f'{tab_group["resource"]}Table'
