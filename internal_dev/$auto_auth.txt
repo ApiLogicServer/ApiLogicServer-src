@@ -14,6 +14,8 @@ Verify procedure:
     works - login s1, 2 customers
 
   keycloak auth hardened - als add-auth --provider-type=keycloak --db-url=hardened
+    Access: https://kc.hardened.be/   using admin/k3whiadl
+      https://medium.com/@ramanamuttana/custom-attribute-in-keycloak-access-token-831b4be7384a
     works - login admin, 4 customers
     fails - login s1 gets: 'DotMapX' is not supported
       but that appears to be missing extended Attributes not returned in JWT
