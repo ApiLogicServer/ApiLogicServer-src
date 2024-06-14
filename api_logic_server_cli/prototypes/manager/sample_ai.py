@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, Column, DECIMAL, DateTime, ForeignKey, Int
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
-Base = declarative_base()
+Base = declarative_base()  # ed. Used for: 3. New Database - using Copilot (Signup optional)
 
 class Customer(Base):
     __tablename__ = 'Customers'
