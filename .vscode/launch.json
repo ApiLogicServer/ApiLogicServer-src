@@ -765,7 +765,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "  - add-auth[KeyCloak] to servers/NW_NoCust - DOT",
+            "name": "  - add-auth[KeyCloak.local] to servers/NW_NoCust - DOT",
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/../../servers/NW_NoCust",
@@ -774,7 +774,7 @@
             "args": ["add-auth",
                     "--provider-type=keycloak",
                     "--project_name=.", 
-                    "--db_url=auth"],
+                    "--db_url=local"],
             "console": "integratedTerminal"
         },
         {

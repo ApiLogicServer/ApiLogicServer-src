@@ -1183,7 +1183,7 @@ from database import <project.bind_key>_models
             if self.auth_provider_type == 'keycloak':
                 if self.auth_db_url in[ 'auth', 'hardened']:
                     self.auth_db_url = "kc_base = 'https://kc.hardened.be'  #"
-                elif self.auth_db_url == 'localhost':
+                elif self.auth_db_url in ['localhost', 'local']:
                     self.auth_db_url = "kc_base = 'http://localhost:8080'  #"
             elif self.auth_provider_type == 'sql':
                 if self.auth_db_url in[ 'auth']:
