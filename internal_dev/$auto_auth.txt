@@ -13,12 +13,12 @@ Verify procedure:
   sql auth
     works - login s1, 2 customers
 
-  keycloak auth hardened - als add-auth --provider-type=keycloak
+  keycloak auth hardened - als add-auth --provider-type=keycloak --db-url=hardened
     works - login admin, 4 customers
     fails - login s1 gets: 'DotMapX' is not supported
       but that appears to be missing extended Attributes not returned in JWT
 
-  keycloak auth local
+  keycloak auth local - als add-auth --provider-type=keycloak --db-url=local
     login works, s1 filters to 2 customers -- need to fix client-id
     logout does not trigger re-login (even when stg cleared)
 
