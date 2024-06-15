@@ -388,11 +388,10 @@ class Grant:
         # Apply Grants
         ##############
         if grant_entity is not None and (grant_list or global_filter_list) and crud_state == "is_select":
-            # grant_filter = or_(*grant_list)
             grants_filter = or_(*grant_list)
             global_filter = and_(*global_filter_list)
-            # orm_execute_state.statement = orm_execute_state.statement.options(
-            #    with_loader_criteria(grant_entity, grants_filter))
+            orm_execute_state.statement = orm_execute_state.statement.options(
+                with_loader_criteria(grant_entity, grants_filter))
             orm_execute_state.statement = orm_execute_state.statement.options(
                 with_loader_criteria(grant_entity, global_filter))
             security_logger.debug(f"Filter(s) applied for entity {entity_name} ") 
