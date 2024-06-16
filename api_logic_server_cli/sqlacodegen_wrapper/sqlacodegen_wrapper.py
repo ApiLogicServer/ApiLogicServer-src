@@ -214,7 +214,10 @@ def create_models_py(model_creation_services: ModelCreationServices, abs_db_url:
         codegen_args = DotDict({})
         codegen_args.url = abs_db_url
         # codegen_args.outfile = models_file
+        models_loc = model_creation_services.project.project_directory_path.\
+            joinpath(model_creation_services.project.models_path_dir + '/' + model_creation_services.project.model_file_name)
         codegen_args.outfile = project_directory + '/database/models.py'
+        codegen_args.outfile = str(models_loc)
         codegen_args.version = False
         codegen_args.model_creation_services = model_creation_services
         opt_locking_file_name = f'{model_creation_services.project.api_logic_server_dir_path.joinpath("templates/opt_locking.txt")}'
@@ -230,9 +233,12 @@ def create_models_py(model_creation_services: ModelCreationServices, abs_db_url:
         if project.use_model is None or model_creation_services.project.use_model == "":
             code_gen_args = get_codegen_args()
             model_full_file_name = code_gen_args.outfile
-            if model_creation_services.project.bind_key != "":
-                model_full_file_name = project.project_directory_path.joinpath('database').joinpath(project.model_file_name)
+            """
+            if model_creation_services.project.bind_key != "":  # if bind key, add to model file name
+                model_full_file_name = project.project_directory_path.\
+                    joinpath('database').joinpath(project.model_file_name)
                 # model_full_file_name = "/".join(model_file_name.split("/")[:-1]) + "/" + model_creation_services.project.bind_key + "_" + model_file_name.split("/")[-1]
+            """
             log.debug(f' a.  Create Models - create database/{project.model_file_name}, using sqlcodegen')
             log.debug(f'.. .. ..For database:  {abs_db_url}')
 

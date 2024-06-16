@@ -39,7 +39,7 @@ class ALSError(JsonapiError):
         self.status_code = status_code
 
 
-class DotMapX(DotMap):  # TODO DotMapX fails - use a DataClass 
+class DotMapX(DotMap):
     """ DotMap, with extended support for auth providers """
     def check_password(self, password=None):
         # print(password)
@@ -48,7 +48,7 @@ class DotMapX(DotMap):  # TODO DotMapX fails - use a DataClass
 
 class Authentication_Provider(Abstract_Authentication_Provider):
 
-    @staticmethod  #val - option for auth provider setup
+    @staticmethod
     def configure_auth(flask_app: Flask):
         """ Called by authentication.py on server start, to 
         - initialize jwt
@@ -72,10 +72,9 @@ class Authentication_Provider(Abstract_Authentication_Provider):
     @staticmethod
     def get_jwt_public_key(alg, kid=None):
         from flask import jsonify, request
-        jwks_uri = 'https://kc.hardened.be/realms/kcals/protocol/openid-connect/certs'
-        #jwks_uri = 'http://localhost:8080/realms/kcals/protocol/openid-connect/certs'
-        # TODO use env variable instead of localhost
-        #jwks_uri = 'http://localhost:8080/realms/kcals/protocol/openid-connect/certs'
+        from config.config import Args  # circular import error if at top
+        
+        jwks_uri = Args.instance.keycloak_base + '/protocol/openid-connect/certs'
         for i in range(100):
             try:
                 keys = requests.get(jwks_uri).json()['keys']
@@ -210,7 +209,6 @@ class Authentication_Provider(Abstract_Authentication_Provider):
             Authentication_Provider.get_jwt_user(id=id)
             pass
         elif try_kc == 'api':  # get jwt for user info & roles
-            KC_BASE = 'http://localhost:8080/realms/kcals'
             KC_BASE = Args.instance.keycloak_base
             data = {
                 "grant_type": "password",

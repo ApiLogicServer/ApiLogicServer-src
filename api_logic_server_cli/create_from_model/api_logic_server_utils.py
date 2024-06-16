@@ -334,6 +334,19 @@ def replace_string_in_file(search_for: str, replace_with: str, in_file: str):
     with open(in_file, 'w') as file:
         file.write(file_data)
 
+def assign_value_to_key_in_file(key: str, value: str, in_file: str):
+    with open(Path(in_file), 'r') as file:
+        file_data = file.read()
+        lines = file_data.split("\n")
+        count = 1
+        for i in range(len(lines)):
+            if lines[i].startswith(key) and count > 0:
+                count -= 1
+                lines[i] = f"{key} = '{value}'"
+        file_data = "\n".join(lines)
+    with open(in_file, 'w') as file:
+        file.write(file_data)
+
 
 def insert_lines_at(lines: str, at: str, file_name: str, after: bool = False):
     """ insert <lines> into file_name after line with <str> """
