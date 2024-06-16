@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.04.66"
+__version__ = "10.04.67"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t06/14/2024 - 10.04.66: sra jun 13, kc auth provider runs locally \n"\
+    "\t06/15/2024 - 10.04.67: sra jun 13, kc auth provider runs locally, configure auth > sqlite \n"\
     "\t06/12/2024 - 10.04.63: revised keycloak auth_provider, default config to hardened, kc_base via add-auth \n"\
     "\t06/11/2024 - 10.04.62: default-auth creation, basic_demo+=b2b, ont CORS fix, basic_demo \n"\
     "\t06/06/2024 - 10.04.48: config-driven admin.yaml security config \n"\
@@ -1155,12 +1155,15 @@ from database import <project.bind_key>_models
             if is_nw or "ApiLogicProject customizable project created" in msg:
                 pass
             else:
-                log.info(".. docs: https://apilogicserver.github.io/Docs/Security-Activation")
+                pass
+                # log.info(".. docs: https://apilogicserver.github.io/Docs/Security-Activation")
             if self.auth_provider_type == 'sql':  # eg, add-auth cli command
-                log.debug("  1. ApiLogicServer add-db --db_url=auth --bind_key=authentication")
+                pass
+                # log.debug("  1. ApiLogicServer add-db --db_url=auth --bind_key=authentication")
             elif self.auth_provider_type == 'keycloak':
-                log.info(".. for keycloak")
-                log.info(".. docs: https://apilogicserver.github.io/Docs/Security-Activation")
+                pass
+                # log.info(".. for keycloak")
+                # log.info(".. docs: https://apilogicserver.github.io/Docs/Security-Activation")
         log.debug("===================================================================\n")
 
         create_security_from_scratch = False  # prior to 10.04.50
@@ -1186,11 +1189,11 @@ from database import <project.bind_key>_models
                 elif self.auth_db_url in ['localhost', 'local']:
                     self.auth_db_url = "kc_base = 'http://localhost:8080'  #"
             elif self.auth_provider_type == 'sql':
-                if self.auth_db_url in[ 'auth']:
+                if self.auth_db_url in[ 'auth' ]:
                     self.auth_db_url = "'sqlite:///../database/authentication_db.sqlite'  #"
    
-            provider_note = f"Setting provider type = {self.auth_provider_type} [@ {self.auth_db_url}] " + \
-                                f'(was: {was_provider_type}, {is_enabled_note})'
+            provider_note = f"Setting provider type = {self.auth_provider_type} [@server {self.auth_db_url}] "
+            #                    f'(was: {was_provider_type}, {is_enabled_note})'
             
             def set_kc_base(from_value: str, to_value: str):
                 # print(f'.. .. (kc_base: {from_value} -> {to_value})')
@@ -1226,19 +1229,11 @@ from database import <project.bind_key>_models
                     log.info(f'\n.. .. ..No action taken - already disabled for current provider type: {was_provider_type}\n')
                 return
 
-            log.info(f'\n..{provider_note}')  # set enabled, provider in config
-            set_security_enabled(to_value="True", from_value=was_enabled)
-            set_provider(from_value=was_provider_type, to_value=self.auth_provider_type)
-            if self.auth_provider_type == "keycloak":
-                self.auth_db_url = set_kc_base(from_value=was_hardened, to_value=self.auth_db_url)
-            else:
-                pass
-
             is_northwind = is_nw or self.nw_db_status in ["nw", "nw+"]  # nw_db_status altered in create_project
             if is_northwind:  # is_nw or self.nw_db_status ==  "nw":
                 if msg != "":
                     if msg != "":
-                        log.info("\n.. Adding Sample authorization to security/declare_security.py")
+                        log.debug("\n.. Adding Sample authorization to security/declare_security.py")
                     nw_declare_security_py_path = self.api_logic_server_dir_path.\
                         joinpath('prototypes/nw/security/declare_security.py')
                     declare_security_py_path = self.project_directory_path.joinpath('security/declare_security.py')
@@ -1247,9 +1242,98 @@ from database import <project.bind_key>_models
                 if msg != "":
                     log.info("\n.. Authorization is declared in security/declare_security.py")
 
+            log.info(f'\n..{provider_note}')  # set enabled, provider in config
+            set_security_enabled(to_value="True", from_value=was_enabled)
+            set_provider(from_value=was_provider_type, to_value=self.auth_provider_type)
+            if self.auth_provider_type == "keycloak":
+                self.auth_db_url = set_kc_base(from_value=was_hardened, to_value=self.auth_db_url)
+            else:
+                if self.auth_db_url != "'sqlite:///../database/authentication_db.sqlite'  #":
+                    self.add_auth_model(msg=msg, is_nw=is_nw)
         self.add_auth_in_progress = False
 
-    def add_auth_from_scratch(self, msg: str, is_nw: bool = False):
+
+    def add_auth_model(self, msg: str, is_nw: bool = False):
+        """add authentication models to project, update config; leverage multi-db support.  kat
+
+        Prior to 10.04.50, if provider_type is sql: 
+        1. add-db --auth-db_url= [ auth | db_url ] by calling self.create_project()
+        2. Add user.login endpoint
+        3. Update config at: "SQLALCHEMY_DATABASE_URI_AUTHENTICATION = '"
+        4. Adding Sample authorization to security/declare_security.py, or user ??
+
+        Alert: complicated self.create_project() non-recursive flow:
+        1. Use model_creation_services to create auth models
+        2. By re-running app_creator (which leaves resources at auth, not db)
+        3. So, save/restore resource_list, bind_key, db_url, abs_db_url
+
+        Args:
+            msg (str): eg: ApiLogicProject customizable project created.  Adding Security:")
+            is_nw (bool): is northwind, which means we add the nw security logic
+            provider_type (str): sql or keycloak
+        """
+
+        save_run = self.run
+        save_command = self.command
+        save_db_url = self.db_url
+        save_abs_db_url = self.abs_db_url
+        save_nw_db_status = self.nw_db_status
+        save_resource_list = None
+        if self.model_creation_services is not None:
+            save_resource_list = self.model_creation_services.resource_list
+        save_bind_key = self.bind_key
+        self.command = "add_db"
+        if self.auth_db_url == "":
+            self.auth_db_url = 'auth'  # for create manager
+        self.db_url = self.auth_db_url
+        self.bind_key = "authentication"
+        is_northwind = is_nw or self.nw_db_status in ["nw", "nw+"]  # nw_db_status altered in create_project
+        if is_northwind:  # is_nw or self.nw_db_status ==  "nw":
+            self.db_url = "auth"  # shorthand for api_logic_server_cli/database/auth...
+        
+        ''' non-recursive call to create_project() '''
+        self.run = False
+        self.create_project()  # not creating project, but using model creation svcs to add authdb
+        
+        log.debug("\n==================================================================")
+        if msg != "":
+            log.debug("  2. Add User.Login endpoint")
+        log.debug("==================================================================\n")
+        login_endpoint_filename = f'{self.api_logic_server_dir_path.joinpath("templates/login_endpoint.txt")}'
+        auth_models_file_name = f'{self.project_directory_path.joinpath("database/database_discovery/authentication_models.py")}'
+        with open(login_endpoint_filename, 'r') as file:
+            login_endpoint_data = file.read()
+        create_utils.insert_lines_at(lines=login_endpoint_data, 
+                    at='UserRoleList : Mapped[List["UserRole"]] = relationship(back_populates="user")',
+                    after=True,
+                    file_name=auth_models_file_name)
+        login_endpoint_filename = f'{self.api_logic_server_dir_path.joinpath("templates/login_endpoint_imports.txt")}'
+        auth_models_file_name = f'{self.project_directory_path.joinpath("database/database_discovery/authentication_models.py")}'
+        with open(login_endpoint_filename, 'r') as file:
+            login_endpoint_data = file.read()
+        create_utils.insert_lines_at(lines=login_endpoint_data, 
+                    at="import declarative_base", after=True,
+                    file_name=auth_models_file_name)
+        
+        log.debug("\n==================================================================")
+        if msg != "":
+            log.debug("  3. Update config at: SQLALCHEMY_DATABASE_URI_AUTHENTICATION = '")
+        log.debug("==================================================================\n")
+        config_file_name = f'{self.project_directory_path.joinpath("config/config.py")}'
+        create_utils.assign_value_to_key_in_file(value=self.abs_db_url, 
+                    key="    SQLALCHEMY_DATABASE_URI_AUTHENTICATION",
+                    in_file=config_file_name)
+
+        self.run = save_run
+        self.command = save_command
+        self.db_url = save_db_url
+        self.abs_db_url = save_abs_db_url
+        self.bind_key = save_bind_key
+        self.nw_db_status = save_nw_db_status
+        self.model_creation_services.resource_list = save_resource_list
+        
+
+    def add_auth_from_scratch(self, msg: str, is_nw: bool = False):  # TODO: remove
         """add authentication models to project, update config; leverage multi-db support.  kat
 
         Prior to 10.04.50, if provider_type is sql: 
@@ -1264,7 +1348,7 @@ from database import <project.bind_key>_models
         3. So, save/restore resource_list, bind_key, db_url, abs_db_url
 
         Args:
-            msg (str): eg: ApiLogicProject customizable project created.  Adding Security:")
+            msg (str): eg: "ApiLogicProject customizable project created.  Adding Security:")
             is_nw (bool): is northwind, which means we add the nw security logic
             provider_type (str): sql or keycloak
         """
@@ -1746,7 +1830,7 @@ from database import <project.bind_key>_models
             create_db_from_model.create_db(self)
 
         if self.add_auth_in_progress:
-            models_py_path = self.project_directory_path.joinpath('database/models.py')
+            self.models_path_dir = 'database/database_discovery'
             self.abs_db_url, self.nw_db_status, self.model_file_name = \
                 create_utils.get_abs_db_url("0. Using Sample DB", self, is_auth=True)    
         else:  # normal path
@@ -1946,6 +2030,6 @@ def key_module_map():
     api_expose_api_models_creator.create()                  # creates api/expose_api_models.py, key input to SAFRS        
     ui_admin_creator.create_db()                            # creates ui/admin/admin.yaml from resource_list
     ProjectRun.update_config_and_copy_sqlite_db()           # adds db (model, multi-db binds, api, app) to curr project
-    ProjectRun.add_auth()                                   # add_db(auth), adds nw declare_security, upd config
+    ProjectRun.add_auth()                                   # update config (not via multi-db support)
     final_project_fixup('done', project=None)               # update config, etc
     ProjectRun.tutorial()                                   # creates basic, nw, nw + cust

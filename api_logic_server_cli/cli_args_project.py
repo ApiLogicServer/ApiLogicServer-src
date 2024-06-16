@@ -36,6 +36,8 @@ class Project(CliArgsBase):  # extends user-visible args with internal values, e
         self.model_gen_bind_msg = False
         """ sqlacodegen/codegen msg printed """
 
+        self.models_path_dir = 'database'
+        """ dir name (str) to write models.py """
         self.model_file_name = "models.py"
         """ name of models file being processed """
 

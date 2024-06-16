@@ -763,7 +763,7 @@ class ModelCreationServices(object):
             log.debug(f'*** DEBUG/import - project_abs_path={project_path}')
         model_imported = False
         path_to_add = project_path if self.project.command == "create-ui" else \
-            project_path + "/database"  # for Api Logic Server projects
+            project_path + '/' + self.project.models_path_dir  # "/database"  # for Api Logic Server projects
         sys.path.insert(0, self.project_directory)    # e.g., /Users/val/dev/servers/install/ApiLogicServer
         sys.path.insert(0, path_to_add)    # e.g., /Users/val/dev/servers/install/ApiLogicServer/database
         log.debug(msg + " in <project>/database")  #  + path_to_add)

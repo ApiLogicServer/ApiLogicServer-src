@@ -402,7 +402,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "  - Add Security to Postgres - postgres-database-authentication",
+            "name": "  - Add PG Security to Postgres - postgres-database-authentication",
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/api_logic_server_cli",
@@ -412,6 +412,19 @@
                 "add-auth",
                 "--project_name=../../../servers/postgres-nw",
                 "--db_url=postgresql://postgres:p@localhost/authdb"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "  - Add sqlite Security to Postgres",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/api_logic_server_cli",
+            "program": "cli.py",
+            "redirectOutput": true,
+            "args": [
+                "add-auth",
+                "--project_name=../../../servers/postgres-nw",
+                "--db_url=auth"],
             "console": "integratedTerminal"
         },
         {

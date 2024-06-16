@@ -1182,7 +1182,9 @@ def add_auth_cmd(ctx, bind_key_url_separator: str, provider_type :str, db_url: s
     project.project_directory_path = Path(project.project_directory_actual)
     models_py_path = project.project_directory_path.joinpath('database/models.py')
     project.abs_db_url, project.nw_db_status, project.model_file_name = \
-        create_utils.get_abs_db_url("0. Using Sample DB", project, is_auth=True)    
+        create_utils.get_abs_db_url("0. Using Sample DB", project, is_auth=True)
+    # if db_url != "auth":
+    #     project.abs_db_url = db_url
     if not models_py_path.exists():
         log.info(f'... Error - does not appear to be a project: {str(project.project_directory_path)}')
         log.info(f'... Typical usage - cd into project, use --project_name=. \n')
