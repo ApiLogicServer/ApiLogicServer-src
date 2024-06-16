@@ -15,7 +15,7 @@ Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 __version__ = "10.04.67"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t06/15/2024 - 10.04.67: sra jun 13, kc auth provider runs locally, configure auth > sqlite \n"\
+    "\t06/15/2024 - 10.04.67: sra jun 13, kc auth provider runs locally, configure auth beyond sqlite \n"\
     "\t06/12/2024 - 10.04.63: revised keycloak auth_provider, default config to hardened, kc_base via add-auth \n"\
     "\t06/11/2024 - 10.04.62: default-auth creation, basic_demo+=b2b, ont CORS fix, basic_demo \n"\
     "\t06/06/2024 - 10.04.48: config-driven admin.yaml security config \n"\
@@ -1899,20 +1899,21 @@ from database import <project.bind_key>_models
         if (self.nw_db_status in ["nw+"]):
             self.add_auth("\nApiLogicProject customizable project created.  \nAdding Security:")
 
-        if self.command not in ["add_db", "add_auth", "add-auth", "add-db", "rebuild-from-database", "rebuild-from-model"]:
-            log.debug(" d.  Create Ontimize from models")
-            from api_logic_server_cli.create_from_model.ont_create import OntCreator
-            ont_creator = OntCreator(project = model_creation_services.project)
-            ont_creator.create_application(show_messages=False)
+        if not self.add_auth_in_progress:
+            if self.command not in ["add_db", "add_auth", "add-auth", "add-db", "rebuild-from-database", "rebuild-from-model"]:
+                log.debug(" d.  Create Ontimize from models")
+                from api_logic_server_cli.create_from_model.ont_create import OntCreator
+                ont_creator = OntCreator(project = model_creation_services.project)
+                ont_creator.create_application(show_messages=False)
 
-        if self.project_directory_path.joinpath('ui/app_model_custom.yaml').exists():
-            # eg, nw project contains this for demo purposes
-            copyfile (src=self.project_directory_path.joinpath('ui/app_model_custom.yaml'),
-                        dst=self.project_directory_path.joinpath('ui/app/app_model.yaml'))
+            if self.project_directory_path.joinpath('ui/app_model_custom.yaml').exists():
+                # eg, nw project contains this for demo purposes
+                copyfile (src=self.project_directory_path.joinpath('ui/app_model_custom.yaml'),
+                            dst=self.project_directory_path.joinpath('ui/app/app_model.yaml'))
 
-        from api_logic_server_cli.create_from_model.ont_build import OntBuilder
-        ont_creator = OntBuilder(project = model_creation_services.project)
-        ont_creator.build_application(show_messages=False)
+            from api_logic_server_cli.create_from_model.ont_build import OntBuilder
+            ont_creator = OntBuilder(project = model_creation_services.project)
+            ont_creator.build_application(show_messages=False)
 
         if self.open_with != "" and 'create' == self.command:  # open project with open_with (vscode, charm, atom) -- NOT for docker!!
             start_open_with(project = self)
