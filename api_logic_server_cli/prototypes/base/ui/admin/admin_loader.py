@@ -193,10 +193,13 @@ def admin_events(flask_app: Flask, args: Args, validation_error: ValidationError
         #response.headers["Content-Type"] = "application/json, text/html"
         
         # This is a short cut to auto login to Ontimize
-        from security.system.authentication import access_token
-        #access_token = request.headers.environ.get("HTTP_AUTHORIZATION")[7:]
-        if access_token:
-            response.headers["X-Auth-Token"] = access_token  # required for Ontimize (kludge alert)
+        try:
+            from security.system.authentication import access_token
+            #access_token = request.headers.environ.get("HTTP_AUTHORIZATION")[7:]
+            if access_token:
+                response.headers["X-Auth-Token"] = access_token  # required for Ontimize (kludge alert)
+        except:
+            logging.error('\nadmin_loader - after_request - access_token not set\n')
         # Ontimize specific 
         #response.headers["Cache-Control"] = "no-cache, no-store, max-age=0, must-revalidate"
         #response.headers["X-Content-Type-Options"] = "nosniff"
