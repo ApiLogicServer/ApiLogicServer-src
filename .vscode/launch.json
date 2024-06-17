@@ -187,6 +187,21 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "     - app-build Chinook",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/../../build_and_test/Chinook",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "justMyCode": false,
+            "args": [
+                "app-build",
+                "--project-name=",
+                "--app=app"
+                ],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "     - add-auth KEYCLOAK",
             "type": "debugpy",
             "request": "launch",

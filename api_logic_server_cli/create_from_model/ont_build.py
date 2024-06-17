@@ -626,7 +626,7 @@ class OntBuilder(object):
         col_var["service"] = fk["resource"]
         col_var["entity"] = fk["resource"]
         col_var["comboColumnType"] = self.get_fk_column_type(fk_column)
-        col_var["columns"] = f'{fk_pkey};{fk["columns"]};{fk_entity_var["favorite"]}'
+        col_var["columns"] = f'{fk["columns"]}' #f'{fk_pkey};{fk["columns"]};{fk_entity_var["favorite"]}'
         col_var["visibleColumns"] = f'{fk_pkey};{fk_entity_var["favorite"]}'
         col_var["valueColumn"] = fk_pkey
         col_var["valueColumnType"] = self.get_fk_column_type(fk_column)
@@ -719,14 +719,15 @@ class OntBuilder(object):
             direction = fk_tab["direction"]
             tab_vars = {
                 "attr": fks,
-                "title": fks,
+                "title": fks[:-2] if fks[-2:] == "Id" else fks,
                 'entity': tab_name,
                 "service" :tab_name,
-                'visibleColumn': fks,
-                "columns":  fks,
+                'visibleColumn': favorite,
+                "columns":  f'{fks};{favorite}',
                 "favorite": favorite,
                 "keys": fks,
-                "parentKeys": gen_parent_keys(direction, fks, parent_entity=parent_entity)
+                "parentKeys":f"{fks}:{parent_entity['primary_key'][0]}",
+                    #gen_parent_keys(direction, fks, parent_entity=parent_entity)
             }
         return tab_name,tab_vars
     
