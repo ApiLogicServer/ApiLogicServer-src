@@ -53,14 +53,13 @@ def export_pdf(api_clz, request, entity, queryParm, columns, columnTitles, attri
         col_data.append(column)
         
     # Define table data (entity)
-    data.append(col_data)
-    
     table_data = []
+    table_data.append(col_data)
     for row in rows['data']:
-        data = []
+        row_data = []
         for col in columns:
-            data.append(row[col])
-        table_data.append(data)
+            row_data.append(row[col])
+        table_data.append(row_data)
 
     # Create table
     table = Table(table_data)
@@ -145,14 +144,14 @@ def gen_report(api_clz, request, project_dir, payload, attributes) -> any:
             col_data.append(column['name'])
             
         # Define table data (entity)
-        data.append(col_data)
-        
+
         table_data = []
+        table_data.append(col_data)
         for row in rows['data']:
-            data = []
+            row_data = []
             for col in columns:
-                data.append(row[col["id"]])
-            table_data.append(data)
+                row_data.append(row[col["id"]])
+            table_data.append(row_data)
 
         # Create table
         table = Table(table_data)
