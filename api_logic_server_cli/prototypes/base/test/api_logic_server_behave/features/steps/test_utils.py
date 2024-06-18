@@ -4,6 +4,8 @@ from dotmap import DotMap
 import sys, os
 from pathlib import Path
 
+__version__ = '0.0.1'  # keycloak support
+
 
 def prt(msg: any, test: str= None) -> None:
     """
@@ -30,30 +32,46 @@ def prt(msg: any, test: str= None) -> None:
     msg_url = f'http://localhost:5656/server_log?msg={msg}&test={test}&dir=test/api_logic_server_behave/logs/scenario_logic_logs'
     r = requests.get(msg_url)
 
-SECURITY_ENABLED = True  # you must also: ApiLogicServer add-db --db_url=auth --bind_key=authentication
-if os.getenv('SECURITY_ENABLED'):  # e.g. export SECURITY_ENABLED=true
-    # config.Args not available - config not loaded, no Flask
-    security_export = os.getenv('SECURITY_ENABLED')  # type: ignore # type: str
-    security_export = security_export.lower()  # type: ignore
-    if security_export in ["false", "no"]:  # NO SEC
-        SECURITY_ENABLED = False
-    else:
-        SECURITY_ENABLED = True
 
-def login(user: str = 'aneu'):
+""" Using Config directly, not config.args / environment variables
+
+We are *not* able to use the config.args class here, since it's contructor requires Flask.
+
+This is a stand-alone app - Flask is not available.
+
+That means the config settings are *not* overridden by environment variables.
+"""
+current_path = Path(__file__).parent
+project_path = current_path.parent.parent.parent.parent
+# project_path = os.path.abspath(os.path.join(current_path, os.pardir))
+sys.path.append(str(project_path))
+
+try:
+    from config.config import Config
+except ImportError:
+    raise Exception(f'login: ImportError: config.config.Args')
+
+
+def login(user: str = 'aneu') -> dict:
     """ login (default aneu), return header with token
+
+    Note different api for sql vs. keycloak
 
     Raises:
         Exception: _description_
 
     Returns:
-        _type_: _description_
+        _type_: dict header with token
     """
-    global SECURITY_ENABLED
-    if SECURITY_ENABLED == False:
+
+    if Config.SECURITY_ENABLED == False:  # throw exception
         return {}
-    else:
-        post_uri = 'http://localhost:5656/api/auth/login'
+        # raise Exception(f'login: SECURITY_ENABLED is False (required for these tests)')
+    elif 'sql' in str(Config.SECURITY_PROVIDER):
+        server = \
+            f'{Config.CREATED_HTTP_SCHEME}://{Config.CREATED_SWAGGER_HOST}:{Config.CREATED_SWAGGER_PORT}{Config.CREATED_API_PREFIX}'
+
+        post_uri = f'{server}/auth/login'
         post_data = {"username": user, "password": "p"}
         r = requests.post(url=post_uri, json = post_data)
         response_text = r.text
@@ -63,14 +81,41 @@ def login(user: str = 'aneu'):
         result_data = json.loads(response_text)
         result_map = DotMap(result_data)
         token = result_map.access_token
+    elif 'keycloak' in str(Config.SECURITY_PROVIDER):
+        """ different with kc
+        TOKEN_ENDPOINT: http://localhost:8080/realms/kcals/protocol/openid-connect/token 
+        TOKEN=$(curl ${TOKEN_ENDPOINT} -d 'grant_type=password&client_id=alsclient' -d 'username=u1' -d 'password=p' | jq -r .access_token)
+        """
+        # Correctly separate the URL from the data
+        post_uri = f"{Config.KEYCLOAK_BASE}/protocol/openid-connect/token"
+        post_data = {
+            'grant_type': 'password',
+            'client_id': 'alsclient',
+            'username': user,
+            'password': 'p'
+        }
+    
+        # Explicitly setting headers to ensure application/json Content-Type
+        headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+        
+        r = requests.post(post_uri, data=post_data)
+        token = r.json()['access_token']
+        status_code = r.status_code
+        if status_code > 300:
+            print(f'POST login: {post_uri}')  # Corrected string formatting
+            print(f'..failed with: {r.text}')
+            raise Exception(f'POST login: failed with {r.text}')  
+    else:
+        raise Exception(f'login: SECURITY_PROVIDER is not sql or keycloak')
 
-        # https://stackoverflow.com/questions/19069701/python-requests-library-how-to-pass-authorization-header-with-single-token
-        header = {'Authorization': 'Bearer {}'.format(f'{token}')}
-        save_for_session = True
-        if save_for_session:
-            s = requests.Session()
-            s.headers.update(header)
-        return header
+    # https://stackoverflow.com/questions/19069701/python-requests-library-how-to-pass-authorization-header-with-single-token
+    header = {'Authorization': 'Bearer {}'.format(f'{token}')}
+    save_for_session = True
+    if save_for_session:
+        s = requests.Session()
+        s.headers.update(header)
+    return header
+        
 
 def does_file_contain(search_for: str, in_file: str) -> bool:
     """ returns True if <search_for> is <in_file> """

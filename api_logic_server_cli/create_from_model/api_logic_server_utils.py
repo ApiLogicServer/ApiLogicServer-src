@@ -334,7 +334,7 @@ def replace_string_in_file(search_for: str, replace_with: str, in_file: str):
     with open(in_file, 'w') as file:
         file.write(file_data)
 
-def assign_value_to_key_in_file(key: str, value: str, in_file: str):
+def assign_value_to_key_in_file(key: str, value: any, in_file: str):
     with open(Path(in_file), 'r') as file:
         file_data = file.read()
         lines = file_data.split("\n")
@@ -342,7 +342,10 @@ def assign_value_to_key_in_file(key: str, value: str, in_file: str):
         for i in range(len(lines)):
             if lines[i].startswith(key) and count > 0:
                 count -= 1
-                lines[i] = f"{key} = '{value}'"
+                if value in [True, False]:
+                    lines[i] = f"{key} = {value}"
+                else:
+                   lines[i] = f"{key} = '{value}'"
         file_data = "\n".join(lines)
     with open(in_file, 'w') as file:
         file.write(file_data)
