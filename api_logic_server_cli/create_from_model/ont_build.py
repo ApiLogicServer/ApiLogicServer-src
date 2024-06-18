@@ -489,7 +489,7 @@ class OntBuilder(object):
         if getattr(entity,"tab_groups",None) != None:
                 for tg in entity["tab_groups"]:
                     exclude = tg.get("exclude", "false") == "true"
-                    if tg["direction"] == "toone" and column.name in tg["fks"] and column.name != "Id" and not exclude:
+                    if tg["direction"] == "toone" and column.name in tg["fks"] and column.name != "Id" and len(tg["fks"]) == 1 and not exclude:
                         tab_name, tab_var = self.get_tab_attrs(entity=entity, parent_entity=parent_entity, fk_tab=tg)
                         return self.table_cell_render.render(tab_var)
                         
@@ -609,12 +609,13 @@ class OntBuilder(object):
     def gen_detail_rows(self, column, fks, entity):
         col_var = self.get_column_attrs(column)
         name = column.label if  hasattr(column, "label") and column.label != DotMap() else column.name
-        self.add_title(column["name"], name)
+        
         for fk in fks:
             # TODO - not sure how to handle multiple fks attrs - so only support 1 for now
             exclude = fk.get("exclude", "false") == "true"
             if column.name in fk["attrs"] and fk["direction"] == "toone" and len(fk["attrs"]) == 1 and not exclude:
                 return self.gen_pick_list_col(col_var, fk, entity)
+        self.add_title(column["name"], name)
         return self.gen_field_template(column, col_var)
 
     def gen_pick_list_col(self, col_var, fk, entity) -> str:
@@ -622,20 +623,25 @@ class OntBuilder(object):
         fk_entity_var = self.get_entity_vars(fk_entity.type, fk_entity)
         fk_column = find_column(fk_entity, fk_entity.primary_key[0])
         fk_pkey =  fk_entity.primary_key[0]
-        col_var["attr"] = fk["attrs"][0]
+        attr = fk["attrs"][0]
+        col_var["attr"] = attr
         col_var["service"] = fk["resource"]
         col_var["entity"] = fk["resource"]
         col_var["comboColumnType"] = self.get_fk_column_type(fk_column)
-        col_var["columns"] = f'{fk["columns"]}' #f'{fk_pkey};{fk["columns"]};{fk_entity_var["favorite"]}'
+        col_var["columns"] = f'{fk_pkey};{fk["columns"]}' #f'{fk_pkey};{fk["columns"]};{fk_entity_var["favorite"]}'
         col_var["visibleColumns"] = f'{fk_pkey};{fk_entity_var["favorite"]}'
         col_var["valueColumn"] = fk_pkey
         col_var["valueColumnType"] = self.get_fk_column_type(fk_column)
         col_var["keys"] = fk_pkey
+        
 
-        if self.pick_style == "list":
-            return self.pick_list_template.render(col_var)
-        else:
+        if self.pick_style != "list":
             return self.combo_list_template.render(col_var)
+        
+        col_var["title"] = attr[:-2] if attr[-2:] == "Id" else attr
+        return self.pick_list_template.render(col_var)
+        
+            
 
     
     def get_fk_column_type(self, fk_column) -> str:
@@ -687,8 +693,7 @@ class OntBuilder(object):
         direction = fk_tab["direction"]
         tab_name = fk_tab["resource"]
         favorite = getattr(entity,"favorite") 
-        exclude = fk_tab.get("exclude", "false") == "true"
-        if exclude:
+        if fk_tab.get("exclude", "false") == "true":
             return tab_name, {}
         if direction == "tomany":
             fks = fk_tab["attrs"][0]
@@ -706,7 +711,7 @@ class OntBuilder(object):
                         "favorite": getattr(entity,"favorite")
                     }
         else:
-            ''' toone 
+            ''' toone list-picker
                 attr="{{ attr }}" title=" {{ title }}">
                     service="{{ service }}" entity="{{ entity }}Type" columns="{{ columns}}"
                     parent-keys="{{ parentKeys }}"
@@ -714,23 +719,36 @@ class OntBuilder(object):
             '''
             tab_entity = self.get_entity(tab_name)
             favorite = getattr(tab_entity,"favorite")
-            fks = fk_tab["fks"][0]
-            title= self.find_template(parent_entity , "favorite", tab_name)
-            direction = fk_tab["direction"]
+            fkey = fk_tab["fks"][0]
+            title = self.find_template(parent_entity , "favorite", tab_name)
+            pkey = parent_entity['primary_key'][0]
+            primary_keys = make_keys(tab_entity['primary_key'])
+            foreign_keys = make_keys(fk_tab["fks"])
+            if len(tab_entity['primary_key']) > 1:
+                parent_keys = self.match_keys(tab_entity['primary_key'], fk_tab["fks"])
+            else:
+                parent_keys = f"{pkey}:{fkey}"
             tab_vars = {
-                "attr": fks,
-                "title": fks[:-2] if fks[-2:] == "Id" else fks,
+                "attr": fkey,
+                "title": fkey[:-2] if fkey[-2:] == "Id" else fkey,
                 'entity': tab_name,
                 "service" :tab_name,
                 'visibleColumn': favorite,
-                "columns":  f'{fks};{favorite}',
+                "columns":  f'{primary_keys};{favorite}',
                 "favorite": favorite,
-                "keys": fks,
-                "parentKeys":f"{fks}:{parent_entity['primary_key'][0]}",
-                    #gen_parent_keys(direction, fks, parent_entity=parent_entity)
+                "keys": foreign_keys,
+                "parentKeys":f"{parent_keys}",
             }
         return tab_name,tab_vars
     
+    def match_keys(self, primary_keys, foreign_keys):
+        parent_keys = ""
+        for i in range(len(primary_keys)):
+            for j in range(len(foreign_keys)):
+                if primary_keys[i].lower() == foreign_keys[j].lower():
+                    parent_keys += f"{primary_keys[i]}:{foreign_keys[j]};"
+        return parent_keys[:-1] if len(parent_keys) > 0 and parent_keys[-1:] == ";" else parent_keys
+        
     def gen_sidebar_routing(self, template_name: str, entities: any) -> str:
         template = self.get_template(template_name)
         children = []
