@@ -115,8 +115,6 @@ class Config:
     KEYCLOAK_BASE_URL = f'{kc_base}'
     KEYCLOAK_CLIENT_ID = 'alsclient'
     ''' keycloak client id '''
-    # if kc_base == 'http://localhost:8080':
-    #    KEYCLOAK_CLIENT_ID = 'alsclient'
 
     SECURITY_ENABLED = False  # disables security (regardless of SECURITY_PROVIDER)
     SECURITY_PROVIDER = None

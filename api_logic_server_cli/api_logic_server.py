@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.04.67"
+__version__ = "10.04.68"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t06/15/2024 - 10.04.67: sra jun 13, kc auth provider runs locally, configure auth beyond sqlite \n"\
+    "\t06/17/2024 - 10.04.68: sra jun 13, kc auth provider runs locally, configure auth beyond sqlite, (kc) behave \n"\
     "\t06/12/2024 - 10.04.63: revised keycloak auth_provider, default config to hardened, kc_base via add-auth \n"\
     "\t06/11/2024 - 10.04.62: default-auth creation, basic_demo+=b2b, ont CORS fix, basic_demo \n"\
     "\t06/06/2024 - 10.04.48: config-driven admin.yaml security config \n"\
@@ -1124,6 +1124,17 @@ from database import <project.bind_key>_models
             log.debug(f'.. ..Not updating database/multi_db.py with {CONFIG_URI} (already present)')
         return return_abs_db_url
 
+    @staticmethod                               
+    def set_provider(from_value: str, to_value: str, config_file: str) -> None:
+        """ update import statement to set provider type in config.py """
+        if from_value == to_value:
+            pass
+            # log.debug(f'.. .. (provider type unchanged)')
+        else:
+            create_utils.replace_string_in_file(in_file=config_file,
+                search_for   =f'authentication_provider.{from_value}.auth_provider import',
+                replace_with =f'authentication_provider.{to_value}.auth_provider import')
+
 
     def add_auth(self, msg: str, is_nw: bool = False):
         """add authentication models to project -- update config (not via multi-db support)
@@ -1149,7 +1160,6 @@ from database import <project.bind_key>_models
             self.auth_provider_type = 'sql'  # nw+ defaulting
 
         database_path = self.project_directory_path.joinpath("database")
-        log.debug("\n\n==================================================================")
         if msg != "":
             log.info(msg + f" to project: {str(database_path.parent)}")
             if is_nw or "ApiLogicProject customizable project created" in msg:
@@ -1164,92 +1174,64 @@ from database import <project.bind_key>_models
                 pass
                 # log.info(".. for keycloak")
                 # log.info(".. docs: https://apilogicserver.github.io/Docs/Security-Activation")
-        log.debug("===================================================================\n")
 
-        create_security_from_scratch = False  # prior to 10.04.50
-        if create_security_from_scratch:
-            self.add_auth_from_scratch(msg=msg, is_nw=is_nw)  # old code - ignore
+        config_file = f'{self.project_directory}/config/config.py'
+        is_enabled = create_utils.does_file_contain(search_for="SECURITY_ENABLED = True",
+                                        in_file=config_file)
+        is_sql = create_utils.does_file_contain(search_for="authentication_provider.sql.auth_provider import",
+                                        in_file=config_file)
+        is_kc_hardened = create_utils.does_file_contain(search_for="kc_base = 'https://kc.hardened.be'",
+                                        in_file=config_file)
+        was_hardened = "kc_base = 'https://kc.hardened.be'" if is_kc_hardened \
+            else "kc_base = 'http://localhost:8080'"
+        was_provider_type = "sql" if is_sql else "keycloak"
+        is_enabled_note = "enabled" if is_enabled else "disabled"
+        was_enabled = "True" if is_enabled else "False"
+        if self.auth_provider_type == 'keycloak':
+            if self.auth_db_url in[ 'auth', 'hardened']:
+                self.auth_db_url = "https://kc.hardened.be"
+            elif self.auth_db_url in ['localhost', 'local']:
+                self.auth_db_url = "http://localhost:8080"
+        elif self.auth_provider_type == 'sql':
+            if self.auth_db_url in[ 'auth' ]:
+                self.auth_db_url = "'sqlite:///../database/authentication_db.sqlite'  #"
+
+        provider_note = f"Setting provider type = {self.auth_provider_type}, @server = {self.auth_db_url} "
+        #                    f'(was: {was_provider_type}, {is_enabled_note})'
+
+        if self.auth_provider_type == 'none':  # none means diaable
+            if is_enabled:
+                log.info(f'\n\n.. ..Disabling security for current provider type: {was_provider_type}\n')
+                create_utils.assign_value_to_key_in_file(value=False, 
+                            key="    SECURITY_ENABLED",
+                            in_file=config_file)                    
+            else:
+                log.info(f'\n.. .. ..No action taken - already disabled for current provider type: {was_provider_type}\n')
+            return
+
+        is_northwind = is_nw or self.nw_db_status in ["nw", "nw+"]  # nw_db_status altered in create_project
+        if is_northwind:  # is_nw or self.nw_db_status ==  "nw":
+            if msg != "":
+                if msg != "":
+                    log.debug("\n.. Adding Sample authorization to security/declare_security.py")
+                nw_declare_security_py_path = self.api_logic_server_dir_path.\
+                    joinpath('prototypes/nw/security/declare_security.py')
+                declare_security_py_path = self.project_directory_path.joinpath('security/declare_security.py')
+                shutil.copyfile(nw_declare_security_py_path, declare_security_py_path)
         else:
-            pass  # based on auth_provider_type, set provider, SECURITY_ENABLED 
-            config_file = f'{self.project_directory}/config/config.py'
-            is_enabled = create_utils.does_file_contain(search_for="SECURITY_ENABLED = True  #",
-                                          in_file=config_file)
-            is_sql = create_utils.does_file_contain(search_for="authentication_provider.sql.auth_provider import",
-                                          in_file=config_file)
-            is_kc_hardened = create_utils.does_file_contain(search_for="kc_base = 'https://kc.hardened.be'  #",
-                                          in_file=config_file)
-            was_hardened = "kc_base = 'https://kc.hardened.be'  #" if is_kc_hardened \
-                else "kc_base = 'http://localhost:8080'  #"
-            was_provider_type = "sql" if is_sql else "keycloak"
-            is_enabled_note = "enabled" if is_enabled else "disabled"
-            was_enabled = "True" if is_enabled else "False"
-            if self.auth_provider_type == 'keycloak':
-                if self.auth_db_url in[ 'auth', 'hardened']:
-                    self.auth_db_url = "kc_base = 'https://kc.hardened.be'  #"
-                elif self.auth_db_url in ['localhost', 'local']:
-                    self.auth_db_url = "kc_base = 'http://localhost:8080'  #"
-            elif self.auth_provider_type == 'sql':
-                if self.auth_db_url in[ 'auth' ]:
-                    self.auth_db_url = "'sqlite:///../database/authentication_db.sqlite'  #"
-   
-            provider_note = f"Setting provider type = {self.auth_provider_type} [@server {self.auth_db_url}] "
-            #                    f'(was: {was_provider_type}, {is_enabled_note})'
-            
-            def set_kc_base(from_value: str, to_value: str):
-                # print(f'.. .. (kc_base: {from_value} -> {to_value})')
-                if from_value == to_value:
-                    log.info(f'.. .. (enabled unchanged)')
-                else:
-                    # print(f'.. .. (kc_base: in: {create_utils.does_file_contain(search_for=f"kc_base = {from_value}", in_file=config_file)})')    
-                    create_utils.replace_string_in_file(in_file=config_file,
-                        search_for=f'{from_value}',
-                        replace_with=f'{to_value}')
-            
-            def set_security_enabled(from_value: str, to_value: str):
-                if from_value == to_value:
-                    log.info(f'.. .. (enabled unchanged)')
-                else:
-                    create_utils.replace_string_in_file(in_file=config_file,
-                        search_for=f'SECURITY_ENABLED = {from_value}  #',
-                        replace_with=f'SECURITY_ENABLED = {to_value}  #')
-            
-            def set_provider(from_value: str, to_value: str):
-                if from_value == to_value:
-                    log.info(f'.. .. (provider type unchanged)')
-                else:
-                    create_utils.replace_string_in_file(in_file=config_file,
-                        search_for   =f'authentication_provider.{from_value}.auth_provider import',
-                        replace_with =f'authentication_provider.{to_value}.auth_provider import')
+            if msg != "":
+                log.info("\n.. Authorization is declared in security/declare_security.py")
 
-            if self.auth_provider_type == 'none':  # none means diaable
-                if is_enabled:
-                    log.info(f'\n\n.. ..Disabling security for current provider type: {was_provider_type}\n')
-                    set_security_enabled(from_value="True", to_value="False")
-                else:
-                    log.info(f'\n.. .. ..No action taken - already disabled for current provider type: {was_provider_type}\n')
-                return
-
-            is_northwind = is_nw or self.nw_db_status in ["nw", "nw+"]  # nw_db_status altered in create_project
-            if is_northwind:  # is_nw or self.nw_db_status ==  "nw":
-                if msg != "":
-                    if msg != "":
-                        log.debug("\n.. Adding Sample authorization to security/declare_security.py")
-                    nw_declare_security_py_path = self.api_logic_server_dir_path.\
-                        joinpath('prototypes/nw/security/declare_security.py')
-                    declare_security_py_path = self.project_directory_path.joinpath('security/declare_security.py')
-                    shutil.copyfile(nw_declare_security_py_path, declare_security_py_path)
-            else:
-                if msg != "":
-                    log.info("\n.. Authorization is declared in security/declare_security.py")
-
-            log.info(f'\n..{provider_note}')  # set enabled, provider in config
-            set_security_enabled(to_value="True", from_value=was_enabled)
-            set_provider(from_value=was_provider_type, to_value=self.auth_provider_type)
-            if self.auth_provider_type == "keycloak":
-                self.auth_db_url = set_kc_base(from_value=was_hardened, to_value=self.auth_db_url)
-            else:
-                if self.auth_db_url != "'sqlite:///../database/authentication_db.sqlite'  #":
-                    self.add_auth_model(msg=msg, is_nw=is_nw)
+        log.info(f'\n..{provider_note}')  # set enabled, provider in config
+        create_utils.assign_value_to_key_in_file(in_file=config_file, \
+                    key="    SECURITY_ENABLED", value=True)                    
+        self.set_provider(from_value=was_provider_type, to_value=self.auth_provider_type, config_file=config_file)
+        if self.auth_provider_type == "keycloak":
+            create_utils.assign_value_to_key_in_file(in_file=config_file, \
+                        key="    KEYCLOAK_BASE_URL", value=self.auth_db_url)                    
+        else:
+            if self.auth_db_url != "'sqlite:///../database/authentication_db.sqlite'  #":
+                self.add_auth_model(msg=msg, is_nw=is_nw)
         self.add_auth_in_progress = False
 
 

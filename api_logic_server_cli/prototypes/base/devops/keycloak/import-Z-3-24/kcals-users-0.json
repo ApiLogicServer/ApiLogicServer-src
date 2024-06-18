@@ -200,8 +200,8 @@
     "totp" : false,
     "emailVerified" : false,
     "attributes" : {
-      "region" : [ "North America" ],
-      "client_id" : [ "2" ]
+      "region" : [ "NULL" ],
+      "client_id" : [ "NULL" ]
     },
     "credentials" : [ {
       "id" : "afb295f4-e4e6-4c4b-b0b6-c949c4952cbb",
