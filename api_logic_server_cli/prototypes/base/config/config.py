@@ -107,6 +107,8 @@ class Config:
 
     #KEYCLOAK Args
     # https://apilogicserver.github.io/Docs/Security-Activation/
+    # als add-auth --provider-type=sql --db-url=
+    # als add-auth --provider-type=keycloak --db-url=localhost
     # als add-auth --provider-type=keycloak --db-url=hardened
     kc_base = 'https://kc.hardened.be'  # 'http://localhost:8080' or 'https://kc.hardened.be'
     ''' keycloak location '''

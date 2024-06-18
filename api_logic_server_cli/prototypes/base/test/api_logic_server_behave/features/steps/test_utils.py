@@ -74,10 +74,10 @@ def login(user: str = 'aneu') -> dict:
         post_uri = f'{server}/auth/login'
         post_data = {"username": user, "password": "p"}
         r = requests.post(url=post_uri, json = post_data)
-        response_text = r.text
-        status_code = r.status_code
         if status_code > 300:
             raise Exception(f'POST login failed with {r.text}')
+        response_text = r.text
+        status_code = r.status_code
         result_data = json.loads(response_text)
         result_map = DotMap(result_data)
         token = result_map.access_token
@@ -99,12 +99,12 @@ def login(user: str = 'aneu') -> dict:
         headers = {'Content-Type': 'application/x-www-form-urlencoded'}
         
         r = requests.post(post_uri, data=post_data)
-        token = r.json()['access_token']
         status_code = r.status_code
         if status_code > 300:
             print(f'POST login: {post_uri}')  # Corrected string formatting
             print(f'..failed with: {r.text}')
             raise Exception(f'POST login: failed with {r.text}')  
+        token = r.json()['access_token']
     else:
         raise Exception(f'login: SECURITY_PROVIDER is not sql or keycloak')
 

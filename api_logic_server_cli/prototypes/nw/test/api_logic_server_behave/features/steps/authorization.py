@@ -21,6 +21,10 @@ def step_impl(context):
 
 @then('Only 1 is returned')
 def step_impl(context):
+    """
+    u1 GETs Categories
+    """
+    scenario_name = 'Grant'
     response = context.response
     response_text = response.text
     result_data = json.loads(response_text)
@@ -38,7 +42,9 @@ def step_impl(context):
 
 @then('only 3 are returned')
 def step_impl(context):
-    """ ALFKI, ANATR, CTWTR """
+    """ ALFKI, ANATR, CTWTR 
+    """
+    scenario_name = 'Multi-tenant'
     response = context.response
     response_text = response.text
     result_data = json.loads(response_text)
@@ -56,6 +62,10 @@ def step_impl(context):
 
 @then('only 8 are returned')
 def step_impl(context):
+    """
+    Sam gets depts
+    """
+    scenario_name = 'Global Filters'
     response = context.response
     response_text = response.text
     result_data = json.loads(response_text)
@@ -65,6 +75,10 @@ def step_impl(context):
 
 @when('s1 GETs Customers')
 def step_impl(context):
+    """
+    s1 GETs Customers
+    """
+    scenario_name = 'Global Filters With Grants'
     get_uri = f'http://localhost:5656/api/Customer/?' \
         f'include=OrderList&fields%5BCustomer%5D=Id%2CCompanyName%2CContactName%2CContactTitle%2CAddress%2CCity%2CRegion%2CPostalCode%2CCountry%2CPhone%2CFax%2CBalance%2CCreditLimit%2COrderCount%2CUnpaidOrderCount%2CClient_id%2C_check_sum_%2CS_CheckSum&'\
         f'page%5Boffset%5D=0&page%5Blimit%5D=10&sort=id'
@@ -90,6 +104,10 @@ def step_impl(context):
 
 @then('Operation is Refused')
 def step_impl(context):
+    """
+    r1 deletes a Shipper
+    """
+    scenario_name = 'CRUD Permissions'
     response = context.response
     response_text = response.text
     assert 'does not have delete access' in response_text
