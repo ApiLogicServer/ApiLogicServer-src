@@ -154,7 +154,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     
     @app.route("/ontimizeweb/services/rest/<path:path>", methods=['GET','POST','PUT','PATCH','DELETE','OPTIONS'])
     @app.route("/services/rest/<path:path>", methods=['GET','POST','PUT','PATCH','DELETE','OPTIONS'])
-    @cross_origin(vary_header=True)
+    @cross_origin()
     @admin_required()
     def api_search(path):
         s = path.split("/")
