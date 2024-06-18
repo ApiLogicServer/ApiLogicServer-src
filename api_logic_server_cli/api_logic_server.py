@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.04.68"
+__version__ = "10.04.70"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t06/17/2024 - 10.04.68: sra jun 13, kc auth provider runs locally, configure auth beyond sqlite, (kc) behave \n"\
+    "\t06/17/2024 - 10.04.70: sra jun 13, kc auth provider runs locally, configure auth beyond sqlite, kc behave+sam \n"\
     "\t06/12/2024 - 10.04.63: revised keycloak auth_provider, default config to hardened, kc_base via add-auth \n"\
     "\t06/11/2024 - 10.04.62: default-auth creation, basic_demo+=b2b, ont CORS fix, basic_demo \n"\
     "\t06/06/2024 - 10.04.48: config-driven admin.yaml security config \n"\
@@ -1228,7 +1228,7 @@ from database import <project.bind_key>_models
         self.set_provider(from_value=was_provider_type, to_value=self.auth_provider_type, config_file=config_file)
         if self.auth_provider_type == "keycloak":
             create_utils.assign_value_to_key_in_file(in_file=config_file, \
-                        key="    KEYCLOAK_BASE_URL", value=self.auth_db_url)                    
+                        key="    kc_base", value=self.auth_db_url)                    
         else:
             if self.auth_db_url != "'sqlite:///../database/authentication_db.sqlite'  #":
                 self.add_auth_model(msg=msg, is_nw=is_nw)
