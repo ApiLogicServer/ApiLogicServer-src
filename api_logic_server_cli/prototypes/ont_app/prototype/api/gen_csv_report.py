@@ -25,9 +25,9 @@ def gen_report(api_clz, request, entity, queryParm, columns, columnTitles, attri
     #from pprint import pprint
     #print("rows: ", pprint(rows))
     buffer = BytesIO()
-    buffer.write(bytes('\t'.join(columnTitles) + '\n', 'utf-8')) 
+    buffer.write(bytes('\t'.join(list_of_columns) + '\n', 'utf-8')) 
     for row in rows["data"]:
-        buffer.write(bytes('\t'.join([str(row[col]) for col in columns]) + '\n', 'utf-8'))
+        buffer.write(bytes('\t'.join([str(row[col]) for col in list_of_columns]) + '\n', 'utf-8'))
 
     return buffer.getvalue()    
 
