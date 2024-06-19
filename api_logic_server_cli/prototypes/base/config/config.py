@@ -105,7 +105,7 @@ class Config:
         app_logger.debug(f'.. overridden from env variable: {SQLALCHEMY_DATABASE_URI}')
 
 
-    #KEYCLOAK Args
+    # KEYCLOAK Args
     # https://apilogicserver.github.io/Docs/Security-Activation/
     # als add-auth --provider-type=sql --db-url=
     # als add-auth --provider-type=keycloak --db-url=localhost
