@@ -49,7 +49,7 @@ def export_pdf(api_clz, request, entity, queryParm, columns, columnTitles, attri
     # Column Header
     data = []
     col_data = []
-    for column in columns:
+    for column in list_of_columns:
         col_data.append(column)
         
     # Define table data (entity)
@@ -57,7 +57,7 @@ def export_pdf(api_clz, request, entity, queryParm, columns, columnTitles, attri
     table_data.append(col_data)
     for row in rows['data']:
         row_data = []
-        for col in columns:
+        for col in list_of_columns:
             row_data.append(row[col])
         table_data.append(row_data)
 
