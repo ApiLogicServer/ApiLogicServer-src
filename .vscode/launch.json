@@ -212,7 +212,8 @@
                 "add-auth",
                 "--project_name=../../../servers/ApiLogicProject", 
                 "--db_url=add-auth",
-                "--provider-type=keycloak"
+                "--provider-type=keycloak",
+                "--db_url=localhost"
                 ],
             "console": "integratedTerminal"
         },
