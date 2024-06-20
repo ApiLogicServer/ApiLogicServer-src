@@ -1199,7 +1199,7 @@ from database import <project.bind_key>_models
         provider_note = f"Setting provider type = {self.auth_provider_type}, @server = {self.auth_db_url} "
         #                    f'(was: {was_provider_type}, {is_enabled_note})'
 
-        if self.auth_provider_type == 'none':  # none means diaable
+        if self.auth_provider_type == 'none':  # none means disable
             if is_enabled:
                 log.info(f'\n\n.. ..Disabling security for current provider type: {was_provider_type}\n')
                 create_utils.assign_value_to_key_in_file(value=False, 

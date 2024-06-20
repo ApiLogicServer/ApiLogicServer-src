@@ -93,6 +93,19 @@ class DataClassUserZ(SAFRSBase):
 
 
 class Authentication_Provider(Abstract_Authentication_Provider):
+    """ Sample auth provider using in-memory data
+
+    This illustrates the basic operation of an auth provider.
+    It is mainly used for internal testing, and illustration.
+      
+    Typically, a real-world  system would use a Keycloak or sql provider.
+
+    Args:
+        Abstract_Authentication_Provider (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
 
     @staticmethod
     def get_user(id: str, password: str) -> object:
