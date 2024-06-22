@@ -4,6 +4,7 @@ version info: 0.5 (5/28/2024)
 ## Welcome to API Logic Server
 
 1. ***Instant microservices*** (APIs and Admin Apps) from a database or **GenAI prompt** -- 1 command
+
 2. ***Customize*** with **Rules** and Python in your IDE: created projects use standard Python libraries (Flask, SQLAlchemy)
 
 </br>
@@ -65,7 +66,7 @@ Created projects use standard Flask and SQLAlchemy; automation is provided by Lo
 
 ## Explore Pre-created Samples
 
-See these [important pre-created sample apps](#important-pre-created-sample-apps).  (Important: look for **readme files.**)
+See below for [important pre-created sample apps](#important-pre-created-sample-apps).  (Important: look for **readme files.**)
 
 &nbsp;
 

@@ -23,6 +23,9 @@ Your Code Goes Here - alter the starter code below to suit your needs
 """
 
 class Roles():
+    """ For code completion (auth data is the source of truth) 
+    
+    Revise these for your app's roles"""
     manager = "manager"
     teller = "teller"
     tenant = "tenant"
