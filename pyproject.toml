@@ -78,7 +78,7 @@ dependencies = [
         "translate==3.6.1",
         "libretranslatepy==2.1.1",
         "reportlab==4.2.0",
-        "xlsxwriter=3.2.0"
+        "xlsxwriter==3.2.0"
 ]
 name = "ApiLogicServer"
 authors = [

@@ -1,7 +1,7 @@
 about:
-  date: 6/6/2024
-  recent_changes: auth config, api_root, altered Customer/Order/Employee attribute ordering, tab captions, info, EmpType, dept emps, defaults, show_when, cascade add, toggles, images, security, login, virtual relns, global filters, no IsCommissioned
-  # this file illustrates customizations; compare it to admin-created.yaml to see the spedific changes.  version: 6.00.08
+  date: 6/22/2024
+  recent_changes: auth config, api_root, altered Customer/Order/Employee attribute ordering, tab captions, info, EmpType, dept emps, defaults, show_when, cascade add, toggles, images, security, login, virtual relns, global filters, no IsCommissioned, employee.notes as textarea
+  # this file illustrates customizations; compare it to admin-created.yaml to see the specific changes.  version: 10.04.71
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
 info_toggle_checked: true
 info:
@@ -223,6 +223,7 @@ resources:
       - name: HomePhone
       - name: Extension
       - name: Notes
+        type: textarea
       - name: ReportsTo
       - name: PhotoPath
         type: Image
