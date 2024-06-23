@@ -565,7 +565,11 @@ def genai(ctx, using, db_url, gen_using_file: click.BOOL, genai_version: str):
     # if no extension on using, then that's the prompt (no file)
     # if using.endswith('.prompt'):
     #    using = using.replace('.prompt','')
-    PR.ProjectRun(command="create", project_name=using, db_url=db_url, from_genai=using, gen_using_file=gen_using_file, genai_version=genai_version)
+    project_name = using
+    if '.' in using:
+        project_name = using.split('.')[0]
+
+    PR.ProjectRun(command="create", project_name=project_name, db_url=db_url, from_genai=using, gen_using_file=gen_using_file, genai_version=genai_version)
 
 
 @main.command("create", cls=HideDunderCommand)
