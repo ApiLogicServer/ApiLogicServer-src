@@ -1198,7 +1198,7 @@ from database import <project.bind_key>_models
             if self.auth_db_url in[ 'auth' ]:
                 self.auth_db_url = "'sqlite:///../database/authentication_db.sqlite'  #"
 
-        provider_note = f"Setting provider type = {self.auth_provider_type}, @server = {self.auth_db_url} "
+        provider_note = f"Setting security provider type = {self.auth_provider_type}, @server = {self.auth_db_url} "
         #                    f'(was: {was_provider_type}, {is_enabled_note})'
 
         if self.auth_provider_type == 'none':  # none means disable
