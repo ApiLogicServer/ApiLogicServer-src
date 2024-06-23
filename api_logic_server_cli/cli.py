@@ -551,7 +551,7 @@ def tutorial(ctx, create):
               help="SQLAlchemy Database URL\n")
 @click.option('--version', 'genai_version',
               default='gpt-3.5-turbo',
-              help="Use AI version#")
+              help="Eg, gpt-3.5-turbo, gpt-4o")
 @click.option('--gen-using-file', 'gen_using_file',
               default='',
               help="Use ChatGPT API")
