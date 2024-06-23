@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.04.71"
+__version__ = "10.04.72"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t06/22/2024 - 10.04.71: sra jun 13, kc auth provider runs locally, configure auth beyond sqlite, kc behave+sam, textarea \n"\
+    "\t06/22/2024 - 10.04.72: sra jun 13, kc local auth, configure auth beyond sqlite, kc behave textarea, gpt v# \n"\
     "\t06/12/2024 - 10.04.63: revised keycloak auth_provider, default config to hardened, kc_base via add-auth \n"\
     "\t06/11/2024 - 10.04.62: default-auth creation, basic_demo+=b2b, ont CORS fix, basic_demo \n"\
     "\t06/06/2024 - 10.04.48: config-driven admin.yaml security config \n"\
@@ -777,7 +777,7 @@ def start_open_with(project: Project):
         try:
             with_readme = '. readme.md' if project.open_with == "xxcode" else ''  # loses project context
             create_utils.run_command(
-                cmd=f'{project.open_with} {project.project_name} {with_readme}',
+                cmd=f'{project.open_with} "{project.project_name}" {with_readme}',
                 env=None, 
                 msg="no-msg", 
                 project=project)
@@ -832,6 +832,7 @@ class ProjectRun(Project):
                      from_model: str="",
                      from_genai: str="",
                      gen_using_file: str="",
+                     genai_version: str="",
                      host: str='localhost', 
                      port: str='5656', 
                      swagger_host: str="localhost", 
@@ -871,6 +872,7 @@ class ProjectRun(Project):
         self.from_model = from_model
         self.from_genai = from_genai
         self.gen_using_file = gen_using_file
+        self.genai_version = genai_version
         self.user_db_url = db_url  # retained for debug
         self.bind_key = bind_key
         self.api_name = api_name
@@ -1806,7 +1808,6 @@ from database import <project.bind_key>_models
         if self.from_genai != "":
             from genai import GenAI
             gen_ai = GenAI(self)
-            # self.genai()
 
         if self.from_model != "" or self.from_genai != "":
             create_db_from_model.create_db(self)
