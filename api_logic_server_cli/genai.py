@@ -50,7 +50,7 @@ class GenAI(object):
             with open(f'{self.project.from_genai}', 'r') as file:
                 prompt = file.read()
         else:
-            pre_post = "{{prompt}}"
+            pre_post = "Use SQLAlchemy to create a sqlite database named system/genai/temp/model.sqlite, with {{prompt}}.  Create some test data."
             if Path('system/genai/pre_post.prompt').exists():
                 with open(f'system/genai/pre_post.prompt', 'r') as file:
                     pre_post = file.read()  # eg, Use SQLAlchemy to create a sqlite database named system/genai/temp/model.sqlite, with
