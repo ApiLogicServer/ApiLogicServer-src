@@ -51,7 +51,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "     - genai - create clean/ApiLogicServer/genai_demo",
+            "name": "     - genai create - clean/ApiLogicServer/genai_demo",
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
@@ -60,7 +60,7 @@
             "redirectOutput": true,
             "args": [
                 "genai",
-                "--using=genai_demo"],
+                "--using=genai_demo.prompt"],
             "console": "integratedTerminal"
         },
         {
@@ -71,6 +71,19 @@
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "args": ["add-cust","--project_name=../../../ApiLogicServer-dev/clean/ApiLogicServer/genai_demo"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "     - genai create NOFILE - clean/ApiLogicServer/genai_demo",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": [
+                "genai",
+                "--using=automobile dealership"],
             "console": "integratedTerminal"
         },
         {

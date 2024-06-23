@@ -35,7 +35,7 @@ class GenAI(object):
         # https://stackoverflow.com/questions/76741410/how-to-invoke-github-copilot-programmatically
         # https://docs.google.com/document/d/1o0TeNQtuT6moWU1bOq2K20IbSw4YhV1x_aFnKwo_XeU/edit#heading=h.3xmoi7pevsnp
 
-        log.info(f'\ngenai creating database/models from {self.project.from_genai}.prompt')
+        log.info(f'\ngenai creating database/models from {self.project.from_genai}')
 
         self.project.from_model = f'system/genai/temp/model.py' # we always write the model to this file
 
@@ -45,23 +45,31 @@ class GenAI(object):
         Path('system/genai/temp/model.sqlite').unlink(missing_ok=True)
         Path('system/genai/temp/model.py').unlink(missing_ok=True)
 
-        # open and read the project description in natural language
-        with open(f'{self.project.from_genai}.prompt', 'r') as file:
-            prompt = file.read()
+        if '.' in self.project.from_genai:
+            # open and read the project description in natural language
+            with open(f'{self.project.from_genai}', 'r') as file:
+                prompt = file.read()
+        else:
+            preamble = "{{prompt}}"
+            if Path('system/genai/preamble.prompt').exists():
+                with open(f'system/genai/preamble.prompt', 'r') as file:
+                    preamble = file.read()  # eg, Use SQLAlchemy to create a sqlite database named system/genai/temp/model.sqlite, with
+            prompt = preamble + ' ' + self.project.from_genai  # experiment
+            prompt = prompt.replace('{{prompt}}', self.project.from_genai)
 
         self.project.genai_logic = self.genai_get_logic(prompt)
 
         if self.project.gen_using_file == '':
-            log.info(f'\nInvoking AI to obtain response: system/genai/temp/chatgpt_original.txt')
+            log.info(f'\nInvoking AI, storing response: system/genai/temp/chatgpt_original.txt')
             response_data = self.genai_gen_using_api(prompt)
-        else:
-            log.info(f'\nUsing prompt from {self.project.gen_using_file}')
+        else: # for retry from corrected prompt... eg system/genai/temp/chatgpt_retry.txt
+            log.info(f'\nUsing [corrected] prompt from: {self.project.gen_using_file}')
             with open(self.project.gen_using_file, 'r') as file:
                 model_raw = file.read()
             # convert model_raw into string array response_data
             response_data = model_raw  # '\n'.join(model_raw)
         from_model = self.genai_write_model_file(response_data)
-        log.info(f'\nModel file created: {from_model}')
+        log.info(f'\nGenAI: model file created: {from_model}')
 
 
     def genai_get_logic(self, prompt: str) -> list[str]:
@@ -168,6 +176,7 @@ class GenAI(object):
             "Authorization": f"Bearer {openai_api_key}"
         }
 
+        version = self.project.genai_version
         data = {
             "model": "gpt-3.5-turbo",
             "messages": [

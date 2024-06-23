@@ -45,6 +45,8 @@ class CliArgsBase():
         """ name of .genai file (ai prompt) to create model, and project """
         self.gen_using_file = None
         """ None uses ChatGPT API, else defaults system/genai/reference/chatgpt_retry.txt """
+        self.genai_version = None
+        """ Version number for ChatGPT API """
         self.bind_key = None # type: str
         self.bind_key_url_separator = None # type: str
         self.api_name = None # type: str
