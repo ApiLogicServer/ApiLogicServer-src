@@ -50,11 +50,11 @@ class GenAI(object):
             with open(f'{self.project.from_genai}', 'r') as file:
                 prompt = file.read()
         else:
-            preamble = "{{prompt}}"
-            if Path('system/genai/preamble.prompt').exists():
-                with open(f'system/genai/preamble.prompt', 'r') as file:
-                    preamble = file.read()  # eg, Use SQLAlchemy to create a sqlite database named system/genai/temp/model.sqlite, with
-            prompt = preamble + ' ' + self.project.from_genai  # experiment
+            pre_post = "{{prompt}}"
+            if Path('system/genai/pre_post.prompt').exists():
+                with open(f'system/genai/pre_post.prompt', 'r') as file:
+                    pre_post = file.read()  # eg, Use SQLAlchemy to create a sqlite database named system/genai/temp/model.sqlite, with
+            prompt = pre_post + ' ' + self.project.from_genai  # experiment
             prompt = prompt.replace('{{prompt}}', self.project.from_genai)
 
         self.project.genai_logic = self.genai_get_logic(prompt)
@@ -176,7 +176,7 @@ class GenAI(object):
             "Authorization": f"Bearer {openai_api_key}"
         }
 
-        version = self.project.genai_version
+        api_version = self.project.genai_version
         data = {
             "model": "gpt-3.5-turbo",
             "messages": [
