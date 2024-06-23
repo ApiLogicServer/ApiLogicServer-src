@@ -176,9 +176,11 @@ class GenAI(object):
             "Authorization": f"Bearer {openai_api_key}"
         }
 
-        api_version = self.project.genai_version
+        api_version = f'{self.project.genai_version}'  # eg, "gpt-3.5-turbo"
+        """ values like gpt-3.5-turbo, gpt-4o (expensive) """
+        debug_value = api_version
         data = {
-            "model": "gpt-3.5-turbo",
+            "model": api_version,
             "messages": [
                 {
                     "role": "system",
