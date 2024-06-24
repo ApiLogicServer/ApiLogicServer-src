@@ -250,8 +250,14 @@ class OntBuilder(object):
             file_name="app.menu.config.ts",
             source=app_menu_config,
         )
-        # KeyCloak or SQL Auth
-        self.gen_auth_components(app_path, self.use_keycloak)
+        # KeyCloak or SQL Auth (from yaml)
+        keycloak_args = {
+            "use_keycloak": self.use_keycloak,
+            "keycloak_url": self.keycloak_url,
+            "keycloak_realm": self.keycloak_realm,
+            "keycloak_client_id": self.keycloak_client_id
+        }
+        self.gen_auth_components(app_path, keycloak_args, self.use_keycloak)
         
         rv_environment = self.environment_template.render(apiEndpoint=self.apiEndpoint)
         write_root_file(
@@ -263,13 +269,7 @@ class OntBuilder(object):
         # Translate all fields from english -> list of languages from settings TODO
         self.generate_translation_files(app_path)
 
-    def gen_auth_components(self, app_path , use_keycloak=False):
-        keycloak_args = {
-            "use_keycloak": use_keycloak,
-            "keycloak_url": self.keycloak_url,
-            "keycloak_realm": self.keycloak_realm,
-            "keycloak_client_id": self.keycloak_client_id
-        }
+    def gen_auth_components(self, app_path , keycloak_args: any, use_keycloak: bool):
         rv_app_modules = self.app_module.render(keycloak_args) 
         write_root_file(
             app_path=app_path,
