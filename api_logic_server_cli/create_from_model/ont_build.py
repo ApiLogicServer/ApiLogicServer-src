@@ -82,11 +82,11 @@ class OntBuilder(object):
         self.include_translation = False
         self.row_height = "medium"
         #Keycloak settings from global
-        self.use_keycloak=False # True this will use different templates - defaults to basic auth
+        self.use_keycloak=False # True this will use different templates - defaults to basic auth TODO
         self.keycloak_url = "http://localhost:8080"
         self.keycloak_realm = "kcals"
         self.keycloak_client_id = "alsclient"
-
+        self.apiEndpoint =  "http://{project.host}:{project.port}/ontimizeweb/services/rest"
         self.title_translation = []
         self.languages = ["en", "es"] # "fr", "it", "de" etc - used to create i18n json files
         
@@ -102,8 +102,8 @@ class OntBuilder(object):
         self.environment_template = self.get_template("environment.jinja")
         
         self.component_scss = self.get_template("component.scss")
-        # Home Grid attributes 0-table-column TODO move these to self.get_template
-        # most of these are the same - only the type changes - should we have 1 table-column? TODO - move to templates
+        # Home Grid attributes o-table-column 
+        # most of these are the same - only the type changes - should we have 1 table-column?
         self.table_text_template = self.get_template("table_text_template.html")
         self.table_currency_template = self.get_template("table_currency_template.html")
         self.table_integer_template = self.get_template("table_integer_template.html")
@@ -273,10 +273,8 @@ class OntBuilder(object):
             source=rv_main_modules,
         )
         # api_root: '{http_type}://{swagger_host}:{port}/{api}' TODO - need actual values
-        value = {}
-        apiEndpoint = "http://localhost:5656/ontimizeweb/services/rest"
-        value["apiEndpoint"] = apiEndpoint
-        rv_environment = self.environment_template.render(Value=value)
+
+        rv_environment = self.environment_template.render(apiEndpoint=self.apiEndpoint)
         write_root_file(
             app_path=app_path,
             dir_name="environments",
