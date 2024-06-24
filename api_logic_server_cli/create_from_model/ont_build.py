@@ -86,7 +86,7 @@ class OntBuilder(object):
         self.keycloak_url = "http://localhost:8080"
         self.keycloak_realm = "kcals"
         self.keycloak_client_id = "alsclient"
-        self.apiEndpoint =  "http://{project.host}:{project.port}/ontimizeweb/services/rest"
+        self.apiEndpoint =  f"http://{project.host}:{project.port}/ontimizeweb/services/rest"
         self.title_translation = []
         self.languages = ["en", "es"] # "fr", "it", "de" etc - used to create i18n json files
         
@@ -250,8 +250,22 @@ class OntBuilder(object):
             file_name="app.menu.config.ts",
             source=app_menu_config,
         )
+        # KeyCloak or SQL Auth
+        self.gen_auth_components(app_path, self.use_keycloak)
+        
+        rv_environment = self.environment_template.render(apiEndpoint=self.apiEndpoint)
+        write_root_file(
+            app_path=app_path,
+            dir_name="environments",
+            file_name="environment.ts",
+            source=rv_environment,
+        )
+        # Translate all fields from english -> list of languages from settings TODO
+        self.generate_translation_files(app_path)
+
+    def gen_auth_components(self, app_path , use_keycloak=False):
         keycloak_args = {
-            "use_keycloak": self.use_keycloak,
+            "use_keycloak": use_keycloak,
             "keycloak_url": self.keycloak_url,
             "keycloak_realm": self.keycloak_realm,
             "keycloak_client_id": self.keycloak_client_id
@@ -265,24 +279,13 @@ class OntBuilder(object):
         )
         
         main_module = self.get_template("main.module.jinja")
-        rv_main_modules = main_module.render(use_keycloak=self.use_keycloak) 
+        rv_main_modules = main_module.render(use_keycloak=use_keycloak) 
         write_root_file(
             app_path=app_path,
             dir_name="main",
             file_name="main.module.ts",
             source=rv_main_modules,
         )
-        # api_root: '{http_type}://{swagger_host}:{port}/{api}' TODO - need actual values
-
-        rv_environment = self.environment_template.render(apiEndpoint=self.apiEndpoint)
-        write_root_file(
-            app_path=app_path,
-            dir_name="environments",
-            file_name="environment.ts",
-            source=rv_environment,
-        )
-        # Translate all fields from english -> list of languages from settings TODO
-        self.generate_translation_files(app_path)
 
     def find_template(self, entity, template_name, default_template):
         if hasattr(entity, template_name) and entity[template_name] != DotMap():
@@ -793,7 +796,7 @@ class OntBuilder(object):
                 rv = self.nif_template.render(col_var)
             elif col_type in ["DECIMAL","NUMERIC", "DOUBLE","REAL"]:
                 rv = self.real_template.render(col_var)
-            elif template_type == "check_circle":
+            elif template_type == "CHECK_CIRCLE" and col_type in ["BIT","BOOLEAN"]:
                 rv == self.check_circle_template.render(col_var)
             else:
                 rv = self.text_template.render(col_var)
