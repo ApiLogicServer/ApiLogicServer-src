@@ -315,6 +315,22 @@ def windows_path_fix(dir_str: str) -> str:
     """ idiotic fix for windows (use 4 slashes to get 1) """
     return dir_str.replace('\\', '\\\\')
 
+def get_config(search_for: str, in_file: str) -> str:
+    """ returns value of <search_for> in <in_file> """
+    with open(Path(in_file), 'r+') as fp:
+        file_lines = fp.readlines()  # lines is list of lines, each element '...\n'
+        found = False
+        insert_line = 0
+        for each_line in file_lines:
+            if search_for in each_line:
+                found = True
+                break
+            insert_line += 1
+        if not found:
+            raise Exception(f'Internal error - unable to find insert:\n'
+                            f'.. seeking {search_for}\n'
+                            f'.. in {in_file}')
+        return file_lines[insert_line].split('=')[1].strip().replace("'","",2)
 def does_file_contain(search_for: str, in_file: str) -> bool:
     """ returns True if <search_for> is <in_file> """
     with open(Path(in_file), 'r+') as fp:

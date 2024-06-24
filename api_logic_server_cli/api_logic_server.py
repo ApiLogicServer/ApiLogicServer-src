@@ -1234,6 +1234,22 @@ from database import <project.bind_key>_models
         else:
             if self.auth_db_url != "'sqlite:///../database/authentication_db.sqlite'  #":
                 self.add_auth_model(msg=msg, is_nw=is_nw)
+        
+        from create_from_model import ont_build
+        #open with: ()
+        build = ont_build.OntBuilder(self)
+        use_keycloak = was_provider_type == "keycloak"
+        keycloak_realm = create_utils.get_config(search_for="KEYCLOAK_REALM",
+                                        in_file=config_file)
+        keycloak_client_id = create_utils.get_config(search_for="KEYCLOAK_CLIENT_ID",
+                                        in_file=config_file)
+        keycloak_args = {
+            "use_keycloak": use_keycloak,
+            "keycloak_url": self.auth_db_url,
+            "keycloak_realm": keycloak_realm,
+            "keycloak_client_id": keycloak_client_id
+        }
+        build.gen_auth_components(build.app_path, keycloak_args, use_keycloak=use_keycloak)
         self.add_auth_in_progress = False
 
 
