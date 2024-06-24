@@ -71,7 +71,7 @@ class OntBuilder(object):
         self.global_values = DotMap()
         self.new_mode = "tab"
         self.detail_mode = "tab" 
-        self.pick_style = "list" #"combo" or"list"
+        self.pick_style = "list" #"combo" or"list-picker"
         self.style = "light" # "dark"
         self.currency_symbol = "$" # "€" 
         self.currency_symbol_position="left" # "right"
@@ -103,30 +103,16 @@ class OntBuilder(object):
         
         self.component_scss = self.get_template("component.scss")
         # Home Grid attributes 0-table-column TODO move these to self.get_template
-        # most of these are the same - only the type changes - should we have 1 table-column?
-        self.table_text_template = Template(
-            '<o-table-column attr="{{ attr }}" label="{{ title }}" editable="{{ editable }}" required="{{ required }}" content-align="left"></o-table-column>'
-        )
-        # TODO currency_us or currency_eu
-        self.table_currency_template = Template(
-            '<o-table-column attr="{{ attr }}" label="{{ title }}" type="currency" editable="{{ editable }}" required="{{ required }}" currency-symbol="{{ currency_symbol }}" currency-symbol-position="{{ currency_symbol_position }}" thousand-separator="{{ thousand_separator }}"decimal-separator="{{ decimal_separator }}"></o-table-column>'
-        )  # currency 100,00.00 settings from global
-    
-        self.table_integer_template = Template(
-            '<o-table-column attr="{{ attr }}" label="{{ title }}" type="integer" editable="{{ editable }}" required="{{ required }}" content-align="center"></o-table-column>'
-        )
-        self.table_image_template = Template(
-            '<o-image attr="{{ attr }}"  width="350px" empty-image="./assets/images/no-image.png" full-screen-button="true"></o-image>'
-        )
-        self.table_textarea_template = Template(
-            '<o-textarea-input attr="{{ attr }}" label="{{ title }}" rows="10" content-align="center"></o-textarea-input>'
-        )
-        self.table_real_template = Template(
-            '<o-table-column attr="{{ attr }}" label="{{ title }}" type="real" min-decimal-digits="2" max-decimal-digits="4" min="0" max="1000000.0000" content-align="center"></o-table-column>'
-        )
-        self.o_table_column=self.get_template("o_table_column.html")
+        # most of these are the same - only the type changes - should we have 1 table-column? TODO - move to templates
+        self.table_text_template = self.get_template("table_text_template.html")
+        self.table_currency_template = self.get_template("table_currency_template.html")
+        self.table_integer_template = self.get_template("table_integer_template.html")
+        self.table_image_template = self.get_template("table_image_template.html")
+        self.table_textarea_template =self.get_template("table_textarea_template.html")
+        self.table_real_template = self.get_template("table_real_template.html")
+        self.table_column=self.get_template("table_column.html")
         
-        # Text Input Fields o-text-input 
+        # Text Input Fields o-text-input for detail and new data entry
         self.text_template = self.get_template("text_template.html")
         self.currency_template = self.get_template("currency_template.html")
         self.date_template = self.get_template("date_template.html") 
@@ -146,6 +132,7 @@ class OntBuilder(object):
         self.html_template = self.get_template("html_template.html")
         self.file_template = self.get_template("file_template.html")
         self.nif_template = self.get_template("o_nif_input.html")
+        self.check_circle_template = self.get_template("check_circle.html")
         
     def get_template(self, template_name) -> Template:
         """
@@ -286,8 +273,10 @@ class OntBuilder(object):
             source=rv_main_modules,
         )
         # api_root: '{http_type}://{swagger_host}:{port}/{api}' TODO - need actual values
+        value = {}
         apiEndpoint = "http://localhost:5656/ontimizeweb/services/rest"
-        rv_environment = self.environment_template.render(apiEndpoint=apiEndpoint)
+        value["apiEndpoint"] = apiEndpoint
+        rv_environment = self.environment_template.render(Value=value)
         write_root_file(
             app_path=app_path,
             dir_name="environments",
@@ -507,6 +496,8 @@ class OntBuilder(object):
             return self.timestamp_template.render(col_var)
         elif template_type in ["REAL", "DECIMAL", "NUMERIC"]:
             return self.table_real_template.render(col_var)
+        elif template_type == "table_column":
+            return self.table_column.render(col_var)
         else:
             if template_type == "TEXTAREA":
                 return self.table_textarea_template.render(col_var)
@@ -804,6 +795,8 @@ class OntBuilder(object):
                 rv = self.nif_template.render(col_var)
             elif col_type in ["DECIMAL","NUMERIC", "DOUBLE","REAL"]:
                 rv = self.real_template.render(col_var)
+            elif template_type == "check_circle":
+                rv == self.check_circle_template.render(col_var)
             else:
                 rv = self.text_template.render(col_var)
         else:
