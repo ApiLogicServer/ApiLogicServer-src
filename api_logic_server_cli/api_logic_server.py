@@ -1182,17 +1182,11 @@ from database import <project.bind_key>_models
                                         in_file=config_file)
         is_sql = create_utils.does_file_contain(search_for="authentication_provider.sql.auth_provider import",
                                         in_file=config_file)
-        is_kc_hardened = create_utils.does_file_contain(search_for="kc_base = 'https://kc.hardened.be'",
-                                        in_file=config_file)
-        was_hardened = "kc_base = 'https://kc.hardened.be'" if is_kc_hardened \
-            else "kc_base = 'http://localhost:8080'"
         was_provider_type = "sql" if is_sql else "keycloak"
-        is_enabled_note = "enabled" if is_enabled else "disabled"
-        was_enabled = "True" if is_enabled else "False"
         if self.auth_provider_type == 'keycloak':
-            if self.auth_db_url in[ 'auth', 'hardened']:
+            if self.auth_db_url in[ 'hardened' ]:
                 self.auth_db_url = "https://kc.hardened.be"
-            elif self.auth_db_url in ['localhost', 'local']:
+            elif self.auth_db_url in ['auth', 'localhost', 'local']:
                 self.auth_db_url = "http://localhost:8080"
         elif self.auth_provider_type == 'sql':
             if self.auth_db_url in[ 'auth' ]:
