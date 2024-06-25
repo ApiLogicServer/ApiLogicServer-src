@@ -270,31 +270,40 @@ class OntBuilder(object):
         self.generate_translation_files(app_path)
 
     def gen_auth_components(self, app_path , keycloak_args: any, use_keycloak: bool):
-        """TODO Describe
-        Does this do all apps, or just the default? etc...
+        """
+        This will only work once on initial build- so if the create uses SQL - then the only way to change
+        to keycloak is to use $als add-auth --provider-type=keycloak --db-url=localhost 
 
         Args:
-            app_path (_type_): _description_
-            keycloak_args (any): _description_
-            use_keycloak (bool): _description_
+            app_path (_type_): path to project
+            keycloak_args (any): keycloak ags
+            use_keycloak (bool): flag used to include keycloak imports and settings
         """
-        rv_app_modules = self.app_module.render(keycloak_args) 
-        write_root_file(
-            app_path=app_path,
-            dir_name="app",
-            file_name="app.module.ts",
-            source=rv_app_modules,
-        )
         
-        main_module = self.get_template("main.module.jinja")
-        rv_main_modules = main_module.render(use_keycloak=use_keycloak) 
-        write_root_file(
-            app_path=app_path,
-            dir_name="main",
-            file_name="main.module.ts",
-            source=rv_main_modules,
-        )
+        #Does the app.module.ts already exist - if so - we skip the rebuild
+        if not self.does_file_exist(app_path,"/src/app","app.module.ts"):
+            rv_app_modules = self.app_module.render(keycloak_args) 
+            write_root_file(
+                app_path=app_path,
+                dir_name="app",
+                file_name="app.module.ts",
+                source=rv_app_modules,
+            )
+        if not self.does_file_exist(app_path,"/src/app/main","main.module.ts"):
+            main_module = self.get_template("main.module.jinja")
+            rv_main_modules = main_module.render(use_keycloak=use_keycloak) 
+            write_root_file(
+                app_path=app_path,
+                dir_name="main",
+                file_name="main.module.ts",
+                source=rv_main_modules,
+            )
 
+    def does_file_exist(self, app_path, dir_name, file_name):
+        with contextlib.suppress(FileNotFoundError):
+            with open(Path(f"{app_path}{dir_name}/{file_name}"),"r+") as fp:
+                return True
+        return False
     def find_template(self, entity, template_name, default_template):
         if hasattr(entity, template_name) and entity[template_name] != DotMap():
             return entity[template_name]
