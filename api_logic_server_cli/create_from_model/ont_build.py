@@ -257,7 +257,7 @@ class OntBuilder(object):
             "keycloak_realm": self.keycloak_realm,
             "keycloak_client_id": self.keycloak_client_id
         }
-        self.gen_auth_components(app_path, keycloak_args, self.use_keycloak)
+        self.gen_auth_components(app_path, keycloak_args, self.use_keycloak, overwrite=False)
         
         rv_environment = self.environment_template.render(apiEndpoint=self.apiEndpoint)
         write_root_file(
@@ -269,7 +269,7 @@ class OntBuilder(object):
         # Translate all fields from english -> list of languages from settings TODO
         self.generate_translation_files(app_path)
 
-    def gen_auth_components(self, app_path , keycloak_args: any, use_keycloak: bool):
+    def gen_auth_components(self, app_path , keycloak_args: any, use_keycloak: bool, overwrite: bool = False):
         """
         This will only work once on initial build- so if the create uses SQL - then the only way to change
         to keycloak is to use $als add-auth --provider-type=keycloak --db-url=localhost 
@@ -281,7 +281,7 @@ class OntBuilder(object):
         """
         
         #Does the app.module.ts already exist - if so - we skip the rebuild
-        if not self.does_file_exist(app_path,"/src/app","app.module.ts"):
+        if overwrite or not self.does_file_exist(app_path,"/src/app","app.module.ts"):
             rv_app_modules = self.app_module.render(keycloak_args) 
             write_root_file(
                 app_path=app_path,
@@ -289,7 +289,7 @@ class OntBuilder(object):
                 file_name="app.module.ts",
                 source=rv_app_modules,
             )
-        if not self.does_file_exist(app_path,"/src/app/main","main.module.ts"):
+        if overwrite or not self.does_file_exist(app_path,"/src/app/main","main.module.ts"):
             main_module = self.get_template("main.module.jinja")
             rv_main_modules = main_module.render(use_keycloak=use_keycloak) 
             write_root_file(
