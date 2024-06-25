@@ -232,7 +232,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "     - Create servers/ApiLogicProject (new IDE) -- With Provider",
+            "name": "     - Create servers/ApiLogicProject (new IDE) -- With Provider (== default)",
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/api_logic_server_cli",
