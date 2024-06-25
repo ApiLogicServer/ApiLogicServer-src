@@ -6,7 +6,7 @@ from os.path import abspath
 from api_logic_server_cli.cli_args_project import Project
 import logging
 from shutil import copyfile
-
+import contextlib
 log = logging.getLogger(__name__)
 
 
@@ -331,6 +331,18 @@ def get_config(search_for: str, in_file: str) -> str:
                             f'.. seeking {search_for}\n'
                             f'.. in {in_file}')
         return file_lines[insert_line].split('=')[1].strip().replace("'","",2)
+def get_ontimize_apps(project_dir_path):
+    result = []
+    for name in os.listdir(f"{project_dir_path}/ui"):
+        if name not in ["admin","templates","images","__pycache__"]:
+            a_dir = os.path.join(f"{project_dir_path}/ui", name)
+            if os.path.isdir(a_dir):
+                with contextlib.suppress(FileNotFoundError):
+                    with open(Path(f"{a_dir}/app_model.yaml"),"r+") as fp:
+                        result.append(name)
+
+                
+    return result
 def does_file_contain(search_for: str, in_file: str) -> bool:
     """ returns True if <search_for> is <in_file> """
     with open(Path(in_file), 'r+') as fp:

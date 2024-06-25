@@ -1229,10 +1229,11 @@ from database import <project.bind_key>_models
             if self.auth_db_url != "'sqlite:///../database/authentication_db.sqlite'  #":
                 self.add_auth_model(msg=msg, is_nw=is_nw)
         
-        if msg.startswith('ApiLogicProject customizable project (for northwind)'):
-            from create_from_model import ont_build
-            #open with: ()
-            build = ont_build.OntBuilder(self)
+        #if msg.startswith('ApiLogicProject customizable project (for northwind)'):
+        from create_from_model import ont_build
+        app_list = create_utils.get_ontimize_apps(self.project_directory_path)
+        for app in app_list:
+            build = ont_build.OntBuilder(self, app)
             use_keycloak = was_provider_type == "keycloak"
             keycloak_realm = create_utils.get_config(search_for="KEYCLOAK_REALM",
                                             in_file=config_file)
@@ -1245,6 +1246,7 @@ from database import <project.bind_key>_models
                 "keycloak_client_id": keycloak_client_id
             }
             build.gen_auth_components(build.app_path, keycloak_args, use_keycloak=use_keycloak)
+            log.info(f'\n.. ..Ontimize Keycloak setting use_keycloak={use_keycloak}')
         self.add_auth_in_progress = False
 
 
