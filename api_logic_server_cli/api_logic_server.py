@@ -1247,7 +1247,7 @@ from database import <project.bind_key>_models
                 "keycloak_realm": keycloak_realm,
                 "keycloak_client_id": keycloak_client_id
             }
-            build.gen_auth_components(build.app_path, keycloak_args, use_keycloak=use_keycloak)
+            build.gen_auth_components(build.app_path, keycloak_args, use_keycloak=use_keycloak, overwrite=True)
             log.info(f'\n.. ..Ontimize Keycloak setting use_keycloak={use_keycloak}')
         self.add_auth_in_progress = False
 
