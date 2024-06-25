@@ -25,3 +25,22 @@ Verify procedure:
     logout does not trigger re-login (even when stg cleared)
 
 
+6/25
+
+mkdir ApiLogicServer
+
+python -m venv venv; venv\Scripts\activate   # win, OR....
+python3 -m venv venv; . venv/bin/activate; python3 -m pip # mac
+
+python -m pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple ApiLogicServer==10.04.76
+
+als create --project-name=nw+ --db-url=nw+  # sql auth enabled
+cd nw+
+code .
+
+# run the app
+#   s1/p - verify 1 customer, then logout
+#   admin/p - many customers
+#
+# add-auth --provider-type=keycloak --db-url=localhost   # might want to verify config file
+# repeat test above
