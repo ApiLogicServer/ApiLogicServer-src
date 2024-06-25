@@ -2,6 +2,7 @@ version: '3'
 
 # cd devops/keycloak
 # docker compose up
+# # docker compose -f devops/keycloak/docker-compose.yml up
 
 services:
 
