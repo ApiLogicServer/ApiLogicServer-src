@@ -270,6 +270,14 @@ class OntBuilder(object):
         self.generate_translation_files(app_path)
 
     def gen_auth_components(self, app_path , keycloak_args: any, use_keycloak: bool):
+        """TODO Describe
+        Does this do all apps, or just the default? etc...
+
+        Args:
+            app_path (_type_): _description_
+            keycloak_args (any): _description_
+            use_keycloak (bool): _description_
+        """
         rv_app_modules = self.app_module.render(keycloak_args) 
         write_root_file(
             app_path=app_path,
