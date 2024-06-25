@@ -341,6 +341,8 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
 
         if project.nw_db_status in ["nw", "nw+"]:
             log.debug(".. ..Copying nw customizations: logic, custom api, readme, tests, admin app")
+            if project.nw_db_status == 'nw':
+                log.error("\n==> System Error: Unexpected customization for nw.  Please contact support.\n")
             project.add_nw_customizations(do_security=False, do_show_messages=False)
             
         if project.nw_db_status in ["nw+"]:
