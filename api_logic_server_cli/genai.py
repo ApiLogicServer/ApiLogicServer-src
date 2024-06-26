@@ -13,9 +13,13 @@ class GenAI(object):
 
     __init__() 
     
-    1. runs ChatGPT to create model: system/genai/temp/chatgpt_original.txt
+    0. work directory is <manager>/system/genai/temp/
+    1. runs ChatGPT to create system/genai/temp/chatgpt_original.txt
+    2. extracts model.py
     2. adds prompt logic as comments into model: self.genai_get_logic() & genai_write_model_file()
-    3. write to mgr: system/genai/temp/
+    3. main driver then 
+        * runs create_db_from_model.create_db(self)
+        * proceeds to create project
 
     insert_logic_into_declare_logic() - later called to merge logic into declare_logic.py
 
