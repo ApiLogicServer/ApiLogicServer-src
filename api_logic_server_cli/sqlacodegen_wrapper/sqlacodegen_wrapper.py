@@ -220,10 +220,15 @@ def create_models_py(model_creation_services: ModelCreationServices, abs_db_url:
         codegen_args.outfile = str(models_loc)
         codegen_args.version = False
         codegen_args.model_creation_services = model_creation_services
+
+        from cli_args_base import OptLocking
         opt_locking_file_name = f'{model_creation_services.project.api_logic_server_dir_path.joinpath("templates/opt_locking.txt")}'
         with open(opt_locking_file_name, 'r') as file:
             opt_locking_data = file.read()
         model_creation_services.opt_locking = opt_locking_data.replace('replace_opt_locking_attr', model_creation_services.project.opt_locking_attr)
+        if model_creation_services.project.opt_locking == OptLocking.IGNORED.value:  # ignore opt_locking
+            model_creation_services.opt_locking = ""
+
         return codegen_args
 
     num_models = 0

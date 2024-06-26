@@ -604,10 +604,10 @@ def genai(ctx, using, db_url, gen_using_file: click.BOOL, genai_version: str):
               help="Last node of API Logic Server url\n")
 @click.option('--opt_locking',
               default=OptLocking.OPTIONAL.value,
-              help="Optimistic Locking [ignore, optional, required]")
+              help="Optimistic Locking [ignored, optional, required]")
 @click.option('--opt-locking', 'opt_locking',
               default=OptLocking.OPTIONAL.value,
-              help="Optimistic Locking [ignore, optional, required]")
+              help="Optimistic Locking [ignored, optional, required]")
 @click.option('--opt_locking_attr',
               default="S_CheckSum",
               help="Attribute Name for Optimistic Locking CheckSum (unused)")
@@ -777,10 +777,10 @@ def create(ctx, project_name: str, db_url: str, not_exposed: str, api_name: str,
               help="Last node of API Logic Server url\n")
 @click.option('--opt_locking',
               default=OptLocking.OPTIONAL.value,
-              help="Optimistic Locking [ignore, optional, required]")
+              help="Optimistic Locking [ignored, optional, required]")
 @click.option('--opt-locking', 'opt_locking',
               default=OptLocking.OPTIONAL.value,
-              help="Optimistic Locking [ignore, optional, required]")
+              help="Optimistic Locking [ignored, optional, required]")
 @click.option('--opt_locking_attr',
               default="S_CheckSum",
               help="Attribute Name for Optimistic Locking CheckSum (unused)")
