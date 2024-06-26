@@ -11,17 +11,17 @@ class GenAI(object):
     """
     Create project from genai prompt.  Called from api_logic_server#create_project() -- main driver
 
-    __init__() 
+    __init__()  # work directory is <manager>/system/genai/temp/
     
-    0. work directory is <manager>/system/genai/temp/
     1. runs ChatGPT to create system/genai/temp/chatgpt_original.txt
-    2. extracts model.py
-    2. adds prompt logic as comments into model: self.genai_get_logic() & genai_write_model_file()
-    3. main driver then 
-        * runs create_db_from_model.create_db(self)
-        * proceeds to create project
+    2. self.genai_get_logic() - saves prompt logic as comments for insertion into model
+    3. genai_write_model_file()
+    4. returns to main driver, which 
+        1. runs create_db_from_model.create_db(self)
+        2. proceeds to create project
+        3. calls this.insert_logic_into_declare_logic() - merge logic into declare_logic.py
 
-    insert_logic_into_declare_logic() - later called to merge logic into declare_logic.py
+    developer then uses CoPilot to create logic (Rule.) from the prompt
 
     Args:
         object (_type_): _description_
