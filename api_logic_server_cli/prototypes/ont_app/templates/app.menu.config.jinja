@@ -5,7 +5,6 @@ import { MenuRootItem } from 'ontimize-web-ngx';
 
 export const MENU_CONFIG: MenuRootItem[] = [
     { id: 'home', name: 'HOME', icon: 'home', route: '/main/home' },
-    { id: 'settings', name: 'Settings', icon: 'home', route: '/main/settings'},
     { id: 'data', name: 'DATA', icon: 'remove_red_eye', opened: true,
     items: [
     {% for menuitem in menuitems %}
@@ -13,7 +12,8 @@ export const MENU_CONFIG: MenuRootItem[] = [
     {% endfor %}
     ] 
     }
-    ,{ id: 'about', name: 'About', icon: 'home', route: '/main/about'}
+    ,{ id: 'settings', name: 'Settings', icon: 'settings', route: '/main/settings'}
+    ,{ id: 'about', name: 'About', icon: 'info', route: '/main/about'}
     ,{ id: 'logout', name: 'LOGOUT', route: '/login', icon: 'power_settings_new', confirm: 'yes' }
 ];
 
