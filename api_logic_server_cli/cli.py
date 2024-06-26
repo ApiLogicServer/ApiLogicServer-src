@@ -568,6 +568,7 @@ def genai(ctx, using, db_url, gen_using_file: click.BOOL, genai_version: str):
     project_name = using
     if '.' in using:
         project_name = using.split('.')[0]
+    project_name  = project_name.replace(' ', '_')
 
     PR.ProjectRun(command="create", project_name=project_name, db_url=db_url, from_genai=using, gen_using_file=gen_using_file, genai_version=genai_version)
 
