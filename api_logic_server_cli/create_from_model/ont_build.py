@@ -100,6 +100,7 @@ class OntBuilder(object):
         self.table_cell_render = self.get_template("table_cell_render.html")
         self.detail_route_template = self.get_template("detail_route_template.jinja")
         self.environment_template = self.get_template("environment.jinja")
+        self.app_menu_group = self.get_template("app_menu_group.jinja")
         
         self.component_scss = self.get_template("component.scss")
         # Home Grid attributes o-table-column 
@@ -874,7 +875,7 @@ class OntBuilder(object):
     def gen_app_menu_config(self, template_name: str, entities: any):
         template = self.get_template(template_name)
         menu_item_template = Template(
-            "{ id: '{{ name }}', name: '{{ name_upper }}', icon: 'description', route: '/main/{{ name }}' }"
+            "{ id: '{{ name }}', name: '{{ name_upper }}', icon: 'view_list', route: '/main/{{ name }}' }"
         )
         import_template = Template("import {{ card_component }} from './{{ name }}-card/{{ name }}-card.component';")
         menuitems = []
@@ -882,21 +883,43 @@ class OntBuilder(object):
         menu_components = []
         sep = ""
         #TODO create menu_group - default to data
+        groups = []
+        menu_groups = []
         for each_entity_name, each_entity in entities:
-            name = each_entity_name
-            menu_group = each_entity.get("menu_group") or "DATA"
-            name_first_cap = name[:1].upper()+ name[1:]
-            menuitem = menu_item_template.render(name=name, name_upper=each_entity_name.upper())
-            menuitem = f"{sep}{menuitem}"
-            menuitems.append(menuitem)
-            card_component = "{ " + f"{name_first_cap}CardComponent" +" }"
-            importTemplate = import_template.render(name=name,card_component=card_component)
-            import_cards.append(importTemplate)
-            menu_components.append(f"{sep}{name_first_cap}CardComponent")
-            sep = ","
+            group =  getattr(each_entity, "group") or "data"
+            get_group(groups, group, each_entity_name)
             
+        for group in groups:
+            group_name = group["group"]  
+            group_entities = group["entities"]
+            menu_group = self.app_menu_group
+            for each_entity_name in group_entities:
+                name = each_entity_name
+                name_first_cap = name[:1].upper()+ name[1:]
+                menuitem = menu_item_template.render(name=name, name_upper=each_entity_name.upper())
+                menuitem = f"{sep}{menuitem}"
+                menuitems.append(menuitem)
+                card_component = "{ " + f"{name_first_cap}CardComponent" +" }"
+                importTemplate = import_template.render(name=name,card_component=card_component)
+                import_cards.append(importTemplate)
+                menu_components.append(f"{sep}{name_first_cap}CardComponent")
+                sep = ","
+            mg = menu_group.render(menu_group_name=group_name, menuitems=menuitems)
+            menu_groups.append(mg)
 
-        return template.render(menuitems=menuitems, name=name, importitems=import_cards,card_components=menu_components)
+        return template.render(menu_groups=menu_groups, name=name, importitems=import_cards, card_components=menu_components)
+def get_group(groups:list, group:str, entity_name: str):
+    entities = []
+    for g in groups:
+        if g["group"] == group:
+            entities = g["entities"]
+            entities.append(entity_name)
+            g["entities"] =entities
+            return
+    entities.append(entity_name)
+    menu_group = {"group":group, "entities": entities}
+    groups.append(menu_group)
+
 def make_key_path(key_list:list)-> str:
     #:key1/:key2
     key_path = ""
