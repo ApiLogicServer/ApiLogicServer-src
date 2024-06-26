@@ -257,7 +257,7 @@ class OntBuilder(object):
             "keycloak_realm": self.keycloak_realm,
             "keycloak_client_id": self.keycloak_client_id
         }
-        self.gen_auth_components(app_path, keycloak_args, self.use_keycloak, overwrite=False)
+        self.gen_auth_components(app_path, keycloak_args, self.use_keycloak,overwrite=False)
         
         rv_environment = self.environment_template.render(apiEndpoint=self.apiEndpoint)
         write_root_file(
@@ -881,8 +881,10 @@ class OntBuilder(object):
         import_cards = []
         menu_components = []
         sep = ""
+        #TODO create menu_group - default to data
         for each_entity_name, each_entity in entities:
             name = each_entity_name
+            menu_group = each_entity.get("menu_group") or "DATA"
             name_first_cap = name[:1].upper()+ name[1:]
             menuitem = menu_item_template.render(name=name, name_upper=each_entity_name.upper())
             menuitem = f"{sep}{menuitem}"

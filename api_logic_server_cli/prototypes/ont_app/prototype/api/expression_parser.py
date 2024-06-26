@@ -74,9 +74,9 @@ def parseFilter(filter: dict, sqltypes: any):
                 filters = expr.get_filters()
                 join = " OR "
         else:
-            q = "" if isinstance(value, int) or isinstance(value, float) else "'"
+            q = "'" if isinstance(value, str) else ""
             sql_where += f'{join} "{f}" = {q}{value}{q}'
-            filters.append({"lop": f, "op": "eq", "rop": f"{q}{value}{q}"})
+            filters.append({"lop": f, "op": "eq", "rop": value})
             join = " AND "
     return sql_where #, filters
 
