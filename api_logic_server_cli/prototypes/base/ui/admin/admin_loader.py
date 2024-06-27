@@ -150,6 +150,10 @@ def admin_events(flask_app: Flask, args: Args, validation_error: ValidationError
 
             admin_logger.debug(f'loading ui/admin/admin.yaml')
             mem = io.BytesIO(str.encode(content))
+            if debug_repoonse := False:  # debug, to verify url/security content
+                mem = io.BytesIO(str.encode(content))
+                mem_array = mem.getvalue().decode('utf-8').split('\n')
+                logging.info(f'admin_yaml() - response: \n{mem_array}')    
             return send_file(mem, mimetype='text/yaml')
         else:
             response = send_file("ui/admin/admin.yaml", mimetype='text/yaml')
