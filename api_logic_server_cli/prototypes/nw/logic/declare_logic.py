@@ -146,7 +146,7 @@ def declare_logic():
     
     Rule.constraint(validate=models.Order,
                     calling=do_not_ship_empty_orders,
-                    error_msg="Cannot Ship Empty Orders")
+                    error_msg="Cannot Ship Empty Orders (No Order Details)")
 
     def congratulate_sales_rep(row: models.Order, old_row: models.Order, logic_row: LogicRow):
         """ use events for sending email, messages, etc. """
@@ -180,6 +180,9 @@ def declare_logic():
     def order_defaults(row: models.Order, old_row: models.Order, logic_row: LogicRow):
         if row.Freight is None:
             row.Freight = 10
+        if row.AmountTotal is None:
+            row.AmountTotal = 0
+
 
     def order_detail_defaults(row: models.OrderDetail, old_row: models.OrderDetail, logic_row: LogicRow):
         if row.Quantity is None:

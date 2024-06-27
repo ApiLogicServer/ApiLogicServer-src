@@ -82,18 +82,6 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "Windows Behave Run (iff Behave Run fails)",
-            "type": "debugpy",
-            "request": "launch",
-            "cwd": "${workspaceFolder}\\test\\api_logic_server_behave\\features",
-            "program": "${workspaceFolder}\\test\\api_logic_server_behave\\behave_run.py",
-            "redirectOutput": true,
-            "args": [ "--outfile=${workspaceFolder}\\test\\api_logic_server_behave\\logs\\behave.log"],
-            "justMyCode": false,            
-            "console": "internalConsole",
-            "internalConsoleOptions": "openOnSessionStart"
-        },
-        {
             "name": "Behave Scenario",
             "type": "debugpy",
             "request": "launch",
@@ -118,18 +106,6 @@
                 ,"--prepend_wiki=reports/Behave Logic Report Intro.md"
                 ,"--wiki=reports/Behave Logic Report.md"
             ],
-            "console": "internalConsole",
-            "internalConsoleOptions": "openOnSessionStart"
-        },
-        {
-            "name": "Perform Customizations - add nw customizations",
-            "type": "debugpy",
-            "request": "launch",
-            "cwd": "${workspaceFolder}",
-            "program": "perform_customizations.py",
-            "redirectOutput": true,
-            "args": [ "go"],
-            "justMyCode": false,            
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
         },
