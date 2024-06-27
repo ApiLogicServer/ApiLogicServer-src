@@ -44,3 +44,9 @@ code .
 #
 # add-auth --provider-type=keycloak --db-url=localhost   # might want to verify config file
 # repeat test above
+
+6/26
+
+images not working (emp)
+
+Need to clear out order.amountTotal
