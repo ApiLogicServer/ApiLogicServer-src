@@ -1,6 +1,32 @@
 {
   "realm" : "kcals",
   "users" : [ {
+    "id" : "00c8db10-b4e8-4c6a-9856-5883fb64a90a",
+    "createdTimestamp" : 1719672369581,
+    "username" : "a1",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "Admin First Abbreviated",
+    "lastName" : "Admin Last Abbreviated",
+    "attributes" : {
+      "region" : [ "British Isles" ],
+      "client_id" : [ "2" ]
+    },
+    "credentials" : [ {
+      "id" : "fd79083e-0601-4ae7-a0b8-2e4bfb01c56a",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1719672409852,
+      "secretData" : "{\"value\":\"y6Q1MvYpQ/l6sz564r2zyd9fBq2bApYptbx5FkgCTSM=\",\"salt\":\"7IRPfO9481umUPcgBaHcTA==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "sa", "default-roles-kcals" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
     "id" : "b15e27f1-7bd7-4d29-a064-fc504880bdec",
     "createdTimestamp" : 1709991832754,
     "username" : "admin",
@@ -10,15 +36,15 @@
     "firstName" : "Admin First",
     "lastName" : "Admin Last",
     "attributes" : {
-      "region" : [ "NULL" ],
-      "client_id" : [ "NULL" ]
+      "region" : [ "British Isles" ],
+      "client_id" : [ "2" ]
     },
     "credentials" : [ {
       "id" : "6e5af703-82de-40c3-95b5-f9dd0cd4ae37",
       "type" : "password",
       "userLabel" : "My password",
-      "createdDate" : 1709991868574,
-      "secretData" : "{\"value\":\"uxCxwX2zQHWdckOlQOZ2NoVPAAGajTLvFrtJeK6F2Dc=\",\"salt\":\"Gejt8uSUSb+qgD8wuO3aJA==\",\"additionalParameters\":{}}",
+      "createdDate" : 1719672510002,
+      "secretData" : "{\"value\":\"40JYlH7cDaSa6M/aiD2p6ymOFVGtA1yjN3GoNhqR0Cg=\",\"salt\":\"lICsWlXeeUApgKBxv1rLbA==\",\"additionalParameters\":{}}",
       "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
     } ],
     "disableableCredentialTypes" : [ ],
@@ -34,9 +60,9 @@
     "totp" : false,
     "emailVerified" : false,
     "firstName" : "alfki first",
-    "lastName" : "alfki",
+    "lastName" : "alfki last - any region",
     "attributes" : {
-      "region" : [ "NULL" ],
+      "region" : [ "null" ],
       "client_id" : [ "1" ]
     },
     "credentials" : [ {
@@ -83,6 +109,7 @@
     "enabled" : true,
     "totp" : false,
     "emailVerified" : false,
+    "lastName" : "Behave Testing",
     "attributes" : {
       "region" : [ "British Isles" ],
       "client_id" : [ "1" ]
@@ -151,6 +178,8 @@
     "enabled" : true,
     "totp" : false,
     "emailVerified" : false,
+    "firstName" : "Just 1 Customer",
+    "lastName" : "Sales, British Isles",
     "attributes" : {
       "region" : [ "British Isles" ],
       "client_id" : [ "2" ]
