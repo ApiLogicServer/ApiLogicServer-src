@@ -189,6 +189,7 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
 
     #########################################################
     # Illustrate using SQLAlchemy in standard Flask endpoints
+    # #als: ORM database access
     #########################################################
 
     @app.route('/join_order')
@@ -198,6 +199,10 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         Illustrates: SQLAlchemy join fields, by manual code
 
         Better: use RowDictMapper (see OrderB2B, below)
+
+        If you've not used ORMs like SQLAlchemy, this example illustrates a few key features:
+        * They return objects (not dicts), which enable code completion and type checking
+        * They provide accessors to related data (parent join fields, child data)
 
         $(venv) ApiLogicServer curl "http://localhost:5656/join_order?id=11077"
 
