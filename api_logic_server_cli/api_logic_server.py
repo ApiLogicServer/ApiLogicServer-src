@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.04.78"
+__version__ = "10.04.79"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t06/26/2024 - 10.04.78: sra 6/13, kc local auth w/Ont, configure auth beyond sqlite, kc behave textarea, gpt v#, opt_lock ignored \n"\
+    "\t06/29/2024 - 10.04.79: sra 6/13, kc local auth w/Ont & attrs, configure auth beyond sqlite, kc behave textarea, gpt v#, opt_lock ignored \n"\
     "\t06/12/2024 - 10.04.63: revised keycloak auth_provider, default config to hardened, kc_base via add-auth \n"\
     "\t06/11/2024 - 10.04.62: default-auth creation, basic_demo+=b2b, ont CORS fix, basic_demo \n"\
     "\t06/06/2024 - 10.04.48: config-driven admin.yaml security config \n"\
