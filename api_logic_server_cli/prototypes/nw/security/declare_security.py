@@ -49,6 +49,7 @@ DefaultRolePermission(to_role = Roles.sales, can_read=True, can_delete=False)
 GlobalFilter(   global_filter_attribute_name = "Client_id",  # try customers & categories for u1 vs u2
                 roles_not_filtered = ["sa"],
                 filter = '{entity_class}.Client_id == Security.current_user().client_id')
+                # user attributes come from sqlalchemy User object, or keycloak user attributes
 
 
 GlobalFilter(   global_filter_attribute_name = "SecurityLevel",  # filters Department 'Eng Area 54'
