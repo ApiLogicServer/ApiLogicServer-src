@@ -86,7 +86,7 @@ authors = [
 ]
 dynamic = ["version"]
 keywords = ["Flask", "SQLAlchemy", "Rules", "WebApp", "Microservice", "ReactAdmin", "Angular"]
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 # zip_safe=False
 # platforms="any"
 readme = "README.md"
