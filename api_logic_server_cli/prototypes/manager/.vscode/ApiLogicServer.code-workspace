@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		}
+	],
+	"settings": {
+		"debug.console.wordWrap": false,
+		"workbench.editorAssociations": {
+			"*.md": "vscode.markdown.preview.editor"
+		},
+		"workbench.colorTheme": "Arduino",
+		"workbench.preferredLightColorTheme": "Arduino"
+	}
+}
