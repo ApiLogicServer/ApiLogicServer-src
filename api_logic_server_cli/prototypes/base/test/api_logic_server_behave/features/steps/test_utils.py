@@ -74,10 +74,10 @@ def login(user: str = 'aneu') -> dict:
         post_uri = f'{server}/auth/login'
         post_data = {"username": user, "password": "p"}
         r = requests.post(url=post_uri, json = post_data)
+        status_code = r.status_code
         if status_code > 300:
             raise Exception(f'POST login failed with {r.text}')
         response_text = r.text
-        status_code = r.status_code
         result_data = json.loads(response_text)
         result_map = DotMap(result_data)
         token = result_map.access_token
