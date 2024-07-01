@@ -4,6 +4,7 @@ from pathlib import Path
 import requests
 import os
 import create_from_model.api_logic_server_utils as utils
+import shutil
 
 log = logging.getLogger(__name__)
 
@@ -40,6 +41,14 @@ class GenAI(object):
         # https://docs.google.com/document/d/1o0TeNQtuT6moWU1bOq2K20IbSw4YhV1x_aFnKwo_XeU/edit#heading=h.3xmoi7pevsnp
 
         log.info(f'\ngenai creating database/models from {self.project.from_genai}')
+
+        manager_exists = False
+        from_dir = project.api_logic_server_dir_path.joinpath('prototypes/manager')
+        to_dir = Path(os.getcwd())
+        to_dir_check = Path(to_dir).joinpath('system')
+        if not to_dir_check.exists():
+            copied_path = shutil.copytree(src=from_dir, dst=to_dir, dirs_exist_ok=True)
+
 
         self.project.from_model = f'system/genai/temp/model.py' # we always write the model to this file
 
@@ -169,9 +178,12 @@ class GenAI(object):
             secrets = dotenv_values("system/secrets.txt")
             openai_api_key = secrets['APILOGICSERVER_CHATGPT_APIKEY']
             if openai_api_key == 'your-api-key-here':
-                log.error("\n\nMissing env value: APILOGICSERVER_CHATGPT_APIKEY")
-                log.error("... Check your system/secrets file...\n")
-                exit(1)
+                if os.getenv('APILOGICSERVER_CHATGPT_APIKEY'):
+                    openai_api_key = os.getenv('APILOGICSERVER_CHATGPT_APIKEY')
+                else:
+                    log.error("\n\nMissing env value: APILOGICSERVER_CHATGPT_APIKEY")
+                    log.error("... Check your system/secrets file...\n")
+                    exit(1)
 
         url = "https://api.openai.com/v1/chat/completions"
 

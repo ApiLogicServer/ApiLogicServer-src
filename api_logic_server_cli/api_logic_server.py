@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.04.81"
+__version__ = "10.04.82"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t07/01/2024 - 10.04.82: APILOGICSERVER_GENAI_VERSION, APILOGICSERVER_CHATGPT_APIKEY \n"\
     "\t06/30/2024 - 10.04.81: sra 6/30, kc local auth w/Ont & attrs, configure auth, kc behave textarea, gpt v#, opt_lock ignored, sqlite imports, multi-reln  \n"\
     "\t06/12/2024 - 10.04.63: revised keycloak auth_provider, default config to hardened, kc_base via add-auth \n"\
     "\t06/11/2024 - 10.04.62: default-auth creation, basic_demo+=b2b, ont CORS fix, basic_demo \n"\
@@ -942,6 +943,9 @@ class ProjectRun(Project):
         # log.debug(f".. ... AFTER  .ENV os.getenv('APILOGICSERVER_AUTO_OPEN'): {os.getenv('APILOGICSERVER_AUTO_OPEN')}")
         pass
 
+        if os.getenv('APILOGICSERVER_GENAI_VERSION'):
+            self.genai_version = os.getenv('APILOGICSERVER_GENAI_VERSION')
+
         if self.open_with == 'NO_AUTO_OPEN':  #, eg, for manager.py
             self.open_with = ''
             log.debug('.. ... NO_AUTO_OPEN')
@@ -953,6 +957,7 @@ class ProjectRun(Project):
         else:
             pass
             # log.debug(f".. ..Not setting open_with: {self.open_with} with env: {os.getenv('APILOGICSERVER_AUTO_OPEN')}")
+
         if execute:
             self.create_project()
 
