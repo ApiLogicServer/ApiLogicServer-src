@@ -725,6 +725,20 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "      -- Create servers/airport from MODEL",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "cwd": "${workspaceFolder}/api_logic_server_cli",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["create",
+                "--project_name=${workspaceFolder}/../../servers/airport",
+                "--from-model=../tests/test_databases/ai-created/airport/airport_model.py",
+                "--db_url=sqlite///../tests/test_databases/ai-created/airport/airport.sqlite"],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "    - Create Sqlite - CHATGPT - ai_customer_orders",
             "type": "debugpy",
             "request": "launch",
