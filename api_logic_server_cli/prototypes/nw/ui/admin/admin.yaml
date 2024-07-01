@@ -1,6 +1,6 @@
 about:
-  date: 6/22/2024
-  recent_changes: auth config, api_root, altered Customer/Order/Employee attribute ordering, tab captions, info, EmpType, dept emps, defaults, show_when, cascade add, toggles, images, security, login, virtual relns, global filters, no IsCommissioned, employee.notes as textarea
+  date: 6/30/2024
+  recent_changes: auth config, api_root, altered Customer/Order/Employee attribute ordering, tab captions, info, EmpType, dept emps, defaults, show_when, cascade add, toggles, images, security, login, virtual relns, global filters, no IsCommissioned, employee.notes as textarea, reln names
   # this file illustrates customizations; compare it to admin-created.yaml to see the specific changes.  version: 10.04.71
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
 info_toggle_checked: true
@@ -143,28 +143,26 @@ resources:
       - name: Id
       - name: SecurityLevel
     tab_groups:
-      - direction: tomany
-        fks:
-          - DepartmentId
-        name: DepartmentList
-        resource: Department
-      - direction: tomany
-        fks:
-          - OnLoanDepartmentId
-        name: EmployeeList
-        label: Employees On Loan
-        resource: Employee
-      - direction: tomany
-        fks:
-          - WorksForDepartmentId
-        name: EmployeeList1
-        label: Employees
-        resource: Employee
-      - direction: toone
-        fks:
-          - DepartmentId
-        name: Department
-        resource: Department
+    - direction: tomany
+      fks:
+      - DepartmentId
+      name: DepartmentList
+      resource: Department
+    - direction: tomany
+      fks:
+      - OnLoanDepartmentId
+      name: EmployeeList
+      resource: Employee
+    - direction: tomany
+      fks:
+      - WorksForDepartmentId
+      name: EmployeeList1
+      resource: Employee
+    - direction: toone
+      fks:
+      - DepartmentId
+      name: Department
+      resource: Department
     type: Department
     user_key: DepartmentName
   Employee:
@@ -228,46 +226,36 @@ resources:
       - name: PhotoPath
         type: Image
     tab_groups:
-      - direction: tomany
-        fks:
-          - EmployeeId
-        name: EmployeeAuditList
-        resource: EmployeeAudit
-      - direction: tomany
-        fks:
-          - EmployeeId
-        name: EmployeeTerritoryList
-        resource: EmployeeTerritory
-      - direction: tomany
-        fks:
-          - EmployeeId
-        name: OrderList
-        resource: Order
-      - direction: toone
-        fks:
-          - OnLoanDepartmentId
-        name: Department
-        resource: Department
-      - direction: toone
-        fks:
-          - WorksForDepartmentId
-        name: Department1
-        resource: Department
-      - direction: toone
-        fks:
-        - UnionId
-        name: Union
-        resource: Union
-      - direction: tomany
-        fks:
-          - ReportsTo
-        name: Manages
-        resource: Employee
-      - direction: toone
-        fks:
-        - ReportsTo
-        name: Manager
-        resource: Employee
+    - direction: tomany
+      fks:
+      - EmployeeId
+      name: EmployeeAuditList
+      resource: EmployeeAudit
+    - direction: tomany
+      fks:
+      - EmployeeId
+      name: EmployeeTerritoryList
+      resource: EmployeeTerritory
+    - direction: tomany
+      fks:
+      - EmployeeId
+      name: OrderList
+      resource: Order
+    - direction: toone
+      fks:
+      - OnLoanDepartmentId
+      name: OnLoanDepartment
+      resource: Department
+    - direction: toone
+      fks:
+      - UnionId
+      name: Union
+      resource: Union
+    - direction: toone
+      fks:
+      - WorksForDepartmentId
+      name: WorksForDepartment
+      resource: Department
     type: Employee
     user_key: LastName
   EmployeeAudit:
