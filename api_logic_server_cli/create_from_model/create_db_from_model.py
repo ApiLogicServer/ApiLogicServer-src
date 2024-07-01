@@ -34,7 +34,7 @@ def create_db(project: Project):
         models_module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(models_module)  # runs "bare" module code (e.g., initialization)
     except Exception as e:
-        log.error(f'Error loading {models_file}: {e}')
+        log.error(f'Error loading models file [{models_file}]: {e}')
         raise e    
     # models_module = importlib.util.module_from_spec(spec)
     # spec.loader.exec_module(models_module)  # runs "bare" module code (e.g., initialization)
