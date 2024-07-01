@@ -313,12 +313,12 @@ class ModelClass(Model):
         pk_column_names = set(col.name for col in table.primary_key.columns)
         parent_accessors = {}
         """ dict of parent_table, current count (0, 1, 2...   >1 ==> multi-reln) """
-        if self.name in ["QtrTotal", "StressBinaryDouble", "STRESSAllChar"]:
+        if self.name in ["Flight", "QtrTotal", "StressBinaryDouble", "STRESSAllChar"]:
             # table name is 'stress_binary_double', should match Oracle STRESS_BINARY_DOUBLE
             # table name is 'STRESS_AllChars', matches Oracle STRESS_AllChars
             debug_stop = "nice breakpoint for class names"
         for constraint in sorted(table.constraints, key=_get_constraint_sort_key):
-            if isinstance(constraint, ForeignKeyConstraint):
+            if isinstance(constraint, ForeignKeyConstraint):  # drive from the child side
                 target_cls = self._tablename_to_classname(constraint.elements[0].column.table.name,
                                                           inflect_engine)
                 this_included = code_generator.is_table_included(self.table.name)
@@ -334,6 +334,8 @@ class ModelClass(Model):
                 else:
                     parent_accessors[target_cls] = multi_reln_count
                 if self.name == 'QtrTotal' and target_cls == 'YrTotal':
+                    debug_stop = "interesting breakpoint"
+                if self.name == 'Flight' and target_cls == 'Airport':
                     debug_stop = "interesting breakpoint"
                 relationship_ = ManyToOneRelationship(self.name, target_cls, constraint,
                                                     inflect_engine, multi_reln_count)
@@ -421,11 +423,18 @@ class Relationship(object):
 
 
 class ManyToOneRelationship(Relationship):
+
     def __init__(self, source_cls, target_cls, constraint, inflect_engine, multi_reln_count):
+        """
+        compute many to 1 class, assigning accessor names (tricky for multi_relns between same 2 tables)
+
+        * source_cls is the child
+        * target_cls is the parent
+        """
         super(ManyToOneRelationship, self).__init__(source_cls, target_cls)
 
-        if source_cls == 'QtrTotal' and target_cls == 'YrTotal':
-            debug_stop = "interesting breakpoint"
+        if source_cls == 'Flight' and target_cls == 'Airport':
+            debug_stop = "interesting breakpoint"  #  Launch config 8...   -- Create servers/airport from MODEL
         column_names = _get_column_names(constraint)
         colname = column_names[0]
         tablename = constraint.elements[0].column.table.name
@@ -452,7 +461,6 @@ class ManyToOneRelationship(Relationship):
             pk_col_names = [col.name for col in constraint.table.primary_key]
             self.kwargs['remote_side'] = '[{0}]'.format(', '.join(pk_col_names))
         
-        
         self.parent_accessor_name = self.preferred_name
         """ parent accessor (typically parent (target_cls)) """
         # assert self.target_cls == self.preferred_name, "preferred name <> parent"
@@ -471,8 +479,8 @@ class ManyToOneRelationship(Relationship):
         self.child_accessor_name = self.source_cls + "List"
         """ child accessor (typically child (target_class) + "List") """
 
-        if multi_reln_count > 0:  # disambiguate multi_reln
-            self.parent_accessor_name += str(multi_reln_count)
+        if multi_reln_count > 0:  # disambiguate multi_reln between same 2 tables (tricky!)
+            # self.parent_accessor_name += str(multi_reln_count)
             self.child_accessor_name += str(multi_reln_count)
         # If the two tables share more than one foreign key constraint,
         # SQLAlchemy needs an explicit primaryjoin to figure out which column(s) to join with
