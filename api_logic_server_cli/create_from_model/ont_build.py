@@ -565,6 +565,9 @@ class OntBuilder(object):
         for column in entity.columns:
             rv = self.get_new_column(column, fks, entity)
             if dv := column.get("default"):
+                type = column.get("type")
+                if type.upper() == "DATE":
+                    dv = f"new Date('{dv}').getTime()" #f"moment('{dv}').format('YYYY-MM-DD')"
                 defaultValues[column.name] = dv
         return defaultValues
     def get_new_column(self, column, fks, entity):
