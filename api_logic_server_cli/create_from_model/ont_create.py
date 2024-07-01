@@ -202,6 +202,8 @@ class OntCreator(object):
                     else:
                         each_attribute.type = resource_attribute.db_type
                         each_attribute.template = self.compute_field_template(each_attribute)
+                    if hasattr(resource_attribute,"default"):
+                        each_attribute.default = resource_attribute.default
         return each_attribute
 
 
