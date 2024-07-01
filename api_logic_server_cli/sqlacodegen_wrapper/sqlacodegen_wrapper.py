@@ -106,8 +106,9 @@ def fix_generated(code, args):
     """ numeric vs. string replacements
     """
     if "sqlite" in args.url: # db.session.bind.dialect.name == "sqlite":   FIXME review
+        sqlite_import = 'from sqlalchemy import DECIMAL, DateTime  # API Logic Server GenAI assist\n'
         pass
-        # code = code.replace("Numeric", "String")  # removed 10.03.88, tested in chinook
+        code = code.replace("coding: utf-8\n","coding: utf-8\n" + sqlite_import)
     if "mysql" in args.url:
         # code = code.replace("Numeric", "String")  # removed 10.03.88, tested in chinook
         code = code.replace(", 'utf8_bin'","")

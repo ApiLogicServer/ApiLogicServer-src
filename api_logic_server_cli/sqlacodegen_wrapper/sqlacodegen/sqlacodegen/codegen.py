@@ -445,7 +445,7 @@ class ManyToOneRelationship(Relationship):
         else:
             if ( colname.endswith('_id') or colname.endswith('_Id') ):
                 self.preferred_name = colname[:-3]
-            if ( colname.endswith('id') or colname.endswith('Id') ):
+            elif ( colname.endswith('id') or colname.endswith('Id') ):
                 self.preferred_name = colname[:-2]
             else:
                 self.preferred_name = inflect_engine.singular_noun(tablename) or tablename
@@ -503,6 +503,9 @@ class ManyToOneRelationship(Relationship):
                 foreign_keys += source_cls + "." + each_column_name + ", "
             self.kwargs['foreign_keys'] = foreign_keys[0 : len(foreign_keys)-2] + "]'"
             pass
+        if self.parent_accessor_name == "user_":
+            debug_stop = "interesting breakpoint"   
+
 
     @staticmethod
     def get_common_fk_constraints(table1, table2):
