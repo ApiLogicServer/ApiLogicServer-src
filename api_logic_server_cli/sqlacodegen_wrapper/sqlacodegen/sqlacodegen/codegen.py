@@ -433,17 +433,23 @@ class ManyToOneRelationship(Relationship):
         """
         super(ManyToOneRelationship, self).__init__(source_cls, target_cls)
 
-        if source_cls == 'Flight' and target_cls == 'Airport':
+        if source_cls in ['Flight', 'Department'] and target_cls in ['Airport', 'Employee']:
             debug_stop = "interesting breakpoint"  #  Launch config 8...   -- Create servers/airport from MODEL
         column_names = _get_column_names(constraint)
         colname = column_names[0]
         tablename = constraint.elements[0].column.table.name
         self.foreign_key_constraint = constraint
-        if colname.endswith('_id') and len(column_names) == 1:
-            self.preferred_name = colname[:-3]
-        else:
-            self.preferred_name = inflect_engine.singular_noun(tablename) or tablename
 
+        if len(column_names) > 1 :    
+            self.preferred_name = inflect_engine.singular_noun(tablename) or tablename
+        else:
+            if ( colname.endswith('_id') or colname.endswith('_Id') ):
+                self.preferred_name = colname[:-3]
+            if ( colname.endswith('id') or colname.endswith('Id') ):
+                self.preferred_name = colname[:-2]
+            else:
+                self.preferred_name = inflect_engine.singular_noun(tablename) or tablename
+        
         # Add uselist=False to One-to-One relationships
         if any(isinstance(c, (PrimaryKeyConstraint, UniqueConstraint)) and
                set(col.name for col in c.columns) == set(column_names)
@@ -480,6 +486,7 @@ class ManyToOneRelationship(Relationship):
         """ child accessor (typically child (target_class) + "List") """
 
         if multi_reln_count > 0:  # disambiguate multi_reln between same 2 tables (tricky!)
+            # key cases are nw (Dept/Employee) and ai/airport (Flight/Airport)
             # self.parent_accessor_name += str(multi_reln_count)
             self.child_accessor_name += str(multi_reln_count)
         # If the two tables share more than one foreign key constraint,
