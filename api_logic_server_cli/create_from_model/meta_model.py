@@ -42,6 +42,8 @@ class ResourceAttribute():
             if lower_name.endswith(each_non_fav):
                 self.non_favorite = True
                 break
+        if each_attribute.server_default is not None:
+            self.default = each_attribute.server_default.arg.text
         resource.attributes.append(self)
 
     def __str__(self):
