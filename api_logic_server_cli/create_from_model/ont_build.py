@@ -199,7 +199,7 @@ class OntBuilder(object):
             home_template = self.load_home_template(home_template_name, each_entity, each_entity_name, entity_favorites)
             home_scss = self.get_template("home.scss").render()
             
-            ts = self.load_ts("home_template.jinja", each_entity_name, each_entity)
+            ts = self.load_ts("home_template.jinja", each_entity_name, each_entity, entity_favorites)
             write_file(app_path, entity_name, "home", "-home.component.html", home_template)
             write_file(app_path, entity_name, "home", "-home.component.ts", ts)
             write_file(app_path, entity_name, "home", "-home.component.scss", home_scss)
@@ -212,7 +212,7 @@ class OntBuilder(object):
             # New Style for Input
             new_template_name = self.find_template(each_entity, "new_template","new_template.html")
             new_template = self.load_new_template(new_template_name, each_entity_name, each_entity, entity_favorites)
-            ts = self.load_ts("new_component.jinja", each_entity_name, each_entity)
+            ts = self.load_ts("new_component.jinja", each_entity_name, each_entity, entity_favorites)
             new_scss = self.get_template("new.scss").render()
             write_file(app_path, entity_name, "new", "-new.component.html", new_template)
             write_file(app_path, entity_name, "new", "-new.component.ts", ts)
@@ -221,14 +221,14 @@ class OntBuilder(object):
             # Detail for Update
             detail_template_name = self.find_template(each_entity, "detail_template","detail_template.html")
             detail_template = self.load_detail_template(detail_template_name, each_entity_name, each_entity, entity_favorites)
-            ts = self.load_ts("detail_component.jinja", each_entity_name, each_entity)
+            ts = self.load_ts("detail_component.jinja", each_entity_name, each_entity, entity_favorites)
             detail_scss = self.get_template("detail.scss").render()
             write_file(app_path, entity_name, "detail", "-detail.component.html", detail_template)
             write_file(app_path, entity_name, "detail", "-detail.component.ts", ts)
             write_file(app_path, entity_name, "detail", "-detail.component.scss", detail_scss)
             
             card_template = self.load_card_template("card.component.html", each_entity_name, entity_favorites)
-            ts = self.load_ts("card.component.jinja", each_entity_name, each_entity)
+            ts = self.load_ts("card.component.jinja", each_entity_name, each_entity, entity_favorites)
             card_scss = self.get_template("detail.scss").render()
             write_card_file(app_path, entity_name, "-card.component.html", card_template)
             write_card_file(app_path, entity_name,  "-card.component.ts", ts)
@@ -388,12 +388,15 @@ class OntBuilder(object):
         )
         return (env,local_env)
     
-    def load_ts(self, template_name: str, entity_name: str, entity: any) -> str:
+    def load_ts(self, template_name: str, entity_name: str, entity: any, favorites: any) -> str:
         # The above code is a Python function that takes a template name as input, retrieves the template
         # using the `self.get_template` method, and then processes the template by rendering it with a
         # dictionary of variables.
         template = self.get_template(template_name)
         entity_vars = self.get_entity_vars(entity_name=entity_name,entity=entity)
+        fks = get_foreign_keys(entity, favorites)
+        defaultValues = self.get_default_values(fks, entity)
+        entity_vars["defaultValues"] = str(defaultValues)
         return template.render(entity_vars)
 
     def load_home_template(self, template_name: str, entity: any, entity_name:str, entity_favorites: any) -> str:
@@ -549,13 +552,21 @@ class OntBuilder(object):
         entity_vars = self.get_entity_vars(entity_name, entity)
         fks = get_foreign_keys(entity, favorites)
         row_cols = []
+        defaultValues = {}
         for column in entity.columns:
             rv = self.get_new_column(column, fks, entity)
             row_cols.append(rv)
-                
-        entity_vars["row_columns"] = row_cols
-        return  template.render(entity_vars)
 
+        entity_vars["row_columns"] = row_cols
+        return template.render(entity_vars)
+
+    def get_default_values(self, fks, entity):
+        defaultValues = {}
+        for column in entity.columns:
+            rv = self.get_new_column(column, fks, entity)
+            if dv := column.get("default"):
+                defaultValues[column.name] = dv
+        return defaultValues
     def get_new_column(self, column, fks, entity):
         col_var = self.get_column_attrs(column)
         name = column["label"] if  hasattr(column, "label") and column.label != DotMap() else column["name"]
