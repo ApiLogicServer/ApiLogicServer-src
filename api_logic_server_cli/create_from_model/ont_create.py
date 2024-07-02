@@ -99,7 +99,7 @@ class OntCreator(object):
 
         from_dir = self.project.api_logic_server_dir_path.joinpath('prototypes/ont_app/devops')
         to_dir = self.project.project_directory_path.joinpath(f'{self.app}/devops')
-        shutil.copytree(from_dir, to_dir, dirs_exist_ok=True)  # create default app files
+        # shutil.copytree(from_dir, to_dir, dirs_exist_ok=True)  # create default app files
 
         with open(f'{admin_app}', "r") as admin_file:  # path is admin.yaml for default url/app
                 admin_dict = yaml.safe_load(admin_file)
