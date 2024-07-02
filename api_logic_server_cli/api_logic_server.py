@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.04.83"
+__version__ = "10.04.84"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t07/01/2024 - 10.04.83: APILOGICSERVER_GENAI_VERSION, APILOGICSERVER_CHATGPT_APIKEY, jun-29 sra \n"\
+    "\t07/01/2024 - 10.04.84: APILOGICSERVER_GENAI_VERSION, APILOGICSERVER_CHATGPT_APIKEY, jun-29 sra, mgr .env \n"\
     "\t06/30/2024 - 10.04.81: sra 6/30, kc local auth w/Ont & attrs, configure auth, kc behave textarea, gpt v#, opt_lock ignored, sqlite imports, multi-reln  \n"\
     "\t06/12/2024 - 10.04.63: revised keycloak auth_provider, default config to hardened, kc_base via add-auth \n"\
     "\t06/11/2024 - 10.04.62: default-auth creation, basic_demo+=b2b, ont CORS fix, basic_demo \n"\
@@ -1199,7 +1199,7 @@ from database import <project.bind_key>_models
             if self.auth_db_url in[ 'auth' ]:
                 self.auth_db_url = "'sqlite:///../database/authentication_db.sqlite'  #"
 
-        provider_note = f"Setting security provider type = {self.auth_provider_type}, @server = {self.auth_db_url} "
+        provider_note = f"Setting security provider type = {self.auth_provider_type}, @server = {self.auth_db_url} \n"
         #                    f'(was: {was_provider_type}, {is_enabled_note})\n'
 
         if self.auth_provider_type == 'none':  # none means disable

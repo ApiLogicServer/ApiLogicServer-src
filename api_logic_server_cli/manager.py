@@ -62,9 +62,8 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path, vol
             log.info(f"    Using manager at: {to_dir}\n\n")
         else:
             log.info(f"    Refreshing .env in manager at: {to_dir}\n\n")
-            src_env = from_dir.joinpath('.env')
-            dst_env = to_dir.joinpath('.env')
-            copied_env = shutil.copy(src=src_env, dst=dst_env)
+            copied_env = shutil.copy(src=from_dir.joinpath('settings.txt'), dst=to_dir.joinpath('.env'))
+            os.remove(to_dir.joinpath('settings.txt'))
     else:
         mgr_save_level = log.level
         codegen_logger = logging.getLogger('sqlacodegen_wrapper.sqlacodegen.sqlacodegen.codegen')
@@ -73,8 +72,12 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path, vol
         log.setLevel(mgr_save_level)
         if to_dir_check.exists():
             log.info(f"    Cleaning manager at: {to_dir}\n\n")
+
         copied_path = shutil.copytree(src=from_dir, dst=to_dir, dirs_exist_ok=True)
+        copied_env = shutil.copy(src=from_dir.joinpath('settings.txt'), dst=to_dir.joinpath('.env'))
+        os.remove(to_dir.joinpath('settings.txt'))
         log.debug(f"    .. created manager\n")
+
         if project.is_docker:
             from_docker_dir = api_logic_server_path.joinpath('prototypes/manager_docker')
             copied_path = shutil.copytree(src=from_docker_dir, dst=to_dir, dirs_exist_ok=True)
@@ -141,7 +144,8 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path, vol
                                             replace_with=str(cli_str),
                                             in_file=vscode_launch_path)
 
-    create_utils.replace_string_in_file(search_for = 'APILOGICSERVER_AUTO_OPEN=code',
+    if env_path.exists():
+        create_utils.replace_string_in_file(search_for = 'APILOGICSERVER_AUTO_OPEN=code',
                                         replace_with=f'APILOGICSERVER_AUTO_OPEN={open_with}',
                                         in_file=env_path)
 
