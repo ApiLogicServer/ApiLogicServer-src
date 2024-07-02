@@ -1,6 +1,6 @@
 # Stage 1: Compile and Build angular codebase
 # Use official node image as the base image
-# docker build -f Dockerfile -t apilogicserver/yaml_editor --rm .
+# docker build -f Dockerfile -t apilogicserver/ontimizeweb --rm .
 FROM node:18.10.0-alpine as build
 
 # Set the working directory

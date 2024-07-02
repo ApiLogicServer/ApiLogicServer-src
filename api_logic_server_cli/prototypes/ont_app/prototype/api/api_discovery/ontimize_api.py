@@ -147,6 +147,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         if clz_type == "dumpyaml":
             return dump_yaml()
         
+        if request.path == '/ontimizeweb/services/rest/users/login':
+            return login(request)
         
         #api_clz = api_map.get(clz_name)
         resource = find_model(clz_name)
@@ -206,6 +208,34 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             if resource == clz_name:
                 return resources[resource]
         return None
+    
+    def login(request):
+        auth = request.headers.get("Authorization", None)
+        if auth and auth.startswith("Basic"):  # support basic auth
+            import base64
+            base64_message = auth[6:]
+            print(f"auth found: {auth}")
+            #base64_message = 'UHl0aG9uIGlzIGZ1bg=='
+            base64_bytes = base64_message.encode('ascii')
+            message_bytes = base64.b64decode(base64_bytes)
+            message = message_bytes.decode('ascii')
+            s = message.split(":")
+            username = s[0]
+            password = s[1]
+        
+            import config.config as config
+            from security.authentication_provider.abstract_authentication_provider import Abstract_Authentication_Provider
+            authentication_provider : Abstract_Authentication_Provider = config.Config.SECURITY_PROVIDER  # type: ignore
+            user = authentication_provider.get_user(username, password)
+        if not user or not user.check_password(password):
+            #raise BaseException("Wrong username or password"), 401
+            return jsonify({"code":1,"message":"Login Failed","data":None})
+
+        from security.system.authentication import create_access_token, access_token
+        access_token = create_access_token(identity=user)  # serialize and encode
+        return jsonify({"code":0,"message":"Login Successful","data":{"username":"admin","token":"admin"}})
+        #return jsonify({"code":1,"message":"Login Failed","data":None})
+    
     def get_rows_agg(request: any, api_clz, agg_type, filter, columns):
         key = api_clz.__name__
         resources = getMetaData(key)
