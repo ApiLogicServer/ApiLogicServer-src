@@ -2,9 +2,9 @@
 
 # ALERT - this is a pre-configured for the sqlite databases
 # see https://apilogicserver.github.io/Docs/Database-Docker/#classicmodels-mysql-docker
-
+# docker build -f Dockerfile -t apilogicserver/ontimizeweb --rm .
 # cd <project>  
-# sh ./devops/docker-compose-dev-local/docker-compose-ontimize.sh
+# sh ./ui/app/docker compose -f docker-compose-ontimize.yml up -d
 # --> builds, runs at localhost/ontimize, and logs to console
 
 version: "3.5"
@@ -45,8 +45,8 @@ services:
           - 80:80
         volumes:
           # local:path-in-container
-          - ../ui/app/nginx:/etc/nginx  
-          - ../app/dist:/usr/share/nginx/html/ontimize-web-ngx-jee-seed
+          #- ../ui/app/nginx:/etc/nginx  
+          - ../app/dist:/usr/share/nginx/html
         depends_on:
           - apilogicserver
         environment:
