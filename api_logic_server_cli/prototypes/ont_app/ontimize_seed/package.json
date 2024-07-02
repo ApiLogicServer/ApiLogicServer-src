@@ -1,5 +1,5 @@
 {
-  "name": "ontimize-web-ngx-jee-seed",
+  "name": "ontimize-app",
   "version": "15.1.0-SNAPSHOT-0",
   "scripts": {
     "ng": "ng",
@@ -8,7 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
-    "production": "ng build --base-href=/ontimize-web-ngx-jee-seed/"
+    "production": "ng build --base-href=/ontimize-app/"
   },
   "private": true,
   "engines": {
