@@ -357,9 +357,7 @@ class OntBuilder(object):
         for v in self.title_translation: # append to app/assets/i8n/en.json and es.json
             strings.extend(v[k] for k in v)
         for s in strings:
-            print(s)
-            translation = translator.translate(s)
-            if translation:
+            if translation := translator.translate(s):
                 print(s, translation)
                 translated_strings.append(translation)
         return translated_strings
@@ -665,9 +663,6 @@ class OntBuilder(object):
         col_var["title"] = attr[:-2] if attr[-2:] == "Id" else attr
         return self.pick_list_template.render(col_var)
         
-            
-
-    
     def get_fk_column_type(self, fk_column) -> str:
         return "VARCHAR" if fk_column and fk_column.type.startswith("VARCHAR") else fk_column.type if hasattr(fk_column,"type") else "INTEGER"
     def load_tab_template(self, entity, parent_entity, template_var: any, parent_pkey:str) -> str:
@@ -884,7 +879,6 @@ class OntBuilder(object):
 
         return template.render(var)
         
-
     # app.menu.config.jinja
     def gen_app_menu_config(self, template_name: str, entities: any):
         template = self.get_template(template_name)
@@ -892,21 +886,21 @@ class OntBuilder(object):
             "{ id: '{{ name }}', name: '{{ name_upper }}', icon: 'view_list', route: '/main/{{ name }}' }"
         )
         import_template = Template("import {{ card_component }} from './{{ name }}-card/{{ name }}-card.component';")
-        menuitems = []
-        import_cards = []
-        menu_components = []
         sep = ""
         #TODO create menu_group - default to data
         groups = []
         menu_groups = []
         for each_entity_name, each_entity in entities:
-            group =  getattr(each_entity, "group") or "data"
+            group =  "data" # getattr(each_entity, "group") or "data" TEMPORARY TODO
             get_group(groups, group, each_entity_name)
-            
+        
+        import_cards = []
+        card_components = []    
         for group in groups:
             group_name = group["group"]  
             group_entities = group["entities"]
             menu_group = self.app_menu_group
+            menuitems = []
             for each_entity_name in group_entities:
                 name = each_entity_name
                 name_first_cap = name[:1].upper()+ name[1:]
@@ -916,19 +910,19 @@ class OntBuilder(object):
                 card_component = "{ " + f"{name_first_cap}CardComponent" +" }"
                 importTemplate = import_template.render(name=name,card_component=card_component)
                 import_cards.append(importTemplate)
-                menu_components.append(f"{sep}{name_first_cap}CardComponent")
+                card_components.append(f"{sep}{name_first_cap}CardComponent")
                 sep = ","
             mg = menu_group.render(menu_group_name=group_name, menuitems=menuitems)
             menu_groups.append(mg)
 
-        return template.render(menu_groups=menu_groups, name=name, importitems=import_cards, card_components=menu_components)
+        return template.render(menu_groups=menu_groups, name=name, import_cards=import_cards, card_components=card_components)
 def get_group(groups:list, group:str, entity_name: str):
     entities = []
     for g in groups:
         if g["group"] == group:
             entities = g["entities"]
             entities.append(entity_name)
-            g["entities"] =entities
+            g["entities"] = entities
             return
     entities.append(entity_name)
     menu_group = {"group":group, "entities": entities}
