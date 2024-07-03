@@ -315,16 +315,20 @@ class Grant:
 
         grant_entity = entity_name 
 
-        user_roles_with_public = [DotMap(role_name="public")]
-        for each_role in user.UserRoleList:
-            user_roles_with_public.append(each_role)
+        user_roles_or_public = []
+        ''' if user has no roles, assume public role (if has roles, not public - causes confusion) '''
+        if len(user.UserRoleList) == 0:
+            user_roles_or_public = [DotMap(role_name="public")]
+        else:
+            for each_role in user.UserRoleList:
+                user_roles_or_public.append(each_role)
                     
         #########################################
         # Role crud permissions 
         #########################################
         # start out full restricted - any True will turn on access
         for each_role in DefaultRolePermission.grants_by_role:
-            for each_user_role in user_roles_with_public:
+            for each_user_role in user_roles_or_public:
                 if each_user_role.role_name == "sa":
                     can_read = True
                     can_insert = True
@@ -349,7 +353,7 @@ class Grant:
                 grant_entity = each_grant.entity
                 if each_grant.global_filter is not None:    # Global Filters
                     excluded_role = False
-                    for each_user_role in user_roles_with_public:
+                    for each_user_role in user_roles_or_public:
                         if each_user_role.role_name in each_grant.global_filter.roles_not_filtered:
                             excluded_role = True
                             break
@@ -358,7 +362,7 @@ class Grant:
                         global_filter_list.append(each_grant.filter())
                         security_logger.info(f"+ Global Filter: {each_grant.filter_debug}")
                 else:                                       # Grant Permissions
-                    for each_user_role in user_roles_with_public:
+                    for each_user_role in user_roles_or_public:
                         if each_grant.role_name == each_user_role.role_name:
                             security_logger.debug(f'Amend Grant for class / role: {entity_name} / {each_grant.role_name} - {each_grant.filter}')
                             security_logger.debug(f"Grant on entity: {entity_name} Role: {each_user_role.role_name:} Read: {each_grant.can_read}, Update: {each_grant.can_update}, Insert: {each_grant.can_insert}, Delete: {each_grant.can_delete}")
@@ -453,7 +457,7 @@ def receive_do_orm_execute(orm_execute_state: ORMExecuteState ):
             mapper = orm_execute_state.bind_arguments['mapper']
             class_name = mapper.class_.__name__   # mapper.mapped_table.fullname disparaged
             if class_name == "Users":
-                #pass
+                # pass
                 security_logger.debug('No grants - avoid recursion on User table')
             elif  session._proxied._flushing:  # type: ignore
                 security_logger.debug('No grants during logic processing')
