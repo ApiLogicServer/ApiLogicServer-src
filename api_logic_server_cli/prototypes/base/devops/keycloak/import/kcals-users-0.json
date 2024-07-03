@@ -148,6 +148,28 @@
     "notBefore" : 0,
     "groups" : [ ]
   }, {
+    "id" : "ad3926d6-d257-4fec-bd99-da1dd107675c",
+    "createdTimestamp" : 1719967487554,
+    "username" : "p1",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "John Q",
+    "lastName" : "Public (default role 'public' only)",
+    "credentials" : [ {
+      "id" : "d42a0489-bfad-4acc-bdcc-5e7b86635da9",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1719967513864,
+      "secretData" : "{\"value\":\"nuDzlkFXuXg7jksASy4omXS/fCVtgU37Pa+fPkmU0yk=\",\"salt\":\"Q2r24LOAfaFxQkjeM18uFQ==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-kcals" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
     "id" : "2e742a04-ed7f-4f91-863f-6dc182534651",
     "createdTimestamp" : 1709993380588,
     "username" : "r1",

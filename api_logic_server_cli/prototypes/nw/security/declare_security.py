@@ -37,6 +37,7 @@ class Roles():
     manager = "manager"         # u2, sam
     sales="sales"               # s1
     customer="customer"         # ALFKI, ANATR
+    public="public"             # p1 (no roles, but gets public)
 
                                 # user_id = 1 -- aneu              many customers, 1 category
                                 # user_id = 2 -- u2, sam, s1, r1   3    customers, 3 categories
@@ -45,6 +46,7 @@ DefaultRolePermission(to_role = Roles.tenant, can_read=True, can_delete=True)
 DefaultRolePermission(to_role = Roles.renter, can_read=True, can_delete=False)
 DefaultRolePermission(to_role = Roles.manager, can_read=True, can_delete=False)
 DefaultRolePermission(to_role = Roles.sales, can_read=True, can_delete=False)
+DefaultRolePermission(to_role = Roles.public, can_read=True, can_delete=False)
 
 GlobalFilter(   global_filter_attribute_name = "Client_id",  # try customers & categories for u1 vs u2
                 roles_not_filtered = ["sa"],
@@ -60,7 +62,7 @@ GlobalFilter(   global_filter_attribute_name = "SecurityLevel",  # filters Depar
 # Observe: Filters are AND'd, Grants are OR'd 
 #############################################
 GlobalFilter(   global_filter_attribute_name = "Region",  # sales see only Customers in British Isles (9 rows)
-                roles_not_filtered = ["sa", "manager", "tenant", "renter"],  # ie, just sales
+                roles_not_filtered = ["sa", "manager", "tenant", "renter", "public"],  # ie, just sales
                 filter = '{entity_class}.Region == Security.current_user().region')
         
 GlobalFilter(   global_filter_attribute_name = "Discontinued",  # hide discontinued products
@@ -85,6 +87,13 @@ Grant(  on_entity = models.Customer,
 # so user s1 sees the CTWSR customer row, per the resulting where from 2 global filters and 2 Grants:
 # where (Client_id=2 and region="British Isles") and (CreditLimit>300 or ContactName="Mike")
 #       <---- Filters AND'd ------------------->     <--- Grants OR'd --------------------->
+
+
+
+Grant(  on_entity = models.Customer,
+        to_role = Roles.public,
+        filter = lambda : models.Customer.Id != 'ANATR',
+        filter_debug = "Customer.Id != 'ANATR'")     # illustrates public role (user p1)
 
 
 app_logger.debug("Declare Security complete - security/declare_security.py")
