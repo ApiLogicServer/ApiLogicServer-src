@@ -470,7 +470,7 @@ def docker_creation_tests(api_logic_server_tests_path):
     tag_cmd = 'docker tag apilogicserver/api_logic_server_local apilogicserver/api_logic_server_local:latest'
     build_container = run_command(tag_cmd,
         cwd=api_logic_server_home_path,
-        msg=f'\Tag ApiLogicServer Docker Container at: {str(api_logic_server_home_path)}')
+        msg=f'\nTag ApiLogicServer Docker Container at: {str(api_logic_server_home_path)}')
     
     src = api_logic_server_tests_path.joinpath('creation_tests').joinpath('docker-commands.sh')
     dest = get_servers_build_and_test_path().joinpath('ApiLogicServer').joinpath('dockers')
@@ -525,7 +525,7 @@ def validate_nw(api_logic_server_install_path, set_venv):
         print("\nBehave tests starting..\n")
         api_logic_project_behave_path = api_logic_project_path.joinpath('test/api_logic_server_behave')
         behave_run_path = api_logic_project_behave_path.joinpath('behave_run.py')
-        api_logic_project_logs_path = api_logic_project_behave_path.joinpath('logs').joinpath('behave.log')
+        api_logic_project_logs_path = api_logic_project_behave_path.joinpath('logs/behave.log')
         behave_command = f'{set_venv} && {python} {behave_run_path} --outfile={str(api_logic_project_logs_path)}'
         result_behave = run_command(behave_command, 
                                     cwd=str(api_logic_project_behave_path),
@@ -545,16 +545,21 @@ def validate_nw(api_logic_server_install_path, set_venv):
             cwd=api_logic_project_behave_path,
             msg="\nBehave Logic Report",
             show_output=True)  # note: report lost due to rebuild tests that run later
-        if result_behave_report.returncode != 0:
+        if result_behave_report.returncode != 0:  # sadly, always is 0 (run_command bug?)
             raise Exception("Behave Report Error")
+        has_traceback = does_file_contain(in_file=api_logic_project_logs_path, search_for="Traceback") 
+        has_assertion_failed = does_file_contain(in_file=api_logic_project_logs_path, search_for="Assertion Failed:") 
+        if has_traceback or has_assertion_failed:
+            raise Exception(f"Behave Test Failure")
+
     except Exception as err:
-        print(f'\n\n** Behave Test failed\n\n')
-        print(f'Behave Failure\nHere is err: {err}\n\n')
-        print(f'Behave Failure\nHere is log from: {str(api_logic_project_logs_path)}\n\n')
+        print(f'\n\nBehave Failure\nHere is err: {err}\n')
+        print(f'Behave Failure\nHere is log from: {str(api_logic_project_logs_path)}\n')
         f = open(str(api_logic_project_logs_path), 'r')
         file_contents = f.read()
         print (file_contents)
         f.close()
+        print(f'\nYou must manually stop the server (using the Admin App)\n')
         rtn_code = 1
         if result_behave_report:
             rtn_code = result_behave_report.returncode
