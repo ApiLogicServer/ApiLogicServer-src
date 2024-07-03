@@ -223,7 +223,7 @@ def get_abs_db_url(msg, project: Project, is_auth: bool = False):
         rtn_nw_db_status = "nw+"
         log.debug(f'{msg} from: {rtn_abs_db_url}')
     elif url_to_process == "auth" or url_to_process == "authorization" or url_to_process == "add-auth":
-        rtn_abs_db_url = f'sqlite:///{str(project.api_logic_server_dir_path.joinpath("database/authentication.sqlite"))}'
+        rtn_abs_db_url = f'sqlite:///{str(project.api_logic_server_dir_path.joinpath("prototypes/base/database/authentication_db.sqlite"))}'
     elif url_to_process == "chinook":
         rtn_abs_db_url = f'sqlite:///{str(project.api_logic_server_dir_path.joinpath("database/Chinook_Sqlite.sqlite"))}'
     elif url_to_process == "todo" or url_to_process == "todos":
