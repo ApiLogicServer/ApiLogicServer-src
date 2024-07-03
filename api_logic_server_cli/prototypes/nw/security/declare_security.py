@@ -37,7 +37,7 @@ class Roles():
     manager = "manager"         # u2, sam
     sales="sales"               # s1
     customer="customer"         # ALFKI, ANATR
-    public="public"             # p1 (no roles, but gets public)
+    public="public"             # p1 (no roles, so gets public)
 
                                 # user_id = 1 -- aneu              many customers, 1 category
                                 # user_id = 2 -- u2, sam, s1, r1   3    customers, 3 categories
