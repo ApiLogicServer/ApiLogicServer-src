@@ -20,7 +20,7 @@ class GenAI(object):
     4. returns to main driver, which 
         1. runs create_db_from_model.create_db(self)
         2. proceeds to create project
-        3. calls this.insert_logic_into_declare_logic() - merge logic into declare_logic.py
+        3. calls this.insert_logic_into_created_project() - merge logic into declare_logic.py
 
     developer then uses CoPilot to create logic (Rule.) from the prompt
 
@@ -62,6 +62,7 @@ class GenAI(object):
             # open and read the project description in natural language
             with open(f'{self.project.from_genai}', 'r') as file:
                 prompt = file.read()
+                self.prompt = prompt
         else:
             pre_post = "Use SQLAlchemy to create a sqlite database named system/genai/temp/model.sqlite, with {{prompt}}.  Create some test data."
             if Path('system/genai/pre_post.prompt').exists():
@@ -69,6 +70,7 @@ class GenAI(object):
                     pre_post = file.read()  # eg, Use SQLAlchemy to create a sqlite database named system/genai/temp/model.sqlite, with
             prompt = pre_post + ' ' + self.project.from_genai  # experiment
             prompt = prompt.replace('{{prompt}}', self.project.from_genai)
+            self.prompt = prompt
 
         self.project.genai_logic = self.genai_get_logic(prompt)
 
@@ -116,6 +118,8 @@ class GenAI(object):
         """Called *after project created* to insert prompt logic into 
         1. declare_logic.py (as comment)
         2. readme.md
+
+        Also creates the doc directory for record of prompt, response.
         """
 
         logic_file = self.project.project_directory_path.joinpath('logic/declare_logic.py')
@@ -134,6 +138,16 @@ class GenAI(object):
                               file_name=readme_file, 
                               at='**other IDEs,**', 
                               after=True)
+        try:
+            docs_dir = self.project.project_directory_path.joinpath("docs")
+            os.makedirs(docs_dir, exist_ok=True)
+            prompt_file_path = docs_dir.joinpath("created_from.prompt")
+            with open(prompt_file_path, "w") as prompt_file:
+                prompt_file.write(self.prompt)
+            shutil.copyfile('system/genai/temp/chatgpt_original.txt', docs_dir.joinpath("chatgpt_response.txt"))
+        except:
+            log.error(f"\n\nError creating genai docs: {docs_dir}\n\n")
+        pass
 
     def genai_write_model_file(self, response_data: str):
         """break response data into lines, throw away instructions, write model file to self.project.from_model
@@ -155,6 +169,7 @@ class GenAI(object):
             elif writing:
                 if 'Decimal' in each_line:  # Cap'n K, at your service
                     each_line = each_line.replace('Decimal', 'DECIMAL')
+                    # other Decimal bugs: see api_logic_server_cli/prototypes/manager/system/genai/reference/errors/chatgpt_decimal.txt
                 model_class += each_line + '\n'
         with open(f'{self.project.from_model}', "w") as model_file:
             model_file.write(model_class)

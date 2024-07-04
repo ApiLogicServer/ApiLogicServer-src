@@ -1,0 +1,9 @@
+bad import: from decimal import DECIMAL, 
+
+Missing missing import: from SQLAlchemy import .... DECIMAL
+
+Bad syntax on test data
+    got:    balance=DECIMAL('100.50')
+    needed: balance=1000.0
+
+This is possible to repair, but a little involved.
