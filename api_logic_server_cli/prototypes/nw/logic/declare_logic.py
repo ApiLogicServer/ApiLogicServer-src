@@ -5,7 +5,7 @@ from logic_bank.extensions.rule_extensions import RuleExtension
 from logic_bank.logic_bank import Rule
 from database import models
 import api.system.opt_locking.opt_locking as opt_locking
-from security.system.authorization import Grant
+from security.system.authorization import Grant, Security
 import logging
 from flask import jsonify
 from integration.row_dict_maps.OrderShipping import OrderShipping
@@ -94,23 +94,23 @@ def declare_logic():
     from logic.logic_discovery.auto_discovery import discover_logic
     discover_logic()
 
-    if preferred_approach:     #als: basic rules - 5 rules vs 200 lines of code: https://github.com/valhuber/LogicBank/wiki/by-code
-        Rule.constraint(validate=models.Customer,       # logic design translates directly into rules
-            as_condition=lambda row: row.Balance <= row.CreditLimit,
-            error_msg="balance ({round(row.Balance, 2)}) exceeds credit ({round(row.CreditLimit, 2)})")
+    #als: basic rules - 5 rules vs 200 lines of code: https://github.com/valhuber/LogicBank/wiki/by-code
+    Rule.constraint(validate=models.Customer,       # logic design translates directly into rules
+        as_condition=lambda row: row.Balance <= row.CreditLimit,
+        error_msg="balance ({round(row.Balance, 2)}) exceeds credit ({round(row.CreditLimit, 2)})")
 
-        Rule.sum(derive=models.Customer.Balance,        # adjust iff AmountTotal or ShippedDate or CustomerID changes
-            as_sum_of=models.Order.AmountTotal,
-            where=lambda row: row.ShippedDate is None)  # adjusts - *not* a sql select sum...
+    Rule.sum(derive=models.Customer.Balance,        # adjust iff AmountTotal or ShippedDate or CustomerID changes
+        as_sum_of=models.Order.AmountTotal,
+        where=lambda row: row.ShippedDate is None)  # adjusts - *not* a sql select sum...
 
-        Rule.sum(derive=models.Order.AmountTotal,       # adjust iff Amount or OrderID changes
-            as_sum_of=models.OrderDetail.Amount)
+    Rule.sum(derive=models.Order.AmountTotal,       # adjust iff Amount or OrderID changes
+        as_sum_of=models.OrderDetail.Amount)
 
-        Rule.formula(derive=models.OrderDetail.Amount,  # compute price * qty
-            as_expression=lambda row: row.UnitPrice * row.Quantity)
+    Rule.formula(derive=models.OrderDetail.Amount,  # compute price * qty
+        as_expression=lambda row: row.UnitPrice * row.Quantity)
 
-        Rule.copy(derive=models.OrderDetail.UnitPrice,  # get Product Price (e,g., on insert, or ProductId change)
-            from_parent=models.Product.UnitPrice)
+    Rule.copy(derive=models.OrderDetail.UnitPrice,  # get Product Price (e,g., on insert, or ProductId change)
+        from_parent=models.Product.UnitPrice)
 
     #als: Demonstrate that logic == Rules + Python (for extensibility)
 
@@ -245,7 +245,7 @@ def declare_logic():
     if preferred_approach:  # #als: AUDITING can be as simple as 1 rule
         RuleExtension.copy_row(copy_from=models.Employee,
                             copy_to=models.EmployeeAudit,
-                            copy_when=lambda logic_row: logic_row.ins_upd_dlt == "upd" and 
+                            copy_when=lambda logic_row: logic_row.ins_upd_dlt in ["upd", "ins"] and 
                                     logic_row.are_attributes_changed([models.Employee.Salary, models.Employee.Title]))
     else:
         def audit_by_event(row: models.Employee, old_row: models.Employee, logic_row: LogicRow):
@@ -281,22 +281,35 @@ def declare_logic():
         """
         This is generic - executed for all classes.
 
-        Invokes optimistic locking.
+        Invokes optimistic locking, and checks Grant permissions.
 
-        You can optionally do time and date stamping here, as shown below.
+        Also provides user/date stamping.
 
         Args:
             logic_row (LogicRow): from LogicBank - old/new row, state
         """
         if logic_row.is_updated() and logic_row.old_row is not None and logic_row.nest_level == 0:
             opt_locking.opt_lock_patch(logic_row=logic_row)
-        enable_creation_stamping = True  # CreatedOn time stamping
-        if enable_creation_stamping:
+
+        Grant.process_updates(logic_row=logic_row)
+
+        did_stamping = False
+        if enable_stamping := True:
             row = logic_row.row
             if logic_row.ins_upd_dlt == "ins" and hasattr(row, "CreatedOn"):
                 row.CreatedOn = datetime.datetime.now()
-                logic_row.log("early_row_event_all_classes - handle_all sets 'Created_on"'')
-        Grant.process_updates(logic_row=logic_row)
+                did_stamping = True
+            if logic_row.ins_upd_dlt == "ins" and hasattr(row, "CreatedBy"):
+                row.CreatedBy = Security.current_user().id  # TODO:  what if not enabled?
+                did_stamping = True
+            if logic_row.ins_upd_dlt == "upd" and hasattr(row, "UpdatedOn"):
+                row.UpdatedOn = datetime.datetime.now()
+                did_stamping = True
+            if logic_row.ins_upd_dlt == "upd" and hasattr(row, "UpdatedBy"):
+                row.UpdatedBy = Security.current_user().id  # TODO:  what if not enabled?
+                did_stamping = True
+            if did_stamping:
+                logic_row.log("early_row_event_all_classes - handle_all did stamping")     
     
     Rule.early_row_event_all_classes(early_row_event_all_classes=handle_all)
         

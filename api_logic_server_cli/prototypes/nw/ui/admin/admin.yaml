@@ -270,6 +270,9 @@ resources:
         type: DECIMAL
       - name: FirstName
       - name: CreatedOn
+      - name: CreatedBy
+      - name: UpdatedOn
+      - name: UpdatedBy
       - name: Id
     tab_groups:
       - direction: toone
