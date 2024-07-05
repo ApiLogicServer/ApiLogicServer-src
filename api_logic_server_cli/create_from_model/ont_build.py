@@ -177,7 +177,7 @@ class OntBuilder(object):
         with contextlib.suppress(Exception):
             shutil.copytree(from_template_dir, to_template_dir, dirs_exist_ok=False)  # do not re-create default template files
         
-        # moved to create - we run this code over and over - no need to seed each time
+        # moved to ont_create.py - we run this code over and over - no need to seed each time
         #from_dir = self.project.api_logic_server_dir_path.joinpath('prototypes/ont_app/ontimize_seed')
         #to_dir = self.project.project_directory_path.joinpath(f'ui/{self.app}/')
         #shutil.copytree(from_dir, to_dir, dirs_exist_ok=True)  # create default app files

@@ -75,6 +75,8 @@ class CustomEndpoint():
             , order_by: Column = None
             , isParent: bool = False
             , isCombined: bool = False
+            , pagesize: int = 100
+            , offset: int = 0
             ):
         """
 
@@ -108,6 +110,8 @@ class CustomEndpoint():
         self.isCombined = isCombined
         self.join_on = join_on 
         self.isParent= isParent 
+        self.pagesize = pagesize
+        self.offset = offset
         self.totalQueryRecordsNumber =  999
         self.startRecordIndex = 0
         if isinstance(join_on, tuple):
@@ -257,6 +261,7 @@ class CustomEndpoint():
             self._pkeyList.append(self.quoteStr(altKey))
         filter_by = filter_by if filter_ is None else f"{filter_by} and {filter_}" if filter_by is not None else filter_
         self._href = f"{request.url_root[:-1]}{request.path}"
+        limit = self.pagesize if self.pagesize > limit else limit
         print(f"limit: {limit}, offset: {offset}, sort: {order_by},filter_by: {filter_by}, add_filter {filter_}")
         try:
             self._createRows(limit=limit,offset=offset,order_by=order_by,filter_by=filter_by) 
