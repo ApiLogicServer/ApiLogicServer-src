@@ -7,6 +7,7 @@ import { NavigationService, OFormComponent } from 'ontimize-web-ngx';
   styleUrls: ['./{{ entityName }}-new.component.scss']
 })
 export class {{ entity_first_cap }}NewComponent {
+  public isInsertMode: boolean = true;
   @ViewChild("{{ entity_first_cap }}Form") form: OFormComponent;
   onInsertMode() {
     const default_values = {{ defaultValues }}

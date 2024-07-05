@@ -134,6 +134,7 @@ class OntBuilder(object):
         self.file_template = self.get_template("file_template.html")
         self.nif_template = self.get_template("o_nif_input.html")
         self.check_circle_template = self.get_template("check_circle.html")
+        self.show_when_template = self.get_template("show_when_template.html")
         
     def get_template(self, template_name) -> Template:
         """
@@ -435,6 +436,8 @@ class OntBuilder(object):
             if column.get("exclude", "false") == "true":
                 continue
             rv = self.gen_home_columns(entity, entity, column)
+            #if show_when := column.get("show_when"):
+            #    rv = self.show_when_template.render({"show_when": show_when, "row": rv})
             row_cols.append(rv)
         return row_cols
 
@@ -553,6 +556,8 @@ class OntBuilder(object):
         defaultValues = {}
         for column in entity.columns:
             rv = self.get_new_column(column, fks, entity)
+            if show_when := column.get("show_when"):
+                rv = self.show_when_template.render({"show_when": show_when, "row": rv})
             row_cols.append(rv)
 
         entity_vars["row_columns"] = row_cols
@@ -619,6 +624,8 @@ class OntBuilder(object):
         for column in entity.columns:
             if column.get("exclude", "false") == "true":
                 continue
+            if show_when := column.get("show_when"):
+                rv = self.show_when_template.render({"show_when": show_when, "row": rv})
             rv = self.gen_detail_rows(column, fks, entity)
             row_cols.append(rv)
 

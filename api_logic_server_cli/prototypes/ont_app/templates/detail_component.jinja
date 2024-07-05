@@ -9,6 +9,7 @@ import { OFormComponent, OntimizeService, OListPickerComponent, OTableComponent,
 })
 export class {{ entity_first_cap }}DetailComponent implements OnInit  {
   protected service: OntimizeService;
+  public isInsertMode: boolean = false;
 
   @ViewChild('oDetailForm') form: OFormComponent;
   
