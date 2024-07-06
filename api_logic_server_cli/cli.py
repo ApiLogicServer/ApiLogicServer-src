@@ -555,8 +555,11 @@ def tutorial(ctx, create):
 @click.option('--gen-using-file', 'gen_using_file',
               default='',
               help="Use ChatGPT API")
+@click.option('--retries', 
+              default=3,
+              help="Number of retries")
 @click.pass_context
-def genai(ctx, using, db_url, gen_using_file: click.BOOL, genai_version: str):
+def genai(ctx, using, db_url, gen_using_file: click.BOOL, genai_version: str, retries: int):
     """
         Creates new customizable project (overwrites).
     """
@@ -570,8 +573,20 @@ def genai(ctx, using, db_url, gen_using_file: click.BOOL, genai_version: str):
         project_name = using.split('.')[0]
     project_name  = project_name.replace(' ', '_')
 
-    PR.ProjectRun(command="create", project_name=project_name, db_url=db_url, from_genai=using, gen_using_file=gen_using_file, genai_version=genai_version)
-
+    try_number = 1
+    while try_number <= retries:
+        try:
+            failed = False
+            PR.ProjectRun(command="create", project_name=project_name, db_url=db_url, from_genai=using, gen_using_file=gen_using_file, genai_version=genai_version)
+            break
+        except Exception as e:
+            log.error(f"\n\nGenai [#Failed With Error: {e}")
+            failed = True
+            try_number += 1
+    if failed:
+        log.error(f"\n\nGenai Failed {retries} times") 
+        exit(1) 
+    log.info(f"GENAI successful on try {try_number}")  
 
 @main.command("create", cls=HideDunderCommand)
 @click.option('--project_name',   # notice - old _names have no prompt
