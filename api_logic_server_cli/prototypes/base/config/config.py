@@ -334,7 +334,7 @@ class Args():
     @property
     def api_logic_server_home(self):
         """ location of ApiLogicServer-src (for admin_loader) """
-        return self.flask_app.config["APILOGICSERVER_HOME"]
+        return self.flask_app.config["APILOGICSERVER_HOME"] if 'APILOGICSERVER_HOME' in self.flask_app.config else None 
 
     
     @api_logic_server_home.setter

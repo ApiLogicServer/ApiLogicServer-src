@@ -39,6 +39,10 @@ class GenAI(object):
         # Explore interim copilot access
         # https://stackoverflow.com/questions/76741410/how-to-invoke-github-copilot-programmatically
         # https://docs.google.com/document/d/1o0TeNQtuT6moWU1bOq2K20IbSw4YhV1x_aFnKwo_XeU/edit#heading=h.3xmoi7pevsnp
+        # https://code.visualstudio.com/api/extension-guides/chat
+        # https://code.visualstudio.com/api/extension-guides/language-model
+        # https://github.com/B00TK1D/copilot-api
+        
 
         log.info(f'\ngenai creating database/models from {self.project.from_genai}')
 

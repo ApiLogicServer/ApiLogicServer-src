@@ -44,7 +44,10 @@ def get_sra_directory(args: Args) -> str:
                     if not dev_home:
                         raise Exception('ApiLogicServer not in venv, env APILOGICSERVER_HOME or HOME must be set')
             sys.path.append(dev_home)
-            from api_logic_server_cli.create_from_model import api_logic_server_utils as api_logic_server_utils
+            try:
+                from api_logic_server_cli.create_from_model import api_logic_server_utils as api_logic_server_utils
+            except:
+                raise Exception('\n\nWrong venv (ApiLogicServer not in venv), or env APILOGICSERVER_HOME or HOME must be set\n.. VSCode users: Ctrl-Shift-P, Python: Select Interpreter > Use Python from "python.defaultInterpreterPath"\n\n')
         admin_logger.debug("return_spa - install directory")
         utils_str = inspect.getfile(api_logic_server_utils)
         sra_path = Path(utils_str).parent.joinpath('safrs-react-admin-npm-build')
