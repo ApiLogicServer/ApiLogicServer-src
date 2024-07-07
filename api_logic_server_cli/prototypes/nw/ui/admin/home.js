@@ -12,7 +12,7 @@ const sla_doc =
     '   <li>For instant collaboration and Back Office data maintenance</li>' +
     '   <li>Rich functionality: multi-page, multi-table, automatic joins, declarative hide/show</li>' +
     '   <li><a class="custom" style="color: #3f51b5;"  rel="nofollow" href="https://apilogicserver.github.io/Docs/Admin-Tour/" target="_blank">Explore</a> this Admin App, ' +
-    '        and how to <a class="custom" style="color: #3f51b5" rel="nofollow" href="https://apilogicserver.github.io/Docsin-Customization/" target="_blank">customize it</a></li>' +
+    '        and how to <a class="custom" style="color: #3f51b5" rel="nofollow" href="https://apilogicserver.github.io/Docs/Admin-Customization/" target="_blank">customize it</a></li>' +
     '</ul>' +
     '<h4>2. API, with <a class="custom" style="color: #3f51b5;"  rel="nofollow" href="/api" target="_blank">oas/Swagger</a></h4>' +
     '<ul>' +
@@ -31,7 +31,14 @@ const sla_doc =
     '       and quality</li>' +
     '   <li><a class="custom" style="color: #3f51b5" rel="nofollow" href="https://apilogicserver.github.io/Docs/Logic-Tutorial/" target="_blank">Test</a> ' +
     '       using Behave, a TDD (Test Driven Design) framework </li>' +
-    '</ul><br/><br/>' +
+    '</ul>' +
+    '<h4>4. Security, for <span class="JoinedField" title="Always a challenge"><span>row level access control, based on user roles</span> </span></h4>' +
+    '<ul>' +
+    '   <li>Authenticate from sql, Keycloak, or your own provider (e.g., LDAP, AD)</li>' +
+    '   <li><a class="custom" style="color: #3f51b5" rel="nofollow" href="https://apilogicserver.github.io/Docs/Logic/" target="_blank">Explore</a> ' +
+    '       declarative grants ' +
+    '       <a class="custom" style="color: #3f51b5" rel="nofollow" href="https://apilogicserver.github.io/Docs/Security-Overview/" title="Expressed in Python"</li>' +
+    '</ul><br/>' +
     '<h4>Explore this app</h4>' +
     '   <ul><li>Start with Customer (at left), and watch for the Info icons (upper right)</li></ul>' +
     '</div>'
