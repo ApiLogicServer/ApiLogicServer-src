@@ -66,15 +66,6 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 return fn(*args, **kwargs)
             return decorator
         return wrapper
-    @app.route("/api/entityList", methods=["GET","OPTIONS"])
-    @cross_origin()
-    def entity_list():
-        import yaml
-
-        with open("//Users/tylerband/ontimize/banking/ui/admin/admin.yaml", 'r') as f:
-            valuesYaml = yaml.load(f, Loader=yaml.FullLoader)
-        print(valuesYaml['resources'])
-        return jsonify(valuesYaml)
 
     
     def gen_export(request) -> any:
@@ -140,12 +131,6 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         
         if clz_name == "export":
             return gen_export(request)
-        
-        if clz_type == "loadyaml":
-            return load_yaml()
-        
-        if clz_type == "dumpyaml":
-            return dump_yaml()
         
         if request.path == '/ontimizeweb/services/rest/users/login':
             return login(request)
