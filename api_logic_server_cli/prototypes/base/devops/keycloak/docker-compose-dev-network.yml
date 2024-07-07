@@ -2,6 +2,8 @@ version: '3'
 
 # cd devops/keycloak; docker compose -f docker-compose-dev-network.yml up
 
+# network: https://stackoverflow.com/questions/44073387/is-it-possible-to-expose-http-ports-with-docker-compose
+
 services:
 
   keycloak:
