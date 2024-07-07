@@ -71,24 +71,31 @@ class Authentication_Provider(Abstract_Authentication_Provider):
 
     @staticmethod
     def get_jwt_public_key(alg, kid=None):
+        """
+            Retrieve the public key of the JWK keypair used by keycloak to sign the JWTs.
+            JWTs signed with this key are trusted by ALS.
+        """
         from flask import jsonify, request
         from config.config import Args  # circular import error if at top
         
         jwks_uri = Args.instance.keycloak_base + '/protocol/openid-connect/certs'
         for i in range(100):
+            # we retry a couple of times in case there are connection problems
             try:
                 keys = requests.get(jwks_uri).json()['keys']
                 break
             except:
-                # waiting .. container may still be sleeping
+                # waiting .. keycloak may still be sleeping
                 time.sleep(1)
         else:
             print(f'Failed to load jwks_uri {jwks_uri}')
             sys.exit(1)
         for key in keys:
+            # loop over all keys until we find the one we're looking for
             if key['alg'] == alg or key['kid'] == kid:
                 logger.info(f"Found JWK: {key['kid']}")
                 return RSAAlgorithm.from_jwk(json.dumps(key))
+        print(f"Couldn't find key with ALG {alg} or kid {kid}")
         exit(1)
 
     # @jwt_required   # so, maybe jwt requires no pwd?
