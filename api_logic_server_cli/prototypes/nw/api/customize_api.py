@@ -367,6 +367,7 @@ class ServicesEndPoint(safrs.JABase):
         order_b2b_def = OrderB2B()
         request_dict_data = request.json["meta"]["args"]["order"]
         sql_alchemy_row = order_b2b_def.dict_to_row(row_dict = request_dict_data, session = session)
+        sql_alchemy_row.Ready = True
 
         session.add(sql_alchemy_row)
         return {"Thankyou For Your OrderB2B"}  # automatic commit, which executes transaction logic
@@ -433,6 +434,7 @@ class ServicesEndPoint(safrs.JABase):
         db = safrs.DB         # Use the safrs.DB, not db!
         session = db.session  # sqlalchemy.orm.scoping.scoped_session
         new_order = models.Order()
+        new_order.Ready = True
         session.add(new_order)
 
         row_dict_mapper.json_to_entities(kwargs, new_order)  # generic function - any db object

@@ -253,7 +253,7 @@ def step_impl(context):
 @then('Rejected per Do Not Ship Empty Orders')
 def step_impl(context):
     response_text = context.response_text
-    assert "Cannot Ship Empty" in response_text, f'Error - "Cannot Ship Empty not in {response_text}'
+    assert "Empty Order - Cannot Ship" in response_text, f'Error - "Empty Order - Cannot Ship not in {response_text}'
 
 
 @when('Order Placed with excessive quantity')

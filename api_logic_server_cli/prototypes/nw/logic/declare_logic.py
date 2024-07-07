@@ -3,6 +3,7 @@ from decimal import Decimal
 from logic_bank.exec_row_logic.logic_row import LogicRow
 from logic_bank.extensions.rule_extensions import RuleExtension
 from logic_bank.logic_bank import Rule
+from logic_bank.util import ConstraintException
 from database import models
 import api.system.opt_locking.opt_locking as opt_locking
 from security.system.authorization import Grant, Security
@@ -42,10 +43,10 @@ def declare_logic():
         *Activation* occurs automatically in api_logic_server_run.py:
             LogicBank.activate(session=session, activator=declare_logic, constraint_event=constraint_handler)
 
-        Logic *runs* automatically, in response to transaction commits (typically via the API),
+        Logic *runs* automatically, by listening to SQLAlchemy events (e.g. from API calls),
             for multi-table derivations and constraints,
-            and events such as sending messages or mail
-                it consists of spreadsheet-like Rules and Python code
+            and events such as sending messages or mail.
+        Logic consists of spreadsheet-like Rules and Python code
     """
 
     """         HOW RULES OPERATE
@@ -74,7 +75,7 @@ def declare_logic():
     """         FEATURE: Place Order
                 ====================
 
-    You can use a BDD approach to doc/run test suites
+    You can optionally use a BDD approach to document and run test suites
          See test/api_logic_server/behave/features/place_order.feature
          See https://apilogicserver.github.io/Docs/Behave/
 
@@ -101,7 +102,7 @@ def declare_logic():
 
     Rule.sum(derive=models.Customer.Balance,        # adjust iff AmountTotal or ShippedDate or CustomerID changes
         as_sum_of=models.Order.AmountTotal,
-        where=lambda row: row.ShippedDate is None)  # adjusts - *not* a sql select sum...
+        where=lambda row: row.ShippedDate is None and row.Ready == True)  # adjusts - *not* a sql select sum...
 
     Rule.sum(derive=models.Order.AmountTotal,       # adjust iff Amount or OrderID changes
         as_sum_of=models.OrderDetail.Amount)
@@ -135,18 +136,6 @@ def declare_logic():
             
     Rule.after_flush_row_event(on_class=models.Order, calling=send_order_to_shipping)  # see above
 
-    def do_not_ship_empty_orders(row: models.Order, old_row: models.Order, logic_row: LogicRow) -> bool:
-        return_value = True
-        if row.OrderDetailCount == 0:  # an empty order... error if trying to ship...
-            if logic_row.is_inserted() and row.ShippedDate is not None:
-                return_value = False
-            if logic_row.is_updated() and row.ShippedDate is not None:
-                return_value = False
-        return return_value
-    
-    Rule.constraint(validate=models.Order,
-                    calling=do_not_ship_empty_orders,
-                    error_msg="Cannot Ship Empty Orders (No Order Details)")
 
     def congratulate_sales_rep(row: models.Order, old_row: models.Order, logic_row: LogicRow):
         """ use events for sending email, messages, etc. """
@@ -168,6 +157,32 @@ def declare_logic():
 
 
     """
+        #als: Commit Events (which reflect sum/count values)
+    """
+    def do_not_ship_empty_orders(row: models.Order, old_row: models.Order, logic_row: LogicRow) -> bool:
+        return_value = True
+        if row.OrderDetailCount == 0:  # an empty order... error if trying to ship...
+            if logic_row.is_deleted():
+                pass
+            else:  # empty order cannot be made ready or shipped
+                if row.ShippedDate is not None or row.Ready == True:
+                    raise ConstraintException("Empty Order - Cannot Ship or Make Ready")
+        return return_value
+    
+    Rule.commit_row_event(on_class=models.Order, calling=do_not_ship_empty_orders)
+
+
+    def ship_ready_orders_only(row: models.Order, old_row: models.Order, logic_row: LogicRow) -> bool:
+        return_value = True
+        if row.Ready == False and row.ShippedDate is not None and old_row.ShippedDate is None:
+            return_value = False
+        return return_value
+    
+    Rule.constraint(validate=models.Order,       # Do not ship orders that are not ready
+        calling=ship_ready_orders_only,
+        error_msg="Cannot Ship Order that is not Ready")
+
+    """
         Simplify data entry with defaults 
     """
 
@@ -182,7 +197,6 @@ def declare_logic():
             row.Freight = 10
         if row.AmountTotal is None:
             row.AmountTotal = 0
-
 
     def order_detail_defaults(row: models.OrderDetail, old_row: models.OrderDetail, logic_row: LogicRow):
         if row.Quantity is None:
@@ -245,7 +259,7 @@ def declare_logic():
     if preferred_approach:  # #als: AUDITING can be as simple as 1 rule
         RuleExtension.copy_row(copy_from=models.Employee,
                             copy_to=models.EmployeeAudit,
-                            copy_when=lambda logic_row: logic_row.ins_upd_dlt in ["upd", "ins"] and 
+                            copy_when=lambda logic_row: logic_row.ins_upd_dlt == "upd" and 
                                     logic_row.are_attributes_changed([models.Employee.Salary, models.Employee.Title]))
     else:
         def audit_by_event(row: models.Employee, old_row: models.Employee, logic_row: LogicRow):
