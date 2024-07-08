@@ -109,6 +109,7 @@ class Config:
     # https://apilogicserver.github.io/Docs/Security-Activation/
     # als add-auth --provider-type=sql --db-url=
     # als add-auth --provider-type=keycloak --db-url=localhost
+    # als add-auth --provider-type=keycloak --db-url=http://10.0.0.77:8080
     kc_base = 'http://localhost:8080'  # e.g., 'http://localhost:8080'
     ''' keycloak location '''
     KEYCLOAK_REALM =  'kcals'
