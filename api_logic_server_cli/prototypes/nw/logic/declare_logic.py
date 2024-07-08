@@ -160,14 +160,12 @@ def declare_logic():
         #als: Commit Events (which reflect sum/count values)
     """
     def do_not_ship_empty_orders(row: models.Order, old_row: models.Order, logic_row: LogicRow) -> bool:
-        return_value = True
         if row.OrderDetailCount == 0:  # an empty order... error if trying to ship...
             if logic_row.is_deleted():
                 pass
-            else:  # empty order cannot be made ready or shipped
+            else:  # enforce child cardinality
                 if row.ShippedDate is not None or row.Ready == True:
                     raise ConstraintException("Empty Order - Cannot Ship or Make Ready")
-        return return_value
     
     Rule.commit_row_event(on_class=models.Order, calling=do_not_ship_empty_orders)
 
