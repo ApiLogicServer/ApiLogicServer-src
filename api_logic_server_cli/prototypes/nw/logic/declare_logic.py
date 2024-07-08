@@ -171,10 +171,8 @@ def declare_logic():
 
 
     def ship_ready_orders_only(row: models.Order, old_row: models.Order, logic_row: LogicRow) -> bool:
-        return_value = True
-        if row.Ready == False and row.ShippedDate is not None and old_row.ShippedDate is None:
-            return_value = False
-        return return_value
+        invalid_row = row.Ready == False and row.ShippedDate is not None and old_row.ShippedDate is None
+        return not invalid_row
     
     Rule.constraint(validate=models.Order,       # Do not ship orders that are not ready
         calling=ship_ready_orders_only,
