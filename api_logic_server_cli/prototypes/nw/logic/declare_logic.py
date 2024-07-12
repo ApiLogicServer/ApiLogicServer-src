@@ -127,7 +127,8 @@ def declare_logic():
             old_row (models.Order): n/a
             logic_row (LogicRow): bundles curr/old row, with ins/upd/dlt logic
         """
-        if logic_row.is_inserted():
+        if (logic_row.is_inserted() and row.Ready == True) or \
+            (logic_row.is_updated() and row.Ready == True and old_row.Ready == False):
             kafka_producer.send_kafka_message(logic_row=logic_row,
                                               row_dict_mapper=OrderShipping,
                                               kafka_topic="order_shipping",
