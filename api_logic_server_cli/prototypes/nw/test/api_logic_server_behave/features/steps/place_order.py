@@ -55,6 +55,94 @@ def step_impl(context):
     context.alfki_before = alfki_before
     pass
 
+
+
+@when('Ready Flag is Reset')
+def step_impl(context):
+    """
+    We reset `Order.Ready`.
+
+    This removes the order from contingent derivations (e.g., the `Customer.Balance`),
+    and constraints.
+
+    > **Key Takeaway:** adjustment from change in qualification condition
+
+    """
+    scenario_name = 'Order Made Not Ready'
+    test_utils.prt(f'\n\n\n{scenario_name}... adjustment when qualification condition changes \n\n', scenario_name)
+    patch_uri = f'http://localhost:5656/api/Order/11011/'
+    patch_args = \
+        {
+            "data": {
+                "attributes": {
+                    "Ready": False
+                },
+                    "type": "Order",
+                    "id": "11011"
+                }
+        }
+    r = requests.patch(url=patch_uri, json=patch_args, headers=test_utils.login())
+    response_text = r.text
+    context.response_text = r.text
+
+@then('Logic Decreases Balance')
+def step_impl(context):
+    before = context.alfki_before
+    expected_adjustment = 960  # find this from inspecting data on test run
+    after = get_ALFLI()
+    context.alfki_after = after
+    assert before.Balance - expected_adjustment == after.Balance, \
+        f'Before balance {before.Balance} - {expected_adjustment} != new Balance {after.Balance}'
+    pass
+
+
+@when('Ready Flag is Set')
+def step_impl(context):
+    """
+    This illustrates the _ready flag_ pattern:
+    1. Add a ready flag to the Order
+    2. Make logic contingent on the ready flag:
+        * Customer.Balance is increased only if the Order is ready
+        * Empty Orders are not rejected
+
+    This enables the user to submit multiple transactions (add order details, alter them etc),
+    before making the order ready (like a checkout).
+
+    Until then, Customer's Balance adjustments, or empty orders constraints do not fire.
+
+    > **Key Takeaway:** the ready flag defers constraints/derivations until the user is ready.
+
+    > **Key Takeaway:** adjustment from change in qualification condition
+
+    """
+    scenario_name = 'Order Made Ready'
+    test_utils.prt(f'\n\n\n{scenario_name}... adjustment when qualification condition changes \n\n', scenario_name)
+    patch_uri = f'http://localhost:5656/api/Order/11011/'
+    patch_args = \
+        {
+            "data": {
+                "attributes": {
+                    "Ready": True
+                },
+                    "type": "Order",
+                    "id": "11011"
+                }
+        }
+    r = requests.patch(url=patch_uri, json=patch_args, headers=test_utils.login())
+    response_text = r.text
+    context.response_text = r.text
+
+@then('Logic Increases Balance')
+def step_impl(context):
+    before = context.alfki_before
+    expected_adjustment = 960  # find this from inspecting data on test run
+    after = get_ALFLI()
+    context.alfki_after = after
+    assert before.Balance + expected_adjustment == after.Balance, \
+        f'Before balance {before.Balance} + {expected_adjustment} != new Balance {after.Balance}'
+    pass
+
+
 @when('Good Order Placed')
 def step_impl(context):
     """
@@ -131,6 +219,7 @@ def step_impl(context):
     }
     test_utils.prt(f'\n\n\n{scenario_name} - verify adjustments...\n',\
         scenario_name)
+    # NB: add_order sets the Ready flag, so Customer.Balance is adjusted
     r = requests.post(url=add_order_uri, json=add_order_args, headers=test_utils.login())
     context.response_text = r.text
 

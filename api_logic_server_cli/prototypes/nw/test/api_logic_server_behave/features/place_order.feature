@@ -1,5 +1,15 @@
 Feature: Place Order
 
+  Scenario: Order Made Not Ready
+     Given Customer Account: ALFKI
+      When Ready Flag is Reset
+      Then Logic Decreases Balance
+
+  Scenario: Order Made Ready
+     Given Customer Account: ALFKI
+      When Ready Flag is Set
+      Then Logic Increases Balance
+
   Scenario: Good Order Custom Service
      Given Customer Account: ALFKI
       When Good Order Placed

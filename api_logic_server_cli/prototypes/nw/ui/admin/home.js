@@ -40,7 +40,7 @@ const sla_doc =
     '       <a class="custom" style="color: #3f51b5" rel="nofollow" href="https://apilogicserver.github.io/Docs/Security-Overview/" title="Expressed in Python"</li>' +
     '</ul><br/>' +
     '<h4>Explore this app</h4>' +
-    '   <ul><li>Start with Customer (at left), and watch for the Info icons (upper right)</li></ul>' +
+    '   <ul><li>Start with Category (at left), and watch for the Info icons (upper right)</li></ul>' +
     '</div>'
 
 
