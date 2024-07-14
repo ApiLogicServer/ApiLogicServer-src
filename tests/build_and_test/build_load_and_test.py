@@ -1064,6 +1064,24 @@ if Config.do_docker_postgres:
     start_api_logic_server(project_name='postgres')
     stop_server(msg="postgres\n")
 
+
+if Config.do_docker_postgres_auth:
+    # ApiLogicServer add-auth --project_name=. --db_url=postgresql://postgres:p@localhost/authdb
+    # postgres_path = install_api_logic_server_path.joinpath('postgres')
+    result_docker_postgres = run_command(
+        f"{set_venv} && ApiLogicServer add-auth --project-name=postgres --{db_url}=postgresql://postgres:p@{db_ip}/authdb",
+        cwd= install_api_logic_server_path,
+        msg=f'\add-auth Postgres postgres (nw) at: {str(install_api_logic_server_path)}')
+    start_api_logic_server(project_name='postgres')
+    stop_server(msg="postgres\n")
+
+    result_docker_postgres = run_command(
+        f"{set_venv} && ApiLogicServer add-auth --project-name=postgres --provider-type=keycloak --{db_url}=auth",
+        cwd= install_api_logic_server_path,
+        msg=f'\add-auth Postgres postgres (nw) at: {str(install_api_logic_server_path)}')
+    start_api_logic_server(project_name='postgres')
+    stop_server(msg="postgres\n")
+
 if Config.do_docker_creation_tests:
     docker_creation_tests(api_logic_server_tests_path)
 
