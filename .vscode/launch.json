@@ -202,10 +202,10 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "     - app-build Chinook",
+            "name": "     - app-build Rowbot",
             "type": "debugpy",
             "request": "launch",
-            "cwd": "${workspaceFolder}/../../build_and_test/Chinook",
+            "cwd": "${workspaceFolder}/../../build_and_test/rowbot",
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "justMyCode": false,

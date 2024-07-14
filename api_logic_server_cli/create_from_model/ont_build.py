@@ -318,9 +318,9 @@ class OntBuilder(object):
             primary_key = each_entity["primary_key"]
             for column in each_entity.columns:
                 if column.name == each_entity.favorite:
-                    datatype = "VARCHAR" if hasattr(column, "type") and column.type.startswith("VARCHAR") else 'INTEGER'
+                    datatype = "VARCHAR" if hasattr(column, "type") and (column.type.startswith("VARCHAR") or column.type in ["TEXT"]) else 'INTEGER'
                 if column.name in primary_key:
-                    pkey_datatype = "VARCHAR" if hasattr(column, "type") and column.type.startswith("VARCHAR") else column.type.upper()
+                    pkey_datatype = "VARCHAR" if hasattr(column, "type") and (column.type.startswith("VARCHAR") or column.type in ["TEXT"]) else column.type.upper()
             favorite_dict = {
                 "entity": each_entity_name,
                 "favorite": each_entity.favorite,
@@ -950,10 +950,13 @@ def make_sql_types(primaryKeys, columns) -> str:
     result = ""
     sep = ""
     keys = primaryKeys.split(";")
+    #log.debug(keys)
+    #print(keys)
     for key in keys:
         for col in columns:
+            #log.debug(col.name, key)
             if col.name.upper() == key.upper():
-                col_type = "VARCHAR" if col.type.startswith("VARCHAR") else "INTEGER"
+                col_type = "VARCHAR" if getattr(col,"type") and col.type.startswith("VARCHAR") or col.type in ["TEXT"] else "INTEGER"
                 result += f"{sep}{col_type}"
                 sep = ";"
     return result
