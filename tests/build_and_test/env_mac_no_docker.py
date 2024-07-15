@@ -39,6 +39,7 @@ class Config:
 
     do_docker_mysql = False               # requires docker database be running
     do_docker_postgres = False            # requires docker database be running
+    do_docker_postgres_auth = False       # requires docker database be running
     do_docker_sqlserver = False           # requires docker database be running
 
     do_docker_creation_tests = False      # build docker image, start it and create projects
