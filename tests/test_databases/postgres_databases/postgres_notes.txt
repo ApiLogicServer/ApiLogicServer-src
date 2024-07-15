@@ -4,3 +4,20 @@ psql -h localhost -U postgres
 
 \c Northwind;
 
+-- in docker container/terminal
+-- psql--username=postgres
+-- \l
+-- \dt
+
+
+docker exec -it postgresql-container bash
+
+
+ApiLogicServer create --project-name=postgres --db-url=postgresql://postgres:p@localhost/postgres
+
+cd ~/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer
+. venv/bin/activate
+cd /Users/val/dev/users/alberto.delgado
+als create --project-name=anoit --db-url=postgresql://postgres:p@localhost/aniot
+cd anoit
+als add-auth --db-url=postgresql://postgres:p@localhost/authdb
