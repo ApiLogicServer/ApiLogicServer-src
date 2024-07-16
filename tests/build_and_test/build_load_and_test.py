@@ -869,6 +869,12 @@ if Config.do_test_api_logic_project:
     validate_nw(install_api_logic_server_path, set_venv)
     stop_server(msg="*** NW TESTS COMPLETE ***\n")
 
+'''
+if Config.do_test_api_logic_project_with_auth:
+    als add-auth kc ala 1073-1080
+    repeat 867-870
+'''
+
 
 if Config.do_create_shipping:  # optionally, start it manually (eg, with breakpoints)
     result_create = run_command(f'{set_venv} && ApiLogicServer create --{project_name}=Shipping --{db_url}=shipping',
