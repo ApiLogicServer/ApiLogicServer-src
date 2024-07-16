@@ -875,6 +875,16 @@ if Config.do_test_api_logic_project_with_auth:
     repeat 867-870
 '''
 
+'''
+if config.genai_tests:  # add this to ghe env.py
+    # code this like 854-856
+    als create --project-name=genai_demo --from-model=system/genai/temp/model.py --db-url=sqlite:///system/genai/temp/genai_demo.db
+    start the server on the created project
+
+    als genai --using=genai_demo.prompt --gen-using-file=system/genai/temp/chatgpt_retry.txt
+    start the server on the created project (and stop it)
+    
+'''
 
 if Config.do_create_shipping:  # optionally, start it manually (eg, with breakpoints)
     result_create = run_command(f'{set_venv} && ApiLogicServer create --{project_name}=Shipping --{db_url}=shipping',
