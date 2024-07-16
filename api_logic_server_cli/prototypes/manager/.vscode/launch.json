@@ -183,6 +183,32 @@
             "args": ["sys-info"],
             "justMyCode": false,
             "console": "integratedTerminal"
+        },
+        {
+            "name": "Install Ontimize (npm install)",
+            "type": "node",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/system/yaml_editor/ui/yaml",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": ["install"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Start Ontimize (npm start)",
+            "type": "node",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/system/yaml_editor/ui/yaml",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": ["start"],
+            "port": 4299,
+            "restart": true,
+            "timeout": 30000,
+            "protocol": "inspector",
+            "justMyCode": false,
+            "console": "integratedTerminal",
+            "env": {
+                "NODE_ENV": "development"
+            }
         }
     ],
     "inputs": [
@@ -212,4 +238,3 @@
         }
     ]
   }
-  
