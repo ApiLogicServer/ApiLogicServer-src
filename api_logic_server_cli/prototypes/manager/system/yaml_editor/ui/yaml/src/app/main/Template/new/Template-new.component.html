@@ -1,0 +1,22 @@
+<o-form attr="Template_form_insert" service="Template" entity="Template" 
+keys="name" fxLayout="column" show-header="yes" header-actions="I"
+horizontal-scroll="yes"
+#oForm after-insert-mode="detail" class="standalone-form-container">
+
+<o-row attr="row1" layout-align="start stretch">
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+    
+        <div fxLayout="row" fxLayoutAlign="start center" class="gap">
+        <o-text-input attr="name" label=" Name*" editable="yes" required="yes"></o-text-input>
+        </div>
+      
+        <div fxLayout="row" fxLayoutAlign="start center" class="gap">
+        <o-text-input attr="description" label="description" editable="yes" required="no"></o-text-input>
+        </div>
+      
+</div>
+</o-row>
+
+<div layout-padding></div>
+
+</o-form>

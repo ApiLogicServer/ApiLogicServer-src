@@ -1,0 +1,36 @@
+<div class="container">
+<o-form-container breadcrumb="yes" breadcrumb-label-columns="name" breadcrumb-separator=", ">
+      <o-form #form attr="GlobalSetting_form_edit" 
+        service="GlobalSetting" 
+        entity="GlobalSetting" 
+        fxLayout="column" 
+        show-header="yes" 
+		title="{{ 'GLOBALSETTING' | oTranslate }}"
+        header-actions="R;I;U;D"
+        #oDetailForm keys="name" 
+        keys-sql-types="VARCHAR" 
+        show-header-navigation="yes"
+        (onDataLoaded)="onDataLoaded($event)">
+
+
+  <o-row attr="row1" layout-align="start stretch">
+    <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+      
+      <div fxLayout="row" fxLayoutAlign="start center" class="gap">
+        <o-text-input attr="name" label=" name*" editable="yes" required="yes"></o-text-input>
+      </div>
+      
+      <div fxLayout="row" fxLayoutAlign="start center" class="gap">
+        <o-text-input attr="value" label="value" editable="yes" required="yes"></o-text-input>
+      </div>
+      
+      <div fxLayout="row" fxLayoutAlign="start center" class="gap">
+        <o-text-input attr="description" label="description" editable="yes" required="no"></o-text-input>
+      </div>
+      
+    </div>
+  </o-row>
+      
+    </o-form>
+  </o-form-container>
+</div>
