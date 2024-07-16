@@ -1,0 +1,64 @@
+# preferred...
+# cd <project> (or use IDE terminal)
+# sh devops/docker-compose-dev-local-nginx/docker-compose.sh
+
+# or, for debug / more logging
+# set APILOGICPROJECT_CLIENT_URI, and use "for testing", below
+# cd <project>
+# docker compose -f ./devops/docker-compose/docker-compose.yml --env-file ./devops/docker-compose/env-docker-compose.env up
+# --> builds, runs at localhost
+
+version: "3.5"
+
+services:
+    api-logic-server:
+        image: apilogicserver/apilogicproject
+        # instead using a built image, uncomment the following to build the image dynamically
+        # build:
+        #     context: ../..
+        #     dockerfile: ./devops/docker-compose/Dockerfile.dockerfile
+        environment:
+          - APILOGICPROJECT_VERBOSE=true
+          - APILOGICPROJECT_CLIENT_URI=//${HOST_IP}
+          - SECURITY_ENABLED=true
+          - PYTHONPATH=/app/ApiLogicProject 
+          ## TODO: verify Database uri's here, 
+          - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI=postgresql://postgres:p@postgresql-service/
+          - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI_AUTHENTICATION=postgresql://postgres:p@postgresql-service/authdb
+          # - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI=mysql+pymysql://root:p@mysql-service:3306/
+          # - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI_AUTHENTICATION=mysql+pymysql://root:p@mysql-service:3306/authdb
+        expose:
+            - 5000
+        volumes:
+            # relative path - thanks https://stackoverflow.com/questions/46907558/docker-compose-relative-paths-vs-docker-volume
+            # - /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/docker-compose-nw-postgres:/app
+            - ./../..:/app
+        # https://stackoverflow.com/questions/39460892/gunicorn-no-module-named-myproject
+        command: /usr/local/bin/gunicorn --reload --workers 2 --worker-connections 2 --access-logfile=- --pythonpath /app -b :5000 api_logic_server_run:flask_app 
+        working_dir: /app/ApiLogicProject 
+
+    nginx:
+        restart: always
+        image: nginx:latest
+        ports:
+            - "80:8080"
+            - "443:443"
+        volumes:
+            - ./www:/www:ro
+            - ./etc/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+            - ./etc/ssl:/etc/ssl:ro
+
+    mysql-service:
+        # TODO - specify your own database
+        image: apilogicserver/mysql8.0:latest
+        restart: always
+        environment:
+            - MYSQL_USER=root
+            - MYSQL_PASSWORD=p
+            - MYSQL_ROOT_PASSWORD=p
+        ports:
+            # <Port exposed> : <MySQL Port running inside service container>
+            - '3306:3306'
+        expose:
+            # Opens port 3306 on the container
+            - '3306'

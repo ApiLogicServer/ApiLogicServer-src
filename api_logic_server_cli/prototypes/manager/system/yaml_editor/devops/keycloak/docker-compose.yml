@@ -1,0 +1,25 @@
+version: '3'
+
+# cd devops/keycloak
+# docker compose up
+
+services:
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:23.0.6
+    container_name: keycloak
+    restart: always
+    #command: start --hostname-strict=false --proxy edge --hostname-url https://kc.hardened.be --hostname-strict-https=false
+    # use next for import, or next+1 for data
+    command: start-dev --import-realm --proxy=edge --hostname-strict=false --hostname-strict-https=false
+    # command: start-dev  --proxy=edge --hostname-strict=false --hostname-strict-https=false
+    ports:
+        - 8080:8080
+    volumes:
+        # - $PWD/devops/keycloak/import:/opt/keycloak/data/import
+        # use next for import, or next+1 for data
+        - $PWD/import:/opt/keycloak/data/import
+        # - $PWD/data:/opt/keycloak/data
+    environment:
+        - KEYCLOAK_ADMIN=admin
+        - KEYCLOAK_ADMIN_PASSWORD=password

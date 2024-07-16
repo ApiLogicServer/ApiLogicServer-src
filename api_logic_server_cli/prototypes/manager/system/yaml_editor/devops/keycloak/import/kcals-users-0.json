@@ -1,0 +1,268 @@
+{
+  "realm" : "kcals",
+  "users" : [ {
+    "id" : "b15e27f1-7bd7-4d29-a064-fc504880bdec",
+    "createdTimestamp" : 1709991832754,
+    "username" : "admin",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "Admin First",
+    "lastName" : "Admin Last",
+    "attributes" : {
+      "region" : [ "NULL" ],
+      "client_id" : [ "NULL" ]
+    },
+    "credentials" : [ {
+      "id" : "6e5af703-82de-40c3-95b5-f9dd0cd4ae37",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1709991868574,
+      "secretData" : "{\"value\":\"uxCxwX2zQHWdckOlQOZ2NoVPAAGajTLvFrtJeK6F2Dc=\",\"salt\":\"Gejt8uSUSb+qgD8wuO3aJA==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "sa", "default-roles-kcals" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "c7f763c3-440c-4080-be70-742e890aeab7",
+    "createdTimestamp" : 1709992888137,
+    "username" : "alfki",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "alfki first",
+    "lastName" : "alfki",
+    "attributes" : {
+      "region" : [ "NULL" ],
+      "client_id" : [ "1" ]
+    },
+    "credentials" : [ {
+      "id" : "730807ec-7789-49fa-b89f-b4ebf5987312",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1709992915202,
+      "secretData" : "{\"value\":\"h/z/mvmeaM6NjFW8md9rSurh5wCno5Af6hRestzJBEo=\",\"salt\":\"F5+0AoNEGy7Mri8somsmIQ==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "tenant", "customer", "default-roles-kcals" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "032b841a-aef3-4e05-9067-2fe5c6ea2f48",
+    "createdTimestamp" : 1709993141282,
+    "username" : "anatr",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "attributes" : {
+      "region" : [ "NULL" ],
+      "client_id" : [ "2" ]
+    },
+    "credentials" : [ {
+      "id" : "76f60c54-967d-41dc-b795-3bf3e8a24a0a",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1709993325112,
+      "secretData" : "{\"value\":\"2a0jHyxxHf2kQLPB3mOHL8poYLCDNyWJ3o2YAi3dAFs=\",\"salt\":\"T0sdAuBlt9xJyUo5ezk9wQ==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "tenant", "customer", "default-roles-kcals" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "31199986-8732-4aa8-adc6-3242cafb68a2",
+    "createdTimestamp" : 1709993343198,
+    "username" : "aneu",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "attributes" : {
+      "region" : [ "British Isles" ],
+      "client_id" : [ "1" ]
+    },
+    "credentials" : [ {
+      "id" : "52e59ba1-a938-453e-a23c-3ba8bd194ef1",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1709993359060,
+      "secretData" : "{\"value\":\"0Bot8xbi4fDi+TOh+HpnreFogL40MrqLu3lHx5jtuTc=\",\"salt\":\"DN97f8seE4HK+jIgW2E8BA==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "tenant", "default-roles-kcals" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "395468b2-bc26-4639-afcd-eb23d5a46271",
+    "createdTimestamp" : 1708774012772,
+    "username" : "demo",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "credentials" : [ {
+      "id" : "417d39eb-7f48-46e9-9a24-bd36a8a38fa6",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1708774029343,
+      "secretData" : "{\"value\":\"u31X27kWe2EK3PC5wHBTFOZq1HSvPTxceyrtTX73ENk=\",\"salt\":\"uwKdDL4nhfh+Eu9OgFCQfQ==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-kcals" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "2e742a04-ed7f-4f91-863f-6dc182534651",
+    "createdTimestamp" : 1709993380588,
+    "username" : "r1",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "attributes" : {
+      "region" : [ "Central America" ],
+      "client_id" : [ "1" ]
+    },
+    "credentials" : [ {
+      "id" : "83b03e18-841f-412c-9733-048a6aceb57b",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1709993400409,
+      "secretData" : "{\"value\":\"K90z4aqc9O2AVeQE19iYSZuMQBHPHNa6SNps/+5HaWY=\",\"salt\":\"BhMsLZwt8mUxDPXXIQs7zQ==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "renter", "default-roles-kcals" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "96f48867-3d74-4126-a601-67f8394a5120",
+    "createdTimestamp" : 1709993414577,
+    "username" : "s1",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "attributes" : {
+      "region" : [ "British Isles" ],
+      "client_id" : [ "2" ]
+    },
+    "credentials" : [ {
+      "id" : "5a459c24-f55f-47d5-ba3c-d36cb2da6194",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1709993427849,
+      "secretData" : "{\"value\":\"iF/5AJ3kwSEg44H3wgUPnf6r5qs1v+8z18uXIGp1298=\",\"salt\":\"mXWVOXR8MIW/NniFS5wzUg==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "sales", "default-roles-kcals" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "356a13b6-ef09-4318-822f-4aa7fba24a84",
+    "createdTimestamp" : 1709994351639,
+    "username" : "sa",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "attributes" : {
+      "region" : [ "NULL" ],
+      "client_id" : [ "NULL" ]
+    },
+    "credentials" : [ {
+      "id" : "4e02b4d4-b0f3-495a-80de-eaaab4b5e557",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1709994385479,
+      "secretData" : "{\"value\":\"hTm/hmRD5UgTz+sRk6wgEJkI+LnhTfzMPpCY7OheDT4=\",\"salt\":\"Bd4s+dzsUVQ3EYp7HyUHqA==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "sa", "default-roles-kcals" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "8ecb2785-a171-47b4-ac63-005ed6aa752a",
+    "createdTimestamp" : 1709993439407,
+    "username" : "sam",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "attributes" : {
+      "region" : [ "NULL" ],
+      "client_id" : [ "NULL" ]
+    },
+    "credentials" : [ {
+      "id" : "afb295f4-e4e6-4c4b-b0b6-c949c4952cbb",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1709993455610,
+      "secretData" : "{\"value\":\"wQydIE3ysU8Dsdx3sR09SbhBtjdwNJq2HCtMOaIYIZ0=\",\"salt\":\"M7UexYjh0KGh4yLE/GC9cw==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "manager", "dev", "default-roles-kcals" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "601dc5c5-94d0-4cb3-80a3-9723d6970d5c",
+    "createdTimestamp" : 1709993476837,
+    "username" : "u1",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "attributes" : {
+      "region" : [ "North America" ],
+      "client_id" : [ "1" ]
+    },
+    "credentials" : [ {
+      "id" : "715cdd8d-6231-4852-9590-eec7c1e57882",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1709993491993,
+      "secretData" : "{\"value\":\"7OSgv+Ln1bd75pJfdFB7Hlio2K0Y6NOkL1gXaiSm+z4=\",\"salt\":\"RreFIPEDFibZMckEia7h1w==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "tenant" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "8a747ace-2143-47be-8a4d-2af1b15a29de",
+    "createdTimestamp" : 1709993528065,
+    "username" : "u2",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "attributes" : {
+      "region" : [ "British Isles" ],
+      "client_id" : [ "2" ]
+    },
+    "credentials" : [ {
+      "id" : "26db6956-b473-4479-910b-3c1e30325f7f",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1709993540546,
+      "secretData" : "{\"value\":\"cK/G96j4VOpCla+QftShSQUCfK1GxyeuHf1UQyowBp4=\",\"salt\":\"X9ZSUMRS2tXasGbJMe+W3A==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "manager", "tenant", "default-roles-kcals" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  } ]
+}

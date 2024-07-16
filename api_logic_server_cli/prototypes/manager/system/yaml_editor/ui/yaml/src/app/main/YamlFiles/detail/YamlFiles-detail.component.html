@@ -1,0 +1,32 @@
+<div class="container">
+<o-form-container breadcrumb="yes" breadcrumb-label-columns="name" breadcrumb-separator=", " class="fill-form">
+      <o-form #form attr="YamlFiles_form_edit" 
+        service="YamlFiles" 
+        entity="YamlFiles" 
+        fxLayout="column" 
+        show-header="yes" 
+        header-actions="R;I;U;D"
+        columns="id;name;size;directory;download_flag;content" 
+        #oDetailForm keys="id" 
+        keys-sql-types="INTEGER" 
+        show-header-navigation="yes"
+        (onDataLoaded)="onDataLoaded($event)">
+
+  <o-row attr="row1" layout-align="start stretch">
+    <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+      
+      <o-text-input attr="name" label=" name*" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      <o-text-input attr="size" label=" Size" enabled="no" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      <o-checkbox attr="directory" label=" Is Directory" enabled="no" required="no"></o-checkbox>
+      <o-checkbox attr="download_flag" label="Download Yaml" tooltip="export to ui/admin_model_merge.yaml" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-checkbox>
+
+      <o-textarea-input attr="content" label="Original Content" [data]="getContent()" read-only="true" rows="30" content-align="left" fxFlex="40%" class="form-field"></o-textarea-input>
+      <o-textarea-input attr="downloaded" label="Downloaded Content" [data]="getConverted()" read-only="true" rows="30" content-align="left" fxFlex="40%" class="form-field"></o-textarea-input>
+      <o-text-input attr="id" label=" Id*" type="INTEGER" enabled="no" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+
+    </div>
+  </o-row>
+      
+    </o-form>
+  </o-form-container>
+</div>
