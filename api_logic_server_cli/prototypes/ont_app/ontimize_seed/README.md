@@ -1,6 +1,9 @@
-# OntimizeWebNgx JEE Seed
+# ApiLogicServer Integrated Ontimize Angular Application
+ApiLogicServer technical preview using OntimizeWebNgx JEE Seed
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.2.9.
+
+Read the docs [Ontimize App Creation](https://apilogicserver.github.io/Docs/App-Custom-Ontimize-Overview/)
 
 ## Requirements
 
