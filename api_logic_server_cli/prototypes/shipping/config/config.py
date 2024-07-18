@@ -120,6 +120,16 @@ class Config:
 
     # Begin Multi-Database URLs (from ApiLogicServer add-db...)
 
+
+    SQLALCHEMY_DATABASE_URI_AUTHENTICATION = 'sqlite:///../database/authentication_db.sqlite'
+    app_logger.info(f'config.py - SQLALCHEMY_DATABASE_URI_AUTHENTICATION: {SQLALCHEMY_DATABASE_URI_AUTHENTICATION}\n')
+
+    # as desired, use env variable: export SQLALCHEMY_DATABASE_URI='sqlite:////Users/val/dev/servers/docker_api_logic_project/database/db.sqliteXX'
+    if os.getenv('SQLALCHEMY_DATABASE_URI_AUTHENTICATION'):
+        SQLALCHEMY_DATABASE_URI_AUTHENTICATION = os.getenv('SQLALCHEMY_DATABASE_URI_AUTHENTICATION')  # type: ignore # type: str
+        app_logger.debug(f'.. overridden from env variable: SQLALCHEMY_DATABASE_URI_AUTHENTICATION')
+
+
     # End Multi-Database URLs (from ApiLogicServer add-db...)
 
     # SQLALCHEMY_ECHO = environ.get("SQLALCHEMY_ECHO")
