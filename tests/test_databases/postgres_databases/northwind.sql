@@ -1,5 +1,7 @@
 --
 -- Revised for als from  https://github.com/pthom/northwind_psql/blob/master/northwind.sql
+-- Uses proper serial for Employee.id
+-- See https://apilogicserver.github.io/Docs/Data-Model-Postgresql/#auto-generated-keys
 --
 DROP DATABASE IF EXISTS northwind;
 CREATE DATABASE northwind;

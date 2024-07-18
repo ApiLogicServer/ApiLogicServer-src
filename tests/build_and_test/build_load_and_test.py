@@ -1080,6 +1080,16 @@ if Config.do_docker_postgres:
     start_api_logic_server(project_name='postgres')
     stop_server(msg="postgres\n")
 
+    # the postgres database has bad employee.id - not serial, so inserts fails
+    # this example shows how to use seriak, to fix it
+    # see https://apilogicserver.github.io/Docs/Data-Model-Postgresql/#auto-generated-keys
+    result_docker_postgres = run_command(
+        f"{set_venv} && ApiLogicServer create --{project_name}=postgres-nw --{db_url}=postgresql://postgres:p@{db_ip}/northwind",
+        cwd=install_api_logic_server_path,
+        msg=f'\nCreate Postgres postgres (nw) at: {str(install_api_logic_server_path)}')
+    start_api_logic_server(project_name='postgres-nw')
+    stop_server(msg="postgres-nw\n")
+
 
 if Config.do_docker_postgres_auth:
     # ApiLogicServer add-auth --project_name=. --db_url=postgresql://postgres:p@localhost/authdb
