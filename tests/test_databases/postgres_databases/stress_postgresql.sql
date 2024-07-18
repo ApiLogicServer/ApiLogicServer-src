@@ -1,13 +1,17 @@
 -- from yaml editor, when using pg
-drop table if exists public.sys_apps_import;
+drop table if exists "public"."sys_apps_import";
+drop sequence if exists "public"."sys_apps_import_SEQ";
+
+create sequence "public"."sys_apps_import_SEQ" increment by 1 start with 1;
 
 CREATE TABLE public.sys_apps_import (
-	app_id serial4 NOT NULL,
-	column01 varchar(32) NULL,
-	column02 varchar(32) NULL,
-	CONSTRAINT sys_apps_import_pkey PRIMARY KEY (app_id)
+        app_id serial4 NOT NULL,
+        column01 varchar(32) NULL,
+        column02 varchar(32) NULL
 );
+alter table "public"."sys_apps_import"  add constraint "PK_sys_apps_import"  primary key ("app_id");
 
+insert into "public"."sys_apps_import" values(nextval('"public.sys_apps_import_SEQ"'), 'col1', 'col2')
 
 
 -- STRESS_CHARACTER_VARYING.table
