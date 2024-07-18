@@ -1,3 +1,15 @@
+-- from yaml editor, when using pg
+drop table if exists public.sys_apps_import;
+
+CREATE TABLE public.sys_apps_import (
+	app_id serial4 NOT NULL,
+	column01 varchar(32) NULL,
+	column02 varchar(32) NULL,
+	CONSTRAINT sys_apps_import_pkey PRIMARY KEY (app_id)
+);
+
+
+
 -- STRESS_CHARACTER_VARYING.table
 drop table if exists "public"."STRESS_CHARACTER_VARYING";
 drop sequence if exists "public"."STRESS_CHARACTER_VARYING_SEQ";
