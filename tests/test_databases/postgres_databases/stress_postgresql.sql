@@ -11,7 +11,8 @@ CREATE TABLE public.sys_apps_import (
 );
 alter table "public"."sys_apps_import"  add constraint "PK_sys_apps_import"  primary key ("app_id");
 
-insert into "public"."sys_apps_import" values(nextval('"public.sys_apps_import_SEQ"'), 'col1', 'col2')
+insert into "public"."sys_apps_import" values(nextval('"public.sys_apps_import_SEQ"'), 'col1', 'col2');
+insert into "public"."sys_apps_import" values(nextval('"public.sys_apps_import_SEQ"'), 'col1-2', 'col2-2');
 
 
 -- STRESS_CHARACTER_VARYING.table
