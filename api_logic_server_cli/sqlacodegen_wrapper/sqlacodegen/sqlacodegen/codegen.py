@@ -389,9 +389,11 @@ class ModelClass(Model):
         """ add table column AND parent-relationship to attributes
 
         disambiguate relationship accessor names (append tablename with 1, 2...)
+
+        attributes is from sqlalchemy, contains things like server_default for pg autonums 
         """
         attrname = tempname = self._convert_to_valid_identifier(attrname)
-        if self.name == "Customer" and attrname == "credit_limit":
+        if self.name in ["Employee"] and attrname in ["employee_id"]:
             debug_stop = "nice breakpoint"
         counter = 1
         while tempname in self.attributes:
