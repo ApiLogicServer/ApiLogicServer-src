@@ -1916,10 +1916,14 @@ from database import <project.bind_key>_models
 
             if self.command in ["rebuild-from-database", "rebuild-from-model"]:
                 # FIXME - temp just default app - Tyler has Ont iterator
-                log.debug(" d.  Create Ontimize Merge from models")
-                from api_logic_server_cli.create_from_model.ont_create import OntCreator
-                ont_creator = OntCreator(project = model_creation_services.project)
-                ont_creator.create_application(show_messages=False)
+                app_list = create_utils.get_ontimize_apps(self.project_directory_path)
+                for app in app_list:
+                    from create_from_model import ont_build
+                    from api_logic_server_cli.create_from_model.ont_create import OntCreator
+                    build = ont_build.OntBuilder(self, app)
+                    log.debug(f" d.  Create Ontimize app_model_merge.yml from models for project: {build.project}")
+                    ont_creator = OntCreator(project = build.project)
+                    ont_creator.create_application(show_messages=False)
 
             if False and self.project_directory_path.joinpath('ui/app_model_custom.yaml').exists():
                 # eg, nw project contains this for demo purposes
