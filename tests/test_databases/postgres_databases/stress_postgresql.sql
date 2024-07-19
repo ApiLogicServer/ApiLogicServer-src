@@ -4,7 +4,7 @@ drop sequence if exists "public"."sys_apps_import_SEQ";
 
 create sequence "public"."sys_apps_import_SEQ" increment by 1 start with 1;
 
-CREATE TABLE public.sys_apps_import (
+CREATE TABLE "public"."sys_apps_import" (
         app_id serial4 NOT NULL,
         column01 varchar(32) NULL,
         column02 varchar(32) NULL
@@ -13,6 +13,8 @@ alter table "public"."sys_apps_import"  add constraint "PK_sys_apps_import"  pri
 
 insert into "public"."sys_apps_import" values(nextval('"public.sys_apps_import_SEQ"'), 'col1', 'col2');
 insert into "public"."sys_apps_import" values(nextval('"public.sys_apps_import_SEQ"'), 'col1-2', 'col2-2');
+
+SELECT setval('"public"."sys_apps_import_SEQ"', (SELECT MAX(app_id) FROM "public"."sys_apps_import"));
 
 
 -- STRESS_CHARACTER_VARYING.table
