@@ -220,6 +220,8 @@ class OntCreator(object):
         """
         if hasattr(column, "type") and column.type != DotMap():
             col_type = column.type.upper().split("(")[0]
+            if col_type in ["SERIAL","SERIAL4"]:
+                rv = "nif"
             if col_type in ["DECIMAL","NUMERIC"]:
                 rv = "currency"  
             elif col_type in ["DOUBLE", "FLOAT", "REAL"]:
