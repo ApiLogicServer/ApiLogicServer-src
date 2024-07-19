@@ -1,5 +1,5 @@
-import { Component, Injector } from '@angular/core';
-import { NavigationService } from 'ontimize-web-ngx';
+import { Component, Injector, ViewChild } from '@angular/core';
+import { NavigationService, OFormComponent } from 'ontimize-web-ngx';
 
 @Component({
   selector: '{{ entityName }}-new',
@@ -7,6 +7,11 @@ import { NavigationService } from 'ontimize-web-ngx';
   styleUrls: ['./{{ entityName }}-new.component.scss']
 })
 export class {{ entity_first_cap }}NewComponent {
+  @ViewChild("{{ entity_first_cap }}Form") form: OFormComponent;
+  onInsertMode() {
+    const default_values = {{ defaultValues }}
+    this.form.setFieldValues(default_values);
+  }
   constructor(protected injector: Injector) {
     this.injector.get(NavigationService).initialize();
   }

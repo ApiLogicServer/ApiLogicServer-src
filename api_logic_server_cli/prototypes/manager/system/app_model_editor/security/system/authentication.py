@@ -79,7 +79,7 @@ def configure_auth(flask_app: Flask, database: object, method_decorators: list[o
     def login():
         """
         Post id/password, returns token to be placed in header of subsequent requests.
-
+        curl -X POST http://apilogicserver:5655/api/auth/login -d '{"username":"admin","password":"p"}'
         Returns:
             string: access token
         """

@@ -89,12 +89,7 @@ class Config:
     FLASK_APP = environ.get("FLASK_APP")
     FLASK_ENV = environ.get("FLASK_ENV")
     DEBUG = environ.get("DEBUG")
-
-    #KEYCLOAK Args
-    kc_base = 'http://localhost:8080'
-    KEYCLOAK_REALM =  'kcals'
-    KEYCLOAK_BASE = f'{kc_base}/realms/{KEYCLOAK_REALM}'
-        
+            
     running_at = Path(__file__)
     project_abs_dir = running_at.parent.absolute()
 
@@ -108,6 +103,20 @@ class Config:
     if os.getenv('SQLALCHEMY_DATABASE_URI'):  # e.g. export SECURITY_ENABLED=true
         SQLALCHEMY_DATABASE_URI = os.getenv('SQLALCHEMY_DATABASE_URI')
         app_logger.debug(f'.. overridden from env variable: {SQLALCHEMY_DATABASE_URI}')
+
+
+    # KEYCLOAK Args
+    # https://apilogicserver.github.io/Docs/Security-Activation/
+    # als add-auth --provider-type=sql --db-url=
+    # als add-auth --provider-type=keycloak --db-url=localhost
+    # als add-auth --provider-type=keycloak --db-url=http://10.0.0.77:8080
+    kc_base = 'http://localhost:8080'  # e.g., 'http://localhost:8080'
+    ''' keycloak location '''
+    KEYCLOAK_REALM =  'kcals'
+    KEYCLOAK_BASE = f'{kc_base}/realms/{KEYCLOAK_REALM}'
+    KEYCLOAK_BASE_URL = f'{kc_base}'
+    KEYCLOAK_CLIENT_ID = 'alsclient'
+    ''' keycloak client id '''
 
     SECURITY_ENABLED = True  # you must also: ApiLogicServer add-db --db_url=auth --bind_key=authentication
     SECURITY_PROVIDER = None
@@ -212,11 +221,21 @@ class Args():
         self.kafka_consumer = Config.KAFKA_CONSUMER
         self.keycloak_base = Config.KEYCLOAK_BASE
         self.keycloak_realm = Config.KEYCLOAK_REALM
+        self.keycloak_base_url = Config.KEYCLOAK_BASE_URL
+        self.keycloak_client_id = Config.KEYCLOAK_CLIENT_ID
 
         self.verbose = False
         self.create_and_run = False
 
     # KEYCLOAK ARGS
+    @property
+    def keycloak_realm(self) -> str:
+        return self.flask_app.config["KEYCLOAK_REALM"]
+    
+    @keycloak_realm.setter
+    def keycloak_realm(self, realm):
+        self.flask_app.config["KEYCLOAK_REALM"] = realm
+
     @property
     def keycloak_base(self) -> str:
         return self.flask_app.config["KEYCLOAK_BASE"]
@@ -226,12 +245,21 @@ class Args():
         self.flask_app.config["KEYCLOAK_BASE"] = base
         
     @property
-    def keycloak_realm(self) -> str:
-        return self.flask_app.config["KEYCLOAK_REALM"]
+    def keycloak_base_url(self) -> str:
+        return self.flask_app.config["KEYCLOAK_BASE_URL"]
     
-    @keycloak_realm.setter
-    def keycloak_realm(self, realm):
-        self.flask_app.config["KEYCLOAK_REALM"] = realm
+    @keycloak_base_url.setter
+    def keycloak_base_url(self, base):
+        self.flask_app.config["KEYCLOAK_BASE_URL"] = base
+        
+    @property
+    def keycloak_client_id(self) -> str:
+        return self.flask_app.config["KEYCLOAK_CLIENT_ID"]
+    
+    @keycloak_client_id.setter
+    def keycloak_client_id(self, base):
+        self.flask_app.config["KEYCLOAK_CLIENT_ID"] = base
+        
 
     @property
     def port(self) -> str:
@@ -305,7 +333,7 @@ class Args():
     @property
     def api_logic_server_home(self):
         """ location of ApiLogicServer-src (for admin_loader) """
-        return self.flask_app.config["APILOGICSERVER_HOME"]
+        return self.flask_app.config["APILOGICSERVER_HOME"] if 'APILOGICSERVER_HOME' in self.flask_app.config else None 
 
     
     @api_logic_server_home.setter

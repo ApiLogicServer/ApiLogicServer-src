@@ -44,7 +44,10 @@ def get_sra_directory(args: Args) -> str:
                     if not dev_home:
                         raise Exception('ApiLogicServer not in venv, env APILOGICSERVER_HOME or HOME must be set')
             sys.path.append(dev_home)
-            from api_logic_server_cli.create_from_model import api_logic_server_utils as api_logic_server_utils
+            try:
+                from api_logic_server_cli.create_from_model import api_logic_server_utils as api_logic_server_utils
+            except:
+                raise Exception('\n\nWrong venv (ApiLogicServer not in venv), or env APILOGICSERVER_HOME or HOME must be set\n.. VSCode users: Ctrl-Shift-P, Python: Select Interpreter > Use Python from "python.defaultInterpreterPath"\n\n')
         admin_logger.debug("return_spa - install directory")
         utils_str = inspect.getfile(api_logic_server_utils)
         sra_path = Path(utils_str).parent.joinpath('safrs-react-admin-npm-build')
@@ -101,9 +104,16 @@ def admin_events(flask_app: Flask, args: Args, validation_error: ValidationError
 
             api_root: {http_type}://{swagger_host}:{port}/{api} (from ui_admin_creator)
 
-            auth/endpoint: {http_type}://{swagger_host}:{port}/api/auth/login
+            authentication:
+                endpoint: {http_type}://{swagger_host}:{port}/api/auth/login     or...
+                    e.g. http://localhost:5656/ui/admin/admin.yaml
 
-            e.g. http://localhost:5656/ui/admin/admin.yaml
+            authentication:
+                keycloak:
+                    url: args.keycloak_url
+                    realm: args.realm
+                    clientId: args.alsclient
+
         """
         use_type = "mem"
         if use_type == "mem":
@@ -120,10 +130,32 @@ def admin_events(flask_app: Flask, args: Args, validation_error: ValidationError
                 content = content.replace("{swagger_host}", args.swagger_host)
                 content = content.replace("{port}", str(args.swagger_port))  # note - codespaces requires 443 here (typically via args)
                 content = content.replace("{api}", args.api_prefix[1:])
+
             if Config.SECURITY_ENABLED == False:
                 content = content.replace("authentication", 'no-authentication')
+                content = content.replace("'{system-default}'", 'no-authentication')
+            else:
+                provider_name = str(Config.SECURITY_PROVIDER)
+                if "keycloak" in provider_name:
+                    s = (f'\n'
+                        f'  keycloak:\n'
+                        f'    url: {args.keycloak_base_url}\n'
+                        f'    realm: {args.keycloak_realm}\n'
+                        f'    clientId: {args.keycloak_client_id}\n'
+                    )   
+                    content = content.replace("'{system-default}'", s)
+                elif "sql" in provider_name:
+                    sql_auth_config = f'\n  endpoint: {args.http_scheme}://{args.swagger_host}:{args.swagger_port}/{args.api_prefix[1:]}/auth/login\n'
+                    content = content.replace("'{system-default}'", sql_auth_config)
+                else:
+                    sys.exit(f"ERROR[admin_loader]: unknown security type: {Config.SECURITY_PROVIDER}")         
+
             admin_logger.debug(f'loading ui/admin/admin.yaml')
             mem = io.BytesIO(str.encode(content))
+            if debug_repoonse := False:  # debug, to verify url/security content
+                mem = io.BytesIO(str.encode(content))
+                mem_array = mem.getvalue().decode('utf-8').split('\n')
+                logging.info(f'admin_yaml() - response: \n{mem_array}')    
             return send_file(mem, mimetype='text/yaml')
         else:
             response = send_file("ui/admin/admin.yaml", mimetype='text/yaml')
@@ -156,19 +188,25 @@ def admin_events(flask_app: Flask, args: Args, validation_error: ValidationError
         Enable CORS. Disable it if you don't need CORS or install Cors Library
         https://parzibyte.me/blog
         '''
-        response.headers["Access-Control-Allow-Origin"] = "*" # "http://localhost:4298"  # <- You can change "*" for a domain for example "http://localhost"
+        response.headers[
+            "Access-Control-Allow-Origin"] = "*"  # <- You can change "*" for a domain for example "http://localhost"
         response.headers["Access-Control-Allow-Credentials"] = "true"
         response.headers["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS, PUT, DELETE, PATCH"
-        #response.headers["Access-Control-Allow-Headers"] = "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token,  X-Requested-With, X-Auth-Token, Authorization"
-            #"access-control-allow-origin, authorization, content-type
+        #response.headers["Access-Control-Allow-Headers"] = \
+        #    "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token,  X-Requested-With, X-Auth-Token, Authorization, Access-Control-Allow-Origin"
+                #"access-control-allow-origin, authorization, content-type
         response.headers["Access-Control-Expose-Headers"] = "X-Auth-Token, Content-disposition, X-Requested-With"
         #response.headers["Content-Type"] = "application/json, text/html"
         
         # This is a short cut to auto login to Ontimize
-        from security.system.authentication import access_token
-        #access_token = request.headers.environ.get("HTTP_AUTHORIZATION")[7:]
-        if access_token:
-            response.headers["X-Auth-Token"] = access_token  # required for Ontimize (kludge alert)
+        try:
+            from security.system.authentication import access_token
+            #access_token = request.headers.environ.get("HTTP_AUTHORIZATION")[7:]
+            if access_token:
+                response.headers["X-Auth-Token"] = access_token  # required for Ontimize (kludge alert)
+        except:
+            logging.error('\nadmin_loader - after_request - access_token not set\n')
+
         
         admin_logger.debug(f'cors after_request - response: {str(response)}')
         return response

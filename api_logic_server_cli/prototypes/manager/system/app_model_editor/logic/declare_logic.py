@@ -5,7 +5,7 @@ from logic_bank.extensions.rule_extensions import RuleExtension
 from logic_bank.logic_bank import Rule
 from database import models
 import api.system.opt_locking.opt_locking as opt_locking
-from security.system.authorization import Grant
+from security.system.authorization import Grant, Security
 import logging
 from base64 import b64decode
 from requests import get
@@ -22,6 +22,8 @@ def declare_logic():
     Your Code Goes Here - Use code completion (Rule.) to declare rules
     '''
 
+    from logic.logic_discovery.auto_discovery import discover_logic
+    discover_logic()
     def handle_all(logic_row: LogicRow):  # OPTIMISTIC LOCKING, [TIME / DATE STAMPING]
         """
         This is generic - executed for all classes.
@@ -48,13 +50,14 @@ def declare_logic():
 
     def validate_yaml(row:models.YamlFiles, old_row:models.YamlFiles, logic_row:LogicRow):
         import yaml
-        if logic_row.ins_upd_dlt in ["ins","upd"]:
-            #yaml_content = str(b64decode(row.content), encoding=encoding) if row.content else None 
+        if logic_row.ins_upd_dlt in ["ins","upd"] and row.download_flag == False:
             if row.content:
+                yaml_content = str(b64decode(row.content), encoding=encoding) if row.content else None 
                 try:
-                    yaml.safe_load(row.content)
-                    row.size = len(row.content)
+                    yaml.safe_load(yaml_content)
+                    row.size = len(yaml_content)
                     row.upload_flag = True
+                    row.content = yaml_content
                     return True
                 except yaml.YAMLError as exc:
                     return False    
@@ -71,8 +74,8 @@ def declare_logic():
     Rule.row_event(models.YamlFiles, calling=export_yaml)
     Rule.constraint(models.YamlFiles, calling=validate_yaml, error_msg="Invalid yaml file")
     #als rules report
-    from api.system import api_utils
-    api_utils.rules_report()
+    #from api.system import api_utils
+    #api_utils.rules_report()
 
     app_logger.debug("..logic/declare_logic.py (logic == rules + code)")
 

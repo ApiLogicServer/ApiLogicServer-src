@@ -1,13 +1,12 @@
 about:
-  date: April 26, 2024 11:18:59
+  date: July 14, 2024 09:44:34
   recent_changes: works with modified safrs-react-admin
   version: 0.0.0
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
-authentication:
-  endpoint: '{http_type}://{swagger_host}:{port}/api/auth/login'
+authentication: '{system-default}'
 info:
   number_relationships: 4
-  number_tables: 5
+  number_tables: 7
 resources:
   Entity:
     attributes:
@@ -17,13 +16,17 @@ resources:
       search: true
       sort: true
     - name: title
+      required: true
     - name: pkey
     - name: favorite
-    - name: menu_group
-      label: 'group'
     - name: info_list
     - name: info_show
     - name: exclude
+    - name: new_template
+    - name: home_template
+    - name: detail_template
+    - name: mode
+    - name: menu_group
     tab_groups:
     - direction: tomany
       fks:
@@ -49,6 +52,8 @@ resources:
       required: true
       search: true
       sort: true
+    - name: entity_name
+      required: true
     - name: template_name
     - name: attr
       required: true
@@ -59,9 +64,10 @@ resources:
       required: true
     - name: tooltip
     - name: exclude
+    - name: visible
+    - name: default_value
     - name: isrequired
     - name: isenabled
-    - name: default_value
     tab_groups:
     - direction: toone
       fks:
@@ -87,10 +93,23 @@ resources:
     - name: description
     type: GlobalSetting
     user_key: name
+  Root:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: about_changes
+    - name: api_root
+    - name: api_auth_type
+    - name: api_auth
+    - name: about_date
+    type: Root
+    user_key: id
   TabGroup:
     attributes:
-    - label: ' entity_name*'
-      name: entity_name
+    - label: ' name*'
+      name: name
       required: true
       search: true
       sort: true
@@ -100,9 +119,9 @@ resources:
       required: true
     - name: direction
       required: true
-    - name: label
-      required: true
     - name: fkeys
+      required: true
+    - name: label
       required: true
     - name: exclude
     tab_groups:
@@ -117,7 +136,7 @@ resources:
       name: entity1
       resource: Entity
     type: TabGroup
-    user_key: entity_name
+    user_key: name
   Template:
     attributes:
     - label: ' name*'
@@ -134,7 +153,7 @@ resources:
       resource: EntityAttr
     type: Template
     user_key: name
-  YamlFiles:
+  YamlFile:
     attributes:
     - label: ' name*'
       name: name
@@ -142,23 +161,17 @@ resources:
       search: true
       sort: true
     - name: content
-      label: 'Original Content'
-      type: image
-      required: false
     - name: downloaded
-      label: 'Downloaded'
-      type: image
-      required: false
+
     - name: download_flag
-      type: boolean
-    - name: Id
-    - name: createDate
-    - name: directory
-      label: 'isDirectory'
     - name: size
+    - name: createdate
+      type: DATE
+      required: true
+    - name: id
+    - name: downloaded
     type: YamlFiles
-    user_key: Id
-    favorite: name
+    user_key: name
 settings:
   HomeJS: http://localhost:5656/admin-app/home.js
   max_list_columns: 8
@@ -166,16 +179,20 @@ settings:
     currency_symbol: $
     currency_symbol_position: left
     date_format: LL
-    decimal_max: '1000000'
+    decimal_max: '10000000'
     decimal_min: '0'
     decimal_separator: .
     detail_mode: tab
     edit_on_mode: dblclick
-    include_translation: false
+    include_translation: 'false'
+    keycloak_client_id: alsclient
+    keycloak_realm: kcals
+    keycloak_url: http://localhost:8080
     max_decimal_digits: '4'
     min_decimal_digits: '2'
     new_mode: dialog
     pick_style: list
+    row_height: small,
     style: light
     thousand_separator: ','
     use_keycloak: 'false'

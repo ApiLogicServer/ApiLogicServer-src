@@ -185,7 +185,7 @@ def add_service(
                 return jsonify(
                     {
                         "code": 1,
-                        "message": f"{ex.message}",
+                        "message": f"{ex}",
                         "data": [],
                         "sqlTypes": None,
                     }
@@ -230,7 +230,6 @@ def add_service(
             return gen_export(request)
 
         if clz_name == "insertFile":
-            pass
             return insertFile(request)
 
         if request.path == "/ontimizeweb/services/rest/users/login":
@@ -238,6 +237,11 @@ def add_service(
 
         # api_clz = api_map.get(clz_name)
         resource = find_model(clz_name)
+        if resource == None:
+            return jsonify(
+                {"code": 1, "message": f"Resource {clz_name} not found", "data": None}
+            )
+            
         api_attributes = resource["attributes"]
         api_clz = resource["model"]
 
@@ -310,7 +314,7 @@ def add_service(
             import base64
 
             base64_message = auth[6:]
-            print(f"auth found: {auth}")
+            #print(f"auth found: {auth}")
             # base64_message = 'UHl0aG9uIGlzIGZ1bg=='
             base64_bytes = base64_message.encode("ascii")
             message_bytes = base64.b64decode(base64_bytes)
@@ -337,7 +341,7 @@ def add_service(
             {
                 "code": 0,
                 "message": "Login Successful",
-                "data": {"username": "admin", "token": "admin"},
+                "data": {"username": username, "token": access_token},
             }
         )
         # return jsonify({"code":1,"message":"Login Failed","data":None})
@@ -900,7 +904,7 @@ def add_service(
         root.about_changes = about["recent_changes"]
         root.api_root = api_root
         root.api_auth_type = "endpoint"
-        root.api_auth = authentication["endpoint"]
+        root.api_auth = authentication["endpoint"] if "endpoint" in authentication else authentication
         try:
             session.add(root)
             session.commit()
@@ -957,52 +961,51 @@ def add_service(
             return default
 
     def insert_tab_groups(entity, entity_type, each_entity_yaml):
-        try:
-            tab_groups = (
-                each_entity_yaml["tab_groups"]
-                if "tab_groups" in each_entity_yaml
-                else []
-            )
-            for tab_group in tab_groups:
-                m_tab_group = models.TabGroup()
-                print(entity, f" tab_group: {tab_group}")
-                m_tab_group.entity_name = entity
-                m_tab_group.direction = tab_group["direction"]
-                m_tab_group.tab_entity = tab_group["resource"]
-                m_tab_group.fkeys = str(tab_group["fks"])
-                m_tab_group.name = tab_group.get("name")
-                m_tab_group.label = tab_group.get("label") or tab_group.get("name")
-                m_tab_group.exclude = get_boolean(tab_group, "exclude", False)
+        tab_groups = (
+            each_entity_yaml["tab_groups"]
+            if "tab_groups" in each_entity_yaml
+            else []
+        )
+        for tab_group in tab_groups:
+            m_tab_group = models.TabGroup()
+            print(entity, f" tab_group: {tab_group}")
+            m_tab_group.entity_name = entity
+            m_tab_group.direction = tab_group["direction"]
+            m_tab_group.tab_entity = tab_group["resource"]
+            m_tab_group.fkeys = str(tab_group["fks"])
+            m_tab_group.name = tab_group.get("name")
+            m_tab_group.label = tab_group.get("label") or tab_group.get("name")
+            m_tab_group.exclude = get_boolean(tab_group, "exclude", False)
 
-                try:
-                    session.add(m_tab_group)
-                    session.commit()
-                except Exception as ex:
-                    session.rollback()
-                    print(ex)
-        except Exception as ex:
-            session.rollback()
-            raise ex
+            try:
+                session.add(m_tab_group)
+                session.commit()
+            except Exception as ex:
+                session.rollback()
+                print(ex)
+
 
     def insert_entity_attrs(entity, entity_type, each_entity_yaml):
+        columns = []
         for attr in each_entity_yaml["columns"]:
-            m_entity_attr = models.EntityAttr()
-            print(entity, f": {attr}")  # merge metadata into attr
-            m_entity_attr.entity_name = entity_type
-            m_entity_attr.attr = get_value(attr, "name")
-            m_entity_attr.label = get_value(attr, "label", attr["name"])
-            m_entity_attr.template_name = get_value(attr, "template", "text")
-            m_entity_attr.thistype = get_value(attr, "type", "VARCHAR")
-            m_entity_attr.isrequired = get_boolean(attr, "required", False)
-            m_entity_attr.issearch = get_boolean(attr, "search", False)
-            m_entity_attr.isort = get_boolean(attr, "sort", False)
-            m_entity_attr.isenabled = get_boolean(attr, "enabled", True)
-            m_entity_attr.exclude = get_boolean(attr, "exclude", False)
-            m_entity_attr.tooltip = get_value(attr, "tooltip", f'Insert {attr["name"]}')
-            m_entity_attr.visible = get_boolean(attr, "visible", True)
-            if get_value(attr, "default_value"):
-                m_entity_attr.default_value = get_value(attr, "default_value", "")
-
+            if attr not in columns:
+                columns.append(attr)
+                m_entity_attr = models.EntityAttr()
+                print(entity, f": {attr}")  # merge metadata into attr
+                m_entity_attr.entity_name = entity_type
+                m_entity_attr.attr = get_value(attr, "name")
+                m_entity_attr.label = get_value(attr, "label", attr["name"])
+                m_entity_attr.template_name = get_value(attr, "template", "text")
+                m_entity_attr.thistype = get_value(attr, "type", "VARCHAR")
+                m_entity_attr.isrequired = get_boolean(attr, "required", False)
+                m_entity_attr.issearch = get_boolean(attr, "search", False)
+                m_entity_attr.isort = get_boolean(attr, "sort", False)
+                m_entity_attr.isenabled = get_boolean(attr, "enabled", True)
+                m_entity_attr.exclude = get_boolean(attr, "exclude", False)
+                m_entity_attr.tooltip = get_value(attr, "tooltip", f'Insert {attr["name"]}')
+                m_entity_attr.visible = get_boolean(attr, "visible", True)
+                if get_value(attr, "default_value"):
+                    m_entity_attr.default_value = get_value(attr, "default_value", "")
             try:
                 session.add(m_entity_attr)
                 session.commit()
@@ -1104,6 +1107,8 @@ def build_json(
             e["favorite"] = entity.get("favorite")
         if entity.get("exclude"):
             e["exclude"] = entity["exclude"]
+        else:
+            e["exclude"]= False
         if entity.get("info_list"):
             e["info_list"] = entity["info_list"]
         if entity.get("info_show"):
