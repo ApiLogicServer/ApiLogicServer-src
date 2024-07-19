@@ -30,5 +30,5 @@ else
 fi
 
 pushd ./../../
-docker compose -f ./devops/docker-compose-dev-local/docker-compose-dev-local.yml up -d
+docker compose -f ./devops/docker-compose-dev-local/docker-compose-yaml.yml up -d
 popd

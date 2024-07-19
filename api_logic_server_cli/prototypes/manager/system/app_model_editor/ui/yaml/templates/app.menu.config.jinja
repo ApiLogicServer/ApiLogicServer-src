@@ -1,6 +1,6 @@
 import { MenuRootItem } from 'ontimize-web-ngx';
-{% for importitem in importitems %}
-{{ importitem }}
+{% for card_item in import_cards %}
+{{ card_item }}
 {% endfor %}
 
 export const MENU_CONFIG: MenuRootItem[] = [
@@ -14,7 +14,7 @@ export const MENU_CONFIG: MenuRootItem[] = [
 ];
 
 export const MENU_COMPONENTS = [
-{% for menu_component in card_components %}
-    {{ menu_component}}
+{% for card_component in card_components %}
+    {{ card_component }}
 {% endfor %}
 ];

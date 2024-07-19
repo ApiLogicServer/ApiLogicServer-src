@@ -62,7 +62,7 @@ def send_kafka_message(logic_row: LogicRow, row_dict_mapper: RowDictMapper,
         msg (str, optional): string to log
         json_root_name (str, optional): json name for json payload root; default is logic_row.name
     """
-    row_obj_dict = row_dict_mapper(logic_row=logic_row).row_to_dict(row = logic_row.row)
+    row_obj_dict = row_dict_mapper().row_to_dict(row = logic_row.row)
     root_name = json_root_name
     if root_name == "":
         root_name = logic_row.name

@@ -1,5 +1,5 @@
 # coding: utf-8
-from sqlalchemy import Column, ForeignKey, Integer, String, Text
+from sqlalchemy import Column, ForeignKey, Integer, String, Text, text
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from flask import abort
@@ -14,14 +14,14 @@ from flask_jwt_extended import create_access_token
 # Alter this file per your database maintenance policy
 #    See https://apilogicserver.github.io/Docs/Project-Rebuild/#rebuilding
 #
-# Created:  April 26, 2024 11:22:13
-# Database: sqlite:////Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/ontimize/database/authentication_db.sqlite
-# Dialect:  sqlite
+# Created:  July 14, 2024 09:44:43
+# Database: postgresql://postgres:p@127.0.0.1/authdb
+# Dialect:  postgresql
 #
 # mypy: ignore-errors
 ########################################################################################################################
-
-from safrs import SAFRSBase
+ 
+from database.system.SAFRSBaseX import SAFRSBaseX
 from flask_login import UserMixin
 import safrs, flask_sqlalchemy
 from safrs import jsonapi_attr
@@ -38,11 +38,11 @@ metadata = Baseauthentication.metadata
 #NullType = db.String  # datatype fixup
 #TIMESTAMP= db.TIMESTAMP
 
-from sqlalchemy.dialects.sqlite import *
+from sqlalchemy.dialects.postgresql import *
 
 
 
-class Role(SAFRSBase, Baseauthentication, db.Model, UserMixin):  # type: ignore
+class Role(SAFRSBaseX, Baseauthentication, db.Model, UserMixin):  # type: ignore
     __tablename__ = 'Role'
     _s_collection_name = 'authentication-Role'  # type: ignore
     __bind_key__ = 'authentication'
@@ -68,23 +68,22 @@ class Role(SAFRSBase, Baseauthentication, db.Model, UserMixin):  # type: ignore
     S_CheckSum = _check_sum_
 
 
-class User(SAFRSBase, Baseauthentication, db.Model, UserMixin):  # type: ignore
+class User(SAFRSBaseX, Baseauthentication, db.Model, UserMixin):  # type: ignore
     __tablename__ = 'User'
     _s_collection_name = 'authentication-User'  # type: ignore
     __bind_key__ = 'authentication'
 
-    name = Column(String(128))
+    name = Column(String(128), server_default=text("NULL::character varying"))
+    id = Column(String(64), primary_key=True)
+    username = Column(String(128), server_default=text("NULL::character varying"))
+    password_hash = Column(String(200), server_default=text("NULL::character varying"))
     client_id = Column(Integer)
-    id = Column(String(64), primary_key=True, unique=True)
-    username = Column(String(128))
-    password_hash = Column(String(200))
-    region = Column(String(32))
+    region = Column(String(32), server_default=text("NULL::character varying"))
     allow_client_generated_ids = True
 
     # parent relationships (access parent)
 
     # child relationships (access children)
-    ApiList : Mapped[List["Api"]] = relationship(back_populates="owner")
     UserRoleList : Mapped[List["UserRole"]] = relationship(back_populates="user")
     
     # authentication-provider extension - password check
@@ -126,42 +125,14 @@ class User(SAFRSBase, Baseauthentication, db.Model, UserMixin):  # type: ignore
     S_CheckSum = _check_sum_
 
 
-class Api(SAFRSBase, Baseauthentication, db.Model, UserMixin):  # type: ignore
-    __tablename__ = 'Apis'
-    _s_collection_name = 'authentication-Api'  # type: ignore
-    __bind_key__ = 'authentication'
-
-    id = Column(Integer, primary_key=True)
-    name = Column(String(32))
-    connection_string = Column(String(64))
-    owner_id = Column(ForeignKey('User.id'))
-
-    # parent relationships (access parent)
-    owner : Mapped["User"] = relationship(back_populates=("ApiList"))
-
-    # child relationships (access children)
-
-    @jsonapi_attr
-    def _check_sum_(self):  # type: ignore [no-redef]
-        return None if isinstance(self, flask_sqlalchemy.model.DefaultMeta) \
-            else self._check_sum_property if hasattr(self,"_check_sum_property") \
-                else None  # property does not exist during initialization
-
-    @_check_sum_.setter
-    def _check_sum_(self, value):  # type: ignore [no-redef]
-        self._check_sum_property = value
-
-    S_CheckSum = _check_sum_
-
-
-class UserRole(SAFRSBase, Baseauthentication, db.Model, UserMixin):  # type: ignore
+class UserRole(SAFRSBaseX, Baseauthentication, db.Model, UserMixin):  # type: ignore
     __tablename__ = 'UserRole'
     _s_collection_name = 'authentication-UserRole'  # type: ignore
     __bind_key__ = 'authentication'
 
-    user_id = Column(ForeignKey('User.id'), primary_key=True)
+    user_id = Column(ForeignKey('User.id', ondelete='CASCADE'), primary_key=True, nullable=False)
     notes = Column(Text)
-    role_name = Column(ForeignKey('Role.name'), primary_key=True)
+    role_name = Column(ForeignKey('Role.name', ondelete='CASCADE'), primary_key=True, nullable=False)
     allow_client_generated_ids = True
 
     # parent relationships (access parent)
