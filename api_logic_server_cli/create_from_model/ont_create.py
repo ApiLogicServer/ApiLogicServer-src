@@ -86,16 +86,19 @@ class OntCreator(object):
             exit(1)
 
         app_path = Path(self.project.project_directory_path).joinpath(f'ui/{self.app}')
+        app_model_path = app_path.joinpath("app_model.yaml")
         if os.path.exists(app_path):
-            log.info(f'\nApp {self.app} already present in project - no action taken\n')
-            exit(1)
+            if self.project.command.startswith('rebuild'):
+                app_model_path = app_path.joinpath("app_model_merge.yaml")
+            else:
+                log.info(f'\nApp {self.app} already present in project - no action taken\n')
+                exit(1)
         else:
             os.mkdir(app_path)              
-
-        # TODO - move ontimize seed to create - may pull from Git or Venv in future
-        from_dir = self.project.api_logic_server_dir_path.joinpath('prototypes/ont_app/ontimize_seed')
-        to_dir = self.project.project_directory_path.joinpath(f'ui/{self.app}/')
-        shutil.copytree(from_dir, to_dir, dirs_exist_ok=True)  # create default app files
+            # TODO - move ontimize seed to create - may pull from Git or Venv in future
+            from_dir = self.project.api_logic_server_dir_path.joinpath('prototypes/ont_app/ontimize_seed')
+            to_dir = self.project.project_directory_path.joinpath(f'ui/{self.app}/')
+            shutil.copytree(from_dir, to_dir, dirs_exist_ok=True)  # create default app files
 
         with open(f'{admin_app}', "r") as admin_file:  # path is admin.yaml for default url/app
                 admin_dict = yaml.safe_load(admin_file)
@@ -140,7 +143,6 @@ class OntCreator(object):
                             to_dir.joinpath('security/declare_security.py'))
 
         app_model_out_dict = app_model_out.toDict()  # dump(dot_map) is improperly structured
-        app_model_path = app_path.joinpath("app_model.yaml")
         with open(app_model_path, 'w') as app_model_file:
             yaml.dump(app_model_out_dict, app_model_file)
         pass

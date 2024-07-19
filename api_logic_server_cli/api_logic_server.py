@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.04.94"
+__version__ = "10.04.95"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t07/19/2024 - 10.04.95: rebuild now does ont apps \n"\
     "\t07/14/2024 - 10.04.94: Manager += Yaml Editor \n"\
     "\t07/14/2024 - 10.04.93: Ont Postgres fix, pg add-auth tests, sra 7-11 \n"\
     "\t07/12/2024 - 10.04.91: Behave Tests / Report now include ready flag example \n"\
@@ -1913,7 +1914,14 @@ from database import <project.bind_key>_models
                 ont_creator = OntCreator(project = model_creation_services.project)
                 ont_creator.create_application(show_messages=False)
 
-            if self.project_directory_path.joinpath('ui/app_model_custom.yaml').exists():
+            if self.command in ["rebuild-from-database", "rebuild-from-model"]:
+                # FIXME - temp just default app - Tyler has Ont iterator
+                log.debug(" d.  Create Ontimize Merge from models")
+                from api_logic_server_cli.create_from_model.ont_create import OntCreator
+                ont_creator = OntCreator(project = model_creation_services.project)
+                ont_creator.create_application(show_messages=False)
+
+            if False and self.project_directory_path.joinpath('ui/app_model_custom.yaml').exists():
                 # eg, nw project contains this for demo purposes
                 copyfile (src=self.project_directory_path.joinpath('ui/app_model_custom.yaml'),
                             dst=self.project_directory_path.joinpath('ui/app/app_model.yaml'))
