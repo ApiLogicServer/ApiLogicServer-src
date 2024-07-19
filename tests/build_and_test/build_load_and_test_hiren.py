@@ -49,7 +49,7 @@ def find_valid_python_name() -> str:
         else:
             return 'python'
 
-def get_api_logic_server_src_path() -> Path:
+def get_api_logic_server_path() -> Path:
     """
     :return: ApiLogicServer dir, eg, /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org/ApiLogicServer-src
     """
@@ -69,7 +69,7 @@ def get_servers_build_and_test_path() -> Path:
     Returns:
         Path:  /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test 
     """
-    api_logic_server_path = get_api_logic_server_src_path()
+    api_logic_server_path = get_api_logic_server_path()
     dev_path = Path(api_logic_server_path).parent.parent
     rtn_path = dev_path.joinpath("build_and_test")
     return rtn_path
@@ -422,9 +422,9 @@ def verify_include_models( project_name : str ='include_exclude',
 def delete_build_directories(install_api_logic_server_path):
     # if os.path.exists(install_api_logic_server_path):
     # rm -r ApiLogicServer.egg-info; rm -r build; rm -r dist
-    delete_dir(dir_path=str(get_api_logic_server_src_path().joinpath('ApiLogicServer.egg-info')), msg="\ndelete egg ")
-    delete_dir(dir_path=str(get_api_logic_server_src_path().joinpath('build')), msg="delete build ")
-    delete_dir(dir_path=str(get_api_logic_server_src_path().joinpath('dist')), msg="delete dist ")
+    delete_dir(dir_path=str(get_api_logic_server_path().joinpath('ApiLogicServer.egg-info')), msg="\ndelete egg ")
+    delete_dir(dir_path=str(get_api_logic_server_path().joinpath('build')), msg="delete build ")
+    delete_dir(dir_path=str(get_api_logic_server_path().joinpath('dist')), msg="delete dist ")
     try:
         os.mkdir(install_api_logic_server_path, mode = 0o777)
         os.mkdir(install_api_logic_server_path.joinpath('dockers'), mode = 0o777)
@@ -697,7 +697,7 @@ def validate_sql_server_types():
 #        MAIN CODE
 # ***************************
 
-__version__ = '10.04.94'  # creating dockers/ApiLogicServer, for docker manager manual tests, genai
+__version__ = '10.04.50'  # creating dockers/ApiLogicServer, for docker manager manual tests
 current_path = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(current_path)
 program_dir = str(current_path)
@@ -723,7 +723,7 @@ install_api_logic_server_clean_path = install_api_logic_server_path.parent.paren
 api_logic_project_path = install_api_logic_server_path.joinpath('ApiLogicProject')
 api_logic_server_tests_path = Path(os.path.abspath(__file__)).parent.parent
 
-api_logic_server_cli_path = get_api_logic_server_src_path().\
+api_logic_server_cli_path = get_api_logic_server_path().\
                             joinpath("api_logic_server_cli").joinpath('api_logic_server.py')  # eg, /Users/val/dev/ApiLogicServer/api_logic_server_cli/api_logic_server.py
 
 with io.open(str(api_logic_server_cli_path), "rt", encoding="utf8") as f:
@@ -875,20 +875,23 @@ if Config.do_test_api_logic_project_with_auth:
     repeat 867-870
 '''
 
-if Config.do_test_genai:
-    # test genai, using pre-supplied ChatGPT response (to avoid api key issues)
-    prompt_path = install_api_logic_server_path.joinpath('system/genai/temp/chatgpt_retry.txt')
-    assert prompt_path.exists() , f'do_test_genai error: prompt path not found: {str(prompt_path)}'
-    result_genai = run_command(f'{set_venv} && als genai --using=genai_demo.prompt --gen-using-file={prompt_path}',
+
+if Config.do_test_genai:  # add this to ghe env.py
+    # code this like 854-856
+    model_path=get_api_logic_server_path().joinpath('api_logic_server_cli/prototypes/manager/system/genai/temp/model.py')
+    #db_path=get_api_logic_server_path().joinpath('api_logic_server_cli/prototypes/manager/system/genai/temp/model.py')
+    assert model_path.exists() ,'badpromptpath'
+    result_genai = run_command(f'{set_venv} && als create --project-name=genai_demo --from-model={model_path} --db-url=sqlite:///system/genai/temp/genai_demo.db',
         cwd=install_api_logic_server_path,
-        msg=f'\nCreate genai_demo')
-    genai_demo_path = install_api_logic_server_path.joinpath('genai_demo')
-    add_cust_genai = run_command(f'{set_venv} && cd {genai_demo_path} && als add-cust',
-        cwd=genai_demo_path,
-        msg=f'\nCustomize genai_demo')
-    start_api_logic_server(project_name="genai_demo")
-    stop_server(msg="*** genai_demo TESTS COMPLETE ***\n")
+        msg=f'\nCreate Manager')
+    pass
+    # als create --project-name=genai_demo --from-model=system/genai/temp/model.py --db-url=sqlite:///system/genai/temp/genai_demo.db
+    # start the server on the created project
+
+    # als genai --using=genai_demo.prompt --gen-using-file=system/genai/temp/chatgpt_retry.txt
+    # start the server on the created project (and stop it)
     
+
 
 if Config.do_create_shipping:  # optionally, start it manually (eg, with breakpoints)
     result_create = run_command(f'{set_venv} && ApiLogicServer create --{project_name}=Shipping --{db_url}=shipping',
@@ -928,7 +931,7 @@ if Config.do_rebuild_tests:
     rebuild_tests()
 
 if Config.do_other_sqlite_databases:
-    chinook_path = get_api_logic_server_src_path().joinpath('api_logic_server_cli').joinpath('database').joinpath('Chinook_Sqlite.sqlite')
+    chinook_path = get_api_logic_server_path().joinpath('api_logic_server_cli').joinpath('database').joinpath('Chinook_Sqlite.sqlite')
     chinook_url = f'sqlite:///{chinook_path}'
     run_command(f'{set_venv} && ApiLogicServer create --{project_name}=chinook_sqlite --{db_url}={chinook_url}',
         cwd=install_api_logic_server_path,
@@ -945,7 +948,7 @@ if Config.do_other_sqlite_databases:
     stop_server(msg="todo\n")
 
 if Config.do_include_exclude:
-    filter_path = str(get_api_logic_server_src_path().joinpath('api_logic_server_cli/database'))
+    filter_path = str(get_api_logic_server_path().joinpath('api_logic_server_cli/database'))
 
     run_command(f'{set_venv} && ApiLogicServer create --{project_name}=include_exclude_nw --{db_url}=nw- --{include_tables}={filter_path}/table_filters_tests_nw.yml',
         cwd=install_api_logic_server_path,
@@ -1120,7 +1123,7 @@ print("\n\nSUCCESS -- END OF TESTS")
 print('\n\nRun & verify >1 Order: pushd ../../../../build_and_test/ApiLogicServer/Shipping\n')
 
 print(f"\n\nRelease {api_logic_server_version}?\n")
-print(f'    cd {str(get_api_logic_server_src_path())}')
+print(f'    cd {str(get_api_logic_server_path())}')
 print(f"    rm -r dist")
 print(f"    {python} -m build")
 print(f"    {python} -m twine upload  --skip-existing dist/*  \n")

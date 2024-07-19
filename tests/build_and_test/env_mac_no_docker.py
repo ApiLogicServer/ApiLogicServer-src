@@ -18,6 +18,8 @@ class Config:
     do_create_api_logic_project = default_setting   # create the default project
     do_run_api_logic_project = default_setting      # start the server 
     do_test_api_logic_project = default_setting     # run the behave tests (test logic, api)
+    do_test_api_logic_project_with_auth = default_setting  # run the behave tests (test logic, api)
+    do_test_genai = default_setting                 # run the genai tests
 
     do_create_shipping = default_setting            # run shipping to listen to kafka (might run manually)
     do_run_shipping = False               # run shipping to listen to kafka (might run manually)
