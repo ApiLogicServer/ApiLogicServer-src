@@ -877,6 +877,7 @@ if Config.do_test_api_logic_project_with_auth:
 
 if Config.do_test_genai:
     # test genai, using pre-supplied ChatGPT response (to avoid api key issues)
+    # see https://apilogicserver.github.io/Docs/Sample-Genai/#what-just-happened
     prompt_path = install_api_logic_server_path.joinpath('system/genai/temp/chatgpt_retry.txt')
     assert prompt_path.exists() , f'do_test_genai error: prompt path not found: {str(prompt_path)}'
     result_genai = run_command(f'{set_venv} && als genai --using=genai_demo.prompt --gen-using-file={prompt_path}',
