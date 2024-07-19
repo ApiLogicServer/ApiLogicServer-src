@@ -1515,7 +1515,7 @@ from database import <project.bind_key>_models
     '''
 
     def add_genai_customizations(self, do_show_messages: bool = True, do_security: bool = True):
-        """ Add customizations to genaiai (default creation)
+        """ Add customizations to genai (default creation)
 
         1. Deep copy prototypes/genai_demo (adds logic and security)
 
