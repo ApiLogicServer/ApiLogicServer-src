@@ -426,29 +426,32 @@ class Relationship(object):
 
 class ManyToOneRelationship(Relationship):
 
-    def __init__(self, source_cls, target_cls, constraint, inflect_engine, multi_reln_count):
+    def __init__(self, child_cls, parent_cls, constraint, inflect_engine, multi_reln_count):
         """
         compute many to 1 class, assigning accessor names (tricky for multi_relns between same 2 tables)
 
-        * source_cls is the child
-        * target_cls is the parent
+        * child_cls is the child
+        * parent_cls is the parent
         """
-        super(ManyToOneRelationship, self).__init__(source_cls, target_cls)
+        super(ManyToOneRelationship, self).__init__(child_cls, parent_cls)
 
-        if source_cls in ['Flight', 'Department'] and target_cls in ['Airport', 'Employee']:
+        if child_cls in ['Flight', 'Employee', 'TabGroup'] and parent_cls in ['Airport', 'Department', 'Entity']:
             debug_stop = "interesting breakpoint"  #  Launch config 8...   -- Create servers/airport from MODEL
         column_names = _get_column_names(constraint)
         colname = column_names[0]
         tablename = constraint.elements[0].column.table.name
         self.foreign_key_constraint = constraint
 
+        parent_accessor_from_fk = False
         if len(column_names) > 1 :    
             self.preferred_name = inflect_engine.singular_noun(tablename) or tablename
-        else:
+        else:  # single column - use column name but without '_id'
             if ( colname.endswith('_id') or colname.endswith('_Id') ):
                 self.preferred_name = colname[:-3]
+                parent_accessor_from_fk = True
             elif ( colname.endswith('id') or colname.endswith('Id') ):
                 self.preferred_name = colname[:-2]
+                parent_accessor_from_fk = True
             else:
                 self.preferred_name = inflect_engine.singular_noun(tablename) or tablename
         
@@ -459,7 +462,7 @@ class ManyToOneRelationship(Relationship):
             self.kwargs['uselist'] = 'False'
 
         # Handle self referential relationships
-        if source_cls == target_cls:
+        if child_cls == parent_cls:
             # self.preferred_name = 'parent' if not colname.endswith('_id') else colname[:-3]
             if colname.endswith("id") or colname.endswith("Id"):
                 self.preferred_name = colname[:-2]
@@ -470,14 +473,14 @@ class ManyToOneRelationship(Relationship):
             self.kwargs['remote_side'] = '[{0}]'.format(', '.join(pk_col_names))
         
         self.parent_accessor_name = self.preferred_name
-        """ parent accessor (typically parent (target_cls)) """
+        """ parent accessor (typically parent (parent_cls)) """
         # assert self.target_cls == self.preferred_name, "preferred name <> parent"
 
         # avoid collision if fkname = parent table name
-        if source_cls == 'Order':
+        if child_cls == 'Order':
             log.debug("Special case: avoid collision if fkname = parent table name")
             debug_stop = "interesting breakpoint"
-        if source_cls == 'Order' and target_cls == 'Customer':   # test database: tests/test_databases/sqlite-databases/nw-fk-getter-collision.sqlite
+        if child_cls == 'Order' and parent_cls == 'Customer':   # test database: tests/test_databases/sqlite-databases/nw-fk-getter-collision.sqlite
             log.debug("Special case: avoid collision if fkname = parent table name")
             debug_stop = "interesting breakpoint"
         for each_col in constraint.table.columns:
@@ -488,8 +491,11 @@ class ManyToOneRelationship(Relationship):
         """ child accessor (typically child (target_class) + "List") """
 
         if multi_reln_count > 0:  # disambiguate multi_reln between same 2 tables (tricky!)
-            # key cases are nw (Dept/Employee) and ai/airport (Flight/Airport)
-            # self.parent_accessor_name += str(multi_reln_count)
+            # key cases are nw (Dept/Employee) and ai/airport (Flight/Airport) and app_model_editor (Entity/TabGroup)
+            if parent_accessor_from_fk:
+                pass  # parent_accessor_name is already unique (eg, Empoyee.WorksForDepartment)
+            else:
+                self.parent_accessor_name += str(multi_reln_count)  # (Entity/TabGroup)??
             self.child_accessor_name += str(multi_reln_count)
         # If the two tables share more than one foreign key constraint,
         # SQLAlchemy needs an explicit primaryjoin to figure out which column(s) to join with
@@ -497,12 +503,12 @@ class ManyToOneRelationship(Relationship):
             constraint.table, constraint.elements[0].column.table)
         if len(common_fk_constraints) > 1:
             self.kwargs['primaryjoin'] = "'{0}.{1} == {2}.{3}'".format(
-                source_cls, column_names[0], target_cls, constraint.elements[0].column.name)
+                child_cls, column_names[0], parent_cls, constraint.elements[0].column.name)
             # eg, 'Employee.OnLoanDepartmentId == Department.Id'
             # and, for SQLAlchemy 2, neds foreign_keys: foreign_keys='[Employee.OnLoanDepartmentId]'
             foreign_keys = "'["
             for each_column_name in column_names:
-                foreign_keys += source_cls + "." + each_column_name + ", "
+                foreign_keys += child_cls + "." + each_column_name + ", "
             self.kwargs['foreign_keys'] = foreign_keys[0 : len(foreign_keys)-2] + "]'"
             pass
         if self.parent_accessor_name == "user_":

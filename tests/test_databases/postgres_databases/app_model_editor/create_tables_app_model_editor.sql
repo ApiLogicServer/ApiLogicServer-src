@@ -1,6 +1,9 @@
+-- docker exec -it postgresql-container bash
+-- psql -h localhost -U postgres
+
 DROP DATABASE IF EXISTS app_model_editor;
 CREATE DATABASE app_model_editor;
-use app_model_editor;
+-- use app_model_editor;
 \c app_model_editor;
 
 DROP TABLE IF EXISTS entity;
@@ -8,6 +11,7 @@ DROP TABLE IF EXISTS entity_attr;
 DROP TABLE IF EXISTS tab_group;
 DROP TABLE IF EXISTS global_settings;
 DROP TABLE IF EXISTS template;
+DROP TABLE IF EXISTS root;
 
 CREATE TABLE entity (
     name varchar(80) not null,
@@ -20,7 +24,8 @@ CREATE TABLE entity (
     new_template VARCHAR(80), 
     home_template VARCHAR(80), 
     detail_template VARCHAR(80), 
-    mode  VARCHAR(10) DEFAULT 'tab', menu_group VARCHAR(25), 
+    mode  VARCHAR(10), 
+    menu_group VARCHAR(25), 
     PRIMARY KEY (name)
 );
 
