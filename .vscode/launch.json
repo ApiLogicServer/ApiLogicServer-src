@@ -739,17 +739,16 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "      -- Create servers/airport from MODEL",
+            "name": "      -- Create blt/airport from RESPONSE",
             "type": "debugpy",
             "request": "launch",
             "env": {"APILOGICSERVER_DEBUG": "True"},
-            "cwd": "${workspaceFolder}/api_logic_server_cli",
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
-            "args": ["create",
-                "--project_name=${workspaceFolder}/../../servers/airport",
-                "--from-model=../tests/test_databases/ai-created/airport/airport_model.py",
-                "--db_url=sqlite///../tests/test_databases/ai-created/airport/airport.sqlite"],
+            "args": ["genai",
+                "--using=airport",
+                "--gen-using-file=${workspaceFolder}/tests/test_databases/ai-created/airport/airport_chatgpt_1.response"],
             "console": "integratedTerminal"
         },
         {

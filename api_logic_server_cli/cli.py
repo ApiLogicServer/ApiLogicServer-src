@@ -554,7 +554,7 @@ def tutorial(ctx, create):
               help="Eg, gpt-3.5-turbo, gpt-4o")
 @click.option('--gen-using-file', 'gen_using_file',
               default='',
-              help="Use ChatGPT API")
+              help="Use ChatGPT Response file")
 @click.option('--retries', 
               default=3,
               help="Number of retries")

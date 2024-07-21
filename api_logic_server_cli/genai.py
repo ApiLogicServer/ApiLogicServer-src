@@ -80,7 +80,7 @@ class GenAI(object):
 
         if self.project.gen_using_file == '':
             log.info(f'\nInvoking AI, storing response: system/genai/temp/chatgpt_original.txt')
-            response_data = self.genai_gen_using_api(prompt)
+            response_data = self.genai_gen_using_api(prompt)  # get response from ChatGPT
         else: # for retry from corrected prompt... eg system/genai/temp/chatgpt_retry.txt
             log.info(f'\nUsing [corrected] prompt from: {self.project.gen_using_file}')
             with open(self.project.gen_using_file, 'r') as file:
@@ -146,9 +146,13 @@ class GenAI(object):
             docs_dir = self.project.project_directory_path.joinpath("docs")
             os.makedirs(docs_dir, exist_ok=True)
             prompt_file_path = docs_dir.joinpath("created_from.prompt")
-            with open(prompt_file_path, "w") as prompt_file:
-                prompt_file.write(self.prompt)
-            shutil.copyfile('system/genai/temp/chatgpt_original.txt', docs_dir.joinpath("chatgpt_response.txt"))
+            if self.project.gen_using_file == '':
+                pass
+                with open(prompt_file_path, "w") as prompt_file:
+                    prompt_file.write(self.prompt)
+                shutil.copyfile('system/genai/temp/chatgpt_original.txt', docs_dir.joinpath("chatgpt_response.txt"))
+            else:
+                shutil.copyfile(self.project.gen_using_file, docs_dir.joinpath("chatgpt_response.txt"))
         except:
             log.error(f"\n\nError creating genai docs: {docs_dir}\n\n")
         pass
