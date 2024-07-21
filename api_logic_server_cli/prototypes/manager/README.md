@@ -115,7 +115,7 @@ als genai --using=genai_demo.prompt
 
 
 ```bash
-als genai --using=genai_demo.prompt --gen-using-file=system/genai/temp/chatgpt_retry.txt
+als genai --using=genai_demo.prompt --gen-using-file=system/genai/temp/chatgpt_retry.response
 ```
 </br>
 
@@ -157,7 +157,7 @@ als create --project-name=genai_demo --from-model=system/genai/temp/model.py --d
 Or, correct the chatgpt response, and
 
 ```bash
-als genai --using=genai_demo.prompt --gen-using-file=system/genai/temp/chatgpt_retry.txt
+als genai --using=genai_demo.prompt --gen-using-file=system/genai/temp/chatgpt_retry.response
 ```
 
 We have seen failures such as:

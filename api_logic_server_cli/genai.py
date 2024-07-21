@@ -14,7 +14,7 @@ class GenAI(object):
 
     __init__()  # work directory is <manager>/system/genai/temp/
     
-    1. runs ChatGPT to create system/genai/temp/chatgpt_original.txt
+    1. runs ChatGPT to create system/genai/temp/chatgpt_original.response
     2. self.genai_get_logic() - saves prompt logic as comments for insertion into model
     3. genai_write_model_file()
     4. returns to main driver, which 
@@ -56,9 +56,9 @@ class GenAI(object):
 
         self.project.from_model = f'system/genai/temp/model.py' # we always write the model to this file
 
-        if self.project.gen_using_file == '':  # clean up unless retrying from chatgpt_retry.txt
-            Path('system/genai/temp/chatgpt_original.txt').unlink(missing_ok=True)
-            Path('system/genai/temp/chatgpt_retry.txt').unlink(missing_ok=True)
+        if self.project.gen_using_file == '':  # clean up unless retrying from chatgpt_original.response
+            Path('system/genai/temp/chatgpt_original.response').unlink(missing_ok=True)
+            Path('system/genai/temp/chatgpt_original.response').unlink(missing_ok=True)
         Path('system/genai/temp/model.sqlite').unlink(missing_ok=True)
         Path('system/genai/temp/model.py').unlink(missing_ok=True)
 
@@ -79,9 +79,9 @@ class GenAI(object):
         self.project.genai_logic = self.genai_get_logic(prompt)
 
         if self.project.gen_using_file == '':
-            log.info(f'\nInvoking AI, storing response: system/genai/temp/chatgpt_original.txt')
+            log.info(f'\nInvoking AI, storing response: system/genai/temp/chatgpt_original.response')
             response_data = self.genai_gen_using_api(prompt)  # get response from ChatGPT
-        else: # for retry from corrected prompt... eg system/genai/temp/chatgpt_retry.txt
+        else: # for retry from corrected prompt... eg system/genai/temp/chatgpt_retry.response
             log.info(f'\nUsing [corrected] prompt from: {self.project.gen_using_file}')
             with open(self.project.gen_using_file, 'r') as file:
                 model_raw = file.read()
@@ -150,9 +150,9 @@ class GenAI(object):
                 pass
                 with open(prompt_file_path, "w") as prompt_file:
                     prompt_file.write(self.prompt)
-                shutil.copyfile('system/genai/temp/chatgpt_original.txt', docs_dir.joinpath("chatgpt_response.txt"))
+                shutil.copyfile('system/genai/temp/chatgpt_original.response', docs_dir.joinpath("chatgpt_response.prompt"))
             else:
-                shutil.copyfile(self.project.gen_using_file, docs_dir.joinpath("chatgpt_response.txt"))
+                shutil.copyfile(self.project.gen_using_file, docs_dir.joinpath("chatgpt_response.response"))
         except:
             log.error(f"\n\nError creating genai docs: {docs_dir}\n\n")
         pass
@@ -238,9 +238,9 @@ class GenAI(object):
             print("Error:", response.status_code, response.text)   # eg, You exceeded your current quota 
 
         response_data = response.json()['choices'][0]['message']['content']
-        with open(f'system/genai/temp/chatgpt_original.txt', "w") as model_file:  # save for debug
+        with open(f'system/genai/temp/chatgpt_original.response', "w") as model_file:  # save for debug
             model_file.write(response_data)
-        with open(f'system/genai/temp/chatgpt_retry.txt', "w") as model_file:     # repair this & retry
+        with open(f'system/genai/temp/chatgpt_original.response', "w") as model_file:     # repair this & retry
             model_file.write(response_data)
         return response_data
 
