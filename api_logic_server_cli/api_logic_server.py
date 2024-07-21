@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.04.95"
+__version__ = "10.04.96"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t07/21/2024 - 10.04.96: multi-reln disambig fix (app_model_editor) \n"\
     "\t07/19/2024 - 10.04.95: rebuild now does all ont apps \n"\
     "\t07/14/2024 - 10.04.94: Manager += Yaml Editor \n"\
     "\t07/14/2024 - 10.04.93: Ont Postgres fix, pg add-auth tests, sra 7-11 \n"\
