@@ -498,6 +498,18 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "  - Postgres App Model Editor (multi-reln test)",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/api_logic_server_cli",
+            "justMyCode": false,
+            "program": "cli.py",
+            "redirectOutput": true,
+            "args": ["create","--project_name=../../../servers/app_model_editor",
+                "--db_url=postgresql://postgres:p@localhost/app_model_editor"],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "6 - ORACLE-HR",
             "type": "debugpy",
             "request": "launch",

@@ -1,5 +1,8 @@
 https://www.tutorialspoint.com/postgresql/postgresql_select_database.htm
 
+
+docker exec -it postgresql-container bash
+
 psql -h localhost -U postgres
 
 \c Northwind;
@@ -10,10 +13,7 @@ psql -h localhost -U postgres
 -- \dt
 
 
-docker exec -it postgresql-container bash
-
-
-ApiLogicServer create --project-name=postgres --db-url=postgresql://postgres:p@localhost/postgres
+ApiLogicServer create --project-name=postgres-nw --db-url=postgresql://postgres:p@localhost/northwind
 
 cd ~/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer
 . venv/bin/activate
