@@ -58,7 +58,7 @@ class GenAI(object):
 
         if self.project.gen_using_file == '':  # clean up unless retrying from chatgpt_original.response
             Path('system/genai/temp/chatgpt_original.response').unlink(missing_ok=True)
-            Path('system/genai/temp/chatgpt_original.response').unlink(missing_ok=True)
+            Path('system/genai/temp/chatgpt_retry.response').unlink(missing_ok=True)
         Path('system/genai/temp/model.sqlite').unlink(missing_ok=True)
         Path('system/genai/temp/model.py').unlink(missing_ok=True)
 
@@ -240,7 +240,7 @@ class GenAI(object):
         response_data = response.json()['choices'][0]['message']['content']
         with open(f'system/genai/temp/chatgpt_original.response', "w") as model_file:  # save for debug
             model_file.write(response_data)
-        with open(f'system/genai/temp/chatgpt_original.response', "w") as model_file:     # repair this & retry
+        with open(f'system/genai/temp/chatgpt_retry.response', "w") as model_file:     # repair this & retry
             model_file.write(response_data)
         return response_data
 
