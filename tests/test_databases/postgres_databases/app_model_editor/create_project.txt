@@ -1,0 +1,4 @@
+  ApiLogicServer create --db_url=postgresql://postgres:p@localhost/app_model_editor
+
+  This database revealed (621/2024) a bug in multiple relns between 2 tables: entity and tabgroup
+    - created dup backref under entity
