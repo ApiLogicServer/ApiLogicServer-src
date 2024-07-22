@@ -39,7 +39,7 @@ def step_impl(context):
 @then('SubDepartments returned')
 def step_impl(context):
         get_dept_uri = f'http://{host}:{port}/api/Department/2/?' \
-                    f'include=DepartmentList%2CEmployeeList%2CEmployeeList1%2CDepartment' \
+                    f'include=DepartmentList%2CEmployeeList%2CWorksForEmployeeList%2CDepartment' \
                     f'&fields%5BDepartment%5D=Id%2CDepartmentId%2CDepartmentName'
         r = requests.get(url=get_dept_uri, headers= test_utils.login())
         response_text = r.text

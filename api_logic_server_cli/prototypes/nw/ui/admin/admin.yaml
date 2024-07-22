@@ -1,5 +1,5 @@
 about:
-  date: 7/06/2024
+  date: 7/22/2024
   recent_changes: auth config, api_root, altered Customer/Order/Employee attribute ordering, tab captions, info, EmpType, dept emps, defaults, show_when, cascade add, toggles, images, security, login, virtual relns, global filters, no IsCommissioned, employee.notes as textarea, reln names
   # this file illustrates customizations; compare it to admin-created.yaml to see the specific changes.  version: 10.04.71
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
@@ -156,7 +156,7 @@ resources:
     - direction: tomany
       fks:
       - WorksForDepartmentId
-      name: EmployeeList1
+      name: WorksForEmployeeList
       resource: Employee
     - direction: toone
       fks:
