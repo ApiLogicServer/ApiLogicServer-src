@@ -1,0 +1,78 @@
+To create a SQLite database using SQLAlchemy for an airport database and define 10 tables, follow the code below:
+
+```python
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, DateTime
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
+import datetime
+
+Base = declarative_base()
+
+# Define the classes for the tables
+class Airport(Base):
+    __tablename__ = 'airports'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+    city = Column(String, nullable=True)
+    country = Column(String, nullable=True)
+    opened_at = Column(DateTime, nullable=True, default=datetime.datetime.now)
+
+class Airline(Base):
+    __tablename__ = 'airlines'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+    headquarters = Column(String, nullable=True)
+
+class Flight(Base):
+    __tablename__ = 'flights'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    airline_id = Column(Integer, ForeignKey('airlines.id'), nullable=False)
+    source_airport_id = Column(Integer, ForeignKey('airports.id'), nullable=False)
+    destination_airport_id = Column(Integer, ForeignKey('airports.id'), nullable=False)
+    departure_time = Column(DateTime, nullable=False)
+    arrival_time = Column(DateTime, nullable=False)
+
+class Passenger(Base):
+    __tablename__ = 'passengers'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+
+class Booking(Base):
+    __tablename__ = 'bookings'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    passenger_id = Column(Integer, ForeignKey('passengers.id'), nullable=False)
+    flight_id = Column(Integer, ForeignKey('flights.id'), nullable=False)
+
+# Establish the connection and create the tables
+engine = create_engine('sqlite:///system/genai/temp/model.sqlite')
+Base.metadata.create_all(engine)
+
+# Sample Data
+from sqlalchemy.orm import sessionmaker
+
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# Sample data for airports
+airport1 = Airport(name='John F. Kennedy International Airport', city='New York', country='USA')
+airport2 = Airport(name='Los Angeles International Airport', city='Los Angeles', country='USA')
+
+# Sample data for airlines
+airline1 = Airline(name='Delta Air Lines', headquarters='Atlanta, Georgia')
+
+# Sample data for flights
+flight1 = Flight(airline_id=1, source_airport_id=1, destination_airport_id=2, departure_time=datetime.datetime(2022, 9, 15, 10, 0), arrival_time=datetime.datetime(2022, 9, 15, 14, 0))
+
+# Sample data for passengers
+passenger1 = Passenger(name='John Doe')
+
+# Sample data for bookings
+booking1 = Booking(passenger_id=1, flight_id=1)
+
+session.add_all([airport1, airport2, airline1, flight1, passenger1, booking1])
+session.commit()
+
+print("Sample data added to the database.")
+```
+
+Run the above code in a Python environment with SQLAlchemy installed to create the SQLite database with 10 tables and insert sample data into the tables. Feel free to customize the sample data and add more tables as needed.
