@@ -692,7 +692,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "      + Create servers/sample_ai, with items",
+            "name": "    - Create servers/sample_ai, with items",
             "type": "debugpy",
             "request": "launch",
             "env": {"APILOGICSERVER_DEBUG": "True"},
@@ -725,7 +725,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "      -- Create servers/sample_ai_copilot from MODEL",
+            "name": "    - Create servers/sample_ai_copilot from MODEL",
             "type": "debugpy",
             "request": "launch",
             "env": {"APILOGICSERVER_DEBUG": "True"},
@@ -739,7 +739,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "      -- Create blt/airport from RESPONSE",
+            "name": "    - Create blt/airport from RESPONSE",
             "type": "debugpy",
             "request": "launch",
             "env": {"APILOGICSERVER_DEBUG": "True"},
@@ -781,22 +781,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "    - Create MySQL - CHATGPT - ai_customer_orders_mysql",
-            "type": "debugpy",
-            "request": "launch",
-            "env": {"APILOGICSERVER_DEBUG": "True"},
-            "cwd": "${workspaceFolder}/api_logic_server_cli",
-            "program": "cli.py",
-            "redirectOutput": true,
-
-            "args": ["create",
-                "--project_name=../../../servers/ai_customer_orders_mysql",
-                "--db_url=mysql+pymysql://root:p@localhost:3306/ai_customer_orders"
-            ],
-            "console": "integratedTerminal"
-        },
-        {
-            "name": "    -- Add Security to ai_customer_orders_mysql",
+            "name": "      + Add Security to ai_customer_orders_mysql",
             "type": "debugpy",
             "request": "launch",
             "env": {"APILOGICSERVER_DEBUG": "True"},
@@ -807,6 +792,21 @@
                 "add-auth",
                 "--project_name=../../../servers/ai_customer_orders_mysql",
                 "--db_url=mysql+pymysql://root:p@localhost:3306/authdb"
+            ],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "      + Create MySQL - CHATGPT - ai_customer_orders_mysql",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "cwd": "${workspaceFolder}/api_logic_server_cli",
+            "program": "cli.py",
+            "redirectOutput": true,
+
+            "args": ["create",
+                "--project_name=../../../servers/ai_customer_orders_mysql",
+                "--db_url=mysql+pymysql://root:p@localhost:3306/ai_customer_orders"
             ],
             "console": "integratedTerminal"
         },
