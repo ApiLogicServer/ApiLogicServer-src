@@ -891,6 +891,20 @@ if Config.do_test_genai:
     stop_server(msg="*** genai_demo TESTS COMPLETE ***\n")
     
 
+if Config.do_test_multi_reln:
+    # test genai, using pre-supplied ChatGPT response (to avoid api key issues)
+    # see https://apilogicserver.github.io/Docs/Sample-Genai/#what-just-happened
+    prompt_path = install_api_logic_server_path.joinpath('system/genai/examples/airport/airport.prompt')
+    response_path = install_api_logic_server_path.joinpath('system/genai/examples/airport/airport.response')
+    # grr - creates project next to prompt
+    assert prompt_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
+    result_genai = run_command(f'{set_venv} && als genai --using={prompt_path} --gen-using-file={response_path}',
+        cwd=install_api_logic_server_path,
+        msg=f'\nCreate airport')
+    genai_demo_path = install_api_logic_server_path.joinpath('airport')
+    start_api_logic_server(project_name="system/genai/examples/airport/airport")
+    stop_server(msg="*** airport TESTS COMPLETE ***\n")
+
 if Config.do_create_shipping:  # optionally, start it manually (eg, with breakpoints)
     result_create = run_command(f'{set_venv} && ApiLogicServer create --{project_name}=Shipping --{db_url}=shipping',
         cwd=install_api_logic_server_path,
