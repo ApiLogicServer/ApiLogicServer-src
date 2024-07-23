@@ -50,7 +50,7 @@ def declare_logic():
 
     def validate_yaml(row:models.YamlFiles, old_row:models.YamlFiles, logic_row:LogicRow):
         import yaml
-        if logic_row.ins_upd_dlt in ["ins","upd"] and row.download_flag == False:
+        if logic_row.ins_upd_dlt in ["ins","upd"] and (row.download_flag is None or row.download_flag == False):
             if row.content:
                 yaml_content = str(b64decode(row.content), encoding=encoding) if row.content else None 
                 try:
