@@ -153,7 +153,7 @@ resources:
       resource: EntityAttr
     type: Template
     user_key: name
-  YamlFile:
+  YamlFiles:
     attributes:
     - label: ' name*'
       name: name
