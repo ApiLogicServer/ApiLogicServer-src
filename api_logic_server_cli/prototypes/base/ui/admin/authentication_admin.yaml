@@ -6,25 +6,8 @@ api_root: '{http_type}://{swagger_host}:{port}/{api}'
 authentication: '{system-default}'
 info:
   number_relationships: 3
-  number_tables: 4
+  number_tables: 3
 resources:
-  authentication-Api:
-    attributes:
-    - label: ' name*'
-      name: name
-      search: true
-      sort: true
-    - name: owner_id
-    - name: connection_string
-    - name: id
-    tab_groups:
-    - direction: toone
-      fks:
-      - owner_id
-      name: owner
-      resource: authentication-User
-    type: authentication-Api
-    user_key: name
   authentication-Role:
     attributes:
     - label: ' name*'
