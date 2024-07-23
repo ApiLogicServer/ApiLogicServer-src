@@ -132,6 +132,7 @@ def add_service(
     @app.route("/main/YamlFiles", methods=["GET", "POST", "DELETE", "OPTIONS"])
     @cross_origin()
     @admin_required()
+    @admin_required()
     def getFiles(path):
         method = request.method
         # if method == 'OPTIONS':

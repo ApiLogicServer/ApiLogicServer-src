@@ -1,5 +1,5 @@
 <div class="container">
-  <o-form-container breadcrumb="yes" breadcrumb-label-columns="entity_name" breadcrumb-separator=", "  class="fill-form">
+  <o-form-container breadcrumb="yes" breadcrumb-label-columns="entity_name;tab_entity" breadcrumb-separator=", "  class="fill-form">
         <o-form #form attr="TabGroup_form_edit" service="TabGroup" entity="TabGroup" fxLayout="column" show-header="yes"
           header-actions="R;U;D" #oDetailForm keys="entity_name;tab_entity;direction;name"
           keys-sql-types="VARCHAR;VARCHAR;VARCHAR;VARCHAR" show-header-navigation="yes"
@@ -30,7 +30,7 @@
               </div>
 
               <div fxLayout="row" fxLayoutAlign="start center" class="gap">
-                <o-text-input attr="name" label="Name" editable="yes" required="yes"></o-text-input>
+                <o-text-input attr="name" label="Name" enabled="no" required="yes"></o-text-input>
               </div>
 
               <div fxLayout="row" fxLayoutAlign="start center" class="gap">

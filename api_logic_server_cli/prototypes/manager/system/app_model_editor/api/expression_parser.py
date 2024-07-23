@@ -86,9 +86,10 @@ def fixup_data(data, sqltypes):
             if sqltypes and key in sqltypes and isinstance(value, str):
                 if sqltypes[key] in [-5,2,4,5,-6]: #BIGINT, TINYINT, INT, SMALLINT, INTEGER
                     data[key] = int(value)
-            if sqltypes and sqltypes[key] in [91,93] and isinstance(value, int): #DATE, TIMESTAMP 
+            if sqltypes and key in sqltypes and sqltypes[key] in [91,93] and isinstance(value, int): #DATE, TIMESTAMP 
                 from datetime import datetime  
-                data[key] = datetime.fromtimestamp(value / 1000).strftime("%Y-%m-%d %H:%M:%S")  
+                fmt = "%Y-%m-%d" if sqltypes[key] == 91 else "%Y-%m-%d %H:%M:%S"
+                data[key] = datetime.fromtimestamp(value / 1000).strftime(fmt)  
     return data
 
 def _parseFilter(filter: dict, sqltypes: any):
