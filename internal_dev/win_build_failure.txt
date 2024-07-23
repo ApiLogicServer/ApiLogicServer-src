@@ -1,0 +1,5 @@
+copying api_logic_server_cli\prototypes\manager\system\app_model_editor\ui\yaml\src\app\main\Entity\detail\visible-columns\o-table-visible-columns-dialog.component.html -> apilogicserver-10.4.97\api_logic_server_cli\prototypes\manager\system\app_model_editor\ui\yaml\src\app\main\Entity\detail\visible-columns
+error: could not create 'apilogicserver-10.4.97\api_logic_server_cli\prototypes\manager\system\app_model_editor\ui\yaml\src\app\main\Entity\detail\visible-columns\o-table-visible-columns-dialog.component.html': No such file or directory
+
+the  path len is 184:
+apilogicserver-10.4.97\api_logic_server_cli\prototypes\manager\system\app_model_editor\ui\yaml\src\app\main\Entity\detail\visible-columns\o-table-visible-columns-dialog.component.html
