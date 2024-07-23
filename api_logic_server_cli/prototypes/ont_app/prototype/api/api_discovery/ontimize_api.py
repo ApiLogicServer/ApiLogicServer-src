@@ -137,6 +137,10 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         
         #api_clz = api_map.get(clz_name)
         resource = find_model(clz_name)
+        if resource == None:
+            return jsonify(
+                {"code": 1, "message": f"Resource {clz_name} not found", "data": None}
+            )
         api_attributes = resource["attributes"]
         api_clz = resource["model"]
         
