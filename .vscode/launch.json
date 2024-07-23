@@ -274,7 +274,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "     - Create servers/nw+ (new IDE) -- nw+",
+            "name": "     + Create servers/nw+ (new IDE) -- nw+",
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/api_logic_server_cli",
