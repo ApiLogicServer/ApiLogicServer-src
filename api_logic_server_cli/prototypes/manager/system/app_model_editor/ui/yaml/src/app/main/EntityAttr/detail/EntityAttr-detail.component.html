@@ -1,5 +1,5 @@
 <div class="container">
-  <o-form-container breadcrumb="yes" breadcrumb-label-columns="entity_name" breadcrumb-separator=", " class="fill-form">
+  <o-form-container breadcrumb="yes" breadcrumb-label-columns="entity_name;attr" breadcrumb-separator=", " class="fill-form">
         <o-form #form attr="EntityAttr_form_edit" service="EntityAttr" entity="EntityAttr" fxLayout="column"
           show-header="yes" header-actions="R;U;D" #oDetailForm keys="entity_name;attr"
           keys-sql-types="VARCHAR;VARCHAR" show-header-navigation="yes" (onDataLoaded)="onDataLoaded($event)">
