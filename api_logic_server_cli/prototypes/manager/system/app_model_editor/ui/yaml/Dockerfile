@@ -2,12 +2,15 @@
 # Use official node image as the base image
 # cd ui/yaml
 # docker build -f Dockerfile -t tylerm007/yaml_editor --rm .
-# docker tag tylerm007/yaml_editor tylerm007/yaml_editor:1.0.10
-# docker push tylerm007/yaml_editor:1.0.10  # requires docker login
+# docker tag tylerm007/yaml_editor tylerm007/yaml_editor:1.0.11
+# docker push tylerm007/yaml_editor:1.0.11  # requires docker login
 #
 # docker tag tylerm007/yaml_editor tylerm007/yaml_editor:latest
 # docker push tylerm007/yaml_editor:latest  
+#
+#  curl -X POST http://apilogicserver:5655/ontimizeweb/services/rest/users/login -H 'Authorization: Basic YWRtaW46cA=='
 FROM node:18.10.0-alpine as build
+USER root
 
 # Set the working directory
 WORKDIR /usr/local/app

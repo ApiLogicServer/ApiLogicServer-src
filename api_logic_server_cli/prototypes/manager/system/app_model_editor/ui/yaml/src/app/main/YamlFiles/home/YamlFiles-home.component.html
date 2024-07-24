@@ -6,9 +6,9 @@
             entity="YamlFiles" 
             title="{{ 'YAMLFILES' | oTranslate }}"
             keys="id;name"
-            columns="id;name;size;directory;createDate;download_flag;content" 
+            columns="id;name;size;upload_flag;download_flag;content" 
             header-actions="R;D"
-            visible-columns="name;size;createDate;download_flag"  
+            visible-columns="name;size;upload_flag;download_flag"  
             sort-columns="name" 
             query-rows="20" 
             quick-filter="yes"
@@ -23,8 +23,10 @@
             export-button="no">
             <o-table-column attr="name" title=" Name*" editable="no" required="yes" content-align="left"></o-table-column>
             <o-integer-input attr="size" title=" Size" editable="no" required="yes" content-align="left"></o-integer-input>
-            <o-table-column attr="createDate" title="Create Date" editable="no" required="no" content-align="left"></o-table-column>
-    
+            <o-table-column attr="upload_flag" title="Process Yaml Flag">
+                <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+                    render-type="icon" boolean-type="boolean" true-value="1" false-value="0"></o-table-cell-renderer-boolean>
+            </o-table-column>
             <o-table-column attr="download_flag" title="Download Flag">
                 <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
                     render-type="icon" boolean-type="boolean" true-value="1" false-value="0"></o-table-cell-renderer-boolean>

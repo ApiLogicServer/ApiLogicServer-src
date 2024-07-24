@@ -1,6 +1,6 @@
 from security.authentication_provider.abstract_authentication_provider import Abstract_Authentication_Provider
 import sqlalchemy as sqlalchemy
-from database.database_discovery import authentication_models
+import database.database_discovery.authentication_models as authentication_models
 from flask import Flask
 import safrs
 from safrs.errors import JsonapiError
@@ -93,7 +93,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
             logger.info(f'*****\nauth_provider FAILED looking for: {id}\n*****\n')
             logger.info(f'excp: {str(e)}\n')
             # raise e
-            raise ALSError(f"Users {id} is not authorized for this system")
+            raise ALSError(f"User {id} is not authorized for this system")
         use_db_row = False
         if use_db_row:
             return user

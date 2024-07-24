@@ -22,3 +22,4 @@ devops/docker-compose-dev-azure-nginx/www
 /safrs-react-admin
 /ui/admin/safrs-react-admin
 /safrs-react-admin/node_modules
+/devops/docker-compose-dev-local/postgres-data/

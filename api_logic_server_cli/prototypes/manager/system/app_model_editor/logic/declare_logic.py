@@ -8,7 +8,7 @@ import api.system.opt_locking.opt_locking as opt_locking
 from security.system.authorization import Grant, Security
 import logging
 from base64 import b64decode
-from requests import get
+from requests import get, post
 
 app_logger = logging.getLogger(__name__)
 encoding = 'utf-8'
@@ -40,9 +40,9 @@ def declare_logic():
         enable_creation_stamping = True  # CreatedOn time stamping
         if enable_creation_stamping:
             row = logic_row.row
-            if logic_row.ins_upd_dlt == "ins" and hasattr(row, "createDate"):
-                row.createDate = datetime.datetime.now()
-                logic_row.log("early_row_event_all_classes - handle_all sets 'createDate"'')
+            if logic_row.ins_upd_dlt == "ins" and hasattr(row, "createdate"):
+                #row.createdate = datetime.datetime.now()
+                logic_row.log("early_row_event_all_classes - handle_all sets 'createdate"'')
         
         Grant.process_updates(logic_row=logic_row)
 
@@ -57,12 +57,18 @@ def declare_logic():
                     yaml.safe_load(yaml_content)
                     row.size = len(yaml_content)
                     row.upload_flag = True
+                    row.download_flag = False
                     row.content = yaml_content
                     return True
                 except yaml.YAMLError as exc:
+                    row.content = None
                     return False    
             return False
         return True
+    def process_yaml(row:models.YamlFiles, old_row:models.YamlFiles, logic_row:LogicRow):
+        if logic_row.ins_upd_dlt == "ins" and row.content and row.downloaded is None:
+            post(f"http://localhost:5655/importyaml/{row.id}",data=row.content)
+            
     def export_yaml(row:models.YamlFiles, old_row:models.YamlFiles, logic_row:LogicRow):
         if logic_row.is_updated and row.download_flag and old_row.download_flag == False and row.content != None:
             from api.api_discovery.ontimize_api import export_yaml_to_file
@@ -73,6 +79,8 @@ def declare_logic():
                 
     Rule.row_event(models.YamlFiles, calling=export_yaml)
     Rule.constraint(models.YamlFiles, calling=validate_yaml, error_msg="Invalid yaml file")
+    Rule.after_flush_row_event(on_class=models.YamlFiles, calling=process_yaml)
+    
     #als rules report
     #from api.system import api_utils
     #api_utils.rules_report()
