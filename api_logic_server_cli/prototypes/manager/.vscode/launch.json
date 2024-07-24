@@ -39,7 +39,7 @@
             "justMyCode": false,
             "args": [ "genai",
                 "--using=${input:inputGenaiProjectName}",
-                "--gen-using-file=system/genai/temp/chatgpt_retry.txt"],
+                "--gen-using-file=system/genai/temp/chatgpt_retry.response"],
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
         },
