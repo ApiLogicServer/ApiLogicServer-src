@@ -178,7 +178,7 @@
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}",
-            "program": "venv_setup/py.py",
+            "program": "samples/nw_sample/venv_setup/py.py",
             "redirectOutput": true,
             "args": ["sys-info"],
             "justMyCode": false,
