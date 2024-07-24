@@ -39,7 +39,7 @@ http://localhost:5655 (user: admin password: p)
 # Run as Docker container
 
 ```
-docker compose -f devops/docker-compose-dev-local/docker-compose-dev-local.yml up -d
+docker compose -f devops/docker-compose-dev-local/docker-compose-yaml.yml up -d
 
 in a browser
 http://localhost/yaml-editor/ (user: admin password: p)

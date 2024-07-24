@@ -30,7 +30,9 @@ class Roles():
     read_only = "readonly"
     admin = "CS_ADMIN"
     public="public"             # p1/p (no roles, but gets public)
+    sa="sa"
     
+DefaultRolePermission(to_role=Roles.sa, can_read=True, can_update=True, can_insert=True, can_delete=True)
 DefaultRolePermission(to_role=Roles.tenant, can_read=True, can_delete=True)
 DefaultRolePermission(to_role=Roles.admin, can_read=True, can_insert=True,can_update=True, can_delete=True)
 DefaultRolePermission(to_role=Roles.manager, can_read=True, can_insert=True,can_update=True, can_delete=False)

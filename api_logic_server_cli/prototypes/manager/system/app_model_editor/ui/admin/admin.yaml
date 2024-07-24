@@ -165,8 +165,6 @@ resources:
 
     - name: download_flag
     - name: size
-    - name: createdate
-      type: DATE
       required: true
     - name: id
     - name: downloaded

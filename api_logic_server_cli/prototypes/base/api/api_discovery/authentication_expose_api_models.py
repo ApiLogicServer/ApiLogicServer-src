@@ -7,7 +7,6 @@ from config.config import Args as args
 from config.config import Config
 
 # use absolute path import for easier multi-{app,model,db} support
-database = __import__('database')
 
 app_logger = logging.getLogger(__name__)
 
@@ -28,7 +27,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
 
     provider_name = str(Config.SECURITY_PROVIDER)
     if "sql" in provider_name and args.instance.security_enabled:
-        api.expose_object(database.database_discovery.authentication_models.User, method_decorators= method_decorators)
-        api.expose_object(database.database_discovery.authentication_models.Role, method_decorators= method_decorators)
-        api.expose_object(database.database_discovery.authentication_models.UserRole, method_decorators= method_decorators)
+        from database.database_discovery.authentication_models import User, Role, UserRole
+        api.expose_object(User, method_decorators= method_decorators)
+        api.expose_object(Role, method_decorators= method_decorators)
+        api.expose_object(UserRole, method_decorators= method_decorators)
     return api
