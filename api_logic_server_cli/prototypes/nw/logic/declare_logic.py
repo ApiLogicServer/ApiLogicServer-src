@@ -12,6 +12,7 @@ from flask import jsonify
 from integration.row_dict_maps.OrderShipping import OrderShipping
 from confluent_kafka import Producer, KafkaException
 import integration.kafka.kafka_producer as kafka_producer
+from config.config import Config
 
 preferred_approach = True
 """ Some examples below contrast a preferred approach with a more manual one """
@@ -255,25 +256,24 @@ def declare_logic():
             Events, plus *generic* event handlers
     """
     
-    if preferred_approach:  # #als: AUDITING can be as simple as 1 rule
-        RuleExtension.copy_row(copy_from=models.Employee,
-                            copy_to=models.EmployeeAudit,
-                            copy_when=lambda logic_row: logic_row.ins_upd_dlt == "upd" and 
-                                    logic_row.are_attributes_changed([models.Employee.Salary, models.Employee.Title]))
-    else:
+    RuleExtension.copy_row(copy_from=models.Employee,  # #als: AUDITING can be as simple as 1 rule
+                    copy_to=models.EmployeeAudit,
+                    copy_when=lambda logic_row: logic_row.ins_upd_dlt == "upd" and 
+                            logic_row.are_attributes_changed([models.Employee.Salary, models.Employee.Title]))
+    pass  # audited (never gets here)
+    
+    ''' the logic above is simpler than
         def audit_by_event(row: models.Employee, old_row: models.Employee, logic_row: LogicRow):
-            tedious = False  # tedious code to repeat for every audited class
-            if tedious:      # see instead the RuleExtension.copy_row above (you can create similar rule extensions)
-                if logic_row.ins_upd_dlt == "upd" and logic_row.are_attributes_changed([models.Employee.Salary, models.Employee.Title]):
-                    # #als: triggered inserts  
-                    copy_to_logic_row = logic_row.new_logic_row(models.EmployeeAudit)
-                    copy_to_logic_row.link(to_parent=logic_row)
-                    copy_to_logic_row.set_same_named_attributes(logic_row)
-                    # copy_to_logic_row.row.attribute_name = value
-                    copy_to_logic_row.insert(reason="Manual Copy " + copy_to_logic_row.name)  # triggers rules...
+            if logic_row.ins_upd_dlt == "upd" and logic_row.are_attributes_changed([models.Employee.Salary, models.Employee.Title]):
+                # #als: triggered inserts  
+                copy_to_logic_row = logic_row.new_logic_row(models.EmployeeAudit)
+                copy_to_logic_row.link(to_parent=logic_row)
+                copy_to_logic_row.set_same_named_attributes(logic_row)
+                # copy_to_logic_row.row.attribute_name = value
+                copy_to_logic_row.insert(reason="Manual Copy " + copy_to_logic_row.name)  # triggers rules...
 
         Rule.commit_row_event(on_class=models.Employee, calling=audit_by_event)
-
+    '''    
 
     def clone_order(row: models.Order, old_row: models.Order, logic_row: LogicRow):
         """ #als: clone multi-row business object
@@ -306,20 +306,23 @@ def declare_logic():
 
         Grant.process_updates(logic_row=logic_row)
 
-        did_stamping = False
+
+        did_stamping = True
         if enable_stamping := True:
             row = logic_row.row
             if logic_row.ins_upd_dlt == "ins" and hasattr(row, "CreatedOn"):
                 row.CreatedOn = datetime.datetime.now()
                 did_stamping = True
             if logic_row.ins_upd_dlt == "ins" and hasattr(row, "CreatedBy"):
-                row.CreatedBy = Security.current_user().id  # TODO:  what if not enabled?
+                row.CreatedBy = Security.current_user().id  \
+                    if Config.SECURITY_ENABLED == True else 'public'
                 did_stamping = True
             if logic_row.ins_upd_dlt == "upd" and hasattr(row, "UpdatedOn"):
                 row.UpdatedOn = datetime.datetime.now()
                 did_stamping = True
             if logic_row.ins_upd_dlt == "upd" and hasattr(row, "UpdatedBy"):
-                row.UpdatedBy = Security.current_user().id  # TODO:  what if not enabled?
+                row.UpdatedBy = Security.current_user().id  \
+                    if Config.SECURITY_ENABLED == True else 'public'
                 did_stamping = True
             if did_stamping:
                 logic_row.log("early_row_event_all_classes - handle_all did stamping")     
