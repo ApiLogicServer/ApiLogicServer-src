@@ -50,13 +50,13 @@ def declare_logic():
 
     def validate_yaml(row:models.YamlFiles, old_row:models.YamlFiles, logic_row:LogicRow):
         import yaml
-        if logic_row.ins_upd_dlt in ["ins","upd"] and (row.download_flag is None or row.download_flag == False):
+        if logic_row.ins_upd_dlt in ["ins"] and (row.download_flag is None or row.download_flag == False):
             if row.content:
                 yaml_content = str(b64decode(row.content), encoding=encoding) if row.content else None 
                 try:
                     yaml.safe_load(yaml_content)
                     row.size = len(yaml_content)
-                    row.upload_flag = True
+                    row.upload_flag = False
                     row.download_flag = False
                     row.content = yaml_content
                     return True
@@ -66,7 +66,7 @@ def declare_logic():
             return False
         return True
     def process_yaml(row:models.YamlFiles, old_row:models.YamlFiles, logic_row:LogicRow):
-        if logic_row.ins_upd_dlt == "ins" and row.content and row.downloaded is None:
+        if logic_row.ins_upd_dlt == "upd" and row.content and row.downloaded is None and row.upload_flag and old_row.upload_flag == False:
             post(f"http://localhost:5655/importyaml/{row.id}",data=row.content)
             
     def export_yaml(row:models.YamlFiles, old_row:models.YamlFiles, logic_row:LogicRow):
@@ -79,7 +79,7 @@ def declare_logic():
                 
     Rule.row_event(models.YamlFiles, calling=export_yaml)
     Rule.constraint(models.YamlFiles, calling=validate_yaml, error_msg="Invalid yaml file")
-    Rule.after_flush_row_event(on_class=models.YamlFiles, calling=process_yaml)
+    Rule.commit_row_event(on_class=models.YamlFiles, calling=process_yaml)
     
     #als rules report
     #from api.system import api_utils

@@ -450,7 +450,7 @@ class OntBuilder(object):
         entity_first_cap = f"{entity_name[:1].upper()}{entity_name[1:]}"
         primaryKey = make_keys(entity["primary_key"])
         keySqlType = make_sql_types(primaryKey, entity.columns)
-        title =  f'{entity_name.upper()}' 
+        title =  f'{entity_name.upper()}' #TODO entity.title
         new_mode = self.find_template(entity, "mode", self.new_mode)
         entity_var = {
             "use_keycloak": self.use_keycloak,
@@ -886,12 +886,13 @@ class OntBuilder(object):
             "{ id: '{{ name }}', name: '{{ name_upper }}', icon: 'view_list', route: '/main/{{ name }}' }"
         )
         import_template = Template("import {{ card_component }} from './{{ name }}-card/{{ name }}-card.component';")
-        sep = ""
+        
         #TODO create menu_group - default to data
         groups = []
+        menu_separator = ""
         menu_groups = []
         for each_entity_name, each_entity in entities:
-            group =  "data" # getattr(each_entity, "group") or "data" TEMPORARY TODO
+            group =  getattr(each_entity, "group") or "data" #TEMPORARY TODO
             get_group(groups, group, each_entity_name)
         
         import_cards = []
@@ -901,6 +902,7 @@ class OntBuilder(object):
             group_entities = group["entities"]
             menu_group = self.app_menu_group
             menuitems = []
+            sep = ""
             for each_entity_name in group_entities:
                 name = each_entity_name
                 name_first_cap = name[:1].upper()+ name[1:]
@@ -910,8 +912,10 @@ class OntBuilder(object):
                 card_component = "{ " + f"{name_first_cap}CardComponent" +" }"
                 importTemplate = import_template.render(name=name,card_component=card_component)
                 import_cards.append(importTemplate)
-                card_components.append(f"{sep}{name_first_cap}CardComponent")
+                card_components.append(f"{menu_separator}{name_first_cap}CardComponent")
                 sep = ","
+                menu_separator = ","
+                
             mg = menu_group.render(menu_group_name=group_name, menuitems=menuitems)
             menu_groups.append(mg)
 
