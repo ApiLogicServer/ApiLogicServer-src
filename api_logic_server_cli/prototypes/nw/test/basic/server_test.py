@@ -16,7 +16,14 @@ if len(sys.argv) == 1 or (len(sys.argv) > 1 and sys.argv[1].__contains__("help")
     sys.exit()
 
 """
-    These are server tests for the default Sample DB.
+    These are re-runnable server tests for the default Sample DB (nw+).
+
+    They are a simple way to verify that the server is running, and that the logic is working.
+
+    In general, we recommend the behave tests, which define scenarios and automate a test suite.
+
+    Requires config/config.py to be SECURITY_ENABLED = False.
+        Use Behave tests to test with security enabled.
 
     These verify the following, and are useful coding examples of API Usage:
 """
@@ -28,7 +35,8 @@ delete_test = True  # Deletes the posted customer
 
 patch_test = True   # simple constraint test (set credit limit low)
 adjust_test = True  # Update Order Detail with intentionally bad data to illustrate chaining, constraint, reuse
-audit_test = True   # alter salary, check for audit row
+audit_test = False   # alter salary, check for audit row
+# fails - You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
 prune_test = True   # observe rules pruned for Order.RequiredDate (2013-10-13)
 cascade_update_test = True  # verify Order.ShippedDate 2013-10-13 adjusts balance 2102-1086->1016, product onhand
 custom_service_test = True  # See https://github.com/valhuber/ApiLogicServer/blob/main/README.md#api-customization
@@ -115,7 +123,7 @@ def server_tests(host, port, version):
         test_name = "GET self-reln Dept-SubDepts"
         prt(f'\n\n\n{test_name}...\n\n', test_name)
         get_dept_uri = f'http://{host}:{port}/api/Department/2/?' \
-                       f'include=DepartmentList%2CEmployeeList%2CEmployeeList1%2CDepartment' \
+                       f'include=DepartmentList%2CEmployeeList%2CWorksForEmployeeList%2CDepartment' \
                        f'&fields%5BDepartment%5D=Id%2CDepartmentId%2CDepartmentName'
         r = requests.get(url=get_dept_uri)
         response_text = r.text

@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.04.97"
+__version__ = "10.04.99"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t07/21/2024 - 10.04.99: py.py fix, launch config, non-behave server tests \n"\
     "\t07/21/2024 - 10.04.97: SRA 7-22, intelligent multi-reln accessor name \n"\
     "\t07/21/2024 - 10.04.96: multi-reln disambig fix (app_model_editor), proper response to project/doc, naming \n"\
     "\t07/19/2024 - 10.04.95: rebuild now does all ont apps \n"\
@@ -76,7 +77,7 @@ import platform
 import importlib
 import fnmatch
 from dotmap import DotMap
-import create_from_model.create_db_from_model as create_db_from_model
+import api_logic_server_cli.create_from_model.create_db_from_model as create_db_from_model
 
 
 def is_docker() -> bool:

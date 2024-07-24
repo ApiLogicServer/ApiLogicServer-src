@@ -86,6 +86,36 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
+            "name": "Install Ontimize (npm install)",
+            "type": "node",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/ui/app",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": ["install"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "  - Start Ontimize (npm start)",
+            "type": "node",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/ui/app",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": ["start"],
+            "restart": true,
+            "timeout": 30000,
+            "console": "integratedTerminal",
+            "env": {
+                "NODE_ENV": "development"
+            }
+        },
+        {
+            "name": "  - Rebuild app from altered model (overwrites app)",
+            "type": "node-terminal",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "command": "als app-build --app=app"
+        },
+        {
             "name": "Behave Run",
             "type": "debugpy",
             "request": "launch",
@@ -140,23 +170,6 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "ApiLogicServer ENV",
-            "type": "debugpy",
-            "cwd": "${workspaceFolder}",
-            "env": {
-                "APILOGICPROJECT_DEBUG": "False",
-                "VERBOSE": "true",
-                "SQLALCHEMY_DATABASE_URI": "mssql+pyodbc://valhuber:PWD@mysqlserver-nwlogic.database.windows.net:1433/nwlogic?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=no"
-            },
-            "request": "launch",
-            "program": "api_logic_server_run.py",
-            "redirectOutput": true,
-            "justMyCode": false,
-            "args": ["--flask_host=localhost", "--port=5656", "--swagger_port=5656", "--swagger_host=localhost", "--verbose=False"],
-            "console": "internalConsole",
-            "internalConsoleOptions": "openOnSessionStart"
-        },
-        {
             "name": "Python: Module",
             "type": "debugpy",
             "request": "launch",
@@ -194,44 +207,6 @@
             "args": ["sys-info"],
             "justMyCode": false,
             "console": "integratedTerminal"
-        },
-        {
-            "name": "Create Database from database/models.py",
-            "type": "debugpy",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/database",
-            "program": "${workspaceFolder}/database/models.py",
-            "redirectOutput": true,
-            "justMyCode": false,            
-            "console": "internalConsole",
-            "internalConsoleOptions": "openOnSessionStart"
-        },
-        {
-            "name": "Install Ontimize (npm install)",
-            "type": "node",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/ui/app",
-            "runtimeExecutable": "npm",
-            "runtimeArgs": ["install"],
-            "console": "integratedTerminal"
-        },
-        {
-            "name": "  - Start Ontimize (npm start)",
-            "type": "node",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/ui/app",
-            "runtimeExecutable": "npm",
-            "runtimeArgs": ["start"],
-            "port": 4299,
-            "restart": true,
-            "timeout": 30000,
-            "protocol": "inspector",
-            "justMyCode": false,
-            "console": "integratedTerminal",
-            "env": {
-                "NODE_ENV": "development"
-            }
         }
-
     ]
 }

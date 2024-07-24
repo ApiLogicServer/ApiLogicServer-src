@@ -194,6 +194,8 @@ def declare_logic():
             row.Freight = 10
         if row.AmountTotal is None:
             row.AmountTotal = 0
+        if row.Ready is None:  # if not set in UI, set to False for do_not_ship_empty_orders() 
+            row.Ready = False
 
     def order_detail_defaults(row: models.OrderDetail, old_row: models.OrderDetail, logic_row: LogicRow):
         if row.Quantity is None:
