@@ -24,7 +24,7 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "GENAI - Retry from repaired chatgpt",
+            "name": "  - GENAI - Retry from repaired chatgpt",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
@@ -44,7 +44,7 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "GENAI - Retry from repaired model",
+            "name": "  - GENAI - Retry from repaired model",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
@@ -65,7 +65,7 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "GENAI - Postgresql",
+            "name": "  - GENAI - Postgresql",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
@@ -105,7 +105,7 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "API Logic Server Run (run project from manager)",
+            "name": "  - API Logic Server Run (run project from manager)",
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/${input:runProjectName}",
@@ -157,34 +157,6 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "Python: Module",
-            "type": "debugpy",
-            "request": "launch",
-            "redirectOutput": true,
-            "justMyCode": false,            
-            "module": "enter-your-module-name"
-        },
-        {
-            "name": "Python: Current File",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "${file}",
-            "redirectOutput": true,
-            "justMyCode": false,            
-            "console": "internalConsole"
-        },
-        {
-            "name": "Sys Info",
-            "type": "debugpy",
-            "request": "launch",
-            "cwd": "${workspaceFolder}",
-            "program": "samples/nw_sample/venv_setup/py.py",
-            "redirectOutput": true,
-            "args": ["sys-info"],
-            "justMyCode": false,
-            "console": "integratedTerminal"
-        },
-        {
             "name": "App Model Editor - Prepare",
             "type": "node",
             "request": "launch",
@@ -225,6 +197,34 @@
             "env": {
                 "NODE_ENV": "development"
             }
+        },
+        {
+            "name": "Python: Module",
+            "type": "debugpy",
+            "request": "launch",
+            "redirectOutput": true,
+            "justMyCode": false,            
+            "module": "enter-your-module-name"
+        },
+        {
+            "name": "Python: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "redirectOutput": true,
+            "justMyCode": false,            
+            "console": "internalConsole"
+        },
+        {
+            "name": "Sys Info",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "program": "samples/nw_sample/venv_setup/py.py",
+            "redirectOutput": true,
+            "args": ["sys-info"],
+            "justMyCode": false,
+            "console": "integratedTerminal"
         }
     ],
     "inputs": [
