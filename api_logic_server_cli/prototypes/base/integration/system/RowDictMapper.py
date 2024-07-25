@@ -64,6 +64,7 @@ def json_to_entities(from_row: str | object, to_row):
                         child_from = from_row[each_attr_name]
                         for each_child_from in child_from:
                             child_class = each_attr.entity.class_
+                            # #als add child to parent list
                             # eachOrderDetail = OrderDetail(); order.OrderDetailList.append(eachOrderDetail)
                             child_to = child_class()  # instance of child (e.g., OrderDetail)
                             json_to_entities(each_child_from, child_to)

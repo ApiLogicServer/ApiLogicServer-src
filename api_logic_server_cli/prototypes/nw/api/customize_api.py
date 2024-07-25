@@ -364,7 +364,7 @@ class ServicesEndPoint(safrs.JABase):
         db = safrs.DB         # Use the safrs.DB, not db!
         session = db.session  # sqlalchemy.orm.scoping.scoped_session
 
-        order_b2b_def = OrderB2B()
+        order_b2b_def = OrderB2B()  # a RowDictMapper
         request_dict_data = request.json["meta"]["args"]["order"]
         sql_alchemy_row = order_b2b_def.dict_to_row(row_dict = request_dict_data, session = session)
         sql_alchemy_row.Ready = True
@@ -403,7 +403,7 @@ class ServicesEndPoint(safrs.JABase):
         db = safrs.DB         # Use the safrs.DB, not db!
         session = db.session  # sqlalchemy.orm.scoping.scoped_session
 
-        order_id_def = OrderById()
+        order_id_def = OrderById()  # a RowDictMapper, but without joins, lookups
         request_dict_data = request.json["meta"]["args"]["order"]
         sql_alchemy_row = order_id_def.dict_to_row(row_dict = request_dict_data, session = session)
 
