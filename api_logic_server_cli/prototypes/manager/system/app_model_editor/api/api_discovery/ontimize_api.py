@@ -230,8 +230,6 @@ def add_service(
         if clz_name == "export":
             return gen_export(request)
 
-        if clz_name == "insertFile":
-            return insertFile(request)
 
         if request.path == "/ontimizeweb/services/rest/users/login":
             return login(request)
@@ -279,6 +277,17 @@ def add_service(
                 # stmt = insert(api_clz).values(data)
 
             else:
+                if clz_type == "importyaml":
+                    key = filter.split("=")[1] if filter and "id" in filter else "1"
+                    resp = (
+                        session.query(models.YamlFiles)
+                        .filter(models.YamlFiles.id == int(key))
+                        .one()
+                        )
+                    yaml_content = resp and resp.content
+                    #yaml_content = request.data.decode("utf-8")
+                    valuesYaml = yaml.safe_load(yaml_content)
+                    return process_yaml(valuesYaml=valuesYaml)
                 # GET (sent as POST)
                 # rows = get_rows_by_query(api_clz, filter, orderBy, columns, pagesize, offset)
                 if "TypeAggregate" in clz_type:
@@ -555,7 +564,13 @@ def add_service(
                 except yaml.YAMLError as exc:
                     return jsonify({"code": 1, "message": f"Error loading yaml: {exc}"})
         elif request.method == "POST":
-            yaml_content = request.data.decode("utf-8")
+            data = (
+                session.query(models.YamlFiles)
+                .filter(models.YamlFiles.id == int(key))
+                .one()
+            )
+            yaml_content = data and data.content
+            #yaml_content = request.data.decode("utf-8")
             valuesYaml = yaml.safe_load(yaml_content)
             return process_yaml(valuesYaml=valuesYaml)
 

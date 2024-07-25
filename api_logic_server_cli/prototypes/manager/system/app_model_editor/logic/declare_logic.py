@@ -9,6 +9,7 @@ from security.system.authorization import Grant, Security
 import logging
 from base64 import b64decode
 from requests import get, post
+import yaml
 
 app_logger = logging.getLogger(__name__)
 encoding = 'utf-8'
@@ -49,7 +50,6 @@ def declare_logic():
     Rule.early_row_event_all_classes(early_row_event_all_classes=handle_all)
 
     def validate_yaml(row:models.YamlFiles, old_row:models.YamlFiles, logic_row:LogicRow):
-        import yaml
         if logic_row.ins_upd_dlt in ["ins"] and (row.download_flag is None or row.download_flag == False):
             if row.content:
                 yaml_content = str(b64decode(row.content), encoding=encoding) if row.content else None 
@@ -65,9 +65,7 @@ def declare_logic():
                     return False    
             return False
         return True
-    def process_yaml(row:models.YamlFiles, old_row:models.YamlFiles, logic_row:LogicRow):
-        if logic_row.ins_upd_dlt == "upd" and row.content and row.downloaded is None and row.upload_flag and old_row.upload_flag == False:
-            post(f"http://localhost:5655/importyaml/{row.id}",data=row.content)
+
             
     def export_yaml(row:models.YamlFiles, old_row:models.YamlFiles, logic_row:LogicRow):
         if logic_row.is_updated and row.download_flag and old_row.download_flag == False and row.content != None:
@@ -79,11 +77,7 @@ def declare_logic():
                 
     Rule.row_event(models.YamlFiles, calling=export_yaml)
     Rule.constraint(models.YamlFiles, calling=validate_yaml, error_msg="Invalid yaml file")
-    Rule.commit_row_event(on_class=models.YamlFiles, calling=process_yaml)
     
-    #als rules report
-    #from api.system import api_utils
-    #api_utils.rules_report()
 
     app_logger.debug("..logic/declare_logic.py (logic == rules + code)")
 

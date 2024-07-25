@@ -49,4 +49,13 @@ export class YamlFilesDetailComponent implements OnInit  {
     }
     return this.downloaded;
   }
+  process_yaml() {
+    console.log("process_yaml");
+    this.service.query({ 'id': this.data.id }, ['content'],"importyaml").subscribe((resp) => {
+        if (resp.code === 0) {
+          console.log("res: " + JSON.stringify(resp));
+        }
+      });
+    }
+
 }
