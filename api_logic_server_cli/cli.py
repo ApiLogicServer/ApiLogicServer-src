@@ -196,7 +196,11 @@ def main(ctx):
     pass  # all commands come through here
 
     if not ctx.invoked_subcommand:  # no command, per invoke_without_command=True
-            sys.stdout.write("    Suggestion: ApiLogicServer start \n\n\n")
+            current_path = Path(os.getcwd())
+            if current_path.joinpath('system/genai/reference').is_dir():
+                sys.stdout.write("    For doc, see https://apilogicserver.github.io/Docs/Manager \n\n\n")
+            else:
+                sys.stdout.write("    Suggestion: ApiLogicServer start \n\n\n")
      
 
 @main.command("start")
