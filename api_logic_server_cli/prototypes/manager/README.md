@@ -182,7 +182,7 @@ You can test this as follows:
 2. And try:
 
 ```bash
-als genai --using=genai_demo_pg.prompt --db-url=postgresql://postgres:p@localhost/genai_demo
+als genai --using=system/genai/postgres/genai_demo_pg.prompt --db-url=postgresql://postgres:p@localhost/genai_demo
 ```
 
 Provisos:
