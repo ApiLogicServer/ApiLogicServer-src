@@ -307,7 +307,7 @@ def declare_logic():
         Grant.process_updates(logic_row=logic_row)
 
 
-        did_stamping = True  # #als: TIME / DATE STAMPING
+        did_stamping = False  # #als: TIME / DATE STAMPING
         if enable_stamping := True:
             row = logic_row.row
             if logic_row.ins_upd_dlt == "ins" and hasattr(row, "CreatedOn"):
