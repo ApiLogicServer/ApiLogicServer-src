@@ -46,13 +46,15 @@ def declare_logic():
                 row.CreatedOn = datetime.datetime.now()
                 did_stamping = True
             if logic_row.ins_upd_dlt == "ins" and hasattr(row, "CreatedBy"):
-                row.CreatedBy = Security.current_user().id  # TODO:  what if not enabled?
+                row.CreatedBy = Security.current_user().id
+                #    if Config.SECURITY_ENABLED == True else 'public'
                 did_stamping = True
             if logic_row.ins_upd_dlt == "upd" and hasattr(row, "UpdatedOn"):
                 row.UpdatedOn = datetime.datetime.now()
                 did_stamping = True
             if logic_row.ins_upd_dlt == "upd" and hasattr(row, "UpdatedBy"):
-                row.UpdatedBy = Security.current_user().id  # TODO:  what if not enabled?
+                row.UpdatedBy = Security.current_user().id  \
+                    if Config.SECURITY_ENABLED == True else 'public'
                 did_stamping = True
             if did_stamping:
                 logic_row.log("early_row_event_all_classes - handle_all did stamping")     

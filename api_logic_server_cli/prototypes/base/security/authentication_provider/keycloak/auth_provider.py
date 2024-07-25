@@ -201,7 +201,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
             user_identity = DotMapX()
             user_identity.id = id
             user_identity.password = password
-            # FIXME fails: JWT_PRIVATE_KEY must be set to use asymmetric cryptography algorithm "RS256"
+            # JWT_PRIVATE_KEY must be set to use asymmetric cryptography algorithm "RS256"
             access_token = create_access_token(identity=user_identity)
             # now decode for user/roles info; also see jwt.io
             jswon_jwt = jsonify(access_token=user)  # this returns something with SQLAlchemy row
