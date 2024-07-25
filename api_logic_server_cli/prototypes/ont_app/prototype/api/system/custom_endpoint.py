@@ -28,16 +28,21 @@ resource_logger = logging.getLogger("api.customize_api")
 
 db = safrs.DB 
 """this is a safrs db not DB"""
+
 session = db.session  # type: sqlalchemy.orm.scoping.scoped_session
+
+
 class DotDict(dict):
     """ dot.notation access to dictionary attributes """
     # thanks: https://stackoverflow.com/questions/2352181/how-to-use-a-dot-to-access-members-of-dictionary/28463329
     __getattr__ = dict.get
     __setattr__ = dict.__setitem__
     __delattr__ = dict.__delitem__
+
+
 class CustomEndpoint():
     """
-    Nested CustomEndpoint Definition
+    Nested CustomEndpoint Definition.  Internal system services for Ontimize.
 
         customer = CustomEndpoint(model_class=models.Customer, alias="Customer"
         , fields = [(models.Customer.CompanyName, "Customer Name")] 
@@ -80,7 +85,7 @@ class CustomEndpoint():
             ):
         """
 
-        Declare a custom yser shaped resource.
+        Declare a custom user shaped resource.
 
         Args:
             :model_class (DeclarativeMeta | None): model.TableName

@@ -121,6 +121,6 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         Returns:
             bool: _description_
         """
-        # return user.check_password(password = password)  TODO: review
+        # return user.check_password(password = password)  : review
         return password == user.password_hash
 
