@@ -934,7 +934,7 @@ class CustomEndpoint():
         for each_child_def in custom_endpoint_child_list:
             child_property_name = each_child_def.role_name
             if child_property_name == '':
-                child_property_name = "OrderList"  # FIXME default from class name
+                child_property_name = "OrderList"  # TODO default from class name
             if child_property_name.startswith('Product'):
                 debug = 'good breakpoint'
             row_dict_child_list = getattr(row, child_property_name)
@@ -986,7 +986,7 @@ class CustomEndpoint():
             if child_property_name in row_dict:
                 row_dict_child_list = row_dict[child_property_name]
                 # row_as_dict[each_child_def.alias] = []  # set up row_dict child array
-                if each_child_def.isParent:  # FIXME not support (but TODO Lookup!)
+                if each_child_def.isParent:
                     #the_parent = getattr(row, child_property_name)
                     #the_parent_to_dict = self.to_dict(row = the_parent, current_endpoint = each_child_def)
                     #row_as_dict[each_child_def.alias].append(the_parent_to_dict)
