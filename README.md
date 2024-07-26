@@ -26,7 +26,7 @@ See how **Microservice Automation** creates and runs a microservice - a multi-pa
 
 # Quickstart
 
-If you have a supported Python (version 3.8-3.12), install is standard, typically:
+If you have a supported Python (version 3.10 - 3.12), install is standard, typically:
 
 ```bash title="Install API Logic Server in a Virtual Environment"
 python3 -m venv venv                 # windows: python -m venv venv

@@ -12,22 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "10.04.101"
+__version__ = "11.00.00"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t07/25/2024 - 10.04.101: fix for sqlite model yaml manager - single button post \n"\
-    "\t07/21/2024 - 10.04.99: py.py fix, launch config, non-behave server tests \n"\
-    "\t07/21/2024 - 10.04.97: SRA 7-22, intelligent multi-reln accessor name \n"\
-    "\t07/21/2024 - 10.04.96: multi-reln disambig fix (app_model_editor), proper response to project/doc, naming \n"\
-    "\t07/19/2024 - 10.04.95: rebuild now does all ont apps \n"\
-    "\t07/14/2024 - 10.04.94: Manager += Yaml Editor \n"\
-    "\t07/14/2024 - 10.04.93: Ont Postgres fix, pg add-auth tests, sra 7-11 \n"\
-    "\t07/12/2024 - 10.04.91: Behave Tests / Report now include ready flag example \n"\
-    "\t07/07/2024 - 10.04.90: Public role support for no-role users, user p1 in sql & dc auth, genai docs, user auditing, genai retry, images \n"\
-    "\t07/01/2024 - 10.04.84: APILOGICSERVER_GENAI_VERSION, APILOGICSERVER_CHATGPT_APIKEY, jun-29 sra, mgr .env \n"\
-    "\t06/30/2024 - 10.04.81: sra 6/30, kc local auth w/Ont & attrs, configure auth, kc behave textarea, gpt v#, opt_lock ignored, sqlite imports, multi-reln  \n"\
-    "\t06/12/2024 - 10.04.63: revised keycloak auth_provider, default config to hardened, kc_base via add-auth \n"\
-    "\t06/11/2024 - 10.04.62: default-auth creation, basic_demo+=b2b, ont CORS fix, basic_demo \n"\
+    "\t07/25/2024 - 11.00.00: Keycloak, App Model Editor \n"\
     "\t06/06/2024 - 10.04.48: config-driven admin.yaml security config \n"\
     "\t06/04/2024 - 10.04.47: ont cascade add, mgr: fix missing env, docker mgr, BLT behave logs, add-cust \n"\
     "\t05/25/2024 - 10.04.32: mgr: pycharm, load readme from git \n"\
