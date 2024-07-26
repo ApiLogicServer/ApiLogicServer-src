@@ -1,6 +1,6 @@
 import { Injector, ViewChild, Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { OFormComponent, OntimizeService, OListPickerComponent, OTableComponent, ORealPipe, ONIFInputComponent } from 'ontimize-web-ngx';
-
+import { DialogService } from 'ontimize-web-ngx';
 
 @Component({
   selector: 'YamlFiles-detail',
@@ -15,7 +15,8 @@ export class YamlFilesDetailComponent implements OnInit  {
 
   @ViewChild('oDetailForm') form: OFormComponent;
   
-  constructor(protected injector: Injector) {
+  constructor(protected injector: Injector,
+    protected dialogService: DialogService)  {
     this.service = this.injector.get(OntimizeService);
   }
 
@@ -52,10 +53,17 @@ export class YamlFilesDetailComponent implements OnInit  {
   process_yaml() {
     console.log("process_yaml");
     this.service.query({ 'id': this.data.id }, ['content'],"importyaml").subscribe((resp) => {
+        console.log("res: " + JSON.stringify(resp));
         if (resp.code === 0) {
-          console.log("res: " + JSON.stringify(resp));
+          this.showInfo();
         }
       });
     }
 
+    showInfo() {
+        if (this.dialogService) {
+        this.dialogService.info('Yaml Processing Complete',
+            'Entities, Attributes, and Relationships have been created from the Yaml "original content"',);
+        }
+    }
 }
