@@ -56,7 +56,7 @@ def declare_logic():
                 try:
                     yaml.safe_load(yaml_content)
                     row.size = len(yaml_content)
-                    row.upload_flag = False
+                    row.upload_flag = True
                     row.download_flag = False
                     row.content = yaml_content
                     return True

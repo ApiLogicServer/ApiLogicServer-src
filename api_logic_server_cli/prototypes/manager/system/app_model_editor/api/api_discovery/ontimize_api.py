@@ -287,7 +287,8 @@ def add_service(
                     yaml_content = resp and resp.content
                     #yaml_content = request.data.decode("utf-8")
                     valuesYaml = yaml.safe_load(yaml_content)
-                    return process_yaml(valuesYaml=valuesYaml)
+                    process_yaml(valuesYaml=valuesYaml)
+                    return jsonify({"code": 0, "message": "Yaml file loaded", "data": None})
                 # GET (sent as POST)
                 # rows = get_rows_by_query(api_clz, filter, orderBy, columns, pagesize, offset)
                 if "TypeAggregate" in clz_type:
@@ -560,7 +561,8 @@ def add_service(
             if yaml_content:
                 try:
                     valuesYaml = yaml.safe_load(yaml_content)
-                    return process_yaml(valuesYaml=valuesYaml)
+                    process_yaml(valuesYaml=valuesYaml)
+                    return jsonify({"code": 0, "message": "Yaml file loaded", "data": None})
                 except yaml.YAMLError as exc:
                     return jsonify({"code": 1, "message": f"Error loading yaml: {exc}"})
         elif request.method == "POST":
@@ -572,7 +574,8 @@ def add_service(
             yaml_content = data and data.content
             #yaml_content = request.data.decode("utf-8")
             valuesYaml = yaml.safe_load(yaml_content)
-            return process_yaml(valuesYaml=valuesYaml)
+            process_yaml(valuesYaml=valuesYaml)
+            return jsonify({"code": 0, "message": "Yaml file loaded", "data": None})
 
     def _gen_report(request) -> any:
         payload = json.loads(request.data)
