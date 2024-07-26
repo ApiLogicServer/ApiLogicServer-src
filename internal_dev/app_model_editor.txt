@@ -1,0 +1,15 @@
+Usability
+    - Entering id is silly - either default it, or make me provide unique textual name
+        - And tab-out to enable save button is unfortunate
+    - Big Process Yaml button is unclear
+    - Don't understand checkboxes for download and process-yaml
+        - Click Process Yaml big button with download reset - right side not filled in
+        - Click Download Yaml and save fills in right side - why?
+        - "                           " creates system/app_model_editor/ui/app_model_merge.yaml?
+            - And did not save my altered attribute label
+            - Which, by following the procedure above, is not removed from the database (user cries).
+    - Entity/Attributes appear to be updatable
+    - Where did the download go?  (system/app_model_editor/ui/yaml/app_model_merge.yaml?)
+    - Using NW, confusion about which is current
+    - Title is not really supported
+    - Does Manager readme need a link to AME doc?
