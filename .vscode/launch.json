@@ -379,7 +379,7 @@
             "redirectOutput": true,
             "args": ["create",
                 "--project_name=../../../servers/demo",
-                "--db_url=nw"],
+                "--db_url=nw+"],
             "stopOnEntry": false,
             "justMyCode": false,
             "console": "integratedTerminal"
