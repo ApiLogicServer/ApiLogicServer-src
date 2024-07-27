@@ -54,11 +54,15 @@ def declare_logic():
             if row.content:
                 yaml_content = str(b64decode(row.content), encoding=encoding) if row.content else None 
                 try:
-                    yaml.safe_load(yaml_content)
+                    ont_yaml = yaml.safe_load(yaml_content)
+                    if ont_yaml.get('entities') is None:
+                        #raise yaml.YAMLError("The yaml file must be a valid app_model.yaml file")
+                        return False
                     row.size = len(yaml_content)
-                    row.upload_flag = True
+                    row.upload_flag = False
                     row.download_flag = False
                     row.content = yaml_content
+                    
                     return True
                 except yaml.YAMLError as exc:
                     row.content = None
@@ -76,7 +80,7 @@ def declare_logic():
             row.downloaded = export_yaml_to_file(project_dir=project_dir)
                 
     Rule.row_event(models.YamlFiles, calling=export_yaml)
-    Rule.constraint(models.YamlFiles, calling=validate_yaml, error_msg="Invalid yaml file")
+    Rule.constraint(models.YamlFiles, calling=validate_yaml, error_msg="Invalid app_model.yaml file")
     
 
     app_logger.debug("..logic/declare_logic.py (logic == rules + code)")

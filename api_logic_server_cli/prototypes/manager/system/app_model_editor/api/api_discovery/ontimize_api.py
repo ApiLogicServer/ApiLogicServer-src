@@ -288,6 +288,7 @@ def add_service(
                     #yaml_content = request.data.decode("utf-8")
                     valuesYaml = yaml.safe_load(yaml_content)
                     process_yaml(valuesYaml=valuesYaml)
+    
                     return jsonify({"code": 0, "message": "Yaml file loaded", "data": None})
                 # GET (sent as POST)
                 # rows = get_rows_by_query(api_clz, filter, orderBy, columns, pagesize, offset)
@@ -304,7 +305,7 @@ def add_service(
         except Exception as ex:
             session.rollback()
             return jsonify(
-                {"code": 1, "message": f"{ex}", "data": [], "sqlTypes": None}
+                {"code": 1, "message": f"{ex.message}", "data": [], "sqlTypes": None}
             )
 
         return jsonify(
@@ -853,7 +854,7 @@ def add_service(
         insert_styles(valuesYaml)
         insert_entities(valuesYaml)
         insert_root(valuesYaml)
-
+    
         return jsonify(valuesYaml)
 
     def delete_sql(clz):

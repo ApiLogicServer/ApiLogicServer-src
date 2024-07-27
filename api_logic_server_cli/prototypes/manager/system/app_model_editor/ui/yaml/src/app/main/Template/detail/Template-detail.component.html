@@ -25,7 +25,6 @@
                 <o-table attr="EntityAttrTable" service="EntityAttr" entity="EntityAttr" 
                   keys="entity_name;attr"
                   parent-keys="template_name:name"
-                  detail-button-in-row="yes"
                   columns="entity_name;attr;template_name;label;thistype;tooltip;issearch;issort;exclude;isrequired;isenabled"
                   horizontal-scroll="yes" detail-form-route="EntityAttr" edit-form-route="EntityAttr"
                   visible-columns="entity_name;attr;template_name;label;thistype;issearch;issort;exclude;isrequired;isenabled"
@@ -34,19 +33,19 @@
                   fixed-header="true" class="vertical-padding-8" edition-mode="none" horizontal-scroll="yes">
                   <!-- parent-keys="template_name;entity_name" -->
 
-                  <o-table-column attr="entity_name" label=" Entity Name*" editable="yes" required="yes"
+                  <o-table-column attr="entity_name" label=" Entity Name*" editable="no" required="yes"
                     content-align="left"></o-table-column>
 
-                  <o-table-column attr="attr" label="Attribute" editable="yes" required="yes"
+                  <o-table-column attr="attr" label="Attribute" editable="no" required="yes"
                     content-align="left"></o-table-column>
 
-                  <o-table-column attr="template_name" label="template_name" editable="yes" required="no"
+                  <o-table-column attr="template_name" label="template_name" editable="no" required="no"
                     content-align="left"></o-table-column>
 
-                  <o-table-column attr="label" label="label" editable="yes" required="no"
+                  <o-table-column attr="label" label="label" editable="no" required="no"
                     content-align="left"></o-table-column>
 
-                  <o-table-column attr="thistype" label="DataType" editable="yes" required="yes"
+                  <o-table-column attr="thistype" label="DataType" editable="no" required="yes"
                     content-align="left"></o-table-column>
 
                   <o-textarea-input attr="tooltip" label="tooltip" rows="10" content-align="center"></o-textarea-input>
