@@ -5,10 +5,11 @@
         entity="YamlFiles" 
         fxLayout="column" 
         show-header="yes" 
-        header-actions="R;I;U;D"
+        header-actions="R;U;D"
         columns="id;name;size;upload_flag;download_flag;content" 
         #oDetailForm keys="id" 
         keys-sql-types="INTEGER" 
+        after-update-mode="home"
         show-header-navigation="yes"
         (onDataLoaded)="onDataLoaded($event)">
         <o-button o-grid-toolbar position="end" (click)="process_yaml()" label="Process Yaml" type="STROKED" icon="upload_file"></o-button>

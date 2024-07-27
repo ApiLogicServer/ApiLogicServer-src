@@ -18,6 +18,7 @@ export class YamlFilesDetailComponent implements OnInit  {
   constructor(protected injector: Injector,
     protected dialogService: DialogService)  {
     this.service = this.injector.get(OntimizeService);
+  
   }
 
   ngOnInit() {
@@ -55,11 +56,20 @@ export class YamlFilesDetailComponent implements OnInit  {
     this.service.query({ 'id': this.data.id }, ['content'],"importyaml").subscribe((resp) => {
         console.log("res: " + JSON.stringify(resp));
         if (resp.code === 0) {
+          this.updateProcessFlag()
+        }
+      });
+    }
+    updateProcessFlag() {
+      console.log("updateProcessFlag");
+      this.data.upload_flag = true;
+      this.service.update({'id':this.data.id}, {'upload_flag':this.data.upload_flag},"YamlFiles").subscribe((resp) => {
+        console.log("res: " + JSON.stringify(resp));
+        if (resp.code === 0) {
           this.showInfo();
         }
       });
     }
-
     showInfo() {
         if (this.dialogService) {
         this.dialogService.info('Yaml Processing Complete',

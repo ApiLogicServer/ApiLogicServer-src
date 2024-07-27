@@ -1,6 +1,6 @@
-<o-breadcrumb [form]="YamlFilesForm" label-columns="" separator=" "></o-breadcrumb>
+<o-breadcrumb [form]="YamlFilesForm" label-columns="" separator=" " title="Upload New app_model.yaml File"></o-breadcrumb>
 <o-form #YamlFilesForm attr="YamlFiles_form_insert" service="YamlFiles" entity="YamlFiles"
-keys="id;name" fxLayout="column" show-header="yes" header-actions="I"
+keys="id;name" fxLayout="column" show-header="yes" header-actions="I" show-header-title="yes" show-header-description="yes"
 horizontal-scroll="no" show-header-navigation="yes" after-insert-mode="home" class="standalone-form-container">
 
 <o-row attr="row1" layout-align="start stretch">

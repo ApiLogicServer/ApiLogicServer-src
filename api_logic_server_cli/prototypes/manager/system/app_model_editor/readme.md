@@ -57,19 +57,17 @@ Then go to the Home page and select the new row and click []Upload (and save) th
 ![](ui/templates/ManageYaml.png)
 
 ## Import the app_model.yaml and load into SQL
-Manage Yaml files -> New - the app_model.yml file can be uploaded and automatically populates entities, attributes, and relationships.
+Manage Yaml files -> New - the app_model.yml file can be uploaded and automatically populates entities, attributes, and relationships. Enter an Id, Name, and Select or drag and drop you app_model.yaml file.
 
 ![](ui/templates/UploadYaml.png)
 
-### Import from curl
-You can also copy your app_model.yaml file from your application to the 'ui' directory. This endpoint will read the app_model.yaml file from the ui directory. It will populate the in-memory SQLite database that the UI developers can edit.
-```
-curl "http://localhost:5655/importyaml"
-```
 
-## Download yaml 
-Manage Yaml Files - select the imported file and click the checkbox 'download' it will write to disk and display in the download content window.
-![](ui/templates/DownloadYaml.png)
+## Process Yaml 
+Once a file has been imported - select the file and open the detail page. Press the Process Yaml button and this will re-populate Entities, Attributes, and Relationships. Then edit your yaml entries.
+## Download Yaml
+Manage Yaml Files - select the imported file and click the checkbox 'download' it will write to disk and display in the download content window
+reflecting all the new edits to your yaml.  Copy this to your app_model.yaml in your project.
+![](ui/templates/ProcessDownload.png)
 
 ### Download using curl file back to disk (ui/app_model_merge.yaml)
 This will write back the modified SQL back to disk as yaml.  Use compare files to merge or replace the merge file for the new app_model_merge.yaml in your application.
