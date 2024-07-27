@@ -783,7 +783,7 @@ if Config.do_install_api_logic_server:  # verify the build process - rebuild, an
         assert install_api_logic_server_path.exists(), f"Win build error - bad blt path {install_api_logic_server_path}"
         build_cmd = f'{python} setup.py sdist bdist_wheel'
         # python -m build --outdir=C:\Users\val\dev\ApiLogicServer\ApiLogicServer-dev\build_and_test\ApiLogicServer
-        build_cmd = f'{python} -m build --outdir={install_api_logic_server_path}'
+        # build_cmd = f'{python} -m build --outdir={install_api_logic_server_path}'
         result_build = run_command(build_cmd,
             cwd=api_logic_server_home_path,
             msg=f'\nBuild ApiLogicServer at: {str(api_logic_server_home_path)}')
