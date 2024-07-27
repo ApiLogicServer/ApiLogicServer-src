@@ -697,11 +697,14 @@ def validate_sql_server_types():
 #        MAIN CODE
 # ***************************
 
-__version__ = '10.04.94'  # creating dockers/ApiLogicServer, for docker manager manual tests, genai
+__version__ = '11.00.00'  # creating dockers/ApiLogicServer, for docker manager manual tests, genai, win dlt mgr ame
 current_path = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(current_path)
 program_dir = str(current_path)
 os.chdir(program_dir)  # so admin app can find images, code
+cli_path = Path(__file__).parent.parent.joinpath('api_logic_server_cli')
+cli_path = Path(os.path.abspath(__file__)).parent.parent.parent.joinpath('api_logic_server_cli')
+assert cli_path.exists(), 'Sys Error - bad cli path: {str(cli_path)}'
 
 python = find_valid_python_name()  # geesh - allow for python vs python3
 
@@ -781,9 +784,13 @@ if Config.do_install_api_logic_server:  # verify the build process - rebuild, an
         api_logic_server_home_path = api_logic_server_tests_path.parent
         # install_api_logic_server_path: C:/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer
         assert install_api_logic_server_path.exists(), f"Win build error - bad blt path {install_api_logic_server_path}"
+        ame_path = cli_path.joinpath("prototypes/manager/system/app_model_editor")
+        if ame_path.exists():
+            pass  # delete path and contents
+            shutil.rmtree(ame_path)
         build_cmd = f'{python} setup.py sdist bdist_wheel'
         # python -m build --outdir=C:\Users\val\dev\ApiLogicServer\ApiLogicServer-dev\build_and_test\ApiLogicServer
-        # build_cmd = f'{python} -m build --outdir={install_api_logic_server_path}'
+        build_cmd = f'{python} -m build'
         result_build = run_command(build_cmd,
             cwd=api_logic_server_home_path,
             msg=f'\nBuild ApiLogicServer at: {str(api_logic_server_home_path)}')
