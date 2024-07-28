@@ -42,7 +42,7 @@ class Config:
 
     do_docker_mysql = default_setting               # requires docker database be running
     do_docker_postgres = default_setting            # requires docker database be running
-    do_docker_postgres_auth = default_setting       # requires docker database be running
+    do_docker_postgres_auth = False       # requires docker database be running
     do_docker_sqlserver = False           # requires docker database be running
 
     do_docker_creation_tests = False      # build docker image, start it and create projects
@@ -53,9 +53,13 @@ class Config:
     #   platform specific
     # ***********************
 
-    set_venv = "c:;cd ${install_api_logic_server_path}[3]\\venv\\Scripts\\activate"
+    set_venv = "c:;cd ${install_api_logic_server_path}/venv && Scripts\\activate"
     '''double slashes... '''
 
+    '''
+    winds up something like
+    c:;cd C:\\Users\\val\\dev\\ApiLogicServer\\ApiLogicServer-dev\\build_and_test\\ApiLogicServer && venv\\Scripts\\activate && python -m pip install C:\\Users\\val\\dev\\ApiLogicServer\\ApiLogicServer-dev\\org_git\\ApiLogicServer-src
+    '''
     docker_database_ip = '10.0.0.77'
     ''' for virtual machine access, set this to host IP '''
 

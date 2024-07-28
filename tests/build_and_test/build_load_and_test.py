@@ -1,4 +1,4 @@
-import subprocess, os, time, requests, sys, re, io
+import subprocess, os, time, requests, sys, re, io, traceback
 from typing import List
 from shutil import copyfile
 import shutil
@@ -14,12 +14,14 @@ bind_key = 'bind-key'
 include_tables = 'include-tables'
 extended_builder = 'extended-builder'
 
+
 class DotDict(dict):
     """ APiLogicServer dot.notation access to dictionary attributes """
     # thanks: https://stackoverflow.com/questions/2352181/how-to-use-a-dot-to-access-members-of-dictionary/28463329
     __getattr__ = dict.get
     __setattr__ = dict.__setitem__
     __delattr__ = dict.__delitem__
+
 
 def find_valid_python_name() -> str:
     '''
@@ -48,6 +50,15 @@ def find_valid_python_name() -> str:
             return 'python3'
         else:
             return 'python'
+
+
+def get_windows_path_with_slashes(url: str) -> str:
+    """ idiotic fix for windows (use 4 slashes to get 1)
+
+    https://stackoverflow.com/questions/1347791/unicode-error-unicodeescape-codec-cant-decode-bytes-cannot-open-text-file
+    """
+    return url.replace('\\', '\\\\')
+
 
 def get_api_logic_server_src_path() -> Path:
     """
@@ -167,6 +178,7 @@ def check_command(command_result, special_message: str=""):
 
     if "Trace" in result_stderr or \
         "Error" in result_stderr or \
+        "cannot find the path" in result_stderr or \
         "allocation failed" in result_stdout or \
         "error" in result_stderr or \
         "not found" in result_stderr or \
@@ -180,6 +192,7 @@ def check_command(command_result, special_message: str=""):
             if special_message != "":
                 print(f'{special_message}')
             raise ValueError("Traceback detected")
+
 
 def run_command(cmd: str, msg: str = "", new_line: bool=False, 
     cwd: Path=None, show_output: bool=False) -> object:
@@ -201,7 +214,7 @@ def run_command(cmd: str, msg: str = "", new_line: bool=False,
         print(f'{msg}, with command: \nsh cmd_venv.sh {cmd_to_run }')
         cmd_to_run = f'sh {current_path}/cmd_venv.sh ' + cmd_to_run
     else:
-        print(f'{msg}, with command: \n{cmd_to_run}')
+        print(f'{msg}, with win command: \n{cmd_to_run}')
     try:
         if 'mssql' in cmd_to_run:
             debug_string = 'nice breakpoint'
@@ -216,6 +229,11 @@ def run_command(cmd: str, msg: str = "", new_line: bool=False,
         check_command(result, msg)
     except Exception as err:
         print(f'\n\n*** Failed {err} on {cmd}')
+        tbe = traceback.TracebackException.from_exception(err)
+        stack_frames = traceback.extract_stack()
+        tbe.stack.extend(stack_frames)
+        formatted_traceback = ''.join(tbe.format())
+        print(f'Formatted Traceback:\n{formatted_traceback}')
         print_byte_string("\n\n==> run_command Console Log:", result.stdout)
         print_byte_string("\n\n==> Error Log:", result.stderr)
         raise
@@ -427,6 +445,7 @@ def delete_build_directories(install_api_logic_server_path):
     delete_dir(dir_path=str(get_api_logic_server_src_path().joinpath('dist')), msg="delete dist ")
     try:
         os.mkdir(install_api_logic_server_path, mode = 0o777)
+        os.mkdir(install_api_logic_server_path.parent.parent.joinpath('clean/ApiLogicServer'), mode = 0o777)
         os.mkdir(install_api_logic_server_path.joinpath('dockers'), mode = 0o777)
         os.mkdir(install_api_logic_server_path.joinpath('dockers/ApiLogicServer'), mode = 0o777) # for testing docker manager
     except Exception as e:
@@ -518,6 +537,38 @@ def validate_nw(api_logic_server_install_path, set_venv):
         "Failed to get 1 CategoriesEndPoint/get_cats row - security ok?"
     assert result_data['result'][0]['Id'] == 1, \
         "Failed to get Id=1 from CategoriesEndPoint/get_cats"
+
+    try:
+        result_behave = None
+        result_behave_report = None
+        print(f"\nVerify Python using set_venv: {set_venv}..\n")
+        api_logic_project_behave_path = api_logic_project_path.joinpath('test/api_logic_server_behave')
+        behave_run_path = api_logic_project_behave_path.joinpath('behave_run.py')
+        api_logic_project_logs_path = api_logic_project_behave_path.joinpath('logs/behave.log')
+        venv_dir = install_api_logic_server_path.joinpath('venv')
+        activate_script = os.path.join(venv_dir, 'Scripts', 'activate.bat')
+        behave_command = f'{activate_script} && {python} --version'
+        behave_command = f'{set_venv} && {python} --version'
+        assert api_logic_project_behave_path.exists(), "System error - nw cannot find cwd - test/behave path"
+        result_behave = run_command(behave_command, 
+                                    cwd=str(api_logic_project_behave_path),
+                                    msg="\nPython --version validation", show_output=True)
+        if result_behave.returncode != 0:
+            raise Exception("Cannot even start Python")
+    except Exception as err:
+        print(f'\nPython --version Failure\nHere is err: {err}\n')
+        print(f'Python --version\nHere is log from: {str(api_logic_project_logs_path)}\n')
+        f = open(str(api_logic_project_logs_path), 'r')
+        file_contents = f.read()
+        print (file_contents)
+        f.close()
+        print(f'\nYou must manually stop the server (using the Admin App)\n')
+        rtn_code = 1
+        if result_behave_report:
+            rtn_code = result_behave_report.returncode
+        elif result_behave:
+            rtn_code = result_behave.returncode
+        exit(rtn_code)
 
     try:
         result_behave = None
@@ -726,10 +777,10 @@ install_api_logic_server_clean_path = install_api_logic_server_path.parent.paren
 api_logic_project_path = install_api_logic_server_path.joinpath('ApiLogicProject')
 api_logic_server_tests_path = Path(os.path.abspath(__file__)).parent.parent
 
-api_logic_server_cli_path = get_api_logic_server_src_path().\
+api_logic_server_main_path = get_api_logic_server_src_path().\
                             joinpath("api_logic_server_cli").joinpath('api_logic_server.py')  # eg, /Users/val/dev/ApiLogicServer/api_logic_server_cli/api_logic_server.py
 
-with io.open(str(api_logic_server_cli_path), "rt", encoding="utf8") as f:
+with io.open(str(api_logic_server_main_path), "rt", encoding="utf8") as f:
     api_logic_server_version = re.search(r"__version__ = \"(.*?)\"", f.read()).group(1)
 
 stdout = None
@@ -744,6 +795,11 @@ venv_with_python = True if platform == "win32" else False
 if venv_with_python == False:
     set_venv = '!cmd_venv'
 
+if venv_with_python:  # windows only (sigh... never found way to set venv with Python on Ubuntu)
+    venv_dir = install_api_logic_server_path.joinpath('venv')
+    set_venv = os.path.join(venv_dir, 'Scripts', 'activate.bat')  #
+
+
 db_ip = Config.docker_database_ip
 """ in docker, we cannot connect on localhost - must use the ip """
 
@@ -753,6 +809,7 @@ print(f'  ..install_api_logic_server_path: {install_api_logic_server_path}')
 print(f'  .. .. will contain: projects, docker, install -- venv')
 # print(f'  ..api_logic_project_path:        {api_logic_project_path}')
 print(f'  ..api_logic_server_tests_path:   {api_logic_server_tests_path}\n')
+print(f'  ..uses set_venv: {set_venv}')
 print(f'  Creates Sample project (nw), starts server and runs (many) Behave Tests')
 print(f'  Kafka tests (mac only, per networking)')
 print(f'  Rebuild tests')
@@ -790,11 +847,12 @@ if Config.do_install_api_logic_server:  # verify the build process - rebuild, an
             shutil.rmtree(ame_path)
         build_cmd = f'{python} setup.py sdist bdist_wheel'
         # python -m build --outdir=C:\Users\val\dev\ApiLogicServer\ApiLogicServer-dev\build_and_test\ApiLogicServer
-        build_cmd = f'{python} -m build'
-        result_build = run_command(build_cmd,
-            cwd=api_logic_server_home_path,
-            msg=f'\nBuild ApiLogicServer at: {str(api_logic_server_home_path)}')
-        assert result_build.returncode == 0, f'Install failed with {result_build}'
+        if do_win_build := True:  # for debugging windows blt install
+            build_cmd = f'{python} -m build'
+            result_build = run_command(build_cmd,
+                cwd=api_logic_server_home_path,
+                msg=f'\nBuild ApiLogicServer at: {str(api_logic_server_home_path)}')
+            assert result_build.returncode == 0, f'Install failed with {result_build}'
         
         venv_cmd = f'{python} -m venv venv'    
         result_venv = run_command(venv_cmd,
@@ -802,14 +860,36 @@ if Config.do_install_api_logic_server:  # verify the build process - rebuild, an
             msg=f'\nCreate venv for ApiLogicServer at: {str(install_api_logic_server_path)}')
         assert result_venv.returncode == 0, f'Venv create failed with {result_venv}'
 
-        # now, we setup for Python in *that* venv
+        # now, we setup for Python in *that* venv: ~\dev\ApiLogicServer\ApiLogicServer-dev\build_and_test\ApiLogicServer
         if platform != "win32":
             python = api_logic_server_home_path.joinpath('venv/scripts/python')
-        install_cmd = f'{set_venv} && {python} -m pip install {str(api_logic_server_home_path)}'    
+        install_cmd = f'{set_venv} && {python} -m pip install {str(cli_path.parent)}'
         result_install = run_command(install_cmd,
             cwd=install_api_logic_server_path,
-            msg=f'\nInstall ApiLogicServer at: {str(install_api_logic_server_path)}')
-        assert result_install.returncode == 0, f'Install failed with {result_install}'
+            msg = f"\nInstalling at {str(install_api_logic_server_path)}")
+        '''
+        winds up something like
+        c:;cd C:\\Users\\val\\dev\\ApiLogicServer\\ApiLogicServer-dev\\build_and_test\\ApiLogicServer && venv\\Scripts\\activate && python -m pip install C:\\Users\\val\\dev\\ApiLogicServer\\ApiLogicServer-dev\\org_git\\ApiLogicServer-src
+        '''
+        assert result_install.returncode == 0, f"Install failed: {result_install}"
+
+        # install_api_logic_server_clean_path - ApiLogicServer-dev/clean
+        
+        venv_cmd = f'{python} -m venv venv'    
+        result_venv = run_command(venv_cmd,
+            cwd=install_api_logic_server_clean_path,
+            msg=f'\nCreate venv for -dev/Clean at: {str(install_api_logic_server_clean_path)}')
+        assert result_venv.returncode == 0, f'Venv create failed with {result_venv}'
+
+        # now, we setup for Python in *that* venv: ~\dev\ApiLogicServer\ApiLogicServer-dev\clean\ApiLogicServer
+        if platform != "win32":
+            python = api_logic_server_home_path.joinpath('venv/scripts/python')
+        clean_env = set_venv.replace('build_and_test','clean')
+        install_cmd = f'{clean_env} && {python} -m pip install {str(cli_path.parent)}'
+        result_install = run_command(install_cmd,
+            cwd=install_api_logic_server_clean_path,
+            msg = f"\nInstalling at -dev/Clean: {str(install_api_logic_server_clean_path)}")
+        assert result_install.returncode == 0, f"Install failed: {result_install}"
     else:
         python_version = sys.version_info
         assert python_version[0] >= 3 and python_version[1] in [8,9,10,11, 12], \
@@ -849,6 +929,7 @@ if Config.do_install_api_logic_server:  # verify the build process - rebuild, an
 if len(sys.argv) > 1 and sys.argv[1] == 'build-only':
     print("\nBuild/Install successful\n\n")
     exit (0)
+
 
 
 # ***************************

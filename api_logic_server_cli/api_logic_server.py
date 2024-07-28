@@ -16,6 +16,7 @@ __version__ = "11.00.01"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
     "\t07/27/2024 - 11.00.01: App Model Editor Re-Design\n"\
+    "\t07/28/2024 - 11.00.01: Interal win blt \n"\
     "\t07/25/2024 - 11.00.00: Keycloak, App Model Editor \n"\
     "\t06/06/2024 - 10.04.48: config-driven admin.yaml security config \n"\
     "\t06/04/2024 - 10.04.47: ont cascade add, mgr: fix missing env, docker mgr, BLT behave logs, add-cust \n"\
@@ -616,12 +617,14 @@ def final_project_fixup(msg, project) -> str:
     # **********************************
     do_default_interpreter_path = True  # compute startup (only) python / venv location, from creating venv (here)
     if do_default_interpreter_path:
-        defaultInterpreterPath_str = sys.executable
+        defaultInterpreterPath_str = sys.executable  # python location, unless running from blt or dev-src
         defaultInterpreterPath = Path(defaultInterpreterPath_str)
-        if 'ApiLogicServer-dev' in str(project.api_logic_server_dir_path):  # apilogicserver dev is special case
-            if os.name == "nt":
-                defaultInterpreterPath = project.api_logic_server_dir_path.parent.parent.parent.joinpath('build_and_test/ApiLogicServer/venv/scripts/python.exe')
-            else:  # running from dev build, or dev source?
+        if 'ApiLogicServer-dev' in str(project.api_logic_server_dir_path):  # blt & dev-src are special case
+            if os.name == "nt":  # cases: blt, or dev source
+                defaultInterpreterPath = project.api_logic_server_dir_path.parent.parent.parent.parent.joinpath('venv/scripts/python.exe')
+                if 'org_git' in str(project.api_logic_server_dir_path):  # running from dev-source
+                    defaultInterpreterPath = project.api_logic_server_dir_path.parent.parent.parent.joinpath('build_and_test/ApiLogicServer/venv/scripts/python.exe')
+            else:  # running from blt, or dev-src?
                 defaultInterpreterPath = project.api_logic_server_dir_path.parent.parent.parent.parent.joinpath('bin/python')
                 if 'org_git' in str(project.api_logic_server_dir_path):  # running from dev-source
                     defaultInterpreterPath = project.api_logic_server_dir_path.parent.parent.parent.joinpath('build_and_test/ApiLogicServer/venv/bin/python')
@@ -906,12 +909,15 @@ class ProjectRun(Project):
         defaultInterpreterPath = Path(defaultInterpreterPath_str)
         if 'ApiLogicServer-dev' in str(self.api_logic_server_dir_path):  # apilogicserver dev is special case
             if os.name == "nt":
-                defaultInterpreterPath = self.api_logic_server_dir_path.parent.parent.parent.joinpath('build_and_test/ApiLogicServer/venv/scripts/python.exe')
+                defaultInterpreterPath = self.api_logic_server_dir_path.parent.parent.parent.parent.joinpath('venv/scripts/python.exe')
+                if 'org_git' in str(self.api_logic_server_dir_path):  # running from dev-source
+                    defaultInterpreterPath = self.api_logic_server_dir_path.parent.parent.parent.joinpath('build_and_test/ApiLogicServer/venv/scripts/python.exe')
             else:
                 defaultInterpreterPath = self.api_logic_server_dir_path.parent.parent.parent.parent.joinpath('bin/python')
                 if 'org_git' in str(self.api_logic_server_dir_path):  # running from dev-source
                     defaultInterpreterPath = self.api_logic_server_dir_path.parent.parent.parent.joinpath('clean/ApiLogicServer/venv/bin/python')
         self.default_interpreter_path = defaultInterpreterPath
+        """ used to compute manager_path """
         self.manager_path = self.default_interpreter_path.parent.parent.parent
         log.debug(f'.. ..Manager path: {self.manager_path}')  # eg ApiLogicServer/ApiLogicServer-dev/clean/ApiLogicServer
         log.debug(f'.. ..Interp path: manager_path / venv/bin/python')

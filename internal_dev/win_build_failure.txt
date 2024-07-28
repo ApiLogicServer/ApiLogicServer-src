@@ -9,3 +9,54 @@ apilogicserver-10.4.97\api_logic_server_cli\prototypes\manager\system\app_model_
 or perhaps the double extension?
 
 in any case, remove ame from manager results in good build
+
+
+then full blt fails trying to find api_logic_server_cli
+
+
+    ==> Error Log:
+
+    Starting manager at: C:\Users\val\dev\ApiLogicServer\ApiLogicServer-dev\build_and_test\ApiLogicServer  
+
+    Creating: tutorial
+
+    Creating tutorial at samples\tutorial
+
+    Creating ApiLogicProject
+
+    Traceback (most recent call last):
+    File "<frozen runpy>", line 198, in _run_module_as_main
+    File "<frozen runpy>", line 88, in _run_code
+    File "C:\Users\val\dev\ApiLogicServer\ApiLogicServer-dev\org_git\ApiLogicServer-src\venv\Scripts\ApiLogicServer.exe\__main__.py", line 7, in <module>
+    File "C:\Users\val\dev\ApiLogicServer\ApiLogicServer-dev\org_git\ApiLogicServer-src\venv\Lib\site-packages\api_logic_server_cli\cli.py", line 1733, in start
+        main(obj={})
+    File "C:\Users\val\dev\ApiLogicServer\ApiLogicServer-dev\org_git\ApiLogicServer-src\venv\Lib\site-packages\click\core.py", line 1157, in __call__
+        return self.main(*args, **kwargs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "C:\Users\val\dev\ApiLogicServer\ApiLogicServer-dev\org_git\ApiLogicServer-src\venv\Lib\site-packages\click\core.py", line 1078, in main
+        rv = self.invoke(ctx)
+            ^^^^^^^^^^^^^^^^
+    File "C:\Users\val\dev\ApiLogicServer\ApiLogicServer-dev\org_git\ApiLogicServer-src\venv\Lib\site-packages\click\core.py", line 1688, in invoke
+        return _process_result(sub_ctx.command.invoke(sub_ctx))
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "C:\Users\val\dev\ApiLogicServer\ApiLogicServer-dev\org_git\ApiLogicServer-src\venv\Lib\site-packages\click\core.py", line 1434, in invoke
+        return ctx.invoke(self.callback, **ctx.params)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "C:\Users\val\dev\ApiLogicServer\ApiLogicServer-dev\org_git\ApiLogicServer-src\venv\Lib\site-packages\click\core.py", line 783, in invoke
+        return __callback(*args, **kwargs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "C:\Users\val\dev\ApiLogicServer\ApiLogicServer-dev\org_git\ApiLogicServer-src\venv\Lib\site-packages\click\decorators.py", line 33, in new_func
+        return f(get_current_context(), *args, **kwargs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "C:\Users\val\dev\ApiLogicServer\ApiLogicServer-dev\org_git\ApiLogicServer-src\venv\Lib\site-packages\api_logic_server_cli\cli.py", line 223, in create_start_manager
+        create_manager(clean=clean, open_with=open_with, api_logic_server_path=get_api_logic_server_path(), volume=volume)
+    File "C:\Users\val\dev\ApiLogicServer\ApiLogicServer-dev\org_git\ApiLogicServer-src\venv\Lib\site-packages\api_logic_server_cli\manager.py", line 126, in create_manager
+        subdirs = [x for x in lib_path.iterdir() if x.is_dir()]
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "C:\Users\val\dev\ApiLogicServer\ApiLogicServer-dev\org_git\ApiLogicServer-src\venv\Lib\site-packages\api_logic_server_cli\manager.py", line 126, in <listcomp>
+        subdirs = [x for x in lib_path.iterdir() if x.is_dir()]
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "C:\Users\val\AppData\Local\Programs\Python\Python311\Lib\pathlib.py", line 931, in iterdir     
+        for name in os.listdir(self):
+                    ^^^^^^^^^^^^^^^^
+    FileNotFoundError: [WinError 3] The system cannot find the path specified: 'C:\\Users\\val\\dev\\ApiLogicServer\\ApiLogicServer-dev\\org_git\\ApiLogicServer-src\\venv\\build_and_test\\ApiLogicServer\\venv\\lib'
