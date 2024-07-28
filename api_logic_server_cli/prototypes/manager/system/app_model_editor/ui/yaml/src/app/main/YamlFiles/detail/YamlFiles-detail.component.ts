@@ -76,4 +76,21 @@ export class YamlFilesDetailComponent implements OnInit  {
             'Entities, Attributes, and Relationships have been created from the Yaml "original content"',);
         }
     }
+    download_yaml() {
+      console.log("download_yaml");
+      this.service.update({'id':this.data.id}, {'download_flag':true},"YamlFiles").subscribe((resp) => {
+        console.log("res: " + JSON.stringify(resp));
+        if (resp.code === 0) {
+          this.downloaded = resp.data.content;
+          this.showDownloadInfo();
+          this.form.reload();
+        }
+      });
+    }
+    showDownloadInfo(){
+      if (this.dialogService) {
+        this.dialogService.info('Yaml File Downloaded',
+            'The Yaml "converted content" has been downloaded',);
+      } 
+    }
 }

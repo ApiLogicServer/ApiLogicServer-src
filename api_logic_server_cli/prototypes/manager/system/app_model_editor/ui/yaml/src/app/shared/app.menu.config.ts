@@ -15,9 +15,9 @@ import { YamlFilesCardComponent } from './YamlFiles-card/YamlFiles-card.componen
 
 export const MENU_CONFIG: MenuRootItem[] = [
     { id: 'home', name: 'HOME', icon: 'home', route: '/main/home' },
-    { id: 'New YamlFiles', name: 'Import Yaml File', icon: 'upload_file', route: '/main//YamlFiles/new' },
-    { id: 'YamlFiles', name: 'Process Yaml File', icon: 'upload_file', route: '/main/YamlFiles' },
-    { id: 'data', name: 'Edit Yaml Data', icon: 'remove_red_eye', opened: true,
+    { id: 'New YamlFiles', name: '1. Import Yaml File', icon: 'upload_file', route: '/main//YamlFiles/new' },
+    { id: 'YamlFiles', name: '2. Process Yaml File', icon: 'upload_file', route: '/main/YamlFiles' },
+    { id: 'data', name: '3. Edit Yaml Data', icon: 'remove_red_eye', opened: true,
     items: [
         { id: 'Entity', name: 'ENTITY', icon: 'view_list', route: '/main/Entity' }
         ,{ id: 'EntityAttr', name: 'ENTITYATTR', icon: 'view_list', route: '/main/EntityAttr' }
