@@ -526,14 +526,17 @@ def add_service(
         yaml_file = export_yaml_to_file(_project_dir)
         try:
             sql_alchemy_row = (
-                session.query(models.YamlFiles).filter(models.YamlFiles.id == 1).one()
+                session.query(models.YamlFiles).filter(models.YamlFiles.id == 1).one_or_none()
             )
-            setattr(sql_alchemy_row, "downloaded", yaml_file)
-            session.add(sql_alchemy_row)
-            session.commit()
+            if sql_alchemy_row and sql_alchemy_row.downloaded is None:
+                setattr(sql_alchemy_row, "downloaded", yaml_file)
+                session.add(sql_alchemy_row)
+                session.commit()
         except Exception as ex:
             print(ex)
-        return jsonify(f"Yaml file written to ui/app_model_merge.yaml")
+            return jsonify({"code": 1, "message": f"{ex}", "data": None})
+        app_logger.debug(f"Yaml file written to ui/app_model_merge.yaml")
+        return yaml_file
 
 
     @app.route("/importyaml/<key>", methods=["GET", "POST", "OPTIONS"])
