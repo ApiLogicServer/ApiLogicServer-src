@@ -1172,6 +1172,7 @@ from database import <project.bind_key>_models
             self.auth_provider_type = 'sql'  # nw+ defaulting
 
         database_path = self.project_directory_path.joinpath("database")
+        use_keycloak = False
         if msg != "":
             log.info(msg + f" to project: {str(database_path.parent)}")
             if is_nw or "ApiLogicProject customizable project created" in msg:
@@ -1183,6 +1184,7 @@ from database import <project.bind_key>_models
                 pass
                 # log.debug("  1. ApiLogicServer add-db --db_url=auth --bind_key=authentication")
             elif self.auth_provider_type == 'keycloak':
+                use_keycloak = True
                 pass
                 # log.info(".. for keycloak")
                 # log.info(".. docs: https://apilogicserver.github.io/Docs/Security-Activation")
@@ -1233,6 +1235,7 @@ from database import <project.bind_key>_models
                     key="    SECURITY_ENABLED", value=True)                    
         self.set_provider(from_value=was_provider_type, to_value=self.auth_provider_type, config_file=config_file)
         if self.auth_provider_type == "keycloak":
+            use_keycloak =True
             create_utils.assign_value_to_key_in_file(in_file=config_file, \
                         key="    kc_base", value=self.auth_db_url)                    
         else:
@@ -1244,7 +1247,7 @@ from database import <project.bind_key>_models
         app_list = create_utils.get_ontimize_apps(self.project_directory_path)
         for app in app_list:
             build = ont_build.OntBuilder(self, app)
-            use_keycloak = was_provider_type == "keycloak"
+            #use_keycloak = was_provider_type == "keycloak"
             keycloak_realm = create_utils.get_config(search_for="KEYCLOAK_REALM",
                                             in_file=config_file)
             keycloak_client_id = create_utils.get_config(search_for="KEYCLOAK_CLIENT_ID",
@@ -1256,7 +1259,7 @@ from database import <project.bind_key>_models
                 "keycloak_client_id": keycloak_client_id
             }
             build.gen_auth_components(build.app_path, keycloak_args, use_keycloak=use_keycloak, overwrite=True)
-            log.info(f'\n.. ..Ontimize Keycloak setting use_keycloak={use_keycloak}')
+            log.info(f'\n.. ..Ontimize Keycloak setting use_keycloak={use_keycloak} for app={build.project}')
         self.add_auth_in_progress = False
 
 
@@ -1913,7 +1916,6 @@ from database import <project.bind_key>_models
                 ont_creator.create_application(show_messages=False)
 
             if self.command in ["rebuild-from-database", "rebuild-from-model"]:
-                # FIXME - temp just default app - Tyler has Ont iterator
                 app_list = create_utils.get_ontimize_apps(self.project_directory_path)
                 for app in app_list:
                     from create_from_model import ont_build

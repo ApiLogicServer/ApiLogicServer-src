@@ -290,6 +290,7 @@ class OntBuilder(object):
                 file_name="app.module.ts",
                 source=rv_app_modules,
             )
+            log.debug(f"Ontimize /src/app/app.module.ts created using args: {keycloak_args}")
         if overwrite or not self.does_file_exist(app_path,"/src/app/main","main.module.ts"):
             main_module = self.get_template("main.module.jinja")
             rv_main_modules = main_module.render(use_keycloak=use_keycloak) 
@@ -299,6 +300,7 @@ class OntBuilder(object):
                 file_name="main.module.ts",
                 source=rv_main_modules,
             )
+            log.debug(f"Ontimize /src/app/main/main.module.ts created using args: {keycloak_args}")
 
     def does_file_exist(self, app_path, dir_name, file_name):
         with contextlib.suppress(FileNotFoundError):
@@ -588,7 +590,7 @@ class OntBuilder(object):
                 if hasattr(column, "label") and column.label != DotMap()
                 else column.name
             ), 
-            "editable": column.editable if hasattr(column, "editable") and column.editable != DotMap() else "yes",
+            "editable": column.editable if hasattr(column, "editable") and column.editable != DotMap() else "no",
             "sort": column.sort if hasattr(column,"sort") and column.sort != DotMap() else "no",
             "search":  column.search if hasattr(column,"search") and column.search != DotMap() else "no",
             "template": column.template if hasattr(column,"template") and column.template != DotMap() else 'text',

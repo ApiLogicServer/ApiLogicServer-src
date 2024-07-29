@@ -339,7 +339,8 @@ def get_ontimize_apps(project_dir_path):
             if os.path.isdir(a_dir):
                 with contextlib.suppress(FileNotFoundError):
                     with open(Path(f"{a_dir}/app_model.yaml"),"r+") as fp:
-                        result.append(name)                
+                        result.append(name)    
+    log.info(f"Found {len(result)} Ontimize app(s)")          
     return result
 def does_file_contain(search_for: str, in_file: str) -> bool:
     """ returns True if <search_for> is <in_file> """
