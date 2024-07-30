@@ -7,7 +7,7 @@ import { YamlFilesDetailComponent } from './detail/YamlFiles-detail.component';
 const routes: Routes = [
   {path: '', component: YamlFilesHomeComponent},
   { path: 'new', component: YamlFilesNewComponent },
-  { path: ':id/:name', component: YamlFilesDetailComponent,
+  { path: ':name', component: YamlFilesDetailComponent,
     data: {
       oPermission: {
         permissionId: 'YamlFiles-detail-permissions'

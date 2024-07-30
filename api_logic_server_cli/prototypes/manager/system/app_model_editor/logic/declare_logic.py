@@ -56,13 +56,12 @@ def declare_logic():
                 try:
                     ont_yaml = yaml.safe_load(yaml_content)
                     if ont_yaml.get('entities') is None:
-                        #raise yaml.YAMLError("The yaml file must be a valid app_model.yaml file")
+                        app_logger.debug("The yaml file must be a valid app_model.yaml file")
                         return False
                     row.size = len(yaml_content)
                     row.upload_flag = False
                     row.download_flag = False
                     row.content = yaml_content
-                    
                     return True
                 except yaml.YAMLError as exc:
                     row.content = None

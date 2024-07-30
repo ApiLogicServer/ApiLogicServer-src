@@ -5,7 +5,7 @@ import { DownloadYamlFilesDetailComponent } from './detail/DownloadYamlFiles-det
 
 const routes: Routes = [
   {path: '', component: DownloadYamlFilesHomeComponent},
-  { path: ':id/:name', component: DownloadYamlFilesDetailComponent,
+  { path: ':name', component: DownloadYamlFilesDetailComponent,
     data: {
       oPermission: {
         permissionId: 'DownloadYamlFiles-detail-permissions'

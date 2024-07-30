@@ -5,8 +5,8 @@
             service="YamlFiles" 
             entity="YamlFiles" 
             title="{{ 'YAMLFILES' | oTranslate }}"
-            keys="id;name"
-            columns="id;name;size;upload_flag;download_flag;content" 
+            keys="name"
+            columns="name;size;upload_flag;download_flag;content" 
             header-actions="R;D"
             visible-columns="name;size;upload_flag;download_flag"  
             sort-columns="name" 
@@ -18,23 +18,23 @@
             pageable="yes"  
             auto-adjust="true" 
             virtual-scroll="yes" 
-            edition-mode="dblclick"
+            edition-mode="click"
             horizontal-scroll="yes"
             show-title="yes"
             export-button="no">
             <o-table-column attr="name" title=" Name*" editable="no" required="yes" content-align="left"></o-table-column>
             <o-integer-input attr="size" title=" Size" editable="no" required="yes" content-align="left"></o-integer-input>
-            <o-table-column attr="upload_flag" title="Process Yaml Flag">
+            <o-table-column attr="upload_flag" title="Processed Flag">
                 <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
                     render-type="icon" boolean-type="boolean" true-value="1" false-value="0"></o-table-cell-renderer-boolean>
             </o-table-column>
-            <o-table-column attr="download_flag" title="Download Flag">
+            <o-table-column attr="download_flag" title="Downloaded Flag">
                 <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
                     render-type="icon" boolean-type="boolean" true-value="1" false-value="0"></o-table-cell-renderer-boolean>
             </o-table-column>
 
             <o-table-context-menu></o-table-context-menu>
-            <o-table-paginator page-size-options="48;96"></o-table-paginator>
+            <o-table-paginator page-size-options="4;8;20"></o-table-paginator>
         </o-table>
     </div>
 </o-form-layout-manager>
