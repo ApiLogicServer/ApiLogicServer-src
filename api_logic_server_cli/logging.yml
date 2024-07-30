@@ -53,7 +53,7 @@ loggers:
         propagate: no
 
     ont-app:   
-        level: DEBUG
+#        level: DEBUG
         handlers: [console]
         propagate: no
 
