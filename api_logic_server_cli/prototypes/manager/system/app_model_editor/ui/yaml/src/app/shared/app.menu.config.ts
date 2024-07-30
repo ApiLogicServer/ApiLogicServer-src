@@ -31,6 +31,7 @@ export const MENU_CONFIG: MenuRootItem[] = [
         ,{ id: 'Template', name: 'TEMPLATE', icon: 'view_list', route: '/main/Template' }
         ] 
     }
+    ,{ id: 'YamlFiles', name: '4. Download Yaml File', icon: 'upload_file', route: '/main/DownloadYamlFiles' }
     ,{ id: 'settings', name: 'Settings', icon: 'settings', route: '/main/settings'}
     ,{ id: 'about', name: 'About', icon: 'info', route: '/main/about'}
     ,{ id: 'logout', name: 'LOGOUT', route: '/login', icon: 'power_settings_new', confirm: 'yes' }

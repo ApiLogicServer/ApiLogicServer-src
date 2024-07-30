@@ -1,10 +1,10 @@
-<o-form-layout-manager attr="YamlFiles" mode="tab" title="2. Process Yaml File" class="fill-form">
+<o-form-layout-manager attr="YamlFiles" mode="tab" title="4. Download Yaml File" class="fill-form">
     <div fxFill fxLayout="column" fxLayoutAlign="start">
         <o-table 
             attr="YamlFilesTable" 
             service="YamlFiles" 
             entity="YamlFiles" 
-            title="{{ 'YAMLFILES' | oTranslate }}"
+            title="{{ 'Download Yaml File' | oTranslate }}"
             keys="id;name"
             columns="id;name;size;upload_flag;download_flag;content" 
             header-actions="R;D"
@@ -34,7 +34,7 @@
             </o-table-column>
 
             <o-table-context-menu></o-table-context-menu>
-            <o-table-paginator page-size-options="48;96"></o-table-paginator>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
         </o-table>
     </div>
 </o-form-layout-manager>
