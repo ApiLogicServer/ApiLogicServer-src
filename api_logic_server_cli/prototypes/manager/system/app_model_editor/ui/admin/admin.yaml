@@ -162,11 +162,9 @@ resources:
       sort: true
     - name: content
     - name: downloaded
-
     - name: download_flag
     - name: size
       required: true
-    - name: id
     - name: downloaded
     type: YamlFiles
     user_key: name
@@ -190,7 +188,7 @@ settings:
     min_decimal_digits: '2'
     new_mode: dialog
     pick_style: list
-    row_height: small,
+    row_height: medium,
     style: light
     thousand_separator: ','
     use_keycloak: 'false'

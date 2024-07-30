@@ -15,9 +15,9 @@ import { YamlFilesCardComponent } from './YamlFiles-card/YamlFiles-card.componen
 
 export const MENU_CONFIG: MenuRootItem[] = [
     { id: 'home', name: 'HOME', icon: 'home', route: '/main/home' },
-    { id: 'New YamlFiles', name: '1. Import Yaml File', icon: 'upload_file', route: '/main//YamlFiles/new' },
+    { id: 'New YamlFiles', name: '1. Import Yaml File', icon: 'upload', route: '/main//YamlFiles/new' },
     { id: 'YamlFiles', name: '2. Process Yaml File', icon: 'upload_file', route: '/main/YamlFiles' },
-    { id: 'data', name: '3. Edit Yaml Data', icon: 'remove_red_eye', opened: true,
+    { id: 'data', name: '3. Edit Yaml Data', icon: 'edit_square', opened: true,
     items: [
         { id: 'Entity', name: 'ENTITY', icon: 'view_list', route: '/main/Entity' }
         ,{ id: 'EntityAttr', name: 'ENTITYATTR', icon: 'view_list', route: '/main/EntityAttr' }
@@ -25,13 +25,13 @@ export const MENU_CONFIG: MenuRootItem[] = [
     
         ] 
     }
-    ,{ id: 'other', name: 'Global', icon: 'remove_red_eye', opened: false,
+    ,{ id: 'other', name: 'Global Settings', icon: 'remove_red_eye', opened: false,
     items: [        
         { id: 'GlobalSetting', name: 'Global Settings', icon: 'view_list', route: '/main/GlobalSetting' }
         ,{ id: 'Template', name: 'TEMPLATE', icon: 'view_list', route: '/main/Template' }
         ] 
     }
-    ,{ id: 'YamlFiles', name: '4. Download Yaml File', icon: 'upload_file', route: '/main/DownloadYamlFiles' }
+    ,{ id: 'YamlFiles', name: '4. Download Yaml File', icon: 'download_file', route: '/main/DownloadYamlFiles' }
     ,{ id: 'settings', name: 'Settings', icon: 'settings', route: '/main/settings'}
     ,{ id: 'about', name: 'About', icon: 'info', route: '/main/about'}
     ,{ id: 'logout', name: 'LOGOUT', route: '/login', icon: 'power_settings_new', confirm: 'yes' }

@@ -53,7 +53,7 @@ export class YamlFilesDetailComponent implements OnInit  {
   }
   process_yaml() {
     console.log("process_yaml");
-    this.service.query({ 'id': this.data.id }, ['content'],"importyaml").subscribe((resp) => {
+    this.service.query({ 'name': this.data.name }, [],"importyaml").subscribe((resp) => {
         console.log("res: " + JSON.stringify(resp));
         if (resp.code === 0) {
           this.updateProcessFlag()
@@ -63,7 +63,7 @@ export class YamlFilesDetailComponent implements OnInit  {
     updateProcessFlag() {
       console.log("updateProcessFlag");
       this.data.upload_flag = true;
-      this.service.update({'id':this.data.id}, {'upload_flag':this.data.upload_flag},"YamlFiles").subscribe((resp) => {
+      this.service.update({'name':this.data.name}, {'upload_flag':this.data.upload_flag},"YamlFiles").subscribe((resp) => {
         console.log("res: " + JSON.stringify(resp));
         if (resp.code === 0) {
           this.showInfo();
@@ -75,22 +75,5 @@ export class YamlFilesDetailComponent implements OnInit  {
         this.dialogService.info('Yaml Processing Complete',
             'Entities, Attributes, and Relationships have been created from the Yaml "original content"',);
         }
-    }
-    download_yaml() {
-      console.log("download_yaml");
-      this.service.update({'id':this.data.id}, {'download_flag':true},"YamlFiles").subscribe((resp) => {
-        console.log("response: " + JSON.stringify(resp));
-        if (resp.code === 0) {
-          this.downloaded = resp.data.content;
-          this.showDownloadInfo();
-          //this.form.reload;
-        }
-      });
-    }
-    showDownloadInfo(){
-      if (this.dialogService) {
-        this.dialogService.info('Yaml File Downloaded',
-            'The Yaml "converted content" has been downloaded',);
-      } 
     }
 }

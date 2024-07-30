@@ -5,8 +5,8 @@
             service="YamlFiles" 
             entity="YamlFiles" 
             title="{{ 'Download Yaml File' | oTranslate }}"
-            keys="id;name"
-            columns="id;name;size;upload_flag;download_flag;content" 
+            keys="name"
+            columns="name;size;upload_flag;download_flag" 
             header-actions="R;D"
             visible-columns="name;size;upload_flag;download_flag"  
             sort-columns="name" 
@@ -18,10 +18,11 @@
             pageable="yes"  
             auto-adjust="true" 
             virtual-scroll="yes" 
-            edition-mode="dblclick"
+            edition-mode="click"
             horizontal-scroll="yes"
             show-title="yes"
             export-button="no">
+            
             <o-table-column attr="name" title=" Name*" editable="no" required="yes" content-align="left"></o-table-column>
             <o-integer-input attr="size" title=" Size" editable="no" required="yes" content-align="left"></o-integer-input>
             <o-table-column attr="upload_flag" title="Process Yaml Flag">

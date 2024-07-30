@@ -164,14 +164,11 @@ class YamlFiles(SAFRSBaseX, Base):
     _s_collection_name = 'YamlFiles'  # type: ignore
     __bind_key__ = 'None'
 
-    id = Column(Integer, primary_key=True)
-    name = Column(String(100), nullable=False)
+    name = Column(String(100),primary_key=True, nullable=False)
     content = Column(Text)
     upload_flag = Column(Boolean, server_default=text("FALSE"))
     download_flag = Column(Boolean, server_default=text("FALSE"))
-    #createdate = Column(DATE)
     size = Column(Integer)
-    directory = Column(Boolean, server_default=text("FALSE"))
     downloaded = Column(Text)
 
     # parent relationships (access parent)

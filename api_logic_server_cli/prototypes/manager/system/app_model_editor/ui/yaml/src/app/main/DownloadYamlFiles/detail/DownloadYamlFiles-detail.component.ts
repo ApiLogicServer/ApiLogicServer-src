@@ -53,7 +53,7 @@ export class DownloadYamlFilesDetailComponent implements OnInit  {
   }
     download_yaml() {
       console.log("download_yaml");
-      this.service.update({'id':this.data.id}, {'download_flag':true},"YamlFiles").subscribe((resp) => {
+      this.service.update({'name':this.data.name}, {'download_flag':true},"YamlFiles").subscribe((resp) => {
         console.log("downloaded: " + JSON.stringify(resp.data.attributes.content));
         if (resp.code === 0) {
           this.data.downloaded = JSON.stringify(resp.data.attributes.content)
