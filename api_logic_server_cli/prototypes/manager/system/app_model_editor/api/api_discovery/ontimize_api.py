@@ -521,8 +521,8 @@ def add_service(
 
     @app.route("/exportyaml/<key>", methods=["GET"])
     def export_yaml(key: str = "app_model.yaml"):
-        # Write the JSON back to yaml
-        # GET curl "http://localhost:5656/exportyaml"
+        # Write the yaml to disk and update the database if name is found
+        # GET curl "http://localhost:5656/exportyaml/{YamlFiles.name}"
 
         yaml_file = export_yaml_to_file(_project_dir)
         try:
@@ -535,7 +535,8 @@ def add_service(
                 session.commit()
         except Exception as ex:
             print(ex)
-            return jsonify({"code": 1, "message": f"{ex}", "data": None})
+            session.rollback()
+            #return jsonify({"code": 1, "message": f"{ex}", "data": None})
         app_logger.debug(f"Yaml file written to ui/app_model_merge.yaml")
         return yaml_file
 

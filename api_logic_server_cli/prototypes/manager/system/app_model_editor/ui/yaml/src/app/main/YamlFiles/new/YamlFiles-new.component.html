@@ -1,7 +1,8 @@
 
+<o-breadcrumb [form]="YamlFilesForm" label-columns="" separator=" "></o-breadcrumb>
 <o-form #YamlFilesForm attr="YamlFiles_form_insert" service="YamlFiles" entity="YamlFiles"
 keys="name" fxLayout="column" show-header="yes" header-actions="I" show-header-title="yes" show-header-description="yes"
-horizontal-scroll="no" show-header-navigation="no" after-insert-mode="home" class="standalone-form-container">
+horizontal-scroll="no" show-header-navigation="no" after-insert-mode="home" class="standalone-form-container" (onInsertMode)="onInsertMode()">
 
 <o-row attr="row1" layout-align="start stretch">
   <!-- o-filemanager-table service="YamlFiles" workspace-key="content" new-folder-button="no" download="yes"></o-filemanager-table -->
