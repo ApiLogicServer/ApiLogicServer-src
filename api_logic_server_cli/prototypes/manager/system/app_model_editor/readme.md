@@ -1,5 +1,5 @@
 # Ontimize Yaml editor
-The YAML editor was built using ApiLogicServer and Ontimize [see docs](https://apilogicserver.github.io/Docs/App-Custom-Ontimize-Overview/) - a local SQLite database is used to store the Ontimize created app_model.yaml files.  The model was created using ApiLogicServer (app-create and app-build) feature to generate the complete application from the yaml file. This editor is designed to help developers edit the yaml attributes, apply column templates and labels used in the Ontimize application generation. Use "Manage Yaml Files" to import your file and the flags to import or download the changes.
+The YAML editor was built using ApiLogicServer and Ontimize [see docs](https://apilogicserver.github.io/Docs/App-Custom-Ontimize-Overview/) - a local SQLite database is used to store the Ontimize created app_model.yaml files.  The model was created using ApiLogicServer (app-create and app-build) feature to generate the complete application from the app_model.yaml file(s) created by ApiLogicServer/Ontimize. This editor can edit the yaml attributes, apply column templates and labels used in the Ontimize application generation. 
 ![](ui/templates/Home.png)
 ## Ontimize Seed
 The Ontimize application is loaded in ui/yaml directory. The react-admin is in the ui/admin directory.
@@ -49,30 +49,33 @@ After you install and start the ApiLogicServer (f5) and (cd ui/yaml) npm install
 ```
 http://localhost:4298 (user: admin password: p)
 ```
+## 1. Import Yaml File 
+The Import will allow you to select an Ontimize/ApiLogicServer app_model.yaml file to upload.  You can import different projects into the editor, but only 1 file can be processed for editing Entities, Attributes, and Relationships. Simply enter the id number, a name, and the app_model.yaml file.
 
-## Use the Manage Yaml File to load each app_model.yaml 
-Go to the "Manage Yaml Files" and click New - then add each of your app_model.yaml files.
-Then go to the Home page and select the new row and click []Upload (and save) this will load the yaml file into the editor (you may need to refresh). Once you have modified your labels, templates, values, you can click on []Download Yaml to export the ui/app_model_merge.yaml.  This file can be merged back into your Ontimize/ApiLogicServer application and then use app-build to create new pages.
+![](ui/templates/NewYaml.png)
+
+## 2. Process Yaml File 
+Go to the "2. Process Yaml Files" then select the app_model.yaml files you wish to process.
+Use the Home page and select the row and click [2. Process Yaml] - this will load the yaml file content (entities, attributes, relationships) into the editor (you may need to refresh pages). Once you have modified your labels, templates, values, you can click on [4. Download Yaml File]  to populate the download content (or see the ui/app_model_merge.yaml folder).  This file can be merged back into your Ontimize/ApiLogicServer application and then use app-build to create new pages.
 
 ![](ui/templates/ManageYaml.png)
-
-## Import the app_model.yaml and load into SQL
-Manage Yaml files -> New - the app_model.yml file can be uploaded and automatically populates entities, attributes, and relationships. Enter an Id, Name, and Select or drag and drop you app_model.yaml file.
-
-![](ui/templates/UploadYaml.png)
+![](ui/templates/ProcessYamlDetail.png)
 
 
-## Process Yaml 
-Once a file has been imported - select the file and open the detail page. Press the Process Yaml button and this will re-populate Entities, Attributes, and Relationships. Then edit your yaml entries.
-## Download Yaml
-Manage Yaml Files - select the imported file and click the checkbox 'download' it will write to disk and display in the download content window
-reflecting all the new edits to your yaml.  Copy this to your app_model.yaml in your project.
-![](ui/templates/ProcessDownload.png)
+
+## 3. Edit Yaml Data
+Once your yaml file has been imported and processed you can now edit Entities, Attributes, and Relationships. This is the same as manually editing the yaml file directly. See the valid field values below for each object.
+
+## 4. Download Yaml File
+Once you have completed your edits - select Process Yaml Files - select the imported row from the list and click the button 'Download Yaml' it will write to disk and display in the 'downloaded content' window
+reflecting all the new edits to your yaml.  Copy this to your app_model.yaml in your project. (you may need to press refresh)
+
+![](ui/templates/DownloadYaml.png)
 
 ### Download using curl file back to disk (ui/app_model_merge.yaml)
-This will write back the modified SQL back to disk as yaml.  Use compare files to merge or replace the merge file for the new app_model_merge.yaml in your application.
+This will write back the modified SQL back to disk as yaml.  Use compare files to merge or replace the merge file for the new ui/app_model_merge.yaml in your application.
 ```
-curl "http://localhost:5655/exportyaml"
+curl "http://localhost:5655/exportyaml/Northwind" > app_model_merge.yaml
 ```
 ## Entity
 Use the Ontimize editor to exclude a selected entity or change the titles.

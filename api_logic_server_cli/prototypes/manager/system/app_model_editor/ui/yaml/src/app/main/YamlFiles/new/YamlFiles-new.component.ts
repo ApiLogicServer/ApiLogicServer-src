@@ -12,7 +12,7 @@ export class YamlFilesNewComponent {
     this.injector.get(NavigationService).initialize();
   }
   onInsertMode() {
-    const default_values = {"id": 1}
+    const default_values = {"name": "app_model.yaml"};
     this.form.setFieldValues(default_values);
   }
 }

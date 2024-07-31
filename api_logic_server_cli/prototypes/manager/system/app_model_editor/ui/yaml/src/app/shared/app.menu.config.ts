@@ -19,9 +19,9 @@ export const MENU_CONFIG: MenuRootItem[] = [
     { id: 'YamlFiles', name: '2. Process Yaml File', icon: 'upload_file', route: '/main/YamlFiles' },
     { id: 'data', name: '3. Edit Yaml Data', icon: 'edit_square', opened: true,
     items: [
-        { id: 'Entity', name: 'ENTITY', icon: 'view_list', route: '/main/Entity' }
-        ,{ id: 'EntityAttr', name: 'ENTITYATTR', icon: 'view_list', route: '/main/EntityAttr' }
-        ,{ id: 'TabGroup', name: 'TABGROUP', icon: 'view_list', route: '/main/TabGroup' }
+        { id: 'Entity', name: 'Entities', icon: 'view_list', route: '/main/Entity' }
+        ,{ id: 'EntityAttr', name: 'Attributes', icon: 'view_list', route: '/main/EntityAttr' }
+        ,{ id: 'TabGroup', name: 'Relationships', icon: 'view_list', route: '/main/TabGroup' }
     
         ] 
     }
