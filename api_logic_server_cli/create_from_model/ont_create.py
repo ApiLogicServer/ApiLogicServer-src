@@ -257,7 +257,7 @@ class OntCreator(object):
         style_guide.min_decimal_digits="2"
         style_guide.max_decimal_digits="4" 
         style_guide.decimal_min="0"
-        style_guide.decimal_max="1000000"
+        style_guide.decimal_max="1000000000"
         style_guide.include_translation=False
         style_guide.use_keycloak=False # True this will use different templates - defaults to basic auth
         style_guide.keycloak_url= "http://localhost:8080"
