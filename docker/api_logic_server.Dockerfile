@@ -41,8 +41,8 @@ FROM python:3.12.3-slim-bullseye
 # FROM python:3.12.3-alpine3.19  - fails /bin/sh -c apt-get update
 ARG TARGETOS
 ARG TARGETARCH
-LABEL ApiLogicServer-10.03.45 ${TARGETARCH}
-
+# LABEL ApiLogicServer-10.03.45 ${TARGETARCH}
+LABEL product="ApiLogicServer-11.00.06" targetarch=${TARGETARCH}
 USER root
 
 RUN apt-get update
