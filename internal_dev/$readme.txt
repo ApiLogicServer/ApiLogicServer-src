@@ -1,4 +1,4 @@
-create nw+ at /Users/val/dev/ApiLogicServer
+Create nw+ at /Users/val/dev/ApiLogicServer
   admin app runs
   so does ont - but how?  lucky jwt?
   (no security diddling)
