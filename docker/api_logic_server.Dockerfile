@@ -1,7 +1,7 @@
 
 # GA release -- DELETE BUILD DIRS FIRST
 
-# docker buildx build --push -f docker/api_logic_server.Dockerfile --tag apilogicserver/api_logic_server:11.00.04 -o type=image --platform=linux/arm64,linux/amd64 .
+# docker buildx build --push -f docker/api_logic_server.Dockerfile --tag apilogicserver/api_logic_server:11.00.07 -o type=image --platform=linux/arm64,linux/amd64 .
 # docker buildx build --push -f docker/api_logic_server.Dockerfile --tag apilogicserver/api_logic_server:latest -o type=image --platform=linux/arm64,linux/amd64 .
 
 # Beta - test codespaces with tutorial, API_Fiddle (change .devcontainer.json -> apilogicserver/api_logic_server_x)
@@ -42,7 +42,7 @@ FROM python:3.12.3-slim-bullseye
 ARG TARGETOS
 ARG TARGETARCH
 # LABEL ApiLogicServer-10.03.45 ${TARGETARCH}
-LABEL product="ApiLogicServer-11.00.06" targetarch=${TARGETARCH}
+LABEL product="ApiLogicServer-11.00.07" targetarch=${TARGETARCH}
 USER root
 
 RUN apt-get update
