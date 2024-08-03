@@ -145,7 +145,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         api_clz = resource["model"]
         
         payload = json.loads(request.data)
-        filter, columns, sqltypes, offset, pagesize, orderBy, data = parsePayload(payload)
+        expressions, filter, columns, sqltypes, offset, pagesize, orderBy, data = parsePayload(api_clz, payload)
         result = {}
         if method in ['PUT','PATCH']:
             sql_alchemy_row = session.query(api_clz).filter(text(filter)).one()
@@ -187,7 +187,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             session.flush()
         except Exception as ex:
             session.rollback()
-            return jsonify({"code":1,"message":f"{ex.message}","data":[],"sqlTypes":None}) 
+            return jsonify({"code":1,"message":f"{ex}","data":[],"sqlTypes":None}) 
             
         return jsonify({"code":0,"message":f"{method}:True","data":result,"sqlTypes":None})   #{f"{method}":True})
     
