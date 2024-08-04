@@ -84,7 +84,7 @@ def configure_auth(flask_app: Flask, database: object, method_decorators: list[o
             string: access token
         """
         if request.method == 'OPTIONS':
-            return jsonify(success=True)  
+	`            return jsonify(success=True)  
         global access_token   
         try:   
             username = request.json.get("username", None)

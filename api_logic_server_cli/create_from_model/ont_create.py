@@ -136,7 +136,7 @@ class OntCreator(object):
         ########################
         from_dir = self.project.api_logic_server_dir_path.joinpath('prototypes/ont_app/prototype')
         to_dir = self.project.project_directory_path
-        shutil.copytree(from_dir, to_dir, dirs_exist_ok=True)  # TODO - stub code, remove later
+        #shutil.copytree(from_dir, to_dir, dirs_exist_ok=True)  # TODO - stub code, remove later
         if self.project.nw_db_status in ["nw", "nw+", "nw-"]:
             pass # restore file quashed by copytree (geesh)
             shutil.copyfile(self.project.api_logic_server_dir_path.joinpath('prototypes/nw/security/declare_security.py'), 
