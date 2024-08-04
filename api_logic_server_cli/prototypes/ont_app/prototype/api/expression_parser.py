@@ -191,12 +191,15 @@ def advancedFilter(cls, args) -> any:
         if not req_arg.startswith("filter"):
             continue
         try:
-            val = json.loads(item)
+            val = item
+            if isinstance(item, str):
+                val = json.loads(item)
         except Exception as e:
-            print("json filter exception",e)
+            print(f"json load filter item: {item} exception:",e)
             val = item
             
         if isinstance(val, list):
+            # this is from sra 
             # '[{"name":"Id","op":"ilike","val":"%AL%"},{"name":"CompanyName","op":"ilike","val":"%AL%"}]'
             for item in val:
                 attr = cls._s_jsonapi_attrs[item['name']]
@@ -210,7 +213,9 @@ def advancedFilter(cls, args) -> any:
             return expressions
         else:
             if isinstance(val, dict):
-                if FILTER_EXPRESSION in item or BASIC_EXPRESSION in item:
+                #if FILTER_EXPRESSION in item or BASIC_EXPRESSION in item:
+                if "filter" in val:
+                    # Ontimize Advanced Filter
                     #{'lop': 'CustomerId', 'op': 'LIKE', 'rop': '%A%'}
                     #TODO - modify this to return expressions (and_ & or_)
                     sqlWhere, filters = parseFilter(val['filter'], None)
@@ -219,7 +224,6 @@ def advancedFilter(cls, args) -> any:
                     for f, value in val.items():
                         filters.append({"lop": f, "op": "eq", "rop": value})
 
-        #'filter[thistype]': 'text'
         not_in_filter = re.search(r"filter\[(\w+)\]\[(\w+)\]", req_arg)
         json_filter = filter_attr = re.search(r"filter\[(\w+)\]", req_arg)
         equal_exp = filter_attr = re.search(r"equal\((\w+),(\w+)\)", req_arg)
@@ -279,7 +283,8 @@ def advancedFilter(cls, args) -> any:
         else:
             op = getattr(operator, op_name)
             expressions.append(op(attr, clean(attr_val)))
-    print(*expressions)
+   
+    for e in expressions : print(e," : ", e.right.value)
     return expressions #query.filter(or_(*expressions))
 
 def clean(val):
