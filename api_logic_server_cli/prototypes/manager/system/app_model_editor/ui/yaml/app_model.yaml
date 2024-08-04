@@ -35,6 +35,9 @@ entities:
     - name: exclude
       template: checkbox
       type: BOOLEAN
+    - name: new_template
+    - name: home_template
+    - name: detail_template
     favorite: name
     primary_key:
     - name
