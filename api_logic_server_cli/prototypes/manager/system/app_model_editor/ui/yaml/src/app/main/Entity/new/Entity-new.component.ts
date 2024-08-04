@@ -9,7 +9,7 @@ import { NavigationService, OFormComponent } from 'ontimize-web-ngx';
 export class EntityNewComponent {
   @ViewChild("EntityForm") form: OFormComponent;
   onInsertMode() {
-    const defaultValues = {'mode':'tab','menu_group':'data'};
+    const defaultValues = {'mode':'tab','menu_group':'data','new_template':'new_template.html','home_template':'home_template.html','detail_template':'detail_template.html'};
     this.form.setFieldValues(defaultValues);
   }
   constructor(protected injector: Injector) {
