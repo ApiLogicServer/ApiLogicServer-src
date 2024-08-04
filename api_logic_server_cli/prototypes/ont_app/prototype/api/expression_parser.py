@@ -187,25 +187,37 @@ def advancedFilter(cls, args) -> any:
     import urllib.parse
     import operator
 
-    for req_arg, val in args.items():
+    for req_arg, item in args.items():
         if not req_arg.startswith("filter"):
             continue
         try:
-            if isinstance(val, dict):
-                #{'id': '1', 'name': 'John'}
-                for f, value in val.items():
-                    filters.append({"lop": f, "op": "eq", "rop": value})
-            else:
-                adv_filter = json.loads(val)
-                if isinstance(adv_filter, dict):
-                    # FILTER_EXPRESSION or BASIC_EXPRESSION
-                    #{'lop': 'CustomerId', 'op': 'LIKE', 'rop': '%A%'}
-                    #TODO - modify this to return expressions (and_ & or_)
-                    sqlWhere, filters = parseFilter(adv_filter['filter'], None)
-                    continue
+            val = json.loads(item)
         except Exception as e:
             print("json filter exception",e)
-            #continue
+            val = item
+            
+        if isinstance(val, list):
+            # '[{"name":"Id","op":"ilike","val":"%AL%"},{"name":"CompanyName","op":"ilike","val":"%AL%"}]'
+            for item in val:
+                attr = cls._s_jsonapi_attrs[item['name']]
+                op = item['op']
+                if op in ["in"]:
+                    expressions.append(attr.in_(item['val']))
+                elif op in ["like","ilike"]:
+                    expressions.append(attr.like( item['val']))
+                else:
+                    expressions.append(attr.eq(clean(item['val'])))
+            return expressions
+        else:
+            if isinstance(val, dict):
+                if FILTER_EXPRESSION in item or BASIC_EXPRESSION in item:
+                    #{'lop': 'CustomerId', 'op': 'LIKE', 'rop': '%A%'}
+                    #TODO - modify this to return expressions (and_ & or_)
+                    sqlWhere, filters = parseFilter(val['filter'], None)
+                else:
+                    #{'id': '1', 'name': 'John'}
+                    for f, value in val.items():
+                        filters.append({"lop": f, "op": "eq", "rop": value})
 
         #'filter[thistype]': 'text'
         not_in_filter = re.search(r"filter\[(\w+)\]\[(\w+)\]", req_arg)
@@ -257,7 +269,7 @@ def advancedFilter(cls, args) -> any:
         elif op_name.lower() in ["like", "ilike", "match"]:
             # => attr is Column or InstrumentedAttribute
             like = getattr(attr, op_name)
-            query = query.filter(eq(attr, attr_val))
+            query = query.filter(or_(attr, attr_val))
         # elif op_name.lower() in ["not like","notlike","notin"]:
         #    # => attr is Column or InstrumentedAttribute
         #    notlike = getattr(attr, op_name)
