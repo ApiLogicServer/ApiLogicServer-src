@@ -1,0 +1,14 @@
+run imports Config.args
+    Config imports auth_provider -> Authentication_models, which imports SAFRSBaseX
+        SAFRSBaseX impprts Config.Args is not yet loaded.
+            Config.Args wants access to config variables
+
+The ont_exp_config_prop branch went to great lengths to address.
+While it can create/run an app, 
+    the BLT tests fail in test_utils, since the Config.Security_PROVIDER is None.
+    It was, of course set, so it's unclear what's happening.
+
+Not investigated - put the import in a function instead of top...
+
+Consequently, that branch is abandoned.  
+    We will need to manually uncomment the code in SAFRSBaseX.
