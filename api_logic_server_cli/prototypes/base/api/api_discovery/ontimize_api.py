@@ -20,12 +20,16 @@ from datetime import date
 from config.config import Args
 import os
 from pathlib import Path
-from api.expression_parser import parsePayload
-from api.gen_pdf_report import gen_report
+from api.system.expression_parser import parsePayload
+from api.system.gen_pdf_report import gen_report
+from api.system.gen_csv_report import csv_gen_report
+from api.system.gen_pdf_report import export_pdf
+from api.system.gen_xlsx_report import xlsx_gen_report
 
+# This is the Ontimize Bridge API - all endpoints will be prefixed with /ontimizeweb/services/rest
 # called by api_logic_server_run.py, to customize api (new end points, services).
 # separate from expose_api_models.py, to simplify merge if project recreated
-# version 11.0.8 - api_logic_server_cli/prototypes/ont_app/prototype/api/api_discovery/ontimize_api.py
+# version 11.x - api_logic_server_cli/prototypes/ont_app/prototype/api/api_discovery/ontimize_api.py
 
 app_logger = logging.getLogger(__name__)
 
@@ -83,15 +87,13 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         resources = getMetaData(api_clz.__name__)
         attributes = resources["resources"][api_clz.__name__]["attributes"]
         if type in ["csv",'CSV']:
-            from api.gen_csv_report import gen_report as csv_gen_report
             return csv_gen_report(api_clz, request, entity, queryParm, columns, columnTitles, attributes) 
         elif type == "pdf": 
-            from api.gen_pdf_report import export_pdf
             payload["entity"] = entity
             return export_pdf(api_clz, request, entity, queryParm, columns, columnTitles, attributes) 
         elif type == "xlsx":
-            from api.gen_xlsx_report import xlsx_gen_report
             return xlsx_gen_report(api_clz, request, entity, queryParm, columns, columnTitles, attributes)
+        
         return jsonify({"code":1,"message":f"Unknown export type {type}","data":None,"sqlTypes":None})   
     
     
@@ -109,7 +111,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     
         return gen_report(api_clz, request, _project_dir, payload, attributes)
         
-    
+    # Ontimize apiEndpoint path for all services
     @app.route("/ontimizeweb/services/rest/<path:path>", methods=['GET','POST','PUT','PATCH','DELETE','OPTIONS'])
     @cross_origin()
     @admin_required()
