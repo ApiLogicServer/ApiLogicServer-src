@@ -37,7 +37,7 @@ authentication_provider : Abstract_Authentication_Provider = config.Config.SECUR
 # note: direct config access is disparaged, but used since args not set up when this imported
 
 security_logger = logging.getLogger(__name__)
-
+access_token = None
 JWT_EXCLUDE = 'jwt_exclude'
 
 def jwt_required(*args, **kwargs):
@@ -73,19 +73,37 @@ def configure_auth(flask_app: Flask, database: object, method_decorators: list[o
     flask_app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=30)
     jwt = JWTManager(flask_app)
     
+    @flask_app.route("/ontimizeweb/services/rest/users/login", methods=["POST","OPTIONS"])
     @flask_app.route("/api/auth/login", methods=["POST"])
     @cross_origin(supports_credentials=False)
     def login():
         """
         Post id/password, returns token to be placed in header of subsequent requests.
-
+        curl -X POST http://apilogicserver:5655/api/auth/login -d '{"username":"admin","password":"p"}'
         Returns:
             string: access token
         """
         if request.method == 'OPTIONS':
-            return jsonify(success=True)        
-        username = request.json.get("username", None)
-        password = request.json.get("password", None)
+            return jsonify(success=True)  
+        global access_token   
+        try:   
+            username = request.json.get("username", None)
+            password = request.json.get("password", None)
+        except:
+            username = ''
+            password = ''
+            auth = request.headers.get("Authorization", None)
+            if auth and auth.startswith("Basic"):  # support basic auth
+                import base64
+                base64_message = auth[6:]
+                print(f"auth found: {auth}")
+                #base64_message = 'UHl0aG9uIGlzIGZ1bg=='
+                base64_bytes = base64_message.encode('ascii')
+                message_bytes = base64.b64decode(base64_bytes)
+                message = message_bytes.decode('ascii')
+                s = message.split(":")
+                username = s[0]
+                password = s[1]
 
         user = authentication_provider.get_user(username, password)
         if not user or not authentication_provider.check_password(user = user, password = password):
