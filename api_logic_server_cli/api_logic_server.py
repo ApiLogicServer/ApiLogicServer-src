@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "11.00.08"
+__version__ = "11.00.09"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t08/05/2024 - 11.00.09: merge JSONAPI features for Ontimize filter \n"\
     "\t08/03/2024 - 11.00.08: api_logic_server_run rework \n"\
     "\t08/02/2024 - 11.00.07: App Model Editor UI rework, docs and fix for kc and export \n"\
     "\t07/25/2024 - 11.00.00: Keycloak, App Model Editor \n"\
