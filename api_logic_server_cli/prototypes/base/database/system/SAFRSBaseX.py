@@ -31,5 +31,5 @@ def jsonapi_filter(cls):
 
 class SAFRSBaseX(SAFRSBase):
     __abstract__ = True
-    #jsonapi_filter = jsonapi_filter
+    jsonapi_filter = jsonapi_filter
 

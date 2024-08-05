@@ -282,6 +282,7 @@ def step_impl(context):
     result_map = DotMap(result_data)
 
     orders = result_map.data
+    assert len(orders) == 1, f"Should have found one order, but found {len(orders)}"
     for each_order in orders:
         order_id = each_order.id
         delete_uri = "http://localhost:5656/api/Order/" + str(order_id) + "/"
