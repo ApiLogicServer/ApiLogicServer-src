@@ -1,5 +1,6 @@
 """
 Advanced Expression Parsing - return SQL Where clause
+version: 11.00.08 - api_logic_server_cli/prototypes/ont_app/prototype/api/expression_parser.py
 """
 """
 JSON:API filtering strategies
@@ -37,7 +38,7 @@ class DotDict(dict):
     __delattr__ = dict.__delitem__
 
 
-def parsePayload(payload: str):
+def parsePayload(clz, payload: str):
     """
     employee/advancedSearch
     {"filter":{},"columns":["EMPLOYEEID","EMPLOYEETYPEID","EMPLOYEENAME","EMPLOYEESURNAME","EMPLOYEEADDRESS","EMPLOYEESTARTDATE","EMPLOYEEEMAIL","OFFICEID","EMPLOYEEPHOTO","EMPLOYEEPHONE"],"sqltypes":{},"offset":0,"pageSize":16,"orderBy":[]}
@@ -46,15 +47,15 @@ def parsePayload(payload: str):
 
     """
     sqltypes = payload.get("sqltypes") or None
-    _filter = parseFilter(payload.get("filter", {}), sqltypes)
+    expressions = advancedFilter(clz, payload)
+    _filter, filter = parseFilter(payload.get("filter", {}), sqltypes)
     columns: list = payload.get("columns") or []
     offset: int = payload.get("offset") or 0
     pagesize: int = payload.get("pageSize") or 100
     orderBy: list = payload.get("orderBy") or []
     data = fixup_data(payload.get("data", None), sqltypes)
 
-    #print(_filter, columns, sqltypes, offset, pagesize, orderBy, data)
-    return _filter, columns, sqltypes, offset, pagesize, orderBy, data
+    return expressions, _filter, columns, sqltypes, offset, pagesize, orderBy, data
 
 
 def parseFilter(filter: dict, sqltypes: any):
@@ -78,7 +79,7 @@ def parseFilter(filter: dict, sqltypes: any):
             sql_where += f'{join} "{f}" = {q}{value}{q}'
             filters.append({"lop": f, "op": "eq", "rop": value})
             join = " AND "
-    return sql_where #, filters
+    return sql_where, filters
 
 def fixup_data(data, sqltypes):
     if data:
@@ -181,46 +182,81 @@ class BasicExpression:
 def advancedFilter(cls, args) -> any:
     filters = []
     expressions = []
-    from safrs import SAFRSBase, SafrsApi, ValidationError
+    from safrs import ValidationError
     import re
     import urllib.parse
     import operator
 
-    for req_arg, val in args.items():
+    for req_arg, item in args.items():
         if not req_arg.startswith("filter"):
             continue
         try:
-            adv_filter = json.loads(val)
-            if isinstance(adv_filter, dict):
-                #TODO - modify this to return expressions (and_ & or_)
-                sqlWhere, filters = parseFilter(adv_filter['filter'], None)
-                continue
+            val = item
+            if isinstance(item, str):
+                val = json.loads(item)
         except Exception as e:
-            print(e)
-            continue
-        #filter[attrname][in|notin]=value
-        filter_attr = re.search(r"filter\[(\w+)\]\[(\w+)\]", req_arg)
-        if filter_attr:
-            name = filter_attr.group(1)
-            op = filter_attr.group(2)
+            print(f"json load filter item: {item} exception:",e)
+            val = item
+            
+        if isinstance(val, list):
+            # this is from sra 
+            # '[{"name":"Id","op":"ilike","val":"%AL%"},{"name":"CompanyName","op":"ilike","val":"%AL%"}]'
+            for item in val:
+                attr = cls._s_jsonapi_attrs[item['name']]
+                op = item['op']
+                if op in ["in"]:
+                    expressions.append(attr.in_(item['val']))
+                elif op in ["like","ilike"]:
+                    expressions.append(attr.like( item['val']))
+                else:
+                    expressions.append(attr.eq(clean(item['val'])))
+            return expressions
+        else:
+            if isinstance(val, dict):
+                #if FILTER_EXPRESSION in item or BASIC_EXPRESSION in item:
+                if "filter" in val:
+                    # Ontimize Advanced Filter
+                    #{'lop': 'CustomerId', 'op': 'LIKE', 'rop': '%A%'}
+                    #TODO - modify this to return expressions (and_ & or_)
+                    sqlWhere, filters = parseFilter(val['filter'], None)
+                else:
+                    #{'id': '1', 'name': 'John'}
+                    for f, value in val.items():
+                        filters.append({"lop": f, "op": "eq", "rop": value})
+
+        not_in_filter = re.search(r"filter\[(\w+)\]\[(\w+)\]", req_arg)
+        json_filter = filter_attr = re.search(r"filter\[(\w+)\]", req_arg)
+        equal_exp = filter_attr = re.search(r"equal\((\w+),(\w+)\)", req_arg)
+        notequal_exp = filter_attr = re.search(r"notequal\((\w+),(\w+)\)", req_arg)
+        if json_filter:
+            #filter[attrname]=value
+            name = json_filter.group(1)
+            op = "eq"
+            filters.append({"lop": name, "op": op, "rop": val})
+            
+        elif not_in_filter:
+            #filter[attrname][in| notin]=value
+            name = not_in_filter.group(1)
+            op = not_in_filter.group(2)
             if op in ["in", "notin"]:
                 val = json.loads(val)
             filters.append({"lop": name, "op": op, "rop": val})
-            continue
+        elif equal_exp:
+            #equal(attrname,value) 
+            name = equal_exp.group(1)
+            attr_val = equal_exp.group(2)
+            filters.append({"lop": name, "op": "eq", "rop": attr_val})
+        elif notequal_exp:
+            #notequal(attrname,value) 
+            name = notequal_exp.group(1)
+            attr_val = notequal_exp.group(2)
+            filters.append({"lop": name, "op": "ne", "rop": attr_val})
+        else:
+            #attrname=value
+            if filter_attr and filter_attr not in ["page","orderBy","pageSize","offset","limit","sort","order","fields","include"]:
+                filters.append({"lop": req_arg, "op": "eq", "rop": val})
 
-        #filter[attrname]=value
-        filter_attr = re.search(r"filter\[(\w+)\]", req_arg)
-        if filter_attr:
-            name = filter_attr.group(1)
-            op = "eq"
-            filters.append({"lop": name, "op": op, "rop": val})
-            continue
-        
-        #attrname=value
-        if filter_attr and filter_attr not in ["page","orderBy","pageSize","offset","limit","sort","order","fields","include"]:
-            filters.append({"lop": req_arg, "op": "eq", "rop": val})
-
-    query = cls._s_query
+        query = cls._s_query
 
     for filt in filters:
         attr_name = filt.get("lop")
@@ -237,7 +273,7 @@ def advancedFilter(cls, args) -> any:
         elif op_name.lower() in ["like", "ilike", "match"]:
             # => attr is Column or InstrumentedAttribute
             like = getattr(attr, op_name)
-            query = query.filter(eq(attr, attr_val))
+            query = query.filter(or_(attr, attr_val))
         # elif op_name.lower() in ["not like","notlike","notin"]:
         #    # => attr is Column or InstrumentedAttribute
         #    notlike = getattr(attr, op_name)
@@ -245,9 +281,10 @@ def advancedFilter(cls, args) -> any:
         elif not hasattr(operator, op_name):
             raise ValidationError(f'Invalid filter "{filt}", unknown operator "{op_name}"')
         else:
-            op = getattr(operator, op_name)
+            op = getattr(operator, op_name) or and_
             expressions.append(op(attr, clean(attr_val)))
-    print(*expressions)
+   
+    for e in expressions : print(e," : ", e.right.value)
     return expressions #query.filter(or_(*expressions))
 
 def clean(val):

@@ -20,8 +20,8 @@ from datetime import date
 from config.config import Args
 import os
 from pathlib import Path
-from api.expression_parser import parsePayload
-from api.gen_pdf_report import gen_report
+from api.system.expression_parser import parsePayload
+from api.system.gen_pdf_report import gen_report
 
 # called by api_logic_server_run.py, to customize api (new end points, services).
 # separate from expose_api_models.py, to simplify merge if project recreated
