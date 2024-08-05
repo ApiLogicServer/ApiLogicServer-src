@@ -20,8 +20,8 @@ from datetime import date
 from config.config import Args
 import os
 from pathlib import Path
-from api.expression_parser import parsePayload
-from api.gen_pdf_report import gen_report
+from api.system.expression_parser import parsePayload
+from api.system.gen_pdf_report import gen_report
 
 # called by api_logic_server_run.py, to customize api (new end points, services).
 # separate from expose_api_models.py, to simplify merge if project recreated
@@ -245,9 +245,7 @@ def add_service(
         api_clz = resource["model"]
 
         payload = json.loads(request.data)
-        filter, columns, sqltypes, offset, pagesize, orderBy, data = parsePayload(
-            payload
-        )
+        expressions, filter, columns, sqltypes, offset, pagesize, orderBy, data = parsePayload(clz=api_clz, payload=payload)
         result = {}
         if method in ["PUT", "PATCH"]:
             sql_alchemy_row = session.query(api_clz).filter(text(filter)).one()
@@ -306,7 +304,7 @@ def add_service(
         except Exception as ex:
             session.rollback()
             return jsonify(
-                {"code": 1, "message": f"{ex.message}", "data": [], "sqlTypes": None}
+                {"code": 1, "message": f"{ex}", "data": [], "sqlTypes": None}
             )
 
         return jsonify(

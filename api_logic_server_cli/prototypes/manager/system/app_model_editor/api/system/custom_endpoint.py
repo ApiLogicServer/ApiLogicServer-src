@@ -21,8 +21,7 @@ import json
 import requests
 import config.config as config
 from config.config import Args
-from api.expression_parser import parsePayload
-from api.gen_pdf_report import gen_report
+from api.system.expression_parser import parsePayload
 
 resource_logger = logging.getLogger("api.customize_api")
 
@@ -35,9 +34,11 @@ class DotDict(dict):
     __getattr__ = dict.get
     __setattr__ = dict.__setitem__
     __delattr__ = dict.__delitem__
+
+
 class CustomEndpoint():
     """
-    Nested CustomEndpoint Definition
+    Nested CustomEndpoint Definition.  Internal system services for Ontimize.
 
         customer = CustomEndpoint(model_class=models.Customer, alias="Customer"
         , fields = [(models.Customer.CompanyName, "Customer Name")] 
@@ -80,7 +81,7 @@ class CustomEndpoint():
             ):
         """
 
-        Declare a custom yser shaped resource.
+        Declare a custom user shaped resource.
 
         Args:
             :model_class (DeclarativeMeta | None): model.TableName
@@ -244,7 +245,7 @@ class CustomEndpoint():
                     raise ValidationError( f'{method} error on entity {self._model_class_name} msg: {ex}') from ex
             elif method == 'GET':
                 if payload:
-                    filter_, columns, sqltypes, offset, limit, order_by, data = parsePayload(payload=payload)
+                    expressions, filter_, columns, sqltypes, offset, limit, order_by, data = parsePayload(clz=self._model_class, payload=payload)
                 else:
                     pkey , value,  limit, offset, order_by , filter_  = self.parseArgs(args)
         #serverURL = f"{request.host_url}api"
@@ -264,7 +265,7 @@ class CustomEndpoint():
         limit = self.pagesize if self.pagesize > limit else limit
         print(f"limit: {limit}, offset: {offset}, sort: {order_by},filter_by: {filter_by}, add_filter {filter_}")
         try:
-            self._createRows(limit=limit,offset=offset,order_by=order_by,filter_by=filter_by) 
+            self._createRows(limit=limit,offset=offset,order_by=order_by,filter_by=filter_by, expressions=expressions) 
             self._executeChildren()
             self._modifyRows(result)
             return json.dumps(result)
@@ -313,13 +314,14 @@ class CustomEndpoint():
         self._fkeyList = keyList
         return keyList
 
-    def _createRows(self,limit:int = 10, offset = 0, filter_by: str = None, order_by: str = None):
+    def _createRows(self,limit:int = 10, offset = 0, filter_by: str = None, order_by: str = None, expressions: list = []):
         """
         execute and store rows based on list of keys in model
         :limit = 10
         :offset = 0
         :filter_by root only
         :order_by root only
+        :expressions = list of expressions
         """
         # If _populateResponse is used - the _dictRows are already filled
         # or the parent resource has now rows - so no need to fetch
