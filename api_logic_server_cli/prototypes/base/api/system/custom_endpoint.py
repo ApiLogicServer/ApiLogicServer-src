@@ -21,8 +21,7 @@ import json
 import requests
 import config.config as config
 from config.config import Args
-from api.expression_parser import parsePayload
-from api.gen_pdf_report import gen_report
+from api.system.expression_parser import parsePayload
 
 resource_logger = logging.getLogger("api.customize_api")
 

@@ -8,7 +8,6 @@ JSON:API filtering strategies
 import sqlalchemy
 import safrs
 import json
-import re
 from flask import request
 from sqlalchemy.orm import joinedload, Query
 from operator import not_, and_, or_, eq, ne, lt, le, gt, ge
@@ -180,15 +179,11 @@ class BasicExpression:
     def is_numeric(self, value):
         return False if value and isinstance(value, str) else True 
 
-not_in_filter = re.search(r"filter\[(\w+)\]\[(\w+)\]", req_arg)
-json_filter = filter_attr = re.search(r"filter\[(\w+)\]", req_arg)
-equal_exp = filter_attr = re.search(r"equal\((\w+),(\w+)\)", req_arg)
-notequal_exp = filter_attr = re.search(r"notequal\((\w+),(\w+)\)", req_arg)
 def advancedFilter(cls, args) -> any:
     filters = []
     expressions = []
     from safrs import ValidationError
-
+    import re
     import urllib.parse
     import operator
 
@@ -229,7 +224,10 @@ def advancedFilter(cls, args) -> any:
                     for f, value in val.items():
                         filters.append({"lop": f, "op": "eq", "rop": value})
 
-
+        not_in_filter = re.search(r"filter\[(\w+)\]\[(\w+)\]", req_arg)
+        json_filter = filter_attr = re.search(r"filter\[(\w+)\]", req_arg)
+        equal_exp = filter_attr = re.search(r"equal\((\w+),(\w+)\)", req_arg)
+        notequal_exp = filter_attr = re.search(r"notequal\((\w+),(\w+)\)", req_arg)
         if json_filter:
             #filter[attrname]=value
             name = json_filter.group(1)

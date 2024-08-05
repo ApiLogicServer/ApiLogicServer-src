@@ -22,7 +22,7 @@ import os
 from pathlib import Path
 from api.system.expression_parser import parsePayload
 from api.system.gen_pdf_report import gen_report
-from api.system.gen_csv_report import csv_gen_report
+from api.system.gen_csv_report import gen_report as csv_gen_report
 from api.system.gen_pdf_report import export_pdf
 from api.system.gen_xlsx_report import xlsx_gen_report
 
@@ -203,31 +203,10 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         return None
     
     def login(request):
-        auth = request.headers.get("Authorization", None)
-        if auth and auth.startswith("Basic"):  # support basic auth
-            import base64
-            base64_message = auth[6:]
-            print(f"auth found: {auth}")
-            #base64_message = 'UHl0aG9uIGlzIGZ1bg=='
-            base64_bytes = base64_message.encode('ascii')
-            message_bytes = base64.b64decode(base64_bytes)
-            message = message_bytes.decode('ascii')
-            s = message.split(":")
-            username = s[0]
-            password = s[1]
-        
-            import config.config as config
-            from security.authentication_provider.abstract_authentication_provider import Abstract_Authentication_Provider
-            authentication_provider : Abstract_Authentication_Provider = config.Config.SECURITY_PROVIDER  # type: ignore
-            user = authentication_provider.get_user(username, password)
-        if not user or not user.check_password(password):
-            #raise BaseException("Wrong username or password"), 401
-            return jsonify({"code":1,"message":"Login Failed","data":None})
-
-        from security.system.authentication import create_access_token, access_token
-        access_token = create_access_token(identity=user)  # serialize and encode
-        return jsonify({"code":0,"message":"Login Successful","data":{"username":"admin","token":"admin"}})
-        #return jsonify({"code":1,"message":"Login Failed","data":None})
+        url = f"http://{request.host}/api/auth/login"
+        requests.post(url=url, headers=request.headers, json = {})
+        return jsonify({"code":0,"message":"Login Successful","data":{}})
+       
     
     def get_rows_agg(request: any, api_clz, agg_type, filter, columns):
         key = api_clz.__name__

@@ -72,8 +72,10 @@ def configure_auth(flask_app: Flask, database: object, method_decorators: list[o
     flask_app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=222)  #  change as you see fit
     flask_app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=30)
     jwt = JWTManager(flask_app)
+    access_token = None
     
     @flask_app.route("/api/auth/login", methods=["POST"])
+    @flask_app.route("/ontimizeweb/services/rest/users/login", methods=["POST"])
     @cross_origin(supports_credentials=False)
     def login():
         """
