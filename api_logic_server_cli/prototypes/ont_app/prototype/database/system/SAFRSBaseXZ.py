@@ -15,6 +15,8 @@ def jsonapi_filter(cls):
     """
     Use this to override SAFRS JSON:API filtering
 
+    Unversioned, from api_logic_server_cli/prototypes/ont_app/prototype/database/system/SAFRSBaseX.py
+
     Returns:
         _type_: SQLAlchemy query filter
     """

@@ -326,7 +326,11 @@ def api_logic_server_setup(flask_app: Flask, args: Args):
             customize_api.expose_services(flask_app, safrs_api, project_dir, swagger_host=args.swagger_host, PORT=args.port)  # custom services
 
             if args.security_enabled:
+                from config.config import set_auth_provider   
+                auth_provider = set_auth_provider()
                 configure_auth(flask_app, database, method_decorators)
+                from security.system import authentication
+                authentication.authentication_provider = auth_provider
 
             multi_db.expose_db_apis(flask_app, session, safrs_api, method_decorators)
 

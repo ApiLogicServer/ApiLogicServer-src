@@ -128,13 +128,13 @@ class Config:
         else:
             SECURITY_ENABLED = True
         app_logger.debug(f'Security .. overridden from env variable: {SECURITY_ENABLED}')
-    if SECURITY_ENABLED:
-        from security.authentication_provider.sql.auth_provider import Authentication_Provider
-        # typically, authentication_provider is [ keycloak | sql ]
-        SECURITY_PROVIDER = Authentication_Provider
-        app_logger.debug(f'config.py - security enabled')
-    else:
-        app_logger.info(f'config.py - security disabled')
+    # if SECURITY_ENABLED:  FIXME remove
+    #     from security.authentication_provider.sql.auth_provider import Authentication_Provider
+    #     # typically, authentication_provider is [ keycloak | sql ]
+    #     SECURITY_PROVIDER = Authentication_Provider
+    #     app_logger.debug(f'config.py - security enabled')
+    # else:
+    #     app_logger.info(f'config.py - security disabled')
 
     # Begin Multi-Database URLs (from ApiLogicServer add-db...)
 
@@ -170,6 +170,25 @@ class Config:
             exit(1)
         app_logger.debug(f'Opt Locking .. overridden from env variable: {OPT_LOCKING}')
 
+    ONT_FILTERS = False
+
+
+def set_auth_provider():
+    """set_auth_provider, for server_setup.py
+    
+    Separate function (vs in-line in class above) avoids circular imports via SAFRSBaseX.
+
+    Returns:
+        _type_: _description_
+    """
+    if Config.SECURITY_ENABLED:
+        from security.authentication_provider.sql.auth_provider import Authentication_Provider
+        # typically, authentication_provider is [ keycloak | sql ]
+        Config.SECURITY_PROVIDER = Authentication_Provider
+        app_logger.debug(f'config.py - security enabled')
+    else:
+        app_logger.info(f'config.py - security disabled')
+    return Config.SECURITY_PROVIDER
 
 
 class Args():
@@ -441,6 +460,17 @@ class Args():
     @kafka_consumer.setter
     def kafka_consumer(self, a: str):
         self.flask_app.config["KAFKA_CONSUMER"] = a
+
+
+    @property
+    def ont_filters(self):
+        """ activate ontimize advanced filters """
+        return self.flask_app.config["ONT_FILTERS"]
+    
+    @ont_filters.setter
+    def verbose(self, a):
+        self.flask_app.config["ONT_FILTERS"] = a
+
 
     def __str__(self) -> str:
         rtn =  f'.. flask_host: {self.flask_host}, port: {self.port}, \n'\
