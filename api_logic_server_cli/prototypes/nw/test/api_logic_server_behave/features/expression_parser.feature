@@ -26,11 +26,16 @@ Feature: Expression Parser
     Then Basic 2 rows returned
 
   Scenario: Filter Expression Processing
-    Given Filter Expression
+    Given Single Filter Expression
     When Query submitted
     Then Filter 1 row returned
 
-  Scenario: Filter 2 Expression Processing
-    Given Filter or Expression
+  Scenario: Filter Expression OR Processing
+    Given Filter Expression with and
     When Query submitted
     Then Filter 2 rows returned
+
+  Scenario: SAFRS like Expression Processing
+    Given SAFRS like Expression
+    When Query submitted
+    Then SAFRS 5 rows returned
