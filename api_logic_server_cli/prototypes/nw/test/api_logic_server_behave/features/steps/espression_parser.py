@@ -109,7 +109,7 @@ def step_impl(context):
         assert len(result_data['data']) == 2, f'Error - " {response_text}'
         assert  "448.00" in response_text and "10259" in response_text, f'Error - " {response_text}'
 
-@given('Filter Expression')
+@given('Single Filter Expression')
 def step_impl(context):
     filter = '{"filter":{"@filter_expression":{"lop":"Id","op":"eq","rop":10259}}}'
     context.filter =  f'&filter={quote(filter)}'
@@ -124,7 +124,7 @@ def step_impl(context):
         assert  "10259" in response_text, f'Error - " {response_text}'
     
 
-@given('Filter or Expression')
+@given('Filter Expression with and')
 def step_impl(context):
     filter = '{"filter":{"@filter_expression":{"lop":{"lop":"Id","op":"eq","rop":10259},"op":"and","rop":{"lop":"CustomerId","op":"eq","rop":"CENTC"}}}}'
     context.filter =  f'&filter={quote(filter)}'
@@ -138,4 +138,18 @@ def step_impl(context):
         assert len(result_data['data']) == 1, f'Error - " {response_text}'
         assert  "CENTC" in response_text and "10259" in response_text, f'Error - " {response_text}'
     
+
+@given('SAFRS like Expression')
+def step_impl(context):
+    filter = '"filter"=[{"lop":{"lop":"ShipName","op":"ilike","val":"%Alfred%"}]'
+    context.filter =  f'&filter={quote(filter)}'
+    pass
+
+@then('SAFRS 5 rows returned')
+def step_impl(context):
+    response_text = context.response_text
+    result_data = json.loads(response_text)
+    if ENABLE_BEHAVE_JSONAPI:
+        assert len(result_data['data']) == 5, f'Error - " {response_text}'
+        assert  "Alfred's Futterkiste" in response_text, f'Error - " {response_text}'
     

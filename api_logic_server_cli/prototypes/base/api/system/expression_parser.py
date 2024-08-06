@@ -13,6 +13,7 @@ from sqlalchemy.orm import joinedload, Query
 from operator import not_, and_, or_, eq, ne, lt, le, gt, ge
 BASIC_EXPRESSION = "@basic_expression"
 FILTER_EXPRESSION = "@filter_expression"
+# Ontimize Advanced Filter Expressions
 LESS = "<"
 LESS_EQUAL = "<="
 EQUAL = "="
@@ -40,15 +41,19 @@ class DotDict(dict):
 
 def parsePayload(clz, payload: str):
     """
-    employee/advancedSearch
-    {"filter":{},"columns":["EMPLOYEEID","EMPLOYEETYPEID","EMPLOYEENAME","EMPLOYEESURNAME","EMPLOYEEADDRESS","EMPLOYEESTARTDATE","EMPLOYEEEMAIL","OFFICEID","EMPLOYEEPHOTO","EMPLOYEEPHONE"],"sqltypes":{},"offset":0,"pageSize":16,"orderBy":[]}
-    customers/customer/advancedSearch
-    {"filter":{},"columns":["CUSTOMERID","NAME","SURNAME","ADDRESS","STARTDATE","EMAIL"],"sqltypes":{"STARTDATE":93},"offset":0,"pageSize":25,"orderBy":[{"columnName":"SURNAME","ascendent":true}]}
-
+    Parse the Ontimize payload 
+    :expressions list using by advancedFilter in jsonapi_filter
+    :filter any 
+    :columns list
+    :sqltypes list 
+    :offset number 
+    :pagesize number
+    :orderBy string 
+    :data JSON 
     """
     sqltypes = payload.get("sqltypes") or None
     expressions = advancedFilter(clz, payload)
-    _filter, filter = parseFilter(payload.get("filter", {}), sqltypes)
+    _filter, filter, expr = parseFilter(payload.get("filter", {}), sqltypes)
     columns: list = payload.get("columns") or []
     offset: int = payload.get("offset") or 0
     pagesize: int = payload.get("pageSize") or 100
@@ -63,23 +68,32 @@ def parseFilter(filter: dict, sqltypes: any):
     filters = []
     sql_where = ""
     join = ""
+    expr = None
+    expressions = []
     for f, value in filter.items():  
         if f in [BASIC_EXPRESSION]:
             if expr := ExpressionParser(filter, BASIC_EXPRESSION, sqltypes):
                 sql_where += join + expr.get_sql_where()
                 filters = expr.get_filters()
                 join = " OR "
+                expressions = expr.get_expressions()
         elif f in [FILTER_EXPRESSION]:
             if expr := ExpressionParser(filter, FILTER_EXPRESSION, sqltypes):
                 sql_where += join + expr.get_sql_where()
                 filters = expr.get_filters()
                 join = " OR "
+                expressions = expr.get_expressions()
         else:
             q = "'" if isinstance(value, str) else ""
             sql_where += f'{join} "{f}" = {q}{value}{q}'
+            #name = clz._s_jsonapi_attrs[f] if f != "id" else clz.id
             filters.append({"lop": f, "op": "eq", "rop": value})
+            expressions.append({"join": join, "lop": f, "op": "eq", "rop": value})  
             join = " AND "
-    return sql_where, filters
+            
+    if expr:
+        for e in expr.expressions : print(e," : ", e.right.value)
+    return sql_where, filters, expressions
 
 def fixup_data(data, sqltypes):
     if data:
@@ -125,7 +139,9 @@ class BasicExpression:
         self.join_condition = ""
         self.sqltypes = sqltypes
         self.filters = []
+        self.expressions = []
 
+        # Left Operator
         if isinstance(lop, dict):
             _lop = lop["lop"]
             _op = lop["lop"]["op"] if hasattr(lop, "op") else lop["op"]
@@ -134,6 +150,7 @@ class BasicExpression:
             be = BasicExpression(_lop, _op, _rop)
             be.join_condition = _op
             self.lop_ext.append(be)
+        # Right Operator
         if isinstance(rop, dict):
             _lop = rop["lop"]
             _op = rop["lop"]["op"] if hasattr(rop, "op") else rop["op"]
@@ -142,7 +159,12 @@ class BasicExpression:
             be = BasicExpression(_lop, _op, _rop)
             be.join_condition = _op
             self.rop_ext.append(be)
-        self.lop = lop
+        #basic {lop: "BALANCE", op: "<=", rop: 35000}
+        attr_name = lop
+        #if attr_name != "id" and attr_name not in cls._s_jsonapi_attrs:
+        #    raise ValidationError(f'Invalid filter "lop:{lop}, op: {op}, rop: {rop}", unknown attribute "{attr_name}"')
+        #attr = clz._s_jsonapi_attrs[attr_name] if attr_name != "id" else clz.id
+        self.lop = attr_name
         self.op = op
         self.rop = rop
 
@@ -173,6 +195,7 @@ class BasicExpression:
                     value = datetime.fromtimestamp(value / 1000).strftime("%Y-%m-%d")
             q = "" if expr.is_numeric(value) else "'"
             self.filters.append({"lop": expr.lop, "op": expr.op, "rop": f"{q}{value}{q}"})
+            self.expressions.append({"join": self.join_condition, "lop": expr.lop, "op": expr.op, "rop": f"{q}{value}{q}"})
             return f'{self.join_condition} "{expr.lop}" {expr.op} {q}{value}{q}'
         return ""
 
@@ -202,7 +225,8 @@ def advancedFilter(cls, args) -> any:
             # this is from sra 
             # '[{"name":"Id","op":"ilike","val":"%AL%"},{"name":"CompanyName","op":"ilike","val":"%AL%"}]'
             for item in val:
-                attr = cls._s_jsonapi_attrs[item['name']]
+                name = item['name']
+                attr = cls._s_jsonapi_attrs[name] if name != "id" else cls.id   
                 op = item['op']
                 if op in ["in"]:
                     expressions.append(attr.in_(item['val']))
@@ -210,6 +234,7 @@ def advancedFilter(cls, args) -> any:
                     expressions.append(attr.like( item['val']))
                 else:
                     expressions.append(attr.eq(clean(item['val'])))
+            for e in expressions : print(e," : ", e.right.value)
             return expressions
         else:
             if isinstance(val, dict):
@@ -218,7 +243,7 @@ def advancedFilter(cls, args) -> any:
                     # Ontimize Advanced Filter
                     #{'lop': 'CustomerId', 'op': 'LIKE', 'rop': '%A%'}
                     #TODO - modify this to return expressions (and_ & or_)
-                    sqlWhere, filters = parseFilter(val['filter'], None)
+                    sqlWhere, filters, expr = parseFilter(val['filter'], None)
                 else:
                     #{'id': '1', 'name': 'John'}
                     for f, value in val.items():
@@ -258,28 +283,30 @@ def advancedFilter(cls, args) -> any:
 
         query = cls._s_query
 
-    for filt in filters:
-        attr_name = filt.get("lop")
-        attr_val = filt.get("rop")
+    for flt in filters:
+        attr_name = flt.get("lop")
+        attr_val = flt.get("rop")
         if attr_name != "id" and attr_name not in cls._s_jsonapi_attrs:
-            raise ValidationError(f'Invalid filter "{filt}", unknown attribute "{attr_name}"')
+            raise ValidationError(f'Invalid filter "{filfltt}", unknown attribute "{attr_name}"')
 
-        op_name = filt.get("op", "").strip("_").lower()
+        op_name = flt.get("op", "").strip("_").lower()
         attr = cls._s_jsonapi_attrs[attr_name] if attr_name != "id" else cls.id
         if op_name in ["in"]:
             op = getattr(attr, op_name + "_")
-            query = query.filter(op(attr_val))
-            #expressions.append(in(attr, clean(attr_val)))
+            #query = query.filter(op(attr_val))
+            expressions.append(attr.in_( clean(attr_val) ))
         elif op_name.lower() in ["like", "ilike", "match"]:
             # => attr is Column or InstrumentedAttribute
             like = getattr(attr, op_name)
-            query = query.filter(or_(attr, attr_val))
-        # elif op_name.lower() in ["not like","notlike","notin"]:
+            #query = query.filter(or_(attr, attr_val))
+            expressions.append(attr.in_( clean(attr_val) ))
+        elif op_name.lower() in ["not like","notlike","notin"]:
         #    # => attr is Column or InstrumentedAttribute
         #    notlike = getattr(attr, op_name)
         #    query = query.filter(notlike(attr, attr_val))
+            expressions.append(attr.not_in_( clean(attr_val) ))
         elif not hasattr(operator, op_name):
-            raise ValidationError(f'Invalid filter "{filt}", unknown operator "{op_name}"')
+            raise ValidationError(f'Invalid filter "{flt}", unknown operator "{op_name}"')
         else:
             op = getattr(operator, op_name) or and_
             expressions.append(op(attr, clean(attr_val)))
@@ -299,6 +326,7 @@ class ExpressionParser:
         self.basic_expr = None
         self.filter = self.parse(filter, expression_type)
         self.build_sql_where(sqltypes)
+        self.expressions = []
 
     def get_expr(self):
         # return self.build_sql_where(self.basic_expr) if self.basic_expr else "1=1"
@@ -307,6 +335,8 @@ class ExpressionParser:
     def get_filters(self):
         return self.basic_expr.filters if self.basic_expr else []
     
+    def get_expressions(self):
+        return self.basic_expr.expressions if self.basic_expr else []
     
     def parse(self, filter, expression_type):
         if isinstance(filter, dict):
@@ -326,6 +356,7 @@ class ExpressionParser:
         lop = expr["lop"]
         op = expr["op"]
         rop = expr["rop"]
+
         self.basic_expr = BasicExpression(lop, op, rop, sqltypes)
 
 
@@ -485,15 +516,17 @@ if __name__ == "__main__":
         filter[AttrName]=Value (numeric) 	
             where “AttrName” like :parm_1 [Value]
         filter[AttrName][like]=”%value%” (string)
-        where “AttrName” like :parm_1 [‘%Value%’]
+            where “AttrName” like :parm_1 [‘%Value%’]
         filter[AttrName]=value (date or timestamp)
-        where “AttrName” like :parm_1 [‘YYYY-mm-dd’]
+            where “AttrName” like :parm_1 [‘YYYY-mm-dd’]
         filter[AttrName][in]=”(a,b,c)”
-        where “AttrName” in :parm_1 [ ‘(a,b,c)’ ]
+            where “AttrName” in :parm_1 [ ‘(a,b,c)’ ]
         filter[AttrName]=”Value”&filter[AttrName2]=”%Value1%”  
-        where “AttrName” like :parm_1 or “AttrName2” like :parm_2 [Value,Value1]
+            where “AttrName” like :parm_1 or “AttrName2” like :parm_2 [Value,Value1]
         filter={“lop”:”AttrName”,”op”:”eq”,”rop”:”Value”}
-        where “AttrName” = :parm_1 [value]
+            where “AttrName” = :parm_1 [value]
+        [{“lop”:”AttrName”,”op”:”ilike”,”val”:”%val%”}] #safrs search
+            where "Attrname" like :parm_1 [‘%val%’]
 
     '''
     filter2 = {
@@ -531,8 +564,14 @@ if __name__ == "__main__":
                 "rop": {"lop": "EMPLOYEENAME", "op": "LIKE", "rop": "%pamella%"},
             }
         }
-
+    filter = {"filter":{"@filter_expression":{"lop":{"lop":"Id","op":"eq","rop":10259},"op":"and","rop":{"lop":"CustomerId","op":"eq","rop":"CENTC"}}}}
     import urllib
-    print(urllib.parse.quote(json.dumps(filter)))
+    #print(urllib.parse.quote(json.dumps(filter)))
     x = urllib.parse.quote("filter[FirstName][like]A")
     #print(x)
+    # from database.models import models
+    #filter = {"filter": {"@basic_expression": {"lop": "BALANCE", "op": "=", "rop": 35000}}}
+    sqlWhere, filters, expressions = parseFilter(full_expr['filter'],None)
+    print(sqlWhere)
+    print(filters)
+    print(expressions)
