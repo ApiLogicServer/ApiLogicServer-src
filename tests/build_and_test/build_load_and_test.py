@@ -985,15 +985,24 @@ if Config.do_test_genai:
 if Config.do_test_multi_reln:
     # test genai, using pre-supplied ChatGPT response (to avoid api key issues)
     # see https://apilogicserver.github.io/Docs/Sample-Genai/#what-just-happened
-    prompt_path = install_api_logic_server_path.joinpath('system/genai/examples/airport/airport.prompt')
-    response_path = install_api_logic_server_path.joinpath('system/genai/examples/airport/airport.response')
+    prompt_path = install_api_logic_server_path.joinpath('system/genai/examples/airport/airport_10.prompt')
+    response_path = install_api_logic_server_path.joinpath('system/genai/examples/airport/airport_10.response')
     # grr - creates project next to prompt
     assert prompt_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
     result_genai = run_command(f'{set_venv} && als genai --using={prompt_path} --gen-using-file={response_path}',
         cwd=install_api_logic_server_path,
-        msg=f'\nCreate airport')
-    genai_demo_path = install_api_logic_server_path.joinpath('airport')
-    start_api_logic_server(project_name="system/genai/examples/airport/airport")
+        msg=f'\nCreate airport_10')
+    start_api_logic_server(project_name="system/genai/examples/airport/airport_10")
+    stop_server(msg="*** airport TESTS COMPLETE ***\n")
+
+    prompt_path = install_api_logic_server_path.joinpath('system/genai/examples/airport/airport_4.prompt')
+    response_path = install_api_logic_server_path.joinpath('system/genai/examples/airport/airport_4.response')
+    # grr - creates project next to prompt
+    assert prompt_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
+    result_genai = run_command(f'{set_venv} && als genai --using={prompt_path} --gen-using-file={response_path}',
+        cwd=install_api_logic_server_path,
+        msg=f'\nCreate airport_4')
+    start_api_logic_server(project_name="system/genai/examples/airport/airport_4")
     stop_server(msg="*** airport TESTS COMPLETE ***\n")
 
 if Config.do_create_shipping:  # optionally, start it manually (eg, with breakpoints)

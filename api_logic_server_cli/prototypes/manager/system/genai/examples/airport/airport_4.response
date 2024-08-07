@@ -1,0 +1,113 @@
+Creating a database for an airport system in SQLite using SQLAlchemy involves defining the database schema with suitable tables and relationships. In this example, we'll create the following tables:
+
+1. **Airports**: To store information about airports.
+2. **Flights**: To store information about flights operated from/to the airports.
+3. **Passengers**: To track passengers.
+4. **Tickets**: To track the booking of flights by passengers.
+
+Here's how you can create such a database using SQLAlchemy in Python:
+
+1. **Setup**:
+
+   Install SQLAlchemy if you haven't already:
+   ```bash
+   pip install sqlalchemy
+   ```
+
+2. **Database Schema and Sample Data**:
+
+   ```python
+   from sqlalchemy import create_engine, Column, Integer, String, DateTime, ForeignKey
+   from sqlalchemy.orm import declarative_base, relationship, sessionmaker
+   from datetime import datetime
+
+   # Initialize the Base and Engine
+   Base = declarative_base()
+   engine = create_engine('sqlite:///system/genai/temp/model.sqlite', echo=True)
+
+   class Airport(Base):
+       __tablename__ = 'airports'
+       id = Column(Integer, primary_key=True, autoincrement=True)
+       name = Column(String, nullable=False)
+       city = Column(String, nullable=True)
+       country = Column(String, nullable=True)
+
+       # Relationship
+       flights = relationship('Flight', back_populates='airport')
+
+   class Flight(Base):
+       __tablename__ = 'flights'
+       id = Column(Integer, primary_key=True, autoincrement=True)
+       flight_number = Column(String, nullable=False)
+       departure_time = Column(DateTime, nullable=False)
+       arrival_time = Column(DateTime, nullable=False)
+       origin_id = Column(Integer, ForeignKey('airports.id'), nullable=False)
+       destination_id = Column(Integer, ForeignKey('airports.id'), nullable=False)
+
+       # Relationships
+       airport = relationship('Airport', foreign_keys=[origin_id])
+       destination = relationship('Airport', foreign_keys=[destination_id])
+
+   class Passenger(Base):
+       __tablename__ = 'passengers'
+       id = Column(Integer, primary_key=True, autoincrement=True)
+       name = Column(String, nullable=False)
+       email = Column(String, nullable=True)
+
+       # Relationship
+       tickets = relationship('Ticket', back_populates='passenger')
+
+   class Ticket(Base):
+       __tablename__ = 'tickets'
+       id = Column(Integer, primary_key=True, autoincrement=True)
+       passenger_id = Column(Integer, ForeignKey('passengers.id'), nullable=False)
+       flight_id = Column(Integer, ForeignKey('flights.id'), nullable=False)
+       booking_time = Column(DateTime, default=datetime.now, nullable=False)
+
+       # Relationships
+       passenger = relationship('Passenger', back_populates='tickets')
+       flight = relationship('Flight')
+
+   Base.metadata.create_all(engine)
+
+   # Create a new session and add sample data
+   Session = sessionmaker(bind=engine)
+   session = Session()
+
+   # Create sample airports
+   airport1 = Airport(name='John F. Kennedy International Airport', city='New York', country='USA')
+   airport2 = Airport(name='Los Angeles International Airport', city='Los Angeles', country='USA')
+   airport3 = Airport(name='Heathrow Airport', city='London', country='UK')
+
+   # Create sample flights
+   flight1 = Flight(
+       flight_number='AA100',
+       departure_time=datetime(2023, 11, 10, 8, 0),
+       arrival_time=datetime(2023, 11, 10, 12, 0),
+       origin_id=1,
+       destination_id=2
+   )
+   flight2 = Flight(
+       flight_number='BA200',
+       departure_time=datetime(2023, 11, 11, 14, 0),
+       arrival_time=datetime(2023, 11, 11, 22, 0),
+       origin_id=2,
+       destination_id=3
+   )
+
+   # Create sample passengers
+   passenger1 = Passenger(name='Alice Johnson', email='alice.johnson@example.com')
+   passenger2 = Passenger(name='Bob Smith', email='bob.smith@example.com')
+
+   # Create sample tickets
+   ticket1 = Ticket(passenger_id=1, flight_id=1)
+   ticket2 = Ticket(passenger_id=2, flight_id=2)
+
+   # Add and commit records to session
+   session.add_all([airport1, airport2, airport3, flight1, flight2, passenger1, passenger2, ticket1, ticket2])
+   session.commit()
+
+   session.close()
+   ```
+
+This code creates a SQLite database named `model.sqlite` in the specified path and defines the following tables: `airports`, `flights`, `passengers`, and `tickets`. Sample data is added to ensure the database is populated with some initial entries. Please ensure the path `system/genai/temp/` exists and is writable before running the code.

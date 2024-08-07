@@ -739,7 +739,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "    - Create blt/airport from RESPONSE",
+            "name": "    - Create blt/airport_10 from RESPONSE",
             "type": "debugpy",
             "request": "launch",
             "env": {"APILOGICSERVER_DEBUG": "True"},
@@ -748,7 +748,20 @@
             "redirectOutput": true,
             "args": ["genai",
                 "--using=airport",
-                "--gen-using-file=${workspaceFolder}/tests/test_databases/ai-created/airport/airport_chatgpt_1.response"],
+                "--gen-using-file=${workspaceFolder}/api_logic_server_cli/prototypes/manager/system/genai/examples/airport/airport_10.response"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "    - Create blt/airport_4 from RESPONSE",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["genai",
+                "--using=airport",
+                "--gen-using-file=${workspaceFolder}/api_logic_server_cli/prototypes/manager/system/genai/examples/airport/airport_4.response"],
             "console": "integratedTerminal"
         },
         {

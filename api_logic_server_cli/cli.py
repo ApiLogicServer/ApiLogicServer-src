@@ -578,6 +578,8 @@ def genai(ctx, using, db_url, gen_using_file: click.BOOL, genai_version: str, re
     project_name  = project_name.replace(' ', '_')
 
     try_number = 1
+    if gen_using_file != "":
+        try_number = retries  # if not calling GenAI, no need to retry
     while try_number <= retries:
         try:
             failed = False
@@ -588,7 +590,7 @@ def genai(ctx, using, db_url, gen_using_file: click.BOOL, genai_version: str, re
             failed = True
             try_number += 1
     if failed:
-        log.error(f"\n\nGenai Failed {retries} times") 
+        log.error(f"\n\nGenai Failed (Retries: {retries})") 
         exit(1) 
     log.info(f"GENAI successful on try {try_number}")  
 
