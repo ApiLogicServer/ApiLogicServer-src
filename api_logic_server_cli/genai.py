@@ -14,9 +14,9 @@ class GenAI(object):
 
     __init__()  # work directory is <manager>/system/genai/temp/
     
-    1. runs ChatGPT to create system/genai/temp/chatgpt_original.response
-    2. self.genai_get_logic() - saves prompt logic as comments for insertion into model
-    3. genai_write_model_file()
+    1. run ChatGPT to create system/genai/temp/chatgpt_original.response
+    2. self.get_logic() - saves prompt logic as comments for insertion into model (4.3)
+    3. fix_and_write_model_file()
     4. returns to main driver, which 
         1. runs create_db_from_model.create_db(self)
         2. proceeds to create project
@@ -24,74 +24,90 @@ class GenAI(object):
 
     developer then uses CoPilot to create logic (Rule.) from the prompt
 
-    Args:
-        object (_type_): _description_
+    Explore interim copilot access:
+    https://stackoverflow.com/questions/76741410/how-to-invoke-github-copilot-programmatically
+    https://docs.google.com/document/d/1o0TeNQtuT6moWU1bOq2K20IbSw4YhV1x_aFnKwo_XeU/edit#heading=h.3xmoi7pevsnp
+    https://code.visualstudio.com/api/extension-guides/chat
+    https://code.visualstudio.com/api/extension-guides/language-model
+    https://github.com/B00TK1D/copilot-api
     """
 
     def __init__(self, project: Project):
+        """ Run ChatGPT to create SQLAlchemy model
+
+        Args:
+        """        
 
         self.project = project
-
-        """ Run ChatGPT to create SQLAlchemy model
-        Issues with reln generation.  Chat does only 1 side and fails compile / test data, copilot does 2 
-        Args:
-        """
-        # Explore interim copilot access
-        # https://stackoverflow.com/questions/76741410/how-to-invoke-github-copilot-programmatically
-        # https://docs.google.com/document/d/1o0TeNQtuT6moWU1bOq2K20IbSw4YhV1x_aFnKwo_XeU/edit#heading=h.3xmoi7pevsnp
-        # https://code.visualstudio.com/api/extension-guides/chat
-        # https://code.visualstudio.com/api/extension-guides/language-model
-        # https://github.com/B00TK1D/copilot-api
-        
-
         log.info(f'\ngenai creating database/models from {self.project.from_genai}')
-
-        manager_exists = False
-        from_dir = project.api_logic_server_dir_path.joinpath('prototypes/manager')
-        to_dir = Path(os.getcwd())
-        to_dir_check = Path(to_dir).joinpath('system')
-        if not to_dir_check.exists():
-            copied_path = shutil.copytree(src=from_dir, dst=to_dir, dirs_exist_ok=True)
-
+        
+        self.ensure_system_dir_exists()  # so we can write to system/genai/temp
 
         self.project.from_model = f'system/genai/temp/model.py' # we always write the model to this file
 
+        Path('system/genai/temp/model.sqlite').unlink(missing_ok=True)  # delete temp (work) files
+        Path('system/genai/temp/model.py').unlink(missing_ok=True)
         if self.project.gen_using_file == '':  # clean up unless retrying from chatgpt_original.response
             Path('system/genai/temp/chatgpt_original.response').unlink(missing_ok=True)
             Path('system/genai/temp/chatgpt_retry.response').unlink(missing_ok=True)
-        Path('system/genai/temp/model.sqlite').unlink(missing_ok=True)
-        Path('system/genai/temp/model.py').unlink(missing_ok=True)
+        
+        self.prompt = self.get_prompt()  # compute self.prompt, from file or text argument
 
-        if '.' in self.project.from_genai:
-            # open and read the project description in natural language
-            with open(f'{self.project.from_genai}', 'r') as file:
-                prompt = file.read()
-                self.prompt = prompt
-        else:
-            pre_post = "Use SQLAlchemy to create a sqlite database named system/genai/temp/model.sqlite, with {{prompt}}.  Create some test data."
-            if Path('system/genai/pre_post.prompt').exists():
-                with open(f'system/genai/pre_post.prompt', 'r') as file:
-                    pre_post = file.read()  # eg, Use SQLAlchemy to create a sqlite database named system/genai/temp/model.sqlite, with
-            prompt = pre_post + ' ' + self.project.from_genai  # experiment
-            prompt = prompt.replace('{{prompt}}', self.project.from_genai)
-            self.prompt = prompt
-
-        self.project.genai_logic = self.genai_get_logic(prompt)
+        self.project.genai_logic = self.get_logic_from_prompt()
 
         if self.project.gen_using_file == '':
             log.info(f'\nInvoking AI, storing response: system/genai/temp/chatgpt_original.response')
-            response_data = self.genai_gen_using_api(prompt)  # get response from ChatGPT
+            response_data = self.genai_gen_using_api(self.prompt)  # get response from ChatGPT API
         else: # for retry from corrected prompt... eg system/genai/temp/chatgpt_retry.response
             log.info(f'\nUsing [corrected] prompt from: {self.project.gen_using_file}')
             with open(self.project.gen_using_file, 'r') as file:
                 model_raw = file.read()
             # convert model_raw into string array response_data
             response_data = model_raw  # '\n'.join(model_raw)
-        from_model = self.genai_write_model_file(response_data)
-        log.info(f'\nGenAI: model file created: {from_model}')
+        self.response = response_data
+
+        self.save_files_to_system_genai_temp_project()  # save prompt and response
+        self.fix_and_write_model_file(response_data)
 
 
-    def genai_get_logic(self, prompt: str) -> list[str]:
+    def get_prompt(self) -> str:
+        """ Get prompt from file or text argument
+
+        Returns:
+            str: prompt string, either from file file or text argument
+        """
+        # compute self.prompt, file file or text argument
+        if '.' in self.project.from_genai:  # prompt from file (hmm, no sentences...)
+            # open and read the project description in natural language
+            with open(f'{self.project.from_genai}', 'r') as file:
+                prompt = file.read()
+        else:                               # prompt from text (add system/genai/pre_post.prompt)
+            pre_post = "Use SQLAlchemy to create a sqlite database named system/genai/temp/model.sqlite, with {{prompt}}.  Create some test data."
+            if Path('system/genai/pre_post.prompt').exists():
+                with open(f'system/genai/pre_post.prompt', 'r') as file:
+                    pre_post = file.read()  # eg, Use SQLAlchemy to create a sqlite database named system/genai/temp/model.sqlite, with
+            prompt = pre_post + ' ' + self.project.from_genai  # experiment
+            prompt = prompt.replace('{{prompt}}', self.project.from_genai)
+        return prompt      
+
+    def ensure_system_dir_exists(self):
+        """
+        If missing, copy prototypes/manager/system -> os.getcwd()/system
+
+        cwd is typically a manager...
+        * eg als dev: ~/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer
+        * eg, user: ~/dev/ApiLogicServer/
+        * we need to create genai/temp files there
+        """
+
+        from_dir = self.project.api_logic_server_dir_path.joinpath('prototypes/manager')
+        to_dir = Path(os.getcwd())
+        to_dir_check = Path(to_dir).joinpath('system')
+        if not to_dir_check.exists():
+            copied_path = shutil.copytree(src=from_dir, dst=to_dir, dirs_exist_ok=True)
+
+
+    def get_logic_from_prompt(self) -> list[str]:
         """ Get logic from ChatGPT prompt
 
         Args:
@@ -99,6 +115,7 @@ class GenAI(object):
         Returns: list[str] of the prompt logic
         """
 
+        prompt = self.prompt
         prompt_array = prompt.split('\n')
         logic_text = """
     GenAI: Paste the following into Copilot Chat, and paste the result below.
@@ -157,8 +174,12 @@ class GenAI(object):
             log.error(f"\n\nError creating genai docs: {docs_dir}\n\n")
         pass
 
-    def genai_write_model_file(self, response_data: str):
-        """break response data into lines, throw away instructions, write model file to self.project.from_model
+    def fix_and_write_model_file(self, response_data: str):
+        """
+        1. break response data into lines
+        2. throw away instructions
+        3. ChatGPT work-arounds (decimal, indent, bogus relns)
+        4. write model file to self.project.from_model
 
         Args:
             response_data (str): the chatgpt response
@@ -168,20 +189,52 @@ class GenAI(object):
         model_class = ""
         line_num = 0
         writing = False
+        indents_to_remove = 0
         for each_line in response_array:
             line_num += 1
             if "```python" in each_line:
                 writing = True
             elif "```" in each_line:
                 writing = False
-            elif writing:
+                # count spaces before "```"
+                position = each_line.find("```")
+                if position == -1:
+                    return 0  # "```" not found in the line
+                indents_to_remove = each_line[:position].count(' ')                
+            elif writing:  # ChatGPT work-arounds
                 if 'Decimal' in each_line:  # Cap'n K, at your service
                     each_line = each_line.replace('Decimal', 'DECIMAL')
                     # other Decimal bugs: see api_logic_server_cli/prototypes/manager/system/genai/reference/errors/chatgpt_decimal.txt
+                if indents_to_remove > 0:
+                    each_line = each_line[indents_to_remove:]
+                if 'relationship(' in each_line:
+                    each_line = each_line.replace('    ', '    # ')
                 model_class += each_line + '\n'
         with open(f'{self.project.from_model}', "w") as model_file:
             model_file.write(model_class)
-        return self.project.from_model
+        
+        log.info(f'\nGenAI: model file created: {self.project.from_model}')
+
+    def save_files_to_system_genai_temp_project(self):
+        """
+        Copy the response to system/genai/temp/chatgpt_original.response
+
+        Copy the prompt to system/genai/temp/created_from.prompt
+        """
+        try:
+            to_dir = Path(os.getcwd())
+            gen_temp_dir = Path(to_dir).joinpath(f'system/genai/temp')
+            to_dir_save_dir = Path(to_dir).joinpath(f'system/genai/temp/{self.project.project_name}')
+            os.makedirs(to_dir_save_dir, exist_ok=True)
+            with open(f'{to_dir_save_dir.joinpath('genai.response')}', "w") as response_file:
+                response_file.write(self.response)
+            if self.project.gen_using_file == '':
+                pass
+                with open(f'{to_dir_save_dir.joinpath('genai.prompt')}', "w") as prompt_file:
+                    prompt_file.write(self.prompt)
+        except Exception as inst:
+            log.error(f"\n\nError {inst} creating genai docs: {str(gen_temp_dir)}\n\n")
+            pass
 
     def genai_gen_using_api(self, prompt: str) -> str:
         """_summary_
