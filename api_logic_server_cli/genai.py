@@ -24,6 +24,10 @@ class GenAI(object):
 
     developer then uses CoPilot to create logic (Rule.) from the prompt
 
+    --gen-using-file means retry from corrected response
+    * --using is required to get the project name
+        * project created along side this; maybe lose path and use cwd?
+
     Explore interim copilot access:
     https://stackoverflow.com/questions/76741410/how-to-invoke-github-copilot-programmatically
     https://docs.google.com/document/d/1o0TeNQtuT6moWU1bOq2K20IbSw4YhV1x_aFnKwo_XeU/edit#heading=h.3xmoi7pevsnp
@@ -39,7 +43,9 @@ class GenAI(object):
         """        
 
         self.project = project
-        log.info(f'\ngenai creating database/models from {self.project.from_genai}')
+        log.info(f'\ngenai creating database/models from prompt: {self.project.from_genai}')
+        if self.project.gen_using_file != '':
+            log.info(f'..     retry from [repaired] response file: {self.project.gen_using_file}')
         
         self.ensure_system_dir_exists()  # so we can write to system/genai/temp
 
@@ -58,8 +64,8 @@ class GenAI(object):
         if self.project.gen_using_file == '':
             log.info(f'\nInvoking AI, storing response: system/genai/temp/chatgpt_original.response')
             response_data = self.genai_gen_using_api(self.prompt)  # get response from ChatGPT API
-        else: # for retry from corrected prompt... eg system/genai/temp/chatgpt_retry.response
-            log.info(f'\nUsing [corrected] prompt from: {self.project.gen_using_file}')
+        else: # for retry from corrected response... eg system/genai/temp/chatgpt_retry.response
+            log.debug(f'\nUsing [corrected] response from: {self.project.gen_using_file}')
             with open(self.project.gen_using_file, 'r') as file:
                 model_raw = file.read()
             # convert model_raw into string array response_data
@@ -224,7 +230,7 @@ class GenAI(object):
         try:
             to_dir = Path(os.getcwd())
             gen_temp_dir = Path(to_dir).joinpath(f'system/genai/temp')
-            to_dir_save_dir = Path(to_dir).joinpath(f'system/genai/temp/{self.project.project_name}')
+            to_dir_save_dir = Path(to_dir).joinpath(f'system/genai/temp/{self.project.project_name_last_node}')
             os.makedirs(to_dir_save_dir, exist_ok=True)
             with open(f'{to_dir_save_dir.joinpath('genai.response')}', "w") as response_file:
                 response_file.write(self.response)

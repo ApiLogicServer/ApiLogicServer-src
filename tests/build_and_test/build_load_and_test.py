@@ -987,7 +987,8 @@ if Config.do_test_multi_reln:
     # see https://apilogicserver.github.io/Docs/Sample-Genai/#what-just-happened
     prompt_path = install_api_logic_server_path.joinpath('system/genai/examples/airport/airport_10.prompt')
     response_path = install_api_logic_server_path.joinpath('system/genai/examples/airport/airport_10.response')
-    # grr - creates project next to prompt
+    # grr - creates project next to prompt; repeat locally as:
+    # als genai --using=system/genai/examples/airport/airport_4.prompt --gen-using-file=system/genai/examples/airport/airport_4.response
     assert prompt_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
     result_genai = run_command(f'{set_venv} && als genai --using={prompt_path} --gen-using-file={response_path}',
         cwd=install_api_logic_server_path,
@@ -997,7 +998,6 @@ if Config.do_test_multi_reln:
 
     prompt_path = install_api_logic_server_path.joinpath('system/genai/examples/airport/airport_4.prompt')
     response_path = install_api_logic_server_path.joinpath('system/genai/examples/airport/airport_4.response')
-    # grr - creates project next to prompt
     assert prompt_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
     result_genai = run_command(f'{set_venv} && als genai --using={prompt_path} --gen-using-file={response_path}',
         cwd=install_api_logic_server_path,
