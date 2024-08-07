@@ -24,7 +24,7 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "  - GENAI - Retry from repaired chatgpt",
+            "name": "  - GENAI - Retry from repaired chatgpt response",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",

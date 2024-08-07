@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "11.00.11"
+__version__ = "11.00.12"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t08/06/2024 - 11.00.11: GenAI work-arounds for indents, bogus relns \n"\
+    "\t08/07/2024 - 11.00.12: GenAI work-arounds for indents, bogus relns, diagnostics \n"\
     "\t08/05/2024 - 11.00.10: merged JSONAPI features for Ontimize filter, BLT runs \n"\
     "\t08/03/2024 - 11.00.08: api_logic_server_run rework \n"\
     "\t08/02/2024 - 11.00.07: App Model Editor UI rework, docs and fix for kc and export \n"\
@@ -1830,6 +1830,7 @@ from database import <project.bind_key>_models
             create_utils.get_project_directory_and_api_name(self)
         self.project_directory_actual = os.path.abspath(self.project_directory)  # make path absolute, not relative (no /../)
         self.project_directory_path = Path(self.project_directory_actual)
+        self.project_name_last_node = Path(self.project_directory_path).name  # for prototype, project_name='.'
 
         # TODO - add this?  self.project_name = self.project_directory_path.parent.name if not self.project_directory_path.is_dir() else self.project_directory_path.name
 
@@ -1858,8 +1859,6 @@ from database import <project.bind_key>_models
         if self.extended_builder == "model_migrator":
             self.extended_builder = abspath(f'{self.api_logic_server_dir_path}/model_migrator/model_migrator_start.py')
             log.debug(f'0. Using model migrator: {self.extended_builder}')
-
-        self.project_name_last_node = Path(self.project_directory_path).name  # for prototype, project_name='.'
 
         if self.command.startswith("rebuild") or self.command == "add_db":
             log.debug("1. Not Deleting Existing Project")
