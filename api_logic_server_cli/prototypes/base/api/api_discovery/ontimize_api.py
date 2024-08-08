@@ -24,7 +24,7 @@ from api.system.expression_parser import parsePayload
 from api.system.gen_pdf_report import gen_report
 from api.system.gen_csv_report import gen_report as csv_gen_report
 from api.system.gen_pdf_report import export_pdf
-from api.system.gen_xlsx_report import xlsx_gen_report
+#from api.gen_xlsx_report import xlsx_gen_report
 
 # This is the Ontimize Bridge API - all endpoints will be prefixed with /ontimizeweb/services/rest
 # called by api_logic_server_run.py, to customize api (new end points, services).
@@ -91,8 +91,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         elif type == "pdf": 
             payload["entity"] = entity
             return export_pdf(api_clz, request, entity, queryParm, columns, columnTitles, attributes) 
-        elif type == "xlsx":
-            return xlsx_gen_report(api_clz, request, entity, queryParm, columns, columnTitles, attributes)
+        #elif type == "xlsx":
+        #    return xlsx_gen_report(api_clz, request, entity, queryParm, columns, columnTitles, attributes)
         
         return jsonify({"code":1,"message":f"Unknown export type {type}","data":None,"sqlTypes":None})   
     

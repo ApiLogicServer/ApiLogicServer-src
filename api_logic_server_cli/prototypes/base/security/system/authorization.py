@@ -456,8 +456,8 @@ def receive_do_orm_execute(orm_execute_state: ORMExecuteState ):
         if 'mapper' in orm_execute_state.bind_arguments:
             mapper = orm_execute_state.bind_arguments['mapper']
             class_name = mapper.class_.__name__   # mapper.mapped_table.fullname disparaged
-            if class_name == "Users":
-                # pass
+            if class_name == "User":
+                #pass
                 security_logger.debug('No grants - avoid recursion on User table')
             elif  session._proxied._flushing:  # type: ignore
                 security_logger.debug('No grants during logic processing')
