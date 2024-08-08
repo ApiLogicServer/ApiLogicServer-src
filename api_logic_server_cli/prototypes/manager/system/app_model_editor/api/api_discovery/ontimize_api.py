@@ -100,12 +100,7 @@ def add_service(
             return export_pdf(
                 api_clz, request, entity, queryParm, columns, columnTitles, attributes
             )
-        elif type == "xlsx":
-            from api.gen_xlsx_report import xlsx_gen_report
-
-            return xlsx_gen_report(
-                api_clz, request, entity, queryParm, columns, columnTitles, attributes
-            )
+        
         return jsonify(
             {
                 "code": 1,
