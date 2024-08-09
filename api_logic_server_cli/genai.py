@@ -168,14 +168,14 @@ class GenAI(object):
         try:
             docs_dir = self.project.project_directory_path.joinpath("docs")
             os.makedirs(docs_dir, exist_ok=True)
-            prompt_file_path = docs_dir.joinpath("created_from.prompt")
-            if self.project.gen_using_file == '':
+            prompt_file_path = docs_dir.joinpath("created_from_genai.prompt")
+            if self.project.gen_using_file == '':   # gen from prompt - save prompt and response
                 pass
                 with open(prompt_file_path, "w") as prompt_file:
                     prompt_file.write(self.prompt)
-                shutil.copyfile('system/genai/temp/chatgpt_original.response', docs_dir.joinpath("chatgpt_response.prompt"))
-            else:
-                shutil.copyfile(self.project.gen_using_file, docs_dir.joinpath("chatgpt_response.response"))
+                shutil.copyfile('system/genai/temp/chatgpt_original.response', docs_dir.joinpath("genai.response"))
+            else:                                   # gen from [corrected] response - save response only 
+                shutil.copyfile(self.project.gen_using_file, docs_dir.joinpath("genai.response"))
         except:
             log.error(f"\n\nError creating genai docs: {docs_dir}\n\n")
         pass

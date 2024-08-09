@@ -10,4 +10,4 @@ Don't use python DECIMAL type.
 Don't install additional packages.
 Don't use the faker pip package.
 
-Create a few rows sample data, use foreign key columns instead of relationship names for the data .
+Create a few rows sample data.
