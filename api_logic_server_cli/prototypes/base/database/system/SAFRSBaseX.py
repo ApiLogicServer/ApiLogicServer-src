@@ -26,7 +26,7 @@ def jsonapi_filter(cls):
         from api.system.expression_parser import advancedFilter
         expressions = advancedFilter(cls, args)
         
-    return query.filter(and_(*expressions))
+    return query.filter(or_(*expressions))
     
 
 class SAFRSBaseX(SAFRSBase):
