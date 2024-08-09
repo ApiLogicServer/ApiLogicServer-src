@@ -430,8 +430,8 @@ class ManyToOneRelationship(Relationship):
         """
         compute many to 1 class, assigning accessor names (tricky for multi_relns between same 2 tables)
 
-        * child_cls is
-        * parent_cls is the parent
+        * child_cls is the child    (self.source_cls)
+        * parent_cls is the parent  (self.target_cls)
         """
         super(ManyToOneRelationship, self).__init__(child_cls, parent_cls)
 
@@ -443,13 +443,13 @@ class ManyToOneRelationship(Relationship):
         self.foreign_key_constraint = constraint
 
         parent_accessor_from_fk = False
-        if len(column_names) > 1 :    
+        if len(column_names) > 1 :      # multi-column - use tablename
             self.preferred_name = inflect_engine.singular_noun(tablename) or tablename
-        else:  # single column - use column name but without '_id'
-            if ( colname.endswith('_id') or colname.endswith('_Id') ):
+        else:                           # single column - use column name but without '_id'
+            if ( colname.endswith('_id') or colname.endswith('_Id') ):  # eg arrival_airport_id
                 self.preferred_name = colname[:-3]
                 parent_accessor_from_fk = True
-            elif ( colname.endswith('id') or colname.endswith('Id') ):
+            elif ( colname.endswith('id') or colname.endswith('Id') ):  # eg WorksForDepartmentId
                 self.preferred_name = colname[:-2]
                 parent_accessor_from_fk = True
             else:
@@ -490,7 +490,7 @@ class ManyToOneRelationship(Relationship):
         self.child_accessor_name = self.source_cls + "List"
         """ child accessor (typically child (target_class) + "List") """
 
-        do_use_fk_for_name = False
+        do_use_fk_for_name = False  # name from fk column name, even if not multi-reln (disabled for compatibility)
         if False and parent_accessor_from_fk:
             pass  # parent_accessor_name is already unique (eg, Employee.WorksForDepartment)
             self.child_accessor_name += str(multi_reln_count)
@@ -504,10 +504,20 @@ class ManyToOneRelationship(Relationship):
             if parent_accessor_from_fk:
                 pass  # parent_accessor_name is already unique (eg, Employee.WorksForDepartment)
                 self.child_accessor_name += str(multi_reln_count)
-                if self.parent_accessor_name.endswith(self.target_cls):
-                    self.child_accessor_name  = \
-                        self.parent_accessor_name[0:len(self.target_cls)-2] + self.source_cls + "List"
-                    pass  # (eg, Department.WorksForEmployeeList)
+                parent_accessor_name_lower = self.parent_accessor_name.lower()
+                target_cls_lower = self.target_cls.lower()  # bugfix - airport vs Airport
+                if parent_accessor_name_lower.endswith(target_cls_lower):
+                    # eg, departure_airport and airport     --> child_accessor_name = departureFlightList
+                    # eg, worksfordepartment and department --> child_accessor_name = WorksForEmployeeList
+                    reln_prefix = self.parent_accessor_name[0: \
+                                            len(parent_accessor_name_lower) - len(self.target_cls)]
+                    if reln_prefix.endswith("_"):
+                        reln_prefix = reln_prefix[0: len(reln_prefix)-1]
+                    self.child_accessor_name  = reln_prefix + self.source_cls + "List"
+                # if self.parent_accessor_name.endswith(self.target_cls):
+                #     self.child_accessor_name  = \
+                #         self.parent_accessor_name[0:len(self.target_cls)-2] + self.source_cls + "List"
+                #     pass  # (eg, Department.WorksForEmployeeList)
             else:
                 self.parent_accessor_name += str(multi_reln_count)  # (Entity/TabGroup)??
                 self.child_accessor_name += str(multi_reln_count)
