@@ -287,7 +287,7 @@ def advancedFilter(cls, args) -> any:
         attr_name = flt.get("lop")
         attr_val = flt.get("rop")
         if attr_name != "id" and attr_name not in cls._s_jsonapi_attrs:
-            raise ValidationError(f'Invalid filter "{filfltt}", unknown attribute "{attr_name}"')
+            raise ValidationError(f'Invalid filter "{flt}", unknown attribute "{attr_name}"')
 
         op_name = flt.get("op", "").strip("_").lower()
         attr = cls._s_jsonapi_attrs[attr_name] if attr_name != "id" else cls.id
@@ -299,7 +299,7 @@ def advancedFilter(cls, args) -> any:
             # => attr is Column or InstrumentedAttribute
             like = getattr(attr, op_name)
             #query = query.filter(or_(attr, attr_val))
-            expressions.append(attr.in_( clean(attr_val) ))
+            expressions.append(attr.ilike( clean(attr_val) ))
         elif op_name.lower() in ["not like","notlike","notin"]:
         #    # => attr is Column or InstrumentedAttribute
         #    notlike = getattr(attr, op_name)
@@ -354,7 +354,7 @@ class ExpressionParser:
         if expr is None:
             return
         lop = expr["lop"]
-        op = expr["op"]
+        op = expr["op"].lower()
         rop = expr["rop"]
 
         self.basic_expr = BasicExpression(lop, op, rop, sqltypes)
@@ -565,13 +565,21 @@ if __name__ == "__main__":
             }
         }
     filter = {"filter":{"@filter_expression":{"lop":{"lop":"Id","op":"eq","rop":10259},"op":"and","rop":{"lop":"CustomerId","op":"eq","rop":"CENTC"}}}}
+    filter = 'filter[@basic_expression]={"lop":{"lop":{"lop":{"lop":"NAME","op":"LIKE","rop":"%25ala%25"},"op":"OR","rop":{"lop":"SURNAME","op":"LIKE","rop":"%25ala%25"}},"op":"OR","rop":{"lop":"EMAIL","op":"LIKE","rop":"%25ala%25"}},"op":"OR","rop":{"lop":"ADDRESS","op":"LIKE","rop":"%25ala%25"}}'
+    filter = {"filter":{"@basic_expression":
+        {"lop":{"lop":{"lop":
+            {"lop":"CompanyName","op":"LIKE","rop":"%25Al%25"},"op":"OR","rop":
+                {"lop":"ContactName","op":"LIKE","rop":"%25A%25"}},"op":"OR","rop":
+                    {"lop":"OrderCount","op":"GE","rop": 1}},"op":"OR","rop":
+                        {"lop":"Address","op":"LIKE","rop":"%25ala%25"}}}}
     import urllib
     #print(urllib.parse.quote(json.dumps(filter)))
     x = urllib.parse.quote("filter[FirstName][like]A")
     #print(x)
     # from database.models import models
     #filter = {"filter": {"@basic_expression": {"lop": "BALANCE", "op": "=", "rop": 35000}}}
-    sqlWhere, filters, expressions = parseFilter(full_expr['filter'],None)
+    print(urllib.parse.quote(json.dumps(filter)))
+    sqlWhere, filters, expressions = parseFilter(filter,None)
     print(sqlWhere)
     print(filters)
     print(expressions)
