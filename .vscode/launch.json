@@ -306,7 +306,46 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "3 - Run Last Project",
+            "name": "3 - Create blt/airport_10 from RESPONSE",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["genai",
+                "--using=airport_10",
+                "--gen-using-file=${workspaceFolder}/api_logic_server_cli/prototypes/manager/system/genai/examples/airport/airport_10.response"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "    - Create blt/airport_4 from RESPONSE",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["genai",
+                "--using=airport_4",
+                "--gen-using-file=${workspaceFolder}/api_logic_server_cli/prototypes/manager/system/genai/examples/airport/airport_4.response"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "    - Create blt/elections from RESPONSE",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["genai",
+                "--using=elections",
+                "--gen-using-file=${workspaceFolder}/api_logic_server_cli/prototypes/manager/system/genai/examples/elections/elections.response"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "4 - Run Last Project",
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/api_logic_server_cli",
@@ -400,7 +439,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "4 - Create Sql/Server",
+            "name": "5 - Create Sql/Server",
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/api_logic_server_cli",
@@ -426,7 +465,7 @@
             "console": "internalConsole" 
         },
         {
-            "name": "5 - Create Postgres (servers)",
+            "name": "6 - Create Postgres (servers)",
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/api_logic_server_cli",
@@ -510,7 +549,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "6 - ORACLE-HR",
+            "name": "7 - ORACLE-HR",
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/api_logic_server_cli",
@@ -553,7 +592,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "7 - Create MySql (servers) - classic models",
+            "name": "8 - Create MySql (servers) - classic models",
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/api_logic_server_cli",
@@ -679,7 +718,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "8 - Create servers/sample_ai",
+            "name": "9 - Create servers/sample_ai",
             "type": "debugpy",
             "request": "launch",
             "env": {"APILOGICSERVER_DEBUG": "True"},
@@ -736,32 +775,6 @@
                 "--project_name=sample_ai_copilot",
                 "--from-model=.",
                 "--db_url=sqlite:///sample_ai_copilot.sqlite"],
-            "console": "integratedTerminal"
-        },
-        {
-            "name": "    - Create blt/airport_10 from RESPONSE",
-            "type": "debugpy",
-            "request": "launch",
-            "env": {"APILOGICSERVER_DEBUG": "True"},
-            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
-            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
-            "redirectOutput": true,
-            "args": ["genai",
-                "--using=airport",
-                "--gen-using-file=${workspaceFolder}/api_logic_server_cli/prototypes/manager/system/genai/examples/airport/airport_10.response"],
-            "console": "integratedTerminal"
-        },
-        {
-            "name": "    - Create blt/airport_4 from RESPONSE",
-            "type": "debugpy",
-            "request": "launch",
-            "env": {"APILOGICSERVER_DEBUG": "True"},
-            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
-            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
-            "redirectOutput": true,
-            "args": ["genai",
-                "--using=airport",
-                "--gen-using-file=${workspaceFolder}/api_logic_server_cli/prototypes/manager/system/genai/examples/airport/airport_4.response"],
             "console": "integratedTerminal"
         },
         {
@@ -839,7 +852,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "9 - nw- NW_No_Cust",
+            "name": "10 - nw- NW_No_Cust",
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/api_logic_server_cli",

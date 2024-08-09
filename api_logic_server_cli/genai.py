@@ -72,8 +72,8 @@ class GenAI(object):
             response_data = model_raw  # '\n'.join(model_raw)
         self.response = response_data
 
-        self.save_files_to_system_genai_temp_project()  # save prompt and response
         self.fix_and_write_model_file(response_data)
+        self.save_files_to_system_genai_temp_project()  # save prompt, response and models.py
 
 
     def get_prompt(self) -> str:
@@ -223,9 +223,11 @@ class GenAI(object):
 
     def save_files_to_system_genai_temp_project(self):
         """
-        Copy the response to system/genai/temp/chatgpt_original.response
+        Save the response to system/genai/temp/{project}/genai.response
 
-        Copy the prompt to system/genai/temp/created_from.prompt
+        Save the prompt to system/genai/temp/{project}/genai.prompt
+
+        Copy models.py to system/genai/temp/{project}/create_db_models.py
         """
         try:
             to_dir = Path(os.getcwd())
@@ -238,6 +240,8 @@ class GenAI(object):
                 pass
                 with open(f'{to_dir_save_dir.joinpath('genai.prompt')}', "w") as prompt_file:
                     prompt_file.write(self.prompt)
+            shutil.copyfile(src='system/genai/temp/model.py', 
+                            dst=to_dir_save_dir.joinpath('create_db_models.py'))
         except Exception as inst:
             log.error(f"\n\nError {inst} creating genai docs: {str(gen_temp_dir)}\n\n")
             pass
