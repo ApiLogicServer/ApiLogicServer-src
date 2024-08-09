@@ -504,16 +504,18 @@ class ManyToOneRelationship(Relationship):
             if parent_accessor_from_fk:
                 pass  # parent_accessor_name is already unique (eg, Employee.WorksForDepartment)
                 self.child_accessor_name += str(multi_reln_count)
+                reln_prefix = self.parent_accessor_name  # eg, airport_4 - origin
                 parent_accessor_name_lower = self.parent_accessor_name.lower()
                 target_cls_lower = self.target_cls.lower()  # bugfix - airport vs Airport
                 if parent_accessor_name_lower.endswith(target_cls_lower):
                     # eg, departure_airport and airport     --> child_accessor_name = departureFlightList
+                    # eg, origin and airport [4]   FAILS    --> child_accessor_name = FlightList1
                     # eg, worksfordepartment and department --> child_accessor_name = WorksForEmployeeList
                     reln_prefix = self.parent_accessor_name[0: \
                                             len(parent_accessor_name_lower) - len(self.target_cls)]
                     if reln_prefix.endswith("_"):
                         reln_prefix = reln_prefix[0: len(reln_prefix)-1]
-                    self.child_accessor_name  = reln_prefix + self.source_cls + "List"
+                self.child_accessor_name  = reln_prefix + self.source_cls + "List"
                 # if self.parent_accessor_name.endswith(self.target_cls):
                 #     self.child_accessor_name  = \
                 #         self.parent_accessor_name[0:len(self.target_cls)-2] + self.source_cls + "List"
