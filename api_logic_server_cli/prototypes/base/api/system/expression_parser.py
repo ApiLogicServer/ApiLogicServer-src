@@ -11,23 +11,38 @@ import json
 from flask import request
 from sqlalchemy.orm import joinedload, Query
 from operator import not_, and_, or_, eq, ne, lt, le, gt, ge
-BASIC_EXPRESSION = "@basic_expression"
+from sqlalchemy import or_ as OR_
+from sqlalchemy import and_ as AND_
+
+BASIC_EXPRESSION =  "@basic_expression"
+"""Ontimize Advanced Filter Expressions"""
 FILTER_EXPRESSION = "@filter_expression"
+"""Ontimize Advanced Filter Expressions"""
 # Ontimize Advanced Filter Expressions
-LESS = "<"
-LESS_EQUAL = "<="
-EQUAL = "="
-MORE_EQUAL = ">="
-MORE = ">"
-NULL = " IS NULL "
-NOT_EQUAL = "<>"
-NOT_NULL = " IS NOT NULL "
-LIKE = " LIKE "
-NOT_LIKE = " NOT LIKE "
-OR = " OR "
-AND = " AND "
-OR_NOT = " OR NOT "
-AND_NOT = " AND NOT "
+ONTIMIZE_OPERATORS = {
+    'LESS' : " < ",
+    'LESS_EQUAL' : " <= ",
+    'EQUAL' : " = ",
+    'EQ' : " = ",
+    'GT' : " > ",
+    'GE' : " >= ",
+    "LT" :  " < ",
+    "LE" : " <= ",
+    "NE" : " <> ",
+    "IN" : " IN ",
+    "NOT_IN" : " NOT IN ",
+    'MORE_EQUAL' : " >= ",
+    'MORE' : " > ",
+    'NULL' : " IS NULL ",
+    'NOT_EQUAL' : "<>",
+    'NOT_NULL' : " IS NOT NULL ",
+    'LIKE' : " LIKE ",
+    'NOT_LIKE' : " NOT LIKE ",
+    'OR' : " OR ",
+    'AND' : " AND ",
+    'OR_NOT' : " OR NOT ",
+    'AND_NOT' : " AND NOT "
+}
 
 
 class DotDict(dict):
@@ -69,31 +84,25 @@ def parseFilter(filter: dict, sqltypes: any):
     sql_where = ""
     join = ""
     expr = None
-    expressions = []
     for f, value in filter.items():  
         if f in [BASIC_EXPRESSION]:
             if expr := ExpressionParser(filter, BASIC_EXPRESSION, sqltypes):
                 sql_where += join + expr.get_sql_where()
                 filters = expr.get_filters()
                 join = " OR "
-                expressions = expr.get_expressions()
         elif f in [FILTER_EXPRESSION]:
             if expr := ExpressionParser(filter, FILTER_EXPRESSION, sqltypes):
                 sql_where += join + expr.get_sql_where()
                 filters = expr.get_filters()
                 join = " OR "
-                expressions = expr.get_expressions()
         else:
             q = "'" if isinstance(value, str) else ""
             sql_where += f'{join} "{f}" = {q}{value}{q}'
-            #name = clz._s_jsonapi_attrs[f] if f != "id" else clz.id
-            filters.append({"lop": f, "op": "eq", "rop": value})
-            expressions.append({"join": join, "lop": f, "op": "eq", "rop": value})  
+            #name = clz._s_jsonapi_attrs[f] if f !: "id" else clz.id
+            filters.append({"join": join,"lop": f, "op": "eq", "rop": value})
             join = " AND "
             
-    if expr:
-        for e in expr.expressions : print(e," : ", e.right.value)
-    return sql_where, filters, expressions
+    return sql_where, filters
 
 def fixup_data(data, sqltypes):
     if data:
@@ -130,6 +139,10 @@ def _parseFilter(filter: dict, sqltypes: any):
         a = " and "
     return None if filter_result == "" else filter_result
 
+class ExpressionHolder():
+    def __init__(self, expr: any, join: str):
+        self.expr = expr
+        self.join = join
 
 class BasicExpression:
     def __init__(self, lop: any = None, op: str = None, rop: any = None, sqltypes = None):
@@ -139,7 +152,6 @@ class BasicExpression:
         self.join_condition = ""
         self.sqltypes = sqltypes
         self.filters = []
-        self.expressions = []
 
         # Left Operator
         if isinstance(lop, dict):
@@ -161,13 +173,18 @@ class BasicExpression:
             self.rop_ext.append(be)
         #basic {lop: "BALANCE", op: "<=", rop: 35000}
         attr_name = lop
-        #if attr_name != "id" and attr_name not in cls._s_jsonapi_attrs:
+        #if attr_name !: "id" and attr_name not in cls._s_jsonapi_attrs:
         #    raise ValidationError(f'Invalid filter "lop:{lop}, op: {op}, rop: {rop}", unknown attribute "{attr_name}"')
-        #attr = clz._s_jsonapi_attrs[attr_name] if attr_name != "id" else clz.id
+        #attr = clz._s_jsonapi_attrs[attr_name] if attr_name !: "id" else clz.id
+        ont_op = self.get_ontimize_operator(op)
         self.lop = attr_name
-        self.op = op
+        self.op = ont_op
         self.rop = rop
 
+    def get_ontimize_operator(self, op: str = '='):
+        op_ = op.strip().upper()
+        return ONTIMIZE_OPERATORS[op_] if op_ in ONTIMIZE_OPERATORS else self.op
+    
     def get_sql_where(self):
         self.where(self)
         return self.sql_where
@@ -193,9 +210,9 @@ class BasicExpression:
                     value = datetime.fromtimestamp(value / 1000).strftime("%Y-%m-%d %H:%M:%S")
                 else:
                     value = datetime.fromtimestamp(value / 1000).strftime("%Y-%m-%d")
-            q = "" if expr.is_numeric(value) else "'"
-            self.filters.append({"lop": expr.lop, "op": expr.op, "rop": f"{q}{value}{q}"})
-            self.expressions.append({"join": self.join_condition, "lop": expr.lop, "op": expr.op, "rop": f"{q}{value}{q}"})
+            q =  "" if expr.is_numeric(value) else "'"
+            
+            self.filters.append({"join": self.join_condition,"lop": expr.lop, "op": expr.op, "rop": f"{q}{value}{q}"})
             return f'{self.join_condition} "{expr.lop}" {expr.op} {q}{value}{q}'
         return ""
 
@@ -209,7 +226,7 @@ def advancedFilter(cls, args) -> any:
     import re
     import urllib.parse
     import operator
-
+    sqlWhere = ""
     for req_arg, item in args.items():
         if not req_arg.startswith("filter"):
             continue
@@ -222,11 +239,11 @@ def advancedFilter(cls, args) -> any:
             val = item
             
         if isinstance(val, list):
-            # this is from sra 
+            # this is from sra ? default and/or to join
             # '[{"name":"Id","op":"ilike","val":"%AL%"},{"name":"CompanyName","op":"ilike","val":"%AL%"}]'
             for item in val:
                 name = item['name']
-                attr = cls._s_jsonapi_attrs[name] if name != "id" else cls.id   
+                attr = cls._s_jsonapi_attrs[name] if name !="id" else cls.id   
                 op = item['op']
                 if op in ["in"]:
                     expressions.append(attr.in_(item['val']))
@@ -235,7 +252,7 @@ def advancedFilter(cls, args) -> any:
                 else:
                     expressions.append(attr.eq(clean(item['val'])))
             for e in expressions : print(e," : ", e.right.value)
-            return expressions
+            return expressions, sqlWhere
         else:
             if isinstance(val, dict):
                 #if FILTER_EXPRESSION in item or BASIC_EXPRESSION in item:
@@ -243,7 +260,8 @@ def advancedFilter(cls, args) -> any:
                     # Ontimize Advanced Filter
                     #{'lop': 'CustomerId', 'op': 'LIKE', 'rop': '%A%'}
                     #TODO - modify this to return expressions (and_ & or_)
-                    sqlWhere, filters, expr = parseFilter(val['filter'], None)
+                    sqlWhere, filters = parseFilter(val['filter'], None)
+                    return expressions, sqlWhere
                 else:
                     #{'id': '1', 'name': 'John'}
                     for f, value in val.items():
@@ -281,38 +299,49 @@ def advancedFilter(cls, args) -> any:
             if filter_attr and filter_attr not in ["page","orderBy","pageSize","offset","limit","sort","order","fields","include"]:
                 filters.append({"lop": req_arg, "op": "eq", "rop": val})
 
-        query = cls._s_query
-
+    #query = cls._s_query
+    join =  ""
+    expression_holder= []
     for flt in filters:
         attr_name = flt.get("lop")
         attr_val = flt.get("rop")
         if attr_name != "id" and attr_name not in cls._s_jsonapi_attrs:
             raise ValidationError(f'Invalid filter "{flt}", unknown attribute "{attr_name}"')
 
-        op_name = flt.get("op", "").strip("_").lower()
+        op_name = flt.get("op", "").strip().upper()
+        if not op_name in ONTIMIZE_OPERATORS:
+            raise ValidationError(f'Invalid filter {flt}, unknown operator: {op_name}')
+        #join = flt.get("join", "").strip("_").lower()   
         attr = cls._s_jsonapi_attrs[attr_name] if attr_name != "id" else cls.id
-        if op_name in ["in"]:
-            op = getattr(attr, op_name + "_")
-            #query = query.filter(op(attr_val))
-            expressions.append(attr.in_( clean(attr_val) ))
-        elif op_name.lower() in ["like", "ilike", "match"]:
-            # => attr is Column or InstrumentedAttribute
-            like = getattr(attr, op_name)
-            #query = query.filter(or_(attr, attr_val))
+        if op_name in ["IN"]:
+            expr = ExpressionHolder(expr=attr.in_(clean(attr_val)), join=join)
+            expression_holder.append(expr)
+        elif op_name in ["LIKE", "ILIKE", "MATCH"]:
             expressions.append(attr.ilike( clean(attr_val) ))
-        elif op_name.lower() in ["not like","notlike","notin"]:
-        #    # => attr is Column or InstrumentedAttribute
-        #    notlike = getattr(attr, op_name)
-        #    query = query.filter(notlike(attr, attr_val))
-            expressions.append(attr.not_in_( clean(attr_val) ))
-        elif not hasattr(operator, op_name):
-            raise ValidationError(f'Invalid filter "{flt}", unknown operator "{op_name}"')
+            expr = ExpressionHolder(expr=attr.ilike(clean(attr_val)), join=join)
+            expression_holder.append(expr)
+        elif op_name in ["NOTLIKE","NOTIN"]:
+            expr = ExpressionHolder(expr=attr.not_in_(clean(attr_val)), join=join)
+            expression_holder.append(expr)
+        elif op_name in ["EQ","NE","LT","LE","GT","GE"]:
+            op = ONTIMIZE_OPERATORS[op_name] if op_name in ONTIMIZE_OPERATORS else "="
+            #expr = ExpressionHolder(expr=op(attr, clean(attr_val)), join=join)
+            #expression_holder.append(expr)
+            sqlWhere += f'{join} "{attr_name}" {op} {clean(attr_val)}'
+            
+    final_expr = []
+    expressions = []
+    for expr in expression_holder:
+        join = expr.join
+        expressions.append(expr.expr)
+        if 'or' in join:
+            final_expr.append(OR_(*expr.expr))
+        elif 'and' in join:
+            final_expr.append(AND_(*expr.expr))
         else:
-            op = getattr(operator, op_name) or and_
-            expressions.append(op(attr, clean(attr_val)))
-   
+            final_expr.append(expr.expr)
     for e in expressions : print(e," : ", e.right.value)
-    return expressions #query.filter(or_(*expressions))
+    return expressions, sqlWhere #query.filter(or_(*expressions))
 
 def clean(val):
     if val and isinstance(val, str):
