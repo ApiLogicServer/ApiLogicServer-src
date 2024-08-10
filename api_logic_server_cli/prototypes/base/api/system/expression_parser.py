@@ -34,10 +34,13 @@ ONTIMIZE_OPERATORS = {
     'MORE_EQUAL' : " >= ",
     'MORE' : " > ",
     'NULL' : " IS NULL ",
+    'IS_NULL' : " IS NULL ",
     'NOT_EQUAL' : "<>",
     'NOT_NULL' : " IS NOT NULL ",
+    'NOTNULL' : " IS NOT NULL ",
     'LIKE' : " LIKE ",
     'NOT_LIKE' : " NOT LIKE ",
+    'NOTLIKE' : " NOT LIKE ",
     'OR' : " OR ",
     'AND' : " AND ",
     'OR_NOT' : " OR NOT ",
@@ -183,7 +186,7 @@ class BasicExpression:
 
     def get_ontimize_operator(self, op: str = '='):
         op_ = op.strip().upper()
-        return ONTIMIZE_OPERATORS[op_] if op_ in ONTIMIZE_OPERATORS else self.op
+        return ONTIMIZE_OPERATORS[op_] if op_ in ONTIMIZE_OPERATORS else op_
     
     def get_sql_where(self):
         self.where(self)
@@ -244,7 +247,7 @@ def advancedFilter(cls, args) -> any:
             for item in val:
                 name = item['name']
                 attr = cls._s_jsonapi_attrs[name] if name !="id" else cls.id   
-                op = item['op']
+                op = item['op'].lower()
                 if op in ["in"]:
                     expressions.append(attr.in_(item['val']))
                 elif op in ["like","ilike"]:
@@ -325,9 +328,10 @@ def advancedFilter(cls, args) -> any:
             expression_holder.append(expr)
         elif op_name in ["EQ","NE","LT","LE","GT","GE"]:
             op = ONTIMIZE_OPERATORS[op_name] if op_name in ONTIMIZE_OPERATORS else "="
-            #expr = ExpressionHolder(expr=op(attr, clean(attr_val)), join=join)
-            #expression_holder.append(expr)
             sqlWhere += f'{join} "{attr_name}" {op} {clean(attr_val)}'
+        elif op_name in ["NULL","IS_NULL","NOTNULL","NOT_NULL"]:
+            op = ONTIMIZE_OPERATORS[op_name] if op_name in ONTIMIZE_OPERATORS else "IS NULL"
+            sqlWhere += f'{join} "{attr_name}" {op}'
             
     final_expr = []
     expressions = []
@@ -599,8 +603,8 @@ if __name__ == "__main__":
         {"lop":{"lop":{"lop":
             {"lop":"CompanyName","op":"LIKE","rop":"%25Al%25"},"op":"OR","rop":
                 {"lop":"ContactName","op":"LIKE","rop":"%25A%25"}},"op":"OR","rop":
-                    {"lop":"OrderCount","op":"GE","rop": 1}},"op":"OR","rop":
-                        {"lop":"Address","op":"LIKE","rop":"%25ala%25"}}}}
+                    {"lop":"OrderCount","op":"NE","rop": 1}},"op":"OR","rop":
+                        {"lop":"Country","op":"IS_NULL","rop":""}}}}
     import urllib
     #print(urllib.parse.quote(json.dumps(filter)))
     x = urllib.parse.quote("filter[FirstName][like]A")
