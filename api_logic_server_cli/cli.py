@@ -554,7 +554,7 @@ def tutorial(ctx, create):
               default=f'sqlite',
               help="SQLAlchemy Database URL\n")
 @click.option('--genai-version', 'genai_version',
-              default='gpt-3.5-turbo',
+              default='gpt-4o',
               help="Eg, gpt-3.5-turbo, gpt-4o")
 @click.option('--gen-using-file', 'gen_using_file',
               default='',
