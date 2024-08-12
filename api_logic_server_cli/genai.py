@@ -48,14 +48,9 @@ class GenAI(object):
             log.info(f'..     retry from [repaired] response file: {self.project.gen_using_file}')
         
         self.ensure_system_dir_exists()  # so we can write to system/genai/temp
+        self.prompt = self.delete_temp_files()
 
         self.project.from_model = f'system/genai/temp/model.py' # we always write the model to this file
-
-        Path('system/genai/temp/model.sqlite').unlink(missing_ok=True)  # delete temp (work) files
-        Path('system/genai/temp/model.py').unlink(missing_ok=True)
-        if self.project.gen_using_file == '':  # clean up unless retrying from chatgpt_original.response
-            Path('system/genai/temp/chatgpt_original.response').unlink(missing_ok=True)
-            Path('system/genai/temp/chatgpt_retry.response').unlink(missing_ok=True)
         
         self.prompt = self.get_prompt()  # compute self.prompt, from file or text argument
 
@@ -75,6 +70,13 @@ class GenAI(object):
         self.fix_and_write_model_file(response_data)
         self.save_files_to_system_genai_temp_project()  # save prompt, response and models.py
 
+    def delete_temp_files(self):
+        """Delete temp files created by genai ((system/genai/temp -- models, responses)"""
+        Path('system/genai/temp/model.sqlite').unlink(missing_ok=True)  # delete temp (work) files
+        Path('system/genai/temp/model.py').unlink(missing_ok=True)
+        if self.project.gen_using_file == '':  # clean up unless retrying from chatgpt_original.response
+            Path('system/genai/temp/chatgpt_original.response').unlink(missing_ok=True)
+            Path('system/genai/temp/chatgpt_retry.response').unlink(missing_ok=True)
 
     def get_prompt(self) -> str:
         """ Get prompt from file or text argument
@@ -200,19 +202,25 @@ class GenAI(object):
             line_num += 1
             if "```python" in each_line:
                 writing = True
+                # count spaces before "```"
+                next_line = response_array[line_num+1]
+                position = next_line.find("```")
+                if position > 0:
+                    indents_to_remove = next_line[:position].count(' ')                
             elif "```" in each_line:
                 writing = False
-                # count spaces before "```"
-                position = each_line.find("```")
-                if position == -1:
-                    return 0  # "```" not found in the line
-                indents_to_remove = each_line[:position].count(' ')                
             elif writing:  # ChatGPT work-arounds
-                if 'Decimal' in each_line:  # Cap'n K, at your service
-                    each_line = each_line.replace('Decimal', 'DECIMAL')
+                if 'Decimal,' in each_line:  # Cap'n K, at your service
+                    each_line = each_line.replace('Decimal,', 'DECIMAL,')
                     # other Decimal bugs: see api_logic_server_cli/prototypes/manager/system/genai/reference/errors/chatgpt_decimal.txt
+                if ', Decimal' in each_line:  # Cap'n K, at your service
+                    each_line = each_line.replace(', Decimal', ', DECIMAL')
+                if 'rom decimal import Decimal' in each_line:
+                    each_line = each_line.replace('from decimal import Decimal', 'import decimal')
                 if indents_to_remove > 0:
                     each_line = each_line[indents_to_remove:]
+                if '=Decimal(' in each_line:
+                    each_line = each_line.replace('=Decimal(', '=decimal.Decimal(')
                 if 'relationship(' in each_line:
                     each_line = each_line.replace('    ', '    # ')
                 model_class += each_line + '\n'

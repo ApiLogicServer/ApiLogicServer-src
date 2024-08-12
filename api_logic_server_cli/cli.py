@@ -572,7 +572,7 @@ def genai(ctx, using, db_url, gen_using_file: click.BOOL, genai_version: str, re
     # if no extension on using, then that's the prompt (no file)
     # if using.endswith('.prompt'):
     #    using = using.replace('.prompt','')
-    project_name = using
+    project_name = using  # this is the prompt file (or project if gen_using_file specified)
     if '.' in using:
         project_name = using.split('.')[0]
     project_name  = project_name.replace(' ', '_')
@@ -584,9 +584,20 @@ def genai(ctx, using, db_url, gen_using_file: click.BOOL, genai_version: str, re
         try:
             failed = False
             PR.ProjectRun(command="create", project_name=project_name, db_url=db_url, from_genai=using, gen_using_file=gen_using_file, genai_version=genai_version)
+            if do_force_failure := False:
+                if try_number < 3:
+                    raise Exception("Forced Failure for Internal Testing")
             break
         except Exception as e:
             log.error(f"\n\nGenai [#Failed With Error: {e}")
+
+            manager_dir = Path(os.getcwd())  # rename save dir (append retry) for diagnosis
+            to_dir_save_dir = Path(manager_dir).joinpath(f'system/genai/temp/{project_name}')
+            to_dir_save_dir_retry = Path(manager_dir).joinpath(f'system/genai/temp/{project_name}_{try_number}')
+            if to_dir_save_dir_retry.exists():
+                shutil.rmtree(to_dir_save_dir_retry)
+            to_dir_save_dir.rename(to_dir_save_dir_retry)
+
             failed = True
             try_number += 1
     if failed:

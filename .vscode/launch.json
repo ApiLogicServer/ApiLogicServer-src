@@ -56,7 +56,6 @@
             "request": "launch",
             "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
             "env": {"APILOGICSERVER_DEBUG": "True",
-                    "APILOGICSERVER_GENAI_VERSION": "gpt-3.5-turbo"
                     },
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
@@ -89,7 +88,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "     - genai NO API",
+            "name": "     - genai RETRY from response (no ChatGPT)",
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
