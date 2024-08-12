@@ -15,7 +15,7 @@ Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 __version__ = "11.00.21"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t08/12/2024 - 11.00.22: save responses for each try, ignore .sh code, decimal fixes  \n"\
+    "\t08/12/2024 - 11.00.22: dflt gpt4, save responses for each try, ignore .sh code, decimal fixes  \n"\
     "\t08/09/2024 - 11.00.21: Same as 11.00.20, to test Web/GenAI release process \n"\
     "\t08/09/2024 - 11.00.20: GenAI hardening, diagnostics \n"\
     "\t08/02/2024 - 11.00.07: App Model Editor UI rework, docs and fix for kc and export \n"\
