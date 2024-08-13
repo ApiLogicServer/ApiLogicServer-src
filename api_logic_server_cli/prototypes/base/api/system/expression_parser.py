@@ -70,8 +70,8 @@ def parsePayload(clz, payload: str):
     :data JSON 
     """
     sqltypes = payload.get("sqltypes") or None
-    expressions = advancedFilter(clz, payload)
-    _filter, filter, expr = parseFilter(payload.get("filter", {}), sqltypes)
+    expressions, sqlWhere = advancedFilter(clz, payload)
+    _filter, filter = parseFilter(payload.get("filter", {}), sqltypes)
     columns: list = payload.get("columns") or []
     offset: int = payload.get("offset") or 0
     pagesize: int = payload.get("pageSize") or 100
