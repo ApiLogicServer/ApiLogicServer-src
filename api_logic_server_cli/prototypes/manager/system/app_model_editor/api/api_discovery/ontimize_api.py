@@ -22,17 +22,20 @@ import os
 from pathlib import Path
 from api.system.expression_parser import parsePayload
 from api.system.gen_pdf_report import gen_report
+from api.system.gen_csv_report import gen_report as csv_gen_report
+from api.system.gen_pdf_report import export_pdf
+#from api.gen_xlsx_report import xlsx_gen_report
 
+# This is the Ontimize Bridge API - all endpoints will be prefixed with /ontimizeweb/services/rest
 # called by api_logic_server_run.py, to customize api (new end points, services).
 # separate from expose_api_models.py, to simplify merge if project recreated
+# version 11.x - api_logic_server_cli/prototypes/ont_app/prototype/api/api_discovery/ontimize_api.py
 
 app_logger = logging.getLogger(__name__)
 
-db = safrs.DB
-session = db.session
+db = safrs.DB 
+session = db.session 
 _project_dir = None
-
-
 class DotDict(dict):
     """dot.notation access to dictionary attributes"""
 
@@ -42,11 +45,10 @@ class DotDict(dict):
     __delattr__ = dict.__delitem__
 
 
-def add_service(
-    app, api, project_dir, swagger_host: str, PORT: str, method_decorators=[]
-):
-
-    # def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
+def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_decorators = []):
+    pass
+    
+#def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
     # sourcery skip: avoid-builtin-shadow
     """ Ontimize API - new end points for services 
     
@@ -87,29 +89,17 @@ def add_service(
         api_clz = resource["model"]
         resources = getMetaData(api_clz.__name__)
         attributes = resources["resources"][api_clz.__name__]["attributes"]
-        if type in ["csv", "CSV"]:
-            from api.gen_csv_report import gen_report as csv_gen_report
-
-            return csv_gen_report(
-                api_clz, request, entity, queryParm, columns, columnTitles, attributes
-            )
-        elif type == "pdf":
-            from api.gen_pdf_report import export_pdf
-
+        if type in ["csv",'CSV']:
+            return csv_gen_report(api_clz, request, entity, queryParm, columns, columnTitles, attributes) 
+        elif type == "pdf": 
             payload["entity"] = entity
-            return export_pdf(
-                api_clz, request, entity, queryParm, columns, columnTitles, attributes
-            )
+            return export_pdf(api_clz, request, entity, queryParm, columns, columnTitles, attributes) 
+        #elif type == "xlsx":
+        #    return xlsx_gen_report(api_clz, request, entity, queryParm, columns, columnTitles, attributes)
         
-        return jsonify(
-            {
-                "code": 1,
-                "message": f"Unknown export type {type}",
-                "data": None,
-                "sqlTypes": None,
-            }
-        )
-
+        return jsonify({"code":1,"message":f"Unknown export type {type}","data":None,"sqlTypes":None})   
+    
+    
     def _gen_report(request) -> any:
         payload = json.loads(request.data)
 
@@ -315,43 +305,11 @@ def add_service(
         return None
 
     def login(request):
-        auth = request.headers.get("Authorization", None)
-        if auth and auth.startswith("Basic"):  # support basic auth
-            import base64
-
-            base64_message = auth[6:]
-            #print(f"auth found: {auth}")
-            # base64_message = 'UHl0aG9uIGlzIGZ1bg=='
-            base64_bytes = base64_message.encode("ascii")
-            message_bytes = base64.b64decode(base64_bytes)
-            message = message_bytes.decode("ascii")
-            s = message.split(":")
-            username = s[0]
-            password = s[1]
-
-            import config.config as config
-            from security.authentication_provider.abstract_authentication_provider import (
-                Abstract_Authentication_Provider,
-            )
-
-            authentication_provider: Abstract_Authentication_Provider = config.Config.SECURITY_PROVIDER  # type: ignore
-            user = authentication_provider.get_user(username, password)
-        if not user or not user.check_password(password):
-            # raise BaseException("Wrong username or password"), 401
-            return jsonify({"code": 1, "message": "Login Failed", "data": None})
-
-        from security.system.authentication import create_access_token, access_token
-
-        access_token = create_access_token(identity=user)  # serialize and encode
-        return jsonify(
-            {
-                "code": 0,
-                "message": "Login Successful",
-                "data": {"username": username, "token": access_token},
-            }
-        )
-        # return jsonify({"code":1,"message":"Login Failed","data":None})
-
+        url = f"http://{request.host}/api/auth/login"
+        requests.post(url=url, headers=request.headers, json = {})
+        return jsonify({"code":0,"message":"Login Successful","data":{}})
+       
+    
     def get_rows_agg(request: any, api_clz, agg_type, filter, columns):
         key = api_clz.__name__
         resources = getMetaData(key)
