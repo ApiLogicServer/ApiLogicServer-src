@@ -983,6 +983,22 @@ if Config.do_test_genai:
     
 
 if Config.do_test_multi_reln:
+
+    # first, some tests for genai, not starting server.  Prompts from tests, avoid too many samples
+    prompt_path = 'genai_demo_outdented_reln'
+    response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/genai_demo/genai_demo_retry_outdented_relns_fixed/genai.response')
+    assert response_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
+    result_genai = run_command(f'{set_venv} && als genai --using={prompt_path} --gen-using-file={response_path}',
+        cwd=install_api_logic_server_path,
+        msg=f'\nCreate outdented_relns_fixed')
+
+    prompt_path = 'genai_demo_decimals'
+    response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/genai_demo/genai_demo_decimal/genai.response')
+    assert response_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
+    result_genai = run_command(f'{set_venv} && als genai --using={prompt_path} --gen-using-file={response_path}',
+        cwd=install_api_logic_server_path,
+        msg=f'\ngenai_demo_decimals')
+
     # test genai, using pre-supplied ChatGPT response (to avoid api key issues)
     # see https://apilogicserver.github.io/Docs/Sample-Genai/#what-just-happened
     prompt_path = install_api_logic_server_path.joinpath('system/genai/examples/airport/airport_10.prompt')
@@ -993,7 +1009,7 @@ if Config.do_test_multi_reln:
     result_genai = run_command(f'{set_venv} && als genai --using={prompt_path} --gen-using-file={response_path}',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate airport_10')
-    start_api_logic_server(project_name="system/genai/examples/airport/airport_10")
+    start_api_logic_server(project_name="airport_10")
     stop_server(msg="*** airport TESTS COMPLETE ***\n")
 
     prompt_path = install_api_logic_server_path.joinpath('system/genai/examples/airport/airport_4.prompt')
@@ -1002,7 +1018,7 @@ if Config.do_test_multi_reln:
     result_genai = run_command(f'{set_venv} && als genai --using={prompt_path} --gen-using-file={response_path}',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate airport_4')
-    start_api_logic_server(project_name="system/genai/examples/airport/airport_4")
+    start_api_logic_server(project_name="airport_4")
     stop_server(msg="*** airport TESTS COMPLETE ***\n")
 
 if Config.do_create_shipping:  # optionally, start it manually (eg, with breakpoints)

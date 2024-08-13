@@ -52,7 +52,9 @@ class GenAI(object):
 
         self.project.from_model = f'system/genai/temp/model.py' # we always write the model to this file
         
-        self.prompt = self.get_prompt()  # compute self.prompt, from file or text argument
+        self.prompt = "not provided - using repaired response"
+        if self.project.gen_using_file == '':
+            self.prompt = self.get_prompt()  # compute self.prompt, from file or text argument
 
         self.project.genai_logic = self.get_logic_from_prompt()
 
@@ -203,10 +205,10 @@ class GenAI(object):
             if "```python" in each_line:
                 writing = True
                 # count spaces before "```"
-                next_line = response_array[line_num+1]
-                position = next_line.find("```")
+                # next_line = response_array[line_num+1]
+                position = each_line.find("```")
                 if position > 0:
-                    indents_to_remove = next_line[:position].count(' ')                
+                    indents_to_remove = each_line[:position].count(' ')                
             elif "```" in each_line:
                 writing = False
             elif writing:  # ChatGPT work-arounds
@@ -222,7 +224,10 @@ class GenAI(object):
                 if '=Decimal(' in each_line:
                     each_line = each_line.replace('=Decimal(', '=decimal.Decimal(')
                 if 'relationship(' in each_line:
-                    each_line = each_line.replace('    ', '    # ')
+                    if each_line.startswith('    '):
+                        each_line = each_line.replace('    ', '    # ')
+                    else:  # sometimes it puts relns outside the class (so, outdented)
+                        each_line = '# ' + each_line
                 model_class += each_line + '\n'
         with open(f'{self.project.from_model}', "w") as model_file:
             model_file.write(model_class)
