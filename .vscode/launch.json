@@ -75,19 +75,6 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "     - genai create NOFILE - clean/ApiLogicServer/genai_demo",
-            "type": "debugpy",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
-            "env": {"APILOGICSERVER_DEBUG": "True"},
-            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
-            "redirectOutput": true,
-            "args": [
-                "genai",
-                "--using=automobile dealership"],
-            "console": "integratedTerminal"
-        },
-        {
             "name": "     - genai RETRY from response (no ChatGPT)",
             "type": "debugpy",
             "request": "launch",
@@ -98,7 +85,20 @@
             "args": [
                 "genai",
                 "--gen-using-file=system/genai/temp/chatgpt_retry.response",
-                "--using=genai_demo"],
+                "--using=ignored/genai_demo_retry.prompt"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "     - genai create NOFILE - auto dealership",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": [
+                "automobile dealership project",
+                "--using=automobile dealership"],
             "console": "integratedTerminal"
         },
         {
