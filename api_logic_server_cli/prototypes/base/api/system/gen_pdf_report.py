@@ -89,6 +89,7 @@ def gen_report(api_clz, request, project_dir, payload, attributes) -> any:
         "service":"Customer",
         "vertical":true,
         "functions":[],
+        "groups": ['CompanyName', 'ContactTitle', 'Address', 'City']
         "style":{"grid":false,"rowNumber":false,"columnName":true,"backgroundOnOddRows":false,"hideGroupDetails":false,"groupNewPage":false,"firstGroupNewPage":false},
         "subtitle":"",
         "columns":[{"id":"Id","name":"Id"},{"id":"CompanyName","name":" Company Name*"}],
@@ -98,21 +99,26 @@ def gen_report(api_clz, request, project_dir, payload, attributes) -> any:
         "sqltypes":{"Id":1111,"CompanyName":1111,"Balance":8,"CreditLimit":8,"OrderCount":4,"UnpaidOrderCount":4,"Client_id":4,"ContactName":1111,"ContactTitle":1111,"Address":1111,"City":1111,"Region":1111,"PostalCode":1111,"Country":1111,"Phone":1111,"Fax":1111},
         "filter":{},
         "offset":0,
+        "style":{'grid': False, 'rowNumber': True, 'columnName': True, 'backgroundOnOddRows': False, 'hideGroupDetails': False, 'groupNewPage': False, 'firstGroupNewPage': False}
         "pageSize":20},
         "advQuery":true}
         '''
 
-        filter, columns, sqltypes, offset, pagesize, orderBy, data = parsePayload(payload)
+        expression , filter, columns, sqltypes, offset, pagesize, orderBy, data = parsePayload(api_clz, payload)
         if len(payload) == 3:
             return jsonify({})
         
         entity = payload["entity"]
         columns = payload["columns"]
+        groups = payload.get("groups", [])
+        style = payload.get("style", {})
+
         list_of_columns = []
         for col in columns:
             for attr in attributes:
                 if col['id'] == attr["name"]:
                     list_of_columns.append(attr['name'])
+        #TODO if groups is not empty, group by the columns - new function
         rows = get_rows(api_clz,request, list_of_columns, filter)
         
         buffer = BytesIO()
@@ -137,6 +143,9 @@ def gen_report(api_clz, request, project_dir, payload, attributes) -> any:
         title = payload["title"] if 'title' in payload and payload["title"] != '' else f"{entity.upper()} Report"
         content.append(Paragraph(title, title_style))
         content.append(Spacer(1, 0.2 * inch)) 
+        if sub_title := payload.get("subtitle",None):
+            content.append(Paragraph(sub_title, title_style))
+            content.append(Spacer(1, 0.2 * inch)) 
         # Column Header
         data = []
         col_data = []
