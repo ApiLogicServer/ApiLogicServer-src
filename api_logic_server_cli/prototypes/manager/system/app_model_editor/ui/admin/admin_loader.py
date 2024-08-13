@@ -119,6 +119,7 @@ def admin_events(flask_app: Flask, args: Args, validation_error: ValidationError
         if use_type == "mem":
             with open(f'ui/admin/{path}', "r") as f:  # path is admin.yaml for default url/app
                 content = f.read()
+
             if args.client_uri is not None:
                 content = content.replace(
                     '{http_type}://{swagger_host}:{port}',
@@ -200,10 +201,10 @@ def admin_events(flask_app: Flask, args: Args, validation_error: ValidationError
         
         # This is a short cut to auto login to Ontimize
         try:
-            from security.system.authentication import access_token
-            #access_token = request.headers.environ.get("HTTP_AUTHORIZATION")[7:]
-            if access_token:
-                response.headers["X-Auth-Token"] = access_token  # required for Ontimize (kludge alert)
+
+            from flask import g
+            if "access_token" in g:
+                response.headers["X-Auth-Token"] = g.access_token  # required for Ontimize (kludge alert)
         except:
             logging.error('\nadmin_loader - after_request - access_token not set\n')
 

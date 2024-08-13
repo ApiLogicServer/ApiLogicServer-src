@@ -77,7 +77,11 @@ class Security:
             if each_role.role_name == role_name:
                 return True
         return False
-
+    @classmethod
+    def set_access_token(cls, token):
+        from flask import g
+        g.access_token = token
+		
 class GrantSecurityException(JsonapiError):
     """
     enables clients to identify "any grant constraint"
@@ -395,7 +399,6 @@ class Grant:
         # Apply Grants
         ##############
         if grant_entity is not None and (grant_list or global_filter_list) and crud_state == "is_select":
-            # grant_filter = or_(*grant_list)
             grants_filter = or_(*grant_list)
             global_filter = and_(*global_filter_list)
             orm_execute_state.statement = orm_execute_state.statement.options(
@@ -457,7 +460,7 @@ def receive_do_orm_execute(orm_execute_state: ORMExecuteState ):
         if 'mapper' in orm_execute_state.bind_arguments:
             mapper = orm_execute_state.bind_arguments['mapper']
             class_name = mapper.class_.__name__   # mapper.mapped_table.fullname disparaged
-            if class_name == "Users":
+            if class_name == "User":
                 #pass
                 security_logger.debug('No grants - avoid recursion on User table')
             elif  session._proxied._flushing:  # type: ignore
