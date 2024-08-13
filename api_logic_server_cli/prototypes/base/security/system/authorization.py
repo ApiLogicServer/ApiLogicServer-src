@@ -77,7 +77,11 @@ class Security:
             if each_role.role_name == role_name:
                 return True
         return False
-
+    @classmethod
+    def set_access_token(cls, token):
+        from flask import g
+        g.access_token = token
+		
 class GrantSecurityException(JsonapiError):
     """
     enables clients to identify "any grant constraint"
