@@ -1,0 +1,719 @@
+[insertmanyvalues 54/100 (ordered; batch not supported)] (6, 10)
+2024-08-13 21:45:36,950 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,950 INFO sqlalchemy.engine.Engine [insertmanyvalues 55/100 (ordered; batch not supported)] (12, 8)
+[insertmanyvalues 55/100 (ordered; batch not supported)] (12, 8)
+2024-08-13 21:45:36,950 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,950 INFO sqlalchemy.engine.Engine [insertmanyvalues 56/100 (ordered; batch not supported)] (12, 5)
+[insertmanyvalues 56/100 (ordered; batch not supported)] (12, 5)
+2024-08-13 21:45:36,950 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,950 INFO sqlalchemy.engine.Engine [insertmanyvalues 57/100 (ordered; batch not supported)] (1, 13)
+[insertmanyvalues 57/100 (ordered; batch not supported)] (1, 13)
+2024-08-13 21:45:36,950 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,950 INFO sqlalchemy.engine.Engine [insertmanyvalues 58/100 (ordered; batch not supported)] (15, 1)
+[insertmanyvalues 58/100 (ordered; batch not supported)] (15, 1)
+2024-08-13 21:45:36,951 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,951 INFO sqlalchemy.engine.Engine [insertmanyvalues 59/100 (ordered; batch not supported)] (20, 5)
+[insertmanyvalues 59/100 (ordered; batch not supported)] (20, 5)
+2024-08-13 21:45:36,951 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,951 INFO sqlalchemy.engine.Engine [insertmanyvalues 60/100 (ordered; batch not supported)] (15, 9)
+[insertmanyvalues 60/100 (ordered; batch not supported)] (15, 9)
+2024-08-13 21:45:36,951 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,951 INFO sqlalchemy.engine.Engine [insertmanyvalues 61/100 (ordered; batch not supported)] (7, 15)
+[insertmanyvalues 61/100 (ordered; batch not supported)] (7, 15)
+2024-08-13 21:45:36,951 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,951 INFO sqlalchemy.engine.Engine [insertmanyvalues 62/100 (ordered; batch not supported)] (5, 11)
+[insertmanyvalues 62/100 (ordered; batch not supported)] (5, 11)
+2024-08-13 21:45:36,951 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,951 INFO sqlalchemy.engine.Engine [insertmanyvalues 63/100 (ordered; batch not supported)] (7, 15)
+[insertmanyvalues 63/100 (ordered; batch not supported)] (7, 15)
+2024-08-13 21:45:36,952 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,952 INFO sqlalchemy.engine.Engine [insertmanyvalues 64/100 (ordered; batch not supported)] (12, 7)
+[insertmanyvalues 64/100 (ordered; batch not supported)] (12, 7)
+2024-08-13 21:45:36,952 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+[insertmanyvalues 65/100 (ordered; batch not supported)] (19, 3)
+2024-08-13 21:45:36,952 INFO sqlalchemy.engine.Engine [insertmanyvalues 65/100 (ordered; batch not supported)] (19, 3)
+2024-08-13 21:45:36,952 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,952 INFO sqlalchemy.engine.Engine [insertmanyvalues 66/100 (ordered; batch not supported)] (4, 10)
+[insertmanyvalues 66/100 (ordered; batch not supported)] (4, 10)
+2024-08-13 21:45:36,952 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,952 INFO sqlalchemy.engine.Engine [insertmanyvalues 67/100 (ordered; batch not supported)] (19, 8)
+[insertmanyvalues 67/100 (ordered; batch not supported)] (19, 8)
+2024-08-13 21:45:36,952 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,952 INFO sqlalchemy.engine.Engine [insertmanyvalues 68/100 (ordered; batch not supported)] (2, 2)
+[insertmanyvalues 68/100 (ordered; batch not supported)] (2, 2)
+2024-08-13 21:45:36,952 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,952 INFO sqlalchemy.engine.Engine [insertmanyvalues 69/100 (ordered; batch not supported)] (5, 2)
+[insertmanyvalues 69/100 (ordered; batch not supported)] (5, 2)
+2024-08-13 21:45:36,953 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,953 INFO sqlalchemy.engine.Engine [insertmanyvalues 70/100 (ordered; batch not supported)] (20, 5)
+[insertmanyvalues 70/100 (ordered; batch not supported)] (20, 5)
+2024-08-13 21:45:36,953 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,953 INFO sqlalchemy.engine.Engine [insertmanyvalues 71/100 (ordered; batch not supported)] (15, 15)
+[insertmanyvalues 71/100 (ordered; batch not supported)] (15, 15)
+2024-08-13 21:45:36,953 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,953 INFO sqlalchemy.engine.Engine [insertmanyvalues 72/100 (ordered; batch not supported)] (15, 15)
+[insertmanyvalues 72/100 (ordered; batch not supported)] (15, 15)
+2024-08-13 21:45:36,953 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,953 INFO sqlalchemy.engine.Engine [insertmanyvalues 73/100 (ordered; batch not supported)] (1, 14)
+[insertmanyvalues 73/100 (ordered; batch not supported)] (1, 14)
+2024-08-13 21:45:36,953 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,953 INFO sqlalchemy.engine.Engine [insertmanyvalues 74/100 (ordered; batch not supported)] (10, 4)
+[insertmanyvalues 74/100 (ordered; batch not supported)] (10, 4)
+2024-08-13 21:45:36,953 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,953 INFO sqlalchemy.engine.Engine [insertmanyvalues 75/100 (ordered; batch not supported)] (15, 2)
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+[insertmanyvalues 75/100 (ordered; batch not supported)] (15, 2)
+2024-08-13 21:45:36,954 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,954 INFO sqlalchemy.engine.Engine [insertmanyvalues 76/100 (ordered; batch not supported)] (12, 3)
+[insertmanyvalues 76/100 (ordered; batch not supported)] (12, 3)
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,954 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,954 INFO sqlalchemy.engine.Engine [insertmanyvalues 77/100 (ordered; batch not supported)] (12, 2)
+[insertmanyvalues 77/100 (ordered; batch not supported)] (12, 2)
+2024-08-13 21:45:36,954 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+[insertmanyvalues 78/100 (ordered; batch not supported)] (11, 15)
+2024-08-13 21:45:36,954 INFO sqlalchemy.engine.Engine [insertmanyvalues 78/100 (ordered; batch not supported)] (11, 15)
+2024-08-13 21:45:36,954 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,954 INFO sqlalchemy.engine.Engine [insertmanyvalues 79/100 (ordered; batch not supported)] (8, 5)
+[insertmanyvalues 79/100 (ordered; batch not supported)] (8, 5)
+2024-08-13 21:45:36,954 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,954 INFO sqlalchemy.engine.Engine [insertmanyvalues 80/100 (ordered; batch not supported)] (6, 3)
+2024-08-13 21:45:36,954 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+[insertmanyvalues 80/100 (ordered; batch not supported)] (6, 3)
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,955 INFO sqlalchemy.engine.Engine [insertmanyvalues 81/100 (ordered; batch not supported)] (16, 7)
+[insertmanyvalues 81/100 (ordered; batch not supported)] (16, 7)
+2024-08-13 21:45:36,955 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,955 INFO sqlalchemy.engine.Engine [insertmanyvalues 82/100 (ordered; batch not supported)] (19, 4)
+[insertmanyvalues 82/100 (ordered; batch not supported)] (19, 4)
+2024-08-13 21:45:36,955 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,955 INFO sqlalchemy.engine.Engine [insertmanyvalues 83/100 (ordered; batch not supported)] (17, 4)
+[insertmanyvalues 83/100 (ordered; batch not supported)] (17, 4)
+2024-08-13 21:45:36,956 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,956 INFO sqlalchemy.engine.Engine [insertmanyvalues 84/100 (ordered; batch not supported)] (17, 3)
+2024-08-13 21:45:36,958 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+[insertmanyvalues 84/100 (ordered; batch not supported)] (17, 3)
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,962 INFO sqlalchemy.engine.Engine [insertmanyvalues 85/100 (ordered; batch not supported)] (18, 1)
+2024-08-13 21:45:36,965 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,967 INFO sqlalchemy.engine.Engine [insertmanyvalues 86/100 (ordered; batch not supported)] (7, 9)
+[insertmanyvalues 85/100 (ordered; batch not supported)] (18, 1)
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+[insertmanyvalues 86/100 (ordered; batch not supported)] (7, 9)
+2024-08-13 21:45:36,968 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,970 INFO sqlalchemy.engine.Engine [insertmanyvalues 87/100 (ordered; batch not supported)] (8, 8)
+[insertmanyvalues 87/100 (ordered; batch not supported)] (8, 8)
+2024-08-13 21:45:36,971 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,972 INFO sqlalchemy.engine.Engine [insertmanyvalues 88/100 (ordered; batch not supported)] (16, 6)
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+[insertmanyvalues 88/100 (ordered; batch not supported)] (16, 6)
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+[insertmanyvalues 89/100 (ordered; batch not supported)] (4, 11)
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+[insertmanyvalues 90/100 (ordered; batch not supported)] (20, 13)
+2024-08-13 21:45:36,973 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,973 INFO sqlalchemy.engine.Engine [insertmanyvalues 89/100 (ordered; batch not supported)] (4, 11)
+2024-08-13 21:45:36,973 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,973 INFO sqlalchemy.engine.Engine [insertmanyvalues 90/100 (ordered; batch not supported)] (20, 13)
+2024-08-13 21:45:36,974 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,974 INFO sqlalchemy.engine.Engine [insertmanyvalues 91/100 (ordered; batch not supported)] (19, 4)
+[insertmanyvalues 91/100 (ordered; batch not supported)] (19, 4)
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+[insertmanyvalues 92/100 (ordered; batch not supported)] (1, 12)
+2024-08-13 21:45:36,976 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,976 INFO sqlalchemy.engine.Engine [insertmanyvalues 92/100 (ordered; batch not supported)] (1, 12)
+2024-08-13 21:45:36,978 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,978 INFO sqlalchemy.engine.Engine [insertmanyvalues 93/100 (ordered; batch not supported)] (19, 4)
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+[insertmanyvalues 93/100 (ordered; batch not supported)] (19, 4)
+2024-08-13 21:45:36,980 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,981 INFO sqlalchemy.engine.Engine [insertmanyvalues 94/100 (ordered; batch not supported)] (20, 2)
+[insertmanyvalues 94/100 (ordered; batch not supported)] (20, 2)
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,981 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,982 INFO sqlalchemy.engine.Engine [insertmanyvalues 95/100 (ordered; batch not supported)] (16, 15)
+2024-08-13 21:45:36,982 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,983 INFO sqlalchemy.engine.Engine [insertmanyvalues 96/100 (ordered; batch not supported)] (8, 5)
+2024-08-13 21:45:36,983 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,983 INFO sqlalchemy.engine.Engine [insertmanyvalues 97/100 (ordered; batch not supported)] (3, 14)
+2024-08-13 21:45:36,983 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,983 INFO sqlalchemy.engine.Engine [insertmanyvalues 98/100 (ordered; batch not supported)] (14, 1[insertmanyvalues 95/100 (ordered; batch not supported)] (16, 15)
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+[insertmanyvalues 96/100 (ordered; batch not supported)] (8, 5)
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+[insertmanyvalues 97/100 (ordered; batch not supported)] (3, 14)
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+[insertmanyvalues 98/100 (ordered; batch not supported)] (14, 12)
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+[insertmanyvalues 99/100 (ordered; batch not supported)] (7, 12)
+
+2024-08-13 21:45:36,984 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:36,984 INFO sqlalchemy.engine.Engine [insertmanyvalues 99/100 (ordered; batch not supported)] (7, 12)
+2024-08-13 21:45:36,987 INFO sqlalchemy.engine.Engine INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_spells (character_id, spell_id) VALUES (?, ?) RETURNING id
+[insertmanyvalues 100/100 (ordered; batch not supported)] (15, 14)
+2024-08-13 21:45:36,988 INFO sqlalchemy.engine.Engine [insertmanyvalues 100/100 (ordered; batch not supported)] (15, 14)
+2024-08-13 21:45:37,011 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,011 INFO sqlalchemy.engine.Engine [generated in 0.00068s (insertmanyvalues) 1/100 (ordered; batch not supported)] (12, 6)
+[generated in 0.00068s (insertmanyvalues) 1/100 (ordered; batch not supported)] (12, 6)
+2024-08-13 21:45:37,012 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,012 INFO sqlalchemy.engine.Engine [insertmanyvalues 2/100 (ordered; batch not supported)] (2, 1)
+[insertmanyvalues 2/100 (ordered; batch not supported)] (2, 1)
+2024-08-13 21:45:37,012 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,012 INFO sqlalchemy.engine.Engine [insertmanyvalues 3/100 (ordered; batch not supported)] (5, 4)
+[insertmanyvalues 3/100 (ordered; batch not supported)] (5, 4)
+2024-08-13 21:45:37,012 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,012 INFO sqlalchemy.engine.Engine [insertmanyvalues 4/100 (ordered; batch not supported)] (20, 1)
+[insertmanyvalues 4/100 (ordered; batch not supported)] (20, 1)
+2024-08-13 21:45:37,012 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,012 INFO sqlalchemy.engine.Engine [insertmanyvalues 5/100 (ordered; batch not supported)] (8, 4)
+2024-08-13 21:45:37,013 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+[insertmanyvalues 5/100 (ordered; batch not supported)] (8, 4)
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,013 INFO sqlalchemy.engine.Engine [insertmanyvalues 6/100 (ordered; batch not supported)] (14, 8)
+[insertmanyvalues 6/100 (ordered; batch not supported)] (14, 8)
+2024-08-13 21:45:37,013 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,013 INFO sqlalchemy.engine.Engine [insertmanyvalues 7/100 (ordered; batch not supported)] (12, 7)
+[insertmanyvalues 7/100 (ordered; batch not supported)] (12, 7)
+2024-08-13 21:45:37,013 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,013 INFO sqlalchemy.engine.Engine [insertmanyvalues 8/100 (ordered; batch not supported)] (1, 8)
+[insertmanyvalues 8/100 (ordered; batch not supported)] (1, 8)
+2024-08-13 21:45:37,013 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,013 INFO sqlalchemy.engine.Engine [insertmanyvalues 9/100 (ordered; batch not supported)] (16, 9)
+[insertmanyvalues 9/100 (ordered; batch not supported)] (16, 9)
+2024-08-13 21:45:37,014 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,014 INFO sqlalchemy.engine.Engine [insertmanyvalues 10/100 (ordered; batch not supported)] (7, 2)
+[insertmanyvalues 10/100 (ordered; batch not supported)] (7, 2)
+2024-08-13 21:45:37,014 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,014 INFO sqlalchemy.engine.Engine [insertmanyvalues 11/100 (ordered; batch not supported)] (4, 9)
+[insertmanyvalues 11/100 (ordered; batch not supported)] (4, 9)
+2024-08-13 21:45:37,014 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,014 INFO sqlalchemy.engine.Engine [insertmanyvalues 12/100 (ordered; batch not supported)] (9, 1)
+[insertmanyvalues 12/100 (ordered; batch not supported)] (9, 1)
+2024-08-13 21:45:37,014 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,014 INFO sqlalchemy.engine.Engine [insertmanyvalues 13/100 (ordered; batch not supported)] (17, 5)
+[insertmanyvalues 13/100 (ordered; batch not supported)] (17, 5)
+2024-08-13 21:45:37,014 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,014 INFO sqlalchemy.engine.Engine [insertmanyvalues 14/100 (ordered; batch not supported)] (18, 4)
+[insertmanyvalues 14/100 (ordered; batch not supported)] (18, 4)
+2024-08-13 21:45:37,014 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,015 INFO sqlalchemy.engine.Engine [insertmanyvalues 15/100 (ordered; batch not supported)] (12, 1)
+[insertmanyvalues 15/100 (ordered; batch not supported)] (12, 1)
+2024-08-13 21:45:37,015 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,015 INFO sqlalchemy.engine.Engine [insertmanyvalues 16/100 (ordered; batch not supported)] (10, 3)
+[insertmanyvalues 16/100 (ordered; batch not supported)] (10, 3)
+2024-08-13 21:45:37,015 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,015 INFO sqlalchemy.engine.Engine [insertmanyvalues 17/100 (ordered; batch not supported)] (9, 7)
+[insertmanyvalues 17/100 (ordered; batch not supported)] (9, 7)
+2024-08-13 21:45:37,015 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,015 INFO sqlalchemy.engine.Engine [insertmanyvalues 18/100 (ordered; batch not supported)] (13, 10)
+[insertmanyvalues 18/100 (ordered; batch not supported)] (13, 10)
+2024-08-13 21:45:37,015 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,015 INFO sqlalchemy.engine.Engine [insertmanyvalues 19/100 (ordered; batch not supported)] (9, 10)
+[insertmanyvalues 19/100 (ordered; batch not supported)] (9, 10)
+2024-08-13 21:45:37,015 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,015 INFO sqlalchemy.engine.Engine [insertmanyvalues 20/100 (ordered; batch not supported)] (11, 6)
+[insertmanyvalues 20/100 (ordered; batch not supported)] (11, 6)
+2024-08-13 21:45:37,016 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+[insertmanyvalues 21/100 (ordered; batch not supported)] (20, 6)
+2024-08-13 21:45:37,016 INFO sqlalchemy.engine.Engine [insertmanyvalues 21/100 (ordered; batch not supported)] (20, 6)
+2024-08-13 21:45:37,016 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,016 INFO sqlalchemy.engine.Engine [insertmanyvalues 22/100 (ordered; batch not supported)] (15, 7)
+[insertmanyvalues 22/100 (ordered; batch not supported)] (15, 7)
+2024-08-13 21:45:37,016 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,016 INFO sqlalchemy.engine.Engine [insertmanyvalues 23/100 (ordered; batch not supported)] (14, 6)
+[insertmanyvalues 23/100 (ordered; batch not supported)] (14, 6)
+2024-08-13 21:45:37,016 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,016 INFO sqlalchemy.engine.Engine [insertmanyvalues 24/100 (ordered; batch not supported)] (18, 9)
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+[insertmanyvalues 24/100 (ordered; batch not supported)] (18, 9)
+2024-08-13 21:45:37,016 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,017 INFO sqlalchemy.engine.Engine [insertmanyvalues 25/100 (ordered; batch not supported)] (15, 9)
+[insertmanyvalues 25/100 (ordered; batch not supported)] (15, 9)
+2024-08-13 21:45:37,017 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,017 INFO sqlalchemy.engine.Engine [insertmanyvalues 26/100 (ordered; batch not supported)] (3, 4)
+[insertmanyvalues 26/100 (ordered; batch not supported)] (3, 4)
+2024-08-13 21:45:37,017 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,017 INFO sqlalchemy.engine.Engine [insertmanyvalues 27/100 (ordered; batch not supported)] (13, 10)
+[insertmanyvalues 27/100 (ordered; batch not supported)] (13, 10)
+2024-08-13 21:45:37,017 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,017 INFO sqlalchemy.engine.Engine [insertmanyvalues 28/100 (ordered; batch not supported)] (14, 3)
+[insertmanyvalues 28/100 (ordered; batch not supported)] (14, 3)
+2024-08-13 21:45:37,017 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,017 INFO sqlalchemy.engine.Engine [insertmanyvalues 29/100 (ordered; batch not supported)] (18, 2)
+[insertmanyvalues 29/100 (ordered; batch not supported)] (18, 2)
+2024-08-13 21:45:37,017 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,017 INFO sqlalchemy.engine.Engine [insertmanyvalues 30/100 (ordered; batch not supported)] (20, 2)
+[insertmanyvalues 30/100 (ordered; batch not supported)] (20, 2)
+2024-08-13 21:45:37,018 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,018 INFO sqlalchemy.engine.Engine [insertmanyvalues 31/100 (ordered; batch not supported)] (2, 9)
+[insertmanyvalues 31/100 (ordered; batch not supported)] (2, 9)
+2024-08-13 21:45:37,018 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,018 INFO sqlalchemy.engine.Engine [insertmanyvalues 32/100 (ordered; batch not supported)] (8, 7)
+[insertmanyvalues 32/100 (ordered; batch not supported)] (8, 7)
+2024-08-13 21:45:37,018 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,018 INFO sqlalchemy.engine.Engine [insertmanyvalues 33/100 (ordered; batch not supported)] (13, 5)
+[insertmanyvalues 33/100 (ordered; batch not supported)] (13, 5)
+2024-08-13 21:45:37,018 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,018 INFO sqlalchemy.engine.Engine [insertmanyvalues 34/100 (ordered; batch not supported)] (18, 4)
+[insertmanyvalues 34/100 (ordered; batch not supported)] (18, 4)
+2024-08-13 21:45:37,018 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,018 INFO sqlalchemy.engine.Engine [insertmanyvalues 35/100 (ordered; batch not supported)] (12, 4)
+[insertmanyvalues 35/100 (ordered; batch not supported)] (12, 4)
+2024-08-13 21:45:37,018 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,018 INFO sqlalchemy.engine.Engine [insertmanyvalues 36/100 (ordered; batch not supported)] (12, 9)
+[insertmanyvalues 36/100 (ordered; batch not supported)] (12, 9)
+2024-08-13 21:45:37,019 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,019 INFO sqlalchemy.engine.Engine [insertmanyvalues 37/100 (ordered; batch not supported)] (1, 7)
+[insertmanyvalues 37/100 (ordered; batch not supported)] (1, 7)
+2024-08-13 21:45:37,019 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,019 INFO sqlalchemy.engine.Engine [insertmanyvalues 38/100 (ordered; batch not supported)] (10, 4)
+[insertmanyvalues 38/100 (ordered; batch not supported)] (10, 4)
+2024-08-13 21:45:37,019 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,019 INFO sqlalchemy.engine.Engine [insertmanyvalues 39/100 (ordered; batch not supported)] (3, 8)
+[insertmanyvalues 39/100 (ordered; batch not supported)] (3, 8)
+2024-08-13 21:45:37,019 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,019 INFO sqlalchemy.engine.Engine [insertmanyvalues 40/100 (ordered; batch not supported)] (6, 10)
+[insertmanyvalues 40/100 (ordered; batch not supported)] (6, 10)
+2024-08-13 21:45:37,019 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,019 INFO sqlalchemy.engine.Engine [insertmanyvalues 41/100 (ordered; batch not supported)] (2, 1)
+[insertmanyvalues 41/100 (ordered; batch not supported)] (2, 1)
+2024-08-13 21:45:37,019 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,020 INFO sqlalchemy.engine.Engine [insertmanyvalues 42/100 (ordered; batch not supported)] (13, 6)
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+[insertmanyvalues 42/100 (ordered; batch not supported)] (13, 6)
+2024-08-13 21:45:37,020 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,020 INFO sqlalchemy.engine.Engine [insertmanyvalues 43/100 (ordered; batch not supported)] (1, 8)
+[insertmanyvalues 43/100 (ordered; batch not supported)] (1, 8)
+2024-08-13 21:45:37,020 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+[insertmanyvalues 44/100 (ordered; batch not supported)] (10, 2)
+2024-08-13 21:45:37,020 INFO sqlalchemy.engine.Engine [insertmanyvalues 44/100 (ordered; batch not supported)] (10, 2)
+2024-08-13 21:45:37,020 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,020 INFO sqlalchemy.engine.Engine [insertmanyvalues 45/100 (ordered; batch not supported)] (9, 5)
+[insertmanyvalues 45/100 (ordered; batch not supported)] (9, 5)
+2024-08-13 21:45:37,020 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,020 INFO sqlalchemy.engine.Engine [insertmanyvalues 46/100 (ordered; batch not supported)] (8, 1)
+[insertmanyvalues 46/100 (ordered; batch not supported)] (8, 1)
+2024-08-13 21:45:37,020 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+[insertmanyvalues 47/100 (ordered; batch not supported)] (16, 2)
+2024-08-13 21:45:37,020 INFO sqlalchemy.engine.Engine [insertmanyvalues 47/100 (ordered; batch not supported)] (16, 2)
+2024-08-13 21:45:37,021 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,021 INFO sqlalchemy.engine.Engine [insertmanyvalues 48/100 (ordered; batch not supported)] (5, 4)
+[insertmanyvalues 48/100 (ordered; batch not supported)] (5, 4)
+2024-08-13 21:45:37,021 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,021 INFO sqlalchemy.engine.Engine [insertmanyvalues 49/100 (ordered; batch not supported)] (17, 4)
+2024-08-13 21:45:37,021 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+[insertmanyvalues 49/100 (ordered; batch not supported)] (17, 4)
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,021 INFO sqlalchemy.engine.Engine [insertmanyvalues 50/100 (ordered; batch not supported)] (9, 1)
+[insertmanyvalues 50/100 (ordered; batch not supported)] (9, 1)
+2024-08-13 21:45:37,021 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,021 INFO sqlalchemy.engine.Engine [insertmanyvalues 51/100 (ordered; batch not supported)] (15, 6)
+[insertmanyvalues 51/100 (ordered; batch not supported)] (15, 6)
+2024-08-13 21:45:37,021 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,021 INFO sqlalchemy.engine.Engine [insertmanyvalues 52/100 (ordered; batch not supported)] (20, 7)
+[insertmanyvalues 52/100 (ordered; batch not supported)] (20, 7)
+2024-08-13 21:45:37,021 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,021 INFO sqlalchemy.engine.Engine [insertmanyvalues 53/100 (ordered; batch not supported)] (2, 7)
+[insertmanyvalues 53/100 (ordered; batch not supported)] (2, 7)
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+[insertmanyvalues 54/100 (ordered; batch not supported)] (6, 9)
+2024-08-13 21:45:37,022 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,022 INFO sqlalchemy.engine.Engine [insertmanyvalues 54/100 (ordered; batch not supported)] (6, 9)
+2024-08-13 21:45:37,022 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,022 INFO sqlalchemy.engine.Engine [insertmanyvalues 55/100 (ordered; batch not supported)] (12, 6)
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+[insertmanyvalues 55/100 (ordered; batch not supported)] (12, 6)
+2024-08-13 21:45:37,022 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,022 INFO sqlalchemy.engine.Engine [insertmanyvalues 56/100 (ordered; batch not supported)] (12, 9)
+[insertmanyvalues 56/100 (ordered; batch not supported)] (12, 9)
+2024-08-13 21:45:37,022 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,022 INFO sqlalchemy.engine.Engine [insertmanyvalues 57/100 (ordered; batch not supported)] (1, 7)
+[insertmanyvalues 57/100 (ordered; batch not supported)] (1, 7)
+2024-08-13 21:45:37,022 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,022 INFO sqlalchemy.engine.Engine [insertmanyvalues 58/100 (ordered; batch not supported)] (15, 10)
+[insertmanyvalues 58/100 (ordered; batch not supported)] (15, 10)
+2024-08-13 21:45:37,022 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,023 INFO sqlalchemy.engine.Engine [insertmanyvalues 59/100 (ordered; batch not supported)] (20, 5)
+[insertmanyvalues 59/100 (ordered; batch not supported)] (20, 5)
+2024-08-13 21:45:37,023 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,023 INFO sqlalchemy.engine.Engine [insertmanyvalues 60/100 (ordered; batch not supported)] (15, 5)
+[insertmanyvalues 60/100 (ordered; batch not supported)] (15, 5)
+2024-08-13 21:45:37,023 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,023 INFO sqlalchemy.engine.Engine [insertmanyvalues 61/100 (ordered; batch not supported)] (7, 1)
+[insertmanyvalues 61/100 (ordered; batch not supported)] (7, 1)
+2024-08-13 21:45:37,023 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,023 INFO sqlalchemy.engine.Engine [insertmanyvalues 62/100 (ordered; batch not supported)] (5, 8)
+[insertmanyvalues 62/100 (ordered; batch not supported)] (5, 8)
+2024-08-13 21:45:37,023 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,023 INFO sqlalchemy.engine.Engine [insertmanyvalues 63/100 (ordered; batch not supported)] (7, 5)
+[insertmanyvalues 63/100 (ordered; batch not supported)] (7, 5)
+2024-08-13 21:45:37,023 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,023 INFO sqlalchemy.engine.Engine [insertmanyvalues 64/100 (ordered; batch not supported)] (12, 7)
+[insertmanyvalues 64/100 (ordered; batch not supported)] (12, 7)
+2024-08-13 21:45:37,023 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,024 INFO sqlalchemy.engine.Engine [insertmanyvalues 65/100 (ordered; batch not supported)] (19, 4)
+[insertmanyvalues 65/100 (ordered; batch not supported)] (19, 4)
+2024-08-13 21:45:37,024 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,024 INFO sqlalchemy.engine.Engine [insertmanyvalues 66/100 (ordered; batch not supported)] (4, 2)
+[insertmanyvalues 66/100 (ordered; batch not supported)] (4, 2)
+2024-08-13 21:45:37,024 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,024 INFO sqlalchemy.engine.Engine [insertmanyvalues 67/100 (ordered; batch not supported)] (19, 2)
+[insertmanyvalues 67/100 (ordered; batch not supported)] (19, 2)
+2024-08-13 21:45:37,024 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,024 INFO sqlalchemy.engine.Engine [insertmanyvalues 68/100 (ordered; batch not supported)] (2, 10)
+[insertmanyvalues 68/100 (ordered; batch not supported)] (2, 10)
+2024-08-13 21:45:37,024 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,024 INFO sqlalchemy.engine.Engine [insertmanyvalues 69/100 (ordered; batch not supported)] (5, 2)
+[insertmanyvalues 69/100 (ordered; batch not supported)] (5, 2)
+2024-08-13 21:45:37,024 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,024 INFO sqlalchemy.engine.Engine [insertmanyvalues 70/100 (ordered; batch not supported)] (20, 8)
+[insertmanyvalues 70/100 (ordered; batch not supported)] (20, 8)
+2024-08-13 21:45:37,025 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,025 INFO sqlalchemy.engine.Engine [insertmanyvalues 71/100 (ordered; batch not supported)] (15, 1)
+[insertmanyvalues 71/100 (ordered; batch not supported)] (15, 1)
+2024-08-13 21:45:37,025 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,025 INFO sqlalchemy.engine.Engine [insertmanyvalues 72/100 (ordered; batch not supported)] (15, 2)
+[insertmanyvalues 72/100 (ordered; batch not supported)] (15, 2)
+2024-08-13 21:45:37,025 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,025 INFO sqlalchemy.engine.Engine [insertmanyvalues 73/100 (ordered; batch not supported)] (1, 4)
+[insertmanyvalues 73/100 (ordered; batch not supported)] (1, 4)
+2024-08-13 21:45:37,025 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,025 INFO sqlalchemy.engine.Engine [insertmanyvalues 74/100 (ordered; batch not supported)] (10, 7)
+[insertmanyvalues 74/100 (ordered; batch not supported)] (10, 7)
+2024-08-13 21:45:37,025 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,025 INFO sqlalchemy.engine.Engine [insertmanyvalues 75/100 (ordered; batch not supported)] (15, 2)
+[insertmanyvalues 75/100 (ordered; batch not supported)] (15, 2)
+2024-08-13 21:45:37,025 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,025 INFO sqlalchemy.engine.Engine [insertmanyvalues 76/100 (ordered; batch not supported)] (12, 7)
+[insertmanyvalues 76/100 (ordered; batch not supported)] (12, 7)
+2024-08-13 21:45:37,026 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,026 INFO sqlalchemy.engine.Engine [insertmanyvalues 77/100 (ordered; batch not supported)] (12, 2)
+[insertmanyvalues 77/100 (ordered; batch not supported)] (12, 2)
+2024-08-13 21:45:37,026 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,026 INFO sqlalchemy.engine.Engine [insertmanyvalues 78/100 (ordered; batch not supported)] (11, 8)
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+[insertmanyvalues 78/100 (ordered; batch not supported)] (11, 8)
+2024-08-13 21:45:37,026 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,026 INFO sqlalchemy.engine.Engine [insertmanyvalues 79/100 (ordered; batch not supported)] (8, 8)
+[insertmanyvalues 79/100 (ordered; batch not supported)] (8, 8)
+2024-08-13 21:45:37,026 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,026 INFO sqlalchemy.engine.Engine [insertmanyvalues 80/100 (ordered; batch not supported)] (6, 10)
+[insertmanyvalues 80/100 (ordered; batch not supported)] (6, 10)
+2024-08-13 21:45:37,026 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,026 INFO sqlalchemy.engine.Engine [insertmanyvalues 81/100 (ordered; batch not supported)] (16, 3)
+[insertmanyvalues 81/100 (ordered; batch not supported)] (16, 3)
+2024-08-13 21:45:37,026 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,027 INFO sqlalchemy.engine.Engine [insertmanyvalues 82/100 (ordered; batch not supported)] (19, 9)
+[insertmanyvalues 82/100 (ordered; batch not supported)] (19, 9)
+2024-08-13 21:45:37,027 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,027 INFO sqlalchemy.engine.Engine [insertmanyvalues 83/100 (ordered; batch not supported)] (17, 8)
+[insertmanyvalues 83/100 (ordered; batch not supported)] (17, 8)
+2024-08-13 21:45:37,027 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,027 INFO sqlalchemy.engine.Engine [insertmanyvalues 84/100 (ordered; batch not supported)] (17, 5)
+[insertmanyvalues 84/100 (ordered; batch not supported)] (17, 5)
+2024-08-13 21:45:37,027 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,027 INFO sqlalchemy.engine.Engine [insertmanyvalues 85/100 (ordered; batch not supported)] (18, 1)
+[insertmanyvalues 85/100 (ordered; batch not supported)] (18, 1)
+2024-08-13 21:45:37,027 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,027 INFO sqlalchemy.engine.Engine [insertmanyvalues 86/100 (ordered; batch not supported)] (7, 4)
+[insertmanyvalues 86/100 (ordered; batch not supported)] (7, 4)
+2024-08-13 21:45:37,027 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,027 INFO sqlalchemy.engine.Engine [insertmanyvalues 87/100 (ordered; batch not supported)] (8, 4)
+[insertmanyvalues 87/100 (ordered; batch not supported)] (8, 4)
+2024-08-13 21:45:37,027 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,028 INFO sqlalchemy.engine.Engine [insertmanyvalues 88/100 (ordered; batch not supported)] (16, 3)
+[insertmanyvalues 88/100 (ordered; batch not supported)] (16, 3)
+2024-08-13 21:45:37,028 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,028 INFO sqlalchemy.engine.Engine [insertmanyvalues 89/100 (ordered; batch not supported)] (4, 6)
+[insertmanyvalues 89/100 (ordered; batch not supported)] (4, 6)
+2024-08-13 21:45:37,028 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,028 INFO sqlalchemy.engine.Engine [insertmanyvalues 90/100 (ordered; batch not supported)] (20, 2)
+[insertmanyvalues 90/100 (ordered; batch not supported)] (20, 2)
+2024-08-13 21:45:37,028 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+[insertmanyvalues 91/100 (ordered; batch not supported)] (19, 2)
+2024-08-13 21:45:37,028 INFO sqlalchemy.engine.Engine [insertmanyvalues 91/100 (ordered; batch not supported)] (19, 2)
+2024-08-13 21:45:37,028 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,028 INFO sqlalchemy.engine.Engine [insertmanyvalues 92/100 (ordered; batch not supported)] (1, 8)
+[insertmanyvalues 92/100 (ordered; batch not supported)] (1, 8)
+2024-08-13 21:45:37,029 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,029 INFO sqlalchemy.engine.Engine [insertmanyvalues 93/100 (ordered; batch not supported)] (19, 2)
+[insertmanyvalues 93/100 (ordered; batch not supported)] (19, 2)
+2024-08-13 21:45:37,029 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+[insertmanyvalues 94/100 (ordered; batch not supported)] (20, 3)
+2024-08-13 21:45:37,029 INFO sqlalchemy.engine.Engine [insertmanyvalues 94/100 (ordered; batch not supported)] (20, 3)
+2024-08-13 21:45:37,029 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,029 INFO sqlalchemy.engine.Engine [insertmanyvalues 95/100 (ordered; batch not supported)] (16, 6)
+[insertmanyvalues 95/100 (ordered; batch not supported)] (16, 6)
+2024-08-13 21:45:37,029 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,029 INFO sqlalchemy.engine.Engine [insertmanyvalues 96/100 (ordered; batch not supported)] (8, 6)
+[insertmanyvalues 96/100 (ordered; batch not supported)] (8, 6)
+2024-08-13 21:45:37,030 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,030 INFO sqlalchemy.engine.Engine [insertmanyvalues 97/100 (ordered; batch not supported)] (3, 1)
+[insertmanyvalues 97/100 (ordered; batch not supported)] (3, 1)
+2024-08-13 21:45:37,030 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,030 INFO sqlalchemy.engine.Engine [insertmanyvalues 98/100 (ordered; batch not supported)] (14, 1)
+[insertmanyvalues 98/100 (ordered; batch not supported)] (14, 1)
+2024-08-13 21:45:37,030 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,030 INFO sqlalchemy.engine.Engine [insertmanyvalues 99/100 (ordered; batch not supported)] (7, 6)
+[insertmanyvalues 99/100 (ordered; batch not supported)] (7, 6)
+2024-08-13 21:45:37,031 INFO sqlalchemy.engine.Engine INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+INSERT INTO character_weapons (character_id, weapon_id) VALUES (?, ?) RETURNING id
+2024-08-13 21:45:37,031 INFO sqlalchemy.engine.Engine [insertmanyvalues 100/100 (ordered; batch not supported)] (15, 2)
+[insertmanyvalues 100/100 (ordered; batch not supported)] (15, 2)
+2024-08-13 21:45:37,045 INFO sqlalchemy.engine.Engine COMMIT
+COMMIT
+Database and sample data created successfully!
+Database already created by importing system/genai/temp/model.py
+Creating project, will open id IDE: code
+1. Delete dir: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/elections
+2. Create Project: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/elections
+.. ..Clone from /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/base 
+.. ..Copy in sqlite devops
+.. ..Sqlite database setup /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/elections/database/db.sqlite...
+.. .. ..From /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/system/genai/temp/model.sqlite
+.. .. ..db_uri set to: sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/elections/database/db.sqlite in <project>/config/config.py
+.. ..project_directory_actual: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/elections
+3. Create/verify database/models.py, then use that to create api/ and ui/ models
+ a.  Create Models - create database/models.py, using sqlcodegen
+.. .. ..For database:  sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/elections/database/db.sqlite
+.. .. ..Create resource_list - dynamic import database/models.py, inspect 9 classes in <project>/database
+
+
+Genai [#Failed With Error: Mapper 'Mapper[CharacterClass(character_classes)]' has no property 'class'.  If this property was indicated from other mappers or configure events, ensure registry.configure() has been called.
+Traceback (most recent call last):
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 2479, in get_property
+    return self._props[key]
+           ~~~~~~~~~~~^^^^^
+KeyError: 'class'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/cli.py", line 588, in genai
+    PR.ProjectRun(command="create", genai_version=genai_version, 
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/api_logic_server.py", line 969, in __init__
+    self.create_project()
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/api_logic_server.py", line 1875, in create_project
+    model_creation_services = ModelCreationServices(project = self,   # Create database/models.py from db
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/create_from_model/model_creation_services.py", line 132, in __init__
+    self.resource_list = self.create_model_classes_and_resource_list()
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/create_from_model/model_creation_services.py", line 908, in create_model_classes_and_resource_list
+    return_resource_list = self.resource_list_from_safrs_metadata(models_name=models_name)  # whether created or used, build resource_list
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/create_from_model/model_creation_services.py", line 838, in resource_list_from_safrs_metadata
+    for rel_name, rel in resource_class._s_relationships.items():
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/ext/hybrid.py", line 1129, in __get__
+    return self._expr_comparator(owner)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/ext/hybrid.py", line 1438, in expr_comparator
+    comparator(owner),
+    ^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/ext/hybrid.py", line 1406, in _expr
+    return ExprComparator(cls, expr(cls), self)
+                               ^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/safrs/base.py", line 417, in _s_relationships
+    rels = {rel.key: rel for rel in cls.__mapper__.relationships if cls._s_check_perm(rel.key)}
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/util/langhelpers.py", line 1257, in __get__
+    obj.__dict__[self.__name__] = result = self.fget(obj)
+                                           ^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 3158, in relationships
+    return self._filter_properties(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 3182, in _filter_properties
+    self._check_configure()
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 2362, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 4177, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 4219, in _do_configure_registries
+    mapper._post_configure_properties()
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 2379, in _post_configure_properties
+    prop.init()
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/interfaces.py", line 549, in init
+    self.do_init()
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/relationships.py", line 1639, in do_init
+    self._generate_backref()
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/relationships.py", line 2130, in _generate_backref
+    self._add_reverse_property(self.back_populates)
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/relationships.py", line 1571, in _add_reverse_property
+    other = self.mapper.get_property(key, _configure_mappers=False)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 2481, in get_property
+    raise sa_exc.InvalidRequestError(
+sqlalchemy.exc.InvalidRequestError: Mapper 'Mapper[CharacterClass(character_classes)]' has no property 'class'.  If this property was indicated from other mappers or configure events, ensure registry.configure() has been called.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/runpy.py", line 198, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/runpy.py", line 88, in _run_code
+    exec(code, run_globals)
+  File "/Users/val/.vscode/extensions/ms-python.debugpy-2024.11.2024080801-darwin-arm64/bundled/libs/debugpy/adapter/../../debugpy/launcher/../../debugpy/__main__.py", line 71, in <module>
+    cli.main()
+  File "/Users/val/.vscode/extensions/ms-python.debugpy-2024.11.2024080801-darwin-arm64/bundled/libs/debugpy/adapter/../../debugpy/launcher/../../debugpy/../debugpy/server/cli.py", line 486, in main
+    run()
+  File "/Users/val/.vscode/extensions/ms-python.debugpy-2024.11.2024080801-darwin-arm64/bundled/libs/debugpy/adapter/../../debugpy/launcher/../../debugpy/../debugpy/server/cli.py", line 336, in run_file
+    runpy.run_path(target, run_name="__main__")
+  File "/Users/val/.vscode/extensions/ms-python.debugpy-2024.11.2024080801-darwin-arm64/bundled/libs/debugpy/_vendored/pydevd/_pydevd_bundle/pydevd_runpy.py", line 321, in run_path
+    return _run_module_code(code, init_globals, run_name,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/.vscode/extensions/ms-python.debugpy-2024.11.2024080801-darwin-arm64/bundled/libs/debugpy/_vendored/pydevd/_pydevd_bundle/pydevd_runpy.py", line 135, in _run_module_code
+    _run_code(code, mod_globals, init_globals,
+  File "/Users/val/.vscode/extensions/ms-python.debugpy-2024.11.2024080801-darwin-arm64/bundled/libs/debugpy/_vendored/pydevd/_pydevd_bundle/pydevd_runpy.py", line 124, in _run_code
+    exec(code, run_globals)
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/cli.py", line 1770, in <module>
+    main()
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/click/core.py", line 1157, in __call__
+    return self.main(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/click/core.py", line 1078, in main
+    rv = self.invoke(ctx)
+         ^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/click/core.py", line 1688, in invoke
+    return _process_result(sub_ctx.command.invoke(sub_ctx))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/click/core.py", line 1434, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/click/core.py", line 783, in invoke
+    return __callback(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/click/decorators.py", line 33, in new_func
+    return f(get_current_context(), *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/cli.py", line 606, in genai
+    to_dir_save_dir.rename(to_dir_save_dir_retry)
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py", line 1363, in rename
+    os.rename(self, target)
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/system/genai/temp/elections' -> '/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/system/genai/temp/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/tests/test_databases/ai-created/dnd/dnd.response_retry'
+(venv) val@Vals-MPB-14 ApiLogicServer % 
