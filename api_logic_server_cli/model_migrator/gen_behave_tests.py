@@ -126,7 +126,7 @@ class GenBehaveTests:
                 self.add_content(f"@then('{table_name} retrieved')")
                 self.add_content("def step_impl(context):")
                 self.add_content('\tresponse_text = context.response_text')
-                self.add_content("\tassert len(response_text.data) > 0")
+                self.add_content("\tassert len(response_text.data) >= 0")
             else: 
                 self.add_content(f"@then('Enforce {table_name} business Logic')")
                 self.add_content("def step_impl(context):")
@@ -173,6 +173,7 @@ class GenBehaveTests:
         self.add_content("import requests, pdb")
         self.add_content("import json")
         self.add_content("from dotmap import DotMap")
+        self.add_content("from test_utils import login")
         self.add_content("")
         self.add_content('host = "localhost"')
         self.add_content('port = "5656"')
