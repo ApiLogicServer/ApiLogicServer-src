@@ -1,0 +1,3 @@
+https://apifabric.ai/projects/gen_01J578WGRYDM7XMJ2EJWDB8GGM
+
+Project files are always under /projects/gen_$ID
