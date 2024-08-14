@@ -399,7 +399,7 @@ class ModelClass(Model):
         while tempname in self.attributes:
             tempname = attrname + str(counter)
             counter += 1
-
+        
         self.attributes[tempname] = value
         return tempname
 
@@ -1100,7 +1100,7 @@ from sqlalchemy.dialects.mysql import *
             extra_args.append('unique=True')
         return 'Index({0!r}, {1})'.format(index.name, ', '.join(extra_args))
 
-    def render_column(self, column: Column, show_name: bool):
+    def render_column(self, column: Column, show_name: bool) -> str:
         """_summary_
 
         Args:
@@ -1370,8 +1370,14 @@ from sqlalchemy.dialects.mysql import *
         for attr, column in model.attributes.items():
             if isinstance(column, Column):
                 show_name = attr != column.name
-                rendered_column = '{0}{1} = {2}\n'.format(
-                    self.indentation, attr, self.render_column(column, show_name))
+                if not attr.isascii():
+                    log.debug(f'Non-ascii column name: {column.name} in {model.name}')
+                    rendered_name = attr.encode('ascii', 'ignore').decode('ascii')
+                    rendered_column = '{0}{1} = {2}\n'.format(
+                            self.indentation, rendered_name, self.render_column(column, show_name))
+                else:
+                    rendered_column = '{0}{1} = {2}\n'.format(
+                        self.indentation, attr, self.render_column(column, show_name))
                 if column.name == "id":  # add name to Column(Integer, primary_key=True)
                     """ add name to Column(Integer, primary_key=True) - but makes system fail
                     rendered_column = rendered_column.replace(
