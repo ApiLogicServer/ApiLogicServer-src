@@ -366,12 +366,25 @@ class ModelClass(Model):
         if camel_case_name in ["Dates"]:
             camel_case_name = camel_case_name + "_Classs"
         result = inflect_engine.singular_noun(camel_case_name) or camel_case_name
+        if tablename in ["classes"]:  # ApiLogicServer
+            debug_stop = "nice breakpoint"
+        if result == "Class":   # ApiLogicServer
+            result = "Class"    # FIXME - workaround for class name... why not "Classs"?
         if result == "CategoryTableNameTest":  # ApiLogicServer
             result = "Category"
         return result
 
     @staticmethod
-    def _convert_to_valid_identifier(name):  # TODO review
+    def _convert_to_valid_identifier(name: str) -> str:  # TODO review
+        """ 
+        fix name for special chars ($ +-), and iskeyword()
+
+        Args:
+            name (str): actual attr name
+
+        Returns:
+            str: name fixed for special chars ($ +-), and iskeyword()
+        """
         assert name, "Identifier cannot be empty"
         if name[0].isdigit() or iskeyword(name):
             name = "_" + name
@@ -386,20 +399,20 @@ class ModelClass(Model):
         return result
 
     def _add_attribute(self, attrname, value):
-        """ add table column AND parent-relationship to attributes
+        """ add table column AND reln accessors to attributes
 
         disambiguate relationship accessor names (append tablename with 1, 2...)
 
-        attributes is from sqlalchemy, contains things like server_default for pg autonums 
+        attributes are from sqlalchemy, contain things like server_default for pg autonums 
         """
         attrname = tempname = self._convert_to_valid_identifier(attrname)
-        if self.name in ["Employee"] and attrname in ["employee_id"]:
+        if self.name in ["Employee", "CharacterClass"] and attrname in ["employee_id", "_class"]:
             debug_stop = "nice breakpoint"
         counter = 1
         while tempname in self.attributes:
             tempname = attrname + str(counter)
             counter += 1
-        
+
         self.attributes[tempname] = value
         return tempname
 
@@ -428,14 +441,19 @@ class ManyToOneRelationship(Relationship):
 
     def __init__(self, child_cls: str, parent_cls: str, constraint, inflect_engine, multi_reln_count):
         """
-        compute many to 1 class, assigning accessor names (tricky for multi_relns between same 2 tables)
-
+        compute many to 1 class, assigning accessor names; tricky 
+        
+        * for multi_relns between same 2 tables
+        * tables with reserved names (e/g., DND Class table)
+        
+        Note: 
         * child_cls is the child    (self.source_cls)
         * parent_cls is the parent  (self.target_cls)
         """
         super(ManyToOneRelationship, self).__init__(child_cls, parent_cls)
 
-        if child_cls in ['Flight', 'Employee', 'TabGroup'] and parent_cls in ['Airport', 'Department', 'Entity']:
+        if child_cls in ['Flight', 'Employee', 'TabGroup', 'CharacterClass'] and \
+            parent_cls in ['Airport', 'Department', 'Entity', 'Class']:
             debug_stop = "interesting breakpoint"  #  Launch config 8...   -- Create servers/airport from MODEL
         column_names = _get_column_names(constraint)
         colname = column_names[0]
@@ -449,11 +467,13 @@ class ManyToOneRelationship(Relationship):
             if ( colname.endswith('_id') or colname.endswith('_Id') ):  # eg arrival_airport_id
                 self.preferred_name = colname[:-3]
                 parent_accessor_from_fk = True
+                pass  # TODO - alert: can "lowercase" parent accessor (see classic models employee )
             elif ( colname.endswith('id') or colname.endswith('Id') ):  # eg WorksForDepartmentId
                 self.preferred_name = colname[:-2]
                 parent_accessor_from_fk = True
             else:
                 self.preferred_name = inflect_engine.singular_noun(tablename) or tablename
+
         
         # Add uselist=False to One-to-One relationships
         if any(isinstance(c, (PrimaryKeyConstraint, UniqueConstraint)) and
@@ -537,8 +557,11 @@ class ManyToOneRelationship(Relationship):
                 foreign_keys += child_cls + "." + each_column_name + ", "
             self.kwargs['foreign_keys'] = foreign_keys[0 : len(foreign_keys)-2] + "]'"
             pass
-        if self.parent_accessor_name == "user_":
-            debug_stop = "interesting breakpoint"   
+        parent_accessor_name_valid_id = ModelClass._convert_to_valid_identifier(self.parent_accessor_name)
+        if parent_accessor_name_valid_id != self.parent_accessor_name:
+            self.parent_accessor_name = parent_accessor_name_valid_id  # unusual (DND - DND CharacterClass)
+        if self.parent_accessor_name in ["user_", "class", "class_"]:
+            debug_stop = "interesting breakpoint"   # DND CharacterClass renders attr as _class (reserved word)
 
 
     @staticmethod
@@ -1467,8 +1490,8 @@ from sqlalchemy.dialects.mysql import *
                 child_accessor = f'    {child_accessor_name} : Mapped[List["{reln.source_cls}"]] = '\
                                  f'relationship({multi_reln_fix}back_populates="{reln.parent_accessor_name}")\n'
 
-                if model.name == "Employee":  # Emp has Department and Department1
-                    debug_str = "nice breakpoint"
+                if model.name in ["Employee", "CharacterClass"]:  # Emp has Department and Department1
+                    debug_str = "nice breakpoint"  # DND CharacterClass - check parent acceossor (class_ not class)
                 model.rendered_parent_relationships += parent_accessor
                 parent_model.rendered_child_relationships += child_accessor
 
@@ -1520,5 +1543,12 @@ from sqlalchemy.dialects.mysql import *
 
 def key_module_map():
     pass
-    read_tables = CodeGenerator.__init__()
-    calls_class = ModelClass.__init__()     # gets attrs, roles
+    read_tables = CodeGenerator()               # invoked by sqlacodegen_wrapper
+    read_tables = CodeGenerator.__init__()      # ctor here
+    calls_class = ModelClass.__init__()         # gets attrs, roles
+    build_reln = ManyToOneRelationship(None)    # complex code for accessors
+    CodeGenerator.render_class()
+    CodeGenerator.render_column()
+    CodeGenerator.render_relns()                # accrue relns, then render these...
+    CodeGenerator.render_relationship()         # accrue relns, then render
+    CodeGenerator.render_relationship_on_parent()
