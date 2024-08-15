@@ -1,0 +1,21 @@
+Excited to share that we can now demonstrate something so powerful, that I would have regarded it as technically impossible less than a year ago.
+
+A website that accepts a Natural Language prompt, and provides instant working software: a database and a API-based Web App. 
+ 
+This is orders of magnitude faster and simpler than Low Code database designers and screen painters, not to mention frameworks.
+
+It's on the web, so you can collaborate with your colleagues with live screens and data, and iterate in minutes -- just submit another prompt.
+
+Building out the system is a breeze.  Download the complete running project. Use standard tools like your IDE, Python, GitHub, and libraries such as Flask and SQLAlchemy -- friendly to your IT team. 
+
+For example, you can enhance it with Kafka for Application Integration.
+
+What's more, declaring spreadsheet-like rules for logic and security is 40 times more concise than manual coding -- a breakthrough for backend logic (typically nearly half the effort). 
+
+Lastly, create containers using supplied scripts, and deploying them anywhere -- it works with your preferred infrastructure.
+
+ Contact me if you'd like access. You can see it in a video, here:
+
+https://apilogicserver.github.io/Docs/WebGenAI/
+
+#WebApp #API #Database #CodingEfficiency #GenAI #BusinessRules #Flask #SqlAlchemy #Python #Microservice
