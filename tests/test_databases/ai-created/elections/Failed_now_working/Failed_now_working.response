@@ -1,0 +1,163 @@
+Creating a Star Wars-themed presidential election app database involves incorporating various elements such as candidates, elections, parties, voters, votes, and more. Let's proceed with the implementation using SQLAlchemy.
+
+First, let's install SQLAlchemy if you haven't already:
+
+```bash
+pip install sqlalchemy
+```
+
+Now, let's create the database schema with the required tables and some sample data:
+
+```python
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, DateTime
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from datetime import datetime
+
+Base = declarative_base()
+DATABASE_URI = 'sqlite:///system/genai/temp/model.sqlite'
+
+class Candidate(Base):
+    __tablename__ = 'candidate'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+    party_id = Column(Integer, ForeignKey('party.id'), nullable=False)
+
+class Party(Base):
+    __tablename__ = 'party'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+
+class Election(Base):
+    __tablename__ = 'election'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+    date = Column(DateTime, nullable=False, default=datetime.utcnow)
+
+class Voter(Base):
+    __tablename__ = 'voter'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+    planet_id = Column(Integer, ForeignKey('planet.id'), nullable=False)
+
+class Planet(Base):
+    __tablename__ = 'planet'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+
+class Vote(Base):
+    __tablename__ = 'vote'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    voter_id = Column(Integer, ForeignKey('voter.id'), nullable=False)
+    candidate_id = Column(Integer, ForeignKey('candidate.id'), nullable=False)
+    election_id = Column(Integer, ForeignKey('election.id'), nullable=False)
+
+class Campaign(Base):
+    __tablename__ = 'campaign'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    candidate_id = Column(Integer, ForeignKey('candidate.id'), nullable=False)
+    start_date = Column(DateTime, nullable=False, default=datetime.utcnow)
+    end_date = Column(DateTime, nullable=True)
+
+class Debate(Base):
+    __tablename__ = 'debate'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    location = Column(String, nullable=False)
+    date = Column(DateTime, nullable=False, default=datetime.utcnow)
+
+class DebateParticipant(Base):
+    __tablename__ = 'debate_participant'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    debate_id = Column(Integer, ForeignKey('debate.id'), nullable=False)
+    candidate_id = Column(Integer, ForeignKey('candidate.id'), nullable=False)
+
+class Funding(Base):
+    __tablename__ = 'funding'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    candidate_id = Column(Integer, ForeignKey('candidate.id'), nullable=False)
+    amount = Column(Integer, nullable=False)
+
+class Endorsement(Base):
+    __tablename__ = 'endorsement'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    entity_name = Column(String, nullable=False)
+    candidate_id = Column(Integer, ForeignKey('candidate.id'), nullable=False)
+
+class Issue(Base):
+    __tablename__ = 'issue'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+
+class Position(Base):
+    __tablename__ = 'position'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    candidate_id = Column(Integer, ForeignKey('candidate.id'), nullable=False)
+    issue_id = Column(Integer, ForeignKey('issue.id'), nullable=False)
+    description = Column(String, nullable=False)
+
+# Additional tables
+
+class Advertisement(Base):
+    __tablename__ = 'advertisement'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    campaign_id = Column(Integer, ForeignKey('campaign.id'), nullable=False)
+    media_type = Column(String, nullable=False)
+    description = Column(String, nullable=True)
+
+class Event(Base):
+    __tablename__ = 'event'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    campaign_id = Column(Integer, ForeignKey('campaign.id'), nullable=False)
+    event_type = Column(String, nullable=False)
+    date = Column(DateTime, nullable=False, default=datetime.utcnow)
+
+class Poll(Base):
+    __tablename__ = 'poll'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    issue_id = Column(Integer, ForeignKey('issue.id'), nullable=False)
+    date = Column(DateTime, nullable=False, default=datetime.utcnow)
+
+# Create an engine and a session
+engine = create_engine(DATABASE_URI)
+Base.metadata.create_all(engine)
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# Inserting sample data
+republic = Party(name="Republic")
+empire = Party(name="Empire")
+session.add_all([republic, empire])
+session.commit()
+
+luke = Candidate(name="Luke Skywalker", party_id=republic.id)
+vader = Candidate(name="Darth Vader", party_id=empire.id)
+session.add_all([luke, vader])
+session.commit()
+
+coruscant = Planet(name="Coruscant")
+tatooine = Planet(name="Tatooine")
+session.add_all([coruscant, tatooine])
+session.commit()
+
+voter1 = Voter(name="Leia Organa", planet_id=coruscant.id)
+voter2 = Voter(name="Han Solo", planet_id=tatooine.id)
+session.add_all([voter1, voter2])
+session.commit()
+
+election1 = Election(name="Galactic President Election", date=datetime(2025, 11, 7))
+session.add(election1)
+session.commit()
+
+vote1 = Vote(voter_id=voter1.id, candidate_id=luke.id, election_id=election1.id)
+vote2 = Vote(voter_id=voter2.id, candidate_id=vader.id, election_id=election1.id)
+session.add_all([vote1, vote2])
+session.commit()
+
+session.close()
+
+print("Database schema created and sample data inserted successfully.")
+```
+
+This script sets up the database with 15 tables and some sample data to get you started. The database contains tables like `Candidate`, `Party`, `Election`, `Voter`, `Planet`, `Vote`, `Campaign`, `Debate`, `DebateParticipant`, `Funding`, `Endorsement`, `Issue`, `Position`, `Advertisement`, and `Event`.
+
+Each table has appropriate columns and foreign key constraints to link them together. Sample data is inserted for demonstration purposes, which includes parties, candidates, voters, planets, an election, and votes.
