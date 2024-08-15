@@ -178,7 +178,7 @@ class ResourceObj:
             
             self.add_content(f"{space})")
             self.add_content(f"{space}result = root.execute(request)")
-            self.add_content(f"{space}return transform('LAC', '{self.name}', result)")
+            self.add_content(f"{space}return root.transform('LAC', '{self.name}', result)")
             self.add_content("")
         return self._content
         
@@ -324,12 +324,13 @@ class ResourceObj:
         self.add_content("@jwt_required()")
         self.add_content("@cross_origin(supports_credentials=True)")
         self.add_content(f"def {name}():")
-        self.add_content(f'{space}sql = get_{self.name}(request)')
+        self.add_content(f'{space}sql = get_{name}(request)')
         self.add_content(f'{space}return FreeSQL(sqlExpression=sql).execute(request)')
         self.add_content("")
     
-        self.add_content(f"def get_{name}(*args):")
+        self.add_content(f"def get_{name}(request):")
         self.add_content(f'{space}pass')
+        self.add_content(f'{space}args = request.args')
         self.add_content(f'{space}#argValue = args.get("argValueName")')
         self.add_content(f'{space}"""')
         self.add_content(f"{space}return {fixupSQL(self.jsSQL)}")
