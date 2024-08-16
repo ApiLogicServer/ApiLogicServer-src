@@ -1,0 +1,14 @@
+Use SQLAlchemy to create a sqlite database named system/genai/temp/model.sqlite, to
+
+{{prompt}}.
+
+Hints: use autonum keys, allow nulls, Decimal types, foreign keys, no check constraints, python datetime datatype.
+
+Remember that SQLite DateTime type only accepts Python datetime and date objects as input, 
+this means you can not enter string attributes where a date or datetime object is expected.
+
+Don't install additional packages.
+Don't use the faker pip package.
+
+Create some test data, use foreign key columns instead of relationship names for the data .
+

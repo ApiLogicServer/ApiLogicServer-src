@@ -90,7 +90,27 @@ class GenAI(object):
         if '.' in self.project.from_genai:  # prompt from file (hmm, no sentences...)
             # open and read the project description in natural language
             with open(f'{self.project.from_genai}', 'r') as file:
-                prompt = file.read()
+                raw_prompt = file.read()
+
+            prompt = raw_prompt
+            prompt_inserts = ''
+            if '*' == self.project.genai_prompt_inserts:    # * means no inserts
+                prompt_inserts = "*"
+            elif '' != self.project.genai_prompt_inserts:   # if text, use this file
+                prompt_inserts = self.project.genai_prompt_inserts
+            elif 'sqlite' in self.project.db_url:           # if blank, use default for db    
+                prompt_inserts = f'sqlite_inserts.prompt'
+            elif 'postgresql' in self.project.db_url:
+                prompt_inserts = f'postgresql_inserts.prompt'
+            elif 'mysql' in self.project.db_url:
+                prompt_inserts = f'mysql_inserts.prompt'
+            
+            if prompt_inserts != "*":
+                assert Path(f'system/genai/prompt_inserts/{prompt_inserts}').exists(), \
+                    f"Missing prompt_inserts file: {prompt_inserts}"  # eg api_logic_server_cli/prototypes/manager/system/genai/prompt_inserts/sqlite_inserts.prompt
+                with open(f'system/genai/prompt_inserts/{prompt_inserts}', 'r') as file:
+                    pre_post = file.read()  # eg, Use SQLAlchemy to create a sqlite database named system/genai/temp/model.sqlite, with
+                prompt = pre_post.replace('{{prompt}}', raw_prompt)
         else:                               # prompt from text (add system/genai/pre_post.prompt)
             pre_post = "Use SQLAlchemy to create a sqlite database named system/genai/temp/model.sqlite, with {{prompt}}.  Create some test data."
             if Path('system/genai/pre_post.prompt').exists():
@@ -141,6 +161,8 @@ class GenAI(object):
             if "Enforce" in each_line:
                 writing = True
             if writing:
+                if 'Hints: use autonum keys' in each_line:
+                    break
                 logic_lines += 1
                 logic_text += '    ' + each_line + '\n'
         return logic_text
