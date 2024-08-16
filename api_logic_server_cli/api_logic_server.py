@@ -840,6 +840,7 @@ class ProjectRun(Project):
                      from_genai: str="",
                      gen_using_file: str="",
                      genai_version: str="",
+                     genai_prompt_inserts: str="",
                      host: str='localhost', 
                      port: str='5656', 
                      swagger_host: str="localhost", 
@@ -880,6 +881,7 @@ class ProjectRun(Project):
         self.from_genai = from_genai
         self.gen_using_file = gen_using_file
         self.genai_version = genai_version
+        self.genai_prompt_inserts = genai_prompt_inserts
         self.user_db_url = db_url  # retained for debug
         self.bind_key = bind_key
         self.api_name = api_name

@@ -61,9 +61,15 @@ class Project(CliArgsBase):  # extends user-visible args with internal values, e
         self.genai_logic = None  # type list[str]
         """ genai logic to be inserted into logic/declare_logic.py """
 
+        self.genai_prompt_inserts : str = None
+        """ text to be inserted into prompt 
+            - "" means infer from db_url (e.g. system/genai/prompt_inserts/sqlite_inserts.prompt)
+            - "*" means no inserts
+            - otherwise, path to file """
+
 
     def print_options(self):
-        """ Creating ApiLogicServer with options: (or uri helo) """
+        """ Creating ApiLogicServer with options: (or uri hello) """
         if self.db_url == "?":  # can only test interactively, not from launch
             uri_info.print_uri_info()
             exit(0)

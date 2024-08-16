@@ -562,8 +562,18 @@ def tutorial(ctx, create):
 @click.option('--retries', 
               default=3,
               help="Number of retries")
+@click.option('--opt-locking', 'opt_locking',
+              default=OptLocking.OPTIONAL.value,
+              help="Optimistic Locking [ignored, optional, required]")
+@click.option('--prompt-inserts', 'prompt_inserts',
+              default="",
+              help="Inserts file [blank defaults from db-url, * for no inserts]")
 @click.pass_context
-def genai(ctx, using, db_url, gen_using_file: click.BOOL, genai_version: str, retries: int):
+@click.option('--quote', is_flag=True,
+              default=False,
+              help="Use Quoted column names")
+def genai(ctx, using, db_url, gen_using_file: click.BOOL, genai_version: str, 
+          retries: int, opt_locking: str, prompt_inserts: str, quote: click.BOOL):
     """
         Creates new customizable project (overwrites).
     """
@@ -588,6 +598,9 @@ def genai(ctx, using, db_url, gen_using_file: click.BOOL, genai_version: str, re
             PR.ProjectRun(command="create", genai_version=genai_version, 
                           from_genai=using,                 # the prompt file, or the actual prompt
                           gen_using_file=gen_using_file,    # retry from [repaired] response file
+                          opt_locking=opt_locking,
+                          genai_prompt_inserts=prompt_inserts,
+                          quote=quote,
                           project_name=project_name, db_url=db_url)
             if do_force_failure := False:
                 if try_number < 3:
