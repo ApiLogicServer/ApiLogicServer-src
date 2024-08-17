@@ -33,7 +33,7 @@ class Offering(Base):
     """
 
 # Create the SQLite database
-engine = create_engine('sqlite:///system/genai/temp/model.sqlite', echo=True)
+engine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite', echo=True)
 Base.metadata.create_all(engine)
 
 # Add some test data

@@ -48,7 +48,7 @@ class Item(Base):
     product = relationship("Product", backref="items")
 
 # Create the SQLite database and the tables
-engine = create_engine('sqlite:///system/genai/temp/model.sqlite')
+engine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite')
 Base.metadata.create_all(engine)
 
 # Insert some sample data

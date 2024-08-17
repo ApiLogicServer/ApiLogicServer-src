@@ -7,7 +7,7 @@ from sqlalchemy.orm import relationship, sessionmaker
 os.makedirs(os.path.dirname('system/genai/temp/model.sqlite'), exist_ok=True)
 
 # Create engine and base
-engine = create_engine('sqlite:///system/genai/temp/model.sqlite', echo=True)
+engine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite', echo=True)
 Base = declarative_base()
 
 # Association table for many-to-many relationship between orders and products via items

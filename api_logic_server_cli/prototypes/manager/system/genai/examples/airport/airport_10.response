@@ -100,7 +100,7 @@ class Baggage(Base):
     dimensions = Column(String, nullable=True)
 
 # Create an engine and a metadata object
-engine = create_engine('sqlite:///system/genai/temp/model.sqlite')
+engine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite')
 Base.metadata.create_all(engine)
 
 # Create a new session

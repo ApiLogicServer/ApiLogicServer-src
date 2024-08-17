@@ -607,17 +607,15 @@ def genai(ctx, using, db_url, gen_using_file: click.BOOL, genai_version: str,
                     raise Exception("Forced Failure for Internal Testing")
             break
         except Exception as e:
-            log.error(f"\n\nGenai [#Failed With Error: {e}")
-
+            log.error(f"\n\nGenai failed With Error: {e}")
             manager_dir = Path(os.getcwd())  # rename save dir (append retry) for diagnosis
             to_dir_save_dir = Path(manager_dir).joinpath(f'system/genai/temp/{project_name}')
             to_dir_save_dir_retry = Path(manager_dir).joinpath(f'system/genai/temp/{project_name}_{try_number}')
             if gen_using_file != "":
-                to_dir_save_dir_retry = Path(manager_dir).joinpath(f'system/genai/temp/{gen_using_file}_retry')  
+                to_dir_save_dir_retry = Path(manager_dir).joinpath(f'system/genai/temp/{project_name}_retry')  
             if to_dir_save_dir_retry.exists():
                 shutil.rmtree(to_dir_save_dir_retry)
-            to_dir_save_dir.rename(to_dir_save_dir_retry)
-
+            to_dir_save_dir.rename(to_dir_save_dir_retry) 
             failed = True
             try_number += 1
     if failed:

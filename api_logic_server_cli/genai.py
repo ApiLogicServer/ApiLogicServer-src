@@ -47,10 +47,9 @@ class GenAI(object):
         if self.project.gen_using_file != '':
             log.info(f'..     retry from [repaired] response file: {self.project.gen_using_file}')
         
+        self.project.from_model = f'system/genai/temp/create_db_models.py' # we always write the model to this file
         self.ensure_system_dir_exists()  # so we can write to system/genai/temp
         self.prompt = self.delete_temp_files()
-
-        self.project.from_model = f'system/genai/temp/model.py' # we always write the model to this file
         
         self.prompt = "not provided - using repaired response"
         if self.project.gen_using_file == '':
@@ -74,8 +73,8 @@ class GenAI(object):
 
     def delete_temp_files(self):
         """Delete temp files created by genai ((system/genai/temp -- models, responses)"""
-        Path('system/genai/temp/model.sqlite').unlink(missing_ok=True)  # delete temp (work) files
-        Path('system/genai/temp/model.py').unlink(missing_ok=True)
+        Path('system/genai/temp/create_db_models.sqlite').unlink(missing_ok=True)  # delete temp (work) files
+        Path(self.project.from_model).unlink(missing_ok=True)
         if self.project.gen_using_file == '':  # clean up unless retrying from chatgpt_original.response
             Path('system/genai/temp/chatgpt_original.response').unlink(missing_ok=True)
             Path('system/genai/temp/chatgpt_retry.response').unlink(missing_ok=True)
@@ -109,13 +108,13 @@ class GenAI(object):
                 assert Path(f'system/genai/prompt_inserts/{prompt_inserts}').exists(), \
                     f"Missing prompt_inserts file: {prompt_inserts}"  # eg api_logic_server_cli/prototypes/manager/system/genai/prompt_inserts/sqlite_inserts.prompt
                 with open(f'system/genai/prompt_inserts/{prompt_inserts}', 'r') as file:
-                    pre_post = file.read()  # eg, Use SQLAlchemy to create a sqlite database named system/genai/temp/model.sqlite, with
+                    pre_post = file.read()  # eg, Use SQLAlchemy to create a sqlite database named system/genai/temp/create_db_models.sqlite, with
                 prompt = pre_post.replace('{{prompt}}', raw_prompt)
         else:                               # prompt from text (add system/genai/pre_post.prompt)
-            pre_post = "Use SQLAlchemy to create a sqlite database named system/genai/temp/model.sqlite, with {{prompt}}.  Create some test data."
+            pre_post = "Use SQLAlchemy to create a sqlite database named system/genai/temp/create_db_models.sqlite, with {{prompt}}.  Create some test data."
             if Path('system/genai/pre_post.prompt').exists():
                 with open(f'system/genai/pre_post.prompt', 'r') as file:
-                    pre_post = file.read()  # eg, Use SQLAlchemy to create a sqlite database named system/genai/temp/model.sqlite, with
+                    pre_post = file.read()  # eg, Use SQLAlchemy to create a sqlite database named system/genai/temp/create_db_models.sqlite, with
             prompt = pre_post + ' ' + self.project.from_genai  # experiment
             prompt = prompt.replace('{{prompt}}', self.project.from_genai)
         return prompt      
@@ -217,8 +216,13 @@ class GenAI(object):
             response_data (str): the chatgpt response
 
         """
-        response_array = response_data.split('\n')
         model_class = ""
+        with open(f'system/genai/create_db_models_inserts/create_db_models_prefix.py', "r") as inserts:
+            model_lines = inserts.readlines()
+        for each_line in model_lines:
+            model_class += each_line + '\n'
+
+        response_array = response_data.split('\n')
         line_num = 0
         writing = False
         indents_to_remove = 0
@@ -262,12 +266,13 @@ class GenAI(object):
 
         Save the prompt to system/genai/temp/{project}/genai.prompt
 
-        Copy models.py to system/genai/temp/{project}/create_db_models.py
+        Copy system/genai/temp/create_db_models.py to system/genai/temp/{project}/create_db_models.py
         """
         try:
             to_dir = Path(os.getcwd())
             gen_temp_dir = Path(to_dir).joinpath(f'system/genai/temp')
             to_dir_save_dir = Path(to_dir).joinpath(f'system/genai/temp/{self.project.project_name_last_node}')
+            self.project.gen_ai_save_dir = to_dir_save_dir
             os.makedirs(to_dir_save_dir, exist_ok=True)
             with open(f'{to_dir_save_dir.joinpath('genai.response')}', "w") as response_file:
                 response_file.write(self.response)
@@ -275,7 +280,7 @@ class GenAI(object):
                 pass
                 with open(f'{to_dir_save_dir.joinpath('genai.prompt')}', "w") as prompt_file:
                     prompt_file.write(self.prompt)
-            shutil.copyfile(src='system/genai/temp/model.py', 
+            shutil.copyfile(src=self.project.from_model, 
                             dst=to_dir_save_dir.joinpath('create_db_models.py'))
         except Exception as inst:
             log.error(f"\n\nError {inst} creating genai docs: {str(gen_temp_dir)}\n\n")

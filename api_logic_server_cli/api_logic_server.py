@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "11.00.24"
+__version__ = "11.00.25"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t08/16/2024 - 11.00.25: Make local GenAI like Web/GenAI. BLT runs  \n"\
     "\t08/14/2024 - 11.00.24: DND handle classes table (reserved word), TB fix (?)  \n"\
     "\t08/13/2024 - 11.00.23: ont auth update, AME model changes.  BLT passes  \n"\
     "\t08/12/2024 - 11.00.22: dflt gpt4, save responses for each try, ignore .sh code, decimal fixes  \n"\
@@ -1843,7 +1844,14 @@ from database import <project.bind_key>_models
             gen_ai = GenAI(self)
 
         if self.from_model != "" or self.from_genai != "":
-            create_db_from_model.create_db(self)
+            try:
+                create_db_from_model.create_db(self)
+            except Exception as e:
+                if hasattr(self, 'gen_ai_save_dir'):
+                    log.error(f"Error creating database from model: {e}")
+                    with open(f'{self.gen_ai_save_dir.joinpath('create_db_models_failed.txt')}', "w") as log_file:
+                        log_file.write(f"Error creating database from model: {e}")
+                raise(e)
 
         if self.add_auth_in_progress:
             self.models_path_dir = 'database/database_discovery'

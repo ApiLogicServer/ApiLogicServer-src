@@ -52,7 +52,7 @@ class Item(Base):
 
 def main():
     # Create an SQLite database
-    engine = create_engine('sqlite:///system/genai/temp/model.sqlite')
+    engine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite')
 
     # Create all tables
     Base.metadata.create_all(engine)

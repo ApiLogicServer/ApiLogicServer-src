@@ -35,7 +35,7 @@ class Item(Base):
     unit_price = Column(Numeric, nullable=False)
     amount = Column(Numeric, nullable=True)
 
-engine = create_engine('sqlite:///system/genai/temp/model.sqlite')
+engine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite')
 Base.metadata.create_all(engine)
 
 Session = sessionmaker(bind=engine)

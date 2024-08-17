@@ -1,4 +1,4 @@
-Use SQLAlchemy to create a sqlite database named system/genai/temp/model.sqlite, to
+Use SQLAlchemy to create a sqlite database named system/genai/temp/create_db_models.sqlite, to
 
 {{prompt}}.
 

@@ -23,7 +23,7 @@ Here's how you can create such a database using SQLAlchemy in Python:
 
    # Initialize the Base and Engine
    Base = declarative_base()
-   engine = create_engine('sqlite:///system/genai/temp/model.sqlite', echo=True)
+   engine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite', echo=True)
 
    class Airport(Base):
        __tablename__ = 'airports'

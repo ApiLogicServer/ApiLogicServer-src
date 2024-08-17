@@ -3,7 +3,7 @@ from sqlalchemy.orm import declarative_base, relationship, sessionmaker
 from datetime import datetime
 
 # Create the SQLite engine
-engine = create_engine('sqlite:///system/genai/temp/model.sqlite')
+engine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite')
 
 # Create a base class for different table models
 Base = declarative_base()
