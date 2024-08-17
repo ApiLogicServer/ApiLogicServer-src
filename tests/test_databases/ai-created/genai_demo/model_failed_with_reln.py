@@ -48,7 +48,7 @@ class Item(Base):
     # product = relationship('Product')
 
 # Create SQLite database
-engine = create_engine('sqlite:///system/genai/temp/model.sqlite')
+engine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite')
 Base.metadata.create_all(engine)
 
 # Create a new session

@@ -8,7 +8,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
 # Create database engine
-engine = create_engine('sqlite:///system/genai/temp/model.sqlite', echo=True)
+engine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite', echo=True)
 Base = declarative_base()
 
 # Define the database schema

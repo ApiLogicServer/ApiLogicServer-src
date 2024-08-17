@@ -42,7 +42,7 @@ class Item(Base):
     product = relationship('Product', backref='items')
 
 # Create the SQLite database engine
-engine = create_engine('sqlite:///system/genai/temp/model.sqlite', echo=True)
+engine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite', echo=True)
 
 # Create the tables
 Base.metadata.create_all(engine)

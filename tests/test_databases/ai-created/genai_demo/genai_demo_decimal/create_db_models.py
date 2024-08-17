@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship, sessionmaker
 from decimal import DECIMAL
 
 # Define the SQLite database path
-DATABASE_URI = 'sqlite:///system/genai/temp/model.sqlite'
+DATABASE_URI = 'sqlite:///system/genai/temp/create_db_models.sqlite'
 Base = declarative_base()
 
 # Define Customer table

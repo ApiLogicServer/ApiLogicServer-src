@@ -42,7 +42,7 @@ class Item(Base):
     product = relationship("Product", backref=backref('products', order_by=id))
 
 # Create SQLite database and session
-engine = create_engine('sqlite:///system/genai/temp/model.sqlite')
+engine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite')
 session = sessionmaker()
 session.configure(bind=engine)
 Base.metadata.create_all(engine)

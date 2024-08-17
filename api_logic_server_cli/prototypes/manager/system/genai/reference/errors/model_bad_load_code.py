@@ -33,7 +33,7 @@ class Product(Base):
     description = Column(String)
     unit_price = Column(Numeric(precision=10, scale=2))
 
-engine = create_engine('sqlite:///system/genai/temp/model.sqlite') # create sqlite db
+engine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite') # create sqlite db
 
 Base.metadata.create_all(engine) # create tables in the database
 

@@ -56,7 +56,7 @@ class Item(Base):
 
 # Create database file and engine
 os.makedirs('system/genai/temp', exist_ok=True)
-engine = create_engine('sqlite:///system/genai/temp/model.sqlite')
+engine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite')
 Base.metadata.create_all(engine)
 
 # Create a session

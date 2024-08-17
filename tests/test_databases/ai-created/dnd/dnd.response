@@ -17,7 +17,7 @@ import datetime
 import random
 
 # Define the SQLite database
-engine = create_engine('sqlite:///system/genai/temp/model.sqlite', echo=True)
+engine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite', echo=True)
 Base = declarative_base()
 Session = sessionmaker(bind=engine)
 session = Session()

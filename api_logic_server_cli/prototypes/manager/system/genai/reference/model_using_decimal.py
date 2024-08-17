@@ -36,7 +36,7 @@ class Product(Base):
     unit_price = Column(DECIMAL, nullable=True)
 
 # Create the SQLite database
-engine = create_engine('sqlite:///system/genai/temp/model.sqlite')
+engine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite')
 Base.metadata.create_all(engine)
 
 # Insert sample data into the customers table

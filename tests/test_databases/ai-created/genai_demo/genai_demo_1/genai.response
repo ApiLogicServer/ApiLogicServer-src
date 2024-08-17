@@ -16,7 +16,7 @@ from sqlalchemy.orm import relationship, sessionmaker, declarative_base
 from sqlalchemy.ext.declarative import DeclarativeMeta
 
 # Create engine and base class
-engine = create_engine('sqlite:///system/genai/temp/model.sqlite', echo=True)
+engine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite', echo=True)
 Base: DeclarativeMeta = declarative_base()
 
 class Customer(Base):

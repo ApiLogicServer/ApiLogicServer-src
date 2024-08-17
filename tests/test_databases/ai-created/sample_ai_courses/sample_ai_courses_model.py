@@ -43,7 +43,7 @@ Revealing 3r bug - bad code for unique constraint
 '''
 
 # Create database engine
-engine = create_engine('sqlite:///system/genai/temp/model.sqlite', echo=True)
+engine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite', echo=True)
 Base = declarative_base()
 
 # Define the database schema
