@@ -28,12 +28,19 @@ class GenAI(object):
     * --using is required to get the project name
         * project created along side this; maybe lose path and use cwd?
 
-    Explore interim copilot access:
+    ### Explore interim copilot access:
+
     https://stackoverflow.com/questions/76741410/how-to-invoke-github-copilot-programmatically
     https://docs.google.com/document/d/1o0TeNQtuT6moWU1bOq2K20IbSw4YhV1x_aFnKwo_XeU/edit#heading=h.3xmoi7pevsnp
     https://code.visualstudio.com/api/extension-guides/chat
     https://code.visualstudio.com/api/extension-guides/language-model
     https://github.com/B00TK1D/copilot-api
+
+    ### Or use ChatGPT:
+
+    Not sure vscode/copilot is best approach, since we'd like to activate this during project creation.
+
+    * Thomas suggests there are ways to "teach" ChatGPT about Logic Bank.  This is a good idea.
     """
 
     def __init__(self, project: Project):
