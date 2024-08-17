@@ -254,6 +254,9 @@ class GenAI(object):
                         each_line = each_line.replace('    ', '    # ')
                     else:  # sometimes it puts relns outside the class (so, outdented)
                         each_line = '# ' + each_line
+                if 'sqlite:///system/genai/temp/model.sqlite':  # fix prior version
+                    each_line = each_line.replace('sqlite:///system/genai/temp/model.sqlite', 
+                                                  'sqlite:///system/genai/temp/create_db_models.sqlite')
                 model_class += each_line + '\n'
         with open(f'{self.project.from_model}', "w") as model_file:
             model_file.write(model_class)
