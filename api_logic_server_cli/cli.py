@@ -568,10 +568,10 @@ def tutorial(ctx, create):
 @click.option('--prompt-inserts', 'prompt_inserts',
               default="",
               help="Inserts file [blank defaults from db-url, * for no inserts]")
-@click.pass_context
 @click.option('--quote', is_flag=True,
               default=False,
               help="Use Quoted column names")
+@click.pass_context
 def genai(ctx, using, db_url, gen_using_file: click.BOOL, genai_version: str, 
           retries: int, opt_locking: str, prompt_inserts: str, quote: click.BOOL):
     """
