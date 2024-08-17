@@ -30,6 +30,8 @@ class GenAI(object):
 
     ### Explore interim copilot access:
 
+    VSCode/Copilot-chat can turn prompts into logic, so can we automate with API?
+
     https://stackoverflow.com/questions/76741410/how-to-invoke-github-copilot-programmatically
     https://docs.google.com/document/d/1o0TeNQtuT6moWU1bOq2K20IbSw4YhV1x_aFnKwo_XeU/edit#heading=h.3xmoi7pevsnp
     https://code.visualstudio.com/api/extension-guides/chat
@@ -38,7 +40,8 @@ class GenAI(object):
 
     ### Or use ChatGPT:
 
-    Not sure vscode/copilot is best approach, since we'd like to activate this during project creation.
+    Not sure vscode/copilot is best approach, since we'd like to activate this during project creation
+    (eg on web/GenAI - not using vscode).
 
     * Thomas suggests there are ways to "teach" ChatGPT about Logic Bank.  This is a good idea.
     """
