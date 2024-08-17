@@ -142,6 +142,7 @@ class CustomEndpoint():
         from api.api_discovery.ontimize_api import getMetaData
         resources = getMetaData(key)
         self._attributes = resources["resources"][key]["attributes"]
+        self._quote = '`' if Args.backtic_as_quote else '"'
         
     def __str__(self):
             return  f"Alias {self.alias} Model: {self._model_class.__name__} PrimaryKey: {self.primaryKey} FilterBy: {self.filter_by} OrderBy: {self.order_by}"
@@ -219,6 +220,7 @@ class CustomEndpoint():
         Returns:
             dict: data dict from sql
         """
+        expressions = []
         args = {}
         payload = {}
         result = {}
@@ -230,6 +232,7 @@ class CustomEndpoint():
             method = request.method
             self._method = method
             args = request.args
+            if len(request.data) > 0:
             payload = json.loads(request.data.decode('utf-8'))
             self._printIncludes(1) # debug print
             if method == 'DELETE':
@@ -257,11 +260,12 @@ class CustomEndpoint():
         resource_logger.debug(f"CustomEndpoint execute on: {self._model_class_name} using alias: {self.alias}")
         filter_by = None
         #key = args.get(pkey) if args.get(pkey) is not None else args.get(f"filter[{pkey}]")
+        _quote = '`' if Args.backtic_as_quote else '"'
         if value is not None and value != 'undefined':
-            filter_by = f'"{pkey}" = {self.quoteStr(value)}'
+            filter_by = f'{_quote}{pkey}{_quote} = {self.quoteStr(value)}'
             self._pkeyList.append(self.quoteStr(value))
         elif altKey is not None:
-            filter_by = f'"{pkey}" = {self.quoteStr(altKey)}'
+            filter_by = f'{_quote}{pkey}{_quote} = {self.quoteStr(altKey)}'
             self._pkeyList.append(self.quoteStr(altKey))
         filter_by = filter_by if filter_ is None else f"{filter_by} and {filter_}" if filter_by is not None else filter_
         self._href = f"{request.url_root[:-1]}{request.path}"
@@ -271,7 +275,7 @@ class CustomEndpoint():
             self._createRows(limit=limit,offset=offset,order_by=order_by,filter_by=filter_by, expressions=expressions) 
             self._executeChildren()
             self._modifyRows(result)
-            return json.dumps(result)
+            return json.dumps(result, indent=4, ensure_ascii=False).encode('utf8')
         except Exception as ex:
             resource_logger.error(f"CustomEndpoint error {ex}")
             return f"'error': {ex}"
@@ -712,8 +716,8 @@ class CustomEndpoint():
                 response = requests.post(url=url, json=j) 
             elif method in ["PUT","PATCH" ]:
                 response = requests.patch(url=f"{url}/{key}", data=j) 
-                
-        return json.dumps(json.loads(response.text)["data"]["attributes"]) if response.status_code < 301 else response.content
+        data  = json.loads(response.text)["data"]["attributes"]        
+        return json.dumps(data,indent=4, ensure_ascii=False).encode('utf8') if response.status_code < 301 else response.content
 
     def populateClass(self, clz, payload):
         for p in payload:
@@ -860,7 +864,8 @@ class CustomEndpoint():
         try:
             if self._method == 'OPTIONS':
                 return json_
-            json_dict = json.loads(json_) if isinstance(json_, str) else json_
+            #TODO - fixup asscii to utf-8
+            json_dict = json.loads(json_) if isinstance(json_, bytes) else json_
             json_result = json_dict.get(key, json_dict) if key in json_dict else json_dict if isinstance(json_dict, list) else [json_dict]
         except Exception as ex:
             resource_logger.error(f"Transform Error on style {style} using key: {key} on {json_} error: {ex}")
