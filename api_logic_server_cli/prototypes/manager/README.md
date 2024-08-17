@@ -267,11 +267,9 @@ The `samples` folder has pre-created important projects you will want to review 
 
     * This reflects the results you can expect with your own databases
 
-* [nw_sample](https://apilogicserver.github.io/Docs/Sample-Database/) - same database, but with ***with [customizations](https://apilogicserver.github.io/Docs/IDE-Customize/) added***.  It's a great resource for exploring:
+* [nw_sample](https://apilogicserver.github.io/Docs/Sample-Database/) - same database, but with ***with [customizations](https://apilogicserver.github.io/Docs/IDE-Customize/) added***.  It's a great resource for exploring how to customize your projects.
 
     * Hint: use your IDE to search for `#als`
-
-    * The sample is also created without customization (`sample_nocust`).
 
 * [tutorial](https://apilogicserver.github.io/Docs/Tutorial/) - short (~30 min) walk-through of using API Logic Server using the northwind (customers, orders...) database
 
