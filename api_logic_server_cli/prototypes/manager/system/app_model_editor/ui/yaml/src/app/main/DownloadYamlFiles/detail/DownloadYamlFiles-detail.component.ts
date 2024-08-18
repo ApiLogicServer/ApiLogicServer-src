@@ -7,7 +7,7 @@ import { DialogService } from 'ontimize-web-ngx';
   templateUrl: './DownloadYamlFiles-detail.component.html',
   styleUrls: ['./DownloadYamlFiles-detail.component.scss']
 })
-export class DownloadYamlFilesDetailComponent implements OnInit  {
+export class DownloadYamlFilesDetailComponent implements OnInit {
   protected service: OntimizeService;
   public data: any;
   public content: string;
@@ -16,9 +16,9 @@ export class DownloadYamlFilesDetailComponent implements OnInit  {
   @ViewChild('yamlFile') yamlFile: OFormComponent;
   @ViewChild('downloadedFile') downloadedFile: OTextareaInputComponent;
   constructor(protected injector: Injector,
-    protected dialogService: DialogService)  {
+    protected dialogService: DialogService) {
     this.service = this.injector.get(OntimizeService);
-  
+
   }
 
   ngOnInit() {
@@ -51,23 +51,45 @@ export class DownloadYamlFilesDetailComponent implements OnInit  {
     }
     return this.downloaded;
   }
-    download_yaml() {
-      console.log("download_yaml");
-      this.service.update({'name':this.data.name}, {'download_flag':true},"YamlFiles").subscribe((resp) => {
-        console.log("downloaded: " + JSON.stringify(resp.data.attributes.content));
-        if (resp.code === 0) {
-          this.data.downloaded = JSON.stringify(resp.data.attributes.content)
-          this.showDownloadInfo();
-          this.yamlFile.reload();
-        } else {
-          console.error(resp);
-        }
-      });
+  download_yaml() {
+    console.log("download_yaml");
+    //this.service.update({ 'name': this.data.name }, { 'download_flag': true }, "YamlFiles").subscribe((resp) => {
+      this.service.query({'name': this.data.name },
+        [],
+        'downloadyaml').subscribe((resp) => {
+      console.log("downloaded: " + JSON.stringify(resp.data));
+      if (resp.code === 0) {
+        this.data.downloaded = JSON.stringify(resp.data);
+        this.showDownloadInfo();
+        //this.yamlFile.reload();
+      } else {
+        console.error(resp);
+      }
+    });
+  }
+  showDownloadInfo() {
+    if (this.dialogService) {
+      this.dialogService.info('Yaml File Downloaded',
+        'The Yaml "converted content" has been downloaded (press Refresh if not visible)',);
     }
-    showDownloadInfo(){
-      if (this.dialogService) {
-        this.dialogService.info('Yaml File Downloaded',
-            'The Yaml "converted content" has been downloaded (press Refresh if not visible)',);
-      } 
+  }
+  reload_yaml() {
+      console.log("reload_yaml");
+      this.service.query({'name': this.data.name },
+        [],
+        'reloadyaml').subscribe((resp) => {
+          console.log("reload_yaml: " + JSON.stringify(resp.data));
+          if (resp.code === 0) {
+            this.showReloadInfo();
+          } else {
+            console.error(resp);
+          }
+        });
     }
+    showReloadInfo(){
+      if(this.dialogService) {
+      this.dialogService.info('Yaml File Reloaded',
+        'The Yaml "downloaded content" has been reprocessed (Reloaded Entities, Attributes, Relationships)',);
+    }
+  }
 }
