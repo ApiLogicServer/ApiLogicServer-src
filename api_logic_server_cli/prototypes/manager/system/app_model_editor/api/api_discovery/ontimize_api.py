@@ -260,20 +260,32 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 # stmt = insert(api_clz).values(data)
 
             else:
-                if clz_type == "importyaml":
+                if clz_name == "YamlFiles" and clz_type in ["importyaml", "reloadyaml", "downloadyaml"]:
                     key = filter.split("=")[1] if filter and "name" in filter else "app_model.yaml"
                     key = key.replace("'","",2).strip()
+                    key = key.replace('"',"",2)
                     resp = (
                         session.query(models.YamlFiles)
                         .filter(models.YamlFiles.name == str(key))
                         .one()
                         )
-                    yaml_content = resp and resp.content
-                    #yaml_content = request.data.decode("utf-8")
-                    valuesYaml = yaml.safe_load(yaml_content)
-                    process_yaml(valuesYaml=valuesYaml)
+                    if clz_type == "downloadyaml":
+                        yaml_content = export_yaml_to_file(_project_dir)
+                        try:
+                            setattr(resp, "downloaded", yaml_content)
+                            session.add(resp)
+                            session.commit()
+                        except Exception as ex:
+                            session.rollback()
+                            return jsonify({"code": 1, "message": f"Yaml file {clz_type} error {ex}", "data": None})
     
-                    return jsonify({"code": 0, "message": "Yaml file loaded", "data": None})
+                    else:
+                        yaml_content = resp.downloaded if resp.downloaded != None and clz_type == "reloadyaml" else resp.content
+                        #yaml_content = request.data.decode("utf-8")
+                        valuesYaml = yaml.safe_load(yaml_content)
+                        process_yaml(valuesYaml=valuesYaml)
+                    
+                    return jsonify({"code": 0, "totalQueryRecordsNumber": 1, "startRecordIndex": 1,"message": f"Yaml file {clz_type}", "data": yaml_content})
                 # GET (sent as POST)
                 # rows = get_rows_by_query(api_clz, filter, orderBy, columns, pagesize, offset)
                 if "TypeAggregate" in clz_type:

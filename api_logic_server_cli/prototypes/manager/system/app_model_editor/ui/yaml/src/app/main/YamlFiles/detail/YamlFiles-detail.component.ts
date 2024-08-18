@@ -63,7 +63,7 @@ export class YamlFilesDetailComponent implements OnInit  {
     updateProcessFlag() {
       console.log("updateProcessFlag");
       this.data.upload_flag = true;
-      this.service.update({'name':this.data.name}, {'upload_flag':this.data.upload_flag},"YamlFiles").subscribe((resp) => {
+      this.service.update({'name':this.data.name}, {'upload_flag':true},"YamlFiles").subscribe((resp) => {
         console.log("res: " + JSON.stringify(resp));
         if (resp.code === 0) {
           this.showInfo();

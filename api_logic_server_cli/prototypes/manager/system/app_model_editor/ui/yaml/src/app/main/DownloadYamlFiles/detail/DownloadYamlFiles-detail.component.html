@@ -10,6 +10,8 @@
         <o-button o-grid-toolbar position="end" (click)="download_yaml()" 
         label="4. Download Yaml (after 3. editing, the download content below can be merged into your app_model.yaml)"
         icon="download_file"></o-button>
+        <o-button o-grid-toolbar position="end" (click)="reload_yaml()" label="2. Reload Yaml from downloaded content (loads all entities, attributes, relationships)" type="STROKED"
+        icon="upload_file"></o-button>
   
       <o-row attr="row1" layout-align="start stretch">
           <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
