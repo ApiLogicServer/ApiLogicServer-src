@@ -233,7 +233,7 @@ class CustomEndpoint():
             self._method = method
             args = request.args
             if len(request.data) > 0:
-            payload = json.loads(request.data.decode('utf-8'))
+                payload = json.loads(request.data.decode('utf-8'))
             self._printIncludes(1) # debug print
             if method == 'DELETE':
                 raise ValidationError( 'Delete is not supported at this time')
