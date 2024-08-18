@@ -44,6 +44,8 @@ class GenAI(object):
     (eg on web/GenAI - not using vscode).
 
     * Thomas suggests there are ways to "teach" ChatGPT about Logic Bank.  This is a good idea.
+
+    https://platform.openai.com/docs/guides/fine-tuning/create-a-fine-tuned-model
     """
 
     def __init__(self, project: Project):
