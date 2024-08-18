@@ -73,6 +73,7 @@ dependencies = [
         "WTForms==2.3.3",
         "behave==1.2.6",
         "alembic==1.7.7",
+        "python-ulid==2.7.0
         "GeoAlchemy2==0.12.5",
         "confluent-kafka==2.3.0",
         "translate==3.6.1",
