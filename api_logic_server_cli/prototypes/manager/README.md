@@ -151,7 +151,7 @@ als genai --using=genai_demo.prompt --gen-using-file=system/genai/temp/chatgpt_r
 <br>AI results are not consistent, so the model file may need corrections.  You can find it at `system/genai/temp/model.py`.  You can correct the model file, and then run:
 
 ```bash
-als create --project-name=genai_demo --from-model=system/genai/temp/model.py --db-url=sqlite
+als create --project-name=genai_demo --from-model=system/genai/temp/create_db_models.py --db-url=sqlite
 ```
 
 Or, correct the chatgpt response, and
