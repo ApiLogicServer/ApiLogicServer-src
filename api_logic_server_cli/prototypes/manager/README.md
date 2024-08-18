@@ -1,5 +1,5 @@
 ---
-version info: 0.5 (5/28/2024)
+version info: 0.6 (8/18/2024)
 ---
 ## Welcome to API Logic Server
 
@@ -107,7 +107,7 @@ Then, try your own databases [(db-url examples here)](https://apilogicserver.git
 1. If you have signed up, this will create and open a project called `genai_demo` from `genai_demo.prompt` (available in left Explorer pane):
 
 ```bash
-als genai --using=genai_demo.prompt
+als genai --using=system/genai/examples/genai_demo/genai_demo.prompt
 ```
 
 

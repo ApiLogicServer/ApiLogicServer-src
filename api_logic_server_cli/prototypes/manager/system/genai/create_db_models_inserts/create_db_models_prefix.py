@@ -1,1 +1,1 @@
-from sqlalchemy.sql import func  # end imports from api_logic_server_cli/fragments/create_db_models_prefix.py
+from sqlalchemy.sql import func  # end imports from system/genai/create_db_models_inserts/create_db_models_prefix.py
