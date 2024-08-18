@@ -24,10 +24,11 @@ def jsonapi_filter(cls):
     query = cls._s_query
     if args := request.args:
         from api.system.expression_parser import advancedFilter
-        expressions = advancedFilter(cls, args)
-        
-    return query.filter(and_(*expressions))
-    
+        expressions, sqlWhere = advancedFilter(cls, args)
+    if sqlWhere != "":    
+        return query.filter(text(sqlWhere))
+    else:
+        return query.filter(or_(*expressions))   
 
 class SAFRSBaseX(SAFRSBase):
     __abstract__ = True

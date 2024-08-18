@@ -97,6 +97,10 @@ class Config:
     SQLALCHEMY_DATABASE_URI : typing.Optional[str] = f"sqlite:///../database/db.sqlite"
     # override SQLALCHEMY_DATABASE_URI here as required
 
+    BACKTIC_AS_QUOTE = False # use backtic as quote for table names for API Bridge
+    if SQLALCHEMY_DATABASE_URI.startswith("mysql") or SQLALCHEMY_DATABASE_URI.startswith("mariadb"):
+        BACKTIC_AS_QUOTE = True
+        
     app_logger.debug(f'config.py - SQLALCHEMY_DATABASE_URI: {SQLALCHEMY_DATABASE_URI}')
 
     # as desired, use env variable: export SQLALCHEMY_DATABASE_URI='sqlite:////Users/val/dev/servers/docker_api_logic_project/database/db.sqliteXX'
@@ -223,6 +227,7 @@ class Args():
         self.keycloak_realm = Config.KEYCLOAK_REALM
         self.keycloak_base_url = Config.KEYCLOAK_BASE_URL
         self.keycloak_client_id = Config.KEYCLOAK_CLIENT_ID
+        self.backtic_as_quote = Config.BACKTIC_AS_QUOTE
 
         self.verbose = False
         self.create_and_run = False
@@ -370,7 +375,15 @@ class Args():
     def api_prefix(self, a):
         self.flask_app.config["API_PREFIX"] = a
 
-
+    @property
+    def backtic_as_quote(self) -> bool:
+        """ use backtic as quote for table names """
+        return self.flask_app.config["BACKTIC_AS_QUOTE"]
+    
+    @backtic_as_quote.setter
+    def backtic_as_quote(self, a):
+        self.flask_app.config["BACKTIC_AS_QUOTE"] = a
+        
     @property
     def http_scheme(self) -> str:
         """ http or https """
