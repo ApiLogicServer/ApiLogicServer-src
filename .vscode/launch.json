@@ -216,6 +216,22 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "     - create herboDeSonia",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/../../build_and_test/",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "justMyCode": false,
+            "args": [
+                "create",
+                "--project-name=accented_chars",
+                "--db-url=mysql+pymysql://root:p@localhost:3306/herboDeSonia?charset=utf8mb4",
+                "--quote"
+                ],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "     - add-auth KEYCLOAK",
             "type": "debugpy",
             "request": "launch",
