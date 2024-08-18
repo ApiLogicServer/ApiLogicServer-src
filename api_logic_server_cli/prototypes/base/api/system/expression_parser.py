@@ -71,7 +71,7 @@ def parsePayload(clz, payload: str):
     """
     sqltypes = payload.get("sqltypes") or None
     expressions, sqlWhere = advancedFilter(clz, payload)
-    _filter, filter = parseFilter(payload.get("filter", {}), sqltypes)
+    _filter, filter = parseFilter(clz, payload.get("filter", {}), sqltypes)
     columns: list = payload.get("columns") or []
     offset: int = payload.get("offset") or 0
     pagesize: int = payload.get("pageSize") or 100
@@ -81,7 +81,7 @@ def parsePayload(clz, payload: str):
     return expressions, _filter, columns, sqltypes, offset, pagesize, orderBy, data
 
 
-def parseFilter(filter: dict, sqltypes: any):
+def parseFilter(clz: any, filter: dict, sqltypes: any):
     # sourcery skip: merge-duplicate-blocks, remove-pass-elif
     filters = []
     sql_where = ""
@@ -99,10 +99,16 @@ def parseFilter(filter: dict, sqltypes: any):
                 filters = expr.get_filters()
                 join = " OR "
         else:
-            q = "'" if isinstance(value, str) else ""
-            sql_where += f'{join} "{f}" = {q}{value}{q}'
+            from config.config import Args
+            _quote = '`' if Args.backtic_as_quote else '"' 
+            attr = clz._s_jsonapi_attrs[f]._proxy_key if f != "id" else clz.id
+            if f == "id":
+                attr = f'{_quote}{clz.__tablename__}{_quote}.{_quote}id{_quote}'
+                _quote = ""
+            q = '"' if isinstance(value, str) else ""
+            sql_where += f'{join} {_quote}{attr}{_quote} = {q}{value}{q}'
             #name = clz._s_jsonapi_attrs[f] if f !: "id" else clz.id
-            filters.append({"join": join,"lop": f, "op": "eq", "rop": value})
+            filters.append({"join": join,"lop": attr, "op": "eq", "rop": value})
             join = " AND "
             
     return sql_where, filters
@@ -263,7 +269,7 @@ def advancedFilter(cls, args) -> any:
                     # Ontimize Advanced Filter
                     #{'lop': 'CustomerId', 'op': 'LIKE', 'rop': '%A%'}
                     #TODO - modify this to return expressions (and_ & or_)
-                    sqlWhere, filters = parseFilter(val['filter'], None)
+                    sqlWhere, filters = parseFilter(cls, val['filter'], None)
                     return expressions, sqlWhere
                 else:
                     #{'id': '1', 'name': 'John'}
@@ -612,7 +618,7 @@ if __name__ == "__main__":
     # from database.models import models
     #filter = {"filter": {"@basic_expression": {"lop": "BALANCE", "op": "=", "rop": 35000}}}
     print(urllib.parse.quote(json.dumps(filter)))
-    sqlWhere, filters, expressions = parseFilter(filter,None)
+    sqlWhere, filters, expressions = parseFilter(None, filter,None)
     print(sqlWhere)
     print(filters)
     print(expressions)
