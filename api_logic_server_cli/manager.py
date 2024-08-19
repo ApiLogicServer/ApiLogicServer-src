@@ -11,10 +11,10 @@ from pathlib import Path
 import api_logic_server_cli.api_logic_server as PR
 
 def create_manager(clean: bool, open_with: str, api_logic_server_path: Path, volume: str = ""):
-    """Creates Manager at os.getcwd(), including:
+    """Implements als start - create Manager at os.getcwd(), including:
     1. .vscode, readme
     2. System folder (GenAI sample prompts / responses, others TBD)
-    3. pre-creted samples
+    3. pre-created samples
 
     Example, from CLI in directory containing a `venv` (see https://apilogicserver.github.io/Docs/Manager/)
         $ als start
@@ -26,6 +26,7 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path, vol
         clean (bool): True means overwrite api_logic_server_cli/prototypes/manager
         open_with (str): code or pycharm (only code for now)
         api_logic_server_path (Path): location of api_logic_server install
+        volume (str): docker volume - https://apilogicserver.github.io/Docs/DevOps-Docker/#2a-using-the-manager
     """
     
     log = logging.getLogger(__name__)
