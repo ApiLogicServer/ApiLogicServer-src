@@ -118,13 +118,13 @@ def get_args(flask_app: Flask) -> Args:
 
     import config.config as config
     flask_app.config.from_object(config.Config)
-    app_logger.debug(f"\nConfig args: \n{args}")                    # config file (e.g., db uri's)
+    app_logger.debug(f"\nserver_setup - get_args: Config args: \n{args}")  # FIXME                  # config file (e.g., db uri's)
 
-    args.get_cli_args(dunder_name='__main__', args=args)
-    app_logger.debug(f"\nCLI args: \n{args}")                       # api_logic_server_run cl args
+    args.get_cli_args(dunder_name=__name__, args=args)
+    app_logger.debug(f"\nserver_setup - get_args: CLI args: \n{args}")                       # api_logic_server_run cl args
 
     flask_app.config.from_prefixed_env(prefix="APILOGICPROJECT")    # env overrides (e.g., docker)
-    app_logger.debug(f"\nENV args: \n{args}\n\n")
+    app_logger.debug(f"\nserver_setup - get_args: ENV args: \n{args}\n\n")
 
     if args.verbose:
         app_logger.setLevel(logging.DEBUG)
@@ -140,7 +140,7 @@ def get_args(flask_app: Flask) -> Args:
 
     if app_logger.getEffectiveLevel() <= logging.DEBUG:
         api_utils.sys_info(flask_app.config)
-    app_logger.debug(f"\nENV args: \n{args}\n\n")
+    app_logger.debug(f"\nserver_setup - get_args: ENV args: \n{args}\n\n")
     return args
 
 
@@ -166,7 +166,7 @@ def logging_setup() -> logging.Logger:
         else:
             app_logger.setLevel(logging.DEBUG)
             app_logger.debug(f'\nDEBUG level set from env\n')
-    app_logger.info(f'\nAPI Logic Project ({project_name}) Starting with CLI args: \n.. {args}\n')
+    app_logger.info(f'\nAPI Logic Project Server Setup ({project_name}) Starting with CLI args: \n.. {args}\n')
     app_logger.info(f'Created August 03, 2024 09:34:01 at {str(project_path)}\n') 
     return app_logger  
 

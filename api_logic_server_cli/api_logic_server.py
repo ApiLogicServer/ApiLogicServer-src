@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "11.00.27"
+__version__ = "11.00.28"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t08/18/2024 - 11.00.27: Genai optLock, quotes, local GenAI like Web/GenAI, readme. BLT runs  \n"\
+    "\t08/18/2024 - 11.00.28: Genai optLock, quotes, local GenAI like Web/GenAI, readme. gunicorn. BLT runs  \n"\
     "\t08/14/2024 - 11.00.24: DND handle classes table (reserved word), TB fix (?)  \n"\
     "\t08/13/2024 - 11.00.23: ont auth update, AME model changes.  BLT passes  \n"\
     "\t08/12/2024 - 11.00.22: dflt gpt4, save responses for each try, ignore .sh code, decimal fixes  \n"\
