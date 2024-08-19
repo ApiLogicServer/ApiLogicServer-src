@@ -485,7 +485,7 @@ class Args():
             local_ip = f"Warning - Failed local_ip = socket.gethostbyname(hostname) with hostname: {hostname}"
             app_logger.debug(f"Failed local_ip = socket.gethostbyname(hostname) with hostname: {hostname}")
 
-        app_logger.debug(f"Getting cli args, with hostname={hostname} on local_ip={local_ip}")
+        app_logger.debug(f"config - get_cli_args: Getting cli args, with hostname={hostname} on local_ip={local_ip}")
         args.verbose = False
         args.create_and_run = False
 
@@ -502,14 +502,15 @@ class Args():
                 return formatter
 
         if dunder_name != "__main__":  
-            app_logger.debug(f"WSGI - no args, using creation default host/port..  sys.argv = {sys.argv}\n")
+            app_logger.debug(f"config - get_cli_args: WSGI - no args, using creation default host/port..  sys.argv = {sys.argv}\n")
         else:   # gunicorn-friendly host/port settings ()
             # thanks to https://www.geeksforgeeks.org/command-line-arguments-in-python/#argparse
             import argparse
             # Initialize parser
             if len(sys.argv) == 1:
-                app_logger.debug("No arguments - using creation default host/port")
+                app_logger.debug("config - get_cli_args: No arguments - using creation default host/port")
             else:
+                app_logger.debug(f"config - get_cli_args [{dunder_name}]: Parse the args")
                 msg = "API Logic Project"
                 parser = argparse.ArgumentParser(
                     formatter_class=make_wide(argparse.ArgumentDefaultsHelpFormatter))
