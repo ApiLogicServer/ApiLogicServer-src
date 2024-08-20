@@ -1486,11 +1486,9 @@ def sample_ai_iteration(ctx, bind_key_url_separator: str, api_name: str, project
               help="Project location")
 @click.option('--db_url',
               default=f'{default_db}',
-              prompt="SQLAlchemy Database URI",
               help="SQLAlchemy Database URL - see above\n")
 @click.option('--db-url', 'db_url',
               default=f'{default_db}',
-              prompt="SQLAlchemy Database URI",
               help="SQLAlchemy Database URL - see above\n")
 @click.option('--api_name',
               default=f'api',
@@ -1596,8 +1594,7 @@ def rebuild_from_model(ctx, project_name: str, db_url: str, api_name: str, not_e
         Updates database, api, and ui from changed models.
     """
     db_types = ""
-    if project_name == "":
-        project_name = '.'
+    project_name == resolve_blank_project_name(project_name)
     PR.ProjectRun(command="rebuild-from-model", project_name=project_name, db_url=db_url, api_name=api_name,
                     not_exposed=not_exposed,
                     run=run, use_model=use_model, from_git=from_git, db_types=db_types,
