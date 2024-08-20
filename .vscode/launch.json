@@ -135,6 +135,18 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "     - ApiLogicServer Start (clean/Volume)",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "cwd": "${workspaceFolder}/../../clean",
+            "args": ["start", "--clean", "--volume=/my_vol_test/my_mgr"],
+            "justMyCode": false,
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "console": "integratedTerminal"
+        },
+        {
             "name": "2 - Create servers/ApiLogicProject (DEFAULTS)",
             "type": "debugpy",
             "request": "launch",
