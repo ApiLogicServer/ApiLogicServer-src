@@ -1,0 +1,23 @@
+This database tests:
+    1 - special characters (col names etc)
+    2 - virtual relns
+
+Used by this project: https://github.com/tylerm007/herboDeSonia
+
+        SQLALCHEMY_DATABASE_URI : typing.Optional[str] = f"mysql+pymysql://root:p@localhost:3306/herboDeSonia?charset=utf8mb4"
+
+        The ddl: ./herboDeSonia.sql
+
+LAC relationships: ./virtual_relationships.txt
+
+
+Status: 8/29
+
+    Original Tyler repo failed to start if activated the virt reln.
+
+    I fiddled, it loads now.
+
+    But swagger fails - it had a bad url: http://localhost:5656/api_logic_server_api_name.
+    It worked when I used 'api' manually in the url bar.
+
+    The api name looks ok in the config file, and app, so unclear where this is coming from.

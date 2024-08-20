@@ -1,0 +1,224 @@
+========================
+       RELATIONSHIPS.JSON 
+=========================
+# This is informational only
+Cliente = relationship('Cliente', remote_side=[NCuentaCliente] ,cascade_backrefs=True, backref='Ventas_LIN')
+Ventas_LIN_List = relationship('Ventas_LIN', remote_side=[NCuenta] ,cascade_backrefs=True, backref='Cliente')
+Compras_CAB = relationship('Compras_CAB', remote_side=[AlbaránCompra] ,cascade_backrefs=True, backref='Compras_LIN')
+Compras_LIN_List = relationship('Compras_LIN', remote_side=[SerieNúmero] ,cascade_backrefs=True, backref='Compras_CAB')
+Producto = relationship('Producto', remote_side=[ReferenciaProducto] ,cascade_backrefs=True, backref='Compras_LIN')
+Compras_LIN_List = relationship('Compras_LIN', remote_side=[Referencia] ,cascade_backrefs=True, backref='Producto')
+Producto_1 = relationship('Producto', remote_side=[Referencia] ,cascade_backrefs=True, backref='StockTienda')
+StockTienda_List = relationship('StockTienda', remote_side=[Referencia] ,cascade_backrefs=True, backref='Producto')
+Producto_1 = relationship('Producto', remote_side=[Referencia] ,cascade_backrefs=True, backref='Traspasos_LIN')
+Traspasos_LIN_List = relationship('Traspasos_LIN', remote_side=[Referencia] ,cascade_backrefs=True, backref='Producto')
+Producto_1 = relationship('Producto', remote_side=[RefProducto] ,cascade_backrefs=True, backref='Ventas_LIN')
+Ventas_LIN_List = relationship('Ventas_LIN', remote_side=[Referencia] ,cascade_backrefs=True, backref='Producto')
+Proveedor = relationship('Proveedor', remote_side=[NºCuentaProveedor] ,cascade_backrefs=True, backref='Compras_CAB')
+Compras_CAB_List = relationship('Compras_CAB', remote_side=[NºCuenta] ,cascade_backrefs=True, backref='Proveedor')
+Proveedor = relationship('Proveedor', remote_side=[NºCuentaProveedor] ,cascade_backrefs=True, backref='Compras_LIN')
+Compras_LIN_List = relationship('Compras_LIN', remote_side=[NºCuenta] ,cascade_backrefs=True, backref='Proveedor')
+StockTienda = relationship('StockTienda', remote_side=[idTienda] ,cascade_backrefs=True, backref='Compras_LIN')
+Compras_LIN_List = relationship('Compras_LIN', remote_side=[idTienda] ,cascade_backrefs=True, backref='StockTienda')
+StockTienda = relationship('StockTienda', remote_side=[Referencia] ,cascade_backrefs=True, backref='Traspasos_LIN')
+Traspasos_LIN_List_DESTINO = relationship('Traspasos_LIN', remote_side=[Referencia] ,cascade_backrefs=True, backref='StockTienda')
+StockTienda_1 = relationship('StockTienda', remote_side=[Referencia] ,cascade_backrefs=True, backref='Traspasos_LIN')
+Traspasos_LIN_List_ORIGEN = relationship('Traspasos_LIN', remote_side=[Referencia] ,cascade_backrefs=True, backref='StockTienda')
+StockTienda = relationship('StockTienda', remote_side=[RefProducto] ,cascade_backrefs=True, backref='Ventas_LIN')
+Ventas_LIN_List = relationship('Ventas_LIN', remote_side=[Referencia] ,cascade_backrefs=True, backref='StockTienda')
+Ventas_CAB = relationship('Ventas_CAB', remote_side=[Número] ,cascade_backrefs=True, backref='Ventas_LIN')
+Ventas_LIN_List = relationship('Ventas_LIN', remote_side=[Número] ,cascade_backrefs=True, backref='Ventas_CAB')
+
+
+ "{f}relationships.json": [
+    {
+      "parentEntity": "main:Cliente",
+      "childEntity": "main:Ventas_LIN",
+      "roleToParent": "Cliente",
+      "roleToChild": "Ventas_LIN_List",
+      "deleteRule": "No Action",
+      "updateRule": "No Action",
+      "parentColumns": [
+        "NCuenta"
+      ],
+      "childColumns": [
+        "NCuentaCliente"
+      ]
+    },
+    {
+      "parentEntity": "main:Compras_CAB",
+      "childEntity": "main:Compras_LIN",
+      "roleToParent": "Compras_CAB",
+      "roleToChild": "Compras_LIN_List",
+      "deleteRule": "No Action",
+      "updateRule": "No Action",
+      "parentColumns": [
+        "SerieNúmero"
+      ],
+      "childColumns": [
+        "AlbaránCompra"
+      ]
+    },
+    {
+      "parentEntity": "main:Producto",
+      "childEntity": "main:Compras_LIN",
+      "roleToParent": "Producto",
+      "roleToChild": "Compras_LIN_List",
+      "deleteRule": "No Action",
+      "updateRule": "No Action",
+      "parentColumns": [
+        "Referencia"
+      ],
+      "childColumns": [
+        "ReferenciaProducto"
+      ]
+    },
+    {
+      "parentEntity": "main:Producto",
+      "childEntity": "main:StockTienda",
+      "roleToParent": "Producto_1",
+      "roleToChild": "StockTienda_List",
+      "deleteRule": "No Action",
+      "updateRule": "No Action",
+      "parentColumns": [
+        "Referencia"
+      ],
+      "childColumns": [
+        "Referencia"
+      ]
+    },
+    {
+      "parentEntity": "main:Producto",
+      "childEntity": "main:Traspasos_LIN",
+      "roleToParent": "Producto_1",
+      "roleToChild": "Traspasos_LIN_List",
+      "deleteRule": "No Action",
+      "updateRule": "No Action",
+      "parentColumns": [
+        "Referencia"
+      ],
+      "childColumns": [
+        "Referencia"
+      ]
+    },
+    {
+      "parentEntity": "main:Producto",
+      "childEntity": "main:Ventas_LIN",
+      "roleToParent": "Producto_1",
+      "roleToChild": "Ventas_LIN_List",
+      "deleteRule": "No Action",
+      "updateRule": "No Action",
+      "parentColumns": [
+        "Referencia"
+      ],
+      "childColumns": [
+        "RefProducto"
+      ]
+    },
+    {
+      "parentEntity": "main:Proveedor",
+      "childEntity": "main:Compras_CAB",
+      "roleToParent": "Proveedor",
+      "roleToChild": "Compras_CAB_List",
+      "deleteRule": "No Action",
+      "updateRule": "No Action",
+      "parentColumns": [
+        "NºCuenta"
+      ],
+      "childColumns": [
+        "NºCuentaProveedor"
+      ]
+    },
+    {
+      "parentEntity": "main:Proveedor",
+      "childEntity": "main:Compras_LIN",
+      "roleToParent": "Proveedor",
+      "roleToChild": "Compras_LIN_List",
+      "deleteRule": "No Action",
+      "updateRule": "No Action",
+      "parentColumns": [
+        "NºCuenta"
+      ],
+      "childColumns": [
+        "NºCuentaProveedor"
+      ]
+    },
+    {
+      "parentEntity": "main:StockTienda",
+      "childEntity": "main:Compras_LIN",
+      "roleToParent": "StockTienda",
+      "roleToChild": "Compras_LIN_List",
+      "deleteRule": "No Action",
+      "updateRule": "No Action",
+      "parentColumns": [
+        "idTienda",
+        "Referencia"
+      ],
+      "childColumns": [
+        "idTienda",
+        "ReferenciaProducto"
+      ]
+    },
+    {
+      "parentEntity": "main:StockTienda",
+      "childEntity": "main:Traspasos_LIN",
+      "roleToParent": "StockTienda",
+      "roleToChild": "Traspasos_LIN_List_DESTINO",
+      "deleteRule": "No Action",
+      "updateRule": "No Action",
+      "parentColumns": [
+        "Referencia",
+        "Tienda"
+      ],
+      "childColumns": [
+        "Referencia",
+        "Destino"
+      ]
+    },
+    {
+      "parentEntity": "main:StockTienda",
+      "childEntity": "main:Traspasos_LIN",
+      "roleToParent": "StockTienda_1",
+      "roleToChild": "Traspasos_LIN_List_ORIGEN",
+      "deleteRule": "No Action",
+      "updateRule": "No Action",
+      "parentColumns": [
+        "Referencia",
+        "Tienda"
+      ],
+      "childColumns": [
+        "Referencia",
+        "Origen"
+      ]
+    },
+    {
+      "parentEntity": "main:StockTienda",
+      "childEntity": "main:Ventas_LIN",
+      "roleToParent": "StockTienda",
+      "roleToChild": "Ventas_LIN_List",
+      "deleteRule": "No Action",
+      "updateRule": "No Action",
+      "parentColumns": [
+        "Referencia",
+        "Tienda"
+      ],
+      "childColumns": [
+        "RefProducto",
+        "Tienda"
+      ]
+    },
+    {
+      "parentEntity": "main:Ventas_CAB",
+      "childEntity": "main:Ventas_LIN",
+      "roleToParent": "Ventas_CAB",
+      "roleToChild": "Ventas_LIN_List",
+      "deleteRule": "No Action",
+      "updateRule": "No Action",
+      "parentColumns": [
+        "Número"
+      ],
+      "childColumns": [
+        "Número"
+      ]
+    }
+  ],
