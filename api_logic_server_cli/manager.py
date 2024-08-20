@@ -33,15 +33,35 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path, vol
 
     project = PR.ProjectRun(command= "start", project_name='ApiLogicServer', db_url='sqlite', execute=False)
 
-    docker_volume = ''
-    if project.is_docker:
-        # set cwd to /localhost, so that the manager is created in the correct location
-        log.info(f"  ..docker volume: {volume}") 
-        os.chdir(f'/{volume}')
-        docker_volume = volume + '/'
-    # project.is_docker = True  # for testing
+    if do_local_docker_test := False:   # MUST be False after testing
+        '''
+        see Run Def: ApiLogicServer Start (clean/Volume)
+        clean/my_vol_test/my_vol must exist, and be empty
+
+        or, to run using api_logic_server_local:
+            $ cd /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/clean/my_vol_test/my_mgr 
+            $ docker run -it --name api_logic_server --rm --net dev-network -p 5656:5656 -p 5002:5002 -v ${PWD}:/ApiLogicServer apilogicserver/api_logic_server_local
+            $ als
+            $ als start --volume /ApiLogicServer  # this also works
+        '''
+        project.is_docker = True  # for testing
 
     log.info(f"\nStarting manager at: {os.getcwd()}")  # eg, ...ApiLogicServer-dev/clean/ApiLogicServer
+
+    docker_volume = ''
+    if project.is_docker:
+        # volume typically /ApiLogicServer... % docker run -it --name api_logic_server --rm --net dev-network -p 5656:5656 -p 5002:5002 -v ${PWD}:/ApiLogicServer apilogicserver/api_logic_server
+        if do_local_docker_test == False:   # normal path
+            # set cwd to /volume, so that the manager is created in the correct location
+            log.info(f"  ..docker volume: {volume} - chg cwd: /{volume}") 
+            os.chdir(f'/{volume}')  #
+            docker_volume = volume + '/'
+        else:                               # do_local_docker_test path
+            volume = volume[1:]  # remove leading '/'
+            log.info(f"  ..do_local_docker_test - cwd: {os.getcwd()} -> {volume}") 
+            os.chdir(f'{os.getcwd()}/{volume}')
+            docker_volume = volume + '/'
+
     to_dir = Path(os.getcwd())
     path = Path(__file__)
     from_dir = api_logic_server_path.joinpath('prototypes/manager')
@@ -74,7 +94,7 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path, vol
         if to_dir_check.exists():
             log.info(f"    Cleaning manager at: {to_dir}\n\n")
 
-        copied_path = shutil.copytree(src=from_dir, dst=to_dir, dirs_exist_ok=True)
+        copied_path = shutil.copytree(src=from_dir, dst=to_dir, dirs_exist_ok=True)  # issue: not permitted
         copied_env = shutil.copy(src=from_dir.joinpath('settings.txt'), dst=to_dir.joinpath('.env'))
         os.remove(to_dir.joinpath('settings.txt'))
         log.debug(f"    .. created manager\n")
