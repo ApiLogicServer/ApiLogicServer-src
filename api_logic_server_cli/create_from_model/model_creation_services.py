@@ -778,6 +778,9 @@ class ModelCreationServices(object):
               models_name = self.project.bind_key + "_" + models_name
             importlib.import_module(models_name)
             model_imported = True
+            if self.project.project_name == ".":
+                log.debug(f'.. .. ..local rebuild - include customize_models.py')  # to get virtual attrs, relns
+                importlib.import_module('customize_models')
         except:
             log.info(f'\n===> ERROR - Dynamic model import failed in {path_to_add} - project run will fail')
             log.info(  f'===>         Typically caused by unexpected data types - compare schema to models.py')
@@ -815,7 +818,7 @@ class ModelCreationServices(object):
                 resource_name = each_cls_member[0]
                 resource_class = each_cls_member[1]
                 table_name = resource_class.__tablename__  # FIXME _s_collection_name
-                if table_name in ["CategoryTableNameTest"]:
+                if table_name in ["CategoryTableNameTest", "Employee"]:
                     debug_str = "Excellent breakpoint"
                 self.metadata = resource_class.metadata
                 resource = Resource(name=resource_name, model_creation_services=self)
