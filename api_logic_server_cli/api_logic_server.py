@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "11.01.01"
+__version__ = "11.01.02"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t08/21/2024 - 11.01.01: Bug 68: nested quotes \n"\
+    "\t08/21/2024 - 11.01.02: Bug 68: nested quotes, BLT path err, disable exp parser tests \n"\
     "\t08/18/2024 - 11.01.00: Genai: simpler prompts, diagnostics, ChatGPT4 \n"\
     "\t08/09/2024 - 11.00.20: GenAI hardening, diagnostics \n"\
     "\t08/02/2024 - 11.00.07: App Model Editor UI rework, docs and fix for kc and export \n"\
