@@ -293,7 +293,7 @@ class GenAI(object):
                 response_file.write(self.response)
             if self.project.gen_using_file == '':
                 pass
-                with open(f'"{to_dir_save_dir.joinpath('genai.prompt')}"', "w") as prompt_file:
+                with open(f"{to_dir_save_dir.joinpath('genai.prompt')}", "w") as prompt_file:
                     prompt_file.write(self.prompt)
             shutil.copyfile(src=self.project.from_model, 
                             dst=to_dir_save_dir.joinpath('create_db_models.py'))

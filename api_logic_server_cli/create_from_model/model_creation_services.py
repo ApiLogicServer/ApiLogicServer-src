@@ -778,7 +778,7 @@ class ModelCreationServices(object):
               models_name = self.project.bind_key + "_" + models_name
             importlib.import_module(models_name)
             model_imported = True
-            if self.project.project_name == ".":
+            if False and self.project.project_name == ".":  # FIXME - fails in Win11
                 log.debug(f'.. .. ..local rebuild - include customize_models.py')  # to get virtual attrs, relns
                 importlib.import_module('customize_models')
         except:
