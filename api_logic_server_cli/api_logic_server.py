@@ -1846,7 +1846,7 @@ from database import <project.bind_key>_models
             except Exception as e:
                 if hasattr(self, 'gen_ai_save_dir'):
                     log.error(f"Error creating database from model: {e}")
-                    with open(f'{self.gen_ai_save_dir.joinpath('create_db_models_failed.txt')}', "w") as log_file:
+                    with open(f"{self.gen_ai_save_dir.joinpath('create_db_models_failed.txt')}", "w") as log_file:
                         log_file.write(f"Error creating database from model: {e}")
                 raise(e)
 

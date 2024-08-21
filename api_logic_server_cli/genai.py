@@ -289,11 +289,11 @@ class GenAI(object):
             to_dir_save_dir = Path(to_dir).joinpath(f'system/genai/temp/{self.project.project_name_last_node}')
             self.project.gen_ai_save_dir = to_dir_save_dir
             os.makedirs(to_dir_save_dir, exist_ok=True)
-            with open(f'{to_dir_save_dir.joinpath('genai.response')}', "w") as response_file:
+            with open(f"{to_dir_save_dir.joinpath('genai.response')}", "w") as response_file:
                 response_file.write(self.response)
             if self.project.gen_using_file == '':
                 pass
-                with open(f'{to_dir_save_dir.joinpath('genai.prompt')}', "w") as prompt_file:
+                with open(f'"{to_dir_save_dir.joinpath('genai.prompt')}"', "w") as prompt_file:
                     prompt_file.write(self.prompt)
             shutil.copyfile(src=self.project.from_model, 
                             dst=to_dir_save_dir.joinpath('create_db_models.py'))
