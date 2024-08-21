@@ -1371,10 +1371,10 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "  - Rebuild-from-model -- BLT / nw_sample_nocust",
+            "name": "  - Rebuild-from-model -- BLT / nw_sample",
             "type": "debugpy",
             "request": "launch",
-            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer/samples/nw_sample_nocust",
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer/samples/nw_sample",
             "env": {"APILOGICSERVER_DEBUG": "True"},
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
