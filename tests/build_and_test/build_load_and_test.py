@@ -842,9 +842,9 @@ if Config.do_install_api_logic_server:  # verify the build process - rebuild, an
         # install_api_logic_server_path: C:/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer
         assert install_api_logic_server_path.exists(), f"Win build error - bad blt path {install_api_logic_server_path}"
         ame_path = cli_path.joinpath("prototypes/manager/system/app_model_editor")
-        if ame_path.exists():
-            pass  # delete path and contents
-            shutil.rmtree(ame_path)
+        if ame_path.exists():           # yikes!  Required on windows, perhaps due to path length
+            pass                        # delete path and contents
+            shutil.rmtree(ame_path)     # NB: you cannot release from windows
         build_cmd = f'{python} setup.py sdist bdist_wheel'
         # python -m build --outdir=C:\Users\val\dev\ApiLogicServer\ApiLogicServer-dev\build_and_test\ApiLogicServer
         if do_win_build := True:  # for debugging windows blt install
