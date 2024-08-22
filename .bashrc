@@ -8,7 +8,7 @@ osv=$(cat ../../etc/issue)
 echo "     $ printenv       for OS context       information -- $osv"
 echo "     $ ApiLogicServer for API Logic Server information"
 echo " "
-echo "     $ IMPORTANT: cd to your docker volume (e.g., cd ApiLogicServer)"
+echo "     $ IMPORTANT: cd to your docker volume (e.g., cd /ApiLogicServer)"
 echo " "
 
 if [[ -z "${CODESPACES}" ]]; then
