@@ -2,6 +2,18 @@ This database tests:
     1 - special characters (col names etc)
     2 - virtual relns
 
+
+To create (presumes db in mysql docker)
+    dev ide
+        run config: "     - create herboDeSonia", or CLI...
+    CLI
+        % als create --project-name=herbo --db-url="mysql+pymysql://root:p@localhost:3306/herboDeSonia?charset=utf8mb4"
+    docker
+        % cd ~/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/dockers/ApiLogicServer; docker run -it --name api_logic_server_local --rm --net dev-network -p 5656:5656 -p 5002:5002 -v ${PWD}:/ApiLogicServer % apilogicserver/api_logic_server_local
+        $ cd /ApiLogicServer    # now in docker...
+        $ als create --project-name=herbo --db-url="mysql+pymysql://root:p@10.0.0.77:3306/herboDeSonia?charset=utf8mb4”
+
+
 Used by this project: https://github.com/tylerm007/herboDeSonia
 
         SQLALCHEMY_DATABASE_URI : typing.Optional[str] = f"mysql+pymysql://root:p@localhost:3306/herboDeSonia?charset=utf8mb4"
