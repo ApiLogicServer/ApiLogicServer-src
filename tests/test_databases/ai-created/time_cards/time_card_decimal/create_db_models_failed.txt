@@ -1,0 +1,5 @@
+Error creating database from model: name 'decimal' is not defined
+
+Not in BLT
+
+see Run:  - Create blt/genai_demo_decimal from RESPONSE

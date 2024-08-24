@@ -399,6 +399,48 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "    - Create blt/genai_demo_decimal from RESPONSE",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": [
+                "genai",
+                "--gen-using-file=${workspaceFolder}/tests/test_databases/ai-created/genai_demo/genai_demo_decimal/genai.response",
+                "--using=genai_demo_decimal_ide"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "    - Create blt/time_cards_decimal from RESPONSE",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": [
+                "genai",
+                "--gen-using-file=${workspaceFolder}/tests/test_databases/ai-created/time_cards/time_card_decimal/genai.response",
+                "--using=time_card_decimal_ide"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "    - Create blt/time_cards_kw from RESPONSE",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": [
+                "genai",
+                "--gen-using-file=${workspaceFolder}/tests/test_databases/ai-created/time_cards/time_card_kw_arg/genai.response",
+                "--using=time_card_kw_ide"],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "4 - Run Last Project",
             "type": "debugpy",
             "request": "launch",

@@ -1006,6 +1006,21 @@ if Config.do_test_multi_reln:
         cwd=install_api_logic_server_path,
         msg=f'\ndungeons_and_dragons')
 
+    # depends on `import decimal`` in api_logic_server_cli/prototypes/manager/system/genai/create_db_models_inserts/create_db_models_prefix.py
+    prompt_path = 'time_cards_decimal'  # really a sqlacodegen test - classes table --> Class (reserved word)
+    response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/time_cards/time_card_decimal/genai.response')
+    assert response_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
+    result_genai = run_command(f'{set_venv} && als genai --using={prompt_path} --gen-using-file={response_path}',
+        cwd=install_api_logic_server_path,
+        msg=f'\ntime cards decimal')    
+
+    prompt_path = 'time_cards_kw'  # really a sqlacodegen test - classes table --> Class (reserved word)
+    response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/time_cards/time_card_decimal/genai.response')
+    assert response_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
+    result_genai = run_command(f'{set_venv} && als genai --using={prompt_path} --gen-using-file={response_path}',
+        cwd=install_api_logic_server_path,
+        msg=f'\ntime cards keyword')    
+
     # test genai, using pre-supplied ChatGPT response (to avoid api key issues)
     # see https://apilogicserver.github.io/Docs/Sample-Genai/#what-just-happened
     prompt_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/airport/airport_10.prompt')

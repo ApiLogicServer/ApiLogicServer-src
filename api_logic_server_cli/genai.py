@@ -25,8 +25,8 @@ class GenAI(object):
     developer then uses CoPilot to create logic (Rule.) from the prompt
 
     --gen-using-file means retry from corrected response
-    * --using is required to get the project name
-        * project created along side this; maybe lose path and use cwd?
+    * `--using` is required to get the project name, to be created at cwd
+
 
     ### Explore interim copilot access:
 
@@ -61,13 +61,11 @@ class GenAI(object):
         
         self.project.from_model = f'system/genai/temp/create_db_models.py' # we always write the model to this file
         self.ensure_system_dir_exists()  # so we can write to system/genai/temp
-        self.prompt = self.delete_temp_files()
-        
-        self.prompt = "not provided - using repaired response"
-        if self.project.gen_using_file == '':
-            self.prompt = self.get_prompt()  # compute self.prompt, from file or text argument
+        self.delete_temp_files()
+        self.prompt = ""
+        """ `--using` - can come from file or text argument """
 
-        self.project.genai_logic = self.get_logic_from_prompt()
+        self.prompt = self.get_prompt()  # compute self.prompt, from file or text argument
 
         if self.project.gen_using_file == '':
             log.info(f'\nInvoking AI, storing response: system/genai/temp/chatgpt_original.response')
@@ -79,6 +77,8 @@ class GenAI(object):
             # convert model_raw into string array response_data
             response_data = model_raw  # '\n'.join(model_raw)
         self.response = response_data
+
+        self.project.genai_logic = self.get_logic_from_prompt()
 
         self.fix_and_write_model_file(response_data)
         self.save_files_to_system_genai_temp_project()  # save prompt, response and models.py
@@ -98,37 +98,44 @@ class GenAI(object):
             str: prompt string, either from file file or text argument
         """
         # compute self.prompt, file file or text argument
-        if '.' in self.project.from_genai:  # prompt from file (hmm, no sentences...)
-            # open and read the project description in natural language
-            with open(f'{self.project.from_genai}', 'r') as file:
-                raw_prompt = file.read()
 
-            prompt = raw_prompt
-            prompt_inserts = ''
-            if '*' == self.project.genai_prompt_inserts:    # * means no inserts
-                prompt_inserts = "*"
-            elif '' != self.project.genai_prompt_inserts:   # if text, use this file
-                prompt_inserts = self.project.genai_prompt_inserts
-            elif 'sqlite' in self.project.db_url:           # if blank, use default for db    
+        if self.project.gen_using_file != '':       # if exists, get prompt (for logic)
+            prompt = ""  
+            if Path(self.project.from_genai).exists():
+                with open(f'{self.project.from_genai}', 'r') as file:
+                    prompt = file.read()
+        else:                                       # prompt from text (add system/genai/pre_post.prompt)      
+            if '.' in self.project.from_genai:  # prompt from file (hmm, no sentences...)
+                # open and read the project description in natural language
+                with open(f'{self.project.from_genai}', 'r') as file:
+                    raw_prompt = file.read()
+
+                prompt = raw_prompt
+                prompt_inserts = ''
+                if '*' == self.project.genai_prompt_inserts:    # * means no inserts
+                    prompt_inserts = "*"
+                elif '' != self.project.genai_prompt_inserts:   # if text, use this file
+                    prompt_inserts = self.project.genai_prompt_inserts
+                elif 'sqlite' in self.project.db_url:           # if blank, use default for db    
+                    prompt_inserts = f'sqlite_inserts.prompt'
+                elif 'postgresql' in self.project.db_url:
+                    prompt_inserts = f'postgresql_inserts.prompt'
+                elif 'mysql' in self.project.db_url:
+                    prompt_inserts = f'mysql_inserts.prompt'
+                
+                if prompt_inserts != "*":
+                    assert Path(f'system/genai/prompt_inserts/{prompt_inserts}').exists(), \
+                        f"Missing prompt_inserts file: {prompt_inserts}"  # eg api_logic_server_cli/prototypes/manager/system/genai/prompt_inserts/sqlite_inserts.prompt
+                    with open(f'system/genai/prompt_inserts/{prompt_inserts}', 'r') as file:
+                        pre_post = file.read()  # eg, Use SQLAlchemy to create a sqlite database named system/genai/temp/create_db_models.sqlite, with
+                    prompt = pre_post.replace('{{prompt}}', raw_prompt)
+            else:                               # prompt from text (add system/genai/pre_post.prompt)
                 prompt_inserts = f'sqlite_inserts.prompt'
-            elif 'postgresql' in self.project.db_url:
-                prompt_inserts = f'postgresql_inserts.prompt'
-            elif 'mysql' in self.project.db_url:
-                prompt_inserts = f'mysql_inserts.prompt'
-            
-            if prompt_inserts != "*":
                 assert Path(f'system/genai/prompt_inserts/{prompt_inserts}').exists(), \
                     f"Missing prompt_inserts file: {prompt_inserts}"  # eg api_logic_server_cli/prototypes/manager/system/genai/prompt_inserts/sqlite_inserts.prompt
                 with open(f'system/genai/prompt_inserts/{prompt_inserts}', 'r') as file:
                     pre_post = file.read()  # eg, Use SQLAlchemy to create a sqlite database named system/genai/temp/create_db_models.sqlite, with
-                prompt = pre_post.replace('{{prompt}}', raw_prompt)
-        else:                               # prompt from text (add system/genai/pre_post.prompt)
-            pre_post = "Use SQLAlchemy to create a sqlite database named system/genai/temp/create_db_models.sqlite, with {{prompt}}.  Create some test data."
-            if Path('system/genai/pre_post.prompt').exists():
-                with open(f'system/genai/pre_post.prompt', 'r') as file:
-                    pre_post = file.read()  # eg, Use SQLAlchemy to create a sqlite database named system/genai/temp/create_db_models.sqlite, with
-            prompt = pre_post + ' ' + self.project.from_genai  # experiment
-            prompt = prompt.replace('{{prompt}}', self.project.from_genai)
+                prompt = pre_post.replace('{{prompt}}', self.project.from_genai)
         return prompt      
 
     def ensure_system_dir_exists(self):
@@ -250,17 +257,32 @@ class GenAI(object):
             elif "```" in each_line:
                 writing = False
             elif writing:  # ChatGPT work-arounds
-                if 'Decimal,' in each_line:  # Cap'n K, at your service
+                ''' decimal issues
+
+                    1. bad import: see Run: tests/test_databases/ai-created/genai_demo/genai_demo_decimal
+                        from decimal import Decimal  # Decimal fix: needs to be from decimal import DECIMAL
+
+                    2. Missing missing import: from SQLAlchemy import .... DECIMAL
+
+                    3. Bad syntax on test data: see Run: blt/time_cards_decimal from RESPONSE
+                        got:    balance=DECIMAL('100.50')
+                        needed: balance=1000.0
+                        fixed with import in create_db_models_prefix.py
+
+                '''
+                if 'Decimal,' in each_line:  # SQLAlchemy import
                     each_line = each_line.replace('Decimal,', 'DECIMAL,')
                     # other Decimal bugs: see api_logic_server_cli/prototypes/manager/system/genai/reference/errors/chatgpt_decimal.txt
                 if ', Decimal' in each_line:  # Cap'n K, at your service
                     each_line = each_line.replace(', Decimal', ', DECIMAL')
                 if 'rom decimal import Decimal' in each_line:
                     each_line = each_line.replace('from decimal import Decimal', 'import decimal')
-                if indents_to_remove > 0:
-                    each_line = each_line[indents_to_remove:]
                 if '=Decimal(' in each_line:
                     each_line = each_line.replace('=Decimal(', '=decimal.Decimal(')
+                if 'end_time(datetime' in each_line:  # tests/test_databases/ai-created/time_cards/time_card_kw_arg/genai.response
+                    each_line = each_line.replace('end_time(datetime', 'end_time=datetime')
+                if indents_to_remove > 0:
+                    each_line = each_line[indents_to_remove:]
                 if 'relationship(' in each_line:
                     if each_line.startswith('    '):
                         each_line = each_line.replace('    ', '    # ')
