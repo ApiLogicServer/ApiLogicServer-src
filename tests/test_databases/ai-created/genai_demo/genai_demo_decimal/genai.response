@@ -13,7 +13,7 @@ To achieve this with SQLAlchemy, you will need to define the database schema, cr
 from sqlalchemy import create_engine, Column, Integer, String, Numeric, ForeignKey, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
-from decimal import Decimal
+from decimal import Decimal  # Decimal fix: needs to be from decimal import DECIMAL
 
 # Define the SQLite database path
 DATABASE_URI = 'sqlite:///system/genai/temp/create_db_models.sqlite'

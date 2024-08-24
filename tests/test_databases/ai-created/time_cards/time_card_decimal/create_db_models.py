@@ -1,0 +1,150 @@
+from sqlalchemy.sql import func  # end imports from system/genai/create_db_models_inserts/create_db_models_prefix.py
+import datetime
+from sqlalchemy import create_engine, Column, Integer, String, DateTime, ForeignKey, DECIMAL, Text
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+
+DATABASE_URL = "sqlite:///system/genai/temp/create_db_models.sqlite"
+
+Base = declarative_base()
+
+# Define the tables
+
+class Employee(Base):
+    __tablename__ = 'employees'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+    email = Column(String, nullable=False)
+    department_id = Column(Integer, ForeignKey('departments.id'), nullable=True)
+
+class Department(Base):
+    __tablename__ = 'departments'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+
+class Project(Base):
+    __tablename__ = 'projects'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+    department_id = Column(Integer, ForeignKey('departments.id'), nullable=True)
+
+class Task(Base):
+    __tablename__ = 'tasks'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+    project_id = Column(Integer, ForeignKey('projects.id'), nullable=False)
+
+class TimeEntry(Base):
+    __tablename__ = 'time_entries'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    employee_id = Column(Integer, ForeignKey('employees.id'), nullable=False)
+    task_id = Column(Integer, ForeignKey('tasks.id'), nullable=False)
+    hours = Column(DECIMAL, nullable=False)
+    entry_date = Column(DateTime, nullable=False, default=datetime.datetime.utcnow)
+
+class Client(Base):
+    __tablename__ = 'clients'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+
+class Invoice(Base):
+    __tablename__ = 'invoices'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    client_id = Column(Integer, ForeignKey('clients.id'), nullable=False)
+    project_id = Column(Integer, ForeignKey('projects.id'), nullable=False)
+    amount = Column(DECIMAL, nullable=False)
+    issued_date = Column(DateTime, nullable=False, default=datetime.datetime.utcnow)
+
+class Expense(Base):
+    __tablename__ = 'expenses'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    employee_id = Column(Integer, ForeignKey('employees.id'), nullable=False)
+    project_id = Column(Integer, ForeignKey('projects.id'), nullable=False)
+    amount = Column(DECIMAL, nullable=False)
+    expense_date = Column(DateTime, nullable=False, default=datetime.datetime.utcnow)
+
+class Payment(Base):
+    __tablename__ = 'payments'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    invoice_id = Column(Integer, ForeignKey('invoices.id'), nullable=False)
+    amount = Column(DECIMAL, nullable=False)
+    paid_date = Column(DateTime, nullable=False, default=datetime.datetime.utcnow)
+
+class Note(Base):
+    __tablename__ = 'notes'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    employee_id = Column(Integer, ForeignKey('employees.id'), nullable=True)
+    project_id = Column(Integer, ForeignKey('projects.id'), nullable=True)
+    content = Column(Text, nullable=True)
+    created_at = Column(DateTime, nullable=False, default=datetime.datetime.utcnow)
+
+# Create an SQLite database and tables
+
+engine = create_engine(DATABASE_URL, echo=True)
+Base.metadata.create_all(engine)
+
+# Create a session
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# Insert test data
+
+# Departments
+dept1 = Department(name="Development")
+dept2 = Department(name="Marketing")
+session.add_all([dept1, dept2])
+session.commit()
+
+# Employees
+employee1 = Employee(name="John Doe", email="john.doe@example.com", department_id=dept1.id)
+employee2 = Employee(name="Jane Smith", email="jane.smith@example.com", department_id=dept2.id)
+session.add_all([employee1, employee2])
+session.commit()
+
+# Projects
+project1 = Project(name="Project A", department_id=dept1.id)
+project2 = Project(name="Project B", department_id=dept2.id)
+session.add_all([project1, project2])
+session.commit()
+
+# Tasks
+task1 = Task(name="Task 1", project_id=project1.id)
+task2 = Task(name="Task 2", project_id=project2.id)
+session.add_all([task1, task2])
+session.commit()
+
+# Time Entries
+time_entry1 = TimeEntry(employee_id=employee1.id, task_id=task1.id, hours=8.0, entry_date=datetime.datetime.utcnow())
+time_entry2 = TimeEntry(employee_id=employee2.id, task_id=task2.id, hours=6.0, entry_date=datetime.datetime.utcnow())
+session.add_all([time_entry1, time_entry2])
+session.commit()
+
+# Clients
+client1 = Client(name="Client X")
+client2 = Client(name="Client Y")
+session.add_all([client1, client2])
+session.commit()
+
+# Invoices
+invoice1 = Invoice(client_id=client1.id, project_id=project1.id, amount=decimal.Decimal('1000.0'), issued_date=datetime.datetime.utcnow())
+invoice2 = Invoice(client_id=client2.id, project_id=project2.id, amount=decimal.Decimal('2000.0'), issued_date=datetime.datetime.utcnow())
+session.add_all([invoice1, invoice2])
+session.commit()
+
+# Expenses
+expense1 = Expense(employee_id=employee1.id, project_id=project1.id, amount=decimal.Decimal('50.0'), expense_date=datetime.datetime.utcnow())
+expense2 = Expense(employee_id=employee2.id, project_id=project2.id, amount=decimal.Decimal('75.0'), expense_date=datetime.datetime.utcnow())
+session.add_all([expense1, expense2])
+session.commit()
+
+# Payments
+payment1 = Payment(invoice_id=invoice1.id, amount=decimal.Decimal('1000.0'), paid_date=datetime.datetime.utcnow())
+payment2 = Payment(invoice_id=invoice2.id, amount=decimal.Decimal('2000.0'), paid_date=datetime.datetime.utcnow())
+session.add_all([payment1, payment2])
+session.commit()
+
+# Notes
+note1 = Note(employee_id=employee1.id, project_id=project1.id, content="Meeting notes", created_at=datetime.datetime.utcnow())
+note2 = Note(employee_id=employee2.id, project_id=project2.id, content="Task notes", created_at=datetime.datetime.utcnow())
+session.add_all([note1, note2])
+session.commit()

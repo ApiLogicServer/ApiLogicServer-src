@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/system/genai/examples",
             "env": {
                 "PYTHONPATH": "", 
                 "SECURITY_ENABLED": "False", 
