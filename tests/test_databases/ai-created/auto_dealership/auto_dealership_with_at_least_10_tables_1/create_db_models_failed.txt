@@ -1,0 +1,1 @@
+Error creating database from model: unsupported operand type(s) for +: 'builtin_function_or_method' and 'datetime.timedelta'
