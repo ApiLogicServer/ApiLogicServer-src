@@ -1,0 +1,151 @@
+import decimal
+
+from sqlalchemy.sql import func  # end imports from system/genai/create_db_models_inserts/create_db_models_prefix.py
+from sqlalchemy import create_engine, Column, Integer, String, DateTime, ForeignKey, DECIMAL, Text
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+import datetime
+
+Base = declarative_base()
+
+# Define tables
+
+class Customer(Base):
+    __tablename__ = 'customers'
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    first_name = Column(String, nullable=False)
+    last_name = Column(String, nullable=False)
+    email = Column(String, unique=True)
+    phone = Column(String)
+
+
+class Employee(Base):
+    __tablename__ = 'employees'
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    first_name = Column(String, nullable=False)
+    last_name = Column(String, nullable=False)
+    position = Column(String)
+    hire_date = Column(DateTime, default=datetime.datetime.utcnow)
+
+
+class Vehicle(Base):
+    __tablename__ = 'vehicles'
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    make = Column(String, nullable=False)
+    model = Column(String, nullable=False)
+    year = Column(Integer, nullable=False)
+    vin = Column(String, unique=True)
+    price = Column(DECIMAL(10, 2))
+    description = Column(Text)
+
+
+class Sale(Base):
+    __tablename__ = 'sales'
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    date = Column(DateTime, default=datetime.datetime.utcnow)
+    amount = Column(DECIMAL(10, 2), nullable=False)
+    vehicle_id = Column(Integer, ForeignKey('vehicles.id'), nullable=False)
+    customer_id = Column(Integer, ForeignKey('customers.id'), nullable=False)
+    employee_id = Column(Integer, ForeignKey('employees.id'), nullable=False)
+
+
+class Service(Base):
+    __tablename__ = 'services'
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    description = Column(Text, nullable=False)
+    cost = Column(DECIMAL(10, 2), nullable=False)
+    vehicle_id = Column(Integer, ForeignKey('vehicles.id'), nullable=False)
+    service_date = Column(DateTime, default=datetime.datetime.utcnow)
+
+
+class Supplier(Base):
+    __tablename__ = 'suppliers'
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+    contact_email = Column(String, unique=True)
+    phone = Column(String)
+
+
+class Part(Base):
+    __tablename__ = 'parts'
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+    part_number = Column(String, unique=True, nullable=False)
+    price = Column(DECIMAL(10, 2), nullable=False)
+    supplier_id = Column(Integer, ForeignKey('suppliers.id'), nullable=False)
+
+
+class Inventory(Base):
+    __tablename__ = 'inventory'
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    vehicle_id = Column(Integer, ForeignKey('vehicles.id'), nullable=False)
+    part_id = Column(Integer, ForeignKey('parts.id'), nullable=False)
+    quantity = Column(Integer, nullable=False)
+
+
+class Rental(Base):
+    __tablename__ = 'rentals'
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    vehicle_id = Column(Integer, ForeignKey('vehicles.id'), nullable=False)
+    customer_id = Column(Integer, ForeignKey('customers.id'), nullable=False)
+    start_date = Column(DateTime, nullable=False, default=datetime.datetime.utcnow)
+    end_date = Column(DateTime, nullable=False, default=datetime.datetime.utcnow + datetime.timedelta(days=1))
+    total_cost = Column(DECIMAL(10, 2), nullable=False)
+
+
+class Payment(Base):
+    __tablename__ = 'payments'
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    amount = Column(DECIMAL(10, 2), nullable=False)
+    date = Column(DateTime, default=datetime.datetime.utcnow)
+    customer_id = Column(Integer, ForeignKey('customers.id'), nullable=False)
+    sale_id = Column(Integer, ForeignKey('sales.id'), nullable=False)
+
+# Create engine and database
+
+engine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite')
+Base.metadata.create_all(engine)
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# Insert some test data
+
+customer1 = Customer(first_name="John", last_name="Doe", email="john.doe@example.com")
+customer2 = Customer(first_name="Jane", last_name="Smith", email="jane.smith@example.com")
+
+employee1 = Employee(first_name="Alice", last_name="Brown", position="Sales Manager")
+employee2 = Employee(first_name="Bob", last_name="White", position="Mechanic")
+
+vehicle1 = Vehicle(make="Toyota", model="Corolla", year=2021, vin="JTDBV9FJ8B4500000", price=20000, description="New sedan.")
+vehicle2 = Vehicle(make="Honda", model="Civic", year=2022, vin="2HGFB2F59EH500000", price=22000, description="New sporty sedan.")
+
+sale1 = Sale(amount=20000, vehicle_id=1, customer_id=1, employee_id=1)
+
+service1 = Service(description="Oil change", cost=40, vehicle_id=1)
+
+supplier1 = Supplier(name="Auto Parts Co.", contact_email="contact@autopartsco.com")
+
+part1 = Part(name="Brake Pad", part_number="BP12345", price=50, supplier_id=1)
+
+inventory1 = Inventory(vehicle_id=1, part_id=1, quantity=10)
+
+rental1 = Rental(vehicle_id=2, customer_id=2, start_date=datetime.datetime.utcnow(), end_date=datetime.datetime.utcnow() + datetime.timedelta(days=3), total_cost=300)
+
+payment1 = Payment(amount=20000, customer_id=1, sale_id=1)
+
+# Add objects to session and commit
+
+session.add_all([customer1, customer2, employee1, employee2, vehicle1, vehicle2, sale1, service1, supplier1, part1, inventory1, rental1, payment1])
+session.commit()
+
+print("Database created successfully with test data.")
