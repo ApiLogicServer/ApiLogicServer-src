@@ -1,0 +1,44 @@
+Use SQLAlchemy to create a sqlite database named system/genai/temp/create_db_models.sqlite, to
+
+
+Employee has a name and organization_name.
+
+A ProjectAllocationPlan has a name and date.
+A ProjectAllocationPlan has a list of ProjectAllocationDepartments.
+A ProjectAllocationDepartment has a ProjectAllocationPlan, a PercentAllocation, and a DepartmentAllocationPlan.
+
+Projects are assigned to a ProjectAllocationPlan.
+
+Derive the ProjectAllocationDepartment.TotalPercentAllocation as the sum of the DepartmentAllocationPlan.PercentAllocation.
+
+Projects have a ManagedBy Employee, and a ProjectAllocationPlan.
+Projects have a list of ProjectCharges, with a ChargeDate and ChargeAmount.
+
+DepartmentAccounts have a Department, a ChargeBudget, and a list of DepartmentProjectCharges.
+DepartmentProjectCharges have a ChargeAmount, and a ProjectCharge.
+Departments have a ManagedBy Employee.
+
+Derive DepartmentAccounts.TotalChargeAmount as the sum of Department ProjectCharge.ChargeAmounts.
+Validate that the DepartmentAccounts TotalChargeAmount cannot exceed ChargeBudget.
+
+Departments have a list of DepartmentAllocationPlans.
+DepartmentAllocationPlans have a list of DepartmentAllocations.
+
+A DepartmentAllocation has a DepartmentAccount and a PercentAllocation.
+
+Derive the DepartmentAllocationPlan.Total as the sum of the DepartmentAllocations.PercentAllocation.
+
+ProjectCharges are disbursed to DepartmentProjectCharges, according to the selected ProjectAllocationPlan.
+
+Project Department Charges are disbursed to DepartmentAccounts, according to the DepartmentAllocationPlan..
+
+Hints: use autonum keys, allow nulls, Decimal types, foreign keys, no check constraints, python datetime datatype.
+
+Remember that SQLite DateTime type only accepts Python datetime and date objects as input, 
+this means you can not enter string attributes where a date or datetime object is expected.
+
+Don't install additional packages.
+Don't use the faker pip package.
+
+Create some test data, use foreign key columns instead of relationship names for the data .
+

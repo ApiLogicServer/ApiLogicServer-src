@@ -2,4 +2,8 @@ Used the no-file option.
 
 Why did the first fail
 
-And, the successful one did not autojoin
+And, the successful one did not autojoin.
+
+Perhaps it's fine... Inventory (and Vehicle) have no name field.  They should (eg, Mfr/Model).
+
+The data model is odd - Inventory -> Vehicle makes no sense.
