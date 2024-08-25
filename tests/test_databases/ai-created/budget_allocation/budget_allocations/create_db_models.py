@@ -1,0 +1,123 @@
+import decimal
+
+from sqlalchemy.sql import func  # end imports from system/genai/create_db_models_inserts/create_db_models_prefix.py
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, Numeric, Date, DateTime
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker, relationship
+import datetime
+
+Base = declarative_base()
+engine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite')
+
+class Employee(Base):
+    __tablename__ = 'employee'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String)
+    organization_name = Column(String)
+
+class Department(Base):
+    __tablename__ = 'department'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String)
+    managed_by = Column(Integer, ForeignKey('employee.id'))
+
+class DepartmentAccount(Base):
+    __tablename__ = 'departmentaccount'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    department_id = Column(Integer, ForeignKey('department.id'))
+    charge_budget = Column(Numeric)
+    total_charge_amount = Column(Numeric, default=0)
+
+class ProjectAllocationPlan(Base):
+    __tablename__ = 'projectallocationplan'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String)
+    date = Column(DateTime, default=datetime.datetime.utcnow)
+
+class DepartmentAllocationPlan(Base):
+    __tablename__ = 'departmentallocationplan'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    department_id = Column(Integer, ForeignKey('department.id'))
+    total = Column(Numeric, default=0)
+
+class DepartmentAllocation(Base):
+    __tablename__ = 'departmentallocation'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    department_allocation_plan_id = Column(Integer, ForeignKey('departmentallocationplan.id'))
+    department_account_id = Column(Integer, ForeignKey('departmentaccount.id'))
+    percent_allocation = Column(Numeric)
+
+class ProjectAllocationDepartment(Base):
+    __tablename__ = 'projectallocationdepartment'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    project_allocation_plan_id = Column(Integer, ForeignKey('projectallocationplan.id'))
+    percent_allocation = Column(Numeric)
+    department_allocation_plan_id = Column(Integer, ForeignKey('departmentallocationplan.id'))
+    total_percent_allocation = Column(Numeric, default=0)
+
+class Project(Base):
+    __tablename__ = 'project'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String)
+    managed_by = Column(Integer, ForeignKey('employee.id'))
+    project_allocation_plan_id = Column(Integer, ForeignKey('projectallocationplan.id'))
+
+class ProjectCharge(Base):
+    __tablename__ = 'projectcharge'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    project_id = Column(Integer, ForeignKey('project.id'))
+    charge_date = Column(DateTime, default=datetime.datetime.utcnow)
+    charge_amount = Column(Numeric)
+
+class DepartmentProjectCharge(Base):
+    __tablename__ = 'departmentprojectcharge'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    department_account_id = Column(Integer, ForeignKey('departmentaccount.id'))
+    charge_amount = Column(Numeric)
+    project_charge_id = Column(Integer, ForeignKey('projectcharge.id'))
+    project_id = Column(Integer, ForeignKey('project.id'))
+
+Base.metadata.create_all(engine)
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# Create Employees
+e1 = Employee(name="Alice", organization_name="Org1")
+e2 = Employee(name="Bob", organization_name="Org2")
+
+# Create Departments
+d1 = Department(name="IT", managed_by=1)  # Managed by Alice
+d2 = Department(name="HR", managed_by=2)  # Managed by Bob
+
+# Create Department Accounts
+da1 = DepartmentAccount(department_id=1, charge_budget=1000)
+da2 = DepartmentAccount(department_id=2, charge_budget=2000)
+
+# Create Project Allocation Plan
+pap = ProjectAllocationPlan(name="Q1 Plan", date=datetime.datetime(2023, 1, 1))
+
+# Create Department Allocation Plan
+dap1 = DepartmentAllocationPlan(department_id=1, total=50)
+dap2 = DepartmentAllocationPlan(department_id=2, total=50)
+
+# Create Department Allocations
+dalloc1 = DepartmentAllocation(department_allocation_plan_id=1, department_account_id=1, percent_allocation=50)
+dalloc2 = DepartmentAllocation(department_allocation_plan_id=2, department_account_id=2, percent_allocation=50)
+
+# Create Project Allocation Department
+pad = ProjectAllocationDepartment(project_allocation_plan_id=1, percent_allocation=100, department_allocation_plan_id=1, total_percent_allocation=50)
+
+# Create Projects
+p1 = Project(name="Project A", managed_by=1, project_allocation_plan_id=1)
+p2 = Project(name="Project B", managed_by=2, project_allocation_plan_id=1)
+
+# Create Project Charges
+pc1 = ProjectCharge(project_id=1, charge_date=datetime.datetime(2023, 1, 1), charge_amount=500)
+pc2 = ProjectCharge(project_id=2, charge_date=datetime.datetime(2023, 1, 1), charge_amount=1500)
+ 
+# Create Department Project Charges
+dpc1 = DepartmentProjectCharge(department_account_id=1, charge_amount=500, project_charge_id=1, project_id=1)
+dpc2 = DepartmentProjectCharge(department_account_id=2, charge_amount=1500, project_charge_id=2, project_id=2)
+
+session.add_all([e1, e2, d1, d2, da1, da2, pap, dap1, dap2, dalloc1, dalloc2, pad, p1, p2, pc1, pc2, dpc1, dpc2])
+session.commit()

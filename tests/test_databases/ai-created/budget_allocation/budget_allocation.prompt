@@ -1,0 +1,12 @@
+
+Department Accounts accrue Department Charges, which cannot exceed Budget Amoounts.
+
+Department Allocation Plans have Department Allocation percents, identifying a Department Account.
+
+Project Allocation Plans have department allocation percents (totalling to 100), and a Department Allocation Plan.
+
+Projects are assigned to Allocation Plans.
+
+When Projects are approved, their costs are disbursed as Department Charges, according to the selected Project Allocation Plan.
+
+Department Charges are disbursed to Department Accounts per Department Allocation Plans.
