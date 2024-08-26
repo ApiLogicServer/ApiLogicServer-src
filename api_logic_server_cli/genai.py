@@ -288,7 +288,7 @@ class GenAI(object):
                     each_line = each_line.replace('end_time(datetime', 'end_time=datetime')
                 if indents_to_remove > 0:
                     each_line = each_line[indents_to_remove:]
-                use_relns = True
+                use_relns = False  # airport4 fails with ould not determine join condition between parent/child tables on relationship Airport.flights
                 if 'relationship(' in each_line and use_relns == False:
                     if each_line.startswith('    '):
                         each_line = each_line.replace('    ', '    # ')
