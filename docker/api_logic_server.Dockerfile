@@ -5,7 +5,9 @@
 # docker buildx build --push -f docker/api_logic_server.Dockerfile --tag apilogicserver/api_logic_server:latest -o type=image --platform=linux/arm64,linux/amd64 .
 
 # Beta - test codespaces with tutorial, API_Fiddle (change .devcontainer.json -> apilogicserver/api_logic_server_x)
-# docker buildx build --push -f docker/api_logic_server.Dockerfile --tag apilogicserver/api_logic_server_x:9.05.00 -o type=image --platform=linux/arm64,linux/amd64 .
+# docker buildx build --push -f docker/api_logic_server.Dockerfile --tag apilogicserver/api_logic_server_x:11.01.05 -o type=image --platform=linux/arm64,linux/amd64 .
+# docker buildx build --push -f docker/api_logic_server.Dockerfile --tag apilogicserver/api_logic_server_x:latest -o type=image --platform=linux/arm64,linux/amd64 .
+# Z - docker buildx build --push -f docker/api_logic_server.Dockerfile --tag apilogicserver/api_logic_server_x:9.05.00 -o type=image --platform=linux/arm64,linux/amd64 .
 
 # Internal - verify what is done with build_and_test
 # docker build -f docker/api_logic_server.Dockerfile -t apilogicserver/api_logic_server_local --rm .
