@@ -1,0 +1,49 @@
+Use SQLAlchemy to create a sqlite database named system/genai/temp/create_db_models.sqlite, to
+
+Create at least 13 tables.
+
+Employee has a name and organization_name.
+
+Departments have a Name and Location.
+
+A ProjectAllocatorPlan has a name and date.
+A ProjectAllocatorPlan has a list of DeptAllocators.
+A DeptAllocator has a ProjectAllocatorPlan, a PercentAllocation, and a AccountAllocatorPlan.
+
+Projects are assigned to a ProjectAllocatorPlan.
+
+Derive the ProjectAllocatorPlan.TotalPercentAllocation as the sum of the DeptAllocator.PercentAllocation.
+
+Projects have a ManagedBy Employee, and a ProjectAllocatorPlan.
+Projects have a list of ProjectCharges, with a ChargeDate and ChargeAmount.
+
+Accounts have a Name, Department, a ChargeBudget, and a list of ProjectCharges.
+ProjectCharges have a ChargeAmount, a ProjectCharge, an Account, and a AccountAllocatorPlan.
+Departments have a ManagedBy Employee, and a list of Accounts.
+
+Derive Accounts.TotalChargeAmount as the sum of ProjectCharge.ChargeAmounts.
+Validate that the Accounts TotalChargeAmount cannot exceed ChargeBudget.
+
+Accounts have a list of AccountAllocatorPlans, a list of AccountAllocatorPlans, and a list of DeptAllocations.
+DeptAllocation has a Account, and a ChargeAmount.
+AccountAllocatorPlans have an Department, a list of AccountAllocators, and a list of AccountCharges.
+
+An AccountAllocator has a Account and a PercentAllocation.
+
+An AccountCharge has an ChargeAmount, and an Account.
+
+Derive the AccountAllocatorPlan.Total as the sum of the AccountAllocator.PercentAllocation.
+
+ProjectCharges are disbursed to ProjectCharges, according to the selected ProjectAllocatorPlan.
+
+ProjectDeptAllocation are disbursed to DeptAllocation, according to the AccountAllocatorPlan.AccountAllocator.
+
+Hints: use autonum keys, allow nulls, Decimal types, foreign keys, no check constraints, python datetime datatype.
+
+Remember that SQLite DateTime type only accepts Python datetime and date objects as input, 
+this means you can not enter string attributes where a date or datetime object is expected.
+
+Don't install additional packages.
+Don't use the faker pip package.
+
+Create some test data, use foreign key columns - NOT relationship names - for the data .
