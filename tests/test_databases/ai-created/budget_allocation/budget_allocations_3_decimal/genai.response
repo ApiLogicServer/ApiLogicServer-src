@@ -1,0 +1,137 @@
+To accomplish this using SQLAlchemy, you'll need to set up your models to represent the entities described, and link them with foreign keys. Here is how you can create the models and the database, and then insert some test data:
+
+```python
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, Date, ForeignKeyConstraint, Decimal, CheckConstraint, DateTime, func
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship, sessionmaker
+from sqlalchemy.sql import select
+import datetime
+
+Base = declarative_base()
+
+class Employee(Base):
+    __tablename__ = 'employees'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String)
+    organization_name = Column(String)
+
+class Department(Base):
+    __tablename__ = 'departments'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String)
+    location = Column(String)
+    manager_id = Column(Integer, ForeignKey('employees.id'))
+
+class ProjectAllocatorPlan(Base):
+    __tablename__ = 'project_allocator_plans'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String)
+    date = Column(Date)
+
+class DeptAllocator(Base):
+    __tablename__ = 'dept_allocators'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    percent_allocation = Column(Decimal)
+    project_allocator_plan_id = Column(Integer, ForeignKey('project_allocator_plans.id'))
+
+class AccountAllocatorPlan(Base):
+    __tablename__ = 'account_allocator_plans'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String)
+    department_id = Column(Integer, ForeignKey('departments.id'))
+
+class AccountAllocator(Base):
+    __tablename__ = 'account_allocators'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    account_id = Column(Integer, ForeignKey('accounts.id'))
+    percent_allocation = Column(Decimal)
+    account_allocator_plan_id = Column(Integer, ForeignKey('account_allocator_plans.id'))
+
+class Project(Base):
+    __tablename__ = 'projects'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String)
+    manager_id = Column(Integer, ForeignKey('employees.id'))
+    project_allocator_plan_id = Column(Integer, ForeignKey('project_allocator_plans.id'))
+
+class ProjectCharge(Base):
+    __tablename__ = 'project_charges'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    charge_date = Column(Date)
+    charge_amount = Column(Decimal)
+    project_id = Column(Integer, ForeignKey('projects.id'))
+    account_allocator_plan_id = Column(Integer, ForeignKey('account_allocator_plans.id'))
+
+class Account(Base):
+    __tablename__ = 'accounts'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String)
+    charge_budget = Column(Decimal)
+
+class DeptCharge(Base):
+    __tablename__ = 'dept_charges'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    account_id = Column(Integer, ForeignKey('accounts.id'))
+    charge_amount = Column(Decimal)
+    project_charge_id = Column(Integer, ForeignKey('project_charges.id'))
+
+class AccountCharge(Base):
+    __tablename__ = 'account_charges'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    charge_amount = Column(Decimal)
+    account_id = Column(Integer, ForeignKey('accounts.id'))
+
+engine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite')
+Base.metadata.create_all(engine)
+
+# Create a session
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# Add test data
+employee1 = Employee(name="John Doe", organization_name="Organization 1")
+session.add(employee1)
+
+department1 = Department(name="IT", location="Building A", manager_id=1)
+session.add(department1)
+
+project_allocator_plan1 = ProjectAllocatorPlan(name="Plan 1", date=datetime.date(2023, 1, 1))
+session.add(project_allocator_plan1)
+
+dept_allocator1 = DeptAllocator(percent_allocation=50.0, project_allocator_plan_id=1)
+session.add(dept_allocator1)
+
+account_allocator_plan1 = AccountAllocatorPlan(name="Account Plan 1", department_id=1)
+session.add(account_allocator_plan1)
+
+account_allocator1 = AccountAllocator(account_id=1, percent_allocation=30.0, account_allocator_plan_id=1)
+session.add(account_allocator1)
+
+project1 = Project(name="Project 1", manager_id=1, project_allocator_plan_id=1)
+session.add(project1)
+
+project_charge1 = ProjectCharge(charge_date=datetime.date(2023, 1, 5), charge_amount=100.0, project_id=1, account_allocator_plan_id=1)
+session.add(project_charge1)
+
+account1 = Account(name="Account 1", charge_budget=1000.0)
+session.add(account1)
+
+dept_charge1 = DeptCharge(account_id=1, charge_amount=100.0, project_charge_id=1)
+session.add(dept_charge1)
+
+account_charge1 = AccountCharge(charge_amount=100.0, account_id=1)
+session.add(account_charge1)
+
+session.commit()
+
+# Query data (Example)
+accounts = session.query(Account).all()
+for account in accounts:
+    print(f'Account ID: {account.id}, Name: {account.name}, Budget: {account.charge_budget}')
+```
+
+This script sets up the ORM models, creates a SQLite database, and inserts some test data. The models include Employees, Departments (managed by Employees), ProjectAllocatorPlan, DeptAllocator, AccountAllocatorPlan, AccountAllocator, Project, ProjectCharge, Account, DeptCharge, and AccountCharge. 
+
+The database structure implements the relationships you've described, with foreign keys linking tables where necessary.
+
+Note: You should add validation and proper exception handling as needed, as well as implement the method to calculate the sums and constraints as described in your requirement.

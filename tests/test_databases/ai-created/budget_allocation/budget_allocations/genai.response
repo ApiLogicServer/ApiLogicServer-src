@@ -1,133 +1,169 @@
-Sure, here's how you can create such a schema using SQLAlchemy and insert some test data:
-
-1. **Define the models:**
+Certainly! Below is a complete SQLAlchemy script to create the specified database schema and populate it with some sample data. The script uses SQLite and adheres to the given constraints (datetime types, foreign keys, derived columns using properties, etc.).
 
 ```python
-from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, Numeric, Date, DateTime
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, DateTime, Numeric
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
-import datetime
+from sqlalchemy.ext.hybrid import hybrid_property
+from datetime import datetime
 
+# Create SQLite engine
+engine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite', echo=True)
+
+# Create a base class
 Base = declarative_base()
-engine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite')
 
 class Employee(Base):
-    __tablename__ = 'employee'
+    __tablename__ = 'employees'
+    
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String)
     organization_name = Column(String)
 
 class Department(Base):
-    __tablename__ = 'department'
+    __tablename__ = 'departments'
+    
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String)
-    managed_by = Column(Integer, ForeignKey('employee.id'))
+    location = Column(String)
+    managed_by = Column(Integer, ForeignKey('employees.id'))
 
-class DepartmentAccount(Base):
-    __tablename__ = 'departmentaccount'
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    department_id = Column(Integer, ForeignKey('department.id'))
-    charge_budget = Column(Numeric)
-    total_charge_amount = Column(Numeric, default=0)
-
-class ProjectAllocationPlan(Base):
-    __tablename__ = 'projectallocationplan'
+class ProjectAllocatorPlan(Base):
+    __tablename__ = 'project_allocator_plans'
+    
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String)
-    date = Column(DateTime, default=datetime.datetime.utcnow)
-
-class DepartmentAllocationPlan(Base):
-    __tablename__ = 'departmentallocationplan'
+    date = Column(DateTime, default=datetime.utcnow)
+    
+    @hybrid_property
+    def total_percent_allocation(self):
+        return sum(allocator.percent_allocation for allocator in self.dept_allocators)
+    
+class DeptAllocator(Base):
+    __tablename__ = 'dept_allocators'
+    
     id = Column(Integer, primary_key=True, autoincrement=True)
-    department_id = Column(Integer, ForeignKey('department.id'))
-    total = Column(Numeric, default=0)
-
-class DepartmentAllocation(Base):
-    __tablename__ = 'departmentallocation'
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    department_allocation_plan_id = Column(Integer, ForeignKey('departmentallocationplan.id'))
-    department_account_id = Column(Integer, ForeignKey('departmentaccount.id'))
+    project_allocator_plan_id = Column(Integer, ForeignKey('project_allocator_plans.id'))
     percent_allocation = Column(Numeric)
-
-class ProjectAllocationDepartment(Base):
-    __tablename__ = 'projectallocationdepartment'
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    project_allocation_plan_id = Column(Integer, ForeignKey('projectallocationplan.id'))
-    percent_allocation = Column(Numeric)
-    department_allocation_plan_id = Column(Integer, ForeignKey('departmentallocationplan.id'))
-    total_percent_allocation = Column(Numeric, default=0)
+    account_allocator_plan_id = Column(Integer, ForeignKey('account_allocator_plans.id'))
 
 class Project(Base):
-    __tablename__ = 'project'
+    __tablename__ = 'projects'
+    
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String)
-    managed_by = Column(Integer, ForeignKey('employee.id'))
-    project_allocation_plan_id = Column(Integer, ForeignKey('projectallocationplan.id'))
+    managed_by = Column(Integer, ForeignKey('employees.id'))
+    project_allocator_plan_id = Column(Integer, ForeignKey('project_allocator_plans.id'))
 
 class ProjectCharge(Base):
-    __tablename__ = 'projectcharge'
+    __tablename__ = 'project_charges'
+    
     id = Column(Integer, primary_key=True, autoincrement=True)
-    project_id = Column(Integer, ForeignKey('project.id'))
-    charge_date = Column(DateTime, default=datetime.datetime.utcnow)
+    charge_date = Column(DateTime, default=datetime.utcnow)
+    charge_amount = Column(Numeric)
+    project_id = Column(Integer, ForeignKey('projects.id'))
+    account_id = Column(Integer, ForeignKey('accounts.id'))
+    account_allocator_plan_id = Column(Integer, ForeignKey('account_allocator_plans.id'))
+
+class Account(Base):
+    __tablename__ = 'accounts'
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String)
+    department_id = Column(Integer, ForeignKey('departments.id'))
+    charge_budget = Column(Numeric)
+    
+    @hybrid_property
+    def total_charge_amount(self):
+        return sum(charge.charge_amount for charge in self.project_charges)
+
+class DeptAllocation(Base):
+    __tablename__ = 'dept_allocations'
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    account_id = Column(Integer, ForeignKey('accounts.id'))
     charge_amount = Column(Numeric)
 
-class DepartmentProjectCharge(Base):
-    __tablename__ = 'departmentprojectcharge'
+class AccountAllocatorPlan(Base):
+    __tablename__ = 'account_allocator_plans'
+    
     id = Column(Integer, primary_key=True, autoincrement=True)
-    department_account_id = Column(Integer, ForeignKey('departmentaccount.id'))
-    charge_amount = Column(Numeric)
-    project_charge_id = Column(Integer, ForeignKey('projectcharge.id'))
-    project_id = Column(Integer, ForeignKey('project.id'))
+    department_id = Column(Integer, ForeignKey('departments.id'))
 
+    @hybrid_property
+    def total_percent_allocation(self):
+        return sum(allocator.percent_allocation for allocator in self.account_allocators)
+
+class AccountAllocator(Base):
+    __tablename__ = 'account_allocators'
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    account_id = Column(Integer, ForeignKey('accounts.id'))
+    percent_allocation = Column(Numeric)
+
+class AccountCharge(Base):
+    __tablename__ = 'account_charges'
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    charge_amount = Column(Numeric)
+    account_id = Column(Integer, ForeignKey('accounts.id'))
+
+# Creating tables
 Base.metadata.create_all(engine)
-```
 
-2. **Create some test data:**
-
-```python
+# Creating a session
 Session = sessionmaker(bind=engine)
 session = Session()
 
-# Create Employees
-e1 = Employee(name="Alice", organization_name="Org1")
-e2 = Employee(name="Bob", organization_name="Org2")
-
-# Create Departments
-d1 = Department(name="IT", managed_by=1)  # Managed by Alice
-d2 = Department(name="HR", managed_by=2)  # Managed by Bob
-
-# Create Department Accounts
-da1 = DepartmentAccount(department_id=1, charge_budget=1000)
-da2 = DepartmentAccount(department_id=2, charge_budget=2000)
-
-# Create Project Allocation Plan
-pap = ProjectAllocationPlan(name="Q1 Plan", date=datetime.datetime(2023, 1, 1))
-
-# Create Department Allocation Plan
-dap1 = DepartmentAllocationPlan(department_id=1, total=50)
-dap2 = DepartmentAllocationPlan(department_id=2, total=50)
-
-# Create Department Allocations
-dalloc1 = DepartmentAllocation(department_allocation_plan_id=1, department_account_id=1, percent_allocation=50)
-dalloc2 = DepartmentAllocation(department_allocation_plan_id=2, department_account_id=2, percent_allocation=50)
-
-# Create Project Allocation Department
-pad = ProjectAllocationDepartment(project_allocation_plan_id=1, percent_allocation=100, department_allocation_plan_id=1, total_percent_allocation=50)
-
-# Create Projects
-p1 = Project(name="Project A", managed_by=1, project_allocation_plan_id=1)
-p2 = Project(name="Project B", managed_by=2, project_allocation_plan_id=1)
-
-# Create Project Charges
-pc1 = ProjectCharge(project_id=1, charge_date=datetime.datetime(2023, 1, 1), charge_amount=500)
-pc2 = ProjectCharge(project_id=2, charge_date=datetime.datetime(2023, 1, 1), charge_amount=1500)
- 
-# Create Department Project Charges
-dpc1 = DepartmentProjectCharge(department_account_id=1, charge_amount=500, project_charge_id=1, project_id=1)
-dpc2 = DepartmentProjectCharge(department_account_id=2, charge_amount=1500, project_charge_id=2, project_id=2)
-
-session.add_all([e1, e2, d1, d2, da1, da2, pap, dap1, dap2, dalloc1, dalloc2, pad, p1, p2, pc1, pc2, dpc1, dpc2])
+# Adding some test data
+emp = Employee(name="John Doe", organization_name="ABC Corp")
+session.add(emp)
 session.commit()
+
+dept = Department(name="IT", location="Building 1", managed_by=emp.id)
+session.add(dept)
+session.commit()
+
+project_allocator_plan = ProjectAllocatorPlan(name="Plan A")
+session.add(project_allocator_plan)
+session.commit()
+
+dept_allocator = DeptAllocator(project_allocator_plan_id=project_allocator_plan.id, percent_allocation=50, account_allocator_plan_id=None)
+session.add(dept_allocator)
+session.commit()
+
+project = Project(name="Project X", managed_by=emp.id, project_allocator_plan_id=project_allocator_plan.id)
+session.add(project)
+session.commit()
+
+account = Account(name="Account 1", department_id=dept.id, charge_budget=10000)
+session.add(account)
+session.commit()
+
+project_charge = ProjectCharge(charge_date=datetime.utcnow(), charge_amount=1000, project_id=project.id, account_id=account.id, account_allocator_plan_id=None)
+session.add(project_charge)
+session.commit()
+
+dept_allocation = DeptAllocation(account_id=account.id, charge_amount=500)
+session.add(dept_allocation)
+session.commit()
+
+account_allocator_plan = AccountAllocatorPlan(department_id=dept.id)
+session.add(account_allocator_plan)
+session.commit()
+
+account_allocator = AccountAllocator(account_id=account.id, percent_allocation=30)
+session.add(account_allocator)
+session.commit()
+
+account_charge = AccountCharge(charge_amount=1000, account_id=account.id)
+session.add(account_charge)
+session.commit()
+
+# Closing session
+session.close()
 ```
 
-Please let me know if you need any further assistance.
+This code defines a complex schema and inserts some initial data entries. It also uses hybrid properties to compute derived values. The database can then be inspected using a tool like SQLite browser, or further analyzed in Python.
+
+Please make sure the directory `system/genai/temp/` exists or create it before running the script, as SQLite will not create directories automatically.

@@ -1,0 +1,33 @@
+cp -r tests/test_databases/ai-created/budget_allocation/budget_allocations ../../build_and_test/ApiLogicServer/system/genai/examples
+
+then go to blt manager, and...
+als genai --using=system/genai/examples/budget_allocations/budget_allocations_bus.prompt
+
+repair and continue
+    als genai --using=budget_allocations.prompt --gen-using-file=system/genai/temp/chatgpt_retry.response
+    als create --project-name=budget_allocations --from-model=system/genai/temp/create_db_models.py --db-url=sqlite
+
+On new project_charge
+    project.project_allocator_plan.dept_allocators() ==> dept_charges
+    on dept_charges
+        account_allocator_plan.account_allocators() ==> account_charges
+
+Bugs:
+    missing account_charges
+    reln: accounts -> dept
+
+Learnings:
+    you need the class diagram, badly
+    use medium-short (not super hyphenated) names
+
+
+On new ProjectCharge
+    Disburse it to Depts: 
+        inserting a provider ProjectCharge allocates the amount 
+        to a set of recipient Project.ProjectAllocationPlan.ProjectAllocationDepartments, 
+        creating DepartmentProjectCharge allocation rows.
+
+        Disburse that to Accts: somehow via DepartmentAllocationPlan
+            inserting a provider DepartmentProjectCharge allocates the amount 
+            to a set of recipient DepartmentAccounts, 
+            creating DepartmentAllocation rows.
