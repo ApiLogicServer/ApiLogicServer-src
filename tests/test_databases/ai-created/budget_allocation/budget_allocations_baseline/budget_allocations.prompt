@@ -1,0 +1,31 @@
+
+Employee has a name and organization_name.
+Departments have a name, a location, ManagedBy Employee.
+
+A ProjectAllocatorPlan has a name, a date, and a list of DeptAllocators.
+A DeptAllocator has a PercentAllocation, and a AccountAllocatorPlan.
+
+Projects have a ManagedBy Employee, and a ProjectAllocatorPlan.
+Projects have a list of ProjectCharges, with a ChargeDate and ChargeAmount.
+
+Departments have a list of Accounts, a list of AccountAllocatorPlans, and a list of DeptAllocations.
+Accounts have a Name, a ChargeBudget, and a list of ProjectCharges.
+ProjectCharges have a ChargeAmount, a Project, and a AccountAllocatorPlan.
+
+DeptCharge has a Account, a ChargeAmount, and a ProjectCharge.
+
+AccountAllocatorPlans have a name, a Department, and a list of AccountAllocators.
+An AccountAllocator has a Account and a PercentAllocation.
+
+An AccountCharge has an ChargeAmount, an Account.
+
+Derive the AccountAllocatorPlan.Total as the sum of the AccountAllocator.PercentAllocation.
+
+Derive the ProjectAllocatorPlan.TotalPercentAllocation as the sum of the DeptAllocator.PercentAllocation.
+
+Derive Accounts.TotalChargeAmount as the sum of ProjectCharge.ChargeAmounts.
+Validate that the Accounts TotalChargeAmount cannot exceed ChargeBudget.
+
+ProjectCharges are disbursed to DeptCharges, according to the selected ProjectAllocatorPlan.
+
+ProjectDeptAllocation are disbursed to DeptAllocation, according to the AccountAllocatorPlan.AccountAllocator.

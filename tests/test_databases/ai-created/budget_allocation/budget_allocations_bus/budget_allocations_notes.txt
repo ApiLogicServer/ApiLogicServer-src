@@ -1,0 +1,1 @@
+als genai --using=system/genai/examples/budget_allocations_bus/budget_allocations_bus.prompt

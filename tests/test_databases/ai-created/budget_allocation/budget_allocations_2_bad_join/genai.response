@@ -1,0 +1,237 @@
+Sure! Below is a full implementation using SQLAlchemy to achieve the requirements described. This will involve creating a SQLite database file and creating the models for the necessary tables with the specified relationships and derived attributes.
+
+First, let's install SQLAlchemy if it is not already installed:
+```shell
+pip install sqlalchemy
+```
+
+Now, let's go ahead and create the database and tables using SQLAlchemy in Python:
+
+```python
+from sqlalchemy import create_engine, Column, Integer, String, Float, DateTime, ForeignKey, CheckConstraint, func, Numeric
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship, sessionmaker, validates
+import datetime
+
+Base = declarative_base()
+
+# Create the database engine
+engine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite')
+
+# Defining the models
+class Employee(Base):
+    __tablename__ = 'employees'
+    
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+    organization_name = Column(String, nullable=True)
+    
+    managed_departments = relationship('Department', back_populates='managed_by')
+    managed_projects = relationship('Project', back_populates='managed_by')
+
+class Department(Base):
+    __tablename__ = 'departments'
+    
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+    location = Column(String, nullable=True)
+    managed_by_id = Column(Integer, ForeignKey('employees.id'), nullable=True)
+    
+    managed_by = relationship('Employee', back_populates='managed_departments')
+    accounts = relationship('Account', back_populates='department')
+
+class Project(Base):
+    __tablename__ = 'projects'
+    
+    id = Column(Integer, primary_key=True)
+    managed_by_id = Column(Integer, ForeignKey('employees.id'), nullable=True)
+    project_allocator_plan_id = Column(Integer, ForeignKey('project_allocator_plans.id'), nullable=True)
+    
+    managed_by = relationship('Employee', back_populates='managed_projects')
+    project_allocator_plan = relationship('ProjectAllocatorPlan', back_populates='projects')
+    project_charges = relationship('ProjectCharge', back_populates='project')
+
+class ProjectAllocatorPlan(Base):
+    __tablename__ = 'project_allocator_plans'
+    
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+    date = Column(DateTime, default=datetime.datetime.utcnow)
+    
+    dept_allocators = relationship('DeptAllocator', back_populates='project_allocator_plan')
+    projects = relationship('Project', back_populates='project_allocator_plan')
+    
+    @property
+    def total_percent_allocation(self):
+        return sum(da.percent_allocation for da in self.dept_allocators)
+
+class DeptAllocator(Base):
+    __tablename__ = 'dept_allocators'
+    
+    id = Column(Integer, primary_key=True)
+    project_allocator_plan_id = Column(Integer, ForeignKey('project_allocator_plans.id'), nullable=False)
+    percent_allocation = Column(Float, nullable=False)
+    account_allocator_plan_id = Column(Integer, ForeignKey('account_allocator_plans.id'), nullable=False)
+    
+    project_allocator_plan = relationship('ProjectAllocatorPlan', back_populates='dept_allocators')
+    account_allocator_plan = relationship('AccountAllocatorPlan')
+
+class Account(Base):
+    __tablename__ = 'accounts'
+    
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+    department_id = Column(Integer, ForeignKey('departments.id'), nullable=False)
+    charge_budget = Column(Float, nullable=False)
+    
+    department = relationship('Department', back_populates='accounts')
+    project_charges = relationship('ProjectCharge', back_populates='account')
+    account_allocator_plans = relationship('AccountAllocatorPlan', back_populates='account')
+    
+    @property
+    def total_charge_amount(self):
+        return sum(pc.charge_amount for pc in self.project_charges)
+    
+    @validates('project_charges')
+    def validate_project_charges(self, key, project_charge):
+        if self.total_charge_amount + project_charge.charge_amount > self.charge_budget:
+            raise ValueError("Total charge amount cannot exceed charge budget")
+        return project_charge
+
+class ProjectCharge(Base):
+    __tablename__ = 'project_charges'
+    
+    id = Column(Integer, primary_key=True)
+    charge_date = Column(DateTime, default=datetime.datetime.utcnow)
+    charge_amount = Column(Float, nullable=False)
+    project_id = Column(Integer, ForeignKey('projects.id'), nullable=False)
+    account_id = Column(Integer, ForeignKey('accounts.id'), nullable=False)
+    account_allocator_plan_id = Column(Integer, ForeignKey('account_allocator_plans.id'), nullable=False)
+    
+    project = relationship('Project', back_populates='project_charges')
+    account = relationship('Account', back_populates='project_charges')
+
+class DeptAllocation(Base):
+    __tablename__ = 'dept_allocations'
+    
+    id = Column(Integer, primary_key=True)
+    account_id = Column(Integer, ForeignKey('accounts.id'), nullable=False)
+    charge_amount = Column(Float, nullable=False)
+    
+    account = relationship('Account')
+
+class AccountAllocatorPlan(Base):
+    __tablename__ = 'account_allocator_plans'
+    
+    id = Column(Integer, primary_key=True)
+    department_id = Column(Integer, ForeignKey('departments.id'), nullable=False)
+    
+    department = relationship('Department')
+    account_allocators = relationship('AccountAllocator', back_populates='account_allocator_plan')
+    account_charges = relationship('AccountCharge', back_populates='account_allocator_plan')
+    
+    @property
+    def total(self):
+        return sum(aa.percent_allocation for aa in self.account_allocators)
+
+class AccountAllocator(Base):
+    __tablename__ = 'account_allocators'
+    
+    id = Column(Integer, primary_key=True)
+    account_id = Column(Integer, ForeignKey('accounts.id'), nullable=False)
+    percent_allocation = Column(Float, nullable=False)
+    
+    account_allocator_plan_id = Column(Integer, ForeignKey('account_allocator_plans.id'), nullable=False)
+    account_allocator_plan = relationship('AccountAllocatorPlan', back_populates='account_allocators')
+
+class AccountCharge(Base):
+    __tablename__ = 'account_charges'
+    
+    id = Column(Integer, primary_key=True)
+    charge_amount = Column(Float, nullable=False)
+    account_id = Column(Integer, ForeignKey('accounts.id'), nullable=False)
+    
+    account_allocator_plan_id = Column(Integer, ForeignKey('account_allocator_plans.id'), nullable=False)
+    account_allocator_plan = relationship('AccountAllocatorPlan', back_populates='account_charges')
+
+# Create all the tables
+Base.metadata.create_all(engine)
+
+# Insert some test data
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# Creating Employees
+employee_1 = Employee(name="John Doe", organization_name="Organization A")
+employee_2 = Employee(name="Jane Smith", organization_name="Organization B")
+session.add(employee_1)
+session.add(employee_2)
+session.commit()
+
+# Creating Departments
+department_1 = Department(name="HR", location="1st Floor", managed_by_id=employee_1.id)
+department_2 = Department(name="Finance", location="2nd Floor", managed_by_id=employee_2.id)
+session.add(department_1)
+session.add(department_2)
+session.commit()
+
+# Creating Accounts
+account_1 = Account(name="Account A", department_id=department_1.id, charge_budget=1000.0)
+account_2 = Account(name="Account B", department_id=department_2.id, charge_budget=2000.0)
+session.add(account_1)
+session.add(account_2)
+session.commit()
+
+# Creating ProjectAllocatorPlan
+project_allocator_plan_1 = ProjectAllocatorPlan(name="Plan 1", date=datetime.datetime.utcnow())
+session.add(project_allocator_plan_1)
+session.commit()
+
+# Creating DeptAllocators
+dept_allocator_1 = DeptAllocator(project_allocator_plan_id=project_allocator_plan_1.id, percent_allocation=50.0, account_allocator_plan_id=1)
+dept_allocator_2 = DeptAllocator(project_allocator_plan_id=project_allocator_plan_1.id, percent_allocation=50.0, account_allocator_plan_id=2)
+session.add(dept_allocator_1)
+session.add(dept_allocator_2)
+session.commit()
+
+# Creating Projects
+project_1 = Project(managed_by_id=employee_1.id, project_allocator_plan_id=project_allocator_plan_1.id)
+session.add(project_1)
+session.commit()
+
+# Creating ProjectCharges
+project_charge_1 = ProjectCharge(charge_date=datetime.datetime.utcnow(), charge_amount=300.0, project_id=project_1.id, account_id=account_1.id, account_allocator_plan_id=1)
+project_charge_2 = ProjectCharge(charge_date=datetime.datetime.utcnow(), charge_amount=200.0, project_id=project_1.id, account_id=account_2.id, account_allocator_plan_id=2)
+session.add(project_charge_1)
+session.add(project_charge_2)
+session.commit()
+
+# Example AccountAllocatorPlan
+account_allocator_plan_1 = AccountAllocatorPlan(department_id=department_1.id)
+account_allocator_plan_2 = AccountAllocatorPlan(department_id=department_2.id)
+session.add(account_allocator_plan_1)
+session.add(account_allocator_plan_2)
+session.commit()
+
+# Creating AccountAllocators
+account_allocator_1 = AccountAllocator(account_id=account_1.id, percent_allocation=60.0, account_allocator_plan_id=account_allocator_plan_1.id)
+account_allocator_2 = AccountAllocator(account_id=account_2.id, percent_allocation=40.0, account_allocator_plan_id=account_allocator_plan_2.id)
+session.add(account_allocator_1)
+session.add(account_allocator_2)
+session.commit()
+
+# Creating DeptAllocations
+dept_allocation_1 = DeptAllocation(account_id=account_1.id, charge_amount=300.0)
+dept_allocation_2 = DeptAllocation(account_id=account_2.id, charge_amount=200.0)
+session.add(dept_allocation_1)
+session.add(dept_allocation_2)
+session.commit()
+
+print("Database and test data created successfully.")
+```
+
+Save this script as `create_db.py` and run it. This script will create the SQLite database, the tables, and insert some test data.
+
+Remember to modify the paths according to your environment and keep all files in an appropriate directory structure.
+
+Note: This script does not cover every possible validation and complex relationships scenario but provides a solid foundation to build upon.

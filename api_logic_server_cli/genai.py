@@ -264,7 +264,10 @@ class GenAI(object):
 
                     2. Missing missing import: from SQLAlchemy import .... DECIMAL
 
-                    3. Bad syntax on test data: see Run: blt/time_cards_decimal from RESPONSE
+                    3. Column(Decimal) -> Column(DECIMAL)
+                        see in: tests/test_databases/ai-created/budget_allocation/budget_allocations/budget_allocations_3_decimal
+
+                    4. Bad syntax on test data: see Run: blt/time_cards_decimal from RESPONSE
                         got:    balance=DECIMAL('100.50')
                         needed: balance=1000.0
                         fixed with import in create_db_models_prefix.py
@@ -279,11 +282,14 @@ class GenAI(object):
                     each_line = each_line.replace('from decimal import Decimal', 'import decimal')
                 if '=Decimal(' in each_line:
                     each_line = each_line.replace('=Decimal(', '=decimal.Decimal(')
+                if 'Column(Decimal)' in each_line:
+                    each_line = each_line.replace('Column(Decimal)', 'Column(DECIMAL)')
                 if 'end_time(datetime' in each_line:  # tests/test_databases/ai-created/time_cards/time_card_kw_arg/genai.response
                     each_line = each_line.replace('end_time(datetime', 'end_time=datetime')
                 if indents_to_remove > 0:
                     each_line = each_line[indents_to_remove:]
-                if 'relationship(' in each_line:
+                use_relns = True
+                if 'relationship(' in each_line and use_relns == False:
                     if each_line.startswith('    '):
                         each_line = each_line.replace('    ', '    # ')
                     else:  # sometimes it puts relns outside the class (so, outdented)
