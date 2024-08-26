@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "11.01.04"
+__version__ = "11.01.05"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t08/26/2024 - 11.01.05: reln retry \n"\
     "\t08/25/2024 - 11.01.04: safrs 3.1.4, genai: more decimal fixes \n"\
     "\t08/21/2024 - 11.01.03: genai: decimal fix (2 timecards), with support for no-file \n"\
     "\t08/21/2024 - 11.01.02: Bug 68: nested quotes, internal (BLT path, exp tests) \n"\
@@ -842,6 +843,7 @@ class ProjectRun(Project):
                      gen_using_file: str="",
                      genai_version: str="",
                      genai_prompt_inserts: str="",
+                     genai_use_relns: bool=True,
                      host: str='localhost', 
                      port: str='5656', 
                      swagger_host: str="localhost", 
@@ -883,6 +885,8 @@ class ProjectRun(Project):
         self.gen_using_file = gen_using_file
         self.genai_version = genai_version
         self.genai_prompt_inserts = genai_prompt_inserts
+        self.genai_use_relns = genai_use_relns
+        """ Use relationships in create_db_models (internal) """
         self.user_db_url = db_url  # retained for debug
         self.bind_key = bind_key
         self.api_name = api_name

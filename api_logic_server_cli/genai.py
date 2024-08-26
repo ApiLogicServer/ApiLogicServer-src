@@ -101,7 +101,7 @@ class GenAI(object):
 
         if self.project.gen_using_file != '':       # if exists, get prompt (for logic)
             prompt = ""  
-            if Path(self.project.from_genai).exists():
+            if Path(self.project.from_genai).is_file():  # eg, launch.json for airport_4 is just a name
                 with open(f'{self.project.from_genai}', 'r') as file:
                     prompt = file.read()
         else:                                       # prompt from text (add system/genai/pre_post.prompt)      
@@ -288,8 +288,8 @@ class GenAI(object):
                     each_line = each_line.replace('end_time(datetime', 'end_time=datetime')
                 if indents_to_remove > 0:
                     each_line = each_line[indents_to_remove:]
-                use_relns = False  # airport4 fails with ould not determine join condition between parent/child tables on relationship Airport.flights
-                if 'relationship(' in each_line and use_relns == False:
+                if 'relationship(' in each_line and self.project.genai_use_relns == False:
+                    # airport4 fails with ould not determine join condition between parent/child tables on relationship Airport.flights
                     if each_line.startswith('    '):
                         each_line = each_line.replace('    ', '    # ')
                     else:  # sometimes it puts relns outside the class (so, outdented)

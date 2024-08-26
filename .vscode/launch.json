@@ -342,7 +342,7 @@
             "redirectOutput": true,
             "args": ["genai",
                 "--using=airport_10",
-                "--gen-using-file=${workspaceFolder}/api_logic_server_cli/prototypes/manager/system/genai/examples/airport/airport_10.response"],
+                "--gen-using-file=${workspaceFolder}/api_logic_server_cli/prototypes/manager/system/genai/examples/airport/airport.response"],
             "console": "integratedTerminal"
         },
         {
@@ -355,7 +355,7 @@
             "redirectOutput": true,
             "args": ["genai",
                 "--using=airport_4",
-                "--gen-using-file=${workspaceFolder}/api_logic_server_cli/prototypes/manager/system/genai/examples/airport/airport_4.response"],
+                "--gen-using-file=${workspaceFolder}/tests/test_databases/ai-created/airport/airport_4.response"],
             "console": "integratedTerminal"
         },
         {

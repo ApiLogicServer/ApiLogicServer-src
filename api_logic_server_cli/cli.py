@@ -7,7 +7,7 @@ To add a new arg:
 
     * update cli_args_base.py
     
-    * add args here (arg, and call to Project.run)
+    * add args here (cli arg, and call to Project.run aka PR)
 
     * update Project.run() 
 
@@ -571,9 +571,13 @@ def tutorial(ctx, create):
 @click.option('--quote', is_flag=True,
               default=False,
               help="Use Quoted column names")
+@click.option('--use-relns', 'use_relns', is_flag=True,
+              default=True,
+              help="Internal (create_db w/relns)")
 @click.pass_context
 def genai(ctx, using, db_url, gen_using_file: click.BOOL, genai_version: str, 
-          retries: int, opt_locking: str, prompt_inserts: str, quote: click.BOOL):
+          retries: int, opt_locking: str, prompt_inserts: str, quote: click.BOOL,
+          use_relns: click.BOOL):
     """
         Creates new customizable project (overwrites).
     """
@@ -590,6 +594,8 @@ def genai(ctx, using, db_url, gen_using_file: click.BOOL, genai_version: str,
     project_name  = project_name.replace(' ', '_')
 
     try_number = 1
+    genai_use_relns = use_relns
+    """ if 'unable to determine join condition', we retry this with False """
     if gen_using_file != "":
         try_number = retries  # if not calling GenAI, no need to retry
     while try_number <= retries:
@@ -600,14 +606,16 @@ def genai(ctx, using, db_url, gen_using_file: click.BOOL, genai_version: str,
                           gen_using_file=gen_using_file,    # retry from [repaired] response file
                           opt_locking=opt_locking,
                           genai_prompt_inserts=prompt_inserts,
+                          genai_use_relns=genai_use_relns,
                           quote=quote,
                           project_name=project_name, db_url=db_url)
             if do_force_failure := False:
                 if try_number < 3:
                     raise Exception("Forced Failure for Internal Testing")
-            break
+            break  # success - exit the loop
         except Exception as e:
             log.error(f"\n\nGenai failed With Error: {e}")
+            # Could not determine join condition
             manager_dir = Path(os.getcwd())  # rename save dir (append retry) for diagnosis
             to_dir_save_dir = Path(manager_dir).joinpath(f'system/genai/temp/{project_name}')
             to_dir_save_dir_retry = Path(manager_dir).joinpath(f'system/genai/temp/{project_name}_{try_number}')
@@ -617,7 +625,13 @@ def genai(ctx, using, db_url, gen_using_file: click.BOOL, genai_version: str,
                 shutil.rmtree(to_dir_save_dir_retry)
             to_dir_save_dir.rename(to_dir_save_dir_retry) 
             failed = True
-            try_number += 1
+            if genai_use_relns and "Could not determine join condition" in str(e):
+                genai_use_relns = False  # just for db_models (fk's still there!!)
+                log.error(f"\n   Failed with join condition - retrying without relns\n")
+                failed = False
+            else:
+                try_number += 1
+        pass # retry (retries times)
     if failed:
         log.error(f"\n\nGenai Failed (Retries: {retries})") 
         exit(1) 
