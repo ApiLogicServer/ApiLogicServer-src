@@ -1,6 +1,6 @@
-import decimal
+Certainly! Below is a complete SQLAlchemy script to create the specified database schema and populate it with some sample data. The script uses SQLite and adheres to the given constraints (datetime types, foreign keys, derived columns using properties, etc.).
 
-from sqlalchemy.sql import func  # end imports from system/genai/create_db_models_inserts/create_db_models_prefix.py
+```python
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, DateTime, Numeric
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
@@ -162,3 +162,8 @@ session.commit()
 
 # Closing session
 session.close()
+```
+
+This code defines a complex schema and inserts some initial data entries. It also uses hybrid properties to compute derived values. The database can then be inspected using a tool like SQLite browser, or further analyzed in Python.
+
+Please make sure the directory `system/genai/temp/` exists or create it before running the script, as SQLite will not create directories automatically.
