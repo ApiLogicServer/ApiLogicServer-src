@@ -360,7 +360,9 @@ class GenAI(object):
             "Content-Type": "application/json",
             "Authorization": f"Bearer {openai_api_key}"
         }
-
+        # maybe user first?  https://community.openai.com/t/what-is-the-difference-between-putting-the-ai-personality-in-system-content-and-in-user-content/194938/6
+        # eg: You are a data modelling expert and python software architect who expands on user input ideas. You create data models with at least 4 tables
+        # consider: https://openai.com/index/openai-codex/
         api_version = f'{self.project.genai_version}'  # eg, "gpt-3.5-turbo"
         """ values like gpt-3.5-turbo, gpt-4o (expensive) """
         debug_value = api_version

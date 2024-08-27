@@ -6,3 +6,5 @@ https://apifabric.ai/projects/gen_01J5G9Z4BVMKP4B58XXM72VDPH
 Project files are always under /projects/gen_$ID
 
 Also, Web/GenAI sra builds: https://apifabric.ai/builds/
+
+https://apifabric.ai/projects/gen_01J6815ZM6P9PDQM3WP63VJMV1
