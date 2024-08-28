@@ -321,7 +321,7 @@ def advancedFilter(cls, args) -> any:
         if not op_name in ONTIMIZE_OPERATORS:
             raise ValidationError(f'Invalid filter {flt}, unknown operator: {op_name}')
         #join = flt.get("join", "").strip("_").lower()   
-        attr = cls._s_jsonapi_attrs[attr_name] if attr_name != "id" else cls.id
+        attr = cls._s_jsonapi_attrs[attr_name] if attr_name != "id" else cls.id if "id" in cls._s_jsonapi_attrs else cls.Id
         if op_name in ["IN"]:
             expr = ExpressionHolder(expr=attr.in_(clean(attr_val)), join=join)
             expression_holder.append(expr)
@@ -338,7 +338,7 @@ def advancedFilter(cls, args) -> any:
         elif op_name in ["NULL","IS_NULL","NOTNULL","NOT_NULL"]:
             op = ONTIMIZE_OPERATORS[op_name] if op_name in ONTIMIZE_OPERATORS else "IS NULL"
             sqlWhere += f'{join} "{attr_name}" {op}'
-            
+        join = " AND " if join == "" else join
     final_expr = []
     expressions = []
     for expr in expression_holder:
@@ -354,10 +354,14 @@ def advancedFilter(cls, args) -> any:
     return expressions, sqlWhere #query.filter(or_(*expressions))
 
 def clean(val):
-    if val and isinstance(val, str):
-        if val.startswith('"') and val.endswith('"'):
-            return val[1:-1 ]
-    return val
+    if val and isinstance(val, str) and (val.startswith("'") and val.endswith("'")):
+            return f"'{val[1:-1 ]}'"
+    elif val and isinstance(val, str) and (val.startswith('"') and val.endswith('"')):
+            return f"'{val[1:-1 ]}'"
+    elif val and isinstance(val, str):
+        return  f"'{val}'"
+    else:
+        return val
             
 class ExpressionParser:
 
