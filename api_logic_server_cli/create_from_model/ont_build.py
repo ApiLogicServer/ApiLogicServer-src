@@ -469,7 +469,7 @@ class OntBuilder(object):
             "breadcrumbLabel":favorite,
             "new_mode": new_mode,
             "detail_mode": self.detail_mode,
-            "title": "{{ '" + title + "' | oTranslate }}",
+            "title": "{{ '" + title + "'}}",
             "tableAttr": f"{entity_name}Table",
             "service": entity_type,
             "entity": entity_type,
@@ -606,7 +606,7 @@ class OntBuilder(object):
         } 
         col_var |= self.global_values
                 #{entity.name}.{col_var["title"]}
-        col_var["label"] =  col_var["title"] # "{{ '" + col_var["title"] + "' | oTranslate }}",
+        col_var["label"] =  col_var["title"] # "{{ '" + col_var["title"] + "' }}",
         #'{{ ' + f'"{col_var["name"]}"' + '| oTranslate }}'
         return col_var
     
