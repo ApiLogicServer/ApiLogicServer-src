@@ -48,7 +48,11 @@ if __name__ == "__main__":
         print(f'session: {session}')
         Base.metadata.create_all(e)
 
+Ensure behave test image links
 
+  https://github.com/valhuber/ApiLogicServer/wiki
+
+  https://github.com/ApiLogicServer/Docs/blob/main/docs
 
 Multi-container Azure deployement
   Note: docker-compose -> docker compose

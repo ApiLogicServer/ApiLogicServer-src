@@ -1,0 +1,92 @@
+(venv) val@Vals-MPB-14 ApiLogicServer % echo 'digraph { a -> b }' | dot -Tsvg > output.svg
+(venv) val@Vals-MPB-14 ApiLogicServer % pip install eralchemy                             
+Collecting eralchemy
+  Using cached ERAlchemy-1.2.10-py2.py3-none-any.whl.metadata (4.8 kB)
+Requirement already satisfied: SQLAlchemy in ./venv/lib/python3.12/site-packages (from eralchemy) (2.0.15)
+Collecting pygraphviz (from eralchemy)
+  Using cached pygraphviz-1.13.tar.gz (104 kB)
+  Installing build dependencies ... done
+  Getting requirements to build wheel ... done
+  Preparing metadata (pyproject.toml) ... done
+Requirement already satisfied: typing-extensions>=4.2.0 in ./venv/lib/python3.12/site-packages (from SQLAlchemy->eralchemy) (4.12.2)
+Using cached ERAlchemy-1.2.10-py2.py3-none-any.whl (14 kB)
+Building wheels for collected packages: pygraphviz
+  Building wheel for pygraphviz (pyproject.toml) ... error
+  error: subprocess-exited-with-error
+  
+  × Building wheel for pygraphviz (pyproject.toml) did not run successfully.
+  │ exit code: 1
+  ╰─> [63 lines of output]
+      running bdist_wheel
+      running build
+      running build_py
+      creating build
+      creating build/lib.macosx-10.9-universal2-cpython-312
+      creating build/lib.macosx-10.9-universal2-cpython-312/pygraphviz
+      copying pygraphviz/scraper.py -> build/lib.macosx-10.9-universal2-cpython-312/pygraphviz
+      copying pygraphviz/graphviz.py -> build/lib.macosx-10.9-universal2-cpython-312/pygraphviz
+      copying pygraphviz/__init__.py -> build/lib.macosx-10.9-universal2-cpython-312/pygraphviz
+      copying pygraphviz/agraph.py -> build/lib.macosx-10.9-universal2-cpython-312/pygraphviz
+      copying pygraphviz/testing.py -> build/lib.macosx-10.9-universal2-cpython-312/pygraphviz
+      creating build/lib.macosx-10.9-universal2-cpython-312/pygraphviz/tests
+      copying pygraphviz/tests/test_unicode.py -> build/lib.macosx-10.9-universal2-cpython-312/pygraphviz/tests
+      copying pygraphviz/tests/test_scraper.py -> build/lib.macosx-10.9-universal2-cpython-312/pygraphviz/tests
+      copying pygraphviz/tests/test_readwrite.py -> build/lib.macosx-10.9-universal2-cpython-312/pygraphviz/tests
+      copying pygraphviz/tests/test_string.py -> build/lib.macosx-10.9-universal2-cpython-312/pygraphviz/tests
+      copying pygraphviz/tests/__init__.py -> build/lib.macosx-10.9-universal2-cpython-312/pygraphviz/tests
+      copying pygraphviz/tests/test_html.py -> build/lib.macosx-10.9-universal2-cpython-312/pygraphviz/tests
+      copying pygraphviz/tests/test_node_attributes.py -> build/lib.macosx-10.9-universal2-cpython-312/pygraphviz/tests
+      copying pygraphviz/tests/test_drawing.py -> build/lib.macosx-10.9-universal2-cpython-312/pygraphviz/tests
+      copying pygraphviz/tests/test_repr_mimebundle.py -> build/lib.macosx-10.9-universal2-cpython-312/pygraphviz/tests
+      copying pygraphviz/tests/test_subgraph.py -> build/lib.macosx-10.9-universal2-cpython-312/pygraphviz/tests
+      copying pygraphviz/tests/test_close.py -> build/lib.macosx-10.9-universal2-cpython-312/pygraphviz/tests
+      copying pygraphviz/tests/test_edge_attributes.py -> build/lib.macosx-10.9-universal2-cpython-312/pygraphviz/tests
+      copying pygraphviz/tests/test_clear.py -> build/lib.macosx-10.9-universal2-cpython-312/pygraphviz/tests
+      copying pygraphviz/tests/test_layout.py -> build/lib.macosx-10.9-universal2-cpython-312/pygraphviz/tests
+      copying pygraphviz/tests/test_attribute_defaults.py -> build/lib.macosx-10.9-universal2-cpython-312/pygraphviz/tests
+      copying pygraphviz/tests/test_graph.py -> build/lib.macosx-10.9-universal2-cpython-312/pygraphviz/tests
+      running egg_info
+      writing pygraphviz.egg-info/PKG-INFO
+      writing dependency_links to pygraphviz.egg-info/dependency_links.txt
+      writing top-level names to pygraphviz.egg-info/top_level.txt
+      reading manifest file 'pygraphviz.egg-info/SOURCES.txt'
+      reading manifest template 'MANIFEST.in'
+      warning: no files found matching '*.swg'
+      warning: no files found matching '*.png' under directory 'doc'
+      warning: no files found matching '*.html' under directory 'doc'
+      warning: no files found matching '*.txt' under directory 'doc'
+      warning: no files found matching '*.css' under directory 'doc'
+      warning: no previously-included files matching '*~' found anywhere in distribution
+      warning: no previously-included files matching '*.pyc' found anywhere in distribution
+      warning: no previously-included files matching '.svn' found anywhere in distribution
+      no previously-included directories found matching 'doc/build'
+      adding license file 'LICENSE'
+      writing manifest file 'pygraphviz.egg-info/SOURCES.txt'
+      copying pygraphviz/graphviz.i -> build/lib.macosx-10.9-universal2-cpython-312/pygraphviz
+      copying pygraphviz/graphviz_wrap.c -> build/lib.macosx-10.9-universal2-cpython-312/pygraphviz
+      running build_ext
+      building 'pygraphviz._graphviz' extension
+      creating build/temp.macosx-10.9-universal2-cpython-312
+      creating build/temp.macosx-10.9-universal2-cpython-312/pygraphviz
+      clang -fno-strict-overflow -Wsign-compare -Wunreachable-code -fno-common -dynamic -DNDEBUG -g -O3 -Wall -arch arm64 -arch x86_64 -g -DSWIG_PYTHON_STRICT_BYTE_CHAR -I/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/include -I/Library/Frameworks/Python.framework/Versions/3.12/include/python3.12 -c pygraphviz/graphviz_wrap.c -o build/temp.macosx-10.9-universal2-cpython-312/pygraphviz/graphviz_wrap.o
+      pygraphviz/graphviz_wrap.c:9:9: warning: 'SWIG_PYTHON_STRICT_BYTE_CHAR' macro redefined [-Wmacro-redefined]
+      #define SWIG_PYTHON_STRICT_BYTE_CHAR
+              ^
+      <command line>:2:9: note: previous definition is here
+      #define SWIG_PYTHON_STRICT_BYTE_CHAR 1
+              ^
+      pygraphviz/graphviz_wrap.c:3023:10: fatal error: 'graphviz/cgraph.h' file not found
+      #include "graphviz/cgraph.h"
+               ^~~~~~~~~~~~~~~~~~~
+      1 warning and 1 error generated.
+      error: command '/usr/bin/clang' failed with exit code 1
+      [end of output]
+  
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+  ERROR: Failed building wheel for pygraphviz
+Failed to build pygraphviz
+ERROR: Could not build wheels for pygraphviz, which is required to install pyproject.toml-based projects
+
+[notice] A new release of pip is available: 24.0 -> 24.2
+[notice] To update, run: pip install --upgrade pip
+(venv) val@Vals-MPB-14 ApiLogicServer % 
