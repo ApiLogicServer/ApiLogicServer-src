@@ -469,7 +469,7 @@ class OntBuilder(object):
             "breadcrumbLabel":favorite,
             "new_mode": new_mode,
             "detail_mode": self.detail_mode,
-            "title": "{{ '" + title + "'}}",
+            "title":  title ,
             "tableAttr": f"{entity_name}Table",
             "service": entity_type,
             "entity": entity_type,
