@@ -193,4 +193,4 @@ def get_rows(api_clz, request, list_of_columns, filter) -> any:
     from api.system.custom_endpoint import CustomEndpoint
     custom_endpoint = CustomEndpoint(model_class=api_clz, fields=list_of_columns, filter_by=filter)
     result = custom_endpoint.execute(request=request)
-    return custom_endpoint.transform("IMATIA",key, result)
+    return custom_endpoint.transform("OntimizeEE",key, result)
