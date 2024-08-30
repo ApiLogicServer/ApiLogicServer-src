@@ -101,6 +101,8 @@ class Config:
     if SQLALCHEMY_DATABASE_URI.startswith("mysql") or SQLALCHEMY_DATABASE_URI.startswith("mariadb"):
         BACKTIC_AS_QUOTE = True
         
+    ONTIMIZE_SERVICE_TYPE = "OntimizeEE" #  "OntimizeEE" uses the API Bridge / "JSONAPI" / "LAC" | Args.service_type
+        
     app_logger.debug(f'config.py - SQLALCHEMY_DATABASE_URI: {SQLALCHEMY_DATABASE_URI}')
 
     # as desired, use env variable: export SQLALCHEMY_DATABASE_URI='sqlite:////Users/val/dev/servers/docker_api_logic_project/database/db.sqliteXX'
@@ -230,6 +232,7 @@ class Args():
         self.keycloak_base_url = Config.KEYCLOAK_BASE_URL
         self.keycloak_client_id = Config.KEYCLOAK_CLIENT_ID
         self.backtic_as_quote = Config.BACKTIC_AS_QUOTE
+        self.service_type = Config.ONTIMIZE_SERVICE_TYPE
 
         self.verbose = False
         self.create_and_run = False
@@ -385,7 +388,15 @@ class Args():
     @backtic_as_quote.setter
     def backtic_as_quote(self, a):
         self.flask_app.config["BACKTIC_AS_QUOTE"] = a
-        
+    
+    @property
+    def service_type(self) -> str:
+        """ service type for OntimizeEE """
+        return self.flask_app.config["ONTIMIZE_SERVICE_TYPE"]
+    @service_type.setter
+    def service_type(self, a):
+        self.flask_app.config["ONTIMIZE_SERVICE_TYPE"] = a
+    
     @property
     def http_scheme(self) -> str:
         """ http or https """
