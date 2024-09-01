@@ -48,11 +48,13 @@ if __name__ == "__main__":
         print(f'session: {session}')
         Base.metadata.create_all(e)
 
-Ensure behave test image links
+Ensure behave test image links (up to "images")
 
-  https://github.com/valhuber/ApiLogicServer/wiki
+  https://github.com/valhuber/ApiLogicServer/wiki   --->
 
   https://github.com/ApiLogicServer/Docs/blob/main/docs
+
+  https://github.com/ApiLogicServer/Docs/blob/main/docs/images/behave/declare-logic.png?raw=true
 
 Multi-container Azure deployement
   Note: docker-compose -> docker compose
