@@ -921,7 +921,7 @@ class OntBuilder(object):
             mg = menu_group.render(menu_group_name=group_name, menuitems=menuitems)
             menu_groups.append(mg)
 
-        return template.render(menu_groups=menu_groups, name=name, import_cards=import_cards, card_components=card_components)
+        return template.render(menu_groups=menu_groups, import_cards=import_cards, card_components=card_components)
 def get_group(groups:list, group:str, entity_name: str):
     entities = []
     for g in groups:
