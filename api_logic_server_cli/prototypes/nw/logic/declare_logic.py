@@ -87,7 +87,7 @@ def declare_logic():
     LOGIC DESIGN: ("Cocktail Napkin Design")
     ========================================
         Customer.Balance <= CreditLimit
-        Customer.Balance = Sum(Order.AmountTotal where unshipped)
+        Customer.Balance = Sum(Order.AmountTotal where unshipped and ready)
         Order.AmountTotal = Sum(OrderDetail.Amount)
         OrderDetail.Amount = Quantity * UnitPrice
         OrderDetail.UnitPrice = copy from Product

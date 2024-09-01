@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "11.01.06"
+__version__ = "11.01.07"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t08/26/2024 - 11.01.06: reln retry, exp fixes \n"\
+    "\t08/31/2024 - 11.01.07: reln retry, exp fixes, logicbank 1.20.7 \n"\
     "\t08/25/2024 - 11.01.04: safrs 3.1.4, genai: more decimal fixes \n"\
     "\t08/21/2024 - 11.01.03: genai: decimal fix (2 timecards), with support for no-file \n"\
     "\t08/21/2024 - 11.01.02: Bug 68: nested quotes, internal (BLT path, exp tests) \n"\
