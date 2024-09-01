@@ -48,6 +48,7 @@ Feature: Place Order
      Given Customer Account: ALFKI
       When Order ShippedDate altered (2013-10-13)
       Then Balance reduced 1086
+      Then Product[46] UnitsInStock adjusted
 
 
   Scenario: Reset Shipped - adjust logic reuse
