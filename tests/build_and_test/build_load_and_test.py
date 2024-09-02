@@ -619,7 +619,7 @@ def validate_nw(api_logic_server_install_path, set_venv):
             rtn_code = result_behave_report.returncode
         elif result_behave:
             rtn_code = result_behave.returncode
-        exit(rtn_code)
+        exit(1 + rtn_code)
 
     print("\nBehave tests & report - Success...\n")
 
