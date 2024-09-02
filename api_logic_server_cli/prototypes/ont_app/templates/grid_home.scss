@@ -1,0 +1,61 @@
+.o-grid {
+    .{{ entity }}-item {
+        cursor: pointer;
+        height: 90%;
+        width: 90%;
+        z-index: 3;
+
+        .image-container {
+        height: 35%;
+        width: 100%;
+
+        .mat-divider {
+            margin: 0 12px 30px;
+        }
+
+        .image {
+            align-items: center;
+            border-radius: 50%;
+            display: flex;
+            height: 100px;
+            justify-content: center;
+            max-height: 100px;
+            max-width: 90px;
+            overflow: hidden;
+            width: 90px;
+
+            img {
+            height: auto;
+            max-height: 100px;
+            max-width: 100px;
+            width: auto;
+            }
+        }
+        }
+
+        .{{ entity }}-data {
+        height: 35%;
+        width: 100%;
+
+        span {
+            font-size: 14px;
+            max-width: 90%;
+            overflow: hidden;
+            padding: 4px 0;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+
+            &.{{ entity }}-name {
+            font-size: 18px;
+            }
+
+            .square {
+            display: inline-block;
+            height: 10px;
+            margin: 0 6px;
+            width: 10px;
+            }
+        }
+        }
+    }
+}

@@ -18,6 +18,7 @@ import sqlalchemy
 import requests
 from datetime import date
 from config.config import Args
+from config.config import Config
 import os
 from pathlib import Path
 from api.system.expression_parser import parsePayload
@@ -349,7 +350,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         request.method = 'GET'
         r = CustomEndpoint(model_class=api_clz, fields=list_of_columns, filter_by=filter, pagesize=pagesize, offset=offset)
         result = r.execute(request=request)
-        return r.transform("OntimizeEE", key, result) # JSONAPI or LAC or OntimizeEE ARGS.service_type
+        service_type: str = Config.ONTIMIZE_SERVICE_TYPE
+        return r.transform(service_type, key, result) # JSONAPI or LAC or OntimizeEE ARGS.service_type
     
     def get_rows_by_query(api_clz, filter, orderBy, columns, pagesize, offset):
         #Old Style
