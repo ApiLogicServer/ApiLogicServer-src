@@ -10,7 +10,7 @@ if [ $# -eq 0 ]
   then
     echo "\n  Usage:"
     echo "    cd ApiLogicServer-src"
-    echo "    sh blt.sh [ s ]"
+    echo "    sh tests/build_and_test/blt.sh [ s ]"
     echo "\n"
     exit 0
   fi

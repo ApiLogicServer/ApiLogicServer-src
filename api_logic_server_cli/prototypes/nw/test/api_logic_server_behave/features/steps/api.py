@@ -20,6 +20,7 @@ def step_impl(context):
     r = requests.get(url=get_order_uri, headers= test_utils.login())
     response_text = r.text
     context.response_text = response_text
+    # assert True is False,"Intentional Error"  # force fail to verify detected in internal blt test
     assert True is not False
 
 @then('VINET retrieved')
