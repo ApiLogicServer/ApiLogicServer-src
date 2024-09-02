@@ -190,51 +190,48 @@ class OntBuilder(object):
             self.global_values[setting_name] = each_setting
         
         for each_entity_name, each_entity in app_model.entities.items():
-            # HOME - Table Style
             if  each_entity.get("exclude", "false") == "true":
                 continue
             entity_name = each_entity_name
             
-            home_template_name = self.find_template(each_entity, "home_template","home_template.html")
-            home_template = self.load_home_template(home_template_name, each_entity, each_entity_name, entity_favorites)
-            home_scss = self.get_template("home.scss").render()
-            
-            ts = self.load_ts("home_template.jinja", each_entity_name, each_entity, entity_favorites)
-            write_file(app_path, entity_name, "home", "-home.component.html", home_template)
-            write_file(app_path, entity_name, "home", "-home.component.ts", ts)
-            write_file(app_path, entity_name, "home", "-home.component.scss", home_scss)
-            
-            routing = self.load_routing("routing.jinja", entity_name, each_entity)
-            write_file(app_path, entity_name, "", "-routing.module.ts", routing)
-            module = self.load_module("module.jinja", entity_name=each_entity_name, entity=each_entity)
-            write_file(app_path, entity_name, "", ".module.ts", module)
+            # Each entity will have a home, new, detail, routing template
+            self.generate_home_template(app_path, entity_favorites, each_entity_name, each_entity, entity_name)
+            self.generate_new_template(app_path, entity_favorites, each_entity_name, each_entity, entity_name)
+            self.generate_detail_template(app_path, entity_favorites, each_entity_name, each_entity, entity_name)
+            self.generate_routing(app_path, each_entity_name, each_entity, entity_name)
 
-            # New Style for Input
-            new_template_name = self.find_template(each_entity, "new_template","new_template.html")
-            new_template = self.load_new_template(new_template_name, each_entity_name, each_entity, entity_favorites)
-            ts = self.load_ts("new_component.jinja", each_entity_name, each_entity, entity_favorites)
-            new_scss = self.get_template("new.scss").render()
-            write_file(app_path, entity_name, "new", "-new.component.html", new_template)
-            write_file(app_path, entity_name, "new", "-new.component.ts", ts)
-            write_file(app_path, entity_name, "new", "-new.component.scss", new_scss)
+            self.generate_card_home_template(app_path, entity_favorites, each_entity_name, each_entity, entity_name)
             
-            # Detail for Update
-            detail_template_name = self.find_template(each_entity, "detail_template","detail_template.html")
-            detail_template = self.load_detail_template(detail_template_name, each_entity_name, each_entity, entity_favorites)
-            ts = self.load_ts("detail_component.jinja", each_entity_name, each_entity, entity_favorites)
-            detail_scss = self.get_template("detail.scss").render()
-            write_file(app_path, entity_name, "detail", "-detail.component.html", detail_template)
-            write_file(app_path, entity_name, "detail", "-detail.component.ts", ts)
-            write_file(app_path, entity_name, "detail", "-detail.component.scss", detail_scss)
-            
-            card_template = self.load_card_template("card.component.html", each_entity_name, entity_favorites)
-            ts = self.load_ts("card.component.jinja", each_entity_name, each_entity, entity_favorites)
-            card_scss = self.get_template("detail.scss").render()
-            write_card_file(app_path, entity_name, "-card.component.html", card_template)
-            write_card_file(app_path, entity_name,  "-card.component.ts", ts)
-            write_card_file(app_path, entity_name,  "-card.component.scss", card_scss)
-            
-        # menu routing and service config
+        # menu groups/routing and service config
+        self.generate_menu_services(app_path, app_model)
+        
+        # KeyCloak or SQL Auth (from yaml)
+        keycloak_args = {
+            "use_keycloak": self.use_keycloak,
+            "keycloak_url": self.keycloak_url,
+            "keycloak_realm": self.keycloak_realm,
+            "keycloak_client_id": self.keycloak_client_id
+        }
+        # Generates KeyCloak or SQL Auth - if already set - do not overwrite - use rebuild=from
+        self.gen_auth_components(app_path, keycloak_args, self.use_keycloak,overwrite=False)
+        
+        rv_environment = self.environment_template.render(apiEndpoint=self.apiEndpoint)
+        write_root_file(
+            app_path=app_path,
+            dir_name="environments",
+            file_name="environment.ts",
+            source=rv_environment,
+        )
+        # Translate all fields from english -> list of languages from settings TODO
+        self.generate_translation_files(app_path)
+
+    def generate_routing(self, app_path, each_entity_name, each_entity, entity_name):
+        routing = self.load_routing("routing.jinja", entity_name, each_entity)
+        write_file(app_path, entity_name, "", "-routing.module.ts", routing)
+        module = self.load_module("module.jinja", entity_name=each_entity_name, entity=each_entity)
+        write_file(app_path, entity_name, "", ".module.ts", module)
+
+    def generate_menu_services(self, app_path, app_model):
         entities = app_model.entities.items()
         sidebar_menu = self.gen_sidebar_routing("main_routing.jinja", entities=entities)
         write_root_file(
@@ -251,24 +248,46 @@ class OntBuilder(object):
             file_name="app.menu.config.ts",
             source=app_menu_config,
         )
-        # KeyCloak or SQL Auth (from yaml)
-        keycloak_args = {
-            "use_keycloak": self.use_keycloak,
-            "keycloak_url": self.keycloak_url,
-            "keycloak_realm": self.keycloak_realm,
-            "keycloak_client_id": self.keycloak_client_id
-        }
-        self.gen_auth_components(app_path, keycloak_args, self.use_keycloak,overwrite=False)
-        
-        rv_environment = self.environment_template.render(apiEndpoint=self.apiEndpoint)
-        write_root_file(
-            app_path=app_path,
-            dir_name="environments",
-            file_name="environment.ts",
-            source=rv_environment,
-        )
-        # Translate all fields from english -> list of languages from settings TODO
-        self.generate_translation_files(app_path)
+
+    def generate_card_home_template(self, app_path, entity_favorites, each_entity_name, each_entity, entity_name):
+        card_template = self.load_card_template("card.component.html", each_entity_name, entity_favorites)
+        ts = self.load_ts("card.component.jinja", each_entity_name, each_entity, entity_favorites)
+        card_scss = self.get_template("detail.scss").render()
+        write_card_file(app_path, entity_name, "-card.component.html", card_template)
+        write_card_file(app_path, entity_name,  "-card.component.ts", ts)
+        write_card_file(app_path, entity_name,  "-card.component.scss", card_scss)
+
+    def generate_detail_template(self, app_path, entity_favorites, each_entity_name, each_entity, entity_name):
+        detail_template_name = self.find_template(each_entity, "detail_template","detail_template.html")
+        detail_template = self.load_detail_template(detail_template_name, each_entity_name, each_entity, entity_favorites)
+        ts = self.load_ts("detail_component.jinja", each_entity_name, each_entity, entity_favorites)
+        detail_scss = self.get_template("detail.scss").render()
+        write_file(app_path, entity_name, "detail", "-detail.component.html", detail_template)
+        write_file(app_path, entity_name, "detail", "-detail.component.ts", ts)
+        write_file(app_path, entity_name, "detail", "-detail.component.scss", detail_scss)
+
+    def generate_new_template(self, app_path, entity_favorites, each_entity_name, each_entity, entity_name):
+        new_template_name = self.find_template(each_entity, "new_template","new_template.html")
+        new_template = self.load_new_template(new_template_name, each_entity_name, each_entity, entity_favorites)
+        ts = self.load_ts("new_component.jinja", each_entity_name, each_entity, entity_favorites)
+        new_scss = self.get_template("new.scss").render()
+        write_file(app_path, entity_name, "new", "-new.component.html", new_template)
+        write_file(app_path, entity_name, "new", "-new.component.ts", ts)
+        write_file(app_path, entity_name, "new", "-new.component.scss", new_scss)
+
+    def generate_home_template(self, app_path, entity_favorites, each_entity_name, each_entity, entity_name):
+        home_template_name = self.find_template(each_entity, "home_template","home_template.html")
+        home_template = self.load_home_template(home_template_name, each_entity, each_entity_name, entity_favorites)
+        if home_template_name == "grid_template.html":
+            home_scss = self.get_template("grid_home.scss").render(entity=each_entity_name)
+            ts = self.load_ts("grid_home_template.jinja", each_entity_name, each_entity, entity_favorites)
+        else:
+            home_scss = self.get_template("home.scss").render(entity=each_entity_name)     
+            ts = self.load_ts("home_template.jinja", each_entity_name, each_entity, entity_favorites)
+            
+        write_file(app_path, entity_name, "home", "-home.component.html", home_template)
+        write_file(app_path, entity_name, "home", "-home.component.ts", ts)
+        write_file(app_path, entity_name, "home", "-home.component.scss", home_scss)
 
     def gen_auth_components(self, app_path , keycloak_args: any, use_keycloak: bool, overwrite: bool = False):
         """
@@ -307,7 +326,7 @@ class OntBuilder(object):
             with open(Path(f"{app_path}{dir_name}/{file_name}"),"r+") as fp:
                 return True
         return False
-    def find_template(self, entity, template_name, default_template):
+    def find_template(self, entity, template_name: str, default_template: any):
         if hasattr(entity, template_name) and entity[template_name] != DotMap():
             return entity[template_name]
         else:
@@ -404,7 +423,6 @@ class OntBuilder(object):
         entity_vars = self.get_entity_vars(entity_name=entity_name, entity=entity)
         entity_vars["row_columns"] = self.get_entity_columns(entity)
         entity_vars["has_tabs"] = False
-        entity_vars["grid_items"] = []
         if template_name.endswith("_expand.html"):
             self.gen_expanded_template(entity, entity_favorites, entity_vars)
 
@@ -454,6 +472,9 @@ class OntBuilder(object):
         keySqlType = make_sql_types(primaryKey, entity.columns)
         title =  f'{entity_name.upper()}' #TODO entity.title
         new_mode = self.find_template(entity, "mode", self.new_mode)
+        items = self.find_template(entity, "grid_items", "")
+        grid_items = ["{{" + f'item.{item}' + "}}" for item in list(items.split(","))]
+        grid_image = self.find_template(entity, "grid_image", "PhotoPath")
         entity_var = {
             "use_keycloak": self.use_keycloak,
             "row_height": self.row_height,
@@ -482,8 +503,10 @@ class OntBuilder(object):
             "primaryKey": f"{primaryKey}",
             "detailFormRoute": entity_name,
             "editFormRoute": entity_name,
-            "attrType": "INTEGER", #TODO
-            "editOnMode": self.edit_on_mode
+            "attrType": f"{entity_name}Table", #TODO
+            "editOnMode": self.edit_on_mode,
+            "grid_items": grid_items,
+            "grid_image": grid_image
         }
 
         self.add_title(title, entity_name)
