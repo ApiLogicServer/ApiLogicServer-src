@@ -9,15 +9,15 @@ class Config:
     #   what tests to run
     # ***********************
 
-    default_setting = True  # simplify enable / disable most
+    default_setting = False  # simplify enable / disable most
 
     do_install_api_logic_server = default_setting   # verify build wheel and local 
     do_logicbank_test = ""                          # use this testpy version (or '')
     
 
     do_create_api_logic_project = default_setting   # create the default project
-    do_run_api_logic_project = default_setting      # start the server 
-    do_test_api_logic_project = default_setting     # run the behave tests (test logic, api)
+    do_run_api_logic_project = True      # start the server 
+    do_test_api_logic_project = True     # run the behave tests (test logic, api)
     do_test_api_logic_project_with_auth = default_setting  # run the behave tests (test logic, api)
     do_test_genai = default_setting                 # run the genai tests
     do_test_multi_reln = default_setting            # run the genai tests on airport
