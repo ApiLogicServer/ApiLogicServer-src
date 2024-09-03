@@ -47,6 +47,11 @@ loggers:
         handlers: [console]
         propagate: no
 
+    create_from_model.ui_admin_creator:   
+        level: DEBUG
+        handlers: [console]
+        propagate: no
+        
     ModelMigrator:   
         level: DEBUG
         handlers: [console]

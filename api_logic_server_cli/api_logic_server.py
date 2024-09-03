@@ -965,6 +965,8 @@ class ProjectRun(Project):
             log.debug('.. ... NO_AUTO_OPEN')
         elif self.open_with == '' and os.getenv('APILOGICSERVER_AUTO_OPEN'):
             self.open_with = os.getenv('APILOGICSERVER_AUTO_OPEN')
+            if self.open_with == 'NO_AUTO_OPEN':  #, eg, for manager.py
+                self.open_with = ''
             # log.debug(f'.. ... set self.open_with: {self.open_with}')
             # log.debug(f".. ... from os.getenv('APILOGICSERVER_AUTO_OPEN'): {os.getenv('APILOGICSERVER_AUTO_OPEN')}")
             # log.debug(f".. ... from os.getcwd(): {os.getcwd()}")

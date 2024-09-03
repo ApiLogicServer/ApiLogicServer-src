@@ -446,6 +446,7 @@ def delete_build_directories(install_api_logic_server_path):
     delete_dir(dir_path=str(get_api_logic_server_src_path().joinpath('ApiLogicServer.egg-info')), msg="\ndelete egg ")
     delete_dir(dir_path=str(get_api_logic_server_src_path().joinpath('build')), msg="delete build ")
     delete_dir(dir_path=str(get_api_logic_server_src_path().joinpath('dist')), msg="delete dist ")
+    # delete_dir(dir_path=str(get_api_logic_server_src_path().joinpath('clean')), msg="delete clean ")
     try:
         os.mkdir(install_api_logic_server_path, mode = 0o777)
         os.mkdir(install_api_logic_server_path.parent.parent.joinpath('clean/ApiLogicServer'), mode = 0o777)
@@ -776,13 +777,16 @@ else:
     print("unknown platform")
 
 install_api_logic_server_path = get_servers_build_and_test_path().joinpath("ApiLogicServer") 
+""" eg, build_and_test/ApiLogicServer """
 install_api_logic_server_clean_path = install_api_logic_server_path.parent.parent.joinpath("clean/ApiLogicServer")
+""" eg, clean/ApiLogicServer"""
 api_logic_project_path = install_api_logic_server_path.joinpath('ApiLogicProject')
+""" eg, build_and_test/ApiLogicServer/ApiLogicProject """
 api_logic_server_tests_path = Path(os.path.abspath(__file__)).parent.parent
-
+""" eg, ApiLogicServer-src/tests """
 api_logic_server_main_path = get_api_logic_server_src_path().\
                             joinpath("api_logic_server_cli").joinpath('api_logic_server.py')  # eg, /Users/val/dev/ApiLogicServer/api_logic_server_cli/api_logic_server.py
-
+"""  eg, api_logic_server_cli/api_logic_server.py """
 with io.open(str(api_logic_server_main_path), "rt", encoding="utf8") as f:
     api_logic_server_version = re.search(r"__version__ = \"(.*?)\"", f.read()).group(1)
 
@@ -822,6 +826,9 @@ print('\n')
 
 if not os.path.isdir(install_api_logic_server_path):
     os.makedirs(install_api_logic_server_path)
+
+if not os.path.isdir(install_api_logic_server_clean_path):
+    os.makedirs(install_api_logic_server_clean_path)
 
 # fails if server left running.  You can stop it with the Admin App at http://localhost:5656/
 
@@ -939,7 +946,7 @@ if len(sys.argv) > 1 and sys.argv[1] == 'build-only':
 #     NORTHWIND TESTS
 # ***************************
 
-
+os.environ["APILOGICSERVER_AUTO_OPEN"] = "NO_AUTO_OPEN"   # does this apply to processes?
 if Config.do_create_api_logic_project: 
     result_manager = run_command(f'{set_venv} && ApiLogicServer start',
         cwd=install_api_logic_server_path,
