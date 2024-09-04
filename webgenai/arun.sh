@@ -12,8 +12,6 @@ export UPLOAD_FOLDER="${PROJ_ROOT}/wgupload"
 
 mkdir -p "${UPLOAD_FOLDER}" "${PROJ_ROOT}/wgadmin/nginx"
 
-ln -sfr /opt/webgenai/database/db.sqlite "${PROJ_ROOT}/wgadmin/db.sqlite"
-
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
@@ -31,8 +29,17 @@ if [[ -z ${APILOGICSERVER_CHATGPT_APIKEY} ]]; then
     export APILOGICSERVER_CHATGPT_APIKEY
 fi
 
+export PYTHONPATH=$PWD
+# Database
+DB_URI=${DB_URI:-"${PROJ_ROOT}/wgadmin/db.sqlite"}
+export SQLALCHEMY_DATABASE_URI="sqlite:///${DB_URI}"
+export WG_SQLALCHEMY_DATABASE_URI="${SQLALCHEMY_DATABASE_URI}"
+if [[ ! -e "${DB_URI}" ]]; then
+    echo "Creating database at ${DB_URI}"
+    python database/manager.py -c
+fi
 # Kill any running project / set "running" to false
-PYTHONPATH=$PWD python database/manager.py -K
+python database/manager.py -K
 
 export GUNICORN_CMD_ARGS=" --worker-tmp-dir=/dev/shm -b 0.0.0.0:${APILOGICPROJECT_PORT} --timeout 60 --workers 3 --threads 2 --reload"
 gunicorn api_logic_server_run:flask_app
