@@ -92,7 +92,7 @@ if [[ ! -f ${prompt_file} ]]; then
 fi
 
 # Kill any running project
-python /opt/webgenai/database/manager.py -K
+#python /opt/webgenai/database/manager.py -K
 
 # Create the project using ALS genai
 cd ${PROJ_ROOT}
@@ -114,8 +114,6 @@ if [[ ! -f "api_logic_server_run.py" ]]; then
 fi
 
 cp /opt/webgenai/grun.sh .
-export APILOGICPROJECT_SWAGGER_PORT="${proj_port}"
-export APILOGICPROJECT_PORT="${proj_port}"
 
 bash grun.sh  2>&1 | while read line
 do
