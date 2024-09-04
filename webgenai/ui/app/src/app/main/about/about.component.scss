@@ -1,0 +1,35 @@
+.info {
+  font-size: 12px;
+  padding: 12px 0;
+}
+
+.mat-divider {
+  width: 800px;
+}
+
+.info-container {
+  margin: 38px;
+  max-width: 800px;
+  width: 70%;
+
+  .info-title {
+    font-size: 14px;
+    font-weight: bold;
+    padding-bottom: 12px;
+    padding-left: 12px;
+  }
+
+  img.mat-icon {
+    height: 40px;
+    width: 40px;
+  }
+
+  > div {
+    margin: 0 50px;
+
+    .dependencies span:not(.info-title) {
+      padding-bottom: 2px;
+      font-size: 12px;
+    }
+  }
+}

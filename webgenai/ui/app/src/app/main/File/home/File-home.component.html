@@ -1,0 +1,57 @@
+<o-form-Layout-manager attr="File" mode="tab" title="FILE">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="FileTable" 
+            service="File" 
+            entity="File" 
+            title="FILE"
+            keys="id"
+            columns="name;project_id;user_id;Type;location;created_at;id" 
+            header-actions="R;D"
+            visible-columns="name;project_id;user_id;Type;location;created_at;id"  
+            sort-columns="name" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #name attr="name" title=" name*" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column attr="project_id" title="project_id">
+    <o-table-cell-renderer-service attr="project_id" 
+        service="Project" entity="ProjectType" columns="id;name"
+        parent-keys="id:project_id"
+        value-column="name" keys="project_id"
+        visible-columns="name" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column attr="user_id" title="user_id">
+    <o-table-cell-renderer-service attr="user_id" 
+        service="User" entity="UserType" columns="id;username"
+        parent-keys="id:user_id"
+        value-column="username" keys="user_id"
+        visible-columns="username" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #Type attr="Type" title="Type" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #location attr="location" title="location" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-date-input #created_at attr="created_at" type="date" label="created_at" enabled="yes" required="no" format="LL" fxFlex="20%" class="form-field"></o-date-input>
+            
+            <o-table-column #id attr="id" title="id" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-Layout-manager>

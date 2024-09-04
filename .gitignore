@@ -15,3 +15,4 @@ venv_z/
 /api_logic_server_cli/ApiLogicProject
 /api_logic_server_cli/test*
 /api_logic_server_cli/model_migrator/CALiveAPICreator.repository
+/api_logic_server_cli/create_from_model/build/
