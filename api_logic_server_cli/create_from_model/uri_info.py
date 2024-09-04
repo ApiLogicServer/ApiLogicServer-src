@@ -5,7 +5,7 @@ uri_info = [
     '  ApiLogicServer create',
     '  ApiLogicServer create-and-run',
     '  ApiLogicServer create --db_url=sqlite:////Users/val/dev/todo_example/todos.db --project_name=todo',
-    '  ApiLogicServer create --db_url=sqlite:///c:\ApiLogicServer\\nw.sqlite --project_name=nw',
+    '  ApiLogicServer create --db_url=sqlite:///c:\\ApiLogicServer\\nw.sqlite --project_name=nw',
     '  ApiLogicServer create --db_url=mysql+pymysql://root:p@mysql-container:3306/classicmodels '
     '--project_name=/localhost/docker_db_project',
     '  ApiLogicServer create --db_url=\'mssql+pyodbc://sa:Posey3861@localhost:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no\'',
@@ -16,7 +16,7 @@ uri_info = [
     '  ApiLogicServer create --project_name=oracle_hr --db_url=\'oracle+oracledb://hr:tiger@localhost:1521/?service_name=ORCL\'',
     '  ApiLogicServer create --project_name=Chinook \\',
     '    --host=ApiLogicServer.pythonanywhere.com --port= \\',
-    '    --db_url=mysql+pymysql://ApiLogicServer:@ApiLogicServer.mysql.pythonanywhere-services.com/ApiLogicServer\$Chinook',
+    '    --db_url=mysql+pymysql://ApiLogicServer:@ApiLogicServer.mysql.pythonanywhere-services.com/ApiLogicServer$Chinook',
     '',
     'Where --db_url is one of...',
     '   <default>                     Sample DB                    - https://apilogicserver.github.io/Docs/Sample-Database/',
