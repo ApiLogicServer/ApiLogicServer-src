@@ -17,8 +17,9 @@ from dotmap import DotMap
 
 from api_logic_server_cli.create_from_model.meta_model import Resource
 
-log = logging.getLogger(__file__)
-log.setLevel(logging.INFO)
+log = logging.getLogger('api_logic_server_cli.create_from_model.ui_admin_creator')
+""" api_logic_server_cli.create_from_model.ui_admin_creator since dyn load is full path """
+# log.setLevel(logging.INFO)
 handler = logging.StreamHandler(sys.stderr)
 formatter = logging.Formatter(f'%(name)s: %(message)s')     # lead tag - '%(name)s: %(message)s')
 handler.setFormatter(formatter)
@@ -718,8 +719,8 @@ class AdminCreator(object):
             log.debug(f'{msg} copy safrs-react-admin to: {to_project_dir}')
             log.debug(f'.. .. ..  ..From {from_proto_dir}')
             if not os.path.isdir(from_proto_dir):
-                log.debug(f'\n==> Error - safrs-react-admin... did you complete setup: https://apilogicserver.github.io/Docs/Internals/')
-                log.debug(".. Setup required.  Really.")
+                log.error(f'\n\n==> Error - safrs-react-admin... did you complete setup: https://apilogicserver.github.io/Docs/Architecture-Internals.md#setup-required')
+                log.error(".. Setup required.  Really.")
                 exit(1)
             use_sra_from_install = True
             if use_sra_from_install:
