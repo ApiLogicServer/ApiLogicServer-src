@@ -65,12 +65,14 @@ def configure_auth(flask_app: Flask, database: object, method_decorators: list[o
     """
     from config.config import Config
 
-    Config.SECURITY_PROVIDER.configure_auth(flask_app=flask_app)   # type-specific configuration
     
     flask_app.config["PROPAGATE_EXCEPTIONS"] = True
     flask_app.config["JWT_SECRET_KEY"] = "ApiLogicServerSecret"  # Change this!
     flask_app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=222)  #  change as you see fit
     flask_app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=30)
+
+    Config.SECURITY_PROVIDER.configure_auth(flask_app=flask_app)   # type-specific configuration
+
     jwt = JWTManager(flask_app)
     
     @flask_app.route("/ontimizeweb/services/rest/auth/login", methods=["POST","OPTIONS"])
