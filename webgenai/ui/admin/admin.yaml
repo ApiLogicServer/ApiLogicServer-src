@@ -1,0 +1,121 @@
+about:
+  date: Aug 31, 2024 13:24:00
+  recent_changes: works with modified safrs-react-admin
+  version: 0.0.0
+api_root: '{http_type}://{swagger_host}:{port}/{api}'
+authentication:
+  endpoint: '{http_type}://{swagger_host}:{port}/{api}/auth/login'
+settings:
+  Home: ApiFab
+info:
+  number_relationships: 1
+  number_tables: 2
+resources:
+  Project:
+    label: Projects
+    sort: '-id'
+    show: showApiFab
+    create: CreateApiFab
+    buttons:
+      - name: download
+        component: DownloadProject
+    attributes:
+      - label: ' id*'
+        name: id
+        show: false
+        hidden: true
+        search: true
+      - name: name
+        label: Name
+        type: text
+      - name: description
+        label: Description
+        search: true
+      - name: prompt
+        label: Prompt
+        search: true
+        type: textarea
+      - name: running
+        component: Running
+        type: Running
+        label: Running
+      - name: link
+        label: Link
+        component: ProjectLink
+      - name: download
+        label: Download
+        type: link
+        text: download
+        icon: download
+        hidden: true
+      - name: status
+        label: Status
+        type: status
+        hidden: true
+      - name: created_at
+        label: Created At
+      - name: connection_string
+        label: "Connection String"
+        search: true
+        component: ConnectionString
+      - name: complexity
+        label: Complexity
+      - name: log
+        type: textarea
+    type: Project
+  File:
+    label: Files
+    attributes:
+    - label: ' name*'
+      name: name
+      search: true
+      sort: true
+    - name: project_id
+    - name: user_id
+    - name: Type
+    - name: location
+    - name: created_at
+    - name: id
+      hidden: true
+    tab_groups:
+    - direction: toone
+      fks:
+      - project_id
+      name: project
+      resource: Project
+    - direction: toone
+      fks:
+      - user_id
+      name: user
+      resource: User
+    type: File
+    user_key: name
+  User:
+    hidden: true
+    attributes:
+    - label: ' username*'
+      name: username
+      search: true
+      sort: true
+    - name: email
+    - name: id
+      required: true
+    tab_groups:
+    - direction: tomany
+      fks:
+      - user_id
+      name: FileList
+      resource: File
+    - direction: tomany
+      fks:
+      - user_id
+      name: ProjectList
+      resource: Project
+    type: User
+    user_key: username
+conf_source: aHR0cHM6Ly9hcGlmYWJyaWMuYWkvYWRtaW4ueWFtbA==
+ui:
+  theme:
+    name: default
+    palette:
+      primary: indigo

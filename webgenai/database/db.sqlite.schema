@@ -1,0 +1,14 @@
+CREATE TABLE users (
+        id VARCHAR NOT NULL,
+        username VARCHAR,
+        email VARCHAR,
+        PRIMARY KEY (id)
+);
+CREATE TABLE IF NOT EXISTS "projects" (
+        id VARCHAR, user_id INTEGER,
+        prompt TEXT,
+        created_at DATETIME,
+        cost DECIMAL(10, 2), link TEXT, description TEXT, response TEXT, created date, port INTEGER, download VARCHAR(511), status VARCHAR(511), complexity INTEGER, name TEXT, pid integer, log text,
+        PRIMARY KEY (id),
+        FOREIGN KEY(user_id) REFERENCES users (id)
+);
