@@ -1,0 +1,253 @@
+Certainly! Below is a Python script using SQLAlchemy to create a SQLite database for a journaling app, featuring at least 22 tables, and inserting at least 88 rows of sample data.
+
+```python
+from sqlalchemy import create_engine, Column, Integer, String, DateTime, ForeignKey, Text
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from datetime import datetime
+
+# Create a SQLite database
+engine = create_engine('sqlite:///system/genai/temp/model.sqlite')
+Base = declarative_base()
+
+# Define tables
+class User(Base):
+    __tablename__ = 'users'
+    user_id = Column(Integer, primary_key=True, autoincrement=True)
+    username = Column(String, nullable=False)
+    email = Column(String, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+class Category(Base):
+    __tablename__ = 'categories'
+    category_id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+
+class JournalEntry(Base):
+    __tablename__ = 'journal_entries'
+    entry_id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey('users.user_id'), nullable=False)
+    category_id = Column(Integer, ForeignKey('categories.category_id'), nullable=False)
+    title = Column(String, nullable=False)
+    content = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+class Comment(Base):
+    __tablename__ = 'comments'
+    comment_id = Column(Integer, primary_key=True, autoincrement=True)
+    entry_id = Column(Integer, ForeignKey('journal_entries.entry_id'), nullable=False)
+    user_id = Column(Integer, ForeignKey('users.user_id'), nullable=False)
+    comment_text = Column(String, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+
+# Adding more tables (total 22)
+class Tag(Base):
+    __tablename__ = 'tags'
+    tag_id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+
+class EntryTag(Base):
+    __tablename__ = 'entry_tags'
+    entry_tag_id = Column(Integer, primary_key=True, autoincrement=True)
+    entry_id = Column(Integer, ForeignKey('journal_entries.entry_id'), nullable=False)
+    tag_id = Column(Integer, ForeignKey('tags.tag_id'), nullable=False)
+
+class Attachment(Base):
+    __tablename__ = 'attachments'
+    attachment_id = Column(Integer, primary_key=True, autoincrement=True)
+    entry_id = Column(Integer, ForeignKey('journal_entries.entry_id'), nullable=False)
+    file_path = Column(String, nullable=False)
+
+class Location(Base):
+    __tablename__ = 'locations'
+    location_id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+
+class EntryLocation(Base):
+    __tablename__ = 'entry_locations'
+    entry_location_id = Column(Integer, primary_key=True, autoincrement=True)
+    entry_id = Column(Integer, ForeignKey('journal_entries.entry_id'), nullable=False)
+    location_id = Column(Integer, ForeignKey('locations.location_id'), nullable=False)
+
+
+class Mood(Base):
+    __tablename__ = 'moods'
+    mood_id = Column(Integer, primary_key=True, autoincrement=True)
+    description = Column(String, nullable=False)
+
+class EntryMood(Base):
+    __tablename__ = 'entry_moods'
+    entry_mood_id = Column(Integer, primary_key=True, autoincrement=True)
+    entry_id = Column(Integer, ForeignKey('journal_entries.entry_id'), nullable=False)
+    mood_id = Column(Integer, ForeignKey('moods.mood_id'), nullable=False)
+
+class Weather(Base):
+    __tablename__ = 'weathers'
+    weather_id = Column(Integer, primary_key=True, autoincrement=True)
+    description = Column(String, nullable=False)
+
+class EntryWeather(Base):
+    __tablename__ = 'entry_weathers'
+    entry_weather_id = Column(Integer, primary_key=True, autoincrement=True)
+    entry_id = Column(Integer, ForeignKey('journal_entries.entry_id'), nullable=False)
+    weather_id = Column(Integer, ForeignKey('weathers.weather_id'), nullable=False)
+
+class Feeling(Base):
+    __tablename__ = 'feelings'
+    feeling_id = Column(Integer, primary_key=True, autoincrement=True)
+    description = Column(String, nullable=False)
+
+class EntryFeeling(Base):
+    __tablename__ = 'entry_feelings'
+    entry_feeling_id = Column(Integer, primary_key=True, autoincrement=True)
+    entry_id = Column(Integer, ForeignKey('journal_entries.entry_id'), nullable=False)
+    feeling_id = Column(Integer, ForeignKey('feelings.feeling_id'), nullable=False)
+
+class Rating(Base):
+    __tablename__ = 'ratings'
+    rating_id = Column(Integer, primary_key=True, autoincrement=True)
+    description = Column(String, nullable=False)
+
+class EntryRating(Base):
+    __tablename__ = 'entry_ratings'
+    entry_rating_id = Column(Integer, primary_key=True, autoincrement=True)
+    entry_id = Column(Integer, ForeignKey('journal_entries.entry_id'), nullable=False)
+    rating_id = Column(Integer, ForeignKey('ratings.rating_id'), nullable=False)
+
+class Task(Base):
+    __tablename__ = 'tasks'
+    task_id = Column(Integer, primary_key=True, autoincrement=True)
+    entry_id = Column(Integer, ForeignKey('journal_entries.entry_id'), nullable=False)
+    description = Column(String, nullable=False)
+    due_date = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+class Contact(Base):
+    __tablename__ = 'contacts'
+    contact_id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+    email = Column(String, nullable=True)
+    phone = Column(String, nullable=True)
+
+class EntryContact(Base):
+    __tablename__ = 'entry_contacts'
+    entry_contact_id = Column(Integer, primary_key=True, autoincrement=True)
+    entry_id = Column(Integer, ForeignKey('journal_entries.entry_id'), nullable=False)
+    contact_id = Column(Integer, ForeignKey('contacts.contact_id'), nullable=False)
+
+class Link(Base):
+    __tablename__ = 'links'
+    link_id = Column(Integer, primary_key=True, autoincrement=True)
+    url = Column(String, nullable=False)
+
+class EntryLink(Base):
+    __tablename__ = 'entry_links'
+    entry_link_id = Column(Integer, primary_key=True, autoincrement=True)
+    entry_id = Column(Integer, ForeignKey('journal_entries.entry_id'), nullable=False)
+    link_id = Column(Integer, ForeignKey('links.link_id'), nullable=False)
+
+
+# Create the tables
+Base.metadata.create_all(engine)
+
+# Create a session
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# Add sample data to the tables
+users = [
+    User(username='user1', email='user1@example.com'),
+    User(username='user2', email='user2@example.com'),
+    User(username='user3', email='user3@example.com'),
+    User(username='user4', email='user4@example.com'),
+    User(username='user5', email='user5@example.com'),
+]
+
+categories = [
+    Category(name='Ideas'),
+    Category(name='Events'),
+    Category(name='Observations'),
+    Category(name='Dreams'),
+    Category(name='Reflections'),
+]
+
+journal_entries = [
+    JournalEntry(user_id=1, category_id=1, title='Idea1', content='Content of idea 1'),
+    JournalEntry(user_id=1, category_id=2, title='Event1', content='Content of event 1'),
+    JournalEntry(user_id=2, category_id=3, title='Observation1', content='Content of observation 1'),
+    JournalEntry(user_id=2, category_id=4, title='Dream1', content='Content of dream 1'),
+    JournalEntry(user_id=3, category_id=5, title='Reflection1', content='Content of reflection 1'),
+    JournalEntry(user_id=3, category_id=1, title='Idea2', content='Content of idea 2'),
+    JournalEntry(user_id=4, category_id=2, title='Event2', content='Content of event 2'),
+    JournalEntry(user_id=5, category_id=3, title='Observation2', content='Content of observation 2'),
+    JournalEntry(user_id=5, category_id=4, title='Dream2', content='Content of dream 2'),
+    JournalEntry(user_id=1, category_id=5, title='Reflection2', content='Content of reflection 2'),
+    # Add more entries to fulfill the requirement
+]
+
+comments = [
+    Comment(entry_id=1, user_id=2, comment_text='Comment1 on entry1'),
+    Comment(entry_id=2, user_id=3, comment_text='Comment2 on entry2'),
+    Comment(entry_id=3, user_id=2, comment_text='Comment3 on entry3'),
+    # Add more comments
+]
+
+# Continue adding sample data to other tables
+
+session.add_all(users)
+session.add_all(categories)
+session.add_all(journal_entries)
+session.add_all(comments)
+session.commit()
+
+# Ensure at least 88 rows of sample data
+# Here we are adding samples to the remaining tables, make sure each table has entries
+
+tags = [Tag(name=f'Tag{i}') for i in range(1, 10)]
+locations = [Location(name=f'Location{i}') for i in range(1, 10)]
+moods = [Mood(description=f'Mood{i}') for i in range(1, 10)]
+weathers = [Weather(description=f'Weather{i}') for i in range(1, 10)]
+feelings = [Feeling(description=f'Feeling{i}') for i in range(1, 10)]
+ratings = [Rating(description=f'Rating{i}') for i in range(1, 10)]
+contacts = [Contact(name=f'Contact{i}', email=f'contact{i}@example.com', phone=f'123-456-78{i}') for i in range(1, 10)]
+links = [Link(url=f'http://example.com/{i}') for i in range(1, 10)]
+tasks = [Task(entry_id=1, description=f'Task{i}', due_date=datetime.utcnow()) for i in range(1, 10)]
+
+session.add_all(tags)
+session.add_all(locations)
+session.add_all(moods)
+session.add_all(weathers)
+session.add_all(feelings)
+session.add_all(ratings)
+session.add_all(contacts)
+session.add_all(links)
+session.add_all(tasks)
+
+session.commit()
+
+# Add entry related sample data
+entry_tags = [EntryTag(entry_id=i % 10 + 1, tag_id=i % 9 + 1) for i in range(20)]
+entry_locations = [EntryLocation(entry_id=i % 10 + 1, location_id=i % 9 + 1) for i in range(20)]
+entry_moods = [EntryMood(entry_id=i % 10 + 1, mood_id=i % 9 + 1) for i in range(20)]
+entry_weathers = [EntryWeather(entry_id=i % 10 + 1, weather_id=i % 9 + 1) for i in range(20)]
+entry_feelings = [EntryFeeling(entry_id=i % 10 + 1, feeling_id=i % 9 + 1) for i in range(20)]
+entry_ratings = [EntryRating(entry_id=i % 10 + 1, rating_id=i % 9 + 1) for i in range(20)]
+entry_contacts = [EntryContact(entry_id=i % 10 + 1, contact_id=i % 9 + 1) for i in range(20)]
+entry_links = [EntryLink(entry_id=i % 10 + 1, link_id=i % 9 + 1) for i in range(20)]
+
+session.add_all(entry_tags)
+session.add_all(entry_locations)
+session.add_all(entry_moods)
+session.add_all(entry_weathers)
+session.add_all(entry_feelings)
+session.add_all(entry_ratings)
+session.add_all(entry_contacts)
+session.add_all(entry_links)
+
+session.commit()
+
+print("Database created and sample data inserted successfully!")
+```
+
+This script sets up the SQLite database `model.sqlite` and defines 22 tables, fulfilling the criteria. It also inserts more than the required 88 rows of sample data into these tables. The data entries make use of foreign keys where specified.
