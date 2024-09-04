@@ -14,7 +14,7 @@ Or, create the database too, by providing just a prompt.
 
 <details markdown>
 
-<summary>Video Overview (40 sec)</summary>
+<summary>Video Overview (4 min)</summary>
 
 &nbsp;
 
@@ -54,7 +54,7 @@ To install the ***dev*** version, [see here](https://apilogicserver.github.io/Do
 
 &nbsp;
 
-# Welcome to API Logic Server - Source
+# Welcome to API Logic Server
 
 For Developers and their organizations seeking to **increase business agility,**
 
@@ -87,5 +87,6 @@ This is an open source project.  We are open to suggestions.  Some of our ideas 
 | 1. JSON:**API** and Swagger | API Execution    | Serverless, Kubernetes        | 
 | 2. Transactional **Logic**   | Rule Enforcement | Recompute Derivations        |
 | 3. This project | API Logic Project Creation | General support - see issues |
+| 3. GenAI | Web version | Create projects with logic<br>Refine GenAI Conversationally |
 
 &nbsp; 
