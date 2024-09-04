@@ -4,6 +4,14 @@
 
 &nbsp;
 
+# TL;DR
+
+Create an executable project (API and Admin App) from a database with 1 command, customize with declarative rules and Python in your IDE.
+
+Or, create the database too, by providing just a prompt.
+
+&nbsp;
+
 <details markdown>
 
 <summary>Video Overview (40 sec)</summary>
