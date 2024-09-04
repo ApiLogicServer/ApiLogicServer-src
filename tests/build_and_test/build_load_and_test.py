@@ -946,9 +946,9 @@ if len(sys.argv) > 1 and sys.argv[1] == 'build-only':
 #     NORTHWIND TESTS
 # ***************************
 
-os.environ["APILOGICSERVER_AUTO_OPEN"] = "NO_AUTO_OPEN"   # does this apply to processes?
+os.environ["APILOGICSERVER_AUTO_OPEN"] = "NO_AUTO_OPEN"   # for each test project
 if Config.do_create_api_logic_project: 
-    result_manager = run_command(f'{set_venv} && ApiLogicServer start',
+    result_manager = run_command(f'{set_venv} && ApiLogicServer start --no-open-manager',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate Manager')
         
