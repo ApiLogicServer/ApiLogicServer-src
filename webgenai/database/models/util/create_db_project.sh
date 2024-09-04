@@ -85,5 +85,3 @@ do
     echo "create_project.sh: ${line}"
 done
 
-
-exit 0
