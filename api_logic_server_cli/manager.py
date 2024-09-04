@@ -10,7 +10,8 @@ import create_from_model.api_logic_server_utils as create_utils
 from pathlib import Path
 import api_logic_server_cli.api_logic_server as PR
 
-def create_manager(clean: bool, open_with: str, api_logic_server_path: Path, volume: str = ""):
+def create_manager(clean: bool, open_with: str, api_logic_server_path: Path, 
+                   volume: str = "", open_manager: bool = True):
     """Implements als start - create Manager at os.getcwd(), including:
     1. .vscode, readme
     2. System folder (GenAI sample prompts / responses, others TBD)
@@ -179,11 +180,12 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path, vol
     else:
         try: # open the manager in open_with
             with_readme = '. readme.md' if open_with == "xxcode" else ' '  # loses project context (no readme preview)
-            create_utils.run_command( 
-                cmd=f'{open_with} {to_dir_str} {with_readme}',  # passing readme here fails - loses project setttings
-                env=None, 
-                msg="no-msg", 
-                project=project)
+            if open_manager:
+                create_utils.run_command( 
+                    cmd=f'{open_with} {to_dir_str} {with_readme}',  # passing readme here fails - loses project setttings
+                    env=None, 
+                    msg="no-msg", 
+                    project=project)
         except Exception as e:
             log.error(f"\n\nError opening manager with {open_with}: {e}")
             log.error(f"\nSuggestion: open code (Ctrl+Shift+P or Command+Shift+P), and run Shell Command\n")

@@ -51,6 +51,17 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "     - Start (Clean, no-open-manager)",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
+            "args": ["start", "--clean", "--no-open-manager"],
+            "justMyCode": false,
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "console": "integratedTerminal"
+        },
+        {
             "name": "     - genai create - clean/ApiLogicServer/genai_demo",
             "type": "debugpy",
             "request": "launch",
