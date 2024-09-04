@@ -12,12 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "11.01.09"
+__version__ = "11.01.11"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t09/02/2024 - 11.01.09: reln retry, exp fixes, logicbank 1.20.7, sra Aug17, Ont name fix, behave_run err-check \n"\
-    "\t08/25/2024 - 11.01.04: safrs 3.1.4, genai: more decimal fixes \n"\
-    "\t08/21/2024 - 11.01.03: genai: decimal fix (2 timecards), with support for no-file \n"\
+    "\t09/03/2024 - 11.01.11: logicbank 1.20.7, safrs 3.1.4, sra Aug17,  behave_run err-check[70], genai decimals \n"\
     "\t08/21/2024 - 11.01.02: Bug 68: nested quotes, internal (BLT path, exp tests) \n"\
     "\t08/18/2024 - 11.01.00: Genai: simpler prompts, diagnostics, ChatGPT4 \n"\
     "\t08/09/2024 - 11.00.20: GenAI hardening, diagnostics \n"\
