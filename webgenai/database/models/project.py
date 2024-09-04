@@ -251,6 +251,8 @@ class Project(BaseModel):
         Method to return the environment variables for the project
         """
         env = os.environ.copy()
+        if 'SQLALCHEMY_DATABASE_URI' in env:
+            del env['SQLALCHEMY_DATABASE_URI']
         return env | {
             "APILOGICPROJECT_SWAGGER_PORT": "8080", #str(self.port),
             "APILOGICPROJECT_PORT": str(self.port),
