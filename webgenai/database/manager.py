@@ -14,7 +14,7 @@ import os
 import psutil
 
 
-DB_URL = 'sqlite:////opt/webgenai/database/db.sqlite' # TODO, use env var from config
+DB_URL = os.getenv('WG_SQLALCHEMY_DATABASE_URI', 'sqlite:////opt/webgenai/database/db.sqlite') # TODO, use env var from config
 
 def get_project(project_id: str) -> Project:
     """
