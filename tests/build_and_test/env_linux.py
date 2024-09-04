@@ -11,13 +11,13 @@ class Config:
 
     default_setting = True  # simplify enable / disable most
 
-    do_install_api_logic_server = True   # verify build wheel and local 
+    do_install_api_logic_server = default_setting   # verify build wheel and local 
     do_logicbank_test = ""                          # use this testpy version (or '')
     
 
-    do_create_api_logic_project = True   # create the default project
-    do_run_api_logic_project = True     # start the server 
-    do_test_api_logic_project = True     # run the behave tests (test logic, api)
+    do_create_api_logic_project = default_setting   # create the default project
+    do_run_api_logic_project = default_setting      # start the server 
+    do_test_api_logic_project = default_setting     # run the behave tests (test logic, api)
     do_test_api_logic_project_with_auth = default_setting  # run the behave tests (test logic, api)
     do_test_genai = default_setting                 # run the genai tests
     do_test_multi_reln = default_setting            # run the genai tests on airport
@@ -40,8 +40,8 @@ class Config:
 
     do_include_exclude = default_setting            # --db_url=table_filters_tests
 
-    do_docker_mysql = default_setting               # requires docker database be running
-    do_docker_postgres = default_setting            # requires docker database be running
+    do_docker_mysql = False               # requires docker database be running
+    do_docker_postgres = False            # requires docker database be running
     do_docker_postgres_auth = False       # requires docker database be running
     do_docker_sqlserver = False           # requires docker database be running
 
@@ -53,12 +53,14 @@ class Config:
     #   platform specific
     # ***********************
 
-    set_venv = 'source ${install_api_logic_server_path}/venv/bin/activate'
-    set_venv = 'export VIRTUAL_ENV=${install_api_logic_server_path}/venv'
-    # set_venv = 'echo "using python in venv"'
-    '''typical source "venv/bin/activate" does not persist over cmds, see...
-        https://github.com/valhuber/ubuntu-script-venv/blob/main/use-in-script.sh '''
+    set_venv = "f:;cd ${install_api_logic_server_path}/venv && Scripts\\activate"
+    '''double slashes... '''
 
+    '''
+    winds up something like
+    f:;cd C:\\Users\\val\\dev\\ApiLogicServer\\ApiLogicServer-dev\\build_and_test\\ApiLogicServer && venv\\Scripts\\activate && python -m pip install C:\\Users\\val\\dev\\ApiLogicServer\\ApiLogicServer-dev\\org_git\\ApiLogicServer-src
+    '''
     docker_database_ip = '10.0.0.77'
     ''' for virtual machine access, set this to host IP '''
+
 

@@ -1,0 +1,169 @@
+<div class="container">
+<o-form-container breadcrumb="yes" breadcrumb-label-columns="username" breadcrumb-separator=", " class="fill-form">
+      <o-form #form attr="User_form_edit" 
+        service="User" 
+        entity="User" 
+        fxLayout="column" 
+        show-header="yes" 
+        header-actions="R;I;U;D"
+        #oDetailForm keys="id" 
+        keys-sql-types="VARCHAR" 
+        show-header-navigation="yes"
+        (onDataLoaded)="onDataLoaded($event)">
+
+  <o-row attr="row1" layout-align="start stretch">
+    <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+      
+      <o-text-input #username attr="username" label=" username*" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #email attr="email" label="email" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #id attr="id" label="id" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+    </div>
+  </o-row>
+      
+      <mat-tab-group fxFill>
+        
+        <mat-tab label="FILE-user_id">
+    <div layout-padding>
+      <o-table 
+        attr="FileTable" 
+        service="File" 
+        entity="File" 
+        keys="id"
+        parent-keys="user_id:id"
+        columns="name;project_id;user_id;Type;location;created_at;id"  
+        horizontal-scroll="yes"
+        detail-form-route="File" 
+        edit-form-route="File"
+        visible-columns="name;project_id;user_id;Type;location;created_at;id"  
+        sort-columns="name" 
+        query-rows="25" 
+        quick-filter="yes"
+        row-height="medium" 
+        select-all-checkbox="true" 
+        pageable="yes"  
+        auto-adjust="true" 
+        virtual-scroll="yes" 
+        insert-button="yes" 
+        delete-button="yes" 
+        fixed-header="true" 
+        class="vertical-padding-8"
+        edition-mode="dblclick" 
+        horizontal-scroll="yes" class="fill-form">
+        
+          <o-table-column #name attr="name" title=" name*" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column attr="project_id" title="project_id">
+    <o-table-cell-renderer-service attr="project_id" 
+        service="Project" entity="ProjectType" columns="id;name"
+        parent-keys="id:project_id"
+        value-column="name" keys="project_id"
+        visible-columns="name" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column attr="user_id" title="user_id">
+    <o-table-cell-renderer-service attr="user_id" 
+        service="User" entity="UserType" columns="id;username"
+        parent-keys="id:user_id"
+        value-column="username" keys="user_id"
+        visible-columns="username" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column #Type attr="Type" title="Type" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #location attr="location" title="location" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-date-input #created_at attr="created_at" type="date" label="created_at" enabled="yes" required="no" format="LL" fxFlex="20%" class="form-field"></o-date-input>
+        
+          <o-table-column #id attr="id" title="id" editable="no" required="yes" content-align="left"></o-table-column>
+        
+        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
+      </o-table>
+    </div>
+</mat-tab>
+        
+        <mat-tab label="PROJECT-user_id">
+    <div layout-padding>
+      <o-table 
+        attr="ProjectTable" 
+        service="Project" 
+        entity="Project" 
+        keys="id"
+        parent-keys="user_id:id"
+        columns="name;user_id;prompt;created_at;cost;link;description;response;port;status;complexity;log;connection_string;directory;id;created;download;pid"  
+        horizontal-scroll="yes"
+        detail-form-route="Project" 
+        edit-form-route="Project"
+        visible-columns="name;user_id;prompt;created_at;cost;link;description;response;port;status;complexity;log;connection_string;directory;id;created;download;pid"  
+        sort-columns="name" 
+        query-rows="25" 
+        quick-filter="yes"
+        row-height="medium" 
+        select-all-checkbox="true" 
+        pageable="yes"  
+        auto-adjust="true" 
+        virtual-scroll="yes" 
+        insert-button="yes" 
+        delete-button="yes" 
+        fixed-header="true" 
+        class="vertical-padding-8"
+        edition-mode="dblclick" 
+        horizontal-scroll="yes" class="fill-form">
+        
+          <o-table-column #name attr="name" title=" name*" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column attr="user_id" title="user_id">
+    <o-table-cell-renderer-service attr="user_id" 
+        service="User" entity="UserType" columns="id;username"
+        parent-keys="id:user_id"
+        value-column="username" keys="user_id"
+        visible-columns="username" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column #prompt attr="prompt" title="prompt" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-date-input #created_at attr="created_at" type="date" label="created_at" enabled="yes" required="no" format="LL" fxFlex="20%" class="form-field"></o-date-input>
+        
+          <o-table-column #cost attr="cost" title="cost" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator=","decimal-separator="."></o-table-column>
+        
+          <o-table-column #link attr="link" title="link" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #description attr="description" title="description" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #response attr="response" title="response" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #port attr="port" title="port" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column #status attr="status" title="status" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #complexity attr="complexity" title="complexity" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column #log attr="log" title="log" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #connection_string attr="connection_string" title="connection_string" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #directory attr="directory" title="directory" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #id attr="id" title="id" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-date-input #created attr="created" type="date" label="created" enabled="yes" required="no" format="LL" fxFlex="20%" class="form-field"></o-date-input>
+        
+          <o-table-column #download attr="download" title="download" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #pid attr="pid" title="pid" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
+      </o-table>
+    </div>
+</mat-tab>
+        
+      </mat-tab-group>
+      
+    </o-form>
+  </o-form-container>
+</div>

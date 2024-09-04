@@ -51,6 +51,8 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         """
 
         import os, signal
+        if not os.getenv('BLT'):
+            return
 
         msg = request.args.get('msg')
         app_logger.info(f'\nStopped server: {msg}\n')

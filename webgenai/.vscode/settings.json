@@ -1,0 +1,21 @@
+{
+    "cSpell.words": [
+        "APILOGICSERVER",
+        "sqlalchemy",
+        "backref",
+        "cascade_backrefs",
+        "proxied",
+        "redef",
+        "jsonapi",
+        "jsonify",
+        "sqltypes"
+    ],
+    "[Log]": {
+        "editor.wordWrap": "off"
+    },
+    "debug.console.wordWrap": false,    
+    "python.defaultInterpreterPath": "/usr/local/bin/python",
+    "workbench.editorAssociations": {
+        "*.md": "vscode.markdown.preview.editor"
+    }
+}
