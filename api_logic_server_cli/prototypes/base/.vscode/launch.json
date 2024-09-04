@@ -11,6 +11,8 @@
             "env": {
                 "PYTHONPATH": "", 
                 "PYTHONHASHSEED": "0", 
+                "APILOGICPROJECT_LOGGING_CONFIG": "config/logging.yml",
+                "APILOGICPROJECT_STOP_OK": "True",
                 "APILOGICPROJECT_DEBUG": "False"},
             "request": "launch",
             "program": "api_logic_server_run.py",
