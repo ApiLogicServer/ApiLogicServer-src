@@ -158,8 +158,8 @@ class AdminCreator(object):
             if resource.table_name in self.mod_gen.project.table_descriptions:
                 info = self.mod_gen.project.table_descriptions[resource.table_name]
                 info = info.replace("This table stores ", "This page shows ")
+                new_resource.description = info
                 new_resource.info_list = info
-                new_resource.info_show = info
 
             self.create_attributes_in_owner(new_resource, resource, None)
             child_tabs = self.create_child_tabs(resource)
