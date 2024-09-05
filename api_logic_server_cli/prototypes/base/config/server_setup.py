@@ -153,7 +153,10 @@ def logging_setup() -> logging.Logger:
     Setup Logging
     """
     global app_logger, debug_value, project_path
-    with open(f'{project_path}/config/logging.yml','rt') as f:  # see also logic/declare_logic.py
+    logging_config = f'{project_path}/config/logging.yml'
+    if os.getenv('APILOGICPROJECT_LOGGING_CONFIG'):
+        logging_config = project_path.joinpath(os.getenv("APILOGICPROJECT_LOGGING_CONFIG"))
+    with open(logging_config,'rt') as f:  # see also logic/declare_logic.py
             config=yaml.safe_load(f.read())
             f.close()
     logging.config.dictConfig(config)  # log levels: notset 0, debug 10, info 20, warn 30, error 40, critical 50

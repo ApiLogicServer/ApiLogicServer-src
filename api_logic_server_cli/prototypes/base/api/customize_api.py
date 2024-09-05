@@ -54,6 +54,9 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         if not os.getenv('BLT'):
             return
 
+        if not os.getenv('APILOGICPROJECT_STOP_OK'):
+            return jsonify({ "success": False, "message": "Shutdown not enabled" })
+
         msg = request.args.get('msg')
         app_logger.info(f'\nStopped server: {msg}\n')
 
