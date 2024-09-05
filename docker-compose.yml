@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  webgenie:
+    image: apilogicserver/webgenie
+    container_name: webgenie
+    ports:
+      - "8080:80"
+    networks:
+      - als
+    env_file:
+      - /opt/webgenai_env
+    stdin_open: true
+    tty: true
+    restart: always
+
+networks:
+  als:
+    external: true

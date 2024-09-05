@@ -43,7 +43,11 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         """ 
         Called by authentication.py on server start to initialize JWT_SECRET_KEY
         """
-        flask_app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", str(uuid.uuid4()))
+        jwt_secret_key = os.getenv("JWT_SECRET_KEY")
+        if not jwt_secret_key:
+            jwt_secret_key = str(uuid.uuid4())
+            os.environ["JWT_SECRET_KEY"] = jwt_secret_key
+        flask_app.config["JWT_SECRET_KEY"] = jwt_secret_key
         flask_app.config['JWT_TOKEN_LOCATION'] = ['headers', 'cookies']
 
     @classmethod

@@ -30,9 +30,7 @@ db = SQLAlchemy()
 Base = declarative_base()  # type: flask_sqlalchemy.model.DefaultMeta
 metadata = Base.metadata
 
-APP_ORIGIN = "http://localhost:{port}"
-APP_ADMIN_ORIGIN = "http://localhost:5657"
-ADMIN_UID = "5d9ada40-5d62-11ef-966d-eb8351752909"
+
 PROJ_ROOT = Path(os.getenv("PROJ_ROOT","/opt/projects"))
 FIRST_PORT = 6000
 UPLOAD_ROOT = f"{PROJ_ROOT}/wgupload"
