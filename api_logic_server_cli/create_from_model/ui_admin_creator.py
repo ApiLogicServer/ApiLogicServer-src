@@ -155,6 +155,10 @@ class AdminCreator(object):
             new_resource.type = str(resource_name)  # this is the name of the resource
             new_resource.user_key = str(self.mod_gen.favorite_attribute_name(resource))
 
+            if resource.table_name in self.mod_gen.project.table_descriptions:
+                new_resource.info_list = self.mod_gen.project.table_descriptions[resource.table_name]
+                new_resource.info_show = self.mod_gen.project.table_descriptions[resource.table_name]
+
             self.create_attributes_in_owner(new_resource, resource, None)
             child_tabs = self.create_child_tabs(resource)
             if child_tabs:
