@@ -33,6 +33,32 @@ def create_db(project: Project):
     try:
         models_module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(models_module)  # runs "bare" module code (e.g., initialization)
+        pass
+        # cls_members = inspect.getmembers(sys.modules[models_name], inspect.isclass)
+        """
+        cls_members = inspect.getmembers(models_module], inspect.isclass)
+        for name, obj in inspect.getmembers(sys.modules[__name__]):
+            if inspect.isclass(obj):
+                print(obj)
+        """
+        import inspect
+        cls_members = inspect.getmembers(models_module, inspect.isclass)
+        for each_cls_member in cls_members:
+            each_class_def_str = str(each_cls_member)
+            #  such as ('Category', <class 'models.Category'>)
+            if True:  # ( True and f"'{models_name}." in str(each_class_def_str) and "Ab" not in str(each_class_def_str)):
+                resource_name = each_cls_member[0]
+                resource_class = each_cls_member[1]
+                process = hasattr(resource_class, '__tablename__') and hasattr(resource_class, '__doc__')
+                if resource_name != 'Base' and process:
+                    table_name = resource_class.__tablename__  # FIXME _s_collection_name
+                    description = resource_class.__doc__
+                    if description is not None:
+                        # '\n    description: This table stores customer information including balance and credit limit.\n    
+                        description = description.replace('\n    description: ', '')
+                        description = description.replace('\n    ', '')
+                        project.table_descriptions[table_name] = description
+                pass
     except Exception as e:
         log.error(f'Error loading models file [{models_file}]: {e}')
         raise e    
