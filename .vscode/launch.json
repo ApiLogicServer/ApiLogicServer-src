@@ -95,7 +95,7 @@
             "redirectOutput": true,
             "args": [
                 "genai",
-                "--gen-using-file=system/genai/temp/chatgpt_retry.response",
+                "--gen-using-file=${workspaceFolder}/api_logic_server_cli/prototypes/manager/system/genai/examples/genai_demo/genai_demo.response",
                 "--using=ignored/genai_demo.prompt"],
             "console": "integratedTerminal"
         },
