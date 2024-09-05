@@ -1324,6 +1324,10 @@ from sqlalchemy.dialects.mysql import *
         # f'Base{self.model_creation_services.project.bind_key} = declarative_base()'
         else:
             rendered = 'class {0}(SAFRSBaseX, {1}):\n'.format(model.name, super_classes)   # ApiLogicServer
+        if model.table.name in self.model_creation_services.project.table_descriptions:
+            rendered += '    """\n'
+            rendered += '    ' + 'description: ' + self.model_creation_services.project.table_descriptions[model.table.name] + '\n'  
+            rendered += '    """\n'
         rendered += '{0}__tablename__ = {1!r}\n'.format(self.indentation, model.table.name)
 
         end_point_name = model.name
