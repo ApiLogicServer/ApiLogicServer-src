@@ -33,6 +33,9 @@ class Project(CliArgsBase):  # extends user-visible args with internal values, e
         self.model_creation_services = None
         """ access to model (bi-directional link - see model_creation_services.py) """
 
+        self.table_descriptions = dict()
+        """ table_name:description  -- populated by create_db_from_model """
+
         self.model_gen_bind_msg = False
         """ sqlacodegen/codegen msg printed """
 
