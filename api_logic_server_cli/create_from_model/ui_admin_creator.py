@@ -156,8 +156,10 @@ class AdminCreator(object):
             new_resource.user_key = str(self.mod_gen.favorite_attribute_name(resource))
 
             if resource.table_name in self.mod_gen.project.table_descriptions:
-                new_resource.info_list = self.mod_gen.project.table_descriptions[resource.table_name]
-                new_resource.info_show = self.mod_gen.project.table_descriptions[resource.table_name]
+                info = self.mod_gen.project.table_descriptions[resource.table_name]
+                info = info.replace("This table stores ", "This page shows ")
+                new_resource.info_list = info
+                new_resource.info_show = info
 
             self.create_attributes_in_owner(new_resource, resource, None)
             child_tabs = self.create_child_tabs(resource)
@@ -666,6 +668,7 @@ class AdminCreator(object):
         self.admin_yaml.info = DotMap()
         self.admin_yaml.info.number_tables = self.num_pages_generated
         self.admin_yaml.info.number_relationships = self.num_related
+        self.admin_yaml.info_toggle_checked = True
         if self.num_related == 0:
             # FIXME what to do self.yaml_lines.append(f'  warning: no_related_view')
             log.debug(".. .. ..WARNING - no relationships detected - add them to your database or model")
