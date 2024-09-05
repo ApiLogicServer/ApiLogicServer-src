@@ -25,7 +25,7 @@ from flask import Flask
 from flask import jsonify, request
 from flask_jwt_extended import JWTManager
 from flask_jwt_extended import jwt_required as jwt_required_ori
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, create_refresh_token, set_access_cookies, set_refresh_cookies
 from datetime import timedelta
 from functools import wraps
 import config.config as config
@@ -64,8 +64,6 @@ def configure_auth(flask_app: Flask, database: object, method_decorators: list[o
         _type_: (no return)
     """
     from config.config import Config
-
-   
     
     flask_app.config["PROPAGATE_EXCEPTIONS"] = True
     flask_app.config["JWT_SECRET_KEY"] = flask_app.config.get("JWT_SECRET_KEY", "ApiLogicServerSecret")  # Change this!
@@ -111,9 +109,13 @@ def configure_auth(flask_app: Flask, database: object, method_decorators: list[o
             return jsonify("Wrong username or password"), 401
         
         access_token = create_access_token(identity=user)  # serialize and encode
+        refresh_token = create_refresh_token(identity=user)
         from flask import g
         g.access_token = access_token
-        return jsonify(access_token=access_token)
+        response = jsonify(access_token=access_token)
+        set_access_cookies(response, access_token)
+        set_refresh_cookies(response, refresh_token)
+        return response
     
     @jwt.user_identity_loader
     def user_identity_lookup(user):

@@ -51,6 +51,7 @@ function log() {
     fi
 }
 
+env > /tmp/env.txt
 #command = [CREATE_DB_SCRIPT, name, kwargs['id'], connnection_string, str(kwargs['port'])]
 proj_name=$1
 proj_id=$2

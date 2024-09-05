@@ -113,7 +113,7 @@ resources:
       resource: Project
     type: User
     user_key: username
-conf_source: aHR0cHM6Ly9hcGlmYWJyaWMuYWkvYWRtaW4ueWFtbA==
+
 ui:
   theme:
     name: default
