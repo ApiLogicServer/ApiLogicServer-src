@@ -4,6 +4,8 @@ import safrs
 import subprocess
 import logging
 import shutil
+import tempfile
+
 from flask import Flask, request, redirect, flash, jsonify, send_from_directory, abort
 from werkzeug.utils import secure_filename
 from pathlib import Path
@@ -81,20 +83,19 @@ def customize_app(app: Flask):
         """
         project_id = secure_filename(project_id)
         project = safrs.DB.session.query(Project).get(project_id)
-        if not project:
-            abort(404, description="Project not found")
-        if not project.path.exists():
+        if not project or not project.path.exists():
             abort(404, description="Project not found")
         filename = f"{project.name}.tgz"
         try:
-            tar_log = subprocess.check_output(["tar", "-czf",  PROJ_ROOT / filename, project.path], cwd=PROJ_ROOT)
-            print(tar_log)
-            shutil.move(PROJ_ROOT / filename, project.path / filename)
+            temp_dir = Path(tempfile.mkdtemp())
+            subprocess.check_output(["tar", "-cYYzf",  filename, project.name], cwd=PROJ_ROOT, stderr=subprocess.STDOUT, universal_newlines=True)
+            shutil.move(PROJ_ROOT / filename, temp_dir / filename)
         except subprocess.CalledProcessError as e:
-            log.error(f"Project tar error: {e}")
-            abort(404, description="Project tar error")
+            log.error(f"download_project tar error: {e} - {e.output}")
+            abort(500, description="Project tar error")
         except Exception as e:
-            log.error(f"Project tar error: {e}")
-            abort(404, description="Project tar error")
-        return send_from_directory(project.path, filename, as_attachment=True)
+            log.error(f"download_project tar error: {e}")
+            abort(500, description="Project tar error")
+            
+        return send_from_directory(temp_dir, filename, as_attachment=True)
         

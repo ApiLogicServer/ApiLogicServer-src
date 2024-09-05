@@ -33,10 +33,8 @@ APILOGICPROJECT_PORT=5657
 APILOGICSERVER_CHATGPT_APIKEY=sk-proj-
 
 # Webgenie security configuration
-# set to false to disable authentication
-SECURITY_ENABLED=false
 # login password for the admin user
-ADMIN_PASSWORD=password
+# ADMIN_PASSWORD=password
 ```
 
 

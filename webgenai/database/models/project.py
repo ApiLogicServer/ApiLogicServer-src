@@ -27,7 +27,7 @@ from pathlib import Path
 from sqlalchemy.dialects.sqlite import *
 from .util.xls2sql import create_sqlite
 from .util import kill_processes_by_port
-from . import BaseModel, apifab_dec, FIRST_PORT, PROJ_ROOT, APP_ORIGIN, APP_ADMIN_ORIGIN, secure_filename_webgenai, log
+from . import BaseModel, apifab_dec, FIRST_PORT, PROJ_ROOT, secure_filename_webgenai, log
 
 # Scripts to manage projects (create, start, etc)
 CREATE_WGAI_SCRIPT = Path(__file__).parent / "util" / "create_wgai_project.sh"
@@ -103,8 +103,6 @@ class Project(BaseModel):
         self.configure_nginx()
         
         kwargs['pid'] = proj_process.pid
-        kwargs['download'] = f'{APP_ADMIN_ORIGIN}/download_project/{self.id}'
-        kwargs['response'] = f'{APP_ADMIN_ORIGIN}/projects/{self.id}/system/genai/temp/chatgpt_retry.response'
         kwargs['created_at'] = datetime.datetime.now()
         
         return BaseModel.__init__(self, *args, **kwargs)
@@ -196,16 +194,19 @@ class Project(BaseModel):
         Method to test a database connection string
         """
         log.debug(f"Testing connection: {kwargs.get('connection_string')}")
-        try:
-            engine = create_engine(kwargs.get("connection_string"))
-            with engine.connect() as connection:
-                result = connection.execute(text("SELECT 1"))
-                result.fetchone()
-            result = { "msg" : "Connection successful!", "success": True}
-        except Exception as e:
-            log.warning(f"Connection failed: {e}")
-            log.exception(e)
-            result = { "msg" : f"Connection failed: {e}", "success": False}
+        connection_string = kwargs.get("connection_string")
+        result = { "msg" : f"Invalid connection string", "success": False}
+        if connection_string and not connection_string.endswith("/"):    
+            try:
+                engine = create_engine(connection_string)
+                with engine.connect() as connection:
+                    result = connection.execute(text("SELECT 1"))
+                    result.fetchone()
+                result = { "msg" : "Connection successful!", "success": True}
+            except Exception as e:
+                log.warning(f"Connection failed: {e}")
+                log.exception(e)
+                result = { "msg" : f"Connection failed: {e}", "success": False}
             
         return result
     
@@ -251,13 +252,20 @@ class Project(BaseModel):
         Method to return the environment variables for the project
         """
         env = os.environ.copy()
-        if 'SQLALCHEMY_DATABASE_URI' in env:
-            del env['SQLALCHEMY_DATABASE_URI']
-        return env | {
-            "APILOGICPROJECT_SWAGGER_PORT": "8080", #str(self.port),
+        # there are secrets in the env, don't just pass it
+        return {
+            "APILOGICPROJECT_SWAGGER_PORT": env.get("APILOGICPROJECT_SWAGGER_PORT", "8080"),
+            "APILOGICPROJECT_EXTERNAL_PORT": env.get("APILOGICPROJECT_EXTERNAL_PORT", "8080"),
+            "APILOGICPROJECT_EXTERNAL_HOST": env.get("APILOGICPROJECT_EXTERNAL_HOST", "localhost"),
+            "APILOGICPROJECT_SWAGGER_HOST": env.get("APILOGICPROJECT_SWAGGER_HOST", "localhost"),
+            "WG_SQLALCHEMY_DATABASE_URI": env.get("WG_SQLALCHEMY_DATABASE_URI", "sqlite:////opt/webgenai/database/db.sqlite"),
+            "APILOGICSERVER_CHATGPT_APIKEY" : env.get("APILOGICSERVER_CHATGPT_APIKEY",""),
+            "PROJ_ROOT": str(PROJ_ROOT),
+            "PATH": env.get("PATH"),
             "APILOGICPROJECT_PORT": str(self.port),
             "SECURITY_ENABLED": "false",
-            "APILOGICPROJECT_API_PREFIX": f"/{self.id}"
+            "APILOGICPROJECT_API_PREFIX": f"/{self.id}",
+            
         }
 
     @jsonapi_attr
@@ -312,15 +320,30 @@ class Project(BaseModel):
         
         return self
 
+    @property
+    def app_origin(self):
+        return
+    
     @jsonapi_attr
     def link(self):
-        #return f'{APP_ORIGIN}/admin-app/index.html#/Configuration'.format(port = self.port)
-        #return f"{APP_ADMIN_ORIGIN}/admin-app/index.html#/Configuration?load={APP_ADMIN_ORIGIN}/{self.id}/admin.yaml"
-        #return f"/admin-app/index.html#/Configuration?load={app_admin_origin}/{self.id}/admin.yaml"
-        app_admin_origin = "http://localhost:8080"
-        #return f"{app_admin_origin}/admin-app/index.html#/Configuration?load={app_admin_origin}/{self.id}/admin.yaml"
-        return f"{app_admin_origin}/{self.id}/admin-app/index.html"
+        """
         
+        """
+        return f"/{self.id}/admin-app/index.html"
+    
+    @jsonapi_attr
+    def download(self):
+        """
+        
+        """
+        return f"/download_project/{self.id}"
+    
+    @jsonapi_attr
+    def response(self):
+        """
+        
+        """
+        return f"/download_project/{self.id}"
     
     @property
     def path(self):
