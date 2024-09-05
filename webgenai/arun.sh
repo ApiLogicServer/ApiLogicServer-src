@@ -9,7 +9,7 @@ export APILOGICPROJECT_SWAGGER_HOST=${APILOGICPROJECT_EXTERNAL_HOST:-localhost}
 export APILOGICPROJECT_PORT=${APILOGICPROJECT_PORT:-5657}
 export PROJ_ROOT="/opt/projects"
 export UPLOAD_FOLDER="${PROJ_ROOT}/wgupload"
-
+set -x
 mkdir -p "${UPLOAD_FOLDER}" "${PROJ_ROOT}/wgadmin/nginx"
 
 RED='\033[0;31m'
@@ -24,6 +24,7 @@ echo "Nginx started"
 
 if [[ -z ${SECURITY_ENABLED} || ${SECURITY_ENABLED} == "false" || ${SECURITY_ENABLED} == "no" ]] ; then
     echo -e "${RED}Authentication disabled (\$SECURITY_ENABLED=${SECURITY_ENABLED}) ${NC}"
+    export SECURITY_ENABLED="false"
 else
     echo -e "${GREEN}Authentication enabled ${NC}"
     export JWT_SECRET_KEY=${JWT_SECRET_KEY:-$(openssl rand -hex 32)}
