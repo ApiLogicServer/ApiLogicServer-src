@@ -635,7 +635,7 @@ class AdminCreator(object):
     def create_settings(self):
         self.admin_yaml.settings = DotMap()
         self.admin_yaml.settings.max_list_columns = self.max_list_columns
-        home_js = "http://localhost:5656/admin-app/home.js"
+        home_js = "/admin-app/home.js"
         if self.host != "localhost":
             if self.port !="":
                 home_js = f'http://{self.host}:{self.port}/admin-app/home.js'

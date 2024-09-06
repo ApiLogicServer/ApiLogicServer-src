@@ -96,7 +96,7 @@ ENV PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:
 # Webgenie
 USER root
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
-COPY nginx/site.conf /etc/nginx/site.conf
+COPY nginx/wg.conf /etc/nginx/wg.conf
 RUN mkdir /etc/nginx/apis
 #RUN mkdir /var/log/nginx
 RUN chown -R api_logic_server /var/log/nginx /etc/nginx/apis
@@ -110,8 +110,8 @@ COPY webgenai /opt/webgenai
 RUN chown -R api_logic_server /opt /home/api_logic_server
 USER api_logic_server
 
-COPY sra-build /home/api_logic_server/api_logic_server_cli/create_from_model/safrs-react-admin-npm-build
-COPY sra-build /var/www/html/admin-app
+#COPY sra-build /home/api_logic_server/api_logic_server_cli/create_from_model/safrs-react-admin-npm-build
+#COPY sra-build /var/www/html/admin-app
 
 EXPOSE 5656-7000
 # EXPOSE 5002
