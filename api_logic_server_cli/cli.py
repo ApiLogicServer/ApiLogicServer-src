@@ -592,8 +592,8 @@ def genai(ctx, using, db_url, gen_using_file: click.BOOL, genai_version: str,
     # if using.endswith('.prompt'):
     #    using = using.replace('.prompt','')
     project_name = using  # this is the prompt file (or actual prompt)
-    if using.endswith('.prompt'):           # regardless of gen_using_file,
-        project_name = Path(using).stem     # the project name is the <cwd>/last node of using
+    if using.endswith('.prompt') or Path(using).is_dir():       # regardless of gen_using_file,
+        project_name = Path(using).stem                         # the project name is the <cwd>/last node of using
     else:
         project_name  = project_name.replace(' ', '_')
     project_name  = project_name.replace(' ', '_')
