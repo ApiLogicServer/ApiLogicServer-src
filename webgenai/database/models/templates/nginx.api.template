@@ -28,12 +28,12 @@ location /{id}/ui/admin/admin.yaml {
 
 location /{id}/admin-app/index.html {
     add_header Cache-Control "no-cache, no-store, must-revalidate";
-    alias /var/www/html/admin-app/index.html;
+    alias /home/api_logic_server/api_logic_server_cli/create_from_model/safrs-react-admin-npm-build/index.html;
 }
 
 location /{id}/admin-app/ {
     index index.html index.htm;
-    alias /var/www/html/admin-app/;
+    alias /home/api_logic_server/api_logic_server_cli/create_from_model/safrs-react-admin-npm-build/;
     #return 301 https://apifabric.ai/admin-app/;
 }
 
