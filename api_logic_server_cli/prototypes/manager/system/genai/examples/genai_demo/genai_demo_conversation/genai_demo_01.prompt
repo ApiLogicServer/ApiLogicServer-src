@@ -1,0 +1,24 @@
+Use SQLAlchemy to create a sqlite database named system/genai/temp/create_db_models.sqlite, to
+
+Create a system with customers, orders, items and products.
+
+Include a notes field for orders.
+
+Enforce the Check Credit requirement (do not generate check constraints):
+1. Customer.balance <= credit_limit
+2. Customer.balance = Sum(Order.amount_total where date_shipped is null)
+3. Order.amount_total = Sum(Item.amount)
+4. Item.amount = quantity * unit_price
+5. Store the Item.unit_price as a copy from Product.unit_price.
+
+Hints: use autonum keys, allow nulls, Decimal types, foreign keys, no check constraints, python datetime datatype.
+
+Remember that SQLite DateTime type only accepts Python datetime and date objects as input, 
+this means you can not enter string attributes where a date or datetime object is expected.
+
+Don't install additional packages.
+Don't use the faker pip package.
+
+Create some test data, use foreign key columns instead of relationship names for the data .
+
+For each data model class, create a docstring describing the table, prefixed with 'description: '. 
