@@ -60,7 +60,7 @@
             "args": [ "create",
                 "--project-name=genai_demo",
                 "--db_url=sqlite",
-                "--from-model=system/genai/temp/model.py"],
+                "--from-model=system/genai/temp/create_db_models.py"],
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
         },
