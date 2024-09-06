@@ -1,4 +1,5 @@
-# File Upload
+# File Upload/ Download
+# TODO: AUTH!!!
 import os
 import safrs
 import subprocess
@@ -14,7 +15,7 @@ from ulid import ULID
 
 log = logging.getLogger("api_logic_server_app")
 
-def customize_app(app: Flask):    
+def customize_app(app: Flask):
     app.config['UPLOAD_FOLDER'] = os.getenv("UPLOAD_FOLDER", '/opt/projects/uploads')
     app.config['ALLOWED_EXTENSIONS'] = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
     app.secret_key = 'supersecretkey'
@@ -88,7 +89,7 @@ def customize_app(app: Flask):
         filename = f"{project.name}.tgz"
         try:
             temp_dir = Path(tempfile.mkdtemp())
-            subprocess.check_output(["tar", "-cYYzf",  filename, project.name], cwd=PROJ_ROOT, stderr=subprocess.STDOUT, universal_newlines=True)
+            subprocess.check_output(["tar", "-czf",  filename, project.name], cwd=PROJ_ROOT, stderr=subprocess.STDOUT, universal_newlines=True)
             shutil.move(PROJ_ROOT / filename, temp_dir / filename)
         except subprocess.CalledProcessError as e:
             log.error(f"download_project tar error: {e} - {e.output}")

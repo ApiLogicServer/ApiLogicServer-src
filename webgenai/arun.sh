@@ -9,7 +9,7 @@ export APILOGICPROJECT_SWAGGER_HOST=${APILOGICPROJECT_EXTERNAL_HOST:-localhost}
 export APILOGICPROJECT_PORT=${APILOGICPROJECT_PORT:-5657}
 export PROJ_ROOT="/opt/projects"
 export UPLOAD_FOLDER="${PROJ_ROOT}/wgupload"
-set -x
+
 mkdir -p "${UPLOAD_FOLDER}" "${PROJ_ROOT}/wgadmin/nginx"
 
 RED='\033[0;31m'
@@ -46,6 +46,7 @@ if [[ ! -e "${DB_URI}" ]]; then
     echo "Creating database at ${DB_URI}"
     python database/manager.py -c
 fi
+
 # Kill any running project / set "running" to false
 python database/manager.py -K
 
