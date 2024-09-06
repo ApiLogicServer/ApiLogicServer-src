@@ -46,7 +46,7 @@ class CliArgsBase():
         self.gen_using_file = None
         """ None uses ChatGPT API, else defaults system/genai/reference/chatgpt_retry.txt """
         self.genai_version = None
-        """ Version number for ChatGPT API """
+        """ Version number for ChatGPT API, eg gpt-3.5-turbo, gpt-4o (expensive) """
         self.genai_use_relns = None
         """ Use relationships in create_db_models """
         self.bind_key = None # type: str

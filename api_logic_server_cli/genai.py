@@ -1,3 +1,4 @@
+from typing import Dict, List
 from api_logic_server_cli.cli_args_project import Project
 import logging
 from pathlib import Path
@@ -50,8 +51,6 @@ class GenAI(object):
 
     def __init__(self, project: Project):
         """ Run ChatGPT to create SQLAlchemy model
-
-        Args:
         """        
 
         self.project = project
@@ -65,22 +64,25 @@ class GenAI(object):
         self.prompt = ""
         """ `--using` - can come from file or text argument """
 
-        self.prompt = self.get_prompt()  # compute self.prompt, from file or text argument
+        self.messages = self.get_prompt_messages()  # compute self.messages, from file, dir or text argument
 
         if self.project.gen_using_file == '':
             log.info(f'\nInvoking AI, storing response: system/genai/temp/chatgpt_original.response')
-            response_data = self.genai_gen_using_api(self.prompt)  # get response from ChatGPT API
+            self.headers = self.get_headers_with_openai_api_key()
+            url = "https://api.openai.com/v1/chat/completions"
+            api_version = f'{self.project.genai_version}'  # eg, "gpt-4o"
+            data = {"model": api_version, "messages": self.messages}
+            response = requests.post(url, headers=self.headers, json=data)
+            create_db_models = self.get_and_save_response_data(response)
         else: # for retry from corrected response... eg system/genai/temp/chatgpt_retry.response
             log.debug(f'\nUsing [corrected] response from: {self.project.gen_using_file}')
             with open(self.project.gen_using_file, 'r') as file:
-                model_raw = file.read()
-            # convert model_raw into string array response_data
-            response_data = model_raw  # '\n'.join(model_raw)
-        self.response = response_data
+                create_db_models = file.read()
+        self.create_db_models = create_db_models
 
         self.project.genai_logic = self.get_logic_from_prompt()
 
-        self.fix_and_write_model_file(response_data)
+        self.fix_and_write_model_file(create_db_models) # write create_db_models.py for db creation   
         self.save_files_to_system_genai_temp_project()  # save prompt, response and models.py
 
     def delete_temp_files(self):
@@ -91,14 +93,14 @@ class GenAI(object):
             Path('system/genai/temp/chatgpt_original.response').unlink(missing_ok=True)
             Path('system/genai/temp/chatgpt_retry.response').unlink(missing_ok=True)
 
-    def get_prompt(self) -> str:
-        """ Get prompt from file or text argument
+    def get_prompt_messages(self) -> List[Dict[str, str]]:
+        """ Get prompt from file, dir (conversation) or text argument
 
         Returns:
-            str: prompt string, either from file file or text argument
+            dict[]: [ {role: (system | user) }: { content: user-prompt-or-system-response } ]
+
         """
         # compute self.prompt, file file or text argument
-
         if self.project.gen_using_file != '':       # if exists, get prompt (for logic)
             prompt = ""  
             if Path(self.project.from_genai).is_file():  # eg, launch.json for airport_4 is just a name
@@ -109,34 +111,46 @@ class GenAI(object):
                 # open and read the project description in natural language
                 with open(f'{self.project.from_genai}', 'r') as file:
                     raw_prompt = file.read()
-
-                prompt = raw_prompt
-                prompt_inserts = ''
-                if '*' == self.project.genai_prompt_inserts:    # * means no inserts
-                    prompt_inserts = "*"
-                elif '' != self.project.genai_prompt_inserts:   # if text, use this file
-                    prompt_inserts = self.project.genai_prompt_inserts
-                elif 'sqlite' in self.project.db_url:           # if blank, use default for db    
-                    prompt_inserts = f'sqlite_inserts.prompt'
-                elif 'postgresql' in self.project.db_url:
-                    prompt_inserts = f'postgresql_inserts.prompt'
-                elif 'mysql' in self.project.db_url:
-                    prompt_inserts = f'mysql_inserts.prompt'
-                
-                if prompt_inserts != "*":
-                    assert Path(f'system/genai/prompt_inserts/{prompt_inserts}').exists(), \
-                        f"Missing prompt_inserts file: {prompt_inserts}"  # eg api_logic_server_cli/prototypes/manager/system/genai/prompt_inserts/sqlite_inserts.prompt
-                    with open(f'system/genai/prompt_inserts/{prompt_inserts}', 'r') as file:
-                        pre_post = file.read()  # eg, Use SQLAlchemy to create a sqlite database named system/genai/temp/create_db_models.sqlite, with
-                    prompt = pre_post.replace('{{prompt}}', raw_prompt)
+                prompt = self.get_prompt__with_inserts(raw_prompt=raw_prompt)  # insert db-specific logic
             else:                               # prompt from text (add system/genai/pre_post.prompt)
-                prompt_inserts = f'sqlite_inserts.prompt'
-                assert Path(f'system/genai/prompt_inserts/{prompt_inserts}').exists(), \
-                    f"Missing prompt_inserts file: {prompt_inserts}"  # eg api_logic_server_cli/prototypes/manager/system/genai/prompt_inserts/sqlite_inserts.prompt
-                with open(f'system/genai/prompt_inserts/{prompt_inserts}', 'r') as file:
-                    pre_post = file.read()  # eg, Use SQLAlchemy to create a sqlite database named system/genai/temp/create_db_models.sqlite, with
-                prompt = pre_post.replace('{{prompt}}', self.project.from_genai)
-        return prompt      
+                prompt = self.get_prompt__with_inserts(raw_prompt=self.project.from_genai)
+
+        prompt_messages = [
+                {
+                    "role": "system",
+                    "content": "You are a helpful assistant."
+                },
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ]
+
+        return prompt_messages      
+
+    def get_prompt__with_inserts(self, raw_prompt: str) -> str:
+        """ prompt-engineering: insert db-specific logic into prompt """
+        prompt_result = raw_prompt
+        prompt_inserts = ''
+        if '*' == self.project.genai_prompt_inserts:    # * means no inserts
+            prompt_inserts = "*"
+        elif '' != self.project.genai_prompt_inserts:   # if text, use this file
+            prompt_inserts = self.project.genai_prompt_inserts
+        elif 'sqlite' in self.project.db_url:           # if blank, use default for db    
+            prompt_inserts = f'sqlite_inserts.prompt'
+        elif 'postgresql' in self.project.db_url:
+            prompt_inserts = f'postgresql_inserts.prompt'
+        elif 'mysql' in self.project.db_url:
+            prompt_inserts = f'mysql_inserts.prompt'
+
+        if prompt_inserts != "*":
+            assert Path(f'system/genai/prompt_inserts/{prompt_inserts}').exists(), \
+                f"Missing prompt_inserts file: {prompt_inserts}"  # eg api_logic_server_cli/prototypes/manager/system/genai/prompt_inserts/sqlite_inserts.prompt
+            with open(f'system/genai/prompt_inserts/{prompt_inserts}', 'r') as file:
+                pre_post = file.read()  # eg, Use SQLAlchemy to create a sqlite database named system/genai/temp/create_db_models.sqlite, with
+            prompt_result = pre_post.replace('{{prompt}}', raw_prompt)
+        return prompt_result
+    
 
     def ensure_system_dir_exists(self):
         """
@@ -163,7 +177,7 @@ class GenAI(object):
         Returns: list[str] of the prompt logic
         """
 
-        prompt = self.prompt
+        prompt = self.prompt  # TODO - redesign if conversation
         prompt_array = prompt.split('\n')
         logic_text = """
     GenAI: Paste the following into Copilot Chat, and paste the result below.
@@ -185,7 +199,7 @@ class GenAI(object):
                 logic_text += '    ' + each_line + '\n'
         return logic_text
 
-    def insert_logic_into_created_project(self):
+    def insert_logic_into_created_project(self):  # TODO - redesign if conversation
         """Called *after project created* to insert prompt logic into 
         1. declare_logic.py (as comment)
         2. readme.md
@@ -221,7 +235,8 @@ class GenAI(object):
             else:                                   # gen from [corrected] response - save response only 
                 shutil.copyfile(self.project.gen_using_file, docs_dir.joinpath("genai.response"))
         except:
-            log.error(f"\n\nError creating genai docs: {docs_dir}\n\n")
+            import traceback
+            log.error(f"\n\nERROR creating genai docs: {docs_dir}\n\n{traceback.format_exc()}")
         pass
 
     def fix_and_write_model_file(self, response_data: str):
@@ -318,7 +333,7 @@ class GenAI(object):
             self.project.gen_ai_save_dir = to_dir_save_dir
             os.makedirs(to_dir_save_dir, exist_ok=True)
             with open(f"{to_dir_save_dir.joinpath('genai.response')}", "w") as response_file:
-                response_file.write(self.response)
+                response_file.write(self.create_db_models)
             if self.project.gen_using_file == '':
                 pass
                 with open(f"{to_dir_save_dir.joinpath('genai.prompt')}", "w") as prompt_file:
@@ -326,17 +341,13 @@ class GenAI(object):
             shutil.copyfile(src=self.project.from_model, 
                             dst=to_dir_save_dir.joinpath('create_db_models.py'))
         except Exception as inst:
-            log.error(f"\n\nError {inst} creating genai docs: {str(gen_temp_dir)}\n\n")
+            log.error(f"\n\nError {inst} creating genai temp files: {str(gen_temp_dir)}\n\n")
             pass
 
-    def genai_gen_using_api(self, prompt: str) -> str:
-        """_summary_
-
-        Args:
-            prompt (str): _description_
-
+    def get_headers_with_openai_api_key(self) -> dict:
+        """
         Returns:
-            str: ChatGPT response (model with extra stuff)
+            dict: api header with OpenAI key (exits if not provided)
         """
         
         pass  # https://community.openai.com/t/how-do-i-call-chatgpt-api-with-python-code/554554
@@ -353,33 +364,19 @@ class GenAI(object):
                     log.error("\n\nMissing env value: APILOGICSERVER_CHATGPT_APIKEY")
                     log.error("... Check your system/secrets file...\n")
                     exit(1)
-
-        url = "https://api.openai.com/v1/chat/completions"
-
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {openai_api_key}"
         }
-        # maybe user first?  https://community.openai.com/t/what-is-the-difference-between-putting-the-ai-personality-in-system-content-and-in-user-content/194938/6
-        # eg: You are a data modelling expert and python software architect who expands on user input ideas. You create data models with at least 4 tables
-        # consider: https://openai.com/index/openai-codex/
-        api_version = f'{self.project.genai_version}'  # eg, "gpt-3.5-turbo"
-        """ values like gpt-3.5-turbo, gpt-4o (expensive) """
-        debug_value = api_version
-        data = {
-            "model": api_version,
-            "messages": [
-                {
-                    "role": "system",
-                    "content": "You are a helpful assistant."
-                },
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ]
-        }
-        response = requests.post(url, headers=headers, json=data)
+        return headers
+    
+
+    def get_and_save_response_data(self, response) -> str:
+        """
+        Returns:
+            str: response_data
+        """
+        
 
         # Check if the request was successful
         if response.status_code != 200:

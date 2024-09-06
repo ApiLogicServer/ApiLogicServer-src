@@ -1,0 +1,3 @@
+* rename Customer to CustomerAccount
+* Add a SalesRep table
+* each order has a salesrep
