@@ -1,0 +1,103 @@
+Below is a script utilizing SQLAlchemy to create a SQLite database at the specified location (`system/genai/temp/create_db_models.sqlite`) with the described requirements. The models include tables for customers, orders, items, and products, with the needed fields and constraints. Test data is also included towards the end of the script.
+
+```python
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, DECIMAL, DateTime, func
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+import datetime
+
+Base = declarative_base()
+engine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite')
+
+class Customer(Base):
+    """description: Table to store customer information"""
+    __tablename__ = 'customers'
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+    balance = Column(DECIMAL(10, 2), nullable=True, default=0.00)
+    credit_limit = Column(DECIMAL(10, 2), nullable=False)
+
+class Product(Base):
+    """description: Table to store product information"""
+    __tablename__ = 'products'
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+    unit_price = Column(DECIMAL(10, 2), nullable=False)
+
+class Order(Base):
+    """description: Table to store order information"""
+    __tablename__ = 'orders'
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    customer_id = Column(Integer, ForeignKey('customers.id'), nullable=False)
+    date_shipped = Column(DateTime, nullable=True)
+    notes = Column(String, nullable=True)
+    
+    @property
+    def amount_total(self):
+        return sum(item.amount for item in self.items)
+
+class Item(Base):
+    """description: Table to store order item information"""
+    __tablename__ = 'items'
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    order_id = Column(Integer, ForeignKey('orders.id'), nullable=False)
+    product_id = Column(Integer, ForeignKey('products.id'), nullable=False)
+    quantity = Column(Integer, nullable=False)
+    unit_price = Column(DECIMAL(10, 2), nullable=False)
+    
+    @property
+    def amount(self):
+        return self.quantity * self.unit_price
+
+# Create the database tables
+Base.metadata.create_all(engine)
+
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# Insert test data
+product1 = Product(name='Product A', unit_price=Decimal('10.00'))
+product2 = Product(name='Product B', unit_price=Decimal('20.00'))
+session.add(product1)
+session.add(product2)
+
+customer1 = Customer(name='Customer A', balance=Decimal('0.00'), credit_limit=Decimal('100.00'))
+customer2 = Customer(name='Customer B', balance=Decimal('0.00'), credit_limit=Decimal('200.00'))
+session.add(customer1)
+session.add(customer2)
+session.commit()
+
+order1 = Order(customer_id=customer1.id, date_shipped=None, notes='First order')
+order2 = Order(customer_id=customer2.id, date_shipped=datetime.datetime.now(), notes='Second order')
+session.add(order1)
+session.add(order2)
+session.commit()
+
+item1 = Item(order_id=order1.id, product_id=product1.id, quantity=2, unit_price=product1.unit_price)
+item2 = Item(order_id=order1.id, product_id=product2.id, quantity=1, unit_price=product2.unit_price)
+item3 = Item(order_id=order2.id, product_id=product1.id, quantity=3, unit_price=product1.unit_price)
+session.add(item1)
+session.add(item2)
+session.add(item3)
+session.commit()
+
+# Calculate the balance for each customer
+for customer in session.query(Customer).all():
+    customer.balance = session.query(func.sum(Item.unit_price * Item.quantity)) \
+        .filter(Item.order_id == Order.id, Order.customer_id == customer.id, Order.date_shipped == None).scalar() or 0
+    session.commit()
+
+session.close()
+```
+
+The script includes:
+1. Model definitions for `Customer`, `Product`, `Order`, and `Item` with necessary fields and properties to handle calculations.
+2. Creation of the SQLite database and tables using SQLAlchemy.
+3. Addition of test data to the database and updates to the balance field for customers based on pending order calculations.
+4. Inline docstrings for each model like you mentioned.
+
+Ensure you have the `SQLAlchemy` package installed in your Python environment before running this script. You can install it using `pip install SQLAlchemy`.
