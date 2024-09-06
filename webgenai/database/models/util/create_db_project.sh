@@ -72,6 +72,10 @@ fi
 log "Creating Project from Database"
 als create --db-url="${connnection_string}" --project-name="${proj_dir}" --quote
 
+if [[ $? -ne 0 ]]; then
+    error "Failed to create project"
+fi
+
 log "Project Created"
 log "Starting Project.."
 echo "${proj_dir}"
