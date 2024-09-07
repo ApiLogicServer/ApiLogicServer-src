@@ -559,6 +559,27 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "     - Basic Demo - add-cust",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "cwd": "${workspaceFolder}/../../servers/basic_demo",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["add-cust"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "     - Basic Demo - add-auth",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/../../servers/basic_demo",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["add-auth", "--db_url=auth"],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "5 - Create Sql/Server",
             "type": "debugpy",
             "request": "launch",

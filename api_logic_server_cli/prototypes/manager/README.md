@@ -291,5 +291,69 @@ ApiLogicServer create --project-name=samples/nw_sample_nocust --db-url=nw
 </details>
 </details>
 
+&nbsp;
+
+## Appendix: Quick Basic Demo
+
+This is a "cheat sheet" for experienced ALS users, e.g., to show your colleagues.
+
+<details markdown>
+
+<summary>Quick Basic Demo - Instructions</summary>
+
+<br>This demo creates and customizes a project, starting from a database:
+
+```bash title="Quick Basic Demo"
+
+# Microservice Automation
+# Admin App, API, Project
+als create --project-name=basic_demo --db-url=basic_demo
+
+# Logic and Security
+# see logic (logic/declare_logic.py, logic/cocktail-napkin.jpg);  add an Order and Item
+# see security (security/declare_security.py); compare customers, s1 vs. admin
+als add-cust
+als add-auth --db_url=auth
+
+# Python Extensibility, Kafka Integration, Rebuild Iteration
+# see logic/declare_logic.py (breakpoint for Kafka)
+# Swagger: ServicesEndPoint.OrderB2B
+als add-cust
+als rebuild-from-database --db_url=sqlite:///database/db.sqlite
+```
+
+</details>
 
 
+&nbsp;
+
+## Appendix: GenAI Demo
+
+This is a "cheat sheet" for experienced ALS users, e.g., to show your colleagues.
+
+<details markdown>
+
+<summary>Quick GenAI Demo - Instructions</summary>
+
+<br>This demo creates and customizes a project, starting from a prompt:
+
+```bash title="Quick GenAI Demo"
+
+# Microservice Automation from GenAI Prompt
+# Admin App, API, Project
+als genai --using=system/genai/examples/genai_demo/genai_demo.prompt
+
+# Or, Microservice Automation from Saved Response
+# Admin App, API, Project
+als genai --using=genai_demo.prompt --gen-using-file=system/genai/temp/chatgpt_retry.response
+
+# Logic and Security
+#   - see logic (logic/declare_logic.py, logic/cocktail-napkin.jpg);  add an Order and Item
+#   - see security (security/declare_security.py); compare customers, s1 vs. admin
+# Python Extensibility, Kafka Integration, Rebuild Iteration
+#   - see logic/declare_logic.py (breakpoint for Kafka)
+#   - Swagger: ServicesEndPoint.OrderB2B
+als add-cust
+```
+
+</details>
