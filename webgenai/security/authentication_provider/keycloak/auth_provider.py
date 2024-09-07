@@ -79,6 +79,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         from config.config import Args  # circular import error if at top
         
         jwks_uri = Args.instance.keycloak_base + '/protocol/openid-connect/certs'
+        jwks_uri = 'https://kc.hardened.be/realms/kcals/protocol/openid-connect/certs'
         for i in range(100):
             # we retry a couple of times in case there are connection problems
             try:
@@ -136,6 +137,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
                 rtn_user[each_name] = each_value
 
         rtn_user.UserRoleList = []
+        
         role_names = jwt_data["realm_access"]["roles"]
         # role_names.append("customer") #Temp role for testing
         for each_role_name in role_names:
