@@ -59,6 +59,27 @@ def get_windows_path_with_slashes(url: str) -> str:
     """
     return url.replace('\\', '\\\\')
 
+def insert_lines_at(lines: str, at: str, file_name: str, after: bool = False):
+    """ insert <lines> into file_name after line with <str> """
+    with open(Path(file_name), 'r+') as fp:
+        file_lines = fp.readlines()  # lines is list of lines, each element '...\n'
+        found = False
+        insert_line = 0
+        for each_line in file_lines:
+            if at in each_line:
+                found = True
+                break
+            insert_line += 1
+        if not found:
+            raise Exception(f'Internal error - unable to find insert:\n'
+                            f'.. seeking {at}\n'
+                            f'.. in {file_name}')
+        if after:
+            insert_line = insert_line + 1
+        file_lines.insert(insert_line, lines)  # you can use any index if you know the line index
+        fp.seek(0)  # file pointer locates at the beginning to write the whole file again
+        fp.writelines(file_lines)  # write whole list again to the same file
+
 
 def get_api_logic_server_src_path() -> Path:
     """
@@ -657,16 +678,60 @@ def validate_nw_with_kafka(api_logic_server_install_path, set_venv):
 
 def validate_opt_locking():
     """
-    Verify optimistic locking
+    Check web_genie for optimistic locking with checksum
+    
+    Verify optimistic locking with @jsonapi_attr: web_genie
+
+    Some nw tests were considered here, *but* moved to behave:
 
     1. Missing CheckSum
     2. Improper Checksum
     3. Proper Checksum
     4. Place_Order tests critical case - attribute order correct with aliased attrs
 
-    Does not work, presumably due to see.  Tests moved to behave
+    NW version does not work, presumably due to see.  Tests moved to behave
     """
-    dup_behave_tests = False  # they don't really work...
+    print(f'\nOptimistic Locking Test with @json_attr -- web_genie')
+    model_insert_jsonapi_attr = '''
+
+    @jsonapi_attr
+    def path(self):
+        return f"/uploads/{self.id}/{self.name}"
+    
+    @jsonapi_attr
+    def connection_string(self):
+        self.location = f"/{self.id}/{self.name}"
+        return self.location   '''
+
+    current_path = Path(os.path.abspath(__file__))
+    install_api_logic_server_path = get_servers_build_and_test_path().joinpath("ApiLogicServer")
+    api_logic_project_path = install_api_logic_server_path.joinpath('web_genie')
+
+    rel_path = 'tests/test_databases/sqlite-databases/web_genie/web_genie.sqlite'
+    wg_db_path = get_api_logic_server_src_path().joinpath(rel_path)
+    assert wg_db_path.exists(), f'Cannot find {wg_db_path}'
+    wg_arg = f'sqlite:///{wg_db_path}'
+    result_create = run_command(f'{set_venv} && ApiLogicServer create --{project_name}=web_genie --{db_url}={wg_arg}',
+        cwd=install_api_logic_server_path,
+        msg=f'\nCreate web_genie at: {str(install_api_logic_server_path)}')
+    
+    # add jsonapi_attr to model
+    model_file = api_logic_project_path.joinpath('database/models.py')
+    insert_at = 'user : Mapped["User"] = relationship(back_populates=("FileList"))'
+    insert_lines_at(file_name=model_file, lines=model_insert_jsonapi_attr, at=insert_at, after=1)
+    
+    start_api_logic_server(project_name='web_genie')  # , env='export SECURITY_ENABLED=true')
+    # headers = login()
+    get_uri = "http://localhost:5656/api/File/?include=project%2Cuser&fields%5BFile%5D=name%2CType%2Clocation%2Ccreated_at%2Cuser_id%2Cproject_id%2Cpath%2Cconnection_string%2C_check_sum_%2CS_CheckSum&page%5Boffset%5D=0&page%5Blimit%5D=10&sort=id"
+    r = requests.get(url=get_uri)  #, headers=headers)
+    response_text = r.text
+    result_data = json.loads(response_text) 
+    assert len(result_data["data"]) > 0, "web_genie did not find any rows"
+
+    stop_server(msg="web_genie\n")
+
+
+    dup_behave_tests = False  # they don't really work, moved to behave...
     if dup_behave_tests:
         patch_uri = "http://localhost:5656/api/Category/1/"
         patch_args = \
@@ -968,9 +1033,9 @@ if Config.do_run_api_logic_project:  # so you can start and set breakpoint, then
     start_api_logic_server(project_name="ApiLogicProject")
 
 if Config.do_test_api_logic_project:
-    validate_opt_locking()
     validate_nw(install_api_logic_server_path, set_venv)
     stop_server(msg="*** NW TESTS COMPLETE ***\n")
+    validate_opt_locking()
 
 '''
 if Config.do_test_api_logic_project_with_auth:
