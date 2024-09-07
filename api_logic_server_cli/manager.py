@@ -12,23 +12,27 @@ import api_logic_server_cli.api_logic_server as PR
 
 def create_manager(clean: bool, open_with: str, api_logic_server_path: Path, 
                    volume: str = "", open_manager: bool = True):
-    """Implements als start - create Manager at os.getcwd(), including:
+    """Implements als start to create manager - called from api_logic_server_cli/cli.py
+
+    create Manager at os.getcwd(), including:
+
     1. .vscode, readme
     2. System folder (GenAI sample prompts / responses, others TBD)
     3. pre-created samples
 
-    Example, from CLI in directory containing a `venv` (see https://apilogicserver.github.io/Docs/Manager/)
-        $ als start
+    Example, from CLI in directory containing a `venv` (see https://apilogicserver.github.io/Docs/Manager/):
+        als start
 
     Foundation is deep copy from api_logic_server_cli/prototypes/manager
         Bit tricky to find find cli in subdirectories of the lib path for manager run launches
 
     Args:
-        clean (bool): True means overwrite api_logic_server_cli/prototypes/manager
-        open_with (str): code or pycharm (only code for now)
-        api_logic_server_path (Path): location of api_logic_server install
-        volume (str): docker volume - https://apilogicserver.github.io/Docs/DevOps-Docker/#2a-using-the-manager
-    """
+        clean (bool): _description_
+        open_with (str): _description_
+        api_logic_server_path (Path): _description_
+        volume (str, optional): _description_. Defaults to "".
+        open_manager (bool, optional): _description_. Defaults to True.
+    """    
     
     log = logging.getLogger(__name__)
 

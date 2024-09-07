@@ -215,9 +215,9 @@ def main(ctx):
               default=False, is_flag=True,
               help="Overlay existing manager (projects retained)")
 @click.option('--open-manager/--no-open-manager', "open_manager",
-              default=False, is_flag=True,
+              default=True, is_flag=True,
               help="Overlay existing manager (projects retained)")
-def create_start_manager(ctx, open_with, clean: click.BOOL = False, 
+def create_start_manager(ctx, open_with, clean: click.BOOL = True, 
                          volume: str = "ApiLogicServer", open_manager: click.BOOL = True):
     """
         Create and Manage API Logic Projects.

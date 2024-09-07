@@ -265,9 +265,8 @@ class AdminCreator(object):
         if required:
             admin_attribute.required = True
         if attribute_name == "UnitPrice":
-            log.debug("Good breakpoint location")
+            debug_str = "Good breakpoint location"
         if isinstance(resource_attribute, str) == True:
-            log.debug("Just a string")
             raise Exception(f'System Error - expected resource_attribute, got string: {resource_attribute}')
         if not isinstance(resource_attribute, str):
             if resource_attribute.type in ["DECIMAL", "DATE"]:
