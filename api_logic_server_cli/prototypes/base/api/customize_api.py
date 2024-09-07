@@ -51,8 +51,6 @@ def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
         """
 
         import os, signal
-        if not os.getenv('BLT'):
-            return
 
         if not os.getenv('APILOGICPROJECT_STOP_OK'):
             return jsonify({ "success": False, "message": "Shutdown not enabled" })
