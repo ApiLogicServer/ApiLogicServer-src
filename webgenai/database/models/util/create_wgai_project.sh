@@ -42,7 +42,7 @@ function parse_log() {
 }
 
 function error() {
-    echo "WGAI Error: $*" >&2
+    log "WebGenAI Error: $*"
     exit 1
 }
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 cd /opt/webgenai
 #PYTHONPATH=$PWD python database/manager.py -K
-cd -
+env > /tmp/env.txt
 #gunicorn --log-level=info -b 0.0.0.0:${APILOGICPROJECT_PORT} --timeout 60 -w1 -t1 --reload alsr:flask_app
 export APILOGICPROJECT_PORT=${APILOGICPROJECT_PORT:-5656}
 export APILOGICPROJECT_SWAGGER_PORT=${APILOGICPROJECT_SWAGGER_PORT:-8080}
