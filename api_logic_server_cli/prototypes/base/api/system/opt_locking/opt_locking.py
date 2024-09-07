@@ -86,7 +86,10 @@ def checksum_row(row: object) -> str:
             logger.debug(f'checksum_row (CheckSum) - good place for breakpoint')
         if isinstance(each_property, sqlalchemy.orm.properties.ColumnProperty):
             # logger.debug(f'row.property: {each_property} [{getattr(row, each_property.key)}] <{type(each_property)}>')
-            attr_list.append(getattr(row, each_property.class_attribute.key))
+            if hasattr(each_property.class_attribute, "key"):
+                attr_list.append(getattr(row, each_property.class_attribute.key))
+            else:
+                debug_stop = f'no key attr - probably @jsonapi_attr'
     return_value = checksum(attr_list)
     # logger.debug(f'checksum_row (get) [{return_value}], inspector: {inspector}')
     return return_value
