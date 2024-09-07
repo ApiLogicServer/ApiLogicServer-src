@@ -111,6 +111,7 @@ class Config:
     # als add-auth --provider-type=keycloak --db-url=localhost
     # als add-auth --provider-type=keycloak --db-url=http://10.0.0.77:8080
     kc_base = 'http://localhost:8080'  # e.g., 'http://localhost:8080'
+    kc_base = 'https://kc.hardened.be'
     ''' keycloak location '''
     KEYCLOAK_REALM =  'kcals'
     KEYCLOAK_BASE = f'{kc_base}/realms/{KEYCLOAK_REALM}'
@@ -129,7 +130,8 @@ class Config:
             SECURITY_ENABLED = True
         app_logger.error(f'Security .. overridden from env variable: {SECURITY_ENABLED}')
     if SECURITY_ENABLED:
-        from security.authentication_provider.custom.auth_provider import Authentication_Provider
+        #from security.authentication_provider.custom.auth_provider import Authentication_Provider
+        from security.authentication_provider.keycloak.auth_provider import Authentication_Provider
         #from security.authentication_provider.memory.auth_provider import Authentication_Provider
         # typically, authentication_provider is [ keycloak | sql ]
         SECURITY_PROVIDER = Authentication_Provider

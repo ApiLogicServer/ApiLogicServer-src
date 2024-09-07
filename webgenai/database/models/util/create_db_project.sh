@@ -6,6 +6,7 @@
 #
 set -e
 
+start_count=0
 function parse_log() {
 
     line="$*" #(printf '%b' $*)"
@@ -29,7 +30,12 @@ function parse_log() {
         log "Models Created.."
         ;;
         *"Starting with CLI args:"*)
-        log "Starting Project.."
+        if [[ start_count -eq 0 ]]; then
+            # Ignore first start message
+            start_count=1
+        else
+            log "Starting Project.."
+        fi
         ;;
         *"Explore data and API at"*)
         log "Project Running!"
@@ -49,6 +55,11 @@ function log() {
     if [[ $? -ne 0 ]]; then
         error "Manager failed"
     fi
+}
+
+function error() {
+    log "WebGenAI Error: $*"
+    exit 1
 }
 
 env > /tmp/env.txt

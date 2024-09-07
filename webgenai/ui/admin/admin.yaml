@@ -3,8 +3,13 @@ about:
   recent_changes: works with modified safrs-react-admin
   version: 0.0.0
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
+#authentication:
+#  endpoint: '{http_type}://{swagger_host}:{port}/{api}/auth/login'
 authentication:
-  endpoint: '{http_type}://{swagger_host}:{port}/{api}/auth/login'
+  keycloak:
+    url: https://kc.hardened.be
+    realm: kcals
+    clientId: alsclient
 settings:
   Home: ApiFab
 info:
@@ -54,13 +59,16 @@ resources:
         hidden: true
       - name: created_at
         label: Created At
+        component: DateTime
       - name: connection_string
         label: "Connection String"
         search: true
         component: ConnectionString
+        hidden: true
       - name: complexity
         label: Complexity
       - name: log
+        hidden: true
         type: textarea
     type: Project
   File:
