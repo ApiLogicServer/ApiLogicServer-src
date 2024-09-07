@@ -50,8 +50,9 @@ fi
 # Kill any running project / set "running" to false
 python database/manager.py -K
 
-# Temp fix
-> /home/api_logic_server/api_logic_server_cli/templates/opt_locking.txt
+# Temp fix - ignore optlocking
+#export OPT_LOCKING=${OPT_LOCKING:-ignored}
+#> /home/api_logic_server/api_logic_server_cli/templates/opt_locking.txt
 
 export GUNICORN_CMD_ARGS=" --worker-tmp-dir=/dev/shm -b 0.0.0.0:${APILOGICPROJECT_PORT} --timeout 60 --workers 3 --threads 2 --reload"
 gunicorn api_logic_server_run:flask_app

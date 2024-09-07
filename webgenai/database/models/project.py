@@ -42,7 +42,7 @@ PROJECT_STARTING = "Starting Project"
 NGINX_TEMPLATE = Path(__file__).parent / "templates"/ "nginx.api.template"
 
 # GPT Prompt content, used to create a prompt file in /opt/projects that will be sent to the GPT model
-AI_API_REQUEST_FILE = Path(__file__).parent / "ai_api_requests" / "default.json"
+AI_API_REQUEST_FILE = Path(__file__).parent / "templates" / "ai_api_request.json"
 
 
 class Project(BaseModel):
