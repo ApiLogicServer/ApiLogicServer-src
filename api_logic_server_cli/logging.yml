@@ -48,7 +48,7 @@ loggers:
         propagate: no
 
     api_logic_server_cli.create_from_model.ui_admin_creator:   
-        level: DEBUG
+#        level: DEBUG
         handlers: [console]
         propagate: no
         
