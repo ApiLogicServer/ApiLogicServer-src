@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 
 class GenAI(object):
     """
-    Create project from genai prompt.  Called from api_logic_server#create_project() -- main driver
+    Create project from genai prompt(s).  Called from api_logic_server#create_project() -- main driver
 
     __init__()  # work directory is <manager>/system/genai/temp/
     
