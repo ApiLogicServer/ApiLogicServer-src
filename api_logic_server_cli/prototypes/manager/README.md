@@ -299,9 +299,9 @@ This is a "cheat sheet" for experienced ALS users, e.g., to show your colleagues
 
 <details markdown>
 
-<summary>Quick Basic Demo - Instructions</summary>
+<summary>Creates and customize a project, starting from a database</summary>
 
-<br>This demo creates and customizes a project, starting from a database:
+<br>
 
 ```bash title="Quick Basic Demo"
 
@@ -332,9 +332,9 @@ This is a "cheat sheet" for experienced ALS users, e.g., to show your colleagues
 
 <details markdown>
 
-<summary>Quick GenAI Demo - Instructions</summary>
+<summary>Create and customize a project, starting from a prompt</summary>
 
-<br>This demo creates and customizes a project, starting from a prompt:
+<br>
 
 ```bash title="Quick GenAI Demo"
 
@@ -356,5 +356,7 @@ als add-cust
 ```
 
 </details>
+
+&nbsp;
 
 Click here for [Database Diagrams](https://apilogicserver.github.io/Docs/Sample-Database/).
