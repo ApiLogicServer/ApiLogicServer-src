@@ -356,3 +356,5 @@ als add-cust
 ```
 
 </details>
+
+Click here for [Database Diagrams](https://apilogicserver.github.io/Docs/Sample-Database/).
