@@ -99,6 +99,20 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "     - genai CONVERSATION RETRY - clean/ApiLogicServer/genai_demo",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": [
+                "genai",
+                "--gen-using-file=${workspaceFolder}/api_logic_server_cli/prototypes/manager/system/genai/examples/genai_demo/genai_demo_conversation_bad_decimal/genai_demo_03.response",
+                "--using=ignored/genai_demo_conversation_bad_decimal.prompt"],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "     - genai RETRY from response (no ChatGPT)",
             "type": "debugpy",
             "request": "launch",

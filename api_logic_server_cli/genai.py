@@ -79,6 +79,7 @@ class GenAI(object):
             with open(self.project.gen_using_file, 'r') as file:
                 create_db_models = file.read()
         self.create_db_models = create_db_models
+        """ the raw response data from ChatGPT which will be fixed & saved create_db_models.py """
 
         self.project.genai_logic = self.get_logic_from_prompt()
 
@@ -154,7 +155,6 @@ class GenAI(object):
             prompt_result = pre_post.replace('{{prompt}}', raw_prompt)
         return prompt_result
     
-
     def ensure_system_dir_exists(self):
         """
         If missing, copy prototypes/manager/system -> os.getcwd()/system
@@ -170,7 +170,6 @@ class GenAI(object):
         to_dir_check = Path(to_dir).joinpath('system')
         if not to_dir_check.exists():
             copied_path = shutil.copytree(src=from_dir, dst=to_dir, dirs_exist_ok=True)
-
 
     def get_logic_from_prompt(self) -> list[str]:
         """ Get logic from ChatGPT prompt
@@ -290,6 +289,10 @@ class GenAI(object):
                         needed: balance=1000.0
                         fixed with import in create_db_models_prefix.py
 
+                    5. Bad syntax on test data cals: see api_logic_server_cli/prototypes/manager/system/genai/examples/genai_demo/genai_demo_conversation_bad_decimal/genai_demo_03.response
+                        got: or Decimal('0.00')
+                        needed: or decimal.Decimal('0.00')
+
                 '''
                 if 'Decimal,' in each_line:  # SQLAlchemy import
                     each_line = each_line.replace('Decimal,', 'DECIMAL,')
@@ -300,6 +303,8 @@ class GenAI(object):
                     each_line = each_line.replace('from decimal import Decimal', 'import decimal')
                 if '=Decimal(' in each_line:
                     each_line = each_line.replace('=Decimal(', '=decimal.Decimal(')
+                if ' Decimal(' in each_line:
+                    each_line = each_line.replace(' Decimal(', ' decimal.Decimal(')
                 if 'Column(Decimal)' in each_line:
                     each_line = each_line.replace('Column(Decimal)', 'Column(DECIMAL)')
                 if 'end_time(datetime' in each_line:  # tests/test_databases/ai-created/time_cards/time_card_kw_arg/genai.response
@@ -339,12 +344,21 @@ class GenAI(object):
                 response_file.write(self.create_db_models)
             if self.project.gen_using_file == '':
                 pass
-                with open(f"{to_dir_save_dir.joinpath('genai.prompt')}", "w") as prompt_file:
-                    prompt_file.write(self.prompt)
+                if Path(self.project.from_genai).is_file():
+                    with open(f"{to_dir_save_dir.joinpath('genai.prompt')}", "w") as prompt_file:
+                        prompt_file.write(self.prompt)
+                else:  
+                    # copy files from self.project.from_genai to to_dir_save_dir
+                    # intent:  1) diagnostics, and  2) use this dir for repair and retry
+                    for each_file in sorted(Path(self.project.from_genai).iterdir()):
+                        if each_file.is_file() and each_file.suffix == '.prompt' or each_file.suffix == '.response':
+                            shutil.copyfile(each_file, to_dir_save_dir.joinpath(each_file.name))
+                    pass  # TODO - rename the final response to highest number
+
             shutil.copyfile(src=self.project.from_model, 
                             dst=to_dir_save_dir.joinpath('create_db_models.py'))
         except Exception as inst:
-            log.error(f"\n\nError {inst} creating genai temp files: {str(gen_temp_dir)}\n\n")
+            log.error(f"\n\nError {inst} creating project diagnostic files: {str(gen_temp_dir)}\n\n")
             pass
 
     def get_headers_with_openai_api_key(self) -> dict:
