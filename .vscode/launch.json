@@ -86,7 +86,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "     - genai Conversation - clean/ApiLogicServer/genai_demo",
+            "name": "     - genai CONVERSATION - clean/ApiLogicServer/genai_demo",
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
@@ -420,6 +420,19 @@
                 "genai",
                 "--gen-using-file=${workspaceFolder}/tests/test_databases/ai-created/dnd/dnd.response",
                 "--using=dnd"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "    - Create Cust/Orders from text prompt",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": [
+                "genai",
+                "--using='Customer Orders'",],
             "console": "integratedTerminal"
         },
         {

@@ -9,3 +9,6 @@ Remember that SQLite DateTime type only accepts Python datetime and date objects
 Don't use python DECIMAL type
 
 Create a few rows sample data.
+
+
+For each data model class, create a docstring describing the table, prefixed with 'description: '. 

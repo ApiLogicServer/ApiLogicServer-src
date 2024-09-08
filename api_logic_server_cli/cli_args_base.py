@@ -42,7 +42,7 @@ class CliArgsBase():
         self.from_model = None # type
         """ create database from this model (e.g. model from copilot)"""
         self.from_genai = None # type
-        """ name of .genai file (ai prompt) to create model, and project """
+        """ name of .genai file (ai prompt) - or 'text' - to create model, and project """
         self.gen_using_file = None
         """ None uses ChatGPT API, else defaults system/genai/reference/chatgpt_retry.txt """
         self.genai_version = None

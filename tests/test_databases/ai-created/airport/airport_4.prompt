@@ -11,3 +11,5 @@ Don't install additional packages.
 Don't use the faker pip package.
 
 Create a few rows sample data.
+
+For each data model class, create a docstring describing the table, prefixed with 'description: '. 

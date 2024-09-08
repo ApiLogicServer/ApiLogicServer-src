@@ -100,31 +100,34 @@ class GenAI(object):
             dict[]: [ {role: (system | user) }: { content: user-prompt-or-system-response } ]
 
         """
-        # compute self.prompt, file file or text argument
-        if self.project.gen_using_file != '':       # if exists, get prompt (for logic)
-            prompt = ""  
+
+        prompt_messages : List[ Dict[str, str] ] = []  # prompt/response conversation to be sent to ChatGPT
+        prompt_messages.append( {"role": "system", "content": "You are a helpful assistant."})
+        
+        if self.project.gen_using_file != '':       # if exists, get prompt (just for inserting into declare_logic.py)
+            prompt = ""  # we are not calling ChatGPT, just getting the prompt to scan for logic
             if Path(self.project.from_genai).is_file():  # eg, launch.json for airport_4 is just a name
                 with open(f'{self.project.from_genai}', 'r') as file:
                     prompt = file.read()
-        else:                                       # prompt from text (add system/genai/pre_post.prompt)      
-            if '.' in self.project.from_genai:  # prompt from file (hmm, no sentences...)
-                # open and read the project description in natural language
-                with open(f'{self.project.from_genai}', 'r') as file:
-                    raw_prompt = file.read()
+                prompt_messages.append( {"role": "user", "content": prompt})
+        #  get ChatGPT prompt, from... text argument, dir files (conversation), or file
+        elif self.project.from_genai.startswith("'"):  # leading quote means prompt from text
+                raw_prompt = self.project.from_genai
                 prompt = self.get_prompt__with_inserts(raw_prompt=raw_prompt)  # insert db-specific logic
-            else:                               # prompt from text (add system/genai/pre_post.prompt)
-                prompt = self.get_prompt__with_inserts(raw_prompt=self.project.from_genai)
-
-        prompt_messages = [
-                {
-                    "role": "system",
-                    "content": "You are a helpful assistant."
-                },
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ]
+                prompt_messages.append( {"role": "user", "content": prompt})
+        elif Path(self.project.from_genai).is_dir():  # conversation from directory
+            for each_file in Path(self.project.from_genai).iterdir():
+                if each_file.is_file() and each_file.suffix == '.prompt' or each_file.suffix == '.response':
+                    with open(each_file, 'r') as file:
+                        prompt = file.read()
+                    role = "user" if ".prompt" in each_file.name else "system"
+                    prompt_messages.append( {"role": role, "content": prompt})
+        else:                                   # prompt from text (add system/genai/pre_post.prompt)
+            # open and read the project description in natural language
+            with open(f'{self.project.from_genai}', 'r') as file:
+                raw_prompt = file.read()
+            prompt = self.get_prompt__with_inserts(raw_prompt=raw_prompt)  # insert db-specific logic
+            prompt_messages.append( {"role": "user", "content": prompt})
 
         return prompt_messages      
 
