@@ -17,7 +17,9 @@ You are in the [API Logic Server Manager](https://apilogicserver.github.io/Docs/
 
 <summary>How to Run Projects from the Manager </summary>
 
-<br>There are 2 ways of running projects from the Manager:
+<br>You typically run projects by opening an IDE on the project folder, using provided Run Configurations.
+
+For a quick preview, you can also run from the Manager; there are 2 ways:
 
 1. Use ***another instance of VSCode.***  You can *examine* them in this current instance, but *run* them in their own instance.
 
@@ -66,7 +68,42 @@ Created projects use standard Flask and SQLAlchemy; automation is provided by Lo
 
 ## Explore Pre-created Samples
 
-See below for [important pre-created sample apps](#important-pre-created-sample-apps).  (Important: look for **readme files.**)
+<details markdown>
+
+<summary> Explore Pre-created Samples</summary>
+
+<br>The `samples` folder has pre-created important projects you will want to review at some point (Important: look for **readme files**):
+
+* [nw_sample_nocust](https://apilogicserver.github.io/Docs/Tutorial/) - northwind (customers, orders...) database
+
+    * This reflects the results you can expect with your own databases
+
+* [nw_sample](https://apilogicserver.github.io/Docs/Sample-Database/) - same database, but with ***with [customizations](https://apilogicserver.github.io/Docs/IDE-Customize/) added***.  It's a great resource for exploring how to customize your projects.
+
+    * Hint: use your IDE to search for `#als`
+
+* [tutorial](https://apilogicserver.github.io/Docs/Tutorial/) - short (~30 min) walk-through of using API Logic Server using the northwind (customers, orders...) database
+
+</br>
+
+<details markdown>
+
+<summary>You can always re-create the samples</summary>
+
+<br>Re-create them as follows:
+
+1. Open a terminal window (**Terminal > New Terminal**), and paste the following CLI command:
+
+```bash
+ApiLogicServer create --project-name=samples/tutorial --db-url=
+ApiLogicServer create --project-name=samples/nw_sample --db-url=nw+
+ApiLogicServer create --project-name=samples/nw_sample_nocust --db-url=nw
+```
+</details>
+
+
+</details>
+
 
 &nbsp;
 
@@ -257,84 +294,49 @@ Please see [this doc](https://apilogicserver.github.io/Docs/Sample-AI-ChatGPT/)
 
 &nbsp;
 
-&nbsp;
-
-## Important Pre-created Sample Apps
-
-The `samples` folder has pre-created important projects you will want to review at some point:
-
-* [nw_sample_nocust](https://apilogicserver.github.io/Docs/Tutorial/) - northwind (customers, orders...) database
-
-    * This reflects the results you can expect with your own databases
-
-* [nw_sample](https://apilogicserver.github.io/Docs/Sample-Database/) - same database, but with ***with [customizations](https://apilogicserver.github.io/Docs/IDE-Customize/) added***.  It's a great resource for exploring how to customize your projects.
-
-    * Hint: use your IDE to search for `#als`
-
-* [tutorial](https://apilogicserver.github.io/Docs/Tutorial/) - short (~30 min) walk-through of using API Logic Server using the northwind (customers, orders...) database
-
-</br>
-
-<details markdown>
-
-<summary>You can always re-create the samples</summary>
-
-<br>Re-create them as follows:
-
-1. Open a terminal window (**Terminal > New Terminal**), and paste the following CLI command:
-
-```bash
-ApiLogicServer create --project-name=samples/tutorial --db-url=
-ApiLogicServer create --project-name=samples/nw_sample --db-url=nw+
-ApiLogicServer create --project-name=samples/nw_sample_nocust --db-url=nw
-```
-</details>
-</details>
-
-&nbsp;
-
 ## Appendix: Quick Basic Demo
 
 This is a "cheat sheet" for experienced ALS users, e.g., to show your colleagues.
 
 <details markdown>
 
-<summary>Creates and customize a project, starting from a database</summary>
+<summary>Quick Basic Demo - Instructions</summary>
 
-<br>
+<br>This demo creates and customizes a project, starting from a database:
 
 ```bash title="Quick Basic Demo"
 
 # Microservice Automation
-#   - see Admin App, API, Project
+# Admin App, API, Project
 als create --project-name=basic_demo --db-url=basic_demo
 
 # Logic and Security
-#   - see logic/declare_logic.py;  add an Order and Item
-#   - see security/declare_security.py; compare customers, s1 vs. admin
+# see logic (logic/declare_logic.py, logic/cocktail-napkin.jpg);  add an Order and Item
+# see security (security/declare_security.py); compare customers, s1 vs. admin
 als add-cust
 als add-auth --db_url=auth
 
 # Python Extensibility, Kafka Integration, Rebuild Iteration
-#   - see logic/declare_logic.py (breakpoint for Kafka)
-#   - Swagger: ServicesEndPoint.OrderB2B
+# see logic/declare_logic.py (breakpoint for Kafka)
+# Swagger: ServicesEndPoint.OrderB2B
 als add-cust
 als rebuild-from-database --db_url=sqlite:///database/db.sqlite
 ```
 
 </details>
 
+
 &nbsp;
 
-## Appendix: Quick GenAI Demo
+## Appendix: GenAI Demo
 
 This is a "cheat sheet" for experienced ALS users, e.g., to show your colleagues.
 
 <details markdown>
 
-<summary>Create and customize a project, starting from a prompt</summary>
+<summary>Quick GenAI Demo - Instructions</summary>
 
-<br>
+<br>This demo creates and customizes a project, starting from a prompt:
 
 ```bash title="Quick GenAI Demo"
 
@@ -343,12 +345,12 @@ This is a "cheat sheet" for experienced ALS users, e.g., to show your colleagues
 als genai --using=system/genai/examples/genai_demo/genai_demo.prompt
 
 # Or, Microservice Automation from Saved Response
-#   - see Admin App, API, Project
+# Admin App, API, Project
 als genai --using=genai_demo.prompt --gen-using-file=system/genai/temp/chatgpt_retry.response
 
 # Logic and Security
-#   - see logic/declare_logic.py;  add an Order and Item
-#   - see security/declare_security.py); compare customers, s1 vs. admin
+#   - see logic (logic/declare_logic.py, logic/cocktail-napkin.jpg);  add an Order and Item
+#   - see security (security/declare_security.py); compare customers, s1 vs. admin
 # Python Extensibility, Kafka Integration, Rebuild Iteration
 #   - see logic/declare_logic.py (breakpoint for Kafka)
 #   - Swagger: ServicesEndPoint.OrderB2B
@@ -356,7 +358,3 @@ als add-cust
 ```
 
 </details>
-
-&nbsp;
-
-Click here for [Database Diagrams](https://apilogicserver.github.io/Docs/Sample-Database/).
