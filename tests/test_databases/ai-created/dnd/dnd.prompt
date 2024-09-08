@@ -11,3 +11,5 @@ Don't install additional packages.
 Don't use the faker pip package.
 
 Create at least 100 rows of sample data, use foreign key columns instead of relationship names for the data inserts.
+
+For each data model class, create a docstring describing the table, prefixed with 'description: '. 
