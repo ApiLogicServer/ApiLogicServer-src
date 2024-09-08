@@ -116,7 +116,7 @@ class GenAI(object):
                 prompt = self.get_prompt__with_inserts(raw_prompt=raw_prompt)  # insert db-specific logic
                 prompt_messages.append( {"role": "user", "content": prompt})
         elif Path(self.project.from_genai).is_dir():  # conversation from directory
-            for each_file in Path(self.project.from_genai).iterdir():
+            for each_file in sorted(Path(self.project.from_genai).iterdir()):
                 if each_file.is_file() and each_file.suffix == '.prompt' or each_file.suffix == '.response':
                     with open(each_file, 'r') as file:
                         prompt = file.read()
