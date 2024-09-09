@@ -340,26 +340,36 @@ class GenAI(object):
             to_dir_save_dir = Path(to_dir).joinpath(f'system/genai/temp/{self.project.project_name_last_node}')
             self.project.gen_ai_save_dir = to_dir_save_dir
             os.makedirs(to_dir_save_dir, exist_ok=True)
+            response_file_name = Path(f"{to_dir_save_dir.joinpath('genai.response')}")  # maybe renamed below
             with open(f"{to_dir_save_dir.joinpath('genai.response')}", "w") as response_file:
                 response_file.write(self.create_db_models)
             if self.project.gen_using_file == '':
                 pass
                 if Path(self.project.from_genai).is_file():
-                    with open(f"{to_dir_save_dir.joinpath('genai.prompt')}", "w") as prompt_file:
+                    prompt_file_name = f'{self.project.project_name}_001.prompt'
+                    with open(f"{to_dir_save_dir.joinpath(prompt_file_name)}", "w") as prompt_file:
                         prompt_file.write(self.prompt)
                 else:  
                     # copy files from self.project.from_genai to to_dir_save_dir
                     # intent:  1) diagnostics, and  2) use this dir for repair and retry
+                    last_prompt_file_name = prompt_file_name = f'{self.project.project_name}_001.prompt'
                     for each_file in sorted(Path(self.project.from_genai).iterdir()):
                         if each_file.is_file() and each_file.suffix == '.prompt' or each_file.suffix == '.response':
                             shutil.copyfile(each_file, to_dir_save_dir.joinpath(each_file.name))
-                    pass  # TODO - rename the final response to highest number
-
-            shutil.copyfile(src=self.project.from_model, 
-                            dst=to_dir_save_dir.joinpath('create_db_models.py'))
+                        if each_file.suffix == '.prompt':
+                            last_prompt_file_name = each_file.name
+                    # last_prompt_file_name = 'genai_demo_002.response'
+                    at_name = last_prompt_file_name.split('.')[0]
+                    at_number = at_name[len(at_name)-3:]
+                    at_number = at_number.zfill(3)
+                    last_prompt_file_name = f'{self.project.project_name}_{at_number}.response'
+                    os.rename(to_dir_save_dir.joinpath('genai.response'),   # dd
+                              to_dir_save_dir.joinpath(last_prompt_file_name))
+            shutil.copyfile(self.project.from_model, to_dir_save_dir.joinpath('create_db_models.py'))
         except Exception as inst:
+            # FileNotFoundError(2, 'No such file or directory')
             log.error(f"\n\nError {inst} creating project diagnostic files: {str(gen_temp_dir)}\n\n")
-            pass
+            pass  # intentional try/catch/bury - it's just diagnostics, so don't fail
 
     def get_headers_with_openai_api_key(self) -> dict:
         """
