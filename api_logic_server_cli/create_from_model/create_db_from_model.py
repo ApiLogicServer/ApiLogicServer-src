@@ -57,6 +57,7 @@ def create_db(project: Project):
                         # '\n    description: This table stores customer information including balance and credit limit.\n    
                         description = description.replace('\n    description: ', '')
                         description = description.replace('\n    ', '')
+                        description = description.replace('description: ', '')
                         project.table_descriptions[table_name] = description
                 pass
     except Exception as e:
