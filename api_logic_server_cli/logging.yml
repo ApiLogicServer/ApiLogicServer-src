@@ -63,6 +63,6 @@ loggers:
         propagate: no
 
     genai:   
-        level: INFO
+        level: DEBUG
         handlers: [console]
         propagate: no
