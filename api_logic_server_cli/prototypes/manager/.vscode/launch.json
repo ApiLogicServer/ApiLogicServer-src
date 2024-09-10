@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
-            "cwd": "${workspaceFolder}/system/genai/examples",
+            "cwd": "${workspaceFolder}",
             "env": {
                 "PYTHONPATH": "", 
                 "SECURITY_ENABLED": "False", 
@@ -18,8 +18,8 @@
                 "APILOGICSERVER_DEBUG": "False",
                 "OPT_LOCKING": "optional"},
             "justMyCode": false,
-            "args": [ "genai",
-                "--using=${input:inputGenaiProjectName}"],
+            "args": [ "genai", "--retries=-1",
+                "--using=${workspaceFolder}/system/genai/examples/${input:inputGenaiProjectName}"],
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
         },
