@@ -374,10 +374,10 @@ class GenAI(object):
                         elif each_file.suffix == '.prompt':
                             last_prompt_file_name = each_file.name
                     # last_response_file_name = 'genai_demo_002.response'
-                    at_name = last_response_file_name.split('.')[0]
+                    at_name = last_prompt_file_name.split('.')[0]
                     at_number = at_name[len(at_name)-3:]
                     at_number = at_number.zfill(3)
-                    if response_count <= 1: # eg. folder contains genai_demo.prompt (not really a conversation)
+                    if response_count < 1: # eg. folder contains genai_demo.prompt (not really a conversation)
                         at_number = '001'   # eg. genai/examples/genai_demo/genai_demo.prompt -> genai_demo_001.prompt
                         new_prompt_file_name = to_dir_save_dir.joinpath(f'{self.project.project_name}_{at_number}.prompt')
                         old_prompt_file_name = Path(self.project.from_genai).joinpath(last_prompt_file_name)
@@ -442,5 +442,11 @@ class GenAI(object):
         log.debug(f'.. stored response: {model_file.name}')
         return response_data
 
+def key_module_map():
+    """ does not execute - strictly fo find key modules """
 
+    genai = GenAI(Project())
+    genai.__init__()                                    # called from api_logic_server#create_project()
+    genai.get_prompt_messages()                         # get self.messages from file/dir/text/arg
+    genai.save_files_to_system_genai_temp_project()     # save prompt, response and models.py
  
