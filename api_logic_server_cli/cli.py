@@ -605,6 +605,7 @@ def genai(ctx, using, db_url, gen_using_file: click.BOOL, genai_version: str,
     """ if 'unable to determine join condition', we retry this with False """
     if gen_using_file != "":
         try_number = retries  # if not calling GenAI, no need to retry:
+    # TODO or 0, right?
     if retries < 0:  # for debug: catch exceptions at point of failure
         PR.ProjectRun(command="create", genai_version=genai_version, 
                     from_genai=using,                 # the prompt file, or the actual prompt
