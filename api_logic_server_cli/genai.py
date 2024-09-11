@@ -362,12 +362,17 @@ class GenAI(object):
                     os.rename(response_file_name, to_dir_save_dir.joinpath(new_response_file_name))
                 else:  
                     # copy files from self.project.from_genai to to_dir_save_dir
-                    # intent:  1) diagnostics, and  2) use this dir for repair and retry
+                    # intent:  1) diagnostics, and  2) use this dir for repair and 
+                    is_iterate_in_place = str(to_dir_save_dir) == str(Path(self.project.from_genai).resolve())
+                    """ means we are using to_dir as the save directory """
                     last_response_file_name = prompt_file_name = f'{self.project.project_name}_001.prompt'
                     response_count = 0
                     for each_file in sorted(Path(self.project.from_genai).iterdir()):
                         if each_file.is_file() and each_file.suffix == '.prompt' or each_file.suffix == '.response':
-                            shutil.copyfile(each_file, to_dir_save_dir.joinpath(each_file.name))
+                            if is_iterate_in_place:
+                                log.debug(f'.. conv iterate skips: {os.path.basename(each_file)}')
+                            else:
+                                shutil.copyfile(each_file, to_dir_save_dir.joinpath(each_file.name))
                         if each_file.suffix == '.response':
                             last_response_file_name = each_file.name
                             response_count += 1
