@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "11.01.20"
+__version__ = "11.01.21"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t09/11/2024 - 11.01.19: Conversations, optLock fix, wg merge, demo guide \n"\
+    "\t09/11/2024 - 11.01.21: Iterative conversations, optLock fix, wg merge, demo guide \n"\
     "\t09/04/2024 - 11.01.15: APILOGICPROJECT_LOG_CONFIG, _STOP_OK, _EXTERNAL_HOST, _EXTERNAL_PORT, genai descriptions \n"\
     "\t09/03/2024 - 11.01.11: logicbank 1.20.7, safrs 3.1.4, sra Aug17,  behave_run err-check[70], genai decimals \n"\
     "\t08/21/2024 - 11.01.02: Bug 68: nested quotes, internal (BLT path, exp tests) \n"\
