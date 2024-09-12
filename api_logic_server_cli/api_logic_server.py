@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "11.01.21"
+__version__ = "11.01.22"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t09/11/2024 - 11.01.21: Iterative conversations, optLock fix, wg merge, demo guide \n"\
+    "\t09/11/2024 - 11.01.22: Iterative conversations, optLock fix, wg merge, demo guide, er \n"\
     "\t09/04/2024 - 11.01.15: APILOGICPROJECT_LOG_CONFIG, _STOP_OK, _EXTERNAL_HOST, _EXTERNAL_PORT, genai descriptions \n"\
     "\t09/03/2024 - 11.01.11: logicbank 1.20.7, safrs 3.1.4, sra Aug17,  behave_run err-check[70], genai decimals \n"\
     "\t08/21/2024 - 11.01.02: Bug 68: nested quotes, internal (BLT path, exp tests) \n"\
@@ -823,11 +823,18 @@ def invoke_creators(model_creation_services: ModelCreationServices):
         creator = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(creator)
         creator.create(model_creation_services)
-
     else:
         pass
         # log.debug(".. .. ..ui/admin_app creation declined")
 
+    log.debug(" d.  Create docs/db.dbml from models")
+    # log.debug(f'---> cwd: {model_creation_services.os_cwd}')
+    spec = importlib.util.spec_from_file_location("module.name", f'{creator_path}/dbml.py')
+    creator = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(creator)  # runs "bare" module code (e.g., initialization)
+    creator.create(model_creation_services)  # invoke create function
+
+    pass
     # model_creation_services.close_app()  # this may no longer be required
 
 
