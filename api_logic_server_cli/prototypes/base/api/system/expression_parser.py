@@ -132,7 +132,7 @@ def parseFilter(clz: any, filter: dict, sqltypes: any):
             elif attr == "":
                 attr =  f'{_quote}{clz.__tablename__}{_quote}.{_quote}{f}{_quote}'
                 _quote = ""
-            q = '"' if isinstance(value, str) else ""
+            q = "'" if isinstance(value, str) else ""
             sql_where += f'{join} {_quote}{attr}{_quote} = {q}{value}{q}'
             #name = clz._s_jsonapi_attrs[f] if f !: "id" else clz.id
             filters.append({"join": join,"lop": attr, "op": "eq", "rop": value})
