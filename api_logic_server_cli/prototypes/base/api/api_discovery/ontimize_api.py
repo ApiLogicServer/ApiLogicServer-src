@@ -75,7 +75,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
 
     
     def gen_export(request) -> any:
-        payload = json.loads(request.data)
+        payload = json.loads(request.data) if request.data != b'' else {}
         type = payload.get("type") or "csv"
         entity = payload.get("dao") 
         queryParm = payload.get("queryParm") or {}
@@ -118,7 +118,9 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     @cross_origin()
     @admin_required()
     def export():
-        print(f"export {type}")
+        print(f"export {request.path}")
+        #if request.method == "OPTIONS":
+        #    return jsonify(success=True)
         return gen_export(request)
     
     @app.route("/api/dynamicjasper", methods=['POST','OPTIONS'])
