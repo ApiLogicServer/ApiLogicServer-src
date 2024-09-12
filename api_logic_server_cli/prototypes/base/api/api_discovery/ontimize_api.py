@@ -75,7 +75,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
 
     
     def gen_export(request) -> any:
-        payload = json.loads(request.data)
+        payload = json.loads(request.data) if request.data != b'' else {}
         type = payload.get("type") or "csv"
         entity = payload.get("dao") 
         queryParm = payload.get("queryParm") or {}
