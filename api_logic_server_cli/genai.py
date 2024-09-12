@@ -244,7 +244,7 @@ class GenAI(object):
             # os.makedirs(docs_dir, exist_ok=True)
             # prompt_file_path = docs_dir.joinpath("created_from_genai.prompt")
             # copy self.project.gen_ai_save_dir to docs_dir
-            shutil.copytree(self.project.gen_ai_save_dir, docs_dir)  # , dirs_exist_ok=True)   
+            shutil.copytree(self.project.gen_ai_save_dir, docs_dir, dirs_exist_ok=True)   
         except:  # intentional try/catch/bury - it's just docs, so don't fail
             import traceback
             log.error(f"\n\nERROR creating genai project docs: {docs_dir}\n\n{traceback.format_exc()}")
