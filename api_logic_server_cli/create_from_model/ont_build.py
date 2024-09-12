@@ -89,7 +89,7 @@ class OntBuilder(object):
         self.apiEndpoint =  f"http://{project.host}:{project.port}/ontimizeweb/services/rest"
         self.title_translation = []
         self.languages = ["en", "es"] # "fr", "it", "de" etc - used to create i18n json files
-        
+        self.locale = "en"
         self.pick_list_template = self.get_template("list-picker.html")
         self.combo_list_template = self.get_template("combo-picker.html") 
         self.o_text_input = self.get_template("o_text_input.html")
@@ -361,15 +361,26 @@ class OntBuilder(object):
         for v in self.title_translation: # append to app/assets/i8n/en.json and es.json
             for k in v: 
                 titles += f'  "{k}": "{v[k]}",\n'
-        rv_en_json = en_json.render(titles=titles)
-        write_json_filename(app_path=app_path, file_name="en.json", source="{\n" + rv_en_json[:-2] +"\n}")
-        es_titles = titles
-        #fr = self.translate_list_of_strings(dest_language='fr')
-        if self.app_model.settings.style_guide.include_translation:
-            es_titles = translation_service(self.title_translation)
-        rv_es_json = es_json.render(titles=es_titles)
-        write_json_filename(app_path=app_path, file_name="es.json", source="{\n" + rv_es_json[:-2] + "\n}")
-    
+        if self.locale == "en":
+            rv_en_json = en_json.render(titles=titles)
+            write_json_filename(app_path=app_path, file_name="en.json", source="{\n" + rv_en_json[:-2] +"\n}")
+            es_titles = titles
+            #fr = self.translate_list_of_strings(dest_language='fr')
+            if self.app_model.settings.style_guide.include_translation:
+                es_titles = translation_service(self.title_translation)
+            rv_es_json = es_json.render(titles=es_titles, from_lang='en', to_lang='es')
+            write_json_filename(app_path=app_path, file_name="es.json", source="{\n" + rv_es_json[:-2] + "\n}")
+        elif self.locale == "es":
+            rv_es_json = es_json.render(titles=titles)
+            write_json_filename(app_path=app_path, file_name="es.json", source="{\n" + rv_es_json[:-2] + "\n}")
+            en_titles = titles
+            if self.app_model.settings.style_guide.include_translation:
+                en_titles = translation_service(self.title_translation, from_lang='es', to_lang='en')
+            rv_en_json = en_json.render(titles=en_titles)
+            write_json_filename(app_path=app_path, file_name="en.json", source="{\n" + rv_en_json[:-2] + "\n}")
+        else:
+            log.error(f"Locale {self.locale} not supported in ont_build")
+            return 
 
     def translate_list_of_strings(self, dest_language:str='en'):
         translator = Translator(from_lang='en',to_lang=dest_language)
