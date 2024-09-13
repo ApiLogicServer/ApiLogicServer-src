@@ -15,7 +15,11 @@ class GenAI(object):
 
     __init__()  # work directory is <manager>/system/genai/temp/
     
-    1. run ChatGPT to create system/genai/temp/chatgpt_original.response
+    1. run ChatGPT to create system/genai/temp/chatgpt_original.response, using...
+        a. --using a file, dir (conversation) or text argument
+            i. This denotes the project name to be created at cwd
+        a. --gen-using-file (retry from corrected response)
+    2. get_prompt_messages() - get prompt from file, dir (conversation) or text argument        
     2. self.get_logic() - saves prompt logic as comments for insertion into model (4.3)
     3. fix_and_write_model_file()
     4. returns to main driver, which 

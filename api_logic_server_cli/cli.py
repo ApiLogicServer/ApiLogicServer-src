@@ -553,7 +553,7 @@ def tutorial(ctx, create):
 @main.command("genai", cls=HideDunderCommand)
 @click.option('--using',
               default=f'genai_demo',
-              prompt="Project description file",
+              prompt="Project description file, dir, or 'text",
               help="Project description file")
 @click.option('--db-url', 'db_url',
               default=f'sqlite',
