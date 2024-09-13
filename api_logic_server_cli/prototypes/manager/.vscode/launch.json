@@ -23,6 +23,26 @@
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
         },
+        // just add the next prompt file to the system/genai/temp/>project> directory
+        {
+            "name": "  - GENAI - Iterate",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "genai",   
+                    "--using=system/genai/temp/${input:inputGenaiProjectName}" ],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
         {
             "name": "  - GENAI - Retry from repaired chatgpt response",
             "type": "debugpy",
