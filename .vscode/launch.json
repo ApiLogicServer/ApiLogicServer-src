@@ -86,6 +86,19 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "     - genai CMDB CONVERSATION - clean/ApiLogicServer/conversation",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": [
+                "genai",
+                "--using=${workspaceFolder}/tests/test_databases/ai-created/cmdb"],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "     - genai CONVERSATION - clean/ApiLogicServer/genai_demo",
             "type": "debugpy",
             "request": "launch",
