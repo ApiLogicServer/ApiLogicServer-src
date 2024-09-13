@@ -300,6 +300,8 @@ def advancedFilter(cls, args) -> any:
                 elif "@basic_expression" in val:
                     sqlWhere = _parseFilter(val, None)
                     return expressions, sqlWhere
+                elif req_arg == 'filter[@basic_expression]' or req_arg == 'filter[@BASIC_EXPRESSION]':
+                        filters.append({"lop": val['lop'], "op": val["op"], "rop": val["rop"]})
                 else:
                     #{'id': '1', 'name': 'John'}
                     for f, value in val.items():
@@ -361,6 +363,7 @@ def advancedFilter(cls, args) -> any:
             expressions.append(attr.ilike( clean(attr_val) ))
             expr = ExpressionHolder(expr=attr.ilike(clean(attr_val)), join=join)
             expression_holder.append(expr)
+            sqlWhere += f'{join} "{attr_name}" LIKE {clean(attr_val)}'
         elif op_name in ["NOTLIKE","NOTIN"]:
             expr = ExpressionHolder(expr=attr.not_in_(clean(attr_val)), join=join)
             expression_holder.append(expr)
