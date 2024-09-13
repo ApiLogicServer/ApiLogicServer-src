@@ -21,6 +21,7 @@ def jsonapi_filter(cls):
     from sqlalchemy import text, or_, and_
     from flask import request
     expressions = []
+    sqlWhere = ""
     query = cls._s_query
     if args := request.args:
         from api.system.expression_parser import advancedFilter
