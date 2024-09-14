@@ -129,7 +129,7 @@ class GenAI(object):
                         log.debug(f'.. conv processes: {os.path.basename(each_file)}')
                         prompt = file.read()
                     role = "user"
-                    if each_file.suffix == "response":
+                    if each_file.suffix == ".response":
                         role = 'system'
                         response_count += 1
                     prompt_messages.append( {"role": role, "content": prompt})
@@ -306,6 +306,11 @@ class GenAI(object):
                         got: or Decimal('0.00')
                         needed: or decimal.Decimal('0.00')
 
+                    6. Bad syntax on test data cals: see api_logic_server_cli/prototypes/manager/system/genai/examples/genai_demo/genai_demo_conversation_bad_decimal_2/genai_demo_conversation_002.response
+                        got: or DECIMAL('
+                        needed: or decimal.Decimal('0.00')
+
+
                 '''
                 if 'Decimal,' in each_line:  # SQLAlchemy import
                     each_line = each_line.replace('Decimal,', 'DECIMAL,')
@@ -320,6 +325,8 @@ class GenAI(object):
                     each_line = each_line.replace(' Decimal(', ' decimal.Decimal(')
                 if 'Column(Decimal)' in each_line:
                     each_line = each_line.replace('Column(Decimal)', 'Column(DECIMAL)')
+                if "DECIMAL('" in each_line:
+                    each_line = each_line.replace("DECIMAL('", "decimal.Decimal('")
                 if 'end_time(datetime' in each_line:  # tests/test_databases/ai-created/time_cards/time_card_kw_arg/genai.response
                     each_line = each_line.replace('end_time(datetime', 'end_time=datetime')
                 if indents_to_remove > 0:

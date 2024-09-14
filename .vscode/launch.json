@@ -66,8 +66,7 @@
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
-            "env": {"APILOGICSERVER_DEBUG": "True",
-                    },
+            "env": {"APILOGICSERVER_DEBUG": "True"},
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "args": [
@@ -86,7 +85,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "     - genai CMDB CONVERSATION - clean/ApiLogicServer/conversation",
+            "name": "     - genai CONVERSATION - clean/ApiLogicServer/genai_demo_conversation",
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
@@ -95,25 +94,12 @@
             "redirectOutput": true,
             "args": [
                 "genai",
-                "--using=${workspaceFolder}/tests/test_databases/ai-created/cmdb"],
+                "--using=${workspaceFolder}/tests/test_databases/ai-created/genai_demo/genai_demo_conversation"],
             "console": "integratedTerminal"
         },
+        // mimic iteration DELETE LAST RESPONSE FIRST
         {
-            "name": "     - genai CONVERSATION - clean/ApiLogicServer/genai_demo",
-            "type": "debugpy",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
-            "env": {"APILOGICSERVER_DEBUG": "True"},
-            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
-            "redirectOutput": true,
-            "args": [
-                "genai",
-                "--using=${workspaceFolder}/api_logic_server_cli/prototypes/manager/system/genai/examples/genai_demo/genai_demo_conversation"],
-            "console": "integratedTerminal"
-        },
-        // mimic iteration, BUT you should delete the final response there...
-        {
-            "name": "     - genai CONVERSATION ITERATE (NB: run prior, then delete final response",
+            "name": "     - genai CONVERSATION ITERATE IN PLACE (NB: DELETE LAST RESPONSE FIRST)",
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
@@ -127,7 +113,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "     - genai CONVERSATION RETRY - clean/ApiLogicServer/genai_demo_conversation_bad_decimal",
+            "name": "     - genai RETRY - clean/ApiLogicServer/genai_demo_conversation_bad_decimal",
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
@@ -136,8 +122,35 @@
             "redirectOutput": true,
             "args": [
                 "genai",
-                "--gen-using-file=${workspaceFolder}/api_logic_server_cli/prototypes/manager/system/genai/examples/genai_demo/genai_demo_conversation_bad_decimal/genai_demo_03.response",
+                "--gen-using-file=${workspaceFolder}/tests/test_databases/ai-created/genai_demo/genai_demo_conversation_bad_decimal/genai_demo_003.response",
                 "--using=ignored/genai_demo_conversation_bad_decimal.prompt"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "     - genai RETRY - clean/ApiLogicServer/genai_demo_conversation_bad_decimal_2",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": [
+                "genai",
+                "--gen-using-file=${workspaceFolder}/tests/test_databases/ai-created/genai_demo/genai_demo_conversation_bad_decimal_2/genai_demo_conversation_002.response",
+                "--using=ignored/genai_demo_conversation_bad_decimal_2.prompt"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "     - genai CMDB CONVERSATION - clean/ApiLogicServer/conversation",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": [
+                "genai",
+                "--using=${workspaceFolder}/tests/test_databases/ai-created/cmdb"],
             "console": "integratedTerminal"
         },
         {
