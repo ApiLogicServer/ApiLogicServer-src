@@ -1,5 +1,5 @@
 ---
-version info: 0.6 (8/18/2024)
+version info: 0.7 (9/15/2024)
 ---
 ## Welcome to API Logic Server
 
@@ -177,6 +177,24 @@ als genai --using=genai_demo.prompt --gen-using-file=system/genai/temp/chatgpt_r
     a. Review `Sample-Genai.md`, Explore Customizations.
 
 ![GenAI Automation](system/images/genai.png)
+
+</details>
+</br>
+
+
+<details markdown>
+
+<summary> You can also iterate</summary>
+
+<br>You can add new columns/tables, while keeping the prior model intact:
+
+```bash title="Iterate"
+# create project without creating a file...
+als genai-create --project-name='customer_orders' --using='customer orders'
+
+als genai-iterate --using='add Order Details and Products'
+# open Docs/db.dmml
+```
 
 </details>
 </br>
