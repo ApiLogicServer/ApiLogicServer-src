@@ -226,6 +226,33 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "     - GENAI-CREATE blt/customer orders",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": [ "genai-create",
+                "--project-name=customer_orders",
+                "--using=customer orders"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "     - GENAI-ITERATE blt/customer orders",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": [
+                "genai-iterate",
+                "--project-name=customer_orders",
+                "--using=add Order Details and Products"],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "2 - Create servers/ApiLogicProject (DEFAULTS)",
             "type": "debugpy",
             "request": "launch",
