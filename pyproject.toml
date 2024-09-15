@@ -23,6 +23,7 @@ version = {attr = "api_logic_server_cli.api_logic_server.__version__"}
 # https://stackoverflow.com/questions/75879256/pyproject-toml-package-flat-layout
 [tool.setuptools.packages.find]
 include = ["api_logic_server_cli*"]
+# exclude = ["__pycache__"]
 namespaces = true
 
 [project]
