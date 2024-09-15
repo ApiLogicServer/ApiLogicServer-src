@@ -1,0 +1,901 @@
+adding 'api_logic_server_cli/prototypes/ont_app/ontimize_seed/src/assets/icons/ontimize96.png'
+adding 'api_logic_server_cli/prototypes/ont_app/ontimize_seed/src/assets/images/github.png'
+adding 'api_logic_server_cli/prototypes/ont_app/ontimize_seed/src/assets/images/login_bg.png'
+adding 'api_logic_server_cli/prototypes/ont_app/ontimize_seed/src/assets/images/no-image-transparent.png'
+adding 'api_logic_server_cli/prototypes/ont_app/ontimize_seed/src/assets/images/no-image.png'
+adding 'api_logic_server_cli/prototypes/ont_app/ontimize_seed/src/assets/images/ontimize.png'
+adding 'api_logic_server_cli/prototypes/ont_app/ontimize_seed/src/assets/images/ontimize_web_log.png'
+adding 'api_logic_server_cli/prototypes/ont_app/ontimize_seed/src/assets/images/sidenav-closed.png'
+adding 'api_logic_server_cli/prototypes/ont_app/ontimize_seed/src/assets/images/sidenav-closed.svg'
+adding 'api_logic_server_cli/prototypes/ont_app/ontimize_seed/src/assets/images/sidenav-opened.png'
+adding 'api_logic_server_cli/prototypes/ont_app/ontimize_seed/src/assets/images/sidenav-opened.svg'
+adding 'api_logic_server_cli/prototypes/ont_app/ontimize_seed/src/assets/images/user_profile.png'
+adding 'api_logic_server_cli/prototypes/ont_app/ontimize_seed/src/assets/js/domchange.js'
+adding 'api_logic_server_cli/prototypes/ont_app/ontimize_seed/src/assets/js/keyboard.js'
+adding 'api_logic_server_cli/prototypes/ont_app/ontimize_seed/src/environments/environment.prod.ts'
+adding 'api_logic_server_cli/prototypes/ont_app/ontimize_seed/src/environments/environment.ts'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/app.menu.config.jinja'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/app.module.jinja'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/app_menu_group.jinja'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/card.component.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/card.component.jinja'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/card.scss'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/check_circle.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/combo-picker.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/component.scss'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/currency_template.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/date_template.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/detail.scss'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/detail_component.jinja'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/detail_route_template.jinja'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/detail_template.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/email_template.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/en.json'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/environment.jinja'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/es.json'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/file_template.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/grid_home.scss'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/grid_home_template.jinja'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/grid_item_template.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/grid_template.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/home.scss'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/home_template.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/home_template.jinja'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/home_template_expand.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/html_template.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/image_template.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/integer_template.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/list-picker.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/main.module.jinja'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/main_routing.jinja'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/module.jinja'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/new.scss'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/new_component.jinja'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/new_template.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/o_checkbox.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/o_combo_input.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/o_nif_input.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/o_slide_toggle.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/o_text_input.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/password_template.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/percent_template.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/phone_template.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/real_template.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/routing.jinja'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/sidebar_template.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/single_tab_panel.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/tab_panel.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/table_cell_render.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/table_column.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/table_currency_template.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/table_image_template.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/table_integer_template.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/table_real_template.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/table_text_template.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/table_textarea_template.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/text_template.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/textarea_template.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/time_template.html'
+adding 'api_logic_server_cli/prototypes/ont_app/templates/timestamp_template.html'
+adding 'api_logic_server_cli/prototypes/oracle/database/db_debug/oracle_db_debug.py'
+adding 'api_logic_server_cli/prototypes/postgres/devops/docker-compose-dev-azure/docker-compose-dev-azure.yml'
+adding 'api_logic_server_cli/prototypes/postgres/devops/docker-compose-dev-local/docker-compose-dev-local.yml'
+adding 'api_logic_server_cli/prototypes/postgres/devops/docker-compose-dev-local-nginx/docker-compose-dev-local-nginx.yml'
+adding 'api_logic_server_cli/prototypes/postgres/devops/docker-image/env.list'
+adding 'api_logic_server_cli/prototypes/sample_ai/database/chatgpt/sample_ai.chatgpt'
+adding 'api_logic_server_cli/prototypes/sample_ai/database/chatgpt/sample_ai.sql'
+adding 'api_logic_server_cli/prototypes/sample_ai/database/chatgpt/sample_ai.sqlite'
+adding 'api_logic_server_cli/prototypes/sample_ai/database/chatgpt/sample_ai_items.sqlite'
+adding 'api_logic_server_cli/prototypes/sample_ai/database/chatgpt/sample_ai_models.py'
+adding 'api_logic_server_cli/prototypes/sample_ai/database/chatgpt/sample_ai_models.sqlite'
+adding 'api_logic_server_cli/prototypes/sample_ai/logic/cocktail-napkin.jpg'
+adding 'api_logic_server_cli/prototypes/sample_ai/logic/declare_logic.py'
+adding 'api_logic_server_cli/prototypes/sample_ai/security/declare_security.py'
+adding 'api_logic_server_cli/prototypes/sample_ai_iteration/api/customize_api.py'
+adding 'api_logic_server_cli/prototypes/sample_ai_iteration/database/db.sqlite'
+adding 'api_logic_server_cli/prototypes/sample_ai_iteration/integration/row_dict_maps/OrderB2B.py'
+adding 'api_logic_server_cli/prototypes/sample_ai_iteration/integration/row_dict_maps/OrderShipping.py'
+adding 'api_logic_server_cli/prototypes/sample_ai_iteration/logic/declare_logic.py'
+adding 'api_logic_server_cli/prototypes/sample_ai_iteration/security/declare_security.py'
+adding 'api_logic_server_cli/prototypes/sample_ai_iteration/ui/admin/admin.yaml'
+adding 'api_logic_server_cli/prototypes/shipping/readme.md'
+adding 'api_logic_server_cli/prototypes/shipping/.vscode/launch.json'
+adding 'api_logic_server_cli/prototypes/shipping/config/config.py'
+adding 'api_logic_server_cli/prototypes/shipping/integration/kafka/kafka_consumer.py'
+adding 'api_logic_server_cli/prototypes/shipping/integration/row_dict_maps/OrderToShip.py'
+adding 'api_logic_server_cli/prototypes/shipping/integration/row_dict_maps/OrderToShipAlt.py'
+adding 'api_logic_server_cli/prototypes/shipping/logic/declare_logic.py'
+adding 'api_logic_server_cli/prototypes/sqlite/devops/auth-db/authdb_mysql.Dockerfile'
+adding 'api_logic_server_cli/prototypes/sqlite/devops/auth-db/authdb_mysql.sql'
+adding 'api_logic_server_cli/prototypes/sqlite/devops/auth-db/authdb_postgres.sql'
+adding 'api_logic_server_cli/prototypes/sqlite/devops/docker-compose-dev-azure/azure-deploy.sh'
+adding 'api_logic_server_cli/prototypes/sqlite/devops/docker-compose-dev-azure/docker-compose-dev-azure.yml'
+adding 'api_logic_server_cli/prototypes/sqlite/devops/docker-compose-dev-local/docker-compose-dev-local.yml'
+adding 'api_logic_server_cli/prototypes/sqlite/devops/docker-compose-dev-local-nginx/docker-compose-dev-local-nginx.yml'
+adding 'api_logic_server_cli/prototypes/sqlite/devops/docker-image/env.list'
+adding 'api_logic_server_cli/prototypes/stress_mysql/test/api_logic_server_behave/features/api_get.feature'
+adding 'api_logic_server_cli/prototypes/stress_mysql/test/api_logic_server_behave/features/steps/api_get-2.py'
+adding 'api_logic_server_cli/prototypes/stress_postgres/test/api_logic_server_behave/features/api_get.feature'
+adding 'api_logic_server_cli/prototypes/stress_postgres/test/api_logic_server_behave/features/steps/api_get.py'
+adding 'api_logic_server_cli/prototypes/tutorial/.gitignore'
+adding 'api_logic_server_cli/prototypes/tutorial/readme.md'
+adding 'api_logic_server_cli/prototypes/tutorial/requirements.txt'
+adding 'api_logic_server_cli/prototypes/tutorial/sample_db.sqlite'
+adding 'api_logic_server_cli/prototypes/tutorial/.devcontainer/For_VSCode.dockerfile'
+adding 'api_logic_server_cli/prototypes/tutorial/.devcontainer/devcontainer.json'
+adding 'api_logic_server_cli/prototypes/tutorial/.devcontainer/setup.sh'
+adding 'api_logic_server_cli/prototypes/tutorial/.vscode/launch.json'
+adding 'api_logic_server_cli/prototypes/tutorial/.vscode/settings.json'
+adding 'api_logic_server_cli/prototypes/tutorial/0. App_Fiddle/config.py'
+adding 'api_logic_server_cli/prototypes/tutorial/0. App_Fiddle/flask_basic.py'
+adding 'api_logic_server_cli/prototypes/tutorial/0. App_Fiddle/logging.yml'
+adding 'api_logic_server_cli/prototypes/tutorial/0. App_Fiddle/readme.md'
+adding 'api_logic_server_cli/prototypes/tutorial/0. App_Fiddle/util.py'
+adding 'api_logic_server_cli/prototypes/tutorial/0. App_Fiddle/api/end_points.py'
+adding 'api_logic_server_cli/prototypes/tutorial/0. App_Fiddle/database/db.sqlite'
+adding 'api_logic_server_cli/prototypes/tutorial/0. App_Fiddle/database/logging.yml'
+adding 'api_logic_server_cli/prototypes/tutorial/0. App_Fiddle/database/models.py'
+adding 'api_logic_server_cli/prototypes/tutorial/0. App_Fiddle/test/server_test.py'
+adding 'api_logic_server_cli/sqlacodegen_wrapper/Readme.md'
+adding 'api_logic_server_cli/sqlacodegen_wrapper/__init__.py'
+adding 'api_logic_server_cli/sqlacodegen_wrapper/console_log.txt'
+adding 'api_logic_server_cli/sqlacodegen_wrapper/requirements.txt'
+adding 'api_logic_server_cli/sqlacodegen_wrapper/sqlacodegen_wrapper.py'
+adding 'api_logic_server_cli/sqlacodegen_wrapper/__pycache__/__init__.cpython-311.pyc'
+adding 'api_logic_server_cli/sqlacodegen_wrapper/__pycache__/__init__.cpython-312.pyc'
+adding 'api_logic_server_cli/sqlacodegen_wrapper/__pycache__/sqlacodegen_wrapper.cpython-311.pyc'
+adding 'api_logic_server_cli/sqlacodegen_wrapper/__pycache__/sqlacodegen_wrapper.cpython-312.pyc'
+adding 'api_logic_server_cli/sqlacodegen_wrapper/sqlacodegen/.travis.yml'
+adding 'api_logic_server_cli/sqlacodegen_wrapper/sqlacodegen/CHANGES.rst'
+adding 'api_logic_server_cli/sqlacodegen_wrapper/sqlacodegen/README.rst'
+adding 'api_logic_server_cli/sqlacodegen_wrapper/sqlacodegen/__init__.py'
+adding 'api_logic_server_cli/sqlacodegen_wrapper/sqlacodegen/pyproject.toml'
+adding 'api_logic_server_cli/sqlacodegen_wrapper/sqlacodegen/setup.cfg'
+adding 'api_logic_server_cli/sqlacodegen_wrapper/sqlacodegen/setup.py'
+adding 'api_logic_server_cli/sqlacodegen_wrapper/sqlacodegen/tox.ini'
+adding 'api_logic_server_cli/sqlacodegen_wrapper/sqlacodegen/__pycache__/__init__.cpython-311.pyc'
+adding 'api_logic_server_cli/sqlacodegen_wrapper/sqlacodegen/__pycache__/__init__.cpython-312.pyc'
+adding 'api_logic_server_cli/sqlacodegen_wrapper/sqlacodegen/sqlacodegen/__init__.py'
+adding 'api_logic_server_cli/sqlacodegen_wrapper/sqlacodegen/sqlacodegen/codegen.py'
+adding 'api_logic_server_cli/sqlacodegen_wrapper/sqlacodegen/sqlacodegen/main.py'
+adding 'api_logic_server_cli/sqlacodegen_wrapper/sqlacodegen/sqlacodegen/__pycache__/__init__.cpython-311.pyc'
+adding 'api_logic_server_cli/sqlacodegen_wrapper/sqlacodegen/sqlacodegen/__pycache__/__init__.cpython-312.pyc'
+adding 'api_logic_server_cli/sqlacodegen_wrapper/sqlacodegen/sqlacodegen/__pycache__/codegen.cpython-311.pyc'
+adding 'api_logic_server_cli/sqlacodegen_wrapper/sqlacodegen/sqlacodegen/__pycache__/codegen.cpython-312.pyc'
+adding 'api_logic_server_cli/sqlacodegen_wrapper/sqlacodegen/sqlacodegen/als_safrs_310/delete_log.txt'
+adding 'api_logic_server_cli/sqlacodegen_wrapper/sqlacodegen/sqlacodegen/als_safrs_310/notes.txt'
+adding 'api_logic_server_cli/sqlacodegen_wrapper/sqlacodegen/sqlacodegen/als_safrs_310/nw-schema.txt'
+adding 'api_logic_server_cli/sqlacodegen_wrapper/sqlacodegen/sqlacodegen/als_safrs_310/classic_models/models_ga.py'
+adding 'api_logic_server_cli/sqlacodegen_wrapper/sqlacodegen/sqlacodegen/als_safrs_310/classic_models/models_gen.py'
+adding 'api_logic_server_cli/sqlacodegen_wrapper/sqlacodegen/sqlacodegen/als_safrs_310/codegen/z_310_codegen.py'
+adding 'api_logic_server_cli/sqlacodegen_wrapper/sqlacodegen/sqlacodegen/als_safrs_310/compare_gen_vs_rc2/models.py'
+adding 'api_logic_server_cli/sqlacodegen_wrapper/sqlacodegen/sqlacodegen/als_safrs_310/compare_gen_vs_rc2/models_rc2.py'
+adding 'api_logic_server_cli/sqlacodegen_wrapper/sqlacodegen/sqlacodegen/als_safrs_310/compare_gen_vs_rc2/pip_freeze.txt'
+adding 'api_logic_server_cli/sqlacodegen_wrapper/sqlacodegen/sqlacodegen/als_safrs_310/compare_gen_vs_rc2/pip_freeze_rc2.txt'
+adding 'api_logic_server_cli/sqlacodegen_wrapper/sqlacodegen/tests/test_codegen.py'
+adding 'api_logic_server_cli/templates/admin.yaml'
+adding 'api_logic_server_cli/templates/app_fiddle.md'
+adding 'api_logic_server_cli/templates/app_fiddle.txt'
+adding 'api_logic_server_cli/templates/index.html'
+adding 'api_logic_server_cli/templates/login_endpoint.txt'
+adding 'api_logic_server_cli/templates/login_endpoint_imports.txt'
+adding 'api_logic_server_cli/templates/opt_locking.txt'
+adding 'ApiLogicServer-11.1.28.dist-info/LICENSE'
+adding 'ApiLogicServer-11.1.28.dist-info/METADATA'
+adding 'ApiLogicServer-11.1.28.dist-info/WHEEL'
+adding 'ApiLogicServer-11.1.28.dist-info/entry_points.txt'
+adding 'ApiLogicServer-11.1.28.dist-info/top_level.txt'
+adding 'ApiLogicServer-11.1.28.dist-info/RECORD'
+removing build/bdist.macosx-10.9-universal2/wheel
+Successfully built apilogicserver-11.1.28.tar.gz and ApiLogicServer-11.1.28-py3-none-any.whl
+Processing /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Collecting PyJWT==2.6.0 (from ApiLogicServer==11.1.28)
+  Using cached PyJWT-2.6.0-py3-none-any.whl.metadata (4.0 kB)
+Collecting python-dateutil==2.8.2 (from ApiLogicServer==11.1.28)
+  Using cached python_dateutil-2.8.2-py2.py3-none-any.whl.metadata (8.2 kB)
+Collecting SQLAlchemy-Utils==0.38.2 (from ApiLogicServer==11.1.28)
+  Using cached SQLAlchemy_Utils-0.38.2-py3-none-any.whl.metadata (4.3 kB)
+Collecting logicbankutils==0.6.0 (from ApiLogicServer==11.1.28)
+  Using cached logicbankutils-0.6.0-py3-none-any.whl.metadata (2.8 kB)
+Collecting inflect==5.0.2 (from ApiLogicServer==11.1.28)
+  Using cached inflect-5.0.2-py3-none-any.whl.metadata (20 kB)
+Collecting Flask==2.3.2 (from ApiLogicServer==11.1.28)
+  Using cached Flask-2.3.2-py3-none-any.whl.metadata (3.7 kB)
+Collecting Flask-Cors==3.0.10 (from ApiLogicServer==11.1.28)
+  Using cached Flask_Cors-3.0.10-py2.py3-none-any.whl.metadata (5.4 kB)
+Collecting Flask-RESTful>=0.3.9 (from ApiLogicServer==11.1.28)
+  Using cached Flask_RESTful-0.3.10-py2.py3-none-any.whl.metadata (1.0 kB)
+Collecting flask-restful-swagger-2>=0.35 (from ApiLogicServer==11.1.28)
+  Using cached flask_restful_swagger_2-0.35-py3-none-any.whl
+Collecting Flask-SQLAlchemy==3.0.3 (from ApiLogicServer==11.1.28)
+  Using cached Flask_SQLAlchemy-3.0.3-py3-none-any.whl.metadata (3.4 kB)
+Collecting flask-swagger-ui>=4.11.1 (from ApiLogicServer==11.1.28)
+  Using cached flask_swagger_ui-4.11.1-py3-none-any.whl.metadata (2.4 kB)
+Collecting flask-bcrypt==1.0.1 (from ApiLogicServer==11.1.28)
+  Using cached Flask_Bcrypt-1.0.1-py3-none-any.whl.metadata (2.6 kB)
+Collecting itsdangerous==2.1.2 (from ApiLogicServer==11.1.28)
+  Using cached itsdangerous-2.1.2-py3-none-any.whl.metadata (2.9 kB)
+Collecting Jinja2==3.1.2 (from ApiLogicServer==11.1.28)
+  Using cached Jinja2-3.1.2-py3-none-any.whl.metadata (3.5 kB)
+Collecting MarkupSafe==2.1.3 (from ApiLogicServer==11.1.28)
+  Using cached MarkupSafe-2.1.3-cp312-cp312-macosx_10_9_x86_64.whl.metadata (2.9 kB)
+Collecting six==1.16.0 (from ApiLogicServer==11.1.28)
+  Using cached six-1.16.0-py2.py3-none-any.whl.metadata (1.8 kB)
+Collecting SQLAlchemy==2.0.15 (from ApiLogicServer==11.1.28)
+  Using cached SQLAlchemy-2.0.15-py3-none-any.whl.metadata (9.3 kB)
+Collecting Werkzeug==2.3.3 (from ApiLogicServer==11.1.28)
+  Using cached Werkzeug-2.3.3-py3-none-any.whl.metadata (4.2 kB)
+Collecting safrs>=3.1.4 (from ApiLogicServer==11.1.28)
+  Using cached safrs-3.1.4-py3-none-any.whl.metadata (59 kB)
+Collecting Flask-Admin==1.5.7 (from ApiLogicServer==11.1.28)
+  Using cached Flask_Admin-1.5.7-py3-none-any.whl
+Collecting Flask-JWT-Extended==4.4.4 (from ApiLogicServer==11.1.28)
+  Using cached Flask_JWT_Extended-4.4.4-py2.py3-none-any.whl.metadata (3.7 kB)
+Collecting Flask-Login==0.6.2 (from ApiLogicServer==11.1.28)
+  Using cached Flask_Login-0.6.2-py3-none-any.whl.metadata (5.8 kB)
+Collecting Flask-OpenID==1.3.0 (from ApiLogicServer==11.1.28)
+  Using cached Flask_OpenID-1.3.0-py3-none-any.whl.metadata (1.4 kB)
+Collecting python-dotenv==0.15.0 (from ApiLogicServer==11.1.28)
+  Using cached python_dotenv-0.15.0-py2.py3-none-any.whl.metadata (18 kB)
+Collecting email-validator==1.1.1 (from ApiLogicServer==11.1.28)
+  Using cached email_validator-1.1.1-py2.py3-none-any.whl.metadata (17 kB)
+Collecting LogicBank>=1.20.7 (from ApiLogicServer==11.1.28)
+  Using cached logicbank-1.20.7-py3-none-any.whl.metadata (15 kB)
+Collecting cryptography==36.0.1 (from ApiLogicServer==11.1.28)
+  Using cached cryptography-36.0.1-cp36-abi3-macosx_10_10_x86_64.whl.metadata (5.3 kB)
+Collecting rsa (from ApiLogicServer==11.1.28)
+  Using cached rsa-4.9-py3-none-any.whl.metadata (4.2 kB)
+Collecting PyMySQL==1.0.3 (from ApiLogicServer==11.1.28)
+  Using cached PyMySQL-1.0.3-py3-none-any.whl.metadata (4.4 kB)
+Collecting oracledb==2.1.2 (from ApiLogicServer==11.1.28)
+  Using cached oracledb-2.1.2-cp312-cp312-macosx_10_9_universal2.whl.metadata (5.2 kB)
+Collecting requests==2.31.0 (from ApiLogicServer==11.1.28)
+  Using cached requests-2.31.0-py3-none-any.whl.metadata (4.6 kB)
+Collecting gunicorn==20.1.0 (from ApiLogicServer==11.1.28)
+  Using cached gunicorn-20.1.0-py3-none-any.whl.metadata (3.8 kB)
+Collecting psycopg2-binary==2.9.9 (from ApiLogicServer==11.1.28)
+  Using cached psycopg2_binary-2.9.9-cp312-cp312-macosx_10_9_x86_64.whl.metadata (4.4 kB)
+Collecting dotmap==1.3.25 (from ApiLogicServer==11.1.28)
+  Using cached dotmap-1.3.25-py3-none-any.whl.metadata (3.2 kB)
+Collecting WTForms==2.3.3 (from ApiLogicServer==11.1.28)
+  Using cached WTForms-2.3.3-py2.py3-none-any.whl.metadata (3.7 kB)
+Collecting behave==1.2.6 (from ApiLogicServer==11.1.28)
+  Using cached behave-1.2.6-py2.py3-none-any.whl.metadata (6.4 kB)
+Collecting alembic==1.7.7 (from ApiLogicServer==11.1.28)
+  Using cached alembic-1.7.7-py3-none-any.whl.metadata (7.3 kB)
+Collecting python-ulid==2.7.0 (from ApiLogicServer==11.1.28)
+  Using cached python_ulid-2.7.0-py3-none-any.whl.metadata (5.8 kB)
+Collecting psutil==6.0.0 (from ApiLogicServer==11.1.28)
+  Using cached psutil-6.0.0-cp36-abi3-macosx_10_9_x86_64.whl.metadata (21 kB)
+Collecting pandas==2.2.2 (from ApiLogicServer==11.1.28)
+  Using cached pandas-2.2.2-cp312-cp312-macosx_10_9_x86_64.whl.metadata (19 kB)
+Collecting openpyxl==3.1.5 (from ApiLogicServer==11.1.28)
+  Using cached openpyxl-3.1.5-py2.py3-none-any.whl.metadata (2.5 kB)
+Collecting GeoAlchemy2==0.12.5 (from ApiLogicServer==11.1.28)
+  Using cached GeoAlchemy2-0.12.5-py2.py3-none-any.whl.metadata (1.6 kB)
+Collecting confluent-kafka==2.3.0 (from ApiLogicServer==11.1.28)
+  Using cached confluent_kafka-2.3.0-cp312-cp312-macosx_10_9_x86_64.whl.metadata (2.3 kB)
+Collecting translate==3.6.1 (from ApiLogicServer==11.1.28)
+  Using cached translate-3.6.1-py2.py3-none-any.whl.metadata (7.7 kB)
+Collecting libretranslatepy==2.1.1 (from ApiLogicServer==11.1.28)
+  Using cached libretranslatepy-2.1.1-py3-none-any.whl.metadata (233 bytes)
+Collecting reportlab==4.2.0 (from ApiLogicServer==11.1.28)
+  Using cached reportlab-4.2.0-py3-none-any.whl.metadata (1.4 kB)
+Collecting xlsxwriter==3.2.0 (from ApiLogicServer==11.1.28)
+  Using cached XlsxWriter-3.2.0-py3-none-any.whl.metadata (2.6 kB)
+Collecting Mako (from alembic==1.7.7->ApiLogicServer==11.1.28)
+  Using cached Mako-1.3.5-py3-none-any.whl.metadata (2.9 kB)
+Collecting parse>=1.8.2 (from behave==1.2.6->ApiLogicServer==11.1.28)
+  Using cached parse-1.20.2-py2.py3-none-any.whl.metadata (22 kB)
+Collecting parse-type>=0.4.2 (from behave==1.2.6->ApiLogicServer==11.1.28)
+  Using cached parse_type-0.6.3-py2.py3-none-any.whl.metadata (12 kB)
+Collecting cffi>=1.12 (from cryptography==36.0.1->ApiLogicServer==11.1.28)
+  Using cached cffi-1.17.1-cp312-cp312-macosx_10_9_x86_64.whl.metadata (1.5 kB)
+Collecting dnspython>=1.15.0 (from email-validator==1.1.1->ApiLogicServer==11.1.28)
+  Using cached dnspython-2.6.1-py3-none-any.whl.metadata (5.8 kB)
+Collecting idna>=2.0.0 (from email-validator==1.1.1->ApiLogicServer==11.1.28)
+  Using cached idna-3.10-py3-none-any.whl.metadata (10 kB)
+Collecting click>=8.1.3 (from Flask==2.3.2->ApiLogicServer==11.1.28)
+  Using cached click-8.1.7-py3-none-any.whl.metadata (3.0 kB)
+Collecting blinker>=1.6.2 (from Flask==2.3.2->ApiLogicServer==11.1.28)
+  Using cached blinker-1.8.2-py3-none-any.whl.metadata (1.6 kB)
+Collecting bcrypt>=3.1.1 (from flask-bcrypt==1.0.1->ApiLogicServer==11.1.28)
+  Using cached bcrypt-4.2.0-cp39-abi3-macosx_10_12_universal2.whl.metadata (9.6 kB)
+Collecting python3-openid>=2.0 (from Flask-OpenID==1.3.0->ApiLogicServer==11.1.28)
+  Using cached python3_openid-3.2.0-py3-none-any.whl.metadata (1.6 kB)
+Collecting packaging (from GeoAlchemy2==0.12.5->ApiLogicServer==11.1.28)
+  Using cached packaging-24.1-py3-none-any.whl.metadata (3.2 kB)
+Collecting setuptools>=3.0 (from gunicorn==20.1.0->ApiLogicServer==11.1.28)
+  Using cached setuptools-75.0.0-py3-none-any.whl.metadata (6.9 kB)
+Collecting et-xmlfile (from openpyxl==3.1.5->ApiLogicServer==11.1.28)
+  Using cached et_xmlfile-1.1.0-py3-none-any.whl.metadata (1.8 kB)
+Collecting numpy>=1.26.0 (from pandas==2.2.2->ApiLogicServer==11.1.28)
+  Using cached numpy-2.1.1-cp312-cp312-macosx_14_0_x86_64.whl.metadata (60 kB)
+Collecting pytz>=2020.1 (from pandas==2.2.2->ApiLogicServer==11.1.28)
+  Using cached pytz-2024.2-py2.py3-none-any.whl.metadata (22 kB)
+Collecting tzdata>=2022.7 (from pandas==2.2.2->ApiLogicServer==11.1.28)
+  Using cached tzdata-2024.1-py2.py3-none-any.whl.metadata (1.4 kB)
+Collecting pillow>=9.0.0 (from reportlab==4.2.0->ApiLogicServer==11.1.28)
+  Using cached pillow-10.4.0-cp312-cp312-macosx_10_10_x86_64.whl.metadata (9.2 kB)
+Collecting chardet (from reportlab==4.2.0->ApiLogicServer==11.1.28)
+  Using cached chardet-5.2.0-py3-none-any.whl.metadata (3.4 kB)
+Collecting charset-normalizer<4,>=2 (from requests==2.31.0->ApiLogicServer==11.1.28)
+  Using cached charset_normalizer-3.3.2-cp312-cp312-macosx_10_9_x86_64.whl.metadata (33 kB)
+Collecting urllib3<3,>=1.21.1 (from requests==2.31.0->ApiLogicServer==11.1.28)
+  Using cached urllib3-2.2.3-py3-none-any.whl.metadata (6.5 kB)
+Collecting certifi>=2017.4.17 (from requests==2.31.0->ApiLogicServer==11.1.28)
+  Using cached certifi-2024.8.30-py3-none-any.whl.metadata (2.2 kB)
+Collecting typing-extensions>=4.2.0 (from SQLAlchemy==2.0.15->ApiLogicServer==11.1.28)
+  Using cached typing_extensions-4.12.2-py3-none-any.whl.metadata (3.0 kB)
+Collecting greenlet!=0.4.17 (from SQLAlchemy==2.0.15->ApiLogicServer==11.1.28)
+  Using cached greenlet-3.1.0-cp312-cp312-macosx_11_0_universal2.whl.metadata (3.8 kB)
+Collecting lxml (from translate==3.6.1->ApiLogicServer==11.1.28)
+  Using cached lxml-5.3.0-cp312-cp312-macosx_10_9_x86_64.whl.metadata (3.8 kB)
+Collecting aniso8601>=0.82 (from Flask-RESTful>=0.3.9->ApiLogicServer==11.1.28)
+  Using cached aniso8601-9.0.1-py2.py3-none-any.whl.metadata (23 kB)
+Collecting PyYaml>=6.0 (from safrs>=3.1.4->ApiLogicServer==11.1.28)
+  Using cached PyYAML-6.0.2-cp312-cp312-macosx_10_9_x86_64.whl.metadata (2.1 kB)
+Collecting pyasn1>=0.1.3 (from rsa->ApiLogicServer==11.1.28)
+  Using cached pyasn1-0.6.1-py3-none-any.whl.metadata (8.4 kB)
+Collecting pycparser (from cffi>=1.12->cryptography==36.0.1->ApiLogicServer==11.1.28)
+  Using cached pycparser-2.22-py3-none-any.whl.metadata (943 bytes)
+Collecting defusedxml (from python3-openid>=2.0->Flask-OpenID==1.3.0->ApiLogicServer==11.1.28)
+  Using cached defusedxml-0.7.1-py2.py3-none-any.whl.metadata (32 kB)
+Using cached alembic-1.7.7-py3-none-any.whl (210 kB)
+Using cached behave-1.2.6-py2.py3-none-any.whl (136 kB)
+Using cached confluent_kafka-2.3.0-cp312-cp312-macosx_10_9_x86_64.whl (3.4 MB)
+Using cached cryptography-36.0.1-cp36-abi3-macosx_10_10_x86_64.whl (2.6 MB)
+Using cached dotmap-1.3.25-py3-none-any.whl (11 kB)
+Using cached email_validator-1.1.1-py2.py3-none-any.whl (17 kB)
+Using cached Flask-2.3.2-py3-none-any.whl (96 kB)
+Using cached Flask_Bcrypt-1.0.1-py3-none-any.whl (6.0 kB)
+Using cached Flask_Cors-3.0.10-py2.py3-none-any.whl (14 kB)
+Using cached Flask_JWT_Extended-4.4.4-py2.py3-none-any.whl (22 kB)
+Using cached Flask_Login-0.6.2-py3-none-any.whl (17 kB)
+Using cached Flask_OpenID-1.3.0-py3-none-any.whl (9.3 kB)
+Using cached Flask_SQLAlchemy-3.0.3-py3-none-any.whl (24 kB)
+Using cached GeoAlchemy2-0.12.5-py2.py3-none-any.whl (50 kB)
+Using cached gunicorn-20.1.0-py3-none-any.whl (79 kB)
+Using cached inflect-5.0.2-py3-none-any.whl (31 kB)
+Using cached itsdangerous-2.1.2-py3-none-any.whl (15 kB)
+Using cached Jinja2-3.1.2-py3-none-any.whl (133 kB)
+Using cached libretranslatepy-2.1.1-py3-none-any.whl (3.2 kB)
+Using cached logicbankutils-0.6.0-py3-none-any.whl (4.8 kB)
+Using cached MarkupSafe-2.1.3-cp312-cp312-macosx_10_9_x86_64.whl (13 kB)
+Using cached openpyxl-3.1.5-py2.py3-none-any.whl (250 kB)
+Using cached oracledb-2.1.2-cp312-cp312-macosx_10_9_universal2.whl (3.6 MB)
+Using cached pandas-2.2.2-cp312-cp312-macosx_10_9_x86_64.whl (12.5 MB)
+Using cached psutil-6.0.0-cp36-abi3-macosx_10_9_x86_64.whl (250 kB)
+Using cached psycopg2_binary-2.9.9-cp312-cp312-macosx_10_9_x86_64.whl (2.8 MB)
+Using cached PyJWT-2.6.0-py3-none-any.whl (20 kB)
+Using cached PyMySQL-1.0.3-py3-none-any.whl (43 kB)
+Using cached python_dateutil-2.8.2-py2.py3-none-any.whl (247 kB)
+Using cached python_dotenv-0.15.0-py2.py3-none-any.whl (18 kB)
+Using cached python_ulid-2.7.0-py3-none-any.whl (10 kB)
+Using cached reportlab-4.2.0-py3-none-any.whl (1.9 MB)
+Using cached requests-2.31.0-py3-none-any.whl (62 kB)
+Using cached six-1.16.0-py2.py3-none-any.whl (11 kB)
+Using cached SQLAlchemy-2.0.15-py3-none-any.whl (1.8 MB)
+Using cached SQLAlchemy_Utils-0.38.2-py3-none-any.whl (100 kB)
+Using cached translate-3.6.1-py2.py3-none-any.whl (12 kB)
+Using cached Werkzeug-2.3.3-py3-none-any.whl (242 kB)
+Using cached WTForms-2.3.3-py2.py3-none-any.whl (169 kB)
+Using cached XlsxWriter-3.2.0-py3-none-any.whl (159 kB)
+Using cached Flask_RESTful-0.3.10-py2.py3-none-any.whl (26 kB)
+Using cached flask_swagger_ui-4.11.1-py3-none-any.whl (1.4 MB)
+Using cached logicbank-1.20.7-py3-none-any.whl (53 kB)
+Using cached safrs-3.1.4-py3-none-any.whl (92 kB)
+Using cached rsa-4.9-py3-none-any.whl (34 kB)
+Using cached aniso8601-9.0.1-py2.py3-none-any.whl (52 kB)
+Using cached bcrypt-4.2.0-cp39-abi3-macosx_10_12_universal2.whl (472 kB)
+Using cached blinker-1.8.2-py3-none-any.whl (9.5 kB)
+Using cached certifi-2024.8.30-py3-none-any.whl (167 kB)
+Using cached cffi-1.17.1-cp312-cp312-macosx_10_9_x86_64.whl (183 kB)
+Using cached charset_normalizer-3.3.2-cp312-cp312-macosx_10_9_x86_64.whl (122 kB)
+Using cached click-8.1.7-py3-none-any.whl (97 kB)
+Using cached dnspython-2.6.1-py3-none-any.whl (307 kB)
+Using cached greenlet-3.1.0-cp312-cp312-macosx_11_0_universal2.whl (270 kB)
+Using cached idna-3.10-py3-none-any.whl (70 kB)
+Using cached numpy-2.1.1-cp312-cp312-macosx_14_0_x86_64.whl (6.6 MB)
+Using cached parse-1.20.2-py2.py3-none-any.whl (20 kB)
+Using cached parse_type-0.6.3-py2.py3-none-any.whl (27 kB)
+Using cached pillow-10.4.0-cp312-cp312-macosx_10_10_x86_64.whl (3.5 MB)
+Using cached pyasn1-0.6.1-py3-none-any.whl (83 kB)
+Using cached python3_openid-3.2.0-py3-none-any.whl (133 kB)
+Using cached pytz-2024.2-py2.py3-none-any.whl (508 kB)
+Using cached PyYAML-6.0.2-cp312-cp312-macosx_10_9_x86_64.whl (183 kB)
+Using cached setuptools-75.0.0-py3-none-any.whl (1.2 MB)
+Using cached typing_extensions-4.12.2-py3-none-any.whl (37 kB)
+Using cached tzdata-2024.1-py2.py3-none-any.whl (345 kB)
+Using cached urllib3-2.2.3-py3-none-any.whl (126 kB)
+Using cached chardet-5.2.0-py3-none-any.whl (199 kB)
+Using cached et_xmlfile-1.1.0-py3-none-any.whl (4.7 kB)
+Using cached lxml-5.3.0-cp312-cp312-macosx_10_9_x86_64.whl (4.4 MB)
+Using cached Mako-1.3.5-py3-none-any.whl (78 kB)
+Using cached packaging-24.1-py3-none-any.whl (53 kB)
+Using cached defusedxml-0.7.1-py2.py3-none-any.whl (25 kB)
+Using cached pycparser-2.22-py3-none-any.whl (117 kB)
+Building wheels for collected packages: ApiLogicServer
+  Building wheel for ApiLogicServer (pyproject.toml): started
+  Building wheel for ApiLogicServer (pyproject.toml): finished with status 'done'
+  Created wheel for ApiLogicServer: filename=ApiLogicServer-11.1.28-py3-none-any.whl size=20984699 sha256=db27c7224c1629e56e73bcee59f71d704fd1bfabc5f65d1c1a948d12c8b1df5a
+  Stored in directory: /Users/val/Library/Caches/pip/wheels/cf/a7/2a/6612366ef507786739e2d7f1902cede6b3c948f14258a1d185
+Successfully built ApiLogicServer
+Installing collected packages: pytz, python-dotenv, parse, libretranslatepy, dotmap, confluent-kafka, aniso8601, xlsxwriter, urllib3, tzdata, typing-extensions, six, setuptools, PyYaml, python-ulid, PyMySQL, PyJWT, pycparser, pyasn1, psycopg2-binary, psutil, pillow, packaging, numpy, MarkupSafe, lxml, logicbankutils, itsdangerous, inflect, idna, greenlet, et-xmlfile, dnspython, defusedxml, click, charset-normalizer, chardet, certifi, blinker, bcrypt, WTForms, Werkzeug, SQLAlchemy, rsa, requests, reportlab, python3-openid, python-dateutil, parse-type, openpyxl, Mako, Jinja2, gunicorn, email-validator, cffi, translate, SQLAlchemy-Utils, pandas, LogicBank, GeoAlchemy2, Flask, cryptography, behave, alembic, oracledb, flask-swagger-ui, Flask-SQLAlchemy, Flask-RESTful, Flask-OpenID, Flask-Login, Flask-JWT-Extended, Flask-Cors, flask-bcrypt, Flask-Admin, flask-restful-swagger-2, safrs, ApiLogicServer
+Successfully installed ApiLogicServer-11.1.28 Flask-2.3.2 Flask-Admin-1.5.7 Flask-Cors-3.0.10 Flask-JWT-Extended-4.4.4 Flask-Login-0.6.2 Flask-OpenID-1.3.0 Flask-RESTful-0.3.10 Flask-SQLAlchemy-3.0.3 GeoAlchemy2-0.12.5 Jinja2-3.1.2 LogicBank-1.20.7 Mako-1.3.5 MarkupSafe-2.1.3 PyJWT-2.6.0 PyMySQL-1.0.3 PyYaml-6.0.2 SQLAlchemy-2.0.15 SQLAlchemy-Utils-0.38.2 WTForms-2.3.3 Werkzeug-2.3.3 alembic-1.7.7 aniso8601-9.0.1 bcrypt-4.2.0 behave-1.2.6 blinker-1.8.2 certifi-2024.8.30 cffi-1.17.1 chardet-5.2.0 charset-normalizer-3.3.2 click-8.1.7 confluent-kafka-2.3.0 cryptography-36.0.1 defusedxml-0.7.1 dnspython-2.6.1 dotmap-1.3.25 email-validator-1.1.1 et-xmlfile-1.1.0 flask-bcrypt-1.0.1 flask-restful-swagger-2-0.35 flask-swagger-ui-4.11.1 greenlet-3.1.0 gunicorn-20.1.0 idna-3.10 inflect-5.0.2 itsdangerous-2.1.2 libretranslatepy-2.1.1 logicbankutils-0.6.0 lxml-5.3.0 numpy-2.1.1 openpyxl-3.1.5 oracledb-2.1.2 packaging-24.1 pandas-2.2.2 parse-1.20.2 parse-type-0.6.3 pillow-10.4.0 psutil-6.0.0 psycopg2-binary-2.9.9 pyasn1-0.6.1 pycparser-2.22 python-dateutil-2.8.2 python-dotenv-0.15.0 python-ulid-2.7.0 python3-openid-3.2.0 pytz-2024.2 reportlab-4.2.0 requests-2.31.0 rsa-4.9 safrs-3.1.4 setuptools-75.0.0 six-1.16.0 translate-3.6.1 typing-extensions-4.12.2 tzdata-2024.1 urllib3-2.2.3 xlsxwriter-3.2.0
+Processing /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Collecting PyJWT==2.6.0 (from ApiLogicServer==11.1.28)
+  Using cached PyJWT-2.6.0-py3-none-any.whl.metadata (4.0 kB)
+Collecting python-dateutil==2.8.2 (from ApiLogicServer==11.1.28)
+  Using cached python_dateutil-2.8.2-py2.py3-none-any.whl.metadata (8.2 kB)
+Collecting SQLAlchemy-Utils==0.38.2 (from ApiLogicServer==11.1.28)
+  Using cached SQLAlchemy_Utils-0.38.2-py3-none-any.whl.metadata (4.3 kB)
+Collecting logicbankutils==0.6.0 (from ApiLogicServer==11.1.28)
+  Using cached logicbankutils-0.6.0-py3-none-any.whl.metadata (2.8 kB)
+Collecting inflect==5.0.2 (from ApiLogicServer==11.1.28)
+  Using cached inflect-5.0.2-py3-none-any.whl.metadata (20 kB)
+Collecting Flask==2.3.2 (from ApiLogicServer==11.1.28)
+  Using cached Flask-2.3.2-py3-none-any.whl.metadata (3.7 kB)
+Collecting Flask-Cors==3.0.10 (from ApiLogicServer==11.1.28)
+  Using cached Flask_Cors-3.0.10-py2.py3-none-any.whl.metadata (5.4 kB)
+Collecting Flask-RESTful>=0.3.9 (from ApiLogicServer==11.1.28)
+  Using cached Flask_RESTful-0.3.10-py2.py3-none-any.whl.metadata (1.0 kB)
+Collecting flask-restful-swagger-2>=0.35 (from ApiLogicServer==11.1.28)
+  Using cached flask_restful_swagger_2-0.35-py3-none-any.whl
+Collecting Flask-SQLAlchemy==3.0.3 (from ApiLogicServer==11.1.28)
+  Using cached Flask_SQLAlchemy-3.0.3-py3-none-any.whl.metadata (3.4 kB)
+Collecting flask-swagger-ui>=4.11.1 (from ApiLogicServer==11.1.28)
+  Using cached flask_swagger_ui-4.11.1-py3-none-any.whl.metadata (2.4 kB)
+Collecting flask-bcrypt==1.0.1 (from ApiLogicServer==11.1.28)
+  Using cached Flask_Bcrypt-1.0.1-py3-none-any.whl.metadata (2.6 kB)
+Collecting itsdangerous==2.1.2 (from ApiLogicServer==11.1.28)
+  Using cached itsdangerous-2.1.2-py3-none-any.whl.metadata (2.9 kB)
+Collecting Jinja2==3.1.2 (from ApiLogicServer==11.1.28)
+  Using cached Jinja2-3.1.2-py3-none-any.whl.metadata (3.5 kB)
+Collecting MarkupSafe==2.1.3 (from ApiLogicServer==11.1.28)
+  Using cached MarkupSafe-2.1.3-cp312-cp312-macosx_10_9_x86_64.whl.metadata (2.9 kB)
+Collecting six==1.16.0 (from ApiLogicServer==11.1.28)
+  Using cached six-1.16.0-py2.py3-none-any.whl.metadata (1.8 kB)
+Collecting SQLAlchemy==2.0.15 (from ApiLogicServer==11.1.28)
+  Using cached SQLAlchemy-2.0.15-py3-none-any.whl.metadata (9.3 kB)
+Collecting Werkzeug==2.3.3 (from ApiLogicServer==11.1.28)
+  Using cached Werkzeug-2.3.3-py3-none-any.whl.metadata (4.2 kB)
+Collecting safrs>=3.1.4 (from ApiLogicServer==11.1.28)
+  Using cached safrs-3.1.4-py3-none-any.whl.metadata (59 kB)
+Collecting Flask-Admin==1.5.7 (from ApiLogicServer==11.1.28)
+  Using cached Flask_Admin-1.5.7-py3-none-any.whl
+Collecting Flask-JWT-Extended==4.4.4 (from ApiLogicServer==11.1.28)
+  Using cached Flask_JWT_Extended-4.4.4-py2.py3-none-any.whl.metadata (3.7 kB)
+Collecting Flask-Login==0.6.2 (from ApiLogicServer==11.1.28)
+  Using cached Flask_Login-0.6.2-py3-none-any.whl.metadata (5.8 kB)
+Collecting Flask-OpenID==1.3.0 (from ApiLogicServer==11.1.28)
+  Using cached Flask_OpenID-1.3.0-py3-none-any.whl.metadata (1.4 kB)
+Collecting python-dotenv==0.15.0 (from ApiLogicServer==11.1.28)
+  Using cached python_dotenv-0.15.0-py2.py3-none-any.whl.metadata (18 kB)
+Collecting email-validator==1.1.1 (from ApiLogicServer==11.1.28)
+  Using cached email_validator-1.1.1-py2.py3-none-any.whl.metadata (17 kB)
+Collecting LogicBank>=1.20.7 (from ApiLogicServer==11.1.28)
+  Using cached logicbank-1.20.7-py3-none-any.whl.metadata (15 kB)
+Collecting cryptography==36.0.1 (from ApiLogicServer==11.1.28)
+  Using cached cryptography-36.0.1-cp36-abi3-macosx_10_10_x86_64.whl.metadata (5.3 kB)
+Collecting rsa (from ApiLogicServer==11.1.28)
+  Using cached rsa-4.9-py3-none-any.whl.metadata (4.2 kB)
+Collecting PyMySQL==1.0.3 (from ApiLogicServer==11.1.28)
+  Using cached PyMySQL-1.0.3-py3-none-any.whl.metadata (4.4 kB)
+Collecting oracledb==2.1.2 (from ApiLogicServer==11.1.28)
+  Using cached oracledb-2.1.2-cp312-cp312-macosx_10_9_universal2.whl.metadata (5.2 kB)
+Collecting requests==2.31.0 (from ApiLogicServer==11.1.28)
+  Using cached requests-2.31.0-py3-none-any.whl.metadata (4.6 kB)
+Collecting gunicorn==20.1.0 (from ApiLogicServer==11.1.28)
+  Using cached gunicorn-20.1.0-py3-none-any.whl.metadata (3.8 kB)
+Collecting psycopg2-binary==2.9.9 (from ApiLogicServer==11.1.28)
+  Using cached psycopg2_binary-2.9.9-cp312-cp312-macosx_10_9_x86_64.whl.metadata (4.4 kB)
+Collecting dotmap==1.3.25 (from ApiLogicServer==11.1.28)
+  Using cached dotmap-1.3.25-py3-none-any.whl.metadata (3.2 kB)
+Collecting WTForms==2.3.3 (from ApiLogicServer==11.1.28)
+  Using cached WTForms-2.3.3-py2.py3-none-any.whl.metadata (3.7 kB)
+Collecting behave==1.2.6 (from ApiLogicServer==11.1.28)
+  Using cached behave-1.2.6-py2.py3-none-any.whl.metadata (6.4 kB)
+Collecting alembic==1.7.7 (from ApiLogicServer==11.1.28)
+  Using cached alembic-1.7.7-py3-none-any.whl.metadata (7.3 kB)
+Collecting python-ulid==2.7.0 (from ApiLogicServer==11.1.28)
+  Using cached python_ulid-2.7.0-py3-none-any.whl.metadata (5.8 kB)
+Collecting psutil==6.0.0 (from ApiLogicServer==11.1.28)
+  Using cached psutil-6.0.0-cp36-abi3-macosx_10_9_x86_64.whl.metadata (21 kB)
+Collecting pandas==2.2.2 (from ApiLogicServer==11.1.28)
+  Using cached pandas-2.2.2-cp312-cp312-macosx_10_9_x86_64.whl.metadata (19 kB)
+Collecting openpyxl==3.1.5 (from ApiLogicServer==11.1.28)
+  Using cached openpyxl-3.1.5-py2.py3-none-any.whl.metadata (2.5 kB)
+Collecting GeoAlchemy2==0.12.5 (from ApiLogicServer==11.1.28)
+  Using cached GeoAlchemy2-0.12.5-py2.py3-none-any.whl.metadata (1.6 kB)
+Collecting confluent-kafka==2.3.0 (from ApiLogicServer==11.1.28)
+  Using cached confluent_kafka-2.3.0-cp312-cp312-macosx_10_9_x86_64.whl.metadata (2.3 kB)
+Collecting translate==3.6.1 (from ApiLogicServer==11.1.28)
+  Using cached translate-3.6.1-py2.py3-none-any.whl.metadata (7.7 kB)
+Collecting libretranslatepy==2.1.1 (from ApiLogicServer==11.1.28)
+  Using cached libretranslatepy-2.1.1-py3-none-any.whl.metadata (233 bytes)
+Collecting reportlab==4.2.0 (from ApiLogicServer==11.1.28)
+  Using cached reportlab-4.2.0-py3-none-any.whl.metadata (1.4 kB)
+Collecting xlsxwriter==3.2.0 (from ApiLogicServer==11.1.28)
+  Using cached XlsxWriter-3.2.0-py3-none-any.whl.metadata (2.6 kB)
+Collecting Mako (from alembic==1.7.7->ApiLogicServer==11.1.28)
+  Using cached Mako-1.3.5-py3-none-any.whl.metadata (2.9 kB)
+Collecting parse>=1.8.2 (from behave==1.2.6->ApiLogicServer==11.1.28)
+  Using cached parse-1.20.2-py2.py3-none-any.whl.metadata (22 kB)
+Collecting parse-type>=0.4.2 (from behave==1.2.6->ApiLogicServer==11.1.28)
+  Using cached parse_type-0.6.3-py2.py3-none-any.whl.metadata (12 kB)
+Collecting cffi>=1.12 (from cryptography==36.0.1->ApiLogicServer==11.1.28)
+  Using cached cffi-1.17.1-cp312-cp312-macosx_10_9_x86_64.whl.metadata (1.5 kB)
+Collecting dnspython>=1.15.0 (from email-validator==1.1.1->ApiLogicServer==11.1.28)
+  Using cached dnspython-2.6.1-py3-none-any.whl.metadata (5.8 kB)
+Collecting idna>=2.0.0 (from email-validator==1.1.1->ApiLogicServer==11.1.28)
+  Using cached idna-3.10-py3-none-any.whl.metadata (10 kB)
+Collecting click>=8.1.3 (from Flask==2.3.2->ApiLogicServer==11.1.28)
+  Using cached click-8.1.7-py3-none-any.whl.metadata (3.0 kB)
+Collecting blinker>=1.6.2 (from Flask==2.3.2->ApiLogicServer==11.1.28)
+  Using cached blinker-1.8.2-py3-none-any.whl.metadata (1.6 kB)
+Collecting bcrypt>=3.1.1 (from flask-bcrypt==1.0.1->ApiLogicServer==11.1.28)
+  Using cached bcrypt-4.2.0-cp39-abi3-macosx_10_12_universal2.whl.metadata (9.6 kB)
+Collecting python3-openid>=2.0 (from Flask-OpenID==1.3.0->ApiLogicServer==11.1.28)
+  Using cached python3_openid-3.2.0-py3-none-any.whl.metadata (1.6 kB)
+Collecting packaging (from GeoAlchemy2==0.12.5->ApiLogicServer==11.1.28)
+  Using cached packaging-24.1-py3-none-any.whl.metadata (3.2 kB)
+Collecting setuptools>=3.0 (from gunicorn==20.1.0->ApiLogicServer==11.1.28)
+  Using cached setuptools-75.0.0-py3-none-any.whl.metadata (6.9 kB)
+Collecting et-xmlfile (from openpyxl==3.1.5->ApiLogicServer==11.1.28)
+  Using cached et_xmlfile-1.1.0-py3-none-any.whl.metadata (1.8 kB)
+Collecting numpy>=1.26.0 (from pandas==2.2.2->ApiLogicServer==11.1.28)
+  Using cached numpy-2.1.1-cp312-cp312-macosx_14_0_x86_64.whl.metadata (60 kB)
+Collecting pytz>=2020.1 (from pandas==2.2.2->ApiLogicServer==11.1.28)
+  Using cached pytz-2024.2-py2.py3-none-any.whl.metadata (22 kB)
+Collecting tzdata>=2022.7 (from pandas==2.2.2->ApiLogicServer==11.1.28)
+  Using cached tzdata-2024.1-py2.py3-none-any.whl.metadata (1.4 kB)
+Collecting pillow>=9.0.0 (from reportlab==4.2.0->ApiLogicServer==11.1.28)
+  Using cached pillow-10.4.0-cp312-cp312-macosx_10_10_x86_64.whl.metadata (9.2 kB)
+Collecting chardet (from reportlab==4.2.0->ApiLogicServer==11.1.28)
+  Using cached chardet-5.2.0-py3-none-any.whl.metadata (3.4 kB)
+Collecting charset-normalizer<4,>=2 (from requests==2.31.0->ApiLogicServer==11.1.28)
+  Using cached charset_normalizer-3.3.2-cp312-cp312-macosx_10_9_x86_64.whl.metadata (33 kB)
+Collecting urllib3<3,>=1.21.1 (from requests==2.31.0->ApiLogicServer==11.1.28)
+  Using cached urllib3-2.2.3-py3-none-any.whl.metadata (6.5 kB)
+Collecting certifi>=2017.4.17 (from requests==2.31.0->ApiLogicServer==11.1.28)
+  Using cached certifi-2024.8.30-py3-none-any.whl.metadata (2.2 kB)
+Collecting typing-extensions>=4.2.0 (from SQLAlchemy==2.0.15->ApiLogicServer==11.1.28)
+  Using cached typing_extensions-4.12.2-py3-none-any.whl.metadata (3.0 kB)
+Collecting greenlet!=0.4.17 (from SQLAlchemy==2.0.15->ApiLogicServer==11.1.28)
+  Using cached greenlet-3.1.0-cp312-cp312-macosx_11_0_universal2.whl.metadata (3.8 kB)
+Collecting lxml (from translate==3.6.1->ApiLogicServer==11.1.28)
+  Using cached lxml-5.3.0-cp312-cp312-macosx_10_9_x86_64.whl.metadata (3.8 kB)
+Collecting aniso8601>=0.82 (from Flask-RESTful>=0.3.9->ApiLogicServer==11.1.28)
+  Using cached aniso8601-9.0.1-py2.py3-none-any.whl.metadata (23 kB)
+Collecting PyYaml>=6.0 (from safrs>=3.1.4->ApiLogicServer==11.1.28)
+  Using cached PyYAML-6.0.2-cp312-cp312-macosx_10_9_x86_64.whl.metadata (2.1 kB)
+Collecting pyasn1>=0.1.3 (from rsa->ApiLogicServer==11.1.28)
+  Using cached pyasn1-0.6.1-py3-none-any.whl.metadata (8.4 kB)
+Collecting pycparser (from cffi>=1.12->cryptography==36.0.1->ApiLogicServer==11.1.28)
+  Using cached pycparser-2.22-py3-none-any.whl.metadata (943 bytes)
+Collecting defusedxml (from python3-openid>=2.0->Flask-OpenID==1.3.0->ApiLogicServer==11.1.28)
+  Using cached defusedxml-0.7.1-py2.py3-none-any.whl.metadata (32 kB)
+Using cached alembic-1.7.7-py3-none-any.whl (210 kB)
+Using cached behave-1.2.6-py2.py3-none-any.whl (136 kB)
+Using cached confluent_kafka-2.3.0-cp312-cp312-macosx_10_9_x86_64.whl (3.4 MB)
+Using cached cryptography-36.0.1-cp36-abi3-macosx_10_10_x86_64.whl (2.6 MB)
+Using cached dotmap-1.3.25-py3-none-any.whl (11 kB)
+Using cached email_validator-1.1.1-py2.py3-none-any.whl (17 kB)
+Using cached Flask-2.3.2-py3-none-any.whl (96 kB)
+Using cached Flask_Bcrypt-1.0.1-py3-none-any.whl (6.0 kB)
+Using cached Flask_Cors-3.0.10-py2.py3-none-any.whl (14 kB)
+Using cached Flask_JWT_Extended-4.4.4-py2.py3-none-any.whl (22 kB)
+Using cached Flask_Login-0.6.2-py3-none-any.whl (17 kB)
+Using cached Flask_OpenID-1.3.0-py3-none-any.whl (9.3 kB)
+Using cached Flask_SQLAlchemy-3.0.3-py3-none-any.whl (24 kB)
+Using cached GeoAlchemy2-0.12.5-py2.py3-none-any.whl (50 kB)
+Using cached gunicorn-20.1.0-py3-none-any.whl (79 kB)
+Using cached inflect-5.0.2-py3-none-any.whl (31 kB)
+Using cached itsdangerous-2.1.2-py3-none-any.whl (15 kB)
+Using cached Jinja2-3.1.2-py3-none-any.whl (133 kB)
+Using cached libretranslatepy-2.1.1-py3-none-any.whl (3.2 kB)
+Using cached logicbankutils-0.6.0-py3-none-any.whl (4.8 kB)
+Using cached MarkupSafe-2.1.3-cp312-cp312-macosx_10_9_x86_64.whl (13 kB)
+Using cached openpyxl-3.1.5-py2.py3-none-any.whl (250 kB)
+Using cached oracledb-2.1.2-cp312-cp312-macosx_10_9_universal2.whl (3.6 MB)
+Using cached pandas-2.2.2-cp312-cp312-macosx_10_9_x86_64.whl (12.5 MB)
+Using cached psutil-6.0.0-cp36-abi3-macosx_10_9_x86_64.whl (250 kB)
+Using cached psycopg2_binary-2.9.9-cp312-cp312-macosx_10_9_x86_64.whl (2.8 MB)
+Using cached PyJWT-2.6.0-py3-none-any.whl (20 kB)
+Using cached PyMySQL-1.0.3-py3-none-any.whl (43 kB)
+Using cached python_dateutil-2.8.2-py2.py3-none-any.whl (247 kB)
+Using cached python_dotenv-0.15.0-py2.py3-none-any.whl (18 kB)
+Using cached python_ulid-2.7.0-py3-none-any.whl (10 kB)
+Using cached reportlab-4.2.0-py3-none-any.whl (1.9 MB)
+Using cached requests-2.31.0-py3-none-any.whl (62 kB)
+Using cached six-1.16.0-py2.py3-none-any.whl (11 kB)
+Using cached SQLAlchemy-2.0.15-py3-none-any.whl (1.8 MB)
+Using cached SQLAlchemy_Utils-0.38.2-py3-none-any.whl (100 kB)
+Using cached translate-3.6.1-py2.py3-none-any.whl (12 kB)
+Using cached Werkzeug-2.3.3-py3-none-any.whl (242 kB)
+Using cached WTForms-2.3.3-py2.py3-none-any.whl (169 kB)
+Using cached XlsxWriter-3.2.0-py3-none-any.whl (159 kB)
+Using cached Flask_RESTful-0.3.10-py2.py3-none-any.whl (26 kB)
+Using cached flask_swagger_ui-4.11.1-py3-none-any.whl (1.4 MB)
+Using cached logicbank-1.20.7-py3-none-any.whl (53 kB)
+Using cached safrs-3.1.4-py3-none-any.whl (92 kB)
+Using cached rsa-4.9-py3-none-any.whl (34 kB)
+Using cached aniso8601-9.0.1-py2.py3-none-any.whl (52 kB)
+Using cached bcrypt-4.2.0-cp39-abi3-macosx_10_12_universal2.whl (472 kB)
+Using cached blinker-1.8.2-py3-none-any.whl (9.5 kB)
+Using cached certifi-2024.8.30-py3-none-any.whl (167 kB)
+Using cached cffi-1.17.1-cp312-cp312-macosx_10_9_x86_64.whl (183 kB)
+Using cached charset_normalizer-3.3.2-cp312-cp312-macosx_10_9_x86_64.whl (122 kB)
+Using cached click-8.1.7-py3-none-any.whl (97 kB)
+Using cached dnspython-2.6.1-py3-none-any.whl (307 kB)
+Using cached greenlet-3.1.0-cp312-cp312-macosx_11_0_universal2.whl (270 kB)
+Using cached idna-3.10-py3-none-any.whl (70 kB)
+Using cached numpy-2.1.1-cp312-cp312-macosx_14_0_x86_64.whl (6.6 MB)
+Using cached parse-1.20.2-py2.py3-none-any.whl (20 kB)
+Using cached parse_type-0.6.3-py2.py3-none-any.whl (27 kB)
+Using cached pillow-10.4.0-cp312-cp312-macosx_10_10_x86_64.whl (3.5 MB)
+Using cached pyasn1-0.6.1-py3-none-any.whl (83 kB)
+Using cached python3_openid-3.2.0-py3-none-any.whl (133 kB)
+Using cached pytz-2024.2-py2.py3-none-any.whl (508 kB)
+Using cached PyYAML-6.0.2-cp312-cp312-macosx_10_9_x86_64.whl (183 kB)
+Using cached setuptools-75.0.0-py3-none-any.whl (1.2 MB)
+Using cached typing_extensions-4.12.2-py3-none-any.whl (37 kB)
+Using cached tzdata-2024.1-py2.py3-none-any.whl (345 kB)
+Using cached urllib3-2.2.3-py3-none-any.whl (126 kB)
+Using cached chardet-5.2.0-py3-none-any.whl (199 kB)
+Using cached et_xmlfile-1.1.0-py3-none-any.whl (4.7 kB)
+Using cached lxml-5.3.0-cp312-cp312-macosx_10_9_x86_64.whl (4.4 MB)
+Using cached Mako-1.3.5-py3-none-any.whl (78 kB)
+Using cached packaging-24.1-py3-none-any.whl (53 kB)
+Using cached defusedxml-0.7.1-py2.py3-none-any.whl (25 kB)
+Using cached pycparser-2.22-py3-none-any.whl (117 kB)
+Building wheels for collected packages: ApiLogicServer
+  Building wheel for ApiLogicServer (pyproject.toml): started
+  Building wheel for ApiLogicServer (pyproject.toml): finished with status 'done'
+  Created wheel for ApiLogicServer: filename=ApiLogicServer-11.1.28-py3-none-any.whl size=20984699 sha256=f211695bde4ad2e5760b734b21861f30e1030f72213f0a481caebbef72863c03
+  Stored in directory: /Users/val/Library/Caches/pip/wheels/cf/a7/2a/6612366ef507786739e2d7f1902cede6b3c948f14258a1d185
+Successfully built ApiLogicServer
+Installing collected packages: pytz, python-dotenv, parse, libretranslatepy, dotmap, confluent-kafka, aniso8601, xlsxwriter, urllib3, tzdata, typing-extensions, six, setuptools, PyYaml, python-ulid, PyMySQL, PyJWT, pycparser, pyasn1, psycopg2-binary, psutil, pillow, packaging, numpy, MarkupSafe, lxml, logicbankutils, itsdangerous, inflect, idna, greenlet, et-xmlfile, dnspython, defusedxml, click, charset-normalizer, chardet, certifi, blinker, bcrypt, WTForms, Werkzeug, SQLAlchemy, rsa, requests, reportlab, python3-openid, python-dateutil, parse-type, openpyxl, Mako, Jinja2, gunicorn, email-validator, cffi, translate, SQLAlchemy-Utils, pandas, LogicBank, GeoAlchemy2, Flask, cryptography, behave, alembic, oracledb, flask-swagger-ui, Flask-SQLAlchemy, Flask-RESTful, Flask-OpenID, Flask-Login, Flask-JWT-Extended, Flask-Cors, flask-bcrypt, Flask-Admin, flask-restful-swagger-2, safrs, ApiLogicServer
+Successfully installed ApiLogicServer-11.1.28 Flask-2.3.2 Flask-Admin-1.5.7 Flask-Cors-3.0.10 Flask-JWT-Extended-4.4.4 Flask-Login-0.6.2 Flask-OpenID-1.3.0 Flask-RESTful-0.3.10 Flask-SQLAlchemy-3.0.3 GeoAlchemy2-0.12.5 Jinja2-3.1.2 LogicBank-1.20.7 Mako-1.3.5 MarkupSafe-2.1.3 PyJWT-2.6.0 PyMySQL-1.0.3 PyYaml-6.0.2 SQLAlchemy-2.0.15 SQLAlchemy-Utils-0.38.2 WTForms-2.3.3 Werkzeug-2.3.3 alembic-1.7.7 aniso8601-9.0.1 bcrypt-4.2.0 behave-1.2.6 blinker-1.8.2 certifi-2024.8.30 cffi-1.17.1 chardet-5.2.0 charset-normalizer-3.3.2 click-8.1.7 confluent-kafka-2.3.0 cryptography-36.0.1 defusedxml-0.7.1 dnspython-2.6.1 dotmap-1.3.25 email-validator-1.1.1 et-xmlfile-1.1.0 flask-bcrypt-1.0.1 flask-restful-swagger-2-0.35 flask-swagger-ui-4.11.1 greenlet-3.1.0 gunicorn-20.1.0 idna-3.10 inflect-5.0.2 itsdangerous-2.1.2 libretranslatepy-2.1.1 logicbankutils-0.6.0 lxml-5.3.0 numpy-2.1.1 openpyxl-3.1.5 oracledb-2.1.2 packaging-24.1 pandas-2.2.2 parse-1.20.2 parse-type-0.6.3 pillow-10.4.0 psutil-6.0.0 psycopg2-binary-2.9.9 pyasn1-0.6.1 pycparser-2.22 python-dateutil-2.8.2 python-dotenv-0.15.0 python-ulid-2.7.0 python3-openid-3.2.0 pytz-2024.2 reportlab-4.2.0 requests-2.31.0 rsa-4.9 safrs-3.1.4 setuptools-75.0.0 six-1.16.0 translate-3.6.1 typing-extensions-4.12.2 tzdata-2024.1 urllib3-2.2.3 xlsxwriter-3.2.0
+Complete.
+
+
+
+
+
+==> Error Log:
+rm: illegal option -- h
+usage: rm [-f | -i] [-dIPRrvWx] file ...
+       unlink [--] file
+ModuleNotFoundError while trying to load entry-point upload_docs: No module named 'setuptools.command.upload_docs'
+warning: no files found matching '*.*' under directory 'api_logic_server_cli/docs'
+warning: no files found matching 'api_logic_server_cli/login_endpoint.txt'
+warning: no previously-included files matching '*.*' found under directory '__pycache__'
+ModuleNotFoundError while trying to load entry-point upload_docs: No module named 'setuptools.command.upload_docs'
+warning: no files found matching '*.*' under directory 'api_logic_server_cli/docs'
+warning: no files found matching 'api_logic_server_cli/login_endpoint.txt'
+warning: no previously-included files matching '*.*' found under directory '__pycache__'
+ModuleNotFoundError while trying to load entry-point upload_docs: No module named 'setuptools.command.upload_docs'
+warning: no files found matching '*.*' under directory 'api_logic_server_cli/docs'
+warning: no files found matching 'api_logic_server_cli/login_endpoint.txt'
+warning: no previously-included files matching '*.*' found under directory '__pycache__'
+ModuleNotFoundError while trying to load entry-point upload_docs: No module named 'setuptools.command.upload_docs'
+warning: no files found matching '*.*' under directory 'api_logic_server_cli/docs'
+warning: no files found matching 'api_logic_server_cli/login_endpoint.txt'
+warning: no previously-included files matching '*.*' found under directory '__pycache__'
+/private/var/folders/49/yn6gxcc14bd575s7xp61s0sc0000gn/T/build-env-wnrehujp/lib/python3.12/site-packages/setuptools/command/build_py.py:218: _Warning: Package 'api_logic_server_cli.create_from_model.__pycache__' is absent from the `packages` configuration.
+!!
+
+        ********************************************************************************
+        ############################
+        # Package would be ignored #
+        ############################
+        Python recognizes 'api_logic_server_cli.create_from_model.__pycache__' as an importable package[^1],
+        but it is absent from setuptools' `packages` configuration.
+
+        This leads to an ambiguous overall configuration. If you want to distribute this
+        package, please make sure that 'api_logic_server_cli.create_from_model.__pycache__' is explicitly added
+        to the `packages` configuration field.
+
+        Alternatively, you can also rely on setuptools' discovery methods
+        (for example by using `find_namespace_packages(...)`/`find_namespace:`
+        instead of `find_packages(...)`/`find:`).
+
+        You can read more about "package discovery" on setuptools documentation page:
+
+        - https://setuptools.pypa.io/en/latest/userguide/package_discovery.html
+
+        If you don't want 'api_logic_server_cli.create_from_model.__pycache__' to be distributed and are
+        already explicitly excluding 'api_logic_server_cli.create_from_model.__pycache__' via
+        `find_namespace_packages(...)/find_namespace` or `find_packages(...)/find`,
+        you can try to use `exclude_package_data`, or `include-package-data=False` in
+        combination with a more fine grained `package-data` configuration.
+
+        You can read more about "package data files" on setuptools documentation page:
+
+        - https://setuptools.pypa.io/en/latest/userguide/datafiles.html
+
+
+        [^1]: For Python, any directory (with suitable naming) can be imported,
+              even if it does not contain any `.py` files.
+              On the other hand, currently there is no concept of package data
+              directory, all directories are treated like packages.
+        ********************************************************************************
+
+!!
+  check.warn(importable)
+/private/var/folders/49/yn6gxcc14bd575s7xp61s0sc0000gn/T/build-env-wnrehujp/lib/python3.12/site-packages/setuptools/command/build_py.py:218: _Warning: Package 'api_logic_server_cli.sqlacodegen_wrapper.__pycache__' is absent from the `packages` configuration.
+!!
+
+        ********************************************************************************
+        ############################
+        # Package would be ignored #
+        ############################
+        Python recognizes 'api_logic_server_cli.sqlacodegen_wrapper.__pycache__' as an importable package[^1],
+        but it is absent from setuptools' `packages` configuration.
+
+        This leads to an ambiguous overall configuration. If you want to distribute this
+        package, please make sure that 'api_logic_server_cli.sqlacodegen_wrapper.__pycache__' is explicitly added
+        to the `packages` configuration field.
+
+        Alternatively, you can also rely on setuptools' discovery methods
+        (for example by using `find_namespace_packages(...)`/`find_namespace:`
+        instead of `find_packages(...)`/`find:`).
+
+        You can read more about "package discovery" on setuptools documentation page:
+
+        - https://setuptools.pypa.io/en/latest/userguide/package_discovery.html
+
+        If you don't want 'api_logic_server_cli.sqlacodegen_wrapper.__pycache__' to be distributed and are
+        already explicitly excluding 'api_logic_server_cli.sqlacodegen_wrapper.__pycache__' via
+        `find_namespace_packages(...)/find_namespace` or `find_packages(...)/find`,
+        you can try to use `exclude_package_data`, or `include-package-data=False` in
+        combination with a more fine grained `package-data` configuration.
+
+        You can read more about "package data files" on setuptools documentation page:
+
+        - https://setuptools.pypa.io/en/latest/userguide/datafiles.html
+
+
+        [^1]: For Python, any directory (with suitable naming) can be imported,
+              even if it does not contain any `.py` files.
+              On the other hand, currently there is no concept of package data
+              directory, all directories are treated like packages.
+        ********************************************************************************
+
+!!
+  check.warn(importable)
+/private/var/folders/49/yn6gxcc14bd575s7xp61s0sc0000gn/T/build-env-wnrehujp/lib/python3.12/site-packages/setuptools/command/build_py.py:218: _Warning: Package 'api_logic_server_cli.sqlacodegen_wrapper.sqlacodegen.__pycache__' is absent from the `packages` configuration.
+!!
+
+        ********************************************************************************
+        ############################
+        # Package would be ignored #
+        ############################
+        Python recognizes 'api_logic_server_cli.sqlacodegen_wrapper.sqlacodegen.__pycache__' as an importable package[^1],
+        but it is absent from setuptools' `packages` configuration.
+
+        This leads to an ambiguous overall configuration. If you want to distribute this
+        package, please make sure that 'api_logic_server_cli.sqlacodegen_wrapper.sqlacodegen.__pycache__' is explicitly added
+        to the `packages` configuration field.
+
+        Alternatively, you can also rely on setuptools' discovery methods
+        (for example by using `find_namespace_packages(...)`/`find_namespace:`
+        instead of `find_packages(...)`/`find:`).
+
+        You can read more about "package discovery" on setuptools documentation page:
+
+        - https://setuptools.pypa.io/en/latest/userguide/package_discovery.html
+
+        If you don't want 'api_logic_server_cli.sqlacodegen_wrapper.sqlacodegen.__pycache__' to be distributed and are
+        already explicitly excluding 'api_logic_server_cli.sqlacodegen_wrapper.sqlacodegen.__pycache__' via
+        `find_namespace_packages(...)/find_namespace` or `find_packages(...)/find`,
+        you can try to use `exclude_package_data`, or `include-package-data=False` in
+        combination with a more fine grained `package-data` configuration.
+
+        You can read more about "package data files" on setuptools documentation page:
+
+        - https://setuptools.pypa.io/en/latest/userguide/datafiles.html
+
+
+        [^1]: For Python, any directory (with suitable naming) can be imported,
+              even if it does not contain any `.py` files.
+              On the other hand, currently there is no concept of package data
+              directory, all directories are treated like packages.
+        ********************************************************************************
+
+!!
+  check.warn(importable)
+/private/var/folders/49/yn6gxcc14bd575s7xp61s0sc0000gn/T/build-env-wnrehujp/lib/python3.12/site-packages/setuptools/command/build_py.py:218: _Warning: Package 'api_logic_server_cli.sqlacodegen_wrapper.sqlacodegen.sqlacodegen.__pycache__' is absent from the `packages` configuration.
+!!
+
+        ********************************************************************************
+        ############################
+        # Package would be ignored #
+        ############################
+        Python recognizes 'api_logic_server_cli.sqlacodegen_wrapper.sqlacodegen.sqlacodegen.__pycache__' as an importable package[^1],
+        but it is absent from setuptools' `packages` configuration.
+
+        This leads to an ambiguous overall configuration. If you want to distribute this
+        package, please make sure that 'api_logic_server_cli.sqlacodegen_wrapper.sqlacodegen.sqlacodegen.__pycache__' is explicitly added
+        to the `packages` configuration field.
+
+        Alternatively, you can also rely on setuptools' discovery methods
+        (for example by using `find_namespace_packages(...)`/`find_namespace:`
+        instead of `find_packages(...)`/`find:`).
+
+        You can read more about "package discovery" on setuptools documentation page:
+
+        - https://setuptools.pypa.io/en/latest/userguide/package_discovery.html
+
+        If you don't want 'api_logic_server_cli.sqlacodegen_wrapper.sqlacodegen.sqlacodegen.__pycache__' to be distributed and are
+        already explicitly excluding 'api_logic_server_cli.sqlacodegen_wrapper.sqlacodegen.sqlacodegen.__pycache__' via
+        `find_namespace_packages(...)/find_namespace` or `find_packages(...)/find`,
+        you can try to use `exclude_package_data`, or `include-package-data=False` in
+        combination with a more fine grained `package-data` configuration.
+
+        You can read more about "package data files" on setuptools documentation page:
+
+        - https://setuptools.pypa.io/en/latest/userguide/datafiles.html
+
+
+        [^1]: For Python, any directory (with suitable naming) can be imported,
+              even if it does not contain any `.py` files.
+              On the other hand, currently there is no concept of package data
+              directory, all directories are treated like packages.
+        ********************************************************************************
+
+!!
+  check.warn(importable)
++ python3 -m pip install /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src
+
+[notice] A new release of pip is available: 24.0 -> 24.2
+[notice] To update, run: pip install --upgrade pip
++ set +x
++ python3 -m pip install /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src
+
+[notice] A new release of pip is available: 24.0 -> 24.2
+[notice] To update, run: pip install --upgrade pip
++ set +x
+
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/runpy.py", line 198, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/runpy.py", line 88, in _run_code
+    exec(code, run_globals)
+  File "/Users/val/.vscode/extensions/ms-python.debugpy-2024.10.0-darwin-x64/bundled/libs/debugpy/adapter/../../debugpy/launcher/../../debugpy/__main__.py", line 39, in <module>
+    cli.main()
+  File "/Users/val/.vscode/extensions/ms-python.debugpy-2024.10.0-darwin-x64/bundled/libs/debugpy/adapter/../../debugpy/launcher/../../debugpy/../debugpy/server/cli.py", line 430, in main
+    run()
+  File "/Users/val/.vscode/extensions/ms-python.debugpy-2024.10.0-darwin-x64/bundled/libs/debugpy/adapter/../../debugpy/launcher/../../debugpy/../debugpy/server/cli.py", line 284, in run_file
+    runpy.run_path(target, run_name="__main__")
+  File "/Users/val/.vscode/extensions/ms-python.debugpy-2024.10.0-darwin-x64/bundled/libs/debugpy/_vendored/pydevd/_pydevd_bundle/pydevd_runpy.py", line 321, in run_path
+    return _run_module_code(code, init_globals, run_name,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/.vscode/extensions/ms-python.debugpy-2024.10.0-darwin-x64/bundled/libs/debugpy/_vendored/pydevd/_pydevd_bundle/pydevd_runpy.py", line 135, in _run_module_code
+    _run_code(code, mod_globals, init_globals,
+  File "/Users/val/.vscode/extensions/ms-python.debugpy-2024.10.0-darwin-x64/bundled/libs/debugpy/_vendored/pydevd/_pydevd_bundle/pydevd_runpy.py", line 124, in _run_code
+    exec(code, run_globals)
+  File "build_load_and_test.py", line 975, in <module>
+    result_install = run_command(install_cmd,
+                     ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "build_load_and_test.py", line 253, in run_command
+    check_command(result, msg)
+  File "build_load_and_test.py", line 218, in check_command
+    raise ValueError("Traceback detected")
+ValueError: Traceback detected
+(venv) val@Vals-MBP-16 build_and_test % 
