@@ -10,30 +10,34 @@ import shutil
 log = logging.getLogger(__name__)
 
 class GenAI(object):
-    """
-    Create project from genai prompt(s).  Called from api_logic_server#create_project() -- main driver
+    """ Create project from genai prompt(s).  Called from api_logic_server#create_project() -- main driver
+
+    The key argument is `--using` (`self.project.from_genai`)
+    * It can be a file, dir (conversation) or text argument.
+    * It's "stem" denotes the project name to be created at cwd
+
+    The (hopefully rarely used) `--gen-using-file` argument (`self.project.gen_using_file`) 
+    * is for retry from corrected response
+    * `--using` is required to get the project name, to be created at cwd
 
     __init__()  # work directory is <manager>/system/genai/temp/
     
     1. run ChatGPT to create system/genai/temp/chatgpt_original.response, using...
-        a. --using a file, dir (conversation) or text argument
-            i. This denotes the project name to be created at cwd
-        a. --gen-using-file (retry from corrected response)
-    2. get_prompt_messages() - get prompt from file, dir (conversation) or text argument        
-    2. self.get_logic() - saves prompt logic as comments for insertion into model (4.3)
-    3. fix_and_write_model_file()
-    4. returns to main driver, which 
+    2. get_prompt_messages() - get self.messages[] from file, dir (conversation) or text argument
+    3. Compute create_db_models
+        a. Usually call chatGPT to get response, save to system/genai/temp/chatgpt_original.response
+        b. If --gen-using-file, read response from file        
+    4. self.get_logic() - saves prompt logic as comments for insertion into model (4.3)
+    5. fix_and_write_model_file()
+    6. returns to main driver (api_logic_server#create_project()), which 
         1. runs create_db_from_model.create_db(self)
         2. proceeds to create project
         3. calls this.insert_logic_into_created_project() - merge logic into declare_logic.py
 
-    developer then uses CoPilot to create logic (Rule.) from the prompt
-
-    --gen-using-file means retry from corrected response
-    * `--using` is required to get the project name, to be created at cwd
+    developer then can use CoPilot to create logic (Rule.) from the prompt (or just code completion)
 
 
-    ### Explore interim copilot access:
+    ##### Explore interim copilot access:
 
     VSCode/Copilot-chat can turn prompts into logic, so can we automate with API?
 
@@ -371,6 +375,15 @@ class GenAI(object):
                     shutil.copyfile(self.project.from_genai, saved_temp_prompt_file_name)
                     new_response_file_name = to_dir_save_dir.joinpath(f'{self.project.project_name}_001.response')
                     os.rename(response_file_name, to_dir_save_dir.joinpath(new_response_file_name))
+
+                elif self.project.from_genai.startswith("'"):  # leading quote means prompt from text
+                    saved_temp_prompt_file_name = to_dir_save_dir.joinpath(f'{self.project.project_name}_001.prompt')
+                    with open(saved_temp_prompt_file_name, "w") as prompt_file:
+                        prompt_file.write(self.project.from_genai[1:-1])
+                    new_response_file_name = to_dir_save_dir.joinpath(f'{self.project.project_name}_001.response')
+                    os.rename(response_file_name,
+                              to_dir_save_dir.joinpath(new_response_file_name))
+
                 else:  
                     # copy files from self.project.from_genai to to_dir_save_dir
                     # intent:  1) diagnostics, and  2) use this dir for repair and 

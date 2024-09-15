@@ -553,8 +553,8 @@ def tutorial(ctx, create):
 @main.command("genai", cls=HideDunderCommand)
 @click.option('--using',
               default=f'genai_demo',
-              prompt="Project description file, dir, or 'text",
-              help="Project description file")
+              prompt="File, dir, or 'text - prompt -> project name",
+              help="File, dir, or 'text - prompt -> project name")
 @click.option('--db-url', 'db_url',
               default=f'sqlite',
               help="SQLAlchemy Database URL\n")
@@ -563,7 +563,7 @@ def tutorial(ctx, create):
               help="Eg, gpt-3.5-turbo, gpt-4o")
 @click.option('--gen-using-file', 'gen_using_file',
               default='',
-              help="Use ChatGPT Response file")
+              help="Retry from [repaired] response file")
 @click.option('--retries', 
               default=3,
               help="Number of retries")
@@ -655,6 +655,83 @@ def genai(ctx, using, db_url, gen_using_file: click.BOOL, genai_version: str,
             log.error(f"\n\nGenai Failed (Retries: {retries})") 
             exit(1) 
         log.info(f"GENAI successful on try {try_number}")  
+
+
+@main.command("genai-create", cls=HideDunderCommand) 
+@click.option('--project-name', 'project_name',
+              default=f'{last_created_project_name}',
+              prompt="Project to iterate",
+              help="Project location")
+@click.option('--using',
+              default=f'localhost',
+              prompt="Iteration prompt (eg, 'add xx table')",
+              help="Iteration prompts (eg, 'add xx table')")
+@click.pass_context
+def genai_create(ctx, project_name: str, using: str):
+    """
+        Create new project from --using prompt.
+
+
+\b
+        Example
+
+\b
+            ApiLogicServer genai-create --project-name=MyProject --using="initial description"
+    """
+    global command
+    command = "genai-create"
+    proj_temp_path = Path(f'system/genai/temp/{project_name}')
+    if proj_temp_path.is_dir():  # not found
+        log.error(f"Project {proj_temp_path} already exists")
+        exit(1)
+    proj_temp_path.mkdir(parents=True)
+    file_name = f'{project_name}_001.prompt'
+    file_path = proj_temp_path.joinpath(file_name)
+    with open(file_path, 'w') as initial_prompt_file:
+        initial_prompt_file.write(using)
+    ctx.invoke(genai, using=str(proj_temp_path) )
+
+
+@main.command("genai-iterate", cls=HideDunderCommand) 
+@click.option('--project-name', 'project_name',
+              default=f'{last_created_project_name}',
+              prompt="Project to iterate",
+              help="Project location")
+@click.option('--using',
+              default=f'localhost',
+              prompt="Iteration prompt (eg, 'add xx table')",
+              help="Iteration prompts (eg, 'add xx table')")
+@click.pass_context
+def genai_iterate(ctx, project_name: str, using: str):
+    """
+        Iterate current project.
+
+
+\b
+        Example
+
+\b
+            ApiLogicServer genai-iterate --project-name=ApiLogicProject --using="'add xx table'"
+    """
+    global command
+    command = "genai-iterate"
+    proj_temp_path = Path(f'system/genai/temp/{project_name}')
+    if not proj_temp_path.is_dir():  # not found
+        log.error(f"Project {proj_temp_path} not found")
+        exit(1)
+    response_count = 0
+    for each_file in sorted(Path(proj_temp_path).iterdir()):
+        if each_file.is_file() and each_file.suffix == '.response':
+            response_count += 1
+    at_number = str(1+response_count).zfill(3)
+    file_name = f'{project_name}_{at_number}.prompt'
+    file_path = proj_temp_path.joinpath(file_name)
+    with open(file_path, 'w') as iteration_prompt_file:
+        iteration_prompt_file.write(using)
+    # genai(ctx, using=file_path)
+    # ctx.forward(genai)
+    ctx.invoke(genai, using=str(proj_temp_path) )
+
 
 @main.command("create", cls=HideDunderCommand)
 @click.option('--project_name',   # notice - old _names have no prompt
