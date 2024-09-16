@@ -12,13 +12,15 @@ log = logging.getLogger(__name__)
 class GenAI(object):
     """ Create project from genai prompt(s).  Called from api_logic_server#create_project() -- main driver
 
-    The key argument is `--using` (`self.project.genai_using`)
+    The key argument is `--using`
     * It can be a file, dir (conversation) or text argument.
     * It's "stem" denotes the project name to be created at cwd
+    * `self.project.genai_using`
 
-    The (hopefully rarely used) `--gen-using-file` argument (`self.project.genai_repaired_response`) 
+    The (rarely used) `--repaired_response` 
     * is for retry from corrected response
     * `--using` is required to get the project name, to be created at cwd
+    * `self.project.genai_repaired_response`
 
     __init__()  # work directory is <manager>/system/genai/temp/
     
