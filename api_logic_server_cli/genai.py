@@ -12,11 +12,11 @@ log = logging.getLogger(__name__)
 class GenAI(object):
     """ Create project from genai prompt(s).  Called from api_logic_server#create_project() -- main driver
 
-    The key argument is `--using` (`self.project.from_genai`)
+    The key argument is `--using` (`self.project.genai_using`)
     * It can be a file, dir (conversation) or text argument.
     * It's "stem" denotes the project name to be created at cwd
 
-    The (hopefully rarely used) `--gen-using-file` argument (`self.project.gen_using_file`) 
+    The (hopefully rarely used) `--gen-using-file` argument (`self.project.genai_repaired_response`) 
     * is for retry from corrected response
     * `--using` is required to get the project name, to be created at cwd
 
@@ -62,9 +62,9 @@ class GenAI(object):
         """        
 
         self.project = project
-        log.info(f'\nGenAI [{self.project.project_name}] creating microservice from: {self.project.from_genai}')
-        if self.project.gen_using_file != '':
-            log.info(f'..     retry from [repaired] response file: {self.project.gen_using_file}')
+        log.info(f'\nGenAI [{self.project.project_name}] creating microservice from: {self.project.genai_using}')
+        if self.project.genai_repaired_response != '':
+            log.info(f'..     retry from [repaired] response file: {self.project.genai_repaired_response}')
         
         self.project.from_model = f'system/genai/temp/create_db_models.py' # we always write the model to this file
         self.ensure_system_dir_exists()  # so we can write to system/genai/temp
@@ -74,7 +74,7 @@ class GenAI(object):
 
         self.messages = self.get_prompt_messages()  # compute self.messages, from file, dir or text argument
 
-        if self.project.gen_using_file == '':
+        if self.project.genai_repaired_response == '':
             log.info(f'.. ChatGPT - response at: system/genai/temp/chatgpt_original.response')
             self.headers = self.get_headers_with_openai_api_key()
             url = "https://api.openai.com/v1/chat/completions"
@@ -83,8 +83,8 @@ class GenAI(object):
             response = requests.post(url, headers=self.headers, json=data)
             create_db_models = self.get_and_save_response_data(response)
         else: # for retry from corrected response... eg system/genai/temp/chatgpt_retry.response
-            log.debug(f'\nUsing [corrected] response from: {self.project.gen_using_file}')
-            with open(self.project.gen_using_file, 'r') as file:
+            log.debug(f'\nUsing [corrected] response from: {self.project.genai_repaired_response}')
+            with open(self.project.genai_repaired_response, 'r') as file:
                 create_db_models = file.read()
         self.create_db_models = create_db_models
         """ the raw response data from ChatGPT which will be fixed & saved create_db_models.py """
@@ -98,7 +98,7 @@ class GenAI(object):
         """Delete temp files created by genai ((system/genai/temp -- models, responses)"""
         Path('system/genai/temp/create_db_models.sqlite').unlink(missing_ok=True)  # delete temp (work) files
         Path(self.project.from_model).unlink(missing_ok=True)
-        if self.project.gen_using_file == '':  # clean up unless retrying from chatgpt_original.response
+        if self.project.genai_repaired_response == '':  # clean up unless retrying from chatgpt_original.response
             Path('system/genai/temp/chatgpt_original.response').unlink(missing_ok=True)
             Path('system/genai/temp/chatgpt_retry.response').unlink(missing_ok=True)
 
@@ -113,21 +113,21 @@ class GenAI(object):
         prompt_messages : List[ Dict[str, str] ] = []  # prompt/response conversation to be sent to ChatGPT
         prompt_messages.append( {"role": "system", "content": "You are a helpful assistant."})
         
-        if self.project.gen_using_file != '':       # if exists, get prompt (just for inserting into declare_logic.py)
+        if self.project.genai_repaired_response != '':       # if exists, get prompt (just for inserting into declare_logic.py)
             prompt = ""  # we are not calling ChatGPT, just getting the prompt to scan for logic
-            if Path(self.project.from_genai).is_file():  # eg, launch.json for airport_4 is just a name
-                with open(f'{self.project.from_genai}', 'r') as file:
+            if Path(self.project.genai_using).is_file():  # eg, launch.json for airport_4 is just a name
+                with open(f'{self.project.genai_using}', 'r') as file:
                     prompt = file.read()
                 prompt_messages.append( {"role": "user", "content": prompt})
         #  get ChatGPT prompt, from... text argument, dir files (conversation), or file
-        elif self.project.from_genai.startswith("'"):  # leading quote means prompt from text
-                raw_prompt = self.project.from_genai
+        elif self.project.genai_using.startswith("'"):  # leading quote means prompt from text TODO dump this
+                raw_prompt = self.project.genai_using
                 prompt = self.get_prompt__with_inserts(raw_prompt=raw_prompt)  # insert db-specific logic
                 prompt_messages.append( {"role": "user", "content": prompt})
-        elif Path(self.project.from_genai).is_dir():  # conversation from directory
+        elif Path(self.project.genai_using).is_dir():  # conversation from directory
             response_count = 0
             prompt = ""
-            for each_file in sorted(Path(self.project.from_genai).iterdir()):
+            for each_file in sorted(Path(self.project.genai_using).iterdir()):
                 if each_file.is_file() and each_file.suffix == '.prompt' or each_file.suffix == '.response':
                     with open(each_file, 'r') as file:
                         log.debug(f'.. conv processes: {os.path.basename(each_file)}')
@@ -146,7 +146,7 @@ class GenAI(object):
         else:                                   # prompt from text (add system/genai/pre_post.prompt)
             # open and read the project description in natural language
             log.debug(f'.. from file')
-            with open(f'{self.project.from_genai}', 'r') as file:
+            with open(f'{self.project.genai_using}', 'r') as file:
                 raw_prompt = file.read()
             prompt = self.get_prompt__with_inserts(raw_prompt=raw_prompt)  # insert db-specific logic
             prompt_messages.append( {"role": "user", "content": prompt})
@@ -250,7 +250,7 @@ class GenAI(object):
         try:
             docs_dir = self.project.project_directory_path.joinpath("docs")
             # os.makedirs(docs_dir, exist_ok=True)
-            # prompt_file_path = docs_dir.joinpath("created_from_genai.prompt")
+            # prompt_file_path = docs_dir.joinpath("created_genai_using.prompt")
             # copy self.project.gen_ai_save_dir to docs_dir
             shutil.copytree(self.project.gen_ai_save_dir, docs_dir, dirs_exist_ok=True)   
         except:  # intentional try/catch/bury - it's just docs, so don't fail
@@ -368,30 +368,30 @@ class GenAI(object):
             response_file_name = Path(f"{to_dir_save_dir.joinpath('genai.response')}")  # maybe renamed below
             with open(f"{to_dir_save_dir.joinpath('genai.response')}", "w") as response_file:
                 response_file.write(self.create_db_models)
-            if self.project.gen_using_file == '':
+            if self.project.genai_repaired_response == '':
                 pass
-                if Path(self.project.from_genai).is_file():
+                if Path(self.project.genai_using).is_file():
                     saved_temp_prompt_file_name = to_dir_save_dir.joinpath(f'{self.project.project_name}_001.prompt')
-                    shutil.copyfile(self.project.from_genai, saved_temp_prompt_file_name)
+                    shutil.copyfile(self.project.genai_using, saved_temp_prompt_file_name)
                     new_response_file_name = to_dir_save_dir.joinpath(f'{self.project.project_name}_001.response')
                     os.rename(response_file_name, to_dir_save_dir.joinpath(new_response_file_name))
 
-                elif self.project.from_genai.startswith("'"):  # leading quote means prompt from text
+                elif self.project.genai_using.startswith("'"):  # leading quote means prompt from text
                     saved_temp_prompt_file_name = to_dir_save_dir.joinpath(f'{self.project.project_name}_001.prompt')
                     with open(saved_temp_prompt_file_name, "w") as prompt_file:
-                        prompt_file.write(self.project.from_genai[1:-1])
+                        prompt_file.write(self.project.genai_using[1:-1])
                     new_response_file_name = to_dir_save_dir.joinpath(f'{self.project.project_name}_001.response')
                     os.rename(response_file_name,
                               to_dir_save_dir.joinpath(new_response_file_name))
 
                 else:  
-                    # copy files from self.project.from_genai to to_dir_save_dir
+                    # copy files from self.project.genai_using to to_dir_save_dir
                     # intent:  1) diagnostics, and  2) use this dir for repair and 
-                    is_iterate_in_place = str(to_dir_save_dir) == str(Path(self.project.from_genai).resolve())
+                    is_iterate_in_place = str(to_dir_save_dir) == str(Path(self.project.genai_using).resolve())
                     """ means we are using to_dir as the save directory """
                     last_response_file_name = prompt_file_name = f'{self.project.project_name}_001.prompt'
                     response_count = 0
-                    for each_file in sorted(Path(self.project.from_genai).iterdir()):
+                    for each_file in sorted(Path(self.project.genai_using).iterdir()):
                         if each_file.is_file() and each_file.suffix == '.prompt' or each_file.suffix == '.response':
                             if is_iterate_in_place:
                                 log.debug(f'.. conv iterate skips: {os.path.basename(each_file)}')
@@ -409,7 +409,7 @@ class GenAI(object):
                     if response_count < 1: # eg. folder contains genai_demo.prompt (not really a conversation)
                         at_number = '001'   # eg. genai/examples/genai_demo/genai_demo.prompt -> genai_demo_001.prompt
                         new_prompt_file_name = to_dir_save_dir.joinpath(f'{self.project.project_name}_{at_number}.prompt')
-                        old_prompt_file_name = Path(self.project.from_genai).joinpath(last_prompt_file_name)
+                        old_prompt_file_name = Path(self.project.genai_using).joinpath(last_prompt_file_name)
                         shutil.copyfile(old_prompt_file_name, new_prompt_file_name)
                         temp_old_prompt_file_name = to_dir_save_dir.joinpath(last_prompt_file_name)
                         os.remove(temp_old_prompt_file_name)

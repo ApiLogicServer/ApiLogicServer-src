@@ -561,7 +561,7 @@ def tutorial(ctx, create):
 @click.option('--genai-version', 'genai_version',
               default='gpt-4o',
               help="Eg, gpt-3.5-turbo, gpt-4o")
-@click.option('--gen-using-file', 'gen_using_file',
+@click.option('--repaired-response', 'repaired_response',
               default='',
               help="Retry from [repaired] response file")
 @click.option('--retries', 
@@ -580,7 +580,7 @@ def tutorial(ctx, create):
               default=True,
               help="Internal (create_db w/relns)")
 @click.pass_context
-def genai(ctx, using, db_url, gen_using_file: click.BOOL, genai_version: str, 
+def genai(ctx, using, db_url, repaired_response: click.BOOL, genai_version: str, 
           retries: int, opt_locking: str, prompt_inserts: str, quote: click.BOOL,
           use_relns: click.BOOL):
     """
@@ -594,7 +594,7 @@ def genai(ctx, using, db_url, gen_using_file: click.BOOL, genai_version: str,
     project_name = using  # this is the prompt file (or actual prompt)
     if project_name.startswith("'"):
         project_name = project_name.replace("'", "")
-    if using.endswith('.prompt') or Path(using).is_dir():       # regardless of gen_using_file,
+    if using.endswith('.prompt') or Path(using).is_dir():       # regardless of repaired_response,
         project_name = Path(using).stem                         # the project name is the <cwd>/last node of using
     else:
         project_name  = project_name.replace(' ', '_')
@@ -603,13 +603,13 @@ def genai(ctx, using, db_url, gen_using_file: click.BOOL, genai_version: str,
     try_number = 1
     genai_use_relns = use_relns
     """ if 'unable to determine join condition', we retry this with False """
-    if gen_using_file != "":
+    if repaired_response != "":
         try_number = retries  # if not calling GenAI, no need to retry:
     # TODO or 0, right?
     if retries < 0:  # for debug: catch exceptions at point of failure
         PR.ProjectRun(command="create", genai_version=genai_version, 
-                    from_genai=using,                 # the prompt file, or the actual prompt
-                    gen_using_file=gen_using_file,    # retry from [repaired] response file
+                    genai_using=using,                    # the prompt file, or the actual prompt
+                    gen_using_file=repaired_response,    # retry from [repaired] response file
                     opt_locking=opt_locking,
                     genai_prompt_inserts=prompt_inserts,
                     genai_use_relns=genai_use_relns,
@@ -621,8 +621,8 @@ def genai(ctx, using, db_url, gen_using_file: click.BOOL, genai_version: str,
             try:
                 failed = False
                 PR.ProjectRun(command="create", genai_version=genai_version, 
-                            from_genai=using,                 # the prompt file, or the actual prompt
-                            gen_using_file=gen_using_file,    # retry from [repaired] response file
+                            genai_using=using,                   # the prompt file, or the actual prompt
+                            repaired_response=repaired_response,    # retry from [repaired] response file
                             opt_locking=opt_locking,
                             genai_prompt_inserts=prompt_inserts,
                             genai_use_relns=genai_use_relns,
@@ -638,7 +638,7 @@ def genai(ctx, using, db_url, gen_using_file: click.BOOL, genai_version: str,
                 manager_dir = Path(os.getcwd())  # rename save dir (append retry) for diagnosis
                 to_dir_save_dir = Path(manager_dir).joinpath(f'system/genai/temp/{project_name}')
                 to_dir_save_dir_retry = Path(manager_dir).joinpath(f'system/genai/temp/{project_name}_{try_number}')
-                if gen_using_file != "":
+                if repaired_response != "":
                     to_dir_save_dir_retry = Path(manager_dir).joinpath(f'system/genai/temp/{project_name}_retry')  
                 if to_dir_save_dir_retry.exists():
                     shutil.rmtree(to_dir_save_dir_retry)

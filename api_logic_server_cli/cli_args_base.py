@@ -41,10 +41,10 @@ class CliArgsBase():
         """ sql (default), or keycloak """
         self.from_model = None # type
         """ create database from this model (e.g. model from copilot)"""
-        self.from_genai = None # type
-        """ name of .genai file (ai prompt) - or 'text' - to create model, and project """
-        self.gen_using_file = None
-        """ None uses ChatGPT API, else defaults system/genai/reference/chatgpt_retry.txt """
+        self.genai_using = None # type
+        """ name of .genai file/dir (ai prompt) --using: to create model, and project """
+        self.genai_repaired_response = None
+        """ Fixed response; None => ChatGPT API, else defaults system/genai/reference/chatgpt_retry.txt """
         self.genai_version = None
         """ Version number for ChatGPT API, eg gpt-3.5-turbo, gpt-4o (expensive) """
         self.genai_use_relns = None
