@@ -847,8 +847,8 @@ class ProjectRun(Project):
                      auth_db_url: str="",
                      auth_provider_type: str="",
                      from_model: str="",
-                     from_genai: str="",
-                     gen_using_file: str="",
+                     genai_using: str="",
+                     repaired_response: str="",
                      genai_version: str="",
                      genai_prompt_inserts: str="",
                      genai_use_relns: bool=True,
@@ -889,8 +889,8 @@ class ProjectRun(Project):
         """ '', nw, nw+, nw-   blank defaults to nw- """
         self.is_docker = is_docker()
         self.from_model = from_model
-        self.from_genai = from_genai
-        self.gen_using_file = gen_using_file
+        self.genai_using = genai_using
+        self.genai_repaired_response = repaired_response
         self.genai_version = genai_version
         self.genai_prompt_inserts = genai_prompt_inserts
         self.genai_use_relns = genai_use_relns
@@ -1853,11 +1853,11 @@ from database import <project.bind_key>_models
         # TODO - add this?  self.project_name = self.project_directory_path.parent.name if not self.project_directory_path.is_dir() else self.project_directory_path.name
 
         gen_ai = None
-        if self.from_genai != "":
+        if self.genai_using != "":
             from genai import GenAI
             gen_ai = GenAI(self)
 
-        if self.from_model != "" or self.from_genai != "":
+        if self.from_model != "" or self.genai_using != "":
             try:
                 create_db_from_model.create_db(self)
             except Exception as e:
