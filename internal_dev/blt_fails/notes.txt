@@ -1,0 +1,19 @@
+The BLT failed on 2 macs, and parallels ubuntu and win11.
+
+No venv worked
+    python3 -m build
+    val@Vals-MPB-14 ApiLogicServer-src % python3 -m build --version
+        build 1.1.1 (/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/build)
+        val@Vals-MPB-14 ApiLogicServer-src %
+
+The venv is 1.2.1.  Maybe it's the build version?
+
+You can run build shell , which works (!) under the venv
+    cd tests/build_and_test
+    sh build_install.sh python3
+    # see tests/build_and_test/build_install.sh
+
+Maybe it's the build_install returning bad return code?
+
+
+
