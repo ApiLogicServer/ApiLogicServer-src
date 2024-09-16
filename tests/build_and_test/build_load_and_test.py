@@ -1050,7 +1050,7 @@ if Config.do_test_genai:
     # see https://apilogicserver.github.io/Docs/Sample-Genai/#what-just-happened
     prompt_path = install_api_logic_server_path.joinpath('system/genai/temp/chatgpt_retry.response')
     assert prompt_path.exists() , f'do_test_genai error: prompt path not found: {str(prompt_path)}'
-    result_genai = run_command(f'{set_venv} && als genai --using=genai_demo.prompt --gen-using-file={prompt_path}',
+    result_genai = run_command(f'{set_venv} && als genai --using=genai_demo.prompt --repaired-response={prompt_path}',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate genai_demo')
     genai_demo_path = install_api_logic_server_path.joinpath('genai_demo')
@@ -1067,21 +1067,21 @@ if Config.do_test_multi_reln:
     prompt_path = 'genai_demo_outdented_reln'
     response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/genai_demo/genai_demo_retry_outdented_relns_fixed/genai.response')
     assert response_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
-    result_genai = run_command(f'{set_venv} && als genai --using={prompt_path} --gen-using-file={response_path}',
+    result_genai = run_command(f'{set_venv} && als genai --using={prompt_path} --repaired-response={response_path}',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate outdented_relns_fixed')
 
     prompt_path = 'genai_demo_decimals'
     response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/genai_demo/genai_demo_decimal/genai.response')
     assert response_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
-    result_genai = run_command(f'{set_venv} && als genai --using={prompt_path} --gen-using-file={response_path}',
+    result_genai = run_command(f'{set_venv} && als genai --using={prompt_path} --repaired-response={response_path}',
         cwd=install_api_logic_server_path,
         msg=f'\ngenai_demo_decimals')
 
     prompt_path = 'dungeons_and_dragons'  # really a sqlacodegen test - classes table --> Class (reserved word)
     response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/dnd/dnd.response')
     assert response_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
-    result_genai = run_command(f'{set_venv} && als genai --using={prompt_path} --gen-using-file={response_path}',
+    result_genai = run_command(f'{set_venv} && als genai --using={prompt_path} --repaired-response={response_path}',
         cwd=install_api_logic_server_path,
         msg=f'\ndungeons_and_dragons')
 
@@ -1089,14 +1089,14 @@ if Config.do_test_multi_reln:
     prompt_path = 'time_cards_decimal'  # really a sqlacodegen test - classes table --> Class (reserved word)
     response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/time_cards/time_card_decimal/genai.response')
     assert response_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
-    result_genai = run_command(f'{set_venv} && als genai --using={prompt_path} --gen-using-file={response_path}',
+    result_genai = run_command(f'{set_venv} && als genai --using={prompt_path} --repaired-response={response_path}',
         cwd=install_api_logic_server_path,
         msg=f'\ntime cards decimal')    
 
     prompt_path = 'time_cards_kw'  # really a sqlacodegen test - classes table --> Class (reserved word)
     response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/time_cards/time_card_decimal/genai.response')
     assert response_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
-    result_genai = run_command(f'{set_venv} && als genai --using={prompt_path} --gen-using-file={response_path}',
+    result_genai = run_command(f'{set_venv} && als genai --using={prompt_path} --repaired-response={response_path}',
         cwd=install_api_logic_server_path,
         msg=f'\ntime cards keyword')    
 
@@ -1104,7 +1104,7 @@ if Config.do_test_multi_reln:
     prompt_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/airport/airport_4.prompt')
     response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/airport/airport_4.response')
     assert prompt_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
-    result_genai = run_command(f'{set_venv} && als genai --using={prompt_path} --gen-using-file={response_path}',
+    result_genai = run_command(f'{set_venv} && als genai --using={prompt_path} --repaired-response={response_path}',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate airport_4')
     start_api_logic_server(project_name="airport_4")
@@ -1115,9 +1115,9 @@ if Config.do_test_multi_reln:
     prompt_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/airport/airport_10.prompt')
     response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/airport/airport_10.response')
     # grr - creates project next to prompt; repeat locally as:
-    # als genai --using=system/genai/examples/airport/airport_4.prompt --gen-using-file=system/genai/examples/airport/airport_4.response
+    # als genai --using=system/genai/examples/airport/airport_4.prompt --repaired-response=system/genai/examples/airport/airport_4.response
     assert prompt_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
-    result_genai = run_command(f'{set_venv} && als genai --using={prompt_path} --gen-using-file={response_path}',
+    result_genai = run_command(f'{set_venv} && als genai --using={prompt_path} --repaired-response={response_path}',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate airport_10')
     start_api_logic_server(project_name="airport_10")
