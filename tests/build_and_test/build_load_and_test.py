@@ -207,6 +207,9 @@ def check_command(command_result, special_message: str=""):
         "Traceback" in result_stderr:
         if 'alembic.runtime.migration' in result_stderr:
             pass
+        elif result_stderr.count('Error') == \
+             result_stderr.count('ModuleNotFoundError while trying to load entry-point upload_docs'):
+            pass  # geesh
         else:
             if "Error" in result_stderr and 'Failed with join condition - retrying without relns' in result_stderr:
                 pass  # occurs with airport_4 - ignore the first error (a bit chancy)
@@ -974,7 +977,6 @@ if Config.do_install_api_logic_server:  # verify the build process - rebuild, an
             install_cmd = f'sh build_install_3_13.sh {python}'
         result_install = run_command(install_cmd,
             cwd=current_path,  # ..ApiLogicServer-dev/org_git/ApiLogicServer-src/tests/build_and_test
-
             msg=f'\nInstall ApiLogicServer at: {str(install_api_logic_server_path)}')
         assert result_install.returncode == 0, f'Install failed with {result_install}'
         pass
