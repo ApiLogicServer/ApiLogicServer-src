@@ -1,0 +1,114 @@
+Sure! I'll expand the database schema to include `OrderDetails` and `Products` tables, and populate these as well. The `OrderDetails` table will link orders to products and specify the quantity of each product in an order. The `Products` table will hold information about the products available for orders.
+
+Here is the updated code:
+
+```python
+from sqlalchemy import (
+    create_engine, Column, Integer, String, DateTime, ForeignKey,
+    Numeric, Sequence, Table
+)
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker, relationship
+from datetime import datetime
+
+# Setup the database connection and Base class
+engine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite')
+Base = declarative_base()
+
+# Define the Customer model
+class Customer(Base):
+    """
+    description: Table storing customer information.
+    """
+    __tablename__ = 'customers'
+    
+    id = Column(Integer, Sequence('customer_id_seq'), primary_key=True, autoincrement=True)
+    name = Column(String, nullable=True)
+    email = Column(String, nullable=True)
+
+# Define the Product model
+class Product(Base):
+    """
+    description: Table storing product information.
+    """
+    __tablename__ = 'products'
+    
+    id = Column(Integer, Sequence('product_id_seq'), primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+    price = Column(Numeric, nullable=False)
+
+# Define the Order model
+class Order(Base):
+    """
+    description: Table storing customer orders.
+    """
+    __tablename__ = 'orders'
+    
+    id = Column(Integer, Sequence('order_id_seq'), primary_key=True, autoincrement=True)
+    customer_id = Column(Integer, ForeignKey('customers.id'))
+    order_datetime = Column(DateTime, default=datetime.utcnow, nullable=True)
+    amount = Column(Numeric, nullable=True)
+    
+    customer = relationship("Customer", back_populates="orders")
+    order_details = relationship("OrderDetail", back_populates="order")
+    
+Customer.orders = relationship("Order", order_back_populates="customer")
+
+# Define the OrderDetail model
+class OrderDetail(Base):
+    """
+    description: Table storing details of each order item.
+    """
+    __tablename__ = 'order_details'
+    
+    id = Column(Integer, Sequence('order_detail_id_seq'), primary_key=True, autoincrement=True)
+    order_id = Column(Integer, ForeignKey('orders.id'))
+    product_id = Column(Integer, ForeignKey('products.id'))
+    quantity = Column(Integer, nullable=True)
+    
+    order = relationship("Order", back_populates="order_details")
+    product = relationship("Product")
+    
+# Create the tables in the database
+Base.metadata.create_all(engine)
+
+# Create a session to interact with the database
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# Add test data
+customers = [
+    Customer(name='John Doe', email='john.doe@example.com'),
+    Customer(name='Jane Smith', email='jane.smith@example.com')
+]
+products = [
+    Product(name='Widget', price=19.99),
+    Product(name='Gadget', price=29.99),
+    Product(name='Thingamajig', price=9.99)
+]
+orders = [
+    Order(customer_id=1, order_datetime=datetime(2022, 1, 1, 10, 0), amount=100.50),
+    Order(customer_id=2, order_datetime=datetime(2022, 1, 2, 12, 30), amount=200.75),
+    Order(customer_id=1, order_datetime=datetime(2022, 1, 3, 14, 45), amount=150.00)
+]
+order_details = [
+    OrderDetail(order_id=1, product_id=1, quantity=2),
+    OrderDetail(order_id=1, product_id=2, quantity=1),
+    OrderDetail(order_id=2, product_id=3, quantity=3),
+    OrderDetail(order_id=3, product_id=1, quantity=1),
+    OrderDetail(order_id=3, product_id=3, quantity=5)
+]
+
+session.add_all(customers)
+session.add_all(products)
+session.commit()  # commit customers and products first to generate ids
+
+session.add_all(orders)
+session.commit()  # commit orders to generate ids
+
+session.add_all(order_details)
+session.commit()
+
+# Close the session
+session.close()
+```

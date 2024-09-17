@@ -1,0 +1,84 @@
+To create a SQLite database named `system/genai/temp/create_db_models.sqlite` for customer orders using SQLAlchemy, and generate some test data, follow the steps provided below. We will define the database models for Customers and Orders, populate the database with some test data, and ensure the usage of foreign key columns.
+
+Here is the code to accomplish that:
+
+```python
+from sqlalchemy import create_engine, Column, Integer, String, DateTime, ForeignKey, Numeric, Sequence
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from datetime import datetime
+
+# Setup the database connection and Base class
+engine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite')
+Base = declarative_base()
+
+class Customer(Base):
+    """
+    description: Table storing customer information.
+    """
+    __tablename__ = 'customers'
+    
+    id = Column(Integer, Sequence('customer_id_seq'), primary_key=True, autoincrement=True)
+    name = Column(String, nullable=True)
+    email = Column(String, nullable=True)
+
+class Order(Base):
+    """
+    description: Table storing customer orders.
+    """
+    __tablename__ = 'orders'
+    
+    id = Column(Integer, Sequence('order_id_seq'), primary_key=True, autoincrement=True)
+    customer_id = Column(Integer, ForeignKey('customers.id'))
+    order_datetime = Column(DateTime, default=datetime.utcnow, nullable=True)
+    amount = Column(Numeric, nullable=True)
+
+# Create the tables in the database
+Base.metadata.create_all(engine)
+
+# Create a session to interact with the database
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# Add test data
+customers = [
+    Customer(name='John Doe', email='john.doe@example.com'),
+    Customer(name='Jane Smith', email='jane.smith@example.com')
+]
+orders = [
+    Order(customer_id=1, order_datetime=datetime(2022, 1, 1, 10, 0), amount=100.50),
+    Order(customer_id=2, order_datetime=datetime(2022, 1, 2, 12, 30), amount=200.75),
+    Order(customer_id=1, order_datetime=datetime(2022, 1, 3, 14, 45), amount=150.00)
+]
+
+session.add_all(customers)
+session.commit()  # commit customers first to generate ids
+
+session.add_all(orders)
+session.commit()
+
+# Close the session
+session.close()
+```
+
+Explanation:
+1. **Set up the SQLite engine and the Base class**:
+   - We create a SQLite database engine pointing to `system/genai/temp/create_db_models.sqlite`.
+   - We use `declarative_base` from SQLAlchemy to create a base class for declarative models.
+
+2. **Define the Customer and Order models**:
+   - Each model includes a docstring starting with `description:` to describe the table.
+   - `Customer` table with `id`, `name`, and `email` fields.
+   - `Order` table with `id`, `customer_id` (linked with `customers.id`), `order_datetime`, and `amount`.
+
+3. **Create the tables**:
+   - Tables are created in the database using `Base.metadata.create_all(engine)`.
+
+4. **Add test data**:
+   - Instances of `Customer` and `Order` are created with some test data.
+   - The test data is added and committed to the database.
+
+5. **Close the session**:
+   - The session is closed to finalize the database interaction.
+
+This code will set up the necessary database schema and populate it with some test data without generating any output.
