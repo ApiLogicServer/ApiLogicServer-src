@@ -319,10 +319,14 @@ class GenAI(object):
                 '''
                 if 'sqlite:///' in each_line:  # must be sqlite:///system/genai/temp/create_db_models.sqlite
                     current_url_rest = each_line.split('sqlite:///')[1]
-                    current_url = current_url_rest.split("'")[0]
-                    each_line = each_line.replace(current_url, 
-                                                  'system/genai/temp/create_db_models.sqlite')
-                    log.debug(f'.. fixed sqlite url: {current_url} -> system/genai/temp/create_db_models.sqlite')
+                    quote_type = "'"
+                    if '"' in current_url_rest:
+                        quote_type = '"'  # eg, tests/test_databases/ai-created/time_cards/time_card_decimal/genai.response
+                    current_url = current_url_rest.split(quote_type)[0]  
+                    proper_url = 'system/genai/temp/create_db_models.sqlite'
+                    each_line = each_line.replace(current_url, proper_url)
+                    if current_url != proper_url:
+                        log.debug(f'.. fixed sqlite url: {current_url} -> system/genai/temp/create_db_models.sqlite')
                 if 'Decimal,' in each_line:  # SQLAlchemy import
                     each_line = each_line.replace('Decimal,', 'DECIMAL,')
                     # other Decimal bugs: see api_logic_server_cli/prototypes/manager/system/genai/reference/errors/chatgpt_decimal.txt
