@@ -101,6 +101,7 @@ class OntBuilder(object):
         self.detail_route_template = self.get_template("detail_route_template.jinja")
         self.environment_template = self.get_template("environment.jinja")
         self.app_menu_group = self.get_template("app_menu_group.jinja")
+        self.app_config = self.get_template("app_config.jinja")
         
         self.component_scss = self.get_template("component.scss")
         # Home Grid attributes o-table-column 
@@ -214,7 +215,7 @@ class OntBuilder(object):
         }
         # Generates KeyCloak or SQL Auth - if already set - do not overwrite - use rebuild=from
         self.gen_auth_components(app_path, keycloak_args, self.use_keycloak,overwrite=False)
-        
+        rv_app_config = self.gen_app_config()
         rv_environment = self.environment_template.render(apiEndpoint=self.apiEndpoint)
         write_root_file(
             app_path=app_path,
@@ -225,6 +226,14 @@ class OntBuilder(object):
         # Translate all fields from english -> list of languages from settings TODO
         self.generate_translation_files(app_path)
 
+    def gen_app_config(self):
+        app_config = self.app_config.render(self.global_values)
+        write_root_file(
+            app_path=self.app_path,
+            dir_name="app",
+            file_name="app.config.ts",
+            source=app_config,
+        )
     def generate_routing(self, app_path, each_entity_name, each_entity, entity_name):
         routing = self.load_routing("routing.jinja", entity_name, each_entity)
         write_file(app_path, entity_name, "", "-routing.module.ts", routing)
@@ -309,7 +318,7 @@ class OntBuilder(object):
                 file_name="app.module.ts",
                 source=rv_app_modules,
             )
-            log.debug(f"Ontimize /src/app/app.module.ts created using args: {keycloak_args}")
+            log.debug(f"Ontimize {app_path}/app/app.module.ts created using args: {keycloak_args}")
         if overwrite or not self.does_file_exist(app_path,"/src/app/main","main.module.ts"):
             main_module = self.get_template("main.module.jinja")
             rv_main_modules = main_module.render(use_keycloak=use_keycloak) 
@@ -319,7 +328,7 @@ class OntBuilder(object):
                 file_name="main.module.ts",
                 source=rv_main_modules,
             )
-            log.debug(f"Ontimize /src/app/main/main.module.ts created using args: {keycloak_args}")
+            log.debug(f"Ontimize {app_path}/main/main.module.ts created using args: {keycloak_args}")
 
     def does_file_exist(self, app_path, dir_name, file_name):
         with contextlib.suppress(FileNotFoundError):

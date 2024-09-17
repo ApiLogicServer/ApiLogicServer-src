@@ -244,10 +244,38 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         return None
     
     def login(request):
-        url = f"http://{request.host}/api/auth/login"
-        requests.post(url=url, headers=request.headers, json = {})
-        return jsonify({"code":0,"message":"Login Successful","data":{}})
-       
+        url = f"{request.scheme}://{request.host}/api/auth/login"
+        # no data is passed - uses basic auth in header
+        #requests.post(url=url, headers=request.headers, json = {})
+        username = ''
+        password = ''
+        auth = request.headers.get("Authorization", None)
+        if auth and auth.startswith("Basic"):  # support basic auth
+            import base64
+            base64_message = auth[6:]
+            print(f"auth found: {auth}")
+            #base64_message = 'UHl0aG9uIGlzIGZ1bg=='
+            base64_bytes = base64_message.encode('ascii')
+            message_bytes = base64.b64decode(base64_bytes)
+            message = message_bytes.decode('ascii')
+            s = message.split(":")
+            username = s[0]
+            password = s[1]
+        from security.authentication_provider.abstract_authentication_provider import Abstract_Authentication_Provider
+        from security.system.authentication import create_access_token
+        
+        authentication_provider : Abstract_Authentication_Provider = Config.SECURITY_PROVIDER 
+        if not authentication_provider:
+            return jsonify({"code":1,"message":"No authentication provider configured"}), 401
+        user = authentication_provider.get_user(username, password)
+        if not user or not authentication_provider.check_password(user = user, password = password):
+            return jsonify({"code":1,"message":"Wrong username or password"}), 401
+        
+        access_token = create_access_token(identity=user)  # serialize and encode
+        from flask import g
+        g.access_token = access_token
+        #return jsonify(access_token=access_token)
+        return jsonify({"code":0,"message":"Login Successful","data":{"access_token":access_token}})
     
     def get_rows_agg(request: any, api_clz, agg_type, filter, columns):
         key = api_clz.__name__

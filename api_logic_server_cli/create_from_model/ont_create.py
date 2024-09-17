@@ -264,6 +264,10 @@ class OntCreator(object):
         style_guide.keycloak_url= "http://localhost:8080"
         style_guide.keycloak_realm = "kcals"
         style_guide.keycloak_client_id = "alsclient"
+        style_guide.serviceType = "OntimizeEE"
+        style_guide.locale = "en"
+        style_guide.applicationLocales = ["en","es"]
+        style_guide.startSessionPath = "/auth/login"
         return style_guide
 
 '''
