@@ -355,7 +355,7 @@ def advancedFilter(cls, args) -> any:
         if op_name not in ONTIMIZE_OPERATORS:
             raise ValidationError(f'Invalid filter {flt}, unknown operator: {op_name}')
         #join = flt.get("join", "").strip("_").lower()   
-        attr = cls._s_jsonapi_attrs[attr_name] if attr_name != "id" else cls.id if "id" in cls._s_jsonapi_attrs else cls.Id
+        attr = cls._s_jsonapi_attrs[attr_name] if attr_name != "id" else cls.id 
         if op_name in ["IN"]:
             expr = ExpressionHolder(expr=attr.in_(clean(attr_val)), join=join)
             expression_holder.append(expr)
