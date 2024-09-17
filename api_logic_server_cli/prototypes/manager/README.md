@@ -152,7 +152,7 @@ als genai --using=system/genai/examples/genai_demo/genai_demo.prompt
 
 
 ```bash
-als genai --using=genai_demo.prompt --gen-using-file=system/genai/temp/chatgpt_retry.response
+als genai --using=genai_demo.prompt --repaired-response=system/genai/temp/chatgpt_retry.response
 ```
 </br>
 
@@ -184,7 +184,7 @@ als genai --using=genai_demo.prompt --gen-using-file=system/genai/temp/chatgpt_r
 
 <details markdown>
 
-<summary> You can also iterate</summary>
+<summary> You can also execute directly, and iterate</summary>
 
 <br>You can add new columns/tables, while keeping the prior model intact:
 
@@ -212,7 +212,7 @@ als create --project-name=genai_demo --from-model=system/genai/temp/create_db_mo
 Or, correct the chatgpt response, and
 
 ```bash
-als genai --using=genai_demo.prompt --gen-using-file=system/genai/temp/chatgpt_retry.response
+als genai --using=genai_demo.prompt --repaired-response=system/genai/temp/chatgpt_retry.response
 ```
 
 We have seen failures such as:
@@ -364,7 +364,7 @@ als genai --using=system/genai/examples/genai_demo/genai_demo.prompt
 
 # Or, Microservice Automation from Saved Response
 # Admin App, API, Project
-als genai --using=genai_demo.prompt --gen-using-file=system/genai/temp/chatgpt_retry.response
+als genai --using=genai_demo.prompt --repaired-response=system/genai/temp/chatgpt_retry.response
 
 # Logic and Security
 #   - see logic (logic/declare_logic.py, logic/cocktail-napkin.jpg);  add an Order and Item

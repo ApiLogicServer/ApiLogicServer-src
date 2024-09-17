@@ -7,7 +7,7 @@ from sqlalchemy.orm import sessionmaker
 import datetime
 
 Base = declarative_base()
-engine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite')
+engine = create_engine('sqlite:///system/genai/temp/very_bogus_file_name')
 
 class CustomerAccount(Base):
     """description: Table to store customer account information"""

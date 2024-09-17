@@ -77,7 +77,7 @@ class GenAI(object):
         self.messages = self.get_prompt_messages()  # compute self.messages, from file, dir or text argument
 
         if self.project.genai_repaired_response == '':
-            log.info(f'.. ChatGPT - response at: system/genai/temp/chatgpt_original.response')
+            log.debug(f'.. ChatGPT - saving response to: system/genai/temp/chatgpt_original.response')
             self.headers = self.get_headers_with_openai_api_key()
             url = "https://api.openai.com/v1/chat/completions"
             api_version = f'{self.project.genai_version}'  # eg, "gpt-4o"
@@ -265,7 +265,8 @@ class GenAI(object):
         1. break response data into lines
         2. throw away instructions
         3. ChatGPT work-arounds (decimal, indent, bogus relns)
-        4. write model file to self.project.from_model
+        4. Ensure the sqlite url is correct: sqlite:///system/genai/temp/create_db_models.sqlite
+        5. write model file to self.project.from_model
 
         Args:
             response_data (str): the chatgpt response
@@ -315,9 +316,13 @@ class GenAI(object):
                     6. Bad syntax on test data cals: see api_logic_server_cli/prototypes/manager/system/genai/examples/genai_demo/genai_demo_conversation_bad_decimal_2/genai_demo_conversation_002.response
                         got: or DECIMAL('
                         needed: or decimal.Decimal('0.00')
-
-
                 '''
+                if 'sqlite:///' in each_line:  # must be sqlite:///system/genai/temp/create_db_models.sqlite
+                    current_url_rest = each_line.split('sqlite:///')[1]
+                    current_url = current_url_rest.split("'")[0]
+                    each_line = each_line.replace(current_url, 
+                                                  'system/genai/temp/create_db_models.sqlite')
+                    log.debug(f'.. fixed sqlite url: {current_url} -> system/genai/temp/create_db_models.sqlite')
                 if 'Decimal,' in each_line:  # SQLAlchemy import
                     each_line = each_line.replace('Decimal,', 'DECIMAL,')
                     # other Decimal bugs: see api_logic_server_cli/prototypes/manager/system/genai/reference/errors/chatgpt_decimal.txt
@@ -350,7 +355,7 @@ class GenAI(object):
         with open(f'{self.project.from_model}', "w") as model_file:
             model_file.write(model_class)
         
-        log.info(f'.. model file created: {self.project.from_model}')
+        log.debug(f'.. model file created: {self.project.from_model}')
 
     def save_files_to_system_genai_temp_project(self):
         """
@@ -364,6 +369,7 @@ class GenAI(object):
             to_dir = Path(os.getcwd())
             gen_temp_dir = Path(to_dir).joinpath(f'system/genai/temp')
             to_dir_save_dir = Path(to_dir).joinpath(f'system/genai/temp/{self.project.project_name_last_node}')
+            log.info(f'.. saving work files to: system/genai/temp/{self.project.project_name_last_node}')
             """ system/genai/temp/project - save prompt, response, and create_db_models.py to this directory """
             self.project.gen_ai_save_dir = to_dir_save_dir
             os.makedirs(to_dir_save_dir, exist_ok=True)
@@ -479,5 +485,6 @@ def key_module_map():
     genai = GenAI(Project())
     genai.__init__()                                    # called from api_logic_server#create_project()
     genai.get_prompt_messages()                         # get self.messages from file/dir/text/arg
+    genai.fix_and_write_model_file('response_data')     # write create_db_models.py for db creation
     genai.save_files_to_system_genai_temp_project()     # save prompt, response and models.py
  
