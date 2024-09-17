@@ -609,7 +609,7 @@ def genai(ctx, using, db_url, repaired_response: click.BOOL, genai_version: str,
     if retries < 0:  # for debug: catch exceptions at point of failure
         PR.ProjectRun(command="create", genai_version=genai_version, 
                     genai_using=using,                    # the prompt file, or the actual prompt
-                    gen_using_file=repaired_response,    # retry from [repaired] response file
+                    repaired_response=repaired_response,    # retry from [repaired] response file
                     opt_locking=opt_locking,
                     genai_prompt_inserts=prompt_inserts,
                     genai_use_relns=genai_use_relns,
