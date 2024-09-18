@@ -6,17 +6,22 @@ API Logic Server / GenAI Microservice Automation has turned your prompt into a m
 
 1. A ***multi-table* application** - explore the links at left
 
-2. A **standard *multi-table* JSON:API** - [click here]()
+2. A **standard *multi-table* JSON:API** - [explore Open API here]()
 
 </br>
 
-## TL;DR
+## TL;DR - instant working software, standards-based customization and deployment
 
-From a simple Natural Language Prompt (or existing database), you get:
+<details markdown>
+</br>
 
-1. Multi-table App & API - no db design, framework, screen painting.  Your business idea, *running* - ready for collaboration and iteration. <br>
+<summary>Instant Microservice, Customize with Declarative Rules and Python in your IDE</summary>
 
-2. A project you can [customize in your IDE](https://apilogicserver.github.io/Docs/Tutorial/#3-customize-and-debug-in-your-ide) with Python, eg:
+From a simple Natural Language Prompt (or existing database) - no db design, framework, screen painting - you get:
+
+1. **Working Software** - ready for collaboration and iteration. <br>
+
+2. A project you can [**customize in your IDE**](https://apilogicserver.github.io/Docs/Tutorial/#3-customize-and-debug-in-your-ide) with Python, eg:
 
     * [declarative security](https://apilogicserver.github.io/Docs/Security-Overview/): keycloak authentication, role-based row authorization<br>
 
@@ -24,8 +29,12 @@ From a simple Natural Language Prompt (or existing database), you get:
 
     * application integration (e.g., [kafka messaging](https://apilogicserver.github.io/Docs/Sample-Integration/)), <br>
 
+3. Deploy...
+
 
 To create unlimited projects on your cloud/network, contact `apilogicserver@gmail.com` for a free docker image, and project support
+
+</details>
 
 </br>
 
@@ -35,7 +44,7 @@ To create unlimited projects on your cloud/network, contact `apilogicserver@gmai
 </br>
 
 
-<summary>Download your Project, or Run the Docker Image</summary>
+<summary>Download the project, or run Docker image</summary>
 
 <br>You can explore this microservice on your own computer
 
