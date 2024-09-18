@@ -126,7 +126,7 @@ def get_args(flask_app: Flask) -> Args:
     flask_app.config.from_prefixed_env(prefix="APILOGICPROJECT")    # env overrides (e.g., docker)
     app_logger.debug(f"\nserver_setup - get_args: ENV args: \n{args}\n\n")
 
-    if args.verbose:
+    if args.verbose:  # export APILOGICPROJECT_VERBOSE=True
         app_logger.setLevel(logging.DEBUG)
         safrs.log.setLevel(logging.DEBUG)  # notset 0, debug 10, info 20, warn 30, error 40, critical 50
         authentication_logger = logging.getLogger('security.system.authentication')
