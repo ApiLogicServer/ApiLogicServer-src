@@ -43,6 +43,8 @@ import os
 import importlib
 import click
 
+use_genai_module = True
+
 class HideDunderCommand(click.Command):
     """remove redundant option_name from --help
     https://stackoverflow.com/questions/62182687/custom-help-in-python-click
@@ -587,74 +589,81 @@ def genai(ctx, using, db_url, repaired_response: click.BOOL, genai_version: str,
         Creates new customizable project (overwrites).
     """
     global command
-    db_types = ""
-    # if no .prompt extension on using, then that's the prompt (no file)
-    # if using.endswith('.prompt'):
-    #    using = using.replace('.prompt','')
-    project_name = using  # this is the prompt file (or actual prompt)
-    if project_name.startswith("'"):
-        project_name = project_name.replace("'", "")
-    if using.endswith('.prompt') or Path(using).is_dir():       # regardless of repaired_response,
-        project_name = Path(using).stem                         # the project name is the <cwd>/last node of using
-    else:
+    if use_genai_module:
+        import genai as genai_svcs
+        genai_svcs.genai(using=using, db_url=db_url, repaired_response=repaired_response, 
+                    genai_version=genai_version, retries=retries, opt_locking=opt_locking, 
+                    prompt_inserts=prompt_inserts, quote=quote, use_relns=use_relns)
+        pass
+    else:  # old code - delete
+        db_types = ""
+        # if no .prompt extension on using, then that's the prompt (no file)
+        # if using.endswith('.prompt'):
+        #    using = using.replace('.prompt','')
+        project_name = using  # this is the prompt file (or actual prompt)
+        if project_name.startswith("'"):
+            project_name = project_name.replace("'", "")
+        if using.endswith('.prompt') or Path(using).is_dir():       # regardless of repaired_response,
+            project_name = Path(using).stem                         # the project name is the <cwd>/last node of using
+        else:
+            project_name  = project_name.replace(' ', '_')
         project_name  = project_name.replace(' ', '_')
-    project_name  = project_name.replace(' ', '_')
 
-    try_number = 1
-    genai_use_relns = use_relns
-    """ if 'unable to determine join condition', we retry this with False """
-    if repaired_response != "":
-        try_number = retries  # if not calling GenAI, no need to retry:
-    # TODO or 0, right?
-    if retries < 0:  # for debug: catch exceptions at point of failure
-        PR.ProjectRun(command="create", genai_version=genai_version, 
-                    genai_using=using,                    # the prompt file, or the actual prompt
-                    repaired_response=repaired_response,    # retry from [repaired] response file
-                    opt_locking=opt_locking,
-                    genai_prompt_inserts=prompt_inserts,
-                    genai_use_relns=genai_use_relns,
-                    quote=quote,
-                    project_name=project_name, db_url=db_url)
-        log.info(f"GENAI successful")  
-    else:
-        while try_number <= retries:
-            try:
-                failed = False
-                PR.ProjectRun(command="create", genai_version=genai_version, 
-                            genai_using=using,                   # the prompt file, or the actual prompt
-                            repaired_response=repaired_response,    # retry from [repaired] response file
-                            opt_locking=opt_locking,
-                            genai_prompt_inserts=prompt_inserts,
-                            genai_use_relns=genai_use_relns,
-                            quote=quote,
-                            project_name=project_name, db_url=db_url)
-                if do_force_failure := False:
-                    if try_number < 3:
-                        raise Exception("Forced Failure for Internal Testing")
-                break  # success - exit the loop
-            except Exception as e:
-                log.error(f"\n\nGenai failed With Error: {e}")
-                # Could not determine join condition
-                manager_dir = Path(os.getcwd())  # rename save dir (append retry) for diagnosis
-                to_dir_save_dir = Path(manager_dir).joinpath(f'system/genai/temp/{project_name}')
-                to_dir_save_dir_retry = Path(manager_dir).joinpath(f'system/genai/temp/{project_name}_{try_number}')
-                if repaired_response != "":
-                    to_dir_save_dir_retry = Path(manager_dir).joinpath(f'system/genai/temp/{project_name}_retry')  
-                if to_dir_save_dir_retry.exists():
-                    shutil.rmtree(to_dir_save_dir_retry)
-                to_dir_save_dir.rename(to_dir_save_dir_retry) 
-                failed = True
-                if genai_use_relns and "Could not determine join condition" in str(e):
-                    genai_use_relns = False  # just for db_models (fk's still there!!)
-                    log.error(f"\n   Failed with join condition - retrying without relns\n")
+        try_number = 1
+        genai_use_relns = use_relns
+        """ if 'unable to determine join condition', we retry this with False """
+        if repaired_response != "":
+            try_number = retries  # if not calling GenAI, no need to retry:
+        # TODO or 0, right?
+        if retries < 0:  # for debug: catch exceptions at point of failure
+            PR.ProjectRun(command="create", genai_version=genai_version, 
+                        genai_using=using,                    # the prompt file, or the actual prompt
+                        repaired_response=repaired_response,    # retry from [repaired] response file
+                        opt_locking=opt_locking,
+                        genai_prompt_inserts=prompt_inserts,
+                        genai_use_relns=genai_use_relns,
+                        quote=quote,
+                        project_name=project_name, db_url=db_url)
+            log.info(f"GENAI successful")  
+        else:
+            while try_number <= retries:
+                try:
                     failed = False
-                else:
-                    try_number += 1
-            pass # retry (retries times)
-        if failed:
-            log.error(f"\n\nGenai Failed (Retries: {retries})") 
-            exit(1) 
-        log.info(f"GENAI successful on try {try_number}")  
+                    PR.ProjectRun(command="create", genai_version=genai_version, 
+                                genai_using=using,                   # the prompt file, or the actual prompt
+                                repaired_response=repaired_response,    # retry from [repaired] response file
+                                opt_locking=opt_locking,
+                                genai_prompt_inserts=prompt_inserts,
+                                genai_use_relns=genai_use_relns,
+                                quote=quote,
+                                project_name=project_name, db_url=db_url)
+                    if do_force_failure := False:
+                        if try_number < 3:
+                            raise Exception("Forced Failure for Internal Testing")
+                    break  # success - exit the loop
+                except Exception as e:
+                    log.error(f"\n\nGenai failed With Error: {e}")
+                    # Could not determine join condition
+                    manager_dir = Path(os.getcwd())  # rename save dir (append retry) for diagnosis
+                    to_dir_save_dir = Path(manager_dir).joinpath(f'system/genai/temp/{project_name}')
+                    to_dir_save_dir_retry = Path(manager_dir).joinpath(f'system/genai/temp/{project_name}_{try_number}')
+                    if repaired_response != "":
+                        to_dir_save_dir_retry = Path(manager_dir).joinpath(f'system/genai/temp/{project_name}_retry')  
+                    if to_dir_save_dir_retry.exists():
+                        shutil.rmtree(to_dir_save_dir_retry)
+                    to_dir_save_dir.rename(to_dir_save_dir_retry) 
+                    failed = True
+                    if genai_use_relns and "Could not determine join condition" in str(e):
+                        genai_use_relns = False  # just for db_models (fk's still there!!)
+                        log.error(f"\n   Failed with join condition - retrying without relns\n")
+                        failed = False
+                    else:
+                        try_number += 1
+                pass # retry (retries times)
+            if failed:
+                log.error(f"\n\nGenai Failed (Retries: {retries})") 
+                exit(1) 
+            log.info(f"GENAI successful on try {try_number}")  
 
 
 @main.command("genai-create", cls=HideDunderCommand) 

@@ -10,57 +10,65 @@ import shutil
 log = logging.getLogger(__name__)
 
 class GenAI(object):
-    """ Create project from genai prompt(s).  Called from api_logic_server#create_project() -- main driver
-
-    The key argument is `--using`
-    * It can be a file, dir (conversation) or text argument.
-    * It's "stem" denotes the project name to be created at cwd
-    * `self.project.genai_using`
-
-    The (rarely used) `--repaired_response` 
-    * is for retry from corrected response
-    * `--using` is required to get the project name, to be created at cwd
-    * `self.project.genai_repaired_response`
-
-    __init__()  # work directory is <manager>/system/genai/temp/
+    """ Create project from genai prompt(s).  
     
-    1. run ChatGPT to create system/genai/temp/chatgpt_original.response, using...
-    2. get_prompt_messages() - get self.messages[] from file, dir (conversation) or text argument
-    3. Compute create_db_models
-        a. Usually call chatGPT to get response, save to system/genai/temp/chatgpt_original.response
-        b. If --gen-using-file, read response from file        
-    4. self.get_logic() - saves prompt logic as comments for insertion into model (4.3)
-    5. fix_and_write_model_file()
-    6. returns to main driver (api_logic_server#create_project()), which 
-        1. runs create_db_from_model.create_db(self)
-        2. proceeds to create project
-        3. calls this.insert_logic_into_created_project() - merge logic into declare_logic.py
+    Called by api_logic_server, to run ChatGPT (or respone file) to create SQLAlchemy model
 
-    developer then can use CoPilot to create logic (Rule.) from the prompt (or just code completion)
+    api_logic_server then uses model to create db, proceeds with normal project creation.
 
-
-    ##### Explore interim copilot access:
-
-    VSCode/Copilot-chat can turn prompts into logic, so can we automate with API?
-
-    https://stackoverflow.com/questions/76741410/how-to-invoke-github-copilot-programmatically
-    https://docs.google.com/document/d/1o0TeNQtuT6moWU1bOq2K20IbSw4YhV1x_aFnKwo_XeU/edit#heading=h.3xmoi7pevsnp
-    https://code.visualstudio.com/api/extension-guides/chat
-    https://code.visualstudio.com/api/extension-guides/language-model
-    https://github.com/B00TK1D/copilot-api
-
-    ### Or use ChatGPT:
-
-    Not sure vscode/copilot is best approach, since we'd like to activate this during project creation
-    (eg on web/GenAI - not using vscode).
-
-    * Thomas suggests there are ways to "teach" ChatGPT about Logic Bank.  This is a good idea.
-
-    https://platform.openai.com/docs/guides/fine-tuning/create-a-fine-tuned-model
+    * there is also a callback to genai to insert logic into created project
     """
 
     def __init__(self, project: Project):
-        """ Run ChatGPT to create SQLAlchemy model
+        """ 
+
+        The key argument is `--using`
+        * It can be a file, dir (conversation) or text argument.
+        * It's "stem" denotes the project name to be created at cwd
+        * `self.project.genai_using`
+
+        The (rarely used) `--repaired_response` 
+        * is for retry from corrected response
+        * `--using` is required to get the project name, to be created at cwd
+        * `self.project.genai_repaired_response`
+
+        __init__() is the main driver (work directory is <manager>/system/genai/temp/)
+        
+        1. run ChatGPT to create system/genai/temp/chatgpt_original.response, using...
+        2. get_prompt_messages() - get self.messages[] from file, dir (conversation) or text argument
+        3. Compute create_db_models
+            a. Usually call chatGPT to get response, save to system/genai/temp/chatgpt_original.response
+            b. If --gen-using-file, read response from file        
+        4. self.get_logic() - saves prompt logic as comments for insertion into model (4.3)
+        5. fix_and_write_model_file()
+        6. returns to main driver (api_logic_server#create_project()), which 
+            1. runs create_db_from_model.create_db(self)
+            2. proceeds to create project
+            3. calls this.insert_logic_into_created_project() - merge logic into declare_logic.py
+
+        developer then can use CoPilot to create logic (Rule.) from the prompt (or just code completion)
+
+        see key_module_map() for key methods
+
+
+        ##### Explore interim copilot access:
+
+        VSCode/Copilot-chat can turn prompts into logic, so can we automate with API?
+
+        https://stackoverflow.com/questions/76741410/how-to-invoke-github-copilot-programmatically
+        https://docs.google.com/document/d/1o0TeNQtuT6moWU1bOq2K20IbSw4YhV1x_aFnKwo_XeU/edit#heading=h.3xmoi7pevsnp
+        https://code.visualstudio.com/api/extension-guides/chat
+        https://code.visualstudio.com/api/extension-guides/language-model
+        https://github.com/B00TK1D/copilot-api
+
+        ### Or use ChatGPT:
+
+        Not sure vscode/copilot is best approach, since we'd like to activate this during project creation
+        (eg on web/GenAI - not using vscode).
+
+        * Thomas suggests there are ways to "teach" ChatGPT about Logic Bank.  This is a good idea.
+
+        https://platform.openai.com/docs/guides/fine-tuning/create-a-fine-tuned-model
         """        
 
         self.project = project
@@ -95,6 +103,9 @@ class GenAI(object):
 
         self.fix_and_write_model_file(create_db_models) # write create_db_models.py for db creation   
         self.save_files_to_system_genai_temp_project()  # save prompt, response and models.py
+        if project.project_name_last_node == 'genai_demo_conversation':
+            debug_string = "good breakpoint - check create_db_models.py"
+        pass # return to api_logic_server.ProjectRun to create db/project from create_db_models.py
 
     def delete_temp_files(self):
         """Delete temp files created by genai ((system/genai/temp -- models, responses)"""
@@ -120,11 +131,6 @@ class GenAI(object):
             if Path(self.project.genai_using).is_file():  # eg, launch.json for airport_4 is just a name
                 with open(f'{self.project.genai_using}', 'r') as file:
                     prompt = file.read()
-                prompt_messages.append( {"role": "user", "content": prompt})
-        #  get ChatGPT prompt, from... text argument, dir files (conversation), or file
-        elif self.project.genai_using.startswith("'"):  # leading quote means prompt from text TODO dump this
-                raw_prompt = self.project.genai_using
-                prompt = self.get_prompt__with_inserts(raw_prompt=raw_prompt)  # insert db-specific logic
                 prompt_messages.append( {"role": "user", "content": prompt})
         elif Path(self.project.genai_using).is_dir():  # conversation from directory
             response_count = 0
@@ -388,7 +394,7 @@ class GenAI(object):
                     new_response_file_name = to_dir_save_dir.joinpath(f'{self.project.project_name}_001.response')
                     os.rename(response_file_name, to_dir_save_dir.joinpath(new_response_file_name))
 
-                elif self.project.genai_using.startswith("'"):  # leading quote means prompt from text
+                elif self.project.genai_using.startswith("'"):  # leading quote means prompt from text  TODO remove
                     saved_temp_prompt_file_name = to_dir_save_dir.joinpath(f'{self.project.project_name}_001.prompt')
                     with open(saved_temp_prompt_file_name, "w") as prompt_file:
                         prompt_file.write(self.project.genai_using[1:-1])
@@ -483,12 +489,136 @@ class GenAI(object):
         log.debug(f'.. stored response: {model_file.name}')
         return response_data
 
+
+def genai(using, db_url, repaired_response: bool, genai_version: str, 
+          retries: int, opt_locking: str, prompt_inserts: str, quote: bool,
+          use_relns: bool):
+    """ cli caller provides using, or repaired_response & using
+    
+        Called from cli commands: genai, genai-create, genai-iterate
+        
+        Invokes api_logic_server.ProjectRun
+        
+        Which calls Genai()
+    """
+    import api_logic_server_cli.api_logic_server as PR
+
+    db_types = ""
+    # if using.endswith('.prompt'):
+    #    using = using.replace('.prompt','')
+    project_name = using  # this is the prompt file (or actual prompt)
+    if using.endswith('.prompt') or Path(using).is_dir():       # regardless of repaired_response,
+        project_name = Path(using).stem                         # the project name is the <cwd>/last node of using
+    else:
+        project_name  = project_name.replace(' ', '_')
+    project_name  = project_name.replace(' ', '_')
+
+    try_number = 1
+    genai_use_relns = use_relns
+    """ if 'unable to determine join condition', we retry this with False """
+    if repaired_response != "":
+        try_number = retries  # if not calling GenAI, no need to retry:
+    # TODO or 0, right?
+    if retries < 0:  # for debug: catch exceptions at point of failure
+        PR.ProjectRun(command="create", genai_version=genai_version, 
+                    genai_using=using,                      # the prompt file, or conversation dir
+                    repaired_response=repaired_response,    # retry from [repaired] response file
+                    opt_locking=opt_locking,
+                    genai_prompt_inserts=prompt_inserts,
+                    genai_use_relns=genai_use_relns,
+                    quote=quote,
+                    project_name=project_name, db_url=db_url)
+        log.info(f"GENAI successful")  
+    else:
+        while try_number <= retries:
+            try:
+                failed = False
+                PR.ProjectRun(command="create", genai_version=genai_version, 
+                            genai_using=using,                      # the prompt file, or dir of prompt/response
+                            repaired_response=repaired_response,    # retry from [repaired] response file
+                            opt_locking=opt_locking,
+                            genai_prompt_inserts=prompt_inserts,
+                            genai_use_relns=genai_use_relns,
+                            quote=quote,
+                            project_name=project_name, db_url=db_url)
+                if do_force_failure := False:
+                    if try_number < 3:
+                        raise Exception("Forced Failure for Internal Testing")
+                break  # success - exit the loop
+            except Exception as e:  # almost certaily in api_logic_server_cli/create_from_model/create_db_from_model.py
+                log.error(f"\n\nGenai failed With Error: {e}")
+
+                if Path(using).is_dir():
+                    log.debug('conversation dir, check in-place iteration')
+                    '''
+                    cases:
+                        - conv in temp - in_place_conversation
+                        - conv elsewhere 
+                    test (sorry, no automated blt test for this):
+                        1. genai CONVERSATION - clean/ApiLogicServer/genai_demo_conversation
+                        2. genai CONVERSATION ITERATE IN-PLACE (NB: DELETE LAST RESPONSE FIRST)
+                            a. Stop: find 'good breakpoint - check create_db_models.py'
+                            b. Introduce error in system/genai/temp/create_db_models.py
+                    '''
+
+                    to_dir_save_dir = Path(Path(os.getcwd())).joinpath(f'system/genai/temp/{project_name}')
+                    in_place_conversation = str(to_dir_save_dir) == str(Path(using).resolve())
+                    """ means we are using to_dir as the save directory """
+                    if in_place_conversation:
+                        last_response_file_name = ''
+                        last_type = ''
+                        for each_file in sorted(Path(to_dir_save_dir).iterdir()):
+                            if each_file.is_file() and each_file.suffix == '.prompt':
+                                last_type = '.prompt'
+                            if each_file.suffix == '.response':
+                                last_type = '.response'
+                                last_response_file_name = each_file.name
+                        if last_type == ".response":  # being careful to delete only recent response
+                            last_response_path = to_dir_save_dir.joinpath(last_response_file_name)
+                            log.debug(f'in-place conversation dir, deleting most recent response: {last_response_path}')
+                            Path(last_response_path).unlink(missing_ok=True)
+
+                # save the temp files for diagnosis (eg, <project_name>_1)
+                manager_dir = Path(os.getcwd())  # rename save dir (append retry) for diagnosis
+                to_dir_save_dir = Path(manager_dir).joinpath(f'system/genai/temp/{project_name}')
+                to_dir_save_dir_retry = Path(manager_dir).joinpath(f'system/genai/temp/{project_name}_{try_number}')
+                if repaired_response != "":
+                    to_dir_save_dir_retry = Path(manager_dir).joinpath(f'system/genai/temp/{project_name}_retry')  
+                if to_dir_save_dir_retry.exists():
+                    shutil.rmtree(to_dir_save_dir_retry)
+                # to_dir_save_dir.rename(to_dir_save_dir_retry) 
+                shutil.copytree(to_dir_save_dir, to_dir_save_dir_retry, dirs_exist_ok=True) 
+
+                failed = True
+                if genai_use_relns and "Could not determine join condition" in str(e):
+                    genai_use_relns = False  # just for db_models (fk's still there!!)
+                    log.error(f"\n   Failed with join condition - retrying without relns\n")
+                    failed = False
+                else:
+                    try_number += 1
+            pass # retry (retries times)
+        if failed:
+            log.error(f"\n\nGenai Failed (Retries: {retries})") 
+            exit(1) 
+        log.info(f"GENAI successful on try {try_number}")  
+
+
 def key_module_map():
     """ does not execute - strictly fo find key modules """
+    import api_logic_server_cli.api_logic_server as als
+    import api_logic_server_cli.create_from_model.create_db_from_model as create_db_from_model
 
-    genai = GenAI(Project())
-    genai.__init__()                                    # called from api_logic_server#create_project()
-    genai.get_prompt_messages()                         # get self.messages from file/dir/text/arg
-    genai.fix_and_write_model_file('response_data')     # write create_db_models.py for db creation
-    genai.save_files_to_system_genai_temp_project()     # save prompt, response and models.py
+    genai()                                         # called from cli.genai/create/iterate
+                                                    # try/catch/retry loop!
+    als.ProjectRun()                                # calls api_logic_server.ProjectRun
+
+    genai = GenAI(Project())                        # called from api_logic_server.ProjectRun
+    genai.__init__()                                # main driver, calls...  
+    genai.get_prompt_messages()                     # get self.messages from file/dir/text/arg
+    genai.fix_and_write_model_file('response_data') # write create_db_models.py for db creation
+    genai.save_files_to_system_genai_temp_project() # save prompt, response and create_db_models.py
+                                                    # returns to api_logic_server, which...
+    create_db_from_model.create_db()                #   creates create_db_models.sqlite from create_db_models.py
+                                                    #   creates project from that db; and calls...
+    genai.insert_logic_into_created_project()       #   merge logic (comments) into declare_logic.py
  

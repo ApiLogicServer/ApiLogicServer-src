@@ -99,7 +99,7 @@
         },
         // mimic iteration DELETE LAST RESPONSE FIRST
         {
-            "name": "     - genai CONVERSATION ITERATE IN PLACE (NB: DELETE LAST RESPONSE FIRST)",
+            "name": "     - genai CONVERSATION ITERATE IN-PLACE (NB: DELETE LAST RESPONSE FIRST)",
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
@@ -179,19 +179,6 @@
                 "genai",
                 "--repaired-response=${workspaceFolder}/api_logic_server_cli/prototypes/manager/system/genai/examples/genai_demo/genai_demo.response",
                 "--using=ignored/genai_demo.prompt"],
-            "console": "integratedTerminal"
-        },
-        {
-            "name": "     - genai create NOFILE - auto dealership",
-            "type": "debugpy",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
-            "env": {"APILOGICSERVER_DEBUG": "True"},
-            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
-            "redirectOutput": true,
-            "args": [
-                "automobile dealership project",
-                "--using=automobile dealership"],
             "console": "integratedTerminal"
         },
         {
@@ -529,19 +516,6 @@
             "args": [
                 "genai",
                 "--using=${workspaceFolder}/tests/test_databases/ai-created/happy_cows"],
-            "console": "integratedTerminal"
-        },
-        {
-            "name": "    - Create Cust/Orders from text prompt",
-            "type": "debugpy",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
-            "env": {"APILOGICSERVER_DEBUG": "True"},
-            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
-            "redirectOutput": true,
-            "args": [
-                "genai",
-                "--using='Customer Orders'",],
             "console": "integratedTerminal"
         },
         {
