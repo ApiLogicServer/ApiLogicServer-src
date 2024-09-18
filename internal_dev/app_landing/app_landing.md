@@ -1,6 +1,6 @@
 
 
-## Explore the created microservice in your Browser
+## What Just Happened?
 
 API Logic Server / GenAI Microservice Automation has turned your prompt into a microservice; explore it:
 
@@ -10,7 +10,7 @@ API Logic Server / GenAI Microservice Automation has turned your prompt into a m
 
 </br>
 
-## TL;DR - instant working software, standards-based customization and deployment
+## TL;DR - instant working software, standards-based customization and deployment, rules
 
 <details markdown>
 </br>
