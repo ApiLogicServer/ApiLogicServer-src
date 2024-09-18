@@ -2,32 +2,28 @@
 
 ## Explore the created microservice in your Browser
 
-Without framework coding, database design or screen painting, you have
+API Logic Server / GenAI Microservice Automation has turned your prompt into a microservice; explore it:
 
 1. A ***multi-table* application** - explore the links at left
 
-2. A **standard *multi-table* JSON:API** - [click here]
+2. A **standard *multi-table* JSON:API** - [click here]()
 
 </br>
 
-## What Just Happened
+## TL;DR
 
 From a simple Natural Language Prompt (or existing database), you get:
 
-1. Multi-table App & API - no db design, framework, screen painting <br>
+1. Multi-table App & API - no db design, framework, screen painting.  Your business idea, *running* - ready for collaboration and iteration. <br>
 
-2. Download the project to [customize in your IDE](https://apilogicserver.github.io/Docs/Tutorial/#3-customize-and-debug-in-your-ide) with Python, eg:
+2. A project you can [customize in your IDE](https://apilogicserver.github.io/Docs/Tutorial/#3-customize-and-debug-in-your-ide) with Python, eg:
 
-    * [declarative security](https://apilogicserver.github.io/Docs/Security-Overview/): role-based row filtering<br>
+    * [declarative security](https://apilogicserver.github.io/Docs/Security-Overview/): keycloak authentication, role-based row authorization<br>
 
-    * [declarative business logic](): 40x more concise for multi-table constraints and derivations, extensible with Python<br>
+    * [declarative business logic](): multi-table constraints and derivations using rules that are 40X more concise than code, extensible with Python<br>
 
     * application integration (e.g., [kafka messaging](https://apilogicserver.github.io/Docs/Sample-Integration/)), <br>
 
-    * models vs code mess ?? tbd 
- 
-
-### Next Steps
 
 To create unlimited projects on your cloud/network, contact `apilogicserver@gmail.com` for a free docker image, and project support
 
@@ -48,6 +44,8 @@ To create unlimited projects on your cloud/network, contact `apilogicserver@gmai
     * Observe the project is a set of [models]() - not a huge pile of difficult-to-understtand code
 
 2. Docker
+
+    * The created project includes scripts to automate docker creation, so you can deploy anywhere
 
 </details>
 
