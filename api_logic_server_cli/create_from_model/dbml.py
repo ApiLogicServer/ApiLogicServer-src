@@ -94,7 +94,10 @@ class DBMLCreator(object):
                 each_resource : Resource = self.mod_gen.resource_list[each_resource_name]
                 self.dbms_lines.append(f"Table {each_resource_name} {{")
                 for each_attr in each_resource.attributes:
-                    self.dbms_lines.append(f"    {each_attr.name} {each_attr.type}")
+                    db_type = each_attr.db_type
+                    if 'DECIMAL' in db_type:
+                        db_type = 'DECIMAL'  # dbml parse fails with DECIMAL(10,2)
+                    self.dbms_lines.append(f"    {each_attr.name} {db_type}")
                 self.dbms_lines.append("    }")
                 self.dbms_lines.append("")
 

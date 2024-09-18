@@ -32,6 +32,7 @@
             "env": {
                 "PYTHONPATH": "", 
                 "SECURITY_ENABLED": "False", 
+                "APILOGICPROJECT_VERBOSE": "True",
                 "PYTHONHASHSEED": "0", 
                 "OPT_LOCKING": "optional"
             },
