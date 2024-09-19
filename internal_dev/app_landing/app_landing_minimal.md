@@ -1,6 +1,19 @@
+## Project Information
+
+Name: xxx
+
+Prompt: yyy
+
+API: [Expore Open API]()
 
 
-## What Just Happened?
+<details markdown>
+</br>
+
+<summary>What Just Happened</summary>
+
+From a simple Natural Language Prompt (or existing database), you get:
+
 
 API Logic Server / GenAI Microservice Automation has turned your prompt into a microservice:
 
@@ -68,13 +81,15 @@ From a simple Natural Language Prompt (or existing database), you get:
 
 </details>
 
+</details>
+
 </br>
 
 ## Automatic Database Design
 
 ![db-automation](./db-automation.png)
 
-## Project Information
+## Project Diagnostics
 
 
 <details markdown>
