@@ -15,4 +15,4 @@ alembic upgrade head
 ![alembic example](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/database/alembic/alembic-overview.png?raw=true)
 
 
-For more information, see [Database Design Changes](https://apilogicserver.github.io/Docs/Database-Changes/).
+Then, run `rebuild-from-model`.  For more information, see [Database Design Changes](https://apilogicserver.github.io/Docs/Database-Changes/).
