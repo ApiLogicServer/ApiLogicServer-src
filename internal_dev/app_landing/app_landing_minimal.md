@@ -6,14 +6,28 @@ Prompt: yyy
 
 API: [Expore Open API]()
 
+<details markdown>
+</br>
+
+<summary>Download the project, or run Docker image</summary>
+
+You can explore this microservice on your own computer
+
+1. [Download]() your project (customize in your IDE to add logic & security)
+
+    * Observe the project is a set of [models]() - not a huge pile of difficult-to-understand code
+
+2. Docker
+
+
+</details>
+
+</br>
 
 <details markdown>
 </br>
 
 <summary>What Just Happened</summary>
-
-From a simple Natural Language Prompt (or existing database), you get:
-
 
 API Logic Server / GenAI Microservice Automation has turned your prompt into a microservice:
 
@@ -21,18 +35,18 @@ API Logic Server / GenAI Microservice Automation has turned your prompt into a m
 
 2. A **standard *multi-table* JSON:API** - [explore Open API here]()
 
+</br>
+
 It simply cannot be faster or simpler.
 
 To create unlimited projects on your cloud/network, contact `apilogicserver@gmail.com` for a free docker image, and project support.
 
 </br>
 
-## TL;DR - Instant Microservice, standards-based customization and deployment, rules :trophy:
-
 <details markdown>
 </br>
 
-<summary>Instant Microservice, Customize with Declarative Rules and Python in your IDE</summary>
+<summary>TL;DR - Instant Microservice, Customize with Declarative Rules and Python in your IDE</summary>
 
 From a simple Natural Language Prompt (or existing database), you get:
 
@@ -55,28 +69,6 @@ From a simple Natural Language Prompt (or existing database), you get:
     * Created projects include scripts to automate docker creation, so you can deploy anywhere.  
     
     * Open means no runtime fees, no lock-in.
-
-
-</details>
-
-</br>
-
-## Explore the created microservice locally
-
-<details markdown>
-</br>
-
-
-<summary>Download the project, or run Docker image</summary>
-
-<br>You can explore this microservice on your own computer
-
-1. [Download]() your project (customize in your IDE to add logic & security)
-
-    * Observe the project is a set of [models]() - not a huge pile of difficult-to-understand code
-
-2. Docker
-
 
 
 </details>
