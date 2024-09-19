@@ -1,7 +1,5 @@
 ## Project Information
 
-Name: xxx
-
 Prompt: yyy
 
 API: [Expore Open API]()
