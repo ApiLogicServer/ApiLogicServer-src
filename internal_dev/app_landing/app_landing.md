@@ -25,7 +25,7 @@ From a simple Natural Language Prompt (or existing database), you get:
 
 1. **Instant Working Software** - enables collaboration and iteration to *get the requirements right:*
 
-    * Don't get bogged down in framework complexity, db design, or screen painting.  
+    * Eliminate weeks to months of complex framework coding, db design, or screen painting.  
     
     * Iterate 15 times... before lunch.
 
