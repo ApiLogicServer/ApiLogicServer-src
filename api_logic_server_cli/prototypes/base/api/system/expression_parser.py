@@ -13,6 +13,7 @@ from sqlalchemy.orm import joinedload, Query
 from operator import not_, and_, or_, eq, ne, lt, le, gt, ge
 from sqlalchemy import or_ as OR_
 from sqlalchemy import and_ as AND_
+from decimal import Decimal
 
 BASIC_EXPRESSION =  "@basic_expression"
 """Ontimize Advanced Filter Expressions"""
@@ -146,10 +147,12 @@ def fixup_data(data, sqltypes):
             if sqltypes and key in sqltypes and isinstance(value, str):
                 if sqltypes[key] in [-5,2,4,5,-6]: #BIGINT, TINYINT, INT, SMALLINT, INTEGER
                     data[key] = int(value)
+                elif  sqltypes[key] in [6]: #DECIMAL
+                    data[key] = Decimal(value)
             if sqltypes and key in sqltypes and sqltypes[key] in [91,93] and isinstance(value, int): #DATE, TIMESTAMP 
                 from datetime import datetime  
                 fmt = "%Y-%m-%d" if sqltypes[key] == 91 else "%Y-%m-%d %H:%M:%S"
-                data[key] = datetime.fromtimestamp(value / 1000).strftime(fmt)  
+                data[key] = datetime.fromtimestamp(value / 1000) #.strftime(fmt)  
     return data
 
 def _parseFilter(filter: dict, sqltypes: any):
