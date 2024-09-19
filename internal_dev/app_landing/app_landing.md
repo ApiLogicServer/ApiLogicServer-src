@@ -2,37 +2,47 @@
 
 ## What Just Happened?
 
-API Logic Server / GenAI Microservice Automation has turned your prompt into a microservice; explore it:
+API Logic Server / GenAI Microservice Automation has turned your prompt into a microservice:
 
 1. A ***multi-table* application** - explore the links at left
 
 2. A **standard *multi-table* JSON:API** - [explore Open API here]()
 
+It simply cannot be faster or simpler.
+
+To create unlimited projects on your cloud/network, contact `apilogicserver@gmail.com` for a free docker image, and project support.
+
 </br>
 
-## TL;DR - instant working software, standards-based customization and deployment, rules
+## TL;DR - Instant Microservice, standards-based customization and deployment, rules :trophy:
 
 <details markdown>
 </br>
 
 <summary>Instant Microservice, Customize with Declarative Rules and Python in your IDE</summary>
 
-From a simple Natural Language Prompt (or existing database) - no db design, framework, screen painting - you get:
+From a simple Natural Language Prompt (or existing database), you get:
 
-1. **Working Software** - ready for collaboration and iteration. <br>
+1. **Instant Working Software** - enables collaboration and iteration to *get the requirements right:*
 
-2. A project you can [**customize in your IDE**](https://apilogicserver.github.io/Docs/Tutorial/#3-customize-and-debug-in-your-ide) with Python, eg:
+    * Don't get bogged down in framework complexity, db design, or screen painting.  
+    
+    * Iterate 15 times... before lunch.
 
-    * [declarative security](https://apilogicserver.github.io/Docs/Security-Overview/): keycloak authentication, role-based row authorization<br>
+2. **Standards-Based Customization** - speed and simplicity, plus all the flexibility of a framework.  You get a standard project you can download and [**customize in your IDE**](https://apilogicserver.github.io/Docs/Tutorial/#3-customize-and-debug-in-your-ide) with Python, eg:
 
-    * [declarative business logic](): multi-table constraints and derivations using rules that are 40X more concise than code, extensible with Python<br>
+    * [Declarative security](https://apilogicserver.github.io/Docs/Security-Overview/): configure keycloak authentication, declare role-based row authorization<br>
 
-    * application integration (e.g., [kafka messaging](https://apilogicserver.github.io/Docs/Sample-Integration/)), <br>
+    * [Declarative business logic](https://apilogicserver.github.io/Docs/Logic-Why/): multi-table constraints and derivations using ***unique rules*** that are 40X more concise than code, extensible with Python.<br>
 
-3. Deploy...
+    * [Application integration](https://apilogicserver.github.io/Docs/Sample-Integration/) (e.g., custom APIs and kafka messaging). <br>
 
+3. **Automated Open Deployment** - standard containers
 
-To create unlimited projects on your cloud/network, contact `apilogicserver@gmail.com` for a free docker image, and project support
+    * Created projects include scripts to automate docker creation, so you can deploy anywhere.  
+    
+    * Open means no runtime fees, no lock-in.
+
 
 </details>
 
@@ -48,13 +58,13 @@ To create unlimited projects on your cloud/network, contact `apilogicserver@gmai
 
 <br>You can explore this microservice on your own computer
 
-1. Download
+1. [Download]() your project (customize in your IDE to add logic & security)
 
-    * Observe the project is a set of [models]() - not a huge pile of difficult-to-understtand code
+    * Observe the project is a set of [models]() - not a huge pile of difficult-to-understand code
 
 2. Docker
 
-    * The created project includes scripts to automate docker creation, so you can deploy anywhere
+
 
 </details>
 
