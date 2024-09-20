@@ -52,13 +52,15 @@ It simply cannot be faster or simpler.
 
 <summary>2. Customize - Declarative Rules and Python in your IDE</summary>
 
-Speed and simplicity, plus all the flexibility of a framework.  You get a standard project you can download and [**customize in your IDE**](https://apilogicserver.github.io/Docs/Tutorial/#3-customize-and-debug-in-your-ide) with Python, eg:
+The speed and simplicity of AI, plus all the flexibility of a framework.  
+
+* Download the standard project, and [**customize in your IDE**](https://apilogicserver.github.io/Docs/Tutorial/#3-customize-and-debug-in-your-ide)
+
+* Use standard Python: e.g. provide [Application integration](https://apilogicserver.github.io/Docs/Sample-Integration/) (custom APIs and kafka messaging) 
 
 * [Declarative security](https://apilogicserver.github.io/Docs/Security-Overview/): configure keycloak authentication, declare role-based row authorization<br>
 
-* [Declarative business logic](https://apilogicserver.github.io/Docs/Logic-Why/): multi-table constraints and derivations using ***unique rules*** that are 40X more concise than code, extensible with Python.<br>
-
-* [Application integration](https://apilogicserver.github.io/Docs/Sample-Integration/) (e.g., custom APIs and kafka messaging). 
+* [Declarative business logic](https://apilogicserver.github.io/Docs/Logic-Why/): multi-table constraints and derivations using ***unique rules*** that are 40X more concise than code, extensible with Python<br>
 
 <br>
 
