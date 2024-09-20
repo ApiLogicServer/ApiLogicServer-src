@@ -68,7 +68,7 @@ Speed and simplicity, plus all the flexibility of a framework.  You get a standa
 <details markdown>
 </br>
 
-<summary>3. Deploy - standard container, no fees, no lock-in</summary>
+<summary>3. Deploy - Standard container, no fees, no lock-in</summary>
 
 Created projects include scripts to automate docker creation, so you can deploy anywhere.  
 

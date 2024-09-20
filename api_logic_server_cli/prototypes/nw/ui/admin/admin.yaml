@@ -187,7 +187,7 @@ resources:
             <h1>Images</h1>
             Observe that "show" pages support images.
             <h1>Virtual Relationships</h1>
-            Observe that "show" pages have tabs for Manages and Manager.<br>
+            Observe that your API includes Manages and Manager.<br>
             These foreign keys are *not* defined in the database, but in <span style="font-family:'Courier New'">database/customize_models.py</span>.<br>
             <h1>Derived Attributes</h1>
             <span style="font-family:'Courier New'">ProperSalary</span> is not defined in the database.<br>
