@@ -3,6 +3,8 @@ Create nw+ at /Users/val/dev/ApiLogicServer
   so does ont - but how?  lucky jwt?
   (no security diddling)
 
+sra builds: https://apifabric.ai/builds/
+sra version: search {primaryText:
 
 sh /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/tests/build_and_test/cmd_venv.sh " ApiLogicServer create --project_name=TVF --extended_builder=* --db_url=\'mssql+pyodbc://sa:Posey3861@localhost:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no\'"
 

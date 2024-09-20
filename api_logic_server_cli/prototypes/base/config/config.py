@@ -130,7 +130,7 @@ class Config:
         security_export = os.getenv('SECURITY_ENABLED')  # type: ignore # type: str
         security_export = security_export.lower()  # type: ignore
         if security_export in ["false", "no"]:  # NO SEC
-            SECURITY_ENABLED = False
+            SECURITY_ENABLED = False  # to remove env: unset SECURITY_ENABLED
         else:
             SECURITY_ENABLED = True
         app_logger.debug(f'Security .. overridden from env variable: {SECURITY_ENABLED}')
