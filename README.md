@@ -6,9 +6,7 @@
 
 # TL;DR
 
-Create an executable project (API and Admin App) from a database with 1 command, customize with declarative rules and Python in your IDE.
-
-Or, create the database too, by providing just a prompt.
+Create an executable project (API and Admin App) from a database or natural language prompt with 1 command, customize with declarative rules and Python in your IDE, containerize and deploy.
 
 &nbsp;
 
@@ -87,6 +85,6 @@ This is an open source project.  We are open to suggestions.  Some of our ideas 
 | 1. JSON:**API** and Swagger | API Execution    | Serverless, Kubernetes        | 
 | 2. Transactional **Logic**   | Rule Enforcement | Recompute Derivations        |
 | 3. This project | API Logic Project Creation | General support - see issues |
-| 3. GenAI | Web version | Create projects with logic<br>Refine GenAI Conversationally |
+| 3. GenAI | Web version | Create projects with logic |
 
 &nbsp; 
