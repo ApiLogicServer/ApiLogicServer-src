@@ -193,8 +193,8 @@ def admin_events(flask_app: Flask, args: Args, validation_error: ValidationError
             "Access-Control-Allow-Origin"] = "*"  # <- You can change "*" for a domain for example "http://localhost"
         response.headers["Access-Control-Allow-Credentials"] = "true"
         response.headers["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS, PUT, DELETE, PATCH"
-        #response.headers["Access-Control-Allow-Headers"] = \
-        #    "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token,  X-Requested-With, X-Auth-Token, Authorization, Access-Control-Allow-Origin"
+        response.headers["Access-Control-Allow-Headers"] = \
+            "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token,  X-Requested-With, X-Auth-Token, Authorization, Access-Control-Allow-Origin"
                 #"access-control-allow-origin, authorization, content-type
         response.headers["Access-Control-Expose-Headers"] = "X-Auth-Token, Content-disposition, X-Requested-With"
         #response.headers["Content-Type"] = "application/json, text/html"
