@@ -42,13 +42,13 @@ loggers:
         handlers: [console]
         propagate: no
 
-    api_logic_server_cli.create_from_model.model_creation_services:   
-#        level: DEBUG
+    create_from_model.model_creation_services:   
+        level: DEBUG
         handlers: [console]
         propagate: no
 
     api_logic_server_cli.create_from_model.ui_admin_creator:   
-#        level: DEBUG
+#         level: DEBUG
         handlers: [console]
         propagate: no
         

@@ -1547,10 +1547,11 @@
             "name": "  - Rebuild-from-model -- servers/ApiLogicProject",
             "type": "debugpy",
             "request": "launch",
-            "cwd": "${workspaceFolder}/../../servers/ApiLogicProject",
+            "cwd": "${workspaceFolder}/../../servers",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
-            "args": ["rebuild-from-model","--project_name=","--db_url="],
+            "args": ["rebuild-from-model","--project_name=ApiLogicProject","--db_url="],
             "console": "integratedTerminal"
         },
         {

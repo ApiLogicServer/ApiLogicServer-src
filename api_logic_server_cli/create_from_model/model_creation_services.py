@@ -735,6 +735,12 @@ class ModelCreationServices(object):
                 traceback.print_exc()
                 pass
     
+    @staticmethod
+    def prt_path():  # just a debug aid
+        log.debug(f'*** DEBUG - sys.path')
+        for p in sys.path:
+            print(".." + str(p))
+
 
     def dynamic_import_model(self, msg) -> bool:
         """
@@ -781,8 +787,10 @@ class ModelCreationServices(object):
             if False and self.project.project_name == ".":  # FIXME - fails in Win11
                 log.debug(f'.. .. ..local rebuild - include customize_models.py')  # to get virtual attrs, relns
                 importlib.import_module('customize_models')
-        except:
+        except Exception as e:
             log.info(f'\n===> ERROR - Dynamic model import failed in {path_to_add} - project run will fail')
+            log.info(f'===>       - {e}')
+            self.prt_path()
             log.info(  f'===>         Typically caused by unexpected data types - compare schema to models.py')
             traceback.print_exc()
             pass  # try to continue to enable manual fixup
