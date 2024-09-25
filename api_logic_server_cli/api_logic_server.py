@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "11.02.00"
+__version__ = "11.02.01"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t09/21/2024 - 11.02.01: cli clarifications \n"\
     "\t09/21/2024 - 11.02.00: er diagrams, GenAI: genai-create, genai-iterate, and conversations \n"\
     "\t09/04/2024 - 11.01.15: APILOGICPROJECT_LOG_CONFIG, _STOP_OK, _EXTERNAL_HOST, _EXTERNAL_PORT \n"\
     "\t09/03/2024 - 11.01.11: logicbank 1.20.7, safrs 3.1.4, sra Aug17,  behave_run err-check[70], genai decimals \n"\
