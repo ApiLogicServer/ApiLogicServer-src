@@ -556,7 +556,7 @@ def tutorial(ctx, create):
 @click.option('--using',
               default=f'genai_demo',
               prompt="File or dir (determines project name)",
-              help="File, dir, or 'text - prompt -> project name")
+              help="File or dir (determines project name)")
 @click.option('--db-url', 'db_url',
               default=f'sqlite',
               help="SQLAlchemy Database URL\n")
@@ -674,7 +674,7 @@ def genai(ctx, using, db_url, repaired_response: str, genai_version: str,
 @click.option('--using',
               default=f'localhost',
               prompt="Iteration prompt (eg, 'add xx table')",
-              help="Iteration prompts (eg, 'add xx table')")
+              help="Iteration prompt (eg, 'add xx table')")
 @click.pass_context
 def genai_create(ctx, project_name: str, using: str):
     """
@@ -710,7 +710,7 @@ def genai_create(ctx, project_name: str, using: str):
 @click.option('--using',
               default=f'localhost',
               prompt="Iteration prompt (eg, 'add xx table')",
-              help="Iteration prompts (eg, 'add xx table')")
+              help="Iteration prompt (eg, 'add xx table')")
 @click.pass_context
 def genai_iterate(ctx, project_name: str, using: str):
     """
