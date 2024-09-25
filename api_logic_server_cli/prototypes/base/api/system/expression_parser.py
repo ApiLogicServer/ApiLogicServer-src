@@ -98,7 +98,7 @@ def parsePayload(clz, payload: str):
         columns: list = payload.get("columns") or []
         offset: int = payload.get("offset") or 0
         pagesize: int = payload.get("pageSize") or 100
-        orderBy: list = payload.get("orderBy") or []
+        orderBy: list = fixup_sort(clz, payload.get("orderBy", None)) or []
         data = fixup_data(payload.get("data", None), sqltypes)
 
     return expressions, _filter, columns, sqltypes, offset, pagesize, orderBy, data
@@ -141,6 +141,17 @@ def parseFilter(clz: any, filter: dict, sqltypes: any):
             
     return sql_where, filters
 
+def fixup_sort(clz, data):
+    sort = None
+    if data and isinstance(data, list):
+        for d in data:
+            sort = []
+            column_name = d["columnName"]
+            for attr_name, value in clz._s_jsonapi_attrs.items():
+                if column_name.upper() == attr_name.upper():
+                    sort.append({"columnName":attr_name, "ascendent": d["ascendent"]})
+                    continue
+    return sort
 def fixup_data(data, sqltypes):
     if data:
         for key, value in data.items():

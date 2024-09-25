@@ -479,6 +479,9 @@ class OntBuilder(object):
         return row_cols
 
     def get_entity_vars(self, entity_name:str, entity):
+        new_mode =  self.find_template(entity, "mode", self.new_mode)
+        if getattr(entity,"tab_groups",  None) is None or len(entity.tab_groups) == 0:
+            new_mode = "dialog"
         favorite =  self.find_template(entity,"favorite","")
         fav_column = find_column(entity,favorite)
         cols = get_columns(entity)
@@ -491,7 +494,7 @@ class OntBuilder(object):
         primaryKey = make_keys(entity["primary_key"])
         keySqlType = make_sql_types(primaryKey, entity.columns)
         title =  f'{entity_name.upper()}' #TODO entity.title
-        new_mode = self.find_template(entity, "mode", self.new_mode)
+        new_mode = new_mode
         items = self.find_template(entity, "grid_items", "")
         grid_items = ["{{" + f'item.{item}' + "}}" for item in list(items.split(","))]
         grid_image = self.find_template(entity, "grid_image", "PhotoPath")

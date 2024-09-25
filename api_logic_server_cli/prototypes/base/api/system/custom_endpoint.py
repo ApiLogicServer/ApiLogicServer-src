@@ -363,9 +363,10 @@ class CustomEndpoint():
                 if order_by:
                     if isinstance(order_by, list) and len(order_by) > 0:
                         col_name = order_by[0]["columnName"]
+                        direction =  order_by[0]["ascendent"] if "ascendent" in order_by[0] else False
                         for a in self._attributes:
                             if a['attr'].key == col_name:
-                                col_name = a['attr'].columns[0].name
+                                col_name = f"{a['attr'].columns[0].name } { 'asc' if direction else 'desc'}"
                                 break
                         session_qry = session_qry.order_by(text(col_name))
                     else:
