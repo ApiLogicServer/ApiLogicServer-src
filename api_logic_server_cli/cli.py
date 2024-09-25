@@ -555,7 +555,7 @@ def tutorial(ctx, create):
 @main.command("genai", cls=HideDunderCommand)
 @click.option('--using',
               default=f'genai_demo',
-              prompt="File, dir, or 'text - prompt -> project name",
+              prompt="File or dir (determines project name)",
               help="File, dir, or 'text - prompt -> project name")
 @click.option('--db-url', 'db_url',
               default=f'sqlite',
@@ -582,7 +582,7 @@ def tutorial(ctx, create):
               default=True,
               help="Internal (create_db w/relns)")
 @click.pass_context
-def genai(ctx, using, db_url, repaired_response: click.BOOL, genai_version: str, 
+def genai(ctx, using, db_url, repaired_response: str, genai_version: str, 
           retries: int, opt_locking: str, prompt_inserts: str, quote: click.BOOL,
           use_relns: click.BOOL):
     """
@@ -678,15 +678,16 @@ def genai(ctx, using, db_url, repaired_response: click.BOOL, genai_version: str,
 @click.pass_context
 def genai_create(ctx, project_name: str, using: str):
     """
-        Create new project from --using prompt.
+        Create new project from --using prompt text.
 
 
 \b
-        Example
+        Example - cd to the manager, and...
 
 \b
             ApiLogicServer genai-create --project-name=MyProject --using="initial description"
     """
+    # turn create manager/temp project, copy --using into a new prompt file, and call genai
     global command
     command = "genai-create"
     proj_temp_path = Path(f'system/genai/temp/{project_name}')
@@ -713,15 +714,17 @@ def genai_create(ctx, project_name: str, using: str):
 @click.pass_context
 def genai_iterate(ctx, project_name: str, using: str):
     """
-        Iterate current project.
+        Iterate current project from --using prompt text.
 
 
 \b
-        Example
+        Example - cd the manager, and...
 
 \b
             ApiLogicServer genai-iterate --project-name=ApiLogicProject --using="'add xx table'"
     """
+
+    # turn --using into a new prompt file, and call genai
     global command
     command = "genai-iterate"
     proj_temp_path = Path(f'system/genai/temp/{project_name}')
