@@ -119,7 +119,7 @@ def gen_report(api_clz, request, project_dir, payload, attributes) -> any:
                 if col['id'] == attr["name"]:
                     list_of_columns.append(attr['name'])
         #TODO if groups is not empty, group by the columns - new function
-        rows = get_rows(api_clz,request, list_of_columns, filter)
+        rows = get_rows(api_clz,request, list_of_columns, filter, groups)
         
         buffer = BytesIO()
         if payload["vertical"] == "true":
@@ -151,7 +151,12 @@ def gen_report(api_clz, request, project_dir, payload, attributes) -> any:
         col_data = []
         for column in columns:
             col_data.append(column['name'])
-            
+        
+        if groups and len(groups) > 0:
+            for group in groups:
+                col_data.append('count')
+                columns.append({"id":"count","name":"count"})
+    
         # Define table data (entity)
 
         table_data = []
@@ -184,13 +189,27 @@ def gen_report(api_clz, request, project_dir, payload, attributes) -> any:
         
         return {"code": 0,"message": "","data": [{"file":str(output)[2:-1] }],"sqlTypes": None}
     
-def get_rows(api_clz, request, list_of_columns, filter) -> any:
+def get_rows(api_clz, request, list_of_columns, filter, groups) -> any:
     #sql = f"{columns} FROM {entity}"
     #return session.query(clz).all()
     key = api_clz.__name__.lower()
     
     request.method = 'GET'
     from api.system.custom_endpoint import CustomEndpoint
+    from sqlalchemy import select, func
     custom_endpoint = CustomEndpoint(model_class=api_clz, fields=list_of_columns, filter_by=filter)
     result = custom_endpoint.execute(request=request)
+    if groups and len(groups) > 0:
+        group_by_columns = [getattr(api_clz, group) for group in groups]
+        stmt = session.query(*[getattr(api_clz, col) for col in list_of_columns], func.count().label('count')).group_by(*group_by_columns)
+    else:
+        stmt = session.query(*[getattr(api_clz, col) for col in list_of_columns])
+
+    if filter:
+        stmt = stmt.filter(text(filter))
+
+    result = stmt.all()
+    for col in result[0]._fields:
+        result = [dict(zip(result[0]._fields, row)) for row in result]
+        break
     return custom_endpoint.transform("OntimizeEE",key, result)
