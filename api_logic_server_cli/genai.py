@@ -66,7 +66,7 @@ class GenAI(object):
         Not sure vscode/copilot is best approach, since we'd like to activate this during project creation
         (eg on web/GenAI - not using vscode).
 
-        * Thomas suggests there are ways to "teach" ChatGPT about Logic Bank.  This is a good idea.
+        * Thomas suggests there are ways to "teach" ChatGPT about Logic Bank.  This is a *great* idea.
 
         https://platform.openai.com/docs/guides/fine-tuning/create-a-fine-tuned-model
         """        
@@ -492,7 +492,7 @@ class GenAI(object):
 
 def genai(using, db_url, repaired_response: bool, genai_version: str, 
           retries: int, opt_locking: str, prompt_inserts: str, quote: bool,
-          use_relns: bool):
+          use_relns: bool, project_name: str):
     """ cli caller provides using, or repaired_response & using
     
         Called from cli commands: genai, genai-create, genai-iterate
@@ -503,15 +503,10 @@ def genai(using, db_url, repaired_response: bool, genai_version: str,
     """
     import api_logic_server_cli.api_logic_server as PR
 
-    db_types = ""
-    # if using.endswith('.prompt'):
-    #    using = using.replace('.prompt','')
-    project_name = using  # this is the prompt file (or actual prompt)
-    if using.endswith('.prompt') or Path(using).is_dir():       # regardless of repaired_response,
-        project_name = Path(using).stem                         # the project name is the <cwd>/last node of using
-    else:
-        project_name  = project_name.replace(' ', '_')
-    project_name  = project_name.replace(' ', '_')
+    resolved_project_name = project_name
+    if resolved_project_name == '' or resolved_project_name is None:
+        resolved_project_name = Path(using).stem  # default project name is the <cwd>/last node of using
+    resolved_project_name  = resolved_project_name.replace(' ', '_')
 
     try_number = 1
     genai_use_relns = use_relns
@@ -527,7 +522,7 @@ def genai(using, db_url, repaired_response: bool, genai_version: str,
                     genai_prompt_inserts=prompt_inserts,
                     genai_use_relns=genai_use_relns,
                     quote=quote,
-                    project_name=project_name, db_url=db_url)
+                    project_name=resolved_project_name, db_url=db_url)
         log.info(f"GENAI successful")  
     else:
         while try_number <= retries:
@@ -540,7 +535,7 @@ def genai(using, db_url, repaired_response: bool, genai_version: str,
                             genai_prompt_inserts=prompt_inserts,
                             genai_use_relns=genai_use_relns,
                             quote=quote,
-                            project_name=project_name, db_url=db_url)
+                            project_name=resolved_project_name, db_url=db_url)
                 if do_force_failure := False:
                     if try_number < 3:
                         raise Exception("Forced Failure for Internal Testing")
@@ -561,7 +556,7 @@ def genai(using, db_url, repaired_response: bool, genai_version: str,
                             b. Introduce error in system/genai/temp/create_db_models.py
                     '''
 
-                    to_dir_save_dir = Path(Path(os.getcwd())).joinpath(f'system/genai/temp/{project_name}')
+                    to_dir_save_dir = Path(Path(os.getcwd())).joinpath(f'system/genai/temp/{resolved_project_name}')
                     in_place_conversation = str(to_dir_save_dir) == str(Path(using).resolve())
                     """ means we are using to_dir as the save directory """
                     if in_place_conversation:
@@ -578,12 +573,12 @@ def genai(using, db_url, repaired_response: bool, genai_version: str,
                             log.debug(f'in-place conversation dir, deleting most recent response: {last_response_path}')
                             Path(last_response_path).unlink(missing_ok=True)
 
-                # save the temp files for diagnosis (eg, <project_name>_1)
+                # save the temp files for diagnosis (eg, <resolved_project_name>_1)
                 manager_dir = Path(os.getcwd())  # rename save dir (append retry) for diagnosis
-                to_dir_save_dir = Path(manager_dir).joinpath(f'system/genai/temp/{project_name}')
-                to_dir_save_dir_retry = Path(manager_dir).joinpath(f'system/genai/temp/{project_name}_{try_number}')
+                to_dir_save_dir = Path(manager_dir).joinpath(f'system/genai/temp/{resolved_project_name}')
+                to_dir_save_dir_retry = Path(manager_dir).joinpath(f'system/genai/temp/{resolved_project_name}_{try_number}')
                 if repaired_response != "":
-                    to_dir_save_dir_retry = Path(manager_dir).joinpath(f'system/genai/temp/{project_name}_retry')  
+                    to_dir_save_dir_retry = Path(manager_dir).joinpath(f'system/genai/temp/{resolved_project_name}_retry')  
                 if to_dir_save_dir_retry.exists():
                     shutil.rmtree(to_dir_save_dir_retry)
                 # to_dir_save_dir.rename(to_dir_save_dir_retry) 

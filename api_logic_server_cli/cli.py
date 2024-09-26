@@ -581,10 +581,13 @@ def tutorial(ctx, create):
 @click.option('--use-relns', 'use_relns', is_flag=True,
               default=True,
               help="Internal (create_db w/relns)")
+@click.option('--project-name', 'project_name',
+              default=f'',
+              help="Project location")
 @click.pass_context
 def genai(ctx, using, db_url, repaired_response: str, genai_version: str, 
           retries: int, opt_locking: str, prompt_inserts: str, quote: click.BOOL,
-          use_relns: click.BOOL):
+          use_relns: click.BOOL, project_name: str):
     """
         Creates new customizable project (overwrites).
     """
@@ -593,7 +596,8 @@ def genai(ctx, using, db_url, repaired_response: str, genai_version: str,
         import genai as genai_svcs
         genai_svcs.genai(using=using, db_url=db_url, repaired_response=repaired_response, 
                     genai_version=genai_version, retries=retries, opt_locking=opt_locking, 
-                    prompt_inserts=prompt_inserts, quote=quote, use_relns=use_relns)
+                    prompt_inserts=prompt_inserts, quote=quote, use_relns=use_relns,
+                    project_name=project_name)
         pass
     else:  # old code - delete
         db_types = ""
