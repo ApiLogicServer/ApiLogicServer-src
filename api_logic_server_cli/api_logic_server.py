@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "11.02.01"
+__version__ = "11.02.02"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t09/21/2024 - 11.02.01: cli clarifications \n"\
+    "\t09/26/2024 - 11.02.02: cli clarifications, massive restructuring of project creation \n"\
     "\t09/21/2024 - 11.02.00: er diagrams, GenAI: genai-create, genai-iterate, and conversations \n"\
     "\t09/04/2024 - 11.01.15: APILOGICPROJECT_LOG_CONFIG, _STOP_OK, _EXTERNAL_HOST, _EXTERNAL_PORT \n"\
     "\t09/03/2024 - 11.01.11: logicbank 1.20.7, safrs 3.1.4, sra Aug17,  behave_run err-check[70], genai decimals \n"\
@@ -804,7 +804,9 @@ def invoke_extended_builder(builder_path, db_url, project_directory, model_creat
 
 
 def invoke_creators(model_creation_services: ModelCreationServices):
-    """ MAJOR: uses model_creation_services (resource_list, model iterator functions) to create api, apps
+    """ creates api/expose_api_models, ui/admin & basic_web_app (Microservice Autmation)
+    
+    uses model_creation_services (resource_list, model iterator functions) to create api, apps
     
     rebuild-from-model backs up old expose_api_models, etc
     """
@@ -1024,6 +1026,9 @@ class ProjectRun(Project):
             log.debug(f'  --infer_primary_key={self.infer_primary_key}')
             log.debug(f'  --opt_locking={self.opt_locking}')
             log.debug(f'  --opt_locking_attr={self.opt_locking_attr}')
+
+        log.debug(f"\nApiLogicServer {__version__} Creation Log:")
+
 
     def update_config_and_copy_sqlite_db(self, msg: str) -> str:
         """
@@ -1830,7 +1835,7 @@ from database import <project.bind_key>_models
         log.info(f'  Open the tutorial project in your VSCode: code Tutorial\n')
 
 
-    def create_project(self):
+    def create_project_Z(self):
         """
         Creates logic-enabled Python safrs api/admin project, options for execution
 
@@ -2026,6 +2031,200 @@ from database import <project.bind_key>_models
                 run_args = "--create_and_run=True"
             create_utils.run_command(f'python {run_file} {run_args}', msg="\nStarting created API Logic Project")
 
+    def directory_setup(self):
+        """ get project_directory, api names, project paths and project name """
+        self.project_directory, self.api_name, self.merge_into_prototype = \
+            create_utils.get_project_directory_and_api_name(self)
+        self.project_directory_actual = os.path.abspath(self.project_directory)  # make path absolute, not relative (no /../)
+        self.project_directory_path = Path(self.project_directory_actual)
+        self.project_name_last_node = Path(self.project_directory_path).name  # for prototype, project_name='.'
+
+        # TODO - add this?  self.project_name = self.project_directory_path.parent.name if not self.project_directory_path.is_dir() else self.project_directory_path.name
+
+    def create_database_from_genai_or_model(self) -> 'GenAI':
+        gen_ai = None
+        if self.genai_using != "":
+            from genai import GenAI
+            gen_ai = GenAI(self)
+
+        if self.from_model != "" or self.genai_using != "":
+            try:
+                create_db_from_model.create_db(self)
+            except Exception as e:
+                if hasattr(self, 'gen_ai_save_dir'):
+                    log.error(f"Error creating database from model: {e}")
+                    with open(f"{self.gen_ai_save_dir.joinpath('create_db_models_failed.txt')}", "w") as log_file:
+                        log_file.write(f"Error creating database from model: {e}")
+                raise(e)
+        return gen_ai
+    
+    def set_standard_external_builder(self):
+        ''' $ means default ext builder, or model_migrator '''
+        if self.extended_builder == "$":
+            self.extended_builder = abspath(f'{self.api_logic_server_dir_path}/extended_builder.py')
+            log.debug(f'0. Using default extended_builder: {self.extended_builder}')
+
+        if self.extended_builder == "model_migrator":
+            self.extended_builder = abspath(f'{self.api_logic_server_dir_path}/model_migrator/model_migrator_start.py')
+            log.debug(f'0. Using model migrator: {self.extended_builder}')
+
+    def call_abs_db_url(self):
+        ''' resolve db_url, handle --db-url abbeviations '''
+        if self.add_auth_in_progress:
+            self.models_path_dir = 'database/database_discovery'
+            self.abs_db_url, self.nw_db_status, self.model_file_name = \
+                create_utils.get_abs_db_url("0. Using Sample DB", self, is_auth=True)    
+        else:  # normal path
+            self.abs_db_url, self.nw_db_status, self.model_file_name = create_utils.get_abs_db_url("0. Using Sample DB", self)
+            if self.nw_db_status in ["nw", "nw+"]:
+                self.auth_provider_type = 'sql'  # nw+ defaulting
+        return self.abs_db_url, self.nw_db_status, self.model_file_name  # make what is set explicit
+
+    def create_project_from_base_prototype__with_overlays(self):
+        ''' (unless rebuild or add_db) - create project from prototypes/base, and overlays for nw etc '''
+        if self.command.startswith("rebuild") or self.command == "add_db":
+            log.debug("1. Not Deleting Existing Project")
+            log.debug("2. Using Existing Project")
+            if self.command == "add_db":
+                self.abs_db_url = self.update_config_and_copy_sqlite_db(
+                    f".. ..Adding Database [{self.bind_key}] to existing project")
+        else:                                                                            # normal path - clone, [overlay nw]
+            self.abs_db_url = create_project_and_overlay_prototypes(self, f"2. Create Project:")
+        return self.abs_db_url
+
+    def create_and_build_ontimize_app(self, model_creation_services : ModelCreationServices):
+            if self.command not in ["add_db", "add_auth", "add-auth", "add-db", "rebuild-from-database", "rebuild-from-model"]:
+                log.debug(" d.  Create Ontimize from models")
+                from api_logic_server_cli.create_from_model.ont_create import OntCreator
+                ont_creator = OntCreator(project = model_creation_services.project)
+                ont_creator.create_application(show_messages=False)
+
+            if self.command in ["rebuild-from-database", "rebuild-from-model"]:
+                app_list = create_utils.get_ontimize_apps(self.project_directory_path)
+                for app in app_list:
+                    from create_from_model import ont_build
+                    from api_logic_server_cli.create_from_model.ont_create import OntCreator
+                    build = ont_build.OntBuilder(self, app)
+                    log.debug(f" d.  Create Ontimize app_model_merge.yml from models for project: {build.project}")
+                    ont_creator = OntCreator(project = build.project)
+                    ont_creator.create_application(show_messages=False)
+
+            if False and self.project_directory_path.joinpath('ui/app_model_custom.yaml').exists():
+                # eg, nw project contains this for demo purposes
+                copyfile (src=self.project_directory_path.joinpath('ui/app_model_custom.yaml'),
+                            dst=self.project_directory_path.joinpath('ui/app/app_model.yaml'))
+
+            from api_logic_server_cli.create_from_model.ont_build import OntBuilder
+            ont_creator = OntBuilder(project = model_creation_services.project)
+            ont_creator.build_application(show_messages=False)
+
+    def final_message(self):
+        if self.command.startswith("add_"):
+            pass  # keep silent for add-db, add-auth...
+        elif self.is_tutorial:
+            log.debug(f"\nTutorial created.  Next steps:\n")
+            log.debug(f'  Establish your Python environment - see https://apilogicserver.github.io/Docs/IDE-Execute/#execute-prebuilt-launch-configurations\n')
+        else:
+            disp_url = self.db_url
+            if disp_url == "":
+                disp_url = "nw"
+            log.debug(f"\n\nCustomizable project {self.project_name} created from database {disp_url}.  Next steps:\n")
+            if self.multi_api:
+                log.debug(f'Server already running.  To Access: Configuration > Load > //localhost:5656/{self.api_name}')
+            else:
+                log.debug("\nRun API Logic Server:")
+                if os.getenv('CODESPACES'):
+                    # log.debug(f'  Add port 5656, with Public visibility') - automated in .devcontainer.json
+                    log.info(f'  Execute using Launch Configuration "ApiLogicServer"')
+                else:
+                    log.debug(f'  cd {self.project_name};  python api_logic_server_run.py')
+        if self.command.startswith("add_"):
+            pass  # keep silent for add-db, add-auth...
+        elif self.is_tutorial:
+            log.debug(f"  Proceed as described in the readme\n")
+        else:
+            if (is_docker()):
+                os.rename(self.project_directory_path.joinpath('.devcontainer-option'),
+                          self.project_directory_path.joinpath('.devcontainer'))
+                if os.getenv('CODESPACES'):
+                    log.info(f'\nCustomize right here, in Browser/VSCode - just as you would locally')
+                    log.info(f'Save customized project to GitHub')
+                else:
+                    log.info(f'\nProject created.  Next steps:\n')
+
+                    log.info(f'  $ ApiLogicServer run      # Run created API and Admin App, or\n')
+
+                    log.info(f'  Customize using IDE on local machine:')
+                    docker_project_name = self.project_name
+                    if self.project_name.startswith('/localhost/'):
+                        docker_project_name = self.project_name[11:]
+                    else:
+                        docker_project_name = f'<local machine directory for: {self.project_name}>'
+                    log.info(f'    exit     # exit the Docker container ')
+                    log.info(f'    code {docker_project_name}  # e.g., open VSCode on created project\n')
+            else:
+                log.info(f'\nProject created at: {str(self.project_directory_path)}\n')
+
+                # log.info(f'  $ ApiLogicServer run                # Run created API and Admin App, or\n')
+
+                if self.open_with == "":
+                    log.info(f'  $ charm | code {self.project_name}      # Customize / debug in your IDE\n\n')
+
+                log.debug(f'  Establish your Python environment - see https://apilogicserver.github.io/Docs/IDE-Execute/#execute-prebuilt-launch-configurations\n')
+
+
+    def create_project(self):
+        """
+        Creates logic-enabled Python safrs api/admin project, options for execution
+
+        main driver - invoked from cli via ProjectRun() ctor
+
+        :returns: none
+        """
+
+        self.print_options()
+        self.directory_setup()
+        gen_ai = self.create_database_from_genai_or_model()                                 # sometimes we create db before creating project
+        self.abs_db_url, self.nw_db_status, self.model_file_name = self.call_abs_db_url()   # nw set here, dbname, db abbrevs
+        self.set_standard_external_builder()
+
+        self.abs_db_url = self.create_project_from_base_prototype__with_overlays()
+        log.debug(f'.. ..project_directory_actual: {self.project_directory_actual}')
+
+        log.debug(f'3. Create/verify database/{self.model_file_name}, then use that to create api/ and ui/ models')
+        model_creation_services = ModelCreationServices(project = self,   # Create database/models.py from db
+            project_directory=self.project_directory)                     # and load meta model for creators
+        # ext builder can read alter the models.py
+        fix_database_models(self.project_directory, self.db_types, self.nw_db_status, self.is_tutorial)
+
+        invoke_creators(model_creation_services)  # MAJOR: creates api, admin app
+        if self.extended_builder is not None and self.extended_builder != "":
+            log.debug(f'4. Invoke extended_builder: {self.extended_builder}, ({self.db_url}, {self.project_directory})')
+            invoke_extended_builder(self.extended_builder, self.abs_db_url, self.project_directory, model_creation_services)
+
+        final_project_fixup("4. Final project fixup", self)
+        if gen_ai is not None:
+            gen_ai.insert_logic_into_created_project()
+
+        if (self.nw_db_status in ["nw+"]):
+            self.add_auth(f"\nApiLogicProject customizable project (for northwind) created.  \nAdding Security to {self.project_name_last_node}:")
+
+        if not self.add_auth_in_progress:
+            self.create_and_build_ontimize_app(model_creation_services)
+      
+        if self.open_with != "" and 'create' == self.command:  # open project with open_with (vscode, charm, atom) -- NOT for docker!!
+            start_open_with(project = self)  # can be from  cli, or env variable: echo $APILOGICSERVER_OPEN_WITH
+        
+        self.final_message()
+
+        if self.run:  # synchronous run of server - does not return
+            run_file = os.path.abspath(f'{resolve_home(self.project_name)}/api_logic_server_run.py')
+            run_file = '"' + run_file + '"'  # spaces in file names - with windows
+            run_args = ""
+            if self.command == "create-and-run":
+                run_args = "--create_and_run=True"
+            create_utils.run_command(f'python {run_file} {run_args}', msg="\nStarting created API Logic Project")
+
 
 def check_ports():
     try:
@@ -2064,8 +2263,11 @@ def key_module_map():
     import create_from_model.ui_admin_creator as ui_admin_creator
     import create_from_model.api_expose_api_models_creator as api_expose_api_models_creator
     import sqlacodegen_wrapper.sqlacodegen_wrapper as sqlacodegen_wrapper
+    import genai
 
-    ProjectRun.create_project()                             # main driver, calls...
+    genai.key_module_map()                                  # alt entry - create project from genai
+
+    ProjectRun.create_project()                             # main driver from CLI, calls...
     create_utils.copy_md()                                  # copy md files
     ProjectRun.create_from_model()                          # eg, from copilot
     create_utils.get_abs_db_url()                           # nw set here, dbname, db abbrevs
@@ -2073,6 +2275,7 @@ def key_module_map():
     model_creation_services = ModelCreationServices()       # creates resource_list (python db model); ctor calls...
     def and_the_ctor_calls():
         model_creation_services.create_model_classes_and_resource_list()  # which uses..
+        sqlacodegen_wrapper.create_models_py()              # calls create_models_memstring, writes file
         sqlacodegen_wrapper.create_models_memstring()       # open db, call sqlacodegen
     invoke_creators(model_creation_services)                # creates api & ui, via create_from_model...
     api_expose_api_models_creator.create()                  # creates api/expose_api_models.py, key input to SAFRS        
