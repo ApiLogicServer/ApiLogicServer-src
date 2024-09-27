@@ -168,102 +168,6 @@ def write_models_py(model_file_name, models_mem):
     with open(model_file_name, "w") as text_file:
         text_file.write(models_mem)
 
-def create_models_py(model_creation_services: ModelCreationServices, abs_db_url: str, project_directory: str):
-    """
-    Create `models.py` (using sqlacodegen, via this wrapper at create_models_py() ).
-
-    Called on creation of ModelCreationServices.__init__ (ctor - singleton).
-
-    1. It calls `create_models_memstring`:
-        * It returns the `models_py` text to be written to the projects' `database/models.py`.
-        * It uses a modification of [sqlacodgen](https://github.com/agronholm/sqlacodegen), by Alex Grönholm -- many thanks!
-            * An important consideration is disambiguating multiple relationships between the same 2 tables
-                * See relationships between `Department` and `Employee`.
-                * [See here](https://apilogicserver.github.io/Docs/Sample-Database/) for a database diagram.
-            * It transforms database names to resource names - capitalized, singular
-                * These (not table names) are used to create api and ui model
-    2. It then calls `write_models_py`
-
-    ModelCreationServices.__init__ then calls `create_resource_list`:
-        * This is the meta data iterated by the creation modules to create api and ui model classes.
-        * Important: models are sometimes _supplied_ (`use_model`), not generated, because:
-            * Many DBs don't define FKs into the db (e.g. nw.db).
-            * Instead, they define "Virtual Keys" in their model files.
-            * To leverage these, we need to get resource Metadata from model classes, not db
-
-    :param model_creation_services: ModelCreationServices
-    :param abs_db_url:  the actual db_url (not relative, reflects sqlite [nw] copy)
-    :param project: project directory
-    """
-
-    class DotDict(dict):
-        """dot.notation access to dictionary attributes"""
-        # thanks: https://stackoverflow.com/questions/2352181/how-to-use-a-dot-to-access-members-of-dictionary/28463329
-        __getattr__ = dict.get
-        __setattr__ = dict.__setitem__
-        __delattr__ = dict.__delitem__
-
-    def get_codegen_args():
-        """ DotDict of url, outfile, version """
-        codegen_args = DotDict({})
-        codegen_args.url = abs_db_url
-        # codegen_args.outfile = models_file
-        models_loc = model_creation_services.project.project_directory_path.\
-            joinpath(model_creation_services.project.models_path_dir + '/' + model_creation_services.project.model_file_name)
-        codegen_args.outfile = project_directory + '/database/models.py'
-        codegen_args.outfile = str(models_loc)
-        codegen_args.version = False
-        codegen_args.model_creation_services = model_creation_services
-
-        from cli_args_base import OptLocking
-        opt_locking_file_name = f'{model_creation_services.project.api_logic_server_dir_path.joinpath("templates/opt_locking.txt")}'
-        with open(opt_locking_file_name, 'r') as file:
-            opt_locking_data = file.read()
-        model_creation_services.opt_locking = opt_locking_data.replace('replace_opt_locking_attr', model_creation_services.project.opt_locking_attr)
-        if model_creation_services.project.opt_locking == OptLocking.IGNORED.value:  # ignore opt_locking
-            model_creation_services.opt_locking = ""
-
-        return codegen_args
-
-    num_models = 0
-    model_full_file_name = "*"
-    project = model_creation_services.project
-    if project.command in ('create', 'create-and-run', 'rebuild-from-database', 'add_db', 'app-create'):
-        if project.use_model is None or model_creation_services.project.use_model == "":
-            code_gen_args = get_codegen_args()
-            model_full_file_name = code_gen_args.outfile
-            """
-            if model_creation_services.project.bind_key != "":  # if bind key, add to model file name
-                model_full_file_name = project.project_directory_path.\
-                    joinpath('database').joinpath(project.model_file_name)
-                # model_full_file_name = "/".join(model_file_name.split("/")[:-1]) + "/" + model_creation_services.project.bind_key + "_" + model_file_name.split("/")[-1]
-            """
-            log.debug(f' a.  Create Models - create database/{project.model_file_name}, using sqlcodegen')
-            log.debug(f'.. .. ..For database:  {abs_db_url}')
-
-            models_mem, num_models = create_models_memstring(code_gen_args)  # calls sqlcodegen
-            write_models_py(model_full_file_name, models_mem)
-            model_creation_services.schema_loaded = True
-            
-        else:  # use pre-existing (or repaired) existing model file
-            model_full_file_name = str(Path(project_directory).joinpath('database/models.py'))
-            if model_creation_services.project.use_model == '.':
-                log.debug(f' a.  Use existing {model_full_file_name} - no copy')
-            else:
-                use_model_path = Path(model_creation_services.project.use_model).absolute()
-                log.debug(f' a.  Use existing {use_model_path} - copy to {project_directory + "/database/models.py"}')
-                copyfile(use_model_path, model_full_file_name)
-    elif project.command == 'create-ui':
-        model_full_file_name = model_creation_services.resolve_home(name = model_creation_services.use_model)
-    elif project.command == "rebuild-from-model":
-        log.debug(f' a.  Use existing database/models.py to rebuild api and ui models - verifying')
-        model_full_file_name = '.'   # project_directory + '/database/models.py'
-    else:
-        error_message = f'System error - unexpected command: {project.command}'
-        raise ValueError(error_message)
-    msg = f'.. .. ..Create resource_list - dynamic import database/{model_creation_services.project.model_file_name}, inspect {num_models} classes'
-    return model_full_file_name, msg # return to ctor, create resource_list
-
 
 def create_models_memstring(args) -> str:
     """ 
@@ -427,3 +331,101 @@ if __name__ == "__main__":
     start_api(HOST, PORT)
     log.debug("API URL: http://{}:{}/api , model dir: {}".format(HOST, PORT, MODEL_DIR))
     app.run(host=HOST, port=PORT)
+
+
+
+def create_models_py(model_creation_services: ModelCreationServices, abs_db_url: str, project_directory: str):
+    """
+    Create `models.py` (using sqlacodegen, via this wrapper at create_models_py() ).
+
+    Called on creation of ModelCreationServices.__init__ (ctor - singleton).
+
+    1. It calls `create_models_memstring`:
+        * It returns the `models_py` text to be written to the projects' `database/models.py`.
+        * It uses a modification of [sqlacodgen](https://github.com/agronholm/sqlacodegen), by Alex Grönholm -- many thanks!
+            * An important consideration is disambiguating multiple relationships between the same 2 tables
+                * See relationships between `Department` and `Employee`.
+                * [See here](https://apilogicserver.github.io/Docs/Sample-Database/) for a database diagram.
+            * It transforms database names to resource names - capitalized, singular
+                * These (not table names) are used to create api and ui model
+    2. It then calls `write_models_py`
+
+    ModelCreationServices.__init__ then calls `create_resource_list`:
+        * This is the meta data iterated by the creation modules to create api and ui model classes.
+        * Important: models are sometimes _supplied_ (`use_model`), not generated, because:
+            * Many DBs don't define FKs into the db (e.g. nw.db).
+            * Instead, they define "Virtual Keys" in their model files.
+            * To leverage these, we need to get resource Metadata from model classes, not db
+
+    :param model_creation_services: ModelCreationServices
+    :param abs_db_url:  the actual db_url (not relative, reflects sqlite [nw] copy)
+    :param project: project directory
+    """
+
+    class DotDict(dict):
+        """dot.notation access to dictionary attributes"""
+        # thanks: https://stackoverflow.com/questions/2352181/how-to-use-a-dot-to-access-members-of-dictionary/28463329
+        __getattr__ = dict.get
+        __setattr__ = dict.__setitem__
+        __delattr__ = dict.__delitem__
+
+    def get_codegen_args():
+        """ DotDict of url, outfile, version """
+        codegen_args = DotDict({})
+        codegen_args.url = abs_db_url
+        # codegen_args.outfile = models_file
+        models_loc = model_creation_services.project.project_directory_path.\
+            joinpath(model_creation_services.project.models_path_dir + '/' + model_creation_services.project.model_file_name)
+        codegen_args.outfile = project_directory + '/database/models.py'
+        codegen_args.outfile = str(models_loc)
+        codegen_args.version = False
+        codegen_args.model_creation_services = model_creation_services
+
+        from cli_args_base import OptLocking
+        opt_locking_file_name = f'{model_creation_services.project.api_logic_server_dir_path.joinpath("templates/opt_locking.txt")}'
+        with open(opt_locking_file_name, 'r') as file:
+            opt_locking_data = file.read()
+        model_creation_services.opt_locking = opt_locking_data.replace('replace_opt_locking_attr', model_creation_services.project.opt_locking_attr)
+        if model_creation_services.project.opt_locking == OptLocking.IGNORED.value:  # ignore opt_locking
+            model_creation_services.opt_locking = ""
+
+        return codegen_args
+
+    num_models = 0
+    model_full_file_name = "*"
+    project = model_creation_services.project
+    if project.command in ('create', 'create-and-run', 'rebuild-from-database', 'add_db', 'app-create'):
+        if project.use_model is None or model_creation_services.project.use_model == "":
+            code_gen_args = get_codegen_args()
+            model_full_file_name = code_gen_args.outfile
+            """
+            if model_creation_services.project.bind_key != "":  # if bind key, add to model file name
+                model_full_file_name = project.project_directory_path.\
+                    joinpath('database').joinpath(project.model_file_name)
+                # model_full_file_name = "/".join(model_file_name.split("/")[:-1]) + "/" + model_creation_services.project.bind_key + "_" + model_file_name.split("/")[-1]
+            """
+            log.debug(f' a.  Create Models - create database/{project.model_file_name}, using sqlcodegen')
+            log.debug(f'.. .. ..For database:  {abs_db_url}')
+
+            models_mem, num_models = create_models_memstring(code_gen_args)  # calls sqlcodegen
+            write_models_py(model_full_file_name, models_mem)
+            model_creation_services.schema_loaded = True
+            
+        else:  # use pre-existing (or repaired) existing model file
+            model_full_file_name = str(Path(project_directory).joinpath('database/models.py'))
+            if model_creation_services.project.use_model == '.':
+                log.debug(f' a.  Use existing {model_full_file_name} - no copy')
+            else:
+                use_model_path = Path(model_creation_services.project.use_model).absolute()
+                log.debug(f' a.  Use existing {use_model_path} - copy to {project_directory + "/database/models.py"}')
+                copyfile(use_model_path, model_full_file_name)
+    elif project.command == 'create-ui':
+        model_full_file_name = model_creation_services.resolve_home(name = model_creation_services.use_model)
+    elif project.command == "rebuild-from-model":
+        log.debug(f' a.  Use existing database/models.py to rebuild api and ui models - verifying')
+        model_full_file_name = '.'   # project_directory + '/database/models.py'
+    else:
+        error_message = f'System error - unexpected command: {project.command}'
+        raise ValueError(error_message)
+    msg = f'.. .. ..Create resource_list - dynamic import database/{model_creation_services.project.model_file_name}, inspect {num_models} classes'
+    return model_full_file_name, msg # return to ctor, create resource_list
