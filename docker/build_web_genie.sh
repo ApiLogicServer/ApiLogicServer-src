@@ -43,8 +43,10 @@ if [ $# -eq 0 ]
     curl -o webgenie.Dockerfile https://raw.githubusercontent.com/ApiLogicServer/ApiLogicServer-src/refs/heads/main/docker/webgenie.Dockerfile
     set -x
     # Build wg:
-    git clone https://github.com/ApiLogicServer/sra
-    git clone https://github.com/ApiLogicServer/webgenai
+    git clone https://github.com/ApiLogicServer/sra --depth=1
+    git clone https://github.com/ApiLogicServer/webgenai --depth=1
+
+    cp -rf ../nginx .
     docker build -f webgenie.Dockerfile -t apilogicserver/webgenie --no-cache  --rm .
 
     # Run wg (on port 8282):
