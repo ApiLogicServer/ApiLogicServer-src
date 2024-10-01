@@ -367,6 +367,8 @@ class CustomEndpoint():
                         for a in self._attributes:
                             if a['attr'].key == col_name:
                                 col_name = f"{a['attr'].columns[0].name } { 'asc' if direction else 'desc'}"
+                                q = '"'
+                                col_name = f"{q}{a['attr'].columns[0].name}{q}"
                                 break
                         session_qry = session_qry.order_by(text(col_name))
                     else:
