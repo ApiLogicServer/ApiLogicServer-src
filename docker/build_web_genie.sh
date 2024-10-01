@@ -37,8 +37,8 @@ if [ $# -eq 0 ]
     echo " "
     mkdir webgen_ai_docker
     cd webgen_ai_docker
-    mkdir opt/webgenai_env
-    curl -o webgenie.Dockerfile https://github.com/ApiLogicServer/ApiLogicServer-src/blob/main/docker/webgenie.Dockerfile
+    touch opt/webgenai_env
+    curl -o webgenie.Dockerfile https://raw.githubusercontent.com/ApiLogicServer/ApiLogicServer-src/refs/heads/main/docker/webgenie.Dockerfile
     set -x
     # Build wg:
     git clone https://github.com/ApiLogicServer/sra
