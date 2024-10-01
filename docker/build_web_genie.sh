@@ -20,10 +20,7 @@ fi
 # if you have installed apilogicserver_dev:
 # cd ~/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src
 # cd ..
-# sh docker/build_web_genie.sh clean
-
-# normally true, use false for skipping long clone during testing 
-clonedocs=true
+# sh apilogicserver-src/docker/build_web_genie.sh clean
 
 webgen_ai_docker='webgen_ai_docker'
 
@@ -37,6 +34,7 @@ if [ $# -eq 0 ]
     echo " Note: creates a folder at pwd: $webgen_ai_docker"
     echo " "
     echo "   > sh build_web_genie.sh [go | clean]"
+    echo "   Browse to http://localhost:8282"
     echo " "
     exit 0
   else
@@ -49,7 +47,7 @@ if [ $# -eq 0 ]
     fi
     mkdir webgen_ai_docker
     cd webgen_ai_docker
-    curl -o webgenai_env https://raw.githubusercontent.com/ApiLogicServer/ApiLogicServer-src/refs/heads/main/docker/webgenie.Dockerfile
+    curl -o webgenai.env https://raw.githubusercontent.com/ApiLogicServer/ApiLogicServer-src/refs/heads/main/docker/webgenie.env
     touch webgenai_env
 
     mkdir nginx
@@ -72,11 +70,5 @@ if [ $# -eq 0 ]
     docker run -it --rm --name webgenie -p 8282:80  --env-file webgenai_env   apilogicserver/webgenie
     set +x
 fi
-
-
-# if you have installed apilogicserver_dev:
-# cd ~/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src
-# cd ..
-# sh apilogicserver-src/docker/build_web_genie.sh clean
 
 exit 0
