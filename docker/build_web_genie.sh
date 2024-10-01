@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e # exit on error
+
 contains()
   # echo contains check $1 in $2
   case "$1" in
@@ -37,7 +39,7 @@ if [ $# -eq 0 ]
     echo " "
     mkdir webgen_ai_docker
     cd webgen_ai_docker
-    touch opt/webgenai_env
+    touch webgenai_env
     curl -o webgenie.Dockerfile https://raw.githubusercontent.com/ApiLogicServer/ApiLogicServer-src/refs/heads/main/docker/webgenie.Dockerfile
     set -x
     # Build wg:
@@ -46,7 +48,7 @@ if [ $# -eq 0 ]
     docker build -f webgenie.Dockerfile -t apilogicserver/webgenie --no-cache  --rm .
 
     # Run wg (on port 8282):
-    docker run -it --rm --name webgenie -p 8282:80  --env-file /opt/webgenai_env   apilogicserver/webgenie
+    docker run -it --rm --name webgenie -p 8282:80  --env-file webgenai_env   apilogicserver/webgenie
     set +x
 fi
 exit 0
