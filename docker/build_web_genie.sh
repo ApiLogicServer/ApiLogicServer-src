@@ -49,6 +49,7 @@ if [ $# -eq 0 ]
     fi
     mkdir webgen_ai_docker
     cd webgen_ai_docker
+    curl -o webgenai_env https://raw.githubusercontent.com/ApiLogicServer/ApiLogicServer-src/refs/heads/main/docker/webgenie.Dockerfile
     touch webgenai_env
 
     mkdir nginx
