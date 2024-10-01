@@ -44,28 +44,28 @@ if [ $# -eq 0 ]
       then
         echo "\nClean $webgen_ai_docker\n"
         rm -rf $webgen_ai_docker
+        mkdir webgen_ai_docker
+        cd webgen_ai_docker
+        curl -o webgenai.env https://raw.githubusercontent.com/ApiLogicServer/ApiLogicServer-src/refs/heads/main/docker/webgenie.env
+        touch webgenai_env
+
+        mkdir nginx
+        cd nginx
+        curl -o nginx.conf https://raw.githubusercontent.com/ApiLogicServer/ApiLogicServer-src/refs/heads/main/nginx/nginx.conf
+        curl -o wg.conf https://raw.githubusercontent.com/ApiLogicServer/ApiLogicServer-src/refs/heads/main/nginx/wg.conf
+        cd ..
+
+        curl -o webgenie.Dockerfile https://raw.githubusercontent.com/ApiLogicServer/ApiLogicServer-src/refs/heads/main/docker/webgenie.Dockerfile
+
+        set -x
+        # Build wg:
+        git clone https://github.com/ApiLogicServer/sra --depth=1
+        git clone https://github.com/ApiLogicServer/webgenai --depth=1
+
+        # cp -rf ../nginx .
+        docker build -f webgenie.Dockerfile -t apilogicserver/webgenie --no-cache  --rm .
     fi
-    mkdir webgen_ai_docker
-    cd webgen_ai_docker
-    curl -o webgenai.env https://raw.githubusercontent.com/ApiLogicServer/ApiLogicServer-src/refs/heads/main/docker/webgenie.env
-    touch webgenai_env
-
-    mkdir nginx
-    cd nginx
-    curl -o nginx.conf https://raw.githubusercontent.com/ApiLogicServer/ApiLogicServer-src/refs/heads/main/nginx/nginx.conf
-    curl -o wg.conf https://raw.githubusercontent.com/ApiLogicServer/ApiLogicServer-src/refs/heads/main/nginx/wg.conf
-    cd ..
-
-    curl -o webgenie.Dockerfile https://raw.githubusercontent.com/ApiLogicServer/ApiLogicServer-src/refs/heads/main/docker/webgenie.Dockerfile
-
-    set -x
-    # Build wg:
-    git clone https://github.com/ApiLogicServer/sra --depth=1
-    git clone https://github.com/ApiLogicServer/webgenai --depth=1
-
-    # cp -rf ../nginx .
-    docker build -f webgenie.Dockerfile -t apilogicserver/webgenie --no-cache  --rm .
-
+    
     # Run wg (on port 8282):
     docker run -it --rm --name webgenie -p 8282:80  --env-file webgenai_env   apilogicserver/webgenie
     set +x
