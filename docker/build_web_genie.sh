@@ -53,8 +53,8 @@ if [ $# -eq 0 ]
 
     mkdir nginx
     cd nginx
-    curl -o webgenie.Dockerfile https://raw.githubusercontent.com/ApiLogicServer/ApiLogicServer-src/refs/heads/main/nginx/nginx.conf
-    curl -o webgenie.Dockerfile https://raw.githubusercontent.com/ApiLogicServer/ApiLogicServer-src/refs/heads/main/nginx/wg.conf
+    curl -o nginx.conf https://raw.githubusercontent.com/ApiLogicServer/ApiLogicServer-src/refs/heads/main/nginx/nginx.conf
+    curl -o wg.conf https://raw.githubusercontent.com/ApiLogicServer/ApiLogicServer-src/refs/heads/main/nginx/wg.conf
     cd ..
 
     curl -o webgenie.Dockerfile https://raw.githubusercontent.com/ApiLogicServer/ApiLogicServer-src/refs/heads/main/docker/webgenie.Dockerfile
