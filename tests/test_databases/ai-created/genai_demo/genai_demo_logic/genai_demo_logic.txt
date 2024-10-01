@@ -1,0 +1,11 @@
+This is just a playground.  It is not even close to working.
+
+The general logic bank api requires activate etc etc,
+all of which is in place in als.  
+
+So the whole model is out of sync.
+In fact, there's a different "api" for als/logicbank
+    1. no activate
+    2. required to use certain dir/file (logic/declare_logic.py),
+    3. the imports are already done
+    4. and **insert** into that (tho, maybe use discovery?)
