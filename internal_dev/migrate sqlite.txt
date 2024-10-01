@@ -1,3 +1,7 @@
+Article: https://shallowsky.com/blog/tech/web/migrate-flask-sqlite-to-postgresql.html
+
+This procedure from CoPilot:
+
 Migrating a SQLAlchemy database from SQLite to PostgreSQL involves a few steps. Here’s a guide on how to do it:
 
 ### 1. **Install PostgreSQL and Dependencies**
