@@ -20,7 +20,7 @@ fi
 # Intende installed apilogicserver_dev:
 # cd ~/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src
 # cd ..
-# sh apilogicserver-src/docker/build_web_genie.sh clean
+# sh docker/webgenie_docker/build_web_genie.sh deploy
 
 webgen_ai_docker='webgen_ai_docker'
 
@@ -37,7 +37,7 @@ if [ $# -eq 0 ]
     echo " Note: creates a folder at pwd: $webgen_ai_docker"
     echo " "
     echo "   > cd ~/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src"
-    echo "   > sh docker/webgenie_docker/build_web_genie.sh [local | go]"
+    echo "   > sh docker/webgenie_docker/build_web_genie.sh [local | deploy]"
     echo " "
     echo "           local: build (not buildx), no publish to dockerhub"
     echo " "
@@ -73,7 +73,7 @@ touch webgenai_env
 # curl -o wg.conf https://raw.githubusercontent.com/ApiLogicServer/ApiLogicServer-src/refs/heads/main/nginx/wg.conf
 # cd ..
 
-curl -o webgenie.Dockerfile https://raw.githubusercontent.com/ApiLogicServer/ApiLogicServer-src/refs/heads/main/docker/webgenie.Dockerfile
+# curl -o webgenie.Dockerfile https://raw.githubusercontent.com/ApiLogicServer/ApiLogicServer-src/refs/heads/main/docker/webgenie.Dockerfile
 
 
 # Build wg:
@@ -83,10 +83,12 @@ git clone https://github.com/ApiLogicServer/webgenai --depth=1
 # cp -rf ../nginx .
 if [ "$1" = "local" ]
   then
-    docker build -f webgenie.Dockerfile -t apilogicserver/webgenie --no-cache  --rm .
+    docker build -f $SRC_DIR/docker/webgenie_docker/webgenie.Dockerfile -t apilogicserver/web_genie --no-cache  --rm .
   else
-    exit 1
-    docker build -f webgenie.Dockerfile -t apilogicserver/webgenie --rm .
+    # stand-alone test in terminal - cd $webgen_ai_docker-src, and...
+    # docker buildx build --push -f webgenie.Dockerfile --tag apilogicserver/web_genai:1.0.0 -o type=image --platform=linux/arm64,linux/amd64 .
+    docker buildx build --push -f webgenie.Dockerfile --tag apilogicserver/web_genai:1.0.0 -o type=image --platform=linux/arm64,linux/amd64 .
+    docker buildx build --push -f webgenie.Dockerfile --tag apilogicserver/web_genai:latest -o type=image --platform=linux/arm64,linux/amd64 .
 fi
 
 set +x
@@ -100,6 +102,6 @@ set +x
 cd $SRC_DIR
 echo "\npwd: $(pwd)\n"
 
-echo "\nrun: docker run -it --rm --name webgenie -p 8282:80  --env-file ../webgen_ai_docker/webgenai.env   apilogicserver/webgenie\n"
+echo "\nrun: docker run -it --rm --name webgenie -p 8282:80  --env-file ../webgen_ai_docker/web_genai.env   apilogicserver/webgenie\n"
 
 exit 0
