@@ -190,6 +190,22 @@ class OntBuilder(object):
             self.set_style(setting_name, each_setting)
             self.global_values[setting_name] = each_setting
         
+        '''
+            # Breaking change - added to app.config.ts - values may not be on older version
+            serviceType = "OntimizeEE"
+            locale = "en"
+            applicationLocales = ["en","es"]
+            startSessionPath = "/auth/login"
+        '''
+        if getattr(self.global_values,"serviceType",None) is None:
+            self.global_values["serviceType"] = "OntimizeEE"
+        if getattr(self.global_values,"locale",None) is None:
+            self.global_values["locale"] =  ["en","es"]
+        if getattr(self.global_values,"applicationLocales",None) is None:
+            self.global_values["applicationLocales"] = "en"
+        if getattr(self.global_values,"startSessionPath",None) is None:
+            self.global_values["startSessionPath"] = "/auth/login"
+            
         for each_entity_name, each_entity in app_model.entities.items():
             if  each_entity.get("exclude", "false") == "true":
                 continue
