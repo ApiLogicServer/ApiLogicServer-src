@@ -59,28 +59,14 @@ echo "\nClean $webgen_ai_docker\n"
 set -x
 
 rm -rf $webgen_ai_docker
-ls ./
 cp -r $SRC_DIR/docker/webgenie_docker/$webgen_ai_docker ./
-
 cd $webgen_ai_docker
-
-# curl -o webgenai.env https://raw.githubusercontent.com/ApiLogicServer/ApiLogicServer-src/refs/heads/main/docker/webgenie.env
 touch webgenai_env
-
-# mkdir nginx
-# cd nginx
-# curl -o nginx.conf https://raw.githubusercontent.com/ApiLogicServer/ApiLogicServer-src/refs/heads/main/nginx/nginx.conf
-# curl -o wg.conf https://raw.githubusercontent.com/ApiLogicServer/ApiLogicServer-src/refs/heads/main/nginx/wg.conf
-# cd ..
-
-# curl -o webgenie.Dockerfile https://raw.githubusercontent.com/ApiLogicServer/ApiLogicServer-src/refs/heads/main/docker/webgenie.Dockerfile
-
 
 # Build wg:
 git clone https://github.com/ApiLogicServer/sra --depth=1
 git clone https://github.com/ApiLogicServer/webgenai --depth=1
 
-# cp -rf ../nginx .
 if [ "$1" = "local" ]
   then
     docker build -f $SRC_DIR/docker/webgenie_docker/webgenie.Dockerfile -t apilogicserver/web_genie --no-cache  --rm .
@@ -93,15 +79,9 @@ fi
 
 set +x
 
-# reset pwd
-# cd ..
-# cd ApiLogicServer-src
-
 # docker run -it --rm --name webgenie -p 8282:80  --env-file ../webgen_ai_docker/webgenai/webgenie.env   apilogicserver/webgenie
 
 cd $SRC_DIR
 echo "\npwd: $(pwd)\n"
-
 echo "\nrun: docker run -it --rm --name webgenie -p 8282:80  --env-file ../webgen_ai_docker/web_genai.env   apilogicserver/webgenie\n"
-
 exit 0
