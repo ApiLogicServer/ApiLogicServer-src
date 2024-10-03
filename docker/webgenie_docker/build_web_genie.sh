@@ -79,7 +79,7 @@ fi
 
 set +x
 
-# docker run -it --rm --name webgenie -p 8282:80  --env-file ../webgen_ai_docker/webgenai/webgenie.env   apilogicserver/webgenie
+# docker run -it --rm --name webgenie -p 8282:80  --env-file docker/webgenie_docker/webgen_ai_docker/webgenai.env   apilogicserver/webgenie
 
 cd $SRC_DIR
 echo "\npwd: $(pwd)\n"
