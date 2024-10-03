@@ -84,7 +84,7 @@ class GenAI(object):
 
         self.messages = self.get_prompt_messages()  # compute self.messages, from file, dir or text argument
 
-        if self.project.genai_repaired_response == '':
+        if self.project.genai_repaired_response == '':  # normal path - get response from ChatGPT
             log.debug(f'.. ChatGPT - saving response to: system/genai/temp/chatgpt_original.response')
             self.headers = self.get_headers_with_openai_api_key()
             url = "https://api.openai.com/v1/chat/completions"
