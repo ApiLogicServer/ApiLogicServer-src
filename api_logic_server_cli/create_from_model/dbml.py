@@ -93,11 +93,13 @@ class DBMLCreator(object):
             if self.do_process_resource(each_resource_name):
                 each_resource : Resource = self.mod_gen.resource_list[each_resource_name]
                 self.dbms_lines.append(f"Table {each_resource_name} {{")
+                pk_name = each_resource.primary_key[0].name
                 for each_attr in each_resource.attributes:
                     db_type = each_attr.db_type
                     if 'DECIMAL' in db_type:
                         db_type = 'DECIMAL'  # dbml parse fails with DECIMAL(10,2)
-                    self.dbms_lines.append(f"    {each_attr.name} {db_type}")
+                    pk = "[primary key]" if each_attr.name == pk_name else ""
+                    self.dbms_lines.append(f"    {each_attr.name} {db_type} {pk}")
                 self.dbms_lines.append("    }")
                 self.dbms_lines.append("")
 
