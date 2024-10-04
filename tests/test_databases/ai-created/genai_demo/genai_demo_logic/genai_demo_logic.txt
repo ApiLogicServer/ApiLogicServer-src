@@ -9,3 +9,10 @@ In fact, there's a different "api" for als/logicbank
     2. required to use certain dir/file (logic/declare_logic.py),
     3. the imports are already done
     4. and **insert** into that (tho, maybe use discovery?)
+
+10/4:
+    We seem to be able to feed CPT the rules api and get a good solution
+        see tests/test_databases/ai-created/genai_demo/genai_demo_logic/logic-transcript.md
+    So maybe RAG is not required to achieve our purpose
+    Also, for a conversation, probably only submit logic-api once:
+        See https://towardsdatascience.com/how-to-choose-the-architecture-for-your-genai-application-6053e862c457
