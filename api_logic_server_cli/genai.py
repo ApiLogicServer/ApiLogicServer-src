@@ -117,6 +117,7 @@ class GenAI(object):
 
     def get_prompt_messages(self) -> List[Dict[str, str]]:
         """ Get prompt from file, dir (conversation) or text argument
+            Prepend with learning_requests (if any)
 
         Returns:
             dict[]: [ {role: (system | user) }: { content: user-prompt-or-system-response } ]
@@ -125,6 +126,8 @@ class GenAI(object):
 
         prompt_messages : List[ Dict[str, str] ] = []  # prompt/response conversation to be sent to ChatGPT
         prompt_messages.append( {"role": "system", "content": "You are a helpful assistant."})
+
+        prompt_messages.append(self.get_learning_requests())  # if any, prepend learning requests (logicbank api etc)
         
         if self.project.genai_repaired_response != '':       # if exists, get prompt (just for inserting into declare_logic.py)
             prompt = ""  # we are not calling ChatGPT, just getting the prompt to scan for logic
@@ -163,7 +166,9 @@ class GenAI(object):
         return prompt_messages      
 
     def get_prompt__with_inserts(self, raw_prompt: str) -> str:
-        """ prompt-engineering: insert db-specific logic into prompt """
+        """ prompt-engineering: insert db-specific logic into prompt 
+            raw_prompt: the prompt from file or text argument
+        """
         prompt_result = raw_prompt
         prompt_inserts = ''
         if '*' == self.project.genai_prompt_inserts:    # * means no inserts
