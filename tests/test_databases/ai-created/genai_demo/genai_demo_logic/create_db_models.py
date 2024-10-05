@@ -23,7 +23,7 @@ import os
 # from logic_bank import LogicBank
 # from logic_bank.rule_bank import Rule  # FIXME
 
-# from logic_bank.exec_row_logic.logic_row import LogicRow  # FIXME circular import
+# from logic_bank.exec_row_logic.logic_row import LogicRow  # TODO circular import?
 # from logic_bank.extensions.rule_extensions import RuleExtension
 from logic_bank.logic_bank import Rule
 

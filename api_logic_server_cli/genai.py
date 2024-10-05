@@ -2,6 +2,7 @@ from typing import Dict, List
 from api_logic_server_cli.cli_args_project import Project
 import logging
 from pathlib import Path
+import importlib
 import requests
 import os
 import create_from_model.api_logic_server_utils as utils
@@ -127,7 +128,8 @@ class GenAI(object):
         prompt_messages : List[ Dict[str, str] ] = []  # prompt/response conversation to be sent to ChatGPT
         prompt_messages.append( {"role": "system", "content": "You are a helpful assistant."})
 
-        prompt_messages.append(self.get_learning_requests())  # if any, prepend learning requests (logicbank api etc)
+        learning_requests = self.get_learning_requests()
+        prompt_messages.extend(learning_requests)  # if any, prepend learning requests (logicbank api etc)
         
         if self.project.genai_repaired_response != '':       # if exists, get prompt (just for inserting into declare_logic.py)
             prompt = ""  # we are not calling ChatGPT, just getting the prompt to scan for logic
@@ -164,6 +166,27 @@ class GenAI(object):
 
         # log.debug(f'.. prompt_messages: {prompt_messages}')  # heaps of output
         return prompt_messages      
+
+
+    def get_learning_requests(self) -> List [ Dict[str, str]]:
+        """ Get learning requests from cwd/system/genai/learning_requests
+
+        Returns:
+            list: learning_requests dicts {"role": "user", "content": learning_request_lines}
+        """
+
+        learning_requests : List[ Dict[str, str] ] = []  # learning -> prompt/response conversation to be sent to ChatGPT
+        request_files_dir_path = Path(f'system/genai/learning_requests')
+        if request_files_dir_path.exists():
+            # loop through files in request_files_dir, and append to prompt_messages
+            for root, dirs, files in os.walk(request_files_dir_path):
+                for file in files:
+                    if file.endswith(".prompt"):
+                        with open(request_files_dir_path.joinpath(file), "r") as learnings:
+                            learning_request_lines = learnings.read()
+                        learning_requests.append( {"role": "user", "content": learning_request_lines})
+        return learning_requests  # TODO - what if no learning requests?
+    
 
     def get_prompt__with_inserts(self, raw_prompt: str) -> str:
         """ prompt-engineering: insert db-specific logic into prompt 
@@ -358,7 +381,7 @@ class GenAI(object):
                 if indents_to_remove > 0:
                     each_line = each_line[indents_to_remove:]
                 if 'relationship(' in each_line and self.project.genai_use_relns == False:
-                    # airport4 fails with ould not determine join condition between parent/child tables on relationship Airport.flights
+                    # airport4 fails with could not determine join condition between parent/child tables on relationship Airport.flights
                     if each_line.startswith('    '):
                         each_line = each_line.replace('    ', '    # ')
                     else:  # sometimes it puts relns outside the class (so, outdented)
@@ -366,6 +389,13 @@ class GenAI(object):
                 if 'sqlite:///system/genai/temp/model.sqlite':  # fix prior version
                     each_line = each_line.replace('sqlite:///system/genai/temp/model.sqlite', 
                                                   'sqlite:///system/genai/temp/create_db_models.sqlite')
+
+                # logicbank fixes
+                if 'from logic_bank' in each_line:  # we do our own imports
+                    each_line = each_line.replace('from', '# from')
+                if 'LogicBank.activate' in each_line:
+                    each_line = each_line.replace('LogicBank.activate', '# LogicBank.activate')
+                
                 model_class += each_line + '\n'
         with open(f'{self.project.from_model}', "w") as model_file:
             model_file.write(model_class)
@@ -481,6 +511,9 @@ class GenAI(object):
         
 
         # Check if the request was successful
+        if response.status_code == 400:
+            raise Exception("Bad ChatGPT Request: " + response.text)
+        
         if response.status_code != 200:
             print("Error:", response.status_code, response.text)   # eg, You exceeded your current quota 
 
