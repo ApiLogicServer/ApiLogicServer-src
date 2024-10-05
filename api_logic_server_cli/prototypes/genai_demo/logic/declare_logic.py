@@ -3,7 +3,7 @@ from decimal import Decimal
 from logic_bank.exec_row_logic.logic_row import LogicRow
 from logic_bank.extensions.rule_extensions import RuleExtension
 from logic_bank.logic_bank import Rule
-from database import models
+from database.models import *
 from database.models import Customer, Order, Item, Product
 import api.system.opt_locking.opt_locking as opt_locking
 from security.system.authorization import Grant
@@ -49,21 +49,21 @@ def declare_logic():
     # 3. Order.AmountTotal = Sum(Items.Amount)
     Rule.sum(derive=Order.AmountTotal, as_sum_of=Item.Amount)
 
-    def derive_amount(row: models.Item, old_row: models.Item, logic_row: LogicRow):
+    def derive_amount(row: Item, old_row: Item, logic_row: LogicRow):
         amount = row.Quantity * row.UnitPrice
         if row.Product.CarbonNeutral == True and row.Quantity >= 10:
            amount = amount * Decimal(0.9)  # breakpoint here
         return amount
 
     # 4. Items.Amount = Quantity * UnitPrice
-    Rule.formula(derive=models.Item.Amount, calling=derive_amount)
+    Rule.formula(derive=Item.Amount, calling=derive_amount)
 
     # 5. Store the Items.UnitPrice as a copy from Product.UnitPrice
     Rule.copy(Item.UnitPrice, from_parent=Product.UnitPrice)
 
     #als: Demonstrate that logic == Rules + Python (for extensibility)
 
-    def send_order_to_shipping(row: models.Order, old_row: models.Order, logic_row: LogicRow):
+    def send_order_to_shipping(row: Order, old_row: Order, logic_row: LogicRow):
         """ #als: Send Kafka message formatted by OrderShipping RowDictMapper
 
         Format row per shipping requirements, and send (e.g., a message)
@@ -71,8 +71,8 @@ def declare_logic():
         NB: the after_flush event makes Order.Id avaible.  Contrast to congratulate_sales_rep().
 
         Args:
-            row (models.Order): inserted Order
-            old_row (models.Order): n/a
+            row (Order): inserted Order
+            old_row (Order): n/a
             logic_row (LogicRow): bundles curr/old row, with ins/upd/dlt logic
         """
         if logic_row.is_inserted():
@@ -82,7 +82,7 @@ def declare_logic():
                                               kafka_key=str(row.OrderID),
                                               msg="Sending Order to Shipping")
             
-    Rule.after_flush_row_event(on_class=models.Order, calling=send_order_to_shipping)  # see above
+    Rule.after_flush_row_event(on_class=Order, calling=send_order_to_shipping)  # see above
 
 
 
