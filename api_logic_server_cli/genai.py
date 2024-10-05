@@ -155,7 +155,7 @@ class GenAI(object):
             if response_count == 0:
                 log.debug(f".. no response files - applying insert to prompt")
                 prompt = self.get_prompt__with_inserts(raw_prompt=prompt)  # insert db-specific logic
-                prompt_messages[1]["content"] = prompt
+                prompt_messages[2]["content"] = prompt
         else:                                   # prompt from text (add system/genai/pre_post.prompt)
             # open and read the project description in natural language
             log.debug(f'.. from file')
