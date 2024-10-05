@@ -240,9 +240,7 @@ class GenAI(object):
         prompt = self.prompt  # TODO - redesign if conversation
         prompt_array = prompt.split('\n')
         logic_text = """
-    GenAI: Paste the following into Copilot Chat, and paste the result below.
-        
-    Use Logic Bank to enforce these requirements:
+    GenAI: Used Logic Bank to enforce these requirements:
     
 """
         line_num = 0
@@ -268,9 +266,22 @@ class GenAI(object):
         """
 
         logic_file = self.project.project_directory_path.joinpath('logic/declare_logic.py')
-        utils.insert_lines_at(lines=self.project.genai_logic, 
+        in_logic = False
+        translated_logic = "\n    # Logic from GenAI:\n\n"
+        for each_line in self.create_db_models.split('\n'):
+            if in_logic:
+                if each_line.startswith('    '):    # indent => still in logic
+                    translated_logic += each_line + '\n'      
+                elif each_line.strip() == '':       # blank => still in logic
+                    pass
+                else:                               # no-indent => end of logic
+                    in_logic = False
+            if "declare_logic()" in each_line:
+                in_logic = True
+        translated_logic += "\n    # End Logic from GenAI\n\n"
+        utils.insert_lines_at(lines=translated_logic, 
                               file_name=logic_file, 
-                              at='Your Code Goes Here', 
+                              at='discover_logic()', 
                               after=True)
 
         readme_lines = \
