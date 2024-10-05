@@ -20,4 +20,5 @@ In fact, there's a different "api" for als/logicbank
 10/4 oh my goodness
     use Run Config: genai LOGIC - clean/ApiLogicServer/genai_demo_logic
     it creates tests/test_databases/ai-created/genai_demo/genai_demo_logic/create_db_models.py
-    which appears to be correct except for a few readmes.  
+    which appears to be correct except for a few FIXMEs.  
+        It does create the db.  **including** the derived columns.
