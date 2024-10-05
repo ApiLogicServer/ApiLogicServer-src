@@ -205,7 +205,7 @@
             "redirectOutput": true,
             "args": [
                 "genai",
-                "--using=${workspaceFolder}/tests/test_databases/ai-created/genai_demo/genai_demo_logic/genai_demo_logic_001.prompt"
+                "--using=${workspaceFolder}/tests/test_databases/ai-created/genai_demo/genai_demo_logic"
                 ],
             "console": "integratedTerminal"
         },

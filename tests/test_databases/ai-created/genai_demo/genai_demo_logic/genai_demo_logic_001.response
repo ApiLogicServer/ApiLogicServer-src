@@ -1,0 +1,1 @@
+The provided API for LogicBank introduces a framework to declaratively define and enforce business rules directly in Python when using SQLAlchemy.

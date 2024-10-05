@@ -16,3 +16,8 @@ In fact, there's a different "api" for als/logicbank
     So maybe RAG is not required to achieve our purpose
     Also, for a conversation, probably only submit logic-api once:
         See https://towardsdatascience.com/how-to-choose-the-architecture-for-your-genai-application-6053e862c457
+
+10/4 oh my goodness
+    use Run Config: genai LOGIC - clean/ApiLogicServer/genai_demo_logic
+    it creates tests/test_databases/ai-created/genai_demo/genai_demo_logic/create_db_models.py
+    which appears to be correct except for a few readmes.  
