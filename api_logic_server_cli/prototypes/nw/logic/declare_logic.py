@@ -4,7 +4,7 @@ from logic_bank.exec_row_logic.logic_row import LogicRow
 from logic_bank.extensions.rule_extensions import RuleExtension
 from logic_bank.logic_bank import Rule
 from logic_bank.util import ConstraintException
-from database import models
+from database.models import *
 import api.system.opt_locking.opt_locking as opt_locking
 from security.system.authorization import Grant, Security
 import logging
@@ -97,26 +97,26 @@ def declare_logic():
     discover_logic()
 
     #als: basic rules - 5 rules vs 200 lines of code: https://github.com/valhuber/LogicBank/wiki/by-code
-    Rule.constraint(validate=models.Customer,       # logic design translates directly into rules
+    Rule.constraint(validate=Customer,       # logic design translates directly into rules
         as_condition=lambda row: row.Balance <= row.CreditLimit,
         error_msg="balance ({round(row.Balance, 2)}) exceeds credit ({round(row.CreditLimit, 2)})")
 
-    Rule.sum(derive=models.Customer.Balance,        # adjust iff AmountTotal or ShippedDate or CustomerID changes
-        as_sum_of=models.Order.AmountTotal,
+    Rule.sum(derive=Customer.Balance,        # adjust iff AmountTotal or ShippedDate or CustomerID changes
+        as_sum_of=Order.AmountTotal,
         where=lambda row: row.ShippedDate is None and row.Ready == True)  # adjusts - *not* a sql select sum...
 
-    Rule.sum(derive=models.Order.AmountTotal,       # adjust iff Amount or OrderID changes
-        as_sum_of=models.OrderDetail.Amount)
+    Rule.sum(derive=Order.AmountTotal,       # adjust iff Amount or OrderID changes
+        as_sum_of=OrderDetail.Amount)
 
-    Rule.formula(derive=models.OrderDetail.Amount,  # compute price * qty
+    Rule.formula(derive=OrderDetail.Amount,  # compute price * qty
         as_expression=lambda row: row.UnitPrice * row.Quantity)
 
-    Rule.copy(derive=models.OrderDetail.UnitPrice,  # get Product Price (e,g., on insert, or ProductId change)
-        from_parent=models.Product.UnitPrice)
+    Rule.copy(derive=OrderDetail.UnitPrice,  # get Product Price (e,g., on insert, or ProductId change)
+        from_parent=Product.UnitPrice)
 
     #als: Demonstrate that logic == Rules + Python (for extensibility)
 
-    def send_order_to_shipping(row: models.Order, old_row: models.Order, logic_row: LogicRow):
+    def send_order_to_shipping(row: Order, old_row: Order, logic_row: LogicRow):
         """ #als: Send Kafka message formatted by OrderShipping RowDictMapper
 
         Format row per shipping requirements, and send (e.g., a message)
@@ -124,8 +124,8 @@ def declare_logic():
         NB: the after_flush event makes Order.Id available.  Contrast to congratulate_sales_rep().
 
         Args:
-            row (models.Order): inserted Order
-            old_row (models.Order): n/a
+            row (Order): inserted Order
+            old_row (Order): n/a
             logic_row (LogicRow): bundles curr/old row, with ins/upd/dlt logic
         """
         if (logic_row.is_inserted() and row.Ready == True) or \
@@ -136,10 +136,10 @@ def declare_logic():
                                               kafka_key=str(row.Id),
                                               msg="Sending Order to Shipping")
             
-    Rule.after_flush_row_event(on_class=models.Order, calling=send_order_to_shipping)  # see above
+    Rule.after_flush_row_event(on_class=Order, calling=send_order_to_shipping)  # see above
 
 
-    def congratulate_sales_rep(row: models.Order, old_row: models.Order, logic_row: LogicRow):
+    def congratulate_sales_rep(row: Order, old_row: Order, logic_row: LogicRow):
         """ use events for sending email, messages, etc. """
         if logic_row.ins_upd_dlt == "ins":  # logic engine fills parents for insert
             sales_rep = row.Employee        # parent accessor
@@ -150,18 +150,18 @@ def declare_logic():
             else:
                 logic_row.log(f'Hi, {sales_rep.Manager.FirstName} - '
                               f'Congratulate {sales_rep.FirstName} on their new order')
-            category_1 = logic_row.session.query(models.Category).filter(models.Category.Id == 1).one()
+            category_1 = logic_row.session.query(Category).filter(Category.Id == 1).one()
             logic_row.log("Illustrate database access")  # not granted for user: u2
             # Note: *Client* access is subject to authorization
             #       *Logic* is system code, not subject to authorization
 
-    Rule.commit_row_event(on_class=models.Order, calling=congratulate_sales_rep)
+    Rule.commit_row_event(on_class=Order, calling=congratulate_sales_rep)
 
 
     """
         #als: Commit Events (which reflect sum/count values)
     """
-    def do_not_ship_empty_orders(row: models.Order, old_row: models.Order, logic_row: LogicRow) -> bool:
+    def do_not_ship_empty_orders(row: Order, old_row: Order, logic_row: LogicRow) -> bool:
         if row.OrderDetailCount == 0:  # an empty order... error if trying to ship...
             if logic_row.is_deleted():
                 pass
@@ -169,14 +169,14 @@ def declare_logic():
                 if row.ShippedDate is not None or row.Ready == True:
                     raise ConstraintException("Empty Order - Cannot Ship or Make Ready")
     
-    Rule.commit_row_event(on_class=models.Order, calling=do_not_ship_empty_orders)
+    Rule.commit_row_event(on_class=Order, calling=do_not_ship_empty_orders)
 
 
-    def ship_ready_orders_only(row: models.Order, old_row: models.Order, logic_row: LogicRow) -> bool:
+    def ship_ready_orders_only(row: Order, old_row: Order, logic_row: LogicRow) -> bool:
         invalid_row = row.Ready == False and row.ShippedDate is not None and old_row.ShippedDate is None
         return not invalid_row
     
-    Rule.constraint(validate=models.Order,       # Do not ship orders that are not ready
+    Rule.constraint(validate=Order,       # Do not ship orders that are not ready
         calling=ship_ready_orders_only,
         error_msg="Cannot Ship Order that is not Ready")
 
@@ -184,13 +184,13 @@ def declare_logic():
         Simplify data entry with defaults 
     """
 
-    def customer_defaults(row: models.Customer, old_row: models.Order, logic_row: LogicRow):
+    def customer_defaults(row: Customer, old_row: Order, logic_row: LogicRow):
         if row.Balance is None:
             row.Balance = 0
         if row.CreditLimit is None:
             row.CreditLimit = 1000
 
-    def order_defaults(row: models.Order, old_row: models.Order, logic_row: LogicRow):
+    def order_defaults(row: Order, old_row: Order, logic_row: LogicRow):
         if row.Freight is None:
             row.Freight = 10
         if row.AmountTotal is None:
@@ -198,15 +198,15 @@ def declare_logic():
         if row.Ready is None:  # if not set in UI, set to False for do_not_ship_empty_orders() 
             row.Ready = False
 
-    def order_detail_defaults(row: models.OrderDetail, old_row: models.OrderDetail, logic_row: LogicRow):
+    def order_detail_defaults(row: OrderDetail, old_row: OrderDetail, logic_row: LogicRow):
         if row.Quantity is None:
             row.Quantity = 1
         if row.Discount is None:
             row.Discount = 0
 
-    Rule.early_row_event(on_class=models.Customer, calling=customer_defaults)
-    Rule.early_row_event(on_class=models.Order, calling=order_defaults)
-    Rule.early_row_event(on_class=models.OrderDetail, calling=order_detail_defaults)
+    Rule.early_row_event(on_class=Customer, calling=customer_defaults)
+    Rule.early_row_event(on_class=Order, calling=order_defaults)
+    Rule.early_row_event(on_class=OrderDetail, calling=order_detail_defaults)
 
 
     """
@@ -215,38 +215,38 @@ def declare_logic():
             https://github.com/valhuber/LogicBank/wiki/Rule-Extensibility
     """
 
-    def units_in_stock(row: models.Product, old_row: models.Product, logic_row: LogicRow):
+    def units_in_stock(row: Product, old_row: Product, logic_row: LogicRow):
         result = row.UnitsInStock - (row.UnitsShipped - old_row.UnitsShipped)
         return result  # use lambdas for simple expressions, functions for complex logic (if/else etc)
 
-    Rule.formula(derive=models.Product.UnitsInStock, calling=units_in_stock)  # compute reorder required
+    Rule.formula(derive=Product.UnitsInStock, calling=units_in_stock)  # compute reorder required
 
-    Rule.sum(derive=models.Product.UnitsShipped,
-        as_sum_of=models.OrderDetail.Quantity,
+    Rule.sum(derive=Product.UnitsShipped,
+        as_sum_of=OrderDetail.Quantity,
         where=lambda row: row.ShippedDate is None)
 
-    Rule.formula(derive=models.OrderDetail.ShippedDate,  # unlike copy, referenced parent values cascade to children
+    Rule.formula(derive=OrderDetail.ShippedDate,  # unlike copy, referenced parent values cascade to children
         as_exp="row.Order.ShippedDate")
 
 
-    Rule.count(derive=models.Customer.UnpaidOrderCount,
-        as_count_of=models.Order,
+    Rule.count(derive=Customer.UnpaidOrderCount,
+        as_count_of=Order,
         where=lambda row: row.ShippedDate is None)  # *not* a sql select sum...
 
-    Rule.count(derive=models.Customer.OrderCount, as_count_of=models.Order)
+    Rule.count(derive=Customer.OrderCount, as_count_of=Order)
 
-    Rule.count(derive=models.Order.OrderDetailCount, as_count_of=models.OrderDetail)
+    Rule.count(derive=Order.OrderDetailCount, as_count_of=OrderDetail)
 
 
     """
         #als: STATE TRANSITION LOGIC, using old_row
     """
-    def raise_over_20_percent(row: models.Employee, old_row: models.Employee, logic_row: LogicRow):
+    def raise_over_20_percent(row: Employee, old_row: Employee, logic_row: LogicRow):
         if logic_row.ins_upd_dlt == "upd" and row.Salary > old_row.Salary:
             return row.Salary >= Decimal('1.20') * old_row.Salary
         else:
             return True
-    Rule.constraint(validate=models.Employee,
+    Rule.constraint(validate=Employee,
                     calling=raise_over_20_percent,
                     error_msg="{row.LastName} needs a more meaningful raise")
 
@@ -256,38 +256,38 @@ def declare_logic():
             Events, plus *generic* event handlers
     """
     
-    RuleExtension.copy_row(copy_from=models.Employee,  # #als: AUDITING can be as simple as 1 rule
-                    copy_to=models.EmployeeAudit,
+    RuleExtension.copy_row(copy_from=Employee,  # #als: AUDITING can be as simple as 1 rule
+                    copy_to=EmployeeAudit,
                     copy_when=lambda logic_row: logic_row.ins_upd_dlt == "upd" and 
-                            logic_row.are_attributes_changed([models.Employee.Salary, models.Employee.Title]))
+                            logic_row.are_attributes_changed([Employee.Salary, Employee.Title]))
     pass  # audited (never gets here)
     
     ''' the logic above is simpler than
-        def audit_by_event(row: models.Employee, old_row: models.Employee, logic_row: LogicRow):
-            if logic_row.ins_upd_dlt == "upd" and logic_row.are_attributes_changed([models.Employee.Salary, models.Employee.Title]):
+        def audit_by_event(row: Employee, old_row: Employee, logic_row: LogicRow):
+            if logic_row.ins_upd_dlt == "upd" and logic_row.are_attributes_changed([Employee.Salary, Employee.Title]):
                 # #als: triggered inserts  
-                copy_to_logic_row = logic_row.new_logic_row(models.EmployeeAudit)
+                copy_to_logic_row = logic_row.new_logic_row(EmployeeAudit)
                 copy_to_logic_row.link(to_parent=logic_row)
                 copy_to_logic_row.set_same_named_attributes(logic_row)
                 # copy_to_logic_row.row.attribute_name = value
                 copy_to_logic_row.insert(reason="Manual Copy " + copy_to_logic_row.name)  # triggers rules...
 
-        Rule.commit_row_event(on_class=models.Employee, calling=audit_by_event)
+        Rule.commit_row_event(on_class=Employee, calling=audit_by_event)
     '''    
 
-    def clone_order(row: models.Order, old_row: models.Order, logic_row: LogicRow):
+    def clone_order(row: Order, old_row: Order, logic_row: LogicRow):
         """ #als: clone multi-row business object
 
         Args:
-            row (models.Order): _description_
-            old_row (models.Order): _description_
+            row (Order): _description_
+            old_row (Order): _description_
             logic_row (LogicRow): _description_
         """
         if row.CloneFromOrder is not None and logic_row.nest_level == 0:
             which = ["OrderDetailList"]
             logic_row.copy_children(copy_from=row.Order,
                                     which_children=which)
-    Rule.row_event(on_class=models.Order, calling=clone_order)
+    Rule.row_event(on_class=Order, calling=clone_order)
 
 
     def handle_all(logic_row: LogicRow):  # #als: TIME / DATE STAMPING, OPTIMISTIC LOCKING
@@ -329,7 +329,7 @@ def declare_logic():
     
     Rule.early_row_event_all_classes(early_row_event_all_classes=handle_all)
         
-    Rule.formula(derive=models.Order.OrderDate, 
+    Rule.formula(derive=Order.OrderDate, 
                  as_expression=lambda row: datetime.datetime.now())
     
     from api.system import api_utils
