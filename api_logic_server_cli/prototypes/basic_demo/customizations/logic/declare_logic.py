@@ -7,7 +7,7 @@ from decimal import Decimal
 from logic_bank.exec_row_logic.logic_row import LogicRow
 from logic_bank.extensions.rule_extensions import RuleExtension
 from logic_bank.logic_bank import Rule
-from database import models
+from database.models import *
 import api.system.opt_locking.opt_locking as opt_locking
 from security.system.authorization import Grant
 import logging
@@ -37,22 +37,22 @@ def declare_logic():
     5. Items.UnitPrice = copy from Product
     """
 
-    Rule.constraint(validate=models.Customer,       # logic design translates directly into rules
+    Rule.constraint(validate=Customer,       # logic design translates directly into rules
         as_condition=lambda row: row.Balance <= row.CreditLimit,
         error_msg="balance ({round(row.Balance, 2)}) exceeds credit ({round(row.CreditLimit, 2)})")
 
-    Rule.sum(derive=models.Customer.Balance,        # adjust iff AmountTotal or ShippedDate or CustomerID changes
-        as_sum_of=models.Order.AmountTotal,
+    Rule.sum(derive=Customer.Balance,        # adjust iff AmountTotal or ShippedDate or CustomerID changes
+        as_sum_of=Order.AmountTotal,
         where=lambda row: row.ShipDate is None)     # adjusts - *not* a sql select sum...
 
-    Rule.sum(derive=models.Order.AmountTotal,       # adjust iff Amount or OrderID changes
-        as_sum_of=models.Item.Amount)
+    Rule.sum(derive=Order.AmountTotal,       # adjust iff Amount or OrderID changes
+        as_sum_of=Item.Amount)
 
-    Rule.formula(derive=models.Item.Amount,    # compute price * qty
+    Rule.formula(derive=Item.Amount,    # compute price * qty
         as_expression=lambda row: row.UnitPrice * row.Quantity)
 
-    Rule.copy(derive=models.Item.UnitPrice,    # get Product Price (e,g., on insert, or ProductId change)
-        from_parent=models.Product.UnitPrice)
+    Rule.copy(derive=Item.UnitPrice,    # get Product Price (e,g., on insert, or ProductId change)
+        from_parent=Product.UnitPrice)
 
 
     def handle_all(logic_row: LogicRow):  # OPTIMISTIC LOCKING, [TIME / DATE STAMPING]
