@@ -155,7 +155,7 @@ class GenAI(object):
             if response_count == 0:
                 log.debug(f".. no response files - applying insert to prompt")
                 prompt = self.get_prompt__with_inserts(raw_prompt=prompt)  # insert db-specific logic
-                prompt_messages[2]["content"] = prompt
+                prompt_messages[1 + len(learning_requests)]["content"] = prompt
         else:                                   # prompt from text (add system/genai/pre_post.prompt)
             # open and read the project description in natural language
             log.debug(f'.. from file')
@@ -166,7 +166,6 @@ class GenAI(object):
 
         # log.debug(f'.. prompt_messages: {prompt_messages}')  # heaps of output
         return prompt_messages      
-
 
     def get_learning_requests(self) -> List [ Dict[str, str]]:
         """ Get learning requests from cwd/system/genai/learning_requests
@@ -187,7 +186,6 @@ class GenAI(object):
                         learning_requests.append( {"role": "user", "content": learning_request_lines})
         return learning_requests  # TODO - what if no learning requests?
     
-
     def get_prompt__with_inserts(self, raw_prompt: str) -> str:
         """ prompt-engineering: insert db-specific logic into prompt 
             raw_prompt: the prompt from file or text argument
@@ -513,7 +511,6 @@ class GenAI(object):
         }
         return headers
     
-
     def get_and_save_response_data(self, response) -> str:
         """
         Returns:
@@ -546,7 +543,7 @@ def genai(using, db_url, repaired_response: bool, genai_version: str,
     
         Called from cli commands: genai, genai-create, genai-iterate
         
-        Invokes api_logic_server.ProjectRun
+        Invokes api_logic_server.ProjectRun (with 3 retries)
         
         Which calls Genai()
     """
