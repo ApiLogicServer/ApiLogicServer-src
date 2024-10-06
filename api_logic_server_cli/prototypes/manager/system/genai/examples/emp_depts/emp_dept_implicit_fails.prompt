@@ -1,0 +1,5 @@
+Departments and Employees in departments, and on loan to departments.
+
+Use Logic Bank to ensure
+1. The sum of employee salaries does not exceed the department budget
+2. There can be no more than 25 employees in a department.
