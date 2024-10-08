@@ -16,6 +16,7 @@ __version__ = "11.02.09"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
     "\t10/07/2024 - 11.02.09: NL/Logic with test data derivations, sra 10-07-2024 \n"\
+    "\t10/07/2024 - 11.02.06: sra 10-7-2024 (constraint handling) \n"\
     "\t10/01/2024 - 11.02.05: logic bank dup derivations detected, sra 10-1-2024 \n"\
     "\t09/21/2024 - 11.02.00: er diagrams, GenAI: genai-create, genai-iterate, and conversations \n"\
     "\t09/04/2024 - 11.01.15: APILOGICPROJECT_LOG_CONFIG, _STOP_OK, _EXTERNAL_HOST, _EXTERNAL_PORT \n"\
