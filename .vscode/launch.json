@@ -210,6 +210,19 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "     - genai ADD-LOGIC - clean/ApiLogicServer/genai_demo_logic",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/../../clean/ApiLogicServer/genai_demo",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": [
+                "genai-logic",
+                ],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "     - ApiLogicServer Start (Clean, charm)",
             "type": "debugpy",
             "request": "launch",
