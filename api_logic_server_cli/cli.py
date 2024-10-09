@@ -670,6 +670,47 @@ def genai(ctx, using, db_url, repaired_response: str, genai_version: str,
             log.info(f"GENAI successful on try {try_number}")  
 
 
+@main.command("genai-logic", cls=HideDunderCommand)
+@click.option('--using',
+              default=f'docs/logic',
+              help="File or dir")
+@click.option('--genai-version', 'genai_version',
+              default='gpt-4o',
+              help="Eg, gpt-3.5-turbo, gpt-4o")
+@click.option('--retries', 
+              default=3,
+              help="Number of retries")
+@click.pass_context
+def genai_logic(ctx, using, genai_version: str, retries: int):
+    """
+        Adds logic to current project.
+    """
+    global command
+    project_dir = resolve_blank_project_name('')
+    project_name = Path(project_dir).name
+    project = PR.ProjectRun(command="add_security", 
+              project_name=project_name, 
+              db_url="",
+              execute=False
+              )
+    project.project_directory, project.api_name, project.merge_into_prototype = \
+        create_utils.get_project_directory_and_api_name(project)
+    project.project_directory_actual = os.path.abspath(os.getcwd())  # make path absolute, not relative (no /../)
+    project.project_directory_path = Path(project.project_directory_actual)
+    models_py_path = project.project_directory_path.joinpath('database/models.py')
+    project.abs_db_url, project.nw_db_status, project.model_file_name = \
+        create_utils.get_abs_db_url("0. Using Sample DB", project, is_auth=True)
+
+    if not models_py_path.exists():
+        log.info(f'... Error - does not appear to be a project: {str(project.project_directory_path)}')
+        log.info(f'... Typical usage - cd into project, use --project_name=. \n')
+        exit (1)
+    from genai_logic_builder import GenAILogic
+    GenAILogic(using=using, project=project, genai_version=genai_version, retries=retries)
+    pass
+    log.info("")
+
+
 @main.command("genai-create", cls=HideDunderCommand) 
 @click.option('--project-name', 'project_name',
               default=f'{last_created_project_name}',
@@ -1297,7 +1338,7 @@ def add_db(ctx, db_url: str, bind_key: str, bind_key_url_separator: str, api_nam
     ApiLogicServer add-db --db-url="todo" --bind-key="Todo"
     
     """
-    project_name == resolve_blank_project_name(project_name)
+    project_name = resolve_blank_project_name(project_name)
     if db_url == "auth":
         bind_key = "authentication"
     PR.ProjectRun(command="add_db", 
@@ -1349,7 +1390,7 @@ def add_auth_cmd(ctx, bind_key_url_separator: str, provider_type :str, db_url: s
     ApiLogicServer add-auth provider_type=keycloak
     
     """
-    project_name == resolve_blank_project_name(project_name)
+    project_name = resolve_blank_project_name(project_name)
     bind_key = "authentication"
     project = PR.ProjectRun(command="add_security", 
               project_name=project_name, 
@@ -1408,7 +1449,7 @@ def genai_cust(ctx, bind_key_url_separator: str, api_name: str, project_name: st
     als genai-cust
     
     """
-    project_name == resolve_blank_project_name(project_name, as_project="NW_NoCust")
+    project_name = resolve_blank_project_name(project_name, as_project="NW_NoCust")
     db_url = "auth"
     bind_key = "authentication"
     project = PR.ProjectRun(command="add_cust", 
@@ -1461,7 +1502,7 @@ def add_cust(ctx, bind_key_url_separator: str, api_name: str, project_name: str)
     ApiLogicServer add-cust
     
     """
-    project_name == resolve_blank_project_name(project_name, as_project="NW_NoCust")
+    project_name = resolve_blank_project_name(project_name, as_project="NW_NoCust")
     db_url = "auth"
     bind_key = "authentication"
     project = PR.ProjectRun(command="add_cust", 
@@ -1533,7 +1574,7 @@ def sample_ai(ctx, bind_key_url_separator: str, api_name: str, project_name: str
     ApiLogicServer sample-ai
     
     """
-    project_name == resolve_blank_project_name(project_name, as_project="sample_ai")
+    project_name = resolve_blank_project_name(project_name, as_project="sample_ai")
     db_url = "auth"
     bind_key = "authentication"
     project = PR.ProjectRun(command="add_cust", 
@@ -1581,7 +1622,7 @@ def sample_ai_iteration(ctx, bind_key_url_separator: str, api_name: str, project
     ApiLogicServer sample-ai-iterate
     
     """
-    project_name == resolve_blank_project_name(project_name, as_project="sample_ai")
+    project_name = resolve_blank_project_name(project_name, as_project="sample_ai")
     db_url = "auth"
     bind_key = "authentication"
     project = PR.ProjectRun(command="add_cust", 
@@ -1720,7 +1761,7 @@ def rebuild_from_model(ctx, project_name: str, db_url: str, api_name: str, not_e
         Updates database, api, and ui from changed models.
     """
     db_types = ""
-    project_name == resolve_blank_project_name(project_name)
+    project_name = resolve_blank_project_name(project_name)
     PR.ProjectRun(command="rebuild-from-model", project_name=project_name, db_url=db_url, api_name=api_name,
                     not_exposed=not_exposed,
                     run=run, use_model=use_model, from_git=from_git, db_types=db_types,
