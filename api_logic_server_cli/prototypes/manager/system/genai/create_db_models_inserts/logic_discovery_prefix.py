@@ -18,6 +18,4 @@ def declare_logic():
     
     Your Code Goes Here - Use code completion (Rule.) to declare rules
     '''
-
-
-
+    

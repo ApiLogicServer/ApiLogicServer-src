@@ -69,7 +69,8 @@ class GenAILogic(object):
         """        
 
         self.project = project
-        log.info(f'\nGenAILogic [{self.project.project_name}] adding logic from: {self.project.genai_using}')
+        logic_from = self.project.genai_using if self.project.genai_using else "<docs/logic/*.prompt>"
+        log.info(f'\nGenAILogic [{self.project.project_name}] adding logic from: {logic_from}')
         
         self.project.genai_using = using
         self.project.from_model = f'system/genai/temp/create_db_models.py' # we always write the model to this file
