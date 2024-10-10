@@ -69,7 +69,8 @@ git clone https://github.com/ApiLogicServer/webgenai --depth=1
 
 if [ "$1" = "local" ]
   then
-    docker build -f $SRC_DIR/docker/webgenie_docker/webgenie.Dockerfile -t apilogicserver/web_genie --no-cache  --rm .
+    #docker build -f $SRC_DIR/docker/webgenie_docker/webgenie.Dockerfile -t apilogicserver/web_genie --no-cache  --rm .
+    docker build -f $SRC_DIR/docker/webgenie_docker/webgen_ai_docker/webgenie.Dockerfile -t apilogicserver/web_genie --no-cache  --rm .
   else
     # stand-alone test in terminal - cd $webgen_ai_docker-src, and...
     # docker buildx build --push -f webgenie.Dockerfile --tag apilogicserver/web_genai:1.0.0 -o type=image --platform=linux/arm64,linux/amd64 .
