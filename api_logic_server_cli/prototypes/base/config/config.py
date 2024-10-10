@@ -584,7 +584,7 @@ class Args():
         use_codespace_defaulting = True  # experimental support to run default launch config
         if use_codespace_defaulting and os.getenv('CODESPACES') and args.swagger_host == 'localhost':
             app_logger.info('\n Applying Codespaces default port settings')
-            args.swagger_host = os.getenv('CODESPACE_NAME') + '-5656.githubpreview.dev'
+            args.swagger_host = os.getenv('CODESPACE_NAME') + '-5656.app.github.dev'  # CS no long preview, app prefix
             args.swagger_port = 443
             args.http_scheme = 'https'
 
