@@ -196,6 +196,19 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "     - genai TEST_PROJECT - clean/ApiLogicServer/test_project",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": [
+                "genai", "--project-name=test_project_out",
+                "--using=${workspaceFolder}/../../clean/ApiLogicServer/test_project/docs"],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "     - genai LOGIC - clean/ApiLogicServer/genai_demo_logic",
             "type": "debugpy",
             "request": "launch",
