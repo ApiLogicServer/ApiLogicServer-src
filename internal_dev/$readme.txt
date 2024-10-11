@@ -3,6 +3,12 @@ Create nw+ at /Users/val/dev/ApiLogicServer
   so does ont - but how?  lucky jwt?
   (no security diddling)
 
+procedure to web-genie local re-creation
+  under src, run Run Config: 1 - ApiLogicServer Start (Clean)
+  copy failed project to clean/ApiLogicServer/test_project
+  under src, run Run Config (under group 1):  - genai TEST_PROJECT - clean/ApiLogicServer/test_project
+
+
 sra builds: https://apifabric.ai/builds/
 sra version: build*.txt
 
