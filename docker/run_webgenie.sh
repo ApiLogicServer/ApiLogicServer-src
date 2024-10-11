@@ -27,8 +27,15 @@ if [ $# -eq 0 ]
     echo "   Browse to http://localhost:8282"
     echo " "
     exit 0
+fi
 
-docker run -it --rm --name webgenie -p 8282:80  --env-file docker/webgenie_docker/webgen_ai_docker/webgenai.env   apilogicserver/web_genai
+
+PROJ_DIR=/tmp/proj2 # local project directory
+[[ $1 == clean ]] && rm -fr $PROJ_DIR
+
+mkdir -p $PROJ_DIR
+chmod 777 $PROJ_DIR
+docker run -it --rm --name webgenie -p 8282:80 --env-file docker/webgenie_docker/webgen_ai_docker/webgenai.env -v $PROJ_DIR:/opt/projects   apilogicserver/web_genai
 
 # docker run -it --rm --name webgenie -p 8282:80  -v /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/webgenai:/opt/webgenai --env-file /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/docker/webgenie_docker/webgen_ai_docker/webgenai.env   apilogicserver/web_genie
 
