@@ -27,6 +27,17 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "  - GenAI tests",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/tests/genai_tests",
+            "env": {"APILOGICSERVER_AUTO_OPEN": ""},
+            "program": "genai_tests.py",
+            "redirectOutput": true,
+            "justMyCode": false,
+            "console": "integratedTerminal"
+        },
+        {
             "name": "  - Create and Run ApiLogicProject",
             "type": "debugpy",
             "request": "launch",

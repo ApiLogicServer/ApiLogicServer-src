@@ -1,0 +1,29 @@
+Use SQLAlchemy to create a sqlite database named system/genai/temp/create_db_models.sqlite, to
+
+Use SQLAlchemy to create a sqlite database named system/genai/temp/model.sqlite  .
+
+The purpose of the database is: Security checklist and incident database, reference iso27001, owasp asvs, cvss, nis2, gdpr . Create incident and risk registers.
+Fill in all database table column data accoring to the relevant specifications.
+
+Create at least 19 tables.
+
+Hints: use autonum keys, allow nulls, foreign keys, no check constraints.
+If you choose to use a date, only use python datetime datatype.
+Remember that SQLite DateTime type only accepts Python datetime and date objects as input, this means you can not enter string attributes where a date or datetime object is expected.Provide a short description of each table. Include the description in each data model class docstring, prefixed with 'description: '. 
+Don't use python DECIMAL type.
+Don't install additional packages.
+Don't use the faker pip package.
+
+Create at least 76 rows of sample data. Add at least one row per table. Add some relationships and use foreign key columns instead of relationship names for the data inserts..
+
+Hints: use autonum keys, allow nulls, Decimal types, foreign keys, no check constraints, python datetime datatype.
+
+Remember that SQLite DateTime type only accepts Python datetime and date objects as input, 
+this means you can not enter string attributes where a date or datetime object is expected.
+
+Don't install additional packages.
+Don't use the faker pip package.
+
+Create some test data, use foreign key columns instead of relationship names for the data.  Do not print the test data.  Be sure to initialize derivations.
+
+For each data model class, create a docstring describing the table, prefixed with 'description: '. 
