@@ -1,0 +1,147 @@
+// Copy this text, paste to https://dbdiagram.io/d
+// Or, https://databasediagram.com/app
+
+Table AuditLog {
+    id INTEGER [primary key]
+    user_id INTEGER 
+    action VARCHAR 
+    timestamp DATETIME 
+    }
+
+Table User {
+    id INTEGER [primary key]
+    username VARCHAR 
+    full_name VARCHAR 
+    role VARCHAR 
+    }
+
+Table ComplianceCheck {
+    id INTEGER [primary key]
+    date_performed DATETIME 
+    summary TEXT 
+    }
+
+Table CvssStandard {
+    id INTEGER [primary key]
+    vector VARCHAR 
+    base_score INTEGER 
+    description TEXT 
+    }
+
+Table DataAsset {
+    id INTEGER [primary key]
+    name VARCHAR 
+    classification VARCHAR 
+    protection_status VARCHAR 
+    }
+
+Table GdprRequirement {
+    id INTEGER [primary key]
+    article VARCHAR 
+    description TEXT 
+    }
+
+Table Incident {
+    id INTEGER [primary key]
+    title VARCHAR 
+    description TEXT 
+    reported_date DATETIME 
+    status VARCHAR 
+    iso_standard_id INTEGER 
+    owasp_standard_id INTEGER 
+    cvss_standard_id INTEGER 
+    }
+
+Table IsoStandard {
+    id INTEGER [primary key]
+    code VARCHAR 
+    name VARCHAR 
+    description TEXT 
+    }
+
+Table OwaspStandard {
+    id INTEGER [primary key]
+    code VARCHAR 
+    name VARCHAR 
+    description TEXT 
+    }
+
+Table IncidentResponse {
+    id INTEGER [primary key]
+    incident_id INTEGER 
+    response_action TEXT 
+    completed_date DATETIME 
+    }
+
+Table LogEntry {
+    id INTEGER [primary key]
+    message TEXT 
+    logged_date DATETIME 
+    }
+
+Table Nis2Directive {
+    id INTEGER [primary key]
+    article VARCHAR 
+    requirement TEXT 
+    }
+
+Table Risk {
+    id INTEGER [primary key]
+    name VARCHAR 
+    likelihood VARCHAR 
+    impact VARCHAR 
+    treatment TEXT 
+    status VARCHAR 
+    }
+
+Table RiskMitigation {
+    id INTEGER [primary key]
+    risk_id INTEGER 
+    action TEXT 
+    date_implemented DATETIME 
+    }
+
+Table SafetyProtocol {
+    id INTEGER [primary key]
+    title VARCHAR 
+    content TEXT 
+    }
+
+Table SecurityPolicy {
+    id INTEGER [primary key]
+    name VARCHAR 
+    description TEXT 
+    last_reviewed DATETIME 
+    }
+
+Table Threat {
+    id INTEGER [primary key]
+    name VARCHAR 
+    description TEXT 
+    threat_level VARCHAR 
+    }
+
+Table TrainingSession {
+    id INTEGER [primary key]
+    session_name VARCHAR 
+    date_conducted DATETIME 
+    attendees_count INTEGER 
+    }
+
+Table Vulnerability {
+    id INTEGER [primary key]
+    title VARCHAR 
+    cvss_vector_id INTEGER 
+    discovered_date DATETIME 
+    }
+
+
+
+// Relationships
+    Ref: AuditLog.(user_id) < User.(id)
+    Ref: Incident.(cvss_standard_id) < CvssStandard.(id)
+    Ref: Incident.(iso_standard_id) < IsoStandard.(id)
+    Ref: Incident.(owasp_standard_id) < OwaspStandard.(id)
+    Ref: IncidentResponse.(incident_id) < Incident.(id)
+    Ref: RiskMitigation.(risk_id) < Risk.(id)
+    Ref: Vulnerability.(cvss_vector_id) < CvssStandard.(id)
