@@ -182,6 +182,19 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "     - genai AUTO DEALERSHIP CONVERSATION - clean/ApiLogicServer/auto_dealership",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": [
+                "genai",
+                "--using=${workspaceFolder}/tests/test_databases/ai-created/auto_dealership/auto_iteration"],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "     - genai RETRY from response (no ChatGPT)",
             "type": "debugpy",
             "request": "launch",
@@ -218,7 +231,7 @@
             "redirectOutput": true,
             "args": [
                 "genai",
-                "--using=${workspaceFolder}/tests/test_databases/ai-created/genai_demo/genai_demo_logic"
+                "--using=${workspaceFolder}/tests/test_databases/ai-created/genai_demo/genai_demo_logic/genai_demo_logic.prompt"
                 ],
             "console": "integratedTerminal"
         },

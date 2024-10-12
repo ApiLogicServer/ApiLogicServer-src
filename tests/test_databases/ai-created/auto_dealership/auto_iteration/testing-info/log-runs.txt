@@ -1,0 +1,15 @@
+GenAI [auto_iteration] creating microservice from: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/tests/test_databases/ai-created/auto_dealership/auto_iteration
+.. conv presets: {'role': 'system', 'content': 'You are a helpful assistant.'}
+.. conv presets: Here is the API for LogicBank:...
+.. conv processes: otto4_001.prompt -   Use SQLAlchemy to create a s...
+.. conv ignores: otto4_001.prompt-ala-thomas
+.. conv processes: otto4_001.response - To create a SQLite database us...
+.. conv processes: otto4_002.prompt - Add a TestDrive table....
+.. conv ignores: testing-info
+.. ChatGPT - saving response to: system/genai/temp/chatgpt_original.response
+.. stored raw response: system/genai/temp/chatgpt_retry.response
+.. fixed sqlite url: system/genai/temp/model.sqlite -> system/genai/temp/create_db_models.sqlite
+.. model file created: system/genai/temp/create_db_models.py
+.. saving work files to: system/genai/temp/auto_iteration
+
+create_db_from_model: 

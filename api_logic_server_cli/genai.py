@@ -92,7 +92,7 @@ class GenAI(object):
             api_version = f'{self.project.genai_version}'  # eg, "gpt-4o"
             data = {"model": api_version, "messages": self.messages}
             response = requests.post(url, headers=self.headers, json=data)
-            create_db_models = self.get_and_save_response_data(response)
+            create_db_models = self.get_and_save_raw_response_data(response)
         else: # for retry from corrected response... eg system/genai/temp/chatgpt_retry.response
             log.debug(f'\nUsing [corrected] response from: {self.project.genai_repaired_response}')
             with open(self.project.genai_repaired_response, 'r') as file:
@@ -120,16 +120,21 @@ class GenAI(object):
         """ Get prompt from file, dir (conversation) or text argument
             Prepend with learning_requests (if any)
 
+            Returned prompts include inserts from prompt_inserts (prompt engineering)
+
         Returns:
             dict[]: [ {role: (system | user) }: { content: user-prompt-or-system-response } ]
 
         """
 
         prompt_messages : List[ Dict[str, str] ] = []  # prompt/response conversation to be sent to ChatGPT
-        prompt_messages.append( {"role": "system", "content": "You are a helpful assistant."})
+        starting_message = {"role": "system", "content": "You are a helpful assistant."}
+        prompt_messages.append( starting_message)
 
         learning_requests = self.get_learning_requests()
         prompt_messages.extend(learning_requests)  # if any, prepend learning requests (logicbank api etc)
+        log.debug(f'.. conv presets: {starting_message}')
+        log.debug(f'.. conv presets: {learning_requests[0]['content'][:30]}...')
         
         if self.project.genai_repaired_response != '':       # if exists, get prompt (just for inserting into declare_logic.py)
             prompt = ""  # we are not calling ChatGPT, just getting the prompt to scan for logic
@@ -139,16 +144,22 @@ class GenAI(object):
                 prompt_messages.append( {"role": "user", "content": prompt})
         elif Path(self.project.genai_using).is_dir():  # conversation from directory
             response_count = 0
+            request_count = 0
             prompt = ""
             for each_file in sorted(Path(self.project.genai_using).iterdir()):
                 if each_file.is_file() and each_file.suffix == '.prompt' or each_file.suffix == '.response':
                     with open(each_file, 'r') as file:
-                        log.debug(f'.. conv processes: {os.path.basename(each_file)}')
                         prompt = file.read()
+                        log.debug(f'.. conv processes: {os.path.basename(each_file)} - {prompt[:30]}...')
                     role = "user"
                     if each_file.suffix == ".response":
                         role = 'system'
                         response_count += 1
+                    else:
+                        request_count += 1      # rebuild response with *all* tables
+                        if request_count > 1:   # Run Config: genai AUTO DEALERSHIP CONVERSATION
+                            if 'updating the prior response' not in prompt:
+                                prompt += ', by updating the prior response.'                    
                     prompt_messages.append( {"role": role, "content": prompt})
                 else:
                     log.debug(f'.. conv ignores: {os.path.basename(each_file)}')
@@ -297,7 +308,16 @@ class GenAI(object):
             # os.makedirs(docs_dir, exist_ok=True)
             # prompt_file_path = docs_dir.joinpath("created_genai_using.prompt")
             # copy self.project.gen_ai_save_dir to docs_dir
-            shutil.copytree(self.project.gen_ai_save_dir, docs_dir, dirs_exist_ok=True)   
+            shutil.copytree(self.project.gen_ai_save_dir, docs_dir, dirs_exist_ok=True)
+
+            docs_readme_file_path = docs_dir.joinpath("readme.md")
+            docs_readme_lines  = "## GenAI Notes\n\n" 
+            docs_readme_lines += "Review the [database diagram](https://apilogicserver.github.io/Docs/Database-Diagram/).\n\n" 
+            docs_readme_lines += "GenAI work files (with prompt_inserts) saved for iterations, diagnostics\n" 
+            docs_readme_lines += "See [WebGenAI-CLI](https://apilogicserver.github.io/Docs/WebGenAI-CLI/). " 
+            with open(docs_readme_file_path, "w") as docs_readme_file:
+                docs_readme_file.write(docs_readme_lines)
+
         except:  # intentional try/catch/bury - it's just docs, so don't fail
             import traceback
             log.error(f"\n\nERROR creating genai project docs: {docs_dir}\n\n{traceback.format_exc()}")
@@ -315,7 +335,9 @@ class GenAI(object):
             response_data (str): the chatgpt response
 
         """
-        model_class = ""
+        model_class =  "# created from response - used to create database and project\n"
+        model_class += "#  should run without error\n"
+        model_class += "#  if not, check for decimal, indent, or import issues\n\n"
         with open(f'system/genai/create_db_models_inserts/create_db_models_prefix.py', "r") as inserts:
             model_lines = inserts.readlines()
         for each_line in model_lines:
@@ -423,9 +445,11 @@ class GenAI(object):
             to_dir = Path(os.getcwd())
             gen_temp_dir = Path(to_dir).joinpath(f'system/genai/temp')
             to_dir_save_dir = Path(to_dir).joinpath(f'system/genai/temp/{self.project.project_name_last_node}')
+            """ project work files saved to system/genai/temp/<project> """
             log.info(f'.. saving work files to: system/genai/temp/{self.project.project_name_last_node}')
             """ system/genai/temp/project - save prompt, response, and create_db_models.py to this directory """
             self.project.gen_ai_save_dir = to_dir_save_dir
+            """ project work files saved to system/genai/temp/<project> """
             os.makedirs(to_dir_save_dir, exist_ok=True)
             response_file_name = Path(f"{to_dir_save_dir.joinpath('genai.response')}")  # maybe renamed below
             with open(f"{to_dir_save_dir.joinpath('genai.response')}", "w") as response_file:
@@ -434,7 +458,10 @@ class GenAI(object):
                 pass
                 if Path(self.project.genai_using).is_file():
                     saved_temp_prompt_file_name = to_dir_save_dir.joinpath(f'{self.project.project_name}_001.prompt')
-                    shutil.copyfile(self.project.genai_using, saved_temp_prompt_file_name)
+                    with open(saved_temp_prompt_file_name, "w") as prompt_file:  # *with* inserts (prompt eng)
+                        prompt_file.write(self.messages[2]['content'])
+                    raw_prompt_file_name = to_dir_save_dir.joinpath(f'{self.project.project_name}_001.prompt-raw')
+                    shutil.copyfile(self.project.genai_using, raw_prompt_file_name)  # no inserts
                     new_response_file_name = to_dir_save_dir.joinpath(f'{self.project.project_name}_001.response')
                     os.rename(response_file_name, to_dir_save_dir.joinpath(new_response_file_name))
 
@@ -511,7 +538,7 @@ class GenAI(object):
         }
         return headers
     
-    def get_and_save_response_data(self, response) -> str:
+    def get_and_save_raw_response_data(self, response) -> str:
         """
         Returns:
             str: response_data
@@ -532,7 +559,7 @@ class GenAI(object):
             file_name = model_file.name
         with open(f'system/genai/temp/chatgpt_retry.response', "w") as model_file:     # repair this & retry
             model_file.write(response_data)
-        log.debug(f'.. stored response: {model_file.name}')
+        log.debug(f'.. stored raw response: {model_file.name}')
         return response_data
 
 
