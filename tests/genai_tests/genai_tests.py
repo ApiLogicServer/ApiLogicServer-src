@@ -290,7 +290,7 @@ print('\n')
 os.environ["APILOGICSERVER_AUTO_OPEN"] = "NO_AUTO_OPEN"     # for each test project
 os.environ["APILOGICPROJECT_STOP_OK"] = "True"              # enable stop server
 
-# verify clean manager exists
+# tests built into blt
 
 if Config.do_test_auto_conv:    # ensure project rebuilt, not truncated
     genai_conv = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/auto_dealership/auto_iteration')
