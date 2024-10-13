@@ -13,6 +13,7 @@ class Config:
 
     do_test_genai = default_setting                 # complex iteration
     do_test_iso = default_setting                   # complex iteration
+    do_test_auto_conv = default_setting             # ensure project rebuilt, not truncated
 
 
     # ***********************
