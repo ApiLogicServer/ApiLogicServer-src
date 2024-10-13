@@ -292,13 +292,19 @@ os.environ["APILOGICPROJECT_STOP_OK"] = "True"              # enable stop server
 
 # verify clean manager exists
 
-if Config.do_test_iso:
+if Config.do_test_auto_conv:    # ensure project rebuilt, not truncated
+    genai_conv = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/auto_dealership/auto_iteration')
+    # als genai --using=iso_test.prompt --using=/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/tests/genai_tests/iso_test/iso-1/docs run at /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer
+    result_genai = run_command(f'{set_venv} && als genai --project-name=auto_conv --using={genai_conv}',
+        cwd=install_api_logic_server_path,
+        msg=f'\nTest auto_conv')
+
+if Config.do_test_iso:          # complex iteration - link tables sometimes have no id
     genai_conv = get_api_logic_server_src_path().joinpath('tests/genai_tests/iso_test/iso_1_docs_conv')
     # als genai --using=iso_test.prompt --using=/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/tests/genai_tests/iso_test/iso-1/docs run at /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer
     result_genai = run_command(f'{set_venv} && als genai --project-name=iso_test --using={genai_conv}',
         cwd=install_api_logic_server_path,
         msg=f'\nTest iso')
-
 
 if Config.do_test_genai:
     # test genai, using copy of pre-supplied ChatGPT response (to avoid api key issues)
