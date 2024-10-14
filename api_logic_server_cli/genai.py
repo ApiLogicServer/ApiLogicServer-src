@@ -131,7 +131,7 @@ class GenAI(object):
         """
 
         prompt_messages : List[ Dict[str, str] ] = []  # prompt/response conversation to be sent to ChatGPT
-        starting_message = {"role": "system", "content": "You are a helpful assistant."}
+        starting_message = {"role": "system", "content": "You are a data modelling expert and python software architect who expands on user input ideas. You create data models with at least 4 tables"}
         prompt_messages.append( starting_message)
 
         learning_requests = self.get_learning_requests()
