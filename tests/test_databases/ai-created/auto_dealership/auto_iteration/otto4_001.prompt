@@ -15,3 +15,4 @@ Don't install additional packages.
 Don't use the faker pip package.
 
 Create some sample data. Add at least one row per table. Add some relationships and use foreign key columns instead of relationship names for the data inserts.
+Be sure to initialize derivations.
