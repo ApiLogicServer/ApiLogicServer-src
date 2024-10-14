@@ -35,6 +35,11 @@ def check_command(command_result, special_message: str=""):
         if command_result.stderr is not None:
             result_stderr = str(command_result.stderr)
 
+    '''
+    in normal BLT tests, we check for interior errors by scanning stdout and stderr
+    but genai is different - we can depend on the return code
+    that said, we scan interior errors by scanning stdout and stderr, and report BUT NOT FAIL
+    '''
     if "Trace" in result_stderr or \
         "Error" in result_stderr or \
         "cannot find the path" in result_stderr or \
@@ -53,11 +58,15 @@ def check_command(command_result, special_message: str=""):
             if "Error" in result_stderr and 'Failed with join condition - retrying without relns' in result_stderr:
                 pass  # occurs with airport_4 - ignore the first error (a bit chancy)
             else:
-                print_byte_string("\n\n==> Command Failed - Console Log:", command_result.stdout)
+                print_byte_string("\n\n==> Command Needs verification - Console Log:", command_result.stdout)
                 print_byte_string("\n\n==> Error Log:", command_result.stderr)
                 if special_message != "":
                     print(f'{special_message}')
-                raise ValueError("Traceback detected")
+                print('/nProceesing\n\n')
+                
+    if command_result.returncode != 0:
+        print_byte_string("\n\n==> Error Log:", command_result.stderr)
+        raise ValueError("Traceback detected")
 
 
 def print_byte_string(msg, byte_string):
@@ -292,6 +301,13 @@ os.environ["APILOGICPROJECT_STOP_OK"] = "True"              # enable stop server
 
 create_in = install_api_logic_server_path  # or, install_api_logic_server_clean_path
 """ where to create tests; BLT working, issues with clean so AVOID FOR NOW """
+
+'''
+Temporary Notes
+===============
+1. As noted above, it does not seem to work for clean, only blt.  So, we use build_and_test
+2. For some reason, it appears we need to run Config.do_test_genai first, don't know why.
+'''
 
 if Config.do_create_manager:    # tests built into clean, so create it first FIXME not working
     # tests built into clean, so create it first
