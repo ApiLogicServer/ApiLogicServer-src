@@ -290,35 +290,44 @@ print('\n')
 os.environ["APILOGICSERVER_AUTO_OPEN"] = "NO_AUTO_OPEN"     # for each test project
 os.environ["APILOGICPROJECT_STOP_OK"] = "True"              # enable stop server
 
-# tests built into blt
+create_in = install_api_logic_server_path  # or, install_api_logic_server_clean_path
+""" where to create tests; BLT working, issues with clean so AVOID FOR NOW """
 
-if Config.do_test_auto_conv:    # ensure project rebuilt, not truncated
-    genai_conv = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/auto_dealership/auto_iteration')
-    # als genai --using=iso_test.prompt --using=/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/tests/genai_tests/iso_test/iso-1/docs run at /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer
-    result_genai = run_command(f'{set_venv} && als genai --project-name=auto_conv --using={genai_conv}',
-        cwd=install_api_logic_server_path,
-        msg=f'\nTest auto_conv')
-
-if Config.do_test_iso:          # complex iteration - link tables sometimes have no id
-    genai_conv = get_api_logic_server_src_path().joinpath('tests/genai_tests/iso_test')
-    # als genai --using=iso_test.prompt --using=/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/tests/genai_tests/iso_test/iso-1/docs run at /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer
-    result_genai = run_command(f'{set_venv} && als genai --project-name=iso_test --using={genai_conv}',
-        cwd=install_api_logic_server_path,
-        msg=f'\nTest iso')
+if Config.do_create_manager:    # tests built into clean, so create it first FIXME not working
+    # tests built into clean, so create it first
+    create_manager = f'{set_venv} && ApiLogicServer start --no-open-manager'
+    result_manager = run_command(create_manager,
+        cwd=create_in,
+        msg=f'\nCreate Manager')
 
 if Config.do_test_genai:
     # test genai, using copy of pre-supplied ChatGPT response (to avoid api key issues)
     # see https://apilogicserver.github.io/Docs/Sample-Genai/#what-just-happened
-    prompt_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/genai_demo/genai.response')
+    prompt_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/genai_demo/genai_demo_logic')
     assert prompt_path.exists() , f'do_test_genai error: prompt path not found: {str(prompt_path)}'
-    result_genai = run_command(f'{set_venv} && als genai --using=genai_demo.prompt --repaired-response={prompt_path}',
-        cwd=install_api_logic_server_path,
-        msg=f'\nCreate genai_demo')
+    do_test_genai_cmd = f'{set_venv} && als genai --project-name=genai_test_genai_demo --using={prompt_path}'
+    result_genai = run_command(do_test_genai_cmd,
+        cwd=create_in,
+        msg=f'\nCreate genai_test_genai_demo')
     genai_demo_path = install_api_logic_server_path.joinpath('genai_demo')
+    '''
     add_cust_genai = run_command(f'{set_venv} && cd {genai_demo_path} && als add-cust',
         cwd=genai_demo_path,
         msg=f'\nCustomize genai_demo')
-    start_api_logic_server(project_name="genai_demo")
-    stop_server(msg="*** genai_demo TESTS COMPLETE ***\n")
+    '''
+    start_api_logic_server(project_name="genai_test_genai_demo")
+    stop_server(msg="*** genai_test_genai_demo TESTS COMPLETE ***\n")
+        
+if Config.do_test_auto_conv:    # ensure project rebuilt, not truncated
+    genai_conv = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/auto_dealership/auto_iteration')
+    result_genai = run_command(f'{set_venv} && als genai --project-name=genai_test_auto_conv --using={genai_conv}',
+        cwd=create_in,
+        msg=f'\nTest auto_conv')
+
+if Config.do_test_iso:          # complex iteration - link tables sometimes have no id
+    genai_conv = get_api_logic_server_src_path().joinpath('tests/genai_tests/iso_test')
+    result_genai = run_command(f'{set_venv} && als genai --project-name=genai_test_iso_test --using={genai_conv}',
+        cwd=create_in,
+        msg=f'\nTest iso')
     
-    
+print(f'\n\n{__file__} {__version__} complete\n\n')
