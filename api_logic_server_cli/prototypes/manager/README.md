@@ -184,6 +184,19 @@ als genai --using=genai_demo.prompt --repaired-response=system/genai/temp/chatgp
 
 <details markdown>
 
+<summary> You can iterate</summary>
+
+<br>You can add new columns/tables, while keeping the prior model intact:
+
+```bash title="Iterate"
+als genai --project-name='genai_demo' --using=system/genai/examples/genai_demo/genai_demo_conversation
+# open Docs/db.dbml
+```
+</details>
+</br>
+
+<details markdown>
+
 <summary> You can also execute directly, and iterate</summary>
 
 <br>You can add new columns/tables, while keeping the prior model intact:
@@ -193,7 +206,7 @@ als genai --using=genai_demo.prompt --repaired-response=system/genai/temp/chatgp
 als genai-create --project-name='customer_orders' --using='customer orders'
 
 als genai-iterate --using='add Order Details and Products'
-# open Docs/db.dmml
+# open Docs/db.dbml
 ```
 
 </details>
