@@ -30,7 +30,7 @@ confluent-kafka==2.3.0
 faker==30.4.0
 
 Flask-Login==0.6.2
-Flask-Admin==1.5.7
+#Flask-Admin==1.5.7
 Flask-JWT-Extended==4.4.4
 flask_bcrypt==1.0.1
 
