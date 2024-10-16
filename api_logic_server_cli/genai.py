@@ -81,7 +81,7 @@ class GenAI(object):
             log.info(f'..     retry from [repaired] response file: {self.project.genai_repaired_response}')
         
         self.project.from_model = f'system/genai/temp/create_db_models.py' # we always write the model to this file
-        self.ensure_system_dir_exists()  # so we can write to system/genai/temp
+        self.ensure_system_dir_exists()  # ~ manager, so we can write to system/genai/temp
         self.delete_temp_files()
         self.prompt = ""
         """ `--using` - can come from file or text argument """
