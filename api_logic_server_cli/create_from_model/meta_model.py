@@ -23,8 +23,8 @@ class ResourceAttribute():
             self.type = "DECIMAL"
         elif type == "DATE":
             self.type = "DATE"
-#        elif type == "DATETIME":  safrs-admin date-picker fails with bad datetime format
-#            self.type = "DATE"
+        elif type == "DATETIME":  #safrs-admin date-picker fails with bad datetime format
+            self.type = "DATETIME"
         elif type == "IMAGE":
             self.type = "IMAGE"
         elif type.startswith("NTEXT") == "NTEXT":
