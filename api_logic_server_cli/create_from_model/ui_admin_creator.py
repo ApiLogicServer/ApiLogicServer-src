@@ -269,7 +269,7 @@ class AdminCreator(object):
         if isinstance(resource_attribute, str) == True:
             raise Exception(f'System Error - expected resource_attribute, got string: {resource_attribute}')
         if not isinstance(resource_attribute, str):
-            if resource_attribute.type in ["DECIMAL", "DATE"]:
+            if str(resource_attribute.type).upper() in ["DECIMAL", "DATE", "DATETIME"]:
                 admin_attribute.type = resource_attribute.type
             if resource_attribute.type in ["NTEXT", "IMAGE"]:
                 admin_attribute = None
@@ -725,7 +725,7 @@ class AdminCreator(object):
             log.debug(f'{msg} copy safrs-react-admin to: {to_project_dir}')
             log.debug(f'.. .. ..  ..From {from_proto_dir}')
             if not os.path.isdir(from_proto_dir):
-                log.error(f'\n\n==> Error - safrs-react-admin... did you complete setup: https://apilogicserver.github.io/Docs/Architecture-Internals.md#setup-required')
+                log.error(f'\n\n==> Error - safrs-react-admin... did you complete setup: https://apilogicserver.github.io/Docs/Architecture-Internals/#setup-required')
                 log.error(".. Setup required.  Really.")
                 exit(1)
             use_sra_from_install = True
