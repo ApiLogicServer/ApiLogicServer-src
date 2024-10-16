@@ -113,7 +113,7 @@ class OntCreator(object):
         app_model_out.entities = DotMap()
         app_model_out.settings.style_guide = self.style_guide()  # TODO - stub code, remove later
         for each_resource_name, each_resource in admin_model_in.resources.items():
-            each_entity = self.create_model_entity(each_resource)
+            each_entity = self.create_model_entity(each_resource, resources=resources)
             app_model_out.entities[each_resource_name] = each_entity
 
             app_model_out.entities[each_resource_name].columns = []
@@ -125,7 +125,7 @@ class OntCreator(object):
                 app_model_out.entities[each_resource_name].columns.append(app_model_attribute)
             app_model_out.entities[each_resource_name].pop('attributes')
 
-            app_model_out.entities[each_resource_name].primary_key = list()
+            app_model_out.entities[each_resource_name].primary_key = []
             resource_list = model_creation_services.resource_list
             resource = resource_list[each_resource_name]
             for each_primary_key_attr in resource.primary_key:
@@ -151,9 +151,10 @@ class OntCreator(object):
             log.info("\nEdit the add_model.yaml as desired, and ApiLogicServer app-build\n")
 
 
-    def create_model_entity(self, each_resource) -> DotMap:
+    def create_model_entity(self, each_resource, resources: list) -> DotMap:
         each_resource.favorite = each_resource.user_key
         each_resource.exclude = "false"
+        each_resource.label = resources[each_resource.type].table_name
         each_resource.new_template = "new_template.html"
         each_resource.home_template = "home_template.html"
         each_resource.detail_template = "detail_template.html"
@@ -247,7 +248,7 @@ class OntCreator(object):
         style_guide = DotMap()
         # GLOBAL Style settings for all forms
         style_guide.mode = "tab" # "dialog"
-        style_guide.pick_style = "list" #"combo" or"list"
+        style_guide.pick_style = "list"  #"combo" or"list"
         style_guide.style = "light" # "dark"
         style_guide.currency_symbol = "$" # "€" 
         style_guide.currency_symbol_position="left" # "right"
@@ -264,10 +265,11 @@ class OntCreator(object):
         style_guide.keycloak_url= "http://localhost:8080"
         style_guide.keycloak_realm = "kcals"
         style_guide.keycloak_client_id = "alsclient"
-        style_guide.serviceType = "OntimizeEE"
+        style_guide.serviceType = "OntimizeEE" #or JSONAPI
         style_guide.locale = "en"
         style_guide.applicationLocales = ["en","es"]
-        style_guide.startSessionPath = "/auth/login"
+        style_guide.startSessionPath = "/auth/login" #Used by JSONAPI only
+        style_guide.exclude_listpicker = False # Only on Home pages
         return style_guide
 
 '''

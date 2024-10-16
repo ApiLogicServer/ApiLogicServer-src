@@ -86,6 +86,7 @@ class OntBuilder(object):
         self.keycloak_url = "http://localhost:8080"
         self.keycloak_realm = "kcals"
         self.keycloak_client_id = "alsclient"
+        self.exclude_listpicker = False
         self.apiEndpoint =  f"http://{project.host}:{project.port}/ontimizeweb/services/rest"
         self.title_translation = []
         self.languages = ["en", "es"] # "fr", "it", "de" etc - used to create i18n json files
@@ -158,7 +159,7 @@ class OntBuilder(object):
     def build_application(self, show_messages: bool = True):
         """main driver - loop through add_model.yaml, ont app"""
         if show_messages:
-            log.debug(f"OntBuild Running at {os.getcwd()}")
+            log.debug(f"Ontimize Build Running at {os.getcwd()}")
 
         app_path = self.app_path
         if not os.path.exists(app_path):
@@ -505,11 +506,12 @@ class OntBuilder(object):
         fav_column_type = "VARCHAR" if fav_column and fav_column.type.startswith("VARCHAR") else "INTEGER"
         key =  make_keys(entity["primary_key"])
         entity_type = f"{entity.type}"
+        title = entity["label"] if hasattr(entity, "label") and entity.label != DotMap() else entity_name
         entity_upper = f"{entity_name[:1].upper()}{entity_name[1:]}"
         entity_first_cap = f"{entity_name[:1].upper()}{entity_name[1:]}"
         primaryKey = make_keys(entity["primary_key"])
         keySqlType = make_sql_types(primaryKey, entity.columns)
-        title =  f'{entity_name.upper()}' #TODO entity.title
+        title =  f'{title.upper()}' #TODO entity.title
         new_mode = new_mode
         items = self.find_template(entity, "grid_items", "")
         grid_items = ["{{" + f'item.{item}' + "}}" for item in list(items.split(","))]
@@ -547,8 +549,7 @@ class OntBuilder(object):
             "grid_items": grid_items,
             "grid_image": grid_image
         }
-
-        self.add_title(title, entity_name)
+        self.add_title(entity_name, f"{title[:1].upper()}{title[1:]}")
         entity_var |= self.global_values
         return entity_var
 
@@ -556,15 +557,17 @@ class OntBuilder(object):
         for v in self.title_translation:
             if title in v:
                 return    
+        # Lookup real Entity Table Name Here 
         self.title_translation.append({title: entity_name})
     def gen_home_columns(self, entity, parent_entity, column):
         col_var = self.get_column_attrs(column)
         if getattr(entity,"tab_groups",None) != None:
                 for tg in entity["tab_groups"]:
                     exclude = tg.get("exclude", "false") == "true"
-                    if tg["direction"] == "toone" and column.name in tg["fks"] and column.name != "Id" and len(tg["fks"]) == 1 and not exclude:
+                    if tg["direction"] == "toone" and column.name in tg["fks"] and column.name not in ["Id","id"] and len(tg["fks"]) == 1 and not exclude:
                         tab_name, tab_var = self.get_tab_attrs(entity=entity, parent_entity=parent_entity, fk_tab=tg)
-                        return self.table_cell_render.render(tab_var)
+                        if not self.exclude_listpicker:
+                            return self.table_column.render(col_var)
                         
         name = column.label if hasattr(column, "label") and column.label != DotMap() else column.name
         self.add_title(column["name"], name)
@@ -640,7 +643,8 @@ class OntBuilder(object):
             exclude = fk.get("exclude", "false") == "true"
             if column.name in fk["attrs"]  and fk["direction"] == "toone" and len(fk["attrs"]) == 1 and not exclude:
                 fk_entity = self.get_entity(fk["resource"])
-                return self.gen_pick_list_col(col_var, fk, entity)
+                if not self.exclude_listpicker:
+                    return self.gen_pick_list_col(col_var, fk, entity)
         return self.gen_field_template(column, col_var)
     
     def get_column_attrs(self, column) -> dict:
@@ -776,7 +780,8 @@ class OntBuilder(object):
         direction = fk_tab["direction"]
         tab_name = fk_tab["resource"]
         favorite = getattr(entity,"favorite") 
-        if fk_tab.get("exclude", "false") == "true":
+        if fk_tab.get("exclude", False)\
+            or fk_tab.get("exclude", "false") == "true":
             return tab_name, {}
         if direction == "tomany":
             fks = fk_tab["attrs"][0]
@@ -822,7 +827,7 @@ class OntBuilder(object):
                 "keys": foreign_keys,
                 "parentKeys":f"{parent_keys}",
             }
-        return tab_name,tab_vars
+        return tab_name, tab_vars
     
     def match_keys(self, primary_keys, foreign_keys):
         parent_keys = ""
@@ -946,8 +951,9 @@ class OntBuilder(object):
     # app.menu.config.jinja
     def gen_app_menu_config(self, template_name: str, entities: any):
         template = self.get_template(template_name)
+        
         menu_item_template = Template(
-            "{ id: '{{ name }}', name: '{{ name_upper }}', icon: 'view_list', route: '/main/{{ name }}' }"
+            "{ id: '{{ name }}', name: '{{ title }}', icon: 'view_list', route: '/main/{{ name }}' }"
         )
         import_template = Template("import {{ card_component }} from './{{ name }}-card/{{ name }}-card.component';")
         
@@ -957,7 +963,7 @@ class OntBuilder(object):
         menu_groups = []
         for each_entity_name, each_entity in entities:
             group =  getattr(each_entity, "group") or "data" #TEMPORARY TODO
-            get_group(groups, group, each_entity_name)
+            get_group(groups, group, each_entity)
         
         import_cards = []
         card_components = []    
@@ -967,10 +973,11 @@ class OntBuilder(object):
             menu_group = self.app_menu_group
             menuitems = []
             sep = ""
-            for each_entity_name in group_entities:
-                name = each_entity_name
+            for entity in group_entities:
+                name = entity.type
+                title = entity["label"].upper() if hasattr(entity, "label") and entity.label != DotMap() else name.upper()
                 name_first_cap = name[:1].upper()+ name[1:]
-                menuitem = menu_item_template.render(name=name, name_upper=each_entity_name.upper())
+                menuitem = menu_item_template.render(name=name, title=title, name_upper=each_entity_name.upper())
                 menuitem = f"{sep}{menuitem}"
                 menuitems.append(menuitem)
                 card_component = "{ " + f"{name_first_cap}CardComponent" +" }"
@@ -1001,7 +1008,9 @@ def make_key_path(key_list:list)-> str:
     key_path = ""
     sep = ""
     for key in key_list:
-        key_path += f'{sep}{key}/'
+        if isinstance(key, DotMap):
+            continue
+        key_path += f'{sep}{key}/' 
         sep = ":"
     return key_path[:-1] if key_path[-1:] == "/" else key_path
 def make_keys(key_list:list)-> str:
@@ -1009,7 +1018,7 @@ def make_keys(key_list:list)-> str:
     key_path = ""
     sep = ""
     for key in key_list:
-        key_path += f'{sep}{key}'
+        key_path +=  f'{sep}{key.fks[0]}' if isinstance(key, DotMap) else f'{sep}{key}' 
         sep = ";"
         
     return key_path
@@ -1155,7 +1164,8 @@ def gen_app_service_config(entities: any) -> str:
     children = ""
     for each_entity_name, each_entity in entities:
         name = each_entity_name
-        child = child_template.render(name=name)
+        title = each_entity["label"] if hasattr(each_entity, "label") and each_entity.label != DotMap() else name
+        child = child_template.render(title=title, name=name)
         children += f"{sep}{child}\n"
         sep = ","
     var = {"children": children}
