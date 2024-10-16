@@ -138,7 +138,7 @@ class GenAI(object):
         prompt_messages.extend(learning_requests)  # if any, prepend learning requests (logicbank api etc)
         log.debug(f'get_prompt_messages()')
         log.debug(f'.. conv[000] presets: {starting_message}')
-        log.debug(f'.. conv[001] presets: {learning_requests[0]['content'][:30]}...')
+        log.debug(f'.. conv[001] presets: {learning_requests[0]["content"][:30]}...')
         
         if self.project.genai_repaired_response != '':       # if exists, get prompt (just for inserting into declare_logic.py)
             prompt = ""  # we are not calling ChatGPT, just getting the prompt to scan for logic
@@ -501,14 +501,14 @@ class GenAI(object):
                             suffix = 'response' 
                         file_name = f'{self.project.project_name}_{str(file_num).zfill(3)}.{suffix}'
                         file_path = to_dir_save_dir.joinpath(file_name)
-                        log.debug(f'.. saving[{file_name}]  - {each_message['content'][:30]}...')
+                        log.debug(f'.. saving[{file_name}]  - {each_message["content"][:30]}...')
                         with open(file_path, "w") as message_file:
                             message_file.write(each_message['content']) 
                         file_num += 1
                     suffix = 'response'  # now add the this response
                     file_name = f'{self.project.project_name}_{str(file_num).zfill(3)}.{suffix}'
                     file_path = to_dir_save_dir.joinpath(file_name)
-                    log.debug(f'.. saving[{file_name}]  - {each_message['content'][:30]}...')
+                    log.debug(f'.. saving[{file_name}]  - {each_message["content"][:30]}...')
                     with open(file_path, "w") as message_file:
                         message_file.write(self.create_db_models)
                 shutil.copyfile(self.project.from_model, to_dir_save_dir.joinpath('create_db_models.py'))
