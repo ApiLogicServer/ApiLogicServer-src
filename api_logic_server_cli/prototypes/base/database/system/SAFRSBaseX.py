@@ -48,8 +48,8 @@ class SAFRSBaseX(SAFRSBase):
         if hasattr(attr, "type"):  # pragma: no cover
             
             if str(attr.type) in ["DATE", "DATETIME"]:
-                attr_val = attr_val.replace("T", " ")
                 try:
+                    attr_val = attr_val.replace("T", " ")
                     datetime.strptime(attr_val, '%Y-%m-%d %H:%M')
                     attr_val += ":00"
                 except ValueError:
