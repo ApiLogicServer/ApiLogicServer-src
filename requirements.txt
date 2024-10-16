@@ -1,7 +1,7 @@
 
 # ALERT: update pyproject.toml too!
 
-safrs>=3.1.5
+safrs>=3.1.4
 PyJWT==2.6.0
 python-dateutil==2.8.2
 logicbankutils==0.6.0
@@ -27,6 +27,7 @@ psutil==6.0.0
 pandas==2.2.2
 openpyxl==3.1.5
 confluent-kafka==2.3.0
+faker==30.4.0
 
 Flask-Login==0.6.2
 Flask-Admin==1.5.7
