@@ -256,7 +256,7 @@ class CustomEndpoint():
                     pkey , value,  limit, offset, order_by , filter_  = self.parseArgs(args)
         #serverURL = f"{request.host_url}api"
         #query = f"{serverURL}/{self._model_class_name}"
-        self.startRecordIndex = int(offset) + int(limit)
+        self.startRecordIndex = int(offset)
         resource_logger.debug(f"CustomEndpoint execute on: {self._model_class_name} using alias: {self.alias}")
         filter_by = None
         #key = args.get(pkey) if args.get(pkey) is not None else args.get(f"filter[{pkey}]")
