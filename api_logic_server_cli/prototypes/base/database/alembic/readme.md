@@ -6,7 +6,7 @@ The diagram below illustrates a simple path for enacting changes to the data mod
 cd database
 alembic revision --autogenerate -m "Added Tables and Columns"
 ```
-3. Edit the revision file to signify your understanding
+3. Edit the revision file to signify your understanding (see below)
 4. Activate the change
 ```bash
 alembic upgrade head 

@@ -366,6 +366,13 @@ class ModelClass(Model):
         if camel_case_name in ["Dates"]:
             camel_case_name = camel_case_name + "_Classs"
         result = inflect_engine.singular_noun(camel_case_name) or camel_case_name
+        if use_inflection := True:  # better support for Address (not Addres)
+            import inflection  # inflect.engine().singular_noun() -> Addres
+            result = inflection.singularize(camel_case_name)
+            if tablename in ["address"]:  # ApiLogicServer
+                debug_stop = "nice breakpoint"
+            pass
+
         if tablename in ["classes"]:  # ApiLogicServer
             debug_stop = "nice breakpoint"
         if result == "Class":   # ApiLogicServer

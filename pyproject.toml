@@ -33,6 +33,7 @@ dependencies = [
         "SQLAlchemy-Utils==0.38.2",
         "logicbankutils==0.6.0",
         "inflect==5.0.2",
+        "inflection==0.5.1",
 
         # from safrs, but stipulate version#s
         # e.g., omit CORS and the build fails

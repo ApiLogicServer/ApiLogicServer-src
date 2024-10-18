@@ -1,6 +1,6 @@
 # Quick Start
 
-**Microservice Automation Complete -- run to verify:** for **VSCode** users:
+**Microservice Automation Complete -- run to verify:** for **VSCode** projects except those downloaded from Web/GenAI:
 1. `Press F5 to Run` (your venv is defaulted)  
 
 &emsp;&emsp;&emsp;&emsp;For **other IDEs,** please follow the [Setup and Run](#1-setup-and-run) procedure, below.
@@ -105,11 +105,14 @@ The ___Key Customization Files___ listed in the table below are created as stubs
 * Since they are separate files, the project can be
 [rebuilt](https://apilogicserver.github.io/Docs/Project-Rebuild/) (e.g., synchronized with a revised schema), preserving your customizations.
 
-To explore customization, see the `nw` sample for examples of typical customizations.  You can open it in GitHub (use Shift + "." to view in project mode) - [click here](https://github.com/ApiLogicServer/demo), or create it locally (`ApiLogicServer create` - accept defaults).
+> Tip: create the sample app for customization examples: `ApiLogicServer create --project-name=nw_sample --db_url=nw+`
+> <br>Or, open it in GitHub (use Shift + "." to view in project mode) - [click here](https://github.com/ApiLogicServer/demo)
 
 To make customizations easy to explore, **search for:**
 * `#als` will reveal key customization examples
 * `Your Code Goes Here` to find key files to customize, summarized below:
+
+<br>
 
 | Directory | Usage                         | Key Customization File             | Typical Customization                                                                 |
 |:-------------- |:------------------------------|:-----------------------------------|:--------------------------------------------------------------------------------------|
@@ -121,17 +124,30 @@ To make customizations easy to explore, **search for:**
 | ```integration``` | Consume Kafka Messages             | ```integration/kafka/kafka_consumer.py```          |  [Application Integration](https://apilogicserver.github.io/Docs/Sample-Integration/)                                          |
 | ```test``` | Behave Test Suite              | ```test/api_logic_server_behave/features```          | Declare and implement [Behave Tests](https://apilogicserver.github.io/Docs/Behave/)                                          |
 
-> Note: API Logic Server CLI provides commands you can use to ugrade your project, e.g., to add security.  Discover the CLI commands with `ApiLogicServer`.
+<br>
+
+Notes:
+
+1. API Logic Server **CLI** provides commands you can use to ugrade your project, e.g., to add security.  See the next section.
+2. You will observe the project is small.  That is because the app, logic and api are represented as **models:**
+    * The [web app](ui/admin/admin.yaml) is a YAML file (about 150 lines - no html or JavaScript)
+    * The [api](api/expose_api_models.py) is essentially 1 line per data model (table)
 
 &nbsp;
 
 # 3. Procedures
 
-See [alembic](database/alembic/readme.md) for database migration procedures.
+Several **CLI commands** are provided to operate on your current project.  
+
+1. Use your IDE's terminal window to access these
+2. Use `ApiLogicServer --help` to discover these
+
+<br>
 
 | Procedures               | Notes                              |
 |:-------------------------|:-----------------------------------|
 | 1. **Database Migration** | See [alembic](database/alembic/readme.md) for database migration procedures.     |
+| 1. **Activating Security** | See [Security Activation](https://apilogicserver.github.io/Docs/Security-Activation/) for activating security.     |
 
 &nbsp;
 
@@ -140,6 +156,7 @@ See [alembic](database/alembic/readme.md) for database migration procedures.
 The `devops` directory contains several scripts for creating container images, testing them, and deploying them.
 
 Since API Logic Server creates working software (UI, API), you can do this after creating your project, to [collaborate with your team](https://apilogicserver.github.io/Docs/DevOps-Containers-Preview/).
+
 &nbsp;
 
 # 5. Project Requirements

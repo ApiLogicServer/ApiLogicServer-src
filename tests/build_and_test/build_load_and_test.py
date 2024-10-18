@@ -1046,6 +1046,22 @@ if Config.do_test_api_logic_project_with_auth:
 '''
 
 if Config.do_test_genai:
+    db_loc = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/genai_demo/genai_demo_models_with_addr.sqlite')
+    db_loc_str = str(db_loc)
+    genai_with_address = f'sqlite:////{db_loc_str}'
+    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=genai_demo_models_with_addr --{db_url}={genai_with_address}',
+        cwd=install_api_logic_server_path,
+        msg=f'\nCreate include_exclude_typical at: {str(install_api_logic_server_path)}')
+    start_api_logic_server(project_name='genai_demo_models_with_addr') 
+
+    get_uri = "http://localhost:5656/api/Address/?include=customer_account&fields%5BAddress%5D=customer_account_id%2Cstreet%2Ccity%2Cstate%2Czipcode%2C_check_sum_%2CS_CheckSum&page%5Boffset%5D=0&page%5Blimit%5D=10&sort=id"
+    r = requests.get(url=get_uri)
+    response_text = r.text
+    result_data = json.loads(response_text) 
+    assert len(result_data["data"]) > 0, "genai_demo_models_with_addr: Did not find any rows"
+
+    stop_server(msg="genai_demo_models_with_addr\n")
+
     # test genai, using copy of pre-supplied ChatGPT response (to avoid api key issues)
     # see https://apilogicserver.github.io/Docs/Sample-Genai/#what-just-happened
     prompt_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/genai_demo/genai.response')
@@ -1059,8 +1075,8 @@ if Config.do_test_genai:
         msg=f'\nCustomize genai_demo')
     start_api_logic_server(project_name="genai_demo")
     stop_server(msg="*** genai_demo TESTS COMPLETE ***\n")
-    
 
+    
 if Config.do_test_multi_reln:
 
     # first, some tests for genai, not starting server.  Prompts from tests, avoid too many samples

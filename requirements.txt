@@ -7,6 +7,7 @@ python-dateutil==2.8.2
 logicbankutils==0.6.0
 LogicBank==1.20.8
 inflect==5.0.2
+inflection==0.5.1
 python-dotenv==0.15.0
 email-validator==1.1.1
 cryptography==36.0.1
