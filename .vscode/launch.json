@@ -1649,7 +1649,6 @@
                 "--db_url=sqlite:///${workspaceFolder}/tests/test_databases/sqlite-databases/ss1/SS1.db"],
             "console": "integratedTerminal"
         },
-
         {
             "name": "create from-model",
             "type": "debugpy",
@@ -1664,7 +1663,21 @@
                 "--db_url=sqlite:///model_using_numeric_retest.sqlite"],
             "console": "integratedTerminal"
         },       
-          {
+        {
+            "name": "create - clean/genai_demo_models_with_addr",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["create",
+                "--project_name=genai_demo_models_with_addr",
+                "--db-url=sqlite:///${workspaceFolder}/tests/test_databases/ai-created/genai_demo/genai_demo_models_with_addr.sqlite"
+            ],
+            "console": "integratedTerminal"
+        },       
+        {
             "name": "Chinook - Create and run Chinook Sqlite (abbr)",
             "type": "debugpy",
             "request": "launch",

@@ -333,16 +333,18 @@ class GenAI(object):
                               file_name=logic_file, 
                               at='discover_logic()', 
                               after=True)
+
         readme_lines = \
             f'\n**GenAI Microservice Automation:** after verifying, apply logic:\n' +\
             f'1. Open [logic/declare_logic.py](logic/declare_logic.py) and use Copilot\n' +\
             f'\n' +\
             f'&nbsp;\n'
-        readme_file = self.project.project_directory_path.joinpath('readme.md')
-        utils.insert_lines_at(lines=readme_lines, 
-                              file_name=readme_file, 
-                              at='**other IDEs,**', 
-                              after=True)
+        if update_readme := False:
+            readme_file = self.project.project_directory_path.joinpath('readme.md')
+            utils.insert_lines_at(lines=readme_lines, 
+                                file_name=readme_file, 
+                                at='**other IDEs,**', 
+                                after=True)
         try:
             docs_dir = self.project.project_directory_path.joinpath("docs")
             # os.makedirs(docs_dir, exist_ok=True)
