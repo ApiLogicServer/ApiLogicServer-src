@@ -206,6 +206,8 @@ class OntBuilder(object):
             self.global_values["applicationLocales"] = "en"
         if getattr(self.global_values,"startSessionPath",None) is None:
             self.global_values["startSessionPath"] = "/auth/login"
+        if getattr(self.global_values,"exclude_listpicker",None) is None:
+            self.global_values["exclude_listpicker"] = False
             
         for each_entity_name, each_entity in app_model.entities.items():
             if  each_entity.get("exclude", "false") == "true":
@@ -563,11 +565,10 @@ class OntBuilder(object):
         col_var = self.get_column_attrs(column)
         if getattr(entity,"tab_groups",None) != None:
                 for tg in entity["tab_groups"]:
-                    exclude = tg.get("exclude", "false") == "true"
+                    exclude = tg.get("exclude", False) or self.global_values["exclude_listpicker"]  == True
                     if tg["direction"] == "toone" and column.name in tg["fks"] and column.name not in ["Id","id"] and len(tg["fks"]) == 1 and not exclude:
                         tab_name, tab_var = self.get_tab_attrs(entity=entity, parent_entity=parent_entity, fk_tab=tg)
-                        if not self.exclude_listpicker:
-                            return self.table_column.render(col_var)
+                        return self.table_cell_render.render(tab_var)
                         
         name = column.label if hasattr(column, "label") and column.label != DotMap() else column.name
         self.add_title(column["name"], name)
@@ -643,8 +644,7 @@ class OntBuilder(object):
             exclude = fk.get("exclude", "false") == "true"
             if column.name in fk["attrs"]  and fk["direction"] == "toone" and len(fk["attrs"]) == 1 and not exclude:
                 fk_entity = self.get_entity(fk["resource"])
-                if not self.exclude_listpicker:
-                    return self.gen_pick_list_col(col_var, fk, entity)
+                return self.gen_pick_list_col(col_var, fk, entity)
         return self.gen_field_template(column, col_var)
     
     def get_column_attrs(self, column) -> dict:

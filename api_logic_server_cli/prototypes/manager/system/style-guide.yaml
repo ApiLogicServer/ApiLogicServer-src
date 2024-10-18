@@ -24,4 +24,5 @@ serviceType: OntimizeEE
 locale: en
 applicationLocales: ["en","es"]
 startSessionPath: /auth/login
+exclude_listpicker: false
 

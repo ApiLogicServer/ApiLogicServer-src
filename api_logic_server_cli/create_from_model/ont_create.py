@@ -154,7 +154,7 @@ class OntCreator(object):
     def create_model_entity(self, each_resource, resources: list) -> DotMap:
         each_resource.favorite = each_resource.user_key
         each_resource.exclude = "false"
-        each_resource.label = resources[each_resource.type].table_name
+        each_resource.label = each_resource.type # resources[each_resource.type].table_name
         each_resource.new_template = "new_template.html"
         each_resource.home_template = "home_template.html"
         each_resource.detail_template = "detail_template.html"

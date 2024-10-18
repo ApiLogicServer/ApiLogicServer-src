@@ -316,6 +316,8 @@ def advancedFilter(cls, args) -> any:
                     return expressions, sqlWhere
                 elif req_arg == 'filter[@basic_expression]' or req_arg == 'filter[@BASIC_EXPRESSION]':
                         filters.append({"lop": val['lop'], "op": val["op"], "rop": val["rop"]})
+                elif "rop" in val:
+                    filters.append(val)
                 else:
                     #{'id': '1', 'name': 'John'}
                     for f, value in val.items():
