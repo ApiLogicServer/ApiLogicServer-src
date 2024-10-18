@@ -594,7 +594,10 @@ def genai(ctx, using, db_url, repaired_response: str, genai_version: str,
     global command
     if use_genai_module:
         import genai as genai_svcs
-        genai_svcs.genai(using=using, db_url=db_url, repaired_response=repaired_response, 
+        defaulted_using = using
+        if defaulted_using == 'genai_demo': # default to genai_demo.prompt
+            defaulted_using = 'system/genai/examples/genai_demo/genai_demo.prompt'
+        genai_svcs.genai(using=defaulted_using, db_url=db_url, repaired_response=repaired_response, 
                     genai_version=genai_version, retries=retries, opt_locking=opt_locking, 
                     prompt_inserts=prompt_inserts, quote=quote, use_relns=use_relns,
                     project_name=project_name)

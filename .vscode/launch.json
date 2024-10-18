@@ -50,6 +50,7 @@
             "justMyCode": false,
             "console": "integratedTerminal"
         },
+
         {
             "name": "1 - ApiLogicServer Start (Clean)",
             "type": "debugpy",
@@ -105,7 +106,7 @@
             "redirectOutput": true,
             "args": [
                 "genai",
-                "--using=${workspaceFolder}/tests/test_databases/ai-created/genai_demo/genai_demo_conversation"],
+                "--using=${workspaceFolder}/api_logic_server_cli/prototypes/manager/system/genai/examples/genai_demo/genai_demo_conversation"],
             "console": "integratedTerminal"
         },
         // mimic iteration DELETE LAST RESPONSE FIRST
@@ -331,6 +332,7 @@
                 "--using=add Order Details and Products"],
             "console": "integratedTerminal"
         },
+
         {
             "name": "2 - Create servers/ApiLogicProject (DEFAULTS)",
             "type": "debugpy",

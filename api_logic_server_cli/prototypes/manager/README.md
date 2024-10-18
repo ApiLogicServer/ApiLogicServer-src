@@ -189,7 +189,7 @@ als genai --using=genai_demo.prompt --repaired-response=system/genai/temp/chatgp
 <br>You can add new columns/tables, while keeping the prior model intact:
 
 ```bash title="Iterate"
-als genai --project-name='genai_demo' --using=system/genai/examples/genai_demo/genai_demo_conversation
+als genai --project-name='genai_demo_conversation' --using=system/genai/examples/genai_demo/genai_demo_conversation
 # open Docs/db.dbml
 ```
 </details>
