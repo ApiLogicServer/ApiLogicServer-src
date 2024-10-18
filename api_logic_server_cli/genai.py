@@ -131,14 +131,6 @@ class GenAI(object):
         """
 
         prompt_messages : List[ Dict[str, str] ] = []  # prompt/response conversation to be sent to ChatGPT
-        starting_message = {"role": "system", "content": "You are a data modelling expert and python software architect who expands on user input ideas. You create data models with at least 4 tables"}
-        prompt_messages.append( starting_message)
-
-        learning_requests = self.get_learning_requests()
-        prompt_messages.extend(learning_requests)  # if any, prepend learning requests (logicbank api etc)
-        log.debug(f'get_prompt_messages()')
-        log.debug(f'.. conv[000] presets: {starting_message}')
-        log.debug(f'.. conv[001] presets: {learning_requests[0]["content"][:30]}...')
         
         if self.project.genai_repaired_response != '':       # if exists, get prompt (just for inserting into declare_logic.py)
             prompt = ""  # we are not calling ChatGPT, just getting the prompt to scan for logic
@@ -154,10 +146,23 @@ class GenAI(object):
                 if each_file.is_file() and each_file.suffix == '.prompt' or each_file.suffix == '.response':
                     with open(each_file, 'r') as file:
                         prompt = file.read()
-                        file_num = request_count + response_count + 2
-                        file_str = str(file_num).zfill(3)
-                        log.debug(f'.. conv[{file_str}] processes: {os.path.basename(each_file)} - {prompt[:30]}...')
                     role = "user"
+                    if response_count == 0 and request_count == 0:
+                        if not prompt.startswith('You are a '):  # add *missing* presets
+                            starting_message = {"role": "system", "content": "You are a data modelling expert and python software architect who expands on user input ideas. You create data models with at least 4 tables"}
+                            prompt_messages.append( starting_message)
+
+                            learning_requests = self.get_learning_requests()
+                            prompt_messages.extend(learning_requests)  # if any, prepend learning requests (logicbank api etc)
+                            log.debug(f'get_prompt_messages()')
+                            log.debug(f'.. conv[000] presets: {starting_message}')
+                            log.debug(f'.. conv[001] presets: {learning_requests[0]["content"][:30]}...')
+
+                            request_count = 1
+                            response_count = len(learning_requests)
+                    file_num = request_count + response_count
+                    file_str = str(file_num).zfill(3)
+                    log.debug(f'.. conv[{file_str}] processes: {os.path.basename(each_file)} - {prompt[:30]}...')
                     if each_file.suffix == ".response":
                         role = 'system'
                         response_count += 1
@@ -490,6 +495,9 @@ class GenAI(object):
             """ system/genai/temp/project - save prompt, response, and create_db_models.py to this directory """
             self.project.gen_ai_save_dir = to_dir_save_dir
             """ project work files saved to system/genai/temp/<project> """
+            # delete and recreate the directory
+            if to_dir_save_dir.exists():
+                shutil.rmtree(to_dir_save_dir)
             os.makedirs(to_dir_save_dir, exist_ok=True)
             log.debug(f'save_prompt_messages_to_system_genai_temp_project()')
 
