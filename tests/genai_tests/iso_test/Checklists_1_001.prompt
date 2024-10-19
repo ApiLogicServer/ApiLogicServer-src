@@ -7,7 +7,8 @@ Fill in all database table column data accoring to the relevant specifications.
 
 Create at least 19 tables.
 
-Hints: use autonum keys, allow nulls, foreign keys, no check constraints.
+Hints: use autonum keys (for all tables - including for link/join/junction/intersection tables), allow nulls, foreign keys, no check constraints.
+
 If you choose to use a date, only use python datetime datatype.
 Remember that SQLite DateTime type only accepts Python datetime and date objects as input, this means you can not enter string attributes where a date or datetime object is expected.Provide a short description of each table. Include the description in each data model class docstring, prefixed with 'description: '. 
 Don't use python DECIMAL type.

@@ -118,7 +118,22 @@ class GenAI(object):
         if self.project.genai_repaired_response == '':  # clean up unless retrying from chatgpt_original.response
             Path('system/genai/temp/chatgpt_original.response').unlink(missing_ok=True)
             Path('system/genai/temp/chatgpt_retry.response').unlink(missing_ok=True)
+    
+    def create_presets(self, prompt_messages: List[Dict[str, str]]):
+        """ Create presets - you are a data modelling expert, and logicbank api etc """
+        pass
 
+        starting_message = {"role": "system", "content": "You are a data modelling expert and python software architect who expands on user input ideas. You create data models with at least 4 tables"}
+        prompt_messages.append( starting_message)
+
+        learning_requests = self.get_learning_requests()
+        prompt_messages.extend(learning_requests)  # if any, prepend learning requests (logicbank api etc)
+        log.debug(f'get_prompt_messages()')
+        log.debug(f'.. conv[000] presets: {starting_message}')
+        log.debug(f'.. conv[001] presets: {learning_requests[0]["content"][:30]}...')
+        return len(learning_requests)
+
+    
     def get_prompt_messages(self) -> List[Dict[str, str]]:
         """ Get prompt from file, dir (conversation) or text argument
             Prepend with learning_requests (if any)
@@ -141,6 +156,7 @@ class GenAI(object):
         elif Path(self.project.genai_using).is_dir():  # conversation from directory
             response_count = 0
             request_count = 0
+            learning_requests_len = 0
             prompt = ""
             for each_file in sorted(Path(self.project.genai_using).iterdir()):
                 if each_file.is_file() and each_file.suffix == '.prompt' or each_file.suffix == '.response':
@@ -149,17 +165,9 @@ class GenAI(object):
                     role = "user"
                     if response_count == 0 and request_count == 0:
                         if not prompt.startswith('You are a '):  # add *missing* presets
-                            starting_message = {"role": "system", "content": "You are a data modelling expert and python software architect who expands on user input ideas. You create data models with at least 4 tables"}
-                            prompt_messages.append( starting_message)
-
-                            learning_requests = self.get_learning_requests()
-                            prompt_messages.extend(learning_requests)  # if any, prepend learning requests (logicbank api etc)
-                            log.debug(f'get_prompt_messages()')
-                            log.debug(f'.. conv[000] presets: {starting_message}')
-                            log.debug(f'.. conv[001] presets: {learning_requests[0]["content"][:30]}...')
-
+                            learning_requests_len = self.create_presets(prompt_messages)
                             request_count = 1
-                            response_count = len(learning_requests)
+                            response_count = learning_requests_len
                     file_num = request_count + response_count
                     file_str = str(file_num).zfill(3)
                     log.debug(f'.. conv[{file_str}] processes: {os.path.basename(each_file)} - {prompt[:30]}...')
@@ -177,14 +185,16 @@ class GenAI(object):
             if response_count == 0:
                 log.debug(f".. no response files - applying insert to prompt")
                 prompt = self.get_prompt__with_inserts(raw_prompt=prompt)  # insert db-specific logic
-                prompt_messages[1 + len(learning_requests)]["content"] = prompt
+                prompt_messages[1 + learning_requests_len]["content"] = prompt
         else:                                   # prompt from text (add system/genai/pre_post.prompt)
             # open and read the project description in natural language
-            log.debug(f'.. from file')
+            learning_requests_len = self.create_presets(prompt_messages)
             with open(f'{self.project.genai_using}', 'r') as file:
+                log.debug(f'.. from file: {self.project.genai_using}')
                 raw_prompt = file.read()
             prompt = self.get_prompt__with_inserts(raw_prompt=raw_prompt)  # insert db-specific logic
             prompt_messages.append( {"role": "user", "content": prompt})
+
 
         # log.debug(f'.. prompt_messages: {prompt_messages}')  # heaps of output
         return prompt_messages      
