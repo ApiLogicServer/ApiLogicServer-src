@@ -47,7 +47,7 @@ fi
 echo " "
 # ls 
 echo "pwd: $(pwd)\n"
-read -p "Verify pwd is at ApiLogicServer-src> "
+read -p "Verify pwd = ApiLogicServer-src, docker pull apilogicserver/api_logic_server complete> "
 echo " "
 
 cd ..
