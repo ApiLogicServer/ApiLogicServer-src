@@ -62,7 +62,7 @@ def check_command(command_result, special_message: str=""):
                 print_byte_string("\n\n==> Error Log:", command_result.stderr)
                 if special_message != "":
                     print(f'{special_message}')
-                print('/nProceesing\n\n')
+                print('\nProceesing\n\n')
                 
     if command_result.returncode != 0:
         print_byte_string("\n\n==> Error Log:", command_result.stderr)
@@ -319,21 +319,39 @@ if Config.do_create_manager:    # tests built into clean, so create it first FIX
 if Config.do_test_genai:
     # test genai, using copy of pre-supplied ChatGPT response (to avoid api key issues)
     # see https://apilogicserver.github.io/Docs/Sample-Genai/#what-just-happened
-    prompt_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/genai_demo/genai_demo_logic')
-    assert prompt_path.exists() , f'do_test_genai error: prompt path not found: {str(prompt_path)}'
-    do_test_genai_cmd = f'{set_venv} && als genai --project-name=genai_test_genai_demo --using={prompt_path}'
+    test_name = 'genai_test_genai_demo_conversation'
+    prompt_path = install_api_logic_server_path.joinpath('system/genai/examples/genai_demo/genai_demo_conversation')
+    assert prompt_path.exists() , f'{test_name} error: prompt path not found: {str(prompt_path)}'
+    do_test_genai_cmd = f'{set_venv} && als genai --project-name={test_name} --using={prompt_path}'
     result_genai = run_command(do_test_genai_cmd,
         cwd=create_in,
-        msg=f'\nCreate genai_test_genai_demo')
-    genai_demo_path = install_api_logic_server_path.joinpath('genai_demo')
+        msg=f'\nCreate {test_name}')
+    genai_demo_path = install_api_logic_server_path.joinpath(test_name)
     '''
     add_cust_genai = run_command(f'{set_venv} && cd {genai_demo_path} && als add-cust',
         cwd=genai_demo_path,
         msg=f'\nCustomize genai_demo')
     '''
-    start_api_logic_server(project_name="genai_test_genai_demo")
-    stop_server(msg="*** genai_test_genai_demo TESTS COMPLETE ***\n")
-        
+    start_api_logic_server(project_name=test_name)
+    stop_server(msg=f"*** {test_name} TESTS COMPLETE ***\n")
+
+
+    test_name = 'genai_test_genai_demo'
+    prompt_path = install_api_logic_server_path.joinpath('system/genai/examples/genai_demo/genai_demo.prompt')
+    assert prompt_path.exists() , f'{test_name} error: prompt path not found: {str(prompt_path)}'
+    do_test_genai_cmd = f'{set_venv} && als genai --project-name={test_name} --using={prompt_path}'
+    result_genai = run_command(do_test_genai_cmd,
+        cwd=create_in,
+        msg=f'\nCreate {test_name}')
+    genai_demo_path = install_api_logic_server_path.joinpath(test_name)
+    '''
+    add_cust_genai = run_command(f'{set_venv} && cd {genai_demo_path} && als add-cust',
+        cwd=genai_demo_path,
+        msg=f'\nCustomize genai_demo')
+    '''
+    start_api_logic_server(project_name=test_name)
+    stop_server(msg=f"*** {test_name} TESTS COMPLETE ***\n")
+
 if Config.do_test_auto_conv:    # ensure project rebuilt, not truncated
     genai_conv = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/auto_dealership/auto_iteration')
     result_genai = run_command(f'{set_venv} && als genai --project-name=genai_test_auto_conv --using={genai_conv}',
@@ -342,8 +360,10 @@ if Config.do_test_auto_conv:    # ensure project rebuilt, not truncated
 
 if Config.do_test_iso:          # complex iteration - link tables sometimes have no id
     genai_conv = get_api_logic_server_src_path().joinpath('tests/genai_tests/iso_test')
+    assert genai_conv.exists() , f'do_test_iso error: genai_conv path not found: {str(genai_conv)}'
     result_genai = run_command(f'{set_venv} && als genai --project-name=genai_test_iso_test --using={genai_conv}',
         cwd=create_in,
         msg=f'\nTest iso')
-    
+    pass  # also tests conversations without presets
+
 print(f'\n\n{__file__} {__version__} complete\n\n')
