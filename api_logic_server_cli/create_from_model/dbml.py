@@ -66,6 +66,7 @@ class DBMLCreator(object):
         self.dbms_lines = []
         self.dbms_lines.append("// Copy this text, paste to https://dbdiagram.io/d")
         self.dbms_lines.append('// Or, https://databasediagram.com/app')
+        self.dbms_lines.append('// Or, view in VSCode with extension: "DBML Live Preview"')
         self.dbms_lines.append("")
 
     def create_docs_dbml_file(self):
