@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "12.00.02"
+__version__ = "12.00.03"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t10/21/2024 - 12.00.03: Prelim support genai dir/project \n"\
     "\t10/18/2024 - 12.00.02: Natural Language Logic \n"\
     "\t10/17/2024 - 11.02.19: singular classes, expanded doc/prompts, logic work-arounds, docs/logic, logic learning, readme \n"\
     "\t10/11/2024 - 11.02.14: NL/Logic with test data calcs, sra 10-07-2024, genai-logic, cs, iteration rebuild \n"\

@@ -272,8 +272,8 @@ def start_api_logic_server(project_name: str, env_list = None, port: str='5656')
 
     global stdout, stderr
     install_api_logic_server_path = get_servers_build_and_test_path().joinpath("ApiLogicServer")
-    path = install_api_logic_server_path.joinpath(f'tests/{project_name}')
-    print(f'\n\nStarting Server tests/{project_name}... from  {install_api_logic_server_path}\venv\n')
+    path = install_api_logic_server_path.joinpath(project_name)
+    print(f'\n\nStarting Server {project_name}... from  {install_api_logic_server_path}\venv\n')
     pipe = None
     if platform == "win32":
         start_cmd = ['powershell.exe', f'{str(path)}\\run.ps1 x']
@@ -360,16 +360,16 @@ def multi_database_tests():
     install_api_logic_server_path = get_servers_build_and_test_path().joinpath("ApiLogicServer")
     api_logic_project_path = install_api_logic_server_path.joinpath('MultiDB')
 
-    result_create = run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/MultiDB --{db_url}=nw-',
+    result_create = run_command(f'{set_venv} && ApiLogicServer create --{project_name}=MultiDB --{db_url}=nw-',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate MultiDB at: {str(install_api_logic_server_path)}')
 
-    result_create = run_command(f'{set_venv} && ApiLogicServer add-db --{db_url}=todo --{bind_key}=Todo --{project_name}=tests/MultiDB',
+    result_create = run_command(f'{set_venv} && ApiLogicServer add-db --{db_url}=todo --{bind_key}=Todo --{project_name}=MultiDB',
         cwd=install_api_logic_server_path,
         msg=f'\nAdd ToDoDB at: {str(install_api_logic_server_path)}')
 
     # declare_security
-    result_create = run_command(f'{set_venv} && ApiLogicServer add-auth --{project_name}=tests/MultiDB --db_url=add-auth',
+    result_create = run_command(f'{set_venv} && ApiLogicServer add-auth --{project_name}=MultiDB --db_url=add-auth',
         cwd=install_api_logic_server_path,
         msg=f'\nAdd AuthDB at: {str(install_api_logic_server_path)}')
 
@@ -396,19 +396,19 @@ def rebuild_tests():
 
     current_path = Path(os.path.abspath(__file__))
     install_api_logic_server_path = get_servers_build_and_test_path().joinpath("ApiLogicServer")
-    api_logic_project_path = install_api_logic_server_path.joinpath('tests/Rebuild')
+    api_logic_project_path = install_api_logic_server_path.joinpath('Rebuild')
     admin_merge_yaml_path = api_logic_project_path.joinpath('ui').joinpath('admin').joinpath('admin-merge.yaml')
     new_model_path = current_path.parent.parent.joinpath('rebuild_tests').joinpath('models.py')
     """ same as models, but adds class: CategoryNew """
     models_py_path = api_logic_project_path.joinpath('database').joinpath('models.py')
 
-    result_create = run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/Rebuild --{db_url}=',
+    result_create = run_command(f'{set_venv} && ApiLogicServer create --{project_name}=Rebuild --{db_url}=',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate Rebuild at: {str(install_api_logic_server_path)}')
     if admin_merge_yaml_path.is_file():
         raise ValueError('System Error - admin-merge.yaml exists on create')
 
-    result_create = run_command(f'{set_venv} && ApiLogicServer rebuild-from-database --{project_name}=tests/Rebuild --{db_url}=',
+    result_create = run_command(f'{set_venv} && ApiLogicServer rebuild-from-database --{project_name}=Rebuild --{db_url}=',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate project Rebuild at: {str(install_api_logic_server_path)}')
     if not admin_merge_yaml_path.is_file():
@@ -419,7 +419,7 @@ def rebuild_tests():
         raise ValueError('System Error - admin-merge.yaml does not contain "new_resources: " ')
 
     copyfile(new_model_path, models_py_path)
-    result_create = run_command(f'{set_venv} && ApiLogicServer rebuild-from-model --{project_name}=tests/Rebuild --{db_url}=',
+    result_create = run_command(f'{set_venv} && ApiLogicServer rebuild-from-model --{project_name}=Rebuild --{db_url}=',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate ApiLogicProject at: {str(install_api_logic_server_path)}')
     if not admin_merge_yaml_path.is_file():
@@ -455,7 +455,7 @@ def verify_include_models( project_name : str ='include_exclude',
     Returns:
         bool: True means all found
     """
-    model_file_str = str(get_servers_build_and_test_path().joinpath(f'ApiLogicServer/tests/{project_name}/database/models.py'))
+    model_file_str = str(get_servers_build_and_test_path().joinpath(f'ApiLogicServer/{project_name}/database/models.py'))
     for each_term in check_for:
         is_in_file = does_file_contain(in_file = model_file_str, search_for=each_term)
         if verify_found and not is_in_file:
@@ -577,7 +577,7 @@ def validate_nw(api_logic_server_install_path, set_venv):
         activate_script = os.path.join(venv_dir, 'Scripts', 'activate.bat')
         behave_command = f'{activate_script} && {python} --version'
         behave_command = f'{set_venv} && {python} --version'
-        assert api_logic_project_behave_path.exists(), "System error - nw cannot find cwd - tests/behave path"
+        assert api_logic_project_behave_path.exists(), "System error - nw cannot find cwd - test/behave path"
         result_behave = run_command(behave_command, 
                                     cwd=str(api_logic_project_behave_path),
                                     msg="\nPython --version validation", show_output=True)
@@ -708,13 +708,13 @@ def validate_opt_locking():
 
     current_path = Path(os.path.abspath(__file__))
     install_api_logic_server_path = get_servers_build_and_test_path().joinpath("ApiLogicServer")
-    api_logic_project_path = install_api_logic_server_path.joinpath('tests/web_genie')
+    api_logic_project_path = install_api_logic_server_path.joinpath('web_genie')
 
     rel_path = 'tests/test_databases/sqlite-databases/web_genie/web_genie.sqlite'
     wg_db_path = get_api_logic_server_src_path().joinpath(rel_path)
     assert wg_db_path.exists(), f'Cannot find {wg_db_path}'
     wg_arg = f'sqlite:///{wg_db_path}'
-    result_create = run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/web_genie --{db_url}={wg_arg}',
+    result_create = run_command(f'{set_venv} && ApiLogicServer create --{project_name}=web_genie --{db_url}={wg_arg}',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate web_genie at: {str(install_api_logic_server_path)}')
     
@@ -848,7 +848,7 @@ install_api_logic_server_path = get_servers_build_and_test_path().joinpath("ApiL
 """ eg, build_and_test/ApiLogicServer """
 install_api_logic_server_clean_path = install_api_logic_server_path.parent.parent.joinpath("clean/ApiLogicServer")
 """ eg, clean/ApiLogicServer"""
-api_logic_project_path = install_api_logic_server_path.joinpath(f'tests/ApiLogicProject')
+api_logic_project_path = install_api_logic_server_path.joinpath('ApiLogicProject')
 """ eg, build_and_test/ApiLogicServer/ApiLogicProject """
 api_logic_server_tests_path = Path(os.path.abspath(__file__)).parent.parent
 """ eg, ApiLogicServer-src/tests """
@@ -1021,7 +1021,7 @@ if Config.do_create_api_logic_project:
         cwd=install_api_logic_server_path,
         msg=f'\nCreate Manager')
         
-    result_create = run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/ApiLogicProject --{db_url}=nw+',
+    result_create = run_command(f'{set_venv} && ApiLogicServer create --{project_name}=ApiLogicProject --{db_url}=nw+',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate ApiLogicProject')     # nw+ (with logic)
     
@@ -1049,7 +1049,7 @@ if Config.do_test_genai:
     db_loc = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/genai_demo/genai_demo_models_with_addr.sqlite')
     db_loc_str = str(db_loc)
     genai_with_address = f'sqlite:////{db_loc_str}'
-    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/genai_demo_models_with_addr --{db_url}={genai_with_address}',
+    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=genai_demo_models_with_addr --{db_url}={genai_with_address}',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate include_exclude_typical at: {str(install_api_logic_server_path)}')
     start_api_logic_server(project_name='genai_demo_models_with_addr') 
@@ -1066,11 +1066,10 @@ if Config.do_test_genai:
     # see https://apilogicserver.github.io/Docs/Sample-Genai/#what-just-happened
     prompt_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/genai_demo/genai.response')
     assert prompt_path.exists() , f'do_test_genai error: prompt path not found: {str(prompt_path)}'
-    # FIXME - add --project-name=tests/xxx
-    result_genai = run_command(f'{set_venv} && als genai --project-name=tests/genai_demo --using=genai_demo.prompt --repaired-response={prompt_path}',
+    result_genai = run_command(f'{set_venv} && als genai --using=genai_demo.prompt --repaired-response={prompt_path}',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate genai_demo')
-    genai_demo_path = install_api_logic_server_path.joinpath('tests/genai_demo')
+    genai_demo_path = install_api_logic_server_path.joinpath('genai_demo')
     add_cust_genai = run_command(f'{set_venv} && cd {genai_demo_path} && als add-cust',
         cwd=genai_demo_path,
         msg=f'\nCustomize genai_demo')
@@ -1084,21 +1083,21 @@ if Config.do_test_multi_reln:
     prompt_path = 'genai_demo_outdented_reln'
     response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/genai_demo/genai_demo_retry_outdented_relns_fixed/genai.response')
     assert response_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
-    result_genai = run_command(f'{set_venv} && als genai  --project-name=tests/genai_demo_retry_outdented_relns_fixed --using={prompt_path} --repaired-response={response_path}',
+    result_genai = run_command(f'{set_venv} && als genai --using={prompt_path} --repaired-response={response_path}',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate outdented_relns_fixed')
 
     prompt_path = 'genai_demo_decimals'
     response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/genai_demo/genai_demo_decimal/genai.response')
     assert response_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
-    result_genai = run_command(f'{set_venv} && als genai --project-name=tests/genai_demo_decimal --using={prompt_path} --repaired-response={response_path}',
+    result_genai = run_command(f'{set_venv} && als genai --using={prompt_path} --repaired-response={response_path}',
         cwd=install_api_logic_server_path,
         msg=f'\ngenai_demo_decimals')
 
     prompt_path = 'dungeons_and_dragons'  # really a sqlacodegen test - classes table --> Class (reserved word)
     response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/dnd/dnd.response')
     assert response_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
-    result_genai = run_command(f'{set_venv} && als genai --project-name=tests/dnd --using={prompt_path} --repaired-response={response_path}',
+    result_genai = run_command(f'{set_venv} && als genai --using={prompt_path} --repaired-response={response_path}',
         cwd=install_api_logic_server_path,
         msg=f'\ndungeons_and_dragons')
 
@@ -1106,14 +1105,14 @@ if Config.do_test_multi_reln:
     prompt_path = 'time_cards_decimal'  # really a sqlacodegen test - classes table --> Class (reserved word)
     response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/time_cards/time_card_decimal/genai.response')
     assert response_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
-    result_genai = run_command(f'{set_venv} && als genai --project-name=tests/dnd --using={prompt_path} --repaired-response={response_path}',
+    result_genai = run_command(f'{set_venv} && als genai --using={prompt_path} --repaired-response={response_path}',
         cwd=install_api_logic_server_path,
         msg=f'\ntime cards decimal')    
 
     prompt_path = 'time_cards_kw'  # really a sqlacodegen test - classes table --> Class (reserved word)
     response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/time_cards/time_card_decimal/genai.response')
     assert response_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
-    result_genai = run_command(f'{set_venv} && als genai --project-name=tests/time_card_decimal --using={prompt_path} --repaired-response={response_path}',
+    result_genai = run_command(f'{set_venv} && als genai --using={prompt_path} --repaired-response={response_path}',
         cwd=install_api_logic_server_path,
         msg=f'\ntime cards keyword')    
 
@@ -1121,7 +1120,7 @@ if Config.do_test_multi_reln:
     prompt_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/airport/airport_4.prompt')
     response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/airport/airport_4.response')
     assert prompt_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
-    result_genai = run_command(f'{set_venv} && als genai --project-name=tests/airport_4 --using={prompt_path} --repaired-response={response_path}',
+    result_genai = run_command(f'{set_venv} && als genai --using={prompt_path} --repaired-response={response_path}',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate airport_4')
     start_api_logic_server(project_name="airport_4")
@@ -1131,15 +1130,17 @@ if Config.do_test_multi_reln:
     # see https://apilogicserver.github.io/Docs/Sample-Genai/#what-just-happened
     prompt_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/airport/airport_10.prompt')
     response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/airport/airport_10.response')
+    # grr - creates project next to prompt; repeat locally as:
+    # als genai --using=system/genai/examples/airport/airport_4.prompt --repaired-response=system/genai/examples/airport/airport_4.response
     assert prompt_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
-    result_genai = run_command(f'{set_venv} && als genai --project-name=tests/airport_10 --using={prompt_path} --repaired-response={response_path}',
+    result_genai = run_command(f'{set_venv} && als genai --using={prompt_path} --repaired-response={response_path}',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate airport_10')
     start_api_logic_server(project_name="airport_10")
     stop_server(msg="*** airport TESTS COMPLETE ***\n")
 
 if Config.do_create_shipping:  # optionally, start it manually (eg, with breakpoints)
-    result_create = run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/Shipping --{db_url}=shipping',
+    result_create = run_command(f'{set_venv} && ApiLogicServer create --{project_name}=Shipping --{db_url}=shipping',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate Shipping at: {str(install_api_logic_server_path)}')
 if Config.do_run_shipping:
@@ -1178,15 +1179,15 @@ if Config.do_rebuild_tests:
 if Config.do_other_sqlite_databases:
     chinook_path = get_api_logic_server_src_path().joinpath('api_logic_server_cli').joinpath('database').joinpath('Chinook_Sqlite.sqlite')
     chinook_url = f'sqlite:///{chinook_path}'
-    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/chinook_sqlite --{db_url}={chinook_url}',
+    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=chinook_sqlite --{db_url}={chinook_url}',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate chinook_sqlite at: {str(install_api_logic_server_path)}')
-    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/classicmodels_sqlite --{db_url}=classicmodels',
+    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=classicmodels_sqlite --{db_url}=classicmodels',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate classicmodels.sqlite at: {str(install_api_logic_server_path)}')
     start_api_logic_server(project_name='classicmodels_sqlite')
     stop_server(msg="classicmodels_sqlite\n")
-    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/todo_sqlite --{db_url}=todo',
+    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=todo_sqlite --{db_url}=todo',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate todo.sqlite at: {str(install_api_logic_server_path)}')
     start_api_logic_server(project_name='todo_sqlite')
@@ -1195,7 +1196,7 @@ if Config.do_other_sqlite_databases:
 if Config.do_include_exclude:
     filter_path = str(get_api_logic_server_src_path().joinpath('api_logic_server_cli/database'))
 
-    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/include_exclude_nw --{db_url}=nw- --{include_tables}={filter_path}/table_filters_tests_nw.yml',
+    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=include_exclude_nw --{db_url}=nw- --{include_tables}={filter_path}/table_filters_tests_nw.yml',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate include_exclude_typical at: {str(install_api_logic_server_path)}')
     verify_include_models( project_name='include_exclude_nw',
@@ -1204,7 +1205,7 @@ if Config.do_include_exclude:
     start_api_logic_server(project_name='include_exclude_nw') 
     stop_server(msg="include_exclude_nw\n")
 
-    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/include_exclude_nw_1 --{db_url}=nw- --{include_tables}={filter_path}/table_filters_tests_nw_1.yml',
+    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=include_exclude_nw_1 --{db_url}=nw- --{include_tables}={filter_path}/table_filters_tests_nw_1.yml',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate include_exclude_typical at: {str(install_api_logic_server_path)}')
     verify_include_models( project_name='include_exclude_nw_1',
@@ -1213,7 +1214,7 @@ if Config.do_include_exclude:
     start_api_logic_server(project_name='include_exclude_nw_1')
     stop_server(msg="include_exclude_nw_1\n")
 
-    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/include_exclude --{db_url}=table_filters_tests --include_tables={filter_path}/table_filters_tests.yml',
+    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=include_exclude --{db_url}=table_filters_tests --include_tables={filter_path}/table_filters_tests.yml',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate include_exclude at: {str(install_api_logic_server_path)}')
     verify_include_models( project_name='include_exclude',
@@ -1221,7 +1222,7 @@ if Config.do_include_exclude:
     start_api_logic_server(project_name='include_exclude')
     stop_server(msg="include_exclude\n")
 
-    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/include_exclude_typical --{db_url}=table_filters_tests --include_tables={filter_path}/table_filters_tests_typical.yml',
+    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=include_exclude_typical --{db_url}=table_filters_tests --include_tables={filter_path}/table_filters_tests_typical.yml',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate include_exclude_typical at: {str(install_api_logic_server_path)}')
     verify_include_models( project_name='include_exclude_typical',
@@ -1231,8 +1232,8 @@ if Config.do_include_exclude:
 
 
 if Config.do_budget_app_test:
-    budget_app_project_path = install_api_logic_server_path.joinpath('tests/BudgetApp')
-    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/BudgetApp --{db_url}=BudgetApp',
+    budget_app_project_path = install_api_logic_server_path.joinpath('BudgetApp')
+    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=BudgetApp --{db_url}=BudgetApp',
             cwd=install_api_logic_server_path,
             msg=f'\nCreate BudgetApp at: {str(install_api_logic_server_path)}')    
     start_api_logic_server(project_name="BudgetApp")
@@ -1258,8 +1259,8 @@ if Config.do_budget_app_test:
     stop_server(msg="*** BudgetApp TEST COMPLETE ***\n")
 
 if Config.do_allocation_test:
-    allocation_project_path = install_api_logic_server_path.joinpath('tests/Allocation')
-    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/Allocation --{db_url}=allocation',
+    allocation_project_path = install_api_logic_server_path.joinpath('Allocation')
+    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=Allocation --{db_url}=allocation',
             cwd=install_api_logic_server_path,
             msg=f'\nCreate Allocation at: {str(install_api_logic_server_path)}')    
     start_api_logic_server(project_name="Allocation")
@@ -1278,7 +1279,7 @@ if Config.do_allocation_test:
 
 if Config.do_docker_mysql:
     result_docker_mysql_classic = run_command(
-        f"{set_venv} && ApiLogicServer create --{project_name}=tests/classicmodels --{db_url}=mysql+pymysql://root:p@{db_ip}:3306/classicmodels",
+        f"{set_venv} && ApiLogicServer create --{project_name}=classicmodels --{db_url}=mysql+pymysql://root:p@{db_ip}:3306/classicmodels",
         cwd=install_api_logic_server_path,
         msg=f'\nCreate MySQL classicmodels at: {str(install_api_logic_server_path)}')
     check_command(result_docker_mysql_classic) 
@@ -1286,8 +1287,8 @@ if Config.do_docker_mysql:
     stop_server(msg="classicmodels\n")
     
 if Config.do_docker_sqlserver:  # CAUTION: see comments below
-    command = f"{set_venv} && ApiLogicServer create --{project_name}=tests/TVF --{extended_builder}=$ --{db_url}='mssql+pyodbc://sa:Posey3861@{db_ip}:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'"
-    command = f"{set_venv} && ApiLogicServer create --{project_name}=tests/TVF --{extended_builder}=$ --{db_url}=mssql+pyodbc://sa:Posey3861@{db_ip}:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no"
+    command = f"{set_venv} && ApiLogicServer create --{project_name}=TVF --{extended_builder}=$ --{db_url}='mssql+pyodbc://sa:Posey3861@{db_ip}:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'"
+    command = f"{set_venv} && ApiLogicServer create --{project_name}=TVF --{extended_builder}=$ --{db_url}=mssql+pyodbc://sa:Posey3861@{db_ip}:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no"
     result_docker_sqlserver = run_command(
         command,
         cwd=install_api_logic_server_path,
@@ -1296,8 +1297,8 @@ if Config.do_docker_sqlserver:  # CAUTION: see comments below
     validate_sql_server_types()
     stop_server(msg="TVF\n")
 
-    command = f"{set_venv} && ApiLogicServer create --{project_name}=tests/sqlserver --{db_url}='mssql+pyodbc://sa:Posey3861@{db_ip}:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'"
-    command = f"{set_venv} && ApiLogicServer create --{project_name}=tests/sqlserver --{db_url}=mssql+pyodbc://sa:Posey3861@{db_ip}:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no"
+    command = f"{set_venv} && ApiLogicServer create --{project_name}=sqlserver --{db_url}='mssql+pyodbc://sa:Posey3861@{db_ip}:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'"
+    command = f"{set_venv} && ApiLogicServer create --{project_name}=sqlserver --{db_url}=mssql+pyodbc://sa:Posey3861@{db_ip}:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no"
     result_docker_sqlserver = run_command(
         command,
         cwd=install_api_logic_server_path,
@@ -1318,7 +1319,7 @@ url above works, but this run config fails:
             "redirectOutput": true,
             "argsExpansion": "none",
             "args": ["create",
-                "--{project_name}=tests/../../servers/sqlserver-types",
+                "--{project_name}=../../servers/sqlserver-types",
 fails           "--{db_url}=mssql+pyodbc://sa:Posey3861@localhost:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no",
 
 works            --{db_url}='mssql+pyodbc://sa:Posey3861@localhost:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'",
@@ -1326,7 +1327,7 @@ works            --{db_url}='mssql+pyodbc://sa:Posey3861@localhost:1433/NORTHWND
 
 if Config.do_docker_postgres:
     result_docker_postgres = run_command(
-        f"{set_venv} && ApiLogicServer create --{project_name}=tests/postgres --{db_url}=postgresql://postgres:p@{db_ip}/postgres",
+        f"{set_venv} && ApiLogicServer create --{project_name}=postgres --{db_url}=postgresql://postgres:p@{db_ip}/postgres",
         cwd=install_api_logic_server_path,
         msg=f'\nCreate Postgres postgres (nw) at: {str(install_api_logic_server_path)}')
     start_api_logic_server(project_name='postgres')
@@ -1336,7 +1337,7 @@ if Config.do_docker_postgres:
     # this example shows how to use seriak, to fix it
     # see https://apilogicserver.github.io/Docs/Data-Model-Postgresql/#auto-generated-keys
     result_docker_postgres = run_command(
-        f"{set_venv} && ApiLogicServer create --{project_name}=tests/postgres-nw --{db_url}=postgresql://postgres:p@{db_ip}/northwind",
+        f"{set_venv} && ApiLogicServer create --{project_name}=postgres-nw --{db_url}=postgresql://postgres:p@{db_ip}/northwind",
         cwd=install_api_logic_server_path,
         msg=f'\nCreate Postgres postgres (nw) at: {str(install_api_logic_server_path)}')
     start_api_logic_server(project_name='postgres-nw')
@@ -1347,14 +1348,14 @@ if Config.do_docker_postgres_auth:
     # ApiLogicServer add-auth --project_name=. --db_url=postgresql://postgres:p@localhost/authdb
     # postgres_path = install_api_logic_server_path.joinpath('postgres')
     result_docker_postgres = run_command(
-        f"{set_venv} && ApiLogicServer add-auth --project-name=tests/postgres --{db_url}=postgresql://postgres:p@{db_ip}/authdb",
+        f"{set_venv} && ApiLogicServer add-auth --project-name=postgres --{db_url}=postgresql://postgres:p@{db_ip}/authdb",
         cwd= install_api_logic_server_path,
         msg=f'\add-auth Postgres postgres (nw) at: {str(install_api_logic_server_path)}')
     start_api_logic_server(project_name='postgres')
     stop_server(msg="postgres\n")
 
     result_docker_postgres = run_command(
-        f"{set_venv} && ApiLogicServer add-auth --project-name=tests/postgres --provider-type=keycloak --{db_url}=auth",
+        f"{set_venv} && ApiLogicServer add-auth --project-name=postgres --provider-type=keycloak --{db_url}=auth",
         cwd= install_api_logic_server_path,
         msg=f'\add-auth Postgres postgres (nw) at: {str(install_api_logic_server_path)}')
     start_api_logic_server(project_name='postgres')
