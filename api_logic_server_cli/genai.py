@@ -674,13 +674,19 @@ def genai(using, db_url, repaired_response: bool, genai_version: str,
 
                 # save the temp files for diagnosis (eg, <resolved_project_name>_1)
                 manager_dir = Path(os.getcwd())  # rename save dir (append retry) for diagnosis
-                to_dir_save_dir = Path(manager_dir).joinpath(f'system/genai/temp/{resolved_project_name}')
-                to_dir_save_dir_retry = Path(manager_dir).joinpath(f'system/genai/temp/{resolved_project_name}_{try_number}')
+                resolved__project_name_parts = resolved_project_name
+                parts = resolved__project_name_parts.split('/')
+                # Return the last element
+                resolved_temp_project_name = parts[-1]
+                to_dir_save_dir = Path(manager_dir).joinpath(f'system/genai/temp/{resolved_temp_project_name}')
+                to_dir_save_dir_retry = Path(manager_dir).joinpath(f'system/genai/temp/{resolved_temp_project_name}_{try_number}')
                 if repaired_response != "":
-                    to_dir_save_dir_retry = Path(manager_dir).joinpath(f'system/genai/temp/{resolved_project_name}_retry')  
+                    to_dir_save_dir_retry = Path(manager_dir).joinpath(f'system/genai/temp/{resolved_temp_project_name}_retry')  
                 if to_dir_save_dir_retry.exists():
                     shutil.rmtree(to_dir_save_dir_retry)
                 # to_dir_save_dir.rename(to_dir_save_dir_retry) 
+                assert to_dir_save_dir.is_dir(), f"\nInternal Error - missing save directory: {to_dir_save_dir}"
+                # assert to_dir_save_dir_retry.is_dir(), f"\nInternal Error - missing retry directory: {to_dir_save_dir_retry}"
                 shutil.copytree(to_dir_save_dir, to_dir_save_dir_retry, dirs_exist_ok=True) 
 
                 failed = True

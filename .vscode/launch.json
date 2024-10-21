@@ -16,6 +16,17 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "  - Old (flat - no directories)",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/tests/build_and_test",
+            "env": {"APILOGICSERVER_AUTO_OPEN": ""},
+            "program": "build_load_and_testZ.py",
+            "redirectOutput": true,
+            "justMyCode": false,
+            "console": "integratedTerminal"
+        },
+        {
             "name": "  - BLT, Hold the Tomato",
             "type": "debugpy",
             "request": "launch",
@@ -541,6 +552,7 @@
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "args": ["genai",
+                "--project-name=tests/airport_4",
                 "--using=airport_4",
                 "--repaired-response=${workspaceFolder}/tests/test_databases/ai-created/airport/airport_4.response"],
             "console": "integratedTerminal"
