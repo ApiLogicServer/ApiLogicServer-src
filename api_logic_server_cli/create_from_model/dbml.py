@@ -90,6 +90,28 @@ class DBMLCreator(object):
 
         sys.path.append(self.mod_gen.project.os_cwd)
 
+        if do_table_descriptions := True:
+            if len(self.mod_gen.project.table_descriptions) > 0:
+                self.dbms_lines.append("Project DBML {")
+                self.dbms_lines.append("  Note: '''")
+                for each_resource_name in self.mod_gen.resource_list:
+                    if self.do_process_resource(each_resource_name):
+                        each_resource : Resource = self.mod_gen.resource_list[each_resource_name]
+                        description = "missing (requires genai creation)"
+                        table_descriptions = self.mod_gen.project.table_descriptions
+                        if each_resource.table_name in table_descriptions:
+                            description = table_descriptions[each_resource.table_name]
+                            description = description.replace("Table representing ", "")
+                            description = description.replace("Table storing ", "")
+                            description = description.replace("This table stores ", "")
+                            description = description.replace("This table lists ", "")
+                            description = description.replace("This table records ", "")
+                        self.dbms_lines.append(f"{each_resource_name}: {description}")
+                self.dbms_lines.append("'''")
+                self.dbms_lines.append("}")
+                self.dbms_lines.append("")
+
+
         for each_resource_name in self.mod_gen.resource_list:
             if self.do_process_resource(each_resource_name):
                 each_resource : Resource = self.mod_gen.resource_list[each_resource_name]
