@@ -100,6 +100,7 @@ class DBMLCreator(object):
                         description = "missing (requires genai creation)"
                         table_descriptions = self.mod_gen.project.table_descriptions
                         if each_resource.table_name in table_descriptions:
+                            # als model desc's: api_logic_server_cli/sqlacodegen_wrapper/sqlacodegen/sqlacodegen/codegen.py
                             description = table_descriptions[each_resource.table_name]
                             description = description.replace("Table representing ", "")
                             description = description.replace("Table storing ", "")
