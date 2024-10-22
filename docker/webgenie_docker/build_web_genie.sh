@@ -84,5 +84,6 @@ set +x
 
 cd $SRC_DIR
 echo "\npwd: $(pwd)\n"
-echo "\nrun: docker run -it --rm --name webgenie -p 8282:80  --env-file docker/webgenie_docker/webgen_ai_docker/webgenai.env  -v ./../../webg-projects:/opt/projects apilogicserver/web_genai\n"
+echo "\nrun: docker run -it --rm --name webgenie -p 8282:80  --env-file ./../../webg-config/web_genai.txt  -v ./../../webg-projects:/opt/projects apilogicserver/web_genai
+\n"
 exit 0
