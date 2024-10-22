@@ -1046,6 +1046,20 @@ if Config.do_test_api_logic_project_with_auth:
 '''
 
 if Config.do_test_genai:
+    # smoke test, part 1: als genai --using=system/genai/examples/genai_demo/genai_demo.prompt
+    create_in = install_api_logic_server_path
+    test_name = 'genai_demo'
+    prompt_path = install_api_logic_server_path.joinpath('system/genai/examples/genai_demo/genai_demo.prompt')
+    assert prompt_path.exists() , f'{test_name} error: prompt path not found: {str(prompt_path)}'
+    do_test_genai_cmd = f'{set_venv} && als genai --project-name={test_name} --using={prompt_path}'
+    result_genai = run_command(do_test_genai_cmd,
+        cwd=create_in,
+        msg=f'\nCreate {test_name}')
+    # genai_demo_path = install_api_logic_server_path.joinpath(test_name)
+    start_api_logic_server(project_name=f'../{test_name}')
+    stop_server(msg=f"*** {test_name} TESTS COMPLETE ***\n")
+
+
     db_loc = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/genai_demo/genai_demo_models_with_addr.sqlite')
     db_loc_str = str(db_loc)
     genai_with_address = f'sqlite:////{db_loc_str}'
