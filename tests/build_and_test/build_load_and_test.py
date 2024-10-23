@@ -253,7 +253,14 @@ def run_command(cmd: str, msg: str = "", new_line: bool=False,
         if special_message.startswith('\nCreate MySQL classicmodels'):
             msg += "\n\nOften caused by docker DBs not running: see https://apilogicserver.github.io/Docs/Architecture-Internals/#do_docker_database"
 
-        check_command(result, msg)
+        if 'als genai' not in cmd_to_run:
+            check_command(result, msg)
+        else:
+            if result.returncode != 0:
+                print(f'\n\n==> GenAI Failed {msg} on {cmd_to_run}')
+                print_byte_string("\n\n==> run_command Console Log:", result.stdout)
+                print_byte_string("\n\n==> Error Log:", result.stderr)
+                raise ValueError("Traceback detected")
     except Exception as err:
         print(f'\n\n*** Failed {err} on {cmd}')
         tbe = traceback.TracebackException.from_exception(err)
