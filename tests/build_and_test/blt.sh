@@ -18,6 +18,8 @@ if [ $# -eq 0 ]
 echo "\nRunner Build, Load and Test Running"
 echo "\n"
 
+export APILOGICSERVER_TEST_GENAI=False
+
 python3 tests/build_and_test/build_load_and_test.py
 
 echo "\nRunner Build, Load and Test completed: $?\n"
