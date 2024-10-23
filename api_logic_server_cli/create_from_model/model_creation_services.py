@@ -825,6 +825,8 @@ class ModelCreationServices(object):
                     "Ab" not in str(each_class_def_str)):
                 resource_name = each_cls_member[0]
                 resource_class = each_cls_member[1]
+                if not hasattr(resource_class, '__tablename__'):
+                    continue
                 table_name = resource_class.__tablename__  # FIXME _s_collection_name
                 if table_name in ["CategoryTableNameTest", "Employee"]:
                     debug_str = "Excellent breakpoint"

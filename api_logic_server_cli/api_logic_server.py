@@ -2149,8 +2149,9 @@ from database import <project.bind_key>_models
             log.debug(f"  Proceed as described in the readme\n")
         else:
             if (is_docker()):
-                os.rename(self.project_directory_path.joinpath('.devcontainer-option'),
-                          self.project_directory_path.joinpath('.devcontainer'))
+                dc_option = self.project_directory_path.joinpath('.devcontainer-option')
+                if os.path.exists(dc_option):
+                    os.rename(dc_option, self.project_directory_path.joinpath('.devcontainer'))
                 if os.getenv('CODESPACES'):
                     log.info(f'\nCustomize right here, in Browser/VSCode - just as you would locally')
                     log.info(f'Save customized project to GitHub')
