@@ -83,6 +83,8 @@ class GenAI(object):
         self.project.from_model = f'system/genai/temp/create_db_models.py' # we always write the model to this file
         self.ensure_system_dir_exists()  # ~ manager, so we can write to system/genai/temp
         self.delete_temp_files()
+        self.post_error = ""
+        """ eg, if response contains table defs, save_prompt_messages_to_system_genai_temp_project raises an exception to trigger retry """
         self.prompt = ""
         """ `--using` - can come from file or text argument """
 
@@ -95,6 +97,8 @@ class GenAI(object):
             api_version = f'{self.project.genai_version}'  # eg, "gpt-4o"
             data = {"model": api_version, "messages": self.messages}
             response = requests.post(url, headers=self.headers, json=data)
+            # todo - review request structured output using openapi pkg
+            # but, does not create the .py code to create database via SQLAlchemy
             create_db_models = self.get_and_save_raw_response_data(response)
         else: # for retry from corrected response... eg system/genai/temp/chatgpt_retry.response
             log.debug(f'\nUsing [corrected] response from: {self.project.genai_repaired_response}')
@@ -109,6 +113,7 @@ class GenAI(object):
         self.save_prompt_messages_to_system_genai_temp_project()  # save prompts, response and models.py
         if project.project_name_last_node == 'genai_demo_conversation':
             debug_string = "good breakpoint - check create_db_models.py"
+        pass # if we've set self.post_error, we'll raise an exception to trigger retry
         pass # return to api_logic_server.ProjectRun to create db/project from create_db_models.py
 
     def delete_temp_files(self):
@@ -261,7 +266,7 @@ class GenAI(object):
             copied_path = shutil.copytree(src=from_dir, dst=to_dir, dirs_exist_ok=True)
 
     def get_logic_from_prompt(self) -> list[str]:
-        """ Get logic from ChatGPT prompt
+        """ Get logic from ChatGPT prompt (code after "Enforce")
 
         Args:
 
@@ -331,7 +336,7 @@ class GenAI(object):
 
         logic_file = self.project.project_directory_path.joinpath('logic/declare_logic.py')
         in_logic = False
-        translated_logic = "\n    # Logic from GenAI:\n\n"
+        translated_logic = "\n    # Logic from GenAI: (or, use your IDE w/ code completion)n\n"
         for each_line in self.create_db_models.split('\n'):
             if in_logic:
                 if each_line.startswith('    '):    # indent => still in logic
@@ -439,6 +444,9 @@ class GenAI(object):
                         got: or DECIMAL('
                         needed: or decimal.Decimal('0.00')
                 '''
+                if "= Table(" in each_line:  # tests/test_databases/ai-created/time_cards/time_card_kw_arg/genai.response
+                    log.debug(f'.. fix_and_write_model_file detects table - raise excp to trigger retry')
+                    self.post_error = "ChatGPT Response contains table (not class) definitions: " + each_line
                 if 'sqlite:///' in each_line:  # must be sqlite:///system/genai/temp/create_db_models.sqlite
                     current_url_rest = each_line.split('sqlite:///')[1]
                     quote_type = "'"

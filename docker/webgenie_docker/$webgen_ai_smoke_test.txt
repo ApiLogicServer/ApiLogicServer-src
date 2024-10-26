@@ -1,8 +1,9 @@
 The local-install version of builds are tested with...
     - Run Config: GenAI tests (at top)
 
-After building the local wg, I test it by creating 2 projects,
-    which mimic <manager>/README.md...
+After building the local wg, 
+    1. Start: docker run -it --rm --name webgenie -p 8282:80  --env-file ./../../webg-config/web_genai.txt  -v ./../../webg-projects:/opt/projects apilogicserver/web_genai
+    2. I test it by creating 2 projects, which mimic <manager>/README.md...
 
 
 TEST 1

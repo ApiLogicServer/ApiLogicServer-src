@@ -1,5 +1,5 @@
 ---
-version info: 0.7 (9/15/2024)
+version info: 0.8 (10/24/2024)
 ---
 ## Welcome to API Logic Server
 
@@ -152,7 +152,7 @@ als genai --using=system/genai/examples/genai_demo/genai_demo.prompt
 
 
 ```bash
-als genai --using=genai_demo.prompt --repaired-response=system/genai/temp/chatgpt_retry.response
+als genai --using=genai_demo.prompt --repaired-response=system/genai/examples/genai_demo/genai_demo_conversation/genai_demo_conversation_005.response-example
 ```
 </br>
 
@@ -225,7 +225,7 @@ als create --project-name=genai_demo --from-model=system/genai/temp/create_db_mo
 Or, correct the chatgpt response, and
 
 ```bash
-als genai --using=genai_demo.prompt --repaired-response=system/genai/temp/chatgpt_retry.response
+als genai --using=genai_demo.prompt --repaired-response=system/genai/examples/genai_demo/genai_demo.response_example
 ```
 
 We have seen failures such as:
