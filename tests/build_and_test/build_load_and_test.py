@@ -1073,7 +1073,6 @@ if Config.do_test_genai:
         stop_server(msg=f"*** {test_name} TESTS COMPLETE ***\n")
     else:
         print("Skipping GenAI tests as per environment variable APILOGICSERVER_TEST_GENAI")
-    exit(0)
 
     db_loc = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/genai_demo/genai_demo_models_with_addr.sqlite')
     db_loc_str = str(db_loc)

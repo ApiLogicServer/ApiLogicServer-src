@@ -37,17 +37,19 @@ def declare_logic():
 
     from logic_bank.logic_bank import Rule
 
-    # 1. Customer.Balance <= CreditLimit
-    Rule.constraint(validate=Customer,
-                    error_msg="balance exceeds credit limit",
-                    as_condition=lambda row: row.Balance <= row.CreditLimit)
+    from logic.logic_discovery.auto_discovery import discover_logic
+    discover_logic()
 
-    # 2. Customer.Balance = Sum(Order.AmountTotal where date shipped is null)
-    Rule.sum(derive=Customer.Balance, as_sum_of=Order.AmountTotal,
-            where=lambda row: row.ShipDate is None)
-
-    # 3. Order.AmountTotal = Sum(Items.Amount)
+    # Logic from GenAI: (or, use your IDE w/ code completion)n
+    Rule.sum(derive=Customer.Balance, as_sum_of=Order.AmountTotal, where=lambda row: row.ShipDate is None)
     Rule.sum(derive=Order.AmountTotal, as_sum_of=Item.Amount)
+    # Rule.formula(derive=Item.amount, as_expression=lambda row: row.quantity * row.unit_price)
+    Rule.copy(derive=Item.UnitPrice, from_parent=Product.UnitPrice)
+    Rule.constraint(validate=Customer,
+                    as_condition=lambda row: row.Balance <= row.CreditLimit,
+                    error_msg="Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})")
+
+    # End Logic from GenAI
 
     def derive_amount(row: Item, old_row: Item, logic_row: LogicRow):
         amount = row.Quantity * row.UnitPrice
@@ -57,9 +59,6 @@ def declare_logic():
 
     # 4. Items.Amount = Quantity * UnitPrice
     Rule.formula(derive=Item.Amount, calling=derive_amount)
-
-    # 5. Store the Items.UnitPrice as a copy from Product.UnitPrice
-    Rule.copy(Item.UnitPrice, from_parent=Product.UnitPrice)
 
     #als: Demonstrate that logic == Rules + Python (for extensibility)
 
