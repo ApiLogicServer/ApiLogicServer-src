@@ -10,8 +10,6 @@ import shutil
 
 log = logging.getLogger(__name__)
 
-k_update_prior_response = ', by updating the prior response.'
-""" , by updating the prior response. """
 
 class GenAI(object):
     """ Create project from genai prompt(s).  
@@ -137,7 +135,6 @@ class GenAI(object):
         log.debug(f'.. conv[000] presets: {starting_message}')
         log.debug(f'.. conv[001] presets: {learning_requests[0]["content"][:30]}...')
         return len(learning_requests)
-
     
     def get_prompt_messages(self) -> List[Dict[str, str]]:
         """ Get prompt from file, dir (conversation) or text argument
@@ -183,7 +180,7 @@ class GenAI(object):
                         request_count += 1      # rebuild response with *all* tables
                         if request_count > 1:   # Run Config: genai AUTO DEALERSHIP CONVERSATION
                             if 'updating the prior response' not in prompt:
-                                prompt += k_update_prior_response                    
+                                prompt = self.get_prompt__with_inserts(raw_prompt=prompt, for_iteration=True)                  
                     prompt_messages.append( {"role": role, "content": prompt})
                 else:
                     log.debug(f'.. .. conv ignores: {os.path.basename(each_file)}')
@@ -223,7 +220,7 @@ class GenAI(object):
                         learning_requests.append( {"role": "user", "content": learning_request_lines})
         return learning_requests  # TODO - what if no learning requests?
     
-    def get_prompt__with_inserts(self, raw_prompt: str) -> str:
+    def get_prompt__with_inserts(self, raw_prompt: str, for_iteration: bool = False) -> str:
         """ prompt-engineering: insert db-specific logic into prompt 
             raw_prompt: the prompt from file or text argument
         """
@@ -241,10 +238,13 @@ class GenAI(object):
             prompt_inserts = f'mysql_inserts.prompt'
 
         if prompt_inserts != "*":
-            assert Path(f'system/genai/prompt_inserts/{prompt_inserts}').exists(), \
-                f"Missing prompt_inserts file: {prompt_inserts}"  # eg api_logic_server_cli/prototypes/manager/system/genai/prompt_inserts/sqlite_inserts.prompt
-            log.debug(f'get_prompt__with_inserts: {str(os.getcwd())} / {prompt_inserts}')
-            with open(f'system/genai/prompt_inserts/{prompt_inserts}', 'r') as file:
+            prompt_eng_file_name = f'system/genai/prompt_inserts/{prompt_inserts}'
+            if for_iteration:
+                prompt_eng_file_name = prompt_eng_file_name.replace('.', '_iterations.')
+            assert Path(prompt_eng_file_name).exists(), \
+                f"Missing prompt_inserts file: {prompt_eng_file_name}"  # eg api_logic_server_cli/prototypes/manager/system/genai/prompt_inserts/sqlite_inserts.prompt
+            log.debug(f'get_prompt__with_inserts: {str(os.getcwd())} / {prompt_eng_file_name}')
+            with open(prompt_eng_file_name, 'r') as file:
                 pre_post = file.read()  # eg, Use SQLAlchemy to create a sqlite database named system/genai/temp/create_db_models.sqlite, with
             prompt_result = pre_post.replace('{{prompt}}', raw_prompt)
         return prompt_result
@@ -517,24 +517,25 @@ class GenAI(object):
             if to_dir_save_dir.exists():
                 shutil.rmtree(to_dir_save_dir)
             os.makedirs(to_dir_save_dir, exist_ok=True)
-            log.debug(f'save_prompt_messages_to_system_genai_temp_project()')
+            log.debug(f'save_prompt_messages_to_system_genai_temp_project() - {str(to_dir_save_dir)}')
 
             if self.project.genai_repaired_response == '':  # normal path, from --using
                 if write_prompt := True:
                     pass
                     file_num = 0
+                    flat_project_name = Path(self.project.project_name).stem  # in case project is dir/project-name
                     for each_message in self.messages:
                         suffix = 'prompt'
                         if each_message['role'] == 'system':
                             suffix = 'response' 
-                        file_name = f'{self.project.project_name}_{str(file_num).zfill(3)}.{suffix}'
+                        file_name = f'{flat_project_name}_{str(file_num).zfill(3)}.{suffix}'
                         file_path = to_dir_save_dir.joinpath(file_name)
                         log.debug(f'.. saving[{file_name}]  - {each_message["content"][:30]}...')
                         with open(file_path, "w") as message_file:
                             message_file.write(each_message['content']) 
                         file_num += 1
                     suffix = 'response'  # now add the this response
-                    file_name = f'{self.project.project_name}_{str(file_num).zfill(3)}.{suffix}'
+                    file_name = f'{flat_project_name}_{str(file_num).zfill(3)}.{suffix}'  # FIXME 
                     file_path = to_dir_save_dir.joinpath(file_name)
                     log.debug(f'.. saving[{file_name}]  - {each_message["content"][:30]}...')
                     with open(file_path, "w") as message_file:
@@ -542,7 +543,7 @@ class GenAI(object):
                 shutil.copyfile(self.project.from_model, to_dir_save_dir.joinpath('create_db_models.py'))
         except Exception as inst:
             # FileNotFoundError(2, 'No such file or directory')
-            log.error(f"\n\nError {inst} creating project diagnostic files: {str(gen_temp_dir)}\n\n")
+            log.error(f"\n\nError: {inst} \n..creating diagnostic files into dir: {str(gen_temp_dir)}\n\n")
             pass  # intentional try/catch/bury - it's just diagnostics, so don't fail
         debug_string = "good breakpoint - return to main driver, and execute create_db_models.py"
 
@@ -632,6 +633,7 @@ def genai(using, db_url, repaired_response: bool, genai_version: str,
                     project_name=resolved_project_name, db_url=db_url)
         log.info(f"GENAI successful")  
     else:
+        failed = False
         while try_number <= retries:
             try:
                 failed = False
@@ -695,6 +697,9 @@ def genai(using, db_url, repaired_response: bool, genai_version: str,
                 # to_dir_save_dir.rename(to_dir_save_dir_retry) 
                 assert to_dir_save_dir.is_dir(), f"\nInternal Error - missing save directory: {to_dir_save_dir}"
                 # assert to_dir_save_dir_retry.is_dir(), f"\nInternal Error - missing retry directory: {to_dir_save_dir_retry}"
+                log.debug(f'.. copying work files...')
+                log.debug(f'.... from: {to_dir_save_dir}')
+                log.debug(f'.... to:   {to_dir_save_dir_retry}')
                 shutil.copytree(to_dir_save_dir, to_dir_save_dir_retry, dirs_exist_ok=True) 
 
                 failed = True
@@ -704,8 +709,9 @@ def genai(using, db_url, repaired_response: bool, genai_version: str,
                     failed = False
                 else:
                     try_number += 1
+                    log.debug(f"\n\nRetry Genai #{try_number}\n")
             pass # retry (retries times)
-        if failed:
+        if failed == True:  # retries exhausted (if failed: threw "an integer is required" ??
             log.error(f"\n\nGenai Failed (Retries: {retries})") 
             exit(1) 
         log.info(f"GENAI successful on try {try_number}")  

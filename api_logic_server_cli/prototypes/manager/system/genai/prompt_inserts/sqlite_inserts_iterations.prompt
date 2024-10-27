@@ -1,8 +1,9 @@
-Use SQLAlchemy to create a sqlite database named system/genai/temp/create_db_models.sqlite, to
 
-{{prompt}}.
+{{prompt}}
 
-Hints: use autonum keys (for all tables - including for link/join/junction/intersection tables), allow nulls, foreign keys, no check constraints.
+Update the prior response.
+
+Hints: use autonum keys (for all tables - including for link/join/junction/intersection/relate objects), allow nulls, foreign keys, no check constraints.
 
 Be sure to create classes, never tables.
 
