@@ -1,7 +1,7 @@
 
 {{prompt}}
 
-Update the prior response.
+Update the prior response - be sure not to lose classes and test data already created.
 
 Hints: use autonum keys (for all tables - including for link/join/junction/intersection/relate objects), allow nulls, foreign keys, no check constraints.
 
