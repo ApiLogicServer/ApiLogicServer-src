@@ -247,6 +247,20 @@ class GenAI(object):
             with open(prompt_eng_file_name, 'r') as file:
                 pre_post = file.read()  # eg, Use SQLAlchemy to create a sqlite database named system/genai/temp/create_db_models.sqlite, with
             prompt_result = pre_post.replace('{{prompt}}', raw_prompt)
+
+            prompt_lines = prompt_result.split('\n')
+            prompt_line_number = 0
+            for each_line in prompt_lines:
+                if "LogicBank" in each_line:
+                    log.debug(f'.. inserted: {each_line}')
+                    prompt_eng_logic_file_name = f'system/genai/prompt_inserts/logic_inserts.prompt'
+                    with open(prompt_eng_logic_file_name, 'r') as file:
+                        prompt_logic = file.read()  # eg, Use SQLAlchemy to...
+                    prompt_lines[prompt_line_number] = prompt_logic
+                    break
+                prompt_line_number += 1
+            prompt_result = "\n".join(prompt_lines)  # back to a string
+            pass
         return prompt_result
     
     def ensure_system_dir_exists(self):
@@ -336,7 +350,7 @@ class GenAI(object):
 
         logic_file = self.project.project_directory_path.joinpath('logic/declare_logic.py')
         in_logic = False
-        translated_logic = "\n    # Logic from GenAI: (or, use your IDE w/ code completion)n\n"
+        translated_logic = "\n    # Logic from GenAI: (or, use your IDE w/ code completion)\n\n"
         for each_line in self.create_db_models.split('\n'):
             if in_logic:
                 if each_line.startswith('    '):    # indent => still in logic

@@ -611,6 +611,19 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "    - Create blt/genai_demo from Prompt/ChatGPT",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["genai",
+                "--using=${workspaceFolder}/api_logic_server_cli/prototypes/manager/system/genai/examples/genai_demo/genai_demo.prompt",
+                "--project-name=genai_demo"],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "    - Create blt/genai_demo_decimal from RESPONSE",
             "type": "debugpy",
             "request": "launch",
