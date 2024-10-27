@@ -2,7 +2,7 @@ Create a system with customers, orders, items and products.
 
 Include a notes field for orders.
 
-Use LogicBank to create declare_logic() to enforce the Check Credit requirement (do not generate check constraints):
+Use LogicBank to enforce the Check Credit requirement:
 1. Customer.balance <= credit_limit
 2. Customer.balance = Sum(Order.amount_total where date_shipped is null)
 3. Order.amount_total = Sum(Item.amount)
