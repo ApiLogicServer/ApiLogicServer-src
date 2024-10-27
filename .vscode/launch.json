@@ -584,6 +584,19 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "    - Create blt/iso_test from Prompt",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["genai",
+                "--using=${workspaceFolder}/tests/genai_tests/iso_test",
+                "--project-name=tests-genai/iso_test"],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "    - Create blt/dnd from RESPONSE",
             "type": "debugpy",
             "request": "launch",
@@ -595,19 +608,6 @@
                 "genai",
                 "--repaired-response=${workspaceFolder}/tests/test_databases/ai-created/dnd/dnd.response",
                 "--using=dnd"],
-            "console": "integratedTerminal"
-        },
-        {
-            "name": "    - Create blt/happy_cows from RESPONSE",
-            "type": "debugpy",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
-            "env": {"APILOGICSERVER_DEBUG": "True"},
-            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
-            "redirectOutput": true,
-            "args": [
-                "genai",
-                "--using=${workspaceFolder}/tests/test_databases/ai-created/happy_cows"],
             "console": "integratedTerminal"
         },
         {
