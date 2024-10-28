@@ -1,0 +1,122 @@
+Certainly! Let's incorporate the business logic using LogicBank, ensuring we add any necessary derived attributes to our model and adjust the test data accordingly. We'll also include the function `declare_logic` which utilizes LogicBank rules.
+
+```python
+from sqlalchemy import create_engine, Column, Integer, String, Float, ForeignKey, Date
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from datetime import datetime
+
+Base = declarative_base()
+
+
+class Customer(Base):
+    """
+    description: Table for storing customer information.
+    """
+    __tablename__ = 'customers'
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=True)
+    credit_limit = Column(Float, nullable=True)
+    balance = Column(Float, default=0.0)  # Added for logic rule
+
+
+class Order(Base):
+    """
+    description: Table for orders linked to customers.
+    """
+    __tablename__ = 'orders'
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    customer_id = Column(Integer, ForeignKey('customers.id'), nullable=True)
+    date_shipped = Column(Date, nullable=True)
+    notes = Column(String, nullable=True)
+    amount_total = Column(Float, default=0.0)  # Added for logic rule
+
+
+class Product(Base):
+    """
+    description: Table for products.
+    """
+    __tablename__ = 'products'
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=True)
+    unit_price = Column(Float, nullable=True)
+
+
+class Item(Base):
+    """
+    description: Table for items linked to orders and products.
+    """
+    __tablename__ = 'items'
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    order_id = Column(Integer, ForeignKey('orders.id'), nullable=True)
+    product_id = Column(Integer, ForeignKey('products.id'), nullable=True)
+    quantity = Column(Integer, nullable=True)
+    unit_price = Column(Float, nullable=True)  # Added for logic rule
+    amount = Column(Float, default=0.0)  # Added for logic rule
+
+
+# Create an SQLite database
+engine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite')
+Base.metadata.create_all(engine)
+
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# Creating test data for tables
+customer1 = Customer(name="John Doe", credit_limit=5000.0, balance=0.0)
+customer2 = Customer(name="Jane Smith", credit_limit=10000.0, balance=0.0)
+session.add_all([customer1, customer2])
+session.commit()
+
+order1 = Order(customer_id=customer1.id, date_shipped=None, notes="Express delivery", amount_total=0.0)
+order2 = Order(customer_id=customer2.id, date_shipped=datetime.now().date(), notes="Standard delivery", amount_total=0.0)
+session.add_all([order1, order2])
+session.commit()
+
+product1 = Product(name="Laptop", unit_price=1000.0)
+product2 = Product(name="Smartphone", unit_price=500.0)
+session.add_all([product1, product2])
+session.commit()
+
+item1 = Item(order_id=order1.id, product_id=product1.id, quantity=2, unit_price=1000.0, amount=2000.0)
+item2 = Item(order_id=order1.id, product_id=product2.id, quantity=3, unit_price=500.0, amount=1500.0)
+item3 = Item(order_id=order2.id, product_id=product2.id, quantity=1, unit_price=500.0, amount=500.0)
+session.add_all([item1, item2, item3])
+session.commit()
+
+
+def declare_logic():
+    Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None)
+    Rule.sum(derive=Order.amount_total, as_sum_of=Item.amount)
+    Rule.formula(derive=Item.amount, as_expression=lambda row: row.quantity * row.unit_price)
+    Rule.copy(derive=Item.unit_price, from_parent=Product.unit_price)
+    Rule.constraint(validate=Customer,
+                    as_condition=lambda row: row.balance <= row.credit_limit,
+                    error_msg="Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})")
+
+```
+
+### Explanation of Changes and Additions:
+
+- **Data Model Updates**:
+  - Added `balance` to `Customer` to support business rules.
+  - Added `amount_total` to `Order` for summation logic.
+  - Added `unit_price` and `amount` to `Item` for business logic involving calculations and copying.
+
+- **Test Data Updates**:
+  - Initialized `balance` and `amount_total` manually since we're relying on LogicBank for automatic updates.
+  - Set `unit_price` and `amount` for each item directly based on test data consistency with products and orders.
+
+- **Business Logic (LogicBank)**:
+  - Implemented `declare_logic` function using LogicBank to define rules:
+    - Calculate `Customer.balance` as the sum of pending `Order.amount_total`.
+    - Sum `Order.amount_total` from `Item.amount`.
+    - Calculate `Item.amount` using `quantity * unit_price`.
+    - Copy `Product.unit_price` to `Item.unit_price`.
+    - Constraint to ensure `Customer.balance` does not exceed `credit_limit`.
+
+By following these guidelines, the data model is prepared with a skeleton for logical integrity checks and value derivations, mirroring the application requirements without executing the logic directly in the database.
