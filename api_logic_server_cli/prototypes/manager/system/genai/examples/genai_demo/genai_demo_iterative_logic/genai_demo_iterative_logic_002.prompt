@@ -1,0 +1,21 @@
+Use SQLAlchemy to create a sqlite database named system/genai/temp/create_db_models.sqlite, to
+
+Create a system with customers, orders, items and products.
+
+Do not generate any logic, including logic bank.
+
+Do not generate derived attributes such as Customer.balance, Customer.credit_limit, Order.amount_total, Item.unit_price, or Item.amount.
+
+Include a notes field for orders.
+
+Hints: use autonum keys (for all tables - including for link/join/junction/intersection tables), allow nulls, foreign keys, no check constraints.
+
+Remember that SQLite DateTime type only accepts Python datetime and date objects as input, 
+this means you can not enter string attributes where a date or datetime object is expected.
+
+Don't install additional packages.
+Don't use the faker pip package.
+
+Create some test data, use foreign key columns instead of relationship names for the data.  Do not print the test data.  Be sure to initialize derived attributes, but do not rely on Logic Bank.
+
+For each data model class, create a docstring describing the table, prefixed with 'description: '. 
