@@ -182,6 +182,7 @@ class GenAI(object):
         if self.project.genai_repaired_response == '':  # clean up unless retrying from chatgpt_original.response
             Path('system/genai/temp/chatgpt_original.response').unlink(missing_ok=True)
             Path('system/genai/temp/chatgpt_retry.response').unlink(missing_ok=True)
+            Path('system/genai/temp/create_db_models.sqlite').unlink(missing_ok=True)
     
     def create_presets(self, prompt_messages: List[Dict[str, str]]):
         """ Create presets - you are a data modelling expert, and logicbank api etc """
@@ -418,7 +419,8 @@ class GenAI(object):
         logic_file = self.project.project_directory_path.joinpath('logic/declare_logic.py')
         in_logic = False
         translated_logic = "\n    # Logic from GenAI: (or, use your IDE w/ code completion)\n\n"
-        for each_line in self.response_dict.rules:
+        for each_rule in self.response_dict.rules:
+            each_line = each_rule.code
             if 'declare_logic.py' not in each_line:
                 each_repaired_line = self.remove_logic_halluncinations(each_line=each_line)
                 if not each_repaired_line.startswith('    '):  # sometimes in indents, sometimes not
@@ -478,10 +480,15 @@ class GenAI(object):
         create_db_model_lines.extend(self.get_lines_from_file(f'system/genai/create_db_models_inserts/create_db_models_imports.py'))
 
         models = self.response_dict.models
+        did_base = False
         for each_model in models:
             model_lines = self.get_model_class_lines(model=each_model)
             for each_line in model_lines:
-                each_fixed_line = each_line.replace('sa.', '')
+                each_fixed_line = each_line.replace('sa.', '')      # sometimes it puts sa. in front of Column
+                if 'Base = declarative_base()' in each_fixed_line:  # sometimes created for each class
+                    if did_base:
+                        each_fixed_line = '# ' + each_fixed_line
+                    did_base = True 
                 create_db_model_lines.append(each_fixed_line)
 
         create_db_model_lines.extend(self.get_lines_from_file(f'system/genai/create_db_models_inserts/create_db_models_create_db.py'))
