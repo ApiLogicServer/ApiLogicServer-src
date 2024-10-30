@@ -12,6 +12,6 @@ this means you can not enter string attributes where a date or datetime object i
 Don't install additional packages.
 Don't use the faker pip package.
 
-Create some test data, use foreign key columns instead of relationship names for the data.  Do not print the test data.  Be sure to initialize derived attributes, but do not rely on LogicBank.
+Create multiple rows of test data without using arrays or functions, use foreign key columns instead of relationship names for the data.  Do not print the test data.  Be sure to initialize derived attributes - including sums and counts, but do not rely on LogicBank.
 
 For each data model class, create a docstring describing the table, prefixed with 'description: '. 
