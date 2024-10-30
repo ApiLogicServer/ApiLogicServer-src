@@ -492,11 +492,15 @@ class GenAI(object):
             each_fixed_line = each_line
             if '=datetime' in each_fixed_line:
                 each_fixed_line = each_fixed_line.replace('=datetime.date', '=date') 
+            if 'engine = create_engine' in each_fixed_line:  # CBT sometimes has engine = create_engine, so do we!
+                each_fixed_line = each_fixed_line.replace('engine = create_engine', '# engine = create_engine')
+            if 'Base.metadata.create_all(engine)e' in each_fixed_line:
+                each_fixed_line = each_fixed_line.replace('Base.metadata.create_all(engine)', '# Base.metadata.create_all(engine)')
             create_db_model_lines.append(each_fixed_line + '\n')
-            if ' = ' in each_line:
+            if ' = ' in each_line and '(' in each_line:  # CPT test data might have: tests = []
                 assign = each_line.split(' = ')[0]
                 # no tokens for: Session = sessionmaker(bind=engine) or session = Session()
-                if '.' not in assign and 'Session' not in each_line:
+                if '.' not in assign and 'Session' not in each_line and 'session.' not in each_line:
                     row_names.append(assign)
 
         create_db_model_lines.append('\n\n')
