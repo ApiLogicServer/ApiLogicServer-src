@@ -1,6 +1,6 @@
 class WGResult(BaseModel):  # must match system/genai/prompt_inserts/response_format.prompt
     models : List[Model] # list of sqlalchemy classes in the response
-    rules : List[Rule] # list of sqlalchemy classes in the response
+    rules : List[Rule] # list of rule declarations
     test_data: str
 
 Format the response as a WGResult.
