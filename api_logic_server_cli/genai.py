@@ -31,7 +31,7 @@ class Model(BaseModel):
 class WGResult(BaseModel):  # must match system/genai/prompt_inserts/response_format.prompt
     # response: str # result
     models : List[Model] # list of sqlalchemy classes in the response
-    rules : List[str] # list of sqlalchemy classes in the response
+    rules : List[Rule] # list rule declarations
     test_data: str
 
 '''
