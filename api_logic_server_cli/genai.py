@@ -420,6 +420,8 @@ class GenAI(object):
         in_logic = False
         translated_logic = "\n    # Logic from GenAI: (or, use your IDE w/ code completion)\n\n"
         for each_rule in self.response_dict.rules:
+            comment_line = each_rule.description
+            translated_logic += f'\n    # {comment_line}\n'
             each_line = each_rule.code
             if 'declare_logic.py' not in each_line:
                 each_repaired_line = self.remove_logic_halluncinations(each_line=each_line)
