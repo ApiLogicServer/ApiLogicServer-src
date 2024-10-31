@@ -66,7 +66,11 @@ touch webgenai_env
 
 # Build wg:
 git clone https://github.com/ApiLogicServer/sra --depth=1
-git clone https://github.com/ApiLogicServer/webgenai --depth=1
+git clone https://github.com/ApiLogicServer/webgenai
+cd webgenai
+git pull
+git checkout so_release
+cd ..
 
 if [ "$1" = "local" ]
   then
@@ -77,6 +81,7 @@ set +x
 
 cd $SRC_DIR
 echo "\npwd: $(pwd)\n"
+echo "get wg temp: docker cp webgenie:/tmp ~/Desktop/wg-temp \n
 echo "\nrun: docker run -it --rm --name webgenie -p 8282:80  --env-file ./../../webg-config/web_genai.txt  -v ./../../webg-projects:/opt/projects apilogicserver/web_genai \n "
 
 exit 0
