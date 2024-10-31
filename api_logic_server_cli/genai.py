@@ -143,7 +143,7 @@ class GenAI(object):
             start_time = time.time()
             client = OpenAI(api_key=os.getenv("APILOGICSERVER_CHATGPT_APIKEY"))
             completion = client.beta.chat.completions.parse(
-                model="gpt-4o-2024-08-06",
+                model="gpt-4o-2024-08-06",  # FIXME - use api_version
                 messages=self.messages,
                 response_format=WGResult,
             )
