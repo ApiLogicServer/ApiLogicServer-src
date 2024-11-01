@@ -152,11 +152,11 @@ Expanded example:
 Prompt:
 
     Use Logic Bank to enforce the Check Credit requirement (do not generate check constraints):
-    1. Customer.balance <= credit_limit
-    2. Customer.balance = Sum(Order.amount_total where date_shipped is null)
-    3. Order.amount_total = Sum(Item.amount)
-    4. Item.amount = quantity * unit_price
-    5. Store the Item.unit_price as a copy from Product.unit_price
+        1. Customer.balance <= credit_limit
+        2. Customer.balance = Sum(Order.amount_total where date_shipped is null)
+        3. Order.amount_total = Sum(Item.amount)
+        4. Item.amount = quantity * unit_price
+        5. Store the Item.unit_price as a copy from Product.unit_price
 
 Response:
 
@@ -176,11 +176,11 @@ Equivalent expanded example using informal syntax:
 Prompt:
 
     Use Logic Bank to enforce the Check Credit requirement (do not generate check constraints):
-    1. The Customer's balance is less than the credit limit
-    2. The Customer's balance is the sum of the Order amount_total where date_shipped is null
-    3. The Order's amount_total is the sum of the Item amount
-    4. The Item amount is the quantity * unit_price
-    5. The Item unit_price is copied from the Product unit_price
+        1. The Customer's balance is less than the credit limit
+        2. The Customer's balance is the sum of the Order amount_total where date_shipped is null
+        3. The Order's amount_total is the sum of the Item amount
+        4. The Item amount is the quantity * unit_price
+        5. The Item unit_price is copied from the Product unit_price
 
 Response is the same:
 
@@ -193,3 +193,6 @@ def declare_logic():  # created by Web/GenAI for ApiLogicServer, LogicBank
     Rule.constraint(validate=CustomerAccount,
                     as_condition=lambda row: row.balance <= row.credit_limit,
                     error_msg="Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})")
+
+Do not use the python sum or count functions for intermediate sum/count values.  
+Intermediate sum/count values require a new column, with a LogicBank sum/count rule.

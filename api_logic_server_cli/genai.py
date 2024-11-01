@@ -34,26 +34,6 @@ class WGResult(BaseModel):  # must match system/genai/prompt_inserts/response_fo
     rules : List[Rule] # list rule declarations
     test_data: str
 
-'''
-class WGResult(BaseModel):
-    description: str
-    models: List[Model]
-    sample_data: str # sqlalchmey model sample data, inserts
-'''
-
-''' this worked
-class WGResult(BaseModel):
-    response: str # result
-    sqlalchemy_classes : List[str] # Python code of the sqlalchemy classes in the response 
-'''
-
-''' this failed - the array did not init sums
-class WGResult(BaseModel):
-    response: str # result
-    sqlalchemy_classes : List[str] # list of sqlalchemy classes in the response
-    rules : List[str] # list of sqlalchemy classes in the response
-    test_data: List[str] 
-'''
 
 class GenAI(object):
     """ Create project from genai prompt(s).  
@@ -133,21 +113,14 @@ class GenAI(object):
         self.messages = self.get_prompt_messages()  # compute self.messages, from file, dir or text argument
 
         if self.project.genai_repaired_response == '':  # normal path - get response from ChatGPT
-            log.debug(f'.. ChatGPT - saving response to: system/genai/temp/chatgpt_original.response')
-            self.headers = self.get_headers_with_openai_api_key()
-            url = "https://api.openai.com/v1/chat/completions"
             api_version = f'{self.project.genai_version}'  # eg, "gpt-4o"
-            data = {"model": api_version, "messages": self.messages}
-            # response = requests.post(url, headers=self.headers, json=data)
-
             start_time = time.time()
             client = OpenAI(api_key=os.getenv("APILOGICSERVER_CHATGPT_APIKEY"))
             completion = client.beta.chat.completions.parse(
-                model="gpt-4o-2024-08-06",  # FIXME - use api_version
-                messages=self.messages,
-                response_format=WGResult,
+                messages=self.messages, response_format=WGResult,
+                model=api_version, temperature=0.0
             )
-            log.debug(f'ChatGPT response time: {str(time.time() - start_time)} seconds')
+            log.debug(f'ChatGPT ({str(int(time.time() - start_time))} secs) - response at: system/genai/temp/chatgpt_original.response')
             
             data = completion.choices[0].message.content
             response_dict = json.loads(data)
@@ -155,9 +128,6 @@ class GenAI(object):
             # print(json.dumps(json.loads(data), indent=4))
             pass
 
-            # todo - review request structured output using openapi pkg
-            # but, does not create the .py code to create database via SQLAlchemy
-            # create_db_models = self.get_and_save_raw_response_data(response)
         else: # for retry from corrected response... eg system/genai/temp/chatgpt_retry.response
             log.debug(f'\nUsing [corrected] response from: {self.project.genai_repaired_response}')
             with open(self.project.genai_repaired_response, 'r') as response_file:
@@ -418,7 +388,7 @@ class GenAI(object):
 
         logic_file = self.project.project_directory_path.joinpath('logic/declare_logic.py')
         in_logic = False
-        translated_logic = "\n    # Logic from GenAI: (or, use your IDE w/ code completion)\n\n"
+        translated_logic = "\n    # Logic from GenAI: (or, use your IDE w/ code completion)\n"
         for each_rule in self.response_dict.rules:
             comment_line = each_rule.description
             translated_logic += f'\n    # {comment_line}\n'
@@ -686,7 +656,7 @@ class GenAI(object):
             pass  # intentional try/catch/bury - it's just diagnostics, so don't fail
         debug_string = "good breakpoint - return to main driver, and execute create_db_models.py"
 
-    def get_headers_with_openai_api_key(self) -> dict:
+    def get_headers_with_openai_api_key_ZZ(self) -> dict:
         """
         Returns:
             dict: api header with OpenAI key (exits if not provided)

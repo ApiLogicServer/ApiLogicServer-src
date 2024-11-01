@@ -1,7 +1,4 @@
-Departments and Employees in departments, and on loan to departments.
+System for Departments and Employees.
 
-Use Logic Bank to ensure
-1. Department.TotalSalaries = sum(employee.salary) 
-2. Department.TotalSalaries < Department.Budget
-3. Department.CountEmployees = count(employees)
-4. Department.CountEmployees < 25
+LogicBank:
+1. Sum of employee salaries cannot exceed department budget
