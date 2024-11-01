@@ -1,0 +1,216 @@
+Here is the code to solve this problem:
+
+```python
+import logging
+from sqlalchemy import create_engine, Column, Integer, String, DateTime, Float, ForeignKey, text, Sequence
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker, relationship
+from datetime import date, datetime
+
+# Create database engine and ORM base class.
+engine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite')
+BaseModel = declarative_base()
+
+class Customer(BaseModel):
+    __tablename__ = 'customer'
+    id = Column(Integer, Sequence('customer_id_seq'), primary_key=True)
+    name = Column(String)
+    email = Column(String)
+    balance = Column(Float)
+
+    description: """Customer table"""
+
+    def __init__(self, name, email, balance=0.0):
+        self.name = name
+        self.email = email
+        self.balance = balance
+
+class Order(BaseModel):
+    __tablename__ = 'order'
+    id = Column(Integer, Sequence('order_id_seq'), primary_key=True)
+    date_placed = Column(DateTime, default=datetime.utcnow)
+    date_shipped = Column(DateTime)
+    customer_id = Column(ForeignKey('customer.id'))
+    amount_total = Column(Float)
+
+    description: """Order table"""
+
+    def __init__(self, date_placed=None, date_shipped=None):
+        self.date_placed = date_placed or datetime.utcnow()
+        self.date_shipped = date_shipped
+        self.amount_total = 0.0
+
+class Item(BaseModel):
+    __tablename__ = 'item'
+    id = Column(Integer, Sequence('item_id_seq'), primary_key=True)
+    product_id = Column(ForeignKey('product.id'))
+    order_id = Column(ForeignKey('order.id'))
+    quantity = Column(Float)
+    unit_price = Column(Float)
+
+    description: """Item table"""
+
+    def __init__(self, product_id, order_id, quantity=1.0, unit_price=None):
+        self.product_id = product_id
+        self.order_id = order_id
+        self.quantity = quantity
+        if unit_price is None:
+            self.unit_price = 0.0
+        else:
+            self.unit_price = unit_price
+
+class Product(BaseModel):
+    __tablename__ = 'product'
+    id = Column(Integer, Sequence('product_id_seq'), primary_key=True)
+    name = Column(String)
+    unit_price = Column(Float)
+
+    description: """Product table"""
+
+    def __init__(self, name, unit_price=0.0):
+        self.name = name
+        self.unit_price = unit_price
+
+# Define logic declarations.
+def declare_logic():
+    from sqlalchemy.orm import Session
+    session = Session(bind=engine)
+    
+    # 1. Customer.balance <= credit_limit
+    session.execute(text("""
+        ALTER TABLE customer
+        ADD COLUMN credit_limit FLOAT;
+    """))
+    
+    # Update data model with 'credit_limit' column.
+    class Customer(BaseModel):
+        __tablename__ = 'customer'
+        id = Column(Integer, Sequence('customer_id_seq'), primary_key=True)
+        name = Column(String)
+        email = Column(String)
+        balance = Column(Float)
+        credit_limit = Column(Float)
+
+        # ...
+
+    # 2. Customer.balance = Sum(Order.amount_total where date_shipped is null)
+    session.execute(text("""
+        ALTER TABLE order
+        ADD COLUMN amount_total FLOAT;
+        
+        CREATE VIEW customer_balance AS
+        SELECT id, COALESCE(SUM(CASE WHEN date_shipped IS NULL THEN amount_total ELSE 0 END), 0) AS balance
+        FROM order
+        GROUP BY id;
+    """))
+    
+    # Update data model with 'amount_total' column.
+    class Order(BaseModel):
+        __tablename__ = 'order'
+        id = Column(Integer, Sequence('order_id_seq'), primary_key=True)
+        date_placed = Column(DateTime, default=datetime.utcnow)
+        date_shipped = Column(DateTime)
+        customer_id = Column(ForeignKey('customer.id'))
+        amount_total = Column(Float)
+
+        # ...
+
+    # 3. Order.amount_total = Sum(Item.amount)
+    session.execute(text("""
+        ALTER TABLE item
+        ADD COLUMN amount FLOAT;
+        
+        CREATE VIEW order_amount AS
+        SELECT id, COALESCE(SUM(amount), 0) AS amount_total
+        FROM item
+        GROUP BY id;
+    """))
+    
+    # Update data model with 'amount' column.
+    class Item(BaseModel):
+        __tablename__ = 'item'
+        id = Column(Integer, Sequence('item_id_seq'), primary_key=True)
+        product_id = Column(ForeignKey('product.id'))
+        order_id = Column(ForeignKey('order.id'))
+        quantity = Column(Float)
+        unit_price = Column(Float)
+        amount = Column(Float)
+
+        # ...
+
+    # 4. Item.amount = quantity * unit_price
+    session.execute(text("""
+        ALTER TABLE item
+        ADD COLUMN item_amount FLOAT;
+        
+        UPDATE item SET item_amount = quantity * unit_price;
+    """))
+    
+    # Update data model with 'item_amount' column.
+    class Item(BaseModel):
+        __tablename__ = 'item'
+        id = Column(Integer, Sequence('item_id_seq'), primary_key=True)
+        product_id = Column(ForeignKey('product.id'))
+        order_id = Column(ForeignKey('order.id'))
+        quantity = Column(Float)
+        unit_price = Column(Float)
+        amount = Column(Float)
+        item_amount = Column(Float)
+
+        # ...
+
+    # 5. Store the Item.unit_price as a copy from Product.unit_price.
+    session.execute(text("""
+        UPDATE item SET unit_price = (
+            SELECT product_id
+            FROM product
+            WHERE id = item.product_id
+        );
+    """))
+
+# Create database tables and test data.
+BaseModel.metadata.create_all(engine)
+
+class WGResult:
+    def __init__(self, models, rules, test_data):
+        self.models = models
+        self.rules = rules
+        self.test_data = test_data
+
+# Test data for Customer table.
+customer1 = Customer('John Doe', 'john@example.com')
+customer2 = Customer('Jane Doe', 'jane@example.com')
+
+# Test data for Order table.
+order1 = Order(date_placed=datetime.utcnow())
+order2 = Order(date_placed=datetime.utcnow())
+
+# Test data for Item table.
+item1 = Item(product_id=1, order_id=1)
+item2 = Item(product_id=2, order_id=2)
+
+# Test data for Product table.
+product1 = Product('Product 1', unit_price=10.99)
+product2 = Product('Product 2', unit_price=9.99)
+
+# Create WGResult object.
+declare_logic()
+models = [
+    Customer.__table__,
+    Order.__table__,
+    Item.__table__,
+    Product.__table__
+]
+rules = []
+test_data = [customer1, customer2, order1, order2, item1, item2, product1, product2]
+
+result = WGResult(models, rules, test_data)
+
+print(result)
+```
+
+This code creates a SQLite database and defines the `Customer`, `Order`, `Item`, and `Product` classes. It also defines the logic declarations 
+using SQLAlchemy's ORM capabilities.
+
+Note that this is a complex piece of code, and it should be reviewed carefully to ensure accuracy and completeness. The test data for each table 
+is created separately as instances of their respective classes, following the guidelines provided.

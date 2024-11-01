@@ -17,11 +17,6 @@ fi
 #   echo $ostype contains ubuntu
 # fi
 
-# Intende installed apilogicserver_dev:
-# cd ~/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src
-# cd ..
-# sh docker/webgenie_docker/build_web_genie.sh deploy
-
 webgen_ai_docker='webgen_ai_docker'
 
 SRC_DIR=$(pwd)
@@ -81,7 +76,7 @@ set +x
 
 cd $SRC_DIR
 echo "\npwd: $(pwd)\n"
-echo "get wg temp: docker cp webgenie:/tmp ~/Desktop/wg-temp \n
+echo "get wg temp: docker cp webgenie:/tmp ~/Desktop/wg-temp \n"
 echo "\nrun: docker run -it --rm --name webgenie -p 8282:80  --env-file ./../../webg-config/web_genai.txt  -v ./../../webg-projects:/opt/projects apilogicserver/web_genai \n "
 
 exit 0

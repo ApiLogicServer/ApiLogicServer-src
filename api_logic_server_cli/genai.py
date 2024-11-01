@@ -33,6 +33,7 @@ class WGResult(BaseModel):  # must match system/genai/prompt_inserts/response_fo
     models : List[Model] # list of sqlalchemy classes in the response
     rules : List[Rule] # list rule declarations
     test_data: str
+    name: str  # suggest a name for the project
 
 
 class GenAI(object):

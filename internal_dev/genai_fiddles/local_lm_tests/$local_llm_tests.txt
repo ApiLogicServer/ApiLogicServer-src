@@ -1,0 +1,74 @@
+I spent a few hours testing ollama and chatgpt4all.
+It takes a long time, and there are many models to test.
+
+llama3.1:latest is used here: https://www.youtube.com/watch?v=mUGsv_IHT-g
+
+The objective is speed (not cost).  Our CPT requests take about 8-30 secs.  It suggests:
+
+    The ChatGPT API often exhibits slower response times compared to the ChatGPT web application due to several factors:
+
+	1.	Model Complexity: Advanced models like GPT-4 are more computationally intensive, leading to longer processing times. Users have reported that GPT-4 can be significantly slower than GPT-3.5, with some experiencing response times of 50 seconds or more for certain requests. (OpenAI Community)
+	2.	Server Load and Demand: High demand can strain server resources, affecting both the API and the web app. However, the web app may have optimizations or priority handling that result in faster responses during peak times.
+	3.	Network Latency: The API’s performance can be influenced by network conditions, including latency and bandwidth, which may vary based on the user’s location and internet service.
+	4.	API Configuration: The speed of API responses can be affected by specific settings, such as the number of tokens requested and the complexity of the prompt. Adjusting these parameters may help improve response times.
+
+    To enhance API performance, consider optimizing your prompts, reducing the number of tokens requested, and ensuring a stable network connection. Monitoring OpenAI’s status page can also provide insights into any ongoing issues that might impact response times. (OpenAI Help Center)
+
+The risks are 
+    - do the responses even work for models, test data and logic
+    - time to accomodate oddities (eg, many work-arounds for CPT)
+
+TL;DR
+    - CPT - excellent classes, test data
+    - ollama3.1 - classes ok, no derivations in test data (and wrong when I insisted)
+    - code gamma - classes ok, took *many* tries to get customer balance 
+
+
+
+
+Here is the test:
+=================
+
+Use SQLAlchemy to create a sqlite database named system/genai/temp/create_db_models.sqlite, to
+
+Create a system with customers, orders, items and products.
+
+Include a notes field for orders.
+
+Use LogicBank to create declare_logic() to enforce these requirements (do not generate check constraints); be sure to update the data model and *all* test data with any attributes used in the logic:
+1. Customer.balance <= credit_limit
+2. Customer.balance = Sum(Order.amount_total where date_shipped is null)
+3. Order.amount_total = Sum(Item.amount)
+4. Item.amount = quantity * unit_price
+5. Store the Item.unit_price as a copy from Product.unit_price.
+
+Hints: use autonum keys (for all tables - including for link/join/junction/intersection tables), allow nulls, foreign keys, no check constraints.
+
+Be sure to create classes, never tables.
+
+Remember that SQLite DateTime type only accepts Python datetime and date objects as input, 
+this means you can not enter string attributes where a date or datetime object is expected.
+
+Don't install additional packages.
+Don't use the faker pip package.
+
+Create multiple rows of test data for each table, and follow these guidelines carefully:
+* Use foreign key columns instead of relationship names for the data.  
+* Create separate objects for each test data row, not in arrays. 
+* Be sure to initialize derived attributes for test data rows - including all sums and counts, but do not rely on LogicBank,
+and do not generate db.execute statements.
+* Do not create arrays of test data.
+* Do not create a function to load test data.  
+* Do not print the test data. 
+
+For each data model class, create a docstring describing the table, prefixed with 'description: '. 
+
+class WGResult(BaseModel):  # must match system/genai/prompt_inserts/response_format.prompt
+
+    models : List[Model] # list of sqlalchemy classes in the response
+
+    rules : List[Rule] # list of rule declarations
+
+    test_data: str
+
+Format the response as a WGResult.
