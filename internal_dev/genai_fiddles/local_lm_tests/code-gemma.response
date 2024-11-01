@@ -1,0 +1,74 @@
+```python
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, CheckConstraint
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
+
+# Create an engine to connect to the database
+engine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite')
+
+# Define the base class for declarative models
+Base = declarative_base()
+
+# Customer table
+class Customer(Base):
+    __tablename__ = 'customers'
+    description: 'Customer Table'
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    email = Column(String)
+    balance = Column(Integer)
+    credit_limit = Column(Integer)
+
+# Order table
+class Order(Base):
+    __tablename__ = 'orders'
+    description: 'Order Table'
+    id = Column(Integer, primary_key=True)
+    customer_id = Column(Integer, ForeignKey('customers.id'))
+    notes = Column(String)
+    amount_total = Column(Integer)
+
+# Item table
+class Item(Base):
+    __tablename__ = 'items'
+    description: 'Item Table'
+    id = Column(Integer, primary_key=True)
+    order_id = Column(Integer, ForeignKey('orders.id'))
+    product_id = Column(Integer, ForeignKey('products.id'))
+    quantity = Column(Integer)
+    amount = Column(Integer)
+
+# Product table
+class Product(Base):
+    __tablename__ = 'products'
+    description: 'Product Table'
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    description = Column(String)
+    unit_price = Column(Integer)
+
+# Create the database tables
+Base.metadata.create_all(engine)
+
+# Declare the logic
+def declare_logic():
+    # Customer.balance <= credit_limit
+    Customer.balance <= Customer.credit_limit
+
+    # Customer.balance = Sum(Order.amount_total where date_shipped is null)
+    Customer.balance = Order.amount_total.sum().where(Order.date_shipped == None)
+
+    # Order.amount_total = Sum(Item.amount)
+    Order.amount_total = Item.amount.sum()
+
+    # Item.amount = quantity * unit_price
+    Item.amount = Item.quantity * Item.unit_price
+
+    # Store the Item.unit_price as a copy from Product.unit_price
+    Item.unit_price = Product.unit_price
+
+# Test data
+customer1 = Customer(name='John Smith', email='john@smith.com', balance=100, credit_limit=200)
+order1 = Order(customer_id=customer1.id, amount_total=50)
+item1 = Item(order_id=order1.id, product_id=1, quantity=2, amount=100)
+```

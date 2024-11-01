@@ -1,0 +1,87 @@
+```python
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, DateTime, Float
+from sqlalchemy.orm import relationship, sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
+
+Base = declarative_base()
+
+class Customer(Base):
+    description: "Customer table"
+    __tablename__ = 'customer'
+    customer_id = Column(Integer, primary_key=True)
+    name = Column(String)
+    credit_limit = Column(Float)
+    balance = Column(Float)
+
+class Order(Base):
+    description: "Order table"
+    __tablename__ = 'order'
+    order_id = Column(Integer, primary_key=True)
+    customer_id = Column(Integer, ForeignKey('customer.customer_id'))
+    date_ordered = Column(DateTime)
+    date_shipped = Column(DateTime, nullable=True)
+    amount_total = Column(Float)
+    notes = Column(String)
+
+class Item(Base):
+    description: "Item table"
+    __tablename__ = 'item'
+    item_id = Column(Integer, primary_key=True)
+    order_id = Column(Integer, ForeignKey('order.order_id'))
+    product_id = Column(Integer, ForeignKey('product.product_id'))
+    quantity = Column(Integer)
+    unit_price = Column(Float)
+    amount = Column(Float)
+
+class Product(Base):
+    description: "Product table"
+    __tablename__ = 'product'
+    product_id = Column(Integer, primary_key=True)
+    name = Column(String)
+    unit_price = Column(Float)
+
+def declare_logic():
+    Customer.balance <= Customer.credit_limit
+    Customer.balance = Customer.balance + Order.amount_total where Order.date_shipped is None
+    Order.amount_total = Item.amount
+    Item.amount = Item.quantity * Item.unit_price
+    Item.unit_price = Product.unit_price
+
+# Test data
+customer1 = Customer(name='Alice', credit_limit=1000)
+customer2 = Customer(name='Bob', credit_limit=500)
+
+order1 = Order(customer_id=customer1.customer_id, date_ordered='2023-04-01', amount_total=200)
+order2 = Order(customer_id=customer2.customer_id, date_ordered='2023-04-02', amount_total=100)
+
+item1 = Item(order_id=order1.order_id, product_id=1, quantity=2, unit_price=100)
+item2 = Item(order_id=order2.order_id, product_id=2, quantity=1, unit_price=100)
+
+product1 = Product(name='Product 1', unit_price=100)
+product2 = Product(name='Product 2', unit_price=100)
+
+# Create the database
+engine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite')
+Base.metadata.create_all(engine)
+
+# Create a session
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# Add test data to the session
+session.add_all([customer1, customer2, order1, order2, item1, item2, product1, product2])
+
+# Commit the session
+session.commit()
+
+# Close the session
+session.close()
+
+# Create the WGResult object
+wg_result = WGResult(
+    models=[Customer, Order, Item, Product],
+    rules=[declare_logic()],
+    test_data='Test data created successfully'
+)
+
+print(wg_result)
