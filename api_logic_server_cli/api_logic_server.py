@@ -12,13 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "12.00.17"
+__version__ = "12.01.00"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t10/31/2024 - 12.00.17: genai: fix format bug, iteration prompt update, multi base, rule objs/doc/informal \n"\
-    "\t10/27/2024 - 12.00.11: genai: major revision for parsed ChatGPT responses \n"\
-    "\t10/27/2024 - 12.00.09: genai: incr logic completion, interations now have db hints, diagnostics in dirs \n"\
-    "\t10/25/2024 - 12.00.05: Fix ChatGPT table gen, align genai_demo add-cust \n"\
+    "\t10/31/2024 - 12.01.00: genai: informal rules (eg, Sum of employee salaries cannot exceed department budget) \n"\
     "\t10/21/2024 - 12.00.04: sra 10-22, Prelim support genai --using=dir/project \n"\
     "\t10/12/2024 - 12.00.02: Natural Language Logic \n"\
     "\t10/17/2024 - 11.02.19: singular classes, expanded doc/prompts, logic work-arounds, docs/logic, logic learning, readme \n"\
