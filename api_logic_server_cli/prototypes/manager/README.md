@@ -194,7 +194,6 @@ als genai --project-name='genai_demo_conversation' --using=system/genai/examples
 ```
 </details>
 </br>
-
 <details markdown>
 
 <summary> You can iterate with logic</summary>
@@ -204,6 +203,31 @@ als genai --project-name='genai_demo_conversation' --using=system/genai/examples
 ```bash title="Iterate With Logic"
 als genai --project-name='genai_demo_iterative_logic' --using=system/genai/examples/genai_demo/genai_demo_iterative_logic
 # open Docs/db.dbml
+```
+</details>
+</br>
+
+<details markdown>
+
+<summary> You can declare informal logic</summary>
+
+<br>You can declare rules using dot notation, or more informally:
+
+```bash title="Informal Logic (no dot notation)"
+als genai --using=system/genai/examples/genai_demo/genai_demo_informal.prompt
+```
+</details>
+</br>
+
+
+<details markdown>
+
+<summary> Multi-Rule Logic</summary>
+
+<br>You can add new columns/tables, while keeping the prior model intact:
+
+```bash title="Multi-Rule Logic"
+als genai --using=system/genai/examples/emp_depts/emp_dept.prompt
 ```
 </details>
 </br>
