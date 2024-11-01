@@ -194,5 +194,15 @@ def declare_logic():  # created by Web/GenAI for ApiLogicServer, LogicBank
                     as_condition=lambda row: row.balance <= row.credit_limit,
                     error_msg="Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})")
 
-Do not use the python sum or count functions for intermediate sum/count values.  
-Intermediate sum/count values require a new column, with a LogicBank sum/count rule.
+Intermediate sum/count values require a new column, with a LogicBank sum/count rule.  For example:
+
+Prompt:
+    The sum of the child value cannot exceed the parent limit
+
+Response is to create 2 rules - a derivation and a constraint, as follows:
+    First Rule to Create:
+        Rule.sum(derive=Parent.value_total, as_sum_of=Child.value)
+    And, be sure to create the second Rule:
+        Rule.constraint(validate=Parent,
+                    as_condition=lambda row: row.value_total <= row.limit,
+                    error_msg="Parent value total ({row.value_total}) exceeds limit ({row.limit})")
