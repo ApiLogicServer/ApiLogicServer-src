@@ -26,6 +26,11 @@ root:
 
 loggers:
 
+    api_logic_server_cli.api_logic_server:
+        # level: DEBUG
+        handlers: [console]
+        propagate: no
+
     create_from_model.api_logic_server_utils:   
 #        level: DEBUG
         handlers: [console]
