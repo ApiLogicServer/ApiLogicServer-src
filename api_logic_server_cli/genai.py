@@ -382,6 +382,10 @@ class GenAI(object):
             str: _description_
         """        """ """
         return_line = each_line
+        if each_line.startswith('Rule.'):
+            # Sometimes indents left out (EmpDepts) - "code": "Rule.sum(derive=Department.salary_total, as_sum_of=Employee.salary)\nRule.constraint(validate=Department,\n                as_condition=lambda row: row.salary_total <= row.budget,\n                error_msg=\"Department salary total ({row.salary_total}) exceeds budget ({row.budget})\")"
+            each_line = "    " + each_line  # add missing indent
+            log.debug(f'.. fixed hallucination/indent: {each_line}')
         if each_line.startswith('    Rule.') or each_line.startswith('    DeclareRule.'):
             if 'Rule.sum' in each_line:
                 pass
