@@ -759,33 +759,25 @@ def genai(using: str, db_url: str, repaired_response: str, genai_version: str,
     """ if 'unable to determine join condition', we retry this with False """
     if repaired_response != "":
         try_number = retries  # if not calling GenAI, no need to retry:
-    # TODO or 0, right?
+    failed = False
+    pr = PR.ProjectRun(command="create", genai_version=genai_version, 
+                genai_using=using,                      # the prompt file, or dir of prompt/response
+                repaired_response=repaired_response,    # retry from [repaired] response file
+                opt_locking=opt_locking,
+                genai_prompt_inserts=prompt_inserts,
+                genai_use_relns=genai_use_relns,
+                quote=quote,
+                genai_tables=tables,
+                project_name=resolved_project_name, db_url=db_url,
+                execute=False)
     if retries < 0:  # for debug: catch exceptions at point of failure
-        PR.ProjectRun(command="create", genai_version=genai_version, 
-                    genai_using=using,                      # the prompt file, or conversation dir
-                    repaired_response=repaired_response,    # retry from [repaired] response file
-                    opt_locking=opt_locking,
-                    genai_prompt_inserts=prompt_inserts,
-                    genai_use_relns=genai_use_relns,
-                    quote=quote,
-                    project_name=resolved_project_name, 
-                    genai_tables=tables,
-                    db_url=db_url)
+        pr.create_project()  # calls GenAI() - the main driver
         log.info(f"GENAI successful")  
     else:
-        failed = False
         while try_number <= retries:
             try:
                 failed = False
-                pr = PR.ProjectRun(command="create", genai_version=genai_version, 
-                            genai_using=using,                      # the prompt file, or dir of prompt/response
-                            repaired_response=repaired_response,    # retry from [repaired] response file
-                            opt_locking=opt_locking,
-                            genai_prompt_inserts=prompt_inserts,
-                            genai_use_relns=genai_use_relns,
-                            quote=quote,
-                            genai_tables=tables,
-                            project_name=resolved_project_name, db_url=db_url)
+                pr.create_project()  # calls GenAI() - the main driver
                 if do_force_failure := False:
                     if try_number < 3:
                         raise Exception("Forced Failure for Internal Testing")
@@ -853,7 +845,8 @@ def genai(using: str, db_url: str, repaired_response: str, genai_version: str,
                     try_number += 1
                     log.debug(f"\n\nRetry Genai #{try_number}\n")
             pass # retry (retries times)
-        if failed == True:  # retries exhausted (if failed: threw "an integer is required" ??
+        if failed == True:    # retries exhausted (if failed: threw "an integer is required" ??
+            pass                # https://github.com/microsoft/debugpy/issues/1708
             log.error(f"\n\nGenai Failed (Retries: {retries})") 
             exit(1) 
         log.info(f"\nGENAI ({str(int(time.time() - start_time))} secs) successful on try {try_number}\n")  
