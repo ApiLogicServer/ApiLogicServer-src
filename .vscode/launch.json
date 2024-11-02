@@ -706,6 +706,26 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "    - retry repaired-response FOR ERRORS",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "genai",
+                "--using=bad_response_test_errors",
+                "--repaired-response=${workspaceFolder}/tests/test_databases/ai-created/genai_demo/bad_response_test_errors.response"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
             "name": "4 - Run Last Project",
             "type": "debugpy",
             "request": "launch",

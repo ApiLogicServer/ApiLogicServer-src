@@ -1,0 +1,57 @@
+{
+    "models": [
+        {
+            "classname": "Customer",
+            "code": "from sqlalchemy import Column, Integer, String, Float\nfrom sqlalchemy.orm import declarative_base\n\nBase = declarative_base()\n\ndescription: Customer table with financial details\n\nclass Customer(Base):\n    __tablename__ = 'customers'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String, nullable=False)\n    balance = Column(Float, nullable=True, default=0.0)\n    credit_limit = Column(Float, nullable=True)",
+            "description": "Customer table with financial details",
+            "name": "Customer"
+        },
+        {
+            "classname": "Order",
+            "code": "from sqlalchemy import Column, Integer, String, Float, ForeignKey, Date\nfrom sqlalchemy.orm import declarative_base\n\nBase = declarative_base()\n\ndescription: Order table containing customer orders\n\nclass Order(Base):\n    __tablename__ = 'orders'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    customer_id = Column(Integer, ForeignKey('customers.id'))\n    date_shipped = Column(Date, nullable=True)\n    amount_total = Column(Float, nullable=True, default=0.0)\n    notes = Column(String, nullable=True)",
+            "description": "Order table containing customer orders",
+            "name": "Order"
+        },
+        {
+            "classname": "Item",
+            "code": "from sqlalchemy import Column, Integer, Float, ForeignKey\nfrom sqlalchemy.orm import declarative_base\n\nBase = declarative_base()\n\ndescription: Item table for order items\n\nclass Item(Base):\n    __tablename__ = 'items'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    order_id = Column(Integer, ForeignKey('orders.id'))\n    product_id = Column(Integer, ForeignKey('products.id'))\n    quantity = Column(Integer, nullable=False)\n    unit_price = Column(Float, nullable=True)\n    amount = Column(Float, nullable=True, default=0.0)",
+            "description": "Item table for order items",
+            "name": "Item"
+        },
+        {
+            "classname": "Product",
+            "code": "from sqlalchemy import Column, Integer, Float, String\nfrom sqlalchemy.orm import declarative_base\n\nBase = declarative_base()\n\ndescription: Product catalog\n\nclass Product(Base):\n    __tablename__ = 'products'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String, nullable=False)\n    unit_price = Column(Float, nullable=False)",
+            "description": "Product catalog",
+            "name": "Product"
+        }
+    ],
+    "rules": [
+        {
+            "name": "Customer balance within credit limit",
+            "description": "Ensure the customer's balance does not exceed the credit limit.",
+            "code": "Rule.constraint(validate=Customer, as_condition=lambda row: row.balance <= row.credit_limit, error_msg='Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})')"
+        },
+        {
+            "name": "Customer balance calculation",
+            "description": "Calculate the customer's balance as the sum of unpaid orders' amount total.",
+            "code": "Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None)"
+        },
+        {
+            "name": "Order amount total calculation",
+            "description": "Calculate the order's total amount as the sum of its items' amounts.",
+            "code": "Rule.sum(derive=Order.amount_total, as_sum_of=Item.amount)"
+        },
+        {
+            "name": "Item amount calculation",
+            "description": "Calculate item amount as quantity multiplied by unit price.",
+            "code": "Rule.formula(derive=Item.amount, as_expression=lambda row: row.quantity * row.unit_price)"
+        },
+        {
+            "name": "Copy item unit price from product",
+            "description": "Ensure the item unit price is copied from the associated product's unit price.",
+            "code": "Rule.copy(derive=Item.unit_price, from_parent=Product.unit_price)"
+        }
+    ],
+    "test_data": "from datetime import date\n\n# Customers\ncustomer_1 = Customer(id=1, name='Alice', balance=150.0, credit_limit=500.0)\ncustomer_2 = Customer(id=2, name='Bob', balance=300.0, credit_limit=300.0)\n\n# Orders\norder_1 = Order(id=1, customer_id=1, date_shipped=None, amount_total=150.0, notes='Urgent delivery')\norder_2 = Order(id=2, customer_id=2, date_shipped=date(2023, 10, 12), amount_total=300.0, notes='Delayed shipment')\n\n# Products\nproduct_1 = Product(id=1, name='Widget', unit_price=10.0)\nproduct_2 = Product(id=2, name='Gadget', unit_price=20.0)\n\n# Items\nitem_1 = Item(id=1, order_id=1, product_id=1, quantity=10, unit_price=10.0, amount=100.0)\nitem_2 = Item(id=2, order_id=1, product_id=2, quantity=5, unit_price=10.0, amount=50.0)\nitem_3 = Item(id=3, order_id=2, product_id=1, quantity=15, unit_price=10.0, amount=150.0)\nitem_4 = Item(id=4, order_id=2, product_id=2, quantity=7, unit_price=20.0, amount=140.0)",
+    "name": "OrderManagementSystem"
+}
