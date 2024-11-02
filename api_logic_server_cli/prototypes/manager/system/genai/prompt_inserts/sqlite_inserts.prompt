@@ -20,5 +20,6 @@ and do not generate db.execute statements.
 * Do not create arrays of test data.
 * Do not create a function to load test data.  
 * Do not print the test data. 
+* For test data, format dates as date(year, month, day).
 
 For each data model class, create a docstring describing the table, prefixed with 'description: '. 
