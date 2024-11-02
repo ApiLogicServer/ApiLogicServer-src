@@ -486,6 +486,8 @@ class GenAI(object):
                     if did_base:
                         each_fixed_line = '# ' + each_fixed_line
                     did_base = True 
+                if 'datetime.datetime.utcnow' in each_fixed_line:
+                    each_fixed_line = each_fixed_line.replace('datetime.datetime.utcnow', 'datetime.now()') 
                 create_db_model_lines.append(each_fixed_line)
 
         create_db_model_lines.extend(self.get_lines_from_file(  # classes done, create db and add test_data code
@@ -497,6 +499,7 @@ class GenAI(object):
             each_fixed_line = each_line
             if '=datetime' in each_fixed_line:
                 each_fixed_line = each_fixed_line.replace('=datetime.date', '=date') 
+            #   datetime.datetime.utcnow might also occur in model classes
             if 'datetime.datetime.utcnow' in each_fixed_line:
                 each_fixed_line = each_fixed_line.replace('datetime.datetime.utcnow', 'datetime.now()') 
             if 'engine = create_engine' in each_fixed_line:  # CBT sometimes has engine = create_engine, so do we!
