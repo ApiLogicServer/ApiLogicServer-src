@@ -141,7 +141,7 @@ class GenAI(object):
 
         self.get_valid_project_name()
 
-        self.fix_and_write_model_file() # write create_db_models.py for db creation, & logic 
+        self.fix_and_write_model_file() # write create_db_models.py for db creation, & logic  (NB: corrections!)
         self.save_prompt_messages_to_system_genai_temp_project()  # save prompts, response and models.py
         if project.project_name_last_node == 'genai_demo_conversation':
             debug_string = "good breakpoint - check create_db_models.py"
@@ -316,10 +316,12 @@ class GenAI(object):
                     break
                 prompt_line_number += 1
             
+            '''
             response_format_file_name = f'system/genai/prompt_inserts/response_format.prompt'
             with open(response_format_file_name, 'r') as file:
                 response_format = file.readlines()
             prompt_lines.extend(response_format)
+            '''
 
             prompt_result = "\n".join(prompt_lines)  # back to a string
             pass
@@ -473,8 +475,8 @@ class GenAI(object):
 
         """
         create_db_model_lines =  list()
-        create_db_model_lines.extend(  # imports for classes
-            self.get_lines_from_file(f'system/genai/create_db_models_inserts/create_db_models_imports.py'))
+        # create_db_model_lines.extend(  # imports for classes
+        #    self.get_lines_from_file(f'system/genai/create_db_models_inserts/create_db_models_imports.py'))
 
         models = self.response_dict.models
         did_base = False
@@ -788,6 +790,7 @@ def genai(using: str, db_url: str, repaired_response: str, genai_version: str,
                         raise Exception("Forced Failure for Internal Testing")
                 break  # success - exit the loop
             except Exception as e:  # almost certaily in api_logic_server_cli/create_from_model/create_db_from_model.py
+                # log.exception(e)
                 log.error(f"\n\nGenai failed With Error: {e}")
                 if resolved_project_name == '_genai_default':
                     resolved_project_name = pr.project_name  # defaulted in genai from response
