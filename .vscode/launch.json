@@ -634,7 +634,7 @@
             "redirectOutput": true,
             "args": ["genai",
                 "--using=${workspaceFolder}/../../build_and_test/ApiLogicServer/system/genai/examples/genai_demo/genai_demo_informal.prompt",
-                "--project-name=genai_demo"],
+                "--project-name=genai_demo_informal"],
             "console": "integratedTerminal"
         },
         {

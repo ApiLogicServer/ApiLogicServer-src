@@ -188,6 +188,8 @@ class GenAI(object):
             self.response_dict.name = valid_name
             self.project.project_name = self.response_dict.name
             self.project.project_name_last_node = self.response_dict.name 
+        else:
+            self.project.directory_setup()  # avoid names like "system/genai/temp/TBD"
         return
     
     def get_prompt_messages(self) -> List[Dict[str, str]]:
@@ -708,8 +710,7 @@ class GenAI(object):
     
     def get_and_save_raw_response_data(self, completion: object, response_dict: dict):
         """
-        Returns:
-            str: response_data
+        Write prompt --> system/genai/temp/chatgpt_original/retry.response
         """
         
         '''  TODO - is exception used instead of return_code...
@@ -746,6 +747,7 @@ def genai(using: str, db_url: str, repaired_response: str, genai_version: str,
         if resolved_project_name == '' or resolved_project_name is None:
             resolved_project_name = Path(using).stem  # project dir is the <cwd>/last node of using
     resolved_project_name  = resolved_project_name.replace(' ', '_')
+    start_time = time.time()
 
     try_number = 1
     genai_use_relns = use_relns
@@ -849,7 +851,7 @@ def genai(using: str, db_url: str, repaired_response: str, genai_version: str,
         if failed == True:  # retries exhausted (if failed: threw "an integer is required" ??
             log.error(f"\n\nGenai Failed (Retries: {retries})") 
             exit(1) 
-        log.info(f"GENAI successful on try {try_number}")  
+        log.info(f"\nGENAI ({str(int(time.time() - start_time))} secs) successful on try {try_number}\n")  
 
 
 def key_module_map():
