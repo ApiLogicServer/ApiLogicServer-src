@@ -497,9 +497,11 @@ class GenAI(object):
             each_fixed_line = each_line
             if '=datetime' in each_fixed_line:
                 each_fixed_line = each_fixed_line.replace('=datetime.date', '=date') 
+            if 'datetime.datetime.utcnow' in each_fixed_line:
+                each_fixed_line = each_fixed_line.replace('datetime.datetime.utcnow', 'datetime.now()') 
             if 'engine = create_engine' in each_fixed_line:  # CBT sometimes has engine = create_engine, so do we!
                 each_fixed_line = each_fixed_line.replace('engine = create_engine', '# engine = create_engine')
-            if 'Base.metadata.create_all(engine)e' in each_fixed_line:
+            if 'Base.metadata.create_all(engine)' in each_fixed_line:
                 each_fixed_line = each_fixed_line.replace('Base.metadata.create_all(engine)', '# Base.metadata.create_all(engine)')
             create_db_model_lines.append(each_fixed_line + '\n')
             if ' = ' in each_line and '(' in each_line:  # CPT test data might have: tests = []
