@@ -6,7 +6,7 @@ import logging
 from pathlib import Path
 import importlib
 import requests
-import os
+import os,re
 import create_from_model.api_logic_server_utils as utils
 import shutil
 import openai
@@ -33,7 +33,7 @@ class WGResult(BaseModel):  # must match system/genai/prompt_inserts/response_fo
     models : List[Model] # list of sqlalchemy classes in the response
     rules : List[Rule] # list rule declarations
     test_data: str
-    name: str  # suggest a name for the project
+    name: str  # suggest a short name for the project
 
 
 class GenAI(object):
@@ -139,7 +139,7 @@ class GenAI(object):
         self.response_dict = DotMap(response_dict)
         """ the raw response data from ChatGPT which will be fixed & saved create_db_models.py """
 
-        # self.project.genai_logic = self.get_logic_from_prompt()
+        self.get_valid_project_name()
 
         self.fix_and_write_model_file() # write create_db_models.py for db creation, & logic 
         self.save_prompt_messages_to_system_genai_temp_project()  # save prompts, response and models.py
@@ -161,7 +161,10 @@ class GenAI(object):
         """ Create presets - you are a data modelling expert, and logicbank api etc """
         pass
 
-        starting_message = {"role": "system", "content": "You are a data modelling expert and python software architect who expands on user input ideas. You create data models with at least 4 tables"}
+        you_are = "You are a data modelling expert and python software architect who expands on user input ideas. You create data models with at least 4 tables"
+        if self.project.genai_tables > 0:
+            you_are = you_are.replace('4', str(self.project.genai_tables))
+        starting_message = {"role": "system", "content": you_are}
         prompt_messages.append( starting_message)
 
         learning_requests = self.get_learning_requests()
@@ -170,6 +173,22 @@ class GenAI(object):
         log.debug(f'.. conv[000] presets: {starting_message}')
         log.debug(f'.. conv[001] presets: {learning_requests[0]["content"][:30]}...')
         return len(learning_requests)
+
+    def get_valid_project_name(self):
+        """ Get a valid project name from the project name
+        Takes a string and returns a valid filename constructed from the string.
+        """
+
+        # Replace invalid characters with underscores
+        valid_name = re.sub(r'[ \\/*?:"<>|\t\n\r\x0b\x0c]', '_', self.response_dict.name)    
+        valid_name = valid_name.strip()     # Remove leading and trailing spaces
+        valid_name = valid_name[:255]       # Limit the filename length
+        if self.project.project_name == '_genai_default':
+            log.debug(f'.. project name: {valid_name} (from response: {self.response_dict.name})')
+            self.response_dict.name = valid_name
+            self.project.project_name = self.response_dict.name
+            self.project.project_name_last_node = self.response_dict.name 
+        return
     
     def get_prompt_messages(self) -> List[Dict[str, str]]:
         """ Get prompt from file, dir (conversation) or text argument
@@ -452,7 +471,8 @@ class GenAI(object):
 
         """
         create_db_model_lines =  list()
-        create_db_model_lines.extend(self.get_lines_from_file(f'system/genai/create_db_models_inserts/create_db_models_imports.py'))
+        create_db_model_lines.extend(  # imports for classes
+            self.get_lines_from_file(f'system/genai/create_db_models_inserts/create_db_models_imports.py'))
 
         models = self.response_dict.models
         did_base = False
@@ -466,7 +486,8 @@ class GenAI(object):
                     did_base = True 
                 create_db_model_lines.append(each_fixed_line)
 
-        create_db_model_lines.extend(self.get_lines_from_file(f'system/genai/create_db_models_inserts/create_db_models_create_db.py'))
+        create_db_model_lines.extend(self.get_lines_from_file(  # classes done, create db and add test_data code
+            f'system/genai/create_db_models_inserts/create_db_models_create_db.py'))
 
         test_data_lines = self.response_dict.test_data.split('\n')
         row_names = list()
@@ -495,7 +516,7 @@ class GenAI(object):
             for line in create_db_model_lines:
                 create_db_model_file.write(f"{line}")
         
-        log.debug(f'.. model file created: {self.project.from_model}')
+        log.debug(f'.. code for db creation and test data: {self.project.from_model}')
 
     def get_lines_from_file(self, file_name: str) -> list[str]:
         """Get lines from a file
@@ -707,10 +728,10 @@ class GenAI(object):
         return
 
 
-def genai(using, db_url, repaired_response: bool, genai_version: str, 
+def genai(using: str, db_url: str, repaired_response: str, genai_version: str, 
           retries: int, opt_locking: str, prompt_inserts: str, quote: bool,
-          use_relns: bool, project_name: str):
-    """ CLI caller provides using, or repaired_response & using
+          use_relns: bool, project_name: str, tables: int):
+    """ CLI Caller: provides using, or repaired_response & using
     
         Called from cli commands: genai, genai-create, genai-iterate
         
@@ -721,8 +742,9 @@ def genai(using, db_url, repaired_response: bool, genai_version: str,
     import api_logic_server_cli.api_logic_server as PR
 
     resolved_project_name = project_name
-    if resolved_project_name == '' or resolved_project_name is None:
-        resolved_project_name = Path(using).stem  # default project name is the <cwd>/last node of using
+    if repaired_response != "":
+        if resolved_project_name == '' or resolved_project_name is None:
+            resolved_project_name = Path(using).stem  # project dir is the <cwd>/last node of using
     resolved_project_name  = resolved_project_name.replace(' ', '_')
 
     try_number = 1
@@ -739,20 +761,23 @@ def genai(using, db_url, repaired_response: bool, genai_version: str,
                     genai_prompt_inserts=prompt_inserts,
                     genai_use_relns=genai_use_relns,
                     quote=quote,
-                    project_name=resolved_project_name, db_url=db_url)
+                    project_name=resolved_project_name, 
+                    genai_tables=tables,
+                    db_url=db_url)
         log.info(f"GENAI successful")  
     else:
         failed = False
         while try_number <= retries:
             try:
                 failed = False
-                PR.ProjectRun(command="create", genai_version=genai_version, 
+                pr = PR.ProjectRun(command="create", genai_version=genai_version, 
                             genai_using=using,                      # the prompt file, or dir of prompt/response
                             repaired_response=repaired_response,    # retry from [repaired] response file
                             opt_locking=opt_locking,
                             genai_prompt_inserts=prompt_inserts,
                             genai_use_relns=genai_use_relns,
                             quote=quote,
+                            genai_tables=tables,
                             project_name=resolved_project_name, db_url=db_url)
                 if do_force_failure := False:
                     if try_number < 3:
@@ -760,7 +785,8 @@ def genai(using, db_url, repaired_response: bool, genai_version: str,
                 break  # success - exit the loop
             except Exception as e:  # almost certaily in api_logic_server_cli/create_from_model/create_db_from_model.py
                 log.error(f"\n\nGenai failed With Error: {e}")
-
+                if resolved_project_name == '_genai_default':
+                    resolved_project_name = pr.project_name  # defaulted in genai from response
                 if Path(using).is_dir():
                     log.debug('conversation dir, check in-place iteration')
                     '''

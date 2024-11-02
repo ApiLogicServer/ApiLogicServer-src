@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "12.01.00"
+__version__ = "12.01.01"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t11/01/2024 - 12.01.01: genai: default project name, cli arg tables (aka complexity) \n"\
     "\t10/31/2024 - 12.01.00: genai: informal rules (eg, Sum of employee salaries cannot exceed department budget) \n"\
     "\t10/21/2024 - 12.00.04: sra 10-22, Prelim support genai --using=dir/project \n"\
     "\t10/12/2024 - 12.00.02: Natural Language Logic \n"\
@@ -860,6 +861,7 @@ class ProjectRun(Project):
                      genai_version: str="",
                      genai_prompt_inserts: str="",
                      genai_use_relns: bool=True,
+                     genai_tables: int=0,
                      host: str='localhost', 
                      port: str='5656', 
                      swagger_host: str="localhost", 
@@ -903,6 +905,7 @@ class ProjectRun(Project):
         self.genai_prompt_inserts = genai_prompt_inserts
         self.genai_use_relns = genai_use_relns
         """ Use relationships in create_db_models (internal) """
+        self.genai_tables = genai_tables
         self.user_db_url = db_url  # retained for debug
         self.bind_key = bind_key
         self.api_name = api_name
@@ -1000,7 +1003,9 @@ class ProjectRun(Project):
             uri_info.print_uri_info()
             exit(0)
 
-        print_options = True
+        print_options = False
+        if log.getEffectiveLevel() >= logging.DEBUG:
+            print_options = True
         if print_options:
             creating_or_updating = "Creating"
             if self.command.startswith("add_"):
@@ -1995,8 +2000,8 @@ from database import <project.bind_key>_models
         """
 
         self.print_options()
-        self.directory_setup()
         gen_ai = self.create_database_from_genai_or_model()                                 # sometimes we create db before creating project
+        self.directory_setup()
         self.abs_db_url, self.nw_db_status, self.model_file_name = self.call_abs_db_url()   # nw set here, dbname, db abbrevs
         self.set_standard_external_builder()
 

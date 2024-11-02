@@ -2,7 +2,7 @@ import api_logic_server_cli.create_from_model.uri_info as uri_info
 from api_logic_server_cli.cli_args_base import CliArgsBase
 from os.path import abspath
 from pathlib import Path
-import os
+import os, logging
 
 class Project(CliArgsBase):  # extends user-visible args with internal values, extended by ProjectRun
     
@@ -64,6 +64,9 @@ class Project(CliArgsBase):  # extends user-visible args with internal values, e
         self.genai_logic = None  # type list[str]
         """ genai logic to be inserted into logic/declare_logic.py """
 
+        self.genai_tables = 0
+        """ number of tables (aks complexity) for genai """
+
         self.genai_prompt_inserts : str = None
         """ text to be inserted into prompt 
             - "" means infer from db_url (e.g. system/genai/prompt_inserts/sqlite_inserts.prompt)
@@ -77,8 +80,8 @@ class Project(CliArgsBase):  # extends user-visible args with internal values, e
             uri_info.print_uri_info()
             exit(0)
 
-        print_options = True
-        if print_options:
+        log = logging.getLogger('api_logic_server_cli.api_logic_server')
+        if log.getEffectiveLevel() >= logging.DEBUG:
             print(f'\n\nCreating ApiLogicServer with options:')
             print(f'  --db_url={self.db_url}')
             print(f'  --bind_key={self.bind_key}') 

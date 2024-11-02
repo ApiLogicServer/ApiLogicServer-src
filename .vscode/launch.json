@@ -619,8 +619,9 @@
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "args": ["genai",
-                "--using=${workspaceFolder}/../../build_and_test/ApiLogicServer/system/genai/examples/genai_demo/genai_demo.prompt",
-                "--project-name=genai_demo"],
+//                "--project-name=genai_demo",
+                "--using=${workspaceFolder}/../../build_and_test/ApiLogicServer/system/genai/examples/genai_demo/genai_demo.prompt"
+            ],
             "console": "integratedTerminal"
         },
         {
