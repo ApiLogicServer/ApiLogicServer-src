@@ -7,7 +7,7 @@ Hints: use autonum keys (for all tables - including for link/join/junction/inter
 
 Be sure to create classes, never tables.
 
-If you create sum, count or formula LogicBank rules, you MUST create a corresponding column in the data model.
+If you create sum, count or formula LogicBank rules, then you MUST create a corresponding column in the data model.
 
 Remember that SQLite DateTime type only accepts Python datetime and date objects as input, 
 this means you can not enter string attributes where a date or datetime object is expected.
