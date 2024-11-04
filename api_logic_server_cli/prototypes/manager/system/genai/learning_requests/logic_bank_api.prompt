@@ -4,6 +4,8 @@ Create a function called declare_logic(), consisting of calls to Rule methods.
 
 Do not generate import statements.
 
+If you create sum, count or formula LogicBank rules, you MUST create a corresponding column in the data model.
+
 Use only the methods provided below.
 
 class Rule:
