@@ -98,7 +98,7 @@ class GenAI(object):
         https://platform.openai.com/docs/guides/fine-tuning/create-a-fine-tuned-model
         """        
 
-        self.project = project
+        self.project = project  # als project info (cli args etc)
         log.info(f'\nGenAI [{self.project.project_name}] creating microservice from: {self.project.genai_using}')
         if self.project.genai_repaired_response != '':
             log.info(f'..     retry from [repaired] response file: {self.project.genai_repaired_response}')
@@ -155,7 +155,6 @@ class GenAI(object):
         if self.project.genai_repaired_response == '':  # clean up unless retrying from chatgpt_original.response
             Path('system/genai/temp/chatgpt_original.response').unlink(missing_ok=True)
             Path('system/genai/temp/chatgpt_retry.response').unlink(missing_ok=True)
-            Path('system/genai/temp/create_db_models.sqlite').unlink(missing_ok=True)
     
     def create_presets(self, prompt_messages: List[Dict[str, str]]):
         """ Create presets - you are a data modelling expert, and logicbank api etc """

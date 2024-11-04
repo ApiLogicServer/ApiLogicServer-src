@@ -1,0 +1,89 @@
+
+Use SQLAlchemy to create a sqlite database named system/genai/temp/create_db_models.sqlite, to
+
+Create a system with customers, orders, items and products.
+
+Include a notes field for orders.
+
+Use LogicBank to create declare_logic() to enforce these requirements (do not generate check constraints); be sure to update the data model and *all* test data with any attributes used in the logic:
+    1. The Customer's balance is less than the credit limit
+    2. The Customer's balance is the sum of the Order amount_total where date_shipped is null
+    3. The Order's amount_total is the sum of the Item amount
+    4. The Item amount is the quantity * unit_price
+    5. The Item unit_price is copied from the Product unit_price
+
+.
+
+Hints: use autonum keys (for all tables - including for link/join/junction/intersection tables), allow nulls, foreign keys, no check constraints.
+
+Be sure to create classes, never tables.
+
+Remember that SQLite DateTime type only accepts Python datetime and date objects as input, 
+this means you can not enter string attributes where a date or datetime object is expected.
+
+Don't install additional packages.
+Don't use the faker pip package.
+
+Create multiple rows of test data for each table, and follow these guidelines carefully:
+* Use foreign key columns instead of relationship names for the data.  
+* Create separate objects for each test data row, not in arrays. 
+* Be sure to initialize derived attributes for test data rows - including all sums and counts, but do not rely on LogicBank,
+and do not generate db.execute statements.
+* Do not create arrays of test data.
+* Do not create a function to load test data.  
+* Do not print the test data. 
+* For test data, format dates as date(year, month, day).
+
+For each data model class, create a docstring describing the table, prefixed with 'description: '. 
+
+class WGResult(BaseModel):  # must match system/genai/prompt_inserts/response_format.prompt
+
+    models : List[Model] # list of sqlalchemy classes in the response
+
+    rules : List[Rule] # list rule declarations
+
+    test_data: str
+
+    name: str  # suggest a short name for the project
+
+
+
+Format the response as a WGResult.
+
+Update the prior response - be sure not to lose classes and test data already created.
+
+Hints: use autonum keys (for all tables - including for link/join/junction/intersection tables), allow nulls, foreign keys, no check constraints.
+
+Be sure to create classes, never tables.
+
+Remember that SQLite DateTime type only accepts Python datetime and date objects as input, 
+this means you can not enter string attributes where a date or datetime object is expected.
+
+Don't install additional packages.
+Don't use the faker pip package.
+
+Create multiple rows of test data for each table, and follow these guidelines carefully:
+* Use foreign key columns instead of relationship names for the data.  
+* Create separate objects for each test data row, not in arrays. 
+* Be sure to initialize derived attributes for test data rows - including all sums and counts, but do not rely on LogicBank,
+and do not generate db.execute statements.
+* Do not create arrays of test data.
+* Do not create a function to load test data.  
+* Do not print the test data.
+* For test data, format dates as date(year, month, day).
+
+For each data model class, create a docstring describing the table, prefixed with 'description: '. 
+
+class WGResult(BaseModel):  # must match system/genai/prompt_inserts/response_format.prompt
+
+    models : List[Model] # list of sqlalchemy classes in the response
+
+    rules : List[Rule] # list rule declarations
+
+    test_data: str
+
+    name: str  # suggest a short name for the project
+
+
+
+Format the response as a WGResult.

@@ -74,10 +74,15 @@ if [ "$1" = "local" ]
 
 set +x
 
+# /Users/val/dev/ApiLogicServer/ApiLogicServer-dev
 cd $SRC_DIR
 echo "\npwd: $(pwd)\n"
 echo "  (wg-temp formerly at: docker cp webgenie:/tmp ~/Desktop/wg-temp \n"
-echo "temp at ./../../webg-projects"
-echo "\nrun: docker run -it --rm --name webgenie -p 8282:80  --env-file ./../../webg-config/web_genai.txt  -v ./../../webg-projects:/opt/projects apilogicserver/web_genai \n "
+echo "projects, temp at ./../../webg-local -- eg, drag it to manager workspace"
+echo "you can 'clean' the webgenie_docker folder\n"
+echo " .. delete it: rm -rf ./../../webg-local  \n"
+echo " .. cp -r docker/webgenie_docker/webgen_ai_docker/webg-local_proto ./../../webg-local \n"
+echo "Browse to: http://localhost:8282/"
+echo "\nrun: docker run -it --rm --name webgenie -p 8282:80  --env-file ./../../webg-local/webg-config/web_genai.txt  -v ./../../webg-local/webg-projects:/opt/projects -v ./../../webg-local/webg-temp:/tmp apilogicserver/web_genai \n "
 
 exit 0
