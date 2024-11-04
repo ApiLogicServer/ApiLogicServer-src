@@ -75,6 +75,7 @@ if [ "$1" = "local" ]
 set +x
 
 # /Users/val/dev/ApiLogicServer/ApiLogicServer-dev
+# sh docker/webgenie_docker/build_web_genie_local.sh local
 cd $SRC_DIR
 echo "\npwd: $(pwd)\n"
 echo "  (wg-temp formerly at: docker cp webgenie:/tmp ~/Desktop/wg-temp \n"

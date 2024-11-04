@@ -296,6 +296,26 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
+            "name": "  - retry conversation",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "genai", "--retries=-1",
+                "--using=retry-project",
+                "--using=system/genai/retry/conv"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
             "name": "Python: Module",
             "type": "debugpy",
             "request": "launch",
