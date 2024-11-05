@@ -558,6 +558,32 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "    - Create blt/airport_4 from PROMPT",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["genai",
+                "--project-name=airport_4",
+                "--using=${workspaceFolder}/tests/test_databases/ai-created/airport/airport.prompt"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "    - Create blt/airport_10 from PROMPT",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["genai",
+                "--project-name=airport_10", "--tables=10",
+                "--using=${workspaceFolder}/tests/test_databases/ai-created/airport/airport.prompt"],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "    - Create blt/elections from RESPONSE",
             "type": "debugpy",
             "request": "launch",
