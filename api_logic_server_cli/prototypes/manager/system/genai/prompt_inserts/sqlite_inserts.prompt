@@ -6,7 +6,7 @@ Hints: use autonum keys (for all tables - including for link/join/junction/inter
 
 Be sure to create classes, never tables.
 
-If you create sum, count or formula LogicBank rules, then you MUST create a corresponding column in the data model.
+If you create sum, count or formula Logic Bank rules, then you MUST create a corresponding column in the data model.
 
 Remember that SQLite DateTime type only accepts Python datetime and date objects as input, 
 this means you can not enter string attributes where a date or datetime object is expected.
@@ -17,7 +17,7 @@ Don't use the faker pip package.
 Create multiple rows of test data for each table, and follow these guidelines carefully:
 * Use foreign key columns instead of relationship names for the data.  
 * Create separate objects for each test data row, not in arrays. 
-* Be sure to initialize derived attributes for test data rows - including all sums and counts, but do not rely on LogicBank,
+* Be sure to initialize derived attributes for test data rows - including all sums and counts, but do not rely on Logic Bank,
 and do not generate db.execute statements.
 * Do not create arrays of test data.
 * Do not create a function to load test data.  
