@@ -233,7 +233,7 @@ class GenAI(object):
                         response_count += 1
                     else:
                         request_count += 1      # rebuild response with *all* tables
-                        if request_count > 1:   # Run Config: genai AUTO DEALERSHIP CONVERSATION
+                        if request_count > 2:   # Run Config: genai AUTO DEALERSHIP CONVERSATION
                             if 'updating the prior response' not in prompt:
                                 prompt = self.get_prompt__with_inserts(raw_prompt=prompt, for_iteration=True)                  
                     prompt_messages.append( {"role": role, "content": prompt})
