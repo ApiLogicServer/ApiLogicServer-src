@@ -327,7 +327,11 @@ def api_logic_server_setup(flask_app: Flask, args: Args):
             if disable_rules:
                 app_logger.info("LogicBank rules disabled")  # db opened 1st access
             else:  # genai may insert rules with no columns... WebG restarts with rules disabled
-                LogicBank.activate(session=session, activator=declare_logic.declare_logic, constraint_event=constraint_handler)
+                try:
+                    LogicBank.activate(session=session, activator=declare_logic.declare_logic, constraint_event=constraint_handler)
+                except Exception as e:
+                    app_logger.error("Logic Bank Activation Error: " + str(e))
+                    app_logger.exception(e)
             logic_logger.setLevel(logic_logger_level)
             app_logger.info("Declare   Logic complete - logic/declare_logic.py (rules + code)"
                 + f' -- {len(database.models.metadata.tables)} tables loaded\n')  # db opened 1st access
