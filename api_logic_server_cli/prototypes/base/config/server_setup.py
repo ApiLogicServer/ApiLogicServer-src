@@ -317,7 +317,17 @@ def api_logic_server_setup(flask_app: Flask, args: Args):
             if logic_logger_activate_debug == False:
                 logic_logger.setLevel(logging.INFO)
             app_logger.info("")
-            LogicBank.activate(session=session, activator=declare_logic.declare_logic, constraint_event=constraint_handler)
+            disable_rules = False
+            if os.getenv('APILOGICPROJECT_DISABLE_RULES'):
+                disable_rules = os.getenv('APILOGICPROJECT_DISABLE_RULES').startswith("1") or \
+                                os.getenv('APILOGICPROJECT_DISABLE_RULES').startswith("T") or \
+                                os.getenv('APILOGICPROJECT_DISABLE_RULES').startswith("t") or \
+                                os.getenv('APILOGICPROJECT_DISABLE_RULES').startswith("Y") or \
+                                os.getenv('APILOGICPROJECT_DISABLE_RULES').startswith("y")   
+            if disable_rules:
+                app_logger.info("LogicBank rules disabled")  # db opened 1st access
+            else:  # genai may insert rules with no columns... WebG restarts with rules disabled
+                LogicBank.activate(session=session, activator=declare_logic.declare_logic, constraint_event=constraint_handler)
             logic_logger.setLevel(logic_logger_level)
             app_logger.info("Declare   Logic complete - logic/declare_logic.py (rules + code)"
                 + f' -- {len(database.models.metadata.tables)} tables loaded\n')  # db opened 1st access
