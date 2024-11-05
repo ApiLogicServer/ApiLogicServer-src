@@ -22,7 +22,7 @@ RUN apt-get update && apt-get install wget -y \
 RUN npm install -g @softwaretechnik/dbml-renderer
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
 COPY nginx/wg.conf /etc/nginx/wg.conf
-RUN mkdir /etc/nginx/apis
+RUN mkdir -p /etc/nginx/apis
 RUN chown -R api_logic_server /var/log/nginx /etc/nginx/apis
 RUN chown api_logic_server /var/lib/nginx
 RUN chmod 777 /run # TODO!! security issue?
