@@ -1,0 +1,42 @@
+{
+    "models": [
+        {
+            "classname": "Department",
+            "code": "class Department(Base):\n    \"\"\"description: Table for storing department information with budget constraints.\"\"\"\n\n    __tablename__ = 'department'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String, nullable=False)\n    budget = Column(Float, nullable=False)\n    salary_total = Column(Float, nullable=False)  # Derived column for total salary of employees in department",
+            "description": "Table for storing department information with budget constraints.",
+            "name": "Department"
+        },
+        {
+            "classname": "Employee",
+            "code": "class Employee(Base):\n    \"\"\"description: Table for storing employee details including salary and department assignment.\"\"\"\n\n    __tablename__ = 'employee'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String, nullable=False)\n    salary = Column(Float, nullable=False)\n    department_id = Column(Integer, ForeignKey('department.id'), nullable=True)  # Allows null for employees who are not assigned to a department",
+            "description": "Table for storing employee details including salary and department assignment.",
+            "name": "Employee"
+        },
+        {
+            "classname": "Position",
+            "code": "class Position(Base):\n    \"\"\"description: Table for storing positions within departments related to employee assignments.\"\"\"\n\n    __tablename__ = 'position'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    title = Column(String, nullable=False)\n    employee_id = Column(Integer, ForeignKey('employee.id'), nullable=True)\n    department_id = Column(Integer, ForeignKey('department.id'), nullable=True)",
+            "description": "Table for storing positions within departments related to employee assignments.",
+            "name": "Position"
+        },
+        {
+            "classname": "Project",
+            "code": "class Project(Base):\n    \"\"\"description: Table for storing project assignments related to departments.\"\"\"\n\n    __tablename__ = 'project'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String, nullable=False)\n    department_id = Column(Integer, ForeignKey('department.id'), nullable=True)",
+            "description": "Table for storing project assignments related to departments.",
+            "name": "Project"
+        }
+    ],
+    "rules": [
+        {
+            "name": "Sum Rule for Salaries",
+            "description": "Ensures that the total salaries of employees in a department are calculated and stored as a derived attribute.",
+            "code": "Rule.sum(derive=Department.salary_total, as_sum_of=Employee.salary, child_role_name='employees')"
+        },
+        {
+            "name": "Constraint on Exceeding Budget",
+            "description": "Departments' total salary must not exceed their budget.",
+            "code": "Rule.constraint(validate=Department, as_condition=lambda row: row.salary_total <= row.budget, error_msg=\"Total salary ({row.salary_total}) exceeds department budget ({row.budget})\")"
+        }
+    ],
+    "test_data": "from sqlalchemy import create_engine\nfrom sqlalchemy.ext.declarative import declarative_base\nfrom sqlalchemy.orm import sessionmaker\nfrom datetime import date\n\nBase = declarative_base()\nengine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite')\nSession = sessionmaker(bind=engine)\nsession = Session()\n\n# Create all tables specified in the data models (normally done once in application setup)\nBase.metadata.create_all(engine)\n\n# Test data for Departments\n\ndepartment1 = Department(name=\"Engineering\", budget=500000.0, salary_total=180000.0)\ndepartment2 = Department(name=\"Human Resources\", budget=300000.0, salary_total=90000.0)\n\n# Test data for Employees\n\nemployee1 = Employee(name=\"Alice Smith\", salary=70000.0, department_id=1)\nemployee2 = Employee(name=\"Bob Jones\", salary=60000.0, department_id=1)\nemployee3 = Employee(name=\"Charlie Brown\", salary=50000.0, department_id=1)\nemployee4 = Employee(name=\"Diane Green\", salary=90000.0, department_id=2)\n\n# Test data for Positions\n\nposition1 = Position(title=\"Developer\", employee_id=1, department_id=1)\nposition2 = Position(title=\"Manager\", employee_id=2, department_id=1)\nposition3 = Position(title=\"HR Specialist\", employee_id=4, department_id=2)\n\n# Test data for Projects\n\nproject1 = Project(name=\"New Website\", department_id=1)\nproject2 = Project(name=\"Employee Wellness Program\", department_id=2)\n\n# Add test data to the current session\ntest_data_objects = [department1, department2, employee1, employee2, employee3, employee4, position1, position2, position3, project1, project2]\n\nfor obj in test_data_objects:\n    session.add(obj)\n\n# Commit all the test data to the database\nsession.commit()",
+    "name": "DepartmentalSalaryBudgetEnforcement"
+}

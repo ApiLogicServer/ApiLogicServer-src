@@ -321,7 +321,7 @@ if Config.do_create_manager:    # tests built into clean, so create it first FIX
 test_names = []
 start_time = time.time()
 
-if Config.do_test_genai:
+if Config.do_genai_test_genai_demo_conversation:
     # test genai, using copy of pre-supplied ChatGPT response (to avoid api key issues)
     # see https://apilogicserver.github.io/Docs/Sample-Genai/#what-just-happened
     test_name = f'{test_folder_name}/genai_test_genai_demo_conversation'
@@ -342,7 +342,7 @@ if Config.do_test_genai:
     start_api_logic_server(project_name=test_name)
     stop_server(msg=f"*** {test_name} TESTS COMPLETE ***\n")
 
-
+if Config.do_test_genai_demo:
     test_name = f'{test_folder_name}/genai_test_genai_demo'
     test_names.append( (test_name, "smoke test") )
     prompt_path = install_api_logic_server_path.joinpath('system/genai/examples/genai_demo/genai_demo.prompt')
@@ -360,7 +360,7 @@ if Config.do_test_genai:
     start_api_logic_server(project_name=test_name)
     stop_server(msg=f"*** {test_name} TESTS COMPLETE ***\n")
 
-
+if Config.do_test_genai_demo_informal:                # complex iteration:
     test_name = f'{test_folder_name}/genai_test_genai_demo_informal'
     test_names.append( (test_name, 'informal logic (no dot notation)') )
     prompt_path = install_api_logic_server_path.joinpath('system/genai/examples/genai_demo/genai_demo_informal.prompt')
@@ -378,7 +378,25 @@ if Config.do_test_genai:
     start_api_logic_server(project_name=test_name)
     stop_server(msg=f"*** {test_name} TESTS COMPLETE ***\n")
 
+if Config.do_multi_rule_logic_bad_gen:
+    test_name = f'{test_folder_name}/multi_rule_logic_bad_gen'
+    test_names.append( (test_name, 'Base and engine got into test data') )
+    prompt_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/emp_dept/multi_rule_logic_003.response')
+    assert prompt_path.exists() , f'{test_name} error: prompt path not found: {str(prompt_path)}'
+    do_test_genai_cmd = f'{set_venv} && als genai --project-name={test_name} --using={prompt_path}'
+    result_genai = run_command(do_test_genai_cmd,
+        cwd=create_in,
+        msg=f'\nCreate {test_name}')
+    genai_demo_path = install_api_logic_server_path.joinpath(test_name)
+    '''
+    add_cust_genai = run_command(f'{set_venv} && cd {genai_demo_path} && als add-cust',
+        cwd=genai_demo_path,
+        msg=f'\nCustomize genai_demo')
+    '''
+    start_api_logic_server(project_name=test_name)
+    stop_server(msg=f"*** {test_name} TESTS COMPLETE ***\n")
 
+if Config.do_multi_rule_logic:
     test_name = f'{test_folder_name}/multi_rule_logic'
     test_names.append( (test_name, 'multiple rules from 1 line') )
     prompt_path = install_api_logic_server_path.joinpath('system/genai/examples/emp_depts/emp_dept.prompt')
@@ -396,7 +414,7 @@ if Config.do_test_genai:
     start_api_logic_server(project_name=test_name)
     stop_server(msg=f"*** {test_name} TESTS COMPLETE ***\n")
 
-
+if Config.do_data_fix_iteration:
     test_name = f'{test_folder_name}/data_fix_iteration'  # ensure the derived sums are correct (balance, etc)
     test_names.append( (test_name, 'ensure the derived sums are correct (balance, etc)') )
     prompt_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/genai_demo/data_fix_iteration')
@@ -415,6 +433,7 @@ if Config.do_test_genai:
     stop_server(msg=f"*** {test_name} TESTS COMPLETE ***\n")
 
 
+if Config.do_airport_4:
     test_name = f'{test_folder_name}/airport_4'  # check for invented rules without columns
     test_names.append( (test_name, 'check for invented rules without columns') )
     prompt_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/airport/airport.prompt')
@@ -440,6 +459,17 @@ if Config.do_test_auto_conv:    # ensure project rebuilt, not truncated
     result_genai = run_command(f'{set_venv} && als genai --project-name={test_name} --using={genai_conv}',
         cwd=create_in,
         msg=f'\nTest auto_conv')
+
+
+if Config.do_students_add_logic:          # complex iteration - link tables sometimes have no id, or are created as tables
+    test_name = f'{test_folder_name}/students_add_logic' 
+    test_names.append( (test_name, 'common iteration - add reln and multi-rule logic') )
+    genai_conv = get_api_logic_server_src_path().joinpath('tests/genai_tests/students_add_logic')
+    assert genai_conv.exists() , f'do_test_iso error: genai_conv path not found: {str(genai_conv)}'
+    result_genai = run_command(f'{set_venv} && als genai --project-name={test_name} --using={genai_conv}',
+        cwd=create_in,
+        msg=f'\nTest iso')
+    pass  # also tests conversations without presets
 
 
 if Config.do_test_iso:          # complex iteration - link tables sometimes have no id, or are created as tables

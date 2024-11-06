@@ -1,0 +1,42 @@
+{
+    "models": [
+        {
+            "classname": "Student",
+            "code": "class Student(Base):\n    \"\"\"description: Represents a student in the system.\"\"\"\n    __tablename__ = 'students'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String, nullable=False)\n    email = Column(String, nullable=True)\n    enrollment_date = Column(Date, nullable=True)",
+            "description": "Represents a student in the system.",
+            "name": "Student"
+        },
+        {
+            "classname": "Course",
+            "code": "class Course(Base):\n    \"\"\"description: Represents a course offered in the system.\"\"\"\n    __tablename__ = 'courses'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    title = Column(String, nullable=False)\n    description = Column(String, nullable=True)",
+            "description": "Represents a course offered in the system.",
+            "name": "Course"
+        },
+        {
+            "classname": "Teacher",
+            "code": "class Teacher(Base):\n    \"\"\"description: Represents a teacher responsible for courses.\"\"\"\n    __tablename__ = 'teachers'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String, nullable=False)\n    department = Column(String, nullable=True)",
+            "description": "Represents a teacher responsible for courses.",
+            "name": "Teacher"
+        },
+        {
+            "classname": "Offering",
+            "code": "class Offering(Base):\n    \"\"\"description: Represents the association between courses and teachers.\"\"\"\n    __tablename__ = 'offerings'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    course_id = Column(Integer, ForeignKey('courses.id'))\n    teacher_id = Column(Integer, ForeignKey('teachers.id'))\n    start_date = Column(Date, nullable=False)\n    end_date = Column(Date, nullable=True)",
+            "description": "Represents the association between courses and teachers.",
+            "name": "Offering"
+        }
+    ],
+    "rules": [
+        {
+            "name": "Total Courses per Teacher",
+            "description": "Calculate the total number of courses a teacher is offering.",
+            "code": "Rule.count(derive=Teacher.total_courses, as_count_of=Offering, child_role_name='offerings')"
+        },
+        {
+            "name": "Credit Limit Constraint",
+            "description": "Ensure student credits do not exceed a predefined maximum limit.",
+            "code": "Rule.constraint(validate=Student, as_condition=lambda row: row.credits <= row.max_credits, error_msg=\"{row.name}'s credits exceed the maximum allowed.\")"
+        }
+    ],
+    "test_data": "from datetime import date\n\n# Creating Student Test Data\nstudent1 = Student(name=\"John Doe\", email=\"john.doe@example.com\", enrollment_date=date(2022, 9, 1))\nstudent2 = Student(name=\"Jane Smith\", email=\"jane.smith@example.com\", enrollment_date=date(2022, 9, 1))\n\n# Creating Course Test Data\ncourse1 = Course(title=\"Mathematics 101\", description=\"An introductory course on Mathematics.\")\ncourse2 = Course(title=\"Physics 101\", description=\"An introductory course on Physics.\")\n\n# Creating Teacher Test Data\nteacher1 = Teacher(name=\"Dr. Brown\", department=\"Mathematics\")\nteacher2 = Teacher(name=\"Dr. Green\", department=\"Physics\")\n\n# Creating Offering Test Data\noffering1 = Offering(course_id=1, teacher_id=1, start_date=date(2022, 9, 1), end_date=date(2022, 12, 15))\noffering2 = Offering(course_id=2, teacher_id=2, start_date=date(2022, 9, 1))",
+    "name": "EducationSystem"
+}

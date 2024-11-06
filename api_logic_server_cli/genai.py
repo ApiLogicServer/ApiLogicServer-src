@@ -514,7 +514,8 @@ class GenAI(object):
             if ' = ' in each_line and '(' in each_line:  # CPT test data might have: tests = []
                 assign = each_line.split(' = ')[0]
                 # no tokens for: Session = sessionmaker(bind=engine) or session = Session()
-                if '.' not in assign and 'Session' not in each_line and 'session.' not in each_line:
+                if '.' not in assign and 'Session' not in each_line and 'session.' not in each_line and \
+                    'Base =' not in each_line and 'engine =' not in each_line:
                     row_names.append(assign)
 
         create_db_model_lines.append('\n\n')
