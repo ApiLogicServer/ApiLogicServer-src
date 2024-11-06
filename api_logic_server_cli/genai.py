@@ -1,5 +1,6 @@
 import json
 import time
+import traceback
 from typing import Dict, List
 from api_logic_server_cli.cli_args_project import Project
 import logging
@@ -786,6 +787,7 @@ def genai(using: str, db_url: str, repaired_response: str, genai_version: str,
                         raise Exception("Forced Failure for Internal Testing")
                 break  # success - exit the loop
             except Exception as e:  # almost certaily in api_logic_server_cli/create_from_model/create_db_from_model.py
+                log.error(traceback.format_exc())
                 log.error(f"\n\nGenai failed With Error: {e}")
                 if resolved_project_name == '_genai_default':
                     resolved_project_name = pr.project_name  # defaulted in genai from response

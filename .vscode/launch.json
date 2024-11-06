@@ -621,6 +621,20 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "    - Create blt/dnd from PROMPT",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": [
+                "genai", "--tables=25",
+                "--using=${workspaceFolder}/tests/test_databases/ai-created/dnd/dnd.prompt",
+                "--project-name=dnd"],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "    - Create blt/dnd from RESPONSE",
             "type": "debugpy",
             "request": "launch",
@@ -631,7 +645,7 @@
             "args": [
                 "genai",
                 "--repaired-response=${workspaceFolder}/tests/test_databases/ai-created/dnd/dnd.response",
-                "--using=dnd"],
+                "--project-name=dnd", "--using=dnd"],
             "console": "integratedTerminal"
         },
         {
