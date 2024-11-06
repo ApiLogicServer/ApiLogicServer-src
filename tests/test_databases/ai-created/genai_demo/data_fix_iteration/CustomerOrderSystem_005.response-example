@@ -1,0 +1,57 @@
+{
+    "models": [
+        {
+            "classname": "Customer",
+            "code": "class Customer(Base):\n    \"\"\"\n    description: This class represents customers, storing each customer's balance and credit limit.\n    \"\"\"\n    __tablename__ = 'customers'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String, nullable=False)\n    balance = Column(Float, nullable=True, default=0.0)\n    credit_limit = Column(Float, nullable=False, default=1000.0)",
+            "description": "This class represents customers, storing each customer's balance and credit limit.",
+            "name": "Customer"
+        },
+        {
+            "classname": "Order",
+            "code": "class Order(Base):\n    \"\"\"\n    description: This class represents orders, which belong to customers and contain the total amount of the order.\n    Includes a notes field and a shipped date.\n    \"\"\"\n    __tablename__ = 'orders'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    customer_id = Column(Integer, ForeignKey('customers.id'), nullable=False)\n    amount_total = Column(Float, nullable=True, default=0.0)\n    notes = Column(String, nullable=True)\n    date_shipped = Column(DateTime, nullable=True)",
+            "description": "This class represents orders, which belong to customers and contain the total amount of the order. Includes a notes field and a shipped date.",
+            "name": "Order"
+        },
+        {
+            "classname": "Item",
+            "code": "class Item(Base):\n    \"\"\"\n    description: This class represents items, which are part of an order and linked to a product.\n    Holds data for quantity, calculated amount and copied unit price.\n    \"\"\"\n    __tablename__ = 'items'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    order_id = Column(Integer, ForeignKey('orders.id'), nullable=False)\n    product_id = Column(Integer, ForeignKey('products.id'), nullable=False)\n    quantity = Column(Integer, nullable=False)\n    unit_price = Column(Float, nullable=True)\n    amount = Column(Float, nullable=True)",
+            "description": "This class represents items, which are part of an order and linked to a product. Holds data for quantity, calculated amount and copied unit price.",
+            "name": "Item"
+        },
+        {
+            "classname": "Product",
+            "code": "class Product(Base):\n    \"\"\"\n    description: This class represents products that can be purchased.\n    \"\"\"\n    __tablename__ = 'products'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String, nullable=False)\n    unit_price = Column(Float, nullable=False)",
+            "description": "This class represents products that can be purchased.",
+            "name": "Product"
+        }
+    ],
+    "rules": [
+        {
+            "name": "Customer Balance Constraint",
+            "description": "Ensure the Customer's balance is less than the credit limit.",
+            "code": "Rule.constraint(validate=Customer,\n                as_condition=lambda row: row.balance <= row.credit_limit,\n                error_msg=\"Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})\")"
+        },
+        {
+            "name": "Customer Balance Sum",
+            "description": "Customer's balance is the sum of Order amount_total where date_shipped is null.",
+            "code": "Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None)"
+        },
+        {
+            "name": "Order Amount Total Sum",
+            "description": "Order's amount_total is the sum of the Item amount.",
+            "code": "Rule.sum(derive=Order.amount_total, as_sum_of=Item.amount)"
+        },
+        {
+            "name": "Item Amount Formula",
+            "description": "Item amount is the product of quantity and unit_price.",
+            "code": "Rule.formula(derive=Item.amount, as_expression=lambda row: row.quantity * row.unit_price)"
+        },
+        {
+            "name": "Unit Price Copy Rule",
+            "description": "Item unit_price is copied from Product unit_price on creation.",
+            "code": "Rule.copy(derive=Item.unit_price, from_parent=Product.unit_price)"
+        }
+    ],
+    "test_data": "# Create test data\nfrom datetime import date\n\ncustomer1 = Customer(id=1, name='John Doe', balance=2500.0, credit_limit=1500.0)\ncustomer2 = Customer(id=2, name='Jane Smith', balance=0.0, credit_limit=2000.0)\n\nproduct1 = Product(id=1, name='Laptop', unit_price=1000.0)\nproduct2 = Product(id=2, name='Smartphone', unit_price=500.0)\n\norder1 = Order(id=1, customer_id=1, amount_total=2500.0, notes='Urgent', date_shipped=None)\norder2 = Order(id=2, customer_id=2, amount_total=1000.0, notes='Regular shipping', date_shipped=date(2023, 10, 15))\n\nitem1 = Item(id=1, order_id=1, product_id=1, quantity=1, unit_price=1000.0, amount=1000.0)\nitem2 = Item(id=2, order_id=1, product_id=2, quantity=3, unit_price=500.0, amount=1500.0)\nitem3 = Item(id=3, order_id=2, product_id=2, quantity=2, unit_price=500.0, amount=1000.0)",
+    "name": "CustomerOrderSystem"
+}

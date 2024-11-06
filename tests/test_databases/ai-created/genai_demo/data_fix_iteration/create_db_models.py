@@ -21,44 +21,54 @@ Base = declarative_base()  # from system/genai/create_db_models_inserts/create_d
 
 
 class Customer(Base):
-    """description: Represents a customer with their balance and credit limit."""
-    __tablename__ = 'customer'
-    
+    """
+    description: This class represents customers, storing each customer's balance and credit limit.
+    """
+    __tablename__ = 'customers'
+
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String)
-    balance = Column(Float, nullable=False, default=0.0)
-    credit_limit = Column(Float, nullable=False)
+    name = Column(String, nullable=False)
+    balance = Column(Float, nullable=True, default=0.0)
+    credit_limit = Column(Float, nullable=False, default=1000.0)
 
 
 class Order(Base):
-    """description: Represents a customer's order with notes and total amount."""
-    __tablename__ = 'order'
+    """
+    description: This class represents orders, which belong to customers and contain the total amount of the order.
+    Includes a notes field and a shipped date.
+    """
+    __tablename__ = 'orders'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    customer_id = Column(Integer, ForeignKey('customer.id'))
-    date_shipped = Column(DateTime)
-    amount_total = Column(Float, nullable=False, default=0.0)
-    notes = Column(String)
+    customer_id = Column(Integer, ForeignKey('customers.id'), nullable=False)
+    amount_total = Column(Float, nullable=True, default=0.0)
+    notes = Column(String, nullable=True)
+    date_shipped = Column(DateTime, nullable=True)
 
 
 class Item(Base):
-    """description: Represents an item in an order, with calculated amount and copied unit price."""
-    __tablename__ = 'item'
+    """
+    description: This class represents items, which are part of an order and linked to a product.
+    Holds data for quantity, calculated amount and copied unit price.
+    """
+    __tablename__ = 'items'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    order_id = Column(Integer, ForeignKey('order.id'))
-    product_id = Column(Integer, ForeignKey('product.id'))
+    order_id = Column(Integer, ForeignKey('orders.id'), nullable=False)
+    product_id = Column(Integer, ForeignKey('products.id'), nullable=False)
     quantity = Column(Integer, nullable=False)
-    unit_price = Column(Float, nullable=False)
-    amount = Column(Float, nullable=False, default=0.0)
+    unit_price = Column(Float, nullable=True)
+    amount = Column(Float, nullable=True)
 
 
 class Product(Base):
-    """description: Represents a product with a defined unit price."""
-    __tablename__ = 'product'
+    """
+    description: This class represents products that can be purchased.
+    """
+    __tablename__ = 'products'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String)
+    name = Column(String, nullable=False)
     unit_price = Column(Float, nullable=False)
 
 
@@ -71,27 +81,22 @@ session = Session()
 
 # ALS/GenAI: Prepare for sample data
 
-# Sample Test Data
+# Create test data
+from datetime import date
 
-# Customer
-customer1 = Customer(id=1, name='John Doe', balance=0.0, credit_limit=5000.0)
+customer1 = Customer(id=1, name='John Doe', balance=0.0, credit_limit=1500.0)
 customer2 = Customer(id=2, name='Jane Smith', balance=0.0, credit_limit=2000.0)
 
-# Product
-product1 = Product(id=1, name='Widget', unit_price=20.0)
-product2 = Product(id=2, name='Gadget', unit_price=10.0)
+product1 = Product(id=1, name='Laptop', unit_price=1000.0)
+product2 = Product(id=2, name='Smartphone', unit_price=500.0)
 
-# Order
-order1 = Order(id=1, customer_id=1, date_shipped=None, amount_total=0.0, notes='Urgent')
-order2 = Order(id=2, customer_id=1, date_shipped=date(2023,10,1), amount_total=0.0, notes='Standard')
-order3 = Order(id=3, customer_id=2, date_shipped=None, amount_total=0.0, notes='Express')
+order1 = Order(id=1, customer_id=1, amount_total=0.0, notes='Urgent', date_shipped=None)
+order2 = Order(id=2, customer_id=2, amount_total=0.0, notes='Regular shipping', date_shipped=date(2023, 10, 15))
 
-# Item
-item1 = Item(id=1, order_id=1, product_id=1, quantity=5, unit_price=20.0, amount=100.0)
-item2 = Item(id=2, order_id=1, product_id=2, quantity=10, unit_price=10.0, amount=100.0)
-item3 = Item(id=3, order_id=2, product_id=1, quantity=3, unit_price=20.0, amount=60.0)
-item4 = Item(id=4, order_id=3, product_id=2, quantity=8, unit_price=10.0, amount=80.0)
+item1 = Item(id=1, order_id=1, product_id=1, quantity=1, unit_price=1000.0, amount=1000.0)
+item2 = Item(id=2, order_id=1, product_id=2, quantity=3, unit_price=500.0, amount=1500.0)
+item3 = Item(id=3, order_id=2, product_id=2, quantity=2, unit_price=500.0, amount=1000.0)
 
 
-session.add_all([customer1, customer2, product1, product2, order1, order2, order3, item1, item2, item3, item4])
+session.add_all([customer1, customer2, product1, product2, order1, order2, item1, item2, item3])
 session.commit()
