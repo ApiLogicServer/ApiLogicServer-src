@@ -345,6 +345,20 @@
         },
 
         {
+            "name": "     - GENAI-ITERATE blt/genai_demo_data_fix_iteration",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": [
+                "genai",
+                "--project-name=genai_demo_data_fix_iteration",
+                "--using=${workspaceFolder}/tests/test_databases/ai-created/genai_demo/data_fix_iteration"],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "2 - Create servers/ApiLogicProject (DEFAULTS)",
             "type": "debugpy",
             "request": "launch",
@@ -422,22 +436,6 @@
                 "app-build",
                 "--project-name=",
                 "--app=app"
-                ],
-            "console": "integratedTerminal"
-        },
-        {
-            "name": "     - create herboDeSonia",
-            "type": "debugpy",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/../../build_and_test/",
-            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
-            "redirectOutput": true,
-            "justMyCode": false,
-            "args": [
-                "create",
-                "--project-name=accented_chars",
-                "--db-url=mysql+pymysql://root:p@localhost:3306/herboDeSonia?charset=utf8mb4",
-                "--quote"
                 ],
             "console": "integratedTerminal"
         },
