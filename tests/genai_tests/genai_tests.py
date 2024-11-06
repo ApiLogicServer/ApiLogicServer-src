@@ -362,8 +362,26 @@ if Config.do_test_genai:
 
 
     test_name = f'{test_folder_name}/genai_test_genai_demo_informal'
-    test_names.append( (test_name, 'informal logic') )
+    test_names.append( (test_name, 'informal logic (no dot notation)') )
     prompt_path = install_api_logic_server_path.joinpath('system/genai/examples/genai_demo/genai_demo_informal.prompt')
+    assert prompt_path.exists() , f'{test_name} error: prompt path not found: {str(prompt_path)}'
+    do_test_genai_cmd = f'{set_venv} && als genai --project-name={test_name} --using={prompt_path}'
+    result_genai = run_command(do_test_genai_cmd,
+        cwd=create_in,
+        msg=f'\nCreate {test_name}')
+    genai_demo_path = install_api_logic_server_path.joinpath(test_name)
+    '''
+    add_cust_genai = run_command(f'{set_venv} && cd {genai_demo_path} && als add-cust',
+        cwd=genai_demo_path,
+        msg=f'\nCustomize genai_demo')
+    '''
+    start_api_logic_server(project_name=test_name)
+    stop_server(msg=f"*** {test_name} TESTS COMPLETE ***\n")
+
+
+    test_name = f'{test_folder_name}/multi_rule_logic'
+    test_names.append( (test_name, 'multiple rules from 1 line') )
+    prompt_path = install_api_logic_server_path.joinpath('system/genai/examples/emp_depts/emp_dept.prompt')
     assert prompt_path.exists() , f'{test_name} error: prompt path not found: {str(prompt_path)}'
     do_test_genai_cmd = f'{set_venv} && als genai --project-name={test_name} --using={prompt_path}'
     result_genai = run_command(do_test_genai_cmd,
@@ -434,9 +452,21 @@ if Config.do_test_iso:          # complex iteration - link tables sometimes have
         msg=f'\nTest iso')
     pass  # also tests conversations without presets
 
-print(f"\n{__file__} {__version__} [{str(int(time.time() - start_time))} secs]  - created in blt/tests-genai\n")
-print ('%-50s%-50s' % ('test', 'notes'))
-print ('%-50s%-50s' % ('====', '====='))
+results = []
+
+results.append(f"\n{__file__} {__version__} [{str(int(time.time() - start_time))} secs]  - created in blt/tests-genai\n")
+
+results.append('%-50s%-50s' % ('test', 'notes')) 
+results.append('%-50s%-50s' % ('====', '====='))
 for each_name, each_note in test_names:
-    print ('%-50s%-50s' % (each_name, each_note))
-print('\n')
+    results.append ('%-50s%-50s' % (each_name, each_note))
+results.append('\n')
+print('\n'.join(results))
+
+# write results to file
+results_file = install_api_logic_server_path.joinpath('tests-genai/results.txt')
+with open(results_file, 'w') as f:
+    f.write('\n'.join(results))
+
+
+
