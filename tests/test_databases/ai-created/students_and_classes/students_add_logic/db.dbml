@@ -1,0 +1,56 @@
+// Copy this text, paste to https://dbdiagram.io/d
+// Or, https://databasediagram.com/app
+// Or, view in VSCode with extension: "DBML Live Preview"
+
+Project DBML {
+  Note: '''
+Course: Represents a course offered in the system.
+Enrollment: Represents the enrollment of students in offerings.
+Offering: Represents the association between courses and teachers.
+Student: Represents a student in the system.
+Teacher: Represents a teacher responsible for courses.
+'''
+}
+
+Table Course {
+    id INTEGER [primary key]
+    title VARCHAR 
+    description VARCHAR 
+    }
+
+Table Enrollment {
+    id INTEGER [primary key]
+    student_id INTEGER 
+    offering_id INTEGER 
+    enrollment_date DATE 
+    }
+
+Table Offering {
+    id INTEGER [primary key]
+    course_id INTEGER 
+    teacher_id INTEGER 
+    start_date DATE 
+    end_date DATE 
+    total_students INTEGER 
+    }
+
+Table Student {
+    id INTEGER [primary key]
+    name VARCHAR 
+    email VARCHAR 
+    enrollment_date DATE 
+    }
+
+Table Teacher {
+    id INTEGER [primary key]
+    name VARCHAR 
+    department VARCHAR 
+    }
+
+
+
+// Relationships
+    Ref: Enrollment.(offering_id) < Offering.(id)
+    Ref: Enrollment.(student_id) < Student.(id)
+    Ref: Offering.(course_id) < Course.(id)
+    Ref: Offering.(teacher_id) < Teacher.(id)
