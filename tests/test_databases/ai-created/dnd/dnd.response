@@ -1,133 +1,151 @@
-Sure! To create a complex SQLite database schema with SQLAlchemy, we'll define the necessary tables and generate the sample data. Here's a comprehensive approach to achieve your requirement:
-
-### Installation and Setup
-First, ensure you have SQLAlchemy installed in your Python environment:
-```bash
-pip install sqlalchemy
-```
-
-### Database Schema and Sample Data Generation
-Below is the Python code to create the SQLite database with the required specifications:
-
-```python
-from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, DateTime
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-import datetime
-import random
-
-# Define the SQLite database
-engine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite', echo=True)
-Base = declarative_base()
-Session = sessionmaker(bind=engine)
-session = Session()
-
-# Define the tables
-class Character(Base):
-    __tablename__ = 'characters'
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String, nullable=False)
-
-class Race(Base):
-    __tablename__ = 'races'
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String, nullable=False)
-
-class Class(Base):
-    __tablename__ = 'classes'
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String, nullable=False)
-
-class Weapon(Base):
-    __tablename__ = 'weapons'
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String, nullable=False)
-
-class Spell(Base):
-    __tablename__ = 'spells'
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String, nullable=False)
-
-# More tables as needed, up to 25 tables following the same pattern
-# For demonstration, I'll create only the necessary to show you the pattern
-class CharacterRace(Base):
-    __tablename__ = 'character_races'
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    character_id = Column(Integer, ForeignKey('characters.id'), nullable=False)
-    race_id = Column(Integer, ForeignKey('races.id'), nullable=False)
-
-class CharacterClass(Base):
-    __tablename__ = 'character_classes'
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    character_id = Column(Integer, ForeignKey('characters.id'), nullable=False)
-    class_id = Column(Integer, ForeignKey('classes.id'), nullable=False)
-
-class CharacterWeapon(Base):
-    __tablename__ = 'character_weapons'
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    character_id = Column(Integer, ForeignKey('characters.id'), nullable=False)
-    weapon_id = Column(Integer, ForeignKey('weapons.id'), nullable=False)
-
-class CharacterSpell(Base):
-    __tablename__ = 'character_spells'
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    character_id = Column(Integer, ForeignKey('characters.id'), nullable=False)
-    spell_id = Column(Integer, ForeignKey('spells.id'), nullable=False)
-
-# Other tables up to 25...
-# After defining the rest of the tables similarly
-
-Base.metadata.create_all(engine)
-
-# Insert sample data
-character_names = [f'Character_{i}' for i in range(20)]
-race_names = [f'Race_{i}' for i in range(5)]
-class_names = [f'Class_{i}' for i in range(5)]
-weapon_names = [f'Weapon_{i}' for i in range(10)]
-spell_names = [f'Spell_{i}' for i in range(15)]
-
-for name in character_names:
-    session.add(Character(name=name))
-
-for name in race_names:
-    session.add(Race(name=name))
-
-for name in class_names:
-    session.add(Class(name=name))
-
-for name in weapon_names:
-    session.add(Weapon(name=name))
-
-for name in spell_names:
-    session.add(Spell(name=name))
-
-session.commit()
-
-characters = session.query(Character).all()
-races = session.query(Race).all()
-classes = session.query(Class).all()
-weapons = session.query(Weapon).all()
-spells = session.query(Spell).all()
-
-for _ in range(100):
-    character = random.choice(characters)
-    race = random.choice(races)
-    class_ = random.choice(classes)
-    weapon = random.choice(weapons)
-    spell = random.choice(spells)
-    
-    session.add(CharacterRace(character_id=character.id, race_id=race.id))
-    session.add(CharacterClass(character_id=character.id, class_id=class_.id))
-    session.add(CharacterWeapon(character_id=character.id, weapon_id=weapon.id))
-    session.add(CharacterSpell(character_id=character.id, spell_id=spell.id))
-
-session.commit()
-print("Database and sample data created successfully!")
-```
-
-### Explanation
-- **Database Creation**: We create a SQLite database with SQLAlchemy and define our table models.
-- **Tables**: `Character`, `Race`, `Class`, `Weapon`, `Spell`, and junction tables like `CharacterRace`, `CharacterClass`, `CharacterWeapon`, and `CharacterSpell`.
-- **Sample Data**: Use lists to generate character names, races, classes, weapons, and spells, then populate the tables with sample data using SQLAlchemy session and commit patterns.
-
-This approach can be extended to create more tables, ensuring requested database complexity and more comprehensive relational data scenarios.
+{
+    "models": [
+        {
+            "classname": "Player",
+            "code": "class Player(Base):\n    \"\"\"description: Represents a player character in the Dungeons and Dragons game.\"\"\"\n    __tablename__ = 'player'\n\n    id = Column(Integer, primary_key=True)\n    name = Column(String, nullable=False)\n    level = Column(Integer, default=1)\n    experience_points = Column(Integer, default=0)\n    hit_points = Column(Integer, default=10)\n    mana_points = Column(Integer, default=5)",
+            "description": "Represents a player character in the Dungeons and Dragons game.",
+            "name": "Player"
+        },
+        {
+            "classname": "Race",
+            "code": "class Race(Base):\n    \"\"\"description: Represents the race of a player character, affecting abilities and traits.\"\"\"\n    __tablename__ = 'race'\n\n    id = Column(Integer, primary_key=True)\n    name = Column(String, nullable=False)\n    description = Column(String)",
+            "description": "Represents the race of a player character, affecting abilities and traits.",
+            "name": "Race"
+        },
+        {
+            "classname": "Class",
+            "code": "class Class(Base):\n    \"\"\"description: Represents the class of a player character, defining their skills and abilities.\"\"\"\n    __tablename__ = 'classes'\n\n    id = Column(Integer, primary_key=True)\n    name = Column(String, nullable=False)\n    description = Column(String)",
+            "description": "Represents the class of a player character, defining their skills and abilities.",
+            "name": "Class"
+        },
+        {
+            "classname": "Spell",
+            "code": "class Spell(Base):\n    \"\"\"description: Represents spells that can be cast by player characters.\"\"\"\n    __tablename__ = 'spell'\n\n    id = Column(Integer, primary_key=True)\n    name = Column(String, nullable=False)\n    description = Column(String)\n    mana_cost = Column(Integer, nullable=False)\n    level_required = Column(Integer, nullable=False)",
+            "description": "Represents spells that can be cast by player characters.",
+            "name": "Spell"
+        },
+        {
+            "classname": "Weapon",
+            "code": "class Weapon(Base):\n    \"\"\"description: Represents weapons available to player characters.\"\"\"\n    __tablename__ = 'weapon'\n\n    id = Column(Integer, primary_key=True)\n    name = Column(String, nullable=False)\n    damage = Column(Integer, nullable=False)\n    weight = Column(Integer, nullable=False)",
+            "description": "Represents weapons available to player characters.",
+            "name": "Weapon"
+        },
+        {
+            "classname": "Armor",
+            "code": "class Armor(Base):\n    \"\"\"description: Represents armor equipment available to player characters.\"\"\"\n    __tablename__ = 'armor'\n\n    id = Column(Integer, primary_key=True)\n    name = Column(String, nullable=False)\n    defense = Column(Integer, nullable=False)\n    weight = Column(Integer, nullable=False)",
+            "description": "Represents armor equipment available to player characters.",
+            "name": "Armor"
+        },
+        {
+            "classname": "Quest",
+            "code": "class Quest(Base):\n    \"\"\"description: Represents quests that players can undertake.\"\"\"\n    __tablename__ = 'quest'\n\n    id = Column(Integer, primary_key=True)\n    name = Column(String, nullable=False)\n    description = Column(String)\n    reward_experience = Column(Integer, nullable=False)",
+            "description": "Represents quests that players can undertake.",
+            "name": "Quest"
+        },
+        {
+            "classname": "Inventory",
+            "code": "class Inventory(Base):\n    \"\"\"description: Represents a player's inventory to hold various items.\"\"\"\n    __tablename__ = 'inventory'\n\n    id = Column(Integer, primary_key=True)\n    player_id = Column(Integer, ForeignKey('player.id'))\n    item_name = Column(String, nullable=False)\n    item_type = Column(String, nullable=False) # e.g., 'weapon', 'armor', 'potion'\n    quantity = Column(Integer, default=1)",
+            "description": "Represents a player's inventory to hold various items.",
+            "name": "Inventory"
+        },
+        {
+            "classname": "PlayerRace",
+            "code": "class PlayerRace(Base):\n    \"\"\"description: Link table associating players with their chosen race.\"\"\"\n    __tablename__ = 'player_race'\n\n    id = Column(Integer, primary_key=True)\n    player_id = Column(Integer, ForeignKey('player.id'))\n    race_id = Column(Integer, ForeignKey('race.id'))",
+            "description": "Link table associating players with their chosen race.",
+            "name": "PlayerRace"
+        },
+        {
+            "classname": "PlayerClass",
+            "code": "class PlayerClass(Base):\n    \"\"\"description: Link table associating players with their chosen class.\"\"\"\n    __tablename__ = 'player_class'\n\n    id = Column(Integer, primary_key=True)\n    player_id = Column(Integer, ForeignKey('player.id'))\n    class_id = Column(Integer, ForeignKey('classes.id'))",
+            "description": "Link table associating players with their chosen class.",
+            "name": "PlayerClass"
+        },
+        {
+            "classname": "PlayerSpell",
+            "code": "class PlayerSpell(Base):\n    \"\"\"description: Link table associating players with available spells.\"\"\"\n    __tablename__ = 'player_spell'\n\n    id = Column(Integer, primary_key=True)\n    player_id = Column(Integer, ForeignKey('player.id'))\n    spell_id = Column(Integer, ForeignKey('spell.id'))\n    times_cast = Column(Integer, default=0)",
+            "description": "Link table associating players with available spells.",
+            "name": "PlayerSpell"
+        },
+        {
+            "classname": "PlayerWeapon",
+            "code": "class PlayerWeapon(Base):\n    \"\"\"description: Link table associating players with available weapons.\"\"\"\n    __tablename__ = 'player_weapon'\n\n    id = Column(Integer, primary_key=True)\n    player_id = Column(Integer, ForeignKey('player.id'))\n    weapon_id = Column(Integer, ForeignKey('weapon.id'))",
+            "description": "Link table associating players with available weapons.",
+            "name": "PlayerWeapon"
+        },
+        {
+            "classname": "PlayerArmor",
+            "code": "class PlayerArmor(Base):\n    \"\"\"description: Link table associating players with available armors.\"\"\"\n    __tablename__ = 'player_armor'\n\n    id = Column(Integer, primary_key=True)\n    player_id = Column(Integer, ForeignKey('player.id'))\n    armor_id = Column(Integer, ForeignKey('armor.id'))",
+            "description": "Link table associating players with available armors.",
+            "name": "PlayerArmor"
+        },
+        {
+            "classname": "QuestAssignment",
+            "code": "class QuestAssignment(Base):\n    \"\"\"description: Link table for players currently undertaking quests.\"\"\"\n    __tablename__ = 'quest_assignment'\n\n    id = Column(Integer, primary_key=True)\n    player_id = Column(Integer, ForeignKey('player.id'))\n    quest_id = Column(Integer, ForeignKey('quest.id'))\n    date_assigned = Column(Date)\n    date_completed = Column(Date, nullable=True)",
+            "description": "Link table for players currently undertaking quests.",
+            "name": "QuestAssignment"
+        },
+        {
+            "classname": "DamageType",
+            "code": "class DamageType(Base):\n    \"\"\"description: Represents types of damage (physical, magical, etc.).\"\"\"\n    __tablename__ = 'damage_type'\n\n    id = Column(Integer, primary_key=True)\n    name = Column(String, nullable=False)\n    description = Column(String)",
+            "description": "Represents types of damage (physical, magical, etc.).",
+            "name": "DamageType"
+        },
+        {
+            "classname": "SpellDamage",
+            "code": "class SpellDamage(Base):\n    \"\"\"description: Link table associating spells with damage types.\"\"\"\n    __tablename__ = 'spell_damage'\n\n    id = Column(Integer, primary_key=True)\n    spell_id = Column(Integer, ForeignKey('spell.id'))\n    damage_type_id = Column(Integer, ForeignKey('damage_type.id'))\n    damage_amount = Column(Integer, nullable=False)",
+            "description": "Link table associating spells with damage types.",
+            "name": "SpellDamage"
+        },
+        {
+            "classname": "WeaponDamage",
+            "code": "class WeaponDamage(Base):\n    \"\"\"description: Link table associating weapons with damage types.\"\"\"\n    __tablename__ = 'weapon_damage'\n\n    id = Column(Integer, primary_key=True)\n    weapon_id = Column(Integer, ForeignKey('weapon.id'))\n    damage_type_id = Column(Integer, ForeignKey('damage_type.id'))\n    damage_amount = Column(Integer, nullable=False)",
+            "description": "Link table associating weapons with damage types.",
+            "name": "WeaponDamage"
+        },
+        {
+            "classname": "GameEvent",
+            "code": "class GameEvent(Base):\n    \"\"\"description: Represents events that occur within the game world.\"\"\"\n    __tablename__ = 'game_event'\n\n    id = Column(Integer, primary_key=True)\n    description = Column(String, nullable=False)\n    date_occurred = Column(Date)",
+            "description": "Represents events that occur within the game world.",
+            "name": "GameEvent"
+        },
+        {
+            "classname": "Skill",
+            "code": "class Skill(Base):\n    \"\"\"description: Represents various skills a player character can possess.\"\"\"\n    __tablename__ = 'skill'\n\n    id = Column(Integer, primary_key=True)\n    name = Column(String, nullable=False)\n    description = Column(String)\n    associated_class = Column(Integer, ForeignKey('classes.id'))",
+            "description": "Represents various skills a player character can possess.",
+            "name": "Skill"
+        },
+        {
+            "classname": "Achievement",
+            "code": "class Achievement(Base):\n    \"\"\"description: Represents achievements players can earn while playing.\"\"\"\n    __tablename__ = 'achievement'\n\n    id = Column(Integer, primary_key=True)\n    name = Column(String, nullable=False)\n    description = Column(String)\n    points = Column(Integer, nullable=False)",
+            "description": "Represents achievements players can earn while playing.",
+            "name": "Achievement"
+        },
+        {
+            "classname": "PlayerAchievement",
+            "code": "class PlayerAchievement(Base):\n    \"\"\"description: Link table associating players with their achievements.\"\"\"\n    __tablename__ = 'player_achievement'\n\n    id = Column(Integer, primary_key=True)\n    player_id = Column(Integer, ForeignKey('player.id'))\n    achievement_id = Column(Integer, ForeignKey('achievement.id'))\n    date_earned = Column(Date)",
+            "description": "Link table associating players with their achievements.",
+            "name": "PlayerAchievement"
+        },
+        {
+            "classname": "Monster",
+            "code": "class Monster(Base):\n    \"\"\"description: Represents a monster that can be encountered by players.\"\"\"\n    __tablename__ = 'monster'\n\n    id = Column(Integer, primary_key=True)\n    name = Column(String, nullable=False)\n    hp = Column(Integer, nullable=False)\n    level = Column(Integer, nullable=False)",
+            "description": "Represents a monster that can be encountered by players.",
+            "name": "Monster"
+        },
+        {
+            "classname": "MonsterSkill",
+            "code": "class MonsterSkill(Base):\n    \"\"\"description: Link table associating monsters with their skills.\"\"\"\n    __tablename__ = 'monster_skill'\n\n    id = Column(Integer, primary_key=True)\n    monster_id = Column(Integer, ForeignKey('monster.id'))\n    skill_id = Column(Integer, ForeignKey('skill.id'))",
+            "description": "Link table associating monsters with their skills.",
+            "name": "MonsterSkill"
+        },
+        {
+            "classname": "MonsterLoot",
+            "code": "class MonsterLoot(Base):\n    \"\"\"description: Represents loot dropped by monsters upon defeat.\"\"\"\n    __tablename__ = 'monster_loot'\n\n    id = Column(Integer, primary_key=True)\n    monster_id = Column(Integer, ForeignKey('monster.id'))\n    item_name = Column(String)\n    item_type = Column(String) # e.g., 'weapon', 'armor', 'potion'\n    quantity = Column(Integer, default=1)",
+            "description": "Represents loot dropped by monsters upon defeat.",
+            "name": "MonsterLoot"
+        }
+    ],
+    "rules": [],
+    "test_data": "from datetime import date\n\ntest_player_1 = Player(id=1, name=\"Aragorn\", level=4, experience_points=1500, hit_points=35, mana_points=10)\ntest_player_2 = Player(id=2, name=\"Gandalf\", level=10, experience_points=4000, hit_points=50, mana_points=50)\n\ntest_race_1 = Race(id=1, name=\"Elf\", description=\"Graceful and quick magical beings.\")\ntest_race_2 = Race(id=2, name=\"Dwarf\", description=\"Stout and strong miners with a penchant for ale.\")\n\ntest_class_1 = Class(id=1, name=\"Warrior\", description=\"Strong melee fighters.\")\ntest_class_2 = Class(id=2, name=\"Wizard\", description=\"Masters of arcane knowledge.\")\n\ntest_spell_1 = Spell(id=1, name=\"Fireball\", description=\"Throws a fiery ball that explodes upon impact.\", mana_cost=10, level_required=5)\ntest_spell_2 = Spell(id=2, name=\"Heal\", description=\"Restores a significant amount of health points.\", mana_cost=8, level_required=3)\n\ntest_weapon_1 = Weapon(id=1, name=\"Sword\", damage=15, weight=10)\ntest_weapon_2 = Weapon(id=2, name=\"Bow\", damage=10, weight=6)\n\ntest_armor_1 = Armor(id=1, name=\"Chainmail\", defense=20, weight=15)\ntest_armor_2 = Armor(id=2, name=\"Leather Armor\", defense=10, weight=5)\n\ntest_quest_1 = Quest(id=1, name=\"Defeat the Dragon\", description=\"Slay the dragon terrorizing the village.\", reward_experience=500)\ntest_quest_2 = Quest(id=2, name=\"Retrieve the Stolen Gem\", description=\"Recover the stolen gem from the bandit camp.\", reward_experience=200)\n\ntest_inventory_1 = Inventory(id=1, player_id=1, item_name=\"Health Potion\", item_type=\"potion\", quantity=3)\ntest_inventory_2 = Inventory(id=2, player_id=1, item_name=\"Mana Potion\", item_type=\"potion\", quantity=2)\n\ntest_player_race_1 = PlayerRace(id=1, player_id=1, race_id=1)\ntest_player_race_2 = PlayerRace(id=2, player_id=2, race_id=2)\n\ntest_player_class_1 = PlayerClass(id=1, player_id=1, class_id=1)\ntest_player_class_2 = PlayerClass(id=2, player_id=2, class_id=2)\n\ntest_player_spell_1 = PlayerSpell(id=1, player_id=1, spell_id=2, times_cast=4)\ntest_player_spell_2 = PlayerSpell(id=2, player_id=2, spell_id=1, times_cast=10)\n\ntest_player_weapon_1 = PlayerWeapon(id=1, player_id=1, weapon_id=1)\ntest_player_weapon_2 = PlayerWeapon(id=2, player_id=2, weapon_id=2)\n\ntest_player_armor_1 = PlayerArmor(id=1, player_id=1, armor_id=1)\ntest_player_armor_2 = PlayerArmor(id=2, player_id=2, armor_id=2)\n\ntest_quest_assignment_1 = QuestAssignment(id=1, player_id=1, quest_id=1, date_assigned=date(2023, 10, 1))\ntest_quest_assignment_2 = QuestAssignment(id=2, player_id=2, quest_id=2, date_assigned=date(2023, 10, 2))\n\ntest_damage_type_1 = DamageType(id=1, name=\"Fire\", description=\"Burns and incinerates the target.\")\ntest_damage_type_2 = DamageType(id=2, name=\"Ice\", description=\"Freezes the target.\")\n\ntest_spell_damage_1 = SpellDamage(id=1, spell_id=1, damage_type_id=1, damage_amount=30)\ntest_spell_damage_2 = SpellDamage(id=2, spell_id=2, damage_type_id=2, damage_amount=20)\n\ntest_weapon_damage_1 = WeaponDamage(id=1, weapon_id=1, damage_type_id=1, damage_amount=15)\ntest_weapon_damage_2 = WeaponDamage(id=2, weapon_id=2, damage_type_id=2, damage_amount=10)\n\ntest_game_event_1 = GameEvent(id=1, description=\"A solar eclipse occurs.\", date_occurred=date(2023, 9, 15))\ntest_game_event_2 = GameEvent(id=2, description=\"A festival is held in the town square.\", date_occurred=date(2023, 10, 10))\n\ntest_skill_1 = Skill(id=1, name=\"Sword Mastery\", description=\"Increased proficiency with swords.\", associated_class=1)\ntest_skill_2 = Skill(id=2, name=\"Fire Magic\", description=\"Enhanced ability with fire-based spells.\", associated_class=2)\n\ntest_achievement_1 = Achievement(id=1, name=\"Dragon Slayer\", description=\"Awarded for slaying a dragon.\", points=100)\ntest_achievement_2 = Achievement(id=2, name=\"Master Wizard\", description=\"Achieved mastery in all spells.\", points=150)\n\ntest_player_achievement_1 = PlayerAchievement(id=1, player_id=1, achievement_id=1, date_earned=date(2023, 10, 5))\ntest_player_achievement_2 = PlayerAchievement(id=2, player_id=2, achievement_id=2, date_earned=date(2023, 10, 8))\n\ntest_monster_1 = Monster(id=1, name=\"Goblin\", hp=30, level=2)\ntest_monster_2 = Monster(id=2, name=\"Orc\", hp=50, level=3)\n\ntest_monster_skill_1 = MonsterSkill(id=1, monster_id=1, skill_id=1)\ntest_monster_skill_2 = MonsterSkill(id=2, monster_id=2, skill_id=2)\n\ntest_monster_loot_1 = MonsterLoot(id=1, monster_id=1, item_name=\"Gold Coin\", item_type=\"currency\", quantity=5)\ntest_monster_loot_2 = MonsterLoot(id=2, monster_id=2, item_name=\"Iron Sword\", item_type=\"weapon\", quantity=1)",
+    "name": "DungeonsAndDragonsModel"
+}

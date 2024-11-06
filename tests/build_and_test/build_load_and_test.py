@@ -1108,7 +1108,7 @@ if Config.do_test_genai:
     
 if Config.do_test_multi_reln:
 
-    ''' TODO: rework per parsed response
+    ''' Lost test: based in pre-parsed response
     # first, some tests for genai, not starting server.  Prompts from tests, avoid too many samples
     prompt_path = 'genai_demo_outdented_reln'
     response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/genai_demo/genai_demo_retry_outdented_relns_fixed/genai.response')
@@ -1124,13 +1124,6 @@ if Config.do_test_multi_reln:
         cwd=install_api_logic_server_path,
         msg=f'\ngenai_demo_decimals')
 
-    prompt_path = 'dungeons_and_dragons'  # really a sqlacodegen test - classes table --> Class (reserved word)
-    response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/dnd/dnd.response')
-    assert response_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
-    result_genai = run_command(f'{set_venv} && als genai --project-name=tests/dnd --using={prompt_path} --repaired-response={response_path}',
-        cwd=install_api_logic_server_path,
-        msg=f'\ndungeons_and_dragons')
-
     # depends on `import decimal`` in api_logic_server_cli/prototypes/manager/system/genai/create_db_models_inserts/create_db_models_prefix.py
     prompt_path = 'time_cards_decimal'  # really a sqlacodegen test - classes table --> Class (reserved word)
     response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/time_cards/time_card_decimal/genai.response')
@@ -1145,7 +1138,15 @@ if Config.do_test_multi_reln:
     result_genai = run_command(f'{set_venv} && als genai --project-name=tests/time_card_decimal --using={prompt_path} --repaired-response={response_path}',
         cwd=install_api_logic_server_path,
         msg=f'\ntime cards keyword')    
-    '''    
+    '''  
+
+    prompt_path = 'dungeons_and_dragons'  # really a sqlacodegen test - classes table --> Class (odd plural, reserved word?)
+    response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/dnd/dnd.response')
+    assert response_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
+    result_genai = run_command(f'{set_venv} && als genai --project-name=tests/dnd --using={prompt_path} --repaired-response={response_path}',
+        cwd=install_api_logic_server_path,
+        msg=f'\ndungeons_and_dragons')
+
 
     # test for using genai-relns (tries, fails, retries with use-relns False)
     prompt_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/airport/airport_4.response')
