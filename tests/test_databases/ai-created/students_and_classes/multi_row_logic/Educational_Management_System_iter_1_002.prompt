@@ -1,8 +1,7 @@
+Use SQLAlchemy to create a sqlite database named system/genai/temp/create_db_models.sqlite, to
 
-students enroll in offerings
-no more than 30 students per offering
-
-Update the prior response - be sure not to lose classes and test data already created.
+students, courses and teachers
+.
 
 Hints: use autonum keys (for all tables - including for link/join/junction/intersection tables), allow nulls, foreign keys, no check constraints.
 
@@ -23,8 +22,10 @@ Create multiple rows of test data for each table, and follow these guidelines ca
 and do not generate db.execute statements.
 * Do not create arrays of test data.
 * Do not create a function to load test data.  
-* Do not print the test data.
+* Do not print the test data. 
 * For test data, format dates as date(year, month, day).
+* Do not specify nullable unless otherwise specified.
+* Do not use Float unless otherwise specified.
 
 For each data model class, create a docstring describing the table, prefixed with 'description: '. 
 

@@ -461,10 +461,21 @@ if Config.do_test_auto_conv:    # ensure project rebuilt, not truncated
         msg=f'\nTest auto_conv')
 
 
-if Config.do_students_add_logic:          # complex iteration - link tables sometimes have no id, or are created as tables
+if Config.do_students_add_logic:
     test_name = f'{test_folder_name}/students_add_logic' 
     test_names.append( (test_name, 'common iteration - add reln and multi-rule logic') )
     genai_conv = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/students_and_classes/students_add_logic')
+    assert genai_conv.exists() , f'do_test_iso error: genai_conv path not found: {str(genai_conv)}'
+    result_genai = run_command(f'{set_venv} && als genai --project-name={test_name} --using={genai_conv}',
+        cwd=create_in,
+        msg=f'\nTest iso')
+    pass  # also tests conversations without presets
+
+
+if Config.do_students_add_informal_logic: 
+    test_name = f'{test_folder_name}/students_add_informal_logic' 
+    test_names.append( (test_name, 'common iteration - add reln and informal multi-rule logic') )
+    genai_conv = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/students_and_classes/multi_row_logic')
     assert genai_conv.exists() , f'do_test_iso error: genai_conv path not found: {str(genai_conv)}'
     result_genai = run_command(f'{set_venv} && als genai --project-name={test_name} --using={genai_conv}',
         cwd=create_in,
@@ -477,7 +488,7 @@ if Config.do_test_iso:          # complex iteration - link tables sometimes have
     test_names.append( (test_name, 'complex iteration - link tables sometimes have no id, or are created as tables') )
     genai_conv = get_api_logic_server_src_path().joinpath('tests/genai_tests/iso_test')
     assert genai_conv.exists() , f'do_test_iso error: genai_conv path not found: {str(genai_conv)}'
-    result_genai = run_command(f'{set_venv} && als genai --project-name={test_name} --using={genai_conv}',
+    result_genai = run_command(f'{set_venv} && als genai --project-name={test_name} --using={genai_conv} --tables=24',
         cwd=create_in,
         msg=f'\nTest iso')
     pass  # also tests conversations without presets

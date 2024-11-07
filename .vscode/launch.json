@@ -676,6 +676,19 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "    - Create blt/students from blt-prompt/ChatGPT, informal logic",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["genai", "--test-data-rows=4",
+                "--using=${workspaceFolder}/tests/test_databases/ai-created/students_and_classes/multi_row_logic",
+                "--project-name=students_classes_informal"],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "    - Create blt/emp_dept from blt-prompt/ChatGPT, informal logic",
             "type": "debugpy",
             "request": "launch",

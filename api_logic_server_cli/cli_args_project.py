@@ -67,6 +67,9 @@ class Project(CliArgsBase):  # extends user-visible args with internal values, e
         self.genai_tables = 0
         """ number of tables (aks complexity) for genai """
 
+        self.genai_test_data_rows = 0
+        """ number of test data rows for genai """
+
         self.genai_prompt_inserts : str = None
         """ text to be inserted into prompt 
             - "" means infer from db_url (e.g. system/genai/prompt_inserts/sqlite_inserts.prompt)

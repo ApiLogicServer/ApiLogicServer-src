@@ -21,6 +21,7 @@ log = logging.getLogger(__name__)
 class Rule(BaseModel):
     name: str
     description: str
+    use_case: str
     code: str # logicbank rule code
     
 class Model(BaseModel):
@@ -293,27 +294,40 @@ class GenAI(object):
         elif 'mysql' in self.project.db_url:
             prompt_inserts = f'mysql_inserts.prompt'
 
-        if prompt_inserts != "*":
+        if prompt_inserts == "*":  
+            pass    # '*' means caller has computed their own prompt -- no inserts
+        else:       # do prompt engineering (inserts)
             prompt_eng_file_name = f'system/genai/prompt_inserts/{prompt_inserts}'
-            if for_iteration:
-                prompt_eng_file_name = prompt_eng_file_name.replace('.', '_iterations.')
             assert Path(prompt_eng_file_name).exists(), \
                 f"Missing prompt_inserts file: {prompt_eng_file_name}"  # eg api_logic_server_cli/prototypes/manager/system/genai/prompt_inserts/sqlite_inserts.prompt
-            log.debug(f'get_prompt__with_inserts: {str(os.getcwd())} / {prompt_eng_file_name}')
+            log.debug(f'get_prompt__with_inserts: {str(os.getcwd())} \n .. merged with: {prompt_eng_file_name}')
             with open(prompt_eng_file_name, 'r') as file:
                 pre_post = file.read()  # eg, Use SQLAlchemy to create a sqlite database named system/genai/temp/create_db_models.sqlite, with
             prompt_result = pre_post.replace('{{prompt}}', raw_prompt)
+            if for_iteration:
+                # Update the prior response - be sure not to lose classes and test data already created.
+                prompt_result = 'Update the prior response - be sure not to lose classes and test data already created.' \
+                    + '\n\n' + prompt_result
+                log.debug(f'.. inserted: Update the prior response')
 
             prompt_lines = prompt_result.split('\n')
             prompt_line_number = 0
+            do_logic = True
             for each_line in prompt_lines:
-                if "LogicBank" in each_line:
+                if 'Create multiple rows of test data' in each_line:
+                    if self.project.genai_test_data_rows > 0:
+                        each_line = each_line.replace(
+                            f'Create multiple rows',  
+                            f'Create {self.project.genai_test_data_rows} rows')
+                        prompt_lines[prompt_line_number] = each_line
+                        log.debug(f'.. inserted explicit test data: {each_line}')
+                if "LogicBank" in each_line and do_logic == True:
                     log.debug(f'.. inserted: {each_line}')
                     prompt_eng_logic_file_name = f'system/genai/prompt_inserts/logic_inserts.prompt'
                     with open(prompt_eng_logic_file_name, 'r') as file:
                         prompt_logic = file.read()  # eg, Use SQLAlchemy to...
                     prompt_lines[prompt_line_number] = prompt_logic
-                    break
+                    do_logic = False
                 prompt_line_number += 1
             
             response_format_file_name = f'system/genai/prompt_inserts/response_format.prompt'
@@ -420,13 +434,16 @@ class GenAI(object):
         for each_rule in self.response_dict.rules:
             comment_line = each_rule.description
             translated_logic += f'\n    # {comment_line}\n'
-            each_line = each_rule.code
-            if 'declare_logic.py' not in each_line:
-                each_repaired_line = self.remove_logic_halluncinations(each_line=each_line)
-                if not each_repaired_line.startswith('    '):  # sometimes in indents, sometimes not
-                    each_repaired_line = '    ' + each_repaired_line
-                if 'def declare_logic' not in each_repaired_line:
-                    translated_logic += each_repaired_line + '\n'      
+            code_lines = each_rule.code.split('\n')
+            if '\n' in each_rule.code:
+                debug_string = "good breakpoint - multi-line rule"
+            for each_line in code_lines:
+                if 'declare_logic.py' not in each_line:
+                    each_repaired_line = self.remove_logic_halluncinations(each_line=each_line)
+                    if not each_repaired_line.startswith('    '):  # sometimes in indents, sometimes not
+                        each_repaired_line = '    ' + each_repaired_line
+                    if 'def declare_logic' not in each_repaired_line:
+                        translated_logic += each_repaired_line + '\n'      
         translated_logic += "\n    # End Logic from GenAI\n\n"
         utils.insert_lines_at(lines=translated_logic, 
                               file_name=logic_file, 
@@ -741,7 +758,7 @@ class GenAI(object):
 
 def genai(using: str, db_url: str, repaired_response: str, genai_version: str, 
           retries: int, opt_locking: str, prompt_inserts: str, quote: bool,
-          use_relns: bool, project_name: str, tables: int):
+          use_relns: bool, project_name: str, tables: int, test_data_rows: int):
     """ CLI Caller: provides using, or repaired_response & using
     
         Called from cli commands: genai, genai-create, genai-iterate
@@ -773,6 +790,7 @@ def genai(using: str, db_url: str, repaired_response: str, genai_version: str,
                 genai_use_relns=genai_use_relns,
                 quote=quote,
                 genai_tables=tables,
+                genai_test_data_rows=test_data_rows,
                 project_name=resolved_project_name, db_url=db_url,
                 execute=False)
     if retries < 0:  # for debug: catch exceptions at point of failure

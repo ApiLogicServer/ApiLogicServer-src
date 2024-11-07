@@ -21,6 +21,7 @@ class Config:
     do_data_fix_iteration = default_setting                 # test data fix iteration
     do_airport_4 = default_setting                          # test airport 4    
     do_students_add_logic = default_setting                 # test students add logic   
+    do_students_add_informal_logic = default_setting        # test students add informal logic
     do_test_iso = default_setting                           # unexpected language
 
 
