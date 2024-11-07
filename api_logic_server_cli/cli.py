@@ -561,7 +561,7 @@ def tutorial(ctx, create):
               default=f'sqlite',
               help="SQLAlchemy Database URL\n")
 @click.option('--genai-version', 'genai_version',
-              default='gpt-4o',
+              default='gpt-4o-2024-08-06',
               help="Eg, gpt-3.5-turbo, gpt-4o")
 @click.option('--repaired-response', 'repaired_response',
               default='',
@@ -590,8 +590,12 @@ def tutorial(ctx, create):
 @click.option('--test-data-rows', 'test_data_rows', 
               default=4,
               help="Number of test data rows")
+@click.option('--temperature',  
+              default=0.7,
+              help="Number of test data rows")
 @click.pass_context
-def genai(ctx, using, db_url, repaired_response: str, genai_version: str, 
+def genai(ctx, using, db_url, repaired_response: str, 
+          genai_version: str, temperature: float,
           retries: int, opt_locking: str, prompt_inserts: str, quote: click.BOOL,
           use_relns: click.BOOL, project_name: str, tables: int, test_data_rows: int):
     """
@@ -603,8 +607,9 @@ def genai(ctx, using, db_url, repaired_response: str, genai_version: str,
     if defaulted_using == 'genai_demo': # default to genai_demo.prompt
         defaulted_using = 'system/genai/examples/genai_demo/genai_demo.prompt'
     genai_svcs.genai(using=defaulted_using, db_url=db_url, repaired_response=repaired_response, 
-                genai_version=genai_version, retries=retries, opt_locking=opt_locking, 
-                prompt_inserts=prompt_inserts, quote=quote, use_relns=use_relns,
+                genai_version=genai_version, temperature=temperature,
+                retries=retries, opt_locking=opt_locking, 
+                prompt_inserts=prompt_inserts, quote=quote, use_relns=use_relns, 
                 project_name=project_name, tables=tables, test_data_rows=test_data_rows)
     pass
 
