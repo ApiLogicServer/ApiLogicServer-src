@@ -208,3 +208,46 @@ Response is to create 2 rules - a derivation and a constraint, as follows:
         Rule.constraint(validate=Parent,
                     as_condition=lambda row: row.value_total <= row.limit,
                     error_msg="Parent value total ({row.value_total}) exceeds limit ({row.limit})")
+
+Intermediate count values also require a new column, with a LogicBank count rule.  For example:
+
+Prompt:
+    The sum of the child value cannot exceed the parent limit
+
+Response is to create 2 rules - a derivation and a constraint, as follows:
+    First Rule to Create:
+        Rule.sum(derive=Parent.value_total, as_sum_of=Child.value)
+    And, be sure to create the second Rule:
+        Rule.constraint(validate=Parent,
+                    as_condition=lambda row: row.value_total <= row.limit,
+                    error_msg="Parent value total ({row.value_total}) exceeds limit ({row.limit})")
+
+Intermediate sum/count values also work for counts.  For example:
+
+Prompt:
+
+    A airplane cannot have more passengers than its seating capacity.
+
+Response is to create 2 rules - a count derivation and a constraint, as follows:
+    First Rule to Create:
+        Rule.count(derive=Airplane.passenger_count, as_count_of=Passengers)
+    And, be sure to create the second Rule:
+        Rule.constraint(validate=Airplane,
+                    as_condition=lambda row: row.passenger_count <= row.seating_capacity,
+                    error_msg="Airplane value total ({row.passenger_count}) exceeds limit ({row.seating_capacity})")
+
+
+Here is an equivalent request:
+
+Prompt:
+
+    A airplane's passengers must be less than its seating capacity.
+
+Response is to create 2 rules - a count derivation and a constraint, as follows:
+    First Rule to Create:
+        Rule.count(derive=Airplane.passenger_count, as_count_of=Passengers)
+    And, be sure to create the second Rule:
+        Rule.constraint(validate=Airplane,
+                    as_condition=lambda row: row.passenger_count <= row.seating_capacity,
+                    error_msg="Airplane value total ({row.passenger_count}) exceeds limit ({row.seating_capacity})")
+
