@@ -656,7 +656,9 @@
             "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
-            "args": ["genai",
+            "args": ["genai", "--temperature=0.5",
+                "--using=${workspaceFolder}/../../build_and_test/ApiLogicServer/system/genai/examples/genai_demo/genai_demo.prompt",
+                "--project-name=genai_demo"],
 //                "--project-name=genai_demo",
                 "--using=${workspaceFolder}/../../build_and_test/ApiLogicServer/system/genai/examples/genai_demo/genai_demo.prompt"
             ],
@@ -683,7 +685,7 @@
             "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
-            "args": ["genai", "--test-data-rows=4",
+            "args": ["genai", "--test-data-rows=4", "--temperature=0.7",
                 "--using=${workspaceFolder}/tests/test_databases/ai-created/students_and_classes/multi_row_logic",
                 "--project-name=students_classes_informal"],
             "console": "integratedTerminal"

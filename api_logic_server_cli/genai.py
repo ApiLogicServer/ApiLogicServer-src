@@ -117,12 +117,12 @@ class GenAI(object):
 
         if self.project.genai_repaired_response == '':  # normal path - get response from ChatGPT
             api_version = f'{self.project.genai_version}'  # eg, "gpt-4o"
-            api_version = "gpt-4o-2024-08-06"
+            # api_version = "gpt-4o-2024-08-06"
             start_time = time.time()
             client = OpenAI(api_key=os.getenv("APILOGICSERVER_CHATGPT_APIKEY"))
             completion = client.beta.chat.completions.parse(
                 messages=self.messages, response_format=WGResult,
-                # temperature=0.0,
+                # temperature=self.project.genai_temperature,  values .1 and .7 made students / charges fail
                 model=api_version
             )
             log.debug(f'ChatGPT ({str(int(time.time() - start_time))} secs) - response at: system/genai/temp/chatgpt_original.response')
@@ -758,7 +758,8 @@ class GenAI(object):
 
 def genai(using: str, db_url: str, repaired_response: str, genai_version: str, 
           retries: int, opt_locking: str, prompt_inserts: str, quote: bool,
-          use_relns: bool, project_name: str, tables: int, test_data_rows: int):
+          use_relns: bool, project_name: str, tables: int, test_data_rows: int,
+          temperature: float) -> None:
     """ CLI Caller: provides using, or repaired_response & using
     
         Called from cli commands: genai, genai-create, genai-iterate
@@ -782,7 +783,9 @@ def genai(using: str, db_url: str, repaired_response: str, genai_version: str,
     if repaired_response != "":
         try_number = retries  # if not calling GenAI, no need to retry:
     failed = False
-    pr = PR.ProjectRun(command="create", genai_version=genai_version, 
+    pr = PR.ProjectRun(command="create", 
+                genai_version=genai_version, 
+                genai_temperature = temperature,
                 genai_using=using,                      # the prompt file, or dir of prompt/response
                 repaired_response=repaired_response,    # retry from [repaired] response file
                 opt_locking=opt_locking,

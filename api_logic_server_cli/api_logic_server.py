@@ -864,6 +864,7 @@ class ProjectRun(Project):
                      genai_prompt_inserts: str="",
                      genai_use_relns: bool=True,
                      genai_tables: int=0,
+                     genai_temperature: float=0.7,
                      genai_test_data_rows: int=0,
                      host: str='localhost', 
                      port: str='5656', 
@@ -910,6 +911,7 @@ class ProjectRun(Project):
         """ Use relationships in create_db_models (internal) """
         self.genai_tables = genai_tables
         self.genai_test_data_rows = genai_test_data_rows
+        self.genai_temperature = genai_temperature
         self.user_db_url = db_url  # retained for debug
         self.bind_key = bind_key
         self.api_name = api_name
