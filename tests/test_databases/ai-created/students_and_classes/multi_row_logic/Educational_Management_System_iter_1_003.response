@@ -1,0 +1,79 @@
+{
+    "models": [
+        {
+            "classname": "Student",
+            "code": "class Student(Base):\n    \"\"\"description: Represents a student participating in courses.\"\"\"\n    __tablename__ = 'students'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String, nullable=False)\n    enrollment_date = Column(Date, nullable=True)",
+            "description": "Represents a student participating in courses.",
+            "name": "students"
+        },
+        {
+            "classname": "Course",
+            "code": "class Course(Base):\n    \"\"\"description: Represents a course available for enrollment.\"\"\"\n    __tablename__ = 'courses'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    title = Column(String, nullable=False)\n    description = Column(String, nullable=True)\n    start_date = Column(Date, nullable=True)\n    end_date = Column(Date, nullable=True)",
+            "description": "Represents a course available for enrollment.",
+            "name": "courses"
+        },
+        {
+            "classname": "Teacher",
+            "code": "class Teacher(Base):\n    \"\"\"description: Represents a teacher responsible for conducting courses.\"\"\"\n    __tablename__ = 'teachers'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String, nullable=False)\n    hire_date = Column(Date, nullable=True)",
+            "description": "Represents a teacher responsible for conducting courses.",
+            "name": "teachers"
+        },
+        {
+            "classname": "Enrollment",
+            "code": "class Enrollment(Base):\n    \"\"\"description: Represents the association between a student and a course.\"\"\"\n    __tablename__ = 'enrollments'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    student_id = Column(Integer, ForeignKey('students.id'), nullable=False)\n    course_id = Column(Integer, ForeignKey('courses.id'), nullable=False)",
+            "description": "Represents the association between a student and a course.",
+            "name": "enrollments"
+        },
+        {
+            "classname": "TeachingAssignment",
+            "code": "class TeachingAssignment(Base):\n    \"\"\"description: Represents the assignment of a teacher to a course.\"\"\"\n    __tablename__ = 'teaching_assignments'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    teacher_id = Column(Integer, ForeignKey('teachers.id'), nullable=False)\n    course_id = Column(Integer, ForeignKey('courses.id'), nullable=False)",
+            "description": "Represents the assignment of a teacher to a course.",
+            "name": "teaching_assignments"
+        },
+        {
+            "classname": "Grade",
+            "code": "class Grade(Base):\n    \"\"\"description: Represents grades received by students for courses.\"\"\"\n    __tablename__ = 'grades'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    enrollment_id = Column(Integer, ForeignKey('enrollments.id'), nullable=False)\n    score = Column(Float, nullable=True)\n    date_recorded = Column(Date, nullable=True)",
+            "description": "Represents grades received by students for courses.",
+            "name": "grades"
+        },
+        {
+            "classname": "StudentAttendance",
+            "code": "class StudentAttendance(Base):\n    \"\"\"description: Tracks the attendance record for students in courses.\"\"\"\n    __tablename__ = 'student_attendances'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    enrollment_id = Column(Integer, ForeignKey('enrollments.id'), nullable=False)\n    date = Column(Date, nullable=False)\n    status = Column(String, nullable=False)",
+            "description": "Tracks the attendance record for students in courses.",
+            "name": "student_attendances"
+        },
+        {
+            "classname": "CourseMaterial",
+            "code": "class CourseMaterial(Base):\n    \"\"\"description: Represents materials related to specific courses.\"\"\"\n    __tablename__ = 'course_materials'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    course_id = Column(Integer, ForeignKey('courses.id'), nullable=False)\n    material_name = Column(String, nullable=False)\n    material_type = Column(String, nullable=True)",
+            "description": "Represents materials related to specific courses.",
+            "name": "course_materials"
+        },
+        {
+            "classname": "CourseSchedule",
+            "code": "class CourseSchedule(Base):\n    \"\"\"description: Represents the schedule dates for courses.\"\"\"\n    __tablename__ = 'course_schedules'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    course_id = Column(Integer, ForeignKey('courses.id'), nullable=False)\n    scheduled_date = Column(Date, nullable=False)",
+            "description": "Represents the schedule dates for courses.",
+            "name": "course_schedules"
+        },
+        {
+            "classname": "StudentContact",
+            "code": "class StudentContact(Base):\n    \"\"\"description: Represents contact details for students.\"\"\"\n    __tablename__ = 'student_contacts'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    student_id = Column(Integer, ForeignKey('students.id'), nullable=False)\n    contact_type = Column(String, nullable=False)\n    contact_value = Column(String, nullable=False)",
+            "description": "Represents contact details for students.",
+            "name": "student_contacts"
+        },
+        {
+            "classname": "TeacherContact",
+            "code": "class TeacherContact(Base):\n    \"\"\"description: Represents contact details for teachers.\"\"\"\n    __tablename__ = 'teacher_contacts'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    teacher_id = Column(Integer, ForeignKey('teachers.id'), nullable=False)\n    contact_type = Column(String, nullable=False)\n    contact_value = Column(String, nullable=False)",
+            "description": "Represents contact details for teachers.",
+            "name": "teacher_contacts"
+        },
+        {
+            "classname": "Department",
+            "code": "class Department(Base):\n    \"\"\"description: Represents a department within the educational institution.\"\"\"\n    __tablename__ = 'departments'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String, nullable=False)\n    head_id = Column(Integer, ForeignKey('teachers.id'), nullable=True)",
+            "description": "Represents a department within the educational institution.",
+            "name": "departments"
+        }
+    ],
+    "rules": [],
+    "test_data": "from datetime import date\n\n# Student data\nstudent_1 = Student(id=1, name=\"Alice Doe\", enrollment_date=date(2021, 9, 1))\nstudent_2 = Student(id=2, name=\"Bob Smith\", enrollment_date=date(2021, 9, 1))\n\n# Course data\ncourse_1 = Course(id=1, title=\"Introduction to Programming\", description=\"Learn basics of programming.\", start_date=date(2021, 9, 1), end_date=date(2021, 12, 15))\ncourse_2 = Course(id=2, title=\"Advanced Mathematics\", description=\"Advanced study of mathematics.\", start_date=date(2021, 9, 1), end_date=date(2021, 12, 15))\n\n# Teacher data\nteacher_1 = Teacher(id=1, name=\"Dr. Emily Johnson\", hire_date=date(2018, 8, 15))\nteacher_2 = Teacher(id=2, name=\"Professor Michael Brown\", hire_date=date(2017, 5, 10))\n\n# Enrollment data\nenrollment_1 = Enrollment(id=1, student_id=1, course_id=1)\nenrollment_2 = Enrollment(id=2, student_id=2, course_id=2)\n\n# Teaching Assignment data\nteaching_assignment_1 = TeachingAssignment(id=1, teacher_id=1, course_id=1)\nteaching_assignment_2 = TeachingAssignment(id=2, teacher_id=2, course_id=2)\n\n# Grade data\ngrade_1 = Grade(id=1, enrollment_id=1, score=95.0, date_recorded=date(2021, 10, 15))\ngrade_2 = Grade(id=2, enrollment_id=2, score=89.0, date_recorded=date(2021, 10, 20))\n\n# Student Attendance data\nattendance_1 = StudentAttendance(id=1, enrollment_id=1, date=date(2021, 9, 1), status=\"Present\")\nattendance_2 = StudentAttendance(id=2, enrollment_id=2, date=date(2021, 9, 1), status=\"Absent\")\n\n# Course Material data\nmaterial_1 = CourseMaterial(id=1, course_id=1, material_name=\"Intro to Programming Textbook\", material_type=\"Book\")\nmaterial_2 = CourseMaterial(id=2, course_id=2, material_name=\"Advanced Math Workbook\", material_type=\"Workbook\")\n\n# Course Schedule data\nschedule_1 = CourseSchedule(id=1, course_id=1, scheduled_date=date(2021, 9, 1))\nschedule_2 = CourseSchedule(id=2, course_id=2, scheduled_date=date(2021, 9, 1))\n\n# Student Contact data\ncontact_1 = StudentContact(id=1, student_id=1, contact_type=\"Email\", contact_value=\"alice.doe@example.com\")\ncontact_2 = StudentContact(id=2, student_id=2, contact_type=\"Phone\", contact_value=\"555-0012\")\n\n# Teacher Contact data\nteacher_contact_1 = TeacherContact(id=1, teacher_id=1, contact_type=\"Email\", contact_value=\"emily.johnson@example.com\")\nteacher_contact_2 = TeacherContact(id=2, teacher_id=2, contact_type=\"Phone\", contact_value=\"555-0098\")\n\n# Department data\ndepartment_1 = Department(id=1, name=\"Computer Science\", head_id=1)\ndepartment_2 = Department(id=2, name=\"Mathematics\", head_id=2)",
+    "name": "Educational_Management_System"
+}

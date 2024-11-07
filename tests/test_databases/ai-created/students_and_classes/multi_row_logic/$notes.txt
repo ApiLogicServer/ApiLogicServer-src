@@ -1,0 +1,8 @@
+the rule "a student's enrollment charges cannot exceed their budget" requires a copy.
+    the default genai builds an improper rule to Course (not enrollment); NOT FLAGGED in logicbank
+
+aside: this example identified that genai can place multiple rules on 1 line (fixed).
+
+still failing 11/6
+    - enrollment.charge is non-null
+    - student.enrollment_count not created

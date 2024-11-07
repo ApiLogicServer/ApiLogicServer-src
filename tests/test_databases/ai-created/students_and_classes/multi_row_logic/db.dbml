@@ -1,0 +1,119 @@
+// Copy this text, paste to https://dbdiagram.io/d
+// Or, https://databasediagram.com/app
+// Or, view in VSCode with extension: "DBML Live Preview"
+
+Project DBML {
+  Note: '''
+Course: Represents a course available for enrollment.
+CourseMaterial: Represents materials related to specific courses.
+CourseSchedule: Represents the schedule dates for courses.
+Department: Represents a department within the educational institution.
+Teacher: Represents a teacher responsible for conducting courses.
+Enrollment: Represents the association between a student and a course.
+Student: Represents a student participating in courses.
+Grade: Represents grades received by students for courses.
+StudentAttendance: Tracks the attendance record for students in courses.
+StudentContact: Represents contact details for students.
+TeacherContact: Represents contact details for teachers.
+TeachingAssignment: Represents the assignment of a teacher to a course.
+'''
+}
+
+Table Course {
+    id INTEGER [primary key]
+    title VARCHAR 
+    description VARCHAR 
+    start_date DATE 
+    end_date DATE 
+    charge FLOAT 
+    }
+
+Table CourseMaterial {
+    id INTEGER [primary key]
+    course_id INTEGER 
+    material_name VARCHAR 
+    material_type VARCHAR 
+    }
+
+Table CourseSchedule {
+    id INTEGER [primary key]
+    course_id INTEGER 
+    scheduled_date DATE 
+    }
+
+Table Department {
+    id INTEGER [primary key]
+    name VARCHAR 
+    head_id INTEGER 
+    }
+
+Table Teacher {
+    id INTEGER [primary key]
+    name VARCHAR 
+    hire_date DATE 
+    num_courses_assigned INTEGER 
+    }
+
+Table Enrollment {
+    id INTEGER [primary key]
+    student_id INTEGER 
+    course_id INTEGER 
+    status VARCHAR 
+    }
+
+Table Student {
+    id INTEGER [primary key]
+    name VARCHAR 
+    enrollment_date DATE 
+    budget FLOAT 
+    total_charges FLOAT 
+    }
+
+Table Grade {
+    id INTEGER [primary key]
+    enrollment_id INTEGER 
+    score FLOAT 
+    date_recorded DATE 
+    }
+
+Table StudentAttendance {
+    id INTEGER [primary key]
+    enrollment_id INTEGER 
+    date DATE 
+    status VARCHAR 
+    }
+
+Table StudentContact {
+    id INTEGER [primary key]
+    student_id INTEGER 
+    contact_type VARCHAR 
+    contact_value VARCHAR 
+    }
+
+Table TeacherContact {
+    id INTEGER [primary key]
+    teacher_id INTEGER 
+    contact_type VARCHAR 
+    contact_value VARCHAR 
+    }
+
+Table TeachingAssignment {
+    id INTEGER [primary key]
+    teacher_id INTEGER 
+    course_id INTEGER 
+    }
+
+
+
+// Relationships
+    Ref: CourseMaterial.(course_id) < Course.(id)
+    Ref: CourseSchedule.(course_id) < Course.(id)
+    Ref: Department.(head_id) < Teacher.(id)
+    Ref: Enrollment.(course_id) < Course.(id)
+    Ref: Enrollment.(student_id) < Student.(id)
+    Ref: Grade.(enrollment_id) < Enrollment.(id)
+    Ref: StudentAttendance.(enrollment_id) < Enrollment.(id)
+    Ref: StudentContact.(student_id) < Student.(id)
+    Ref: TeacherContact.(teacher_id) < Teacher.(id)
+    Ref: TeachingAssignment.(course_id) < Course.(id)
+    Ref: TeachingAssignment.(teacher_id) < Teacher.(id)
