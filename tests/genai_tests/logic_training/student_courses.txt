@@ -1,0 +1,40 @@
+LogicBank:
+
+Teachers, courses which have offerings, and students who have offerings.
+
+LogicBank
+Use Case: capacity
+teachers cannot be assigned to more than 5 courses
+students cannot have more enrollments than 6
+
+Use Case: budget control
+courses have a charge, which is copied to enrollments charge
+a student's total enrollment charges cannot exceed their budget
+
+
+Poor result:
+    - no Lookup on Students/Enrollments (never saw that before)
+    - increased charge on course 1, enrollment did not trigger over-budget
+
+
+Rules:
+
+    # Logic from GenAI: (or, use your IDE w/ code completion)
+
+    # Copies course charge to enrollment charge when a student enrolls in a course.
+    Rule.copy(derive=Enrollment.enrollment_charge, from_parent=Course.charge)
+
+    # Keeps track of the number of courses a student is enrolled in.
+    Rule.count(derive=Student.enrollment_count, as_count_of=Enrollment)
+
+    # Keeps track of the number of courses a teacher is assigned to.
+    Rule.count(derive=Teacher.course_count, as_count_of=Course)
+
+    # Calculates the total charges for student enrollments.
+    Rule.sum(derive=Student.total_enrollment_charges, as_sum_of=Enrollment.enrollment_charge)
+
+    # Ensures a teacher cannot be assigned to more than 5 courses.
+    Rule.constraint(validate=Teacher, as_condition=lambda row: row.course_count <= 5, error_msg="Teacher course assignment exceeds limit")
+
+    # Ensures a student's total enrollment charges do not exceed their budget.
+    Rule.constraint(validate=Student, as_condition=lambda row: row.total_enrollment_charges <= row.budget, error_msg="Student charges exceed budget")

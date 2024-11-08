@@ -353,7 +353,8 @@ if Config.do_create_manager:    # tests built into clean, so create it first FIX
 
 start_time = time.time()
 
-logic_training()
+if Config.do_logic_training:
+    logic_training()
 
 if Config.do_genai_test_genai_demo_conversation:
     '''do_genai_test(test_name='system/genai/examples/genai_demo/genai_demo_conversation', 
