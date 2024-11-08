@@ -1,3 +1,12 @@
+Students have grades and activities.
+
+LogicBank
+A student is eligible for the honor society if 
+their grade point average is over 3.5, 
+and they have at least 2 service activities.
+
+
+
 Bad Rule - no qual condition, insert_parent is rarely used.
 
     Rule.count(derive=Student.activity_count, as_count_of=StudentActivity,
