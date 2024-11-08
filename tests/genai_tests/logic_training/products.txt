@@ -1,0 +1,27 @@
+Products have Notices, with severity 0-5.
+
+A product is orderable if there are no severity 5 Notices, and the count of severities is < 4.
+
+
+Repaired Rule creation
+
+    # Sum and count for tracking product notices.
+    Rule.count(derive=ProductNoticeCount.total_notices, as_count_of=Notice)
+    Rule.count(derive=ProductNoticeCount.severity_five_notices, as_count_of=Notice, where=lambda row: row.severity == 5)
+    Rule.formula(derive=OrderableProduct.is_orderable, as_expression=lambda row: row.severity_five_notices == 0 and row.total_notices < 4)
+
+    # Ensure products are orderable based on notice severity and count.
+    Rule.constraint(validate=OrderableProduct, as_condition=lambda row: row.is_orderable, error_msg='Product is not orderable due to severity or number of notices.')
+
+
+
+Bad rule creation 
+    - meant count where sev>5 -- quite wrong
+    - no sums in formula
+
+
+    # This rule determines if the total severity of notices for a product is correctly calculated.
+    Rule.sum(derive=Product.sum_severities, as_sum_of=Notice.severity)
+
+    # This rule checks if products with severe notices are orderable.
+    Rule.formula(derive=Product.orderable, as_expression=lambda row: all(notice.severity < 5 for notice in row.notices) and row.sum_severities < 4)
