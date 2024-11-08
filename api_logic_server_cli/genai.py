@@ -308,7 +308,8 @@ class GenAI(object):
                 # Update the prior response - be sure not to lose classes and test data already created.
                 prompt_result = 'Update the prior response - be sure not to lose classes and test data already created.' \
                     + '\n\n' + prompt_result
-                log.debug(f'.. inserted: Update the prior response')
+                log.debug(f'.. iteration inserted: Update the prior response')
+                log.debug(f'.... iteration prompt result: {prompt_result}')
 
             prompt_lines = prompt_result.split('\n')
             prompt_line_number = 0
