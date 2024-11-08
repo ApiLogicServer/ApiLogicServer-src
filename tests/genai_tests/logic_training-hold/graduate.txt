@@ -1,0 +1,4 @@
+terrible test data
+
+a little ambiguous - "is eligible" is a contraint, attr?
+

@@ -8,6 +8,15 @@ from pathlib import Path
 from dotmap import DotMap
 import json
 
+test_folder_name = 'tests-genai'
+""" manager folder for tests """
+
+test_names = []
+""" list of (test_name, test_notes) that ran """
+
+global install_api_logic_server_path
+install_api_logic_server_path = None
+""" path to blt install """
 
 def get_api_logic_server_src_path() -> Path:
     """
@@ -219,8 +228,30 @@ def stop_server(msg: str, port: str='5656'):
     except:
         print("..")
 
-def do_iso_tests():
-    pass
+def do_genai_test(test_note: str, test_path: Path = None):
+    global install_api_logic_server_path, test_folder_name
+    if test_path.is_file():
+        full_test_name = f'{test_folder_name}/{test_path.stem}'  # eg, tests-genai/logic_training/airport
+    elif test_path.exists():
+        full_test_name = f'{test_folder_name}/{test_path.stem}'
+    else:
+        raise ValueError(f'do_genai_test error: test_path not found: {str(test_path)}')
+    result_genai = run_command(f'{set_venv} && als genai --project-name={full_test_name} --using={test_path}',
+        cwd=create_in,
+        msg=f'\n{full_test_name}')
+    test_names.append( (full_test_name, test_note) )
+
+def logic_training():
+    global install_api_logic_server_path, test_folder_name
+    save_test_folder_name = test_folder_name
+    test_folder_name += '/logic_training'
+    logic_training_path = get_api_logic_server_src_path().joinpath('tests/genai_tests/logic_training')    
+    for each_file in sorted(Path(logic_training_path).iterdir()):
+        if each_file.is_file() and each_file.suffix == '.prompt':
+            test_note = 'logic training'
+            do_genai_test(test_note, each_file)
+    test_folder_name = save_test_folder_name
+
 
 # ***************************
 #        MAIN CODE
@@ -252,6 +283,7 @@ elif platform.startswith("linux"):
     from env_linux import Config
 else:
     print("unknown platform")
+
 
 install_api_logic_server_path = get_servers_build_and_test_path().joinpath("ApiLogicServer") 
 """ eg, build_and_test/ApiLogicServer """
@@ -302,7 +334,7 @@ os.environ["APILOGICPROJECT_STOP_OK"] = "True"              # enable stop server
 create_in = install_api_logic_server_path  # or, install_api_logic_server_clean_path
 """ where to create tests; BLT working, issues with clean so AVOID FOR NOW """
 
-test_folder_name = 'tests-genai'
+
 
 '''
 Temporary Notes
@@ -318,10 +350,15 @@ if Config.do_create_manager:    # tests built into clean, so create it first FIX
         cwd=create_in,
         msg=f'\nCreate Manager')
 
-test_names = []
+
 start_time = time.time()
 
+logic_training()
+
 if Config.do_genai_test_genai_demo_conversation:
+    '''do_genai_test(test_name='system/genai/examples/genai_demo/genai_demo_conversation', 
+                  test_note='rename Customer / add Addresses, add SalesRep')
+                  '''
     # test genai, using copy of pre-supplied ChatGPT response (to avoid api key issues)
     # see https://apilogicserver.github.io/Docs/Sample-Genai/#what-just-happened
     test_name = f'{test_folder_name}/genai_test_genai_demo_conversation'
@@ -433,8 +470,8 @@ if Config.do_data_fix_iteration:
     stop_server(msg=f"*** {test_name} TESTS COMPLETE ***\n")
 
 
-if Config.do_airport_4:
-    test_name = f'{test_folder_name}/airport_4'  # check for invented rules without columns
+if Config.do_airport:
+    test_name = f'{test_folder_name}/airport'  # check for invented rules without columns
     test_names.append( (test_name, 'check for invented rules without columns') )
     prompt_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/airport/airport.prompt')
     assert prompt_path.exists() , f'{test_name} error: prompt path not found: {str(prompt_path)}'

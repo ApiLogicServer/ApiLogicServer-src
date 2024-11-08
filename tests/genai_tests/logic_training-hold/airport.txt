@@ -1,0 +1,1 @@
+Invalid sum/count - no relationship to: Airplane in Derive Airplane.passenger_count as Count(<class 'database.models.Passenger'> Where None)

@@ -1,0 +1,63 @@
+Bad Rule - no qual condition, insert_parent is rarely used.
+
+    Rule.count(derive=Student.activity_count, as_count_of=StudentActivity,
+                child_role_name='student_activities', insert_parent=True)
+
+
+
+
+Fixed that, then poor SRA message after deleting an Activity (Error 1: Bad Request):
+
+....Student[1] {Update - Adjusting student: activity_count} id: 1, name: Alice Johnson, gpa: 3.8, honor_society_eligible: True, activity_count:  [2-->] 1  row: 0x1077552e0  session: 0x10772ff50  ins_upd_dlt: upd
+....Student[1] {Constraint Failure: Student does not meet the honor society eligibility requirements.} id: 1, name: Alice Johnson, gpa: 3.8, honor_society_eligible: True, activity_count:  [2-->] 1  row: 0x1077552e0  session: 0x10772ff50  ins_upd_dlt: upd
+
+Rules Fired:            ##
+  Student               ##
+    1. Derive Student.activity_count as Count(<class 'database.models.StudentActivity'> Where None)             ##
+    2. Constraint Function: None                ##
+
+Traceback (most recent call last):
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/safrs/safrs_api.py", line 671, in method_wrapper
+    safrs.DB.session.commit()
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 553, in commit
+    return self._proxied.commit()
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 1906, in commit
+    trans.commit(_to_root=True)
+  File "<string>", line 2, in commit
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/sqlalchemy/orm/state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 1221, in commit
+    self._prepare_impl()
+  File "<string>", line 2, in _prepare_impl
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/sqlalchemy/orm/state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 1196, in _prepare_impl
+    self.session.flush()
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4154, in flush
+    self._flush(objects)
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/sqlalchemy/orm/session.py", line 4183, in _flush
+    self.dispatch.before_flush(self, flush_context, objects)
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/sqlalchemy/event/attr.py", line 378, in __call__
+    fn(*args, **kw)
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/logic_bank/exec_trans_logic/listeners.py", line 80, in before_flush
+    logic_row.delete(reason="client", do_not_adjust_list = do_not_adjust_list)
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/logic_bank/exec_row_logic/logic_row.py", line 1160, in delete
+    self._adjust_parent_aggregates(do_not_adjust_list=do_not_adjust_list)
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/logic_bank/exec_row_logic/logic_row.py", line 1034, in _adjust_parent_aggregates
+    parent_adjuster.save_altered_parents(do_not_adjust_list=do_not_adjust_list)  # iff req'd (altered only)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/logic_bank/exec_row_logic/logic_row.py", line 1252, in save_altered_parents
+    parent_logic_row.update(
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/logic_bank/exec_row_logic/logic_row.py", line 1096, in update
+    self._constraints()
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/logic_bank/exec_row_logic/logic_row.py", line 783, in _constraints
+    each_constraint.execute(self)
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/logic_bank/rule_type/constraint.py", line 77, in execute
+    ll.constraint_event(message=msg, logic_row=logic_row, constraint=self)
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/tests-genai/logic_training/honor_society/config/server_setup.py", line 279, in constraint_handler
+    raise ValidationErrorExt(message=message, detail=detail)
+config.server_setup.ValidationErrorExt
+127.0.0.1 - - [07/Nov/2024 19:28:50] "DELETE /api/StudentActivity/2 HTTP/1.1" 400 -
