@@ -1,0 +1,3 @@
+Products have Notices, with severity 0-5.
+
+A product is orderable if there are no severity 5 Notices, and the count of severities is < 4.

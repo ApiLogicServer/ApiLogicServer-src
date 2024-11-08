@@ -1,0 +1,3 @@
+    Rule.count(derive=Applicant.bankruptcy_count, as_count_of=Bankruptcy, where=lambda row: row.applicant_id == row.id)
+
+bad rule - no qual for fk match!

@@ -1,0 +1,7 @@
+Create a system with Employees and their Skiils.
+More than One Employee can have the same Skill.
+EmployeeSkill.rating = Skill.rating
+
+LogicBank
+Employee Skill is the sum of the Employee.Skills, plus 2 * years of service.
+

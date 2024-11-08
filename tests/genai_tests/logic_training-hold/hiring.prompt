@@ -1,0 +1,4 @@
+Applicant have felonies and bankruptcies.
+
+LogicBank
+An applicant is not hirable if there are more than 3 bankruptcies, or 2 felonies.
