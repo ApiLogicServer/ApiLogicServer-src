@@ -20,4 +20,22 @@ This works...
 
 Notes:
 1. The constraint did not fire on step 1, since LogicBank did not cascade the change to Airplane->Flights
-    - This is an issue for LogicBank, but the GenAI logic is correct.
+    - This is possibly an issue for LogicBank, but the GenAI logic is correct.
+
+
+Created logic:
+
+    # Logic from GenAI: (or, use your IDE w/ code completion)
+
+    # Derive the number of probations for a student.
+    Rule.count(derive=Student.probation_count, as_count_of=Probation)
+
+    # Derive the number of sick days for a student.
+    Rule.count(derive=Student.sick_days_count, as_count_of=SickDay)
+
+    # Signal an error if a Student's can-graduate is True, and there are more than 2 probations or more than 100 sick days.
+    Rule.constraint(validate=Student,
+                as_condition=lambda row: not row.can_graduate or (row.probation_count < 3 and row.sick_days_count <= 100),
+                error_msg="Student ({row.name}) cannot graduate with {row.probation_count} probations and {row.sick_days_count} sick days.")
+
+    # End Logic from GenAI
