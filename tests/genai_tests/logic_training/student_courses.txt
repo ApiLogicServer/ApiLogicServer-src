@@ -12,29 +12,34 @@ courses have a charge, which is copied to enrollments charge
 a student's total enrollment charges cannot exceed their budget
 
 
-Poor result:
-    - no Lookup on Students/Enrollments (never saw that before)
-    - increased charge on course 1, enrollment did not trigger over-budget
-
-
 Rules:
 
-    # Logic from GenAI: (or, use your IDE w/ code completion)
-
-    # Copies course charge to enrollment charge when a student enrolls in a course.
-    Rule.copy(derive=Enrollment.enrollment_charge, from_parent=Course.charge)
-
-    # Keeps track of the number of courses a student is enrolled in.
-    Rule.count(derive=Student.enrollment_count, as_count_of=Enrollment)
-
-    # Keeps track of the number of courses a teacher is assigned to.
+    # Ensures a teacher is not assigned more than 5 courses.
     Rule.count(derive=Teacher.course_count, as_count_of=Course)
+    Rule.constraint(validate=Teacher,
+                as_condition=lambda row: row.course_count <= 5,
+                error_msg="Teacher has been assigned more than 5 courses")
 
-    # Calculates the total charges for student enrollments.
-    Rule.sum(derive=Student.total_enrollment_charges, as_sum_of=Enrollment.enrollment_charge)
+    # Ensures a student does not enroll in more than 6 courses.
+    Rule.count(derive=Student.enrollment_count, as_count_of=Offering)
+    Rule.constraint(validate=Student,
+                as_condition=lambda row: row.enrollment_count <= 6,
+                error_msg="Student enrollment exceeds the allowed 6 courses")
 
-    # Ensures a teacher cannot be assigned to more than 5 courses.
-    Rule.constraint(validate=Teacher, as_condition=lambda row: row.course_count <= 5, error_msg="Teacher course assignment exceeds limit")
+    # Copies the charge from the course to the offering.
+    Rule.copy(derive=Offering.charge, from_parent=Course.charge)
 
-    # Ensures a student's total enrollment charges do not exceed their budget.
-    Rule.constraint(validate=Student, as_condition=lambda row: row.total_enrollment_charges <= row.budget, error_msg="Student charges exceed budget")
+    # Ensures total charges of a student’s enrollments do not exceed their budget.
+    Rule.sum(derive=Student.total_charges, as_sum_of=Offering.charge)
+    Rule.constraint(validate=Student,
+                as_condition=lambda row: row.total_charges <= row.budget,
+                error_msg="Student's enrollment charges exceed budget")
+
+    # End Logic from GenAI
+
+
+Older comments:
+
+    Poor result:
+        - no Lookup on Students/Enrollments (never saw that before)
+        - increased charge on course 1, enrollment did not trigger over-budget

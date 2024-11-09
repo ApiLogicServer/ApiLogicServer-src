@@ -1,4 +1,4 @@
 Students have probations and sick days.
 
 LogicBank
-A Student can graduate unless there are more than 2 probations, or 100 sick days.
+A Student can be marked as can-graduate only if there are less than 2 probations, and less than 100 sick days.

@@ -27,8 +27,8 @@ class Rule:
             derive: name of parent <class.attribute> being derived
             as_sum_of: name of child <class.attribute> being summed
             child_role_name: parent's child accessor attribute (required only for disambiguation)
-            where: optional where clause, designates which child rows are summed
-
+            where: optional where clause, designates which child rows are summed.  Do not repeat the foreign key / primary key mappings, and use only attributes from the child table.
+            insert_parent: create parent if it does not exist.  Do not use unless directly requested.
         """
         return Sum(derive, as_sum_of, where, child_role_name, insert_parent)
 
@@ -48,7 +48,8 @@ class Rule:
             derive: name of parent <class.attribute> being derived
             as_count_of: name of child <class> being counted
             child_role_name: parent's child accessor attribute (required only for disambiguation)
-            where: optional where clause, designates which child rows are counted
+            where: optional where clause, designates which child rows are counted.  Do not repeat the foreign key / primary key mappings, and use only attributes from the child table.
+            insert_parent: create parent if it does not exist.  Do not use unless directly requested.
         """
         return Count(derive, as_count_of, where, child_role_name, insert_parent)
 
@@ -71,7 +72,7 @@ class Rule:
 
         Args:
             validate: name of mapped <class>
-            as_condition: lambda, passed row (simple constraints)
+            as_condition: lambda, passed row (simple constraints).  Conditions may not contains sum or count python functions - these must be used to declare additional columns and sum/count rules.
             error_msg: string, with {row.attribute} replacements
             error_attributes: list of attributes
 
@@ -237,6 +238,18 @@ Response is to create 2 rules - a count derivation and a constraint, as follows:
                     error_msg="Airplane value total ({row.passenger_count}) exceeds limit ({row.seating_capacity})")
 
 
+Prompt:
+
+    A student cannot be an honor student unless they have mre than 2 service activities.
+
+Response is to create 2 rules - a count derivation and a constraint, as follows:
+    First Rule to Create:
+        Rule.count(derive=Student.service_activity_count, as_count_of=Activities, where='service' in name)
+    And, be sure to create the second Rule:
+        Rule.constraint(validate=Student,
+                    as_condition=lambda row: row.is_honor_student and service_activity_count < 2,
+                    error_msg="Honor Students must have at least 2 service activities")
+
 Here is an equivalent request:
 
 Prompt:
@@ -250,4 +263,31 @@ Response is to create 2 rules - a count derivation and a constraint, as follows:
         Rule.constraint(validate=Airplane,
                     as_condition=lambda row: row.passenger_count <= row.seating_capacity,
                     error_msg="Airplane value total ({row.passenger_count}) exceeds limit ({row.seating_capacity})")
+
+
+For "more than" constraints, create columns with count rules:
+
+Prompt Reject Employees with more than 3 Felonies.
+
+Response:
+    First Rule is to create:
+        Rule.count(derive=Employee.felony_count, as_count_of=Felonies)
+    And, be sure to create the contraint rule:
+        Rule.constraint(validate=Employee,
+                    as_condition=lambda row: row.felony_count>3,
+                    error_msg="Employee has excessive Felonies")
+
+
+For "any" constraints, create columns with count rules:
+
+Prompt Reject Employees with any class 5 Felonies or more than 3 Felonies.
+
+Response:
+    First Rule is to create:
+        Rule.count(derive=Employee.class_5_felony_count, as_count_of=Felonies, where=class>5)
+        Rule.count(derive=Employee.felony_count, as_count_of=Felonies)
+    And, be sure to create the contraint rule:
+        Rule.constraint(validate=Employee,
+                    as_condition=lambda row: row.class_5_felony_count > 0 or row.felony_count>3,
+                    error_msg="Employee has excessive Felonies")
 
