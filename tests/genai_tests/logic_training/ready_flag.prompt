@@ -2,12 +2,19 @@ Create a system with customers, orders, items and products.
 
 Include a notes field for orders.
 
-Use LogicBank to enforce the Check Credit Use Case:
+LogicBank 
+
+Use Case: enforce the Check Credit for ready orders:
 1. Customer.balance <= credit_limit
-2. Customer.balance = Sum(Order.amount_total where date_shipped is null)
+2. Customer.balance = Sum(Order.amount_total where date_shipped is null and ready is True)
 3. Order.amount_total = Sum(Item.amount)
 4. Item.amount = quantity * unit_price
 5. Store the Item.unit_price as a copy from Product.unit_price
+
+Use Case: Compute Products ordered
+1. Item.ready = Order.ready
+2. Product.total_ordered = sum(Item.quantity) where ready == True
+3. Product.reorder_required = quantity_on_hand <= total_ordered
 
 Use Case: No Empty Orders
 1. Order.item_count = Count(Items)

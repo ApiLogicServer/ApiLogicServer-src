@@ -37,3 +37,24 @@ Applicant have felonies and bankruptcies.
 
 LogicBank
 Signal error if is-hirable is true and there are more than 3 bankruptcies, or 2 felonies.
+
+
+    # Logic from GenAI: (or, use your IDE w/ code completion)
+
+    # Signal error if an applicant is marked as hirable and has more than 3 bankruptcies.
+    Rule.constraint(validate=Applicant,
+                as_condition=lambda row: not (row.is_hirable and row.bankruptcy_count > 3),
+                error_msg="Applicant with {row.bankruptcy_count} bankruptcies is not hirable.")
+
+    # Signal error if an applicant is marked as hirable and has more than 2 felonies.
+    Rule.constraint(validate=Applicant,
+                as_condition=lambda row: not (row.is_hirable and row.felony_count > 2),
+                error_msg="Applicant with {row.felony_count} felonies is not hirable.")
+
+    # Counts bankruptcies for each applicant.
+    Rule.count(derive=Applicant.bankruptcy_count, as_count_of=Bankruptcy, child_role_name='applicant')
+
+    # Counts felonies for each applicant.
+    Rule.count(derive=Applicant.felony_count, as_count_of=Felony, child_role_name='applicant')
+
+    # End Logic from GenAI
