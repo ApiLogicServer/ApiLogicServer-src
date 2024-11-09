@@ -1,0 +1,17 @@
+System for Departments and Employees.
+
+LogicBank
+1. Sum of employee salaries cannot exceed department budget.
+
+
+Creates logic:
+
+    # Logic from GenAI: (or, use your IDE w/ code completion)
+
+    # Ensure that the total salaries of employees in a department do not exceed the department's budget.
+    Rule.sum(derive=Department.total_salary, as_sum_of=Employee.salary)
+    Rule.constraint(validate=Department,
+                as_condition=lambda row: row.total_salary <= row.budget,
+                error_msg="Department salaries ({row.total_salary}) exceed budget ({row.budget})")
+
+    # End Logic from GenAI
