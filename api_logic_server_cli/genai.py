@@ -123,7 +123,7 @@ class GenAI(object):
             completion = client.beta.chat.completions.parse(
                 messages=self.messages, response_format=WGResult,
                 # temperature=self.project.genai_temperature,  values .1 and .7 made students / charges fail
-                model=api_version
+                model=api_version  # for own model, use "ft:gpt-4o-2024-08-06:personal:logicbank:ARY904vS" 
             )
             log.debug(f'ChatGPT ({str(int(time.time() - start_time))} secs) - response at: system/genai/temp/chatgpt_original.response')
             

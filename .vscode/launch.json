@@ -712,7 +712,7 @@
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "args": ["genai",
-                "--using=${workspaceFolder}/../../build_and_test/ApiLogicServer/system/genai/examples/emp_depts/emp_dept_explicit.prompt",
+                "--using=${workspaceFolder}/../../build_and_test/ApiLogicServer/system/genai/examples/emp_depts/emp_dept.prompt",
                 "--project-name=emp_dept"],
             "console": "integratedTerminal"
         },
