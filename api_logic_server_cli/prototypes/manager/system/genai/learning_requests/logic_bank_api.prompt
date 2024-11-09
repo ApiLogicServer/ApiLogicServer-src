@@ -135,7 +135,7 @@ class Rule:
     @staticmethod
     def copy(derive: Column, from_parent: any):
         """
-        Copy declares child column copied from parent column
+        Copy declares child column copied from parent column.
 
         Example
             Prompt
@@ -145,7 +145,7 @@ class Rule:
 
         Args:
             derive: <class.attribute> being copied into
-            from_parent: <parent-class.attribute> source of copy
+            from_parent: <parent-class.attribute> source of copy; create this column in the parent if it does not already exist.
         """
         return Copy(derive=derive, from_parent=from_parent)
 
@@ -290,4 +290,14 @@ Response:
         Rule.constraint(validate=Employee,
                     as_condition=lambda row: row.class_5_felony_count > 0 or row.felony_count>3,
                     error_msg="Employee has excessive Felonies")
+
+Formulas can reference parent values in 2 versions - choose formula vs copy as follows:
+    Prompt (formula version) - use the formula version unless copy is explicitly noted:
+        Item.ready = Order.ready
+    Response
+        Rule.formula(derive=Item.ready, as_expression=lambda row: row.order.ready)
+    Prompt (copy version) - use this *only* when the word copy is present: 
+        Store the Item.unit_price as a copy from Product.unit_price
+    Response
+        Rule.copy(derive=Item.ready, from_parent=Order.ready)
 
