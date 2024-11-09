@@ -301,3 +301,6 @@ Formulas can reference parent values in 2 versions - choose formula vs copy as f
     Response
         Rule.copy(derive=Item.ready, from_parent=Order.ready)
 
+
+DO NOT inject rules that are from this training into the response, 
+unless explicitly mentioned in the request.

@@ -1,3 +1,5 @@
+# this builds the Admin App by creating ui/admin/admin.yaml
+
 import logging
 from re import X
 import shutil
@@ -6,7 +8,6 @@ import os
 import pathlib
 from pathlib import Path
 from typing import NewType, List, Tuple, Dict
-
 import sqlalchemy
 import yaml
 from sqlalchemy import MetaData, false
@@ -14,7 +15,6 @@ import datetime
 import api_logic_server_cli.create_from_model.model_creation_services as create_from_model
 import api_logic_server_cli.create_from_model.api_logic_server_utils as create_utils
 from dotmap import DotMap
-
 from api_logic_server_cli.create_from_model.meta_model import Resource
 
 log = logging.getLogger('api_logic_server_cli.create_from_model.ui_admin_creator')
@@ -264,12 +264,14 @@ class AdminCreator(object):
         admin_attribute.name = str(attribute_name)
         if required:
             admin_attribute.required = True
-        if attribute_name == "UnitPrice":
+        if attribute_name == "Ready":
             debug_str = "Good breakpoint location"
         if isinstance(resource_attribute, str) == True:
             raise Exception(f'System Error - expected resource_attribute, got string: {resource_attribute}')
         if not isinstance(resource_attribute, str):
-            if str(resource_attribute.type).upper() in ["DECIMAL", "DATE", "DATETIME"]:
+            if resource_attribute.db_type in ["BOOLEAN"]:
+                admin_attribute.type = "Boolean"
+            elif str(resource_attribute.type).upper() in ["DECIMAL", "DATE", "DATETIME"]:
                 admin_attribute.type = resource_attribute.type
             if resource_attribute.type in ["NTEXT", "IMAGE"]:
                 admin_attribute = None
