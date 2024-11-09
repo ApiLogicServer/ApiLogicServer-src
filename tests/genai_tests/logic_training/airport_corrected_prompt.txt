@@ -1,0 +1,23 @@
+Airport - at least 10 tables
+
+LogicBank
+A airplane's passengers must be less than its seating capacity.
+
+
+Invalid sum/count - no relationship to: Airplane in Derive Airplane.passenger_count as Count(<class 'database.models.Passenger'> Where None)
+
+This is a correct message... passengers are about flights, not Airplane
+So, reformulate the request:
+
+Airport - at least 10 tables
+
+LogicBank
+A flight's passengers must be less than its Airplane's seating capacity.
+
+This works...
+1. Update an airplane's seating capacity, then
+2. Alter a flight - observe constraint: Flight passenger count (150) exceeds airplane capacity (5)
+
+Notes:
+1. The constraint did not fire on step 1, since LogicBank did not cascade the change to Airplane->Flights
+    - This is an issue for LogicBank, but the GenAI logic is correct.

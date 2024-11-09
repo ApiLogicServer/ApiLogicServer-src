@@ -1,5 +1,4 @@
-Airport - at least 10 tables
+Students have probations and sick days.
 
 LogicBank
-A airplane's passengers must be less than its seating capacity.
-
+Signal an error if a Student's can-graduate is True, and there are more 2 probations, or more than 100 sick days.

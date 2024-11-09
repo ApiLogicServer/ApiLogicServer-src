@@ -1,0 +1,29 @@
+Students have grades and activities.
+
+LogicBank
+A student is eligible for the honor society if 
+their grade point average is over 3.5, 
+and they have at least 2 service activities.
+
+
+This is reasonably taken as a derivation.  It was meant to be a constraint:
+
+Students have grades and activities.
+
+LogicBank
+Signal error if student is eligible for the honor society, 
+and their grade point average is under 3.5, 
+or they have less than 2 service activities.
+
+
+This failed to create the count, so rephrase (note the == True):
+
+Students have Grades and belong to Clubs.
+
+LogicBank
+Copy the name from Club to Student Club
+The student's service activity is the count of Student Clubs where name contains 'service'. 
+Signal error if student is eligible for the honor society == True, 
+and their grade point average is under 3.5, 
+or they have less than 2 service activities
+

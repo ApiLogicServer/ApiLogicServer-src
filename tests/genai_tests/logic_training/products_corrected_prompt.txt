@@ -1,0 +1,35 @@
+Products have Notices, with severity 0-5.
+
+A product is orderable if there are no severity 5 Notices, and the count of severities is < 4.
+
+
+    # Logic from GenAI: (or, use your IDE w/ code completion)
+
+    # Calculates the total number of notices for a product.
+    Rule.count(derive=Product.total_severity_count, as_count_of=Notice)
+
+    # Calculates the count of severity 5 notices for a product.
+    Rule.count(derive=Product.severity_five_count, as_count_of=Notice, where=lambda row: row.severity == 5)
+
+    # A product is orderable if there are no severity 5 notices and total severity count is less than 4.
+    Rule.constraint(validate=Product, as_condition=lambda row: row.severity_five_count == 0 and row.total_severity_count < 4, error_msg="Product cannot be ordered due to severity constraints.")
+
+    # End Logic from GenAI
+
+Not quite -- the constraint depends on the orderable value (again).  So..
+
+Products have Notices, with severity 0-5.
+
+Raise and error if product is orderable == True and there are any severity 5 Notices, or more than 3 Notices.
+
+    # Logic from GenAI: (or, use your IDE w/ code completion)
+
+    # Reject Products if they are orderable and have any severity 5 Notices or more than 3 Notices.
+    Rule.count(derive=Product.notice_count, as_count_of=Notice)
+    Rule.count(derive=Product.severity_5_notice_count, as_count_of=Notice, where=lambda row: row.severity == 5)
+    Rule.constraint(validate=Product,
+                as_condition=lambda row: not row.orderable or (row.severity_5_notice_count == 0 and row.notice_count <= 3),
+                error_msg="Product is orderable with conflicting Notices (severity 5 or more than 3)")
+
+    # End Logic from GenAI
+

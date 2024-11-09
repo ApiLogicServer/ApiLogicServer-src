@@ -1,3 +1,3 @@
 Products have Notices, with severity 0-5.
 
-A product is orderable if there are no severity 5 Notices, and the count of severities is < 4.
+Raise and error if product is orderable == True and there are any severity 5 Notices, or more than 3 Notices.
