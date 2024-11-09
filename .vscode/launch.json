@@ -590,8 +590,8 @@
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "args": ["genai",
-                "--project-name=tests-genai/logic_training/students_courses", 
-                "--using=${workspaceFolder}/tests/genai_tests/logic_training/students_courses.prompt"],
+                "--project-name=tests-genai/logic_training/ready_flag", 
+                "--using=${workspaceFolder}/tests/genai_tests/logic_training/ready_flag.prompt"],
             "console": "integratedTerminal"
         },
         {
