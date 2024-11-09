@@ -3,7 +3,12 @@
 # eg, python convert_to_jsonl.py /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/tests-genai/logic_training/emp_depts/docs
 # python convert_to_jsonl.py  /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/tests-genai/logic_training/hiring/docs
 # these update the ft.josnl with 10 lines, which can be used for training
-# 
+
+# ls -d */ | while read l; do python create_json_l.py $l; done
+
+# ls -d /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/tests-genai/logic_training/*/ | while read l; do python create_json_l.py $l/docs; done
+
+# /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/tests-genai/logic_training
 
 import json
 import sys
