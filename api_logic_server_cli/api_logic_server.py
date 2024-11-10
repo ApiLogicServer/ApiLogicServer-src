@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "12.01.21"
+__version__ = "12.01.22"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t11/09/2024 - 12.01.21: genai: rule training, bug fix admin app Boolean fields \n"\
+    "\t11/10/2024 - 12.01.22: genai: rule training, bug fix admin app Boolean fields, model via env \n"\
     "\t10/31/2024 - 12.01.00: genai: informal rules (eg, Sum of employee salaries cannot exceed department budget) \n"\
     "\t10/21/2024 - 12.00.04: sra 10-22, Prelim support genai --using=dir/project \n"\
     "\t10/12/2024 - 12.00.02: Natural Language Logic \n"\
@@ -1872,9 +1872,11 @@ from database import <project.bind_key>_models
                     raise Exception(gen_ai.post_error)
             except Exception as e:
                 if hasattr(self, 'gen_ai_save_dir'):
+                    failed_msg = str(datetime.datetime.now().strftime("%B %d, %Y %H:%M:%S"))
+                    failed_msg += f"\n{e}"
                     log.error(f"Error creating database from model: {e}")
                     with open(f"{self.gen_ai_save_dir.joinpath('create_db_models_failed.txt')}", "w") as log_file:
-                        log_file.write(f"Error creating database from model: {e}")
+                        log_file.write(f"Error creating database from model: {failed_msg}")
                 raise(e)
         return gen_ai
     
