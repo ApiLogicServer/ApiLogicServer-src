@@ -117,13 +117,19 @@ class GenAI(object):
 
         if self.project.genai_repaired_response == '':  # normal path - get response from ChatGPT
             api_version = f'{self.project.genai_version}'  # eg, "gpt-4o"
-            # api_version = "gpt-4o-2024-08-06"
             start_time = time.time()
+            db_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")
             client = OpenAI(api_key=os.getenv("APILOGICSERVER_CHATGPT_APIKEY"))
+            model = api_version
+            if model == "":
+                model = os.getenv("APILOGICSERVER_CHATGPT_MODEL")
+                if model is None or model == "*":
+                    model = "gpt-4o-2024-08-06"
+            self.resolved_model = model
             completion = client.beta.chat.completions.parse(
                 messages=self.messages, response_format=WGResult,
                 # temperature=self.project.genai_temperature,  values .1 and .7 made students / charges fail
-                model=api_version  # for own model, use "ft:gpt-4o-2024-08-06:personal:logicbank:ARY904vS" 
+                model=model  # for own model, use "ft:gpt-4o-2024-08-06:personal:logicbank:ARY904vS" 
             )
             log.debug(f'ChatGPT ({str(int(time.time() - start_time))} secs) - response at: system/genai/temp/chatgpt_original.response')
             
@@ -134,6 +140,7 @@ class GenAI(object):
             pass
 
         else: # for retry from corrected response... eg system/genai/temp/chatgpt_retry.response
+            self.resolved_model = "(n/a: model not used for repaired response)"
             log.debug(f'\nUsing [corrected] response from: {self.project.genai_repaired_response}')
             with open(self.project.genai_repaired_response, 'r') as response_file:
                 response_dict = json.load(response_file)
@@ -495,7 +502,8 @@ class GenAI(object):
 
         """
         create_db_model_lines =  list()
-        create_db_model_lines.extend(  # imports for classes
+        create_db_model_lines.append(f'# using resolved_model {self.resolved_model}')
+        create_db_model_lines.extend(  # imports for classes (comes from api_logic_server_cli/prototypes/manager/system/genai/create_db_models_inserts/create_db_models_imports.py)
             self.get_lines_from_file(f'system/genai/create_db_models_inserts/create_db_models_imports.py'))
 
         models = self.response_dict.models
@@ -510,6 +518,8 @@ class GenAI(object):
                     did_base = True 
                 if 'datetime.datetime.utcnow' in each_fixed_line:
                     each_fixed_line = each_fixed_line.replace('datetime.datetime.utcnow', 'datetime.now()') 
+                if 'Column(date' in each_fixed_line:
+                    each_fixed_line = each_fixed_line.replace('Column(dat', 'column(Date') 
                 create_db_model_lines.append(each_fixed_line)
 
         create_db_model_lines.extend(self.get_lines_from_file(  # classes done, create db and add test_data code

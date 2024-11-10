@@ -561,8 +561,8 @@ def tutorial(ctx, create):
               default=f'sqlite',
               help="SQLAlchemy Database URL\n")
 @click.option('--genai-version', 'genai_version',
-              default='gpt-4o-2024-08-06',
-              help="Eg, gpt-3.5-turbo, gpt-4o")
+              default='',
+              help="Eg, '', gpt-3.5-turbo, gpt-4o")
 @click.option('--repaired-response', 'repaired_response',
               default='',
               help="Retry from [repaired] response file")
