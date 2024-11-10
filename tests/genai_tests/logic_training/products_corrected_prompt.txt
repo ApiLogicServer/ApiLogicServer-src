@@ -24,12 +24,15 @@ Raise and error if product is orderable == True and there are any severity 5 Not
 
     # Logic from GenAI: (or, use your IDE w/ code completion)
 
-    # Reject Products if they are orderable and have any severity 5 Notices or more than 3 Notices.
+    # Derive product notice count from related notices.
     Rule.count(derive=Product.notice_count, as_count_of=Notice)
-    Rule.count(derive=Product.severity_5_notice_count, as_count_of=Notice, where=lambda row: row.severity == 5)
+
+    # Derive count of severity 5 notices for products.
+    Rule.count(derive=Product.class_5_notice_count, as_count_of=Notice, where=lambda row: row.severity == 5)
+
+    # Ensure product is not orderable if conditions on notices are met.
     Rule.constraint(validate=Product,
-                as_condition=lambda row: not row.orderable or (row.severity_5_notice_count == 0 and row.notice_count <= 3),
-                error_msg="Product is orderable with conflicting Notices (severity 5 or more than 3)")
+    as_condition=lambda row: not (row.orderable and (row.class_5_notice_count > 0 or row.notice_count > 3)),
+    error_msg="Orderable product contains severity 5 or excessive notices.")
 
     # End Logic from GenAI
-

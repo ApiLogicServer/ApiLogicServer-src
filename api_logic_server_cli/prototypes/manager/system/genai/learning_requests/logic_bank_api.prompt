@@ -72,7 +72,7 @@ class Rule:
 
         Args:
             validate: name of mapped <class>
-            as_condition: lambda, passed row (simple constraints).  Conditions may not contains sum or count python functions - these must be used to declare additional columns and sum/count rules.
+            as_condition: lambda, passed row (simple constraints).  Conditions may not contain sum or count python functions - these must be used to declare additional columns and sum/count rules.
             error_msg: string, with {row.attribute} replacements
             error_attributes: list of attributes
 
@@ -125,7 +125,7 @@ class Rule:
 
         Args:
             derive: <class.attribute> being derived
-            as_expression: lambda, passed row (for syntax checking)
+            as_expression: lambda, passed row (for syntax checking).  Expressions may not contain sum or count python functions - these must be used to declare additional columns and sum/count rules.
             no_prune: disable pruning (rarely used, default False)
         """
         return Formula(derive=derive,
@@ -197,20 +197,8 @@ def declare_logic():  # created by Web/GenAI for ApiLogicServer, LogicBank
                     as_condition=lambda row: row.balance <= row.credit_limit,
                     error_msg="Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})")
 
+
 Intermediate sum/count values require a new column, with a LogicBank sum/count rule.  For example:
-
-Prompt:
-    The sum of the child value cannot exceed the parent limit
-
-Response is to create 2 rules - a derivation and a constraint, as follows:
-    First Rule to Create:
-        Rule.sum(derive=Parent.value_total, as_sum_of=Child.value)
-    And, be sure to create the second Rule:
-        Rule.constraint(validate=Parent,
-                    as_condition=lambda row: row.value_total <= row.limit,
-                    error_msg="Parent value total ({row.value_total}) exceeds limit ({row.limit})")
-
-Intermediate count values also require a new column, with a LogicBank count rule.  For example:
 
 Prompt:
     The sum of the child value cannot exceed the parent limit
@@ -236,6 +224,19 @@ Response is to create 2 rules - a count derivation and a constraint, as follows:
         Rule.constraint(validate=Airplane,
                     as_condition=lambda row: row.passenger_count <= row.seating_capacity,
                     error_msg="Airplane value total ({row.passenger_count}) exceeds limit ({row.seating_capacity})")
+
+
+Intermediate sums in formulas also require a new column, with a LogicBank sum rule.  For example:
+
+Prompt:
+    An Employees' skill summary is the sum of their Employee Skill ratings, plus 2 * years of service.
+
+Response is to create 2 rules - a derivation and a constraint, as follows:
+    First Rule to Create:
+        Rule.sum(derive=Employee.skill_rating_total, as_sum_of=EmployeeSkill.rating)
+    And, be sure to create the second Rule:
+        Rule.Formula(derive=Employee.skill_summary, 
+                    as_condition=lambda row: row.skill_rating_total + 2 * row.years_of_service)
 
 
 Prompt:
@@ -301,6 +302,20 @@ Formulas can reference parent values in 2 versions - choose formula vs copy as f
     Response
         Rule.copy(derive=Item.ready, from_parent=Order.ready)
 
+Sum and Count where clauses:
+    1. must not restate the foreign key / primary key matchings
+    2. Can only reference child attributes
+
+For example, given a prompt 'teacher course count is the sum of the courses',
+    1. This is correct
+        Rule.count(derive=Teacher.course_count, as_count_of=Course)
+
+    2. This is incorrect, and should never be generated:
+        Rule.count(derive=Teacher.course_count, as_count_of=Course, where=lambda row: row.teacher_id == Teacher.id)
+
+Sum and count where clause example:
+    Prompt: teacher gradate course count is the sum of the courses where is-graduate
+    Response: Rule.count(derive=Teacher.course_count, as_count_of=Course, where=lamda row: row.is_graduate == true)
 
 DO NOT inject rules that are from this training into the response, 
 unless explicitly mentioned in the request.

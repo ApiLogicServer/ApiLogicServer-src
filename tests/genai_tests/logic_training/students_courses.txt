@@ -1,5 +1,3 @@
-LogicBank:
-
 Teachers, courses which have offerings, and students who have offerings.
 
 LogicBank
@@ -12,30 +10,33 @@ courses have a charge, which is copied to enrollments charge
 a student's total enrollment charges cannot exceed their budget
 
 
-Rules:
+Created Logic:
 
-    # Ensures a teacher is not assigned more than 5 courses.
+    # Logic from GenAI: (or, use your IDE w/ code completion)
+
+    # Teachers cannot be assigned to more than 5 courses.
     Rule.count(derive=Teacher.course_count, as_count_of=Course)
     Rule.constraint(validate=Teacher,
-                as_condition=lambda row: row.course_count <= 5,
-                error_msg="Teacher has been assigned more than 5 courses")
+    as_condition=lambda row: row.course_count <= 5,
+    error_msg="Teacher has more than 5 course assignments ({row.course_count})")
 
-    # Ensures a student does not enroll in more than 6 courses.
+    # Students cannot have more enrollments than 6.
     Rule.count(derive=Student.enrollment_count, as_count_of=Offering)
     Rule.constraint(validate=Student,
-                as_condition=lambda row: row.enrollment_count <= 6,
-                error_msg="Student enrollment exceeds the allowed 6 courses")
+    as_condition=lambda row: row.enrollment_count <= 6,
+    error_msg="Student has more than 6 enrollments ({row.enrollment_count})")
 
-    # Copies the charge from the course to the offering.
+    # Courses have a charge, which is copied to enrollments charge.
     Rule.copy(derive=Offering.charge, from_parent=Course.charge)
 
-    # Ensures total charges of a student’s enrollments do not exceed their budget.
-    Rule.sum(derive=Student.total_charges, as_sum_of=Offering.charge)
+    # A student's total enrollment charges cannot exceed their budget.
+    Rule.sum(derive=Student.enrollment_charge_total, as_sum_of=Offering.charge)
     Rule.constraint(validate=Student,
-                as_condition=lambda row: row.total_charges <= row.budget,
-                error_msg="Student's enrollment charges exceed budget")
+    as_condition=lambda row: row.enrollment_charge_total <= row.budget,
+    error_msg="Student enrollment charges ({row.enrollment_charge_total}) exceed budget ({row.budget})")
 
     # End Logic from GenAI
+
 
 
 Older comments:

@@ -1,11 +1,28 @@
 Students have probations and sick days.
 
 LogicBank
-A Student can graduate unless there are more than 2 probations, or 100 sick days.
+A Student can-graduate unless there are more than 2 probations, or 100 sick days.
 
 (terrible test data)
 
 a little ambiguous - "is eligible" is a contraint, or an attr?
+
+logic is not quite right:
+
+    # A constraint ensuring a student can graduate only if they have no more than 2 probations and no more than 100 sick days.
+    Rule.constraint(
+    validate=Student,
+    as_condition=lambda row: row.probation_count <= 2 and row.sick_days_count <= 100,
+    error_msg="Student cannot graduate with more than 2 probations or 100 sick days"
+    )
+
+    # A rule to count the number of probations associated with a student.
+    Rule.count(derive=Student.probation_count, as_count_of=Probation)
+
+    # A rule to count the number of sick days associated with a student.
+    Rule.count(derive=Student.sick_days_count, as_count_of=SickDay)
+
+    # End Logic from GenAI
 
 
 
@@ -20,8 +37,18 @@ A Student can be marked as can-graduate only if there are less than 2 probations
 
 Better, but it is not seeing this as a 'state' transition:
 
-    # Rule to determine if a student can graduate based on probation and sick days.
-    Rule.constraint(validate=Student, as_condition=lambda row: row.probation_count < 2 and row.sick_days_total < 100, error_msg="Student cannot graduate due to probation count or sick days.")
+    # Logic from GenAI: (or, use your IDE w/ code completion)
+
+    # Derive the number of probations for each student.
+    Rule.count(derive=Student.probation_count, as_count_of=Probation)
+
+    # Derive the total number of sick days for each student.
+    Rule.count(derive=Student.sick_days_total, as_count_of=SickDay)
+
+    # Ensure students marked as can-graduate have less than 2 probations and less than 100 sick days.
+    Rule.constraint(validate=Student, as_condition=lambda row: row.probation_count < 2 and row.sick_days_total < 100, error_msg="A Student can be marked as can-graduate only if there are less than 2 probations and less than 100 sick days.")
+
+    # End Logic from GenAI
 
 
 
@@ -33,17 +60,28 @@ LogicBank
 Signal an error if a Student's can-graduate is True, and there are more 2 probations, or more than 100 sick days.
 
 
-This generated logic that is  1) invalid "where" on counts, and   2) constraint failed to mention can-graduate
+Incorrect logic - constraint failed to mention can-graduate
 
     # Logic from GenAI: (or, use your IDE w/ code completion)
 
-    # Derive student probation count from probation records.
-    Rule.count(derive=Student.probations, as_count_of=Probation, where=lambda row: row.student_id == row.Student.id)
+    # A student can be marked as can-graduate only if probation_count is less than 2 and sick_days_count is less than 100.
+    Rule.constraint(validate=Student,
+                as_condition=lambda row: row.probation_count < 2 and row.sick_days_count < 100,
+                error_msg="Student cannot graduate due to excessive probations or sick days")
 
-    # Derive student sick day count from sick day records.
-    Rule.count(derive=Student.sick_days, as_count_of=SickDay, where=lambda row: row.student_id == row.Student.id)
+    # Derives the probation_count for a student by counting Probation instances.
+    Rule.count(derive=Student.probation_count, as_count_of=Probation)
 
-    # Ensure students can graduate if they have less than 2 probations and less than 100 sick days.
-    Rule.constraint(validate=Student, as_condition=lambda row: (row.probations < 2 and row.sick_days < 100), error_msg="Student cannot graduate due to excessive probations ({row.probations}) or sick days ({row.sick_days}).")
+    # Derives the sick_days_count for a student by counting SickDay instances.
+    Rule.count(derive=Student.sick_days_count, as_count_of=SickDay)
 
     # End Logic from GenAI
+
+
+So revise logic again:
+
+Students have probations and sick days.
+
+LogicBank
+Student can-graduate is false if there are more 2 probations, or more than 100 sick days.
+Signal an error if a Student's can-graduate is True, and there are more 2 probations, or more than 100 sick days.

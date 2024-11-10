@@ -24,42 +24,31 @@ Use Case: No Empty Orders
 
     # Logic from GenAI: (or, use your IDE w/ code completion)
 
-    # Ensure customer balance does not exceed credit limit
-    Rule.constraint(validate=Customer,
-                as_condition=lambda row: row.balance <= row.credit_limit,
-                error_msg="balance ({row.balance}) exceeds credit ({row.credit_limit})")
+    # Logic Bank rules to enforce balance constraints and derivations for customers.
+    Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None and row.ready is True);
+    Rule.constraint(validate=Customer, as_condition=lambda row: row.balance <= row.credit_limit, error_msg="Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})")
 
-    # Derive customer balance from order amounts
-    Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total,
-         where=lambda row: row.date_shipped is None and row.ready is True)
-
-    # Derive order amount total as sum of item amounts
+    # Sum the items to calculate order's total amount.
     Rule.sum(derive=Order.amount_total, as_sum_of=Item.amount)
 
-    # Calculate item amount from quantity and unit_price
+    # Calculate item amount based on quantity and unit price.
     Rule.formula(derive=Item.amount, as_expression=lambda row: row.quantity * row.unit_price)
 
-    # Copy item unit price from product
+    # Copy unit price from product to item.
     Rule.copy(derive=Item.unit_price, from_parent=Product.unit_price)
 
-    # Set item ready status as order ready status
+    # Set item ready state based on order ready state.
     Rule.formula(derive=Item.ready, as_expression=lambda row: row.order.ready)
 
-    # Sum of item quantities where ready is true for the product
+    # Calculate total products ordered when ready.
     Rule.sum(derive=Product.total_ordered, as_sum_of=Item.quantity, where=lambda row: row.ready == True)
 
-    # Check if reorder is required based on quantity on hand and total ordered
-    Rule.constraint(validate=Product,
-                as_condition=lambda row: row.quantity_on_hand <= row.total_ordered,
-                error_msg="Reorder required for product {row.name}")
+    # Determine if reorder is required based on total ordered.
+    Rule.formula(derive=Product.reorder_required, as_expression=lambda row: row.quantity_on_hand <= row.total_ordered)
 
-    # Count the number of items in an order
-    Rule.count(derive=Order.item_count, as_count_of=Item)
-
-    # Ensure an order has at least one item before shipment
-    Rule.constraint(validate=Order,
-                as_condition=lambda row: not (row.date_shipped is not None and row.item_count == 0),
-                error_msg="Cannot ship an empty order")
+    # Count items in an order and ensure no empty orders when shipped.
+    Rule.count(derive=Order.item_count, as_count_of=Item);
+    Rule.constraint(validate=Order, as_condition=lambda row: row.date_shipped is not None and row.item_count > 0, error_msg="Cannot ship an order with no items")
 
     # End Logic from GenAI
 
