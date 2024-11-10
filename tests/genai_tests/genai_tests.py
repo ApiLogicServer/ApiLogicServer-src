@@ -421,7 +421,7 @@ if Config.do_multi_rule_logic_bad_gen:
     test_names.append( (test_name, 'Base and engine got into test data') )
     prompt_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/emp_dept/multi_rule_logic_003.response')
     assert prompt_path.exists() , f'{test_name} error: prompt path not found: {str(prompt_path)}'
-    do_test_genai_cmd = f'{set_venv} && als genai --project-name={test_name} --using={prompt_path}'
+    do_test_genai_cmd = f'{set_venv} && als genai --project-name={test_name} --using=ignored/multi_rule_logic_bad_gen --repaired-response={prompt_path}'
     result_genai = run_command(do_test_genai_cmd,
         cwd=create_in,
         msg=f'\nCreate {test_name}')

@@ -1,0 +1,18 @@
+docker run -it --name api_logic_server_local --rm --net dev-network -p 5656:5656 -p 5002:5002 -v /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/dockers:/localhost apilogicserver/api_logic_server_local sh -c "export PATH=$PATH:/home/api_logic_server/bin && /bin/sh /localhost/docker-commands.sh"
+
+b'sh: 1: export: Fusion.app/Contents/Public:/Users/val/.vscode/extensions/ms-python.python-2024.18.1-darwin-x64/python_files/deactivate/zsh:/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/bin:/Library/Frameworks/Python.framework/Versions/3.12/bin:/Library/Frameworks/Python.framework/Versions/3.11/bin:/Library/Frameworks/Python.framework/Versions/3.10/bin:/home/api_logic_server/bin: bad variable name\r\n'
+
+echo $PATH
+/Library/Frameworks/Python.framework/Versions/3.12/bin:/Library/Frameworks/Python.framework/Versions/3.11/bin:/Library/Frameworks/Python.framework/Versions/3.10/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Applications/VMware Fusion.app/Contents/Public
+
+in container, I can: 
+export PATH=$PATH:/home/api_logic_server/bin && /bin/sh /localhost/docker-commands.sh
+
+Seems to be picking up $HOME from host, not container??
+
+but I cannot:
+docker run -it --name api_logic_server_local --rm --net dev-network -p 5656:5656 -p 5002:5002 -v /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/dockers:/localhost apilogicserver/api_logic_server_local sh -c "export PATH=$PATH:/home/api_logic_server/bin && /bin/sh /localhost/docker-commands.sh"
+---> h: 1: export: Fusion.app/Contents/Public:/home/api_logic_server/bin: bad variable name
+
+I can try less, which works...
+docker run -it --name api_logic_server_local --rm --net dev-network -p 5656:5656 -p 5002:5002 -v /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/dockers:/localhost apilogicserver/api_logic_server_local sh -c "/localhost/docker-commands.sh"
