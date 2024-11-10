@@ -232,6 +232,21 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "     - genai BLT/EmpDept (multi_rule_logic_bad_gen - no ChatGPT)",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": [
+                "genai",
+                "--repaired-response=${workspaceFolder}/tests/test_databases/ai-created/emp_dept/multi_rule_logic_003.response",
+                "--project-name=multi_rule_logic_bad_gen",
+                "--using=ignored/multi_rule_logic_bad_gen"],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "     - genai TEST_PROJECT - clean/ApiLogicServer/test_project",
             "type": "debugpy",
             "request": "launch",
@@ -669,7 +684,7 @@
             "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
-            "args": ["genai", "--temperature=0.5",
+            "args": ["genai", 
                 "--using=${workspaceFolder}/../../build_and_test/ApiLogicServer/system/genai/examples/genai_demo/genai_demo.prompt",
                 "--project-name=genai_demo"],
 //                "--project-name=genai_demo",

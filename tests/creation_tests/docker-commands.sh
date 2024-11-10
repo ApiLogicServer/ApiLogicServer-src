@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "\n docker-commands running"
+
 ApiLogicServer create --project_name=/localhost/ApiLogicProject --db_url=
 
 ApiLogicServer create --project_name=/localhost/classicmodels --db_url=mysql+pymysql://root:p@mysql-container:3306/classicmodels
@@ -12,3 +14,4 @@ ApiLogicServer create --project_name=/localhost/postgres --db_url=postgresql://p
 
 ApiLogicServer create --project_name=/localhost/sqlserver --db_url='mssql+pyodbc://sa:Posey3861@sqlsvr-container:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'
 
+echo "\n\ndocker-commands compete"

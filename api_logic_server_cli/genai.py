@@ -519,21 +519,23 @@ class GenAI(object):
         row_names = list()
         for each_line in test_data_lines:
             each_fixed_line = each_line
+            check_for_row_name = True
             if '=datetime' in each_fixed_line:
                 each_fixed_line = each_fixed_line.replace('=datetime.date', '=date') 
-            #   datetime.datetime.utcnow might also occur in model classes
             if 'datetime.datetime.utcnow' in each_fixed_line:
                 each_fixed_line = each_fixed_line.replace('datetime.datetime.utcnow', 'datetime.now()') 
             if 'engine = create_engine' in each_fixed_line:  # CBT sometimes has engine = create_engine, so do we!
                 each_fixed_line = each_fixed_line.replace('engine = create_engine', '# engine = create_engine')
+                check_for_row_name = False
+            if each_fixed_line.startswith('Base') or each_fixed_line.startswith('engine'):
+                check_for_row_name = False
             if 'Base.metadata.create_all(engine)' in each_fixed_line:
                 each_fixed_line = each_fixed_line.replace('Base.metadata.create_all(engine)', '# Base.metadata.create_all(engine)')
             create_db_model_lines.append(each_fixed_line + '\n')
-            if ' = ' in each_line and '(' in each_line:  # CPT test data might have: tests = []
+            if check_for_row_name and ' = ' in each_line and '(' in each_line:  # CPT test data might have: tests = []
                 assign = each_line.split(' = ')[0]
                 # no tokens for: Session = sessionmaker(bind=engine) or session = Session()
-                if '.' not in assign and 'Session' not in each_line and 'session.' not in each_line and \
-                    'Base =' not in each_line and 'engine =' not in each_line:
+                if '.' not in assign and 'Session' not in each_line and 'session.' not in each_line:
                     row_names.append(assign)
 
         create_db_model_lines.append('\n\n')
