@@ -27,3 +27,19 @@ Signal error if student is eligible for the honor society == True,
 and their grade point average is under 3.5, 
 or they have less than 2 service activities
 
+Created logic:
+
+    # Logic from GenAI: (or, use your IDE w/ code completion)
+
+    # Copy the name from Club to Student Club
+    Rule.copy(derive=Student.club_name, from_parent=Club.name)
+
+    # The student's service activity is the count of Student Clubs where name contains 'service'.
+    Rule.count(derive=Student.service_activity_count, as_count_of=StudentClub, where=lambda row: 'service' in row.club.name)
+
+    # Signal error if student is eligible for the honor society and their GPA is under 3.5 or they have less than 2 service activities.
+    Rule.constraint(validate=Student,
+                as_condition=lambda row: not(row.honor_society_eligible and (row.gpa < 3.5 or row.service_activity_count < 2)),
+                error_msg="Honor Society requires GPA >= 3.5 and at least 2 service activities")
+
+    # End Logic from GenAI

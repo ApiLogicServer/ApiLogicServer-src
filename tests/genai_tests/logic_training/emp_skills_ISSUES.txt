@@ -1,0 +1,19 @@
+Create a system with Employees and their Skills.
+More than One Employee can have the same Skill.
+EmployeeSkill.rating = Skill.rating
+
+LogicBank
+An Employee's skill-rating is the sum of the Employee Skills rating, plus 2 * years of service.
+
+Creates incorrect Logic - copy vs formula
+
+    # Logic from GenAI: (or, use your IDE w/ code completion)
+
+    # Calculate skill_summary as the sum of skill ratings plus twice the years of service.
+    Rule.sum(derive=Employee.skill_rating_total, as_sum_of=EmployeeSkill.rating)
+    Rule.formula(derive=Employee.skill_summary, as_expression=lambda row: row.skill_rating_total + 2 * row.years_of_service)
+
+    # Copy skill rating to employee skill.
+    Rule.copy(derive=EmployeeSkill.rating, from_parent=Skill.rating)
+
+    # End Logic from GenAI
