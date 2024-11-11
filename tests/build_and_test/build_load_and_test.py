@@ -535,7 +535,7 @@ def docker_creation_tests(api_logic_server_tests_path):
         f'docker run -it --name api_logic_server_local --rm '
         f'--net dev-network -p 5656:5656 -p 5002:5002 ' 
         f'-v {str(dest)}:/localhost {image_name} ' 
-        f'sh -c "export PATH=$PATH:/home/api_logic_server/bin && /bin/sh /localhost/docker-commands.sh"')
+        f'sh -c " /bin/sh /localhost/docker-commands.sh"')
     print(f'\n\ndocker_creation_tests: 2. build projects: {build_projects_cmd}')
     build_projects = run_command(build_projects_cmd,
         cwd=api_logic_server_home_path,
