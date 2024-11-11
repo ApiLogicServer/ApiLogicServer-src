@@ -1,4 +1,5 @@
 import json
+import sys
 import time
 import traceback
 from typing import Dict, List
@@ -116,29 +117,32 @@ class GenAI(object):
         self.messages = self.get_prompt_messages()  # compute self.messages, from file, dir or text argument
 
         if self.project.genai_repaired_response == '':  # normal path - get response from ChatGPT
-            api_version = f'{self.project.genai_version}'  # eg, "gpt-4o"
-            start_time = time.time()
-            db_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")
-            client = OpenAI(api_key=os.getenv("APILOGICSERVER_CHATGPT_APIKEY"))
-            model = api_version
-            if model == "":
-                model = os.getenv("APILOGICSERVER_CHATGPT_MODEL")
-                if model is None or model == "*":
-                    model = "gpt-4o-2024-08-06"
-            self.resolved_model = model
-            completion = client.beta.chat.completions.parse(
-                messages=self.messages, response_format=WGResult,
-                # temperature=self.project.genai_temperature,  values .1 and .7 made students / charges fail
-                model=model  # for own model, use "ft:gpt-4o-2024-08-06:personal:logicbank:ARY904vS" 
-            )
-            log.debug(f'ChatGPT ({str(int(time.time() - start_time))} secs) - response at: system/genai/temp/chatgpt_original.response')
-            
-            data = completion.choices[0].message.content
-            response_dict = json.loads(data)
-            self.get_and_save_raw_response_data(completion=completion, response_dict=response_dict)
-            # print(json.dumps(json.loads(data), indent=4))
-            pass
-
+            try:
+                api_version = f'{self.project.genai_version}'  # eg, "gpt-4o"
+                start_time = time.time()
+                db_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")
+                client = OpenAI(api_key=os.getenv("APILOGICSERVER_CHATGPT_APIKEY"))
+                model = api_version
+                if model == "":  # default from CLI is '', meaning fall back to env variable or system default...
+                    model = os.getenv("APILOGICSERVER_CHATGPT_MODEL")
+                    if model is None or model == "*":  # system default chatgpt model
+                        model = "gpt-4o-2024-08-06"
+                self.resolved_model = model
+                completion = client.beta.chat.completions.parse(
+                    messages=self.messages, response_format=WGResult,
+                    # temperature=self.project.genai_temperature,  values .1 and .7 made students / charges fail
+                    model=model  # for own model, use "ft:gpt-4o-2024-08-06:personal:logicbank:ARY904vS" 
+                )
+                log.debug(f'ChatGPT ({str(int(time.time() - start_time))} secs) - response at: system/genai/temp/chatgpt_original.response')
+                
+                data = completion.choices[0].message.content
+                response_dict = json.loads(data)
+                self.get_and_save_raw_response_data(completion=completion, response_dict=response_dict)
+                # print(json.dumps(json.loads(data), indent=4))
+                pass
+            except Exception as inst:
+                log.error(f"\n\nError: ChatGPT call failed\n{inst}\n\n")
+                sys.exit('ChatGPT call failed - please see https://apilogicserver.github.io/Docs/WebGenAI-CLI/#configuration')
         else: # for retry from corrected response... eg system/genai/temp/chatgpt_retry.response
             self.resolved_model = "(n/a: model not used for repaired response)"
             log.debug(f'\nUsing [corrected] response from: {self.project.genai_repaired_response}')
@@ -181,6 +185,10 @@ class GenAI(object):
         log.debug(f'.. conv[000] presets: {starting_message}')
         log.debug(f'.. conv[001] presets: {learning_requests[0]["content"][:30]}...')
         return len(learning_requests)
+
+    def chatgpt_excp(self):
+        # https://apilogicserver.github.io/Docs/WebGenAI-CLI/
+        pass
 
     def get_valid_project_name(self):
         """ Get a valid project name from the project name
@@ -573,14 +581,6 @@ class GenAI(object):
         with open(file_name, "r") as file:
             lines = file.readlines()
         return lines
-    
-    def get_model_test_data_lines_ZZ(self, model: DotMap) -> list[str]:
-        create_db_model_lines =  list()
-        create_db_model_lines.append('\n\n')
-        sample_data = model.sample_data
-        for each_line in sample_data:
-            create_db_model_lines.append(each_line + '\n')
-        return create_db_model_lines
 
     def get_model_class_lines(self, model: DotMap) -> list[str]:
         """Get the model class from the model
@@ -721,32 +721,6 @@ class GenAI(object):
             log.error(f"\n\nError: {inst} \n..creating diagnostic files into dir: {str(gen_temp_dir)}\n\n")
             pass  # intentional try/catch/bury - it's just diagnostics, so don't fail
         debug_string = "good breakpoint - return to main driver, and execute create_db_models.py"
-
-    def get_headers_with_openai_api_key_ZZ(self) -> dict:
-        """
-        Returns:
-            dict: api header with OpenAI key (exits if not provided)
-        """
-        
-        pass  # https://community.openai.com/t/how-do-i-call-chatgpt-api-with-python-code/554554
-        if os.getenv('APILOGICSERVER_CHATGPT_APIKEY'):
-            openai_api_key = os.getenv('APILOGICSERVER_CHATGPT_APIKEY')
-        else:
-            from dotenv import dotenv_values
-            secrets = dotenv_values("system/secrets.txt")
-            openai_api_key = secrets['APILOGICSERVER_CHATGPT_APIKEY']
-            if openai_api_key == 'your-api-key-here':
-                if os.getenv('APILOGICSERVER_CHATGPT_APIKEY'):
-                    openai_api_key = os.getenv('APILOGICSERVER_CHATGPT_APIKEY')
-                else:
-                    log.error("\n\nMissing env value: APILOGICSERVER_CHATGPT_APIKEY")
-                    log.error("... Check your system/secrets file...\n")
-                    exit(1)
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {openai_api_key}"
-        }
-        return headers
     
     def get_and_save_raw_response_data(self, completion: object, response_dict: dict):
         """
