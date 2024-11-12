@@ -1,0 +1,9 @@
+class A: ...
+class B: ...
+class C: ...
+
+# https://stackoverflow.com/questions/51142320/how-to-instantiate-class-by-its-string-name-in-python-from-current-file
+
+def factory(classname):
+    cls = globals()[classname]
+    return cls()
