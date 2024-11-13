@@ -78,7 +78,7 @@ class OntCreator(object):
         self.project.use_model = "."
         model_creation_services = ModelCreationServices(project = self.project,   # load models (user db, not auth)
             project_directory=self.project.project_directory)
-        resources : Dict[str, Resource] = model_creation_services.resource_list
+        resources: Dict[str, Resource] = {name: resource for name, resource in model_creation_services.resource_list.items() if not getattr(resource, 'hidden', False)}
 
         admin_app = Path(self.project.project_directory_path).joinpath(f'ui/admin/{self.admin_app}.yaml')
         if not os.path.exists(admin_app):
@@ -113,6 +113,8 @@ class OntCreator(object):
         app_model_out.entities = DotMap()
         app_model_out.settings.style_guide = self.style_guide()  # TODO - stub code, remove later
         for each_resource_name, each_resource in admin_model_in.resources.items():
+            if each_resource["hidden"] == True:
+                continue
             each_entity = self.create_model_entity(each_resource, resources=resources)
             app_model_out.entities[each_resource_name] = each_entity
 
