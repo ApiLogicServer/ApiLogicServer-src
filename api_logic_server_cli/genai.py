@@ -19,6 +19,9 @@ from dotmap import DotMap
 
 log = logging.getLogger(__name__)
 
+K_LogicBankOff = "LBX"
+''' Disable Logic (for demos) '''
+
 class Rule(BaseModel):
     name: str
     description: str
@@ -55,12 +58,11 @@ class GenAI(object):
         The key argument is `--using`
         * It can be a file, dir (conversation) or text argument.
         * It's "stem" denotes the project name to be created at cwd
-        * `self.project.genai_using`
+        * `self.project.genai_using` (not used by WebGenAI)
 
-        The (rarely used) `--repaired_response` 
+        The (rarely used) `--repaired_response` --> `self.project.genai_repaired_response`
         * is for retry from corrected response
         * `--using` is required to get the project name, to be created at cwd
-        * `self.project.genai_repaired_response`
 
         __init__() is the main driver (work directory is <manager>/system/genai/temp/)
         
@@ -80,25 +82,7 @@ class GenAI(object):
 
         see key_module_map() for key methods
 
-
-        ##### Explore interim copilot access:
-
-        VSCode/Copilot-chat can turn prompts into logic, so can we automate with API?
-
-        https://stackoverflow.com/questions/76741410/how-to-invoke-github-copilot-programmatically
-        https://docs.google.com/document/d/1o0TeNQtuT6moWU1bOq2K20IbSw4YhV1x_aFnKwo_XeU/edit#heading=h.3xmoi7pevsnp
-        https://code.visualstudio.com/api/extension-guides/chat
-        https://code.visualstudio.com/api/extension-guides/language-model
-        https://github.com/B00TK1D/copilot-api
-
-        ### Or use ChatGPT:
-
-        Not sure vscode/copilot is best approach, since we'd like to activate this during project creation
-        (eg on web/GenAI - not using vscode).
-
-        * Thomas suggests there are ways to "teach" ChatGPT about Logic Bank.  This is a *great* idea.
-
-        https://platform.openai.com/docs/guides/fine-tuning/create-a-fine-tuned-model
+        https://platform.openai.com/finetune/ftjob-2i1wkh4t4l855NKCovJeHExs?filter=all
         """        
 
         self.project = project  # als project info (cli args etc)
@@ -113,7 +97,8 @@ class GenAI(object):
         """ eg, if response contains table defs, save_prompt_messages_to_system_genai_temp_project raises an exception to trigger retry """
         self.prompt = ""
         """ `--using` - can come from file or text argument """
-
+        self.logic_enabled = True
+        """ K_LogicBankOff is used for demos, where we don't want to create logic """
         self.messages = self.get_prompt_messages()  # compute self.messages, from file, dir or text argument
 
         if self.project.genai_repaired_response == '':  # normal path - get response from ChatGPT
@@ -337,6 +322,8 @@ class GenAI(object):
                             f'Create {self.project.genai_test_data_rows} rows')
                         prompt_lines[prompt_line_number] = each_line
                         log.debug(f'.. inserted explicit test data: {each_line}')
+                if K_LogicBankOff in each_line:
+                    self.logic_enabled = False  # for demos
                 if "LogicBank" in each_line and do_logic == True:
                     log.debug(f'.. inserted: {each_line}')
                     prompt_eng_logic_file_name = f'system/genai/prompt_inserts/logic_inserts.prompt'
@@ -444,6 +431,7 @@ class GenAI(object):
         Also creates the doc directory for record of prompt, response.
         """
 
+        logic_enabled = True
         logic_file = self.project.project_directory_path.joinpath('logic/declare_logic.py')
         in_logic = False
         translated_logic = "\n    # Logic from GenAI: (or, use your IDE w/ code completion)\n"
@@ -459,7 +447,10 @@ class GenAI(object):
                     if not each_repaired_line.startswith('    '):  # sometimes in indents, sometimes not
                         each_repaired_line = '    ' + each_repaired_line
                     if 'def declare_logic' not in each_repaired_line:
-                        translated_logic += each_repaired_line + '\n'      
+                        translated_logic += each_repaired_line + '\n'    
+        if self.logic_enabled == False:
+            translated_logic = "\n    # Logic from GenAI: (or, use your IDE w/ code completion)\n"
+            translated_logic += "\n    # LogicBank Disabled \n"  
         translated_logic += "\n    # End Logic from GenAI\n\n"
         utils.insert_lines_at(lines=translated_logic, 
                               file_name=logic_file, 
@@ -735,7 +726,6 @@ class GenAI(object):
         if completion.status_code != 200:
             print("Error:", completion.status_code, completion.text)   # eg, You exceeded your current quota 
         '''
-
         with open(f'system/genai/temp/chatgpt_original.response', "w") as response_file:  # save for debug
             json.dump(response_dict, response_file, indent=4)
         with open(f'system/genai/temp/chatgpt_retry.response', "w") as response_file:     # repair this & retry
