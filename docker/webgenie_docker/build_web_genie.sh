@@ -87,3 +87,12 @@ echo "\npwd: $(pwd)\n"
 echo "\nrun: docker run -it --rm --name webgenie -p 8282:80  --env-file ./../../webg-config/web_genai.txt  -v ./../../webg-projects:/opt/projects apilogicserver/web_genai
 \n"
 exit 0
+
+# Notes:
+echo For Dev, run WG with '
+docker run -it --rm --name webgenie -p 8282:80 --env-file /opt/webgenai_env \
+    -v /opt/projects/:/opt/projects \
+    -v /opt/webgenai:/opt/webgenai \
+    -v ./api_logic_server_cli:/home/api_logic_server/api_logic_server_cli \
+    apilogicserver/web_genai
+'
