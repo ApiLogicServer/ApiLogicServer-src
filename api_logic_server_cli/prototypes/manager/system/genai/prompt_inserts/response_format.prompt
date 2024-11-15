@@ -1,7 +1,25 @@
+<responseFormat>
+class Rule(BaseModel):
+    name: str
+    description: str
+    use_case: str
+    code: str # logicbank rule code
+    
+class Model(BaseModel):
+    classname: str
+    code: str # sqlalchemy model code
+    sqlite_create: str # sqlite create table statement
+    description: str
+    name: str
+
 class WGResult(BaseModel):  # must match system/genai/prompt_inserts/response_format.prompt
+    # response: str # result
     models : List[Model] # list of sqlalchemy classes in the response
     rules : List[Rule] # list rule declarations
     test_data: str
+    test_data_sqlite: str # test data as sqlite INSERT statements
     name: str  # suggest a short name for the project
 
 Format the response as a WGResult.
+
+</responseFormat>

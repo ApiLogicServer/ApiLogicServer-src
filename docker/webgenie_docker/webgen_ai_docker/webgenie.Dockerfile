@@ -6,7 +6,7 @@ FROM apilogicserver/api_logic_server
 USER root
 
 RUN apt-get update
-RUN apt-get install -y nginx jq
+RUN apt-get install -y nginx jq sqlite3
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get install -y nodejs && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
