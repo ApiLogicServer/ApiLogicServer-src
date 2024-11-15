@@ -16,6 +16,7 @@ from openai import OpenAI
 from typing import List, Dict
 from pydantic import BaseModel
 from dotmap import DotMap
+import importlib.util
 
 log = logging.getLogger(__name__)
 
@@ -31,6 +32,7 @@ class Rule(BaseModel):
 class Model(BaseModel):
     classname: str
     code: str # sqlalchemy model code
+    sqlite_create: str # sqlite create table statement
     description: str
     name: str
 
@@ -39,7 +41,16 @@ class WGResult(BaseModel):  # must match system/genai/prompt_inserts/response_fo
     models : List[Model] # list of sqlalchemy classes in the response
     rules : List[Rule] # list rule declarations
     test_data: str
+    test_data_sqlite: str # test data for sqlite
     name: str  # suggest a short name for the project
+
+
+def import_module_from_path(module_name, file_path):
+    spec = importlib.util.spec_from_file_location(module_name, file_path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[module_name] = module
+    spec.loader.exec_module(module)
+    return module
 
 
 class GenAI(object):
@@ -500,62 +511,83 @@ class GenAI(object):
             response_data (str): the chatgpt response
 
         """
+        def fix_model_lines(models, create_db_model_lines):
+            did_base = False
+            for each_model in models:
+                model_lines = self.get_model_class_lines(model=each_model)
+                for each_line in model_lines:
+                    each_fixed_line = each_line.replace('sa.', '')      # sometimes it puts sa. in front of Column
+                    if 'Base = declarative_base()' in each_fixed_line:  # sometimes created for each class
+                        if did_base:
+                            each_fixed_line = '# ' + each_fixed_line
+                        did_base = True 
+                    if 'datetime.datetime.utcnow' in each_fixed_line:
+                        each_fixed_line = each_fixed_line.replace('datetime.datetime.utcnow', 'datetime.now()') 
+                    if 'Column(date' in each_fixed_line:
+                        each_fixed_line = each_fixed_line.replace('Column(dat', 'column(Date') 
+                    create_db_model_lines.append(each_fixed_line)
+            return create_db_model_lines
+        
+        def insert_test_data_lines(test_data_lines):
+            
+            row_names = list()
+            test_data_lines_ori = self.response_dict.test_data.split('\n') # gpt response
+            
+            for each_line in test_data_lines_ori:
+                each_fixed_line = each_line
+                check_for_row_name = True
+                if '=datetime' in each_fixed_line:
+                    each_fixed_line = each_fixed_line.replace('=datetime.date', '=date') 
+                if 'datetime.datetime.utcnow' in each_fixed_line:
+                    each_fixed_line = each_fixed_line.replace('datetime.datetime.utcnow', 'datetime.now()') 
+                if 'engine = create_engine' in each_fixed_line:  # CBT sometimes has engine = create_engine, so do we!
+                    each_fixed_line = each_fixed_line.replace('engine = create_engine', '# engine = create_engine')
+                    check_for_row_name = False
+                if each_fixed_line.startswith('Base') or each_fixed_line.startswith('engine'):
+                    check_for_row_name = False
+                if 'Base.metadata.create_all(engine)' in each_fixed_line:
+                    each_fixed_line = each_fixed_line.replace('Base.metadata.create_all(engine)', '# Base.metadata.create_all(engine)')
+                test_data_lines.append(each_fixed_line)
+                if check_for_row_name and ' = ' in each_line and '(' in each_line:  # CPT test data might have: tests = []
+                    assign = each_line.split(' = ')[0]
+                    # no tokens for: Session = sessionmaker(bind=engine) or session = Session()
+                    if '.' not in assign and 'Session' not in each_line and 'session.' not in each_line:
+                        row_names.append(assign)
+            return row_names
+        
         create_db_model_lines =  list()
         create_db_model_lines.append(f'# using resolved_model {self.resolved_model}')
         create_db_model_lines.extend(  # imports for classes (comes from api_logic_server_cli/prototypes/manager/system/genai/create_db_models_inserts/create_db_models_imports.py)
             self.get_lines_from_file(f'system/genai/create_db_models_inserts/create_db_models_imports.py'))
-
+        create_db_model_lines.append("\nfrom sqlalchemy.dialects.sqlite import *\n") # specific for genai 
+        
         models = self.response_dict.models
-        did_base = False
-        for each_model in models:
-            model_lines = self.get_model_class_lines(model=each_model)
-            for each_line in model_lines:
-                each_fixed_line = each_line.replace('sa.', '')      # sometimes it puts sa. in front of Column
-                if 'Base = declarative_base()' in each_fixed_line:  # sometimes created for each class
-                    if did_base:
-                        each_fixed_line = '# ' + each_fixed_line
-                    did_base = True 
-                if 'datetime.datetime.utcnow' in each_fixed_line:
-                    each_fixed_line = each_fixed_line.replace('datetime.datetime.utcnow', 'datetime.now()') 
-                if 'Column(date' in each_fixed_line:
-                    each_fixed_line = each_fixed_line.replace('Column(dat', 'column(Date') 
-                create_db_model_lines.append(each_fixed_line)
-
-        create_db_model_lines.extend(self.get_lines_from_file(  # classes done, create db and add test_data code
-            f'system/genai/create_db_models_inserts/create_db_models_create_db.py'))
-
-        test_data_lines = self.response_dict.test_data.split('\n')
-        row_names = list()
-        for each_line in test_data_lines:
-            each_fixed_line = each_line
-            check_for_row_name = True
-            if '=datetime' in each_fixed_line:
-                each_fixed_line = each_fixed_line.replace('=datetime.date', '=date') 
-            if 'datetime.datetime.utcnow' in each_fixed_line:
-                each_fixed_line = each_fixed_line.replace('datetime.datetime.utcnow', 'datetime.now()') 
-            if 'engine = create_engine' in each_fixed_line:  # CBT sometimes has engine = create_engine, so do we!
-                each_fixed_line = each_fixed_line.replace('engine = create_engine', '# engine = create_engine')
-                check_for_row_name = False
-            if each_fixed_line.startswith('Base') or each_fixed_line.startswith('engine'):
-                check_for_row_name = False
-            if 'Base.metadata.create_all(engine)' in each_fixed_line:
-                each_fixed_line = each_fixed_line.replace('Base.metadata.create_all(engine)', '# Base.metadata.create_all(engine)')
-            create_db_model_lines.append(each_fixed_line + '\n')
-            if check_for_row_name and ' = ' in each_line and '(' in each_line:  # CPT test data might have: tests = []
-                assign = each_line.split(' = ')[0]
-                # no tokens for: Session = sessionmaker(bind=engine) or session = Session()
-                if '.' not in assign and 'Session' not in each_line and 'session.' not in each_line:
-                    row_names.append(assign)
-
-        create_db_model_lines.append('\n\n')
-        row_name_list = ', '.join(row_names)
-        add_rows = f'session.add_all([{row_name_list}])'
-        create_db_model_lines.append(add_rows + '\n')  
-        create_db_model_lines.append('session.commit()\n')  
+        
+        # Usage inside the class
+        create_db_model_lines = fix_model_lines(models, create_db_model_lines)
 
         with open(f'{self.project.from_model}', "w") as create_db_model_file:
-            for line in create_db_model_lines:
-                create_db_model_file.write(f"{line}")
+            create_db_model_file.write("".join(create_db_model_lines))
+            create_db_model_file.write("\n\n# end of model classes\n\n")
+            
+        # classes done, create db and add test_data code
+        test_data_lines = self.get_lines_from_file(f'system/genai/create_db_models_inserts/create_db_models_create_db.py')
+        test_data_lines.append('session.commit()')
+        
+        row_names = insert_test_data_lines(test_data_lines)
+
+        test_data_lines.append('\n\n')
+        row_name_list = ', '.join(row_names)
+        add_rows = f'session.add_all([{row_name_list}])'
+        test_data_lines.append(add_rows )  
+        test_data_lines.append('session.commit()')
+        test_data_lines.append('# end of test data\n\n')
+        
+        with open(f'{self.project.from_model}', "a") as create_db_model_file:
+            create_db_model_file.write("try:\n    ")
+            create_db_model_file.write("\n    ".join(test_data_lines))
+            create_db_model_file.write("except Exception as exc:\n")
+            create_db_model_file.write("    print(f'Test Data Error: {exc}')\n")
         
         log.debug(f'.. code for db creation and test data: {self.project.from_model}')
 

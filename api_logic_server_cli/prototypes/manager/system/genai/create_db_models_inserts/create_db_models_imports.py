@@ -9,11 +9,13 @@ import sqlalchemy
 from sqlalchemy.sql import func 
 from logic_bank.logic_bank import Rule
 from sqlalchemy import create_engine, Column, Integer, String, Float, ForeignKey, Date, DateTime, Numeric, Boolean, Text
+from sqlalchemy.types import *
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import relationship
 from datetime import date   
 from datetime import datetime
+
 
 logging.getLogger('sqlalchemy.engine.Engine').disabled = True  # remove for additional logging
 
