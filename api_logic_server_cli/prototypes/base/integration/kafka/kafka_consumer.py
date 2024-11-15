@@ -1,5 +1,5 @@
 """
-Invoked at server start (api_logic_server_run.py)
+Invoked at server start (api_logic_server_run.py -> config/setup.py)
 
 Listen/consume Kafka topis, if KAFKA_CONSUMER specified in Config.py
 

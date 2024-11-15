@@ -68,8 +68,6 @@ import ui.admin.admin_loader as AdminLoader
 from security.system.authentication import configure_auth
 import database.multi_db as multi_db
 import oracledb
-import integration.kafka.kafka_producer as kafka_producer
-import integration.kafka.kafka_consumer as kafka_consumer
 
 
 app_logger = server_setup.logging_setup()

@@ -98,19 +98,32 @@ As shown above:
 
 Your project is ready to run, but it's likely you'll want to customize it - declare logic, new endpoints, etc.
 
->> Tip: in particular, use the sample app to explore the value of ___declarative logic and security.___  Unique to API Logic Server, this is critical to unlocking the full value of API Logic Server.
+
+<details markdown>
+
+<summary>Important: explore customization examples</summary>
+<br>
+In particular, use the sample app to explore the value of declarative logic and security.  Unique to API Logic Server, these are critical to unlocking the full value of API Logic Server.
+
+<br>
+
+To create the sample app for customization examples: 
+
+* `ApiLogicServer create --project-name=nw_sample --db_url=nw+`
+* Or, open it in GitHub (use Shift + "." to view in project mode) - [click here](https://github.com/ApiLogicServer/demo)
+
+To make customizations easy to explore, search for:
+* `#als` will reveal key customization examples
+* `Your Code Goes Here` to find key files to customize, summarized in the table below.
+
+</details>
+
+&nbsp;
 
 The ___Key Customization Files___ listed in the table below are created as stubs, intended for you to add customizations that extend the created API, Logic and Web App.
 
 * Since they are separate files, the project can be
 [rebuilt](https://apilogicserver.github.io/Docs/Project-Rebuild/) (e.g., synchronized with a revised schema), preserving your customizations.
-
-> Tip: create the sample app for customization examples: `ApiLogicServer create --project-name=nw_sample --db_url=nw+`
-> <br>Or, open it in GitHub (use Shift + "." to view in project mode) - [click here](https://github.com/ApiLogicServer/demo)
-
-To make customizations easy to explore, **search for:**
-* `#als` will reveal key customization examples
-* `Your Code Goes Here` to find key files to customize, summarized below:
 
 <br>
 
