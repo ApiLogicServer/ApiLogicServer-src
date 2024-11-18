@@ -1,12 +1,14 @@
 import json
+import sys
 import time
+import traceback
 from typing import Dict, List
 from api_logic_server_cli.cli_args_project import Project
 import logging
 from pathlib import Path
 import importlib
 import requests
-import os
+import os,re
 import create_from_model.api_logic_server_utils as utils
 import shutil
 import openai
@@ -14,25 +16,46 @@ from openai import OpenAI
 from typing import List, Dict
 from pydantic import BaseModel
 from dotmap import DotMap
+import importlib.util
 
 log = logging.getLogger(__name__)
+
+K_LogicBankOff = "LBX"
+''' Disable Logic (for demos) '''
 
 class Rule(BaseModel):
     name: str
     description: str
+    use_case: str
     code: str # logicbank rule code
     
 class Model(BaseModel):
     classname: str
     code: str # sqlalchemy model code
+    sqlite_create: str # sqlite create table statement
     description: str
     name: str
+
+class TestDataRow(BaseModel):
+    test_data_row_variable: str  # the Python test data row variable
+    code: str  # Python code to create a test data row instance
 
 class WGResult(BaseModel):  # must match system/genai/prompt_inserts/response_format.prompt
     # response: str # result
     models : List[Model] # list of sqlalchemy classes in the response
     rules : List[Rule] # list rule declarations
     test_data: str
+    test_data_rows: List[TestDataRow]  # list of test data rows
+    test_data_sqlite: str # test data as sqlite INSERT statements
+    name: str  # suggest a short name for the project
+
+
+def import_module_from_path(module_name, file_path):
+    spec = importlib.util.spec_from_file_location(module_name, file_path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[module_name] = module
+    spec.loader.exec_module(module)
+    return module
 
 
 class GenAI(object):
@@ -51,12 +74,11 @@ class GenAI(object):
         The key argument is `--using`
         * It can be a file, dir (conversation) or text argument.
         * It's "stem" denotes the project name to be created at cwd
-        * `self.project.genai_using`
+        * `self.project.genai_using` (not used by WebGenAI)
 
-        The (rarely used) `--repaired_response` 
+        The (rarely used) `--repaired_response` --> `self.project.genai_repaired_response`
         * is for retry from corrected response
         * `--using` is required to get the project name, to be created at cwd
-        * `self.project.genai_repaired_response`
 
         __init__() is the main driver (work directory is <manager>/system/genai/temp/)
         
@@ -76,28 +98,10 @@ class GenAI(object):
 
         see key_module_map() for key methods
 
-
-        ##### Explore interim copilot access:
-
-        VSCode/Copilot-chat can turn prompts into logic, so can we automate with API?
-
-        https://stackoverflow.com/questions/76741410/how-to-invoke-github-copilot-programmatically
-        https://docs.google.com/document/d/1o0TeNQtuT6moWU1bOq2K20IbSw4YhV1x_aFnKwo_XeU/edit#heading=h.3xmoi7pevsnp
-        https://code.visualstudio.com/api/extension-guides/chat
-        https://code.visualstudio.com/api/extension-guides/language-model
-        https://github.com/B00TK1D/copilot-api
-
-        ### Or use ChatGPT:
-
-        Not sure vscode/copilot is best approach, since we'd like to activate this during project creation
-        (eg on web/GenAI - not using vscode).
-
-        * Thomas suggests there are ways to "teach" ChatGPT about Logic Bank.  This is a *great* idea.
-
-        https://platform.openai.com/docs/guides/fine-tuning/create-a-fine-tuned-model
+        https://platform.openai.com/finetune/ftjob-2i1wkh4t4l855NKCovJeHExs?filter=all
         """        
 
-        self.project = project
+        self.project = project  # als project info (cli args etc)
         log.info(f'\nGenAI [{self.project.project_name}] creating microservice from: {self.project.genai_using}')
         if self.project.genai_repaired_response != '':
             log.info(f'..     retry from [repaired] response file: {self.project.genai_repaired_response}')
@@ -109,28 +113,39 @@ class GenAI(object):
         """ eg, if response contains table defs, save_prompt_messages_to_system_genai_temp_project raises an exception to trigger retry """
         self.prompt = ""
         """ `--using` - can come from file or text argument """
-
+        self.logic_enabled = True
+        """ K_LogicBankOff is used for demos, where we don't want to create logic """
         self.messages = self.get_prompt_messages()  # compute self.messages, from file, dir or text argument
 
         if self.project.genai_repaired_response == '':  # normal path - get response from ChatGPT
-            api_version = f'{self.project.genai_version}'  # eg, "gpt-4o"
-            api_version = "gpt-4o-2024-08-06"
-            start_time = time.time()
-            client = OpenAI(api_key=os.getenv("APILOGICSERVER_CHATGPT_APIKEY"))
-            completion = client.beta.chat.completions.parse(
-                messages=self.messages, response_format=WGResult,
-                # temperature=0.0,
-                model=api_version
-            )
-            log.debug(f'ChatGPT ({str(int(time.time() - start_time))} secs) - response at: system/genai/temp/chatgpt_original.response')
-            
-            data = completion.choices[0].message.content
-            response_dict = json.loads(data)
-            self.get_and_save_raw_response_data(completion=completion, response_dict=response_dict)
-            # print(json.dumps(json.loads(data), indent=4))
-            pass
-
+            try:
+                api_version = f'{self.project.genai_version}'  # eg, "gpt-4o"
+                start_time = time.time()
+                db_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")
+                client = OpenAI(api_key=os.getenv("APILOGICSERVER_CHATGPT_APIKEY"))
+                model = api_version
+                if model == "":  # default from CLI is '', meaning fall back to env variable or system default...
+                    model = os.getenv("APILOGICSERVER_CHATGPT_MODEL")
+                    if model is None or model == "*":  # system default chatgpt model
+                        model = "gpt-4o-2024-08-06"
+                self.resolved_model = model
+                completion = client.beta.chat.completions.parse(
+                    messages=self.messages, response_format=WGResult,
+                    # temperature=self.project.genai_temperature,  values .1 and .7 made students / charges fail
+                    model=model  # for own model, use "ft:gpt-4o-2024-08-06:personal:logicbank:ARY904vS" 
+                )
+                log.debug(f'ChatGPT ({str(int(time.time() - start_time))} secs) - response at: system/genai/temp/chatgpt_original.response')
+                
+                data = completion.choices[0].message.content
+                response_dict = json.loads(data)
+                self.get_and_save_raw_response_data(completion=completion, response_dict=response_dict)
+                # print(json.dumps(json.loads(data), indent=4))
+                pass
+            except Exception as inst:
+                log.error(f"\n\nError: ChatGPT call failed\n{inst}\n\n")
+                sys.exit('ChatGPT call failed - please see https://apilogicserver.github.io/Docs/WebGenAI-CLI/#configuration')
         else: # for retry from corrected response... eg system/genai/temp/chatgpt_retry.response
+            self.resolved_model = "(n/a: model not used for repaired response)"
             log.debug(f'\nUsing [corrected] response from: {self.project.genai_repaired_response}')
             with open(self.project.genai_repaired_response, 'r') as response_file:
                 response_dict = json.load(response_file)
@@ -138,7 +153,7 @@ class GenAI(object):
         self.response_dict = DotMap(response_dict)
         """ the raw response data from ChatGPT which will be fixed & saved create_db_models.py """
 
-        # self.project.genai_logic = self.get_logic_from_prompt()
+        self.get_valid_project_name()
 
         self.fix_and_write_model_file() # write create_db_models.py for db creation, & logic 
         self.save_prompt_messages_to_system_genai_temp_project()  # save prompts, response and models.py
@@ -154,13 +169,15 @@ class GenAI(object):
         if self.project.genai_repaired_response == '':  # clean up unless retrying from chatgpt_original.response
             Path('system/genai/temp/chatgpt_original.response').unlink(missing_ok=True)
             Path('system/genai/temp/chatgpt_retry.response').unlink(missing_ok=True)
-            Path('system/genai/temp/create_db_models.sqlite').unlink(missing_ok=True)
     
     def create_presets(self, prompt_messages: List[Dict[str, str]]):
         """ Create presets - you are a data modelling expert, and logicbank api etc """
         pass
 
-        starting_message = {"role": "system", "content": "You are a data modelling expert and python software architect who expands on user input ideas. You create data models with at least 4 tables"}
+        you_are = "You are a data modelling expert and python software architect who expands on user input ideas. You create data models with at least 4 tables"
+        if self.project.genai_tables > 0:
+            you_are = you_are.replace('4', str(self.project.genai_tables))
+        starting_message = {"role": "system", "content": you_are}
         prompt_messages.append( starting_message)
 
         learning_requests = self.get_learning_requests()
@@ -169,6 +186,28 @@ class GenAI(object):
         log.debug(f'.. conv[000] presets: {starting_message}')
         log.debug(f'.. conv[001] presets: {learning_requests[0]["content"][:30]}...')
         return len(learning_requests)
+
+    def chatgpt_excp(self):
+        # https://apilogicserver.github.io/Docs/WebGenAI-CLI/
+        pass
+
+    def get_valid_project_name(self):
+        """ Get a valid project name from the project name
+        Takes a string and returns a valid filename constructed from the string.
+        """
+
+        # Replace invalid characters with underscores
+        valid_name = re.sub(r'[ \\/*?:"<>|\t\n\r\x0b\x0c]', '_', self.response_dict.name)    
+        valid_name = valid_name.strip()     # Remove leading and trailing spaces
+        valid_name = valid_name[:255]       # Limit the filename length
+        if self.project.project_name == '_genai_default':
+            log.debug(f'.. project name: {valid_name} (from response: {self.response_dict.name})')
+            self.response_dict.name = valid_name
+            self.project.project_name = self.response_dict.name
+            self.project.project_name_last_node = self.response_dict.name 
+        else:
+            self.project.directory_setup()  # avoid names like "system/genai/temp/TBD"
+        return
     
     def get_prompt_messages(self) -> List[Dict[str, str]]:
         """ Get prompt from file, dir (conversation) or text argument
@@ -212,7 +251,7 @@ class GenAI(object):
                         response_count += 1
                     else:
                         request_count += 1      # rebuild response with *all* tables
-                        if request_count > 1:   # Run Config: genai AUTO DEALERSHIP CONVERSATION
+                        if request_count > 2:   # Run Config: genai AUTO DEALERSHIP CONVERSATION
                             if 'updating the prior response' not in prompt:
                                 prompt = self.get_prompt__with_inserts(raw_prompt=prompt, for_iteration=True)                  
                     prompt_messages.append( {"role": role, "content": prompt})
@@ -271,27 +310,43 @@ class GenAI(object):
         elif 'mysql' in self.project.db_url:
             prompt_inserts = f'mysql_inserts.prompt'
 
-        if prompt_inserts != "*":
+        if prompt_inserts == "*":  
+            pass    # '*' means caller has computed their own prompt -- no inserts
+        else:       # do prompt engineering (inserts)
             prompt_eng_file_name = f'system/genai/prompt_inserts/{prompt_inserts}'
-            if for_iteration:
-                prompt_eng_file_name = prompt_eng_file_name.replace('.', '_iterations.')
             assert Path(prompt_eng_file_name).exists(), \
                 f"Missing prompt_inserts file: {prompt_eng_file_name}"  # eg api_logic_server_cli/prototypes/manager/system/genai/prompt_inserts/sqlite_inserts.prompt
-            log.debug(f'get_prompt__with_inserts: {str(os.getcwd())} / {prompt_eng_file_name}')
+            log.debug(f'get_prompt__with_inserts: {str(os.getcwd())} \n .. merged with: {prompt_eng_file_name}')
             with open(prompt_eng_file_name, 'r') as file:
                 pre_post = file.read()  # eg, Use SQLAlchemy to create a sqlite database named system/genai/temp/create_db_models.sqlite, with
             prompt_result = pre_post.replace('{{prompt}}', raw_prompt)
+            if for_iteration:
+                # Update the prior response - be sure not to lose classes and test data already created.
+                prompt_result = 'Update the prior response - be sure not to lose classes and test data already created.' \
+                    + '\n\n' + prompt_result
+                log.debug(f'.. iteration inserted: Update the prior response')
+                log.debug(f'.... iteration prompt result: {prompt_result}')
 
             prompt_lines = prompt_result.split('\n')
             prompt_line_number = 0
+            do_logic = True
             for each_line in prompt_lines:
-                if "LogicBank" in each_line:
+                if 'Create multiple rows of test data' in each_line:
+                    if self.project.genai_test_data_rows > 0:
+                        each_line = each_line.replace(
+                            f'Create multiple rows',  
+                            f'Create {self.project.genai_test_data_rows} rows')
+                        prompt_lines[prompt_line_number] = each_line
+                        log.debug(f'.. inserted explicit test data: {each_line}')
+                if K_LogicBankOff in each_line:
+                    self.logic_enabled = False  # for demos
+                if "LogicBank" in each_line and do_logic == True:
                     log.debug(f'.. inserted: {each_line}')
                     prompt_eng_logic_file_name = f'system/genai/prompt_inserts/logic_inserts.prompt'
                     with open(prompt_eng_logic_file_name, 'r') as file:
                         prompt_logic = file.read()  # eg, Use SQLAlchemy to...
                     prompt_lines[prompt_line_number] = prompt_logic
-                    break
+                    do_logic = False
                 prompt_line_number += 1
             
             response_format_file_name = f'system/genai/prompt_inserts/response_format.prompt'
@@ -347,39 +402,6 @@ class GenAI(object):
                 logic_text += '    ' + each_line + '\n'
         return logic_text
 
-    @staticmethod
-    def remove_logic_halluncinations(each_line: str) -> str:
-        """remove hallucinations from logic
-
-        eg: Rule.setup()
-
-        Args:
-            each_line (str): _description_
-
-        Returns:
-            str: _description_
-        """        """ """
-        return_line = each_line
-        if each_line.startswith('    Rule.') or each_line.startswith('    DeclareRule.'):
-            if 'Rule.sum' in each_line:
-                pass
-            elif 'Rule.count' in each_line:
-                pass
-            elif 'Rule.formula' in each_line:
-                pass
-            elif 'Rule.copy' in each_line:
-                pass
-            elif 'Rule.constraint' in each_line:
-                pass
-            elif 'Rule.allocate' in each_line:
-                pass
-            elif 'Rule.calculate' in each_line:
-                return_line = each_line.replace('Rule.calculate', 'Rule.copy')
-            else:
-                return_line = each_line.replace('    ', '    # ')
-                log.debug(f'.. removed hallucination: {each_line}')
-        return return_line
-
     def insert_logic_into_created_project(self):  # TODO - redesign if conversation
         """Called *after project created* to insert prompt logic into 
         1. declare_logic.py (as comment)
@@ -388,19 +410,62 @@ class GenAI(object):
         Also creates the doc directory for record of prompt, response.
         """
 
+        def remove_logic_halluncinations(each_line: str) -> str:
+            """remove hallucinations from logic
+
+            eg: Rule.setup()
+
+            Args:
+                each_line (str): _description_
+
+            Returns:
+                str: _description_
+            """        """ """
+            return_line = each_line
+            if each_line.startswith('Rule.'):
+                # Sometimes indents left out (EmpDepts) - "code": "Rule.sum(derive=Department.salary_total, as_sum_of=Employee.salary)\nRule.constraint(validate=Department,\n                as_condition=lambda row: row.salary_total <= row.budget,\n                error_msg=\"Department salary total ({row.salary_total}) exceeds budget ({row.budget})\")"
+                each_line = "    " + each_line  # add missing indent
+                log.debug(f'.. fixed hallucination/indent: {each_line}')
+            if each_line.startswith('    Rule.') or each_line.startswith('    DeclareRule.'):
+                if 'Rule.sum' in each_line:
+                    pass
+                elif 'Rule.count' in each_line:
+                    pass
+                elif 'Rule.formula' in each_line:
+                    pass
+                elif 'Rule.copy' in each_line:
+                    pass
+                elif 'Rule.constraint' in each_line:
+                    pass
+                elif 'Rule.allocate' in each_line:
+                    pass
+                elif 'Rule.calculate' in each_line:
+                    return_line = each_line.replace('Rule.calculate', 'Rule.copy')
+                else:
+                    return_line = each_line.replace('    ', '    # ')
+                    log.debug(f'.. removed hallucination: {each_line}')
+            return return_line
+
+        logic_enabled = True
         logic_file = self.project.project_directory_path.joinpath('logic/declare_logic.py')
         in_logic = False
         translated_logic = "\n    # Logic from GenAI: (or, use your IDE w/ code completion)\n"
         for each_rule in self.response_dict.rules:
             comment_line = each_rule.description
             translated_logic += f'\n    # {comment_line}\n'
-            each_line = each_rule.code
-            if 'declare_logic.py' not in each_line:
-                each_repaired_line = self.remove_logic_halluncinations(each_line=each_line)
-                if not each_repaired_line.startswith('    '):  # sometimes in indents, sometimes not
-                    each_repaired_line = '    ' + each_repaired_line
-                if 'def declare_logic' not in each_repaired_line:
-                    translated_logic += each_repaired_line + '\n'      
+            code_lines = each_rule.code.split('\n')
+            if '\n' in each_rule.code:
+                debug_string = "good breakpoint - multi-line rule"
+            for each_line in code_lines:
+                if 'declare_logic.py' not in each_line:
+                    each_repaired_line = self.remove_logic_halluncinations(each_line=each_line)
+                    if not each_repaired_line.startswith('    '):  # sometimes in indents, sometimes not
+                        each_repaired_line = '    ' + each_repaired_line
+                    if 'def declare_logic' not in each_repaired_line:
+                        translated_logic += each_repaired_line + '\n'    
+        if self.logic_enabled == False:
+            translated_logic = "\n    # Logic from GenAI: (or, use your IDE w/ code completion)\n"
+            translated_logic += "\n    # LogicBank Disabled \n"  
         translated_logic += "\n    # End Logic from GenAI\n\n"
         utils.insert_lines_at(lines=translated_logic, 
                               file_name=logic_file, 
@@ -450,51 +515,185 @@ class GenAI(object):
             response_data (str): the chatgpt response
 
         """
+
+        def get_model_class_lines(model: DotMap) -> list[str]:
+            """Get the model class from the model
+
+            Args:
+                model (Model): the model
+
+            Returns:
+                stlist[str]: the model class lines, fixed up
+            """
+
+            create_db_model_lines =  list()
+            create_db_model_lines.append('\n\n')
+            class_lines = model.code.split('\n')
+            line_num = 0
+            indents_to_remove = 0
+            for each_line in class_lines:
+                line_num += 1
+                ''' decimal issues
+
+                    1. bad import: see Run: tests/test_databases/ai-created/genai_demo/genai_demo_decimal
+                        from decimal import Decimal  # Decimal fix: needs to be from decimal import DECIMAL
+
+                    2. Missing missing import: from SQLAlchemy import .... DECIMAL
+
+                    3. Column(Decimal) -> Column(DECIMAL)
+                        see in: tests/test_databases/ai-created/budget_allocation/budget_allocations/budget_allocations_3_decimal
+
+                    4. Bad syntax on test data: see Run: blt/time_cards_decimal from RESPONSE
+                        got:    balance=DECIMAL('100.50')
+                        needed: balance=1000.0
+                        fixed with import in create_db_models_prefix.py
+
+                    5. Bad syntax on test data cals: see api_logic_server_cli/prototypes/manager/system/genai/examples/genai_demo/genai_demo_conversation_bad_decimal/genai_demo_03.response
+                        got: or Decimal('0.00')
+                        needed: or decimal.Decimal('0.00')
+
+                    6. Bad syntax on test data cals: see api_logic_server_cli/prototypes/manager/system/genai/examples/genai_demo/genai_demo_conversation_bad_decimal_2/genai_demo_conversation_002.response
+                        got: or DECIMAL('
+                        needed: or decimal.Decimal('0.00')
+                '''
+                if "= Table(" in each_line:  # tests/test_databases/ai-created/time_cards/time_card_kw_arg/genai.response
+                    log.debug(f'.. fix_and_write_model_file detects table - raise excp to trigger retry')
+                    self.post_error = "ChatGPT Response contains table (not class) definitions: " + each_line
+                if 'sqlite:///' in each_line:  # must be sqlite:///system/genai/temp/create_db_models.sqlite
+                    current_url_rest = each_line.split('sqlite:///')[1]
+                    quote_type = "'"
+                    if '"' in current_url_rest:
+                        quote_type = '"'  # eg, tests/test_databases/ai-created/time_cards/time_card_decimal/genai.response
+                    current_url = current_url_rest.split(quote_type)[0]  
+                    proper_url = 'system/genai/temp/create_db_models.sqlite'
+                    each_line = each_line.replace(current_url, proper_url)
+                    if current_url != proper_url:
+                        log.debug(f'.. fixed sqlite url: {current_url} -> system/genai/temp/create_db_models.sqlite')
+                if 'Decimal,' in each_line:  # SQLAlchemy import
+                    each_line = each_line.replace('Decimal,', 'DECIMAL,')
+                    # other Decimal bugs: see api_logic_server_cli/prototypes/manager/system/genai/reference/errors/chatgpt_decimal.txt
+                if ', Decimal' in each_line:  # Cap'n K, at your service
+                    each_line = each_line.replace(', Decimal', ', DECIMAL')
+                if 'rom decimal import Decimal' in each_line:
+                    each_line = each_line.replace('from decimal import Decimal', 'import decimal')
+                if '=Decimal(' in each_line:
+                    each_line = each_line.replace('=Decimal(', '=decimal.Decimal(')
+                if ' Decimal(' in each_line:
+                    each_line = each_line.replace(' Decimal(', ' decimal.Decimal(')
+                if 'Column(Decimal)' in each_line:
+                    each_line = each_line.replace('Column(Decimal)', 'Column(DECIMAL)')
+                if "DECIMAL('" in each_line:
+                    each_line = each_line.replace("DECIMAL('", "decimal.Decimal('")
+                if 'end_time(datetime' in each_line:  # tests/test_databases/ai-created/time_cards/time_card_kw_arg/genai.response
+                    each_line = each_line.replace('end_time(datetime', 'end_time=datetime')
+                if indents_to_remove > 0:
+                    each_line = each_line[indents_to_remove:]
+                if 'relationship(' in each_line and self.project.genai_use_relns == False:
+                    # airport4 fails with could not determine join condition between parent/child tables on relationship Airport.flights
+                    if each_line.startswith('    '):
+                        each_line = each_line.replace('    ', '    # ')
+                    else:  # sometimes it puts relns outside the class (so, outdented)
+                        each_line = '# ' + each_line
+                if 'sqlite:///system/genai/temp/model.sqlite':  # fix prior version
+                    each_line = each_line.replace('sqlite:///system/genai/temp/model.sqlite', 
+                                                'sqlite:///system/genai/temp/create_db_models.sqlite')
+
+                # logicbank fixes
+                if 'from logic_bank' in each_line:  # we do our own imports
+                    each_line = each_line.replace('from', '# from')
+                if 'LogicBank.activate' in each_line:
+                    each_line = each_line.replace('LogicBank.activate', '# LogicBank.activate')
+                
+                create_db_model_lines.append(each_line + '\n')
+            return create_db_model_lines
+    
+        def fix_model_lines(models, create_db_model_lines):
+            did_base = False
+            for each_model in models:
+                model_lines = get_model_class_lines(model=each_model)
+                for each_line in model_lines:
+                    each_fixed_line = each_line.replace('sa.', '')      # sometimes it puts sa. in front of Column
+                    if 'Base = declarative_base()' in each_fixed_line:  # sometimes created for each class
+                        if did_base:
+                            each_fixed_line = '# ' + each_fixed_line
+                        did_base = True 
+                    if 'datetime.datetime.utcnow' in each_fixed_line:
+                        each_fixed_line = each_fixed_line.replace('datetime.datetime.utcnow', 'datetime.now()') 
+                    if 'Column(date' in each_fixed_line:
+                        each_fixed_line = each_fixed_line.replace('Column(dat', 'column(Date') 
+                    create_db_model_lines.append(each_fixed_line)
+            return create_db_model_lines
+        
+        def insert_test_data_lines(test_data_lines) -> list[str]:
+            """Insert test data lines into the model file
+
+            Args:
+                test_data_lines (str): string of test data lines from ChatGPT (with \n)
+
+            Returns:
+                list[str]: variable names for the test data rows (for create_all)
+            """
+            
+            row_names = list()
+            test_data_lines_ori = self.response_dict.test_data.split('\n') # gpt response
+            
+            for each_line in test_data_lines_ori:
+                each_fixed_line = each_line
+                check_for_row_name = True
+                if '=datetime' in each_fixed_line:
+                    each_fixed_line = each_fixed_line.replace('=datetime.date', '=date') 
+                if 'datetime.datetime.utcnow' in each_fixed_line:
+                    each_fixed_line = each_fixed_line.replace('datetime.datetime.utcnow', 'datetime.now()') 
+                if 'engine = create_engine' in each_fixed_line:  # CBT sometimes has engine = create_engine, so do we!
+                    each_fixed_line = each_fixed_line.replace('engine = create_engine', '# engine = create_engine')
+                    check_for_row_name = False
+                if each_fixed_line.startswith('Base') or each_fixed_line.startswith('engine'):
+                    check_for_row_name = False
+                if 'Base.metadata.create_all(engine)' in each_fixed_line:
+                    each_fixed_line = each_fixed_line.replace('Base.metadata.create_all(engine)', '# Base.metadata.create_all(engine)')
+                test_data_lines.append(each_fixed_line)
+                if check_for_row_name and ' = ' in each_line and '(' in each_line:  # CPT test data might have: tests = []
+                    assign = each_line.split(' = ')[0]
+                    # no tokens for: Session = sessionmaker(bind=engine) or session = Session()
+                    if '.' not in assign and 'Session' not in each_line and 'session.' not in each_line:
+                        row_names.append(assign)
+            return row_names
+        
         create_db_model_lines =  list()
-        create_db_model_lines.extend(self.get_lines_from_file(f'system/genai/create_db_models_inserts/create_db_models_imports.py'))
-
+        create_db_model_lines.append(f'# using resolved_model {self.resolved_model}')
+        create_db_model_lines.extend(  # imports for classes (comes from api_logic_server_cli/prototypes/manager/system/genai/create_db_models_inserts/create_db_models_imports.py)
+            self.get_lines_from_file(f'system/genai/create_db_models_inserts/create_db_models_imports.py'))
+        create_db_model_lines.append("\nfrom sqlalchemy.dialects.sqlite import *\n") # specific for genai 
+        
         models = self.response_dict.models
-        did_base = False
-        for each_model in models:
-            model_lines = self.get_model_class_lines(model=each_model)
-            for each_line in model_lines:
-                each_fixed_line = each_line.replace('sa.', '')      # sometimes it puts sa. in front of Column
-                if 'Base = declarative_base()' in each_fixed_line:  # sometimes created for each class
-                    if did_base:
-                        each_fixed_line = '# ' + each_fixed_line
-                    did_base = True 
-                create_db_model_lines.append(each_fixed_line)
-
-        create_db_model_lines.extend(self.get_lines_from_file(f'system/genai/create_db_models_inserts/create_db_models_create_db.py'))
-
-        test_data_lines = self.response_dict.test_data.split('\n')
-        row_names = list()
-        for each_line in test_data_lines:
-            each_fixed_line = each_line
-            if '=datetime' in each_fixed_line:
-                each_fixed_line = each_fixed_line.replace('=datetime.date', '=date') 
-            if 'engine = create_engine' in each_fixed_line:  # CBT sometimes has engine = create_engine, so do we!
-                each_fixed_line = each_fixed_line.replace('engine = create_engine', '# engine = create_engine')
-            if 'Base.metadata.create_all(engine)e' in each_fixed_line:
-                each_fixed_line = each_fixed_line.replace('Base.metadata.create_all(engine)', '# Base.metadata.create_all(engine)')
-            create_db_model_lines.append(each_fixed_line + '\n')
-            if ' = ' in each_line and '(' in each_line:  # CPT test data might have: tests = []
-                assign = each_line.split(' = ')[0]
-                # no tokens for: Session = sessionmaker(bind=engine) or session = Session()
-                if '.' not in assign and 'Session' not in each_line and 'session.' not in each_line:
-                    row_names.append(assign)
-
-        create_db_model_lines.append('\n\n')
-        row_name_list = ', '.join(row_names)
-        add_rows = f'session.add_all([{row_name_list}])'
-        create_db_model_lines.append(add_rows + '\n')  
-        create_db_model_lines.append('session.commit()\n')  
+        
+        # Usage inside the class
+        create_db_model_lines = fix_model_lines(models, create_db_model_lines)
 
         with open(f'{self.project.from_model}', "w") as create_db_model_file:
-            for line in create_db_model_lines:
-                create_db_model_file.write(f"{line}")
+            create_db_model_file.write("".join(create_db_model_lines))
+            create_db_model_file.write("\n\n# end of model classes\n\n")
+            
+        # classes done, create db and add test_data code
+        test_data_lines = self.get_lines_from_file(f'system/genai/create_db_models_inserts/create_db_models_create_db.py')
+        test_data_lines.append('session.commit()')
         
-        log.debug(f'.. model file created: {self.project.from_model}')
+        row_names = insert_test_data_lines(test_data_lines)
+
+        test_data_lines.append('\n\n')
+        row_name_list = ', '.join(row_names)
+        add_rows = f'session.add_all([{row_name_list}])'
+        test_data_lines.append(add_rows )  
+        test_data_lines.append('session.commit()')
+        test_data_lines.append('# end of test data\n\n')
+        
+        with open(f'{self.project.from_model}', "a") as create_db_model_file:
+            create_db_model_file.write("try:\n    ")
+            create_db_model_file.write("\n    ".join(test_data_lines))
+            create_db_model_file.write("except Exception as exc:\n")
+            create_db_model_file.write("    print(f'Test Data Error: {exc}')\n")
+        
+        log.debug(f'.. code for db creation and test data: {self.project.from_model}')
 
     def get_lines_from_file(self, file_name: str) -> list[str]:
         """Get lines from a file
@@ -509,105 +708,6 @@ class GenAI(object):
         with open(file_name, "r") as file:
             lines = file.readlines()
         return lines
-    
-    def get_model_test_data_lines_ZZ(self, model: DotMap) -> list[str]:
-        create_db_model_lines =  list()
-        create_db_model_lines.append('\n\n')
-        sample_data = model.sample_data
-        for each_line in sample_data:
-            create_db_model_lines.append(each_line + '\n')
-        return create_db_model_lines
-
-    def get_model_class_lines(self, model: DotMap) -> list[str]:
-        """Get the model class from the model
-
-        Args:
-            model (Model): the model
-
-        Returns:
-            stlist[str]: the model class lines, fixed up
-        """
-
-        create_db_model_lines =  list()
-        create_db_model_lines.append('\n\n')
-        class_lines = model.code.split('\n')
-        line_num = 0
-        indents_to_remove = 0
-        for each_line in class_lines:
-            line_num += 1
-            ''' decimal issues
-
-                1. bad import: see Run: tests/test_databases/ai-created/genai_demo/genai_demo_decimal
-                    from decimal import Decimal  # Decimal fix: needs to be from decimal import DECIMAL
-
-                2. Missing missing import: from SQLAlchemy import .... DECIMAL
-
-                3. Column(Decimal) -> Column(DECIMAL)
-                    see in: tests/test_databases/ai-created/budget_allocation/budget_allocations/budget_allocations_3_decimal
-
-                4. Bad syntax on test data: see Run: blt/time_cards_decimal from RESPONSE
-                    got:    balance=DECIMAL('100.50')
-                    needed: balance=1000.0
-                    fixed with import in create_db_models_prefix.py
-
-                5. Bad syntax on test data cals: see api_logic_server_cli/prototypes/manager/system/genai/examples/genai_demo/genai_demo_conversation_bad_decimal/genai_demo_03.response
-                    got: or Decimal('0.00')
-                    needed: or decimal.Decimal('0.00')
-
-                6. Bad syntax on test data cals: see api_logic_server_cli/prototypes/manager/system/genai/examples/genai_demo/genai_demo_conversation_bad_decimal_2/genai_demo_conversation_002.response
-                    got: or DECIMAL('
-                    needed: or decimal.Decimal('0.00')
-            '''
-            if "= Table(" in each_line:  # tests/test_databases/ai-created/time_cards/time_card_kw_arg/genai.response
-                log.debug(f'.. fix_and_write_model_file detects table - raise excp to trigger retry')
-                self.post_error = "ChatGPT Response contains table (not class) definitions: " + each_line
-            if 'sqlite:///' in each_line:  # must be sqlite:///system/genai/temp/create_db_models.sqlite
-                current_url_rest = each_line.split('sqlite:///')[1]
-                quote_type = "'"
-                if '"' in current_url_rest:
-                    quote_type = '"'  # eg, tests/test_databases/ai-created/time_cards/time_card_decimal/genai.response
-                current_url = current_url_rest.split(quote_type)[0]  
-                proper_url = 'system/genai/temp/create_db_models.sqlite'
-                each_line = each_line.replace(current_url, proper_url)
-                if current_url != proper_url:
-                    log.debug(f'.. fixed sqlite url: {current_url} -> system/genai/temp/create_db_models.sqlite')
-            if 'Decimal,' in each_line:  # SQLAlchemy import
-                each_line = each_line.replace('Decimal,', 'DECIMAL,')
-                # other Decimal bugs: see api_logic_server_cli/prototypes/manager/system/genai/reference/errors/chatgpt_decimal.txt
-            if ', Decimal' in each_line:  # Cap'n K, at your service
-                each_line = each_line.replace(', Decimal', ', DECIMAL')
-            if 'rom decimal import Decimal' in each_line:
-                each_line = each_line.replace('from decimal import Decimal', 'import decimal')
-            if '=Decimal(' in each_line:
-                each_line = each_line.replace('=Decimal(', '=decimal.Decimal(')
-            if ' Decimal(' in each_line:
-                each_line = each_line.replace(' Decimal(', ' decimal.Decimal(')
-            if 'Column(Decimal)' in each_line:
-                each_line = each_line.replace('Column(Decimal)', 'Column(DECIMAL)')
-            if "DECIMAL('" in each_line:
-                each_line = each_line.replace("DECIMAL('", "decimal.Decimal('")
-            if 'end_time(datetime' in each_line:  # tests/test_databases/ai-created/time_cards/time_card_kw_arg/genai.response
-                each_line = each_line.replace('end_time(datetime', 'end_time=datetime')
-            if indents_to_remove > 0:
-                each_line = each_line[indents_to_remove:]
-            if 'relationship(' in each_line and self.project.genai_use_relns == False:
-                # airport4 fails with could not determine join condition between parent/child tables on relationship Airport.flights
-                if each_line.startswith('    '):
-                    each_line = each_line.replace('    ', '    # ')
-                else:  # sometimes it puts relns outside the class (so, outdented)
-                    each_line = '# ' + each_line
-            if 'sqlite:///system/genai/temp/model.sqlite':  # fix prior version
-                each_line = each_line.replace('sqlite:///system/genai/temp/model.sqlite', 
-                                            'sqlite:///system/genai/temp/create_db_models.sqlite')
-
-            # logicbank fixes
-            if 'from logic_bank' in each_line:  # we do our own imports
-                each_line = each_line.replace('from', '# from')
-            if 'LogicBank.activate' in each_line:
-                each_line = each_line.replace('LogicBank.activate', '# LogicBank.activate')
-            
-            create_db_model_lines.append(each_line + '\n')
-        return create_db_model_lines
     
     def save_prompt_messages_to_system_genai_temp_project(self):
         """
@@ -657,37 +757,10 @@ class GenAI(object):
             log.error(f"\n\nError: {inst} \n..creating diagnostic files into dir: {str(gen_temp_dir)}\n\n")
             pass  # intentional try/catch/bury - it's just diagnostics, so don't fail
         debug_string = "good breakpoint - return to main driver, and execute create_db_models.py"
-
-    def get_headers_with_openai_api_key_ZZ(self) -> dict:
-        """
-        Returns:
-            dict: api header with OpenAI key (exits if not provided)
-        """
-        
-        pass  # https://community.openai.com/t/how-do-i-call-chatgpt-api-with-python-code/554554
-        if os.getenv('APILOGICSERVER_CHATGPT_APIKEY'):
-            openai_api_key = os.getenv('APILOGICSERVER_CHATGPT_APIKEY')
-        else:
-            from dotenv import dotenv_values
-            secrets = dotenv_values("system/secrets.txt")
-            openai_api_key = secrets['APILOGICSERVER_CHATGPT_APIKEY']
-            if openai_api_key == 'your-api-key-here':
-                if os.getenv('APILOGICSERVER_CHATGPT_APIKEY'):
-                    openai_api_key = os.getenv('APILOGICSERVER_CHATGPT_APIKEY')
-                else:
-                    log.error("\n\nMissing env value: APILOGICSERVER_CHATGPT_APIKEY")
-                    log.error("... Check your system/secrets file...\n")
-                    exit(1)
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {openai_api_key}"
-        }
-        return headers
     
     def get_and_save_raw_response_data(self, completion: object, response_dict: dict):
         """
-        Returns:
-            str: response_data
+        Write prompt --> system/genai/temp/chatgpt_original/retry.response
         """
         
         '''  TODO - is exception used instead of return_code...
@@ -698,7 +771,6 @@ class GenAI(object):
         if completion.status_code != 200:
             print("Error:", completion.status_code, completion.text)   # eg, You exceeded your current quota 
         '''
-
         with open(f'system/genai/temp/chatgpt_original.response', "w") as response_file:  # save for debug
             json.dump(response_dict, response_file, indent=4)
         with open(f'system/genai/temp/chatgpt_retry.response', "w") as response_file:     # repair this & retry
@@ -706,10 +778,11 @@ class GenAI(object):
         return
 
 
-def genai(using, db_url, repaired_response: bool, genai_version: str, 
+def genai(using: str, db_url: str, repaired_response: str, genai_version: str, 
           retries: int, opt_locking: str, prompt_inserts: str, quote: bool,
-          use_relns: bool, project_name: str):
-    """ CLI caller provides using, or repaired_response & using
+          use_relns: bool, project_name: str, tables: int, test_data_rows: int,
+          temperature: float) -> None:
+    """ CLI Caller: provides using, or repaired_response & using
     
         Called from cli commands: genai, genai-create, genai-iterate
         
@@ -720,46 +793,48 @@ def genai(using, db_url, repaired_response: bool, genai_version: str,
     import api_logic_server_cli.api_logic_server as PR
 
     resolved_project_name = project_name
-    if resolved_project_name == '' or resolved_project_name is None:
-        resolved_project_name = Path(using).stem  # default project name is the <cwd>/last node of using
+    if repaired_response != "":
+        if resolved_project_name == '' or resolved_project_name is None:
+            resolved_project_name = Path(using).stem  # project dir is the <cwd>/last node of using
     resolved_project_name  = resolved_project_name.replace(' ', '_')
+    start_time = time.time()
 
     try_number = 1
     genai_use_relns = use_relns
     """ if 'unable to determine join condition', we retry this with False """
     if repaired_response != "":
         try_number = retries  # if not calling GenAI, no need to retry:
-    # TODO or 0, right?
+    failed = False
+    pr = PR.ProjectRun(command="create", 
+                genai_version=genai_version, 
+                genai_temperature = temperature,
+                genai_using=using,                      # the prompt file, or dir of prompt/response
+                repaired_response=repaired_response,    # retry from [repaired] response file
+                opt_locking=opt_locking,
+                genai_prompt_inserts=prompt_inserts,
+                genai_use_relns=genai_use_relns,
+                quote=quote,
+                genai_tables=tables,
+                genai_test_data_rows=test_data_rows,
+                project_name=resolved_project_name, db_url=db_url,
+                execute=False)
     if retries < 0:  # for debug: catch exceptions at point of failure
-        PR.ProjectRun(command="create", genai_version=genai_version, 
-                    genai_using=using,                      # the prompt file, or conversation dir
-                    repaired_response=repaired_response,    # retry from [repaired] response file
-                    opt_locking=opt_locking,
-                    genai_prompt_inserts=prompt_inserts,
-                    genai_use_relns=genai_use_relns,
-                    quote=quote,
-                    project_name=resolved_project_name, db_url=db_url)
+        pr.create_project()  # calls GenAI() - the main driver
         log.info(f"GENAI successful")  
     else:
-        failed = False
         while try_number <= retries:
             try:
                 failed = False
-                PR.ProjectRun(command="create", genai_version=genai_version, 
-                            genai_using=using,                      # the prompt file, or dir of prompt/response
-                            repaired_response=repaired_response,    # retry from [repaired] response file
-                            opt_locking=opt_locking,
-                            genai_prompt_inserts=prompt_inserts,
-                            genai_use_relns=genai_use_relns,
-                            quote=quote,
-                            project_name=resolved_project_name, db_url=db_url)
+                pr.create_project()  # calls GenAI() - the main driver
                 if do_force_failure := False:
                     if try_number < 3:
                         raise Exception("Forced Failure for Internal Testing")
                 break  # success - exit the loop
             except Exception as e:  # almost certaily in api_logic_server_cli/create_from_model/create_db_from_model.py
+                log.error(traceback.format_exc())
                 log.error(f"\n\nGenai failed With Error: {e}")
-
+                if resolved_project_name == '_genai_default':
+                    resolved_project_name = pr.project_name  # defaulted in genai from response
                 if Path(using).is_dir():
                     log.debug('conversation dir, check in-place iteration')
                     '''
@@ -819,10 +894,11 @@ def genai(using, db_url, repaired_response: bool, genai_version: str,
                     try_number += 1
                     log.debug(f"\n\nRetry Genai #{try_number}\n")
             pass # retry (retries times)
-        if failed == True:  # retries exhausted (if failed: threw "an integer is required" ??
+        if failed == True:    # retries exhausted (if failed: threw "an integer is required" ??
+            pass                # https://github.com/microsoft/debugpy/issues/1708
             log.error(f"\n\nGenai Failed (Retries: {retries})") 
             exit(1) 
-        log.info(f"GENAI successful on try {try_number}")  
+        log.info(f"\nGENAI ({str(int(time.time() - start_time))} secs) successful on try {try_number}\n")  
 
 
 def key_module_map():

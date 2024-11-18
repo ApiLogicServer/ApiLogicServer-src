@@ -36,12 +36,17 @@ class Model(BaseModel):
     description: str
     name: str
 
+class TestDataRow(BaseModel):
+    test_data_row_variable: str  # the Python test data row variable
+    code: str  # Python code to create a test data row instance
+
 class WGResult(BaseModel):  # must match system/genai/prompt_inserts/response_format.prompt
     # response: str # result
     models : List[Model] # list of sqlalchemy classes in the response
     rules : List[Rule] # list rule declarations
     test_data: str
-    test_data_sqlite: str # test data for sqlite
+    test_data_rows: List[TestDataRow]  # list of test data rows
+    test_data_sqlite: str # test data as sqlite INSERT statements
     name: str  # suggest a short name for the project
 
 
@@ -397,43 +402,6 @@ class GenAI(object):
                 logic_text += '    ' + each_line + '\n'
         return logic_text
 
-    @staticmethod
-    def remove_logic_halluncinations(each_line: str) -> str:
-        """remove hallucinations from logic
-
-        eg: Rule.setup()
-
-        Args:
-            each_line (str): _description_
-
-        Returns:
-            str: _description_
-        """        """ """
-        return_line = each_line
-        if each_line.startswith('Rule.'):
-            # Sometimes indents left out (EmpDepts) - "code": "Rule.sum(derive=Department.salary_total, as_sum_of=Employee.salary)\nRule.constraint(validate=Department,\n                as_condition=lambda row: row.salary_total <= row.budget,\n                error_msg=\"Department salary total ({row.salary_total}) exceeds budget ({row.budget})\")"
-            each_line = "    " + each_line  # add missing indent
-            log.debug(f'.. fixed hallucination/indent: {each_line}')
-        if each_line.startswith('    Rule.') or each_line.startswith('    DeclareRule.'):
-            if 'Rule.sum' in each_line:
-                pass
-            elif 'Rule.count' in each_line:
-                pass
-            elif 'Rule.formula' in each_line:
-                pass
-            elif 'Rule.copy' in each_line:
-                pass
-            elif 'Rule.constraint' in each_line:
-                pass
-            elif 'Rule.allocate' in each_line:
-                pass
-            elif 'Rule.calculate' in each_line:
-                return_line = each_line.replace('Rule.calculate', 'Rule.copy')
-            else:
-                return_line = each_line.replace('    ', '    # ')
-                log.debug(f'.. removed hallucination: {each_line}')
-        return return_line
-
     def insert_logic_into_created_project(self):  # TODO - redesign if conversation
         """Called *after project created* to insert prompt logic into 
         1. declare_logic.py (as comment)
@@ -441,6 +409,42 @@ class GenAI(object):
 
         Also creates the doc directory for record of prompt, response.
         """
+
+        def remove_logic_halluncinations(each_line: str) -> str:
+            """remove hallucinations from logic
+
+            eg: Rule.setup()
+
+            Args:
+                each_line (str): _description_
+
+            Returns:
+                str: _description_
+            """        """ """
+            return_line = each_line
+            if each_line.startswith('Rule.'):
+                # Sometimes indents left out (EmpDepts) - "code": "Rule.sum(derive=Department.salary_total, as_sum_of=Employee.salary)\nRule.constraint(validate=Department,\n                as_condition=lambda row: row.salary_total <= row.budget,\n                error_msg=\"Department salary total ({row.salary_total}) exceeds budget ({row.budget})\")"
+                each_line = "    " + each_line  # add missing indent
+                log.debug(f'.. fixed hallucination/indent: {each_line}')
+            if each_line.startswith('    Rule.') or each_line.startswith('    DeclareRule.'):
+                if 'Rule.sum' in each_line:
+                    pass
+                elif 'Rule.count' in each_line:
+                    pass
+                elif 'Rule.formula' in each_line:
+                    pass
+                elif 'Rule.copy' in each_line:
+                    pass
+                elif 'Rule.constraint' in each_line:
+                    pass
+                elif 'Rule.allocate' in each_line:
+                    pass
+                elif 'Rule.calculate' in each_line:
+                    return_line = each_line.replace('Rule.calculate', 'Rule.copy')
+                else:
+                    return_line = each_line.replace('    ', '    # ')
+                    log.debug(f'.. removed hallucination: {each_line}')
+            return return_line
 
         logic_enabled = True
         logic_file = self.project.project_directory_path.joinpath('logic/declare_logic.py')
@@ -454,7 +458,7 @@ class GenAI(object):
                 debug_string = "good breakpoint - multi-line rule"
             for each_line in code_lines:
                 if 'declare_logic.py' not in each_line:
-                    each_repaired_line = self.remove_logic_halluncinations(each_line=each_line)
+                    each_repaired_line = remove_logic_halluncinations(each_line=each_line)
                     if not each_repaired_line.startswith('    '):  # sometimes in indents, sometimes not
                         each_repaired_line = '    ' + each_repaired_line
                     if 'def declare_logic' not in each_repaired_line:
@@ -511,10 +515,102 @@ class GenAI(object):
             response_data (str): the chatgpt response
 
         """
+
+        def get_model_class_lines(model: DotMap) -> list[str]:
+            """Get the model class from the model
+
+            Args:
+                model (Model): the model
+
+            Returns:
+                stlist[str]: the model class lines, fixed up
+            """
+
+            create_db_model_lines =  list()
+            create_db_model_lines.append('\n\n')
+            class_lines = model.code.split('\n')
+            line_num = 0
+            indents_to_remove = 0
+            for each_line in class_lines:
+                line_num += 1
+                ''' decimal issues
+
+                    1. bad import: see Run: tests/test_databases/ai-created/genai_demo/genai_demo_decimal
+                        from decimal import Decimal  # Decimal fix: needs to be from decimal import DECIMAL
+
+                    2. Missing missing import: from SQLAlchemy import .... DECIMAL
+
+                    3. Column(Decimal) -> Column(DECIMAL)
+                        see in: tests/test_databases/ai-created/budget_allocation/budget_allocations/budget_allocations_3_decimal
+
+                    4. Bad syntax on test data: see Run: blt/time_cards_decimal from RESPONSE
+                        got:    balance=DECIMAL('100.50')
+                        needed: balance=1000.0
+                        fixed with import in create_db_models_prefix.py
+
+                    5. Bad syntax on test data cals: see api_logic_server_cli/prototypes/manager/system/genai/examples/genai_demo/genai_demo_conversation_bad_decimal/genai_demo_03.response
+                        got: or Decimal('0.00')
+                        needed: or decimal.Decimal('0.00')
+
+                    6. Bad syntax on test data cals: see api_logic_server_cli/prototypes/manager/system/genai/examples/genai_demo/genai_demo_conversation_bad_decimal_2/genai_demo_conversation_002.response
+                        got: or DECIMAL('
+                        needed: or decimal.Decimal('0.00')
+                '''
+                if "= Table(" in each_line:  # tests/test_databases/ai-created/time_cards/time_card_kw_arg/genai.response
+                    log.debug(f'.. fix_and_write_model_file detects table - raise excp to trigger retry')
+                    self.post_error = "ChatGPT Response contains table (not class) definitions: " + each_line
+                if 'sqlite:///' in each_line:  # must be sqlite:///system/genai/temp/create_db_models.sqlite
+                    current_url_rest = each_line.split('sqlite:///')[1]
+                    quote_type = "'"
+                    if '"' in current_url_rest:
+                        quote_type = '"'  # eg, tests/test_databases/ai-created/time_cards/time_card_decimal/genai.response
+                    current_url = current_url_rest.split(quote_type)[0]  
+                    proper_url = 'system/genai/temp/create_db_models.sqlite'
+                    each_line = each_line.replace(current_url, proper_url)
+                    if current_url != proper_url:
+                        log.debug(f'.. fixed sqlite url: {current_url} -> system/genai/temp/create_db_models.sqlite')
+                if 'Decimal,' in each_line:  # SQLAlchemy import
+                    each_line = each_line.replace('Decimal,', 'DECIMAL,')
+                    # other Decimal bugs: see api_logic_server_cli/prototypes/manager/system/genai/reference/errors/chatgpt_decimal.txt
+                if ', Decimal' in each_line:  # Cap'n K, at your service
+                    each_line = each_line.replace(', Decimal', ', DECIMAL')
+                if 'rom decimal import Decimal' in each_line:
+                    each_line = each_line.replace('from decimal import Decimal', 'import decimal')
+                if '=Decimal(' in each_line:
+                    each_line = each_line.replace('=Decimal(', '=decimal.Decimal(')
+                if ' Decimal(' in each_line:
+                    each_line = each_line.replace(' Decimal(', ' decimal.Decimal(')
+                if 'Column(Decimal)' in each_line:
+                    each_line = each_line.replace('Column(Decimal)', 'Column(DECIMAL)')
+                if "DECIMAL('" in each_line:
+                    each_line = each_line.replace("DECIMAL('", "decimal.Decimal('")
+                if 'end_time(datetime' in each_line:  # tests/test_databases/ai-created/time_cards/time_card_kw_arg/genai.response
+                    each_line = each_line.replace('end_time(datetime', 'end_time=datetime')
+                if indents_to_remove > 0:
+                    each_line = each_line[indents_to_remove:]
+                if 'relationship(' in each_line and self.project.genai_use_relns == False:
+                    # airport4 fails with could not determine join condition between parent/child tables on relationship Airport.flights
+                    if each_line.startswith('    '):
+                        each_line = each_line.replace('    ', '    # ')
+                    else:  # sometimes it puts relns outside the class (so, outdented)
+                        each_line = '# ' + each_line
+                if 'sqlite:///system/genai/temp/model.sqlite':  # fix prior version
+                    each_line = each_line.replace('sqlite:///system/genai/temp/model.sqlite', 
+                                                'sqlite:///system/genai/temp/create_db_models.sqlite')
+
+                # logicbank fixes
+                if 'from logic_bank' in each_line:  # we do our own imports
+                    each_line = each_line.replace('from', '# from')
+                if 'LogicBank.activate' in each_line:
+                    each_line = each_line.replace('LogicBank.activate', '# LogicBank.activate')
+                
+                create_db_model_lines.append(each_line + '\n')
+            return create_db_model_lines
+    
         def fix_model_lines(models, create_db_model_lines):
             did_base = False
             for each_model in models:
-                model_lines = self.get_model_class_lines(model=each_model)
+                model_lines = get_model_class_lines(model=each_model)
                 for each_line in model_lines:
                     each_fixed_line = each_line.replace('sa.', '')      # sometimes it puts sa. in front of Column
                     if 'Base = declarative_base()' in each_fixed_line:  # sometimes created for each class
@@ -528,14 +624,28 @@ class GenAI(object):
                     create_db_model_lines.append(each_fixed_line)
             return create_db_model_lines
         
-        def insert_test_data_lines(test_data_lines):
+        def insert_test_data_lines(test_data_lines : list[str]) -> list[str]:
+            """Insert test data lines into the model file
+
+            Args:
+                test_data_lines (list(str)):  
+                                       * initially header (engine =, sesssion =)
+                                       * this function appends CPT test data
+
+            Returns:
+                list[str]: variable names for the test data rows (for create_all)
+            """
             
-            row_names = list()
-            test_data_lines_ori = self.response_dict.test_data.split('\n') # gpt response
-            
-            for each_line in test_data_lines_ori:
-                each_fixed_line = each_line
-                check_for_row_name = True
+            def fix_test_data_line(each_fixed_line: str) -> str:
+                """Fix the test data line
+
+                Args:
+                    each_fixed_line (str): the test data line
+
+                Returns:
+                    str: the fixed test data line
+                """
+
                 if '=datetime' in each_fixed_line:
                     each_fixed_line = each_fixed_line.replace('=datetime.date', '=date') 
                 if 'datetime.datetime.utcnow' in each_fixed_line:
@@ -547,12 +657,30 @@ class GenAI(object):
                     check_for_row_name = False
                 if 'Base.metadata.create_all(engine)' in each_fixed_line:
                     each_fixed_line = each_fixed_line.replace('Base.metadata.create_all(engine)', '# Base.metadata.create_all(engine)')
-                test_data_lines.append(each_fixed_line)
-                if check_for_row_name and ' = ' in each_line and '(' in each_line:  # CPT test data might have: tests = []
-                    assign = each_line.split(' = ')[0]
-                    # no tokens for: Session = sessionmaker(bind=engine) or session = Session()
-                    if '.' not in assign and 'Session' not in each_line and 'session.' not in each_line:
-                        row_names.append(assign)
+                return each_fixed_line
+
+            row_names = list()
+            use_test_data_rows = True # CPT test data, new format - test_data_rows (*way* less variable)
+            if use_test_data_rows & hasattr(self.response_dict, 'test_data_rows'):
+                test_data_rows = self.response_dict.test_data_rows
+                log.debug(f'.... test_data_rows: {len(test_data_rows)}')
+                for each_row in test_data_rows:
+                    each_fixed_line = fix_test_data_line(each_row.code)
+                    test_data_lines.append(each_fixed_line) 
+                    row_names.append(each_row.test_data_row_variable)
+                pass
+            else:  # CPT test data, old format - rows, plus session, engine etc (quite variable)
+                test_data_lines_ori = self.response_dict.test_data.split('\n') # gpt response
+                log.debug(f'.... test_data_lines...')
+                for each_line in test_data_lines_ori:
+                    each_fixed_line = fix_test_data_line(each_line)
+                    check_for_row_name = True
+                    test_data_lines.append(each_fixed_line)  # append the fixed test data line
+                    if check_for_row_name and ' = ' in each_line and '(' in each_line:  # CPT test data might have: tests = []
+                        assign = each_line.split(' = ')[0]
+                        # no tokens for: Session = sessionmaker(bind=engine) or session = Session()
+                        if '.' not in assign and 'Session' not in each_line and 'session.' not in each_line:
+                            row_names.append(assign)
             return row_names
         
         create_db_model_lines =  list()
@@ -604,97 +732,6 @@ class GenAI(object):
         with open(file_name, "r") as file:
             lines = file.readlines()
         return lines
-
-    def get_model_class_lines(self, model: DotMap) -> list[str]:
-        """Get the model class from the model
-
-        Args:
-            model (Model): the model
-
-        Returns:
-            stlist[str]: the model class lines, fixed up
-        """
-
-        create_db_model_lines =  list()
-        create_db_model_lines.append('\n\n')
-        class_lines = model.code.split('\n')
-        line_num = 0
-        indents_to_remove = 0
-        for each_line in class_lines:
-            line_num += 1
-            ''' decimal issues
-
-                1. bad import: see Run: tests/test_databases/ai-created/genai_demo/genai_demo_decimal
-                    from decimal import Decimal  # Decimal fix: needs to be from decimal import DECIMAL
-
-                2. Missing missing import: from SQLAlchemy import .... DECIMAL
-
-                3. Column(Decimal) -> Column(DECIMAL)
-                    see in: tests/test_databases/ai-created/budget_allocation/budget_allocations/budget_allocations_3_decimal
-
-                4. Bad syntax on test data: see Run: blt/time_cards_decimal from RESPONSE
-                    got:    balance=DECIMAL('100.50')
-                    needed: balance=1000.0
-                    fixed with import in create_db_models_prefix.py
-
-                5. Bad syntax on test data cals: see api_logic_server_cli/prototypes/manager/system/genai/examples/genai_demo/genai_demo_conversation_bad_decimal/genai_demo_03.response
-                    got: or Decimal('0.00')
-                    needed: or decimal.Decimal('0.00')
-
-                6. Bad syntax on test data cals: see api_logic_server_cli/prototypes/manager/system/genai/examples/genai_demo/genai_demo_conversation_bad_decimal_2/genai_demo_conversation_002.response
-                    got: or DECIMAL('
-                    needed: or decimal.Decimal('0.00')
-            '''
-            if "= Table(" in each_line:  # tests/test_databases/ai-created/time_cards/time_card_kw_arg/genai.response
-                log.debug(f'.. fix_and_write_model_file detects table - raise excp to trigger retry')
-                self.post_error = "ChatGPT Response contains table (not class) definitions: " + each_line
-            if 'sqlite:///' in each_line:  # must be sqlite:///system/genai/temp/create_db_models.sqlite
-                current_url_rest = each_line.split('sqlite:///')[1]
-                quote_type = "'"
-                if '"' in current_url_rest:
-                    quote_type = '"'  # eg, tests/test_databases/ai-created/time_cards/time_card_decimal/genai.response
-                current_url = current_url_rest.split(quote_type)[0]  
-                proper_url = 'system/genai/temp/create_db_models.sqlite'
-                each_line = each_line.replace(current_url, proper_url)
-                if current_url != proper_url:
-                    log.debug(f'.. fixed sqlite url: {current_url} -> system/genai/temp/create_db_models.sqlite')
-            if 'Decimal,' in each_line:  # SQLAlchemy import
-                each_line = each_line.replace('Decimal,', 'DECIMAL,')
-                # other Decimal bugs: see api_logic_server_cli/prototypes/manager/system/genai/reference/errors/chatgpt_decimal.txt
-            if ', Decimal' in each_line:  # Cap'n K, at your service
-                each_line = each_line.replace(', Decimal', ', DECIMAL')
-            if 'rom decimal import Decimal' in each_line:
-                each_line = each_line.replace('from decimal import Decimal', 'import decimal')
-            if '=Decimal(' in each_line:
-                each_line = each_line.replace('=Decimal(', '=decimal.Decimal(')
-            if ' Decimal(' in each_line:
-                each_line = each_line.replace(' Decimal(', ' decimal.Decimal(')
-            if 'Column(Decimal)' in each_line:
-                each_line = each_line.replace('Column(Decimal)', 'Column(DECIMAL)')
-            if "DECIMAL('" in each_line:
-                each_line = each_line.replace("DECIMAL('", "decimal.Decimal('")
-            if 'end_time(datetime' in each_line:  # tests/test_databases/ai-created/time_cards/time_card_kw_arg/genai.response
-                each_line = each_line.replace('end_time(datetime', 'end_time=datetime')
-            if indents_to_remove > 0:
-                each_line = each_line[indents_to_remove:]
-            if 'relationship(' in each_line and self.project.genai_use_relns == False:
-                # airport4 fails with could not determine join condition between parent/child tables on relationship Airport.flights
-                if each_line.startswith('    '):
-                    each_line = each_line.replace('    ', '    # ')
-                else:  # sometimes it puts relns outside the class (so, outdented)
-                    each_line = '# ' + each_line
-            if 'sqlite:///system/genai/temp/model.sqlite':  # fix prior version
-                each_line = each_line.replace('sqlite:///system/genai/temp/model.sqlite', 
-                                            'sqlite:///system/genai/temp/create_db_models.sqlite')
-
-            # logicbank fixes
-            if 'from logic_bank' in each_line:  # we do our own imports
-                each_line = each_line.replace('from', '# from')
-            if 'LogicBank.activate' in each_line:
-                each_line = each_line.replace('LogicBank.activate', '# LogicBank.activate')
-            
-            create_db_model_lines.append(each_line + '\n')
-        return create_db_model_lines
     
     def save_prompt_messages_to_system_genai_temp_project(self):
         """
