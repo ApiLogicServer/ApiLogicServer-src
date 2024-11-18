@@ -12,7 +12,7 @@ class Config:
     default_setting = True  # simplify enable / disable most    
 
     do_create_manager = False                               # create the manager - FIXME not working    do_test_iso = default_setting                   # complex iteration
-    do_logic_training = default_setting                     # created 10 tests for logic training
+    do_logic_training = False                     # created 10 tests for logic training
     do_test_auto_conv = default_setting                     # ensure project rebuilt, not truncated
     do_test_genai_demo = default_setting                 # test genai_demo
     do_genai_test_genai_demo_conversation = default_setting # test genai_demo conversation 

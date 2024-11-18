@@ -1,137 +1,67 @@
-Certainly! Below is a complete example of how to create a SQLite database using SQLAlchemy with the specified tables and constraints. We will manually enforce the business logic for `Check Credit` requirements through SQLAlchemy ORM events or others as comments to the code, where appropriate.
-
-### Step 1: Install SQLAlchemy
-
-If you haven't already installed SQLAlchemy, you can install it using pip:
-```sh
-pip install sqlalchemy
-```
-
-### Step 2: Create the SQLite Database and Schema
-
-```python
-import sqlalchemy as sa
-from sqlalchemy import create_engine, Column, Integer, String, DECIMAL, ForeignKey, Date, Text
-from sqlalchemy.orm import relationship, sessionmaker, declarative_base
-from sqlalchemy.ext.declarative import DeclarativeMeta
-
-# Create engine and base class
-engine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite', echo=True)
-Base: DeclarativeMeta = declarative_base()
-
-class Customer(Base):
-    __tablename__ = 'customers'
-    
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String, nullable=True)  # Allowing nulls as per instructions
-    balance = Column(DECIMAL, nullable=True)
-    credit_limit = Column(DECIMAL, nullable=True)
-    
-    orders = relationship("Order", back_populates="customer")
-
-class Product(Base):
-    __tablename__ = 'products'
-    
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String, nullable=True)  # Allowing nulls as per instructions
-    unit_price = Column(DECIMAL, nullable=True)
-
-class Order(Base):
-    __tablename__ = 'orders'
-    
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    customer_id = Column(Integer, ForeignKey('customers.id'))
-    date_shipped = Column(Date, nullable=True)
-    notes = Column(Text, nullable=True)  # Adding the notes field
-    amount_total = Column(DECIMAL, nullable=True)
-    
-    items = relationship("Item", back_populates="order")
-    customer = relationship("Customer", back_populates="orders")
-
-class Item(Base):
-    __tablename__ = 'items'
-    
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    order_id = Column(Integer, ForeignKey('orders.id'))
-    product_id = Column(Integer, ForeignKey('products.id'))
-    quantity = Column(Integer, nullable=True)
-    unit_price = Column(DECIMAL, nullable=True)
-    amount = Column(DECIMAL, nullable=True)
-    
-    product = relationship("Product")
-    order = relationship("Order", back_populates="items")
-
-# Create all tables
-Base.metadata.create_all(engine)
-
-# Create a session
-Session = sessionmaker(bind=engine)
-session = Session()
-
-# Adding initial customer data
-customers = [
-    Customer(name="John Doe", balance=0, credit_limit=1000),
-    Customer(name="Jane Doe", balance=0, credit_limit=1500),
-]
-
-# Adding initial product data
-products = [
-    Product(name="Widget", unit_price=10.99),
-    Product(name="Gadget", unit_price=15.99),
-]
-
-session.add_all(customers)
-session.add_all(products)
-session.commit()
-
-# Business logic checks
-
-# Here we need to ensure the correctness of certain requirements, we can use ORM events.
-
-def check_balance(customer):
-    # Assuming Customer.balance should equal sum of the amount totals of unshipped orders
-    unshipped_orders = session.query(Order).filter(Order.customer_id == customer.id, Order.date_shipped == None)
-    balance_calculated = sum(order.amount_total or 0 for order in unshipped_orders)
-    if customer.balance != balance_calculated:
-        raise ValueError("Customer balance does not match the sum of amounts of unshipped orders.")
-
-def check_credit_limit(customer):
-    if customer.balance > customer.credit_limit:
-        raise ValueError("Customer balance exceeds their credit limit.")
-
-def check_order_amount_total(order):
-    items = session.query(Item).filter(Item.order_id == order.id)
-    amount_total_calculated = sum(item.amount for item in items)
-    if order.amount_total != amount_total_calculated:
-        raise ValueError("Order's total amount does not match the sum of its items' amounts.")
-
-def check_item_amount(item):
-    product = session.query(Product).filter(Product.id == item.product_id).first()
-    item.unit_price = product.unit_price
-    amount_calculated = item.quantity * item.unit_price
-    if item.amount != amount_calculated:
-        raise ValueError("Item's amount does not match its calculated value (quantity times unit price).")
-
-sa.event.listen(Customer, 'before_update', check_balance)
-sa.event.listen(Customer, 'before_update', check_credit_limit)
-sa.event.listen(Order, 'before_update', check_order_amount_total)
-sa.event.listen(Item, 'before_update', check_item_amount)
-
-print("Database and schema created successfully!")
-```
-
-### Explanation
-
-1. **Schema Definition:** We've created the necessary tables: `customers`, `products`, `orders`, and `items` with the specified columns and data types, using SQLAlchemy to map the Python objects to database tables.
- 
-2. **Relationships:** Defined relationships between the tables using SQLAlchemy's ORM.
-
-3. **Initial Data:** Inserted a few rows of initial data into the `customers` and `products` tables.
-
-4. **Business Logic Enforcement:** Instead of using database constraints, the script uses ORM events to enforce certain logic checks:
-   - `check_balance`: Ensures customer balance matches the sum of amounts of unshipped orders.
-   - `check_credit_limit`: Ensures customer balance does not exceed their credit limit.
-   - `check_order_amount_total`: Ensures order's total amount matches the sum of item amounts.
-   - `check_item_amount`: Ensures the item's amount matches the calculated value from quantity and unit price.
-
-Please note that this script doesn't cover all possible edge cases and should be adapted for a larger and more complex application.
+{
+    "models": [
+        {
+            "classname": "Customer",
+            "code": "class Customer(Base):\n    \"\"\"description: Table to store customer information.\"\"\"\n\n    __tablename__ = 'customer'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String, nullable=False)\n    balance = Column(Integer, default=0)\n    credit_limit = Column(Integer, nullable=False)",
+            "sqlite_create": "CREATE TABLE customer (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    name TEXT NOT NULL,\n    balance INTEGER DEFAULT 0,\n    credit_limit INTEGER NOT NULL\n)",
+            "description": "Table to store customer information.",
+            "name": "Customer"
+        },
+        {
+            "classname": "Order",
+            "code": "class Order(Base):\n    \"\"\"description: Table to store order information.\"\"\"\n\n    __tablename__ = 'order'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    customer_id = Column(Integer, ForeignKey('customer.id'))\n    date_shipped = Column(DateTime)\n    amount_total = Column(Integer, default=0)\n    notes = Column(String)",
+            "sqlite_create": "CREATE TABLE \"order\" (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    customer_id INTEGER,\n    date_shipped DATETIME,\n    amount_total INTEGER DEFAULT 0,\n    notes TEXT,\n    FOREIGN KEY(customer_id) REFERENCES customer(id)\n)",
+            "description": "Table to store order information.",
+            "name": "Order"
+        },
+        {
+            "classname": "Item",
+            "code": "class Item(Base):\n    \"\"\"description: Table to store item information for each order.\"\"\"\n\n    __tablename__ = 'item'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    order_id = Column(Integer, ForeignKey('order.id'))\n    product_id = Column(Integer, ForeignKey('product.id'))\n    quantity = Column(Integer, nullable=False)\n    unit_price = Column(Integer)\n    amount = Column(Integer, default=0)",
+            "sqlite_create": "CREATE TABLE item (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    order_id INTEGER,\n    product_id INTEGER,\n    quantity INTEGER NOT NULL,\n    unit_price INTEGER,\n    amount INTEGER DEFAULT 0,\n    FOREIGN KEY(order_id) REFERENCES \"order\"(id),\n    FOREIGN KEY(product_id) REFERENCES product(id)\n)",
+            "description": "Table to store item information for each order.",
+            "name": "Item"
+        },
+        {
+            "classname": "Product",
+            "code": "class Product(Base):\n    \"\"\"description: Table to store product information.\"\"\"\n\n    __tablename__ = 'product'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String, nullable=False)\n    unit_price = Column(Integer, nullable=False)",
+            "sqlite_create": "CREATE TABLE product (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    name TEXT NOT NULL,\n    unit_price INTEGER NOT NULL\n)",
+            "description": "Table to store product information.",
+            "name": "Product"
+        }
+    ],
+    "rules": [
+        {
+            "name": "Customer Balance Constraint",
+            "description": "Ensure customer's balance does not exceed their credit limit.",
+            "use_case": "Customer.balance must be less than or equal to credit limit.",
+            "code": "Rule.constraint(validate=Customer, as_condition=lambda row: row.balance <= row.credit_limit, error_msg=\"Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})\")"
+        },
+        {
+            "name": "Customer Balance Sum",
+            "description": "Calculate customer's balance as sum of pending order totals.",
+            "use_case": "Customer.balance = Sum(Order.amount_total where date_shipped is null)",
+            "code": "Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None)"
+        },
+        {
+            "name": "Order Amount Total Sum",
+            "description": "Calculate order's total amount as sum of item amounts.",
+            "use_case": "Order.amount_total = Sum(Item.amount)",
+            "code": "Rule.sum(derive=Order.amount_total, as_sum_of=Item.amount)"
+        },
+        {
+            "name": "Item Amount Formula",
+            "description": "Calculate item's amount as product of quantity and unit price.",
+            "use_case": "Item.amount = quantity * unit_price",
+            "code": "Rule.formula(derive=Item.amount, as_expression=lambda row: row.quantity * row.unit_price)"
+        },
+        {
+            "name": "Item Unit Price Copy",
+            "description": "Copy unit price from product to item.",
+            "use_case": "Item.unit_price is copied from Product.unit_price",
+            "code": "Rule.copy(derive=Item.unit_price, from_parent=Product.unit_price)"
+        }
+    ],
+    "test_data": "# Test data for Customers\ncustomer1 = Customer(id=1, name='Customer A', balance=100, credit_limit=500)\ncustomer2 = Customer(id=2, name='Customer B', balance=200, credit_limit=1000)\ncustomer3 = Customer(id=3, name='Customer C', balance=300, credit_limit=1500)\ncustomer4 = Customer(id=4, name='Customer D', balance=400, credit_limit=2000)\n\n# Test data for Orders\norder1 = Order(id=1, customer_id=1, date_shipped=None, amount_total=100, notes='Order 1 Note')\norder2 = Order(id=2, customer_id=2, date_shipped=date(2023, 3, 15), amount_total=50, notes='Order 2 Note')\norder3 = Order(id=3, customer_id=3, date_shipped=None, amount_total=150, notes='Order 3 Note')\norder4 = Order(id=4, customer_id=4, date_shipped=date(2023, 4, 20), amount_total=70, notes='Order 4 Note')\n\n# Test data for Items\nitem1 = Item(id=1, order_id=1, product_id=1, quantity=2, unit_price=50, amount=100)\nitem2 = Item(id=2, order_id=2, product_id=2, quantity=1, unit_price=50, amount=50)\nitem3 = Item(id=3, order_id=3, product_id=3, quantity=3, unit_price=50, amount=150)\nitem4 = Item(id=4, order_id=4, product_id=4, quantity=1, unit_price=70, amount=70)\n\n# Test data for Products\nproduct1 = Product(id=1, name='Product A', unit_price=50)\nproduct2 = Product(id=2, name='Product B', unit_price=50)\nproduct3 = Product(id=3, name='Product C', unit_price=50)\nproduct4 = Product(id=4, name='Product D', unit_price=70)",
+    "test_data_sqlite": "INSERT INTO customer (id, name, balance, credit_limit) VALUES (1, 'Customer A', 100, 500);\nINSERT INTO customer (id, name, balance, credit_limit) VALUES (2, 'Customer B', 200, 1000);\nINSERT INTO customer (id, name, balance, credit_limit) VALUES (3, 'Customer C', 300, 1500);\nINSERT INTO customer (id, name, balance, credit_limit) VALUES (4, 'Customer D', 400, 2000);\n\nINSERT INTO \"order\" (id, customer_id, date_shipped, amount_total, notes) VALUES (1, 1, NULL, 100, 'Order 1 Note');\nINSERT INTO \"order\" (id, customer_id, date_shipped, amount_total, notes) VALUES (2, 2, '2023-03-15', 50, 'Order 2 Note');\nINSERT INTO \"order\" (id, customer_id, date_shipped, amount_total, notes) VALUES (3, 3, NULL, 150, 'Order 3 Note');\nINSERT INTO \"order\" (id, customer_id, date_shipped, amount_total, notes) VALUES (4, 4, '2023-04-20', 70, 'Order 4 Note');\n\nINSERT INTO item (id, order_id, product_id, quantity, unit_price, amount) VALUES (1, 1, 1, 2, 50, 100);\nINSERT INTO item (id, order_id, product_id, quantity, unit_price, amount) VALUES (2, 2, 2, 1, 50, 50);\nINSERT INTO item (id, order_id, product_id, quantity, unit_price, amount) VALUES (3, 3, 3, 3, 50, 150);\nINSERT INTO item (id, order_id, product_id, quantity, unit_price, amount) VALUES (4, 4, 4, 1, 70, 70);\n\nINSERT INTO product (id, name, unit_price) VALUES (1, 'Product A', 50);\nINSERT INTO product (id, name, unit_price) VALUES (2, 'Product B', 50);\nINSERT INTO product (id, name, unit_price) VALUES (3, 'Product C', 50);\nINSERT INTO product (id, name, unit_price) VALUES (4, 'Product D', 70);",
+    "name": "ECommerceSystem"
+}
