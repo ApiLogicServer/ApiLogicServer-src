@@ -1,0 +1,7 @@
+Rule Event/Condition Actions
+
+API Entity Actions (set <field> = <value>... toggle on_hold, ship, etc)
+
+Allocate
+
+Rules by UseCase (discovery)
