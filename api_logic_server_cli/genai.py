@@ -802,7 +802,7 @@ class GenAI(object):
         return
 
 
-def genai(using: str, db_url: str, repaired_response: str, genai_version: str, 
+def genai_cli_retry(using: str, db_url: str, repaired_response: str, genai_version: str, 
           retries: int, opt_locking: str, prompt_inserts: str, quote: bool,
           use_relns: bool, project_name: str, tables: int, test_data_rows: int,
           temperature: float) -> None:
@@ -930,7 +930,7 @@ def key_module_map():
     import api_logic_server_cli.api_logic_server as als
     import api_logic_server_cli.create_from_model.create_db_from_model as create_db_from_model
 
-    genai()                                         # called from cli.genai/create/iterate
+    genai_cli_retry()                               # called from cli.genai for retries
                                                     # try/catch/retry loop!
     als.ProjectRun()                                # calls api_logic_server.ProjectRun
 
