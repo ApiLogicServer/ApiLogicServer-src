@@ -1,4 +1,25 @@
+Sales / Mktg
+
+    John Rymer, Forrester, Jim Milbery
+
+    GoFund
+
+    Berkeley? (Grant T)
+
+    Articles
+
+    Partnerships - Low Code, AI Dev FE tools
+
+    Logo
+
+    Affiliates - ala FastAPI ($$??)  -- visibility benefit from community?
+
+
 These have already been vetted by Customers / Prod Mgmt (we know they are valuable)
+
+    Add Security to WebG?
+
+    Rule suggester...
 
     Rule Event/Condition Actions (ECA when order shipped, send order to Kafka and email to manager)
 
