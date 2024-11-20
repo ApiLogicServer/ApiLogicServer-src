@@ -92,7 +92,7 @@ loggers:
         propagate: no
 
     security.system.authorization:   
-        level: INFO
+        level: WARNING
         handlers: [console]
         propagate: no
 

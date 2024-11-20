@@ -30,5 +30,5 @@ class Abstract_Authentication_Provider():
         Returns:
             bool: whether password matches
         """
-        return True
+        return False
 
