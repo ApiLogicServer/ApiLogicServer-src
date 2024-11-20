@@ -39,7 +39,7 @@ class DotMapX(DotMap):
         DotMap (_type_): _description_
     """
     def check_password(self, password=None):
-        # print(password)
+        logger.warning("Insecure check_password method, using insecure default, override this method for password verification!")
         return password == self.password_hash
 
 
@@ -122,5 +122,6 @@ class Authentication_Provider(Abstract_Authentication_Provider):
             bool: _description_
         """
         # return user.check_password(password = password)  : review
+        logger.warning("Checking plaintext password")
         return password == user.password_hash
 
