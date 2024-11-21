@@ -6,66 +6,38 @@ import importlib
 import requests
 import os
 import create_from_model.api_logic_server_utils as utils
-import shutil
+import time
+from openai import OpenAI
+from genai import WGResult
+from genai import Rule
+import json
+from typing import List, Dict
+from pydantic import BaseModel
+from dotmap import DotMap
+from natsort import natsorted
+import glob
 
 log = logging.getLogger(__name__)
 
 class GenAILogic(object):
-    """ Create project from genai prompt(s).  
-    
-    Called by cli to add logic to exsting project
+    """ 
+        Called by cli for *existing* project 
+        
+        * create logic from *logic files* eg `<project>/docs/logic/check_credit.prompt`
+
+            * creates `logic/discovery/check_credit.py` with logic from ChatGPT response
+
+        * Or suggest logic
+
+            * TBD
     """
 
-    def __init__(self, project: Project, using: str, genai_version=str, retries=int):
+    def __init__(self, project: Project, using: str, genai_version: str, retries: int, suggest: bool):
         """ 
-
-        The key argument is `--using`
-        * It can be a file, dir (conversation) or text argument.
-        * It's "stem" denotes the project name to be created at cwd
-        * `self.project.genai_using`
-
-        The (rarely used) `--repaired_response` 
-        * is for retry from corrected response
-        * `--using` is required to get the project name, to be created at cwd
-        * `self.project.genai_repaired_response`
-
-        __init__() is the main driver (work directory is <manager>/system/genai/temp/)
-        
-        1. run ChatGPT to create system/genai/temp/chatgpt_original.response, using...
-        2. get_prompt_messages() - get self.messages[] from file, dir (conversation) or text argument
-        3. Compute create_db_models
-            a. Usually call chatGPT to get response, save to system/genai/temp/chatgpt_original.response
-            b. If --gen-using-file, read response from file        
-        4. self.get_logic() - saves prompt logic as comments for insertion into model (4.3)
-        5. fix_and_write_model_file()
-        6. returns to main driver (api_logic_server#create_project()), which 
-            1. runs create_db_from_model.create_db(self)
-            2. proceeds to create project
-            3. calls this.insert_logic_into_created_project() - merge logic into declare_logic.py
-
-        developer then can use CoPilot to create logic (Rule.) from the prompt (or just code completion)
+        Add logic to existing projects - [see docs](https://apilogicserver.github.io/Docs/WebGenAI-CLI/#add-logic-to-existing-projects)
 
         see key_module_map() for key methods
 
-
-        ##### Explore interim copilot access:
-
-        VSCode/Copilot-chat can turn prompts into logic, so can we automate with API?
-
-        https://stackoverflow.com/questions/76741410/how-to-invoke-github-copilot-programmatically
-        https://docs.google.com/document/d/1o0TeNQtuT6moWU1bOq2K20IbSw4YhV1x_aFnKwo_XeU/edit#heading=h.3xmoi7pevsnp
-        https://code.visualstudio.com/api/extension-guides/chat
-        https://code.visualstudio.com/api/extension-guides/language-model
-        https://github.com/B00TK1D/copilot-api
-
-        ### Or use ChatGPT:
-
-        Not sure vscode/copilot is best approach, since we'd like to activate this during project creation
-        (eg on web/GenAI - not using vscode).
-
-        * Thomas suggests there are ways to "teach" ChatGPT about Logic Bank.  This is a *great* idea.
-
-        https://platform.openai.com/docs/guides/fine-tuning/create-a-fine-tuned-model
         """        
 
         self.project = project
@@ -79,23 +51,28 @@ class GenAILogic(object):
 
         self.messages = self.get_learnings_and_data_model()  # learnings and data model
         self.messages_length = len(self.messages)
+        self.file_number = 0
+        self.file_name_prefix = ""
 
-        logic_files = self.get_logic_files()  # get logic files (typically from project)
+        if suggest:
+            self.suggest_logic()
+        else:
+            logic_files = self.get_logic_files()  # get logic files (typically from project)
 
-        for each_file in logic_files:
-            with open(each_file, 'r') as file:
-                log.debug(f'.. conv processes: {os.path.basename(each_file)}')
-                logic = file.read()
-            logic_message = {"role": "user", "content": logic}
-            self.messages[self.messages_length-1] = logic_message  # replace data model with logic
-            log.debug(f'.. ChatGPT - saving response to: system/genai/temp/chatgpt_original.response')
-            self.headers = self.get_headers_with_openai_api_key()
-            url = "https://api.openai.com/v1/chat/completions"
-            api_version = f'{self.project.genai_version}'  # eg, "gpt-4o"
-            data = {"model": genai_version, "messages": self.messages}
-            response = requests.post(url, headers=self.headers, json=data)
-            self.get_and_save_response_data(response=response, file=each_file)          # save raw response to docs/logiic
-            self.insert_logic_into_project(response=response, file=each_file)   # insert logic into project
+            for each_file in logic_files:
+                with open(each_file, 'r') as file:
+                    log.debug(f'.. genai_logic_builder processes: {os.path.basename(each_file)}')
+                    logic = file.read()
+                logic_message = {"role": "user", "content": logic}
+                self.messages[self.messages_length-1] = logic_message  # replace data model with logic
+                log.debug(f'.. ChatGPT - saving response to: system/genai/temp/chatgpt_original.response')
+                self.headers = self.get_headers_with_openai_api_key()
+                url = "https://api.openai.com/v1/chat/completions"
+                api_version = f'{self.project.genai_version}'  # eg, "gpt-4o"
+                data = {"model": genai_version, "messages": self.messages}
+                response = requests.post(url, headers=self.headers, json=data)
+                self.get_and_save_response_data(response=response, file=each_file)          # save raw response to docs/logiic
+                self.insert_logic_into_project(response=response, file=each_file)   # insert logic into project
         pass
 
     def get_logic_files(self) -> List[str]:
@@ -115,8 +92,7 @@ class GenAILogic(object):
         return logic_files
     
     def get_learnings_and_data_model(self) -> List[Dict[str, str]]:
-        """ Get prompt from file, dir (conversation) or text argument
-            Prepend with learning_requests (if any)
+        """ Get prompts from the docs dir (so CPT knows model, learnings)
 
         Returns:
             dict[]: [ {role: (system | user) }: { content: user-prompt-or-system-response } ]
@@ -124,28 +100,109 @@ class GenAILogic(object):
         """
 
         prompt_messages : List[ Dict[str, str] ] = []  # prompt/response conversation to be sent to ChatGPT
-        prompt_messages.append( {"role": "system", "content": "You are a helpful assistant."})
+        # FIXME - dump dup -- prompt_messages.append( {"role": "system", "content": "You are a helpful assistant."})
 
         learning_requests : List[ Dict[str, str] ] = []  # learning -> prompt/response conversation to be sent to ChatGPT
         manager_root = Path(os.getcwd()).parent
 
-        request_files_dir_path = Path(manager_root.joinpath('system/genai/learning_requests'))
-        if request_files_dir_path.exists():
-            # loop through files in request_files_dir, and append to prompt_messages
-            for root, dirs, files in os.walk(request_files_dir_path):
-                for file in files:
-                    if file.endswith(".prompt"):
-                        with open(request_files_dir_path.joinpath(file), "r") as learnings:
-                            learning_request_lines = learnings.read()
-                        learning_requests.append( {"role": "user", "content": learning_request_lines})
-        prompt_messages.extend(learning_requests)  # if any, prepend learning requests (logicbank api etc)
+        request_files_dir_path = Path(self.project.project_directory_path.joinpath('docs'))
+        assert request_files_dir_path.exists(), f"Directory not found: {request_files_dir_path}"
+        # loop through files in request_files_dir, and append to prompt_messages
+        response_count = 0
+        request_count = 0
+        learning_requests_len = 0
+        prompt = ""
+        for each_file in sorted(Path(request_files_dir_path).iterdir()):
+            if each_file.is_file() and each_file.suffix == '.prompt' or each_file.suffix == '.response':
+                stem = each_file.stem
+                with open(each_file, 'r') as file:
+                    prompt = file.read()
+                role = "user"
+                if response_count == 0 and request_count == 0:
+                    if not prompt.startswith('You are a '):  # add *missing* presets
+                        learning_requests_len = self.create_presets(prompt_messages)
+                        request_count = 1
+                        response_count = learning_requests_len
+                file_num = request_count + response_count
+                file_str = str(file_num).zfill(3)
+                log.debug(f'.. genai_logic_builder[{file_str}] processes: {os.path.basename(each_file)} - {prompt[:30]}...')
+                if each_file.suffix == ".response":
+                    role = 'system'
+                    response_count += 1
+                else:
+                    request_count += 1      # rebuild response with *all* tables
+                    if request_count > 3:   # Run Config: genai AUTO DEALERSHIP CONVERSATION
+                        assert 'updating the prior response' in prompt, f"Missing 'updating the prior response' in {prompt}"
+                        '''
+                        if 'updating the prior response' not in prompt:
 
+                            prompt = self.get_prompt__with_inserts(raw_prompt=prompt, for_iteration=True)   
+                        '''             
+                prompt_messages.append( {"role": role, "content": prompt})
+            else:
+                log.debug(f'.. .. genai_logic_builder ignores: {os.path.basename(each_file)}')
+        file_number = request_count + response_count  # file number for next learning request
+        self.next_file_name = stem[0:len(stem)-3] + str(file_number).zfill(3)
+        pass
+                        
+        # prompt_messages.extend(learning_requests)  # if any, prepend learning requests (logicbank api etc)
+        '''  model is in the docs (presumption - it has not changed)
         with open(self.project.project_directory_path.joinpath('database/models.py'), 'r') as file:
             data_model = file.read()
         data_model_prompt = f"Here is the data model:\n{data_model}"
         prompt_messages.append( {"role": "user", "content": data_model_prompt})
+        '''
 
         return prompt_messages      
+    
+    def suggest_logic(self):
+        """ Suggest logic for prompt (more info here)
+        """
+
+        def get_rule_prompt_from_response(rules: DotMap) -> List[str]:
+            """ Get rule prompt from structured json response
+            Returns:
+                List[str]: rule_prompt
+            """
+            rule_prompt = []
+            for each_rule in rules:
+                rule_prompt.append(each_rule.description)
+            return rule_prompt
+    
+        start_time = time.time()
+        self.messages.append({"role": "user", "content": "Suggest logic"})
+        db_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")
+        client = OpenAI(api_key=os.getenv("APILOGICSERVER_CHATGPT_APIKEY"))
+        model = ""  # self.project.genai_version   FIXME make it an arg
+        if model == "":  # default from CLI is '', meaning fall back to env variable or system default...
+            model = os.getenv("APILOGICSERVER_CHATGPT_MODEL")
+            if model is None or model == "*":  # system default chatgpt model
+                model = "gpt-4o-2024-08-06"
+        self.resolved_model = model
+        completion = client.beta.chat.completions.parse(
+            messages=self.messages, response_format=WGResult,
+            # temperature=self.project.genai_temperature,  values .1 and .7 made students / charges fail
+            model=model  # for own model, use "ft:gpt-4o-2024-08-06:personal:logicbank:ARY904vS" 
+        )
+        
+        data = completion.choices[0].message.content
+        response_dict = json.loads(data)
+        self.response_dict = DotMap(response_dict)
+        rules = self.response_dict.rules
+
+        logic_suggestion_file_name = self.project.project_directory_path.joinpath('docs/logic/suggested_logic.response')
+        with open(logic_suggestion_file_name, "w") as response_file:
+            json.dump(rules, response_file, indent=4)
+        
+        prompt_file_name = self.file_name_prefix + f"{self.next_file_name}.prompt" 
+        rule_list = get_rule_prompt_from_response(rules)
+        rule_str = "\n".join(rule_list)
+        rule_str_prompt = 'Update the prior response - be sure not to lose classes and test data already created.' \
+            + '\n\n' + rule_str
+        with open(self.project.project_directory_path.joinpath(f'docs/{prompt_file_name}'), "w") as prompt_file:
+            prompt_file.write(rule_str_prompt)
+        log.debug(f'ChatGPT suggestions in ({str(int(time.time() - start_time))} secs) - response at: docs/logic/suggested_logic.response')
+        log.debug(f'.. prompt at: docs/{prompt_file_name}')
     
     def insert_logic_into_project(self, response: dict, file: Path):
         """Called *for each logic file* to create logic.py in logic/discovery 

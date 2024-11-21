@@ -85,6 +85,7 @@ dependencies = [
         "libretranslatepy==2.1.1",
         "reportlab==4.2.0",
         "xlsxwriter==3.2.0",
+        "natsort==8.4.0",
         "openai==1.52.1"
 ]
 name = "ApiLogicServer"

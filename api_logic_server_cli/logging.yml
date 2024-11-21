@@ -71,3 +71,9 @@ loggers:
         level: DEBUG
         handlers: [console]
         propagate: no
+
+
+    genai_logic_builder:   
+        level: DEBUG
+        handlers: [console]
+        propagate: no

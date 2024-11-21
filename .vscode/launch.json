@@ -553,9 +553,7 @@
             "redirectOutput": true,
             "args": ["genai", 
                 "--using=${workspaceFolder}/../../build_and_test/ApiLogicServer/system/genai/examples/genai_demo/genai_demo.prompt",
-                "--project-name=genai_demo"],
-//                "--project-name=genai_demo",
-                "--using=${workspaceFolder}/../../build_and_test/ApiLogicServer/system/genai/examples/genai_demo/genai_demo.prompt"
+                "--project-name=genai_demo"
             ],
             "console": "integratedTerminal"
         },
@@ -582,7 +580,33 @@
             "redirectOutput": true,
             "args": ["genai",
             "--using=${workspaceFolder}/tests/test_databases/ai-created/genai_demo/genai_demo_logic/genai_demo_logic_off.prompt",
-            "--project-name=genai_demo_LogicBankOff"],
+            "--project-name=tests/genai_demo_LogicBankOff"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "    + SUGGEST logic for blt/genai_demo_LogicBankOff from Prompt/ChatGPT",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer/tests/genai_demo_LogicBankOff",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["genai-logic", "--suggest",
+                ],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "    + SUGGEST/ITERATE logic for blt/genai_demo_LogicBankOn from genai_demo_LogicBankOff",
+//  ** run prior config first
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["genai",
+            "--using=tests/genai_demo_LogicBankOff/docs",
+            "--project-name=tests/genai_demo_LogicBankOn"],
             "console": "integratedTerminal"
         },
         {

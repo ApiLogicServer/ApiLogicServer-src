@@ -9,4 +9,4 @@ Use LogicBank to enforce the Check Credit requirement (do not generate check con
 4. Item.amount = quantity * unit_price
 5. Store the Item.unit_price as a copy from Product.unit_price
 
-LogicBankOff
+LBX
