@@ -112,9 +112,7 @@ class GenAILogic(object):
         request_files_dir_path = Path(self.project.project_directory_path.joinpath('docs'))
         assert request_files_dir_path.exists(), f"Directory not found: {request_files_dir_path}"
         # loop through files in request_files_dir, and append to prompt_messages
-        response_count = 0
-        request_count = 0
-        learning_requests_len = 0
+        file_number = -1
         prompt = ""
         for each_file in sorted(Path(request_files_dir_path).iterdir()):
             if each_file.is_file() and each_file.suffix == '.prompt' or each_file.suffix == '.response':
@@ -122,37 +120,21 @@ class GenAILogic(object):
                 with open(each_file, 'r') as file:
                     prompt = file.read()
                 role = "user"
-                if response_count == 0 and request_count == 0:  # TODO dump this
-                    if not prompt.startswith('You are a '):  # add *missing* presets
-                        learning_requests_len = self.create_presets(prompt_messages)
-                        request_count = 1
-                        response_count = learning_requests_len
-                file_num = request_count + response_count
-                file_str = str(file_num).zfill(3)
+                file_number += 1
+                file_str = str(file_number).zfill(3)
                 if each_file.suffix == ".response":
                     role = 'system'
-                    response_count += 1
+                if file_number == 2:  # CPT takes a ~ 20 secs for this prompt - skip it
+                    log.debug(f'.. genai_logic_builder[{file_str}] ignores:   {os.path.basename(each_file)} - {prompt[:30]}...')
                 else:
-                    request_count += 1      # rebuild response with *all* tables
-                    '''bif request_count > 3:   # Run Config: genai AUTO DEALERSHIP CONVERSATION
-                        assert 'updating the prior response' in prompt, f"Missing 'updating the prior response' in {prompt}"
-                        
-                        if 'updating the prior response' not in prompt:
-
-                            prompt = self.get_prompt__with_inserts(raw_prompt=prompt, for_iteration=True)   
-                    '''             
-                if file_num == 2:  # CPT takes a ~ 20 secs for this prompt - skip it
-                    log.debug(f'.. genai_logic_builder[{file_str}] ignores: {os.path.basename(each_file)} - {prompt[:30]}...')
-                else:
-                    if file_num == 3:  # just get the models portion (save 8 secs)
+                    if file_number == 3:  # just get the models portion (save 8 secs)
                         prompt_dict = json.loads(prompt)
                         prompt = json.dumps(prompt_dict['models'])
                     prompt_messages.append( {"role": role, "content": prompt})
-                    log.debug(f'.. genai_logic_builder[{file_str}] processes: {os.path.basename(each_file)}')
+                    log.debug(f'.. genai_logic_builder[{file_str}] processes: {os.path.basename(each_file)} - {prompt[:30]}...')
             else:
                 log.debug(f'.. .. genai_logic_builder ignores: {os.path.basename(each_file)}')
-        file_number = request_count + response_count  # file number for next learning request
-        self.next_file_name = stem[0:len(stem)-3] + str(file_number).zfill(3)
+        self.next_file_name = stem[0:len(stem)-3] + str(1 + file_number).zfill(3)
         pass
                         
         # prompt_messages.extend(learning_requests)  # if any, prepend learning requests (logicbank api etc)
