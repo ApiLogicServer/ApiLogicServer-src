@@ -606,7 +606,7 @@ def genai(ctx, using, db_url, repaired_response: str,
     defaulted_using = using
     if defaulted_using == 'genai_demo': # default to genai_demo.prompt
         defaulted_using = 'system/genai/examples/genai_demo/genai_demo.prompt'
-    genai_svcs.genai_cli_retry(using=defaulted_using, db_url=db_url, repaired_response=repaired_response, 
+    genai_svcs.genai_cli_with_retry(using=defaulted_using, db_url=db_url, repaired_response=repaired_response, 
                 genai_version=genai_version, temperature=temperature,
                 retries=retries, opt_locking=opt_locking, 
                 prompt_inserts=prompt_inserts, quote=quote, use_relns=use_relns, 
@@ -624,10 +624,13 @@ def genai(ctx, using, db_url, repaired_response: str,
 @click.option('--retries', 
               default=3,
               help="Number of retries")
+@click.option('--suggest', is_flag=True,
+              default=False,
+              help="Suggest Logic")
 @click.pass_context
-def genai_logic(ctx, using, genai_version: str, retries: int):
+def genai_logic(ctx, using, genai_version: str, retries: int, suggest: click.BOOL):
     """
-        Adds logic to current project.
+        Adds (or suggests) logic to current project.
     """
     global command
     project_dir = resolve_blank_project_name('')
@@ -650,7 +653,7 @@ def genai_logic(ctx, using, genai_version: str, retries: int):
         log.info(f'... Typical usage - cd into project, use --project_name=. \n')
         exit (1)
     from genai_logic_builder import GenAILogic
-    GenAILogic(using=using, project=project, genai_version=genai_version, retries=retries)
+    GenAILogic(using=using, project=project, genai_version=genai_version, retries=retries, suggest=suggest)
     pass
     log.info("")
 

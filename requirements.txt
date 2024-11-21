@@ -29,6 +29,7 @@ pandas==2.2.2
 openpyxl==3.1.5
 confluent-kafka==2.3.0
 faker==30.4.0
+natsort==8.4.0
 
 Flask-Login==0.6.2
 #Flask-Admin==1.5.7

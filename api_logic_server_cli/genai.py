@@ -21,7 +21,7 @@ import importlib.util
 log = logging.getLogger(__name__)
 
 K_LogicBankOff = "LBX"
-''' Disable Logic (for demos) '''
+''' LBX Disable Logic (for demos) '''
 
 class Rule(BaseModel):
     name: str
@@ -69,6 +69,22 @@ class GenAI(object):
     """
 
     def __init__(self, project: Project):
+        """ 
+        create instance of GenAI, eg,
+
+        genai = GenAI(project=project)
+        genai.create_db_models()
+        genai.insert_logic_into_created_project()
+        genai.suggest_logic()
+        
+        see key_module_map() for key methods
+
+        https://platform.openai.com/finetune/ftjob-2i1wkh4t4l855NKCovJeHExs?filter=all
+        """        
+
+        self.project = project  # als project info (cli args etc)
+
+    def __init_old__(self, project: Project, command: str = "create_db_models"):
         """ 
 
         The key argument is `--using`
@@ -162,6 +178,105 @@ class GenAI(object):
         pass # if we've set self.post_error, we'll raise an exception to trigger retry
         pass # return to api_logic_server.ProjectRun to create db/project from create_db_models.py
 
+    def create_db_models(self):
+        """ 
+        Called by api_logic_server, to 
+        * run ChatGPT (or respone file) to create_db_models.py - models & test data
+        * which then used to create db, for normal project creation.
+
+        The key argument is `--using`
+        * It can be a file, dir (conversation) or text argument.
+        * It's "stem" denotes the project name to be created at cwd
+        * `self.project.genai_using` (not used by WebGenAI)
+
+        The (rarely used) `--repaired_response` --> `self.project.genai_repaired_response`
+        * is for retry from corrected response
+        * `--using` is required to get the project name, to be created at cwd
+
+        __init__() is the main driver (work directory is <manager>/system/genai/temp/)
+        
+        1. run ChatGPT to create system/genai/temp/chatgpt_original.response, using...
+        2. get_prompt_messages() - get self.messages[] from file, dir (conversation) or text argument
+        3. Compute create_db_models
+            a. Usually call chatGPT to get response, save to system/genai/temp/chatgpt_original.response
+            b. If --gen-using-file, read response from file        
+        4. self.get_logic() - saves prompt logic as comments for insertion into model (4.3)
+        5. fix_and_write_model_file()
+        6. returns to main driver (api_logic_server#create_project()), which 
+            1. runs create_db_from_model.create_db(self)
+            2. proceeds to create project
+            3. calls this.insert_logic_into_created_project() - merge logic into declare_logic.py
+
+        developer then can use CoPilot to create logic (Rule.) from the prompt (or just code completion)
+
+        see key_module_map() for key methods
+
+        https://platform.openai.com/finetune/ftjob-2i1wkh4t4l855NKCovJeHExs?filter=all
+        """        
+
+        log.info(f'\nGenAI [{self.project.project_name}] creating microservice from: {self.project.genai_using}')
+        if self.project.genai_repaired_response != '':
+            log.info(f'..     retry from [repaired] response file: {self.project.genai_repaired_response}')
+        
+        self.project.from_model = f'system/genai/temp/create_db_models.py' # we always write the model to this file
+        self.ensure_system_dir_exists()  # ~ manager, so we can write to system/genai/temp
+        self.delete_temp_files()
+        self.post_error = ""
+        """ eg, if response contains table defs, save_prompt_messages_to_system_genai_temp_project raises an exception to trigger retry """
+        self.prompt = ""
+        """ `--using` - can come from file or text argument """
+        self.logic_enabled = True
+        """ K_LogicBankOff is used for demos, where we don't want to create logic """
+        self.messages = self.get_prompt_messages()  # compute self.messages, from file, dir or text argument
+
+        if self.project.genai_repaired_response == '':  # normal path - get response from ChatGPT
+            try:
+                api_version = f'{self.project.genai_version}'  # eg, "gpt-4o"
+                start_time = time.time()
+                db_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")
+                client = OpenAI(api_key=os.getenv("APILOGICSERVER_CHATGPT_APIKEY"))
+                model = api_version
+                if model == "":  # default from CLI is '', meaning fall back to env variable or system default...
+                    model = os.getenv("APILOGICSERVER_CHATGPT_MODEL")
+                    if model is None or model == "*":  # system default chatgpt model
+                        model = "gpt-4o-2024-08-06"
+                self.resolved_model = model
+                completion = client.beta.chat.completions.parse(
+                    messages=self.messages, response_format=WGResult,
+                    # temperature=self.project.genai_temperature,  values .1 and .7 made students / charges fail
+                    model=model  # for own model, use "ft:gpt-4o-2024-08-06:personal:logicbank:ARY904vS" 
+                )
+                log.debug(f'ChatGPT ({str(int(time.time() - start_time))} secs) - response at: system/genai/temp/chatgpt_original.response')
+                
+                data = completion.choices[0].message.content
+                response_dict = json.loads(data)
+                self.get_and_save_raw_response_data(completion=completion, response_dict=response_dict)
+                # print(json.dumps(json.loads(data), indent=4))
+                pass
+            except Exception as inst:
+                log.error(f"\n\nError: ChatGPT call failed\n{inst}\n\n")
+                sys.exit('ChatGPT call failed - please see https://apilogicserver.github.io/Docs/WebGenAI-CLI/#configuration')
+        else: # for retry from corrected response... eg system/genai/temp/chatgpt_retry.response
+            self.resolved_model = "(n/a: model not used for repaired response)"
+            log.debug(f'\nUsing [corrected] response from: {self.project.genai_repaired_response}')
+            with open(self.project.genai_repaired_response, 'r') as response_file:
+                response_dict = json.load(response_file)
+
+        self.response_dict = DotMap(response_dict)
+        if self.logic_enabled == False:
+            self.response_dict.rules = []
+
+        """ the raw response data from ChatGPT which will be fixed & saved create_db_models.py """
+
+        self.get_valid_project_name()
+
+        self.fix_and_write_model_file() # write create_db_models.py for db creation, & logic 
+        self.save_prompt_messages_to_system_genai_temp_project()  # save prompts, response and models.py
+        if self.project.project_name_last_node == 'genai_demo_conversation':
+            debug_string = "good breakpoint - check create_db_models.py"
+        pass # if we've set self.post_error, we'll raise an exception to trigger retry
+        pass # return to api_logic_server.ProjectRun to create db/project from create_db_models.py
+
     def delete_temp_files(self):
         """Delete temp files created by genai ((system/genai/temp -- models, responses)"""
         Path('system/genai/temp/create_db_models.sqlite').unlink(missing_ok=True)  # delete temp (work) files
@@ -177,7 +292,7 @@ class GenAI(object):
         you_are = "You are a data modelling expert and python software architect who expands on user input ideas. You create data models with at least 4 tables"
         if self.project.genai_tables > 0:
             you_are = you_are.replace('4', str(self.project.genai_tables))
-        starting_message = {"role": "system", "content": you_are}
+        starting_message = {"role": "user", "content": you_are}
         prompt_messages.append( starting_message)
 
         learning_requests = self.get_learning_requests()
@@ -251,7 +366,8 @@ class GenAI(object):
                         response_count += 1
                     else:
                         request_count += 1      # rebuild response with *all* tables
-                        if request_count > 2:   # Run Config: genai AUTO DEALERSHIP CONVERSATION
+                        if request_count > 3:   # Run Config: genai AUTO DEALERSHIP CONVERSATION
+                            # 0 is 'you are', 1 is 'learning requests', 2 is 'request', 3 is 'response'
                             if 'updating the prior response' not in prompt:
                                 prompt = self.get_prompt__with_inserts(raw_prompt=prompt, for_iteration=True)                  
                     prompt_messages.append( {"role": role, "content": prompt})
@@ -340,6 +456,7 @@ class GenAI(object):
                         log.debug(f'.. inserted explicit test data: {each_line}')
                 if K_LogicBankOff in each_line:
                     self.logic_enabled = False  # for demos
+
                 if "LogicBank" in each_line and do_logic == True:
                     log.debug(f'.. inserted: {each_line}')
                     prompt_eng_logic_file_name = f'system/genai/prompt_inserts/logic_inserts.prompt'
@@ -801,8 +918,10 @@ class GenAI(object):
             json.dump(response_dict, response_file, indent=4)
         return
 
+def genai_cli_rule_suggesions(project_name: str) -> dict:
+    pass
 
-def genai_cli_retry(using: str, db_url: str, repaired_response: str, genai_version: str, 
+def genai_cli_with_retry(using: str, db_url: str, repaired_response: str, genai_version: str, 
           retries: int, opt_locking: str, prompt_inserts: str, quote: bool,
           use_relns: bool, project_name: str, tables: int, test_data_rows: int,
           temperature: float) -> None:
@@ -843,7 +962,7 @@ def genai_cli_retry(using: str, db_url: str, repaired_response: str, genai_versi
                 project_name=resolved_project_name, db_url=db_url,
                 execute=False)
     if retries < 0:  # for debug: catch exceptions at point of failure
-        pr.create_project()  # calls GenAI() - the main driver
+        pr.create_project()  # this calls GenAI(pr) - the main driver
         log.info(f"GENAI successful")  
     else:
         while try_number <= retries:
@@ -930,7 +1049,7 @@ def key_module_map():
     import api_logic_server_cli.api_logic_server as als
     import api_logic_server_cli.create_from_model.create_db_from_model as create_db_from_model
 
-    genai_cli_retry()                               # called from cli.genai for retries
+    genai_cli_with_retry()                          # called from cli.genai for retries
                                                     # try/catch/retry loop!
     als.ProjectRun()                                # calls api_logic_server.ProjectRun
 
