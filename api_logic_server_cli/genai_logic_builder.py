@@ -54,6 +54,8 @@ class GenAILogic(object):
         self.file_number = 0
         self.file_name_prefix = ""
 
+        self.mananager_path = self.get_manager_path()
+
         if suggest:
             self.suggest_logic()
         else:
@@ -162,16 +164,15 @@ class GenAILogic(object):
             return rule_prompt
     
         start_time = time.time()
-        self.messages.append({"role": "user", "content": "Suggest logic"})
-        db_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")
+        with open(f'{self.mananager_path}/system/genai/prompt_inserts/logic_suggestions.prompt', 'r') as file:
+            suggest_logic = file.read()
+        self.messages.append({"role": "user", "content": suggest_logic})
+        debug_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")
         client = OpenAI(api_key=os.getenv("APILOGICSERVER_CHATGPT_APIKEY"))
-        model = ""  # self.project.genai_version   FIXME make it an arg
-        if model == "":  # default from CLI is '', meaning fall back to env variable or system default...
-            model = os.getenv("APILOGICSERVER_CHATGPT_MODEL")
-            if model is None or model == "*":  # system default chatgpt model
-                model = "gpt-4o-2024-08-06"
-        model = 'gpt-4o-mini'  # reduces from 40 -> 7 secs
-        self.resolved_model = model
+        model = os.getenv("APILOGICSERVER_CHATGPT_MODEL_SUGGESTION")
+        if model is None or model == "*":  # system default chatgpt model
+            model = "gpt-4o-2024-08-06"
+            model = 'gpt-4o-mini'  # reduces from 40 -> 7 secs
         completion = client.beta.chat.completions.parse(
             messages=self.messages, response_format=WGResult,
             # temperature=self.project.genai_temperature,  values .1 and .7 made students / charges fail
@@ -183,18 +184,19 @@ class GenAILogic(object):
         self.response_dict = DotMap(response_dict)
         rules = self.response_dict.rules
 
-        logic_suggestion_file_name = self.project.project_directory_path.joinpath('docs/logic/suggested_logic.response')
+        logic_suggestion_file_name = self.project.project_directory_path.joinpath('docs/logic/logic_suggestions.response')
         with open(logic_suggestion_file_name, "w") as response_file:
             json.dump(rules, response_file, indent=4)
         
         prompt_file_name = self.file_name_prefix + f"{self.next_file_name}.prompt" 
         rule_list = get_rule_prompt_from_response(rules)
         rule_str = "\n".join(rule_list)
-        rule_str_prompt = 'Update the prior response - be sure not to lose classes and test data already created.' \
-            + '\n\n' + rule_str
+        with open(f'{self.mananager_path}/system/genai/prompt_inserts/iteration.prompt', 'r') as file:
+            iteration_prompt = file.read()
+        rule_str_prompt = iteration_prompt + '\n\n' + rule_str
         with open(self.project.project_directory_path.joinpath(f'docs/{prompt_file_name}'), "w") as prompt_file:
             prompt_file.write(rule_str_prompt)
-        log.debug(f'ChatGPT suggestions in ({str(int(time.time() - start_time))} secs) - response at: docs/logic/suggested_logic.response')
+        log.debug(f'ChatGPT suggestions in ({str(int(time.time() - start_time))} secs) - response at: docs/logic/logic_suggestions.response')
         log.debug(f'.. prompt at: docs/{prompt_file_name}')
     
     def insert_logic_into_project(self, response: dict, file: Path):
@@ -253,6 +255,22 @@ class GenAILogic(object):
             "Authorization": f"Bearer {openai_api_key}"
         }
         return headers
+    
+    def get_manager_path(self) -> Path:
+        """ Checks cwd parent/grandparent for system/genai
+
+        * Possibly could add cli arg later
+
+        Returns:
+            Path: Manager path (contains system/genai)
+        """            
+        result_path = Path(os.getcwd()).parent
+        check_system_genai = result_path.joinpath('system/genai')
+        if not check_system_genai.exists():
+            result_path = result_path.parent
+            check_system_genai = result_path.joinpath('system/genai')
+            assert check_system_genai.exists(), f"Manager Directory not found: {check_system_genai}"
+        return result_path
     
     def get_and_save_response_data(self, response, file) -> str:
         """ Checks return code, saves response to file, returns response_data
