@@ -94,6 +94,10 @@ class GenAILogic(object):
     def get_learnings_and_data_model(self) -> List[Dict[str, str]]:
         """ Get prompts from the docs dir (so CPT knows model, learnings)
 
+        0 = 'you are', 1 = 'rules api', 2 = 'create_db_models.py', 3 = 'response'
+
+        So, skip 2
+
         Returns:
             dict[]: [ {role: (system | user) }: { content: user-prompt-or-system-response } ]
 
@@ -118,27 +122,33 @@ class GenAILogic(object):
                 with open(each_file, 'r') as file:
                     prompt = file.read()
                 role = "user"
-                if response_count == 0 and request_count == 0:
+                if response_count == 0 and request_count == 0:  # TODO dump this
                     if not prompt.startswith('You are a '):  # add *missing* presets
                         learning_requests_len = self.create_presets(prompt_messages)
                         request_count = 1
                         response_count = learning_requests_len
                 file_num = request_count + response_count
                 file_str = str(file_num).zfill(3)
-                log.debug(f'.. genai_logic_builder[{file_str}] processes: {os.path.basename(each_file)} - {prompt[:30]}...')
                 if each_file.suffix == ".response":
                     role = 'system'
                     response_count += 1
                 else:
                     request_count += 1      # rebuild response with *all* tables
-                    if request_count > 3:   # Run Config: genai AUTO DEALERSHIP CONVERSATION
+                    '''bif request_count > 3:   # Run Config: genai AUTO DEALERSHIP CONVERSATION
                         assert 'updating the prior response' in prompt, f"Missing 'updating the prior response' in {prompt}"
-                        '''
+                        
                         if 'updating the prior response' not in prompt:
 
                             prompt = self.get_prompt__with_inserts(raw_prompt=prompt, for_iteration=True)   
-                        '''             
-                prompt_messages.append( {"role": role, "content": prompt})
+                    '''             
+                if file_num == 2:  # CPT takes a ~ 20 secs for this prompt - skip it
+                    log.debug(f'.. genai_logic_builder[{file_str}] ignores: {os.path.basename(each_file)} - {prompt[:30]}...')
+                else:
+                    if file_num == 3:  # just get the models portion (save 8 secs)
+                        prompt_dict = json.loads(prompt)
+                        prompt = json.dumps(prompt_dict['models'])
+                    prompt_messages.append( {"role": role, "content": prompt})
+                    log.debug(f'.. genai_logic_builder[{file_str}] processes: {os.path.basename(each_file)}')
             else:
                 log.debug(f'.. .. genai_logic_builder ignores: {os.path.basename(each_file)}')
         file_number = request_count + response_count  # file number for next learning request
@@ -178,6 +188,7 @@ class GenAILogic(object):
             model = os.getenv("APILOGICSERVER_CHATGPT_MODEL")
             if model is None or model == "*":  # system default chatgpt model
                 model = "gpt-4o-2024-08-06"
+        model = 'gpt-4o-mini'  # reduces from 40 -> 7 secs
         self.resolved_model = model
         completion = client.beta.chat.completions.parse(
             messages=self.messages, response_format=WGResult,
