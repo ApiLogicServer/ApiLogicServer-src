@@ -2,6 +2,7 @@ import json
 import sys
 import time
 import traceback
+import ast
 from typing import Dict, List
 from api_logic_server_cli.cli_args_project import Project
 import logging
@@ -746,6 +747,13 @@ class GenAI(object):
                     if 'Column(date' in each_fixed_line:
                         each_fixed_line = each_fixed_line.replace('Column(dat', 'column(Date') 
                     create_db_model_lines.append(each_fixed_line)
+                
+                model_code = "\n".join(model_lines)
+                try:
+                    ast.parse(model_code)
+                except SyntaxError as exc:
+                    log.error(f"Model Class Error: {model_code}")
+                    self.post_error = f"Model Class Error: {exc}"
             return create_db_model_lines
         
         def insert_test_data_lines(test_data_lines : list[str]) -> list[str]:
@@ -774,8 +782,8 @@ class GenAI(object):
                     each_fixed_line = each_fixed_line.replace('=datetime.date', '=date') 
                 if 'datetime.datetime.utcnow' in each_fixed_line:
                     each_fixed_line = each_fixed_line.replace('datetime.datetime.utcnow', 'datetime.now()') 
-                if 'datetime.date.today' in each_line:
-                    each_line = each_line.replace('datetime.date.today', 'datetime.today')
+                if 'datetime.date.today' in each_fixed_line:
+                    each_fixed_line = each_fixed_line.replace('datetime.date.today', 'datetime.today')
                 if 'engine = create_engine' in each_fixed_line:  # CBT sometimes has engine = create_engine, so do we!
                     each_fixed_line = each_fixed_line.replace('engine = create_engine', '# engine = create_engine')
                     check_for_row_name = False
