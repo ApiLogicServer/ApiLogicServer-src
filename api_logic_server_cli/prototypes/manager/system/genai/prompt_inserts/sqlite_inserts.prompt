@@ -27,4 +27,5 @@ and do not generate db.execute statements.
 * Do not create arrays of test data.
 * Do not create a function to load test data.  
 * Do not print the test data. 
+* Use double quotes " for strings.
 * For test data, format dates as date(year, month, day).

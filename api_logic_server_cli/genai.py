@@ -623,9 +623,9 @@ class GenAI(object):
 
     def fix_and_write_model_file(self):
         """
-        1. break response data into lines
-        2. throw away instructions
-        3. ChatGPT work-arounds (decimal, indent, bogus relns)
+        1. from response, create model file / models lines
+        2. from response, create model file / test lines
+        3. ChatGPT work-arounds (decimal, indent, bogus relns, etc etc)
         4. Ensure the sqlite url is correct: sqlite:///system/genai/temp/create_db_models.sqlite
         5. write model file to self.project.from_model
 
@@ -633,99 +633,105 @@ class GenAI(object):
             response_data (str): the chatgpt response
 
         """
+   
+        def insert_model_lines(models, create_db_model_lines):
 
-        def get_model_class_lines(model: DotMap) -> list[str]:
-            """Get the model class from the model
+            def get_model_class_lines(model: DotMap) -> list[str]:
+                """Get the model class from the model, with MAJOR fixes
 
-            Args:
-                model (Model): the model
+                Args:
+                    model (Model): the model
 
-            Returns:
-                stlist[str]: the model class lines, fixed up
-            """
+                Returns:
+                    stlist[str]: the model class lines, fixed up
+                """
 
-            create_db_model_lines =  list()
-            create_db_model_lines.append('\n\n')
-            class_lines = model.code.split('\n')
-            line_num = 0
-            indents_to_remove = 0
-            for each_line in class_lines:
-                line_num += 1
-                ''' decimal issues
+                create_db_model_lines =  list()
+                create_db_model_lines.append('\n\n')
+                class_lines = model.code.split('\n')
+                line_num = 0
+                indents_to_remove = 0
+                for each_line in class_lines:
+                    line_num += 1
+                    ''' decimal issues
 
-                    1. bad import: see Run: tests/test_databases/ai-created/genai_demo/genai_demo_decimal
-                        from decimal import Decimal  # Decimal fix: needs to be from decimal import DECIMAL
+                        1. bad import: see Run: tests/test_databases/ai-created/genai_demo/genai_demo_decimal
+                            from decimal import Decimal  # Decimal fix: needs to be from decimal import DECIMAL
 
-                    2. Missing missing import: from SQLAlchemy import .... DECIMAL
+                        2. Missing missing import: from SQLAlchemy import .... DECIMAL
 
-                    3. Column(Decimal) -> Column(DECIMAL)
-                        see in: tests/test_databases/ai-created/budget_allocation/budget_allocations/budget_allocations_3_decimal
+                        3. Column(Decimal) -> Column(DECIMAL)
+                            see in: tests/test_databases/ai-created/budget_allocation/budget_allocations/budget_allocations_3_decimal
 
-                    4. Bad syntax on test data: see Run: blt/time_cards_decimal from RESPONSE
-                        got:    balance=DECIMAL('100.50')
-                        needed: balance=1000.0
-                        fixed with import in create_db_models_prefix.py
+                        4. Bad syntax on test data: see Run: blt/time_cards_decimal from RESPONSE
+                            got:    balance=DECIMAL('100.50')
+                            needed: balance=1000.0
+                            fixed with import in create_db_models_prefix.py
 
-                    5. Bad syntax on test data cals: see api_logic_server_cli/prototypes/manager/system/genai/examples/genai_demo/genai_demo_conversation_bad_decimal/genai_demo_03.response
-                        got: or Decimal('0.00')
-                        needed: or decimal.Decimal('0.00')
+                        5. Bad syntax on test data cals: see api_logic_server_cli/prototypes/manager/system/genai/examples/genai_demo/genai_demo_conversation_bad_decimal/genai_demo_03.response
+                            got: or Decimal('0.00')
+                            needed: or decimal.Decimal('0.00')
 
-                    6. Bad syntax on test data cals: see api_logic_server_cli/prototypes/manager/system/genai/examples/genai_demo/genai_demo_conversation_bad_decimal_2/genai_demo_conversation_002.response
-                        got: or DECIMAL('
-                        needed: or decimal.Decimal('0.00')
-                '''
-                if "= Table(" in each_line:  # tests/test_databases/ai-created/time_cards/time_card_kw_arg/genai.response
-                    log.debug(f'.. fix_and_write_model_file detects table - raise excp to trigger retry')
-                    self.post_error = "ChatGPT Response contains table (not class) definitions: " + each_line
-                if 'sqlite:///' in each_line:  # must be sqlite:///system/genai/temp/create_db_models.sqlite
-                    current_url_rest = each_line.split('sqlite:///')[1]
-                    quote_type = "'"
-                    if '"' in current_url_rest:
-                        quote_type = '"'  # eg, tests/test_databases/ai-created/time_cards/time_card_decimal/genai.response
-                    current_url = current_url_rest.split(quote_type)[0]  
-                    proper_url = 'system/genai/temp/create_db_models.sqlite'
-                    each_line = each_line.replace(current_url, proper_url)
-                    if current_url != proper_url:
-                        log.debug(f'.. fixed sqlite url: {current_url} -> system/genai/temp/create_db_models.sqlite')
-                if 'Decimal,' in each_line:  # SQLAlchemy import
-                    each_line = each_line.replace('Decimal,', 'DECIMAL,')
-                    # other Decimal bugs: see api_logic_server_cli/prototypes/manager/system/genai/reference/errors/chatgpt_decimal.txt
-                if ', Decimal' in each_line:  # Cap'n K, at your service
-                    each_line = each_line.replace(', Decimal', ', DECIMAL')
-                if 'rom decimal import Decimal' in each_line:
-                    each_line = each_line.replace('from decimal import Decimal', 'import decimal')
-                if '=Decimal(' in each_line:
-                    each_line = each_line.replace('=Decimal(', '=decimal.Decimal(')
-                if ' Decimal(' in each_line:
-                    each_line = each_line.replace(' Decimal(', ' decimal.Decimal(')
-                if 'Column(Decimal)' in each_line:
-                    each_line = each_line.replace('Column(Decimal)', 'Column(DECIMAL)')
-                if "DECIMAL('" in each_line:
-                    each_line = each_line.replace("DECIMAL('", "decimal.Decimal('")
-                if 'end_time(datetime' in each_line:  # tests/test_databases/ai-created/time_cards/time_card_kw_arg/genai.response
-                    each_line = each_line.replace('end_time(datetime', 'end_time=datetime')
-                if indents_to_remove > 0:
-                    each_line = each_line[indents_to_remove:]
-                if 'relationship(' in each_line and self.project.genai_use_relns == False:
-                    # airport4 fails with could not determine join condition between parent/child tables on relationship Airport.flights
-                    if each_line.startswith('    '):
-                        each_line = each_line.replace('    ', '    # ')
-                    else:  # sometimes it puts relns outside the class (so, outdented)
-                        each_line = '# ' + each_line
-                if 'sqlite:///system/genai/temp/model.sqlite':  # fix prior version
-                    each_line = each_line.replace('sqlite:///system/genai/temp/model.sqlite', 
-                                                'sqlite:///system/genai/temp/create_db_models.sqlite')
+                        6. Bad syntax on test data cals: see api_logic_server_cli/prototypes/manager/system/genai/examples/genai_demo/genai_demo_conversation_bad_decimal_2/genai_demo_conversation_002.response
+                            got: or DECIMAL('
+                            needed: or decimal.Decimal('0.00')
+                    '''
 
-                # logicbank fixes
-                if 'from logic_bank' in each_line:  # we do our own imports
-                    each_line = each_line.replace('from', '# from')
-                if 'LogicBank.activate' in each_line:
-                    each_line = each_line.replace('LogicBank.activate', '# LogicBank.activate')
-                
-                create_db_model_lines.append(each_line + '\n')
-            return create_db_model_lines
-    
-        def fix_model_lines(models, create_db_model_lines):
+                    # TODO - seeing several \\ in the response - should be \ (I think)
+                    if "= Table(" in each_line:  # tests/test_databases/ai-created/time_cards/time_card_kw_arg/genai.response
+                        log.debug(f'.. fix_and_write_model_file detects table - raise excp to trigger retry')
+                        self.post_error = "ChatGPT Response contains table (not class) definitions: " + each_line
+                    if 'sqlite:///' in each_line:  # must be sqlite:///system/genai/temp/create_db_models.sqlite
+                        current_url_rest = each_line.split('sqlite:///')[1]
+                        quote_type = "'"
+                        if '"' in current_url_rest:
+                            quote_type = '"'  # eg, tests/test_databases/ai-created/time_cards/time_card_decimal/genai.response
+                        current_url = current_url_rest.split(quote_type)[0]  
+                        proper_url = 'system/genai/temp/create_db_models.sqlite'
+                        each_line = each_line.replace(current_url, proper_url)
+                        if current_url != proper_url:
+                            log.debug(f'.. fixed sqlite url: {current_url} -> system/genai/temp/create_db_models.sqlite')
+                    if 'Decimal,' in each_line:  # SQLAlchemy import
+                        each_line = each_line.replace('Decimal,', 'DECIMAL,')
+                        # other Decimal bugs: see api_logic_server_cli/prototypes/manager/system/genai/reference/errors/chatgpt_decimal.txt
+                    if ', Decimal' in each_line:  # Cap'n K, at your service
+                        each_line = each_line.replace(', Decimal', ', DECIMAL')
+                    if 'rom decimal import Decimal' in each_line:
+                        each_line = each_line.replace('from decimal import Decimal', 'import decimal')
+                    if '=Decimal(' in each_line:
+                        each_line = each_line.replace('=Decimal(', '=decimal.Decimal(')
+                    if ' Decimal(' in each_line:
+                        each_line = each_line.replace(' Decimal(', ' decimal.Decimal(')
+                    if 'Column(Decimal)' in each_line:
+                        each_line = each_line.replace('Column(Decimal)', 'Column(DECIMAL)')
+                    if "DECIMAL('" in each_line:
+                        each_line = each_line.replace("DECIMAL('", "decimal.Decimal('")
+                    if 'end_time(datetime' in each_line:  # tests/test_databases/ai-created/time_cards/time_card_kw_arg/genai.response
+                        each_line = each_line.replace('end_time(datetime', 'end_time=datetime')
+                    if 'datetime.date.today' in each_line:
+                        each_line = each_line.replace('datetime.today', 'end_time=datetime')
+                    if indents_to_remove > 0:
+                        each_line = each_line[indents_to_remove:]
+                    if 'relationship(' in each_line and self.project.genai_use_relns == False:
+                        # airport4 fails with could not determine join condition between parent/child tables on relationship Airport.flights
+                        if each_line.startswith('    '):
+                            each_line = each_line.replace('    ', '    # ')
+                        else:  # sometimes it puts relns outside the class (so, outdented)
+                            each_line = '# ' + each_line
+                    if 'sqlite:///system/genai/temp/model.sqlite':  # fix prior version
+                        each_line = each_line.replace('sqlite:///system/genai/temp/model.sqlite', 
+                                                    'sqlite:///system/genai/temp/create_db_models.sqlite')
+
+                    # logicbank fixes
+                    if 'from logic_bank' in each_line:  # we do our own imports
+                        each_line = each_line.replace('from', '# from')
+                    if 'LogicBank.activate' in each_line:
+                        each_line = each_line.replace('LogicBank.activate', '# LogicBank.activate')
+                    
+                    create_db_model_lines.append(each_line + '\n')
+                return create_db_model_lines
+
+
             did_base = False
             for each_model in models:
                 model_lines = get_model_class_lines(model=each_model)
@@ -768,6 +774,8 @@ class GenAI(object):
                     each_fixed_line = each_fixed_line.replace('=datetime.date', '=date') 
                 if 'datetime.datetime.utcnow' in each_fixed_line:
                     each_fixed_line = each_fixed_line.replace('datetime.datetime.utcnow', 'datetime.now()') 
+                if 'datetime.date.today' in each_line:
+                    each_line = each_line.replace('datetime.date.today', 'datetime.today')
                 if 'engine = create_engine' in each_fixed_line:  # CBT sometimes has engine = create_engine, so do we!
                     each_fixed_line = each_fixed_line.replace('engine = create_engine', '# engine = create_engine')
                     check_for_row_name = False
@@ -810,7 +818,7 @@ class GenAI(object):
         models = self.response_dict.models
         
         # Usage inside the class
-        create_db_model_lines = fix_model_lines(models, create_db_model_lines)
+        create_db_model_lines = insert_model_lines(models, create_db_model_lines)
 
         with open(f'{self.project.from_model}', "w") as create_db_model_file:
             create_db_model_file.write("".join(create_db_model_lines))
