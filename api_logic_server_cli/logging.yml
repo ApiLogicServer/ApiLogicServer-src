@@ -48,7 +48,7 @@ loggers:
         propagate: no
 
     create_from_model.model_creation_services:   
-        level: DEBUG
+#        level: DEBUG
         handlers: [console]
         propagate: no
 
@@ -68,12 +68,12 @@ loggers:
         propagate: no
 
     genai:   
-        level: DEBUG
+#         level: DEBUG
         handlers: [console]
         propagate: no
 
 
     genai_logic_builder:   
-        level: DEBUG
+#         level: DEBUG
         handlers: [console]
         propagate: no
