@@ -19,3 +19,7 @@ Mage — Generate full-stack web apps in Wasp, React, Node.js and Prisma.
 
 Can we create PR for:
 GenAI-Logic - creates and runs database, api and web app from prompt, including logic
+
+models not Code
+it runs - all 3 tiers
+logic
