@@ -1,0 +1,21 @@
+https://github.com/jamesmurdza/awesome-ai-devtools?tab=readme-ov-file#app-generators
+
+
+Pico — End-to-end micro app generator with instant deployment.
+
+Literally anything — HTML and JavaScript web app generator.
+    Just the admin home page
+GPT Web App Generator — Generates a full-stack React/Node.js/Prisma/Wasp app from a short description.
+    Code to download; database?
+Make Real — Online canvas that can be used to generate HTML/JavaScript apps.
+    Screen painter, wants api key
+Marblism — Generate a SaaS boilerplate from a prompt.
+    It failed a few weeks back
+Glowbom — Generate apps with AI and export to multiple platforms.
+    Sketch
+Mage — Generate full-stack web apps in Wasp, React, Node.js and Prisma.
+    Seems same as GPT wag, above
+
+
+Can we create PR for:
+GenAI-Logic - creates and runs database, api and web app from prompt, including logic
