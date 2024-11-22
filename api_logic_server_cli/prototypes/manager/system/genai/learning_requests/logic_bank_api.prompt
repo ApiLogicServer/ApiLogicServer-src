@@ -72,7 +72,7 @@ class Rule:
 
         Args:
             validate: name of mapped <class>
-            as_condition: lambda, passed row (simple constraints).  Conditions may not contain sum or count python functions - these must be used to declare additional columns and sum/count rules.
+            as_condition: lambda, passed row (simple constraints).  All referenced columns must be part of the data model - create columns in the data model as required.  ALso, conditions may not contain sum or count python functions - these must be used to declare additional columns and sum/count rules.
             error_msg: string, with {row.attribute} replacements
             error_attributes: list of attributes
 

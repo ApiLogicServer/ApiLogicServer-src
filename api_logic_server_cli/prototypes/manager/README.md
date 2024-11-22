@@ -1,5 +1,5 @@
 ---
-version info: 0.8 (10/24/2024)
+version info: 0.9 (11/21/2024)
 ---
 ## Welcome to API Logic Server
 
@@ -200,7 +200,7 @@ als genai --project-name='genai_demo_conversation' --using=system/genai/examples
 
 <br>You can add new columns/tables, while keeping the prior model intact:
 
-```bash title="Iterate With Logic"
+```bash title='Iterate With Logic'
 als genai --project-name='genai_demo_iterative_logic' --using=system/genai/examples/genai_demo/genai_demo_iterative_logic
 # open Docs/db.dbml
 ```
@@ -229,6 +229,39 @@ als genai --using=system/genai/examples/genai_demo/genai_demo_informal.prompt
 ```bash title="Multi-Rule Logic"
 als genai --using=system/genai/examples/emp_depts/emp_dept.prompt
 ```
+</details>
+</br>
+
+<details markdown>
+
+<summary> You can ask AI to suggest logic (great way to learn!)</summary>
+
+<br>You can create a project, and ask GenAI for logic suggestions:
+
+```bash title='1. Create Project, without Rules'
+# 1. Create Project, without Rules
+als genai --project-name='genai_demo_no_logic' --using=system/genai/examples/genai_demo/genai_demo_no_logic.prompt
+```
+
+```bash title="2. Request Rule Suggestions"
+# 2. Request Rule Suggestions
+cd genai_demo_no_logic
+als genai-logic --suggest
+```
+
+You can review the suggestions in the `genai_demo_no_logic` project:
+
+ * See `docs/genai_demo_no_logic_004.prompt`
+ * And `docs/logic/logic_suggestions.response`
+
+
+```bash title="3. Now, (alter and) Implement the Rule Suggestions"
+# 3. Now, (alter and) Implement the Rule Suggestions
+cd ..
+als genai --project-name='genai_demo_with_logic' --using=genai_demo_no_logic/docs
+```
+
+
 </details>
 </br>
 
