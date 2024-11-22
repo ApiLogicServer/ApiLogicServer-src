@@ -185,6 +185,12 @@ class GenAILogic(object):
         rules = self.response_dict.rules
 
         logic_suggestion_file_name = self.project.project_directory_path.joinpath('docs/logic/logic_suggestions.response')
+        counter = 1
+        while logic_suggestion_file_name.exists():
+            response_file_name = f"logic_suggestions_{counter:03d}.response"
+            logic_suggestion_file_name = self.project.project_directory_path.joinpath(f'docs/logic/{response_file_name}')
+            counter += 1
+
         with open(logic_suggestion_file_name, "w") as response_file:
             json.dump(rules, response_file, indent=4)
         
@@ -257,19 +263,30 @@ class GenAILogic(object):
         return headers
     
     def get_manager_path(self) -> Path:
-        """ Checks cwd parent/grandparent for system/genai
+        """ Checks cwd, parent, and grandparent for system/genai
 
         * Possibly could add cli arg later
 
         Returns:
             Path: Manager path (contains system/genai)
-        """            
-        result_path = Path(os.getcwd()).parent
+        """
+        result_path = Path(os.getcwd())
         check_system_genai = result_path.joinpath('system/genai')
-        if not check_system_genai.exists():
-            result_path = result_path.parent
-            check_system_genai = result_path.joinpath('system/genai')
-            assert check_system_genai.exists(), f"Manager Directory not found: {check_system_genai}"
+        
+        if check_system_genai.exists():
+            return result_path
+        
+        result_path = result_path.parent
+        check_system_genai = result_path.joinpath('system/genai')
+        
+        if check_system_genai.exists():
+            return result_path
+        
+        result_path = result_path.parent
+        check_system_genai = result_path.joinpath('system/genai')
+        
+        assert check_system_genai.exists(), f"Manager Directory not found: {check_system_genai}"
+        
         return result_path
     
     def get_and_save_response_data(self, response, file) -> str:
@@ -288,9 +305,19 @@ class GenAILogic(object):
         response_data = response.json()['choices'][0]['message']['content']
         response_file_name = file.stem + '.response'
         response_file_path = self.project.project_directory_path.joinpath(f'docs/logic/{response_file_name}')
+        
+        log.error(f'.. response: {response_file_name} {response_file_path} { response_file_path.exists()}...'*20)
+        # Check if the file already exists and rename it if necessary
+        counter = 1
+        while response_file_path.exists():
+            response_file_name = f"{file.stem}_{counter:03d}.response"
+            response_file_path = self.project.project_directory_path.joinpath(f'docs/logic/{response_file_name}')
+            counter += 1
+        
         with open(response_file_path, "w") as model_file:  # save for debug
             model_file.write(response_data)
             file_name = model_file.name
+            
         log.debug(f'.. stored response: {response_file_path}')
         return response_data
 
