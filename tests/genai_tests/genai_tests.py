@@ -96,7 +96,7 @@ def run_command(cmd: str, msg: str = "", new_line: bool=False,
     :param show_output print command result
     :return: dict print(ret.stdout.decode())
     """
-
+    global test_names
     cmd_to_run = cmd
     if cmd_to_run.startswith('!cmd_venv'):
         cmd_to_run = cmd_to_run.replace('!cmd_venv &&', '')
@@ -126,7 +126,7 @@ def run_command(cmd: str, msg: str = "", new_line: bool=False,
         print(f'Formatted Traceback:\n{formatted_traceback}')
         print_byte_string("\n\n==> run_command Console Log:", result.stdout)
         print_byte_string("\n\n==> Error Log:", result.stderr)
-        raise
+        test_names.append( f" x - {msg}", 'FAILED')
     return result
 
 def find_valid_python_name() -> str:
