@@ -1,0 +1,120 @@
+Summary
+=======
+
+Non-Null-FK - add learning
+Restate-FK - investigate learning failure
+Unique-Key - add learning
+No-Python-Set-Functions - enhance learning to cover this
+No-Child-Role-Name - investigate
+
+
+
+1. Count the number of projects each user has.
+Rule.count(derive=User.project_count, as_count_of=Project, where=None)
+
+ok
+
+
+2. Ensure each project has a valid owner that exists in the User table.
+Rule.parent_check(validate=Project, error_msg="Project must have a valid owner")
+
+--> Error - do not create parent_checks.  Maybe instruct it to generate Non-Null-FK?
+
+
+3. Ensure each user has a unique email address.
+Rule.constraint(validate=User, as_condition=lambda row: row.email, error_msg="Email address must be unique")
+
+--> GPT Error - rule ok, but not what the description said.  Not much we can do, user must address...
+
+
+4. Count the number of projects each user has.
+Rule.count(derive=User.project_count, as_count_of=Project, where=lambda row: row.owner_id == User.id)
+
+--> Error - bad code.  We said not to Restate-FK, needs attention.
+
+
+5. Each project must have a valid owner that exists in the User table.
+Rule.parent_check(validate=Project, error_msg='Each project must have a valid owner.')
+
+Dup #2 - Non-Null-FK
+
+
+6. Each user must have a unique email address.
+Rule.constraint(validate=User, as_condition=lambda row: True, error_msg='Email must be unique.')
+
+--> Error - not a constraint.  Think we can instruct it to create Unique-Key, cannot address rule vs description.
+
+
+2.1. Ensure each user has a unique email address.
+Rule.constraint(validate=User,
+                    as_condition=lambda row: row.email in (other_user.email for other_user in session.query(User).all()),
+                    error_msg="Email address ({row.email}) is already taken.")
+
+--> Error - invalid constraint - can't do No-Python-Set-Functions (ala Python sum).  Teach avoid Python-In?
+
+
+2.2. Ensure each project has a valid owner.
+Rule.parent_check(validate=Project,
+                    error_msg="Project owner (user id: {row.owner_id}) does not exist in User table.")
+
+--> Dup of #2 - Non-Null-FK.
+
+
+2.3. Each user must have a unique email address.
+Rule.constraint(validate=User,
+                    as_condition=lambda row: row.email is not None,
+                    error_msg="Email must be unique for User." )
+
+--> Dup of #6 - Unique-Key.
+
+
+2.4. Each project must have a valid owner that exists in the User table.
+Rule.parent_check(validate=Project,
+                    error_msg="Project owner must exist in User table.")
+
+--> Dup of #2 - Non-Null-FK.
+
+
+2.5. Count the number of projects each user has.
+Rule.count(derive=User.project_count, as_count_of=Project,
+                    where=lambda row: row.owner_id == User.id)
+
+--> Dup of #4 - Restate-FK.
+
+2.6. Ensure that each user must have a unique email address.
+Rule.constraint(validate=User, as_condition=lambda row: row.email == unique_email, error_msg="Email address ({row.email}) already exists.")
+
+--> Dup of #6 - Unique-Key.
+
+
+2.7. Each project must have an owner that exists in the User table.
+Rule.parent_check(validate=Project, error_msg="Project owner must exist in the User table", enable=True)
+
+--> Dup of #2 - Non-Null-FK.
+
+
+2.8. Count the number of projects each user has.
+Rule.count(derive=User.project_count, as_count_of=Project, where=lambda row: row.owner_id == row.id)
+
+Dup of #4 - --> Restate-FK.
+
+
+2.9. Ensure each user has a unique email address.
+Rule.constraint(validate=User,
+                    as_condition=lambda row: row.email is not None,
+                    error_msg="Email address {row.email} is not unique!")
+
+--> Dup of #6 - Unique-Key.
+
+
+2.10. Ensure each project has a valid owner that exists in the User table.
+Rule.parent_check(validate=Project,
+                    error_msg="Project must have a valid owner.")
+
+--> Dup of #2 - Non-Null-FK.
+
+
+2.11. Count the number of projects each user has.
+Rule.count(derive=User.project_count, as_count_of=Project, child_role_name='owner')
+
+--> Error - No-Child-Role-Name (small risk here of ambiguous relns - not implemented).
