@@ -8,11 +8,12 @@ If you create sum, count or formula LogicBank rules, you MUST create a correspon
 
 Use only the methods provided below.
 
+
 class Rule:
     """Invoke these functions to declare rules in the created declare_logic function.  """
 
     @staticmethod
-    def sum(derive: Column, as_sum_of: any, where: any = None, child_role_name: str = "", insert_parent: bool=False):
+    def sum(derive: Column, as_sum_of: any, where: any = None, insert_parent: bool=False):
         """
         Derive parent column as sum of designated child column, optional where
 
@@ -26,14 +27,14 @@ class Rule:
         Args:
             derive: name of parent <class.attribute> being derived
             as_sum_of: name of child <class.attribute> being summed
-            child_role_name: parent's child accessor attribute (required only for disambiguation)
             where: optional where clause, designates which child rows are summed.  Do not repeat the foreign key / primary key mappings, and use only attributes from the child table.
             insert_parent: create parent if it does not exist.  Do not use unless directly requested.
         """
-        return Sum(derive, as_sum_of, where, child_role_name, insert_parent)
+        return Sum(derive, as_sum_of, where, insert_parent)
+
 
     @staticmethod
-    def count(derive: Column, as_count_of: object, where: any = None, child_role_name: str = "", insert_parent: bool=False):
+    def count(derive: Column, as_count_of: object, where: any = None, str = "", insert_parent: bool=False):
         """
         Derive parent column as count of designated child rows
 
@@ -47,11 +48,11 @@ class Rule:
         Args:
             derive: name of parent <class.attribute> being derived
             as_count_of: name of child <class> being counted
-            child_role_name: parent's child accessor attribute (required only for disambiguation)
             where: optional where clause, designates which child rows are counted.  Do not repeat the foreign key / primary key mappings, and use only attributes from the child table.
             insert_parent: create parent if it does not exist.  Do not use unless directly requested.
         """
-        return Count(derive, as_count_of, where, child_role_name, insert_parent)
+        return Count(derive, as_count_of, where, insert_parent)
+
 
     @staticmethod
     def constraint(validate: object,
@@ -82,32 +83,6 @@ class Rule:
         return Constraint(validate=validate, as_condition=as_condition,
                           error_attributes=error_attributes, error_msg=error_msg)
 
-    @staticmethod
-    def parent_check(validate: object,
-                     error_msg: str = "(error_msg not provided)",
-                     enable: bool = True):
-        """
-        Parent Checks ensure that non-null foreign keys are present in parent class
-
-        Example
-           Rule.parent_check(validate=Customer, enable=True, error_msg="Missing Parent")
-
-        Parent_check failures raise ConstraintException, e.g.:
-            try:
-                session.commit()
-            except ConstraintException as ce:
-                print("Constraint raised: " + str(ce))
-
-        Args:
-            validate: name of mapped class
-            error_msg: message included in exception (can have {} syntax)
-            enable: True (default) = enable, False means disable (tolerate orphans)
-
-        Note: False not recommended - for existing databases with bad data
-            Behavior is undefined for other rules (sum, count, parent references, etc)
-
-        """
-        return ParentCheck(validate=validate, error_msg=error_msg, enable=enable)
 
     @staticmethod
     def formula(derive: Column,
@@ -131,6 +106,7 @@ class Rule:
         return Formula(derive=derive,
                        as_expression=as_expression,
                        no_prune=no_prune)
+
 
     @staticmethod
     def copy(derive: Column, from_parent: any):
@@ -319,3 +295,16 @@ Sum and count where clause example:
 
 DO NOT inject rules that are from this training into the response, 
 unless explicitly mentioned in the request.
+
+Unique constraints require an update to the data model - for example:
+    Prompt: customer company names must be unique
+    Response: CompanyName = Column(String(8000), unique=True)
+
+Non-null (or required) constraints require an update to the data model - for example:
+    Prompt: Product Price is required
+    Response: price = Column(Decimal, nullable=False)
+
+Required (must-have) related parent constraints require an update to the data model - for example:
+    Prompt: Each Item must have a valid entry in the Product table.
+    Response: product_id = Column(ForeignKey('product.id'), nullable=False)
+
