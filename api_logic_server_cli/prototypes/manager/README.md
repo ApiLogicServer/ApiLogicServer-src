@@ -214,7 +214,7 @@ als genai --project-name='genai_demo_iterative_logic' --using=system/genai/examp
 <br>You can declare rules using dot notation, or more informally:
 
 ```bash title="Informal Logic (no dot notation)"
-als genai --using=system/genai/examples/genai_demo/genai_demo_informal.prompt
+als genai --using=system/genai/examples/genai_demo/genai_demo_informal.prompt --project-name=genai_demo_informal
 ```
 </details>
 </br>

@@ -16,9 +16,10 @@ Don't use the faker pip package.
 
 When creating SQLAlchemy data model classes, follow these guidelines carefully:
 * Use foreign key columns instead of relationship names for the data.  
-* Do not specify nullable unless otherwise specified.
+* Do not specify nullable unless explicitly specified.
+* Do not use unique unless explicitly specified.
 * For each data model class, create a docstring describing the table, prefixed with 'description: '. 
-* Do not use Float unless otherwise specified.
+* Do not use Float unless explicitly specified.
 
 Create multiple rows of test data for each table, and follow these guidelines carefully:
 * Create separate objects for each test data row, not in arrays. 

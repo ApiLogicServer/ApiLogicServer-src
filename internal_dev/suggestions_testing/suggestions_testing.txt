@@ -1,11 +1,17 @@
 Summary
 =======
 
-Non-Null-FK - add learning
+Done:
+* No-Parent-Checks - remove from learning
+* Non-Null
+* Unique-Key - add learning
+* No-Child-Role-Name - remove from learning
+
+Remaining:
+Non-Null-FK - added learning, but it's not working.  Unclear why.
 Restate-FK - investigate learning failure
-Unique-Key - add learning
 No-Python-Set-Functions - enhance learning to cover this
-No-Child-Role-Name - investigate
+
 
 
 
@@ -18,7 +24,8 @@ ok
 2. Ensure each project has a valid owner that exists in the User table.
 Rule.parent_check(validate=Project, error_msg="Project must have a valid owner")
 
---> Error - do not create parent_checks.  Maybe instruct it to generate Non-Null-FK?
+--> Error - do not create No-Parent-Checks.  
+--> Maybe instruct it to generate Non-Null-FK?
 
 
 3. Ensure each user has a unique email address.
