@@ -64,7 +64,7 @@ git clone https://github.com/ApiLogicServer/sra --depth=1
 git clone https://github.com/ApiLogicServer/webgenai
 cd webgenai
 git pull
-git checkout so_release
+# git checkout so_release
 cd ..
 
 if [ "$1" = "local" ]
@@ -76,6 +76,9 @@ set +x
 
 # /Users/val/dev/ApiLogicServer/ApiLogicServer-dev
 # sh docker/webgenie_docker/build_web_genie_local.sh local
+
+# docker run -it --rm --name webgenie -p 8282:80  --env-file ./../../webg-local/webg-config/web_genai.txt -v ./../../webg-local/webg-temp:/tmp apilogicserver/web_genai
+
 cd $SRC_DIR
 echo "\npwd: $(pwd)\n"
 echo "  (wg-temp formerly at: docker cp webgenie:/tmp ~/Desktop/wg-temp \n"
