@@ -1,6 +1,9 @@
-Kevin Meeks regards it as the gold standard
+Kevin Meeks (heavy duty CTO) regards it as the gold standard
      https://www.linkedin.com/in/kelvinmeeks/
+F500 looking to 100% low code, fire developers
 
 Low / No Code screen painter
 Uses Excel for bus logic, seems to driven from UI button: https://www.youtube.com/watch?v=Iac8qi68g90
+
+OpenAPI 2.0 (not swagger) - roadmap item (serveral days)
 
