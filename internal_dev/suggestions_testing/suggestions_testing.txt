@@ -11,8 +11,7 @@ Remaining:
 Non-Null-FK - added learning, but it's not working.  Unclear why.
 Restate-FK - investigate learning failure
 No-Python-Set-Functions - enhance learning to cover this
-
-
+No_Pruning - remove from training
 
 
 1. Count the number of projects each user has.
