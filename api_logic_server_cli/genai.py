@@ -844,11 +844,15 @@ class GenAI(object):
         test_data_lines.append(add_rows )  
         test_data_lines.append('session.commit()')
         test_data_lines.append('# end of test data\n\n')
+
+        test_data_lines_result = []
+        for line in test_data_lines:
+            test_data_lines_result += line.split('\n')
         
         with open(f'{self.project.from_model}', "a") as create_db_model_file:
-            create_db_model_file.write("try:\n    ")
-            create_db_model_file.write("\n    ".join(test_data_lines))
-            create_db_model_file.write("except Exception as exc:\n")
+            create_db_model_file.write("\ntry:\n    ")
+            create_db_model_file.write("\n    ".join(test_data_lines_result))
+            create_db_model_file.write("\nexcept Exception as exc:\n")
             create_db_model_file.write("    print(f'Test Data Error: {exc}')\n")
         
         log.debug(f'.. code for db creation and test data: {self.project.from_model}')
