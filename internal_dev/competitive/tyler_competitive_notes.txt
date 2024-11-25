@@ -1,0 +1,191 @@
+# Competitors and Players
+
+https://nocodeforge.io/
+This is a good site of a lot of new and featured AI Tools.
+
+https://githubnext.com/projects/github-spark
+GitHub Spark is an AI-powered tool for creating and sharing micro apps (“sparks”), which can be tailored to your exact needs and preferences, and are directly usable from your desktop and mobile devices. Without needing to write or deploy any code.  This is the most interesting - coming soon to a developer near you. (I have signed up for the technical preview) https://github.com/githubnext/copilot-workspace-user-manual/blob/main/changes.md 
+
+https://www.djangoproject.com/ (Open Source)
+Django is a high-level Python web framework that encourages rapid development and clean, pragmatic design. Built by experienced developers, it takes care of much of the hassle of web development, so you can focus on writing your app without needing to reinvent the wheel. It’s free and open source.
+$132,098.00 donated of US $200,000.00 goal for 2024
+
+https://hygraph.com/pricing 
+The Headless CMS that simplifies complexity for demanding digital projects and speeds up content velocity Hygraph compare with Strapi
+
+Strapi https://strapi.io/pricing-cloud saas
+The open-source headless CMS for developers that makes API creation easy, and supports your favorite frameworks. Customize and host your projects in the cloud or on your own servers.
+
+
+ODOO https://www.odoo.com/pricing 
+saas $484M - long time with flat revenue - took off 2 years ago with SaaS model
+
+Retool https://retool.com/pricing npm
+Seamlessly connect databases, build with elegant components, and customize with code. Accelerate mundane tasks, freeing up time for the work that matters most.
+
+RapidAPI https://rapidapi.com/products/pricing/
+Description: RapidAPI offers an API development platform with AI-powered code generation for endpoints, automatic documentation, and testing. It allows developers to design, build, and share APIs with ease.
+Features:
+AI-assisted API endpoint generation and documentation
+Built-in marketplace for publishing APIs
+Testing, monitoring, and analytics features
+Use Case: Ideal for developers looking to publish and monetize APIs or for those needing a robust API management tool.
+
+FastAPI https://fastapi.tiangolo.com/ open source MIT
+Description: FastAPI, combined with GitHub Copilot, allows for rapid API development using Python. It’s known for its high performance and type-based validation. Copilot aids in auto-generating endpoint logic, models, and documentation.
+Features:
+Automatically generates OpenAPI and JSON Schema for endpoints
+Supports async programming for fast execution
+Copilot offers code suggestions and testing integration
+Use Case: Perfect for Python developers building high-performance REST APIs.
+
+Apigee API Management (by Google) https://cloud.google.com/apigee/ 
+Description: Apigee provides a comprehensive API management platform with AI-assisted design and monitoring. It facilitates the creation, deployment, and management of APIs with tools to ensure security and scalability.
+Features:
+AI-powered tools for API security, scaling, and analytics
+Automated generation of OpenAPI specs and policies
+Supports microservices orchestration and deployment
+Use Case: Best for enterprises needing to manage large API ecosystems with detailed monitoring and scaling needs.
+
+# Generative AI tools for API microservices are often designed to enable developers to integrate AI capabilities like text generation, image creation, and code assistance directly into applications. Here are some of the top generative AI tools that offer robust APIs for microservices:
+
+1. OpenAI API
+Core AI Models: Offers models like GPT-4 for text generation, Codex for code generation, and DALL·E for image creation.
+Features:
+Easy-to-integrate API for a wide range of use cases (chatbots, content creation, and more).
+Supports fine-tuning to build custom generative models.
+Provides support for conversational AI, Q&A systems, and multi-modal outputs.
+Ideal for: Applications requiring natural language understanding, text generation, or automated content workflows.
+
+2. Anthropic’s Claude API
+Core AI Models: Claude, focused on dialogue-based AI with high safety and accuracy.
+Features:
+Designed to integrate smoothly with conversational microservices, with a focus on safe outputs.
+Offers both real-time and batch API calls for different conversational contexts.
+Works well for chatbot services, customer support systems, and other dialogue-based applications.
+Ideal for: Building AI-powered microservices for customer service, knowledge management, or FAQ systems.
+
+3. Google Vertex AI API
+Core AI Models: Offers models like PaLM and Imagen for text and image generation.
+Features:
+A unified API that supports text, image, and multi-modal generations.
+Deep integration with Google Cloud infrastructure for seamless microservice deployment.
+Includes tools for model fine-tuning, training, and scalability.
+Ideal for: Microservices that require generative AI with Google Cloud integration and support for large-scale deployments.
+
+4. Hugging Face Inference API
+Core AI Models: Hosts thousands of open-source models, including transformers for text and Stable Diffusion for images.
+Features:
+Provides a wide array of generative AI models, including GPT, BERT, and more specialized models.
+Flexible deployment options like hosted APIs or on-premise using Hugging Face’s Inference Endpoints.
+Pre-built models or custom models trained on the Hugging Face platform.
+deal for: AI microservices needing flexible, open-source solutions across NLP, vision, and other AI tasks.
+
+
+5. Azure OpenAI Service
+Core AI Models: GPT-4, Codex, and DALL·E, deployed through Microsoft Azure.
+Features:
+Designed for enterprise-grade deployment with Azure’s security and compliance.
+Offers seamless integration with other Azure services, such as Azure Functions and Kubernetes.
+Includes features for role-based access, version control, and deployment across microservices.
+Ideal for: Building scalable, secure, and compliant generative AI microservices in the Azure cloud ecosystem.
+
+6. Cohere API
+Core AI Models: NLP models focused on large-scale text generation, retrieval, and classification tasks.
+Features:
+Provides language models that excel in text generation, embeddings, and retrieval-augmented generation.
+Simple RESTful API, making it easy to build generative AI-based microservices for NLP tasks like chatbots, summarization, and content creation.
+Ideal for: Language-focused microservices like text summarization, document analysis, or conversational AI.
+
+
+7. Stability AI API (Stable Diffusion)
+Core AI Models: Stable Diffusion models for generating images from text prompts.
+	Features:
+Customizable image generation with model fine-tuning and parameter adjustments.
+API endpoints designed to scale image generation for web services and mobile apps.
+Ideal for: Image-generation microservices, creative tools, or dynamic content applications.
+
+8. IBM Watson AI APIs
+Core AI Models: Watson Language, Watson Vision, Watson Speech to Text, etc.
+Features:
+Offers a comprehensive suite of AI models, including generative models for text and language processing.
+ APIs are highly customizable and support enterprise-level deployment, with robust documentation and developer tools.
+IIdeal for: Building generative AI microservices that require natural language understanding and processing capabilities in enterprise environments.
+
+These tools are built for developers seeking to create scalable, efficient, and intelligent microservices that leverage generative AI capabilities. Let me know if you want more details about a specific tool or API!
+
+# GitHub projects 
+Some that actually generate usable product here are some tested that actually work:
+
+1. kyaukyuai/gpt-all-star    using FastAPI
+AI-powered code generation tool for scratch development of web applications with a team collaboration of autonomous AI agents. This is a research-project, and its primary value is to explore the possibility of autonomous AI agents.
+
+2. Significant-Gravitas/AutoGPT
+AutoGPT is a powerful platform that allows you to create, deploy, and manage continuous AI agents that automate complex workflows.
+run-llama/llama-agents
+Llama Deploy (formerly llama-agents) is an async-first framework for deploying, scaling, and productionizing agentic multi-service systems based on workflows from llama_index. With Llama Deploy, you can build any number of workflows in llama_index and then run them as services, accessible through a HTTP API by a user interface or other services part of your system.
+aider is AI pair programming in your terminal | aider
+Aider lets you pair program with LLMs, to edit code in your local git repository. Start a new project or work with an existing git repo. Aider works best with GPT-4o & Claude 3.5 Sonnet and can connect to almost any LLM.
+
+3. https://github.com/princeton-nlp/SWE-agent
+SWE-agent turns LMs (e.g. GPT-4) into software engineering agents that can resolve issues in real GitHub repositories and more.
+
+4. https://www.crewai.com/
+Streamline workflows across industries with powerful AI agents. Build and deploy automated workflows using any LLM and cloud platform.
+
+
+5. https://github.com/Chainlit/chainlit
+Build production-ready Conversational AI applications in minutes, not weeks ⚡️
+Chainlit is an open-source async Python framework which allows developers to build scalable Conversational AI or agentic applications.
+
+6. https://github.com/All-Hands-AI/OpenHands
+Welcome to OpenHands (formerly OpenDevin), a platform for software development agents powered by AI.
+OpenHands agents can do anything a human developer can: modify code, run commands, browse the web, call APIs, and yes—even copy code snippets from StackOverflow.
+
+7. https://github.com/OpenBMB/AgentVerse
+AgentVerse is designed to facilitate the deployment of multiple LLM-based agents in various applications. AgentVerse primarily provides two frameworks: task-solving and simulation.
+Task-solving: This framework assembles multiple agents as an automatic multi-agent system (AgentVerse-Tasksolving, Multi-agent as system) to collaboratively accomplish the corresponding tasks. Applications: software development system, consulting system, etc.
+
+8. https://github.com/OpenBMB/XAgent  uses FastAPI
+XAgent is an open-source experimental Large Language Model (LLM) driven autonomous agent that can automatically solve various tasks. It is designed to be a general-purpose agent that can be applied to a wide range of tasks. XAgent is still in its early stages, and we are working hard to improve it.
+🏆 Our goal is to create a super-intelligent agent that can solve any given task!
+We welcome diverse forms of collaborations, including full-time and part-time roles and more. If you are interested in the frontiers of agents and want to join us in realizing true autonomous agents
+
+9. https://github.com/OpenBMB/ChatDev
+ChatDev stands as a virtual software company that operates through various intelligent agents holding different roles, including Chief Executive Officer , Chief Product Officer , Chief Technology Officer , Programmer , Reviewer , Tester , Art designer . These agents form a multi-agent organizational structure and are united by a mission to "revolutionize the digital world through programming." The agents within ChatDev collaborate by participating in specialized functional seminars, including tasks such as designing, coding, testing and documenting.
+The primary objective of ChatDev is to offer an easy-to-use, highly customizable and extendable framework, which is based on large language models (LLMs) and serves as an ideal scenario for studying and understanding collective intelligence
+
+
+10. https://github.com/geekan/MetaGPT
+Assign different roles to GPTs to form a collaborative entity for complex tasks. <<< Looks Interesting
+
+11. https://github.com/frdel/agent-zero
+Personal and organic AI framework
+Agent Zero is not a predefined agentic framework. It is designed to be dynamic, organically growing, and learning as you use it.
+Agent Zero is fully transparent, readable, comprehensible, customizable and interactive.
+Agent Zero uses the computer as a tool to accomplish its (your) tasks.
+
+
+
+Some other Low Code contenders
+Flutterflow https://app.flutterflow.io/create-acc...
+Draftbit: https://try.draftbit.com/a779ulwk35gm
+Glide: https://join.glideapps.com/ivjc4xj7qngx
+Adalo: https://www.adalo.com/
+BravoStudio: https://www.bravostudio.app/
+Thunkable: https://thunkable.com/
+GoodBarber: https://www.goodbarber.com/
+
+
+Bubble (webapp builder) - https://bubble.pxf.io/LXWEjj  << Looks Interesting
+Best for: Startups, entrepreneurs, and small businesses focused on web apps.
+Features: Bubble provides a comprehensive visual editor that allows you to create complex web applications without code. It supports APIs, database setup, and front-end design all in one platform.
+Pros: Powerful for creating custom web applications; highly flexible and versatile; good for MVPs and prototypes.
+Cons: Limited mobile app support; can be challenging to scale for larger applications.
+
+
+Webflow (website/webapp builder) - https://webflow.grsm.io/7wlbazltg0by
+AppGyver - part of SAP https://www.appgyver.com/community 
+Airtable (databases) - https://airtable.com/invite/r/656Trp0Y
+Make (automation) - https://www.make.com/en/register?pc=n...
+Hubspot (CRM) - https://www.hubspot.com/ https://www.hubspot.com/pricing/marketing/enterprise?hubs_content=www.hubspot.com%2F&hubs_content-cta=nav-pricing&term=annual 
