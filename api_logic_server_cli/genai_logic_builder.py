@@ -17,6 +17,8 @@ from dotmap import DotMap
 from natsort import natsorted
 import glob
 
+K_data_model_prompt = "Use SQLAlchemy to create"
+
 log = logging.getLogger(__name__)
 
 class GenAILogic(object):
@@ -55,10 +57,9 @@ class GenAILogic(object):
         self.file_name_prefix = ""
 
         if suggest:
-            self.suggest_logic()
+            self.suggest_logic()                  # suggest logic for prompt
         else:
-            logic_files = self.get_logic_files()  # get logic files (typically from project)
-
+            logic_files = self.get_logic_files()  # rebuild rules from docs/logic/*.prompt
             for each_file in logic_files:
                 with open(each_file, 'r') as file:
                     log.debug(f'.. genai_logic_builder processes: {os.path.basename(each_file)}')
@@ -94,14 +95,33 @@ class GenAILogic(object):
     def get_learnings_and_data_model(self) -> List[Dict[str, str]]:
         """ Get prompts from the docs dir (so CPT knows model, learnings)
 
-        0 = 'you are', 1 = 'rules api', 2 = 'create_db_models.py', 3 = 'response'
+        Most often, adding logic to new project, which looks like:
 
-        So, skip 2
+        0 = 'you are', 1 = 'create_db_models.py', 2 = 'response (data model)'
 
         Returns:
             dict[]: [ {role: (system | user) }: { content: user-prompt-or-system-response } ]
 
         """
+
+        def get_learning_requests() -> List [ Dict[str, str]]:
+            """ Get learning requests from cwd/system/genai/learning_requests
+
+            Returns:
+                list: learning_requests dicts {"role": "user", "content": learning_request_lines}
+            """
+
+            learning_requests : List[ Dict[str, str] ] = []  # learning -> prompt/response conversation to be sent to ChatGPT
+            request_files_dir_path = self.manager_path.joinpath(f'system/genai/learning_requests')
+            if request_files_dir_path.exists():
+                # loop through files in request_files_dir, and append to prompt_messages
+                for root, dirs, files in os.walk(request_files_dir_path):
+                    for file in files:
+                        if file.endswith(".prompt"):
+                            with open(request_files_dir_path.joinpath(file), "r") as learnings:
+                                learning_request_lines = learnings.read()
+                            learning_requests.append( {"role": "user", "content": learning_request_lines})
+            return learning_requests  # TODO - what if no learning requests?
 
         prompt_messages : List[ Dict[str, str] ] = []  # prompt/response conversation to be sent to ChatGPT
         # FIXME - dump dup -- prompt_messages.append( {"role": "system", "content": "You are a helpful assistant."})
@@ -127,7 +147,7 @@ class GenAILogic(object):
                     role = 'system'
                 if prompt.startswith('Use SQLAlchemy to'):  # CPT takes a ~ 20 secs for this prompt - skip it
                     log.debug(f'.. genai_logic_builder[{file_str}] ignores:   {os.path.basename(each_file)} - {prompt[:30]}...')
-                else:
+                else:  # TODO: address iteration > 1, where *multiple data models* exist
                     if '"models"' in prompt:  # just get the models portion (save 8 secs)
                         prompt_dict = json.loads(prompt)
                         prompt = json.dumps(prompt_dict['models'])
@@ -136,16 +156,10 @@ class GenAILogic(object):
             else:
                 log.debug(f'.. .. genai_logic_builder ignores: {os.path.basename(each_file)}')
         self.next_file_name = stem[0:len(stem)-3] + str(1 + file_number).zfill(3)
-        pass
-                        
-        # prompt_messages.extend(learning_requests)  # if any, prepend learning requests (logicbank api etc)
-        '''  model is in the docs (presumption - it has not changed)
-        with open(self.project.project_directory_path.joinpath('database/models.py'), 'r') as file:
-            data_model = file.read()
-        data_model_prompt = f"Here is the data model:\n{data_model}"
-        prompt_messages.append( {"role": "user", "content": data_model_prompt})
-        '''
 
+        learnings = get_learning_requests()  # call method without instance?
+        prompt_messages.extend(learnings)
+                        
         return prompt_messages      
     
     def suggest_logic(self):
@@ -153,7 +167,7 @@ class GenAILogic(object):
         """
 
         def get_rule_prompt_from_response(rules: DotMap) -> List[str]:
-            """ Get rule prompt from structured json response
+            """ Get rule prompt from structured json response -- description
             Returns:
                 List[str]: rule_prompt
             """
@@ -164,7 +178,7 @@ class GenAILogic(object):
     
         start_time = time.time()
         with open(f'{self.manager_path}/system/genai/prompt_inserts/logic_suggestions.prompt', 'r') as file:
-            suggest_logic = file.read()
+            suggest_logic = file.read()  # "Suggest Logic"
         self.messages.append({"role": "user", "content": suggest_logic})
         debug_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")
         client = OpenAI(api_key=os.getenv("APILOGICSERVER_CHATGPT_APIKEY"))
@@ -187,6 +201,10 @@ class GenAILogic(object):
         with open(logic_suggestion_file_name, "w") as response_file:
             json.dump(rules, response_file, indent=4)
         
+        logic_suggestion_file_name = self.project.project_directory_path.joinpath('docs/logic/logic_suggestions.prompt')
+        with open(logic_suggestion_file_name, "w") as prompt_file:
+            json.dump(self.messages, prompt_file, indent=4)
+
         prompt_file_name = self.file_name_prefix + f"{self.next_file_name}.prompt" 
         rule_list = get_rule_prompt_from_response(rules)
         rule_str = "\n".join(rule_list)
@@ -282,7 +300,7 @@ class GenAILogic(object):
         assert check_system_genai.exists(), f"Manager Directory not found: {check_system_genai}"
         
         return result_path
-        
+    
     def get_and_save_response_data(self, response, file) -> str:
         """ Checks return code, saves response to file, returns response_data
         Returns:
