@@ -24,7 +24,7 @@ log = logging.getLogger(__name__)
 K_LogicBankOff = "LBX"
 ''' LBX Disable Logic (for demos) '''
 K_LogicBankTraining = "Here is the simplified API for LogicBank"
-''' Idenitfy whether conversation contains LB training '''
+''' Identify whether conversation contains LB training '''
 
 class Rule(BaseModel):
     name: str
