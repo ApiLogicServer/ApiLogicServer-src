@@ -365,7 +365,7 @@ if Config.do_genai_test_genai_demo_conversation:
     test_name = f'{test_folder_name}/genai_test_genai_demo_conversation'
     test_note = 'rename Customer / add Addresses, add SalesRep'
     test_names.append( (test_name, test_note) )
-    prompt_path = install_api_logic_server_path.joinpath('system/genai/examples/genai_demo/genai_demo_conversation')
+    prompt_path = install_api_logic_server_path.joinpath('system/genai/examples/genai_demo/genai_demo_iteration')
     assert prompt_path.exists() , f'{test_name} error: prompt path not found: {str(prompt_path)}'
     do_test_genai_cmd = f'{set_venv} && als genai --project-name={test_name} --using={prompt_path}'
     result_genai = run_command(do_test_genai_cmd,
@@ -506,7 +506,7 @@ if Config.do_students_add_logic:
     assert genai_conv.exists() , f'do_test_iso error: genai_conv path not found: {str(genai_conv)}'
     result_genai = run_command(f'{set_venv} && als genai --project-name={test_name} --using={genai_conv}',
         cwd=create_in,
-        msg=f'\nTest iso')
+        msg=f'\nstudents_add_logic')
     pass  # also tests conversations without presets
 
 
@@ -517,7 +517,7 @@ if Config.do_students_add_informal_logic:
     assert genai_conv.exists() , f'do_test_iso error: genai_conv path not found: {str(genai_conv)}'
     result_genai = run_command(f'{set_venv} && als genai --project-name={test_name} --using={genai_conv}',
         cwd=create_in,
-        msg=f'\nTest iso')
+        msg=f'\nstudents_add_informal_logic')
     pass  # also tests conversations without presets
 
 
