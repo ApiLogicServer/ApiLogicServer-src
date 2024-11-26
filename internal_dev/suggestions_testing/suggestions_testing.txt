@@ -19,6 +19,10 @@ The Data Model had almost all columms nullable, DESPITE explicit prompt to contr
         order_date = Column(Date, nullable=False)
 
 
+Genai tests - 11/25 partial failures
+    * conversation - Product.unit_price invalid columms
+    * genai_demo - CR
+
 1. Count the number of projects each user has.
 Rule.count(derive=User.project_count, as_count_of=Project, where=None)
 
