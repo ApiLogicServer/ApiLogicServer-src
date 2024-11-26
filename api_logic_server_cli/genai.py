@@ -23,11 +23,13 @@ log = logging.getLogger(__name__)
 
 K_LogicBankOff = "LBX"
 ''' LBX Disable Logic (for demos) '''
+K_LogicBankTraining = "Here is the simplified API for LogicBank"
+''' Idenitfy whether conversation contains LB training '''
 
 class Rule(BaseModel):
     name: str
     description: str
-    use_case: str
+    requirement: str
     entity: str # the entity being constrained or derived
     code: str # logicbank rule code
     
@@ -86,103 +88,10 @@ class GenAI(object):
 
         self.project = project  # als project info (cli args etc)
 
-    def __init_old__(self, project: Project, command: str = "create_db_models"):
-        """ 
-
-        The key argument is `--using`
-        * It can be a file, dir (conversation) or text argument.
-        * It's "stem" denotes the project name to be created at cwd
-        * `self.project.genai_using` (not used by WebGenAI)
-
-        The (rarely used) `--repaired_response` --> `self.project.genai_repaired_response`
-        * is for retry from corrected response
-        * `--using` is required to get the project name, to be created at cwd
-
-        __init__() is the main driver (work directory is <manager>/system/genai/temp/)
-        
-        1. run ChatGPT to create system/genai/temp/chatgpt_original.response, using...
-        2. get_prompt_messages() - get self.messages[] from file, dir (conversation) or text argument
-        3. Compute create_db_models
-            a. Usually call chatGPT to get response, save to system/genai/temp/chatgpt_original.response
-            b. If --gen-using-file, read response from file        
-        4. self.get_logic() - saves prompt logic as comments for insertion into model (4.3)
-        5. fix_and_write_model_file()
-        6. returns to main driver (api_logic_server#create_project()), which 
-            1. runs create_db_from_model.create_db(self)
-            2. proceeds to create project
-            3. calls this.insert_logic_into_created_project() - merge logic into declare_logic.py
-
-        developer then can use CoPilot to create logic (Rule.) from the prompt (or just code completion)
-
-        see key_module_map() for key methods
-
-        https://platform.openai.com/finetune/ftjob-2i1wkh4t4l855NKCovJeHExs?filter=all
-        """        
-
-        self.project = project  # als project info (cli args etc)
-        log.info(f'\nGenAI [{self.project.project_name}] creating microservice from: {self.project.genai_using}')
-        if self.project.genai_repaired_response != '':
-            log.info(f'..     retry from [repaired] response file: {self.project.genai_repaired_response}')
-        
-        self.project.from_model = f'system/genai/temp/create_db_models.py' # we always write the model to this file
-        self.ensure_system_dir_exists()  # ~ manager, so we can write to system/genai/temp
-        self.delete_temp_files()
-        self.post_error = ""
-        """ eg, if response contains table defs, save_prompt_messages_to_system_genai_temp_project raises an exception to trigger retry """
-        self.prompt = ""
-        """ `--using` - can come from file or text argument """
-        self.logic_enabled = True
-        """ K_LogicBankOff is used for demos, where we don't want to create logic """
-        self.messages = self.get_prompt_messages()  # compute self.messages, from file, dir or text argument
-
-        if self.project.genai_repaired_response == '':  # normal path - get response from ChatGPT
-            try:
-                api_version = f'{self.project.genai_version}'  # eg, "gpt-4o"
-                start_time = time.time()
-                db_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")
-                client = OpenAI(api_key=os.getenv("APILOGICSERVER_CHATGPT_APIKEY"))
-                model = api_version
-                if model == "":  # default from CLI is '', meaning fall back to env variable or system default...
-                    model = os.getenv("APILOGICSERVER_CHATGPT_MODEL")
-                    if model is None or model == "*":  # system default chatgpt model
-                        model = "gpt-4o-2024-08-06"
-                self.resolved_model = model
-                completion = client.beta.chat.completions.parse(
-                    messages=self.messages, response_format=WGResult,
-                    # temperature=self.project.genai_temperature,  values .1 and .7 made students / charges fail
-                    model=model  # for own model, use "ft:gpt-4o-2024-08-06:personal:logicbank:ARY904vS" 
-                )
-                log.debug(f'ChatGPT ({str(int(time.time() - start_time))} secs) - response at: system/genai/temp/chatgpt_original.response')
-                
-                data = completion.choices[0].message.content
-                response_dict = json.loads(data)
-                self.get_and_save_raw_response_data(completion=completion, response_dict=response_dict)
-                # print(json.dumps(json.loads(data), indent=4))
-                pass
-            except Exception as inst:
-                log.error(f"\n\nError: ChatGPT call failed\n{inst}\n\n")
-                sys.exit('ChatGPT call failed - please see https://apilogicserver.github.io/Docs/WebGenAI-CLI/#configuration')
-        else: # for retry from corrected response... eg system/genai/temp/chatgpt_retry.response
-            self.resolved_model = "(n/a: model not used for repaired response)"
-            log.debug(f'\nUsing [corrected] response from: {self.project.genai_repaired_response}')
-            with open(self.project.genai_repaired_response, 'r') as response_file:
-                response_dict = json.load(response_file)
-
-        self.response_dict = DotMap(response_dict)
-        """ the raw response data from ChatGPT which will be fixed & saved create_db_models.py """
-
-        self.get_valid_project_name()
-
-        self.fix_and_write_model_file() # write create_db_models.py for db creation, & logic 
-        self.save_prompt_messages_to_system_genai_temp_project()  # save prompts, response and models.py
-        if project.project_name_last_node == 'genai_demo_conversation':
-            debug_string = "good breakpoint - check create_db_models.py"
-        pass # if we've set self.post_error, we'll raise an exception to trigger retry
-        pass # return to api_logic_server.ProjectRun to create db/project from create_db_models.py
 
     def create_db_models(self):
         """ 
-        Called by api_logic_server, to 
+        Main Driver for GenAI - called by api_logic_server, to 
         * run ChatGPT (or respone file) to create_db_models.py - models & test data
         * which then used to create db, for normal project creation.
 
@@ -228,7 +137,8 @@ class GenAI(object):
         self.prompt = ""
         """ `--using` - can come from file or text argument """
         self.logic_enabled = True
-        """ K_LogicBankOff is used for demos, where we don't want to create logic """
+        """ K_LogicBankOff is used for initial creation, where we don't want un-reviewed logic """
+
         self.messages = self.get_prompt_messages()  # compute self.messages, from file, dir or text argument
 
         if self.project.genai_repaired_response == '':  # normal path - get response from ChatGPT
@@ -248,7 +158,7 @@ class GenAI(object):
                     # temperature=self.project.genai_temperature,  values .1 and .7 made students / charges fail
                     model=model  # for own model, use "ft:gpt-4o-2024-08-06:personal:logicbank:ARY904vS" 
                 )
-                log.debug(f'ChatGPT ({str(int(time.time() - start_time))} secs) - response at: system/genai/temp/chatgpt_original.response')
+                log.info(f'ChatGPT ({str(int(time.time() - start_time))} secs) - response at: system/genai/temp/chatgpt_original.response')
                 
                 data = completion.choices[0].message.content
                 response_dict = json.loads(data)
@@ -286,23 +196,6 @@ class GenAI(object):
         if self.project.genai_repaired_response == '':  # clean up unless retrying from chatgpt_original.response
             Path('system/genai/temp/chatgpt_original.response').unlink(missing_ok=True)
             Path('system/genai/temp/chatgpt_retry.response').unlink(missing_ok=True)
-    
-    def create_presets(self, prompt_messages: List[Dict[str, str]]):
-        """ Create presets - you are a data modelling expert, and logicbank api etc """
-        pass
-
-        you_are = "You are a data modelling expert and python software architect who expands on user input ideas. You create data models with at least 4 tables"
-        if self.project.genai_tables > 0:
-            you_are = you_are.replace('4', str(self.project.genai_tables))
-        starting_message = {"role": "user", "content": you_are}
-        prompt_messages.append( starting_message)
-
-        learning_requests = self.get_learning_requests()
-        prompt_messages.extend(learning_requests)  # if any, prepend learning requests (logicbank api etc)
-        log.debug(f'get_prompt_messages()')
-        log.debug(f'.. conv[000] presets: {starting_message}')
-        log.debug(f'.. conv[001] presets: {learning_requests[0]["content"][:30]}...')
-        return len(learning_requests)
 
     def chatgpt_excp(self):
         # https://apilogicserver.github.io/Docs/WebGenAI-CLI/
@@ -345,21 +238,35 @@ class GenAI(object):
                 with open(f'{self.project.genai_using}', 'r') as file:
                     prompt = file.read()
                 prompt_messages.append( {"role": "user", "content": prompt})
-        elif Path(self.project.genai_using).is_dir():  # conversation from directory
+        elif Path(self.project.genai_using).is_file():  # from file (initial creation)
+            prompt_messages.append( self.get_prompt_you_are() )
+            with open(f'{self.project.genai_using}', 'r') as file:
+                log.debug(f'.. from file: {self.project.genai_using}')
+                raw_prompt = file.read()
+            prompt = self.get_prompt__with_inserts(raw_prompt=raw_prompt, for_iteration=False)  # insert db-specific logic
+            self.logic_enabled = False
+            if 'LogicBank' in prompt:  # if prompt has logic, we need to insert the training
+                prompt_messages.extend( self.get_prompt_learning_requests())
+                self.logic_enabled = True
+            if prompt.startswith('You are a '):  # if it's a preset, we need to insert the prompt
+                prompt_messages[0]["content"] = prompt  # TODO - verify no longer needed
+            prompt_messages.append( {"role": "user", "content": prompt})
+        elif Path(self.project.genai_using).is_dir():  # from directory (conversation / iteration)
             response_count = 0
             request_count = 0
             learning_requests_len = 0
             prompt = ""
             for each_file in sorted(Path(self.project.genai_using).iterdir()):
                 if each_file.is_file() and each_file.suffix == '.prompt' or each_file.suffix == '.response':
+                    # 0 is R/'you are', 1 R/'request', 2 is 'response', 3 is iteration
                     with open(each_file, 'r') as file:
                         prompt = file.read()
                     role = "user"
-                    if response_count == 0 and request_count == 0:
-                        if not prompt.startswith('You are a '):  # add *missing* presets
-                            learning_requests_len = self.create_presets(prompt_messages)
+                    if response_count == 0 and request_count == 0 and each_file.suffix == '.prompt':
+                        if not prompt.startswith('You are a '):  # add *missing* 'you are''
+                            prompt_you_are = self.get_prompt_you_are(prompt_messages)
+                            prompt_messages.append(prompt_you_are)
                             request_count = 1
-                            response_count = learning_requests_len
                     file_num = request_count + response_count
                     file_str = str(file_num).zfill(3)
                     log.debug(f'.. conv[{file_str}] processes: {os.path.basename(each_file)} - {prompt[:30]}...')
@@ -368,10 +275,16 @@ class GenAI(object):
                         response_count += 1
                     else:
                         request_count += 1      # rebuild response with *all* tables
-                        if request_count > 3:   # Run Config: genai AUTO DEALERSHIP CONVERSATION
-                            # 0 is 'you are', 1 is 'learning requests', 2 is 'request', 3 is 'response'
+                        if request_count >= 3:   # Run Config: genai AUTO DEALERSHIP CONVERSATION
                             if 'updating the prior response' not in prompt:
-                                prompt = self.get_prompt__with_inserts(raw_prompt=prompt, for_iteration=True)                  
+                                prompt = self.get_prompt__with_inserts(raw_prompt=prompt, for_iteration=True)
+                            if request_count == 3:
+                                if prompt.startswith(K_LogicBankTraining):
+                                    pass 
+                                else:
+                                    learnings = self.get_learning_requests()
+                                    prompt_messages.extend(learnings)
+                                    request_count += len(learnings)           
                     prompt_messages.append( {"role": role, "content": prompt})
                 else:
                     log.debug(f'.. .. conv ignores: {os.path.basename(each_file)}')
@@ -379,18 +292,33 @@ class GenAI(object):
                 log.debug(f".. no response files - applying insert to prompt")
                 prompt = self.get_prompt__with_inserts(raw_prompt=prompt)  # insert db-specific logic
                 prompt_messages[1 + learning_requests_len]["content"] = prompt
-        else:                                   # prompt from text (add system/genai/pre_post.prompt)
-            # open and read the project description in natural language
-            learning_requests_len = self.create_presets(prompt_messages)
-            with open(f'{self.project.genai_using}', 'r') as file:
-                log.debug(f'.. from file: {self.project.genai_using}')
-                raw_prompt = file.read()
-            prompt = self.get_prompt__with_inserts(raw_prompt=raw_prompt)  # insert db-specific logic
-            prompt_messages.append( {"role": "user", "content": prompt})
-
 
         # log.debug(f'.. prompt_messages: {prompt_messages}')  # heaps of output
         return prompt_messages      
+    
+    def get_prompt_you_are(self) -> Dict[str, str]:
+        """   Create presets - you are a data modelling expert, and logicbank api etc
+
+        Args:
+            prompt_messages (List[Dict[str, str]]): updated array of messages to be sent to ChatGPT
+        """
+        pass
+
+        you_are = "You are a data modelling expert and python software architect who expands on user input ideas. You create data models with at least 4 tables"
+        if self.project.genai_tables > 0:
+            you_are = you_are.replace('4', str(self.project.genai_tables))
+        return {"role": "user", "content": you_are}
+
+
+    def get_prompt_learning_requests(self) -> List[Dict[str, str]]:
+        """ Create presets - learning requests
+
+        Returns:
+            learning_messages (List[Dict[str, str]]): logic learning
+        """
+        return self.get_learning_requests()
+        prompt_messages.extend(learning_requests)
+        log.debug(f'.. prompt_learning_requests')
 
     def get_learning_requests(self) -> List [ Dict[str, str]]:
         """ Get learning requests from cwd/system/genai/learning_requests
@@ -412,8 +340,18 @@ class GenAI(object):
         return learning_requests  # TODO - what if no learning requests?
     
     def get_prompt__with_inserts(self, raw_prompt: str, for_iteration: bool = False) -> str:
-        """ prompt-engineering: insert db-specific logic into prompt 
-            raw_prompt: the prompt from file or text argument
+        """ prompt-engineering:
+            1. insert db-specific logic into prompt 
+            2. insert iteration prompt     (if for_iteration)
+            3. insert logic_inserts.prompt ('1 line: Use LogicBank to create declare_logic()...')
+            4. designates prompt-format    (response_format.prompt)
+
+        Args:
+            raw_prompt (str): the prompt from file or text argument
+            for_iteration (bool, optional): Inserts 'Update the prior response...' Defaults to False.
+
+        Returns:
+            str: the engineered prompt with inserts
         """
         prompt_result = raw_prompt
         prompt_inserts = ''
@@ -463,7 +401,7 @@ class GenAI(object):
                     log.debug(f'.. inserted: {each_line}')
                     prompt_eng_logic_file_name = f'system/genai/prompt_inserts/logic_inserts.prompt'
                     with open(prompt_eng_logic_file_name, 'r') as file:
-                        prompt_logic = file.read()  # eg, Use SQLAlchemy to...
+                        prompt_logic = file.read()  # eg, Use LogicBank to create declare_logic()...
                     prompt_lines[prompt_line_number] = prompt_logic
                     do_logic = False
                 prompt_line_number += 1
@@ -703,8 +641,8 @@ class GenAI(object):
                         each_line = each_line.replace('=Decimal(', '=decimal.Decimal(')
                     if ' Decimal(' in each_line:
                         each_line = each_line.replace(' Decimal(', ' decimal.Decimal(')
-                    if 'Column(Decimal)' in each_line:
-                        each_line = each_line.replace('Column(Decimal)', 'Column(DECIMAL)')
+                    if 'Column(Decimal' in each_line:
+                        each_line = each_line.replace('Column(Decimal', 'Column(DECIMAL')
                     if "DECIMAL('" in each_line:
                         each_line = each_line.replace("DECIMAL('", "decimal.Decimal('")
                     if 'end_time(datetime' in each_line:  # tests/test_databases/ai-created/time_cards/time_card_kw_arg/genai.response
@@ -749,6 +687,9 @@ class GenAI(object):
                     create_db_model_lines.append(each_fixed_line)
                 
                 model_code = "\n".join(model_lines)
+                if '\\n' in model_code:
+                    log.debug(f'.. fix_and_write_model_file detects \\n - attempting fix')
+                    model_code = model_code.replace('\\n', '\n')
                 try:
                     ast.parse(model_code)
                 except SyntaxError as exc:

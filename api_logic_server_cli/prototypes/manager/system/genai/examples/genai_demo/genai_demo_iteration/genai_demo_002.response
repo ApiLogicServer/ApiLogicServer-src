@@ -1,0 +1,102 @@
+{
+    "models": [
+        {
+            "classname": "Customer",
+            "code": "from sqlalchemy import Column, Integer, String\nfrom sqlalchemy.ext.declarative import declarative_base\n\nBase = declarative_base()\n\nclass Customer(Base):\n    \"\"\"\n    description: This table holds customer details.\n    \"\"\"\n    __tablename__ = 'customer'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String, nullable=True)\n    email = Column(String, nullable=True)\n",
+            "sqlite_create": "CREATE TABLE customer (id INTEGER NOT NULL, name VARCHAR, email VARCHAR, PRIMARY KEY (id))",
+            "description": "This table holds customer details.",
+            "name": "Customer"
+        },
+        {
+            "classname": "Order",
+            "code": "from sqlalchemy import Column, Integer, String, Date, ForeignKey\nfrom sqlalchemy.ext.declarative import declarative_base\nfrom datetime import date\n\nBase = declarative_base()\n\nclass Order(Base):\n    \"\"\"\n    description: This table contains order details with notes.\n    \"\"\"\n    __tablename__ = 'order'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    customer_id = Column(Integer, ForeignKey('customer.id'), nullable=False)\n    order_date = Column(Date, nullable=True)\n    notes = Column(String, nullable=True)\n",
+            "sqlite_create": "CREATE TABLE \"order\" (id INTEGER NOT NULL, customer_id INTEGER NOT NULL, order_date DATE, notes VARCHAR, PRIMARY KEY (id), FOREIGN KEY(customer_id) REFERENCES customer(id))",
+            "description": "This table contains order details with notes.",
+            "name": "Order"
+        },
+        {
+            "classname": "Item",
+            "code": "from sqlalchemy import Column, Integer, ForeignKey\nfrom sqlalchemy.ext.declarative import declarative_base\n\nBase = declarative_base()\n\nclass Item(Base):\n    \"\"\"\n    description: This table links orders to products for each item on an order.\n    \"\"\"\n    __tablename__ = 'item'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    order_id = Column(Integer, ForeignKey('order.id'), nullable=False)\n    product_id = Column(Integer, ForeignKey('product.id'), nullable=False)\n\n",
+            "sqlite_create": "CREATE TABLE item (id INTEGER NOT NULL, order_id INTEGER NOT NULL, product_id INTEGER NOT NULL, PRIMARY KEY (id), FOREIGN KEY(order_id) REFERENCES \"order\"(id), FOREIGN KEY(product_id) REFERENCES product(id))",
+            "description": "This table links orders to products for each item on an order.",
+            "name": "Item"
+        },
+        {
+            "classname": "Product",
+            "code": "from sqlalchemy import Column, Integer, String, Float\nfrom sqlalchemy.ext.declarative import declarative_base\n\nBase = declarative_base()\n\nclass Product(Base):\n    \"\"\"\n    description: This table contains product information.\n    \"\"\"\n    __tablename__ = 'product'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String, nullable=True)\n    price = Column(Float, nullable=True)\n",
+            "sqlite_create": "CREATE TABLE product (id INTEGER NOT NULL, name VARCHAR, price FLOAT, PRIMARY KEY (id))",
+            "description": "This table contains product information.",
+            "name": "Product"
+        }
+    ],
+    "rules": [],
+    "test_data": "from datetime import date\n\n# Customer Test Data\ncustomer1 = Customer(name=\"John Doe\", email=\"john.doe@example.com\")\ncustomer2 = Customer(name=\"Jane Smith\", email=\"jane.smith@example.com\")\ncustomer3 = Customer(name=\"Alice Johnson\", email=\"alice.johnson@example.com\")\ncustomer4 = Customer(name=\"Bob Brown\", email=\"bob.brown@example.com\")\n\n# Product Test Data\nproduct1 = Product(name=\"Laptop\", price=999.99)\nproduct2 = Product(name=\"Smartphone\", price=499.99)\nproduct3 = Product(name=\"Tablet\", price=299.99)\nproduct4 = Product(name=\"Headphones\", price=89.99)\n\n# Order Test Data\norder1 = Order(customer_id=1, order_date=date(2023, 1, 10), notes=\"First order.\")\norder2 = Order(customer_id=2, order_date=date(2023, 2, 15), notes=\"In a rush.\")\norder3 = Order(customer_id=3, order_date=date(2023, 3, 20), notes=\"Regular customer.\")\norder4 = Order(customer_id=4, order_date=date(2023, 4, 25), notes=\"Check delivery.\")\n\n# Item Test Data\nitem1 = Item(order_id=1, product_id=2)\nitem2 = Item(order_id=1, product_id=3)\nitem3 = Item(order_id=2, product_id=1)\nitem4 = Item(order_id=3, product_id=4)",
+    "test_data_rows": [
+        {
+            "test_data_row_variable": "customer1",
+            "code": "customer1 = Customer(name=\"John Doe\", email=\"john.doe@example.com\")"
+        },
+        {
+            "test_data_row_variable": "customer2",
+            "code": "customer2 = Customer(name=\"Jane Smith\", email=\"jane.smith@example.com\")"
+        },
+        {
+            "test_data_row_variable": "customer3",
+            "code": "customer3 = Customer(name=\"Alice Johnson\", email=\"alice.johnson@example.com\")"
+        },
+        {
+            "test_data_row_variable": "customer4",
+            "code": "customer4 = Customer(name=\"Bob Brown\", email=\"bob.brown@example.com\")"
+        },
+        {
+            "test_data_row_variable": "product1",
+            "code": "product1 = Product(name=\"Laptop\", price=999.99)"
+        },
+        {
+            "test_data_row_variable": "product2",
+            "code": "product2 = Product(name=\"Smartphone\", price=499.99)"
+        },
+        {
+            "test_data_row_variable": "product3",
+            "code": "product3 = Product(name=\"Tablet\", price=299.99)"
+        },
+        {
+            "test_data_row_variable": "product4",
+            "code": "product4 = Product(name=\"Headphones\", price=89.99)"
+        },
+        {
+            "test_data_row_variable": "order1",
+            "code": "order1 = Order(customer_id=1, order_date=date(2023, 1, 10), notes=\"First order.\")"
+        },
+        {
+            "test_data_row_variable": "order2",
+            "code": "order2 = Order(customer_id=2, order_date=date(2023, 2, 15), notes=\"In a rush.\")"
+        },
+        {
+            "test_data_row_variable": "order3",
+            "code": "order3 = Order(customer_id=3, order_date=date(2023, 3, 20), notes=\"Regular customer.\")"
+        },
+        {
+            "test_data_row_variable": "order4",
+            "code": "order4 = Order(customer_id=4, order_date=date(2023, 4, 25), notes=\"Check delivery.\")"
+        },
+        {
+            "test_data_row_variable": "item1",
+            "code": "item1 = Item(order_id=1, product_id=2)"
+        },
+        {
+            "test_data_row_variable": "item2",
+            "code": "item2 = Item(order_id=1, product_id=3)"
+        },
+        {
+            "test_data_row_variable": "item3",
+            "code": "item3 = Item(order_id=2, product_id=1)"
+        },
+        {
+            "test_data_row_variable": "item4",
+            "code": "item4 = Item(order_id=3, product_id=4)"
+        }
+    ],
+    "test_data_sqlite": "INSERT INTO customer (name, email) VALUES ('John Doe', 'john.doe@example.com');\nINSERT INTO customer (name, email) VALUES ('Jane Smith', 'jane.smith@example.com');\nINSERT INTO customer (name, email) VALUES ('Alice Johnson', 'alice.johnson@example.com');\nINSERT INTO customer (name, email) VALUES ('Bob Brown', 'bob.brown@example.com');\n\nINSERT INTO product (name, price) VALUES ('Laptop', 999.99);\nINSERT INTO product (name, price) VALUES ('Smartphone', 499.99);\nINSERT INTO product (name, price) VALUES ('Tablet', 299.99);\nINSERT INTO product (name, price) VALUES ('Headphones', 89.99);\n\nINSERT INTO \"order\" (customer_id, order_date, notes) VALUES (1, '2023-01-10', 'First order.');\nINSERT INTO \"order\" (customer_id, order_date, notes) VALUES (2, '2023-02-15', 'In a rush.');\nINSERT INTO \"order\" (customer_id, order_date, notes) VALUES (3, '2023-03-20', 'Regular customer.');\nINSERT INTO \"order\" (customer_id, order_date, notes) VALUES (4, '2023-04-25', 'Check delivery.');\n\nINSERT INTO item (order_id, product_id) VALUES (1, 2);\nINSERT INTO item (order_id, product_id) VALUES (1, 3);\nINSERT INTO item (order_id, product_id) VALUES (2, 1);\nINSERT INTO item (order_id, product_id) VALUES (3, 4);",
+    "name": "OrderManagementSystem"
+}

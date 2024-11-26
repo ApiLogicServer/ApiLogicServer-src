@@ -1,4 +1,0 @@
-* rename Customer to CustomerAccount
-* each CustomerAccount can have multiple Addresses
-* Add a SalesRep table
-* each order has a salesrep

@@ -219,7 +219,7 @@
             }
         },
         {
-            "name": "Internal - GenAI smoke test - genai_demo",
+            "name": "Internal - GenAI smoke test - genai_demo (with informal logic)",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
@@ -232,13 +232,14 @@
                 "APILOGICSERVER_DEBUG": "False",
                 "OPT_LOCKING": "optional"},
             "justMyCode": false,
-            "args": [ "genai", "--retries=-1",
+            "args": [ "genai", "--retries=-1", "--project-name=genai_demo",
                 "--using=${workspaceFolder}/system/genai/examples/genai_demo/genai_demo.prompt"],
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "  - GenAI informal logic - genai_demo",
+            "name": "  - GenAI - no logic",
+//  typical start - just the model
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
@@ -251,8 +252,68 @@
                 "APILOGICSERVER_DEBUG": "False",
                 "OPT_LOCKING": "optional"},
             "justMyCode": false,
-            "args": [ "genai", "--retries=-1",
-                "--using=${workspaceFolder}/system/genai/examples/genai_demo/genai_demo_informal.prompt"],
+            "args": [ "genai", "--retries=3", "--project-name=genai_demo_no_logic",
+                "--using=${workspaceFolder}/system/genai/examples/genai_demo/genai_demo_no_logic.prompt"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - GenAI - suggest logic",
+// typical next step - suggest logic
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}/genai_demo_no_logic",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": ["genai-logic", "--suggest",
+                ],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - GenAI - iterate with suggested logic",
+// typical next step - activate suggested logic created above
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "genai", "--project-name=genai_demo_with_suggested_logic",
+                "--using=${workspaceFolder}/genai_demo_no_logic/docs"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - GenAI iteration - model and logic",
+// typical step - iterate the model, now with logic
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "genai", "--retries=3", "--project-name=genai_demo_with_logic",
+                "--using=${workspaceFolder}/system/genai/examples/genai_demo/genai_demo_iteration"],
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
         },
