@@ -264,8 +264,7 @@ class GenAI(object):
                     role = "user"
                     if response_count == 0 and request_count == 0 and each_file.suffix == '.prompt':
                         if not prompt.startswith('You are a '):  # add *missing* 'you are''
-                            prompt_you_are = self.get_prompt_you_are(prompt_messages)
-                            prompt_messages.append(prompt_you_are)
+                            prompt_messages.append( self.get_prompt_you_are() )
                             request_count = 1
                     file_num = request_count + response_count
                     file_str = str(file_num).zfill(3)
