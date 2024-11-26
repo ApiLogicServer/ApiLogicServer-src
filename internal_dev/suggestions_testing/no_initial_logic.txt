@@ -1,0 +1,40 @@
+We agree initial create should be logic-free...
+    Logic should be prompted or reviewed, never activate by GenAI.
+
+With Version 14.00.03, 
+    Create Manager
+    Execute Run Configs:
+        - GenAI - no logic
+        - GenAI - suggest logic
+        - GenAI - iterate with suggested logic
+
+
+
+In my case, the resultant logic was good, but see Issues, below.
+
+    # Ensure each customer's email is unique across the customers table to avoid duplication.
+    # Error - this is not a constraint
+    Rule.constraint(validate=Customer, 
+                 as_condition=lambda row: row.email.is_unique(),
+                 error_msg="Customer email ({row.email}) already exists.")
+
+    # Ensure order date is not in the future.
+    Rule.constraint(validate=Order, 
+                 as_condition=lambda row: row.order_date <= date.today(),
+                 error_msg="Order date ({row.order_date}) cannot be in the future.")
+
+    # Ensure prices are positive integers for valid product pricing.
+    Rule.constraint(validate=Product, 
+                 as_condition=lambda row: row.price > 0,
+                 error_msg="Product price ({row.price}) must be a positive integer.")
+
+    # Ensure item quantity for each order is a positive integer.
+    Rule.constraint(validate=Item, 
+                 as_condition=lambda row: row.quantity > 0,
+                 error_msg="Item quantity ({row.quantity}) must be a positive integer.")
+
+
+Issues:
+    - first rule is *not* a constraint, but data model only.  (Data Model did have unique)
+    - The Data Model had almost all columms nullable, DESPITE explicit prompt to contrary
+        order_date = Column(Date, nullable=False)

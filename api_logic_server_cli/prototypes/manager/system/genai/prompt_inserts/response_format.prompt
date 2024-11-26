@@ -2,7 +2,7 @@
 class Rule(BaseModel):
     name: str
     description: str
-    use_case: str
+    requirement: str
     entity: str # the entity being constrained or derived
     code: str # logicbank rule code
     

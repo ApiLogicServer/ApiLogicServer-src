@@ -182,26 +182,19 @@ als genai --using=genai_demo.prompt --repaired-response=system/genai/examples/ge
 </br>
 
 
-<details markdown>
-
-<summary> You can iterate</summary>
+<summary> You can iterate the data model and logic</summary>
 
 <br>You can add new columns/tables, while keeping the prior model intact:
 
-```bash title="Iterate"
-als genai --project-name='genai_demo_conversation' --using=system/genai/examples/genai_demo/genai_demo_conversation
+```bash title='Iterate Without Logic'
+# Step 1 - create without logic
+als genai --project-name='genai_demo_no_logic' --using=system/genai/examples/genai_demo/genai_demo_no_logic.prompt
 # open Docs/db.dbml
 ```
-</details>
-</br>
-<details markdown>
-
-<summary> You can iterate with logic</summary>
-
-<br>You can add new columns/tables, while keeping the prior model intact:
 
 ```bash title='Iterate With Logic'
-als genai --project-name='genai_demo_iterative_logic' --using=system/genai/examples/genai_demo/genai_demo_iterative_logic
+# Iterate with data model and logic
+als genai --project-name='genai_demo_with_logic' --using=system/genai/examples/genai_demo/genai_demo_iteration
 # open Docs/db.dbml
 ```
 </details>

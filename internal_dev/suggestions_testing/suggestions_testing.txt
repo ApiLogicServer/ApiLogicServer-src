@@ -13,6 +13,11 @@ Restate-FK - investigate learning failure
 No-Python-Set-Functions - enhance learning to cover this
 No_Pruning - remove from training
 
+Remaining from no_initial_logic:
+First rule is *not* a constraint, but data model only.  (Data Model did have unique)
+The Data Model had almost all columms nullable, DESPITE explicit prompt to contrary
+        order_date = Column(Date, nullable=False)
+
 
 1. Count the number of projects each user has.
 Rule.count(derive=User.project_count, as_count_of=Project, where=None)
