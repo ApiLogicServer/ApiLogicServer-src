@@ -54,8 +54,6 @@ class GenAILogic(object):
         self.file_number = 0
         self.file_name_prefix = ""
 
-        self.mananager_path = self.get_manager_path()
-
         if suggest:
             self.suggest_logic()
         else:
@@ -165,7 +163,7 @@ class GenAILogic(object):
             return rule_prompt
     
         start_time = time.time()
-        with open(f'{self.mananager_path}/system/genai/prompt_inserts/logic_suggestions.prompt', 'r') as file:
+        with open(f'{self.manager_path}/system/genai/prompt_inserts/logic_suggestions.prompt', 'r') as file:
             suggest_logic = file.read()
         self.messages.append({"role": "user", "content": suggest_logic})
         debug_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")
@@ -192,7 +190,7 @@ class GenAILogic(object):
         prompt_file_name = self.file_name_prefix + f"{self.next_file_name}.prompt" 
         rule_list = get_rule_prompt_from_response(rules)
         rule_str = "\n".join(rule_list)
-        with open(f'{self.mananager_path}/system/genai/prompt_inserts/iteration.prompt', 'r') as file:
+        with open(f'{self.manager_path}/system/genai/prompt_inserts/iteration.prompt', 'r') as file:
             iteration_prompt = file.read()
         rule_str_prompt = iteration_prompt + '\n\n' + rule_str
         with open(self.project.project_directory_path.joinpath(f'docs/{prompt_file_name}'), "w") as prompt_file:
@@ -257,22 +255,34 @@ class GenAILogic(object):
         }
         return headers
     
-    def get_manager_path(self) -> Path:
-        """ Checks cwd parent/grandparent for system/genai
+    @property
+    def manager_path(self) -> Path:
+        """ Checks cwd, parent, and grandparent for system/genai
 
         * Possibly could add cli arg later
 
         Returns:
             Path: Manager path (contains system/genai)
-        """            
-        result_path = Path(os.getcwd()).parent
+        """
+        result_path = Path(os.getcwd())
         check_system_genai = result_path.joinpath('system/genai')
-        if not check_system_genai.exists():
-            result_path = result_path.parent
-            check_system_genai = result_path.joinpath('system/genai')
-            assert check_system_genai.exists(), f"Manager Directory not found: {check_system_genai}"
+        
+        if check_system_genai.exists():
+            return result_path
+        
+        result_path = result_path.parent
+        check_system_genai = result_path.joinpath('system/genai')
+        
+        if check_system_genai.exists():
+            return result_path
+        
+        result_path = result_path.parent
+        check_system_genai = result_path.joinpath('system/genai')
+        
+        assert check_system_genai.exists(), f"Manager Directory not found: {check_system_genai}"
+        
         return result_path
-    
+        
     def get_and_save_response_data(self, response, file) -> str:
         """ Checks return code, saves response to file, returns response_data
         Returns:
