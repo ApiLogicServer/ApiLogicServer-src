@@ -29,7 +29,7 @@ K_LogicBankTraining = "Here is the simplified API for LogicBank"
 class Rule(BaseModel):
     name: str
     description: str
-    requirement: str
+    use_case: str # groups rules by use case or requirement (eg, "Enforce Budget")
     entity: str # the entity being constrained or derived
     code: str # logicbank rule code
     
