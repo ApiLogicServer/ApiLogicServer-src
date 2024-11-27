@@ -24,7 +24,7 @@ See how **Microservice Automation** creates and runs a microservice - a multi-pa
 
 * Then, customize in your IDE with Python and **Logic Automation:** spreadsheet-like rules
 
-[![GenAI Automation](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/sample-ai/copilot/genai-automation-video.png)](https://www.youtube.com/watch?v=LSh7mqGiT0k&t=5s "Microservice Automation")
+[![GenAI Automation](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/sample-ai/copilot/genai-automation-video.png)](https://www.youtube.com/watch?v=7I33Fa9Ulos "Microservice Automation")
 
 </details>
 
