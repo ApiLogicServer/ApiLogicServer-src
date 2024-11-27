@@ -862,7 +862,7 @@ class GenAI(object):
     
     def get_and_save_raw_response_data(self, completion: object, response_dict: dict):
         """
-        Write prompt --> system/genai/temp/chatgpt_original/retry.response
+        Write response_dict --> system/genai/temp/chatgpt_original/retry.response
         """
         
         '''  TODO - is exception used instead of return_code...

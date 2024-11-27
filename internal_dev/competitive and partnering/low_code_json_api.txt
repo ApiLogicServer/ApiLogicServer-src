@@ -1,0 +1,18 @@
+A possible vision:
+    Kickstart with GenAI - get reqmts, db, apilogicserver
+    Custom Apps (etc) with LC using logic-aware API
+    Joint ECA dev (actions to post messages, email, process-complete...)
+
+DashJoin
+    Andreas Eberhart
+
+Linx
+    App Integrtion - Messages and Timers in Linx Server
+
+Directual - Visual Programming (flow charts - loops, if/else etc)
+    JSON Parsing: https://www.directual.com/blog/what-is-json-and-how-to-use-it-with-no-code-tools
+
+Interplay - Visual Programming
+    https://www.youtube.com/watch?v=KGNq_Xipt8k
+    
+AirTable
