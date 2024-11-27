@@ -20,7 +20,10 @@ When creating SQLAlchemy data model classes, follow these guidelines carefully:
 * Do not use unique unless explicitly specified.
 * For each data model class, create a docstring describing the table, prefixed with 'description: '. 
 * Do not use Float unless explicitly specified.
-* Do not generate imports, connect statements or engines - just the class.
+* Generate the classes ONLY.
+* Do NOT generate imports.
+* Do NOT generate connect statements.
+* Do NOT generate engines.
 
 Create multiple rows of test data for each table, and follow these guidelines carefully:
 * Create separate objects for each test data row, not in arrays. 
