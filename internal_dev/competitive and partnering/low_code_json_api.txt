@@ -14,5 +14,37 @@ Directual - Visual Programming (flow charts - loops, if/else etc)
 
 Interplay - Visual Programming
     https://www.youtube.com/watch?v=KGNq_Xipt8k
-    
+
 AirTable
+    database design, formulas via spreadsheet metaphor
+    are all tables their db?  evidently - provides import/export to MySQL
+
+Clappia
+
+Jet Admin: https://docs.jetadmin.io/user-guide/integrations/rest-api
+
+
+ChatGPT lists...
+
+1.	Budibase: An open-source low-code platform that enables the creation of business applications and workflows. It supports various data sources, including REST APIs, facilitating integration with JSON:API services. 
+        
+￼
+
+2.	ToolJet: An open-source platform designed for building business applications. It connects to databases, cloud storage, GraphQL, and API endpoints, allowing interaction with JSON:API-compliant services. ￼
+        detail screen building from API
+        https://www.youtube.com/watch?v=vA8dZt1BY6c
+
+
+3.	APITable: An API-oriented low-code platform for building collaborative apps. It provides RESTful API capabilities, enabling integration with JSON:API services. ￼
+        connects to MySQL using 3rd party adapter
+
+
+4.	NocoDB: An open-source platform that transforms databases into smart spreadsheets. It offers REST API support, which can be configured to interact with JSON:API-compliant services. ￼
+        connects to MySQL (etc) and REST...
+
+5.	Appian: A low-code platform with a visual interface and pre-built development modules. It enables businesses to create apps and automations using little or no code and includes API management features that can be configured to work with JSON:API services. ￼
+        gui expression builder - functions for screens, ?
+
+6. Softr: multi-db support w/ ad hoc relns -- it focuses on FE..Berlin
+        https://www.youtube.com/watch?v=uLbxWihKqBk&t=14s
+        Artur Mkrtchyan
