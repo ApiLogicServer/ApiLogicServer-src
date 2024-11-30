@@ -1,0 +1,37 @@
+[
+    {
+        "name": "Sum of Unpaid Orders",
+        "description": "The sum of unpaid orders is derived from the total amount of orders that have not been shipped.",
+        "use_case": "Customer balance reflects unpaid orders total",
+        "entity": "Customer",
+        "code": "Rule.sum(derive=Customer.unpaid_orders_sum, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None)"
+    },
+    {
+        "name": "Total Amount for Order Items",
+        "description": "Calculates the total amount for item quantities and makes it available in the order.",
+        "use_case": "Accurate order amounts before shipping",
+        "entity": "Order",
+        "code": "Rule.sum(derive=Order.items_sum, as_sum_of=Item.amount)"
+    },
+    {
+        "name": "Item Amount Calculation",
+        "description": "Calculates item amount based on quantity and unit price.",
+        "use_case": "Calculate total amount for each item ordered",
+        "entity": "Item",
+        "code": "Rule.formula(derive=Item.amount, as_expression=lambda row: row.quantity * row.unit_price)"
+    },
+    {
+        "name": "Copy Product Unit Price to Item",
+        "description": "Each item's unit price is taken from the product price.",
+        "use_case": "Maintain consistency of item pricing based on product",
+        "entity": "Item",
+        "code": "Rule.copy(derive=Item.unit_price, from_parent=Product.unit_price)"
+    },
+    {
+        "name": "Credit Limit Constraint",
+        "description": "Ensures customer balance does not exceed credit limit.",
+        "use_case": "Prevents financial discrepancies",
+        "entity": "Customer",
+        "code": "Rule.constraint(validate=Customer,\n                    as_condition=lambda row: row.balance <= row.credit_limit,\n                    error_msg=\"Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})\")"
+    }
+]

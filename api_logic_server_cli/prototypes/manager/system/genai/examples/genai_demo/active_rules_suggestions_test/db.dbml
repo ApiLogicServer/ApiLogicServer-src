@@ -1,0 +1,50 @@
+// Copy this text, paste to https://dbdiagram.io/d
+// Or, https://databasediagram.com/app
+// Or, view in VSCode with extension: "DBML Live Preview"
+
+Project DBML {
+  Note: '''
+Customer: Table for storing customer information.
+Item: Table for storing items in each order.
+Order: Table for storing orders made by customers.
+Product: Table for storing product information.
+'''
+}
+
+Table Customer {
+    id INTEGER [primary key]
+    name VARCHAR 
+    balance INTEGER 
+    credit_limit INTEGER 
+    }
+
+Table Item {
+    id INTEGER [primary key]
+    order_id INTEGER 
+    product_id INTEGER 
+    quantity INTEGER 
+    unit_price INTEGER 
+    amount INTEGER 
+    }
+
+Table Order {
+    id INTEGER [primary key]
+    customer_id INTEGER 
+    date_created DATETIME 
+    date_shipped DATETIME 
+    amount_total INTEGER 
+    notes VARCHAR 
+    }
+
+Table Product {
+    id INTEGER [primary key]
+    name VARCHAR 
+    unit_price INTEGER 
+    }
+
+
+
+// Relationships
+    Ref: Item.(order_id) < Order.(id)
+    Ref: Item.(product_id) < Product.(id)
+    Ref: Order.(customer_id) < Customer.(id)

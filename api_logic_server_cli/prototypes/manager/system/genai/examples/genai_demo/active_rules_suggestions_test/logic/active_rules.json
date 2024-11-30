@@ -1,0 +1,14 @@
+[
+    {
+        "code": "Rule.constraint(validate=Customer,\n                    as_condition=lambda row: row.balance <= row.credit_limit,\n                    error_msg=\"Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})\")",
+        "description": "Ensure Customer balance does not exceed credit limit",
+        "name": "Check Credit Constraint",
+        "use_case": "Ensure that the customer's balance is less than or equal to the credit limit"
+    },
+    {
+        "code": "Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None)",
+        "description": "Sum of order amounts where not yet shipped",
+        "name": "Calculate Unpaid Orders",
+        "use_case": "Calculate the total unpaid orders for a customer"
+    }
+]
