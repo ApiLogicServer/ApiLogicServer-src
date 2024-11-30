@@ -181,6 +181,7 @@ als genai --using=genai_demo.prompt --repaired-response=system/genai/examples/ge
 </details>
 </br>
 
+<details markdown>
 
 <summary> You can iterate the data model and logic</summary>
 

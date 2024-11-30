@@ -3,7 +3,7 @@
 * Add a SalesRep table
 * each order has a salesrep
 
-Enforce the Check Credit requirement:
+Enforce the requirement: Check Credit
 1. CustomerAccount.balance <= credit_limit
 2. CustomerAccount.balance = Sum(Order.amount_total where date_shipped is null)
 3. Order.amount_total = Sum(Item.amount)
