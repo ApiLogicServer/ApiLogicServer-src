@@ -258,7 +258,7 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "  - GenAI - suggest logic",
+            "name": "  - GenAI - no logic -> suggest logic",
 // typical next step - suggest logic
             "type": "debugpy",
             "request": "launch",
@@ -278,7 +278,7 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "  - GenAI - iterate with suggested logic",
+            "name": "  - GenAI - suggest logic -> iterate with suggested logic",
 // typical next step - activate suggested logic created above
             "type": "debugpy",
             "request": "launch",
@@ -314,6 +314,26 @@
             "justMyCode": false,
             "args": [ "genai", "--retries=3", "--project-name=genai_demo_with_logic",
                 "--using=${workspaceFolder}/system/genai/examples/genai_demo/genai_demo_iteration"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - GenAI iteration - GenAI - no logic -> accept edited suggestions (logic/active_rules.json)",
+// iterate from WebG suggestions -- GenAI - no logic, then remove suffix from ...genai_demo/genai_demo_iteration/logic/active_rules_webg.json
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "genai", "--retries=3", "--project-name=genai_demo_with_logic",
+                "--using=${workspaceFolder}/system/genai/examples/genai_demo/active_rules_suggestions_test"],
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
         },

@@ -230,28 +230,9 @@ class GenAI(object):
 
         """
 
-        prompt_messages : List[ Dict[str, str] ] = []  # prompt/response conversation to be sent to ChatGPT
-        
-        if self.project.genai_repaired_response != '':       # if exists, get prompt (just for inserting into declare_logic.py)
-            prompt = ""  # we are not calling ChatGPT, just getting the prompt to scan for logic
-            if Path(self.project.genai_using).is_file():  # eg, launch.json for airport_4 is just a name
-                with open(f'{self.project.genai_using}', 'r') as file:
-                    prompt = file.read()
-                prompt_messages.append( {"role": "user", "content": prompt})
-        elif Path(self.project.genai_using).is_file():  # from file (initial creation)
-            prompt_messages.append( self.get_prompt_you_are() )
-            with open(f'{self.project.genai_using}', 'r') as file:
-                log.debug(f'.. from file: {self.project.genai_using}')
-                raw_prompt = file.read()
-            prompt = self.get_prompt__with_inserts(raw_prompt=raw_prompt, for_iteration=False)  # insert db-specific logic
-            self.logic_enabled = False
-            if 'LogicBank' in prompt:  # if prompt has logic, we need to insert the training
-                prompt_messages.extend( self.get_prompt_learning_requests())
-                self.logic_enabled = True
-            if prompt.startswith('You are a '):  # if it's a preset, we need to insert the prompt
-                prompt_messages[0]["content"] = prompt  # TODO - verify no longer needed
-            prompt_messages.append( {"role": "user", "content": prompt})
-        elif Path(self.project.genai_using).is_dir():  # from directory (conversation / iteration)
+        def iteration(prompt_messages: List[Dict[str, str]]):
+            """ `--using` is a directory (conversation)
+            """            
             response_count = 0
             request_count = 0
             learning_requests_len = 0
@@ -287,10 +268,91 @@ class GenAI(object):
                     prompt_messages.append( {"role": role, "content": prompt})
                 else:
                     log.debug(f'.. .. conv ignores: {os.path.basename(each_file)}')
-            if response_count == 0:
+            if response_count == 0:  # this is mainly for testing
                 log.debug(f".. no response files - applying insert to prompt")
                 prompt = self.get_prompt__with_inserts(raw_prompt=prompt)  # insert db-specific logic
-                prompt_messages[1 + learning_requests_len]["content"] = prompt
+                prompt_messages[1 + learning_requests_len]["content"] = prompt  # TODO - use append?
+            
+            active_rules_json_path = Path(self.project.genai_using).joinpath('logic/active_rules.json')
+            if active_rules_json_path.exists():
+                deleted_rule = prompt_messages.pop()
+                log.debug(f".. active_rules.json overrides last prompt [{deleted_rule['content'][0:35]}] in --using")
+                with open(active_rules_json_path, 'r') as file:
+                    active_rules = json.load(file)
+                # passing json into ChatGPT provoked it to invent rules
+                # so, we extract the commands and pass them in as a string, which seems to relax it
+                active_rules_str = ""
+                for each_rule in active_rules:
+                    active_rules_str += each_rule['description'] + '\n'
+                prompt_messages.append( {"role": "user", "content": active_rules_str} )
+            else:
+                log.debug(f".. no active_rules.json -- using prompts in --using ")
+            pass
+
+        prompt_messages : List[ Dict[str, str] ] = []  # prompt/response conversation to be sent to ChatGPT
+        
+        if self.project.genai_repaired_response != '':       # if exists, get prompt (just for inserting into declare_logic.py)
+            prompt = ""  # we are not calling ChatGPT, just getting the prompt to scan for logic
+            if Path(self.project.genai_using).is_file():  # eg, launch.json for airport_4 is just a name
+                with open(f'{self.project.genai_using}', 'r') as file:
+                    prompt = file.read()
+                prompt_messages.append( {"role": "user", "content": prompt})
+        elif Path(self.project.genai_using).is_file():  # from file (initial creation)
+            prompt_messages.append( self.get_prompt_you_are() )
+            with open(f'{self.project.genai_using}', 'r') as file:
+                log.debug(f'.. from file: {self.project.genai_using}')
+                raw_prompt = file.read()
+            prompt = self.get_prompt__with_inserts(raw_prompt=raw_prompt, for_iteration=False)  # insert db-specific logic
+            self.logic_enabled = False
+            if 'LogicBank' in prompt:  # if prompt has logic, we need to insert the training
+                prompt_messages.extend( self.get_prompt_learning_requests())
+                self.logic_enabled = True
+            if prompt.startswith('You are a '):  # if it's a preset, we need to insert the prompt
+                prompt_messages[0]["content"] = prompt  # TODO - verify no longer needed
+            prompt_messages.append( {"role": "user", "content": prompt})
+        elif Path(self.project.genai_using).is_dir():  # from directory (conversation / iteration)
+            if do_sub := True:
+                iteration(prompt_messages=prompt_messages)  # `--using` is a directory (conversation)
+            else:
+                response_count = 0
+                request_count = 0
+                learning_requests_len = 0
+                prompt = ""
+                for each_file in sorted(Path(self.project.genai_using).iterdir()):
+                    if each_file.is_file() and each_file.suffix == '.prompt' or each_file.suffix == '.response':
+                        # 0 is R/'you are', 1 R/'request', 2 is 'response', 3 is iteration
+                        with open(each_file, 'r') as file:
+                            prompt = file.read()
+                        role = "user"
+                        if response_count == 0 and request_count == 0 and each_file.suffix == '.prompt':
+                            if not prompt.startswith('You are a '):  # add *missing* 'you are''
+                                prompt_messages.append( self.get_prompt_you_are() )
+                                request_count = 1
+                        file_num = request_count + response_count
+                        file_str = str(file_num).zfill(3)
+                        log.debug(f'.. conv[{file_str}] processes: {os.path.basename(each_file)} - {prompt[:30]}...')
+                        if each_file.suffix == ".response":
+                            role = 'system'
+                            response_count += 1
+                        else:
+                            request_count += 1      # rebuild response with *all* tables
+                            if request_count >= 3:   # Run Config: genai AUTO DEALERSHIP CONVERSATION
+                                if 'updating the prior response' not in prompt:
+                                    prompt = self.get_prompt__with_inserts(raw_prompt=prompt, for_iteration=True)
+                                if request_count == 3:
+                                    if prompt.startswith(K_LogicBankTraining):
+                                        pass 
+                                    else:
+                                        learnings = self.get_learning_requests()
+                                        prompt_messages.extend(learnings)
+                                        request_count += len(learnings)           
+                        prompt_messages.append( {"role": role, "content": prompt})
+                    else:
+                        log.debug(f'.. .. conv ignores: {os.path.basename(each_file)}')
+                if response_count == 0:
+                    log.debug(f".. no response files - applying insert to prompt")
+                    prompt = self.get_prompt__with_inserts(raw_prompt=prompt)  # insert db-specific logic
+                    prompt_messages[1 + learning_requests_len]["content"] = prompt
 
         # log.debug(f'.. prompt_messages: {prompt_messages}')  # heaps of output
         return prompt_messages      
@@ -884,7 +946,7 @@ class GenAI(object):
             json.dump(response_dict, response_file, indent=4)
         return
 
-def genai_cli_rule_suggesions(project_name: str) -> dict:
+def z_genai_cli_rule_suggesions_unused(project_name: str) -> dict:
     pass
 
 def genai_cli_with_retry(using: str, db_url: str, repaired_response: str, genai_version: str, 
