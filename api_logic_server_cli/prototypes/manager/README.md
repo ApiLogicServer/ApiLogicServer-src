@@ -245,8 +245,8 @@ als genai-logic --suggest
 
 You can review the suggestions in the `genai_demo_no_logic` project:
 
- * See `docs/genai_demo_no_logic_004.prompt`
- * And `docs/logic/logic_suggestions.response`
+ * See and edit: `docs/genai_demo_no_logic_004.prompt` (used in step 3, below)
+ * Diagnostic info at: `docs/logic/logic_suggestions.response`
 
 
 ```bash title="3. Now, (alter and) Implement the Rule Suggestions"
