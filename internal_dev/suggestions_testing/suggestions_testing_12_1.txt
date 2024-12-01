@@ -1,0 +1,6 @@
+Seeing where clause attrs not in data model (customer.balance)
+    Maybe automate an Alembic run?  Not trivial, but valuable...
+    Maybe flag these better in LogicBank?
+
+Asked for 5 rules, but stil did not create copy rule for item.unit_price.  
+    Seems like the user must notice
