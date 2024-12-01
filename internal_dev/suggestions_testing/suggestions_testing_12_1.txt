@@ -5,6 +5,7 @@ Seeing where clause attrs not in data model (customer.balance)
 Asked for 5 rules, but stil did not create copy rule for item.unit_price.  
     Seems like the user must notice
 
-Perhaps suggestions are the way to "kickstart" rules...
-    Use them after 1st gen, **learn** about them, consider suggestions
-    Then declare them (in Nat Lang) directly
+These issues may go on and on... Will we be able to run them all down?
+    Perhaps suggestions are the way to "kickstart" rules...
+        Use them after 1st gen, **learn** about them, consider suggestions
+        Then declare them (in Nat Lang) directly
