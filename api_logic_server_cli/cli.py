@@ -627,8 +627,11 @@ def genai(ctx, using, db_url, repaired_response: str,
 @click.option('--suggest', is_flag=True,
               default=False,
               help="Suggest Logic")
+@click.option('--logic',
+              default='',
+              help="balance is total of order amounts")
 @click.pass_context
-def genai_logic(ctx, using, genai_version: str, retries: int, suggest: click.BOOL):
+def genai_logic(ctx, using, genai_version: str, retries: int, suggest: click.BOOL, logic: str):
     """
         Adds (or suggests) logic to current project.
     """
@@ -653,7 +656,7 @@ def genai_logic(ctx, using, genai_version: str, retries: int, suggest: click.BOO
         log.info(f'... Typical usage - cd into project, use --project_name=. \n')
         exit (1)
     from genai_logic_builder import GenAILogic
-    GenAILogic(using=using, project=project, genai_version=genai_version, retries=retries, suggest=suggest)
+    GenAILogic(using=using, project=project, genai_version=genai_version, retries=retries, suggest=suggest, logic=logic)
     pass
     log.info("")
 
