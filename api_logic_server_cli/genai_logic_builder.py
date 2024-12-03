@@ -25,16 +25,25 @@ class GenAILogic(object):
     """ 
         Called by cli for *existing* project 
         
-        * create logic from *logic files* eg `<project>/docs/logic/check_credit.prompt`
+        * **Create logic** from *logic files* eg `<project>/docs/logic/check_credit.prompt`
 
-            * creates `logic/discovery/check_credit.py` with logic from ChatGPT response
-
-        * Or suggest logic
-
-            * TBD
+            * creates `logic/discovery/check_credit.py` with logic from ChatGPT response 
+\b          
+        * Or **Suggest logic** for current project (as defined in the `docs` directory)
+            ```
+            cd genai_demo_no_logic
+            als genai-logic --suggest
+           ```
+\b                
+        * Or, **Suggest Python code for a line of logic** (eg, manually entered into WebG) 
+            ```
+            cd genai_demo_no_logic
+            als genai-logic --suggest --logic="balance is the sum of unpaid orders"
+            ```
+            \tSaved: `docs/logic/logic_suggestions.response`
     """
 
-    def __init__(self, project: Project, using: str, genai_version: str, retries: int, suggest: bool):
+    def __init__(self, project: Project, using: str, genai_version: str, retries: int, suggest: bool, logic: str):
         """ 
         Add logic to existing projects - [see docs](https://apilogicserver.github.io/Docs/WebGenAI-CLI/#add-logic-to-existing-projects)
 
@@ -55,6 +64,8 @@ class GenAILogic(object):
         self.messages_length = len(self.messages)
         self.file_number = 0
         self.file_name_prefix = ""
+        self.logic = logic
+        """ WebG user has entered logic, we need to get the rule(s) """
 
         if suggest:
             self.suggest_logic()                  # suggest logic for prompt
@@ -97,10 +108,12 @@ class GenAILogic(object):
 
         Most often, adding logic to new project, which looks like:
 
-        0 = 'you are', 1 = 'create_db_models.py', 2 = 'response (data model)'
+        0 = 'you are', 1 = 'use SQLAlchemy to create...', 2 = 'response (data model)'
 
         Returns:
             dict[]: [ {role: (system | user) }: { content: user-prompt-or-system-response } ]
+                
+                0 = 'you are', 1 = the classes, 2 = rule training
 
         """
 
@@ -163,11 +176,19 @@ class GenAILogic(object):
         return prompt_messages      
     
     def suggest_logic(self):
-        """ Suggest logic for prompt (more info here)
+        """ Suggest logic for prompt
+            self.messages has data model and logic training
+
+            if no --logic, 
+                we call ChatGPT to suggest logic and build new docs/prompt
+
+            if --logic, 
+                we call ChatGPT to suggest code for the rule
         """
 
         def get_rule_prompt_from_response(rules: DotMap) -> List[str]:
-            """ Get rule prompt from structured json response -- description
+            """ Get rule prompt from structured json response -- [descriptions]
+
             Returns:
                 List[str]: rule_prompt
             """
@@ -177,8 +198,11 @@ class GenAILogic(object):
             return rule_prompt
     
         start_time = time.time()
-        with open(f'{self.manager_path}/system/genai/prompt_inserts/logic_suggestions.prompt', 'r') as file:
-            suggest_logic = file.read()  # "Suggest Logic"
+        prompt_file = f'{self.manager_path}/system/genai/prompt_inserts/logic_suggestions.prompt'
+        if self.logic != "":
+            prompt_file = f'{self.manager_path}/system/genai/prompt_inserts/logic_translate.prompt'
+        with open(prompt_file, 'r') as file:
+            suggest_logic = file.read()  # "Suggest Logic" or "Translate Logic"
         self.messages.append({"role": "user", "content": suggest_logic})
         debug_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")
         client = OpenAI(api_key=os.getenv("APILOGICSERVER_CHATGPT_APIKEY"))
@@ -205,16 +229,19 @@ class GenAILogic(object):
         with open(logic_suggestion_file_name, "w") as prompt_file:
             json.dump(self.messages, prompt_file, indent=4)
 
-        prompt_file_name = self.file_name_prefix + f"{self.next_file_name}.prompt" 
-        rule_list = get_rule_prompt_from_response(rules)
-        rule_str = "\n".join(rule_list)
-        with open(f'{self.manager_path}/system/genai/prompt_inserts/iteration.prompt', 'r') as file:
-            iteration_prompt = file.read()
-        rule_str_prompt = iteration_prompt + '\n\n' + rule_str
-        with open(self.project.project_directory_path.joinpath(f'docs/{prompt_file_name}'), "w") as prompt_file:
-            prompt_file.write(rule_str_prompt)
-        log.debug(f'ChatGPT suggestions in ({str(int(time.time() - start_time))} secs) - response at: docs/logic/logic_suggestions.response')
-        log.debug(f'.. prompt at: docs/{prompt_file_name}')
+        if self.logic != "":
+            log.debug(f'.. logic translated at: docs/logic/logic_suggestions.response')
+        else:
+            prompt_file_name = self.file_name_prefix + f"{self.next_file_name}.prompt" 
+            rule_list = get_rule_prompt_from_response(rules)
+            rule_str = "\n".join(rule_list)
+            with open(f'{self.manager_path}/system/genai/prompt_inserts/iteration.prompt', 'r') as file:
+                iteration_prompt = file.read()
+            rule_str_prompt = iteration_prompt + '\n\n' + rule_str
+            with open(self.project.project_directory_path.joinpath(f'docs/{prompt_file_name}'), "w") as prompt_file:
+                prompt_file.write(rule_str_prompt)
+            log.debug(f'ChatGPT suggestions in ({str(int(time.time() - start_time))} secs) - response at: docs/logic/logic_suggestions.response')
+            log.debug(f'.. prompt at: docs/{prompt_file_name}')
     
     def insert_logic_into_project(self, response: dict, file: Path):
         """Called *for each logic file* to create logic.py in logic/discovery 
@@ -322,25 +349,4 @@ class GenAILogic(object):
             file_name = model_file.name
         log.debug(f'.. stored response: {response_file_path}')
         return response_data
-
-
-
-def key_module_map():
-    """ does not execute - strictly fo find key modules """
-    import api_logic_server_cli.api_logic_server as als
-    import api_logic_server_cli.create_from_model.create_db_from_model as create_db_from_model
-
-    genai()                                         # called from cli.genai/create/iterate
-                                                    # try/catch/retry loop!
-    als.ProjectRun()                                # calls api_logic_server.ProjectRun
-
-    genai = GenAI(Project())                        # called from api_logic_server.ProjectRun
-    genai.__init__()                                # main driver, calls...  
-    genai.get_prompt_messages()                     # get self.messages from file/dir/text/arg
-    genai.fix_and_write_model_file('response_data') # write create_db_models.py for db creation
-    genai.save_files_to_system_genai_temp_project() # save prompt, response and create_db_models.py
-                                                    # returns to api_logic_server, which...
-    create_db_from_model.create_db()                #   creates create_db_models.sqlite from create_db_models.py
-                                                    #   creates project from that db; and calls...
-    genai.insert_logic_into_created_project()       #   merge logic (comments) into declare_logic.py
  

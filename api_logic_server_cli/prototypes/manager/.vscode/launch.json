@@ -278,6 +278,26 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
+            "name": "  - GenAI - no logic -- compile logic",
+// typical next step - explore rules for supplied logic
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}/genai_demo_no_logic",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": ["genai-logic", "--suggest", "--logic='balance is total of order amounts'"
+                ],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
             "name": "  - GenAI - suggest logic -> iterate with suggested logic",
 // typical next step - activate suggested logic created above
             "type": "debugpy",
