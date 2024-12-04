@@ -520,17 +520,16 @@ class GenAI(object):
                 logic_text += '    ' + each_line + '\n'
         return logic_text
 
-    def insert_logic_into_created_project(self):  # TODO - redesign if conversation
+
+    def insert_logic_into_created_project(self):
         """Called *after project created* to insert prompt logic into 
         1. declare_logic.py
         2. readme.md
         
         Also creates the doc directory for record of prompt, response.
 
-        TODO - specify `use_case` to create a `rules/discovery/webg/use_case.py` file
-        1. Logic Prompt is: `Check Credit:`
-        2. This will help in source control, enabling merge new GenAI -> existing project
-            * For project developed in WebG and IDE
+        TODO - use genai_rules_from_response
+
         """
 
         def remove_logic_halluncinations(each_line: str) -> str:

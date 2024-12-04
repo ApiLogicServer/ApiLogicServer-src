@@ -16,6 +16,7 @@ from pydantic import BaseModel
 from dotmap import DotMap
 from natsort import natsorted
 import glob
+import api_logic_server_cli.genai_rules_from_response as genai_rules_from_response
 
 K_data_model_prompt = "Use SQLAlchemy to create"
 
@@ -68,7 +69,7 @@ class GenAILogic(object):
         """ WebG user has entered logic, we need to get the rule(s) """
 
         if suggest:
-            self.suggest_logic()                  # suggest logic for prompt
+            self.suggest_logic()                  # suggest logic for prompt, or see logic code
         else:
             logic_files = self.get_logic_files()  # rebuild rules from docs/logic/*.prompt
             for each_file in logic_files:
@@ -83,8 +84,9 @@ class GenAILogic(object):
                 api_version = f'{self.project.genai_version}'  # eg, "gpt-4o"
                 data = {"model": genai_version, "messages": self.messages}
                 response = requests.post(url, headers=self.headers, json=data)
-                self.get_and_save_response_data(response=response, file=each_file)          # save raw response to docs/logiic
-                self.insert_logic_into_project(response=response, file=each_file)   # insert logic into project
+                self.get_and_save_response_data(response=response, file=each_file)          # save raw response to docs/logic
+                rule_list = self.response_dict.rules  # TODO this is likely wrong
+                self.insert_logic_into_project(rule_list=rule_list, file=each_file)           # insert logic into project
         pass
 
     def get_logic_files(self) -> List[str]:
@@ -176,34 +178,66 @@ class GenAILogic(object):
         return prompt_messages      
     
     def suggest_logic(self):
-        """ Suggest logic for prompt
+        """ Suggest logic for prompt, or translate suggestion to code
             self.messages has data model and logic training
 
-            if no --logic, 
+            if no --logic (self.logic), 
                 we call ChatGPT to suggest logic and build new docs/prompt
 
             if --logic, 
-                we call ChatGPT to suggest code for the rule
+                we call ChatGPT for code for the already-suggest logic, or supplied string
         """
 
-        def get_rule_prompt_from_response(rules: DotMap) -> List[str]:
+        def get_rule_prompt_from_response(rules: List[DotMap | Dict]) -> List[str]:
             """ Get rule prompt from structured json response -- [descriptions]
 
             Returns:
                 List[str]: rule_prompt
             """
             rule_prompt = []
-            for each_rule in rules:
+            for each_rule_x in rules:
+                each_rule = each_rule_x
+                if isinstance(each_rule, dict):
+                    each_rule = DotMap(each_rule_x)
                 rule_prompt.append(each_rule.description)
             return rule_prompt
-    
+        
+        def get_suggest_logic_prompt() -> str:
+            """ Get the prompt for suggesting logic
+
+            if self.logic is empty, we suggest logic
+
+            otherwise, we obtain the logic to convert to rules
+            * "*" means all the suggested logic
+            * otherwise just the --logic string
+
+            Returns:
+                str: suggest_logic
+            """
+            suggest_logic = ""
+            prompt_file = f'{self.manager_path}/system/genai/prompt_inserts/logic_suggestions.prompt'
+            if self.logic != "":
+                prompt_file = f'{self.manager_path}/system/genai/prompt_inserts/logic_translate.prompt'
+            with open(prompt_file, 'r') as file:
+                suggest_logic = file.read()  # "Suggest Logic" or "Convert this into LogicBank rules:"
+                if self.logic != "'*'":       # --logic
+                    log.debug(f'.. genai_logic_builder [...] processes --logic: {self.logic}')
+                    suggest_logic += '\n' + self.logic
+                else:                       # possibly edited suggested logic (from prior run)
+                    logic_suggestion_file_name = self.project.project_directory_path.joinpath('docs/logic/logic_suggestions.txt')
+                    with open(logic_suggestion_file_name, "r") as prompt_file:
+                        rules_json_str = prompt_file.read()
+                    """ or, we could process the response
+                    rules_list = json.loads(rules_json_str)
+                    rule_list = get_rule_prompt_from_response(rules_list)
+                    rule_str = "\n".join(rule_list)
+                    """
+                    suggest_logic += '\n' + rules_json_str
+                    log.debug(f'.. genai_logic_builder [...] processes: docs/logic/logic_suggestions.txt')
+            return suggest_logic
+
         start_time = time.time()
-        prompt_file = f'{self.manager_path}/system/genai/prompt_inserts/logic_suggestions.prompt'
-        if self.logic != "":
-            prompt_file = f'{self.manager_path}/system/genai/prompt_inserts/logic_translate.prompt'
-        with open(prompt_file, 'r') as file:
-            suggest_logic = file.read()  # "Suggest Logic" or "Translate Logic"
-        self.messages.append({"role": "user", "content": suggest_logic})
+        self.messages.append({"role": "user", "content": get_suggest_logic_prompt()})
         debug_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")
         client = OpenAI(api_key=os.getenv("APILOGICSERVER_CHATGPT_APIKEY"))
         model = os.getenv("APILOGICSERVER_CHATGPT_MODEL_SUGGESTION")
@@ -231,47 +265,47 @@ class GenAILogic(object):
 
         if self.logic != "":
             log.debug(f'.. logic translated at: docs/logic/logic_suggestions.response')
-        else:
+            logic_suggestions_code_path = self.project.project_directory_path.joinpath('docs/logic/logic_suggestions_code.txt')
+            self.insert_logic_into_project(rule_list=self.response_dict.rules, file=logic_suggestions_code_path) 
+        else:  # got code for logic
             prompt_file_name = self.file_name_prefix + f"{self.next_file_name}.prompt" 
             rule_list = get_rule_prompt_from_response(rules)
             rule_str = "\n".join(rule_list)
             with open(f'{self.manager_path}/system/genai/prompt_inserts/iteration.prompt', 'r') as file:
-                iteration_prompt = file.read()
+                iteration_prompt = file.read()  # 'update prior response...'
             rule_str_prompt = iteration_prompt + '\n\n' + rule_str
             with open(self.project.project_directory_path.joinpath(f'docs/{prompt_file_name}'), "w") as prompt_file:
                 prompt_file.write(rule_str_prompt)
+            with open(self.project.project_directory_path.joinpath(f'docs/logic/logic_suggestions.txt'), "w") as suggestions_file:
+                suggestions_file.write(rule_str)
             log.debug(f'ChatGPT suggestions in ({str(int(time.time() - start_time))} secs) - response at: docs/logic/logic_suggestions.response')
             log.debug(f'.. prompt at: docs/{prompt_file_name}')
-    
-    def insert_logic_into_project(self, response: dict, file: Path):
-        """Called *for each logic file* to create logic.py in logic/discovery 
-        """
 
-        manager_root = Path(os.getcwd()).parent
-        with open(manager_root.joinpath('system/genai/create_db_models_inserts/logic_discovery_prefix.py'), "r") as logic_prefix_file:
-            logic_prefix = logic_prefix_file.read()
-        translated_logic = logic_prefix
+
+    def insert_logic_into_project(self, rule_list: List[DotMap], file: Path):
+        """ Called *for each logic file* to create logic.py in logic/discovery 
+
+        Args:
+            response List[Dict]: rules from ChatGPT
+            file (Path): one logic file to create
+        """
+        translated_logic = ""
+        if file.suffix == '.py':  # for logic files (not suggestions - they are .txt)
+            manager_root = Path(os.getcwd()).parent
+            with open(manager_root.joinpath('system/genai/create_db_models_inserts/logic_discovery_prefix.py'), "r") as logic_prefix_file:
+                logic_prefix = logic_prefix_file.read()
+            translated_logic = logic_prefix
         translated_logic += "\n    # Logic from GenAI:\n\n"
 
-        logic_data = response.json()['choices'][0]['message']['content']
-        in_logic = False
-        for each_line in logic_data.split('\n'):
-            if in_logic:
-                if each_line.startswith('    '):    # indent => still in logic
-                    translated_logic += each_line + '\n'      
-                elif each_line.strip() == '':       # blank => still in logic
-                    pass
-                else:                               # no-indent => end of logic
-                    in_logic = False
-            if "declare_logic()" in each_line:
-                in_logic = True
+        rule_code = genai_rules_from_response.get_code(rule_list)  # get code from logic
+        translated_logic += rule_code
         translated_logic += "\n    # End Logic from GenAI\n\n"
 
-        logic_file_name = file.stem + '.py'
-        logic_file_path = self.project.project_directory_path.joinpath(f'logic/logic_discovery/{logic_file_name}')
-        with open(logic_file_path, "w") as logic_file:
+        # logic_file_name = file.stem + '.py'
+        # logic_file_path = self.project.project_directory_path.joinpath(f'logic/logic_discovery/{logic_file_name}')
+        with open(file, "w") as logic_file:
             logic_file.write(translated_logic)
-        log.debug(f'.. stored logic: {logic_file_path}')
+        log.debug(f'.. stored logic code: {file}')
         pass
 
     def get_headers_with_openai_api_key(self) -> dict:

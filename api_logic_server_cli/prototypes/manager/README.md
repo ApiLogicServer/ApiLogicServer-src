@@ -245,12 +245,32 @@ als genai-logic --suggest
 
 You can review the suggestions in the `genai_demo_no_logic` project:
 
- * See and edit: `docs/genai_demo_no_logic_004.prompt` (used in step 3, below)
+ * See and edit: `docs/logic/logic_suggestions.txt` (used in step 3, below)
+    * This corresponds to the Suggestions Editor - Logic View in the WebGenAI web app
  * Diagnostic info at: `docs/logic/logic_suggestions.response`
 
+```bash title="3. See the rules for the logic"
+# 3. See the rule code for the logic
+als genai-logic --suggest --logic='*'
+```
+You can inspect the code from your `docs/logic/logic_suggestions.txt` at:
 
-```bash title="3. Now, (alter and) Implement the Rule Suggestions"
-# 3. Now, (alter and) Implement the Rule Suggestions
+* `docs/logic/logic_suggestions_code.txt`
+    * This corresponds to the Suggestions Editor - Code View in the WebGenAI web app
+
+Notes about generated code:
+* This service is intended to identify logic that does not translate into proper code
+    * Delete the logic lines from `docs/logic/logic_suggestions.txt`
+* It is not advised to paste the code into `logic/declare_logic.py`
+    * Your logic may result in new data model attributes
+    * These are created by running `als genai` (next step)
+
+When you are ready to proceed:
+1. Paste your `docs/logic/logic_suggestions.txt` into: `docs/genai_demo_no_logic_004.prompt`
+2. Execute the following:
+
+```bash title="4. Now, (alter and) Implement the Rule Suggestions"
+# 4. Now, (alter and) Implement the Rule Suggestions
 cd ..
 als genai --project-name='genai_demo_with_logic' --using=genai_demo_no_logic/docs
 ```
