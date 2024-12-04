@@ -220,20 +220,20 @@ class GenAILogic(object):
                 prompt_file = f'{self.manager_path}/system/genai/prompt_inserts/logic_translate.prompt'
             with open(prompt_file, 'r') as file:
                 suggest_logic = file.read()  # "Suggest Logic" or "Convert this into LogicBank rules:"
-                if self.logic != "'*'":       # --logic
-                    log.debug(f'.. genai_logic_builder [...] processes --logic: {self.logic}')
-                    suggest_logic += '\n' + self.logic
-                else:                       # possibly edited suggested logic (from prior run)
-                    logic_suggestion_file_name = self.project.project_directory_path.joinpath('docs/logic/logic_suggestions.txt')
-                    with open(logic_suggestion_file_name, "r") as prompt_file:
-                        rules_json_str = prompt_file.read()
-                    """ or, we could process the response
-                    rules_list = json.loads(rules_json_str)
-                    rule_list = get_rule_prompt_from_response(rules_list)
-                    rule_str = "\n".join(rule_list)
-                    """
-                    suggest_logic += '\n' + rules_json_str
-                    log.debug(f'.. genai_logic_builder [...] processes: docs/logic/logic_suggestions.txt')
+            if self.logic != "'*'":       # --logic
+                log.debug(f'.. genai_logic_builder [...] processes --logic: {self.logic}')
+                suggest_logic += '\n' + self.logic
+            else:                         # possibly edited suggested logic (from prior run)
+                logic_suggestion_file_name = self.project.project_directory_path.joinpath('docs/logic/logic_suggestions.txt')
+                with open(logic_suggestion_file_name, "r") as prompt_file:
+                    rules_json_str = prompt_file.read()
+                """ or, we could process the response
+                rules_list = json.loads(rules_json_str)
+                rule_list = get_rule_prompt_from_response(rules_list)
+                rule_str = "\n".join(rule_list)
+                """
+                suggest_logic += '\n' + rules_json_str
+                log.debug(f'.. genai_logic_builder [...] processes: docs/logic/logic_suggestions.txt')
             return suggest_logic
 
         start_time = time.time()
