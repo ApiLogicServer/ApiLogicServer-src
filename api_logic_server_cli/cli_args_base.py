@@ -51,6 +51,8 @@ class CliArgsBase():
         """ ChatGPT API, 0-1, default 0.7 """
         self.genai_use_relns = None
         """ Use relationships in create_db_models """
+        self.genai_active_rules = False
+        """ Use `logic/active_rules.json` in create_db_models """
         self.bind_key = None # type: str
         self.bind_key_url_separator = None # type: str
         self.api_name = None # type: str

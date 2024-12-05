@@ -274,7 +274,7 @@ class GenAI(object):
                 prompt_messages[1 + learning_requests_len]["content"] = prompt  # TODO - use append?
             
             active_rules_json_path = Path(self.project.genai_using).joinpath('logic/active_rules.json')
-            if active_rules_json_path.exists():
+            if False and active_rules_json_path.exists():
                 deleted_rule = prompt_messages.pop()
                 log.debug(f".. active_rules.json overrides last prompt [{deleted_rule['content'][0:35]}] in --using")
                 with open(active_rules_json_path, 'r') as file:
@@ -311,48 +311,22 @@ class GenAI(object):
                 prompt_messages[0]["content"] = prompt  # TODO - verify no longer needed
             prompt_messages.append( {"role": "user", "content": prompt})
         elif Path(self.project.genai_using).is_dir():  # from directory (conversation / iteration)
-            if do_sub := True:
-                iteration(prompt_messages=prompt_messages)  # `--using` is a directory (conversation)
-            else:
-                response_count = 0
-                request_count = 0
-                learning_requests_len = 0
-                prompt = ""
-                for each_file in sorted(Path(self.project.genai_using).iterdir()):
-                    if each_file.is_file() and each_file.suffix == '.prompt' or each_file.suffix == '.response':
-                        # 0 is R/'you are', 1 R/'request', 2 is 'response', 3 is iteration
-                        with open(each_file, 'r') as file:
-                            prompt = file.read()
-                        role = "user"
-                        if response_count == 0 and request_count == 0 and each_file.suffix == '.prompt':
-                            if not prompt.startswith('You are a '):  # add *missing* 'you are''
-                                prompt_messages.append( self.get_prompt_you_are() )
-                                request_count = 1
-                        file_num = request_count + response_count
-                        file_str = str(file_num).zfill(3)
-                        log.debug(f'.. conv[{file_str}] processes: {os.path.basename(each_file)} - {prompt[:30]}...')
-                        if each_file.suffix == ".response":
-                            role = 'system'
-                            response_count += 1
-                        else:
-                            request_count += 1      # rebuild response with *all* tables
-                            if request_count >= 3:   # Run Config: genai AUTO DEALERSHIP CONVERSATION
-                                if 'updating the prior response' not in prompt:
-                                    prompt = self.get_prompt__with_inserts(raw_prompt=prompt, for_iteration=True)
-                                if request_count == 3:
-                                    if prompt.startswith(K_LogicBankTraining):
-                                        pass 
-                                    else:
-                                        learnings = self.get_learning_requests()
-                                        prompt_messages.extend(learnings)
-                                        request_count += len(learnings)           
-                        prompt_messages.append( {"role": role, "content": prompt})
-                    else:
-                        log.debug(f'.. .. conv ignores: {os.path.basename(each_file)}')
-                if response_count == 0:
-                    log.debug(f".. no response files - applying insert to prompt")
-                    prompt = self.get_prompt__with_inserts(raw_prompt=prompt)  # insert db-specific logic
-                    prompt_messages[1 + learning_requests_len]["content"] = prompt
+            iteration(prompt_messages=prompt_messages)  # `--using` is a directory (conversation)
+            if self.project.genai_active_rules:
+                active_rules_json_path = Path(self.project.genai_using).joinpath('logic/active_rules.json')
+                assert active_rules_json_path.exists(), f"Missing active_rules.json: {active_rules_json_path}"
+                with open(active_rules_json_path, 'r') as file:
+                    active_rules_str = file.read()
+                # not deleting docs/genai_demo_no_logic_003.prompt, since ignored - instead...
+                prompt_messages[len(prompt_messages) - 1] = {"role": "user", "content": active_rules_str}
+                # and, pop the logic bank training since active_rules has it
+                for each_message in prompt_messages:
+                    if K_LogicBankTraining in each_message["content"]:
+                        prompt_messages.remove(each_message)
+                        break
+                log.debug(f'.... using active_rules: {active_rules_str[0:15]}')
+                pass
+
 
         # log.debug(f'.. prompt_messages: {prompt_messages}')  # heaps of output
         return prompt_messages      
@@ -951,7 +925,7 @@ def z_genai_cli_rule_suggesions_unused(project_name: str) -> dict:
 def genai_cli_with_retry(using: str, db_url: str, repaired_response: str, genai_version: str, 
           retries: int, opt_locking: str, prompt_inserts: str, quote: bool,
           use_relns: bool, project_name: str, tables: int, test_data_rows: int,
-          temperature: float) -> None:
+          temperature: float, genai_active_rules: bool) -> None:
     """ CLI Caller: provides using, or repaired_response & using
     
         Called from cli commands: genai, genai-create, genai-iterate
@@ -987,6 +961,7 @@ def genai_cli_with_retry(using: str, db_url: str, repaired_response: str, genai_
                 genai_tables=tables,
                 genai_test_data_rows=test_data_rows,
                 project_name=resolved_project_name, db_url=db_url,
+                genai_active_rules=genai_active_rules,
                 execute=False)
     if retries < 0:  # for debug: catch exceptions at point of failure
         pr.create_project()  # this calls GenAI(pr) - the main driver
