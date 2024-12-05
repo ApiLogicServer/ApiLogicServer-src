@@ -593,9 +593,12 @@ def tutorial(ctx, create):
 @click.option('--temperature',  
               default=0.7,
               help="Number of test data rows")
+@click.option('--active-rules', 'active_rules',  is_flag=True,
+              default=False,
+              help="Use logic/active_rules")
 @click.pass_context
 def genai(ctx, using, db_url, repaired_response: str, 
-          genai_version: str, temperature: float,
+          genai_version: str, temperature: float, active_rules: click.BOOL,
           retries: int, opt_locking: str, prompt_inserts: str, quote: click.BOOL,
           use_relns: click.BOOL, project_name: str, tables: int, test_data_rows: int):
     """
@@ -608,7 +611,7 @@ def genai(ctx, using, db_url, repaired_response: str,
         defaulted_using = 'system/genai/examples/genai_demo/genai_demo.prompt'
     genai_svcs.genai_cli_with_retry(using=defaulted_using, db_url=db_url, repaired_response=repaired_response, 
                 genai_version=genai_version, temperature=temperature,
-                retries=retries, opt_locking=opt_locking, 
+                retries=retries, opt_locking=opt_locking, genai_active_rules=active_rules,
                 prompt_inserts=prompt_inserts, quote=quote, use_relns=use_relns, 
                 project_name=project_name, tables=tables, test_data_rows=test_data_rows)
     pass

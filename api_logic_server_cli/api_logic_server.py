@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "14.00.11"
+__version__ = "14.00.12"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t12/04/2024 - 14.00.11: genai: genai-logic --logic, no dup derivations, active rules > 5, no initial logic, use_case \n"\
+    "\t12/05/2024 - 14.00.12: genai: genai-logic --logic, no dup derivations, --use-active-rules, active rules > 5, no initial logic, use_case \n"\
     "\t11/18/2024 - 12.02.00: genai: 'qualified any' now supported in logic training \n"\
     "\t10/31/2024 - 12.01.00: genai: informal rules (eg, Sum of employee salaries cannot exceed department budget) \n"\
     "\t10/21/2024 - 12.00.04: sra 10-22, Prelim support genai --using=dir/project \n"\
@@ -865,6 +865,7 @@ class ProjectRun(Project):
                      genai_tables: int=0,
                      genai_temperature: float=0.7,
                      genai_test_data_rows: int=0,
+                     genai_active_rules: bool=False,
                      host: str='localhost', 
                      port: str='5656', 
                      swagger_host: str="localhost", 
@@ -911,6 +912,7 @@ class ProjectRun(Project):
         self.genai_tables = genai_tables
         self.genai_test_data_rows = genai_test_data_rows
         self.genai_temperature = genai_temperature
+        self.genai_active_rules = genai_active_rules
         self.user_db_url = db_url  # retained for debug
         self.bind_key = bind_key
         self.api_name = api_name

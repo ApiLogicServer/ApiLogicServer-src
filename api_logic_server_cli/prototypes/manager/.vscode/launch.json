@@ -338,6 +338,27 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
+            "name": "  - GenAI - suggest logic -> WebG iterate (requires cp)",
+// Simulate WebG: cp docs/genai_demo_no_logic_003.prompt docs/logic/active_rules.json
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "genai", "--project-name=genai_demo_with_suggested_logic",
+                "--using=${workspaceFolder}/genai_demo_no_logic/docs",
+                "--active-rules"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
             "name": "  - GenAI iteration - model and logic",
 // typical step - iterate the model, now with logic
             "type": "debugpy",
