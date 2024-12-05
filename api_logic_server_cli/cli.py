@@ -486,14 +486,19 @@ def app_create(ctx, project_name, app, admin_app):
 @click.option('--app',
               default='app',
               help="App directory name")
+@click.option('--api-endpoint','api_endpoint',
+              default='*',
+              help="API endpoint name (default is all)")
 @click.pass_context
-def app_build(ctx, project_name, app):
+def app_build(ctx, project_name, app, api_endpoint):
     """
     Builds runnable app from: ui/<app>/app-model.yaml
 
     example: 
 
-        ApiLogicServer create-app —app=name=app1
+        ApiLogicServer app-build —app=name=app1
+        
+        ApiLogicServer app-build —app=name=app1 —api-endpoint=Orders # only build Orders
     
     This creates app1/app-model.yml. — edit that to deselect tables, tweak fields etc
     """
@@ -515,7 +520,7 @@ def app_build(ctx, project_name, app):
     project.project_directory_actual = os.path.abspath(project.project_directory)  # make path absolute, not relative (no /../)
     project.project_directory_path = Path(project.project_directory_actual)
 
-    ont_creator = OntBuilder(project = project, app = app)
+    ont_creator = OntBuilder(project = project, app = app, api_endpoint = api_endpoint)
     ont_creator.build_application()
     log.info("")
 
