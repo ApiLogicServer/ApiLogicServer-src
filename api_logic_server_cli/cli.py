@@ -487,8 +487,8 @@ def app_create(ctx, project_name, app, admin_app):
               default='app',
               help="App directory name")
 @click.option('--api-endpoint','api_endpoint',
-              default='*',
-              help="API endpoint name (default is all)")
+              default=None,
+              help="API endpoint name")
 @click.pass_context
 def app_build(ctx, project_name, app, api_endpoint):
     """

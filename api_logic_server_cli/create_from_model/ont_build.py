@@ -221,6 +221,8 @@ class OntBuilder(object):
             self.generate_home_template(app_path, entity_favorites, each_entity_name, each_entity, entity_name)
             self.generate_new_template(app_path, entity_favorites, each_entity_name, each_entity, entity_name)
             self.generate_detail_template(app_path, entity_favorites, each_entity_name, each_entity, entity_name)
+            if self.api_endpoint:
+                return
             self.generate_routing(app_path, each_entity_name, each_entity, entity_name)
 
             self.generate_card_home_template(app_path, entity_favorites, each_entity_name, each_entity, entity_name)
