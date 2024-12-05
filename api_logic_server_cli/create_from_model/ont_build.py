@@ -61,9 +61,10 @@ class OntBuilder(object):
     num_pages_generated = 0
     num_related = 0
 
-    def __init__(self, project: Project, app: str = "app"):
+    def __init__(self, project: Project, app: str = "app", api_endpoint: str = None):
         self.project = project
         self.app = app
+        self.api_endpoint = api_endpoint #if None - use all endpoints
         self.app_path = Path(self.project.project_directory_path).joinpath(f"ui/{self.app}")
         t_env = self.get_environment()
         self.env = t_env[0]
@@ -210,6 +211,8 @@ class OntBuilder(object):
             self.global_values["exclude_listpicker"] = False
             
         for each_entity_name, each_entity in app_model.entities.items():
+            if self.api_endpoint and each_entity_name != self.api_endpoint:
+                continue
             if  each_entity.get("exclude", "false") == "true":
                 continue
             entity_name = each_entity_name
