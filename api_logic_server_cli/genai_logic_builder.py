@@ -110,7 +110,7 @@ class GenAILogic(object):
 
         Most often, adding logic to new project, which looks like:
 
-        0 = 'you are', 1 = 'use SQLAlchemy to create...', 2 = 'response (data model)'
+        0 = 'you are', 1 = 'use SQLAlchemy to create...', 2 = 'response (data model, test data)'
 
         Returns:
             dict[]: [ {role: (system | user) }: { content: user-prompt-or-system-response } ]
@@ -162,6 +162,8 @@ class GenAILogic(object):
                     role = 'system'
                 if prompt.startswith('Use SQLAlchemy to'):  # CPT takes a ~ 20 secs for this prompt - skip it
                     log.debug(f'.. genai_logic_builder[{file_str}] ignores:   {os.path.basename(each_file)} - {prompt[:30]}...')
+                elif prompt.startswith('Update the prior response -'):  # ignore the existing suggestions
+                    log.debug(f'.. genai_logic_builder[{file_str}] ignores:   {os.path.basename(each_file)} - {prompt[:30]}...')
                 else:  # TODO: address iteration > 1, where *multiple data models* exist
                     if '"models"' in prompt:  # just get the models portion (save 8 secs)
                         prompt_dict = json.loads(prompt)
@@ -172,7 +174,7 @@ class GenAILogic(object):
                 log.debug(f'.. .. genai_logic_builder ignores: {os.path.basename(each_file)}')
         self.next_file_name = stem[0:len(stem)-3] + str(1 + file_number).zfill(3)
 
-        learnings = get_learning_requests()  # call method without instance?
+        learnings = get_learning_requests()
         prompt_messages.extend(learnings)
                         
         return prompt_messages      
@@ -202,30 +204,41 @@ class GenAILogic(object):
                 rule_prompt.append(each_rule.description)
             return rule_prompt
         
-        def get_suggest_logic_prompt() -> str:
-            """ Get the prompt for suggesting logic
+        def get_suggest_or_get_code_prompt() -> str:
+            """ Get the prompt for suggesting logic, or getting code
 
-            if self.logic is empty, we suggest logic
+            if self.logic is empty, we **suggest** logic
 
-            otherwise, we obtain the logic to convert to rules
-            * "*" means all the suggested logic
-            * otherwise just the --logic string
+            otherwise, we **obtain code** from logic
+                * "*" means all the suggested logic
+                * otherwise just the --logic string
 
             Returns:
                 str: suggest_logic
             """
             suggest_logic = ""
+            logic_suggestion_file_name_path = self.project.project_directory_path.joinpath('docs/logic/logic_suggestions.txt')
+
             prompt_file = f'{self.manager_path}/system/genai/prompt_inserts/logic_suggestions.prompt'
             if self.logic != "":
                 prompt_file = f'{self.manager_path}/system/genai/prompt_inserts/logic_translate.prompt'
             with open(prompt_file, 'r') as file:
-                suggest_logic = file.read()  # "Suggest Logic" or "Convert this into LogicBank rules:"
-            if self.logic != "'*'":       # --logic
-                log.debug(f'.. genai_logic_builder [...] processes --logic: {self.logic}')
+                suggest_logic = file.read() # "Suggest Logic" or "Convert this into LogicBank rules:"
+            if self.logic == "":            # suggest logic
+                log.debug(f'.. genai_logic_builder [...] get_suggestions - suggest logic')
+                dups_path = self.project.project_directory_path.joinpath(f'docs/logic/logic_suggestions_no_dups.txt')
+                if dups_path.exists():  # avoid dups (good try, usually fails)
+                    log.debug(f'.... genai_logic_builder [...] avoid dups')
+                    with open(dups_path, "r") as dup_file:
+                        rules_json_str = dup_file.read()
+                    suggest_logic += f'\nomit rules where the code includes any of:\nr{rules_json_str}'
+                pass
+            elif self.logic != "'*'":       # --logic string (eg, 1 line of logic)
+                log.debug(f'.. genai_logic_builder [...] get_suggestions - get code for -logic: {self.logic}')
                 suggest_logic += '\n' + self.logic
-            else:                         # possibly edited suggested logic (from prior run)
-                logic_suggestion_file_name = self.project.project_directory_path.joinpath('docs/logic/logic_suggestions.txt')
-                with open(logic_suggestion_file_name, "r") as prompt_file:
+            else:                           # possibly edited suggested logic_suggestions.txt (from prior run)
+                log.debug(f'.. genai_logic_builder [...] get_suggestions - get code for logic_suggestions.txt -logic: {self.logic}')
+                with open(logic_suggestion_file_name_path, "r") as prompt_file:
                     rules_json_str = prompt_file.read()
                 """ or, we could process the response
                 rules_list = json.loads(rules_json_str)
@@ -233,11 +246,34 @@ class GenAILogic(object):
                 rule_str = "\n".join(rule_list)
                 """
                 suggest_logic += '\n' + rules_json_str
-                log.debug(f'.. genai_logic_builder [...] processes: docs/logic/logic_suggestions.txt')
-            return suggest_logic
+                log.debug(f'.. genai_logic_builder [...] get_code processes: docs/logic/logic_suggestions.txt')
+            return suggest_logic  # from get_suggest_or_get_code_prompt()
 
-        start_time = time.time()
-        self.messages.append({"role": "user", "content": get_suggest_logic_prompt()})
+        def get_derived_attributes(response: DotMap) -> str:
+            """ Get derived attributes from the rules
+
+            find table.attr in: 'Rule.count(derive=Order.pending_item_count, ...'
+            Returns:
+                str: derived_attributes
+            """
+            derived_attributes = ""
+            rules = response.rules
+            for each_rule in rules:
+                code = each_rule.code
+                derive_str_loc = code.find("derive=")  # -1 if not found
+                if derive_str_loc > 0:
+                    derived = code[derive_str_loc + 7:]
+                    comma_loc = derived.find(",")
+                    derived_result = derived[:comma_loc]
+                    derived_attributes += f'{derived_result}\n'
+
+            return derived_attributes
+        
+
+        start_time = time.time()  # begin suggest logic
+        suggest_or_get_code_prompt = get_suggest_or_get_code_prompt()
+        self.messages.append({"role": "user", "content": suggest_or_get_code_prompt})
+
         debug_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")
         client = OpenAI(api_key=os.getenv("APILOGICSERVER_CHATGPT_APIKEY"))
         model = os.getenv("APILOGICSERVER_CHATGPT_MODEL_SUGGESTION")
@@ -246,7 +282,6 @@ class GenAILogic(object):
             model = 'gpt-4o-mini'  # reduces from 40 -> 7 secs
         completion = client.beta.chat.completions.parse(
             messages=self.messages, response_format=WGResult,
-            # temperature=self.project.genai_temperature,  values .1 and .7 made students / charges fail
             model=model  # for own model, use "ft:gpt-4o-2024-08-06:personal:logicbank:ARY904vS" 
         )
         
@@ -278,6 +313,14 @@ class GenAILogic(object):
                 prompt_file.write(rule_str_prompt)
             with open(self.project.project_directory_path.joinpath(f'docs/logic/logic_suggestions.txt'), "w") as suggestions_file:
                 suggestions_file.write(rule_str)
+            dups_path = self.project.project_directory_path.joinpath(f'docs/logic/logic_suggestions_no_dups.txt')
+            derived_attrs = get_derived_attributes(self.response_dict)
+            if dups_path.exists():
+                with open(dups_path, "a") as dups_file:
+                    dups_file.write('\n\n' + derived_attrs)
+            else:
+                with open(dups_path, "w") as dups_file:
+                    dups_file.write(derived_attrs)
             log.debug(f'ChatGPT suggestions in ({str(int(time.time() - start_time))} secs) - response at: docs/logic/logic_suggestions.response')
             log.debug(f'.. prompt at: docs/{prompt_file_name}')
 

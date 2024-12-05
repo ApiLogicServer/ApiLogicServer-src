@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "14.00.10"
+__version__ = "14.00.11"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t12/03/2024 - 14.00.10: genai: genai-logic --logic, active rules > 5, use_case, openai 1.55.3, no initial logic, use_case \n"\
+    "\t12/04/2024 - 14.00.11: genai: genai-logic --logic, no dup derivations, active rules > 5, no initial logic, use_case \n"\
     "\t11/18/2024 - 12.02.00: genai: 'qualified any' now supported in logic training \n"\
     "\t10/31/2024 - 12.01.00: genai: informal rules (eg, Sum of employee salaries cannot exceed department budget) \n"\
     "\t10/21/2024 - 12.00.04: sra 10-22, Prelim support genai --using=dir/project \n"\
