@@ -486,19 +486,14 @@ def app_create(ctx, project_name, app, admin_app):
 @click.option('--app',
               default='app',
               help="App directory name")
-@click.option('--api-endpoint','api_endpoint',
-              default=None,
-              help="API endpoint name")
 @click.pass_context
-def app_build(ctx, project_name, app, api_endpoint):
+def app_build(ctx, project_name, app):
     """
     Builds runnable app from: ui/<app>/app-model.yaml
 
     example: 
 
-        ApiLogicServer app-build —app=name=app1
-        
-        ApiLogicServer app-build —app=name=app1 —api-endpoint=Orders # only build Orders
+        ApiLogicServer create-app —app=name=app1
     
     This creates app1/app-model.yml. — edit that to deselect tables, tweak fields etc
     """
@@ -520,7 +515,7 @@ def app_build(ctx, project_name, app, api_endpoint):
     project.project_directory_actual = os.path.abspath(project.project_directory)  # make path absolute, not relative (no /../)
     project.project_directory_path = Path(project.project_directory_actual)
 
-    ont_creator = OntBuilder(project = project, app = app, api_endpoint = api_endpoint)
+    ont_creator = OntBuilder(project = project, app = app)
     ont_creator.build_application()
     log.info("")
 
@@ -620,6 +615,51 @@ def genai(ctx, using, db_url, repaired_response: str,
                 prompt_inserts=prompt_inserts, quote=quote, use_relns=use_relns, 
                 project_name=project_name, tables=tables, test_data_rows=test_data_rows)
     pass
+
+
+@main.command("genai-utils", cls=HideDunderCommand)
+@click.option('--using',
+              default=f'docs/logic',
+              help="File or dir")
+@click.option('--genai-version', 'genai_version',
+              default='gpt-4o',
+              help="Eg, gpt-3.5-turbo, gpt-4o")
+@click.option('--fixup', is_flag=True,
+              default=False,
+              help="Fix data model and test data")
+@click.option('--submit', is_flag=True,
+              default=False,
+              help="Submit --using to GenAI")
+@click.pass_context
+def genai_utils(ctx, using, genai_version: str, fixup: click.BOOL, submit: click.BOOL):
+    """
+        Utilities for GenAI.
+    """
+    global command
+    project_dir = resolve_blank_project_name('')
+    project_name = Path(project_dir).name
+    project = PR.ProjectRun(command="add_security", 
+              project_name=project_name, 
+              db_url="",
+              execute=False
+              )
+    project.project_directory, project.api_name, project.merge_into_prototype = \
+        create_utils.get_project_directory_and_api_name(project)
+    project.project_directory_actual = os.path.abspath(os.getcwd())  # make path absolute, not relative (no /../)
+    project.project_directory_path = Path(project.project_directory_actual)
+    models_py_path = project.project_directory_path.joinpath('database/models.py')
+    project.abs_db_url, project.nw_db_status, project.model_file_name = \
+        create_utils.get_abs_db_url("0. Using Sample DB", project, is_auth=True)
+
+    if not models_py_path.exists():
+        log.info(f'... Error - does not appear to be a project: {str(project.project_directory_path)}')
+        log.info(f'... Typical usage - cd into project, use --project_name=. \n')
+        exit (1)
+    from api_logic_server_cli.genai_utils import GenAIUtils
+    genai_utils = GenAIUtils(using=using, project=project, genai_version=genai_version, fixup=fixup, submit=submit)
+    genai_utils.run()
+    pass
+    log.info("")
 
 
 @main.command("genai-logic", cls=HideDunderCommand)

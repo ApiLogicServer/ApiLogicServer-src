@@ -16,7 +16,7 @@ from pydantic import BaseModel
 from dotmap import DotMap
 from natsort import natsorted
 import glob
-import api_logic_server_cli.genai_rules_from_response as genai_rules_from_response
+import api_logic_server_cli.genai_utils as genai_utils
 
 K_data_model_prompt = "Use SQLAlchemy to create"
 
@@ -340,7 +340,7 @@ class GenAILogic(object):
             translated_logic = logic_prefix
         translated_logic += "\n    # Logic from GenAI:\n\n"
 
-        rule_code = genai_rules_from_response.get_code(rule_list)  # get code from logic
+        rule_code = genai_utils.get_code(rule_list)  # get code from logic
         translated_logic += rule_code
         translated_logic += "\n    # End Logic from GenAI\n\n"
 
