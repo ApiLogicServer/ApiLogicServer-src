@@ -47,7 +47,7 @@ class SAFRSBaseX(SAFRSBase):
         attr = self.__class__._s_jsonapi_attrs.get(attr_name, None)
         if hasattr(attr, "type"):  # pragma: no cover
             
-            if str(attr.type) in ["DATE", "DATETIME"]:
+            if str(attr.type) in ["DATE", "DATETIME"] and attr_val:
                 try:
                     attr_val = attr_val.replace("T", " ")
                     datetime.strptime(attr_val, '%Y-%m-%d %H:%M')
