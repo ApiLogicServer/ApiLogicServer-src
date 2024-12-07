@@ -1,0 +1,138 @@
+{
+    "models": [
+        {
+            "classname": "Customer",
+            "code": "class Customer(Base):\n    \"\"\"\n    description: Table to store customer details including unpaid orders.\n    \"\"\"\n    __tablename__ = 'customers'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String)\n    email = Column(String, unique=True)\n    phone_number = Column(String)\n    address = Column(String)\n    balance = Column(DECIMAL)\n    credit_limit = Column(DECIMAL)\n    unpaid_order_total = Column(DECIMAL, default=0)",
+            "sqlite_create": "CREATE TABLE customers (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    name TEXT,\n    email TEXT UNIQUE,\n    phone_number TEXT,\n    address TEXT,\n    balance DECIMAL,\n    credit_limit DECIMAL,\n    unpaid_order_total DECIMAL DEFAULT 0\n);",
+            "description": "Table to store customer details including unpaid orders.",
+            "name": "customers"
+        },
+        {
+            "classname": "Order",
+            "code": "class Order(Base):\n    \"\"\"\n    description: Table to store order details with a calculated total amount.\n    \"\"\"\n    __tablename__ = 'orders'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    customer_id = Column(Integer, ForeignKey('customers.id'))\n    order_date = Column(DateTime)\n    notes = Column(Text)\n    amount_total = Column(DECIMAL, default=0)  # Calculated from items\n    item_count = Column(Integer)\n    date_shipped = Column(DateTime, nullable=True) # To check if order is unpaid\n",
+            "sqlite_create": "CREATE TABLE orders (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    customer_id INTEGER REFERENCES customers(id),\n    order_date DATETIME,\n    notes TEXT,\n    amount_total DECIMAL DEFAULT 0,\n    item_count INTEGER,\n    date_shipped DATETIME\n);",
+            "description": "Table to store order details with a calculated total amount.",
+            "name": "orders"
+        },
+        {
+            "classname": "Item",
+            "code": "class Item(Base):\n    \"\"\"\n    description: Table to store individual items linked to orders with calculated amounts.\n    \"\"\"\n    __tablename__ = 'items'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    order_id = Column(Integer, ForeignKey('orders.id'))\n    product_id = Column(Integer, ForeignKey('products.id'))\n    quantity = Column(Integer)\n    unit_price = Column(DECIMAL)\n    amount = Column(DECIMAL, default=0)  # Calculated as quantity * unit_price\n",
+            "sqlite_create": "CREATE TABLE items (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    order_id INTEGER REFERENCES orders(id),\n    product_id INTEGER REFERENCES products(id),\n    quantity INTEGER,\n    unit_price DECIMAL,\n    amount DECIMAL DEFAULT 0\n);",
+            "description": "Table to store individual items linked to orders with calculated amounts.",
+            "name": "items"
+        },
+        {
+            "classname": "Product",
+            "code": "class Product(Base):\n    \"\"\"\n    description: Table to store product details.\n    \"\"\"\n    __tablename__ = 'products'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String)\n    description = Column(String)\n    price = Column(DECIMAL)\n",
+            "sqlite_create": "CREATE TABLE products (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    name TEXT,\n    description TEXT,\n    price DECIMAL\n);",
+            "description": "Table to store product details.",
+            "name": "products"
+        }
+    ],
+    "rules": [
+        {
+            "name": "Customer Balance Constraint",
+            "description": "Ensure Customer's unpaid_order_total does not exceed credit limit",
+            "use_case": "To ensure responsible financial behavior",
+            "entity": "Customer",
+            "code": "Rule.constraint(validate=Customer,\n                    as_condition=lambda row: row.unpaid_order_total <= row.credit_limit,\n                    error_msg=\"Customer unpaid order total ({row.unpaid_order_total}) exceeds credit limit ({row.credit_limit})\")"
+        },
+        {
+            "name": "Unpaid Orders Sum",
+            "description": "Calculate total unpaid orders for each customer",
+            "use_case": "Manage customer debts",
+            "entity": "Customer",
+            "code": "Rule.sum(derive=Customer.unpaid_order_total,\n    as_sum_of=Order.amount_total,\n    where=lambda row: row.date_shipped is None)"
+        },
+        {
+            "name": "Order Amount Total Calculation",
+            "description": "Calculate total amount for each order from linked items",
+            "use_case": "Track order revenue",
+            "entity": "Order",
+            "code": "Rule.sum(derive=Order.amount_total,\n    as_sum_of=Item.amount)"
+        },
+        {
+            "name": "Item Amount Calculation",
+            "description": "Calculate item amount as quantity * unit_price",
+            "use_case": "Ensure accuracy of item totals",
+            "entity": "Item",
+            "code": "Rule.formula(derive=Item.amount,\n    as_expression=lambda row: row.quantity * row.unit_price)"
+        },
+        {
+            "name": "Copy Item Price from Product Price",
+            "description": "Ensure Item's unit_price equals Product's price",
+            "use_case": "Reflect current product price in orders",
+            "entity": "Item",
+            "code": "Rule.copy(derive=Item.unit_price, from_parent=Product.price)"
+        }
+    ],
+    "test_data": "# Updated Test Data to adhere to rules\n\n# Customers\ncustomer_1 = Customer(name=\"Alice Smith\", email=\"alice.smith@example.com\", phone_number=\"123-456-7890\", address=\"123 Elm Street\", balance=500, credit_limit=1000, unpaid_order_total=0)\ncustomer_2 = Customer(name=\"Bob Brown\", email=\"bob.brown@example.com\", phone_number=\"234-567-8901\", address=\"456 Oak Avenue\", balance=300, credit_limit=500, unpaid_order_total=0)\ncustomer_3 = Customer(name=\"Charlie Johnson\", email=\"charlie.johnson@example.com\", phone_number=\"345-678-9012\", address=\"789 Pine Road\", balance=150, credit_limit=400, unpaid_order_total=0)\ncustomer_4 = Customer(name=\"Diana Gonzalez\", email=\"diana.gonzalez@example.com\", phone_number=\"456-789-0123\", address=\"321 Maple Court\", balance=50, credit_limit=300, unpaid_order_total=0)\n\n# Orders with a date_shipped set as None to ensure they're unpaid\norder_1 = Order(customer_id=1, order_date=date(2023, 9, 20), notes=\"Leave package at back door.\", amount_total=1999.98, item_count=2, date_shipped=None)\norder_2 = Order(customer_id=2, order_date=date(2023, 9, 21), notes=\"Urgent delivery.\", amount_total=199.99, item_count=1, date_shipped=None)\norder_3 = Order(customer_id=3, order_date=date(2023, 9, 22), notes=\"Gift wrap this order.\", amount_total=2249.97, item_count=3, date_shipped=None)\norder_4 = Order(customer_id=4, order_date=date(2023, 9, 23), notes=\"Deliver between 9-11 AM.\", amount_total=99.99, item_count=1, date_shipped=None)\n\n# Products\nproduct_1 = Product(name=\"Laptop\", description=\"15-inch display, 256GB SSD\", price=999.99)\nproduct_2 = Product(name=\"Headphones\", description=\"Noise-canceling, over-ear\", price=199.99)\nproduct_3 = Product(name=\"Smartphone\", description=\"Unlocked, 128GB storage\", price=749.99)\nproduct_4 = Product(name=\"Coffee Maker\", description=\"Automatic, with built-in grinder\", price=99.99)\n\n# Items with calculated amounts\nitem_1 = Item(order_id=1, product_id=1, quantity=2, unit_price=999.99, amount=1999.98)\nitem_2 = Item(order_id=2, product_id=2, quantity=1, unit_price=199.99, amount=199.99)\nitem_3 = Item(order_id=3, product_id=3, quantity=3, unit_price=749.99, amount=2249.97)\nitem_4 = Item(order_id=4, product_id=4, quantity=1, unit_price=99.99, amount=99.99)\n",
+    "test_data_rows": [
+        {
+            "test_data_row_variable": "customer_1",
+            "code": "customer_1 = Customer(name=\"Alice Smith\", email=\"alice.smith@example.com\", phone_number=\"123-456-7890\", address=\"123 Elm Street\", balance=500, credit_limit=1000, unpaid_order_total=0)"
+        },
+        {
+            "test_data_row_variable": "customer_2",
+            "code": "customer_2 = Customer(name=\"Bob Brown\", email=\"bob.brown@example.com\", phone_number=\"234-567-8901\", address=\"456 Oak Avenue\", balance=300, credit_limit=500, unpaid_order_total=0)"
+        },
+        {
+            "test_data_row_variable": "customer_3",
+            "code": "customer_3 = Customer(name=\"Charlie Johnson\", email=\"charlie.johnson@example.com\", phone_number=\"345-678-9012\", address=\"789 Pine Road\", balance=150, credit_limit=400, unpaid_order_total=0)"
+        },
+        {
+            "test_data_row_variable": "customer_4",
+            "code": "customer_4 = Customer(name=\"Diana Gonzalez\", email=\"diana.gonzalez@example.com\", phone_number=\"456-789-0123\", address=\"321 Maple Court\", balance=50, credit_limit=300, unpaid_order_total=0)"
+        },
+        {
+            "test_data_row_variable": "order_1",
+            "code": "order_1 = Order(customer_id=1, order_date=date(2023, 9, 20), notes=\"Leave package at back door.\", amount_total=1999.98, item_count=2, date_shipped=None)"
+        },
+        {
+            "test_data_row_variable": "order_2",
+            "code": "order_2 = Order(customer_id=2, order_date=date(2023, 9, 21), notes=\"Urgent delivery.\", amount_total=199.99, item_count=1, date_shipped=None)"
+        },
+        {
+            "test_data_row_variable": "order_3",
+            "code": "order_3 = Order(customer_id=3, order_date=date(2023, 9, 22), notes=\"Gift wrap this order.\", amount_total=2249.97, item_count=3, date_shipped=None)"
+        },
+        {
+            "test_data_row_variable": "order_4",
+            "code": "order_4 = Order(customer_id=4, order_date=date(2023, 9, 23), notes=\"Deliver between 9-11 AM.\", amount_total=99.99, item_count=1, date_shipped=None)"
+        },
+        {
+            "test_data_row_variable": "product_1",
+            "code": "product_1 = Product(name=\"Laptop\", description=\"15-inch display, 256GB SSD\", price=999.99)"
+        },
+        {
+            "test_data_row_variable": "product_2",
+            "code": "product_2 = Product(name=\"Headphones\", description=\"Noise-canceling, over-ear\", price=199.99)"
+        },
+        {
+            "test_data_row_variable": "product_3",
+            "code": "product_3 = Product(name=\"Smartphone\", description=\"Unlocked, 128GB storage\", price=749.99)"
+        },
+        {
+            "test_data_row_variable": "product_4",
+            "code": "product_4 = Product(name=\"Coffee Maker\", description=\"Automatic, with built-in grinder\", price=99.99)"
+        },
+        {
+            "test_data_row_variable": "item_1",
+            "code": "item_1 = Item(order_id=1, product_id=1, quantity=2, unit_price=999.99, amount=1999.98)"
+        },
+        {
+            "test_data_row_variable": "item_2",
+            "code": "item_2 = Item(order_id=2, product_id=2, quantity=1, unit_price=199.99, amount=199.99)"
+        },
+        {
+            "test_data_row_variable": "item_3",
+            "code": "item_3 = Item(order_id=3, product_id=3, quantity=3, unit_price=749.99, amount=2249.97)"
+        },
+        {
+            "test_data_row_variable": "item_4",
+            "code": "item_4 = Item(order_id=4, product_id=4, quantity=1, unit_price=99.99, amount=99.99)"
+        }
+    ],
+    "test_data_sqlite": "-- SQLite INSERT Statements for Test Data\n\nINSERT INTO customers (name, email, phone_number, address, balance, credit_limit, unpaid_order_total) VALUES\n(\"Alice Smith\", \"alice.smith@example.com\", \"123-456-7890\", \"123 Elm Street\", 500, 1000, 0),\n(\"Bob Brown\", \"bob.brown@example.com\", \"234-567-8901\", \"456 Oak Avenue\", 300, 500, 0),\n(\"Charlie Johnson\", \"charlie.johnson@example.com\", \"345-678-9012\", \"789 Pine Road\", 150, 400, 0),\n(\"Diana Gonzalez\", \"diana.gonzalez@example.com\", \"456-789-0123\", \"321 Maple Court\", 50, 300, 0);\n\nINSERT INTO orders (customer_id, order_date, notes, amount_total, item_count, date_shipped) VALUES\n(1, \"2023-09-20\", \"Leave package at back door.\", 1999.98, 2, NULL),\n(2, \"2023-09-21\", \"Urgent delivery.\", 199.99, 1, NULL),\n(3, \"2023-09-22\", \"Gift wrap this order.\", 2249.97, 3, NULL),\n(4, \"2023-09-23\", \"Deliver between 9-11 AM.\", 99.99, 1, NULL);\n\nINSERT INTO products (name, description, price) VALUES\n(\"Laptop\", \"15-inch display, 256GB SSD\", 999.99),\n(\"Headphones\", \"Noise-canceling, over-ear\", 199.99),\n(\"Smartphone\", \"Unlocked, 128GB storage\", 749.99),\n(\"Coffee Maker\", \"Automatic, with built-in grinder\", 99.99);\n\nINSERT INTO items (order_id, product_id, quantity, unit_price, amount) VALUES\n(1, 1, 2, 999.99, 1999.98),\n(2, 2, 1, 199.99, 199.99),\n(3, 3, 3, 749.99, 2249.97),\n(4, 4, 1, 99.99, 99.99);",
+    "name": "Updated E-Commerce Data Model"
+}

@@ -18,40 +18,16 @@ from typing import List, Dict
 from pydantic import BaseModel
 from dotmap import DotMap
 import importlib.util
+from api_logic_server_cli.genai.genai_utils import WGResult
+from api_logic_server_cli.genai.genai_utils import Rule
+from api_logic_server_cli.genai.genai_utils import Model
+from api_logic_server_cli.genai.genai_utils import TestDataRow
+from api_logic_server_cli.genai.genai_utils import K_LogicBankOff
+from api_logic_server_cli.genai.genai_utils import K_LogicBankOff
+from api_logic_server_cli.genai.genai_utils import K_LogicBankTraining
+import api_logic_server_cli.genai.genai_utils as genai_utils
 
 log = logging.getLogger(__name__)
-
-K_LogicBankOff = "LBX"
-''' LBX Disable Logic (for demos) '''
-K_LogicBankTraining = "Here is the simplified API for LogicBank"
-''' Identify whether conversation contains LB training '''
-
-class Rule(BaseModel):
-    name: str
-    description: str
-    use_case: str # specified use case or requirement name (use 'General' if missing)
-    entity: str # the entity being constrained or derived
-    code: str # logicbank rule code
-    
-class Model(BaseModel):
-    classname: str
-    code: str # sqlalchemy model code
-    sqlite_create: str # sqlite create table statement
-    description: str
-    name: str
-
-class TestDataRow(BaseModel):
-    test_data_row_variable: str  # the Python test data row variable
-    code: str  # Python code to create a test data row instance
-
-class WGResult(BaseModel):  # must match system/genai/prompt_inserts/response_format.prompt
-    # response: str # result
-    models : List[Model] # list of sqlalchemy classes in the response
-    rules : List[Rule] # list rule declarations
-    test_data: str
-    test_data_rows: List[TestDataRow]  # list of test data rows
-    test_data_sqlite: str # test data as sqlite INSERT statements
-    name: str  # suggest a short name for the project
 
 
 def import_module_from_path(module_name, file_path):
@@ -274,19 +250,6 @@ class GenAI(object):
                 prompt_messages[1 + learning_requests_len]["content"] = prompt  # TODO - use append?
             
             active_rules_json_path = Path(self.project.genai_using).joinpath('logic/active_rules.json')
-            if False and active_rules_json_path.exists():
-                deleted_rule = prompt_messages.pop()
-                log.debug(f".. active_rules.json overrides last prompt [{deleted_rule['content'][0:35]}] in --using")
-                with open(active_rules_json_path, 'r') as file:
-                    active_rules = json.load(file)
-                # passing json into ChatGPT provoked it to invent rules
-                # so, we extract the commands and pass them in as a string, which seems to relax it
-                active_rules_str = ""
-                for each_rule in active_rules:
-                    active_rules_str += each_rule['description'] + '\n'
-                prompt_messages.append( {"role": "user", "content": active_rules_str} )
-            else:
-                log.debug(f".. no active_rules.json -- using prompts in --using ")
             pass
 
         prompt_messages : List[ Dict[str, str] ] = []  # prompt/response conversation to be sent to ChatGPT
@@ -546,19 +509,22 @@ class GenAI(object):
         logic_file = self.project.project_directory_path.joinpath('logic/declare_logic.py')
         in_logic = False
         translated_logic = "\n    # Logic from GenAI: (or, use your IDE w/ code completion)\n"
-        for each_rule in self.response_dict.rules:
-            comment_line = each_rule.description
-            translated_logic += f'\n    # {comment_line}\n'
-            code_lines = each_rule.code.split('\n')
-            if '\n' in each_rule.code:
-                debug_string = "good breakpoint - multi-line rule"
-            for each_line in code_lines:
-                if 'declare_logic.py' not in each_line:
-                    each_repaired_line = remove_logic_halluncinations(each_line=each_line)
-                    if not each_repaired_line.startswith('    '):  # sometimes in indents, sometimes not
-                        each_repaired_line = '    ' + each_repaired_line
-                    if 'def declare_logic' not in each_repaired_line:
-                        translated_logic += each_repaired_line + '\n'    
+        if shared_logic := True:
+            translated_logic += genai_utils.get_code(self.response_dict.rules)
+        else:  # old code - delete
+            for each_rule in self.response_dict.rules:
+                comment_line = each_rule.description
+                translated_logic += f'\n    # {comment_line}\n'
+                code_lines = each_rule.code.split('\n')
+                if '\n' in each_rule.code:
+                    debug_string = "good breakpoint - multi-line rule"
+                for each_line in code_lines:
+                    if 'declare_logic.py' not in each_line:
+                        each_repaired_line = remove_logic_halluncinations(each_line=each_line)
+                        if not each_repaired_line.startswith('    '):  # sometimes in indents, sometimes not
+                            each_repaired_line = '    ' + each_repaired_line
+                        if 'def declare_logic' not in each_repaired_line:
+                            translated_logic += each_repaired_line + '\n'    
         if self.logic_enabled == False:
             translated_logic = "\n    # Logic from GenAI: (or, use your IDE w/ code completion)\n"
             translated_logic += "\n    # LogicBank Disabled \n"  

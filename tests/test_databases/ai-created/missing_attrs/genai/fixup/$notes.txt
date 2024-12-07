@@ -1,0 +1,1 @@
+date_shipped was omitted from model after a series of suggestions and edits.
