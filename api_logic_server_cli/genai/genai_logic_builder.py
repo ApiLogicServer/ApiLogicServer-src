@@ -8,15 +8,15 @@ import os
 import create_from_model.api_logic_server_utils as utils
 import time
 from openai import OpenAI
-from genai import WGResult
-from genai import Rule
+from api_logic_server_cli.genai.genai import WGResult
+from api_logic_server_cli.genai.genai import Rule
 import json
 from typing import List, Dict
 from pydantic import BaseModel
 from dotmap import DotMap
 from natsort import natsorted
 import glob
-import api_logic_server_cli.genai_utils as genai_utils
+import api_logic_server_cli.genai.genai_utils as genai_utils
 
 K_data_model_prompt = "Use SQLAlchemy to create"
 

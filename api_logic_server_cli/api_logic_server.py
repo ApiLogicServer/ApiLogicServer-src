@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "14.00.14"
+__version__ = "14.00.15"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t12/05/2024 - 14.00.14: genai: genai-logic --logic, utils, no dup derivations, --use-active-rules, active rules > 5, no initial logic, use_case \n"\
+    "\t12/06/2024 - 14.00.15: genai: genai-logic --logic, utils/fixup, no dup derivations, --use-active-rules, active rules > 5, no initial logic, use_case \n"\
     "\t11/18/2024 - 12.02.00: genai: 'qualified any' now supported in logic training \n"\
     "\t10/31/2024 - 12.01.00: genai: informal rules (eg, Sum of employee salaries cannot exceed department budget) \n"\
     "\t10/21/2024 - 12.00.04: sra 10-22, Prelim support genai --using=dir/project \n"\
@@ -1738,7 +1738,7 @@ from database import <project.bind_key>_models
             log.info(".. complete\n")
 
 
-    def genai_get_logic(self, prompt: str) -> list[str]:
+    def genai_get_logic(self, prompt: str) -> list[str]:  # FIXME drop old code
         """ Get logic from ChatGPT prompt
         Args:
         """
@@ -1865,9 +1865,9 @@ from database import <project.bind_key>_models
     def create_database_from_genai_or_model(self) -> 'GenAI':
         gen_ai = None
         if self.genai_using != "":
-            from genai import GenAI
-            gen_ai = GenAI(self)
-            gen_ai.create_db_models()
+            from api_logic_server_cli.genai.genai import GenAI
+            gen_ai = GenAI(self)  
+            gen_ai.create_db_models()  # create_db_models.py used to create database to build project
 
         if self.from_model != "" or self.genai_using != "":
             try:
@@ -2090,7 +2090,7 @@ def key_module_map():
     import create_from_model.ui_admin_creator as ui_admin_creator
     import create_from_model.api_expose_api_models_creator as api_expose_api_models_creator
     import sqlacodegen_wrapper.sqlacodegen_wrapper as sqlacodegen_wrapper
-    import genai
+    import api_logic_server_cli.genai.genai as genai
 
     genai.key_module_map()                                  # alt entry - create project from genai
 

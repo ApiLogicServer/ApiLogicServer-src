@@ -59,7 +59,7 @@
             "justMyCode": false,
             "args": [ "genai",
                 "--using=${input:inputGenaiProjectName}",
-                "--gen-using-file=system/genai/temp/chatgpt_retry.response"],
+                "--repaired-response=system/genai/temp/chatgpt_retry.response"],
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
         },
@@ -359,8 +359,8 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "  - GenAI iteration - model and logic",
-// typical step - iterate the model, now with logic
+            "name": "  - GenAI - suggest logic -> WebG iterate (requires cp)",
+// Simulate WebG: cp docs/genai_demo_no_logic_003.prompt docs/logic/active_rules.json
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
@@ -373,8 +373,49 @@
                 "APILOGICSERVER_DEBUG": "False",
                 "OPT_LOCKING": "optional"},
             "justMyCode": false,
-            "args": [ "genai", "--retries=3", "--project-name=genai_demo_with_logic",
-                "--using=${workspaceFolder}/system/genai/examples/genai_demo/genai_demo_iteration"],
+            "args": [ "genai", "--project-name=genai_demo_with_suggested_logic",
+                "--using=${workspaceFolder}/genai_demo_no_logic/docs",
+                "--active-rules"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - GenAI FixUp - upd model and test data from logic",
+// typical step - iterate the model, now with logic
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}/missing_attrs",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "genai-utils", "--fixup", "--using=genai/fixup"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - GenAI FixUp - rebuild from response",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "genai",
+                "--using=missing_attrs_fixed", "--project-name=missing_attrs_fixed",
+                "--retries=-1",
+                "--repaired-response=missing_attrs/genai/fixup/response.json"],
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
         },

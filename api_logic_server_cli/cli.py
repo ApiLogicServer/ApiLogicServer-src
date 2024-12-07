@@ -605,7 +605,7 @@ def genai(ctx, using, db_url, repaired_response: str,
         Creates new customizable project (overwrites).
     """
     global command
-    import genai as genai_svcs
+    import api_logic_server_cli.genai.genai as genai_svcs
     defaulted_using = using
     if defaulted_using == 'genai_demo': # default to genai_demo.prompt
         defaulted_using = 'system/genai/examples/genai_demo/genai_demo.prompt'
@@ -655,7 +655,7 @@ def genai_utils(ctx, using, genai_version: str, fixup: click.BOOL, submit: click
         log.info(f'... Error - does not appear to be a project: {str(project.project_directory_path)}')
         log.info(f'... Typical usage - cd into project, use --project_name=. \n')
         exit (1)
-    from api_logic_server_cli.genai_utils import GenAIUtils
+    from api_logic_server_cli.genai.genai_utils import GenAIUtils
     genai_utils = GenAIUtils(using=using, project=project, genai_version=genai_version, fixup=fixup, submit=submit)
     genai_utils.run()
     pass
@@ -703,7 +703,7 @@ def genai_logic(ctx, using, genai_version: str, retries: int, suggest: click.BOO
         log.info(f'... Error - does not appear to be a project: {str(project.project_directory_path)}')
         log.info(f'... Typical usage - cd into project, use --project_name=. \n')
         exit (1)
-    from genai_logic_builder import GenAILogic
+    from api_logic_server_cli.genai.genai_logic_builder import GenAILogic
     GenAILogic(using=using, project=project, genai_version=genai_version, retries=retries, suggest=suggest, logic=logic)
     pass
     log.info("")
