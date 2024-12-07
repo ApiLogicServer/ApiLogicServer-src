@@ -54,6 +54,8 @@ class SAFRSBaseX(SAFRSBase):
                     attr_val += ":00"
                 except ValueError:
                     pass
+                except Exception as exc:
+                    safrs.log.warning(exc)
         
         
         return super()._s_parse_attr_value(attr_name, attr_val)
