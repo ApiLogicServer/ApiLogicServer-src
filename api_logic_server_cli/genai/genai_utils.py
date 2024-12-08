@@ -185,7 +185,16 @@ def select_messages(messages: List[Dict], messages_out: List[Dict], message_sele
             message_selector(messages_out, each_message)
     return result
 
-def call_chatgpt(messages: List[Dict[str, str]], api_version: str, using: str):
+def call_chatgpt(messages: List[Dict[str, str]], api_version: str, using: str) -> str:
+    """call ChatGPT with messages
+
+    Args:
+        messages (List[Dict[str, str]]): array of messages
+        api_version (str): genai version
+        using (str): str to save response
+    Returns:
+        str: response from ChatGPT
+    """    
     try:
         start_time = time.time()
         db_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")
@@ -204,14 +213,14 @@ def call_chatgpt(messages: List[Dict[str, str]], api_version: str, using: str):
         
         data = completion.choices[0].message.content
         response_dict = json.loads(data)
-        with open(f'{using}/response.json', "w") as response_file:  # save for debug
+        with open(Path(using).joinpath('response.json'), "w") as response_file:  # save for debug
             json.dump(response_dict, response_file, indent=4)
         log.info(f'.. saved response: {using}/response.json')
 
-        with open(f'{using}/request.json', "w") as request_file:  # save for debug
+        with open(Path(using).joinpath('request.json'), "w") as request_file:  # save for debug
             json.dump(messages, request_file, indent=4)
         log.info(f'.. saved request: {using}/request.json')
-        pass
+        return data
     except Exception as inst:
         log.error(f"\n\nError: ChatGPT call failed\n{inst}\n\n")
         sys.exit('ChatGPT call failed - please see https://apilogicserver.github.io/Docs/WebGenAI-CLI/#configuration')
@@ -279,18 +288,40 @@ class GenAIUtils:
             1. Read all the files in `--using`, extracting the *latest* model, rules and test data
             2. Then run the prompt to push missing attrs back into data model and test data to create response.json
 
+            Issues:
+            1. multiple logic files overwrite rules
+            2. logic files must be after the docs files
+            3. the response seems to trigger suggestions
+            4. fix/docs is confusing.. required??
+            5. Catch dup derivations?
+            6. Catch stoopid where clauses that repeat the FK
+
             Example:
             * Get test from tests/test_databases/ai-created/missing_attrs, copy to manager
+                * real project: copy docs to genai/fixup
             * Then run 2 GenAI Fixup run units in the manager
                 * The 1st run unit will create and run the request / response to ask for missing attrs   
                 * The 2nd creates project missing_attrs_fixed, which successfully runs check credit rules.
 
             From CLI:
             ```
+            cd missing_attrs
+            # cp docs genai/fixup
             als genai-utils --fixup --using=genai/fixup
+            cd ..
             als genai --using=missing_attrs_fixed --project-name=missing_attrs_fixed --retries=-1 --repaired-response=missing_attrs/genai/fixup/response.json
+
+            # real example
+            cd genai_demo_no_logic
+            mkdir genai
+            mkdir genai/fixup
+            cp -r docs genai/fixup
+            als genai-utils --fixup --using=genai/fixup
+            cd ..
+            als genai --using=genai-utils_fixed --project-name=genai_demo_no_logic_fixed --retries=-1 --repaired-response=genai_demo_no_logic/genai/fixup/response.json
             ```
-        """        
+        """
+
         k_fixit_prompt = '''
 
         Update the Data Model and Test Data to ensure that:
@@ -307,12 +338,20 @@ class GenAIUtils:
             """            
             
             message_obj = json.loads(message['content'])
-            if isinstance(message_obj, list):
-                messages_out['rules'] = message['content']
+            if isinstance(message_obj, list):  # it's a list of rules
+                if messages_out['rules'] is None:
+                    messages_out['rules'] = message['content']
+                    log.info(f'.. fixup sees first rules: {message["content"][:30]}...')
+                else:                           # rules are additive
+                    log.info(f'.. fixup sees more rules: {message["content"][:30]}...')
+                    messages_out['rules'].append(message['content'])
+                pass
             else:
                 for key, value in message_obj.items():
                     if key in messages_out:
                         messages_out[key] = value
+                        log.info(f'.. fixup sees: {key}: {value[:30]}...')
+                        pass
             pass
 
         
@@ -325,6 +364,8 @@ class GenAIUtils:
                                           messages_out=messages_out,            # updated by message_selector
                                           message_selector=message_selector)
 
+        logic_path = Path(self.using).joinpath('logic')
+        logic_messages = get_prompt_messages
         fixup_messages = []
         fixup_messages.append( get_prompt_you_are() )
         sysdef = {'role': 'user', 'content': json.dumps(messages_out)}

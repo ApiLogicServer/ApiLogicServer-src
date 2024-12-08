@@ -1,0 +1,4 @@
+Use case: Simple contraints for testing
+
+Customer names cannot be 'x'.
+Product names cannot be 'xx'.

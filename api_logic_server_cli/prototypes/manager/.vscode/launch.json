@@ -440,6 +440,25 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
+            "name": "  - GenAI - no logic - include multiple logic files",
+// typical next step - suggest logic
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}/genai_demo_no_logic",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": ["genai-logic"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
             "name": "  - GenAI informal logic - emp_depts",
             "type": "debugpy",
             "request": "launch",
