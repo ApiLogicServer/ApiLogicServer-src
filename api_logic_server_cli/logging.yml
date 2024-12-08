@@ -67,13 +67,19 @@ loggers:
         handlers: [console]
         propagate: no
 
-    genai:   
+    api_logic_server_cli.genai.genai:   
 #         level: DEBUG
         handlers: [console]
         propagate: no
 
 
-    genai_logic_builder:   
+    api_logic_server_cli.genai.genai_logic_builder:   
+        level: DEBUG
+        handlers: [console]
+        propagate: no
+
+
+    api_logic_server_cli.genai.genai_utils:   
         level: DEBUG
         handlers: [console]
         propagate: no

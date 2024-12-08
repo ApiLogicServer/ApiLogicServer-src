@@ -77,16 +77,15 @@ class GenAILogic(object):
                     log.debug(f'.. genai_logic_builder processes: {os.path.basename(each_file)}')
                     logic = file.read()
                 logic_message = {"role": "user", "content": logic}
-                self.messages[self.messages_length-1] = logic_message  # replace data model with logic
+                self.messages.append( logic_message ) # replace data model with logic
                 log.debug(f'.. ChatGPT - saving response to: system/genai/temp/chatgpt_original.response')
-                self.headers = self.get_headers_with_openai_api_key()
-                url = "https://api.openai.com/v1/chat/completions"
-                api_version = f'{self.project.genai_version}'  # eg, "gpt-4o"
-                data = {"model": genai_version, "messages": self.messages}
-                response = requests.post(url, headers=self.headers, json=data)
+                response_str = genai_utils.call_chatgpt(messages=self.messages, api_version=self.project.genai_version, using=self.project.genai_using)
+                response = json.loads(response_str)
                 self.get_and_save_response_data(response=response, file=each_file)          # save raw response to docs/logic
+                self.response_dict = DotMap(response)
                 rule_list = self.response_dict.rules  # TODO this is likely wrong
-                self.insert_logic_into_project(rule_list=rule_list, file=each_file)           # insert logic into project
+                each_code_file = self.project.project_directory_path.joinpath(f'logic/logic_discovery/{each_file.stem}.py')
+                self.insert_logic_into_project(rule_list=rule_list, file=each_code_file)           # insert logic into project
         pass
 
     def get_logic_files(self) -> List[str]:
@@ -405,25 +404,19 @@ class GenAILogic(object):
         
         return result_path
     
-    def get_and_save_response_data(self, response, file) -> str:
-        """ Checks return code, saves response to file, returns response_data
+    def get_and_save_response_data(self, response, file):
+        """ saves response to file, returns response_data
+        Args:
+            response (Dict): response from ChatGPT
+            file (Path): file (stem) to save response to
         Returns:
             str: response_data
         """
-        
-        # Check if the request was successful
-        if response.status_code == 400:
-            raise Exception("Bad ChatGPT Request: " + response.text)
-        
-        if response.status_code != 200:
-            print("Error:", response.status_code, response.text)   # eg, You exceeded your current quota 
 
-        response_data = response.json()['choices'][0]['message']['content']
         response_file_name = file.stem + '.response'
         response_file_path = self.project.project_directory_path.joinpath(f'docs/logic/{response_file_name}')
         with open(response_file_path, "w") as model_file:  # save for debug
-            model_file.write(response_data)
-            file_name = model_file.name
+            json.dump(response, model_file, ensure_ascii=False, indent=4)
         log.debug(f'.. stored response: {response_file_path}')
-        return response_data
+        return
  
