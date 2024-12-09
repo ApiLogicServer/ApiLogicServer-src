@@ -114,14 +114,107 @@ def get_code(rule_list: List[DotMap]) -> str:
                     translated_logic += each_repaired_line + '\n'    
     return translated_logic
 
-def get_prompt_messages(using) -> List[Dict[str, str]]:
-    """ Get prompt from file, dir (conversation) or text argument
-        Prepend with learning_requests (if any)
+def get_lines_from_file(file_name: str) -> list[str]:
+    """Get lines from a file
+
+    Args:
+        file_name (str): the file name
+
+    Returns:
+        list[str]: the lines from the file
+    """
+
+    with open(file_name, "r") as file:
+        lines = file.readlines()
+    return lines
+
+def get_create_prompt__with_inserts(arg_prompt_inserts: str='', raw_prompt: str='', for_iteration: bool = False, 
+                                    arg_db_url: str="sqlite", arg_test_data_rows: int=4) -> tuple[str, bool]:
+    """ prompt-engineering for creating project:
+        1. insert db-specific logic into prompt 
+        2. insert iteration prompt     (if for_iteration)
+        3. insert logic_inserts.prompt ('1 line: Use LogicBank to create declare_logic()...')
+        4. designates prompt-format    (response_format.prompt)
+
+    Args:  FIXME
+        raw_prompt (str): the prompt from file or text argument
+        for_iteration (bool, optional): Inserts 'Update the prior response...' Defaults to False.
+
+    Returns:
+        str: the engineered prompt with inserts
+    """
+    prompt_result = raw_prompt
+    prompt_inserts = ''
+    logic_enabled = True
+    if '*' == arg_prompt_inserts:    # * means no inserts
+        prompt_inserts = "*"
+    elif '' != arg_prompt_inserts:   # if text, use this file
+        prompt_inserts = arg_prompt_inserts
+    elif 'sqlite' in arg_db_url:           # if blank, use default for db    
+        prompt_inserts = f'sqlite_inserts.prompt'
+    elif 'postgresql' in arg_db_url:
+        prompt_inserts = f'postgresql_inserts.prompt'
+    elif 'mysql' in arg_db_url:
+        prompt_inserts = f'mysql_inserts.prompt'
+
+    if prompt_inserts == "*":  
+        pass    # '*' means caller has computed their own prompt -- no inserts
+    else:       # do prompt engineering (inserts)
+        prompt_eng_file_name = get_manager_path().joinpath(f'system/genai/prompt_inserts/{prompt_inserts}')
+        assert Path(prompt_eng_file_name).exists(), \
+            f"Missing prompt_inserts file: {prompt_eng_file_name}"  # eg api_logic_server_cli/prototypes/manager/system/genai/prompt_inserts/sqlite_inserts.prompt
+        log.debug(f'get_prompt__with_inserts: {str(os.getcwd())} \n .. merged with: {prompt_eng_file_name}')
+        with open(prompt_eng_file_name, 'r') as file:
+            pre_post = file.read()  # eg, Use SQLAlchemy to create a sqlite database named system/genai/temp/create_db_models.sqlite, with
+        prompt_result = pre_post.replace('{{prompt}}', raw_prompt)
+        if for_iteration:
+            # Update the prior response - be sure not to lose classes and test data already created.
+            prompt_result = 'Update the prior response - be sure not to lose classes and test data already created.' \
+                + '\n\n' + prompt_result
+            log.debug(f'.. iteration inserted: Update the prior response')
+            log.debug(f'.... iteration prompt result: {prompt_result}')
+
+        prompt_lines = prompt_result.split('\n')
+        prompt_line_number = 0
+        do_logic = True
+        for each_line in prompt_lines:
+            if 'Create multiple rows of test data' in each_line:
+                if arg_test_data_rows > 0:
+                    each_line = each_line.replace(
+                        f'Create multiple rows',  
+                        f'Create {arg_test_data_rows} rows')
+                    prompt_lines[prompt_line_number] = each_line
+                    log.debug(f'.. inserted explicit test data: {each_line}')
+            if K_LogicBankOff in each_line:
+                logic_enabled = False  # for demos
+
+            if "LogicBank" in each_line and do_logic == True:
+                log.debug(f'.. inserted: {each_line}')
+                prompt_eng_logic_file_name = get_manager_path().joinpath(f'system/genai/prompt_inserts/logic_inserts.prompt')
+                with open(prompt_eng_logic_file_name, 'r') as file:
+                    prompt_logic = file.read()  # eg, Use LogicBank to create declare_logic()...
+                prompt_lines[prompt_line_number] = prompt_logic
+                do_logic = False
+            prompt_line_number += 1
+        
+        response_format_file_name = get_manager_path().joinpath(f'system/genai/prompt_inserts/response_format.prompt')
+        with open(response_format_file_name, 'r') as file:
+            response_format = file.readlines()
+        prompt_lines.extend(response_format)
+
+        prompt_result = "\n".join(prompt_lines)  # back to a string
+        pass
+    return prompt_result, logic_enabled
+
+
+
+def get_prompt_messages_from_dirs(using) -> List[Dict[str, str]]:
+    """ Get raw prompts from dir (might be json or text) and return as list of dicts
 
         Returned prompts include inserts from prompt_inserts (prompt engineering)
 
     Returns:
-        dict[]: [ {role: (system | user) }: { content: user-prompt-or-system-response } ]
+        dict[]: [ {role: (system | user) }: { content: user-prompt-or-system-json-response } ]
 
     """
 
@@ -138,6 +231,8 @@ def get_prompt_messages(using) -> List[Dict[str, str]]:
                 # 0 is R/'you are', 1 R/'request', 2 is 'response', 3 is iteration
                 with open(each_file, 'r') as file:
                     prompt = file.read()
+                if each_file.name == 'check_credit.prompt':
+                    debug_string = "good breakpoint - prompt"
                 role = "user"
                 if response_count == 0 and request_count == 0 and each_file.suffix == '.prompt':
                     if not prompt.startswith('You are a '):  # add *missing* 'you are''
@@ -176,14 +271,27 @@ def get_prompt_you_are() -> Dict[str, str]:
     return {"role": "user", "content": you_are}
 
 def select_messages(messages: List[Dict], messages_out: List[Dict], message_selector: object):
+    """iterates through messages and - for `json` content - calls message_selector to update messages_out
+
+    Args:
+        messages (List[Dict]): messages to iterate through (from get_prompt_messages_from_dirs)
+        messages_out (List[Dict]): building the latest values of models, (all) rules and test data
+        message_selector (object): function to update messages_out
+
+    Returns:
+        _type_: _description_
+    """    
+    
     result = List[DotMap]
 
     for each_message in messages:
         content = each_message['content']
-        if content.startswith("[") or content.startswith("{"):
+        content_as_json = as_json(content)
+        if content_as_json is not None:  # eg we skip text content, such as raw logic prompt
             # each_message_obj = json.loads(content)
             message_selector(messages_out, each_message)
     return result
+
 
 def call_chatgpt(messages: List[Dict[str, str]], api_version: str, using: str) -> str:
     """call ChatGPT with messages
@@ -225,6 +333,57 @@ def call_chatgpt(messages: List[Dict[str, str]], api_version: str, using: str) -
         log.error(f"\n\nError: ChatGPT call failed\n{inst}\n\n")
         sys.exit('ChatGPT call failed - please see https://apilogicserver.github.io/Docs/WebGenAI-CLI/#configuration')
 
+def get_manager_path() -> Path:
+    """ Checks cwd, parent, and grandparent for system/genai
+
+    * Possibly could add cli arg later
+
+    Returns:
+        Path: Manager path (contains system/genai)
+    """
+    result_path = Path(os.getcwd())
+    check_system_genai = result_path.joinpath('system/genai')
+    
+    if check_system_genai.exists():
+        return result_path
+    
+    result_path = result_path.parent
+    check_system_genai = result_path.joinpath('system/genai')
+    
+    if check_system_genai.exists():
+        return result_path
+    
+    result_path = result_path.parent
+    check_system_genai = result_path.joinpath('system/genai')
+    
+    assert check_system_genai.exists(), f"Manager Directory not found: {check_system_genai}"
+    
+    return result_path
+
+
+def as_json(value: str) -> dict:
+    """returns json or None from string value
+
+    Args:
+        value (str): string - maybe json
+
+    Returns:
+        dict: json-to-dict, or None
+    """    
+    
+    return_json = None
+    if isinstance(value, str) and (value.startswith('{') or value.startswith('[')):
+        return_json = json.loads(value)
+    return return_json
+
+db_in = "sqlite"
+db = None
+def dbs() -> List[str]:    # split on comma, strip, and return as list
+    # db = [x.strip() for x in s.split('\n')]
+    global db
+    db = (json.dumps(db_in)).split('\n')
+    return
+
 
 class GenAIUtils:
     def __init__(self, project: Project, using: str, genai_version: str, fixup: bool, submit: bool):
@@ -249,7 +408,7 @@ class GenAIUtils:
 
     def submit_project(self):
         log.info(f'.. submitting: {self.using}')
-        self.messages = get_prompt_messages(self.using)
+        self.messages = get_prompt_messages_from_dirs(self.using)
         try:
             api_version = f'{self.project.genai_version}'  # eg, "gpt-4o"
             start_time = time.time()
@@ -289,12 +448,10 @@ class GenAIUtils:
             2. Then run the prompt to push missing attrs back into data model and test data to create response.json
 
             Issues:
-            1. multiple logic files overwrite rules
-            2. logic files must be after the docs files
-            3. the response seems to trigger suggestions
-            4. fix/docs is confusing.. required??
-            5. Catch dup derivations?
-            6. Catch stoopid where clauses that repeat the FK
+            1. Bug: test data is not working (code is json, not a string)
+            2. Feature: logic is all in one file (declare_logic.py) - should be in dicovery
+            3. Catch dup derivations?  (less likley here, but often with suggestions)
+            4. Catch stoopid where clauses that repeat the FK
 
             Example:
             * Get test from tests/test_databases/ai-created/missing_attrs, copy to manager
@@ -311,26 +468,30 @@ class GenAIUtils:
             cd ..
             als genai --using=missing_attrs_fixed --project-name=missing_attrs_fixed --retries=-1 --repaired-response=missing_attrs/genai/fixup/response.json
 
-            # real example
-            cd genai_demo_no_logic
-            mkdir genai
-            mkdir genai/fixup
-            cp -r docs genai/fixup
-            als genai-utils --fixup --using=genai/fixup
-            cd ..
-            als genai --using=genai-utils_fixed --project-name=genai_demo_no_logic_fixed --retries=-1 --repaired-response=genai_demo_no_logic/genai/fixup/response.json
+            # real example - see <mgr>/system/genai/examples/genai_demo/multiple_logic_files/docs/logic/readme_genai_example.md
             ```
         """
 
-        k_fixit_prompt = '''
+        manager_path = get_manager_path()
+        with open(manager_path.joinpath('system/genai/prompt_inserts/fixup.prompt'), 'r') as file:
+            f_fixup_prompt = file.read()
 
-        Update the Data Model and Test Data to ensure that:
-        - The Data Model includes every column referenced in rules
-        - Every column referenced in rules is properly initialized in the test data
-        '''
-
+        def add_rule(messages_out: List[Rule], value: Rule):
+            if isinstance(value, List) and len(value) == 0:
+                log.debug(f'.. fixup ignores: rules [] ...')
+                return
+            if messages_out['rules'] is None:
+                messages_out['rules'] = value
+                log.debug(f'.. fixup sees first rules: {str(value)[0:50]}...')
+            else:                           # rules are additive
+                log.debug(f'.. fixup sees more rules: {str(value)[0:50]}...')
+                messages_out['rules'].append(value)
+            pass
+        
         def message_selector(messages_out: Dict[str, str], message: Dict):
-            """called back from select_messages to update messages_out with the latest rules, models and test data
+            """called back from select_messages 
+            1. to update messages_out with the latest rules, models and test data
+            2. only called in json content (not text, such as raw logic prompt)
 
             Args:
                 messages_out (Dict[str, str]): lastest model, rules and test data
@@ -338,7 +499,8 @@ class GenAIUtils:
             """            
             
             message_obj = json.loads(message['content'])
-            if isinstance(message_obj, list):  # it's a list of rules
+            if isinstance(message_obj, list):  # not expected - TODO - remove code
+                assert True, "unexpected list of rules"  
                 if messages_out['rules'] is None:
                     messages_out['rules'] = message['content']
                     log.info(f'.. fixup sees first rules: {message["content"][:30]}...')
@@ -349,8 +511,22 @@ class GenAIUtils:
             else:
                 for key, value in message_obj.items():
                     if key in messages_out:
-                        messages_out[key] = value
-                        log.info(f'.. fixup sees: {key}: {value[:30]}...')
+                        if key == 'rules':
+                            if isinstance(value, list):
+                                add_rule(messages_out, value)  # accrue rules (not just latest)
+                                continue
+                            else:       # unexpected: rules is not a list: {type(value)} - TODO - remove code
+                                assert True, f"unexpected: rules is not a list: {type(value)}"
+                                if isinstance(value, str):
+                                    log.info(f'.. fixup ignores: rule str {value[:30]}...')
+                                    continue
+                                else:
+                                    log.info(f'.. fixup ignores: rule non-json {value[:30]}...')
+                        elif key == 'test_data_rows':
+                            continue
+                        else:
+                            messages_out[key] = value
+                            log.info(f'.. fixup sees: {key}: {value[:30]}...')
                         pass
             pass
 
@@ -359,20 +535,37 @@ class GenAIUtils:
                         'test_data_rows': None, 
                         'rules': None}
         log.info(f'.. fixup: {self.using}')
-        all_messages = get_prompt_messages(self.using)
+        all_messages = get_prompt_messages_from_dirs(self.using)                # typically docs
         result_messages = select_messages(messages=all_messages, 
                                           messages_out=messages_out,            # updated by message_selector
                                           message_selector=message_selector)
 
-        logic_path = Path(self.using).joinpath('logic')
-        logic_messages = get_prompt_messages
+        logic_path = Path(self.using).joinpath('logic')                         # typically docs/logic
+        logic_messages = get_prompt_messages_from_dirs(str(logic_path))         # [dicts] - contents mixed json and text
+        result_messages = select_messages(messages=logic_messages, 
+                                          messages_out=messages_out,            # updated by message_selector to += rules
+                                          message_selector=message_selector)
         fixup_messages = []
+
         fixup_messages.append( get_prompt_you_are() )
         sysdef = {'role': 'user', 'content': json.dumps(messages_out)}
         fixup_messages.append(sysdef)
-        fix_it = {'role': 'user', 'content': k_fixit_prompt}
+        db = json.loads(sysdef['content'])
+
+        fixup_prompt, logic_enabled = get_create_prompt__with_inserts(raw_prompt=f_fixup_prompt)
+
+        fix_it = {'role': 'user', 'content': fixup_prompt}
         fixup_messages.append(fix_it)
 
+        db = json.loads(sysdef['content'])
         call_chatgpt(messages=fixup_messages, api_version=self.genai_version, using=self.using)
+
+        request_path = Path(self.using).joinpath('request.json')
+        new_file_path = request_path.with_name("request_fixup.json")
+        request_path.rename(new_file_path)
+
+        request_path = Path(self.using).joinpath('response.json')
+        new_file_path = request_path.with_name("response_fixup.json")
+        request_path.rename(new_file_path)
         pass
 
