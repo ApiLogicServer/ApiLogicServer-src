@@ -619,7 +619,7 @@ def genai(ctx, using, db_url, repaired_response: str,
 
 @main.command("genai-utils", cls=HideDunderCommand)
 @click.option('--using',
-              default=f'docs/logic',
+              default=f'docs',
               help="File or dir")
 @click.option('--genai-version', 'genai_version',
               default='gpt-4o',
