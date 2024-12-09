@@ -440,7 +440,7 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "  - GenAI - no logic - include multiple logic files",
+            "name": "  * GenAI - no logic - include multiple logic files",
 // typical next step - suggest logic
             "type": "debugpy",
             "request": "launch",
@@ -455,6 +455,45 @@
                 "OPT_LOCKING": "optional"},
             "justMyCode": false,
             "args": ["genai-logic"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - GenAI - no logic - FixUp (new attrs -> data model, test data)",
+// typical next step - suggest logic
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}/genai_demo_no_logic",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": ["genai-utils", "--fixup"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - GenAI - no logic - rebuild fixed up project",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "genai", "--retries=-1",
+                "--project-name=genai_demo_no_logic_fixed",
+                "--repaired-response=${workspaceFolder}/genai_demo_no_logic/docs/genai_demo_no_logic.response"],
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
         },
