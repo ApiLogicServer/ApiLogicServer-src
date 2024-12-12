@@ -1,7 +1,9 @@
 Status: this example under construction.  
-It should work (build and run), but 
-the resultant project combines the rules into `declare_logic.py` -- 
-they should be under `logic/discovery`.
+It should work (build and run), but:
+
+1. the resultant project combines the rules into `declare_logic.py` -- 
+they should be under `logic/discovery`
+2. additional customizations (new endpoints, security, etc) are not migrated in this procedure
 
 Use this to explore:
 
@@ -13,6 +15,8 @@ Use this to explore:
 <br/>
 
 ## Create genai_no_logic and add logic files
+
+<br/>
 
 1. Create the `genai_demo_no_logic` project
 ```
@@ -39,6 +43,7 @@ als genai-logic
 ```
 
 <br/>
+<br/>
 
 ## Fixup to account for new attributes
 
@@ -46,23 +51,35 @@ The project is not yet runnable, since:
 * the logic refers to attributes not in the data model / database
 * the test data is incomplete and incorrect.
 
-To address, use the `genai-utils --fixup` utility, then rebuild the project:
+To address, use the `genai-utils --fixup` utility, then create a new project:
+
+<br/>
+
+1. Execute `fixup` to get a revised data model and test data
 
 ```
-cd genai_demo_no_logic
+# cd genai_demo_no_logic  # (you should already be at the directory)
 als genai-utils --fixup    
+```
 
-# Creates genai_demo_no_logic/docs/fixup/ -- verify:
-#   2_models.response contains customer.balance, product.carbon_neutral
-#   3_rules.response contains all logic
+Creates `docs/fixup` -- verify:
+1.   `2_models.response` contains customer.balance, product.carbon_neutral
+2.   `3_rules.response` contains all logic
 
 
+<br/>
+
+2. Create a new project with the logic, revised data model and test data
+
+```
 cd ..   # This cd is important!  (else you get TypeError: ...)
 als genai --using=genai-utils_fixed --project-name=genai_demo_no_logic_fixed --retries=-1 --repaired-response=genai_demo_no_logic/docs/fixup/response_fixup.json
 
 # or, --repaired-response now supports a directory of data model / rule models:
 als genai --using=genai-utils_fixed --project-name=genai_demo_no_logic_fixed --retries=-1 --repaired-response=genai_demo_no_logic/docs/fixup
 ```
+
+<br/>
 
 ## Test
 
