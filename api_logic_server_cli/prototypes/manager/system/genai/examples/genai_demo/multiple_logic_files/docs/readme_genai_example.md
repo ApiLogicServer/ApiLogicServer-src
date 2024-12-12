@@ -16,7 +16,7 @@ Use this to explore [managing logic in your project with multiple files](https:/
 
 It takes a few moments. 
 
-Interim: you may need to add the following to the docs/logic/*.prompt files:
+Interim: maybe need to add the following to the docs/logic/*.prompt files (tho think not):
 
         <responseFormat>
         class Rule(BaseModel):
@@ -60,12 +60,21 @@ The project is not yet runnable, since:
 
 To address, use the `genai-utils --fixup` utility, then rebuild the project:
 
+Problem: test data not linking items to orders (pk not anticipated)
+Cause: presumably fixup is creating request_fixup.json differently than normal creation
+And: it's hard to see the request_fixup.json
+
 ```
 cd genai_demo_no_logic
 als genai-utils --fixup
 # creates genai_demo_no_logic/docs/response_fixup.json
 cd ..
-als genai --using=genai-utils_fixed --project-name=genai_demo_no_logic_fixed --retries=-1 --repaired-response=genai_demo_no_logic/docs/response_fixup.json
+als genai --using=genai-utils_fixed --project-name=genai_demo_no_logic_fixed --retries=-1 --repaired-response=genai_demo_no_logic/docs/fixup/response_fixup.json
+
+# or...
+als genai-utils --submit --using=docs/fixup
+cd ..
+als genai --using=genai-utils_fixed --project-name=genai_demo_no_logic_fixed --retries=-1 --repaired-response=genai_demo_no_logic/docs/fixup/response.json
 ```
 
 ## Test

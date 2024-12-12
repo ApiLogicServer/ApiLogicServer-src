@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Tuple
 from api_logic_server_cli.cli_args_project import Project
 import logging
 from pathlib import Path
@@ -7,6 +7,7 @@ import requests
 import os
 import sys
 import create_from_model.api_logic_server_utils as utils
+import shutil
 import time
 from openai import OpenAI
 import json
@@ -163,7 +164,7 @@ def get_create_prompt__with_inserts(arg_prompt_inserts: str='', raw_prompt: str=
         prompt_eng_file_name = get_manager_path().joinpath(f'system/genai/prompt_inserts/{prompt_inserts}')
         assert Path(prompt_eng_file_name).exists(), \
             f"Missing prompt_inserts file: {prompt_eng_file_name}"  # eg api_logic_server_cli/prototypes/manager/system/genai/prompt_inserts/sqlite_inserts.prompt
-        log.debug(f'get_prompt__with_inserts: {str(os.getcwd())} \n .. merged with: {prompt_eng_file_name}')
+        log.debug(f'get_create_prompt__with_inserts: {str(os.getcwd())} \n .. merged with: {prompt_eng_file_name}')
         with open(prompt_eng_file_name, 'r') as file:
             pre_post = file.read()  # eg, Use SQLAlchemy to create a sqlite database named system/genai/temp/create_db_models.sqlite, with
         prompt_result = pre_post.replace('{{prompt}}', raw_prompt)
@@ -208,7 +209,7 @@ def get_create_prompt__with_inserts(arg_prompt_inserts: str='', raw_prompt: str=
 
 
 
-def get_prompt_messages_from_dirs(using) -> List[Dict[str, str]]:
+def get_prompt_messages_from_dirs(using) -> List[ Tuple[Dict[str, str]]]:
     """ Get raw prompts from dir (might be json or text) and return as list of dicts
 
         Returned prompts include inserts from prompt_inserts (prompt engineering)
@@ -218,7 +219,7 @@ def get_prompt_messages_from_dirs(using) -> List[Dict[str, str]]:
 
     """
 
-    def iteration(using) -> List[ Dict[str, str] ]:
+    def iteration(using) -> List[ Tuple[str, Dict[str, str]] ]:
         """ `--using` is a directory (conversation)
         """            
         response_count = 0
@@ -236,22 +237,25 @@ def get_prompt_messages_from_dirs(using) -> List[Dict[str, str]]:
                 role = "user"
                 if response_count == 0 and request_count == 0 and each_file.suffix == '.prompt':
                     if not prompt.startswith('You are a '):  # add *missing* 'you are''
-                        prompt_messages.append( get_prompt_you_are() )
+                        prompt_messages.append( ( each_file, get_prompt_you_are() ) )
                         request_count = 1
                 file_num = request_count + response_count
                 file_str = str(file_num).zfill(3)
-                log.debug(f'.. utils[{file_str}] processes: {os.path.basename(each_file)} - {prompt[:30]}...')
+                debug_prompt = prompt[:30] 
+                debug_prompt = debug_prompt.replace('\n', ' | ')
+                log.debug(f'.. utils[{file_str}] processes: {os.path.basename(each_file)} - {debug_prompt}...')
                 if each_file.suffix == ".response":
                     role = 'system'
                     response_count += 1
                 else:
                     request_count += 1      # rebuild response with *all* tables
-                prompt_messages.append( {"role": role, "content": prompt})
+                prompt_messages.append( (each_file, {"role": role, "content": prompt} ) )
             else:
                 log.debug(f'.. .. utils ignores: {os.path.basename(each_file)}')
         return prompt_messages
 
-    prompt_messages : List[ Dict[str, str] ] = []  # prompt/response conversation to be sent to ChatGPT
+    log.debug(f'\nget_prompt_messages_from_dirs - scanning (${using})')
+    prompt_messages : List[ Tuple[ Dict[str, str] ] ] = []  # prompt/response conversation to be sent to ChatGPT
     
     assert Path(using).is_dir(), f"Missing directory: {using}"
     prompt_messages = iteration(using)  # `--using` is a directory (conversation)
@@ -260,7 +264,7 @@ def get_prompt_messages_from_dirs(using) -> List[Dict[str, str]]:
     return prompt_messages  
 
 def get_prompt_you_are() -> Dict[str, str]:
-    """   Create presets - you are a data modelling expert, and logicbank api etc
+    """   Create presets - {'role'...you are a data modelling expert, and logicbank api etc
 
     Args:
         prompt_messages (List[Dict[str, str]]): updated array of messages to be sent to ChatGPT
@@ -283,13 +287,13 @@ def select_messages(messages: List[Dict], messages_out: List[Dict], message_sele
     """    
     
     result = List[DotMap]
-
-    for each_message in messages:
+    log.debug(f'\nfixup/select_messages: {len(messages)} messages')
+    for each_message_file, each_message in messages:
         content = each_message['content']
         content_as_json = as_json(content)
         if content_as_json is not None:  # eg we skip text content, such as raw logic prompt
             # each_message_obj = json.loads(content)
-            message_selector(messages_out, each_message)
+            message_selector(messages_out, each_message, each_message_file)
     return result
 
 
@@ -312,6 +316,10 @@ def call_chatgpt(messages: List[Dict[str, str]], api_version: str, using: str) -
             model = os.getenv("APILOGICSERVER_CHATGPT_MODEL")
             if model is None or model == "*":  # system default chatgpt model
                 model = "gpt-4o-2024-08-06"
+        with open(Path(using).joinpath('request.json'), "w") as request_file:  # save for debug
+            json.dump(messages, request_file, indent=4)
+        log.info(f'.. saved request: {using}/request.json')
+
         completion = client.beta.chat.completions.parse(
             messages=messages, response_format=WGResult,
             # temperature=self.project.genai_temperature,  values .1 and .7 made students / charges fail
@@ -323,11 +331,7 @@ def call_chatgpt(messages: List[Dict[str, str]], api_version: str, using: str) -
         response_dict = json.loads(data)
         with open(Path(using).joinpath('response.json'), "w") as response_file:  # save for debug
             json.dump(response_dict, response_file, indent=4)
-        log.info(f'.. saved response: {using}/response.json')
-
-        with open(Path(using).joinpath('request.json'), "w") as request_file:  # save for debug
-            json.dump(messages, request_file, indent=4)
-        log.info(f'.. saved request: {using}/request.json')
+        log.debug(f'.. call_chatgpt saved response: {using}/response.json')
         return data
     except Exception as inst:
         log.error(f"\n\nError: ChatGPT call failed\n{inst}\n\n")
@@ -407,9 +411,15 @@ class GenAIUtils:
             log.info(f'.. no action specified')
 
     def submit_project(self):
+        """ Submit dir contents to ChatGPT for processing
+
+        cd genai_demo_no_logic
+        als genai_utils --submit --using=docs/fixup
+        
+        """
         log.info(f'.. submitting: {self.using}')
         self.messages = get_prompt_messages_from_dirs(self.using)
-        try:
+        try:  # TODO - use call_chatgpt
             api_version = f'{self.project.genai_version}'  # eg, "gpt-4o"
             start_time = time.time()
             db_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")
@@ -439,7 +449,7 @@ class GenAIUtils:
             sys.exit('ChatGPT call failed - please see https://apilogicserver.github.io/Docs/WebGenAI-CLI/#configuration')
 
     def fixup_project(self):
-        """ Fixup project by updating the Data Model and Test Data to ensure that:
+        """ Fixup project by updating the Data Model and Test Data to ensure that (eg, after -genai-logic):
             - The Data Model includes every column referenced in rules
             - Every column referenced in rules is properly initialized in the test data
 
@@ -482,13 +492,13 @@ class GenAIUtils:
                 return
             if messages_out['rules'] is None:
                 messages_out['rules'] = value
-                log.debug(f'.. fixup sees first rules: {str(value)[0:50]}...')
+                log.debug(f'.. .. fixup/add_rule sees first rules: {str(value)[0:50]}...')
             else:                           # rules are additive
-                log.debug(f'.. fixup sees more rules: {str(value)[0:50]}...')
+                log.debug(f'.. .. fixup/add_rule sees more rules: {str(value)[0:50]}...')
                 messages_out['rules'].append(value)
             pass
         
-        def message_selector(messages_out: Dict[str, str], message: Dict):
+        def message_selector(messages_out: Dict[str, str], message: Dict, each_message_file: str):
             """called back from select_messages 
             1. to update messages_out with the latest rules, models and test data
             2. only called in json content (not text, such as raw logic prompt)
@@ -503,9 +513,9 @@ class GenAIUtils:
                 assert True, "unexpected list of rules"  
                 if messages_out['rules'] is None:
                     messages_out['rules'] = message['content']
-                    log.info(f'.. fixup sees first rules: {message["content"][:30]}...')
+                    log.debug(f'.. fixup/message_selector sees first rules: {each_message_file} - {message["content"][:30]}...')
                 else:                           # rules are additive
-                    log.info(f'.. fixup sees more rules: {message["content"][:30]}...')
+                    log.deubg(f'.. fixup/message_selector sees more rules: {each_message_file} - {message["content"][:30]}...')
                     messages_out['rules'].append(message['content'])
                 pass
             else:
@@ -518,54 +528,88 @@ class GenAIUtils:
                             else:       # unexpected: rules is not a list: {type(value)} - TODO - remove code
                                 assert True, f"unexpected: rules is not a list: {type(value)}"
                                 if isinstance(value, str):
-                                    log.info(f'.. fixup ignores: rule str {value[:30]}...')
+                                    log.debug(f'.. fixup/message_selector ignores: rule  str{each_message_file} -  {value[:30]}...')
                                     continue
                                 else:
-                                    log.info(f'.. fixup ignores: rule non-json {value[:30]}...')
+                                    log.debug(f'.. fixup/message_selector ignores: rule non-json {each_message_file} -  {value[:30]}...')
                         elif key == 'test_data_rows':
                             continue
                         else:
-                            messages_out[key] = value
-                            log.info(f'.. fixup sees: {key}: {value[:30]}...')
+                            messages_out[key] = value  # FIXME - should be additive??
+                            log.debug(f'.. fixup/message_selector sees: {each_message_file} -  {key}: {value[:30]}...')
                         pass
             pass
 
-        
+        def create_fixup_files(self):
+            """ _response.json > docs/fixup/you-are.prompt. model_and_rules.response, rules.response and doit.prompt
+            """
+
+            request_path = Path(self.using).joinpath('request.json')
+            new_file_path = Path(self.using).joinpath("fixup/request_fixup.json")
+            shutil.move(request_path, new_file_path)
+
+            response_path = Path(self.using).joinpath('response.json')
+            new_file_path = Path(self.using).joinpath("fixup/response_fixup.json")
+            shutil.move(response_path, new_file_path)
+
+            you_are = get_prompt_you_are()['content']
+            with open(Path(self.using).joinpath('fixup/1_you-are.prompt'), "w") as file:
+                file.write(you_are)
+
+            models = {'models': self.fixup_response.models}
+            with open(Path(self.using).joinpath('fixup/2_models.response'), "w") as file:
+                json.dump(models, file, indent=4) # models and rules
+
+            models = {'rules': self.fixup_response.models}
+            with open(Path(self.using).joinpath('fixup/3_rules.response'), "w") as file:
+                json.dump(models, file, indent=4) # models and rules
+
+            test_data_rows = {'test_data_rows': self.fixup_response.test_data_rows}
+            with open(Path(self.using).joinpath('fixup/4_test_data_rows.response'), "w") as file:
+                json.dump(test_data_rows, file, indent=4) # models and rules
+
+            with open(Path(self.using).joinpath('fixup/5_fixup_command.response'), "w") as file:
+                file.write(self.fixup_command)
+
+        # build fixup request: [you-are, models_and_rules, fixup_prompt]
+        os.makedirs(Path(self.using).joinpath('fixup'), exist_ok=True)
+
         messages_out = {'models':  None, 
-                        'test_data_rows': None, 
                         'rules': None}
-        log.info(f'.. fixup: {self.using}')
+        log.debug(f'Fixup --using={self.using}')
+
+        self.fixup_request = []
+        self.fixup_request.append( get_prompt_you_are() )
+
         all_messages = get_prompt_messages_from_dirs(self.using)                # typically docs
         result_messages = select_messages(messages=all_messages, 
                                           messages_out=messages_out,            # updated by message_selector
                                           message_selector=message_selector)
-
+        
+        log.debug(f'\n\nfixup: processing /logic {self.using}/logic')
         logic_path = Path(self.using).joinpath('logic')                         # typically docs/logic
         logic_messages = get_prompt_messages_from_dirs(str(logic_path))         # [dicts] - contents mixed json and text
         result_messages = select_messages(messages=logic_messages, 
                                           messages_out=messages_out,            # updated by message_selector to += rules
                                           message_selector=message_selector)
-        fixup_messages = []
 
-        fixup_messages.append( get_prompt_you_are() )
-        sysdef = {'role': 'user', 'content': json.dumps(messages_out)}
-        fixup_messages.append(sysdef)
-        db = json.loads(sysdef['content'])
+        self.models_and_rules = {'role': 'user', 'content': json.dumps(messages_out)}
+        db = json.loads(self.models_and_rules['content'])
+        self.fixup_request.append(self.models_and_rules)
 
-        fixup_prompt, logic_enabled = get_create_prompt__with_inserts(raw_prompt=f_fixup_prompt)
+        log.debug(f'\nmodels/rules gathered - now get fixup command prompt')
+        self.fixup_command, logic_enabled = get_create_prompt__with_inserts(raw_prompt=f_fixup_prompt)
+        fixup_command_prompt = {'role': 'user', 'content': self.fixup_command}
+        self.fixup_request.append(fixup_command_prompt)
+        # db = json.loads(self.fixup_request['content'])
 
-        fix_it = {'role': 'user', 'content': fixup_prompt}
-        fixup_messages.append(fix_it)
+        self.response_str = call_chatgpt(messages=self.fixup_request, api_version=self.genai_version, using=self.using)
+        self.fixup_response = DotMap(json.loads(self.response_str))
 
-        db = json.loads(sysdef['content'])
-        call_chatgpt(messages=fixup_messages, api_version=self.genai_version, using=self.using)
+        # response.json > docs/fixup/you-are.prompt. model_and_rules.response, rules.response and doit.prompt
+        #  
+        create_fixup_files(self)
 
-        request_path = Path(self.using).joinpath('request.json')
-        new_file_path = request_path.with_name("request_fixup.json")
-        request_path.rename(new_file_path)
-
-        request_path = Path(self.using).joinpath('response.json')
-        new_file_path = request_path.with_name("response_fixup.json")
-        request_path.rename(new_file_path)
+        log.info(f'.. fixup complete: {self.using}/fixup')
         pass
 

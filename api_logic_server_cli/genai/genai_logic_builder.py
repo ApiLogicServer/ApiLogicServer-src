@@ -5,6 +5,7 @@ from pathlib import Path
 import importlib
 import requests
 import os
+import datetime
 import create_from_model.api_logic_server_utils as utils
 import time
 from openai import OpenAI
@@ -78,14 +79,14 @@ class GenAILogic(object):
                     logic = file.read()
                 logic_message = {"role": "user", "content": logic}
                 self.messages.append( logic_message ) # replace data model with logic
-                log.debug(f'.. ChatGPT - saving response to: system/genai/temp/chatgpt_original.response')
+                log.debug(f'.. ChatGPT - saving raw response to: system/genai/temp/chatgpt_original.response')
                 response_str = genai_utils.call_chatgpt(messages=self.messages, api_version=self.project.genai_version, using=self.project.genai_using)
                 response = json.loads(response_str)
                 self.get_and_save_response_data(response=response, file=each_file)          # save raw response to docs/logic
                 self.response_dict = DotMap(response)
-                rule_list = self.response_dict.rules  # TODO this is likely wrong
+                rule_list = self.response_dict.rules
                 each_code_file = self.project.project_directory_path.joinpath(f'logic/logic_discovery/{each_file.stem}.py')
-                self.insert_logic_into_project(rule_list=rule_list, file=each_code_file)           # insert logic into project
+                self.insert_logic_into_project(rule_list=rule_list, file=each_code_file)     # insert logic into project
         pass
 
     def get_logic_files(self) -> List[str]:
@@ -337,7 +338,7 @@ class GenAILogic(object):
             with open(manager_root.joinpath('system/genai/create_db_models_inserts/logic_discovery_prefix.py'), "r") as logic_prefix_file:
                 logic_prefix = logic_prefix_file.read()
             translated_logic = logic_prefix
-        translated_logic += "\n    # Logic from GenAI:\n\n"
+        translated_logic += f'\n    # Logic from GenAI {str(datetime.datetime.now().strftime("%B %d, %Y %H:%M:%S"))}:\n\n'
 
         rule_code = genai_utils.get_code(rule_list)  # get code from logic
         translated_logic += rule_code
@@ -412,11 +413,25 @@ class GenAILogic(object):
         Returns:
             str: response_data
         """
-
-        response_file_name = file.stem + '.response'
+        response_file_name = file.stem + '_all' + '.json'
         response_file_path = self.project.project_directory_path.joinpath(f'docs/logic/{response_file_name}')
         with open(response_file_path, "w") as model_file:  # save for debug
             json.dump(response, model_file, ensure_ascii=False, indent=4)
         log.debug(f'.. stored response: {response_file_path}')
+
+        response_file_name = file.stem + '_models' + '.response'
+        model_dict = {"models": response['models']}
+        response_file_path = self.project.project_directory_path.joinpath(f'docs/logic/{response_file_name}')
+        with open(response_file_path, "w") as model_file:  # save for debug
+            json.dump(model_dict, model_file, ensure_ascii=False, indent=4)
+        log.debug(f'.. stored response: {response_file_path}')
+
+        response_file_name = file.stem + '_rules' + '.response'
+        model_dict = {"rules": response['rules']}
+        response_file_path = self.project.project_directory_path.joinpath(f'docs/logic/{response_file_name}')
+        with open(response_file_path, "w") as model_file:  # save for debug
+            json.dump(model_dict, model_file, ensure_ascii=False, indent=4)
+        log.debug(f'.. stored response: {response_file_path}')
+
         return
  
