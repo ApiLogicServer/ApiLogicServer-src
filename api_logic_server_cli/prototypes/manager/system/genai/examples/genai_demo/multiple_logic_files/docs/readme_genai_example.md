@@ -11,20 +11,22 @@ Use this to explore:
 
 ## Create genai_no_logic and add logic files
 
-1. Run Config: `  - GenAI - no logic` to create project `genai_demo_no_logic`
-'''
+1. Create the `genai_demo_no_logic` project
+```
 als genai  --retries=3 --project-name=genai_demo_no_logic --using=system/genai/examples/genai_demo/genai_demo_no_logic.prompt
-'''
+```
 
 2. Acquire the logic files (natural language prompts) into in `genai_demo_no_logic/docs/logic`
-'''
+```
 cp -r system/genai/examples/genai_demo/multiple_logic_files/docs/logic genai_demo_no_logic/docs
-'''
+```
 
-3. This uses GenAI to translate Natural Language logic into logic code at `genai_demo_no_logic/logic/logic_discovery`.  It takes a few moments.
+Observe these rules introduce attributes: `customer.balance, product.carbon_neutral`
+
+3. Use `genai-logic` to translate Natural Language logic into logic code at `genai_demo_no_logic/logic/logic_discovery`.  It takes a few moments.
 
 ```
-cd genai_demo_no_logic`
+cd genai_demo_no_logic
 als genai-logic
 ```
 
@@ -40,12 +42,15 @@ To address, use the `genai-utils --fixup` utility, then rebuild the project:
 
 ```
 cd genai_demo_no_logic
-als genai-utils --fixup    # creates genai_demo_no_logic/docs/fixup/
+als genai-utils --fixup    
+
+# Creates genai_demo_no_logic/docs/fixup/ -- verify:
+#   2_models.response contains customer.balance, product.carbon_neutral
+#   3_rules.response contains all logic
+
 
 cd ..   # Important!  else you get TypeError: ...
 als genai --using=genai-utils_fixed --project-name=genai_demo_no_logic_fixed --retries=-1 --repaired-response=genai_demo_no_logic/docs/fixup/response_fixup.json
-
-# BUG: missing contraints rules
 
 # or...
 als genai --using=genai-utils_fixed --project-name=genai_demo_no_logic_fixed --retries=-1 --repaired-response=genai_demo_no_logic/docs/fixup
