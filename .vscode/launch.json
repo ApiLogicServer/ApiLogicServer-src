@@ -1925,13 +1925,13 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "11 GenAI - no logic (TODO)",
+            "name": "11 GenAI - create genai_demo_no_logic",
 //  typical start - just the model
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
-            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer/genai_demo_no_logic",
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
             "env": {
                 "PYTHONPATH": "", 
                 "SECURITY_ENABLED": "False", 
@@ -2002,12 +2002,12 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "  - GenAI - no logic -> genai_demo_no_logic_fixed (from dir)  TODO SLOW",
+            "name": "  - GenAI - no logic -> genai_demo_no_logic_fixed (from dir)",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
-            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer/genai_demo_no_logic",
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
             "env": {
                 "PYTHONPATH": "", 
                 "SECURITY_ENABLED": "False", 
@@ -2017,7 +2017,7 @@
             "justMyCode": false,
             "args": [ "genai", "--retries=-1",
                 "--project-name=genai_demo_no_logic_fixed",  "--using=genai_demo_no_logic",
-                "--repaired-response=docs/fixup"],
+                "--repaired-response=genai_demo_no_logic/docs/fixup"],
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
         },

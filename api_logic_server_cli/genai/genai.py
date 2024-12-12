@@ -101,6 +101,40 @@ class GenAI(object):
         https://platform.openai.com/finetune/ftjob-2i1wkh4t4l855NKCovJeHExs?filter=all
         """        
 
+        def get_repaired_response() -> dict:
+            """Get repaired response from file
+
+            Returns:
+                dict: the repaired response
+            """
+            response_dict = dict()
+            if Path(self.project.genai_repaired_response).is_file():
+                with open(self.project.genai_repaired_response, 'r') as response_file:
+                    response_dict = json.load(response_file)
+            elif Path(self.project.genai_repaired_response).is_dir():
+                response_dict = dict()
+                for each_file in sorted(Path(self.project.genai_repaired_response).iterdir()):
+                    if each_file.is_file() and each_file.suffix == '.prompt' or each_file.suffix == '.response':
+                        # see api_logic_server_cli/prototypes/manager/system/genai/examples/genai_demo/multiple_logic_files/docs/readme_genai_example.md
+                        with open(each_file, 'r') as repair_file:
+                            each_repair_file = repair_file.read()
+                        if each_repair_file.startswith('[') or each_repair_file.startswith('{'):
+                            each_repair_dict = json.loads(each_repair_file)
+                            if 'models' in each_repair_dict:
+                                response_dict['models'] = each_repair_dict['models']
+                            elif 'rules' in each_repair_dict:
+                                response_dict['rules'] = each_repair_dict['rules']
+                            elif 'test_data_rows' in each_repair_dict: # eg, tests/test_databases/ai-created/time_cards/time_card_kw_arg/genai.response
+                                response_dict['test_data_rows'] = each_repair_dict['test_data_rows']
+                            else:
+                                log.error(f"Error: recognized repair file json: {self.project.genai_repaired_response}")
+                        else:
+                            log.debug(f"Skipping non-json repair file: {self.project.genai_repaired_response}")
+                response_dict['name'] = self.project.project_name
+            else:
+                log.error(f"Error: repaired response file/dir not found: {self.project.genai_repaired_response}")
+            return response_dict
+
         log.info(f'\nGenAI [{self.project.project_name}] creating microservice from: {self.project.genai_using}')
         if self.project.genai_repaired_response != '':
             log.info(f'..     retry from [repaired] response file: {self.project.genai_repaired_response}')
@@ -121,7 +155,7 @@ class GenAI(object):
             try:
                 api_version = f'{self.project.genai_version}'  # eg, "gpt-4o"
                 start_time = time.time()
-                db_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")
+                db_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")  # TODO - use genai_utils
                 client = OpenAI(api_key=os.getenv("APILOGICSERVER_CHATGPT_APIKEY"))
                 model = api_version
                 if model == "":  # default from CLI is '', meaning fall back to env variable or system default...
@@ -147,8 +181,7 @@ class GenAI(object):
         else: # for retry from corrected response... eg system/genai/temp/chatgpt_retry.response
             self.resolved_model = "(n/a: model not used for repaired response)"
             log.debug(f'\nUsing [corrected] response from: {self.project.genai_repaired_response}')
-            with open(self.project.genai_repaired_response, 'r') as response_file:
-                response_dict = json.load(response_file)
+            response_dict = get_repaired_response()  # from file or dir
 
         self.response_dict = DotMap(response_dict)
         if self.logic_enabled == False:

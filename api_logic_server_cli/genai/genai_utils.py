@@ -558,15 +558,15 @@ class GenAIUtils:
 
             models = {'models': self.fixup_response.models}
             with open(Path(self.using).joinpath('fixup/2_models.response'), "w") as file:
-                json.dump(models, file, indent=4) # models and rules
+                json.dump(models, file, indent=4)
 
-            models = {'rules': self.fixup_response.models}
+            rules = {'rules': self.fixup_response.rules}
             with open(Path(self.using).joinpath('fixup/3_rules.response'), "w") as file:
-                json.dump(models, file, indent=4) # models and rules
+                json.dump(rules, file, indent=4)
 
             test_data_rows = {'test_data_rows': self.fixup_response.test_data_rows}
             with open(Path(self.using).joinpath('fixup/4_test_data_rows.response'), "w") as file:
-                json.dump(test_data_rows, file, indent=4) # models and rules
+                json.dump(test_data_rows, file, indent=4)
 
             with open(Path(self.using).joinpath('fixup/5_fixup_command.response'), "w") as file:
                 file.write(self.fixup_command)
