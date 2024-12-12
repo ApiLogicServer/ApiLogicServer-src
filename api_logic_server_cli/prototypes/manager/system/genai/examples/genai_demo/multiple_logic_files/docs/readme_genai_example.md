@@ -1,4 +1,7 @@
-Status: this example under construction.
+Status: this example under construction.  
+It should work (build and run), but 
+the resultant project combines the rules into `declare_logic.py` -- 
+they should be under `logic/discovery`.
 
 Use this to explore:
 
@@ -15,15 +18,20 @@ Use this to explore:
 ```
 als genai  --retries=3 --project-name=genai_demo_no_logic --using=system/genai/examples/genai_demo/genai_demo_no_logic.prompt
 ```
+<br/>
 
-2. Acquire the logic files (natural language prompts) into in `genai_demo_no_logic/docs/logic`
+2. Acquire the logic files into in `genai_demo_no_logic/docs/logic`
 ```
 cp -r system/genai/examples/genai_demo/multiple_logic_files/docs/logic genai_demo_no_logic/docs
 ```
 
-Observe these rules introduce attributes: `customer.balance, product.carbon_neutral`
+The `/logic` files are natural language prompts - `credit_check.prompt` and `constraint_tests`.
+ 
+> Observe this logic introduces new attributes: `customer.balance, product.carbon_neutral`
 
-3. Use `genai-logic` to translate Natural Language logic into logic code at `genai_demo_no_logic/logic/logic_discovery`.  It takes a few moments.
+<br/>
+
+3. Use `genai-logic` to translate Natural Language logic into logic code at `genai_demo_no_logic/logic/logic_discovery` (it takes a few moments):
 
 ```
 cd genai_demo_no_logic
@@ -49,13 +57,13 @@ als genai-utils --fixup
 #   3_rules.response contains all logic
 
 
-cd ..   # Important!  else you get TypeError: ...
+cd ..   # This cd is important!  (else you get TypeError: ...)
 als genai --using=genai-utils_fixed --project-name=genai_demo_no_logic_fixed --retries=-1 --repaired-response=genai_demo_no_logic/docs/fixup/response_fixup.json
 
-# or...
+# or, --repaired-response now supports a directory of data model / rule models:
 als genai --using=genai-utils_fixed --project-name=genai_demo_no_logic_fixed --retries=-1 --repaired-response=genai_demo_no_logic/docs/fixup
 ```
 
 ## Test
 
-To test, update a customer name to "x".
+To test, open and start `genai_demo_no_logic_fixed`, and use the Admin app to update a customer name to "x".  This should trigger a constraint message.
