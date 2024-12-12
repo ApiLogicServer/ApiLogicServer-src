@@ -492,8 +492,8 @@
                 "OPT_LOCKING": "optional"},
             "justMyCode": false,
             "args": [ "genai", "--retries=-1",
-                "--project-name=genai_demo_no_logic_fixed",
-                "--repaired-response=${workspaceFolder}/genai_demo_no_logic/docs/genai_demo_no_logic.response"],
+                "--project-name=genai_demo_no_logic_fixed",  "--using=genai_demo_no_logic",
+                "--repaired-response=${workspaceFolder}/genai_demo_no_logic/docs/fixup/response_fixup.json"],
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
         },

@@ -724,6 +724,8 @@ class GenAI(object):
                     str: the fixed test data line
                 """
 
+                if '=null' in each_fixed_line:
+                    each_fixed_line = each_fixed_line.replace('=None', '=date') 
                 if '=datetime' in each_fixed_line:
                     each_fixed_line = each_fixed_line.replace('=datetime.date', '=date') 
                 if 'datetime.datetime.utcnow' in each_fixed_line:
