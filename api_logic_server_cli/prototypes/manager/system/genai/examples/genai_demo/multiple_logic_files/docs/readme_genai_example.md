@@ -4,6 +4,7 @@ It should work (build and run), but:
 1. the resultant project combines the rules into `declare_logic.py` -- 
 they should be under `logic/discovery`
 2. additional customizations (new endpoints, security, etc) are not migrated in this procedure
+    * Consider copying the database and models from the output project back to the original.
 
 Use this to explore:
 
