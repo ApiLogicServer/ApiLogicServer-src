@@ -131,7 +131,7 @@ def declare_logic():
         if (logic_row.is_inserted() and row.Ready == True) or \
             (logic_row.is_updated() and row.Ready == True and old_row.Ready == False):
             kafka_producer.send_kafka_message(logic_row=logic_row,
-                                              row_dict_mapper=OrderShipping,
+                                              row_dict_mapper=OrderShipping,  # omit to just send order header
                                               kafka_topic="order_shipping",
                                               kafka_key=str(row.Id),
                                               msg="Sending Order to Shipping")

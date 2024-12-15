@@ -47,9 +47,8 @@ def kafka_producer():
         logger.debug(f'\nKafka producer connected')
 
 
-def send_kafka_message(logic_row: LogicRow, row_dict_mapper: RowDictMapper, 
-                       kafka_topic: str, kafka_key: str, msg: str="",
-                       json_root_name: str = ""):
+def send_kafka_message(logic_row: LogicRow, kafka_topic: str, kafka_key: str, msg: str="",
+                       json_root_name: str = "", row_dict_mapper: RowDictMapper = None):
     """ Send Kafka message regarding logic_row, mapped by row_dict_mapper
 
     * Typically called from declare_logic event
@@ -62,7 +61,12 @@ def send_kafka_message(logic_row: LogicRow, row_dict_mapper: RowDictMapper,
         msg (str, optional): string to log
         json_root_name (str, optional): json name for json payload root; default is logic_row.name
     """
-    row_obj_dict = row_dict_mapper().row_to_dict(row = logic_row.row)
+    mapper = row_dict_mapper
+    if mapper is None:
+        mapper = RowDictMapper(model_class=logic_row.row.__class__)  # requires model_class, alias, fields
+    else:
+        mapper = row_dict_mapper()
+    row_obj_dict = mapper.row_to_dict(row = logic_row.row)
     root_name = json_root_name
     if root_name == "":
         root_name = logic_row.name

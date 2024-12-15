@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "14.00.19"
+__version__ = "14.00.20"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t12/15/2024 - 14.00.20: LogicBank reports missing attrs, kafka/kafka_producer.py#send_kafka_message - RowDictMapper now optional \n"\
     "\t12/12/2024 - 14.00.19: genai: genai-logic --logic, utils/fixup+, no dup derivations, --use-active-rules, active rules > 5, no initial logic, use_case \n"\
     "\t11/18/2024 - 12.02.00: genai: 'qualified any' now supported in logic training \n"\
     "\t10/31/2024 - 12.01.00: genai: informal rules (eg, Sum of employee salaries cannot exceed department budget) \n"\
