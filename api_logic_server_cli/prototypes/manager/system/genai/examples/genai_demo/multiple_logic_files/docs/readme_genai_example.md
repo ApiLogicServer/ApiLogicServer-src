@@ -3,13 +3,13 @@ It should work (build and run), but:
 
 1. the resultant project combines the rules into `declare_logic.py` -- 
 they should be under `logic/discovery`
-2. additional customizations (new endpoints, security, etc) are not migrated in this procedure
-    * Consider copying the database and models from the output project back to the original.
+2. additional customizations (new endpoints, security, etc) are not migrated in this procedure.
+    * Consider copying back to the original: database/db.sqlite, database/models, rebuilt api/expose_api_models.py
 
 Use this to explore:
 
 1. [managing logic in your project with multiple files](https://apilogicserver.github.io/Docs/WebGenAI-CLI/#add-logic-to-existing-projects)
-2. Merging multiple logic files into a single project, and reflect newly introduced attributes into:
+2. Merging multiple logic files into a single project, reflecting newly introduced attributes into:
     * the data model
     * and the test data
 
@@ -25,7 +25,7 @@ als genai  --retries=3 --project-name=genai_demo_no_logic --using=system/genai/e
 ```
 <br/>
 
-2. Acquire the logic files into in `genai_demo_no_logic/docs/logic`
+2. Acquire the logic files into `genai_demo_no_logic/docs/logic`
 ```
 cp -r system/genai/examples/genai_demo/multiple_logic_files/docs/logic genai_demo_no_logic/docs
 ```

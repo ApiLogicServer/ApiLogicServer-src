@@ -16,17 +16,6 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "  - Old (flat - no directories)",
-            "type": "debugpy",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/tests/build_and_test",
-            "env": {"APILOGICSERVER_AUTO_OPEN": ""},
-            "program": "build_load_and_testZ.py",
-            "redirectOutput": true,
-            "justMyCode": false,
-            "console": "integratedTerminal"
-        },
-        {
             "name": "  - BLT, Hold the Tomato",
             "type": "debugpy",
             "request": "launch",
