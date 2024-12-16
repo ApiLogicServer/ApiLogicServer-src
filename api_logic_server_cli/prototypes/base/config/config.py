@@ -165,6 +165,16 @@ class Config:
     KAFKA_CONSUMER = '{"bootstrap.servers": "localhost:9092", "group.id": "als-default-group1"}'
     KAFKA_CONSUMER = None  # comment out to enable Kafka consumer
 
+    wh_server = "localhost"
+    wh_port = 5678
+    wh_endpoint = "webhook-test"
+    wh_key = "1c83eb31-18b7-4505-9cd2-b6722cb8bb86"
+
+    N8N_PRODUCER = '{"authorization": "Basic YWRtaW46cA==", \
+                "url": "localhost", "port": 5678, "end_point": "webhook-test", "key": "1c83eb31-18b7-4505-9cd2-b6722cb8bb86"}' 
+    # N8N_PRODUCER = None  # comment out to enable N8N producer
+    # Consumer under consideration
+
     OPT_LOCKING = "optional"
     if os.getenv('OPT_LOCKING'):  # e.g. export OPT_LOCKING=required
         opt_locking_export = os.getenv('OPT_LOCKING')  # type: ignore # type: str
@@ -227,6 +237,7 @@ class Args():
         self.http_scheme = Config.CREATED_HTTP_SCHEME
         self.kafka_producer = Config.KAFKA_PRODUCER
         self.kafka_consumer = Config.KAFKA_CONSUMER
+        self.n8n_producer = Config.N8N_PRODUCER
         self.keycloak_base = Config.KEYCLOAK_BASE
         self.keycloak_realm = Config.KEYCLOAK_REALM
         self.keycloak_base_url = Config.KEYCLOAK_BASE_URL
@@ -477,6 +488,23 @@ class Args():
                f'.. http_scheme: {self.http_scheme}, api_prefix: {self.api_prefix}, \n'\
                f'.. | verbose: {self.verbose}, create_and_run: {self.create_and_run}'
         return rtn
+
+    @property
+    def n8n_producer(self) -> dict:
+        """ n8n connect string """
+        if "N8N_PRODUCER" in self.flask_app.config:
+            if self.flask_app.config["N8N_PRODUCER"] is not None:
+                value = self.flask_app.config["N8N_PRODUCER"]
+                if isinstance(value, dict):
+                    pass  # eg, from VSCode Run Config: "APILOGICPROJECT_N8N_PRODUCER": "{\"bootstrap.servers\": \"localhost:9092\"}",
+                else:
+                    value = json.loads(self.flask_app.config["N8N_PRODUCER"])
+                return value
+        return None
+    
+    @n8n_producer.setter
+    def n8n_producer(self, a: str):
+        self.flask_app.config["N8N_PRODUCER"] = a
 
 
     def get_cli_args(self, args: 'Args', dunder_name: str):

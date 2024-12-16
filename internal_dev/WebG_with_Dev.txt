@@ -1,0 +1,7 @@
+The Diego Lo Giudice challenge.
+    TeamWG: new rules, attributes
+    TeamDev: same
+
+Groundrules:
+    No TeamDev -> TeamWG integration (just deploy TeamDev and use)
+    TeamWG logic files are separate from TeamDev
