@@ -83,6 +83,7 @@ import database.multi_db as multi_db
 import oracledb
 import integration.kafka.kafka_producer as kafka_producer
 import integration.kafka.kafka_consumer as kafka_consumer
+import integration.n8n.n8n_producer as n8n_producer
 
 
 
@@ -332,6 +333,7 @@ def api_logic_server_setup(flask_app: Flask, args: Args):
                 except Exception as e:
                     app_logger.error("Logic Bank Activation Error: " + str(e))
                     app_logger.exception(e)
+                    raise e
             logic_logger.setLevel(logic_logger_level)
             app_logger.info("Declare   Logic complete - logic/declare_logic.py (rules + code)"
                 + f' -- {len(database.models.metadata.tables)} tables loaded\n')  # db opened 1st access
@@ -363,6 +365,8 @@ def api_logic_server_setup(flask_app: Flask, args: Args):
 
             kafka_producer.kafka_producer()
             kafka_consumer.kafka_consumer(safrs_api = safrs_api)
+
+            n8n_producer.n8n_producer()
 
             SAFRSBase._s_auto_commit = False
             session.close()

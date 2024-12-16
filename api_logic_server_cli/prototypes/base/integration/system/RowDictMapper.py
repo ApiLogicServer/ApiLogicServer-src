@@ -184,7 +184,7 @@ class RowDictMapper():
             custom_endpoint = current_endpoint
         row_as_dict = {}
         if len(self.fields) == 0:
-            logger.info(f'No fields defined for {self._model_class.__name__}')
+            # logger.info(f'No fields defined for {self._model_class.__name__}')
             row_as_dict = row.to_dict()
         else:
             for each_field in custom_endpoint.fields:
@@ -200,30 +200,30 @@ class RowDictMapper():
                         logger.info("Coding error - you need to use TUPLE for attr/alias")
                     row_as_dict[each_field.name] = getattr(row, each_field.name)
             
-            custom_endpoint_related_list = custom_endpoint.related
-            if isinstance(custom_endpoint_related_list, list) is False:
-                custom_endpoint_related_list = []
-                custom_endpoint_related_list.append(custom_endpoint.related)
-            for each_related in custom_endpoint_related_list:
-                child_property_name = each_related.role_name
-                if child_property_name == '':
-                    child_property_name = "OrderList"  # TODO default from class name
-                if child_property_name.startswith('Product'):
-                    debug = 'good breakpoint'
-                row_dict_child_list = getattr(row, child_property_name)
-                if each_related.isParent:
-                    the_parent = getattr(row, child_property_name)
-                    the_parent_to_dict = self.row_to_dict(row = the_parent, current_endpoint = each_related)
-                    if each_related.isCombined:
-                        for each_attr_name, each_attr_value in the_parent_to_dict.items():
-                            row_as_dict[each_attr_name] = each_attr_value
-                    else:
-                        row_as_dict[each_related.alias] = the_parent_to_dict
+        custom_endpoint_related_list = custom_endpoint.related
+        if isinstance(custom_endpoint_related_list, list) is False:
+            custom_endpoint_related_list = []
+            custom_endpoint_related_list.append(custom_endpoint.related)
+        for each_related in custom_endpoint_related_list:
+            child_property_name = each_related.role_name
+            if child_property_name == '':
+                child_property_name = "OrderList"  # TODO default from class name
+            if child_property_name.startswith('Product'):
+                debug = 'good breakpoint'
+            row_dict_child_list = getattr(row, child_property_name)
+            if each_related.isParent:
+                the_parent = getattr(row, child_property_name)
+                the_parent_to_dict = self.row_to_dict(row = the_parent, current_endpoint = each_related)
+                if each_related.isCombined:
+                    for each_attr_name, each_attr_value in the_parent_to_dict.items():
+                        row_as_dict[each_attr_name] = each_attr_value
                 else:
-                    row_as_dict[each_related.alias] = []
-                    for each_child in row_dict_child_list:
-                        each_child_to_dict = self.row_to_dict(row = each_child, current_endpoint = each_related)
-                        row_as_dict[each_related.alias].append(each_child_to_dict)
+                    row_as_dict[each_related.alias] = the_parent_to_dict
+            else:
+                row_as_dict[each_related.alias] = []
+                for each_child in row_dict_child_list:
+                    each_child_to_dict = self.row_to_dict(row = each_child, current_endpoint = each_related)
+                    row_as_dict[each_related.alias].append(each_child_to_dict)
         return row_as_dict
     
 

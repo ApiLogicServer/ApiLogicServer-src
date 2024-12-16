@@ -1,34 +1,35 @@
 """
 
-Version 1.1
+Version 1.0
 
 Invoked at server start (api_logic_server_run.py -> config/setup.py)
 
-Connect to Kafka, if KAFKA_CONNECT specified in Config.py
+Connect to n8n, if N8N_CONNECT specified in Config.py
 
 You do not normally need to alter this file
 
 """
+import traceback
+import requests
 from config.config import Args
-from confluent_kafka import Producer
+
 import socket
 import logging
 from logic_bank.exec_row_logic.logic_row import LogicRow
 from integration.system.RowDictMapper import RowDictMapper
 from flask import jsonify
-from confluent_kafka import Producer, KafkaException
 import api.system.api_utils as api_utils
 
 producer = None
-""" connected producer (or null if Kafka not enabled in Config.py) """
+""" connected producer (or null if N8N not enabled in Config.py) """
 
 conf = None
-""" filled from config (KAFKA_CONNECT) """
+""" filled from config (N8N_CONNECT) """
 
 logger = logging.getLogger('integration.n8n')
-logger.debug("kafka_connect imported")
+logger.debug("n8n_connect imported")
 
-def kafka_producer():
+def n8n_producer():
     """
     Called by api_logic_server_run>server_setup to listen on kafka using confluent_kafka
 
@@ -38,19 +39,17 @@ def kafka_producer():
         none
     """
 
-    global producer, conf
-    if Args.instance.kafka_producer:
-        conf = Args.instance.kafka_producer
-        if "client.id" not in conf:
-            conf["client.id"] = socket.gethostname()
-        # conf = {'bootstrap.servers': 'localhost:9092', 'client.id': socket.gethostname()}
-        producer = Producer(conf)
-        logger.debug(f'\nKafka producer connected')
+    global conf
+    if Args.instance.n8n_producer:
+        conf = Args.instance.n8n_producer
+        producer = conf
+        # good place to do defaults, get api keys, etc
+        logger.debug(f'N8N producer initialized')
 
 
-def send_kafka_message(kafka_topic: str, kafka_key: str, msg: str="", json_root_name: str = "", 
+def send_n8n_message(kafka_topic: str, n8n_key: str, msg: str="", json_root_name: str = "", 
                        logic_row: LogicRow = None, row_dict_mapper: RowDictMapper = None, payload: dict = None):
-    """ Send Kafka message regarding logic_row, mapped by row_dict_mapper
+    """ Send N8N message regarding logic_row, mapped by row_dict_mapper
 
     * Typically called from declare_logic event
 
@@ -63,6 +62,7 @@ def send_kafka_message(kafka_topic: str, kafka_key: str, msg: str="", json_root_
         json_root_name (str, optional): json name for json payload root; default is logic_row.name
     """
 
+    global conf
 
     if isinstance(payload, dict):
         row_obj_dict = payload
@@ -71,7 +71,7 @@ def send_kafka_message(kafka_topic: str, kafka_key: str, msg: str="", json_root_
     elif row_dict_mapper is None:
         row_obj_dict = RowDictMapper(model_class=logic_row.row.__class__).row_to_dict(row = logic_row.row)
     else:
-        raise ValueError(f"send_kafka_message payload type not supported: {type(payload)}") 
+        raise ValueError(f"send_n8n_message payload type not supported: {type(payload)}") 
 
     root_name = json_root_name
     if root_name == "":
@@ -80,15 +80,26 @@ def send_kafka_message(kafka_topic: str, kafka_key: str, msg: str="", json_root_
         else:
             root_name = logic_row.name
 
-    json_string = jsonify({f'{root_name}': row_obj_dict}).data.decode('utf-8')
+    json_payload = jsonify({f'{root_name}': row_obj_dict}).data.decode('utf-8')
     log_msg = msg + ' sends:'
-    if producer:  # enabled in config/config.py?
-        try:
-            producer.produce(value=json_string, topic="order_shipping", key=kafka_key)
-            if logic_row:
-                logic_row.log(msg)
-        except KafkaException as ke:
-            logger.error("kafka_producer#send_kafka_message error: {ke}") 
-    else:
-        log_msg += "    [Note: **Kafka not enabled** ]"
-    logger.debug(f'\n\n{log_msg}\n{json_string}')
+
+    if logic_row:
+        logic_row.log(msg)
+    logger.debug(f'\n\n{log_msg}\n{json_payload}')
+
+    token = "YWRtaW46cA=="  # admin:p base64 encoded
+    headers = {
+        "Authorization": conf['authorization'],
+        "Content-Type": "application/json",
+        "wh_state": logic_row.ins_upd_dlt
+    }
+    try:
+        endpoint = 'fixme'
+        status = requests.post(f'http://{conf["server"]}:{conf["port"]}/{endpoint}/{n8n_key}/:{n8n_key}', 
+                                json=json_payload, headers=headers)
+        if status.status_code != 200:
+            raise(f"n8n_producer: status_code: {status.status_code}")
+    except Exception as e:
+        logger.error(f"\nn8n_producer fails with: {e}")
+        long_message = traceback.format_exc()
+

@@ -1,9 +1,0 @@
-Here's how to waste 4 hours of a beautiful day, with serious risk of lost sanity:
-
-    1. modified genai, which is called by cli with catch so we can retry 3 times.
-
-    2. genai includes write-diagnostics, which is (by design) try/catch/ignore.
-
-    3. run blt, which obscures logs.
-
-    4. own bug in write-diagnostics, using same (copied) text in a catch.
