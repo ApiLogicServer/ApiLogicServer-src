@@ -1,18 +1,23 @@
-The Diego Lo Giudice challenge:
-    WG_Team: new rules, attributes
-    Dev_Team: same, using either genai or alembic...
+The Diego Lo Giudice challenge: coordinate parallel dev streams
+    WG_Team: new rules & attributes
+        Implicit Assumption: WG is not a day-1-only pilot... it lives for a while...
+    Dev_Team: their own new rules & attributes, using either genai and/or alembic...
 
 Groundrules:
-    No Dev_Team -> WG_Team integration (just deploy Dev_Team and use)
+    No Dev_Team -> WG_Team integration (just deploy Dev_Team version, and use)
+        Dev team code cannot be integrated into WG - dependencies, libs, integration, ...
     WG_Team - serial dev
-    WG_Team logic files are separate from Dev_Team
+    WG_Team logic files are separate from Dev_Team (eg, using logic/discovery)
+    sqlite only, for now (presume upgrade to 'some other db' is doable later)
+        Tyler, what were the issues you mentioned in sqlite that forced you to use PG?
 
-Key Idea: is 'source of truth' the genai/response files, or the .py files?
-    Seems like:
+Key Idea: is 'source of truth' the WG_Results json data, or the .py files?
+    Seems like it comes to what each group sees and edits:
         Dev_Team: .py 
-            Probably a fixup bug (is ignoring these)
-        WG_Team: WG_Results json files  
+        WG_Team: WG_Results json data  
             Are these maintained in WG db?  Seems like they'd have to be...
-                It's all the WG_Team Sees
+                It's all the WG_Team sees.
                 And they need to be able to delete them.
                 Does this hold true over multiple iterations?
+    If this is true, I need to verify that GenAI can merge json/py data models.
+        Probably a fixup bug (is ignoring .py)
