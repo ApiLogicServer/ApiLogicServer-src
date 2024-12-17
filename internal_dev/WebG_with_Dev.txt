@@ -1,7 +1,17 @@
-The Diego Lo Giudice challenge.
-    TeamWG: new rules, attributes
-    TeamDev: same
+The Diego Lo Giudice challenge:
+    WG_Team: new rules, attributes
+    Dev_Team: same, using either genai or alembic...
 
 Groundrules:
-    No TeamDev -> TeamWG integration (just deploy TeamDev and use)
-    TeamWG logic files are separate from TeamDev
+    No Dev_Team -> WG_Team integration (just deploy Dev_Team and use)
+    WG_Team - serial dev
+    WG_Team logic files are separate from Dev_Team
+
+Key Idea: is 'source of truth' the genai/response files, or the .py files?
+    Seems like:
+        Dev_Team: .py 
+            Probably a fixup bug (is ignoring these)
+        WG_Team: WG_Results json files  
+            Are these maintained in WG db?  Seems like they'd have to be...
+                It's all the WG_Team Sees
+                And they need to be able to delete them.
