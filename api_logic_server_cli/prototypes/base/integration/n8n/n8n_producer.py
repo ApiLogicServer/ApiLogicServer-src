@@ -85,7 +85,10 @@ def send_n8n_message(kafka_topic: str, n8n_key: str, msg: str="", json_root_name
 
     if logic_row:
         logic_row.log(msg)
-    logger.debug(f'\n\n{log_msg}\n{json_payload}')
+    if logic_row is not None:
+        logic_row.log(f'\n\n{log_msg}\n{json_payload}')
+    else:
+        logger.debug(f'\n\n{log_msg}\n{json_payload}')
 
     token = "YWRtaW46cA=="  # admin:p base64 encoded
     headers = {
