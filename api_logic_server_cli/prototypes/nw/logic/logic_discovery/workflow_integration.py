@@ -10,7 +10,7 @@ import logging
 import requests
 from flask import jsonify
 import json
-from integration.n8n_producer import send_n8n_message
+from integration.n8n.n8n_producer import send_n8n_message
 
 """ Some examples below contrast a preferred approach with a more manual one """
 
