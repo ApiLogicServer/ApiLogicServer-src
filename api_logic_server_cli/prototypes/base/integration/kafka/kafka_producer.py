@@ -91,4 +91,7 @@ def send_kafka_message(kafka_topic: str, kafka_key: str, msg: str="", json_root_
             logger.error("kafka_producer#send_kafka_message error: {ke}") 
     else:
         log_msg += "    [Note: **Kafka not enabled** ]"
-    logger.debug(f'\n\n{log_msg}\n{json_string}')
+    if logic_row is not None:
+        logic_row.log(f'\n\n{log_msg}\n{json_string}')
+    else:
+        logger.debug(f'\n\n{log_msg}\n{json_string}')
