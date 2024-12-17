@@ -23,3 +23,9 @@ Key Idea: is 'source of truth' the WG_Results json data, or the .py files?
         Probably a fixup bug (is ignoring .py).
         Note our big advantage is the logic merges automatically, without worrying about order.
             That's because execution is automatically ordered by dependencies.
+
+Base Project is GenAI_no_logic
+
+WG adds standard rules
+
+Dev adds something TBD.
