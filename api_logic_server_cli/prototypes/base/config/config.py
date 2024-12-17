@@ -165,14 +165,18 @@ class Config:
     KAFKA_CONSUMER = '{"bootstrap.servers": "localhost:9092", "group.id": "als-default-group1"}'
     KAFKA_CONSUMER = None  # comment out to enable Kafka consumer
 
-    wh_server = "localhost"
+    # N8N Webhook Args (for testing)
+	# see https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.webhook/?utm_source=n8n_app&utm_medium=node_settings_modal-credential_link&utm_campaign=n8n-nodes-base.webhook#path
+    wh_scheme = "http"
+    wh_server = "localhost" # or cloud.n8n.io...
     wh_port = 5678
     wh_endpoint = "webhook-test"
-    wh_key = "1c83eb31-18b7-4505-9cd2-b6722cb8bb86"
-
-    N8N_PRODUCER = '{"authorization": "Basic YWRtaW46cA==", \
-                "url": "localhost", "port": 5678, "end_point": "webhook-test", "key": "1c83eb31-18b7-4505-9cd2-b6722cb8bb86"}' 
-    # N8N_PRODUCER = None  # comment out to enable N8N producer
+    wh_path = "002fa0e8-f7aa-4e04-b4e3-e81aa29c6e69"
+    token = "YWRtaW46cA=="
+    N8N_PRODUCER = {"authorization": f"Basic {token}", "n8n_url": f'"{wh_scheme}://{wh_server}:{wh_port}/{wh_endpoint}/{wh_path}"'} 
+    # Or enter the n8n_url directly:
+    N8N_PRODUCER = {"authorization": f"Basic {token}","n8n_url":"http://localhost:5678/webhook-test/002fa0e8-f7aa-4e04-b4e3-e81aa29c6e69"}  
+    N8N_PRODUCER = None # comment out to enable N8N producer
     # Consumer under consideration
 
     OPT_LOCKING = "optional"
