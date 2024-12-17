@@ -20,4 +20,6 @@ Key Idea: is 'source of truth' the WG_Results json data, or the .py files?
                 And they need to be able to delete them.
                 Does this hold true over multiple iterations?
     If this is true, I need to verify that GenAI can merge json/py data models.
-        Probably a fixup bug (is ignoring .py)
+        Probably a fixup bug (is ignoring .py).
+        Note our big advantage is the logic merges automatically, without worrying about order.
+            That's because execution is automatically ordered by dependencies.
