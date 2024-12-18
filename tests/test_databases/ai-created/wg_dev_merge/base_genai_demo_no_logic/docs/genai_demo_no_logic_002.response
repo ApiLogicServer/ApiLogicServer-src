@@ -1,0 +1,102 @@
+{
+    "models": [
+        {
+            "classname": "Customer",
+            "code": "class Customer(Base):\n    \"\"\"description: Storage of customer information.\"\"\"\n    __tablename__ = 'customer'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String)\n    email = Column(String)\n    join_date = Column(Date)\n",
+            "sqlite_create": "CREATE TABLE customer (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    name TEXT,\n    email TEXT,\n    join_date DATE);\n",
+            "description": "Storage of customer information.",
+            "name": "Customer"
+        },
+        {
+            "classname": "Product",
+            "code": "class Product(Base):\n    \"\"\"description: Catalog of products available for purchase.\"\"\"\n    __tablename__ = 'product'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String)\n    price = Column(Integer)\n    stock_quantity = Column(Integer)\n",
+            "sqlite_create": "CREATE TABLE product (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    name TEXT,\n    price INTEGER,\n    stock_quantity INTEGER);\n",
+            "description": "Catalog of products available for purchase.",
+            "name": "Product"
+        },
+        {
+            "classname": "Order",
+            "code": "class Order(Base):\n    \"\"\"description: Records of customer orders.\"\"\"\n    __tablename__ = 'order'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    customer_id = Column(Integer, ForeignKey('customer.id'))\n    order_date = Column(Date)\n    notes = Column(String)\n",
+            "sqlite_create": "CREATE TABLE order (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    customer_id INTEGER,\n    order_date DATE,\n    notes TEXT,\n    FOREIGN KEY(customer_id) REFERENCES customer(id));\n",
+            "description": "Records of customer orders.",
+            "name": "Order"
+        },
+        {
+            "classname": "Item",
+            "code": "class Item(Base):\n    \"\"\"description: Items purchased within an order.\"\"\"\n    __tablename__ = 'item'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    order_id = Column(Integer, ForeignKey('order.id'))\n    product_id = Column(Integer, ForeignKey('product.id'))\n    quantity = Column(Integer)\n",
+            "sqlite_create": "CREATE TABLE item (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    order_id INTEGER,\n    product_id INTEGER,\n    quantity INTEGER,\n    FOREIGN KEY(order_id) REFERENCES order(id),\n    FOREIGN KEY(product_id) REFERENCES product(id));\n",
+            "description": "Items purchased within an order.",
+            "name": "Item"
+        }
+    ],
+    "rules": [],
+    "test_data": "Test data consists of initializing Customer, Product, Order, and Item instances, assigning identifiers, names, and details about joining, ordering, and items purchased.",
+    "test_data_rows": [
+        {
+            "test_data_row_variable": "customer_1",
+            "code": "customer_1 = Customer(id=1, name=\"Alice\", email=\"alice@example.com\", join_date=date(2023, 1, 15))"
+        },
+        {
+            "test_data_row_variable": "customer_2",
+            "code": "customer_2 = Customer(id=2, name=\"Bob\", email=\"bob@example.com\", join_date=date(2023, 2, 10))"
+        },
+        {
+            "test_data_row_variable": "customer_3",
+            "code": "customer_3 = Customer(id=3, name=\"Charlie\", email=\"charlie@example.com\", join_date=date(2023, 3, 5))"
+        },
+        {
+            "test_data_row_variable": "customer_4",
+            "code": "customer_4 = Customer(id=4, name=\"Diana\", email=\"diana@example.com\", join_date=date(2023, 4, 25))"
+        },
+        {
+            "test_data_row_variable": "product_1",
+            "code": "product_1 = Product(id=1, name=\"Laptop\", price=1500, stock_quantity=20)"
+        },
+        {
+            "test_data_row_variable": "product_2",
+            "code": "product_2 = Product(id=2, name=\"Smartphone\", price=800, stock_quantity=50)"
+        },
+        {
+            "test_data_row_variable": "product_3",
+            "code": "product_3 = Product(id=3, name=\"Headphones\", price=200, stock_quantity=30)"
+        },
+        {
+            "test_data_row_variable": "product_4",
+            "code": "product_4 = Product(id=4, name=\"Monitor\", price=300, stock_quantity=15)"
+        },
+        {
+            "test_data_row_variable": "order_1",
+            "code": "order_1 = Order(id=1, customer_id=1, order_date=date(2023, 5, 15), notes=\"Urgent delivery\")"
+        },
+        {
+            "test_data_row_variable": "order_2",
+            "code": "order_2 = Order(id=2, customer_id=2, order_date=date(2023, 6, 10), notes=\"Gift wrap\")"
+        },
+        {
+            "test_data_row_variable": "order_3",
+            "code": "order_3 = Order(id=3, customer_id=3, order_date=date(2023, 7, 20), notes=\"Include a thank you card\")"
+        },
+        {
+            "test_data_row_variable": "order_4",
+            "code": "order_4 = Order(id=4, customer_id=4, order_date=date(2023, 8, 2), notes=\"Address needs verification\")"
+        },
+        {
+            "test_data_row_variable": "item_1",
+            "code": "item_1 = Item(id=1, order_id=1, product_id=1, quantity=1)"
+        },
+        {
+            "test_data_row_variable": "item_2",
+            "code": "item_2 = Item(id=2, order_id=2, product_id=3, quantity=2)"
+        },
+        {
+            "test_data_row_variable": "item_3",
+            "code": "item_3 = Item(id=3, order_id=3, product_id=2, quantity=1)"
+        },
+        {
+            "test_data_row_variable": "item_4",
+            "code": "item_4 = Item(id=4, order_id=4, product_id=4, quantity=1)"
+        }
+    ],
+    "test_data_sqlite": "INSERT INTO customer (id, name, email, join_date) VALUES (1, 'Alice', 'alice@example.com', '2023-01-15');\nINSERT INTO customer (id, name, email, join_date) VALUES (2, 'Bob', 'bob@example.com', '2023-02-10');\nINSERT INTO customer (id, name, email, join_date) VALUES (3, 'Charlie', 'charlie@example.com', '2023-03-05');\nINSERT INTO customer (id, name, email, join_date) VALUES (4, 'Diana', 'diana@example.com', '2023-04-25');\n\nINSERT INTO product (id, name, price, stock_quantity) VALUES (1, 'Laptop', 1500, 20);\nINSERT INTO product (id, name, price, stock_quantity) VALUES (2, 'Smartphone', 800, 50);\nINSERT INTO product (id, name, price, stock_quantity) VALUES (3, 'Headphones', 200, 30);\nINSERT INTO product (id, name, price, stock_quantity) VALUES (4, 'Monitor', 300, 15);\n\nINSERT INTO order (id, customer_id, order_date, notes) VALUES (1, 1, '2023-05-15', 'Urgent delivery');\nINSERT INTO order (id, customer_id, order_date, notes) VALUES (2, 2, '2023-06-10', 'Gift wrap');\nINSERT INTO order (id, customer_id, order_date, notes) VALUES (3, 3, '2023-07-20', 'Include a thank you card');\nINSERT INTO order (id, customer_id, order_date, notes) VALUES (4, 4, '2023-08-02', 'Address needs verification');\n\nINSERT INTO item (id, order_id, product_id, quantity) VALUES (1, 1, 1, 1);\nINSERT INTO item (id, order_id, product_id, quantity) VALUES (2, 2, 3, 2);\nINSERT INTO item (id, order_id, product_id, quantity) VALUES (3, 3, 2, 1);\nINSERT INTO item (id, order_id, product_id, quantity) VALUES (4, 4, 4, 1);",
+    "name": "ECommerceSystem"
+}
