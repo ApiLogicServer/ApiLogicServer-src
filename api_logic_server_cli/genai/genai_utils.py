@@ -345,21 +345,25 @@ def get_manager_path() -> Path:
     Returns:
         Path: Manager path (contains system/genai)
     """
-    result_path = Path(os.getcwd())
+    result_path = Path(os.getcwd())  # normal case - project at manager root
     check_system_genai = result_path.joinpath('system/genai')
     
     if check_system_genai.exists():
         return result_path
     
-    result_path = result_path.parent
+    result_path = result_path.parent  # try pwd parent
     check_system_genai = result_path.joinpath('system/genai')
     
     if check_system_genai.exists():
         return result_path
     
-    result_path = result_path.parent
+    result_path = result_path.parent  # try pwd grandparent
     check_system_genai = result_path.joinpath('system/genai')
     
+    
+    result_path = result_path.parent.parent.parent.parent  # try ancestors - this is for import testing
+    check_system_genai = result_path.joinpath('system/genai')
+
     assert check_system_genai.exists(), f"Manager Directory not found: {check_system_genai}"
     
     return result_path
@@ -518,7 +522,7 @@ class GenAIUtils:
                     messages_out['rules'] = message['content']
                     log.debug(f'.. fixup/message_selector sees first rules: {each_message_file} - {message["content"][:30]}...')
                 else:                           # rules are additive
-                    log.deubg(f'.. fixup/message_selector sees more rules: {each_message_file} - {message["content"][:30]}...')
+                    log.debug(f'.. fixup/message_selector sees more rules: {each_message_file} - {message["content"][:30]}...')
                     messages_out['rules'].append(message['content'])
                 pass
             else:
@@ -581,8 +585,8 @@ class GenAIUtils:
                         'rules': None}
         log.debug(f'Fixup --using={self.using}')
 
-        self.fixup_request = []
-        self.fixup_request.append( get_prompt_you_are() )
+        self.import_request = []
+        self.import_request.append( get_prompt_you_are() )
 
         all_messages = get_prompt_messages_from_dirs(self.using)                # typically docs
         result_messages_docs = select_messages(messages=all_messages, 
@@ -598,15 +602,15 @@ class GenAIUtils:
 
         self.models_and_rules = {'role': 'user', 'content': json.dumps(messages_out)}
         db = json.loads(self.models_and_rules['content'])
-        self.fixup_request.append(self.models_and_rules)
+        self.import_request.append(self.models_and_rules)
 
         log.debug(f'\nmodels/rules gathered - now get fixup command prompt')
         self.fixup_command, logic_enabled = get_create_prompt__with_inserts(raw_prompt=f_fixup_prompt)
         fixup_command_prompt = {'role': 'user', 'content': self.fixup_command}
-        self.fixup_request.append(fixup_command_prompt)
-        # db = json.loads(self.fixup_request['content'])
+        self.import_request.append(fixup_command_prompt)
+        # db = json.loads(self.import_request['content'])
 
-        self.response_str = call_chatgpt(messages=self.fixup_request, api_version=self.genai_version, using=self.using)
+        self.response_str = call_chatgpt(messages=self.import_request, api_version=self.genai_version, using=self.using)
         self.fixup_response = DotMap(json.loads(self.response_str))
 
         # response.json > docs/fixup/you-are.prompt. model_and_rules.response, rules.response and doit.prompt
@@ -627,51 +631,83 @@ class GenAIUtils:
             2. prompt += dev-project models.py    (already have declare_logic.py, /logic_discovery/*.py)
             3. prompt += "combine these data models"
             4. response --> docs/import/response.json (raw response with model and test data)
-            4. response.data_model -> docs/import/create_db_models.py -> database: models.py, db.sqlite with test_data_rows
+            4. response.data_model --> docs/import/create_db_models.py -> database: models.py, db.sqlite with test_data_rows
             5. wg-project json rules --> somewhere in discovery
             6. later, run -rebuild-from-model to update API, admin app
 
 
-        """        
+        """    
+
+        def get_wg_project_models(wg_path: Path) -> dict[str, list[dict]]:
+            """ Get models from wg-project (this is a placeholder, pending import)
+
+            Args:
+                wg_path (Path): path to wg-project
+
+            Returns:
+                models dict
+            """            
+
+            models = []
+            with open(wg_path.joinpath('docs/models_export.json'), "r") as file:
+                json_data = json.load(file)
+            return json_data['models']
+         
+        def get_dev_project_models(wg_path: Path) -> dict[str, list[dict]]:
+            """ Get models from wg-project
+
+            Args:
+                wg_path (Path): path to wg-project
+
+            Returns:
+                models dict
+            """            
+
+            models = []
+            with open(wg_path.joinpath('database/models.py'), "r") as file:
+                dev_models = file.read()
+            return {"existing_models": dev_models}
+
         log.info(f'import_genai from genai export at: {self.using}')
         assert Path(self.using).is_dir(), f"Missing genai-import project directory: {self.using}"
-        log.info(f'.. under contruction')
-        pass
+        wg_path = Path(self.using)
+        dev_path = Path(os.getcwd())
+        dev_path_import = dev_path.joinpath('docs/import')
+        if path_debug:=False:
+            for member in wg_path.iterdir():
+                log.debug(f'.. .. import_genai: {member.name}')
+                if member.is_dir() and member.name == 'docs':
+                    for docs_member in member.iterdir():
+                        log.debug(f'.. .. .. import_genai: {docs_member.name}')
+                        break
+                pass
+            pass
 
-        # build import request: [you-are, models_and_rules, fixup_prompt]
-        os.makedirs(Path(self.using).joinpath('import'), exist_ok=True)
+        manager_path = get_manager_path()
+        with open(manager_path.joinpath('system/genai/prompt_inserts/import.prompt'), 'r') as file:
+            f_import_prompt = file.read()
 
-        messages_out = {'models':  None, 
-                        'rules': None}
-        log.debug(f'Fixup --using={self.using}')
+        # build import request: [you-are, models_and_rules, import_prompt]
+        os.makedirs(dev_path_import, exist_ok=True)
 
-        self.fixup_request = []
-        self.fixup_request.append( get_prompt_you_are() )
+        self.import_request = []
+        self.import_request.append( get_prompt_you_are() )
 
+        self.wg_project_models = get_wg_project_models(wg_path)
+        self.import_request.append({'role': 'user', 'content': json.dumps(self.wg_project_models)})
 
-        all_messages = get_prompt_messages_from_dirs(self.using)                # typically docs
-        result_messages_docs = select_messages(messages=all_messages, 
-                                          messages_out=messages_out,            # updated by message_selector
-                                          message_selector=message_selector)
-        
-        log.debug(f'\n\nfixup: processing /logic {self.using}/logic')
-        logic_path = Path(self.using).joinpath('logic')                         # typically docs/logic
-        logic_messages = get_prompt_messages_from_dirs(str(logic_path))         # [dicts] - contents mixed json and text
-        result_messages_logic = select_messages(messages=logic_messages, 
-                                          messages_out=messages_out,            # updated by message_selector to += rules
-                                          message_selector=message_selector)
+        self.dev_project_models = get_dev_project_models(wg_path)
+        self.import_request.append({'role': 'user', 'content': json.dumps(self.dev_project_models)})
 
-        self.models_and_rules = {'role': 'user', 'content': json.dumps(messages_out)}
-        db = json.loads(self.models_and_rules['content'])
-        self.fixup_request.append(self.models_and_rules)
+        # TODO - need to gather rules for test data
 
-        log.debug(f'\nmodels/rules gathered - now get fixup command prompt')
-        self.fixup_command, logic_enabled = get_create_prompt__with_inserts(raw_prompt=f_fixup_prompt)
-        fixup_command_prompt = {'role': 'user', 'content': self.fixup_command}
-        self.fixup_request.append(fixup_command_prompt)
-        # db = json.loads(self.fixup_request['content'])
+        log.debug(f'\nmodels/rules gathered - now get import command prompt')
+        self.import_command, logic_enabled = get_create_prompt__with_inserts(raw_prompt=f_import_prompt, arg_prompt_inserts='*')
+        import_command_prompt = {'role': 'user', 'content': self.import_command}
+        self.import_request.append(import_command_prompt)
+        # db = json.loads(self.import_request['content'])
 
-        self.response_str = call_chatgpt(messages=self.fixup_request, api_version=self.genai_version, using=self.using)
+        self.response_str = call_chatgpt(messages=self.import_request, api_version=self.genai_version, using=dev_path_import)
         self.fixup_response = DotMap(json.loads(self.response_str))
 
         # response.json > docs/fixup/you-are.prompt. model_and_rules.response, rules.response and doit.prompt
