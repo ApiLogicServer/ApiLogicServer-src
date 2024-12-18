@@ -24,7 +24,7 @@ def expose_models(api, method_decorators = []):
         - See https://apilogicserver.github.io/Docs/Tutorial/#customize-and-debug 
     """
     api.expose_object(database.models.Customer, method_decorators= method_decorators)
-    api.expose_object(database.models.Item, method_decorators= method_decorators)
     api.expose_object(database.models.Order, method_decorators= method_decorators)
+    api.expose_object(database.models.OrderItem, method_decorators= method_decorators)
     api.expose_object(database.models.Product, method_decorators= method_decorators)
     return api

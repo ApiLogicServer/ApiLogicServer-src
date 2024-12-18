@@ -24,18 +24,15 @@
     "Customer": "CUSTOMER",
   "name": " name*",
   "email": "email",
-  "join_date": "join_date",
   "id": "id",
   "Order": "ORDER",
   "order_date": "order_date",
   "notes": "notes",
-  "Item": "ITEM",
+  "customer_id": "customer_id",
+  "OrderItem": "ORDERITEM",
   "quantity": "quantity",
   "order_id": "order_id",
   "product_id": "product_id",
   "Product": "PRODUCT",
-  "customer_id": "customer_id",
-  "price": "price",
-  "stock_quantity": "stock_quantity",
-  "carbon_neutral": "carbon_neutral"
+  "price": "price"
 }

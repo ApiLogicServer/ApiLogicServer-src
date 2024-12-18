@@ -1,5 +1,5 @@
 about:
-  date: December 17, 2024 16:29:52
+  date: December 17, 2024 19:31:50
   recent_changes: works with modified safrs-react-admin
   version: 0.0.0
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
@@ -16,11 +16,9 @@ resources:
       search: true
       sort: true
     - name: email
-    - name: join_date
-      type: DATE
     - name: id
-    description: Storage of customer information.
-    info_list: Storage of customer information.
+    description: Represents customers in the system.
+    info_list: Represents customers in the system.
     tab_groups:
     - direction: tomany
       fks:
@@ -29,7 +27,32 @@ resources:
       resource: Order
     type: Customer
     user_key: name
-  Item:
+  Order:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: customer_id
+    - name: order_date
+      type: DATETIME
+    - name: notes
+    description: Represents orders placed by customers.
+    info_list: Represents orders placed by customers.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - order_id
+      name: OrderItemList
+      resource: OrderItem
+    - direction: toone
+      fks:
+      - customer_id
+      name: customer
+      resource: Customer
+    type: Order
+    user_key: id
+  OrderItem:
     attributes:
     - label: ' id*'
       name: id
@@ -38,8 +61,8 @@ resources:
     - name: order_id
     - name: product_id
     - name: quantity
-    description: Items purchased within an order.
-    info_list: Items purchased within an order.
+    description: Represents items in an order.
+    info_list: Represents items in an order.
     tab_groups:
     - direction: toone
       fks:
@@ -51,32 +74,7 @@ resources:
       - product_id
       name: product
       resource: Product
-    type: Item
-    user_key: id
-  Order:
-    attributes:
-    - label: ' id*'
-      name: id
-      search: true
-      sort: true
-    - name: customer_id
-    - name: order_date
-      type: DATE
-    - name: notes
-    description: Records of customer orders.
-    info_list: Records of customer orders.
-    tab_groups:
-    - direction: tomany
-      fks:
-      - order_id
-      name: ItemList
-      resource: Item
-    - direction: toone
-      fks:
-      - customer_id
-      name: customer
-      resource: Customer
-    type: Order
+    type: OrderItem
     user_key: id
   Product:
     attributes:
@@ -85,18 +83,15 @@ resources:
       search: true
       sort: true
     - name: price
-    - name: stock_quantity
-    - name: carbon_neutral
-      type: Boolean
     - name: id
-    description: Catalog of products available for purchase.
-    info_list: Catalog of products available for purchase.
+    description: Represents products available in the system.
+    info_list: Represents products available in the system.
     tab_groups:
     - direction: tomany
       fks:
       - product_id
-      name: ItemList
-      resource: Item
+      name: OrderItemList
+      resource: OrderItem
     type: Product
     user_key: name
 settings:

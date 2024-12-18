@@ -1,0 +1,6 @@
+Enforce the Check Credit:
+1. Customer.balance <= credit_limit
+2. Customer.balance = Sum(Order.amount_total where date_shipped is null)
+3. Order.amount_total = Sum(Item.amount)
+4. Item.amount = quantity * unit_price
+5. Store the Item.unit_price as a copy from Product.unit_price

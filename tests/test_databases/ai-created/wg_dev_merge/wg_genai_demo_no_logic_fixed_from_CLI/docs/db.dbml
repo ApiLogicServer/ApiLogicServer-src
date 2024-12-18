@@ -1,0 +1,51 @@
+// Copy this text, paste to https://dbdiagram.io/d
+// Or, https://databasediagram.com/app
+// Or, view in VSCode with extension: "DBML Live Preview"
+
+Project DBML {
+  Note: '''
+Customer: Represents customers in the system, including credit limits and balances.
+Order: Represents orders placed by customers, including total amounts and shipment dates.
+OrderItem: Represents items in an order, including their amounts and unit prices.
+Product: Represents products available in the system.
+'''
+}
+
+Table Customer {
+    id INTEGER [primary key]
+    name VARCHAR 
+    email VARCHAR 
+    credit_limit INTEGER 
+    balance INTEGER 
+    }
+
+Table Order {
+    id INTEGER [primary key]
+    customer_id INTEGER 
+    order_date DATETIME 
+    date_shipped DATETIME 
+    notes VARCHAR 
+    amount_total INTEGER 
+    }
+
+Table OrderItem {
+    id INTEGER [primary key]
+    order_id INTEGER 
+    product_id INTEGER 
+    quantity INTEGER 
+    amount INTEGER 
+    unit_price INTEGER 
+    }
+
+Table Product {
+    id INTEGER [primary key]
+    name VARCHAR 
+    price INTEGER 
+    }
+
+
+
+// Relationships
+    Ref: Order.(customer_id) < Customer.(id)
+    Ref: OrderItem.(order_id) < Order.(id)
+    Ref: OrderItem.(product_id) < Product.(id)

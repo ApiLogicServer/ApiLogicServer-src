@@ -185,8 +185,8 @@ For information on Managing API Logic Projects, [click here](https://apilogicser
 
 | About                    | Info                               |
 |:-------------------------|:-----------------------------------|
-| Created                  | December 17, 2024 08:55:29                      |
-| API Logic Server Version | 14.00.21           |
+| Created                  | December 17, 2024 19:31:50                      |
+| API Logic Server Version | 14.00.25           |
 | Created in directory     | genai_demo_no_logic |
 | API Name                 | api          |
 | Execution begins with    | `api_logic_server_run.py`          |

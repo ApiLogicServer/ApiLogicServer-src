@@ -1,0 +1,5 @@
+Use case: Simple contraints for testing
+
+Customer names cannot be 'x'.
+Product names cannot be 'xx'.
+Product carbon_neutral must be true if the product name contains 'green'.

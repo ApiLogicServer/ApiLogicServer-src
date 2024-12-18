@@ -25,8 +25,8 @@ Key Idea: is 'source of truth' the WG_Results json data, or the .py files?
         Note our big advantage is the logic merges automatically, without worrying about order.
             That's because execution is automatically ordered by dependencies.
 
-Base Project is GenAI_no_logic
+Base Project is GenAI_no_logic.  No rule-based attributes.
 
-WG adds standard rules
+WG adds standard rules - Customer.balance etc.
 
-Dev adds something TBD.
+Dev (wg_genai_demo_no_logic_fixed) adds Product.carbon_neutral.

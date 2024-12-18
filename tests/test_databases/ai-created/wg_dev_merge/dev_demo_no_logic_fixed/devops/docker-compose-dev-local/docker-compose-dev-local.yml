@@ -21,7 +21,7 @@ services:
       # thanks: https://stackoverflow.com/questions/65811608/how-to-connect-flask-app-to-sqlite-db-running-in-docker
 
     api-logic-server:
-        image: apilogicserver/genaidemonologicfixed
+        image: apilogicserver/genaidemonologic
         environment:
           - APILOGICPROJECT_VERBOSE=true
           - SECURITY_ENABLED=true

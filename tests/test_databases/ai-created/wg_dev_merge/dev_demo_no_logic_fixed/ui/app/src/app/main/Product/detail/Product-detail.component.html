@@ -18,10 +18,6 @@
       
       <o-integer-input #price attr="price" label="price" type="integer" editable="no" required="no" ></o-integer-input>
       
-      <o-integer-input #stock_quantity attr="stock_quantity" label="stock_quantity" type="integer" editable="no" required="no" ></o-integer-input>
-      
-      <o-text-input #carbon_neutral attr="carbon_neutral" label="carbon_neutral" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
-      
       <o-integer-input #id attr="id" label="id" type="integer" editable="no" required="no" ></o-integer-input>
       
     </div>
@@ -29,18 +25,18 @@
       
       <mat-tab-group fxFill>
         
-        <mat-tab label="ITEM-product_id">
+        <mat-tab label="ORDERITEM-product_id">
     <div layout-padding>
       <o-table 
-        attr="ItemTable" 
-        service="Item" 
-        entity="Item" 
+        attr="OrderItemTable" 
+        service="OrderItem" 
+        entity="OrderItem" 
         keys="id"
         parent-keys="product_id:id"
         columns="id;order_id;product_id;quantity"  
         horizontal-scroll="yes"
-        detail-form-route="Item" 
-        edit-form-route="Item"
+        detail-form-route="OrderItem" 
+        edit-form-route="OrderItem"
         visible-columns="id;order_id;product_id;quantity"  
         sort-columns="id" 
         query-rows="25" 

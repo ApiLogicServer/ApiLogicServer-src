@@ -6,9 +6,9 @@
             entity="Customer" 
             title="CUSTOMER"
             keys="id"
-            columns="name;email;join_date;id" 
+            columns="name;email;id" 
             header-actions="R;D"
-            visible-columns="name;email;join_date;id"  
+            visible-columns="name;email;id"  
             sort-columns="name" 
             query-rows="20" 
             quick-filter="yes"
@@ -25,8 +25,6 @@
             <o-table-column #name attr="name" title=" name*" editable="no" required="no" content-align="left"></o-table-column>
             
             <o-table-column #email attr="email" title="email" editable="no" required="no" content-align="left"></o-table-column>
-            
-            <o-date-input #join_date attr="join_date" type="date" label="join_date" enabled="yes" required="no" format="LL" fxFlex="20%" class="form-field"></o-date-input>
             
             <o-table-column #id attr="id" title="id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
             
