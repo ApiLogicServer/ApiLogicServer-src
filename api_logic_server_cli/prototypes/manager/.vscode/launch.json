@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": " * GENAI",
+            "name": "1. GENAI - Create a project from one of the system/genai/examples",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
@@ -23,9 +23,8 @@
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
         },
-        // just add the next prompt file to the system/genai/temp/>project> directory
         {
-            "name": "  - GENAI - Iterate",
+            "name": "  1.1  GENAI - Iterate (first, add prompt to system/genai/temp/<project>)",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
@@ -44,7 +43,7 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "  - GENAI - Retry from repaired chatgpt response",
+            "name": "  1.2  GENAI - Retry from repaired chatgpt response",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
@@ -64,7 +63,7 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "  - GENAI - Retry from repaired model",
+            "name": "  1.3  GENAI - Retry from repaired model",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
@@ -85,7 +84,7 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "  - GENAI - Postgresql",
+            "name": "  1.4  GENAI - Postgresql",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
@@ -359,27 +358,6 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "  - GenAI - suggest logic -> WebG iterate (requires cp)",
-// Simulate WebG: cp docs/genai_demo_no_logic_003.prompt docs/logic/active_rules.json
-            "type": "debugpy",
-            "request": "launch",
-            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
-            "redirectOutput": true,
-            "cwd": "${workspaceFolder}",
-            "env": {
-                "PYTHONPATH": "", 
-                "SECURITY_ENABLED": "False", 
-                "PYTHONHASHSEED": "0", 
-                "APILOGICSERVER_DEBUG": "False",
-                "OPT_LOCKING": "optional"},
-            "justMyCode": false,
-            "args": [ "genai", "--project-name=genai_demo_with_suggested_logic",
-                "--using=${workspaceFolder}/genai_demo_no_logic/docs",
-                "--active-rules"],
-            "console": "internalConsole",
-            "internalConsoleOptions": "openOnSessionStart"
-        },
-        {
             "name": "  - GenAI FixUp - upd model and test data from logic",
 // typical step - iterate the model, now with logic
             "type": "debugpy",
@@ -440,8 +418,9 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "  * GenAI - no logic - include multiple logic files",
-// typical next step - suggest logic
+            "name": "GenAI - no logic - see system/genai/examples/genai_demo/multiple_logic_files/docs/readme - then fixup",
+// typical next step - fixup
+// see system/genai/examples/genai_demo/multiple_logic_files/docs
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
@@ -460,7 +439,7 @@
         },
         {
             "name": "  - GenAI - no logic - FixUp (new attrs -> data model, test data)",
-// typical next step - suggest logic
+// typical next step - rebuild
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
