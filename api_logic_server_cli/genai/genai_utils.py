@@ -693,11 +693,13 @@ class GenAIUtils:
         self.import_request = []
         self.import_request.append( get_prompt_you_are() )
 
-        self.wg_project_models = get_wg_project_models(wg_path)
-        self.import_request.append({'role': 'user', 'content': json.dumps(self.wg_project_models)})
+        self.wg_project_models = {'models': get_wg_project_models(wg_path)}
+        self.wg_project_models_content = json.dumps(self.wg_project_models)  # make it unreadable
+        self.import_request.append( {'role': 'user', 'content': self.wg_project_models_content} )
 
         self.dev_project_models = get_dev_project_models(wg_path)
-        self.import_request.append({'role': 'user', 'content': json.dumps(self.dev_project_models)})
+        self.dev_project_models_content = json.dumps(self.dev_project_models)
+        self.import_request.append({'role': 'user', 'content': self.dev_project_models_content})
 
         # TODO - need to gather rules for test data
 
@@ -707,6 +709,7 @@ class GenAIUtils:
         self.import_request.append(import_command_prompt)
         # db = json.loads(self.import_request['content'])
 
+        # Invalid type for 'messages[1].content[0]': expected an object, but got a string instead.", 'type': 'invalid_request_error', 'param': 'messages[1].content[0]', 'code': 'invalid_type'}}
         self.response_str = call_chatgpt(messages=self.import_request, api_version=self.genai_version, using=dev_path_import)
         self.fixup_response = DotMap(json.loads(self.response_str))
 
