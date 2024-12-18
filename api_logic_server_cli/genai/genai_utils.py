@@ -709,7 +709,6 @@ class GenAIUtils:
         self.import_request.append(import_command_prompt)
         # db = json.loads(self.import_request['content'])
 
-        # Invalid type for 'messages[1].content[0]': expected an object, but got a string instead.", 'type': 'invalid_request_error', 'param': 'messages[1].content[0]', 'code': 'invalid_type'}}
         self.response_str = call_chatgpt(messages=self.import_request, api_version=self.genai_version, using=dev_path_import)
         self.fixup_response = DotMap(json.loads(self.response_str))
 
