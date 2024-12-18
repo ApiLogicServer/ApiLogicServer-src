@@ -390,7 +390,7 @@ def dbs() -> List[str]:    # split on comma, strip, and return as list
 
 
 class GenAIUtils:
-    def __init__(self, project: Project, using: str, genai_version: str, fixup: bool, submit: bool):
+    def __init__(self, project: Project, using: str, genai_version: str, fixup: bool, submit: bool, import_genai: bool):
         """ 
 
         """        
@@ -400,6 +400,7 @@ class GenAIUtils:
         self.using = using
         self.genai_version = genai_version
         self.submit = submit
+        self.import_genai = import_genai
 
 
     def run(self):
@@ -407,6 +408,8 @@ class GenAIUtils:
             self.fixup_project()
         elif self.submit:
             self.submit_project()
+        elif self.import_genai:
+            self.import_genai_project()
         else:
             log.info(f'.. no action specified')
 
@@ -613,3 +616,67 @@ class GenAIUtils:
         log.info(f'.. fixup complete: {self.using}/fixup')
         pass
 
+    def import_genai_project(self):
+        """ Import wg-project (--using from WebGenAI export) into current dev-project
+
+            cd system/genai/examples/genai_demo/wg_dev_merge/wg_genai_demo_no_logic_fixed_from_CLI
+            als genai-utils --import-genai --using=../wg_genai_demo_no_logic_fixed_from_CLI
+
+            Basics:
+            1. prompt = wg-project data model (yaml??)
+            2. prompt += dev-project models.py    (already have declare_logic.py, /logic_discovery/*.py)
+            3. prompt += "combine these data models"
+            4. response --> docs/import/response.json (raw response with model and test data)
+            4. response.data_model -> docs/import/create_db_models.py -> database: models.py, db.sqlite with test_data_rows
+            5. wg-project json rules --> somewhere in discovery
+            6. later, run -rebuild-from-model to update API, admin app
+
+
+        """        
+        log.info(f'import_genai from genai export at: {self.using}')
+        assert Path(self.using).is_dir(), f"Missing genai-import project directory: {self.using}"
+        log.info(f'.. under contruction')
+        pass
+
+        # build import request: [you-are, models_and_rules, fixup_prompt]
+        os.makedirs(Path(self.using).joinpath('import'), exist_ok=True)
+
+        messages_out = {'models':  None, 
+                        'rules': None}
+        log.debug(f'Fixup --using={self.using}')
+
+        self.fixup_request = []
+        self.fixup_request.append( get_prompt_you_are() )
+
+
+        all_messages = get_prompt_messages_from_dirs(self.using)                # typically docs
+        result_messages_docs = select_messages(messages=all_messages, 
+                                          messages_out=messages_out,            # updated by message_selector
+                                          message_selector=message_selector)
+        
+        log.debug(f'\n\nfixup: processing /logic {self.using}/logic')
+        logic_path = Path(self.using).joinpath('logic')                         # typically docs/logic
+        logic_messages = get_prompt_messages_from_dirs(str(logic_path))         # [dicts] - contents mixed json and text
+        result_messages_logic = select_messages(messages=logic_messages, 
+                                          messages_out=messages_out,            # updated by message_selector to += rules
+                                          message_selector=message_selector)
+
+        self.models_and_rules = {'role': 'user', 'content': json.dumps(messages_out)}
+        db = json.loads(self.models_and_rules['content'])
+        self.fixup_request.append(self.models_and_rules)
+
+        log.debug(f'\nmodels/rules gathered - now get fixup command prompt')
+        self.fixup_command, logic_enabled = get_create_prompt__with_inserts(raw_prompt=f_fixup_prompt)
+        fixup_command_prompt = {'role': 'user', 'content': self.fixup_command}
+        self.fixup_request.append(fixup_command_prompt)
+        # db = json.loads(self.fixup_request['content'])
+
+        self.response_str = call_chatgpt(messages=self.fixup_request, api_version=self.genai_version, using=self.using)
+        self.fixup_response = DotMap(json.loads(self.response_str))
+
+        # response.json > docs/fixup/you-are.prompt. model_and_rules.response, rules.response and doit.prompt
+        #  
+        create_fixup_files(self)
+
+        log.info(f'.. fixup complete: {self.using}/fixup')
+        pass
