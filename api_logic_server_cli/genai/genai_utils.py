@@ -232,7 +232,7 @@ def get_prompt_messages_from_dirs(using) -> List[ Tuple[Dict[str, str]]]:
                 # 0 is R/'you are', 1 R/'request', 2 is 'response', 3 is iteration
                 with open(each_file, 'r') as file:
                     prompt = file.read()
-                if each_file.name == 'check_credit.prompt':
+                if each_file.name == 'constraint_tests.prompt':
                     debug_string = "good breakpoint - prompt"
                 role = "user"
                 if response_count == 0 and request_count == 0 and each_file.suffix == '.prompt':
@@ -521,21 +521,21 @@ class GenAIUtils:
             else:
                 for key, value in message_obj.items():
                     if key in messages_out:
-                        if key == 'rules':
+                        if key == 'rules' or key == 'models':
                             if isinstance(value, list):
-                                add_rule(messages_out, value)  # accrue rules (not just latest)
+                                add_rule(messages_out, value)  # accrue (not just latest)
                                 continue
-                            else:       # unexpected: rules is not a list: {type(value)} - TODO - remove code
-                                assert True, f"unexpected: rules is not a list: {type(value)}"
+                            else:       # unexpected: not a list: {type(value)} - TODO - remove code
+                                assert True, f"unexpected: {key} is not a list: {type(value)}"
                                 if isinstance(value, str):
-                                    log.debug(f'.. fixup/message_selector ignores: rule  str{each_message_file} -  {value[:30]}...')
+                                    log.debug(f'.. fixup/message_selector ignores: {key}  str{each_message_file} -  {value[:30]}...')
                                     continue
                                 else:
-                                    log.debug(f'.. fixup/message_selector ignores: rule non-json {each_message_file} -  {value[:30]}...')
+                                    log.debug(f'.. fixup/message_selector ignores: {key} non-json {each_message_file} -  {value[:30]}...')
                         elif key == 'test_data_rows':
                             continue
-                        else:
-                            messages_out[key] = value  # FIXME - should be additive??
+                        else:  # replaces with last model -- ie, presumes logic models include all tables
+                            messages_out[key] = value   # TODO - remove dead code
                             log.debug(f'.. fixup/message_selector sees: {each_message_file} -  {key}: {value[:30]}...')
                         pass
             pass
@@ -582,14 +582,14 @@ class GenAIUtils:
         self.fixup_request.append( get_prompt_you_are() )
 
         all_messages = get_prompt_messages_from_dirs(self.using)                # typically docs
-        result_messages = select_messages(messages=all_messages, 
+        result_messages_docs = select_messages(messages=all_messages, 
                                           messages_out=messages_out,            # updated by message_selector
                                           message_selector=message_selector)
         
         log.debug(f'\n\nfixup: processing /logic {self.using}/logic')
         logic_path = Path(self.using).joinpath('logic')                         # typically docs/logic
         logic_messages = get_prompt_messages_from_dirs(str(logic_path))         # [dicts] - contents mixed json and text
-        result_messages = select_messages(messages=logic_messages, 
+        result_messages_logic = select_messages(messages=logic_messages, 
                                           messages_out=messages_out,            # updated by message_selector to += rules
                                           message_selector=message_selector)
 

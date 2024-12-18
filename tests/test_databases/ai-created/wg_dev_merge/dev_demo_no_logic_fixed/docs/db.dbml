@@ -1,0 +1,48 @@
+// Copy this text, paste to https://dbdiagram.io/d
+// Or, https://databasediagram.com/app
+// Or, view in VSCode with extension: "DBML Live Preview"
+
+Project DBML {
+  Note: '''
+Customer: Storage of customer information.
+Item: Items purchased within an order.
+Order: Records of customer orders.
+Product: Catalog of products available for purchase.
+'''
+}
+
+Table Customer {
+    id INTEGER [primary key]
+    name VARCHAR 
+    email VARCHAR 
+    join_date DATE 
+    }
+
+Table Item {
+    id INTEGER [primary key]
+    order_id INTEGER 
+    product_id INTEGER 
+    quantity INTEGER 
+    }
+
+Table Order {
+    id INTEGER [primary key]
+    customer_id INTEGER 
+    order_date DATE 
+    notes VARCHAR 
+    }
+
+Table Product {
+    id INTEGER [primary key]
+    name VARCHAR 
+    price INTEGER 
+    stock_quantity INTEGER 
+    carbon_neutral BOOLEAN 
+    }
+
+
+
+// Relationships
+    Ref: Item.(order_id) < Order.(id)
+    Ref: Item.(product_id) < Product.(id)
+    Ref: Order.(customer_id) < Customer.(id)

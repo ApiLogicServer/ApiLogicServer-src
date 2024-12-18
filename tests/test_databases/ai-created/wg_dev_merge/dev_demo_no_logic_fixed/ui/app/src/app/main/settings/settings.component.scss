@@ -1,0 +1,44 @@
+.app-settings {
+  height: 100%;
+
+  .settings-container {
+    height: 90%;
+    margin: auto;
+
+    .setting-column {
+
+      &.o-column>.o-container .o-container-scroll,
+      &.o-row>.o-container .o-container-scroll {
+        overflow: hidden;
+      }
+
+      .mat-mdc-radio-group .mat-mdc-radio-button {
+        padding: 4px 14px;
+
+        .theme-option {
+          height: 36px;
+          width: 36px;
+
+          .theme-option-background {
+            border-radius: 50%;
+            height: 100%;
+          }
+        }
+      }
+
+      .theme-radio-group {
+        .mdc-radio {
+          display: none !important;
+        }
+
+        .mdc-label {
+          padding: 0;
+        }
+      }
+
+      .mat-mdc-slide-toggle {
+        padding-left: 14px;
+      }
+    }
+  }
+}
