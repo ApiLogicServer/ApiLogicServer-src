@@ -3,8 +3,8 @@
 # intended for use in portal cli - not to be run on your local machine.
 
 projectname="apilogicserver_project"  # project directory
-resourcename="genaidemonologicfixed"  # lower case, only
-resourcegroup="genaidemonologicfixed_rg"
+resourcename="genaidemonologic"  # lower case, only
+resourcegroup="genaidemonologic_rg"
 dockerrepositoryname="apilogicserver"  # change this to your DockerHub Repository
 githubaccount="apilogicserver"         # change this to your GitHub account
 version="1.0.0"
@@ -14,8 +14,8 @@ version="1.0.0"
 # which uses: https://github.com/Azure-Samples/multicontainerwordpress
 
 # login to Azure Portal CLI (substitute your github account for apilogicserver)
-# git clone https://github.com/apilogicserver/genaidemonologicfixed.git
-# cd genaidemonologicfixed
+# git clone https://github.com/apilogicserver/genaidemonologic.git
+# cd genaidemonologic
 # sh devops/docker-compose-dev-azure/azure-deploy.sh
 
 echo " "
@@ -79,9 +79,9 @@ az appservice plan create --name myAppServicePlan --resource-group $resourcegrou
 az container create --resource-group $resourcegroup --name ${projectname} --image ${dockerrepositoryname}/${resourcename}:latest --dns-name-label ${resourcename} --ports 5656 --environment-variables 'VERBOSE'='True'  'APILOGICPROJECT_CLIENT_URI'='//{resourcename}.westus.azurecontainer.io:5656'
 
 # or, issue commands like these (fix the git repo name) directly in portal, or local az cli
-az group create --name genaidemonologicfixed_rg --location "westus"
-az appservice plan create --name myAppServicePlan --resource-group genaidemonologicfixed_rg --sku S1 --is-linux
-az container create --resource-group genaidemonologicfixed_rg --name genaidemonologicfixed --image apilogicserver/genaidemonologicfixed:latest --dns-name-label genaidemonologicfixed --ports 5656 --environment-variables 'VERBOSE'='True'  'APILOGICPROJECT_CLIENT_URI'='//genaidemonologicfixed.westus.azurecontainer.io:5656'
+az group create --name genaidemonologic_rg --location "westus"
+az appservice plan create --name myAppServicePlan --resource-group genaidemonologic_rg --sku S1 --is-linux
+az container create --resource-group genaidemonologic_rg --name genaidemonologic --image apilogicserver/genaidemonologic:latest --dns-name-label genaidemonologic --ports 5656 --environment-variables 'VERBOSE'='True'  'APILOGICPROJECT_CLIENT_URI'='//genaidemonologic.westus.azurecontainer.io:5656'
 
 # e.g.: az container create --resource-group aicustomerorders_rg --name aicustomerorders --image apilogicserver/aicustomerorders:latest --dns-name-label aicustomerorders --ports 5656 --environment-variables VERBOSE=True APILOGICPROJECT_CLIENT_URI=//aicustomerorders.westus.azurecontainer.io:5656
 

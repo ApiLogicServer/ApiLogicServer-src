@@ -1,0 +1,68 @@
+{
+    "test_data_rows": [
+        {
+            "test_data_row_variable": "customer_1",
+            "code": "customer_1 = Customer(name='Alice', email='alice@example.com')"
+        },
+        {
+            "test_data_row_variable": "customer_2",
+            "code": "customer_2 = Customer(name='Bob', email='bob@example.com')"
+        },
+        {
+            "test_data_row_variable": "customer_3",
+            "code": "customer_3 = Customer(name='Charlie', email='charlie@example.com')"
+        },
+        {
+            "test_data_row_variable": "customer_4",
+            "code": "customer_4 = Customer(name='Diana', email='diana@example.com')"
+        },
+        {
+            "test_data_row_variable": "order_1",
+            "code": "order_1 = Order(customer_id=1, order_date=datetime(2023, 1, 1), notes='Urgent')"
+        },
+        {
+            "test_data_row_variable": "order_2",
+            "code": "order_2 = Order(customer_id=2, order_date=datetime(2023, 2, 1), notes='')"
+        },
+        {
+            "test_data_row_variable": "order_3",
+            "code": "order_3 = Order(customer_id=3, order_date=datetime(2023, 3, 1), notes='Include gift wrap')"
+        },
+        {
+            "test_data_row_variable": "order_4",
+            "code": "order_4 = Order(customer_id=4, order_date=datetime(2023, 4, 1), notes='')"
+        },
+        {
+            "test_data_row_variable": "product_1",
+            "code": "product_1 = Product(name='ProductA', price=100, carbon_neutral=False)"
+        },
+        {
+            "test_data_row_variable": "product_2",
+            "code": "product_2 = Product(name='GreenProduct', price=200, carbon_neutral=True)"
+        },
+        {
+            "test_data_row_variable": "product_3",
+            "code": "product_3 = Product(name='ProductB', price=300, carbon_neutral=False)"
+        },
+        {
+            "test_data_row_variable": "product_4",
+            "code": "product_4 = Product(name='EcoItem', price=150, carbon_neutral=True)"
+        },
+        {
+            "test_data_row_variable": "order_item_1",
+            "code": "order_item_1 = OrderItem(order_id=1, product_id=1, quantity=2)"
+        },
+        {
+            "test_data_row_variable": "order_item_2",
+            "code": "order_item_2 = OrderItem(order_id=2, product_id=2, quantity=1)"
+        },
+        {
+            "test_data_row_variable": "order_item_3",
+            "code": "order_item_3 = OrderItem(order_id=3, product_id=3, quantity=3)"
+        },
+        {
+            "test_data_row_variable": "order_item_4",
+            "code": "order_item_4 = OrderItem(order_id=4, product_id=4, quantity=1)"
+        }
+    ]
+}

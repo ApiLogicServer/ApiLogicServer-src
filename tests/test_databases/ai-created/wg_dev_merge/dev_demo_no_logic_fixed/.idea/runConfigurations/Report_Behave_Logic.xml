@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Report Behave Logic" type="PythonConfigurationType" factoryName="Python">
-    <module name="genai_demo_no_logic_fixed" />
+    <module name="genai_demo_no_logic" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
     <envs>

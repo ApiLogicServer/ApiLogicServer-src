@@ -6,9 +6,9 @@
             entity="Product" 
             title="PRODUCT"
             keys="id"
-            columns="name;price;stock_quantity;carbon_neutral;id" 
+            columns="name;price;id" 
             header-actions="R;D"
-            visible-columns="name;price;stock_quantity;carbon_neutral;id"  
+            visible-columns="name;price;id"  
             sort-columns="name" 
             query-rows="20" 
             quick-filter="yes"
@@ -25,10 +25,6 @@
             <o-table-column #name attr="name" title=" name*" editable="no" required="no" content-align="left"></o-table-column>
             
             <o-table-column #price attr="price" title="price" type="integer" editable="no" required="no" content-align="center"></o-table-column>
-            
-            <o-table-column #stock_quantity attr="stock_quantity" title="stock_quantity" type="integer" editable="no" required="no" content-align="center"></o-table-column>
-            
-            <o-table-column #carbon_neutral attr="carbon_neutral" title="carbon_neutral" editable="no" required="no" content-align="left"></o-table-column>
             
             <o-table-column #id attr="id" title="id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
             

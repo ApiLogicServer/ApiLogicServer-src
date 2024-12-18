@@ -1,6 +1,6 @@
 # coding: utf-8
 from sqlalchemy import DECIMAL, DateTime  # API Logic Server GenAI assist
-from sqlalchemy import Boolean, Column, Date, ForeignKey, Integer, String
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -10,8 +10,8 @@ from sqlalchemy.ext.declarative import declarative_base
 # Alter this file per your database maintenance policy
 #    See https://apilogicserver.github.io/Docs/Project-Rebuild/#rebuilding
 #
-# Created:  December 17, 2024 16:29:52
-# Database: sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/genai_demo_no_logic_fixed/database/db.sqlite
+# Created:  December 17, 2024 19:31:50
+# Database: sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/genai_demo_no_logic/database/db.sqlite
 # Dialect:  sqlite
 #
 # mypy: ignore-errors
@@ -40,7 +40,7 @@ from sqlalchemy.dialects.sqlite import *
 
 class Customer(SAFRSBaseX, Base):
     """
-    description: Storage of customer information.
+    description: Represents customers in the system.
     """
     __tablename__ = 'customer'
     _s_collection_name = 'Customer'  # type: ignore
@@ -49,7 +49,6 @@ class Customer(SAFRSBaseX, Base):
     id = Column(Integer, primary_key=True)
     name = Column(String)
     email = Column(String)
-    join_date = Column(Date)
 
     # parent relationships (access parent)
 
@@ -71,7 +70,7 @@ class Customer(SAFRSBaseX, Base):
 
 class Product(SAFRSBaseX, Base):
     """
-    description: Catalog of products available for purchase.
+    description: Represents products available in the system.
     """
     __tablename__ = 'product'
     _s_collection_name = 'Product'  # type: ignore
@@ -80,13 +79,11 @@ class Product(SAFRSBaseX, Base):
     id = Column(Integer, primary_key=True)
     name = Column(String)
     price = Column(Integer)
-    stock_quantity = Column(Integer)
-    carbon_neutral = Column(Boolean)
 
     # parent relationships (access parent)
 
     # child relationships (access children)
-    ItemList : Mapped[List["Item"]] = relationship(back_populates="product")
+    OrderItemList : Mapped[List["OrderItem"]] = relationship(back_populates="product")
 
     @jsonapi_attr
     def _check_sum_(self):  # type: ignore [no-redef]
@@ -103,7 +100,7 @@ class Product(SAFRSBaseX, Base):
 
 class Order(SAFRSBaseX, Base):
     """
-    description: Records of customer orders.
+    description: Represents orders placed by customers.
     """
     __tablename__ = 'order'
     _s_collection_name = 'Order'  # type: ignore
@@ -111,14 +108,14 @@ class Order(SAFRSBaseX, Base):
 
     id = Column(Integer, primary_key=True)
     customer_id = Column(ForeignKey('customer.id'))
-    order_date = Column(Date)
+    order_date = Column(DateTime)
     notes = Column(String)
 
     # parent relationships (access parent)
     customer : Mapped["Customer"] = relationship(back_populates=("OrderList"))
 
     # child relationships (access children)
-    ItemList : Mapped[List["Item"]] = relationship(back_populates="order")
+    OrderItemList : Mapped[List["OrderItem"]] = relationship(back_populates="order")
 
     @jsonapi_attr
     def _check_sum_(self):  # type: ignore [no-redef]
@@ -133,12 +130,12 @@ class Order(SAFRSBaseX, Base):
     S_CheckSum = _check_sum_
 
 
-class Item(SAFRSBaseX, Base):
+class OrderItem(SAFRSBaseX, Base):
     """
-    description: Items purchased within an order.
+    description: Represents items in an order.
     """
-    __tablename__ = 'item'
-    _s_collection_name = 'Item'  # type: ignore
+    __tablename__ = 'order_item'
+    _s_collection_name = 'OrderItem'  # type: ignore
     __bind_key__ = 'None'
 
     id = Column(Integer, primary_key=True)
@@ -147,8 +144,8 @@ class Item(SAFRSBaseX, Base):
     quantity = Column(Integer)
 
     # parent relationships (access parent)
-    order : Mapped["Order"] = relationship(back_populates=("ItemList"))
-    product : Mapped["Product"] = relationship(back_populates=("ItemList"))
+    order : Mapped["Order"] = relationship(back_populates=("OrderItemList"))
+    product : Mapped["Product"] = relationship(back_populates=("OrderItemList"))
 
     # child relationships (access children)
 

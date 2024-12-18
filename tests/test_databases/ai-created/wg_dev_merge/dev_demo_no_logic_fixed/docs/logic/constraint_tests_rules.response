@@ -1,0 +1,25 @@
+{
+    "rules": [
+        {
+            "name": "Customer Name Constraint",
+            "description": "Ensures customer names cannot be 'x'.",
+            "use_case": "Validation to prevent invalid customer names.",
+            "entity": "Customer",
+            "code": "Rule.constraint(validate=Customer,\n                as_condition=lambda row: row.name != 'x',\n                error_msg=\"Customer names cannot be 'x'.\")"
+        },
+        {
+            "name": "Product Name Constraint",
+            "description": "Ensures product names cannot be 'xx'.",
+            "use_case": "Validation to prevent invalid product names.",
+            "entity": "Product",
+            "code": "Rule.constraint(validate=Product,\n                as_condition=lambda row: row.name != 'xx',\n                error_msg=\"Product names cannot be 'xx'.\")"
+        },
+        {
+            "name": "Product Carbon Neutral",
+            "description": "Ensures products with names containing 'green' are carbon neutral.",
+            "use_case": "Validation for environmentally friendly products.",
+            "entity": "Product",
+            "code": "Rule.constraint(validate=Product,\n                as_condition=lambda row: 'green' not in row.name.lower() or row.carbon_neutral is True,\n                error_msg=\"Products containing 'green' in their name must be carbon neutral.\")"
+        }
+    ]
+}

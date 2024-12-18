@@ -4,10 +4,10 @@
 
 Project DBML {
   Note: '''
-Customer: Storage of customer information.
-Item: Items purchased within an order.
-Order: Records of customer orders.
-Product: Catalog of products available for purchase.
+Customer: Represents customers in the system.
+Order: Represents orders placed by customers.
+OrderItem: Represents items in an order.
+Product: Represents products available in the system.
 '''
 }
 
@@ -15,33 +15,31 @@ Table Customer {
     id INTEGER [primary key]
     name VARCHAR 
     email VARCHAR 
-    join_date DATE 
     }
 
-Table Item {
+Table Order {
+    id INTEGER [primary key]
+    customer_id INTEGER 
+    order_date DATETIME 
+    notes VARCHAR 
+    }
+
+Table OrderItem {
     id INTEGER [primary key]
     order_id INTEGER 
     product_id INTEGER 
     quantity INTEGER 
     }
 
-Table Order {
-    id INTEGER [primary key]
-    customer_id INTEGER 
-    order_date DATE 
-    notes VARCHAR 
-    }
-
 Table Product {
     id INTEGER [primary key]
     name VARCHAR 
     price INTEGER 
-    stock_quantity INTEGER 
     }
 
 
 
 // Relationships
-    Ref: Item.(order_id) < Order.(id)
-    Ref: Item.(product_id) < Product.(id)
     Ref: Order.(customer_id) < Customer.(id)
+    Ref: OrderItem.(order_id) < Order.(id)
+    Ref: OrderItem.(product_id) < Product.(id)

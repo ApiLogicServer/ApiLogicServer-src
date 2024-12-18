@@ -27,14 +27,7 @@ def declare_logic():
 
     # Logic from GenAI: (or, use your IDE w/ code completion)
 
-    # Customer names cannot be 'x'.
-    Rule.constraint(validate=Customer, as_condition=lambda row: row.name != 'x', error_msg="Customer names cannot be 'x'.")
-
-    # Product names cannot be 'xx'.
-    Rule.constraint(validate=Product, as_condition=lambda row: row.name != 'xx', error_msg="Product names cannot be 'xx'.")
-
-    # Product carbon_neutral must be true if the product name contains 'green'.
-    Rule.constraint(validate=Product, as_condition=lambda row: ('green' not in row.name.lower() or row.carbon_neutral), error_msg="Product must be carbon_neutral if 'green' is in the name.")
+    # LogicBank Disabled 
 
     # End Logic from GenAI
 
