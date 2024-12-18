@@ -10,6 +10,7 @@ Groundrules:
     WG_Team logic files are separate from Dev_Team (eg, using logic/discovery)
     sqlite only, for now (presume upgrade to 'some other db' is doable later)
         Tyler, what were the issues you mentioned in sqlite that forced you to use PG?
+    All Dev_Team and logic generations are finished before merge-G
 
 Key Idea: is 'source of truth' the WG_Results json data, or the .py files?
     Seems like it comes to what each group sees and edits:

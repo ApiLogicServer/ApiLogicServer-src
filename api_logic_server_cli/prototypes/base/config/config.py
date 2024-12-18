@@ -176,7 +176,7 @@ class Config:
     N8N_PRODUCER = {"authorization": f"Basic {token}", "n8n_url": f'"{wh_scheme}://{wh_server}:{wh_port}/{wh_endpoint}/{wh_path}"'} 
     # Or enter the n8n_url directly:
     N8N_PRODUCER = {"authorization": f"Basic {token}","n8n_url":"http://localhost:5678/webhook-test/002fa0e8-f7aa-4e04-b4e3-e81aa29c6e69"}  
-    N8N_PRODUCER = None # comment out to enable N8N producer
+    # N8N_PRODUCER = None # comment out to enable N8N producer
     # Consumer under consideration
 
     OPT_LOCKING = "optional"

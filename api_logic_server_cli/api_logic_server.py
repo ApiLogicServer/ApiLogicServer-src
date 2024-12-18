@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "14.00.24"
+__version__ = "14.00.25"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t12/17/2024 - 14.00.24: add wg_dev_merge projects, fix fixup bug that (lost initial data models) \n"\
+    "\t12/17/2024 - 14.00.25: add wg_dev_merge projects, fix fixup bug that (lost initial data models), n8n fixes \n"\
     "\t12/17/2024 - 14.00.23: Integration: add nw:employee.email, fix workflow_integration.py \n"\
     "\t12/16/2024 - 14.00.22: Integration: simplified RowMapper, prelim n8n, bug fix ref no-rule classes \n"\
     "\t12/15/2024 - 14.00.20: LogicBank reports missing attrs, kafka/kafka_producer.py#send_kafka_message - RowDictMapper now optional \n"\

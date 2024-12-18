@@ -26,7 +26,7 @@ def declare_logic():
         """
 
         status = send_n8n_message(logic_row=logic_row)
-        logic_row.debug(status)
+        logic_row.log(status)
         return
     
     Rule.after_flush_row_event(on_class=models.Customer, calling=call_n8n_workflow)
