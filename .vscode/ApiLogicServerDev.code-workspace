@@ -106,6 +106,12 @@
 			"editor.defaultFormatter": "ms-python.black-formatter"
 		},
 		"python.formatting.provider": "none",
-		"editor.fontLigatures": false
+		"editor.fontLigatures": false,
+		"outline.showFields": true,
+		"outline.showVariables": false,
+		"outline.showFunctions": true,
+		"outline.showMethods": true,
+		"notebook.outline.showCodeCells": false,
+		"outline.showModules": false
 	}
 }

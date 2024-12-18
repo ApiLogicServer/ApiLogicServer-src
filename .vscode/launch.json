@@ -2011,6 +2011,25 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
+            "name": "GenAI - import genai_export from tests/test_databases/ai-created/wg_dev_merge",
+// first, copy tests/test_databases/ai-created/wg_dev_merge --> <manager>/system/genai/examples/genai_demo/
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer/system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": ["genai-utils", "--import-genai", "--using=../wg_genai_demo_no_logic_fixed_from_CLI"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
             "name": "Spaces in project dir",
             "type": "debugpy",
             "request": "launch",
