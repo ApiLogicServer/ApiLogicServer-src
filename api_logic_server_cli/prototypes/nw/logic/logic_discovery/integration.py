@@ -34,8 +34,7 @@ def declare_logic():
         Workflow:  When Customer is inserted = post to external system
         """
         n8n_producer.send_n8n_message(logic_row=logic_row,
-                                            kafka_topic="customer",
-                                            n8n_key=str(row.Id),
+                                            # n8n_key=str(row.Id),
                                             msg="1. /integration.py: n8n, sending logic_row")        
 
     Rule.after_flush_row_event(on_class=Customer, calling=fn_workflow)

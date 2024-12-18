@@ -1,6 +1,6 @@
 """
 
-Version 1.0
+Version 1.1
 
 Invoked at server start (api_logic_server_run.py -> config/setup.py)
 
@@ -47,7 +47,7 @@ def n8n_producer():
         logger.debug('N8N producer initialized')
 
 
-def send_n8n_message(http_method: str = "POST", ins_upd_dlt: str = "ins", 
+def send_n8n_message(http_method: str = "POST", ins_upd_dlt: str = "ins", msg: str = "",
         wh_entity: str = "unknown",
         logic_row: LogicRow = None, 
         row_dict_mapper: RowDictMapper = None, 
@@ -74,9 +74,9 @@ def send_n8n_message(http_method: str = "POST", ins_upd_dlt: str = "ins",
         return "send_n8n_message: payload, logic_row, row_dict_mapper are all None - must provide one"
     row_obj_dict = None
     if isinstance(payload, dict):
-        payload = json.dumps(payload)
+        row_obj_dict = json.dumps(payload)
     elif logic_row is not None:
-        payload = json.dumps(logic_row.row.to_dict())
+        row_obj_dict = json.dumps(logic_row.row.to_dict())
     elif row_dict_mapper is not None:
         row_obj_dict = row_dict_mapper().row_to_dict(row = logic_row.row)
     elif row_dict_mapper is None:
