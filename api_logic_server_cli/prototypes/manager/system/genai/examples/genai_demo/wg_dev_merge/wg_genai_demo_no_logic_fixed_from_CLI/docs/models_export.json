@@ -16,7 +16,7 @@
         },
         {
             "classname": "Product",
-            "code": "class Product(Base):\n    \"\"\"description: Represents products available in the system.\"\"\"\n    __tablename__ = 'product'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String)\n    price = Column(Integer)\n    carbon_neutral = Column(Boolean, server_default=text('TRUE'))",
+            "code": "class Product(Base):\n    \"\"\"description: Represents products available in the system.\"\"\"\n    __tablename__ = 'product'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String)\n    price = Column(Integer)",
             "sqlite_create": "CREATE TABLE product (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    name TEXT,\n    price INTEGER\n);",
             "description": "Table for storing products available for purchase.",
             "name": "Product"

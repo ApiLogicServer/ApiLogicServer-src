@@ -1,6 +1,6 @@
 # coding: utf-8
 from sqlalchemy import DECIMAL, DateTime  # API Logic Server GenAI assist
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -79,6 +79,7 @@ class Product(SAFRSBaseX, Base):
     id = Column(Integer, primary_key=True)
     name = Column(String)
     price = Column(Integer)
+    carbon_neutral = Column(Boolean)
 
     # parent relationships (access parent)
 
