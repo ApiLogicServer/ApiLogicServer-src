@@ -18,14 +18,14 @@ from typing import List, Dict
 from pydantic import BaseModel
 from dotmap import DotMap
 import importlib.util
-from api_logic_server_cli.genai.genai_utils import WGResult
-from api_logic_server_cli.genai.genai_utils import Rule
-from api_logic_server_cli.genai.genai_utils import Model
-from api_logic_server_cli.genai.genai_utils import TestDataRow
-from api_logic_server_cli.genai.genai_utils import K_LogicBankOff
-from api_logic_server_cli.genai.genai_utils import K_LogicBankOff
-from api_logic_server_cli.genai.genai_utils import K_LogicBankTraining
-import api_logic_server_cli.genai.genai_utils as genai_utils
+from api_logic_server_cli.genai.genai_svcs import WGResult
+from api_logic_server_cli.genai.genai_svcs import Rule
+from api_logic_server_cli.genai.genai_svcs import Model
+from api_logic_server_cli.genai.genai_svcs import TestDataRow
+from api_logic_server_cli.genai.genai_svcs import K_LogicBankOff
+from api_logic_server_cli.genai.genai_svcs import K_LogicBankOff
+from api_logic_server_cli.genai.genai_svcs import K_LogicBankTraining
+import api_logic_server_cli.genai.genai_svcs as genai_svcs
 
 log = logging.getLogger(__name__)
 
@@ -543,7 +543,7 @@ class GenAI(object):
         in_logic = False
         translated_logic = "\n    # Logic from GenAI: (or, use your IDE w/ code completion)\n"
         if shared_logic := True:
-            translated_logic += genai_utils.get_code(self.response_dict.rules)
+            translated_logic += genai_svcs.get_code(self.response_dict.rules)
         else:  # old code - delete
             for each_rule in self.response_dict.rules:
                 comment_line = each_rule.description

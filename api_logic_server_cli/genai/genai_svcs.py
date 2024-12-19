@@ -1,0 +1,638 @@
+''' shared functions for genai '''
+
+from typing import Dict, List, Tuple
+from api_logic_server_cli.cli_args_project import Project
+import logging
+from pathlib import Path
+import os
+import sys
+import create_from_model.api_logic_server_utils as utils
+
+import time
+from openai import OpenAI
+import json
+from typing import List, Dict
+from pydantic import BaseModel
+from dotmap import DotMap
+import ast
+
+
+K_LogicBankOff = "LBX"
+''' LBX Disable Logic (for demos) '''
+K_LogicBankTraining = "Here is the simplified API for LogicBank"
+''' Identify whether conversation contains LB training '''
+
+
+class Rule(BaseModel):
+    name: str
+    description: str
+    use_case: str # specified use case or requirement name (use 'General' if missing)
+    entity: str # the entity being constrained or derived
+    code: str # logicbank rule code
+    
+class Model(BaseModel):
+    classname: str
+    code: str # sqlalchemy model code
+    sqlite_create: str # sqlite create table statement
+    description: str
+    name: str
+
+class TestDataRow(BaseModel):
+    test_data_row_variable: str  # the Python test data row variable
+    code: str  # Python code to create a test data row instance
+
+class WGResult(BaseModel):  # must match system/genai/prompt_inserts/response_format.prompt
+    # response: str # result
+    models : List[Model] # list of sqlalchemy classes in the response
+    rules : List[Rule] # list rule declarations
+    test_data: str
+    test_data_rows: List[TestDataRow]  # list of test data rows
+    test_data_sqlite: str # test data as sqlite INSERT statements
+    name: str  # suggest a short name for the project
+
+log = logging.getLogger(__name__)
+
+def get_code(rule_list: List[DotMap]) -> str:
+    """returns code snippet for rules from rule
+
+    Args:
+        rule_list (List[DotMap]): list of rules from ChatGPT in DotMap format
+
+    Returns:
+        str: the rule code
+    """    
+
+    def remove_logic_halluncinations(each_line: str) -> str:
+        """remove hallucinations from logic
+
+        eg: Rule.setup()
+
+        Args:
+            each_line (str): _description_
+
+        Returns:
+            str: _description_
+        """
+        return_line = each_line
+        if each_line.startswith('Rule.'):
+            # Sometimes indents left out (EmpDepts) - "code": "Rule.sum(derive=Department.salary_total, as_sum_of=Employee.salary)\nRule.constraint(validate=Department,\n                as_condition=lambda row: row.salary_total <= row.budget,\n                error_msg=\"Department salary total ({row.salary_total}) exceeds budget ({row.budget})\")"
+            each_line = "    " + each_line  # add missing indent
+            log.debug(f'.. fixed hallucination/indent: {each_line}')
+        if each_line.startswith('    Rule.') or each_line.startswith('    DeclareRule.'):
+            if 'Rule.sum' in each_line:
+                pass
+            elif 'Rule.count' in each_line:
+                pass
+            elif 'Rule.formula' in each_line:
+                pass
+            elif 'Rule.copy' in each_line:
+                pass
+            elif 'Rule.constraint' in each_line:
+                pass
+            elif 'Rule.allocate' in each_line:
+                pass
+            elif 'Rule.calculate' in each_line:
+                return_line = each_line.replace('Rule.calculate', 'Rule.copy')
+            else:
+                return_line = each_line.replace('    ', '    # ')
+                log.debug(f'.. removed hallucination: {each_line}')
+        return return_line
+
+    translated_logic = ""
+    for each_rule in rule_list:
+        comment_line = each_rule.description
+        translated_logic += f'\n    # {comment_line}\n'
+        code_lines = each_rule.code.split('\n')
+        if '\n' in each_rule.code:
+            debug_string = "good breakpoint - multi-line rule"
+        for each_line in code_lines:
+            if 'declare_logic.py' not in each_line:
+                each_repaired_line = remove_logic_halluncinations(each_line=each_line)
+                if not each_repaired_line.startswith('    '):  # sometimes in indents, sometimes not
+                    each_repaired_line = '    ' + each_repaired_line
+                if 'def declare_logic' not in each_repaired_line:
+                    translated_logic += each_repaired_line + '\n'    
+    return translated_logic
+
+def fix_and_write_model_file(response_dict: DotMap,  save_dir: str, post_error: str = None, use_relns: bool = False) -> str:
+    """
+    1. from response, create model file / models lines
+    2. from response, create model file / test lines
+    3. ChatGPT work-arounds (decimal, indent, bogus relns, etc etc)
+    4. Ensure the sqlite url is correct: sqlite:///system/genai/temp/create_db_models.sqlite
+    5. write model file to save_dir (e.g, in genai, self.project.from_model)  
+
+    Args:
+        response_data (str): the chatgpt response
+        post_error (str, optional): genai uses to stop creation in api_logic_server_cli. Defaults to None.
+        use_relns (bool, optional): set on genai retry to avoid relns. Defaults to False.
+
+    """
+
+    def insert_model_lines(models, create_db_model_lines, post_error: str = None, use_relns=False) -> list[str]:
+
+        def get_model_class_lines(model: DotMap) -> list[str]:
+            """Get the model class from the model, with MAJOR fixes
+
+            Args:
+                model (Model): the model
+
+            Returns:
+                stlist[str]: the model class lines, fixed up
+            """
+
+            create_db_model_lines =  list()
+            create_db_model_lines.append('\n\n')
+            class_lines = model.code.split('\n')
+            line_num = 0
+            indents_to_remove = 0
+            for each_line in class_lines:
+                line_num += 1
+                ''' decimal issues
+
+                    1. bad import: see Run: tests/test_databases/ai-created/genai_demo/genai_demo_decimal
+                        from decimal import Decimal  # Decimal fix: needs to be from decimal import DECIMAL
+
+                    2. Missing missing import: from SQLAlchemy import .... DECIMAL
+
+                    3. Column(Decimal) -> Column(DECIMAL)
+                        see in: tests/test_databases/ai-created/budget_allocation/budget_allocations/budget_allocations_3_decimal
+
+                    4. Bad syntax on test data: see Run: blt/time_cards_decimal from RESPONSE
+                        got:    balance=DECIMAL('100.50')
+                        needed: balance=1000.0
+                        fixed with import in create_db_models_prefix.py
+
+                    5. Bad syntax on test data cals: see api_logic_server_cli/prototypes/manager/system/genai/examples/genai_demo/genai_demo_conversation_bad_decimal/genai_demo_03.response
+                        got: or Decimal('0.00')
+                        needed: or decimal.Decimal('0.00')
+
+                    6. Bad syntax on test data cals: see api_logic_server_cli/prototypes/manager/system/genai/examples/genai_demo/genai_demo_conversation_bad_decimal_2/genai_demo_conversation_002.response
+                        got: or DECIMAL('
+                        needed: or decimal.Decimal('0.00')
+                '''
+
+                # TODO - seeing several \\ in the response - should be \ (I think)
+                if "= Table(" in each_line:  # tests/test_databases/ai-created/time_cards/time_card_kw_arg/genai.response
+                    log.debug(f'.. fix_and_write_model_file detects table - raise excp to trigger retry')
+                    if post_error is not None:
+                        post_error = "ChatGPT Response contains table (not class) definitions: " + each_line
+                if 'sqlite:///' in each_line:  # must be sqlite:///system/genai/temp/create_db_models.sqlite
+                    current_url_rest = each_line.split('sqlite:///')[1]
+                    quote_type = "'"
+                    if '"' in current_url_rest:
+                        quote_type = '"'  # eg, tests/test_databases/ai-created/time_cards/time_card_decimal/genai.response
+                    current_url = current_url_rest.split(quote_type)[0]  
+                    proper_url = 'system/genai/temp/create_db_models.sqlite'
+                    each_line = each_line.replace(current_url, proper_url)
+                    if current_url != proper_url:
+                        log.debug(f'.. fixed sqlite url: {current_url} -> system/genai/temp/create_db_models.sqlite')
+                if 'Decimal,' in each_line:  # SQLAlchemy import
+                    each_line = each_line.replace('Decimal,', 'DECIMAL,')
+                    # other Decimal bugs: see api_logic_server_cli/prototypes/manager/system/genai/reference/errors/chatgpt_decimal.txt
+                if ', Decimal' in each_line:  # Cap'n K, at your service
+                    each_line = each_line.replace(', Decimal', ', DECIMAL')
+                if 'rom decimal import Decimal' in each_line:
+                    each_line = each_line.replace('from decimal import Decimal', 'import decimal')
+                if '=Decimal(' in each_line:
+                    each_line = each_line.replace('=Decimal(', '=decimal.Decimal(')
+                if ' Decimal(' in each_line:
+                    each_line = each_line.replace(' Decimal(', ' decimal.Decimal(')
+                if 'Column(Decimal' in each_line:
+                    each_line = each_line.replace('Column(Decimal', 'Column(DECIMAL')
+                if "DECIMAL('" in each_line:
+                    each_line = each_line.replace("DECIMAL('", "decimal.Decimal('")
+                if 'end_time(datetime' in each_line:  # tests/test_databases/ai-created/time_cards/time_card_kw_arg/genai.response
+                    each_line = each_line.replace('end_time(datetime', 'end_time=datetime')
+                if 'datetime.date.today' in each_line:
+                    each_line = each_line.replace('datetime.today', 'end_time=datetime')
+                if indents_to_remove > 0:
+                    each_line = each_line[indents_to_remove:]
+                if 'relationship(' in each_line and use_relns == False:
+                    # airport4 fails with could not determine join condition between parent/child tables on relationship Airport.flights
+                    if each_line.startswith('    '):
+                        each_line = each_line.replace('    ', '    # ')
+                    else:  # sometimes it puts relns outside the class (so, outdented)
+                        each_line = '# ' + each_line
+                if 'sqlite:///system/genai/temp/model.sqlite':  # fix prior version
+                    each_line = each_line.replace('sqlite:///system/genai/temp/model.sqlite', 
+                                                'sqlite:///system/genai/temp/create_db_models.sqlite')
+
+                # logicbank fixes
+                if 'from logic_bank' in each_line:  # we do our own imports
+                    each_line = each_line.replace('from', '# from')
+                if 'LogicBank.activate' in each_line:
+                    each_line = each_line.replace('LogicBank.activate', '# LogicBank.activate')
+                
+                create_db_model_lines.append(each_line + '\n')
+            return create_db_model_lines
+
+
+        did_base = False
+        for each_model in models:
+            model_lines = get_model_class_lines(model=each_model)
+            for each_line in model_lines:
+                each_fixed_line = each_line.replace('sa.', '')      # sometimes it puts sa. in front of Column
+                if 'Base = declarative_base()' in each_fixed_line:  # sometimes created for each class
+                    if did_base:
+                        each_fixed_line = '# ' + each_fixed_line
+                    did_base = True 
+                if 'datetime.datetime.utcnow' in each_fixed_line:
+                    each_fixed_line = each_fixed_line.replace('datetime.datetime.utcnow', 'datetime.now()') 
+                if 'Column(date' in each_fixed_line:
+                    each_fixed_line = each_fixed_line.replace('Column(dat', 'column(Date') 
+                create_db_model_lines.append(each_fixed_line)
+            
+            model_code = "\n".join(model_lines)
+            if '\\n' in model_code:
+                log.debug(f'.. fix_and_write_model_file detects \\n - attempting fix')
+                model_code = model_code.replace('\\n', '\n')
+            try:
+                ast.parse(model_code)
+            except SyntaxError as exc:
+                log.error(f"Model Class Error: {model_code}")
+                if post_error is not None:
+                    post_error = f"Model Class Error: {exc}"
+        return create_db_model_lines
+    
+    def insert_test_data_lines(test_data_lines : list[str]) -> list[str]:
+        """Insert test data lines into the model file
+
+        Args:
+            test_data_lines (list(str)):  
+                                    * initially header (engine =, sesssion =)
+                                    * this function appends CPT test data
+
+        Returns:
+            list[str]: variable names for the test data rows (for create_all)
+        """
+        
+        def fix_test_data_line(each_fixed_line: str) -> str:
+            """Fix the test data line
+
+            Args:
+                each_fixed_line (str): the test data line
+
+            Returns:
+                str: the fixed test data line
+            """
+
+            if '=null' in each_fixed_line:
+                each_fixed_line = each_fixed_line.replace('=None', '=date') 
+            if '=datetime' in each_fixed_line:
+                each_fixed_line = each_fixed_line.replace('=datetime.date', '=date') 
+            if 'datetime.datetime.utcnow' in each_fixed_line:
+                each_fixed_line = each_fixed_line.replace('datetime.datetime.utcnow', 'datetime.now()') 
+            if 'datetime.date.today' in each_fixed_line:
+                each_fixed_line = each_fixed_line.replace('datetime.date.today', 'datetime.today')
+            if 'engine = create_engine' in each_fixed_line:  # CBT sometimes has engine = create_engine, so do we!
+                each_fixed_line = each_fixed_line.replace('engine = create_engine', '# engine = create_engine')
+                check_for_row_name = False
+            if each_fixed_line.startswith('Base') or each_fixed_line.startswith('engine'):
+                check_for_row_name = False
+            if 'Base.metadata.create_all(engine)' in each_fixed_line:
+                each_fixed_line = each_fixed_line.replace('Base.metadata.create_all(engine)', '# Base.metadata.create_all(engine)')
+            return each_fixed_line
+
+        row_names = list()
+        use_test_data_rows = True # CPT test data, new format - test_data_rows (*way* less variable)
+        if use_test_data_rows & hasattr(response_dict, 'test_data_rows'):
+            test_data_rows = response_dict.test_data_rows
+            log.debug(f'.... test_data_rows: {len(test_data_rows)}')
+            for each_row in test_data_rows:
+                each_fixed_line = fix_test_data_line(each_row.code)
+                test_data_lines.append(each_fixed_line) 
+                row_names.append(each_row.test_data_row_variable)
+            pass
+        else:  # CPT test data, old format - rows, plus session, engine etc (quite variable)
+            test_data_lines_ori = response_dict.test_data.split('\n') # gpt response
+            log.debug(f'.... test_data_lines...')
+            for each_line in test_data_lines_ori:
+                each_fixed_line = fix_test_data_line(each_line)
+                check_for_row_name = True
+                test_data_lines.append(each_fixed_line)  # append the fixed test data line
+                if check_for_row_name and ' = ' in each_line and '(' in each_line:  # CPT test data might have: tests = []
+                    assign = each_line.split(' = ')[0]
+                    # no tokens for: Session = sessionmaker(bind=engine) or session = Session()
+                    if '.' not in assign and 'Session' not in each_line and 'session.' not in each_line:
+                        row_names.append(assign)
+        return row_names
+    
+    create_db_model_lines =  list()
+    create_db_model_lines.append(f'# using resolved_model self.resolved_model FIXME')
+    create_db_model_lines.extend(
+        get_lines_from_file(f'{get_manager_path()}/system/genai/create_db_models_inserts/create_db_models_imports.py'))
+    create_db_model_lines.append("\nfrom sqlalchemy.dialects.sqlite import *\n") # specific for genai 
+    
+    models = response_dict.models
+    
+    create_db_model_lines = insert_model_lines(models, create_db_model_lines)
+
+    create_db_model_path = Path(save_dir).joinpath('create_db_models.py')
+
+    with open(f'{create_db_model_path}', "w") as create_db_model_file:
+        create_db_model_file.write("".join(create_db_model_lines))
+        create_db_model_file.write("\n\n# end of model classes\n\n")
+        
+    # classes done, create db and add test_data code
+    test_data_lines = get_lines_from_file(f'{get_manager_path()}/system/genai/create_db_models_inserts/create_db_models_create_db.py')
+    test_data_lines.append('session.commit()')
+    
+    row_names = insert_test_data_lines(test_data_lines)
+
+    test_data_lines.append('\n\n')
+    row_name_list = ', '.join(row_names)
+    add_rows = f'session.add_all([{row_name_list}])'
+    test_data_lines.append(add_rows )  
+    test_data_lines.append('session.commit()')
+    test_data_lines.append('# end of test data\n\n')
+
+    test_data_lines_result = []
+    for line in test_data_lines:
+        test_data_lines_result += line.split('\n')
+    
+    with open(f'{create_db_model_path}', "a") as create_db_model_file:
+        create_db_model_file.write("\ntry:\n    ")
+        create_db_model_file.write("\n    ".join(test_data_lines_result))
+        create_db_model_file.write("\nexcept Exception as exc:\n")
+        create_db_model_file.write("    print(f'Test Data Error: {exc}')\n")
+    
+    log.debug(f'.. code for db creation and test data: {create_db_model_path}')
+
+
+def get_lines_from_file(file_name: str) -> list[str]:
+    """Get lines from a file
+
+    Args:
+        file_name (str): the file name
+
+    Returns:
+        list[str]: the lines from the file
+    """
+
+    with open(file_name, "r") as file:
+        lines = file.readlines()
+    return lines
+
+def get_create_prompt__with_inserts(arg_prompt_inserts: str='', raw_prompt: str='', for_iteration: bool = False, 
+                                    arg_db_url: str="sqlite", arg_test_data_rows: int=4) -> tuple[str, bool]:
+    """ prompt-engineering for creating project:
+        1. insert db-specific logic into prompt 
+        2. insert iteration prompt     (if for_iteration)
+        3. insert logic_inserts.prompt ('1 line: Use LogicBank to create declare_logic()...')
+        4. designates prompt-format    (response_format.prompt)
+
+    Args:  FIXME
+        raw_prompt (str): the prompt from file or text argument
+        for_iteration (bool, optional): Inserts 'Update the prior response...' Defaults to False.
+
+    Returns:
+        str: the engineered prompt with inserts
+    """
+    prompt_result = raw_prompt
+    prompt_inserts = ''
+    logic_enabled = True
+    if '*' == arg_prompt_inserts:    # * means no inserts
+        prompt_inserts = "*"
+    elif '' != arg_prompt_inserts:   # if text, use this file
+        prompt_inserts = arg_prompt_inserts
+    elif 'sqlite' in arg_db_url:           # if blank, use default for db    
+        prompt_inserts = f'sqlite_inserts.prompt'
+    elif 'postgresql' in arg_db_url:
+        prompt_inserts = f'postgresql_inserts.prompt'
+    elif 'mysql' in arg_db_url:
+        prompt_inserts = f'mysql_inserts.prompt'
+
+    if prompt_inserts == "*":  
+        pass    # '*' means caller has computed their own prompt -- no inserts
+    else:       # do prompt engineering (inserts)
+        prompt_eng_file_name = get_manager_path().joinpath(f'system/genai/prompt_inserts/{prompt_inserts}')
+        assert Path(prompt_eng_file_name).exists(), \
+            f"Missing prompt_inserts file: {prompt_eng_file_name}"  # eg api_logic_server_cli/prototypes/manager/system/genai/prompt_inserts/sqlite_inserts.prompt
+        log.debug(f'get_create_prompt__with_inserts: {str(os.getcwd())} \n .. merged with: {prompt_eng_file_name}')
+        with open(prompt_eng_file_name, 'r') as file:
+            pre_post = file.read()  # eg, Use SQLAlchemy to create a sqlite database named system/genai/temp/create_db_models.sqlite, with
+        prompt_result = pre_post.replace('{{prompt}}', raw_prompt)
+        if for_iteration:
+            # Update the prior response - be sure not to lose classes and test data already created.
+            prompt_result = 'Update the prior response - be sure not to lose classes and test data already created.' \
+                + '\n\n' + prompt_result
+            log.debug(f'.. iteration inserted: Update the prior response')
+            log.debug(f'.... iteration prompt result: {prompt_result}')
+
+        prompt_lines = prompt_result.split('\n')
+        prompt_line_number = 0
+        do_logic = True
+        for each_line in prompt_lines:
+            if 'Create multiple rows of test data' in each_line:
+                if arg_test_data_rows > 0:
+                    each_line = each_line.replace(
+                        f'Create multiple rows',  
+                        f'Create {arg_test_data_rows} rows')
+                    prompt_lines[prompt_line_number] = each_line
+                    log.debug(f'.. inserted explicit test data: {each_line}')
+            if K_LogicBankOff in each_line:
+                logic_enabled = False  # for demos
+
+            if "LogicBank" in each_line and do_logic == True:
+                log.debug(f'.. inserted: {each_line}')
+                prompt_eng_logic_file_name = get_manager_path().joinpath(f'system/genai/prompt_inserts/logic_inserts.prompt')
+                with open(prompt_eng_logic_file_name, 'r') as file:
+                    prompt_logic = file.read()  # eg, Use LogicBank to create declare_logic()...
+                prompt_lines[prompt_line_number] = prompt_logic
+                do_logic = False
+            prompt_line_number += 1
+        
+        response_format_file_name = get_manager_path().joinpath(f'system/genai/prompt_inserts/response_format.prompt')
+        with open(response_format_file_name, 'r') as file:
+            response_format = file.readlines()
+        prompt_lines.extend(response_format)
+
+        prompt_result = "\n".join(prompt_lines)  # back to a string
+        pass
+    return prompt_result, logic_enabled
+
+
+
+def get_prompt_messages_from_dirs(using) -> List[ Tuple[Dict[str, str]]]:
+    """ Get raw prompts from dir (might be json or text) and return as list of dicts
+
+        Returned prompts include inserts from prompt_inserts (prompt engineering)
+
+    Returns:
+        dict[]: [ {role: (system | user) }: { content: user-prompt-or-system-json-response } ]
+
+    """
+
+    def iteration(using) -> List[ Tuple[str, Dict[str, str]] ]:
+        """ `--using` is a directory (conversation)
+        """            
+        response_count = 0
+        request_count = 0
+        learning_requests_len = 0
+        prompt = ""
+        prompt_messages : List[ Dict[str, str] ] = []
+        for each_file in sorted(Path(using).iterdir()):
+            if each_file.is_file() and each_file.suffix == '.prompt' or each_file.suffix == '.response':
+                # 0 is R/'you are', 1 R/'request', 2 is 'response', 3 is iteration
+                with open(each_file, 'r') as file:
+                    prompt = file.read()
+                if each_file.name == 'constraint_tests.prompt':
+                    debug_string = "good breakpoint - prompt"
+                role = "user"
+                if response_count == 0 and request_count == 0 and each_file.suffix == '.prompt':
+                    if not prompt.startswith('You are a '):  # add *missing* 'you are''
+                        prompt_messages.append( ( each_file, get_prompt_you_are() ) )
+                        request_count = 1
+                file_num = request_count + response_count
+                file_str = str(file_num).zfill(3)
+                debug_prompt = prompt[:30] 
+                debug_prompt = debug_prompt.replace('\n', ' | ')
+                log.debug(f'.. utils[{file_str}] processes: {os.path.basename(each_file)} - {debug_prompt}...')
+                if each_file.suffix == ".response":
+                    role = 'system'
+                    response_count += 1
+                else:
+                    request_count += 1      # rebuild response with *all* tables
+                prompt_messages.append( (each_file, {"role": role, "content": prompt} ) )
+            else:
+                log.debug(f'.. .. utils ignores: {os.path.basename(each_file)}')
+        return prompt_messages
+
+    log.debug(f'\nget_prompt_messages_from_dirs - scanning (${using})')
+    prompt_messages : List[ Tuple[ Dict[str, str] ] ] = []  # prompt/response conversation to be sent to ChatGPT
+    
+    assert Path(using).is_dir(), f"Missing directory: {using}"
+    prompt_messages = iteration(using)  # `--using` is a directory (conversation)
+
+    # log.debug(f'.. prompt_messages: {prompt_messages}')  # heaps of output
+    return prompt_messages  
+
+def get_prompt_you_are() -> Dict[str, str]:
+    """   Create presets - {'role'...you are a data modelling expert, and logicbank api etc
+
+    Args:
+        prompt_messages (List[Dict[str, str]]): updated array of messages to be sent to ChatGPT
+    """
+    pass
+
+    you_are = "You are a data modelling expert and python software architect who expands on user input ideas. You create data models with at least 4 tables"
+    return {"role": "user", "content": you_are}
+
+def select_messages(messages: List[Dict], messages_out: List[Dict], message_selector: object):
+    """iterates through messages and - for `json` content - calls message_selector to update messages_out
+
+    Args:
+        messages (List[Dict]): messages to iterate through (from get_prompt_messages_from_dirs)
+        messages_out (List[Dict]): building the latest values of models, (all) rules and test data
+        message_selector (object): function to update messages_out
+
+    Returns:
+        _type_: _description_
+    """    
+    
+    result = List[DotMap]
+    log.debug(f'\nfixup/select_messages: {len(messages)} messages')
+    for each_message_file, each_message in messages:
+        content = each_message['content']
+        content_as_json = as_json(content)
+        if content_as_json is not None:  # eg we skip text content, such as raw logic prompt
+            # each_message_obj = json.loads(content)
+            message_selector(messages_out, each_message, each_message_file)
+    return result
+
+
+def call_chatgpt(messages: List[Dict[str, str]], api_version: str, using: str) -> str:
+    """call ChatGPT with messages
+
+    Args:
+        messages (List[Dict[str, str]]): array of messages
+        api_version (str): genai version
+        using (str): str to save response
+    Returns:
+        str: response from ChatGPT
+    """    
+    try:
+        start_time = time.time()
+        db_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")
+        client = OpenAI(api_key=os.getenv("APILOGICSERVER_CHATGPT_APIKEY"))
+        model = api_version
+        if model == "":  # default from CLI is '', meaning fall back to env variable or system default...
+            model = os.getenv("APILOGICSERVER_CHATGPT_MODEL")
+            if model is None or model == "*":  # system default chatgpt model
+                model = "gpt-4o-2024-08-06"
+        with open(Path(using).joinpath('request.json'), "w") as request_file:  # save for debug
+            json.dump(messages, request_file, indent=4)
+        log.info(f'.. saved request: {using}/request.json')
+
+        completion = client.beta.chat.completions.parse(
+            messages=messages, response_format=WGResult,
+            # temperature=self.project.genai_temperature,  values .1 and .7 made students / charges fail
+            model=model  # for own model, use "ft:gpt-4o-2024-08-06:personal:logicbank:ARY904vS" 
+        )
+        log.info(f'ChatGPT ({str(int(time.time() - start_time))} secs) - response at: system/genai/temp/chatgpt_original.response')
+        
+        data = completion.choices[0].message.content
+        response_dict = json.loads(data)
+        with open(Path(using).joinpath('response.json'), "w") as response_file:  # save for debug
+            json.dump(response_dict, response_file, indent=4)
+        log.debug(f'.. call_chatgpt saved response: {using}/response.json')
+        return data
+    except Exception as inst:
+        log.error(f"\n\nError: ChatGPT call failed\n{inst}\n\n")
+        sys.exit('ChatGPT call failed - please see https://apilogicserver.github.io/Docs/WebGenAI-CLI/#configuration')
+
+def get_manager_path() -> Path:
+    """ Checks cwd, parent, and grandparent for system/genai
+
+    * Possibly could add cli arg later
+
+    Returns:
+        Path: Manager path (contains system/genai)
+    """
+    result_path = Path(os.getcwd())  # normal case - project at manager root
+    check_system_genai = result_path.joinpath('system/genai')
+    
+    if check_system_genai.exists():
+        return result_path
+    
+    result_path = result_path.parent  # try pwd parent
+    check_system_genai = result_path.joinpath('system/genai')
+    
+    if check_system_genai.exists():
+        return result_path
+    
+    result_path = result_path.parent  # try pwd grandparent
+    check_system_genai = result_path.joinpath('system/genai')
+    
+    
+    result_path = result_path.parent.parent.parent.parent  # try ancestors - this is for import testing
+    check_system_genai = result_path.joinpath('system/genai')
+
+    assert check_system_genai.exists(), f"Manager Directory not found: {check_system_genai}"
+    
+    return result_path
+
+
+def as_json(value: str) -> dict:
+    """returns json or None from string value
+
+    Args:
+        value (str): string - maybe json
+
+    Returns:
+        dict: json-to-dict, or None
+    """    
+    
+    return_json = None
+    if isinstance(value, str) and (value.startswith('{') or value.startswith('[')):
+        return_json = json.loads(value)
+    return return_json
+
+db_in = "sqlite"
+db = None
+def dbs() -> List[str]:    # split on comma, strip, and return as list
+    # db = [x.strip() for x in s.split('\n')]
+    global db
+    db = (json.dumps(db_in)).split('\n')
+    return
