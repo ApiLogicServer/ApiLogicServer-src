@@ -900,7 +900,7 @@ class GenAIUtils:
                 json_data = json.load(file)
             return json_data['models']
          
-        def get_dev_project_models(wg_path: Path) -> dict[str, list[dict]]:
+        def get_dev_project_models(dev_path: Path) -> dict[str, list[dict]]:
             """ Get models from wg-project
 
             Args:
@@ -911,7 +911,7 @@ class GenAIUtils:
             """            
 
             models = []
-            with open(wg_path.joinpath('database/models.py'), "r") as file:
+            with open(dev_path.joinpath('database/models.py'), "r") as file:
                 dev_models = file.read()
             return {"existing_models": dev_models}
 
@@ -951,7 +951,7 @@ class GenAIUtils:
             self.wg_project_models_content = json.dumps(self.wg_project_models)  # make it unreadable
             self.import_request.append( {'role': 'user', 'content': self.wg_project_models_content} )
 
-            self.dev_project_models = get_dev_project_models(wg_path)
+            self.dev_project_models = get_dev_project_models(dev_path)
             self.dev_project_models_content = json.dumps(self.dev_project_models)
             self.import_request.append({'role': 'user', 'content': self.dev_project_models_content})
 
@@ -964,7 +964,7 @@ class GenAIUtils:
             # db = json.loads(self.import_request['content'])
 
             self.response_str = call_chatgpt(messages=self.import_request, api_version=self.genai_version, using=dev_path_import)
-            self.fixup_response = DotMap(json.loads(self.response_str))
+            self.import_response = DotMap(json.loads(self.response_str))
 
         # response.json > docs/fixup/you-are.prompt. model_and_rules.response, rules.response and doit.prompt
         fix_and_write_model_file(response_dict=self.import_response, save_dir=dev_path_import)
