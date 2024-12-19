@@ -9,15 +9,15 @@ import datetime
 import create_from_model.api_logic_server_utils as utils
 import time
 from openai import OpenAI
-from api_logic_server_cli.genai.genai import WGResult
-from api_logic_server_cli.genai.genai import Rule
+from api_logic_server_cli.genai.genai_svcs import WGResult
+from api_logic_server_cli.genai.genai_svcs import Rule
+import api_logic_server_cli.genai.genai_svcs as genai_svcs
 import json
 from typing import List, Dict
 from pydantic import BaseModel
 from dotmap import DotMap
 from natsort import natsorted
 import glob
-import api_logic_server_cli.genai.genai_utils as genai_utils
 
 K_data_model_prompt = "Use SQLAlchemy to create"
 
@@ -80,7 +80,7 @@ class GenAILogic(object):
                 logic_message = {"role": "user", "content": logic}
                 self.messages.append( logic_message ) # replace data model with logic
                 log.debug(f'.. ChatGPT - saving raw response to: system/genai/temp/chatgpt_original.response')
-                response_str = genai_utils.call_chatgpt(messages=self.messages, api_version=self.project.genai_version, using=self.project.genai_using)
+                response_str = genai_svcs.call_chatgpt(messages=self.messages, api_version=self.project.genai_version, using=self.project.genai_using)
                 response = json.loads(response_str)
                 self.get_and_save_response_data(response=response, file=each_file)          # save raw response to docs/logic
                 self.response_dict = DotMap(response)
@@ -340,7 +340,7 @@ class GenAILogic(object):
             translated_logic = logic_prefix
         translated_logic += f'\n    # Logic from GenAI {str(datetime.datetime.now().strftime("%B %d, %Y %H:%M:%S"))}:\n\n'
 
-        rule_code = genai_utils.get_code(rule_list)  # get code from logic
+        rule_code = genai_svcs.get_code(rule_list)  # get code from logic
         translated_logic += rule_code
         translated_logic += "\n    # End Logic from GenAI\n\n"
 
