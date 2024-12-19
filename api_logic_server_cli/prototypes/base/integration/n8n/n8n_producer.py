@@ -60,6 +60,7 @@ def send_n8n_message(http_method: str = "POST", ins_upd_dlt: str = "ins", msg: s
         http_method (str):  [GET, POST,PUT,PATCH, DELETE] default is POST
         ins_upd_dlt (str): "ins, upd, dlt" (logic row state) logic_row.ins_upd_dlt or manual (wh_state pass in header)
         logic_row (LogicRow):(Optional) logic row contains row, old_row, ins_upd_dlt and more
+        msg: this is used for debugging
         row_dict_mapper (RowDictMapper): (Optional) typically subclass of RowDictMapper, transforms row to dict
         payload (str): (Optional) JSON data to be sent as string (json.dumps(row.to_dict()))    
         wh_entity (str): the webhook entity name pass in header
@@ -84,23 +85,20 @@ def send_n8n_message(http_method: str = "POST", ins_upd_dlt: str = "ins", msg: s
     elif payload is None and http_method.lower() == "post":
         raise ValueError(f"send_n8n_message payload type not supported: {type(payload)}") 
 
-    #TODO -  this breaks my payload if I have already done a json.dumps()
-    json_payload = jsonify(f'{row_obj_dict}').data.decode('utf-8')
-    msg = f"Webhook send_n8n_message: method: {http_method} type: {ins_upd_dlt}"
-    logger.debug(f'\n\n{msg}\n{json_payload}')
-
+    wh_state =  ins_upd_dlt if logic_row is None else logic_row.ins_upd_dlt
+    wh_entity = logic_row.row.__class__.__name__ if logic_row else wh_entity
     headers = {
         "Authorization": conf['authorization'],
         "Content-Type": "application/json",
-        "wh_state": ins_upd_dlt if logic_row is None else logic_row.ins_upd_dlt,
-        "wh_entity": logic_row.row.__class__.__name__ if logic_row else wh_entity
+        "wh_state": wh_state,
+        "wh_entity": wh_entity
     }
     try:
         endpoint = f'{conf["n8n_url"]}'
         status = {"status_code": 500}
         if http_method in {"post", "POST"}:
             #Only passing payload in this example
-            status = requests.post(endpoint, json=payload, headers=headers)
+            status = requests.post(endpoint, json=row_obj_dict, headers=headers)
         elif http_method.lower() == "get":
             status = requests.get(endpoint, headers=headers)
         elif http_method.lower() in {"put", "patch", "delete"}:
@@ -108,6 +106,10 @@ def send_n8n_message(http_method: str = "POST", ins_upd_dlt: str = "ins", msg: s
 
         if status and status.status_code != 200:
             logger.error(f"n8n_producer: status_code: {status.status_code}")
+        if row_obj_dict is not None:
+            json_payload = jsonify(f'{row_obj_dict}').data.decode('utf-8')
+            msg = f"Webhook send_n8n_message: http_method: {http_method} wh_state: {wh_state} wh_entity: {wh_entity}"
+            logger.debug(f'\n\n{msg}\n{json_payload}')
         return status
     except Exception as e:
         logger.error(f"\nn8n_producer fails with: {e}")
