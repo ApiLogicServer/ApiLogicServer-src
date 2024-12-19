@@ -599,7 +599,7 @@ class GenAI(object):
         pass
 
     def fix_and_write_model_file(self):
-        """
+        """  TODO: use genai_utils
         1. from response, create model file / models lines
         2. from response, create model file / test lines
         3. ChatGPT work-arounds (decimal, indent, bogus relns, etc etc)
