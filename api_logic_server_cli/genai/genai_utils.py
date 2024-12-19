@@ -16,6 +16,7 @@ from pydantic import BaseModel
 from dotmap import DotMap
 from natsort import natsorted
 import glob
+import ast
 
 
 K_LogicBankOff = "LBX"
@@ -114,6 +115,252 @@ def get_code(rule_list: List[DotMap]) -> str:
                 if 'def declare_logic' not in each_repaired_line:
                     translated_logic += each_repaired_line + '\n'    
     return translated_logic
+
+def fix_and_write_model_file(response_dict: DotMap,  save_dir: str, post_error: str = None, use_relns: bool = False) -> str:
+    """
+    1. from response, create model file / models lines
+    2. from response, create model file / test lines
+    3. ChatGPT work-arounds (decimal, indent, bogus relns, etc etc)
+    4. Ensure the sqlite url is correct: sqlite:///system/genai/temp/create_db_models.sqlite
+    5. write model file to save_dir (e.g, in genai, self.project.from_model)  
+
+    Args:
+        response_data (str): the chatgpt response
+        post_error (str, optional): genai uses to stop creation in api_logic_server_cli. Defaults to None.
+        use_relns (bool, optional): set on genai retry to avoid relns. Defaults to False.
+
+    """
+
+    def insert_model_lines(models, create_db_model_lines, post_error: str = None, use_relns=False) -> list[str]:
+
+        def get_model_class_lines(model: DotMap) -> list[str]:
+            """Get the model class from the model, with MAJOR fixes
+
+            Args:
+                model (Model): the model
+
+            Returns:
+                stlist[str]: the model class lines, fixed up
+            """
+
+            create_db_model_lines =  list()
+            create_db_model_lines.append('\n\n')
+            class_lines = model.code.split('\n')
+            line_num = 0
+            indents_to_remove = 0
+            for each_line in class_lines:
+                line_num += 1
+                ''' decimal issues
+
+                    1. bad import: see Run: tests/test_databases/ai-created/genai_demo/genai_demo_decimal
+                        from decimal import Decimal  # Decimal fix: needs to be from decimal import DECIMAL
+
+                    2. Missing missing import: from SQLAlchemy import .... DECIMAL
+
+                    3. Column(Decimal) -> Column(DECIMAL)
+                        see in: tests/test_databases/ai-created/budget_allocation/budget_allocations/budget_allocations_3_decimal
+
+                    4. Bad syntax on test data: see Run: blt/time_cards_decimal from RESPONSE
+                        got:    balance=DECIMAL('100.50')
+                        needed: balance=1000.0
+                        fixed with import in create_db_models_prefix.py
+
+                    5. Bad syntax on test data cals: see api_logic_server_cli/prototypes/manager/system/genai/examples/genai_demo/genai_demo_conversation_bad_decimal/genai_demo_03.response
+                        got: or Decimal('0.00')
+                        needed: or decimal.Decimal('0.00')
+
+                    6. Bad syntax on test data cals: see api_logic_server_cli/prototypes/manager/system/genai/examples/genai_demo/genai_demo_conversation_bad_decimal_2/genai_demo_conversation_002.response
+                        got: or DECIMAL('
+                        needed: or decimal.Decimal('0.00')
+                '''
+
+                # TODO - seeing several \\ in the response - should be \ (I think)
+                if "= Table(" in each_line:  # tests/test_databases/ai-created/time_cards/time_card_kw_arg/genai.response
+                    log.debug(f'.. fix_and_write_model_file detects table - raise excp to trigger retry')
+                    if post_error is not None:
+                        post_error = "ChatGPT Response contains table (not class) definitions: " + each_line
+                if 'sqlite:///' in each_line:  # must be sqlite:///system/genai/temp/create_db_models.sqlite
+                    current_url_rest = each_line.split('sqlite:///')[1]
+                    quote_type = "'"
+                    if '"' in current_url_rest:
+                        quote_type = '"'  # eg, tests/test_databases/ai-created/time_cards/time_card_decimal/genai.response
+                    current_url = current_url_rest.split(quote_type)[0]  
+                    proper_url = 'system/genai/temp/create_db_models.sqlite'
+                    each_line = each_line.replace(current_url, proper_url)
+                    if current_url != proper_url:
+                        log.debug(f'.. fixed sqlite url: {current_url} -> system/genai/temp/create_db_models.sqlite')
+                if 'Decimal,' in each_line:  # SQLAlchemy import
+                    each_line = each_line.replace('Decimal,', 'DECIMAL,')
+                    # other Decimal bugs: see api_logic_server_cli/prototypes/manager/system/genai/reference/errors/chatgpt_decimal.txt
+                if ', Decimal' in each_line:  # Cap'n K, at your service
+                    each_line = each_line.replace(', Decimal', ', DECIMAL')
+                if 'rom decimal import Decimal' in each_line:
+                    each_line = each_line.replace('from decimal import Decimal', 'import decimal')
+                if '=Decimal(' in each_line:
+                    each_line = each_line.replace('=Decimal(', '=decimal.Decimal(')
+                if ' Decimal(' in each_line:
+                    each_line = each_line.replace(' Decimal(', ' decimal.Decimal(')
+                if 'Column(Decimal' in each_line:
+                    each_line = each_line.replace('Column(Decimal', 'Column(DECIMAL')
+                if "DECIMAL('" in each_line:
+                    each_line = each_line.replace("DECIMAL('", "decimal.Decimal('")
+                if 'end_time(datetime' in each_line:  # tests/test_databases/ai-created/time_cards/time_card_kw_arg/genai.response
+                    each_line = each_line.replace('end_time(datetime', 'end_time=datetime')
+                if 'datetime.date.today' in each_line:
+                    each_line = each_line.replace('datetime.today', 'end_time=datetime')
+                if indents_to_remove > 0:
+                    each_line = each_line[indents_to_remove:]
+                if 'relationship(' in each_line and use_relns == False:
+                    # airport4 fails with could not determine join condition between parent/child tables on relationship Airport.flights
+                    if each_line.startswith('    '):
+                        each_line = each_line.replace('    ', '    # ')
+                    else:  # sometimes it puts relns outside the class (so, outdented)
+                        each_line = '# ' + each_line
+                if 'sqlite:///system/genai/temp/model.sqlite':  # fix prior version
+                    each_line = each_line.replace('sqlite:///system/genai/temp/model.sqlite', 
+                                                'sqlite:///system/genai/temp/create_db_models.sqlite')
+
+                # logicbank fixes
+                if 'from logic_bank' in each_line:  # we do our own imports
+                    each_line = each_line.replace('from', '# from')
+                if 'LogicBank.activate' in each_line:
+                    each_line = each_line.replace('LogicBank.activate', '# LogicBank.activate')
+                
+                create_db_model_lines.append(each_line + '\n')
+            return create_db_model_lines
+
+
+        did_base = False
+        for each_model in models:
+            model_lines = get_model_class_lines(model=each_model)
+            for each_line in model_lines:
+                each_fixed_line = each_line.replace('sa.', '')      # sometimes it puts sa. in front of Column
+                if 'Base = declarative_base()' in each_fixed_line:  # sometimes created for each class
+                    if did_base:
+                        each_fixed_line = '# ' + each_fixed_line
+                    did_base = True 
+                if 'datetime.datetime.utcnow' in each_fixed_line:
+                    each_fixed_line = each_fixed_line.replace('datetime.datetime.utcnow', 'datetime.now()') 
+                if 'Column(date' in each_fixed_line:
+                    each_fixed_line = each_fixed_line.replace('Column(dat', 'column(Date') 
+                create_db_model_lines.append(each_fixed_line)
+            
+            model_code = "\n".join(model_lines)
+            if '\\n' in model_code:
+                log.debug(f'.. fix_and_write_model_file detects \\n - attempting fix')
+                model_code = model_code.replace('\\n', '\n')
+            try:
+                ast.parse(model_code)
+            except SyntaxError as exc:
+                log.error(f"Model Class Error: {model_code}")
+                if post_error is not None:
+                    post_error = f"Model Class Error: {exc}"
+        return create_db_model_lines
+    
+    def insert_test_data_lines(test_data_lines : list[str]) -> list[str]:
+        """Insert test data lines into the model file
+
+        Args:
+            test_data_lines (list(str)):  
+                                    * initially header (engine =, sesssion =)
+                                    * this function appends CPT test data
+
+        Returns:
+            list[str]: variable names for the test data rows (for create_all)
+        """
+        
+        def fix_test_data_line(each_fixed_line: str) -> str:
+            """Fix the test data line
+
+            Args:
+                each_fixed_line (str): the test data line
+
+            Returns:
+                str: the fixed test data line
+            """
+
+            if '=null' in each_fixed_line:
+                each_fixed_line = each_fixed_line.replace('=None', '=date') 
+            if '=datetime' in each_fixed_line:
+                each_fixed_line = each_fixed_line.replace('=datetime.date', '=date') 
+            if 'datetime.datetime.utcnow' in each_fixed_line:
+                each_fixed_line = each_fixed_line.replace('datetime.datetime.utcnow', 'datetime.now()') 
+            if 'datetime.date.today' in each_fixed_line:
+                each_fixed_line = each_fixed_line.replace('datetime.date.today', 'datetime.today')
+            if 'engine = create_engine' in each_fixed_line:  # CBT sometimes has engine = create_engine, so do we!
+                each_fixed_line = each_fixed_line.replace('engine = create_engine', '# engine = create_engine')
+                check_for_row_name = False
+            if each_fixed_line.startswith('Base') or each_fixed_line.startswith('engine'):
+                check_for_row_name = False
+            if 'Base.metadata.create_all(engine)' in each_fixed_line:
+                each_fixed_line = each_fixed_line.replace('Base.metadata.create_all(engine)', '# Base.metadata.create_all(engine)')
+            return each_fixed_line
+
+        row_names = list()
+        use_test_data_rows = True # CPT test data, new format - test_data_rows (*way* less variable)
+        if use_test_data_rows & hasattr(response_dict, 'test_data_rows'):
+            test_data_rows = response_dict.test_data_rows
+            log.debug(f'.... test_data_rows: {len(test_data_rows)}')
+            for each_row in test_data_rows:
+                each_fixed_line = fix_test_data_line(each_row.code)
+                test_data_lines.append(each_fixed_line) 
+                row_names.append(each_row.test_data_row_variable)
+            pass
+        else:  # CPT test data, old format - rows, plus session, engine etc (quite variable)
+            test_data_lines_ori = response_dict.test_data.split('\n') # gpt response
+            log.debug(f'.... test_data_lines...')
+            for each_line in test_data_lines_ori:
+                each_fixed_line = fix_test_data_line(each_line)
+                check_for_row_name = True
+                test_data_lines.append(each_fixed_line)  # append the fixed test data line
+                if check_for_row_name and ' = ' in each_line and '(' in each_line:  # CPT test data might have: tests = []
+                    assign = each_line.split(' = ')[0]
+                    # no tokens for: Session = sessionmaker(bind=engine) or session = Session()
+                    if '.' not in assign and 'Session' not in each_line and 'session.' not in each_line:
+                        row_names.append(assign)
+        return row_names
+    
+    create_db_model_lines =  list()
+    create_db_model_lines.append(f'# using resolved_model self.resolved_model FIXME')
+    create_db_model_lines.extend(
+        get_lines_from_file(f'{get_manager_path()}/system/genai/create_db_models_inserts/create_db_models_imports.py'))
+    create_db_model_lines.append("\nfrom sqlalchemy.dialects.sqlite import *\n") # specific for genai 
+    
+    models = response_dict.models
+    
+    create_db_model_lines = insert_model_lines(models, create_db_model_lines)
+
+    create_db_model_path = Path(save_dir).joinpath('create_db_models.py')
+
+    with open(f'{create_db_model_path}', "w") as create_db_model_file:
+        create_db_model_file.write("".join(create_db_model_lines))
+        create_db_model_file.write("\n\n# end of model classes\n\n")
+        
+    # classes done, create db and add test_data code
+    test_data_lines = get_lines_from_file(f'{get_manager_path()}/system/genai/create_db_models_inserts/create_db_models_create_db.py')
+    test_data_lines.append('session.commit()')
+    
+    row_names = insert_test_data_lines(test_data_lines)
+
+    test_data_lines.append('\n\n')
+    row_name_list = ', '.join(row_names)
+    add_rows = f'session.add_all([{row_name_list}])'
+    test_data_lines.append(add_rows )  
+    test_data_lines.append('session.commit()')
+    test_data_lines.append('# end of test data\n\n')
+
+    test_data_lines_result = []
+    for line in test_data_lines:
+        test_data_lines_result += line.split('\n')
+    
+    with open(f'{create_db_model_path}', "a") as create_db_model_file:
+        create_db_model_file.write("\ntry:\n    ")
+        create_db_model_file.write("\n    ".join(test_data_lines_result))
+        create_db_model_file.write("\nexcept Exception as exc:\n")
+        create_db_model_file.write("    print(f'Test Data Error: {exc}')\n")
+    
+    log.debug(f'.. code for db creation and test data: {create_db_model_path}')
+
 
 def get_lines_from_file(file_name: str) -> list[str]:
     """Get lines from a file
@@ -683,38 +930,45 @@ class GenAIUtils:
                 pass
             pass
 
-        manager_path = get_manager_path()
-        with open(manager_path.joinpath('system/genai/prompt_inserts/import.prompt'), 'r') as file:
-            f_import_prompt = file.read()
+        if debug_rebuild:=False:
+            log.debug(f'.. import_genai: rebuild-from-response')
+            with open(dev_path_import.joinpath('response.json'), "r") as file:
+                import_response = json.load(file)
+                self.import_response = DotMap(import_response)
+            pass
+        else:
+            manager_path = get_manager_path()
+            with open(manager_path.joinpath('system/genai/prompt_inserts/import.prompt'), 'r') as file:
+                f_import_prompt = file.read()
 
-        # build import request: [you-are, models_and_rules, import_prompt]
-        os.makedirs(dev_path_import, exist_ok=True)
+            # build import request: [you-are, models_and_rules, import_prompt]
+            os.makedirs(dev_path_import, exist_ok=True)
 
-        self.import_request = []
-        self.import_request.append( get_prompt_you_are() )
+            self.import_request = []
+            self.import_request.append( get_prompt_you_are() )
 
-        self.wg_project_models = {'models': get_wg_project_models(wg_path)}
-        self.wg_project_models_content = json.dumps(self.wg_project_models)  # make it unreadable
-        self.import_request.append( {'role': 'user', 'content': self.wg_project_models_content} )
+            self.wg_project_models = {'models': get_wg_project_models(wg_path)}
+            self.wg_project_models_content = json.dumps(self.wg_project_models)  # make it unreadable
+            self.import_request.append( {'role': 'user', 'content': self.wg_project_models_content} )
 
-        self.dev_project_models = get_dev_project_models(wg_path)
-        self.dev_project_models_content = json.dumps(self.dev_project_models)
-        self.import_request.append({'role': 'user', 'content': self.dev_project_models_content})
+            self.dev_project_models = get_dev_project_models(wg_path)
+            self.dev_project_models_content = json.dumps(self.dev_project_models)
+            self.import_request.append({'role': 'user', 'content': self.dev_project_models_content})
 
-        # TODO - need to gather rules for test data
+            # TODO - need to gather rules for test data
 
-        log.debug(f'\nmodels/rules gathered - now get import command prompt')
-        self.import_command, logic_enabled = get_create_prompt__with_inserts(raw_prompt=f_import_prompt, arg_prompt_inserts='*')
-        import_command_prompt = {'role': 'user', 'content': self.import_command}
-        self.import_request.append(import_command_prompt)
-        # db = json.loads(self.import_request['content'])
+            log.debug(f'\nmodels/rules gathered - now get import command prompt')
+            self.import_command, logic_enabled = get_create_prompt__with_inserts(raw_prompt=f_import_prompt, arg_prompt_inserts='*')
+            import_command_prompt = {'role': 'user', 'content': self.import_command}
+            self.import_request.append(import_command_prompt)
+            # db = json.loads(self.import_request['content'])
 
-        self.response_str = call_chatgpt(messages=self.import_request, api_version=self.genai_version, using=dev_path_import)
-        self.fixup_response = DotMap(json.loads(self.response_str))
+            self.response_str = call_chatgpt(messages=self.import_request, api_version=self.genai_version, using=dev_path_import)
+            self.fixup_response = DotMap(json.loads(self.response_str))
 
         # response.json > docs/fixup/you-are.prompt. model_and_rules.response, rules.response and doit.prompt
-        #  
-        create_fixup_files(self)
+        fix_and_write_model_file(response_dict=self.import_response, save_dir=dev_path_import)
+        create_import_files(self)
 
-        log.info(f'.. fixup complete: {self.using}/fixup')
+        log.info(f'.. import complete: {self.using}/import')
         pass
