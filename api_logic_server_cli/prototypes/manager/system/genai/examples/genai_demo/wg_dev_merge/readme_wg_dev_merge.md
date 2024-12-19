@@ -33,3 +33,18 @@ Dev (wg_genai_demo_no_logic_fixed) adds Product.carbon_neutral.
 
 ### GenAI merges json/py data models 
 ![successfully merged](./merged%20models.png)
+
+## Status - 12/18
+
+To do:
+* use export
+* add test data
+* update current project with revised model and db
+* run rebuild-from-model to update the api and admin app
+
+## Usage
+
+```bash
+cd system/genai/examples/genai_demo/wg_dev_merge/wg_genai_demo_no_logic_fixed_from_CLI
+als genai-utils --import-genai --using=../wg_genai_demo_no_logic_fixed_from_CLI
+```
