@@ -21,25 +21,9 @@ from config.config import Config
 
 app_logger = logging.getLogger(__name__)
 
-# Configuration for Webhook
-wh_server = "localhost"
-wh_port = 5678
-wh_endpoint = "webhook-test"
-wh_key = "1c83eb31-18b7-4505-9cd2-b6722cb8bb86"
 
 def declare_logic():
     
-    def fn_workflow(row: Customer, old_row: Customer, logic_row: LogicRow):
-        """
-        Workflow:  When Customer is inserted = post to external system
-        """
-        n8n_producer.send_n8n_message(logic_row=logic_row,
-                                            # n8n_key=str(row.Id),
-                                            msg="1. /integration.py: n8n, sending logic_row")        
-
-    Rule.after_flush_row_event(on_class=Customer, calling=fn_workflow)
-
-
     def send_kafka_customer_orders(row: Customer, old_row: Customer, logic_row: LogicRow):
         """ #als: Send Kafka message formatted by OrderShipping RowDictMapper
 
