@@ -629,10 +629,29 @@ def as_json(value: str) -> dict:
         return_json = json.loads(value)
     return return_json
 
-db_in = "sqlite"
-db = None
-def dbs() -> List[str]:    # split on comma, strip, and return as list
-    # db = [x.strip() for x in s.split('\n')]
-    global db
-    db = (json.dumps(db_in)).split('\n')
-    return
+def remove_als_from_models_py(file_path) -> List[str]:
+    """ 
+    convert als model.py to non-als (returns lines[]) - remove:
+     * SAFRSBaseX, and 
+     * checksum @json attrs
+
+    this code courtesy of @jamesdavidmiller/Copilot
+    """
+    with open(file_path, 'r') as file:
+        lines = file.readlines()
+
+    start_marker = '@json'
+    end_marker = 'S_CheckSum'
+    inside_markers = False
+    result_lines = []
+
+    for line in lines:
+        if start_marker in line:
+            inside_markers = True
+        if not inside_markers:
+            out_line = line.replace('SAFRSBaseX, ', '')
+            result_lines.append(out_line)
+        if end_marker in line:
+            inside_markers = False
+
+    return result_lines
