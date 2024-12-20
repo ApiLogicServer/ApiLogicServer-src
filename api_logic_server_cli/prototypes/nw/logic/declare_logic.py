@@ -12,6 +12,7 @@ from flask import jsonify
 from integration.row_dict_maps.OrderShipping import OrderShipping
 from confluent_kafka import Producer, KafkaException
 import integration.kafka.kafka_producer as kafka_producer
+from integration.n8n.n8n_producer import send_n8n_message
 from config.config import Config
 
 preferred_approach = True
@@ -135,6 +136,23 @@ def declare_logic():
                                               kafka_topic="order_shipping",
                                               kafka_key=str(row.Id),
                                               msg="Sending Order to Shipping")
+
+        """ #als: Send N8N message (also see discovery/integration.py)
+        Workflow:  When Order is inserted = post n8n Webhook and call sendgrid email system
+        """
+        if logic_row.is_updated() and row.Ready == True and old_row.Ready == False:
+            send_n8n_message(payload={
+                                    "Order Id": row.Id, 
+                                    "Customer Name": row.Customer.CompanyName, 
+                                    "Order Total": str(row.AmountTotal),
+                                    "Order Date": row.OrderDate,
+                                    #"items": [row.OrderDetailList]
+                                },
+                ins_upd_dlt="upd", wh_entity="Order",
+                msg="1. /Webhook integration.py: n8n, sending ready Order payload")  
+            
+        logic_row.log("send_order_to_shipping - sent order to shipping and N8N/sendgrid")  # see in log      
+
             
     Rule.after_flush_row_event(on_class=Order, calling=send_order_to_shipping)  # see above
 

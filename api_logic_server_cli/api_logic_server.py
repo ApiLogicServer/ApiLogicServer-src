@@ -15,7 +15,7 @@ Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 __version__ = "14.00.26"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t12/17/2024 - 14.00.26: logicbank 1.20.12 - fail-save rules \n"\
+    "\t12/17/2024 - 14.00.26: logicbank 1.20.12 - fail-save rules, BLT files for N8N \n"\
     "\t12/17/2024 - 14.00.25: add wg_dev_merge projects, fix fixup bug that (lost initial data models), n8n fixes \n"\
     "\t12/17/2024 - 14.00.23: Integration: add nw:employee.email, fix workflow_integration.py \n"\
     "\t12/16/2024 - 14.00.22: Integration: simplified RowMapper, prelim n8n, bug fix ref no-rule classes \n"\
