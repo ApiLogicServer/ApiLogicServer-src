@@ -1352,7 +1352,7 @@ url above works, but this run config fails:
             "args": ["create",
                 "--{project_name}=tests/../../servers/sqlserver-types",
 fails           "--{db_url}=mssql+pyodbc://sa:Posey3861@localhost:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no",
-
+read
 works            --{db_url}='mssql+pyodbc://sa:Posey3861@localhost:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'",
     """
 

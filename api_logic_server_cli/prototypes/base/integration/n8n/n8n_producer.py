@@ -87,29 +87,35 @@ def send_n8n_message(http_method: str = "POST", ins_upd_dlt: str = "ins", msg: s
 
     wh_state =  ins_upd_dlt if logic_row is None else logic_row.ins_upd_dlt
     wh_entity = logic_row.row.__class__.__name__ if logic_row else wh_entity
-    headers = {
-        "Authorization": conf['authorization'],
-        "Content-Type": "application/json",
-        "wh_state": wh_state,
-        "wh_entity": wh_entity
-    }
     try:
-        endpoint = f'{conf["n8n_url"]}'
-        status = {"status_code": 500}
-        if http_method in {"post", "POST"}:
-            #Only passing payload in this example
-            status = requests.post(endpoint, json=row_obj_dict, headers=headers)
-        elif http_method.lower() == "get":
-            status = requests.get(endpoint, headers=headers)
-        elif http_method.lower() in {"put", "patch", "delete"}:
-            logger.error(f"n8n_producer: http_method: {http_method} not implemented")
-
-        if status and status.status_code != 200:
-            logger.error(f"n8n_producer: status_code: {status.status_code}")
         if row_obj_dict is not None:
             json_payload = jsonify(f'{row_obj_dict}').data.decode('utf-8')
             msg = f"Webhook send_n8n_message: http_method: {http_method} wh_state: {wh_state} wh_entity: {wh_entity}"
             logger.debug(f'\n\n{msg}\n{json_payload}')
+        
+        status = {"status_code": 500}
+
+        if conf is None:
+            logger.debug(f"n8n_producer: not configured in config/Config.py")
+        else:
+            headers = {
+                "Authorization": conf['authorization'],
+                "Content-Type": "application/json",
+                "wh_state": wh_state,
+                "wh_entity": wh_entity
+            }
+            endpoint = f'{conf["n8n_url"]}'
+            status = {"status_code": 500}
+            if http_method in {"post", "POST"}:
+                #Only passing payload in this example
+                status = requests.post(endpoint, json=row_obj_dict, headers=headers)
+            elif http_method.lower() == "get":
+                status = requests.get(endpoint, headers=headers)
+            elif http_method.lower() in {"put", "patch", "delete"}:
+                logger.error(f"n8n_producer: http_method: {http_method} not implemented")
+
+            if status and status.status_code != 200:
+                logger.error(f"n8n_producer: status_code: {status.status_code}")
         return status
     except Exception as e:
         logger.error(f"\nn8n_producer fails with: {e}")
