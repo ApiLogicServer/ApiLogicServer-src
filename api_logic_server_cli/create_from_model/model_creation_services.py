@@ -916,7 +916,7 @@ class ModelCreationServices(object):
         model_file_name, msg = sqlacodegen_wrapper.create_models_py(
             model_creation_services = self,
             abs_db_url= self.project.abs_db_url,
-            project_directory = self.project_directory)
+            project_directory = self.project_directory)  # last node (eg, dev_demo_no_logic_fixed)
         model_imported, models_name = self.dynamic_import_model(msg)
         return_resource_list = self.resource_list_from_safrs_metadata(models_name=models_name)  # whether created or used, build resource_list
         return return_resource_list

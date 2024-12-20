@@ -2022,7 +2022,7 @@
                 "PYTHONPATH": "", 
                 "SECURITY_ENABLED": "False", 
                 "PYTHONHASHSEED": "0", 
-                "APILOGICSERVER_DEBUG": "False",
+                "APILOGICSERVER_DEBUG": "True",
                 "OPT_LOCKING": "optional"},
             "justMyCode": false,
             "args": ["genai-utils", "--import-genai", "--using=../wg_genai_demo_no_logic_fixed_from_CLI"],

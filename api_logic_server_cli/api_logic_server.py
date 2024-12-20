@@ -1859,8 +1859,7 @@ from database import <project.bind_key>_models
 
     def directory_setup(self):
         """ get project_directory, api names, project paths and project name """
-        self.project_directory, self.api_name, self.merge_into_prototype = \
-            create_utils.get_project_directory_and_api_name(self)
+        self.project_directory, self.api_name, self.merge_into_prototype = create_utils.get_project_directory_and_api_name(self)
         self.project_directory_actual = os.path.abspath(self.project_directory)  # make path absolute, not relative (no /../)
         self.project_directory_path = Path(self.project_directory_actual)
         self.project_name_last_node = Path(self.project_directory_path).name  # for prototype, project_name='.'
@@ -1877,7 +1876,10 @@ from database import <project.bind_key>_models
         if self.from_model != "" or self.genai_using != "":
             try:
                 create_db_from_model.create_db(self)
-                if gen_ai.post_error != '':  # eg, response contains table definitions
+                # halt execution if genai already discovered errors, eg, response contains table definitions
+                #   signalled with en_ai.post_error = "..."
+                # not used for import (gen_ai is None)
+                if gen_ai is not None and gen_ai.post_error != '': 
                     raise Exception(gen_ai.post_error)
             except Exception as e:
                 if hasattr(self, 'gen_ai_save_dir'):
