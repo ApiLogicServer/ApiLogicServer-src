@@ -161,6 +161,10 @@ def write_models_py(model_file_name, models_mem):
     """
     write models_mem to disk as model_file_name
 
+    fixme why is this a string -- windows??
+
+    for import, the project name is double...
+
     Args:
         model_file_name (str): name of models.py file
         models_mem (str): the actual models code (long string with \n)
@@ -374,6 +378,10 @@ def create_models_py(model_creation_services: ModelCreationServices, abs_db_url:
         codegen_args = DotDict({})
         codegen_args.url = abs_db_url
         # codegen_args.outfile = models_file
+        # for import, the project name is double...
+        # project_directory_path = '...wg_dev_merge/dev_demo_no_logic_fixed/dev_demo_no_logic_fixed'  <-- no
+        # models_path_dir = database
+        # model_file_name = models.py
         models_loc = model_creation_services.project.project_directory_path.\
             joinpath(model_creation_services.project.models_path_dir + '/' + model_creation_services.project.model_file_name)
         codegen_args.outfile = project_directory + '/database/models.py'
@@ -397,7 +405,7 @@ def create_models_py(model_creation_services: ModelCreationServices, abs_db_url:
     if project.command in ('create', 'create-and-run', 'rebuild-from-database', 'add_db', 'app-create'):
         if project.use_model is None or model_creation_services.project.use_model == "":
             code_gen_args = get_codegen_args()
-            model_full_file_name = code_gen_args.outfile
+            model_full_file_name = code_gen_args.outfile  # double dir on import
             """
             if model_creation_services.project.bind_key != "":  # if bind key, add to model file name
                 model_full_file_name = project.project_directory_path.\

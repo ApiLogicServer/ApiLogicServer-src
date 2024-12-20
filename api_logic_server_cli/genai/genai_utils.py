@@ -306,10 +306,14 @@ class GenAIUtils:
             model_lines = remove_als_from_models_py(self.path_dev_import.joinpath('create_db_models.py'))
             with open(self.path_dev_import.joinpath('create_db_models_no_als.py'), "w") as file:
                 file.write("".join(model_lines))
+            create_db_models_no_als_db_loc = self.path_dev_import.joinpath('create_db_models_no_als.py')
+            create_db_models_no_als_url = f'sqlite:///{create_db_models_no_als_db_loc}'
             utils.replace_string_in_file(search_for='sqlite:///system/genai/temp/create_db_models.sqlite', 
-                                         replace_with='sqlite:///import/create_db_models.sqlite',
+                                         replace_with=create_db_models_no_als_url,
                                          in_file=self.path_dev_import.joinpath('create_db_models_no_als.py'))
-            self.project.create_project()
+            self.project.db_url = create_db_models_no_als_url
+            self.project.project_name = '.'  # create_project -> self.directory_setup() dups the last project node
+            self.project.create_project()  
 
 
         # import starts here
