@@ -2,7 +2,7 @@ from typing import Dict, List, Tuple
 from api_logic_server_cli.cli_args_project import Project
 import logging
 from pathlib import Path
-from api_logic_server_cli.genai.genai_svcs import get_prompt_messages_from_dirs, select_messages, get_create_prompt__with_inserts, get_prompt_you_are, call_chatgpt, fix_and_write_model_file, create_import_files, get_manager_path
+from api_logic_server_cli.genai.genai_svcs import get_prompt_messages_from_dirs, select_messages, get_create_prompt__with_inserts, get_prompt_you_are, call_chatgpt, fix_and_write_model_file, get_manager_path, remove_als_from_models_py
 from api_logic_server_cli.genai.genai_svcs import Rule, WGResult
 import os
 import sys
@@ -265,43 +265,61 @@ class GenAIUtils:
 
         """    
 
-        def get_wg_project_models(wg_path: Path) -> dict[str, list[dict]]:
+        def get_wg_project_models(path_wg: Path) -> dict[str, list[dict]]:
             """ Get models from wg-project (this is a placeholder, pending import)
 
             Args:
-                wg_path (Path): path to wg-project
+                self.path_wg (Path): path to wg-project
 
             Returns:
                 models dict
             """            
 
             models = []
-            with open(wg_path.joinpath('docs/models_export.json'), "r") as file:
+            with open(path_wg.joinpath('docs/models_export.json'), "r") as file:
                 json_data = json.load(file)
             return json_data['models']
          
-        def get_dev_project_models(dev_path: Path) -> dict[str, list[dict]]:
+        def get_dev_project_models(path_dev: Path) -> dict[str, list[dict]]:
             """ Get models from wg-project
 
             Args:
-                wg_path (Path): path to wg-project
+                self.path_wg (Path): path to wg-project
 
             Returns:
                 models dict
             """            
 
             models = []
-            with open(dev_path.joinpath('database/models.py'), "r") as file:
+            with open(path_dev.joinpath('database/models.py'), "r") as file:
                 dev_models = file.read()
             return {"existing_models": dev_models}
 
+        def rebuild_from_import(self):
+            """ 
+                1. run create_db_models, but from/to import directory
+                2. run rebuild_from_model
+            """
+            self.project.command = 'rebuild-from-database'
+            self.project.from_model = self.path_dev_import.joinpath('create_db_models.py')
+            # de-als: remove safrs_basex, json_api_attrs (since we built from dev als db)
+            model_lines = remove_als_from_models_py(self.path_dev_import.joinpath('create_db_models.py'))
+            with open(self.path_dev_import.joinpath('create_db_models_no_als.py'), "w") as file:
+                file.write("".join(model_lines))
+            utils.replace_string_in_file(search_for='sqlite:///system/genai/temp/create_db_models.sqlite', 
+                                         replace_with='sqlite:///import/create_db_models.sqlite',
+                                         in_file=self.path_dev_import.joinpath('create_db_models_no_als.py'))
+            self.project.create_project()
+
+
+        # import starts here
         log.info(f'import_genai from genai export at: {self.using}')
         assert Path(self.using).is_dir(), f"Missing genai-import project directory: {self.using}"
-        wg_path = Path(self.using)
-        dev_path = Path(os.getcwd())
-        dev_path_import = dev_path.joinpath('docs/import')
+        self.path_wg = Path(self.using)
+        self.path_dev = Path(os.getcwd())
+        self.path_dev_import = self.path_dev.joinpath('docs/import')
         if path_debug:=False:
-            for member in wg_path.iterdir():
+            for member in self.path_wg.iterdir():
                 log.debug(f'.. .. import_genai: {member.name}')
                 if member.is_dir() and member.name == 'docs':
                     for docs_member in member.iterdir():
@@ -310,9 +328,9 @@ class GenAIUtils:
                 pass
             pass
 
-        if debug_rebuild:=False:
+        if debug_rebuild:=True:  # this is just to avoid lengthy GPT calls
             log.debug(f'.. import_genai: rebuild-from-response')
-            with open(dev_path_import.joinpath('response.json'), "r") as file:
+            with open(self.path_dev_import.joinpath('response.json'), "r") as file:
                 import_response = json.load(file)
                 self.import_response = DotMap(import_response)
             pass
@@ -322,16 +340,16 @@ class GenAIUtils:
                 f_import_prompt = file.read()
 
             # build import request: [you-are, models_and_rules, import_prompt]
-            os.makedirs(dev_path_import, exist_ok=True)
+            os.makedirs(self.path_dev_import, exist_ok=True)
 
             self.import_request = []
             self.import_request.append( get_prompt_you_are() )
 
-            self.wg_project_models = {'models': get_wg_project_models(wg_path)}
+            self.wg_project_models = {'models': get_wg_project_models(self.path_wg)}
             self.wg_project_models_content = json.dumps(self.wg_project_models)  # make it unreadable
             self.import_request.append( {'role': 'user', 'content': self.wg_project_models_content} )
 
-            self.dev_project_models = get_dev_project_models(dev_path)
+            self.dev_project_models = get_dev_project_models(self.path_dev)
             self.dev_project_models_content = json.dumps(self.dev_project_models)
             self.import_request.append({'role': 'user', 'content': self.dev_project_models_content})
 
@@ -343,12 +361,13 @@ class GenAIUtils:
             self.import_request.append(import_command_prompt)
             # db = json.loads(self.import_request['content'])
 
-            self.response_str = call_chatgpt(messages=self.import_request, api_version=self.genai_version, using=dev_path_import)
+            self.response_str = call_chatgpt(messages=self.import_request, api_version=self.genai_version, using=self.path_dev_import)
             self.import_response = DotMap(json.loads(self.response_str))
 
-        # response.json > docs/fixup/you-are.prompt. model_and_rules.response, rules.response and doit.prompt
-        fix_and_write_model_file(response_dict=self.import_response, save_dir=dev_path_import)
-        create_import_files(self)
+            # response.json > docs/fixup/you-are.prompt. model_and_rules.response, rules.response and doit.prompt
+            fix_and_write_model_file(response_dict=self.import_response, save_dir=self.path_dev_import)
+
+        rebuild_from_import(self)
 
         log.info(f'.. import complete: {self.using}/import')
         pass
