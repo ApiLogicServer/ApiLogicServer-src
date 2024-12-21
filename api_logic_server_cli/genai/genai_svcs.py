@@ -274,8 +274,8 @@ def fix_and_write_model_file(response_dict: DotMap,  save_dir: str, post_error: 
         for each_model in models:
             model_lines = get_model_class_lines(model=each_model)
             
-            try:
-                model_code = model2code(each_model)
+            try: # fixme - needs to be based on model_lines
+                model_code = model2code(each_model) # else lose Decimal (etc) fixes 
                 log.info(f"Added description to model: {each_model.name}: {model_code}")
             except Exception as exc:
                 log.error(f"Failed to add description to model: {exc}")
@@ -369,6 +369,8 @@ def fix_and_write_model_file(response_dict: DotMap,  save_dir: str, post_error: 
     create_db_model_lines.append("\nfrom sqlalchemy.dialects.sqlite import *\n") # specific for genai 
     
     models = response_dict.models
+
+    # fix_and_write_model_file_svcs(response_dict=self.response_dict, save_dir="/tmp")  # todo Thomas - please resolve this...
     
     create_db_model_lines = insert_model_lines(models, create_db_model_lines)
 
