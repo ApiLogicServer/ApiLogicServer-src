@@ -300,23 +300,29 @@ class GenAIUtils:
                 1. run create_db_models, but from/to import directory
                 2. run rebuild_from_model
             """
-            self.project.command = 'rebuild-from-database'
-            self.project.from_model = self.path_dev_import.joinpath('create_db_models.py')
             # de-als: remove safrs_basex, json_api_attrs (since we built from dev als db)
             model_lines = remove_als_from_models_py(self.path_dev_import.joinpath('create_db_models.py'))
             with open(self.path_dev_import.joinpath('create_db_models_no_als.py'), "w") as file:
                 file.write("".join(model_lines))
             create_db_models_no_als_db_loc = self.path_dev_import.joinpath('create_db_models_no_als.py')
-            create_db_models_no_als_url = f'sqlite:///{create_db_models_no_als_db_loc}'
+            create_db_models_no_als_url = f'sqlite:///docs/import/create_db_models_no_als.sqlite'
             utils.replace_string_in_file(search_for='sqlite:///system/genai/temp/create_db_models.sqlite', 
                                          replace_with=create_db_models_no_als_url,
                                          in_file=self.path_dev_import.joinpath('create_db_models_no_als.py'))
+            self.project.command = 'rebuild-from-database'
+            self.project.from_model = self.path_dev_import.joinpath('create_db_models_no_als.py')
             self.project.db_url = create_db_models_no_als_url
             self.project.project_name = '.'  # create_project -> self.directory_setup() dups the last project node
             self.project.create_project()  
 
+            shutil.copy(self.path_dev_import.joinpath('create_db_models_no_als.sqlite'), 
+                        self.path_dev.joinpath('database/db.sqlite')  )
 
+
+        # ############################################################################################################
         # import starts here
+        # ############################################################################################################
+ 
         log.info(f'import_genai from genai export at: {self.using}')
         assert Path(self.using).is_dir(), f"Missing genai-import project directory: {self.using}"
         self.path_wg = Path(self.using)
@@ -333,6 +339,9 @@ class GenAIUtils:
             pass
 
         if debug_rebuild:=True:  # this is just to avoid lengthy GPT calls
+            # this presumes ../docs/import/create_db_models.py is built.  
+            # You may to repair test data and restart here.
+            # Errors can make ont app fail - deleted in the incoming project (but will need to test)
             log.debug(f'.. import_genai: rebuild-from-response')
             with open(self.path_dev_import.joinpath('response.json'), "r") as file:
                 import_response = json.load(file)
@@ -368,7 +377,7 @@ class GenAIUtils:
             self.response_str = call_chatgpt(messages=self.import_request, api_version=self.genai_version, using=self.path_dev_import)
             self.import_response = DotMap(json.loads(self.response_str))
 
-            # response.json > docs/fixup/you-are.prompt. model_and_rules.response, rules.response and doit.prompt
+            # docs/import/response.json - models --> {path_dev_import}/create_db_models.py
             fix_and_write_model_file(response_dict=self.import_response, save_dir=self.path_dev_import)
 
         rebuild_from_import(self)

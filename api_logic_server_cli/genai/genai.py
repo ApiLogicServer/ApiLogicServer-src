@@ -306,22 +306,26 @@ class GenAI(object):
             if prompt.startswith('You are a '):  # if it's a preset, we need to insert the prompt
                 prompt_messages[0]["content"] = prompt  # TODO - verify no longer needed
             prompt_messages.append( {"role": "user", "content": prompt})
-        elif Path(self.project.genai_using).is_dir():  # from directory (conversation / iteration)
-            iteration(prompt_messages=prompt_messages)  # `--using` is a directory (conversation)
+        elif Path(self.project.genai_using).is_dir():  # `--using` is a directory (conversation)
+            iteration(prompt_messages=prompt_messages)
             if self.project.genai_active_rules:
-                active_rules_json_path = Path(self.project.genai_using).joinpath('logic/active_rules.json')
-                assert active_rules_json_path.exists(), f"Missing active_rules.json: {active_rules_json_path}"
-                with open(active_rules_json_path, 'r') as file:
-                    active_rules_str = file.read()
-                # not deleting docs/genai_demo_no_logic_003.prompt, since ignored - instead...
-                prompt_messages[len(prompt_messages) - 1] = {"role": "user", "content": active_rules_str}
-                # and, pop the logic bank training since active_rules has it
-                for each_message in prompt_messages:
-                    if K_LogicBankTraining in each_message["content"]:
-                        prompt_messages.remove(each_message)
-                        break
-                log.debug(f'.... using active_rules: {active_rules_str[0:15]}')
-                pass
+                if self.project.genai_active_rules == 'active_rules.json':
+                    active_rules_json_path = Path(self.project.genai_using).joinpath('logic/active_rules.json')
+                    # assert active_rules_json_path.exists(), f"Missing active_rules.json: {active_rules_json_path}"
+                    if not active_rules_json_path.exists():
+                        log.info("*** Internal error: --active_rules specified, but no --using/logic/active_rules.json found - try to proced")
+                    else:
+                        with open(active_rules_json_path, 'r') as file:
+                            active_rules_str = file.read()
+                        # not deleting docs/genai_demo_no_logic_003.prompt, since ignored - instead...
+                        prompt_messages[len(prompt_messages) - 1] = {"role": "user", "content": active_rules_str}
+                        # and, pop the logic bank training since active_rules has it
+                        for each_message in prompt_messages:
+                            if K_LogicBankTraining in each_message["content"]:
+                                prompt_messages.remove(each_message)
+                                break
+                        log.debug(f'.... using active_rules: {active_rules_str[0:15]}')
+                        pass
 
 
         # log.debug(f'.. prompt_messages: {prompt_messages}')  # heaps of output
