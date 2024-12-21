@@ -18,7 +18,6 @@ When creating SQLAlchemy data model classes, follow these guidelines carefully:
 * Use foreign key columns instead of relationship names for the data.  
 * Do not specify nullable unless explicitly specified.
 * Do not use unique unless explicitly specified.
-* For each data model class, create a docstring describing the table, prefixed with 'description: '. 
 * Do not use Float unless explicitly specified.
 * Generate the classes ONLY.
 * Do NOT generate imports.
