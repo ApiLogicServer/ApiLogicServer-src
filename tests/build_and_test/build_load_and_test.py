@@ -11,7 +11,7 @@ import json
 db_url = 'db-url'  # db_url or db-url
 project_name = 'project-name'
 bind_key = 'bind-key'
-include_tables = 'include-tpiables'
+include_tables = 'include-tables'
 extended_builder = 'extended-builder'
 
 
