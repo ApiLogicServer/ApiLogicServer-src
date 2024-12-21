@@ -165,6 +165,8 @@ class OntBuilder(object):
         app_path = self.app_path
         if not os.path.exists(app_path):
             log.error(f"\nApp {self.app} not present in project - no action taken\n")
+            if self.project.command.startswith( "rebuild"):  # todo more cases to consider, but for now - be cool on import
+                return
             exit(1)
 
         app_model_path = app_path.joinpath("app_model.yaml")
