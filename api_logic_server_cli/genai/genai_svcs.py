@@ -629,11 +629,12 @@ def as_json(value: str) -> dict:
         return_json = json.loads(value)
     return return_json
 
-def remove_als_from_models_py(file_path) -> List[str]:
+def remove_als_from_models_py(file_path, safrs_basex: bool = True) -> List[str]:
     """ 
     convert als model.py to non-als (returns lines[]) - remove:
-     * SAFRSBaseX, and 
+     * SAFRSBaseX (iff safrs_basex), and 
      * checksum @json attrs
+
 
     this code courtesy of @jamesdavidmiller/Copilot
     """
@@ -649,7 +650,13 @@ def remove_als_from_models_py(file_path) -> List[str]:
         if start_marker in line:
             inside_markers = True
         if not inside_markers:
-            out_line = line.replace('SAFRSBaseX, ', '')
+            out_line = line
+            if safrs_basex:
+                if 'import SAFRSBaseX' in line:
+                    debug_string = "good breakpoint - SAFRSBaseX"
+                    out_line = '# ' + line
+                else:
+                    out_line = line.replace('SAFRSBaseX, ', '')
             result_lines.append(out_line)
         if end_marker in line:
             inside_markers = False

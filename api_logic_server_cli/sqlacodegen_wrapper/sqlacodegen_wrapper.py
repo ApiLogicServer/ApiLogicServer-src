@@ -402,7 +402,7 @@ def create_models_py(model_creation_services: ModelCreationServices, abs_db_url:
     num_models = 0
     model_full_file_name = "*"
     project = model_creation_services.project
-    do_no_als_model_format = False # fixme this makes model_creation_services fail @ 840 with resource_class._s_type} 
+    do_no_als_model_format = True # fixme this makes model_creation_services fail @ 840 with resource_class._s_type} 
     if project.command in ('create', 'create-and-run', 'rebuild-from-database', 'add_db', 'app-create'):
         if project.use_model is None or model_creation_services.project.use_model == "":
             code_gen_args = get_codegen_args()
@@ -420,7 +420,7 @@ def create_models_py(model_creation_services: ModelCreationServices, abs_db_url:
             write_models_py(model_full_file_name, models_mem)
             import api_logic_server_cli.genai.genai_svcs as genai_svcs
             if do_no_als_model_format:
-                no_als_model_lines = genai_svcs.remove_als_from_models_py(model_full_file_name)
+                no_als_model_lines = genai_svcs.remove_als_from_models_py(model_full_file_name, safrs_basex=False)
                 with open(model_full_file_name, "w") as file:
                     file.write("".join(no_als_model_lines))
             model_creation_services.schema_loaded = True
@@ -434,7 +434,7 @@ def create_models_py(model_creation_services: ModelCreationServices, abs_db_url:
                 log.debug(f' a.  Use existing {use_model_path} - copy to {project_directory + "/database/models.py"}')
                 copyfile(use_model_path, model_full_file_name)
                 if do_no_als_model_format:  # remove ALS formatting (it's lots of code in sqlacodegen)
-                    no_als_model_lines = genai_svcs.remove_als_from_models_py(model_full_file_name)
+                    no_als_model_lines = genai_svcs.remove_als_from_models_py(model_full_file_name, safrs_basex=False)
                     with open(model_full_file_name, "w") as file:
                         file.write("".join(no_als_model_lines))
     elif project.command == 'create-ui':
