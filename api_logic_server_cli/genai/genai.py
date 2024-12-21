@@ -25,6 +25,7 @@ from api_logic_server_cli.genai.genai_svcs import TestDataRow
 from api_logic_server_cli.genai.genai_svcs import K_LogicBankOff
 from api_logic_server_cli.genai.genai_svcs import K_LogicBankOff
 from api_logic_server_cli.genai.genai_svcs import K_LogicBankTraining
+from api_logic_server_cli.genai.genai_svcs import fix_and_write_model_file as fix_and_write_model_file_svcs
 import api_logic_server_cli.genai.genai_svcs as genai_svcs
 
 log = logging.getLogger(__name__)
@@ -809,6 +810,8 @@ class GenAI(object):
         create_db_model_lines.append("\nfrom sqlalchemy.dialects.sqlite import *\n") # specific for genai 
         
         models = self.response_dict.models
+        
+        fix_and_write_model_file_svcs(response_dict=self.response_dict, save_dir="/tmp")
         
         # Usage inside the class
         create_db_model_lines = insert_model_lines(models, create_db_model_lines)

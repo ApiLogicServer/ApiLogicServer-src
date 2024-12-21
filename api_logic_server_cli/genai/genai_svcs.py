@@ -15,7 +15,7 @@ from typing import List, Dict
 from pydantic import BaseModel
 from dotmap import DotMap
 import ast
-
+import astor
 
 K_LogicBankOff = "LBX"
 ''' LBX Disable Logic (for demos) '''
@@ -33,7 +33,6 @@ class Rule(BaseModel):
 class Model(BaseModel):
     classname: str
     code: str # sqlalchemy model code
-    sqlite_create: str # sqlite create table statement
     description: str
     name: str
 
@@ -51,6 +50,17 @@ class WGResult(BaseModel):  # must match system/genai/prompt_inserts/response_fo
     name: str  # suggest a short name for the project
 
 log = logging.getLogger(__name__)
+file_handler = logging.FileHandler('/tmp/genai_svcs.log', mode='a')
+file_handler.setLevel(logging.DEBUG)
+
+# Create a logging format
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(formatter)
+
+# Add the file handler to the logger
+log.addHandler(file_handler)
+log.setLevel(logging.DEBUG)
+log.info(f"Svcs log file: /tmp/genai_svcs.log")
 
 def get_code(rule_list: List[DotMap]) -> str:
     """returns code snippet for rules from rule
@@ -114,6 +124,40 @@ def get_code(rule_list: List[DotMap]) -> str:
                     translated_logic += each_repaired_line + '\n'    
     return translated_logic
 
+
+def model2code(model: DotMap) -> str:
+    """Add a description to the model
+    Args:
+        model (DotMap): the model
+
+    Returns:
+        str: model_code with the description
+    """
+    description = model.description
+    model_code = model.code
+    log.info(f"add description to {model.name}: {description}")
+    # Parse the code string into an AST
+    tree = ast.parse(model_code)
+
+    # Function to add a docstring to a class node
+    def add_docstring_to_class(node, docstring):
+        if isinstance(node, ast.ClassDef):
+            node.body.insert(0, ast.Expr(value=ast.Str(s=docstring)))
+
+    # Walk through the AST and add the docstring to the class
+    class DocstringAdder(ast.NodeTransformer):
+        def visit_ClassDef(self, node):
+            add_docstring_to_class(node, f"description: {description}")
+            return self.generic_visit(node)
+
+    # Transform the AST
+    tree = DocstringAdder().visit(tree)
+
+    # Convert the AST back to a code string
+    updated_model_str = astor.to_source(tree)
+    return updated_model_str
+
+
 def fix_and_write_model_file(response_dict: DotMap,  save_dir: str, post_error: str = None, use_relns: bool = False) -> str:
     """
     1. from response, create model file / models lines
@@ -143,11 +187,10 @@ def fix_and_write_model_file(response_dict: DotMap,  save_dir: str, post_error: 
 
             create_db_model_lines =  list()
             create_db_model_lines.append('\n\n')
-            class_lines = model.code.split('\n')
-            line_num = 0
+            code = model.code.replace('\\n', '\n')
+            class_lines = code.split('\n')
             indents_to_remove = 0
             for each_line in class_lines:
-                line_num += 1
                 ''' decimal issues
 
                     1. bad import: see Run: tests/test_databases/ai-created/genai_demo/genai_demo_decimal
@@ -227,10 +270,21 @@ def fix_and_write_model_file(response_dict: DotMap,  save_dir: str, post_error: 
                 create_db_model_lines.append(each_line + '\n')
             return create_db_model_lines
 
-
         did_base = False
         for each_model in models:
             model_lines = get_model_class_lines(model=each_model)
+            
+            try:
+                model_code = model2code(each_model)
+                log.info(f"Added description to model: {each_model.name}: {model_code}")
+            except Exception as exc:
+                log.error(f"Failed to add description to model: {exc}")
+                if post_error is not None:
+                    post_error = f"Failed to add description to model  {each_model.name}: {exc}"
+                continue
+            
+            model_lines = model_code.split('\n')
+            
             for each_line in model_lines:
                 each_fixed_line = each_line.replace('sa.', '')      # sometimes it puts sa. in front of Column
                 if 'Base = declarative_base()' in each_fixed_line:  # sometimes created for each class
@@ -243,16 +297,6 @@ def fix_and_write_model_file(response_dict: DotMap,  save_dir: str, post_error: 
                     each_fixed_line = each_fixed_line.replace('Column(dat', 'column(Date') 
                 create_db_model_lines.append(each_fixed_line)
             
-            model_code = "\n".join(model_lines)
-            if '\\n' in model_code:
-                log.debug(f'.. fix_and_write_model_file detects \\n - attempting fix')
-                model_code = model_code.replace('\\n', '\n')
-            try:
-                ast.parse(model_code)
-            except SyntaxError as exc:
-                log.error(f"Model Class Error: {model_code}")
-                if post_error is not None:
-                    post_error = f"Model Class Error: {exc}"
         return create_db_model_lines
     
     def insert_test_data_lines(test_data_lines : list[str]) -> list[str]:
@@ -331,7 +375,7 @@ def fix_and_write_model_file(response_dict: DotMap,  save_dir: str, post_error: 
     create_db_model_path = Path(save_dir).joinpath('create_db_models.py')
 
     with open(f'{create_db_model_path}', "w") as create_db_model_file:
-        create_db_model_file.write("".join(create_db_model_lines))
+        create_db_model_file.write("\n".join(create_db_model_lines))
         create_db_model_file.write("\n\n# end of model classes\n\n")
         
     # classes done, create db and add test_data code
@@ -371,7 +415,7 @@ def get_lines_from_file(file_name: str) -> list[str]:
     """
 
     with open(file_name, "r") as file:
-        lines = file.readlines()
+        lines = file.read().split("\n")
     return lines
 
 def get_create_prompt__with_inserts(arg_prompt_inserts: str='', raw_prompt: str='', for_iteration: bool = False, 
@@ -655,3 +699,22 @@ def remove_als_from_models_py(file_path) -> List[str]:
             inside_markers = False
 
     return result_lines
+
+
+if __name__ == '__main__':
+    """
+    test fix_and_write_model_file from the cli
+    
+    args:
+    1. response file
+    2. save_dir
+    
+    example:
+    PYTHONPATH=$PWD:PYTHONPATH python genai/genai_svcs.py SimpleCommerceSystem_002.response /tmp
+    """
+    with open(sys.argv[1], "r") as f:
+        response = DotMap(json.load(f))
+    save_dir = sys.argv[2]
+    fix_and_write_model_file(response, save_dir)
+    with open(save_dir + "/create_db_models.py", "r") as f:
+        ast.parse(f.read())
