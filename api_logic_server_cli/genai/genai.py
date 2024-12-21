@@ -66,7 +66,7 @@ class GenAI(object):
         self.project = project  # als project info (cli args etc)
 
 
-    def create_db_models(self):
+    def create_db_models(self):   # main driver
         """ 
         Main Driver for GenAI - called by api_logic_server, to 
         * run ChatGPT (or respone file) to create_db_models.py - models & test data
@@ -102,6 +102,16 @@ class GenAI(object):
         https://platform.openai.com/finetune/ftjob-2i1wkh4t4l855NKCovJeHExs?filter=all
         """        
 
+
+        def delete_temp_files(self):
+            """Delete temp files created by genai ((system/genai/temp -- models, responses)"""
+            Path('system/genai/temp/create_db_models.sqlite').unlink(missing_ok=True)  # delete temp (work) files
+            Path(self.project.from_model).unlink(missing_ok=True)
+            if self.project.genai_repaired_response == '':  # clean up unless retrying from chatgpt_original.response
+                Path('system/genai/temp/chatgpt_original.response').unlink(missing_ok=True)
+                Path('system/genai/temp/chatgpt_retry.response').unlink(missing_ok=True)
+
+
         def get_repaired_response() -> dict:
             """Get repaired response from file
 
@@ -134,7 +144,7 @@ class GenAI(object):
                 response_dict['name'] = self.project.project_name
             else:
                 log.error(f"Error: repaired response file/dir not found: {self.project.genai_repaired_response}")
-            return response_dict
+            return response_dict  # end get_repaired_response()
 
         log.info(f'\nGenAI [{self.project.project_name}] creating microservice from: {self.project.genai_using}')
         if self.project.genai_repaired_response != '':
@@ -142,7 +152,7 @@ class GenAI(object):
         
         self.project.from_model = f'system/genai/temp/create_db_models.py' # we always write the model to this file
         self.ensure_system_dir_exists()  # ~ manager, so we can write to system/genai/temp
-        self.delete_temp_files()
+        delete_temp_files(self)
         self.post_error = ""
         """ eg, if response contains table defs, save_prompt_messages_to_system_genai_temp_project raises an exception to trigger retry """
         self.prompt = ""
@@ -192,20 +202,22 @@ class GenAI(object):
 
         self.get_valid_project_name()
 
-        self.fix_and_write_model_file() # write create_db_models.py for db creation, & logic 
+        if use_svcs := True:
+            save_dir_final = self.project.from_model 
+            save_dir = str(Path(save_dir_final).parent) # was self.project.from_model @ 828 (system/genai/temp/create_db_models.py), 
+            # save_dir=self.path_dev_import in utils 
+            genai_svcs.fix_and_write_model_file(response_dict=self.response_dict, 
+                                                save_dir=save_dir,  
+                                                post_error=self.post_error,
+                                                use_relns=self.project.genai_use_relns)
+        else:
+            self.fix_and_write_model_file() # write create_db_models.py for db creation, & logic (key method)
+        
         self.save_prompt_messages_to_system_genai_temp_project()  # save prompts, response and models.py
         if self.project.project_name_last_node == 'genai_demo_conversation':
             debug_string = "good breakpoint - check create_db_models.py"
         pass # if we've set self.post_error, we'll raise an exception to trigger retry
-        pass # return to api_logic_server.ProjectRun to create db/project from create_db_models.py
-
-    def delete_temp_files(self):
-        """Delete temp files created by genai ((system/genai/temp -- models, responses)"""
-        Path('system/genai/temp/create_db_models.sqlite').unlink(missing_ok=True)  # delete temp (work) files
-        Path(self.project.from_model).unlink(missing_ok=True)
-        if self.project.genai_repaired_response == '':  # clean up unless retrying from chatgpt_original.response
-            Path('system/genai/temp/chatgpt_original.response').unlink(missing_ok=True)
-            Path('system/genai/temp/chatgpt_retry.response').unlink(missing_ok=True)
+        pass # end create_db_models - return to api_logic_server.ProjectRun to create db/project from create_db_models.py
 
     def chatgpt_excp(self):
         # https://apilogicserver.github.io/Docs/WebGenAI-CLI/
@@ -604,7 +616,7 @@ class GenAI(object):
         pass
 
     def fix_and_write_model_file(self):
-        """  TODO: use genai_utils
+        """
         1. from response, create model file / models lines
         2. from response, create model file / test lines
         3. ChatGPT work-arounds (decimal, indent, bogus relns, etc etc)
@@ -806,12 +818,12 @@ class GenAI(object):
         create_db_model_lines =  list()
         create_db_model_lines.append(f'# using resolved_model {self.resolved_model}')
         create_db_model_lines.extend(  # imports for classes (comes from api_logic_server_cli/prototypes/manager/system/genai/create_db_models_inserts/create_db_models_imports.py)
-            self.get_lines_from_file(f'system/genai/create_db_models_inserts/create_db_models_imports.py'))
+            genai_svcs.get_lines_from_file(f'system/genai/create_db_models_inserts/create_db_models_imports.py'))
         create_db_model_lines.append("\nfrom sqlalchemy.dialects.sqlite import *\n") # specific for genai 
         
         models = self.response_dict.models
         
-        fix_and_write_model_file_svcs(response_dict=self.response_dict, save_dir="/tmp")
+        # fix_and_write_model_file_svcs(response_dict=self.response_dict, save_dir="/tmp")
         
         # Usage inside the class
         create_db_model_lines = insert_model_lines(models, create_db_model_lines)
@@ -821,7 +833,7 @@ class GenAI(object):
             create_db_model_file.write("\n\n# end of model classes\n\n")
             
         # classes done, create db and add test_data code
-        test_data_lines = self.get_lines_from_file(f'system/genai/create_db_models_inserts/create_db_models_create_db.py')
+        test_data_lines = genai_svcs.get_lines_from_file(f'system/genai/create_db_models_inserts/create_db_models_create_db.py')
         test_data_lines.append('session.commit()')
         
         row_names = insert_test_data_lines(test_data_lines)
@@ -845,8 +857,8 @@ class GenAI(object):
         
         log.debug(f'.. code for db creation and test data: {self.project.from_model}')
 
-    def get_lines_from_file(self, file_name: str) -> list[str]:
-        """Get lines from a file
+    def get_lines_from_fileZZ(self, file_name: str) -> list[str]:
+        """Get lines from a file  todo: migrate to svcs
 
         Args:
             file_name (str): the file name

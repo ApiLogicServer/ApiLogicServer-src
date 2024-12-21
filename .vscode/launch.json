@@ -540,7 +540,7 @@
             "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
-            "args": ["genai", 
+            "args": ["genai",  "--retries=-1",
                 "--using=${workspaceFolder}/../../build_and_test/ApiLogicServer/system/genai/examples/genai_demo/genai_demo.prompt",
                 "--project-name=genai_demo"
             ],
