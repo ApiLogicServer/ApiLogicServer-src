@@ -318,6 +318,15 @@ class GenAIUtils:
             shutil.copy(self.path_dev_import.joinpath('create_db_models_no_als.sqlite'), 
                         self.path_dev.joinpath('database/db.sqlite')  )
 
+        def add_web_genai_logic(self):
+            """ """
+
+            # add to logic_discovery
+            logic_discovery_path = self.path_dev.joinpath('logic/discovery')
+            os.makedirs(logic_discovery_path, exist_ok=True)
+            
+
+
 
         # ############################################################################################################
         # import starts here
@@ -328,7 +337,7 @@ class GenAIUtils:
         self.path_wg = Path(self.using)
         self.path_dev = Path(os.getcwd())
         self.path_dev_import = self.path_dev.joinpath('docs/import')
-        if path_debug:=False:
+        if path_debug := False:
             for member in self.path_wg.iterdir():
                 log.debug(f'.. .. import_genai: {member.name}')
                 if member.is_dir() and member.name == 'docs':
@@ -338,10 +347,10 @@ class GenAIUtils:
                 pass
             pass
 
-        if debug_rebuild:=True:  # this is just to avoid lengthy GPT calls
+        if debug_rebuild := True:  # this is mainly to avoid lengthy GPT calls
             # this presumes ../docs/import/create_db_models.py is built.  
             # You may to repair test data and restart here.
-            # Errors can make ont app fail - deleted in the incoming project (but will need to test)
+            # Errors can make ont appgen fail - you may need to delete in incoming project (but will need to test)
             log.debug(f'.. import_genai: rebuild-from-response')
             with open(self.path_dev_import.joinpath('response.json'), "r") as file:
                 import_response = json.load(file)
@@ -381,6 +390,8 @@ class GenAIUtils:
             fix_and_write_model_file(response_dict=self.import_response, save_dir=self.path_dev_import)
 
         rebuild_from_import(self)
+
+        add_web_genai_logic(self)
 
         log.info(f'.. import complete: {self.using}/import')
         pass

@@ -27,7 +27,9 @@ def create_expose_api_models(model_creation_services: create_from_model.ModelCre
     """ create strings for ui/basic_web_app/views.py and api/expose_api_models.py """
 
     if use_model_driven := True:
-        log.debug(f'.. .. ..Model-driven API creation')
+        shutil.copyfile(model_creation_services.project.api_logic_server_dir_path.joinpath("prototypes/base/api/expose_api_models.py"),
+                        Path(model_creation_services.project_directory).joinpath("api/expose_api_models.py"))
+        log.debug(f'.. .. ..Model-driven API creation')  # copy above was to upgrade existing projects, eg, import
     else:
         result_apis = ''
         '''
