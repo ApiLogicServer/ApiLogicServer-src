@@ -1,0 +1,208 @@
+Here is the simplified API for LogicBank:
+
+Create a function called declare_logic(), consisting of calls to Rule methods.
+
+Do not generate import statements.
+
+Use only the methods provided below.
+
+class Rule:
+    """Invoke these functions to declare rules in the created declare_logic function.  """
+
+    @staticmethod
+    def sum(derive: Column, as_sum_of: any, where: any = None, child_role_name: str = "", insert_parent: bool=False):
+        """
+        Derive parent column as sum of designated child column, optional where
+
+        Example
+            Prompt
+                Customer.Balance = Sum(Order.amount_total where date_shipped is null)
+            Response
+                Rule.sum(derive=Customer.Balance, as_sum_of=Order.AmountTotal,
+                    where=lambda row: row.ShippedDate is None)
+
+        Args:
+            derive: name of parent <class.attribute> being derived
+            as_sum_of: name of child <class.attribute> being summed
+            child_role_name: parent's child accessor attribute (required only for disambiguation)
+            where: optional where clause, designates which child rows are summed
+
+        """
+        return Sum(derive, as_sum_of, where, child_role_name, insert_parent)
+
+    @staticmethod
+    def count(derive: Column, as_count_of: object, where: any = None, child_role_name: str = "", insert_parent: bool=False):
+        """
+        Derive parent column as count of designated child rows
+
+        Example
+            Prompt
+                Customer.UnPaidOrders = count(Orders where ShippedDate is None)
+            Response
+                Rule.count(derive=Customer.UnPaidOrders, as_count_of=Order,
+                    where=Lambda row: row.ShippedDate is None)
+
+        Args:
+            derive: name of parent <class.attribute> being derived
+            as_count_of: name of child <class> being counted
+            child_role_name: parent's child accessor attribute (required only for disambiguation)
+            where: optional where clause, designates which child rows are counted
+        """
+        return Count(derive, as_count_of, where, child_role_name, insert_parent)
+
+    @staticmethod
+    def constraint(validate: object,
+                   calling: Callable = None,
+                   as_condition: any = None,
+                   error_msg: str = "(error_msg not provided)",
+                   error_attributes=None):
+        """
+        Constraints declare condition that must be true for all commits
+
+        Example
+            Prompt
+                Customer.balance <= credit_limit
+            Response  
+                Rule.constraint(validate=Customer,
+                                as_condition=lambda row: row.Balance <= row.CreditLimit,
+                                error_msg="balance ({row.Balance}) exceeds credit ({row.CreditLimit})")
+
+        Args:
+            validate: name of mapped <class>
+            as_condition: lambda, passed row (simple constraints)
+            error_msg: string, with {row.attribute} replacements
+            error_attributes: list of attributes
+
+        """
+        if error_attributes is None:
+            error_attributes = []
+        return Constraint(validate=validate, as_condition=as_condition,
+                          error_attributes=error_attributes, error_msg=error_msg)
+
+    @staticmethod
+    def parent_check(validate: object,
+                     error_msg: str = "(error_msg not provided)",
+                     enable: bool = True):
+        """
+        Parent Checks ensure that non-null foreign keys are present in parent class
+
+        Example
+           Rule.parent_check(validate=Customer, enable=True, error_msg="Missing Parent")
+
+        Parent_check failures raise ConstraintException, e.g.:
+            try:
+                session.commit()
+            except ConstraintException as ce:
+                print("Constraint raised: " + str(ce))
+
+        Args:
+            validate: name of mapped class
+            error_msg: message included in exception (can have {} syntax)
+            enable: True (default) = enable, False means disable (tolerate orphans)
+
+        Note: False not recommended - for existing databases with bad data
+            Behavior is undefined for other rules (sum, count, parent references, etc)
+
+        """
+        return ParentCheck(validate=validate, error_msg=error_msg, enable=enable)
+
+    @staticmethod
+    def formula(derive: Column,
+                as_expression: Callable = None,
+                no_prune: bool = False):
+        """
+        Formulas declare column value, based on current and parent rows
+
+        Example
+            Prompt
+                Item.amount = quantity * unit_price
+            Response
+                Rule.formula(derive=OrderDetail.Amount,
+                             as_expression=lambda row: row.UnitPrice * row.Quantity)
+
+        Args:
+            derive: <class.attribute> being derived
+            as_expression: lambda, passed row (for syntax checking)
+            no_prune: disable pruning (rarely used, default False)
+        """
+        return Formula(derive=derive,
+                       as_expression=as_expression,
+                       no_prune=no_prune)
+
+    @staticmethod
+    def copy(derive: Column, from_parent: any):
+        """
+        Copy declares child column copied from parent column
+
+        Example
+            Prompt
+                Store the Item.unit_price as a copy from Product.unit_price
+            Response
+                Rule.copy(derive=OrderDetail.UnitPrice, from_parent=Product.UnitPrice)
+
+        Args:
+            derive: <class.attribute> being copied into
+            from_parent: <parent-class.attribute> source of copy
+        """
+        return Copy(derive=derive, from_parent=from_parent)
+
+
+Expanded example:
+
+Prompt:
+
+    Use Logic Bank to enforce the Check Credit requirement (do not generate check constraints):
+        1. Customer.balance <= credit_limit
+        2. Customer.balance = Sum(Order.amount_total where date_shipped is null)
+        3. Order.amount_total = Sum(Item.amount)
+        4. Item.amount = quantity * unit_price
+        5. Store the Item.unit_price as a copy from Product.unit_price
+
+Response:
+
+def declare_logic():  # created by Web/GenAI for ApiLogicServer, LogicBank
+    
+    Rule.sum(derive=CustomerAccount.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None)
+    Rule.sum(derive=Order.amount_total, as_sum_of=Item.amount)
+    Rule.formula(derive=Item.amount, as_expression=lambda row: row.quantity * row.unit_price)
+    Rule.copy(derive=Item.unit_price, from_parent=Product.unit_price)
+    Rule.constraint(validate=CustomerAccount,
+                    as_condition=lambda row: row.balance <= row.credit_limit,
+                    error_msg="Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})")
+
+
+Equivalent expanded example using informal syntax:
+
+Prompt:
+
+    Use Logic Bank to enforce the Check Credit requirement (do not generate check constraints):
+        1. The Customer's balance is less than the credit limit
+        2. The Customer's balance is the sum of the Order amount_total where date_shipped is null
+        3. The Order's amount_total is the sum of the Item amount
+        4. The Item amount is the quantity * unit_price
+        5. The Item unit_price is copied from the Product unit_price
+
+Response is the same:
+
+def declare_logic():  # created by Web/GenAI for ApiLogicServer, LogicBank
+    
+    Rule.sum(derive=CustomerAccount.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None)
+    Rule.sum(derive=Order.amount_total, as_sum_of=Item.amount)
+    Rule.formula(derive=Item.amount, as_expression=lambda row: row.quantity * row.unit_price)
+    Rule.copy(derive=Item.unit_price, from_parent=Product.unit_price)
+    Rule.constraint(validate=CustomerAccount,
+                    as_condition=lambda row: row.balance <= row.credit_limit,
+                    error_msg="Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})")
+
+Intermediate sum/count values require a new column, with a LogicBank sum/count rule.  For example:
+
+Prompt:
+    The sum of the child value cannot exceed the parent limit
+
+Response is to create 2 rules - a derivation and a constraint, as follows:
+    First Rule to Create:
+        Rule.sum(derive=Parent.value_total, as_sum_of=Child.value)
+    And, be sure to create the second Rule:
+        Rule.constraint(validate=Parent,
+                    as_condition=lambda row: row.value_total <= row.limit,
+                    error_msg="Parent value total ({row.value_total}) exceeds limit ({row.limit})")

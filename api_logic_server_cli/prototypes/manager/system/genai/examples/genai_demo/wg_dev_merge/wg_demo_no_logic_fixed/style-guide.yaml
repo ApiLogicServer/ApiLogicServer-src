@@ -1,0 +1,28 @@
+favorite_attribute_names: name description
+non_favorite_attribute_names: id
+new_mode : dialog
+detail_mode: tab
+pick_style : list 
+style : light 
+currency_symbol: '$' # "€" 
+currency_symbol_position: left 
+thousand_separator: ',' 
+decimal_separator: '.' 
+date_format: 'LL'
+edit_on_mode : 'dblclick' 
+min_decimal_digits: '2'
+max_decimal_digits: '4' 
+decimal_min: '0'
+decimal_max: '1000000000'
+row_height: small,
+include_translation: 'false'
+use_keycloak: 'false' 
+keycloak_url: http://localhost:8080
+keycloak_realm: kcals
+keycloak_client_id: alsclient
+serviceType: OntimizeEE
+locale: en
+applicationLocales: ["en","es"]
+startSessionPath: /auth/login
+exclude_listpicker: false
+

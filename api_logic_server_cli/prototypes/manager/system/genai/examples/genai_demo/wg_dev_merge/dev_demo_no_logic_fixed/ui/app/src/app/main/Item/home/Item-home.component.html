@@ -1,0 +1,37 @@
+<o-form-layout-manager attr="Item" mode="dialog" title="ITEM">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="ItemTable" 
+            service="Item" 
+            entity="Item" 
+            title="ITEM"
+            keys="id"
+            columns="id;quantity;order_id;product_id" 
+            header-actions="R;D"
+            visible-columns="id;quantity;order_id;product_id"  
+            sort-columns="id" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #id attr="id" title=" id*" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #quantity attr="quantity" title="quantity" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+            
+            <o-table-column #order_id attr="order_id" title="order_id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #product_id attr="product_id" title="product_id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

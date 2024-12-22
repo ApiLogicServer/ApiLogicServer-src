@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Wndows Run Behave" type="PythonConfigurationType" factoryName="Python">
-    <module name="genai_demo_no_logic" />
+    <module name="dev-db" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
     <envs>

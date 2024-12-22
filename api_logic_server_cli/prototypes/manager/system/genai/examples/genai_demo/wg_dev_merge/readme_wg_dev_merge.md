@@ -29,7 +29,13 @@ Base Project is GenAI_no_logic.  No rule-based attributes.
 
 WG adds standard rules - Customer.balance etc.
 
-Dev (wg_genai_demo_no_logic_fixed) adds Product.carbon_neutral.
+Dev (wg_genai_demo_no_logic_fixed) adds Product.carbon_neutral from constraint_tests.prompt
+* cd project
+* als genai-logic
+* als genai-utils --fixup
+* cd ..
+* als genai --retries=-1 --project-name=genai_demo_no_logic_fixed --using=genai_demo_no_logic --repaired-response=genai_demo_no_logic/docs/fixup/response_fixup.json
+
 
 ### GenAI merges json/py data models 
 ![successfully merged](./merged%20models.png)
@@ -45,6 +51,6 @@ To do:
 ## Usage
 
 ```bash
-cd system/genai/examples/genai_demo/wg_dev_merge/wg_genai_demo_no_logic_fixed_from_CLI
-als genai-utils --import-genai --using=../wg_genai_demo_no_logic_fixed_from_CLI
+cd system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed
+als genai-utils --import-genai --using=../wg_demo_no_logic_fixed
 ```

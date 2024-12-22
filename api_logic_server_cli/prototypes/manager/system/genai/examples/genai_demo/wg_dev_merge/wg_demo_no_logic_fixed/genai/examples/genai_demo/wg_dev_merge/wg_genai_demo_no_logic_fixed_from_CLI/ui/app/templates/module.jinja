@@ -1,0 +1,19 @@
+import {CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { OntimizeWebModule } from 'ontimize-web-ngx';
+import { SharedModule } from '../../shared/shared.module';
+import  {{ import_module }} from {{ module_from }};
+
+@NgModule({
+
+  imports: [
+    SharedModule,
+    CommonModule,
+    OntimizeWebModule,
+    {{ routing_module }}
+  ],
+  declarations: {{ entity_upper }}_MODULE_DECLARATIONS,
+  exports: {{ entity_upper }}_MODULE_DECLARATIONS,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+})
+export class {{ entity_first_cap }}Module { }

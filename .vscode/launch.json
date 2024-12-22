@@ -1953,7 +1953,6 @@
         },
         {
             "name": "  - GenAI - no logic - FixUp (new attrs -> data model, test data)",
-// typical next step - suggest logic
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
@@ -2013,6 +2012,9 @@
         {
             "name": "GenAI - import genai_export from tests/test_databases/ai-created/wg_dev_merge",
 // first, copy tests/test_databases/ai-created/wg_dev_merge --> <manager>/system/genai/examples/genai_demo/
+// api_logic_server_cli/prototypes/manager/system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed
+// pwd: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed
+// so /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed/..//wg_demo_no_logic_fixed
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
@@ -2025,7 +2027,7 @@
                 "APILOGICSERVER_DEBUG": "True",
                 "OPT_LOCKING": "optional"},
             "justMyCode": false,
-            "args": ["genai-utils", "--import-genai", "--using=../wg_genai_demo_no_logic_fixed_from_CLI"],
+            "args": ["genai-utils", "--import-genai", "--using=../wg_demo_no_logic_fixed"],
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
         },

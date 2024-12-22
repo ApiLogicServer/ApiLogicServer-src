@@ -4,42 +4,37 @@
 
 Project DBML {
   Note: '''
-Customer: Represents customers in the system.
-Order: Represents orders placed by customers.
-OrderItem: Represents items in an order.
-Product: Represents products available in the system.
+Customer: Model for Customer data, representing customers in the system.
+Item: Model for Item data, representing items in an order with their respective quantities.
+Order: Model for Order data, representing orders placed by customers.
+Product: Model for Product data, representing products available in the system including carbon neutral status.
 '''
 }
 
 Table Customer {
     id INTEGER [primary key]
-    name VARCHAR 
-    email VARCHAR 
+    name VARCHAR(255) 
     }
 
-Table Order {
-    id INTEGER [primary key]
-    customer_id INTEGER 
-    order_date DATETIME 
-    notes VARCHAR 
-    }
-
-Table OrderItem {
+Table Item {
     id INTEGER [primary key]
     order_id INTEGER 
     product_id INTEGER 
     quantity INTEGER 
     }
 
+Table Order {
+    id INTEGER [primary key]
+    customer_id INTEGER 
+    notes VARCHAR(255) 
+    }
+
 Table Product {
     id INTEGER [primary key]
-    name VARCHAR 
-    price INTEGER 
+    name VARCHAR(255) 
+    carbon_neutral BOOLEAN 
     }
 
 
 
 // Relationships
-    Ref: Order.(customer_id) < Customer.(id)
-    Ref: OrderItem.(order_id) < Order.(id)
-    Ref: OrderItem.(product_id) < Product.(id)

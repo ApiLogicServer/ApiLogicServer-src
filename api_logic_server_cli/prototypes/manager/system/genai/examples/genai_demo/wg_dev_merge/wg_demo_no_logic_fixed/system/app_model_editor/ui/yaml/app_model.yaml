@@ -1,0 +1,234 @@
+about:
+  date: April 26, 2024 11:18:59
+  recent_changes: works with modified safrs-react-admin
+  version: 0.0.0
+api_root: '{http_type}://{swagger_host}:{port}/{api}'
+authentication:
+  endpoint: '{http_type}://{swagger_host}:{port}/api/auth/login'
+entities:
+  Entity:
+    columns:
+    - label: ' Entity Name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+      template: text
+      type: VARCHAR(80)
+    - name: title
+      label: "Title"
+      template: text
+      type: VARCHAR(100)
+    - name: pkey
+      label: "Primary Key"
+      template: text
+      type: VARCHAR(100)
+    - name: favorite
+      template: text
+      type: VARCHAR(100)
+    - name: info_list
+      template: textarea
+      type: TEXT
+    - name: info_show
+      template: textarea
+      type: TEXT
+    - name: exclude
+      template: checkbox
+      type: BOOLEAN
+    - name: new_template
+    - name: home_template
+    - name: detail_template
+    favorite: name
+    primary_key:
+    - name
+    tab_groups:
+    - direction: tomany
+      fks:
+      - entity_name
+      name: EntityAttrList
+      resource: EntityAttr
+    - direction: tomany
+      fks:
+      - entity_name
+      name: TabGroupList
+      resource: TabGroup
+    - direction: tomany
+      fks:
+      - tab_entity
+      name: TabGroupList1
+      resource: TabGroup
+    type: Entity
+  EntityAttr:
+    columns:
+    - label: ' Entity Name*'
+      name: entity_name
+      required: true
+      search: true
+      sort: true
+      template: text
+      type: VARCHAR(80)
+    - name: attr
+      label: Attribute
+      required: true
+      template: text
+      type: VARCHAR(80)
+    - name: template_name
+      template: text
+      type: VARCHAR(100)
+    - name: label
+      template: text
+      type: VARCHAR(100)
+    - name: issearch
+      label: Search
+      template: checkbox
+      type: BOOLEAN
+    - name: issort
+      label: Sort
+      template: checkbox
+      type: BOOLEAN
+    - name: thistype
+      label: "DataType"
+      required: true
+      template: text
+      type: VARCHAR(50)
+    - name: tooltip
+      template: textarea
+      type: VARCHAR(8000)
+    - name: exclude
+      template: checkbox
+      type: BOOLEAN
+    - name: isrequired
+      label: Required
+      template: checkbox
+      type: BOOLEAN
+    - name: isenabled
+      label: Enabled
+      template: checkbox
+      type: BOOLEAN
+    favorite: entity_name
+    primary_key:
+    - entity_name
+    - attr
+    tab_groups:
+    - direction: toone
+      fks:
+      - entity_name
+      name: entity
+      resource: Entity
+    - direction: toone
+      fks:
+      - template_name
+      name: template
+      resource: Template
+    type: EntityAttr
+  GlobalSetting:
+    columns:
+    - label: ' name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+      template: text
+      type: VARCHAR(100)
+    - name: value
+      required: true
+      template: text
+      type: VARCHAR(8000)
+    - name: description
+      template: text
+      type: TEXT
+    favorite: name
+    primary_key:
+    - name
+    type: GlobalSetting
+  TabGroup:
+    columns:
+    - label: ' Entity Name*'
+      name: entity_name
+      required: true
+      search: true
+      sort: true
+      template: text
+      type: VARCHAR(80)
+    - name: tab_entity
+      label: Tab Entity
+      required: true
+      template: text
+      type: VARCHAR(80)
+    - name: direction
+      required: true
+      template: text
+      type: VARCHAR(6)
+    - name: label
+      required: true
+      template: text
+      type: VARCHAR(80)
+    - name: fkeys
+      required: true
+      template: text
+      type: VARCHAR(80)
+    - name: exclude
+      template: checkbox
+      type: BOOLEAN
+    favorite: entity_name
+    primary_key:
+    - entity_name
+    - tab_entity
+    - direction
+    - label
+    tab_groups:
+    - direction: toone
+      fks:
+      - entity_name
+      name: entity
+      resource: Entity
+    - direction: toone
+      fks:
+      - tab_entity
+      name: entity1
+      resource: Entity
+    type: TabGroup
+  Template:
+    columns:
+    - label: ' Name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+      template: text
+      type: VARCHAR(100)
+    - name: description
+      template: text
+      type: TEXT
+    favorite: name
+    primary_key:
+    - name
+    tab_groups:
+    - direction: tomany
+      fks:
+      - template_name
+      name: EntityAttrList
+      resource: EntityAttr
+    type: Template
+settings:
+  HomeJS: http://localhost:5656/admin-app/home.js
+  max_list_columns: 8
+  style_guide:
+    currency_symbol: $
+    currency_symbol_position: left
+    date_format: LL
+    decimal_max: '1000000'
+    decimal_min: '0'
+    decimal_separator: .
+    edit_on_mode: dblclick
+    max_decimal_digits: '4'
+    min_decimal_digits: '2'
+    mode: tab
+    pick_style: list
+    style: light
+    thousand_separator: ','
+    use_keycloak: false
+    row_height: medium
+    keycloak_url: http://localhost:8080
+    keycloak_realm: kcals
+    keycloak_client_id: alsclient

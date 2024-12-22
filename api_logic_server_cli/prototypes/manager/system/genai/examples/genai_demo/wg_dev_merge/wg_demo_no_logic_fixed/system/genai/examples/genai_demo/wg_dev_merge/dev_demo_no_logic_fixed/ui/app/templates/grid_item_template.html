@@ -1,0 +1,18 @@
+<o-grid-item *ngFor="let item of grid.dataArray">
+<div fxLayout="column" fxLayoutAlign="space-evenly center" class="{{ entity }}-item mat-elevation-z1">
+    <div fxLayout="row" fxLayoutAlign="space-between end" class="image-container">
+    <mat-divider fxFlex></mat-divider>
+    <div class="image">
+        <img [src]="getImageSrc(item.{{ imageAttr }})">
+    </div>
+    <mat-divider fxFlex></mat-divider>
+    </div>
+
+    <div fxLayout="column" fxLayoutAlign="start center" class="{{ entity }}-data">
+    
+    {% for item in grid_items %}
+    <span>item.{{ item }}</span>
+    {% endfor %}
+    </div>
+</div>
+</o-grid-item>

@@ -13,8 +13,10 @@ from sqlalchemy.types import *
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import relationship
+from sqlalchemy.orm import Mapped
 from datetime import date   
 from datetime import datetime
+from typing import List
 
 
 logging.getLogger('sqlalchemy.engine.Engine').disabled = True  # remove for additional logging

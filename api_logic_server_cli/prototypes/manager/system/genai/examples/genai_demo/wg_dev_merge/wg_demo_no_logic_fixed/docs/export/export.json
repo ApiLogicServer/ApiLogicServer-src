@@ -1,0 +1,21 @@
+{
+    "rules": [],
+    "models": [
+        {
+            "classname": "Customer",
+            "code": "class Customer(SAFRSBaseX, Base):\n    \"\"\"\n    description: Represents a customer in the system with unique names and a balance constraint.\n    \"\"\"\n    __tablename__ = 'customers'\n    _s_collection_name = 'Customer'  # type: ignore\n    __bind_key__ = 'None'\n\n    id = Column(Integer, primary_key=True)\n    name = Column(String(50), unique=True)\n    email = Column(String(50))\n    balance = Column(Integer)\n    credit_limit = Column(Integer)\n\n    # parent relationships (access parent)\n\n    # child relationships (access children)\n    OrderList : Mapped[List[\"Order\"]] = relationship(back_populates=\"customer\")"
+        },
+        {
+            "classname": "Product",
+            "code": "class Product(SAFRSBaseX, Base):\n    \"\"\"\n    description: Represents a product available for purchase.\n    \"\"\"\n    __tablename__ = 'products'\n    _s_collection_name = 'Product'  # type: ignore\n    __bind_key__ = 'None'\n\n    id = Column(Integer, primary_key=True)\n    name = Column(String(50))\n    price = Column(Integer)\n\n    # parent relationships (access parent)\n\n    # child relationships (access children)\n    ItemList : Mapped[List[\"Item\"]] = relationship(back_populates=\"product\")"
+        },
+        {
+            "classname": "Order",
+            "code": "class Order(SAFRSBaseX, Base):\n    \"\"\"\n    description: Represents an order made by a customer, needing a valid customer reference.\n    \"\"\"\n    __tablename__ = 'orders'\n    _s_collection_name = 'Order'  # type: ignore\n    __bind_key__ = 'None'\n\n    id = Column(Integer, primary_key=True)\n    customer_id = Column(ForeignKey('customers.id'), nullable=False)\n    order_date = Column(DateTime)\n    notes = Column(String(255))\n    total_amount = Column(Integer)\n    amount_total = Column(Integer)\n\n    # parent relationships (access parent)\n    customer : Mapped[\"Customer\"] = relationship(back_populates=(\"OrderList\"))\n\n    # child relationships (access children)\n    ItemList : Mapped[List[\"Item\"]] = relationship(back_populates=\"order\")"
+        },
+        {
+            "classname": "Item",
+            "code": "class Item(SAFRSBaseX, Base):\n    \"\"\"\n    description: Represents an item included in an order with non-null quantity and derived attributes.\n    \"\"\"\n    __tablename__ = 'items'\n    _s_collection_name = 'Item'  # type: ignore\n    __bind_key__ = 'None'\n\n    id = Column(Integer, primary_key=True)\n    order_id = Column(ForeignKey('orders.id'))\n    product_id = Column(ForeignKey('products.id'))\n    quantity = Column(Integer, nullable=False)\n    price = Column(Integer)\n    amount = Column(Integer)\n    unit_price = Column(Integer)\n\n    # parent relationships (access parent)\n    order : Mapped[\"Order\"] = relationship(back_populates=(\"ItemList\"))\n    product : Mapped[\"Product\"] = relationship(back_populates=(\"ItemList\"))"
+        }
+    ]
+}

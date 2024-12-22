@@ -1,0 +1,198 @@
+[
+    {
+        "id": "c12f0892-df55-4c75-9081-7377c3fabc2b",
+        "ja_type": "SPAPage",
+        "contact": "info@logicpage.ai",
+        "name": "F1 Scheduler",
+        "relationships": {
+            "SectionList": {
+                "data": [
+                    {
+                        "id": "f180df1c-7509-4cd5-9bd1-d2e3310d94d0",
+                        "type": "SPASection"
+                    },
+                    {
+                        "id": "4389ae5e-5a64-4773-8c38-ecb04a9441fd",
+                        "type": "SPASection"
+                    },
+                    {
+                        "id": "398f785c-d939-48d9-9132-6190ab9d2189",
+                        "type": "SPASection"
+                    },
+                    {
+                        "id": "b796faf6-e287-4fa5-b309-9c425d3910d6",
+                        "type": "SPASection"
+                    },
+                    {
+                        "id": "5620aea1-ac15-4c14-9933-aa6e5541a160",
+                        "type": "SPASection"
+                    },
+                    {
+                        "id": "c2ccff25-93f0-491e-9d91-4e8fe6d32f89",
+                        "type": "SPASection"
+                    }
+                ],
+                "links": {
+                    "self": "/01JBEV0VCG7K5YXN41PJA1QMQC/SPAPage/c12f0892-df55-4c75-9081-7377c3fabc2b/SectionList"
+                },
+                "meta": {
+                    "count": 6,
+                    "limit": 100,
+                    "total": 6
+                }
+            }
+        },
+        "SectionList": [
+            {
+                "id": "f180df1c-7509-4cd5-9bd1-d2e3310d94d0",
+                "ja_type": "SPASection",
+                "Type": "Hero",
+                "background": "http://localhost:8282/01JBEV0VCG7K5YXN41PJA1QMQC/static/F1 Race Car.png",
+                "content": "# Experience Formula 1 Like Never Before  \nJoin millions of fans around the world who use F1 Scheduler to stay updated on every race, practice, and qualifying session. Our platform delivers the most current schedules and allows you to personalize your race day experience.",
+                "hidden": false,
+                "label": "Home",
+                "name": "header",
+                "order": 1,
+                "page_id": "c12f0892-df55-4c75-9081-7377c3fabc2b",
+                "paragraph": null,
+                "subtitle": "Plan your races, stay ahead",
+                "template": null,
+                "title": "Welcome to F1 Scheduler",
+                "relationships": {
+                    "page": {
+                        "data": null,
+                        "links": {
+                            "self": "/01JBEV0VCG7K5YXN41PJA1QMQC/SPASection/f180df1c-7509-4cd5-9bd1-d2e3310d94d0/page"
+                        }
+                    }
+                },
+                "page": null
+            },
+            {
+                "id": "4389ae5e-5a64-4773-8c38-ecb04a9441fd",
+                "ja_type": "SPASection",
+                "Type": "About",
+                "background": "http://localhost:8282/01JBEV0VCG7K5YXN41PJA1QMQC/static/Race History",
+                "content": "### Revolutionizing Race Scheduling  \nF1 Scheduler started with a simple mission: to keep Formula 1 fans informed and excited about every race, everywhere. Our team of experts continuously monitors race schedules, delivers real-time updates, and personalizes experience tailored just for you.",
+                "hidden": false,
+                "label": "About",
+                "name": "about",
+                "order": 2,
+                "page_id": "c12f0892-df55-4c75-9081-7377c3fabc2b",
+                "paragraph": null,
+                "subtitle": "Our Journey and Mission",
+                "template": null,
+                "title": "About F1 Scheduler",
+                "relationships": {
+                    "page": {
+                        "data": null,
+                        "links": {
+                            "self": "/01JBEV0VCG7K5YXN41PJA1QMQC/SPASection/4389ae5e-5a64-4773-8c38-ecb04a9441fd/page"
+                        }
+                    }
+                },
+                "page": null
+            },
+            {
+                "id": "398f785c-d939-48d9-9132-6190ab9d2189",
+                "ja_type": "SPASection",
+                "Type": "Services",
+                "background": "http://localhost:8282/01JBEV0VCG7K5YXN41PJA1QMQC/static/Service Overview",
+                "content": "- **Real-Time Schedule Updates:** Stay informed with the latest race timings and alerts.  \n- **Personalized Race Notifications:** Choose your favorite teams and drivers to receive bespoke updates.  \n- **Last-Minute Changes:** Get notified instantly about any race day modifications.  \n- **Race Insights and Stats:** Enhance your knowledge with critical race data and driver performance.",
+                "hidden": false,
+                "label": "Services",
+                "name": "services",
+                "order": 3,
+                "page_id": "c12f0892-df55-4c75-9081-7377c3fabc2b",
+                "paragraph": null,
+                "subtitle": "Tailored Race Day Experience",
+                "template": null,
+                "title": "Our Services",
+                "relationships": {
+                    "page": {
+                        "data": null,
+                        "links": {
+                            "self": "/01JBEV0VCG7K5YXN41PJA1QMQC/SPASection/398f785c-d939-48d9-9132-6190ab9d2189/page"
+                        }
+                    }
+                },
+                "page": null
+            },
+            {
+                "id": "b796faf6-e287-4fa5-b309-9c425d3910d6",
+                "ja_type": "SPASection",
+                "Type": "Testimonials",
+                "background": "http://localhost:8282/01JBEV0VCG7K5YXN41PJA1QMQC/static/Fan Portrait",
+                "content": "\"F1 Scheduler has completely changed how I experience race days! The timely updates and notifications are a game changer.\" — **Sarah T.**  \n\n\"I never miss a moment with F1 Scheduler. The personalized notifications are just what I needed.\" — **John L.**",
+                "hidden": false,
+                "label": "Testimonials",
+                "name": "testimonials",
+                "order": 4,
+                "page_id": "c12f0892-df55-4c75-9081-7377c3fabc2b",
+                "paragraph": null,
+                "subtitle": "Hear from Our Fans",
+                "template": null,
+                "title": "User Testimonials",
+                "relationships": {
+                    "page": {
+                        "data": null,
+                        "links": {
+                            "self": "/01JBEV0VCG7K5YXN41PJA1QMQC/SPASection/b796faf6-e287-4fa5-b309-9c425d3910d6/page"
+                        }
+                    }
+                },
+                "page": null
+            },
+            {
+                "id": "5620aea1-ac15-4c14-9933-aa6e5541a160",
+                "ja_type": "SPASection",
+                "Type": "Contact",
+                "background": "http://localhost:8282/01JBEV0VCG7K5YXN41PJA1QMQC/static/Office Location",
+                "content": "### Contact Us  \nHave questions or need assistance? Our support team is just a message away. Reach out via the following methods:  \n- **Email:** support@f1scheduler.com  \n- **Phone:** +1 (555) 123-4567  \n- **Address:** 123 Grand Prix Lane, Racing City, RC 10012  \nFeel free to visit our [Support Page](#) for more information.",
+                "hidden": false,
+                "label": "Contact",
+                "name": "contact",
+                "order": 5,
+                "page_id": "c12f0892-df55-4c75-9081-7377c3fabc2b",
+                "paragraph": null,
+                "subtitle": "We’re Here to Help",
+                "template": null,
+                "title": "Get in Touch",
+                "relationships": {
+                    "page": {
+                        "data": null,
+                        "links": {
+                            "self": "/01JBEV0VCG7K5YXN41PJA1QMQC/SPASection/5620aea1-ac15-4c14-9933-aa6e5541a160/page"
+                        }
+                    }
+                },
+                "page": null
+            },
+            {
+                "id": "c2ccff25-93f0-491e-9d91-4e8fe6d32f89",
+                "ja_type": "SPASection",
+                "Type": "Footer",
+                "background": "http://localhost:8282/01JBEV0VCG7K5YXN41PJA1QMQC/static/Twitter Logo",
+                "content": "Keep up to date with the latest news and updates by following us on [Twitter](#), [Facebook](#), and [Instagram](#).  \n\n© 2023 F1 Scheduler. All rights reserved. | [Privacy Policy](#) | [Terms of Service](#)",
+                "hidden": false,
+                "label": "Footer",
+                "name": "footer",
+                "order": 6,
+                "page_id": "c12f0892-df55-4c75-9081-7377c3fabc2b",
+                "paragraph": null,
+                "subtitle": "Follow Us on Social Media",
+                "template": null,
+                "title": "Stay Connected",
+                "relationships": {
+                    "page": {
+                        "data": null,
+                        "links": {
+                            "self": "/01JBEV0VCG7K5YXN41PJA1QMQC/SPASection/c2ccff25-93f0-491e-9d91-4e8fe6d32f89/page"
+                        }
+                    }
+                },
+                "page": null
+            }
+        ]
+    }
+]

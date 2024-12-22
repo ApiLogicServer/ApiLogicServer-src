@@ -1,0 +1,124 @@
+{
+    "models": [
+        {
+            "classname": "Customer",
+            "code": "class Customer(Base):\n    \"\"\"description: Represents customers in the system.\"\"\"\n    __tablename__ = 'customer'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String)\n    email = Column(String)",
+            "sqlite_create": "CREATE TABLE customer (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    name TEXT,\n    email TEXT\n);",
+            "description": "Table for storing information about customers.",
+            "name": "Customer"
+        },
+        {
+            "classname": "Order",
+            "code": "class Order(Base):\n    \"\"\"description: Represents orders placed by customers.\"\"\"\n    __tablename__ = 'order'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    customer_id = Column(Integer, ForeignKey('customer.id'))\n    order_date = Column(DateTime)\n    notes = Column(String)",
+            "sqlite_create": "CREATE TABLE order (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    customer_id INTEGER,\n    order_date DATETIME,\n    notes TEXT,\n    FOREIGN KEY(customer_id) REFERENCES customer(id)\n);",
+            "description": "Table for storing orders made by customers, includes a notes field.",
+            "name": "Order"
+        },
+        {
+            "classname": "Product",
+            "code": "class Product(Base):\n    \"\"\"description: Represents products available in the system.\"\"\"\n    __tablename__ = 'product'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String)\n    price = Column(Integer)\n    carbon_neutral = Column(Boolean)",
+            "sqlite_create": "CREATE TABLE product (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    name TEXT,\n    price INTEGER,\n    carbon_neutral BOOLEAN\n);",
+            "description": "Table for storing products available for purchase, including if they're carbon neutral.",
+            "name": "Product"
+        },
+        {
+            "classname": "OrderItem",
+            "code": "class OrderItem(Base):\n    \"\"\"description: Represents items in an order.\"\"\"\n    __tablename__ = 'order_item'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    order_id = Column(Integer, ForeignKey('order.id'))\n    product_id = Column(Integer, ForeignKey('product.id'))\n    quantity = Column(Integer)",
+            "sqlite_create": "CREATE TABLE order_item (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    order_id INTEGER,\n    product_id INTEGER,\n    quantity INTEGER,\n    FOREIGN KEY(order_id) REFERENCES order(id),\n    FOREIGN KEY(product_id) REFERENCES product(id)\n);",
+            "description": "Table representing items belonging to an order. It links orders to products.",
+            "name": "OrderItem"
+        }
+    ],
+    "rules": [
+        {
+            "name": "Customer Name Constraint",
+            "description": "Ensures customer names cannot be 'x'.",
+            "use_case": "Validation to prevent invalid customer names.",
+            "entity": "Customer",
+            "code": "Rule.constraint(validate=Customer,\n                as_condition=lambda row: row.name != 'x',\n                error_msg=\"Customer names cannot be 'x'.\")"
+        },
+        {
+            "name": "Product Name Constraint",
+            "description": "Ensures product names cannot be 'xx'.",
+            "use_case": "Validation to prevent invalid product names.",
+            "entity": "Product",
+            "code": "Rule.constraint(validate=Product,\n                as_condition=lambda row: row.name != 'xx',\n                error_msg=\"Product names cannot be 'xx'.\")"
+        },
+        {
+            "name": "Product Carbon Neutral",
+            "description": "Ensures products with names containing 'green' are carbon neutral.",
+            "use_case": "Validation for environmentally friendly products.",
+            "entity": "Product",
+            "code": "Rule.constraint(validate=Product,\n                as_condition=lambda row: 'green' not in row.name.lower() or row.carbon_neutral is True,\n                error_msg=\"Products containing 'green' in their name must be carbon neutral.\")"
+        }
+    ],
+    "test_data": "create_customer_data()\ncreate_order_data()\ncreate_product_data()\ncreate_order_item_data()",
+    "test_data_rows": [
+        {
+            "test_data_row_variable": "customer_1",
+            "code": "customer_1 = Customer(name='Alice', email='alice@example.com')"
+        },
+        {
+            "test_data_row_variable": "customer_2",
+            "code": "customer_2 = Customer(name='Bob', email='bob@example.com')"
+        },
+        {
+            "test_data_row_variable": "customer_3",
+            "code": "customer_3 = Customer(name='Charlie', email='charlie@example.com')"
+        },
+        {
+            "test_data_row_variable": "customer_4",
+            "code": "customer_4 = Customer(name='Diana', email='diana@example.com')"
+        },
+        {
+            "test_data_row_variable": "order_1",
+            "code": "order_1 = Order(customer_id=1, order_date=datetime(2023, 1, 1), notes='Urgent')"
+        },
+        {
+            "test_data_row_variable": "order_2",
+            "code": "order_2 = Order(customer_id=2, order_date=datetime(2023, 2, 1), notes='')"
+        },
+        {
+            "test_data_row_variable": "order_3",
+            "code": "order_3 = Order(customer_id=3, order_date=datetime(2023, 3, 1), notes='Include gift wrap')"
+        },
+        {
+            "test_data_row_variable": "order_4",
+            "code": "order_4 = Order(customer_id=4, order_date=datetime(2023, 4, 1), notes='')"
+        },
+        {
+            "test_data_row_variable": "product_1",
+            "code": "product_1 = Product(name='ProductA', price=100, carbon_neutral=False)"
+        },
+        {
+            "test_data_row_variable": "product_2",
+            "code": "product_2 = Product(name='GreenProduct', price=200, carbon_neutral=True)"
+        },
+        {
+            "test_data_row_variable": "product_3",
+            "code": "product_3 = Product(name='ProductB', price=300, carbon_neutral=False)"
+        },
+        {
+            "test_data_row_variable": "product_4",
+            "code": "product_4 = Product(name='EcoItem', price=150, carbon_neutral=True)"
+        },
+        {
+            "test_data_row_variable": "order_item_1",
+            "code": "order_item_1 = OrderItem(order_id=1, product_id=1, quantity=2)"
+        },
+        {
+            "test_data_row_variable": "order_item_2",
+            "code": "order_item_2 = OrderItem(order_id=2, product_id=2, quantity=1)"
+        },
+        {
+            "test_data_row_variable": "order_item_3",
+            "code": "order_item_3 = OrderItem(order_id=3, product_id=3, quantity=3)"
+        },
+        {
+            "test_data_row_variable": "order_item_4",
+            "code": "order_item_4 = OrderItem(order_id=4, product_id=4, quantity=1)"
+        }
+    ],
+    "test_data_sqlite": "INSERT INTO customer (name, email) VALUES\n('Alice', 'alice@example.com'),\n('Bob', 'bob@example.com'),\n('Charlie', 'charlie@example.com'),\n('Diana', 'diana@example.com');\n\nINSERT INTO \"order\" (customer_id, order_date, notes) VALUES\n(1, '2023-01-01', 'Urgent'),\n(2, '2023-02-01', ''),\n(3, '2023-03-01', 'Include gift wrap'),\n(4, '2023-04-01', '');\n\nINSERT INTO product (name, price, carbon_neutral) VALUES\n('ProductA', 100, false),\n('GreenProduct', 200, true),\n('ProductB', 300, false),\n('EcoItem', 150, true);\n\nINSERT INTO order_item (order_id, product_id, quantity) VALUES\n(1, 1, 2),\n(2, 2, 1),\n(3, 3, 3),\n(4, 4, 1);",
+    "name": "E-commerce System"
+}

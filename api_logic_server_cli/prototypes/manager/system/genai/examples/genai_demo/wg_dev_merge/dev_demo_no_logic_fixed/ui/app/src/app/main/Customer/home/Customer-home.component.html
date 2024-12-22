@@ -1,4 +1,4 @@
-<o-form-layout-manager attr="Customer" mode="tab" title="CUSTOMER">
+<o-form-layout-manager attr="Customer" mode="dialog" title="CUSTOMER">
     <div fxFill fxLayout="column" fxLayoutAlign="start">
         <o-table 
             attr="CustomerTable" 
@@ -6,9 +6,9 @@
             entity="Customer" 
             title="CUSTOMER"
             keys="id"
-            columns="name;email;id" 
+            columns="name;id" 
             header-actions="R;D"
-            visible-columns="name;email;id"  
+            visible-columns="name;id"  
             sort-columns="name" 
             query-rows="20" 
             quick-filter="yes"
@@ -23,8 +23,6 @@
             export-button="yes">
             
             <o-table-column #name attr="name" title=" name*" editable="no" required="no" content-align="left"></o-table-column>
-            
-            <o-table-column #email attr="email" title="email" editable="no" required="no" content-align="left"></o-table-column>
             
             <o-table-column #id attr="id" title="id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
             

@@ -1,0 +1,26 @@
+<o-form-layout-manager mode="tab" title="Employees" label-columns="LastName;FirstName" separator=", ">
+    <o-grid #grid attr="{{ entity }}Table" service="{{ service }}" entity="{{ entity }}"
+    columns="{{ columns }}"
+    quick-filter-columns="{{ columns }}" keys="{{ keys }}" sort-columns="{{ sortColumns }}"
+    pageable="yes" query-rows="16" fixed-header="yes" refresh-button="no" gutter-size="18px" detail-mode="none"
+    insert-button="yes">
+    <o-grid-item *ngFor="let item of grid.dataArray">
+        <div (click)="openDetail(item)" fxLayout="column" fxLayoutAlign="space-evenly center" class="{{ entity }}-item mat-elevation-z1">
+            <div fxLayout="row" fxLayoutAlign="space-between end" class="image-container">
+            <mat-divider fxFlex></mat-divider>
+            <div class="image">
+                <img [src]="getImageSrc(item.{{grid_image}})">
+            </div>
+            <mat-divider fxFlex></mat-divider>
+            </div>
+        
+            <div fxLayout="column" fxLayoutAlign="start center" class="{{ entity }}-data">
+            
+            {% for item in grid_items %}
+            <span>{{ item }}</span>
+            {% endfor %}
+            </div>
+        </div>
+        </o-grid-item>
+</o-grid>
+</o-form-layout-manager>

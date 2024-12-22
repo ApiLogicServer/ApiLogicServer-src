@@ -1,0 +1,18 @@
+// Define your custom theme or choose predefined theme
+@use 'ontimize-web-ngx/theming/themes/ontimize.scss'as theme;
+@use 'ontimize-web-ngx/theming/ontimize-style.scss';
+@use '../../app/login/login.theme.scss'as login;
+
+// Include ontimize styles
+@include ontimize-style.ontimize-theme-styles(theme.$theme);
+
+// Propagate theme to screen styles definition.
+@include login.login-theme(theme.$theme);
+
+
+//Include dark styles option
+.o-dark {
+  @include ontimize-style.ontimize-theme-all-component-color(theme.$dark-theme);
+}
+//@import '~ontimize-web-ngx-filemanager/o-filemanager-table-theme.scss';
+//@include o-filemanager-table-theme($theme);

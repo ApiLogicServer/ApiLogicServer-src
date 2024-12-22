@@ -21,16 +21,14 @@
   "FOOTER_RIGHTS": "Todos los derechos reservados",
     "Customer": "CUSTOMER",
   "name": " name*",
-  "email": "email",
   "id": "id",
-  "Order": "ORDER",
-  "order_date": "order_date",
-  "notes": "notes",
-  "customer_id": "customer_id",
-  "OrderItem": "ORDERITEM",
+  "Item": "ITEM",
   "quantity": "quantity",
   "order_id": "order_id",
   "product_id": "product_id",
+  "Order": "ORDER",
+  "notes": "notes",
+  "customer_id": "customer_id",
   "Product": "PRODUCT",
-  "price": "price"
+  "carbon_neutral": "carbon_neutral"
 }

@@ -1,0 +1,31 @@
+<responseFormat>
+class Rule(BaseModel):
+    name: str
+    description: str
+    use_case: str # specified use case or requirement name (use 'General' if missing)
+    entity: str # the entity being constrained or derived
+    code: str # logicbank rule code
+    
+class Model(BaseModel):
+    classname: str
+    code: str # sqlalchemy model code
+    sqlite_create: str # sqlite create table statement
+    description: str
+    name: str
+
+class TestDataRow(BaseModel):
+    test_data_row_variable: str  # the Python test data row variable
+    code: str  # Python code to create a test data row instance
+
+class WGResult(BaseModel):  # must match system/genai/prompt_inserts/response_format.prompt
+    # response: str # result
+    models : List[Model] # list of sqlalchemy classes in the response
+    rules : List[Rule] # list rule declarations
+    test_data: str
+    test_data_rows: List[TestDataRow]  # list of test data rows
+    test_data_sqlite: str # test data as sqlite INSERT statements
+    name: str  # suggest a short name for the project
+
+Format the response as a WGResult.
+
+</responseFormat>

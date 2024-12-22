@@ -8,28 +8,9 @@ after-insert-mode="new" class="standalone-form-container" (onInsertMode)="onInse
     
         <o-integer-input #id attr="id" label=" id*" type="integer" editable="no" required="no" ></o-integer-input>
       
-        <o-list-picker 
-        attr="customer_id"
-        service="Customer" 
-        entity="CustomerType"
-        fxFlex="30" 
-        query-on-init="no" 
-        query-on-bind="yes" 
-        required="no" 
-        enabled="yes" 
-        filter="yes"
-        value-column="id" 
-        value-column-type="INTEGER"  
-        keys="id" 
-        columns="id;customer_id;name" 
-        title="customer_id"
-        visible-columns="id;name" 
-        separator=" - " width="680px" class="form-field">
-</o-list-picker>
-      
-        <o-date-input #order_date attr="order_date" type="timestamp" label="order_date" editable="no" required="no" format="LL" fxFlex="20%" class="form-field"></o-date-input>
-      
         <o-text-input #notes attr="notes" label="notes" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #customer_id attr="customer_id" label="customer_id" type="integer" editable="no" required="no" ></o-integer-input>
       
 </div>
 </o-row>

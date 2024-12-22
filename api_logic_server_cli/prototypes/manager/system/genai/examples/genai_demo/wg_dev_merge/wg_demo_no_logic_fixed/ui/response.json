@@ -1,0 +1,86 @@
+{
+    "models": [
+        {
+            "classname": "Customer",
+            "code": "class Customer(Base):\n    __tablename__ = 'customers'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String(50), unique=True)\n    email = Column(String(50))\n    balance = Column(Integer)\n    credit_limit = Column(Integer)",
+            "description": "Represents a customer in the system with unique names and a balance constraint.",
+            "name": "Customer"
+        },
+        {
+            "classname": "Order",
+            "code": "class Order(Base):\n    __tablename__ = 'orders'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    customer_id = Column(Integer, ForeignKey('customers.id'), nullable=False)\n    order_date = Column(DateTime)\n    notes = Column(String(255))\n    total_amount = Column(Integer)\n    amount_total = Column(Integer)",
+            "description": "Represents an order made by a customer, needing a valid customer reference.",
+            "name": "Order"
+        },
+        {
+            "classname": "Item",
+            "code": "class Item(Base):\n    __tablename__ = 'items'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    order_id = Column(Integer, ForeignKey('orders.id'))\n    product_id = Column(Integer, ForeignKey('products.id'))\n    quantity = Column(Integer, nullable=False)\n    price = Column(Integer)\n    amount = Column(Integer)\n    unit_price = Column(Integer)",
+            "description": "Represents an item included in an order with non-null quantity and derived attributes.",
+            "name": "Item"
+        },
+        {
+            "classname": "Product",
+            "code": "class Product(Base):\n    __tablename__ = 'products'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String(50))\n    price = Column(Integer)",
+            "description": "Represents a product available for purchase.",
+            "name": "Product"
+        }
+    ],
+    "rules": [
+        {
+            "name": "Customer Balance Constraint",
+            "description": "Ensure Customer balance is less than the Credit Limit",
+            "use_case": "Check Credit",
+            "entity": "Customer",
+            "code": "Rule.constraint(validate=Customer,\n        as_condition=lambda row: row.balance <= row.credit_limit,\n        error_msg=\"Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})\")"
+        },
+        {
+            "name": "Customer Balance Calculation",
+            "description": "Customer balance is the sum of the Order amount_total where date_shipped is null",
+            "use_case": "Check Credit",
+            "entity": "Customer",
+            "code": "Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total)"
+        },
+        {
+            "name": "Order Total Amount Calculation",
+            "description": "Order's amount_total is the sum of the Item amount",
+            "use_case": "Check Credit",
+            "entity": "Order",
+            "code": "Rule.sum(derive=Order.amount_total, as_sum_of=Item.amount)"
+        },
+        {
+            "name": "Item Amount Formula",
+            "description": "Item amount is calculated as quantity * unit_price",
+            "use_case": "Check Credit",
+            "entity": "Item",
+            "code": "Rule.formula(derive=Item.amount, as_expression=lambda row: row.quantity * row.unit_price)"
+        },
+        {
+            "name": "Item Unit Price Copy",
+            "description": "Item unit_price copied from Product unit_price",
+            "use_case": "Check Credit",
+            "entity": "Item",
+            "code": "Rule.copy(derive=Item.unit_price, from_parent=Product.price)"
+        }
+    ],
+    "test_data": "# Test Data for Customer, Order, Item, and Product tables\n\ncustomer1 = Customer(name=\"Alice Smith\", email=\"alice@example.com\", balance=0, credit_limit=500)\ncustomer2 = Customer(name=\"Bob Jones\", email=\"bob@example.com\", balance=0, credit_limit=700)\ncustomer3 = Customer(name=\"Charlie Brown\", email=\"charlie@example.com\", balance=0, credit_limit=900)\ncustomer4 = Customer(name=\"Daisy Miller\", email=\"daisy@example.com\", balance=0, credit_limit=600)\n\norder1 = Order(customer_id=1, order_date=date(2023, 3, 1), notes=\"Urgent delivery\", total_amount=200,\n               amount_total=200)\norder2 = Order(customer_id=2, order_date=date(2023, 3, 5), notes=\"Include gift wrap\", total_amount=150,\n               amount_total=150)\norder3 = Order(customer_id=3, order_date=date(2023, 3, 10), notes=\"No rush\", total_amount=100,\n               amount_total=100)\norder4 = Order(customer_id=4, order_date=date(2023, 3, 15), notes=\"Deliver to secondary address\", total_amount=250,\n               amount_total=250)\n\nitem1 = Item(order_id=1, product_id=1, quantity=2, price=50, amount=100, unit_price=50)\nitem2 = Item(order_id=1, product_id=2, quantity=3, price=100, amount=300, unit_price=100)\nitem3 = Item(order_id=2, product_id=1, quantity=1, price=50, amount=50, unit_price=50)\nitem4 = Item(order_id=2, product_id=3, quantity=1, price=100, amount=100, unit_price=100)\n\nproduct1 = Product(name=\"Laptop\", price=1000)\nproduct2 = Product(name=\"Smartphone\", price=500)\nproduct3 = Product(name=\"Tablet\", price=300)\nproduct4 = Product(name=\"Headphones\", price=100)",
+    "test_data_rows": [
+        {
+            "test_data_row_variable": "customer1",
+            "code": "Customer(name=\"Alice Smith\", email=\"alice@example.com\", balance=0, credit_limit=500)"
+        },
+        {
+            "test_data_row_variable": "order1",
+            "code": "Order(customer_id=1, order_date=date(2023, 3, 1), notes=\"Urgent delivery\", total_amount=200, amount_total=200)"
+        },
+        {
+            "test_data_row_variable": "item1",
+            "code": "Item(order_id=1, product_id=1, quantity=2, price=50, amount=100, unit_price=50)"
+        },
+        {
+            "test_data_row_variable": "product1",
+            "code": "Product(name=\"Laptop\", price=1000)"
+        }
+    ],
+    "test_data_sqlite": "INSERT INTO customers VALUES (NULL, 'Alice Smith', 'alice@example.com', 0, 500);\nINSERT INTO orders VALUES (NULL, 1, '2023-03-01', 'Urgent delivery', 200, 200);\nINSERT INTO items VALUES (NULL, 1, 1, 2, 50, 100, 50);\nINSERT INTO products VALUES (NULL, 'Laptop', 1000);",
+    "name": "EnhancedDataModel"
+}

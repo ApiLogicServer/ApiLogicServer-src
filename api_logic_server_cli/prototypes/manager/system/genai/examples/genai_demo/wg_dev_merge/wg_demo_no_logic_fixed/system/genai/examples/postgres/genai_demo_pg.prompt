@@ -1,0 +1,14 @@
+Use SQLAlchemy to create a postgresql database named genai_demo (username=postgres, password p), with customers, orders, items and product
+
+Hints: use autonum keys, allow nulls, Decimal types, foreign keys, no check constraints.
+
+Include a notes field for orders.
+
+Create a few rows of only customer and product data.
+
+Enforce the Check Credit requirement (do not generate check constraints):
+1. Customer.balance <= credit_limit
+2. Customer.balance = Sum(Order.amount_total where date_shipped is null)
+3. Order.amount_total = Sum(Item.mount)
+4. Item.amount = quantity * unit_price
+5. Store the Item.unit_price as a copy from Product.unit_price

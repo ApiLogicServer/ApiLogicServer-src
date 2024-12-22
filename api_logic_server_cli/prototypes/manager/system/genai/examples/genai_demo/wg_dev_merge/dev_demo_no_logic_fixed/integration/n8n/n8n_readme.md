@@ -1,5 +1,5 @@
 # Workflow Integration using n8n.io
-The n8n.io has over 400 integrations predefined. There are over 1,000 prebuilt templates including AI chatbot creation that can be used to integrate with ApiLogicServer.
+The n8n.io has over 400 integrations predefined. There are over 1,000 prebuilt templates including AI chatbot creation that can be used to integrate with ApiLogicServer. In the integration/n8n folder, the N8N_WebHook_from_ApiLogicServer,json which can be imported into your n8n.io running project and use the Northwind sample to test. [Note - the SendGrid APIKey is not provided] 
 
 ## Download and install n8n.io locally
 The cloud version is available - but for development we will use the local install
@@ -40,10 +40,9 @@ in the workflow (e.g. SendGrid email)
         """
         Webhook Workflow:  When Customer is inserted/updated = post to external system
         """
-
-        status = send_n8n_message(logic_row=logic_row)
-        logic_row.debug(status)
-        return
+        if logic_row.is_inserted():
+            status = send_n8n_message(logic_row=logic_row)
+            logic_row.debug(status)
 
     Rule.after_flush_row_event(on_class=models.Customer, calling=call_n8n_workflow)
 ```

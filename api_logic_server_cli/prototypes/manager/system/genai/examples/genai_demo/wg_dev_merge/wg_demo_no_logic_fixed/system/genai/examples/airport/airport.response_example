@@ -1,0 +1,149 @@
+Absolutely, let's design an airport database using SQLAlchemy for SQLite. Below is a schema definition for such a database, along with sample data for a few tables. We'll include the following tables:
+
+1. Airports
+2. Airlines
+3. Flights
+4. Runways
+5. Gates
+6. Terminals
+7. Employees
+8. Passengers
+9. Tickets
+10. Baggage
+
+First, ensure you have SQLAlchemy installed. You can install it using pip:
+```sh
+pip install SQLAlchemy
+```
+
+Here's the code:
+
+```python
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, DateTime
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship, sessionmaker
+import datetime
+
+# Define base
+Base = declarative_base()
+
+# Define tables
+class Airport(Base):
+    __tablename__ = 'airports'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+    city = Column(String, nullable=False)
+    country = Column(String, nullable=False)
+
+class Airline(Base):
+    __tablename__ = 'airlines'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+
+class Flight(Base):
+    __tablename__ = 'flights'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    flight_number = Column(String, nullable=False)
+    departure_airport_id = Column(Integer, ForeignKey('airports.id'), nullable=False)
+    arrival_airport_id = Column(Integer, ForeignKey('airports.id'), nullable=False)
+    departure_time = Column(DateTime, nullable=False)
+    arrival_time = Column(DateTime, nullable=False)
+    airline_id = Column(Integer, ForeignKey('airlines.id'), nullable=False)
+
+class Runway(Base):
+    __tablename__ = 'runways'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    airport_id = Column(Integer, ForeignKey('airports.id'), nullable=False)
+    length = Column(Integer, nullable=False)
+    surface = Column(String, nullable=True)
+
+class Gate(Base):
+    __tablename__ = 'gates'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    airport_id = Column(Integer, ForeignKey('airports.id'), nullable=False)
+    gate_number = Column(String, nullable=False)
+
+class Terminal(Base):
+    __tablename__ = 'terminals'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    airport_id = Column(Integer, ForeignKey('airports.id'), nullable=False)
+    terminal_name = Column(String, nullable=False)
+
+class Employee(Base):
+    __tablename__ = 'employees'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    first_name = Column(String, nullable=False)
+    last_name = Column(String, nullable=False)
+    position = Column(String, nullable=False)
+    airport_id = Column(Integer, ForeignKey('airports.id'), nullable=False)
+
+class Passenger(Base):
+    __tablename__ = 'passengers'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    first_name = Column(String, nullable=False)
+    last_name = Column(String, nullable=False)
+    passport_number = Column(String, nullable=False)
+
+class Ticket(Base):
+    __tablename__ = 'tickets'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    passenger_id = Column(Integer, ForeignKey('passengers.id'), nullable=False)
+    flight_id = Column(Integer, ForeignKey('flights.id'), nullable=False)
+    seat_number = Column(String, nullable=False)
+    price = Column(Integer, nullable=False)
+
+class Baggage(Base):
+    __tablename__ = 'baggage'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    ticket_id = Column(Integer, ForeignKey('tickets.id'), nullable=False)
+    weight = Column(Integer, nullable=False)
+    dimensions = Column(String, nullable=True)
+
+# Create an engine and a metadata object
+engine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite')
+Base.metadata.create_all(engine)
+
+# Create a new session
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# Add sample data
+airport1 = Airport(name="John F. Kennedy International Airport", city="New York", country="USA")
+airport2 = Airport(name="Los Angeles International Airport", city="Los Angeles", country="USA")
+
+airline1 = Airline(name="American Airlines")
+airline2 = Airline(name="Delta Airlines")
+
+flight1 = Flight(flight_number="AA123", departure_airport_id=1, arrival_airport_id=2, departure_time=datetime.datetime(2023, 10, 1, 14, 30), arrival_time=datetime.datetime(2023, 10, 1, 17, 30), airline_id=1)
+flight2 = Flight(flight_number="DL456", departure_airport_id=2, arrival_airport_id=1, departure_time=datetime.datetime(2023, 10, 2, 9, 45), arrival_time=datetime.datetime(2023, 10, 2, 13, 0), airline_id=2)
+
+runway1 = Runway(airport_id=1, length=4000, surface="Asphalt")
+runway2 = Runway(airport_id=2, length=3800, surface="Concrete")
+
+gate1 = Gate(airport_id=1, gate_number="A1")
+gate2 = Gate(airport_id=2, gate_number="B2")
+
+terminal1 = Terminal(airport_id=1, terminal_name="Terminal 1")
+terminal2 = Terminal(airport_id=2, terminal_name="Terminal 2")
+
+employee1 = Employee(first_name="John", last_name="Smith", position="Pilot", airport_id=1)
+employee2 = Employee(first_name="Marry", last_name="Johnson", position="Flight Attendant", airport_id=2)
+
+passenger1 = Passenger(first_name="Alice", last_name="Brown", passport_number="X123456")
+passenger2 = Passenger(first_name="Bob", last_name="Davis", passport_number="Y654321")
+
+ticket1 = Ticket(passenger_id=1, flight_id=1, seat_number="12A", price=300)
+ticket2 = Ticket(passenger_id=2, flight_id=2, seat_number="14C", price=250)
+
+baggage1 = Baggage(ticket_id=1, weight=25, dimensions="55x40x20")
+baggage2 = Baggage(ticket_id=2, weight=30, dimensions="60x45x25")
+
+# Add and commit the objects
+session.add_all([airport1, airport2, airline1, airline2, flight1, flight2, runway1, runway2, gate1, gate2, terminal1, terminal2, employee1, employee2, passenger1, passenger2, ticket1, ticket2, baggage1, baggage2])
+session.commit()
+
+# Close the session
+session.close()
+```
+
+This script defines the ten required tables with appropriate relationships and fields. It also adds some sample data into the database. When you run this script, it will create a SQLite database named `model.sqlite` at the specified location and populate it with initial data.
