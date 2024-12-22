@@ -113,7 +113,7 @@ class GenAI(object):
 
 
         def get_repaired_response() -> dict:
-            """Get repaired response from file
+            """Get repaired response dict from file
 
             Returns:
                 dict: the repaired response
@@ -145,6 +145,11 @@ class GenAI(object):
             else:
                 log.error(f"Error: repaired response file/dir not found: {self.project.genai_repaired_response}")
             return response_dict  # end get_repaired_response()
+
+
+        #######################################################
+        # main driver starts here
+        #######################################################
 
         log.info(f'\nGenAI [{self.project.project_name}] creating microservice from: {self.project.genai_using}')
         if self.project.genai_repaired_response != '':
@@ -211,7 +216,7 @@ class GenAI(object):
                                                 post_error=self.post_error,
                                                 use_relns=self.project.genai_use_relns)
         else:
-            self.fix_and_write_model_file() # write create_db_models.py for db creation, & logic (key method)
+            self.z_fix_and_write_model_file() # write create_db_models.py for db creation, & logic (key method)
         
         self.save_prompt_messages_to_system_genai_temp_project()  # save prompts, response and models.py
         if self.project.project_name_last_node == 'genai_demo_conversation':
@@ -264,6 +269,8 @@ class GenAI(object):
                     # 0 is R/'you are', 1 R/'request', 2 is 'response', 3 is iteration
                     with open(each_file, 'r') as file:
                         prompt = file.read()
+                    if each_file.name == 'constraint_tests.prompt':
+                        debug_string = "good breakpoint - prompt"
                     role = "user"
                     if response_count == 0 and request_count == 0 and each_file.suffix == '.prompt':
                         if not prompt.startswith('You are a '):  # add *missing* 'you are''
@@ -271,12 +278,15 @@ class GenAI(object):
                             request_count = 1
                     file_num = request_count + response_count
                     file_str = str(file_num).zfill(3)
-                    log.debug(f'.. conv[{file_str}] processes: {os.path.basename(each_file)} - {prompt[:30]}...')
+                    debug_prompt = prompt[:30] 
+                    debug_prompt = debug_prompt.replace('\n', ' | ')
+                    log.debug(f'.. conv[{file_str}] processes: {os.path.basename(each_file)} - {debug_prompt}...')
                     if each_file.suffix == ".response":
                         role = 'system'
                         response_count += 1
                     else:
                         request_count += 1      # rebuild response with *all* tables
+                        # hmm, this differs from genai_svcs/ get_prompt_messages
                         if request_count >= 3:   # Run Config: genai AUTO DEALERSHIP CONVERSATION
                             if 'updating the prior response' not in prompt:
                                 prompt = self.get_prompt__with_inserts(raw_prompt=prompt, for_iteration=True)
@@ -295,11 +305,12 @@ class GenAI(object):
                 prompt = self.get_prompt__with_inserts(raw_prompt=prompt)  # insert db-specific logic
                 prompt_messages[1 + learning_requests_len]["content"] = prompt  # TODO - use append?
             
-            active_rules_json_path = Path(self.project.genai_using).joinpath('logic/active_rules.json')
+            active_rules_json_path = Path(self.project.genai_using).joinpath('logic/active_rules.json')  # todo - what is this
             pass
 
         prompt_messages : List[ Dict[str, str] ] = []  # prompt/response conversation to be sent to ChatGPT
         
+        # hmm, this differs from genai_svcs/ get_prompt_messages
         if self.project.genai_repaired_response != '':       # if exists, get prompt (just for inserting into declare_logic.py)
             prompt = ""  # we are not calling ChatGPT, just getting the prompt to scan for logic
             if Path(self.project.genai_using).is_file():  # eg, launch.json for airport_4 is just a name
@@ -389,6 +400,7 @@ class GenAI(object):
     
     def get_prompt__with_inserts(self, raw_prompt: str, for_iteration: bool = False) -> str:
         """ prompt-engineering:
+
             1. insert db-specific logic into prompt 
             2. insert iteration prompt     (if for_iteration)
             3. insert logic_inserts.prompt ('1 line: Use LogicBank to create declare_logic()...')
@@ -401,67 +413,75 @@ class GenAI(object):
         Returns:
             str: the engineered prompt with inserts
         """
-        prompt_result = raw_prompt
-        prompt_inserts = ''
-        if '*' == self.project.genai_prompt_inserts:    # * means no inserts
-            prompt_inserts = "*"
-        elif '' != self.project.genai_prompt_inserts:   # if text, use this file
-            prompt_inserts = self.project.genai_prompt_inserts
-        elif 'sqlite' in self.project.db_url:           # if blank, use default for db    
-            prompt_inserts = f'sqlite_inserts.prompt'
-        elif 'postgresql' in self.project.db_url:
-            prompt_inserts = f'postgresql_inserts.prompt'
-        elif 'mysql' in self.project.db_url:
-            prompt_inserts = f'mysql_inserts.prompt'
+        if use_svcs := True:  #  to do - remove this wrapper, migrate to genai_svcs
+            prompt_result, logic_enabled = genai_svcs.get_create_prompt__with_inserts(
+                arg_prompt_inserts = self.project.genai_prompt_inserts,
+                raw_prompt = raw_prompt, 
+                arg_db_url = self.project.db_url,
+                arg_test_data_rows = self.project.genai_test_data_rows,
+                for_iteration=for_iteration)
+        else:  # old code - delete
+            prompt_result = raw_prompt
+            prompt_inserts = ''
+            if '*' == self.project.genai_prompt_inserts:    # * means no inserts
+                prompt_inserts = "*"
+            elif '' != self.project.genai_prompt_inserts:   # if text, use this file
+                prompt_inserts = self.project.genai_prompt_inserts
+            elif 'sqlite' in self.project.db_url:           # if blank, use default for db    
+                prompt_inserts = f'sqlite_inserts.prompt'
+            elif 'postgresql' in self.project.db_url:
+                prompt_inserts = f'postgresql_inserts.prompt'
+            elif 'mysql' in self.project.db_url:
+                prompt_inserts = f'mysql_inserts.prompt'
 
-        if prompt_inserts == "*":  
-            pass    # '*' means caller has computed their own prompt -- no inserts
-        else:       # do prompt engineering (inserts)
-            prompt_eng_file_name = f'system/genai/prompt_inserts/{prompt_inserts}'
-            assert Path(prompt_eng_file_name).exists(), \
-                f"Missing prompt_inserts file: {prompt_eng_file_name}"  # eg api_logic_server_cli/prototypes/manager/system/genai/prompt_inserts/sqlite_inserts.prompt
-            log.debug(f'get_prompt__with_inserts: {str(os.getcwd())} \n .. merged with: {prompt_eng_file_name}')
-            with open(prompt_eng_file_name, 'r') as file:
-                pre_post = file.read()  # eg, Use SQLAlchemy to create a sqlite database named system/genai/temp/create_db_models.sqlite, with
-            prompt_result = pre_post.replace('{{prompt}}', raw_prompt)
-            if for_iteration:
-                # Update the prior response - be sure not to lose classes and test data already created.
-                prompt_result = 'Update the prior response - be sure not to lose classes and test data already created.' \
-                    + '\n\n' + prompt_result
-                log.debug(f'.. iteration inserted: Update the prior response')
-                log.debug(f'.... iteration prompt result: {prompt_result}')
+            if prompt_inserts == "*":  
+                pass    # '*' means caller has computed their own prompt -- no inserts
+            else:       # do prompt engineering (inserts)
+                prompt_eng_file_name = f'system/genai/prompt_inserts/{prompt_inserts}'
+                assert Path(prompt_eng_file_name).exists(), \
+                    f"Missing prompt_inserts file: {prompt_eng_file_name}"  # eg api_logic_server_cli/prototypes/manager/system/genai/prompt_inserts/sqlite_inserts.prompt
+                log.debug(f'get_prompt__with_inserts: {str(os.getcwd())} \n .. merged with: {prompt_eng_file_name}')
+                with open(prompt_eng_file_name, 'r') as file:
+                    pre_post = file.read()  # eg, Use SQLAlchemy to create a sqlite database named system/genai/temp/create_db_models.sqlite, with
+                prompt_result = pre_post.replace('{{prompt}}', raw_prompt)
+                if for_iteration:
+                    # Update the prior response - be sure not to lose classes and test data already created.
+                    prompt_result = 'Update the prior response - be sure not to lose classes and test data already created.' \
+                        + '\n\n' + prompt_result
+                    log.debug(f'.. iteration inserted: Update the prior response')
+                    log.debug(f'.... iteration prompt result: {prompt_result}')
 
-            prompt_lines = prompt_result.split('\n')
-            prompt_line_number = 0
-            do_logic = True
-            for each_line in prompt_lines:
-                if 'Create multiple rows of test data' in each_line:
-                    if self.project.genai_test_data_rows > 0:
-                        each_line = each_line.replace(
-                            f'Create multiple rows',  
-                            f'Create {self.project.genai_test_data_rows} rows')
-                        prompt_lines[prompt_line_number] = each_line
-                        log.debug(f'.. inserted explicit test data: {each_line}')
-                if K_LogicBankOff in each_line:
-                    self.logic_enabled = False  # for demos
+                prompt_lines = prompt_result.split('\n')
+                prompt_line_number = 0
+                do_logic = True
+                for each_line in prompt_lines:
+                    if 'Create multiple rows of test data' in each_line:
+                        if self.project.genai_test_data_rows > 0:
+                            each_line = each_line.replace(
+                                f'Create multiple rows',  
+                                f'Create {self.project.genai_test_data_rows} rows')
+                            prompt_lines[prompt_line_number] = each_line
+                            log.debug(f'.. inserted explicit test data: {each_line}')
+                    if K_LogicBankOff in each_line:
+                        self.logic_enabled = False  # for demos
 
-                if "LogicBank" in each_line and do_logic == True:
-                    log.debug(f'.. inserted: {each_line}')
-                    prompt_eng_logic_file_name = f'system/genai/prompt_inserts/logic_inserts.prompt'
-                    with open(prompt_eng_logic_file_name, 'r') as file:
-                        prompt_logic = file.read()  # eg, Use LogicBank to create declare_logic()...
-                    prompt_lines[prompt_line_number] = prompt_logic
-                    do_logic = False
-                prompt_line_number += 1
-            
-            response_format_file_name = f'system/genai/prompt_inserts/response_format.prompt'
-            with open(response_format_file_name, 'r') as file:
-                response_format = file.readlines()
-            prompt_lines.extend(response_format)
+                    if "LogicBank" in each_line and do_logic == True:
+                        log.debug(f'.. inserted: {each_line}')
+                        prompt_eng_logic_file_name = f'system/genai/prompt_inserts/logic_inserts.prompt'
+                        with open(prompt_eng_logic_file_name, 'r') as file:
+                            prompt_logic = file.read()  # eg, Use LogicBank to create declare_logic()...
+                        prompt_lines[prompt_line_number] = prompt_logic
+                        do_logic = False
+                    prompt_line_number += 1
+                
+                response_format_file_name = f'system/genai/prompt_inserts/response_format.prompt'
+                with open(response_format_file_name, 'r') as file:
+                    response_format = file.readlines()
+                prompt_lines.extend(response_format)
 
-            prompt_result = "\n".join(prompt_lines)  # back to a string
-            pass
-        return prompt_result
+                prompt_result = "\n".join(prompt_lines)  # back to a string
+                pass
+        return prompt_result #, logic_enabled hmm
     
     def ensure_system_dir_exists(self):
         """
@@ -615,7 +635,7 @@ class GenAI(object):
             log.error(f"\n\nERROR creating genai project docs: {docs_dir}\n\n{traceback.format_exc()}")
         pass
 
-    def fix_and_write_model_file(self):
+    def z_fix_and_write_model_file(self):
         """
         1. from response, create model file / models lines
         2. from response, create model file / test lines
@@ -822,8 +842,6 @@ class GenAI(object):
         create_db_model_lines.append("\nfrom sqlalchemy.dialects.sqlite import *\n") # specific for genai 
         
         models = self.response_dict.models
-        
-        # fix_and_write_model_file_svcs(response_dict=self.response_dict, save_dir="/tmp")
         
         # Usage inside the class
         create_db_model_lines = insert_model_lines(models, create_db_model_lines)
