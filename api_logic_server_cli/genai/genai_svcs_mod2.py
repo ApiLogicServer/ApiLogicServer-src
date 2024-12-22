@@ -419,25 +419,19 @@ def get_lines_from_file(file_name: str) -> list[str]:
 
 def get_create_prompt__with_inserts(arg_prompt_inserts: str='', raw_prompt: str='', for_iteration: bool = False, 
                                     arg_db_url: str="sqlite", arg_test_data_rows: int=4) -> tuple[str, bool]:
-    """ Prompt-engineering for creating project,  from: <manager>/system/genai/prompt_inserts
+    """ prompt-engineering for creating project:
+        1. insert db-specific logic into prompt 
+        2. insert iteration prompt     (if for_iteration)
+        3. insert logic_inserts.prompt ('1 line: Use LogicBank to create declare_logic()...')
+        4. designates prompt-format    (response_format.prompt)
 
-    prompt_inserts file name is computed from db_url, with inserts from arg_prompt_inserts.
-    1. insert db-specific logic into prompt 
-    2. insert iteration prompt     (if for_iteration)
-    3. insert logic_inserts.prompt ('1 line: Use LogicBank to create declare_logic()...')
-    4. designates prompt-format    (response_format.prompt)
-
-    Args:
-        arg_prompt_inserts (str, optional): user prompt (eg, airport system). Defaults to ''.
-        raw_prompt (str, optional): user prompt (eg, airport system) replaces {{prompt}}. Defaults to ''.
-        for_iteration (bool, optional): _description_. Defaults to False.
-        arg_db_url (str, optional): used to compute prompt file name. Defaults to "sqlite".
-        arg_test_data_rows (int, optional): how many rows. Defaults to 4.
+    Args:  FIXME
+        raw_prompt (str): the prompt from file or text argument
+        for_iteration (bool, optional): Inserts 'Update the prior response...' Defaults to False.
 
     Returns:
-        tuple[str, bool]: str: the engineered prompt with inserts, logic_enabled
-    """    
-
+        str: the engineered prompt with inserts
+    """
     prompt_result = raw_prompt
     prompt_inserts = ''
     logic_enabled = True
