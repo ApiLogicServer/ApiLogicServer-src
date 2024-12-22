@@ -1011,9 +1011,10 @@ if Config.do_install_api_logic_server:  # verify the build process - rebuild, an
             cwd=install_api_logic_server_path,
             msg=f'\nInstall pyodbc')
 
-if len(sys.argv) > 1 and sys.argv[1] == 'build-only':
-    print("\nBuild/Install successful\n\n")
-    exit (0)
+if just_build := False:  # most times, we need to create mgr and run nw
+    if len(sys.argv) > 1 and sys.argv[1] == 'build-only':
+        print("\nBuild/Install successful\n\n")
+        exit (0)
 
 
 
@@ -1052,6 +1053,12 @@ if Config.do_test_api_logic_project_with_auth:
     als add-auth kc ala 1073-1080
     repeat 867-870
 '''
+
+if len(sys.argv) > 1 and sys.argv[1] == 'build-only':
+    print("\nBuild/Install successful\n\n")
+    exit (0)
+
+
 
 if Config.do_test_genai:
     # read environment variable APILOGICSERVER_TEST_GENAI
