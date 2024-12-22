@@ -372,8 +372,8 @@ if Config.do_genai_test_genai_demo_conversation:
                   '''
     # test genai, using copy of pre-supplied ChatGPT response (to avoid api key issues)
     # see https://apilogicserver.github.io/Docs/Sample-Genai/#what-just-happened
-    test_name = f'{test_folder_name}/genai_test_genai_demo_conversation'
-    test_note = 'rename Customer / add Addresses, add SalesRep'
+    test_name = f'{test_folder_name}/genai_test_genai_demo_iteration'
+    test_note = 'rename Customer / add Addresses, add SalesRep, logic'
     test_names.append( (test_name, test_note) )
     prompt_path = install_api_logic_server_path.joinpath('system/genai/examples/genai_demo/genai_demo_iteration')
     assert prompt_path.exists() , f'{test_name} error: prompt path not found: {str(prompt_path)}'
@@ -387,8 +387,12 @@ if Config.do_genai_test_genai_demo_conversation:
         cwd=genai_demo_path,
         msg=f'\nCustomize genai_demo')
     '''
-    start_api_logic_server(project_name=test_name)
-    stop_server(msg=f"*** {test_name} TESTS COMPLETE ***\n")
+    msg = f"*** {test_name} TESTS COMPLETE ***\n"
+    result = start_api_logic_server(project_name=test_name)
+    if result is not None:
+        msg = f"  ** {test_name} TESTS FAILED \n"
+        test_names.append( (msg, result) )
+    stop_server(msg=msg)
 
 if Config.do_test_genai_demo:
     test_name = f'{test_folder_name}/genai_test_genai_demo'
@@ -405,8 +409,12 @@ if Config.do_test_genai_demo:
         cwd=genai_demo_path,
         msg=f'\nCustomize genai_demo')
     '''
-    start_api_logic_server(project_name=test_name)
-    stop_server(msg=f"*** {test_name} TESTS COMPLETE ***\n")
+    msg = f"*** {test_name} TESTS COMPLETE ***\n"
+    result = start_api_logic_server(project_name=test_name)
+    if result is not None:
+        msg = f"  ** {test_name} TESTS FAILED \n"
+        test_names.append( (msg, result) )
+    stop_server(msg=msg)
 
 if Config.do_test_genai_demo_informal:                # complex iteration:
     test_name = f'{test_folder_name}/genai_test_genai_demo_informal'
@@ -423,8 +431,12 @@ if Config.do_test_genai_demo_informal:                # complex iteration:
         cwd=genai_demo_path,
         msg=f'\nCustomize genai_demo')
     '''
-    start_api_logic_server(project_name=test_name)
-    stop_server(msg=f"*** {test_name} TESTS COMPLETE ***\n")
+    msg = f"*** {test_name} TESTS COMPLETE ***\n"
+    result = start_api_logic_server(project_name=test_name)
+    if result is not None:
+        msg = f"  ** {test_name} TESTS FAILED \n"
+        test_names.append( (msg, result) )
+    stop_server(msg=msg)
 
 if Config.do_multi_rule_logic_bad_gen:
     test_name = f'{test_folder_name}/multi_rule_logic_bad_gen'
@@ -441,8 +453,12 @@ if Config.do_multi_rule_logic_bad_gen:
         cwd=genai_demo_path,
         msg=f'\nCustomize genai_demo')
     '''
-    start_api_logic_server(project_name=test_name)
-    stop_server(msg=f"*** {test_name} TESTS COMPLETE ***\n")
+    msg = f"*** {test_name} TESTS COMPLETE ***\n"
+    result = start_api_logic_server(project_name=test_name)
+    if result is not None:
+        msg = f"  ** {test_name} TESTS FAILED \n"
+        test_names.append( (msg, result) )
+    stop_server(msg=msg)
 
 if Config.do_multi_rule_logic:
     test_name = f'{test_folder_name}/multi_rule_logic'
@@ -459,8 +475,12 @@ if Config.do_multi_rule_logic:
         cwd=genai_demo_path,
         msg=f'\nCustomize genai_demo')
     '''
-    start_api_logic_server(project_name=test_name)
-    stop_server(msg=f"*** {test_name} TESTS COMPLETE ***\n")
+    msg = f"*** {test_name} TESTS COMPLETE ***\n"
+    result = start_api_logic_server(project_name=test_name)
+    if result is not None:
+        msg = f"  ** {test_name} TESTS FAILED \n"
+        test_names.append( (msg, result) )
+    stop_server(msg=msg)
 
 if Config.do_data_fix_iteration:
     test_name = f'{test_folder_name}/data_fix_iteration'  # ensure the derived sums are correct (balance, etc)
@@ -477,8 +497,12 @@ if Config.do_data_fix_iteration:
         cwd=genai_demo_path,
         msg=f'\nCustomize genai_demo')
     '''
-    start_api_logic_server(project_name=test_name)
-    stop_server(msg=f"*** {test_name} TESTS COMPLETE ***\n")
+    msg = f"*** {test_name} TESTS COMPLETE ***\n"
+    result = start_api_logic_server(project_name=test_name)
+    if result is not None:
+        msg = f"  ** {test_name} TESTS FAILED \n"
+        test_names.append( (msg, result) )
+    stop_server(msg=msg)
 
 
 if Config.do_airport:
@@ -496,8 +520,12 @@ if Config.do_airport:
         cwd=genai_demo_path,
         msg=f'\nCustomize genai_demo')
     '''
-    start_api_logic_server(project_name=test_name)
-    stop_server(msg=f"*** {test_name} TESTS COMPLETE ***\n")
+    msg = f"*** {test_name} TESTS COMPLETE ***\n"
+    result = start_api_logic_server(project_name=test_name)
+    if result is not None:
+        msg = f"  ** {test_name} TESTS FAILED \n"
+        test_names.append( (msg, result) )
+    stop_server(msg=msg)
 
 
 if Config.do_test_auto_conv:    # ensure project rebuilt, not truncated
