@@ -29,7 +29,8 @@ Base Project is GenAI_no_logic.  No rule-based attributes.
 
 WG adds standard rules - Customer.balance etc.
 
-Dev (wg_genai_demo_no_logic_fixed) adds Product.carbon_neutral from constraint_tests.prompt
+Dev (wg_genai_demo_no_logic_fixed) adds Product.carbon_neutral from constraint_tests.prompt.
+It was created like this (no need to do this, it's already done)
 * cd project
 * als genai-logic
 * als genai-utils --fixup
@@ -40,7 +41,15 @@ Dev (wg_genai_demo_no_logic_fixed) adds Product.carbon_neutral from constraint_t
 ### GenAI merges json/py data models 
 ![successfully merged](./merged%20models.png)
 
-## Status - 12/18
+## Status - 12/21
+
+TODO / Fixup:
+1. seems to lose tables (had to have rules on Order etc)
+2. fix prompt so it does not try to do rules eg in DDL
+
+TODO / Import
+1. See #2 above.  Item stuff like def __repr__(self)...
+    * To get around, 
 
 To do:
 * use export
@@ -54,3 +63,12 @@ To do:
 cd system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed
 als genai-utils --import-genai --using=../wg_demo_no_logic_fixed
 ```
+
+It may fail
+* fix `system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed/docs/import/create_db_models.py`
+* use the restart option
+```bash
+cd system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed
+als genai-utils --import-genai --using=../wg_demo_no_logic_fixed --import-restart
+```
+

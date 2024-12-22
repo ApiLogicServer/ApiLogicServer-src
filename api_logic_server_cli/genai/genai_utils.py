@@ -21,7 +21,7 @@ import ast
 log = logging.getLogger(__name__)
 
 class GenAIUtils:
-    def __init__(self, project: Project, using: str, genai_version: str, fixup: bool, submit: bool, import_genai: bool):
+    def __init__(self, project: Project, using: str, genai_version: str, fixup: bool, submit: bool, import_genai: bool, import_restart: bool = False):
         """ 
 
         """        
@@ -32,6 +32,7 @@ class GenAIUtils:
         self.genai_version = genai_version
         self.submit = submit
         self.import_genai = import_genai
+        self.import_restart = import_restart
 
 
     def run(self):
@@ -263,6 +264,8 @@ class GenAIUtils:
             6. later, run -rebuild-from-model to update API, admin app
 
 
+
+
         """    
 
         def get_wg_project_models(path_wg: Path) -> dict[str, list[dict]]:
@@ -337,7 +340,7 @@ class GenAIUtils:
         self.path_wg = Path(self.using)
         self.path_dev = Path(os.getcwd())
         self.path_dev_import = self.path_dev.joinpath('docs/import')
-        if path_debug := False:
+        if self.import_restart == True:
             for member in self.path_wg.iterdir():
                 log.debug(f'.. .. import_genai: {member.name}')
                 if member.is_dir() and member.name == 'docs':
