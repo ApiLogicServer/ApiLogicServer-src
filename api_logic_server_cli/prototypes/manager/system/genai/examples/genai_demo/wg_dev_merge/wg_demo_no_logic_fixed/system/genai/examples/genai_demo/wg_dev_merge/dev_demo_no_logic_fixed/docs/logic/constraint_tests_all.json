@@ -1,0 +1,66 @@
+{
+    "models": [
+        {
+            "classname": "Customer",
+            "code": "class Customer(Base):\n    \"\"\"description: Represents customers in the system.\"\"\"\n    __tablename__ = 'customer'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String)\n    email = Column(String)",
+            "sqlite_create": "CREATE TABLE customer (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    name TEXT,\n    email TEXT\n);",
+            "description": "Table for storing information about customers.",
+            "name": "Customer"
+        },
+        {
+            "classname": "Product",
+            "code": "class Product(Base):\n    \"\"\"description: Represents products available in the system.\"\"\"\n    __tablename__ = 'product'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String)\n    price = Column(Integer)\n    carbon_neutral = Column(Boolean)",
+            "sqlite_create": "CREATE TABLE product (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    name TEXT,\n    price INTEGER,\n    carbon_neutral BOOLEAN\n);",
+            "description": "Table for storing products available for purchase, including if they're carbon neutral.",
+            "name": "Product"
+        }
+    ],
+    "rules": [
+        {
+            "name": "Customer Name Constraint",
+            "description": "Ensures customer names cannot be 'x'.",
+            "use_case": "Validation to prevent invalid customer names.",
+            "entity": "Customer",
+            "code": "Rule.constraint(validate=Customer,\n                as_condition=lambda row: row.name != 'x',\n                error_msg=\"Customer names cannot be 'x'.\")"
+        },
+        {
+            "name": "Product Name Constraint",
+            "description": "Ensures product names cannot be 'xx'.",
+            "use_case": "Validation to prevent invalid product names.",
+            "entity": "Product",
+            "code": "Rule.constraint(validate=Product,\n                as_condition=lambda row: row.name != 'xx',\n                error_msg=\"Product names cannot be 'xx'.\")"
+        },
+        {
+            "name": "Product Carbon Neutral",
+            "description": "Ensures products with names containing 'green' are carbon neutral.",
+            "use_case": "Validation for environmentally friendly products.",
+            "entity": "Product",
+            "code": "Rule.constraint(validate=Product,\n                as_condition=lambda row: 'green' not in row.name.lower() or row.carbon_neutral is True,\n                error_msg=\"Products containing 'green' in their name must be carbon neutral.\")"
+        }
+    ],
+    "test_data": "-- Populate customer table\nINSERT INTO customer (name, email) VALUES ('Alice', 'alice@example.com');\nINSERT INTO customer (name, email) VALUES ('x', 'invalid@example.com');\n\n-- Populate product table\nINSERT INTO product (name, price, carbon_neutral) VALUES ('Eco-Friendly Chair', 150, 1);\nINSERT INTO product (name, price, carbon_neutral) VALUES ('green forrest artwork', 500, 1);\nINSERT INTO product (name, price, carbon_neutral) VALUES ('xx', 30, 1);",
+    "test_data_rows": [
+        {
+            "test_data_row_variable": "customer1",
+            "code": "insert into customer (name, email) values ('Alice', 'alice@example.com');"
+        },
+        {
+            "test_data_row_variable": "customer2_invalid",
+            "code": "insert into customer (name, email) values ('x', 'invalid@example.com');"
+        },
+        {
+            "test_data_row_variable": "product1",
+            "code": "insert into product (name, price, carbon_neutral) values ('Eco-Friendly Chair', 150, 1);"
+        },
+        {
+            "test_data_row_variable": "product2",
+            "code": "insert into product (name, price, carbon_neutral) values ('green forrest artwork', 500, 1);"
+        },
+        {
+            "test_data_row_variable": "product3_invalid",
+            "code": "insert into product (name, price, carbon_neutral) values ('xx', 30, 1);"
+        }
+    ],
+    "test_data_sqlite": "-- Sqlite statements for inserting data\ninsert into customer (name, email) values ('Alice', 'alice@example.com');\ninsert into customer (name, email) values ('x', 'invalid@example.com');\n\ninsert into product (name, price, carbon_neutral) values ('Eco-Friendly Chair', 150, 1);\ninsert into product (name, price, carbon_neutral) values ('green forrest artwork', 500, 1);\ninsert into product (name, price, carbon_neutral) values ('xx', 30, 1);",
+    "name": "Simple Constraints Test"
+}

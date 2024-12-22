@@ -1,0 +1,22 @@
+<o-form #ItemForm attr="Item_form_insert" service="Item" entity="Item" 
+keys="id" fxLayout="column" show-header="yes" header-actions="I"
+horizontal-scroll="yes"
+after-insert-mode="new" class="standalone-form-container" (onInsertMode)="onInsertMode()">
+
+<o-row attr="row1" layout-align="start stretch">
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+    
+        <o-integer-input #id attr="id" label=" id*" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-integer-input #quantity attr="quantity" label="quantity" type="integer" editable="no" required="yes" ></o-integer-input>
+      
+        <o-integer-input #order_id attr="order_id" label="order_id" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-integer-input #product_id attr="product_id" label="product_id" type="integer" editable="no" required="no" ></o-integer-input>
+      
+</div>
+</o-row>
+
+<div layout-padding></div>
+
+</o-form>

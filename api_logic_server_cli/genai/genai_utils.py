@@ -276,7 +276,7 @@ class GenAIUtils:
             """            
 
             models = []
-            with open(path_wg.joinpath('docs/models_export.json'), "r") as file:
+            with open(path_wg.joinpath('docs/export/export.json'), "r") as file:
                 json_data = json.load(file)
             return json_data['models']
          
@@ -347,7 +347,7 @@ class GenAIUtils:
                 pass
             pass
 
-        if debug_rebuild := True:  # this is mainly to avoid lengthy GPT calls
+        if debug_rebuild := False:  # this is mainly to avoid lengthy GPT calls
             # this presumes ../docs/import/create_db_models.py is built.  
             # You may to repair test data and restart here.
             # Errors can make ont appgen fail - you may need to delete in incoming project (but will need to test)

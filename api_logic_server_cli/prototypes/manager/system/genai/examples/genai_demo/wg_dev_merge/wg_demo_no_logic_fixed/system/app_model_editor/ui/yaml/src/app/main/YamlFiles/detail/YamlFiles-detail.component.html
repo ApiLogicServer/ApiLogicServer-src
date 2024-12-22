@@ -1,0 +1,37 @@
+<div class="container">
+  <o-form-container breadcrumb="yes" breadcrumb-label-columns="name" breadcrumb-separator=", " class="fill-form">
+    <o-form #form attr="YamlFiles_form_edit" service="YamlFiles" entity="YamlFiles" fxLayout="column" show-header="yes"
+      header-actions="R;U;D" columns="name;size;upload_flag;download_flag;content" #oDetailForm keys="name"
+      keys-sql-types="VARCHAR" after-update-mode="home" show-header-navigation="yes"
+      (onDataLoaded)="onDataLoaded($event)">
+      
+        <o-button o-grid-toolbar position="end" (click)="process_yaml()" label="2. Process Yaml (loads all entities, attributes, relationships)" type="STROKED"
+          icon="upload_file"></o-button>
+        <!-- o-button o-grid-toolbar position="end" (click)="download_yaml()" label="Download Yaml (after editing, populate the download content below)" type="STROKED"
+        icon="download_file" fxFlex="50%"></o-button -->
+      
+      <o-row attr="row1" layout-align="start stretch">
+          <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+
+            <o-text-input attr="name" label=" name*" enabled="no" required="yes" fxFlex="20%"
+              class="form-field"></o-text-input>
+            <o-text-input attr="size" label=" Size" enabled="no" required="no" fxFlex="20%"
+              class="form-field"></o-text-input>
+            <!-- o-checkbox attr="upload_flag" label="Yaml file Processed" tooltip="import to ui/app_model.yaml"
+              enabled="no" required="no" fxFlex="20%" class="form-field"></o-checkbox -->
+            <!-- o-checkbox attr="download_flag" label="Download Yaml file" tooltip="export to ui/admin_model_merge.yaml"
+              enabled="{% now '' %}" required="no" fxFlex="20%" class="form-field"></o-checkbox -->
+            <!-- a href="/download/yamlfile" download="app_model_merge.yaml">Download link</a -->
+            <o-textarea-input attr="content" label="Original Content" [data]="getContent()" read-only="true" rows="30"
+              content-align="left" fxFlex="60%" class="form-field"></o-textarea-input>
+            <!-- o-textarea-input attr="downloaded" label="Downloaded Content" [data]="getConverted()" read-only="true"
+              rows="30" content-align="left" fxFlex="40%" class="form-field"></o-textarea-input -->
+            <!-- o-text-input attr="id" label=" Id*" type="INTEGER" enabled="no" required="yes" fxFlex="20%"
+              class="form-field"></o-text-input -->
+
+          </div>
+        </o-row>
+
+    </o-form>
+  </o-form-container>
+</div>

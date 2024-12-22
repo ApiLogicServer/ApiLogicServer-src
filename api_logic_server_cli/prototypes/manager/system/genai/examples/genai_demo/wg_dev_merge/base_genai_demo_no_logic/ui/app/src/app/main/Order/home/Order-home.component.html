@@ -6,9 +6,9 @@
             entity="Order" 
             title="ORDER"
             keys="id"
-            columns="id;customer_id;order_date;notes" 
+            columns="id;customer_id;notes" 
             header-actions="R;D"
-            visible-columns="id;customer_id;order_date;notes"  
+            visible-columns="id;customer_id;notes"  
             sort-columns="id" 
             query-rows="20" 
             quick-filter="yes"
@@ -32,8 +32,6 @@
         visible-columns="name" separator=" - " width="680px">
     </o-table-cell-renderer-service>
 </o-table-column>
-            
-            <o-date-input #order_date attr="order_date" type="timestamp" label="order_date" editable="no" required="no" format="LL" fxFlex="20%" class="form-field"></o-date-input>
             
             <o-table-column #notes attr="notes" title="notes" editable="no" required="no" content-align="left"></o-table-column>
             

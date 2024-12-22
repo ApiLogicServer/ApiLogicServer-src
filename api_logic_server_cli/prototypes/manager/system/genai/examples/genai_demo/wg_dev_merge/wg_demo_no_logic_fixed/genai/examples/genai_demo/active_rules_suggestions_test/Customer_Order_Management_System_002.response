@@ -1,0 +1,102 @@
+{
+    "models": [
+        {
+            "classname": "Customer",
+            "code": "class Customer(Base):\n    \"\"\"description: Table for storing customer information.\"\"\"\n    __tablename__ = 'customer'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String, unique=True)\n    balance = Column(Integer)\n    credit_limit = Column(Integer)",
+            "sqlite_create": "CREATE TABLE customer (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    name TEXT NOT NULL UNIQUE,\n    balance INTEGER NOT NULL,\n    credit_limit INTEGER NOT NULL\n);",
+            "description": "Table for storing customer information.",
+            "name": "customer"
+        },
+        {
+            "classname": "Order",
+            "code": "class Order(Base):\n    \"\"\"description: Table for storing orders made by customers.\"\"\"\n    __tablename__ = 'order'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    customer_id = Column(Integer, ForeignKey('customer.id'))\n    date_created = Column(DateTime)\n    date_shipped = Column(DateTime, nullable=True)\n    amount_total = Column(Integer)\n    notes = Column(String)",
+            "sqlite_create": "CREATE TABLE order (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    customer_id INTEGER NOT NULL,\n    date_created DATETIME NOT NULL,\n    date_shipped DATETIME,\n    amount_total INTEGER NOT NULL,\n    notes TEXT,\n    FOREIGN KEY(customer_id) REFERENCES customer(id)\n);",
+            "description": "Table for storing orders made by customers.",
+            "name": "order"
+        },
+        {
+            "classname": "Item",
+            "code": "class Item(Base):\n    \"\"\"description: Table for storing items in each order.\"\"\"\n    __tablename__ = 'item'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    order_id = Column(Integer, ForeignKey('order.id'))\n    product_id = Column(Integer, ForeignKey('product.id'))\n    quantity = Column(Integer)\n    unit_price = Column(Integer)\n    amount = Column(Integer)",
+            "sqlite_create": "CREATE TABLE item (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    order_id INTEGER NOT NULL,\n    product_id INTEGER NOT NULL,\n    quantity INTEGER NOT NULL,\n    unit_price INTEGER NOT NULL,\n    amount INTEGER NOT NULL,\n    FOREIGN KEY(order_id) REFERENCES order(id),\n    FOREIGN KEY(product_id) REFERENCES product(id)\n);",
+            "description": "Table for storing items in each order.",
+            "name": "item"
+        },
+        {
+            "classname": "Product",
+            "code": "class Product(Base):\n    \"\"\"description: Table for storing product information.\"\"\"\n    __tablename__ = 'product'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String)\n    unit_price = Column(Integer)",
+            "sqlite_create": "CREATE TABLE product (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    name TEXT NOT NULL,\n    unit_price INTEGER NOT NULL\n);",
+            "description": "Table for storing product information.",
+            "name": "product"
+        }
+    ],
+    "rules": [],
+    "test_data": "Test data to provide initial example instances for each table.",
+    "test_data_rows": [
+        {
+            "test_data_row_variable": "customer_1",
+            "code": "customer_1 = Customer(name=\"Customer A\", balance=1000, credit_limit=5000)"
+        },
+        {
+            "test_data_row_variable": "customer_2",
+            "code": "customer_2 = Customer(name=\"Customer B\", balance=2000, credit_limit=7000)"
+        },
+        {
+            "test_data_row_variable": "customer_3",
+            "code": "customer_3 = Customer(name=\"Customer C\", balance=3000, credit_limit=9000)"
+        },
+        {
+            "test_data_row_variable": "customer_4",
+            "code": "customer_4 = Customer(name=\"Customer D\", balance=4000, credit_limit=10000)"
+        },
+        {
+            "test_data_row_variable": "order_1",
+            "code": "order_1 = Order(customer_id=1, date_created=date(2023, 3, 15), date_shipped=None, amount_total=300, notes=\"Urgent\")"
+        },
+        {
+            "test_data_row_variable": "order_2",
+            "code": "order_2 = Order(customer_id=2, date_created=date(2023, 4, 20), date_shipped=None, amount_total=150, notes=\"\")"
+        },
+        {
+            "test_data_row_variable": "order_3",
+            "code": "order_3 = Order(customer_id=3, date_created=date(2023, 5, 25), date_shipped=None, amount_total=250, notes=\"\")"
+        },
+        {
+            "test_data_row_variable": "order_4",
+            "code": "order_4 = Order(customer_id=4, date_created=date(2023, 6, 30), date_shipped=None, amount_total=350, notes=\"Regular shipment\")"
+        },
+        {
+            "test_data_row_variable": "item_1",
+            "code": "item_1 = Item(order_id=1, product_id=1, quantity=10, unit_price=25, amount=250)"
+        },
+        {
+            "test_data_row_variable": "item_2",
+            "code": "item_2 = Item(order_id=1, product_id=2, quantity=5, unit_price=10, amount=50)"
+        },
+        {
+            "test_data_row_variable": "item_3",
+            "code": "item_3 = Item(order_id=2, product_id=1, quantity=15, unit_price=25, amount=375)"
+        },
+        {
+            "test_data_row_variable": "item_4",
+            "code": "item_4 = Item(order_id=3, product_id=2, quantity=20, unit_price=10, amount=200)"
+        },
+        {
+            "test_data_row_variable": "product_1",
+            "code": "product_1 = Product(name=\"Widget A\", unit_price=25)"
+        },
+        {
+            "test_data_row_variable": "product_2",
+            "code": "product_2 = Product(name=\"Widget B\", unit_price=10)"
+        },
+        {
+            "test_data_row_variable": "product_3",
+            "code": "product_3 = Product(name=\"Widget C\", unit_price=15)"
+        },
+        {
+            "test_data_row_variable": "product_4",
+            "code": "product_4 = Product(name=\"Widget D\", unit_price=20)"
+        }
+    ],
+    "test_data_sqlite": "INSERT INTO customer (name, balance, credit_limit) VALUES ('Customer A', 1000, 5000);\nINSERT INTO customer (name, balance, credit_limit) VALUES ('Customer B', 2000, 7000);\nINSERT INTO customer (name, balance, credit_limit) VALUES ('Customer C', 3000, 9000);\nINSERT INTO customer (name, balance, credit_limit) VALUES ('Customer D', 4000, 10000);\n\nINSERT INTO product (name, unit_price) VALUES ('Widget A', 25);\nINSERT INTO product (name, unit_price) VALUES ('Widget B', 10);\nINSERT INTO product (name, unit_price) VALUES ('Widget C', 15);\nINSERT INTO product (name, unit_price) VALUES ('Widget D', 20);\n\nINSERT INTO \"order\" (customer_id, date_created, date_shipped, amount_total, notes) VALUES (1, '2023-03-15', NULL, 300, 'Urgent');\nINSERT INTO \"order\" (customer_id, date_created, date_shipped, amount_total, notes) VALUES (2, '2023-04-20', NULL, 150, '');\nINSERT INTO \"order\" (customer_id, date_created, date_shipped, amount_total, notes) VALUES (3, '2023-05-25', NULL, 250, '');\nINSERT INTO \"order\" (customer_id, date_created, date_shipped, amount_total, notes) VALUES (4, '2023-06-30', NULL, 350, 'Regular shipment');\n\nINSERT INTO item (order_id, product_id, quantity, unit_price, amount) VALUES (1, 1, 10, 25, 250);\nINSERT INTO item (order_id, product_id, quantity, unit_price, amount) VALUES (1, 2, 5, 10, 50);\nINSERT INTO item (order_id, product_id, quantity, unit_price, amount) VALUES (2, 1, 15, 25, 375);\nINSERT INTO item (order_id, product_id, quantity, unit_price, amount) VALUES (3, 2, 20, 10, 200);",
+    "name": "CustomerOrderSystem"
+}

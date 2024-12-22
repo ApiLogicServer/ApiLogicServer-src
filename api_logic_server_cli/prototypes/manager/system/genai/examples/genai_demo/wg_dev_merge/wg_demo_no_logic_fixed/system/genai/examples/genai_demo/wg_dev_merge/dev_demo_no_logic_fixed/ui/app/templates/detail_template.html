@@ -1,0 +1,30 @@
+<div class="container">
+<o-form-container breadcrumb="yes" breadcrumb-label-columns="{{ breadcrumbLabel }}" breadcrumb-separator=", " class="fill-form">
+      <o-form #form attr="{{ entity }}_form_edit" 
+        service="{{ service }}" 
+        entity="{{ entity }}" 
+        fxLayout="column" 
+        show-header="yes" 
+        header-actions="R;I;U;D"
+        #oDetailForm keys="{{ keys }}" 
+        keys-sql-types="{{ keySqlType }}" 
+        show-header-navigation="yes"
+        (onDataLoaded)="onDataLoaded($event)">
+
+  <o-row attr="row1" layout-align="start stretch">
+    <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+      {% for inputrow in row_columns %}
+      {{ inputrow }}
+      {% endfor %}
+    </div>
+  </o-row>
+      {% if has_tabs %}
+      <mat-tab-group fxFill>
+        {% for tab_panel in tab_panels %}
+        {{ tab_panel }}
+        {% endfor %}
+      </mat-tab-group>
+      {% endif %}
+    </o-form>
+  </o-form-container>
+</div>

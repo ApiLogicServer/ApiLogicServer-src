@@ -1,0 +1,42 @@
+<div class="container">
+<o-form-layout-manager attr="{{ entity}}" mode="{{ new_mode }}" title="{{ title }}">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="{{ tableAttr }}" 
+            service="{{ service }}" 
+            entity="{{ entity }}" 
+            title="{{ title }}"
+            keys="{{ keys }}"
+            columns="{{ columns }}" 
+            header-actions="R;D"
+            visible-columns="{{ visibleColumns }}"  
+            sort-columns="{{ sortColumns }}" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="{{ row_height }}" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            show-title="yes"
+            edition-mode="{{ editOnMode }}" 
+            horizontal-scroll="yes"
+            export-button="yes">
+            {% for table_row_column in row_columns %}
+            {{ table_row_column }}
+            {% endfor %}
+            {% if has_tabs %}
+                <o-table-row-expandable icon-collapse="expand_more" icon-expand="chevron_right">
+                    <ng-template let-row>
+                        <o-expandable-container [targets]="[{{ tableAttr }}]" [data]="row">
+                            {{ single_tab_panel }}
+                        </o-expandable-container>
+                    </ng-template>
+                </o-table-row-expandable>
+            {% endif %}
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>
+</div>

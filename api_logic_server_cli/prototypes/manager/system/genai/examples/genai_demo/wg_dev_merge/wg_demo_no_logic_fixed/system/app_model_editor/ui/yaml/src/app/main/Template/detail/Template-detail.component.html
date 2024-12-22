@@ -1,0 +1,84 @@
+<div class="container">
+  <o-form-container breadcrumb="yes" breadcrumb-label-columns="name" breadcrumb-separator=", "  class="fill-form">
+        <o-form #form attr="Template_form_edit" service="Template" entity="Template" fxLayout="column" show-header="yes"
+          header-actions="R;I;U;D" #oDetailForm keys="name" keys-sql-types="VARCHAR" show-header-navigation="yes"
+          (onDataLoaded)="onDataLoaded($event)">
+
+          <o-row attr="row1" layout-align="start stretch">
+            <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+
+              <div fxLayout="row" fxLayoutAlign="start center" class="gap">
+                <o-text-input attr="name" label=" Name*" editable="yes" required="yes"></o-text-input>
+              </div>
+
+              <div fxLayout="row" fxLayoutAlign="start center" class="gap">
+                <o-text-input attr="description" label="description" editable="yes" required="no"></o-text-input>
+              </div>
+
+            </div>
+          </o-row>
+
+          <mat-tab-group fxFill>
+
+            <mat-tab label="ENTITYATTR-template_name">
+              <div layout-padding>
+                <o-table attr="EntityAttrTable" service="EntityAttr" entity="EntityAttr" 
+                  keys="entity_name;attr"
+                  parent-keys="template_name:name"
+                  columns="entity_name;attr;template_name;label;thistype;tooltip;issearch;issort;exclude;isrequired;isenabled"
+                  horizontal-scroll="yes" detail-form-route="EntityAttr" edit-form-route="EntityAttr"
+                  visible-columns="entity_name;attr;template_name;label;thistype;issearch;issort;exclude;isrequired;isenabled"
+                  sort-columns="entity_name" query-rows="100" quick-filter="yes" row-height="small"
+                  select-all-checkbox="true" pageable="yes" virtual-scroll="yes" insert-button="no" delete-button="no"
+                  fixed-header="true" class="vertical-padding-8" edition-mode="none" horizontal-scroll="yes">
+                  <!-- parent-keys="template_name;entity_name" -->
+
+                  <o-table-column attr="entity_name" label=" Entity Name*" editable="no" required="yes"
+                    content-align="left"></o-table-column>
+
+                  <o-table-column attr="attr" label="Attribute" editable="no" required="yes"
+                    content-align="left"></o-table-column>
+
+                  <o-table-column attr="template_name" label="template_name" editable="no" required="no"
+                    content-align="left"></o-table-column>
+
+                  <o-table-column attr="label" label="label" editable="no" required="no"
+                    content-align="left"></o-table-column>
+
+                  <o-table-column attr="thistype" label="DataType" editable="no" required="yes"
+                    content-align="left"></o-table-column>
+
+                  <o-textarea-input attr="tooltip" label="tooltip" rows="10" content-align="center"></o-textarea-input>
+                  <o-table-column attr="issearch" title="Search">
+                    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+                        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+                </o-table-column>
+                <o-table-column attr="issort" label="Sort">
+    
+                    <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+                        render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+                </o-table-column>
+                  <o-table-column attr="exclude" title="Excluded">
+  
+                      <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+                          render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+                  </o-table-column>
+
+                  <o-table-column attr="isrequired" title="Required">
+                      <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+                          render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+                  </o-table-column>
+
+                  <o-table-column attr="isenabled" title="Enabled">
+                      <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+                          render-type="icon" boolean-type="boolean" true-value="true" false-value="false"></o-table-cell-renderer-boolean>
+                  </o-table-column>
+                    <o-table-paginator page-size-options="100;200;300"></o-table-paginator>
+                </o-table>
+              </div>
+            </mat-tab>
+
+          </mat-tab-group>
+        </o-form>
+  </o-form-container>
+</div>

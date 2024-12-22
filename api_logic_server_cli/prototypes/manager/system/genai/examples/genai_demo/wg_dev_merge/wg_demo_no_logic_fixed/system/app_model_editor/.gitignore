@@ -1,0 +1,25 @@
+.DS_Store
+/build/
+/dist/
+**/__pycache__
+*.egg-info
+/devops/.npm/_logs
+venv/
+test/api_logic_server_behave/scenario_logic_logs/
+devops/docker-compose-dev-local-nginx/www
+devops/docker-compose-dev-azure-nginx/www
+# compiled output
+/ui/yaml/dist
+/tmp
+/out-tsc
+# Only exists if Bazel was run
+/bazel-out
+
+# dependencies
+/node_modules
+/ui/yaml/node_modules
+
+/safrs-react-admin
+/ui/admin/safrs-react-admin
+/safrs-react-admin/node_modules
+/devops/docker-compose-dev-local/postgres-data/

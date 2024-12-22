@@ -1,11 +1,11 @@
 about:
-  date: December 17, 2024 19:31:50
+  date: December 21, 2024 18:44:38
   recent_changes: works with modified safrs-react-admin
   version: 0.0.0
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
 authentication: '{system-default}'
 info:
-  number_relationships: 3
+  number_relationships: 0
   number_tables: 4
 info_toggle_checked: true
 resources:
@@ -15,66 +15,38 @@ resources:
       name: name
       search: true
       sort: true
-    - name: email
     - name: id
-    description: Represents customers in the system.
-    info_list: Represents customers in the system.
-    tab_groups:
-    - direction: tomany
-      fks:
-      - customer_id
-      name: OrderList
-      resource: Order
+    description: Model for Customer data, representing customers in the system.
+    info_list: Model for Customer data, representing customers in the system.
     type: Customer
     user_key: name
+  Item:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: quantity
+      required: true
+    - name: order_id
+    - name: product_id
+    description: Model for Item data, representing items in an order with their respective
+      quantities.
+    info_list: Model for Item data, representing items in an order with their respective
+      quantities.
+    type: Item
+    user_key: id
   Order:
     attributes:
     - label: ' id*'
       name: id
       search: true
       sort: true
-    - name: customer_id
-    - name: order_date
-      type: DATETIME
     - name: notes
-    description: Represents orders placed by customers.
-    info_list: Represents orders placed by customers.
-    tab_groups:
-    - direction: tomany
-      fks:
-      - order_id
-      name: OrderItemList
-      resource: OrderItem
-    - direction: toone
-      fks:
-      - customer_id
-      name: customer
-      resource: Customer
+    - name: customer_id
+    description: Model for Order data, representing orders placed by customers.
+    info_list: Model for Order data, representing orders placed by customers.
     type: Order
-    user_key: id
-  OrderItem:
-    attributes:
-    - label: ' id*'
-      name: id
-      search: true
-      sort: true
-    - name: order_id
-    - name: product_id
-    - name: quantity
-    description: Represents items in an order.
-    info_list: Represents items in an order.
-    tab_groups:
-    - direction: toone
-      fks:
-      - order_id
-      name: order
-      resource: Order
-    - direction: toone
-      fks:
-      - product_id
-      name: product
-      resource: Product
-    type: OrderItem
     user_key: id
   Product:
     attributes:
@@ -82,16 +54,13 @@ resources:
       name: name
       search: true
       sort: true
-    - name: price
+    - name: carbon_neutral
+      type: Boolean
     - name: id
-    description: Represents products available in the system.
-    info_list: Represents products available in the system.
-    tab_groups:
-    - direction: tomany
-      fks:
-      - product_id
-      name: OrderItemList
-      resource: OrderItem
+    description: Model for Product data, representing products available in the system
+      including carbon neutral status.
+    info_list: Model for Product data, representing products available in the system
+      including carbon neutral status.
     type: Product
     user_key: name
 settings:

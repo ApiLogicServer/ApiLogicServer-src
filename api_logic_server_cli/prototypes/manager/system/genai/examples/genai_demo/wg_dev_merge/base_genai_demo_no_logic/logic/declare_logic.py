@@ -25,13 +25,6 @@ def declare_logic():
     from logic.logic_discovery.auto_discovery import discover_logic
     discover_logic()
 
-    # Logic from GenAI: (or, use your IDE w/ code completion)
-
-    # LogicBank Disabled 
-
-    # End Logic from GenAI
-
-
     def handle_all(logic_row: LogicRow):  # #als: TIME / DATE STAMPING, OPTIMISTIC LOCKING
         """
         This is generic - executed for all classes.

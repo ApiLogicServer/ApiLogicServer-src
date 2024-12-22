@@ -1,0 +1,66 @@
+Here's an example SQLAlchemy code to create a SQLite database with the specified tables and fields:
+
+```python
+from sqlalchemy import create_engine, Column, Integer, String, Numeric, ForeignKey
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
+
+Base = declarative_base()
+
+class Customer(Base):
+    __tablename__ = 'customers'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=True)
+    balance = Column(Numeric(precision=10, scale=2), nullable=True)
+    credit_limit = Column(Numeric(precision=10, scale=2), nullable=True)
+
+class Order(Base):
+    __tablename__ = 'orders'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    customer_id = Column(Integer, ForeignKey('customers.id'))
+    amount_total = Column(Numeric(precision=10, scale=2), nullable=True)
+    notes = Column(String, nullable=True)
+
+    customer = relationship("Customer", back_populates="orders")
+
+class Item(Base):
+    __tablename__ = 'items'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    order_id = Column(Integer, ForeignKey('orders.id'))
+    product_id = Column(Integer, ForeignKey('products.id'))
+    quantity = Column(Integer, nullable=True)
+    amount = Column(Numeric(precision=10, scale=2), nullable=True)
+
+    order = relationship("Order", back_populates="items")
+
+class Product(Base):
+    __tablename__ = 'products'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=True)
+    unit_price = Column(Numeric(precision=10, scale=2), nullable=True)
+
+engine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite')
+Base.metadata.create_all(engine)
+```
+
+To add sample data to the tables (customers and products), you can create instances of the respective classes and add them to the database session, and then commit the changes. Here's an example:
+
+```python
+from sqlalchemy.orm import sessionmaker
+
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# Add sample customers
+customer1 = Customer(name="John Doe", balance=1000.00, credit_limit=2000.00)
+customer2 = Customer(name="Jane Smith", balance=1500.00, credit_limit=3000.00)
+
+# Add sample products
+product1 = Product(name="Product A", unit_price=10.00)
+product2 = Product(name="Product B", unit_price=20.00)
+
+session.add_all([customer1, customer2, product1, product2])
+session.commit()
+```
+
+This creates a SQLite database with the specified tables and fields, and adds sample customer and product data. Feel free to modify the code to fit your specific requirements or add more data as needed.

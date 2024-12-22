@@ -1,0 +1,57 @@
+{
+    "models": [
+        {
+            "classname": "Customer",
+            "code": "class Customer(Base):\n    \"\"\"description: Table representing customers in the system.\"\"\"\n\n    __tablename__ = 'customers'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String, nullable=False)\n    balance = Column(Float, default=0.0)  # Derived as sum of Order.amount_total where shipped_date is null\n    credit_limit = Column(Float, nullable=False)",
+            "description": "Table representing customers in the system.",
+            "name": "Customer"
+        },
+        {
+            "classname": "Order",
+            "code": "class Order(Base):\n    \"\"\"description: Table representing customer orders with associated notes.\"\"\"\n\n    __tablename__ = 'orders'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    customer_id = Column(Integer, ForeignKey('customers.id'))\n    notes = Column(Text)\n    amount_total = Column(Float, default=0.0)  # Derived as sum of Item.amount\n    date_shipped = Column(DateTime)",
+            "description": "Table representing customer orders with associated notes.",
+            "name": "Order"
+        },
+        {
+            "classname": "Item",
+            "code": "class Item(Base):\n    \"\"\"description: Table representing items associated with orders.\"\"\"\n\n    __tablename__ = 'items'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    order_id = Column(Integer, ForeignKey('orders.id'))\n    product_id = Column(Integer, ForeignKey('products.id'))\n    quantity = Column(Integer, nullable=False)\n    amount = Column(Float, default=0.0)  # Derived as quantity * unit_price\n    unit_price = Column(Float)  # Copied from Product.unit_price",
+            "description": "Table representing items associated with orders.",
+            "name": "Item"
+        },
+        {
+            "classname": "Product",
+            "code": "class Product(Base):\n    \"\"\"description: Table representing products available for sale.\"\"\"\n\n    __tablename__ = 'products'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String, nullable=False)\n    unit_price = Column(Float, nullable=False)",
+            "description": "Table representing products available for sale.",
+            "name": "Product"
+        }
+    ],
+    "rules": [
+        {
+            "name": "Customer Balance Constraint",
+            "description": "Ensure customer's balance is less than the credit limit.",
+            "code": "Rule.constraint(validate=Customer, as_condition=lambda row: row.balance <= row.credit_limit, error_msg=\"Customer's balance ({row.balance}) exceeds the credit limit ({row.credit_limit})\")"
+        },
+        {
+            "name": "Customer Balance Sum Rule",
+            "description": "Derive customer's balance as the sum of order amount_total where date_shipped is null.",
+            "code": "Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None)"
+        },
+        {
+            "name": "Order Amount Total Sum Rule",
+            "description": "Derive order's amount_total as the sum of item amounts.",
+            "code": "Rule.sum(derive=Order.amount_total, as_sum_of=Item.amount)"
+        },
+        {
+            "name": "Item Amount Formula",
+            "description": "Derive item amount as quantity multiplied by unit_price.",
+            "code": "Rule.formula(derive=Item.amount, as_expression=lambda row: row.quantity * row.unit_price)"
+        },
+        {
+            "name": "Item Unit Price Copy Rule",
+            "description": "Copy item unit_price from product unit_price.",
+            "code": "Rule.copy(derive=Item.unit_price, from_parent=Product.unit_price)"
+        }
+    ],
+    "test_data": "# Test Data Loading\nfrom datetime import date, datetime\n\ntest_product1 = Product(id=1, name=\"Laptop\", unit_price=1000.00)\ntest_product2 = Product(id=2, name=\"Phone\", unit_price=600.00)\n\ntest_customer1 = Customer(id=1, name=\"Alice Smith\", credit_limit=5000.00, balance=0.0)\ntest_customer2 = Customer(id=2, name=\"Bob Johnson\", credit_limit=3000.00, balance=0.0)\n\ntest_order1 = Order(id=1, customer_id=1, notes=\"Urgent delivery\", amount_total=0.0, date_shipped=None)\ntest_order2 = Order(id=2, customer_id=2, notes=\"Gift wrap\", amount_total=0.0, date_shipped=datetime(2023, 5, 10))\n\ntest_item1 = Item(id=1, order_id=1, product_id=1, quantity=2, amount=2000.00, unit_price=1000.00)\ntest_item2 = Item(id=2, order_id=1, product_id=2, quantity=3, amount=1800.00, unit_price=600.00)\ntest_item3 = Item(id=3, order_id=2, product_id=1, quantity=1, amount=1000.00, unit_price=1000.00)",
+    "name": "SalesSystem"
+}

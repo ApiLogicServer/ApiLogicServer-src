@@ -1,0 +1,38 @@
+<o-form attr="Entity" mode="tab" title="{{ 'ENTITY' | oTranslate }}" class="fill-form">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table attr="EntityTable" service="Entity" entity="Entity" title="{{ 'ENTITY' | oTranslate }}" keys="name"
+            columns="name;title;pkey;favorite;mode;menu_group;exclude;new_template;home_template;detail_template" header-actions="R;D"
+            visible-columns="name;title;pkey;favorite;mode;menu_group;exclude" sort-columns="name" query-rows="20"
+            quick-filter="yes" row-height="small" select-all-checkbox="false" pageable="yes" auto-adjust="true"
+            virtual-scroll="yes" edition-mode="dblClick" horizontal-scroll="yes" show-title="yes" export-button="yes">
+
+            <o-table-column attr="name" title=" Entity Name*" editable="no" required="yes"
+                content-align="left"></o-table-column>
+
+            <o-table-column attr="title" title="Title" editable="no" required="no"
+                content-align="left"></o-table-column>
+
+            <o-table-column attr="pkey" title="Primary Key" editable="no" required="no"
+                content-align="left"></o-table-column>
+
+            <o-table-column attr="favorite" title="Favorite" editable="no" required="no"
+                content-align="left"></o-table-column>
+            <o-table-column attr="menu_group" title="Menu Group" editable="no" required="no"
+                content-align="left"></o-table-column>
+            <o-table-column attr="mode" title="Mode" editable="no" required="no" content-align="left"></o-table-column>
+
+            <o-table-column attr="exclude" title="Excluded">
+                <!-- auto-commit="false" -->
+                <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+                    render-type="icon" boolean-type="boolean" true-value="true"
+                    false-value="false"></o-table-cell-renderer-boolean>
+            </o-table-column>
+            <o-textarea-input attr="info_list" label="info_list" rows="10" content-align="center"></o-textarea-input>
+
+            <o-textarea-input attr="info_show" label="info_show" rows="10" content-align="center"></o-textarea-input>
+
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form>

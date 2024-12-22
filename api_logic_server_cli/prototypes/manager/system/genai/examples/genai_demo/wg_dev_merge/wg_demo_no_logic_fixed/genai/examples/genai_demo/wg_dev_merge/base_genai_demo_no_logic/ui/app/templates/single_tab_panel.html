@@ -1,0 +1,34 @@
+<div layout-padding>
+  <o-table #{{ tableAttr }}
+    attr="{{ tableAttr }}" 
+    title="{{ tabTitle }}"
+    service="{{ service }}" 
+    entity="{{ entity }}" 
+    keys="{{ keys }}"
+    parent-keys="{{ parentKeys }}"
+    columns="{{ columns }}"  
+    horizontal-scroll="no"
+    visible-columns="{{ visibleColumns }}"  
+    sort-columns="{{ sortColumns }}" 
+    query-rows="10" 
+    quick-filter="yes"
+    refresh-button="false" 
+    show-title="yes"
+    row-height="{{ row_height }}" 
+    select-all-checkbox="false" 
+    pageable="yes"  
+    auto-adjust="true" 
+    virtual-scroll="yes" 
+    insert-button="no" 
+    delete-button="no" 
+    fixed-header="false" 
+    class="vertical-padding-8"
+    detail-mode="none"
+    edition-mode="none" 
+    auto-adjust="true"
+    horizontal-scroll="yes">
+    {% for table_column in table_columns %}
+    {{ table_column }}
+    {% endfor %}
+  </o-table>
+</div>

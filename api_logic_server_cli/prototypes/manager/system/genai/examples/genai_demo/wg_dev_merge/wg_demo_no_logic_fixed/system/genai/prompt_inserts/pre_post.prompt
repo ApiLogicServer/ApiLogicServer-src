@@ -1,0 +1,3 @@
+Use SQLAlchemy to create a sqlite database named system/genai/temp/model.sqlite, with {{prompt}}.
+
+Create some test data.

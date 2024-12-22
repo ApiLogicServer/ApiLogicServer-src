@@ -1,0 +1,26 @@
+<span mat-dialog-title>{{ 'TABLE.BUTTONS.COLVIS' | oTranslate }}</span>
+
+
+<mat-dialog-content>
+  <div mat-subheader>{{'TABLE.VISIBLE_COLUMNS.DESCRIPTION' | oTranslate}}</div>
+
+  <div [ngClass]="rowHeight">
+    <mat-list cdkDropList (cdkDropListDropped)="drop($event)">
+      <mat-list-item *ngFor="let column of columns" cdkDrag (click)="onClickColumn(column)" [ngClass]="{'column-hidden':!column.visible}"
+        class="o-drag-list-item-box">
+        <div fxLayout="row" fxFlex fxLayoutAlign="stretch center">
+          <mat-icon matListItemIcon svgIcon="ontimize:drag_handle"></mat-icon>
+          <span matListItemLine fxFlex>{{ (column.title || column.attr) | oTranslate }}</span>
+          <mat-icon *ngIf="column.visible" svgIcon="ontimize:visibility" color="primary"></mat-icon>
+          <mat-icon *ngIf="!column.visible" svgIcon="ontimize:visibility_off"></mat-icon>
+        </div>
+        <mat-divider></mat-divider>
+      </mat-list-item>
+    </mat-list>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions fxLayoutAlign="end center">
+  <button type="button" mat-stroked-button [mat-dialog-close]="null" class="o-button-default cancel" cancel>{{ 'CANCEL' | oTranslate }}</button>
+  <button type="button" mat-stroked-button (click)="closeDialog()" class="o-button-primary">{{ 'ACCEPT' | oTranslate }}</button>
+</mat-dialog-actions>

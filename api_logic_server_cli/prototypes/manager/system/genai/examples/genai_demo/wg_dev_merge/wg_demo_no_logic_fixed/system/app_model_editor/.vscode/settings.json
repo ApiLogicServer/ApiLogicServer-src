@@ -1,0 +1,22 @@
+{
+    "cSpell.words": [
+        "APILOGICSERVER",
+        "backref",
+        "cascade_backrefs",
+        "jsonapi",
+        "jsonify",
+        "Ontimize",
+        "proxied",
+        "redef",
+        "sqlalchemy",
+        "sqltypes"
+    ],
+    "[Log]": {
+        "editor.wordWrap": "off"
+    },
+    "debug.console.wordWrap": false,    
+    "python.defaultInterpreterPath": "~/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/bin/python",
+    "workbench.editorAssociations": {
+        "*.md": "vscode.markdown.preview.editor"
+    }
+}

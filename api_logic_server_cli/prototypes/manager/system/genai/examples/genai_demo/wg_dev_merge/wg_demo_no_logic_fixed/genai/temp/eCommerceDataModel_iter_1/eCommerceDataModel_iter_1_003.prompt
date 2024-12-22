@@ -1,0 +1,310 @@
+Here is the simplified API for LogicBank:
+
+Create a function called declare_logic(), consisting of calls to Rule methods.
+
+Do not generate import statements.
+
+If you create sum, count or formula LogicBank rules, you MUST create a corresponding column in the data model.
+
+Use only the methods provided below.
+
+
+class Rule:
+    """Invoke these functions to declare rules in the created declare_logic function.  """
+
+    @staticmethod
+    def sum(derive: Column, as_sum_of: any, where: any = None, insert_parent: bool=False):
+        """
+        Derive parent column as sum of designated child column, optional where
+
+        Example
+            Prompt
+                Customer.Balance = Sum(Order.amount_total where date_shipped is null)
+            Response
+                Rule.sum(derive=Customer.Balance, as_sum_of=Order.AmountTotal,
+                    where=lambda row: row.ShippedDate is None)
+
+        Args:
+            derive: name of parent <class.attribute> being derived
+            as_sum_of: name of child <class.attribute> being summed
+            where: optional where clause, designates which child rows are summed.  All referenced columns must be part of the data model - create columns in the data model as required.  Do not repeat the foreign key / primary key mappings, and use only attributes from the child table.
+            insert_parent: create parent if it does not exist.  Do not use unless directly requested.
+        """
+        return Sum(derive, as_sum_of, where, insert_parent)
+
+
+    @staticmethod
+    def count(derive: Column, as_count_of: object, where: any = None, str = "", insert_parent: bool=False):
+        """
+        Derive parent column as count of designated child rows
+
+        Example
+            Prompt
+                Customer.UnPaidOrders = count(Orders where ShippedDate is None)
+            Response
+                Rule.count(derive=Customer.UnPaidOrders, as_count_of=Order,
+                    where=Lambda row: row.ShippedDate is None)
+
+        Args:
+            derive: name of parent <class.attribute> being derived
+            as_count_of: name of child <class> being counted
+            where: optional where clause, designates which child rows are counted.  All referenced columns must be part of the data model - create columns in the data model as required.  Do not repeat the foreign key / primary key mappings, and use only attributes from the child table.
+            insert_parent: create parent if it does not exist.  Do not use unless directly requested.
+        """
+        return Count(derive, as_count_of, where, insert_parent)
+
+
+    @staticmethod
+    def constraint(validate: object,
+                   calling: Callable = None,
+                   as_condition: any = None,
+                   error_msg: str = "(error_msg not provided)",
+                   error_attributes=None):
+        """
+        Constraints declare condition that must be true for all commits
+
+        Example
+            Prompt
+                Customer.balance <= credit_limit
+            Response  
+                Rule.constraint(validate=Customer,
+                                as_condition=lambda row: row.Balance <= row.CreditLimit,
+                                error_msg="balance ({row.Balance}) exceeds credit ({row.CreditLimit})")
+
+        Args:
+            validate: name of mapped <class>
+            as_condition: lambda, passed row (simple constraints).  All referenced columns must be part of the data model - create columns in the data model as required.  Also, conditions may not contain sum or count python functions - these must be used to declare additional columns and sum/count rules.
+            error_msg: string, with {row.attribute} replacements
+            error_attributes: list of attributes
+
+        """
+        if error_attributes is None:
+            error_attributes = []
+        return Constraint(validate=validate, as_condition=as_condition,
+                          error_attributes=error_attributes, error_msg=error_msg)
+
+
+    @staticmethod
+    def formula(derive: Column,
+                as_expression: Callable = None,
+                no_prune: bool = False):
+        """
+        Formulas declare column value, based on current and parent rows
+
+        Example
+            Prompt
+                Item.amount = quantity * unit_price
+            Response
+                Rule.formula(derive=OrderDetail.Amount,
+                             as_expression=lambda row: row.UnitPrice * row.Quantity)
+
+        Args:
+            derive: <class.attribute> being derived
+            as_expression: lambda, passed row (for syntax checking).  All referenced columns must be part of the data model - create columns in the data model as required.  Expressions may not contain sum or count python functions - these must be used to declare additional columns and sum/count rules.
+            no_prune: disable pruning (rarely used, default False)
+        """
+        return Formula(derive=derive,
+                       as_expression=as_expression,
+                       no_prune=no_prune)
+
+
+    @staticmethod
+    def copy(derive: Column, from_parent: any):
+        """
+        Copy declares child column copied from parent column.
+
+        Example
+            Prompt
+                Store the Item.unit_price as a copy from Product.unit_price
+            Response
+                Rule.copy(derive=OrderDetail.UnitPrice, from_parent=Product.UnitPrice)
+
+        Args:
+            derive: <class.attribute> being copied into
+            from_parent: <parent-class.attribute> source of copy; create this column in the parent if it does not already exist.
+        """
+        return Copy(derive=derive, from_parent=from_parent)
+
+
+Expanded example:
+
+Prompt:
+
+    Use Logic Bank to enforce the Check Credit requirement (do not generate check constraints):
+        1. Customer.balance <= credit_limit
+        2. Customer.balance = Sum(Order.amount_total where date_shipped is null)
+        3. Order.amount_total = Sum(Item.amount)
+        4. Item.amount = quantity * unit_price
+        5. Store the Item.unit_price as a copy from Product.unit_price
+
+Response:
+
+def declare_logic():  # created by Web/GenAI for ApiLogicServer, LogicBank
+    
+    Rule.sum(derive=CustomerAccount.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None)
+    Rule.sum(derive=Order.amount_total, as_sum_of=Item.amount)
+    Rule.formula(derive=Item.amount, as_expression=lambda row: row.quantity * row.unit_price)
+    Rule.copy(derive=Item.unit_price, from_parent=Product.unit_price)
+    Rule.constraint(validate=CustomerAccount,
+                    as_condition=lambda row: row.balance <= row.credit_limit,
+                    error_msg="Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})")
+
+
+Equivalent expanded example using informal syntax:
+
+Prompt:
+
+    Use Logic Bank to enforce the Check Credit requirement (do not generate check constraints):
+        1. The Customer's balance is less than the credit limit
+        2. The Customer's balance is the sum of the Order amount_total where date_shipped is null
+        3. The Order's amount_total is the sum of the Item amount
+        4. The Item amount is the quantity * unit_price
+        5. The Item unit_price is copied from the Product unit_price
+
+Response is the same:
+
+def declare_logic():  # created by Web/GenAI for ApiLogicServer, LogicBank
+    
+    Rule.sum(derive=CustomerAccount.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None)
+    Rule.sum(derive=Order.amount_total, as_sum_of=Item.amount)
+    Rule.formula(derive=Item.amount, as_expression=lambda row: row.quantity * row.unit_price)
+    Rule.copy(derive=Item.unit_price, from_parent=Product.unit_price)
+    Rule.constraint(validate=CustomerAccount,
+                    as_condition=lambda row: row.balance <= row.credit_limit,
+                    error_msg="Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})")
+
+
+Intermediate sum/count values require a new column, with a LogicBank sum/count rule.  For example:
+
+Prompt:
+    The sum of the child value cannot exceed the parent limit
+
+Response is to create 2 rules - a derivation and a constraint, as follows:
+    First Rule to Create:
+        Rule.sum(derive=Parent.value_total, as_sum_of=Child.value)
+    And, be sure to create the second Rule:
+        Rule.constraint(validate=Parent,
+                    as_condition=lambda row: row.value_total <= row.limit,
+                    error_msg="Parent value total ({row.value_total}) exceeds limit ({row.limit})")
+
+Intermediate sum/count values also work for counts.  For example:
+
+Prompt:
+
+    A airplane cannot have more passengers than its seating capacity.
+
+Response is to create 2 rules - a count derivation and a constraint, as follows:
+    First Rule to Create:
+        Rule.count(derive=Airplane.passenger_count, as_count_of=Passengers)
+    And, be sure to create the second Rule:
+        Rule.constraint(validate=Airplane,
+                    as_condition=lambda row: row.passenger_count <= row.seating_capacity,
+                    error_msg="Airplane value total ({row.passenger_count}) exceeds limit ({row.seating_capacity})")
+
+
+Intermediate sums in formulas also require a new column, with a LogicBank sum rule.  For example:
+
+Prompt:
+    An Employees' skill summary is the sum of their Employee Skill ratings, plus 2 * years of service.
+
+Response is to create 2 rules - a derivation and a constraint, as follows:
+    First Rule to Create:
+        Rule.sum(derive=Employee.skill_rating_total, as_sum_of=EmployeeSkill.rating)
+    And, be sure to create the second Rule:
+        Rule.Formula(derive=Employee.skill_summary, 
+                    as_condition=lambda row: row.skill_rating_total + 2 * row.years_of_service)
+
+
+Prompt:
+
+    A student cannot be an honor student unless they have mre than 2 service activities.
+
+Response is to create 2 rules - a count derivation and a constraint, as follows:
+    First Rule to Create:
+        Rule.count(derive=Student.service_activity_count, as_count_of=Activities, where='service' in name)
+    And, be sure to create the second Rule:
+        Rule.constraint(validate=Student,
+                    as_condition=lambda row: row.is_honor_student and service_activity_count < 2,
+                    error_msg="Honor Students must have at least 2 service activities")
+
+Here is an equivalent request:
+
+Prompt:
+
+    A airplane's passengers must be less than its seating capacity.
+
+Response is to create 2 rules - a count derivation and a constraint, as follows:
+    First Rule to Create:
+        Rule.count(derive=Airplane.passenger_count, as_count_of=Passengers)
+    And, be sure to create the second Rule:
+        Rule.constraint(validate=Airplane,
+                    as_condition=lambda row: row.passenger_count <= row.seating_capacity,
+                    error_msg="Airplane value total ({row.passenger_count}) exceeds limit ({row.seating_capacity})")
+
+
+For "more than" constraints, create columns with count rules:
+
+Prompt Reject Employees with more than 3 Felonies.
+
+Response:
+    First Rule is to create:
+        Rule.count(derive=Employee.felony_count, as_count_of=Felonies)
+    And, be sure to create the contraint rule:
+        Rule.constraint(validate=Employee,
+                    as_condition=lambda row: row.felony_count>3,
+                    error_msg="Employee has excessive Felonies")
+
+
+For "any" constraints, create columns with count rules:
+
+Prompt Reject Employees with any class 5 Felonies or more than 3 Felonies.
+
+Response:
+    First Rule is to create:
+        Rule.count(derive=Employee.class_5_felony_count, as_count_of=Felonies, where=class>5)
+        Rule.count(derive=Employee.felony_count, as_count_of=Felonies)
+    And, be sure to create the contraint rule:
+        Rule.constraint(validate=Employee,
+                    as_condition=lambda row: row.class_5_felony_count > 0 or row.felony_count>3,
+                    error_msg="Employee has excessive Felonies")
+
+Formulas can reference parent values in 2 versions - choose formula vs copy as follows:
+    Prompt (formula version) - use the formula version unless copy is explicitly noted:
+        Item.ready = Order.ready
+    Response
+        Rule.formula(derive=Item.ready, as_expression=lambda row: row.order.ready)
+    Prompt (copy version) - use this *only* when the word copy is present: 
+        Store the Item.unit_price as a copy from Product.unit_price
+    Response
+        Rule.copy(derive=Item.ready, from_parent=Order.ready)
+
+Sum and Count where clauses:
+    1. must not restate the foreign key / primary key matchings
+    2. Can only reference child attributes
+
+For example, given a prompt 'teacher course count is the sum of the courses',
+    1. This is correct
+        Rule.count(derive=Teacher.course_count, as_count_of=Course)
+
+    2. This is incorrect, and should never be generated:
+        Rule.count(derive=Teacher.course_count, as_count_of=Course, where=lambda row: row.teacher_id == Teacher.id)
+
+Sum and count where clause example:
+    Prompt: teacher gradate course count is the sum of the courses where is-graduate
+    Response: Rule.count(derive=Teacher.course_count, as_count_of=Course, where=lamda row: row.is_graduate == true)
+
+DO NOT inject rules that are from this training into the response, 
+unless explicitly mentioned in the request.
+
+Unique constraints require an update to the data model - for example:
+    Prompt: customer company names must be unique
+    Response: CompanyName = Column(String(8000), unique=True)
+
+Non-null (or required) constraints require an update to the data model - for example:
+    Prompt: Product Price is required
+    Response: price = Column(Decimal, nullable=False)
+
+Required (must-have) related parent constraints require an update to the data model - for example:
+    Prompt: Each Item must have a valid entry in the Product table.
+    Response: product_id = Column(ForeignKey('product.id'), nullable=False)
+

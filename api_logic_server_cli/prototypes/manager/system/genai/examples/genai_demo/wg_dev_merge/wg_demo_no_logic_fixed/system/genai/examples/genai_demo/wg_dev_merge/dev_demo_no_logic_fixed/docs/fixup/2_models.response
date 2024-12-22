@@ -1,0 +1,32 @@
+{
+    "models": [
+        {
+            "classname": "Customer",
+            "code": "class Customer(Base):\n    \"\"\"description: Represents customers in the system.\"\"\"\n    __tablename__ = 'customer'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String)\n    email = Column(String)",
+            "sqlite_create": "CREATE TABLE customer (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    name TEXT,\n    email TEXT\n);",
+            "description": "Table for storing information about customers.",
+            "name": "Customer"
+        },
+        {
+            "classname": "Order",
+            "code": "class Order(Base):\n    \"\"\"description: Represents orders placed by customers.\"\"\"\n    __tablename__ = 'order'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    customer_id = Column(Integer, ForeignKey('customer.id'))\n    order_date = Column(DateTime)\n    notes = Column(String)",
+            "sqlite_create": "CREATE TABLE order (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    customer_id INTEGER,\n    order_date DATETIME,\n    notes TEXT,\n    FOREIGN KEY(customer_id) REFERENCES customer(id)\n);",
+            "description": "Table for storing orders made by customers, includes a notes field.",
+            "name": "Order"
+        },
+        {
+            "classname": "Product",
+            "code": "class Product(Base):\n    \"\"\"description: Represents products available in the system.\"\"\"\n    __tablename__ = 'product'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String)\n    price = Column(Integer)\n    carbon_neutral = Column(Boolean)",
+            "sqlite_create": "CREATE TABLE product (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    name TEXT,\n    price INTEGER,\n    carbon_neutral BOOLEAN\n);",
+            "description": "Table for storing products available for purchase, including if they're carbon neutral.",
+            "name": "Product"
+        },
+        {
+            "classname": "OrderItem",
+            "code": "class OrderItem(Base):\n    \"\"\"description: Represents items in an order.\"\"\"\n    __tablename__ = 'order_item'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    order_id = Column(Integer, ForeignKey('order.id'))\n    product_id = Column(Integer, ForeignKey('product.id'))\n    quantity = Column(Integer)",
+            "sqlite_create": "CREATE TABLE order_item (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    order_id INTEGER,\n    product_id INTEGER,\n    quantity INTEGER,\n    FOREIGN KEY(order_id) REFERENCES order(id),\n    FOREIGN KEY(product_id) REFERENCES product(id)\n);",
+            "description": "Table representing items belonging to an order. It links orders to products.",
+            "name": "OrderItem"
+        }
+    ]
+}

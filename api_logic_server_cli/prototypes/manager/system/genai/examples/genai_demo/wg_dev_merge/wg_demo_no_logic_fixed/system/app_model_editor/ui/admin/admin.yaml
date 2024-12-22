@@ -1,0 +1,194 @@
+about:
+  date: July 14, 2024 09:44:34
+  recent_changes: works with modified safrs-react-admin
+  version: 0.0.0
+api_root: '{http_type}://{swagger_host}:{port}/{api}'
+authentication: '{system-default}'
+info:
+  number_relationships: 4
+  number_tables: 7
+resources:
+  Entity:
+    attributes:
+    - label: ' name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+    - name: title
+      required: true
+    - name: pkey
+    - name: favorite
+    - name: info_list
+    - name: info_show
+    - name: exclude
+    - name: new_template
+    - name: home_template
+    - name: detail_template
+    - name: mode
+    - name: menu_group
+    tab_groups:
+    - direction: tomany
+      fks:
+      - entity_name
+      name: EntityAttrList
+      resource: EntityAttr
+    - direction: tomany
+      fks:
+      - entity_name
+      name: TabGroupList
+      resource: TabGroup
+    - direction: tomany
+      fks:
+      - tab_entity
+      name: TabGroupList1
+      resource: TabGroup
+    type: Entity
+    user_key: name
+  EntityAttr:
+    attributes:
+    - label: ' entity_name*'
+      name: entity_name
+      required: true
+      search: true
+      sort: true
+    - name: entity_name
+      required: true
+    - name: template_name
+    - name: attr
+      required: true
+    - name: label
+    - name: issearch
+    - name: issort
+    - name: thistype
+      required: true
+    - name: tooltip
+    - name: exclude
+    - name: visible
+    - name: default_value
+    - name: isrequired
+    - name: isenabled
+    tab_groups:
+    - direction: toone
+      fks:
+      - entity_name
+      name: entity
+      resource: Entity
+    - direction: toone
+      fks:
+      - template_name
+      name: template
+      resource: Template
+    type: EntityAttr
+    user_key: entity_name
+  GlobalSetting:
+    attributes:
+    - label: ' name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+    - name: value
+      required: true
+    - name: description
+    type: GlobalSetting
+    user_key: name
+  Root:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: about_changes
+    - name: api_root
+    - name: api_auth_type
+    - name: api_auth
+    - name: about_date
+    type: Root
+    user_key: id
+  TabGroup:
+    attributes:
+    - label: ' name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+    - name: entity_name
+      required: true
+    - name: tab_entity
+      required: true
+    - name: direction
+      required: true
+    - name: fkeys
+      required: true
+    - name: label
+      required: true
+    - name: exclude
+    tab_groups:
+    - direction: toone
+      fks:
+      - entity_name
+      name: entity
+      resource: Entity
+    - direction: toone
+      fks:
+      - tab_entity
+      name: entity1
+      resource: Entity
+    type: TabGroup
+    user_key: name
+  Template:
+    attributes:
+    - label: ' name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+    - name: description
+    tab_groups:
+    - direction: tomany
+      fks:
+      - template_name
+      name: EntityAttrList
+      resource: EntityAttr
+    type: Template
+    user_key: name
+  YamlFiles:
+    attributes:
+    - label: ' name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+    - name: content
+    - name: downloaded
+    - name: download_flag
+    - name: size
+      required: true
+    - name: downloaded
+    type: YamlFiles
+    user_key: name
+settings:
+  HomeJS: http://localhost:5656/admin-app/home.js
+  max_list_columns: 8
+  style_guide:
+    currency_symbol: $
+    currency_symbol_position: left
+    date_format: LL
+    decimal_max: '10000000'
+    decimal_min: '0'
+    decimal_separator: .
+    detail_mode: tab
+    edit_on_mode: dblclick
+    include_translation: 'false'
+    keycloak_client_id: alsclient
+    keycloak_realm: kcals
+    keycloak_url: http://localhost:8080
+    max_decimal_digits: '4'
+    min_decimal_digits: '2'
+    new_mode: dialog
+    pick_style: list
+    row_height: medium,
+    style: light
+    thousand_separator: ','
+    use_keycloak: 'false'

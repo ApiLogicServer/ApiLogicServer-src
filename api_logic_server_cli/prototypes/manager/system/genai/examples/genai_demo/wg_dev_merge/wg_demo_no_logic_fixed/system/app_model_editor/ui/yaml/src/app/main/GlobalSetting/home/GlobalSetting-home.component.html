@@ -1,0 +1,32 @@
+<o-form attr="GlobalSetting" mode="tab" title="{{ 'GLOBALSETTING' | oTranslate }}" class="fill-form"> 
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="GlobalSettingTable" 
+            service="GlobalSetting" 
+            entity="GlobalSetting" 
+            keys="name"
+            columns="name;value;description" 
+            header-actions="R;D"
+            visible-columns="name;value;description"  
+            sort-columns="name" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="small" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            virtual-scroll="yes" 
+            edition-mode="dblclick" 
+            horizontal-scroll="yes"
+            export-button="no">
+            
+            <o-table-column attr="name" label=" name*" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column attr="value" label="value" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column attr="description" label="description" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form>

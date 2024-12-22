@@ -1,0 +1,75 @@
+# First, build image: sh devops/docker-image/build_image.sh .
+
+# ALERT - this is a pre-configured for the sqlite databases
+# see https://apilogicserver.github.io/Docs/Database-Docker/#classicmodels-mysql-docker
+
+# cd <project>  
+# sh ./devops/docker-compose-dev-local/docker-compose.sh
+# --> builds, runs at localhost:5656
+
+services:
+
+    # TODO - alter this for your database
+    # Postgres example: https://github.com/ApiLogicServer/postgres-nw/blob/main/devops/docker-compose-dev-local/docker-compose-dev-local.yml
+    postgresql-service:
+        image: postgres:10.5
+        restart: always
+        environment:
+          - POSTGRES_USER=postgres
+          - POSTGRES_PASSWORD=postgres
+        logging:
+          options:
+            max-size: 10m
+            max-file: "3"
+        ports:
+          - '5432:5432'
+        volumes: 
+          - ./postgres-data:/var/lib/postgresql/data
+          # copy the sql script to create tables
+          - ./sql/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
+          - ./sql/create_tables_yaml.sql:/docker-entrypoint-initdb.d/create_tables_yaml.sql
+
+  apilogicserver:
+      image: tylerm007/ontimize_repos:1.0.12
+      environment:
+        - APILOGICPROJECT_VERBOSE=true
+        - SECURITY_ENABLED=true
+        - APILOGICPROJECT_CLIENT_URI=//${HOST_IP}
+        - PYTHONPATH=/app/ApiLogicProject
+        - APILOGICSERVER_RUNNING=DOCKER
+        - APILOGICPROJECT_SWAGGER_HOST=127.0.0.1
+        - APILOGICPROJECT_SWAGGER_PORT=8080
+        - SQLALCHEMY_DATABASE_URI=postgresql://postgres:postgres@postgresql-service/yaml
+        - SQLALCHEMY_DATABASE_URI_AUTHENTICATION=postgresql://postgres:postgres@postgresql-service/authdb
+        - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI=postgresql://postgres:postgres@postgresql-service/yaml
+        - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI_AUTHENTICATION=postgresql://postgres:postgres@postgresql-service/authdb
+      ports:
+        - 5655:5655
+      expose:
+        - 5655
+      depends_on:
+        - postgresql-service
+      volumes:
+          # relative path - thanks https://stackoverflow.com/questions/46907558/docker-compose-relative-paths-vs-docker-volume
+          # - /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/docker-compose-nw-postgres:/app
+          - ../../:/home/api_logic_project
+          #- ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:rw
+      # https://stackoverflow.com/questions/39460892/gunicorn-no-module-named-myproject
+      #command: /usr/local/bin/gunicorn --reload --workers 2 --worker-connections 2 --access-logfile=- --pythonpath /app -b :5655 api_logic_server_run:flask_app 
+      working_dir: /home/api_logic_project 
+  
+  yaml_editor:
+      image: tylerm007/yaml_editor:1.0.11
+      container_name: yaml_editor
+      expose:
+        - 80
+      ports:
+        - 80:80
+      volumes:
+        # local:path-in-container
+        - ../../ui/yaml/dist:/home/node  
+      depends_on:
+        - apilogicserver
+      environment:
+        - NODE_ENV=production
+      

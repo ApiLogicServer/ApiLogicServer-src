@@ -1,0 +1,21 @@
+
+<o-breadcrumb [form]="YamlFilesForm" label-columns="" separator=" "></o-breadcrumb>
+<o-form #YamlFilesForm attr="YamlFiles_form_insert" service="YamlFiles" entity="YamlFiles"
+keys="name" fxLayout="column" show-header="yes" header-actions="I" show-header-title="yes" show-header-description="yes"
+horizontal-scroll="no" show-header-navigation="no" after-insert-mode="home" class="standalone-form-container" (onInsertMode)="onInsertMode()">
+
+<o-row attr="row1" layout-align="start stretch">
+  <!-- o-filemanager-table service="YamlFiles" workspace-key="content" new-folder-button="no" download="yes"></o-filemanager-table -->
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+        <o-text-input attr="name" label=" name*" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+        <o-image attr="content" type="image" label="Yaml Content" sql-type="TEXT" auto-fit="true" enabled="true" 
+          read-only="false" show-controls="true"  
+          tooltip="Select an app_model.yaml file from your ApiLogicServer project."
+          full-screen-button="false" accept-file-type="*.yaml" empty-image="./assets/images/no-image.png">
+        </o-image>
+</div>
+</o-row>
+
+<div layout-padding></div>
+
+</o-form>

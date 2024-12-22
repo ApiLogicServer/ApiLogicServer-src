@@ -1,0 +1,58 @@
+<div class="container">
+  <o-form-container breadcrumb="yes" breadcrumb-label-columns="entity_name;tab_entity" breadcrumb-separator=", "  class="fill-form">
+        <o-form #form attr="TabGroup_form_edit" service="TabGroup" entity="TabGroup" fxLayout="column" show-header="yes"
+          header-actions="R;U;D" #oDetailForm keys="entity_name;tab_entity;direction;name"
+          keys-sql-types="VARCHAR;VARCHAR;VARCHAR;VARCHAR" show-header-navigation="yes"
+          (onDataLoaded)="onDataLoaded($event)">
+
+
+          <o-row attr="row1" layout-align="start stretch">
+            <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+
+              <div fxLayout="row" fxLayoutAlign="start center" class="gap">
+                <o-list-picker attr="entity_name" service="Entity" entity="EntityType" fxFlex="30" query-on-init="no"
+                  query-on-bind="yes" required="yes" enabled="no" filter="yes" value-column="name"
+                  value-column-type="VARCHAR" keys="name" columns="name" title=" Entity Name*" visible-columns="name"
+                  separator=" - " width="680px">
+                </o-list-picker>
+              </div>
+
+              <div fxLayout="row" fxLayoutAlign="start center" class="gap">
+                <o-list-picker attr="tab_entity" service="Entity" entity="EntityType" fxFlex="30" query-on-init="no"
+                  query-on-bind="yes" required="yes" enabled="no" filter="yes" value-column="name"
+                  value-column-type="VARCHAR" keys="name" columns="name" title="Tab Entity" visible-columns="name"
+                  separator=" - " width="680px">
+                </o-list-picker>
+              </div>
+
+              <div fxLayout="row" fxLayoutAlign="start center" class="gap">
+                <o-text-input attr="direction" label="Direction" enabled="no" required="yes"></o-text-input>
+              </div>
+
+              <div fxLayout="row" fxLayoutAlign="start center" class="gap">
+                <o-text-input attr="name" label="Name" enabled="no" required="yes"></o-text-input>
+              </div>
+
+              <div fxLayout="row" fxLayoutAlign="start center" class="gap">
+                <o-text-input attr="label" label="Label" editable="yes" required="no"></o-text-input>
+              </div>
+
+              <div fxLayout="row" fxLayoutAlign="start center" class="gap">
+                <o-text-input attr="fkeys" label="fkeys" enabled="no" required="yes"></o-text-input>
+              </div>
+
+              <div fxLayout="row" fxLayoutAlign="start center" class="gap">
+                <o-checkbox attr="exclude" label="Exclude" read-only="no" enabled="yes"></o-checkbox>
+              </div>
+
+            </div>
+          </o-row>
+
+
+    <mat-tab-group fxFill>
+
+    </mat-tab-group>
+
+    </o-form>
+  </o-form-container>
+</div>

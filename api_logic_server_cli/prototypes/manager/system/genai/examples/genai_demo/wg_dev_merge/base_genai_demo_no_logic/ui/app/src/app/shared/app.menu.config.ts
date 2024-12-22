@@ -2,9 +2,9 @@ import { MenuRootItem } from 'ontimize-web-ngx';
 
 import { CustomerCardComponent } from './Customer-card/Customer-card.component';
 
-import { OrderCardComponent } from './Order-card/Order-card.component';
+import { ItemCardComponent } from './Item-card/Item-card.component';
 
-import { OrderItemCardComponent } from './OrderItem-card/OrderItem-card.component';
+import { OrderCardComponent } from './Order-card/Order-card.component';
 
 import { ProductCardComponent } from './Product-card/Product-card.component';
 
@@ -18,9 +18,9 @@ export const MENU_CONFIG: MenuRootItem[] = [
     
         { id: 'Customer', name: 'CUSTOMER', icon: 'view_list', route: '/main/Customer' }
     
-        ,{ id: 'Order', name: 'ORDER', icon: 'view_list', route: '/main/Order' }
+        ,{ id: 'Item', name: 'ITEM', icon: 'view_list', route: '/main/Item' }
     
-        ,{ id: 'OrderItem', name: 'ORDERITEM', icon: 'view_list', route: '/main/OrderItem' }
+        ,{ id: 'Order', name: 'ORDER', icon: 'view_list', route: '/main/Order' }
     
         ,{ id: 'Product', name: 'PRODUCT', icon: 'view_list', route: '/main/Product' }
     
@@ -36,9 +36,9 @@ export const MENU_COMPONENTS = [
 
     CustomerCardComponent
 
-    ,OrderCardComponent
+    ,ItemCardComponent
 
-    ,OrderItemCardComponent
+    ,OrderCardComponent
 
     ,ProductCardComponent
 

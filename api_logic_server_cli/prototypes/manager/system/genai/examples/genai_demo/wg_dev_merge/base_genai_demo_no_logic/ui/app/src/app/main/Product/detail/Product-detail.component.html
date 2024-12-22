@@ -25,18 +25,18 @@
       
       <mat-tab-group fxFill>
         
-        <mat-tab label="ORDERITEM-product_id">
+        <mat-tab label="ITEM-product_id">
     <div layout-padding>
       <o-table 
-        attr="OrderItemTable" 
-        service="OrderItem" 
-        entity="OrderItem" 
+        attr="ItemTable" 
+        service="Item" 
+        entity="Item" 
         keys="id"
         parent-keys="product_id:id"
         columns="id;order_id;product_id;quantity"  
         horizontal-scroll="yes"
-        detail-form-route="OrderItem" 
-        edit-form-route="OrderItem"
+        detail-form-route="Item" 
+        edit-form-route="Item"
         visible-columns="id;order_id;product_id;quantity"  
         sort-columns="id" 
         query-rows="25" 
@@ -73,7 +73,7 @@
     </o-table-cell-renderer-service>
 </o-table-column>
         
-          <o-table-column #quantity attr="quantity" title="quantity" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+          <o-table-column #quantity attr="quantity" title="quantity" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
         
         <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
       </o-table>

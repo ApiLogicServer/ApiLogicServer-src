@@ -1,0 +1,37 @@
+<o-form attr="TabGroup" mode="dialog" title="{{ 'TABGROUP' | oTranslate }}"  class="fill-form">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table attr="TabGroupTable" service="TabGroup" entity="TabGroup" keys="entity_name;tab_entity;direction;name"
+            columns="entity_name;tab_entity;direction;name;label;fkeys;exclude" header-actions="R;D"
+            visible-columns="entity_name;tab_entity;direction;name;label;fkeys;exclude" sort-columns="entity_name"
+            query-rows="100" quick-filter="yes" row-height="small" select-all-checkbox="true" pageable="yes"
+            virtual-scroll="yes" edition-mode="dblclick" horizontal-scroll="yes" export-button="no">
+
+            <o-table-column attr="entity_name" title=" Entity Name*" editable="no" required="yes"
+                content-align="left"></o-table-column>
+
+            <o-table-column attr="tab_entity" title="Tab Entity*" editable="no" required="yes"
+                content-align="left"></o-table-column>
+
+            <o-table-column attr="direction" title="Direction*" editable="no" required="yes"
+                content-align="center"></o-table-column>
+
+            <o-table-column attr="name" title="Relationship Name*" type="text" editable="no" required="yes" 
+                content-align="left"></o-table-column>
+
+            <o-table-column attr="label" title="title" editable="no" required="no"
+                content-align="left"></o-table-column>
+
+            <o-table-column attr="fkeys" title="fkeys" editable="no" required="yes"
+                content-align="center"></o-table-column>
+
+            <o-table-column attr="exclude" title="Excluded">
+                <!-- auto-commit="false" -->
+                <o-table-cell-renderer-boolean render-true-value="check_circle" render-false-value="highlight_off"
+                    render-type="icon" boolean-type="boolean" true-value="true"
+                    false-value="false"></o-table-cell-renderer-boolean>
+            </o-table-column>
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="100;200"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form>

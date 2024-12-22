@@ -1,0 +1,50 @@
+{
+    "models": [
+        {
+            "classname": "Customer",
+            "code": "class Customer(Base):\n    __tablename__ = 'customers'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String(50))\n    email = Column(String(50))",
+            "description": "Represents a customer in the system.",
+            "name": "Customer"
+        },
+        {
+            "classname": "Order",
+            "code": "class Order(Base):\n    __tablename__ = 'orders'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    customer_id = Column(Integer, ForeignKey('customers.id'))\n    order_date = Column(DateTime)\n    notes = Column(String(255))\n    total_amount = Column(Integer)",
+            "description": "Represents an order made by a customer.",
+            "name": "Order"
+        },
+        {
+            "classname": "Item",
+            "code": "class Item(Base):\n    __tablename__ = 'items'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    order_id = Column(Integer, ForeignKey('orders.id'))\n    product_id = Column(Integer, ForeignKey('products.id'))\n    quantity = Column(Integer)\n    price = Column(Integer)",
+            "description": "Represents an item included in an order.",
+            "name": "Item"
+        },
+        {
+            "classname": "Product",
+            "code": "class Product(Base):\n    __tablename__ = 'products'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String(50))\n    price = Column(Integer)",
+            "description": "Represents a product available for purchase.",
+            "name": "Product"
+        }
+    ],
+    "rules": [],
+    "test_data": "# Test Data for Customer, Order, Item, and Product tables\n\ncustomer1 = Customer(name=\"Alice Smith\", email=\"alice@example.com\")\ncustomer2 = Customer(name=\"Bob Jones\", email=\"bob@example.com\")\ncustomer3 = Customer(name=\"Charlie Brown\", email=\"charlie@example.com\")\ncustomer4 = Customer(name=\"Daisy Miller\", email=\"daisy@example.com\")\n\norder1 = Order(customer_id=1, order_date=date(2023, 3, 1), notes=\"Urgent delivery\", total_amount=200)\norder2 = Order(customer_id=2, order_date=date(2023, 3, 5), notes=\"Include gift wrap\", total_amount=150)\norder3 = Order(customer_id=3, order_date=date(2023, 3, 10), notes=\"No rush\", total_amount=100)\norder4 = Order(customer_id=4, order_date=date(2023, 3, 15), notes=\"Deliver to secondary address\", total_amount=250)\n\nitem1 = Item(order_id=1, product_id=1, quantity=2, price=50)\nitem2 = Item(order_id=1, product_id=2, quantity=3, price=100)\nitem3 = Item(order_id=2, product_id=1, quantity=1, price=50)\nitem4 = Item(order_id=2, product_id=3, quantity=1, price=100)\n\nproduct1 = Product(name=\"Laptop\", price=1000)\nproduct2 = Product(name=\"Smartphone\", price=500)\nproduct3 = Product(name=\"Tablet\", price=300)\nproduct4 = Product(name=\"Headphones\", price=100)",
+    "test_data_rows": [
+        {
+            "test_data_row_variable": "customer1",
+            "code": "Customer(name=\"Alice Smith\", email=\"alice@example.com\")"
+        },
+        {
+            "test_data_row_variable": "order1",
+            "code": "Order(customer_id=1, order_date=date(2023, 3, 1), notes=\"Urgent delivery\", total_amount=200)"
+        },
+        {
+            "test_data_row_variable": "item1",
+            "code": "Item(order_id=1, product_id=1, quantity=2, price=50)"
+        },
+        {
+            "test_data_row_variable": "product1",
+            "code": "Product(name=\"Laptop\", price=1000)"
+        }
+    ],
+    "test_data_sqlite": "INSERT INTO customers VALUES (NULL, 'Alice Smith', 'alice@example.com');\nINSERT INTO orders VALUES (NULL, 1, '2023-03-01', 'Urgent delivery', 200);\nINSERT INTO items VALUES (NULL, 1, 1, 2, 50);\nINSERT INTO products VALUES (NULL, 'Laptop', 1000);",
+    "name": "eCommerceDataModel"
+}

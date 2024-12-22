@@ -1,0 +1,7 @@
+Merge the models into the existing_models, creating updated models.code.
+Ensure that the response output model contains all the tables and columns from models and existing_models.
+Format the response as a WGResult
+
+Create updated test data to ensure that:
+- The test data includes every column referenced in rules
+- Every column referenced in rules is properly initialized in the test data 

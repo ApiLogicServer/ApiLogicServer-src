@@ -1,0 +1,4 @@
+These temp work files are overwritten each time you run genai.
+
+They are initially pre-populated to support testing,
+without signing up to ChatGPT or Copilot.

@@ -1,5 +1,5 @@
 about:
-  date: December 17, 2024 19:31:50
+  date: December 21, 2024 18:44:38
   recent_changes: works with modified safrs-react-admin
   version: 0.0.0
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
@@ -12,33 +12,24 @@ entities:
       search: true
       sort: true
       template: text
-      type: VARCHAR
-    - name: email
-      template: text
-      type: VARCHAR
+      type: VARCHAR(255)
     - name: id
       template: integer
       type: INTEGER
-    description: Represents customers in the system.
+    description: Model for Customer data, representing customers in the system.
     detail_template: detail_template.html
     exclude: 'false'
     favorite: name
     hidden: {}
     home_template: home_template.html
-    info_list: Represents customers in the system.
+    info_list: Model for Customer data, representing customers in the system.
     label: Customer
     mode: tab
     new_template: new_template.html
     primary_key:
     - id
-    tab_groups:
-    - direction: tomany
-      fks:
-      - customer_id
-      name: OrderList
-      resource: Order
     type: Customer
-  Order:
+  Item:
     columns:
     - label: ' id*'
       name: id
@@ -46,44 +37,8 @@ entities:
       sort: true
       template: integer
       type: INTEGER
-    - name: customer_id
-      template: integer
-      type: INTEGER
-    - name: order_date
-      type: DATETIME
-    - name: notes
-      template: text
-      type: VARCHAR
-    description: Represents orders placed by customers.
-    detail_template: detail_template.html
-    exclude: 'false'
-    favorite: id
-    hidden: {}
-    home_template: home_template.html
-    info_list: Represents orders placed by customers.
-    label: Order
-    mode: tab
-    new_template: new_template.html
-    primary_key:
-    - id
-    tab_groups:
-    - direction: tomany
-      fks:
-      - order_id
-      name: OrderItemList
-      resource: OrderItem
-    - direction: toone
-      fks:
-      - customer_id
-      name: customer
-      resource: Customer
-    type: Order
-  OrderItem:
-    columns:
-    - label: ' id*'
-      name: id
-      search: true
-      sort: true
+    - name: quantity
+      required: true
       template: integer
       type: INTEGER
     - name: order_id
@@ -92,33 +47,48 @@ entities:
     - name: product_id
       template: integer
       type: INTEGER
-    - name: quantity
-      template: integer
-      type: INTEGER
-    description: Represents items in an order.
+    description: Model for Item data, representing items in an order with their respective
+      quantities.
     detail_template: detail_template.html
     exclude: 'false'
     favorite: id
     hidden: {}
     home_template: home_template.html
-    info_list: Represents items in an order.
-    label: OrderItem
+    info_list: Model for Item data, representing items in an order with their respective
+      quantities.
+    label: Item
     mode: tab
     new_template: new_template.html
     primary_key:
     - id
-    tab_groups:
-    - direction: toone
-      fks:
-      - order_id
-      name: order
-      resource: Order
-    - direction: toone
-      fks:
-      - product_id
-      name: product
-      resource: Product
-    type: OrderItem
+    type: Item
+  Order:
+    columns:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+      template: integer
+      type: INTEGER
+    - name: notes
+      template: text
+      type: VARCHAR(255)
+    - name: customer_id
+      template: integer
+      type: INTEGER
+    description: Model for Order data, representing orders placed by customers.
+    detail_template: detail_template.html
+    exclude: 'false'
+    favorite: id
+    hidden: {}
+    home_template: home_template.html
+    info_list: Model for Order data, representing orders placed by customers.
+    label: Order
+    mode: tab
+    new_template: new_template.html
+    primary_key:
+    - id
+    type: Order
   Product:
     columns:
     - label: ' name*'
@@ -126,31 +96,26 @@ entities:
       search: true
       sort: true
       template: text
-      type: VARCHAR
-    - name: price
-      template: integer
-      type: INTEGER
+      type: VARCHAR(255)
+    - name: carbon_neutral
+      type: Boolean
     - name: id
       template: integer
       type: INTEGER
-    description: Represents products available in the system.
+    description: Model for Product data, representing products available in the system
+      including carbon neutral status.
     detail_template: detail_template.html
     exclude: 'false'
     favorite: name
     hidden: {}
     home_template: home_template.html
-    info_list: Represents products available in the system.
+    info_list: Model for Product data, representing products available in the system
+      including carbon neutral status.
     label: Product
     mode: tab
     new_template: new_template.html
     primary_key:
     - id
-    tab_groups:
-    - direction: tomany
-      fks:
-      - product_id
-      name: OrderItemList
-      resource: OrderItem
     type: Product
 settings:
   HomeJS: /admin-app/home.js

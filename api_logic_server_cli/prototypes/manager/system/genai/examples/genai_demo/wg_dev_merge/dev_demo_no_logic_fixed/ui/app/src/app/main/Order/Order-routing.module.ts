@@ -13,14 +13,7 @@ const routes: Routes = [
         permissionId: 'Order-detail-permissions'
       }
     }
-  },{
-    path: ':order_id/OrderItem', loadChildren: () => import('../OrderItem/OrderItem.module').then(m => m.OrderItemModule),
-    data: {
-        oPermission: {
-            permissionId: 'OrderItem-detail-permissions'
-        }
-    }
-}
+  }
 ];
 
 export const ORDER_MODULE_DECLARATIONS = [

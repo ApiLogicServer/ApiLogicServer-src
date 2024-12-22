@@ -172,7 +172,10 @@ class GenAILogic(object):
                     log.debug(f'.. genai_logic_builder[{file_str}] processes: {os.path.basename(each_file)} - {prompt[:30]}...')
             else:
                 log.debug(f'.. .. genai_logic_builder ignores: {os.path.basename(each_file)}')
-        self.next_file_name = stem[0:len(stem)-3] + str(1 + file_number).zfill(3)
+        if file_number == -1:
+            self.next_file_name  = 'data_model.prompt'
+        else:
+            self.next_file_name = stem[0:len(stem)-3] + str(1 + file_number).zfill(3)
 
         learnings = get_learning_requests()
         prompt_messages.extend(learnings)

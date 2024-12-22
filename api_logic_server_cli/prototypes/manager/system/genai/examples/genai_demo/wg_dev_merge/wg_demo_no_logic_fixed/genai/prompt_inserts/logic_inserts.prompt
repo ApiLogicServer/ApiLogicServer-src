@@ -1,0 +1,1 @@
+Use LogicBank to create declare_logic() to enforce these requirements (do not generate check constraints); be sure to update the data model and *all* test data with any attributes used in the logic:

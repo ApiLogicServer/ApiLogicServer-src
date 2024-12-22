@@ -1,0 +1,159 @@
+Sure, here's how you can create a SQLite database named `model.sqlite` with 15 tables for a Star Wars themed presidential election app using SQLAlchemy. After creating the tables, I will insert some sample data to demonstrate its functionality.
+
+First, make sure you have SQLAlchemy installed:
+```bash
+pip install sqlalchemy
+```
+
+```python
+from sqlalchemy import create_engine, Column, Integer, String, DateTime, ForeignKey, Float, Boolean
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship, sessionmaker
+import datetime
+
+Base = declarative_base()
+engine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite')
+
+class User(Base):
+    __tablename__ = 'users'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    username = Column(String, nullable=False)
+    password = Column(String, nullable=False)
+    email = Column(String)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+
+class Candidate(Base):
+    __tablename__ = 'candidates'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+    homeworld = Column(String, nullable=True)
+    species = Column(String, nullable=True)
+
+class Election(Base):
+    __tablename__ = 'elections'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    year = Column(Integer, nullable=False)
+    title = Column(String, nullable=False)
+    description = Column(String)
+    start_date = Column(DateTime, nullable=False)
+    end_date = Column(DateTime, nullable=False)
+
+class Vote(Base):
+    __tablename__ = 'votes'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    candidate_id = Column(Integer, ForeignKey('candidates.id'), nullable=False)
+    election_id = Column(Integer, ForeignKey('elections.id'), nullable=False)
+
+class Planet(Base):
+    __tablename__ = 'planets'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+    system = Column(String, nullable=True)
+
+class Species(Base):
+    __tablename__ = 'species'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+    classification = Column(String, nullable=True)
+    average_height = Column(Float, nullable=True)
+    average_lifespan = Column(Integer, nullable=True)
+    language = Column(String, nullable=True)
+
+class PoliticalParty(Base):
+    __tablename__ = 'political_parties'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+    ideology = Column(String, nullable=True)
+
+class Campaign(Base):
+    __tablename__ = 'campaigns'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    candidate_id = Column(Integer, ForeignKey('candidates.id'), nullable=False)
+    slogan = Column(String, nullable=False)
+    budget = Column(Float, nullable=True)
+    start_date = Column(DateTime, nullable=True)
+    end_date = Column(DateTime, nullable=True)
+
+class Debate(Base):
+    __tablename__ = 'debates'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    date = Column(DateTime, nullable=False)
+    location = Column(String, nullable=False)
+
+class DebateParticipation(Base):
+    __tablename__ = 'debate_participations'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    debate_id = Column(Integer, ForeignKey('debates.id'), nullable=False)
+    candidate_id = Column(Integer, ForeignKey('candidates.id'), nullable=False)
+
+class Event(Base):
+    __tablename__ = 'events'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+    date = Column(DateTime, nullable=False)
+    location = Column(String, nullable=True)
+    description = Column(String, nullable=True)
+
+class Donation(Base):
+    __tablename__ = 'donations'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    campaign_id = Column(Integer, ForeignKey('campaigns.id'), nullable=False)
+    amount = Column(Float, nullable=False)
+    date = Column(DateTime, default=datetime.datetime.utcnow)
+
+class Endorsement(Base):
+    __tablename__ = 'endorsements'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    endorser = Column(String, nullable=False)
+    candidate_id = Column(Integer, ForeignKey('candidates.id'), nullable=False)
+    date = Column(DateTime, nullable=True)
+
+class Notification(Base):
+    __tablename__ = 'notifications'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    message = Column(String, nullable=False)
+    read = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+
+class VoterRegistration(Base):
+    __tablename__ = 'voter_registrations'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    planet_id = Column(Integer, ForeignKey('planets.id'), nullable=False)
+    registration_date = Column(DateTime, default=datetime.datetime.utcnow)
+
+def create_sample_data(session):
+    user1 = User(username="luke_skywalker", password="force123", email="luke@jedi.com")
+    user2 = User(username="han_solo", password="falcon456", email="han@smuggler.com")
+
+    candidate1 = Candidate(name="Leia Organa", homeworld="Alderaan", species="Human")
+    candidate2 = Candidate(name="Mon Mothma", homeworld="Chandrila", species="Human")
+    
+    election1 = Election(year=2023, title="Galactic Presidential Election", description="The annual election to vote for the President of the New Republic.", start_date=datetime.datetime(2023, 10, 1), end_date=datetime.datetime(2023, 10, 15))
+
+    session.add_all([user1, user2, candidate1, candidate2, election1])
+    session.commit()
+
+    vote1 = Vote(user_id=user1.id, candidate_id=candidate1.id, election_id=election1.id)
+    vote2 = Vote(user_id=user2.id, candidate_id=candidate2.id, election_id=election1.id)
+
+    session.add_all([vote1, vote2])
+    session.commit()
+
+# Create tables
+Base.metadata.create_all(engine)
+
+# Create a session
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# Create sample data
+create_sample_data(session)
+
+print("Database and sample data created successfully!")
+```
+
+You can run the above code to create the database and populate it with sample data. Feel free to extend this code by adding more tables or populating it with additional data as per your requirements.

@@ -1,4 +1,4 @@
-<o-form-layout-manager attr="Product" mode="tab" title="PRODUCT">
+<o-form-layout-manager attr="Product" mode="dialog" title="PRODUCT">
     <div fxFill fxLayout="column" fxLayoutAlign="start">
         <o-table 
             attr="ProductTable" 
@@ -6,9 +6,9 @@
             entity="Product" 
             title="PRODUCT"
             keys="id"
-            columns="name;price;id" 
+            columns="name;carbon_neutral;id" 
             header-actions="R;D"
-            visible-columns="name;price;id"  
+            visible-columns="name;carbon_neutral;id"  
             sort-columns="name" 
             query-rows="20" 
             quick-filter="yes"
@@ -24,7 +24,7 @@
             
             <o-table-column #name attr="name" title=" name*" editable="no" required="no" content-align="left"></o-table-column>
             
-            <o-table-column #price attr="price" title="price" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            <o-table-column #carbon_neutral attr="carbon_neutral" title="carbon_neutral" editable="no" required="no" content-align="left"></o-table-column>
             
             <o-table-column #id attr="id" title="id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
             

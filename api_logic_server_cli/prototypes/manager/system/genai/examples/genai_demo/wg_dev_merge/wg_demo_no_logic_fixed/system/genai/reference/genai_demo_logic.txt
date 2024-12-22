@@ -1,0 +1,28 @@
+-- informal English
+
+Use Logic Bank to enforce the Check Credit requirement (do not generate check constraints):
+1. The customer's balance must not exceed the credit limit.
+2. The customer's balance is the sum of all unshipped orders.
+3. The order amount total is the sum of all item amounts.
+4. The item amount is the quantity times the unit price.
+5. The unit price is copied from the product.
+
+
+-- sample_ai (caps col names)
+
+Enforce the Check Credit requirement (do not generate check constraints):
+1. Customer.Balance <= CreditLimit
+2. Customer.Balance = Sum(Order.AmountTotal where date shipped is null)
+3. Order.AmountTotal = Sum(Items.Amount)
+4. Items.Amount = Quantity * UnitPrice
+5. Store the Items.UnitPrice as a copy from Product.UnitPrice
+
+
+-- genai_demo (lower case col names)a
+
+Enforce the Check Credit requirement (do not generate check constraints):
+1. Customer.balance <= credit_limit
+2. Customer.balance = Sum(Order.amount_total where date_shipped is null)
+3. Order.amount_total = Sum(Item.amount)
+4. Item.amount = quantity * unit_price
+5. Store the Item.unit_price as a copy from Product.unit_price

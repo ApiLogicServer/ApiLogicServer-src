@@ -1,0 +1,8 @@
+{
+    id: '{{ menu_group_name }}', name: ' {{ menu_group_name }}', icon: 'remove_red_eye', opened: true,
+    items: [
+    {% for menuitem in menuitems %}
+        {{ menuitem }}
+    {% endfor %}
+    ] 
+},

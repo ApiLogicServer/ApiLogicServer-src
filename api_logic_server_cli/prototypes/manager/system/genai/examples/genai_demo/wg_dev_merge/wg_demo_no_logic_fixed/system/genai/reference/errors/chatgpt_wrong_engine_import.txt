@@ -1,0 +1,111 @@
+To achieve this goal, you can follow these steps:
+
+1. First, define the database schema and create sample data using SQLAlchemy:
+
+```python
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, Numeric
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
+
+Base = declarative_base()
+
+class Customer(Base):
+    __tablename__ = 'customers'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=True)
+    balance = Column(Numeric(10, 2), nullable=True)
+    credit_limit = Column(Numeric(10, 2), nullable=True)
+
+class Order(Base):
+    __tablename__ = 'orders'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    customer_id = Column(Integer, ForeignKey('customers.id', ondelete='CASCADE'), nullable=True)
+    total_amount = Column(Numeric(10, 2), nullable=True)
+    notes = Column(String, nullable=True)
+    customer = relationship('Customer', backref='orders')
+
+class Item(Base):
+    __tablename__ = 'items'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    order_id = Column(Integer, ForeignKey('orders.id', ondelete='CASCADE'), nullable=True)
+    product_id = Column(Integer, ForeignKey('products.id'), nullable=True)
+    quantity = Column(Integer, nullable=True)
+    unit_price = Column(Numeric(10, 2), nullable=True)
+    amount = Column(Numeric(10, 2), nullable=True)
+
+class Product(Base):
+    __tablename__ = 'products'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=True)
+    unit_price = Column(Numeric(10, 2), nullable=True)
+
+# Create SQLite database
+engine = create_engine('sqlite:///system/genai/temp/create_db_models.sqlite')
+Base.metadata.create_all(engine)
+```
+
+2. Insert sample customer and product data:
+
+```python
+from sqlalchemy.orm import sessionmaker
+
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# Insert sample customer data
+customer1 = Customer(name='John Doe', balance=1000.00, credit_limit=1500.00)
+customer2 = Customer(name='Jane Smith', balance=1200.00, credit_limit=2000.00)
+session.add_all([customer1, customer2])
+
+# Insert sample product data
+product1 = Product(name='Product A', unit_price=25.00)
+product2 = Product(name='Product B', unit_price=30.00)
+session.add_all([product1, product2])
+
+session.commit()
+```
+
+3. Implement the Check Credit requirement using Logic Bank library. This automated validation will enforce the rules you specified:
+
+```python
+from logic_bank import Engine
+from logic_bank.logic_bank import Rule
+from logic_bank.util import row_decorator, constraint, if_key_match, apply_update, next_int
+
+from sqlalchemy import event
+from sqlalchemy.engine import Engine as SqlAlchemyEngine
+from sqlalchemy.orm import Session as SqlAlchemySession
+
+@row_decorator(target="items", compare={"unit_price": "products.unit_price"})
+@constraint
+def item_amount_formula(this):
+    return this.get("quantity") * this.get("unit_price")
+
+@row_decorator(target="orders", apply_row=True)
+@constraint
+def order_total_amount_formula(this):
+    return Engine.session_from_object(this).query(Item).filter(Item.order_id == this.id).with_parent(this).sum(Item.amount)
+
+@row_decorator(target="customers", apply_row=True)
+@constraint
+def customer_balance_formula(this):
+    return this.get("balance") - Engine.session.query(Order).filter(Order.customer_id == this.get("id"), Order.notes != "Shipped").sum(Order.total_amount)
+
+Rule.constraint(rule=item_amount_formula, enforced=True, as_condition=True)
+Rule.constraint(rule=order_total_amount_formula, enforced=True, as_condition=True)
+Rule.constraint(rule=customer_balance_formula)
+
+# Activate the logicbank engine
+engine = Engine()
+engine.activate(detailed=True, insert=True, update=True, delete=True)
+
+# Save session for Logic Bank
+def before_flush(session: SqlAlchemySession, flush_context, instances):
+    engine._appending_rows = list()
+    engine._session = session
+    Engine.session = session
+
+event.listens_for(SqlAlchemyEngine, "before_flush")(before_flush)
+```
+
+By following these steps, you should have a SQLite database created with the specified tables and constraints. The Logic Bank library is now enforcing the Check Credit requirements described in your original request.
