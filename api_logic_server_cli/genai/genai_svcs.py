@@ -320,7 +320,7 @@ def fix_and_write_model_file(response_dict: DotMap,  save_dir: str, post_error: 
             Returns:
                 str: the fixed test data line
             """
-
+            each_fixed_line = each_fixed_line.replace('\\n', '\n')
             if '=null' in each_fixed_line:
                 each_fixed_line = each_fixed_line.replace('=None', '=date') 
             if '=datetime' in each_fixed_line:
