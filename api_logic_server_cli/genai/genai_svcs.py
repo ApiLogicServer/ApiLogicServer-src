@@ -318,6 +318,7 @@ def fix_and_write_model_file(response_dict: DotMap,  save_dir: str, post_error: 
                 str: the fixed test data line
             """
 
+            each_fixed_line = each_fixed_line.replace('\\n', '\n')  # fixme is this the fix or the removed bug
             if '=null' in each_fixed_line:
                 each_fixed_line = each_fixed_line.replace('=None', '=date') 
             if '=datetime' in each_fixed_line:

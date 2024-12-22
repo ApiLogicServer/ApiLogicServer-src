@@ -174,7 +174,7 @@ def get_servers_build_and_test_path() -> Path:
     rtn_path = dev_path.joinpath("build_and_test")
     return rtn_path
 
-def start_api_logic_server(project_name: str, env_list = None, port: str='5656'):
+def start_api_logic_server(project_name: str, env_list = None, port: str='5656') -> str:
     """ start server (subprocess.Popen) at path [with env], and wait a few moments """
     import stat
 
@@ -183,6 +183,8 @@ def start_api_logic_server(project_name: str, env_list = None, port: str='5656')
     path = install_api_logic_server_path.joinpath(project_name)
     print(f'\n\nStarting Server {project_name}... from  {install_api_logic_server_path}\venv\n')
     pipe = None
+    return_str = None
+
     if platform == "win32":
         start_cmd = ['powershell.exe', f'{str(path)}\\run.ps1 x']
     else:
@@ -216,9 +218,17 @@ def start_api_logic_server(project_name: str, env_list = None, port: str='5656')
     try:
         print("\n.. Proceeding...\n")
         r = requests.get(url = URL)
-    except:
+    except Exception as err:
         print(f".. Ping failed on {project_name}")
-        raise
+        if "Missing attributes" in (str(err)):  # fixme where is the error msg?
+            print(f".. Missing attributes in {project_name}")
+            return_str = "Missing attributes"
+        elif "Connection refused" in (str(err)):
+            print(f".. Connection refused in {project_name}")
+            return_str = "Connection refused"
+        else:
+            raise
+    return return_str
 
 def stop_server(msg: str, port: str='5656'):
     URL = f"http://localhost:{port}/stop"
