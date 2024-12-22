@@ -52,10 +52,9 @@ TODO / Import
     * To get around, 
 
 To do:
-* use export
 * add test data
-* update current project with revised model and db
-* run rebuild-from-model to update the api and admin app
+* pull in wg rules
+* add this to the wg_test suite
 
 ## Usage
 
