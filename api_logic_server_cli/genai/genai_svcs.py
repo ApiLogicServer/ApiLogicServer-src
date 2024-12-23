@@ -158,14 +158,14 @@ def model2code(model: DotMap) -> str:
     return updated_model_str
 
 
-def fix_model_lines(model: DotMap) -> list[str]:
+def fix_model_lines(model: DotMap, use_relns: bool = True) -> list[str]:
     """Get the model class from the model, with MAJOR fixes
 
     Args:
         model (Model): the model
 
     Returns:
-        stlist[str]: the model class lines, fixed up
+        stlist[str]: the model class lines, fixed up (in place)
     """
 
     fixed_model_lines =  []
@@ -218,17 +218,26 @@ def fix_model_lines(model: DotMap) -> list[str]:
             log.debug(f'.. fix_and_write_model_file detects table - raise excp to trigger retry')
             if post_error is not None:
                 post_error = "ChatGPT Response contains table (not class) definitions: " + each_line
-        if 'sqlite:///' in each_line:  # must be sqlite:///system/genai/temp/create_db_models.sqlite
+        if 'sqlite:///' in each_line:  
+            # must be sqlite:///system/genai/temp/create_db_models.sqlite
+            # or sqlite:///{current_file_path}/create_db_models.sqlite (often better to create db next to py)
             current_url_rest = each_line.split('sqlite:///')[1]
             quote_type = "'"
             if '"' in current_url_rest:
                 quote_type = '"'  # eg, tests/test_databases/ai-created/time_cards/time_card_decimal/genai.response
-            current_url = current_url_rest.split(quote_type)[0]  
-            proper_url = 'system/genai/temp/create_db_models.sqlite'
-            each_line = each_line.replace(current_url, proper_url)
-            if current_url != proper_url:
-                log.debug(f'.. fixed sqlite url: {current_url} -> system/genai/temp/create_db_models.sqlite')
-                
+            current_url = current_url_rest.split(quote_type)[0]
+            if current_url == 'sqlite:///{current_file_path}/create_db_models.sqlite':
+                pass  
+            else:
+                proper_url = 'system/genai/temp/create_db_models.sqlite'
+                each_line = each_line.replace(current_url, proper_url)
+                if current_url != proper_url:
+                    log.debug(f'.. fixed sqlite url: {current_url} -> system/genai/temp/create_db_models.sqlite')
+        if 'class ' in each_line:
+            if 'Base' not in each_line:
+                log.debug(f'.. fix_and_write_model_file detects class with no Base - raise excp to trigger retry')
+                if post_error is not None:
+                    post_error = "ChatGPT Response contains class with no Base: " + each_line
         if 'relationship(' in each_line and use_relns == False:
             # airport4 fails with could not determine join condition between parent/child tables on relationship Airport.flights
             if each_line.startswith('    '):
@@ -269,10 +278,10 @@ def fix_and_write_model_file(response_dict: DotMap,  save_dir: str, post_error: 
 
         did_base = False
         for each_model in models:
-            fix_model_lines(model=each_model)
+            fix_model_lines(model=each_model, use_relns=use_relns)  # eg, Decimal -> DECIMAL, indent, bogus relns
             
-            try: # fixme - needs to be based on model_lines
-                model_code = model2code(each_model) # else lose Decimal (etc) fixes 
+            try: # based on model_lines
+                model_code = model2code(each_model)  
                 log.info(f"Added description to model: {each_model.name}: {model_code}")
             except Exception as exc:
                 log.error(f"Failed to add description to model: {exc}")
@@ -418,21 +427,64 @@ def get_lines_from_file(file_name: str) -> list[str]:
         lines = file.read().split("\n")
     return lines
 
+def get_expand_prompt_file(prompt_file_name) -> str:
+    ''' 
+    Read a prompt file, expand includes, and return the content as a string 
+    eg: includes: {{% include 'system/genai/prompt_inserts/sqlite_inserts_model_test_hints.prompt' % }}
+    '''
+from pathlib import Path
+
+def read_and_expand_prompt(prompt_file_path: str) -> str:
+    """
+    Read a prompt file, expand includes, and return the content as a string.
+    Includes are in the format (starting from same path): {{% include 'include_file.prompt' % }}
+
+    Args:
+        file_path (str): Path to the prompt file.
+
+    Returns:
+        str: The content of the prompt file with includes expanded.
+    """
+
+    with open(prompt_file_path, 'r') as file:
+        lines = file.readlines()
+    manager_prompt_dir = os.path.dirname(prompt_file_path) 
+    out_lines = []
+    for each_line in lines:
+        if each_line.startswith('{{% include '):
+            debug_string = "good breakpoint - include"
+            parts = each_line.split("'")  
+            include_name = parts[1]
+            with open(Path(manager_prompt_dir).joinpath(include_name), 'r') as include_file:
+                include_lines = include_file.readlines()
+            for each_line_include in include_lines: 
+                out_lines.append(each_line_include)
+        else:
+            out_lines.append(each_line)   
+    result_lines = "".join(out_lines)
+    return result_lines
+
+
 def get_create_prompt__with_inserts(arg_prompt_inserts: str='', raw_prompt: str='', for_iteration: bool = False, 
                                     arg_db_url: str="sqlite", arg_test_data_rows: int=4) -> tuple[str, bool]:
     """ Prompt-engineering for creating project,  from: <manager>/system/genai/prompt_inserts
 
-    prompt_inserts file name is computed from db_url, with inserts from arg_prompt_inserts.
-    1. insert db-specific logic into prompt 
+    insert raw_prompt into prompt_inserts file; name is computed from db_url, with inserts from db (or optiomally arg_prompt_inserts).
+    1. insert the raw prompt --> into the prompt_inserts file (sqlite one quite big)
+    1. prompt-insert file name computed from db_url (or override with arg_prompt_inserts) 
+    1. It is first macro-expanded to share creation hints Using get_expand_prompt
+        * Content: "use SQLAlchemy to.... {{prompt}} .. directions on models & test data"... (big)
+        * Want the share all these directions with import
+        * So, sqlite_inserts has {{% include 'sqlite_inserts_model_test_hints.prompt' % }}
     2. insert iteration prompt     (if for_iteration)
     3. insert logic_inserts.prompt ('1 line: Use LogicBank to create declare_logic()...')
     4. designates prompt-format    (response_format.prompt)
 
     Args:
-        arg_prompt_inserts (str, optional): user prompt (eg, airport system). Defaults to ''.
+        arg_prompt_inserts (str, optional): force own insert (vs dburl->db). Defaults to '', * means no inserts.
         raw_prompt (str, optional): user prompt (eg, airport system) replaces {{prompt}}. Defaults to ''.
         for_iteration (bool, optional): _description_. Defaults to False.
-        arg_db_url (str, optional): used to compute prompt file name. Defaults to "sqlite".
+        arg_db_url (str, optional): used to compute prompt_inserts file name. Defaults to "sqlite".
         arg_test_data_rows (int, optional): how many rows. Defaults to 4.
 
     Returns:
@@ -456,12 +508,16 @@ def get_create_prompt__with_inserts(arg_prompt_inserts: str='', raw_prompt: str=
     if prompt_inserts == "*":  
         pass    # '*' means caller has computed their own prompt -- no inserts
     else:       # do prompt engineering (inserts)
-        prompt_eng_file_name = get_manager_path().joinpath(f'system/genai/prompt_inserts/{prompt_inserts}')
-        assert Path(prompt_eng_file_name).exists(), \
-            f"Missing prompt_inserts file: {prompt_eng_file_name}"  # eg api_logic_server_cli/prototypes/manager/system/genai/prompt_inserts/sqlite_inserts.prompt
-        log.debug(f'get_create_prompt__with_inserts: {str(os.getcwd())} \n .. merged with: {prompt_eng_file_name}')
-        with open(prompt_eng_file_name, 'r') as file:
-            pre_post = file.read()  # eg, Use SQLAlchemy to create a sqlite database named system/genai/temp/create_db_models.sqlite, with
+
+        if use_includes := True:
+            pre_post = read_and_expand_prompt(get_manager_path().joinpath(f'system/genai/prompt_inserts/{prompt_inserts}'))
+        else:
+            prompt_eng_file_name = get_manager_path().joinpath(f'system/genai/prompt_inserts/{prompt_inserts}')
+            assert Path(prompt_eng_file_name).exists(), \
+                f"Missing prompt_inserts file: {prompt_eng_file_name}"  # eg api_logic_server_cli/prototypes/manager/system/genai/prompt_inserts/sqlite_inserts.prompt
+            log.debug(f'get_create_prompt__with_inserts: {str(os.getcwd())} \n .. merged with: {prompt_eng_file_name}')
+            with open(prompt_eng_file_name, 'r') as file:  # string with \n
+                pre_post = file.read()  # eg, Use SQLAlchemy to create a sqlite database named system/genai/temp/create_db_models.sqlite, with
         prompt_result = pre_post.replace('{{prompt}}', raw_prompt)
         if for_iteration:
             # Update the prior response - be sure not to lose classes and test data already created.
@@ -598,7 +654,7 @@ def call_chatgpt(messages: List[Dict[str, str]], api_version: str, using: str) -
     Args:
         messages (List[Dict[str, str]]): array of messages
         api_version (str): genai version
-        using (str): str to save response
+        using (str): str to save response.json (relative to cwd)
     Returns:
         str: response from ChatGPT
     """    

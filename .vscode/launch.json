@@ -2024,8 +2024,9 @@
                 "APILOGICSERVER_DEBUG": "True",
                 "OPT_LOCKING": "optional"},
             "justMyCode": false,
-            "args": ["genai-utils", "--import-genai", "--import-restart",
-            "--using=../wg_demo_no_logic_fixed"],
+            "args": ["genai-utils", "--import-genai", 
+                    // "--import-restart",
+                    "--using=../wg_demo_no_logic_fixed"],
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
         },

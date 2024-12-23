@@ -5,3 +5,8 @@ Format the response as a WGResult
 Create updated test data to ensure that:
 - The test data includes every column referenced in rules
 - Every column referenced in rules is properly initialized in the test data 
+
+
+{{% include 'sqlite_inserts_model_test_hints.prompt' % }}
+
+{{% include 'response_format.prompt' % }}

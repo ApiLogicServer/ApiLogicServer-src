@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "14.00.35"
+__version__ = "14.00.36"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t12/22/2024 - 14.00.36: many: prompt includes, relative create_db_models db, check class no base,  \n"\
     "\t12/22/2024 - 14.00.35: safrs 3.1.6, models_2_code recovery, with newline \n"\
     "\t12/21/2024 - 14.00.32: successful [assisted] import of export, fix genai_svcs.model2code, fix safrs_basex removal, with option for just opt_lock for clean models \n"\
     "\t12/20/2024 - 14.00.28: model driven api (fails multi-db), import(ish), missing active_rules, logicbank 1.20.12 - fail-save rules, BLT files for N8N \n"\

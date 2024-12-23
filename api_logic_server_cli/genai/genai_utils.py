@@ -2,7 +2,7 @@ from typing import Dict, List, Tuple
 from api_logic_server_cli.cli_args_project import Project
 import logging
 from pathlib import Path
-from api_logic_server_cli.genai.genai_svcs import get_prompt_messages_from_dirs, select_messages, get_create_prompt__with_inserts, get_prompt_you_are, call_chatgpt, fix_and_write_model_file, get_manager_path, remove_als_from_models_py
+from api_logic_server_cli.genai.genai_svcs import get_prompt_messages_from_dirs, select_messages, get_create_prompt__with_inserts, get_prompt_you_are, call_chatgpt, fix_and_write_model_file, get_manager_path, remove_als_from_models_py, read_and_expand_prompt
 from api_logic_server_cli.genai.genai_svcs import Rule, WGResult
 import os
 import sys
@@ -307,18 +307,20 @@ class GenAIUtils:
             model_lines = remove_als_from_models_py(self.path_dev_import.joinpath('create_db_models.py'))
             with open(self.path_dev_import.joinpath('create_db_models_no_als.py'), "w") as file:
                 file.write("".join(model_lines))
-            create_db_models_no_als_db_loc = self.path_dev_import.joinpath('create_db_models_no_als.py')
-            create_db_models_no_als_url = f'sqlite:///docs/import/create_db_models_no_als.sqlite'
-            utils.replace_string_in_file(search_for='sqlite:///system/genai/temp/create_db_models.sqlite', 
-                                         replace_with=create_db_models_no_als_url,
+            # create_db_models_no_als_db_loc = self.path_dev_import.joinpath('create_db_models_no_als.py')
+            create_db_models_no_als_url = f'sqlite:///docs/import/create_db_models.sqlite'
+            create_db_models_no_als_url = f'sqlite:///{self.path_dev_import.joinpath('create_db_models.sqlite')}'
+            # eg /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed/docs/import/create_db_models.sqlite
+            utils.replace_string_in_file(search_for='mgr_db_loc = True', 
+                                         replace_with='mgr_db_loc = False',
                                          in_file=self.path_dev_import.joinpath('create_db_models_no_als.py'))
-            self.project.command = 'rebuild-from-database'
-            self.project.from_model = self.path_dev_import.joinpath('create_db_models_no_als.py')
+            self.project.command = 'rebuild-from-model'
+            self.project.from_model = self.path_dev_import.joinpath('create_db_models_no_als.py')  # todo eh?
             self.project.db_url = create_db_models_no_als_url
             self.project.project_name = '.'  # create_project -> self.directory_setup() dups the last project node
             self.project.create_project()  
 
-            shutil.copy(self.path_dev_import.joinpath('create_db_models_no_als.sqlite'), 
+            shutil.copy(self.path_dev_import.joinpath('create_db_models.sqlite'), 
                         self.path_dev.joinpath('database/db.sqlite')  )
 
         def add_web_genai_logic(self):
@@ -340,7 +342,7 @@ class GenAIUtils:
         self.path_wg = Path(self.using)
         self.path_dev = Path(os.getcwd())
         self.path_dev_import = self.path_dev.joinpath('docs/import')
-        if self.import_restart == True:
+        if False and self.import_restart == True:
             for member in self.path_wg.iterdir():
                 log.debug(f'.. .. import_genai: {member.name}')
                 if member.is_dir() and member.name == 'docs':
@@ -350,7 +352,7 @@ class GenAIUtils:
                 pass
             pass
 
-        if debug_rebuild := False:  # this is mainly to avoid lengthy GPT calls
+        if self.import_restart == True:  # this is mainly to avoid lengthy GPT calls
             # this presumes ../docs/import/create_db_models.py is built.  
             # You may to repair test data and restart here.
             # Errors can make ont appgen fail - you may need to delete in incoming project (but will need to test)
@@ -363,6 +365,7 @@ class GenAIUtils:
             manager_path = get_manager_path()
             with open(manager_path.joinpath('system/genai/prompt_inserts/import.prompt'), 'r') as file:
                 f_import_prompt = file.read()
+            f_import_prompt = read_and_expand_prompt(get_manager_path().joinpath(f'system/genai/prompt_inserts/import.prompt'))
 
             # build import request: [you-are, models_and_rules, import_prompt]
             os.makedirs(self.path_dev_import, exist_ok=True)
