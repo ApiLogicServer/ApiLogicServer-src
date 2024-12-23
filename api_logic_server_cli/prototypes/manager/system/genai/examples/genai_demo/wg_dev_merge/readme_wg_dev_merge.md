@@ -65,6 +65,10 @@ als genai-utils --import-genai --using=../wg_demo_no_logic_fixed
 
 It may fail
 * fix `system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed/docs/import/create_db_models.py`
+* make sure to get initial system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed/database/models.py (eg, make a copy before 1st test)
+* vs. 'system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed/docs/import/create_db_models.sqlite'
+* vs. 'sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed/docs/import/create_db_models.sqlite'
+
 * use the restart option
 ```bash
 cd system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed
