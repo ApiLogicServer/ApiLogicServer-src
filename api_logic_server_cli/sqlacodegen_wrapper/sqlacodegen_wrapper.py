@@ -414,7 +414,8 @@ def create_models_py(model_creation_services: ModelCreationServices, abs_db_url:
                 # model_full_file_name = "/".join(model_file_name.split("/")[:-1]) + "/" + model_creation_services.project.bind_key + "_" + model_file_name.split("/")[-1]
             """
             log.debug(f' a.  Create Models - create database/{project.model_file_name}, using sqlcodegen')
-            log.debug(f'.. .. ..For database:  {abs_db_url}')
+            log.debug(f'.. .. ..For database:  {abs_db_url}')  
+            # import: sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed/docs/import/create_db_models.sqlite
 
             models_mem, num_models = create_models_memstring(code_gen_args)  # calls sqlcodegen
             write_models_py(model_full_file_name, models_mem)

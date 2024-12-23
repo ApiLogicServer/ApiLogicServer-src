@@ -188,7 +188,7 @@ def start_api_logic_server(project_name: str, env_list = None, port: str='5656')
     if platform == "win32":
         start_cmd = ['powershell.exe', f'{str(path)}\\run.ps1 x']
     else:
-        if path.exists('run.sh').exists():
+        if not path.exists():
             return '**System Error** - run.sh not found'
         os.chmod(f'{str(path)}/run.sh', 0o777)
         os.chmod(f'{str(path)}/run.sh', 0o777)

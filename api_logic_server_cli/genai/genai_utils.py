@@ -1,3 +1,6 @@
+import importlib
+import runpy
+import traceback
 from typing import Dict, List, Tuple
 from api_logic_server_cli.cli_args_project import Project
 import logging
@@ -299,9 +302,17 @@ class GenAIUtils:
             return {"existing_models": dev_models}
 
         def rebuild_from_import(self):
-            """ 
-                1. run create_db_models, but from/to import directory
-                2. run rebuild_from_model
+            """  create the dev db and models.py from the import:
+                1. import contains 
+                    * no databases
+                    * db_models.py
+                        * merged models and tests data
+                        * but wrong format
+                            * so, convert it to create_db_models_no_als.py
+                2. run rebuild-from-database
+                    * replace the database with the new one (rebuild-from-database does not)
+                        * so we need to run create_db_models_no_als.py
+                    * fyi: rebuild-from-model means use *existing* database/models.py (we want replace)
             """
             # de-als: remove safrs_basex, json_api_attrs (since we built from dev als db)
                 
@@ -312,7 +323,7 @@ class GenAIUtils:
 
             if do_verify_response:= True:  # internal: chatGPT - we are watching you!!
                 if 'wg_dev_merge' in str(self.path_dev_import):  # internal only
-                    assert 'carbon' in model_lines_str, f"carbon not in create_db_models_no_als.py"
+                    assert 'carbon' in model_lines_str, f"carbon not in create_db_models_no_als.py - maybe old dev models.py?"
                     assert 'balance' in model_lines_str, f"balance not in create_db_models_no_als.py"
                     log.debug(f'\nconfirm good data model response -> create_db_models_no_als\n')
 
@@ -323,14 +334,18 @@ class GenAIUtils:
             utils.replace_string_in_file(search_for='mgr_db_loc = True', 
                                          replace_with='mgr_db_loc = False',
                                          in_file=self.path_dev_import.joinpath('create_db_models_no_als.py'))
-            self.project.command = 'rebuild-from-model'
-            self.project.from_model = self.path_dev_import.joinpath('create_db_models_no_als.py')  # todo eh?
+
+            models_name = self.path_dev_import.joinpath('create_db_models_no_als.py')  # create create_db_models.sqlite
+            runpy.run_path(path_name=models_name)
+
+            shutil.copy(self.path_dev_import.joinpath('create_db_models.sqlite'),  
+                        self.path_dev.joinpath('database/db.sqlite')  )
+
+            self.project.command = 'rebuild-from-database'  # from model means use existing database/models.py (we want replace)
+            # self.project.from_model = self.path_dev_import.joinpath('create_db_models_no_als.py')  # todo eh?
             self.project.db_url = create_db_models_no_als_url
             self.project.project_name = '.'  # create_project -> self.directory_setup() dups the last project node
             self.project.create_project()  
-
-            shutil.copy(self.path_dev_import.joinpath('create_db_models.sqlite'), 
-                        self.path_dev.joinpath('database/db.sqlite')  )
 
         def add_web_genai_logic(self):
             """ """
