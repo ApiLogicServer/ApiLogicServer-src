@@ -16,6 +16,7 @@ from pydantic import BaseModel
 from dotmap import DotMap
 import ast
 import astor
+import yaml
 
 K_LogicBankOff = "LBX"
 ''' LBX Disable Logic (for demos) '''
@@ -682,8 +683,12 @@ def call_chatgpt(messages: List[Dict[str, str]], api_version: str, using: str) -
         response_dict = json.loads(data)
         with open(Path(using).joinpath('response.json'), "w") as response_file:  # save for debug
             json.dump(response_dict, response_file, indent=4)
+        with open(Path(using).joinpath('response.yaml'), "w") as response_file:
+            yaml.dump(response_dict, response_file, default_flow_style=False, default_style='|')
+            #yaml_string = yaml.dump(data, default_flow_style=False, default_style='|')
+            #response_dict['yaml'] = yaml_string
         log.debug(f'.. call_chatgpt saved response: {using}/response.json')
-        return data
+        return data # this is a string...
     except Exception as inst:
         log.error(f"\n\nError: ChatGPT call failed\n{inst}\n\n")
         sys.exit('ChatGPT call failed - please see https://apilogicserver.github.io/Docs/WebGenAI-CLI/#configuration')
