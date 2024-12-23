@@ -304,9 +304,18 @@ class GenAIUtils:
                 2. run rebuild_from_model
             """
             # de-als: remove safrs_basex, json_api_attrs (since we built from dev als db)
+                
             model_lines = remove_als_from_models_py(self.path_dev_import.joinpath('create_db_models.py'))
+            model_lines_str = "".join(model_lines)
             with open(self.path_dev_import.joinpath('create_db_models_no_als.py'), "w") as file:
-                file.write("".join(model_lines))
+                file.write(model_lines_str)
+
+            if do_verify_response:= True:  # internal: chatGPT - we are watching you!!
+                if 'wg_dev_merge' in str(self.path_dev_import):  # internal only
+                    assert 'carbon' in model_lines_str, f"carbon not in create_db_models_no_als.py"
+                    assert 'balance' in model_lines_str, f"balance not in create_db_models_no_als.py"
+                    log.debug(f'\nconfirm good data model response -> create_db_models_no_als\n')
+
             # create_db_models_no_als_db_loc = self.path_dev_import.joinpath('create_db_models_no_als.py')
             create_db_models_no_als_url = f'sqlite:///docs/import/create_db_models.sqlite'
             create_db_models_no_als_url = f'sqlite:///{self.path_dev_import.joinpath('create_db_models.sqlite')}'
