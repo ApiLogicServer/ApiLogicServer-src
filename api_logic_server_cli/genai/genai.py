@@ -151,7 +151,10 @@ class GenAI(object):
         # main driver starts here
         #######################################################
 
-        log.info(f'\nGenAI [{self.project.project_name}] creating microservice from: {self.project.genai_using}')
+        log.info(f'\nGenAI [{self.project.project_name}] creating microservice...')
+        log.info(f'.. .. --using prompt: {self.project.genai_using}')
+        log.info(f'.. .. in pwd: {os.getcwd()}')
+
         if self.project.genai_repaired_response != '':
             log.info(f'..     retry from [repaired] response file: {self.project.genai_repaired_response}')
         
@@ -169,28 +172,35 @@ class GenAI(object):
 
         if self.project.genai_repaired_response == '':  # normal path - get response from ChatGPT
             try:
-                api_version = f'{self.project.genai_version}'  # eg, "gpt-4o"
-                start_time = time.time()
-                db_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")  # TODO - use genai_utils
-                client = OpenAI(api_key=os.getenv("APILOGICSERVER_CHATGPT_APIKEY"))
-                model = api_version
-                if model == "":  # default from CLI is '', meaning fall back to env variable or system default...
-                    model = os.getenv("APILOGICSERVER_CHATGPT_MODEL")
-                    if model is None or model == "*":  # system default chatgpt model
-                        model = "gpt-4o-2024-08-06"
-                self.resolved_model = model
-                completion = client.beta.chat.completions.parse(
-                    messages=self.messages, response_format=WGResult,
-                    # temperature=self.project.genai_temperature,  values .1 and .7 made students / charges fail
-                    model=model  # for own model, use "ft:gpt-4o-2024-08-06:personal:logicbank:ARY904vS" 
-                )
-                log.info(f'ChatGPT ({str(int(time.time() - start_time))} secs) - response at: system/genai/temp/chatgpt_original.response')
-                
-                data = completion.choices[0].message.content
-                response_dict = json.loads(data)
-                self.get_and_save_raw_response_data(completion=completion, response_dict=response_dict)
-                # print(json.dumps(json.loads(data), indent=4))
-                pass
+                if use_svcs := True:
+                    data = genai_svcs.call_chatgpt(
+                        messages=self.messages,
+                        using = 'system/genai/temp', 
+                        api_version=self.project.genai_version)
+                    response_dict = json.loads(data)
+                else:
+                    api_version = f'{self.project.genai_version}'  # eg, "gpt-4o"
+                    start_time = time.time()
+                    db_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")  # TODO - use genai_utils
+                    client = OpenAI(api_key=os.getenv("APILOGICSERVER_CHATGPT_APIKEY"))
+                    model = api_version
+                    if model == "":  # default from CLI is '', meaning fall back to env variable or system default...
+                        model = os.getenv("APILOGICSERVER_CHATGPT_MODEL")
+                        if model is None or model == "*":  # system default chatgpt model
+                            model = "gpt-4o-2024-08-06"
+                    self.resolved_model = model
+                    completion = client.beta.chat.completions.parse(
+                        messages=self.messages, response_format=WGResult,
+                        # temperature=self.project.genai_temperature,  values .1 and .7 made students / charges fail
+                        model=model  # for own model, use "ft:gpt-4o-2024-08-06:personal:logicbank:ARY904vS" 
+                    )
+                    log.info(f'ChatGPT ({str(int(time.time() - start_time))} secs) - response at: system/genai/temp/chatgpt_original.response')
+                    
+                    data = completion.choices[0].message.content
+                    response_dict = json.loads(data)
+                    self.z_get_and_save_raw_response_data(completion=completion, response_dict=response_dict)
+                    # print(json.dumps(json.loads(data), indent=4))  # careful - name chg original.response
+                    pass
             except Exception as inst:
                 log.error(f"\n\nError: ChatGPT call failed\n{inst}\n\n")
                 sys.exit('ChatGPT call failed - please see https://apilogicserver.github.io/Docs/WebGenAI-CLI/#configuration')
@@ -634,6 +644,54 @@ class GenAI(object):
             import traceback
             log.error(f"\n\nERROR creating genai project docs: {docs_dir}\n\n{traceback.format_exc()}")
         pass
+    def save_prompt_messages_to_system_genai_temp_project(self):
+        """
+        Save prompts / responses to system/genai/temp/{project}/genai.response
+
+        Copy system/genai/temp/create_db_models.py to system/genai/temp/{project}/create_db_models.py
+        """
+        try:
+            to_dir = Path(os.getcwd())
+            gen_temp_dir = Path(to_dir).joinpath(f'system/genai/temp')
+            to_dir_save_dir = Path(to_dir).joinpath(f'system/genai/temp/{self.project.project_name_last_node}')
+            """ project work files saved to system/genai/temp/<project> """
+            log.info(f'.. saving work files to: system/genai/temp/{self.project.project_name_last_node}')
+            """ system/genai/temp/project - save prompt, response, and create_db_models.py to this directory """
+            self.project.gen_ai_save_dir = to_dir_save_dir
+            """ project work files saved to system/genai/temp/<project> """
+            # delete and recreate the directory
+            if to_dir_save_dir.exists():
+                shutil.rmtree(to_dir_save_dir)
+            os.makedirs(to_dir_save_dir, exist_ok=True)
+            log.debug(f'save_prompt_messages_to_system_genai_temp_project() - {str(to_dir_save_dir)}')
+
+            if self.project.genai_repaired_response == '':  # normal path, from --using
+                if write_prompt := True:
+                    pass
+                    file_num = 0
+                    flat_project_name = Path(self.project.project_name).stem  # in case project is dir/project-name
+                    for each_message in self.messages:
+                        suffix = 'prompt'
+                        if each_message['role'] == 'system':
+                            suffix = 'response' 
+                        file_name = f'{flat_project_name}_{str(file_num).zfill(3)}.{suffix}'
+                        file_path = to_dir_save_dir.joinpath(file_name)
+                        log.debug(f'.. saving[{file_name}]  - {each_message["content"][:30]}...')
+                        with open(file_path, "w") as message_file:
+                            message_file.write(each_message['content']) 
+                        file_num += 1
+                    suffix = 'response'  # now add the this response
+                    file_name = f'{flat_project_name}_{str(file_num).zfill(3)}.{suffix}'  # FIXME 
+                    file_path = to_dir_save_dir.joinpath(file_name)
+                    log.debug(f'.. saving[{file_name}]  - {each_message["content"][:30]}...')
+                    with open(file_path, "w") as message_file:
+                        json.dump(self.response_dict.toDict(), message_file, indent=4)
+                shutil.copyfile(self.project.from_model, to_dir_save_dir.joinpath('create_db_models.py'))
+        except Exception as inst:
+            # FileNotFoundError(2, 'No such file or directory')
+            log.error(f"\n\nError: {inst} \n..creating diagnostic files into dir: {str(gen_temp_dir)}\n\n")
+            pass  # intentional try/catch/bury - it's just diagnostics, so don't fail
+        debug_string = "good breakpoint - return to main driver, and execute create_db_models.py"
 
     def z_fix_and_write_model_file(self):
         """
@@ -874,7 +932,8 @@ class GenAI(object):
             create_db_model_file.write("    print(f'Test Data Error: {exc}')\n")
         
         log.debug(f'.. code for db creation and test data: {self.project.from_model}')
-
+    
+ 
     def get_lines_from_fileZZ(self, file_name: str) -> list[str]:
         """Get lines from a file  todo: migrate to svcs
 
@@ -888,57 +947,8 @@ class GenAI(object):
         with open(file_name, "r") as file:
             lines = file.readlines()
         return lines
-    
-    def save_prompt_messages_to_system_genai_temp_project(self):
-        """
-        Save prompts / responses to system/genai/temp/{project}/genai.response
-
-        Copy system/genai/temp/create_db_models.py to system/genai/temp/{project}/create_db_models.py
-        """
-        try:
-            to_dir = Path(os.getcwd())
-            gen_temp_dir = Path(to_dir).joinpath(f'system/genai/temp')
-            to_dir_save_dir = Path(to_dir).joinpath(f'system/genai/temp/{self.project.project_name_last_node}')
-            """ project work files saved to system/genai/temp/<project> """
-            log.info(f'.. saving work files to: system/genai/temp/{self.project.project_name_last_node}')
-            """ system/genai/temp/project - save prompt, response, and create_db_models.py to this directory """
-            self.project.gen_ai_save_dir = to_dir_save_dir
-            """ project work files saved to system/genai/temp/<project> """
-            # delete and recreate the directory
-            if to_dir_save_dir.exists():
-                shutil.rmtree(to_dir_save_dir)
-            os.makedirs(to_dir_save_dir, exist_ok=True)
-            log.debug(f'save_prompt_messages_to_system_genai_temp_project() - {str(to_dir_save_dir)}')
-
-            if self.project.genai_repaired_response == '':  # normal path, from --using
-                if write_prompt := True:
-                    pass
-                    file_num = 0
-                    flat_project_name = Path(self.project.project_name).stem  # in case project is dir/project-name
-                    for each_message in self.messages:
-                        suffix = 'prompt'
-                        if each_message['role'] == 'system':
-                            suffix = 'response' 
-                        file_name = f'{flat_project_name}_{str(file_num).zfill(3)}.{suffix}'
-                        file_path = to_dir_save_dir.joinpath(file_name)
-                        log.debug(f'.. saving[{file_name}]  - {each_message["content"][:30]}...')
-                        with open(file_path, "w") as message_file:
-                            message_file.write(each_message['content']) 
-                        file_num += 1
-                    suffix = 'response'  # now add the this response
-                    file_name = f'{flat_project_name}_{str(file_num).zfill(3)}.{suffix}'  # FIXME 
-                    file_path = to_dir_save_dir.joinpath(file_name)
-                    log.debug(f'.. saving[{file_name}]  - {each_message["content"][:30]}...')
-                    with open(file_path, "w") as message_file:
-                        json.dump(self.response_dict.toDict(), message_file, indent=4)
-                shutil.copyfile(self.project.from_model, to_dir_save_dir.joinpath('create_db_models.py'))
-        except Exception as inst:
-            # FileNotFoundError(2, 'No such file or directory')
-            log.error(f"\n\nError: {inst} \n..creating diagnostic files into dir: {str(gen_temp_dir)}\n\n")
-            pass  # intentional try/catch/bury - it's just diagnostics, so don't fail
-        debug_string = "good breakpoint - return to main driver, and execute create_db_models.py"
-    
-    def get_and_save_raw_response_data(self, completion: object, response_dict: dict):
+   
+    def z_get_and_save_raw_response_data(self, completion: object, response_dict: dict):
         """
         Write response_dict --> system/genai/temp/chatgpt_original/retry.response
         """
