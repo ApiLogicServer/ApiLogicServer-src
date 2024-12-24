@@ -9,10 +9,10 @@ class Config:
     #   what tests to run
     # ***********************
 
-    default_setting = False  # simplify enable / disable most    
+    default_setting = True  # simplify enable / disable most    
 
-    do_create_manager = False                               # create the manager - FIXME not working    do_test_iso = default_setting                   # complex iteration
-    do_logic_training = False                               # created 10 tests for logic training
+    do_create_manager = default_setting                               # create the manager - FIXME not working    do_test_iso = default_setting                   # complex iteration
+    do_logic_training = default_setting                               # created 10 tests for logic training
     do_import = default_setting                             # import 
     do_test_auto_conv = default_setting                     # ensure project rebuilt, not truncated
     do_test_genai_demo = default_setting                    # test genai_demo

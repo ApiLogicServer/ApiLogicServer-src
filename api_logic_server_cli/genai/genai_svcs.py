@@ -159,7 +159,7 @@ def model2code(model: DotMap) -> str:
     return updated_model_str
 
 
-def fix_model_lines(model: DotMap, use_relns: bool = True) -> list[str]:
+def fix_model_lines(model: DotMap, use_relns: bool = True, post_error: str = None) -> list[str]:
     """Get the model class from the model, with MAJOR fixes
 
     Args:
