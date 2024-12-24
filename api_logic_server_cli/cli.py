@@ -635,14 +635,14 @@ def genai(ctx, using, db_url, repaired_response: str,
 @click.option('--import-genai', "import_genai",
               default=False, is_flag=True,
               help="Import Web-Genai Export")
-@click.option('--import-restart', "import_restart",
+@click.option('--import-resume', "import_resume",
               default=False, is_flag=True,
               help="Fix import models, and restart")
 @click.option('--submit', is_flag=True,
               default=False,
               help="Submit --using to GenAI")
 @click.pass_context
-def genai_utils(ctx, using, genai_version: str, fixup: click.BOOL, submit: click.BOOL, import_genai: click.BOOL, import_restart: click.BOOL):
+def genai_utils(ctx, using, genai_version: str, fixup: click.BOOL, submit: click.BOOL, import_genai: click.BOOL, import_resume: click.BOOL):
     """
         Utilities for GenAI.
     """
@@ -668,7 +668,7 @@ def genai_utils(ctx, using, genai_version: str, fixup: click.BOOL, submit: click
         exit (1)
     from api_logic_server_cli.genai.genai_utils import GenAIUtils
     genai_utils = GenAIUtils(using=using, project=project, genai_version=genai_version, 
-                             fixup=fixup, submit=submit, import_genai=import_genai, import_restart=import_restart)
+                             fixup=fixup, submit=submit, import_genai=import_genai, import_resume=import_resume)
     genai_utils.run()
     pass
     log.info("")
