@@ -24,7 +24,7 @@ import ast
 log = logging.getLogger(__name__)
 
 class GenAIUtils:
-    def __init__(self, project: Project, using: str, genai_version: str, fixup: bool, submit: bool, import_genai: bool, import_restart: bool = False):
+    def __init__(self, project: Project, using: str, genai_version: str, fixup: bool, submit: bool, import_genai: bool, import_resume: bool = False):
         """ 
 
         """        
@@ -35,7 +35,7 @@ class GenAIUtils:
         self.genai_version = genai_version
         self.submit = submit
         self.import_genai = import_genai
-        self.import_restart = import_restart
+        self.import_resume = import_resume
 
 
     def run(self):
@@ -366,7 +366,7 @@ class GenAIUtils:
         self.path_wg = Path(self.using)
         self.path_dev = Path(os.getcwd())
         self.path_dev_import = self.path_dev.joinpath('docs/import')
-        if False and self.import_restart == True:
+        if False and self.import_resume == True:
             for member in self.path_wg.iterdir():
                 log.debug(f'.. .. import_genai: {member.name}')
                 if member.is_dir() and member.name == 'docs':
@@ -376,7 +376,7 @@ class GenAIUtils:
                 pass
             pass
 
-        if self.import_restart == True:  # this is mainly to avoid lengthy GPT calls
+        if self.import_resume == True:  # this is mainly to avoid lengthy GPT calls
             # this presumes ../docs/import/create_db_models.py is built.  
             # You may to repair test data and restart here.
             # Errors can make ont appgen fail - you may need to delete in incoming project (but will need to test)
