@@ -76,6 +76,8 @@ The `import-genai` command creates the `docs/import` directory and the following
 * The system then uses this to update the dev `database/db.sqlite` and `database/models.py`.
     * **It's good practice to verify these**.  Make sure all the attributes from both sources are reflected in the updated **database** and **models** noted above.
 
+> you cannot currently re-run the tests, since it appears to encounter dups in sqlite.  See the re-run instructions, below.
+
 <br/>
 
 ### Restart option for failure recovery
@@ -84,6 +86,7 @@ It may fail, requiring either a **re-run** or an `import-resume`:
 
 * **Re-run** is indicated if the data model is missing attributes, incorrect or imcomplete.
     1. make sure to get initial `system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed/database/models.py` (eg, make a copy before 1st test)
+    2. delete or rename the `docs/import` directory.
 
 * `import-resume` can be used if you can repair the file below, e.g., a minor syntax error.
     1. fix `system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed/docs/import/create_db_models.py`
@@ -125,6 +128,10 @@ It was created like this (no need to do this, it's already done):
 
 ## Status - 12/23
 
+Should work:
+* after BLT
+* in wg_test suite
+
 TODO / Fixup:
 1. seems to lose tables (had to have rules on Order etc)
 
@@ -132,6 +139,5 @@ TODO / Import
 1. See #2 above.  Item stuff like def __repr__(self)...
     * To get around, 
 
-To do:
+TODO / not done:
 * pull in wg rules
-* add this to the wg_test suite

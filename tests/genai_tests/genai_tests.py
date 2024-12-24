@@ -108,7 +108,7 @@ def run_command(cmd: str, msg: str = "", new_line: bool=False,
     try:
         if 'mssql' in cmd_to_run:
             debug_string = 'nice breakpoint'
-        # result_b = subprocess.run(cmd, cwd=cwd, shell=True, stderr=subprocess.STDOUT)
+
         result = subprocess.run(cmd_to_run, cwd=cwd, shell=True, capture_output=True)
         if show_output:
             print_byte_string(f'{msg} Output:', result.stdout)
@@ -126,7 +126,7 @@ def run_command(cmd: str, msg: str = "", new_line: bool=False,
         print(f'Formatted Traceback:\n{formatted_traceback}')
         print_byte_string("\n\n==> run_command Console Log:", result.stdout)
         print_byte_string("\n\n==> Error Log:", result.stderr)
-        test_names.append( f" x - {msg}", 'FAILED')
+        test_names.append( f" x - {msg}, 'FAILED'")
     return result
 
 def find_valid_python_name() -> str:
@@ -189,7 +189,7 @@ def start_api_logic_server(project_name: str, env_list = None, port: str='5656')
         start_cmd = ['powershell.exe', f'{str(path)}\\run.ps1 x']
     else:
         if not path.exists():
-            return '**System Error** - run.sh not found'
+            return '  **System Error** - run.sh not found'
         os.chmod(f'{str(path)}/run.sh', 0o777)
         os.chmod(f'{str(path)}/run.sh', 0o777)
         # start_cmd = ['sh', f'{str(path)}/run x']
@@ -380,7 +380,7 @@ if Config.do_genai_test_genai_demo_conversation:
     test_names.append( (test_name, test_note) )
     prompt_path = install_api_logic_server_path.joinpath('system/genai/examples/genai_demo/genai_demo_iteration')
     assert prompt_path.exists() , f'{test_name} error: prompt path not found: {str(prompt_path)}'
-    do_test_genai_cmd = f'{set_venv} && als genai --project-name={test_name} --using={prompt_path}'
+    do_test_genai_cmd = f'als genai --project-name={test_name} --using={prompt_path}'
     result_genai = run_command(do_test_genai_cmd,
         cwd=create_in,
         msg=f'\nCreate {test_name}')
@@ -414,10 +414,33 @@ if Config.do_test_genai_demo:
     '''
     msg = f"*** {test_name} TESTS COMPLETE ***\n"
     result = start_api_logic_server(project_name=test_name)
-    if result is not None:
+    if result.status != 0:  # this is for the cmd, not server start
         msg = f"  ** {test_name} TESTS FAILED \n"
         test_names.append( (msg, result) )
     stop_server(msg=msg)
+
+
+if Config.do_import:
+    """bash
+        cd system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed
+        als genai-utils --import-genai --using=../wg_demo_no_logic_fixed
+
+        sh /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/tests/genai_tests/cmd_venv.sh " als genai-utils --import-genai --using=../wg_demo_no_logic_fixed" 
+    """
+    test_name = f'{test_folder_name}/import'
+    test_names.append( (test_name, 'test dev_demo import wg_demo') )
+    dev_demo_project_path = install_api_logic_server_path.joinpath('system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed')
+    msg = f"*** {test_name} TESTS COMPLETE ***\n"
+    cmd_to_run = f'{set_venv} && cd system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed && als genai-utils --import-genai --using=../wg_demo_no_logic_fixed'
+    cmd_to_run = f'sh {api_logic_server_tests_path}/genai_tests/cmd_import.sh x'
+    # sh /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/tests/genai_tests/cmd_import.sh x
+    result_genai = run_command(f'{cmd_to_run}',
+        cwd=create_in,
+        msg=f'\n{test_name}')    
+    if result_genai.returncode:
+        msg = f"  ** {test_name} TESTS FAILED \n"
+        test_names.append( (msg, result_genai) )
+
 
 if Config.do_test_genai_demo_informal:                # complex iteration:
     test_name = f'{test_folder_name}/genai_test_genai_demo_informal'
