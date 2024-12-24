@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "14.00.38"
+__version__ = "14.00.39"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t12/24/2024 - 14.00.39: post_error missing from genai_svcs#fix_model_lines  \n"\
     "\t12/23/2024 - 14.00.38: import creates db, models and test data (not rules), readme_wg_dev_merge.md  \n"\
     "\t12/22/2024 - 14.00.36: many: prompt includes, relative create_db_models db, check class no base,  \n"\
     "\t12/22/2024 - 14.00.35: safrs 3.1.6, models_2_code recovery, with newline \n"\
