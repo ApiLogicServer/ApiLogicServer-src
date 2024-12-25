@@ -1,6 +1,9 @@
-# Coordinating Parallel Dev Streams (Team *s* Development)
+# Coordinating Parallel Dev Streams (**Multi-Team Development**)
 
-This is the Diego Lo Giudice challenge:
+This is the Diego Lo Giudice challenge: enable ongoing parallel development with both the LOB and Dev *teams.*  It's enabled by declarative technology, where the integration is done with software, not manual effort.
+
+It works like this:
+
 1. The project begins with the **Kickstart:** several iterations to get *solid requirements*.
     * Uses Natural Language and Declarative Rules
 
