@@ -68,8 +68,10 @@ from typing import TypedDict
 import safrs  # fails without venv - see https://apilogicserver.github.io/Docs/Project-Env/
 from safrs import ValidationError, SAFRSBase, SAFRSAPI as _SAFRSAPI
 from logic_bank.logic_bank import LogicBank
+from logic_bank.exceptions import LBActivateException
 from logic_bank.exec_row_logic.logic_row import LogicRow
 from logic_bank.rule_type.constraint import Constraint
+from .activate_logicbank import activate_logicbank
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Session
 import socket
@@ -311,32 +313,7 @@ def api_logic_server_setup(flask_app: Flask, args: Args):
             app_logger.info("Data Model Loaded, customizing...")
             from database import customize_models
 
-            from logic import declare_logic
-            declare_logic_message = declare_logic.declare_logic_message
-            logic_logger = logging.getLogger('logic_logger')
-            logic_logger_level = logic_logger.getEffectiveLevel()
-            if logic_logger_activate_debug == False:
-                logic_logger.setLevel(logging.INFO)
-            app_logger.info("")
-            disable_rules = False
-            if os.getenv('APILOGICPROJECT_DISABLE_RULES'):
-                disable_rules = os.getenv('APILOGICPROJECT_DISABLE_RULES').startswith("1") or \
-                                os.getenv('APILOGICPROJECT_DISABLE_RULES').startswith("T") or \
-                                os.getenv('APILOGICPROJECT_DISABLE_RULES').startswith("t") or \
-                                os.getenv('APILOGICPROJECT_DISABLE_RULES').startswith("Y") or \
-                                os.getenv('APILOGICPROJECT_DISABLE_RULES').startswith("y")   
-            if disable_rules:
-                app_logger.info("LogicBank rules disabled")  # db opened 1st access
-            else:  # genai may insert rules with no columns... WebG restarts with rules disabled
-                try:
-                    LogicBank.activate(session=session, activator=declare_logic.declare_logic, constraint_event=constraint_handler)
-                except Exception as e:
-                    app_logger.error("Logic Bank Activation Error: " + str(e))
-                    app_logger.exception(e)
-                    raise e
-            logic_logger.setLevel(logic_logger_level)
-            app_logger.info("Declare   Logic complete - logic/declare_logic.py (rules + code)"
-                + f' -- {len(database.models.metadata.tables)} tables loaded\n')  # db opened 1st access
+            activate_logicbank(session, constraint_handler)
             
             method_decorators : list = []
             safrs_init_logger.setLevel(logging.WARN)
