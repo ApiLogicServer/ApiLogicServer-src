@@ -65,3 +65,4 @@ build
 
 openai==1.55.3
 astor==0.8.1
+colorama==0.4.6
