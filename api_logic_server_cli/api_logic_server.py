@@ -15,6 +15,7 @@ Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 __version__ = "14.00.40"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t12/26/2024 - 14.00.41: colorama failed, LogicBank 01.20.15 missing attrs excp with all excps, fail-save rules, excp content \n"\
     "\t12/26/2024 - 14.00.40: LogicBank 01.20.14 - missing attrs excp with all excps, fail-save rules \n"\
     "\t12/24/2024 - 14.00.39: post_error missing from genai_svcs#fix_model_lines  \n"\
     "\t12/23/2024 - 14.00.38: import creates db, models and test data (not rules), readme_wg_dev_merge.md  \n"\
