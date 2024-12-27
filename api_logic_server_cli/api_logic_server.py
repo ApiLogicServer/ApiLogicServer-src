@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "14.00.42"
+__version__ = "14.00.43"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t12/27/2024 - 14.00.43: refactored genai_utils \n"\
     "\t12/27/2024 - 14.00.42: colorama failed, LogicBank 01.20.16 missing attrs excp with all excps, fail-save rules, excp content \n"\
     "\t12/26/2024 - 14.00.40: LogicBank 01.20.14 - missing attrs excp with all excps, fail-save rules \n"\
     "\t12/24/2024 - 14.00.39: post_error missing from genai_svcs#fix_model_lines  \n"\

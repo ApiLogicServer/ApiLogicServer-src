@@ -126,7 +126,7 @@ def run_command(cmd: str, msg: str = "", new_line: bool=False,
         print(f'Formatted Traceback:\n{formatted_traceback}')
         print_byte_string("\n\n==> run_command Console Log:", result.stdout)
         print_byte_string("\n\n==> Error Log:", result.stderr)
-        test_names.append( f" x - {msg}, 'FAILED'")
+        test_names.append( (f" x - {msg}", 'FAILED') )
     return result
 
 def find_valid_python_name() -> str:
@@ -414,7 +414,10 @@ if Config.do_test_genai_demo:
     '''
     msg = f"*** {test_name} TESTS COMPLETE ***\n"
     result = start_api_logic_server(project_name=test_name)
-    if result.status != 0:  # this is for the cmd, not server start
+    if result is None:
+        msg = f"  ** {test_name} None response from start server, ok? \n"
+        test_names.append( (msg, result) )
+    elif result.status != 0:  # this is for the cmd, not server start  FIXME not None?
         msg = f"  ** {test_name} TESTS FAILED \n"
         test_names.append( (msg, result) )
     stop_server(msg=msg)
