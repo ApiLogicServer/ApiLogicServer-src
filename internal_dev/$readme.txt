@@ -3,6 +3,9 @@ Create nw+ at /Users/val/dev/ApiLogicServer
   so does ont - but how?  lucky jwt?
   (no security diddling)
 
+copilot for refactoring
+  use https://github.com, o1 model (a few per day)
+
 procedure to web-genie local re-creation
   under src, run Run Config: 1 - ApiLogicServer Start (Clean)
   copy failed project to clean/ApiLogicServer/test_project
