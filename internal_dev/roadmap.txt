@@ -1,7 +1,41 @@
-Rules
+Sales / Mktg
 
-    Event Condition Actions
+    John Rymer, Forrester, Jim Milbery
 
-    Nat Lang copy, allocate
+    GoFund
 
-Example: AIDev (show what's possible, eg, cursor)
+    Berkeley? (Grant T)
+
+    Articles
+
+    Partnerships - Low Code, AI Dev FE tools
+
+    Logo
+
+    Affiliates - ala FastAPI ($$??)  -- visibility benefit from community?
+
+
+These have already been vetted by Customers / Prod Mgmt (we know they are valuable)
+
+    Add Security to WebG?
+
+    Rule suggester...
+
+    Rule Event/Condition Actions (ECA when order shipped, send order to Kafka and n8n email to manager, Nat Lang)
+
+    Nat Lang Copy, Allocate (apply Payment to Outstanding Orders, Bonus to Dept members, ...)
+
+    API Entity Actions (set <field> = <value>... toggle on_hold, ship, etc)
+
+    Rules by UseCase (discovery)
+
+    Example: AIDev (show what's possible, eg, cursor)
+
+
+Further Out
+
+    Test Case Creation - can we create the BLT tests used for SampleDB?
+        Longer term, probably best done with Design Partners per their actual practice.
+
+    Background: (Semi) Automated Deployment Services - SaaS...?  Configure...
+        Accrue such assets as we work with customers to deploy...
