@@ -1008,6 +1008,8 @@ metadata = Base.metadata
 #TIMESTAMP= db.TIMESTAMP
 
 from sqlalchemy.dialects.mysql import *
+
+Base = SAFRSBaseX
 """
         
         if self.model_creation_services.project.bind_key != "":
@@ -1325,12 +1327,16 @@ from sqlalchemy.dialects.mysql import *
         super_classes = model.parent_name
         if model.name in ["QtrTotal", "StressBinaryDouble", "STRESSAllChar"]:
             debug_stop = "nice breakpoint for class rendering"
+        
+        ''' rework SafrsBaseX 12/28/2024 - just Base now
         if self.model_creation_services.project.bind_key != "":
             super_classes = f'Base{self.model_creation_services.project.bind_key}, db.Model, UserMixin'
             rendered = 'class {0}(SAFRSBaseX, {1}):  # type: ignore\n'.format(model.name, super_classes)   # ApiLogicServer
-        # f'Base{self.model_creation_services.project.bind_key} = declarative_base()'
+            # f'Base{self.model_creation_services.project.bind_key} = declarative_base()'
         else:
             rendered = 'class {0}(SAFRSBaseX, {1}):\n'.format(model.name, super_classes)   # ApiLogicServer
+        '''
+        rendered = 'class {0}(Base):  # type: ignore\n'.format(model.name)   # ApiLogicServer
         if model.table.name in self.model_creation_services.project.table_descriptions:
             rendered += '    """\n'
             rendered += '    ' + 'description: ' + self.model_creation_services.project.table_descriptions[model.table.name] + '\n'  
@@ -1346,10 +1352,10 @@ from sqlalchemy.dialects.mysql import *
                 self.model_creation_services.project.bind_key_url_separator + model.name
         rendered += '{0}_s_collection_name = {1!r}  # type: ignore\n'.format(self.indentation, end_point_name)
         if self.model_creation_services.project.bind_key != "":
-          bind_key = self.model_creation_services.project.bind_key
-        else:
-          bind_key = "None"
-        rendered += '{0}__bind_key__ = {1!r}\n'.format(self.indentation, bind_key)  # usually __bind_key__ = None
+            bind_key = self.model_creation_services.project.bind_key
+            rendered += '{0}__bind_key__ = {1!r}\n'.format(self.indentation, bind_key)  # usually __bind_key__ = None
+        # else:  bind_key no longer required for 'main' objects
+       #   bind_key = "None"
 
         # Render constraints and indexes as __table_args__
         autonum_col = False

@@ -6,11 +6,7 @@ from safrs import jsonapi_attr
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
-
-db = SQLAlchemy() 
-Base = declarative_base()  # type: flask_sqlalchemy.model.DefaultMeta
-metadata = Base.metadata
-
+#vh new x
 @classmethod
 def jsonapi_filter(cls):
     """
@@ -32,7 +28,7 @@ def jsonapi_filter(cls):
     else:
         return query.filter(or_(*expressions))   
 
-class SAFRSBaseX(SAFRSBase):
+class SAFRSBaseX(SAFRSBase, safrs.DB.Model):
     __abstract__ = True
     if do_enable_ont_advanced_filters := False:
         jsonapi_filter = jsonapi_filter
