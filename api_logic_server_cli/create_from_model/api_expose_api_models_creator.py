@@ -30,6 +30,18 @@ def create_expose_api_models(model_creation_services: create_from_model.ModelCre
         shutil.copyfile(model_creation_services.project.api_logic_server_dir_path.joinpath("prototypes/base/api/expose_api_models.py"),
                         Path(model_creation_services.project_directory).joinpath("api/expose_api_models.py"))
         log.debug(f'.. .. ..Model-driven API creation')  # copy above was to upgrade existing projects, eg, import
+
+        if model_creation_services.project.bind_key != "":  # multi-db -- expose apis by discovery
+            dest = Path(model_creation_services.project_directory).\
+                joinpath(f'api/api_discovery/{model_creation_services.project.bind_key}_expose_api_models.py')
+            src = model_creation_services.project.api_logic_server_dir_path.\
+                    joinpath('prototypes/base/api/expose_api_models.py')
+            src = model_creation_services.project.api_logic_server_dir_path.\
+                    joinpath('templates/_bind_expose_api.py')
+            copyfile(src, dest)  # TODO - much substitution required!!
+
+
+
     else:
         result_apis = ''
         '''
