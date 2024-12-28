@@ -51,17 +51,20 @@ class WGResult(BaseModel):  # must match system/genai/prompt_inserts/response_fo
     name: str  # suggest a short name for the project
 
 log = logging.getLogger(__name__)
-file_handler = logging.FileHandler('/tmp/genai_svcs.log', mode='a')
-file_handler.setLevel(logging.DEBUG)
+try:  # this is just for WebGenAI
+    file_handler = logging.FileHandler('/tmp/genai_svcs.log', mode='a')
+    file_handler.setLevel(logging.DEBUG)
 
-# Create a logging format
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-file_handler.setFormatter(formatter)
+    # Create a logging format
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    file_handler.setFormatter(formatter)
 
-# Add the file handler to the logger
-log.addHandler(file_handler)
-log.setLevel(logging.DEBUG)
-log.info(f"Svcs log file: /tmp/genai_svcs.log")
+    # Add the file handler to the logger
+    log.addHandler(file_handler)
+    log.setLevel(logging.DEBUG)
+    log.info(f"Svcs log file: /tmp/genai_svcs.log")
+except Exception as exc:
+    pass # this is just for WebGenAI, ok to ignore error
 
 def get_code(rule_list: List[DotMap]) -> str:
     """returns code snippet for rules from rule
