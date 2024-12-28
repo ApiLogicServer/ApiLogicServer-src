@@ -1464,7 +1464,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "  - Add-database to NW_NoCust",
+            "name": "  - Add-database to NW_NoCust (curr cwd, explicit location)",
             "type": "debugpy",
             "request": "launch",
             "env": {"APILOGICSERVER_DEBUG": "True"},
