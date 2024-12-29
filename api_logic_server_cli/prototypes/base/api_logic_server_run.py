@@ -66,7 +66,6 @@ from flask import Flask, redirect, send_from_directory, send_file
 from flask_cors import CORS
 import ui.admin.admin_loader as AdminLoader
 from security.system.authentication import configure_auth
-import database.multi_db as multi_db
 import oracledb
 
 
