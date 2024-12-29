@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "14.00.47"
+__version__ = "14.00.48"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t12/29/2024 - 14.00.48: LB 01.20.18 with resettable singleton \n"\
     "\t12/29/2024 - 14.00.47: BLT runs with multi-db (multi_db with auth special-dirs case) \n"\
     "\t12/28/2024 - 14.00.45: Win fix for genai_svcs WebG logging \n"\
     "\t12/27/2024 - 14.00.44: refactored genai_utils, logicbank-1.20.17 (excp fix) \n"\
