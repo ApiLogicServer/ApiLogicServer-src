@@ -33,24 +33,32 @@ def create_expose_api_models(model_creation_services: create_from_model.ModelCre
             log.debug(f'.. .. ..Model-driven API creation')  # copy above was to upgrade existing projects, eg, import
             return
         
+        # model fixup for multi-db... there are 2 cases:
+        #   1. database/database_discovery/authentication_models.py
+        #   2. database/Todo_models.py
+        # important to test - add multi-db AND auth, as in BLT multi-db test.  Unit test: use Run Config ~10...
         # multi-db -- expose apis by discovery-- start with the standard api/expose_api_models.py
+
+        src = model_creation_services.project.api_logic_server_dir_path.joinpath('templates/_bind_expose_api.py')  # debug version
+        bind = model_creation_services.project.bind_key
         dest = Path(model_creation_services.project_directory).\
             joinpath(f'api/api_discovery/{model_creation_services.project.bind_key}_expose_api_models.py')
         src = model_creation_services.project.api_logic_server_dir_path.joinpath('templates/_bind_expose_api.py')  # debug version
-        # no - diff top level sub src = model_creation_services.project.api_logic_server_dir_path.joinpath('prototypes/base/api/expose_api_models.py')
-        copyfile(src, dest)  # TODO - much substitution required!!
+        copyfile(src, dest)
 
-        # add force_import = __import__('database.Todo_models')  #tp - force import of <bind>_models
-        bind = model_creation_services.project.bind_key
-        insert_this = f'force_import = __import__("database.{bind}_models")\n'
         create_utils.insert_lines_at(file_name=dest, 
-                                     at='database = __import__', 
-                                     lines = insert_this)
+                                    at='database = __import__', 
+                                    lines = f'force_import = __import__("database.{bind}_models")\n')
         
-        # inspect.getmembers(database.models) -> inspect.getmembers(database.{bind}_models
         create_utils.replace_string_in_file(search_for="inspect.getmembers(database.models)",
                                             replace_with=f'inspect.getmembers(database.{bind}_models)',
                                             in_file=dest)
+
+        if bind == 'authentication':  # it's in a different dir
+            create_utils.replace_string_in_file(search_for='database.authentication_models',
+                                                replace_with='database.database_discovery.authentication_models',
+                                                in_file=dest)
+
 
 
     else:

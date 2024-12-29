@@ -29,7 +29,6 @@ def add_check_sum(cls):
 
 def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_decorators ):
     """ Called by api_discovery to 
-    * add SqlAlchemy binds (which FIXME does not work)
     * expose API for each model (using introspection)
 
     Args:
@@ -44,8 +43,6 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         _type_: _description_
     """    
 
-    debug_inspect_list = inspect.getmembers(database.models)
-    pass  #vh
     # Get all the subclasses of the Base class and expose them in the api
     for name, obj in inspect.getmembers(database.models):
         if inspect.isclass(obj) and issubclass(obj, database.models.SAFRSBaseX) and obj is not database.models.SAFRSBaseX:
