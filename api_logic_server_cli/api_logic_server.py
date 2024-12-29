@@ -1181,11 +1181,11 @@ from database import <project.bind_key>_models
             create_utils.insert_lines_at(lines=flask_app_config__bind_update,
                                         at="# make multiple databases available",
                                         file_name=multi_db_file_name)
-            
+            """  FIXME remove dead code
             create_utils.insert_lines_at(lines=expose_apis,
                                         at="# Begin Expose APIs", after=True,
                                         file_name=multi_db_file_name)
-            
+            """
             create_utils.insert_lines_at(lines=imports,
                                         at="# additional per-database imports", after=True,
                                         file_name=multi_db_file_name)
