@@ -1170,7 +1170,7 @@ from database import <project.bind_key>_models
         imports = imports.replace('<project.bind_key>', f'{self.bind_key}')
         imports = imports.replace('<bind_key_upper>', f'{bind_key_upper}')
 
-        multi_db_file_name = f'{self.project_directory}/database/multi_db.py'
+        multi_db_file_name = f'{self.project_directory}/database/bind_dbs.py'
         binds_built = create_utils.does_file_contain( \
             search_for=bind_key_upper, in_file=multi_db_file_name)
         some_configs_built = create_utils.does_file_contain( \
@@ -1181,11 +1181,7 @@ from database import <project.bind_key>_models
             create_utils.insert_lines_at(lines=flask_app_config__bind_update,
                                         at="# make multiple databases available",
                                         file_name=multi_db_file_name)
-            """  FIXME remove dead code
-            create_utils.insert_lines_at(lines=expose_apis,
-                                        at="# Begin Expose APIs", after=True,
-                                        file_name=multi_db_file_name)
-            """
+
             create_utils.insert_lines_at(lines=imports,
                                         at="# additional per-database imports", after=True,
                                         file_name=multi_db_file_name)

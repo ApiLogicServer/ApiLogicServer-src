@@ -81,7 +81,7 @@ from flask_cors import CORS
 from safrs import ValidationError, SAFRSBase, SAFRSAPI
 import ui.admin.admin_loader as AdminLoader
 from security.system.authentication import configure_auth
-import database.multi_db as multi_db
+import database.bind_dbs as bind_dbs
 import oracledb
 import integration.kafka.kafka_producer as kafka_producer
 import integration.kafka.kafka_consumer as kafka_consumer
@@ -267,7 +267,7 @@ def api_logic_server_setup(flask_app: Flask, args: Args):
             safrs_init_logger.setLevel(logging.WARN)
             authorization_logger.setLevel(logging.WARN)
 
-        multi_db.bind_dbs(flask_app)
+        bind_dbs.bind_dbs(flask_app)
 
         # https://stackoverflow.com/questions/34674029/sqlalchemy-query-raises-unnecessary-warning-about-sqlite-and-decimal-how-to-spe
         warnings.simplefilter("ignore", category=sa_exc.SAWarning)  # alert - disable for safety msgs
