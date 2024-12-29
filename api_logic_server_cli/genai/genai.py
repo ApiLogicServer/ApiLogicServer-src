@@ -376,7 +376,7 @@ class GenAI(object):
         you_are = "You are a data modelling expert and python software architect who expands on user input ideas. You create data models with at least 4 tables"
         if self.project.genai_tables > 0:
             you_are = you_are.replace('4', str(self.project.genai_tables))
-        return {"role": "user", "content": you_are}
+        return {"role": "system", "content": you_are}
 
 
     def get_prompt_learning_requests(self) -> List[Dict[str, str]]:
