@@ -324,8 +324,6 @@ def api_logic_server_setup(flask_app: Flask, args: Args):
             if args.security_enabled:
                 configure_auth(flask_app, database, method_decorators)
 
-            multi_db.expose_db_apis(flask_app, session, safrs_api, method_decorators)
-
             if args.security_enabled:
                 from security import declare_security  # activate security
                 app_logger.info("..declare security - security/declare_security.py"
