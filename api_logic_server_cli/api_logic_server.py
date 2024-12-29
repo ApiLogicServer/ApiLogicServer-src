@@ -1069,7 +1069,7 @@ class ProjectRun(Project):
 
         2. Add project.db_url to config 
 
-        3. Update database/multi_db.py - bind & expose APIs
+        3. Update database/multi_db.py (from prototype/base) - bind & expose APIs
 
         Parameters:
 
@@ -1158,7 +1158,7 @@ class ProjectRun(Project):
         """
 
         imports = """
-from api import <project.bind_key>_expose_api_models
+# FIXME remove from api import <project.bind_key>_expose_api_models
 from database import <project.bind_key>_models
         """
 

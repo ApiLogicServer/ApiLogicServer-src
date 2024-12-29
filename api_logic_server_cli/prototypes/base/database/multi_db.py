@@ -3,6 +3,13 @@ import logging as logging  # additional per-database imports
 
 app_logger = logging.getLogger("api_logic_server_app")
 
+'''
+For multi-database support, this is called by Config/server_setup to
+* create the SQLAlchemy binds for each database
+  * NB: must do all binds in 1 call (not 1 call per db): https://www.youtube.com/watch?v=SB5BfYYpXjE
+* expose APIs for each database FIXME - no, that's done by discovery
+'''
+
 
 def bind_dbs(flask_app):
     """ called by api_logic_server_run to open/bind each additional database"""
@@ -16,6 +23,8 @@ def bind_dbs(flask_app):
 
 def expose_db_apis(flask_app, session, safrs_api, method_decorators):
     """ called by api_logic_server_run to expose APIs for each additional database """
+
+    return  #vh - now done by discovery.  FIXME remove this.
 
     # Begin Expose APIs
 
