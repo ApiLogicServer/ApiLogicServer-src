@@ -6,6 +6,7 @@ import datetime
 from pathlib import Path
 from typing import NewType
 from shutil import copyfile
+import create_from_model.api_logic_server_utils as create_utils
 
 import create_from_model.model_creation_services as create_from_model
 
@@ -20,26 +21,36 @@ log.propagate = True
 #  MetaData = NewType('MetaData', object)
 MetaDataTable = NewType('MetaDataTable', object)
 
-__version__ = "0.1"
-
+__version__ = "0.2"
 
 def create_expose_api_models(model_creation_services: create_from_model.ModelCreationServices):
     """ create strings for ui/basic_web_app/views.py and api/expose_api_models.py """
 
     if use_model_driven := True:
-        shutil.copyfile(model_creation_services.project.api_logic_server_dir_path.joinpath("prototypes/base/api/expose_api_models.py"),
-                        Path(model_creation_services.project_directory).joinpath("api/expose_api_models.py"))
-        log.debug(f'.. .. ..Model-driven API creation')  # copy above was to upgrade existing projects, eg, import
+        if model_creation_services.project.bind_key == "":  # multi-db -- expose apis by discovery
+            shutil.copyfile(model_creation_services.project.api_logic_server_dir_path.joinpath("prototypes/base/api/expose_api_models.py"),
+                            Path(model_creation_services.project_directory).joinpath("api/expose_api_models.py"))
+            log.debug(f'.. .. ..Model-driven API creation')  # copy above was to upgrade existing projects, eg, import
+            return
+        
+        # multi-db -- expose apis by discovery-- start with the standard api/expose_api_models.py
+        dest = Path(model_creation_services.project_directory).\
+            joinpath(f'api/api_discovery/{model_creation_services.project.bind_key}_expose_api_models.py')
+        src = model_creation_services.project.api_logic_server_dir_path.joinpath('templates/_bind_expose_api.py')  # debug version
+        # no - diff top level sub src = model_creation_services.project.api_logic_server_dir_path.joinpath('prototypes/base/api/expose_api_models.py')
+        copyfile(src, dest)  # TODO - much substitution required!!
 
-        if model_creation_services.project.bind_key != "":  # multi-db -- expose apis by discovery
-            dest = Path(model_creation_services.project_directory).\
-                joinpath(f'api/api_discovery/{model_creation_services.project.bind_key}_expose_api_models.py')
-            src = model_creation_services.project.api_logic_server_dir_path.\
-                    joinpath('prototypes/base/api/expose_api_models.py')
-            src = model_creation_services.project.api_logic_server_dir_path.\
-                    joinpath('templates/_bind_expose_api.py')
-            copyfile(src, dest)  # TODO - much substitution required!!
-
+        # add force_import = __import__('database.Todo_models')  #tp - force import of <bind>_models
+        bind = model_creation_services.project.bind_key
+        insert_this = f'force_import = __import__("database.{bind}_models")\n'
+        create_utils.insert_lines_at(file_name=dest, 
+                                     at='database = __import__', 
+                                     lines = insert_this)
+        
+        # inspect.getmembers(database.models) -> inspect.getmembers(database.{bind}_models
+        create_utils.replace_string_in_file(search_for="inspect.getmembers(database.models)",
+                                            replace_with=f'inspect.getmembers(database.{bind}_models)',
+                                            in_file=dest)
 
 
     else:

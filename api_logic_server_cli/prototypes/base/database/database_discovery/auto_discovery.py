@@ -17,6 +17,8 @@ def discover_models():
                 spec = importlib.util.spec_from_file_location("module.name", models_path.joinpath(file))
                 if file.endswith("auto_discovery.py"):
                     pass
+                elif file.endswith('authentication_models.py'):  #tp - avoid double import??
+                    pass
                 else:
                     models.append(file)
                     each_model = importlib.util.module_from_spec(spec)
