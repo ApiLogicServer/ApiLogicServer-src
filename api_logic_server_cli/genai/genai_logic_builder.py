@@ -234,7 +234,7 @@ class GenAILogic(object):
                     log.debug(f'.... genai_logic_builder [...] avoid dups')
                     with open(dups_path, "r") as dup_file:
                         rules_json_str = dup_file.read()
-                    suggest_logic += f'\nomit rules where the code includes any of:\nr{rules_json_str}'
+                    suggest_logic += f'\nomit rules where the code or description resembles any of:\n{rules_json_str}'
                 pass
             elif self.logic != "'*'":       # --logic string (eg, 1 line of logic)
                 log.debug(f'.. genai_logic_builder [...] get_suggestions - get code for -logic: {self.logic}')

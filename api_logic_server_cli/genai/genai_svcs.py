@@ -528,7 +528,7 @@ def get_create_prompt__with_inserts(arg_prompt_inserts: str='', raw_prompt: str=
             prompt_result = 'Update the prior response - be sure not to lose classes and test data already created.' \
                 + '\n\n' + prompt_result
             log.debug(f'.. iteration inserted: Update the prior response')
-            log.debug(f'.... iteration prompt result: {prompt_result}')
+            #log.debug(f'.... iteration prompt result: {prompt_result}')
 
         prompt_lines = prompt_result.split('\n')
         prompt_line_number = 0
