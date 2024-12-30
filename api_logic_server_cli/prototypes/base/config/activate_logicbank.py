@@ -24,6 +24,7 @@ def activate_logicbank(session, constraint_handler):
         app_logger.error("Logic Bank Activation Error")
         if e.invalid_rules: logic_logger.error(f"Invalid Rules:  {e.invalid_rules}")
         if e.missing_attributes: logic_logger.error(f"Missing Attrs: {e.missing_attributes}")
+        raise e
         
     except Exception as e:
         app_logger.error(f"Logic Bank Activation Error: {e}")
