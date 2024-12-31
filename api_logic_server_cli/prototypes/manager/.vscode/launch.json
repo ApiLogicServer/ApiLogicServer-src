@@ -400,13 +400,13 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "  - GenAI RECOMPUTE r1 - rebuild test data (genai_demo_with_logic_fixed)",
+            "name": "  - GenAI RECOMPUTE r1 - rebuild test data (genai_demo)",
 // typical step - iterate the model, now with logic
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
-            "cwd": "${workspaceFolder}/genai_demo_with_logic_fixed",
+            "cwd": "${workspaceFolder}/genai_demo",
             "env": {
                 "PYTHONPATH": "", 
                 "SECURITY_ENABLED": "False", 
@@ -414,7 +414,7 @@
                 "APILOGICSERVER_DEBUG": "False",
                 "OPT_LOCKING": "optional"},
             "justMyCode": false,
-            "args": [ "genai-utils", "--submit", "--using=docs/fixup_recompute"],
+            "args": [ "genai-utils", "--submit", "--using=docs/recompute"],
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
         },
