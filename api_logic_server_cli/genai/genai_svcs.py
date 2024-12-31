@@ -331,7 +331,7 @@ def fix_and_write_model_file(response_dict: DotMap,  save_dir: str, post_error: 
                 str: the fixed test data line
             """
 
-            each_fixed_line = each_fixed_line.replace('\\n', '\n')  # fixme is this the fix or the removed bug
+            each_fixed_line = each_fixed_line.replace('\\n', '\n')
             if '=null' in each_fixed_line:
                 each_fixed_line = each_fixed_line.replace('=None', '=date') 
             if '=datetime' in each_fixed_line:
@@ -564,14 +564,19 @@ def get_create_prompt__with_inserts(arg_prompt_inserts: str='', raw_prompt: str=
 
 
 
-def get_prompt_messages_from_dirs(using) -> List[ Tuple[Dict[str, str]]]:
+def get_prompt_messages_from_dirs(using) -> List[ Tuple[ Path, Dict [str, str ] ] ]:
     """ Get raw prompts from dir (might be json or text) and return as list of dicts
 
-        Returned prompts include inserts from prompt_inserts (prompt engineering)
+    Returned prompts include inserts from prompt_inserts (prompt engineering)
+
+    Use: see run configs..
+    * Recompute
+    * Mgr: GenAI - FixUp f1 genai_demo_with_logic
+        * NOT GenAI - Suggestions s4. Now, (alter and) Implement the Rule Suggestions
 
     Returns:
-        dict[]: [ {role: (system | user) }: { content: user-prompt-or-system-json-response } ]
-
+         List[ Tuple[ Path, Dict [str, str ] ] ]:  Dict is role: user/system, content: prompt
+        
     """
 
     def iteration(using) -> List[ Tuple[str, Dict[str, str]] ]:
@@ -594,6 +599,8 @@ def get_prompt_messages_from_dirs(using) -> List[ Tuple[Dict[str, str]]]:
                     if not prompt.startswith('You are a '):  # add *missing* 'you are''
                         prompt_messages.append( ( each_file, get_prompt_you_are() ) )
                         request_count = 1
+                    else:
+                        debug_string = "FIXME - shouldn't this be in prompt??"
                 file_num = request_count + response_count
                 file_str = str(file_num).zfill(3)
                 debug_prompt = prompt[:30] 
@@ -705,24 +712,22 @@ def get_manager_path() -> Path:
         Path: Manager path (contains system/genai)
     """
     result_path = Path(os.getcwd())  # normal case - project at manager root
-    check_system_genai = result_path.joinpath('system/genai')
-    
+    check_system_genai = result_path.joinpath('system/genai')    
     if check_system_genai.exists():
         return result_path
     
     result_path = result_path.parent  # try pwd parent
     check_system_genai = result_path.joinpath('system/genai')
-    
     if check_system_genai.exists():
         return result_path
     
     result_path = result_path.parent  # try pwd grandparent
     check_system_genai = result_path.joinpath('system/genai')
+    if check_system_genai.exists():
+        return result_path
     
-    
-    result_path = result_path.parent.parent.parent.parent  # try ancestors - this is for import testing
+    result_path = result_path.parent.parent  # try ancestors - this is for import testing
     check_system_genai = result_path.joinpath('system/genai')
-
     assert check_system_genai.exists(), f"Manager Directory not found: {check_system_genai}"
     
     return result_path
