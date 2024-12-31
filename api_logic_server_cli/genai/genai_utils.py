@@ -104,12 +104,6 @@ class GenAIUtils:
                 " system/genai/temp/chatgpt_original.response"
             )
 
-            data = completion.choices[0].message.content
-            response_dict = json.loads(data)
-            response_file_path = Path(self.using).joinpath("response.json")
-            with open(response_file_path, "w") as response_file:
-                json.dump(response_dict, response_file, indent=4)
-            log.info(f".. saved response: {response_file_path}")
         except Exception as inst:
             log.error(f"\n\nError: ChatGPT call failed\n{inst}\n\n")
             sys.exit(
