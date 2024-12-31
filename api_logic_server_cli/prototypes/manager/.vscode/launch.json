@@ -237,8 +237,8 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "  - GenAI - no logic",
-//  typical start - just the model
+            "name": "  - GenAI - Suggestions s1. Create Project, without Rules",
+//  typical start for suggestiosn - just the model
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
@@ -257,7 +257,7 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "  - GenAI - no logic -> suggest logic",
+            "name": "  - GenAI  - Suggestions s2. Request Rule Suggestions",
 // typical next step - suggest logic
             "type": "debugpy",
             "request": "launch",
@@ -277,7 +277,7 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "  - GenAI - no logic -- compile logic",
+            "name": "  - GenAI - Suggestions <cli logic>",
 // typical next step - explore rules for supplied logic
             "type": "debugpy",
             "request": "launch",
@@ -297,7 +297,7 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "  - GenAI - no logic -- compile *all logic",
+            "name": "  - GenAI - Suggestions s3. See the rules for the logic",
 // typical next step - explore rules for supplied logic
             "type": "debugpy",
             "request": "launch",
@@ -317,7 +317,7 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "  - GenAI - suggest logic -> iterate with suggested logic",
+            "name": "  - GenAI - Suggestions s4. Now, (alter and) Implement the Rule Suggestions",
 // typical next step - activate suggested logic created above
             "type": "debugpy",
             "request": "launch",
@@ -331,7 +331,7 @@
                 "APILOGICSERVER_DEBUG": "False",
                 "OPT_LOCKING": "optional"},
             "justMyCode": false,
-            "args": [ "genai", "--project-name=genai_demo_with_suggested_logic",
+            "args": [ "genai", "--project-name=genai_demo_with_logic",
                 "--using=${workspaceFolder}/genai_demo_no_logic/docs"],
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
@@ -358,13 +358,14 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "  - GenAI FixUp - upd model and test data from logic",
-// typical step - iterate the model, now with logic
+            "name": "  - GenAI - FixUp f1 genai_demo_with_logic (setup in readme) - upd model and test data from logic",
+// see readme - comment out Customer.Balance in samples/nw_sample/database/models.py
+// note; can't use pre-installed nw - this relies on docs files
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
-            "cwd": "${workspaceFolder}/missing_attrs",
+            "cwd": "${workspaceFolder}/genai_demo_with_logic",
             "env": {
                 "PYTHONPATH": "", 
                 "SECURITY_ENABLED": "False", 
@@ -372,12 +373,13 @@
                 "APILOGICSERVER_DEBUG": "False",
                 "OPT_LOCKING": "optional"},
             "justMyCode": false,
-            "args": [ "genai-utils", "--fixup", "--using=genai/fixup"],
+            // FIXME "args": [ "genai-utils", "--fixup", "--using=genai/fixup"],
+            "args": [ "genai-utils", "--fixup"],
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "  - GenAI FixUp - rebuild from response",
+            "name": "  - GenAI - FixUp f2 - rebuild from response -> genai_demo_with_logic_fixed",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
@@ -391,9 +393,28 @@
                 "OPT_LOCKING": "optional"},
             "justMyCode": false,
             "args": [ "genai",
-                "--using=missing_attrs_fixed", "--project-name=missing_attrs_fixed",
+                "--using=genai_demo_with_logic_fixed", "--project-name=genai_demo_with_logic_fixed",
                 "--retries=-1",
-                "--repaired-response=missing_attrs/genai/fixup/response.json"],
+                "--repaired-response=genai_demo_with_logic/docs/fixup/response_fixup.json"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - GenAI RECOMPUTE r1 - rebuild test data (genai_demo_with_logic_fixed)",
+// typical step - iterate the model, now with logic
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}/genai_demo_with_logic_fixed",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "genai-utils", "--submit", "--using=docs/fixup_recompute"],
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
         },

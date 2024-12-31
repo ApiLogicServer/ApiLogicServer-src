@@ -83,19 +83,22 @@ class GenAIUtils:
         """
         log.info(f".. submitting: {self.using}")
         self.messages = get_prompt_messages_from_dirs(self.using)
+        self.messages_chatgpt = []
+        for each_path, each_message in self.messages:  # get rid of the path
+            self.messages_chatgpt.append(each_message)
+
         try:
-            api_version = f"{self.project.genai_version}"
+            api_version = f"{self.genai_version}"
             start_time = time.time()
             db_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY", "")
             client = OpenAI(api_key=db_key)
             model = api_version if api_version else os.getenv("APILOGICSERVER_CHATGPT_MODEL", "gpt-4o-2024-08-06")
             self.resolved_model = model
 
-            completion = client.beta.chat.completions.parse(
-                messages=self.messages,
-                response_format=WGResult,
-                model=model
-            )
+            call_chatgpt(api_version=model,
+                         messages=self.messages_chatgpt,
+                         using=self.using)
+
             log.info(
                 f"ChatGPT ({str(int(time.time() - start_time))} secs) - response at:"
                 " system/genai/temp/chatgpt_original.response"
@@ -120,7 +123,12 @@ class GenAIUtils:
           1. Collects the latest model, rules, and test data from the --using directory.
           2. Calls ChatGPT (or similar) to resolve missing columns or data in the project.
           3. Saves the fixup request/response under a 'fixup' folder.
-          4. Example: als genai-utils --fixup --using=genai/fixup
+        
+        Example: 
+        als genai-utils --fixup --using=genai/fixup
+        mgr 
+            * comment out the balance
+            * run: GenAI - FixUp f1 Samples/nw_sample
         """
 
         manager_path = get_manager_path()

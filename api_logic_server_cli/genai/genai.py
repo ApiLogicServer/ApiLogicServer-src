@@ -376,7 +376,7 @@ class GenAI(object):
         you_are = "You are a data modelling expert and python software architect who expands on user input ideas. You create data models with at least 4 tables"
         if self.project.genai_tables > 0:
             you_are = you_are.replace('4', str(self.project.genai_tables))
-        return {"role": "system", "content": you_are}
+        return {"role": "user", "content": you_are}
 
 
     def get_prompt_learning_requests(self) -> List[Dict[str, str]]:
@@ -681,7 +681,7 @@ class GenAI(object):
                             message_file.write(each_message['content']) 
                         file_num += 1
                     suffix = 'response'  # now add the this response
-                    file_name = f'{flat_project_name}_{str(file_num).zfill(3)}.{suffix}'  # FIXME 
+                    file_name = f'{flat_project_name}_{str(file_num).zfill(3)}.{suffix}'
                     file_path = to_dir_save_dir.joinpath(file_name)
                     log.debug(f'.. saving[{file_name}]  - {each_message["content"][:30]}...')
                     with open(file_path, "w") as message_file:

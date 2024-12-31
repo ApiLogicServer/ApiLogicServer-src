@@ -246,37 +246,94 @@ als genai-logic --suggest
 You can review the suggestions in the `genai_demo_no_logic` project:
 
  * See and edit: `docs/logic/logic_suggestions.txt` (used in step 3, below)
-    * This corresponds to the Suggestions Editor - Logic View in the WebGenAI web app
+    * This corresponds to the Logic Editor - Logic View in the WebGenAI web app
  * Diagnostic info at: `docs/logic/logic_suggestions.response`
 
 ```bash title="3. See the rules for the logic"
 # 3. See the rule code for the logic
 als genai-logic --suggest --logic='*'
 ```
-You can inspect the code from your `docs/logic/logic_suggestions.txt` at:
+You can inspect the generated code:
 
 * `docs/logic/logic_suggestions_code.txt`
     * This corresponds to the Suggestions Editor - Code View in the WebGenAI web app
 
-Notes about generated code:
+Important notes about suggestions and generated code:
 * This service is intended to identify logic that does not translate into proper code
     * Delete the logic lines from `docs/logic/logic_suggestions.txt`
 * It is not advised to paste the code into `logic/declare_logic.py`
     * Your logic may result in new data model attributes
-    * These are created by running `als genai` (next step)
+    * These are created automatically by running `als genai` (next step)
+* The suggestions are useful, but not *wise*
+    * For example, the balance rule might be right, but the item.amount was not addressed
 
 When you are ready to proceed:
-1. Paste your `docs/logic/logic_suggestions.txt` into: `docs/genai_demo_no_logic_004.prompt`
-2. Execute the following:
+1. Paste your `docs/logic/logic_suggestions.txt` into: `docs/genai_demo_no_logic_003.prompt`
+    * Skip this step to just keep the original suggestion
+2. Execute the following to create a *new project* (iteration), with logic:
 
 ```bash title="4. Now, (alter and) Implement the Rule Suggestions"
 # 4. Now, (alter and) Implement the Rule Suggestions
 cd ..
 als genai --project-name='genai_demo_with_logic' --using=genai_demo_no_logic/docs
 ```
-
+Internal Note: this sequence available in the run configs (s1/s4).
 
 </details>
+
+</br>
+
+<details markdown>
+
+<summary>Fixup - update data model with new attributes from rules</summary>
+
+<br>Fixes project issues by updating the Data Model and Test Data:
+
+1. Collects the latest model, rules, and test data from the --using directory.
+2. Calls ChatGPT (or similar) to resolve missing columns or data in the project.
+3. Saves the fixup request/response under a 'fixup' folder.
+
+For example: 
+1. Comment out the `Customer.Balance` in `genai_demo_with_logic/models.py`
+2. Run, and note the error
+3. Repair:
+```
+# Ask ChatGPT to recompute the data model and test data - create missing attrs per the current rules
+als genai-utils --fixup
+# see results in genai_demo_with_logic/docs/fixup
+
+# create a new project with the correct data model & test data
+als genai --using=genai_demo_with_logic_fixed --project-name=genai_demo_with_logic_fixed --retries=-1 --repaired-response=genai_demo_with_logic/docs/fixup/response_fixup.json
+```
+
+Internal Note: this sequence available in the run configs (f1/f2).
+
+</details>
+
+
+</br>
+
+<details markdown>
+
+<summary>Recompute - rebuild the test data</summary>
+
+<br>Fixes project issues by updating the Data Model and Test Data:
+
+FIXME this is wrong
+
+1. Recomputes the test data from the model and rules
+
+For example: 
+1. Comment out the `Customer.Balance` in `genai_demo_with_logic/models.py`
+2. Run, and note the error
+3. Repair:
+```
+# Ask ChatGPT to recompute the data model and test data - create missing attrs per the current rules
+als genai-utils --submit --using=docs/fixup_recompute
+```
+
+Internal Note: this sequence available in the run configs r1.
+
 </br>
 
 <details markdown>
