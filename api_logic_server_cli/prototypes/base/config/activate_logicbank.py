@@ -18,8 +18,12 @@ def activate_logicbank(session, constraint_handler):
         return
 
     app_logger.info("LogicBank Activation - declare_logic.py")
+    aggregate_defaults = os.environ.get("AGGREGATE_DEFAULTS") == "True"
     try:          # hover activate for info
-        LogicBank.activate(session=session, activator=declare_logic.declare_logic, constraint_event=constraint_handler)
+        LogicBank.activate(session=session, 
+                           activator=declare_logic.declare_logic, 
+                           constraint_event=constraint_handler,
+                           aggregate_defaults=aggregate_defaults)
     except LBActivateException as e:
         app_logger.error("Logic Bank Activation Error")
         if e.invalid_rules: logic_logger.error(f"Invalid Rules:  {e.invalid_rules}")
