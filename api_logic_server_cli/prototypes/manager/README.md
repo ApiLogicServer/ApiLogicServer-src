@@ -321,7 +321,7 @@ Internal Note: this sequence available in the run configs (f1/f2).
 
 FIXME needs validation, thought
 
-1. Create genai_demo: `als genai --using=system/genai/examples/genai_demo/genai_demo.prompt --project-name=`genai_demo`
+1. Create genai_demo: `als genai --using=system/genai/examples/genai_demo/genai_demo.prompt --project-name=genai_demo`
 2. Prepare the `recompute` dir
 ```bash
 cp -r docs docs/recompute
@@ -339,6 +339,7 @@ als genai-utils --submit --using=docs/recompute
 
 Internal Note: this sequence available in the run configs r1.
 
+</details>
 </br>
 
 <details markdown>
