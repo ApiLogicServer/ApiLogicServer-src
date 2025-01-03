@@ -21,3 +21,20 @@ flask_app.config.from_prefixed_env(prefix="APILOGICPROJECT")
 args = server_setup.get_args(flask_app)
 
 server_setup.api_logic_server_setup(flask_app, args)
+
+from database.models import *
+import safrs
+from datetime import date
+import os
+os.environ['AGGREGATE_DEFAULTS'] = 'True'
+
+with flask_app.app_context():
+    safrs.DB.create_all()
+    # try:
+    #     alice = Customer(id=1, name="Alice", credit_limit=1000, balance=0, total_orders=0)
+    #     safrs.DB.session.add(alice)
+    #     safrs.DB.session.commit()
+    # except Exception as e:
+    #     print(f"Error adding variable to session: {e}")
+
+    
