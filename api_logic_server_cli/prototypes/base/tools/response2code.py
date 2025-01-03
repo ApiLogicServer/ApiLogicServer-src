@@ -10,6 +10,7 @@ import logging
 import click
 import safrs
 import os
+from colorama import Fore, Style
 from pathlib import Path
 
 sys.path.append('.')
@@ -38,25 +39,34 @@ def get_top_level_assignments(source_code):
     return assignments
 
 
+source_code_template = """
+try:
+    {code}
+    safrs.DB.session.add({variables})
+    safrs.DB.session.commit()
+except Exception as e:
+    print(f"Error adding variable to session: {{e}}")
+"""
+
 def exec_test_data(test_data):
     variables = []
+    test_data_code = ""
     for row in test_data:
         source_code = row.get("code")
-        print('>' , source_code)
-        try:
-            exec(source_code)
-            assignments = get_top_level_assignments(source_code)
-            variables.extend(assignments.keys())
-        except Exception as e:
-            log.warning(f"Error executing source code: {e}")
-            continue
+        test_data_row_variable = row.get("test_data_row_variable")
+        source_code2 = source_code_template.format(code=source_code, variables=test_data_row_variable)
+        exec(source_code2)
+        test_data_code += source_code2
+    
+    with open('/tmp/test_data_code.py', 'w') as f:
+        f.write(test_data_code)
         
     for variable in variables:
         try:
             safrs.DB.session.add(locals()[variable])
             safrs.DB.session.commit()
         except Exception as e:
-            log.warning(f"Error adding variable to session: {e}")
+            log.warning(f"{Fore.RED}Error adding variable to session: {e}{Style.RESET_ALL}")
     
     log.info(f"added {variables} variables to session")
     
@@ -94,21 +104,22 @@ def main(models, rules, test_data, response):
         """
         project_dir = Path(response).parent.parent
         os.chdir(project_dir)
-        db_uri = f'sqlite:///{project_dir.resolve()}/database/db.sqlite'
-        #db_uri = f'sqlite:////tmp/db2.sqlite'
+        db_uri = project_dir.resolve() / 'database/db.sqlite'
         
-        os.environ['SQLALCHEMY_DATABASE_URI'] = db_uri
+        if not db_uri.exists():
+            log.warning(f"Database file not found: {db_uri}")
+            
+        
+        os.environ['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_uri}'
         os.environ['AGGREGATE_DEFAULTS'] = 'True'
         from tools.alp_init import flask_app
         
-        print(os.getcwd())
-        print(flask_app.config['SQLALCHEMY_DATABASE_URI'])
         
         with flask_app.app_context():
             safrs.DB.create_all()    
             exec_test_data(test_data)
             
-            print(safrs.DB.session.get_bind())
+            #print(safrs.DB.session.get_bind())
             
     elif test_data:
         log.warning("Response file not provided. Skipping test_data2code.")
