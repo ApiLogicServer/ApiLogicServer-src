@@ -1,4 +1,4 @@
-import datetime
+import datetime, os
 from decimal import Decimal
 from logic_bank.exec_row_logic.logic_row import LogicRow
 from logic_bank.extensions.rule_extensions import RuleExtension
@@ -37,9 +37,8 @@ def declare_logic():
             logic_row (LogicRow): from LogicBank - old/new row, state
         """
 
-        from flask import has_app_context  # enables logic outside of flask (eg, test data loading)
-        if not has_app_context():
-            return
+        if not os.getenv("APILOGICPROJECT_NO_FLASK") is not None:
+            return  # enables rules to be used outside of Flask, e.g., test data loading
 
         if logic_row.is_updated() and logic_row.old_row is not None and logic_row.nest_level == 0:
             opt_locking.opt_lock_patch(logic_row=logic_row)

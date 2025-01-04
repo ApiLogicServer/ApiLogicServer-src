@@ -992,7 +992,7 @@ class CodeGenerator(object):
  
 from database.system.SAFRSBaseX import SAFRSBaseX
 from flask_login import UserMixin
-import safrs, flask_sqlalchemy
+import safrs, flask_sqlalchemy, os
 from safrs import jsonapi_attr
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
@@ -1009,7 +1009,8 @@ metadata = Base.metadata
 
 from sqlalchemy.dialects.mysql import *
 
-Base = SAFRSBaseX
+if os.getenv("APILOGICPROJECT_NO_FLASK") is None:
+    Base = SAFRSBaseX  # enables rules to be used outside of Flask, e.g., test data loading
 """
         
         if self.model_creation_services.project.bind_key != "":
