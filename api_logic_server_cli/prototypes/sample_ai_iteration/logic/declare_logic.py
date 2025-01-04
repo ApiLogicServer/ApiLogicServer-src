@@ -10,7 +10,7 @@ from logic_bank.logic_bank import Rule
 from database import models
 import api.system.opt_locking.opt_locking as opt_locking
 from security.system.authorization import Grant
-import logging
+import logging, os
 from flask import jsonify
 from integration.row_dict_maps.OrderShipping import OrderShipping
 from confluent_kafka import Producer, KafkaException
@@ -94,6 +94,10 @@ def declare_logic():
         Args:
             logic_row (LogicRow): from LogicBank - old/new row, state
         """
+
+        if not os.getenv("APILOGICPROJECT_NO_FLASK") is not None:
+            return  # enables rules to be used outside of Flask, e.g., test data loading
+
         if logic_row.is_updated() and logic_row.old_row is not None and logic_row.nest_level == 0:
             opt_locking.opt_lock_patch(logic_row=logic_row)
         enable_creation_stamping = False  # CreatedOn time stamping

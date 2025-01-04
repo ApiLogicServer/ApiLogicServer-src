@@ -37,6 +37,9 @@ from logic_bank.logic_bank import LogicBank, Rule
 
 project_dir = Path(os.getenv("PROJECT_DIR",'./')).resolve()
 
+assert os.getenv("APILOGICPROJECT_NO_FLASK"), "APILOGICPROJECT_NO_FLASK must be set to run this script"
+assert str(os.getcwd()) == str(project_dir), f"Current directory must be {project_dir}"
+
 logging_config = project_dir / 'config/logging.yml'
 if logging_config.is_file():
     with open(logging_config,'rt') as f:  

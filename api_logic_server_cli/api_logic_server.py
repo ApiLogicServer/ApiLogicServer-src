@@ -643,20 +643,6 @@ def final_project_fixup(msg, project) -> str:
         with open(api_logic_server_info_file_name, 'w') as api_logic_server_info_file_file:
             yaml.dump(api_logic_server_info_file_dict, api_logic_server_info_file_file, default_flow_style=False)
 
-    # ***********************************
-    # update models.py for non-SAFRSBaseX
-    # ***********************************
-    conditional_safrs_basex = '''
-from flask import has_app_context   # enables logic outside of flask (eg, test data loading)
-if True or has_app_context():
-    Base = SAFRSBaseX'''
-
-    # TODO: rebuild?  multi-db?
-    models_db_path = (project.project_directory_path).joinpath('database/models.py')
-
-    create_utils.replace_string_in_file(search_for = 'Base = SAFRSBaseX',
-                                    replace_with=conditional_safrs_basex,
-                                    in_file=models_db_path)
 
     # **********************************
     # set python.defaultInterpreterPath
