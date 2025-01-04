@@ -8,12 +8,6 @@
 # # Run the generated test data code:
 # python database/test_data_code.py
 #
-<<<<<<< HEAD
-=======
-# python tools/response2code.py docs/response.json
-# python database/test_data/response2code.py --test-data --response=docs/Customer_Order_System_003.response
-import ast
->>>>>>> af26307 (comments)
 import json
 import sys
 import os
