@@ -36,6 +36,11 @@ def declare_logic():
         Args:
             logic_row (LogicRow): from LogicBank - old/new row, state
         """
+
+        from flask import has_app_context  # enables logic outside of flask (eg, test data loading)
+        if not has_app_context():
+            return
+
         if logic_row.is_updated() and logic_row.old_row is not None and logic_row.nest_level == 0:
             opt_locking.opt_lock_patch(logic_row=logic_row)
 
