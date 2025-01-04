@@ -172,6 +172,34 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
+            "name": "REBUILD TEST DATA",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"SECURITY_ENABLED": "True"},
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/database/test_data/response2code.py",
+            "redirectOutput": true,
+            "args": ["--test-data"
+                    ,"--response=docs/Customer_Order_System_003.response"
+            ],
+            "justMyCode": false,            
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "Rebuild Test Data Z",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"SECURITY_ENABLED": "True"},
+            "cwd": "${workspaceFolder}/test/api_logic_server_behave",
+            "program": "${workspaceFolder}/docs/test_data/create_test_data.py",
+            "redirectOutput": true,
+            // "args": [ "--outfile=${workspaceFolder}/test/api_logic_server_behave/logs/behave.log"],
+            "justMyCode": false,            
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
             "name": "Python: Module",
             "type": "debugpy",
             "request": "launch",
