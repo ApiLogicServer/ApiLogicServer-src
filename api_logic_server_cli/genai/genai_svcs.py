@@ -176,7 +176,11 @@ def model2code(model: DotMap) -> str:
     model_code = model.code
     log.info(f"add description to {model.name}: {description}")
     # Parse the code string into an AST
-    tree = ast.parse(model_code)
+    try:
+        tree = ast.parse(model_code)
+    except Exception as exc:
+        log.error(f"Failed to parse model code ({model_code}): {exc}")
+        raise exc
 
     # Function to add a docstring to a class node
     def add_docstring_to_class(node, docstring):
@@ -324,6 +328,7 @@ def fix_and_write_model_file(response_dict: DotMap,  save_dir: str, post_error: 
                 log.info(f"Added description to model: {each_model.name}: {model_code}")
             except Exception as exc:
                 log.error(f"Failed to add description to model: {exc}")
+                log.debug(f"model: {each_model}")
                 if post_error is not None:
                     post_error = f"Failed to add description to model  {each_model.name}: {exc}"
                 continue
@@ -427,29 +432,29 @@ def fix_and_write_model_file(response_dict: DotMap,  save_dir: str, post_error: 
         create_db_model_file.write("\n\n# end of model classes\n\n")
         
     # classes done, create db and add test_data code
-    test_data_lines = get_lines_from_file(f'{get_manager_path()}/system/genai/create_db_models_inserts/create_db_models_create_db.py')
-    test_data_lines.append('session.commit()')
+    # test_data_lines = get_lines_from_file(f'{get_manager_path()}/system/genai/create_db_models_inserts/create_db_models_create_db.py')
+    # test_data_lines.append('session.commit()')
     
-    row_names = insert_test_data_lines(test_data_lines)
+    # row_names = insert_test_data_lines(test_data_lines)
 
-    test_data_lines.append('\n\n')
-    row_name_list = ', '.join(row_names)
-    add_rows = f'session.add_all([{row_name_list}])'
-    test_data_lines.append(add_rows )  
-    test_data_lines.append('session.commit()')
-    test_data_lines.append('# end of test data\n\n')
+    # test_data_lines.append('\n\n')
+    # row_name_list = ', '.join(row_names)
+    # add_rows = f'session.add_all([{row_name_list}])'
+    # test_data_lines.append(add_rows )  
+    # test_data_lines.append('session.commit()')
+    # test_data_lines.append('# end of test data\n\n')
 
-    test_data_lines_result = []
-    for line in test_data_lines:
-        test_data_lines_result += line.split('\n')
+    # test_data_lines_result = []
+    # for line in test_data_lines:
+    #     test_data_lines_result += line.split('\n')
     
-    with open(f'{create_db_model_path}', "a") as create_db_model_file:
-        create_db_model_file.write("\ntry:\n    ")
-        create_db_model_file.write("\n    ".join(test_data_lines_result))
-        create_db_model_file.write("\nexcept Exception as exc:\n")
-        create_db_model_file.write("    print(f'Test Data Error: {exc}')\n")
+    # with open(f'{create_db_model_path}', "a") as create_db_model_file:
+    #     create_db_model_file.write("\ntry:\n    ")
+    #     create_db_model_file.write("\n    ".join(test_data_lines_result))
+    #     create_db_model_file.write("\nexcept Exception as exc:\n")
+    #     create_db_model_file.write("    print(f'Test Data Error: {exc}')\n")
     
-    log.debug(f'.. code for db creation and test data: {create_db_model_path}')
+    # log.debug(f'.. code for db creation and test data: {create_db_model_path}')
 
 
 def get_lines_from_file(file_name: str) -> list[str]:
