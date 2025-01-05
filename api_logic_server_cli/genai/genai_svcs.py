@@ -135,7 +135,8 @@ def rebuild_test_data_for_project(project_path: Path, response: str) -> None:
     assert project_path.is_dir(), f"Missing project directory: {project_path}"
     python_loc = sys.executable  # eg, /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/bin/python
     run_file = project_path.joinpath('database/test_data/response2code.py')
-    run_file = '"' + str(run_file) + '"'  # spaces in file names - with windows
+    # run_file = '"' + str(run_file) + '"'  # spaces in file names - with windows  FIXME
+    run_file = str(Path(run_file).resolve()) 
     run_args = f'--test-data --response={response}'
 
     # cd /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/genai_demo_informal
@@ -151,7 +152,7 @@ def rebuild_test_data_for_project(project_path: Path, response: str) -> None:
 
     # Exception: Missing attributes:['Product.unit_price: parent copy from']
     run_file = project_path.joinpath('database/test_data/test_data_code.py')
-    run_file = '"' + str(run_file) + '"'  # spaces in file names - with windows
+    run_file = str(Path(run_file).resolve()) 
     result = create_utils.run_command(f'{python_loc} {run_file}', 
                                       msg="\nStarting test data rebuild...",
                                       cwd=cwd)
