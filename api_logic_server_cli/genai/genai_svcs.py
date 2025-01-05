@@ -1,6 +1,7 @@
 ''' shared functions for genai '''
 
 import shutil
+import subprocess
 from typing import Dict, List, Tuple
 from api_logic_server_cli.cli_args_project import Project
 import create_from_model.api_logic_server_utils as create_utils
@@ -133,7 +134,7 @@ def get_code(rule_list: List[DotMap]) -> str:
 def rebuild_test_data_for_project(project_path: Path, response: str) -> None:
     pass
     assert project_path.is_dir(), f"Missing project directory: {project_path}"
-    python_loc = sys.executable  # eg, /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/bin/python
+    python_loc = sys.executable  # eg, /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/bin/python
     run_file = project_path.joinpath('database/test_data/response2code.py')
     # run_file = '"' + str(run_file) + '"'  # spaces in file names - with windows  FIXME
     run_file = str(Path(run_file).resolve()) 
@@ -143,6 +144,9 @@ def rebuild_test_data_for_project(project_path: Path, response: str) -> None:
     # /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/bin/python
     # /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/bin/python database/test_data/response2code.py --test-data --response=docs/genai_demo_informal_003.response
     # /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/bin/python database/test_data/test_data_code.py
+
+    # cd /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/genai_demo_informal
+    # /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/bin/python /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/genai_demo_informal/database/test_data/test_data_code.py
 
     # Exception: Missing attributes:['Product.unit_price: parent copy from']
     cwd = project_path.resolve()
@@ -154,7 +158,10 @@ def rebuild_test_data_for_project(project_path: Path, response: str) -> None:
     run_file = project_path.joinpath('database/test_data/test_data_code.py')
     run_file = str(Path(run_file).resolve()) 
     # run_file = 'database/test_data/test_data_code.py'  # this did't work either
-    result = create_utils.run_command(f'{python_loc} {run_file}', 
+
+    subprocess.check_output([python_loc,run_file,'--test-data','--response', 'docs/response.json'] , cwd=cwd,shell=False, env=os.environ.copy())
+    # subprocess.check_output([python_loc,run_file,'--test-data','--response', 'docs/response.json'] , cwd=cwd,shell=True)
+    result = create_utils.run_commiand(f'{python_loc} {run_file}', 
                                       msg="\Running Test Data Builder...",
                                       cwd=cwd)
 
