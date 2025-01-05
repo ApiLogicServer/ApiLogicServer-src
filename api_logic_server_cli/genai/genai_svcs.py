@@ -147,14 +147,15 @@ def rebuild_test_data_for_project(project_path: Path, response: str) -> None:
     # Exception: Missing attributes:['Product.unit_price: parent copy from']
     cwd = project_path.resolve()
     result = create_utils.run_command(f'{python_loc} {run_file} {run_args}', 
-                                      msg="\nStarting test data rebuild...",
+                                      msg="\nCreating Test Data Builder...",
                                       cwd = cwd)
 
-    # Exception: Missing attributes:['Product.unit_price: parent copy from']
+    # Exception: Missing attributes:['Product.unit_price: parent copy from']  FIXME
     run_file = project_path.joinpath('database/test_data/test_data_code.py')
     run_file = str(Path(run_file).resolve()) 
+    # run_file = 'database/test_data/test_data_code.py'  # this did't work either
     result = create_utils.run_command(f'{python_loc} {run_file}', 
-                                      msg="\nStarting test data rebuild...",
+                                      msg="\Running Test Data Builder...",
                                       cwd=cwd)
 
     shutil.copyfile(project_path.joinpath('database/test_data/db.sqlite'), 
