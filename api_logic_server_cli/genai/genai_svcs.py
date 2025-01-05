@@ -161,9 +161,9 @@ def rebuild_test_data_for_project(project_path: Path, response: str) -> None:
 
     subprocess.check_output([python_loc,run_file,'--test-data','--response', 'docs/response.json'] , cwd=cwd,shell=False, env=os.environ.copy())
     # subprocess.check_output([python_loc,run_file,'--test-data','--response', 'docs/response.json'] , cwd=cwd,shell=True)
-    result = create_utils.run_commiand(f'{python_loc} {run_file}', 
-                                      msg="\Running Test Data Builder...",
-                                      cwd=cwd)
+    # result = create_utils.run_commiand(f'{python_loc} {run_file}', 
+    #                                  msg="\Running Test Data Builder...",
+    #                                  cwd=cwd)
 
     shutil.copyfile(project_path.joinpath('database/test_data/db.sqlite'), 
                     project_path.joinpath('database/db.sqlite')) # db with corrected test data
