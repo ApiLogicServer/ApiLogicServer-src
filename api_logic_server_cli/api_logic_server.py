@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "14.00.52"
+__version__ = "14.00.53"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t01/04/2024 - 14.00.52: response2code runs, starting: als genai-utils --rebuild-test-data  \n"\
+    "\t01/05/2024 - 14.00.53: response2code runs, first run: als genai-utils --rebuild-test-data  \n"\
     "\t01/03/2024 - 14.00.51: aggr dflts, LB 1.20.20, running load_test_data proto, colorama \n"\
     "\t12/30/2024 - 14.00.49: genai fixes: submit, readme, etc \n"\
     "\t12/29/2024 - 14.00.48: LB 01.20.18 with resettable singleton \n"\
