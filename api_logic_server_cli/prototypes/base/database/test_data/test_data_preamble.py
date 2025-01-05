@@ -27,6 +27,8 @@ project_dir = Path(os.getenv("PROJECT_DIR",'./')).resolve()
 assert os.getenv("APILOGICPROJECT_NO_FLASK"), "APILOGICPROJECT_NO_FLASK must be set to run this script"
 assert str(os.getcwd()) == str(project_dir), f"Current directory must be {project_dir}"
 
+data_log : list[str] = []
+
 logging_config = project_dir / 'config/logging.yml'
 if logging_config.is_file():
     with open(logging_config,'rt') as f:  
@@ -39,23 +41,33 @@ logic_logger.info(f'..  logic_logger: {logic_logger}')
 db_url_path = project_dir.joinpath('database/test_data/db.sqlite')
 db_url = f'sqlite:///{db_url_path.resolve()}'
 logging.info(f'..  db_url: {db_url}')
+logging.info(f'..  cwd: {os.getcwd()}')
+data_log.append(f'..  db_url: {db_url}')
+data_log.append(f'..  cwd: {os.getcwd()}')
 
 if db_url_path.is_file():
     db_url_path.unlink()
 
-engine = create_engine(db_url)
-Base.metadata.create_all(engine)
-Session = sessionmaker(bind=engine)  # note: LogicBank activated for this session only
-session = Session()
-
-LogicBank.activate(session=session, activator=declare_logic.declare_logic)
+try:
+    engine = create_engine(db_url)
+    Base.metadata.create_all(engine)
+    Session = sessionmaker(bind=engine)  # note: LogicBank activated for this session only
+    session = Session()
+    LogicBank.activate(session=session, activator=declare_logic.declare_logic)
+except Exception as e: 
+    logging.error(f'Error creating engine: {e}')
+    data_log.append(f'Error creating engine: {e}')
+    print('\n'.join(data_log))
+    with open(project_dir / 'database/test_data/test_data_code_log.txt', 'w') as log_file:
+        log_file.write('\n'.join(data_log))
+    print('\n'.join(data_log))
+    raise
 
 restart_count = 0
 has_errors = True
 succeeded_hashes = set()
 
 while restart_count < 5 and has_errors:
-    data_log : list[str] = []
     has_errors = False
     restart_count += 1
     data_log.append("print(Pass: " + str(restart_count) + ")" )
