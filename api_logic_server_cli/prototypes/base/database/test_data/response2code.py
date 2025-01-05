@@ -52,8 +52,12 @@ def write_test_data(test_data):
         fixed_code = row.get("code").replace("'s", "''s")
         test_data_code += add_instance_code_template.format(code=fixed_code, hash=hash(fixed_code))
 
-    test_data_code += f"print('\\n'.join(data_log))"
-    
+    test_data_code += f"print('\\n'.join(data_log))\n"
+    test_data_code += "with open(project_dir / 'database/test_data/test_data_code_log.txt', 'w') as log_file:\n"
+    test_data_code += "    log_file.write('\\n'.join(data_log))\n"
+    test_data_code += "print('\\n'.join(data_log))"
+
+
     test_data_file = 'database/test_data/test_data_code.py'
     
     with open(test_data_file, 'w') as f:
