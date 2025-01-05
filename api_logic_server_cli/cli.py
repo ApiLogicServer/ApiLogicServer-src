@@ -641,8 +641,16 @@ def genai(ctx, using, db_url, repaired_response: str,
 @click.option('--submit', is_flag=True,
               default=False,
               help="Submit --using to GenAI")
+@click.option('--rebuild-test-data', "rebuild_test_data", 
+              default=False, is_flag=True,
+              help="Submit --using to GenAI")
+@click.option('--response', 
+              default='',
+              help="Project file with ChatGPT test data")
 @click.pass_context
-def genai_utils(ctx, using, genai_version: str, fixup: click.BOOL, submit: click.BOOL, import_genai: click.BOOL, import_resume: click.BOOL):
+def genai_utils(ctx, using, genai_version: str, 
+                fixup: click.BOOL, submit: click.BOOL, import_genai: click.BOOL, 
+                import_resume: click.BOOL, rebuild_test_data: click.BOOL, response: str):
     """
         Utilities for GenAI.
     """
@@ -668,7 +676,8 @@ def genai_utils(ctx, using, genai_version: str, fixup: click.BOOL, submit: click
         exit (1)
     from api_logic_server_cli.genai.genai_utils import GenAIUtils
     genai_utils = GenAIUtils(using=using, project=project, genai_version=genai_version, 
-                             fixup=fixup, submit=submit, import_genai=import_genai, import_resume=import_resume)
+                             fixup=fixup, submit=submit, import_genai=import_genai, 
+                             import_resume=import_resume, rebuild_test_data=rebuild_test_data, response=response)
     genai_utils.run()
     pass
     log.info("")

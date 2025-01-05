@@ -547,7 +547,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "    - Create blt/genai_demo from blt-prompt/ChatGPT, informal logic",
+            "name": "    - Create blt/genai_demo_informal from blt-prompt/ChatGPT, informal logic",
             "type": "debugpy",
             "request": "launch",
             "env": {"APILOGICSERVER_DEBUG": "True"},
@@ -557,6 +557,21 @@
             "args": ["genai",
                 "--using=${workspaceFolder}/../../build_and_test/ApiLogicServer/system/genai/examples/genai_demo/genai_demo_informal.prompt",
                 "--project-name=genai_demo_informal"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "    - Rebuild test data -  blt/ApiLogicServer/genai_demo_informal",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True",
+                    "APILOGICPROJECT_NO_FLASK": "True"},
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer/genai_demo_informal",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["genai-utils", "--rebuild-test-data",
+                "--using=${workspaceFolder}/../../build_and_test/ApiLogicServer/genai_demo_informal",
+                "--response=docs/genai_demo_informal_003.response"]
+                ],
             "console": "integratedTerminal"
         },
         {

@@ -422,7 +422,8 @@ def find_valid_python_name() -> str:
         return "python"
 
 
-def run_command(cmd: str, env=None, msg: str = "", new_line: bool=False, project: Project = None) -> str:
+def run_command(cmd: str, env=None, msg: str = "", new_line: bool=False, 
+                project: Project = None, cwd: str = None) -> str:
     """ run shell command
 
     :param cmd: string of command to execute
@@ -466,7 +467,7 @@ def run_command(cmd: str, env=None, msg: str = "", new_line: bool=False, project
     if use_env_debug:
         result_b = subprocess.check_output(cmd_to_run, shell=True, env=use_env)
     else:
-        result_b = subprocess.check_output(cmd_to_run, shell=True) # , stderr=subprocess.STDOUT)  # causes hang on docker
+        result_b = subprocess.check_output(cmd_to_run, shell=True, cwd=cwd) # , stderr=subprocess.STDOUT)  # causes hang on docker
         log.debug(f'{log_msg} {cmd_to_run}')
     result = str(result_b)  # b'pyenv 1.2.21\n'  # this code never gets reached when running app...
     result = result[2: len(result) - 3]
