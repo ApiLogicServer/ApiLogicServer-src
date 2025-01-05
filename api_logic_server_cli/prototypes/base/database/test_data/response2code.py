@@ -19,83 +19,30 @@ import os
 import logging
 import logging.config
 import click
+from pathlib import Path
 
 logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger("response2code")
 
-source_code_preamble = """
-import logging
-import logging.config
-import os, sys
-import yaml
-from datetime import date
-from pathlib import Path
-from sqlalchemy import (Boolean, Column, Date, DateTime, DECIMAL, Float, ForeignKey, Integer, Numeric, String, Text, create_engine)
-from sqlalchemy.dialects.sqlite import *
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.sql import func
+source_code_preamble = open(Path(__file__).parent / 'test_data_preamble.py').read()
 
-current_path = Path(__file__)
-project_path = (current_path.parent.parent.parent).resolve()
-sys.path.append(str(project_path))
-
-from logic_bank.logic_bank import LogicBank, Rule
-from logic import declare_logic
-from database.models import *
-from database.models import Base
-
-project_dir = Path(os.getenv("PROJECT_DIR",'./')).resolve()
-
-assert os.getenv("APILOGICPROJECT_NO_FLASK"), "APILOGICPROJECT_NO_FLASK must be set to run this script"
-assert str(os.getcwd()) == str(project_dir), f"Current directory must be {project_dir}"
-
-logging_config = project_dir / 'config/logging.yml'
-if logging_config.is_file():
-    with open(logging_config,'rt') as f:  
-        config=yaml.safe_load(f.read())
-    logging.config.dictConfig(config)
-logic_logger = logging.getLogger('logic_logger')
-logic_logger.setLevel(logging.DEBUG)
-logic_logger.info(f'..  logic_logger: {logic_logger}')
-
-db_url_path = project_dir.joinpath('database/test_data/db.sqlite')
-db_url = f'sqlite:///{db_url_path.resolve()}'
-logging.info(f'..  db_url: {db_url}')
-
-if db_url_path.is_file():
-    db_url_path.unlink()
-
-data_log : list[str] = []
-
-engine = create_engine(db_url)
-Base.metadata.create_all(engine)
-Session = sessionmaker(bind=engine)  # note: LogicBank activated for this session only
-session = Session()
-
-LogicBank.activate(session=session, activator=declare_logic.declare_logic)
-
-restart_count = 0
-has_errors = True
-
-while restart_count < 3 and has_errors:
-    has_errors = False
-    restart_count += 1
-    data_log.append("print(Pass: " + str(restart_count) + ")" )
-"""
-
-source_code_template = """
+add_instance_code_template = """
     try:
-        instance = {code}
-        session.add(instance)
-        session.commit()
+        if not {hash} in succeeded_hashes:  # avoid duplicate inserts
+            instance = {code}
+            session.add(instance)
+            session.commit()
+            succeeded_hashes.add({hash})
     except Exception as e:
         has_errors = True
         if 'UNIQUE' in str(e) and restart_count > 1:
             pass
         else:
-            data_log.append(f'Error {code} adding variable to session: {{e}}')
-        session.rollback()
+            error_str = f"Error adding variable to session: {{e}}"
+            if not error_str in data_log:
+                data_log.append(error_str)
+        if not restart_count in [2,3]:
+            session.rollback()
 """
 
 def write_test_data(test_data):
@@ -103,7 +50,7 @@ def write_test_data(test_data):
     
     for row in test_data:
         fixed_code = row.get("code").replace("'s", "''s")
-        test_data_code += source_code_template.format(code=fixed_code)
+        test_data_code += add_instance_code_template.format(code=fixed_code, hash=hash(fixed_code))
 
     test_data_code += f"print('\\n'.join(data_log))"
     
