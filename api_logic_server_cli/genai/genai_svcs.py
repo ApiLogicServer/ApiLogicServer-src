@@ -1,7 +1,9 @@
 ''' shared functions for genai '''
 
+import shutil
 from typing import Dict, List, Tuple
 from api_logic_server_cli.cli_args_project import Project
+import create_from_model.api_logic_server_utils as create_utils
 import logging
 from pathlib import Path
 import os
@@ -127,6 +129,37 @@ def get_code(rule_list: List[DotMap]) -> str:
                 if 'def declare_logic' not in each_repaired_line:
                     translated_logic += each_repaired_line + '\n'    
     return translated_logic
+
+def rebuild_test_data_for_project(project_path: Path, response: str) -> None:
+    pass
+    assert project_path.is_dir(), f"Missing project directory: {project_path}"
+    python_loc = sys.executable  # eg, /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/bin/python
+    run_file = project_path.joinpath('database/test_data/response2code.py')
+    run_file = '"' + str(run_file) + '"'  # spaces in file names - with windows
+    run_args = f'--test-data --response={response}'
+
+    # cd /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/genai_demo_informal
+    # /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/bin/python
+    # /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/bin/python database/test_data/response2code.py --test-data --response=docs/genai_demo_informal_003.response
+    # /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/bin/python database/test_data/test_data_code.py
+
+    # Exception: Missing attributes:['Product.unit_price: parent copy from']
+    cwd = project_path.resolve()
+    result = create_utils.run_command(f'{python_loc} {run_file} {run_args}', 
+                                      msg="\nStarting test data rebuild...",
+                                      cwd = cwd)
+
+    # Exception: Missing attributes:['Product.unit_price: parent copy from']
+    run_file = project_path.joinpath('database/test_data/test_data_code.py')
+    run_file = '"' + str(run_file) + '"'  # spaces in file names - with windows
+    result = create_utils.run_command(f'{python_loc} {run_file}', 
+                                      msg="\nStarting test data rebuild...",
+                                      cwd=cwd)
+
+    shutil.copyfile(project_path.joinpath('database/test_data/db.sqlite'), 
+                    project_path.joinpath('database/db.sqlite')) # db with corrected test data
+
+    pass
 
 
 def model2code(model: DotMap) -> str:

@@ -557,6 +557,33 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
+            "name": "REBUILD TEST DATA - A1",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"SECURITY_ENABLED": "True"},
+            "cwd": "${workspaceFolder}/genai_demo_informal",
+            "program": "${workspaceFolder}/genai_demo_informal/database/test_data/response2code.py",
+            "redirectOutput": true,
+            "args": ["--test-data"
+                    ,"--response=docs/genai_demo_informal_003.response"
+            ],
+            "justMyCode": false,            
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "REBUILD TEST DATA - A2",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICPROJECT_NO_FLASK": "True"},
+            "cwd": "${workspaceFolder}/genai_demo_informal",
+            "program": "${workspaceFolder}/genai_demo_informal/database/test_data/test_data_code.py",
+            "redirectOutput": true,
+            "justMyCode": false,            
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
             "name": "Python: Module",
             "type": "debugpy",
             "request": "launch",

@@ -22,6 +22,7 @@ from api_logic_server_cli.genai.genai_svcs import (
     remove_als_from_models_py,
     read_and_expand_prompt,
     Rule,
+    rebuild_test_data_for_project,
     WGResult
 )
 import create_from_model.api_logic_server_utils as utils
@@ -43,7 +44,9 @@ class GenAIUtils:
         fixup: bool,
         submit: bool,
         import_genai: bool,
-        import_resume: bool = False
+        import_resume: bool = False,
+        rebuild_test_data: bool = False,
+        response: str = None
     ):
         """
         Initialization for GenAIUtils.
@@ -64,6 +67,8 @@ class GenAIUtils:
         self.submit = submit
         self.import_genai = import_genai
         self.import_resume = import_resume
+        self.rebuild_test_data = rebuild_test_data
+        self.response = response
 
     def run(self) -> None:
         """Decides which operation to perform based on the provided flags."""
@@ -73,6 +78,8 @@ class GenAIUtils:
             self.submit_project()
         elif self.import_genai:
             self.import_genai_project()
+        elif self.rebuild_test_data:
+            self.rebuild_test_data_project()
         else:
             log.info(".. no action specified")
 
@@ -110,6 +117,12 @@ class GenAIUtils:
                 "ChatGPT call failed - please see "
                 "https://apilogicserver.github.io/Docs/WebGenAI-CLI/#configuration"
             )
+
+    def rebuild_test_data_project(self) -> None:
+        """rebuilds test data from the response.json file by calling response2code.py
+        """        
+        rebuild_test_data_for_project(Path(self.using), self.response)
+
 
     def fixup_project(self) -> None:
         """
