@@ -1010,7 +1010,9 @@ metadata = Base.metadata
 from sqlalchemy.dialects.mysql import *
 
 if os.getenv("APILOGICPROJECT_NO_FLASK") is None:
-    Base = SAFRSBaseX  # enables rules to be used outside of Flask, e.g., test data loading
+    Base = SAFRSBaseX   # enables rules to be used outside of Flask, e.g., test data loading
+else:
+    Base = TestBase     # ensure proper types, so rules work for data loading
 """
         
         if self.model_creation_services.project.bind_key != "":
