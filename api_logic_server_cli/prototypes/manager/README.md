@@ -303,6 +303,7 @@ als genai-utils --fixup
 # see results in genai_demo_with_logic/docs/fixup
 
 # create a new project with the correct data model & test data
+cd ..  # should be the manager
 als genai --using=genai_demo_with_logic_fixed --project-name=genai_demo_with_logic_fixed --retries=-1 --repaired-response=genai_demo_with_logic/docs/fixup/response_fixup.json
 ```
 
