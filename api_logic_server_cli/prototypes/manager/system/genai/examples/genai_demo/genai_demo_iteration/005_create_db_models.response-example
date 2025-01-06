@@ -1,0 +1,178 @@
+{
+    "models": [
+        {
+            "classname": "CustomerAccount",
+            "code": "class CustomerAccount(Base):\n    \"\"\"\n    description: This table holds customer account details with credit checks.\n    \"\"\"\n    __tablename__ = 'customer_account'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String, nullable=True)\n    email = Column(String, nullable=True)\n    balance = Column(Float, nullable=True)\n    credit_limit = Column(Float, nullable=True)\n",
+            "description": "This table holds customer account details with credit checks.",
+            "name": "CustomerAccount"
+        },
+        {
+            "classname": "Address",
+            "code": "class Address(Base):\n    \"\"\"\n    description: This table contains addresses associated with CustomerAccount.\n    \"\"\"\n    __tablename__ = 'address'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    customer_account_id = Column(Integer, ForeignKey('customer_account.id'), nullable=False)\n    street = Column(String, nullable=True)\n    city = Column(String, nullable=True)\n    state = Column(String, nullable=True)\n    zip_code = Column(String, nullable=True)\n",
+            "description": "This table contains addresses associated with CustomerAccount.",
+            "name": "Address"
+        },
+        {
+            "classname": "SalesRep",
+            "code": "class SalesRep(Base):\n    \"\"\"\n    description: This table contains sales representative details.\n    \"\"\"\n    __tablename__ = 'sales_rep'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String, nullable=True)\n    region = Column(String, nullable=True)\n",
+            "description": "This table contains sales representative details.",
+            "name": "SalesRep"
+        },
+        {
+            "classname": "Order",
+            "code": "class Order(Base):\n    \"\"\"\n    description: This table contains order details with an assigned sales representative.\n    \"\"\"\n    __tablename__ = 'order'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    customer_account_id = Column(Integer, ForeignKey('customer_account.id'), nullable=False)\n    order_date = Column(Date, nullable=True)\n    sales_rep_id = Column(Integer, ForeignKey('sales_rep.id'), nullable=False)\n    notes = Column(String, nullable=True)\n    amount_total = Column(Float, nullable=True)\n",
+            "description": "This table contains order details with an assigned sales representative.",
+            "name": "Order"
+        },
+        {
+            "classname": "Item",
+            "code": "class Item(Base):\n    \"\"\"\n    description: This table links orders to products for each item on an order.\n    \"\"\"\n    __tablename__ = 'item'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    order_id = Column(Integer, ForeignKey('order.id'), nullable=False)\n    product_id = Column(Integer, ForeignKey('product.id'), nullable=False)\n    quantity = Column(Integer, nullable=True)\n    unit_price = Column(Float, nullable=True)\n    amount = Column(Float, nullable=True)  # derived in logic\n",
+            "description": "This table links orders to products for each item on an order.",
+            "name": "Item"
+        },
+        {
+            "classname": "Product",
+            "code": "class Product(Base):\n    \"\"\"\n    description: This table contains product information.\n    \"\"\"\n    __tablename__ = 'product'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String, nullable=True)\n    price = Column(Float, nullable=True)\n",
+            "description": "This table contains product information.",
+            "name": "Product"
+        }
+    ],
+    "rules": [
+        {
+            "name": "Check Credit",
+            "description": "Enforces that a CustomerAccount's balance does not exceed the credit limit.",
+            "use_case": "Check Credit",
+            "entity": "CustomerAccount",
+            "code": "Rule.constraint(validate=CustomerAccount, as_condition=lambda row: row.balance <= row.credit_limit, error_msg=\"CustomerAccount balance ({row.balance}) exceeds credit limit ({row.credit_limit})\")"
+        },
+        {
+            "name": "Balance Sum",
+            "description": "Calculates CustomerAccount balance based on orders' amount_total where date_shipped is null.",
+            "use_case": "Check Credit",
+            "entity": "CustomerAccount",
+            "code": "Rule.sum(derive=CustomerAccount.balance, as_sum_of=Order.amount_total, where=lambda row: row.order_date is None)"
+        },
+        {
+            "name": "Order Amount Total",
+            "description": "Calculates Order's amount_total from sum of Item.amount values.",
+            "use_case": "Check Credit",
+            "entity": "Order",
+            "code": "Rule.sum(derive=Order.amount_total, as_sum_of=Item.amount)"
+        },
+        {
+            "name": "Item Amount Formula",
+            "description": "Derives Item.amount as quantity * unit_price.",
+            "use_case": "Check Credit",
+            "entity": "Item",
+            "code": "Rule.formula(derive=Item.amount, as_expression=lambda row: row.quantity * row.unit_price)"
+        },
+        {
+            "name": "Copy Unit Price",
+            "description": "Copies Product.unit_price to Item.unit_price when an order item is created.",
+            "use_case": "Check Credit",
+            "entity": "Item",
+            "code": "Rule.copy(derive=Item.unit_price, from_parent=Product.price)"
+        }
+    ],
+    "test_data": "from datetime import date\n\n# CustomerAccount Test Data\ncustomer_account1 = CustomerAccount(name=\"John Doe\", email=\"john.doe@example.com\", balance=0, credit_limit=1500)\ncustomer_account2 = CustomerAccount(name=\"Jane Smith\", email=\"jane.smith@example.com\", balance=0, credit_limit=1000)\ncustomer_account3 = CustomerAccount(name=\"Alice Johnson\", email=\"alice.johnson@example.com\", balance=0, credit_limit=2000)\ncustomer_account4 = CustomerAccount(name=\"Bob Brown\", email=\"bob.brown@example.com\", balance=0, credit_limit=1200)\n\n# Address Test Data\naddress1 = Address(customer_account_id=1, street=\"123 Elm St\", city=\"Springfield\", state=\"IL\", zip_code=\"62701\")\naddress2 = Address(customer_account_id=2, street=\"456 Maple Ave\", city=\"Dover\", state=\"DE\", zip_code=\"19901\")\naddress3 = Address(customer_account_id=3, street=\"789 Oak Dr\", city=\"Albany\", state=\"NY\", zip_code=\"12207\")\naddress4 = Address(customer_account_id=4, street=\"321 Pine St\", city=\"Madison\", state=\"WI\", zip_code=\"53703\")\n\n# SalesRep Test Data\nsales_rep1 = SalesRep(name=\"Sam Allen\", region=\"West\")\nsales_rep2 = SalesRep(name=\"Linda Carter\", region=\"East\")\nsales_rep3 = SalesRep(name=\"Dan Miller\", region=\"North\")\nsales_rep4 = SalesRep(name=\"Karen White\", region=\"South\")\n\n# Product Test Data\nproduct1 = Product(name=\"Laptop\", price=999.99)\nproduct2 = Product(name=\"Smartphone\", price=499.99)\nproduct3 = Product(name=\"Tablet\", price=299.99)\nproduct4 = Product(name=\"Headphones\", price=89.99)\n\n# Order Test Data\norder1 = Order(customer_account_id=1, order_date=date(2023, 1, 10), sales_rep_id=1, notes=\"First order.\", amount_total=0)\norder2 = Order(customer_account_id=2, order_date=date(2023, 2, 15), sales_rep_id=2, notes=\"In a rush.\", amount_total=0)\norder3 = Order(customer_account_id=3, order_date=date(2023, 3, 20), sales_rep_id=3, notes=\"Regular customer.\", amount_total=0)\norder4 = Order(customer_account_id=4, order_date=date(2023, 4, 25), sales_rep_id=4, notes=\"Check delivery.\", amount_total=0)\n\n# Item Test Data\nitem1 = Item(order_id=1, product_id=2, quantity=3, unit_price=product2.price, amount=1500)\nitem2 = Item(order_id=1, product_id=3, quantity=2, unit_price=product3.price, amount=600)\nitem3 = Item(order_id=2, product_id=1, quantity=1, unit_price=product1.price, amount=1000)\nitem4 = Item(order_id=3, product_id=4, quantity=5, unit_price=product4.price, amount=450)\n",
+    "test_data_rows": [
+        {
+            "test_data_row_variable": "customer_account1",
+            "code": "customer_account1 = CustomerAccount(name=\"John Doe\", email=\"john.doe@example.com\", balance=0, credit_limit=1500)"
+        },
+        {
+            "test_data_row_variable": "customer_account2",
+            "code": "customer_account2 = CustomerAccount(name=\"Jane Smith\", email=\"jane.smith@example.com\", balance=0, credit_limit=1000)"
+        },
+        {
+            "test_data_row_variable": "customer_account3",
+            "code": "customer_account3 = CustomerAccount(name=\"Alice Johnson\", email=\"alice.johnson@example.com\", balance=0, credit_limit=2000)"
+        },
+        {
+            "test_data_row_variable": "customer_account4",
+            "code": "customer_account4 = CustomerAccount(name=\"Bob Brown\", email=\"bob.brown@example.com\", balance=0, credit_limit=1200)"
+        },
+        {
+            "test_data_row_variable": "address1",
+            "code": "address1 = Address(customer_account_id=1, street=\"123 Elm St\", city=\"Springfield\", state=\"IL\", zip_code=\"62701\")"
+        },
+        {
+            "test_data_row_variable": "address2",
+            "code": "address2 = Address(customer_account_id=2, street=\"456 Maple Ave\", city=\"Dover\", state=\"DE\", zip_code=\"19901\")"
+        },
+        {
+            "test_data_row_variable": "address3",
+            "code": "address3 = Address(customer_account_id=3, street=\"789 Oak Dr\", city=\"Albany\", state=\"NY\", zip_code=\"12207\")"
+        },
+        {
+            "test_data_row_variable": "address4",
+            "code": "address4 = Address(customer_account_id=4, street=\"321 Pine St\", city=\"Madison\", state=\"WI\", zip_code=\"53703\")"
+        },
+        {
+            "test_data_row_variable": "sales_rep1",
+            "code": "sales_rep1 = SalesRep(name=\"Sam Allen\", region=\"West\")"
+        },
+        {
+            "test_data_row_variable": "sales_rep2",
+            "code": "sales_rep2 = SalesRep(name=\"Linda Carter\", region=\"East\")"
+        },
+        {
+            "test_data_row_variable": "sales_rep3",
+            "code": "sales_rep3 = SalesRep(name=\"Dan Miller\", region=\"North\")"
+        },
+        {
+            "test_data_row_variable": "sales_rep4",
+            "code": "sales_rep4 = SalesRep(name=\"Karen White\", region=\"South\")"
+        },
+        {
+            "test_data_row_variable": "product1",
+            "code": "product1 = Product(name=\"Laptop\", price=999.99)"
+        },
+        {
+            "test_data_row_variable": "product2",
+            "code": "product2 = Product(name=\"Smartphone\", price=499.99)"
+        },
+        {
+            "test_data_row_variable": "product3",
+            "code": "product3 = Product(name=\"Tablet\", price=299.99)"
+        },
+        {
+            "test_data_row_variable": "product4",
+            "code": "product4 = Product(name=\"Headphones\", price=89.99)"
+        },
+        {
+            "test_data_row_variable": "order1",
+            "code": "order1 = Order(customer_account_id=1, order_date=date(2023, 1, 10), sales_rep_id=1, notes=\"First order.\", amount_total=0)"
+        },
+        {
+            "test_data_row_variable": "order2",
+            "code": "order2 = Order(customer_account_id=2, order_date=date(2023, 2, 15), sales_rep_id=2, notes=\"In a rush.\", amount_total=0)"
+        },
+        {
+            "test_data_row_variable": "order3",
+            "code": "order3 = Order(customer_account_id=3, order_date=date(2023, 3, 20), sales_rep_id=3, notes=\"Regular customer.\", amount_total=0)"
+        },
+        {
+            "test_data_row_variable": "order4",
+            "code": "order4 = Order(customer_account_id=4, order_date=date(2023, 4, 25), sales_rep_id=4, notes=\"Check delivery.\", amount_total=0)"
+        },
+        {
+            "test_data_row_variable": "item1",
+            "code": "item1 = Item(order_id=1, product_id=2, quantity=3, unit_price=product2.price, amount=1500)"
+        },
+        {
+            "test_data_row_variable": "item2",
+            "code": "item2 = Item(order_id=1, product_id=3, quantity=2, unit_price=product3.price, amount=600)"
+        },
+        {
+            "test_data_row_variable": "item3",
+            "code": "item3 = Item(order_id=2, product_id=1, quantity=1, unit_price=product1.price, amount=1000)"
+        },
+        {
+            "test_data_row_variable": "item4",
+            "code": "item4 = Item(order_id=3, product_id=4, quantity=5, unit_price=product4.price, amount=450)"
+        }
+    ],
+    "test_data_sqlite": "INSERT INTO customer_account (name, email, balance, credit_limit) VALUES ('John Doe', 'john.doe@example.com', 0, 1500);\nINSERT INTO customer_account (name, email, balance, credit_limit) VALUES ('Jane Smith', 'jane.smith@example.com', 0, 1000);\nINSERT INTO customer_account (name, email, balance, credit_limit) VALUES ('Alice Johnson', 'alice.johnson@example.com', 0, 2000);\nINSERT INTO customer_account (name, email, balance, credit_limit) VALUES ('Bob Brown', 'bob.brown@example.com', 0, 1200);\n\nINSERT INTO address (customer_account_id, street, city, state, zip_code) VALUES (1, '123 Elm St', 'Springfield', 'IL', '62701');\nINSERT INTO address (customer_account_id, street, city, state, zip_code) VALUES (2, '456 Maple Ave', 'Dover', 'DE', '19901');\nINSERT INTO address (customer_account_id, street, city, state, zip_code) VALUES (3, '789 Oak Dr', 'Albany', 'NY', '12207');\nINSERT INTO address (customer_account_id, street, city, state, zip_code) VALUES (4, '321 Pine St', 'Madison', 'WI', '53703');\n\nINSERT INTO sales_rep (name, region) VALUES ('Sam Allen', 'West');\nINSERT INTO sales_rep (name, region) VALUES ('Linda Carter', 'East');\nINSERT INTO sales_rep (name, region) VALUES ('Dan Miller', 'North');\nINSERT INTO sales_rep (name, region) VALUES ('Karen White', 'South');\n\nINSERT INTO product (name, price) VALUES ('Laptop', 999.99);\nINSERT INTO product (name, price) VALUES ('Smartphone', 499.99);\nINSERT INTO product (name, price) VALUES ('Tablet', 299.99);\nINSERT INTO product (name, price) VALUES ('Headphones', 89.99);\n\nINSERT INTO \"order\" (customer_account_id, order_date, sales_rep_id, notes, amount_total) VALUES (1, '2023-01-10', 1, 'First order.', 0);\nINSERT INTO \"order\" (customer_account_id, order_date, sales_rep_id, notes, amount_total) VALUES (2, '2023-02-15', 2, 'In a rush.', 0);\nINSERT INTO \"order\" (customer_account_id, order_date, sales_rep_id, notes, amount_total) VALUES (3, '2023-03-20', 3, 'Regular customer.', 0);\nINSERT INTO \"order\" (customer_account_id, order_date, sales_rep_id, notes, amount_total) VALUES (4, '2023-04-25', 4, 'Check delivery.', 0);\n\nINSERT INTO \"item\" (order_id, product_id, quantity, unit_price, amount) VALUES (1, 2, 3, 499.99, 1500);\nINSERT INTO \"item\" (order_id, product_id, quantity, unit_price, amount) VALUES (1, 3, 2, 299.99, 600);\nINSERT INTO \"item\" (order_id, product_id, quantity, unit_price, amount) VALUES (2, 1, 1, 999.99, 1000);\nINSERT INTO \"item\" (order_id, product_id, quantity, unit_price, amount) VALUES (3, 4, 5, 89.99, 450);",
+    "name": "EnhancedOrderManagementSystem"
+}

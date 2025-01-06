@@ -25,9 +25,10 @@ def activate_logicbank(session, constraint_handler):
                            constraint_event=constraint_handler,
                            aggregate_defaults=aggregate_defaults)
     except LBActivateException as e:
-        app_logger.error("Logic Bank Activation Error")
+        app_logger.error("\nLogic Bank Activation Error -- see https://apilogicserver.github.io/Docs/WebGenAI-CLI/#recovery-options")
         if e.invalid_rules: logic_logger.error(f"Invalid Rules:  {e.invalid_rules}")
-        if e.missing_attributes: logic_logger.error(f"Missing Attrs: {e.missing_attributes}")
+        if e.missing_attributes: logic_logger.error(f"Missing Attrs (try als genai-utils --fixup): {e.missing_attributes}")
+        app_logger.error("\n")
         if not os.environ.get("VERIFY_RULES") == "True":
             # WG Rule Verification, continue if VERIFY_RULES is True
             raise e

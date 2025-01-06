@@ -43,8 +43,10 @@ db_url_path = project_dir.joinpath('database/test_data/db.sqlite')
 db_url = f'sqlite:///{db_url_path.resolve()}'
 logging.info(f'..  db_url: {db_url}')
 logging.info(f'..  cwd: {os.getcwd()}')
+logging.info(f'..  python_loc: {sys.executable}')
 data_log.append(f'..  db_url: {db_url}')
 data_log.append(f'..  cwd: {os.getcwd()}')
+data_log.append(f'..  python_loc: {sys.executable}')
 
 if db_url_path.is_file():
     db_url_path.unlink()

@@ -93,11 +93,12 @@
             "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
-            "args": ["add-cust","--project_name=../../../ApiLogicServer-dev/clean/ApiLogicServer/genai_demo"],
+            "args": ["add-cust",
+                "--project-name=../../../ApiLogicServer-dev/clean/ApiLogicServer/genai_demo"],
             "console": "integratedTerminal"
         },
         {
-            "name": "     - genai CONVERSATION - clean/ApiLogicServer/genai_demo_conversation",
+            "name": "     - genai ITERATION - clean/ApiLogicServer/genai_demo_iteration",
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
@@ -106,6 +107,7 @@
             "redirectOutput": true,
             "args": [
                 "genai",
+                "--project-name=../../../ApiLogicServer-dev/clean/ApiLogicServer/genai_demo_iteration",
                 "--using=${workspaceFolder}/api_logic_server_cli/prototypes/manager/system/genai/examples/genai_demo/genai_demo_iteration"],
             "console": "integratedTerminal"
         },
