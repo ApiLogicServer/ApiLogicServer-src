@@ -990,7 +990,7 @@ class CodeGenerator(object):
 # mypy: ignore-errors
 {nw_info}########################################################################################################################
  
-from database.system.SAFRSBaseX import SAFRSBaseX
+from database.system.SAFRSBaseX import SAFRSBaseX, TestBase
 from flask_login import UserMixin
 import safrs, flask_sqlalchemy, os
 from safrs import jsonapi_attr
