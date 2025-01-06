@@ -296,7 +296,7 @@ class GenAI(object):
                         response_count += 1
                     else:
                         request_count += 1      # rebuild response with *all* tables
-                        # hmm, this differs from genai_svcs/ get_prompt_messages
+                        # note, this differs from genai_svcs/ get_prompt_messages (poor sharing candidate)
                         if request_count >= 3:   # Run Config: genai AUTO DEALERSHIP CONVERSATION
                             if 'updating the prior response' not in prompt:
                                 prompt = self.get_prompt__with_inserts(raw_prompt=prompt, for_iteration=True)
@@ -341,7 +341,7 @@ class GenAI(object):
                 prompt_messages[0]["content"] = prompt  # TODO - verify no longer needed
             prompt_messages.append( {"role": "user", "content": prompt})
         elif Path(self.project.genai_using).is_dir():  # `--using` is a directory (conversation)
-            iteration(prompt_messages=prompt_messages)
+            iteration(prompt_messages=prompt_messages)  # basic test in under 1: - genai CONVERSATION
             if self.project.genai_active_rules:
                 if self.project.genai_active_rules == 'active_rules.json':
                     active_rules_json_path = Path(self.project.genai_using).joinpath('logic/active_rules.json')
@@ -644,6 +644,7 @@ class GenAI(object):
             import traceback
             log.error(f"\n\nERROR creating genai project docs: {docs_dir}\n\n{traceback.format_exc()}")
         pass
+
     def save_prompt_messages_to_system_genai_temp_project(self):
         """
         Save prompts / responses to system/genai/temp/{project}/genai.response
@@ -666,24 +667,36 @@ class GenAI(object):
             log.debug(f'save_prompt_messages_to_system_genai_temp_project() - {str(to_dir_save_dir)}')
 
             if self.project.genai_repaired_response == '':  # normal path, from --using
-                if write_prompt := True:
+                if write_prompt := True:  # simple test: 3 - Create blt/genai_demo
                     pass
-                    file_num = 0
+                    file_num = 0  # maintain the sequence of the prompts
                     flat_project_name = Path(self.project.project_name).stem  # in case project is dir/project-name
                     for each_message in self.messages:
                         suffix = 'prompt'
                         if each_message['role'] == 'system':
-                            suffix = 'response' 
+                            suffix = 'response' # (does not occur during normal create).
                         file_name = f'{flat_project_name}_{str(file_num).zfill(3)}.{suffix}'
+                        if 'You are a ' in each_message['content']:
+                            file_purpose = 'you_are'
+                        elif 'simplified API for LogicBank' in each_message['content']:
+                            file_purpose = 'logic_training'
+                        elif 'Update the prior response' in each_message['content']:
+                            file_purpose = 'iteration'
+                        elif 'Use SQLAlchemy to create a sqlite database' in each_message['content']:
+                            file_purpose = 'create_db_models'
+                        else:
+                            file_purpose = 'prompt'
+                        file_name = f'{str(file_num).zfill(3)}_{file_purpose}.{suffix}'
                         file_path = to_dir_save_dir.joinpath(file_name)
                         log.debug(f'.. saving[{file_name}]  - {each_message["content"][:30]}...')
                         with open(file_path, "w") as message_file:
                             message_file.write(each_message['content']) 
                         file_num += 1
-                    suffix = 'response'  # now add the this response
+                    suffix = 'response'  # now add this response
                     file_name = f'{flat_project_name}_{str(file_num).zfill(3)}.{suffix}'
+                    file_name = f'{str(file_num).zfill(3)}_create_db_models.{suffix}'
                     file_path = to_dir_save_dir.joinpath(file_name)
-                    log.debug(f'.. saving[{file_name}]  - {each_message["content"][:30]}...')
+                    log.debug(f'.. saving response [{file_name}]  - {each_message["content"][:30]}...')
                     with open(file_path, "w") as message_file:
                         json.dump(self.response_dict.toDict(), message_file, indent=4)
                 shutil.copyfile(self.project.from_model, to_dir_save_dir.joinpath('create_db_models.py'))
