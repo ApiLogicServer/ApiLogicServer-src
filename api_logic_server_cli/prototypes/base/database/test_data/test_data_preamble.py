@@ -24,7 +24,8 @@ from database.models import Base
 
 project_dir = Path(os.getenv("PROJECT_DIR",'./')).resolve()
 
-assert os.getenv("APILOGICPROJECT_NO_FLASK"), "APILOGICPROJECT_NO_FLASK must be set to run this script"
+os.environ["APILOGICPROJECT_NO_FLASK"] = "1"
+
 assert str(os.getcwd()) == str(project_dir), f"Current directory must be {project_dir}"
 
 data_log : list[str] = []

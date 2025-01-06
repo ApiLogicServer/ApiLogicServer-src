@@ -172,35 +172,11 @@ class GenAI(object):
 
         if self.project.genai_repaired_response == '':  # normal path - get response from ChatGPT
             try:
-                if use_svcs := True:
-                    data = genai_svcs.call_chatgpt(
-                        messages=self.messages,
-                        using = 'system/genai/temp', 
-                        api_version=self.project.genai_version)
-                    response_dict = json.loads(data)
-                else:
-                    api_version = f'{self.project.genai_version}'  # eg, "gpt-4o"
-                    start_time = time.time()
-                    db_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")  # TODO - use genai_utils
-                    client = OpenAI(api_key=os.getenv("APILOGICSERVER_CHATGPT_APIKEY"))
-                    model = api_version
-                    if model == "":  # default from CLI is '', meaning fall back to env variable or system default...
-                        model = os.getenv("APILOGICSERVER_CHATGPT_MODEL")
-                        if model is None or model == "*":  # system default chatgpt model
-                            model = "gpt-4o-2024-08-06"
-                    self.resolved_model = model
-                    completion = client.beta.chat.completions.parse(
-                        messages=self.messages, response_format=WGResult,
-                        # temperature=self.project.genai_temperature,  values .1 and .7 made students / charges fail
-                        model=model  # for own model, use "ft:gpt-4o-2024-08-06:personal:logicbank:ARY904vS" 
-                    )
-                    log.info(f'ChatGPT ({str(int(time.time() - start_time))} secs) - response at: system/genai/temp/chatgpt_original.response')
-                    
-                    data = completion.choices[0].message.content
-                    response_dict = json.loads(data)
-                    self.z_get_and_save_raw_response_data(completion=completion, response_dict=response_dict)
-                    # print(json.dumps(json.loads(data), indent=4))  # careful - name chg original.response
-                    pass
+                data = genai_svcs.call_chatgpt(
+                    messages=self.messages,
+                    using = 'system/genai/temp', 
+                    api_version=self.project.genai_version)
+                response_dict = json.loads(data)
             except Exception as inst:
                 log.error(f"\n\nError: ChatGPT call failed\n{inst}\n\n")
                 sys.exit('ChatGPT call failed - please see https://apilogicserver.github.io/Docs/WebGenAI-CLI/#configuration')
@@ -589,22 +565,7 @@ class GenAI(object):
         logic_file = self.project.project_directory_path.joinpath('logic/declare_logic.py')
         in_logic = False
         translated_logic = "\n    # Logic from GenAI: (or, use your IDE w/ code completion)\n"
-        if shared_logic := True:
-            translated_logic += genai_svcs.get_code(self.response_dict.rules)
-        else:  # old code - delete
-            for each_rule in self.response_dict.rules:
-                comment_line = each_rule.description
-                translated_logic += f'\n    # {comment_line}\n'
-                code_lines = each_rule.code.split('\n')
-                if '\n' in each_rule.code:
-                    debug_string = "good breakpoint - multi-line rule"
-                for each_line in code_lines:
-                    if 'declare_logic.py' not in each_line:
-                        each_repaired_line = remove_logic_halluncinations(each_line=each_line)
-                        if not each_repaired_line.startswith('    '):  # sometimes in indents, sometimes not
-                            each_repaired_line = '    ' + each_repaired_line
-                        if 'def declare_logic' not in each_repaired_line:
-                            translated_logic += each_repaired_line + '\n'    
+        translated_logic += genai_svcs.get_code(self.response_dict.rules)
         if self.logic_enabled == False:
             translated_logic = "\n    # Logic from GenAI: (or, use your IDE w/ code completion)\n"
             translated_logic += "\n    # LogicBank Disabled \n"  
@@ -639,6 +600,11 @@ class GenAI(object):
             docs_readme_lines += "See [WebGenAI-CLI](https://apilogicserver.github.io/Docs/WebGenAI-CLI/). " 
             with open(docs_readme_file_path, "w") as docs_readme_file:
                 docs_readme_file.write(docs_readme_lines)
+
+            response_file = self.project.project_directory_path.joinpath("docs/response.json")
+            genai_svcs.rebuild_test_data_for_project(
+                use_project_path = self.project.project_directory_path, 
+                response = response_file)
 
         except:  # intentional try/catch/bury - it's just docs, so don't fail
             import traceback
@@ -698,6 +664,8 @@ class GenAI(object):
                     file_path = to_dir_save_dir.joinpath(file_name)
                     log.debug(f'.. saving response [{file_name}]  - {each_message["content"][:30]}...')
                     with open(file_path, "w") as message_file:
+                        json.dump(self.response_dict.toDict(), message_file, indent=4)
+                    with open(to_dir_save_dir.joinpath('response.json'), "w") as message_file:
                         json.dump(self.response_dict.toDict(), message_file, indent=4)
                 shutil.copyfile(self.project.from_model, to_dir_save_dir.joinpath('create_db_models.py'))
         except Exception as inst:
