@@ -131,9 +131,12 @@ def get_code(rule_list: List[DotMap]) -> str:
                     translated_logic += each_repaired_line + '\n'    
     return translated_logic
 
-def rebuild_test_data_for_project(response: str = 'docs/003_create_db_models.response') -> None:
+def rebuild_test_data_for_project(response: str = 'docs/003_create_db_models.response',
+                                  use_project_path: Path = None) -> None:
     pass  # basic test: Rebuild test data -  blt/ApiLogicServer/genai_demo_informal
     project_path = Path(os.getcwd())
+    if use_project_path is not None:
+        project_path = use_project_path
     assert project_path.is_dir(), f"Missing project directory: {project_path}"
     assert project_path.joinpath('database').is_dir(), f"Missing project database directory: {project_path}"
 
