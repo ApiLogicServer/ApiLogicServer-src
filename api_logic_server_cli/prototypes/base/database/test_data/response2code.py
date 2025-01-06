@@ -55,7 +55,7 @@ def write_test_data(test_data):
     test_data_code += f"print('\\n'.join(data_log))\n"
     test_data_code += "with open(project_dir / 'database/test_data/test_data_code_log.txt', 'w') as log_file:\n"
     test_data_code += "    log_file.write('\\n'.join(data_log))\n"
-    test_data_code += "print('\\n'.join(data_log))"
+    test_data_code += "print('\\n'.join(data_log))\n"
 
 
     test_data_file = 'database/test_data/test_data_code.py'
