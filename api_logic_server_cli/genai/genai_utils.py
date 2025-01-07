@@ -94,29 +94,21 @@ class GenAIUtils:
         for each_path, each_message in self.messages:  # get rid of the path
             self.messages_chatgpt.append(each_message)
 
-        try:
-            api_version = f"{self.genai_version}"
-            start_time = time.time()
-            db_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY", "")
-            client = OpenAI(api_key=db_key)
-            model = api_version if api_version else os.getenv("APILOGICSERVER_CHATGPT_MODEL", "gpt-4o-2024-08-06")
-            self.resolved_model = model
+        api_version = f"{self.genai_version}"
+        start_time = time.time()
+        db_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY", "")
+        client = OpenAI(api_key=db_key)
+        model = api_version if api_version else os.getenv("APILOGICSERVER_CHATGPT_MODEL", "gpt-4o-2024-08-06")
+        self.resolved_model = model
 
-            call_chatgpt(api_version=model,
-                         messages=self.messages_chatgpt,
-                         using=self.using)
+        call_chatgpt(api_version=model,
+                        messages=self.messages_chatgpt,
+                        using=self.using)
 
-            log.info(
-                f"ChatGPT ({str(int(time.time() - start_time))} secs) - response at:"
-                " system/genai/temp/chatgpt_original.response"
-            )
-
-        except Exception as inst:
-            log.error(f"\n\nError: ChatGPT call failed\n{inst}\n\n")
-            sys.exit(
-                "ChatGPT call failed - please see "
-                "https://apilogicserver.github.io/Docs/WebGenAI-CLI/#configuration"
-            )
+        log.info(
+            f"ChatGPT ({str(int(time.time() - start_time))} secs) - response at:"
+            " system/genai/temp/chatgpt_original.response"
+        )
 
     def rebuild_test_data_project(self) -> None:
         """rebuilds test data from the response.json file by calling response2code.py

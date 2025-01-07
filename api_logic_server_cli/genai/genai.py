@@ -171,15 +171,11 @@ class GenAI(object):
         self.messages = self.get_prompt_messages()  # compute self.messages, from file, dir or text argument
 
         if self.project.genai_repaired_response == '':  # normal path - get response from ChatGPT
-            try:
-                data = genai_svcs.call_chatgpt(
-                    messages=self.messages,
-                    using = 'system/genai/temp', 
-                    api_version=self.project.genai_version)
-                response_dict = json.loads(data)
-            except Exception as inst:
-                log.error(f"\n\nError: ChatGPT call failed\n{inst}\n\n")
-                sys.exit('ChatGPT call failed - please see https://apilogicserver.github.io/Docs/WebGenAI-CLI/#configuration')
+            data = genai_svcs.call_chatgpt(
+                messages=self.messages,
+                using = 'system/genai/temp', 
+                api_version=self.project.genai_version)
+            response_dict = json.loads(data)
         else: # for retry from corrected response... eg system/genai/temp/chatgpt_retry.response
             self.resolved_model = "(n/a: model not used for repaired response)"
             log.debug(f'\nUsing [corrected] response from: {self.project.genai_repaired_response}')
@@ -1071,7 +1067,7 @@ def genai_cli_with_retry(using: str, db_url: str, repaired_response: str, genai_
         if failed == True:    # retries exhausted (if failed: threw "an integer is required" ??
             pass                # https://github.com/microsoft/debugpy/issues/1708
             log.error(f"\n\nGenai Failed (Retries: {retries})") 
-            exit(1) 
+            sys.exit(1) 
         log.info(f"\nGENAI ({str(int(time.time() - start_time))} secs) successful on try {try_number}\n")  
 
 
