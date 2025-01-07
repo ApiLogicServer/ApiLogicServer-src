@@ -648,7 +648,7 @@ def genai(ctx, using, db_url, repaired_response: str,
               default=False, is_flag=True,
               help="Submit --using to GenAI")
 @click.option('--response', 
-              default='response.json',
+              default='docs/response.json',
               help="Project file with ChatGPT test data")
 @click.pass_context
 def genai_utils(ctx, using, genai_version: str, 

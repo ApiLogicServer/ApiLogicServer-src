@@ -400,13 +400,13 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "  - GenAI RECOMPUTE r1 - rebuild test data (genai_demo)",
+            "name": "  - GenAI RECOMPUTE r0 - rebuild test data (genai_demo)",
 // typical step - iterate the model, now with logic
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
-            "cwd": "${workspaceFolder}/genai_demo",
+            "cwd": "${workspaceFolder}/genai_demo_no_logic",
             "env": {
                 "PYTHONPATH": "", 
                 "SECURITY_ENABLED": "False", 
@@ -414,7 +414,48 @@
                 "APILOGICSERVER_DEBUG": "False",
                 "OPT_LOCKING": "optional"},
             "justMyCode": false,
-            "args": [ "genai-utils", "--submit", "--using=docs/recompute"],
+            "args": [ "genai-utils", "--rebuild-test-data"
+                    // , "--using=docs/recompute"]
+                    ],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - GenAI RECOMPUTE r1 - rebuild test data (genai_demo)",
+// typical step - iterate the model, now with logic
+            "type": "debugpy",
+            "request": "launch",
+            "program": "database/test_data/response2code.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}/genai_demo_no_logic",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "--test-data"
+                    , "--response=docs/response.json"
+                    ],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - GenAI RECOMPUTE r2 - rebuild test data (genai_demo)",
+// typical step - iterate the model, now with logic
+            "type": "debugpy",
+            "request": "launch",
+            "program": "database/test_data/test_data_code.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}/genai_demo_no_logic",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
         },
