@@ -249,7 +249,7 @@ You can review the suggestions in the `genai_demo_no_logic` project:
     * This corresponds to the Logic Editor - Logic View in the WebGenAI web app
  * Diagnostic info at: `docs/logic/logic_suggestions.response`
 
-```bash title="3. See the rules for the logic"
+```bash title="3. See the rules for the logic - under construction - please ignore for now"
 # 3. See the rule code for the logic
 als genai-logic --suggest --logic='*'
 ```

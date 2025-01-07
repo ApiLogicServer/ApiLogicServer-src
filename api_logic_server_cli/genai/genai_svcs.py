@@ -754,8 +754,8 @@ def call_chatgpt(messages: List[Dict[str, str]], api_version: str, using: str) -
         log.debug(f'.. call_chatgpt saved response: {using}/response.json')
         return data # this is a string...
     except Exception as inst:
-        log.error(f"\n\nError: ChatGPT call failed\n{inst}\n\n")
-        sys.exit('ChatGPT call failed - please see https://apilogicserver.github.io/Docs/WebGenAI-CLI/#configuration')
+        log.error(f"\n\nError: ChatGPT call failed\n- please see https://apilogicserver.github.io/Docs/WebGenAI-CLI/#configuratio\n{inst}\n\n")
+        sys.exit(1)
 
 def get_manager_path() -> Path:
     """ Checks cwd, parent, and grandparent for system/genai
