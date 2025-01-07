@@ -12,64 +12,22 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "14.00.58"
+__version__ = "14.01.00"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t01/06/2024 - 14.00.58: genai test+ data creation, test data typing, lb 1.20.21, safrs 0106, clearer work file names, simpler CLI for genai-utils --rebuild, TestBase  \n"\
-    "\t01/05/2024 - 14.00.53: response2code runs, first run: als genai-utils --rebuild-test-data  \n"\
-    "\t01/03/2024 - 14.00.51: aggr dflts, LB 1.20.20, running load_test_data proto, colorama \n"\
-    "\t12/30/2024 - 14.00.49: genai fixes: submit, readme, etc \n"\
-    "\t12/29/2024 - 14.00.48: LB 01.20.18 with resettable singleton \n"\
-    "\t12/29/2024 - 14.00.47: BLT runs with multi-db (multi_db with auth special-dirs case) \n"\
-    "\t12/28/2024 - 14.00.45: Win fix for genai_svcs WebG logging \n"\
-    "\t12/27/2024 - 14.00.44: refactored genai_utils, logicbank-1.20.17 (excp fix) \n"\
-    "\t12/27/2024 - 14.00.42: colorama failed, LogicBank 01.20.16 missing attrs excp with all excps, fail-save rules, excp content \n"\
-    "\t12/26/2024 - 14.00.40: LogicBank 01.20.14 - missing attrs excp with all excps, fail-save rules \n"\
-    "\t12/24/2024 - 14.00.39: post_error missing from genai_svcs#fix_model_lines  \n"\
-    "\t12/23/2024 - 14.00.38: import creates db, models and test data (not rules), readme_wg_dev_merge.md  \n"\
-    "\t12/22/2024 - 14.00.36: many: prompt includes, relative create_db_models db, check class no base,  \n"\
-    "\t12/22/2024 - 14.00.35: safrs 3.1.6, models_2_code recovery, with newline \n"\
-    "\t12/21/2024 - 14.00.32: successful [assisted] import of export, fix genai_svcs.model2code, fix safrs_basex removal, with option for just opt_lock for clean models \n"\
-    "\t12/20/2024 - 14.00.28: model driven api (fails multi-db), import(ish), missing active_rules, logicbank 1.20.12 - fail-save rules, BLT files for N8N \n"\
-    "\t12/17/2024 - 14.00.25: add wg_dev_merge projects, fix fixup bug that (lost initial data models), n8n fixes \n"\
-    "\t12/17/2024 - 14.00.23: Integration: add nw:employee.email, fix workflow_integration.py \n"\
-    "\t12/16/2024 - 14.00.22: Integration: simplified RowMapper, prelim n8n, bug fix ref no-rule classes \n"\
-    "\t12/15/2024 - 14.00.20: LogicBank reports missing attrs, kafka/kafka_producer.py#send_kafka_message - RowDictMapper now optional \n"\
-    "\t12/12/2024 - 14.00.19: genai: genai-logic --logic, utils/fixup+, no dup derivations, --use-active-rules, active rules > 5, no initial logic, use_case \n"\
+    "\t01/06/2024 - 14.01.00: N8N, Rebuild test data, Fixup, Project Import, Improved reporting of missing attributes, Simplified RowDictMaper  \n"\
     "\t11/18/2024 - 12.02.00: genai: 'qualified any' now supported in logic training \n"\
     "\t10/31/2024 - 12.01.00: genai: informal rules (eg, Sum of employee salaries cannot exceed department budget) \n"\
     "\t10/21/2024 - 12.00.04: sra 10-22, Prelim support genai --using=dir/project \n"\
     "\t10/12/2024 - 12.00.02: Natural Language Logic \n"\
     "\t10/17/2024 - 11.02.19: singular classes, expanded doc/prompts, logic work-arounds, docs/logic, logic learning, readme \n"\
     "\t10/11/2024 - 11.02.14: NL/Logic with test data calcs, sra 10-07-2024, genai-logic, cs, iteration rebuild \n"\
-    "\t10/07/2024 - 11.02.06: sra 10-7-2024 (constraint handling) \n"\
-    "\t10/01/2024 - 11.02.05: logic bank dup derivations detected, sra 10-1-2024 \n"\
-    "\t09/21/2024 - 11.02.00: er diagrams, GenAI: genai-create, genai-iterate, and conversations \n"\
-    "\t09/04/2024 - 11.01.15: APILOGICPROJECT_LOG_CONFIG, _STOP_OK, _EXTERNAL_HOST, _EXTERNAL_PORT \n"\
-    "\t09/03/2024 - 11.01.11: logicbank 1.20.7, safrs 3.1.4, sra Aug17,  behave_run err-check[70], genai decimals \n"\
-    "\t08/21/2024 - 11.01.02: Bug 68: nested quotes, internal (BLT path, exp tests) \n"\
-    "\t08/18/2024 - 11.01.00: Genai: simpler prompts, diagnostics, ChatGPT4 \n"\
-    "\t08/09/2024 - 11.00.20: GenAI hardening, diagnostics \n"\
     "\t08/02/2024 - 11.00.07: App Model Editor UI rework, docs and fix for kc and export \n"\
     "\t07/25/2024 - 11.00.00: Keycloak, App Model Editor \n"\
-    "\t06/06/2024 - 10.04.48: config-driven admin.yaml security config \n"\
-    "\t06/04/2024 - 10.04.47: ont cascade add, mgr: fix missing env, docker mgr, BLT behave logs, add-cust \n"\
-    "\t05/25/2024 - 10.04.32: mgr: pycharm, load readme from git \n"\
-    "\t05/24/2024 - 10.04.24: default ont creation (w/ security), logic/svc discovery, nw+ app_model_custom.yaml \n"\
-    "\t05/04/2024 - 10.04.01: genai w/ restart, logic insertion, use Numeric, genai-cust, pg, 57 \n"\
-    "\t04/05/2024 - 10.03.66: ApiLogicServer start, als create from-model (eg copilot) \n"\
     "\t03/28/2024 - 10.03.46: Python 3.12, View support, CLI option-names, Keycloak preview \n"\
-    "\t02/24/2024 - 10.03.04: Issue 45 (RowDictMapper joins), Issue 44 (defaulting), Issue 43 (rebuild no yaml), Tests \n"\
-    "\t02/16/2024 - 10.02.05: kafka_producer.send_kafka_message, sample md fixes, docker ENV, pg authdb, issue 42 \n"\
-    "\t02/07/2024 - 10.02.00: BugFix[38]: foreign-key/getter collision \n"\
-    "\t01/31/2024 - 10.01.28: LogicBank fix, sample-ai, better rules example \n"\
-    "\t01/03/2024 - 10.01.00: Quoted col names \n"\
-    "\t12/21/2023 - 10.00.01: Fix < Python 3.11 \n"\
     "\t12/19/2023 - 10.00.00: Kafka pub/sub, Fix MySQL CHAR/String, list/hash/set types \n"\
     "\t12/06/2023 - 09.06.00: Oracle Thick, Integration Sample, No sql logging in rules, curl post \n"\
     "\t09/14/2023 - 09.03.00: Oracle support \n"\
-    "\t09/09/2023 - 09.02.24: Cleanup of table vs. class \n"\
-    "\t06/24/2023 - 09.00.01: PyMysql \n"\
     "\t06/22/2023 - 09.00.00: Optimistic Locking, safrs 310, SQLAlchemy 2.0.15 \n"\
     "\t05/01/2023 - 08.03.06: allocation sample \n"\
     "\t04/26/2023 - 08.03.00: virt attrs (Issue 56), safrs 3.0.2, readme updates, LogicBank 1.8.4 \n"\
