@@ -253,22 +253,34 @@ You can review the suggestions in the `genai_demo_no_logic` project:
 # 3. See the rule code for the logic
 als genai-logic --suggest --logic='*'
 ```
-You can inspect the generated code:
+You can inspect the generated suggestions:
 
 * `docs/logic/logic_suggestions_code.txt`
     * This corresponds to the Suggestions Editor - Code View in the WebGenAI web app
 
+Results vary (it's AI!), but here's one example:
+```
+The Customer's balance must be less than or equal to their credit limit.
+The Customer's total order amount is the sum of all orders placed by them.
+Each Order's total amount is the sum of amounts from Order Items.
+Calculates the amount of an Order Item as quantity multiplied by unit price.
+Product price must be a non-null value.
+The count of total orders placed by a Customer.
+```
+
 Important notes about suggestions and generated code:
-* This service is intended to identify logic that does not translate into proper code
-    * Delete the logic lines from `docs/logic/logic_suggestions.txt`
+* This service is intended to enable you to identify logic that does not translate into proper code
+* The example above was pretty good, but sometimes the results are downright silly -- just run suggest again
+
+Repair / delete the logic lines in `docs/logic/logic_suggestions.txt`
+
+Also...
 * It is not advised to paste the code into `logic/declare_logic.py`
     * Your logic may result in new data model attributes
     * These are created automatically by running `als genai` (next step)
-* The suggestions are useful, but not *wise*
-    * For example, the balance rule might be right, but the item.amount was not addressed
 
 When you are ready to proceed:
-1. Paste your `docs/logic/logic_suggestions.txt` into: `docs/genai_demo_no_logic_003.prompt`
+1. Paste your `docs/logic/logic_suggestions.txt` into: `docs/003_suggest.prompt`
     * Skip this step to just keep the original suggestion
 2. Execute the following to create a *new project* (iteration), with logic:
 
@@ -294,7 +306,7 @@ Internal Note: this sequence available in the run configs (s1/s4).
 3. Saves the fixup request/response under a 'fixup' folder.
 
 For example: 
-1. Comment out the `Customer.Balance` in `genai_demo_with_logic/models.py`
+1. If it exists, comment out the `Customer.Balance` in `genai_demo_with_logic/models.py`
 2. Run, and note the error
 3. Repair:
 ```
@@ -306,6 +318,14 @@ als genai-utils --fixup
 cd ..  # should be the manager
 als genai --using=genai_demo_with_logic_fixed --project-name=genai_demo_with_logic_fixed --retries=-1 --repaired-response=genai_demo_with_logic/docs/fixup/response_fixup.json
 ```
+
+The created project may still report some attributes as missing.  
+(ChatGPT seems to often miss attributes mentioned in sum/count where clauses.)  To fix:
+
+1. Note the missing attributes(s) from the log
+2. Add them to `docs/003_suggest.prompt`
+3. Rebuild the project: `als genai --project-name='genai_demo_with_logic' --using=genai_demo_no_logic/docs`
+
 
 Internal Note: this sequence available in the run configs (f1/f2).
 
