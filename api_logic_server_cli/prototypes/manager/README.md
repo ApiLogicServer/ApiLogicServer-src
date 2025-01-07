@@ -336,29 +336,16 @@ Internal Note: this sequence available in the run configs (f1/f2).
 
 <details markdown>
 
-<summary>Recompute - rebuild the test data</summary>
+<summary>Rebuild the test data</summary>
 
-<br>Fixes project issues by updating the Data Model and Test Data:
-
-FIXME needs validation, thought
+<br>Fixes project issues by rebuilding the database to conform to the derivation rules:
 
 1. Create genai_demo: `als genai --using=system/genai/examples/genai_demo/genai_demo.prompt --project-name=genai_demo`
-2. Prepare the `recompute` dir
-```bash
-cp -r docs docs/recompute
-mv docs/recompute/genai_demo_001.prompt docs/recompute/genai_demo_001.promptZ
-mv docs/recompute/genai_demo_002.prompt docs/recompute/genai_demo_002.promptZ
-cp ../system/genai/prompt_inserts/recompute.prompt docs/recompute/genai_demo_004.prompt
+2. Rebuild:
 ```
-3. Run Recompute
-```
-# Ask ChatGPT to recompute the data model and test data - create missing attrs per the current rules
 cd genai_demo
-als genai-utils --submit --using=docs/recompute
+als genai-utils --rebuild-test-data
 ```
-4. Observe response.json has test data rows (future support can use these to update the database)
-
-Internal Note: this sequence available in the run configs r1.
 
 </details>
 </br>
