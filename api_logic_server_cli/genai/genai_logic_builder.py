@@ -106,7 +106,7 @@ class GenAILogic(object):
         return logic_files
     
     def get_learnings_and_data_model(self) -> List[Dict[str, str]]:
-        """ Get prompts from the docs dir (so CPT knows model, learnings)
+        """ Get prompts from the docs dir (so GPT knows model, learnings)
 
         Most often, adding logic to new project, which looks like:
 
@@ -176,6 +176,7 @@ class GenAILogic(object):
             self.next_file_name  = 'data_model.prompt'
         else:
             self.next_file_name = stem[0:len(stem)-3] + str(1 + file_number).zfill(3)
+            self.next_file_name = str(1 + file_number).zfill(3) + '_suggest'
 
         learnings = get_learning_requests()
         prompt_messages.extend(learnings)
@@ -211,6 +212,8 @@ class GenAILogic(object):
             """ Get the prompt for suggesting logic, or getting code
 
             if self.logic is empty, we **suggest** logic
+
+            Quick test: Manager, s1-4 launch configs
 
             otherwise, we **obtain code** from logic
                 * "*" means all the suggested logic
