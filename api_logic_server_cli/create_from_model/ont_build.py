@@ -61,14 +61,16 @@ class OntBuilder(object):
     num_pages_generated = 0
     num_related = 0
 
-    def __init__(self, project: Project, app: str = "app", api_endpoint: str = None):
+    def __init__(self, project: Project, app: str = "app", api_endpoint: str = None, template_dir: str = None):
         self.project = project
         self.app = app
+        self.template_dir = template_dir # user provided custom template directory
         self.api_endpoint = api_endpoint #if None - use all endpoints
         self.app_path = Path(self.project.project_directory_path).joinpath(f"ui/{self.app}")
         t_env = self.get_environment()
         self.env = t_env[0]
         self.local_env = t_env[1]
+        self.template_env = t_env[2]
         self.global_values = DotMap()
         self.new_mode = "tab"
         self.detail_mode = "tab" 
@@ -145,10 +147,14 @@ class OntBuilder(object):
         Args:
             template_name (_type_): _description_
         local_env - the copy of templates to override
+        template_env - the user provided template directory
         env - default
         Returns:
             _type_: Template
         """
+        if self.template_dir is not None:
+            with contextlib.suppress(Exception):
+                return self.template_env.get_template(template_name)
         use_local=True 
         if use_local:
             with contextlib.suppress(Exception):
@@ -253,7 +259,8 @@ class OntBuilder(object):
         self.generate_translation_files(app_path)
 
     def gen_app_config(self):
-        app_config = self.app_config.render(self.global_values)
+        project_name = self.project.project_name.split("/")[-1:][0]
+        app_config = self.app_config.render(self.global_values, project_name=project_name)
         write_root_file(
             app_path=self.app_path,
             dir_name="app",
@@ -451,7 +458,12 @@ class OntBuilder(object):
         local_env = Environment (
             loader=FileSystemLoader(searchpath=f"{local_templates_path}")
         )
-        return (env,local_env)
+        template_env = None
+        if self.template_dir is not None:
+            template_env = Environment(
+                loader=FileSystemLoader(searchpath=f"{self.template_dir}")
+            )
+        return (env,local_env, template_env)
     
     def load_ts(self, template_name: str, entity_name: str, entity: any, favorites: any) -> str:
         # The above code is a Python function that takes a template name as input, retrieves the template

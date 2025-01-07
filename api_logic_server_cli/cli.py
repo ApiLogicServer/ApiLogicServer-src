@@ -481,16 +481,19 @@ def app_create(ctx, project_name, app, admin_app):
 
 @main.command("app-build")
 @click.option('--project-name', 'project_name',
-              default=f'',
-              help="Project containing App")
+            default=f'',
+            help="Project containing App")
 @click.option('--app',
-              default='app',
-              help="App directory name")
+            default='app',
+            help="App directory name")
 @click.option('--api-endpoint','api_endpoint',
-              default=None,
-              help="API endpoint name")
+            default=None,
+            help="API endpoint name")
+@click.option('--template-dir','template_dir',
+            default=None,
+            help="Directory of user defined Ontimize templates")
 @click.pass_context
-def app_build(ctx, project_name, app, api_endpoint):
+def app_build(ctx, project_name, app, api_endpoint, template_dir):
     """
     Builds runnable app from: ui/<app>/app-model.yaml
 
@@ -511,16 +514,16 @@ def app_build(ctx, project_name, app, api_endpoint):
     project_name = resolve_blank_project_name(project_name)
 
     project = PR.ProjectRun(command=command, 
-              project_name=project_name, 
-              db_url="",
-              execute=False
-              )
+        project_name=project_name, 
+        db_url="",
+        execute=False
+    )
     project.project_directory, project.api_name, project.merge_into_prototype = \
         create_utils.get_project_directory_and_api_name(project)
     project.project_directory_actual = os.path.abspath(project.project_directory)  # make path absolute, not relative (no /../)
     project.project_directory_path = Path(project.project_directory_actual)
 
-    ont_creator = OntBuilder(project = project, app = app,  api_endpoint = api_endpoint)
+    ont_creator = OntBuilder(project = project, app = app,  api_endpoint = api_endpoint, template_dir = template_dir)
     ont_creator.build_application()
     log.info("")
 
