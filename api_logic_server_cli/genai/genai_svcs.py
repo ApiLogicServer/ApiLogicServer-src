@@ -781,7 +781,7 @@ def get_manager_path() -> Path:
     if check_system_genai.exists():
         return result_path
     
-    result_path = result_path.parent.parent  # try ancestors - this is for import testing
+    result_path = result_path.parent  # try ancestors - this is for import testing
     check_system_genai = result_path.joinpath('system/genai')
     assert check_system_genai.exists(), f"Manager Directory not found: {check_system_genai}"
     
