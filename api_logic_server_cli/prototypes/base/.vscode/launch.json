@@ -172,7 +172,7 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "REBUILD TEST DATA",
+            "name": "REBUILD TEST DATA 1",
             "type": "debugpy",
             "request": "launch",
             "env": {"SECURITY_ENABLED": "True"},
@@ -180,8 +180,20 @@
             "program": "${workspaceFolder}/database/test_data/response2code.py",
             "redirectOutput": true,
             "args": ["--test-data"
-                    ,"--response=docs/Customer_Order_System_003.response"
-            ],
+                    , "--response=docs/response.json"
+                    ],
+            "justMyCode": false,            
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "REBUILD TEST DATA 2 ",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"SECURITY_ENABLED": "True"},
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/database/test_data/test_data_code.py",
+            "redirectOutput": true,
             "justMyCode": false,            
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
