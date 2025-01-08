@@ -1,0 +1,13 @@
+LogicBank
+Use Case: capacity
+teachers cannot be assigned to more than 5 courses
+students cannot be enrolled in more than 6 courses
+
+Use Case: budget control
+courses have a charge, which is copied to enrollments charge
+a student's total enrollment charges cannot exceed their budget
+
+students enrollments cannot exceed 6
+    but ok with
+        students enrollment count cannot exceed 6
+        students cannot have more enrollments than 6

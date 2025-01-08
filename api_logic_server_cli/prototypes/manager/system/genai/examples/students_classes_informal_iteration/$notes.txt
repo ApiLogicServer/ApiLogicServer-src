@@ -1,0 +1,24 @@
+students, courses and teachers
+
+LogicBank
+Use Case: capacity
+teachers cannot be assigned to more than 5 courses
+students cannot have more enrollments than 6
+
+Use Case: budget control
+courses have a charge, which is copied to enrollments charge
+a student's total enrollment charges cannot exceed their budget
+
+
+
+the rule "a student's Course charges cannot exceed their budget" requires a copy.
+    the default genai builds an improper rule to Course (not enrollment); NOT FLAGGED in logicbank
+
+aside: this example identified that genai can place multiple rules on 1 line (fixed).
+
+temperature = 0.1
+
+        Rule.sum(derive=Student.total_enrollment_charges, as_sum_of=Enrollment.charge, 
+                where=lambda row: row.student_id == Student.id)  # oh no... this is an attr def!
+
+11/7 - good gen, except missed budget constraint

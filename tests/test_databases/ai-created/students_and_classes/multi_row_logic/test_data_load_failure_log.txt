@@ -1,0 +1,1012 @@
+0.00s - Debugger warning: It seems that frozen modules are being used, which may
+0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off
+0.00s - to python to disable frozen modules.
+0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.
+..  logic_logger: <Logger logic_logger (DEBUG)>
+..  db_url: sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/students_classes_informal/database/test_data/db.sqlite
+..  cwd: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/students_classes_informal
+..  python_loc: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/bin/python
+..  test_data_loader version: 1.0
+..discovered logic: []
+
+The following rules have been loaded
+Rule Bank[0x122c2cf20] (loaded 2025-01-07 16:59:13.163226)
+Mapped Class[Teacher] rules:
+  Constraint Function: None
+  Derive <class 'database.models.Teacher'>.course_count as Count(<class 'database.models.TeachingAssignment'> Where  - None)
+Mapped Class[Student] rules:
+  Constraint Function: None 
+  Constraint Function: None 
+  Derive <class 'database.models.Student'>.enrollment_count as Count(<class 'database.models.Enrollment'> Where  - None)
+  Derive <class 'database.models.Student'>.total_enrollment_charges as Sum(Enrollment.charge Where  - None)
+Mapped Class[Enrollment] rules:
+  Derive <class 'database.models.Enrollment'>.charge as Copy(course.charge)
+
+The following attributes have been referenced
+..Teacher.course_count: constraint
+..Teacher.course_count: aggregate derivation
+..Student.enrollment_count: constraint
+..Student.total_enrollment_charges: constraint
+..Student.budget: constraint
+..Student.enrollment_count: aggregate derivation
+..Student.total_enrollment_charges: aggregate derivation
+..Enrollment.charge: sum derived from
+..Enrollment.charge: parent copy derivation
+..Course.charge: parent copy from
+
+The following rules have been activated
+Rule Bank[0x122c2cf20] (loaded 2025-01-07 16:59:13.163226)
+Mapped Class[Teacher] rules:
+  Constraint Function: None
+  Derive <class 'database.models.Teacher'>.course_count as Count(<class 'database.models.TeachingAssignment'> Where  - None)
+Mapped Class[Student] rules:
+  Constraint Function: None 
+  Constraint Function: None
+  Derive <class 'database.models.Student'>.enrollment_count as Count(<class 'database.models.Enrollment'> Where  - None)
+  Derive <class 'database.models.Student'>.total_enrollment_charges as Sum(Enrollment.charge Where  - None)
+Mapped Class[Enrollment] rules:
+  Derive <class 'database.models.Enrollment'>.charge as Copy(course.charge)
+Logic Bank 01.20.20 - 11 rules loaded
+..  LogicBank activated
+Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Traceback (most recent call last):
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/safrs/base.py", line 884, in _s_query
+    result = safrs.DB.session.query(cls_or_self)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 1589, in query
+    return self._proxied.query(*entities, **kwargs)
+           ^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 195, in _proxied
+    return self.registry()
+           ^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/util/_collections.py", line 640, in __call__
+    key = self.scopefunc()
+          ^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/flask_sqlalchemy/session.py", line 102, in _app_ctx_id
+    return id(app_ctx._get_current_object())  # type: ignore[attr-defined]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/werkzeug/local.py", line 508, in _get_current_object
+    raise RuntimeError(unbound_message) from None
+RuntimeError: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Query failed for <class 'database.models.Student'>: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+'NoneType' object has no attribute 'filter_by'
+'str' object cannot be interpreted as an integer
+
+Logic Phase:		ROW LOGIC		(session=0x122c2cb60) (sqlalchemy before_flush)
+..Student[1] {Insert - client} id: 1, name: Alice Doe, enrollment_date: 2021-09-01, enrollment_count: 2, budget: 2000, total_enrollment_charges: 300  row: 0x122a98140  session: 0x122c2cb60  ins_upd_dlt: ins, initial: ins
+..Student[1] {server_aggregate_defaults: enrollment_count total_enrollment_charges } id: 1, name: Alice Doe, enrollment_date: 2021-09-01, enrollment_count: 0, budget: 2000, total_enrollment_charges: 0  row: 0x122a98140  session: 0x122c2cb60  ins_upd_dlt: ins, initial: ins
+Logic Phase:		COMMIT LOGIC		(session=0x122c2cb60)
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x122c2cb60)
+
+Rules Fired:		##
+
+Logic Phase:		COMPLETE(session=0x122c2cb60))
+Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Traceback (most recent call last):
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/safrs/base.py", line 884, in _s_query
+    result = safrs.DB.session.query(cls_or_self)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 1589, in query
+    return self._proxied.query(*entities, **kwargs)
+           ^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 195, in _proxied
+    return self.registry()
+           ^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/util/_collections.py", line 640, in __call__
+    key = self.scopefunc()
+          ^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/flask_sqlalchemy/session.py", line 102, in _app_ctx_id
+    return id(app_ctx._get_current_object())  # type: ignore[attr-defined]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/werkzeug/local.py", line 508, in _get_current_object
+    raise RuntimeError(unbound_message) from None
+RuntimeError: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Query failed for <class 'database.models.Student'>: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+'NoneType' object has no attribute 'filter_by'
+'str' object cannot be interpreted as an integer
+Logic Phase:		ROW LOGIC IGNORE RE-RAISE(session=0x122c2cb60) (sqlalchemy before_flush)
+
+Logic Phase:		ROW LOGIC		(session=0x122c2cb60) (sqlalchemy before_flush)
+..Student[2] {Insert - client} id: 2, name: Bob Smith, enrollment_date: 2021-09-01, enrollment_count: 1, budget: 1500, total_enrollment_charges: 150  row: 0x122b0d460  session: 0x122c2cb60  ins_upd_dlt: ins, initial: ins
+..Student[2] {server_aggregate_defaults: enrollment_count total_enrollment_charges } id: 2, name: Bob Smith, enrollment_date: 2021-09-01, enrollment_count: 0, budget: 1500, total_enrollment_charges: 0  row: 0x122b0d460  session: 0x122c2cb60  ins_upd_dlt: ins, initial: ins
+Logic Phase:		COMMIT LOGIC		(session=0x122c2cb60)
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x122c2cb60)
+
+Rules Fired:		##
+
+Logic Phase:		COMPLETE(session=0x122c2cb60))
+Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Traceback (most recent call last):
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/safrs/base.py", line 884, in _s_query
+    result = safrs.DB.session.query(cls_or_self)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 1589, in query
+    return self._proxied.query(*entities, **kwargs)
+           ^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 195, in _proxied
+    return self.registry()
+           ^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/util/_collections.py", line 640, in __call__
+    key = self.scopefunc()
+          ^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/flask_sqlalchemy/session.py", line 102, in _app_ctx_id
+    return id(app_ctx._get_current_object())  # type: ignore[attr-defined]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/werkzeug/local.py", line 508, in _get_current_object
+    raise RuntimeError(unbound_message) from None
+RuntimeError: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Query failed for <class 'database.models.Student'>: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+'NoneType' object has no attribute 'filter_by'
+'str' object cannot be interpreted as an integer
+Logic Phase:		ROW LOGIC IGNORE RE-RAISE(session=0x122c2cb60) (sqlalchemy before_flush)
+
+Logic Phase:		ROW LOGIC		(session=0x122c2cb60) (sqlalchemy before_flush)
+..Student[3] {Insert - client} id: 3, name: Charlie Brown, enrollment_date: 2021-09-01, enrollment_count: 3, budget: 1000, total_enrollment_charges: 450  row: 0x122deffb0  session: 0x122c2cb60  ins_upd_dlt: ins, initial: ins
+..Student[3] {server_aggregate_defaults: enrollment_count total_enrollment_charges } id: 3, name: Charlie Brown, enrollment_date: 2021-09-01, enrollment_count: 0, budget: 1000, total_enrollment_charges: 0  row: 0x122deffb0  session: 0x122c2cb60  ins_upd_dlt: ins, initial: ins
+Logic Phase:		COMMIT LOGIC		(session=0x122c2cb60)
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x122c2cb60)
+
+Rules Fired:		##
+
+Logic Phase:		COMPLETE(session=0x122c2cb60))
+Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Traceback (most recent call last):
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/safrs/base.py", line 884, in _s_query
+    result = safrs.DB.session.query(cls_or_self)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 1589, in query
+    return self._proxied.query(*entities, **kwargs)
+           ^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 195, in _proxied
+    return self.registry()
+           ^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/util/_collections.py", line 640, in __call__
+    key = self.scopefunc()
+          ^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/flask_sqlalchemy/session.py", line 102, in _app_ctx_id
+    return id(app_ctx._get_current_object())  # type: ignore[attr-defined]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/werkzeug/local.py", line 508, in _get_current_object
+    raise RuntimeError(unbound_message) from None
+RuntimeError: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Query failed for <class 'database.models.Student'>: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+'NoneType' object has no attribute 'filter_by'
+'str' object cannot be interpreted as an integer
+Logic Phase:		ROW LOGIC IGNORE RE-RAISE(session=0x122c2cb60) (sqlalchemy before_flush)
+
+Logic Phase:		ROW LOGIC		(session=0x122c2cb60) (sqlalchemy before_flush)
+..Student[4] {Insert - client} id: 4, name: David Clark, enrollment_date: 2021-09-01, enrollment_count: 0, budget: 500, total_enrollment_charges: 0  row: 0x122ded640  session: 0x122c2cb60  ins_upd_dlt: ins, initial: ins
+..Student[4] {server_aggregate_defaults: enrollment_count total_enrollment_charges } id: 4, name: David Clark, enrollment_date: 2021-09-01, enrollment_count: 0, budget: 500, total_enrollment_charges: 0  row: 0x122ded640  session: 0x122c2cb60  ins_upd_dlt: ins, initial: ins
+Logic Phase:		COMMIT LOGIC		(session=0x122c2cb60)
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x122c2cb60)
+
+Rules Fired:		##
+
+Logic Phase:		COMPLETE(session=0x122c2cb60))
+Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Traceback (most recent call last):
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/safrs/base.py", line 884, in _s_query
+    result = safrs.DB.session.query(cls_or_self)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 1589, in query
+    return self._proxied.query(*entities, **kwargs)
+           ^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 195, in _proxied
+    return self.registry()
+           ^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/util/_collections.py", line 640, in __call__
+    key = self.scopefunc()
+          ^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/flask_sqlalchemy/session.py", line 102, in _app_ctx_id
+    return id(app_ctx._get_current_object())  # type: ignore[attr-defined]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/werkzeug/local.py", line 508, in _get_current_object
+    raise RuntimeError(unbound_message) from None
+RuntimeError: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Query failed for <class 'database.models.Course'>: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+'NoneType' object has no attribute 'filter_by'
+'str' object cannot be interpreted as an integer
+'str' object cannot be interpreted as an integer
+Logic Phase:		ROW LOGIC IGNORE RE-RAISE(session=0x122c2cb60) (sqlalchemy before_flush)
+
+Logic Phase:		ROW LOGIC		(session=0x122c2cb60) (sqlalchemy before_flush)
+..Course[1] {Insert - client} id: 1, title: Introduction to Programming, description: Learn the basics of programming., start_date: 2021-09-01, end_date: 2021-12-15, charge: 500  row: 0x122721c40  session: 0x122c2cb60  ins_upd_dlt: ins, initial: ins
+Logic Phase:		COMMIT LOGIC		(session=0x122c2cb60)
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x122c2cb60)
+
+Rules Fired:		##
+
+Logic Phase:		COMPLETE(session=0x122c2cb60))
+Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Traceback (most recent call last):
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/safrs/base.py", line 884, in _s_query
+    result = safrs.DB.session.query(cls_or_self)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 1589, in query
+    return self._proxied.query(*entities, **kwargs)
+           ^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 195, in _proxied
+    return self.registry()
+           ^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/util/_collections.py", line 640, in __call__
+    key = self.scopefunc()
+          ^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/flask_sqlalchemy/session.py", line 102, in _app_ctx_id
+    return id(app_ctx._get_current_object())  # type: ignore[attr-defined]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/werkzeug/local.py", line 508, in _get_current_object
+    raise RuntimeError(unbound_message) from None
+RuntimeError: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Query failed for <class 'database.models.Course'>: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+'NoneType' object has no attribute 'filter_by'
+'str' object cannot be interpreted as an integer
+'str' object cannot be interpreted as an integer
+Logic Phase:		ROW LOGIC IGNORE RE-RAISE(session=0x122c2cb60) (sqlalchemy before_flush)
+
+Logic Phase:		ROW LOGIC		(session=0x122c2cb60) (sqlalchemy before_flush)
+..Course[2] {Insert - client} id: 2, title: Advanced Mathematics, description: Advanced study of mathematics., start_date: 2021-09-01, end_date: 2021-12-15, charge: 350  row: 0x12293e1e0  session: 0x122c2cb60  ins_upd_dlt: ins, initial: ins
+Logic Phase:		COMMIT LOGIC		(session=0x122c2cb60)
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x122c2cb60)
+
+Rules Fired:		##
+
+Logic Phase:		COMPLETE(session=0x122c2cb60))
+Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Traceback (most recent call last):
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/safrs/base.py", line 884, in _s_query
+    result = safrs.DB.session.query(cls_or_self)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 1589, in query
+    return self._proxied.query(*entities, **kwargs)
+           ^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 195, in _proxied
+    return self.registry()
+           ^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/util/_collections.py", line 640, in __call__
+    key = self.scopefunc()
+          ^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/flask_sqlalchemy/session.py", line 102, in _app_ctx_id
+    return id(app_ctx._get_current_object())  # type: ignore[attr-defined]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/werkzeug/local.py", line 508, in _get_current_object
+    raise RuntimeError(unbound_message) from None
+RuntimeError: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Query failed for <class 'database.models.Course'>: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+'NoneType' object has no attribute 'filter_by'
+'str' object cannot be interpreted as an integer
+'str' object cannot be interpreted as an integer
+Logic Phase:		ROW LOGIC IGNORE RE-RAISE(session=0x122c2cb60) (sqlalchemy before_flush)
+
+Logic Phase:		ROW LOGIC		(session=0x122c2cb60) (sqlalchemy before_flush)
+..Course[3] {Insert - client} id: 3, title: Biology 101, description: Introduction to Biology., start_date: 2021-09-01, end_date: 2021-12-15, charge: 300  row: 0x122dec050  session: 0x122c2cb60  ins_upd_dlt: ins, initial: ins
+Logic Phase:		COMMIT LOGIC		(session=0x122c2cb60)
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x122c2cb60)
+
+Rules Fired:		##
+
+Logic Phase:		COMPLETE(session=0x122c2cb60))
+Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Traceback (most recent call last):
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/safrs/base.py", line 884, in _s_query
+    result = safrs.DB.session.query(cls_or_self)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 1589, in query
+    return self._proxied.query(*entities, **kwargs)
+           ^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 195, in _proxied
+    return self.registry()
+           ^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/util/_collections.py", line 640, in __call__
+    key = self.scopefunc()
+          ^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/flask_sqlalchemy/session.py", line 102, in _app_ctx_id
+    return id(app_ctx._get_current_object())  # type: ignore[attr-defined]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/werkzeug/local.py", line 508, in _get_current_object
+    raise RuntimeError(unbound_message) from None
+RuntimeError: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Query failed for <class 'database.models.Course'>: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+'NoneType' object has no attribute 'filter_by'
+'str' object cannot be interpreted as an integer
+'str' object cannot be interpreted as an integer
+Logic Phase:		ROW LOGIC IGNORE RE-RAISE(session=0x122c2cb60) (sqlalchemy before_flush)
+
+Logic Phase:		ROW LOGIC		(session=0x122c2cb60) (sqlalchemy before_flush)
+..Course[4] {Insert - client} id: 4, title: History of Art, description: Learn about the evolution of art., start_date: 2021-09-01, end_date: 2021-12-15, charge: 400  row: 0x122ed5490  session: 0x122c2cb60  ins_upd_dlt: ins, initial: ins
+Logic Phase:		COMMIT LOGIC		(session=0x122c2cb60)
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x122c2cb60)
+
+Rules Fired:		##
+
+Logic Phase:		COMPLETE(session=0x122c2cb60))
+Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Traceback (most recent call last):
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/safrs/base.py", line 884, in _s_query
+    result = safrs.DB.session.query(cls_or_self)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 1589, in query
+    return self._proxied.query(*entities, **kwargs)
+           ^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 195, in _proxied
+    return self.registry()
+           ^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/util/_collections.py", line 640, in __call__
+    key = self.scopefunc()
+          ^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/flask_sqlalchemy/session.py", line 102, in _app_ctx_id
+    return id(app_ctx._get_current_object())  # type: ignore[attr-defined]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/werkzeug/local.py", line 508, in _get_current_object
+    raise RuntimeError(unbound_message) from None
+RuntimeError: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Query failed for <class 'database.models.Teacher'>: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+'NoneType' object has no attribute 'filter_by'
+'str' object cannot be interpreted as an integer
+Logic Phase:		ROW LOGIC IGNORE RE-RAISE(session=0x122c2cb60) (sqlalchemy before_flush)
+
+Logic Phase:		ROW LOGIC		(session=0x122c2cb60) (sqlalchemy before_flush)
+..Teacher[1] {Insert - client} id: 1, name: Dr. Emily Johnson, hire_date: 2018-08-15, course_count: 2  row: 0x122dbcbc0  session: 0x122c2cb60  ins_upd_dlt: ins, initial: ins
+..Teacher[1] {server_aggregate_defaults: course_count } id: 1, name: Dr. Emily Johnson, hire_date: 2018-08-15, course_count: 0  row: 0x122dbcbc0  session: 0x122c2cb60  ins_upd_dlt: ins, initial: ins
+Logic Phase:		COMMIT LOGIC		(session=0x122c2cb60)
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x122c2cb60)
+
+Rules Fired:		##
+
+Logic Phase:		COMPLETE(session=0x122c2cb60))
+Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Traceback (most recent call last):
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/safrs/base.py", line 884, in _s_query
+    result = safrs.DB.session.query(cls_or_self)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 1589, in query
+    return self._proxied.query(*entities, **kwargs)
+           ^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 195, in _proxied
+    return self.registry()
+           ^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/util/_collections.py", line 640, in __call__
+    key = self.scopefunc()
+          ^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/flask_sqlalchemy/session.py", line 102, in _app_ctx_id
+    return id(app_ctx._get_current_object())  # type: ignore[attr-defined]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/werkzeug/local.py", line 508, in _get_current_object
+    raise RuntimeError(unbound_message) from None
+RuntimeError: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Query failed for <class 'database.models.Teacher'>: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+'NoneType' object has no attribute 'filter_by'
+'str' object cannot be interpreted as an integer
+Logic Phase:		ROW LOGIC IGNORE RE-RAISE(session=0x122c2cb60) (sqlalchemy before_flush)
+
+Logic Phase:		ROW LOGIC		(session=0x122c2cb60) (sqlalchemy before_flush)
+..Teacher[2] {Insert - client} id: 2, name: Professor Michael Brown, hire_date: 2017-05-10, course_count: 1  row: 0x106d312e0  session: 0x122c2cb60  ins_upd_dlt: ins, initial: ins
+..Teacher[2] {server_aggregate_defaults: course_count } id: 2, name: Professor Michael Brown, hire_date: 2017-05-10, course_count: 0  row: 0x106d312e0  session: 0x122c2cb60  ins_upd_dlt: ins, initial: ins
+Logic Phase:		COMMIT LOGIC		(session=0x122c2cb60)
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x122c2cb60)
+
+Rules Fired:		##
+
+Logic Phase:		COMPLETE(session=0x122c2cb60))
+Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Traceback (most recent call last):
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/safrs/base.py", line 884, in _s_query
+    result = safrs.DB.session.query(cls_or_self)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 1589, in query
+    return self._proxied.query(*entities, **kwargs)
+           ^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 195, in _proxied
+    return self.registry()
+           ^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/util/_collections.py", line 640, in __call__
+    key = self.scopefunc()
+          ^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/flask_sqlalchemy/session.py", line 102, in _app_ctx_id
+    return id(app_ctx._get_current_object())  # type: ignore[attr-defined]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/werkzeug/local.py", line 508, in _get_current_object
+    raise RuntimeError(unbound_message) from None
+RuntimeError: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Query failed for <class 'database.models.Teacher'>: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+'NoneType' object has no attribute 'filter_by'
+'str' object cannot be interpreted as an integer
+Logic Phase:		ROW LOGIC IGNORE RE-RAISE(session=0x122c2cb60) (sqlalchemy before_flush)
+
+Logic Phase:		ROW LOGIC		(session=0x122c2cb60) (sqlalchemy before_flush)
+..Teacher[3] {Insert - client} id: 3, name: Ms. Angela White, hire_date: 2019-01-20, course_count: 1  row: 0x122defdd0  session: 0x122c2cb60  ins_upd_dlt: ins, initial: ins
+..Teacher[3] {server_aggregate_defaults: course_count } id: 3, name: Ms. Angela White, hire_date: 2019-01-20, course_count: 0  row: 0x122defdd0  session: 0x122c2cb60  ins_upd_dlt: ins, initial: ins
+Logic Phase:		COMMIT LOGIC		(session=0x122c2cb60)
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x122c2cb60)
+
+Rules Fired:		##
+
+Logic Phase:		COMPLETE(session=0x122c2cb60))
+Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Traceback (most recent call last):
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/safrs/base.py", line 884, in _s_query
+    result = safrs.DB.session.query(cls_or_self)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 1589, in query
+    return self._proxied.query(*entities, **kwargs)
+           ^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 195, in _proxied
+    return self.registry()
+           ^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/util/_collections.py", line 640, in __call__
+    key = self.scopefunc()
+          ^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/flask_sqlalchemy/session.py", line 102, in _app_ctx_id
+    return id(app_ctx._get_current_object())  # type: ignore[attr-defined]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/werkzeug/local.py", line 508, in _get_current_object
+    raise RuntimeError(unbound_message) from None
+RuntimeError: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Query failed for <class 'database.models.Teacher'>: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+'NoneType' object has no attribute 'filter_by'
+'str' object cannot be interpreted as an integer
+Logic Phase:		ROW LOGIC IGNORE RE-RAISE(session=0x122c2cb60) (sqlalchemy before_flush)
+
+Logic Phase:		ROW LOGIC		(session=0x122c2cb60) (sqlalchemy before_flush)
+..Teacher[4] {Insert - client} id: 4, name: Mr. John Doe, hire_date: 2020-09-05, course_count: 0  row: 0x122dbcd70  session: 0x122c2cb60  ins_upd_dlt: ins, initial: ins
+..Teacher[4] {server_aggregate_defaults: course_count } id: 4, name: Mr. John Doe, hire_date: 2020-09-05, course_count: 0  row: 0x122dbcd70  session: 0x122c2cb60  ins_upd_dlt: ins, initial: ins
+Logic Phase:		COMMIT LOGIC		(session=0x122c2cb60)
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x122c2cb60)
+
+Rules Fired:		##
+
+Logic Phase:		COMPLETE(session=0x122c2cb60))
+Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Traceback (most recent call last):
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/safrs/base.py", line 884, in _s_query
+    result = safrs.DB.session.query(cls_or_self)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 1589, in query
+    return self._proxied.query(*entities, **kwargs)
+           ^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 195, in _proxied
+    return self.registry()
+           ^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/util/_collections.py", line 640, in __call__
+    key = self.scopefunc()
+          ^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/flask_sqlalchemy/session.py", line 102, in _app_ctx_id
+    return id(app_ctx._get_current_object())  # type: ignore[attr-defined]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/werkzeug/local.py", line 508, in _get_current_object
+    raise RuntimeError(unbound_message) from None
+RuntimeError: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Query failed for <class 'database.models.Enrollment'>: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+'NoneType' object has no attribute 'filter_by'
+Logic Phase:		ROW LOGIC IGNORE RE-RAISE(session=0x122c2cb60) (sqlalchemy before_flush)
+
+Logic Phase:		ROW LOGIC		(session=0x122c2cb60) (sqlalchemy before_flush)
+..Enrollment[1] {Insert - client} id: 1, student_id: 1, course_id: 1, charge: 500  row: 0x122721c40  session: 0x122c2cb60  ins_upd_dlt: ins, initial: ins
+..Enrollment[1] {copy_rules for role: course - charge} id: 1, student_id: 1, course_id: 1, charge: 500  row: 0x122721c40  session: 0x122c2cb60  ins_upd_dlt: ins, initial: ins
+....Student[1] {Update - Adjusting student: enrollment_count, total_enrollment_charges} id: 1, name: Alice Doe, enrollment_date: 2021-09-01, enrollment_count:  [0-->] 1, budget: 2000, total_enrollment_charges:  [0-->] 500  row: 0x122ed6300  session: 0x122c2cb60  ins_upd_dlt: upd, initial: upd
+Logic Phase:		COMMIT LOGIC		(session=0x122c2cb60)
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x122c2cb60)
+
+Rules Fired:		##
+  Enrollment		##
+    1. Derive <class 'database.models.Enrollment'>.charge as Copy(course.charge)		##
+  Student		##
+    2. Derive <class 'database.models.Student'>.total_enrollment_charges as Sum(Enrollment.charge Where  - None)		##
+    3. Derive <class 'database.models.Student'>.enrollment_count as Count(<class 'database.models.Enrollment'> Where  - None)		##
+
+Logic Phase:		COMPLETE(session=0x122c2cb60))
+Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Traceback (most recent call last):
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/safrs/base.py", line 884, in _s_query
+    result = safrs.DB.session.query(cls_or_self)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 1589, in query
+    return self._proxied.query(*entities, **kwargs)
+           ^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 195, in _proxied
+    return self.registry()
+           ^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/util/_collections.py", line 640, in __call__
+    key = self.scopefunc()
+          ^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/flask_sqlalchemy/session.py", line 102, in _app_ctx_id
+    return id(app_ctx._get_current_object())  # type: ignore[attr-defined]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/werkzeug/local.py", line 508, in _get_current_object
+    raise RuntimeError(unbound_message) from None
+RuntimeError: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Query failed for <class 'database.models.Enrollment'>: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+'NoneType' object has no attribute 'filter_by'
+Logic Phase:		ROW LOGIC IGNORE RE-RAISE(session=0x122c2cb60) (sqlalchemy before_flush)
+
+Logic Phase:		ROW LOGIC		(session=0x122c2cb60) (sqlalchemy before_flush)
+..Enrollment[2] {Insert - client} id: 2, student_id: 1, course_id: 3, charge: 300  row: 0x122c205f0  session: 0x122c2cb60  ins_upd_dlt: ins, initial: ins
+..Enrollment[2] {copy_rules for role: course - charge} id: 2, student_id: 1, course_id: 3, charge: 300  row: 0x122c205f0  session: 0x122c2cb60  ins_upd_dlt: ins, initial: ins
+....Student[1] {Update - Adjusting student: enrollment_count, total_enrollment_charges} id: 1, name: Alice Doe, enrollment_date: 2021-09-01, enrollment_count:  [1-->] 2, budget: 2000, total_enrollment_charges:  [500-->] 800  row: 0x122ed6300  session: 0x122c2cb60  ins_upd_dlt: upd, initial: upd
+Logic Phase:		COMMIT LOGIC		(session=0x122c2cb60)
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x122c2cb60)
+
+Rules Fired:		##
+  Enrollment		##
+    1. Derive <class 'database.models.Enrollment'>.charge as Copy(course.charge)		##
+  Student		##
+    2. Derive <class 'database.models.Student'>.total_enrollment_charges as Sum(Enrollment.charge Where  - None)		##
+    3. Derive <class 'database.models.Student'>.enrollment_count as Count(<class 'database.models.Enrollment'> Where  - None)		##
+
+Logic Phase:		COMPLETE(session=0x122c2cb60))
+Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Traceback (most recent call last):
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/safrs/base.py", line 884, in _s_query
+    result = safrs.DB.session.query(cls_or_self)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 1589, in query
+    return self._proxied.query(*entities, **kwargs)
+           ^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 195, in _proxied
+    return self.registry()
+           ^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/util/_collections.py", line 640, in __call__
+    key = self.scopefunc()
+          ^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/flask_sqlalchemy/session.py", line 102, in _app_ctx_id
+    return id(app_ctx._get_current_object())  # type: ignore[attr-defined]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/werkzeug/local.py", line 508, in _get_current_object
+    raise RuntimeError(unbound_message) from None
+RuntimeError: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Query failed for <class 'database.models.Enrollment'>: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+'NoneType' object has no attribute 'filter_by'
+Logic Phase:		ROW LOGIC IGNORE RE-RAISE(session=0x122c2cb60) (sqlalchemy before_flush)
+
+Logic Phase:		ROW LOGIC		(session=0x122c2cb60) (sqlalchemy before_flush)
+..Enrollment[3] {Insert - client} id: 3, student_id: 2, course_id: 2, charge: 350  row: 0x120e4f710  session: 0x122c2cb60  ins_upd_dlt: ins, initial: ins
+..Enrollment[3] {copy_rules for role: course - charge} id: 3, student_id: 2, course_id: 2, charge: 350  row: 0x120e4f710  session: 0x122c2cb60  ins_upd_dlt: ins, initial: ins
+....Student[2] {Update - Adjusting student: enrollment_count, total_enrollment_charges} id: 2, name: Bob Smith, enrollment_date: 2021-09-01, enrollment_count:  [0-->] 1, budget: 1500, total_enrollment_charges:  [0-->] 350  row: 0x122f6d5b0  session: 0x122c2cb60  ins_upd_dlt: upd, initial: upd
+Logic Phase:		COMMIT LOGIC		(session=0x122c2cb60)
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x122c2cb60)
+
+Rules Fired:		##
+  Enrollment		##
+    1. Derive <class 'database.models.Enrollment'>.charge as Copy(course.charge)		##
+  Student		##
+    2. Derive <class 'database.models.Student'>.total_enrollment_charges as Sum(Enrollment.charge Where  - None)		##
+    3. Derive <class 'database.models.Student'>.enrollment_count as Count(<class 'database.models.Enrollment'> Where  - None)		##
+
+Logic Phase:		COMPLETE(session=0x122c2cb60))
+Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Traceback (most recent call last):
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/safrs/base.py", line 884, in _s_query
+    result = safrs.DB.session.query(cls_or_self)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 1589, in query
+    return self._proxied.query(*entities, **kwargs)
+           ^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 195, in _proxied
+    return self.registry()
+           ^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/util/_collections.py", line 640, in __call__
+    key = self.scopefunc()
+          ^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/flask_sqlalchemy/session.py", line 102, in _app_ctx_id
+    return id(app_ctx._get_current_object())  # type: ignore[attr-defined]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/werkzeug/local.py", line 508, in _get_current_object
+    raise RuntimeError(unbound_message) from None
+RuntimeError: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Query failed for <class 'database.models.Enrollment'>: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+'NoneType' object has no attribute 'filter_by'
+Logic Phase:		ROW LOGIC IGNORE RE-RAISE(session=0x122c2cb60) (sqlalchemy before_flush)
+
+Logic Phase:		ROW LOGIC		(session=0x122c2cb60) (sqlalchemy before_flush)
+..Enrollment[4] {Insert - client} id: 4, student_id: 3, course_id: 4, charge: 400  row: 0x122c2ed50  session: 0x122c2cb60  ins_upd_dlt: ins, initial: ins
+..Enrollment[4] {copy_rules for role: course - charge} id: 4, student_id: 3, course_id: 4, charge: 400  row: 0x122c2ed50  session: 0x122c2cb60  ins_upd_dlt: ins, initial: ins
+....Student[3] {Update - Adjusting student: enrollment_count, total_enrollment_charges} id: 3, name: Charlie Brown, enrollment_date: 2021-09-01, enrollment_count:  [0-->] 1, budget: 1000, total_enrollment_charges:  [0-->] 400  row: 0x122f6dca0  session: 0x122c2cb60  ins_upd_dlt: upd, initial: upd
+Logic Phase:		COMMIT LOGIC		(session=0x122c2cb60)
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x122c2cb60)
+
+Rules Fired:		##
+  Enrollment		##
+    1. Derive <class 'database.models.Enrollment'>.charge as Copy(course.charge)		##
+  Student		##
+    2. Derive <class 'database.models.Student'>.total_enrollment_charges as Sum(Enrollment.charge Where  - None)		##
+    3. Derive <class 'database.models.Student'>.enrollment_count as Count(<class 'database.models.Enrollment'> Where  - None)		##
+
+Logic Phase:		COMPLETE(session=0x122c2cb60))
+Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Traceback (most recent call last):
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/safrs/base.py", line 884, in _s_query
+    result = safrs.DB.session.query(cls_or_self)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 1589, in query
+    return self._proxied.query(*entities, **kwargs)
+           ^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 195, in _proxied
+    return self.registry()
+           ^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/util/_collections.py", line 640, in __call__
+    key = self.scopefunc()
+          ^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/flask_sqlalchemy/session.py", line 102, in _app_ctx_id
+    return id(app_ctx._get_current_object())  # type: ignore[attr-defined]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/werkzeug/local.py", line 508, in _get_current_object
+    raise RuntimeError(unbound_message) from None
+RuntimeError: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Query failed for <class 'database.models.TeachingAssignment'>: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+'NoneType' object has no attribute 'filter_by'
+Logic Phase:		ROW LOGIC IGNORE RE-RAISE(session=0x122c2cb60) (sqlalchemy before_flush)
+
+Logic Phase:		ROW LOGIC		(session=0x122c2cb60) (sqlalchemy before_flush)
+..TeachingAssignment[1] {Insert - client} id: 1, teacher_id: 1, course_id: 1  row: 0x122a21430  session: 0x122c2cb60  ins_upd_dlt: ins, initial: ins
+....Teacher[1] {Update - Adjusting teacher: course_count} id: 1, name: Dr. Emily Johnson, hire_date: 2018-08-15, course_count:  [0-->] 1  row: 0x122dbcbc0  session: 0x122c2cb60  ins_upd_dlt: upd, initial: upd
+Logic Phase:		COMMIT LOGIC		(session=0x122c2cb60)
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x122c2cb60)
+
+Rules Fired:		##
+  Teacher		##
+    1. Derive <class 'database.models.Teacher'>.course_count as Count(<class 'database.models.TeachingAssignment'> Where  - None)		##
+
+Logic Phase:		COMPLETE(session=0x122c2cb60))
+Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Traceback (most recent call last):
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/safrs/base.py", line 884, in _s_query
+    result = safrs.DB.session.query(cls_or_self)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 1589, in query
+    return self._proxied.query(*entities, **kwargs)
+           ^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 195, in _proxied
+    return self.registry()
+           ^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/util/_collections.py", line 640, in __call__
+    key = self.scopefunc()
+          ^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/flask_sqlalchemy/session.py", line 102, in _app_ctx_id
+    return id(app_ctx._get_current_object())  # type: ignore[attr-defined]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/werkzeug/local.py", line 508, in _get_current_object
+    raise RuntimeError(unbound_message) from None
+RuntimeError: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Query failed for <class 'database.models.TeachingAssignment'>: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+'NoneType' object has no attribute 'filter_by'
+Logic Phase:		ROW LOGIC IGNORE RE-RAISE(session=0x122c2cb60) (sqlalchemy before_flush)
+
+Logic Phase:		ROW LOGIC		(session=0x122c2cb60) (sqlalchemy before_flush)
+..TeachingAssignment[2] {Insert - client} id: 2, teacher_id: 1, course_id: 3  row: 0x122dbd2b0  session: 0x122c2cb60  ins_upd_dlt: ins, initial: ins
+....Teacher[1] {Update - Adjusting teacher: course_count} id: 1, name: Dr. Emily Johnson, hire_date: 2018-08-15, course_count:  [1-->] 2  row: 0x122dbcbc0  session: 0x122c2cb60  ins_upd_dlt: upd, initial: upd
+Logic Phase:		COMMIT LOGIC		(session=0x122c2cb60)
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x122c2cb60)
+
+Rules Fired:		##
+  Teacher		##
+    1. Derive <class 'database.models.Teacher'>.course_count as Count(<class 'database.models.TeachingAssignment'> Where  - None)		##
+
+Logic Phase:		COMPLETE(session=0x122c2cb60))
+Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Traceback (most recent call last):
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/safrs/base.py", line 884, in _s_query
+    result = safrs.DB.session.query(cls_or_self)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 1589, in query
+    return self._proxied.query(*entities, **kwargs)
+           ^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 195, in _proxied
+    return self.registry()
+           ^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/util/_collections.py", line 640, in __call__
+    key = self.scopefunc()
+          ^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/flask_sqlalchemy/session.py", line 102, in _app_ctx_id
+    return id(app_ctx._get_current_object())  # type: ignore[attr-defined]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/werkzeug/local.py", line 508, in _get_current_object
+    raise RuntimeError(unbound_message) from None
+RuntimeError: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Query failed for <class 'database.models.TeachingAssignment'>: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+'NoneType' object has no attribute 'filter_by'
+Logic Phase:		ROW LOGIC IGNORE RE-RAISE(session=0x122c2cb60) (sqlalchemy before_flush)
+
+Logic Phase:		ROW LOGIC		(session=0x122c2cb60) (sqlalchemy before_flush)
+..TeachingAssignment[3] {Insert - client} id: 3, teacher_id: 2, course_id: 2  row: 0x122ed6de0  session: 0x122c2cb60  ins_upd_dlt: ins, initial: ins
+....Teacher[2] {Update - Adjusting teacher: course_count} id: 2, name: Professor Michael Brown, hire_date: 2017-05-10, course_count:  [0-->] 1  row: 0x122f6fd10  session: 0x122c2cb60  ins_upd_dlt: upd, initial: upd
+Logic Phase:		COMMIT LOGIC		(session=0x122c2cb60)
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x122c2cb60)
+
+Rules Fired:		##
+  Teacher		##
+    1. Derive <class 'database.models.Teacher'>.course_count as Count(<class 'database.models.TeachingAssignment'> Where  - None)		##
+
+Logic Phase:		COMPLETE(session=0x122c2cb60))
+Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Traceback (most recent call last):
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/safrs/base.py", line 884, in _s_query
+    result = safrs.DB.session.query(cls_or_self)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 1589, in query
+    return self._proxied.query(*entities, **kwargs)
+           ^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/orm/scoping.py", line 195, in _proxied
+    return self.registry()
+           ^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/sqlalchemy/util/_collections.py", line 640, in __call__
+    key = self.scopefunc()
+          ^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/flask_sqlalchemy/session.py", line 102, in _app_ctx_id
+    return id(app_ctx._get_current_object())  # type: ignore[attr-defined]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/lib/python3.12/site-packages/werkzeug/local.py", line 508, in _get_current_object
+    raise RuntimeError(unbound_message) from None
+RuntimeError: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Query failed for <class 'database.models.TeachingAssignment'>: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+'NoneType' object has no attribute 'filter_by'
+Logic Phase:		ROW LOGIC IGNORE RE-RAISE(session=0x122c2cb60) (sqlalchemy before_flush)
+
+Logic Phase:		ROW LOGIC		(session=0x122c2cb60) (sqlalchemy before_flush)
+..TeachingAssignment[4] {Insert - client} id: 4, teacher_id: 3, course_id: 4  row: 0x122c2ed50  session: 0x122c2cb60  ins_upd_dlt: ins, initial: ins
+....Teacher[3] {Update - Adjusting teacher: course_count} id: 3, name: Ms. Angela White, hire_date: 2019-01-20, course_count:  [0-->] 1  row: 0x122f6fe00  session: 0x122c2cb60  ins_upd_dlt: upd, initial: upd
+Logic Phase:		COMMIT LOGIC		(session=0x122c2cb60)
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x122c2cb60)
+
+Rules Fired:		##
+  Teacher		##
+    1. Derive <class 'database.models.Teacher'>.course_count as Count(<class 'database.models.TeachingAssignment'> Where  - None)		##
+
+Logic Phase:		COMPLETE(session=0x122c2cb60))
+ d.  Create Ontimize from models
+ a.  Use existing students_classes_informal/database/models.py - no copy
+.. .. ..Create resource_list - dynamic import database/models.py, inspect 0 classes in <project>/database
+
+Creation complete - Opening code at students_classes_informal
+.. See the readme for install / run instructions
+ code "students_classes_informal"
+
+
+Customizable project students_classes_informal created from database sqlite:///system/genai/temp/create_db_models.sqlite.  Next steps:
+
+Run API Logic Server:
+  cd students_classes_informal;  python api_logic_server_run.py
+
+Project created at: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/students_classes_informal
+
+  Establish your Python environment - see https://apilogicserver.github.io/Docs/IDE-Execute/#execute-prebuilt-launch-configurations
+
+GENAI (69 secs) successful on try 1

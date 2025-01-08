@@ -38,6 +38,7 @@ def declare_logic():
         """
 
         if os.getenv("APILOGICPROJECT_NO_FLASK") is not None:
+            print("\ndeclare_logic.py Using TestBase\n")
             return  # enables rules to be used outside of Flask, e.g., test data loading
 
         if logic_row.is_updated() and logic_row.old_row is not None and logic_row.nest_level == 0:

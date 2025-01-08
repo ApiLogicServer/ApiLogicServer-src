@@ -44,9 +44,11 @@ db_url = f'sqlite:///{db_url_path.resolve()}'
 logging.info(f'..  db_url: {db_url}')
 logging.info(f'..  cwd: {os.getcwd()}')
 logging.info(f'..  python_loc: {sys.executable}')
+logging.info(f'..  test_data_loader version: 1.0')
 data_log.append(f'..  db_url: {db_url}')
 data_log.append(f'..  cwd: {os.getcwd()}')
 data_log.append(f'..  python_loc: {sys.executable}')
+data_log.append(f'..  test_data_loader version: 1.0')
 
 if db_url_path.is_file():
     db_url_path.unlink()
@@ -65,6 +67,9 @@ except Exception as e:
         log_file.write('\n'.join(data_log))
     print('\n'.join(data_log))
     raise
+
+logging.info(f'..  LogicBank activated')
+data_log.append(f'..  LogicBank activated')
 
 restart_count = 0
 has_errors = True

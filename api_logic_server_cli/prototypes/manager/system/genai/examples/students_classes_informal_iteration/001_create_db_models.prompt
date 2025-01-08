@@ -1,0 +1,44 @@
+Use SQLAlchemy to create a sqlite database named system/genai/temp/create_db_models.sqlite, to
+
+students, courses and teachers
+.
+
+Hints: use autonum keys (for all tables - including for link/join/junction/intersection tables), allow nulls, foreign keys, no check constraints.
+
+Be sure to create classes, never tables.
+
+If you create sum, count or formula Logic Bank rules, then you MUST create a corresponding column in the data model.
+
+Remember that SQLite DateTime type only accepts Python datetime and date objects as input, 
+this means you can not enter string attributes where a date or datetime object is expected.
+
+Don't install additional packages.
+Don't use the faker pip package.
+
+Create multiple rows of test data for each table, and follow these guidelines carefully:
+* Use foreign key columns instead of relationship names for the data.  
+* Create separate objects for each test data row, not in arrays. 
+* Be sure to initialize derived attributes for test data rows - including all sums and counts, but do not rely on Logic Bank,
+and do not generate db.execute statements.
+* Do not create arrays of test data.
+* Do not create a function to load test data.  
+* Do not print the test data. 
+* For test data, format dates as date(year, month, day).
+* Do not specify nullable unless otherwise specified.
+* Do not use Float unless otherwise specified.
+
+For each data model class, create a docstring describing the table, prefixed with 'description: '. 
+
+class WGResult(BaseModel):  # must match system/genai/prompt_inserts/response_format.prompt
+
+    models : List[Model] # list of sqlalchemy classes in the response
+
+    rules : List[Rule] # list rule declarations
+
+    test_data: str
+
+    name: str  # suggest a short name for the project
+
+
+
+Format the response as a WGResult.

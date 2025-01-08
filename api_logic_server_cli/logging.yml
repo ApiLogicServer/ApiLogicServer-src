@@ -68,7 +68,7 @@ loggers:
         propagate: no
 
     api_logic_server_cli.genai.genai:   
-#         level: DEBUG
+        level: DEBUG
         handlers: [console]
         propagate: no
 
