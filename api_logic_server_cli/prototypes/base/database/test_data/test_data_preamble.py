@@ -3,10 +3,14 @@ import logging.config
 import json
 import os
 import sys
+
+os.environ["APILOGICPROJECT_NO_FLASK"] = "1"  # must be present before importing models
+
 import traceback
 import yaml
 from datetime import date, datetime
 from pathlib import Path
+from decimal import Decimal
 from sqlalchemy import (Boolean, Column, Date, DateTime, DECIMAL, Float, ForeignKey, Integer, Numeric, String, Text, create_engine)
 from sqlalchemy.dialects.sqlite import *
 from sqlalchemy.ext.declarative import declarative_base
@@ -23,8 +27,6 @@ from database.models import *
 from database.models import Base
 
 project_dir = Path(os.getenv("PROJECT_DIR",'./')).resolve()
-
-os.environ["APILOGICPROJECT_NO_FLASK"] = "1"
 
 assert str(os.getcwd()) == str(project_dir), f"Current directory must be {project_dir}"
 
@@ -44,11 +46,11 @@ db_url = f'sqlite:///{db_url_path.resolve()}'
 logging.info(f'..  db_url: {db_url}')
 logging.info(f'..  cwd: {os.getcwd()}')
 logging.info(f'..  python_loc: {sys.executable}')
-logging.info(f'..  test_data_loader version: 1.0')
+logging.info(f'..  test_data_loader version: 1.1')
 data_log.append(f'..  db_url: {db_url}')
 data_log.append(f'..  cwd: {os.getcwd()}')
 data_log.append(f'..  python_loc: {sys.executable}')
-data_log.append(f'..  test_data_loader version: 1.0')
+data_log.append(f'..  test_data_loader version: 1.1')
 
 if db_url_path.is_file():
     db_url_path.unlink()
