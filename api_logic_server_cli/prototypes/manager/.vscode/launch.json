@@ -558,6 +558,19 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
+            "name": "    - Create students_classes_informal, iteration / informal logic",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["genai", "--test-data-rows=4", "--temperature=0.7",
+                "--using=${workspaceFolder}/system/genai/examples/students_classes_informal_iteration",
+                "--project-name=students_classes_informal_flask"],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "  - retry repaired-response",
             "type": "debugpy",
             "request": "launch",

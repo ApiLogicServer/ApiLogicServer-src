@@ -166,7 +166,8 @@ def rebuild_test_data_for_project(response: str = 'docs/response.json',
     run_file = str(Path(run_file).resolve()) 
     # run_file = 'database/test_data/test_data_code.py'  # this did't work either
 
-    subprocess.check_output([python_loc,run_file,'--test-data','--response=docs/response.json'] , cwd=cwd,shell=False, env=os.environ.copy())
+    subprocess.check_output([python_loc,run_file,'--test-data','--response=docs/response.json'] , 
+                            cwd=cwd,shell=False, env=os.environ.copy())
     # subprocess.check_output([python_loc,run_file,'--test-data','--response', 'docs/response.json'] , cwd=cwd,shell=True)
     # result = create_utils.run_commiand(f'{python_loc} {run_file}', 
     #                                  msg="\Running Test Data Builder...",
