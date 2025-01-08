@@ -289,6 +289,7 @@ def api_logic_server_setup(flask_app: Flask, args: Args):
 
         db = SQLAlchemy()
         db.init_app(flask_app)
+        flask_app.db = db
         with flask_app.app_context():
 
             with open(Path(project_path).joinpath('security/system/custom_swagger.json')) as json_file:
