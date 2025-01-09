@@ -374,6 +374,8 @@ if Config.do_genai_test_genai_demo_conversation:
                   test_note='rename Customer / add Addresses, add SalesRep')
                   '''
     # test genai, using copy of pre-supplied ChatGPT response (to avoid api key issues)
+    # FIXME - this test fails - CustomerAccount not defined (erk, was Customeraccount)
+    # als genai --project-name=tests-genai/genai_demo_iteration --using=system/genai/examples/genai_demo/genai_demo_iteration
     # see https://apilogicserver.github.io/Docs/Sample-Genai/#what-just-happened
     test_name = f'{test_folder_name}/genai_test_genai_demo_iteration'
     test_note = 'rename Customer / add Addresses, add SalesRep, logic'
