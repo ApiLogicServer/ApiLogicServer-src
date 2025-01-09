@@ -12,4 +12,7 @@ Don't use python DECIMAL type.
 Don't install additional packages.
 Don't use the faker pip package.
 
-Create a few rows of sample data, use foreign key columns instead of relationship names for the data .
+Follow the following requirements carefully:
+<TestDataRequirements>
+Create 4 rows of sample data for each table (i.e. 4 instances per model), use foreign key columns instead of relationship names for the sample data .
+</TestDataRequirements>
