@@ -25,7 +25,7 @@ def get_sra_directory(args: Args) -> str:
     
     This enables the sra code to be re-used, reducing app size 32MB -> 2.5 MB
     """
-    directory = 'ui/safrs-react-admin'  # local project sra typical API Logic Server path (index.yaml)
+    directory = os.environ.get("APILOGICPROJECT_SRA", 'ui/safrs-react-admin')  # local project sra typical API Logic Server path (index.yaml)
     if Path(directory).joinpath('robots.txt').is_file():
         admin_logger.debug("return_spa - using local directory")
     else:        # else use installed sra - from venv, or, for dev, in APILOGICSERVER_HOME
