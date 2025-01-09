@@ -13,6 +13,7 @@
 # export APILOGICPROJECT_NO_FLASK=1
 # als genai-utils --rebuild-test-data --response=docs/genai_demo_informal_003.response
 #
+import ast
 import json
 import sys
 import os
@@ -45,11 +46,52 @@ add_instance_code_template = """
             session.rollback()
 """
 
+
+def fix_code(code):
+    """
+    Fix syntax errors in code
+    """
+    ori_code = code
+    try:
+        ast.parse(code)
+        return code
+    except SyntaxError:
+        log.warning(f"Syntax error in code (1): {code}")
+    
+    code = ori_code.replace("'s", "''s")
+    try:
+        ast.parse(code)
+        return code
+    except SyntaxError:
+        log.warning(f"Syntax error in code (2): {code}")
+    
+    code = ori_code.replace("'", "")
+    try:
+        ast.parse(code)
+        return code
+    except SyntaxError:
+        log.warning(f"Syntax error in code (3): {code}")
+
+    code = ori_code.replace('"', '')
+    try:
+        ast.parse(code)
+        return code
+    except SyntaxError:
+        log.warning(f"Syntax error in code (4): {code}")
+
+    return None
+
 def write_test_data(test_data):
     test_data_code = source_code_preamble
     
     for row in test_data:
-        fixed_code = row.get("code").replace("'s", "''s")
+        try:
+            fixed_code = fix_code(row.get("code",''))
+            if not fixed_code:
+                continue
+        except Exception as e:
+            log.warning(f"Error fixing code: {e}")
+            continue
         test_data_code += add_instance_code_template.format(code=fixed_code, hash=hash(fixed_code))
 
     test_data_code += f"print('\\n'.join(data_log))\n"
