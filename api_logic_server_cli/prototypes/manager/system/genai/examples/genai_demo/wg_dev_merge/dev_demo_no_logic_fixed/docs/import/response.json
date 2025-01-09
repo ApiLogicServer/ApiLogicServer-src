@@ -1,0 +1,78 @@
+{
+    "models": [
+        {
+            "classname": "Customer",
+            "code": "class Customer(Base):\n    \"\"\"\n    description: Represents a customer in the system with unique names and a balance constraint.\n    \"\"\"\n    __tablename__ = 'customer'\n    _s_collection_name = 'Customer'  # type: ignore\n    __bind_key__ = 'None'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String(50), unique=True)\n    email = Column(String(50))\n    balance = Column(Integer)\n    credit_limit = Column(Integer)\n\n    # parent relationships (access parent)\n\n    # child relationships (access children)\n    OrderList: Mapped[List[\"Order\"]] = relationship(back_populates=\"customer\")",
+            "description": "Model for holding customer information with a balance and credit limit.",
+            "name": "Customer"
+        },
+        {
+            "classname": "Product",
+            "code": "class Product(Base):\n    \"\"\"\n    description: Represents a product available for purchase.\n    \"\"\"\n    __tablename__ = 'product'\n    _s_collection_name = 'Product'  # type: ignore\n    __bind_key__ = 'None'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String(50))\n    price = Column(Integer)\n    carbon_neutral = Column(Boolean)\n\n    # parent relationships (access parent)\n\n    # child relationships (access children)\n    ItemList: Mapped[List[\"Item\"]] = relationship(back_populates=\"product\")",
+            "description": "Model representing products with a price and carbon-neutral status.",
+            "name": "Product"
+        },
+        {
+            "classname": "Order",
+            "code": "class Order(Base):\n    \"\"\"\n    description: Represents an order made by a customer, needing a valid customer reference.\n    \"\"\"\n    __tablename__ = 'order'\n    _s_collection_name = 'Order'  # type: ignore\n    __bind_key__ = 'None'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    customer_id = Column(Integer, ForeignKey('customer.id'))\n    order_date = Column(DateTime)\n    notes = Column(String(255))\n    total_amount = Column(Integer)\n\n    # parent relationships (access parent)\n    customer: Mapped[\"Customer\"] = relationship(back_populates=\"OrderList\")\n\n    # child relationships (access children)\n    ItemList: Mapped[List[\"Item\"]] = relationship(back_populates=\"order\")",
+            "description": "Model for customer orders, including references to customer and items.",
+            "name": "Order"
+        },
+        {
+            "classname": "Item",
+            "code": "class Item(Base):\n    \"\"\"\n    description: Represents an item included in an order with non-null quantity and derived attributes.\n    \"\"\"\n    __tablename__ = 'item'\n    _s_collection_name = 'Item'  # type: ignore\n    __bind_key__ = 'None'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    order_id = Column(Integer, ForeignKey('order.id'))\n    product_id = Column(Integer, ForeignKey('product.id'))\n    quantity = Column(Integer, nullable=False)\n    price = Column(Integer)\n    unit_price = Column(Integer)\n    amount = Column(Integer, doc=\"derived: quantity * unit_price\")\n\n    # parent relationships (access parent)\n    order: Mapped[\"Order\"] = relationship(back_populates=\"ItemList\")\n    product: Mapped[\"Product\"] = relationship(back_populates=\"ItemList\")",
+            "description": "Model for items in orders, with calculated amount from quantity and unit price.",
+            "name": "Item"
+        }
+    ],
+    "rules": [
+        {
+            "name": "Calculate Item Amount",
+            "description": "Automatically calculates the amount for each item based on quantity and unit price.",
+            "use_case": "General",
+            "entity": "Item",
+            "code": "derive(Item, Item.amount, formula=\"Item.quantity * Item.unit_price\")"
+        }
+    ],
+    "test_data": "import datetime\n\ncustomer1 = Customer(id=1, name=\"Alice\", email=\"alice@example.com\", balance=200, credit_limit=500)\ncustomer2 = Customer(id=2, name=\"Bob\", email=\"bob@example.com\", balance=300, credit_limit=400)\n\nproduct1 = Product(id=1, name=\"Widget\", price=20, carbon_neutral=True)\nproduct2 = Product(id=2, name=\"Gadget\", price=30, carbon_neutral=False)\n\norder1 = Order(id=1, customer_id=1, order_date=datetime.date(2023, 11, 25), notes=\"First order\", total_amount=100)\norder2 = Order(id=2, customer_id=2, order_date=datetime.date(2023, 11, 26), notes=\"Second order\", total_amount=60)\n\nitem1 = Item(id=1, order_id=1, product_id=1, quantity=2, unit_price=20, price=40, amount=40)\nitem2 = Item(id=2, order_id=1, product_id=2, quantity=1, unit_price=30, price=30, amount=30)\nitem3 = Item(id=3, order_id=2, product_id=1, quantity=1, unit_price=20, price=20, amount=20)",
+    "test_data_rows": [
+        {
+            "test_data_row_variable": "customer1",
+            "code": "customer1 = Customer(id=1, name=\"Alice\", email=\"alice@example.com\", balance=200, credit_limit=500)"
+        },
+        {
+            "test_data_row_variable": "customer2",
+            "code": "customer2 = Customer(id=2, name=\"Bob\", email=\"bob@example.com\", balance=300, credit_limit=400)"
+        },
+        {
+            "test_data_row_variable": "product1",
+            "code": "product1 = Product(id=1, name=\"Widget\", price=20, carbon_neutral=True)"
+        },
+        {
+            "test_data_row_variable": "product2",
+            "code": "product2 = Product(id=2, name=\"Gadget\", price=30, carbon_neutral=False)"
+        },
+        {
+            "test_data_row_variable": "order1",
+            "code": "order1 = Order(id=1, customer_id=1, order_date=datetime.date(2023, 11, 25), notes=\"First order\", total_amount=100)"
+        },
+        {
+            "test_data_row_variable": "order2",
+            "code": "order2 = Order(id=2, customer_id=2, order_date=datetime.date(2023, 11, 26), notes=\"Second order\", total_amount=60)"
+        },
+        {
+            "test_data_row_variable": "item1",
+            "code": "item1 = Item(id=1, order_id=1, product_id=1, quantity=2, unit_price=20, price=40, amount=40)"
+        },
+        {
+            "test_data_row_variable": "item2",
+            "code": "item2 = Item(id=2, order_id=1, product_id=2, quantity=1, unit_price=30, price=30, amount=30)"
+        },
+        {
+            "test_data_row_variable": "item3",
+            "code": "item3 = Item(id=3, order_id=2, product_id=1, quantity=1, unit_price=20, price=20, amount=20)"
+        }
+    ],
+    "test_data_sqlite": "INSERT INTO customer (id, name, email, balance, credit_limit) VALUES (1, 'Alice', 'alice@example.com', 200, 500);\nINSERT INTO customer (id, name, email, balance, credit_limit) VALUES (2, 'Bob', 'bob@example.com', 300, 400);\n\nINSERT INTO product (id, name, price, carbon_neutral) VALUES (1, 'Widget', 20, 1);\nINSERT INTO product (id, name, price, carbon_neutral) VALUES (2, 'Gadget', 30, 0);\n\nINSERT INTO \"order\" (id, customer_id, order_date, notes, total_amount) VALUES (1, 1, '2023-11-25', 'First order', 100);\nINSERT INTO \"order\" (id, customer_id, order_date, notes, total_amount) VALUES (2, 2, '2023-11-26', 'Second order', 60);\n\nINSERT INTO item (id, order_id, product_id, quantity, unit_price, price, amount) VALUES (1, 1, 1, 2, 20, 40, 40);\nINSERT INTO item (id, order_id, product_id, quantity, unit_price, price, amount) VALUES (2, 1, 2, 1, 30, 30, 30);\nINSERT INTO item (id, order_id, product_id, quantity, unit_price, price, amount) VALUES (3, 2, 1, 1, 20, 20, 20);",
+    "name": "CustomerOrdersSystem"
+}

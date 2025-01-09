@@ -1,0 +1,151 @@
+"models":
+- "classname": |-
+    Customer
+  "code": |-
+    class Customer(SAFRSBaseX, Base):
+        """
+        Represents a customer in the system.
+        """
+        __tablename__ = 'customers'
+
+        id = Column(Integer, primary_key=True)
+        name = Column(String(50), unique=True)
+        email = Column(String(50))
+        balance = Column(Integer)
+        credit_limit = Column(Integer)
+
+        # child relationships
+        OrderList: Mapped[List["Order"]] = relationship(back_populates="customer")
+  "description": |-
+    Model for Customer data, representing customers in the system.
+  "name": |-
+    Customer
+- "classname": |-
+    Product
+  "code": |-
+    class Product(SAFRSBaseX, Base):
+        """
+        Represents a product available for purchase.
+        """
+        __tablename__ = 'products'
+
+        id = Column(Integer, primary_key=True)
+        name = Column(String(50))
+        price = Column(Integer)
+        carbon_neutral = Column(Boolean)
+
+        # child relationships
+        ItemList: Mapped[List["Item"]] = relationship(back_populates="product")
+  "description": |-
+    Model for Product data, representing products.
+  "name": |-
+    Product
+- "classname": |-
+    Order
+  "code": |-
+    class Order(SAFRSBaseX, Base):
+        """
+        Represents an order made by a customer.
+        """
+        __tablename__ = 'orders'
+
+        id = Column(Integer, primary_key=True)
+        customer_id = Column(ForeignKey('customers.id'), nullable=False)
+        order_date = Column(DateTime)
+        notes = Column(String(255))
+        total_amount = Column(Integer)
+
+        # parent relationships
+        customer: Mapped["Customer"] = relationship(back_populates="OrderList")
+
+        # child relationships
+        ItemList: Mapped[List["Item"]] = relationship(back_populates="order")
+  "description": |-
+    Model for Order data, representing orders placed by customers.
+  "name": |-
+    Order
+- "classname": |-
+    Item
+  "code": |-
+    class Item(SAFRSBaseX, Base):
+        """
+        Represents an item included in an order.
+        """
+        __tablename__ = 'items'
+
+        id = Column(Integer, primary_key=True)
+        order_id = Column(ForeignKey('orders.id'))
+        product_id = Column(ForeignKey('products.id'))
+        quantity = Column(Integer, nullable=False)
+        price = Column(Integer)
+        amount = Column(Integer)
+        unit_price = Column(Integer)
+
+        # parent relationships
+        order: Mapped["Order"] = relationship(back_populates="ItemList")
+        product: Mapped["Product"] = relationship(back_populates="ItemList")
+  "description": |-
+    Model for Item data, representing items in an order.
+  "name": |-
+    Item
+"name": |-
+  E-CommerceSystem
+"rules": []
+"test_data": |-
+  # Test Data for Customer
+  customer1 = Customer(id=1, name="John Doe", email="john.doe@example.com", balance=1000, credit_limit=5000)
+  customer2 = Customer(id=2, name="Jane Smith", email="jane.smith@example.com", balance=1500, credit_limit=7000)
+
+  # Test Data for Product
+  product1 = Product(id=1, name="Widget", price=20, carbon_neutral=True)
+  product2 = Product(id=2, name="Gadget", price=30, carbon_neutral=False)
+
+  # Test Data for Order
+  order1 = Order(id=1, customer_id=1, order_date=date(2023, 5, 10), notes="Urgent", total_amount=200)
+  order2 = Order(id=2, customer_id=2, order_date=date(2023, 5, 12), notes="Regular", total_amount=450)
+
+  # Test Data for Item
+  item1 = Item(id=1, order_id=1, product_id=1, quantity=5, price=20, amount=100, unit_price=20)
+  item2 = Item(id=2, order_id=2, product_id=2, quantity=10, price=30, amount=300, unit_price=30)
+"test_data_rows":
+- "code": |-
+    customer1 = Customer(id=1, name="John Doe", email="john.doe@example.com", balance=1000, credit_limit=5000)
+  "test_data_row_variable": |-
+    customer1
+- "code": |-
+    customer2 = Customer(id=2, name="Jane Smith", email="jane.smith@example.com", balance=1500, credit_limit=7000)
+  "test_data_row_variable": |-
+    customer2
+- "code": |-
+    product1 = Product(id=1, name="Widget", price=20, carbon_neutral=True)
+  "test_data_row_variable": |-
+    product1
+- "code": |-
+    product2 = Product(id=2, name="Gadget", price=30, carbon_neutral=False)
+  "test_data_row_variable": |-
+    product2
+- "code": |-
+    order1 = Order(id=1, customer_id=1, order_date=date(2023, 5, 10), notes="Urgent", total_amount=200)
+  "test_data_row_variable": |-
+    order1
+- "code": |-
+    order2 = Order(id=2, customer_id=2, order_date=date(2023, 5, 12), notes="Regular", total_amount=450)
+  "test_data_row_variable": |-
+    order2
+- "code": |-
+    item1 = Item(id=1, order_id=1, product_id=1, quantity=5, price=20, amount=100, unit_price=20)
+  "test_data_row_variable": |-
+    item1
+- "code": |-
+    item2 = Item(id=2, order_id=2, product_id=2, quantity=10, price=30, amount=300, unit_price=30)
+  "test_data_row_variable": |-
+    item2
+"test_data_sqlite": |-
+  INSERT INTO customers (id, name, email, balance, credit_limit) VALUES (1, 'John Doe', 'john.doe@example.com', 1000, 5000);
+  INSERT INTO customers (id, name, email, balance, credit_limit) VALUES (2, 'Jane Smith', 'jane.smith@example.com', 1500, 7000);
+  INSERT INTO products (id, name, price, carbon_neutral) VALUES (1, 'Widget', 20, 1);
+  INSERT INTO products (id, name, price, carbon_neutral) VALUES (2, 'Gadget', 30, 0);
+  INSERT INTO orders (id, customer_id, order_date, notes, total_amount) VALUES (1, 1, '2023-05-10', 'Urgent', 200);
+  INSERT INTO orders (id, customer_id, order_date, notes, total_amount) VALUES (2, 2, '2023-05-12', 'Regular', 450);
+  INSERT INTO items (id, order_id, product_id, quantity, price, amount, unit_price) VALUES (1, 1, 1, 5, 20, 100, 20);
+  INSERT INTO items (id, order_id, product_id, quantity, price, amount, unit_price) VALUES (2, 2, 2, 10, 30, 300, 30);

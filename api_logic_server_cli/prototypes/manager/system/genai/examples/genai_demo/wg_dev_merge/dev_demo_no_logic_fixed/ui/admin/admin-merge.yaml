@@ -1,0 +1,147 @@
+about:
+  date: December 21, 2024 18:44:38
+  merged:
+    at: January 08, 2025 17:24:44
+    new_attributes: 'Customer.email Customer.balance Customer.credit_limit Item.price
+      Item.unit_price Item.amount Order.order_date Order.total_amount Product.price '
+    new_resources: ''
+    new_tab_groups: 'Customer.OrderList Item.order Item.product Order.ItemList Order.customer
+      Product.ItemList '
+  recent_changes: works with modified safrs-react-admin
+  version: 0.0.0
+api_root: '{http_type}://{swagger_host}:{port}/{api}'
+authentication: '{system-default}'
+info:
+  number_relationships: 0
+  number_tables: 4
+info_toggle_checked: true
+resources:
+  Customer:
+    attributes:
+    - label: ' name*'
+      name: name
+      search: true
+      sort: true
+    - name: id
+    - name: email
+    - name: balance
+    - name: credit_limit
+    description: Model for Customer data, representing customers in the system.
+    info_list: Model for Customer data, representing customers in the system.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - customer_id
+      name: OrderList
+      resource: Order
+    type: Customer
+    user_key: name
+  Item:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: quantity
+      required: true
+    - name: order_id
+    - name: product_id
+    - name: price
+    - name: unit_price
+    - name: amount
+    description: Model for Item data, representing items in an order with their respective
+      quantities.
+    info_list: Model for Item data, representing items in an order with their respective
+      quantities.
+    tab_groups:
+    - direction: toone
+      fks:
+      - order_id
+      name: order
+      resource: Order
+    - direction: toone
+      fks:
+      - product_id
+      name: product
+      resource: Product
+    type: Item
+    user_key: id
+  Order:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: notes
+    - name: customer_id
+    - name: order_date
+      type: DATETIME
+    - name: total_amount
+    description: Model for Order data, representing orders placed by customers.
+    info_list: Model for Order data, representing orders placed by customers.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - order_id
+      name: ItemList
+      resource: Item
+    - direction: toone
+      fks:
+      - customer_id
+      name: customer
+      resource: Customer
+    type: Order
+    user_key: id
+  Product:
+    attributes:
+    - label: ' name*'
+      name: name
+      search: true
+      sort: true
+    - name: carbon_neutral
+      type: Boolean
+    - name: id
+    - name: price
+    description: Model for Product data, representing products available in the system
+      including carbon neutral status.
+    info_list: Model for Product data, representing products available in the system
+      including carbon neutral status.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - product_id
+      name: ItemList
+      resource: Item
+    type: Product
+    user_key: name
+settings:
+  HomeJS: /admin-app/home.js
+  max_list_columns: 8
+  style_guide:
+    applicationLocales:
+    - en
+    - es
+    currency_symbol: $
+    currency_symbol_position: left
+    date_format: LL
+    decimal_max: '1000000000'
+    decimal_min: '0'
+    decimal_separator: .
+    detail_mode: tab
+    edit_on_mode: dblclick
+    exclude_listpicker: false
+    include_translation: 'false'
+    keycloak_client_id: alsclient
+    keycloak_realm: kcals
+    keycloak_url: http://localhost:8080
+    locale: en
+    max_decimal_digits: '4'
+    min_decimal_digits: '2'
+    new_mode: dialog
+    pick_style: list
+    row_height: small,
+    serviceType: OntimizeEE
+    startSessionPath: /auth/login
+    style: light
+    thousand_separator: ','
+    use_keycloak: 'false'

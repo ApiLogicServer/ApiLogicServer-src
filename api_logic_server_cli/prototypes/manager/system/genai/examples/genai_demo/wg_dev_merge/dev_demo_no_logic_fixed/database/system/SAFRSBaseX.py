@@ -1,4 +1,5 @@
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, DECIMAL, Date, ForeignKey, Integer, String
 from safrs import SAFRSBase
 from flask_login import UserMixin
 import safrs, flask_sqlalchemy
@@ -6,11 +7,8 @@ from safrs import jsonapi_attr
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
-
-db = SQLAlchemy() 
 Base = declarative_base()  # type: flask_sqlalchemy.model.DefaultMeta
-metadata = Base.metadata
-
+#vh new x
 @classmethod
 def jsonapi_filter(cls):
     """
@@ -32,7 +30,7 @@ def jsonapi_filter(cls):
     else:
         return query.filter(or_(*expressions))   
 
-class SAFRSBaseX(SAFRSBase):
+class SAFRSBaseX(SAFRSBase, safrs.DB.Model):
     __abstract__ = True
     if do_enable_ont_advanced_filters := False:
         jsonapi_filter = jsonapi_filter
@@ -60,3 +58,16 @@ class SAFRSBaseX(SAFRSBase):
         
         return super()._s_parse_attr_value(attr_name, attr_val)
 
+class TestBase(Base):
+    __abstract__ = True
+    def __init__(self, *args, **kwargs):
+        for name, val in kwargs.items():
+            col = getattr(self.__class__, name)
+            if 'amount_total' == name:
+                debug_stop = 'stop'
+            if val is not None:
+                if str(col.type) in ["DATE", "DATETIME"]:
+                    pass
+                else:
+                    kwargs[name] = col.type.python_type(val)
+        return super().__init__(*args, **kwargs)
