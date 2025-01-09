@@ -44,7 +44,7 @@ It works like this:
 
 When [you create the manager (**strongly recommended**)](https://apilogicserver.github.io/Docs/Manager/), the system installs 3 sample projects you can use to explore import.
 
-1. **Base Project** is GenAI_no_logic.  No rule-based attributes.  See `system/genai/examples/genai_demo/wg_dev_merge/base_genai_demo_no_logic`.
+1. **Base Project** is GenAI_no_logic.  No rule-based attributes.  See `system/genai/examples/genai_demo/wg_dev_merge/base_genai_demo_no_logic`.  It's not really used, just provided as a reference.
 
 2. **Dev Project** was created with export-1, and has added rules for `carbon_neutral`.  It is ready for export-2.  See `system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed`
 
@@ -74,9 +74,10 @@ The `import-genai` command creates the `docs/import` directory and the following
 * `request.json` is sent to ChatGPT.  It contains both models, and a command to merge them
 * `response.json` is the merged model.  It should reflect the attributes from both sides, as shown
 * The response is translated to `system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed/docs/import/create_db_models.py`
-    * It is further reformatted into `system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed/docs/import/create_db_models_no_als.py`.  This is an internal work file you can ignore
-* The system creates `create_db_models.sqlite` by executing the file above.
-* The system then uses this to update the dev `database/db.sqlite` and `database/models.py`.
+* The system creates `docs/import/create_db_models.py/create_db_models.sqlite` by executing the file above.
+* The system then uses this to update the dev project:
+    * update the dev `database/db.sqlite` and 
+    * Runs `--rebuild-from-database`.  This updates the model, the api, etc from the new database.
     * **It's good practice to verify these**.  Make sure all the attributes from both sources are reflected in the updated **database** and **models** noted above.
 
 > you cannot currently re-run the tests, since it appears to encounter dups in sqlite.  See the re-run instructions, below.
@@ -88,13 +89,13 @@ The `import-genai` command creates the `docs/import` directory and the following
 It may fail, requiring either a **re-run** or an `import-resume`:
 
 * **Re-run** is indicated if the data model is missing attributes, incorrect or imcomplete.
-    1. make sure to get initial `system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed/database/models.py` (eg, make a copy before 1st test)
+    1. make sure to get initial `system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed/database/models.py` (eg, update from models_for_resume.py)
     2. delete or rename the `docs/import` directory.
 
 * `import-resume` can be used if you can repair the file below, e.g., a minor syntax error.
     1. fix `system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed/docs/import/create_db_models.py`
         * Note: you can run this standalone with your IDE to verify it.  It should create `create_db_models.sqlite` in your `docs/import` directory.
-    2. make sure to get initial system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed/database/models.py (eg, make a copy before 1st test)
+    2. make sure to get initial system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed/database/models.py (eg, update from models_for_resume.py)
 
 ```bash
 cd system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed
@@ -129,7 +130,7 @@ It was created like this (no need to do this, it's already done):
 
 <br/>
 
-## Status - 12/23
+## Status - 1/8
 
 Should work:
 * after BLT

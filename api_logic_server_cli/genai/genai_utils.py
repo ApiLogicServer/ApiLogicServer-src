@@ -265,30 +265,32 @@ class GenAIUtils:
                 dev_models = file.read()
             return {"existing_models": dev_models}
 
-        def rebuild_from_import(this_ref: "GenAIUtils") -> None:
+        def create_db_and_rebuild_project_from_db(this_ref: "GenAIUtils") -> None:
             """
             Creates the dev DB and models.py from import data:
               1. Create create_db_models_no_als.py from the merged models.
               2. Generate an SQLite database for the dev-project.
               3. Run rebuild-from-database to finalize the updated project structure.
             """
-            model_lines = remove_als_from_models_py(
-                this_ref.path_dev_import.joinpath("create_db_models.py")
-            )
-            model_lines_str = "".join(model_lines)
-            no_als_path = this_ref.path_dev_import.joinpath("create_db_models_no_als.py")
-            with open(no_als_path, "w") as file:
-                file.write(model_lines_str)
+            
+            add_create_all = """
+engine = create_engine('sqlite:///docs/import/create_db_models.sqlite')
+
+Base.metadata.create_all(engine)"""
 
             # Create the new SQLite DB
             new_db_path = this_ref.path_dev_import.joinpath("create_db_models.sqlite")
+            create_db_models_path = this_ref.path_dev_import.joinpath("create_db_models.py")
             utils.replace_string_in_file(
-                search_for="mgr_db_loc = True",
-                replace_with="mgr_db_loc = False",
-                in_file=no_als_path
+                search_for="# end of model classes",
+                replace_with=add_create_all,
+                in_file=create_db_models_path
             )
-            runpy.run_path(path_name=no_als_path)
-            shutil.copy(new_db_path, this_ref.path_dev.joinpath("database/db.sqlite"))
+            runpy.run_path(path_name=create_db_models_path)  # Create the new DB by running dev_demo_no_logic_fixed/docs/import/create_db_models.py
+            assert new_db_path.exists(), "FIXME failed to create new db using {create_db_models_path}"
+            # dev_demo_no_logic_fixed/docs/import/create_db_models.sqlite
+            shutil.copy(new_db_path, 
+                        this_ref.path_dev.joinpath("database/db.sqlite"))  # Copy to dev-project ..dev_demo_no_logic_fixed
 
             # Rebuild the project from the newly created database
             this_ref.project.command = "rebuild-from-database"
@@ -319,6 +321,7 @@ class GenAIUtils:
             with open(response_json, "r") as file:
                 import_response = json.load(file)
             self.import_response = DotMap(import_response)
+            fix_and_write_model_file(response_dict=self.import_response, save_dir=self.path_dev_import)
         else:
             manager_path = get_manager_path()
             import_prompt_path = manager_path.joinpath("system/genai/prompt_inserts/import.prompt")
@@ -349,6 +352,6 @@ class GenAIUtils:
 
             fix_and_write_model_file(response_dict=self.import_response, save_dir=self.path_dev_import)
 
-        rebuild_from_import(self)
+        create_db_and_rebuild_project_from_db(self)
         add_web_genai_logic(self)
         log.info(f".. import complete: {self.using}/import")

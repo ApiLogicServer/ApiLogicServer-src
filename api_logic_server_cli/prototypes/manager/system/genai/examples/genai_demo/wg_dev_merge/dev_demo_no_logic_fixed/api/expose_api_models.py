@@ -39,9 +39,11 @@ def expose_models(api, method_decorators = []):
         - See https://apilogicserver.github.io/Docs/Tutorial/#customize-and-debug
     """
 
+    debug_inspect_list = inspect.getmembers(database.models)
+    pass  #vh
     # Get all the subclasses of the Base class and expose them in the api
     for name, obj in inspect.getmembers(database.models):
-        if inspect.isclass(obj) and issubclass(obj, database.models.Base) and obj is not database.models.Base:
+        if inspect.isclass(obj) and issubclass(obj, database.models.SAFRSBaseX) and obj is not database.models.SAFRSBaseX:
             app_logger.info(f"Exposing /{name}")
             api.expose_object(add_check_sum(obj), method_decorators= method_decorators)
 
