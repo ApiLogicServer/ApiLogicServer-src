@@ -320,7 +320,8 @@ Base.metadata.create_all(engine)"""
         self.path_dev = Path(os.getcwd())
         self.path_dev_import = self.path_dev.joinpath("docs/import")
         os.makedirs(self.path_dev_import, exist_ok=True)
-
+        add_web_genai_logic(self)
+        
         if self.import_resume:
             log.debug(".. import_genai: rebuild-from-response")
             response_json = self.path_dev_import.joinpath("response.json")
@@ -359,5 +360,5 @@ Base.metadata.create_all(engine)"""
             fix_and_write_model_file(response_dict=self.import_response, save_dir=self.path_dev_import)
 
         create_db_and_rebuild_project_from_db(self)
-        add_web_genai_logic(self)
+        
         log.info(f".. import complete: {self.using}/import")
