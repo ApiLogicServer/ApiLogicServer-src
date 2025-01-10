@@ -303,7 +303,7 @@ Base.metadata.create_all(engine)"""
             """
             Adds or updates WebGenAI logic (if any) into the dev-project's logic/discovery folder.
             """
-            logic_discovery_path = this_ref.path_dev.joinpath("logic/discovery")
+            logic_discovery_path = this_ref.path_dev.joinpath("logic/logic_discovery")
             os.makedirs(logic_discovery_path, exist_ok=True)
             export_json = self.path_wg.joinpath("docs/export/export.json")
             if export_json.is_file():
