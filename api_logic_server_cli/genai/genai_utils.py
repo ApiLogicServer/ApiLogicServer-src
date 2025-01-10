@@ -299,6 +299,19 @@ Base.metadata.create_all(engine)"""
             this_ref.project.project_name = "."
             this_ref.project.create_project()
 
+        def setup_import_dir():
+            """create the docs/import dir, and delete files from prior run...
+            """            
+            self.path_dev_import = self.path_dev.joinpath("docs/import")
+            os.makedirs(self.path_dev_import, exist_ok=True)
+            if Path(self.path_dev_import.joinpath("create_db_models.py")).is_file():
+                os.remove(Path(self.path_dev_import.joinpath("create_db_models.py"))) 
+            if Path(self.path_dev_import.joinpath("create_db_models.sqlite")).is_file():
+                os.remove(Path(self.path_dev_import.joinpath("create_db_models.sqlite"))) 
+            if Path(self.path_dev_import.joinpath("request.json")).is_file():
+                os.remove(Path(self.path_dev_import.joinpath("request.json"))) 
+            pass
+
         def add_web_genai_logic(this_ref: "GenAIUtils") -> None:
             """
             Adds or updates WebGenAI logic (if any) into the dev-project's logic/discovery folder.
@@ -323,8 +336,7 @@ Base.metadata.create_all(engine)"""
             raise FileNotFoundError(f"Missing genai-import project directory: {self.using}")
 
         self.path_dev = Path(os.getcwd())
-        self.path_dev_import = self.path_dev.joinpath("docs/import")
-        os.makedirs(self.path_dev_import, exist_ok=True)
+        setup_import_dir()
         
         if self.import_resume:
             log.debug(".. import_genai: rebuild-from-response")
@@ -366,4 +378,4 @@ Base.metadata.create_all(engine)"""
         create_db_and_rebuild_project_from_db(self)
         add_web_genai_logic(self)
         
-        log.info(f".. import complete: {self.using}/import")
+        log.info(f".. import complete: {self.using}/import\n")
