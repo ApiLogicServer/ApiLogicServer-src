@@ -133,6 +133,15 @@ def get_code(rule_list: List[DotMap]) -> str:
 
 def rebuild_test_data_for_project(response: str = 'docs/response.json',
                                   use_project_path: Path = None) -> None:
+    """
+    1. Builds database/test_data/test_data.py from docs/response.json
+    2. Runs it to create database/test_data/db.sqlite
+    3. Copies database/test_data/db.sqlite to database/db.sqlite
+
+    Args:
+        response (str, optional): _description_. Defaults to 'docs/response.json'.
+        use_project_path (Path, optional): _description_. Defaults to None.
+    """    
     pass  # basic test: Rebuild test data -  blt/ApiLogicServer/genai_demo_informal
     project_path = Path(os.getcwd())
     if use_project_path is not None:
@@ -147,24 +156,13 @@ def rebuild_test_data_for_project(response: str = 'docs/response.json',
     run_file = str(Path(run_file).resolve()) 
     run_args = f'--test-data --response={response}'
 
-    # cd /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/genai_demo_informal
-    # /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/bin/python
-    # /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/bin/python database/test_data/response2code.py --test-data --response=docs/genai_demo_informal_003.response
-    # /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/bin/python database/test_data/test_data_code.py
-
-    # cd /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/genai_demo_informal
-    # /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/bin/python /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/genai_demo_informal/database/test_data/test_data_code.py
-
-    # Exception: Missing attributes:['Product.unit_price: parent copy from']
     cwd = project_path.resolve()
     result = create_utils.run_command(f'{python_loc} {run_file} {run_args}', 
                                       msg="\nCreating Test Data Builder...",
                                       cwd = cwd)
 
-    # Exception: Missing attributes:['Product.unit_price: parent copy from']  FIXME
     run_file = project_path.joinpath('database/test_data/test_data_code.py')
     run_file = str(Path(run_file).resolve()) 
-    # run_file = 'database/test_data/test_data_code.py'  # this did't work either
 
     subprocess.check_output([python_loc,run_file,'--test-data','--response=docs/response.json'] , 
                             cwd=cwd,shell=False, env=os.environ.copy())
