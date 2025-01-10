@@ -179,7 +179,7 @@ class GenAI(object):
         else: # for retry from corrected response... eg system/genai/temp/chatgpt_retry.response
             self.resolved_model = "(n/a: model not used for repaired response)"
             log.debug(f'\nUsing [corrected] response from: {self.project.genai_repaired_response}')
-            response_dict = get_repaired_response()  # from file or dir
+            response_dict = get_repaired_response()  # from file or dir            
 
         self.response_dict = DotMap(response_dict)
         if self.logic_enabled == False:
@@ -189,16 +189,13 @@ class GenAI(object):
 
         self.get_valid_project_name()
 
-        if use_svcs := True:
-            save_dir_final = self.project.from_model 
-            save_dir = str(Path(save_dir_final).parent) # was self.project.from_model @ 828 (system/genai/temp/create_db_models.py), 
-            # save_dir=self.path_dev_import in utils 
-            genai_svcs.fix_and_write_model_file(response_dict=self.response_dict, 
-                                                save_dir=save_dir,  
-                                                post_error=self.post_error,
-                                                use_relns=self.project.genai_use_relns)
-        else:
-            self.z_fix_and_write_model_file() # write create_db_models.py for db creation, & logic (key method)
+        save_dir_final = self.project.from_model 
+        save_dir = str(Path(save_dir_final).parent) # was self.project.from_model @ 828 (system/genai/temp/create_db_models.py), 
+        # save_dir=self.path_dev_import in utils 
+        genai_svcs.fix_and_write_model_file(response_dict=self.response_dict, 
+                                            save_dir=save_dir,  
+                                            post_error=self.post_error,
+                                            use_relns=self.project.genai_use_relns)
         
         self.save_prompt_messages_to_system_genai_temp_project()  # save prompts, response and models.py
         if self.project.project_name_last_node == 'genai_demo_conversation':
@@ -567,7 +564,12 @@ class GenAI(object):
             os.makedirs(to_dir_save_dir, exist_ok=True)
             log.debug(f'save_prompt_messages_to_system_genai_temp_project() - {str(to_dir_save_dir)}')
 
-            if self.project.genai_repaired_response == '':  # normal path, from --using
+            if self.project.genai_repaired_response != '':  # normal path, from --using
+                # we might need this file for Fixup
+                save_repaired_response = to_dir_save_dir.joinpath('repaired.response')  # FIXME don't know project here
+                log.debug(f'\nsaving repaired response to: {save_repaired_response}')
+                shutil.copyfile(self.project.genai_repaired_response, save_repaired_response)
+            else:  # normal path, from --using
                 if write_prompt := True:  # simple test: 3 - Create blt/genai_demo
                     pass
                     file_num = 0  # maintain the sequence of the prompts

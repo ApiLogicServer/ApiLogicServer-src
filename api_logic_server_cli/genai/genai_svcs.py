@@ -450,30 +450,34 @@ def fix_and_write_model_file(response_dict: DotMap,  save_dir: str, post_error: 
         create_db_model_file.write("\n".join(create_db_model_lines))
         create_db_model_file.write("\n\n# end of model classes\n\n")
         
-    # classes done, create db and add test_data code
-    # test_data_lines = get_lines_from_file(f'{get_manager_path()}/system/genai/create_db_models_inserts/create_db_models_create_db.py')
-    # test_data_lines.append('session.commit()')
-    
-    # row_names = insert_test_data_lines(test_data_lines)
+    if os.getenv('APILOGICPROJECT_NO_TEST_DATA') is None:
+        # classes done, create db and add test_data code
+        test_data_lines = get_lines_from_file(f'{get_manager_path()}/system/genai/create_db_models_inserts/create_db_models_create_db.py')
+        test_data_lines.append('session.commit()')
+        
+        row_names = insert_test_data_lines(test_data_lines)
 
-    # test_data_lines.append('\n\n')
-    # row_name_list = ', '.join(row_names)
-    # add_rows = f'session.add_all([{row_name_list}])'
-    # test_data_lines.append(add_rows )  
-    # test_data_lines.append('session.commit()')
-    # test_data_lines.append('# end of test data\n\n')
+        test_data_lines.append('\n\n')
+        row_name_list = ', '.join(row_names)
+        add_rows = f'session.add_all([{row_name_list}])'
+        test_data_lines.append(add_rows )  
+        test_data_lines.append('session.commit()')
+        test_data_lines.append('# end of test data\n\n')
 
-    # test_data_lines_result = []
-    # for line in test_data_lines:
-    #     test_data_lines_result += line.split('\n')
-    
-    # with open(f'{create_db_model_path}', "a") as create_db_model_file:
-    #     create_db_model_file.write("\ntry:\n    ")
-    #     create_db_model_file.write("\n    ".join(test_data_lines_result))
-    #     create_db_model_file.write("\nexcept Exception as exc:\n")
-    #     create_db_model_file.write("    print(f'Test Data Error: {exc}')\n")
-    
-    # log.debug(f'.. code for db creation and test data: {create_db_model_path}')
+        test_data_lines_result = []
+        for line in test_data_lines:
+            test_data_lines_result += line.split('\n')
+        
+        with open(f'{create_db_model_path}', "a") as create_db_model_file:
+            create_db_model_file.write("\ntry:\n    ")
+            create_db_model_file.write("\n    ".join(test_data_lines_result))
+            create_db_model_file.write("\nexcept Exception as exc:\n")
+            create_db_model_file.write("    print(f'Test Data Error: {exc}')\n")
+        
+        log.debug(f'.. code for db creation and test data: {create_db_model_path}')
+    else:
+        log.info(f"Test Data Skipped per env var: APILOGICPROJECT_NO_TEST_DATA")
+        
 
 
 def get_lines_from_file(file_name: str) -> list[str]:
