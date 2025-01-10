@@ -137,9 +137,9 @@ def rebuild_test_data_for_project(response: str = 'docs/response.json',
     project_path = Path(os.getcwd())
     if use_project_path is not None:
         project_path = use_project_path
-    assert project_path.is_dir(), f"Missing project directory: {project_path}"
-    assert project_path.joinpath('database').is_dir(), f"Missing project database directory: {project_path}"
-    assert project_path.joinpath(response).is_file(), f"Missing Response File: {response}"
+    assert project_path.is_dir(), f"rebuild_test_data_for_project - missing project directory: {project_path}"
+    assert project_path.joinpath('database').is_dir(), f"rebuild_test_data_for_project - missing project database directory: {project_path}"
+    assert project_path.joinpath(response).is_file(), f"rebuild_test_data_for_project - missing Response File: {response}"
 
     python_loc = sys.executable  # eg, /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/bin/python
     run_file = project_path.joinpath('database/test_data/response2code.py')
