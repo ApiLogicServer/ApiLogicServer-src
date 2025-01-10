@@ -1,3 +1,9 @@
+#!/usr/bin/env python
+#
+# Convert a WG exported JSON file to Python rules:
+# This script reads an exported JSON file and generates Python rules that can be used to add the rules to the logicbank.
+# We only consider active rules.
+#
 import sys
 import json
 import logging
@@ -7,6 +13,8 @@ log = logging.getLogger(__name__)
 DEFAULT_EXPORT_JSON_PATH = Path('docs/export/export.json')
 
 declare_logic_template = """
+from logic.declare_logic import *
+
 def declare_logic():
     '''
         Imported rules
