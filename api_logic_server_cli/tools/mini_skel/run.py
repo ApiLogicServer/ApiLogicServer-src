@@ -12,7 +12,6 @@ import os
 from pathlib import Path
 
 
-
 @click.command()
 @click.option('--spec', '-s', default=f"./docs/export/export.json", help='Path specifying the export json file')
 @click.option('--directory', '-d', default=None, help='Project directory')
@@ -35,14 +34,13 @@ if __name__ == "__main__":
         "APILOGICPROJECT_PORT": "5656",
         "APILOGICPROJECT_EXTERNAL_PORT": "5656",
         "APILOGICPROJECT_SWAGGER_HOST": "localhost",
-        "APILOGICPROJECT_EXTERNAL_HOST": "localhost"
+        "APILOGICPROJECT_EXTERNAL_HOST": "localhost",
+        "SQLALCHEMY_DATABASE_URI": f"sqlite:///{os.getcwd()}/database/db.sqlite",
+        "APILOGICPROJECT_SRA": str(Path(api_logic_server_cli.__file__).parent / "create_from_model"),
     }
 
     for var, default in env_vars.items():
         os.environ[var] = os.environ.get(var, default)
-        
-    os.environ["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{os.getcwd()}/database/db.sqlite"
-    os.environ["APILOGICPROJECT_SRA"] = str(Path(api_logic_server_cli.__file__).parent / "create_from_model")
 
     base_path = Path(api_logic_server_cli.__file__).parent / "prototypes/base"
     sys.path = ['.', str(base_path), *sys.path]
