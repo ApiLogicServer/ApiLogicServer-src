@@ -1,0 +1,454 @@
+about:
+  date: January 09, 2025 14:55:41
+  recent_changes: works with modified safrs-react-admin
+  version: 0.0.0
+api_root: '{http_type}://{swagger_host}:{port}/{api}'
+authentication: '{system-default}'
+info:
+  number_relationships: 14
+  number_tables: 12
+info_toggle_checked: true
+resources:
+  Accommodation:
+    attributes:
+    - label: ' name*'
+      name: name
+      search: true
+      sort: true
+    - name: destination_id
+    - name: price_per_night
+    - name: accommodation_type
+    - name: id
+    description: Represents available accommodation at a destination.
+    info_list: Represents available accommodation at a destination.
+    tab_groups:
+    - direction: toone
+      fks:
+      - destination_id
+      name: destination
+      resource: Destination
+    type: Accommodation
+    user_key: name
+  Activity:
+    attributes:
+    - label: ' name*'
+      name: name
+      search: true
+      sort: true
+    - name: destination_id
+    - name: description
+    - name: duration
+    - name: id
+    description: Represents an activity that can be added to a booking by a user.
+    info_list: Represents an activity that can be added to a booking by a user.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - activity_id
+      name: BookingList
+      resource: Booking
+    - direction: toone
+      fks:
+      - destination_id
+      name: destination
+      resource: Destination
+    type: Activity
+    user_key: name
+  Booking:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: activity_id
+    - name: destination_id
+    - name: user_id
+    - name: booking_date
+      type: DATETIME
+    - name: total_cost
+    description: Represents a booking instance associating a user, a destination,
+      and activities.
+    info_list: Represents a booking instance associating a user, a destination, and
+      activities.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - booking_id
+      name: InsuranceList
+      resource: Insurance
+    - direction: tomany
+      fks:
+      - booking_id
+      name: MealList
+      resource: Meal
+    - direction: tomany
+      fks:
+      - booking_id
+      name: PaymentList
+      resource: Payment
+    - direction: toone
+      fks:
+      - activity_id
+      name: activity
+      resource: Activity
+    - direction: toone
+      fks:
+      - destination_id
+      name: destination
+      resource: Destination
+    - direction: toone
+      fks:
+      - user_id
+      name: user
+      resource: User
+    type: Booking
+    user_key: id
+  Destination:
+    attributes:
+    - label: ' name*'
+      name: name
+      search: true
+      sort: true
+    - name: description
+    - name: activity_count
+    - name: id
+    description: Represents a holiday destination.
+    info_list: Represents a holiday destination.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - destination_id
+      name: AccommodationList
+      resource: Accommodation
+    - direction: tomany
+      fks:
+      - destination_id
+      name: ActivityList
+      resource: Activity
+    - direction: tomany
+      fks:
+      - destination_id
+      name: BookingList
+      resource: Booking
+    - direction: tomany
+      fks:
+      - destination_id
+      name: GuideList
+      resource: Guide
+    - direction: tomany
+      fks:
+      - destination_id
+      name: ReviewList
+      resource: Review
+    type: Destination
+    user_key: name
+  Guide:
+    attributes:
+    - label: ' name*'
+      name: name
+      search: true
+      sort: true
+    - name: destination_id
+    - name: languages
+    - name: id
+    description: Represents a tour guide available at a destination.
+    info_list: Represents a tour guide available at a destination.
+    tab_groups:
+    - direction: toone
+      fks:
+      - destination_id
+      name: destination
+      resource: Destination
+    type: Guide
+    user_key: name
+  Insurance:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: booking_id
+    - name: user_id
+    - name: policy_number
+    - name: coverage_amount
+    description: Represents an insurance policy booked along with the trip.
+    info_list: Represents an insurance policy booked along with the trip.
+    tab_groups:
+    - direction: toone
+      fks:
+      - booking_id
+      name: booking
+      resource: Booking
+    - direction: toone
+      fks:
+      - user_id
+      name: user
+      resource: User
+    type: Insurance
+    user_key: id
+  Meal:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: booking_id
+    - name: meal_type
+    - name: price
+    description: Represents meals that can be pre-booked for the trip.
+    info_list: Represents meals that can be pre-booked for the trip.
+    tab_groups:
+    - direction: toone
+      fks:
+      - booking_id
+      name: booking
+      resource: Booking
+    type: Meal
+    user_key: id
+  Notification:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: user_id
+    - name: message
+    - name: date_sent
+      type: DATETIME
+    - name: is_read
+    description: Represents messages sent to users.
+    info_list: Represents messages sent to users.
+    tab_groups:
+    - direction: toone
+      fks:
+      - user_id
+      name: user
+      resource: User
+    type: Notification
+    user_key: id
+  Payment:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: booking_id
+    - name: user_id
+    - name: payment_date
+      type: DATETIME
+    - name: amount
+    description: Represents a payment processed for a particular booking.
+    info_list: Represents a payment processed for a particular booking.
+    tab_groups:
+    - direction: toone
+      fks:
+      - booking_id
+      name: booking
+      resource: Booking
+    - direction: toone
+      fks:
+      - user_id
+      name: user
+      resource: User
+    type: Payment
+    user_key: id
+  Review:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: destination_id
+    - name: user_id
+    - name: rating
+    - name: comment
+    description: Represents a user's review of a destination.
+    info_list: Represents a user's review of a destination.
+    tab_groups:
+    - direction: toone
+      fks:
+      - destination_id
+      name: destination
+      resource: Destination
+    - direction: toone
+      fks:
+      - user_id
+      name: user
+      resource: User
+    type: Review
+    user_key: id
+  SPAComponent:
+    attributes:
+    - hidden: true
+      name: id
+      required: true
+    - name: Type
+    - name: prompt
+      type: textarea
+    - name: user_comments
+      type: textarea
+    - name: created_at
+      type: datetime
+    - name: ai_comments
+      type: textarea
+    - label: name
+      name: name
+      required: true
+      search: true
+    - name: code
+      type: textarea
+    hidden: true
+    order: 2002
+    sort: -created_at
+    tab_groups:
+    - direction: tomany
+      fks:
+      - id
+      name: ChildList
+      resource: SPAComponent
+    type: SPAComponent
+    user_key: name
+  SPAPage:
+    attributes:
+    - label: ' name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+    - name: id
+      required: true
+    - name: contact
+    hidden: true
+    order: 2000
+    tab_groups:
+    - direction: tomany
+      fks:
+      - page_id
+      name: SectionList
+      resource: Section
+    type: SPAPage
+    user_key: name
+  SPASection:
+    attributes:
+    - name: order
+      sort: true
+      type: number
+    - label: ' name*'
+      name: name
+      required: true
+      search: true
+    - name: page_id
+    - name: title
+      required: true
+    - name: subtitle
+    - name: label
+    - name: Type
+    - name: paragraph
+      type: textarea
+    - name: content
+      type: textarea
+    - name: id
+    - name: background
+    - name: template
+    - name: style
+      type: json
+    - name: hidden
+      type: boolean
+    hidden: true
+    order: 2001
+    sort: order
+    tab_groups:
+    - direction: toone
+      fks:
+      - page_id
+      name: page
+      resource: SPASection
+    type: SPASection
+    user_key: name
+  Transport:
+    attributes:
+    - label: ' name*'
+      name: name
+      search: true
+      sort: true
+    - name: departure_date
+      type: DATETIME
+    - name: arrival_date
+      type: DATETIME
+    - name: departure_location
+    - name: arrival_location
+    - name: id
+    description: Represents transport arrangements for a booking.
+    info_list: Represents transport arrangements for a booking.
+    type: Transport
+    user_key: name
+  User:
+    attributes:
+    - label: ' name*'
+      name: name
+      search: true
+      sort: true
+    - name: email
+    - name: booking_count
+    - name: id
+    description: Represents a user in the holiday planner system.
+    info_list: Represents a user in the holiday planner system.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - user_id
+      name: BookingList
+      resource: Booking
+    - direction: tomany
+      fks:
+      - user_id
+      name: InsuranceList
+      resource: Insurance
+    - direction: tomany
+      fks:
+      - user_id
+      name: NotificationList
+      resource: Notification
+    - direction: tomany
+      fks:
+      - user_id
+      name: PaymentList
+      resource: Payment
+    - direction: tomany
+      fks:
+      - user_id
+      name: ReviewList
+      resource: Review
+    type: User
+    user_key: name
+settings:
+  HomeJS: /admin-app/home.js
+  max_list_columns: 8
+  style_guide:
+    applicationLocales:
+    - en
+    - es
+    currency_symbol: $
+    currency_symbol_position: left
+    date_format: LL
+    decimal_max: '1000000000'
+    decimal_min: '0'
+    decimal_separator: .
+    detail_mode: tab
+    edit_on_mode: dblclick
+    exclude_listpicker: false
+    include_translation: 'false'
+    keycloak_client_id: alsclient
+    keycloak_realm: kcals
+    keycloak_url: http://localhost:8080
+    locale: en
+    max_decimal_digits: '4'
+    min_decimal_digits: '2'
+    new_mode: dialog
+    pick_style: list
+    row_height: small,
+    serviceType: OntimizeEE
+    startSessionPath: /auth/login
+    style: light
+    thousand_separator: ','
+    use_keycloak: 'false'
