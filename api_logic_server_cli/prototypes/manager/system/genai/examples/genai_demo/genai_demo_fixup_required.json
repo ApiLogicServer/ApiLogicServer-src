@@ -1,0 +1,133 @@
+{
+    "models": [
+        {
+            "classname": "Customer",
+            "code": "class Customer(Base):\n    __tablename__ = 'customers'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String, nullable=False)\n    credit_limit = Column(Integer, nullable=False)\n\n    def __repr__(self):\n        return f\"Customer(id={self.id}, name='{self.name}', balance={self.balance}, credit_limit={self.credit_limit})\"",
+            "sqlite_create": "CREATE TABLE customers (\n    id INTEGER PRIMARY KEY AUTOINCREMENT, \n    name VARCHAR NOT NULL, \n    balance INTEGER DEFAULT 0, \n    credit_limit INTEGER NOT NULL\n)",
+            "description": "description: Customers table",
+            "name": "customers"
+        },
+        {
+            "classname": "Order",
+            "code": "class Order(Base):\n    __tablename__ = 'orders'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    customer_id = Column(Integer, ForeignKey('customers.id'))\n    notes = Column(String)\n    date_shipped = Column(Date)\n    amount_total = Column(Integer, default=0)\n\n    def __repr__(self):\n        return f\"Order(id={self.id}, customer_id={self.customer_id}, notes='{self.notes}', amount_total={self.amount_total}, date_shipped={self.date_shipped})\"",
+            "sqlite_create": "CREATE TABLE orders (\n    id INTEGER PRIMARY KEY AUTOINCREMENT, \n    customer_id INTEGER, \n    notes VARCHAR, \n    date_shipped DATE, \n    amount_total INTEGER DEFAULT 0, \n    FOREIGN KEY(customer_id) REFERENCES customers (id)\n)",
+            "description": "description: Orders table",
+            "name": "orders"
+        },
+        {
+            "classname": "Item",
+            "code": "class Item(Base):\n    __tablename__ = 'items'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    order_id = Column(Integer, ForeignKey('orders.id'))\n    product_id = Column(Integer, ForeignKey('products.id'))\n    quantity = Column(Integer, nullable=False)\n    unit_price = Column(Integer, nullable=False)\n    amount = Column(Integer, default=0)\n\n    def __repr__(self):\n        return f\"Item(id={self.id}, order_id={self.order_id}, product_id={self.product_id}, quantity={self.quantity}, unit_price={self.unit_price}, amount={self.amount})\"",
+            "sqlite_create": "CREATE TABLE items (\n    id INTEGER PRIMARY KEY AUTOINCREMENT, \n    order_id INTEGER, \n    product_id INTEGER, \n    quantity INTEGER NOT NULL, \n    unit_price INTEGER NOT NULL, \n    amount INTEGER DEFAULT 0, \n    FOREIGN KEY(order_id) REFERENCES orders (id), \n    FOREIGN KEY(product_id) REFERENCES products (id)\n)",
+            "description": "description: Items table",
+            "name": "items"
+        },
+        {
+            "classname": "Product",
+            "code": "class Product(Base):\n    __tablename__ = 'products'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String, nullable=False)\n    unit_price = Column(Integer, nullable=False)\n\n    def __repr__(self):\n        return f\"Product(id={self.id}, name='{self.name}', unit_price={self.unit_price})\"",
+            "sqlite_create": "CREATE TABLE products (\n    id INTEGER PRIMARY KEY AUTOINCREMENT, \n    name VARCHAR NOT NULL, \n    unit_price INTEGER NOT NULL\n)",
+            "description": "description: Products table",
+            "name": "products"
+        }
+    ],
+    "rules": [
+        {
+            "name": "Customer Balance Constraint",
+            "description": "Ensures the customer's balance does not exceed the credit limit.",
+            "use_case": "Customer.balance <= credit_limit",
+            "code": "Rule.constraint(validate=Customer,\n                as_condition=lambda row: row.balance <= row.credit_limit,\n                error_msg=\"Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})\")"
+        },
+        {
+            "name": "Customer Balance Derivation",
+            "description": "Calculates the customer's balance as the sum of orders' amount_total where date_shipped is null.",
+            "use_case": "Customer.balance = Sum(Order.amount_total where date_shipped is null)",
+            "code": "Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None)"
+        },
+        {
+            "name": "Order Amount Total Derivation",
+            "description": "Calculates order's amount_total as the sum of item amounts.",
+            "use_case": "Order.amount_total = Sum(Item.amount)",
+            "code": "Rule.sum(derive=Order.amount_total, as_sum_of=Item.amount)"
+        },
+        {
+            "name": "Item Amount Derivation",
+            "description": "Calculates item amount as quantity multiplied by unit price.",
+            "use_case": "Item.amount = quantity * unit_price",
+            "code": "Rule.formula(derive=Item.amount, as_expression=lambda row: row.quantity * row.unit_price)"
+        },
+        {
+            "name": "Copy Item Unit Price",
+            "description": "Copies the product's unit price to the item.",
+            "use_case": "Store the Item.unit_price as a copy from Product.unit_price",
+            "code": "Rule.copy(derive=Item.unit_price, from_parent=Product.unit_price)"
+        }
+    ],
+    "test_data": "Insert test data into the tables with values compatible with the derived logic.",
+    "test_data_rows": [
+        {
+            "test_data_row_variable": "test_customer_1",
+            "code": "test_customer_1 = Customer(name='Customer 1', balance=300, credit_limit=1000)"
+        },
+        {
+            "test_data_row_variable": "test_customer_2",
+            "code": "test_customer_2 = Customer(name='Customer 2', balance=500, credit_limit=750)"
+        },
+        {
+            "test_data_row_variable": "test_customer_3",
+            "code": "test_customer_3 = Customer(name='Customer 3', balance=0, credit_limit=1500)"
+        },
+        {
+            "test_data_row_variable": "test_customer_4",
+            "code": "test_customer_4 = Customer(name='Customer 4', balance=200, credit_limit=1200)"
+        },
+        {
+            "test_data_row_variable": "test_order_1",
+            "code": "test_order_1 = Order(customer_id=1, notes='Order 1 notes', amount_total=150)"
+        },
+        {
+            "test_data_row_variable": "test_order_2",
+            "code": "test_order_2 = Order(customer_id=2, notes='Order 2 notes', amount_total=0)"
+        },
+        {
+            "test_data_row_variable": "test_order_3",
+            "code": "test_order_3 = Order(customer_id=2, notes='Order 3 notes', amount_total=0)"
+        },
+        {
+            "test_data_row_variable": "test_order_4",
+            "code": "test_order_4 = Order(customer_id=3, notes='Order 4 notes', amount_total=150)"
+        },
+        {
+            "test_data_row_variable": "test_item_1",
+            "code": "test_item_1 = Item(order_id=1, product_id=1, quantity=3, unit_price=50, amount=150)"
+        },
+        {
+            "test_data_row_variable": "test_item_2",
+            "code": "test_item_2 = Item(order_id=2, product_id=2, quantity=2, unit_price=0, amount=0)"
+        },
+        {
+            "test_data_row_variable": "test_item_3",
+            "code": "test_item_3 = Item(order_id=3, product_id=3, quantity=1, unit_price=0, amount=0)"
+        },
+        {
+            "test_data_row_variable": "test_item_4",
+            "code": "test_item_4 = Item(order_id=4, product_id=1, quantity=3, unit_price=50, amount=150)"
+        },
+        {
+            "test_data_row_variable": "test_product_1",
+            "code": "test_product_1 = Product(name='Product 1', unit_price=50)"
+        },
+        {
+            "test_data_row_variable": "test_product_2",
+            "code": "test_product_2 = Product(name='Product 2', unit_price=25)"
+        },
+        {
+            "test_data_row_variable": "test_product_3",
+            "code": "test_product_3 = Product(name='Product 3', unit_price=75)"
+        },
+        {
+            "test_data_row_variable": "test_product_4",
+            "code": "test_product_4 = Product(name='Product 4', unit_price=100)"
+        }
+    ],
+    "test_data_sqlite": "INSERT INTO customers (name, balance, credit_limit) VALUES ('Customer 1', 300, 1000);\nINSERT INTO customers (name, balance, credit_limit) VALUES ('Customer 2', 500, 750);\nINSERT INTO customers (name, balance, credit_limit) VALUES ('Customer 3', 0, 1500);\nINSERT INTO customers (name, balance, credit_limit) VALUES ('Customer 4', 200, 1200);\n\nINSERT INTO orders (customer_id, notes, date_shipped, amount_total) VALUES (1, 'Order 1 notes', NULL, 150);\nINSERT INTO orders (customer_id, notes, date_shipped, amount_total) VALUES (2, 'Order 2 notes', NULL, 0);\nINSERT INTO orders (customer_id, notes, date_shipped, amount_total) VALUES (2, 'Order 3 notes', NULL, 0);\nINSERT INTO orders (customer_id, notes, date_shipped, amount_total) VALUES (3, 'Order 4 notes', NULL, 150);\n\nINSERT INTO items (order_id, product_id, quantity, unit_price, amount) VALUES (1, 1, 3, 50, 150);\nINSERT INTO items (order_id, product_id, quantity, unit_price, amount) VALUES (2, 2, 2, 25, 0);\nINSERT INTO items (order_id, product_id, quantity, unit_price, amount) VALUES (3, 3, 1, 75, 0);\nINSERT INTO items (order_id, product_id, quantity, unit_price, amount) VALUES (4, 1, 3, 50, 150);\n\nINSERT INTO products (name, unit_price) VALUES ('Product 1', 50);\nINSERT INTO products (name, unit_price) VALUES ('Product 2', 25);\nINSERT INTO products (name, unit_price) VALUES ('Product 3', 75);\nINSERT INTO products (name, unit_price) VALUES ('Product 4', 100);",
+    "name": "genai_demo_fixup_required"
+}
