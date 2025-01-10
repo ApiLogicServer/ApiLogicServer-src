@@ -26,6 +26,7 @@ from api_logic_server_cli.genai.genai_svcs import (
     WGResult
 )
 import create_from_model.api_logic_server_utils as utils
+from  genai.json2rules import json2rules
 
 log = logging.getLogger(__name__)
 
@@ -304,7 +305,12 @@ Base.metadata.create_all(engine)"""
             """
             logic_discovery_path = this_ref.path_dev.joinpath("logic/discovery")
             os.makedirs(logic_discovery_path, exist_ok=True)
-            # Implementation to merge or copy logic files would go here.
+            export_json = self.path_wg.joinpath("docs/export/export.json")
+            if export_json.is_file():
+                try:
+                    json2rules(export_json, logic_discovery_path)
+                except Exception as exc:
+                    log.error(f"Failed to import logic from {export_json}: {exc}")
 
         log.info(f"import_genai from genai export at: {self.using}")
         self.path_wg = Path(self.using)
