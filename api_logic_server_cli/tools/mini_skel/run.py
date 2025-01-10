@@ -11,17 +11,20 @@ import sys
 import os
 from pathlib import Path
 
-cwd = os.getcwd()
+
 
 @click.command()
-@click.option('--spec', '-s', default=f"{cwd}/docs/export/export.json", help='Path specifying the export json file')
+@click.option('--spec', '-s', default=f"./docs/export/export.json", help='Path specifying the export json file')
 @click.option('--directory', '-d', default=None, help='Project directory')
 def main(spec, directory):
     
+    if not directory:
+        directory = os.getcwd()
+
     port = os.environ.get("APILOGICPROJECT_EXTERNAL_PORT",5656)
     from api_logic_server_cli.prototypes.base.api_logic_server_run import flask_app
     
-    os.chdir(cwd) # change to the project directory - may have changed during initialization
+    os.chdir(directory) # change to the project directory - may have changed during initialization
 
     with flask_app.app_context():
         flask_app.run("0.0.0.0", threaded=True, port=int(port))
@@ -38,7 +41,7 @@ if __name__ == "__main__":
     for var, default in env_vars.items():
         os.environ[var] = os.environ.get(var, default)
         
-    os.environ["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{cwd}/database/db.sqlite"
+    os.environ["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{os.getcwd()}/database/db.sqlite"
     os.environ["APILOGICPROJECT_SRA"] = str(Path(api_logic_server_cli.__file__).parent / "create_from_model")
 
     base_path = Path(api_logic_server_cli.__file__).parent / "prototypes/base"
