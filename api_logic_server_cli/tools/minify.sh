@@ -54,15 +54,16 @@ if [[ -d "${minified_dir_name}" ]]; then
     esac
 fi
 
-mkdir -p "${minified_dir_name}"
+mkdir -p "${minified_dir_name}/ui/admin"
 cd "${minified_dir_name}" || exit 1
 
 cp -r "${minify_skel_dir}"/* .
+cp -r "${minify_skel_dir}"/.vscode .
 cp "${PROJECT_DIR}/database/"{models.py,db.sqlite} database/
 cp "${PROJECT_DIR}/ui/admin/admin.yaml" ui/admin/admin.yaml
 
 
 echo "Created ${minified_dir_name}"
 echo "You can now run the minified project with:"
-echo "cd ${minified_dir_name}"
-echo "python run.py"
+echo "  cd ${minified_dir_name}"
+echo "  python run.py"
