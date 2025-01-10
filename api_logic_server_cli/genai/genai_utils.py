@@ -244,7 +244,7 @@ class GenAIUtils:
           3. Example usage: als genai-utils --import-genai --using=../wg_genai_demo_no_logic_fixed_from_CLI
         """
 
-        def get_wg_project_models(path_wg: Path) -> List[Dict]:
+        def get_wg_project_models_from_docs_export(path_wg: Path) -> List[Dict]:
             """
             Return models from a wg-project's export.json.
 
@@ -255,7 +255,7 @@ class GenAIUtils:
                 json_data = json.load(file)
             return json_data["models"]
 
-        def get_dev_project_models(path_dev: Path) -> Dict[str, str]:
+        def get_dev_project_models_from_database_models_py(path_dev: Path) -> Dict[str, str]:
             """
             Retrieves existing models.py content from the dev-project.
 
@@ -312,6 +312,11 @@ Base.metadata.create_all(engine)"""
                 except Exception as exc:
                     log.error(f"Failed to import logic from {export_json}: {exc}")
 
+
+        ##############################
+        # Main import_genai_project
+        ##############################
+
         log.info(f"import_genai from genai export at: {self.using}")
         self.path_wg = Path(self.using)
         if not self.path_wg.is_dir():
@@ -320,7 +325,6 @@ Base.metadata.create_all(engine)"""
         self.path_dev = Path(os.getcwd())
         self.path_dev_import = self.path_dev.joinpath("docs/import")
         os.makedirs(self.path_dev_import, exist_ok=True)
-        add_web_genai_logic(self)
         
         if self.import_resume:
             log.debug(".. import_genai: rebuild-from-response")
@@ -337,10 +341,10 @@ Base.metadata.create_all(engine)"""
             self.import_request = []
             self.import_request.append(get_prompt_you_are())
 
-            wg_models = {"models": get_wg_project_models(self.path_wg)}
+            wg_models = {"models": get_wg_project_models_from_docs_export(self.path_wg)}
             self.import_request.append({"role": "user", "content": json.dumps(wg_models)})
 
-            dev_models = get_dev_project_models(self.path_dev)
+            dev_models = get_dev_project_models_from_database_models_py(self.path_dev)
             self.import_request.append({"role": "user", "content": json.dumps(dev_models)})
 
             self.import_command, _ = get_create_prompt__with_inserts(
@@ -360,5 +364,6 @@ Base.metadata.create_all(engine)"""
             fix_and_write_model_file(response_dict=self.import_response, save_dir=self.path_dev_import)
 
         create_db_and_rebuild_project_from_db(self)
+        add_web_genai_logic(self)
         
         log.info(f".. import complete: {self.using}/import")
