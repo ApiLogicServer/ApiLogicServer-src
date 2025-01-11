@@ -52,7 +52,7 @@
         },
         {
             "classname": "Order",
-            "code": "class Order(Base):\n    \"\"\"\n    description: Represents an order made by a customer, needing a valid customer reference.\n    \"\"\"\n    __tablename__ = 'orders'\n    _s_collection_name = 'Order'  # type: ignore\n    __bind_key__ = 'None'\n\n    id = Column(Integer, primary_key=True)\n    customer_id = Column(ForeignKey('customers.id'), nullable=False)\n    order_date = Column(DateTime)\n    notes = Column(String(255))\n    amount_total = Column(Integer)\n    amount_total = Column(Integer)\n\n    # parent relationships (access parent)\n    customer : Mapped[\"Customer\"] = relationship(back_populates=(\"OrderList\"))\n\n    # child relationships (access children)\n    ItemList : Mapped[List[\"Item\"]] = relationship(back_populates=\"order\")"
+            "code": "class Order(Base):\n    \"\"\"\n    description: Represents an order made by a customer, needing a valid customer reference.\n    \"\"\"\n    __tablename__ = 'orders'\n    _s_collection_name = 'Order'  # type: ignore\n    __bind_key__ = 'None'\n\n    id = Column(Integer, primary_key=True)\n    customer_id = Column(ForeignKey('customers.id'), nullable=False)\n    order_date = Column(DateTime)\n    notes = Column(String(255))\n    amount_total = Column(Integer)\n    # parent relationships (access parent)\n    customer : Mapped[\"Customer\"] = relationship(back_populates=(\"OrderList\"))\n\n    # child relationships (access children)\n    ItemList : Mapped[List[\"Item\"]] = relationship(back_populates=\"order\")"
         },
         {
             "classname": "Item",
