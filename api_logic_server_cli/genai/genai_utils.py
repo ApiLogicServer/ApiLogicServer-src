@@ -275,11 +275,12 @@ class GenAIUtils:
             """
             
             add_create_all = """
+print('*** docs/import/create_db_models here ***')
 engine = create_engine('sqlite:///docs/import/create_db_models.sqlite')
 
 Base.metadata.create_all(engine)"""
 
-            # Create the new SQLite DB
+            # Create the new SQLite DB using the merged models in docs/import/create_db_models.py
             new_db_path = this_ref.path_dev_import.joinpath("create_db_models.sqlite")
             create_db_models_path = this_ref.path_dev_import.joinpath("create_db_models.py")
             utils.replace_string_in_file(
@@ -287,6 +288,12 @@ Base.metadata.create_all(engine)"""
                 replace_with=add_create_all,
                 in_file=create_db_models_path
             )
+            utils.replace_string_in_file(
+                search_for="mgr_db_loc = True",
+                replace_with="mgr_db_loc = False",
+                in_file=create_db_models_path
+            )
+            
             runpy.run_path(path_name=create_db_models_path)  # Create the new DB by running dev_demo_no_logic_fixed/docs/import/create_db_models.py
             assert new_db_path.exists(), "FIXME failed to create new db using {create_db_models_path}"
             # dev_demo_no_logic_fixed/docs/import/create_db_models.sqlite
@@ -294,6 +301,7 @@ Base.metadata.create_all(engine)"""
                         this_ref.path_dev.joinpath("database/db.sqlite"))  # Copy to dev-project ..dev_demo_no_logic_fixed
 
             # Rebuild the project from the newly created database
+            os.environ["APILOGICPROJECT_NO_FLASK"] = "None"  # introspection requires safrs properties
             this_ref.project.command = "rebuild-from-database"
             this_ref.project.db_url = f"sqlite:///{new_db_path}"
             this_ref.project.project_name = "."
@@ -337,6 +345,7 @@ Base.metadata.create_all(engine)"""
 
         self.path_dev = Path(os.getcwd())
         setup_import_dir()
+        os.environ["APILOGICPROJECT_NO_FLASK"] = "1"  # no automatic data loading
         
         if self.import_resume:
             log.debug(".. import_genai: rebuild-from-response")
