@@ -2,37 +2,7 @@
 
 This is the Diego Lo Giudice challenge: enable ongoing parallel development with both the LOB and Dev *teams.*  It's enabled by declarative technology, where the integration is done with software, not manual effort.
 
-It works like this:
-
-1. The project begins with the **Kickstart:** several iterations to get *solid requirements*.
-    * Uses Natural Language and Declarative Rules
-
-2. The project is **exported:** the Dev Team begin work on the Custom UI, Enterprise Integration, etc
-    * This is *not* the end of declarative: logic is either or both of Natural Language, and Python DSL
-
-3. As depicted in the **divergent arcs:** there are now 2 versions of the project.  Both can, in parallel, introduce new rules and attributes.  This is not just "Team Development", it is ***TeamS Development***.
-    * **LOB Parallel:** (WG_Team): new rules & attributes
-        * Observe: WG is not a day-1-only pilot...
-        * They continue to use the Natural Language Web-Based interface (WebGenai)
-    * **Dev_Team:** their own new rules & attributes, using either genai Natural Language and/or alembic...
-        * In addition, the server team also uses Python (and) and libs as required, e.g. for enterprise integration. 
-            * They do this in their favorite IDE, with tools such as GitHub etc.
-            * Observe the logic remains at a high lev
-        * The UI team can use familiar tools for Custom UIs.  These 
-            * leverage the API (ready day 1, so they are not blocked on API Dev), and
-            * are dramatically simplified by automated backend rule-based logic
-
-4. **Export 2:** illustrates that the LOB WG_Team can export their project.  The dev team can import it using the API Logic Server CLI.
-
-    * This automatically integrates rules and attributes from both projects, **updating the dev project with a new database and models.**
-        * This is virtually impossible with procedural code, because developers must manually assess the execution dependencies and order the logic properly.  It time-consuming, complex, and error-prone - just like post deployment maintenance.
-        * The integration is automatic and "safe" because logic is expressed in a declarative rules/models for which *ordering is automatic.*  
-    * It also rebuilds the test data, per your rules (e.g. sum/count values)
-    * The process supports multiple exports.
-
-<br/>
-
-![genai-process](https://raw.githubusercontent.com/ApiLogicServer/Docs/refs/heads/main/docs/images/sample-ai/genai/genai-process.png)
+Please see [Import Documentation](https://apilogicserver.github.io/Docs/IDE-Import-WebGenAI/).
 
 <br/>
 
@@ -65,23 +35,6 @@ cd system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed
 als genai-utils --import-genai --using=../wg_demo_no_logic_fixed
 ```
 
-That will leave things in this state:
-
-![genai-process](https://raw.githubusercontent.com/ApiLogicServer/Docs/refs/heads/main/docs/images/sample-ai/genai/genai-process-merged-models.png)
-
-The `import-genai` command creates the `docs/import` directory and the following files, as shown above:
-
-* `request.json` is sent to ChatGPT.  It contains both models, and a command to merge them
-* `response.json` is the merged model.  It should reflect the attributes from both sides, as shown
-* The response is translated to `system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed/docs/import/create_db_models.py`
-* The system creates `docs/import/create_db_models.py/create_db_models.sqlite` by executing the file above.
-* The system then uses this to update the dev project:
-    * update the dev `database/db.sqlite` and 
-    * Runs `--rebuild-from-database`.  This updates the model, the api, etc from the new database.
-    * **It's good practice to verify these**.  Make sure all the attributes from both sources are reflected in the updated **database** and **models** noted above.
-
-> you cannot currently re-run the tests, since it appears to encounter dups in sqlite.  See the re-run instructions, below.
-
 <br/>
 
 ### Restart option for failure recovery
@@ -101,47 +54,3 @@ It may fail, requiring either a **re-run** or an `import-resume`:
 cd system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed
 als genai-utils --import-genai --using=../wg_demo_no_logic_fixed --import-resume
 ```
-
-<br/>
-
-# Appendices
-
-<br/>
-
-## Recreating the sample from WebGenai (TBD - incomplete)
-
-It was created like this (no need to do this, it's already done):
-* cd project
-* als genai-logic
-* als genai-utils --fixup
-* cd ..
-* als genai --retries=-1 --project-name=genai_demo_no_logic_fixed --using=genai_demo_no_logic --repaired-response=genai_demo_no_logic/docs/fixup/response_fixup.json
-
-<br/>
-
-## Ground Rules
-* No Dev_Team -> WG_Team integration (just deploy Dev_Team version, and use)
-    * Dev team code cannot be integrated into WG - dependencies, libs, integration, ...
-* WG_Team - serial dev (as now)
-* WG_Team logic files are separate from Dev_Team (eg, using logic/discovery)
-* sqlite only, for now (presume upgrade to 'some other db' is doable later)
-    * Tyler, what were the issues you mentioned in sqlite that forced you to use PG?
-* All Dev_Team and logic generations are finished before merge-G
-
-<br/>
-
-## Status - 1/8
-
-Should work:
-* after BLT
-* in wg_test suite
-
-TODO / Fixup:
-1. seems to lose tables (had to have rules on Order etc)
-
-TODO / Import
-1. See #2 above.  Item stuff like def __repr__(self)...
-    * To get around, 
-
-TODO / not done:
-* pull in wg rules
