@@ -90,6 +90,7 @@ USER api_logic_server
 ENV APILOGICSERVER_RUNNING=DOCKER
 ENV APILOGICSERVER_FROM=python:3.11.4-slim-bullseye
 ENV PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/api_logic_server/bin
+ENV PYTHONPATH=/home/api_logic_server:$PYTHONPATH
 # EXPOSE 5656
 # EXPOSE 5002
 
