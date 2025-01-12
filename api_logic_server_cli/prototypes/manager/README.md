@@ -1,5 +1,5 @@
 ---
-version info: 0.9 (11/21/2024)
+version info: 1.0 (01/11/2025)
 ---
 ## Welcome to API Logic Server
 
@@ -8,8 +8,6 @@ version info: 0.9 (11/21/2024)
 2. ***Customize*** with **Rules** and Python in your IDE: created projects use standard Python libraries (Flask, SQLAlchemy)
 
 </br>
-
-> **Evaluation Guide:** open *"1. Existing Database - pre-installed sample database"*, below.
 
 You are in the [API Logic Server Manager](https://apilogicserver.github.io/Docs/Manager/).  This is a good place to manage projects, create notes and resources, etc.
 
@@ -66,50 +64,9 @@ Created projects use standard Flask and SQLAlchemy; automation is provided by Lo
 
 &nbsp;
 
-## Explore Pre-created Samples
-
-<details markdown>
-
-<summary> Explore Pre-created Samples</summary>
-
-<br>The `samples` folder has pre-created important projects you will want to review at some point (Important: look for **readme files**):
-
-* [nw_sample_nocust](https://apilogicserver.github.io/Docs/Tutorial/) - northwind (customers, orders...) database
-
-    * This reflects the results you can expect with your own databases
-
-* [nw_sample](https://apilogicserver.github.io/Docs/Sample-Database/) - same database, but with ***with [customizations](https://apilogicserver.github.io/Docs/IDE-Customize/) added***.  It's a great resource for exploring how to customize your projects.
-
-    * Hint: use your IDE to search for `#als`
-
-* [tutorial](https://apilogicserver.github.io/Docs/Tutorial/) - short (~30 min) walk-through of using API Logic Server using the northwind (customers, orders...) database
-
-</br>
-
-<details markdown>
-
-<summary>You can always re-create the samples</summary>
-
-<br>Re-create them as follows:
-
-1. Open a terminal window (**Terminal > New Terminal**), and paste the following CLI command:
-
-```bash
-ApiLogicServer create --project-name=samples/tutorial --db-url=
-ApiLogicServer create --project-name=samples/nw_sample --db-url=nw+
-ApiLogicServer create --project-name=samples/nw_sample_nocust --db-url=nw
-```
-</details>
-
-
-</details>
-
-
-&nbsp;
-
 ##  Explore Creating Projects
 
-Click on the disclosure buttons, below.  (Important: look for **readme files.**)
+**Evaluation Guide:** click on the disclosure buttons, below.  Important: look for **readme files.**
 </br>
 
 <details markdown>
@@ -128,7 +85,7 @@ als create --project-name=basic_demo --db-url=basic_demo
 als create --project-name=nw_sample_nocust --db-url=sqlite:///nw.sqlite
 ```
 
-<br>See **with customizations** in the [pre-created sample apps](#important-pre-created-sample-apps).  This is an **important learning resource**.
+<br>See **with customizations** in the [pre-created sample apps](#explore-pre-created-samples).  This is an **important learning resource**.
 
 Then, try your own databases [(db-url examples here)](https://apilogicserver.github.io/Docs/Database-Connectivity/), or experiment with [these Docker databases](https://apilogicserver.github.io/Docs/Database-Docker/).
 
@@ -361,6 +318,27 @@ Internal Note: this sequence available in the run configs (f1/f2).
 
 <details markdown>
 
+<summary>Create from WebGenAI, and import (merge) subsequent changes</summary>
+
+<br>You can use [WebGenAI](https://apilogicserver.github.io/Docs/WebGenAI/) to create a project, and export it.  
+
+You (or colleagues) can make changes to both the WebGenAI project (on the web), and your downloaded project.  You can import the WebGenAI project, and the system will merge changes to the data model and rules automatically.  
+
+This is possible since the logic is declarative, so ordering is automatic.  This eliminates the troublesome merge issues so prevalent in procedural code.  For more on import, [click here](https://apilogicserver.github.io/Docs/IDE-Import-WebGenAI/).
+
+The Manager pre-installs a sample project you can use to explore import:
+
+```bash
+cd system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed
+als genai-utils --import-genai --using=../wg_demo_no_logic_fixed
+```
+
+</details>
+
+</br>
+
+<details markdown>
+
 <summary>Rebuild the test data</summary>
 
 <br>Fixes project issues by rebuilding the database to conform to the derivation rules:
@@ -498,6 +476,47 @@ als create --project-name=sample_ai --from-model=sample_ai.py --db-url=sqlite
 <br>A final option for GenAI is to use your Browser with ChatGPT.
 
 Please see [this doc](https://apilogicserver.github.io/Docs/Sample-AI-ChatGPT/)
+
+</details>
+
+
+&nbsp;
+
+## Explore Pre-created Samples
+
+<details markdown>
+
+<summary> Explore Pre-created Samples</summary>
+
+<br>The `samples` folder has pre-created important projects you will want to review at some point (Important: look for **readme files**):
+
+* [nw_sample_nocust](https://apilogicserver.github.io/Docs/Tutorial/) - northwind (customers, orders...) database
+
+    * This reflects the results you can expect with your own databases
+
+* [nw_sample](https://apilogicserver.github.io/Docs/Sample-Database/) - same database, but with ***with [customizations](https://apilogicserver.github.io/Docs/IDE-Customize/) added***.  It's a great resource for exploring how to customize your projects.
+
+    * Hint: use your IDE to search for `#als`
+
+* [tutorial](https://apilogicserver.github.io/Docs/Tutorial/) - short (~30 min) walk-through of using API Logic Server using the northwind (customers, orders...) database
+
+</br>
+
+<details markdown>
+
+<summary>You can always re-create the samples</summary>
+
+<br>Re-create them as follows:
+
+1. Open a terminal window (**Terminal > New Terminal**), and paste the following CLI command:
+
+```bash
+ApiLogicServer create --project-name=samples/tutorial --db-url=
+ApiLogicServer create --project-name=samples/nw_sample --db-url=nw+
+ApiLogicServer create --project-name=samples/nw_sample_nocust --db-url=nw
+```
+</details>
+
 
 </details>
 
