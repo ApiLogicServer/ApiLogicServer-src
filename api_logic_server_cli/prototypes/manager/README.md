@@ -211,29 +211,14 @@ cd genai_demo_no_logic
 als genai-logic --suggest
 ```
 
-You can review the [resultant logic suggestions](genai_demo_no_logic/docs/logic) in the `genai_demo_no_logic` project:
+You can review the [resultant logic suggestions](genai_demo_no_logic/docs/logic_suggestions) in the `genai_demo_no_logic` project:
 
- * See and edit: `docs/logic_suggestions/logic_suggestions.txt` (used in step 3, below)
+ * See and edit: `docs/logic_suggestions/002_logic_suggestions.prompt` (used in step 3, below)
     * This corresponds to the Logic Editor - Logic View in the WebGenAI web app
- * Diagnostic info at: `docs/logic_suggestions/logic_suggestions.response`
 
 ```bash title="3. See the rules for the logic - under construction - please ignore for now"
 # 3. See the rule code for the logic
 als genai-logic --suggest --logic='*'
-```
-You can inspect the generated suggestions:
-
-* `docs/logic_suggestions/logic_suggestions_code.txt`
-    * This corresponds to the Suggestions Editor - Code View in the WebGenAI web app
-
-Results vary (it's AI!), but here's one example:
-```
-The Customer's balance must be less than or equal to their credit limit.
-The Customer's total order amount is the sum of all orders placed by them.
-Each Order's total amount is the sum of amounts from Order Items.
-Calculates the amount of an Order Item as quantity multiplied by unit price.
-Product price must be a non-null value.
-The count of total orders placed by a Customer.
 ```
 
 Important notes about suggestions and generated code:
@@ -241,15 +226,15 @@ Important notes about suggestions and generated code:
 * The example above was pretty good, but sometimes the results are downright silly:
     * Just run suggest again, or
         * Note: must must delete 
-    * Repair `docs/logic_suggestions/logic_suggestions.response`
+    * Repair `docs/logic_suggestions/002_logic_suggestions.prompt`
 
 Also...
 * It is not advised to paste the code into `logic/declare_logic.py`
-    * Your logic may result in new data model attributes
+    * The suggested logic may result in new data model attributes
     * These are created automatically by running `als genai` (next step)
 
 When you are ready to proceed:
-1. Execute the following to create a *new project* (iteration), with logic:
+1. Execute the following to create a *new project* (iteration), with suggested logic:
 
 ```bash title="4. Now, (alter and) Implement the Rule Suggestions"
 # 4. Now, (alter and) Implement the Rule Suggestions

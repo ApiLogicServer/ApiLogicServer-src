@@ -107,6 +107,25 @@ class GenAILogic(object):
             logic_files.append(self.project.genai_using)
         return logic_files
     
+    def get_learning_requests(self) -> List [ Dict[str, str]]:
+        """ Get learning requests from cwd/system/genai/learning_requests
+
+        Returns:
+            list: learning_requests dicts {"role": "user", "content": learning_request_lines}
+        """
+
+        learning_requests : List[ Dict[str, str] ] = []  # learning -> prompt/response conversation to be sent to ChatGPT
+        request_files_dir_path = self.manager_path.joinpath(f'system/genai/learning_requests')
+        if request_files_dir_path.exists():
+            # loop through files in request_files_dir, and append to prompt_messages
+            for root, dirs, files in os.walk(request_files_dir_path):
+                for file in files:
+                    if file.endswith(".prompt"):
+                        with open(request_files_dir_path.joinpath(file), "r") as learnings:
+                            learning_request_lines = learnings.read()
+                        learning_requests.append( {"role": "user", "content": learning_request_lines})
+        return learning_requests  # TODO - what if no learning requests?
+    
     def get_learnings_and_data_model(self) -> List[Dict[str, str]]:
         """ Get prompts from the docs dir (so GPT knows model, learnings)
 
@@ -120,25 +139,6 @@ class GenAILogic(object):
                 0 = 'you are', 1 = the classes, 2 = rule training
 
         """
-
-        def get_learning_requests() -> List [ Dict[str, str]]:
-            """ Get learning requests from cwd/system/genai/learning_requests
-
-            Returns:
-                list: learning_requests dicts {"role": "user", "content": learning_request_lines}
-            """
-
-            learning_requests : List[ Dict[str, str] ] = []  # learning -> prompt/response conversation to be sent to ChatGPT
-            request_files_dir_path = self.manager_path.joinpath(f'system/genai/learning_requests')
-            if request_files_dir_path.exists():
-                # loop through files in request_files_dir, and append to prompt_messages
-                for root, dirs, files in os.walk(request_files_dir_path):
-                    for file in files:
-                        if file.endswith(".prompt"):
-                            with open(request_files_dir_path.joinpath(file), "r") as learnings:
-                                learning_request_lines = learnings.read()
-                            learning_requests.append( {"role": "user", "content": learning_request_lines})
-            return learning_requests  # TODO - what if no learning requests?
 
         prompt_messages : List[ Dict[str, str] ] = []  # prompt/response conversation to be sent to ChatGPT
         # FIXME - dump dup -- prompt_messages.append( {"role": "system", "content": "You are a helpful assistant."})
@@ -180,7 +180,7 @@ class GenAILogic(object):
             self.next_file_name = stem[0:len(stem)-3] + str(1 + file_number).zfill(3)
             self.next_file_name = str(1 + file_number).zfill(3) + '_suggest'
 
-        learnings = get_learning_requests()
+        learnings = self.get_learning_requests()
         prompt_messages.extend(learnings)
                         
         return prompt_messages      
@@ -285,10 +285,13 @@ class GenAILogic(object):
                 # Load the JSON data into a Python dictionary
                 dict_data = json.load(f)            
             messages.append({"role": "user", "content": json.dumps(dict_data)})
+            learnings = self.get_learning_requests()
+            messages.extend(learnings)
             return messages
 
         #  already have: 0 = 'you are', 1 = the classes, 2 = rule training
         if self.project.project_directory_path.joinpath('docs/response.json').exists():
+            # this creates: 0 = 'you are', 1 = the classes
             self.messages : List[ Dict[str, str] ] = load_requests_using_response_json()
 
         start_time = time.time()  # begin suggest logic
@@ -334,7 +337,7 @@ class GenAILogic(object):
 
         if self.logic != "":    # this is the translate docs/logic/xxx.prompt to code path
             log.debug(f'.. logic translated at: docs/logic_suggestions.response')
-            logic_suggestions_code_path = self.project.project_directory_path.joinpath('docs/logic_suggestions_code.txt')
+            logic_suggestions_code_path = self.project.project_directory_path.joinpath('docs/logic_suggestions/logic_suggestions_code.txt')
             self.insert_logic_into_project(rule_list=self.response_dict.rules, file=logic_suggestions_code_path) 
         else:                   # this is the suggestions path - got code for logic
             prompt_file_name = self.file_name_prefix + f"{self.next_file_name}.prompt"   # e.g., 003_s
