@@ -1,4 +1,4 @@
-# using resolved_model self.resolved_model FIXME
+# experiment - under construction.  Not working, not used.
 # created from response, to create create_db_models.sqlite, with test data
 #    that is used to create project
 # should run without error in manager 
