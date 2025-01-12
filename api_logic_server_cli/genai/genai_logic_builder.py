@@ -1,8 +1,10 @@
+import shutil
 from typing import Dict, List
 from api_logic_server_cli.cli_args_project import Project
 import logging
 from pathlib import Path
 import importlib
+from api_logic_server_cli.genai.genai_utils import call_chatgpt
 import requests
 import os
 import datetime
@@ -42,7 +44,7 @@ class GenAILogic(object):
             cd genai_demo_no_logic
             als genai-logic --suggest --logic="balance is the sum of unpaid orders"
             ```
-            \tSaved: `docs/logic/logic_suggestions.response`
+            \tSaved: `docs/logic_suggestions.response`
     """
 
     def __init__(self, project: Project, using: str, genai_version: str, retries: int, suggest: bool, logic: str):
@@ -185,13 +187,12 @@ class GenAILogic(object):
     
     def suggest_logic(self):
         """ Suggest logic for prompt, or translate suggestion to code
-            self.messages has data model and logic training
-
+            self.messages already has learnings and data model
             if no --logic (self.logic), 
                 we call ChatGPT to suggest logic and build new docs/prompt
 
             if --logic, 
-                we call ChatGPT for code for the already-suggest logic, or supplied string
+                we call ChatGPT for code for the already-suggested logic, or supplied string
         """
 
         def get_rule_prompt_from_response(rules: List[DotMap | Dict]) -> List[str]:
@@ -211,7 +212,9 @@ class GenAILogic(object):
         def get_suggest_or_get_code_prompt() -> str:
             """ Get the prompt for suggesting logic, or getting code
 
-            if self.logic is empty, we **suggest** logic
+            if self.logic is empty, we **suggest** docs/logic-suggestions, eg:
+
+            `Suggest logicbank rules for the provided data model....at least 6....`
 
             Quick test: Manager, s1-4 launch configs
 
@@ -223,7 +226,7 @@ class GenAILogic(object):
                 str: suggest_logic
             """
             suggest_logic = ""
-            logic_suggestion_file_name_path = self.project.project_directory_path.joinpath('docs/logic/logic_suggestions.txt')
+            logic_suggestion_file_name_path = self.project.project_directory_path.joinpath('docs/logic_suggestions/logic_suggestions.txt')
 
             prompt_file = f'{self.manager_path}/system/genai/prompt_inserts/logic_suggestions.prompt'
             if self.logic != "":
@@ -232,7 +235,7 @@ class GenAILogic(object):
                 suggest_logic = file.read() # "Suggest Logic" or "Convert this into LogicBank rules:"
             if self.logic == "":            # suggest logic
                 log.debug(f'.. genai_logic_builder [...] get_suggestions - suggest logic')
-                dups_path = self.project.project_directory_path.joinpath(f'docs/logic/logic_suggestions_no_dups.txt')
+                dups_path = self.project.project_directory_path.joinpath(f'docs/no_dups.txt')
                 if dups_path.exists():  # avoid dups (good try, usually fails)
                     log.debug(f'.... genai_logic_builder [...] avoid dups')
                     with open(dups_path, "r") as dup_file:
@@ -252,7 +255,7 @@ class GenAILogic(object):
                 rule_str = "\n".join(rule_list)
                 """
                 suggest_logic += '\n' + rules_json_str
-                log.debug(f'.. genai_logic_builder [...] get_code processes: docs/logic/logic_suggestions.txt')
+                log.debug(f'.. genai_logic_builder [...] get_code processes: docs/logic_suggestions/logic_suggestions.txt')
             return suggest_logic  # from get_suggest_or_get_code_prompt()
 
         def get_derived_attributes(response: DotMap) -> str:
@@ -275,51 +278,75 @@ class GenAILogic(object):
 
             return derived_attributes
         
+        def load_requests_using_response_json() -> List[ Dict[str, str] ]:
+            messages : List[ Dict[str, str] ] = []
+            messages.append(genai_svcs.get_prompt_you_are())
+            with open(self.project.project_directory_path.joinpath('docs/response.json'), 'r') as f:
+                # Load the JSON data into a Python dictionary
+                dict_data = json.load(f)            
+            messages.append({"role": "user", "content": json.dumps(dict_data)})
+            return messages
+
+        #  already have: 0 = 'you are', 1 = the classes, 2 = rule training
+        if self.project.project_directory_path.joinpath('docs/response.json').exists():
+            self.messages : List[ Dict[str, str] ] = load_requests_using_response_json()
 
         start_time = time.time()  # begin suggest logic
         suggest_or_get_code_prompt = get_suggest_or_get_code_prompt()
         self.messages.append({"role": "user", "content": suggest_or_get_code_prompt})
 
-        debug_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")
-        client = OpenAI(api_key=os.getenv("APILOGICSERVER_CHATGPT_APIKEY"))
-        model = os.getenv("APILOGICSERVER_CHATGPT_MODEL_SUGGESTION")
-        if model is None or model == "*":  # system default chatgpt model
-            model = "gpt-4o-2024-08-06"
-            model = 'gpt-4o-mini'  # reduces from 40 -> 7 secs
-        completion = client.beta.chat.completions.parse(
-            messages=self.messages, response_format=WGResult,
-            model=model  # for own model, use "ft:gpt-4o-2024-08-06:personal:logicbank:ARY904vS" 
-        )
-        
-        data = completion.choices[0].message.content
-        response_dict = json.loads(data)
-        self.response_dict = DotMap(response_dict)
-        rules = self.response_dict.rules
 
-        logic_suggestion_file_name = self.project.project_directory_path.joinpath('docs/logic/logic_suggestions.response')
-        with open(logic_suggestion_file_name, "w") as response_file:
-            json.dump(rules, response_file, indent=4)
-        
-        logic_suggestion_file_name = self.project.project_directory_path.joinpath('docs/logic/logic_suggestions.prompt')
+        if use_svs := True:
+            response_dict_str = call_chatgpt(
+                messages=self.messages,
+                api_version=self.project.genai_version,
+                using=self.project.project_directory_path.joinpath('docs/logic_suggestions')
+            )
+            response_dict = json.loads(response_dict_str)
+        else:
+            debug_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")
+            client = OpenAI(api_key=os.getenv("APILOGICSERVER_CHATGPT_APIKEY"))
+            model = os.getenv("APILOGICSERVER_CHATGPT_MODEL_SUGGESTION")
+            if model is None or model == "*":  # system default chatgpt model
+                model = "gpt-4o-2024-08-06"
+                model = 'gpt-4o-mini'  # reduces from 40 -> 7 secs
+            # 0 = 'you are', 1 = the classes, 2 = rule training
+            # FIXME - use gena0_svcs.call_chatgpt()
+            completion = client.beta.chat.completions.parse(
+                messages=self.messages, response_format=WGResult,
+                model=model  # for own model, use "ft:gpt-4o-2024-08-06:personal:logicbank:ARY904vS" 
+            )
+            
+            data = completion.choices[0].message.content
+            response_dict = json.loads(data)
+        self.response_dict = DotMap(response_dict)
+
+        # starting creating files in docs/logic_suggestions, starting with response
+        # the docs/logic-suggestions dir already exists, from prototypes/base        
+        #  already have: 0 = 'you are', 1 = the classes, 2 = rule training, 3 = suggestions
+        logic_suggestion_file_name = self.project.project_directory_path.joinpath('docs/logic_suggestions/001_curr_model_rules.prompt')
         with open(logic_suggestion_file_name, "w") as prompt_file:
             json.dump(self.messages, prompt_file, indent=4)
 
-        if self.logic != "":
-            log.debug(f'.. logic translated at: docs/logic/logic_suggestions.response')
-            logic_suggestions_code_path = self.project.project_directory_path.joinpath('docs/logic/logic_suggestions_code.txt')
+        logic_suggestion_file_name = self.project.project_directory_path.joinpath('docs/logic_suggestions/002_suggestions.prompt')
+        with open(logic_suggestion_file_name, "w") as response_file:
+            json.dump(self.response_dict.rules, response_file, indent=4)
+
+        if self.logic != "":    # this is the translate docs/logic/xxx.prompt to code path
+            log.debug(f'.. logic translated at: docs/logic_suggestions.response')
+            logic_suggestions_code_path = self.project.project_directory_path.joinpath('docs/logic_suggestions_code.txt')
             self.insert_logic_into_project(rule_list=self.response_dict.rules, file=logic_suggestions_code_path) 
-        else:  # got code for logic
-            prompt_file_name = self.file_name_prefix + f"{self.next_file_name}.prompt" 
-            rule_list = get_rule_prompt_from_response(rules)
+        else:                   # this is the suggestions path - got code for logic
+            prompt_file_name = self.file_name_prefix + f"{self.next_file_name}.prompt"   # e.g., 003_s
+            rule_list = get_rule_prompt_from_response(self.response_dict.rules)  # nat lang rules
             rule_str = "\n".join(rule_list)
             with open(f'{self.manager_path}/system/genai/prompt_inserts/iteration.prompt', 'r') as file:
-                iteration_prompt = file.read()  # 'update prior response...'
-            rule_str_prompt = iteration_prompt + '\n\n' + rule_str
-            with open(self.project.project_directory_path.joinpath(f'docs/{prompt_file_name}'), "w") as prompt_file:
-                prompt_file.write(rule_str_prompt)
-            with open(self.project.project_directory_path.joinpath(f'docs/logic/logic_suggestions.txt'), "w") as suggestions_file:
+                iteration_prompt = file.read()                      # 'update prior response...'
+            with open(self.project.project_directory_path.joinpath(f'docs/logic_suggestions/003_rebuild.prompt'), "w") as prompt_file:
+                prompt_file.write(iteration_prompt)
+            with open(self.project.project_directory_path.joinpath(f'docs/logic_suggestions/logic_suggestions.txt'), "w") as suggestions_file:
                 suggestions_file.write(rule_str)
-            dups_path = self.project.project_directory_path.joinpath(f'docs/logic/logic_suggestions_no_dups.txt')
+            dups_path = self.project.project_directory_path.joinpath(f'docs/logic_suggestions/no_dups.txt')
             derived_attrs = get_derived_attributes(self.response_dict)
             if dups_path.exists():
                 with open(dups_path, "a") as dups_file:
@@ -327,7 +354,8 @@ class GenAILogic(object):
             else:
                 with open(dups_path, "w") as dups_file:
                     dups_file.write(derived_attrs)
-            log.debug(f'ChatGPT suggestions in ({str(int(time.time() - start_time))} secs) - response at: docs/logic/logic_suggestions.response')
+                
+            log.debug(f'\nChatGPT suggestions complete in ({str(int(time.time() - start_time))} secs) - response at: docs/logic_suggestions/logic_suggestions.response')
             log.debug(f'.. prompt at: docs/{prompt_file_name}')
 
 
@@ -343,7 +371,7 @@ class GenAILogic(object):
             manager_root = Path(os.getcwd()).parent
             with open(manager_root.joinpath('system/genai/create_db_models_inserts/logic_discovery_prefix.py'), "r") as logic_prefix_file:
                 logic_prefix = logic_prefix_file.read()
-            translated_logic = logic_prefix
+            translated_logic = logic_prefix  # imports, your code goes here
         translated_logic += f'\n    # Logic from GenAI {str(datetime.datetime.now().strftime("%B %d, %Y %H:%M:%S"))}:\n\n'
 
         rule_code = genai_svcs.get_code(rule_list)  # get code from logic
@@ -420,21 +448,21 @@ class GenAILogic(object):
             str: response_data
         """
         response_file_name = file.stem + '_all' + '.json'
-        response_file_path = self.project.project_directory_path.joinpath(f'docs/logic/{response_file_name}')
+        response_file_path = self.project.project_directory_path.joinpath(f'docs/logic/logic_suggestions/{response_file_name}')
         with open(response_file_path, "w") as model_file:  # save for debug
             json.dump(response, model_file, ensure_ascii=False, indent=4)
         log.debug(f'.. stored response: {response_file_path}')
 
         response_file_name = file.stem + '_models' + '.response'
         model_dict = {"models": response['models']}
-        response_file_path = self.project.project_directory_path.joinpath(f'docs/logic/{response_file_name}')
+        response_file_path = self.project.project_directory_path.joinpath(f'docs/logic/logic_suggestions/{response_file_name}')
         with open(response_file_path, "w") as model_file:  # save for debug
             json.dump(model_dict, model_file, ensure_ascii=False, indent=4)
         log.debug(f'.. stored response: {response_file_path}')
 
         response_file_name = file.stem + '_rules' + '.response'
         model_dict = {"rules": response['rules']}
-        response_file_path = self.project.project_directory_path.joinpath(f'docs/logic/{response_file_name}')
+        response_file_path = self.project.project_directory_path.joinpath(f'docs/logic/logic_suggestions/{response_file_name}')
         with open(response_file_path, "w") as model_file:  # save for debug
             json.dump(model_dict, model_file, ensure_ascii=False, indent=4)
         log.debug(f'.. stored response: {response_file_path}')
