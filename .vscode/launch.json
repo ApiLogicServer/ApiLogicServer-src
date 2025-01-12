@@ -616,7 +616,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "    + SUGGEST s2 logic for blt/genai_demo_LogicBankOff from Prompt/ChatGPT",
+            "name": "    + SUGGEST s2 logic for blt/genai_demo_no_logic from Prompt/ChatGPT",
             "type": "debugpy",
             "request": "launch",
             "env": {"APILOGICSERVER_DEBUG": "True"},
@@ -628,7 +628,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "    + SUGGEST/ITERATE s4 logic for blt/genai_demo_LogicBankOff from Prompt/ChatGPT",
+            "name": "    + SUGGEST/ITERATE s4 logic for blt/genai_demo_no_logic from Prompt/ChatGPT",
             "type": "debugpy",
             "request": "launch",
             "env": {"APILOGICSERVER_DEBUG": "True"},
@@ -636,7 +636,7 @@
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "args": [ "genai", "--project-name=genai_demo_with_logic",
-                "--using=${workspaceFolder}/../../build_and_test/ApiLogicServer/tests/genai_demo_no_logic/docs/logic_suggestions"],
+                "--using=${workspaceFolder}/../../build_and_test/ApiLogicServer/genai_demo_no_logic/docs/logic_suggestions"],
             "console": "integratedTerminal"
         },
         {
