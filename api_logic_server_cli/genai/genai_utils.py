@@ -111,6 +111,7 @@ class GenAIUtils:
             " system/genai/temp/chatgpt_original.response"
         )
 
+
     def rebuild_test_data_project(self) -> None:
         """rebuilds test data from the response.json file by calling response2code.py
         """        
@@ -235,6 +236,7 @@ class GenAIUtils:
 
         create_fixup_files(self)
         log.info(f".. fixup complete: {self.using}/fixup")
+        log.info(f".. .. next step: als genai --using=genai_demo.prompt --repaired-response={self.using}/fixup/response_fixup.json")
 
     def import_genai_project(self) -> None:
         """

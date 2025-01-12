@@ -74,10 +74,10 @@ if [ "$1" = "local" ]
 
 set +x
 
-# /Users/val/dev/ApiLogicServer/ApiLogicServer-dev
+# cd ~/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src
 # sh docker/webgenie_docker/build_web_genie_local.sh local
 
-# docker run -it --rm --name webgenie -p 8282:80  --env-file ./../../webg-local/webg-config/web_genai.txt -v ./../../webg-local/webg-temp:/tmp apilogicserver/web_genai
+# docker run -it --rm --name webgenie -p 8282:80  --env-file ./../../webg-local/webg-config/web_genai.txt -v ./../../webg-local/webg-temp:/tmp  -v ./../../webg-local/webg-projects:/opt/projects apilogicserver/web_genai
 
 cd $SRC_DIR
 echo "\npwd: $(pwd)\n"
