@@ -534,6 +534,8 @@ class GenAI(object):
                 docs_readme_file.write(docs_readme_lines)
 
             response_file = self.project.project_directory_path.joinpath("docs/response.json")
+            if Path(self.project.genai_using).stem == 'logic_suggestions':
+                response_file = self.project.project_directory_path.joinpath("docs/logic_suggestions/response.json")  
             genai_svcs.rebuild_test_data_for_project(
                 use_project_path = self.project.project_directory_path, 
                 response = response_file)

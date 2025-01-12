@@ -111,6 +111,15 @@ als genai --using=system/genai/examples/genai_demo/genai_demo.prompt
 ```bash
 als genai --using=genai_demo.prompt --repaired-response=system/genai/examples/genai_demo/genai_demo_iteration/005_create_db_models.response-example
 ```
+
+Verify it's operating properly:
+
+1. Run Configurations are provided to start the server
+2. Verify the logic by navigating to a Customer with an unshipped order, and altering one of the items to have a very large quantity
+3. Observe the constraint operating on the rollup of order amount_totals.
+    * View the logic in `logic/declare_logic.py`
+    * Put a breakpoint on the `as_condition`.  Observe the console log to see rule execution for this multi-table transaction.
+
 </br>
 
 <details markdown>
@@ -155,6 +164,8 @@ als genai --project-name='genai_demo_no_logic' --using=system/genai/examples/gen
 als genai --project-name='genai_demo_with_logic' --using=system/genai/examples/genai_demo/genai_demo_iteration
 # open Docs/db.dbml
 ```
+> Explore [genai_demo_iteration](system/genai/examples/genai_demo/genai_demo_iteration) - observe the `--using` is a *directory* of prompts.  These include the prompts from the first example, plus an *iteration prompt* (`004_iteration_renames_logic.prompt`) to rename tables and add logic.
+
 </details>
 </br>
 
@@ -200,11 +211,11 @@ cd genai_demo_no_logic
 als genai-logic --suggest
 ```
 
-You can review the suggestions in the `genai_demo_no_logic` project:
+You can review the [resultant logic suggestions](genai_demo_no_logic/docs/logic) in the `genai_demo_no_logic` project:
 
- * See and edit: `docs/logic/logic_suggestions.txt` (used in step 3, below)
+ * See and edit: `docs/logic_suggestions/logic_suggestions.txt` (used in step 3, below)
     * This corresponds to the Logic Editor - Logic View in the WebGenAI web app
- * Diagnostic info at: `docs/logic/logic_suggestions.response`
+ * Diagnostic info at: `docs/logic_suggestions/logic_suggestions.response`
 
 ```bash title="3. See the rules for the logic - under construction - please ignore for now"
 # 3. See the rule code for the logic
@@ -212,7 +223,7 @@ als genai-logic --suggest --logic='*'
 ```
 You can inspect the generated suggestions:
 
-* `docs/logic/logic_suggestions_code.txt`
+* `docs/logic_suggestions/logic_suggestions_code.txt`
     * This corresponds to the Suggestions Editor - Code View in the WebGenAI web app
 
 Results vary (it's AI!), but here's one example:
@@ -226,10 +237,11 @@ The count of total orders placed by a Customer.
 ```
 
 Important notes about suggestions and generated code:
-* This service is intended to enable you to identify logic that does not translate into proper code
-* The example above was pretty good, but sometimes the results are downright silly -- just run suggest again
-
-Repair / delete the logic lines in `docs/logic/logic_suggestions.txt`
+* `--suggest --logic='*'` is intended to enable you to identify logic that does not translate into proper code
+* The example above was pretty good, but sometimes the results are downright silly:
+    * Just run suggest again, or
+        * Note: must must delete 
+    * Repair `docs/logic_suggestions/logic_suggestions.response`
 
 Also...
 * It is not advised to paste the code into `logic/declare_logic.py`
@@ -237,14 +249,12 @@ Also...
     * These are created automatically by running `als genai` (next step)
 
 When you are ready to proceed:
-1. Paste your `docs/logic/logic_suggestions.txt` into: `docs/003_suggest.prompt`
-    * Skip this step to just keep the original suggestion
-2. Execute the following to create a *new project* (iteration), with logic:
+1. Execute the following to create a *new project* (iteration), with logic:
 
 ```bash title="4. Now, (alter and) Implement the Rule Suggestions"
 # 4. Now, (alter and) Implement the Rule Suggestions
-cd ..
-als genai --project-name='genai_demo_with_logic' --using=genai_demo_no_logic/docs
+cd ..  # important - back to manager root dir
+als genai --project-name='genai_demo_with_logic' --using=genai_demo_no_logic/docs/logic_suggestions
 ```
 Internal Note: this sequence available in the run configs (s1/s4).
 
