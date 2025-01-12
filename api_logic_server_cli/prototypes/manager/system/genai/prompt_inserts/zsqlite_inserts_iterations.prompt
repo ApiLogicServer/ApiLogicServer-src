@@ -6,6 +6,7 @@ Update the prior response - be sure not to lose classes and test data already cr
 Hints: use autonum keys (for all tables - including for link/join/junction/intersection tables), allow nulls, foreign keys, no check constraints.
 
 Be sure to create classes, never tables.
+Class names are singlular, and first letter is capitalized.
 
 If you create sum, count or formula Logic Bank rules, then you MUST create a corresponding column in the data model.
 
