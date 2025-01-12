@@ -332,7 +332,7 @@
                 "OPT_LOCKING": "optional"},
             "justMyCode": false,
             "args": [ "genai", "--project-name=genai_demo_with_logic",
-                "--using=${workspaceFolder}/genai_demo_no_logic/docs"],
+                "--using=${workspaceFolder}/genai_demo_no_logic/docs/logic_suggestions"],
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
         },
