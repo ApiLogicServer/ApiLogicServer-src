@@ -258,10 +258,10 @@ Internal Note: this sequence available in the run configs (s1/s4).
 <summary>Fixup - update data model with new attributes from rules</summary>
 
 <br>Fixes project issues by updating the Data Model and Test Data:
-When adding rules, such as using suggestions, you may introduce new attributes.
+when adding rules, such as using suggestions, you may introduce new attributes.
 If these are missing, you will see exceptions when you start your project.
 
-The `genai-utils` fixes such project issues by updating the Data Model and Test Data:
+The `genai-utils --fixup` fixes such project issues by updating the Data Model and Test Data:
 
 1. Collects the latest model, rules, and test data from the project. 
 2. Calls ChatGPT (or similar) to resolve missing columns or data in the project.
@@ -270,7 +270,7 @@ The `genai-utils` fixes such project issues by updating the Data Model and Test 
 
 ***Setup***
 
-After starting the [Manager](Manager.md): 
+After starting the [Manager](https://apilogicserver.github.io/Docs/Manager): 
 
 ```bash title="0. Create Project Requiring Fixup"
 # 0. Create a project requiring fixup
@@ -347,7 +347,10 @@ Observe:
 
 <br>Fixes project issues by rebuilding the database to conform to the derivation rules:
 
-1. Create genai_demo: `als genai --using=system/genai/examples/genai_demo/genai_demo.prompt --project-name=genai_demo`
+1. Create genai_demo: 
+```
+als genai --using=system/genai/examples/genai_demo/genai_demo.prompt --project-name=genai_demo
+```
 2. Rebuild:
 ```
 cd genai_demo
