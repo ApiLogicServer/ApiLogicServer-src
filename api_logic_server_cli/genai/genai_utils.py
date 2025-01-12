@@ -236,7 +236,8 @@ class GenAIUtils:
 
         create_fixup_files(self)
         log.info(f".. fixup complete: {self.using}/fixup")
-        log.info(f".. .. next step: als genai --using=genai_demo.prompt --repaired-response={self.using}/fixup/response_fixup.json")
+        log.info(f".. .. next step: cd <manager>  eg, cd ..")
+        log.info(f".. .. and then, create fixed project: als genai --using=genai_demo.prompt --repaired-response={self.project.project_name}/{self.using}/fixup/response_fixup.json --project-name=fixed_project")
 
     def import_genai_project(self) -> None:
         """

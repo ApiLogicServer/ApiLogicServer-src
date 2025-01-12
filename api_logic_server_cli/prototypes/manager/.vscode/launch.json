@@ -415,7 +415,7 @@
             "justMyCode": false,
             "args": [ "genai"
                 , "--using=genai_demo_fixup_result"
-                , "--project-name=genai_demo_fixup_result"
+                , "--project-name=fixed_project"
                 , "--retries=-1"
                 , "--repaired-response=genai_demo_fixup_required/docs/fixup/response_fixup.json"],
             "console": "internalConsole",

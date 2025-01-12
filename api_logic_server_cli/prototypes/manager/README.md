@@ -294,11 +294,11 @@ cd genai_demo_fixup_required
 als genai-utils --fixup
 ```
 
-Finally, rebuild the project:
+Finally, use the created [fixup files](genai_demo_fixup_required/docs/fixup/) to rebuild the project:
 ```bash title="2. Rebuild the project from the fixup response data model"
 # 2. Rebuild the project from the fixup response data model
 cd ../
-als genai --using=genai_demo.prompt --repaired-response=genai_demo_fixup_required/docs/fixup/response_fixup.json
+als genai --using=genai_demo.prompt --repaired-response=genai_demo_fixup_required/docs/fixup/response_fixup.json --project-name=fixed_project
 ```
     
 &nbsp;
@@ -333,6 +333,9 @@ The Manager pre-installs a sample project you can use to explore import:
 cd system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed
 als genai-utils --import-genai --using=../wg_demo_no_logic_fixed
 ```
+Observe:
+1. The [data model](system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed/database) contains `Customer.balance` and `Product.carbon_neutral`
+2. The test data has been updated to include these attributes, with proper values
 
 </details>
 
