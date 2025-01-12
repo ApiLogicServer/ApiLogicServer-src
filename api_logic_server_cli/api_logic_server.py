@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "14.01.08"
+__version__ = "14.01.09"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t01/10/2024 - 14.01.08: import - WebG rules, with data, runs to completion \n"\
+    "\t01/11/2024 - 14.01.09: import - WebG rules, with data, runs to completion \n"\
     "\t01/09/2024 - 14.01.05: test data from response per APILOGICPROJECT_NO_TEST_DATA, revised fixup tests \n"\
     "\t01/08/2024 - 14.01.04: import fixes, rebuild-test-data response fix, iterations rework, models2code fix no flask, prompt updates, call chapGPT sys.exit(1) \n"\
     "\t01/06/2024 - 14.01.00: N8N, Rebuild test data, Fixup, Project Import, Improved reporting of missing attributes, Simplified RowDictMaper  \n"\
