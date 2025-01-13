@@ -538,6 +538,8 @@ class GenAI(object):
                 response_file = self.project.project_directory_path.joinpath("docs/logic_suggestions/response.json")  
             genai_svcs.rebuild_test_data_for_project(
                 use_project_path = self.project.project_directory_path, 
+                project = self.project,
+                use_existing_response = True,
                 response = response_file)
 
         except:  # intentional try/catch/bury - it's just docs, so don't fail

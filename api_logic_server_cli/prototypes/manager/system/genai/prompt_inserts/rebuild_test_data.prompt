@@ -1,8 +1,9 @@
 
 
-Given the schema and rules,
+Given the model and rules,
 Create 4 rows of test data for each table, and follow these guidelines carefully:
 * Create separate objects for each test data row, not in arrays. 
+* Class names are singular, with leading capital letter.
 * Be sure to initialize derived attributes for test data rows - including all sums and counts, but do not rely on Logic Bank,
 and do not generate db.execute statements.
 * Do not create arrays of test data.
