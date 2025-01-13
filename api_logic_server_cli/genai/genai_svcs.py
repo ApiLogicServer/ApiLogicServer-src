@@ -134,16 +134,20 @@ def get_code(rule_list: List[DotMap]) -> str:
     return translated_logic
 
 def rebuild_test_data_for_project(response: str = 'docs/response.json',
+                                  project: Project = None,
+                                  use_existing_response: bool = False,
                                   use_project_path: Path = None) -> None:
     """
-    1. Builds database/test_data/test_data.py from docs/response.json
-    2. Runs it to create database/test_data/db.sqlite
-    3. Copies database/test_data/db.sqlite to database/db.sqlite
+    1. Rebuild the test data - updates existing docs/response.json
+    2. Builds database/test_data/test_data.py from updated docs/response.json
+    3. Runs it to create database/test_data/db.sqlite
+    4. Copies database/test_data/db.sqlite to database/db.sqlite
 
     Args:
         response (str, optional): _description_. Defaults to 'docs/response.json'.
         use_project_path (Path, optional): _description_. Defaults to None.
     """    
+
     pass  # basic test: Rebuild test data -  blt/ApiLogicServer/genai_demo_informal
     project_path = Path(os.getcwd())
     if use_project_path is not None:
@@ -152,11 +156,33 @@ def rebuild_test_data_for_project(response: str = 'docs/response.json',
     assert project_path.joinpath('database').is_dir(), f"rebuild_test_data_for_project - missing project database directory: {project_path}"
     assert project_path.joinpath(response).is_file(), f"rebuild_test_data_for_project - missing Response File: {response}"
 
+    if use_existing_response:
+        use_response = response
+    else:
+        rebuild_request : List[ Dict[str, str] ] = []
+        rebuild_request.append(get_prompt_you_are())
+        with open(project_path.joinpath(response), 'r') as file:
+            rebuild_project = json.load(file)
+        existing_models = rebuild_project
+        del existing_models['rules']
+        del existing_models['test_data']
+        del existing_models['test_data_rows']
+        del existing_models['test_data_sqlite']
+        rebuild_request.append({"role": "user", "content": json.dumps(existing_models)})
+        with open(get_manager_path().joinpath('system/genai/prompt_inserts/rebuild_test_data.prompt'), 'r') as file:
+            rebuild_prompt = file.read()
+        rebuild_request.append({"role": "user", "content": rebuild_prompt})
+        rebuild_response = call_chatgpt(  messages=rebuild_request
+                                        , api_version = ''
+                                        , using=project_path.joinpath('database/test_data'))
+        use_response = project_path.joinpath('database/test_data/response.json')
+
     python_loc = sys.executable  # eg, /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/bin/python
+
     run_file = project_path.joinpath('database/test_data/response2code.py')
     # run_file = '"' + str(run_file) + '"'  # spaces in file names - with windows  FIXME
     run_file = str(Path(run_file).resolve()) 
-    run_args = f'--test-data --response={response}'
+    run_args = f'--test-data --response={use_response}'
 
     cwd = project_path.resolve()
     result = create_utils.run_command(f'{python_loc} {run_file} {run_args}', 

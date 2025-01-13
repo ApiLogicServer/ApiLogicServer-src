@@ -115,7 +115,7 @@ class GenAIUtils:
     def rebuild_test_data_project(self) -> None:
         """rebuilds test data from the response.json file by calling response2code.py
         """        
-        rebuild_test_data_for_project(self.response)
+        rebuild_test_data_for_project(project = self.project, response = self.response)
 
 
     def fixup_project(self) -> None:
