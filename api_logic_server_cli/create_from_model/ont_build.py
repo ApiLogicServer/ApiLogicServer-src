@@ -230,6 +230,7 @@ class OntBuilder(object):
             self.generate_new_template(app_path, entity_favorites, each_entity_name, each_entity, entity_name)
             self.generate_detail_template(app_path, entity_favorites, each_entity_name, each_entity, entity_name)
             if self.api_endpoint:
+                print(f"Ontimize Build for --api-endpoint={self.api_endpoint} - entity: {each_entity_name}")
                 return
             self.generate_routing(app_path, each_entity_name, each_entity, entity_name)
 
@@ -454,7 +455,7 @@ class OntBuilder(object):
             # loader=PackageLoader(package_name="APILOGICPROJECT",package_path="/ApiLogicServer/ApiLogicServer-dev/build_and_test/nw/ui/templates"),
             loader=FileSystemLoader(searchpath=f"{templates_path}")
         )
-        local_templates_path = self.app_path.joinpath(f'ui/{self.app}/templates')
+        local_templates_path = self.app_path.joinpath(f'templates')
         local_env = Environment (
             loader=FileSystemLoader(searchpath=f"{local_templates_path}")
         )
