@@ -884,7 +884,29 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "    - retry repaired-response FOR ERRORS",
+            "name": "    - retry repaired-response BASELESS CLASSES",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "genai",
+                "--using=${workspaceFolder}/tests/test_databases/ai-created/auto_dealership/auto_baseless_models/response.json",
+                "--retries=-1",
+                "--project-name=bad_response_test_errors_project",
+                "--repaired-response=${workspaceFolder}/tests/test_databases/ai-created/auto_dealership/auto_baseless_models/response.json"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "    - retry repaired-response BROKEN PROJECT",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
