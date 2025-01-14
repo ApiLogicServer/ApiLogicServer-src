@@ -74,13 +74,16 @@ if [ "$1" = "local" ]
   else
     # stand-alone test in terminal - cd $webgen_ai_docker-src, and...
     # docker buildx build --push -f webgenie.Dockerfile --tag apilogicserver/web_genai:1.0.0 -o type=image --platform=linux/arm64,linux/amd64 .
-    docker buildx build --push -f webgenie.Dockerfile --tag apilogicserver/web_genai:14.00.00 -o type=image --platform=linux/arm64,linux/amd64 .
+    docker buildx build --push -f webgenie.Dockerfile --tag apilogicserver/web_genai:14.02.02 -o type=image --platform=linux/arm64,linux/amd64 .
     docker buildx build --push -f webgenie.Dockerfile --tag apilogicserver/web_genai:latest -o type=image --platform=linux/arm64,linux/amd64 .
 fi
 
 set +x
 
 # docker run -it --rm --name webgenie -p 8282:80  --env-file docker/webgenie_docker/webgen_ai_docker/webgenai.env   apilogicserver/webgenie
+
+# reminder - you can use web_genie_local, like this
+# docker run -it --rm --name webgenie -p 8282:80  --env-file ./../../webg-local/webg-config/web_genai.txt -v ./../../webg-local/webg-temp:/tmp  -v ./../../webg-local/webg-projects:/opt/projects apilogicserver/web_genai
 
 cd $SRC_DIR
 echo "\npwd: $(pwd)\n"

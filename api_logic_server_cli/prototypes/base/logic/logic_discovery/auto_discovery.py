@@ -22,5 +22,19 @@ def discover_logic():
                     each_logic_file = importlib.util.module_from_spec(spec)
                     spec.loader.exec_module(each_logic_file)  # runs "bare" module code (e.g., initialization)
                     each_logic_file.declare_logic()  # invoke create function
+
+    wg_logic_path = Path(__file__).parent.parent.joinpath("wg_rules")
+    for root, dirs, files in os.walk(wg_logic_path):
+        for file in files:
+            if file.endswith(".py"):
+                spec = importlib.util.spec_from_file_location("module.name", wg_logic_path.joinpath(file))
+                if file.endswith("auto_discovery.py"):
+                    pass
+                else:
+                    logic.append(file)
+                    each_logic_file = importlib.util.module_from_spec(spec)
+                    spec.loader.exec_module(each_logic_file)  # runs "bare" module code (e.g., initialization)
+                    each_logic_file.init_rule()  # invoke create function
+
     app_logger.info(f"..discovered logic: {logic}")
     return
