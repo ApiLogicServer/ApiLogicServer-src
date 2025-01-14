@@ -15,7 +15,7 @@ Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 __version__ = "14.02.01"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t01/13/2024 - 14.02.01: support for import/merge of WbGenAI projects into Dev projects, rebuilt test data \n"\
+    "\t01/13/2024 - 14.02.01: support for import/merge of WebGenAI projects into Dev projects, rebuilt test data \n"\
     "\t01/06/2024 - 14.01.00: N8N, Rebuild test data, Fixup, Project Import, Improved reporting of missing attributes, Simplified RowDictMaper  \n"\
     "\t11/18/2024 - 12.02.00: genai: 'qualified any' now supported in logic training \n"\
     "\t10/31/2024 - 12.01.00: genai: informal rules (eg, Sum of employee salaries cannot exceed department budget) \n"\
