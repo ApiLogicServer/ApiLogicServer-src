@@ -1,0 +1,110 @@
+{
+    "models": [
+        {
+            "classname": "Customer",
+            "code": "class Customer:\n    id = Column(Integer, primary_key=True)\n    name = Column(String(100))\n    email = Column(String(100))\n    phone = Column(String(15))\n    monthly_appointment_count = Column(Integer)",
+            "description": "Represents customers in the dealership system with personal details and monthly appointment count.",
+            "name": "Customer"
+        },
+        {
+            "classname": "Appointment",
+            "code": "class Appointment:\n    id = Column(Integer, primary_key=True)\n    date = Column(Date)\n    service_type = Column(String(50))\n    customer_id = Column(Integer, ForeignKey('customer.id'))",
+            "description": "Details of service appointments made by customers at the dealership.",
+            "name": "Appointment"
+        },
+        {
+            "classname": "Car",
+            "code": "class Car:\n    id = Column(Integer, primary_key=True)\n    make = Column(String(30))\n    model = Column(String(30))\n    year = Column(Integer)\n    price = Column(Integer)",
+            "description": "Car inventory available for sale at the dealership.",
+            "name": "Car"
+        },
+        {
+            "classname": "Sale",
+            "code": "class Sale:\n    id = Column(Integer, primary_key=True)\n    date = Column(Date)\n    customer_id = Column(Integer, ForeignKey('customer.id'))\n    car_id = Column(Integer, ForeignKey('car.id'))\n    price = Column(Integer)",
+            "description": "Records of car sales transactions at the dealership, linking customers and purchased cars.",
+            "name": "Sale"
+        },
+        {
+            "classname": "Employee",
+            "code": "class Employee:\n    id = Column(Integer, primary_key=True)\n    name = Column(String(100))\n    department = Column(String(50))\n    hire_date = Column(Date)",
+            "description": "Information about employees working at the dealership.",
+            "name": "Employee"
+        },
+        {
+            "classname": "Inventory",
+            "code": "class Inventory:\n    id = Column(Integer, primary_key=True)\n    car_id = Column(Integer, ForeignKey('car.id'))\n    quantity = Column(Integer)",
+            "description": "Keeps track of the number of cars available in the dealership's inventory.",
+            "name": "Inventory"
+        },
+        {
+            "classname": "Supplier",
+            "code": "class Supplier:\n    id = Column(Integer, primary_key=True)\n    name = Column(String(100))\n    contact_email = Column(String(100))",
+            "description": "Suppliers providing cars and parts to the dealership.",
+            "name": "Supplier"
+        },
+        {
+            "classname": "Order",
+            "code": "class Order:\n    id = Column(Integer, primary_key=True)\n    supplier_id = Column(Integer, ForeignKey('supplier.id'))\n    date = Column(Date)\n    total_amount = Column(Integer)",
+            "description": "Records of orders placed with suppliers for cars and parts.",
+            "name": "Order"
+        },
+        {
+            "classname": "Warranty",
+            "code": "class Warranty:\n    id = Column(Integer, primary_key=True)\n    car_id = Column(Integer, ForeignKey('car.id'))\n    customer_id = Column(Integer, ForeignKey('customer.id'))\n    start_date = Column(Date)\n    end_date = Column(Date)",
+            "description": "Warranty information associated with car purchases.",
+            "name": "Warranty"
+        },
+        {
+            "classname": "Service",
+            "code": "class Service:\n    id = Column(Integer, primary_key=True)\n    name = Column(String(50))\n    cost = Column(Integer)\n    duration = Column(Integer)",
+            "description": "Different types of services offered at the dealership and their details.",
+            "name": "Service"
+        },
+        {
+            "classname": "CarService",
+            "code": "class CarService:\n    id = Column(Integer, primary_key=True)\n    car_id = Column(Integer, ForeignKey('car.id'))\n    service_id = Column(Integer, ForeignKey('service.id'))\n    appointment_id = Column(Integer, ForeignKey('appointment.id'))",
+            "description": "Association between cars, services, and appointments.",
+            "name": "CarService"
+        },
+        {
+            "classname": "EmployeeSchedule",
+            "code": "class EmployeeSchedule:\n    id = Column(Integer, primary_key=True)\n    employee_id = Column(Integer, ForeignKey('employee.id'))\n    appointment_id = Column(Integer, ForeignKey('appointment.id'))",
+            "description": "Schedule of employees handling service appointments.",
+            "name": "EmployeeSchedule"
+        }
+    ],
+    "rules": [
+        {
+            "name": "MonthlyAppointmentCount",
+            "description": "Ensure customers don't schedule more than 2 service appointments per month.",
+            "use_case": "Limit Service Appointments",
+            "entity": "Customer",
+            "code": "Rule.count(derive=Customer.monthly_appointment_count, as_count_of=Appointment, where=lambda row: row.date.month == current_date.month)\nRule.constraint(validate=Customer,\n                as_condition=lambda row: row.monthly_appointment_count <= 2,\n                error_msg=\"Customers cannot have more than 2 service appointments per month.\")"
+        }
+    ],
+    "test_data": "# Note: Sample test data objects are defined below for each table. The 'date' used is a dummy example to demonstrate. Consider adding realistic values as appropriate.\n\ncustomer1 = Customer(id=1, name=\"John Doe\", email=\"john@example.com\", phone=\"1234567890\", monthly_appointment_count=2)\ncustomer2 = Customer(id=2, name=\"Jane Smith\", email=\"jane@example.com\", phone=\"0987654321\", monthly_appointment_count=1)\nappointment1 = Appointment(id=1, date=date(2023, 11, 1), service_type=\"Maintenance\", customer_id=1)\nappt2 = Appointment(id=2, date=date(2023, 10, 30), service_type=\"Inspection\", customer_id=1)\nappt3 = Appointment(id=3, date=date(2023, 11, 3), service_type=\"Repair\", customer_id=2)",
+    "test_data_rows": [
+        {
+            "test_data_row_variable": "customer1",
+            "code": "customer1 = Customer(id=1, name=\"John Doe\", email=\"john@example.com\", phone=\"1234567890\", monthly_appointment_count=2)"
+        },
+        {
+            "test_data_row_variable": "customer2",
+            "code": "customer2 = Customer(id=2, name=\"Jane Smith\", email=\"jane@example.com\", phone=\"0987654321\", monthly_appointment_count=1)"
+        },
+        {
+            "test_data_row_variable": "appointment1",
+            "code": "appointment1 = Appointment(id=1, date=date(2023, 11, 1), service_type=\"Maintenance\", customer_id=1)"
+        },
+        {
+            "test_data_row_variable": "appointment2",
+            "code": "appointment2 = Appointment(id=2, date=date(2023, 10, 30), service_type=\"Inspection\", customer_id=1)"
+        },
+        {
+            "test_data_row_variable": "appointment3",
+            "code": "appointment3 = Appointment(id=3, date=date(2023, 11, 3), service_type=\"Repair\", customer_id=2)"
+        }
+    ],
+    "test_data_sqlite": "# Sample SQLite INSERT Statements - Example Data\n\nINSERT INTO customer (id, name, email, phone, monthly_appointment_count) VALUES (1, 'John Doe', 'john@example.com', '1234567890', 2);\nINSERT INTO customer (id, name, email, phone, monthly_appointment_count) VALUES (2, 'Jane Smith', 'jane@example.com', '0987654321', 1);\n\nINSERT INTO appointment (id, date, service_type, customer_id) VALUES (1, '2023-11-01', 'Maintenance', 1);\nINSERT INTO appointment (id, date, service_type, customer_id) VALUES (2, '2023-10-30', 'Inspection', 1);\nINSERT INTO appointment (id, date, service_type, customer_id) VALUES (3, '2023-11-03', 'Repair', 2);",
+    "name": "CarDealershipSystem"
+}

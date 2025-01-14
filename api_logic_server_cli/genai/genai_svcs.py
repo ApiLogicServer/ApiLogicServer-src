@@ -322,6 +322,8 @@ def fix_model_lines(model: DotMap, use_relns: bool = True, post_error: str = Non
                 if current_url != proper_url:
                     log.debug(f'.. fixed sqlite url: {current_url} -> system/genai/temp/create_db_models.sqlite')
         if 'class ' in each_line:
+            # yes, tempting fix... but it fails in SqlAlchemy with missing __tablename__
+            # each_line = each_line.replace(':', '(Base):')  # sometimes it forgets the Base
             if 'Base' not in each_line:
                 log.debug(f'.. fix_and_write_model_file detects class with no Base - raise excp to trigger retry')
                 if post_error is not None:

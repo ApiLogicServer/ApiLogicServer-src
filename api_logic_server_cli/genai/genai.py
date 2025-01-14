@@ -993,7 +993,7 @@ def genai_cli_with_retry(using: str, db_url: str, repaired_response: str, genai_
                 if to_dir_save_dir_retry.exists():
                     shutil.rmtree(to_dir_save_dir_retry)
                 # to_dir_save_dir.rename(to_dir_save_dir_retry) 
-                assert to_dir_save_dir.is_dir(), f"\nInternal Error - missing save directory: {to_dir_save_dir}"
+                assert to_dir_save_dir.is_dir(), f"\nInternal Error - missing save directory: {str(to_dir_save_dir)}"
                 # assert to_dir_save_dir_retry.is_dir(), f"\nInternal Error - missing retry directory: {to_dir_save_dir_retry}"
                 log.debug(f'.. copying work files...')
                 log.debug(f'.... from: {to_dir_save_dir}')
