@@ -906,6 +906,28 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
+            "name": "    - retry repaired-response response_json_test",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "genai",
+                "--using=${workspaceFolder}//tests/test_databases/ai-created/response_json_test/response.json",
+                "--retries=-1",
+                "--project-name=response_json_test",
+                "--repaired-response=${workspaceFolder}/tests/test_databases/ai-created/response_json_test/response.json"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
             "name": "    - retry repaired-response BROKEN PROJECT",
             "type": "debugpy",
             "request": "launch",

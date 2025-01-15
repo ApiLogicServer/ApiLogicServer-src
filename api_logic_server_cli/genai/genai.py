@@ -535,7 +535,10 @@ class GenAI(object):
 
             response_file = self.project.project_directory_path.joinpath("docs/response.json")
             if Path(self.project.genai_using).stem == 'logic_suggestions':
-                response_file = self.project.project_directory_path.joinpath("docs/logic_suggestions/response.json")  
+                response_file = self.project.project_directory_path.joinpath("docs/logic_suggestions/response.json")
+            elif not response_file.exists():
+                if Path(self.project.genai_repaired_response).is_file():
+                    shutil.copyfile(self.project.genai_repaired_response, response_file)
             genai_svcs.rebuild_test_data_for_project(
                 use_project_path = self.project.project_directory_path, 
                 project = self.project,
