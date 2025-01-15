@@ -1,0 +1,79 @@
+{
+    "models": [
+        {
+            "classname": "Customer",
+            "code": "class Customer(Base):\n    __tablename__ = 'customers'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String)\n    credit_limit = Column(Decimal)\n    balance = Column(Decimal)\n    unpaid_orders = Column(Integer) # New attribute for LogicBank\n    \n    # Other attributes if necessary",
+            "description": "Model for storing customer information, including balance and credit details.",
+            "name": "Customer"
+        },
+        {
+            "classname": "Order",
+            "code": "class Order(Base):\n    __tablename__ = 'orders'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    customer_id = Column(Integer, ForeignKey('customers.id'))\n    amount_total = Column(Decimal)\n    date_shipped = Column(DateTime, nullable=True)\n    ",
+            "description": "Model for storing orders, linked to customers.",
+            "name": "Order"
+        },
+        {
+            "classname": "Inventory",
+            "code": "class Inventory(Base):\n    __tablename__ = 'inventory'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    product_id = Column(Integer, ForeignKey('products.id'))\n    stock_quantity = Column(Integer) # attribute for LogicBank\n    ",
+            "description": "Model for inventory management with respect to stock.",
+            "name": "Inventory"
+        },
+        {
+            "classname": "Shipment",
+            "code": "class Shipment(Base):\n    __tablename__ = 'shipments'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    order_id = Column(Integer, ForeignKey('orders.id'))\n    shipped_date = Column(DateTime, nullable=True)\n    ",
+            "description": "Model for shipment details associated with orders.",
+            "name": "Shipment"
+        }
+    ],
+    "rules": [
+        {
+            "name": "Calculate unpaid orders for a customer",
+            "description": "Calculates the number of unpaid orders for a customer.",
+            "use_case": "Customer Unpaid Orders Count",
+            "entity": "Customer",
+            "code": "Rule.count(derive=Customer.unpaid_orders, as_count_of=Order, where=lambda row: row.date_shipped is None)"
+        },
+        {
+            "name": "Shipment Date Validation",
+            "description": "Ensures order shipment dates are not set in the future.",
+            "use_case": "Shipment Date Validation",
+            "entity": "Shipment",
+            "code": "Rule.constraint(validate=Shipment, as_condition=lambda row: row.shipped_date is not None and row.shipped_date <= datetime.datetime.now(), error_msg=\"Shipped date {row.shipped_date} cannot be in the future.\")"
+        },
+        {
+            "name": "Stock Quantity Update",
+            "description": "Automatically updates stock quantity upon order shipment.",
+            "use_case": "Inventory Management",
+            "entity": "Inventory",
+            "code": "Rule.formula(derive=Inventory.stock_quantity, as_expression=lambda row: row.stock_quantity - sum(item.quantity for item in row.product.items if item.order.date_shipped is not None))"
+        },
+        {
+            "name": "Ensure non-negative stock quantity",
+            "description": "Ensure that the stock quantity in the inventory is never negative.",
+            "use_case": "Inventory Constraint",
+            "entity": "Inventory",
+            "code": "Rule.constraint(validate=Inventory, as_condition=lambda row: row.stock_quantity >= 0, error_msg=\"Negative stock quantity for product {row.product_id}\")"
+        }
+    ],
+    "test_data": "Test data for both models and rules.",
+    "test_data_rows": [
+        {
+            "test_data_row_variable": "customer1",
+            "code": "customer1 = Customer(id=1, name=\"John Doe\", credit_limit=5000.00, balance=1500.00, unpaid_orders=2)"
+        },
+        {
+            "test_data_row_variable": "order1",
+            "code": "order1 = Order(id=1, customer_id=1, amount_total=200.00, date_shipped=None)"
+        },
+        {
+            "test_data_row_variable": "inventory1",
+            "code": "inventory1 = Inventory(id=1, product_id=1, stock_quantity=100)"
+        },
+        {
+            "test_data_row_variable": "shipment1",
+            "code": "shipment1 = Shipment(id=1, order_id=1, shipped_date=datetime(2023, 3, 10))"
+        }
+    ],
+    "test_data_sqlite": "-- Test data in SQL format\nINSERT INTO customers VALUES (1, 'John Doe', 5000.00, 1500.00, 2);\nINSERT INTO orders VALUES (1, 1, 200.00, NULL);\nINSERT INTO inventory VALUES (1, 1, 100);\nINSERT INTO shipments VALUES (1, 1, '2023-03-10');",
+    "name": "OrderManagement"
+}
