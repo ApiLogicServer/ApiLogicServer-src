@@ -140,7 +140,7 @@ Verify it's operating properly:
 
 2. Your created project is opened in your IDE, ready to execute and customize.  
 
-    a. Review `Sample-Genai.md`, Explore Customizations.
+    a. Review `Tutorial.md`, Explore Customizations.
 
 ![GenAI Automation](system/images/genai.png)
 

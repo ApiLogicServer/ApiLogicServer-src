@@ -409,8 +409,10 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
         if project.db_url == 'sqlite:///sample_ai.sqlite':  # work-around - VSCode run config arg parsing (dbviz STRESS)
             create_utils.copy_md(project = project, from_doc_file = "Sample-AI.md", to_project_file='Sample-AI.md')
 
-        if project.project_name == 'genai_demo':
-            create_utils.copy_md(project = project, from_doc_file = "Sample-Genai.md", to_project_file='Sample-Genai.md')
+        if project.project_name == 'genai_demo':  # readme now opens automatically, so use that.
+            shutil.move(project.project_directory_path.joinpath('readme.md'), 
+                        project.project_directory_path.joinpath('readme_standard.md'))   
+            create_utils.copy_md(project = project, from_doc_file = "Sample-Genai.md", to_project_file='readme.md')
 
         if "postgres" or "mysql" in project.db_url:
             fixup_devops_for_postgres_mysql(project)
@@ -1539,6 +1541,18 @@ from database import <project.bind_key>_models
         """ Add customizations to genai (default creation)
 
         1. Deep copy prototypes/genai_demo (adds logic and security)
+
+        WebGenAI DX:
+        0. Convention: click the Blue Button
+            * Home/Create Project
+            * Home/Open App
+            * Landing
+            * Overview[Manager}/Open
+            * Overview/GitHub
+            * App Home / Develop --> GitHub
+        0. demo --> codespaces.  Where are instructions (what is CS, how do I load/run)?
+        1. Name must be exact - how we we ensure that?
+        2. Need to bypass the wg_logic, since is duplicated in the recursive_overwrite; rename it?
 
         Args:
         """
