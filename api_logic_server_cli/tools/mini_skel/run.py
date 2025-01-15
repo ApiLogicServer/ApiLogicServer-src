@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 Minimal run script for the API Logic Project
 
