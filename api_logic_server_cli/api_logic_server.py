@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "14.02.06"
+__version__ = "14.02.07"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t01/16/2024 - 14.02.06: genai - --using not required on --repaired-response, genai_demo ok IFF you als add-cust \n"\
+    "\t01/16/2024 - 14.02.07: genai - running genai_demo, --using not required on --repaired-response \n"\
     "\t01/15/2024 - 14.02.04: APILOGICPROJECT_IS_GENAI_DEMO enables genai_demo to be any name \n"\
     "\t01/15/2024 - 14.02.03: --repaired-response needs to save docs/response.json \n"\
     "\t01/13/2024 - 14.02.01: webg logic, support for import/merge of WebGenAI projects into Dev projects, rebuilt test data \n"\
@@ -412,10 +412,10 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
         if project.db_url == 'sqlite:///sample_ai.sqlite':  # work-around - VSCode run config arg parsing (dbviz STRESS)
             create_utils.copy_md(project = project, from_doc_file = "Sample-AI.md", to_project_file='Sample-AI.md')
 
-        check_project_is_genai_demo = False
-        if os.getenv('APILOGICPROJECT_IS_GENAI_DEMO') is not None:
-                check_project_is_genai_demo = True
-        if check_project_is_genai_demo or project.project_name == 'genai_demo':  # readme now opens automatically, so use that.
+        if project.is_genai_demo:  # readme now opens automatically, so use that.
+            genai_demo_dir = (Path(api_logic_server_dir_str)).\
+                joinpath('prototypes/genai_demo')
+            recursive_overwrite(genai_demo_dir, project.project_directory)
             shutil.move(project.project_directory_path.joinpath('readme.md'), 
                         project.project_directory_path.joinpath('readme_standard.md'))   
             create_utils.copy_md(project = project, from_doc_file = "Sample-Genai.md", to_project_file='readme.md')
@@ -472,7 +472,8 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
             # strip sqlite://// from sqlite:////Users/val/dev/ApiLogicServer/api_logic_server_cli/database/nw-gold.sqlite
             db_loc = project.abs_db_url.replace("sqlite:///", "")
             target_db_loc_actual = str(project.project_directory_path.joinpath('database/db.sqlite'))
-            copyfile(db_loc, target_db_loc_actual)
+            if project.is_genai_demo == False:
+                copyfile(db_loc, target_db_loc_actual)
             config_url = str(project.api_logic_server_dir_path)
             # build this:  SQLALCHEMY_DATABASE_URI = sqlite:///{str(project_abs_dir.joinpath('database/db.sqlite'))}
             # into  this:  SQLALCHEMY_DATABASE_URI = f"replace_db_url"
@@ -1132,7 +1133,7 @@ class ProjectRun(Project):
         """
 
         imports = """
-# FIXME remove from api import <project.bind_key>_expose_api_models
+# TODO remove from api import <project.bind_key>_expose_api_models
 from database import <project.bind_key>_models
         """
 
@@ -1563,7 +1564,7 @@ from database import <project.bind_key>_models
         0. demo --> codespaces.  Where are instructions (what is CS, how do I load/run)?
         1. Name can be any, iff created with APILOGICPROJECT_IS_GENAI_DEMO
         2. Bypass duplicate discovery logic iff created with APILOGICPROJECT_IS_GENAI_DEMO
-        3. FIXME:
+        3. TODO:
                 * cd project
                 * als add-cust  # add customizations
                 * run, and use place b2b order service - end point is not activated.
@@ -1741,7 +1742,7 @@ from database import <project.bind_key>_models
             log.info(".. complete\n")
 
 
-    def genai_get_logic(self, prompt: str) -> list[str]:  # FIXME drop old code
+    def genai_get_logic(self, prompt: str) -> list[str]:  # TODO drop old code
         """ Get logic from ChatGPT prompt
         Args:
         """
@@ -1866,12 +1867,23 @@ from database import <project.bind_key>_models
 
     def create_database_from_genai_or_model(self) -> 'GenAI':
         gen_ai = None
+
+        self.is_genai_demo = False
+        if os.getenv('APILOGICPROJECT_IS_GENAI_DEMO') is not None or self.project_name == 'genai_demo':
+            self.is_genai_demo = True
+
+
         if self.genai_using != "":
             from api_logic_server_cli.genai.genai import GenAI
             gen_ai = GenAI(self)  
             gen_ai.create_db_models()  # create_db_models.py used to create database to build project
+            if self.is_genai_demo:
+                # restore the database from genai_demo (but go ahead and keep the docs dir etc) FIXME
+                genai_demo_db = self.api_logic_server_dir_path.joinpath('prototypes/genai_demo/database/db.sqlite')
+                shutil.copyfile(src=genai_demo_db, dst=self.project_directory_path.joinpath('database/db.sqlite'))
+                log.debug(f"Restored database from genai_demo")
 
-        if self.from_model != "" or self.genai_using != "":
+        if (self.from_model != "" or self.genai_using) != "" and not self.is_genai_demo:
             try:
                 create_db_from_model.create_db(self)
                 # halt execution if genai already discovered errors, eg, response contains table definitions
