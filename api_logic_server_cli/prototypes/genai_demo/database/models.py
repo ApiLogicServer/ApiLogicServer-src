@@ -45,7 +45,6 @@ else:
 class Customer(Base):
     __tablename__ = 'Customers'
     _s_collection_name = 'Customer'  # type: ignore
-    __bind_key__ = 'None'
 
     CustomerID = Column(Integer, primary_key=True)
     CustomerName = Column(Text, nullable=False)
@@ -59,23 +58,10 @@ class Customer(Base):
     # child relationships (access children)
     OrderList : Mapped[List["Order"]] = relationship(back_populates="Customer")
 
-    @jsonapi_attr
-    def _check_sum_(self):  # type: ignore [no-redef]
-        return None if isinstance(self, flask_sqlalchemy.model.DefaultMeta) \
-            else self._check_sum_property if hasattr(self,"_check_sum_property") \
-                else None  # property does not exist during initialization
-
-    @_check_sum_.setter
-    def _check_sum_(self, value):  # type: ignore [no-redef]
-        self._check_sum_property = value
-
-    S_CheckSum = _check_sum_
-
 
 class Product(Base):
     __tablename__ = 'Products'
     _s_collection_name = 'Product'  # type: ignore
-    __bind_key__ = 'None'
 
     ProductID = Column(Integer, primary_key=True)
     ProductName = Column(Text, nullable=False)
@@ -87,23 +73,11 @@ class Product(Base):
     # child relationships (access children)
     ItemList : Mapped[List["Item"]] = relationship(back_populates="Product")
 
-    @jsonapi_attr
-    def _check_sum_(self):  # type: ignore [no-redef]
-        return None if isinstance(self, flask_sqlalchemy.model.DefaultMeta) \
-            else self._check_sum_property if hasattr(self,"_check_sum_property") \
-                else None  # property does not exist during initialization
-
-    @_check_sum_.setter
-    def _check_sum_(self, value):  # type: ignore [no-redef]
-        self._check_sum_property = value
-
-    S_CheckSum = _check_sum_
 
 
 class Order(Base):
     __tablename__ = 'Orders'
     _s_collection_name = 'Order'  # type: ignore
-    __bind_key__ = 'None'
 
     OrderID = Column(Integer, primary_key=True)
     CustomerID = Column(ForeignKey('Customers.CustomerID'))
@@ -118,23 +92,11 @@ class Order(Base):
     # child relationships (access children)
     ItemList : Mapped[List["Item"]] = relationship(back_populates="Order")
 
-    @jsonapi_attr
-    def _check_sum_(self):  # type: ignore [no-redef]
-        return None if isinstance(self, flask_sqlalchemy.model.DefaultMeta) \
-            else self._check_sum_property if hasattr(self,"_check_sum_property") \
-                else None  # property does not exist during initialization
-
-    @_check_sum_.setter
-    def _check_sum_(self, value):  # type: ignore [no-redef]
-        self._check_sum_property = value
-
-    S_CheckSum = _check_sum_
 
 
 class Item(Base):
     __tablename__ = 'Items'
     _s_collection_name = 'Item'  # type: ignore
-    __bind_key__ = 'None'
 
     ItemID = Column(Integer, primary_key=True)
     OrderID = Column(ForeignKey('Orders.OrderID'))
@@ -149,14 +111,3 @@ class Item(Base):
 
     # child relationships (access children)
 
-    @jsonapi_attr
-    def _check_sum_(self):  # type: ignore [no-redef]
-        return None if isinstance(self, flask_sqlalchemy.model.DefaultMeta) \
-            else self._check_sum_property if hasattr(self,"_check_sum_property") \
-                else None  # property does not exist during initialization
-
-    @_check_sum_.setter
-    def _check_sum_(self, value):  # type: ignore [no-redef]
-        self._check_sum_property = value
-
-    S_CheckSum = _check_sum_

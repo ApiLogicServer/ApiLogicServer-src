@@ -46,6 +46,7 @@ class OptLocking(ExtendedEnum):
 
 basedir = path.abspath(path.dirname(__file__))
 load_dotenv(path.join(basedir, "default.env"))
+project_path = Path(__file__).parent.parent
 app_logger = logging.getLogger('api_logic_server_app')
 
 def is_docker() -> bool:
@@ -89,11 +90,10 @@ class Config:
     FLASK_APP = environ.get("FLASK_APP")
     FLASK_ENV = environ.get("FLASK_ENV")
     DEBUG = environ.get("DEBUG")
-            
-    running_at = Path(__file__)
-    project_abs_dir = running_at.parent.absolute()
+
 
     # Database
+    db_path = str(project_path.joinpath('database/db.sqlite'))
     SQLALCHEMY_DATABASE_URI : typing.Optional[str] = f"replace_db_url"
     # override SQLALCHEMY_DATABASE_URI here as required
 
@@ -144,8 +144,8 @@ class Config:
 
     # Begin Multi-Database URLs (from ApiLogicServer add-db...)
 
-
-    SQLALCHEMY_DATABASE_URI_AUTHENTICATION = 'sqlite:///../database/authentication_db.sqlite'
+    auth_db_path = str(project_path.joinpath('database/authentication_db.sqlite'))
+    SQLALCHEMY_DATABASE_URI_AUTHENTICATION = f'sqlite:///{auth_db_path}'
     app_logger.info(f'config.py - SQLALCHEMY_DATABASE_URI_AUTHENTICATION: {SQLALCHEMY_DATABASE_URI_AUTHENTICATION}\n')
 
     # as desired, use env variable: export SQLALCHEMY_DATABASE_URI='sqlite:////Users/val/dev/servers/docker_api_logic_project/database/db.sqliteXX'
