@@ -101,7 +101,7 @@ Then, try your own databases [(db-url examples here)](https://apilogicserver.git
 1. If you have signed up, this will create and open a project called `genai_demo` from `genai_demo.prompt` (available in left Explorer pane):
 
 ```bash
-als genai --using=system/genai/examples/genai_demo/genai_demo.prompt
+als genai --using=system/genai/examples/genai_demo/genai_demo.prompt --project-name=genai_demo
 ```
 
 
@@ -109,7 +109,7 @@ als genai --using=system/genai/examples/genai_demo/genai_demo.prompt
 
 
 ```bash
-als genai --using=genai_demo.prompt --repaired-response=system/genai/examples/genai_demo/genai_demo_iteration/005_create_db_models.response-example
+als genai --repaired-response=system/genai/examples/genai_demo/genai_demo_iteration/005_create_db_models.response-example --project-name=genai_demo
 ```
 
 Verify it's operating properly:
@@ -274,7 +274,7 @@ After starting the [Manager](https://apilogicserver.github.io/Docs/Manager):
 
 ```bash title="0. Create Project Requiring Fixup"
 # 0. Create a project requiring fixup
-als genai --using=genai_demo.prompt --repaired-response=system/genai/examples/genai_demo/genai_demo_fixup_required.json --project-name=genai_demo_fixup_required
+als genai --repaired-response=system/genai/examples/genai_demo/genai_demo_fixup_required.json --project-name=genai_demo_fixup_required
 ```
 
 If you run this project, you will observe that it fails with:
@@ -298,7 +298,7 @@ Finally, use the created [fixup files](genai_demo_fixup_required/docs/fixup/) to
 ```bash title="2. Rebuild the project from the fixup response data model"
 # 2. Rebuild the project from the fixup response data model
 cd ../
-als genai --using=genai_demo.prompt --repaired-response=genai_demo_fixup_required/docs/fixup/response_fixup.json --project-name=fixed_project
+als genai --repaired-response=genai_demo_fixup_required/docs/fixup/response_fixup.json --project-name=fixed_project
 ```
     
 &nbsp;
@@ -390,7 +390,7 @@ als create --project-name=genai_demo --from-model=system/genai/temp/create_db_mo
 Or, correct the chatgpt response, and
 
 ```bash
-als genai --using=genai_demo.prompt --repaired-response=system/genai/examples/genai_demo/genai_demo.response_example --project-name=genai_demo
+als genai --repaired-response=system/genai/examples/genai_demo/genai_demo.response_example --project-name=genai_demo
 ```
 
 We have seen failures such as:
@@ -583,7 +583,7 @@ als genai --using=system/genai/examples/genai_demo/genai_demo.prompt
 
 # Or, Microservice Automation from Saved Response
 # Admin App, API, Project
-als genai --using=genai_demo.prompt --repaired-response=system/genai/temp/chatgpt_retry.response
+als genai --repaired-response=system/genai/temp/chatgpt_retry.response
 
 # Logic and Security
 #   - see logic (logic/declare_logic.py, logic/cocktail-napkin.jpg);  add an Order and Item

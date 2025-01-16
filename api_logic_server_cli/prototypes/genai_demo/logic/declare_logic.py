@@ -47,7 +47,7 @@ def declare_logic():
     Rule.copy(derive=Item.UnitPrice, from_parent=Product.UnitPrice)
     Rule.constraint(validate=Customer,
                     as_condition=lambda row: row.Balance <= row.CreditLimit,
-                    error_msg="Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})")
+                    error_msg="Customer balance ({row.Balance}) exceeds credit limit ({row.CreditLimit})")
 
     # End Logic from GenAI
 

@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "14.02.05"
+__version__ = "14.02.06"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t01/16/2024 - 14.02.05: genai - --using not required on --repaired-response \n"\
+    "\t01/16/2024 - 14.02.06: genai - --using not required on --repaired-response, genai_demo ok IFF you als add-cust \n"\
     "\t01/15/2024 - 14.02.04: APILOGICPROJECT_IS_GENAI_DEMO enables genai_demo to be any name \n"\
     "\t01/15/2024 - 14.02.03: --repaired-response needs to save docs/response.json \n"\
     "\t01/13/2024 - 14.02.01: webg logic, support for import/merge of WebGenAI projects into Dev projects, rebuilt test data \n"\
@@ -478,6 +478,7 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
             # into  this:  SQLALCHEMY_DATABASE_URI = f"replace_db_url"
             replace_db_url_value = "sqlite:///{str(project_abs_dir.joinpath('database/db.sqlite'))}"
             replace_db_url_value = f"sqlite:///../database/db.sqlite"  # relative for portable sqlite
+            replace_db_url_value = "sqlite:///{db_path}"
 
             if os.name == "nt":  # windows
                 target_db_loc_actual = get_windows_path_with_slashes(target_db_loc_actual)
