@@ -23,6 +23,9 @@ def discover_logic():
                     spec.loader.exec_module(each_logic_file)  # runs "bare" module code (e.g., initialization)
                     each_logic_file.declare_logic()  # invoke create function
 
+    if Path(__file__).parent.parent.parent.joinpath("docs/project_is_genai_demo.txt").exists():
+        return  # for genai_demo, logic is in logic/declare_logic.py (so ignore logic_discovery)
+    
     wg_logic_path = Path(__file__).parent.parent.joinpath("wg_rules")
     for root, dirs, files in os.walk(wg_logic_path):
         for file in files:

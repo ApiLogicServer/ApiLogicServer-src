@@ -1548,10 +1548,13 @@ def add_cust(ctx, bind_key_url_separator: str, api_name: str, project_name: str)
         raise Exception("Customizations are northwind/genai-specific - models.py does not exist")
     
     project.abs_db_url, project.nw_db_status, project.model_file_name = create_utils.get_abs_db_url("0. Using Sample DB", project)
+    project_is_genai_demo = False
+    if project.project_directory_path.joinpath('docs/project_is_genai_demo.txt').exists():
+        project_is_genai_demo = True
     if create_utils.does_file_contain(search_for="CategoryTableNameTest", in_file=models_py_path):
         project.add_nw_customizations(do_security=False)
         log.info("\nNext step - add authentication:\n  $ ApiLogicServer add-auth --db_url=auth\n\n")
-    elif project_name == 'genai_demo' and create_utils.does_file_contain(search_for="Customer", in_file=models_py_path):
+    elif (project_is_genai_demo or project_name == 'genai_demo') and create_utils.does_file_contain(search_for="Customer", in_file=models_py_path):
         project.add_genai_customizations(do_security=False)
     elif project_name == 'sample_ai' and create_utils.does_file_contain(search_for="CustomerName = Column(Text", in_file=models_py_path):
         cocktail_napkin_path = project.project_directory_path.joinpath('logic/cocktail-napkin.jpg')
@@ -1568,7 +1571,7 @@ def add_cust(ctx, bind_key_url_separator: str, api_name: str, project_name: str)
         else:
             project.add_basic_demo_iteration()
     else:
-        raise Exception("Customizations are northwind/genai-specific - models.py has neither CategoryTableNameTest nor Customer")
+        raise Exception("Customizations are northwind/genai-specific - models.py has neither CategoryTableNameTest, nor Customer, nor docs/project_is_genai_demo.txt")
 
 
 @main.command("sample-ai", cls=HideDunderCommand, hidden=True) 
