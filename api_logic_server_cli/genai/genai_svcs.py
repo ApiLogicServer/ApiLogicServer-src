@@ -21,6 +21,8 @@ import ast
 import astor
 import yaml
 
+from genai.client import client
+
 K_LogicBankOff = "LBX"
 ''' LBX Disable Logic (for demos) '''
 K_LogicBankTraining = "Here is the simplified API for LogicBank"
@@ -759,11 +761,11 @@ def call_chatgpt(messages: List[Dict[str, str]], api_version: str, using: str) -
         using (str): str to save response.json (relative to cwd)
     Returns:
         str: response from ChatGPT
-    """    
+    """
     try:
         start_time = time.time()
         db_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")
-        client = OpenAI(api_key=os.getenv("APILOGICSERVER_CHATGPT_APIKEY"))
+        #client = OpenAI(api_key=os.getenv("APILOGICSERVER_CHATGPT_APIKEY"))
         model = api_version
         if model == "":  # default from CLI is '', meaning fall back to env variable or system default...
             model = os.getenv("APILOGICSERVER_CHATGPT_MODEL")
