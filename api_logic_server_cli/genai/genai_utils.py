@@ -27,7 +27,6 @@ from api_logic_server_cli.genai.genai_svcs import (
 )
 import create_from_model.api_logic_server_utils as utils
 from  genai.json2rules import json2rules
-from genai.client import client
 
 log = logging.getLogger(__name__)
 
@@ -99,7 +98,6 @@ class GenAIUtils:
         api_version = f"{self.genai_version}"
         start_time = time.time()
         db_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY", "")
-        #client = OpenAI(api_key=db_key)
         model = api_version if api_version else os.getenv("APILOGICSERVER_CHATGPT_MODEL", "gpt-4o-2024-08-06")
         self.resolved_model = model
 

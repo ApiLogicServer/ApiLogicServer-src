@@ -21,7 +21,7 @@ import ast
 import astor
 import yaml
 
-from genai.client import client
+from genai.client import get_ai_client
 
 K_LogicBankOff = "LBX"
 ''' LBX Disable Logic (for demos) '''
@@ -764,8 +764,6 @@ def call_chatgpt(messages: List[Dict[str, str]], api_version: str, using: str) -
     """
     try:
         start_time = time.time()
-        db_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")
-        #client = OpenAI(api_key=os.getenv("APILOGICSERVER_CHATGPT_APIKEY"))
         model = api_version
         if model == "":  # default from CLI is '', meaning fall back to env variable or system default...
             model = os.getenv("APILOGICSERVER_CHATGPT_MODEL")
@@ -774,9 +772,10 @@ def call_chatgpt(messages: List[Dict[str, str]], api_version: str, using: str) -
         with open(Path(using).joinpath('request.json'), "w") as request_file:  # save for debug
             json.dump(messages, request_file, indent=4)
         log.info(f'.. saved request: {using}/request.json')
-
+        client = get_ai_client()
         completion = client.beta.chat.completions.parse(
-            messages=messages, response_format=WGResult,
+            messages=messages,
+            response_format=WGResult,
             # temperature=self.project.genai_temperature,  values .1 and .7 made students / charges fail
             model=model  # for own model, use "ft:gpt-4o-2024-08-06:personal:logicbank:ARY904vS" 
         )
