@@ -298,30 +298,13 @@ class GenAILogic(object):
         suggest_or_get_code_prompt = get_suggest_or_get_code_prompt()
         self.messages.append({"role": "user", "content": suggest_or_get_code_prompt})
 
-
-        if use_svs := True:
-            response_dict_str = call_chatgpt(
-                messages=self.messages,
-                api_version=self.project.genai_version,
-                using=self.project.project_directory_path.joinpath('docs/logic_suggestions')
-            )
-            response_dict = json.loads(response_dict_str)
-        else:
-            debug_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")
-            client = OpenAI(api_key=os.getenv("APILOGICSERVER_CHATGPT_APIKEY"))
-            model = os.getenv("APILOGICSERVER_CHATGPT_MODEL_SUGGESTION")
-            if model is None or model == "*":  # system default chatgpt model
-                model = "gpt-4o-2024-08-06"
-                model = 'gpt-4o-mini'  # reduces from 40 -> 7 secs
-            # 0 = 'you are', 1 = the classes, 2 = rule training
-            # FIXME - use gena0_svcs.call_chatgpt()
-            completion = client.beta.chat.completions.parse(
-                messages=self.messages, response_format=WGResult,
-                model=model  # for own model, use "ft:gpt-4o-2024-08-06:personal:logicbank:ARY904vS" 
-            )
-            
-            data = completion.choices[0].message.content
-            response_dict = json.loads(data)
+        response_dict_str = call_chatgpt(
+            messages=self.messages,
+            api_version=self.project.genai_version,
+            using=self.project.project_directory_path.joinpath('docs/logic_suggestions')
+        )
+        response_dict = json.loads(response_dict_str)
+        
         self.response_dict = DotMap(response_dict)
 
         # starting creating files in docs/logic_suggestions, starting with response
