@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "14.02.04"
+__version__ = "14.02.05"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t01/16/2024 - 14.02.05: genai - --using not required on --repaired-response \n"\
     "\t01/15/2024 - 14.02.04: APILOGICPROJECT_IS_GENAI_DEMO enables genai_demo to be any name \n"\
     "\t01/15/2024 - 14.02.03: --repaired-response needs to save docs/response.json \n"\
     "\t01/13/2024 - 14.02.01: webg logic, support for import/merge of WebGenAI projects into Dev projects, rebuilt test data \n"\
@@ -1550,12 +1551,12 @@ from database import <project.bind_key>_models
         1. Deep copy prototypes/genai_demo (adds logic and security, and custom end point)
 
         WebGenAI DX:
-        
+
         0. Convention: click the Blue Button
                 * Home/Create Project
                 * Home/Open App
                 * Landing
-                * Overview[Manager}/Open
+                * Overview[Manager]/Open
                 * Overview/GitHub
                 * App Home / Develop --> GitHub
         0. demo --> codespaces.  Where are instructions (what is CS, how do I load/run)?
@@ -1564,7 +1565,7 @@ from database import <project.bind_key>_models
         3. FIXME:
                 * cd project
                 * als add-cust  # add customizations
-                * run, and use place order service - end point is not activated.
+                * run, and use place b2b order service - end point is not activated.
 
         Args:
         """
