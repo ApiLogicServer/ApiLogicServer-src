@@ -493,19 +493,18 @@ class GenAI(object):
                     log.debug(f'.. removed hallucination: {each_line}')
             return return_line
 
-        logic_enabled = True
         logic_file = self.project.project_directory_path.joinpath('logic/declare_logic.py')
-        in_logic = False
-        translated_logic = "\n    # Logic from GenAI: (or, use your IDE w/ code completion)\n"
-        translated_logic += genai_svcs.get_code(self.response_dict.rules)
-        if self.logic_enabled == False:
+        if self.project.is_genai_demo == False:
             translated_logic = "\n    # Logic from GenAI: (or, use your IDE w/ code completion)\n"
-            translated_logic += "\n    # LogicBank Disabled \n"  
-        translated_logic += "\n    # End Logic from GenAI\n\n"
-        utils.insert_lines_at(lines=translated_logic, 
-                              file_name=logic_file, 
-                              at='discover_logic()', 
-                              after=True)
+            translated_logic += genai_svcs.get_code(self.response_dict.rules)
+            if self.logic_enabled == False:
+                translated_logic = "\n    # Logic from GenAI: (or, use your IDE w/ code completion)\n"
+                translated_logic += "\n    # LogicBank Disabled \n"  
+            translated_logic += "\n    # End Logic from GenAI\n\n"
+            utils.insert_lines_at(lines=translated_logic, 
+                                file_name=logic_file, 
+                                at='discover_logic()', 
+                                after=True)
 
         readme_lines = \
             f'\n**GenAI Microservice Automation:** after verifying, apply logic:\n' +\
@@ -540,13 +539,15 @@ class GenAI(object):
                 if Path(self.project.genai_repaired_response).is_file():
                     shutil.copyfile(self.project.genai_repaired_response, response_file)
             is_genai_demo = False
-            if os.getenv('APILOGICPROJECT_IS_GENAI_DEMO') is not None:
+            if os.getenv('APILOGICPROJECT_IS_GENAI_DEMO') is not None or self.project.project_name == 'genai_demo':
                 self.project.project_directory_path.joinpath('docs/project_is_genai_demo.txt').touch()
-            genai_svcs.rebuild_test_data_for_project(
-                use_project_path = self.project.project_directory_path, 
-                project = self.project,
-                use_existing_response = True,
-                response = response_file)
+                # and DON'T create test data (db.sqlite already set up in recurive copy)
+            else:  # normal path
+                genai_svcs.rebuild_test_data_for_project(
+                    use_project_path = self.project.project_directory_path, 
+                    project = self.project,
+                    use_existing_response = True,
+                    response = response_file)
 
         except:  # intentional try/catch/bury - it's just docs, so don't fail
             import traceback

@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "1. GENAI - Create a project from one of the system/genai/examples",
+            "name": "1. GENAI - Create genai_logic demo project",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
@@ -18,8 +18,8 @@
                 "APILOGICSERVER_DEBUG": "False",
                 "OPT_LOCKING": "optional"},
             "justMyCode": false,
-            "args": [ "genai", "--retries=-1",
-                "--using=${workspaceFolder}/system/genai/examples/${input:inputGenaiProjectName}"],
+            "args": [ "genai", "--retries=-1", "--project-name=genai_demo",
+                "--using=${workspaceFolder}/system/genai/examples/genai_demo/genai_demo_informal.prompt"],
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
         },
