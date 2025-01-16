@@ -539,6 +539,9 @@ class GenAI(object):
             elif not response_file.exists():
                 if Path(self.project.genai_repaired_response).is_file():
                     shutil.copyfile(self.project.genai_repaired_response, response_file)
+            is_genai_demo = False
+            if os.getenv('APILOGICPROJECT_IS_GENAI_DEMO') is not None:
+                self.project.project_directory_path.joinpath('docs/project_is_genai_demo.txt').touch()
             genai_svcs.rebuild_test_data_for_project(
                 use_project_path = self.project.project_directory_path, 
                 project = self.project,

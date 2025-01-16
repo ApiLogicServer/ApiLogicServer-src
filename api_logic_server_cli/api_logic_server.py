@@ -12,9 +12,11 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "14.02.02"
+__version__ = "14.02.04"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t01/15/2024 - 14.02.04: APILOGICPROJECT_IS_GENAI_DEMO enables genai_demo to be any name \n"\
+    "\t01/15/2024 - 14.02.03: --repaired-response needs to save docs/response.json \n"\
     "\t01/13/2024 - 14.02.01: webg logic, support for import/merge of WebGenAI projects into Dev projects, rebuilt test data \n"\
     "\t01/06/2024 - 14.01.00: N8N, Rebuild test data, Fixup, Project Import, Improved reporting of missing attributes, Simplified RowDictMaper  \n"\
     "\t11/18/2024 - 12.02.00: genai: 'qualified any' now supported in logic training \n"\
@@ -296,7 +298,7 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
 
         from_dir = project.from_git
         api_logic_server_dir_str = str(get_api_logic_server_dir())  # todo not req'd
-        if project.from_git.startswith("https://"):
+        if project.from_git.startswith("https://"):  # warning - very old code, not tested in a long time
             cmd = 'git clone --quiet https://github.com/valhuber/ApiLogicServerProto.git ' + project.project_directory
             cmd = f'git clone --quiet {project.from_gitfrom_git} {project.project_directory}'
             result = create_utils.run_command(cmd, msg=msg)  # "2. Create Project")
@@ -409,7 +411,10 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
         if project.db_url == 'sqlite:///sample_ai.sqlite':  # work-around - VSCode run config arg parsing (dbviz STRESS)
             create_utils.copy_md(project = project, from_doc_file = "Sample-AI.md", to_project_file='Sample-AI.md')
 
-        if project.project_name == 'genai_demo':  # readme now opens automatically, so use that.
+        check_project_is_genai_demo = False
+        if os.getenv('APILOGICPROJECT_IS_GENAI_DEMO') is not None:
+                check_project_is_genai_demo = True
+        if check_project_is_genai_demo or project.project_name == 'genai_demo':  # readme now opens automatically, so use that.
             shutil.move(project.project_directory_path.joinpath('readme.md'), 
                         project.project_directory_path.joinpath('readme_standard.md'))   
             create_utils.copy_md(project = project, from_doc_file = "Sample-Genai.md", to_project_file='readme.md')
@@ -1540,19 +1545,26 @@ from database import <project.bind_key>_models
     def add_genai_customizations(self, do_show_messages: bool = True, do_security: bool = True):
         """ Add customizations to genai (default creation)
 
-        1. Deep copy prototypes/genai_demo (adds logic and security)
+        0. Initial: create_project_and_overlay_prototypes() -- minor: just creates the readme
+                * When done with genai logic prompt, logic is pre-created (in logic/declare_logic.py)
+        1. Deep copy prototypes/genai_demo (adds logic and security, and custom end point)
 
         WebGenAI DX:
+        
         0. Convention: click the Blue Button
-            * Home/Create Project
-            * Home/Open App
-            * Landing
-            * Overview[Manager}/Open
-            * Overview/GitHub
-            * App Home / Develop --> GitHub
+                * Home/Create Project
+                * Home/Open App
+                * Landing
+                * Overview[Manager}/Open
+                * Overview/GitHub
+                * App Home / Develop --> GitHub
         0. demo --> codespaces.  Where are instructions (what is CS, how do I load/run)?
-        1. Name must be exact - how we we ensure that?
-        2. Need to bypass the wg_logic, since is duplicated in the recursive_overwrite; rename it?
+        1. Name can be any, iff created with APILOGICPROJECT_IS_GENAI_DEMO
+        2. Bypass duplicate discovery logic iff created with APILOGICPROJECT_IS_GENAI_DEMO
+        3. FIXME:
+                * cd project
+                * als add-cust  # add customizations
+                * run, and use place order service - end point is not activated.
 
         Args:
         """

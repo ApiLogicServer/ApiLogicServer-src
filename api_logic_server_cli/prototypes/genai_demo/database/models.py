@@ -16,9 +16,9 @@ from sqlalchemy.ext.declarative import declarative_base
 # mypy: ignore-errors
 ########################################################################################################################
 
-from safrs import SAFRSBase
+from database.system.SAFRSBaseX import SAFRSBaseX, TestBase
 from flask_login import UserMixin
-import safrs, flask_sqlalchemy
+import safrs, flask_sqlalchemy, os
 from safrs import jsonapi_attr
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
@@ -35,9 +35,14 @@ metadata = Base.metadata
 
 from sqlalchemy.dialects.sqlite import *
 
+if os.getenv('APILOGICPROJECT_NO_FLASK') is None or os.getenv('APILOGICPROJECT_NO_FLASK') == 'None':
+    Base = SAFRSBaseX   # enables rules to be used outside of Flask, e.g., test data loading
+else:
+    Base = TestBase     # ensure proper types, so rules work for data loading
+    print('*** Models.py Using TestBase ***')
 
 
-class Customer(SAFRSBase, Base):
+class Customer(Base):
     __tablename__ = 'Customers'
     _s_collection_name = 'Customer'  # type: ignore
     __bind_key__ = 'None'
@@ -67,7 +72,7 @@ class Customer(SAFRSBase, Base):
     S_CheckSum = _check_sum_
 
 
-class Product(SAFRSBase, Base):
+class Product(Base):
     __tablename__ = 'Products'
     _s_collection_name = 'Product'  # type: ignore
     __bind_key__ = 'None'
@@ -95,7 +100,7 @@ class Product(SAFRSBase, Base):
     S_CheckSum = _check_sum_
 
 
-class Order(SAFRSBase, Base):
+class Order(Base):
     __tablename__ = 'Orders'
     _s_collection_name = 'Order'  # type: ignore
     __bind_key__ = 'None'
@@ -126,7 +131,7 @@ class Order(SAFRSBase, Base):
     S_CheckSum = _check_sum_
 
 
-class Item(SAFRSBase, Base):
+class Item(Base):
     __tablename__ = 'Items'
     _s_collection_name = 'Item'  # type: ignore
     __bind_key__ = 'None'
