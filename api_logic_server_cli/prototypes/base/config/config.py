@@ -143,7 +143,6 @@ class Config:
         app_logger.info(f'config.py - security disabled')
 
     # Begin Multi-Database URLs (from ApiLogicServer add-db...)
-
     auth_db_path = str(project_path.joinpath('database/authentication_db.sqlite'))
     SQLALCHEMY_DATABASE_URI_AUTHENTICATION = f'sqlite:///{auth_db_path}'
     app_logger.info(f'config.py - SQLALCHEMY_DATABASE_URI_AUTHENTICATION: {SQLALCHEMY_DATABASE_URI_AUTHENTICATION}\n')
@@ -153,6 +152,11 @@ class Config:
         SQLALCHEMY_DATABASE_URI_AUTHENTICATION = os.getenv('SQLALCHEMY_DATABASE_URI_AUTHENTICATION')  # type: ignore # type: str
         app_logger.debug(f'.. overridden from env variable: SQLALCHEMY_DATABASE_URI_AUTHENTICATION')
 
+    # Single Page App (SPA) Landing Page Database
+    landing_db_path = project_path.joinpath('database/db_spa.sqlite')
+    SQLALCHEMY_DATABASE_URI_LANDING = f'sqlite:///{landing_db_path}'
+    if landing_db_path.exists():
+        app_logger.info(f'config.py - SQLALCHEMY_DATABASE_URI_LANDING: {SQLALCHEMY_DATABASE_URI_LANDING}\n')
 
     # End Multi-Database URLs (from ApiLogicServer add-db...)
 
