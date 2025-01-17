@@ -67,7 +67,7 @@ try:  # this is just for WebGenAI
     # Add the file handler to the logger
     log.addHandler(file_handler)
     log.setLevel(logging.DEBUG)
-    log.info(f"Svcs log file: /tmp/genai_svcs.log")
+    
 except Exception as exc:
     pass # this is just for WebGenAI, ok to ignore error
 
