@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "14.02.07"
+__version__ = "14.02.11"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t01/16/2024 - 14.02.07: genai - running genai_demo, --using not required on --repaired-response \n"\
+    "\t01/16/2024 - 14.02.11: genai - running genai_demo, --using not required on --repaired-response \n"\
     "\t01/15/2024 - 14.02.04: APILOGICPROJECT_IS_GENAI_DEMO enables genai_demo to be any name \n"\
     "\t01/15/2024 - 14.02.03: --repaired-response needs to save docs/response.json \n"\
     "\t01/13/2024 - 14.02.01: webg logic, support for import/merge of WebGenAI projects into Dev projects, rebuilt test data \n"\
@@ -412,10 +412,12 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
         if project.db_url == 'sqlite:///sample_ai.sqlite':  # work-around - VSCode run config arg parsing (dbviz STRESS)
             create_utils.copy_md(project = project, from_doc_file = "Sample-AI.md", to_project_file='Sample-AI.md')
 
-        if project.is_genai_demo:  # readme now opens automatically, so use that.
-            genai_demo_dir = (Path(api_logic_server_dir_str)).\
-                joinpath('prototypes/genai_demo')
-            recursive_overwrite(genai_demo_dir, project.project_directory)
+        if project.is_genai_demo:  # overwrite logic & db, add readme
+            genai_demo_dir = (Path(api_logic_server_dir_str)).joinpath('prototypes/genai_demo')
+            # recursive_overwrite(genai_demo_dir, project.project_directory)
+            # log.info('.. ..Copy in genai_demo customizations')
+            # exit(1)
+            # readme now opens automatically, so use that...
             shutil.move(project.project_directory_path.joinpath('readme.md'), 
                         project.project_directory_path.joinpath('readme_standard.md'))   
             create_utils.copy_md(project = project, from_doc_file = "Sample-Genai.md", to_project_file='readme.md')
@@ -472,7 +474,7 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
             # strip sqlite://// from sqlite:////Users/val/dev/ApiLogicServer/api_logic_server_cli/database/nw-gold.sqlite
             db_loc = project.abs_db_url.replace("sqlite:///", "")
             target_db_loc_actual = str(project.project_directory_path.joinpath('database/db.sqlite'))
-            if project.is_genai_demo == False:
+            if True:  # project.is_genai_demo == False:  genai_demo using db from genai, not prototypes
                 copyfile(db_loc, target_db_loc_actual)
             config_url = str(project.api_logic_server_dir_path)
             # build this:  SQLALCHEMY_DATABASE_URI = sqlite:///{str(project_abs_dir.joinpath('database/db.sqlite'))}
@@ -1877,13 +1879,8 @@ from database import <project.bind_key>_models
             from api_logic_server_cli.genai.genai import GenAI
             gen_ai = GenAI(self)  
             gen_ai.create_db_models()  # create_db_models.py used to create database to build project
-            if self.is_genai_demo:
-                # restore the database from genai_demo (but go ahead and keep the docs dir etc) FIXME
-                genai_demo_db = self.api_logic_server_dir_path.joinpath('prototypes/genai_demo/database/db.sqlite')
-                shutil.copyfile(src=genai_demo_db, dst=self.project_directory_path.joinpath('database/db.sqlite'))
-                log.debug(f"Restored database from genai_demo")
 
-        if (self.from_model != "" or self.genai_using) != "" and not self.is_genai_demo:
+        if (self.from_model != "" or self.genai_using != ""):  # and not self.is_genai_demo:  # use create_db_from_model.py
             try:
                 create_db_from_model.create_db(self)
                 # halt execution if genai already discovered errors, eg, response contains table definitions
