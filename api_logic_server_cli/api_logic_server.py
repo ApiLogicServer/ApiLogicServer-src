@@ -12,13 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "14.02.12"
+__version__ = "14.02.20"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t01/16/2024 - 14.02.12: bind fixes, genai - running genai_demo, --using not required on --repaired-response \n"\
-    "\t01/15/2024 - 14.02.04: APILOGICPROJECT_IS_GENAI_DEMO enables genai_demo to be any name \n"\
-    "\t01/15/2024 - 14.02.03: --repaired-response needs to save docs/response.json \n"\
-    "\t01/13/2024 - 14.02.01: webg logic, support for import/merge of WebGenAI projects into Dev projects, rebuilt test data \n"\
+    "\t01/17/2024 - 14.02.20: WebGenAI support, genai_demo \n"\
     "\t01/06/2024 - 14.01.00: N8N, Rebuild test data, Fixup, Project Import, Improved reporting of missing attributes, Simplified RowDictMaper  \n"\
     "\t11/18/2024 - 12.02.00: genai: 'qualified any' now supported in logic training \n"\
     "\t10/31/2024 - 12.01.00: genai: informal rules (eg, Sum of employee salaries cannot exceed department budget) \n"\

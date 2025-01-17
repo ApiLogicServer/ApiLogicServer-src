@@ -7,6 +7,7 @@ import decimal
 import logging
 import sqlalchemy
 from sqlalchemy.sql import func 
+from decimal import Decimal
 from logic_bank.logic_bank import Rule
 from sqlalchemy import create_engine, Column, Integer, String, Float, ForeignKey, Date, DateTime, Numeric, Boolean, Text, DECIMAL
 from sqlalchemy.types import *
