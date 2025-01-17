@@ -1548,12 +1548,16 @@ def add_cust(ctx, bind_key_url_separator: str, api_name: str, project_name: str)
     log.debug(f"\ncli[add-cust] models_py_path={models_py_path}")
     if not models_py_path.exists():
         raise Exception("Customizations are northwind/genai-specific - models.py does not exist")
+
+    project_is_genai_demo = False  # can't use project.is_genai_demo because this is not the create command...
+    if project.project_directory_path.joinpath('docs/project_is_genai_demo.txt').exists():
+        project_is_genai_demo = True
     
     project.abs_db_url, project.nw_db_status, project.model_file_name = create_utils.get_abs_db_url("0. Using Sample DB", project)
     if create_utils.does_file_contain(search_for="CategoryTableNameTest", in_file=models_py_path):
         project.add_nw_customizations(do_security=False)
         log.info("\nNext step - add authentication:\n  $ ApiLogicServer add-auth --db_url=auth\n\n")
-    elif project_name == 'genai_demo' and create_utils.does_file_contain(search_for="Customer", in_file=models_py_path):
+    elif project_is_genai_demo and create_utils.does_file_contain(search_for="Customer", in_file=models_py_path):
         project.add_genai_customizations(do_security=False)
     elif project_name == 'sample_ai' and create_utils.does_file_contain(search_for="CustomerName = Column(Text", in_file=models_py_path):
         cocktail_napkin_path = project.project_directory_path.joinpath('logic/cocktail-napkin.jpg')

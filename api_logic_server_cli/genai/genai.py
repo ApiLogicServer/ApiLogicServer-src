@@ -494,7 +494,7 @@ class GenAI(object):
             return return_line
 
         logic_file = self.project.project_directory_path.joinpath('logic/declare_logic.py')
-        if self.project.is_genai_demo == False:
+        if True:  # self.project.is_genai_demo == False: translate logic
             translated_logic = "\n    # Logic from GenAI: (or, use your IDE w/ code completion)\n"
             translated_logic += genai_svcs.get_code(self.response_dict.rules)
             if self.logic_enabled == False:
