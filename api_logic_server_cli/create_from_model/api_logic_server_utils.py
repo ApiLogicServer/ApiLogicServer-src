@@ -92,6 +92,10 @@ def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "R
 
     2. Except if 1st line has ## - then remove indents to retain sections
 
+    Image references are made absolute (to github).
+
+    Doc Links are not well displayed in Codespaces, so should me minimized.
+
     Args:
         project (ProjectRun): project object (project name, etc)
         from_doc_file (str): eg, Sample-Basic_Demo.md
