@@ -1,0 +1,28 @@
+'Mapper[Follower(followers)]' has no property 'user11'.  If this property was indicated from other mappers or configure events, ensure registry.configure() has been called.
+KeyError: 'user11'
+
+issue with multi-reln User/Follower has:
+
+
+class User(Base):  # type: ignore
+    __tablename__ = 'users'
+    _s_collection_name = 'User'  # type: ignore
+
+    id = Column(String(36), primary_key=True, unique=True)
+    email = Column(String(255), nullable=False, unique=True)
+    username = Column(String(255), nullable=False, unique=True)
+    image = Column(String(255), server_default=text("''"))
+    bio = Column(Text, server_default=text("''"))
+    password = Column(String(255), nullable=False)
+    created_at = Column(DateTime, server_default=text("CURRENT_TIMESTAMP"), nullable=False)
+    updated_at = Column(DateTime, server_default=text("CURRENT_TIMESTAMP"), nullable=False)
+    allow_client_generated_ids = True
+
+    # parent relationships (access parent)
+
+    # child relationships (access children)
+    ArticleList : Mapped[List["Article"]] = relationship(back_populates="user")
+    FollowerList : Mapped[List["Follower"]] = relationship(foreign_keys='[Follower.follower]', back_populates="user1")
+    FollowerList1 : Mapped[List["Follower"]] = relationship(foreign_keys='[Follower.user]', back_populates="user11")
+    CommentList : Mapped[List["Comment"]] = relationship(back_populates="user")
+    FavoriteList : Mapped[List["Favorite"]] = relationship(back_populates="user1")
