@@ -1362,7 +1362,7 @@
             "redirectOutput": true,
             "args": ["create-and-run"
                     ,"--project_name=${workspaceFolder}/../../build_and_test/ApiLogicServer/t_peters_dev_multi_reln"
-                    ,"--db_url=sqlite:///../tests/test_databases/sqlite-databases/tom_peters_dev/dev.sqlite3"],
+                    ,"--db_url=sqlite:///../tests/test_databases/sqlite-databases/tom_peters_dev/dev_test.sqlite3"],
             "console": "integratedTerminal"
         },
         {
