@@ -20,19 +20,16 @@ def declare_logic():
     ''' Declarative multi-table derivations and constraints, extensible with Python.
  
     Brief background: see readme_declare_logic.md
-    
-    Your Code Goes Here - Use code completion (Rule.) to declare rules
 
-    GenAI: Paste the following into Copilot Chat, and paste the result below.
+    GenAI: the following prompt was sent to GenAI-Logic, which translated it into the code below:
         
-    Use Logic Bank to enforce these requirements:
+    Use case: Check Credit 
     
-    Enforce the Check Credit requirement (do not generate check constraints):
-    1. Customer.Balance <= CreditLimit
-    2. Customer.Balance = Sum(Order.AmountTotal where date shipped is null)
-    3. Order.AmountTotal = Sum(Items.Amount)
-    4. Items.Amount = Quantity * UnitPrice
-    5. Store the Items.UnitPrice as a copy from Product.UnitPrice
+    1. The Customer's balance is less than the credit limit
+    2. The Customer's balance is the sum of the Order amount_total where date_shipped is null
+    3. The Order's amount_total is the sum of the Item amount
+    4. The Item amount is the quantity * unit_price
+    5. The Item unit_price is copied from the Product unit_price
     '''
 
     from logic_bank.logic_bank import Rule
@@ -40,39 +37,50 @@ def declare_logic():
     from logic.logic_discovery.auto_discovery import discover_logic
     discover_logic()
 
-    # Logic from GenAI: (or, use your IDE w/ code completion)n
-    Rule.sum(derive=Customer.Balance, as_sum_of=Order.AmountTotal, where=lambda row: row.ShipDate is None)
-    Rule.sum(derive=Order.AmountTotal, as_sum_of=Item.Amount)
-    # Rule.formula(derive=Item.amount, as_expression=lambda row: row.quantity * row.unit_price)
-    Rule.copy(derive=Item.UnitPrice, from_parent=Product.UnitPrice)
+    # Logic from GenAI: (or, use your IDE w/ code completion)
+
+    # Ensures the customer's balance is less than the credit limit.
     Rule.constraint(validate=Customer,
                     as_condition=lambda row: row.Balance <= row.CreditLimit,
                     error_msg="Customer balance ({row.Balance}) exceeds credit limit ({row.CreditLimit})")
 
+    # Computes the customer's balance as the sum of unshipped orders.
+    Rule.sum(derive=Customer.Balance, as_sum_of=Order.AmountTotal, where=lambda row: row.ShipDate is None)
+
+    # Computes the total amount of an order as the sum of item amounts.
+    Rule.sum(derive=Order.AmountTotal, as_sum_of=Item.Amount)
+
+    # Calculates the item amount as the quantity times unit price.  (original rule, prior to iteration)
+    # Rule.formula(derive=Item.amount, as_expression=lambda row: row.quantity * row.unit_price)
+
+    # Copies the unit price from the parent product to the item.
+    Rule.copy(derive=Item.UnitPrice, from_parent=Product.UnitPrice)
+
     # End Logic from GenAI
 
+
+    #als: Demonstrate that logic == Rules + Python (for extensibility)
+
+    # 4. Items.Amount = Quantity * UnitPrice, altered with IDE for CarbonNeutral discount
     def derive_amount(row: Item, old_row: Item, logic_row: LogicRow):
         amount = row.Quantity * row.UnitPrice
         if row.Product.CarbonNeutral == True and row.Quantity >= 10:
            amount = amount * Decimal(0.9)  # breakpoint here
         return amount
-
-    # 4. Items.Amount = Quantity * UnitPrice
-    Rule.formula(derive=Item.Amount, calling=derive_amount)
-
-    #als: Demonstrate that logic == Rules + Python (for extensibility)
+    # now register function; note logic ordering is automatic
+    Rule.formula(derive=Item.Amount, calling=derive_amount)  
 
     def send_order_to_shipping(row: Order, old_row: Order, logic_row: LogicRow):
         """ #als: Send Kafka message formatted by OrderShipping RowDictMapper
 
         Format row per shipping requirements, and send (e.g., a message)
 
-        NB: the after_flush event makes Order.Id avaible.  Contrast to congratulate_sales_rep().
+        NB: the after_flush event makes Order.Id avaible.
 
         Args:
             row (Order): inserted Order
             old_row (Order): n/a
-            logic_row (LogicRow): bundles curr/old row, with ins/upd/dlt logic
+            logic_row (LogicRow): bundles curr/old row, with ins/upd/dlt (etc) state
         """
         if logic_row.is_inserted():
             kafka_producer.send_kafka_message(logic_row=logic_row,
