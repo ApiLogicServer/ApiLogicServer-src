@@ -102,25 +102,43 @@ class RuleObj:
         title =""
         if j.title is not None:
             title = j.title
-        funName = "fn_" + name.split(".")[0]
+        #funName = "fn_" + name.split(".")[0]
+        entityLower = entity.lower()
+        funName =  f"fn_{entityLower}_{ruleType}_{name}"
         comments = j.comments
         appliesTo = ""
         if j.appliesTo is not None:
             appliesTo = j.appliesTo
         
         # Define a function to use in the rule 
-        ruleJSObj = None if self.jsObj is None else fixup(self.jsObj)
+        ruleJSObj = None if self.jsObj is None else fixup(self.jsObj) if self.jsObj is None else ""
         tab = "\t\t"
         self.add_content(f"\t# RuleType: {ruleType}")
         self.add_content(f"\t# Title: {title}")
         self.add_content(f"\t# Name: {name}")
         self.add_content(f"\t# Entity: {entity}")
+        
+        codeType = j.get("codeType", None)
+        if codeType == "Java":
+            className = j.get("className", None)
+            methodName = j.get("methodName", None)
+            self.add_content(f"\t# CodeType: {codeType}")
+            self.add_content(f"\t# ClassName: {className}")
+            self.add_content(f"\t# MethodName: {methodName}")
+            if name == "cache":
+                funName =  f"fn_{methodName}"
+
+            
         self.add_content(f"\t# Comments: {comments}")
         self.add_content("")
+        if codeType == "Java":
+            self.add_content(f"\tdef {funName}(row: models.{entity}, old_row: models.{entity}, logic_row: LogicRow):")
+            self.add_content(f"\t\t# Call Java Code: {className}.{methodName}(row, old_row, logic_row)")
+            self.add_content("\t\tpass")
+            
+    
         if ruleJSObj is not None:
-            entityLower = entity.lower()
-            funName =  f"\tfn_{entityLower}_{ruleType}_{name}"
-            if len(ruleJSObj) < 80 and ruleType == "formula":
+            if len(ruleJSObj) < 80 and ruleType == "formula" and codeType == "JavaScript":
                 pass
             else:
                 self.add_content(f"\tdef {funName}(row: models.{entity}, old_row: models.{entity}, logic_row: LogicRow):")
@@ -149,7 +167,7 @@ class RuleObj:
                 if ruleJSObj is not None and len(ruleJSObj) > 80:
                     self.add_content(f"{tab}calling={funName})")
                 else:
-                    ruleJSObj = ruleJSObj.replace("return","lambda row: ")
+                    ruleJSObj = ruleJSObj.replace("return","lambda row: ") if ruleJSObj is not None else ""
                     self.add_content(f"{tab}as_expression={ruleJSObj})")
             case "count":
                 attr = j.attribute
