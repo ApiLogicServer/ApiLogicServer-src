@@ -404,7 +404,7 @@ class ModelMigrationService(object):
                         j = json.loads(d)
                         isActive = j["isActive"]
                         if isActive:
-                            func_type = j["functionType"]
+                            func_type = j.get("functionType","Java")
                             if func_type == "rowLevel":
                                 comments = j["comments"]
                                 if comments != "":
@@ -424,6 +424,14 @@ class ModelMigrationService(object):
                                 )
                                 self.add_content("'''")
                                 self.add_content(fixup(javaScriptFile))
+                                self.add_content("'''")
+                                self.add_content("")
+                                lac_func.append(name)
+                            elif func_type == "Java":
+                                name = j["name"]
+                                self.add_content("'''")
+                                self.add_content(f"#Java Function: {j['methodName']}") 
+                                self.add_content(f"#Java Function: {j['className']}") 
                                 self.add_content("'''")
                                 self.add_content("")
                                 lac_func.append(name)
