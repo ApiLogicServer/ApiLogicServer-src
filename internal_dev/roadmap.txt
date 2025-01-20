@@ -19,6 +19,8 @@ These have already been vetted by Customers / Prod Mgmt (we know they are valuab
 
     Add Security to WebG?
 
+    Python 3.13
+
     Rule Event/Condition Actions (ECA when order shipped, send order to Kafka and n8n email to manager, Nat Lang)
 
     API Entity Actions (set <field> = <value>... toggle on_hold, ship, etc)

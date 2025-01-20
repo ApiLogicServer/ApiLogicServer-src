@@ -39,8 +39,12 @@
 
 # if builds fails, check for renamed targets by breaking up Run commands
 
-FROM python:3.12.3-slim-bullseye
-# FROM python:3.12.3-alpine3.19  - fails /bin/sh -c apt-get update
+# FROM python:3.12.3-slim-bullseye
+FROM python:3.12.8-slim-bullseye
+# docker scout cves apilogicserver/api_logic_server  
+# 3.12.3: 3C    16H  
+# 3.12.8: 1C     9H
+
 ARG TARGETOS
 ARG TARGETARCH
 # LABEL ApiLogicServer-10.03.45 ${TARGETARCH}
