@@ -23,6 +23,8 @@ These have already been vetted by Customers / Prod Mgmt (we know they are valuab
 
     API Entity Actions (set <field> = <value>... toggle on_hold, ship, etc)
 
+    Clean up custom endpoint 'extra methods'
+
     Nat Lang Copy, Allocate (apply Payment to Outstanding Orders, Bonus to Dept members, ...)
 
     Rules by UseCase (discovery)
