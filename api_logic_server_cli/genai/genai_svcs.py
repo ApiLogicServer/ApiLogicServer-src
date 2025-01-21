@@ -82,14 +82,33 @@ def get_code(rule_list: List[DotMap]) -> str:
     """    
 
     import re
-    constraint_pattern = re.compile(r"(Rule\.constraint\(validate=)(\w+)(,)")
-    sum_pattern = re.compile(r"(Rule\.sum\(derive=)(\w+)(.)")
-    count_pattern = re.compile(r"(Rule\.count\(derive=)(\w+)(.)")
-    formula_pattern = re.compile(r"(Rule\.formula\(derive=)(\w+)(.)")
-    copy_pattern = re.compile(r"(Rule\.copy\(derive=)(\w+)(.)")
-    as_sum_of_pattern = re.compile(r"(as_sum_of=)(\w+)(.)")
-    as_count_of_pattern = re.compile(r"(as_count_of=)(\w+)(.)")
-    from_parent_pattern = re.compile(r"(from_parent=)(\w+)(.)")
+
+    patterns = [ re.compile(r"derive=(\w+).*$"),
+                 re.compile(r"from_parent=(\w+).*$"),
+                 re.compile(r"Rule\.constraint\(validate=(\w+).*$"),
+                 re.compile(r"as_sum_of=(\w+).*$"),
+                 re.compile(r"as_count_of=(\w+).*$")
+               ]
+
+    def get_imports(each_line: str, imports: set):
+        """updates imports by extracting the class names to import
+        
+        eg, Rule.constraint(validate=Customer) -> Customer
+
+        Args:
+            each_line (str): the ChatGPT code
+            imports (set): the set of imported classes (updated in place)
+        """
+
+        for each_pattern in patterns:
+            match = each_pattern.search(each_line)
+            if match:
+                the_class_name = match.group(1)
+                log.debug(f'.. found class: {the_class_name} in: {each_line}')
+                imports.add(the_class_name)
+            else:
+                log.debug(f'.. no classes found in: {each_line}')
+        return
 
 
     def remove_logic_halluncinations(each_line: str) -> str:
@@ -130,27 +149,9 @@ def get_code(rule_list: List[DotMap]) -> str:
                 log.debug(f'.. removed hallucination: {each_line}')
         return return_line
 
-    def insert_model(each_line: str) -> str:
-        """insert the model
 
-        Args:
-            each_line (str): _description_
-
-        Returns:
-            str: _description_
-        """
-        # pattern = re.compile(r"(Rule\.constraint\(validate=)(\w+)(\))")
-        return_line = constraint_pattern.sub(r"\1models.\2\3", each_line)
-        return_line = sum_pattern.sub(r"\1models.\2\3", return_line)
-        return_line = count_pattern.sub(r"\1models.\2\3", return_line)
-        return_line = formula_pattern.sub(r"\1models.\2\3", return_line)
-        return_line = copy_pattern.sub(r"\1models.\2\3", return_line)
-        return_line = as_sum_of_pattern.sub(r"\1models.\2\3", return_line)
-        return_line = as_count_of_pattern.sub(r"\1models.\2\3", return_line)
-        return_line = from_parent_pattern.sub(r"\1models.\2\3", return_line)
-        return return_line  
-    
     translated_logic = ""
+    imports = set()
     for each_rule in rule_list:
         comment_line = each_rule.description
         translated_logic += f'\n    # {comment_line}\n'
@@ -160,12 +161,14 @@ def get_code(rule_list: List[DotMap]) -> str:
         for each_line in code_lines:
             if 'declare_logic.py' not in each_line:
                 each_repaired_line = remove_logic_halluncinations(each_line=each_line)
-                each_repaired_line = insert_model(each_line = each_repaired_line)
+                get_imports(each_line = each_repaired_line, imports=imports)
                 if not each_repaired_line.startswith('    '):  # sometimes in indents, sometimes not
                     each_repaired_line = '    ' + each_repaired_line
                 if 'def declare_logic' not in each_repaired_line:
-                    translated_logic += each_repaired_line + '\n'    
-    return translated_logic
+                    translated_logic += each_repaired_line + '\n' 
+    # from database.models import Customer, Order, Item, Product 
+    imports_str = '    from database.models import ' + ', '.join(imports) + '\n' 
+    return imports_str + translated_logic
 
 def rebuild_test_data_for_project(response: str = 'docs/response.json',
                                   project: Project = None,
