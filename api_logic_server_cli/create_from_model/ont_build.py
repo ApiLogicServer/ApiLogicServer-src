@@ -159,8 +159,11 @@ class OntBuilder(object):
         if use_local:
             with contextlib.suppress(Exception):
                 return self.local_env.get_template(template_name)
-
-        return self.env.get_template(template_name)
+        try:
+            return self.env.get_template(template_name)
+        except Exception as e:
+            log.error(f"Error loading template {template_name} - {e}")
+            return None 
 
     
     def build_application(self, show_messages: bool = True):
@@ -229,11 +232,7 @@ class OntBuilder(object):
             self.generate_home_template(app_path, entity_favorites, each_entity_name, each_entity, entity_name)
             self.generate_new_template(app_path, entity_favorites, each_entity_name, each_entity, entity_name)
             self.generate_detail_template(app_path, entity_favorites, each_entity_name, each_entity, entity_name)
-            if self.api_endpoint:
-                print(f"Ontimize Build for --api-endpoint={self.api_endpoint} - entity: {each_entity_name}")
-                return
             self.generate_routing(app_path, each_entity_name, each_entity, entity_name)
-
             self.generate_card_home_template(app_path, entity_favorites, each_entity_name, each_entity, entity_name)
             
         # menu groups/routing and service config
@@ -269,7 +268,11 @@ class OntBuilder(object):
             source=app_config,
         )
     def generate_routing(self, app_path, each_entity_name, each_entity, entity_name):
-        routing = self.load_routing("routing.jinja", entity_name, each_entity)
+        home_template_name = self.find_template(each_entity, "home_template","home_template.html")
+        if home_template_name == "home_tree_template.html":
+            routing = self.load_routing("tree_routing.jinja", entity_name, each_entity)
+        else:
+            routing = self.load_routing("routing.jinja", entity_name, each_entity)
         write_file(app_path, entity_name, "", "-routing.module.ts", routing)
         module = self.load_module("module.jinja", entity_name=each_entity_name, entity=each_entity)
         write_file(app_path, entity_name, "", ".module.ts", module)
@@ -324,6 +327,11 @@ class OntBuilder(object):
         if home_template_name == "grid_template.html":
             home_scss = self.get_template("grid_home.scss").render(entity=each_entity_name)
             ts = self.load_ts("grid_home_template.jinja", each_entity_name, each_entity, entity_favorites)
+        elif home_template_name != "home_template.html":
+            home_scss = self.get_template("home.scss").render(entity=each_entity_name)
+            home_template_nm = home_template_name.split(".")
+            ts_template = self.find_template(each_entity, f"{home_template_nm[0]}.jinja","home_template.jinja")
+            ts = self.load_ts(ts_template, each_entity_name, each_entity, entity_favorites)
         else:
             home_scss = self.get_template("home.scss").render(entity=each_entity_name)     
             ts = self.load_ts("home_template.jinja", each_entity_name, each_entity, entity_favorites)
@@ -455,7 +463,7 @@ class OntBuilder(object):
             # loader=PackageLoader(package_name="APILOGICPROJECT",package_path="/ApiLogicServer/ApiLogicServer-dev/build_and_test/nw/ui/templates"),
             loader=FileSystemLoader(searchpath=f"{templates_path}")
         )
-        local_templates_path = self.app_path.joinpath(f'templates')
+        local_templates_path = self.app_path.joinpath('templates')
         local_env = Environment (
             loader=FileSystemLoader(searchpath=f"{local_templates_path}")
         )
@@ -464,7 +472,7 @@ class OntBuilder(object):
             template_env = Environment(
                 loader=FileSystemLoader(searchpath=f"{self.template_dir}")
             )
-        return (env,local_env, template_env)
+        return (env, local_env, template_env)
     
     def load_ts(self, template_name: str, entity_name: str, entity: any, favorites: any) -> str:
         # The above code is a Python function that takes a template name as input, retrieves the template
