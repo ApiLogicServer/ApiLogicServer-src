@@ -72,10 +72,13 @@ except Exception as exc:
     pass # this is just for WebGenAI, ok to ignore error
 
 def get_code_update_logic_file(rule_list: List[DotMap], logic_file_path: Path = None) -> str:
-    """returns code snippet for rules from rule
+    """returns code snippet for rules from rule, updates rules if logic_file_path provided
+
+        * see avoid_collisions_on_rule
 
     Args:
         rule_list (List[DotMap]): list of rules from ChatGPT in DotMap format
+        logic_file_path (Path): if provided, update default rule file, with provisions for model named `Rule`
 
     Returns:
         str: the rule code
@@ -111,7 +114,9 @@ def get_code_update_logic_file(rule_list: List[DotMap], logic_file_path: Path = 
         return
 
     def avoid_collisions_on_rule(translated_logic: str, imports: set, logic_file_path: Path = None) -> None:
-        """ If there's a model named `Rule`, change LogicBank.Rule refs:
+        """ Update logic file with rule code (if provided), with collision avoidance on models named Rule
+        
+        If there's a model named `Rule`, that collides with LogicBank.Rule.  So, change LogicBank.Rule refs:
 
         1. `from logic_bank.logic_bank import Rule`
                 * to: from logic_bank.logic_bank import Rule as LogicBankRule
