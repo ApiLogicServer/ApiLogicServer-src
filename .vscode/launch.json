@@ -589,6 +589,7 @@
         },
         {
             "name": "    - Create blt/genai_demo from blt-prompt/ChatGPT, DISABLED logic",
+// used to mimic Genai - rules provided, but disabled on initial creation ('structure first')
             "type": "debugpy",
             "request": "launch",
             "env": {"APILOGICSERVER_DEBUG": "True"},
@@ -651,7 +652,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "    - Create blt/genai_demo from RESPONSE",
+            "name": "    - Create blt/genai_demo from RESPONSE (old format)",
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
@@ -661,8 +662,7 @@
             "args": [
                 "genai",
                 "--repaired-response=${workspaceFolder}/tests/test_databases/ai-created/genai_demo/genai.response",
-                "--project-name=genai_demo",
-                "--using=genai_demo"],
+                "--project-name=genai_demo"],
             "console": "integratedTerminal"
         },
         {
@@ -678,6 +678,21 @@
                 "--repaired-response=${workspaceFolder}/tests/test_databases/ai-created/genai_demo/genai_rows.response",
                 "--project-name=genai_demo_rows",
                 "--using=genai_demo"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "    - Create blt/rule_reserved_words",
+// requires bug-fix to avoid: type object 'Rule' has no attribute 'constraint'
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True", "--Tries=-1",
+                    "APILOGICPROJECT_IS_GENAI_DEMO": "True"},
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["genai",
+            "--repaired-response=${workspaceFolder}/tests/test_databases/ai-created/rule_reserved_words/003_create_db_models.response",
+            "--project-name=rule_reserved_words"],
             "console": "integratedTerminal"
         },
         {

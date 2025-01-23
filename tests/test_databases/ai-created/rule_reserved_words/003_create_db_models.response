@@ -1,0 +1,162 @@
+{
+    "models": [
+        {
+            "classname": "Rule",
+            "code": "class Rule(Base):\n    __tablename__ = 'rule'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String)\n    description = Column(String)\n    use_case = Column(String)\n    entity = Column(String)",
+            "description": "Represents the rules applied to situations in the system.",
+            "name": "Represents rules applied to different situations."
+        },
+        {
+            "classname": "Situation",
+            "code": "class Situation(Base):\n    __tablename__ = 'situation'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    description = Column(String)",
+            "description": "Situations where rules can be applied.",
+            "name": "Represents occurrences where specific rules must be activated."
+        },
+        {
+            "classname": "Category",
+            "code": "class Category(Base):\n    __tablename__ = 'category'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String)",
+            "description": "Different categories of rules.",
+            "name": "Classification of rules into various categories."
+        },
+        {
+            "classname": "Action",
+            "code": "class Action(Base):\n    __tablename__ = 'action'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String)\n    rule_id = Column(Integer, ForeignKey('rule.id'))",
+            "description": "Actions to be triggered by rules.",
+            "name": "Defines actions triggered under specific rules."
+        },
+        {
+            "classname": "Condition",
+            "code": "class Condition(Base):\n    __tablename__ = 'condition'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    expression = Column(String)",
+            "description": "Logical expressions defining rule conditions.",
+            "name": "Expressions that specify the conditions for rules."
+        },
+        {
+            "classname": "Context",
+            "code": "class Context(Base):\n    __tablename__ = 'context'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    description = Column(String)",
+            "description": "Various contexts applicable to rules.",
+            "name": "Different contexts where specified rules may apply."
+        },
+        {
+            "classname": "Event",
+            "code": "class Event(Base):\n    __tablename__ = 'event'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    description = Column(String)",
+            "description": "Events that may trigger rules.",
+            "name": "Triggers causing rules to activate within contexts."
+        },
+        {
+            "classname": "Trigger",
+            "code": "class Trigger(Base):\n    __tablename__ = 'trigger'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    rule_id = Column(Integer, ForeignKey('rule.id'))\n    condition_id = Column(Integer, ForeignKey('condition.id'))",
+            "description": "Link between triggers and rule conditions.",
+            "name": "Connects triggers with various rule conditions."
+        },
+        {
+            "classname": "Outcome",
+            "code": "class Outcome(Base):\n    __tablename__ = 'outcome'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    description = Column(String)",
+            "description": "Outcomes resulting from actions triggered by rules.",
+            "name": "Results or effects produced when an action is triggered based on rules."
+        },
+        {
+            "classname": "History",
+            "code": "class History(Base):\n    __tablename__ = 'history'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    date_logged = Column(DateTime)\n    action_id = Column(Integer, ForeignKey('action.id'))",
+            "description": "Logs of actions triggered by rules.",
+            "name": "Chronological logging of rule-triggered actions."
+        },
+        {
+            "classname": "Audit",
+            "code": "class Audit(Base):\n    __tablename__ = 'audit'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    date_reviewed = Column(DateTime)\n    outcome_id = Column(Integer, ForeignKey('outcome.id'))",
+            "description": "Records of reviews of outcomes.",
+            "name": "Reviews outcomes related to triggered rule actions."
+        },
+        {
+            "classname": "Log",
+            "code": "class Log(Base):\n    __tablename__ = 'log'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    action_description = Column(String)\n    context_id = Column(Integer, ForeignKey('context.id'))",
+            "description": "Comprehensive logs on all actions within contexts.",
+            "name": "Comprehensive logging of actions within specific contexts."
+        }
+    ],
+    "rules": [
+        {
+            "name": "Rule Name Constraint",
+            "description": "Ensure rule names are not 'x'.",
+            "use_case": "General",
+            "entity": "Rule",
+            "code": "Rule.constraint(validate=Rule, as_condition=lambda row: row.name != 'x', error_msg='Rule names cannot be ''x''.')"
+        }
+    ],
+    "test_data": "Insert sample data across 12 tables, indicating test scenarios for functionality of the rule-system interaction.",
+    "test_data_rows": [
+        {
+            "test_data_row_variable": "rule_1",
+            "code": "rule_1 = Rule(name='Rule 1', description='First Rule', use_case='General', entity='Situation')"
+        },
+        {
+            "test_data_row_variable": "rule_2",
+            "code": "rule_2 = Rule(name='Rule 2', description='Second Rule', use_case='General', entity='Category')"
+        },
+        {
+            "test_data_row_variable": "rule_example",
+            "code": "rule_example = Rule(name='TestRule', description='Example Rule', use_case='Example', entity='Condition')"
+        },
+        {
+            "test_data_row_variable": "rule_invalid",
+            "code": "rule_invalid = Rule(name='x', description='Invalid Name Rule', use_case='Invalid Test', entity='Condition')"
+        },
+        {
+            "test_data_row_variable": "situation_1",
+            "code": "situation_1 = Situation(description='Sample Situation 1')"
+        },
+        {
+            "test_data_row_variable": "situation_2",
+            "code": "situation_2 = Situation(description='Sample Situation 2')"
+        },
+        {
+            "test_data_row_variable": "category_1",
+            "code": "category_1 = Category(name='Category A')"
+        },
+        {
+            "test_data_row_variable": "category_2",
+            "code": "category_2 = Category(name='Category B')"
+        },
+        {
+            "test_data_row_variable": "action_1",
+            "code": "action_1 = Action(name='Action A', rule_id=1)"
+        },
+        {
+            "test_data_row_variable": "action_2",
+            "code": "action_2 = Action(name='Action B', rule_id=1)"
+        },
+        {
+            "test_data_row_variable": "condition_1",
+            "code": "condition_1 = Condition(expression=\"x > y\")"
+        },
+        {
+            "test_data_row_variable": "condition_2",
+            "code": "condition_2 = Condition(expression=\"y < 10\")"
+        },
+        {
+            "test_data_row_variable": "context_1",
+            "code": "context_1 = Context(description='Context A')"
+        },
+        {
+            "test_data_row_variable": "context_2",
+            "code": "context_2 = Context(description='Context B')"
+        },
+        {
+            "test_data_row_variable": "event_1",
+            "code": "event_1 = Event(description='Event A')"
+        },
+        {
+            "test_data_row_variable": "event_2",
+            "code": "event_2 = Event(description='Event B')"
+        },
+        {
+            "test_data_row_variable": "trigger_1",
+            "code": "trigger_1 = Trigger(rule_id=1, condition_id=1)"
+        },
+        {
+            "test_data_row_variable": "trigger_2",
+            "code": "trigger_2 = Trigger(rule_id=2, condition_id=2)"
+        }
+    ],
+    "test_data_sqlite": "INSERT INTO rule (name, description, use_case, entity) VALUES ('Rule 1', 'First Rule', 'General', 'Situation');\nINSERT INTO rule (name, description, use_case, entity) VALUES ('Rule 2', 'Second Rule', 'General', 'Category');\nINSERT INTO rule (name, description, use_case, entity) VALUES ('TestRule', 'Example Rule', 'Example', 'Condition');\nINSERT INTO rule (name, description, use_case, entity) VALUES ('x', 'Invalid Name Rule', 'Invalid Test', 'Condition');\nINSERT INTO situation (description) VALUES ('Sample Situation 1');\nINSERT INTO situation (description) VALUES ('Sample Situation 2');\nINSERT INTO category (name) VALUES ('Category A');\nINSERT INTO category (name) VALUES ('Category B');\nINSERT INTO action (name, rule_id) VALUES ('Action A', 1);\nINSERT INTO action (name, rule_id) VALUES ('Action B', 1);\nINSERT INTO condition (expression) VALUES ('x > y');\nINSERT INTO condition (expression) VALUES ('y < 10');\nINSERT INTO context (description) VALUES ('Context A');\nINSERT INTO context (description) VALUES ('Context B');\nINSERT INTO event (description) VALUES ('Event A');\nINSERT INTO event (description) VALUES ('Event B');\nINSERT INTO trigger (rule_id, condition_id) VALUES (1, 1);\nINSERT INTO trigger (rule_id, condition_id) VALUES (2, 2);",
+    "name": "Rule_Management_System"
+}

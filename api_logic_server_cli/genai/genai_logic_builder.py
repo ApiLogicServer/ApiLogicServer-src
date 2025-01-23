@@ -357,18 +357,18 @@ class GenAILogic(object):
             manager_root = Path(os.getcwd()).parent
             with open(manager_root.joinpath('system/genai/create_db_models_inserts/logic_discovery_prefix.py'), "r") as logic_prefix_file:
                 logic_prefix = logic_prefix_file.read()
-            translated_logic = logic_prefix  # imports, your code goes here
+            translated_logic = logic_prefix  # imports (such as `from logic_bank.logic_bank import Rule``), your code goes here
         translated_logic += f'\n    # Logic from GenAI {str(datetime.datetime.now().strftime("%B %d, %Y %H:%M:%S"))}:\n\n'
 
-        rule_code = genai_svcs.get_code(rule_list)  # get code from logic
+        with open(file, "w") as logic_file:  # write the prefix, so get_code can fix the imports
+            logic_file.write(translated_logic)
+        log.debug(f'.. created logic code: {file}')
+
+        # update logic file with translated rules (and fix import if there is a Rule table)
+        rule_code = genai_svcs.get_code_update_logic_file(rule_list = rule_list,
+                                                          logic_file = file) 
         translated_logic += rule_code
         translated_logic += "\n    # End Logic from GenAI\n\n"
-
-        # logic_file_name = file.stem + '.py'
-        # logic_file_path = self.project.project_directory_path.joinpath(f'logic/logic_discovery/{logic_file_name}')
-        with open(file, "w") as logic_file:
-            logic_file.write(translated_logic)
-        log.debug(f'.. stored logic code: {file}')
         pass
 
     def get_headers_with_openai_api_key(self) -> dict:
