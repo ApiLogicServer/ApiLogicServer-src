@@ -113,7 +113,7 @@ def get_code_update_logic_file(rule_list: List[DotMap], logic_file_path: Path = 
                 log.debug(f'.. no classes found in: {each_line}')
         return
 
-    def avoid_collisions_on_rule(translated_logic: str, imports: set, logic_file_path: Path = None) -> None:
+    def insert_logic_into_file_and_avoid_collisions_on_rule(translated_logic: str, imports: set, logic_file_path: Path = None) -> None:
         """ Update logic file with rule code (if provided), with collision avoidance on models named Rule
         
         If there's a model named `Rule`, that collides with LogicBank.Rule.  So, change LogicBank.Rule refs:
@@ -218,12 +218,13 @@ def get_code_update_logic_file(rule_list: List[DotMap], logic_file_path: Path = 
                     each_repaired_line = '    ' + each_repaired_line
                 if 'def declare_logic' not in each_repaired_line:
                     translated_logic += each_repaired_line + '\n' 
-    return_translated_logic = '    from database.models import ' + ', '.join(imports) + '\n' + \
-                                translated_logic
-    avoid_collisions_on_rule(imports=imports, 
-                             translated_logic=return_translated_logic, 
-                             logic_file_path=logic_file_path)
+
     # from database.models import Customer, Order, Item, Product 
+    return_translated_logic = '    from database.models import ' + ', '.join(imports) + '\n' + translated_logic
+    insert_logic_into_file_and_avoid_collisions_on_rule(
+        imports=imports, 
+        translated_logic=return_translated_logic, 
+        logic_file_path=logic_file_path)
     return return_translated_logic
 
 def rebuild_test_data_for_project(response: str = 'docs/response.json',
