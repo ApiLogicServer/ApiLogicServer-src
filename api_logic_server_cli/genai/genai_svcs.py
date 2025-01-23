@@ -71,7 +71,7 @@ try:  # this is just for WebGenAI
 except Exception as exc:
     pass # this is just for WebGenAI, ok to ignore error
 
-def get_code(rule_list: List[DotMap]) -> str:
+def get_code_update_logic_file(rule_list: List[DotMap], logic_file_path: Path = None) -> str:
     """returns code snippet for rules from rule
 
     Args:
@@ -109,6 +109,53 @@ def get_code(rule_list: List[DotMap]) -> str:
             else:
                 log.debug(f'.. no classes found in: {each_line}')
         return
+
+    def avoid_collisions_on_rule(translated_logic: str, imports: set, logic_file_path: Path = None) -> None:
+        """ If there's a model named `Rule`, change LogicBank.Rule refs:
+
+        1. `from logic_bank.logic_bank import Rule`
+                * to: from logic_bank.logic_bank import Rule as LogicBankRule
+        2. `Rule.early_row_event_all_classes(early_row_event_all_classes=handle_all)`
+                * to: LogicBankRule.early_row_event_all_classes
+                * not used in logic_files, so project is None
+        3. Users' logic (e.g, Rule.constraint) --> LogicBank.Rule.constraint
+
+        Beware of these cases:
+        1. als create - this is not used (but logic/declare_logic.py must exist)
+        2. als genai - uses this, with discovery stuff & Rule.early_event at the end
+        3. als genai-logic - logic/logic_discovery files, no discovery stuff at end
+        4. webG logic - operates differently, to create logic/wg_rules files (for diagnostics)
+
+        Args:
+            rule_list (List[DotMap]): list of rules from ChatGPT in DotMap format
+            project (Project): a Project object (unless creating a logic file)
+            imports (set): the set of imported classes
+        """        
+        insert_logic = "\n    # Logic from GenAI: (or, use your IDE w/ code completion)\n"
+        insert_logic += translated_logic
+        insert_logic += "\n    # End Logic from GenAI\n\n"
+
+        utils.insert_lines_at(lines=insert_logic, 
+                            file_name=logic_file_path, 
+                            at='discover_logic()', 
+                            after=True)
+        
+        if 'Rule' not in imports:
+            return
+        if logic_file_path is None:  # this needs review for WebGenAI
+            log.debug(f'.. .. WebGenAI - avoid_collisions_on_rule: {logic_file_path}')
+            return
+        # find and replace `Rule` in declare_logic.py:
+        utils.replace_string_in_file(search_for='from logic_bank.logic_bank import Rule', 
+                                     replace_with='from logic_bank.logic_bank import Rule as LogicBankRule', 
+                                     in_file=logic_file_path)
+        utils.replace_string_in_file(search_for='Rule.early_row_event_all_classes', 
+                                     replace_with='LogicBankRule.early_row_event_all_classes', 
+                                     in_file=logic_file_path)
+        utils.replace_string_in_file(search_for='    Rule.', 
+                                     replace_with='    LogicBankRule.', 
+                                     in_file=logic_file_path)
+
 
 
     def remove_logic_halluncinations(each_line: str) -> str:
@@ -166,9 +213,13 @@ def get_code(rule_list: List[DotMap]) -> str:
                     each_repaired_line = '    ' + each_repaired_line
                 if 'def declare_logic' not in each_repaired_line:
                     translated_logic += each_repaired_line + '\n' 
+    return_translated_logic = '    from database.models import ' + ', '.join(imports) + '\n' + \
+                                translated_logic
+    avoid_collisions_on_rule(imports=imports, 
+                             translated_logic=return_translated_logic, 
+                             logic_file_path=logic_file_path)
     # from database.models import Customer, Order, Item, Product 
-    imports_str = '    from database.models import ' + ', '.join(imports) + '\n' 
-    return imports_str + translated_logic
+    return return_translated_logic
 
 def rebuild_test_data_for_project(response: str = 'docs/response.json',
                                   project: Project = None,

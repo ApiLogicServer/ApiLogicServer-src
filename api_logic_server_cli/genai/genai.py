@@ -303,7 +303,7 @@ class GenAI(object):
                 raw_prompt = file.read()
             prompt = self.get_prompt__with_inserts(raw_prompt=raw_prompt, for_iteration=False)  # insert db-specific logic
             self.logic_enabled = False
-            if 'LogicBank' in prompt:  # if prompt has logic, we need to insert the training
+            if 'LogicBank' in prompt and K_LogicBankOff not in prompt:  # if prompt has logic, we need to insert the training
                 prompt_messages.extend( self.get_prompt_learning_requests())
                 self.logic_enabled = True
             if prompt.startswith('You are a '):  # if it's a preset, we need to insert the prompt
@@ -494,13 +494,12 @@ class GenAI(object):
             return return_line
 
         logic_file = self.project.project_directory_path.joinpath('logic/declare_logic.py')
-        if True:  # self.project.is_genai_demo == False: translate logic
+        if self.logic_enabled:
+            translated_logic = genai_svcs.get_code_update_logic_file(rule_list = self.response_dict.rules,
+                                                                     logic_file_path = logic_file)
+        else:  # prompt contains LogicBankOff (eg, LBX - some demo thing)
             translated_logic = "\n    # Logic from GenAI: (or, use your IDE w/ code completion)\n"
-            translated_logic += genai_svcs.get_code(self.response_dict.rules)
-            if self.logic_enabled == False:
-                translated_logic = "\n    # Logic from GenAI: (or, use your IDE w/ code completion)\n"
-                translated_logic += "\n    # LogicBank Disabled \n"  
-            translated_logic += "\n    # End Logic from GenAI\n\n"
+            translated_logic += "\n    # LogicBank Disabled \n"  
             utils.insert_lines_at(lines=translated_logic, 
                                 file_name=logic_file, 
                                 at='discover_logic()', 

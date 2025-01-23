@@ -9,7 +9,7 @@ from importlib import import_module
 from pathlib import Path
 from werkzeug.utils import secure_filename
 from database.models import *
-from logic_bank.logic_bank import DeclareRule, Rule, LogicBank
+from logic_bank.logic_bank import Rule, LogicBank
 from colorama import Fore, Style, init
 from logic_bank.logic_bank import RuleBank
 from logic_bank.rule_bank.rule_bank_setup import find_referenced_attributes
