@@ -4,14 +4,11 @@ from logic_bank.exec_row_logic.logic_row import LogicRow
 from logic_bank.extensions.rule_extensions import RuleExtension
 from logic_bank.logic_bank import Rule
 import database.models as models
-from database.models import *
 import api.system.opt_locking.opt_locking as opt_locking
 from security.system.authorization import Grant, Security
-import logging, os
+import logging
 
-app_logger = logging.getLogger(__name__)
-
-declare_logic_message = "ALERT:  *** No Rules Yet ***"  # printed in api_logic_server.py
+logger = logging.getLogger(__name__)
 
 def declare_logic():
     ''' Declarative multi-table derivations and constraints, extensible with Python.
@@ -23,28 +20,6 @@ def declare_logic():
 
     from logic.logic_discovery.auto_discovery import discover_logic
     discover_logic()
-
-    # Logic from GenAI: (or, use your IDE w/ code completion)
-
-    # Ensure Customer balance is less than the Credit Limit
-    Rule.constraint(validate=Customer,
-        as_condition=lambda row: row.balance <= row.credit_limit,
-        error_msg="Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})")
-
-    # Customer balance is the sum of the Order amount_total where date_shipped is null
-    Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total)
-
-    # Order's amount_total is the sum of the Item amount
-    Rule.sum(derive=Order.amount_total, as_sum_of=Item.amount)
-
-    # Item amount is calculated as quantity * unit_price
-    Rule.formula(derive=Item.amount, as_expression=lambda row: row.quantity * row.unit_price)
-
-    # Item unit_price copied from Product unit_price
-    Rule.copy(derive=Item.unit_price, from_parent=Product.price)
-
-    # End Logic from GenAI
-
 
     def handle_all(logic_row: LogicRow):  # #als: TIME / DATE STAMPING, OPTIMISTIC LOCKING
         """
@@ -58,7 +33,8 @@ def declare_logic():
             logic_row (LogicRow): from LogicBank - old/new row, state
         """
 
-        if not os.getenv("APILOGICPROJECT_NO_FLASK") is not None:
+        if os.getenv("APILOGICPROJECT_NO_FLASK") is not None:
+            print("\ndeclare_logic.py Using TestBase\n")
             return  # enables rules to be used outside of Flask, e.g., test data loading
 
         if logic_row.is_updated() and logic_row.old_row is not None and logic_row.nest_level == 0:
@@ -93,3 +69,4 @@ def declare_logic():
 
     app_logger.debug("..logic/declare_logic.py (logic == rules + code)")
 
+    
