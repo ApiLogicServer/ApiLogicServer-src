@@ -7,6 +7,7 @@ from logic_bank.logic_bank import DeclareRule
 import database.models as models
 import api.system.opt_locking.opt_locking as opt_locking
 from security.system.authorization import Grant, Security
+from logic.load_verify_rules import load_verify_rules
 import logging
 
 app_logger = logging.getLogger(__name__)
@@ -21,8 +22,13 @@ def declare_logic():
     Your Code Goes Here - Use code completion (Rule.) to declare rules
     '''
 
-    from logic.logic_discovery.auto_discovery import discover_logic
-    discover_logic()
+    if os.environ.get("WG_PROJECT"):
+        # Inside WG: Load rules from docs/expprt/export.json
+        load_verify_rules()
+    else:
+        # Outside WG: load declare_logic function
+        from logic.logic_discovery.auto_discovery import discover_logic
+        discover_logic()
 
     def handle_all(logic_row: LogicRow):  # #als: TIME / DATE STAMPING, OPTIMISTIC LOCKING
         """
