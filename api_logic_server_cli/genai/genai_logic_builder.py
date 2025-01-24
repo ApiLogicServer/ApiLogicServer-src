@@ -85,6 +85,7 @@ class GenAILogic(object):
                 response_str = genai_svcs.call_chatgpt(messages=self.messages, api_version=self.project.genai_version, using=self.project.genai_using)
                 response = json.loads(response_str)
                 # FIXME - perhaps required for fixup (it is failing)
+                # the rules & data models are expected to be in docs... not there
                 # self.get_and_save_response_data(response=response, file=each_file)          # save raw response to docs/logic
                 self.response_dict = DotMap(response)
                 rule_list = self.response_dict.rules
