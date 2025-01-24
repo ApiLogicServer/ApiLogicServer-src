@@ -84,7 +84,8 @@ class GenAILogic(object):
                 log.debug(f'.. ChatGPT - saving raw response to: system/genai/temp/chatgpt_original.response')
                 response_str = genai_svcs.call_chatgpt(messages=self.messages, api_version=self.project.genai_version, using=self.project.genai_using)
                 response = json.loads(response_str)
-                self.get_and_save_response_data(response=response, file=each_file)          # save raw response to docs/logic
+                # FIXME - perhaps required for fixup (it is failing)
+                # self.get_and_save_response_data(response=response, file=each_file)          # save raw response to docs/logic
                 self.response_dict = DotMap(response)
                 rule_list = self.response_dict.rules
                 each_code_file = self.project.project_directory_path.joinpath(f'logic/logic_discovery/{each_file.stem}.py')
@@ -354,8 +355,9 @@ class GenAILogic(object):
         """
         translated_logic = ""
         if file.suffix == '.py':  # for logic files (not suggestions - they are .txt)
-            manager_root = Path(os.getcwd()).parent
-            with open(manager_root.joinpath('system/genai/create_db_models_inserts/logic_discovery_prefix.py'), "r") as logic_prefix_file:
+            manager_root = Path(os.getcwd()).parent  # FIXME this moved
+            logic_prefix_path = self.project.api_logic_server_dir_path.joinpath('fragments/declare_logic_begin.py')
+            with open(logic_prefix_path, "r") as logic_prefix_file:
                 logic_prefix = logic_prefix_file.read()
             translated_logic = logic_prefix  # imports (such as `from logic_bank.logic_bank import Rule``), your code goes here
         translated_logic += f'\n    # Logic from GenAI {str(datetime.datetime.now().strftime("%B %d, %Y %H:%M:%S"))}:\n\n'
@@ -366,7 +368,7 @@ class GenAILogic(object):
 
         # update logic file with translated rules (and fix import if there is a Rule table)
         rule_code = genai_svcs.get_code_update_logic_file(rule_list = rule_list,
-                                                          logic_file = file) 
+                                                          logic_file_path = file) 
         translated_logic += rule_code
         translated_logic += "\n    # End Logic from GenAI\n\n"
         pass
