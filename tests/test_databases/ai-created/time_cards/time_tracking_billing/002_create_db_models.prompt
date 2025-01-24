@@ -1,0 +1,184 @@
+Use SQLAlchemy to create a sqlite database named system/genai/temp/create_db_models.sqlite for the following requirements. These requirements are very important!
+Requirements:
+<Requirements>
+Generate a time tracking and billing application
+
+Use these names for tables and attributes:
+Client (id, name, email, phone, total_hours, total_amount, budget_amount, is_over_budget)
+Project ( id, client_id, name, total_project_hours, total_project_amount, project_budget_amount, is_over_budget)
+Invoice: (id, invoice_date, project_id, invoice_amount, payment_total, invoice_balance, is_paid)
+Task (id, project_id, name, description, total_task_hours_worked, total_task_amount_billed, task_budget_hours, is_over_budget, invoice_id)
+Person (id, client_id, name, email, phone, billing_rate, total_hours_entered, total_amount_billed)
+Timesheet (id,task_id, person_id, date_worked, hours_worked, month, year, billing_rate, total_amount_billed)
+Payment (id, invoice_id, payment_amount, payment_date, notes)
+
+Use decimal(10,2) for: hours_worked, total_hours, hours_entered, total_amount, billing_rate, total_task_amount_billed, project_budget_amount, total_project_amount, total_project_hours
+Default all decimal fields to zero
+
+Use LogicBank to enforce these requirements (do not generate check constraints); be sure to update the data model and *all* test data with any attributes used in the logic:
+
+Use case: Person
+Total Hours entered is sum of timesheet hours worked
+Total amount billed is total hours entered times billing rate
+Billing rate must be greater than 0 and less than 200
+
+Use case: Timesheet
+The total amount billed is the Person billing rate times hours worked
+Hours worked must be greater than 0 and less than 15
+Month is extracted using datetime from the date worked
+Year is extracted using datetime from the date worked
+Copy billing rate from Person billing rate
+
+Use Case: Task
+Total task hours worked is the sum of the Timesheet hours worked
+Total task amount billed is the sum of the Timesheet total amount billed
+Formula: is Over Budget  when total task hours worked exceeds task budget hours
+
+Use Case: Project
+Total project hours is the sum of Task total task hours worked
+Total project amount is the sum of Task total amount billed
+Formula: set  is Over Budget when total project amount exceeds project budget amount
+
+Use Case: Client
+Total hours is the sum of Project total project hours
+Total amount is the sum of Project total amount
+Formula: is Over Budget is true when total amount exceeds budget amount
+
+Use Case: Invoice
+Invoice Amount is the sum of Task total amount billed
+Payment total is the sum of Payment
+invoice balance is invoice amount less payment total
+Formula: is_paid when invoice balance is zero
+
+
+.
+Create at least 7 tables (models)
+.
+</Requirements>
+
+Hints: use autonum keys (for all tables - including for link/join/junction/intersection tables), allow nulls, foreign keys, no check constraints.
+
+Be sure to create classes, never tables.
+Class names are singular, and first letter is capitalized.
+
+If you create sum, count or formula Logic Bank rules, then you MUST create a corresponding column in the data model.
+
+Remember that SQLite DateTime type only accepts Python datetime and date objects as input, 
+this means you can not enter string attributes where a date or datetime object is expected.
+
+Don't install additional packages.
+Don't use the faker pip package.
+
+When creating SQLAlchemy data model classes, follow these guidelines carefully:
+* Use foreign key columns instead of relationship names for the data.  
+* Do not specify nullable unless explicitly specified.
+* Do not use unique unless explicitly specified.
+* Do not use Float unless explicitly specified.
+* Generate the classes ONLY.
+* Do NOT generate imports.
+* Do NOT generate connect statements.
+* Do NOT generate engines.
+
+Create 4 rows of test data for each table, and follow these guidelines carefully:
+* Create separate objects for each test data row, not in arrays. 
+* Be sure to initialize derived attributes for test data rows - including all sums and counts, but do not rely on Logic Bank,
+and do not generate db.execute statements.
+* Do not create arrays of test data.
+* Do not create a function to load test data.  
+* Do not print the test data. 
+* Use double quotes " for strings.
+* For test data, format dates as date(year, month, day).
+
+<responseFormat>
+class Rule(BaseModel):
+    name: str
+    description: str
+    use_case: str # specified use case or requirement name (use 'General' if missing)
+    entity: str # the entity being constrained or derived
+    code: str # logicbank rule code
+    
+class Model(BaseModel):
+    classname: str
+    code: str # sqlalchemy model code
+    sqlite_create: str # sqlite create table statement
+    description: str
+    name: str
+
+class TestDataRow(BaseModel):
+    test_data_row_variable: str  # the Python test data row variable
+    code: str  # Python code to create a test data row instance
+
+class WGResult(BaseModel):  # must match system/genai/prompt_inserts/response_format.prompt
+    # response: str # result
+    models : List[Model] # list of sqlalchemy classes in the response
+    rules : List[Rule] # list rule declarations
+    test_data: str
+    test_data_rows: List[TestDataRow]  # list of test data rows
+    test_data_sqlite: str # test data as sqlite INSERT statements
+    name: str  # suggest a short name for the project
+
+Format the response as a WGResult.
+
+</responseFormat>
+
+<responseFormat>
+
+class Rule(BaseModel):
+
+    name: str
+
+    description: str
+
+    use_case: str # specified use case or requirement name (use 'General' if missing)
+
+    entity: str # the entity being constrained or derived
+
+    code: str # logicbank rule code
+
+    
+
+class Model(BaseModel):
+
+    classname: str
+
+    code: str # sqlalchemy model code
+
+    sqlite_create: str # sqlite create table statement
+
+    description: str
+
+    name: str
+
+
+
+class TestDataRow(BaseModel):
+
+    test_data_row_variable: str  # the Python test data row variable
+
+    code: str  # Python code to create a test data row instance
+
+
+
+class WGResult(BaseModel):  # must match system/genai/prompt_inserts/response_format.prompt
+
+    # response: str # result
+
+    models : List[Model] # list of sqlalchemy classes in the response
+
+    rules : List[Rule] # list rule declarations
+
+    test_data: str
+
+    test_data_rows: List[TestDataRow]  # list of test data rows
+
+    test_data_sqlite: str # test data as sqlite INSERT statements
+
+    name: str  # suggest a short name for the project
+
+
+
+Format the response as a WGResult.
+
+
+
+</responseFormat>
