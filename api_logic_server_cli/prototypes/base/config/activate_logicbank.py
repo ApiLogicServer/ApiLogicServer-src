@@ -29,13 +29,15 @@ def activate_logicbank(session, constraint_handler):
         if e.invalid_rules: logic_logger.error(f"Invalid Rules:  {e.invalid_rules}")
         if e.missing_attributes: logic_logger.error(f"Missing Attrs (try als genai-utils --fixup): {e.missing_attributes}")
         app_logger.error("\n")
-        if not os.environ.get("VERIFY_RULES") == "True":
-            # WG Rule Verification, continue if VERIFY_RULES is True
+        if not os.environ.get("VERIFY_RULES") == "True" and not os.environ.get("WG_PROJECT") == "True":
+            # WG Rule Verification, continue if VERIFY_RULES is True or inside WebGenAI
             raise e
         
     except Exception as e:
         app_logger.error(f"Logic Bank Activation Error: {e}")
         app_logger.exception(e)
-        raise e
+        if not os.environ.get("WG_PROJECT") == "True":
+            # Continue if inside WebGenAI
+            raise e
     logic_logger.setLevel(logic_logger_level)
     
