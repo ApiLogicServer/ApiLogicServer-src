@@ -17,4 +17,6 @@ def declare_logic():
     
     Your Code Goes Here - Use code completion (Rule.) to declare rules
     '''
+
+    # this logic is automatically discovered by declare_logic.py#discover_logic()
     
