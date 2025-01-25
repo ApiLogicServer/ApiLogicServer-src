@@ -1072,7 +1072,7 @@ if Config.do_test_genai:
         test_name = 'tests/genai_demo'
         prompt_path = install_api_logic_server_path.joinpath('system/genai/examples/genai_demo/genai_demo.prompt')
         assert prompt_path.exists() , f'{test_name} error: prompt path not found: {str(prompt_path)}'
-        do_test_genai_cmd = f'{set_venv} && als genai --project-name={test_name} --using={prompt_path}'
+        do_test_genai_cmd = f'{set_venv} && als genai --project-name={test_name} --using={prompt_path} --retries=3'
         result_genai = run_command(do_test_genai_cmd,
             cwd=create_in,
             msg=f'\nCreate {test_name}')
