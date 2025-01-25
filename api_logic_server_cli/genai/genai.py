@@ -176,6 +176,14 @@ class GenAI(object):
                 using = 'system/genai/temp', 
                 api_version=self.project.genai_version)
             response_dict = json.loads(data)
+            if os.environ.get("APILOGICPROJECT_IS_GENAI_DEMO") is not None:
+                genai_demo_response_path = Path('system/genai/examples/genai_demo/genai_demo.response_example')
+                if not genai_demo_response_path.is_file():
+                    log.debug(f'.. standard genai_demo response not found: {genai_demo_response_path}')
+                else:
+                    with open(genai_demo_response_path, 'r') as response_file:
+                        response_dict = json.load(response_file)
+                    log.debug(f'.. using standard genai_demo response: {genai_demo_response_path}')
         else: # for retry from corrected response... eg system/genai/temp/chatgpt_retry.response
             self.resolved_model = "(n/a: model not used for repaired response)"
             log.debug(f'\nUsing [corrected] response from: {self.project.genai_repaired_response}')

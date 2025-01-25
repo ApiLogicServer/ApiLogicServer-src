@@ -2,31 +2,27 @@
     "models": [
         {
             "classname": "Customer",
-            "code": "class Customer(Base):\n    __tablename__ = 'customers'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String, nullable=False)\n    balance = Column(Integer, default=0)\n    credit_limit = Column(Integer, nullable=False)\n\n    def __repr__(self):\n        return f\"Customer(id={self.id}, name='{self.name}', balance={self.balance}, credit_limit={self.credit_limit})\"",
-            "sqlite_create": "CREATE TABLE customers (\n    id INTEGER PRIMARY KEY AUTOINCREMENT, \n    name VARCHAR NOT NULL, \n    balance INTEGER DEFAULT 0, \n    credit_limit INTEGER NOT NULL\n)",
-            "description": "description: Customers table",
-            "name": "customers"
+            "code": "class Customer(Base):\n    __tablename__ = 'customer'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String, unique=True)\n    balance = Column(DECIMAL)\n    credit_limit = Column(DECIMAL)",
+            "description": "Represents a customer in the system with unique name, balance, and credit limit attributes.",
+            "name": "Customer"
         },
         {
             "classname": "Order",
-            "code": "class Order(Base):\n    __tablename__ = 'orders'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    customer_id = Column(Integer, ForeignKey('customers.id'))\n    notes = Column(String)\n    date_shipped = Column(Date)\n    amount_total = Column(Integer, default=0)\n\n    def __repr__(self):\n        return f\"Order(id={self.id}, customer_id={self.customer_id}, notes='{self.notes}', amount_total={self.amount_total}, date_shipped={self.date_shipped})\"",
-            "sqlite_create": "CREATE TABLE orders (\n    id INTEGER PRIMARY KEY AUTOINCREMENT, \n    customer_id INTEGER, \n    notes VARCHAR, \n    date_shipped DATE, \n    amount_total INTEGER DEFAULT 0, \n    FOREIGN KEY(customer_id) REFERENCES customers (id)\n)",
-            "description": "description: Orders table",
-            "name": "orders"
+            "code": "class Order(Base):\n    __tablename__ = 'order'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    customer_id = Column(Integer, ForeignKey('customer.id'))\n    date_shipped = Column(Date)\n    amount_total = Column(DECIMAL)\n    notes = Column(String)",
+            "description": "Represents an order made by a customer, including a notes field.",
+            "name": "Order"
         },
         {
             "classname": "Item",
-            "code": "class Item(Base):\n    __tablename__ = 'items'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    order_id = Column(Integer, ForeignKey('orders.id'))\n    product_id = Column(Integer, ForeignKey('products.id'))\n    quantity = Column(Integer, nullable=False)\n    unit_price = Column(Integer, nullable=False)\n    amount = Column(Integer, default=0)\n\n    def __repr__(self):\n        return f\"Item(id={self.id}, order_id={self.order_id}, product_id={self.product_id}, quantity={self.quantity}, unit_price={self.unit_price}, amount={self.amount})\"",
-            "sqlite_create": "CREATE TABLE items (\n    id INTEGER PRIMARY KEY AUTOINCREMENT, \n    order_id INTEGER, \n    product_id INTEGER, \n    quantity INTEGER NOT NULL, \n    unit_price INTEGER NOT NULL, \n    amount INTEGER DEFAULT 0, \n    FOREIGN KEY(order_id) REFERENCES orders (id), \n    FOREIGN KEY(product_id) REFERENCES products (id)\n)",
-            "description": "description: Items table",
-            "name": "items"
+            "code": "class Item(Base):\n    __tablename__ = 'item'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    order_id = Column(Integer, ForeignKey('order.id'))\n    product_id = Column(Integer, ForeignKey('product.id'))\n    quantity = Column(Integer, nullable=False)\n    unit_price = Column(DECIMAL)\n    amount = Column(DECIMAL)",
+            "description": "Represents an item in an order, including quantity and pricing details.",
+            "name": "Item"
         },
         {
             "classname": "Product",
-            "code": "class Product(Base):\n    __tablename__ = 'products'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String, nullable=False)\n    unit_price = Column(Integer, nullable=False)\n\n    def __repr__(self):\n        return f\"Product(id={self.id}, name='{self.name}', unit_price={self.unit_price})\"",
-            "sqlite_create": "CREATE TABLE products (\n    id INTEGER PRIMARY KEY AUTOINCREMENT, \n    name VARCHAR NOT NULL, \n    unit_price INTEGER NOT NULL\n)",
-            "description": "description: Products table",
-            "name": "products"
+            "code": "class Product(Base):\n    __tablename__ = 'product'\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String)\n    unit_price = Column(DECIMAL)",
+            "description": "Represents a product available in the system with a unit price.",
+            "name": "Product"
         }
     ],
     "rules": [
@@ -34,7 +30,7 @@
             "name": "Customer Balance Constraint",
             "description": "Ensures the customer's balance does not exceed the credit limit.",
             "use_case": "Customer.balance <= credit_limit",
-            "code": "Rule.constraint(validate=Customer,\n                as_condition=lambda row: row.balance <= row.credit_limit,\n                error_msg=\"Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})\")"
+            "code": "Rule.constraint(validate=Customer,\n                as_condition=lambda row: row.balance <= row.credit_limit,\n                error_msg='Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})')"
         },
         {
             "name": "Customer Balance Derivation",
