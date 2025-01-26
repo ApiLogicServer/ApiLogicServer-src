@@ -1,0 +1,141 @@
+{
+    "models": [
+        {
+            "classname": "Customer",
+            "code": "class Customer(Base):\n    __tablename__ = 'customer'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String(8000), unique=True)\n    balance = Column(DECIMAL)\n    credit_limit = Column(DECIMAL)",
+            "description": "Class representing customers with unique names and credit limits.",
+            "name": "Customer"
+        },
+        {
+            "classname": "Order",
+            "code": "class Order(Base):\n    __tablename__ = 'order'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    customer_id = Column(Integer, ForeignKey('customer.id'))\n    amount_total = Column(DECIMAL)\n    date_shipped = Column(DateTime)\n    notes = Column(String(8000))",
+            "description": "Class representing orders linked to customers, with notes and shipment date.",
+            "name": "Order"
+        },
+        {
+            "classname": "Item",
+            "code": "class Item(Base):\n    __tablename__ = 'item'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    order_id = Column(Integer, ForeignKey('order.id'))\n    product_id = Column(Integer, ForeignKey('product.id'))\n    quantity = Column(Integer, nullable=False)\n    amount = Column(DECIMAL)\n    unit_price = Column(DECIMAL)\n    carbon_neutral = Column(Boolean)",
+            "description": "Class representing items with quantity, amount, and carbon neutral status.",
+            "name": "Item"
+        },
+        {
+            "classname": "Product",
+            "code": "class Product(Base):\n    __tablename__ = 'product'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String(8000))\n    unit_price = Column(DECIMAL)\n    carbon_neutral = Column(Boolean)",
+            "description": "Class representing products with their unit prices and carbon neutral status.",
+            "name": "Product"
+        }
+    ],
+    "rules": [
+        {
+            "name": "Customer Balance Sum",
+            "description": "Customer's balance is the sum of the Order amount_total where date_shipped is null.",
+            "use_case": "Check Credit",
+            "entity": "Customer",
+            "code": "Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None)"
+        },
+        {
+            "name": "Order Amount Total",
+            "description": "The Order's amount_total is the sum of the Item amount.",
+            "use_case": "Check Credit",
+            "entity": "Order",
+            "code": "Rule.sum(derive=Order.amount_total, as_sum_of=Item.amount)"
+        },
+        {
+            "name": "Item Amount Formula",
+            "description": "The Item amount is the quantity * unit_price.",
+            "use_case": "Check Credit",
+            "entity": "Item",
+            "code": "Rule.formula(derive=Item.amount, as_expression=lambda row: row.quantity * row.unit_price if not row.carbon_neutral or row.quantity <= 10 else 0.9 * row.quantity * row.unit_price)"
+        },
+        {
+            "name": "Item Unit Price Copy",
+            "description": "The Item unit_price is copied from the Product unit_price.",
+            "use_case": "Check Credit",
+            "entity": "Item",
+            "code": "Rule.copy(derive=Item.unit_price, from_parent=Product.unit_price)"
+        },
+        {
+            "name": "Customer Credit Constraint",
+            "description": "The Customer's balance must be less than the credit limit.",
+            "use_case": "Check Credit",
+            "entity": "Customer",
+            "code": "Rule.constraint(validate=Customer, as_condition=lambda row: row.balance <= row.credit_limit, error_msg='Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})')"
+        },
+        {
+            "name": "Item Carbon Neutral Copy",
+            "description": "Copy carbon neutral status from Product to Item.",
+            "use_case": "General",
+            "entity": "Item",
+            "code": "Rule.copy(derive=Item.carbon_neutral, from_parent=Product.carbon_neutral)"
+        }
+    ],
+    "test_data": "Sample test data includes initial customers, orders with associated items, and products.",
+    "test_data_rows": [
+        {
+            "test_data_row_variable": "customer1",
+            "code": "customer1 = Customer(id=1, name=\"Customer A\", balance=0.0, credit_limit=1000.0)"
+        },
+        {
+            "test_data_row_variable": "customer2",
+            "code": "customer2 = Customer(id=2, name=\"Customer B\", balance=0.0, credit_limit=1500.0)"
+        },
+        {
+            "test_data_row_variable": "customer3",
+            "code": "customer3 = Customer(id=3, name=\"Customer C\", balance=0.0, credit_limit=2000.0)"
+        },
+        {
+            "test_data_row_variable": "customer4",
+            "code": "customer4 = Customer(id=4, name=\"Customer D\", balance=0.0, credit_limit=2500.0)"
+        },
+        {
+            "test_data_row_variable": "product1",
+            "code": "product1 = Product(id=1, name=\"Product A\", unit_price=10.0, carbon_neutral=True)"
+        },
+        {
+            "test_data_row_variable": "product2",
+            "code": "product2 = Product(id=2, name=\"Product B\", unit_price=20.0, carbon_neutral=False)"
+        },
+        {
+            "test_data_row_variable": "product3",
+            "code": "product3 = Product(id=3, name=\"Product C\", unit_price=30.0, carbon_neutral=True)"
+        },
+        {
+            "test_data_row_variable": "product4",
+            "code": "product4 = Product(id=4, name=\"Product D\", unit_price=40.0, carbon_neutral=False)"
+        },
+        {
+            "test_data_row_variable": "order1",
+            "code": "order1 = Order(id=1, customer_id=1, amount_total=0.0, date_shipped=None, notes='Urgent order')"
+        },
+        {
+            "test_data_row_variable": "order2",
+            "code": "order2 = Order(id=2, customer_id=2, amount_total=0.0, date_shipped=None, notes='Regular order')"
+        },
+        {
+            "test_data_row_variable": "order3",
+            "code": "order3 = Order(id=3, customer_id=3, amount_total=0.0, date_shipped=None, notes='Delayed order')"
+        },
+        {
+            "test_data_row_variable": "order4",
+            "code": "order4 = Order(id=4, customer_id=4, amount_total=0.0, date_shipped=None, notes='Important client')"
+        },
+        {
+            "test_data_row_variable": "item1",
+            "code": "item1 = Item(id=1, order_id=1, product_id=1, quantity=15, amount=135.0, unit_price=10.0, carbon_neutral=True)"
+        },
+        {
+            "test_data_row_variable": "item2",
+            "code": "item2 = Item(id=2, order_id=1, product_id=2, quantity=5, amount=100.0, unit_price=20.0, carbon_neutral=False)"
+        },
+        {
+            "test_data_row_variable": "item3",
+            "code": "item3 = Item(id=3, order_id=2, product_id=3, quantity=8, amount=216.0, unit_price=30.0, carbon_neutral=True)"
+        },
+        {
+            "test_data_row_variable": "item4",
+            "code": "item4 = Item(id=4, order_id=3, product_id=4, quantity=2, amount=80.0, unit_price=40.0, carbon_neutral=False)"
+        }
+    ],
+    "test_data_sqlite": "INSERT INTO customer (id, name, balance, credit_limit) VALUES\n(1, \"Customer A\", 0.0, 1000.0),\n(2, \"Customer B\", 0.0, 1500.0),\n(3, \"Customer C\", 0.0, 2000.0),\n(4, \"Customer D\", 0.0, 2500.0);\n\nINSERT INTO product (id, name, unit_price, carbon_neutral) VALUES\n(1, \"Product A\", 10.0, 1),\n(2, \"Product B\", 20.0, 0),\n(3, \"Product C\", 30.0, 1),\n(4, \"Product D\", 40.0, 0);\n\nINSERT INTO \"order\" (id, customer_id, amount_total, date_shipped, notes) VALUES\n(1, 1, 0.0, NULL, 'Urgent order'),\n(2, 2, 0.0, NULL, 'Regular order'),\n(3, 3, 0.0, NULL, 'Delayed order'),\n(4, 4, 0.0, NULL, 'Important client');\n\nINSERT INTO item (id, order_id, product_id, quantity, amount, unit_price, carbon_neutral) VALUES\n(1, 1, 1, 15, 135.0, 10.0, 1),\n(2, 1, 2, 5, 100.0, 20.0, 0),\n(3, 2, 3, 8, 216.0, 30.0, 1),\n(4, 3, 4, 2, 80.0, 40.0, 0);",
+    "name": "CustomerOrderSystem"
+}

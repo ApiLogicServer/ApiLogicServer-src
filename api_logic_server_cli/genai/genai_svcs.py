@@ -110,7 +110,8 @@ def get_code_update_logic_file(rule_list: List[DotMap], logic_file_path: Path = 
                 log.debug(f'.. found class: {the_class_name} in: {each_line}')
                 imports.add(the_class_name)
             else:
-                log.debug(f'.. no classes found in: {each_line}')
+                pass
+                # log.debug(f'.. no classes found in: {each_line}')
         return
 
     def insert_logic_into_file_and_avoid_collisions_on_rule(translated_logic: str, imports: set, logic_file_path: Path = None) -> None:
