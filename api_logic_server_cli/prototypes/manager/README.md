@@ -149,9 +149,22 @@ Verify it's operating properly:
 
 <details markdown>
 
-<summary> You can iterate the data model and logic</summary>
+<summary> You can iterate the logic and data model</summary>
 
-<br>You can add new columns/tables, while keeping the prior model intact:
+<br>Logic iterations are particuarly useful.  For example, here we take the basic check-credit logic, and add:
+
+> Provide a 10% discount when buying more than 10 carbon neutral products.<br><br>The Item carbon neutral is copied from the Product carbon neutral
+
+Explore [genai_demo_iteration_discount](system/genai/examples/genai_demo/genai_demo_iteration_discount).  This will add carbon_neutral to the data model, and update the logic to provide the discount:
+
+```bash title='Iterate Business Logic'
+# Iterate with data model and logic
+als genai --project-name='genai_demo_with_logic' --using=system/genai/examples/genai_demo/genai_demo_iteration
+# open Docs/db.dbml
+```
+<br>
+
+You can add new columns/tables, while keeping the prior model intact:
 
 ```bash title='Iterate Without Logic'
 # Step 1 - create without logic
@@ -164,7 +177,9 @@ als genai --project-name='genai_demo_no_logic' --using=system/genai/examples/gen
 als genai --project-name='genai_demo_with_logic' --using=system/genai/examples/genai_demo/genai_demo_iteration
 # open Docs/db.dbml
 ```
-> Explore [genai_demo_iteration](system/genai/examples/genai_demo/genai_demo_iteration) - observe the `--using` is a *directory* of prompts.  These include the prompts from the first example, plus an *iteration prompt* (`004_iteration_renames_logic.prompt`) to rename tables and add logic.
+
+Explore [genai_demo_iteration](system/genai/examples/genai_demo/genai_demo_iteration) - observe the `--using` is a *directory* of prompts.  These include the prompts from the first example, plus an *iteration prompt* (`004_iteration_renames_logic.prompt`) to rename tables and add logic.
+
 
 </details>
 </br>
