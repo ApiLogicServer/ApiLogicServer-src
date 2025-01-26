@@ -1,0 +1,131 @@
+Update the prior response - be sure not to lose classes and test data already created.
+
+Provide a 10% discount when buying more than 10 carbon neutral products
+
+The Item carbon neutral is copied from the Product carbon neutral
+
+Hints: use autonum keys (for all tables - including for link/join/junction/intersection tables), allow nulls, foreign keys, no check constraints.
+
+Be sure to create classes, never tables.
+
+If you create sum, count or formula Logic Bank rules, then you MUST create a corresponding column in the data model.
+
+Remember that SQLite DateTime type only accepts Python datetime and date objects as input, 
+this means you can not enter string attributes where a date or datetime object is expected.
+
+Don't install additional packages.
+Don't use the faker pip package.
+
+When creating SQLAlchemy data model classes, follow these guidelines carefully:
+* Use foreign key columns instead of relationship names for the data.  
+* Do not specify nullable unless explicitly specified.
+* Do not use unique unless explicitly specified.
+* Do not use Float unless explicitly specified.
+* Generate the classes ONLY.
+* Do NOT generate imports.
+* Do NOT generate connect statements.
+* Do NOT generate engines.
+
+Create 4 rows of test data for each table, and follow these guidelines carefully:
+* Create separate objects for each test data row, not in arrays. 
+* Be sure to initialize derived attributes for test data rows - including all sums and counts, but do not rely on Logic Bank,
+and do not generate db.execute statements.
+* Do not create arrays of test data.
+* Do not create a function to load test data.  
+* Do not print the test data. 
+* Use double quotes " for strings.
+* For test data, format dates as date(year, month, day).
+
+<responseFormat>
+class Rule(BaseModel):
+    name: str
+    description: str
+    use_case: str # specified use case or requirement name (use 'General' if missing)
+    entity: str # the entity being constrained or derived
+    code: str # logicbank rule code
+    
+class Model(BaseModel):
+    classname: str
+    code: str # sqlalchemy model code
+    sqlite_create: str # sqlite create table statement
+    description: str
+    name: str
+
+class TestDataRow(BaseModel):
+    test_data_row_variable: str  # the Python test data row variable
+    code: str  # Python code to create a test data row instance
+
+class WGResult(BaseModel):  # must match system/genai/prompt_inserts/response_format.prompt
+    # response: str # result
+    models : List[Model] # list of sqlalchemy classes in the response
+    rules : List[Rule] # list rule declarations
+    test_data: str
+    test_data_rows: List[TestDataRow]  # list of test data rows
+    test_data_sqlite: str # test data as sqlite INSERT statements
+    name: str  # suggest a short name for the project
+
+Format the response as a WGResult.
+
+</responseFormat>
+
+<responseFormat>
+
+class Rule(BaseModel):
+
+    name: str
+
+    description: str
+
+    use_case: str # specified use case or requirement name (use 'General' if missing)
+
+    entity: str # the entity being constrained or derived
+
+    code: str # logicbank rule code
+
+    
+
+class Model(BaseModel):
+
+    classname: str
+
+    code: str # sqlalchemy model code
+
+    sqlite_create: str # sqlite create table statement
+
+    description: str
+
+    name: str
+
+
+
+class TestDataRow(BaseModel):
+
+    test_data_row_variable: str  # the Python test data row variable
+
+    code: str  # Python code to create a test data row instance
+
+
+
+class WGResult(BaseModel):  # must match system/genai/prompt_inserts/response_format.prompt
+
+    # response: str # result
+
+    models : List[Model] # list of sqlalchemy classes in the response
+
+    rules : List[Rule] # list rule declarations
+
+    test_data: str
+
+    test_data_rows: List[TestDataRow]  # list of test data rows
+
+    test_data_sqlite: str # test data as sqlite INSERT statements
+
+    name: str  # suggest a short name for the project
+
+
+
+Format the response as a WGResult.
+
+
+
+</responseFormat>

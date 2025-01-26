@@ -1,0 +1,70 @@
+// Copy this text, paste to https://dbdiagram.io/d
+// Or, https://databasediagram.com/app
+// Or, view in VSCode with extension: "DBML Live Preview"
+
+Project DBML {
+  Note: '''
+Address: This table contains addresses associated with CustomerAccount.
+CustomerAccount: This table holds customer account details with credit checks.
+Item: This table links orders to products for each item on an order.
+Order: This table contains order details with an assigned sales representative.
+Product: This table contains product information.
+SalesRep: This table contains sales representative details.
+'''
+}
+
+Table Address {
+    id INTEGER [primary key]
+    customer_account_id INTEGER 
+    street VARCHAR 
+    city VARCHAR 
+    state VARCHAR 
+    zip_code VARCHAR 
+    }
+
+Table CustomerAccount {
+    id INTEGER [primary key]
+    name VARCHAR 
+    email VARCHAR 
+    balance FLOAT 
+    credit_limit FLOAT 
+    }
+
+Table Item {
+    id INTEGER [primary key]
+    order_id INTEGER 
+    product_id INTEGER 
+    quantity INTEGER 
+    unit_price FLOAT 
+    amount FLOAT 
+    }
+
+Table Order {
+    id INTEGER [primary key]
+    customer_account_id INTEGER 
+    order_date DATE 
+    sales_rep_id INTEGER 
+    notes VARCHAR 
+    amount_total FLOAT 
+    }
+
+Table Product {
+    id INTEGER [primary key]
+    name VARCHAR 
+    price FLOAT 
+    }
+
+Table SalesRep {
+    id INTEGER [primary key]
+    name VARCHAR 
+    region VARCHAR 
+    }
+
+
+
+// Relationships
+    Ref: Address.(customer_account_id) < CustomerAccount.(id)
+    Ref: Item.(order_id) < Order.(id)
+    Ref: Item.(product_id) < Product.(id)
+    Ref: Order.(customer_account_id) < CustomerAccount.(id)
+    Ref: Order.(sales_rep_id) < SalesRep.(id)
