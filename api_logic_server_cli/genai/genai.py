@@ -176,7 +176,8 @@ class GenAI(object):
                 using = 'system/genai/temp', 
                 api_version=self.project.genai_version)
             response_dict = json.loads(data)
-            if os.environ.get("APILOGICPROJECT_IS_GENAI_DEMO") is not None:
+            if os.environ.get("APILOGICPROJECT_IS_GENAI_DEMO") is not None and \
+                os.environ.get("APILOGICPROJECT_IS_GENAI_DEMO") == 'True':
                 genai_demo_response_path = Path('system/genai/examples/genai_demo/genai_demo.response_example')
                 if not genai_demo_response_path.is_file():
                     log.debug(f'.. standard genai_demo response not found: {genai_demo_response_path}')
