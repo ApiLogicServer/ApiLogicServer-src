@@ -5,6 +5,9 @@ FROM apilogicserver/api_logic_server_local
 
 USER root
 
+RUN apt-get clean
+RUN echo 'Acquire::http::Pipeline-Depth 0;\nAcquire::http::No-Cache true;\nAcquire::BrokenProxy true;\n' > /etc/apt/apt.conf.d/99fixbadproxy
+
 RUN apt-get update
 RUN apt-get install -y nginx jq sqlite3
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \

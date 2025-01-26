@@ -51,6 +51,8 @@ ARG TARGETARCH
 LABEL product="ApiLogicServer-11.00.07" targetarch=${TARGETARCH}
 USER root
 
+RUN apt-get clean
+RUN echo 'Acquire::http::Pipeline-Depth 0;\nAcquire::http::No-Cache true;\nAcquire::BrokenProxy true;\n' > /etc/apt/apt.conf.d/99fixbadproxy
 RUN apt-get update
 RUN apt-get install -y curl
 RUN apt-get install -y git
