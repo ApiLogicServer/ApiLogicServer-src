@@ -1,10 +1,10 @@
-GenAI often fails to build proper test data that matches the derivation rules.
+ChatGPT sometimes fails to build proper test data that matches the derivation rules.
 
-You can rebuild the test data, using Logic Bank rules for proper derivations.
+You can rebuild the test data, using Logic Bank rules for proper derivations, to rebuild your `database/db.sqlite` (make a copy first to preserve your existing data).
 
-Envisioned support will create a new db.sqlite, with test data that reflects derivations.  
-Review, and copy to your database/db.sqlite.
 
 ```
 als genai-utils --rebuild-test-data 
 ```
+
+You can explore the generated `database/test_data/test_data_code.py` to control test data generation.
