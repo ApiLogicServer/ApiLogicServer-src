@@ -529,6 +529,8 @@ def fix_and_write_model_file(response_dict: DotMap,  save_dir: str, post_error: 
                 check_for_row_name = False
             if 'Base.metadata.create_all(engine)' in each_fixed_line:
                 each_fixed_line = each_fixed_line.replace('Base.metadata.create_all(engine)', '# Base.metadata.create_all(engine)')
+            if ',00' in each_fixed_line:
+                each_fixed_line = each_fixed_line.replace(',00', ',0')
             return each_fixed_line
 
         row_names = list()
