@@ -594,9 +594,15 @@ class OntBuilder(object):
         if getattr(entity,"tab_groups",None) != None:
                 for tg in entity["tab_groups"]:
                     exclude = tg.get("exclude", False) or self.global_values["exclude_listpicker"]  == True
-                    if tg["direction"] == "toone" and column.name in tg["fks"] and column.name not in ["Id","id"] and len(tg["fks"]) == 1 and not exclude:
-                        tab_name, tab_var = self.get_tab_attrs(entity=entity, parent_entity=parent_entity, fk_tab=tg)
-                        return self.table_cell_render.render(tab_var)
+                    if tg["direction"] == "toone" \
+                        and column.name in tg["fks"] \
+                        and column.name not in ["Id","id"] \
+                        and len(tg["fks"]) == 1 \
+                        and not exclude:
+                        col_type = next((col.type for col in entity.columns if col.name == col_var["name"]), None)
+                        if col_type and col_var["type"] != col_type:
+                            tab_name, tab_var = self.get_tab_attrs(entity=entity, parent_entity=parent_entity, fk_tab=tg)
+                            return self.table_cell_render.render(tab_var)
                         
         name = column.label if hasattr(column, "label") and column.label != DotMap() else column.name
         self.add_title(column["name"], name)
@@ -614,6 +620,8 @@ class OntBuilder(object):
             return self.table_real_template.render(col_var)
         elif template_type == "table_column":
             return self.table_column.render(col_var)
+        elif template_type.upper() == "CHECKBOX":
+            return self.check_circle_template.render(col_var)
         else:
             if template_type == "TEXTAREA":
                 return self.table_textarea_template.render(col_var)
@@ -637,6 +645,8 @@ class OntBuilder(object):
                 return "CURRENCY"
             elif column.type in ["BLOB","CLOB", "VARBINARY"]:
                 return "IMAGE"
+            elif column.type == "BOOLEAN":
+                return "BOOLEAN"
         return "TEXT"
     def load_new_template(self, template_name: str,entity_name: str,  entity: any, favorites: any) -> str:
         """
@@ -670,9 +680,15 @@ class OntBuilder(object):
         self.add_title(column["name"], name)
         for fk in fks:
             exclude = fk.get("exclude", "false") == "true"
-            if column.name in fk["attrs"]  and fk["direction"] == "toone" and len(fk["attrs"]) == 1 and not exclude:
+            if column.name in fk["attrs"] \
+                and fk["direction"] == "toone" \
+                and len(fk["attrs"]) == 1 \
+                and not exclude: 
+                #and column.template != 'text':
                 fk_entity = self.get_entity(fk["resource"])
-                return self.gen_pick_list_col(col_var, fk, entity)
+                col_type = next((col.type for col in entity.columns if col.name == col_var["name"]), None)
+                if col_type and col_var["type"] != col_type:
+                    return self.gen_pick_list_col(col_var, fk, entity)
         return self.gen_field_template(column, col_var)
     
     def get_column_attrs(self, column) -> dict:
@@ -731,8 +747,14 @@ class OntBuilder(object):
         for fk in fks:
             # TODO - not sure how to handle multiple fks attrs - so only support 1 for now
             exclude = fk.get("exclude", "false") == "true"
-            if column.name in fk["attrs"] and fk["direction"] == "toone" and len(fk["attrs"]) == 1 and not exclude:
-                return self.gen_pick_list_col(col_var, fk, entity)
+            if column.name in fk["attrs"] \
+                and fk["direction"] == "toone" \
+                    and len(fk["attrs"]) == 1 \
+                    and not exclude:
+                    #and column.template != 'text':
+                #col_type = next((col.type for col in entity.columns if col.name == col_var["name"]), None)
+                #if col_type and col_var["type"] != col_type:
+                    return self.gen_pick_list_col(col_var, fk, entity)
         self.add_title(column["name"], name)
         return self.gen_field_template(column, col_var)
 
@@ -920,7 +942,7 @@ class OntBuilder(object):
                 rv = self.nif_template.render(col_var)
             elif col_type in ["DECIMAL","NUMERIC", "DOUBLE","REAL"]:
                 rv = self.real_template.render(col_var)
-            elif template_type == "CHECK_CIRCLE" and col_type in ["BIT","BOOLEAN"]:
+            elif template_type == "CHECK_CIRCLE" or col_type in ["BIT","BOOLEAN"]:
                 rv == self.check_circle_template.render(col_var)
             else:
                 rv = self.text_template.render(col_var)
@@ -1077,11 +1099,15 @@ def get_first_tab_group_entity(entity: any):
 def calculate_template(column):
     col_type = column.type.upper().split("(")[0]
     name = column.name.upper()
-    if name.endswith("AMT") or name.endswith("AMOUNT") or name.endswith("TOTAL") or name in ["BALANCE","CREDITLIMIT","FREIGHT"]:
+    if col_type in ["INTEGER","INT", "TINYINT", "SMALLINT"]:
+        return "INTEGER"
+    if col_type in ["BIT","BOOLEAN"]:
+        return "CHECKBOX"
+    elif name.endswith("AMT") or name.endswith("AMOUNT") or name.endswith("TOTAL") or name in ["BALANCE","CREDITLIMIT","FREIGHT"]:
         return "CURRENCY"
-    if name.endswith("DT") or name.endswith("DATE"):
+    elif name.endswith("DT") or name.endswith("DATE"):
         return "DATE" if col_type == "DATE" else "TIMESTAMP"
-    if name == "DISCOUNT":
+    elif name == "DISCOUNT":
         return "PERCENT"
     template = column.template.upper() if hasattr(column,"template") and column.template != DotMap() else col_type
     if template == "TEXT" and col_type in ["DECIMAL","INTEGER","NUMERIC","REAL","FLOAT"]:
