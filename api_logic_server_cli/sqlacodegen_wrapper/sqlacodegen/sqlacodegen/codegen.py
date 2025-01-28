@@ -1179,7 +1179,8 @@ else:
         render_coltype = not dedicated_fks or any(fk.column is column for fk in dedicated_fks)
         if 'DataTypes.char_type DEBUG ONLY' == str(column):
             debug_stop = "Debug Stop: Column"  # char_type = Column(CHAR(1, 'SQL_Latin1_General_CP1_CI_AS'))
-
+        if str(column) in ['Credit_limit', 'credit_limit']:
+            debug_stop = "Debug Stop: Column"
         if column.key != column.name:
             kwarg.append('key')
         if column.primary_key:
