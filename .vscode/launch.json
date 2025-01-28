@@ -417,21 +417,6 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "     - app-create jan28",
-            "type": "debugpy",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/../../build_and_test/jan28",
-            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
-            "redirectOutput": true,
-            "justMyCode": false,
-            "args": [
-                "app-create",
-                "--project-name=",
-                "--app=app_test"
-                ],
-            "console": "integratedTerminal"
-        },
-        {
             "name": "     - app-build",
             "type": "debugpy",
             "request": "launch",
@@ -447,17 +432,17 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "     - app-build yaml",
+            "name": "     - app-build Rowbot",
             "type": "debugpy",
             "request": "launch",
-            "cwd": "${workspaceFolder}/../../build_and_test/jan28",
+            "cwd": "${workspaceFolder}/../../build_and_test/demo",
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "justMyCode": false,
             "args": [
                 "app-build",
                 "--project-name=",
-                "--app=app_test"
+                "--app=app"
                 ],
             "console": "integratedTerminal"
         },
