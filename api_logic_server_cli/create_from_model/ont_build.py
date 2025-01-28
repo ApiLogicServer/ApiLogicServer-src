@@ -686,9 +686,9 @@ class OntBuilder(object):
                 and not exclude: 
                 #and column.template != 'text':
                 fk_entity = self.get_entity(fk["resource"])
-                col_type = next((col.type for col in entity.columns if col.name == col_var["name"]), None)
-                if col_type and col_var["type"] != col_type:
-                    return self.gen_pick_list_col(col_var, fk, entity)
+                #col_type = next((col.type for col in entity.columns if col.name == col_var["name"]), None)
+                #if col_type and col_var["type"] != col_type:
+                return self.gen_pick_list_col(col_var, fk, entity)
         return self.gen_field_template(column, col_var)
     
     def get_column_attrs(self, column) -> dict:
