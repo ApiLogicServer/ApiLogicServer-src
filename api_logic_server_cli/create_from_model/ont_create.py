@@ -63,6 +63,10 @@ class OntCreator(object):
         self.admin_app = admin_app
         self.app = app
 
+    def attribute_exists(self, attribute: DotMap, attributes: List[DotMap]) -> bool:
+        return any(
+            each_attribute.name == attribute.name for each_attribute in attributes
+        )
     def create_application(self, show_messages: bool = True):
         """ Iterate over ui/admin/admin.yml, and create app...
 
@@ -124,7 +128,8 @@ class OntCreator(object):
                     each_attribute=each_attribute, 
                     each_resource_name=each_resource_name,
                     resources=resources)
-                app_model_out.entities[each_resource_name].columns.append(app_model_attribute)
+                if not self.attribute_exists(app_model_attribute, app_model_out.entities[each_resource_name].columns):
+                    app_model_out.entities[each_resource_name].columns.append(app_model_attribute)
             app_model_out.entities[each_resource_name].pop('attributes')
 
             app_model_out.entities[each_resource_name].primary_key = []
@@ -151,8 +156,7 @@ class OntCreator(object):
         pass
         if show_messages:
             log.info("\nEdit the add_model.yaml as desired, and ApiLogicServer app-build\n")
-
-
+            
     def create_model_entity(self, each_resource, resources: list) -> DotMap:
         each_resource.favorite = each_resource.user_key
         each_resource.exclude = "false"
@@ -227,7 +231,7 @@ class OntCreator(object):
             if col_type in ["SERIAL","SERIAL4"]:
                 rv = "nif"
             if col_type in ["DECIMAL","NUMERIC"]:
-                rv = "currency"  
+                rv = "real"  
             elif col_type in ["DOUBLE", "FLOAT", "REAL"]:
                 rv = "real"  
             elif col_type in ["DATE","DATETIME","TIME","TIMESTAMP"]:
@@ -240,8 +244,13 @@ class OntCreator(object):
                 rv = "image"  
             elif col_type in ["BLOB","CLOB","VARBINARY","BINARY","BYTEA","LONGBLOB","MEDIUMBLOB","TINYBLOB"]:
                 rv = "textarea"
+            elif col_type in ["BOOLEAN","BOOL"]:
+                rv = "checkbox"
             else:
-                rv = "text"  
+                if "amount" in column.name or "price" in column.name or "rate" in column.name:
+                    rv = "currency"
+                else:
+                    rv = "text"  #char varchar string etc
         else:
             rv = "text"  
         return rv
