@@ -19,11 +19,13 @@ def activate_logicbank(session, constraint_handler):
 
     app_logger.info("LogicBank Activation - declare_logic.py")
     aggregate_defaults = os.environ.get("AGGREGATE_DEFAULTS") == "True"
+    numeric_defaults = os.environ.get("NUMERIC_DEFAULTS") == "True"
     try:          # hover activate for info
         LogicBank.activate(session=session, 
                            activator=declare_logic.declare_logic, 
                            constraint_event=constraint_handler,
-                           aggregate_defaults=aggregate_defaults)
+                           aggregate_defaults=aggregate_defaults,
+                           numeric_defaults=numeric_defaults)
     except LBActivateException as e:
         app_logger.error("\nLogic Bank Activation Error -- see https://apilogicserver.github.io/Docs/WebGenAI-CLI/#recovery-options")
         if e.invalid_rules: logic_logger.error(f"Invalid Rules:  {e.invalid_rules}")
