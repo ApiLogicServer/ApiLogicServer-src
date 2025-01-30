@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "14.02.32"
+__version__ = "14.02.33"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t01/28/2024 - 14.02.32: LogicBank 1.20.22 (numeric defaults) \n"\
+    "\t01/29/2024 - 14.02.33: LogicBank 1.20.23 (all defaults) \n"\
     "\t01/26/2024 - 14.02.31: genai_logic fail-safe, Issue 74: Multi-db fix, support models named Rule, wg logic discovery, if formula \n"\
     "\t01/17/2024 - 14.02.20: WebGenAI support, genai_demo \n"\
     "\t01/06/2024 - 14.01.00: N8N, Rebuild test data, Fixup, Project Import, Improved reporting of missing attributes, Simplified RowDictMaper  \n"\
