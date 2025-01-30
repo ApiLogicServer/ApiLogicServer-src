@@ -1,21 +1,23 @@
 Use SQLAlchemy to create a sqlite database named system/genai/temp/create_db_models.sqlite for the following requirements. These requirements are very important!
 Requirements:
 <Requirements>
-Generate a time tracking and billing application
+Generate a project time tracking and invoice application
 
 Use these names for tables and attributes:
-Client (id, name, email, phone, total_hours, total_amount, budget_amount, is_over_budget)
-Project ( id, client_id, name, total_project_hours, total_project_amount, project_budget_amount, is_over_budget)
-Invoice: (id, invoice_date, project_id, invoice_amount, payment_total, invoice_balance, is_paid)
-Task (id, project_id, name, description, total_task_hours_worked, total_task_amount_billed, task_budget_hours, is_over_budget, invoice_id)
-Person (id, client_id, name, email, phone, billing_rate, total_hours_entered, total_amount_billed)
-Timesheet (id,task_id, person_id, date_worked, hours_worked, month, year, billing_rate, total_amount_billed)
-Payment (id, invoice_id, payment_amount, payment_date, notes)
+* Client (id, name, email, phone, total_hours, total_amount, budget_amount, is_over_budget)
+* Project ( id, client_id, name, total_project_hours, total_project_amount, project_budget_amount, is_over_budget, is_active)
+* Invoice: (id, invoice_date, project_id, invoice_amount, payment_total, invoice_balance, is_paid, is_ready,task_count,completed_task_count)
+* InvoiceItem(id, invoice_id, task_id, task_amount, is_completed)
+* Task (id, project_id, name, description, total_task_hours_worked, total_task_amount_billed, task_budget_hours, is_over_budget,is_completed)
+* Person (id, client_id, name, email, phone, billing_rate, total_hours_entered, total_amount_billed)
+* Timesheet (id,task_id, person_id, date_worked, hours_worked, billing_rate, total_amount_billed, is_billable)
+* Payment (id, invoice_id, amount, payment_date, notes)
 
 Use decimal(10,2) for: hours_worked, total_hours, hours_entered, total_amount, billing_rate, total_task_amount_billed, project_budget_amount, total_project_amount, total_project_hours
-Default all decimal fields to zero
+Default hours_worked, total_hours, hours_entered, total_amount, billing_rate, total_task_amount_billed, project_budget_amount, total_project_amount, total_project_hours to zero
+Create relationships between all tables
 
-Use LogicBank to enforce these requirements (do not generate check constraints); be sure to update the data model and *all* test data with any attributes used in the logic:
+Use LogicBank to enforce business logic.
 
 Use case: Person
 Total Hours entered is sum of timesheet hours worked
@@ -23,11 +25,10 @@ Total amount billed is total hours entered times billing rate
 Billing rate must be greater than 0 and less than 200
 
 Use case: Timesheet
-The total amount billed is the Person billing rate times hours worked
-Hours worked must be greater than 0 and less than 15
-Month is extracted using datetime from the date worked
-Year is extracted using datetime from the date worked
 Copy billing rate from Person billing rate
+The total amount billed is the billing rate times hours worked
+Hours worked must be greater than 0 and less than 15
+
 
 Use Case: Task
 Total task hours worked is the sum of the Timesheet hours worked
@@ -37,22 +38,31 @@ Formula: is Over Budget  when total task hours worked exceeds task budget hours
 Use Case: Project
 Total project hours is the sum of Task total task hours worked
 Total project amount is the sum of Task total amount billed
-Formula: set  is Over Budget when total project amount exceeds project budget amount
+Formula: is Over Budget when total project amount exceeds project budget amount
 
 Use Case: Client
 Total hours is the sum of Project total project hours
-Total amount is the sum of Project total amount
-Formula: is Over Budget is true when total amount exceeds budget amount
+Total amount is the sum of Project total project amount
+Formula: is Over Budget equals true when total amount exceeds budget amount
 
 Use Case: Invoice
-Invoice Amount is the sum of Task total amount billed
-Payment total is the sum of Payment
-invoice balance is invoice amount less payment total
-Formula: is_paid when invoice balance is zero
+Invoice Amount is the sum of InvoiceItem task amount
+Payment total is the sum of Payment amount
+Invoice balance is invoice amount less payment total
+Formula: is_paid when invoice balance is than or equal to zero
+Task Count is count of InvoiceItem 
+Task completed count is count of InvoiceItem where is_completed is True
+Formula: is ready when Task Count is equal to Task Completed Count
+
+
+Use Case: InvoiceItem
+InvoiceItem task amount is copied from Task total task amount billed
+InvoiceItem is_completed is sum of Task is_completed when True
+
 
 
 .
-Create at least 7 tables (models)
+Create at least 8 tables (models)
 .
 </Requirements>
 
