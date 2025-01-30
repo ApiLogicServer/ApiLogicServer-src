@@ -261,7 +261,6 @@ def rebuild_test_data_for_project(response: str = 'docs/response.json',
         existing_models = rebuild_project
         del existing_models['rules']
         del existing_models['test_data']
-        del existing_models['test_data_rows']
         del existing_models['test_data_sqlite']
         rebuild_request.append({"role": "user", "content": json.dumps(existing_models)})
         with open(get_manager_path().joinpath('system/genai/prompt_inserts/rebuild_test_data.prompt'), 'r') as file:
