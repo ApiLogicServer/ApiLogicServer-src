@@ -184,7 +184,7 @@ class GenAI(object):
                 else:
                     with open(genai_demo_response_path, 'r') as response_file:
                         response_dict = json.load(response_file)
-                    log.debug(f'.. using standard genai_demo response: {genai_demo_response_path}')
+                    log.debug(f'.. used standard genai_demo response: {genai_demo_response_path}')
         else: # for retry from corrected response... eg system/genai/temp/chatgpt_retry.response
             self.resolved_model = "(n/a: model not used for repaired response)"
             log.debug(f'\nUsing [corrected] response from: {self.project.genai_repaired_response}')
@@ -549,7 +549,12 @@ class GenAI(object):
             is_genai_demo = False
             if os.getenv('APILOGICPROJECT_IS_GENAI_DEMO') is not None or self.project.project_name == 'genai_demo':
                 self.project.project_directory_path.joinpath('docs/project_is_genai_demo.txt').touch()
-                # and DON'T create test data (db.sqlite already set up in recurive copy)
+                # and DON'T create test data (db.sqlite already set up in recursive copy)
+                project_docs_response = self.project.project_directory_path.joinpath('docs/response.json')
+                with open(project_docs_response, "w") as response_file:  # WebG uses this for wg_rules
+                    json.dump(self.response_dict, response_file, indent=4)
+                    pass  # not possible on create_db_models, since project paths not yet set by api_logic_server
+
             else:  # normal path
                 genai_svcs.rebuild_test_data_for_project(
                     use_project_path = self.project.project_directory_path, 
