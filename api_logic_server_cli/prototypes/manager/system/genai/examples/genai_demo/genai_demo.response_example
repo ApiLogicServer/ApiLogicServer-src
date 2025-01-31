@@ -28,32 +28,37 @@
     "rules": [
         {
             "name": "Customer Balance Constraint",
-            "description": "Ensures the customer's balance does not exceed the credit limit.",
+            "description": "Ensures the customer's balance is aligned with the credit limit.",
             "use_case": "Customer.balance <= credit_limit",
+            "entity": "Customer",
             "code": "Rule.constraint(validate=Customer,\n                as_condition=lambda row: row.balance <= row.credit_limit,\n                error_msg='Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})')"
         },
         {
             "name": "Customer Balance Derivation",
             "description": "Calculates the customer's balance as the sum of orders' amount_total where date_shipped is null.",
             "use_case": "Customer.balance = Sum(Order.amount_total where date_shipped is null)",
+            "entity": "Customer",
             "code": "Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None)"
         },
         {
             "name": "Order Amount Total Derivation",
             "description": "Calculates order's amount_total as the sum of item amounts.",
             "use_case": "Order.amount_total = Sum(Item.amount)",
+            "entity": "Order",
             "code": "Rule.sum(derive=Order.amount_total, as_sum_of=Item.amount)"
         },
         {
             "name": "Item Amount Derivation",
             "description": "Calculates item amount as quantity multiplied by unit price.",
             "use_case": "Item.amount = quantity * unit_price",
+            "entity": "Item",
             "code": "Rule.formula(derive=Item.amount, as_expression=lambda row: row.quantity * row.unit_price)"
         },
         {
             "name": "Copy Item Unit Price",
             "description": "Copies the product's unit price to the item.",
             "use_case": "Store the Item.unit_price as a copy from Product.unit_price",
+            "entity": "Item",
             "code": "Rule.copy(derive=Item.unit_price, from_parent=Product.unit_price)"
         }
     ],
