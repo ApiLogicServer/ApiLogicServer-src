@@ -1383,6 +1383,20 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "  - Imatia product_management",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["genai",  "--retries=-1",
+                "--using=${workspaceFolder}/tests/test_databases/ai-created/imatia/product_management/product_management.prompt",
+                "--project-name=imatia_product_management"
+            ],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "  - Create and run Thos Peters dev multi-reln (fails 1/17/2025)",
             "type": "debugpy",
             "request": "launch",
