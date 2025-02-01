@@ -1,0 +1,20 @@
+Generate a product management application with the following specifications:
+
+Tables and attributes:
+Product (id, description, photo_url, unit_type)
+ProductVariant (id, product_id, size, color)
+
+Use LogicBank to enforce these requirements.
+
+Notes:
+- Implement CRUD operations for products and variants
+- Ensure photo_url is stored as a string
+- Generate all necessary relationships
+- Products should be available for both sale and purchase
+
+Use case: Product
+- Validate that description is not empty
+- Ensure unit_type is one of: 'unit', 'kg', 'liter', 'meter'
+
+Use case: ProductVariant
+- Validate that size and color are not empty when provided

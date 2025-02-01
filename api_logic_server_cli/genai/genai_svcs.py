@@ -861,8 +861,9 @@ def call_chatgpt(messages: List[Dict[str, str]], api_version: str, using: str) -
         model = api_version
         if model == "":  # default from CLI is '', meaning fall back to env variable or system default...
             model = os.getenv("APILOGICSERVER_CHATGPT_MODEL")
-            if model is None or model == "*":  # system default chatgpt model
-                model = "gpt-4o-2024-08-06"
+            if model is None or model == "*":   # system default chatgpt model
+                model = "gpt-4o-2024-08-06"     #  33 sec
+                model = "o3-mini"               # 130 sec
         with open(Path(using).joinpath('request.json'), "w") as request_file:  # save for debug
             json.dump(messages, request_file, indent=4)
         log.info(f'.. saved request: {using}/request.json')
