@@ -3,3 +3,6 @@ logic_bank.exceptions.LBActivateException: LBActivateException:
 []
 ['ProductVariant.color): constraint']
 LogicBank Activation Error
+
+This is fixed in 14.02.35: Issue 76: exp ending in ")".  
+    As noted, the exp parser failed in trailing right paren.
