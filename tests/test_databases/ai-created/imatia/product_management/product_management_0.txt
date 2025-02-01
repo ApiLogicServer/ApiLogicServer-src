@@ -1,0 +1,5 @@
+    raise LBActivateException(rule_bank.invalid_rules, missing_attributes)
+logic_bank.exceptions.LBActivateException: LBActivateException: 
+[]
+['ProductVariant.color): constraint']
+LogicBank Activation Error
