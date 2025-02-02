@@ -730,7 +730,7 @@
             "id": "runProjectName",
             "type": "promptString",
             "description": "Project Name (folder) to run",
-            "default": "samples/nw"
+            "default": "genai_demo"
         },
         {
             "id": "inputGenaiProjectName",
