@@ -153,18 +153,24 @@ def fixup_sort(clz, data):
                     continue
     return sort
 def fixup_data(data, sqltypes):
+    new_data = None
     if data:
+        new_data = {}
         for key, value in data.items():
+            new_data[key] = value
             if sqltypes and key in sqltypes and isinstance(value, str):
                 if sqltypes[key] in [-5,2,4,5,-6]: #BIGINT, TINYINT, INT, SMALLINT, INTEGER
-                    data[key] = int(value)
+                    if new_data[key].isdigit():
+                        new_data[key] = int(value)
+                    else:
+                        del new_data[key]
                 elif  sqltypes[key] in [6]: #DECIMAL
-                    data[key] = Decimal(value)
+                    new_data[key] = Decimal(value)
             if sqltypes and key in sqltypes and sqltypes[key] in [91,93] and isinstance(value, int): #DATE, TIMESTAMP 
                 from datetime import datetime  
                 fmt = "%Y-%m-%d" if sqltypes[key] == 91 else "%Y-%m-%d %H:%M:%S"
-                data[key] = datetime.fromtimestamp(value / 1000) #.strftime(fmt)  
-    return data
+                new_data[key] = datetime.fromtimestamp(value / 1000) #.strftime(fmt)  
+    return new_data
 
 def _parseFilter(filter: dict, sqltypes: any):
     # {filter":{"@basic_expression":{"lop":"BALANCE","op":"<=","rop":35000}}
