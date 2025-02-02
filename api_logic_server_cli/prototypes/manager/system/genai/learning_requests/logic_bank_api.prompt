@@ -1,6 +1,6 @@
 Here is the simplified API for LogicBank:
 
-Create a function called declare_logic(), consisting of calls to Rule methods.
+Translate the user prompt into a series of calls to Rule methods, described here.
 
 Do not generate import statements.
 
@@ -125,6 +125,20 @@ class Rule:
         """
         return Copy(derive=derive, from_parent=from_parent)
 
+
+    @staticmethod
+    def after_flush_row_event(on_class: object, calling: Callable = None,
+                              if_condition: any = None,
+                              when_condition: any = None,
+                              with_args: dict = None):
+
+        Example:
+            Prompt:
+                Send the Order to Kafka topic 'order_shipping' if the date_shipped is not None
+            Response:
+                Rule.after_flush_row_event(on_class=Order, calling=kafka_producer.send_row_to_kafka,
+                               if_condition=lambda row: row.date_shipped is not None,
+                               with_args={"topic": "order_shipping"})
 
 Expanded example:
 

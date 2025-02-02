@@ -1,0 +1,12 @@
+als genai --using=system/genai/examples/genai_demo/agent_swarm/genai_swarm.prompt --project-name=genai_demo_swarm
+
+to test:
+    alter a shipped order, and see console log:
+        ..Order[1] {Sending Order to Kafka topic 'order_shipping' [Note: **Kafka not enabled** ]} id: 1, customer_id: 2, date_shipped:  [None-->] 2025-02-01 19:25:29.838564, amount_total: 3500, notes:  [None-->] -.  row: 0x109cb2db0  session: 0x1099c9670  ins_upd_dlt: upd, initial: upd
+
+the prompt is in this directory, and contains:
+
+    Use case: App Integration
+        1. Send the Order to Kafka topic 'order_shipping' if the date_shipped is not None.
+
+

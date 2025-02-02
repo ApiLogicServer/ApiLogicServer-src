@@ -193,6 +193,8 @@ def get_code_update_logic_file(rule_list: List[DotMap], logic_file_path: Path = 
                 pass
             elif 'Rule.constraint' in each_line:
                 pass
+            elif 'Rule.after_flush_row_event' in each_line:
+                pass
             elif 'Rule.allocate' in each_line:
                 pass
             elif 'Rule.calculate' in each_line:

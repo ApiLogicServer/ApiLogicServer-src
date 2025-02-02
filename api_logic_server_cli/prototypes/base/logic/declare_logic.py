@@ -8,6 +8,7 @@ import database.models as models
 import api.system.opt_locking.opt_locking as opt_locking
 from security.system.authorization import Grant, Security
 from logic.load_verify_rules import load_verify_rules
+import integration.kafka.kafka_producer as kafka_producer
 import logging
 
 app_logger = logging.getLogger(__name__)
