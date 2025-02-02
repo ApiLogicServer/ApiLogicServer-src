@@ -480,6 +480,7 @@ class ManyToOneRelationship(Relationship):
                 parent_accessor_from_fk = True
             else:
                 self.preferred_name = inflect_engine.singular_noun(tablename) or tablename
+            # TODO - consider using the target class name as the preferred name (lower case fk -> a_child.parent)
 
         
         # Add uselist=False to One-to-One relationships
@@ -1512,7 +1513,7 @@ else:
                 child_accessor = f'    {child_accessor_name} : Mapped[List["{reln.source_cls}"]] = '\
                                  f'relationship({multi_reln_fix}back_populates="{reln.parent_accessor_name}")\n'
 
-                if model.name in ["Employee", "CharacterClass"]:  # Emp has Department and Department1
+                if model.name in ["Item", "Employee", "CharacterClass"]:  # Emp has Department and Department1
                     debug_str = "nice breakpoint"  # DND CharacterClass - check parent acceossor (class_ not class)
                 model.rendered_parent_relationships += parent_accessor
                 parent_model.rendered_child_relationships += child_accessor

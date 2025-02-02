@@ -589,7 +589,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "    - Create blt/genai_demo as IS_GENAI_DEMO",
+            "name": "    - Create blt/genai_demo_ as IS_GENAI_DEMO",
 // used to mimic Genai - demo mode
             "type": "debugpy",
             "request": "launch",
@@ -599,6 +599,20 @@
             "redirectOutput": true,
             "args": ["genai",
             "--using=${workspaceFolder}/../../build_and_test/ApiLogicServer/system/genai/examples/genai_demo/genai_demo_informal.prompt",
+            "--project-name=genai_demo_"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "    - Create blt/genai_demo_ from repaired",
+// used to mimic Genai - demo mode
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["genai",
+            "--repaired-response=${workspaceFolder}/../../build_and_test/ApiLogicServer/system/genai/examples/genai_demo/genai_demo.response_example",
             "--project-name=genai_demo_"],
             "console": "integratedTerminal"
         },

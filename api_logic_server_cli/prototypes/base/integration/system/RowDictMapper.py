@@ -1,7 +1,7 @@
 from database import models
 from flask import request, jsonify
 import sqlalchemy as sqlalchemy
-from sqlalchemy import Column
+from sqlalchemy import Column, inspect
 from sqlalchemy.ext.declarative import declarative_base
 from flask_sqlalchemy.model import DefaultMeta
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -276,8 +276,7 @@ class RowDictMapper():
                 parent_lookup_list.append(self.parent_lookups)
             for each_parent_lookup in parent_lookup_list:
                 self._parent_lookup_from_child(child_row_dict = row_dict, 
-                                            lookup_fields = each_parent_lookup[1],
-                                            parent_class = each_parent_lookup[0],
+                                            parent_lookup = each_parent_lookup,
                                             child_row = sql_alchemy_row,
                                             session = session)
         
@@ -354,27 +353,31 @@ class RowDictMapper():
 
     def _parent_lookup_from_child(self, child_row_dict: dict, child_row: object,
                       session: object, 
-                      parent_class: DefaultMeta,
-                      lookup_fields: list[object]):
-        """ Used from child -- parent_lookups
+                      parent_lookup: tuple[DefaultMeta, list[tuple[Column, str]]]):
+        """ Used from child -- parent_lookups (e,g, B2B Product)
 
         Args:
-            child_row_dict (dict): _description_
-            child_row (object): _description_
-            session (object): _description_
-            lookup_parent_endpoint (RowDictMapper, optional): _description_. Defaults to None.
+            child_row_dict (dict): the incoming payload
+            child_row (object): row
+            parent_lookup (tuple[DefaultMeta, list[tuple[Column, str]]]): parent class, list of attrs/json keys
+            session (object): SqlAlchemy session
+
+        Example lookup_fields (genai_demo/OrderB2B.py):
+            parent_lookup = ( models.Customer, [(models.Customer.name, 'Account')] )
+            parent_class: parent_lookups[0] Customer)
+            lookup_fields: parent_lookups[1] [(models.Customer.name, 'Account')]
 
         Raises:
-            ValueError: _description_
-            ValueError: _description_
+            ValueError: eg, missing parent
         """
-
+        parent_class = parent_lookup[0]
+        lookup_fields = parent_lookup[1]
         query = session.query(parent_class)
 
         if parent_class.__name__ in ['Product', 'Customer']:
             logging.debug(f'_parent_lookup_from_child {parent_class.__name__}' )
-        for each_lookup_param_field in lookup_fields:
-            attr_name = each_lookup_param_field
+        for each_lookup_param_field in lookup_fields:   # e.g, (models.Customer.name, 'Account')
+            attr_name = each_lookup_param_field         #       <col_def>             <filter-val>
             if isinstance(each_lookup_param_field, tuple):
                 col_def = each_lookup_param_field[0]
                 attr_name = each_lookup_param_field[1]
@@ -394,6 +397,20 @@ class RowDictMapper():
                 raise ValueError('Lookup failed: missing parent', child_row, parent_class.__name__, str(child_row_dict)) 
             
             parent_row = parent_rows[0]
-            setattr(child_row, parent_class.__name__, parent_row)
+
+            # find parent accessor - usually parent_class.__name__, unless fk is lower case (B2bOrders)
+            mapper = inspect(child_row).mapper
+            parent_accessor = None
+            for each_attribute in mapper.attrs:  # find parent accessors
+                if isinstance(each_attribute, sqlalchemy.orm.relationships.RelationshipProperty):
+                    if each_attribute.argument == parent_class.__name__:
+                        if parent_accessor is None:
+                            parent_accessor = each_attribute.key
+                        else:
+                            raise ValueError(f'Parent accessor not unique: {parent_accessor}')  # TODO - multiple parents
+            if parent_accessor is None:
+                raise ValueError(f'Parent accessor not found: {parent_class.__name__}')
+
+            setattr(child_row, parent_accessor, parent_row)
 
         return
