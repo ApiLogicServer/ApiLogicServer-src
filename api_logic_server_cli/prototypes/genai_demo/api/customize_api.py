@@ -5,8 +5,8 @@ from flask import request, jsonify
 from safrs import jsonapi_rpc
 from database import models
 import integration.system.RowDictMapper as row_dict_mapper
-from integration.row_dict_maps.OrderShipping import OrderShipping
-from integration.row_dict_maps.OrderB2B import OrderB2B
+# from integration.row_dict_maps.OrderShipping import OrderShipping
+from integration.row_dict_maps.OrderB2B import OrderB2B  # TODO - how to drive; B2B...
 
 # called by api_logic_server_run.py, to customize api (new end points, services).
 # separate from expose_api_models.py, to simplify merge if project recreated
@@ -140,15 +140,13 @@ class ServicesEndPoint(safrs.JABase):
         """ # yaml creates Swagger description
             args :
                 order:
-                    Account: "Jane Smith"
+                    Account: "Alice"
                     Notes: "Please Rush"
                     Items :
-                    - ProductName: "Widget A"
+                    - ProductName: "Product 1"
                       QuantityOrdered: 1
-                    - ProductName: "Gadget B"
+                    - ProductName: "Product 2"
                       QuantityOrdered: 2
-                    - ProductName: "Green Apples"
-                      QuantityOrdered: 3
             ---
 
         Note attribute alias, Lookup automation in OrderB2B
@@ -159,19 +157,19 @@ class ServicesEndPoint(safrs.JABase):
         $(venv) ApiLogicServer login --user=admin --password=p
         $(venv) ApiLogicServer curl "'POST' 'http://localhost:5656/api/ServicesEndPoint/OrderB2B'" --data '
         {"meta": {"args": {"order": {
-            "Account": "Jane Smith",
+            "Account": "Alice",
             "Notes": "Please Rush",
             "Items": [
                 {
-                "ProductName": "Widget A",
+                "ProductName": "Product 1",
                 "QuantityOrdered": 1
                 },
                 {
-                "ProductName": "Gadget B",
+                "ProductName": "Product 2",
                 "QuantityOrdered": 2
                 },
                 {
-                "ProductName": "Gadget B",
+                "ProductName": "Green Apples",
                 "QuantityOrdered": 2
                 }
                 ]

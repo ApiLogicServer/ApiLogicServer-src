@@ -19,15 +19,13 @@ class OrderB2B(RowDictMapper):
         order = super(OrderB2B, self).__init__(
             model_class=models.Order
             , alias = "order"
-            , fields = [(models.Order.Notes)]
-            , parent_lookups = [( models.Customer, 
-                                  [(models.Customer.CustomerName, 'Account')]
-                                )]
+            , fields = [(models.Order.notes, "Notes")]
+            , parent_lookups = [( models.Customer, [(models.Customer.name, 'Account')] )]
             , related = [
                 (RowDictMapper(model_class=models.Item
                     , alias="Items"
-                    , fields = [(models.Item.Quantity, "QuantityOrdered")]
-                    , parent_lookups = [( models.Product, [models.Product.ProductName] )]
+                    , fields = [(models.Item.quantity, "QuantityOrdered")]
+                    , parent_lookups = [( models.Product, [(models.Product.name, 'ProductName')] )]
                     )
                 )
             ]

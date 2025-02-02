@@ -1,5 +1,6 @@
 # coding: utf-8
-from sqlalchemy import Boolean, Column, DECIMAL, DateTime, ForeignKey, Integer, Text, text
+from sqlalchemy import DECIMAL, DateTime  # API Logic Server GenAI assist
+from sqlalchemy import Column, Date, ForeignKey, Integer, Numeric, String, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -9,13 +10,13 @@ from sqlalchemy.ext.declarative import declarative_base
 # Alter this file per your database maintenance policy
 #    See https://apilogicserver.github.io/Docs/Project-Rebuild/#rebuilding
 #
-# Created:  May 03, 2024 22:23:08
-# Database: sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/clean/ApiLogicServer/genai_demo/database/db.sqlite
+# Created:  January 31, 2025 17:52:29
+# Database: sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/genai_demo/database/db.sqlite
 # Dialect:  sqlite
 #
 # mypy: ignore-errors
 ########################################################################################################################
-
+ 
 from database.system.SAFRSBaseX import SAFRSBaseX, TestBase
 from flask_login import UserMixin
 import safrs, flask_sqlalchemy, os
@@ -42,72 +43,81 @@ else:
     print('*** Models.py Using TestBase ***')
 
 
-class Customer(Base):
-    __tablename__ = 'Customers'
+
+class Customer(Base):  # type: ignore
+    """
+    description: Customer table with unique name, balance and credit_limit.
+    """
+    __tablename__ = 'customer'
     _s_collection_name = 'Customer'  # type: ignore
 
-    CustomerID = Column(Integer, primary_key=True)
-    CustomerName = Column(Text, nullable=False)
-    Address = Column(Text)
-    Phone = Column(Text)
-    Balance : DECIMAL = Column(DECIMAL(10, 2))
-    CreditLimit : DECIMAL = Column(DECIMAL(10, 2), nullable=False)
+    id = Column(Integer, primary_key=True)
+    name = Column(String(255), unique=True)
+    balance = Column(Numeric)
+    credit_limit = Column(Numeric)
 
     # parent relationships (access parent)
 
     # child relationships (access children)
-    OrderList : Mapped[List["Order"]] = relationship(back_populates="Customer")
+    OrderList : Mapped[List["Order"]] = relationship(back_populates="customer")
 
 
-class Product(Base):
-    __tablename__ = 'Products'
+
+class Product(Base):  # type: ignore
+    """
+    description: Product table with unit_price used for copying to Item.
+    """
+    __tablename__ = 'product'
     _s_collection_name = 'Product'  # type: ignore
 
-    ProductID = Column(Integer, primary_key=True)
-    ProductName = Column(Text, nullable=False)
-    UnitPrice : DECIMAL = Column(DECIMAL(10, 2), nullable=False)
-    CarbonNeutral = Column(Boolean)
-
+    id = Column(Integer, primary_key=True)
+    name = Column(String(255))
+    unit_price = Column(Numeric)
+    carbon_neutral = Column(Boolean)
     # parent relationships (access parent)
 
     # child relationships (access children)
-    ItemList : Mapped[List["Item"]] = relationship(back_populates="Product")
+    ItemList : Mapped[List["Item"]] = relationship(back_populates="product")
 
 
 
-class Order(Base):
-    __tablename__ = 'Orders'
+class Order(Base):  # type: ignore
+    """
+    description: Order table with a foreign key to Customer, a notes field, date_shipped and derived amount_total.
+    """
+    __tablename__ = 'order'
     _s_collection_name = 'Order'  # type: ignore
 
-    OrderID = Column(Integer, primary_key=True)
-    CustomerID = Column(ForeignKey('Customers.CustomerID'))
-    OrderDate = Column(DateTime, server_default=text("CURRENT_TIMESTAMP"))
-    Notes = Column(Text)
-    ShipDate = Column(DateTime)
-    AmountTotal : DECIMAL = Column(DECIMAL(10, 2))
+    id = Column(Integer, primary_key=True)
+    customer_id = Column(ForeignKey('customer.id'))
+    date_shipped = Column(Date)
+    notes = Column(String(255))
+    amount_total = Column(Numeric)
 
     # parent relationships (access parent)
-    Customer : Mapped["Customer"] = relationship(back_populates=("OrderList"))
+    customer : Mapped["Customer"] = relationship(back_populates=("OrderList"))
 
     # child relationships (access children)
-    ItemList : Mapped[List["Item"]] = relationship(back_populates="Order")
+    ItemList : Mapped[List["Item"]] = relationship(back_populates="order")
 
 
 
-class Item(Base):
-    __tablename__ = 'Items'
+class Item(Base):  # type: ignore
+    """
+    description: Item table with non-null quantity, derived amount and unit_price copied from Product.
+    """
+    __tablename__ = 'item'
     _s_collection_name = 'Item'  # type: ignore
 
-    ItemID = Column(Integer, primary_key=True)
-    OrderID = Column(ForeignKey('Orders.OrderID'))
-    ProductID = Column(ForeignKey('Products.ProductID'))
-    Quantity = Column(Integer, nullable=False)
-    UnitPrice : DECIMAL = Column(DECIMAL(10, 2))
-    Amount : DECIMAL = Column(DECIMAL(10, 2))
+    id = Column(Integer, primary_key=True)
+    order_id = Column(ForeignKey('order.id'))
+    product_id = Column(ForeignKey('product.id'))
+    quantity = Column(Integer, nullable=False)
+    unit_price = Column(Numeric)
+    amount = Column(Numeric)
 
     # parent relationships (access parent)
-    Order : Mapped["Order"] = relationship(back_populates=("ItemList"))
-    Product : Mapped["Product"] = relationship(back_populates=("ItemList"))
+    order : Mapped["Order"] = relationship(back_populates=("ItemList"))
+    product : Mapped["Product"] = relationship(back_populates=("ItemList"))
 
     # child relationships (access children)
-
