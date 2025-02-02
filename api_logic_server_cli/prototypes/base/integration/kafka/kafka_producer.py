@@ -1,6 +1,6 @@
 """
 
-Version 1.1
+Version 2.0
 
 Invoked at server start (api_logic_server_run.py -> config/setup.py)
 
@@ -47,8 +47,23 @@ def kafka_producer():
         producer = Producer(conf)
         logger.debug(f'\nKafka producer connected')
 
+from sqlalchemy.inspection import inspect
 
-def send_kafka_message(kafka_topic: str, kafka_key: str, msg: str="", json_root_name: str = "", 
+def get_primary_key(logic_row: LogicRow):
+    """ Return primary key for row, if it exists
+
+    Args:
+        logic_row (LogicRow): The SQLAlchemy row object
+
+    Returns:
+        dict: A dictionary with primary key column names and their values
+    """
+    primary_key_columns = inspect(logic_row.row).mapper.primary_key
+    primary_key = {column.name: getattr(logic_row.row, column.name) for column in primary_key_columns}
+    return primary_key
+
+
+def send_kafka_message(kafka_topic: str, kafka_key: str = None, msg: str="", json_root_name: str = "", 
                        logic_row: LogicRow = None, row_dict_mapper: RowDictMapper = None, payload: dict = None):
     """ Send Kafka message regarding logic_row, mapped by row_dict_mapper
 
@@ -80,18 +95,27 @@ def send_kafka_message(kafka_topic: str, kafka_key: str, msg: str="", json_root_
         else:
             root_name = logic_row.name
 
+    if kafka_key is None:
+        kafka_key = get_primary_key(logic_row) 
+
+    log_msg = msg if msg != "" else f"Sending {root_name} to Kafka topic '{kafka_topic}'" 
+
     json_string = jsonify({f'{root_name}': row_obj_dict}).data.decode('utf-8')
-    log_msg = msg + ' sends:'
+    log_msg = log_msg
     if producer:  # enabled in config/config.py?
         try:
             producer.produce(value=json_string, topic="order_shipping", key=kafka_key)
             if logic_row:
-                logic_row.log(msg)
+                logic_row.log(log_msg)
         except KafkaException as ke:
             logger.error("kafka_producer#send_kafka_message error: {ke}") 
     else:
-        log_msg += "    [Note: **Kafka not enabled** ]"
+        log_msg += " [Note: **Kafka not enabled** ]"
     if logic_row is not None:
-        logic_row.log(f'\n\n{log_msg}\n{json_string}')
-    else:
-        logger.debug(f'\n\n{log_msg}\n{json_string}')
+        logic_row.log(f'{log_msg}')
+    logger.debug(f'\n\n{log_msg}\n{json_string}')
+
+
+def send_row_to_kafka(row: object, old_row: object, logic_row: LogicRow, with_args: dict):
+    if logic_row.row.date_shipped is not None:
+        send_kafka_message(logic_row=logic_row, kafka_topic=with_args["topic"])
