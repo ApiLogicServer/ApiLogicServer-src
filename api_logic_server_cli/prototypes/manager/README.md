@@ -109,7 +109,7 @@ als genai --using=system/genai/examples/genai_demo/genai_demo.prompt --project-n
 
 
 ```bash
-als genai --repaired-response=system/genai/examples/genai_demo/genai_demo_iteration/005_create_db_models.response-example --project-name=genai_demo
+als genai --repaired-response=system/genai/examples/genai_demo/genai_demo.response_example --project-name=genai_demo
 ```
 
 Verify it's operating properly:
