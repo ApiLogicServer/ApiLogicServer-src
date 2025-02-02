@@ -600,7 +600,7 @@ class OntBuilder(object):
                         and len(tg["fks"]) == 1 \
                         and not exclude:
                         col_type = next((col.type for col in entity.columns if col.name == col_var["name"]), None)
-                        if col_type and col_var["type"] != col_type:
+                        if col_type and col_var["type"].lower().split("(")[0] in ["bigint", "int","numeric","decimal"]:
                             tab_name, tab_var = self.get_tab_attrs(entity=entity, parent_entity=parent_entity, fk_tab=tg)
                             return self.table_cell_render.render(tab_var)
                         
