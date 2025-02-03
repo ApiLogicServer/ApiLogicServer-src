@@ -60,6 +60,13 @@
             "use_case": "Store the Item.unit_price as a copy from Product.unit_price",
             "entity": "Item",
             "code": "Rule.copy(derive=Item.unit_price, from_parent=Product.unit_price)"
+        },
+        {
+            "name": "Order Kafka Integration",
+            "description": "Sends the order to Kafka topic 'order_shipping' if the date shipped is not None.",
+            "use_case": "App Integration",
+            "entity": "Order",
+            "code": "Rule.after_flush_row_event(on_class=Order, calling=kafka_producer.send_row_to_kafka, if_condition=lambda row: row.date_shipped is not None, with_args={\"topic\": \"order_shipping\"})"
         }
     ],
     "test_data": "Insert test data into the tables with values compatible with the derived logic.",
