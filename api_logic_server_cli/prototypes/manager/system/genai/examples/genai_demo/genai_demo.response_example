@@ -73,19 +73,19 @@
     "test_data_rows": [
         {
             "test_data_row_variable": "test_customer_1",
-            "code": "test_customer_1 = Customer(name='Customer 1', balance=300, credit_limit=1000)"
+            "code": "test_customer_1 = Customer(name='Customer 1', balance=150, credit_limit=1000)"
         },
         {
             "test_data_row_variable": "test_customer_2",
-            "code": "test_customer_2 = Customer(name='Customer 2', balance=500, credit_limit=750)"
+            "code": "test_customer_2 = Customer(name='Customer 2', balance=275, credit_limit=750)"
         },
         {
             "test_data_row_variable": "test_customer_3",
-            "code": "test_customer_3 = Customer(name='Customer 3', balance=0, credit_limit=1500)"
+            "code": "test_customer_3 = Customer(name='Customer 3', balance=150, credit_limit=1500)"
         },
         {
             "test_data_row_variable": "test_customer_4",
-            "code": "test_customer_4 = Customer(name='Customer 4', balance=200, credit_limit=1200)"
+            "code": "test_customer_4 = Customer(name='Customer 4', balance=0, credit_limit=1200)"
         },
         {
             "test_data_row_variable": "test_order_1",
@@ -93,11 +93,11 @@
         },
         {
             "test_data_row_variable": "test_order_2",
-            "code": "test_order_2 = Order(customer_id=2, notes='Order 2 notes', amount_total=0)"
+            "code": "test_order_2 = Order(customer_id=2, notes='Order 2 notes', amount_total=225)"
         },
         {
             "test_data_row_variable": "test_order_3",
-            "code": "test_order_3 = Order(customer_id=2, notes='Order 3 notes', amount_total=0)"
+            "code": "test_order_3 = Order(customer_id=2, notes='Order 3 notes', amount_total=50)"
         },
         {
             "test_data_row_variable": "test_order_4",
@@ -109,11 +109,11 @@
         },
         {
             "test_data_row_variable": "test_item_2",
-            "code": "test_item_2 = Item(order_id=2, product_id=2, quantity=2, unit_price=0, amount=0)"
+            "code": "test_item_2 = Item(order_id=2, product_id=2, quantity=2, unit_price=25, amount=50)"
         },
         {
             "test_data_row_variable": "test_item_3",
-            "code": "test_item_3 = Item(order_id=3, product_id=3, quantity=1, unit_price=0, amount=0)"
+            "code": "test_item_3 = Item(order_id=3, product_id=3, quantity=3, unit_price=75, amount=225)"
         },
         {
             "test_data_row_variable": "test_item_4",
