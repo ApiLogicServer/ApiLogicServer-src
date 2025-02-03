@@ -45,51 +45,25 @@ def declare_logic():
     # Order.amount_total is the sum of Item.amount.
     Rule.sum(derive=Order.amount_total, as_sum_of=Item.amount)
 
-    # Item.amount is calculated as quantity multiplied by unit_price.
-    Rule.formula(derive=Item.amount, as_expression=lambda row: row.quantity * row.unit_price)
+    def derive_amount(row: models.Item, old_row: models.Item, logic_row: LogicRow):
+        amount = row.Quantity * row.UnitPrice
+        if row.Product.CarbonNeutral == True and row.Quantity >= 10:
+           amount = amount * Decimal(0.9)  # breakpoint here
+        return amount
+
+    # Items.Amount = Quantity * UnitPrice with discount for CarbonNeutral products.
+    Rule.formula(derive=models.Item.Amount, 
+                 calling=derive_amount)
 
     # Item.unit_price is copied from Product.unit_price.
     Rule.copy(derive=Item.unit_price, from_parent=Product.unit_price)
 
+    # Send the Order to Kafka topic 'order_shipping' if the date_shipped is not None.
+    Rule.after_flush_row_event(on_class=Order, calling=kafka_producer.send_row_to_kafka,
+                   if_condition=lambda row: row.date_shipped is not None,
+                   with_args={'topic': 'order_shipping'})
+
     # End Logic from GenAI
-
-    def send_order_to_shipping(row: Order, old_row: Order, logic_row: LogicRow):
-        """ #als: Send Kafka message formatted by OrderShipping RowDictMapper
-
-        Format row per shipping requirements, and send (e.g., a message)
-
-        NB: the after_flush event makes Order.Id available.
-
-        Args:
-            row (Order): inserted Order
-            old_row (Order): n/a
-            logic_row (LogicRow): bundles curr/old row, with ins/upd/dlt (etc) state
-        """
-        if logic_row.row.date_shipped is not None:
-            kafka_producer.send_kafka_message(logic_row=logic_row, kafka_topic="order_shipping")
-            
-    # Rule.after_flush_row_event(on_class=Order, calling=send_order_to_shipping)  # see above
-
-
-
-    def send_to_kafka(row: Order, old_row: Order, logic_row: LogicRow, with_args: dict):
-        if logic_row.row.date_shipped is not None:
-            kafka_producer.send_kafka_message(logic_row=logic_row, kafka_topic=with_args["topic"])
-
-    Rule.after_flush_row_event(on_class=Order, calling=send_to_kafka,
-                               if_condition=lambda row: row.date_shipped is not None,
-                               with_args={"topic": "order_shipping_GENERIC"})  # see above
-
-
-
-
-    '''
-    Fails with - TypeError: declare_logic.<locals>.<lambda>() got an unexpected keyword argument 'row'
-
-    Rule.after_flush_row_event(on_class=Order, 
-                               calling = lambda logic_row: send_order_to_shipping(logic_row=logic_row, kafka_topic="order_shipping") 
-                               if logic_row.date_shipped is not None else None)
-    '''
 
 
     def handle_all(logic_row: LogicRow):  # #als: TIME / DATE STAMPING, OPTIMISTIC LOCKING
