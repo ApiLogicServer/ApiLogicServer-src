@@ -4,11 +4,11 @@
         service="{{ service }}" 
         entity="{{ entity }}" 
         fxLayout="column" 
-        show-header="yes" 
+        show-header="{{ show-header }}" 
         header-actions="{{ header-actions }}"
         #oDetailForm keys="{{ keys }}" 
         keys-sql-types="{{ keySqlType }}" 
-        show-header-navigation="yes"
+        show-header-navigation="{{ show-header-navigation }}"
         (onDataLoaded)="onDataLoaded($event)">
 
   <o-row attr="row1" layout-align="start stretch">

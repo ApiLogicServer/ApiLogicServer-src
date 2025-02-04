@@ -7,24 +7,25 @@
         keys="{{ keys }}"
         parent-keys="{{ parentKeys }}"
         columns="{{ columns }}"  
-        horizontal-scroll="yes"
         detail-form-route="{{ detailFormRoute }}" 
         edit-form-route="{{ editFormRoute }}"
         visible-columns="{{ visibleColumns }}"  
         sort-columns="{{ sortColumns }}" 
-        query-rows="25" 
-        quick-filter="yes"
+        query-rows="{{ query-rows }}" 
+        quick-filter="{{ quick-filter }}"
         row-height="{{ row_height }}" 
-        select-all-checkbox="true" 
-        pageable="yes"  
+        select-all-checkbox="{{ select-all-checkbox }}" 
+        pageable="{{ pageable }}"  
         auto-adjust="true" 
-        virtual-scroll="yes" 
-        insert-button="yes" 
-        delete-button="yes" 
-        fixed-header="true" 
+        virtual-scroll="{{ virtual-scroll }}" 
+        insert-button="{{ insert-button }}" 
+        delete-button="{{ delete-button }}" 
+        fixed-header="{{ fixed-header }}" 
         class="vertical-padding-8"
-        edition-mode="dblclick" 
-        horizontal-scroll="yes" class="fill-form">
+        edition-mode="{{ editon-mode }}" 
+        horizontal-scroll="{{ horizontal-scroll }}" 
+        class="fill-form">
+
         {% for table_column in row_columns %}
           {{ table_column }}
         {% endfor %}
