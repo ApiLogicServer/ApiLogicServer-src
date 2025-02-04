@@ -72,6 +72,7 @@ class OntBuilder(object):
         self.local_env = t_env[1]
         self.template_env = t_env[2]
         self.global_values = DotMap()
+        self.modules = DotMap()
         self.new_mode = "tab"
         self.detail_mode = "tab" 
         self.pick_style = "list" #"combo" or"list-picker"
@@ -203,6 +204,9 @@ class OntBuilder(object):
             self.set_style(setting_name, each_setting)
             self.global_values[setting_name] = each_setting
         
+        for modules_name, each_module in dict(model_dict["modules"]).items():
+            self.modules[modules_name] = each_module
+        
         '''
             # Breaking change - added to app.config.ts - values may not be on older version
             serviceType = "OntimizeEE"
@@ -304,37 +308,49 @@ class OntBuilder(object):
         write_card_file(app_path, entity_name,  "-card.component.scss", card_scss)
 
     def generate_detail_template(self, app_path, entity_favorites, each_entity_name, each_entity, entity_name):
-        detail_template_name = self.find_template(each_entity, "detail_template","detail_template.html")
-        detail_template = self.load_detail_template(detail_template_name, each_entity_name, each_entity, entity_favorites)
-        ts = self.load_ts("detail_component.jinja", each_entity_name, each_entity, entity_favorites)
-        detail_scss = self.get_template("detail.scss").render()
+        detail_page = home = self.modules[each_entity_name]["pages"]["detail"]
+        detail_template_name = detail_page["detail_template"] if "detail_template" in detail_page else "detail_template.html"
+        detail_scss_name = detail_page["detail_scss"] if "detail_scss" in detail_page else "detail.scss"
+        detail_component = detail_page["detail_component.ts"] if "detail_component.ts" in detail_page else "detail_component.jinja"
+        #detail_template_name = self.find_template(each_entity, "detail_template","detail_template.html")
+        detail_template = self.load_detail_template(detail_template_name, each_entity_name, each_entity, entity_favorites, detail_page)
+        ts = self.load_ts(detail_component, each_entity_name, each_entity, entity_favorites)
+        detail_scss = self.get_template(detail_scss_name).render()
         write_file(app_path, entity_name, "detail", "-detail.component.html", detail_template)
         write_file(app_path, entity_name, "detail", "-detail.component.ts", ts)
         write_file(app_path, entity_name, "detail", "-detail.component.scss", detail_scss)
 
     def generate_new_template(self, app_path, entity_favorites, each_entity_name, each_entity, entity_name):
-        new_template_name = self.find_template(each_entity, "new_template","new_template.html")
-        new_template = self.load_new_template(new_template_name, each_entity_name, each_entity, entity_favorites)
-        ts = self.load_ts("new_component.jinja", each_entity_name, each_entity, entity_favorites)
-        new_scss = self.get_template("new.scss").render()
+        new_page = self.modules[each_entity_name]["pages"]["new"]
+        new_template_name = new_page["new_template"] if "new_template" in new_page else "new_template.html"
+        new_scss_name = new_page["new_scss"] if "new_scss" in new_page else "new.scss"
+        new_jinja = new_page["new_component.ts"] if "new_component.ts" in new_page else"new_component.jinja"
+        #new_template_name = self.find_template(each_entity, "new_template","new_template.html")
+        new_template = self.load_new_template(new_template_name, each_entity_name, each_entity, entity_favorites, new_page)
+        ts = self.load_ts(new_jinja, each_entity_name, each_entity, entity_favorites)
+        new_scss = self.get_template(new_scss_name).render()
         write_file(app_path, entity_name, "new", "-new.component.html", new_template)
         write_file(app_path, entity_name, "new", "-new.component.ts", ts)
         write_file(app_path, entity_name, "new", "-new.component.scss", new_scss)
 
     def generate_home_template(self, app_path, entity_favorites, each_entity_name, each_entity, entity_name):
-        home_template_name = self.find_template(each_entity, "home_template","home_template.html")
-        home_template = self.load_home_template(home_template_name, each_entity, each_entity_name, entity_favorites)
+        home_page = self.modules[each_entity_name]["pages"]["home"]
+        home_template_name = home_page["home_template"] if "home_template" in home_page else "home_template.html"
+        home_scss_name = home_page["home_scss"] if "home_scss" in home_page else "home.scss"
+        home_jinja = home_page["home_component.ts"] if "home_component.ts" in home_page else"home_template.jinja"
+        #home_template_name = self.find_template(each_entity, home_template_html ,"home_template.html")
+        home_template = self.load_home_template(home_template_name, each_entity, each_entity_name, entity_favorites, home_page)
         if home_template_name == "grid_template.html":
             home_scss = self.get_template("grid_home.scss").render(entity=each_entity_name)
             ts = self.load_ts("grid_home_template.jinja", each_entity_name, each_entity, entity_favorites)
         elif home_template_name != "home_template.html":
-            home_scss = self.get_template("home.scss").render(entity=each_entity_name)
+            home_scss = self.get_template(home_scss_name).render(entity=each_entity_name)
             home_template_nm = home_template_name.split(".")
-            ts_template = self.find_template(each_entity, f"{home_template_nm[0]}.jinja","home_template.jinja")
+            ts_template = self.find_template(each_entity, f"{home_template_nm[0]}.jinja",home_jinja)
             ts = self.load_ts(ts_template, each_entity_name, each_entity, entity_favorites)
         else:
-            home_scss = self.get_template("home.scss").render(entity=each_entity_name)     
-            ts = self.load_ts("home_template.jinja", each_entity_name, each_entity, entity_favorites)
+            home_scss = self.get_template(home_scss_name).render(entity=each_entity_name)     
+            ts = self.load_ts(home_jinja, each_entity_name, each_entity, entity_favorites)
             
         write_file(app_path, entity_name, "home", "-home.component.html", home_template)
         write_file(app_path, entity_name, "home", "-home.component.ts", ts)
@@ -485,15 +501,16 @@ class OntBuilder(object):
         entity_vars["defaultValues"] = str(defaultValues)
         return template.render(entity_vars)
 
-    def load_home_template(self, template_name: str, entity: any, entity_name:str, entity_favorites: any) -> str:
+    def load_home_template(self, template_name: str, entity: any, entity_name:str, entity_favorites: any, home_page: dict) -> str:
         template = self.get_template(template_name)
         entity_vars = self.get_entity_vars(entity_name=entity_name, entity=entity)
-        entity_vars["row_columns"] = self.get_entity_columns(entity)
-        entity_vars["has_tabs"] = False
+        home_page |= entity_vars
+        home_page["row_columns"] = self.get_entity_columns(entity)
+        home_page["has_tabs"] = False
         if template_name.endswith("_expand.html"):
-            self.gen_expanded_template(entity, entity_favorites, entity_vars)
+            self.gen_expanded_template(entity, entity_favorites, home_page)
 
-        return template.render(entity_vars)
+        return template.render(home_page)
 
     def gen_expanded_template(self, parent_entity, entity_favorites, entity_vars):
         fks = get_foreign_keys(parent_entity, entity_favorites)
@@ -648,12 +665,14 @@ class OntBuilder(object):
             elif column.type == "BOOLEAN":
                 return "BOOLEAN"
         return "TEXT"
-    def load_new_template(self, template_name: str,entity_name: str,  entity: any, favorites: any) -> str:
+    def load_new_template(self, template_name: str,entity_name: str,  entity: any, favorites: any, new_page: dict) -> str:
         """
         This is a grid display (new) 
         """
         template = self.get_template(template_name)
         entity_vars = self.get_entity_vars(entity_name, entity)
+        new_page |= entity_vars
+        #new_page.update(entity_vars)
         fks = get_foreign_keys(entity, favorites)
         row_cols = []
         defaultValues = {}
@@ -661,8 +680,8 @@ class OntBuilder(object):
             rv = self.get_new_column(column, fks, entity)
             row_cols.append(rv)
 
-        entity_vars["row_columns"] = row_cols
-        return template.render(entity_vars)
+        new_page["row_columns"] = row_cols
+        return template.render(new_page)
 
     def get_default_values(self, fks, entity):
         defaultValues = {}
@@ -720,12 +739,13 @@ class OntBuilder(object):
         #'{{ ' + f'"{col_var["name"]}"' + '| oTranslate }}'
         return col_var
     
-    def load_detail_template(self, template_name: str, entity_name:str, entity: any, favorites: any) -> str:
+    def load_detail_template(self, template_name: str, entity_name:str, entity: any, favorites: any, detail_page: dict) -> str:
         """
         This is a detail display (detail) 
         """
         template = self.get_template(template_name)
         entity_vars = self.get_entity_vars(entity_name, entity)
+        detail_page |= entity_vars
         fks = get_foreign_keys(entity, favorites)
         row_cols = []
         for column in entity.columns:
@@ -734,11 +754,12 @@ class OntBuilder(object):
             rv = self.gen_detail_rows(column, fks, entity)
             row_cols.append(rv)
 
-        entity_vars["row_columns"] = row_cols
-        entity_vars["has_tabs"] = len(fks) > 0
-        entity_vars["tab_groups"] = fks
-        entity_vars["tab_panels"] = self.get_tabs(entity, entity ,fks)
-        return template.render(entity_vars)
+        #TODO dict(detail_page["tab_panels"][0])['name'] && dict(detail_page["tab_panels"][0])['panel'] 
+        detail_page["row_columns"] = row_cols
+        detail_page["has_tabs"] = len(fks) > 0
+        detail_page["tab_groups"] = fks
+        detail_page["tab_panels"] = self.get_tabs(entity, entity ,fks)
+        return template.render(detail_page)
 
     def gen_detail_rows(self, column, fks, entity):
         col_var = self.get_column_attrs(column)

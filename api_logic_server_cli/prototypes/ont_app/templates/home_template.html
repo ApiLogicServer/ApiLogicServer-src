@@ -7,25 +7,27 @@
             title="{{ title }}"
             keys="{{ keys }}"
             columns="{{ columns }}" 
-            header-actions="R;D"
+            header-actions="{{ header-actions}}"
             visible-columns="{{ visibleColumns }}"  
             sort-columns="{{ sortColumns }}" 
-            query-rows="20" 
-            quick-filter="yes"
+            query-rows="{{ query-rows }}" 
+            quick-filter="{{ quick-filter}}"
             row-height="{{ row_height }}" 
-            select-all-checkbox="true" 
-            pageable="yes"  
+            select-all-checkbox="{{ select-all-checkbox }}" 
+            pageable="{{ pageable }}"  
             auto-adjust="true" 
-            virtual-scroll="yes" 
+            virtual-scroll="{{ virtual-scroll }}" 
             edition-mode="{{ editOnMode }}"
-            horizontal-scroll="yes"
-            show-title="yes"
-            export-button="yes">
+            horizontal-scroll="{{ horizontal-scroll}}"
+            show-title="{{ show-title}}"
+            export-button="{{ export-button}}">
+
             {% for table_row_column in row_columns %}
-            {{ table_row_column }}
+                {{ table_row_column }}
             {% endfor %}
+            
             <o-table-context-menu></o-table-context-menu>
-            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+            <o-table-paginator page-size-options="{{ page-size-options }}"></o-table-paginator>
         </o-table>
     </div>
 </o-form-layout-manager>

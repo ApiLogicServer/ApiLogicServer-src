@@ -72,6 +72,7 @@ class OntCreator(object):
 
         1. ui/<app>, and 
         2. ui/<app>/app_model_out.yaml
+        3. ui/<app>/app_module.yaml #module/pages/new/home/detail
 
         User can edit this, then issue ApiLogicServer app-build
 
@@ -91,9 +92,11 @@ class OntCreator(object):
 
         app_path = Path(self.project.project_directory_path).joinpath(f'ui/{self.app}')
         app_model_path = app_path.joinpath("app_model.yaml")
+        app_module_path = app_path.joinpath("app_module.yaml")
         if os.path.exists(app_path):
             if self.project.command.startswith('rebuild'):
                 app_model_path = app_path.joinpath("app_model_merge.yaml")
+                app_module_path = app_path.joinpath("app_module_merge.yaml")
             else:
                 log.info(f'\nApp {self.app} already present in project - no action taken\n')
                 exit(1)
@@ -109,19 +112,21 @@ class OntCreator(object):
 
         admin_model_in = DotMap(admin_dict)    # the input
         app_model_out = DotMap()                # the output
-
         app_model_out.about = admin_model_in.about
         app_model_out.api_root = admin_model_in.api_root
         app_model_out.authentication = admin_model_in.authentication
         app_model_out.settings = admin_model_in.settings
+        app_model_out.full_path=str(self.project.project_directory_path)
+        app_model_out.app_name = self.app   
         app_model_out.entities = DotMap()
         app_model_out.settings.style_guide = self.style_guide()  # TODO - stub code, remove later
+        
         for each_resource_name, each_resource in admin_model_in.resources.items():
             if each_resource["hidden"] == True:
                 continue
+            
             each_entity = self.create_model_entity(each_resource, resources=resources)
             app_model_out.entities[each_resource_name] = each_entity
-
             app_model_out.entities[each_resource_name].columns = []
             for each_attribute in each_resource.attributes:
                 app_model_attribute = self.create_model_attribute(
@@ -137,7 +142,7 @@ class OntCreator(object):
             resource = resource_list[each_resource_name]
             for each_primary_key_attr in resource.primary_key:
                 app_model_out.entities[each_resource_name].primary_key.append(each_primary_key_attr.name)
-
+        
         ########################
         # No good, dirty rotten kludge for api emulation
         ########################
@@ -149,22 +154,172 @@ class OntCreator(object):
             pass # restore file quashed by copytree (geesh)
             shutil.copyfile(self.project.api_logic_server_dir_path.joinpath('prototypes/nw/security/declare_security.py'), 
                             to_dir.joinpath('security/declare_security.py'))
-
+        # New Module/Page format Feb 2025
+        app_module_out = self.create_module_pages(resources, admin_dict)
+        app_module_out_dict = app_module_out.toDict()  # dump(dot_map) is improperly structured
+        with open(app_module_path, 'w') as app_module_file:
+            yaml.dump(app_module_out_dict, app_module_file)
+        app_model_out["modules"] = app_module_out["modules"]
         app_model_out_dict = app_model_out.toDict()  # dump(dot_map) is improperly structured
         with open(app_model_path, 'w') as app_model_file:
-            yaml.dump(app_model_out_dict, app_model_file)
+            yaml.dump(app_model_out_dict, app_model_file) 
         pass
         if show_messages:
             log.info("\nEdit the add_model.yaml as desired, and ApiLogicServer app-build\n")
+    def create_module_pages(self, resources, admin_dict):
+        '''
+            New Ontimize Format for Modules and pages
+            One Module per entity
+            Pages (new, home, detail) 
+        '''
+        app_module_out = DotMap()            # the output
+        app_module_out.modules = DotMap()
+        admin_model_in = DotMap(admin_dict)  # the input
+        for each_resource_name, each_resource in admin_model_in.resources.items():
+            if each_resource["hidden"] == True:
+                continue
             
+            each_entity = self.create_model_entity(each_resource, resources=resources)
+            cols = []
+            cols.extend(attr.name for attr in each_entity.attributes)
+            columns = ",".join(cols)
+            visible_columns = columns
+            keys = ",".join(each_entity.primary_key) if "primary_key" in each_entity else ""
+            sort = each_entity.favorite if "favorite" in each_entity else ""
+            tab_panels = [self.format_tab_panel(tg, columns) for tg in each_entity.tab_groups if tg.direction == 'tomany']
+            pick_list = self.format_pick(each_entity, columns) # for tg in each_entity.tab_groups if tg.direction == 'toone'] if tg != None else []
+            app_module_out.modules[each_resource_name] = {
+                "menu_group": "data",
+                "module_template": "module.jinja",
+                "exclude": "false",
+                "pages": {
+                    "new": {
+                        "new_template": "new_template.html",
+                        "new_component.ts": "new_component.jinja",
+                        "new_scss": "new.scss",
+                        "title": each_entity.label,
+                        "columns": columns,
+                        "header-actions": "R",
+                        "visible-columns": visible_columns,
+                        "horizontal-scroll": "yes",
+                        "after-insert-mode": "new",
+                        "exclude": "false",
+                        "pick_list":pick_list if len(pick_list) > 0 else None,
+                    },
+                    "home": {
+                        "home_template": "home_template.html",
+                        "home_component.ts": "home_component.jinja",
+                        "home_scss": "home.scss",
+                        "mode": each_entity.mode if "mode" in each_entity else "tab",   
+                        "title": each_entity.label,
+                        "columns": columns,
+                        "visible-columns": visible_columns,
+                        "keys": keys,
+                        "header-actions": "R,D",
+                        "sort-columns=": sort,
+                        "query-rows": "20",
+                        "quick-filter": "yes",
+                        "row-height": "{{ row_height }}",
+                        "select-all-checkbox": "true",
+                        "pageable": "yes",
+                        "auto-adjust": "true",
+                        "virtual-scroll": "yes",
+                        "horizontal-scroll": "yes",
+                        "show-title": "yes",
+                        "export-button": "yes",
+                        "edition-mode": "dblclick",
+                        "page-size-options": "25;50;100",
+                        "pick_list":pick_list if len(pick_list) > 0 else None,
+                    },
+                    "detail": {
+                        "detail_template": "detail_template.html",
+                        "detail_component.ts": "detail_component.jinja",
+                        "detail_scss": "detail.scss",
+                        "title": each_entity.label,
+                        "columns": columns,
+                        "visible-columns": visible_columns,
+                        "show-header-navigation": "true",
+                        "show-header":"yes",
+                        "header-actions": "R,I,U,D",
+                        "exclude": "false",
+                        "tab_panels": tab_panels,
+                        "pick_list":pick_list if len(pick_list) > 0 else None,
+                    }
+                }
+            }
+        return app_module_out
+    
+    def format_tab_panel(self, tab_group, columns):
+        return {
+            "name": tab_group.name,
+            "panel": {
+                "fks": tab_group.fks,
+                "title": str(tab_group.label),
+                "parent_entity": tab_group.resource,
+                "columns": columns,
+                "visible-columns": columns,
+                "keys":"{{ keys }}",
+                "parent-keys":"{{ parentKeys }}",
+                "horizontal-scroll": "yes",
+                "detail-form-route": "{{ detailFormRoute }}",
+                "edit-form-route": "{{ editFormRoute }}",
+                "sort-columns": "{{ sortColumns }}", 
+                "query-rows": "20",
+                "quick-filter": "yes",
+                "row-height": "{{ row_height }}",
+                "select-all-checkbox": "true",
+                "pageable": "yes",
+                "auto-adjust": "true",
+                "virtual-scroll": "yes",
+                "horizontal-scroll": "yes",
+                "show-title": "yes",
+                "export-button": "yes",
+                "edition-mode": "dblclick",
+                "page-size-options": "25;50;100",
+                "exclude": "false",
+            }
+        }
+    def format_pick(self, each_entity , columns):
+
+        if each_entity.tab_groups is None:
+            return {}
+        pick_list = {}
+        for tab_group in each_entity.tab_groups:
+            if tab_group.direction == 'toone':
+                pick_list |= ( 
+                    {
+                        "label": str(tab_group.name),
+                        "list-picker":{
+                            "parent_entity": tab_group.resource,
+                            "attribute": tab_group.fks[0] if len(tab_group.fks) == 1 else tab_group.fks,
+                            "columns": columns,
+                            "visible-columns": columns,
+                            "fxFlex": "30",
+                            "keys":"{{ keys }}",
+                            "query-on-init": "no", 
+                            "query-on-bind": "yes", 
+                            "required": "{{ required }}", 
+                            "enabled": "{{ enabled }}", 
+                            "filter": "yes",
+                            "value-column": "{{ valueColumn }}", 
+                            "value-column-type": "{{ valueColumnType }}", 
+                            "separator": " - ",
+                            "width": "680px",
+                            "exclude": "false",
+                            "pick-list-template": "list-picker.html",
+                        }
+                    }
+                )
+    
+        return pick_list
     def create_model_entity(self, each_resource, resources: list) -> DotMap:
         each_resource.favorite = each_resource.user_key
         each_resource.exclude = "false"
         each_resource.label = each_resource.type # resources[each_resource.type].table_name
-        each_resource.new_template = "new_template.html"
-        each_resource.home_template = "home_template.html"
-        each_resource.detail_template = "detail_template.html"
-        each_resource.mode = "tab"
+        #each_resource.new_template = "new_template.html"
+        #each_resource.home_template = "home_template.html"
+        #each_resource.detail_template = "detail_template.html"
+        #each_resource.mode = "tab"
         each_resource.pop('user_key')
         return each_resource
 
