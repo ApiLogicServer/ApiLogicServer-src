@@ -185,6 +185,10 @@ class GenAI(object):
                     with open(genai_demo_response_path, 'r') as response_file:
                         response_dict = json.load(response_file)
                     log.debug(f'.. used standard genai_demo response: {genai_demo_response_path}')
+                    genai_demo_response_path = Path('system/genai/temp/response.json')
+                    with open(genai_demo_response_path, 'w') as response_file:
+                         json.dump(response_dict, response_file, indent=4)
+
         else: # for retry from corrected response... eg system/genai/temp/chatgpt_retry.response
             self.resolved_model = "(n/a: model not used for repaired response)"
             log.debug(f'\nUsing [corrected] response from: {self.project.genai_repaired_response}')
