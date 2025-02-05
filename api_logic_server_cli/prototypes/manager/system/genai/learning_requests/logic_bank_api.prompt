@@ -139,6 +139,13 @@ class Rule:
                 Rule.after_flush_row_event(on_class=Order, calling=kafka_producer.send_row_to_kafka,
                                if_condition=lambda row: row.date_shipped is not None,
                                with_args={"topic": "order_shipping"})
+            Prompt:
+                Send the Product to Kafka topic 'ready_to_ship' if the is_complete is True
+            Response:
+                Rule.after_flush_row_event(on_class=Product, calling=kafka_producer.send_row_to_kafka,
+                               if_condition=lambda row: row.is_complete is True,
+                               with_args={"topic": "ready_to_ship"})
+
 
 Expanded example:
 
