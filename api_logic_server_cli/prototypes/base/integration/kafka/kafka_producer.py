@@ -117,5 +117,4 @@ def send_kafka_message(kafka_topic: str, kafka_key: str = None, msg: str="", jso
 
 
 def send_row_to_kafka(row: object, old_row: object, logic_row: LogicRow, with_args: dict):
-    if logic_row.row.date_shipped is not None:
-        send_kafka_message(logic_row=logic_row, kafka_topic=with_args["topic"])
+    send_kafka_message(logic_row=logic_row, kafka_topic=with_args["topic"])

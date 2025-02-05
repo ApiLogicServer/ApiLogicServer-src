@@ -53,6 +53,7 @@ Formula: is_paid when invoice balance is than or equal to zero
 Task Count is count of InvoiceItem 
 Task completed count is count of InvoiceItem where is_completed is True
 Formula: is ready when Task Count is equal to Task Completed Count
+When Invoice is_ready send row to Kafka with topic 'invoice_ready'
 
 
 Use Case: InvoiceItem
