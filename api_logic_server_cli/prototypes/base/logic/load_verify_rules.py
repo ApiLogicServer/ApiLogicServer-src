@@ -26,6 +26,7 @@ declare_logic_message = "ALERT:  *** No Rules Yet ***"  # printed in api_logic_s
 rule_import_template = """
 from logic_bank.logic_bank import Rule
 from database.models import *
+import integration.kafka.kafka_producer as kafka_producer
 
 def init_rule():
 {rule_code}
