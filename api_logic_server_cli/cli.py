@@ -216,10 +216,13 @@ def main(ctx):
 @click.option('--clean/--no-clean', "clean",
               default=False, is_flag=True,
               help="Overlay existing manager (projects retained)")
+@click.option('--samples/--no-samples', "samples",
+              default=True, is_flag=True,
+              help="Create sample projects")
 @click.option('--open-manager/--no-open-manager', "open_manager",
               default=True, is_flag=True,
               help="Overlay existing manager (projects retained)")
-def create_start_manager(ctx, open_with, clean: click.BOOL = True, 
+def create_start_manager(ctx, open_with, clean: click.BOOL = True, samples: click.BOOL = True,
                          volume: str = "ApiLogicServer", open_manager: click.BOOL = True):
     """
         Create and Manage API Logic Projects.
@@ -227,7 +230,7 @@ def create_start_manager(ctx, open_with, clean: click.BOOL = True,
     # print(f'start sees volume={volume}')
     from api_logic_server_cli.manager import create_manager
     create_manager(clean=clean, open_with=open_with, api_logic_server_path=get_api_logic_server_path(), 
-                   volume=volume, open_manager=open_manager)
+                   volume=volume, open_manager=open_manager, samples=samples)
 
 
 @main.command("about")

@@ -11,14 +11,14 @@ from pathlib import Path
 import api_logic_server_cli.api_logic_server as PR
 
 def create_manager(clean: bool, open_with: str, api_logic_server_path: Path, 
-                   volume: str = "", open_manager: bool = True):
+                   volume: str = "", open_manager: bool = True, samples: bool = True):
     """Implements als start to create manager - called from api_logic_server_cli/cli.py
 
     create Manager at os.getcwd(), including:
 
     1. .vscode, readme
     2. System folder (GenAI sample prompts / responses, others TBD)
-    3. pre-created samples
+    3. pre-created samples (optional)
 
     Example, from CLI in directory containing a `venv` (see https://apilogicserver.github.io/Docs/Manager/):
         als start
@@ -122,21 +122,25 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path,
         except:     # do NOT fail 
             pass    # just fall back to using the pip-installed version
 
-        if project.is_docker:
-            log.debug(f"    tutorial not created for docker\n\n")
+        if not samples:
+            shutil.rmtree(to_dir.joinpath(f'{docker_volume}system/app_model_editor'))
+            shutil.rmtree(to_dir.joinpath(f'{docker_volume}system/genai/examples/genai_demo/wg_dev_merge'))
         else:
-            tutorial_project = PR.ProjectRun(command="tutorial", 
-                    project_name='./samples', 
-                    db_url="",
-                    execute=False,
-                    open_with="NO_AUTO_OPEN"
-                    )
-            tutorial_project = tutorial_project.tutorial(msg="Creating:") ##, create='tutorial')
+            if project.is_docker:
+                log.debug(f"    tutorial not created for docker\n\n")
+            else:
+                tutorial_project = PR.ProjectRun(command="tutorial", 
+                        project_name='./samples', 
+                        db_url="",
+                        execute=False,
+                        open_with="NO_AUTO_OPEN"
+                        )
+                tutorial_project = tutorial_project.tutorial(msg="Creating:") ##, create='tutorial')
 
-        samples_project = PR.ProjectRun(command= "create", project_name=f'{docker_volume}samples/nw_sample', db_url='nw+', open_with="NO_AUTO_OPEN")
-        log.setLevel(mgr_save_level)
-        log.disabled = False  # todo why was it reset?
-        samples_project = PR.ProjectRun(command= "create", project_name=f'{docker_volume}samples/nw_sample_nocust', db_url='nw', open_with="NO_AUTO_OPEN")
+            samples_project = PR.ProjectRun(command= "create", project_name=f'{docker_volume}samples/nw_sample', db_url='nw+', open_with="NO_AUTO_OPEN")
+            log.setLevel(mgr_save_level)
+            log.disabled = False  # todo why was it reset?
+            samples_project = PR.ProjectRun(command= "create", project_name=f'{docker_volume}samples/nw_sample_nocust', db_url='nw', open_with="NO_AUTO_OPEN")
         log.info('')
         log.setLevel(mgr_save_level)
         log.disabled = False
