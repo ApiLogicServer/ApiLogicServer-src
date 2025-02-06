@@ -59,3 +59,7 @@ Note: The Client total amount should be the same value as Project, Task, and Tim
 
 Bonus: Enter an Invoice for a Client/Project then add Invoice Item for a specific Client Task. Once the invoice is ready - we can add a new Event (logic) to send to Kafka.
 ```
+
+## Issues
+
+Is this backward? `InvoiceItem is_completed is sum of Task is_completed` (I changed it)

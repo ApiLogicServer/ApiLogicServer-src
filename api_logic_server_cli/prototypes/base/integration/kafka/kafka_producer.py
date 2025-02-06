@@ -1,6 +1,6 @@
 """
 
-Version 2.0
+Version 2.1
 
 Invoked at server start (api_logic_server_run.py -> config/setup.py)
 
