@@ -950,6 +950,20 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "    - Create blt/time tracking from repaired response",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": [
+                "genai",
+                "--repaired-response=system/genai/examples/time_tracking_billing/003_create_db_models.response",
+                "--project-name=trk"],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "    - Create blt/time_cards_kw from RESPONSE",
             "type": "debugpy",
             "request": "launch",
