@@ -3,6 +3,8 @@ Create nw+ at /Users/val/dev/ApiLogicServer
   so does ont - but how?  lucky jwt?
   (no security diddling)
 
+dev install guide needs to mention mac dev tools, and update the sra
+
 copilot for refactoring
   use https://github.com, o1 model (a few per day)
 
