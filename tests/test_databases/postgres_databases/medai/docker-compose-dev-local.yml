@@ -1,0 +1,65 @@
+
+services:
+    apilogicserver:
+        image: tylerm007/medai:latest
+        # instead using a built image, uncomment the following to build the image dynamically
+        # build:
+        #     context: ../..
+        #     dockerfile: ./devops/docker-compose/Dockerfile.dockerfile
+        environment:
+          - APILOGICPROJECT_VERBOSE=true
+          - APILOGICPROJECT_CLIENT_URI=//${HOST_IP}
+          - SECURITY_ENABLED=true
+          - PYTHONPATH=/app/ApiLogicProject 
+          ## TODO: verify Database uri's here, 
+          - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI=postgresql://postgres:postgres@postgresql-service:5432/medai
+          - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI_AUTHENTICATION=postgresql://postgres:postgres@postgresql-service:5432/authdb
+        expose:
+            - 5656
+        ports:
+          - 5656:5656
+        volumes:
+            # relative path - thanks https://stackoverflow.com/questions/46907558/docker-compose-relative-paths-vs-docker-volume
+            # - /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/docker-compose-nw-postgres:/app
+            - ./../..:/app
+        # https://stackoverflow.com/questions/39460892/gunicorn-no-module-named-myproject
+        command: /usr/local/bin/gunicorn --reload --workers 2 --worker-connections 2 --access-logfile=- --pythonpath /app -b :5000 api_logic_server_run:flask_app 
+        working_dir: /app/ApiLogicProject 
+        depends_on:
+            - postgresql-service
+
+
+    postgresql-service:
+        image: postgres:10.5
+        restart: always
+        environment:
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
+        logging:
+          options:
+            max-size: 10m
+            max-file: "3"
+        ports:
+          - '5432:5432'
+        volumes: 
+          - ./postgres-data:/var/lib/postgresql/data
+          # copy the sql script to create tables
+          - ../medai.sql:/docker-entrypoint-initdb.d/media.sql
+          - ../auth-db/authdb_postgres.sql:/docker-entrypoint-initdb.d/authdb_postgres.sql
+  
+    media-front-end:
+        image: tylerm007/medai_frontend:latest
+        container_name: media-front-end
+        expose:
+          - 80
+        ports:
+          - 80:80
+        #volumes:
+          # local:path-in-container
+          #- ../ui/app/nginx:/etc/nginx  
+          #- ./Users/tylerband/medai+/medai2/ui/app/dist:/usr/share/nginx/html
+        depends_on:
+          - apilogicserver
+        environment:
+          - NODE_ENV=production
+
