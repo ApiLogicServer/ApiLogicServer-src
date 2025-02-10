@@ -1,467 +1,192 @@
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "Role".name AS "Role_name" 
-api-logic-server-1  | FROM "Role"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
-api-logic-server-1  | FROM "UserRole"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
-api-logic-server-1  | FROM "UserRole"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "Role".name AS "Role_name" 
-api-logic-server-1  | FROM "Role"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
-api-logic-server-1  | FROM "UserRole"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
-api-logic-server-1  | FROM "UserRole"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "Role".name AS "Role_name" 
-api-logic-server-1  | FROM "Role"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
-api-logic-server-1  | FROM "UserRole"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
-api-logic-server-1  | FROM "UserRole"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "Role".name AS "Role_name" 
-api-logic-server-1  | FROM "Role"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
-api-logic-server-1  | FROM "UserRole"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | Exposing /User
-api-logic-server-1  | No grants - avoid recursion on User table
-api-logic-server-1  | No grants - avoid recursion on User table
-api-logic-server-1  | No grants - avoid recursion on User table
-api-logic-server-1  | No grants - avoid recursion on User table
-api-logic-server-1  | No grants - avoid recursion on User table
-api-logic-server-1  | No grants - avoid recursion on User table
-api-logic-server-1  | No grants - avoid recursion on User table
-api-logic-server-1  | No grants - avoid recursion on User table
-api-logic-server-1  | No grants - avoid recursion on User table
-api-logic-server-1  | No grants - avoid recursion on User table
-api-logic-server-1  | No grants - avoid recursion on User table
-api-logic-server-1  | No grants - avoid recursion on User table
-api-logic-server-1  | No grants - avoid recursion on User table
-api-logic-server-1  | No grants - avoid recursion on User table
-api-logic-server-1  | No grants - avoid recursion on User table
-api-logic-server-1  | No grants - avoid recursion on User table
-api-logic-server-1  | No grants - avoid recursion on User table
-api-logic-server-1  | No grants - avoid recursion on User table
-api-logic-server-1  | No grants - avoid recursion on User table
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
-api-logic-server-1  | FROM "UserRole"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
-api-logic-server-1  | FROM "UserRole"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | No grants - avoid recursion on User table
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
-api-logic-server-1  | FROM "UserRole"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
-api-logic-server-1  | FROM "UserRole"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | No grants - avoid recursion on User table
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
-api-logic-server-1  | FROM "UserRole"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
-api-logic-server-1  | FROM "UserRole"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | No grants - avoid recursion on User table
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
-api-logic-server-1  | FROM "UserRole"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | Exposing /UserRole
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
-api-logic-server-1  | FROM "UserRole"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
-api-logic-server-1  | FROM "UserRole"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
-api-logic-server-1  | FROM "UserRole"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
-api-logic-server-1  | FROM "UserRole"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
-api-logic-server-1  | FROM "UserRole"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
-api-logic-server-1  | FROM "UserRole"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
-api-logic-server-1  | FROM "UserRole"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
-api-logic-server-1  | FROM "UserRole"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
-api-logic-server-1  | FROM "UserRole"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
-api-logic-server-1  | FROM "UserRole"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
-api-logic-server-1  | FROM "UserRole"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
-api-logic-server-1  | FROM "UserRole"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
-api-logic-server-1  | FROM "UserRole"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
-api-logic-server-1  | FROM "UserRole"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
-api-logic-server-1  | FROM "UserRole"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
-api-logic-server-1  | FROM "UserRole"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
-api-logic-server-1  | FROM "UserRole"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "Role".name AS "Role_name" 
-api-logic-server-1  | FROM "Role"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "Role".name AS "Role_name" 
-api-logic-server-1  | FROM "Role"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
-api-logic-server-1  | FROM "UserRole"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "Role".name AS "Role_name" 
-api-logic-server-1  | FROM "Role"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "Role".name AS "Role_name" 
-api-logic-server-1  | FROM "Role"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
-api-logic-server-1  | FROM "UserRole"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "Role".name AS "Role_name" 
-api-logic-server-1  | FROM "Role"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "Role".name AS "Role_name" 
-api-logic-server-1  | FROM "Role"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
-api-logic-server-1  | FROM "UserRole"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "Role".name AS "Role_name" 
-api-logic-server-1  | FROM "Role"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
-api-logic-server-1  | FROM "UserRole"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | No grants - avoid recursion on User table
-api-logic-server-1  | No grants - avoid recursion on User table
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
-api-logic-server-1  | FROM "UserRole"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | No grants - avoid recursion on User table
-api-logic-server-1  | No grants - avoid recursion on User table
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
-api-logic-server-1  | FROM "UserRole"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | No grants - avoid recursion on User table
-api-logic-server-1  | No grants - avoid recursion on User table
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
-api-logic-server-1  | FROM "UserRole"
-api-logic-server-1  |  LIMIT :param_1
-api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
-api-logic-server-1  | No grants - avoid recursion on User table
-api-logic-server-1  | ..discovered services: ['new_service.py', 'system.py', 'ontimize_api.py', 'authentication_expose_api_models.py', 'newer_service.py']
-api-logic-server-1  | 
-api-logic-server-1  | Authentication loaded -- api calls now require authorization header
-api-logic-server-1  | ..declare security - security/declare_security.py authentication tables loaded
-api-logic-server-1  | Kafka Consumer not activated
-api-logic-server-1  | 
-api-logic-server-1  | API Logic Project loaded (not WSGI), version 14.03.08
-api-logic-server-1  | .. startup message: normal start
-api-logic-server-1  |  (running from docker container at flask_host: 0.0.0.0 - may require refresh)
-api-logic-server-1  | 
-api-logic-server-1  | API Logic Project (name: api_logic_project) starting:
-api-logic-server-1  | ..Explore data and API at http_scheme://swagger_host:port http://localhost:5656   *
-api-logic-server-1  | .... with flask_host: 0.0.0.0
-api-logic-server-1  | .... and  swagger_port: 5656
-api-logic-server-1  | 
-api-logic-server-1  | Alert: These following are **Critical** to unlocking value for project: api_logic_project:
-api-logic-server-1  | .. see logic.declare_logic.py       -- 
-api-logic-server-1  | .. see security.declare_security.py -- No Grants Yet
-api-logic-server-1  | 
-api-logic-server-1  | 
-api-logic-server-1  | *************************************************************************
-api-logic-server-1  | *   Startup Instructions: Open your Browser at: http://localhost:5656   *
-api-logic-server-1  | *************************************************************************
-api-logic-server-1  | 
-api-logic-server-1  | 
-api-logic-server-1  | 
-api-logic-server-1  | sys_info here
-api-logic-server-1  | 
-api-logic-server-1  | Environment Variables...
-api-logic-server-1  | .. PATH = /usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/api_logic_server/bin
-api-logic-server-1  | .. HOSTNAME = 248ed2c7534e
-api-logic-server-1  | .. SECURITY_ENABLED = true
-api-logic-server-1  | .. APILOGICPROJECT_SQLALCHEMY_DATABASE_URI = postgresql://postgres:p@postgres-service/postgres
-api-logic-server-1  | .. APILOGICPROJECT_SQLALCHEMY_DATABASE_URI_AUTHENTICATION = postgresql://postgres:p@postgres-service/authdb
-api-logic-server-1  | .. APILOGICPROJECT_VERBOSE = true
-api-logic-server-1  | .. LANG = C.UTF-8
-api-logic-server-1  | .. GPG_KEY = 7169605F62C751356D054A26A821E680E5FA6305
-api-logic-server-1  | .. PYTHON_VERSION = 3.12.8
-api-logic-server-1  | .. PYTHON_SHA256 = c909157bb25ec114e5869124cc2a9c4a4d4c1e957ca4ff553f1edc692101154e
-api-logic-server-1  | .. APILOGICSERVER_RUNNING = DOCKER
-api-logic-server-1  | .. APILOGICSERVER_FROM = python:3.11.4-slim-bullseye
-api-logic-server-1  | .. PYTHONPATH = /home/api_logic_server
-api-logic-server-1  | .. HOME = /root
-api-logic-server-1  | .. SECRET_KEY = whatnothow
-api-logic-server-1  | .. SQLALCHEMY_TRACK_MODIFICATIONS = False
-api-logic-server-1  | .. SQLAlCHEMY_ECHO = False
-api-logic-server-1  | 
-api-logic-server-1  | 
-api-logic-server-1  | flask_app.config: 
-api-logic-server-1  | 
-api-logic-server-1  | <Config {'DEBUG': None,
-api-logic-server-1  |   'TESTING': False,
-api-logic-server-1  |   'PROPAGATE_EXCEPTIONS': False,
-api-logic-server-1  |   'SECRET_KEY': 'whatnothow',
-api-logic-server-1  |   'PERMANENT_SESSION_LIFETIME': datetime.timedelta(days=31),
-api-logic-server-1  |   'USE_X_SENDFILE': False,
-api-logic-server-1  |   'SERVER_NAME': None,
-api-logic-server-1  |   'APPLICATION_ROOT': '/',
-api-logic-server-1  |   'SESSION_COOKIE_NAME': 'session',
-api-logic-server-1  |   'SESSION_COOKIE_DOMAIN': None,
-api-logic-server-1  |   'SESSION_COOKIE_PATH': None,
-api-logic-server-1  |   'SESSION_COOKIE_HTTPONLY': True,
-api-logic-server-1  |   'SESSION_COOKIE_SECURE': False,
-api-logic-server-1  |   'SESSION_COOKIE_SAMESITE': None,
-api-logic-server-1  |   'SESSION_REFRESH_EACH_REQUEST': True,
-api-logic-server-1  |   'MAX_CONTENT_LENGTH': None,
-api-logic-server-1  |   'SEND_FILE_MAX_AGE_DEFAULT': None,
-api-logic-server-1  |   'TRAP_BAD_REQUEST_ERRORS': None,
-api-logic-server-1  |   'TRAP_HTTP_EXCEPTIONS': False,
-api-logic-server-1  |   'EXPLAIN_TEMPLATE_LOADING': False,
-api-logic-server-1  |   'PREFERRED_URL_SCHEME': 'http',
-api-logic-server-1  |   'TEMPLATES_AUTO_RELOAD': None,
-api-logic-server-1  |   'MAX_COOKIE_SIZE': 4093,
-api-logic-server-1  |   'API_PREFIX': '/api',
-api-logic-server-1  |   'FLASK_HOST': '0.0.0.0',
-api-logic-server-1  |   'SWAGGER_HOST': 'localhost',
-api-logic-server-1  |   'PORT': '5656',
-api-logic-server-1  |   'SWAGGER_PORT': '5656',
-api-logic-server-1  |   'HTTP_SCHEME': 'http',
-api-logic-server-1  |   'KAFKA_PRODUCER': None,
-api-logic-server-1  |   'KAFKA_CONSUMER': None,
-api-logic-server-1  |   'N8N_PRODUCER': None,
-api-logic-server-1  |   'KEYCLOAK_BASE': 'http://localhost:8080/realms/kcals',
-api-logic-server-1  |   'KEYCLOAK_REALM': 'kcals',
-api-logic-server-1  |   'KEYCLOAK_BASE_URL': 'http://localhost:8080',
-api-logic-server-1  |   'KEYCLOAK_CLIENT_ID': 'alsclient',
-api-logic-server-1  |   'BACKTIC_AS_QUOTE': False,
-api-logic-server-1  |   'ONTIMIZE_SERVICE_TYPE': 'OntimizeEE',
-api-logic-server-1  |   'VERBOSE': True,
-api-logic-server-1  |   'CREATE_AND_RUN': False,
-api-logic-server-1  |   'CREATED_API_PREFIX': '/api',
-api-logic-server-1  |   'CREATED_FLASK_HOST': '0.0.0.0',
-api-logic-server-1  |   'CREATED_HTTP_SCHEME': 'http',
-api-logic-server-1  |   'CREATED_PORT': '5656',
-api-logic-server-1  |   'CREATED_SWAGGER_HOST': 'localhost',
-api-logic-server-1  |   'CREATED_SWAGGER_PORT': '5656',
-api-logic-server-1  |   'FLASK_APP': None,
-api-logic-server-1  |   'FLASK_ENV': None,
-api-logic-server-1  |   'OPT_LOCKING': 'optional',
-api-logic-server-1  |   'SECURITY_ENABLED': True,
-api-logic-server-1  |   'SECURITY_PROVIDER': <class 'security.authentication_provider.sql.auth_provider.Authentication_Provider'>,
-api-logic-server-1  |   'SQLALCHEMY_DATABASE_URI': 'postgresql://postgres:p@postgres-service/postgres',
-api-logic-server-1  |   'SQLALCHEMY_DATABASE_URI_AUTHENTICATION': 'postgresql://postgres:p@postgres-service/authdb',
-api-logic-server-1  |   'SQLALCHEMY_DATABASE_URI_LANDING': 'sqlite:////home/api_logic_project/database/db_spa.sqlite',
-api-logic-server-1  |   'SQLALCHEMY_TRACK_MODIFICATIONS': False}>
-api-logic-server-1  | 
-api-logic-server-1  | 
-api-logic-server-1  | PYTHONPATH..
-api-logic-server-1  | ../home/api_logic_project
-api-logic-server-1  | ../home/api_logic_server
-api-logic-server-1  | ../usr/local/lib/python312.zip
-api-logic-server-1  | ../usr/local/lib/python3.12
-api-logic-server-1  | ../usr/local/lib/python3.12/lib-dynload
-api-logic-server-1  | ../usr/local/lib/python3.12/site-packages
-api-logic-server-1  | ../home/api_logic_server
-api-logic-server-1  | ../home/api_logic_project
-api-logic-server-1  | ../home/api_logic_server
-api-logic-server-1  | 
-api-logic-server-1  | sys.prefix (venv): /usr/local
-api-logic-server-1  | 
-api-logic-server-1  | 
-api-logic-server-1  | hostname=248ed2c7534e on local_ip=172.20.0.3, IPAddr=172.20.0.3
-api-logic-server-1  | 
-api-logic-server-1  | 
-api-logic-server-1  | os.getcwd()=/home/api_logic_project
-api-logic-server-1  | 
-api-logic-server-1  | 
-api-logic-server-1  |  * Serving Flask app 'API Logic Server'
-api-logic-server-1  | WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
-api-logic-server-1  |  * Running on all addresses (0.0.0.0)
-api-logic-server-1  |  * Running on http://127.0.0.1:5656
-api-logic-server-1  |  * Running on http://172.20.0.3:5656
-api-logic-server-1  | Press CTRL+C to quit
+ine 483, in _execute_on_connection
+api-logic-server-1  |     return connection._execute_clauseelement(
+api-logic-server-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-logic-server-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1637, in _execute_clauseelement
+api-logic-server-1  |     ret = self._execute_context(
+api-logic-server-1  |           ^^^^^^^^^^^^^^^^^^^^^^
+api-logic-server-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+api-logic-server-1  |     return self._exec_single_context(
+api-logic-server-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-logic-server-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1987, in _exec_single_context
+api-logic-server-1  |     self._handle_dbapi_exception(
+api-logic-server-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 2344, in _handle_dbapi_exception
+api-logic-server-1  |     raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+api-logic-server-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1968, in _exec_single_context
+api-logic-server-1  |     self.dialect.do_execute(
+api-logic-server-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/engine/default.py", line 920, in do_execute
+api-logic-server-1  |     cursor.execute(statement, parameters)
+api-logic-server-1  | sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedTable) relation "dosage" does not exist
+api-logic-server-1  | LINE 1: INSERT INTO dosage (drug_id, drug_name, drug_type, min_dose,...
+api-logic-server-1  |                     ^
+api-logic-server-1  | 
+api-logic-server-1  | [SQL: INSERT INTO dosage (drug_id, drug_name, drug_type, min_dose, max_dose, min_age, max_age, min_weight, max_weight, min_creatine, max_creatine) VALUES (%(drug_id)s, %(drug_name)s, %(drug_type)s, %(min_dose)s, %(max_dose)s, %(min_age)s, %(max_age)s, %(min_weight)s, %(max_weight)s, %(min_creatine)s, %(max_creatine)s) RETURNING dosage.id]
+api-logic-server-1  | [parameters: {'drug_id': None, 'drug_name': 'd', 'drug_type': None, 'min_dose': None, 'max_dose': None, 'min_age': None, 'max_age': None, 'min_weight': None, 'max_weight': None, 'min_creatine': None, 'max_creatine': None}]
+api-logic-server-1  | (Background on this error at: https://sqlalche.me/e/20/f405)
+api-logic-server-1  | 
+api-logic-server-1  | During handling of the above exception, another exception occurred:
+api-logic-server-1  | 
+api-logic-server-1  | Traceback (most recent call last):
+api-logic-server-1  |   File "/usr/local/lib/python3.12/site-packages/safrs/safrs_api.py", line 674, in method_wrapper
+api-logic-server-1  |     result = fun(*args, **kwargs)
+api-logic-server-1  |              ^^^^^^^^^^^^^^^^^^^^
+api-logic-server-1  |   File "/usr/local/lib/python3.12/site-packages/safrs/jsonapi.py", line 436, in post
+api-logic-server-1  |     instance = self._create_instance(data)
+api-logic-server-1  |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-logic-server-1  |   File "/usr/local/lib/python3.12/site-packages/safrs/jsonapi.py", line 476, in _create_instance
+api-logic-server-1  |     instance = self.SAFRSObject._s_post(**attributes, **relationships)
+api-logic-server-1  |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-logic-server-1  |   File "/usr/local/lib/python3.12/site-packages/safrs/base.py", line 467, in _s_post
+api-logic-server-1  |     raise GenericError(str(exc))
+api-logic-server-1  | safrs.errors.GenericError
+api-logic-server-1  | Exception on /api/Dosage [POST]
+api-logic-server-1  | Traceback (most recent call last):
+api-logic-server-1  |   File "/usr/local/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
+api-logic-server-1  |     rv = self.dispatch_request()
+api-logic-server-1  |          ^^^^^^^^^^^^^^^^^^^^^^^
+api-logic-server-1  |   File "/usr/local/lib/python3.12/site-packages/flask/app.py", line 1469, in dispatch_request
+api-logic-server-1  |     return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+api-logic-server-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-logic-server-1  |   File "/usr/local/lib/python3.12/site-packages/flask_restful/__init__.py", line 489, in wrapper
+api-logic-server-1  |     resp = resource(*args, **kwargs)
+api-logic-server-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^
+api-logic-server-1  |   File "/usr/local/lib/python3.12/site-packages/flask_restful_swagger_2/__init__.py", line 39, in decorator
+api-logic-server-1  |     return f(*args, **kwargs)
+api-logic-server-1  |            ^^^^^^^^^^^^^^^^^^
+api-logic-server-1  |   File "/usr/local/lib/python3.12/site-packages/flask/views.py", line 109, in view
+api-logic-server-1  |     return current_app.ensure_sync(self.dispatch_request)(**kwargs)
+api-logic-server-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-logic-server-1  |   File "/usr/local/lib/python3.12/site-packages/flask_restful/__init__.py", line 604, in dispatch_request
+api-logic-server-1  |     resp = meth(*args, **kwargs)
+api-logic-server-1  |            ^^^^^^^^^^^^^^^^^^^^^
+api-logic-server-1  |   File "/usr/local/lib/python3.12/site-packages/flask_jwt_extended/view_decorators.py", line 154, in decorator
+api-logic-server-1  |     return current_app.ensure_sync(fn)(*args, **kwargs)
+api-logic-server-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+api-logic-server-1  |   File "/usr/local/lib/python3.12/site-packages/flask_restful_swagger_2/swagger.py", line 219, in inner
+api-logic-server-1  |     return f(self, *args, **kwargs)
+api-logic-server-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^
+api-logic-server-1  |   File "/usr/local/lib/python3.12/site-packages/safrs/safrs_api.py", line 708, in method_wrapper
+api-logic-server-1  |     abort(status_code, errors=[errors])
+api-logic-server-1  |   File "/usr/local/lib/python3.12/site-packages/flask_restful/__init__.py", line 32, in abort
+api-logic-server-1  |     original_flask_abort(http_status_code)
+api-logic-server-1  |   File "/usr/local/lib/python3.12/site-packages/flask/helpers.py", line 277, in abort
+api-logic-server-1  |     current_app.aborter(code, *args, **kwargs)
+api-logic-server-1  |   File "/usr/local/lib/python3.12/site-packages/werkzeug/exceptions.py", line 861, in __call__
+api-logic-server-1  |     raise self.mapping[code](*args, **kwargs)
+api-logic-server-1  | werkzeug.exceptions.InternalServerError: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+api-logic-server-1  | 172.20.0.1 - - [09/Feb/2025 21:34:36] "POST /api/Dosage HTTP/1.1" 500 -
+
+ *  History restored 
+v View in Docker Desktop   o View Config   w Enable Watch
+(venv) val@Vals-MPB-14 medai % 
+(venv) val@Vals-MPB-14 medai % 
+ *  History restored 
+
+(venv) val@Vals-MPB-14 medai % /usr/local/bin/python3.10 /Users/val/.vscode/extensions/ms-python.python-2025.1.2025020701-darwin-arm64/python_files/printEnvVariablesToFile.py /Users/val/.vscode/extensions/ms-python.python-2025.1.2025020701-darwin-arm64/python_files/deactivate/zsh/envVars.txt
+(venv) val@Vals-MPB-14 medai % als create --project-name=medai --db-url=\postgresql://postgres:p@127.0.0.1:5432/medai                   
+(venv) val@Vals-MPB-14 medai % sh ./devops/docker-compose-dev-local/docker-compose.sh
+
+.. cd ./devops/docker-compose-dev-local 
+
+/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/medai/devops/docker-compose-dev-local
+
+... security check complete
+
+~/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/medai ~/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/medai/devops/docker-compose-dev-local
+WARN[0000] /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/medai/devops/docker-compose-dev-local/docker-compose-dev-local.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion 
+[+] Running 2/0
+ ✔ Container docker-compose-dev-local-api-logic-server-1  Created                                   0.0s 
+ ✔ Container docker-compose-dev-local-postgres-service-1  Created                                   0.0s 
+Attaching to api-logic-server-1, postgres-service-1
+Gracefully stopping... (press Ctrl+C again to force)
+Error response from daemon: driver failed programming external connectivity on endpoint docker-compose-dev-local-postgres-service-1 (818d16b0a715ce64f5742530fc2df1be4319c0486f03d47dff4c298ddbba0d6f): Bind for 0.0.0.0:5432 failed: port is already allocated
+~/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/medai/devops/docker-compose-dev-local
+(venv) val@Vals-MPB-14 medai % sh ./devops/docker-compose-dev-local/docker-compose.sh
+
+.. cd ./devops/docker-compose-dev-local 
+
+/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/medai/devops/docker-compose-dev-local
+
+... security check complete
+
+~/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/medai ~/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/medai/devops/docker-compose-dev-local
+WARN[0000] /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/medai/devops/docker-compose-dev-local/docker-compose-dev-local.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion 
+[+] Running 2/0
+ ✔ Container docker-compose-dev-local-postgres-service-1  Created                                   0.0s 
+ ✔ Container docker-compose-dev-local-api-logic-server-1  Running                                   0.0s 
+Attaching to api-logic-server-1, postgres-service-1
+postgres-service-1  | 
+postgres-service-1  | PostgreSQL Database directory appears to contain a database; Skipping initialization
+postgres-service-1  | 
+postgres-service-1  | 2025-02-10 04:18:41.675 UTC [1] LOG:  starting PostgreSQL 13.4 (Debian 13.4-1.pgdg100+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 8.3.0-6) 8.3.0, 64-bit
+postgres-service-1  | 2025-02-10 04:18:41.678 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+postgres-service-1  | 2025-02-10 04:18:41.678 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+postgres-service-1  | 2025-02-10 04:18:41.679 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+postgres-service-1  | 2025-02-10 04:18:41.695 UTC [26] LOG:  database system was shut down at 2025-02-10 04:15:14 UTC
+postgres-service-1  | 2025-02-10 04:18:41.705 UTC [1] LOG:  database system is ready to accept connections
 api-logic-server-1  | API Logic Server - Start Default App - redirect /admin-app/index.html
-api-logic-server-1  | 172.20.0.1 - - [09/Feb/2025 21:32:12] "GET / HTTP/1.1" 302 -
-api-logic-server-1  | 172.20.0.1 - - [09/Feb/2025 21:32:12] "GET /admin-app/index.html HTTP/1.1" 200 -
-api-logic-server-1  | 172.20.0.1 - - [09/Feb/2025 21:32:12] "GET /admin-app/static/css/main.a6dcf785.css HTTP/1.1" 304 -
-api-logic-server-1  | 172.20.0.1 - - [09/Feb/2025 21:32:12] "GET /admin-app/static/js/main.bfe80d1d.js HTTP/1.1" 304 -
-api-logic-server-1  | 172.20.0.1 - - [09/Feb/2025 21:32:12] "GET /admin-app/manifest.json HTTP/1.1" 304 -
-api-logic-server-1  | 172.20.0.1 - - [09/Feb/2025 21:32:12] "GET /admin-app/static/js/main.bfe80d1d.js HTTP/1.1" 304 -
-api-logic-server-1  | 172.20.0.1 - - [09/Feb/2025 21:32:12] "GET /admin-app/static/css/main.a6dcf785.css HTTP/1.1" 304 -
-api-logic-server-1  | 172.20.0.1 - - [09/Feb/2025 21:32:12] "GET /ui/admin/admin.yaml?v=1739136732981 HTTP/1.1" 200 -
-api-logic-server-1  | 172.20.0.1 - - [09/Feb/2025 21:32:13] "GET /admin-app/index.html HTTP/1.1" 200 -
-api-logic-server-1  | 172.20.0.1 - - [09/Feb/2025 21:32:13] "GET /admin-app/static/js/main.bfe80d1d.js HTTP/1.1" 200 -
-api-logic-server-1  | 172.20.0.1 - - [09/Feb/2025 21:32:13] "GET /admin-app/manifest.json HTTP/1.1" 200 -
-api-logic-server-1  | 172.20.0.1 - - [09/Feb/2025 21:32:13] "GET /admin-app/static/css/main.a6dcf785.css HTTP/1.1" 200 -
-api-logic-server-1  | 172.20.0.1 - - [09/Feb/2025 21:32:13] "GET /admin-app/manifest.json HTTP/1.1" 200 -
-api-logic-server-1  | 172.20.0.1 - - [09/Feb/2025 21:32:13] "GET /admin-app/static/js/main.bfe80d1d.js HTTP/1.1" 304 -
-api-logic-server-1  | 172.20.0.1 - - [09/Feb/2025 21:32:13] "GET /admin-app/static/css/main.a6dcf785.css HTTP/1.1" 304 -
-api-logic-server-1  | 172.20.0.1 - - [09/Feb/2025 21:32:13] "GET /ui/admin/admin.yaml?v=1739136733459 HTTP/1.1" 200 -
+api-logic-server-1  | 172.20.0.1 - - [10/Feb/2025 04:25:54] "GET / HTTP/1.1" 302 -
+api-logic-server-1  | 172.20.0.1 - - [10/Feb/2025 04:25:54] "GET /admin-app/index.html HTTP/1.1" 200 -
+api-logic-server-1  | 172.20.0.1 - - [10/Feb/2025 04:25:54] "GET /admin-app/manifest.json HTTP/1.1" 304 -
+api-logic-server-1  | 172.20.0.1 - - [10/Feb/2025 04:25:54] "GET /admin-app/static/css/main.a6dcf785.css HTTP/1.1" 304 -
+api-logic-server-1  | 172.20.0.1 - - [10/Feb/2025 04:25:54] "GET /admin-app/static/js/main.bfe80d1d.js HTTP/1.1" 304 -
+api-logic-server-1  | 172.20.0.1 - - [10/Feb/2025 04:25:54] "GET /ui/admin/admin.yaml?v=1739161554862 HTTP/1.1" 200 -
+api-logic-server-1  | 172.20.0.1 - - [10/Feb/2025 04:25:55] "GET /admin-app/index.html HTTP/1.1" 200 -
+api-logic-server-1  | 172.20.0.1 - - [10/Feb/2025 04:25:55] "GET /admin-app/manifest.json HTTP/1.1" 200 -
+api-logic-server-1  | 172.20.0.1 - - [10/Feb/2025 04:25:55] "GET /admin-app/static/js/main.bfe80d1d.js HTTP/1.1" 304 -
+api-logic-server-1  | 172.20.0.1 - - [10/Feb/2025 04:25:55] "GET /admin-app/manifest.json HTTP/1.1" 200 -
+api-logic-server-1  | 172.20.0.1 - - [10/Feb/2025 04:25:55] "GET /admin-app/static/css/main.a6dcf785.css HTTP/1.1" 304 -
+api-logic-server-1  | 172.20.0.1 - - [10/Feb/2025 04:25:55] "GET /ui/admin/admin.yaml?v=1739161555516 HTTP/1.1" 200 -
+api-logic-server-1  | 172.20.0.1 - - [10/Feb/2025 04:25:58] "GET /api/Patient?include=&page[limit]=25&page[number]=1&page[offset]=0&page[size]=25&sort=name HTTP/1.1" 401 -
+api-logic-server-1  | 172.20.0.1 - - [10/Feb/2025 04:25:58] "GET /api/Patient?include=&page[limit]=25&page[number]=1&page[offset]=0&page[size]=25&sort=-id HTTP/1.1" 401 -
+api-logic-server-1  | 172.20.0.1 - - [10/Feb/2025 04:25:58] "GET /api/Patient?include=&page[limit]=25&page[number]=1&page[offset]=0&page[size]=25&sort=name HTTP/1.1" 401 -
+api-logic-server-1  | 172.20.0.1 - - [10/Feb/2025 04:25:58] "GET /api/Patient?include=&page[limit]=25&page[number]=1&page[offset]=0&page[size]=25&sort=-id HTTP/1.1" 401 -
+api-logic-server-1  | 172.20.0.1 - - [10/Feb/2025 04:25:58] "GET /api/Patient?include=&page[limit]=25&page[number]=1&page[offset]=0&page[size]=25&sort=name HTTP/1.1" 401 -
+api-logic-server-1  | 172.20.0.1 - - [10/Feb/2025 04:25:58] "GET /api/Patient?include=&page[limit]=25&page[number]=1&page[offset]=0&page[size]=25&sort=name HTTP/1.1" 401 -
+api-logic-server-1  | 172.20.0.1 - - [10/Feb/2025 04:25:58] "GET /api/Patient?include=&page[limit]=25&page[number]=1&page[offset]=0&page[size]=25&sort=name HTTP/1.1" 401 -
 api-logic-server-1  | No grants - avoid recursion on User table
+api-logic-server-1  | Checking plaintext password
+api-logic-server-1  | 172.20.0.1 - - [10/Feb/2025 04:26:04] "POST /api/auth/login HTTP/1.1" 200 -
 api-logic-server-1  | No grants - avoid recursion on User table
 api-logic-server-1  | 
 api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT count(*) AS count_1 
-api-logic-server-1  | FROM (SELECT dosage.id AS dosage_id, dosage.drug_id AS dosage_drug_id, dosage.drug_name AS dosage_drug_name, dosage.drug_type AS dosage_drug_type, dosage.min_dose AS dosage_min_dose, dosage.max_dose AS dosage_max_dose, dosage.min_age AS dosage_min_age, dosage.max_age AS dosage_max_age, dosage.min_weight AS dosage_min_weight, dosage.max_weight AS dosage_max_weight, dosage.min_creatine AS dosage_min_creatine, dosage.max_creatine AS dosage_max_creatine 
-api-logic-server-1  | FROM dosage) AS anon_1
+api-logic-server-1  | FROM (SELECT patient.id AS patient_id, patient.name AS patient_name, patient.birth_date AS patient_birth_date, patient.weight_kg AS patient_weight_kg, patient.creatine_mg_dl AS patient_creatine_mg_dl, patient.medical_record_number AS patient_medical_record_number, patient.created_date AS patient_created_date 
+api-logic-server-1  | FROM patient) AS anon_1
 api-logic-server-1  | super user (e,g, sa) - no grants apply
-postgres-service-1  | 2025-02-09 21:32:49.136 UTC [35] ERROR:  relation "dosage" does not exist at character 489
-postgres-service-1  | 2025-02-09 21:32:49.136 UTC [35] STATEMENT:  SELECT count(*) AS count_1 
-postgres-service-1  |   FROM (SELECT dosage.id AS dosage_id, dosage.drug_id AS dosage_drug_id, dosage.drug_name AS dosage_drug_name, dosage.drug_type AS dosage_drug_type, dosage.min_dose AS dosage_min_dose, dosage.max_dose AS dosage_max_dose, dosage.min_age AS dosage_min_age, dosage.max_age AS dosage_max_age, dosage.min_weight AS dosage_min_weight, dosage.max_weight AS dosage_max_weight, dosage.min_creatine AS dosage_min_creatine, dosage.max_creatine AS dosage_max_creatine 
-api-logic-server-1  | Can't get count for <class 'database.models.Dosage'> ((psycopg2.errors.UndefinedTable) relation "dosage" does not exist
-postgres-service-1  |   FROM dosage) AS anon_1
-api-logic-server-1  | LINE 3: FROM dosage) AS anon_1
+api-logic-server-1  | No grants - avoid recursion on User table
+postgres-service-1  | 2025-02-10 04:26:04.619 UTC [149] ERROR:  relation "patient" does not exist at character 345
+postgres-service-1  | 2025-02-10 04:26:04.619 UTC [149] STATEMENT:  SELECT count(*) AS count_1 
+postgres-service-1  |   FROM (SELECT patient.id AS patient_id, patient.name AS patient_name, patient.birth_date AS patient_birth_date, patient.weight_kg AS patient_weight_kg, patient.creatine_mg_dl AS patient_creatine_mg_dl, patient.medical_record_number AS patient_medical_record_number, patient.created_date AS patient_created_date 
+postgres-service-1  |   FROM patient) AS anon_1
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT count(*) AS count_1 
+api-logic-server-1  | FROM (SELECT patient.id AS patient_id, patient.name AS patient_name, patient.birth_date AS patient_birth_date, patient.weight_kg AS patient_weight_kg, patient.creatine_mg_dl AS patient_creatine_mg_dl, patient.medical_record_number AS patient_medical_record_number, patient.created_date AS patient_created_date 
+api-logic-server-1  | FROM patient) AS anon_1
+api-logic-server-1  | super user (e,g, sa) - no grants apply
+api-logic-server-1  | Can't get count for <class 'database.models.Patient'> ((psycopg2.errors.UndefinedTable) relation "patient" does not exist
+api-logic-server-1  | LINE 3: FROM patient) AS anon_1
 api-logic-server-1  |              ^
 api-logic-server-1  | 
 api-logic-server-1  | [SQL: SELECT count(*) AS count_1 
-api-logic-server-1  | FROM (SELECT dosage.id AS dosage_id, dosage.drug_id AS dosage_drug_id, dosage.drug_name AS dosage_drug_name, dosage.drug_type AS dosage_drug_type, dosage.min_dose AS dosage_min_dose, dosage.max_dose AS dosage_max_dose, dosage.min_age AS dosage_min_age, dosage.max_age AS dosage_max_age, dosage.min_weight AS dosage_min_weight, dosage.max_weight AS dosage_max_weight, dosage.min_creatine AS dosage_min_creatine, dosage.max_creatine AS dosage_max_creatine 
-api-logic-server-1  | FROM dosage) AS anon_1]
+api-logic-server-1  | FROM (SELECT patient.id AS patient_id, patient.name AS patient_name, patient.birth_date AS patient_birth_date, patient.weight_kg AS patient_weight_kg, patient.creatine_mg_dl AS patient_creatine_mg_dl, patient.medical_record_number AS patient_medical_record_number, patient.created_date AS patient_created_date 
+api-logic-server-1  | FROM patient) AS anon_1]
 api-logic-server-1  | (Background on this error at: https://sqlalche.me/e/20/f405))
 api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT dosage.id AS dosage_id, dosage.drug_id AS dosage_drug_id, dosage.drug_name AS dosage_drug_name, dosage.drug_type AS dosage_drug_type, dosage.min_dose AS dosage_min_dose, dosage.max_dose AS dosage_max_dose, dosage.min_age AS dosage_min_age, dosage.max_age AS dosage_max_age, dosage.min_weight AS dosage_min_weight, dosage.max_weight AS dosage_max_weight, dosage.min_creatine AS dosage_min_creatine, dosage.max_creatine AS dosage_max_creatine 
-api-logic-server-1  | FROM dosage ORDER BY dosage.drug_name
+postgres-service-1  | 2025-02-10 04:26:04.625 UTC [149] ERROR:  current transaction is aborted, commands ignored until end of transaction block
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT patient.id AS patient_id, patient.name AS patient_name, patient.birth_date AS patient_birth_date, patient.weight_kg AS patient_weight_kg, patient.creatine_mg_dl AS patient_creatine_mg_dl, patient.medical_record_number AS patient_medical_record_number, patient.created_date AS patient_created_date 
+postgres-service-1  | 2025-02-10 04:26:04.625 UTC [149] STATEMENT:  SELECT patient.id AS patient_id, patient.name AS patient_name, patient.birth_date AS patient_birth_date, patient.weight_kg AS patient_weight_kg, patient.creatine_mg_dl AS patient_creatine_mg_dl, patient.medical_record_number AS patient_medical_record_number, patient.created_date AS patient_created_date 
+api-logic-server-1  | FROM patient ORDER BY patient.id DESC
+postgres-service-1  |   FROM patient ORDER BY patient.id DESC 
 api-logic-server-1  |  LIMIT :param_1 OFFSET :param_2
-api-logic-server-1  | super user (e,g, sa) - no grants apply
-postgres-service-1  | 2025-02-09 21:32:49.140 UTC [35] ERROR:  current transaction is aborted, commands ignored until end of transaction block
-postgres-service-1  | 2025-02-09 21:32:49.140 UTC [35] STATEMENT:  SELECT dosage.id AS dosage_id, dosage.drug_id AS dosage_drug_id, dosage.drug_name AS dosage_drug_name, dosage.drug_type AS dosage_drug_type, dosage.min_dose AS dosage_min_dose, dosage.max_dose AS dosage_max_dose, dosage.min_age AS dosage_min_age, dosage.max_age AS dosage_max_age, dosage.min_weight AS dosage_min_weight, dosage.max_weight AS dosage_max_weight, dosage.min_creatine AS dosage_min_creatine, dosage.max_creatine AS dosage_max_creatine 
-postgres-service-1  |   FROM dosage ORDER BY dosage.drug_name 
 postgres-service-1  |    LIMIT 25 OFFSET 0
+api-logic-server-1  | super user (e,g, sa) - no grants apply
 api-logic-server-1  | Generic Error: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
 api-logic-server-1  | 
-api-logic-server-1  | [SQL: SELECT dosage.id AS dosage_id, dosage.drug_id AS dosage_drug_id, dosage.drug_name AS dosage_drug_name, dosage.drug_type AS dosage_drug_type, dosage.min_dose AS dosage_min_dose, dosage.max_dose AS dosage_max_dose, dosage.min_age AS dosage_min_age, dosage.max_age AS dosage_max_age, dosage.min_weight AS dosage_min_weight, dosage.max_weight AS dosage_max_weight, dosage.min_creatine AS dosage_min_creatine, dosage.max_creatine AS dosage_max_creatine 
-api-logic-server-1  | FROM dosage ORDER BY dosage.drug_name 
+api-logic-server-1  | [SQL: SELECT patient.id AS patient_id, patient.name AS patient_name, patient.birth_date AS patient_birth_date, patient.weight_kg AS patient_weight_kg, patient.creatine_mg_dl AS patient_creatine_mg_dl, patient.medical_record_number AS patient_medical_record_number, patient.created_date AS patient_created_date 
+api-logic-server-1  | FROM patient ORDER BY patient.id DESC 
 api-logic-server-1  |  LIMIT %(param_1)s OFFSET %(param_2)s]
 api-logic-server-1  | [parameters: {'param_1': 25, 'param_2': 0}]
 api-logic-server-1  | (Background on this error at: https://sqlalche.me/e/20/2j85)
-api-logic-server-1  | Error in http://localhost:5656/api/Dosage?include=drug,drug&page[limit]=25&page[number]=1&page[offset]=0&page[size]=25&sort=drug_name
+api-logic-server-1  | Error in http://localhost:5656/api/Patient?include=&page[limit]=25&page[number]=1&page[offset]=0&page[size]=25&sort=-id
 api-logic-server-1  | Traceback (most recent call last):
 api-logic-server-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1968, in _exec_single_context
 api-logic-server-1  |     self.dialect.do_execute(
@@ -513,8 +238,8 @@ api-logic-server-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy
 api-logic-server-1  |     cursor.execute(statement, parameters)
 api-logic-server-1  | sqlalchemy.exc.InternalError: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
 api-logic-server-1  | 
-api-logic-server-1  | [SQL: SELECT dosage.id AS dosage_id, dosage.drug_id AS dosage_drug_id, dosage.drug_name AS dosage_drug_name, dosage.drug_type AS dosage_drug_type, dosage.min_dose AS dosage_min_dose, dosage.max_dose AS dosage_max_dose, dosage.min_age AS dosage_min_age, dosage.max_age AS dosage_max_age, dosage.min_weight AS dosage_min_weight, dosage.max_weight AS dosage_max_weight, dosage.min_creatine AS dosage_min_creatine, dosage.max_creatine AS dosage_max_creatine 
-api-logic-server-1  | FROM dosage ORDER BY dosage.drug_name 
+api-logic-server-1  | [SQL: SELECT patient.id AS patient_id, patient.name AS patient_name, patient.birth_date AS patient_birth_date, patient.weight_kg AS patient_weight_kg, patient.creatine_mg_dl AS patient_creatine_mg_dl, patient.medical_record_number AS patient_medical_record_number, patient.created_date AS patient_created_date 
+api-logic-server-1  | FROM patient ORDER BY patient.id DESC 
 api-logic-server-1  |  LIMIT %(param_1)s OFFSET %(param_2)s]
 api-logic-server-1  | [parameters: {'param_1': 25, 'param_2': 0}]
 api-logic-server-1  | (Background on this error at: https://sqlalche.me/e/20/2j85)
@@ -531,9 +256,13 @@ api-logic-server-1  |
 api-logic-server-1  | The above exception was the direct cause of the following exception:
 api-logic-server-1  | 
 api-logic-server-1  | Traceback (most recent call last):
+postgres-service-1  | 2025-02-10 04:26:04.649 UTC [151] ERROR:  relation "patient" does not exist at character 345
 api-logic-server-1  |   File "/usr/local/lib/python3.12/site-packages/safrs/jsonapi_formatting.py", line 201, in paginate
+postgres-service-1  | 2025-02-10 04:26:04.649 UTC [151] STATEMENT:  SELECT count(*) AS count_1 
 api-logic-server-1  |     instances = res_query.all()
+postgres-service-1  |   FROM (SELECT patient.id AS patient_id, patient.name AS patient_name, patient.birth_date AS patient_birth_date, patient.weight_kg AS patient_weight_kg, patient.creatine_mg_dl AS patient_creatine_mg_dl, patient.medical_record_number AS patient_medical_record_number, patient.created_date AS patient_created_date 
 api-logic-server-1  |                 ^^^^^^^^^^^^^^^
+postgres-service-1  |   FROM patient) AS anon_1
 api-logic-server-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/orm/query.py", line 2692, in all
 api-logic-server-1  |     return self._iter().all()  # type: ignore
 api-logic-server-1  |            ^^^^^^^^^^^^
@@ -571,9 +300,13 @@ api-logic-server-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy
 api-logic-server-1  |     cursor.execute(statement, parameters)
 api-logic-server-1  | sqlalchemy.exc.InternalError: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
 api-logic-server-1  | 
-api-logic-server-1  | [SQL: SELECT dosage.id AS dosage_id, dosage.drug_id AS dosage_drug_id, dosage.drug_name AS dosage_drug_name, dosage.drug_type AS dosage_drug_type, dosage.min_dose AS dosage_min_dose, dosage.max_dose AS dosage_max_dose, dosage.min_age AS dosage_min_age, dosage.max_age AS dosage_max_age, dosage.min_weight AS dosage_min_weight, dosage.max_weight AS dosage_max_weight, dosage.min_creatine AS dosage_min_creatine, dosage.max_creatine AS dosage_max_creatine 
-api-logic-server-1  | FROM dosage ORDER BY dosage.drug_name 
+postgres-service-1  | 2025-02-10 04:26:04.655 UTC [151] ERROR:  current transaction is aborted, commands ignored until end of transaction block
+api-logic-server-1  | [SQL: SELECT patient.id AS patient_id, patient.name AS patient_name, patient.birth_date AS patient_birth_date, patient.weight_kg AS patient_weight_kg, patient.creatine_mg_dl AS patient_creatine_mg_dl, patient.medical_record_number AS patient_medical_record_number, patient.created_date AS patient_created_date 
+postgres-service-1  | 2025-02-10 04:26:04.655 UTC [151] STATEMENT:  SELECT patient.id AS patient_id, patient.name AS patient_name, patient.birth_date AS patient_birth_date, patient.weight_kg AS patient_weight_kg, patient.creatine_mg_dl AS patient_creatine_mg_dl, patient.medical_record_number AS patient_medical_record_number, patient.created_date AS patient_created_date 
+api-logic-server-1  | FROM patient ORDER BY patient.id DESC 
+postgres-service-1  |   FROM patient ORDER BY patient.name 
 api-logic-server-1  |  LIMIT %(param_1)s OFFSET %(param_2)s]
+postgres-service-1  |    LIMIT 25 OFFSET 0
 api-logic-server-1  | [parameters: {'param_1': 25, 'param_2': 0}]
 api-logic-server-1  | (Background on this error at: https://sqlalche.me/e/20/2j85)
 api-logic-server-1  | 
@@ -589,7 +322,7 @@ api-logic-server-1  |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 api-logic-server-1  |   File "/usr/local/lib/python3.12/site-packages/safrs/jsonapi_formatting.py", line 216, in paginate
 api-logic-server-1  |     raise GenericError(f"{exc}")
 api-logic-server-1  | safrs.errors.GenericError
-api-logic-server-1  | Exception on /api/Dosage [GET]
+api-logic-server-1  | Exception on /api/Patient [GET]
 api-logic-server-1  | Traceback (most recent call last):
 api-logic-server-1  |   File "/usr/local/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
 api-logic-server-1  |     rv = self.dispatch_request()
@@ -624,41 +357,28 @@ api-logic-server-1  |     current_app.aborter(code, *args, **kwargs)
 api-logic-server-1  |   File "/usr/local/lib/python3.12/site-packages/werkzeug/exceptions.py", line 861, in __call__
 api-logic-server-1  |     raise self.mapping[code](*args, **kwargs)
 api-logic-server-1  | werkzeug.exceptions.InternalServerError: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
-api-logic-server-1  | 172.20.0.1 - - [09/Feb/2025 21:32:49] "GET /api/Dosage?include=drug,drug&page[limit]=25&page[number]=1&page[offset]=0&page[size]=25&sort=drug_name HTTP/1.1" 500 -
-api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT count(*) AS count_1 
-api-logic-server-1  | FROM (SELECT dosage.id AS dosage_id, dosage.drug_id AS dosage_drug_id, dosage.drug_name AS dosage_drug_name, dosage.drug_type AS dosage_drug_type, dosage.min_dose AS dosage_min_dose, dosage.max_dose AS dosage_max_dose, dosage.min_age AS dosage_min_age, dosage.max_age AS dosage_max_age, dosage.min_weight AS dosage_min_weight, dosage.max_weight AS dosage_max_weight, dosage.min_creatine AS dosage_min_creatine, dosage.max_creatine AS dosage_max_creatine 
-api-logic-server-1  | FROM dosage) AS anon_1
-api-logic-server-1  | super user (e,g, sa) - no grants apply
-postgres-service-1  | 2025-02-09 21:32:49.193 UTC [35] ERROR:  relation "dosage" does not exist at character 489
-postgres-service-1  | 2025-02-09 21:32:49.193 UTC [35] STATEMENT:  SELECT count(*) AS count_1 
-postgres-service-1  |   FROM (SELECT dosage.id AS dosage_id, dosage.drug_id AS dosage_drug_id, dosage.drug_name AS dosage_drug_name, dosage.drug_type AS dosage_drug_type, dosage.min_dose AS dosage_min_dose, dosage.max_dose AS dosage_max_dose, dosage.min_age AS dosage_min_age, dosage.max_age AS dosage_max_age, dosage.min_weight AS dosage_min_weight, dosage.max_weight AS dosage_max_weight, dosage.min_creatine AS dosage_min_creatine, dosage.max_creatine AS dosage_max_creatine 
-postgres-service-1  |   FROM dosage) AS anon_1
-api-logic-server-1  | Can't get count for <class 'database.models.Dosage'> ((psycopg2.errors.UndefinedTable) relation "dosage" does not exist
-api-logic-server-1  | LINE 3: FROM dosage) AS anon_1
+api-logic-server-1  | Can't get count for <class 'database.models.Patient'> ((psycopg2.errors.UndefinedTable) relation "patient" does not exist
+api-logic-server-1  | LINE 3: FROM patient) AS anon_1
 api-logic-server-1  |              ^
 api-logic-server-1  | 
 api-logic-server-1  | [SQL: SELECT count(*) AS count_1 
-api-logic-server-1  | FROM (SELECT dosage.id AS dosage_id, dosage.drug_id AS dosage_drug_id, dosage.drug_name AS dosage_drug_name, dosage.drug_type AS dosage_drug_type, dosage.min_dose AS dosage_min_dose, dosage.max_dose AS dosage_max_dose, dosage.min_age AS dosage_min_age, dosage.max_age AS dosage_max_age, dosage.min_weight AS dosage_min_weight, dosage.max_weight AS dosage_max_weight, dosage.min_creatine AS dosage_min_creatine, dosage.max_creatine AS dosage_max_creatine 
-api-logic-server-1  | FROM dosage) AS anon_1]
+api-logic-server-1  | FROM (SELECT patient.id AS patient_id, patient.name AS patient_name, patient.birth_date AS patient_birth_date, patient.weight_kg AS patient_weight_kg, patient.creatine_mg_dl AS patient_creatine_mg_dl, patient.medical_record_number AS patient_medical_record_number, patient.created_date AS patient_created_date 
+api-logic-server-1  | FROM patient) AS anon_1]
 api-logic-server-1  | (Background on this error at: https://sqlalche.me/e/20/f405))
+api-logic-server-1  | 172.20.0.1 - - [10/Feb/2025 04:26:04] "GET /api/Patient?include=&page[limit]=25&page[number]=1&page[offset]=0&page[size]=25&sort=-id HTTP/1.1" 500 -
 api-logic-server-1  | 
-api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT dosage.id AS dosage_id, dosage.drug_id AS dosage_drug_id, dosage.drug_name AS dosage_drug_name, dosage.drug_type AS dosage_drug_type, dosage.min_dose AS dosage_min_dose, dosage.max_dose AS dosage_max_dose, dosage.min_age AS dosage_min_age, dosage.max_age AS dosage_max_age, dosage.min_weight AS dosage_min_weight, dosage.max_weight AS dosage_max_weight, dosage.min_creatine AS dosage_min_creatine, dosage.max_creatine AS dosage_max_creatine 
-api-logic-server-1  | FROM dosage ORDER BY dosage.id DESC
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT patient.id AS patient_id, patient.name AS patient_name, patient.birth_date AS patient_birth_date, patient.weight_kg AS patient_weight_kg, patient.creatine_mg_dl AS patient_creatine_mg_dl, patient.medical_record_number AS patient_medical_record_number, patient.created_date AS patient_created_date 
+api-logic-server-1  | FROM patient ORDER BY patient.name
 api-logic-server-1  |  LIMIT :param_1 OFFSET :param_2
 api-logic-server-1  | super user (e,g, sa) - no grants apply
-postgres-service-1  | 2025-02-09 21:32:49.195 UTC [35] ERROR:  current transaction is aborted, commands ignored until end of transaction block
-postgres-service-1  | 2025-02-09 21:32:49.195 UTC [35] STATEMENT:  SELECT dosage.id AS dosage_id, dosage.drug_id AS dosage_drug_id, dosage.drug_name AS dosage_drug_name, dosage.drug_type AS dosage_drug_type, dosage.min_dose AS dosage_min_dose, dosage.max_dose AS dosage_max_dose, dosage.min_age AS dosage_min_age, dosage.max_age AS dosage_max_age, dosage.min_weight AS dosage_min_weight, dosage.max_weight AS dosage_max_weight, dosage.min_creatine AS dosage_min_creatine, dosage.max_creatine AS dosage_max_creatine 
-postgres-service-1  |   FROM dosage ORDER BY dosage.id DESC 
 api-logic-server-1  | Generic Error: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
-postgres-service-1  |    LIMIT 25 OFFSET 0
 api-logic-server-1  | 
-api-logic-server-1  | [SQL: SELECT dosage.id AS dosage_id, dosage.drug_id AS dosage_drug_id, dosage.drug_name AS dosage_drug_name, dosage.drug_type AS dosage_drug_type, dosage.min_dose AS dosage_min_dose, dosage.max_dose AS dosage_max_dose, dosage.min_age AS dosage_min_age, dosage.max_age AS dosage_max_age, dosage.min_weight AS dosage_min_weight, dosage.max_weight AS dosage_max_weight, dosage.min_creatine AS dosage_min_creatine, dosage.max_creatine AS dosage_max_creatine 
-api-logic-server-1  | FROM dosage ORDER BY dosage.id DESC 
+api-logic-server-1  | [SQL: SELECT patient.id AS patient_id, patient.name AS patient_name, patient.birth_date AS patient_birth_date, patient.weight_kg AS patient_weight_kg, patient.creatine_mg_dl AS patient_creatine_mg_dl, patient.medical_record_number AS patient_medical_record_number, patient.created_date AS patient_created_date 
+api-logic-server-1  | FROM patient ORDER BY patient.name 
 api-logic-server-1  |  LIMIT %(param_1)s OFFSET %(param_2)s]
 api-logic-server-1  | [parameters: {'param_1': 25, 'param_2': 0}]
 api-logic-server-1  | (Background on this error at: https://sqlalche.me/e/20/2j85)
-api-logic-server-1  | Error in http://localhost:5656/api/Dosage?include=drug,drug&page[limit]=25&page[number]=1&page[offset]=0&page[size]=25&sort=-id
+api-logic-server-1  | Error in http://localhost:5656/api/Patient?include=&page[limit]=25&page[number]=1&page[offset]=0&page[size]=25&sort=name
 api-logic-server-1  | Traceback (most recent call last):
 api-logic-server-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy/engine/base.py", line 1968, in _exec_single_context
 api-logic-server-1  |     self.dialect.do_execute(
@@ -710,8 +430,8 @@ api-logic-server-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy
 api-logic-server-1  |     cursor.execute(statement, parameters)
 api-logic-server-1  | sqlalchemy.exc.InternalError: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
 api-logic-server-1  | 
-api-logic-server-1  | [SQL: SELECT dosage.id AS dosage_id, dosage.drug_id AS dosage_drug_id, dosage.drug_name AS dosage_drug_name, dosage.drug_type AS dosage_drug_type, dosage.min_dose AS dosage_min_dose, dosage.max_dose AS dosage_max_dose, dosage.min_age AS dosage_min_age, dosage.max_age AS dosage_max_age, dosage.min_weight AS dosage_min_weight, dosage.max_weight AS dosage_max_weight, dosage.min_creatine AS dosage_min_creatine, dosage.max_creatine AS dosage_max_creatine 
-api-logic-server-1  | FROM dosage ORDER BY dosage.id DESC 
+api-logic-server-1  | [SQL: SELECT patient.id AS patient_id, patient.name AS patient_name, patient.birth_date AS patient_birth_date, patient.weight_kg AS patient_weight_kg, patient.creatine_mg_dl AS patient_creatine_mg_dl, patient.medical_record_number AS patient_medical_record_number, patient.created_date AS patient_created_date 
+api-logic-server-1  | FROM patient ORDER BY patient.name 
 api-logic-server-1  |  LIMIT %(param_1)s OFFSET %(param_2)s]
 api-logic-server-1  | [parameters: {'param_1': 25, 'param_2': 0}]
 api-logic-server-1  | (Background on this error at: https://sqlalche.me/e/20/2j85)
@@ -768,8 +488,8 @@ api-logic-server-1  |   File "/usr/local/lib/python3.12/site-packages/sqlalchemy
 api-logic-server-1  |     cursor.execute(statement, parameters)
 api-logic-server-1  | sqlalchemy.exc.InternalError: (psycopg2.errors.InFailedSqlTransaction) current transaction is aborted, commands ignored until end of transaction block
 api-logic-server-1  | 
-api-logic-server-1  | [SQL: SELECT dosage.id AS dosage_id, dosage.drug_id AS dosage_drug_id, dosage.drug_name AS dosage_drug_name, dosage.drug_type AS dosage_drug_type, dosage.min_dose AS dosage_min_dose, dosage.max_dose AS dosage_max_dose, dosage.min_age AS dosage_min_age, dosage.max_age AS dosage_max_age, dosage.min_weight AS dosage_min_weight, dosage.max_weight AS dosage_max_weight, dosage.min_creatine AS dosage_min_creatine, dosage.max_creatine AS dosage_max_creatine 
-api-logic-server-1  | FROM dosage ORDER BY dosage.id DESC 
+api-logic-server-1  | [SQL: SELECT patient.id AS patient_id, patient.name AS patient_name, patient.birth_date AS patient_birth_date, patient.weight_kg AS patient_weight_kg, patient.creatine_mg_dl AS patient_creatine_mg_dl, patient.medical_record_number AS patient_medical_record_number, patient.created_date AS patient_created_date 
+api-logic-server-1  | FROM patient ORDER BY patient.name 
 api-logic-server-1  |  LIMIT %(param_1)s OFFSET %(param_2)s]
 api-logic-server-1  | [parameters: {'param_1': 25, 'param_2': 0}]
 api-logic-server-1  | (Background on this error at: https://sqlalche.me/e/20/2j85)
@@ -786,7 +506,7 @@ api-logic-server-1  |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 api-logic-server-1  |   File "/usr/local/lib/python3.12/site-packages/safrs/jsonapi_formatting.py", line 216, in paginate
 api-logic-server-1  |     raise GenericError(f"{exc}")
 api-logic-server-1  | safrs.errors.GenericError
-api-logic-server-1  | Exception on /api/Dosage [GET]
+api-logic-server-1  | Exception on /api/Patient [GET]
 api-logic-server-1  | Traceback (most recent call last):
 api-logic-server-1  |   File "/usr/local/lib/python3.12/site-packages/flask/app.py", line 1484, in full_dispatch_request
 api-logic-server-1  |     rv = self.dispatch_request()
@@ -821,7 +541,7 @@ api-logic-server-1  |     current_app.aborter(code, *args, **kwargs)
 api-logic-server-1  |   File "/usr/local/lib/python3.12/site-packages/werkzeug/exceptions.py", line 861, in __call__
 api-logic-server-1  |     raise self.mapping[code](*args, **kwargs)
 api-logic-server-1  | werkzeug.exceptions.InternalServerError: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
-api-logic-server-1  | 172.20.0.1 - - [09/Feb/2025 21:32:49] "GET /api/Dosage?include=drug,drug&page[limit]=25&page[number]=1&page[offset]=0&page[size]=25&sort=-id HTTP/1.1" 500 -
+api-logic-server-1  | 172.20.0.1 - - [10/Feb/2025 04:26:04] "GET /api/Patient?include=&page[limit]=25&page[number]=1&page[offset]=0&page[size]=25&sort=name HTTP/1.1" 500 -
 
 
 v View in Docker Desktop   o View Config   w Enable Watch
