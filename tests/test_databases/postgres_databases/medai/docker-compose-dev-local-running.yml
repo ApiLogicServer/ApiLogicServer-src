@@ -1,0 +1,49 @@
+# First, build image: sh devops/docker-image/build_image.sh .
+
+# ALERT - this is a pre-configured for the mysql classicmodels sample database
+# see https://apilogicserver.github.io/Docs/Database-Docker/#classicmodels-mysql-docker
+# you will need to alter APILOGICPROJECT_SQLALCHEMY_DATABASE_URI (2 lines) for your database & auth
+# and, in the case of demo (sqlite), comment them out
+
+# cd <project>  
+# sh ./devops/docker-compose-dev-local/docker-compose.sh
+# --> builds, runs at localhost:5656
+
+version: "3.5"
+
+services:
+
+    postgres-service:
+        image: apilogicserver/postgres:latest
+        restart: always
+        environment:
+          - PGDATA=/pgdata
+          - POSTGRES_PASSWORD=p
+        # healthcheck:
+        #  test: pg_isready -U myuser -d db_prod
+        #  interval: 10s
+        #  timeout: 3s
+        #  retries: 3
+        ports:
+          - "5432:5432"
+
+    api-logic-server:
+        image: apilogicserver/medai
+        # depends_on:
+        #  postgres-container:
+        #    condition: service_healthy
+        # healthcheck:
+        #  test: ["CMD", "curl", "-f", "http://localhost:5656/hello_world"]
+        #  interval: 200s
+        #  timeout: 200s
+        #  retries: 5
+        environment:
+          - APILOGICPROJECT_VERBOSE=true
+          - SECURITY_ENABLED=true
+          ## todid - database uri's:
+          - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI=postgresql://postgres:p@postgres-service/medai
+          - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI_AUTHENTICATION=postgresql://postgres:p@postgres-service/authdb
+        expose:
+          - 5656
+        ports:
+          - 5656:5656
