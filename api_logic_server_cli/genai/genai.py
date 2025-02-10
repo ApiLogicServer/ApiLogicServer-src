@@ -316,7 +316,10 @@ class GenAI(object):
                 raw_prompt = file.read()
             prompt = self.get_prompt__with_inserts(raw_prompt=raw_prompt, for_iteration=False)  # insert db-specific logic
             self.logic_enabled = False
-            if 'LogicBank' in prompt and K_LogicBankOff not in prompt:  # if prompt has logic, we need to insert the training
+            if os.environ.get("APILOGICPROJECT_LOGIC_ENABLED") is not None and \
+                            os.environ.get("APILOGICPROJECT_LOGIC_ENABLED") == 'True':
+                self.logic_enabled = True            
+            if self.logic_enabled == True or ('LogicBank' in prompt and K_LogicBankOff not in prompt):  # if prompt has logic, we need to insert the training
                 prompt_messages.extend( self.get_prompt_learning_requests())
                 self.logic_enabled = True
             if prompt.startswith('You are a '):  # if it's a preset, we need to insert the prompt
