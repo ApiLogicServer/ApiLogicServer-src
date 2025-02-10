@@ -1,0 +1,754 @@
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT reading.id AS reading_id, reading.patient_id AS reading_patient_id, reading.morning AS reading_morning, reading.afternoon AS reading_afternoon, reading.dinner AS reading_dinner, reading.bedtime AS reading_bedtime, reading.reading_date AS reading_reading_date 
+api-logic-server-1  | FROM reading
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT reading.id AS reading_id, reading.patient_id AS reading_patient_id, reading.morning AS reading_morning, reading.afternoon AS reading_afternoon, reading.dinner AS reading_dinner, reading.bedtime AS reading_bedtime, reading.reading_date AS reading_reading_date 
+api-logic-server-1  | FROM reading
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT reading.id AS reading_id, reading.patient_id AS reading_patient_id, reading.morning AS reading_morning, reading.afternoon AS reading_afternoon, reading.dinner AS reading_dinner, reading.bedtime AS reading_bedtime, reading.reading_date AS reading_reading_date 
+api-logic-server-1  | FROM reading
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT reading.id AS reading_id, reading.patient_id AS reading_patient_id, reading.morning AS reading_morning, reading.afternoon AS reading_afternoon, reading.dinner AS reading_dinner, reading.bedtime AS reading_bedtime, reading.reading_date AS reading_reading_date 
+api-logic-server-1  | FROM reading
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT patient.id AS patient_id, patient.name AS patient_name, patient.birth_date AS patient_birth_date, patient.weight_kg AS patient_weight_kg, patient.creatine_mg_dl AS patient_creatine_mg_dl, patient.medical_record_number AS patient_medical_record_number, patient.created_date AS patient_created_date 
+api-logic-server-1  | FROM patient
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT patient.id AS patient_id, patient.name AS patient_name, patient.birth_date AS patient_birth_date, patient.weight_kg AS patient_weight_kg, patient.creatine_mg_dl AS patient_creatine_mg_dl, patient.medical_record_number AS patient_medical_record_number, patient.created_date AS patient_created_date 
+api-logic-server-1  | FROM patient
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT reading.id AS reading_id, reading.patient_id AS reading_patient_id, reading.morning AS reading_morning, reading.afternoon AS reading_afternoon, reading.dinner AS reading_dinner, reading.bedtime AS reading_bedtime, reading.reading_date AS reading_reading_date 
+api-logic-server-1  | FROM reading
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT patient.id AS patient_id, patient.name AS patient_name, patient.birth_date AS patient_birth_date, patient.weight_kg AS patient_weight_kg, patient.creatine_mg_dl AS patient_creatine_mg_dl, patient.medical_record_number AS patient_medical_record_number, patient.created_date AS patient_created_date 
+api-logic-server-1  | FROM patient
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT patient.id AS patient_id, patient.name AS patient_name, patient.birth_date AS patient_birth_date, patient.weight_kg AS patient_weight_kg, patient.creatine_mg_dl AS patient_creatine_mg_dl, patient.medical_record_number AS patient_medical_record_number, patient.created_date AS patient_created_date 
+api-logic-server-1  | FROM patient
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT reading.id AS reading_id, reading.patient_id AS reading_patient_id, reading.morning AS reading_morning, reading.afternoon AS reading_afternoon, reading.dinner AS reading_dinner, reading.bedtime AS reading_bedtime, reading.reading_date AS reading_reading_date 
+api-logic-server-1  | FROM reading
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT patient.id AS patient_id, patient.name AS patient_name, patient.birth_date AS patient_birth_date, patient.weight_kg AS patient_weight_kg, patient.creatine_mg_dl AS patient_creatine_mg_dl, patient.medical_record_number AS patient_medical_record_number, patient.created_date AS patient_created_date 
+api-logic-server-1  | FROM patient
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT patient.id AS patient_id, patient.name AS patient_name, patient.birth_date AS patient_birth_date, patient.weight_kg AS patient_weight_kg, patient.creatine_mg_dl AS patient_creatine_mg_dl, patient.medical_record_number AS patient_medical_record_number, patient.created_date AS patient_created_date 
+api-logic-server-1  | FROM patient
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT reading.id AS reading_id, reading.patient_id AS reading_patient_id, reading.morning AS reading_morning, reading.afternoon AS reading_afternoon, reading.dinner AS reading_dinner, reading.bedtime AS reading_bedtime, reading.reading_date AS reading_reading_date 
+api-logic-server-1  | FROM reading
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT patient.id AS patient_id, patient.name AS patient_name, patient.birth_date AS patient_birth_date, patient.weight_kg AS patient_weight_kg, patient.creatine_mg_dl AS patient_creatine_mg_dl, patient.medical_record_number AS patient_medical_record_number, patient.created_date AS patient_created_date 
+api-logic-server-1  | FROM patient
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | Exposing /Recommendation
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT recommendation.id AS recommendation_id, recommendation.patient_id AS recommendation_patient_id, recommendation.drug_id AS recommendation_drug_id, recommendation.dosage AS recommendation_dosage, recommendation.recommendation_date AS recommendation_recommendation_date 
+api-logic-server-1  | FROM recommendation
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT recommendation.id AS recommendation_id, recommendation.patient_id AS recommendation_patient_id, recommendation.drug_id AS recommendation_drug_id, recommendation.dosage AS recommendation_dosage, recommendation.recommendation_date AS recommendation_recommendation_date 
+api-logic-server-1  | FROM recommendation
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT recommendation.id AS recommendation_id, recommendation.patient_id AS recommendation_patient_id, recommendation.drug_id AS recommendation_drug_id, recommendation.dosage AS recommendation_dosage, recommendation.recommendation_date AS recommendation_recommendation_date 
+api-logic-server-1  | FROM recommendation
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT recommendation.id AS recommendation_id, recommendation.patient_id AS recommendation_patient_id, recommendation.drug_id AS recommendation_drug_id, recommendation.dosage AS recommendation_dosage, recommendation.recommendation_date AS recommendation_recommendation_date 
+api-logic-server-1  | FROM recommendation
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT recommendation.id AS recommendation_id, recommendation.patient_id AS recommendation_patient_id, recommendation.drug_id AS recommendation_drug_id, recommendation.dosage AS recommendation_dosage, recommendation.recommendation_date AS recommendation_recommendation_date 
+api-logic-server-1  | FROM recommendation
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT recommendation.id AS recommendation_id, recommendation.patient_id AS recommendation_patient_id, recommendation.drug_id AS recommendation_drug_id, recommendation.dosage AS recommendation_dosage, recommendation.recommendation_date AS recommendation_recommendation_date 
+api-logic-server-1  | FROM recommendation
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT recommendation.id AS recommendation_id, recommendation.patient_id AS recommendation_patient_id, recommendation.drug_id AS recommendation_drug_id, recommendation.dosage AS recommendation_dosage, recommendation.recommendation_date AS recommendation_recommendation_date 
+api-logic-server-1  | FROM recommendation
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT recommendation.id AS recommendation_id, recommendation.patient_id AS recommendation_patient_id, recommendation.drug_id AS recommendation_drug_id, recommendation.dosage AS recommendation_dosage, recommendation.recommendation_date AS recommendation_recommendation_date 
+api-logic-server-1  | FROM recommendation
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT recommendation.id AS recommendation_id, recommendation.patient_id AS recommendation_patient_id, recommendation.drug_id AS recommendation_drug_id, recommendation.dosage AS recommendation_dosage, recommendation.recommendation_date AS recommendation_recommendation_date 
+api-logic-server-1  | FROM recommendation
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT recommendation.id AS recommendation_id, recommendation.patient_id AS recommendation_patient_id, recommendation.drug_id AS recommendation_drug_id, recommendation.dosage AS recommendation_dosage, recommendation.recommendation_date AS recommendation_recommendation_date 
+api-logic-server-1  | FROM recommendation
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT recommendation.id AS recommendation_id, recommendation.patient_id AS recommendation_patient_id, recommendation.drug_id AS recommendation_drug_id, recommendation.dosage AS recommendation_dosage, recommendation.recommendation_date AS recommendation_recommendation_date 
+api-logic-server-1  | FROM recommendation
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT recommendation.id AS recommendation_id, recommendation.patient_id AS recommendation_patient_id, recommendation.drug_id AS recommendation_drug_id, recommendation.dosage AS recommendation_dosage, recommendation.recommendation_date AS recommendation_recommendation_date 
+api-logic-server-1  | FROM recommendation
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT recommendation.id AS recommendation_id, recommendation.patient_id AS recommendation_patient_id, recommendation.drug_id AS recommendation_drug_id, recommendation.dosage AS recommendation_dosage, recommendation.recommendation_date AS recommendation_recommendation_date 
+api-logic-server-1  | FROM recommendation
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT recommendation.id AS recommendation_id, recommendation.patient_id AS recommendation_patient_id, recommendation.drug_id AS recommendation_drug_id, recommendation.dosage AS recommendation_dosage, recommendation.recommendation_date AS recommendation_recommendation_date 
+api-logic-server-1  | FROM recommendation
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT recommendation.id AS recommendation_id, recommendation.patient_id AS recommendation_patient_id, recommendation.drug_id AS recommendation_drug_id, recommendation.dosage AS recommendation_dosage, recommendation.recommendation_date AS recommendation_recommendation_date 
+api-logic-server-1  | FROM recommendation
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT recommendation.id AS recommendation_id, recommendation.patient_id AS recommendation_patient_id, recommendation.drug_id AS recommendation_drug_id, recommendation.dosage AS recommendation_dosage, recommendation.recommendation_date AS recommendation_recommendation_date 
+api-logic-server-1  | FROM recommendation
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT recommendation.id AS recommendation_id, recommendation.patient_id AS recommendation_patient_id, recommendation.drug_id AS recommendation_drug_id, recommendation.dosage AS recommendation_dosage, recommendation.recommendation_date AS recommendation_recommendation_date 
+api-logic-server-1  | FROM recommendation
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT drug.id AS drug_id, drug.drug_name AS drug_drug_name, drug.drug_type AS drug_drug_type 
+api-logic-server-1  | FROM drug
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT drug.id AS drug_id, drug.drug_name AS drug_drug_name, drug.drug_type AS drug_drug_type 
+api-logic-server-1  | FROM drug
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT recommendation.id AS recommendation_id, recommendation.patient_id AS recommendation_patient_id, recommendation.drug_id AS recommendation_drug_id, recommendation.dosage AS recommendation_dosage, recommendation.recommendation_date AS recommendation_recommendation_date 
+api-logic-server-1  | FROM recommendation
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT drug.id AS drug_id, drug.drug_name AS drug_drug_name, drug.drug_type AS drug_drug_type 
+api-logic-server-1  | FROM drug
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT drug.id AS drug_id, drug.drug_name AS drug_drug_name, drug.drug_type AS drug_drug_type 
+api-logic-server-1  | FROM drug
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT recommendation.id AS recommendation_id, recommendation.patient_id AS recommendation_patient_id, recommendation.drug_id AS recommendation_drug_id, recommendation.dosage AS recommendation_dosage, recommendation.recommendation_date AS recommendation_recommendation_date 
+api-logic-server-1  | FROM recommendation
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT drug.id AS drug_id, drug.drug_name AS drug_drug_name, drug.drug_type AS drug_drug_type 
+api-logic-server-1  | FROM drug
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT drug.id AS drug_id, drug.drug_name AS drug_drug_name, drug.drug_type AS drug_drug_type 
+api-logic-server-1  | FROM drug
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT recommendation.id AS recommendation_id, recommendation.patient_id AS recommendation_patient_id, recommendation.drug_id AS recommendation_drug_id, recommendation.dosage AS recommendation_dosage, recommendation.recommendation_date AS recommendation_recommendation_date 
+api-logic-server-1  | FROM recommendation
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT drug.id AS drug_id, drug.drug_name AS drug_drug_name, drug.drug_type AS drug_drug_type 
+api-logic-server-1  | FROM drug
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT recommendation.id AS recommendation_id, recommendation.patient_id AS recommendation_patient_id, recommendation.drug_id AS recommendation_drug_id, recommendation.dosage AS recommendation_dosage, recommendation.recommendation_date AS recommendation_recommendation_date 
+api-logic-server-1  | FROM recommendation
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT patient.id AS patient_id, patient.name AS patient_name, patient.birth_date AS patient_birth_date, patient.weight_kg AS patient_weight_kg, patient.creatine_mg_dl AS patient_creatine_mg_dl, patient.medical_record_number AS patient_medical_record_number, patient.created_date AS patient_created_date 
+api-logic-server-1  | FROM patient
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT patient.id AS patient_id, patient.name AS patient_name, patient.birth_date AS patient_birth_date, patient.weight_kg AS patient_weight_kg, patient.creatine_mg_dl AS patient_creatine_mg_dl, patient.medical_record_number AS patient_medical_record_number, patient.created_date AS patient_created_date 
+api-logic-server-1  | FROM patient
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT recommendation.id AS recommendation_id, recommendation.patient_id AS recommendation_patient_id, recommendation.drug_id AS recommendation_drug_id, recommendation.dosage AS recommendation_dosage, recommendation.recommendation_date AS recommendation_recommendation_date 
+api-logic-server-1  | FROM recommendation
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT patient.id AS patient_id, patient.name AS patient_name, patient.birth_date AS patient_birth_date, patient.weight_kg AS patient_weight_kg, patient.creatine_mg_dl AS patient_creatine_mg_dl, patient.medical_record_number AS patient_medical_record_number, patient.created_date AS patient_created_date 
+api-logic-server-1  | FROM patient
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT patient.id AS patient_id, patient.name AS patient_name, patient.birth_date AS patient_birth_date, patient.weight_kg AS patient_weight_kg, patient.creatine_mg_dl AS patient_creatine_mg_dl, patient.medical_record_number AS patient_medical_record_number, patient.created_date AS patient_created_date 
+api-logic-server-1  | FROM patient
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT recommendation.id AS recommendation_id, recommendation.patient_id AS recommendation_patient_id, recommendation.drug_id AS recommendation_drug_id, recommendation.dosage AS recommendation_dosage, recommendation.recommendation_date AS recommendation_recommendation_date 
+api-logic-server-1  | FROM recommendation
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT patient.id AS patient_id, patient.name AS patient_name, patient.birth_date AS patient_birth_date, patient.weight_kg AS patient_weight_kg, patient.creatine_mg_dl AS patient_creatine_mg_dl, patient.medical_record_number AS patient_medical_record_number, patient.created_date AS patient_created_date 
+api-logic-server-1  | FROM patient
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT patient.id AS patient_id, patient.name AS patient_name, patient.birth_date AS patient_birth_date, patient.weight_kg AS patient_weight_kg, patient.creatine_mg_dl AS patient_creatine_mg_dl, patient.medical_record_number AS patient_medical_record_number, patient.created_date AS patient_created_date 
+api-logic-server-1  | FROM patient
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT recommendation.id AS recommendation_id, recommendation.patient_id AS recommendation_patient_id, recommendation.drug_id AS recommendation_drug_id, recommendation.dosage AS recommendation_dosage, recommendation.recommendation_date AS recommendation_recommendation_date 
+api-logic-server-1  | FROM recommendation
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT patient.id AS patient_id, patient.name AS patient_name, patient.birth_date AS patient_birth_date, patient.weight_kg AS patient_weight_kg, patient.creatine_mg_dl AS patient_creatine_mg_dl, patient.medical_record_number AS patient_medical_record_number, patient.created_date AS patient_created_date 
+api-logic-server-1  | FROM patient
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | Declare   API - api/expose_api_models, endpoint for each table on localhost:5656, customizing...
+api-logic-server-1  | Exposing /Role
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "Role".name AS "Role_name" 
+api-logic-server-1  | FROM "Role"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "Role".name AS "Role_name" 
+api-logic-server-1  | FROM "Role"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "Role".name AS "Role_name" 
+api-logic-server-1  | FROM "Role"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "Role".name AS "Role_name" 
+api-logic-server-1  | FROM "Role"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "Role".name AS "Role_name" 
+api-logic-server-1  | FROM "Role"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "Role".name AS "Role_name" 
+api-logic-server-1  | FROM "Role"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "Role".name AS "Role_name" 
+api-logic-server-1  | FROM "Role"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "Role".name AS "Role_name" 
+api-logic-server-1  | FROM "Role"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "Role".name AS "Role_name" 
+api-logic-server-1  | FROM "Role"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "Role".name AS "Role_name" 
+api-logic-server-1  | FROM "Role"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "Role".name AS "Role_name" 
+api-logic-server-1  | FROM "Role"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "Role".name AS "Role_name" 
+api-logic-server-1  | FROM "Role"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "Role".name AS "Role_name" 
+api-logic-server-1  | FROM "Role"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "Role".name AS "Role_name" 
+api-logic-server-1  | FROM "Role"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "Role".name AS "Role_name" 
+api-logic-server-1  | FROM "Role"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "Role".name AS "Role_name" 
+api-logic-server-1  | FROM "Role"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "Role".name AS "Role_name" 
+api-logic-server-1  | FROM "Role"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
+api-logic-server-1  | FROM "UserRole"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
+api-logic-server-1  | FROM "UserRole"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "Role".name AS "Role_name" 
+api-logic-server-1  | FROM "Role"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
+api-logic-server-1  | FROM "UserRole"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
+api-logic-server-1  | FROM "UserRole"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "Role".name AS "Role_name" 
+api-logic-server-1  | FROM "Role"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
+api-logic-server-1  | FROM "UserRole"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
+api-logic-server-1  | FROM "UserRole"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "Role".name AS "Role_name" 
+api-logic-server-1  | FROM "Role"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
+api-logic-server-1  | FROM "UserRole"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | Exposing /User
+api-logic-server-1  | No grants - avoid recursion on User table
+api-logic-server-1  | No grants - avoid recursion on User table
+api-logic-server-1  | No grants - avoid recursion on User table
+api-logic-server-1  | No grants - avoid recursion on User table
+api-logic-server-1  | No grants - avoid recursion on User table
+api-logic-server-1  | No grants - avoid recursion on User table
+api-logic-server-1  | No grants - avoid recursion on User table
+api-logic-server-1  | No grants - avoid recursion on User table
+api-logic-server-1  | No grants - avoid recursion on User table
+api-logic-server-1  | No grants - avoid recursion on User table
+api-logic-server-1  | No grants - avoid recursion on User table
+api-logic-server-1  | No grants - avoid recursion on User table
+api-logic-server-1  | No grants - avoid recursion on User table
+api-logic-server-1  | No grants - avoid recursion on User table
+api-logic-server-1  | No grants - avoid recursion on User table
+api-logic-server-1  | No grants - avoid recursion on User table
+api-logic-server-1  | No grants - avoid recursion on User table
+api-logic-server-1  | No grants - avoid recursion on User table
+api-logic-server-1  | No grants - avoid recursion on User table
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
+api-logic-server-1  | FROM "UserRole"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
+api-logic-server-1  | FROM "UserRole"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | No grants - avoid recursion on User table
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
+api-logic-server-1  | FROM "UserRole"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
+api-logic-server-1  | FROM "UserRole"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | No grants - avoid recursion on User table
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
+api-logic-server-1  | FROM "UserRole"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
+api-logic-server-1  | FROM "UserRole"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | No grants - avoid recursion on User table
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
+api-logic-server-1  | FROM "UserRole"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | Exposing /UserRole
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
+api-logic-server-1  | FROM "UserRole"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
+api-logic-server-1  | FROM "UserRole"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
+api-logic-server-1  | FROM "UserRole"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
+api-logic-server-1  | FROM "UserRole"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
+api-logic-server-1  | FROM "UserRole"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
+api-logic-server-1  | FROM "UserRole"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
+api-logic-server-1  | FROM "UserRole"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
+api-logic-server-1  | FROM "UserRole"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
+api-logic-server-1  | FROM "UserRole"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
+api-logic-server-1  | FROM "UserRole"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
+api-logic-server-1  | FROM "UserRole"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
+api-logic-server-1  | FROM "UserRole"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
+api-logic-server-1  | FROM "UserRole"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
+api-logic-server-1  | FROM "UserRole"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
+api-logic-server-1  | FROM "UserRole"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
+api-logic-server-1  | FROM "UserRole"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
+api-logic-server-1  | FROM "UserRole"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "Role".name AS "Role_name" 
+api-logic-server-1  | FROM "Role"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "Role".name AS "Role_name" 
+api-logic-server-1  | FROM "Role"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
+api-logic-server-1  | FROM "UserRole"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "Role".name AS "Role_name" 
+api-logic-server-1  | FROM "Role"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "Role".name AS "Role_name" 
+api-logic-server-1  | FROM "Role"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
+api-logic-server-1  | FROM "UserRole"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "Role".name AS "Role_name" 
+api-logic-server-1  | FROM "Role"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "Role".name AS "Role_name" 
+api-logic-server-1  | FROM "Role"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
+api-logic-server-1  | FROM "UserRole"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "Role".name AS "Role_name" 
+api-logic-server-1  | FROM "Role"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
+api-logic-server-1  | FROM "UserRole"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | No grants - avoid recursion on User table
+api-logic-server-1  | No grants - avoid recursion on User table
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
+api-logic-server-1  | FROM "UserRole"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | No grants - avoid recursion on User table
+api-logic-server-1  | No grants - avoid recursion on User table
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
+api-logic-server-1  | FROM "UserRole"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | No grants - avoid recursion on User table
+api-logic-server-1  | No grants - avoid recursion on User table
+api-logic-server-1  | 
+api-logic-server-1  | SQL Select -- Begin authorization processing for SELECT "UserRole".user_id AS "UserRole_user_id", "UserRole".notes AS "UserRole_notes", "UserRole".role_name AS "UserRole_role_name" 
+api-logic-server-1  | FROM "UserRole"
+api-logic-server-1  |  LIMIT :param_1
+api-logic-server-1  | no user - ok (eg, system initialization) error: You must call `@jwt_required()` or `verify_jwt_in_request()` before using this method
+api-logic-server-1  | No grants - avoid recursion on User table
+api-logic-server-1  | ..discovered services: ['new_service.py', 'system.py', 'ontimize_api.py', 'authentication_expose_api_models.py', 'newer_service.py']
+api-logic-server-1  | 
+api-logic-server-1  | Authentication loaded -- api calls now require authorization header
+api-logic-server-1  | ..declare security - security/declare_security.py authentication tables loaded
+api-logic-server-1  | Kafka Consumer not activated
+api-logic-server-1  | 
+api-logic-server-1  | API Logic Project loaded (not WSGI), version 14.03.08
+api-logic-server-1  | .. startup message: normal start
+api-logic-server-1  |  (running from docker container at flask_host: 0.0.0.0 - may require refresh)
+api-logic-server-1  | 
+api-logic-server-1  | API Logic Project (name: api_logic_project) starting:
+api-logic-server-1  | ..Explore data and API at http_scheme://swagger_host:port http://localhost:5656   *
+api-logic-server-1  | .... with flask_host: 0.0.0.0
+api-logic-server-1  | .... and  swagger_port: 5656
+api-logic-server-1  | 
+api-logic-server-1  | Alert: These following are **Critical** to unlocking value for project: api_logic_project:
+api-logic-server-1  | .. see logic.declare_logic.py       -- 
+api-logic-server-1  | .. see security.declare_security.py -- No Grants Yet
+api-logic-server-1  | 
+api-logic-server-1  | 
+api-logic-server-1  | *************************************************************************
+api-logic-server-1  | *   Startup Instructions: Open your Browser at: http://localhost:5656   *
+api-logic-server-1  | *************************************************************************
+api-logic-server-1  | 
+api-logic-server-1  | 
+api-logic-server-1  | 
+api-logic-server-1  | sys_info here
+api-logic-server-1  | 
+api-logic-server-1  | Environment Variables...
+api-logic-server-1  | .. PATH = /usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/api_logic_server/bin
+api-logic-server-1  | .. HOSTNAME = 44ab4aa7b3d4
+api-logic-server-1  | .. APILOGICPROJECT_SQLALCHEMY_DATABASE_URI_AUTHENTICATION = postgresql://postgres:p@postgres-service/authdb
+api-logic-server-1  | .. APILOGICPROJECT_VERBOSE = true
+api-logic-server-1  | .. SECURITY_ENABLED = true
+api-logic-server-1  | .. APILOGICPROJECT_SQLALCHEMY_DATABASE_URI = postgresql://postgres:p@postgres-service/medai
+api-logic-server-1  | .. LANG = C.UTF-8
+api-logic-server-1  | .. GPG_KEY = 7169605F62C751356D054A26A821E680E5FA6305
+api-logic-server-1  | .. PYTHON_VERSION = 3.12.8
+api-logic-server-1  | .. PYTHON_SHA256 = c909157bb25ec114e5869124cc2a9c4a4d4c1e957ca4ff553f1edc692101154e
+api-logic-server-1  | .. APILOGICSERVER_RUNNING = DOCKER
+api-logic-server-1  | .. APILOGICSERVER_FROM = python:3.11.4-slim-bullseye
+api-logic-server-1  | .. PYTHONPATH = /home/api_logic_server
+api-logic-server-1  | .. HOME = /root
+api-logic-server-1  | .. SECRET_KEY = whatnothow
+api-logic-server-1  | .. SQLALCHEMY_TRACK_MODIFICATIONS = False
+api-logic-server-1  | .. SQLAlCHEMY_ECHO = False
+api-logic-server-1  | 
+api-logic-server-1  | 
+api-logic-server-1  | flask_app.config: 
+api-logic-server-1  | 
+api-logic-server-1  | <Config {'DEBUG': None,
+api-logic-server-1  |   'TESTING': False,
+api-logic-server-1  |   'PROPAGATE_EXCEPTIONS': False,
+api-logic-server-1  |   'SECRET_KEY': 'whatnothow',
+api-logic-server-1  |   'PERMANENT_SESSION_LIFETIME': datetime.timedelta(days=31),
+api-logic-server-1  |   'USE_X_SENDFILE': False,
+api-logic-server-1  |   'SERVER_NAME': None,
+api-logic-server-1  |   'APPLICATION_ROOT': '/',
+api-logic-server-1  |   'SESSION_COOKIE_NAME': 'session',
+api-logic-server-1  |   'SESSION_COOKIE_DOMAIN': None,
+api-logic-server-1  |   'SESSION_COOKIE_PATH': None,
+api-logic-server-1  |   'SESSION_COOKIE_HTTPONLY': True,
+api-logic-server-1  |   'SESSION_COOKIE_SECURE': False,
+api-logic-server-1  |   'SESSION_COOKIE_SAMESITE': None,
+api-logic-server-1  |   'SESSION_REFRESH_EACH_REQUEST': True,
+api-logic-server-1  |   'MAX_CONTENT_LENGTH': None,
+api-logic-server-1  |   'SEND_FILE_MAX_AGE_DEFAULT': None,
+api-logic-server-1  |   'TRAP_BAD_REQUEST_ERRORS': None,
+api-logic-server-1  |   'TRAP_HTTP_EXCEPTIONS': False,
+api-logic-server-1  |   'EXPLAIN_TEMPLATE_LOADING': False,
+api-logic-server-1  |   'PREFERRED_URL_SCHEME': 'http',
+api-logic-server-1  |   'TEMPLATES_AUTO_RELOAD': None,
+api-logic-server-1  |   'MAX_COOKIE_SIZE': 4093,
+api-logic-server-1  |   'API_PREFIX': '/api',
+api-logic-server-1  |   'FLASK_HOST': '0.0.0.0',
+api-logic-server-1  |   'SWAGGER_HOST': 'localhost',
+api-logic-server-1  |   'PORT': '5656',
+api-logic-server-1  |   'SWAGGER_PORT': '5656',
+api-logic-server-1  |   'HTTP_SCHEME': 'http',
+api-logic-server-1  |   'KAFKA_PRODUCER': None,
+api-logic-server-1  |   'KAFKA_CONSUMER': None,
+api-logic-server-1  |   'N8N_PRODUCER': None,
+api-logic-server-1  |   'KEYCLOAK_BASE': 'http://localhost:8080/realms/kcals',
+api-logic-server-1  |   'KEYCLOAK_REALM': 'kcals',
+api-logic-server-1  |   'KEYCLOAK_BASE_URL': 'http://localhost:8080',
+api-logic-server-1  |   'KEYCLOAK_CLIENT_ID': 'alsclient',
+api-logic-server-1  |   'BACKTIC_AS_QUOTE': False,
+api-logic-server-1  |   'ONTIMIZE_SERVICE_TYPE': 'OntimizeEE',
+api-logic-server-1  |   'VERBOSE': True,
+api-logic-server-1  |   'CREATE_AND_RUN': False,
+api-logic-server-1  |   'CREATED_API_PREFIX': '/api',
+api-logic-server-1  |   'CREATED_FLASK_HOST': '0.0.0.0',
+api-logic-server-1  |   'CREATED_HTTP_SCHEME': 'http',
+api-logic-server-1  |   'CREATED_PORT': '5656',
+api-logic-server-1  |   'CREATED_SWAGGER_HOST': 'localhost',
+api-logic-server-1  |   'CREATED_SWAGGER_PORT': '5656',
+api-logic-server-1  |   'FLASK_APP': None,
+api-logic-server-1  |   'FLASK_ENV': None,
+api-logic-server-1  |   'OPT_LOCKING': 'optional',
+api-logic-server-1  |   'SECURITY_ENABLED': True,
+api-logic-server-1  |   'SECURITY_PROVIDER': <class 'security.authentication_provider.sql.auth_provider.Authentication_Provider'>,
+api-logic-server-1  |   'SQLALCHEMY_DATABASE_URI': 'postgresql://postgres:p@postgres-service/medai',
+api-logic-server-1  |   'SQLALCHEMY_DATABASE_URI_AUTHENTICATION': 'postgresql://postgres:p@postgres-service/authdb',
+api-logic-server-1  |   'SQLALCHEMY_DATABASE_URI_LANDING': 'sqlite:////home/api_logic_project/database/db_spa.sqlite',
+api-logic-server-1  |   'SQLALCHEMY_TRACK_MODIFICATIONS': False}>
+api-logic-server-1  | 
+api-logic-server-1  | 
+api-logic-server-1  | PYTHONPATH..
+api-logic-server-1  | ../home/api_logic_project
+api-logic-server-1  | ../home/api_logic_server
+api-logic-server-1  | ../usr/local/lib/python312.zip
+api-logic-server-1  | ../usr/local/lib/python3.12
+api-logic-server-1  | ../usr/local/lib/python3.12/lib-dynload
+api-logic-server-1  | ../usr/local/lib/python3.12/site-packages
+api-logic-server-1  | ../home/api_logic_server
+api-logic-server-1  | ../home/api_logic_project
+api-logic-server-1  | ../home/api_logic_server
+api-logic-server-1  | 
+api-logic-server-1  | sys.prefix (venv): /usr/local
+api-logic-server-1  | 
+api-logic-server-1  | 
+api-logic-server-1  | hostname=44ab4aa7b3d4 on local_ip=172.20.0.2, IPAddr=172.20.0.2
+api-logic-server-1  | 
+api-logic-server-1  | 
+api-logic-server-1  | os.getcwd()=/home/api_logic_project
+api-logic-server-1  | 
+api-logic-server-1  | 
+api-logic-server-1  |  * Serving Flask app 'API Logic Server'
+api-logic-server-1  | WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+api-logic-server-1  |  * Running on all addresses (0.0.0.0)
+api-logic-server-1  |  * Running on http://127.0.0.1:5656
+api-logic-server-1  |  * Running on http://172.20.0.2:5656
+api-logic-server-1  | Press CTRL+C to quit
+
+
+v View in Docker Desktop   o View Config   w Enable Watch
