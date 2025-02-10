@@ -315,10 +315,13 @@ class GenAI(object):
                 log.debug(f'.. from file: {self.project.genai_using}')
                 raw_prompt = file.read()
             prompt = self.get_prompt__with_inserts(raw_prompt=raw_prompt, for_iteration=False)  # insert db-specific logic
-            self.logic_enabled = False
+            self.logic_enabled = True
             if os.environ.get("APILOGICPROJECT_LOGIC_ENABLED") is not None and \
-                            os.environ.get("APILOGICPROJECT_LOGIC_ENABLED") == 'True':
-                self.logic_enabled = True            
+                            os.environ.get("APILOGICPROJECT_LOGIC_ENABLED") == 'False':
+                self.logic_enabled = False
+                log.info("*** Initial Logic Disabled: {self.logic_enabled}")
+            else:
+                log.debug(f'.. Initial Logic enabled: {self.logic_enabled}')            
             if self.logic_enabled == True or ('LogicBank' in prompt and K_LogicBankOff not in prompt):  # if prompt has logic, we need to insert the training
                 prompt_messages.extend( self.get_prompt_learning_requests())
                 self.logic_enabled = True
@@ -332,7 +335,7 @@ class GenAI(object):
                     active_rules_json_path = Path(self.project.genai_using).joinpath('logic/active_rules.json')
                     # assert active_rules_json_path.exists(), f"Missing active_rules.json: {active_rules_json_path}"
                     if not active_rules_json_path.exists():
-                        log.info("*** Internal error: --active_rules specified, but no --using/logic/active_rules.json found - try to proced")
+                        log.info("*** Internal error: --active_rules specified, but no --using/logic/active_rules.json found - try to proceed")
                     else:
                         with open(active_rules_json_path, 'r') as file:
                             active_rules_str = file.read()
