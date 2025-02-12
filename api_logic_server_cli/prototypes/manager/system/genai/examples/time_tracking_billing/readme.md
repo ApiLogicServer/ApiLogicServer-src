@@ -49,8 +49,8 @@ $npm install && npm start  # install and start the NodeJS/Angular app
 You can delete the existing sample data or you can start by entering new data.  To test the logic - follow these steps:
 ```
 1. Enter new Client
-2. Enter new Person (works for Client)
-3. Enter new Project for client (enter billing rate)
+2. Enter new Person (works for Client, Billing Rate 100)
+3. Enter new Project for client
 4. Enter new Task for Project
 5. Enter new Timesheet - enter task and person for client (enter hours worked)
 
@@ -59,7 +59,3 @@ Note: The Client total amount should be the same value as Project, Task, and Tim
 
 Bonus: Enter an Invoice for a Client/Project then add Invoice Item for a specific Client Task. Once the invoice is ready - we can add a new Event (logic) to send to Kafka.
 ```
-
-## Issues
-
-Is this backward? `InvoiceItem is_completed is sum of Task is_completed` (I changed it)
