@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "14.03.09"
+__version__ = "14.03.10"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t02/11/2024 - 14.03.10: fixes for LogicBank date defaulting \n"\
     "\t02/09/2024 - 14.03.09: webg APILOGICPROJECT_LOGIC_ENABLED \n"\
     "\t02/05/2024 - 14.03.08: webg SendWhen \n"\
     "\t01/31/2024 - 14.03.00: Issue 76: exp ending in right paren, Issue 74: Multi-db fix, extended default options, if-based Nat Lang formulas \n"\
