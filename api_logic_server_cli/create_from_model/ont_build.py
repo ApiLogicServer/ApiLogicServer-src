@@ -536,7 +536,7 @@ class OntBuilder(object):
         fav_column_type = "VARCHAR" if fav_column and fav_column.type.startswith("VARCHAR") else "INTEGER"
         key =  make_keys(entity["primary_key"])
         entity_type = f"{entity.type}"
-        title = entity["label"] if hasattr(entity, "label") and entity.label != DotMap() else entity_name
+        title = entity["label"].replace("*","") if hasattr(entity, "label") and entity.label != DotMap() else entity_name
         entity_upper = f"{entity_name[:1].upper()}{entity_name[1:]}"
         entity_first_cap = f"{entity_name[:1].upper()}{entity_name[1:]}"
         primaryKey = make_keys(entity["primary_key"])
@@ -604,7 +604,7 @@ class OntBuilder(object):
                             tab_name, tab_var = self.get_tab_attrs(entity=entity, parent_entity=parent_entity, fk_tab=tg)
                             return self.table_cell_render.render(tab_var)
                         
-        name = column.label if hasattr(column, "label") and column.label != DotMap() else column.name
+        name = column.label.replace("*","") if hasattr(column, "label") and column.label != DotMap() else column.name
         self.add_title(column["name"], name)
         #template_type = self.get_template_type(column)
         template_type = calculate_template(column)
@@ -676,7 +676,7 @@ class OntBuilder(object):
         return defaultValues
     def get_new_column(self, column, fks, entity):
         col_var = self.get_column_attrs(column)
-        name = column["label"] if  hasattr(column, "label") and column.label != DotMap() else column["name"]
+        name = column["label"].replace("*","") if  hasattr(column, "label") and column.label != DotMap() else column["name"]
         self.add_title(column["name"], name)
         for fk in fks:
             exclude = fk.get("exclude", "false") == "true"
@@ -696,7 +696,7 @@ class OntBuilder(object):
             "attr": column.name, 
             "name": column.name,
             "title": (
-                column.label
+                column.label.replace("*","")
                 if hasattr(column, "label") and column.label != DotMap()
                 else column.name
             ), 
@@ -716,7 +716,7 @@ class OntBuilder(object):
         } 
         col_var |= self.global_values
                 #{entity.name}.{col_var["title"]}
-        col_var["label"] =  col_var["title"] # "{{ '" + col_var["title"] + "' }}",
+        col_var["label"] =  col_var["title"].replace("*","") # "{{ '" + col_var["title"] + "' }}",
         #'{{ ' + f'"{col_var["name"]}"' + '| oTranslate }}'
         return col_var
     
@@ -742,7 +742,7 @@ class OntBuilder(object):
 
     def gen_detail_rows(self, column, fks, entity):
         col_var = self.get_column_attrs(column)
-        name = column.label if  hasattr(column, "label") and column.label != DotMap() else column.name
+        name = column.label.replace("*","") if  hasattr(column, "label") and column.label != DotMap() else column.name
         
         for fk in fks:
             # TODO - not sure how to handle multiple fks attrs - so only support 1 for now
@@ -1025,7 +1025,7 @@ class OntBuilder(object):
             sep = ""
             for entity in group_entities:
                 name = entity.type
-                title = entity["label"].upper() if hasattr(entity, "label") and entity.label != DotMap() else name.upper()
+                title = entity["label"].upper().replace("*","") if hasattr(entity, "label") and entity.label != DotMap() else name.upper()
                 name_first_cap = name[:1].upper()+ name[1:]
                 menuitem = menu_item_template.render(name=name, title=title, name_upper=each_entity_name.upper())
                 menuitem = f"{sep}{menuitem}"
@@ -1218,7 +1218,7 @@ def gen_app_service_config(entities: any) -> str:
     children = ""
     for each_entity_name, each_entity in entities:
         name = each_entity_name
-        title = each_entity["label"] if hasattr(each_entity, "label") and each_entity.label != DotMap() else name
+        title = each_entity["label"].replace("*","") if hasattr(each_entity, "label") and each_entity.label != DotMap() else name
         child = child_template.render(title=title, name=name)
         children += f"{sep}{child}\n"
         sep = ","
