@@ -24,7 +24,7 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "  1.1  GENAI - Iterate (first, add prompt to system/genai/temp/<project>)",
+            "name": "  - 1.1  GENAI - Iterate (first, add prompt to system/genai/temp/<project>)",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
@@ -43,7 +43,7 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "  1.2  GENAI - Retry from repaired chatgpt response",
+            "name": "  - 1.2  GENAI - Retry from repaired chatgpt response",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
@@ -63,7 +63,7 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "  1.3  GENAI - Retry from repaired model",
+            "name": "  - 1.3  GENAI - Retry from repaired model",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
@@ -84,7 +84,7 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "  1.4  GENAI - Postgresql",
+            "name": "  - 1.4  GENAI - Postgresql",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
@@ -124,21 +124,7 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "  - API Logic Server Run (run project from manager)",
-            "type": "debugpy",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/${input:runProjectName}",
-            "env": {
-                "PYTHONHASHSEED": "0", 
-                "APILOGICSERVER_DEBUG": "False",
-                "OPT_LOCKING": "optional"},
-            "justMyCode": false,
-            "program": "api_logic_server_run.py",
-            "redirectOutput": true,
-            "console": "integratedTerminal"
-        },
-        {
-            "name": "ApiLogicServer Create nw_sample_nocust",
+            "name": "  - ApiLogicServer Create nw_sample_nocust",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
@@ -157,7 +143,7 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "ApiLogicServer Create nw_sample With Customizations",
+            "name": "  - ApiLogicServer Create nw_sample With Customizations",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
@@ -174,6 +160,20 @@
                 "--db-url=nw+"],
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "API Logic Server Run (run project from manager)",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/${input:runProjectName}",
+            "env": {
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "program": "api_logic_server_run.py",
+            "redirectOutput": true,
+            "console": "integratedTerminal"
         },
         {
             "name": "App Model Editor - Prepare",
