@@ -10,6 +10,14 @@ This describes how to use Logic; for more information, [see here](https://apilog
 
 &nbsp;
 
+## Natural Language vs. IDE
+
+If you are using WebGenAI, you can specify rules in Natural Language. You can also augment them in the IDE using code completion.  There are some important usage guidelines.  
+
+> You should generally not alter any files in the `wg_rules` directory.  For more information, see [WebGenAI](https://apilogicserver.github.io/Docs/WebGenAI/), and [WebGenAI Logic](https://apilogicserver.github.io/Docs/WebGenAI-CLI.md#natural-language-logic).
+
+&nbsp;
+
 ## Examples      
 Examples from tutorial project:
 * Examples drawn from [tutorial project](https://github.com/ApiLogicServer/demo/blob/main/logic/declare_logic.py)
