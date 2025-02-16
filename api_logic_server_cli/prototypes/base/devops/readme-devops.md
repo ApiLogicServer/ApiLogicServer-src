@@ -1,4 +1,16 @@
-Use these directories to rapidly deploy your system to the cloud.  This means you can provide a preview of [working software](https://apilogicserver.github.io/Docs/Working-Software-Now/) for your team:
+## Using the standard container
+
+There are many, many ways of using docker.
+
+1. You can use the existing apilogicserver/api_logic_server container as shown in `devops/docker-standard-image`.
+
+2. Or, you can create your own container, as described in the next section.
+
+&nbsp;
+
+## Creating per-project containers
+
+Use these directories to deploy your system to the cloud.  This means you can provide a preview of [working software](https://apilogicserver.github.io/Docs/Working-Software-Now/) for your team:
 
 * **Developers** can use the API to begin custom User Interface development
 

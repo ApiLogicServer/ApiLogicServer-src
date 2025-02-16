@@ -1,0 +1,8 @@
+# App configuration
+APILOGICPROJECT_EXTERNAL_PORT=8282
+APILOGICPROJECT_PORT=5657
+APILOGICSERVER_CHATGPT_APIKEY=sk-proj-< your api key >
+
+# WebGenAI security configuration
+# login password for the admin user
+# ADMIN_PASSWORD=password
