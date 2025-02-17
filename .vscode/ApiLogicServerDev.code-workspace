@@ -93,7 +93,7 @@
 		],
 		"sqltools.useNodeRuntime": true,
 		"workbench.preferredDarkColorTheme": "Darcula Pycharm with Light GUI",
-		"workbench.preferredLightColorTheme": "Office Theme (Word)",
+		"workbench.preferredLightColorTheme": "Blue Light Theme",
 		"workbench.colorTheme": "Blue Light Theme",
 		"search.exclude": {
 			"**api_logic_server_cli/ApiLogicProject/": true,
