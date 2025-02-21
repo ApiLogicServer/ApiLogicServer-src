@@ -154,7 +154,7 @@ def fixup_sort(clz, data):
     return sort
 def fixup_data(data, sqltypes):
     new_data = None
-    if data:
+    if data and isinstance(data, dict):
         new_data = {}
         for key, value in data.items():
             new_data[key] = value
