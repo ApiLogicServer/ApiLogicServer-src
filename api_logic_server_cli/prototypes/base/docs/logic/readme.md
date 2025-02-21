@@ -1,6 +1,9 @@
-### Add Natural Languate Logic to Your Project
+### Add Natural Language Logic to Your Project
 
-You can add Natural Language logic files to this directory, e.g., `check_credit.prompt`.
+You can add Natural Language logic files to this directory, e.g. in `genai_demo/docs/logic`: 
+
+* `valid_names.prompt`: Customer and Product Names cannot be 'x'
+* `valid_currency.prompt`: Customer credit limits cannot be negative; Product prices must be positive.
 
 Then, use GenAI to create executable logic in your `logic/logic_discovery` directory, e.g.,
 
