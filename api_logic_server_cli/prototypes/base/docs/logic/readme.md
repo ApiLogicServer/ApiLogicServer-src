@@ -16,3 +16,4 @@ Notes:
 1. Ensure derived attributes exist in the data model (see [Database Design Changes](https://apilogicserver.github.io/Docs/Database-Changes/))
 2. Be sure to initialize such attributes in your database
 3. For more information, [click here](https://apilogicserver.github.io/Docs/WebGenAI-CLI/#add-logic-to-existing-projects)
+4. Consider renaming your logic files afterward (`valid_names.z-prompt`)so they are skipped on future runs
