@@ -7,6 +7,9 @@ contains()
     (*) false;;
   esac
 
+sra="safrs-react-admin-0.2.9.zip"
+sra_curl="0.2.9/$sra"
+
 ostype=$(uname -a)
 if contains "Ubuntu" $ostype; then
   ostype="ubuntu"
@@ -69,7 +72,7 @@ if [ $# -eq 0 ]
     # read -p "Ready to acquire - verify at ApiLogicServer-dev/org_git> "
     # get sra runtime as ApiLogicServer-dev/build
     # curl https://github.com/thomaxxl/safrs-react-admin/releases/download/0.1.2/safrs-react-admin-0.2.8.zip -LO
-    curl https://github.com/thomaxxl/safrs-react-admin/releases/download/0.1.2/safrs-react-admin-0.1.2.zip -LO
+    curl https://github.com/thomaxxl/safrs-react-admin/releases/download/0.2.9/$sra_curl -LO
     echo "unzipping sra to build.."
     set +x
     unzip safrs-react-admin-0.1.2.zip
@@ -83,7 +86,7 @@ if [ $# -eq 0 ]
     cp -r ../build api_logic_server_cli/create_from_model/safrs-react-admin-npm-build
 
     rm -r ../build
-    rm ../safrs-react-admin-0.1.2.zip
+    rm ../$sra
     
     #
     #

@@ -360,8 +360,8 @@ class ModelClass(Model):
         camel-case and singlularize, with provisions for reserved word (Date) and collisions (Dates & _Dates)
         """
         tablename = cls._convert_to_valid_identifier(tablename)
-        if tablename in ["Dates"]:  # ApiLogicServer
-            tablename = tablename + "Classs"
+        if tablename in ["Dates", "dates", "Column", "column"]:  # ApiLogicServer
+            tablename = tablename + "Cls"
         camel_case_name = ''.join(part[:1].upper() + part[1:] for part in tablename.split('_'))
         if camel_case_name in ["Dates"]:
             camel_case_name = camel_case_name + "_Classs"

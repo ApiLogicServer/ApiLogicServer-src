@@ -10,7 +10,7 @@ from pathlib import Path
 import os
 import sys
 import create_from_model.api_logic_server_utils as utils
-
+from api_logic_server_cli.genai.genai_fatal_excp import GenAIException
 import time
 from openai import OpenAI
 import json
@@ -322,6 +322,11 @@ def model2code(model: DotMap) -> str:
             tree = ast.parse(model_code.replace('\\n', '\n'))
         except Exception as exc:
             raise exc
+    # check for reserved words... these can fail before sqlacodegen can fix, and might inter-relate, so quit
+    if model.name in ['column', 'Column', 'table', 'Table', 'session', 'Session', 'base', 'Base']:
+        log.error(f"Reserved word in model name: {model.name}")
+        raise GenAIException(f"Reserved word in model name: {model.name}")
+
 
     # Function to add a docstring to a class node
     def add_docstring_to_class(node, docstring):
@@ -418,7 +423,7 @@ def fix_model_lines(model: DotMap, use_relns: bool = True, post_error: str = Non
                 if current_url != proper_url:
                     log.debug(f'.. fixed sqlite url: {current_url} -> system/genai/temp/create_db_models.sqlite')
         if 'class ' in each_line:
-            # yes, tempting fix... but it fails in SqlAlchemy with missing __tablename__
+            # yes, tempting to fix... but it fails in SqlAlchemy with missing __tablename__
             # each_line = each_line.replace(':', '(Base):')  # sometimes it forgets the Base
             if 'Base' not in each_line:
                 log.debug(f'.. fix_and_write_model_file detects class with no Base - raise excp to trigger retry')
@@ -469,6 +474,13 @@ def fix_and_write_model_file(response_dict: DotMap,  save_dir: str, post_error: 
             try: # based on model_lines
                 model_code = model2code(each_model)  
                 log.info(f"Added description to model: {each_model.name}: {model_code}")
+            except GenAIException as exc:
+                ''' this does not work - creates a duplicate class, so let's just bail
+                if post_error is not None:
+                    post_error = exc.args[0]
+                continue
+                '''
+                raise exc
             except Exception as exc:
                 log.error(f"Failed to add description to model: {exc}")
                 log.debug(f"model: {each_model}")

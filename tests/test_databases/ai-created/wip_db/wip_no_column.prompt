@@ -1,0 +1,11 @@
+Create a system with projects, tasks, and boards.
+Include a description field for tasks.
+
+Use Case: WIP
+A board has a WIP limit that restricts the number of tasks in a specific board_column (e.g., "In Progress").
+A task belongs to a board_column on a board (e.g., "To Do," "In Progress," "Done").
+A task's status moves from "To Do" → "In Progress" → "Done" in sequence.
+A task cannot move to "In Progress" if it exceeds the board's WIP limit.
+A board's total WIP limit is the sum of all board_column WIP limits.
+A task's priority is automatically set based on predefined criteria (e.g., deadline, dependencies).
+A task can have dependencies that prevent it from being moved to "In Progress" until prerequisite tasks are completed.

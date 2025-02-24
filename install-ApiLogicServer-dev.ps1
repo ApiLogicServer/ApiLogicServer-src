@@ -53,10 +53,10 @@ if ($clonedocs -eq $true) {
 
 
 # get sra runtime as build folder
-curl https://github.com/thomaxxl/safrs-react-admin/releases/download/0.1.2/safrs-react-admin-0.1.2.zip -LO
+curl https://github.com/thomaxxl/safrs-react-admin/releases/download/0.2.9/safrs-react-admin-0.2.9.zip -LO
 echo "unzipping sra to build.."
 
-Expand-Archive -LiteralPath safrs-react-admin-0.1.2.zip -DestinationPath . | out-null
+Expand-Archive -LiteralPath safrs-react-admin-0.2.9.zip -DestinationPath . | out-null
 
 git clone https://github.com/ApiLogicServer/ApiLogicServer-src.git
 cd ApiLogicServer-src
@@ -65,7 +65,7 @@ ls
 cp -r ../build api_logic_server_cli/create_from_model/safrs-react-admin-npm-build
 
 rm -r ../build
-rm ../safrs-react-admin-0.1.2.zip
+rm ../safrs-react-admin-0.2.9.zip
 
 if ($IDE -eq "vscode") {
     python -m venv venv

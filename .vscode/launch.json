@@ -722,7 +722,6 @@
         },
         {
             "name": "    - Create blt/rule_reserved_words",
-// requires bug-fix to avoid: type object 'Rule' has no attribute 'constraint'
             "type": "debugpy",
             "request": "launch",
             "env": {"APILOGICSERVER_DEBUG": "True", "--Tries=-1",
@@ -733,6 +732,33 @@
             "args": ["genai",
             "--repaired-response=${workspaceFolder}/tests/test_databases/ai-created/rule_reserved_words/003_create_db_models.response",
             "--project-name=rule_reserved_words"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "    - Create blt/WIP from test-dbs",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["genai",
+                "--using=${workspaceFolder}/tests/test_databases/ai-created/wip_db/wip_no_column.prompt",
+                "--project-name=wip_db"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "    - Create blt/wip from test-dbs (reserved word Column)",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["genai",
+                "--repaired-response=${workspaceFolder}/tests/test_databases/ai-created/wip_db/test_Column_tblname.response",
+                "--retries=-1",
+                "--project-name=wip_db"],
             "console": "integratedTerminal"
         },
         {
