@@ -595,7 +595,7 @@ def tutorial(ctx, create):
               default=f'_genai_default',
               help="Project location")
 @click.option('--tables', 
-              default=4,
+              default=12,
               help="Number of tables")
 @click.option('--test-data-rows', 'test_data_rows', 
               default=4,

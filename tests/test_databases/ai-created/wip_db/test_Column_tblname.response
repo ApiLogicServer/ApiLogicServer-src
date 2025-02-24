@@ -1,0 +1,113 @@
+{
+    "models": [
+        {
+            "classname": "Project",
+            "code": "class Project(Base):\n    __tablename__ = 'projects'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    name = Column(String)\n    description = Column(String)",
+            "description": "Represents a project entity",
+            "name": "Project"
+        },
+        {
+            "classname": "Board",
+            "code": "class Board(Base):\n    __tablename__ = 'boards'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    project_id = Column(Integer, ForeignKey('projects.id'))\n    name = Column(String)\n    total_wip_limit = Column(Integer)",
+            "description": "Represents a board entity and its associated WIP limit.",
+            "name": "Board"
+        },
+        {
+            "classname": "Column",
+            "code": "class Column(Base):\n    __tablename__ = 'columns'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    board_id = Column(Integer, ForeignKey('boards.id'))\n    name = Column(String)\n    wip_limit = Column(Integer)",
+            "description": "Represents a column in a board with a specific WIP limit.",
+            "name": "Column"
+        },
+        {
+            "classname": "Task",
+            "code": "class Task(Base):\n    __tablename__ = 'tasks'\n\n    id = Column(Integer, primary_key=True, autoincrement=True)\n    board_id = Column(Integer, ForeignKey('boards.id'))\n    column_id = Column(Integer, ForeignKey('columns.id'))\n    name = Column(String)\n    description = Column(String)\n    status = Column(String)\n    priority = Column(Integer)\n    dependencies_complete = Column(Boolean, default=False)",
+            "description": "Represents a task that is assigned to a column in a board.",
+            "name": "Task"
+        }
+    ],
+    "rules": [
+        {
+            "name": "Calculate Total WIP Limit",
+            "description": "Derive the board's total WIP limit as the sum of all column WIP limits of the board.",
+            "use_case": "WIP",
+            "entity": "Board",
+            "code": "Rule.sum(derive=Board.total_wip_limit, as_sum_of=Column.wip_limit)"
+        },
+        {
+            "name": "Check WIP Limit Constraint",
+            "description": "A task cannot move to 'In Progress' if it exceeds the board's WIP limit.",
+            "use_case": "WIP",
+            "entity": "Task",
+            "code": "Rule.constraint(validate=Task, as_condition=lambda row: row.board.total_wip_limit >= row.board.columns.where(column=Column.name == 'In Progress').count(), error_msg='WIP limit exceeded when moving to In Progress')"
+        }
+    ],
+    "test_data": "proj1 = Project(name=\"Project A\", description=\"Project A Description\")\nproj2 = Project(name=\"Project B\", description=\"Project B Description\")\nproj3 = Project(name=\"Project C\", description=\"Project C Description\")\nproj4 = Project(name=\"Project D\", description=\"Project D Description\")\n\nboard1 = Board(project_id=1, name=\"Board Alpha\", total_wip_limit=15)\nboard2 = Board(project_id=2, name=\"Board Beta\", total_wip_limit=20)\nboard3 = Board(project_id=3, name=\"Board Gamma\", total_wip_limit=25)\nboard4 = Board(project_id=4, name=\"Board Delta\", total_wip_limit=30)\n\ncol1 = Column(board_id=1, name=\"To Do\", wip_limit=5)\ncol2 = Column(board_id=1, name=\"In Progress\", wip_limit=5)\ncol3 = Column(board_id=2, name=\"To Do\", wip_limit=5)\ncol4 = Column(board_id=2, name=\"In Progress\", wip_limit=5)\n\ncol5 = Column(board_id=3, name=\"Done\", wip_limit=5)\ncol6 = Column(board_id=3, name=\"To Do\", wip_limit=10)\ncol7 = Column(board_id=4, name=\"In Progress\", wip_limit=10)\ncol8 = Column(board_id=4, name=\"Done\", wip_limit=15)\n\n# For simplicity, other test data rows for additional tasks are omitted in this example.",
+    "test_data_rows": [
+        {
+            "test_data_row_variable": "proj1",
+            "code": "proj1 = Project(name=\"Project A\", description=\"Project A Description\")"
+        },
+        {
+            "test_data_row_variable": "proj2",
+            "code": "proj2 = Project(name=\"Project B\", description=\"Project B Description\")"
+        },
+        {
+            "test_data_row_variable": "proj3",
+            "code": "proj3 = Project(name=\"Project C\", description=\"Project C Description\")"
+        },
+        {
+            "test_data_row_variable": "proj4",
+            "code": "proj4 = Project(name=\"Project D\", description=\"Project D Description\")"
+        },
+        {
+            "test_data_row_variable": "board1",
+            "code": "board1 = Board(project_id=1, name=\"Board Alpha\", total_wip_limit=15)"
+        },
+        {
+            "test_data_row_variable": "board2",
+            "code": "board2 = Board(project_id=2, name=\"Board Beta\", total_wip_limit=20)"
+        },
+        {
+            "test_data_row_variable": "board3",
+            "code": "board3 = Board(project_id=3, name=\"Board Gamma\", total_wip_limit=25)"
+        },
+        {
+            "test_data_row_variable": "board4",
+            "code": "board4 = Board(project_id=4, name=\"Board Delta\", total_wip_limit=30)"
+        },
+        {
+            "test_data_row_variable": "col1",
+            "code": "col1 = Column(board_id=1, name=\"To Do\", wip_limit=5)"
+        },
+        {
+            "test_data_row_variable": "col2",
+            "code": "col2 = Column(board_id=1, name=\"In Progress\", wip_limit=5)"
+        },
+        {
+            "test_data_row_variable": "col3",
+            "code": "col3 = Column(board_id=2, name=\"To Do\", wip_limit=5)"
+        },
+        {
+            "test_data_row_variable": "col4",
+            "code": "col4 = Column(board_id=2, name=\"In Progress\", wip_limit=5)"
+        },
+        {
+            "test_data_row_variable": "col5",
+            "code": "col5 = Column(board_id=3, name=\"Done\", wip_limit=5)"
+        },
+        {
+            "test_data_row_variable": "col6",
+            "code": "col6 = Column(board_id=3, name=\"To Do\", wip_limit=10)"
+        },
+        {
+            "test_data_row_variable": "col7",
+            "code": "col7 = Column(board_id=4, name=\"In Progress\", wip_limit=10)"
+        },
+        {
+            "test_data_row_variable": "col8",
+            "code": "col8 = Column(board_id=4, name=\"Done\", wip_limit=15)"
+        }
+    ],
+    "test_data_sqlite": "INSERT INTO projects (name, description) VALUES (\"Project A\", \"Project A Description\");\nINSERT INTO projects (name, description) VALUES (\"Project B\", \"Project B Description\");\nINSERT INTO projects (name, description) VALUES (\"Project C\", \"Project C Description\");\nINSERT INTO projects (name, description) VALUES (\"Project D\", \"Project D Description\");\n\nINSERT INTO boards (project_id, name, total_wip_limit) VALUES (1, \"Board Alpha\", 15);\nINSERT INTO boards (project_id, name, total_wip_limit) VALUES (2, \"Board Beta\", 20);\nINSERT INTO boards (project_id, name, total_wip_limit) VALUES (3, \"Board Gamma\", 25);\nINSERT INTO boards (project_id, name, total_wip_limit) VALUES (4, \"Board Delta\", 30);\n\nINSERT INTO columns (board_id, name, wip_limit) VALUES (1, \"To Do\", 5);\nINSERT INTO columns (board_id, name, wip_limit) VALUES (1, \"In Progress\", 5);\nINSERT INTO columns (board_id, name, wip_limit) VALUES (2, \"To Do\", 5);\nINSERT INTO columns (board_id, name, wip_limit) VALUES (2, \"In Progress\", 5);\n\nINSERT INTO columns (board_id, name, wip_limit) VALUES (3, \"Done\", 5);\nINSERT INTO columns (board_id, name, wip_limit) VALUES (3, \"To Do\", 10);\nINSERT INTO columns (board_id, name, wip_limit) VALUES (4, \"In Progress\", 10);\nINSERT INTO columns (board_id, name, wip_limit) VALUES (4, \"Done\", 15);",
+    "name": "ProjectBoardManagement"
+}
