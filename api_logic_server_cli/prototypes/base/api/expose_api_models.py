@@ -40,7 +40,7 @@ def expose_models(api, method_decorators = []):
     """
 
     debug_inspect_list = inspect.getmembers(database.models)
-    pass  #vh
+    pass
     # Get all the subclasses of the Base class and expose them in the api
     for name, obj in inspect.getmembers(database.models):
         if inspect.isclass(obj) and issubclass(obj, database.models.SAFRSBaseX) and obj is not database.models.SAFRSBaseX:
