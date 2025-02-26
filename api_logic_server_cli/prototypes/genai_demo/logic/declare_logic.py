@@ -46,13 +46,13 @@ def declare_logic():
     Rule.sum(derive=Order.amount_total, as_sum_of=Item.amount)
 
     def derive_amount(row: models.Item, old_row: models.Item, logic_row: LogicRow):
-        amount = row.Quantity * row.UnitPrice
-        if row.Product.CarbonNeutral == True and row.Quantity >= 10:
+        amount = row.quantity * row.unit_price
+        if row.product.carbon_neutral == True and row.quantity >= 10:
            amount = amount * Decimal(0.9)  # breakpoint here
         return amount
 
     # Items.Amount = Quantity * UnitPrice with discount for CarbonNeutral products.
-    Rule.formula(derive=models.Item.Amount, 
+    Rule.formula(derive=models.Item.amount, 
                  calling=derive_amount)
 
     # Item.unit_price is copied from Product.unit_price.
