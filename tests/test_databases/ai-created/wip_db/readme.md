@@ -7,6 +7,8 @@ Courtesy Ray Myers
     * Tasks cannot move to 'In Progress' if dependencies are incomplete
     * `Rule.constraint(validate=Task, as_condition=lambda row: not row.dependencies or row.dependencies_completed, error_msg="Task dependencies are not completed")`
 
+als genai --using wip_no_column.prompt --project-name=wip_logic
+
 Here is the prompt
 
 ```
