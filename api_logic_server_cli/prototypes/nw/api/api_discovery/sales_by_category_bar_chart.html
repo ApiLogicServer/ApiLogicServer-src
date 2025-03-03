@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bar Chart Example</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <canvas id="myChart" width="400" height="200"></canvas>
+    <script>
+        // Input data
+        const result = {
+            "result": [
+                "('Beverages', Decimal('262288.9800000000'))",
+                "('Dairy Products', Decimal('230535.1650000000'))",
+                "('Confections', Decimal('164672.0520000000'))",
+                "('Meat/Poultry', Decimal('162132.2095000000'))",
+                "('Seafood', Decimal('129548.6375000000'))",
+                "('Condiments', Decimal('105047.1850000000'))",
+                "('Produce', Decimal('93117.7975000000'))",
+                "('Grains/Cereals', Decimal('90779.5825000000'))"
+            ]
+        };
+
+        // Parse the input data
+        const labels = [];
+        const data = [];
+        result.result.forEach(item => {
+            const match = item.match(/\('(.+)', Decimal\('([\d.]+)'\)\)/);
+            if (match) {
+                labels.push(match[1]);
+                data.push(parseFloat(match[2]));
+            }
+        });
+
+        // Create the bar chart
+        const ctx = document.getElementById('myChart').getContext('2d');
+        const myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Sales',
+                    data: data,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
