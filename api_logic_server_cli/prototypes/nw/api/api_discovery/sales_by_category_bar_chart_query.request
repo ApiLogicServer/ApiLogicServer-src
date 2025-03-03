@@ -1,0 +1,3 @@
+Northwind Sales by Category as a SQLAlchemy qry
+
+-- see api/api_discovery/sales_by_category.py
