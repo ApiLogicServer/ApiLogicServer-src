@@ -56,9 +56,9 @@ class OntCreator(object):
     num_related = 0
 
     def __init__(self,
-                 project: Project,
-                 admin_app: str = "admin",
-                 app: str = "app"):
+                project: Project,
+                admin_app: str = "admin",
+                app: str = "app"):
         self.project = project
         self.admin_app = admin_app
         self.app = app
@@ -137,7 +137,12 @@ class OntCreator(object):
             resource = resource_list[each_resource_name]
             for each_primary_key_attr in resource.primary_key:
                 app_model_out.entities[each_resource_name].primary_key.append(each_primary_key_attr.name)
-
+        
+        ###############################
+        # App/MenuGroup/MenuItem/Page #
+        ###############################
+        self.build_application(app_model_out)
+        
         ########################
         # No good, dirty rotten kludge for api emulation
         ########################
@@ -157,14 +162,67 @@ class OntCreator(object):
         if show_messages:
             log.info("\nEdit the add_model.yaml as desired, and ApiLogicServer app-build\n")
             
+    def build_application(self, app_model_out: DotMap):
+        '''
+            Each Application has a MenuGroup, which has MenuItems, which have Pages 
+            Pages are New, Home, Detail (used by app-build)
+            This function builds the app_model_out.yaml
+        '''
+        this_app = {
+            "name": self.app,
+            "description": "generated Ontimize application"
+            # this_app["template_dir"] = f"{self.app}/templates"
+        }
+        a = {self.app: this_app }
+        # MENU GROUP
+        mg_list = {}
+        this_menu_group = {
+            "menu_name": "data",
+            "icon": "edit_square",
+            "opened":  True,
+            "menu_title": "data"  
+            # "order: mg["menu_order"]  # TODO
+        }
+        mg_list = {"data": this_menu_group}
+        this_app["menu_group"] = mg_list
+        # MENU ITEM
+        mi_list = {}
+        for entity in app_model_out.entities:
+            cols = []
+            cols.extend(column.name for column in app_model_out.entities[entity].columns)
+            columns = ",".join(cols)
+            this_menu_item = {
+                "menu_name": entity,
+                "menu_title": entity,
+                "template_name": "module.jinja",
+                "icon": "edit_square",
+            }
+            mi_list[entity] = this_menu_item  
+            # PAGE (new, home, detail)
+            p = {}
+            for page_name in ["new", "home", "detail"]:
+                ts_type = "template" if page_name == "home" else "component"
+                this_page = {
+                    "title": entity,
+                    "page_name": page_name,
+                    "template_name": f"{page_name}_template.html",
+                    "typescript_name": f"{page_name}_{ts_type}.jinja",
+                    "columns": columns,
+                    "visible_columns": columns,
+                    "include_children": True
+                }
+                p[page_name] = this_page
+            this_menu_item["page"] = p
+            this_menu_group["menu_item"] = mi_list
+        app_model_out.application = a
     def create_model_entity(self, each_resource, resources: list) -> DotMap:
         each_resource.favorite = each_resource.user_key
-        each_resource.exclude = "false"
+        #each_resource.exclude = "false"
         each_resource.label = each_resource.type # resources[each_resource.type].table_name
-        each_resource.new_template = "new_template.html"
-        each_resource.home_template = "home_template.html"
-        each_resource.detail_template = "detail_template.html"
-        each_resource.mode = "tab"
+        #each_resource.new_template = "new_template.html"
+        #each_resource.home_template = "home_template.html"
+        #each_resource.detail_template = "detail_template.html"
+        #each_resource.mode = "tab"
         each_resource.pop('user_key')
         return each_resource
 
