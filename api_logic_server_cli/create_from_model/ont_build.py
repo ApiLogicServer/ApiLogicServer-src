@@ -670,6 +670,24 @@ class OntBuilder(object):
                                 if page_name == p:
                                     return menu_group[mg]["menu_item"][mi]["page"][p]
         return None
+    def get_menu_group(self):
+        menu_groups = []
+        entity_list = self.build_entity_list_from_app()
+        # menu_group = {"group":group, "entities": entities}
+        if "application" in self.app_model:
+            for app in self.app_model.application:
+                # yaml may have multiple apps = only work on the one selected app-build --app={app}
+                if self.app != app:
+                    continue
+                menu_group = self.app_model.application[app]["menu_group"]
+                for mg in menu_group:
+                    entities = []
+                    for mi in menu_group[mg]["menu_item"]:
+                        for entity_name, each_entity in entity_list:
+                            if entity_name == mi:
+                                get_group(menu_groups, mg, each_entity)
+        return menu_groups
+
     def add_title(self, title, entity_name):
         for v in self.title_translation:
             if title in v:
@@ -1097,13 +1115,13 @@ class OntBuilder(object):
         )
         import_template = Template("import {{ card_component }} from './{{ name }}-card/{{ name }}-card.component';")
         
-        #TODO create menu_group - default to data
-        groups = []
-        menu_separator = ""
         menu_groups = []
-        for each_entity_name, each_entity in entities:
-            group =  getattr(each_entity, "group") or "data" #TEMPORARY TODO
-            get_group(groups, group, each_entity)
+        menu_separator = ""
+        groups = self.get_menu_group()
+        if len(groups) == 0:
+            for each_entity_name, each_entity in entities:
+                group =  getattr(each_entity, "group") or "data" 
+                get_group(groups, group, each_entity)
         
         import_cards = []
         card_components = []    
@@ -1114,10 +1132,10 @@ class OntBuilder(object):
             menuitems = []
             sep = ""
             for entity in group_entities:
-                name = entity.type
+                name = entity["type"]
                 title = entity["label"].upper().replace("*","") if hasattr(entity, "label") and entity.label != DotMap() else name.upper()
                 name_first_cap = name[:1].upper()+ name[1:]
-                menuitem = menu_item_template.render(name=name, title=title, name_upper=each_entity_name.upper())
+                menuitem = menu_item_template.render(name=name, title=title, name_upper=name.upper())
                 menuitem = f"{sep}{menuitem}"
                 menuitems.append(menuitem)
                 card_component = "{ " + f"{name_first_cap}CardComponent" +" }"
@@ -1131,15 +1149,15 @@ class OntBuilder(object):
             menu_groups.append(mg)
 
         return template.render(menu_groups=menu_groups, import_cards=import_cards, card_components=card_components)
-def get_group(groups:list, group:str, entity_name: str):
+def get_group(groups:list, group:str, entity: any):
     entities = []
     for g in groups:
         if g["group"] == group:
             entities = g["entities"]
-            entities.append(entity_name)
+            entities.append(entity)
             g["entities"] = entities
             return
-    entities.append(entity_name)
+    entities.append(entity)
     menu_group = {"group":group, "entities": entities}
     groups.append(menu_group)
 
