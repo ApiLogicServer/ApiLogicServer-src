@@ -196,7 +196,7 @@ class OntBuilder(object):
         #to_dir = self.project.project_directory_path.joinpath(f'ui/{self.app}/')
         #shutil.copytree(from_dir, to_dir, dirs_exist_ok=True)  # create default app files
 
-        entity_favorites = self.build_entity_favorites(app_model)
+        entity_favorites = self.build_entity_favorites()
         
         for setting_name, each_setting in app_model.settings.style_guide.items():
             #style guide
@@ -221,19 +221,40 @@ class OntBuilder(object):
         if getattr(self.global_values,"exclude_listpicker",None) is None:
             self.global_values["exclude_listpicker"] = False
             
-        for each_entity_name, each_entity in app_model.entities.items():
-            if self.api_endpoint and each_entity_name != self.api_endpoint:
-                continue
-            if  each_entity.get("exclude", "false") == "true":
-                continue
-            entity_name = each_entity_name
-            
-            # Each entity will have a home, new, detail, routing template
-            self.generate_home_template(app_path, entity_favorites, each_entity_name, each_entity, entity_name)
-            self.generate_new_template(app_path, entity_favorites, each_entity_name, each_entity, entity_name)
-            self.generate_detail_template(app_path, entity_favorites, each_entity_name, each_entity, entity_name)
-            self.generate_routing(app_path, each_entity_name, each_entity, entity_name)
-            self.generate_card_home_template(app_path, entity_favorites, each_entity_name, each_entity, entity_name)
+        # If the application yaml has been included = we will use the values from the yaml
+        if "application" in app_model:
+            for app in app_model.application:
+                # yaml may have multiple apps = only work on the one selected app-build --app={app}
+                if self.app != app:
+                    continue
+                menu_group = app_model.application[app]["menu_group"] 
+                for mg in menu_group:
+                    for mi in menu_group[mg]["menu_item"]:
+                        each_entity =app_model.entities[mi]
+                        for p in menu_group[mg]["menu_item"][mi]["page"]:
+                            if p == 'home':
+                                self.generate_home_template(app_path, entity_favorites, mi, each_entity, mi)
+                            elif p == "detail":
+                                self.generate_detail_template(app_path, entity_favorites, mi, each_entity, mi)
+                            elif p == "new":
+                                self.generate_new_template(app_path, entity_favorites, mi, each_entity, mi)
+                            
+                        self.generate_routing(app_path, mi, each_entity, mi)
+                        self.generate_card_home_template(app_path, entity_favorites, mi, each_entity, mi)
+        else:
+            for each_entity_name, each_entity in app_model.entities.items():
+                if self.api_endpoint and each_entity_name != self.api_endpoint:
+                    continue
+                if  each_entity.get("exclude", "false") == "true":
+                    continue
+                entity_name = each_entity_name
+                
+                # Each entity will have a home, new, detail, routing template
+                self.generate_home_template(app_path, entity_favorites, each_entity_name, each_entity, entity_name)
+                self.generate_new_template(app_path, entity_favorites, each_entity_name, each_entity, entity_name)
+                self.generate_detail_template(app_path, entity_favorites, each_entity_name, each_entity, entity_name)
+                self.generate_routing(app_path, each_entity_name, each_entity, entity_name)
+                self.generate_card_home_template(app_path, entity_favorites, each_entity_name, each_entity, entity_name)
             
         # menu groups/routing and service config
         self.generate_menu_services(app_path, app_model)
@@ -278,7 +299,7 @@ class OntBuilder(object):
         write_file(app_path, entity_name, "", ".module.ts", module)
 
     def generate_menu_services(self, app_path, app_model):
-        entities = app_model.entities.items()
+        entities = self.build_entity_list_from_app()
         sidebar_menu = self.gen_sidebar_routing("main_routing.jinja", entities=entities)
         write_root_file(
             app_path, "main", "main-routing.module.ts", sidebar_menu
@@ -295,6 +316,25 @@ class OntBuilder(object):
             source=app_menu_config,
         )
 
+    def build_entity_list_from_app(self):
+        entity_list = self.app_model.entities.items()
+        if "application" in self.app_model:
+            entities = []
+            for app in self.app_model.application:
+                # yaml may have multiple apps = only work on the one selected app-build --app={app}
+                if self.app != app:
+                    continue
+                menu_group = self.app_model.application[app]["menu_group"] 
+                for mg in menu_group:
+                    for mi in menu_group[mg]["menu_item"]:
+                        each_entity = self.app_model.entities[mi]
+                        for each_entity_name, each_entity in entity_list:
+                            if each_entity_name == mi:
+                                entities.append((mi,each_entity))
+            return entities
+                        
+        return entity_list
+
     def generate_card_home_template(self, app_path, entity_favorites, each_entity_name, each_entity, entity_name):
         card_template = self.load_card_template("card.component.html", each_entity_name, entity_favorites)
         ts = self.load_ts("card.component.jinja", each_entity_name, each_entity, entity_favorites)
@@ -304,25 +344,38 @@ class OntBuilder(object):
         write_card_file(app_path, entity_name,  "-card.component.scss", card_scss)
 
     def generate_detail_template(self, app_path, entity_favorites, each_entity_name, each_entity, entity_name):
-        detail_template_name = self.find_template(each_entity, "detail_template","detail_template.html")
+        if page := self.get_page("detail", each_entity_name):
+            detail_template_name = page.template_name
+            ts_name = page.typescript_name
+        else:
+            detail_template_name = self.find_template(each_entity, "detail_template","detail_template.html")
+            ts_name = "detail_component.jinja"
         detail_template = self.load_detail_template(detail_template_name, each_entity_name, each_entity, entity_favorites)
-        ts = self.load_ts("detail_component.jinja", each_entity_name, each_entity, entity_favorites)
+        ts = self.load_ts(ts_name, each_entity_name, each_entity, entity_favorites)
         detail_scss = self.get_template("detail.scss").render()
         write_file(app_path, entity_name, "detail", "-detail.component.html", detail_template)
         write_file(app_path, entity_name, "detail", "-detail.component.ts", ts)
         write_file(app_path, entity_name, "detail", "-detail.component.scss", detail_scss)
 
     def generate_new_template(self, app_path, entity_favorites, each_entity_name, each_entity, entity_name):
-        new_template_name = self.find_template(each_entity, "new_template","new_template.html")
+        if page := self.get_page("new", each_entity_name):
+            new_template_name = page.template_name
+            ts_name = page.typescript_name
+        else:
+            new_template_name = self.find_template(each_entity, "new_template","new_template.html")
+            ts_name = "new_component.jinja"
         new_template = self.load_new_template(new_template_name, each_entity_name, each_entity, entity_favorites)
-        ts = self.load_ts("new_component.jinja", each_entity_name, each_entity, entity_favorites)
+        ts = self.load_ts(ts_name, each_entity_name, each_entity, entity_favorites)
         new_scss = self.get_template("new.scss").render()
         write_file(app_path, entity_name, "new", "-new.component.html", new_template)
         write_file(app_path, entity_name, "new", "-new.component.ts", ts)
         write_file(app_path, entity_name, "new", "-new.component.scss", new_scss)
 
     def generate_home_template(self, app_path, entity_favorites, each_entity_name, each_entity, entity_name):
-        home_template_name = self.find_template(each_entity, "home_template","home_template.html")
+        if page := self.get_page("home", each_entity_name):
+            home_template_name = page.template_name
+        else:
+            home_template_name = self.find_template(each_entity, "home_template","home_template.html")
         home_template = self.load_home_template(home_template_name, each_entity, each_entity_name, entity_favorites)
         if home_template_name == "grid_template.html":
             home_scss = self.get_template("grid_home.scss").render(entity=each_entity_name)
@@ -382,9 +435,10 @@ class OntBuilder(object):
             return entity[template_name]
         else:
             return default_template
-    def build_entity_favorites(self, app_model):
+    def build_entity_favorites(self):
         entity_favorites = []
-        for each_entity_name, each_entity in app_model.entities.items():
+        entity_list = self.build_entity_list_from_app()
+        for each_entity_name, each_entity in entity_list:
             datatype = 'INTEGER'
             pkey_datatype = 'INTEGER'
             primary_key = each_entity["primary_key"]
@@ -449,7 +503,8 @@ class OntBuilder(object):
             setattr(self,setting_name,each_setting)
             
     def get_entity(self, entity_name):
-        for each_entity_name, each_entity in self.app_model.entities.items():
+        entity_list = self.build_entity_list_from_app()
+        for each_entity_name, each_entity in entity_list:
             if each_entity_name == entity_name:
                 return each_entity
         
@@ -479,7 +534,7 @@ class OntBuilder(object):
         # using the `self.get_template` method, and then processes the template by rendering it with a
         # dictionary of variables.
         template = self.get_template(template_name)
-        entity_vars = self.get_entity_vars(entity_name=entity_name,entity=entity)
+        entity_vars = self.get_entity_vars(entity_name=entity_name,entity=entity, page_name="home")
         fks = get_foreign_keys(entity, favorites)
         defaultValues = self.get_default_values(fks, entity)
         entity_vars["defaultValues"] = str(defaultValues)
@@ -506,7 +561,7 @@ class OntBuilder(object):
             tab_name, tab_vars = self.get_tab_attrs(detail_entity, parent_entity, tab_group)
             entity_vars['tableAttr'] = f'{tab_group["resource"]}Table'
             tab_vars["table_columns"] = self.get_entity_columns(detail_entity)
-            col_vars = self.get_entity_vars(detail_entity.type,detail_entity)
+            col_vars = self.get_entity_vars(detail_entity.type,detail_entity, 'detail')
             tab_vars |= col_vars
             tab_vars["tabTitle"] = tab_name
             tab_vars ["tableAttr"] = f'{tab_group["resource"]}Table'
@@ -525,14 +580,18 @@ class OntBuilder(object):
             row_cols.append(rv)
         return row_cols
 
-    def get_entity_vars(self, entity_name:str, entity):
+    def get_entity_vars(self, entity_name:str, entity, page_name: str = "home") -> dict:
         new_mode =  self.find_template(entity, "mode", self.new_mode)
         if getattr(entity,"tab_groups",  None) is None or len(entity.tab_groups) == 0:
             new_mode = "dialog"
         favorite =  self.find_template(entity,"favorite","")
         fav_column = find_column(entity,favorite)
-        cols = get_columns(entity)
-        visible_columns = get_visible_columns(entity, True)
+        if page := self.get_page(page_name, entity.type):
+            cols = page.visible_columns.replace(",",";",100)
+            visible_columns = page.visible_columns.replace(",",";",100)
+        else:
+            cols = self.get_columns(entity)
+            visible_columns = self.get_visible_columns(entity, True)
         fav_column_type = "VARCHAR" if fav_column and fav_column.type.startswith("VARCHAR") else "INTEGER"
         key =  make_keys(entity["primary_key"])
         entity_type = f"{entity.type}"
@@ -582,7 +641,35 @@ class OntBuilder(object):
         self.add_title(entity_name, f"{title[:1].upper()}{title[1:]}")
         entity_var |= self.global_values
         return entity_var
-
+    def get_visible_columns(self, entity,default:bool = True) -> str:
+        cols = []
+        for column in entity.columns:
+            visible = column.visible if hasattr(column, "visible") and column.visible != DotMap() else default
+            if visible:
+                cols.append(column.name)
+        return ";".join(cols)
+    
+    def get_columns(self, entity) -> str:
+        cols = []
+        for column in entity.columns:
+            cols.append(column.name)
+        return ";".join(cols)
+    
+    def get_page(self, page_name, entity_name: str) -> dict:
+        if "application" in self.app_model:
+            for app in self.app_model.application:
+                # yaml may have multiple apps = only work on the one selected app-build --app={app}
+                if self.app != app:
+                    continue
+                menu_group = self.app_model.application[app]["menu_group"] 
+                for mg in menu_group:
+                    for mi in menu_group[mg]["menu_item"]:
+                        #each_entity = self.app_model.entities[mi]
+                        if mi == entity_name:
+                            for p in menu_group[mg]["menu_item"][mi]["page"]:
+                                if page_name == p:
+                                    return menu_group[mg]["menu_item"][mi]["page"][p]
+        return None
     def add_title(self, title, entity_name):
         for v in self.title_translation:
             if title in v:
@@ -785,7 +872,7 @@ class OntBuilder(object):
         return "VARCHAR" if fk_column and fk_column.type.startswith("VARCHAR") else fk_column.type if hasattr(fk_column,"type") else "INTEGER"
     def load_tab_template(self, entity, parent_entity, template_var: any, parent_pkey:str) -> str:
         tab_template = self.tab_panel
-        entity_vars = self.get_entity_vars(entity.type, entity)
+        entity_vars = self.get_entity_vars(entity.type, entity, 'detail')
         template_var |= entity_vars
         row_cols = []
         for column in entity.columns:
@@ -819,7 +906,8 @@ class OntBuilder(object):
             if fk_tab["direction"] == "tomany":
                 tab_name, tab_vars = self.get_tab_attrs(entity, parent_entity, fk_tab)
                 primaryKey = make_keys(entity["primary_key"])
-                for each_entity_name, each_entity in self.app_model.entities.items():
+                entity_list = self.build_entity_list_from_app()
+                for each_entity_name, each_entity in entity_list:
                     if each_entity_name == tab_name:
                         template = self.load_tab_template(each_entity,entity,tab_vars, primaryKey )
                         panels.append(template)
@@ -970,11 +1058,13 @@ class OntBuilder(object):
             "routing_module": f"{entity_first_cap}RoutingModule",
         }
         additional_routes = ""
+        entity_list = self.build_entity_list_from_app()
         for tg in entity.tab_groups:
             if tg.direction == "tomany":
                 var["tab_name"] = tg.resource
                 var["tab_key"] = tg.fks[0]
-                additional_routes += f",{self.detail_route_template.render(var)}"
+                if next((e for e in entity_list if e[0] == tg.resource), None):
+                    additional_routes += f",{self.detail_route_template.render(var)}"
 
         var["additional_routes"] = additional_routes
         return template.render(var)
@@ -1119,7 +1209,6 @@ def get_foreign_keys(entity:any, favorites:any ) -> list:
     attrType = "INTEGER"
     for fkey in entity.tab_groups:
         if fkey.direction in ["tomany", "toone"]:
-            # attrType = "int" # get_column_type(entity, fkey.resource, fkey.fks)  # TODO
             fav_col, attrType = find_favorite(favorites, fkey.resource)
             fk = {
                 "attrs": fkey.fks,
@@ -1186,24 +1275,6 @@ def write_json_filename(app_path: Path, file_name: str, source: str):
     with open(f"{directory}/{file_name}", "w") as file:
         file.write(source)
 
-
-def get_visible_columns(entity,default:bool = True) -> str:
-    cols = ""
-    sep = ""
-    for column in entity.columns:
-        visible = column.visible if hasattr(column, "visible") and column.visible != DotMap() else default
-        if visible:
-            cols += f"{sep}{column.name}"
-            sep = ";"
-    return cols
-
-def get_columns(entity) -> str:
-    cols = ""
-    sep = ""
-    for column in entity.columns:
-        cols += f"{sep}{column.name}"
-        sep = ";"
-    return cols
 def find_column(entity, column_name) -> any:
     return next(
         (column for column in entity.columns if column.name == column_name),
@@ -1238,15 +1309,6 @@ def find_favorite(entity_favorites: any, entity_name:str):
                 datatype = "VARCHAR"
             return entity_favorite["favorite"], datatype
     return "Id", "INTEGER"
-
-def get_column_type(app_model: any, fkey_resource: str, attrs: any) -> str:
-    # return datatype (and listcols?)
-    for each_entity_name, each_entity in app_model.entities.items():
-        if each_entity_name == fkey_resource:
-            for column in  each_entity.columns:
-                if column in attrs:
-                    return column.type
-    return "int"
 
     
 def translation_service(titles:dict,from_lang:str="en", to_lang:str="es") -> str:
