@@ -6,3 +6,7 @@ APILOGICSERVER_CHATGPT_APIKEY=sk-proj-< your api key >
 # WebGenAI security configuration
 # login password for the admin user
 # ADMIN_PASSWORD=password
+
+# WebGenAI GitHub configuration
+GH_TOKEN={personal access token from github}
+GH_ORG=github.com/<gh-user-name>

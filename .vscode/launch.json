@@ -27,6 +27,28 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "  - license generator",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/docker/webgenie_docker/webgen_ai_docker/license",
+            "env": {"APILOGICSERVER_AUTO_OPEN": ""},
+            "program": "license_generator.py",
+            "redirectOutput": true,
+            "justMyCode": false,
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "  - license checker",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/docker/webgenie_docker/webgen_ai_docker/license",
+            "env": {"APILOGICSERVER_AUTO_OPEN": ""},
+            "program": "license_checker.py",
+            "redirectOutput": true,
+            "justMyCode": false,
+            "console": "integratedTerminal"
+        },
+        {
             "name": "  - GenAI tests",
             "type": "debugpy",
             "request": "launch",
