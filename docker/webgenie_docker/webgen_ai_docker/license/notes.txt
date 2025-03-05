@@ -1,0 +1,13 @@
+This explores an approach to licensing enforcement on docker start
+
+license-generator creates a license (add such code into license portal, later)
+
+user places license in webg_config
+license_checker validates it.
+
+license_checker is added to webg image, later to be run on start.
+for now, it's in the image, use the command below as a unit test 
+    - it validates the license and prints a message
+    - it's accessed on the config volume, defined in command below
+
+# docker run -it --rm --name webgenie -p 8282:80  --env-file ./system/genai/webg_local/webg_config/web_genai.txt -v ./system/genai/webg_local/webg_temp:/tmp  -v ./system/genai/webg_local/webg_config:/config -v ./system/genai/webg_local/webg_projects:/opt/projects apilogicserver/web_genai python /home/license/license_checker.py

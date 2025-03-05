@@ -5,8 +5,8 @@
 
 # cd <manager>  
 
-# docker-compose -f system/genai/webg_local/docker-compose-webg.yml up
-# docker-compose -f system/genai/webg_local/docker-compose-webg.yml down
+# docker compose -f system/genai/webg_local/docker-compose-webg.yml up
+# docker compose -f system/genai/webg_local/docker-compose-webg.yml down
 
 # if you have run docker compose up (above), you must run docker compose down to run directly:
 # docker run -it --rm --name webgenie -p 8282:80  --env-file ./system/genai/webg_local/webg_config/web_genai.txt -v ./system/genai/webg_local/webg_temp:/tmp  -v ./system/genai/webg_local/webg_projects:/opt/projects apilogicserver/web_genai
@@ -24,4 +24,5 @@ services:
         volumes:
             - ./../webg_local/webg_temp:/tmp
             - ./../webg_local/webg_projects:/opt/projects
+            - ./../webg_local/webg_config:/config
         image: apilogicserver/web_genai
