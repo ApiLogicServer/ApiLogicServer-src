@@ -26,3 +26,4 @@ services:
             - ./../webg_local/webg_projects:/opt/projects
             - ./../webg_local/webg_config:/config
         image: apilogicserver/web_genai
+#       command: ["python", "/app/other_script.py"]
