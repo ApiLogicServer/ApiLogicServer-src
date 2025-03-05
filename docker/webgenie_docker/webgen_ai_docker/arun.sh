@@ -83,7 +83,7 @@ NC='\033[0m' # No Color
 
 start_nginx
 
-license_checker &
+license_checker # run in foreground to allow failure to stop the container
 
 start_dev &
 
