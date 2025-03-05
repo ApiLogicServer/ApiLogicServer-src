@@ -81,12 +81,7 @@ set +x
 
 cd $SRC_DIR
 echo "\npwd: $(pwd)\n"
-echo "  (wg-temp formerly at: docker cp webgenie:/tmp ~/Desktop/wg-temp \n"
-echo "projects, temp at ./../../webg-local -- eg, drag it to manager workspace"
-echo "you can 'clean' the webgenie_docker folder\n"
-echo " .. delete it: rm -rf ./../../webg-local  \n"
-echo " .. cp -r docker/webgenie_docker/webgen_ai_docker/webg-local_proto ./../../webg-local \n"
-echo "    .. AND, you will need 2 magic files under docker/webgenie_docker/webgen_ai_docker/webg-local_proto/webg-config"
+echo "run manually: add bash to cli, then % source /opt/webgenai/arun.sh \n"
 echo "Browse to: http://localhost:8282/"
 echo "\nrun: docker run -it --rm --name webgenai -p 8282:80  --env-file ./../../webg-local/webg-config/web_genai.txt  -v ./../../webg-local/webg-projects:/opt/projects -v ./../../webg-local/webg-temp:/tmp apilogicserver/web_genai \n "
 

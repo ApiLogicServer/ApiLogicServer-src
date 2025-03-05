@@ -11,7 +11,7 @@ SECRET_KEY = b"your-secure-secret-key"
 def load_license(license_path="license.json"):
     """Load the license file from disk."""
     if not os.path.exists(license_path):
-        print("License file not found.")
+        print(f"License file not found at {license_path}.")
         return None
     try:
         with open(license_path, "r") as file:
@@ -60,7 +60,9 @@ def check_license():
     """Main function to validate the license."""
     license_data = load_license()
     if not license_data:
-        exit(1)
+        license_data = load_license("/config/license.json")
+        if not license_data:
+            exit(1)
 
     if not verify_signature(license_data):
         print("License verification failed.")
