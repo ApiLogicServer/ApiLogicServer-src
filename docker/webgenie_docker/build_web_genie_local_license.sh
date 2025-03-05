@@ -32,7 +32,7 @@ if [ $# -eq 0 ]
     echo " Note: creates a folder at pwd: $webgen_ai_docker"
     echo " "
     echo "   > cd ~/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src"
-    echo "   > sh docker/webgenie_docker/build_web_genie_local.sh local "
+    echo "   > sh docker/webgenie_docker/build_web_genie_local_license.sh local "
     echo " "
     exit 0
 fi
