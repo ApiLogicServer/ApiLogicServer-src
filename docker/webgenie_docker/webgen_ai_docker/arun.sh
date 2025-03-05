@@ -3,6 +3,18 @@
 # Start the webgenie admin interface
 #
 
+function license_checker() {
+    [[ -z ${LICENSE_CHECKER} ]] && return
+    echo -e "${GREEN}License check enabled ${NC}"
+    # Run the license checker script
+    python ~/../license/license_checker.py -l
+    if [[ $? -eq 1 ]]; then
+        echo "License check failed, exiting..."
+        pkill -P $$
+        exit 1
+    fi
+}
+
 function monitor() {
     [[ -z ${MONITOR} ]] && return
     # Run the monitor script to check project health
@@ -71,6 +83,7 @@ NC='\033[0m' # No Color
 
 start_nginx
 
+license_checker &
 
 start_dev &
 
