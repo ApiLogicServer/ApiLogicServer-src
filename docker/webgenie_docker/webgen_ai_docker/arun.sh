@@ -7,11 +7,13 @@ function license_checker() {
     [[ -z ${LICENSE_CHECKER} ]] && return
     echo -e "${GREEN}License check enabled ${NC}"
     # Run the license checker script
-    python ~/../license/license_checker.py -l
+    python ~/../license/license_checker.py -l 
     if [[ $? -eq 1 ]]; then
         echo "License check failed, exiting..."
         pkill -P $$
         exit 1
+    else
+        LICENSE_VALIDATION=True
     fi
 }
 
@@ -84,6 +86,10 @@ NC='\033[0m' # No Color
 start_nginx
 
 license_checker # run in foreground to allow failure to stop the container
+if [[ -z ${LICENSE_VALIDATION} ]]; then
+    echo 'License Validation Failed, Please provide a valid License key if you want to use GenAI'
+    echo -n '> '
+fi
 
 start_dev &
 
