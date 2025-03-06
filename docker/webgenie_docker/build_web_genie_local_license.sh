@@ -77,13 +77,13 @@ set +x
 # cd ~/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src
 # sh docker/webgenie_docker/build_web_genie_local_license.sh local
 
-# docker run -it --rm --name webgenie -p 8282:80  --env-file ./../../webg-local/webg-config/web_genai.txt -v ./../../webg-local/webg-temp:/tmp  -v ./../../webg-local/webg-projects:/opt/projects apilogicserver/web_genai
+# docker run -it --rm --name webgenie -p 8282:80  --env-file ./system/genai/webg_local/webg_config/web_genai.txt -v ./system/genai/webg_local/webg_temp:/tmp  -v ./system/genai/webg_local/webg_config:/config -v ./system/genai/webg_local/webg_projects:/opt/projects apilogicserver/web_genai
 
 cd $SRC_DIR
 echo "\npwd: $(pwd)\n"
 echo "run manually: add bash to cli, then % source /opt/webgenai/arun.sh"
 echo "  (or use bash instead of source)\n"
 echo "Browse to: http://localhost:8282/"
-echo "\nrun: docker run -it --rm --name webgenai -p 8282:80  --env-file ./../../webg-local/webg-config/web_genai.txt  -v ./../../webg-local/webg-projects:/opt/projects -v ./../../webg-local/webg-temp:/tmp apilogicserver/web_genai \n "
+echo "\nrun: docker run -it --rm --name webgenie -p 8282:80  --env-file ./system/genai/webg_local/webg_config/web_genai.txt -v ./system/genai/webg_local/webg_temp:/tmp  -v ./system/genai/webg_local/webg_config:/config -v ./system/genai/webg_local/webg_projects:/opt/projects apilogicserver/web_genai \n "
 
 exit 0
