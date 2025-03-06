@@ -58,6 +58,7 @@ def is_license_valid(license_data):
 
 def check_license():
     """Main function to validate the license."""
+    print(f"\nlicense_checker.py 0.0: Checking license...")
     license_data = load_license("/config/license.json")
     if not license_data:
         license_data = load_license()
@@ -72,7 +73,7 @@ def check_license():
         print("License expired or invalid.")
         exit(1)
 
-    print(f"License is valid! Type: {license_data['license_type']}, Expiry: {license_data['expiry']}")
+    print(f"License is valid! Type: {license_data['license_type']}, Expiry: {license_data['expiry']}\n")
 
 if __name__ == "__main__":
     check_license()
