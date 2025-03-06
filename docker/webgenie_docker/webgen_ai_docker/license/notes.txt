@@ -5,20 +5,8 @@ license-generator creates a license (add such code into license portal, later)
 user places license in webg_config
 license_checker validates it.
 
-license_checker is added to webg image, later to be run on start before invoking arun.sh
-for now, it's in the image, use the command below as a unit test (don't let this run wg!)
-    - it validates the license, prints a message, and exits
-    - it's accessed on the config volume, defined in command below
-    - it needs to be run in the context of the manager root
+license_checker is added to webg image, invoked on start in license/startup.sh before invoking arun.sh
+dockerfile startup: CMD ["bash", "-c", "/home/license/startup.sh"]
 
-    - I never did figure out how to run the checker using docker compose
-            docker-compose run python-app python /app/other.py
-        or
-            version: '3.8'
-            services:
-            my-python-app:
-                build: .
-                container_name: my-python-container
-                command: ["python", "/config/license_checker.py"]
-
-# docker run -it --rm --name webgenie -p 8282:80  --env-file ./system/genai/webg_local/webg_config/web_genai.txt -v ./system/genai/webg_local/webg_temp:/tmp  -v ./system/genai/webg_local/webg_config:/config -v ./system/genai/webg_local/webg_projects:/opt/projects apilogicserver/web_genai python /home/license/license_checker.py
+Run from Manager with:
+docker run -it --rm --name webgenie -p 8282:80  --env-file ./system/genai/webg_local/webg_config/web_genai.txt -v ./system/genai/webg_local/webg_temp:/tmp  -v ./system/genai/webg_local/webg_config:/config -v ./system/genai/webg_local/webg_projects:/opt/projects apilogicserver/web_genai
