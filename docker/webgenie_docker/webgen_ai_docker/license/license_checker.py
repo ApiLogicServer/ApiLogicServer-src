@@ -58,9 +58,9 @@ def is_license_valid(license_data):
 
 def check_license():
     """Main function to validate the license."""
-    license_data = load_license()
+    license_data = load_license("/config/license.json")
     if not license_data:
-        license_data = load_license("/config/license.json")
+        license_data = load_license()
         if not license_data:
             exit(1)
 
