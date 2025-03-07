@@ -12,7 +12,7 @@ IMAGE_HASH=${FULL_IMAGE_ID#*:}
 
 echo "image.hash=$IMAGE_HASH\n"
 
-# docker tag apilogicserver/web_genai:latest apilogicserver/web_genai:HASH.$IMAGE_HASH
+docker tag apilogicserver/web_genai:latest apilogicserver/web_genai:HASH.b49b3b5867cb8da805e3d5c83fac2be18c71b194288b54aea2a523a06dd83760
 
 echo "tagged image with hash"
 

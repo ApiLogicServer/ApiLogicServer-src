@@ -41,3 +41,6 @@ the context for these tests: we are trying to build tamper protection for apilog
 The created tag appears to be consistent - if I run hash.sh, it reproduces the value.
 
 The problem is shown in the terminal window - when I run the container startup.sh script, the container hash it finds (b8b...) does not match the tag (HASH.955...)
+
+docker images...
+docker rmi xxx -f

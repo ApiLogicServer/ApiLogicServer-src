@@ -21,8 +21,8 @@ CONTAINER_ID=$(hostname)
 # Debug: Display the extracted container ID
 echo "Extracted container ID: $CONTAINER_ID"
 
-# Retrieve the container hash
-CONTAINER_HASH=$(docker inspect --format='{{.Id}}' $CONTAINER_ID)
+# Retrieve the container hash (er, un, iimge)
+CONTAINER_HASH=$(docker inspect --format='{{.Image}}' $CONTAINER_ID)
 
 # Debug: Display the retrieved container hash
 echo "Retrieved container hash: $CONTAINER_HASH"
