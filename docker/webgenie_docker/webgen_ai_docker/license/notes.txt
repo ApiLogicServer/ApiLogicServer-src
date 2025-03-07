@@ -44,3 +44,7 @@ The problem is shown in the terminal window - when I run the container startup.s
 
 docker images...
 docker rmi xxx -f
+
+https://jfrog.com/devops-tools/article/3-steps-to-securing-your-docker-container-deployments/
+
+https://www.geeksforgeeks.org/docker-security-tools-to-secure-docker-container-images/

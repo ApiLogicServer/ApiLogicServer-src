@@ -50,12 +50,9 @@ fi
 # Run the license checker
 python /home/license/license_checker.py
 
+read -p "Ready to start WebGenAI (or Ctl-C) > "
+echo " "
 
-# for testing, exit here
-if [ $# -eq 0 ]; then
-    echo "No arguments provided"
-    exit 0
-fi
 
 # Check if the license checker was successful
 if [ $? -eq 0 ]; then
