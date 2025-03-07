@@ -74,6 +74,23 @@ if [ "$1" = "local" ]
 
 set +x
 
+echo "\ntamper protection - tag image with hash"
+
+# Get the full image ID
+FULL_IMAGE_ID=$(docker inspect --format='{{.Id}}' apilogicserver/web_genai:latest)
+
+# Extract the hash part from the full image ID
+IMAGE_HASH=${FULL_IMAGE_ID#*:}
+echo "image.hash=$IMAGE_HASH\n"
+
+# docker build --label "image.hash=$IMAGE_HASH" -t apilogicserver/web_genai:lastest
+docker tag apilogicserver/web_genai:latest apilogicserver/web_genai:HASH.$IMAGE_HASH
+echo "tagged image with hash"
+
+# List the tags of the Docker image
+echo "Listing tags for apilogicserver/web_genai:"
+docker images --filter=reference='apilogicserver/web_genai' --format '{{.Tag}}'
+
 # cd ~/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src
 # sh docker/webgenie_docker/build_web_genie_local_license.sh local
 
@@ -81,11 +98,10 @@ set +x
 # docker run -it --rm --name webgenie -p 8282:80  --env-file ./system/genai/webg_local/webg_config/web_genai.txt -v ./system/genai/webg_local/webg_temp:/tmp  -v ./system/genai/webg_local/webg_config:/config -v ./system/genai/webg_local/webg_projects:/opt/projects apilogicserver/web_genai
 
 cd $SRC_DIR
-echo "\npwd: $(pwd)\n"
-echo "run manually: add bash to cli, then % source /opt/webgenai/arun.sh"
-echo "  (or use bash instead of source)\n"
-echo "Browse to: http://localhost:8282/\n"
+echo "\n\nWebGenAI Build Complete from pwd: $(pwd)\n"
+echo "run manually: add bash to cli, then % bash /opt/webgenai/arun.sh"
 echo "Run **from manager** with:\n"
-echo "docker run -it --rm --name webgenie -p 8282:80  --env-file ./system/genai/webg_local/webg_config/web_genai.txt -v ./system/genai/webg_local/webg_temp:/tmp  -v ./system/genai/webg_local/webg_config:/config -v ./system/genai/webg_local/webg_projects:/opt/projects apilogicserver/web_genai \n "
+echo "docker run -it --rm --name webgenie -p 8282:80  --env-file ./system/genai/webg_local/webg_config/web_genai.txt -v ./system/genai/webg_local/webg_temp:/tmp  -v ./system/genai/webg_local/webg_config:/config -v ./system/genai/webg_local/webg_projects:/opt/projects apilogicserver/web_genai"
+echo "\nBrowse to: http://localhost:8282/\n"
 
 exit 0
