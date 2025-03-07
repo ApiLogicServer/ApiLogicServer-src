@@ -10,3 +10,20 @@ dockerfile startup: CMD ["bash", "-c", "/home/license/startup.sh"]
 
 Run from Manager with:
 docker run -it --rm --name webgenie -p 8282:80  --env-file ./system/genai/webg_local/webg_config/web_genai.txt -v ./system/genai/webg_local/webg_temp:/tmp  -v ./system/genai/webg_local/webg_config:/config -v ./system/genai/webg_local/webg_projects:/opt/projects apilogicserver/web_genai
+
+3/6
+    - image tagged with hash, and now includes docker cli 
+    - but Got permission denied while trying to connect to the Docker daemon 
+        - docker socket permissions - probably not req'd
+            ls -l /var/run/docker.sock should have...
+                srw-rw---- 1 root docker 0 Mar  6 12:34 /var/run/docker.sock
+            sudo chmod 666 /var/run/docker.sock
+        - run as user root solved it
+
+    - now see if container can find its hash
+        
+WebGenAI Startup 0.1 
+Tags for apilogicserver/web_genai:
+HASH.1bf8415e11f5ad8d0e97bb44a78625575714bc97ef50f5ac106334fb90c40a3e
+latest
+HASH.788317db692f7dc69a37b603cf4ef0678f0a97a78d3e6cc4a4293fe3cb9ea416
