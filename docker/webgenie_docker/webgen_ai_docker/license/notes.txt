@@ -27,3 +27,17 @@ Tags for apilogicserver/web_genai:
 HASH.1bf8415e11f5ad8d0e97bb44a78625575714bc97ef50f5ac106334fb90c40a3e
 latest
 HASH.788317db692f7dc69a37b603cf4ef0678f0a97a78d3e6cc4a4293fe3cb9ea416
+
+
+# for testing, exit here
+if [ $# -eq 0 ]; then
+    echo "No arguments provided"
+    exit 0
+fi
+
+valhuber
+the context for these tests: we are trying to build tamper protection for apilogicserver/web_genai, by creating a tag at build time of the container hash, and then when the container is started, verify the container hash matches the tag.
+
+The created tag appears to be consistent - if I run hash.sh, it reproduces the value.
+
+The problem is shown in the terminal window - when I run the container startup.sh script, the container hash it finds (b8b...) does not match the tag (HASH.955...)
