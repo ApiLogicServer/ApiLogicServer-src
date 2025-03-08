@@ -1,0 +1,21 @@
+als genai --project-name=bom --using=bom.prompt
+
+gens bad model:
+    class Product(Base):  # type: ignore
+        """
+        description: Represents a product that can have components
+        """
+        __tablename__ = 'product'
+        _s_collection_name = 'Product'  # type: ignore
+
+        id = Column(Integer, primary_key=True)
+        name = Column(String)
+        base_price : DECIMAL = Column(DECIMAL)
+        sum_of_components_price : DECIMAL = Column(DECIMAL)
+        price : DECIMAL = Column(DECIMAL)
+
+        # parent relationships (access parent)
+
+        # child relationships (access children)  FIXME - reln collision!!
+        ComponentList : Mapped[List["Component"]] = relationship(foreign_keys='[Component.component_product_id]', back_populates="component_product")
+        ComponentList : Mapped[List["Component"]] = relationship(foreign_keys='[Component.product_id]', back_populates="product")
