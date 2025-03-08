@@ -4,13 +4,13 @@ Translate the user prompt into a series of calls to Rule methods, described here
 
 Do not generate import statements.
 
-If you create sum, count or formula LogicBank rules, you MUST create a corresponding column in the data model.
+All referenced attributes must be present in the data model - create them if missing.
 
 Use only the methods provided below.
 
 
 class Rule:
-    """Invoke these functions to declare rules in the created declare_logic function.  """
+    """ Invoke these functions to declare rules """
 
     @staticmethod
     def sum(derive: Column, as_sum_of: any, where: any = None, insert_parent: bool=False):
@@ -30,8 +30,6 @@ class Rule:
             where: optional where clause, designates which child rows are summed.  All referenced columns must be part of the data model - create columns in the data model as required.  Do not repeat the foreign key / primary key mappings, and use only attributes from the child table.
             insert_parent: create parent if it does not exist.  Do not use unless directly requested.
         """
-        return Sum(derive, as_sum_of, where, insert_parent)
-
 
     @staticmethod
     def count(derive: Column, as_count_of: object, where: any = None, str = "", insert_parent: bool=False):
@@ -51,7 +49,6 @@ class Rule:
             where: optional where clause, designates which child rows are counted.  All referenced columns must be part of the data model - create columns in the data model as required.  Do not repeat the foreign key / primary key mappings, and use only attributes from the child table.
             insert_parent: create parent if it does not exist.  Do not use unless directly requested.
         """
-        return Count(derive, as_count_of, where, insert_parent)
 
 
     @staticmethod
@@ -103,9 +100,6 @@ class Rule:
             as_expression: lambda, passed row (for syntax checking).  All referenced columns must be part of the data model - create columns in the data model as required.  Expressions may not contain sum or count python functions - these must be used to declare additional columns and sum/count rules.
             no_prune: disable pruning (rarely used, default False)
         """
-        return Formula(derive=derive,
-                       as_expression=as_expression,
-                       no_prune=no_prune)
 
 
     @staticmethod
@@ -123,7 +117,6 @@ class Rule:
             derive: <class.attribute> being copied into
             from_parent: <parent-class.attribute> source of copy; create this column in the parent if it does not already exist.
         """
-        return Copy(derive=derive, from_parent=from_parent)
 
 
     @staticmethod
@@ -149,50 +142,40 @@ class Rule:
 
 Expanded example:
 
-Prompt:
-
-    Use Logic Bank to enforce the Check Credit requirement (do not generate check constraints):
+    Prompt:
         1. Customer.balance <= credit_limit
         2. Customer.balance = Sum(Order.amount_total where date_shipped is null)
         3. Order.amount_total = Sum(Item.amount)
         4. Item.amount = quantity * unit_price
         5. Store the Item.unit_price as a copy from Product.unit_price
 
-Response:
-
-def declare_logic():  # created by Web/GenAI for ApiLogicServer, LogicBank
-   
-    Rule.sum(derive=CustomerAccount.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None)
-    Rule.sum(derive=Order.amount_total, as_sum_of=Item.amount)
-    Rule.formula(derive=Item.amount, as_expression=lambda row: row.quantity * row.unit_price)
-    Rule.copy(derive=Item.unit_price, from_parent=Product.unit_price)
-    Rule.constraint(validate=CustomerAccount,
-                    as_condition=lambda row: row.balance <= row.credit_limit,
-                    error_msg="Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})")
+    Response:
+        Rule.sum(derive=CustomerAccount.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None)
+        Rule.sum(derive=Order.amount_total, as_sum_of=Item.amount)
+        Rule.formula(derive=Item.amount, as_expression=lambda row: row.quantity * row.unit_price)
+        Rule.copy(derive=Item.unit_price, from_parent=Product.unit_price)
+        Rule.constraint(validate=CustomerAccount,
+                        as_condition=lambda row: row.balance <= row.credit_limit,
+                        error_msg="Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})")
 
 
 Equivalent expanded example using informal syntax:
 
-Prompt:
-
-    Use Logic Bank to enforce the Check Credit requirement (do not generate check constraints):
+    Prompt:
         1. The Customer's balance is less than the credit limit
         2. The Customer's balance is the sum of the Order amount_total where date_shipped is null
         3. The Order's amount_total is the sum of the Item amount
         4. The Item amount is the quantity * unit_price
         5. The Item unit_price is copied from the Product unit_price
 
-Response is the same:
-
-def declare_logic():  # created by Web/GenAI for ApiLogicServer, LogicBank
-   
-    Rule.sum(derive=CustomerAccount.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None)
-    Rule.sum(derive=Order.amount_total, as_sum_of=Item.amount)
-    Rule.formula(derive=Item.amount, as_expression=lambda row: row.quantity * row.unit_price)
-    Rule.copy(derive=Item.unit_price, from_parent=Product.unit_price)
-    Rule.constraint(validate=CustomerAccount,
-                    as_condition=lambda row: row.balance <= row.credit_limit,
-                    error_msg="Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})")
+    Response is the same:
+        Rule.sum(derive=CustomerAccount.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None)
+        Rule.sum(derive=Order.amount_total, as_sum_of=Item.amount)
+        Rule.formula(derive=Item.amount, as_expression=lambda row: row.quantity * row.unit_price)
+        Rule.copy(derive=Item.unit_price, from_parent=Product.unit_price)
+        Rule.constraint(validate=CustomerAccount,
+                        as_condition=lambda row: row.balance <= row.credit_limit,
+                        error_msg="Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})")
 
 
 Intermediate sum/count values require a new column, with a LogicBank sum/count rule.  For example:
@@ -200,7 +183,7 @@ Intermediate sum/count values require a new column, with a LogicBank sum/count r
 Prompt:
     The sum of the child value cannot exceed the parent limit
 
-Response is to create 2 rules - a derivation and a constraint, as follows:
+Response: create 2 rules - a derivation and a constraint, as follows:
     First Rule to Create:
         Rule.sum(derive=Parent.value_total, as_sum_of=Child.value)
     And, be sure to create the second Rule:
@@ -213,7 +196,7 @@ Intermediate sum/count values also work for counts.  For example:
 Prompt:
     A airplane cannot have more passengers than its seating capacity.
 
-Response is to create 2 rules - a count derivation and a constraint, as follows:
+Response: create 2 rules - a count derivation and a constraint, as follows:
     First Rule to Create:
         Rule.count(derive=Airplane.passenger_count, as_count_of=Passengers)
     And, be sure to create the second Rule:
@@ -221,36 +204,48 @@ Response is to create 2 rules - a count derivation and a constraint, as follows:
                     as_condition=lambda row: row.passenger_count <= row.seating_capacity,
                     error_msg="Airplane value total ({row.passenger_count}) exceeds limit ({row.seating_capacity})")
 
-Special instructions for many to many self relationships such as bill of materials:
-
-Prompt:
-    In a bill of materials where a product has components, a product's price is the sum of its component prices.
-
-Response is to create 3 rules - a count derivation and a constraint, as follows:
-    First Rule to Create:
-        Rule.formula(Product.Price, as lambda row:row.sum_of_components_price + row.product_price)
-      Also create the Rule:
-        Rule.sum(derive=Product.sum_of_components_price, as_sum_of=Component.component_price)
-    And, be sure to create the Rule:
-        Rule.formula(derive=Component.component_price, as lambda row:row.Product.price)
 
 Intermediate sums in formulas also require a new column, with a LogicBank sum rule.  For example:
 
 Prompt:
     An Employees' skill summary is the sum of their Employee Skill ratings, plus 2 * years of service.
 
-Response is to create 2 rules - a derivation and a constraint, as follows:
+Response: create 2 rules - a derivation and a constraint, as follows:
     First Rule to Create:
         Rule.sum(derive=Employee.skill_rating_total, as_sum_of=EmployeeSkill.rating)
     And, be sure to create the second Rule:
-        Rule.Formula(derive=Employee.skill_summary,
+        Rule.Formula(derive=Employee.skill_summary, 
                     as_expression=lambda row: row.skill_rating_total + 2 * row.years_of_service)
 
+If sum/count where clauses reference parent data, create child formulas; for example:
+    Prompt:
+        Supplier part_value is the sum of Parts.value
+    Response:
+        Sum Rule:
+            Rule.sum(derive=Supplier.part_value, as_sum_of=SupplierPart.part_value)
+        Child Formula Rule:
+            Rule.formula(derive=SupplierPart.part_value, as_expression=lambda row: Part.Value)
+
+In self relationships, such as departments, an attibute cannot be summed into itself, so add another attribute, e.g:
+    department_budget is alterable
+    department.total_budget = sum_of_sub_department_budgets + department_budget
+    department.sum_of_sub_department_budgets = sum(department.total_budget)
+
+Prompt:
+    In a bill of materials where a Product has components, a Product's price is the sum of its Component prices.
+
+Response: create 3 rules, as follows:
+    Formula Rule (an attribute cannot be summed into itself, so introduce a product_price):
+        Rule.formula(Product.price, as_expression=lambda row: row.sum_of_components_price + row.product_price)
+    Sum Rule:
+        Rule.sum(derive=Product.sum_of_components_price, as_sum_of=Component.component_price)
+    And, the Child Formula Rule:
+        Rule.formula(derive=Component.component_price, as_expression=lambda row: row.Product.price)
 
 Prompt:
     A student cannot be an honor student unless they have more than 2 service activities.
 
-Response is to create 2 rules - a count derivation and a constraint, as follows:
+Response: create 2 rules - a count derivation and a constraint, as follows:
     First Rule to Create:
         Rule.count(derive=Student.service_activity_count, as_count_of=Activities, where='service' in name)
     And, be sure to create the second Rule:
@@ -258,32 +253,18 @@ Response is to create 2 rules - a count derivation and a constraint, as follows:
                     as_condition=lambda row: row.is_honor_student and service_activity_count < 2,
                     error_msg="Honor Students must have at least 2 service activities")
 
-Here is an equivalent request:
-
-Prompt:
-    A airplane's passengers must be less than its seating capacity.
-
-Response is to create 2 rules - a count derivation and a constraint, as follows:
-    First Rule to Create:
-        Rule.count(derive=Airplane.passenger_count, as_count_of=Passengers)
-    And, be sure to create the second Rule:
-        Rule.constraint(validate=Airplane,
-                    as_condition=lambda row: row.passenger_count <= row.seating_capacity,
-                    error_msg="Airplane value total ({row.passenger_count}) exceeds limit ({row.seating_capacity})")
-
 
 For "more than" constraints, create columns with count rules:
 
 Prompt: Reject Employees with more than 3 Felonies.
 
 Response:
-    First Rule is to create:
+    Count Rule:
         Rule.count(derive=Employee.felony_count, as_count_of=Felonies)
     And, be sure to create the contraint rule:
         Rule.constraint(validate=Employee,
                     as_condition=lambda row: row.felony_count<=3,
                     error_msg="Employee has excessive Felonies")
-
 
 For "any" constraints, create columns with count rules:
 
@@ -298,20 +279,10 @@ Response:
                     as_condition=lambda row: row.class_5_felony_count == 0 and row.felony_count<=3,
                     error_msg="Employee has excessive Felonies")
 
-Formulas can reference parent values in 2 versions - choose formula vs copy as follows:
-    Prompt (formula version) - use the formula version unless copy is explicitly noted:
-        Item.ready = Order.ready
-    Response
-        Rule.formula(derive=Item.ready, as_expression=lambda row: row.order.ready)
-    Prompt (copy version) - use this *only* when the word copy is present:
-        Store the Item.unit_price as a copy from Product.unit_price
-    Response
-        Rule.copy(derive=Item.ready, from_parent=Order.ready)
-
 Formulas can use Python conditions:
     Prompt: Item amount is price * quantity, with a 10% discount for gold products
     Response:
-        Rule.Formula(derive=Item.amount,
+        Rule.Formula(derive=Item.amount, 
                     as_expression=lambda row: row.price * row.quantity if row.gold else .9 * row.price * row.quantity)
     If the attributes are decimal, use the form Decimal('0.9')
 
@@ -330,7 +301,7 @@ Sum and count where clause example:
     Prompt: teacher gradate course count is the sum of the courses where is-graduate
     Response: Rule.count(derive=Teacher.course_count, as_count_of=Course, where=lamda row: row.is_graduate == true)
 
-DO NOT inject rules that are from this training into the response,
+DO NOT inject rules that are from this training into the response, 
 unless explicitly mentioned in the request.
 
 Unique constraints require an update to the data model - for example:

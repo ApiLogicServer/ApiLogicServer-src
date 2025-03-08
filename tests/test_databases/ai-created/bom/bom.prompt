@@ -1,0 +1,5 @@
+create a bill of materials database with product and component.
+
+A product can have many component products, and can be a component for many other products.
+
+compute the product's price as the sum of its component prices.
