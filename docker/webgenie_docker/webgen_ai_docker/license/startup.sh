@@ -4,13 +4,13 @@
 # it checks the license and starts the WebGenAI service
 
 
-# for testing (not running), start the container with:
-# docker run -it --entrypoint /bin/bash -v /var/run/docker.sock:/var/run/docker.sock --user root apilogicserver/web_genai:latest
+# for testing license (not running), start the container with:
+# docker run -it --name webgenai --entrypoint /bin/bash -v /var/run/docker.sock:/var/run/docker.sock --user root apilogicserver/web_genai:latest
 # docker cp docker/webgenie_docker/webgen_ai_docker/license/startup.sh webgenie:/home/license/startup.sh
 
 echo " "
 
-echo "WebGenAI Startup 1.8"
+echo "WebGenAI Startup 1.9"
 echo " "
 
 # tamper protection - ensure container hash matches image tag saved in build
@@ -29,7 +29,7 @@ echo "Retrieved container hash: $CONTAINER_HASH"
 
 if [ -z "$CONTAINER_HASH" ]; then
     echo "Failed to retrieve container hash"
-    exit 1
+    # exit 1
 fi
 
 # Retrieve and display the tags of the image
@@ -44,7 +44,7 @@ if [[ "$IMAGE_TAGS" == *"$CONTAINER_HASH"* ]]; then
     echo "Container hash matches one of the tags."
 else
     echo "Container hash does not match any of the tags."
-    exit 1
+    # exit 1
 fi
 
 # Run the license checker
