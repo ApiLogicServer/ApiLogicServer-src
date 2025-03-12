@@ -10,7 +10,7 @@
 
 # if you have run docker compose up (above), you must run docker compose down to run directly:
 
-# docker run -it --rm --name webgenai -p 8282:80  --env-file ./system/genai/webg_local/webg_config/web_genai.txt -v ./system/genai/webg_local/webg_temp:/tmp  -v ./system/genai/webg_local/webg_config:/config -v ./system/genai/webg_local/webg_projects:/opt/projects apilogicserver/web_genai
+# docker run -it --rm --name webgenai -p 8282:80  --env-file ./system/genai/webg_local/webg_config/web_genai.txt -v ./system/genai/webg_local/webg_temp:/tmp  -v ./system/genai/webg_local/webg_config:/config -v ./system/genai/webg_local/webg_projects:/opt/projects -v /var/run/docker.sock:/var/run/docker.sock --user root apilogicserver/web_genai
 
 
 name: webgenie
@@ -18,7 +18,7 @@ services:
     web_genai:
         stdin_open: true
         tty: true
-        container_name: webgenai
+        container_name: webgenie
         ports:
             - 8282:80
         env_file:
@@ -27,5 +27,6 @@ services:
             - ./webg_temp:/tmp
             - ./webg_config:/config
             - ./webg_projects:/opt/projects
+            - /var/run/docker.sock:/var/run/docker.sock
         image: apilogicserver/web_genai 
         user: root
