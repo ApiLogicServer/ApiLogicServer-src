@@ -48,3 +48,9 @@ docker rmi xxx -f
 https://jfrog.com/devops-tools/article/3-steps-to-securing-your-docker-container-deployments/
 
 https://www.geeksforgeeks.org/docker-security-tools-to-secure-docker-container-images/
+
+
+update 3/11
+    * according to all reports, you cannot seal the container - it's always updateable
+    * support removed, saved to: docker/webgenie_docker/webgen_ai_docker/license/z-tamper-tags-failed
+
