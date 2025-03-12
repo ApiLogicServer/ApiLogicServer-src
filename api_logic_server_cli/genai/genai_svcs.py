@@ -141,9 +141,13 @@ def get_code_update_logic_file(rule_list: List[DotMap], logic_file_path: Path = 
         insert_logic += translated_logic
         insert_logic += "\n    # End Logic from GenAI\n\n"
 
+        insert_point = 'discover_logic()'  # default for als`
+        if utils.does_file_contain(in_file=logic_file_path, search_for='# Logic from GenAI'):
+            insert_point = '# Logic from GenAI'
+
         utils.insert_lines_at(lines=insert_logic, 
                             file_name=logic_file_path, 
-                            at='discover_logic()', 
+                            at=insert_point, 
                             after=True)
         
         if 'Rule' not in imports:

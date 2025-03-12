@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "14.03.14"
+__version__ = "14.03.15"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t03/12/2024 - 14.03.15: [86: bug fix for explicitly added wg rules (wip) \n"\
     "\t02/26/2024 - 14.03.14: [85: reserved words], genai_demo fixes \n"\
     "\t02/16/2024 - 14.03.12: Docker w/ std container, mgr assistant for local WebG \n"\
     "\t02/13/2024 - 14.03.11: fixes [78: Keycloak, 79: boolean defaulting, 80: Send If missing attribute] \n"\
