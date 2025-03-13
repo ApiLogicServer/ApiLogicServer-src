@@ -57,5 +57,8 @@ update 3/11
 
 update 3/13
     * license server: http://ec2-50-19-38-47.compute-1.amazonaws.com/registration.html
+        * phone # is optional
+        * maybe combine manager / local webG setup?  what was plan for genai-org projects?
+    * signup
         * special links for each partner (eg, link in T/Master app store)
         * default link in startup.sh
