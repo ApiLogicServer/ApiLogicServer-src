@@ -54,3 +54,8 @@ update 3/11
     * according to all reports, you cannot seal the container - it's always updateable
     * support removed, saved to: docker/webgenie_docker/webgen_ai_docker/license/z-tamper-tags-failed
 
+
+update 3/13
+    * license server: http://ec2-50-19-38-47.compute-1.amazonaws.com/registration.html
+        * special links for each partner (eg, link in T/Master app store)
+        * default link in startup.sh
