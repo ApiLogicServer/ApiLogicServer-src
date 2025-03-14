@@ -6,7 +6,7 @@ import hashlib
 import hmac
 
 # Secret key for signing (store securely!)
-SECRET_KEY = b"your-secure-secret-key"
+SECRET_KEY = b"fe3d2e7c-2c19-4992-8d7f-f31a0d0c96c6"
 
 def load_license(license_path="license.json"):
     """Load the license file from disk."""

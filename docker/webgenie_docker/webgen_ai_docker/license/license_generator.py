@@ -3,8 +3,7 @@ import base64
 import hashlib
 import hmac
 
-SECRET_KEY = b"your-secure-secret-key"
-
+SECRET_KEY = b"fe3d2e7c-2c19-4992-8d7f-f31a0d0c96c6"
 def generate_license(license_key, license_type, expiry_date):
     """Generate a signed license JSON file."""
     license_data = {
