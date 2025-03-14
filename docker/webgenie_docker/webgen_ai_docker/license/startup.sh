@@ -25,6 +25,7 @@ if [ $? -eq 0 ]; then
     bash /opt/webgenai/arun.sh
 else
     echo "License check failed. Exiting."
-    # coming soon: put up form to request license
+    # Launch a browser to request a license (example using xdg-open)
+    xdg-open http://ec2-50-19-38-47.compute-1.amazonaws.com/registration.html || echo "Failed to open browser. Please visit http://ec2-50-19-38-47.compute-1.amazonaws.com/registration.html to register."
     exit 1
 fi
