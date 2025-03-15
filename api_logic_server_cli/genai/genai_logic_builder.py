@@ -411,16 +411,35 @@ class GenAILogic(object):
         """
         result_path = Path(os.getcwd())
         check_system_genai = result_path.joinpath('system/genai')
-        
         if check_system_genai.exists():
             return result_path
         
         result_path = result_path.parent
         check_system_genai = result_path.joinpath('system/genai')
-        
         if check_system_genai.exists():
             return result_path
         
+        result_path = result_path.parent
+        check_system_genai = result_path.joinpath('system/genai')
+        if check_system_genai.exists():
+            return result_path
+        
+        result_path = result_path.parent
+        check_system_genai = result_path.joinpath('system/genai')
+        if check_system_genai.exists():
+            return result_path
+        
+        
+        result_path = result_path.parent
+        check_system_genai = result_path.joinpath('system/genai')
+        if check_system_genai.exists():
+            return result_path
+        
+        result_path = result_path.parent
+        check_system_genai = result_path.joinpath('system/genai')
+        if check_system_genai.exists():
+            return result_path
+
         result_path = result_path.parent
         check_system_genai = result_path.joinpath('system/genai')
         

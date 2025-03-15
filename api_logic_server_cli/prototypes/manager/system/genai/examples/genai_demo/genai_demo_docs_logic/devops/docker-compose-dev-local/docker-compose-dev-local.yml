@@ -1,0 +1,38 @@
+# First, build image: sh devops/docker-image/build_image.sh .
+
+# ALERT - this is a pre-configured for the sqlite databases
+# see https://apilogicserver.github.io/Docs/Database-Docker/#classicmodels-mysql-docker
+
+# cd <project>  
+# sh ./devops/docker-compose-dev-local/docker-compose.sh
+# --> builds, runs at localhost:5656
+
+version: "3.5"
+
+services:
+
+    sqlite3:
+      # hmm... runs, but not access; SQLAlchemy syntax for sqlite service?  (it's just files below)
+      image: nouchka/sqlite3:latest
+      stdin_open: true
+      tty: true
+      volumes:
+        - ../../database/:/root/db/
+      # thanks: https://stackoverflow.com/questions/65811608/how-to-connect-flask-app-to-sqlite-db-running-in-docker
+
+    api-logic-server:
+        image: apilogicserver/genaidemo
+        environment:
+          - APILOGICPROJECT_VERBOSE=true
+          - SECURITY_ENABLED=true
+          ## todid - use default database uri's:
+          # - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI=sqlite:///../database/db.sqlite
+          # - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI_AUTHENTICATION=sqlite:///../database/authentication_db.sqlite
+        expose:
+          - 5656
+        ports:
+          - 5656:5656
+        volumes:
+          # local:path-in-container
+          - ../:/app
+          - ../../database/:/my/sqlite/path/

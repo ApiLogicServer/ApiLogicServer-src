@@ -1,0 +1,49 @@
+// Copy this text, paste to https://dbdiagram.io/d
+// Or, https://databasediagram.com/app
+// Or, view in VSCode with extension: "DBML Live Preview"
+
+Project DBML {
+  Note: '''
+Customer: Represents a customer entity with unique name, credit limit, and balance.
+Item: Represents an item within an order, linked to a product with mandatory quantity.
+Order: Represents an order entity linked to a customer with a note field.
+Product: Represents a product entity with unique name and unit price.
+'''
+}
+
+Table Customer {
+    id INTEGER [primary key]
+    name VARCHAR(255) 
+    credit_limit DECIMAL 
+    balance DECIMAL 
+    }
+
+Table Item {
+    id INTEGER [primary key]
+    order_id INTEGER 
+    product_id INTEGER 
+    quantity INTEGER 
+    unit_price DECIMAL 
+    amount DECIMAL 
+    }
+
+Table Order {
+    id INTEGER [primary key]
+    customer_id INTEGER 
+    date_shipped DATETIME 
+    amount_total DECIMAL 
+    notes VARCHAR(255) 
+    }
+
+Table Product {
+    id INTEGER [primary key]
+    name VARCHAR(255) 
+    unit_price DECIMAL 
+    }
+
+
+
+// Relationships
+    Ref: Item.(order_id) < Order.(id)
+    Ref: Item.(product_id) < Product.(id)
+    Ref: Order.(customer_id) < Customer.(id)

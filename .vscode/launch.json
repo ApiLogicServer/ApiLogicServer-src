@@ -2213,13 +2213,13 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "  * GenAI - no logic - include multiple logic files",
+            "name": "  * GenAI - include Multiple Docs/Logic Files",
 //  see system/genai/examples/genai_demo/multiple_logic_files/docs/readme_genai_example.md
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
-            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer/genai_demo_no_logic",
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer/system/genai/examples/genai_demo/genai_demo_docs_logic",
             "env": {
                 "PYTHONPATH": "", 
                 "SECURITY_ENABLED": "False", 
