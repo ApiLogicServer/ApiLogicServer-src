@@ -39,5 +39,7 @@ echo " "
 
 cp -r $blt/samples $genailogic
 cp -r $src/webgenai $genailogic
+cp $src/run_sample.sh $genailogic/samples
+cp $src/run_webgenai.sh $genailogic
 
 echo "\nCompleted.\n\n "

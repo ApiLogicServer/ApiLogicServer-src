@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "14.03.15"
+__version__ = "14.03.16"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t03/14/2024 - 14.03.16: fix config security uri for wg docker run of nw+ \n"\
     "\t03/12/2024 - 14.03.15: [86: bug fix for explicitly added wg rules (wip) \n"\
     "\t02/26/2024 - 14.03.14: [85: reserved words], genai_demo fixes \n"\
     "\t02/16/2024 - 14.03.12: Docker w/ std container, mgr assistant for local WebG \n"\
@@ -1111,9 +1112,12 @@ class ProjectRun(Project):
         app_logger.debug(f'.. overridden from env variable: {CONFIG_URI}')
 
     """
-        config_insert = config_insert.replace("<CONFIG_URI_VALUE>", "{" + f'{CONFIG_URI}' + "}")
         config_file = f'{self.project_directory}/config/config.py'
         config_built = create_utils.does_file_contain(search_for=CONFIG_URI, in_file=config_file)
+        if self.add_auth_in_progress and self.auth_provider_type == 'sql' and self.bind_key == 'authentication' and self.auth_db_url == 'auth':
+            pass
+            # config_built = True  # already built in add_auth
+        config_insert = config_insert.replace("<CONFIG_URI_VALUE>", "{" + f'{CONFIG_URI}' + "}")
         if not config_built:
             create_utils.insert_lines_at(lines=config_insert,
                                         at="# End Multi-Database URLs (from ApiLogicServer add-db...)",
@@ -1365,9 +1369,12 @@ from database import <project.bind_key>_models
             log.debug("  3. Update config at: SQLALCHEMY_DATABASE_URI_AUTHENTICATION = '")
         log.debug("==================================================================\n")
         config_file_name = f'{self.project_directory_path.joinpath("config/config.py")}'
-        create_utils.assign_value_to_key_in_file(value=self.abs_db_url, 
-                    key="    SQLALCHEMY_DATABASE_URI_AUTHENTICATION",
-                    in_file=config_file_name)
+        if self.abs_db_url.endswith('database/authentication_db.sqlite'):
+            pass
+        else:
+            create_utils.assign_value_to_key_in_file(value=self.abs_db_url, 
+                        key="    SQLALCHEMY_DATABASE_URI_AUTHENTICATION",
+                        in_file=config_file_name)
 
         self.run = save_run
         self.command = save_command
