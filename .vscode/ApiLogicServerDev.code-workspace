@@ -93,7 +93,7 @@
 		],
 		"sqltools.useNodeRuntime": true,
 		"workbench.preferredDarkColorTheme": "Darcula Pycharm with Light GUI",
-		"workbench.preferredLightColorTheme": "Blue Light Theme 2022",
+		"workbench.preferredLightColorTheme": "Laravel PyCharm Theme",
 		"workbench.colorTheme": "Blue Light Theme 2022",
 		"search.exclude": {
 			"**api_logic_server_cli/ApiLogicProject/": true,
