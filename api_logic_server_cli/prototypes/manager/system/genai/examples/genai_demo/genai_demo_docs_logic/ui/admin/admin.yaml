@@ -1,0 +1,141 @@
+about:
+  date: March 14, 2025 20:10:45
+  recent_changes: works with modified safrs-react-admin
+  version: 0.0.0
+api_root: '{http_type}://{swagger_host}:{port}/{api}'
+authentication: '{system-default}'
+info:
+  number_relationships: 3
+  number_tables: 4
+info_toggle_checked: true
+resources:
+  Customer:
+    attributes:
+    - label: ' name*'
+      name: name
+      search: true
+      sort: true
+    - name: credit_limit
+      type: DECIMAL
+    - name: balance
+      type: DECIMAL
+    - name: id
+    description: Represents a customer entity with unique name, credit limit, and
+      balance.
+    info_list: Represents a customer entity with unique name, credit limit, and balance.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - customer_id
+      name: OrderList
+      resource: Order
+    type: Customer
+    user_key: name
+  Item:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: order_id
+    - name: product_id
+    - name: quantity
+      required: true
+    - name: unit_price
+      type: DECIMAL
+    - name: amount
+      type: DECIMAL
+    description: Represents an item within an order, linked to a product with mandatory
+      quantity.
+    info_list: Represents an item within an order, linked to a product with mandatory
+      quantity.
+    tab_groups:
+    - direction: toone
+      fks:
+      - order_id
+      name: order
+      resource: Order
+    - direction: toone
+      fks:
+      - product_id
+      name: product
+      resource: Product
+    type: Item
+    user_key: id
+  Order:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: customer_id
+    - name: amount_total
+      type: DECIMAL
+    - name: notes
+    - name: date_shipped
+      type: DATETIME
+    description: Represents an order entity linked to a customer with a note field.
+    info_list: Represents an order entity linked to a customer with a note field.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - order_id
+      name: ItemList
+      resource: Item
+    - direction: toone
+      fks:
+      - customer_id
+      name: customer
+      resource: Customer
+    type: Order
+    user_key: id
+  Product:
+    attributes:
+    - label: ' name*'
+      name: name
+      search: true
+      sort: true
+    - name: unit_price
+      type: DECIMAL
+    - name: id
+    description: Represents a product entity with unique name and unit price.
+    info_list: Represents a product entity with unique name and unit price.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - product_id
+      name: ItemList
+      resource: Item
+    type: Product
+    user_key: name
+settings:
+  HomeJS: /admin-app/home.js
+  max_list_columns: 8
+  style_guide:
+    applicationLocales:
+    - en
+    - es
+    currency_symbol: $
+    currency_symbol_position: left
+    date_format: LL
+    decimal_max: '1000000000'
+    decimal_min: '0'
+    decimal_separator: .
+    detail_mode: tab
+    edit_on_mode: dblclick
+    exclude_listpicker: false
+    include_translation: 'false'
+    keycloak_client_id: alsclient
+    keycloak_realm: kcals
+    keycloak_url: http://localhost:8080
+    locale: en
+    max_decimal_digits: '4'
+    min_decimal_digits: '2'
+    new_mode: dialog
+    pick_style: list
+    row_height: small,
+    serviceType: OntimizeEE
+    startSessionPath: /auth/login
+    style: light
+    thousand_separator: ','
+    use_keycloak: 'false'

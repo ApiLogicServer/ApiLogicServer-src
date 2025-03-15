@@ -1,0 +1,9 @@
+<div fxLayout="row" fxLayoutAlign="center start" fxFlexFill class="container">
+    <o-tree #tree service="{{ service }}" entity="{{ entity }}" 
+            keys="{{ keys }}" root-title="{{ entity }}" columns="{{ columns }}"
+            visible-columns="{{ favorite }}" route=":{{ keys }}" fxFlex="20">
+    </o-tree>
+    <div fxLayout="column" fxLayoutAlign="center stretch" fxFlex="80">
+    <router-outlet></router-outlet>
+    </div>
+</div>

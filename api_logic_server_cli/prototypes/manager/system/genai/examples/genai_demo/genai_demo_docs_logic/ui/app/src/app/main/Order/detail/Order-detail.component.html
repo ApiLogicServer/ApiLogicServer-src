@@ -1,0 +1,112 @@
+<div class="container">
+<o-form-container breadcrumb="yes" breadcrumb-label-columns="id" breadcrumb-separator=", " class="fill-form">
+      <o-form #form attr="Order_form_edit" 
+        service="Order" 
+        entity="Order" 
+        fxLayout="column" 
+        show-header="yes" 
+        header-actions="R;I;U;D"
+        #oDetailForm keys="id" 
+        keys-sql-types="INTEGER" 
+        show-header-navigation="yes"
+        (onDataLoaded)="onDataLoaded($event)">
+
+  <o-row attr="row1" layout-align="start stretch">
+    <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+      
+      <o-integer-input #id attr="id" label=" id" type="integer" editable="no" required="no" ></o-integer-input>
+      
+      <o-list-picker 
+        attr="customer_id"
+        service="Customer" 
+        entity="CustomerType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="no" 
+        enabled="yes" 
+        filter="yes"
+        value-column="id" 
+        value-column-type="INTEGER"  
+        keys="id" 
+        columns="id;customer_id;name" 
+        title="customer_id"
+        visible-columns="id;name" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+      <o-currency-input #amount_total attr="amount_total" title="amount_total" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator="," decimal-separator="."></o-currency-input>
+      
+      <o-text-input #notes attr="notes" label="notes" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-date-input #date_shipped attr="date_shipped" type="timestamp" label="date_shipped" editable="no" required="no" format="LL" fxFlex="20%" class="form-field"></o-date-input>
+      
+    </div>
+  </o-row>
+      
+      <mat-tab-group fxFill>
+        
+        <mat-tab label="ITEM-order_id">
+    <div layout-padding>
+      <o-table 
+        attr="ItemTable" 
+        service="Item" 
+        entity="Item" 
+        keys="id"
+        parent-keys="order_id:id"
+        columns="id;order_id;product_id;quantity;unit_price;amount"  
+        horizontal-scroll="yes"
+        detail-form-route="Item" 
+        edit-form-route="Item"
+        visible-columns="id;order_id;product_id;quantity;unit_price;amount"  
+        sort-columns="id" 
+        query-rows="25" 
+        quick-filter="yes"
+        row-height="medium" 
+        select-all-checkbox="true" 
+        pageable="yes"  
+        auto-adjust="true" 
+        virtual-scroll="yes" 
+        insert-button="yes" 
+        delete-button="yes" 
+        fixed-header="true" 
+        class="vertical-padding-8"
+        edition-mode="dblclick" 
+        horizontal-scroll="yes" class="fill-form">
+        
+          <o-table-column #id attr="id" title=" id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column attr="order_id" title="order_id">
+    <o-table-cell-renderer-service attr="order_id" 
+        service="Order" entity="OrderType" columns="id;id"
+        parent-keys="id:order_id"
+        value-column="id" keys="order_id"
+        visible-columns="id" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column attr="product_id" title="product_id">
+    <o-table-cell-renderer-service attr="product_id" 
+        service="Product" entity="ProductType" columns="id;name"
+        parent-keys="id:product_id"
+        value-column="name" keys="product_id"
+        visible-columns="name" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column #quantity attr="quantity" title="quantity" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+        
+          <o-table-column #unit_price attr="unit_price" title="unit_price" type="real" min-decimal-digits="2" max-decimal-digits="4" min="0" max="1000000.0000" content-align="center"></o-table-column>
+        
+          <o-table-column #amount attr="amount" title="amount" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator=","decimal-separator="."></o-table-column>
+        
+        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
+      </o-table>
+    </div>
+</mat-tab>
+        
+      </mat-tab-group>
+      
+    </o-form>
+  </o-form-container>
+</div>
