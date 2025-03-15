@@ -31,39 +31,6 @@ def declare_logic():
         from logic.logic_discovery.auto_discovery import discover_logic
         discover_logic()
 
-    # Logic from GenAI: (or, use your IDE w/ code completion)
-    from database.models import Product, Customer, Item, Order
-
-    # Ensure customer balance is within credit limit.
-    Rule.constraint(validate=Customer, 
-                as_condition=lambda row: row.balance <= row.credit_limit, 
-                error_msg="Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})")
-
-    # Sum of order amount totals where date shipped is null.
-    Rule.sum(derive=Customer.balance, 
-          as_sum_of=Order.amount_total, 
-          where=lambda row: row.date_shipped is None)
-
-    # Sum of item amounts for each order.
-    Rule.sum(derive=Order.amount_total, 
-          as_sum_of=Item.amount)
-
-    # Calculate item amount as quantity times unit price.
-    Rule.formula(derive=Item.amount, 
-             as_expression=lambda row: row.quantity * row.unit_price)
-
-    # Copy unit price from product to item.
-    Rule.copy(derive=Item.unit_price, 
-          from_parent=Product.unit_price)
-
-    # Send orders to Kafka when shipped date is not None.
-    Rule.after_flush_row_event(on_class=Order, 
-                             calling=kafka_producer.send_row_to_kafka, 
-                             if_condition=lambda row: row.date_shipped is not None, 
-                             with_args={"topic": "order_shipping"})
-
-    # End Logic from GenAI
-
 
     def handle_all(logic_row: LogicRow):  # #als: TIME / DATE STAMPING, OPTIMISTIC LOCKING
         """

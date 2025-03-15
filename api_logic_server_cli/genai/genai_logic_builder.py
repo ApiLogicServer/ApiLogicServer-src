@@ -74,23 +74,7 @@ class GenAILogic(object):
         if suggest:
             self.suggest_logic()                  # suggest logic for prompt, or see logic code
         else:
-            logic_files = self.get_logic_files()  # rebuild rules from docs/logic/*.prompt
-            for each_file in logic_files:
-                with open(each_file, 'r') as file:
-                    log.debug(f'.. genai_logic_builder processes: {os.path.basename(each_file)}')
-                    logic = file.read()
-                logic_message = {"role": "user", "content": logic}
-                self.messages.append( logic_message ) # replace data model with logic
-                log.debug(f'.. ChatGPT - saving raw response to: system/genai/temp/chatgpt_original.response')
-                response_str = genai_svcs.call_chatgpt(messages=self.messages, api_version=self.project.genai_version, using=self.project.genai_using)
-                response = json.loads(response_str)
-                # FIXME - perhaps required for fixup (it is failing)
-                # the rules & data models are expected to be in docs... not there
-                # self.get_and_save_response_data(response=response, file=each_file)          # save raw response to docs/logic
-                self.response_dict = DotMap(response)
-                rule_list = self.response_dict.rules
-                each_code_file = self.project.project_directory_path.joinpath(f'logic/logic_discovery/{each_file.stem}.py')
-                self.insert_logic_into_project(rule_list=rule_list, file=each_code_file)     # insert logic into project
+            self.process_logic_files()            # process logic files (eg, from docs/logic/*.prompt)
         pass
 
     def get_logic_files(self) -> List[str]:
@@ -186,7 +170,63 @@ class GenAILogic(object):
         prompt_messages.extend(learnings)
                         
         return prompt_messages      
-    
+
+
+    def process_logic_files(self):
+        """
+        Processes logic files by reading them, sending their content to a generative AI service, 
+        and then inserting the generated logic into the project.
+
+        Process each docs/logic/*.prompt file to create corresponding file in logic/logic_discovery
+
+        """
+        """ CoPilot's doc (meh)
+
+        Steps:
+        1. Retrieve logic files from the specified directory.
+        2. For each logic file:
+            a. Read the file content.
+            b. Log the processing of the file.
+            c. Create a message with the file content.
+            d. Append the message to the list of messages.
+            e. Call the generative AI service with the messages.
+            f. Parse the response from the AI service.
+            g. Insert the generated logic into the project.
+            h. Reset the messages for the next file.
+        3. Log the completion of the process and provide instructions for checking and renaming files.
+
+        Note:
+        - The method assumes the existence of several helper methods and attributes such as 
+          `get_logic_files`, `genai_svcs.call_chatgpt`, `get_and_save_response_data`, 
+          `insert_logic_into_project`, and `get_learnings_and_data_model`.
+        - There are some FIXME comments indicating areas that may need further attention or fixing.
+        """
+
+        logic_files = self.get_logic_files()  # rebuild rules from docs/logic/*.prompt
+        for each_file in logic_files:
+            with open(each_file, 'r') as file:
+                log.debug(f'\n.. genai_logic_builder/process_logic_files - logic file: {os.path.basename(each_file)}')
+                logic = file.read()
+            logic_message = {"role": "user", "content": logic}
+            self.messages.append( logic_message ) # replace data model with logic
+            log.debug(f'.. ChatGPT - saving raw response to: system/genai/temp/chatgpt_original.response')
+            response_str = genai_svcs.call_chatgpt(messages=self.messages, api_version=self.project.genai_version, using=self.project.genai_using)
+            response = json.loads(response_str)
+            # see launch: GenAI - include Multiple Docs/Logic Files
+            # FIXME - perhaps required for fixup (it is failing)
+            # the rules & data models are expected to be in docs... not there for als projects?
+            # self.get_and_save_response_data(response=response, file=each_file)
+            # save raw response to docs/logic
+            self.response_dict = DotMap(response)
+            rule_list = self.response_dict.rules
+            each_code_file = self.project.project_directory_path.joinpath(f'logic/logic_discovery/{each_file.stem}.py')
+            self.insert_logic_into_project(rule_list=rule_list, file=each_code_file)     # insert logic into project
+            self.messages = self.get_learnings_and_data_model()  # reset messages for next file
+            self.messages_length = len(self.messages)
+        log.info(f'\n.. Completed -- check logic/logic_discovery for new logic files, rename docs/logic files')
+
+
+
     def suggest_logic(self):
         """ Suggest logic for prompt, or translate suggestion to code
             self.messages already has learnings and data model

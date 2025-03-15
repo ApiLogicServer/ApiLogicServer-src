@@ -2214,7 +2214,7 @@
         },
         {
             "name": "  * GenAI - include Multiple Docs/Logic Files",
-//  see system/genai/examples/genai_demo/multiple_logic_files/docs/readme_genai_example.md
+// gen discovery - multiple docs/logic files -- verify logic repeated in constraint_tests.py [83]
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
