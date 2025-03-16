@@ -4,6 +4,8 @@ import datetime
 import base64
 import hashlib
 import hmac
+import jwt
+from typing import Optional, Dict, Any
 
 # Secret key for signing (store securely!)
 SECRET_KEY = b"fe3d2e7c-2c19-4992-8d7f-f31a0d0c96c6"
@@ -74,6 +76,33 @@ def check_license():
         exit(1)
 
     print(f"License is valid! Type: {license_data['license_type']}, Expiry: {license_data['expiry']}\n")
+def verify_api_key(api_key: str) -> Dict[str, Any]:
+    """
+    Verify and decode a JWT API key.
+    
+    Args:
+        api_key: The JWT API key to verify
+        
+    Returns:
+        The decoded payload if valid
+        
+    Raises:
+        jwt.InvalidTokenError: If the token is invalid
+        jwt.ExpiredSignatureError: If the token has expired
+    """
+    try:
+        return jwt.decode(api_key, SECRET_KEY, algorithms=["HS256"])
+    except jwt.ExpiredSignatureError as ee:
+        raise jwt.ExpiredSignatureError("API key has expired") from ee
+    except jwt.InvalidTokenError as it:
+        raise jwt.InvalidTokenError("Invalid API key") from it
 
 if __name__ == "__main__":
     check_license()
+    try:
+        decoded_payload = verify_api_key("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwMmZjNTA2ZS1jN2M4LTQ1NjQtYjI4MC01MGM5NzcyYmYzNWEiLCJpYXQiOjE3NDIxNjM5OTIsImV4cCI6MTc0OTkzOTk5MiwibmFtZSI6IkFQSSBLZXkgZm9yIFJlZ2lzdHJhdGlvbiIsImxpY2Vuc2VfdHlwZSI6IlRSSUFMIiwiY29tcGFueV9uYW1lIjoiQWNtZSBDb3Jwb3JhdGlvbiIsInBlcm1pc3Npb25zIjpbInJlYWQiLCJ3cml0ZSIsImFkbWluIl19.PpyedLyKJTMNr7YqCoPWZKsXj_rmyTvoUyF4e4bvqwc")
+        print("API Key is valid!")
+        print(f"API Key belongs to: {decoded_payload['company_name']}")
+        print(f"License type: {decoded_payload['license_type']}")
+    except (jwt.ExpiredSignatureError, jwt.InvalidTokenError) as e:
+        print(f"API Key validation failed: {str(e)}")
