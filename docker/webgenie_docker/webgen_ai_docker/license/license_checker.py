@@ -99,10 +99,19 @@ def verify_api_key(api_key: str) -> Dict[str, Any]:
 
 if __name__ == "__main__":
     check_license()
+    
+    ## GOOD API KEY TEST
     try:
-        decoded_payload = verify_api_key("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwMmZjNTA2ZS1jN2M4LTQ1NjQtYjI4MC01MGM5NzcyYmYzNWEiLCJpYXQiOjE3NDIxNjM5OTIsImV4cCI6MTc0OTkzOTk5MiwibmFtZSI6IkFQSSBLZXkgZm9yIFJlZ2lzdHJhdGlvbiIsImxpY2Vuc2VfdHlwZSI6IlRSSUFMIiwiY29tcGFueV9uYW1lIjoiQWNtZSBDb3Jwb3JhdGlvbiIsInBlcm1pc3Npb25zIjpbInJlYWQiLCJ3cml0ZSIsImFkbWluIl19.PpyedLyKJTMNr7YqCoPWZKsXj_rmyTvoUyF4e4bvqwc")
+        APIKEY = os.getenv("GENAI_LOGIC_APIKEY") or "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwMmZjNTA2ZS1jN2M4LTQ1NjQtYjI4MC01MGM5NzcyYmYzNWEiLCJpYXQiOjE3NDIxNjM5OTIsImV4cCI6MTc0OTkzOTk5MiwibmFtZSI6IkFQSSBLZXkgZm9yIFJlZ2lzdHJhdGlvbiIsImxpY2Vuc2VfdHlwZSI6IlRSSUFMIiwiY29tcGFueV9uYW1lIjoiQWNtZSBDb3Jwb3JhdGlvbiIsInBlcm1pc3Npb25zIjpbInJlYWQiLCJ3cml0ZSIsImFkbWluIl19.PpyedLyKJTMNr7YqCoPWZKsXj_rmyTvoUyF4e4bvqwc"
+        decoded_payload = verify_api_key(APIKEY)
         print("API Key is valid!")
         print(f"API Key belongs to: {decoded_payload['company_name']}")
         print(f"License type: {decoded_payload['license_type']}")
+    except (jwt.ExpiredSignatureError, jwt.InvalidTokenError) as e:
+        print(f"API Key validation failed: {str(e)}")
+
+    # BAD KEY TEST
+    try:
+        decoded_payload = verify_api_key("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwMmZjNTA2ZS1jN2M4LTQ1NjQtYjI4MC01MGM5NzcyYmYzNWEiLCJpYXQiOjE3NDIxNjM5OTIsImV4cCI6MTc0OTkzOTk5MiwibmFtZSI6IkFQSSBLZXkgZm9yIFJlZ2lzdHJhdGlvbiIsImxpY2Vuc2VfdHlwZSI6IlRSSUFMIiwiY29tcGFueV9uYW1lIjoiQWNtZSBDb3Jwb3JhdGlvbiIsInBlcm1pc3Npb25zIjpbInJlYWQiLCJ3cml0ZSIsImFkbWluIl19.PpyedLyKJTMNr7YqCoPWZKsXj")
     except (jwt.ExpiredSignatureError, jwt.InvalidTokenError) as e:
         print(f"API Key validation failed: {str(e)}")
