@@ -15,6 +15,7 @@ Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 __version__ = "14.03.16"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t03/17/2024 - 14.03.17: sra fix for home.js \n"\
     "\t03/14/2024 - 14.03.16: fix config security uri for wg docker run of nw+ \n"\
     "\t03/12/2024 - 14.03.15: [86: bug fix for explicitly added wg rules (wip) \n"\
     "\t02/26/2024 - 14.03.14: [85: reserved words], genai_demo fixes \n"\
