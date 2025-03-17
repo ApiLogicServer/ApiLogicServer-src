@@ -26,6 +26,6 @@ if [ $? -eq 0 ]; then
 else
     echo "License check failed. Exiting."
     # Launch a browser to request a license (example using xdg-open)
-    xdg-open http://ec2-50-19-38-47.compute-1.amazonaws.com/registration.html || echo "Failed to open browser. Please visit http://ec2-50-19-38-47.compute-1.amazonaws.com/registration.html to register."
+    xdg-open http://registration-genailogic.com/registration.html || echo "Failed to open browser. Please visit http://registration-genailogic.com/registration.html to register and obtain license."
     exit 1
 fi
