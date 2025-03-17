@@ -92,7 +92,7 @@ class JWTAPIKeyGenerator:
 # Example usage
 if __name__ == "__main__":
     # Initialize with a secure secret key (in production, store this securely)
-    secret_key = b"fe3d2e7c-2c19-4992-8d7f-f31a0d0c96c6"
+    secret_key = b"fe3d2e7c"
     generator = JWTAPIKeyGenerator(secret_key)
     
     # Generate an API key
