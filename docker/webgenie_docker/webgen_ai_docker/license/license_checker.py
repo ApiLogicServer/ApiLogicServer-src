@@ -98,7 +98,7 @@ def verify_api_key(api_key: str) -> Dict[str, Any]:
 
 if __name__ == "__main__":
     check_license()
-    
+    '''
     ## GOOD API KEY TEST
     try:
         APIKEY = os.getenv("GENAI_LOGIC_APIKEY")
@@ -114,3 +114,4 @@ if __name__ == "__main__":
         decoded_payload = verify_api_key("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwMmZjNTA2ZS1jN2M4LTQ1NjQtYjI4MC01MGM5N") #BAD KEY
     except (jwt.ExpiredSignatureError, jwt.InvalidTokenError) as e:
         print(f"API Key validation failed: {str(e)}")
+'''

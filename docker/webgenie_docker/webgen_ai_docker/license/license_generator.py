@@ -79,7 +79,7 @@ if __name__ == "__main__":
     )
     
     print("Generated API Key:")
-    print(f"API Key: {api_key_data['api_key']}")
+    print(f"export GENAI_LOGIC_APIKEY={api_key_data['api_key']}")
     print(f"Name: {api_key_data['name']}")
     print(f"License Type: {api_key_data['license_type']}")
     print(f"Company Name: {api_key_data['company_name']}")  
