@@ -77,8 +77,8 @@ set +x
 # cd ~/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src
 # sh docker/webgenie_docker/build_web_genie_local_license.sh local
 
-# run from manager with
-# docker run -it --rm --name webgenai -p 8282:80  --env-file ./system/genai/webg_local/webg_config/web_genai.txt -v ./system/genai/webg_local/webg_temp:/tmp  -v ./system/genai/webg_local/webg_config:/config -v ./system/genai/webg_local/webg_projects:/opt/projects apilogicserver/web_genai
+# run from manager [remove license cheecker] with:
+# docker run -it --rm --name webgenai -p 8282:80  --env-file ./webgenai/webg_config/web_genai.txt -v ./webgenai/webg_temp:/tmp  -v ./webgenai/webg_config:/config -v ./webgenai/webg_projects:/opt/projects apilogicserver/web_genai
 
 cd $SRC_DIR
 echo "\n\nWebGenAI Build Complete from pwd: $(pwd)\n"

@@ -62,3 +62,7 @@ update 3/13
     * signup
         * special links for each partner (eg, link in T/Master app store)
         * default link in startup.sh
+
+update 3/19
+    * seeing "Failed to move project"
+    * removed license, unprotected dirs, ran from mgr: still fails
