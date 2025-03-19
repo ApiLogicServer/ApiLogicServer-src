@@ -28,3 +28,6 @@ services:
             - ./webg_projects:/opt/projects
         image: apilogicserver/web_genai 
         user: root
+        environment:
+            - GENAI_LOGIC_APIKEY=<paste license here from registration email>
+            - APILOGICSERVER_CHATGPT_APIKEY=<sk-proj-your-openai-key-here>    
