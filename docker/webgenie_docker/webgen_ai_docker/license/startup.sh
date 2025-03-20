@@ -10,6 +10,7 @@
 echo " "
 
 echo "WebGenAI Startup 2.0"
+als
 echo " "
 
 # Run the license checker
