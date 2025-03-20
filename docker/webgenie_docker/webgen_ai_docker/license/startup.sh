@@ -25,8 +25,10 @@ if [ $? -eq 0 ]; then
     echo "License check passed. Starting WebGenAI."
     bash /opt/webgenai/arun.sh
 else
-    echo "License check failed. Exiting."
+    echo "License check failed."
+    echo " "
     # Launch a browser to request a license (example using xdg-open)
-    xdg-open http://registration-genailogic.com/registration.html || echo "Failed to open browser. Please visit http://registration-genailogic.com/registration.html to register and obtain license."
+    xdg-open http://registration-genailogic.com/registration.html || echo "Please visit http://registration-genailogic.com/registration.html to register and obtain license."
+    echo " "
     exit 1
 fi

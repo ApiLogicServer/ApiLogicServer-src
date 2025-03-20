@@ -37,9 +37,11 @@ ls $genailogic
 
 echo " "
 
-cp -r $blt/samples $genailogic
+cp -r $blt/samples/nw_sample $genailogic/samples
+cp -r $blt/samples/nw_sample_nocust $genailogic/samples
+# (omit tutorial - and research this next one...)
 cp -r $src/webgenai $genailogic
-cp $src/run_sample.sh $genailogic/samples
+cp $src/run_sample.sh $genailogic
 cp $src/run_webgenai.sh $genailogic
 
 echo "\nCompleted.\n\n "
