@@ -26,7 +26,7 @@ RUN chmod 777 /run # TODO!! security issue?
 
 RUN mkdir -p /opt/projects
 COPY webgenai/webgenai /opt/webgenai
-COPY arun.sh /opt/webgenai/arun.sh
+# COPY arun.sh /opt/webgenai/arun.sh
 RUN cd /opt/webgenai/simple-spa && npm install
 RUN rm -fr /home/api_logic_server/api_logic_server_cli/create_from_model/safrs-react-admin-npm-build
 COPY sra/build /home/api_logic_server/api_logic_server_cli/create_from_model/safrs-react-admin-npm-build

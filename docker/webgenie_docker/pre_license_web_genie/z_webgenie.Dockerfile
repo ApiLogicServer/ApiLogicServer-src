@@ -22,9 +22,6 @@ RUN apt-get update && apt-get install wget -y \
 RUN npm install -g @softwaretechnik/dbml-renderer
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
 COPY nginx/wg.conf /etc/nginx/wg.conf
-COPY license/license_checker.py /home/license/license_checker.py
-COPY license/startup.sh /home/license/startup.sh
-RUN chmod +x /home/license/startup.sh
 RUN mkdir -p /etc/nginx/apis
 RUN chown -R api_logic_server /var/log/nginx /etc/nginx/apis
 RUN chown api_logic_server /var/lib/nginx
@@ -38,8 +35,6 @@ COPY sra/build /home/api_logic_server/api_logic_server_cli/create_from_model/saf
 RUN chown -R api_logic_server /etc/nginx /opt /home/api_logic_server
 USER api_logic_server
 RUN pip install colorama astor
-
 EXPOSE 5656-7000
 
-# CMD ["bash", "-c", "/opt/webgenai/arun.sh"]
-CMD ["bash", "-c", "/home/license/startup.sh"]
+CMD ["bash", "-c", "/opt/webgenai/arun.sh"]
