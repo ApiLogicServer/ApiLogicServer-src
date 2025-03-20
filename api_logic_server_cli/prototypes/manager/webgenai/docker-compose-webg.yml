@@ -1,15 +1,9 @@
 # Run WebGenAI locally from docker container
 
-# Before running, update ./system/genai/webg_local/webg_config/web_genai.txt
-# See: https://apilogicserver.github.io/Docs/WebGenAI-CLI/#configuration
-
 # cd <manager>  
 
 # docker compose -f webgenai/docker-compose-webg.yml up
 # docker compose -f webgenai/docker-compose-webg.yml down
-
-# to start in interactive mode:
-# docker compose -f webgenai/docker-compose-webg.yml run web_genai
 
 name: webgenie
 services:
