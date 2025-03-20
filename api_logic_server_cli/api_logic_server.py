@@ -15,6 +15,7 @@ Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 __version__ = "14.03.20"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t03/19/2024 - 14.03.21: Internal - print als v#, compose cmt on start in bash \n"\
     "\t03/19/2024 - 14.03.20: licensed webgenai docker, [87] sra fix for home.js \n"\
     "\t02/26/2024 - 14.03.14: [85: reserved words], genai_demo fixes \n"\
     "\t02/16/2024 - 14.03.12: Docker w/ std container, mgr assistant for local WebG \n"\
