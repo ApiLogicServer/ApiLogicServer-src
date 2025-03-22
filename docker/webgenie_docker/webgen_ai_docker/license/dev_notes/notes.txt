@@ -1,3 +1,31 @@
+The following commands have proved useful:
+
+    # troubleshooting
+
+    # Get the host name of the tnas device 
+    uname -n
+
+    # exec into the running container
+    docker exec -it webgenai /bin/bash
+
+    # modify the internal host name for target host name
+    sed -i 's/ localhost/ tnas-appliance.local/g' /etc/nginx/wg.conf
+
+    nginx -s reload
+
+    # check processes running in container
+    ss -lntl
+
+    # cat the wg.conf
+    cat /etc/nginx/wg.conf
+
+    # start webgini interactive mode
+    cd /opt/webgenai
+    bash arun.sh
+
+    # check the Projects endpoint
+    curl localhost/api/Project
+
 This explores an approach to licensing enforcement on docker start
 
 license-generator creates a license (add such code into license portal, later)
