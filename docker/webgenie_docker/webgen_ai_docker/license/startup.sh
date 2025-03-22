@@ -9,9 +9,8 @@
 
 echo " "
 
-echo "WebGenAI Startup 2.0"
+echo "WebGenAI Startup 2.00 at $PWD"
 als
-echo " "
 
 # Run the license checker
 python /home/license/license_checker.py
@@ -22,7 +21,7 @@ python /home/license/license_checker.py
 
 # Check if the license checker was successful
 if [ $? -eq 0 ]; then
-    echo "License check passed. Starting WebGenAI."
+    echo "License check passed. Starting WebGenAI at $PWD."
     bash /opt/webgenai/arun.sh
 else
     echo "License check failed."
