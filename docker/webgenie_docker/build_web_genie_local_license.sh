@@ -83,6 +83,7 @@ set +x
 # docker compose -f webgenai/docker-compose-webg.yml down
 
 # to start in interactive mode:
+# Add to docker-compose-webg.yml: command: /bin/bash
 # docker compose -f webgenai/docker-compose-webg.yml run web_genai
 # docker cp api_logic_server_utils.py webgenai://home/api_logic_server/api_logic_server_cli/create_from_model/api_logic_server_utils.py
 
