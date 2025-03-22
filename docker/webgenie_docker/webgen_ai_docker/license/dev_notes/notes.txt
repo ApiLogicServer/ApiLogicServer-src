@@ -66,3 +66,13 @@ update 3/13
 update 3/19
     * seeing "Failed to move project"
     * removed license, unprotected dirs, ran from mgr: still fails
+
+update 3/21
+    * working fine locally, deployed to docker hub (with debug update)
+        * but failing with nginx config not complete on TerraMaster
+    * still testing, but appears wg start can be as simple as:
+        * mkdir webgenie
+        * cd webgenie
+        * cp <docker-compose.yml> webgenie
+        * update the 2 licenses at end
+        * docker compose up
