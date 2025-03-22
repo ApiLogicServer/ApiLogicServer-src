@@ -22,5 +22,6 @@ services:
         environment:
             - APILOGICPROJECT_EXTERNAL_PORT=8282
             - APILOGICPROJECT_PORT=5657
+            - APILOGICPROJECT_EXTERNAL_HOST=localhost
             - GENAI_LOGIC_APIKEY=<paste license here from registration email>
             - APILOGICSERVER_CHATGPT_APIKEY=<sk-proj-your-openai-key-here>
