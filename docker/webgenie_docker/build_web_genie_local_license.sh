@@ -83,9 +83,13 @@ set +x
 # docker compose -f webgenai/docker-compose-webg.yml down
 
 # to start in interactive mode:
-# Add to docker-compose-webg.yml: command: /bin/bash
-# docker compose -f webgenai/docker-compose-webg.yml run web_genai
+# docker exec -it webgenai bash
+# docker cp docker/webgenie_docker/webgen_ai_docker/nginx/wg.conf webgenai:/etc/nginx/
+# nginx -s reload
 # docker cp api_logic_server_utils.py webgenai://home/api_logic_server/api_logic_server_cli/create_from_model/api_logic_server_utils.py
+
+# Worked, now fails: add to docker-compose-webg.yml: command: /bin/bash
+# docker compose -f webgenai/docker-compose-webg.yml run web_genai
 
 cd $SRC_DIR
 echo "\n\nWebGenAI Build Complete from pwd: $(pwd)\n"

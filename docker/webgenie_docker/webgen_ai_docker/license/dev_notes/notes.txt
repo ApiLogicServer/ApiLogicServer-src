@@ -104,3 +104,8 @@ update 3/21
         * cp <docker-compose.yml> webgenie
         * update the 2 licenses at end
         * docker compose up
+
+update 3/32
+    * docker/webgenie_docker/webgen_ai_docker/nginx/wg.conf
+        * server_name localhost;  -->  server_name ~^(.*)$;
+        * seems to work locally
