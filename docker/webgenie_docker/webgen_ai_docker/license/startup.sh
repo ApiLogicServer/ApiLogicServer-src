@@ -9,7 +9,7 @@
 
 echo " "
 
-echo "WebGenAI Startup 2.00 at $PWD"
+echo "WebGenAI Startup 2.01 at $PWD on $(hostname)"
 als
 
 # Run the license checker
