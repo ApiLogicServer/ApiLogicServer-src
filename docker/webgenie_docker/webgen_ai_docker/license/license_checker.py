@@ -68,13 +68,14 @@ def check_license():
         exit(1)
     try:
         decoded_payload = verify_api_key(api_key=license_key)
-        print("API Key is valid!")
-        print(f"API Key belongs to: {decoded_payload['company_name']}")
+        print("WebGenAI License is valid!")
+        print(f"License belongs to: {decoded_payload['company_name']}")
         print(f"License type: {decoded_payload['license_type']}")
-        print(f"API Key expires on: {datetime.datetime.fromtimestamp(decoded_payload['exp']).isoformat()}")
+        print(f"License expires on: {datetime.datetime.fromtimestamp(decoded_payload['exp']).isoformat()}")
     except (jwt.ExpiredSignatureError, jwt.InvalidTokenError) as e:
-        print(f"API Key validation failed: {str(e)}")
+        print(f"WebGenAI License validation failed: {str(e)}")
         exit(1)
+
 def verify_api_key(api_key: str) -> Dict[str, Any]:
     """
     Verify and decode a JWT API key.
