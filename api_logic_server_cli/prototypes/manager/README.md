@@ -98,7 +98,7 @@ Then, try your own databases [(db-url examples here)](https://apilogicserver.git
 
 <br>You can do this with or without signup:
 
-1. If you have signed up, this will create and open a project called `genai_demo` from `genai_demo.prompt` (available in left Explorer pane):
+1. If you have signed up (see *To obtain a ChatGPT API Key*, below), this will create and open a project called `genai_demo` from `genai_demo.prompt` (available in left Explorer pane):
 
 ```bash
 als genai --using=system/genai/examples/genai_demo/genai_demo.prompt --project-name=genai_demo
@@ -119,6 +119,20 @@ Verify it's operating properly:
 3. Observe the constraint operating on the rollup of order amount_totals.
     * View the logic in `logic/declare_logic.py`
     * Put a breakpoint on the `as_condition`.  Observe the console log to see rule execution for this multi-table transaction.
+
+</br>
+
+
+<details markdown>
+
+<summary> To obtain a ChatGPT API Key</summary>
+
+<br>GenAI-Logic uses OpenAI, which requires an Open API Key:
+
+1. Obtain one from [here](https://platform.openai.com/account/api-keys) or [here](https://platform.openai.com/api-keys)
+2. Authorize payments [here](https://platform.openai.com/settings/organization/billing/overview)
+
+</details>
 
 </br>
 
@@ -541,6 +555,21 @@ ApiLogicServer create --project-name=samples/nw_sample_nocust --db-url=nw
 
 
 </details>
+
+&nbsp;
+
+## Explore WebGenAI
+
+In addition to the CLI examples above, you can use [WebGenAI](https://apilogicserver.github.io/Docs/WebGenAI/) - a web interface for creating projects from prompts.  You can install WebGenAI on a server, so that created projects are easy to review with colleagues.
+
+To try WebGenAI:
+
+```bash
+cd webgenai
+docker compose up
+```
+
+You will be directed to the registration process.  You will also require a ChatGPT API Key as described above.
 
 &nbsp;
 
