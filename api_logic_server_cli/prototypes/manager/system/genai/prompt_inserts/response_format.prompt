@@ -17,16 +17,17 @@ class TestDataRow(BaseModel):
     test_data_row_variable: str  # the Python test data row variable
     code: str  # Python code to create a test data row instance
 
-class Graph(BaseModel):
-    sqlalchemy_query: str  # sqlalchemy group by result = { "result": [ ("name", "value)  ] }
-    name: str  # suggested name for sqlalchemy_query
+class Graphic(BaseModel):
+    sqlalchemy_query: str  # sqlalchemy query using group by, returns result = { "result": [ ("name", "value")  ] }
+    tables_used: str # comma-delimited list of tables used in sqlalchemy_query
+    name: str  # suggested Python name for sqlalchemy_query
     html_code: str # create a java script app to show a bar chart from sqlalchemy_query result
 
 class WGResult(BaseModel):  # must match system/genai/prompt_inserts/response_format.prompt
     # response: str # result
     models : List[Model] # list of sqlalchemy classes in the response
     rules : List[Rule] # list rule declarations
-    graphs: List[Graph] # list of graphs
+    graphics: List[Graphic] # list of Graphic objects
     test_data: str
     test_data_rows: List[TestDataRow]  # list of test data rows
     test_data_sqlite: str # test data as sqlite INSERT statements

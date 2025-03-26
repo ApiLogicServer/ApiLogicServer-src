@@ -20,78 +20,107 @@ from pydantic import BaseModel
 from dotmap import DotMap
 from natsort import natsorted
 import glob
+import create_from_model.api_logic_server_utils as create_utils
 
 K_data_model_prompt = "Use SQLAlchemy to create"
 
 log = logging.getLogger(__name__)
 
-class GenAILogic(object):
+class GenAIGraphics(object):
     """ 
-        Called by cli for *existing* project (must be wg project with docs models)
-        
-        * **Create logic** from *logic files* eg `<project>/docs/logic/check_credit.prompt`
+    Adds Graphics to **existing** projects (genai project or als project):
+    * adds api/discovery file(s) to project
+    * adds html to `home.js`
 
-            * creates `logic/discovery/check_credit.py` with logic from ChatGPT response 
-\b          
-        * Or **Suggest logic** for current project (as defined in the `docs` directory)
-            ```
-            cd genai_demo_no_logic
-            als genai-logic --suggest
-           ```
-\b                
-        * Or, **Suggest Python code for a line of logic** (eg, manually entered into WebG) 
-            ```
-            cd genai_demo_no_logic
-            als genai-logic --suggest --logic="balance is the sum of unpaid orders"
-            ```
-            \tSaved: `docs/logic_suggestions.response`
+    Invoked from:
+    * CLI/genai-graphics using *docs/graphics* eg `<project>/docs/graphics/sales_by_month.prompt`
+        * --using`  ==> Need to call ChatGPT to get WGResponse.graphics with --using files   
+    * GenAI for newly created project (e,g, mgr system/genai/examples/genai_demo/genai_demo.prompt)
+        * `--using` is None ==> Docs folder already has WGResponse.graphics[]      
+    * GenAI as a special iteration on an existing wg project - TBD: in-place (do not create new project)
+
+    **Issue:** what is the persistence model for graphics?  (eg, in docs/graphics, or docs/response.json, wg database??)
+    * if existing wg project, is docs/response.json updated?
     """
 
-    def __init__(self, project: Project, using: str, genai_version: str, retries: int, suggest: bool, logic: str):
+    def __init__(self, project: Project, using: str, genai_version: str):
         """ 
-        Add logic to existing projects - [see docs](https://apilogicserver.github.io/Docs/WebGenAI-CLI/#add-logic-to-existing-projects)
+        Add graphics to existing projects - [see docs](https://apilogicserver.github.io/Docs/WebGenAI-CLI/#add-graphics-to-existing-projects)
 
         see key_module_map() for key methods
 
         """        
 
         self.project = project
-        logic_from = self.project.genai_using if self.project.genai_using else "<docs/logic/*.prompt>"
-        log.info(f'\nGenAILogic [{self.project.project_name}] adding logic from: {logic_from}')
         
         self.project.genai_using = using
-        self.project.from_model = f'system/genai/temp/create_db_models.py' # we always write the model to this file
-        self.prompt = ""
-        """ `--using` - can come from file or text argument """
+        # self.project.from_model = f'system/genai/temp/create_db_models.py' # we always write the model to this file
 
-        self.messages = self.get_learnings_and_data_model()  # learnings and data model
-        self.messages_length = len(self.messages)
-        self.file_number = 0
-        self.file_name_prefix = ""
-        self.logic = logic
-        """ WebG user has entered logic, we need to get the rule(s) """
-
-        if suggest:
-            self.suggest_logic()                  # suggest logic for prompt, or see logic code
-        else:
-            self.process_logic_files()            # process logic files (eg, from docs/logic/*.prompt)
+        if using is None:           # newly created project - use docs/response.json
+            graphics_response_path = self.project.project_directory_path
+            self.process_graphics_response(graphics_response_path)
+        else:                       # existing project - use graphics files
+            self.messages = self.get_learnings_and_data_model()  # learnings and data model
+            self.messages_length = len(self.messages)
+            self.file_number = 0
+            self.file_name_prefix = ""
+            self.process_graphics_files()         
         pass
 
-    def get_logic_files(self) -> List[str]:
-        """ Get logic files (typically from project)
+    def process_graphics_response(self, graphics_response_path: Path):
+        """ Process graphics response from ChatGPT """
+        pass
+        # open and read the graphics_response_path json file
+        assert graphics_response_path.exists(), f'Graphics response file not found: {graphics_response_path}'
+        with open(graphics_response_path.joinpath('docs/response.json'), 'r') as file:
+            graphics_response = json.load(file)
+            log.info(f'Graphics response loaded from {graphics_response_path}')
+        graphics = graphics_response['graphics']
+        for each_graphic in graphics:  # add each service to api/api_discovery
+            service_file_name = each_graphic['name']
+            service_file_path = self.project.project_directory_path.joinpath(f'api/api_discovery/{service_file_name}.py')
+            template_service_path = Path(self.manager_path.joinpath('system/genai/graphics_templates/service_template.py'))
+            # copy the template service file to the service file path
+            shutil.copy(template_service_path, service_file_path)
+            create_utils.replace_string_in_file(in_file=service_file_path, 
+                                  search_for='{{service_name}}', 
+                                  replace_with=service_file_name)
+            create_utils.replace_string_in_file(in_file=service_file_path, 
+                                  search_for='{{sqlalchemy_query}}', 
+                                  replace_with=each_graphic['sqlalchemy_query'])
+            create_utils.replace_string_in_file(in_file=service_file_path, 
+                                  search_for='{{tables_used}}', 
+                                  replace_with=each_graphic['tables_used'])
+
+            html_file_path = self.project.project_directory_path.joinpath(f'api/api_discovery/{service_file_name}.html')
+            template_service_path = Path(self.manager_path.joinpath('system/genai/graphics_templates/html_template.html'))
+            # copy the template service file to the service file path
+            shutil.copy(template_service_path, html_file_path)
+            create_utils.replace_string_in_file(in_file=html_file_path, 
+                                  search_for='{{service_name}}', 
+                                  replace_with=service_file_name)
+
+            log.info(f'.. added service: {service_file_name} to api_discovery')
+
+
+
+        pass
+
+    def get_graphics_files(self) -> List[str]:
+        """ Get graphics files (typically from project)
 
         Returns:
             list: logic_files
         """
 
-        logic_files = []
+        graphics_files = []
         if Path(self.project.genai_using).is_dir():  # conversation from directory
             for each_file in sorted(Path(self.project.genai_using).iterdir()):
                 if each_file.is_file() and each_file.suffix == '.prompt':
-                    logic_files.append(each_file)
+                    graphics_files.append(each_file)
         else:                                   # prompt from text (add system/genai/pre_post.prompt)
-            logic_files.append(self.project.genai_using)
-        return logic_files
+            graphics_files.append(self.project.genai_using)
+        return graphics_files
     
     def get_learning_requests(self) -> List [ Dict[str, str]]:
         """ Get learning requests from cwd/system/genai/learning_requests
