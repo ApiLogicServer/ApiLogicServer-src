@@ -1,7 +1,9 @@
 {
     "python.terminal.activateEnvironment": true,
     "python.terminal.activateEnvInCurrentTerminal": true,
- 
+    "python.linting.ignorePatterns": [
+        "**/*.jinja"
+    ],
     "terminal.integrated.env.osx": 
         {
             "PYTHONPATH": "/Users/val/dev/safrx"

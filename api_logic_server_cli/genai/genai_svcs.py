@@ -44,7 +44,7 @@ class Model(BaseModel):
 
 class Graph(BaseModel):
     sqlalchemy_query: str  # sqlalchemy group by result = { "result": [ ("name", "value)  ] }
-    tables_used: str # comma-delimited list of tables used in sqlalchemy_query
+    classes_used: str # comma-delimited list of classes used in sqlalchemy_query
     name: str  # suggested Python name for sqlalchemy_query
     html_code: str # create a java script app to show a bar chart from sqlalchemy_query result
 
