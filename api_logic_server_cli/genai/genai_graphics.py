@@ -33,11 +33,12 @@ class GenAIGraphics(object):
     * adds html to `home.js`
 
     Invoked from:
-    * CLI/genai-graphics using *docs/graphics* eg `<project>/docs/graphics/sales_by_month.prompt`
+    1. CLI/genai-graphics existing project, using *docs/graphics* eg `<project>/docs/graphics/sales_by_month.prompt`
         * --using`  ==> Need to call ChatGPT to get WGResponse.graphics with --using files   
-    * GenAI for newly created project (e,g, mgr system/genai/examples/genai_demo/genai_demo.prompt)
+        * note: dbml not rebuilt after rebuild-from-db
+    2. GenAI for newly created project (e,g, mgr system/genai/examples/genai_demo/genai_demo.prompt)
         * `--using` is None ==> Docs folder already has WGResponse.graphics[]      
-    * GenAI as a special iteration on an existing wg project - TBD: in-place (do not create new project)
+    3. GenAI as a special iteration on an existing wg project - TBD: in-place (do not create new project)
 
     **Issue:** what is the persistence model for graphics?  (eg, in docs/graphics, or docs/response.json, wg database??)
     * if existing wg project, is docs/response.json updated?
@@ -79,7 +80,7 @@ class GenAIGraphics(object):
         for each_graphic in graphics:  # add each service to api/api_discovery
             service_file_name = each_graphic['name']
             service_file_path = self.project.project_directory_path.joinpath(f'api/api_discovery/{service_file_name}.py')
-            template_service_path = Path(self.manager_path.joinpath('system/genai/graphics_templates/service_template.py'))
+            template_service_path = Path(self.manager_path.joinpath('system/genai/graphics_templates/service_template.jinja'))
             # copy the template service file to the service file path
             shutil.copy(template_service_path, service_file_path)
             create_utils.replace_string_in_file(in_file=service_file_path, 
@@ -89,11 +90,11 @@ class GenAIGraphics(object):
                                   search_for='{{sqlalchemy_query}}', 
                                   replace_with=each_graphic['sqlalchemy_query'])
             create_utils.replace_string_in_file(in_file=service_file_path, 
-                                  search_for='{{tables_used}}', 
-                                  replace_with=each_graphic['tables_used'])
+                                  search_for='{{classes_used}}', 
+                                  replace_with=each_graphic['classes_used'])
 
             html_file_path = self.project.project_directory_path.joinpath(f'api/api_discovery/{service_file_name}.html')
-            template_service_path = Path(self.manager_path.joinpath('system/genai/graphics_templates/html_template.html'))
+            template_service_path = Path(self.manager_path.joinpath('system/genai/graphics_templates/html_template.jinja'))
             # copy the template service file to the service file path
             shutil.copy(template_service_path, html_file_path)
             create_utils.replace_string_in_file(in_file=html_file_path, 
