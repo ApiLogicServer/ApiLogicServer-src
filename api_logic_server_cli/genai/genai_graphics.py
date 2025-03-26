@@ -21,6 +21,8 @@ from dotmap import DotMap
 from natsort import natsorted
 import glob
 import create_from_model.api_logic_server_utils as create_utils
+from jinja2 import Environment, FileSystemLoader
+
 
 K_data_model_prompt = "Use SQLAlchemy to create"
 
@@ -29,16 +31,17 @@ log = logging.getLogger(__name__)
 class GenAIGraphics(object):
     """ 
     Adds Graphics to **existing** projects (genai project or als project):
-    * adds api/discovery file(s) to project
-    * adds html to `home.js`
+    * adds `api/api_discovery` file(s) to project
+    * adds html to `home.js` (?  currently just creating a 1-off in api/api_discovery)
 
     Invoked from:
-    1. CLI/genai-graphics existing project, using *docs/graphics* eg `<project>/docs/graphics/sales_by_month.prompt`
-        * --using`  ==> Need to call ChatGPT to get WGResponse.graphics with --using files   
-        * note: dbml not rebuilt after rebuild-from-db
-    2. GenAI for newly created project (e,g, mgr system/genai/examples/genai_demo/genai_demo.prompt)
+    1. **New GenAI Project:** for newly created project (e,g, mgr system/genai/examples/genai_demo/genai_demo.prompt)
         * `--using` is None ==> Docs folder already has WGResponse.graphics[]      
-    3. GenAI as a special iteration on an existing wg project - TBD: in-place (do not create new project)
+    2. **Existing Project:** CLI/genai-graphics existing project, using *docs/graphics* eg 
+        * `--using`  ==> Call ChatGPT for WGResponse.graphics `<project>/docs/graphics/*.prompt`  
+        * note: dbml not rebuilt after rebuild-from-db
+    3. **Existing WG Project:** in-place (do not create new project with new test data)
+        *  Same as #1, but requires WG UI change ('in place', 'graphics' button, ...) to use genai_graphics cmd
 
     **Issue:** what is the persistence model for graphics?  (eg, in docs/graphics, or docs/response.json, wg database??)
     * if existing wg project, is docs/response.json updated?
@@ -78,33 +81,19 @@ class GenAIGraphics(object):
             log.info(f'Graphics response loaded from {graphics_response_path}')
         graphics = graphics_response['graphics']
         for each_graphic in graphics:  # add each service to api/api_discovery
-            service_file_name = each_graphic['name']
-            service_file_path = self.project.project_directory_path.joinpath(f'api/api_discovery/{service_file_name}.py')
-            template_service_path = Path(self.manager_path.joinpath('system/genai/graphics_templates/service_template.jinja'))
-            # copy the template service file to the service file path
-            shutil.copy(template_service_path, service_file_path)
-            create_utils.replace_string_in_file(in_file=service_file_path, 
-                                  search_for='{{service_name}}', 
-                                  replace_with=service_file_name)
-            create_utils.replace_string_in_file(in_file=service_file_path, 
-                                  search_for='{{sqlalchemy_query}}', 
-                                  replace_with=each_graphic['sqlalchemy_query'])
-            create_utils.replace_string_in_file(in_file=service_file_path, 
-                                  search_for='{{classes_used}}', 
-                                  replace_with=each_graphic['classes_used'])
+            env = Environment(loader=FileSystemLoader(self.manager_path.joinpath('system/genai/graphics_templates')))
 
-            html_file_path = self.project.project_directory_path.joinpath(f'api/api_discovery/{service_file_name}.html')
-            template_service_path = Path(self.manager_path.joinpath('system/genai/graphics_templates/html_template.jinja'))
-            # copy the template service file to the service file path
-            shutil.copy(template_service_path, html_file_path)
-            create_utils.replace_string_in_file(in_file=html_file_path, 
-                                  search_for='{{service_name}}', 
-                                  replace_with=service_file_name)
+            template = env.get_template('service_template.jinja')
+            rendered_result = template.render( **each_graphic )
+            with open(self.project.project_directory_path.joinpath(f'api/api_discovery/{each_graphic['name']}.py'), 'w') as out_file:
+                out_file.write(rendered_result)
 
-            log.info(f'.. added service: {service_file_name} to api_discovery')
+            template = env.get_template('html_template.jinja')
+            rendered_result = template.render( **each_graphic )
+            with open(self.project.project_directory_path.joinpath(f'api/api_discovery/{each_graphic['name']}.html'), 'w') as out_file:
+                out_file.write(rendered_result)
 
-
-
+            log.info(f'.. added service: {each_graphic['name']} to api_discovery')
         pass
 
     def get_graphics_files(self) -> List[str]:

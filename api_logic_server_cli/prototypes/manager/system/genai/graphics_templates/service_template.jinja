@@ -10,15 +10,15 @@ app_logger = logging.getLogger("api_logic_server_app")
 def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_decorators = []):
     pass
 
-    @app.route('/{{service_name}}')
-    def {{service_name}}():
+    @app.route('/{{name}}')
+    def {{name}}():
         """        
         Illustrates:
         * Complex query with multiple joins
 
         Test it with:
         
-                curl -X GET "http://localhost:5656/{{service_name}}"
+                curl -X GET "http://localhost:5656/{{name}}"
         
         """
         db = safrs.DB
