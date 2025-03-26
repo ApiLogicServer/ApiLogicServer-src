@@ -10,7 +10,7 @@
     <canvas id="myChart" width="400" height="200"></canvas>
     <script>
         // Input data
-        fetch('http://localhost:5656/{{service_name}}')
+        fetch('http://localhost:5656/{{name}}')
             .then(response => response.json())
             .then(result => {
             const labels = [];
