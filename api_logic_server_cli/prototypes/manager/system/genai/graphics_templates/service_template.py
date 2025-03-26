@@ -1,0 +1,33 @@
+from flask import request, jsonify
+import logging
+import safrs
+from sqlalchemy.orm import aliased
+from sqlalchemy import extract, func
+from database.models import {{tables_used}}
+
+app_logger = logging.getLogger("api_logic_server_app")
+
+def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_decorators = []):
+    pass
+
+    @app.route('/{{service_name}}')
+    def {{service_name}}():
+        """        
+        Illustrates:
+        * Complex query with multiple joins
+
+        Test it with:
+        
+                curl -X GET "http://localhost:5656/{{service_name}}"
+        
+        """
+        db = safrs.DB
+        session = db.session    # sqlalchemy.orm.scoping.scoped_session
+        # Security.set_user_sa()  # an endpoint that requires no auth header (see also @bypass_security)
+
+        # SQLAlchemy query
+        query = {{sqlalchemy_query}}
+
+        # Execute query and fetch results
+        results = query.all()
+        return jsonify( { "result": results } )

@@ -645,8 +645,21 @@
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "args": ["genai",
-            "--repaired-response=${workspaceFolder}/../../build_and_test/ApiLogicServer/system/genai/examples/genai_demo/genai_demo.response_example",
-            "--project-name=genai_demo_"],
+                "--retries=-1",
+                "--repaired-response=${workspaceFolder}/../../build_and_test/ApiLogicServer/system/genai/examples/genai_demo/genai_demo.response_example",
+                "--project-name=genai_demo_repaired"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "    - Add Graphics to basic_demo",
+// test adding graphics to non-genai project
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer/basic_demo",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["genai-graphics" ],
             "console": "integratedTerminal"
         },
         {

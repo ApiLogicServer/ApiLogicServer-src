@@ -27,6 +27,7 @@ from api_logic_server_cli.genai.genai_svcs import K_LogicBankOff
 from api_logic_server_cli.genai.genai_svcs import K_LogicBankTraining
 from api_logic_server_cli.genai.genai_svcs import fix_and_write_model_file as fix_and_write_model_file_svcs
 import api_logic_server_cli.genai.genai_svcs as genai_svcs
+from api_logic_server_cli.genai.genai_graphics import GenAIGraphics
 
 log = logging.getLogger(__name__)
 
@@ -575,7 +576,7 @@ class GenAI(object):
         except:  # intentional try/catch/bury - it's just docs, so don't fail
             import traceback
             log.error(f"\n\nERROR creating genai project docs: {docs_dir}\n\n{traceback.format_exc()}")
-        pass
+        genai_graphics = GenAIGraphics(project=self.project, using=None, genai_version=self.project.genai_version)
 
     def save_prompt_messages_to_system_genai_temp_project(self):
         """
