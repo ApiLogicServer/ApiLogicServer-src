@@ -103,12 +103,16 @@ class GenAIGraphics(object):
             with open(self.project.project_directory_path.joinpath(f'api/api_discovery/{each_graphic['name']}.html'), 'w') as out_file:
                 out_file.write(rendered_result)
 
+            with open(self.project.project_directory_path.joinpath(f'api/api_discovery/{each_graphic['name']}.sql'), 'w') as out_file:
+                out_file.write(each_graphic['sql_query'])
+
             log.info(f'.. added service: {each_graphic['name']} to api_discovery')
         pass
 
     def fix_sqlalchemy_query(self, graphic: Dict):
         """ Fix the SQLAlchemy query for the graphic """
         graphic['sqlalchemy_query'] = graphic['sqlalchemy_query'].replace('\\n', '\n')
+        graphic['sqlalchemy_query'] = graphic['sqlalchemy_query'].replace('\"', '"')
         pass
 
 
