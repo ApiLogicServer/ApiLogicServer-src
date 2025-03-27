@@ -19,6 +19,7 @@ class TestDataRow(BaseModel):
 
 class Graphic(BaseModel):
     sqlalchemy_query: str  # sqlalchemy query using group by, returns result = { "result": [ ("name", "value")  ] }
+    sql_query: str  # sql query using group by, returns result = { "result": [ ("name", "value")  ] }
     classes_used: str # comma-delimited list of classes used in sqlalchemy_query
     name: str  # suggested Python name for sqlalchemy_query
     html_code: str # create a java script app to show a bar chart from sqlalchemy_query result
