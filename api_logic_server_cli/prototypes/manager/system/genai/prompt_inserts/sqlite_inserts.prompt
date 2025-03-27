@@ -6,4 +6,6 @@ Requirements:
 
 {{% include 'sqlite_inserts_model_test_hints.prompt' % }}
 
+{{% include 'graphics.prompt' % }}
+
 {{% include 'response_format.prompt' % }}

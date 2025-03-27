@@ -771,7 +771,7 @@ def genai_graphics(ctx, using, genai_version: str):
         log.info(f'... Typical usage - cd into project, use --project_name=. \n')
         exit (1)
     from api_logic_server_cli.genai.genai_graphics import GenAIGraphics
-    GenAIGraphics(using=using, project=project, genai_version=genai_version)
+    genai_graphics = GenAIGraphics(using=using, project=project, genai_version=genai_version)
     pass
     log.info("")
 

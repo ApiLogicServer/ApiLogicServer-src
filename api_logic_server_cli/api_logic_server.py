@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "14.03.22"
+__version__ = "14.03.23"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t03/25/2024 - 14.03.22: Create services for group by queries (new genai projects only) \n"\
+    "\t03/26/2024 - 14.03.23: Create services for group by queries (new and existing projects) \n"\
     "\t03/23/2024 - 14.03.21: Internal - simple mgr docker compose & exp docker, print als v#, compose cmt on start in bash \n"\
     "\t03/19/2024 - 14.03.20: licensed webgenai docker, [87] sra fix for home.js \n"\
     "\t02/26/2024 - 14.03.14: [85: reserved words], genai_demo fixes \n"\

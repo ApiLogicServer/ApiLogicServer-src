@@ -30,21 +30,3 @@ and do not generate db.execute statements.
 * Do not print the test data. 
 * Use double quotes " for strings.
 * For test data, format dates as date(year, month, day).
-
-Create WGResult Graphics for prompts like 'graph sales by region'.
-    * use 'sales by region' to create a WGResult Graphic.sqlalchemy_query
-    * Be sure to use class names, not table names
-    * for example, using Northwind:
-        # SQLAlchemy query for Sales by Category
-        sales_by_category = (
-            session.query(
-                category.CategoryName,
-                func.sum(order_detail.Quantity * order_detail.UnitPrice * (1 - order_detail.Discount)).label("TotalSales")
-            )
-            .join(product, category.Id == product.CategoryId)
-            .join(order_detail, product.Id == order_detail.ProductId)
-            .join(order, order_detail.OrderId == order.Id)
-            .filter(order.ShippedDate.isnot(None))  # Consider only shipped orders
-            .group_by(category.CategoryName)
-            .order_by(func.sum(order_detail.Quantity * order_detail.UnitPrice * (1 - order_detail.Discount)).desc())
-        )
