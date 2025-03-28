@@ -61,27 +61,34 @@ class GenAIGraphics(object):
 
         if using is None:           # New GenAI Project: use docs/response.json
             graphics_response_path = self.project.project_directory_path.joinpath('docs/response.json')
-        else:                       # Existing (any) Project - use graphics files  
-            prompt = genai_svcs.read_and_expand_prompt(self.manager_path.joinpath('system/genai/prompt_inserts/graphics_request.prompt'))
-            prompt_lines = prompt.split('\n')                   # ChatGPT instructions
-            prompt_lines.extend(self.append_data_model())       # add data model
-            prompt_lines.extend(self.append_graphics_files())   # and the users's requests from graphics files
-            prompt_str = "\n".join(prompt_lines)
-            
-            prompt_messages : List[ Dict[str, str] ] = []  # prompt/response conversation to be sent to ChatGPT
-            prompt = genai_svcs.get_prompt_you_are()
-            prompt["content"] = prompt_str
-            prompt_messages.append( prompt )
-            genai_svcs.call_chatgpt(messages = prompt_messages, 
-                                    using = self.project.project_directory_path.joinpath('docs/graphics'),
-                                    api_version=genai_version)
+        else:                       # Existing (any) Project - use graphics files  -> ChatGPT
             graphics_response_path = self.project.project_directory_path.joinpath('docs/graphics/response.json')
+            if bypass_for_debug := False:
+                pass
+            else:
+                prompt = genai_svcs.read_and_expand_prompt(self.manager_path.joinpath('system/genai/prompt_inserts/graphics_request.prompt'))
+                prompt_lines = prompt.split('\n')                   # ChatGPT instructions
+                prompt_lines.extend(self.append_data_model())       # add data model
+                prompt_lines.extend(self.append_graphics_files())   # and the users's requests from graphics files
+                prompt_str = "\n".join(prompt_lines)
+                
+                prompt_messages : List[ Dict[str, str] ] = []  # prompt/response conversation to be sent to ChatGPT
+                prompt = genai_svcs.get_prompt_you_are()
+                prompt["content"] = prompt_str
+                prompt_messages.append( prompt )
+                genai_svcs.call_chatgpt(messages = prompt_messages, 
+                                        using = self.project.project_directory_path.joinpath('docs/graphics'),
+                                        api_version=genai_version)
 
         self.process_graphics_response(graphics_response_path)
         pass
 
     def process_graphics_response(self, graphics_response_path: Path):
         """ Process graphics response from ChatGPT graphics_response_path """
+
+        graphic_services_header_path = self.manager_path.joinpath('system/genai/graphics_templates/graphics_services.py')
+        graphics_services_path = self.project.project_directory_path.joinpath('api/api_discovery/graphics_services.py')
+        shutil.copy(graphic_services_header_path, graphics_services_path)
 
         # open and read the graphics_response_path json file
         assert graphics_response_path.exists(), f'Graphics response file not found: {graphics_response_path}'
@@ -93,9 +100,9 @@ class GenAIGraphics(object):
             self.fix_sqlalchemy_query(each_graphic)
             env = Environment(loader=FileSystemLoader(self.manager_path.joinpath('system/genai/graphics_templates')))
 
-            template = env.get_template('service_template.jinja')
+            template = env.get_template('service_template_jsonapi_rpc.jinja')
             rendered_result = template.render( **each_graphic )
-            with open(self.project.project_directory_path.joinpath(f'api/api_discovery/{each_graphic['name']}.py'), 'w') as out_file:
+            with open(self.project.project_directory_path.joinpath(f'api/api_discovery/graphics_services.py'), 'a') as out_file:
                 out_file.write(rendered_result)
 
             template = env.get_template('html_template.jinja')

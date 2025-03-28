@@ -10,7 +10,7 @@
     <canvas id="myChart" width="400" height="200"></canvas>
     <script>
         // Input data
-        fetch('http://localhost:5656/{{name}}')
+        fetch('http://localhost:5656/api/GraphicsServices/{{name}}')
             .then(response => response.json())
             .then(result => {
             const labels = [];
@@ -18,8 +18,8 @@
             result.result.forEach(item => {
                 const match = item.match(/\('(.+)', Decimal\('([\d.]+)'\)\)/);
                 if (match) {
-                labels.push(match[1]);
-                data.push(parseFloat(match[2]));
+                    labels.push(match[1]);
+                    data.push(parseFloat(match[2]));
                 }
             });
 
@@ -47,19 +47,6 @@
             });
             })
             .catch(error => console.error('Error fetching data:', error));
-
-        const result = {
-            "result": [
-                "('Beverages', Decimal('262288.9800000000'))",
-                "('Dairy Products', Decimal('230535.1650000000'))",
-                "('Confections', Decimal('164672.0520000000'))",
-                "('Meat/Poultry', Decimal('162132.2095000000'))",
-                "('Seafood', Decimal('129548.6375000000'))",
-                "('Condiments', Decimal('105047.1850000000'))",
-                "('Produce', Decimal('93117.7975000000'))",
-                "('Grains/Cereals', Decimal('90779.5825000000'))"
-            ]
-        };
 
         // Parse the input data
         const labels = [];
