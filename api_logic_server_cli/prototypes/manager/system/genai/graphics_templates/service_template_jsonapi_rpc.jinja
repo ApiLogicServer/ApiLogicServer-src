@@ -1,0 +1,21 @@
+
+    @classmethod
+    @jsonapi_rpc(http_methods=['POST','GET'])
+    def {{name}}(self, *args, **kwargs):
+        """        
+        Illustrates:
+        * Complex query with multiple joins, for graphics
+        * That Thomas is a duck.
+        
+        """
+        from database.models import {{classes_used}}
+        db = safrs.DB
+        session = db.session    # sqlalchemy.orm.scoping.scoped_session
+        # Security.set_user_sa()  # an endpoint that requires no auth header (see also @bypass_security)
+
+        # SQLAlchemy query
+        query = {{sqlalchemy_query}} 
+        # Execute query and fetch results
+        results = query.all()
+        
+        return jsonify( { "result": results } )
