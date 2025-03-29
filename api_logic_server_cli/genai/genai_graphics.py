@@ -43,8 +43,15 @@ class GenAIGraphics(object):
     3. **Existing WG Project:** in-place (do not create new project with new test data)
         *  Same as #1, but requires WG UI change ('in place', 'graphics' button, ...) to use genai_graphics cmd
 
+
     **Issue:** what is the persistence model for graphics?  (eg, in docs/graphics, or docs/response.json, wg database??)
     * if existing wg project, is docs/response.json updated?
+
+    Open Issues
+    * How to integrate with als/wg home.js?
+    * How to enforce licensing?
+    * How to choose graph vs chart?
+    
     """
 
     def __init__(self, project: Project, using: str, genai_version: str):
