@@ -78,7 +78,7 @@ class Authentication_Provider(Abstract_Authentication_Provider):
         from flask import jsonify, request
         from config.config import Args  # circular import error if at top
         
-        jwks_uri = Args.instance.keycloak_base + '/protocol/openid-connect/certs'
+        jwks_uri = Args.instance.keycloak_base_url + '/protocol/openid-connect/certs'
         for i in range(100):
             # we retry a couple of times in case there are connection problems
             try:

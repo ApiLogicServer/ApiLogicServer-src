@@ -10,7 +10,7 @@ app_logger = logging.getLogger("api_logic_server_app")
 def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_decorators = []):
     pass
 
-    @app.route('/{{name}}')
+    @app.route('/{{name}}, methods=["GET","OPTIONS"]')
     def {{name}}():
         """        
         Illustrates:
@@ -21,13 +21,37 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                 curl -X GET "http://localhost:5656/{{name}}"
         
         """
+        if request.method == 'OPTIONS':
+            return jsonify({ "result": "ok" })
+
         db = safrs.DB
         session = db.session    # sqlalchemy.orm.scoping.scoped_session
         # Security.set_user_sa()  # an endpoint that requires no auth header (see also @bypass_security)
 
         # SQLAlchemy query
         query = {{sqlalchemy_query}}
-
-        # Execute query and fetch results
-        results = query.all()
-        return jsonify( { "result": results } )
+        from decimal import Decimal
+        columns = ['RegionDescription', 'TotalSales']  # {{ xAxis }} {{ yAxis }}
+        results = [{columns[0]: row[0], columns[1]: str(Decimal(row[1]).quantize(Decimal('0.01')))} for row in results]
+        title = "Sales by Region" # {{ title }}
+        chart_type = 'bar' # {{ chart_type }}
+        json_results = {
+            "results": results,
+            "columns": columns,
+            "title": title,
+            "chart_type": "bar",
+            "xAxis": columns[0],
+            "yAxis": columns[1],
+        }
+        
+        results = GraphicsServices.{{ name }}()
+        # Render the HTML template with the results
+        # Ensure the template is located in the "templates" directory relative to the project root.
+        from jinja2 import Environment, FileSystemLoader
+        from flask import Response
+        env = Environment(loader = FileSystemLoader('templates')) # create a templates folder in root path and add jinja files
+        template = env.get_template('{{ name }}.jinja')
+        output = template.render(result=results)
+        print(output)
+    
+        return output
