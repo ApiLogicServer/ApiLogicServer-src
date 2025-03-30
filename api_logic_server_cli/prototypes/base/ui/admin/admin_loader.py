@@ -140,7 +140,7 @@ def admin_events(flask_app: Flask, args: Args, validation_error: ValidationError
                 if "keycloak" in provider_name:
                     s = (f'\n'
                         f'  keycloak:\n'
-                        f'    url: {args.keycloak_base_url}\n'
+                        f'    url: {args.keycloak_base}\n'
                         f'    realm: {args.keycloak_realm}\n'
                         f'    clientId: {args.keycloak_client_id}\n'
                     )   
@@ -148,6 +148,8 @@ def admin_events(flask_app: Flask, args: Args, validation_error: ValidationError
                 elif "sql" in provider_name:
                     sql_auth_config = f'\n  endpoint: {args.http_scheme}://{args.swagger_host}:{args.swagger_port}/{args.api_prefix[1:]}/auth/login\n'
                     content = content.replace("'{system-default}'", sql_auth_config)
+                elif getattr(Config.SECURITY_PROVIDER, 'auth_config', None):
+                    content = content.replace("'{system-default}'", Config.SECURITY_PROVIDER.auth_config)
                 else:
                     sys.exit(f"ERROR[admin_loader]: unknown security type: {Config.SECURITY_PROVIDER}")         
 

@@ -116,15 +116,16 @@ class Config:
     # als add-auth --provider-type=sql --db-url=
     # als add-auth --provider-type=keycloak --db-url=localhost
     # als add-auth --provider-type=keycloak --db-url=http://10.0.0.77:8080
-    kc_base = 'http://localhost:8080'  # e.g., 'http://localhost:8080'
+    kc_base = os.getenv('KEYCLOAK_BASE','https://localhost:8080')
+    #kc_base = 'http://localhost:8080'
     ''' keycloak location '''
-    KEYCLOAK_REALM =  'kcals'
-    KEYCLOAK_BASE = f'{kc_base}/realms/{KEYCLOAK_REALM}'
-    KEYCLOAK_BASE_URL = f'{kc_base}'
-    KEYCLOAK_CLIENT_ID = 'alsclient'
+    KEYCLOAK_REALM =  os.getenv('KEYCLOAK_REALM','kcals')
+    KEYCLOAK_BASE = os.getenv('KEYCLOAK_BASE',f'{kc_base}')
+    KEYCLOAK_BASE_URL = os.getenv('KEYCLOAK_BASE_URL',f'{kc_base}/realms/{KEYCLOAK_REALM}')
+    KEYCLOAK_CLIENT_ID = os.getenv('KEYCLOAK_CLIENT_ID','alsclient')
     ''' keycloak client id '''
 
-    SECURITY_ENABLED = False  # disables security (regardless of SECURITY_PROVIDER)
+    SECURITY_ENABLED = os.getenv("SECURITY_ENABLED",False)
     SECURITY_PROVIDER = None
     if os.getenv('SECURITY_ENABLED'):  # e.g. export SECURITY_ENABLED=true
         security_export = os.getenv('SECURITY_ENABLED')  # type: ignore # type: str
@@ -141,6 +142,8 @@ class Config:
         app_logger.debug(f'config.py - security enabled')
     else:
         app_logger.info(f'config.py - security disabled')
+	
+    app_logger.info(f'SECURITY_PROVIDER={SECURITY_PROVIDER}')
 
     # Begin Multi-Database URLs (from ApiLogicServer add-db...)
     auth_db_path = str(project_path.joinpath('database/authentication_db.sqlite'))
@@ -164,11 +167,22 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     PROPAGATE_EXCEPTIONS = False
 
-    KAFKA_PRODUCER = '{"bootstrap.servers": "localhost:9092"}'  #  , "client.id": "aaa.b.c.d"}'
-    KAFKA_PRODUCER = None  # comment out to enable Kafka producer
-    KAFKA_CONSUMER = '{"bootstrap.servers": "localhost:9092", "group.id": "als-default-group1"}'
-    KAFKA_CONSUMER = None  # comment out to enable Kafka consumer
-
+    KAFKA_PRODUCER = None
+    KAFKA_CONSUMER = None
+    KAFKA_CONSUMER_GROUP = None
+    KAFKA_SERVER = None
+    #KAFKA_SERVER = os.getenv('KAFKA_SERVER','localhost:9092') # if running locally default
+    if KAFKA_SERVER:
+        app_logger.info(f'config.py - KAFKA_SERVER: {KAFKA_SERVER}')
+        KAFKA_PRODUCER = os.getenv('KAFKA_PRODUCER',{"bootstrap.servers": f"{KAFKA_SERVER}"})  #  , "client.id": "aaa.b.c.d"}'
+        KAFKA_CONSUMER_GROUP = os.getenv('KAFKA_CONSUMER_GROUP','als-default-group1')
+        KAFKA_CONSUMER =  os.getenv('KAFKA_CONSUMER', {"bootstrap.servers": f"{KAFKA_SERVER}", "group.id": f"{KAFKA_CONSUMER_GROUP}", "enable.auto.commit": "false", "auto.offset.reset": "earliest"})
+    else:
+        app_logger.info(f'config.py - KAFKA_SERVER: {KAFKA_SERVER} - not set, no kafka producer/consumer')
+    print(f'config.py - KAFKA_PRODUCER: {KAFKA_PRODUCER}')
+    print(f'config.py - KAFKA_CONSUMER: {KAFKA_CONSUMER}')
+    print(f'config.py - KAFKA_CONSUMER_GROUP: {KAFKA_CONSUMER_GROUP}')
+    print(f'config.py - KAFKA_SERVER: {KAFKA_SERVER}')
     # N8N Webhook Args (for testing)
 	# see https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.webhook/?utm_source=n8n_app&utm_medium=node_settings_modal-credential_link&utm_campaign=n8n-nodes-base.webhook#path
     wh_scheme = "http"
@@ -245,6 +259,7 @@ class Args():
         self.http_scheme = Config.CREATED_HTTP_SCHEME
         self.kafka_producer = Config.KAFKA_PRODUCER
         self.kafka_consumer = Config.KAFKA_CONSUMER
+        self.kafka_consumer_group = Config.KAFKA_CONSUMER_GROUP
         self.n8n_producer = Config.N8N_PRODUCER
         self.keycloak_base = Config.KEYCLOAK_BASE
         self.keycloak_realm = Config.KEYCLOAK_REALM
@@ -463,14 +478,11 @@ class Args():
     @property
     def kafka_producer(self) -> dict:
         """ kafka connect string """
-        if "KAFKA_PRODUCER" in self.flask_app.config:
-            if self.flask_app.config["KAFKA_PRODUCER"] is not None:
-                value = self.flask_app.config["KAFKA_PRODUCER"]
-                if isinstance(value, dict):
-                    pass  # eg, from VSCode Run Config: "APILOGICPROJECT_KAFKA_PRODUCER": "{\"bootstrap.servers\": \"localhost:9092\"}",
-                else:
-                    value = json.loads(self.flask_app.config["KAFKA_PRODUCER"])
-                return value
+        if "KAFKA_PRODUCER" in self.flask_app.config and self.flask_app.config["KAFKA_PRODUCER"] is not None:
+            value = self.flask_app.config["KAFKA_PRODUCER"]
+            if not isinstance(value, dict):
+                value = json.loads(self.flask_app.config["KAFKA_PRODUCER"])
+            return value
         return None
     
     @kafka_producer.setter
@@ -480,23 +492,30 @@ class Args():
     @property
     def kafka_consumer(self) -> dict:
         """ kafka enable consumer """
-        if "KAFKA_CONSUMER" in self.flask_app.config:
-            if self.flask_app.config["KAFKA_CONSUMER"] is not None:
-                return json.loads(self.flask_app.config["KAFKA_CONSUMER"])
+        if "KAFKA_CONSUMER" in self.flask_app.config and self.flask_app.config["KAFKA_CONSUMER"] is not None:
+            value = self.flask_app.config["KAFKA_CONSUMER"]
+            if not isinstance(value, dict):
+                value = json.loads(self.flask_app.config["KAFKA_CONSUMER"])
+            return value
         return None
     
     @kafka_consumer.setter
     def kafka_consumer(self, a: str):
         self.flask_app.config["KAFKA_CONSUMER"] = a
 
-    def __str__(self) -> str:
-        rtn =  f'.. flask_host: {self.flask_host}, port: {self.port}, \n'\
-               f'.. swagger_host: {self.swagger_host}, swagger_port: {self.swagger_port}, \n'\
-               f'.. client_uri: {self.client_uri}, \n'\
-               f'.. http_scheme: {self.http_scheme}, api_prefix: {self.api_prefix}, \n'\
-               f'.. | verbose: {self.verbose}, create_and_run: {self.create_and_run}'
-        return rtn
-
+	
+    @property
+    def kafka_consumer_group(self) -> dict:
+        """ kafka enable consumer group """
+        if "KAFKA_CONSUMER_GROUP" in self.flask_app.config:
+            if self.flask_app.config["KAFKA_CONSUMER_GROUP"] is not None:
+                return self.flask_app.config["KAFKA_CONSUMER_GROUP"]
+        return None
+    
+    @kafka_consumer_group.setter
+    def kafka_consumer_group(self, a: str):
+        self.flask_app.config["KAFKA_CONSUMER_GROUP"] = a
+		
     @property
     def n8n_producer(self) -> dict:
         """ n8n connect string """
@@ -513,6 +532,15 @@ class Args():
     @n8n_producer.setter
     def n8n_producer(self, a: str):
         self.flask_app.config["N8N_PRODUCER"] = a
+
+
+    def __str__(self) -> str:
+        rtn =  f'.. flask_host: {self.flask_host}, port: {self.port}, \n'\
+            f'.. swagger_host: {self.swagger_host}, swagger_port: {self.swagger_port}, \n'\
+            f'.. client_uri: {self.client_uri}, \n'\
+            f'.. http_scheme: {self.http_scheme}, api_prefix: {self.api_prefix}, \n'\
+            f'.. | verbose: {self.verbose}, create_and_run: {self.create_and_run}'
+        return rtn
 
 
     def get_cli_args(self, args: 'Args', dunder_name: str):
