@@ -24,6 +24,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         if request.method == 'OPTIONS':
             return jsonify({ "result": "ok" })
             
+        from api.api_discovery.graphics_services import GraphicsServices 
         results = GraphicsServices.{{ name }}()
         # Render the HTML template with the results
         # Ensure the template is located in the "templates" directory relative to the project root.
