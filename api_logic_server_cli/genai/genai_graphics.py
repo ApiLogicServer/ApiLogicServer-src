@@ -102,7 +102,7 @@ class GenAIGraphics(object):
         with open(graphics_response_path, 'r') as file:
             graphics_response = json.load(file)
             log.info(f'Graphics response loaded from {graphics_response_path}')
-        graphics = graphics_response['graphics']
+        graphics = graphics_response['graphics']  # needs title, chart_type, xAxis, yAxis
         for each_graphic in graphics:  # add each service to api/api_discovery
             self.fix_sqlalchemy_query(each_graphic)
             env = Environment(loader=FileSystemLoader(self.manager_path.joinpath('system/genai/graphics_templates')))
