@@ -14,8 +14,13 @@ services:
     image: apilogicserver/api_logic_server
     container_name: api_logic_project
     environment:
-      - APILOGICPROJECT_VERBOSE=true
-      - SECURITY_ENABLED=true
+      - APILOGICPROJECT_VERBOSE=false
+      - APILOGICPROJECT_SECURITY_ENABLED=false
+      - APILOGICPROJECT_KEYCLOAK_REALM=kcals
+      # use your IP, below....
+      - APILOGICPROJECT_KEYCLOAK_BASE_URL=http://10.0.0.249:8080/realms/kcals
+      - APILOGICPROJECT_KEYCLOAK_BASE=http://10.0.0.249:8080
+      - APILOGICPROJECT_KEYCLOAK_CLIENT_ID=alsclient
     env_file:
       - ./env.list
     volumes:
