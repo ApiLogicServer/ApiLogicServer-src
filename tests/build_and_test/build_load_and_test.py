@@ -8,6 +8,15 @@ from pathlib import Path
 from dotmap import DotMap
 import json
 
+test_folder_name = 'tests-genai'
+""" manager folder for tests """
+
+test_names = []
+""" list of (test_name, test_notes) that ran """
+
+
+start_time = time.time()
+
 db_url = 'db-url'  # db_url or db-url
 project_name = 'project-name'
 bind_key = 'bind-key'
@@ -273,7 +282,7 @@ def run_command(cmd: str, msg: str = "", new_line: bool=False,
         raise
     return result
 
-def start_api_logic_server(project_name: str, env_list = None, port: str='5656'):
+def start_api_logic_server(project_name: str, env_list = None, port: str='5656', do_return: bool=False):
     """ start server (subprocess.Popen) at path [with env], and wait a few moments """
     import stat
 
@@ -282,6 +291,8 @@ def start_api_logic_server(project_name: str, env_list = None, port: str='5656')
     path = install_api_logic_server_path.joinpath(f'tests/{project_name}')
     print(f'\n\nStarting Server tests/{project_name}... from  {install_api_logic_server_path}\venv\n')
     pipe = None
+    return_str = None
+    
     if platform == "win32":
         start_cmd = ['powershell.exe', f'{str(path)}\\run.ps1 x']
     else:
@@ -317,7 +328,9 @@ def start_api_logic_server(project_name: str, env_list = None, port: str='5656')
         r = requests.get(url = URL)
     except:
         print(f".. Ping failed on {project_name}")
-        raise
+        if do_return == False:
+            raise
+    return return_str
 
 def does_file_contain(in_file: str, search_for: str) -> bool:
     with open(in_file, 'r') as file:
@@ -1067,6 +1080,9 @@ if Config.do_test_genai:
         test_genai_env = True
     if test_genai_env:
         print("Running GenAI tests as per environment variable APILOGICSERVER_TEST_GENAI")
+        test_name = f'test_genai'
+        test_note = 'genai smoke test'
+        test_names.append( (test_name, test_note) )
         # smoke test, part 1: als genai --using=system/genai/examples/genai_demo/genai_demo.prompt
         create_in = install_api_logic_server_path
         test_name = 'tests/genai_demo'
@@ -1088,7 +1104,7 @@ if Config.do_test_genai:
     run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/genai_demo_models_with_addr --{db_url}={genai_with_address}',
         cwd=install_api_logic_server_path,
         msg=f'\nCreate include_exclude_typical at: {str(install_api_logic_server_path)}')
-    start_api_logic_server(project_name='genai_demo_models_with_addr') 
+    result = start_api_logic_server(project_name='genai_demo_models_with_addr', do_return=True) 
 
     get_uri = "http://localhost:5656/api/Address/?include=customer_account&fields%5BAddress%5D=customer_account_id%2Cstreet%2Ccity%2Cstate%2Czipcode%2C_check_sum_%2CS_CheckSum&page%5Boffset%5D=0&page%5Blimit%5D=10&sort=id"
     r = requests.get(url=get_uri)
@@ -1411,6 +1427,23 @@ print(f'    cd {str(get_api_logic_server_src_path())}')
 print(f"    rm -r dist")
 print(f"    {python} -m build")
 print(f"    {python} -m twine upload  --skip-existing dist/*  \n")
+
+results = []
+
+results.append(f"\n{__file__} {__version__} [{str(int(time.time() - start_time))} secs]  - created in blt/tests-genai\n")
+
+results.append('%-50s%-50s' % ('test', 'notes')) 
+results.append('%-50s%-50s' % ('====', '====='))
+for each_name, each_note in test_names:
+    results.append ('%-50s%-50s' % (each_name, each_note))
+results.append('\n')
+print('\n'.join(results))
+
+# write results to file
+results_file = install_api_logic_server_path.joinpath('tests/results.txt')
+with open(results_file, 'w') as f:
+    f.write('\n'.join(results))
+
 
 # print(f"{python} setup.py sdist bdist_wheel")
 # print(f"{python} -m twine upload  --skip-existing dist/* \n")
