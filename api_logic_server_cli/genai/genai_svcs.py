@@ -42,11 +42,15 @@ class Model(BaseModel):
     description: str
     name: str
 
-class Graph(BaseModel):
-    sqlalchemy_query: str  # sqlalchemy group by result = { "result": [ ("name", "value)  ] }
+class Graphic(BaseModel):
+    sqlalchemy_query: str  # sqlalchemy query using group by, returns result = { "result": [ ("name", "value")  ] }
     sql_query: str  # sql query using group by, returns result = { "result": [ ("name", "value")  ] }
     classes_used: str # comma-delimited list of classes used in sqlalchemy_query
+    class_x_axis: str # name of class for x axis
     name: str  # suggested Python name for sqlalchemy_query
+    title: str # expanded name
+    xAxis: str # caption for x axis
+    yAxis: str # caption for y axis
     html_code: str # create a java script app to show a bar chart from sqlalchemy_query result
 
 class TestDataRow(BaseModel):
@@ -57,7 +61,7 @@ class WGResult(BaseModel):  # must match system/genai/prompt_inserts/response_fo
     # response: str # result
     models : List[Model] # list of sqlalchemy classes in the response
     rules : List[Rule] # list rule declarations
-    graphics: List[Graph] # list of graphs
+    graphics: List[Graphic] # list of graphs
     test_data: str
     test_data_rows: List[TestDataRow]  # list of test data rows
     test_data_sqlite: str # test data as sqlite INSERT statements

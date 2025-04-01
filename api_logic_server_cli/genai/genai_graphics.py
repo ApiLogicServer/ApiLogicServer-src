@@ -93,8 +93,8 @@ class GenAIGraphics(object):
     def process_graphics_response(self, graphics_response_path: Path):
         """ Process graphics response from ChatGPT graphics_response_path """
 
-        graphic_services_header_path = self.manager_path.joinpath('system/genai/graphics_templates/graphics_services.py')
-        graphics_services_path = self.project.project_directory_path.joinpath('api/api_discovery/graphics_services.py')
+        graphic_services_header_path = self.manager_path.joinpath('system/genai/graphics_templates/graphics_services.jinja')
+        graphics_services_path = self.project.project_directory_path.joinpath('database/database_discovery/graphics_services.py')
         shutil.copy(graphic_services_header_path, graphics_services_path)
 
         # open and read the graphics_response_path json file
@@ -107,20 +107,20 @@ class GenAIGraphics(object):
             self.fix_sqlalchemy_query(each_graphic)
             env = Environment(loader=FileSystemLoader(self.manager_path.joinpath('system/genai/graphics_templates')))
 
-            template = env.get_template('service_template_jsonapi_rpc.jinja')
+            template = env.get_template('graphics_services_each_method.jinja')
             rendered_result = template.render( **each_graphic )
-            with open(self.project.project_directory_path.joinpath(f'api/api_discovery/graphics_services.py'), 'a') as out_file:
+            with open(self.project.project_directory_path.joinpath(f'database/database_discovery/graphics_services.py'), 'a') as out_file:
                 out_file.write(rendered_result)
 
             template = env.get_template('html_template.jinja')
             rendered_result = template.render( **each_graphic )
-            with open(self.project.project_directory_path.joinpath(f'api/api_discovery/{each_graphic['name']}.html'), 'w') as out_file:
+            with open(self.project.project_directory_path.joinpath(f'database/database_discovery/{each_graphic['name']}.html'), 'w') as out_file:
                 out_file.write(rendered_result)
 
-            with open(self.project.project_directory_path.joinpath(f'api/api_discovery/{each_graphic['name']}.sql'), 'w') as out_file:
+            with open(self.project.project_directory_path.joinpath(f'database/database_discovery/{each_graphic['name']}.sql'), 'w') as out_file:
                 out_file.write(each_graphic['sql_query'])
 
-            log.info(f'.. added service: {each_graphic['name']} to api_discovery')
+            log.info(f'.. added service: {each_graphic['name']} to database_discovery')
         pass
 
     def fix_sqlalchemy_query(self, graphic: Dict):
