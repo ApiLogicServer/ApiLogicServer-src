@@ -1,0 +1,17 @@
+{
+    "models": [],
+    "rules": [],
+    "graphics": [
+        {
+            "sqlalchemy_query": "sales_by_region = (\n    session.query(\n        Region.RegionDescription,\n        func.sum(OrderDetail.Quantity * OrderDetail.UnitPrice * (1 - OrderDetail.Discount)).label(\"TotalSales\")\n    )\n    .join(Order, Order.ShipRegion == Region.RegionDescription)\n    .join(OrderDetail, OrderDetail.OrderId == Order.Id)\n    .filter(Order.ShippedDate.isnot(None))  # Consider only shipped orders\n    .group_by(Region.RegionDescription)\n    .order_by(func.sum(OrderDetail.Quantity * OrderDetail.UnitPrice * (1 - OrderDetail.Discount)).desc())\n)",
+            "sql_query": "SELECT Region.RegionDescription, SUM(OrderDetail.Quantity * OrderDetail.UnitPrice * (1 - OrderDetail.Discount)) AS TotalSales\nFROM Order\nJOIN Region ON Order.ShipRegion = Region.RegionDescription\nJOIN OrderDetail ON OrderDetail.OrderId = Order.Id\nWHERE Order.ShippedDate IS NOT NULL\nGROUP BY Region.RegionDescription\nORDER BY TotalSales DESC;",
+            "classes_used": "Order, Region, OrderDetail",
+            "name": "sales_by_region_query",
+            "html_code": "<script src=\"https://cdn.jsdelivr.net/npm/chart.js\"></script>\n<canvas id=\"salesByRegionChart\" width=\"400\" height=\"400\"></canvas>\n<script>\n  const ctx = document.getElementById('salesByRegionChart').getContext('2d');\n  const data = {\n    labels: [], // Populate with Region description\n    datasets: [{\n      label: 'Sales by Region',\n      data: [], // Populate with total sales\n      backgroundColor: 'rgba(75, 192, 192, 0.2)',\n      borderColor: 'rgba(75, 192, 192, 1)',\n      borderWidth: 1\n    }]\n  };\n  const salesByRegionChart = new Chart(ctx, {\n    type: 'bar',\n    data: data,\n    options: {\n      scales: {\n        y: {\n          beginAtZero: true\n        }\n      }\n    }\n  });\n</script>"
+        }
+    ],
+    "test_data": "",
+    "test_data_rows": [],
+    "test_data_sqlite": "",
+    "name": "SalesByRegionAnalysis"
+}
