@@ -1,0 +1,59 @@
+"graphics":
+- "classes_used": |-
+    Order, Region, OrderDetail
+  "html_code": |-
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <canvas id="salesByRegionChart" width="400" height="400"></canvas>
+    <script>
+      const ctx = document.getElementById('salesByRegionChart').getContext('2d');
+      const data = {
+        labels: [], // Populate with Region description
+        datasets: [{
+          label: 'Sales by Region',
+          data: [], // Populate with total sales
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 1
+        }]
+      };
+      const salesByRegionChart = new Chart(ctx, {
+        type: 'bar',
+        data: data,
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    </script>
+  "name": |-
+    sales_by_region_query
+  "sql_query": |-
+    SELECT Region.RegionDescription, SUM(OrderDetail.Quantity * OrderDetail.UnitPrice * (1 - OrderDetail.Discount)) AS TotalSales
+    FROM Order
+    JOIN Region ON Order.ShipRegion = Region.RegionDescription
+    JOIN OrderDetail ON OrderDetail.OrderId = Order.Id
+    WHERE Order.ShippedDate IS NOT NULL
+    GROUP BY Region.RegionDescription
+    ORDER BY TotalSales DESC;
+  "sqlalchemy_query": |-
+    sales_by_region = (
+        session.query(
+            Region.RegionDescription,
+            func.sum(OrderDetail.Quantity * OrderDetail.UnitPrice * (1 - OrderDetail.Discount)).label("TotalSales")
+        )
+        .join(Order, Order.ShipRegion == Region.RegionDescription)
+        .join(OrderDetail, OrderDetail.OrderId == Order.Id)
+        .filter(Order.ShippedDate.isnot(None))  # Consider only shipped orders
+        .group_by(Region.RegionDescription)
+        .order_by(func.sum(OrderDetail.Quantity * OrderDetail.UnitPrice * (1 - OrderDetail.Discount)).desc())
+    )
+"models": []
+"name": |-
+  SalesByRegionAnalysis
+"rules": []
+"test_data": ""
+"test_data_rows": []
+"test_data_sqlite": ""
