@@ -31,8 +31,8 @@ log = logging.getLogger(__name__)
 class GenAIGraphics(object):
     """ 
     Adds Graphics to **existing** projects (genai project or als project):
-    * adds `api/api_discovery` file(s) to project
-    * adds html to `home.js` (?  currently just creating a 1-off in api/api_discovery)
+    * adds `database/database_discovery` file to project (methods on database.models classes)
+    * creates a 1-off html files, to be merged into home.js (eg, as a iFrame)
 
     Invoked from:
     1. **New GenAI Project:** for newly created project (e,g, mgr system/genai/examples/genai_demo/genai_demo.prompt)
@@ -57,9 +57,10 @@ class GenAIGraphics(object):
     def __init__(self, project: Project, using: str, genai_version: str):
         """ 
         Add graphics to existing projects - [see docs](https://apilogicserver.github.io/Docs/WebGenAI-CLI/#add-graphics-to-existing-projects)
-
-        see key_module_map() for key methods
-
+        Args:
+            project (Project): Project object
+            using (str): path to graphics prompt file (or None)
+            genai_version (str): GenAI version to use
         """        
 
         self.project = project        
@@ -91,7 +92,9 @@ class GenAIGraphics(object):
         pass
 
     def process_graphics_response(self, graphics_response_path: Path):
-        """ Process graphics response from ChatGPT graphics_response_path """
+        """ Process graphics response from ChatGPT docs/graphics/response.json
+        * 'graphics' attributes map directly (by name) to <mgr>/system/genai/graphics_templates
+        """
 
         graphic_services_header_path = self.manager_path.joinpath('system/genai/graphics_templates/graphics_services.jinja')
         graphics_services_path = self.project.project_directory_path.joinpath('database/database_discovery/graphics_services.py')
@@ -129,12 +132,11 @@ class GenAIGraphics(object):
         graphic['sqlalchemy_query'] = graphic['sqlalchemy_query'].replace('\"', '"')
         pass
 
-
     def append_data_model(self) -> List[str]:
         """ Get the data model
 
         Returns:
-            list: logic_files
+            list[str]: the data model lines
         """
 
         data_model_lines = []
@@ -146,7 +148,8 @@ class GenAIGraphics(object):
         return data_model_lines
     
     def append_graphics_files(self) -> List[str]:
-        """ Get graphics files (typically from project)
+        """ Get graphics files (typically from project/docs/graphics)
+        * 1 file per graphic
 
         Returns:
             list: logic_files
