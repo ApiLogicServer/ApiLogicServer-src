@@ -10,7 +10,12 @@ from safrs import jsonapi_rpc, SAFRSAPI
 import safrs
 
 """
-Graphics methods for database classes, from 'Graph Sales by Category', etc.
+Graphics methods for database classes, from 
+* genai prompts like: 'Graph Sales by Category', etc.
+* CLI add-graphics from the docs/graphics directory
+
+You typically do not alter this file.
+
 """
 
 app_logger = logging.getLogger(__name__)
@@ -31,3 +36,9 @@ def add_method(cls):
     # Note we are not binding func, but wrapper which accepts self but does exactly the same as func
     return func # returning func means func can still be used normally
   return decorator
+
+##############################
+# generated services follow
+##############################
+
+
