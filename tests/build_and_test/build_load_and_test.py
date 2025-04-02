@@ -1437,7 +1437,7 @@ print(f"    {python} -m twine upload  --skip-existing dist/*  \n")
 
 results = []
 
-results.append(f"\n{__file__} {__version__} [{str(int(time.time() - start_time))} secs]  - created in blt/tests-genai\n")
+results.append(f"\n{__file__} {__version__} [{str(int(time.time() - start_time))} secs]  - created in blt/tests\n")
 
 results.append('%-50s%-50s' % ('test', 'notes')) 
 results.append('%-50s%-50s' % ('====', '====='))
