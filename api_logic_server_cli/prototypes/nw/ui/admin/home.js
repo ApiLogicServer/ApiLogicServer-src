@@ -1,11 +1,12 @@
 const sla_doc =
     '<div class="MuiTypography-root jss4" style="color: rgba(0, 0, 0, 0.66)">' +
     '<div style="text-align:center">' +
-    '<h2>Welcome to API Logic Server - Sample</h2>' +
+    '<h2>Welcome to GenAI-Logic/API Logic Server - Sample</h2>' +
     '</div><br>' +
-    '<h3><a class="custom" style="color: #3f51b5;"  rel="nofollow" href="https://apilogicserver.github.io/Docs/" target="_blank">API Logic Server</a> ' +
-    'creates <i>customizable</i> model-driven systems, instantly from your ' +
-    '<a class="custom" style="color: #3f51b5;"  rel="nofollow" href="https://apilogicserver.github.io/Docs/Sample-Database/" target="_blank">database:</a>' +
+    '<h3><a class="custom" style="color: #3f51b5;"  rel="nofollow" href="https://www.genai-logic.com" target="_blank">GenAI-Logic</a> ' +
+    'creates <i>customizable</i> systems, instantly from your ' +
+    '<a class="custom" style="color: #3f51b5;"  rel="nofollow" href="https://apilogicserver.github.io/Docs/Sample-Database/" target="_blank">database</a> or ' +
+    '<a class="custom" style="color: #3f51b5;"  rel="nofollow" href="https://apilogicserver.github.io/Docs/WebGenAI/" target="_blank">Natural Language prompt:</a> ' +
     '</h3>' +
     '<h4>1. Automatic Admin App</h4>' +
     '<ul>' +

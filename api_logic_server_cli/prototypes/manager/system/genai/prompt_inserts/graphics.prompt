@@ -2,7 +2,7 @@
 Create WGResult Graphics for prompts like 'graph sales by region'.
     * use 'sales by region' to create a WGResult Graphic.sqlalchemy_query
     * Be sure to use class names, not table names
-    * for example, using Northwind:
+    * for example, using Northwind - imporant!  note the 2 right parents closing label("Total Sales"):
         # SQLAlchemy query for Sales by Category
         sales_by_category = (
             session.query(
@@ -16,3 +16,4 @@ Create WGResult Graphics for prompts like 'graph sales by region'.
             .group_by(Category.CategoryName)
             .order_by(func.sum(OrderDetail.Quantity * OrderDetail.UnitPrice * (1 - OrderDetail.Discount)).desc())
         )
+
