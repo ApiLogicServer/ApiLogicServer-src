@@ -1451,17 +1451,23 @@ def add_auth_cmd(ctx, bind_key_url_separator: str, provider_type :str, db_url: s
 
     cd existing_project
 
-    ApiLogicServer add-auth project_name=.
+    ApiLogicServer add-auth
+
+    ApiLogicServer add-auth --db-url=add-auth
+
     ApiLogicServer add-auth provider_type=keycloak
     
     """
     project_name = resolve_blank_project_name(project_name)
     bind_key = "authentication"
+    auth_db_url = db_url
+    if db_url == "auth" and provider_type == "sql":
+        auth_db_url = "add-auth"
     project = PR.ProjectRun(command="add_security", 
               project_name=project_name, 
               api_name=api_name, 
               db_url="",
-              auth_db_url=db_url, 
+              auth_db_url=auth_db_url, 
               auth_provider_type=provider_type,
               bind_key=bind_key,
               bind_key_url_separator=bind_key_url_separator,

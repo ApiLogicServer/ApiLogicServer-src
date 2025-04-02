@@ -372,6 +372,13 @@ def login(user: str='aneu'):
 def multi_database_tests():
     """
     NW-, plus todo and security
+
+    Manual equivalent:
+    * cd ~/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer
+    * ApiLogicServer create --project-name=tests/MultiDB --db-url=nw-
+    * ApiLogicServer add-db --db-url=todo --bind-key=Todo --project-name=tests/MultiDB
+    * ApiLogicServer add-auth --project-name=tests/MultiDB --db-url=add-auth
+    * ApiLogicServer start --project-name=tests/MultiDB
     """
 
     print(f'\nMulti-Database Tests')
