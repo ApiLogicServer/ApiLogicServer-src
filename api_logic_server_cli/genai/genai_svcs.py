@@ -51,6 +51,8 @@ class Graphic(BaseModel):
     title: str # expanded name
     xAxis: str # caption for x axis
     yAxis: str # caption for y axis
+    dashboard: bool  # whether appears on home page
+    graph_type: str  # Bar, Line, Pie
     html_code: str # create a java script app to show a bar chart from sqlalchemy_query result
 
 class TestDataRow(BaseModel):
