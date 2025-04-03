@@ -17,25 +17,18 @@ from flask_cors import cross_origin
 from logic_bank.rule_bank.rule_bank import RuleBank
 import integration.system.RowDictMapper as row_dict_mapper
 
-# Customize this file to add endpoints/services, using SQLAlchemy as required
-#     Separate from expose_api_models.py, to simplify merge if project rebuilt
-# Called by api_logic_server_run.py
+# called by home.js to populate dashboard iFrame with results of all dsahboard queries
 
 app_logger = logging.getLogger("api_logic_server_app")
-
-# called by api_logic_server_run.py, to customize api (new end points, services).
-# separate from expose_api_models.py, to simplify merge if project recreated
 
 def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_decorators = []):
     pass
 
-    api.expose_object(GraphicsServices)  # Swagger-visible services
+    api.expose_object(GraphicsDashboard)  # Swagger-visible services
 
 
-"""
-Illustrates #als: apis for graphics
+class GraphicsDashboard(safrs.JABase):
+    """GraphicsDashboard service - results of all dsahboard queries"""
+    result = []
 
-* Custom service - visible in swagger
-"""
-class GraphicsServices(safrs.JABase):
-    pass
+{{dashboard_lines}}
