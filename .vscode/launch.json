@@ -651,6 +651,18 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "    - Add Graphics to blt/samples/nw_sample_nocust",
+// test adding graphics to non-genai project
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer/samples/nw_sample_nocust",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["genai-graphics" ],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "    - Add Graphics to blt/samples/nw_sample",
 // test adding graphics to non-genai project
             "type": "debugpy",
