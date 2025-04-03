@@ -71,7 +71,7 @@ class GenAIGraphics(object):
             graphics_response_path = self.project.project_directory_path.joinpath('docs/response.json')
         else:                       # Existing (any) Project - use graphics files  -> ChatGPT
             graphics_response_path = self.project.project_directory_path.joinpath('docs/graphics/response.json')
-            if bypass_for_debug := True:
+            if bypass_for_debug := False:
                 pass
             else:
                 prompt = genai_svcs.read_and_expand_prompt(self.manager_path.joinpath('system/genai/prompt_inserts/graphics_request.prompt'))
@@ -183,11 +183,13 @@ class GenAIGraphics(object):
         """
 
         data_model_lines = []
+        data_model_lines.extend('Here is the data model - please use it to create the graphics:\n')
         data_model_path = self.project.project_directory_path.joinpath('database/models.py')
         assert data_model_path.exists(), f"Data model file not found: {data_model_path}"
         with open(data_model_path, 'r') as file:
             prompt_lines = file.readlines()
         data_model_lines.extend(prompt_lines)
+        data_model_lines.extend('End of data model\n')
         return data_model_lines
     
     def append_graphics_files(self) -> List[str]:
