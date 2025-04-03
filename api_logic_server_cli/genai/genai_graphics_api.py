@@ -29,10 +29,10 @@ K_data_model_prompt = "Use SQLAlchemy to create"
 log = logging.getLogger(__name__)
 
 class GenAIGraphics(object):
-    """ 4/3/2025
+    """ 
     Adds Graphics to **existing** projects (genai project or als project):
-    * adds `database/database_discovery` file to project (methods on database.models classes)
-    * creates a 1-off html files, to be merged into home.js (eg, as a iFrame)
+    * adds `api/api_discovery` file(s) to project
+    * adds html to `home.js` (?  currently just creating a 1-off in api/api_discovery)
 
     Invoked from:
     1. **New GenAI Project:** for newly created project (e,g, mgr system/genai/examples/genai_demo/genai_demo.prompt)
@@ -57,10 +57,9 @@ class GenAIGraphics(object):
     def __init__(self, project: Project, using: str, genai_version: str):
         """ 
         Add graphics to existing projects - [see docs](https://apilogicserver.github.io/Docs/WebGenAI-CLI/#add-graphics-to-existing-projects)
-        Args:
-            project (Project): Project object
-            using (str): path to graphics prompt file (or None)
-            genai_version (str): GenAI version to use
+
+        see key_module_map() for key methods
+
         """        
 
         self.project = project        
@@ -71,7 +70,7 @@ class GenAIGraphics(object):
             graphics_response_path = self.project.project_directory_path.joinpath('docs/response.json')
         else:                       # Existing (any) Project - use graphics files  -> ChatGPT
             graphics_response_path = self.project.project_directory_path.joinpath('docs/graphics/response.json')
-            if bypass_for_debug := True:
+            if bypass_for_debug := False:
                 pass
             else:
                 prompt = genai_svcs.read_and_expand_prompt(self.manager_path.joinpath('system/genai/prompt_inserts/graphics_request.prompt'))
@@ -88,57 +87,15 @@ class GenAIGraphics(object):
                                         using = self.project.project_directory_path.joinpath('docs/graphics'),
                                         api_version=genai_version)
 
-        self.create_data_class_methods(graphics_response_path)
-        self.create_graphics_dashboard_service(graphics_response_path)
+        self.process_graphics_response(graphics_response_path)
         pass
 
-    def create_data_class_methods(self, graphics_response_path: Path):
-        """ Process graphics response from ChatGPT docs/graphics/response.json
-        * 'graphics' attributes map directly (by name) to <mgr>/system/genai/graphics_templates
-        """
-
-        shutil.copy(self.manager_path.joinpath('system/genai/graphics_templates/graphics_services_db.jinja'),
-                    self.project.project_directory_path.joinpath('database/database_discovery/graphics_services.py')) # all the db-class methods are created in this file
-
-        # open and read the graphics_response_path json file
-        assert graphics_response_path.exists(), f'Graphics response file not found: {graphics_response_path}'
-        with open(graphics_response_path, 'r') as file:
-            graphics_response = json.load(file)
-            log.info(f'Graphics response loaded from {graphics_response_path}')
-        graphics = graphics_response['graphics']  # needs title, chart_type, xAxis, yAxis
-        for each_graphic in graphics:  # add each service to api/api_discovery
-            self.fix_sqlalchemy_query(each_graphic)
-            env = Environment(loader=FileSystemLoader(self.manager_path.joinpath('system/genai/graphics_templates')))
-
-            template = env.get_template('graphics_services_db_each_method.jinja')
-            rendered_result = template.render( **each_graphic )
-            with open(self.project.project_directory_path.joinpath(f'database/database_discovery/graphics_services.py'), 'a') as out_file:
-                out_file.write(rendered_result)
-
-            template = env.get_template('html_template.jinja')
-            rendered_result = template.render( **each_graphic )
-            with open(self.project.project_directory_path.joinpath(f'database/database_discovery/{each_graphic['name']}.html'), 'w') as out_file:
-                out_file.write(rendered_result)
-
-            with open(self.project.project_directory_path.joinpath(f'database/database_discovery/{each_graphic['name']}.sql'), 'w') as out_file:
-                out_file.write(each_graphic['sql_query'])
-
-            log.info(f'.. added service: {each_graphic['name']} to database_discovery')
-        pass
-
-
-    """ note it needs the /1 - what is that about?
-    curl -X 'GET' \
-    'http://localhost:5656/api/Category/sales_by_category' \
-    -H 'accept: application/vnd.api+json' \
-    -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0MzY5MTc3OCwianRpIjoiNDBlYzZkNGMtMzk4My00OGEwLTgxMjQtYzQwY2RmYWFiZWRhIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6InUxIiwibmJmIjoxNzQzNjkxNzc4LCJleHAiOjE3NDM3MDUwOTh9.WLDxdkp3PIsgUqR0t9-ymQDR0eOAECdQsgS_3YTqAQ0'
-    """
-
-    def create_graphics_dashboard_service(self, graphics_response_path: Path):
+    def process_graphics_response(self, graphics_response_path: Path):
         """ Process graphics response from ChatGPT graphics_response_path """
 
-        shutil.copy(self.manager_path.joinpath('system/genai/graphics_templates/dashboard_services.jinja'),
-                    self.project.project_directory_path.joinpath('api/api_discovery/dashboard_services.py') )  # all the api methods are created in this file
+        graphic_services_header_path = self.manager_path.joinpath('system/genai/graphics_templates/graphics_services.py')
+        graphics_services_path = self.project.project_directory_path.joinpath('api/api_discovery/graphics_services.py')
+        shutil.copy(graphic_services_header_path, graphics_services_path)
 
         # open and read the graphics_response_path json file
         assert graphics_response_path.exists(), f'Graphics response file not found: {graphics_response_path}'
@@ -150,11 +107,11 @@ class GenAIGraphics(object):
             self.fix_sqlalchemy_query(each_graphic)
             env = Environment(loader=FileSystemLoader(self.manager_path.joinpath('system/genai/graphics_templates')))
 
-            template = env.get_template('dashboard_services_each_method.jinja')
+            template = env.get_template('service_template_jsonapi_rpc.jinja')
             rendered_result = template.render( **each_graphic )
-            with open(self.project.project_directory_path.joinpath(f'api/api_discovery/dashboard_services.py'), 'a') as out_file:
+            with open(self.project.project_directory_path.joinpath(f'api/api_discovery/graphics_services.py'), 'a') as out_file:
                 out_file.write(rendered_result)
-            """
+
             template = env.get_template('html_template.jinja')
             rendered_result = template.render( **each_graphic )
             with open(self.project.project_directory_path.joinpath(f'api/api_discovery/{each_graphic['name']}.html'), 'w') as out_file:
@@ -162,11 +119,8 @@ class GenAIGraphics(object):
 
             with open(self.project.project_directory_path.joinpath(f'api/api_discovery/{each_graphic['name']}.sql'), 'w') as out_file:
                 out_file.write(each_graphic['sql_query'])
-            """
+
             log.info(f'.. added service: {each_graphic['name']} to api_discovery')
-        return_result = '\n        return jsonify(dashboard_result)\n'
-        with open(self.project.project_directory_path.joinpath(f'api/api_discovery/dashboard_services.py'), 'a') as out_file:
-            out_file.write(return_result)
         pass
 
     def fix_sqlalchemy_query(self, graphic: Dict):
@@ -175,11 +129,12 @@ class GenAIGraphics(object):
         graphic['sqlalchemy_query'] = graphic['sqlalchemy_query'].replace('\"', '"')
         pass
 
+
     def append_data_model(self) -> List[str]:
         """ Get the data model
 
         Returns:
-            list[str]: the data model lines
+            list: logic_files
         """
 
         data_model_lines = []
@@ -191,8 +146,7 @@ class GenAIGraphics(object):
         return data_model_lines
     
     def append_graphics_files(self) -> List[str]:
-        """ Get graphics files (typically from project/docs/graphics)
-        * 1 file per graphic
+        """ Get graphics files (typically from project)
 
         Returns:
             list: logic_files

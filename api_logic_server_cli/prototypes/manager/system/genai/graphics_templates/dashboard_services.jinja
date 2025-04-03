@@ -1,0 +1,38 @@
+from database import models
+import logging
+from safrs import jsonapi_attr
+from sqlalchemy.orm import relationship, remote, foreign
+from functools import wraps # This convenience func preserves name and docstring
+import decimal as decimal
+from sqlalchemy import extract, func
+from flask import request, jsonify
+from safrs import jsonapi_rpc, SAFRSAPI
+import safrs
+
+"""
+Invoked api_discovery on server setattr
+
+Returns array of dashboard queries
+
+curl -X GET "http://localhost:5656/dashboard"
+
+You typically do not alter this file.
+
+"""
+
+app_logger = logging.getLogger(__name__)
+
+dashboard_result = {'dashboard': []}
+
+
+def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_decorators = []):
+    pass
+
+    @app.route('/dashboard')
+    def dashboard():
+
+    ##############################
+    # generated queries follow
+    ##############################
+
+
