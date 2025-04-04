@@ -6,7 +6,7 @@ from pathlib import Path
 import importlib
 from api_logic_server_cli.genai.genai_utils import call_chatgpt
 import requests
-import os
+import os, time
 import datetime
 import create_from_model.api_logic_server_utils as utils
 import time
@@ -66,6 +66,7 @@ class GenAIGraphics(object):
         self.project = project        
         self.project.genai_using = using
         self.manager_path = genai_svcs.get_manager_path()
+        self.start_time = time.time()
 
         if using is None:           # New GenAI Project: use docs/response.json
             graphics_response_path = self.project.project_directory_path.joinpath('docs/response.json')
@@ -90,6 +91,7 @@ class GenAIGraphics(object):
 
         self.create_data_class_methods(graphics_response_path)
         self.create_graphics_dashboard_service(graphics_response_path)
+        log.info(f"\ngenai-graphics completed in [{str(int(time.time() - self.start_time))} secs] \n")
         pass
 
     def create_data_class_methods(self, graphics_response_path: Path):
@@ -115,14 +117,6 @@ class GenAIGraphics(object):
             with open(self.project.project_directory_path.joinpath(f'database/database_discovery/graphics_services.py'), 'a') as out_file:
                 out_file.write(rendered_result)
 
-            template = env.get_template('html_template.jinja')
-            rendered_result = template.render( **each_graphic )
-            with open(self.project.project_directory_path.joinpath(f'database/database_discovery/{each_graphic['name']}.html'), 'w') as out_file:
-                out_file.write(rendered_result)
-
-            with open(self.project.project_directory_path.joinpath(f'database/database_discovery/{each_graphic['name']}.sql'), 'w') as out_file:
-                out_file.write(each_graphic['sql_query'])
-
             log.info(f'.. added service: {each_graphic['name']} to database_discovery')
         pass
 
@@ -144,7 +138,6 @@ class GenAIGraphics(object):
         assert graphics_response_path.exists(), f'Graphics response file not found: {graphics_response_path}'
         with open(graphics_response_path, 'r') as file:
             graphics_response = json.load(file)
-            log.info(f'Graphics response loaded from {graphics_response_path}')
         graphics = graphics_response['graphics']
         for each_graphic in graphics:  # add each service to api/api_discovery
             self.fix_sqlalchemy_query(each_graphic)
@@ -154,7 +147,7 @@ class GenAIGraphics(object):
             rendered_result = template.render( **each_graphic )
             with open(self.project.project_directory_path.joinpath(f'api/api_discovery/dashboard_services.py'), 'a') as out_file:
                 out_file.write(rendered_result)
-            """
+
             template = env.get_template('html_template.jinja')
             rendered_result = template.render( **each_graphic )
             with open(self.project.project_directory_path.joinpath(f'api/api_discovery/{each_graphic['name']}.html'), 'w') as out_file:
@@ -162,8 +155,8 @@ class GenAIGraphics(object):
 
             with open(self.project.project_directory_path.joinpath(f'api/api_discovery/{each_graphic['name']}.sql'), 'w') as out_file:
                 out_file.write(each_graphic['sql_query'])
-            """
-            log.info(f'.. added service: {each_graphic['name']} to api_discovery')
+
+            log.info(f'.. added dashboard query: {each_graphic['name']} to api_discovery')
         return_result = '\n        return jsonify(dashboard_result)\n'
         with open(self.project.project_directory_path.joinpath(f'api/api_discovery/dashboard_services.py'), 'a') as out_file:
             out_file.write(return_result)
