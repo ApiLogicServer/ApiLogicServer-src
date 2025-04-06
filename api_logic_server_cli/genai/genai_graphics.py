@@ -46,6 +46,7 @@ class GenAIGraphics(object):
 
     **Issue:** what is the persistence model for graphics?  (eg, in docs/graphics, or docs/response.json, wg database??)
     * if existing wg project, is docs/response.json updated?
+        * eg, create with graphics, then iterate: should not lose graphics
 
     Open Issues
     * How to integrate with als/wg home.js?
