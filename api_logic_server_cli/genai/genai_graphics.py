@@ -46,6 +46,8 @@ class GenAIGraphics(object):
     Testing:
     * BLT to create manager
     * Test from source: launch.json (in group 3) has `Add Graphics to blt/samples/nw...`
+        * Note: uses `<mgr>/system/genai/graphics_templates`
+        * Don't forget to copy these back to `api_logic_server_cli/prototypes/manager/system/genai/graphics_templates`
     * Optionally: update `bypass_for_debug` to True to skip ChatGPT call
 
 
