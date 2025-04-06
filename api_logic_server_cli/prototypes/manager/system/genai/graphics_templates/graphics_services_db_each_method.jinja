@@ -1,3 +1,4 @@
+
 @classmethod
 @add_method(models.{{class_x_axis}})
 @jsonapi_rpc(http_methods=['GET', 'OPTIONS'])
@@ -15,19 +16,19 @@ def {{name}}(*args, **kwargs):
     # Security.set_user_sa()  # an endpoint that requires no auth header (see also @bypass_security)
 
     # SQLAlchemy query
-    query = {{sqlalchemy_query}} 
+    query = {{ sqlalchemy_query }} 
     # Execute query and fetch results
     results = query.all()
     from decimal import Decimal
-    columns = ['RegionDescription', 'TotalSales']  # {{ xAxis }} {{ yAxis }}
-    results = [{columns[0]: row[0], columns[1]: str(Decimal(row[1]).quantize(Decimal('0.01')))} for row in results]
-    title = "Sales by Region" # {{ title }}
-    chart_type = 'bar' # {{ chart_type }}
+    columns = ['{{ xAxis }}' , '{{ yAxis }}']
+    results = [{columns[0]: row[0], columns[1]: row[1]} for row in results]
+    title = '{{ title }}'
+    graph_type = '{{ graph_type }}'
     json_results = {
         "results": results,
         "columns": columns,
         "title": title,
-        "chart_type": "bar",
+        "chart_type": graph_type,
         "xAxis": columns[0],
         "yAxis": columns[1],
     }
