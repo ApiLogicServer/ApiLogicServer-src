@@ -154,7 +154,10 @@ class GenAIGraphics(object):
                 out_file.write(rendered_result)
 
             with open(self.project.project_directory_path.joinpath(f'api/api_discovery/{each_graphic['name']}.sql'), 'w') as out_file:
-                out_file.write(each_graphic['sql_query'])
+                sql_query = "System Error: missing sql_query - check WGResult format"
+                if 'sql_query' in each_graphic:
+                    sql_query = each_graphic['sql_query']
+                out_file.write(sql_query)
 
             log.info(f'.. added dashboard query: {each_graphic['name']} to api_discovery')
         return_result = '\n        return jsonify(dashboard_result)\n'
