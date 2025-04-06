@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "14.03.30"
+__version__ = "14.03.31"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t04/05/2024 - 14.03.31: Patch - WebGenAI has old WGResult format (?) \n"\
     "\t04/03/2024 - 14.03.30: db graphics/dashboard svcs mult types, expose Data Models for sql auth tables / auth-admin app (WIP), issue 91 \n"\
     "\t03/30/2024 - 14.03.25: WebGenAI fixes for Kafka and Keycloak \n"\
     "\t03/19/2024 - 14.03.20: licensed webgenai docker, [87] sra fix for home.js \n"\
