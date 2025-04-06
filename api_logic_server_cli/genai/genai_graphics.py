@@ -43,6 +43,11 @@ class GenAIGraphics(object):
     3. **Existing WG Project:** in-place (do not create new project with new test data)
         *  Same as #1, but requires WG UI change ('in place', 'graphics' button, ...) to use genai_graphics cmd
 
+    Testing:
+    * BLT to create manager
+    * Test from source: launch.json (in group 3) has `Add Graphics to blt/samples/nw...`
+    * Optionally: update `bypass_for_debug` to True to skip ChatGPT call
+
 
     **Issue:** what is the persistence model for graphics?  (eg, in docs/graphics, or docs/response.json, wg database??)
     * if existing wg project, is docs/response.json updated?
@@ -74,7 +79,7 @@ class GenAIGraphics(object):
         else:                       # Existing (any) Project - use graphics files  -> ChatGPT
             graphics_response_path = self.project.project_directory_path.joinpath('docs/graphics/response.json')
             if bypass_for_debug := False:
-                pass
+                pass # usa already-built response.json, above
             else:
                 prompt = genai_svcs.read_and_expand_prompt(self.manager_path.joinpath('system/genai/prompt_inserts/graphics_request.prompt'))
                 prompt_lines = prompt.split('\n')                   # ChatGPT instructions
