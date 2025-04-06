@@ -139,23 +139,45 @@ class GenAIGraphics(object):
     def create_graphics_dashboard_service(self, graphics_response_path: Path):
         """ Process graphics response from ChatGPT graphics_response_path """
 
-        shutil.copy(self.manager_path.joinpath('system/genai/graphics_templates/dashboard_services.jinja'),
-                    self.project.project_directory_path.joinpath('api/api_discovery/dashboard_services.py') )  # all the api methods are created in this file
-
         # open and read the graphics_response_path json file
         assert graphics_response_path.exists(), f'Graphics response file not found: {graphics_response_path}'
         with open(graphics_response_path, 'r') as file:
             graphics_response = json.load(file)
+        if 'graphics' not in graphics_response:
+            log.error(f'No graphics found in {graphics_response_path}')
+            return
         graphics = graphics_response['graphics']
+    
+        env = Environment(loader=FileSystemLoader(self.manager_path.joinpath('system/genai/graphics_templates')))
+        iframe_templates= []
+        has_iframe = False
+        iframe_links = []
+        dashboards = []
+        cnt = 0
+        template = env.get_template('dashboard_services.jinja')
         for each_graphic in graphics:  # add each service to api/api_discovery
+            cnt += 1
+            server = '{server}'
+            iframe = f'iframe_{cnt} = iframe_template.format(url=f"{server}chart_graphics/{each_graphic['name']}")\n'
+            iframe_templates.append(iframe)
+            link = "{"+ f'iframe_{cnt}' + "}"
+            iframe_links.append(f'{link}')
+            sqlalchemy_query = each_graphic['sqlalchemy_query'].split("session.query(")[1].split(',')[0].split(".")[0].replace('\n', '').strip()
+            db = f"""
+            results = models.{sqlalchemy_query}.{each_graphic['name']}(None)
+            color = 'rgba(75, 192, 192, 0.2)'
+            dashboard{cnt} = template.render(result=results, color=color)
+            dashboard_result['{each_graphic['name']}']= dashboard{cnt}
+            """
+            dashboards.append(db)
+        
+        rendered_result = template.render(iframe_templates=iframe_templates, iframe_links=" ".join(iframe_links), has_iframe=cnt > 0 , dashboards= dashboards)
+        with open(self.project.project_directory_path.joinpath(f'api/api_discovery/dashboard_services.py'), 'a') as out_file:
+            out_file.write(rendered_result)
+            log.info(f'.. added dashboard service to api_discovery')
+            
+        for each_graphic in graphics: 
             self.fix_sqlalchemy_query(each_graphic)
-            env = Environment(loader=FileSystemLoader(self.manager_path.joinpath('system/genai/graphics_templates')))
-
-            template = env.get_template('dashboard_services_each_method.jinja')
-            rendered_result = template.render( **each_graphic )
-            with open(self.project.project_directory_path.joinpath(f'api/api_discovery/dashboard_services.py'), 'a') as out_file:
-                out_file.write(rendered_result)
-
             template = env.get_template('html_template.jinja')
             rendered_result = template.render( **each_graphic )
             with open(self.project.project_directory_path.joinpath(f'api/api_discovery/{each_graphic['name']}.html'), 'w') as out_file:
@@ -168,9 +190,7 @@ class GenAIGraphics(object):
                 out_file.write(sql_query)
 
             log.info(f'.. added dashboard query: {each_graphic['name']} to api_discovery')
-        return_result = '\n        return jsonify(dashboard_result)\n'
-        with open(self.project.project_directory_path.joinpath(f'api/api_discovery/dashboard_services.py'), 'a') as out_file:
-            out_file.write(return_result)
+        
         pass
 
     def fix_sqlalchemy_query(self, graphic: Dict):

@@ -7,6 +7,7 @@ import decimal as decimal
 from sqlalchemy import extract, func
 from flask import request, jsonify
 from safrs import jsonapi_rpc, SAFRSAPI
+from database.models import models
 import safrs
 
 """
@@ -21,18 +22,58 @@ You typically do not alter this file.
 """
 
 app_logger = logging.getLogger(__name__)
-
-dashboard_result = {'dashboard': []}
+dashboard_result = {}
 
 
 def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_decorators = []):
     pass
 
-    @app.route('/dashboard')
+    @app.route('/dashboard', methods=['GET','OPTIONS'])
     def dashboard():
 
+
+        if request.method == 'OPTIONS':
+            return jsonify({"result": "ok"})
+
+        server = request.host_url
+    
+        iframe_template = '<div class="dashboard-iframe"><iframe src="{url}" style="flex: 1; border: none; width: 90%; height: 200px;"></iframe></div>'
+        {% for iframe in iframe_templates %}
+        {{iframe}}
+        {% endfor %}
+
+        {% if has_iframe %}
+        return f'<div style="display: flex; flex-direction: row; gap: 10px;  border: none; ">{{ iframe_links }}</div>'
+        {% endif %}
+        {% if has_iframe == false %}
+        return jsonify({})
+        {% endif %}
+
+    @app.route('/chart_graphics/<path:path>', methods=['GET','OPTIONS'])
+    def chart_graphics(path):
+        if request.method == 'OPTIONS':
+            return jsonify({"result": "ok"})
+
+        dashboards = get_dashboards()
+        if len(dashboards) == 0:
+            return jsonify({"result": "No dashboards Found"}), 404
+        if path in dashboards:
+            return dashboards[path]
+        return jsonify({"result": "not found"}), 404
     ##############################
     # generated queries follow
     ##############################
 
-
+    def get_dashboards():
+        if len(dashboard_result) > 0:
+            return dashboard_result
+    
+        from jinja2 import Environment, FileSystemLoader
+        env = Environment(loader = FileSystemLoader('ui/templates'))
+        template = env.get_template('bar_chart.jinja')
+            
+        {% for dashboard in dashboards %}
+        {{dashboard}}
+        {% endfor %}
+        
+        return dashboard_result
