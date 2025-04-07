@@ -198,6 +198,7 @@ class GenAIGraphics(object):
         """ Fix the SQLAlchemy query for the graphic """
         graphic['sqlalchemy_query'] = graphic['sqlalchemy_query'].replace('\\n', '\n')
         graphic['sqlalchemy_query'] = graphic['sqlalchemy_query'].replace('\"', '"')
+        graphic['sqlalchemy_query'] = graphic['sqlalchemy_query'].replace('.isnot', '.is_not')
         pass
 
     def append_data_model(self) -> List[str]:
