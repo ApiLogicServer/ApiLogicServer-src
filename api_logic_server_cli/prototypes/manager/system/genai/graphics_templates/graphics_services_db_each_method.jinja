@@ -23,7 +23,7 @@ def {{name}}(*args, **kwargs):
     columns = ['{{ xAxis }}' , '{{ yAxis }}']
     results = [{columns[0]: row[0], columns[1]: round(float(row[1]), 2)} for row in results]
     title = '{{ title }}'
-    graph_type = '{{ graph_type }}.lower()'
+    graph_type = '{{ graph_type }}'.lower()
     json_results = {
         "results": results,
         "columns": columns,
