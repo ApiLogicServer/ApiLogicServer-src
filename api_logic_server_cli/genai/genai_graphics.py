@@ -164,10 +164,11 @@ class GenAIGraphics(object):
             iframe_links.append(f'{link}')
             sqlalchemy_query = each_graphic['sqlalchemy_query'].split("session.query(")[1].split(',')[0].split(".")[0].replace('\n', '').strip()
             db = f"""
-            results = models.{sqlalchemy_query}.{each_graphic['name']}(None)
-            color = 'rgba(75, 192, 192, 0.2)'
-            dashboard{cnt} = template.render(result=results, color=color)
-            dashboard_result['{each_graphic['name']}']= dashboard{cnt}
+        results = models.{sqlalchemy_query}.{each_graphic['name']}(None)
+        color = 'rgba(75, 192, 192, 0.2)'
+        dashboard{cnt} = template.render(result=results, color=color)
+        dashboard_result['{each_graphic['name']}']= dashboard{cnt}
+
             """
             dashboards.append(db)
         
