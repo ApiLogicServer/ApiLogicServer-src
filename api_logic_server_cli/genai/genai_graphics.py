@@ -52,9 +52,22 @@ class GenAIGraphics(object):
 
 
     **Issue:** what is the persistence model for graphics?  (eg, in docs/graphics, or docs/response.json, wg database??)
-    * if existing wg project, is docs/response.json updated?
-        * eg, create with graphics, then iterate: should not lose graphics
+    * Proposal: 4/8
+        * requirements:
+            1. Do not let WG projects fail due to graphics - but alert user, just once
+            2. Do not lose graphics on WG iteration
+        * if in wg mode, this file creates docs/graphics/<graphics.name>.prompt 
+            * this preserves the graphics for future wg iterations
+            * ALS developers manage their own graphics
+        * dashboard_service.py -- each <graphic.names> query:
+            1. if exists(docs/graphics/<graphics.name>.err), bypass the query
+            2. wrap each dashboard_service query in a try/except block
+            3. if not ok, 
+                * return "graphics failed" to iFrame so user can see it
+                * create docs/graphics/<graphics>.err to inhibit future calls
+                    * assumption: running projects can update webgenai data
 
+            
     Open Issues
     * How to integrate with als/wg home.js?
     * How to enforce licensing?
