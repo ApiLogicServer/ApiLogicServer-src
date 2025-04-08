@@ -55,3 +55,8 @@ s.CompanyName as [SupplierName], s.Region as [SupplierRegion]
 from "Product" p
 join "CategoryTableNameTest" c on p.CategoryId = c.id
 join [Supplier] s on s.id = p.SupplierId
+
+
+INSERT INTO Region (RegionDescription)
+SELECT DISTINCT ShipRegion
+FROM "Order";
