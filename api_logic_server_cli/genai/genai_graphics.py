@@ -186,7 +186,7 @@ class GenAIGraphics(object):
             dashboards.append(db)
         
         rendered_result = template.render(iframe_templates=iframe_templates, iframe_links=" ".join(iframe_links), has_iframe=cnt > 0 , dashboards= dashboards)
-        with open(self.project.project_directory_path.joinpath(f'api/api_discovery/dashboard_services.py'), 'a') as out_file:
+        with open(self.project.project_directory_path.joinpath(f'api/api_discovery/dashboard_services.py'), 'w') as out_file:
             out_file.write(rendered_result)
             log.info(f'.. added dashboard service to api_discovery')
             
