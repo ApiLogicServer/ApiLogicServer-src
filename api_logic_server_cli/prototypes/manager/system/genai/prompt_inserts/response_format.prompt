@@ -23,6 +23,7 @@ class Graphic(BaseModel):
     classes_used: str # comma-delimited list of classes used in sqlalchemy_query
     class_x_axis: str # name of class for x axis
     name: str  # suggested Python name for sqlalchemy_query
+    prompt: str  # prompt used to create the graphic
     title: str # expanded name
     xAxis: str # caption for x axis
     yAxis: str # caption for y axis
