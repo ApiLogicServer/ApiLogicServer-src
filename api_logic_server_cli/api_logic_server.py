@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "14.03.33"
+__version__ = "14.03.34"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t04/08/2024 - 14.03.34: Phase 1 of fail-safe graphics (todo: display info) \n"\
     "\t04/07/2024 - 14.03.33: Tyler revisions+, remove graphics from genai_demo, nw product.category \n"\
     "\t04/06/2024 - 14.03.32: Tyler revision to dashboard home.js/iFrame \n"\
     "\t04/05/2024 - 14.03.31: Patch - WebGenAI has old WGResult format (?) \n"\

@@ -57,7 +57,7 @@ class GenAIGraphics(object):
         1. Fail-safe: do not let WG projects fail due to graphics - but alert user, just once
         2. Iterable: do not lose graphics on WG iteration
     * Proposal: 4/8
-        * if new project, this file creates docs/graphics/<graphics.name>.prompt 
+        * if new genai project, this code creates docs/graphics/<graphics.name>.prompt 
             * this preserves the graphics for future wg iterations
             * ALS developers manage their own graphics
         * dashboard_service.py -- each <graphic.names> query:
@@ -94,7 +94,7 @@ class GenAIGraphics(object):
             graphics_response_path = self.project.project_directory_path.joinpath('docs/response.json')
         else:                       # Existing (any) Project - use graphics files  -> ChatGPT
             graphics_response_path = self.project.project_directory_path.joinpath('docs/graphics/response.json')
-            if bypass_for_debug := False:
+            if bypass_for_debug := True:
                 pass # usa already-built response.json, above
             else:
                 prompt = genai_svcs.read_and_expand_prompt(self.manager_path.joinpath('system/genai/prompt_inserts/graphics_request.prompt'))
@@ -178,10 +178,21 @@ class GenAIGraphics(object):
             iframe_links.append(f'{link}')
             sqlalchemy_query = each_graphic['sqlalchemy_query'].split("session.query(")[1].split(',')[0].split(".")[0].replace('\n', '').strip()
             db = f"""
-        results = models.{sqlalchemy_query}.{each_graphic['name']}(None)
-        color = 'rgba(75, 192, 192, 0.2)'
-        dashboard{cnt} = template.render(result=results, color=color)
-        dashboard_result['{each_graphic['name']}']= dashboard{cnt}
+        not_active = Path('docs/graphics/{each_graphic['name']}.err').exists()
+        if not_active:
+            pass  # query has failed, so skip it
+        else:
+            try:
+                results = models.{sqlalchemy_query}.{each_graphic['name']}(None)
+                color = 'rgba(75, 192, 192, 0.2)'
+                dashboard{cnt} = template.render(result=results, color=color)
+                dashboard_result['{each_graphic['name']}']= dashboard{cnt}
+            except Exception as e:
+                dashboard_result['{each_graphic['name']}']= f"System Error: "  # todo insert e
+                app_logger.error(f"Graphics query failed: ")  # todo insert e
+                # create file: docs/graphics/{each_graphic['name']}.err
+                with open('docs/graphics//{each_graphic['name']}.err', 'w') as f:
+                    f.write(str(e))
 
             """
             dashboards.append(db)
