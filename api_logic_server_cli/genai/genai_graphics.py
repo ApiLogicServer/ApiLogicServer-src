@@ -36,7 +36,8 @@ class GenAIGraphics(object):
 
     Invoked from:
     1. **New GenAI Project:** for newly created project (e,g, mgr system/genai/examples/genai_demo/genai_demo.prompt)
-        * `--using` is None ==> Docs folder already has WGResponse.graphics[]      
+        * `--using` is None ==> Docs folder already has WGResponse.graphics[]
+        * see api_logic_server_cli/genai/genai_svcs.py#insert_logic_into_created_project      
     2. **Existing Project:** CLI/genai-graphics existing project, using *docs/graphics* eg 
         * `--using`  ==> Call ChatGPT for WGResponse.graphics `<project>/docs/graphics/*.prompt`  
         * note: dbml not rebuilt after rebuild-from-db
@@ -52,11 +53,11 @@ class GenAIGraphics(object):
 
 
     **Issue:** what is the persistence model for graphics?  (eg, in docs/graphics, or docs/response.json, wg database??)
+    * requirements:
+        1. Fail-safe: do not let WG projects fail due to graphics - but alert user, just once
+        2. Iterable: do not lose graphics on WG iteration
     * Proposal: 4/8
-        * requirements:
-            1. Do not let WG projects fail due to graphics - but alert user, just once
-            2. Do not lose graphics on WG iteration
-        * if in wg mode, this file creates docs/graphics/<graphics.name>.prompt 
+        * if new project, this file creates docs/graphics/<graphics.name>.prompt 
             * this preserves the graphics for future wg iterations
             * ALS developers manage their own graphics
         * dashboard_service.py -- each <graphic.names> query:
