@@ -94,7 +94,7 @@ class GenAIGraphics(object):
             graphics_response_path = self.project.project_directory_path.joinpath('docs/response.json')
         else:                       # Existing (any) Project - use graphics files  -> ChatGPT
             graphics_response_path = self.project.project_directory_path.joinpath('docs/graphics/response.json')
-            if bypass_for_debug := True:
+            if bypass_for_debug := False:
                 pass # usa already-built response.json, above
             else:
                 prompt = genai_svcs.read_and_expand_prompt(self.manager_path.joinpath('system/genai/prompt_inserts/graphics_request.prompt'))
