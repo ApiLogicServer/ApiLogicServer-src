@@ -44,8 +44,12 @@ def kafka_producer():
         if "client.id" not in conf:
             conf["client.id"] = socket.gethostname()
         # conf = {'bootstrap.servers': 'localhost:9092', 'client.id': socket.gethostname()}
-        producer = Producer(conf)
-        logger.debug(f'\nKafka producer connected')
+        try:
+            producer = Producer(conf)
+            logger.debug(f'\nKafka producer connected')
+        except Exception as ke:
+            logger.debug(f'Kafka producer error: {ke}')
+            producer = None
 
 from sqlalchemy.inspection import inspect
 
@@ -64,7 +68,7 @@ def get_primary_key(logic_row: LogicRow):
 
 
 def send_kafka_message(kafka_topic: str, kafka_key: str = None, msg: str="", json_root_name: str = "", 
-                       logic_row: LogicRow = None, row_dict_mapper: RowDictMapper = None, payload: dict = None):
+                        logic_row: LogicRow = None, row_dict_mapper: RowDictMapper = None, payload: dict = None):
     """ Send Kafka message regarding logic_row, mapped by row_dict_mapper
 
     * Typically called from declare_logic event
