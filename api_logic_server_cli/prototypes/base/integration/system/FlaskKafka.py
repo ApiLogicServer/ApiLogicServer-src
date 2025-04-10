@@ -64,7 +64,11 @@ class FlaskKafka():
         logger.info(f" - FlaskKafka._start: begin polling (v {__version__}), with \n -- conf: {self.conf} \n -- topics: {topics}")
         consumer = Consumer(self.conf)
         consumer.subscribe(topics=list(topics))
-        while True:
+        while True and len(topics) > 0:
+            if self.interrupt_event.is_set():
+                logger.info("Kafka thread interrupted")
+                break
+    
             msg = consumer.poll(1.0)
             logger.debug(f' - KafkaConnect._start - consuming consumer.poll(1.0): {msg}')
             if msg is None:

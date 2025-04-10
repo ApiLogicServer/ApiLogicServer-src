@@ -171,12 +171,14 @@ class Config:
     KAFKA_CONSUMER = None
     KAFKA_CONSUMER_GROUP = None
     KAFKA_SERVER = None
-    #KAFKA_SERVER = os.getenv('KAFKA_SERVER','localhost:9092') # if running locally default
-    if KAFKA_SERVER:
+    KAFKA_SERVER = os.getenv('KAFKA_SERVER', None) # 'localhost:9092' # if running locally default
+    if KAFKA_SERVER is not None or KAFKA_SERVER != "None":
         app_logger.info(f'config.py - KAFKA_SERVER: {KAFKA_SERVER}')
         KAFKA_PRODUCER = os.getenv('KAFKA_PRODUCER',{"bootstrap.servers": f"{KAFKA_SERVER}"})  #  , "client.id": "aaa.b.c.d"}'
-        KAFKA_CONSUMER_GROUP = os.getenv('KAFKA_CONSUMER_GROUP','als-default-group1')
-        KAFKA_CONSUMER =  os.getenv('KAFKA_CONSUMER', {"bootstrap.servers": f"{KAFKA_SERVER}", "group.id": f"{KAFKA_CONSUMER_GROUP}", "enable.auto.commit": "false", "auto.offset.reset": "earliest"})
+        KAFKA_CONSUMER_GROUP = os.getenv('KAFKA_CONSUMER_GROUP') #'als-default-group1'
+        if KAFKA_CONSUMER_GROUP is not None: # or KAFKA_CONSUMER_GROUP != "None":
+            print("SHOULD NOT REACH HERE")
+            KAFKA_CONSUMER =  os.getenv('KAFKA_CONSUMER', {"bootstrap.servers": f"{KAFKA_SERVER}", "group.id": f"{KAFKA_CONSUMER_GROUP}", "enable.auto.commit": "false", "auto.offset.reset": "earliest"})
     else:
         app_logger.info(f'config.py - KAFKA_SERVER: {KAFKA_SERVER} - not set, no kafka producer/consumer')
     print(f'config.py - KAFKA_PRODUCER: {KAFKA_PRODUCER}')
@@ -479,10 +481,13 @@ class Args():
     def kafka_producer(self) -> dict:
         """ kafka connect string """
         if "KAFKA_PRODUCER" in self.flask_app.config and self.flask_app.config["KAFKA_PRODUCER"] is not None:
-            value = self.flask_app.config["KAFKA_PRODUCER"]
-            if not isinstance(value, dict):
-                value = json.loads(self.flask_app.config["KAFKA_PRODUCER"])
-            return value
+            if self.flask_app.config["KAFKA_PRODUCER"] is not None:
+                value = self.flask_app.config["KAFKA_PRODUCER"]
+                if isinstance(value, dict):
+                    pass  # eg, from VSCode Run Config: "APILOGICPROJECT_KAFKA_PRODUCER": "{\"bootstrap.servers\": \"localhost:9092\"}",
+                else:
+                    value = json.loads(self.flask_app.config["KAFKA_PRODUCER"])
+                return value
         return None
     
     @kafka_producer.setter
@@ -494,7 +499,9 @@ class Args():
         """ kafka enable consumer """
         if "KAFKA_CONSUMER" in self.flask_app.config and self.flask_app.config["KAFKA_CONSUMER"] is not None:
             value = self.flask_app.config["KAFKA_CONSUMER"]
-            if not isinstance(value, dict):
+            if isinstance(value, dict):
+                pass  # eg, from VSCode Run Config: "APILOGICPROJECT_KAFKA_PRODUCER": "{\"bootstrap.servers\": \"localhost:9092\"}",
+            else:
                 value = json.loads(self.flask_app.config["KAFKA_CONSUMER"])
             return value
         return None
