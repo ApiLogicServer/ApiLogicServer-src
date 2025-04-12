@@ -1,6 +1,7 @@
 
 Create WGResult Graphics, with graphics elements for each prompts like 'graph sales by region'.
     * do not create graphics elements unless explicitly requested.
+    * query results should always return exactly 2 columns.
     * use 'sales by region' to create a WGResult Graphic.sqlalchemy_query for *each* such line
     * Be sure to use class names, not table names
     * Create joins for only explicitly defined foreign key relationships

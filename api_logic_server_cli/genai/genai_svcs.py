@@ -47,7 +47,7 @@ class Graphic(BaseModel):
     sql_query: str  # sql query using group by, returns result = { "result": [ ("name", "value")  ] }
     classes_used: str # comma-delimited list of classes used in sqlalchemy_query
     class_x_axis: str # name of class for x axis
-    name: str  # suggested Python name for sqlalchemy_query
+    name: str  # suggested Python name for sqlalchemy_query - unique
     prompt: str  # prompt used to create the graphic
     title: str # expanded name
     xAxis: str # caption for x axis
