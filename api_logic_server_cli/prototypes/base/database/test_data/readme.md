@@ -8,3 +8,5 @@ als genai-utils --rebuild-test-data
 ```
 
 You can explore the generated `database/test_data/test_data_code.py` to control test data generation.
+
+If required, you can copy `database/test_data/test_data_preamble.py` to a new file, to rebuild your database (e.g., from an altered model file), and load your own test data (if any).
