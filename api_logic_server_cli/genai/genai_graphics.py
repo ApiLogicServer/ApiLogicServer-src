@@ -112,6 +112,7 @@ class GenAIGraphics(object):
 
         self.create_data_class_methods(graphics_response_path)
         self.create_graphics_dashboard_service(graphics_response_path)
+        self.create_genai_graphics_prompts(graphics_response_path)
         log.info(f"\ngenai-graphics completed in [{str(int(time.time() - self.start_time))} secs] \n")
         pass
 
@@ -128,7 +129,7 @@ class GenAIGraphics(object):
         with open(graphics_response_path, 'r') as file:
             graphics_response = json.load(file)
             log.info(f'Graphics response loaded from {graphics_response_path}')
-        graphics = graphics_response['graphics']  # needs title, chart_type, xAxis, yAxis
+        graphics = graphics_response['graphics']
         for each_graphic in graphics:  # add each service to api/api_discovery
             self.fix_sqlalchemy_query(each_graphic)
             env = Environment(loader=FileSystemLoader(self.manager_path.joinpath('system/genai/graphics_templates')))
@@ -219,6 +220,27 @@ class GenAIGraphics(object):
 
             log.info(f'.. added dashboard query: {each_graphic['name']} to api_discovery')
         
+        pass
+
+    def create_genai_graphics_prompts(self, graphics_response_path: Path):
+        """ if genai project, create graphics prompt files
+        """
+        if self.project.genai_using is not None:
+            return  # it's an als request, not a genai project (todo: confirm this works on iterations)
+            
+        shutil.copy(self.manager_path.joinpath('system/genai/graphics_templates/graphics_services_db.jinja'),
+                    self.project.project_directory_path.joinpath('database/database_discovery/graphics_services.py')) # all the db-class methods are created in this file
+
+        # open and read the graphics_response_path json file
+        assert graphics_response_path.exists(), f'Graphics response file not found: {graphics_response_path}'
+        with open(graphics_response_path, 'r') as file:
+            graphics_response = json.load(file)
+            log.info(f'Graphics response loaded from {graphics_response_path}')
+        graphics = graphics_response['graphics']
+        for each_graphic in graphics:  # add each prompt to docs/graphics
+            with open(self.project.project_directory_path.joinpath(f'docs/graphics/{each_graphic['name']}'), 'w') as out_file:
+                out_file.write(each_graphic['prompt'] + '\n')
+            log.info(f'.. added graphics prompt: {each_graphic['name']} to docs/graphics')
         pass
 
     def fix_sqlalchemy_query(self, graphic: Dict):
