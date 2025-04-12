@@ -58,8 +58,8 @@ class GenAIGraphics(object):
         2. Iterable: do not lose graphics on WG iteration
     * Proposal: 4/8
         * if new genai project, this code creates docs/graphics/<graphics.name>.prompt 
-            * this preserves the graphics for future wg iterations
-            * ALS developers manage their own graphics
+            * future wg iterations use this to preserve graphics
+            * ALS developers manage their own docs/graphics
         * dashboard_service.py -- each <graphic.names> query:
             1. if exists(docs/graphics/<graphics.name>.err), bypass the query
             2. wrap each dashboard_service query in a try/except block
@@ -70,9 +70,8 @@ class GenAIGraphics(object):
 
             
     Open Issues
-    * How to integrate with als/wg home.js?
     * How to enforce licensing?
-    * How to choose graph vs chart?
+    * How do we demo this for wg with such small test data?  Maybe just counts?
     
     """
 
@@ -81,7 +80,7 @@ class GenAIGraphics(object):
         Add graphics to existing projects - [see docs](https://apilogicserver.github.io/Docs/WebGenAI-CLI/#add-graphics-to-existing-projects)
         Args:
             project (Project): Project object
-            using (str): path to graphics prompt file (or None)
+            using (str): path to graphics prompt files (or None)
             genai_version (str): GenAI version to use
         """        
 
@@ -90,12 +89,12 @@ class GenAIGraphics(object):
         self.manager_path = genai_svcs.get_manager_path()
         self.start_time = time.time()
 
-        if using is None:           # New GenAI Project: use docs/response.json
+        if using is None:           # New GenAI Project: find graphics in docs/response.json
             graphics_response_path = self.project.project_directory_path.joinpath('docs/response.json')
-        else:                       # Existing (any) Project - use graphics files  -> ChatGPT
+        else:                       # Existing (any) Project - find graphics in files and send to ChatGPT
             graphics_response_path = self.project.project_directory_path.joinpath('docs/graphics/response.json')
-            if bypass_for_debug := True:
-                pass # usa already-built response.json, above
+            if bypass_for_debug := False:
+                pass # uses already-built docs/graphics/response.json
             else:
                 prompt = genai_svcs.read_and_expand_prompt(self.manager_path.joinpath('system/genai/prompt_inserts/graphics_request.prompt'))
                 prompt_lines = prompt.split('\n')                   # ChatGPT instructions
@@ -227,6 +226,11 @@ class GenAIGraphics(object):
         graphic['sqlalchemy_query'] = graphic['sqlalchemy_query'].replace('\\n', '\n')
         graphic['sqlalchemy_query'] = graphic['sqlalchemy_query'].replace('\"', '"')
         graphic['sqlalchemy_query'] = graphic['sqlalchemy_query'].replace('.isnot', '.is_not')
+
+        # this part is for readability, not 'fixing'
+        graphic['sqlalchemy_query'] = graphic['sqlalchemy_query'].replace('session.query', '(session.query')
+        graphic['sqlalchemy_query'] = graphic['sqlalchemy_query'] + ')'
+        graphic['sqlalchemy_query'] = graphic['sqlalchemy_query'].replace(').', ')\n            .')
         pass
 
     def append_data_model(self) -> List[str]:
