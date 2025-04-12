@@ -71,10 +71,32 @@
     ],
     "graphics": [
         {
-            "sqlalchemy_query": "sales_by_month = (session.query(func.strftime('%Y-%m', Order.date_shipped).label('Month'), func.sum(Item.amount)) .join(Item, Order.id == Item.order_id) .group_by(func.strftime('%Y-%m', Order.date_shipped)) .order_by(func.strftime('%Y-%m', Order.date_shipped)))",
-            "classes_used": "Order, Item",
-            "name": "sales_by_month",
-            "html_code": "function drawSalesByMonthChart(result) {\n    const labels = result.map(entry => entry.Month);\n    const data = result.map(entry => entry.TotalSales);\n    const ctx = document.getElementById('salesByMonthChart').getContext('2d');\n    new Chart(ctx, {\n        type: 'bar',\n        data: {\n            labels: labels,\n            datasets: [{\n                label: 'Sales by Month',\n                data: data,\n                backgroundColor: '#42A5F5',\n                borderColor: '#1E88E5',\n                borderWidth: 1\n            }]\n        },\n        options: {\n            scales: {\n                yAxes: [{\n                    ticks: {\n                        beginAtZero: true\n                    }\n                }]\n            }\n        }\n    });\n}"
+            "sqlalchemy_query": "session.query(Product.name, func.sum(Item.amount).label('TotalSales')).join(Item, Product.id == Item.product_id).filter(Order.date_shipped.isnot(None)).group_by(Product.name).order_by(func.sum(Item.amount).desc())",
+            "sql_query": "SELECT Product.name, SUM(Item.amount) AS TotalSales FROM Product JOIN Item ON Product.id = Item.product_id JOIN Order ON Item.order_id = Order.id WHERE Order.date_shipped IS NOT NULL GROUP BY Product.name ORDER BY TotalSales DESC",
+            "classes_used": "Product, Item, Order",
+            "class_x_axis": "Product",
+            "name": "sales_by_product",
+            "prompt": "Graph Sales by Product",
+            "title": "Sales by Product",
+            "xAxis": "Product",
+            "yAxis": "Total Sales",
+            "dashboard": true,
+            "graph_type": "Bar",
+            "html_code": "var data = result.result; var categories = data.map(item => item[0]); var totals = data.map(item => item[1]); var ctx = document.getElementById('salesByProductChart').getContext('2d'); new Chart(ctx, {type: 'bar', data: {labels: categories, datasets: [{label: 'Sales by Product', data: totals}]}});"
+        },
+        {
+            "sqlalchemy_query": "session.query(Customer.name, func.sum(Order.amount_total).label('TotalCustomerSales')).join(Order, Customer.id == Order.customer_id).filter(Order.date_shipped.isnot(None)).group_by(Customer.name).order_by(func.sum(Order.amount_total).desc())",
+            "sql_query": "SELECT Customer.name, SUM(Order.amount_total) AS TotalCustomerSales FROM Customer JOIN Order ON Customer.id = Order.customer_id WHERE Order.date_shipped IS NOT NULL GROUP BY Customer.name ORDER BY TotalCustomerSales DESC",
+            "classes_used": "Customer, Order",
+            "class_x_axis": "Customer",
+            "name": "sales_by_customer",
+            "prompt": "Graph Sales by Customer",
+            "title": "Sales by Customer",
+            "xAxis": "Customer",
+            "yAxis": "Total Sales",
+            "dashboard": true,
+            "graph_type": "Bar",
+            "html_code": "var data = result.result; var customers = data.map(item => item[0]); var sales = data.map(item => item[1]); var ctx = document.getElementById('salesByCustomerChart').getContext('2d'); new Chart(ctx, {type: 'bar', data: {labels: customers, datasets: [{label: 'Sales by Customer', data: sales}]}});"
         }
     ],
     "test_data": "This is the test data generated for Customers, Orders, Items, and Products in the new system.",

@@ -15,7 +15,7 @@ Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 __version__ = "14.03.37"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t04/12/2024 - 14.03.37: unique names, formatting of graphics queries, ensure 2 column results  \n"\
+    "\t04/12/2024 - 14.03.37: unique names, format graphics queries, ensure 2 col results, create docs/graphics prompts for genai  \n"\
     "\t04/11/2024 - 14.03.36: graphics iff requested, count nw examples, error reporting, bugfix: find each_graphic['class_x_axis']  \n"\
     "\t04/08/2024 - 14.03.34: Phase 1 of fail-safe graphics (todo: display info) \n"\
     "\t04/07/2024 - 14.03.33: Tyler revisions+, remove graphics from genai_demo, nw product.category \n"\

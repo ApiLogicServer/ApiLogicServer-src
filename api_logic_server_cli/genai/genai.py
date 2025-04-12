@@ -183,7 +183,7 @@ class GenAI(object):
                 if not genai_demo_response_path.is_file():
                     log.debug(f'.. standard genai_demo response not found: {genai_demo_response_path}')
                 else:
-                    with open(genai_demo_response_path, 'r') as response_file:
+                    with open(genai_demo_response_path, 'r') as response_file:  # fail-safe demo
                         response_dict = json.load(response_file)
                     log.debug(f'.. used standard genai_demo response: {genai_demo_response_path}')
                     genai_demo_response_path = Path('system/genai/temp/response.json')
