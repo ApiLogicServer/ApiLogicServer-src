@@ -52,11 +52,11 @@ class GenAIGraphics(object):
     * Optionally: update `bypass_for_debug` to True to skip ChatGPT call
 
 
-    **Issue:** what is the persistence model for graphics?  (eg, in docs/graphics, or docs/response.json, wg database??)
-    * requirements:
+    Persistence model for graphics  (eg, in docs/graphics and or docs/response.json)
+    * Requirements:
         1. Fail-safe: do not let WG projects fail due to graphics - but alert user, just once
         2. Iterable: do not lose graphics on WG iteration
-    * Proposal: 4/8
+    * Running design: 4/12 
         * if new genai project, this code creates docs/graphics/<graphics.name>.prompt 
             * future wg iterations use this to preserve graphics
             * ALS developers manage their own docs/graphics
@@ -71,7 +71,6 @@ class GenAIGraphics(object):
             
     Open Issues
     * How to enforce licensing?
-    * How do we demo this for wg with such small test data?  Maybe just counts?
     
     """
 
@@ -227,9 +226,6 @@ class GenAIGraphics(object):
         """
         if self.project.genai_using is not None:
             return  # it's an als request, not a genai project (todo: confirm this works on iterations)
-            
-        shutil.copy(self.manager_path.joinpath('system/genai/graphics_templates/graphics_services_db.jinja'),
-                    self.project.project_directory_path.joinpath('database/database_discovery/graphics_services.py')) # all the db-class methods are created in this file
 
         # open and read the graphics_response_path json file
         assert graphics_response_path.exists(), f'Graphics response file not found: {graphics_response_path}'
@@ -263,13 +259,13 @@ class GenAIGraphics(object):
         """
 
         data_model_lines = []
-        data_model_lines.extend('Here is the data model - please use it to create the graphics:\n')
+        data_model_lines.extend(['Here is the data model - please use it to create the graphics:'])
         data_model_path = self.project.project_directory_path.joinpath('database/models.py')
         assert data_model_path.exists(), f"Data model file not found: {data_model_path}"
         with open(data_model_path, 'r') as file:
             prompt_lines = file.readlines()
         data_model_lines.extend(prompt_lines)
-        data_model_lines.extend('End of data model\n')
+        data_model_lines.extend(['End of data model'])
         return data_model_lines
     
     def append_graphics_files(self) -> List[str]:
