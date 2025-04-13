@@ -597,7 +597,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "      + Add Customizations - blt/genai_demo_informal",
+            "name": "      + Add Simulated Customizations - blt/genai_demo_informal",
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer/genai_demo_informal",
@@ -633,6 +633,21 @@
             "args": ["genai",
             "--using=${workspaceFolder}/../../build_and_test/ApiLogicServer/system/genai/examples/genai_demo/genai_demo_informal.prompt",
             "--project-name=genai_demo_"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "    - Iterate blt/genai_demo__ (test - retain graphics over iterations)",
+// used to mimic iterating Genai - demo mode, to verify that graphics are not lost.
+// IMPORTANT: add docs/004_iterate_add_sales_rep.prompt first (eg, assign orders to a salesrep)
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True", "APILOGICPROJECT_IS_GENAI_DEMO": "True"},
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["genai",
+            "--using=${workspaceFolder}/../../build_and_test/ApiLogicServer/genai_demo_/docs",
+            "--project-name=genai_demo__"],
             "console": "integratedTerminal"
         },
         {

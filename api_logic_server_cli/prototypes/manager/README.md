@@ -165,26 +165,36 @@ Verify it's operating properly:
 
 <summary> You can iterate the logic and data model</summary>
 
-<br>Logic iterations are particuarly useful.  For example, here we take the basic check-credit logic, and add:
+<br>The approach for an iteration is to create a new project from an existing one:
+
+1. add another prompt to an existing projects `docs` directory, specifying your changes
+2. use `als genai`, specifying 
+    * `--using` existing projects `docs` directory, and 
+    * `--project-name` as the output project
+ 
+ **Logic iterations** are particuarly useful.  For example, here we take the basic check-credit logic, and add:
 
 > Provide a 10% discount when buying more than 10 carbon neutral products.<br><br>The Item carbon neutral is copied from the Product carbon neutral
 
-Explore [genai_demo_iteration_discount](system/genai/examples/genai_demo/genai_demo_iteration_discount).  This will add carbon_neutral to the data model, and update the logic to provide the discount:
+Explore [genai_demo_iteration_discount](system/genai/examples/genai_demo/genai_demo_iteration_discount).  It's an iteration of basic_demo (see system/genai/examples/genai_demo/genai_demo_iteration_discount/002_create_db_models.prompt).  This will add carbon_neutral to the data model, and update the logic to provide the discount:
 
 ```bash title='Iterate Business Logic'
 # Iterate with data model and logic
-als genai --project-name='genai_demo_with_logic' --using=system/genai/examples/genai_demo/genai_demo_iteration
+als genai --project-name='genai_demo_with_discount' --using=system/genai/examples/genai_demo/genai_demo_iteration_discount
 # open Docs/db.dbml
 ```
+
 <br>
 
-You can add new columns/tables, while keeping the prior model intact:
+You can perform **model iterations:** add new columns/tables, while keeping the prior model intact.  First, we create a project with no logic, perhaps just to see the screens (this step is optional, provided just to illustrate that iterations create new projects from existing ones):
 
 ```bash title='Iterate Without Logic'
 # Step 1 - create without logic
 als genai --project-name='genai_demo_no_logic' --using=system/genai/examples/genai_demo/genai_demo_no_logic.prompt
 # open Docs/db.dbml
 ```
+
+Then, we would create another prompt in the docs directory with our model changes. We've already created these for you in `system/genai/examples/genai_demo/genai_demo_iteration` - we use that to alter the data model (see `system/genai/examples/genai_demo/genai_demo_iteration/004_iteration_renames_logic.prompt`):
 
 ```bash title='Iterate With Logic'
 # Iterate with data model and logic
