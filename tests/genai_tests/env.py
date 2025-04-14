@@ -17,7 +17,7 @@ class Config:
     do_test_auto_conv = default_setting                     # ensure project rebuilt, not truncated
     do_test_genai_demo = default_setting                    # test genai_demo
     do_import = True                             # import 
-    do_genai_test_genai_demo_conversation = default_setting # test genai_demo conversation 
+    do_genai_test_genai_demo_iteration = default_setting # test genai_demo conversation 
     do_test_genai_demo_informal = default_setting     # test genai_demo informal
     do_multi_rule_logic_bad_gen = default_setting           # test bad CPT - puts engine, Base into test
     do_multi_rule_logic = default_setting                   # test multi-rule logic
