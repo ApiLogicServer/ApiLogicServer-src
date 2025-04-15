@@ -18,5 +18,5 @@ Ensure each Item quantity is not null.
 
 Ensure: each order has a valid customer_id that exists in the Customer table.
 
-Graph Sales by Product.
-Graph Sales by Customer.
+Graph Sales by Product, for dashboard.
+Graph Sales by Customer, for dashboard.
