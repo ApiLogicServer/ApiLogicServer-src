@@ -112,6 +112,12 @@
 		"outline.showFunctions": true,
 		"outline.showMethods": true,
 		"notebook.outline.showCodeCells": false,
-		"outline.showModules": false
+		"outline.showModules": false,
+		"github.copilot.enable": {
+			"*": false,
+			"plaintext": false,
+			"markdown": false,
+			"scminput": false
+		}
 	}
 }

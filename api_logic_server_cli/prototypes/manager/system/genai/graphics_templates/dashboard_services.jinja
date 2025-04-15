@@ -12,14 +12,14 @@ import safrs
 from pathlib import Path
 
 """
-Invoked by api_discovery on server startup
+Called by iFrame in home.js when admin app is loaded
 
 Returns iFrame for ui/admin/home.js, with entries like this to populate the dashboard:
 <iframe src="http://localhost:5656/chart_graphics/sales_per_category" style="flex: 1; border: none; width: 90%; height: 200px;">
 
 curl -X GET "http://localhost:5656/dashboard"
 
-You typically do not alter this file.
+You typically do not alter this file - it is rebuilt on `als genai-graphics`
 
 """
 
