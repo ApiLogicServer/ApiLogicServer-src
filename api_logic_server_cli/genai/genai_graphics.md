@@ -5,6 +5,7 @@
 | Change Model   | Lost (1)
 | Rules
 | Both
+| + Graphics
 
 
 ### Notes:

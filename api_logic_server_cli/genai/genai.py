@@ -184,7 +184,7 @@ class GenAI(object):
                     log.debug(f'.. standard genai_demo response not found: {genai_demo_response_path}')
                 else:
                     with open(genai_demo_response_path, 'r') as response_file:  # fail-safe demo
-                        response_dict = json.load(response_file)
+                        response_dict = json.load(response_file)                # BUT, the prompt is in wg?  which needs graphics
                     log.debug(f'.. used standard genai_demo response: {genai_demo_response_path}')
                     genai_demo_response_path = Path('system/genai/temp/response.json')
                     with open(genai_demo_response_path, 'w') as response_file:
@@ -316,7 +316,7 @@ class GenAI(object):
                 log.debug(f'.. from file: {self.project.genai_using}')
                 raw_prompt = file.read()
             prompt = self.get_prompt__with_inserts(raw_prompt=raw_prompt, for_iteration=False)  # insert db-specific logic
-            self.logic_enabled = True
+            self.logic_enabled = True 
             if os.environ.get("APILOGICPROJECT_LOGIC_ENABLED") is not None and \
                             os.environ.get("APILOGICPROJECT_LOGIC_ENABLED") == 'False':
                 self.logic_enabled = False
@@ -398,12 +398,19 @@ class GenAI(object):
         return learning_requests  # TODO - what if no learning requests?
     
     def get_prompt__with_inserts(self, raw_prompt: str, for_iteration: bool = False) -> str:
-        """ prompt-engineering:
+        """ prompt-engineering for both initial & iteration:
 
             1. insert db-specific logic into prompt 
-            2. insert iteration prompt     (if for_iteration)
+            2. insert iteration prompt     (iff for_iteration)
             3. insert logic_inserts.prompt ('1 line: Use LogicBank to create declare_logic()...')
             4. designates prompt-format    (response_format.prompt)
+
+        Eg, initial creation: expands system/genai/prompt_inserts/sqlite_inserts.prompt
+            1. use sqlalchemy to create...
+            2. <requirements>prompt</requirements>
+            3. Use autonum.. (sql hints)
+            4. Graphics training...
+            5. Response format
 
         Args:
             raw_prompt (str): the prompt from file or text argument

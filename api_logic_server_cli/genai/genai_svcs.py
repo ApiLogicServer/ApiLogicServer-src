@@ -773,10 +773,11 @@ def get_create_prompt__with_inserts(arg_prompt_inserts: str='', raw_prompt: str=
                 do_logic = False
             prompt_line_number += 1
         
-        response_format_file_name = get_manager_path().joinpath(f'system/genai/prompt_inserts/response_format.prompt')
-        with open(response_format_file_name, 'r') as file:
-            response_format = file.readlines()
-        prompt_lines.extend(response_format)
+        if format_not_requested := False:  # FIXME - double format definition on create; others??
+            response_format_file_name = get_manager_path().joinpath(f'system/genai/prompt_inserts/response_format.prompt')
+            with open(response_format_file_name, 'r') as file:
+                response_format = file.readlines()
+            prompt_lines.extend(response_format)
 
         prompt_result = "\n".join(prompt_lines)  # back to a string
         pass
