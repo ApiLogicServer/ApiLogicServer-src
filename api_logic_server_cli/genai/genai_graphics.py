@@ -30,16 +30,17 @@ log = logging.getLogger(__name__)
 
 class GenAIGraphics(object):
     """ 4/3/2025
-    Adds Graphics to **existing** projects (genai project or als project):
+    Adds Graphics to projects (genai project or als project):
     * adds `database/database_discovery` file to project (methods on database.models classes)
-    * creates a 1-off html files, to be merged into home.js (eg, as a iFrame)
+    * adds `api/api_discovery` file to project (dashboard services - calls db methods, above)
+    * adds `docs/graphics` prompt files to **wg** project (graphics prompt files)
 
     Invoked from:
     1. **New GenAI Project:** for newly created project (e,g, mgr system/genai/examples/genai_demo/genai_demo.prompt)
         * `--using` is None ==> Docs folder already has WGResponse.graphics[]
         * see api_logic_server_cli/genai/genai_svcs.py#insert_logic_into_created_project      
-    2. **Existing Project:** CLI/genai-graphics existing project, using *docs/graphics* eg 
-        * `--using`  ==> Call ChatGPT for WGResponse.graphics `<project>/docs/graphics/*.prompt`  
+    2. **Existing Project:** `als genai-graphics [--using]`  # existing project
+        * `--using`  ==> Call ChatGPT for WGResponse.graphics, default = `<project>/docs/graphics/*.prompt`  
         * note: dbml not rebuilt after rebuild-from-db
     3. **Existing WG Project:** in-place (do not create new project with new test data)
         *  Same as #1, but requires WG UI change ('in place', 'graphics' button, ...) to use genai_graphics cmd
@@ -51,26 +52,28 @@ class GenAIGraphics(object):
         * Don't forget to copy these back to `api_logic_server_cli/prototypes/manager/system/genai/graphics_templates`
     * Optionally: update `bypass_for_debug` to True to skip ChatGPT call
 
-
-    Persistence model for graphics  (eg, in docs/graphics and or docs/response.json)
+    Persistence model for graphics: docs/response.json (also in docs/graphics/response.json, for als customization)
     * Requirements:
         1. Fail-safe: do not let WG projects fail due to graphics - but alert user, just once
         2. Iterable: do not lose graphics on WG iteration
     * Running design: 4/12 
-        * if new genai project, this code creates docs/graphics/<graphics.name>.prompt 
-            * future wg iterations use this to preserve graphics
-            * ALS developers manage their own docs/graphics
-        * dashboard_service.py -- each <graphic.names> query:
+        * Fail-safe: implemented in dashboard_service.py -- for each <graphic.name> query:
             1. if exists(docs/graphics/<graphics.name>.err), bypass the query
             2. wrap each dashboard_service query in a try/except block
-            3. if not ok, 
+            3. if exception, 
                 * return "graphics failed" to iFrame so user can see it
                 * create docs/graphics/<graphics>.err to inhibit future calls
-                    * assumption: running projects can update webgenai data
-
+        * For wg (--using == None):
+            * iterations build on docs/response.json, so graphics are preserved
+                * todo: verify add-rules
+            * this code creates docs/graphics/<graphics.name>.prompt
+                * preserves graphics when opening project in als mode
+            * ALS developers manage their own docs/graphics
             
     Open Issues
     * How to enforce licensing?
+    * How can user delete or alter the graphics?  All, or just specific one (but name not known..)
+    * Graphics for wg projects (not showing)
     
     """
 

@@ -5,8 +5,6 @@ Create a system with customers, orders, items and products.
 
 Include a notes field for orders.
 
-Use LogicBank to enforce these requirements (do not generate check constraints); be sure to update the data model and *all* test data with any attributes used in the logic:
-
 Use case: Check Credit    
     1. The Customer's balance is less than the credit limit
     2. The Customer's balance is the sum of the Order amount_total where date_shipped is null
@@ -17,12 +15,14 @@ Use case: Check Credit
 Use case: App Integration
     1. Send the Order to Kafka topic 'order_shipping' if the date_shipped is not None.
 
-Ensure each customer and product has a unique name.
+Ensure each customer has a unique name.
 
 Ensure each Item quantity is not null.
 
 Ensure each order has a valid customer_id that exists in the Customer table.
-.
+
+Graph sales by month, for dashboard.
+Graph Sales by Product, for dashboard.
 </Requirements>
 
 Hints: use autonum keys (for all tables - including for link/join/junction/intersection tables), allow nulls, foreign keys, no check constraints.
