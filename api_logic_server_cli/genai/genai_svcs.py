@@ -744,10 +744,10 @@ def get_create_prompt__with_inserts(arg_prompt_inserts: str='', raw_prompt: str=
                 pre_post = file.read()  # eg, Use SQLAlchemy to create a sqlite database named system/genai/temp/create_db_models.sqlite, with
         prompt_result = pre_post.replace('{{prompt}}', raw_prompt)
         if for_iteration:
-            # Update the prior response - be sure not to lose classes and test data already created.
-            prompt_result = 'Update the prior response - be sure not to lose classes and test data already created.' \
-                + '\n\n' + prompt_result
-            log.debug(f'.. iteration inserted: Update the prior response')
+            # Update the prior response - be sure not to lose classes, attributes, rules and test data already created.
+            iteration_prompt = read_and_expand_prompt(get_manager_path().joinpath(f'system/genai/prompt_inserts/iteration.prompt'))
+            prompt_result = iteration_prompt  + '\n\n' + prompt_result
+            log.debug(f'.. iteration inserted: Update the prior response, using prompt_inserts/iteration.prompt')
             #log.debug(f'.... iteration prompt result: {prompt_result}')
 
         prompt_lines = prompt_result.split('\n')

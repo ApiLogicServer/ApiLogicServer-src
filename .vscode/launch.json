@@ -641,7 +641,7 @@
 // IMPORTANT: add docs/004_iterate_add_sales_rep.prompt first (eg, assign orders to a salesrep)
             "type": "debugpy",
             "request": "launch",
-            "env": {"APILOGICSERVER_DEBUG": "True", "APILOGICPROJECT_IS_GENAI_DEMO": "True"},
+            "env": {"APILOGICSERVER_DEBUG": "True"},
             "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
