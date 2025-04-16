@@ -189,6 +189,12 @@ class GenAI(object):
                     genai_demo_response_path = Path('system/genai/temp/response.json')
                     with open(genai_demo_response_path, 'w') as response_file:
                          json.dump(response_dict, response_file, indent=4)
+                    # the request is a cli arg; for wg: sra/src/components/apifab/WebGenAICreate.tsx
+                    genai_demo_request_path = Path('system/genai/temp/request.json')
+                    utils.replace_string_in_file(in_file=genai_demo_request_path,
+                                                 search_for='at least 12 tables',
+                                                 replace_with='only the requested tables')
+                    pass
 
         else: # for retry from corrected response... eg system/genai/temp/chatgpt_retry.response
             self.resolved_model = "(n/a: model not used for repaired response)"
