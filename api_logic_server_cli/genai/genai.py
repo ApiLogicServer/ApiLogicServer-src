@@ -43,11 +43,11 @@ def import_module_from_path(module_name, file_path):
 class GenAI(object):
     """ Create project from genai prompt(s).  
     
-    Called by api_logic_server, to run ChatGPT (or respone file) to create SQLAlchemy model
+    Called by api_logic_server, to run ChatGPT (or response file) to create SQLAlchemy model
 
     api_logic_server then uses model to create db, proceeds with normal project creation.
 
-    * NB: there is also a callback to genai to insert_logic.. (& graphics into created project
+    * NB: there is also a callback to genai to genai#insert_logic.. (& graphics) into created project
     """
 
     def __init__(self, project: Project):
@@ -533,6 +533,12 @@ class GenAI(object):
                     return_line = each_line.replace('    ', '    # ')
                     log.debug(f'.. removed hallucination: {each_line}')
             return return_line
+
+        log.info(f'\n\nGenAI [{self.project.project_name}] creating microservice...')
+        log.info(f'.. .. --using prompt: {self.project.genai_using}')
+        log.info(f'.. .. --project-name[self.project.project_name]: {self.project.project_name}')
+        log.info(f'.. .. project.project_directory_actual: {self.project.project_directory_actual}')
+        log.info(f'.. .. in pwd: {os.getcwd()}\n')
 
         logic_file = self.project.project_directory_path.joinpath('logic/declare_logic.py')
         if self.logic_enabled:

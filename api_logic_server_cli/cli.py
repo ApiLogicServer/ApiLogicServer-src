@@ -745,8 +745,11 @@ def genai_logic(ctx, using, genai_version: str, retries: int, suggest: click.BOO
 @click.option('--genai-version', 'genai_version',
               default='gpt-4o',
               help="Eg, gpt-3.5-turbo, gpt-4o")
+@click.option('--delete-in-project', 'delete_in_project',
+              default='',
+              help="Delete all graphics in specified directory")
 @click.pass_context
-def genai_graphics(ctx, using, genai_version: str):
+def genai_graphics(ctx, using, genai_version: str, delete_in_project: str):
     """
         Adds (or suggests) logic to current project.
     """
@@ -771,7 +774,7 @@ def genai_graphics(ctx, using, genai_version: str):
         log.info(f'... Typical usage - cd into project, use --project_name=. \n')
         exit (1)
     from api_logic_server_cli.genai.genai_graphics import GenAIGraphics
-    genai_graphics = GenAIGraphics(using=using, project=project, genai_version=genai_version)
+    genai_graphics = GenAIGraphics(using=using, project=project, genai_version=genai_version, delete_in_project=delete_in_project)
     pass
     log.info("")
 
