@@ -77,7 +77,7 @@ class GenAIGraphics(object):
     
     """
 
-    def __init__(self, project: Project, using: str, genai_version: str):
+    def __init__(self, project: Project, using: str, genai_version: str, delete_in_project: str = None):
         """ 
         Add graphics to existing projects - [see docs](https://apilogicserver.github.io/Docs/WebGenAI-CLI/#add-graphics-to-existing-projects)
         Args:
@@ -90,8 +90,13 @@ class GenAIGraphics(object):
         self.project.genai_using = using
         self.manager_path = genai_svcs.get_manager_path()
         self.start_time = time.time()
+        self.delete_in_project = delete_in_project
 
-        if using is None:           # New GenAI Project: find graphics in docs/response.json
+        if self.delete_graphics_in_project is not None:
+            self.delete_graphics_in_project()
+            return
+        
+        elif using is None:           # New GenAI Project: find graphics in docs/response.json
             graphics_response_path = self.project.project_directory_path.joinpath('docs/response.json')
         else:                       # Existing (any) Project - find graphics in files and send to ChatGPT
             graphics_response_path = self.project.project_directory_path.joinpath('docs/graphics/response.json')
@@ -240,6 +245,22 @@ class GenAIGraphics(object):
             with open(self.project.project_directory_path.joinpath(f'docs/graphics/{each_graphic['name']}'), 'w') as out_file:
                 out_file.write(each_graphic['prompt'] + '\n')
             log.info(f'.. added graphics prompt: {each_graphic['name']} to docs/graphics')
+        pass
+
+    def delete_graphics_in_project(self):
+        """
+        Deletes the associated resources or files in the current project.
+
+        This method is intended to handle the removal of specific project-related
+        assets or configurations. The exact implementation details should be
+        defined based on the project's requirements.
+
+        Raises:
+            NotImplementedError: If the method is not yet implemented.
+        """
+        log.info(f"\ndelete_in_project (stub) called...")
+        log.info(f"... self.delete_in_project: {self.delete_in_project}")
+        log.info(f"... self.project.project_directory_actual: {self.project.project_directory_actual}")
         pass
 
     def fix_sqlalchemy_query(self, graphic: Dict):
