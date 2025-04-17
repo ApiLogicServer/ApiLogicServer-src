@@ -92,7 +92,7 @@ class GenAIGraphics(object):
         self.start_time = time.time()
         self.delete_in_project = delete_in_project
 
-        if self.delete_graphics_in_project is not None:
+        if self.delete_in_project is not None:
             self.delete_graphics_in_project()
             return
         
