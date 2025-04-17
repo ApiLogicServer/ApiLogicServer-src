@@ -12,6 +12,7 @@
             "env": {"APILOGICSERVER_AUTO_OPEN": ""},
             "program": "build_load_and_test.py",
             "redirectOutput": true,
+            "args": ["confirm"],
             "justMyCode": false,
             "console": "integratedTerminal"
         },
@@ -22,7 +23,7 @@
             "cwd": "${workspaceFolder}/tests/build_and_test",
             "program": "build_load_and_test.py",
             "redirectOutput": true,
-            "args": ["build-only"],
+            "args": ["build-only", "confirm"],
             "justMyCode": false,
             "console": "integratedTerminal"
         },

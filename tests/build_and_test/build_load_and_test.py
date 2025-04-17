@@ -920,6 +920,14 @@ print(f'  Creates other projects')
 print(f'  Creates Docker projects ')
 print('\n')
 
+# this is because vsc sometimes reset the current run config, so trying a test launches blt (10 minutes..)
+if (len(sys.argv) == 2 and 'confirm' in sys.argv[1]) or (len(sys.argv) == 3 and 'confirm' in sys.argv[2]):
+    # input string
+    result = input('Press Enter to continue (or Ctl-c) >')
+    if result == "x":
+        print('..cancelled\n')
+        exit(0)
+
 if not os.path.isdir(install_api_logic_server_path):
     os.makedirs(install_api_logic_server_path)
 
@@ -1074,7 +1082,7 @@ if Config.do_test_api_logic_project_with_auth:
     repeat 867-870
 '''
 
-if len(sys.argv) > 1 and sys.argv[1] == 'build-only':
+if len(sys.argv) > 1 and 'build-only' in sys.argv[1]:
     print("\nBuild/Install successful\n\n")
     exit (0)
 
