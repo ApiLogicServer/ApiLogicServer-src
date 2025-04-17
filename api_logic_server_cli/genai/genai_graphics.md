@@ -15,3 +15,5 @@
 3. Iterations definitely driven by docs/response, but
     * Bad-g-1 then add g-2, lost g-1
     * Bug: add g must add to docs/response
+4. genai/iteration does not have access to src app, so 
+    * how could a 'delete_graphics` work?  Seems unfortunate to create a new project from that...
