@@ -615,14 +615,14 @@ def genai(ctx, using, db_url, repaired_response: str,
         Creates new customizable project (overwrites).
     """
     global command
-    import api_logic_server_cli.genai.genai as genai_svcs
+    import api_logic_server_cli.genai.genai as genai
     if using is None and repaired_response is None:
         log.error("Error - must provide --using or --repaired-response")
         exit(1) 
     defaulted_using = using
     if defaulted_using == 'genai_demo': # default to genai_demo.prompt
         defaulted_using = 'system/genai/examples/genai_demo/genai_demo.prompt'
-    genai_svcs.genai_cli_with_retry(using=defaulted_using, db_url=db_url, repaired_response=repaired_response, 
+    genai.genai_cli_with_retry(using=defaulted_using, db_url=db_url, repaired_response=repaired_response, 
                 genai_version=genai_version, temperature=temperature,
                 retries=retries, opt_locking=opt_locking, genai_active_rules=active_rules,
                 prompt_inserts=prompt_inserts, quote=quote, use_relns=use_relns, 

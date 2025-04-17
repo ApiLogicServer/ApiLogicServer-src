@@ -47,7 +47,7 @@ class GenAI(object):
 
     api_logic_server then uses model to create db, proceeds with normal project creation.
 
-    * there is also a callback to genai to insert logic into created project
+    * NB: there is also a callback to genai to insert logic & graphics into created project
     """
 
     def __init__(self, project: Project):
@@ -152,9 +152,11 @@ class GenAI(object):
         # main driver starts here
         #######################################################
 
-        log.info(f'\nGenAI [{self.project.project_name}] creating microservice...')
+        log.info(f'\n\nGenAI [{self.project.project_name}] creating microservice...')
         log.info(f'.. .. --using prompt: {self.project.genai_using}')
-        log.info(f'.. .. in pwd: {os.getcwd()}')
+        log.info(f'.. .. --project-name[self.project.project_name]: {self.project.project_name}')
+        log.info(f'.. .. project.project_directory_actual: {self.project.project_directory_actual}')
+        log.info(f'.. .. in pwd: {os.getcwd()}\n')
 
         if self.project.genai_repaired_response != '':
             log.info(f'..     retry from [repaired] response file: {self.project.genai_repaired_response}')
