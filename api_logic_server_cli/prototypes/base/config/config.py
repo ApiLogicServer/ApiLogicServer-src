@@ -180,10 +180,10 @@ class Config:
             KAFKA_CONSUMER =  os.getenv('KAFKA_CONSUMER', {"bootstrap.servers": f"{KAFKA_SERVER}", "group.id": f"{KAFKA_CONSUMER_GROUP}", "enable.auto.commit": "false", "auto.offset.reset": "earliest"})
     else:
         app_logger.info(f'config.py - KAFKA_SERVER: {KAFKA_SERVER} - not set, no kafka producer/consumer')
-    print(f'config.py - KAFKA_PRODUCER: {KAFKA_PRODUCER}')
-    print(f'config.py - KAFKA_CONSUMER: {KAFKA_CONSUMER}')
-    print(f'config.py - KAFKA_CONSUMER_GROUP: {KAFKA_CONSUMER_GROUP}')
-    print(f'config.py - KAFKA_SERVER: {KAFKA_SERVER}')
+    app_logger.info(f'config.py - KAFKA_PRODUCER: {KAFKA_PRODUCER}')
+    app_logger.info(f'config.py - KAFKA_CONSUMER: {KAFKA_CONSUMER}')
+    app_logger.info(f'config.py - KAFKA_CONSUMER_GROUP: {KAFKA_CONSUMER_GROUP}')
+    app_logger.info(f'config.py - KAFKA_SERVER: {KAFKA_SERVER}')
     # N8N Webhook Args (for testing)
 	# see https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.webhook/?utm_source=n8n_app&utm_medium=node_settings_modal-credential_link&utm_campaign=n8n-nodes-base.webhook#path
     wh_scheme = "http"
