@@ -47,7 +47,7 @@ class GenAI(object):
 
     api_logic_server then uses model to create db, proceeds with normal project creation.
 
-    * NB: there is also a callback to genai to insert logic & graphics into created project
+    * NB: there is also a callback to genai to insert_logic.. (& graphics into created project
     """
 
     def __init__(self, project: Project):
@@ -491,6 +491,8 @@ class GenAI(object):
         2. readme.md
         
         Also creates the doc directory for record of prompt, response.
+
+        And, invokes genai_graphics
 
         TODO - use genai_rules_from_response
 
