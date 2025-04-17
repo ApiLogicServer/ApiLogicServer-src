@@ -249,11 +249,13 @@ class GenAIGraphics(object):
 
     def delete_graphics_in_project(self):
         """
-        Deletes the associated resources or files in the current project.
+        Delete graphics for wg project (als projects - just delete the docs/graphics files)
+        1. Update docs/*.prompt to remove lines starting with Graphics
+            * Prevents reappearance on iteration
+        2. Presume (!) not necessary to delete the graphics[] in docs/*.response files
+        3. Rebuild the api/api_discovery/dashboard_services.py file, in place.
 
-        This method is intended to handle the removal of specific project-related
-        assets or configurations. The exact implementation details should be
-        defined based on the project's requirements.
+        This does not rebuild / create a new project - operates on current project.
 
         Raises:
             NotImplementedError: If the method is not yet implemented.
@@ -261,6 +263,32 @@ class GenAIGraphics(object):
         log.info(f"\ndelete_in_project (stub) called...")
         log.info(f"... self.delete_in_project: {self.delete_in_project}")
         log.info(f"... self.project.project_directory_actual: {self.project.project_directory_actual}")
+        log.info(f"... self.project.project_directory_path: {str(self.project.project_directory_path)}")
+
+        docs_dir = self.project.project_directory_path.joinpath('docs')
+        # for all the *.prompt files, remove any lines where the first characters are 'Graph' (case insensitive)
+        deleted = 0
+        for prompt_file in docs_dir.glob('*.prompt'):
+            with open(prompt_file, 'r') as file:
+                lines = file.readlines()
+                line_number = 0
+                with open(prompt_file, 'w') as file:
+                    for line in lines:
+                        line_number += 1
+                        if not line.strip().lower().startswith('graph '):
+                            file.write(line)
+                        else:
+                            log.info(f"..... deleting {prompt_file.name}[{line_number}]: {line[0: len(line)-1]}")
+                            deleted += 1
+        log.info(f"... completed - removed {deleted} graph line(s).")
+        # Rename the old dashboard_services.py file to dashboard_services.pyZ if it exists
+        dashboard_service_path = self.project.project_directory_path.joinpath('api/api_discovery/dashboard_services.py')
+        if dashboard_service_path.exists():
+            renamed_path = dashboard_service_path.with_suffix('.pyZ')
+            dashboard_service_path.rename(renamed_path)
+            log.info(f"Renamed existing dashboard_services.py to {renamed_path}")
+        else:
+            log.info(f'.. Note: {dashboard_service_path} not found')
         pass
 
     def fix_sqlalchemy_query(self, graphic: Dict):
