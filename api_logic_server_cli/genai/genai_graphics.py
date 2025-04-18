@@ -112,7 +112,7 @@ class GenAIGraphics(object):
 
         if self.replace_with != '!new-wg' and self.replace_with != '!using' :  # update existing genai project
             replaced_graphics = self.graphics_replace_with_in_existing_project()
-            if self.replace_with == '!delete':     # '' we are done (else create docs/graphics prompts for processing below)
+            if self.replace_with == '!delete':     # we are done (else create docs/graphics prompts for processing below)
                 log.info(f"... update existing genai project - delete graphics")
                 return
             log.info(f"... update genai existing project - from docs/graphics prompts with {replaced_graphics}")
@@ -323,7 +323,7 @@ class GenAIGraphics(object):
         if dashboard_service_path.exists():
             renamed_path = dashboard_service_path.with_suffix('.pyZ')
             dashboard_service_path.rename(renamed_path)
-            log.info(f"Renamed existing dashboard_services.py to {renamed_path}")
+            log.info(f"..... Renamed existing dashboard_services.py to {renamed_path}")
         else:
             log.info(f'.. Note: {dashboard_service_path} not found')
         return replaced_prompts
