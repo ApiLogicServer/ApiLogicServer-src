@@ -665,6 +665,30 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "    - Replace graphics: blt/genai_demo_",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer/genai_demo_",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["genai-graphics",
+                "--replace-with=Graph Count of Sales by Product, for dashboard."],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "    - Redo graphics: blt/genai_demo_",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer/genai_demo_",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["genai-graphics",
+                "--replace-with=*"],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "    - Create blt/genai_demo_ from repaired",
 // used to mimic Genai - demo mode
             "type": "debugpy",

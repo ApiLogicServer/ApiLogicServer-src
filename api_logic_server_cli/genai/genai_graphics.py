@@ -80,9 +80,14 @@ class GenAIGraphics(object):
     def __init__(self, project: Project, using: str, genai_version: str, replace_with: str = None):
         """ 
         Add graphics to existing projects - [see docs](https://apilogicserver.github.io/Docs/WebGenAI-CLI/#add-graphics-to-existing-projects)
+
+        Called to inject graphics into existing project, by:
+        1. genai#insert_logic for NEW WG   projects  (--using is None, so docs/response['graphics'])
+        2. cli                for EXISTING projects  (--using is docs/graphics, eg, `als genai-graphics`)    
+
         Args:
             project (Project): Project object
-            using (str): path to graphics prompt files (or None)
+            using (str): path to graphics prompt files (set by genai#insert_logic, or None, for existing project)
             genai_version (str): GenAI version to use
         """        
 
@@ -91,14 +96,25 @@ class GenAIGraphics(object):
         self.manager_path = genai_svcs.get_manager_path()
         self.start_time = time.time()
         self.replace_with = replace_with
+        graphics_response_path = (
+            self.project.project_directory_path.joinpath('docs/response.json') if using is None else    # new wg project
+            self.project.project_directory_path.joinpath('docs/graphics/response.json'))                # existing project - create w/GPT
+        ''' None  means NEW WG   project (already have docs/response['graphics']), \n
+            value means EXISTING project (build docs/graphics/response.json)'''
 
-        if self.replace_with is not None:
-            self.graphics_replace_with_in_project()
-            return
-        
-        elif using is None:           # New GenAI Project: find graphics in docs/response.json
-            graphics_response_path = self.project.project_directory_path.joinpath('docs/response.json')
-        else:                       # Existing (any) Project - find graphics in files and send to ChatGPT
+        log.info(f"\nGenAIGraphics start...")
+        log.info(f"... --using: {self.project.genai_using}")
+        log.info(f"... graphics_response_path: {graphics_response_path}")
+        log.info(f"... self.replace_with: {self.replace_with}")
+        log.info(f"... self.project.project_directory_actual: {self.project.project_directory_actual}")
+        log.info(f"... self.project.project_directory_path: {str(self.project.project_directory_path)}")
+
+        if self.replace_with is not None:   # '' means delete, '*' means retry GPT, else put replace_with into docs requests...
+            replaced_graphics = self.graphics_replace_with_in_existing_project()
+            if self.replace_with == '':     # '' means delete; we are done (else create docs/graphics prompts for processing below)
+                return
+
+        if using is not None:               # EXISTING (any) Project - create docs/graphics/response from ChatGPT using docs/graphics prompts
             graphics_response_path = self.project.project_directory_path.joinpath('docs/graphics/response.json')
             if bypass_for_debug := False:
                 pass # uses already-built docs/graphics/response.json
@@ -230,7 +246,7 @@ class GenAIGraphics(object):
         pass
 
     def create_genai_graphics_prompts(self, graphics_response_path: Path):
-        """ if genai project, create graphics prompt files
+        """ if genai project, create graphics prompt file: docs/graphics/wg_graphics.prompt
         """
         if self.project.genai_using is not None:
             return  # it's an als request, not a genai project (todo: confirm this works on iterations)
@@ -241,33 +257,33 @@ class GenAIGraphics(object):
             graphics_response = json.load(file)
             log.info(f'Graphics response loaded from {graphics_response_path}')
         graphics = graphics_response['graphics']
+        graphics_prompt = ''
+        graphics_prompt_count = 0
         for each_graphic in graphics:  # add each prompt to docs/graphics
-            with open(self.project.project_directory_path.joinpath(f'docs/graphics/{each_graphic['name']}'), 'w') as out_file:
-                out_file.write(each_graphic['prompt'] + '\n')
-            log.info(f'.. added graphics prompt: {each_graphic['name']} to docs/graphics')
+            graphics_prompt_count += 1
+            graphics_prompt += each_graphic['prompt'] + '\n'
+        with open(self.project.project_directory_path.joinpath(f'docs/graphics/wg_graphics.prompt'), 'w') as out_file:
+            out_file.write(graphics_prompt)
+        log.info(f'.. added docs/graphics/wg_graphics.prompt')
         pass
 
-    def graphics_replace_with_in_project(self):
+    def graphics_replace_with_in_existing_project(self) -> str:
         """
         Delete graphics for wg project (als projects - just delete the docs/graphics files)
         1. Update docs/*.prompt to remove lines starting with Graphics
             * Prevents reappearance on iteration
         2. Presume (!) not necessary to delete the graphics[] in docs/*.response files
-        3. Rebuild the api/api_discovery/dashboard_services.py file, in place.
+        3. If delete, rename the api/api_discovery/dashboard_services.py file so it won't be called
 
         This does not rebuild / create a new project - operates on current project.
 
-        Raises:
-            NotImplementedError: If the method is not yet implemented.
+        If * or 'graphics', build docs/graphics prompts
         """
-        log.info(f"\nreplace_with (stub) called...")
-        log.info(f"... self.replace_with: {self.replace_with}")
-        log.info(f"... self.project.project_directory_actual: {self.project.project_directory_actual}")
-        log.info(f"... self.project.project_directory_path: {str(self.project.project_directory_path)}")
 
         docs_dir = self.project.project_directory_path.joinpath('docs')
         # for all the *.prompt files, remove any lines where the first characters are 'Graph' (case insensitive)
-        deleted = 0
+        replaced_count = 0
+        replaced_prompts = ''
         for prompt_file in docs_dir.glob('*.prompt'):
             with open(prompt_file, 'r') as file:
                 lines = file.readlines()
@@ -278,10 +294,20 @@ class GenAIGraphics(object):
                         if not line.strip().lower().startswith('graph '):
                             file.write(line)
                         else:
-                            log.info(f"..... deleting {prompt_file.name}[{line_number}]: {line[0: len(line)-1]}")
-                            deleted += 1
-        log.info(f"... completed - removed {deleted} graph line(s).")
-        # Rename the old dashboard_services.py file to dashboard_services.pyZ if it exists
+                            replaced_prompts += line
+                            replaced_count += 1
+                            if self.replace_with == '*':  # we are just doing retry - don't replace
+                                file.write(line)
+                            elif self.replace_with != '' and replaced_count == 1:  # replacing - replace ==> docs and doc/graphics
+                                file.write(self.replace_with + '\n')
+                                with open(self.project.project_directory_path.joinpath(f'docs/graphics/wg_graphics.prompt'), 'w') as out_file:
+                                    out_file.write(self.replace_with)
+                            else:
+                                pass  # removing line
+
+        log.info(f"... completed - removed {replaced_count} graph line(s).")
+
+        # Stop graphics: rename the old dashboard_services.py file to dashboard_services.pyZ
         dashboard_service_path = self.project.project_directory_path.joinpath('api/api_discovery/dashboard_services.py')
         if dashboard_service_path.exists():
             renamed_path = dashboard_service_path.with_suffix('.pyZ')
@@ -289,7 +315,7 @@ class GenAIGraphics(object):
             log.info(f"Renamed existing dashboard_services.py to {renamed_path}")
         else:
             log.info(f'.. Note: {dashboard_service_path} not found')
-        pass
+        return replaced_prompts
 
     def fix_sqlalchemy_query(self, graphic: Dict):
         """ Fix the SQLAlchemy query for the graphic """
