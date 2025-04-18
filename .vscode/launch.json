@@ -653,8 +653,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "    - Delete graphics: blt/genai_demo_",
-// delete graphics in project (update docs folder, remove the code)
+            "name": "    - Redo graphics: blt/genai_demo_",
             "type": "debugpy",
             "request": "launch",
             "env": {"APILOGICSERVER_DEBUG": "True"},
@@ -662,7 +661,7 @@
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "args": ["genai-graphics",
-                "--replace-with='!delete'"],
+                "--replace-with=!retry"],
             "console": "integratedTerminal"
         },
         {
@@ -678,7 +677,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "    - Redo graphics: blt/genai_demo_",
+            "name": "    - Delete graphics: blt/genai_demo_",
             "type": "debugpy",
             "request": "launch",
             "env": {"APILOGICSERVER_DEBUG": "True"},
@@ -686,7 +685,7 @@
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "args": ["genai-graphics",
-                "--replace-with=!retry"],
+                "--replace-with='!delete'"],
             "console": "integratedTerminal"
         },
         {
