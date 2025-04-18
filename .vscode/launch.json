@@ -661,7 +661,7 @@
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "args": ["genai-graphics",
-                "--delete-in-project=genai_demo_"],
+                "--replace-with=''"],
             "console": "integratedTerminal"
         },
         {

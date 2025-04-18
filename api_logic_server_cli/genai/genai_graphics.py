@@ -77,7 +77,7 @@ class GenAIGraphics(object):
     
     """
 
-    def __init__(self, project: Project, using: str, genai_version: str, delete_in_project: str = None):
+    def __init__(self, project: Project, using: str, genai_version: str, replace_with: str = None):
         """ 
         Add graphics to existing projects - [see docs](https://apilogicserver.github.io/Docs/WebGenAI-CLI/#add-graphics-to-existing-projects)
         Args:
@@ -90,10 +90,10 @@ class GenAIGraphics(object):
         self.project.genai_using = using
         self.manager_path = genai_svcs.get_manager_path()
         self.start_time = time.time()
-        self.delete_in_project = delete_in_project
+        self.replace_with = replace_with
 
-        if self.delete_in_project is not None:
-            self.delete_graphics_in_project()
+        if self.replace_with is not None:
+            self.graphics_replace_with_in_project()
             return
         
         elif using is None:           # New GenAI Project: find graphics in docs/response.json
@@ -247,7 +247,7 @@ class GenAIGraphics(object):
             log.info(f'.. added graphics prompt: {each_graphic['name']} to docs/graphics')
         pass
 
-    def delete_graphics_in_project(self):
+    def graphics_replace_with_in_project(self):
         """
         Delete graphics for wg project (als projects - just delete the docs/graphics files)
         1. Update docs/*.prompt to remove lines starting with Graphics
@@ -260,8 +260,8 @@ class GenAIGraphics(object):
         Raises:
             NotImplementedError: If the method is not yet implemented.
         """
-        log.info(f"\ndelete_in_project (stub) called...")
-        log.info(f"... self.delete_in_project: {self.delete_in_project}")
+        log.info(f"\nreplace_with (stub) called...")
+        log.info(f"... self.replace_with: {self.replace_with}")
         log.info(f"... self.project.project_directory_actual: {self.project.project_directory_actual}")
         log.info(f"... self.project.project_directory_path: {str(self.project.project_directory_path)}")
 
