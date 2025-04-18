@@ -603,7 +603,10 @@ class GenAI(object):
         except:  # intentional try/catch/bury - it's just docs, so don't fail
             import traceback
             log.error(f"\n\nERROR creating genai project docs: {docs_dir}\n\n{traceback.format_exc()}")
-        genai_graphics = GenAIGraphics(project=self.project, using=None, genai_version=self.project.genai_version)
+        genai_graphics = GenAIGraphics(project=self.project, 
+                                       replace_with='!new-wg',
+                                       using=None, 
+                                       genai_version=self.project.genai_version)
 
     def save_prompt_messages_to_system_genai_temp_project(self):
         """
