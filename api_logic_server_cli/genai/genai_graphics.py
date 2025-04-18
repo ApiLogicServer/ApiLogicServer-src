@@ -77,7 +77,7 @@ class GenAIGraphics(object):
     
     """
 
-    def __init__(self, project: Project, using: str, genai_version: str, replace_with: str = None):
+    def __init__(self, project: Project, using: str, genai_version: str, replace_with: str):
         """ 
         Add graphics to existing projects - [see docs](https://apilogicserver.github.io/Docs/WebGenAI-CLI/#add-graphics-to-existing-projects)
 
@@ -88,34 +88,38 @@ class GenAIGraphics(object):
         Args:
             project (Project): Project object
             using (str): path to graphics prompt files (set by genai#insert_logic, or None, for existing project)
+            replace_with (str): (request type): '!using' (default), '!new-wg', '!delete', '!retry`, or '!request'
             genai_version (str): GenAI version to use
         """        
 
         self.project = project        
-        self.project.genai_using = using
+        self.using = using
         self.manager_path = genai_svcs.get_manager_path()
         self.start_time = time.time()
         self.replace_with = replace_with
-        graphics_response_path = (
-            self.project.project_directory_path.joinpath('docs/response.json') if using is None else    # new wg project
-            self.project.project_directory_path.joinpath('docs/graphics/response.json'))                # existing project - create w/GPT
-        ''' None  means NEW WG   project (already have docs/response['graphics']), \n
-            value means EXISTING project (build docs/graphics/response.json)'''
+        ''' '!using', '!new-wg', '!delete', '!retry`, or '!request Graph Sales... '''
+        graphics_response_path = self.project.project_directory_path.joinpath('docs/graphics/response.json')  # assume existing project
+        if replace_with == '!new-wg':  # if new webgenai, response already prepared here
+            graphics_response_path = self.project.project_directory_path.joinpath('docs/response.json')
 
         log.info(f"\nGenAIGraphics start...")
-        log.info(f"... --using: {self.project.genai_using}")
-        log.info(f"... graphics_response_path: {graphics_response_path}")
         log.info(f"... self.replace_with: {self.replace_with}")
+        log.info(f"... self.using: {self.using}")
+        log.info(f"... graphics_response_path: {graphics_response_path}")
         log.info(f"... self.project.project_directory_actual: {self.project.project_directory_actual}")
         log.info(f"... self.project.project_directory_path: {str(self.project.project_directory_path)}")
 
-        if self.replace_with is not None:   # '' means delete, '*' means retry GPT, else put replace_with into docs requests...
+        if self.replace_with != '!new-wg':
             replaced_graphics = self.graphics_replace_with_in_existing_project()
-            if self.replace_with == '':     # '' means delete; we are done (else create docs/graphics prompts for processing below)
+            if self.replace_with == '!delete':     # '' we are done (else create docs/graphics prompts for processing below)
+                log.info(f"delete graphics from existing project")
                 return
+            log.info(f"update existing project from docs/graphics prompts with {replaced_graphics}")
 
-        if using is not None:               # EXISTING (any) Project - create docs/graphics/response from ChatGPT using docs/graphics prompts
-            graphics_response_path = self.project.project_directory_path.joinpath('docs/graphics/response.json')
+        if replace_with == '!new-wg':
+            log.info(f"... new wg project - already built: docs/002_create_db_models.prompt")
+        else:
+            log.info(f"... existing project - process prompts in docs/graphics")
             if bypass_for_debug := False:
                 pass # uses already-built docs/graphics/response.json
             else:
@@ -248,7 +252,7 @@ class GenAIGraphics(object):
     def create_genai_graphics_prompts(self, graphics_response_path: Path):
         """ if genai project, create graphics prompt file: docs/graphics/wg_graphics.prompt
         """
-        if self.project.genai_using is not None:
+        if self.using is not None:
             return  # it's an als request, not a genai project (todo: confirm this works on iterations)
 
         # open and read the graphics_response_path json file
@@ -277,11 +281,11 @@ class GenAIGraphics(object):
 
         This does not rebuild / create a new project - operates on current project.
 
-        If * or 'graphics', build docs/graphics prompts
+        If self.replace_with is retry or request, build docs/graphics/wg_graphics.prompt
         """
 
+        # for all docs/*.prompt files, alter lines where the first characters are 'Graph' (case insensitive)
         docs_dir = self.project.project_directory_path.joinpath('docs')
-        # for all the *.prompt files, remove any lines where the first characters are 'Graph' (case insensitive)
         replaced_count = 0
         replaced_prompts = ''
         for prompt_file in docs_dir.glob('*.prompt'):
@@ -296,13 +300,17 @@ class GenAIGraphics(object):
                         else:
                             replaced_prompts += line
                             replaced_count += 1
-                            if self.replace_with == '*':  # we are just doing retry - don't replace
+                            if self.replace_with == '!retry':  # we are just doing retry - don't replace, use existing wg_graphics
                                 file.write(line)
-                            elif self.replace_with != '' and replaced_count == 1:  # replacing - replace ==> docs and doc/graphics
-                                file.write(self.replace_with + '\n')
-                                with open(self.project.project_directory_path.joinpath(f'docs/graphics/wg_graphics.prompt'), 'w') as out_file:
-                                    out_file.write(self.replace_with)
+                                continue
+                            elif self.replace_with.startswith('!request'):  # replacing - replace ==> docs and doc/graphics
+                                if replaced_count == 1:
+                                    file.write(self.replace_with + '\n')
+                                    graphics_prompt = self.replace_with[8:]
+                                    with open(self.project.project_directory_path.joinpath(f'docs/graphics/wg_graphics.prompt'), 'w') as out_file:
+                                        out_file.write(self.replace_with)
                             else:
+                                assert self.replace_with == '!delete', f"genai_graphics - expected !delete, got: {self.replace_with}"
                                 pass  # removing line
 
         log.info(f"... completed - removed {replaced_count} graph line(s).")
@@ -355,8 +363,8 @@ class GenAIGraphics(object):
         """
 
         graphics_lines = []
-        if Path(self.project.genai_using).is_dir():  # conversation from directory
-            for each_file in sorted(Path(self.project.genai_using).iterdir()):
+        if Path(self.using).is_dir():  # conversation from directory
+            for each_file in sorted(Path(self.using).iterdir()):
                 if each_file.is_file() and each_file.suffix == '.prompt':
                     # read lines from each_file, and append to prompt
                     with open(each_file, 'r') as file:

@@ -746,8 +746,8 @@ def genai_logic(ctx, using, genai_version: str, retries: int, suggest: click.BOO
               default='gpt-4o',
               help="Eg, gpt-3.5-turbo, gpt-4o")
 @click.option('--replace-with', 'replace_with',
-              default='',
-              help="Replace Graphics will this")
+              default='!using',
+              help="Replace Graphics with this (*/retry, ''/delete)")
 @click.pass_context
 def genai_graphics(ctx, using, genai_version: str, replace_with: str):
     """

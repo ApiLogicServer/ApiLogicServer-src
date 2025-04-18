@@ -633,6 +633,7 @@
             "redirectOutput": true,
             "args": ["genai",
             "--using=${workspaceFolder}/../../build_and_test/ApiLogicServer/system/genai/examples/genai_demo/genai_demo.prompt",
+            "--retries=-1",
             "--project-name=genai_demo_"],
             "console": "integratedTerminal"
         },
@@ -661,7 +662,7 @@
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "args": ["genai-graphics",
-                "--replace-with=''"],
+                "--replace-with='!delete'"],
             "console": "integratedTerminal"
         },
         {
@@ -673,7 +674,7 @@
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "args": ["genai-graphics",
-                "--replace-with=Graph Count of Sales by Product, for dashboard."],
+                "--replace-with=!request Graph Count of Sales by Product, for dashboard."],
             "console": "integratedTerminal"
         },
         {
@@ -685,7 +686,7 @@
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "args": ["genai-graphics",
-                "--replace-with=*"],
+                "--replace-with=!retry"],
             "console": "integratedTerminal"
         },
         {
