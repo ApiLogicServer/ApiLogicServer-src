@@ -82,8 +82,8 @@ class GenAIGraphics(object):
         Add graphics to existing projects - [see docs](https://apilogicserver.github.io/Docs/WebGenAI-CLI/#add-graphics-to-existing-projects)
 
         Called to inject graphics into existing project, by:
-        1. genai#insert_logic for NEW WG   projects  (--using is None, so docs/response['graphics'])
-        2. cli                for EXISTING projects  (--using is docs/graphics, eg, `als genai-graphics`)    
+        1. genai#insert_logic for NEW WG   projects  (--replace_with = '!new-wg', using already-built docs dir)
+        2. cli                for EXISTING projects  (add from docs/graphics, or update per replace_with)    
 
         Args:
             project (Project): Project object
@@ -103,23 +103,24 @@ class GenAIGraphics(object):
             graphics_response_path = self.project.project_directory_path.joinpath('docs/response.json')
 
         log.info(f"\nGenAIGraphics start...")
-        log.info(f"... self.replace_with: {self.replace_with}")
-        log.info(f"... self.using: {self.using}")
-        log.info(f"... graphics_response_path: {graphics_response_path}")
-        log.info(f"... self.project.project_directory_actual: {self.project.project_directory_actual}")
-        log.info(f"... self.project.project_directory_path: {str(self.project.project_directory_path)}")
+        log.info(f"... args:")
+        log.info(f"..... self.replace_with: {self.replace_with}")
+        log.info(f"..... self.using: {self.using}")
+        log.info(f"..... graphics_response_path: {graphics_response_path}")
+        log.info(f"..... self.project.project_directory_actual: {self.project.project_directory_actual}")
+        log.info(f"..... self.project.project_directory_path: {str(self.project.project_directory_path)}")
 
-        if self.replace_with != '!new-wg':
+        if self.replace_with != '!new-wg' and self.replace_with != '!using' :  # update existing genai project
             replaced_graphics = self.graphics_replace_with_in_existing_project()
             if self.replace_with == '!delete':     # '' we are done (else create docs/graphics prompts for processing below)
-                log.info(f"delete graphics from existing project")
+                log.info(f"... update existing genai project - delete graphics")
                 return
-            log.info(f"update existing project from docs/graphics prompts with {replaced_graphics}")
+            log.info(f"... update genai existing project - from docs/graphics prompts with {replaced_graphics}")
 
         if replace_with == '!new-wg':
-            log.info(f"... new wg project - already built: docs/002_create_db_models.prompt")
+            log.info(f"... NEW WG project - already built: docs/002_create_db_models.prompt")
         else:
-            log.info(f"... existing project - process prompts in docs/graphics")
+            log.info(f"... EXISTING project - process prompts in docs/graphics")
             if bypass_for_debug := False:
                 pass # uses already-built docs/graphics/response.json
             else:
@@ -155,7 +156,7 @@ class GenAIGraphics(object):
         assert graphics_response_path.exists(), f'Graphics response file not found: {graphics_response_path}'
         with open(graphics_response_path, 'r') as file:
             graphics_response = json.load(file)
-            log.info(f'Graphics response loaded from {graphics_response_path}')
+            log.info(f'... create_data_class_methods - from {graphics_response_path}')
         graphics = graphics_response['graphics']
         for each_graphic in graphics:  # add each service to api/api_discovery
             self.fix_sqlalchemy_query(each_graphic)
@@ -166,7 +167,7 @@ class GenAIGraphics(object):
             with open(self.project.project_directory_path.joinpath(f'database/database_discovery/graphics_services.py'), 'a') as out_file:
                 out_file.write(rendered_result)
 
-            log.info(f'.. added service: {each_graphic['name']} to database_discovery')
+            log.info(f'..... added db class method: {each_graphic['name']} to database_discovery')
         pass
 
 
@@ -230,7 +231,7 @@ class GenAIGraphics(object):
         rendered_result = template.render(iframe_templates=iframe_templates, iframe_links=" ".join(iframe_links), has_iframe=cnt > 0 , dashboards= dashboards)
         with open(self.project.project_directory_path.joinpath(f'api/api_discovery/dashboard_services.py'), 'w') as out_file:
             out_file.write(rendered_result)
-            log.info(f'.. added dashboard service to api_discovery')
+            log.info(f'... create_graphics_dashboard_service - created api/api_discovery/dashboard_services.py')
             
         for each_graphic in graphics: 
             self.fix_sqlalchemy_query(each_graphic)
@@ -245,7 +246,7 @@ class GenAIGraphics(object):
                     sql_query = each_graphic['sql_query']
                 out_file.write(sql_query)
 
-            log.info(f'.. added dashboard query: {each_graphic['name']} to api_discovery')
+            log.info(f'..... added dashboard query: {each_graphic['name']} to api_discovery')
         
         pass
 
@@ -259,7 +260,7 @@ class GenAIGraphics(object):
         assert graphics_response_path.exists(), f'Graphics response file not found: {graphics_response_path}'
         with open(graphics_response_path, 'r') as file:
             graphics_response = json.load(file)
-            log.info(f'Graphics response loaded from {graphics_response_path}')
+            log.info(f'... create_genai_graphics_prompts - from {graphics_response_path}')
         graphics = graphics_response['graphics']
         graphics_prompt = ''
         graphics_prompt_count = 0
@@ -268,7 +269,7 @@ class GenAIGraphics(object):
             graphics_prompt += each_graphic['prompt'] + '\n'
         with open(self.project.project_directory_path.joinpath(f'docs/graphics/wg_graphics.prompt'), 'w') as out_file:
             out_file.write(graphics_prompt)
-        log.info(f'.. added docs/graphics/wg_graphics.prompt')
+        log.info(f'..... added docs/graphics/wg_graphics.prompt')
         pass
 
     def graphics_replace_with_in_existing_project(self) -> str:
@@ -288,6 +289,8 @@ class GenAIGraphics(object):
         docs_dir = self.project.project_directory_path.joinpath('docs')
         replaced_count = 0
         replaced_prompts = ''
+        log.info(f"... graphics_replace_with_in_existing_project - self.replace_with: {self.replace_with}")
+
         for prompt_file in docs_dir.glob('*.prompt'):
             with open(prompt_file, 'r') as file:
                 lines = file.readlines()
@@ -313,7 +316,7 @@ class GenAIGraphics(object):
                                 assert self.replace_with == '!delete', f"genai_graphics - expected !delete, got: {self.replace_with}"
                                 pass  # removing line
 
-        log.info(f"... completed - removed {replaced_count} graph line(s).")
+        log.info(f"..... completed - processed {replaced_count} graph line(s).")
 
         # Stop graphics: rename the old dashboard_services.py file to dashboard_services.pyZ
         dashboard_service_path = self.project.project_directory_path.joinpath('api/api_discovery/dashboard_services.py')
