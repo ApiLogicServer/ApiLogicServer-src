@@ -40,6 +40,7 @@ def activate_logicbank(session, constraint_handler):
         app_logger.exception(e)
         if not os.environ.get("WG_PROJECT") == "True":
             # Continue if inside WebGenAI
+            # see: https://apilogicserver.github.io/Docs/WebGenAI-CLI/#wg_rules-and-ide-rules
             raise e
     logic_logger.setLevel(logic_logger_level)
     
