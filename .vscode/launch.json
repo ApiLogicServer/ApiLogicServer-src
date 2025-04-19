@@ -689,21 +689,6 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "    - Create blt/genai_demo_ from repaired",
-// used to mimic Genai - demo mode
-            "type": "debugpy",
-            "request": "launch",
-            "env": {"APILOGICSERVER_DEBUG": "True"},
-            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
-            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
-            "redirectOutput": true,
-            "args": ["genai",
-                "--retries=-1",
-                "--repaired-response=${workspaceFolder}/../../build_and_test/ApiLogicServer/system/genai/examples/genai_demo/genai_demo.response_example",
-                "--project-name=genai_demo_repaired"],
-            "console": "integratedTerminal"
-        },
-        {
             "name": "    - Add Graphics to blt/samples/nw_sample_nocust",
 // test adding graphics to non-genai project
             "type": "debugpy",
@@ -725,6 +710,21 @@
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "args": ["genai-graphics" ],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "    - Create blt/genai_demo_ from repaired",
+// used to mimic Genai - demo mode
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["genai",
+                "--retries=-1",
+                "--repaired-response=${workspaceFolder}/../../build_and_test/ApiLogicServer/system/genai/examples/genai_demo/genai_demo.response_example",
+                "--project-name=genai_demo_repaired"],
             "console": "integratedTerminal"
         },
         {
