@@ -1,0 +1,153 @@
+No clue about rules like: 
+we need to monitor oxygen usage douring each journey
+
+GenAI [rockets] creating microservice...
+.. .. --using prompt: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/tests/test_databases/ai-created/rockets/reckets.prompt
+.. .. --project-name[self.project.project_name]: rockets
+.. .. project.project_directory_actual: None
+.. .. in pwd: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src
+
+.. from file: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/tests/test_databases/ai-created/rockets/reckets.prompt
+.. inserted explicit test data: Create 4 rows of test data for each table, and follow these guidelines carefully:
+.. Initial Logic enabled: True
+.. saved request: system/genai/temp/request.json
+HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+ChatGPT (21 secs) - response at: system/genai/temp/chatgpt_original.response
+.. call_chatgpt saved response: system/genai/temp/response.json
+add description to Passenger: Represents a passenger with weight and calculates the launch fuel needed based on their weight.
+Added description to model: Passenger: class Passenger(Base):
+    """description: Represents a passenger with weight and calculates the launch fuel needed based on their weight."""
+    __tablename__ = 'passenger'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    weight = Column(DECIMAL)
+    launch_fuel_required = Column(DECIMAL)
+
+add description to OxygenSystem: Tracks oxygen usage during the journey.
+Added description to model: OxygenSystem: class OxygenSystem(Base):
+    """description: Tracks oxygen usage during the journey."""
+    __tablename__ = 'oxygen_system'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    journey_id = Column(Integer, ForeignKey('journey.id'))
+    oxygen_used = Column(DECIMAL)
+
+add description to Astronaut: Monitors food consumption and waste of astronauts.
+Added description to model: Astronaut: class Astronaut(Base):
+    """description: Monitors food consumption and waste of astronauts."""
+    __tablename__ = 'astronaut'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    food_consumption = Column(DECIMAL)
+    waste_generated = Column(DECIMAL)
+
+add description to Engine: Tracks and optimizes the engine firing time.
+Added description to model: Engine: class Engine(Base):
+    """description: Tracks and optimizes the engine firing time."""
+    __tablename__ = 'engine'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    firing_time = Column(Integer)
+
+add description to Journey: Represents a journey with aggregates for oxygen, food, waste, and engine time.
+Added description to model: Journey: class Journey(Base):
+    """description: Represents a journey with aggregates for oxygen, food, waste, and engine time."""
+    __tablename__ = 'journey'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    start_date = Column(DateTime)
+    end_date = Column(DateTime)
+    total_oxygen_used = Column(DECIMAL)
+    total_food_consumed = Column(DECIMAL)
+    total_waste = Column(DECIMAL)
+    total_engine_time = Column(Integer)
+    total_launch_fuel = Column(DECIMAL)
+
+.... test_data_rows: 20
+.. code for db creation and test data: system/genai/temp/create_db_models.py
+.. saving work files to: system/genai/temp/rockets
+save_prompt_messages_to_system_genai_temp_project() - /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/system/genai/temp/rockets
+.. saving[000_you_are.prompt]  - You are a data modelling exper...
+.. saving[001_logic_training.prompt]  - Here is the simplified API for...
+.. saving[002_create_db_models.prompt]  - Use SQLAlchemy to create a sql...
+.. saving response [003_create_db_models.response]  - Use SQLAlchemy to create a sql...
+creating in manager: sqlite:///system/genai/temp/create_db_models.sqlite
+
+
+GenAI [rockets] creating microservice...
+.. .. --using prompt: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/tests/test_databases/ai-created/rockets/reckets.prompt
+.. .. --project-name[self.project.project_name]: rockets
+.. .. project.project_directory_actual: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/rockets
+.. .. in pwd: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src
+
+.. fixed hallucination/indent:     Rule.formula(derive=Passenger.launch_fuel_required, 
+.. found class: Passenger in: Rule.formula(derive=Passenger.launch_fuel_required, 
+.. fixed hallucination/indent:     Rule.formula(derive=Journey.total_oxygen_used, 
+.. found class: Journey in: Rule.formula(derive=Journey.total_oxygen_used, 
+.. fixed hallucination/indent:     Rule.formula(derive=Journey.total_food_consumed, 
+.. found class: Journey in: Rule.formula(derive=Journey.total_food_consumed, 
+.. fixed hallucination/indent:     Rule.formula(derive=Journey.total_waste, 
+.. found class: Journey in: Rule.formula(derive=Journey.total_waste, 
+.. fixed hallucination/indent:     Rule.formula(derive=Journey.total_engine_time, 
+.. found class: Journey in: Rule.formula(derive=Journey.total_engine_time, 
+INFO:response2code:Loading GPT response from /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/rockets/docs/response.json
+INFO:response2code:Successfully wrote test data code to database/test_data/test_data_code.py
+Traceback (most recent call last):
+  File "/Users/val/.vscode/extensions/ms-python.debugpy-2025.6.0-darwin-arm64/bundled/libs/debugpy/_vendored/pydevd/pydevd.py", line 3717, in <module>
+    main()
+  File "/Users/val/.vscode/extensions/ms-python.debugpy-2025.6.0-darwin-arm64/bundled/libs/debugpy/_vendored/pydevd/pydevd.py", line 3702, in main
+    globals = debugger.run(setup["file"], None, None, is_module)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/.vscode/extensions/ms-python.debugpy-2025.6.0-darwin-arm64/bundled/libs/debugpy/_vendored/pydevd/pydevd.py", line 2698, in run
+    return self._exec(is_module, entry_point_fn, module_name, file, globals, locals)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/.vscode/extensions/ms-python.debugpy-2025.6.0-darwin-arm64/bundled/libs/debugpy/_vendored/pydevd/pydevd.py", line 2706, in _exec
+    globals = pydevd_runpy.run_path(file, globals, "__main__")
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/.vscode/extensions/ms-python.debugpy-2025.6.0-darwin-arm64/bundled/libs/debugpy/_vendored/pydevd/_pydevd_bundle/pydevd_runpy.py", line 310, in run_path
+    return _run_module_code(code, init_globals, run_name, pkg_name=pkg_name, script_name=fname)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/val/.vscode/extensions/ms-python.debugpy-2025.6.0-darwin-arm64/bundled/libs/debugpy/_vendored/pydevd/_pydevd_bundle/pydevd_runpy.py", line 127, in _run_module_code
+    _run_code(code, mod_globals, init_globals, mod_name, mod_spec, pkg_name, script_name)
+  File "/Users/val/.vscode/extensions/ms-python.debugpy-2025.6.0-darwin-arm64/bundled/libs/debugpy/_vendored/pydevd/_pydevd_bundle/pydevd_runpy.py", line 118, in _run_code
+    exec(code, run_globals)
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/rockets/database/test_data/test_data_code.py", line 25, in <module>
+    from logic import declare_logic
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/rockets/logic/declare_logic.py", line 47
+    as_expression=lambda row: sum([astro.food_consumption for astro in Astronaut.query.all()] if row.id))
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+SyntaxError: expected 'else' after 'if' expression
+
+
+ERROR creating genai project docs: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/rockets/docs
+
+Traceback (most recent call last):
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/genai/genai.py", line 597, in insert_logic_into_created_project
+    genai_svcs.rebuild_test_data_for_project(
+  File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/genai/genai_svcs.py", line 310, in rebuild_test_data_for_project
+    subprocess.check_output([python_loc,run_file,'--test-data','--response=docs/response.json'] ,
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/subprocess.py", line 468, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/subprocess.py", line 573, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/venv/bin/python', '/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/rockets/database/test_data/test_data_code.py', '--test-data', '--response=docs/response.json']' returned non-zero exit status 1.
+
+
+GenAIGraphics start...
+... args:
+..... self.replace_with: !new-wg
+..... self.using: None
+..... graphics_response_path: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/rockets/docs/response.json
+..... self.project.project_directory_actual: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/rockets
+..... self.project.project_directory_path: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/rockets
+... NEW WG project - already built: docs/002_create_db_models.prompt
+... create_data_class_methods - from /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/rockets/docs/response.json
+... create_graphics_dashboard_service - created api/api_discovery/dashboard_services.py
+... create_genai_graphics_prompts - from /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/rockets/docs/response.json
+..... added docs/graphics/wg_graphics.prompt
+
+genai-graphics completed in [0 secs] 
+
+
+Creation complete - Opening code at rockets
+
+Project created at: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/rockets
+
+
+GENAI (30 secs) successful on try 1
