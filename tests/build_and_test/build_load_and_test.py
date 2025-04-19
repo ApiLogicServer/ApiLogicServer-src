@@ -923,7 +923,7 @@ print('\n')
 # this is because vsc sometimes reset the current run config, so trying a test launches blt (10 minutes..)
 if (len(sys.argv) == 2 and 'confirm' in sys.argv[1]) or (len(sys.argv) == 3 and 'confirm' in sys.argv[2]):
     # input string
-    result = input('Press Enter to continue (or Ctl-c) >')
+    result = input('Press Enter to continue (or Ctl-c) > ')
     if result == "x":
         print('..cancelled\n')
         exit(0)
