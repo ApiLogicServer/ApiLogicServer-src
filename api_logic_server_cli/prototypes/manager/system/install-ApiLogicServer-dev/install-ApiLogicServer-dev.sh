@@ -77,7 +77,7 @@ if [ $# -eq 0 ]
     git clone https://github.com/ApiLogicServer/ApiLogicServer-src.git
     cd ApiLogicServer-src
     echo "\ncopying $sra --> ApiLogicServer"
-    cp -r $sra api_logic_server_cli/create_from_model/safrs-react-admin-npm-build
+    cp -r ../../../$sra api_logic_server_cli/create_from_model/safrs-react-admin-npm-build
     
     #
     #
