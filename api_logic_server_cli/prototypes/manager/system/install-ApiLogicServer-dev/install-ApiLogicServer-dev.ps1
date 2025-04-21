@@ -69,7 +69,7 @@ git clone https://github.com/ApiLogicServer/ApiLogicServer-src.git
 cd ApiLogicServer-src
 ls
 # $Ready= Read-Host -Prompt "Should be at -src - ready to copy sra build $1> "
-cp -r $SRA api_logic_server_cli/create_from_model/safrs-react-admin-npm-build
+cp -r ../../../$SRA api_logic_server_cli/create_from_model/safrs-react-admin-npm-build
 
 
 if ($IDE -eq "vscode") {
