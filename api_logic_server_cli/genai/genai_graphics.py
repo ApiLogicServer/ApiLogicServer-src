@@ -71,9 +71,10 @@ class GenAIGraphics(object):
             * ALS developers manage their own docs/graphics
             
     Open Issues
-    * How to enforce licensing?
-    * How can user delete or alter the graphics?  All, or just specific one (but name not known..)
+    * How to enforce licensing? eg, create stubbed api/api_discovery/dashboard_services.py
+    * How can user delete or alter the graphics?  Activate the Project Summary Graphics button [replace]
     * Graphics for wg projects (not showing)
+    * No Graphics (just shows {} )
     
     """
 
