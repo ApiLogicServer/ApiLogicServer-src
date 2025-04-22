@@ -7,6 +7,9 @@ const sla_doc =
     'creates <i>customizable</i> model-driven systems, instantly from your ' +
     'database:' +
     '</h3>' +
+    '<div class="dashboard-iframe">' +
+        '<iframe id="iframeTargetDashboard" src="http://localhost:5656/dashboard" style="flex: 1; border: none; width: 100%; height: 200px;"></iframe>' +
+    '</div>' +
     '<h4>1. Automatic Admin App</h4>' +
     '<ul>' +
     '   <li>For instant collaboration and Back Office data maintenance</li>' +
