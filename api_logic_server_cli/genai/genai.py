@@ -71,7 +71,8 @@ class GenAI(object):
         """ 
         Main Driver for GenAI - called by api_logic_server, to 
         * run ChatGPT (or respone file) to create_db_models.py - models & test data
-        * which then used to create db, for normal project creation.
+        * which then used by apiLogic_server#api_logic_server_cli/create_from_model/create_db_from_model.py, for normal project creation.
+            * warning - test data failure here is not reported
 
         The key argument is `--using`
         * It can be a file, dir (conversation) or text argument.

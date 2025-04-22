@@ -12,6 +12,8 @@ log = logging.getLogger('create_from_model.model_creation_services')
 def create_db(project: Project):
     """ Create a database from a model file
 
+    Warning - test data failure is not reported here
+
     Args:
         project (Project): contains the model file and db_url locations
     """
