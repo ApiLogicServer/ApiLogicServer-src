@@ -11,6 +11,3 @@ Use case: Check Credit
 
 Use case: App Integration
     1. Send the Order to Kafka topic 'order_shipping' if the date_shipped is not None.
-
-Graph Sales by Product, for dashboard.
-Graph Sales by Customer, for dashboard.
