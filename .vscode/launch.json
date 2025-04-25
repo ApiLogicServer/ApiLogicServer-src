@@ -466,17 +466,18 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "     - app-build MedAI",
+            "name": "     - app-build JSONAPI",
             "type": "debugpy",
             "request": "launch",
-            "cwd": "/Users/tylerband/rightmetrics/ejaz",
+            "cwd": "/Users/tylerband/ontimize/northwind-jsonapi",
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "justMyCode": false,
             "args": [
                 "app-build",
                 "--project-name=",
-                "--app=app"
+                "--app=jsonapi",
+                "--api-endpoint=Customer"
                 ],
             "console": "integratedTerminal"
         },

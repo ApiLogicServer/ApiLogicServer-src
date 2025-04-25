@@ -1,6 +1,6 @@
 {
   "name": "ontimize-app",
-  "version": "15.1.0-SNAPSHOT-0",
+  "version": "15.6.0-NEXT-2",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --port 4299",
@@ -30,12 +30,12 @@
     "@angular/router": "^15.2.10",
     "@angular/service-worker": "^15.2.10",
     "@angular/upgrade": "^15.2.10",
-    "ontimize-web-ngx-keycloak": "15.0.0",
-    "ontimize-web-ngx": "15.0.3",
-    "ontimize-web-ngx-charts": "15.0.0",
-    "ontimize-web-ngx-filemanager": "15.0.0",
+    "ontimize-web-ngx": "15.6.0-next.2",
+    "ontimize-web-ngx-charts": "15.2.0-next.2",
+    "ontimize-web-ngx-filemanager": "^15.1.0-next.0",
     "ontimize-web-ngx-map": "15.0.0",
-    "ontimize-web-ngx-report": "15.0.1",
+    "ontimize-web-ngx-report": "15.1.0-next.2",
+    "ontimize-web-ngx-keycloak": "15.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.12.0"
