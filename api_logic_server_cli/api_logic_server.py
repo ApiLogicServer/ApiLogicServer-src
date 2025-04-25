@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "14.03.48"
+__version__ = "14.03.49"
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t04/24/2024 - 14.03.48: remove graphics from samples pending fixes, fix config logging \n"\
+    "\t04/24/2024 - 14.03.49: remove graphics from samples pending fixes, add debug for config logging \n"\
     "\t04/17/2024 - 14.03.46: replace-with for delete/replace/redo, initially running \n"\
     "\t04/16/2024 - 14.03.42: add graphics to genai examples, dup wg_result fix, iteration fix, genai diagnostics  \n"\
     "\t04/14/2024 - 14.03.39: comments, proper fail-safe demo  \n"\

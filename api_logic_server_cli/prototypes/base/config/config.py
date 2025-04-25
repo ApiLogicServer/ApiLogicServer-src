@@ -208,7 +208,7 @@ class Config:
     KAFKA_CONSUMER_GROUP = None
     KAFKA_SERVER = None
     KAFKA_SERVER = os.getenv('KAFKA_SERVER', None) # 'localhost:9092' # if running locally default
-    if KAFKA_SERVER is not None and KAFKA_SERVER != "None":
+    if KAFKA_SERVER is not None and KAFKA_SERVER != "None" and KAFKA_SERVER != "":
         app_logger.info(f'config.py - KAFKA_SERVER: {KAFKA_SERVER}')
         KAFKA_PRODUCER = os.getenv('KAFKA_PRODUCER',{"bootstrap.servers": f"{KAFKA_SERVER}"})  #  , "client.id": "aaa.b.c.d"}'
         KAFKA_CONSUMER_GROUP = os.getenv('KAFKA_CONSUMER_GROUP') #'als-default-group1'
