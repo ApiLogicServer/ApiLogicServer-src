@@ -1971,7 +1971,7 @@ from database import <project.bind_key>_models
                     ont_creator = OntCreator(project = build.project)
                     ont_creator.create_application(show_messages=False)
 
-            if False and self.project_directory_path.joinpath('ui/app_model_custom.yaml').exists():
+            if self.project_directory_path.joinpath('ui/app_model_custom.yaml').exists():
                 # eg, nw project contains this for demo purposes
                 copyfile (src=self.project_directory_path.joinpath('ui/app_model_custom.yaml'),
                             dst=self.project_directory_path.joinpath('ui/app/app_model.yaml'))
