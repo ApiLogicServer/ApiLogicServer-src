@@ -135,7 +135,7 @@ settings:
     new_mode: dialog
     pick_style: list
     row_height: small,
-    serviceType: OntimizeEE
+    serviceType: JSONAPI
     startSessionPath: /auth/login
     style: light
     thousand_separator: ','

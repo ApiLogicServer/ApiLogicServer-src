@@ -268,10 +268,10 @@ class OntCreator(object):
                         each_attribute.type = "text"
                         each_attribute.template = "text"
                     else:
-                        each_attribute.type = resource_attribute.db_type
+                        each_attribute.type = resource_attribute.db_type.upper().split("(")[0] #VARCHAR, DECIMAL, NUMERIC, etc
                         each_attribute.template = self.compute_field_template(each_attribute)
-                    if hasattr(resource_attribute,"default"):
-                        each_attribute.default = resource_attribute.default
+                    if hasattr(resource_attribute,"default") and "::" not in resource_attribute.default:
+                            each_attribute.default = resource_attribute.default
         return each_attribute
 
 
@@ -286,7 +286,7 @@ class OntCreator(object):
         """
         if hasattr(column, "type") and column.type != DotMap():
             col_type = column.type.upper().split("(")[0]
-            if col_type in ["SERIAL","SERIAL4"]:
+            if col_type in ["SERIAL","SERIAL4","SERIAL8"]:
                 rv = "nif"
             if col_type in ["DECIMAL","NUMERIC"]:
                 rv = "real"  
@@ -334,7 +334,7 @@ class OntCreator(object):
         style_guide.keycloak_url= "http://localhost:8080"
         style_guide.keycloak_realm = "kcals"
         style_guide.keycloak_client_id = "alsclient"
-        style_guide.serviceType = "OntimizeEE" #or JSONAPI
+        style_guide.serviceType = "JSONAPI" # OntimizeEE or JSONAPI
         style_guide.locale = "en"
         style_guide.applicationLocales = ["en","es"]
         style_guide.startSessionPath = "/auth/login" #Used by JSONAPI only

@@ -90,7 +90,7 @@ class OntBuilder(object):
         self.keycloak_realm = "kcals"
         self.keycloak_client_id = "alsclient"
         self.exclude_listpicker = False
-        self.apiEndpoint =  f"http://{project.host}:{project.port}/ontimizeweb/services/rest"
+        self.apiEndpoint =  f"http://{project.host}:{project.port}/api"
         self.title_translation = []
         self.languages = ["en", "es"] # "fr", "it", "de" etc - used to create i18n json files
         self.locale = "en"
@@ -211,7 +211,7 @@ class OntBuilder(object):
             startSessionPath = "/auth/login"
         '''
         if getattr(self.global_values,"serviceType",None) is None:
-            self.global_values["serviceType"] = "OntimizeEE"
+            self.global_values["serviceType"] = "JSONAPI"
         if getattr(self.global_values,"locale",None) is None:
             self.global_values["locale"] =  ["en","es"]
         if getattr(self.global_values,"applicationLocales",None) is None:
@@ -234,12 +234,13 @@ class OntBuilder(object):
                         for p in menu_group[mg]["menu_item"][mi]["page"]:
                             if p == 'home':
                                 self.generate_home_template(app_path, entity_favorites, mi, each_entity, mi)
+                                home_template_name = menu_group[mg]["menu_item"][mi]["page"][p]["template_name"]
+                                self.generate_routing(app_path, mi, each_entity, mi, home_template_name)
                             elif p == "detail":
                                 self.generate_detail_template(app_path, entity_favorites, mi, each_entity, mi)
                             elif p == "new":
                                 self.generate_new_template(app_path, entity_favorites, mi, each_entity, mi)
                             
-                        self.generate_routing(app_path, mi, each_entity, mi)
                         self.generate_card_home_template(app_path, entity_favorites, mi, each_entity, mi)
         else:
             for each_entity_name, each_entity in app_model.entities.items():
@@ -250,10 +251,11 @@ class OntBuilder(object):
                 entity_name = each_entity_name
                 
                 # Each entity will have a home, new, detail, routing template
+                template_name = self.find_template(each_entity, "home_template","home_template.html")    
                 self.generate_home_template(app_path, entity_favorites, each_entity_name, each_entity, entity_name)
                 self.generate_new_template(app_path, entity_favorites, each_entity_name, each_entity, entity_name)
                 self.generate_detail_template(app_path, entity_favorites, each_entity_name, each_entity, entity_name)
-                self.generate_routing(app_path, each_entity_name, each_entity, entity_name)
+                self.generate_routing(app_path, each_entity_name, each_entity, entity_name, template_name)
                 self.generate_card_home_template(app_path, entity_favorites, each_entity_name, each_entity, entity_name)
             
         # menu groups/routing and service config
@@ -288,8 +290,7 @@ class OntBuilder(object):
             file_name="app.config.ts",
             source=app_config,
         )
-    def generate_routing(self, app_path, each_entity_name, each_entity, entity_name):
-        home_template_name = self.find_template(each_entity, "home_template","home_template.html")
+    def generate_routing(self, app_path, each_entity_name, each_entity, entity_name, home_template_name:str ):
         if home_template_name == "home_tree_template.html":
             routing = self.load_routing("tree_routing.jinja", entity_name, each_entity)
         else:
@@ -656,6 +657,7 @@ class OntBuilder(object):
         return ";".join(cols)
     
     def get_page(self, page_name, entity_name: str) -> dict:
+        #page_name = home, detail, new
         if "application" in self.app_model:
             for app in self.app_model.application:
                 # yaml may have multiple apps = only work on the one selected app-build --app={app}
@@ -666,9 +668,9 @@ class OntBuilder(object):
                     for mi in menu_group[mg]["menu_item"]:
                         #each_entity = self.app_model.entities[mi]
                         if mi == entity_name:
-                            for p in menu_group[mg]["menu_item"][mi]["page"]:
-                                if page_name == p:
-                                    return menu_group[mg]["menu_item"][mi]["page"][p]
+                            for pg_name in menu_group[mg]["menu_item"][mi]["page"]:
+                                if page_name == pg_name:
+                                    return menu_group[mg]["menu_item"][mi]["page"][pg_name]
         return None
     def get_menu_group(self):
         menu_groups = []
@@ -718,9 +720,11 @@ class OntBuilder(object):
         elif template_type == 'INTEGER':
             return self.table_integer_template.render(col_var)
         elif template_type == "DATE":
-            return self.date_template.render(col_var)
+            return self.table_column.render(col_var)
+            #return self.date_template.render(col_var)
         elif template_type == "TIMESTAMP":
-            return self.timestamp_template.render(col_var)
+            return self.table_column.render(col_var)
+            #return self.timestamp_template.render(col_var)
         elif template_type in ["REAL", "DECIMAL", "NUMERIC"]:
             return self.table_real_template.render(col_var)
         elif template_type == "table_column":
@@ -729,7 +733,8 @@ class OntBuilder(object):
             return self.check_circle_template.render(col_var)
         else:
             if template_type == "TEXTAREA":
-                return self.table_textarea_template.render(col_var)
+                return self.table_column.render(col_var)
+                #return self.table_textarea_template.render(col_var)
             else:
                 return self.table_text_template.render(col_var)
     
@@ -738,7 +743,7 @@ class OntBuilder(object):
         if hasattr(column, "template") and column.template != DotMap():
             return column.template.upper()
         if hasattr(column, "type") and column.type != DotMap():
-            if column.type.startswith("DECIMAL") or column.type.startswith("NUMERIC"):
+            if column.type.startswith("DECIMAL") or column.type.startswith("NUMERIC") or column.type.startswith("FLOAT"):
                 return "REAL"
             elif column.type == 'INTEGER':
                 return "INTEGER"
@@ -1300,7 +1305,7 @@ def find_column(entity, column_name) -> any:
     )
 
 def gen_app_service_config(entities: any) -> str:
-    t = Template("export const SERVICE_CONFIG: Object ={ {{ children }} };")
+    t = Template("export const SERVICE_CONFIG ={ {{ children }} };")
     child_template = Template("'{{ name }}': { 'path': '/{{ name }}' }")
     sep = ""
     config = ""
