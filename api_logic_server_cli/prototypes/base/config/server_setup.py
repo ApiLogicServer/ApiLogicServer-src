@@ -9,6 +9,24 @@
 #
 ###############################################################################
 
+"""
+Operation:
+    1. api_logic_server_run.py - imports config
+        1. captures args
+    2. api_logic_server_run.py - imports server_setup
+        1. server_setup#logging_setup()
+    3. api_logic_server_run.py - server_setup.api_logic_server_setup
+On error, NOT CALLED: constraint_handler or ValidationErrorExt (!)
+
++ Operation:
+    1. api_logic_server_run.py - imports config
+        1. captures args
+        1. config#logging_setup()
+    2. api_logic_server_run.py - imports server_setup
+    3. api_logic_server_run.py - server_setup.api_logic_server_setup
+
+"""
+
 start_up_message = "normal start"
 
 import traceback
@@ -25,6 +43,8 @@ except:
 from flask_sqlalchemy import SQLAlchemy
 import json
 from pathlib import Path
+if os.getenv("EXPERIMENT") == '+':
+    import config
 from config.config import Args
 
 
@@ -88,6 +108,9 @@ import integration.kafka.kafka_consumer as kafka_consumer
 import integration.n8n.n8n_producer as n8n_producer
 
 
+if os.getenv("EXPERIMENT") == '+':
+    app_logger = logging.getLogger("api_logic_server_app")
+
 
 class SAFRSAPI(_SAFRSAPI):
     """
@@ -121,7 +144,7 @@ def get_args(flask_app: Flask) -> Args:
 
     import config.config as config
     flask_app.config.from_object(config.Config)
-    app_logger.debug(f"\nserver_setup - get_args: Config args: \n{args}")  # FIXME                  # config file (e.g., db uri's)
+    app_logger.debug(f"\nserver_setup - get_args: Config args: \n{args}")  #                 # config file (e.g., db uri's)
 
     args.get_cli_args(dunder_name=__name__, args=args)
     app_logger.debug(f"\nserver_setup - get_args: CLI args: \n{args}")                       # api_logic_server_run cl args
@@ -350,5 +373,8 @@ def api_logic_server_setup(flask_app: Flask, args: Args):
         safrs.log.setLevel(safrs_log_level)
         db_logger.setLevel(db_log_level)
         authorization_logger.setLevel(authorization_log_level)
+
+        if os.getenv('APILOGICPROJECT_DEBUG'):  # temp debug since logging in config is not happening
+            app_logger.debug(f'\nDEBUG Args.instance.kafka_producer: {Args.instance.kafka_producer}\n')
 
 

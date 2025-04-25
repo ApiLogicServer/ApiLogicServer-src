@@ -4,10 +4,11 @@ from pathlib import Path
 import os
 import typing
 from dotenv import load_dotenv
-import logging
+import logging, logging.config
 from enum import Enum
 import socket
 import json
+
 
 '''
 #als: configuration settings
@@ -57,6 +58,39 @@ def is_docker() -> bool:
     # assert path_result == env_result
     return path_result
 
+
+
+# ==================================
+#       LOGGING SETUP 
+# ================================== 
+
+def logging_setup() -> logging.Logger:
+    """
+    Setup Logging
+    """
+    import yaml
+    global app_logger, debug_value, project_path
+    logging_config = f'{project_path}/config/logging.yml'
+    if os.getenv('APILOGICPROJECT_LOGGING_CONFIG'):
+        logging_config = project_path.joinpath(os.getenv("APILOGICPROJECT_LOGGING_CONFIG"))
+    with open(logging_config,'rt') as f:  # see also logic/declare_logic.py
+            config=yaml.safe_load(f.read())
+            f.close()
+    logging.config.dictConfig(config)  # log levels: notset 0, debug 10, info 20, warn 30, error 40, critical 50
+    app_logger = logging.getLogger("api_logic_server_app")
+    debug_value = os.getenv('APILOGICPROJECT_DEBUG')
+    if debug_value is not None:  # > export APILOGICPROJECT_DEBUG=True
+        debug_value = debug_value.upper()
+        if debug_value.startswith("F") or debug_value.startswith("N"):
+            app_logger.setLevel(logging.INFO)
+        else:
+            app_logger.setLevel(logging.DEBUG)
+            app_logger.debug(f'\nDEBUG level set from env\n')
+    # app_logger.info(f'\nAPI Logic Project Server Setup ({project_name}) Starting with CLI args: \n.. {args}\n')
+    # app_logger.info(f'Created August 03, 2024 09:34:01 at {str(project_path)}\n') 
+    return app_logger  
+
+
 class Config:
     """
     
@@ -67,6 +101,8 @@ class Config:
     Code should therefore access these ONLY as described in Args, below.
     
     """
+    if os.getenv("EXPERIMENT") == '+':
+        logging_setup()  # set up logging as early as possible so capture critical config logging
 
     # Project Creation Defaults (overridden from args, env variables)
     CREATED_API_PREFIX = "/api"
@@ -180,7 +216,8 @@ class Config:
             KAFKA_CONSUMER =  os.getenv('KAFKA_CONSUMER', {"bootstrap.servers": f"{KAFKA_SERVER}", "group.id": f"{KAFKA_CONSUMER_GROUP}", "enable.auto.commit": "false", "auto.offset.reset": "earliest"})
     else:
         app_logger.info(f'config.py - KAFKA_SERVER: {KAFKA_SERVER} - not set, no kafka producer/consumer')
-    app_logger.info(f'config.py - KAFKA_PRODUCER: {KAFKA_PRODUCER}')
+    producer_is_empty = "" == KAFKA_PRODUCER
+    app_logger.info(f'config.py - KAFKA_PRODUCER: {KAFKA_PRODUCER} (is_empty={producer_is_empty})')
     app_logger.info(f'config.py - KAFKA_CONSUMER: {KAFKA_CONSUMER}')
     app_logger.info(f'config.py - KAFKA_CONSUMER_GROUP: {KAFKA_CONSUMER_GROUP}')
     app_logger.info(f'config.py - KAFKA_SERVER: {KAFKA_SERVER}')

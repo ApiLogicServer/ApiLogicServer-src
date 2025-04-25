@@ -31,7 +31,7 @@ import os, logging, logging.config, sys, yaml  # failure here means venv probabl
 from flask_sqlalchemy import SQLAlchemy
 import json
 from pathlib import Path
-from config.config import Args
+from config.config import Args  # sets up logging
 from config import server_setup
 
 current_path = os.path.abspath(os.path.dirname(__file__))
@@ -68,8 +68,11 @@ import ui.admin.admin_loader as AdminLoader
 from security.system.authentication import configure_auth
 import oracledb
 
+if os.getenv("EXPERIMENT") == '+':
+    app_logger = logging.getLogger("api_logic_server_app")
+else:
+    app_logger = server_setup.logging_setup()
 
-app_logger = server_setup.logging_setup()
 
 
 # ==================================

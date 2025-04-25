@@ -1,4 +1,5 @@
 version: 1
+# notset 0, debug 10, info 20, warn 30, error 40, critical 50
 
 formatters:
     simple:
