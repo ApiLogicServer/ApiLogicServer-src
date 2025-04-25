@@ -375,6 +375,12 @@ def api_logic_server_setup(flask_app: Flask, args: Args):
         authorization_logger.setLevel(authorization_log_level)
 
         if os.getenv('APILOGICPROJECT_DEBUG'):  # temp debug since logging in config is not happening
-            app_logger.debug(f'\nDEBUG Args.instance.kafka_producer: {Args.instance.kafka_producer}\n')
+            KAFKA_SERVER = os.getenv('KAFKA_SERVER')
+            is_empty = False
+            if KAFKA_SERVER is not None:
+                is_empty = KAFKA_SERVER == ""
+            is_none = KAFKA_SERVER is None
+            app_logger.debug(f'\nDEBUG KAFKA_SERVER: [{KAFKA_SERVER}] (is_empty: {is_empty}) (is_none: {is_none}) \n')
+            app_logger.debug(f'... Args.instance.kafka_producer: {Args.instance.kafka_producer}\n')
 
 
