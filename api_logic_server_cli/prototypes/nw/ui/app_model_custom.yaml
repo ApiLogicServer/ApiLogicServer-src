@@ -1,51 +1,522 @@
 about:
-  date: 5/17/2024
-  recent_changes: custom app_model.yaml, api_root, altered Customer/Order/Employee attribute ordering, tab, captions, info, EmpType, dept emps, defaults, show_when, cascade add, toggles, images, security, login, virtual relns, global filters, no IsCommissioned, add expand template to Order, add mode - dialog and exclude - true for a few tables
+  date: 7/22/2024
+  recent_changes: auth config, api_root, altered Customer/Order/Employee attribute
+    ordering, tab captions, info, EmpType, dept emps, defaults, show_when, cascade
+    add, toggles, images, security, login, virtual relns, global filters, no IsCommissioned,
+    employee.notes as textarea, reln names
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
-authentication:
-  endpoint: '{http_type}://{swagger_host}:{port}/api/auth/login'
+application:
+  app:
+    description: generated Ontimize application
+    menu_group:
+      data:
+        icon: edit_square
+        menu_item:
+          Category:
+            icon: edit_square
+            menu_name: Category
+            menu_title: Category
+            page:
+              detail:
+                columns: CategoryName,Description,Client_id,Id
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: Category
+                typescript_name: detail_component.jinja
+                visible_columns: CategoryName,Description,Client_id,Id
+              home:
+                columns: CategoryName,Description,Client_id,Id
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: Category
+                typescript_name: home_template.jinja
+                visible_columns: CategoryName,Description,Client_id,Id
+              new:
+                columns: CategoryName,Description,Client_id,Id
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: Category
+                typescript_name: new_component.jinja
+                visible_columns: CategoryName,Description,Client_id,Id
+            template_name: module.jinja
+          Customer:
+            icon: edit_square
+            menu_name: Customer
+            menu_title: Customer
+            page:
+              detail:
+                columns: Id,CompanyName,Balance,CreditLimit,OrderCount,UnpaidOrderCount,Client_id,ContactName,ContactTitle,Address,City,Region,PostalCode,Country,Phone,Fax
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: Customer
+                typescript_name: detail_component.jinja
+                visible_columns: Id,CompanyName,Balance,CreditLimit,OrderCount,UnpaidOrderCount,Client_id,ContactName,ContactTitle,Address,City,Region,PostalCode,Country,Phone,Fax
+              home:
+                columns: Id,CompanyName,Balance,CreditLimit,OrderCount,UnpaidOrderCount,Client_id,ContactName,ContactTitle,Address,City,Region,PostalCode,Country,Phone,Fax
+                include_children: true
+                page_name: home
+                template_name: home_tree_template.html
+                title: Customer
+                typescript_name: tree_routing.jinja
+                visible_columns: Id,CompanyName,Balance,CreditLimit,OrderCount,UnpaidOrderCount,Client_id,ContactName,ContactTitle,Address,City,Region,PostalCode,Country,Phone,Fax
+              new:
+                columns: Id,CompanyName,Balance,CreditLimit,OrderCount,UnpaidOrderCount,Client_id,ContactName,ContactTitle,Address,City,Region,PostalCode,Country,Phone,Fax
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: Customer
+                typescript_name: new_component.jinja
+                visible_columns: Id,CompanyName,Balance,CreditLimit,OrderCount,UnpaidOrderCount,Client_id,ContactName,ContactTitle,Address,City,Region,PostalCode,Country,Phone,Fax
+            template_name: module.jinja
+          CustomerDemographic:
+            icon: edit_square
+            menu_name: CustomerDemographic
+            menu_title: CustomerDemographic
+            page:
+              detail:
+                columns: Id,CustomerDesc
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: CustomerDemographic
+                typescript_name: detail_component.jinja
+                visible_columns: Id,CustomerDesc
+              home:
+                columns: Id,CustomerDesc
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: CustomerDemographic
+                typescript_name: home_template.jinja
+                visible_columns: Id,CustomerDesc
+              new:
+                columns: Id,CustomerDesc
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: CustomerDemographic
+                typescript_name: new_component.jinja
+                visible_columns: Id,CustomerDesc
+            template_name: module.jinja
+          Department:
+            icon: edit_square
+            menu_name: Department
+            menu_title: Department
+            page:
+              detail:
+                columns: DepartmentName,DepartmentId,Id,SecurityLevel
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: Department
+                typescript_name: detail_component.jinja
+                visible_columns: DepartmentName,DepartmentId,Id,SecurityLevel
+              home:
+                columns: DepartmentName,DepartmentId,Id,SecurityLevel
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: Department
+                typescript_name: home_template.jinja
+                visible_columns: DepartmentName,DepartmentId,Id,SecurityLevel
+              new:
+                columns: DepartmentName,DepartmentId,Id,SecurityLevel
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: Department
+                typescript_name: new_component.jinja
+                visible_columns: DepartmentName,DepartmentId,Id,SecurityLevel
+            template_name: module.jinja
+          Employee:
+            icon: edit_square
+            menu_name: Employee
+            menu_title: Employee
+            page:
+              detail:
+                columns: LastName,OnLoanDepartmentId,WorksForDepartmentId,Salary,ProperSalary,EmployeeType,Dues,FirstName,Id,Title,TitleOfCourtesy,BirthDate,HireDate,Address,City,Region,PostalCode,Country,HomePhone,Extension,ReportsTo,PhotoPath,Notes
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: Employee
+                typescript_name: detail_component.jinja
+                visible_columns: LastName,OnLoanDepartmentId,WorksForDepartmentId,Salary,ProperSalary,EmployeeType,Dues,FirstName,Id,Title,TitleOfCourtesy,BirthDate,HireDate,Address,City,Region,PostalCode,Country,HomePhone,Extension,ReportsTo,PhotoPath,Notes
+              home:
+                columns: LastName,OnLoanDepartmentId,WorksForDepartmentId,Salary,ProperSalary,EmployeeType,Dues,FirstName,Id,Title,TitleOfCourtesy,BirthDate,HireDate,Address,City,Region,PostalCode,Country,HomePhone,Extension,ReportsTo,PhotoPath,Notes
+                include_children: true
+                page_name: home
+                template_name: grid_template.html
+                title: Employee
+                typescript_name: grid_home_template.jinja
+                visible_columns: LastName,OnLoanDepartmentId,WorksForDepartmentId,Salary,ProperSalary,EmployeeType,Dues,FirstName,Id,Title,TitleOfCourtesy,BirthDate,HireDate,Address,City,Region,PostalCode,Country,HomePhone,Extension,ReportsTo,PhotoPath,Notes
+              new:
+                columns: LastName,OnLoanDepartmentId,WorksForDepartmentId,Salary,ProperSalary,EmployeeType,Dues,FirstName,Id,Title,TitleOfCourtesy,BirthDate,HireDate,Address,City,Region,PostalCode,Country,HomePhone,Extension,ReportsTo,PhotoPath,Notes
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: Employee
+                typescript_name: new_component.jinja
+                visible_columns: LastName,OnLoanDepartmentId,WorksForDepartmentId,Salary,ProperSalary,EmployeeType,Dues,FirstName,Id,Title,TitleOfCourtesy,BirthDate,HireDate,Address,City,Region,PostalCode,Country,HomePhone,Extension,ReportsTo,PhotoPath,Notes
+            template_name: module.jinja
+          EmployeeAudit:
+            icon: edit_square
+            menu_name: EmployeeAudit
+            menu_title: EmployeeAudit
+            page:
+              detail:
+                columns: LastName,EmployeeId,Title,Salary,FirstName,CreatedOn,CreatedBy,UpdatedOn,UpdatedBy,Id
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: EmployeeAudit
+                typescript_name: detail_component.jinja
+                visible_columns: LastName,EmployeeId,Title,Salary,FirstName,CreatedOn,CreatedBy,UpdatedOn,UpdatedBy,Id
+              home:
+                columns: LastName,EmployeeId,Title,Salary,FirstName,CreatedOn,CreatedBy,UpdatedOn,UpdatedBy,Id
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: EmployeeAudit
+                typescript_name: home_template.jinja
+                visible_columns: LastName,EmployeeId,Title,Salary,FirstName,CreatedOn,CreatedBy,UpdatedOn,UpdatedBy,Id
+              new:
+                columns: LastName,EmployeeId,Title,Salary,FirstName,CreatedOn,CreatedBy,UpdatedOn,UpdatedBy,Id
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: EmployeeAudit
+                typescript_name: new_component.jinja
+                visible_columns: LastName,EmployeeId,Title,Salary,FirstName,CreatedOn,CreatedBy,UpdatedOn,UpdatedBy,Id
+            template_name: module.jinja
+          EmployeeTerritory:
+            icon: edit_square
+            menu_name: EmployeeTerritory
+            menu_title: EmployeeTerritory
+            page:
+              detail:
+                columns: Id,TerritoryId,EmployeeId
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: EmployeeTerritory
+                typescript_name: detail_component.jinja
+                visible_columns: Id,TerritoryId,EmployeeId
+              home:
+                columns: Id,TerritoryId,EmployeeId
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: EmployeeTerritory
+                typescript_name: home_template.jinja
+                visible_columns: Id,TerritoryId,EmployeeId
+              new:
+                columns: Id,TerritoryId,EmployeeId
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: EmployeeTerritory
+                typescript_name: new_component.jinja
+                visible_columns: Id,TerritoryId,EmployeeId
+            template_name: module.jinja
+          Location:
+            icon: edit_square
+            menu_name: Location
+            menu_title: Location
+            page:
+              detail:
+                columns: country,city,notes
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: Location
+                typescript_name: detail_component.jinja
+                visible_columns: country,city,notes
+              home:
+                columns: country,city,notes
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: Location
+                typescript_name: home_template.jinja
+                visible_columns: country,city,notes
+              new:
+                columns: country,city,notes
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: Location
+                typescript_name: new_component.jinja
+                visible_columns: country,city,notes
+            template_name: module.jinja
+          Order:
+            icon: edit_square
+            menu_name: Order
+            menu_title: Order
+            page:
+              detail:
+                columns: Id,EmployeeId,ShippedDate,OrderDate,AmountTotal,Ready,CloneFromOrder,OrderDetailCount,Freight,Country,City,RequiredDate,CustomerId,ShipName,ShipVia,ShipAddress,ShipCity,ShipRegion,ShipZip,ShipCountry
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: Order
+                typescript_name: detail_component.jinja
+                visible_columns: Id,EmployeeId,ShippedDate,OrderDate,AmountTotal,Ready,CloneFromOrder,OrderDetailCount,Freight,Country,City,RequiredDate,CustomerId,ShipName,ShipVia,ShipAddress,ShipCity,ShipRegion,ShipZip,ShipCountry
+              home:
+                columns: Id,EmployeeId,ShippedDate,OrderDate,AmountTotal,Ready,CloneFromOrder,OrderDetailCount,Freight,Country,City,RequiredDate,CustomerId,ShipName,ShipVia,ShipAddress,ShipCity,ShipRegion,ShipZip,ShipCountry
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: Order
+                typescript_name: home_template.jinja
+                visible_columns: Id,EmployeeId,ShippedDate,OrderDate,AmountTotal,Ready,CloneFromOrder,OrderDetailCount,Freight,Country,City,RequiredDate,CustomerId,ShipName,ShipVia,ShipAddress,ShipCity,ShipRegion,ShipZip,ShipCountry
+              new:
+                columns: Id,EmployeeId,ShippedDate,OrderDate,AmountTotal,Ready,CloneFromOrder,OrderDetailCount,Freight,Country,City,RequiredDate,CustomerId,ShipName,ShipVia,ShipAddress,ShipCity,ShipRegion,ShipZip,ShipCountry
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: Order
+                typescript_name: new_component.jinja
+                visible_columns: Id,EmployeeId,ShippedDate,OrderDate,AmountTotal,Ready,CloneFromOrder,OrderDetailCount,Freight,Country,City,RequiredDate,CustomerId,ShipName,ShipVia,ShipAddress,ShipCity,ShipRegion,ShipZip,ShipCountry
+            template_name: module.jinja
+          OrderDetail:
+            icon: edit_square
+            menu_name: OrderDetail
+            menu_title: OrderDetail
+            page:
+              detail:
+                columns: Id,ProductId,OrderId,UnitPrice,Quantity,Discount,Amount,ShippedDate
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: OrderDetail
+                typescript_name: detail_component.jinja
+                visible_columns: Id,ProductId,OrderId,UnitPrice,Quantity,Discount,Amount,ShippedDate
+              home:
+                columns: Id,ProductId,OrderId,UnitPrice,Quantity,Discount,Amount,ShippedDate
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: OrderDetail
+                typescript_name: home_template.jinja
+                visible_columns: Id,ProductId,OrderId,UnitPrice,Quantity,Discount,Amount,ShippedDate
+              new:
+                columns: Id,ProductId,OrderId,UnitPrice,Quantity,Discount,Amount,ShippedDate
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: OrderDetail
+                typescript_name: new_component.jinja
+                visible_columns: Id,ProductId,OrderId,UnitPrice,Quantity,Discount,Amount,ShippedDate
+            template_name: module.jinja
+          Product:
+            icon: edit_square
+            menu_name: Product
+            menu_title: Product
+            page:
+              detail:
+                columns: ProductName,QuantityPerUnit,UnitPrice,UnitsInStock,UnitsOnOrder,ReorderLevel,Discontinued,UnitsShipped,Id,SupplierId,CategoryId
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: Product
+                typescript_name: detail_component.jinja
+                visible_columns: ProductName,QuantityPerUnit,UnitPrice,UnitsInStock,UnitsOnOrder,ReorderLevel,Discontinued,UnitsShipped,Id,SupplierId,CategoryId
+              home:
+                columns: ProductName,QuantityPerUnit,UnitPrice,UnitsInStock,UnitsOnOrder,ReorderLevel,Discontinued,UnitsShipped,Id,SupplierId,CategoryId
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: Product
+                typescript_name: home_template.jinja
+                visible_columns: ProductName,QuantityPerUnit,UnitPrice,UnitsInStock,UnitsOnOrder,ReorderLevel,Discontinued,UnitsShipped,Id,SupplierId,CategoryId
+              new:
+                columns: ProductName,QuantityPerUnit,UnitPrice,UnitsInStock,UnitsOnOrder,ReorderLevel,Discontinued,UnitsShipped,Id,SupplierId,CategoryId
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: Product
+                typescript_name: new_component.jinja
+                visible_columns: ProductName,QuantityPerUnit,UnitPrice,UnitsInStock,UnitsOnOrder,ReorderLevel,Discontinued,UnitsShipped,Id,SupplierId,CategoryId
+            template_name: module.jinja
+          Region:
+            icon: edit_square
+            menu_name: Region
+            menu_title: Region
+            page:
+              detail:
+                columns: RegionDescription,Id
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: Region
+                typescript_name: detail_component.jinja
+                visible_columns: RegionDescription,Id
+              home:
+                columns: RegionDescription,Id
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: Region
+                typescript_name: home_template.jinja
+                visible_columns: RegionDescription,Id
+              new:
+                columns: RegionDescription,Id
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: Region
+                typescript_name: new_component.jinja
+                visible_columns: RegionDescription,Id
+            template_name: module.jinja
+          Shipper:
+            icon: edit_square
+            menu_name: Shipper
+            menu_title: Shipper
+            page:
+              detail:
+                columns: CompanyName,Phone,Id
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: Shipper
+                typescript_name: detail_component.jinja
+                visible_columns: CompanyName,Phone,Id
+              home:
+                columns: CompanyName,Phone,Id
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: Shipper
+                typescript_name: home_template.jinja
+                visible_columns: CompanyName,Phone,Id
+              new:
+                columns: CompanyName,Phone,Id
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: Shipper
+                typescript_name: new_component.jinja
+                visible_columns: CompanyName,Phone,Id
+            template_name: module.jinja
+          Supplier:
+            icon: edit_square
+            menu_name: Supplier
+            menu_title: Supplier
+            page:
+              detail:
+                columns: CompanyName,ContactName,ContactTitle,Address,City,Region,PostalCode,Country,Phone,Fax,HomePage,Id
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: Supplier
+                typescript_name: detail_component.jinja
+                visible_columns: CompanyName,ContactName,ContactTitle,Address,City,Region,PostalCode,Country,Phone,Fax,HomePage,Id
+              home:
+                columns: CompanyName,ContactName,ContactTitle,Address,City,Region,PostalCode,Country,Phone,Fax,HomePage,Id
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: Supplier
+                typescript_name: home_template.jinja
+                visible_columns: CompanyName,ContactName,ContactTitle,Address,City,Region,PostalCode,Country,Phone,Fax,HomePage,Id
+              new:
+                columns: CompanyName,ContactName,ContactTitle,Address,City,Region,PostalCode,Country,Phone,Fax,HomePage,Id
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: Supplier
+                typescript_name: new_component.jinja
+                visible_columns: CompanyName,ContactName,ContactTitle,Address,City,Region,PostalCode,Country,Phone,Fax,HomePage,Id
+            template_name: module.jinja
+          Territory:
+            icon: edit_square
+            menu_name: Territory
+            menu_title: Territory
+            page:
+              detail:
+                columns: TerritoryDescription,Id,RegionId
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: Territory
+                typescript_name: detail_component.jinja
+                visible_columns: TerritoryDescription,Id,RegionId
+              home:
+                columns: TerritoryDescription,Id,RegionId
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: Territory
+                typescript_name: home_template.jinja
+                visible_columns: TerritoryDescription,Id,RegionId
+              new:
+                columns: TerritoryDescription,Id,RegionId
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: Territory
+                typescript_name: new_component.jinja
+                visible_columns: TerritoryDescription,Id,RegionId
+            template_name: module.jinja
+          Union:
+            icon: edit_square
+            menu_name: Union
+            menu_title: Union
+            page:
+              detail:
+                columns: Name,Id
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: Union
+                typescript_name: detail_component.jinja
+                visible_columns: Name,Id
+              home:
+                columns: Name,Id
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: Union
+                typescript_name: home_template.jinja
+                visible_columns: Name,Id
+              new:
+                columns: Name,Id
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: Union
+                typescript_name: new_component.jinja
+                visible_columns: Name,Id
+            template_name: module.jinja
+        menu_name: data
+        menu_title: data
+        opened: true
+    name: jsonapi
+authentication: '{system-default}'
 entities:
   Category:
     columns:
-    - enabled: true
-      exclude: false
-      label: ' Category Name*'
+    - label: ' Category Name*'
       name: CategoryName
-      required: false
       search: true
       sort: true
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: Description
-      name: Description
-      required: false
-      search: true
-      sort: true
+      type: VARCHAR
+    - name: Description
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: Client_id
-      name: Client_id
-      required: false
-      search: false
-      sort: false
+      type: VARCHAR
+    - name: Client_id
       template: integer
       type: INTEGER
-    - enabled: true
-      exclude: false
-      label: Id
-      name: Id
-      required: false
-      search: false
-      sort: false
-      template: text
+    - name: Id
+      template: integer
       type: INTEGER
-    detail_template: detail_template.html
     favorite: CategoryName
-    home_template: home_template.html
+    hidden: {}
     info_list: <h1>Tour - Application Information, Authorization</h1> <h2>Application
       Information</h2> Info is set in the <span style="font-family:'Courier New'">ui/admin/admin.yaml</span>
       file with <span style="font-family:'Courier New'">info_list</span> and <span
@@ -58,160 +529,71 @@ entities:
       'p', upper right).<br><br> But, logout and login as 'u1' -- only 1 is shown,
       per <a target="_blank" href="https://apilogicserver.github.io/Docs/Security-Authorization/">authorization</a>.
       <br><br>
-    mode: dialog  
-    new_template: new_template.html
+    label: Category
     primary_key:
     - Id
     type: Category
   Customer:
     columns:
-    - enabled: true
-      exclude: false
-      label: Id
-      name: Id
-      required: false
+    - name: Id
       search: true
       sort: true
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: ' Company Name*'
+      type: VARCHAR
+    - label: ' Company Name*'
       name: CompanyName
-      required: false
       search: true
       sort: true
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: Balance
+      type: VARCHAR
+    - info: derived as sum(Order.AmountTotal where ShippedDate is None)
       name: Balance
-      required: false
-      search: false
-      sort: false
-      template: currency
       type: DECIMAL
-    - enabled: true
-      exclude: false
-      label: CreditLimit
+    - info: Balance may not exceed this value
       name: CreditLimit
-      required: false
-      search: false
-      sort: false
-      template: currency
       type: DECIMAL
-    - enabled: true
-      exclude: false
-      label: OrderCount
+    - default: '0'
+      info: derived as sum(Order)
       name: OrderCount
-      required: false
-      search: false
-      sort: false
       template: integer
       type: INTEGER
-    - enabled: true
-      exclude: false
-      label: UnpaidOrderCount
+    - default: '0'
+      info: derived as count(Order where ShippedDate is None)
       name: UnpaidOrderCount
-      required: false
-      search: false
-      sort: false
-      template: text
+      template: integer
       type: INTEGER
-    - enabled: true
-      exclude: false
-      label: Client_id
-      name: Client_id
-      required: false
-      search: false
-      sort: false
-      template: text
+    - name: Client_id
+      template: integer
       type: INTEGER
-    - enabled: true
-      exclude: false
-      label: ContactName
-      name: ContactName
-      required: false
-      search: false
-      sort: false
+    - name: ContactName
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: ContactTitle
-      name: ContactTitle
-      required: false
-      search: false
-      sort: false
+      type: VARCHAR
+    - name: ContactTitle
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: Address
-      name: Address
-      required: false
-      search: false
-      sort: false
+      type: VARCHAR
+    - name: Address
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: City
-      name: City
-      required: false
-      search: false
-      sort: false
+      type: VARCHAR
+    - name: City
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: Region
-      name: Region
-      required: false
-      search: false
-      sort: false
+      type: VARCHAR
+    - name: Region
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: PostalCode
-      name: PostalCode
-      required: false
-      search: false
-      sort: false
+      type: VARCHAR
+    - name: PostalCode
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: Country
-      name: Country
-      required: false
-      search: false
-      sort: false
+      type: VARCHAR
+    - name: Country
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: Phone
-      name: Phone
-      required: false
-      search: false
-      sort: false
-      template: phone
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: Fax
-      name: Fax
-      required: false
-      search: false
-      sort: false
-      template: phone
-      type: VARCHAR(8000)
-    detail_template: detail_template.html
+      type: VARCHAR
+    - name: Phone
+      template: text
+      type: VARCHAR
+    - name: Fax
+      template: text
+      type: VARCHAR
     favorite: CompanyName
-    home_template: home_template.html
+    hidden: {}
     info_list: <h1>List Pages</h1> In this <a target="_blank" href="https://apilogicserver.github.io/Docs/Sample-Database/">Northwind
       demo,</a> Info provides Tour suggestions (see Category for instructions).  On
       this page... <ul> <li> <strong>Search</strong> on multiple fields (Company,
@@ -235,12 +617,11 @@ entities:
       not shown ("Show_when")</li> <li>Lookup a Product</li> <li>Click <strong>Save
       and Add Another</strong> </li> <li>Lookup another Product, and click <strong>Add</strong>
       to see the added Order </li> </ul> </li> </ul>
-    new_template: new_template.html
+    label: Customer
     primary_key:
     - Id
     tab_groups:
     - direction: tomany
-      exclude: false
       fks:
       - CustomerId
       label: Placed Order List
@@ -249,322 +630,142 @@ entities:
     type: Customer
   CustomerDemographic:
     columns:
-    - enabled: true
-      exclude: false
-      label: ' Id*'
+    - label: ' Id*'
       name: Id
-      required: false
       search: true
       sort: true
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: CustomerDesc
-      name: CustomerDesc
-      required: false
-      search: false
-      sort: false
+      type: VARCHAR
+    - name: CustomerDesc
       template: text
-      type: VARCHAR(8000)
-    detail_template: detail_template.html
+      type: VARCHAR
     favorite: Id
-    home_template: home_template.html
-    exclude: true
-    new_template: new_template.html
+    hidden: {}
+    label: CustomerDemographic
     primary_key:
     - Id
     type: CustomerDemographic
   Department:
     columns:
-    - enabled: true
-      exclude: false
-      label: ' Department Name*'
+    - label: ' Department Name*'
       name: DepartmentName
-      required: false
       search: true
       sort: true
       template: text
       type: VARCHAR(100)
-    - enabled: true
-      exclude: false
-      label: DepartmentId
-      name: DepartmentId
-      required: false
-      search: false
-      sort: false
-      template: text
+    - name: DepartmentId
+      template: integer
       type: INTEGER
-    - enabled: true
-      exclude: false
-      label: Id
-      name: Id
-      required: false
-      search: false
-      sort: false
-      template: text
+    - name: Id
+      template: integer
       type: INTEGER
-    - enabled: true
-      exclude: false
-      label: SecurityLevel
+    - default: '0'
       name: SecurityLevel
-      required: false
-      search: false
-      sort: false
-      template: text
+      template: integer
       type: INTEGER
-    detail_template: detail_template.html
     favorite: DepartmentName
-    home_template: home_template.html
+    hidden: {}
     info_list: <h1>Tour - Authorization</h1> <h2>Global Security Filters</h2> Only
       role sa & manager can view SecurityLevel > 0 - see security/declare_security.py
       <br><br>
-    new_template: new_template.html
+    label: Department
     primary_key:
     - Id
     tab_groups:
     - direction: tomany
-      exclude: false
       fks:
       - DepartmentId
-      label: DepartmentList
       name: DepartmentList
       resource: Department
-    - direction: toone
-      exclude: false
-      fks:
-      - DepartmentId
-      label: Department
-      name: Department
-      resource: Department
     - direction: tomany
-      exclude: false
       fks:
       - OnLoanDepartmentId
-      label: Employees On Loan
       name: EmployeeList
       resource: Employee
     - direction: tomany
-      exclude: false
       fks:
       - WorksForDepartmentId
-      label: Employees
-      name: EmployeeList1
+      name: WorksForEmployeeList
       resource: Employee
+    - direction: toone
+      fks:
+      - DepartmentId
+      name: Department
+      resource: Department
     type: Department
   Employee:
     columns:
-    - enabled: true
-      exclude: false
-      label: ' Last Name*'
+    - label: ' Last Name*'
       name: LastName
-      required: false
       search: true
       sort: true
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: OnLoanDepartmentId
-      name: OnLoanDepartmentId
-      required: false
-      search: false
-      sort: false
-      template: text
+      type: VARCHAR
+    - name: OnLoanDepartmentId
+      template: integer
       type: INTEGER
-    - enabled: true
-      exclude: false
-      label: WorksForDepartmentId
-      name: WorksForDepartmentId
-      required: false
-      search: false
-      sort: false
-      template: text
+    - name: WorksForDepartmentId
+      template: integer
       type: INTEGER
-    - enabled: true
-      exclude: false
-      label: Salary
-      name: Salary
-      required: false
-      search: false
-      sort: false
-      template: currency
+    - name: Salary
       type: DECIMAL
-    - enabled: true
-      exclude: false
-      label: ProperSalary
-      name: ProperSalary
-      required: false
-      search: false
-      sort: false
-      template: currency
+    - name: ProperSalary
       type: DECIMAL
-    - enabled: true
-      exclude: false
-      label: EmployeeType
+    - default: Salaried
       name: EmployeeType
-      required: false
-      search: false
-      sort: false
       template: text
       type: VARCHAR(16)
-    - enabled: true
-      exclude: false
-      label: Dues
-      name: Dues
-      required: false
-      search: false
-      sort: false
-      template: currency
+    - name: Dues
+      show_when: record["EmployeeType"] == "Hourly"
       type: DECIMAL
-    - enabled: true
-      exclude: false
-      label: FirstName
-      name: FirstName
-      required: false
-      search: false
-      sort: false
+    - name: FirstName
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: Id
-      name: Id
-      required: false
-      search: false
-      sort: false
-      template: text
+      type: VARCHAR
+    - name: Id
+      template: integer
       type: INTEGER
-    - enabled: true
-      exclude: false
-      label: Title
-      name: Title
-      required: false
-      search: false
-      sort: false
+    - name: Title
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: TitleOfCourtesy
-      name: TitleOfCourtesy
-      required: false
-      search: false
-      sort: false
+      type: VARCHAR
+    - name: TitleOfCourtesy
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: BirthDate
-      name: BirthDate
-      required: false
-      search: false
-      sort: false
-      template: date
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: HireDate
-      name: HireDate
-      required: false
-      search: false
-      sort: false
-      template: date
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: Address
-      name: Address
-      required: false
-      search: false
-      sort: false
+      type: VARCHAR
+    - name: BirthDate
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: City
-      name: City
-      required: false
-      search: false
-      sort: false
+      type: DATE
+    - name: HireDate
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: Region
-      name: Region
-      required: false
-      search: false
-      sort: false
+      type: DATE
+    - name: Address
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: PostalCode
-      name: PostalCode
-      required: false
-      search: false
-      sort: false
+      type: VARCHAR
+    - name: City
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: Country
-      name: Country
-      required: false
-      search: false
-      sort: false
+      type: VARCHAR
+    - name: Region
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: HomePhone
-      name: HomePhone
-      required: false
-      search: false
-      sort: false
-      template: phone
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: Extension
-      name: Extension
-      required: false
-      search: false
-      sort: false
+      type: VARCHAR
+    - name: PostalCode
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: Notes
-      name: Notes
-      required: false
-      search: false
-      sort: false
+      type: VARCHAR
+    - name: Country
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: ReportsTo
-      name: ReportsTo
-      required: false
-      search: false
-      sort: false
+      type: VARCHAR
+    - name: HomePhone
       template: text
+      type: VARCHAR
+    - name: Extension
+      template: text
+      type: VARCHAR
+    - name: ReportsTo
+      template: integer
       type: INTEGER
-    - enabled: true
-      exclude: false
-      label: PhotoPath
-      name: PhotoPath
-      required: false
-      search: false
-      sort: false
-      template: text
-      type: Image
-    detail_template: detail_template.html
+    - name: PhotoPath
+      type: image
+    - name: Notes
+      type: textarea
     favorite: LastName
-    home_template: grid_template.html
-    grid_items: 'LastName, FirstName, HomePhone'
+    hidden: {}
     info_list: <h1>Show When</h1> Support for <a target="_blank" href="https://apilogicserver.github.io/Docs/Admin-Customization/#show_when">Show
       When</a> means you can define expressions that determine when a field is shown
       or hidden.  On this page... <ul> <li> Click <strong>Suyama</strong> and note
@@ -575,436 +776,229 @@ entities:
       New'">Dues</span> field </li> </ul> </li> <li> Observe the same effect on Update
       / Insert screens as you alter the value of <span style="font-family:'Courier
       New'">EmployeeType</span></li> </ul> <h1>Images</h1> Observe that "show" pages
-      support images. <h1>Virtual Relationships</h1> Observe that "show" pages have
-      tabs for Manages and Manager.<br> These foreign keys are *not* defined in the
-      database, but in <span style="font-family:'Courier New'">database/customize_models.py</span>.<br>
+      support images. <h1>Virtual Relationships</h1> Observe that your API includes
+      Manages and Manager.<br> These foreign keys are *not* defined in the database,
+      but in <span style="font-family:'Courier New'">database/customize_models.py</span>.<br>
       <h1>Derived Attributes</h1> <span style="font-family:'Courier New'">ProperSalary</span>
       is not defined in the database.<br> See <span style="font-family:'Courier New'">database/customize_models.py</span>.<br>
-    new_template: new_template.html
+    label: Employee
+    grid_items: 'EmployeeType, LastName,FirstName,Address, Country, HomePhone'
+    grid_image: PhotoPath
     primary_key:
     - Id
     tab_groups:
-    - direction: toone
-      exclude: false
-      fks:
-      - OnLoanDepartmentId
-      label: Department
-      name: Department
-      resource: Department
-    - direction: toone
-      exclude: false
-      fks:
-      - WorksForDepartmentId
-      label: Department1
-      name: Department1
-      resource: Department
     - direction: tomany
-      exclude: false
-      fks:
-      - ReportsTo
-      label: Manages
-      name: Manages
-      resource: Employee
-    - direction: toone
-      exclude: false
-      fks:
-      - ReportsTo
-      label: Manager
-      name: Manager
-      resource: Employee
-    - direction: tomany
-      exclude: false
       fks:
       - EmployeeId
-      label: EmployeeAuditList
       name: EmployeeAuditList
       resource: EmployeeAudit
     - direction: tomany
-      exclude: false
       fks:
       - EmployeeId
-      label: EmployeeTerritoryList
       name: EmployeeTerritoryList
       resource: EmployeeTerritory
     - direction: tomany
-      exclude: false
       fks:
       - EmployeeId
-      label: OrderList
       name: OrderList
       resource: Order
     - direction: toone
-      exclude: false
+      fks:
+      - OnLoanDepartmentId
+      name: OnLoanDepartment
+      resource: Department
+    - direction: toone
       fks:
       - UnionId
-      label: Union
       name: Union
       resource: Union
+    - direction: toone
+      fks:
+      - WorksForDepartmentId
+      name: WorksForDepartment
+      resource: Department
     type: Employee
   EmployeeAudit:
     columns:
-    - enabled: true
-      exclude: false
-      label: ' Last Name*'
+    - label: ' Last Name*'
       name: LastName
-      required: false
       search: true
       sort: true
       template: text
       type: VARCHAR
-    - enabled: true
-      exclude: false
-      label: EmployeeId
-      name: EmployeeId
-      required: false
-      search: false
-      sort: false
-      template: text
+    - name: EmployeeId
+      template: integer
       type: INTEGER
-    - enabled: true
-      exclude: false
-      label: Title
-      name: Title
-      required: false
-      search: false
-      sort: false
+    - name: Title
       template: text
       type: VARCHAR
-    - enabled: true
-      exclude: false
-      label: Salary
-      name: Salary
-      required: false
-      search: false
-      sort: false
-      template: currency
+    - name: Salary
       type: DECIMAL
-    - enabled: true
-      exclude: false
-      label: FirstName
-      name: FirstName
-      required: false
-      search: false
-      sort: false
+    - name: FirstName
       template: text
       type: VARCHAR
-    - enabled: true
-      exclude: false
-      label: CreatedOn
-      name: CreatedOn
-      required: false
-      search: false
-      sort: false
+    - name: CreatedOn
       template: text
       type: TEXT
-    - enabled: true
-      exclude: false
-      label: Id
-      name: Id
-      required: false
-      search: false
-      sort: false
+    - name: CreatedBy
       template: text
+      type: TEXT
+    - name: UpdatedOn
+      template: text
+      type: TEXT
+    - name: UpdatedBy
+      template: text
+      type: TEXT
+    - name: Id
+      template: integer
       type: INTEGER
-    detail_template: detail_template.html
     favorite: LastName
-    home_template: home_template.html
-    exclude: true
-    new_template: new_template.html
+    hidden: {}
+    label: EmployeeAudit
     primary_key:
     - Id
     tab_groups:
     - direction: toone
-      exclude: false
       fks:
       - EmployeeId
-      label: Employee
       name: Employee
       resource: Employee
     type: EmployeeAudit
   EmployeeTerritory:
     columns:
-    - enabled: true
-      exclude: false
-      label: ' Id*'
+    - label: ' Id*'
       name: Id
-      required: false
       search: true
       sort: true
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: TerritoryId
-      name: TerritoryId
-      required: false
-      search: false
-      sort: false
+      type: VARCHAR
+    - name: TerritoryId
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: EmployeeId
-      name: EmployeeId
+      type: VARCHAR
+    - name: EmployeeId
       required: true
-      search: false
-      sort: false
-      template: text
+      template: integer
       type: INTEGER
-    detail_template: detail_template.html
     favorite: Id
-    home_template: home_template.html
-    new_template: new_template.html
+    hidden: {}
+    label: EmployeeTerritory
     primary_key:
     - Id
     tab_groups:
     - direction: toone
-      exclude: false
-      fks:
-      - EmployeeId
-      label: Employee
-      name: Employee
-      resource: Employee
-    - direction: toone
-      exclude: false
       fks:
       - TerritoryId
-      label: Territory
       name: Territory
       resource: Territory
+    - direction: toone
+      fks:
+      - EmployeeId
+      name: Employee
+      resource: Employee
     type: EmployeeTerritory
   Location:
     columns:
-    - enabled: true
-      exclude: false
-      label: ' country*'
+    - label: ' country*'
       name: country
       required: true
       search: true
       sort: true
       template: text
       type: VARCHAR(50)
-    - enabled: true
-      exclude: false
-      label: city
-      name: city
+    - name: city
       required: true
-      search: false
-      sort: false
       template: text
       type: VARCHAR(50)
-    - enabled: true
-      exclude: false
-      label: notes
-      name: notes
-      required: false
-      search: false
-      sort: false
+    - name: notes
       template: text
       type: VARCHAR(256)
-    detail_template: detail_template.html
     favorite: country
-    home_template: home_template.html
-    mode: dialog
-    new_template: new_template.html
+    hidden: {}
+    label: Location
     primary_key:
     - country
     - city
     tab_groups:
     - direction: tomany
-      exclude: false
       fks:
       - Country
       - City
-      label: OrderList
       name: OrderList
       resource: Order
     type: Location
   Order:
     columns:
-    - enabled: true
-      exclude: false
-      label: Id
-      name: Id
-      required: false
-      search: false
-      sort: false
-      template: text
+    - name: Id
+      show_when: isInserting == false
+      template: integer
       type: INTEGER
-    - enabled: true
-      exclude: false
-      label: EmployeeId
-      name: EmployeeId
-      required: false
-      search: false
-      sort: false
-      template: text
+    - name: EmployeeId
+      template: integer
       type: INTEGER
-    - enabled: true
-      exclude: false
-      label: ShippedDate
+    - info: set reduces Customer Balance, decreases Product Stock
       name: ShippedDate
-      required: false
-      search: false
-      sort: false
-      template: date
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: OrderDate
-      name: OrderDate
-      required: false
-      search: false
-      sort: false
-      template: date
+      show_when: isInserting == false
+      template: text
+      type: VARCHAR
+    - name: OrderDate
       type: DATE
-    - enabled: true
-      exclude: false
-      label: AmountTotal
+    - info: derived as sum(OrderDetail.Amount)
       name: AmountTotal
-      required: false
-      search: false
-      sort: false
-      template: currency
+      show_when: isInserting == false
       type: DECIMAL
-    - enabled: true
-      exclude: false
-      label: Ready
-      name: Ready
-      required: false
-      search: false
-      sort: false
-      template: checkbox
+    - name: Ready
       type: Boolean
-    - enabled: true
-      exclude: false
-      label: CloneFromOrder
-      name: CloneFromOrder
-      required: false
-      search: false
-      sort: false
-      template: text
+    - name: CloneFromOrder
+      template: integer
       type: INTEGER
-    - enabled: true
-      exclude: false
-      label: OrderDetailCount
+    - default: '0'
       name: OrderDetailCount
-      required: false
-      search: false
-      sort: false
-      template: text
+      show_when: isInserting == false
+      template: integer
       type: INTEGER
-    - enabled: true
-      exclude: false
-      label: Freight
-      name: Freight
-      required: false
-      search: false
-      sort: false
-      template: text
+    - name: Freight
       type: DECIMAL
-    - enabled: true
-      exclude: false
-      label: Country
+    - label: Country
       name: Country
-      required: false
-      search: false
-      sort: false
       template: text
       type: VARCHAR(50)
-    - enabled: true
-      exclude: false
-      label: City
+    - label: City
       name: City
-      required: false
-      search: false
-      sort: false
       template: text
       type: VARCHAR(50)
-    - enabled: true
-      exclude: false
-      label: RequiredDate
-      name: RequiredDate
-      required: false
-      search: false
-      sort: false
+    - name: RequiredDate
       template: date
       type: DATE
-    - enabled: true
-      exclude: false
-      label: CustomerId
-      name: CustomerId
+    - name: CustomerId
       required: true
-      search: false
-      sort: false
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: ' Ship Name*'
+      type: VARCHAR
+    - label: ' Ship Name*'
       name: ShipName
-      required: false
       search: true
       sort: true
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: ShipVia
-      name: ShipVia
-      required: false
-      search: false
-      sort: false
-      template: text
+      type: VARCHAR
+    - name: ShipVia
+      template: integer
       type: INTEGER
-    - enabled: true
-      exclude: false
-      label: ShipAddress
-      name: ShipAddress
-      required: false
-      search: false
-      sort: false
+    - name: ShipAddress
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: ShipCity
-      name: ShipCity
-      required: false
-      search: false
-      sort: false
+      type: VARCHAR
+    - name: ShipCity
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: ShipRegion
-      name: ShipRegion
-      required: false
-      search: false
-      sort: false
+      type: VARCHAR
+    - name: ShipRegion
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: ShipZip
-      name: ShipZip
-      required: false
-      search: false
-      sort: false
+      type: VARCHAR
+    - name: ShipZip
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: ShipCountry
-      name: ShipCountry
-      required: false
-      search: false
-      sort: false
+      type: VARCHAR
+    - name: ShipCountry
       template: text
-      type: VARCHAR(8000)
-    detail_template: detail_template.html
+      type: VARCHAR
     favorite: Id
-    home_template: home_template_expand.html
+    hidden: {}
     info_show: <h1>Tour</h1> <h3>Automatic Joins</h3> <ul> <li> Observe the Product
       Name in the Order Detail list.</li> <li> In the <a target="_blank" href="https://apilogicserver.github.io/Docs/Sample-Database/">sample
       database,</a> the Order Detail is related to the Product by <span style="font-family:'Courier
@@ -1017,513 +1011,278 @@ entities:
       <span style="font-family:'Courier New'">Amount Total.</span> <ul> <li> This
       is not from code, but from <a target="_blank" href="https://apilogicserver.github.io/Docs/Tutorial/#logic">this
       logic.</a> </li> </ul> </li> </ul>
-    new_template: new_template.html
+    label: Order
     primary_key:
     - Id
     tab_groups:
-    - direction: toone
-      exclude: false
-      fks:
-      - CustomerId
-      label: Customer
-      name: Customer
-      resource: Customer
-    - direction: toone
-      exclude: false
-      fks:
-      - Country
-      - City
-      label: Location
-      name: Location
-      resource: Location
-    - direction: toone
-      exclude: false
-      fks:
-      - EmployeeId
-      label: Employee
-      name: Employee
-      resource: Employee
     - direction: tomany
-      exclude: false
       fks:
       - OrderId
       label: Order Detail List
       name: OrderDetailList
       resource: OrderDetail
+    - direction: toone
+      fks:
+      - CustomerId
+      name: Customer
+      resource: Customer
+    - direction: toone
+      fks:
+      - Country
+      - City
+      name: Location
+      resource: Location
+    - direction: toone
+      fks:
+      - EmployeeId
+      name: Employee
+      resource: Employee
     type: Order
   OrderDetail:
     columns:
-    - enabled: true
-      exclude: false
-      label: ' Id*'
+    - label: ' Id*'
       name: Id
-      required: false
       search: true
+      show_when: isInserting == false
       sort: true
-      template: text
-      type: INTEGER
-    - enabled: true
-      exclude: false
-      label: ProductId
-      name: ProductId
-      required: true
-      search: false
-      sort: false
-      template: text
-      type: INTEGER
-    - enabled: true
-      exclude: false
-      label: OrderId
-      name: OrderId
-      required: true
-      search: false
-      sort: false
-      template: text
-      type: INTEGER
-    - enabled: true
-      exclude: false
-      label: UnitPrice
-      name: UnitPrice
-      required: false
-      search: false
-      sort: false
-      template: text
-      type: DECIMAL
-    - enabled: true
-      exclude: false
-      label: Quantity
-      name: Quantity
-      required: false
-      search: false
-      sort: false
       template: integer
       type: INTEGER
-    - enabled: true
-      exclude: false
-      label: Discount
+    - name: ProductId
+      required: true
+      template: integer
+      type: INTEGER
+    - name: OrderId
+      required: true
+      show_when: isInserting == false
+      template: integer
+      type: INTEGER
+    - info: derived as copy(Product.UnitPrice)
+      name: UnitPrice
+      show_when: isInserting == false
+      type: DECIMAL
+    - default: '1'
+      name: Quantity
+      template: integer
+      type: INTEGER
+    - default: '0'
       name: Discount
-      required: false
-      search: false
-      sort: false
       template: real
       type: DOUBLE
-    - enabled: true
-      exclude: false
-      label: Amount
+    - info: derived as UnitPrice * Quantity
       name: Amount
-      required: false
-      search: false
-      sort: false
-      template: currency
+      show_when: isInserting == false
       type: DECIMAL
-    - enabled: true
-      exclude: false
-      label: ShippedDate
+    - info: derived as Order.ShippedDate
       name: ShippedDate
-      required: false
-      search: false
-      sort: false
-      template: date
-      type: VARCHAR(8000)
-    detail_template: detail_template.html
+      show_when: isInserting == false
+      template: text
+      type: VARCHAR
     favorite: Id
-    home_template: home_template.html
-    new_template: new_template.html
+    hidden: {}
+    label: OrderDetail
     primary_key:
     - Id
     tab_groups:
     - direction: toone
-      exclude: false
-      fks:
-      - OrderId
-      label: Order
-      name: Order
-      resource: Order
-    - direction: toone
-      exclude: false
       fks:
       - ProductId
-      label: Product
       name: Product
       resource: Product
+    - direction: toone
+      fks:
+      - OrderId
+      name: Order
+      resource: Order
     type: OrderDetail
   Product:
     columns:
-    - enabled: true
-      exclude: false
-      label: ' Product Name*'
+    - label: ' Product Name*'
       name: ProductName
-      required: false
       search: true
       sort: true
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: QuantityPerUnit
-      name: QuantityPerUnit
-      required: false
-      search: false
-      sort: false
+      type: VARCHAR
+    - name: QuantityPerUnit
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: UnitPrice
-      name: UnitPrice
+      type: VARCHAR
+    - name: UnitPrice
       required: true
-      search: false
-      sort: false
-      template: text
       type: DECIMAL
-    - enabled: true
-      exclude: false
-      label: UnitsInStock
+    - info: derived as UnitsInStock - (UnitsShipped - old_row.UnitsShipped)
       name: UnitsInStock
       required: true
-      search: false
-      sort: false
       template: integer
       type: INTEGER
-    - enabled: true
-      exclude: false
-      label: UnitsOnOrder
-      name: UnitsOnOrder
+    - name: UnitsOnOrder
       required: true
-      search: false
-      sort: false
-      template: text
+      template: integer
       type: INTEGER
-    - enabled: true
-      exclude: false
-      label: ReorderLevel
-      name: ReorderLevel
+    - name: ReorderLevel
       required: true
-      search: false
-      sort: false
-      template: text
+      template: integer
       type: INTEGER
-    - enabled: true
-      exclude: false
-      label: Discontinued
-      name: Discontinued
+    - name: Discontinued
       required: true
-      search: false
-      sort: false
-      template: text
+      template: integer
       type: INTEGER
-    - enabled: true
-      exclude: false
-      label: UnitsShipped
-      name: UnitsShipped
-      required: false
-      search: false
-      sort: false
-      template: text
+    - name: UnitsShipped
+      template: integer
       type: INTEGER
-    - enabled: true
-      exclude: false
-      label: Id
+    - info: derived as sum(OrderDetail.Quantity where ShippedDate is not None)
       name: Id
-      required: false
-      search: false
-      sort: false
-      template: text
+      template: integer
       type: INTEGER
-    - enabled: true
-      exclude: false
-      label: SupplierId
-      name: SupplierId
+    - name: SupplierId
       required: true
-      search: false
-      sort: false
-      template: text
+      template: integer
       type: INTEGER
-    - enabled: true
-      exclude: false
-      label: CategoryId
-      name: CategoryId
+    - name: CategoryId
       required: true
-      search: false
-      sort: false
-      template: text
+      template: integer
       type: INTEGER
-    detail_template: detail_template.html
     favorite: ProductName
-    home_template: home_template.html
-    new_template: new_template.html
+    hidden: {}
+    label: Product
     primary_key:
     - Id
     tab_groups:
     - direction: tomany
-      exclude: false
       fks:
       - ProductId
-      label: OrderDetailList
       name: OrderDetailList
       resource: OrderDetail
     type: Product
   Region:
     columns:
-    - enabled: true
-      exclude: false
-      label: ' Region Description*'
+    - label: ' Region Description*'
       name: RegionDescription
-      required: false
       search: true
       sort: true
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: Id
-      name: Id
-      required: false
-      search: false
-      sort: false
-      template: text
+      type: VARCHAR
+    - name: Id
+      template: integer
       type: INTEGER
-    detail_template: detail_template.html
     favorite: RegionDescription
-    home_template: home_template.html
-    mode: dialog
-    new_template: new_template.html
+    hidden: {}
+    label: Region
     primary_key:
     - Id
     type: Region
   Shipper:
     columns:
-    - enabled: true
-      exclude: false
-      label: ' Company Name*'
+    - label: ' Company Name*'
       name: CompanyName
-      required: false
       search: true
       sort: true
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: Phone
-      name: Phone
-      required: false
-      search: false
-      sort: false
+      type: VARCHAR
+    - name: Phone
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: Id
-      name: Id
-      required: false
-      search: false
-      sort: false
-      template: text
+      type: VARCHAR
+    - name: Id
+      template: integer
       type: INTEGER
-    detail_template: detail_template.html
     favorite: CompanyName
-    home_template: home_template.html
-    mode: dialog
-    new_template: new_template.html
+    hidden: {}
+    label: Shipper
     primary_key:
     - Id
     type: Shipper
   Supplier:
     columns:
-    - enabled: true
-      exclude: false
-      label: ' Company Name*'
+    - label: ' Company Name*'
       name: CompanyName
-      required: false
       search: true
       sort: true
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: ContactName
-      name: ContactName
-      required: false
-      search: false
-      sort: false
+      type: VARCHAR
+    - name: ContactName
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: ContactTitle
-      name: ContactTitle
-      required: false
-      search: false
-      sort: false
+      type: VARCHAR
+    - name: ContactTitle
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: Address
-      name: Address
-      required: false
-      search: false
-      sort: false
+      type: VARCHAR
+    - name: Address
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: City
-      name: City
-      required: false
-      search: false
-      sort: false
+      type: VARCHAR
+    - name: City
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: Region
-      name: Region
-      required: false
-      search: false
-      sort: false
+      type: VARCHAR
+    - name: Region
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: PostalCode
-      name: PostalCode
-      required: false
-      search: false
-      sort: false
+      type: VARCHAR
+    - name: PostalCode
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: Country
-      name: Country
-      required: false
-      search: false
-      sort: false
+      type: VARCHAR
+    - name: Country
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: Phone
-      name: Phone
-      required: false
-      search: false
-      sort: false
-      template: phone
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: Fax
-      name: Fax
-      required: false
-      search: false
-      sort: false
-      template: phone
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: HomePage
-      name: HomePage
-      required: false
-      search: false
-      sort: false
+      type: VARCHAR
+    - name: Phone
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: Id
-      name: Id
-      required: false
-      search: false
-      sort: false
+      type: VARCHAR
+    - name: Fax
       template: text
+      type: VARCHAR
+    - name: HomePage
+      template: text
+      type: VARCHAR
+    - name: Id
+      template: integer
       type: INTEGER
-    detail_template: detail_template.html
     favorite: CompanyName
-    home_template: home_template.html
-    mode: dialog
-    new_template: new_template.html
+    hidden: {}
+    label: Supplier
     primary_key:
     - Id
     type: Supplier
   Territory:
     columns:
-    - enabled: true
-      exclude: false
-      label: ' Territory Description*'
+    - label: ' Territory Description*'
       name: TerritoryDescription
-      required: false
       search: true
       sort: true
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: Id
-      name: Id
-      required: false
-      search: false
-      sort: false
+      type: VARCHAR
+    - name: Id
       template: text
-      type: VARCHAR(8000)
-    - enabled: true
-      exclude: false
-      label: RegionId
-      name: RegionId
+      type: VARCHAR
+    - name: RegionId
       required: true
-      search: false
-      sort: false
-      template: text
+      template: integer
       type: INTEGER
-    detail_template: detail_template.html
-    exclude: true
     favorite: TerritoryDescription
-    home_template: home_template.html
-    new_template: new_template.html
+    hidden: {}
+    label: Territory
     primary_key:
     - Id
     tab_groups:
     - direction: tomany
-      exclude: false
       fks:
       - TerritoryId
-      label: EmployeeTerritoryList
       name: EmployeeTerritoryList
       resource: EmployeeTerritory
     type: Territory
   Union:
     columns:
-    - enabled: true
-      exclude: false
-      label: ' Name*'
+    - label: ' Name*'
       name: Name
-      required: false
       search: true
       sort: true
       template: text
       type: VARCHAR(80)
-    - enabled: true
-      exclude: false
-      label: Id
-      name: Id
-      required: false
-      search: false
-      sort: false
-      template: text
+    - name: Id
+      template: integer
       type: INTEGER
-    detail_template: detail_template.html
-    exclude: true
     favorite: Name
-    home_template: home_template.html
-    new_template: new_template.html
+    hidden: {}
+    label: Union
     primary_key:
     - Id
     tab_groups:
     - direction: tomany
-      exclude: false
       fks:
       - UnionId
-      label: EmployeeList
       name: EmployeeList
       resource: Employee
     type: Union
@@ -1531,18 +1290,28 @@ settings:
   HomeJS: http://localhost:5656/admin-app/home.js
   max_list_columns: 8
   style_guide:
+    applicationLocales:
+    - en
+    - es
     currency_symbol: $
     currency_symbol_position: left
     date_format: LL
-    decimal_max: '1000000'
+    decimal_max: '1000000000'
     decimal_min: '0'
     decimal_separator: .
     edit_on_mode: dblclick
+    exclude_listpicker: false
     include_translation: false
+    keycloak_client_id: alsclient
+    keycloak_realm: kcals
+    keycloak_url: http://localhost:8080
+    locale: en
     max_decimal_digits: '4'
     min_decimal_digits: '2'
     mode: tab
     pick_style: list
+    serviceType: JSONAPI
+    startSessionPath: /auth/login
     style: light
     thousand_separator: ','
     use_keycloak: false
