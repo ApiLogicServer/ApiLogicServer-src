@@ -103,15 +103,15 @@
     "test_data_rows": [
         {
             "test_data_row_variable": "customer1",
-            "code": "customer1 = Customer(name=\"Alice\", balance=1000.00, credit_limit=5000.00)"
+            "code": "customer1 = Customer(name=\"Alice\", balance=0.00, credit_limit=5000.00)"
         },
         {
             "test_data_row_variable": "customer2",
-            "code": "customer2 = Customer(name=\"Bob\", balance=2000.00, credit_limit=3000.00)"
+            "code": "customer2 = Customer(name=\"Bob\", balance=90.00, credit_limit=3000.00)"
         },
         {
             "test_data_row_variable": "customer3",
-            "code": "customer3 = Customer(name=\"Charlie\", balance=500.00, credit_limit=2000.00)"
+            "code": "customer3 = Customer(name=\"Charlie\", balance=220.00, credit_limit=2000.00)"
         },
         {
             "test_data_row_variable": "customer4",
@@ -139,11 +139,11 @@
         },
         {
             "test_data_row_variable": "order2",
-            "code": "order2 = Order(notes=\"Second Order\", customer_id=2, date_shipped=None, amount_total=0.00)"
+            "code": "order2 = Order(notes=\"Second Order\", customer_id=2, date_shipped=None, amount_total=90.00)"
         },
         {
             "test_data_row_variable": "order3",
-            "code": "order3 = Order(notes=\"Pending Shipment\", customer_id=3, date_shipped=None, amount_total=300.00)"
+            "code": "order3 = Order(notes=\"Pending Shipment\", customer_id=3, date_shipped=None, amount_total=220.00)"
         },
         {
             "test_data_row_variable": "order4",
