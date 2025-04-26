@@ -75,7 +75,18 @@
         },
 
         {
-            "name": "1 - ApiLogicServer Start (Clean)",
+            "name": "1 - ApiLogicServer Start (no clean)",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
+            "args": ["start"],
+            "justMyCode": false,
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "     - ApiLogicServer Start (Clean)",
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",

@@ -221,7 +221,7 @@ def main(ctx):
               help="Create sample projects")
 @click.option('--open-manager/--no-open-manager', "open_manager",
               default=True, is_flag=True,
-              help="Overlay existing manager (projects retained)")
+              help="Whether to open IDE at Manager")
 def create_start_manager(ctx, open_with, clean: click.BOOL = True, samples: click.BOOL = True,
                          volume: str = "ApiLogicServer", open_manager: click.BOOL = True):
     """

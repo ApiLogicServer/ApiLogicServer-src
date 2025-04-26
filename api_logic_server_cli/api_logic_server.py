@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "14.03.50"
+__version__ = "14.03.51"  # last public release: 14.03.25
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t04/26/2024 - 14.03.51: Ont fixes, manager preserves existing license (WebG installed first) \n"\
     "\t04/24/2024 - 14.03.50: remove graphics from samples pending fixes, temp KAFKA_SERVER='' fix \n"\
     "\t04/17/2024 - 14.03.46: replace-with for delete/replace/redo, initially running \n"\
     "\t04/16/2024 - 14.03.42: add graphics to genai examples, dup wg_result fix, iteration fix, genai diagnostics  \n"\

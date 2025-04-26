@@ -12,7 +12,7 @@ import api_logic_server_cli.api_logic_server as PR
 
 def create_manager(clean: bool, open_with: str, api_logic_server_path: Path, 
                    volume: str = "", open_manager: bool = True, samples: bool = True):
-    """Implements als start to create manager - called from api_logic_server_cli/cli.py
+    """Implements `als start` to create manager - called from api_logic_server_cli/cli.py
 
     create Manager at os.getcwd(), including:
 
@@ -27,11 +27,11 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path,
         Bit tricky to find find cli in subdirectories of the lib path for manager run launches
 
     Args:
-        clean (bool): _description_
-        open_with (str): _description_
+        clean (bool): Overlay existing manager (projects and web_genai retained)
+        open_with (str): IDE to use
         api_logic_server_path (Path): _description_
         volume (str, optional): _description_. Defaults to "".
-        open_manager (bool, optional): _description_. Defaults to True.
+        open_manager (bool, optional): Whether to open IDE at Manager. Defaults to True.
     """    
     
     log = logging.getLogger(__name__)
@@ -68,8 +68,9 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path,
             docker_volume = volume + '/'
 
     to_dir = Path(os.getcwd())
+    """ location for creating (cleaning) the Manager """
     path = Path(__file__)
-    from_dir = api_logic_server_path.joinpath('prototypes/manager')
+    from_dir_proto_mgr = api_logic_server_path.joinpath('prototypes/manager')
     to_dir_str = str(to_dir)
     to_dir_check = Path(to_dir).joinpath('venv')
     if not Path(to_dir).joinpath('venv').exists():
@@ -85,12 +86,12 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path,
     if to_dir_check.exists() and not clean:
         manager_exists = True
         if env_path.exists():
-            log.info(f"    Using manager at: {to_dir}\n\n")
+            log.info(f"    Using existing manager (update .env APILOGICSERVER_AUTO_OPEN, only) at: {to_dir}\n\n")
         else:
             log.info(f"    Refreshing .env in manager at: {to_dir}\n\n")
-            copied_env = shutil.copy(src=from_dir.joinpath('settings.txt'), dst=to_dir.joinpath('.env'))
+            copied_env = shutil.copy(src=from_dir_proto_mgr.joinpath('settings.txt'), dst=to_dir.joinpath('.env'))
             os.remove(to_dir.joinpath('settings.txt'))
-    else:
+    else:   # new Manager, or clean existing manager
         mgr_save_level = log.level
         codegen_logger = logging.getLogger('sqlacodegen_wrapper.sqlacodegen.sqlacodegen.codegen')
         codegen_logger_save_level= codegen_logger.level
@@ -99,8 +100,16 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path,
         if to_dir_check.exists():
             log.info(f"    Cleaning manager at: {to_dir}\n\n")
 
-        copied_path = shutil.copytree(src=from_dir, dst=to_dir, dirs_exist_ok=True)  # issue: not permitted
-        copied_env = shutil.copy(src=from_dir.joinpath('settings.txt'), dst=to_dir.joinpath('.env'))
+        # create the manager system files and shell scripts (samples created below).
+        copied_path = shutil.copytree(src=from_dir_proto_mgr, dst=to_dir, dirs_exist_ok=True, )  # issue: not permitted
+        copied_env = shutil.copy(src=from_dir_proto_mgr.joinpath('settings.txt'), dst=to_dir.joinpath('.env'))
+        web_genai_docker = to_dir.joinpath('webgenai/docker-compose.yml')
+        if web_genai_docker.exists():
+            log.debug('    .. WebGenAI docker_compose unaltered (license preserved)')
+        else:
+            log.debug('    .. WebGenAI docker_compose created')
+            copied_env = shutil.copy(src=api_logic_server_path.joinpath('fragments/docker-compose.yml'), 
+                                     dst=web_genai_docker)
         os.remove(to_dir.joinpath('settings.txt'))
         log.debug(f"    .. created manager\n")
 
