@@ -1,4 +1,5 @@
 # Updates local genai-logic project (at org_git)
+# update 4/27/2025 - should no longer be required with WebGenAI install simplification
 
 # Before running, run BLT
 # This will copy:
