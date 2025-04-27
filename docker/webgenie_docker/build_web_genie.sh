@@ -74,7 +74,7 @@ if [ "$1" = "local" ]
   else
     # stand-alone test in terminal - cd $webgen_ai_docker-src, and...
     # docker buildx build --push -f webgenie.Dockerfile --tag apilogicserver/web_genai:1.0.0 -o type=image --platform=linux/arm64,linux/amd64 .
-    docker buildx build --push -f webgenie.Dockerfile --tag apilogicserver/web_genai:14.03.25 -o type=image --platform=linux/arm64,linux/amd64 .
+    docker buildx build --push -f webgenie.Dockerfile --tag apilogicserver/web_genai:14.04.00 -o type=image --platform=linux/arm64,linux/amd64 .
     docker buildx build --push -f webgenie.Dockerfile --tag apilogicserver/web_genai:latest -o type=image --platform=linux/arm64,linux/amd64 .
 fi
 

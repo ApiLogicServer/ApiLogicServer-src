@@ -12,21 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "14.03.51"  # last public release: 14.03.25, planning 14.04.00
+__version__ = "14.04.00"  # last public release: 14.04.00
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t04/26/2024 - 14.03.51: Ont fixes, manager preserves existing license (WebG installed first) \n"\
-    "\t04/24/2024 - 14.03.50: remove graphics from samples pending fixes, temp KAFKA_SERVER='' fix \n"\
-    "\t04/17/2024 - 14.03.46: replace-with for delete/replace/redo, initially running \n"\
-    "\t04/16/2024 - 14.03.42: add graphics to genai examples, dup wg_result fix, iteration fix, genai diagnostics  \n"\
-    "\t04/14/2024 - 14.03.39: comments, proper fail-safe demo  \n"\
-    "\t04/12/2024 - 14.03.38: unique names, format graphics queries, ensure 2 col results, create docs/graphics prompts for genai, running wg iterations  \n"\
-    "\t04/11/2024 - 14.03.36: graphics iff requested, count nw examples, error reporting, bugfix: find each_graphic['class_x_axis']  \n"\
-    "\t04/08/2024 - 14.03.34: Phase 1 of fail-safe graphics (todo: display info) \n"\
-    "\t04/07/2024 - 14.03.33: Tyler revisions+, remove graphics from genai_demo, nw product.category \n"\
-    "\t04/06/2024 - 14.03.32: Tyler revision to dashboard home.js/iFrame \n"\
-    "\t04/05/2024 - 14.03.31: Patch - WebGenAI has old WGResult format (?) \n"\
-    "\t04/03/2024 - 14.03.30: db graphics/dashboard svcs mult types, expose Data Models for sql auth tables / auth-admin app (WIP), issue 91 \n"\
+    "\t04/27/2024 - 14.04.00: Graphics preview, Vibe install fix, Improved IDE Chat Logic, MCP Exploration \n"\
     "\t03/30/2024 - 14.03.25: WebGenAI fixes for Kafka and Keycloak \n"\
     "\t03/19/2024 - 14.03.20: licensed webgenai docker, [87] sra fix for home.js \n"\
     "\t02/26/2024 - 14.03.14: [85: reserved words], genai_demo fixes \n"\
