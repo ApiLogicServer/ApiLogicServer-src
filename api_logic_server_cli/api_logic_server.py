@@ -19,20 +19,11 @@ recent_changes = \
     "\t03/30/2024 - 14.03.25: WebGenAI fixes for Kafka and Keycloak \n"\
     "\t03/19/2024 - 14.03.20: licensed webgenai docker, [87] sra fix for home.js \n"\
     "\t02/26/2024 - 14.03.14: [85: reserved words], genai_demo fixes \n"\
-    "\t02/16/2024 - 14.03.12: Docker w/ std container, mgr assistant for local WebG \n"\
-    "\t02/13/2024 - 14.03.11: fixes [78: Keycloak, 79: boolean defaulting, 80: Send If missing attribute] \n"\
-    "\t01/31/2024 - 14.03.00: Issue 76: exp ending in right paren, Issue 74: Multi-db fix, extended default options, if-based Nat Lang formulas \n"\
-    "\t01/29/2024 - 14.02.34: save docs/response.json to fix bad rules for IS_GENAI_DEMO, LogicBank 1.20.23 (all defaults) \n"\
-    "\t01/26/2024 - 14.02.31: genai_logic fail-safe, Issue 74: Multi-db fix, support models named Rule, wg logic discovery, if formula \n"\
     "\t01/17/2024 - 14.02.20: WebGenAI support, genai_demo \n"\
     "\t01/06/2024 - 14.01.00: N8N, Rebuild test data, Fixup, Project Import, Improved reporting of missing attributes, Simplified RowDictMaper  \n"\
     "\t11/18/2024 - 12.02.00: genai: 'qualified any' now supported in logic training \n"\
     "\t10/31/2024 - 12.01.00: genai: informal rules (eg, Sum of employee salaries cannot exceed department budget) \n"\
-    "\t10/21/2024 - 12.00.04: sra 10-22, Prelim support genai --using=dir/project \n"\
     "\t10/12/2024 - 12.00.02: Natural Language Logic \n"\
-    "\t10/17/2024 - 11.02.19: singular classes, expanded doc/prompts, logic work-arounds, docs/logic, logic learning, readme \n"\
-    "\t10/11/2024 - 11.02.14: NL/Logic with test data calcs, sra 10-07-2024, genai-logic, cs, iteration rebuild \n"\
-    "\t08/02/2024 - 11.00.07: App Model Editor UI rework, docs and fix for kc and export \n"\
     "\t07/25/2024 - 11.00.00: Keycloak, App Model Editor \n"\
     "\t03/28/2024 - 10.03.46: Python 3.12, View support, CLI option-names, Keycloak preview \n"\
     "\t12/19/2023 - 10.00.00: Kafka pub/sub, Fix MySQL CHAR/String, list/hash/set types \n"\
@@ -40,8 +31,6 @@ recent_changes = \
     "\t09/14/2023 - 09.03.00: Oracle support \n"\
     "\t06/22/2023 - 09.00.00: Optimistic Locking, safrs 310, SQLAlchemy 2.0.15 \n"\
     "\t05/01/2023 - 08.03.06: allocation sample \n"\
-    "\t04/26/2023 - 08.03.00: virt attrs (Issue 56), safrs 3.0.2, readme updates, LogicBank 1.8.4 \n"\
-    "\t04/13/2023 - 08.02.00: integratedConsole, logic logging (66), table relns fix (65) \n"\
     "\t02/15/2023 - 08.00.01: Declarative Authorization and Authentication, Werkzeug==2.2.3 \n"\
     "\t01/06/2023 - 07.00.00: Multi-db, sqlite test dbs, tests run, security prototype, env config  \n"\
 
