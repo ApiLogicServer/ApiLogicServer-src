@@ -3,7 +3,7 @@
 '''
 ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogicProject.
     * Basically clones prototype project (api_logic_server_cli/prototypes/base), and creates:
-        * database/models.py for SQLAlchemy,` using modified sqlacodegen & safrs metadata
+        * database/models.py for SQLAlchemy, using modified sqlacodegen & safrs metadata
         * ui/admin/admin.yaml for the Admin App     - using introspected models.py
         * api/expose_api_models.py for a safrs api  - using introspected models.py
     * Special provisions for NW Sample, to show customizations.
@@ -12,7 +12,7 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "14.03.51"  # last public release: 14.03.25
+__version__ = "14.03.51"  # last public release: 14.03.25, planning 14.04.00
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
     "\t04/26/2024 - 14.03.51: Ont fixes, manager preserves existing license (WebG installed first) \n"\
