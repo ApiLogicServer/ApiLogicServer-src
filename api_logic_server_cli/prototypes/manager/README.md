@@ -512,6 +512,18 @@ als create --project-name=sample_ai --from-model=sample_ai.py --db-url=sqlite
 
 4. This will create your database, create an API Logic Project from it, and launch your IDE.
 
+5. Create business logic
+
+    * You can create logic with either your IDE (and code completion), or Natural Language
+    * To use Natural Language:
+
+        1. Use the CoPilot chat,
+        2. Paste the logic above
+        3. Copy it to `logic/declare_logic.py` after `discover_logic()`
+        
+            * Alert:  Table and Column Names may require correction to conform to the model
+            * Alert: you may to apply [defaulting](https://apilogicserver.github.io/Docs/Logic-Use/#insert-defaulting), and initialize derived attributes in your database
+
 </details>
 </br>
 
