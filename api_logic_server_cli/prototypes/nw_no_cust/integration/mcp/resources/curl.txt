@@ -2,3 +2,4 @@ curl -X 'GET' \
   'http://localhost:5656/api/Customer/?filter%5BCountry%5D=Germany' \
   -H 'accept: application/vnd.api+json' \
   -H 'Content-Type: application/vnd.api+json'
+
