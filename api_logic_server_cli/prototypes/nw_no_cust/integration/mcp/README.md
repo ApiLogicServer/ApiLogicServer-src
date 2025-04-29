@@ -1,11 +1,21 @@
 Model Context Protocol is a way for Chat agents to discover and call external servers, be they databases, APIs, file systems, etc, and call their services.  And, for multiple such servers to be choreographed in a chain of calls.
 
+This is to explore:
+
+| Explore                                                           | Status |
+| ----------------------------------------------------------------- | ------ |
+| ALS Svr can be used as an MCP server                              | Runs   |
+| Nat Lang access from ChatBot (eg, ChatGPT) to (tunnelled) ALS Svr | Fails  |
+| ALS Svr can be choroegraphed by LLM (1 in a chain of calls)       | ?      |
+
+
+![Intro diagram](resources/images/MCP%20Overview.png)
+
 For more information:
 
 * [see here](https://modelcontextprotocol.io/introduction)
 * [and here](https://apilogicserver.github.io/Docs/Integration-MCP/)
 * [and here](https://www.youtube.com/watch?v=1bUy-1hGZpI&t=72s)
-
 
 > Status: Technology Exploration
 
@@ -18,7 +28,7 @@ This is just an initial experiment, without automation such as creation of openA
 We welcome participation in this exploration.  Please contact us via [discord](https://discord.gg/HcGxbBsgRF){:target="_blank" rel="noopener"}.
 
 Local testing:
-1. Run the 3 programs
+1. Run `integration/mcp/3_executor_test_agent.py`
 
 
 &nbsp;

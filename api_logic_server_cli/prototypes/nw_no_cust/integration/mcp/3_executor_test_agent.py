@@ -1,7 +1,7 @@
 import requests
 
 # MCP-style tool_context
-'''
+# does not like this pagination
 tool_context = {
     "method": "GET",
     "url": "http://localhost:5656/api/Customer",
@@ -13,7 +13,7 @@ tool_context = {
         "Accept": "application/vnd.api+json"
     }
 }
-'''
+
 tool_context = {
     "method": "GET",
     "url": "http://localhost:5656/api/Customer",
@@ -22,6 +22,7 @@ tool_context = {
     },
     "headers": {
         "Accept": "application/vnd.api+json"
+        , "Authorization": "Bearer your_token"
     }
 }
 
