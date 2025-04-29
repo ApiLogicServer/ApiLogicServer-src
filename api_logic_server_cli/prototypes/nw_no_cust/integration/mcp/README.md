@@ -5,7 +5,7 @@ This is to explore:
 | Explore                                                           | Status |
 | ----------------------------------------------------------------- | ------ |
 | ALS Svr can be used as an MCP server                              | Runs   |
-| Nat Lang access from ChatBot (eg, ChatGPT) to (tunnelled) ALS Svr | Fails <br>Non-std API<br>MCP requires pre-registered resource schemas inside its system — which you and I cannot modify from outside (?) |
+| Nat Lang access from ChatBot (eg, ChatGPT) to (tunnelled) ALS Svr | Fails <br>Non-std API<br>MCP requires pre-registered resource schemas inside its system — which you and I cannot modify from outside (?) <br> See Appendix 1|
 | ALS Svr can be choroegraphed by LLM (1 in a chain of calls)       | ?      |
 
 
@@ -141,3 +141,29 @@ online:
   "expected_output": "List of customer records"
 }
 
+
+## Appendix 1: OpenAI Feedback
+
+It appears that OpenAI is missing an enabling feature:
+
+📢 Feedback: Unlocking Swagger-Based JSON:API Support in MCP
+Summary:
+As a developer, I have a fully functional REST API with a Swagger 2.0 spec and a proxy layer that emits strict JSON:API compliant responses. 
+
+However, MCP fails to parse the results due to a ValueError, seemingly because the resource type ("type": "Customer") isn't known to MCP’s internal schema registry — even though it is fully defined in my Swagger spec.
+
+Details:
+
+The server replies with correct Content-Type: application/vnd.api+json
+* Every item includes "type", "id", and "attributes"
+* The response includes jsonapi and links
+* Swagger 2.0 spec clearly defines the resource fields
+
+Issue: MCP does not ingest the Swagger schema to understand new resource types or field structures, making machine-integration impossible — despite the API being fully compliant with both Swagger and JSON:API standards.
+
+Request: Please support one (or more) of the following:
+
+1. Auto-ingesting Swagger (OpenAPI) specs for schema understanding
+2. Allowing users to register or upload resource types
+3. Relaxing strict JSON:API parsing to tolerate unfamiliar types that are structurally valid
+4. Benefit: This would unlock powerful real-world MCP integrations with actual APIs — enabling developers to query their real data using natural language, with minimal friction and zero backend changes.
