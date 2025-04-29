@@ -5,7 +5,7 @@ This is to explore:
 | Explore                                                           | Status |
 | ----------------------------------------------------------------- | ------ |
 | ALS Svr can be used as an MCP server                              | Runs   |
-| Nat Lang access from ChatBot (eg, ChatGPT) to (tunnelled) ALS Svr | Fails  |
+| Nat Lang access from ChatBot (eg, ChatGPT) to (tunnelled) ALS Svr | Fails <br>Non-std API<br>MCP requires pre-registered resource schemas inside its system — which you and I cannot modify from outside (?) |
 | ALS Svr can be choroegraphed by LLM (1 in a chain of calls)       | ?      |
 
 
