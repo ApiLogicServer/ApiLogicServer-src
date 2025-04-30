@@ -29,6 +29,8 @@ This is an initial experiment, without automation.  Many substantive issues need
 
 We welcome participation in this exploration.  Please contact us via [discord](https://discord.gg/HcGxbBsgRF).
 
+This exploration is changing rapidly.  For updates, replace `integration/mcp` from [integration/msp](https://github.com/ApiLogicServer/ApiLogicServer-src/tree/main/api_logic_server_cli/prototypes/nw_no_cust/integration/mcp){:target="_blank" rel="noopener"}.
+
 &nbsp;
 
 ## ALS Access via MCP 
