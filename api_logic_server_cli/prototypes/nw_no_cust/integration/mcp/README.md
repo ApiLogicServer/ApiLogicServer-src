@@ -92,6 +92,20 @@ replacing url to create prompt (??)        d:
   "expected_output": "List of customer records"
 }
 
+&nbsp;
+
+#### Proxy for strict JSON:API
+
+Run `integration/msp/resources/proxy_server.py`.  
+
+This runs on port 6000 - use that for ngrok:
+
+```
+ngrok http 6000
+```
+
+&nbsp;
+
 #### Create the MCP in Web ChatGPT
 
 Explore > Create
@@ -143,8 +157,6 @@ https://mcp_url.ngrok-free.app/api/
 
 The API follows JSON:API standards (application/vnd.api+json).
 ```
-
-
 
 online:
 
