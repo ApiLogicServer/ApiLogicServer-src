@@ -9,14 +9,15 @@ For tech background, see Appendix 2.
 
 This is to explore:
 
-| Explore                                                           | Status |
-| ----------------------------------------------------------------- | ------ |
-| ALS Access via MCP                                                | Runs   |
-| Nat Lang ALS Access from simple driver                            | Runs (simple query from test driver using `openai.ChatCompletion.create`) |
-| Nat Lang ALS Access from LangChain                            | Blocked: import version issues |
+| Explore                                                        | Status                                                                                      |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| ALS Access via MCP                                             | Runs                                                                                        |
+| Nat Lang ALS Access from simple driver                         | Runs (simple query from test driver using `openai.ChatCompletion.create`)                   |
+| Nat Lang ALS Access using OpenAI Plugin                        | Per CoPilot                                                                                 |
+| Nat Lang ALS Access from LangChain                             | Blocked: import version issues                                                              |
 | Nat Lang access from Chat (eg, ChatGPT) to (tunnelled) ALS Svr | Blocked - See Appendix 1<br>* MCP unable to pre-register resource schemas inside its system |
-| ALS Svr can be choroegraphed by LLM (1 in a chain of calls)       | TBD    |
-|
+| ALS Svr can be choroegraphed by LLM (1 in a chain of calls)    | TBD                                                                                         |
+|                                                                |                                                                                             |
 
 A value prop might be summarized: *instantly mcp-fy your legacy DB, including critical business logic and security*.
 
@@ -87,6 +88,39 @@ pip install openai==0.28.1
 Fix API Keys and URLS, then run `natlang_to_api.py` (gateway not required).  Observe json result.
 
 &nbsp;
+
+### Nat Lang ALS Access using OpenAI Plugin
+
+Prepare `ai_plug_in.json`:
+
+```{
+  "schema_version": "v1",
+  "name_for_human": "ALS NW-",
+  "name_for_model": "ALS NW",
+  "description_for_human": "Access and manage categories, customers, and more.",
+  "description_for_model": "Plugin for interacting with the API Logic Server.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "http://localhost:5656/api/swagger.json"
+  },
+  "logo_url": "https://your-logo-url/logo.png",
+  "contact_email": "support@yourdomain.com",
+  "legal_info_url": "https://yourdomain.com/legal"
+}
+```
+
+Both ALS and and `ai_plug_in.json` presume the swagger and api are consistent:
+
+* swagger is at `http://localhost:5656/api/swagger.json`, 
+* typical API at `http://localhost:5656/api/Category`
+
+So, looks like we need an custom endpoint for swagger 3:
+* swagger is at `http://localhost:5656/api/openai.json`
+
+And the url needs to be the tunnelled version.
 
 ### Nat Lang ALS Access from LangChain (not working)
 
@@ -241,6 +275,13 @@ Request: Please support one (or more) of the following:
 Info courtesy ChatGPT...
 
 &nbsp;
+
+### API
+
+We currently create swagger 2 doc.  Many tools expect swagger 3.  We might use tools like Swagger Editor or APIMatic Transformer for conversion.
+
+ChatGPT/MCP had difficulty with the api response not being *strict JSONPI*.  There's a jsonapi validator somewhere to verify the results are according to the jsonapi json schema.  We experimented with a proxy for translation.
+
 
 ### LangChain
 
