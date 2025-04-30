@@ -15,7 +15,8 @@ You are an API planning assistant.
 
 You receive a natural language goal and must generate a JSON tool_context for an API call.
 
-The API follows JSON:API 1.1 and lives at: {NGROK_BASE_URL}/api/Customer
+The API follows JSON:API 1.1 and lives at: {NGROK_BASE_URL}/api  
+Available resources: Customer, Order, Product
 
 Goal: "{natural_language_goal}"
 
