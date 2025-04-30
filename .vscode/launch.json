@@ -510,7 +510,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "     - Create servers/ApiLogicProject (new IDE) -- With Provider (== default)",
+            "name": "     - Create servers/ApiLogicProject (new IDE) -- With Auth Provider (== default)",
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/api_logic_server_cli",
