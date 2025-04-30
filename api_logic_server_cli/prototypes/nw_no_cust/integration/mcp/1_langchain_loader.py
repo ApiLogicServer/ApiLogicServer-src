@@ -50,6 +50,12 @@ from langchain.tools.openapi.tool import OpenAPITool
 spec = OpenAPISpec.from_file("resources/nw_swagger_3.yaml")
 spec = OpenAPISpec.from_file("resources/nw_swagger_2.yaml")
 
+# List available operation IDs (optional debugging)
+print("Available operation IDs:")
+for path, methods in spec.raw_spec["paths"].items():
+    for method, details in methods.items():
+        print(f"- {details.get('operationId')}")
+        
 # Create LangChain tool from a specific endpoint
 customer_tool = OpenAPITool.from_openapi_spec(
     spec=spec,
