@@ -66,6 +66,9 @@ then
 ```
 ngrok http 5656
 ```
+You should see:
+
+![ngrok](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/mcp/ngrok.png?raw=true)
 
 and note the url like: `https://mcp_url_eg_bca3_2601.ngrok-free.app -> http://localhost:5656`
 
@@ -268,11 +271,11 @@ LangChain can:
 
 ### MCP
 
-![Intro diagram](resources/images/MCP_Arch.png)
+![Intro diagram](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/mcp/MCP_Arch.png?raw=true)
 
 
 For more information:
 
-* [see here](https://modelcontextprotocol.io/introduction)
+* [see MCP Introduction](https://modelcontextprotocol.io/introduction)
 * [and here](https://apilogicserver.github.io/Docs/Integration-MCP/)
 * [and here](https://www.youtube.com/watch?v=1bUy-1hGZpI&t=72s)
