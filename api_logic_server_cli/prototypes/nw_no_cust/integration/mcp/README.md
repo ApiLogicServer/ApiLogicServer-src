@@ -76,6 +76,13 @@ Fix API Keys and URLS, then run `integration/mcp/natlang_to_api.py`, observe jso
 
 ### Configure ChatGPT (not working)
 
+This investigation has failed for 2 reasons:
+
+1. Non-standard JSON:API: MCP insists on *strict* compliance.  We investigated a prosy to help.
+2. See Appendex 1
+
+&nbsp;
+
 
 replacing url to create prompt (??)        d:
 {
