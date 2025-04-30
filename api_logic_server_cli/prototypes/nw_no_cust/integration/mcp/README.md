@@ -21,15 +21,17 @@ A value prop might be: *instant mcp-fy your legacy DB and business logic*.
 &nbsp;
 
 
-> Status: Technology Exploration
+## Status: Technology Exploration
+
+This is just an initial experiment, without automation such as creation of openAI version 3 from version 2.  Many substantive issues need to be addressed, including but not limited to security, update, etc.
+
+We welcome participation in this exploration.  Please contact us via [discord](https://discord.gg/HcGxbBsgRF).
+
+&nbsp;
 
 ## ChatGPT testing
 
 In the Manager, open `samples/nw_sample_nocust`, and explore `integration/mcp`.  This has been successfully used to invoke the server, including with authorization.
-
-This is just an initial experiment, without automation such as creation of openAI version 3 from version 2.  Many substantive issues need to be addressed, including but not limited to security, update, etc.
-
-We welcome participation in this exploration.  Please contact us via [discord](https://discord.gg/HcGxbBsgRF){:target="_blank" rel="noopener"}.
 
 Local testing:
 1. Run `integration/mcp/3_executor_test_agent.py`
@@ -64,8 +66,15 @@ pip install openai==0.28.1
 
 Run `natlang_to_api.py` (gateway not required)
 
+&nbsp;
 
-### Configure ChatGPT
+### Simulate Nat Lang Query
+
+Fix API Keys and URLS, then run `integration/mcp/natlang_to_api.py`, observe json result.
+
+&nbsp;
+
+### Configure ChatGPT (not working)
 
 
 replacing url to create prompt (??)        d:
@@ -83,7 +92,7 @@ replacing url to create prompt (??)        d:
   "expected_output": "List of customer records"
 }
 
-### Create the MCP in Web ChatGPT
+#### Create the MCP in Web ChatGPT
 
 Explore > Create
 
@@ -153,6 +162,7 @@ online:
   "expected_output": "List of customer records"
 }
 
+&nbsp;
 
 ## Appendix 1: OpenAI Feedback
 
@@ -179,6 +189,8 @@ Request: Please support one (or more) of the following:
 2. Allowing users to register or upload resource types
 3. Relaxing strict JSON:API parsing to tolerate unfamiliar types that are structurally valid
 4. Benefit: This would unlock powerful real-world MCP integrations with actual APIs — enabling developers to query their real data using natural language, with minimal friction and zero backend changes.
+
+&nbsp;
 
 ## Appendix 2: Tech Notes
 
