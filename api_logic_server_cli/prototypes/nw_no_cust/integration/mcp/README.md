@@ -1,6 +1,6 @@
 Model Context Protocol is a way for:
 
-* A server to be one of several, choreographed by an LLM in a chain of calls.
+* LLMs to chorograph multiple MCP servers in a chain of calls.
 
 * Chat agents to *discover* and *call* external servers, be they databases, APIs, file systems, etc. 
 
@@ -14,8 +14,9 @@ This is to explore:
 | ALS Svr can be used as an MCP server                              | Runs   |
 | Nat Lang access from ChatBot (eg, ChatGPT) to (tunnelled) ALS Svr | Fails <br>Non-std API<br>MCP requires pre-registered resource schemas inside its system — which you and I cannot modify from outside (?) <br> See Appendix 1|
 | ALS Svr can be choroegraphed by LLM (1 in a chain of calls)       | ?      |
+|
 
-A business pitch might be: *instant mcp-fy your legacy DB and business logic*.
+A value prop might be: *instant mcp-fy your legacy DB and business logic*.
 
 &nbsp;
 
