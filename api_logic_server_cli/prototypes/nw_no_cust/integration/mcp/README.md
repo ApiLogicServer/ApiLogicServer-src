@@ -1,4 +1,11 @@
-Model Context Protocol is a way for Chat agents to discover and call external servers, be they databases, APIs, file systems, etc, and call their services.  And, for multiple such servers to be choreographed in a chain of calls.
+Model Context Protocol is a way for:
+
+* A server to be one of several, choreographed by an LLM in a chain of calls.
+
+* Chat agents to *discover* and *call* external servers, be they databases, APIs, file systems, etc. 
+
+For tech background, see Appendix 2.
+
 
 This is to explore:
 
@@ -8,14 +15,10 @@ This is to explore:
 | Nat Lang access from ChatBot (eg, ChatGPT) to (tunnelled) ALS Svr | Fails <br>Non-std API<br>MCP requires pre-registered resource schemas inside its system — which you and I cannot modify from outside (?) <br> See Appendix 1|
 | ALS Svr can be choroegraphed by LLM (1 in a chain of calls)       | ?      |
 
+A business pitch might be: *instant mcp-fy your legacy DB and business logic*.
 
-![Intro diagram](resources/images/MCP%20Overview.png)
+&nbsp;
 
-For more information:
-
-* [see here](https://modelcontextprotocol.io/introduction)
-* [and here](https://apilogicserver.github.io/Docs/Integration-MCP/)
-* [and here](https://www.youtube.com/watch?v=1bUy-1hGZpI&t=72s)
 
 > Status: Technology Exploration
 
@@ -51,6 +54,14 @@ ngrok http 5656
 and note the url like: `https://mcp_url_eg_bca3_2601.ngrok-free.app -> http://localhost:5656`
 
 We'll call it `mcp_url`.
+
+### Use natlang_to_api
+
+```
+pip install openai==0.28.1
+```
+
+Run `natlang_to_api.py` (gateway not required)
 
 
 ### Configure ChatGPT
@@ -111,11 +122,11 @@ Later, did this:
 You are an AI Planner + Executor for a live JSON:API server.
 
 When a user gives you a natural language goal (e.g., “list customers from Germany”), you:
-	•	Identify the resource (Customer, Order, Product).
-	•	Map filters (e.g., Country=Germany).
-	•	Construct a JSON:API call to the live endpoint (through a function called fetch_resource).
-	•	Execute the live API call through the function.
-	•	Format and display the results neatly.
+	* Identify the resource (Customer, Order, Product).
+	* Map filters (e.g., Country=Germany).
+	* Construct a JSON:API call to the live endpoint (through a function called fetch_resource).
+	* Execute the live API call through the function.
+	* Format and display the results neatly.
 
 Base URL:
 https://mcp_url.ngrok-free.app/api/
@@ -167,3 +178,49 @@ Request: Please support one (or more) of the following:
 2. Allowing users to register or upload resource types
 3. Relaxing strict JSON:API parsing to tolerate unfamiliar types that are structurally valid
 4. Benefit: This would unlock powerful real-world MCP integrations with actual APIs — enabling developers to query their real data using natural language, with minimal friction and zero backend changes.
+
+## Appendix 2: Tech Notes
+
+Info courtesy ChatGPT...
+
+&nbsp;
+
+### LangChain
+
+What LangChain Does:
+
+* Chains together prompts, tools, memory, and agents
+* Helps you call APIs, query databases, or browse documents using LLMs
+* Provides standard components like:
+* Prompt templates
+* Retrieval (RAG)
+* Agents (autonomous or guided)
+* Tool wrappers (e.g., OpenAPI, SQL, Python functions)
+* Memory modules
+
+⸻
+
+💡 Example Use Case:
+
+“Build an agent that answers business questions using a SQL database + OpenAI.”
+
+LangChain can:
+1.	Accept a question from a user
+2.	Convert it into a SQL query (via GPT)
+3.	Run it on your database
+4.	Return and explain the result
+
+***See:*** `integration/mcp/1_langchain_loader.py`
+
+&nbsp;
+
+### MCP
+
+![Intro diagram](resources/images/MCP_Arch.png)
+
+
+For more information:
+
+* [see here](https://modelcontextprotocol.io/introduction)
+* [and here](https://apilogicserver.github.io/Docs/Integration-MCP/)
+* [and here](https://www.youtube.com/watch?v=1bUy-1hGZpI&t=72s)

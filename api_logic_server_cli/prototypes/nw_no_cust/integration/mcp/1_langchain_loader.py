@@ -3,6 +3,11 @@
  LangChain OpenAPI Loader – JSON:API Planner Tool (1_langchain_loader.py)
 ==========================================================================================
 
+Alert:
+------
+This does not work - hours of import version madness.
+
+
 Purpose:
 --------
 This script loads an OpenAPI 3.0 specification (e.g., nw_swagger_3.yaml) using LangChain's
