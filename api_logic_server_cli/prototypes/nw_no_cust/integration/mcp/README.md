@@ -1,8 +1,8 @@
 Model Context Protocol is a way for:
 
-* LLMs to chorograph multiple MCP servers in a chain of calls.
+* LLMs to chorograph multiple MCP servers in a chain of calls.  MCPs support shared contexts and goals, enabling the LLM to use the result from 1 call to determine whether the goals has been reached, or which service is appropriate to call next.
 
-* Chat agents to *discover* and *call* external servers, be they databases, APIs, file systems, etc. 
+* Chat agents to *discover* and *call* external servers, be they databases, APIs, file systems, etc.  MCPs support shared contexts and goals, enabling the LLM
 
 For tech background, see Appendix 2.
 
@@ -11,25 +11,27 @@ This is to explore:
 
 | Explore                                                           | Status |
 | ----------------------------------------------------------------- | ------ |
-| ALS Svr can be used as an MCP server                              | Runs   |
-| Nat Lang access from ChatBot (eg, ChatGPT) to (tunnelled) ALS Svr | Fails <br>Non-std API<br>MCP requires pre-registered resource schemas inside its system — which you and I cannot modify from outside (?) <br> See Appendix 1|
-| ALS Svr can be choroegraphed by LLM (1 in a chain of calls)       | ?      |
+| ALS Access via MCP                                                | Runs   |
+| Nat Lang ALS Access from simple driver                            | Runs (simple query from test driver using `openai.ChatCompletion.create`) |
+| Nat Lang ALS Access from LangChain                            | Blocked: import version issues |
+| Nat Lang access from Chat (eg, ChatGPT) to (tunnelled) ALS Svr | Blocked - See Appendix 1<br>* MCP unable to pre-register resource schemas inside its system |
+| ALS Svr can be choroegraphed by LLM (1 in a chain of calls)       | TBD    |
 |
 
-A value prop might be: *instant mcp-fy your legacy DB and business logic*.
+A value prop might be summarized: *instantly mcp-fy your legacy DB, including critical business logic and security*.
 
 &nbsp;
 
 
 ## Status: Technology Exploration
 
-This is just an initial experiment, without automation such as creation of openAI version 3 from version 2.  Many substantive issues need to be addressed, including but not limited to security, update, etc.
+This is an initial experiment, without automation.  Many substantive issues need to be addressed, including but not limited to security, update, etc.
 
 We welcome participation in this exploration.  Please contact us via [discord](https://discord.gg/HcGxbBsgRF).
 
 &nbsp;
 
-## ChatGPT testing
+## ALS Access via MCP 
 
 In the Manager, open `samples/nw_sample_nocust`, and explore `integration/mcp`.  This has been successfully used to invoke the server, including with authorization.
 
@@ -39,11 +41,22 @@ Local testing:
 
 &nbsp;
 
-## Access via ChatGPT
+## Access ALS with Nat Lang Query
 
-### Tunnel to local host with ngrok
+The goal is *Nat Lang access from Chat*.  We begin with *Nat Lang ALS Access from simple driver.*
 
-Requires the web version, which in turn requires tunnel to local host such as [ngrok](https://ngrok.com/downloads/mac-os?tab=download), then
+&nbsp;
+
+
+### Nat Lang ALS Access from simple driver
+
+Here we use a simple driver to simulate Chat access.
+
+&nbsp;
+
+#### Tunnel to local host with ngrok
+
+Requires tunnel to local host such as [ngrok](https://ngrok.com/downloads/mac-os?tab=download), then
 
 ```
 ngrok config add-authtoken <obtain from https://dashboard.ngrok.com/get-started/setup/macos>
@@ -58,33 +71,37 @@ and note the url like: `https://mcp_url_eg_bca3_2601.ngrok-free.app -> http://lo
 
 We'll call it `mcp_url`.
 
-### Use natlang_to_api
+&nbsp;
+
+#### Use natlang_to_api
 
 ```
 pip install openai==0.28.1
 ```
 
-Run `natlang_to_api.py` (gateway not required)
+Fix API Keys and URLS, then run `natlang_to_api.py` (gateway not required).  Observe json result.
 
 &nbsp;
 
-### Simulate Nat Lang Query
+### Nat Lang ALS Access from LangChain (not working)
 
-Fix API Keys and URLS, then run `integration/mcp/natlang_to_api.py`, observe json result.
+Blocked on many import / version issues.  See `1_langchain_loader.py`.
 
 &nbsp;
 
-### Configure ChatGPT (not working)
+### Nat Lang access from Chat (not working)
 
 This investigation has failed for 2 reasons:
 
-1. Non-standard JSON:API: MCP insists on *strict* compliance.  We investigated a prosy to help.
+1. Non-standard JSON:API: MCP insists on *strict* compliance.  We investigated a proxy to help.
 2. See Appendex 1
 
 &nbsp;
 
 
-replacing url to create prompt (??)        d:
+replacing url to create prompt (??) 
+
+```
 {
   "tool": "json-api",
   "method": "GET",
@@ -98,6 +115,7 @@ replacing url to create prompt (??)        d:
   },
   "expected_output": "List of customer records"
 }
+```
 
 &nbsp;
 
@@ -167,6 +185,7 @@ The API follows JSON:API standards (application/vnd.api+json).
 
 online:
 
+```
 {
   "tool": "json-api",
   "method": "GET",
@@ -180,6 +199,7 @@ online:
   },
   "expected_output": "List of customer records"
 }
+```
 
 &nbsp;
 
