@@ -1,6 +1,6 @@
 Model Context Protocol is a way for:
 
-* LLMs to chorograph multiple MCP servers in a chain of calls.  MCPs support shared contexts and goals, enabling the LLM to use the result from 1 call to determine whether the goals has been reached, or which service is appropriate to call next.
+* LLMs to choreograph multiple MCP servers in a chain of calls.  MCPs support shared contexts and goals, enabling the LLM to use the result from 1 call to determine whether the goals has been reached, or which service is appropriate to call next.
 
 * Chat agents to *discover* and *call* external servers, be they databases, APIs, file systems, etc.  MCPs support shared contexts and goals, enabling the LLM
 
@@ -13,7 +13,7 @@ This is to explore:
 | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
 | ALS Access via MCP                                             | Runs                                                                                        |
 | Nat Lang ALS Access from simple driver                         | Runs (simple query from test driver using `openai.ChatCompletion.create`)                   |
-| Nat Lang ALS Access using OpenAI Plugin                        | Per CoPilot                                                                                 |
+| Nat Lang ALS Access using OpenAI Plugin                        | Ran simple ChatGPT query                                                                    |
 | Nat Lang ALS Access from LangChain                             | Blocked: import version issues                                                              |
 | Nat Lang access from Chat (eg, ChatGPT) to (tunnelled) ALS Svr | Blocked - See Appendix 1<br>* MCP unable to pre-register resource schemas inside its system |
 | ALS Svr can be choroegraphed by LLM (1 in a chain of calls)    | TBD                                                                                         |
@@ -91,36 +91,9 @@ Fix API Keys and URLS, then run `natlang_to_api.py` (gateway not required).  Obs
 
 ### Nat Lang ALS Access using OpenAI Plugin
 
-Prepare `ai_plug_in.json`:
+Please see `integration/openai_plugin`.
 
-```{
-  "schema_version": "v1",
-  "name_for_human": "ALS NW-",
-  "name_for_model": "ALS NW",
-  "description_for_human": "Access and manage categories, customers, and more.",
-  "description_for_model": "Plugin for interacting with the API Logic Server.",
-  "auth": {
-    "type": "none"
-  },
-  "api": {
-    "type": "openapi",
-    "url": "http://localhost:5656/api/swagger.json"
-  },
-  "logo_url": "https://your-logo-url/logo.png",
-  "contact_email": "support@yourdomain.com",
-  "legal_info_url": "https://yourdomain.com/legal"
-}
-```
-
-Both ALS and and `ai_plug_in.json` presume the swagger and api are consistent:
-
-* swagger is at `http://localhost:5656/api/swagger.json`, 
-* typical API at `http://localhost:5656/api/Category`
-
-So, looks like we need an custom endpoint for swagger 3:
-* swagger is at `http://localhost:5656/api/openai.json`
-
-And the url needs to be the tunnelled version.
+&nbsp;
 
 ### Nat Lang ALS Access from LangChain (not working)
 
