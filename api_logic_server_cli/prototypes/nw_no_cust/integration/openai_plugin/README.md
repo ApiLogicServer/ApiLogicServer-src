@@ -88,6 +88,6 @@ which worked, but: **OpenAPI spec can have a maximum of 30 operations**, so, cre
 
 fix openai version, url
 
-retrieval worked.
+retrieval worked:
 
-
+![openai-plugin](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/openai-plugin/Nat%20Lang%20Query.png?raw=true)
