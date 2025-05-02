@@ -12,7 +12,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     def openapi(path=None):
         """ return integration/openai_plugin/nw-swagger_3.json """
 
-        response = send_file("integration/openai_plugin/nw-swagger_3.json", mimetype='text/json')
+        response = send_file("integration/openai_plugin/swagger_3.json", mimetype='text/json')
         return response
 
 
