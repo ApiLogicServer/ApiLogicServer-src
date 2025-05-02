@@ -9,7 +9,7 @@
     },
     "api": {
       "type": "openapi",
-      "url": "https://2e9f-2601-644-4900-d6f0-9893-cd5c-23f8-f7a6.ngrok-free.app/api/swagger.json"
+      "url": "https://tunnel_url.ngrok-free.app/api/openapi"
     },
     "logo_url": "https://your-logo-url/logo.png",
     "contact_email": "support@yourdomain.com",
