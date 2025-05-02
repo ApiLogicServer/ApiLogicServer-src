@@ -1,4 +1,4 @@
-**OpenAI plugins** are tools that extend the capabilities of ChatGPT by allowing it to access real-time data, perform actions, or connect with external services via APIs. 
+**OpenAI plugins** are tools that extend the capabilities of ChatGPT by allowing it to access real-time data, perform actions, or connect with external services via APIs. .
 
 Instead of being limited to its pre-trained knowledge, ChatGPT can use plugins to retrieve up-to-date information (like live weather, stock prices, or databases) or perform tasks (like booking a flight or running a query). 
 
@@ -48,15 +48,52 @@ You should see:
 
 ![ngrok](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/mcp/ngrok.png?raw=true)
 
-and note the url like: `https://mcp_url_eg_bca3_2601.ngrok-free.app -> http://localhost:5656`
+and note the url like: `https://42da-2601-644-4900-etc.ngrok-free.app -> http://localhost:5656`
 
 We'll call it `tunnel_url`
 
 <br>
 
+### obtain swagger_3
+
+Convert swagger 2 to 3: https://converter.swagger.io
+
+fix line 11 for servers - no trailing "/":
+
+```
+    "servers": [
+      {
+        "url": "https://tunnel_url.ngrok-free.app/api"
+      }
+    ],
+```
+
+Reduce down to 30 operations (genai_demo has 69); use ChatGPT with prompts like:
+
+1. Optionally collapse GET by ID and GET collection into a single endpoint using query params
+2. remove POST from relationship endpoints
+3. remove delete
+4. collapse relationship endpoints further
+
+then fix the result:
+
+1. ensure servers and paths is retained (got deleted for me), and includes https:
+2. version 3.1.0
+
+Still seeing (fix with Chat):
+
+In path /Customer, method get is missing operationId; skipping
+In path /Customer, method post is missing operationId; skipping
+In path /Order, method get is missing operationId; skipping
+In path /Order, method post is missing operationId; skipping
+In path /Item, method get is missing operationId; skipping
+In path /Item, method post is missing operationId; skipping
+In path /Product, method get is missing operationId; skipping
+In path /Product, method post is missing operationId; skipping
+
 ### Create ai_plug_in.json
 
-Prepare `ai_plug_in.json` as shown in this directory.  It identifies the url for finding the openapi through the tunnel.
+Prepare `ai_plug_in.json` as shown in this directory.  Observe that it It identifies the url for finding the openapi through the tunnel.
 
 Note: both ALS and and `ai_plug_in.json` presume the swagger and api are consistent:
 
@@ -64,7 +101,6 @@ Note: both ALS and and `ai_plug_in.json` presume the swagger and api are consist
 * typical API at `http://localhost:5656/api/Category`
 
 <br>
-
 ### Add APIs for openapi and openai_plugin
 
 OpenAI requires a openai document, so create a custom endpoint - `api/api_discovery/openapi.py` - for swagger 3:
@@ -72,22 +108,28 @@ OpenAI requires a openai document, so create a custom endpoint - `api/api_discov
 
 Note: the url needs to be the tunnelled version.
 
-Fix servers in the `openai.json`
+Fix servers in the `openai.json`  fixme name??  fixme already there (no work here)
 
 <br>
-
 ### Configure in ChatGPT
 
-ChatGPT -> Create > Configure > Add Action > url
+Then, upload it to the Web version of ChatGPT: 
 
-Provide the url of the openai endpoint:
+1. Explore GPTs
+2. Create
+3. Configure
+4. Create New Action
+
+Provide the url of the openai endpoint (or, the `ai_plugin` endpoint??):
 
 https://tunnel_url.ngrok-free.app/api/openapi
 
-which worked, but: **OpenAPI spec can have a maximum of 30 operations**, so, created a "pruned" version with just Customer: `integration/openai_plugin/nw-swagger_3.json`
+
 
 fix openai version, url
 
-retrieval worked:
+retrieval worked.
 
-![openai-plugin](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/openai-plugin/Nat%20Lang%20Query.png?raw=true)
+and, list the items of order 1 with their product names*
+
+
