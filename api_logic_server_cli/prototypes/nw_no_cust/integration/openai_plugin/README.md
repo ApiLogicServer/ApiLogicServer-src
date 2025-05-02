@@ -91,6 +91,8 @@ In path /Item, method post is missing operationId; skipping
 In path /Product, method get is missing operationId; skipping
 In path /Product, method post is missing operationId; skipping
 
+For testing, you can copy `integration/openai_plugin/swagger_3_genai_demo.json` or `integration/openai_plugin/nw-swagger_3.json` over `integration/openai_plugin/swagger_3.json`.
+
 ### Create ai_plug_in.json
 
 Prepare `ai_plug_in.json` as shown in this directory.  Observe that it It identifies the url for finding the openapi through the tunnel.
