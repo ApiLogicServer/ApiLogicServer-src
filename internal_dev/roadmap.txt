@@ -1,3 +1,39 @@
+Existing Systems Initiative - way more existing systems than new ones
+
+    Value Props center around leveraging these for extension, integration:
+        - instantly mcp-fy your legacy DB, including critical business logic and security.
+        -instantly expose legacy DBs to Natural Language, including critical business logic and security, to simplify user discovery and operation.
+            - it's where users "already are"
+            - add ChatBot to extend to Discord, Slack, Teams? 
+                1.	User types in Slack:
+                    → “What’s the balance for customer ALFKI?”
+                2.	Slack bot receives → forwards to backend
+                3.	Backend passes query to GPT function-calling-enabled model
+                4.	GPT emits: GET /Customer?filter[id]=ALFKI
+                5.	Backend executes API call to your database/API
+                6.	Returns balance → formats reply:
+                    → “Customer ALFKI has a balance of $23,000.”
+                7.	Sends reply message into Slack thread
+
+    Thoughts:
+        MCP
+            - Blockers, but value in marketing
+            - Need a compelling example (GPT: check credit as multi-mcp flow... good grief)
+            - Interesting contrast: deterministic work flow vs non-deterministic AI flow
+                - several N8N demos might be truly compelling
+        NLQ - explore
+            - compelling value?  get some feedback
+            - security
+            - update
+            - pruning the openapi
+            - Mgmt
+                - how does user know about the various 'functions'
+                - how does org make functions available
+        Demos
+            - Not too fancy - excessive tech can be confusing / distracting (does this apply to NL API Creation?)
+            - Must clarify leverage logic & security (vs just api)
+
+
 Sales / Mktg
 
     John Rymer, Forrester, Jim Milbery
