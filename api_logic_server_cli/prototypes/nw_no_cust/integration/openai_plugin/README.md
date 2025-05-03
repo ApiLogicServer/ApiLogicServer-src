@@ -52,21 +52,15 @@ and note the url like: `https://42da-2601-644-4900-etc.ngrok-free.app -> http://
 
 We'll call it `tunnel_url`
 
+Enter this into `config/default.env`
 <br>
 
 ### obtain swagger_3
 
 Convert swagger 2 to 3: https://converter.swagger.io
 
-fix line 11 for servers - no trailing "/":
 
-```
-    "servers": [
-      {
-        "url": "https://tunnel_url.ngrok-free.app/api"
-      }
-    ],
-```
+#### Reduce Operations
 
 Reduce down to 30 operations (genai_demo has 69); use ChatGPT with prompts like:
 
@@ -92,25 +86,12 @@ In path /Product, method get is missing operationId; skipping
 In path /Product, method post is missing operationId; skipping
 
 For testing, you can copy `integration/openai_plugin/swagger_3_genai_demo.json` or `integration/openai_plugin/nw-swagger_3.json` over `integration/openai_plugin/swagger_3.json`.
-
-### Create ai_plug_in.json
-
-Prepare `ai_plug_in.json` as shown in this directory.  Observe that it It identifies the url for finding the openapi through the tunnel.
-
-Note: both ALS and and `ai_plug_in.json` presume the swagger and api are consistent:
-
-* swagger is at `http://localhost:5656/api/swagger.json`, 
-* typical API at `http://localhost:5656/api/Category`
-
 <br>
-### Add APIs for openapi and openai_plugin
+### APIs for openapi
 
-OpenAI requires a openai document, so create a custom endpoint - `api/api_discovery/openapi.py` - for swagger 3:
-* swagger is at `http://localhost:5656/api/openai.json`
+OpenAI requires a openai document, so observe the custom endpoint - `api/api_discovery/openapi` - eg, to test locally: `http://localhost:5656/api/openai`
 
-Note: the url needs to be the tunnelled version.
-
-Fix servers in the `openai.json`  fixme name??  fixme already there (no work here)
+Note: the url is the tunnelled version, from the env variable.
 
 <br>
 ### Configure in ChatGPT
@@ -122,7 +103,7 @@ Then, upload it to the Web version of ChatGPT:
 3. Configure
 4. Create New Action
 
-Provide the url of the openai endpoint (or, the `ai_plugin` endpoint??):
+Provide the url of the openai endpoint:
 
 https://tunnel_url.ngrok-free.app/api/openapi
 
@@ -135,3 +116,18 @@ retrieval worked.
 and, list the items of order 1 with their product names*
 
 
+## Appendix
+
+
+### Create ai_plug_in.json
+
+Prepare `ai_plug_in.json` as shown in this directory.  Observe that it It identifies the url for finding the openapi through the tunnel.
+
+Note: both ALS and and `ai_plug_in.json` presume the swagger and api are consistent:
+
+* swagger is at `http://localhost:5656/api/swagger.json`, 
+* typical API at `http://localhost:5656/api/Category`
+
+Not required for function - **Settings / Beta / Plugins > Plugin install → expects the ai-plugin.json manifest URL**
+
+This appears to be unavailable for ChatGPT 4o

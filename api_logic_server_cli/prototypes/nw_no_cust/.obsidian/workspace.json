@@ -155,8 +155,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -170,6 +169,8 @@
   },
   "active": "5d40d1f776c26abb",
   "lastOpenFiles": [
+    "config/default.env",
+    "config",
     "integration/openai_plugin/README_genai.md",
     "integration/openai_plugin/README.md",
     "integration/mcp/README.md"
