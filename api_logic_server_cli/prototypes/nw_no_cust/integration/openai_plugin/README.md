@@ -16,8 +16,7 @@ This is to explore:
 
 A value prop might be summarized: *instantly expose legacy DBs to Natural Language, including critical business logic and security, to simplify user discovery and operation.*
 
-&nbsp;
-
+<br>
 
 ## Status: Technology Exploration
 
@@ -27,11 +26,10 @@ We welcome participation in this exploration.  Please contact us via [discord](h
 
 This exploration is changing rapidly.  For updates, replace `integration/mcp` from [integration/msp](https://github.com/ApiLogicServer/ApiLogicServer-src/tree/main/api_logic_server_cli/prototypes/nw_no_cust/integration/openai_plugin)
 
-&nbsp;
+<br>
 
 ## Nat Lang ALS Access using OpenAI Plugin
 
-Tunnel to local host with ngrok
 
 Requires tunnel to local host such as [ngrok](https://ngrok.com/downloads/mac-os?tab=download), then
 
@@ -39,7 +37,7 @@ Requires tunnel to local host such as [ngrok](https://ngrok.com/downloads/mac-os
 ngrok config add-authtoken <obtain from https://dashboard.ngrok.com/get-started/setup/macos>
 ```
 
-then
+then start the tunnel
 ```
 ngrok http 5656
 ```
@@ -55,14 +53,20 @@ We'll call it `tunnel_url`
 Enter this into `config/default.env`
 <br>
 
-### obtain swagger_3
+### Obtain swagger_3
 
-Convert swagger 2 to 3: https://converter.swagger.io
+Obtain swagger 2 from API Logic Server, eg, http://localhost:5656/api/swagger.json) 
+
+Convert to 3: https://converter.swagger.io or other.
 
 
 #### Reduce Operations
 
-Reduce down to 30 operations (genai_demo has 69); use ChatGPT with prompts like:
+Reduce down to 30 operations (genai_demo has 69).
+
+For testing, you can copy `integration/openai_plugin/swagger_3_genai_demo.json` or `integration/openai_plugin/nw-swagger_3.json` over `integration/openai_plugin/swagger_3.json`.
+
+This was obtained using ChatGPT with prompts like:
 
 1. Optionally collapse GET by ID and GET collection into a single endpoint using query params
 2. remove POST from relationship endpoints
@@ -85,13 +89,13 @@ In path /Item, method post is missing operationId; skipping
 In path /Product, method get is missing operationId; skipping
 In path /Product, method post is missing operationId; skipping
 
-For testing, you can copy `integration/openai_plugin/swagger_3_genai_demo.json` or `integration/openai_plugin/nw-swagger_3.json` over `integration/openai_plugin/swagger_3.json`.
+
 <br>
 ### APIs for openapi
 
 OpenAI requires a openai document, so observe the custom endpoint - `api/api_discovery/openapi` - eg, to test locally: `http://localhost:5656/api/openai`
 
-Note: the url is the tunnelled version, from the env variable.
+Note: the url for use in ChatGPT is the tunnelled version, from the env variable.
 
 <br>
 ### Configure in ChatGPT
@@ -108,15 +112,15 @@ Provide the url of the openai endpoint:
 https://tunnel_url.ngrok-free.app/api/openapi
 
 
+Retrieval worked:
 
-fix openai version, url
+* list customers
 
-retrieval worked.
+* list the items of order 1 with their product names
 
-and, list the items of order 1 with their product names*
+<br>
 
-
-## Appendix
+## Appendices
 
 
 ### Create ai_plug_in.json
