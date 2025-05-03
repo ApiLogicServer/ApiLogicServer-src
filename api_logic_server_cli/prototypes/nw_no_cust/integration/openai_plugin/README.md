@@ -51,6 +51,7 @@ and note the url like: `https://42da-2601-644-4900-etc.ngrok-free.app -> http://
 We'll call it `tunnel_url`
 
 Enter this into `config/default.env`
+
 <br>
 
 ### Obtain swagger_3
@@ -59,6 +60,7 @@ Obtain swagger 2 from API Logic Server, eg, http://localhost:5656/api/swagger.js
 
 Convert to 3: https://converter.swagger.io or other.
 
+<br>
 
 #### Reduce Operations
 
@@ -80,6 +82,7 @@ then fix the result:
 
 Still seeing (fix with Chat):
 
+```
 In path /Customer, method get is missing operationId; skipping
 In path /Customer, method post is missing operationId; skipping
 In path /Order, method get is missing operationId; skipping
@@ -88,10 +91,10 @@ In path /Item, method get is missing operationId; skipping
 In path /Item, method post is missing operationId; skipping
 In path /Product, method get is missing operationId; skipping
 In path /Product, method post is missing operationId; skipping
-
+```
 
 <br>
-### APIs for openapi
+### Custom endpoint for openapi
 
 OpenAI requires a openai document, so observe the custom endpoint - `api/api_discovery/openapi` - eg, to test locally: `http://localhost:5656/api/openai`
 
@@ -122,6 +125,7 @@ Retrieval worked:
 
 ## Appendices
 
+<br>
 
 ### Create ai_plug_in.json
 

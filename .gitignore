@@ -4,6 +4,8 @@
 /.eggs/
 **/__pycache__
 *.egg-info
+*.obsidian/*.*
+*.obsidian
 venv/
 venv_x/
 venv_z/
