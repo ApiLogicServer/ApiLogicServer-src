@@ -6,7 +6,6 @@ The goal is to turn ChatGPT into a more useful, interactive assistant that can b
 
 >For example, in large companies, it can be remarkably hard to find corporate systems via an Intranet, and use different user interfaces.  ChatGPT can simplify finding these, and interacting with Natural Language.
 
-
 This is to explore:
 
 | Explore                                 | Status               |
@@ -30,7 +29,6 @@ This exploration is changing rapidly.  For updates, replace `integration/mcp` fr
 
 ## Nat Lang ALS Access using OpenAI Plugin
 
-
 Requires tunnel to local host such as [ngrok](https://ngrok.com/downloads/mac-os?tab=download), then
 
 ```
@@ -38,6 +36,7 @@ ngrok config add-authtoken <obtain from https://dashboard.ngrok.com/get-started/
 ```
 
 then start the tunnel
+
 ```
 ngrok http 5656
 ```
@@ -94,6 +93,7 @@ In path /Product, method post is missing operationId; skipping
 ```
 
 <br>
+
 ### Custom endpoint for openapi
 
 OpenAI requires a openai document, so observe the custom endpoint - `api/api_discovery/openapi` - eg, to test locally: `http://localhost:5656/api/openai`
@@ -101,6 +101,7 @@ OpenAI requires a openai document, so observe the custom endpoint - `api/api_dis
 Note: the url for use in ChatGPT is the tunnelled version, from the env variable.
 
 <br>
+
 ### Configure in ChatGPT
 
 Then, upload it to the Web version of ChatGPT: 
@@ -114,14 +115,30 @@ Provide the url of the openai endpoint:
 
 https://tunnel_url.ngrok-free.app/api/openapi
 
-
 Retrieval worked:
 
-* list customers
-
-* list the items of order 1 with their product names
+- list customers
+- list the items of order 1 with their product names
 
 <br>
+
+
+
+### Update: failed to load
+
+We also experimented with update, using `integration/openai_plugin/swagger_3_genai_demo_with_update.json`.
+
+It failed to load with
+
+```
+In context=('paths', '/Customer/{CustomerId}/', 'patch', 'requestBody', 'content', 'application/json', 'schema'), reference to unknown component Customer_inst; using empty schema
+
+In path /Customer/{CustomerId}/, method patch, operationId UpdateCustomer_0, request body schema is not an object schema; skipping
+
+In path /Customer/{CustomerId}/, method patch, operationId UpdateCustomer_0, skipping function due to errors
+```
+
+
 
 ## Appendices
 
@@ -133,8 +150,8 @@ Prepare `ai_plug_in.json` as shown in this directory.  Observe that it It identi
 
 Note: both ALS and and `ai_plug_in.json` presume the swagger and api are consistent:
 
-* swagger is at `http://localhost:5656/api/swagger.json`, 
-* typical API at `http://localhost:5656/api/Category`
+- swagger is at `http://localhost:5656/api/swagger.json`, 
+- typical API at `http://localhost:5656/api/Category`
 
 Not required for function - **Settings / Beta / Plugins > Plugin install → expects the ai-plugin.json manifest URL**
 

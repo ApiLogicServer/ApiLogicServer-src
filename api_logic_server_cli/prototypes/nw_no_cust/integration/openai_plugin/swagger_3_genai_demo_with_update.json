@@ -1,0 +1,515 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "API Logic Server (Reduced for OpenAI Plugin)",
+    "version": "1.0.0",
+    "description": "Simplified OpenAPI spec for OpenAI Plugin: GET/POST only, no DELETE/PATCH, relationships collapsed into filters"
+  },
+  "servers": [
+    {
+      "url": "https://42da-2601-644-4900-d6f0-b171-348b-e99d-839b.ngrok-free.app/api"
+    }
+  ],
+  "security": [
+    {
+      "Bearer": []
+    }
+  ],
+  "paths": {
+    "/Customer": {
+      "get": {
+        "summary": "Retrieve Customers (with optional filter)",
+        "parameters": [
+          {
+            "name": "filter[id]",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[name]",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[balance]",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[credit_limit]",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Customer records"
+          }
+        },
+        "operationId": "getCustomers"
+      },
+      "post": {
+        "summary": "Create a Customer",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Customer created"
+          }
+        },
+        "operationId": "createCustomer"
+      }
+    },
+"/Customer/{CustomerId}/": {
+        "get": {
+          "tags": [
+            "Customer"
+          ],
+          "summary": "Retrieve Customer instance",
+          "description": "Retrieve Customer from Customer",
+          "operationId": "RetrieveCustomerinstance_0",
+          "parameters": [
+            {
+              "name": "include",
+              "in": "query",
+              "description": "Customer relationships to include (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string",
+                "default": "OrderList"
+              }
+            },
+            {
+              "name": "fields[Customer]",
+              "in": "query",
+              "description": "Customer fields to include (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string",
+                "default": "name,balance,credit_limit,S_CheckSum"
+              }
+            },
+            {
+              "name": "CustomerId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "default": "1"
+              }
+            },
+            {
+              "name": "Content-Type",
+              "in": "header",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "default": "application/vnd.api+json",
+                "enum": [
+                  "application/vnd.api+json",
+                  "application/json"
+                ]
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Request fulfilled, document follows",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Customer_inst1"
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Forbidden",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_403"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Not Found",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_404"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "delete": {
+          "tags": [
+            "Customer"
+          ],
+          "summary": "Delete Customer from Customer",
+          "operationId": "DeleteCustomerfromCustomer_0",
+          "parameters": [
+            {
+              "name": "CustomerId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "default": "1"
+              }
+            },
+            {
+              "name": "Content-Type",
+              "in": "header",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "default": "application/vnd.api+json",
+                "enum": [
+                  "application/vnd.api+json",
+                  "application/json"
+                ]
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Customer_inst1"
+                  }
+                }
+              }
+            },
+            "202": {
+              "description": "Accepted",
+              "content": {}
+            },
+            "204": {
+              "description": "Request fulfilled, nothing follows",
+              "content": {}
+            },
+            "403": {
+              "description": "Forbidden",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_403"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Not Found",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_404"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "patch": {
+          "tags": [
+            "Customer"
+          ],
+          "summary": "Update Customer",
+          "description": "Update Customer attributes",
+          "operationId": "UpdateCustomer_0",
+          "parameters": [
+            {
+              "name": "CustomerId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "default": "1"
+              }
+            },
+            {
+              "name": "Content-Type",
+              "in": "header",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "default": "application/vnd.api+json",
+                "enum": [
+                  "application/vnd.api+json",
+                  "application/json"
+                ]
+              }
+            }
+          ],
+          "requestBody": {
+            "description": "Customer attributes",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Customer_inst"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Request fulfilled, document follows",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Customer_inst1"
+                  }
+                }
+              }
+            },
+            "202": {
+              "description": "Accepted",
+              "content": {}
+            },
+            "204": {
+              "description": "No Content",
+              "content": {}
+            },
+            "403": {
+              "description": "Forbidden",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_403"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Not Found",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_404"
+                  }
+                }
+              }
+            },
+            "409": {
+              "description": "Conflict",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_409"
+                  }
+                }
+              }
+            }
+          },
+          "x-codegen-request-body-name": "PATCH body"
+        }
+      },
+    "/Order": {
+      "get": {
+        "summary": "Retrieve Orders (with optional filter)",
+        "parameters": [
+          {
+            "name": "filter[id]",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[customer_id]",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[date_shipped]",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[amount_total]",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order records"
+          }
+        },
+        "operationId": "getOrders"
+      },
+      "post": {
+        "summary": "Create an Order",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Order created"
+          }
+        },
+        "operationId": "createOrder"
+      }
+    },
+    "/Item": {
+      "get": {
+        "summary": "Retrieve Items (with optional filter)",
+        "parameters": [
+          {
+            "name": "filter[id]",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[order_id]",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[product_id]",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[quantity]",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[amount]",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Item records"
+          }
+        },
+        "operationId": "getItems"
+      },
+      "post": {
+        "summary": "Create an Item",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Item created"
+          }
+        },
+        "operationId": "createItem"
+      }
+    },
+    "/Product": {
+      "get": {
+        "summary": "Retrieve Products (with optional filter)",
+        "parameters": [
+          {
+            "name": "filter[id]",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[name]",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter[unit_price]",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product records"
+          }
+        },
+        "operationId": "getProducts"
+      },
+      "post": {
+        "summary": "Create a Product",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Product created"
+          }
+        },
+        "operationId": "createProduct"
+      }
+    }
+  }
+}
