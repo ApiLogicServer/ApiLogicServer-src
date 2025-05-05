@@ -30,7 +30,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         """
             
         # read dict from json file integration/openai_plugin/swagger_3.json
-        with open("integration/openai_plugin/swagger_3.json", "r") as json_file:
+        with open("integration/openai_function/swagger_3.json", "r") as json_file:
             swagger_dict = json.load(json_file)
         app_logger.info(f"openapi: Swagger JSON loaded: {swagger_dict}")
 

@@ -1,0 +1,5 @@
+https://268f-2601-644-4900-d6f0-806d-b9f7-9f64-7677.ngrok-free.app/api/openapi
+
+list customers
+
+for customer ID=1 update name to 'x'
