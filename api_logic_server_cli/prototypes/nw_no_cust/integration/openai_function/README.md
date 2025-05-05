@@ -127,7 +127,9 @@ Provide the url of the openai endpoint:
 
 https://tunnel_url.ngrok-free.app/api/openapi
 
-Retrieval worked:
+<br>
+
+### Retrieval worked:
 
 - list customers
 - list the items of order 1 with their product names
