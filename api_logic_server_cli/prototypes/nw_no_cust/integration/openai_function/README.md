@@ -102,8 +102,6 @@ In path /Product, method get is missing operationId; skipping
 In path /Product, method post is missing operationId; skipping
 ```
 
-
-
 <br>
 
 ### Custom endpoint for openapi
@@ -136,15 +134,13 @@ https://tunnel_url.ngrok-free.app/api/openapi
 
 <br>
 
-### Update: Invalid Data Object
+### Update: Resoved, pending verification
 
 We also experimented with update, using `integration/openai_plugin/swagger_3.json`.
 
 > It initially failed to load, which we repaired as noted in Appendix 2.
 
-However, updates are still failing with Invalid Data Object.  ChatGPT reports it was sending:
-
-![updt error](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/openai-plugin/upd%20invalid%20obj.png?raw=true)
+> It then failed to generate proper update API, evidently due to bad OpenAPI spec as noted in Appendix 3.
 
 <br>
 
@@ -183,3 +179,25 @@ In path /Customer/{CustomerId}/, method patch, operationId UpdateCustomer_0, ski
 
 We requested a revised jasonapi from ChatGPT to clear these errors, which loaded.  
 
+<br>
+
+### Appendix 3: Invalid Data Object
+
+ This appears to be caused by improper JSON:API openAPI spec, which caused ChatGPT to generate an improper json PATCH payload:
+
+```python
+            chatgpt_request_json = {
+                        "credit_limit": 25000,
+            }
+            standard_request_json = {
+                "data": {
+                    "type": "Customer",
+                    "id": "ALFKI",
+                    "attributes": {
+                        "name": "Alice",
+                        "credit_limit": 25000,
+                        "balance": 12345
+                    }
+                }
+            }
+```
