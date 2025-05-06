@@ -223,17 +223,19 @@ class Config:
     app_logger.info(f'config.py - KAFKA_SERVER: {KAFKA_SERVER}')
     # N8N Webhook Args (for testing)
 	# see https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.webhook/?utm_source=n8n_app&utm_medium=node_settings_modal-credential_link&utm_campaign=n8n-nodes-base.webhook#path
+    # N8N is a workflow automation tool that allows you to connect different applications and automate tasks between them.
     wh_scheme = "http"
     wh_server = "localhost" # or cloud.n8n.io...
     wh_port = 5678
-    wh_endpoint = "webhook-test"
-    wh_path = "002fa0e8-f7aa-4e04-b4e3-e81aa29c6e69"
-    token = "YWRtaW46cA=="
-    N8N_PRODUCER = {"authorization": f"Basic {token}", "n8n_url": f'"{wh_scheme}://{wh_server}:{wh_port}/{wh_endpoint}/{wh_path}"'} 
+    wh_endpoint = "webhook-test" # This comes from the WebHook node in n8n
+    wh_path = "002fa0e8-f7aa-4e04-b4e3-e81aa29c6e69" # This comes from the WebHook node in n8n
+    wh_token = "YWRtaW46cA==" # This is the base64 encoded string of username:password (e.g. admin:password)
+    N8N_PRODUCER = {"authorization": f"Basic {wh_token}", "n8n_url": f'"{wh_scheme}://{wh_server}:{wh_port}/{wh_endpoint}/{wh_path}"'} 
     # Or enter the n8n_url directly:
-    N8N_PRODUCER = {"authorization": f"Basic {token}","n8n_url":"http://localhost:5678/webhook-test/002fa0e8-f7aa-4e04-b4e3-e81aa29c6e69"}  
+    #N8N_PRODUCER = {"authorization": f"Basic {wh_token}","n8n_url":"http://localhost:5678/webhook-test/002fa0e8-f7aa-4e04-b4e3-e81aa29c6e69"}  
     N8N_PRODUCER = None # comment out to enable N8N producer
-    # Consumer under consideration
+    # See integration/n8n/n8n_readme.md for more details
+    
 
     OPT_LOCKING = "optional"
     if os.getenv('OPT_LOCKING'):  # e.g. export OPT_LOCKING=required
@@ -298,14 +300,19 @@ class Args():
         self.kafka_producer = Config.KAFKA_PRODUCER
         self.kafka_consumer = Config.KAFKA_CONSUMER
         self.kafka_consumer_group = Config.KAFKA_CONSUMER_GROUP
-        self.n8n_producer = Config.N8N_PRODUCER
         self.keycloak_base = Config.KEYCLOAK_BASE
         self.keycloak_realm = Config.KEYCLOAK_REALM
         self.keycloak_base_url = Config.KEYCLOAK_BASE_URL
         self.keycloak_client_id = Config.KEYCLOAK_CLIENT_ID
         self.backtic_as_quote = Config.BACKTIC_AS_QUOTE
         self.service_type = Config.ONTIMIZE_SERVICE_TYPE
-
+        self.wh_scheme = Config.wh_scheme
+        self.wh_server = Config.wh_server
+        self.wh_port = Config.wh_port
+        self.wh_endpoint = Config.wh_endpoint
+        self.wh_path = Config.wh_path       
+        self.wh_token = Config.wh_token
+        self.n8n_producer = Config.N8N_PRODUCER
         self.verbose = False
         self.create_and_run = False
 
@@ -576,7 +583,56 @@ class Args():
     def n8n_producer(self, a: str):
         self.flask_app.config["N8N_PRODUCER"] = a
 
-
+    # WebHook Args (used by N8N producer - see n8n_producer above)
+    @property
+    def wh_scheme(self) -> str:
+        """ n8n connect string """  
+        return self.flask_app.config["WH_SCHEME"]
+    @wh_scheme.setter           
+    def wh_scheme(self, a: str):
+        self.flask_app.config["WH_SCHEME"] = a
+        
+    @property
+    def wh_server(self) -> str:
+        """ n8n connect string """
+        return self.flask_app.config["WH_SERVER"]
+    @wh_server.setter
+    def wh_server(self, a: str):
+        self.flask_app.config["WH_SERVER"] = a  
+        
+    @property
+    def wh_port(self) -> str:       
+        """ n8n connect string """
+        return self.flask_app.config["WH_PORT"]
+    
+    @wh_port.setter         
+    def wh_port(self, a: str):
+        self.flask_app.config["WH_PORT"] = a
+        
+    @property
+    def wh_endpoint(self) -> str:
+        """ n8n connect string """
+        return self.flask_app.config["WH_ENDPOINT"]
+    @wh_endpoint.setter     
+    def wh_endpoint(self, a: str):
+        self.flask_app.config["WH_ENDPOINT"] = a
+    @property
+    def wh_path(self) -> str:
+        """ n8n connect string """
+        return self.flask_app.config["WH_PATH"] 
+    
+    @wh_path.setter
+    def wh_path(self, a: str):
+        self.flask_app.config["WH_PATH"] = a
+    @property
+    def wh_token(self) -> str:
+        """ n8n connect string """
+        return self.flask_app.config["WH_TOKEN"]
+    @wh_token.setter
+    def wh_token(self, a: str):
+        self.flask_app.config["WH_TOKEN"] = a
+        
+    
     def __str__(self) -> str:
         rtn =  f'.. flask_host: {self.flask_host}, port: {self.port}, \n'\
             f'.. swagger_host: {self.swagger_host}, swagger_port: {self.swagger_port}, \n'\
@@ -696,4 +752,3 @@ class Args():
             args.http_scheme = 'https'
 
         return
-   

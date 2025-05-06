@@ -58,7 +58,7 @@ def n8n_producer():
     
     producer = configure_n8n_producer()
 
-def configure_n8n_producer(wh_endpoint: str = None) -> dict:
+def configure_n8n_producer(wh_endpoint: str = None, wh_path: str = None) -> dict:
     """
     Need to be able to change the endpoint for different workflows and webhooks
 
@@ -71,12 +71,14 @@ def configure_n8n_producer(wh_endpoint: str = None) -> dict:
     global conf
     conf = None
     from os import getenv
+    endpoint = wh_endpoint if wh_endpoint is not None else Args.instance.wh_endpoint
+    n8n_path = wh_path if wh_path is not None else Args.instance.wh_path
     token = getenv("N8N_TOKEN", Args.instance.wh_token)
     scheme = getenv("N8N_SCHEME",Args.instance.wh_scheme)
     server = getenv("N8N_SERVER", Args.instance.wh_server)
     port = getenv("N8N_PORT",Args.instance.wh_port)
-    endpoint = getenv("N8N_ENDPOINT", wh_endpoint)
-    path = getenv("N8N_PATH", Args.instance.wh_path)
+    endpoint = getenv("N8N_ENDPOINT", endpoint)
+    path = getenv("N8N_PATH", n8n_path)
     if token is None or scheme is None or server is None or port is None or path is None:
         logger.debug('N8N producer not configured in config/Config.py or environment variables')
         conf = getenv("N8N_PRODUCER", Args.instance.n8n_producer)
@@ -92,7 +94,8 @@ def send_n8n_message(http_method: str = "POST",
         logic_row: LogicRow = None, 
         row_dict_mapper: RowDictMapper = None, 
         payload: dict = None,
-        wh_endpoint: str = None):
+        wh_endpoint: str = None,
+        wh_path: str= None) -> str:
     """ Send N8N webhook message regarding [logic_row, mapped by row_dict_mapper or by  payload]
 
     * Typically called from declare_logic event
@@ -105,14 +108,15 @@ def send_n8n_message(http_method: str = "POST",
         row_dict_mapper (RowDictMapper): (Optional) typically subclass of RowDictMapper, transforms row to dict
         payload (str): (Optional) JSON data to be sent as string (json.dumps(row.to_dict()))    
         wh_entity (str): the webhook entity name pass in header
-        wh_endpoint (str): the webhook endpoint name modify the producer
+        wh_endpoint (str): (Optional) override the webhook endpoint name modify the producer
+        wh_path (str): (Optional) override the webhook path name modify the producer
     """
 
     #global conf
     #if conf is None:
     #    conf = Args.instance.n8n_producer #FIXME not sure why this fails - conf is None
         #return "N8N not enabled in Config.py"
-    conf = configure_n8n_producer(wh_endpoint)
+    conf = configure_n8n_producer(wh_endpoint, wh_path)
     logger.debug(f"n8n_producer: conf: {conf}")
     if row_dict_mapper is None and payload is None and logic_row is None:
         return "send_n8n_message: payload, logic_row, row_dict_mapper are all None - must provide one"
@@ -166,4 +170,3 @@ def send_n8n_message(http_method: str = "POST",
         long_message = traceback.format_exc()
         logger.error(long_message)
         return long_message
-
