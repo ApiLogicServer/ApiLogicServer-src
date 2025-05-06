@@ -21,6 +21,36 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         return result
         
 
+
+    @app.before_request
+    def before_any_request():
+        # print(f"[DEBUG] Incoming request: {request.method} {request.url}")
+        if activate_openapi_logging := True:
+            if request.content_type == 'application/json' and request.method in ['POST', 'PUT', 'PATCH']:
+                # openapi: Incoming request: PATCH http://localhost:5656/api/Customer/1/ {'data': {'attributes': {'credit_limit': 5555}, 'type': 'Customer', 'id': '1'}}
+                # openapi: Incoming request: PATCH http://6f6f-2601-644-4900-d6f0-ecc9-6df3-8863-c5b2.ngrok-free.app/api/Customer/1 {'credit_limit': 5555}
+                app_logger.info(f"openapi: Incoming request: {request.method} {request.url} {str(request.json)}")
+            else:
+                app_logger.info(f"openapi: Incoming request: {request.method} {request.url}")
+            # app_logger.info(f"openapi: Incoming request headers: {request.headers}")
+
+            chatgpt_request_json = {
+                        "credit_limit": 25000,
+            }
+            standard_request_json = {
+                "data": {
+                    "type": "Customer",
+                    "id": "ALFKI",
+                    "attributes": {
+                        "name": "Alice",
+                        "credit_limit": 25000,
+                        "balance": 12345
+                    }
+                }
+            }
+        pass
+    
+
     @app.route('/api/openapi')
     def openapi(path=None):
         """ return integration/openai_plugin/swagger_3.json 
