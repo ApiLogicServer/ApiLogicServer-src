@@ -1,11 +1,9 @@
 Model Context Protocol is a way for:
 
-* LLMs to choreograph multiple MCP servers in a chain of calls.  MCPs support shared contexts and goals, enabling the LLM to use the result from 1 call to determine whether the goals has been reached, or which service is appropriate to call next.
-
-* Chat agents to *discover* and *call* external servers, be they databases, APIs, file systems, etc.  MCPs support shared contexts and goals, enabling the LLM
+- LLMs to choreograph multiple MCP servers in a chain of calls.  MCPs support shared contexts and goals, enabling the LLM to use the result from 1 call to determine whether the goals has been reached, or which service is appropriate to call next.
+- Chat agents to *discover* and *call* external servers, be they databases, APIs, file systems, etc.  MCPs support shared contexts and goals, enabling the LLM
 
 For tech background, see Appendix 2.
-
 
 This is to explore:
 
@@ -23,7 +21,6 @@ A value prop might be summarized: *instantly mcp-fy your legacy DB, including cr
 
 &nbsp;
 
-
 ## Status: Technology Exploration
 
 This is an initial experiment, without automation.  Many substantive issues need to be addressed, including but not limited to security, update, etc.
@@ -39,8 +36,8 @@ This exploration is changing rapidly.  For updates, replace `integration/mcp` fr
 In the Manager, open `samples/nw_sample_nocust`, and explore `integration/mcp`.  This has been successfully used to invoke the server, including with authorization.
 
 Local testing:
-1. Run `integration/mcp/3_executor_test_agent.py`
 
+1. Run `integration/mcp/3_executor_test_agent.py`
 
 &nbsp;
 
@@ -49,7 +46,6 @@ Local testing:
 The goal is *Nat Lang access from Chat*.  We begin with *Nat Lang ALS Access from simple driver.*
 
 &nbsp;
-
 
 ### Nat Lang ALS Access from simple driver
 
@@ -66,9 +62,11 @@ ngrok config add-authtoken <obtain from https://dashboard.ngrok.com/get-started/
 ```
 
 then
+
 ```
 ngrok http 5656
 ```
+
 You should see:
 
 ![ngrok](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/mcp/ngrok.png?raw=true)
@@ -109,7 +107,6 @@ This investigation has failed for 2 reasons:
 2. See Appendex 1
 
 &nbsp;
-
 
 replacing url to create prompt (??) 
 
@@ -220,7 +217,9 @@ online:
 It appears that OpenAI is missing an enabling feature:
 
 📢 Feedback: Unlocking Swagger-Based JSON:API Support in MCP
+
 Summary:
+
 As a developer, I have a fully functional REST API with a Swagger 2.0 spec and a proxy layer that emits strict JSON:API compliant responses. 
 
 However, MCP fails to parse the results due to a ValueError, seemingly because the resource type ("type": "Customer") isn't known to MCP’s internal schema registry — even though it is fully defined in my Swagger spec.
@@ -228,9 +227,10 @@ However, MCP fails to parse the results due to a ValueError, seemingly because t
 Details:
 
 The server replies with correct Content-Type: application/vnd.api+json
-* Every item includes "type", "id", and "attributes"
-* The response includes jsonapi and links
-* Swagger 2.0 spec clearly defines the resource fields
+
+- Every item includes "type", "id", and "attributes"
+- The response includes jsonapi and links
+- Swagger 2.0 spec clearly defines the resource fields
 
 Issue: MCP does not ingest the Swagger schema to understand new resource types or field structures, making machine-integration impossible — despite the API being fully compliant with both Swagger and JSON:API standards.
 
@@ -255,19 +255,18 @@ We currently create swagger 2 doc.  Many tools expect swagger 3.  We might use t
 
 ChatGPT/MCP had difficulty with the api response not being *strict JSONPI*.  There's a jsonapi validator somewhere to verify the results are according to the jsonapi json schema.  We experimented with a proxy for translation.
 
-
 ### LangChain
 
 What LangChain Does:
 
-* Chains together prompts, tools, memory, and agents
-* Helps you call APIs, query databases, or browse documents using LLMs
-* Provides standard components like:
-* Prompt templates
-* Retrieval (RAG)
-* Agents (autonomous or guided)
-* Tool wrappers (e.g., OpenAPI, SQL, Python functions)
-* Memory modules
+- Chains together prompts, tools, memory, and agents
+- Helps you call APIs, query databases, or browse documents using LLMs
+- Provides standard components like:
+- Prompt templates
+- Retrieval (RAG)
+- Agents (autonomous or guided)
+- Tool wrappers (e.g., OpenAPI, SQL, Python functions)
+- Memory modules
 
 ⸻
 
@@ -276,10 +275,11 @@ What LangChain Does:
 “Build an agent that answers business questions using a SQL database + OpenAI.”
 
 LangChain can:
-1.	Accept a question from a user
-2.	Convert it into a SQL query (via GPT)
-3.	Run it on your database
-4.	Return and explain the result
+
+1. Accept a question from a user
+2. Convert it into a SQL query (via GPT)
+3. Run it on your database
+4. Return and explain the result
 
 ***See:*** `integration/mcp/1_langchain_loader.py`
 
@@ -289,9 +289,9 @@ LangChain can:
 
 ![Intro diagram](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/mcp/MCP_Arch.png?raw=true)
 
-
 For more information:
 
-* [see MCP Introduction](https://modelcontextprotocol.io/introduction)
-* [and here](https://apilogicserver.github.io/Docs/Integration-MCP/)
-* [and here](https://www.youtube.com/watch?v=1bUy-1hGZpI&t=72s)
+- [see MCP Introduction](https://modelcontextprotocol.io/introduction)
+- [and here](https://apilogicserver.github.io/Docs/Integration-MCP/)
+- [and here](https://www.youtube.com/watch?v=1bUy-1hGZpI&t=72s)
+- and this [N8N link](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.mcptrigger/?utm_source=n8n_app&utm_medium=node_settings_modal-credential_link&utm_campaign=%40n8n%2Fn8n-nodes-langchain.mcpTrigger)
