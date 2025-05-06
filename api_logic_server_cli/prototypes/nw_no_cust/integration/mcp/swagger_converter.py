@@ -15,9 +15,11 @@ def filter_swagger(input_file, output_file, include_paths_methods):
         swagger = yaml.safe_load(f)
 
     filtered_paths = {}
+    tags = []
     for path, methods in swagger.get('paths', {}).items():
         if path in include_paths_methods:
             print(f"Filtering path: {path}")
+            tags.append({"name": path.replace("/", "",2)})
             filtered_methods = {
                 method: op
                 for method, op in methods.items()
@@ -26,7 +28,7 @@ def filter_swagger(input_file, output_file, include_paths_methods):
             if filtered_methods:
                 print
                 filtered_paths[path] = filtered_methods
-
+    swagger['tags'] = tags
     swagger['paths'] = filtered_paths
     info ={}
     swagger["info"]['termsOfService'] = 'http://genai-logic.com/terms'
