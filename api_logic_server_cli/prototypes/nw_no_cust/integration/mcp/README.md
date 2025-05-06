@@ -294,4 +294,7 @@ For more information:
 - [see MCP Introduction](https://modelcontextprotocol.io/introduction)
 - [and here](https://apilogicserver.github.io/Docs/Integration-MCP/)
 - [and here](https://www.youtube.com/watch?v=1bUy-1hGZpI&t=72s)
-- and this [N8N link](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.mcptrigger/?utm_source=n8n_app&utm_medium=node_settings_modal-credential_link&utm_campaign=%40n8n%2Fn8n-nodes-langchain.mcpTrigger)
+- and this [N8N link](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.mcptrigger/?utm_source=n8n_app&utm_medium=node_settings_modal-credential_link&utm_campaign=%40n8n%2Fn8n-nodes-langchain.mcpTriggerlangchain.mcpTriggerlangchain.mcpTrigger)
+- and this [python sdk](https://github.com/modelcontextprotocol/python-sdk)
+- 
+
