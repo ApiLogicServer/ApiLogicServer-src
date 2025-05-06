@@ -13,7 +13,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
 
     def get_server_url():
         """ return the server URL for the OpenAPI spec """
-        result = Args.instance.keycloak_base_url
+        result = f'http:localhost:5656/{Args.instance.swagger_host}:{Args.instance.swagger_port}'
         # get env variable API_LOGIC_SERVER_TUNNEL (or None)
         if tunnel_url := os.getenv("API_LOGIC_SERVER_TUNNEL", None):
             app_logger.info(f".. tunnel URL: {tunnel_url}")
@@ -29,6 +29,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
             if request.content_type == 'application/json' and request.method in ['POST', 'PUT', 'PATCH']:
                 # openapi: Incoming request: PATCH http://localhost:5656/api/Customer/1/ {'data': {'attributes': {'credit_limit': 5555}, 'type': 'Customer', 'id': '1'}}
                 # openapi: Incoming request: PATCH http://6f6f-2601-644-4900-d6f0-ecc9-6df3-8863-c5b2.ngrok-free.app/api/Customer/1 {'credit_limit': 5555}
+
                 app_logger.info(f"openapi: Incoming request: {request.method} {request.url} {str(request.json)}")
             else:
                 app_logger.info(f"openapi: Incoming request: {request.method} {request.url}")
@@ -48,8 +49,41 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
                     }
                 }
             }
+            swagger_request_json = {
+                'data': {
+                    'attributes': {
+                        'credit_limit': 5555
+                        }, 
+                    'type': 'Customer', 
+                    'id': '1'
+                }
+            }
         pass
     
+    @app.route('/mcp')
+    def mcp(path=None):
+        '''
+        test: curl -X GET http://localhost:5656/mcp
+        test: curl -X GET http://localhost:5656/mcp?name=Alice
+        '''
+        
+        mcp = f'''
+You are an AI Planner + Executor for a live JSON:API server.
+
+When a user gives you a natural language goal (e.g., “list customers from Germany”), you:
+	* Identify the resource (Customer, Order, Product).
+	* Map filters (e.g., Country=Germany).
+	* Construct a JSON:API call to the live endpoint (through a function called fetch_resource).
+	* Execute the live API call through the function.
+	* Format and display the results neatly.
+
+Base URL:
+{get_server_url()}.ngrok-free.app/api
+
+The API follows JSON:API standards (application/vnd.api+json).
+        '''
+        return jsonify(mcp), 200, {'Content-Type': 'text/plain; charset=utf-8'}
+
 
     @app.route('/api/openapi')
     def openapi(path=None):
