@@ -106,7 +106,7 @@ In path /Product, method post is missing operationId; skipping
 
 ### Custom endpoint for openapi
 
-OpenAI requires a openai document, so observe the custom endpoint - `api/api_discovery/openapi` - eg, to test locally: `http://localhost:5656/api/openai`
+OpenAI requires a openai document, so observe the custom endpoint - `api/api_discovery/openapi` - eg, to test locally: `http://localhost:5656/api/openai.json`
 
 Note: the url for use in ChatGPT is the tunnelled version, from the env variable.
 
@@ -123,7 +123,7 @@ Then, upload it to the **Web** version of ChatGPT:
 
 Provide the url of the openai endpoint:
 
-https://tunnel_url.ngrok-free.app/api/openapi
+https://tunnel_url.ngrok-free.app/api/openapi.json
 
 <br>
 

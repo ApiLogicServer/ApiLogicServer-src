@@ -33,7 +33,20 @@ This exploration is changing rapidly.  For updates, replace `integration/mcp` fr
 
 ## ALS Access via MCP 
 
-In the Manager, open `samples/nw_sample_nocust`, and explore `integration/mcp`.  This has been successfully used to invoke the server, including with authorization.
+There are 2 projects we have used for testing:
+
+1. **NW:** In the Manager, open `samples/nw_sample_nocust`, and explore `integration/mcp`.  This has been successfully used to invoke the server, including with authorization.
+2. **GenAI_DEMO:** preferred, since has update - from Dev Source, run run config: `Create blt/genai_demo_ as IS_GENAI_DEMO`
+    1. Copy 
+    2. In the target `genai_demo-` project: 
+
+```
+cp -R ~/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/genai_demo_ ~/dev/ApiLogicServer/ApiLogicServer-dev/servers
+
+cp -R ~/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/nw_no_cust/integration ~/dev/ApiLogicServer/ApiLogicServer-dev/servers/genai_demo_
+
+cp ~/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/nw_no_cust/api/api_discovery/openapi.py ~/dev/ApiLogicServer/ApiLogicServer-dev/servers/genai_demo_/api/api_discovery/openapi.py
+```
 
 Local testing:
 
@@ -99,32 +112,13 @@ Blocked on many import / version issues.  See `1_langchain_loader.py`.
 
 &nbsp;
 
-### Nat Lang access from Chat (not working)
+#### Create the MCP in Web ChatGPT
 
-This investigation has failed for 2 reasons:
+In the web GPT: 
 
-1. Non-standard JSON:API: MCP insists on *strict* compliance.  We investigated a proxy to help.
-2. See Appendex 1
+Explore > Create > load mcp from `https://tunnel_url.ngrok-free.app/mcp.json`
 
-&nbsp;
-
-replacing url to create prompt (??) 
-
-```
-{
-  "tool": "json-api",
-  "method": "GET",
-  "url": "https://mcp_url.ngrok.io/api/Customer",
-  "query_params": {
-    "filter[Country]": "Germany",
-    "page[limit]": 2
-  },
-  "headers": {
-    "Accept": "application/vnd.api+json"
-  },
-  "expected_output": "List of customer records"
-}
-```
+But this does not respond to Nat Lang queries, since GPT is not enabled for http.  That requires yet another bridge in `api/api_discovery/openapi.py` (fetch_resource) -- coded, not tested.
 
 &nbsp;
 
@@ -137,84 +131,6 @@ This runs on port 6000 - use that for ngrok:
 ```
 ngrok http 6000
 ```
-
-&nbsp;
-
-#### Create the MCP in Web ChatGPT
-
-In the web 
-
-Explore > Create
-
-An early try:
-
-```prompt
-You are an AI Planner that builds MCP tool_context blocks to call a JSON:API server.
-
-Use this information:
-- Base URL: [insert your ngrok URL]
-- API conforms to JSON:API standard (application/vnd.api+json).
-- Key resources: Customer, Order, Product.
-
-Example Goal:
-"List all customers from Germany, limited to 2 results."
-
-Expected MCP tool_context output:
-
-{
-  "tool": "json-api",
-  "method": "GET",
-  "url": "mcp_url/api/Customer",
-  "query_params": {
-    "filter[Country]": "Germany",
-    "page[limit]": 2
-  },
-  "headers": {
-    "Accept": "application/vnd.api+json"
-  },
-  "expected_output": "List of customer records"
-}
-```
-
-Later, did this:
-
-```prompt
-You are an AI Planner + Executor for a live JSON:API server.
-
-When a user gives you a natural language goal (e.g., “list customers from Germany”), you:
-	* Identify the resource (Customer, Order, Product).
-	* Map filters (e.g., Country=Germany).
-	* Construct a JSON:API call to the live endpoint (through a function called fetch_resource).
-	* Execute the live API call through the function.
-	* Format and display the results neatly.
-
-Base URL:
-https://mcp_url.ngrok-free.app/api/
-
-The API follows JSON:API standards (application/vnd.api+json).
-```
-
-online:
-
-```
-{
-  "tool": "json-api",
-  "method": "GET",
-  "url": "https://mcp_url.ngrok-free.app/api/Customer",
-  "query_params": {
-    "filter[Country]": "Germany",
-    "page[limit]": 2
-  },
-  "headers": {
-    "Accept": "application/vnd.api+json"
-  },
-  "expected_output": "List of customer records"
-}
-```
-
-
-
-&nbsp;
 
 ## Appendix 1: OpenAI Feedback
 
