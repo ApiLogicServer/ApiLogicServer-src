@@ -55,15 +55,13 @@ Enter this into `config/default.env`
 
 ### Use GenAI_Demo
 
-Create it, and from dev-source, copy:
-
-- `api_logic_server_cli/prototypes/nw_no_cust/integration/openai_function`
-- `api_logic_server_cli/prototypes/nw_no_cust/api/api_discovery`
-- `api_logic_server_cli/prototypes/nw_no_cust/config/default.env`
+See `mcp/README_mcp.md`
 
 <br>
 
 ### Obtain swagger_3
+
+This has already been done using the procedure described below.
 
 Obtain swagger 2 from API Logic Server, eg, http://localhost:5656/api/swagger.json) 
 
