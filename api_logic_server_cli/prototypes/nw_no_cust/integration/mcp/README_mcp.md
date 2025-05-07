@@ -46,6 +46,8 @@ cp -R ~/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/gena
 cp -R ~/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/nw_no_cust/integration ~/dev/ApiLogicServer/ApiLogicServer-dev/servers/genai_demo_
 
 cp ~/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/nw_no_cust/api/api_discovery/openapi.py ~/dev/ApiLogicServer/ApiLogicServer-dev/servers/genai_demo_/api/api_discovery/openapi.py
+
+cp ~/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/nw_no_cust/config/default.env ~/dev/ApiLogicServer/ApiLogicServer-dev/servers/genai_demo_/config/default.env
 ```
 
 Local testing:
@@ -84,9 +86,9 @@ You should see:
 
 ![ngrok](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/mcp/ngrok.png?raw=true)
 
-and note the url like: `https://mcp_url_eg_bca3_2601.ngrok-free.app -> http://localhost:5656`
+and note the url like: `https://tunnel_url_eg_bca3_2601.ngrok-free.app -> http://localhost:5656`
 
-We'll call it `mcp_url`.
+We'll call it `tunnel_url`.
 
 &nbsp;
 
@@ -118,7 +120,9 @@ In the web GPT:
 
 Explore > Create > load mcp from `https://tunnel_url.ngrok-free.app/mcp.json`
 
-But this does not respond to Nat Lang queries, since GPT is not enabled for http.  That requires yet another bridge in `api/api_discovery/openapi.py` (fetch_resource) -- coded, not tested.
+You can use this to test Nat Lang queries, tho it fails to notice the /api suffix.
+
+But this does not _run_ Nat Lang queries, since GPT is not enabled for http.  That requires yet another bridge in `api/api_discovery/openapi.py` (fetch_resource) -- coded, not tested.
 
 &nbsp;
 
