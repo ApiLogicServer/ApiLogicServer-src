@@ -12,7 +12,7 @@ You do not normally need to alter this file
 from config.config import Args
 from confluent_kafka import Producer
 import socket
-import logging
+import logging, os
 from logic_bank.exec_row_logic.logic_row import LogicRow
 from integration.system.RowDictMapper import RowDictMapper
 from flask import jsonify
@@ -82,7 +82,10 @@ def send_kafka_message(kafka_topic: str, kafka_key: str = None, msg: str="", jso
         json_root_name (str, optional): json name for json payload root; default is logic_row.name
     """
 
-
+    if '1' == os.getenv("APILOGICPROJECT_NO_FLASK", None):
+        logger.debug("kafka_producer#send_kafka_message: not safrs class (e.g. database/test_data/test_data_code.py)")
+        return
+    
     if isinstance(payload, dict):
         row_obj_dict = payload
     elif row_dict_mapper is not None:
