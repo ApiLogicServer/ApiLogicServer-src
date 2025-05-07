@@ -1,7 +1,8 @@
+This rebuilds test data into `database/test_data/db.sqlite`, for example as used by genai project creation.
+
 ChatGPT sometimes fails to build proper test data that matches the derivation rules.
 
 You can rebuild the test data, using Logic Bank rules for proper derivations, to rebuild your `database/db.sqlite` (make a copy first to preserve your existing data).
-
 
 ```
 als genai-utils --rebuild-test-data 
