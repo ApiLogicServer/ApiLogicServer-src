@@ -1,4 +1,4 @@
-import requests
+import requests, json
 
 # MCP-style tool_context
 # does not like this pagination
@@ -14,7 +14,19 @@ tool_context = {
     }
 }
 
-tool_context = {
+tool_context = {  # use this for nw
+    "method": "GET",
+    "url": "http://localhost:5656/api/Customer",
+    "query_params": {
+        "filter[Country]": "Germany"
+    },
+    "headers": {
+        "Accept": "application/vnd.api+json"
+        , "Authorization": "Bearer your_token"
+    }
+}
+
+tool_context = {  # use this for genai_demo
     "method": "GET",
     "url": "http://localhost:5656/api/Customer",
     "query_params": {
@@ -26,9 +38,8 @@ tool_context = {
     }
 }
 
-
 # Execute as a simulated MCP executor
-response = requests.get(
+response = requests.get(  # use this for genai_demo
     tool_context["url"],
     headers=tool_context["headers"],
     params=tool_context["query_params"]
@@ -36,4 +47,6 @@ response = requests.get(
 
 # Display result
 print(response.status_code)
-print(response.json())
+# Print the response, format it as JSON with indent
+print(json.dumps(response.json(), indent=4))
+
