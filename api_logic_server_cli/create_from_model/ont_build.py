@@ -225,8 +225,8 @@ class OntBuilder(object):
         if "application" in app_model:
             for app in app_model.application:
                 # yaml may have multiple apps = only work on the one selected app-build --app={app}
-                if self.app != app:
-                    continue
+                #if self.app != app:
+                #    continue
                 menu_group = app_model.application[app]["menu_group"] 
                 for mg in menu_group:
                     for mi in menu_group[mg]["menu_item"]:
@@ -318,18 +318,18 @@ class OntBuilder(object):
         )
 
     def build_entity_list_from_app(self):
-        entity_list = self.app_model.entities.items()
+        entity_list = self.app_model.entities
         if "application" in self.app_model:
             entities = []
             for app in self.app_model.application:
                 # yaml may have multiple apps = only work on the one selected app-build --app={app}
-                if self.app != app:
-                    continue
+                #if self.app != app:
+                #    continue
                 menu_group = self.app_model.application[app]["menu_group"] 
                 for mg in menu_group:
                     for mi in menu_group[mg]["menu_item"]:
                         each_entity = self.app_model.entities[mi]
-                        for each_entity_name, each_entity in entity_list:
+                        for each_entity_name, each_entity in entity_list.items():
                             if each_entity_name == mi:
                                 entities.append((mi,each_entity))
             return entities
@@ -661,8 +661,8 @@ class OntBuilder(object):
         if "application" in self.app_model:
             for app in self.app_model.application:
                 # yaml may have multiple apps = only work on the one selected app-build --app={app}
-                if self.app != app:
-                    continue
+                #if self.app != app:
+                #    continue
                 menu_group = self.app_model.application[app]["menu_group"] 
                 for mg in menu_group:
                     for mi in menu_group[mg]["menu_item"]:
@@ -679,8 +679,8 @@ class OntBuilder(object):
         if "application" in self.app_model:
             for app in self.app_model.application:
                 # yaml may have multiple apps = only work on the one selected app-build --app={app}
-                if self.app != app:
-                    continue
+                #if self.app != app:
+                #    continue
                 menu_group = self.app_model.application[app]["menu_group"]
                 for mg in menu_group:
                     entities = []
@@ -767,9 +767,15 @@ class OntBuilder(object):
         fks = get_foreign_keys(entity, favorites)
         row_cols = []
         defaultValues = {}
-        for column in entity.columns:
-            rv = self.get_new_column(column, fks, entity)
-            row_cols.append(rv)
+        if page := self.get_page("new", entity.type):
+            visible_columns = page.visible_columns.replace(",",";",100).replace(" ","",100)
+        else:
+            visible_columns = self.get_visible_columns(entity, True)
+        for col in  visible_columns.split(";"):
+            for column in entity.columns:
+                if col == column.name:
+                    rv = self.get_new_column(column, fks, entity)
+                    row_cols.append(rv)
 
         entity_vars["row_columns"] = row_cols
         return template.render(entity_vars)
