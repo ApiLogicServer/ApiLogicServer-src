@@ -1,7 +1,7 @@
 ---
 title: Sample Application Tutorial
 Description: Create, Run and Customize the pre-installed sqlite Northwind database
-Version: 1.0 [proto]
+Version: 1.02 dev
 ---
 # API Logic Server Sample Tutorial
 
@@ -11,11 +11,11 @@ This is the sample app.  It was created from the pre-installed sqlite [Northwind
 
 In this tutorial, we will explore:
 
-* **create** - we will briefly review what actually happened during the create process.
+1. **Create** - we will briefly review what actually happened during the create process.
 
-* **run** - we will first run the Admin App and the JSON:API.  These will illustrate how automation creates an app and API from a database.  Use this to infer what you'd get for one of your databases.
+2. **Run** - we will first run the Admin App and the JSON:API.  These will illustrate how automation creates an app and API from a database.  Use this to infer what you'd get for one of your databases.
 
-* **customize** - we will then explore customizing and debugging the project.
+3. **Customize** - we will then explore customizing and debugging the project.
 
 &nbsp;
 
@@ -23,10 +23,13 @@ In this tutorial, we will explore:
 This tutorial illustrates some key concepts:
 
 #### _Declarative Models_, not code
-Observe that the files for the Admin App and API are models that describe _what, not how_.  This is much easier to understand than large amounts of generated code.
+Observe that the files for the Admin App and API are models that describe _what, not how_.  This level of abstratction is much easier to understand than large amounts of generated code.
+
+##### Automated Automation
+Not only do models automate functionality, the *models themselves* are automated, created instantly when you create a project.  That means you have instant Working Software.
 
 #### Customize - using standard tools
-The system is designed for you to customize the UI, Logic, Security and API, using standard tools - your IDE for code editing/debugging, git, etc.
+The system is designed for you to customize the UI, Logic, Security and API, using standard tools - your IDE for code editing / debugging, git, etc.
 
 #### Iterate - Preserve Customizations
 The system is designed to enable `rebuild`, so you can iterate the data model - _without losing your customizations._  In general, such customizations are kept in separate files from the model files.  So, the model files can be rebuilt without affecting customization files.
@@ -38,7 +41,7 @@ A unique feature of API Logic Server is provision for spreadsheet-like rules, cu
 
 # Development Overview
 
-[![Using VS Code](https://github.com/valhuber/apilogicserver/wiki/images//creates-and-runs-video.jpg?raw=true?raw=true)](https://youtu.be/tOojjEAct4M "Using VS Code with the ApiLogicServer container - click for video")
+[![Using VS Code](images/creates-and-runs-video.png)](https://youtu.be/tOojjEAct4M "Using VS Code with the ApiLogicServer container - click for video")
 
 The diagram above summarizes the create / run / customize process.
 
@@ -48,7 +51,9 @@ The diagram above summarizes the create / run / customize process.
 
 ## 1. Create: Instant Project
 
-The CLI command below creates an `ApiLogicProject` by reading your schema.  Note: the `db_url` value is [an abbreviation](https://apilogicserver.github.io/Docs/Data-Model-Examples/); you would normally supply a SQLAlchemy URL.  
+The CLI command below creates an `ApiLogicProject` by reading your schema.  
+
+Note: the `db_url` value is defaulted to the pre-installed sample project; you would normally supply a SQLAlchemy URL.  
 
 ```bash
 $ ApiLogicServer create --project_name= --db_url=    # create ApiLogicProject
@@ -70,11 +75,11 @@ The system has created an API and an Admin App.  Let's explore them.
 
 ### 2.a Self-Serve API: Ad hoc Integration
 
-The system creates an API with end points for each table, providing filtering, sorting, pagination, optimistic locking and related data access.
+The system creates a JSON:API with end points for each table, providing filtering, sorting, pagination, optimistic locking and related data access.
 
 The API is [**self-serve**](https://apilogicserver.github.io/Docs/API-Self-Serve/): consumers can select their own attributes and related data, eliminating reliance on custom API development.  Our self-serve API meets requirements for Ad Hoc Application Integration, and Custom UI Dev.
 
-<img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/api-swagger.jpeg?raw=true">
+![api-swagger](images/integration/api-swagger.png)
 
 ### 2.b Admin App: Multi-Page, Multi-Table, Automatic Joins
 
@@ -85,7 +90,7 @@ After starting the server and browser, explore the Admin App in your browser:
 1. Navigate to `Customer`
       * Depending on your screen size, you may need to hit the "hamburger menu" (top left) to see the left menu<br/><br/>
 2. Click the first Customer row  to see Customer Details
-3. Observe the `ORDERLIST` tab at the bottom
+3. Click the `ORDERLIST` tab at the bottom
 4. Click the first Order row
 5. Observe the `ORDERDETAILLIST` tab at the bottom
 6. Observe the elements shown in the diagram
@@ -94,10 +99,9 @@ After starting the server and browser, explore the Admin App in your browser:
       * Multi-Table - database relationships (typically from foreign keys) used to build master/detail pages
       * Automatic Joins - the Order Detail table contains `ProductId`, but the system has joined in the `Product Name`.  You can edit the `admin.yaml` file to control such behavior.
 
+![run-admin-app](images/ui-admin/run-admin-app.png)
 
-<figure><img src="https://github.com/valhuber/apilogicserver/wiki/images/ui-admin/run-admin-app.png?raw=true"></figure>
-
-> **Key Takeaway: API/UI *Automation***<br>With 1 command, we have created an executable project with a self-serve API, for ad hoc application integration and custom UI development.  Our Admin App can be used for agile business user collaboration.
+> **Key Takeaway: *Microservice Automation***<br>With **1 command**, we have created an executable project with a **self-serve API**, for ad hoc application integration and custom UI development.  Our **Admin App** can be used for agile business user collaboration.
 
 &nbsp;
 
@@ -132,6 +136,7 @@ To apply customizations, in a terminal window for your project:
 
 ```bash
 ApiLogicServer add-cust
+ApiLogicServer add-auth --db_url=auth  # version 10.3.14 or greater
 ```
 
 **3. Restart the server, login as `admin`**
@@ -149,7 +154,7 @@ In the sections below, we will explore:
 
 ### 3.a Customize UI: Declare UI Behavior
 
-The admin app is not built with complex html and javascript.  Instead, it is configured with the `ui/admin/admin.yml`, automatically created from your data model by `ApiLogicServer create`.
+The admin app is not built with complex html and javascript.  Instead, it is *configured* with  `ui/admin/admin.yml`, automatically created from your data model by `ApiLogicServer create`.
 
 You can customize this file in your IDE to control which fields are shown (including joins), hide/show conditions, help text etc.  The `add-cust` process above has simulated such customizations.
 
@@ -175,7 +180,7 @@ To see customized Admin app in action, with the restarted server:
 
 One customization has been to hide several Order fields (search `ui/admin/admin.yml` for `show_when: isInserting == false`).  This makes it convenient to use the Admin App to enter an Order and OrderDetails:
 
-<img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/order-entry-ui.jpg?raw=true">
+![order-entry-ui](images/integration/order-entry-ui.png)
 
 &nbsp;
 
@@ -198,7 +203,7 @@ Rules are declared in Python, simplified with IDE code completion.  The `add-cus
 
 Observe rules can be debugged using standard logging and the debugger:
 
-<img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/logic-chaining.jpeg?raw=true">
+![logic-chaining](images/integration/logic-chaining.png)
 
 &nbsp;
 
@@ -222,7 +227,13 @@ Rules are a unique and significant innovation, providing meaningful improvements
 
 &nbsp;
 
-> Key Takeway -  Logic: Multi-table Derivation and Constraint Rules, 40X More Concise.  <br>For more on rules, [click here](https://apilogicserver.github.io/Docs/Logic-Why/).
+> **Key Takeway -  Logic:** Multi-table Derivations and Constraint Rules, Extensible with Python 
+<br><br>Rules are:
+<br>1. **Declared** in your IDE - 40X more concise
+<br>2. **Activated** on server start
+<br>3. **Executed** - *automatically* -  on updates (using SQLAlchemy events)
+<br>4. **Debugged** in your IDE, and with the console log
+<br><br>For more on rules, [click here](https://apilogicserver.github.io/Docs/Logic-Why/).
 
 &nbsp;
 
@@ -234,7 +245,9 @@ To see security in action:
 
 **1. Logout (upper right), and Login** as `AFLKI`, password `p`
 
-**2. Click Customer** - observe you now see only 1 customer
+    * This authorized user has 2 roles: `customer` and 'tenant`
+
+**2. Click Customer** - observe you now see only 1 customer (per the `customer` role)
 
 <br>
 
@@ -242,7 +255,7 @@ To see security in action:
 
 Declarative row-level security ensures that users see only the rows authorized for their roles.  Observe you now see only customer ALFKI, per the security declared below.  Note the console log at the bottom shows how the filter worked.
 
-<img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/security-filters.jpg?raw=true">
+![security-filter](images/integration/security-filters.png)
 
 &nbsp;
 
@@ -277,7 +290,7 @@ The main task here is to ***map*** a B2B payload onto our logic-enabled SQLAlche
     * Use the `OrderB2B` class to transform a api request data to SQLAlchemy rows (`dict_to_row`)
     * The automatic commit initiates the same shared logic described above to check credit and reorder products
 
-![dict to row](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/dict-to-row.jpg?raw=true)
+![dict-to-row](images/integration/dict-to-row.png)
 
 
 &nbsp;
@@ -304,11 +317,17 @@ Just as you can customize apis, you can complement rule-based logic using Python
 
 3. `send_order_to_shipping` uses the `OrderShipping` class, which maps our SQLAlchemy order row to a dict (`row_to_dict`).
 
-![send order to shipping](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/order-to-shipping.jpg?raw=true)
-
+![order-to-shipping](images/integration/order-to-shipping.png)
 
 &nbsp;
 > **Key Takeway -  Extensible Rules, Kafka Message Produced**<br>Rule-based logic is extensible with Python, here producing a Kafka message with 20 lines of code.
+
+
+&nbsp;
+
+### 3.e Customize the Data Model
+
+You can also alter the data model, while preserving customizations.  For more information, see [Database Design Changes](https://apilogicserver.github.io/Docs/Database-Changes/).
 
 &nbsp;
 
@@ -316,7 +335,7 @@ Just as you can customize apis, you can complement rule-based logic using Python
 
 ### Behave
 
-You can test using standard api and ui test tools.  We recommend exploring the [Behave framework](https://valhuber.github.io/ApiLogicServer/Behave/).  This can be used as part of an overall agile approach as described in the [Logic Tutorial](https://valhuber.github.io/ApiLogicServer/Logic-Tutorial/).
+You can test using standard api and ui test tools.  We recommend exploring the [Behave framework](https://apilogicserver.github.io/Docs/Behave/).  This can be used as part of an overall agile approach as described in the [Logic Tutorial](https://apilogicserver.github.io/Docs/Logic-Tutorial/).
 
 TL;DR - features and test scripts are predefined in the sample; to run them (with the server running):
 
@@ -328,7 +347,7 @@ TL;DR - features and test scripts are predefined in the sample; to run them (wit
 
    > The sample Scenarios below were chosen to illustrate the basic patterns of using rules. Open the disclosure box ("Tests - and their logic...") to see the implementation and notes.   
 
-For more information, see [Testing with Behave](https://valhuber.github.io/ApiLogicServer/Behave/).
+For more information, see [Testing with Behave](https://apilogicserver.github.io/Docs/Behave/).
 
 &nbsp;
 
@@ -361,7 +380,7 @@ ApiLogicServer curl "'POST' 'http://localhost:5656/api/ServicesEndPoint/OrderB2B
 
 After the Tutorial, these are excellent next steps:
 
-* Further explore Application Integration - [open the Sample Integration tutorial](integration/Sample-Integration.md)
+* Further explore Application Integration - [open the Sample Integration tutorial](Sample-Integration.md)
     * It will show how to activate Kafka so that the message above is actually sent
     * It will ilustrate to the _consume_ Kafka messages
     * You've already created most of it, so...

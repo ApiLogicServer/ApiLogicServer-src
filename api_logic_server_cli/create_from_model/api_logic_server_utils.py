@@ -336,6 +336,7 @@ def get_config(search_for: str, in_file: str) -> str:
                             f'.. seeking {search_for}\n'
                             f'.. in {in_file}')
         return file_lines[insert_line].split('=')[1].strip().replace("'","",2)
+
 def get_ontimize_apps(project_dir_path):
     result = []
     for name in os.listdir(f"{project_dir_path}/ui"):
@@ -347,6 +348,7 @@ def get_ontimize_apps(project_dir_path):
                         result.append(name)    
     log.debug(f"Found {len(result)} Ontimize app(s)")          
     return result
+
 def does_file_contain(search_for: str, in_file: str) -> bool:
     """ returns True if <search_for> is <in_file> """
     with open(Path(in_file), 'r+') as fp:

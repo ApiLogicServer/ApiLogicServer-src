@@ -137,7 +137,7 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path,
         else:
             if project.is_docker:
                 log.debug(f"    tutorial not created for docker\n\n")
-            else:
+            elif create_manager := False:
                 tutorial_project = PR.ProjectRun(command="tutorial", 
                         project_name='./samples', 
                         db_url="",
@@ -145,7 +145,8 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path,
                         open_with="NO_AUTO_OPEN"
                         )
                 tutorial_project = tutorial_project.tutorial(msg="Creating:") ##, create='tutorial')
-
+            else:
+                log.debug(f"For Tutorial, use Northwind and basic_demo\n\n")
             samples_project = PR.ProjectRun(command= "create", project_name=f'{docker_volume}samples/nw_sample', db_url='nw+', open_with="NO_AUTO_OPEN")
             log.setLevel(mgr_save_level)
             log.disabled = False  # todo why was it reset?
