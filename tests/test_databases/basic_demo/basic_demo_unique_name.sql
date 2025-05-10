@@ -1,8 +1,5 @@
--- not used - wg version seems to fail around unique(name) - Alice has no orders.  Needs verification.
--- this is backup example
--- sqlite3 tests/test_databases/basic_demo/basic_demo.sqlite < tests/test_databases/basic_demo/basic_demo.sql;
--- popd
-
+-- sqlite3 basic_demo_unique_name.sqlite < basic_demo_unique_name.sql;
+-- ApiLogicServer create --db_url=sqlite:///basic_demo_unique_name.sqlite --project_name=basic_demo_unique_name
 
 PRAGMA foreign_keys=OFF;
 BEGIN TRANSACTION;
@@ -11,6 +8,7 @@ CREATE TABLE customer (
         name VARCHAR, 
         balance DECIMAL, 
         credit_limit DECIMAL, 
+        UNIQUE (name),
         PRIMARY KEY (id)
 );
 INSERT INTO customer VALUES(1,'Alice',90,5000);

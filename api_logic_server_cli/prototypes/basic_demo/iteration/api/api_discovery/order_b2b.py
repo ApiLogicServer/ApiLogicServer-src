@@ -1,34 +1,28 @@
-import logging
-import api.system.api_utils as api_utils
-import safrs
 from flask import request, jsonify
+import logging
+
 from safrs import jsonapi_rpc
-from database import models
-import integration.system.RowDictMapper as row_dict_mapper
-from integration.row_dict_maps.OrderShipping import OrderShipping
+import safrs
+
 from integration.row_dict_maps.OrderB2B import OrderB2B
 
-# called by api_logic_server_run.py, to customize api (new end points, services).
-# separate from expose_api_models.py, to simplify merge if project recreated
+app_logger = logging.getLogger("api_logic_server_app")
 
-app_logger = logging.getLogger(__name__)
+def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_decorators = []):
+    pass
 
-def expose_services(app, api, project_dir, swagger_host: str, PORT: str):
-    """ Customize API - new end points for services 
-    
-        Brief background: see readme_customize_api.md
 
-        Your Code Goes Here
-    
     """
+    Illustrates #als: custom end point with swagger, RowDictMapper
 
-    from api.api_discovery.auto_discovery import discover_services
-    discover_services(app, api, project_dir, swagger_host, PORT)
-    
-    app_logger.debug("api/customize_api.py - expose custom services")
+    * Custom service - visible in swagger
+    * Services *not* requiring authentication (contrast to CategoriesEndPoint, below)
+    * Use OrderB2B (extends RowDictMapper) to map json to rows with aliasing, joins and lookups
+    * Recall business logic is not in service, but encapsulated for reuse in logic/declare_logic.py
+    """
+    # class B2BSvcs(safrs.JABase):
 
     api.expose_object(ServicesEndPoint)  # Swagger-visible services
-
 
 """
 Illustrates #als: custom end point with swagger, RowDictMapper
@@ -47,12 +41,12 @@ class ServicesEndPoint(safrs.JABase):
         """ # yaml creates Swagger description
             args :
                 order:
-                    Account: "Customer 1"
+                    Account: "Alice"
                     Notes: "Please Rush"
                     Items :
-                    - Name: "Product A"
+                    - Name: "Gadget"
                       QuantityOrdered: 1
-                    - Name: "Product B"
+                    - Name: "Widget"
                       QuantityOrdered: 2
                     - Name: "Green"
                       QuantityOrdered: 3
