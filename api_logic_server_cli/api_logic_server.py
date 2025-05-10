@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "14.04.03"  # last public release: 14.04.00
+__version__ = "14.04.04"  # last public release: 14.04.00
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t05/07/2024 - 14.04.03: safrs 3.1.7, MCP Testing, Kafka Producer Fixes for env & test data loading \n"\
+    "\t05/07/2024 - 14.04.04: safrs 3.1.7, add_cust reorg, MCP Testing, Kafka Producer Fixes for env & test data loading \n"\
     "\t04/27/2024 - 14.04.00: Graphics preview, Vibe install fix, Improved IDE Chat Logic, MCP Exploration \n"\
     "\t03/30/2024 - 14.03.25: WebGenAI fixes for Kafka and Keycloak \n"\
     "\t03/19/2024 - 14.03.20: licensed webgenai docker, [87] sra fix for home.js \n"\
@@ -180,7 +180,7 @@ def delete_dir(dir_path, msg):
 
 
 def recursive_overwrite(src, dest, ignore=None):
-    """
+    """  TODO moving to api_logic_server_utils
     copyTree, with overwrite
     thanks: https://stackoverflow.com/questions/12683834/how-to-copy-directory-recursively-in-python-and-overwrite-all
     """
@@ -526,7 +526,7 @@ def resolve_home(name: str) -> str:
     return result
 
 def fix_nw_datamodel(project_directory: str):
-    """update sqlite data model for cascade delete, aliases
+    """update sqlite data model for cascade delete, aliases  -- fixme moving to add_cust
 
     Args:
         project_directory (str): project creation dir
@@ -1220,8 +1220,9 @@ from database import <project.bind_key>_models
                 # log.info(".. docs: https://apilogicserver.github.io/Docs/Security-Activation")
 
         config_file = f'{self.project_directory}/config/config.py'
+        env_file    = f'{self.project_directory}/config/default.env'
         is_enabled = create_utils.does_file_contain(search_for="SECURITY_ENABLED = True",
-                                        in_file=config_file)
+                                        in_file=env_file)
         is_sql = create_utils.does_file_contain(search_for="authentication_provider.sql.auth_provider import",
                                         in_file=config_file)
         was_provider_type = "sql" if is_sql else "keycloak"
@@ -1241,8 +1242,8 @@ from database import <project.bind_key>_models
             if is_enabled:
                 log.info(f'\n\n.. ..Disabling security for current provider type: {was_provider_type}\n')
                 create_utils.assign_value_to_key_in_file(value=False, 
-                            key="    SECURITY_ENABLED",
-                            in_file=config_file)                    
+                            key="SECURITY_ENABLED",
+                            in_file=env_file)                    
             else:
                 log.info(f'\n.. .. ..No action taken - already disabled for current provider type: {was_provider_type}\n')
             return
@@ -1261,8 +1262,8 @@ from database import <project.bind_key>_models
                 log.info("\n.. Authorization is declared in security/declare_security.py")
 
         log.info(f'\n..{provider_note}')  # set enabled, provider in config
-        create_utils.assign_value_to_key_in_file(in_file=config_file, \
-                    key="    SECURITY_ENABLED", value=True)                    
+        create_utils.assign_value_to_key_in_file(in_file=env_file, \
+                    key="SECURITY_ENABLED", value=True)                    
         self.set_provider(from_value=was_provider_type, to_value=self.auth_provider_type, config_file=config_file)
         if self.auth_provider_type == "keycloak":
             use_keycloak =True
@@ -1540,7 +1541,7 @@ from database import <project.bind_key>_models
             create_utils.copy_md(project = self, from_doc_file = "Tutorial-3.md", to_project_file='Tutorial.md')
             # z_copy_md(project = self, from_doc_file="Tutorial-3.md", to_project_file='Tutorial.md')
 
-    '''
+    '''  --> add_cust
     samples and demos - simulate customizations - https://apilogicserver.github.io/Docs/Doc-Home/#start-install-samples-training
         1. nw - sample code
         2. genai_demo - GenAI (ChatGPT to create model, add rules VSC)

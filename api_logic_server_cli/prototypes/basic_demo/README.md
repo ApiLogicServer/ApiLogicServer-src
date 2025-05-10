@@ -12,21 +12,19 @@ See how to build a complete database system -- in minutes instead of weeks or mo
 
 We'll use API Logic Server (open source), providing:
 
-| Key Feature | Providing | Why It Matters|
-| :--- |:---|:---|
-| **Automation** | Instant Project Creation:<br>An API and an Admin web app  | Unblock UI App Dev<br>Instant Agile Collaboration |
-| **Customization** | Declarative logic and security <br> 5 rules vs. 200 lines of Python | 40X less backend code |
-| **Iteration** | Revising the data model, and <br>Adding rules plus Python | Iterative development <br> Extensiblity with Python |
+| Key Feature       | Providing                                                           | Why It Matters                                      |
+| :---------------- | :------------------------------------------------------------------ | :-------------------------------------------------- |
+| **Automation**    | Instant Project Creation:<br>An API and an Admin web app            | Unblock UI App Dev<br>Instant Agile Collaboration   |
+| **Customization** | Declarative logic and security <br> 5 rules vs. 200 lines of Python | 40X less backend code                               |
+| **Iteration**     | Revising the data model, and <br>Adding rules plus Python           | Iterative development <br> Extensiblity with Python |
 
 The entire process takes 10 minutes, instead of several weeks using traditional development.
 
 You can use this article in several ways:
 
-* Conceptual Overview - focus on the basic process.  Operational details are moved to the Appendix to retain focus on the concepts.
-
-* Self-demo - you can create this system yourself.
-
-* Self-demo with video - you can also use [this video](https://www.youtube.com/watch?v=sD6RFp8S6Fg) (it's the same system, but the database is created with ChatGPT).
+- Conceptual Overview - focus on the basic process.  Operational details are moved to the Appendix to retain focus on the concepts.
+- Self-demo - you can create this system yourself.
+- Self-demo with video - you can also use [this video](https://www.youtube.com/watch?v=sD6RFp8S6Fg) (it's the same system, but the database is created with ChatGPT).
 
 &nbsp;
 
@@ -45,9 +43,7 @@ This creates a project by reading your schema.  The database is Customer, Orders
 You can open with VSCode, and run it as follows:
 
 1. **Create Virtual Environment:** as shown in the Appendix.
-
 2. **Start the Server:** F5 (also described in the Appendix).
-
 3. **Start the Admin App:** either use the links provided in the IDE console, or click [http://localhost:5656/](http://localhost:5656/).  The screen shown below should appear in your Browser.
 
 The sections below explore the system that has been created (which would be similar for your own database).
@@ -58,7 +54,7 @@ The sections below explore the system that has been created (which would be simi
 
 The system creates an API with end points for each table, with filtering, sorting, pagination, optimistic locking and related data access -- **[self-serve](https://apilogicserver.github.io/Docs/API-Self-Serve/), ready for custom app dev.**
 
-<img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/basic_demo/api-swagger.jpeg?raw=true">
+![api-swagger](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/basic_demo/api-swagger.jpeg?raw=true)
 
 ### Admin App
 
@@ -66,32 +62,29 @@ It also creates an Admin App: multi-page, multi-table apps -- ready for **[busin
 
 You can click Customer 2, see their Orders, and Items.
 
-<img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/basic_demo/admin-app-initial.jpeg?raw=true">
+![admin-app-initial](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/basic_demo/api-swagger.jpeg?raw=true)
 
 ## 2. Customize in your IDE
 
 While API/UI automation is a great start, it's critical to enforce logic and security.  Here's how.
 
-The follwing `apply_customizations` process simulates adding security to your project, and using your IDE to declare logic and security in `logic/declare_logic.sh` and `security/declare_security.py`.  You can diff these files to their created versions, and/or examine the declared logic.
+The follwing *add customizations* process simulates adding security to your project, and using your IDE to declare logic and security in `logic/declare_logic.sh` and `security/declare_security.py`.  You can diff these files to their created versions, and/or examine the declared logic.
 
 In a terminal window for your project:
 
 **1. Stop the Server** (Red Stop button, or Shift-F5 -- see Appendix)
 
-**2. Apply Customizations**
+**2. Add Customizations**
 
 ```bash
-# mac, linux
-sh apply_customizations.sh
-
-#windows
-./apply_customizations.ps1
+als add-cust
 ```
+
 &nbsp;
 
 ### Declare Security
 
-The `apply_customizations` process above has simulated the `ApiLogicServer add-auth` command, and using your IDE to declare security in `logic/declare_logic.sh`.
+The *add customizations* process above has simulated the `ApiLogicServer add-auth` command, and using your IDE to declare security in `logic/declare_logic.sh`.
 
 To see security in action:
 
@@ -115,7 +108,7 @@ Logic (multi-table derivations and constraints) is a significant portion of a sy
 
 Rules are declared in Python, simplified with IDE code completion.  The screen below shows the 5 rules for **Check Credit Logic.**
 
-The `apply_customizations` process above has simulated the process of using your IDE to declare logic in `logic/declare_logic.sh`.
+The *add customizations* process above has simulated the process of using your IDE to declare logic in `logic/declare_logic.sh`.
 
 To see logic in action:
 
@@ -169,11 +162,9 @@ Not only are spreadsheet-like rules 40X more concise, they meaningfully simplify
 
 The follwing `apply_iteration` process simulates an iteration:
 
-* acquires a new database with `Product.CarbonNeutral`
-
-* and a revised `ui/admin/admin.yaml` that shows this new column
-
-* revised logic - in `logic/declare_logic.py`, we replace the 2 lines for the `models.Item.Amount` formula with this (next screenshot shows revised logic executing with breakpoint):
+- acquires a new database with `Product.CarbonNeutral`
+- and a revised `ui/admin/admin.yaml` that shows this new column
+- revised logic - in `logic/declare_logic.py`, we replace the 2 lines for the `models.Item.Amount` formula with this (next screenshot shows revised logic executing with breakpoint):
 
 ```python
     def derive_amount(row: models.Item, old_row: models.Item, logic_row: LogicRow):
@@ -185,8 +176,6 @@ The follwing `apply_iteration` process simulates an iteration:
     Rule.formula(derive=models.Item.Amount, calling=derive_amount)
 ```
 
-* issues the `ApiLogicServer rebuild-from-database` command that rebuilds your project (the database models, the api), while preserving the customizations we made above.
-
 In a terminal window for your project:
 
 **1. Stop the Server** (Red Stop button, or Shift-F5 -- see Appendix)
@@ -194,12 +183,10 @@ In a terminal window for your project:
 **2. Apply Iteration**
 
 ```bash
-# mac, linux
-sh apply_iteration.sh
-
-#windows
-./apply_iteration.ps1
+als add-cust
+als rebuild-from-database
 ```
+
 &nbsp;
 
 **3. Set the breakpoint as shown**
@@ -210,7 +197,7 @@ sh apply_iteration.sh
 
 At the breakpoint, note you can use standard debugger services to debug your logic (examine `Item` attributes, step, etc).
 
-<img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/basic_demo/logic-debugging.jpeg?raw=true">
+![logic-debugging](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/basic_demo/logic-debugging.jpeg?raw=true)!
 
 &nbsp;
 
@@ -250,11 +237,9 @@ Note we rebuilt the project from our altered database, illustrating we can **ite
 
 Of course, we all know that all businesses the world over depend on the `hello world` app.  This is provided in `api/customize_api`.  Observe that it's:
 
-* standard Python
-
-* using Flask
-
-* and, for database access, SQLAlchemy.  Note all updates from custom APIs also enforce your logic.
+- standard Python
+- using Flask
+- and, for database access, SQLAlchemy.  Note all updates from custom APIs also enforce your logic.
 
 &nbsp;
 
@@ -270,7 +255,7 @@ API Logic Server also creates scripts for deployment.  While these are ***not re
 
 ## Summary
 
-<img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/basic_demo/summary.jpeg?raw=true">
+![summary](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/basic_demo/summary.jpeg?raw=true)
 
 In minutes - not days or weeks - you've used API Logic Server to convert an idea into **working software,** added **logic and security,** and **iterated** to meet new requirements.
 
@@ -282,8 +267,9 @@ To dive deeper, you can install [API Logic Server](https://apilogicserver.github
 
 ## Appendix: Database Schema
 
-<img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/basic_demo/basic_demo_data_model.jpeg?raw=true" width="500">
 
+
+![basic_demo_data_model](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/basic_demo/basic_demo_data_model.jpeg?raw=true" width="500")
 &nbsp;
 
 ## Appendix: Procedures
@@ -321,28 +307,19 @@ For PyCharm, start the server with CTL-D, Stop with red stop button.
 To enter a new Order:
 
 1. Click `Customer 1``
-
 2. Click `+ ADD NEW ORDER`
-
 3. Set `Notes` to "hurry", and press `SAVE AND SHOW`
-
 4. Click `+ ADD NEW ITEM`
-
 5. Enter Quantity 1, lookup "Product 1", and click `SAVE AND ADD ANOTHER`
-
 6. Enter Quantity 2000, lookup "Product 2", and click `SAVE`
-
 7. Observe the constraint error, triggered by rollups from the `Item` to the `Order` and `Customer`
-
 8. Correct the quantity to 2, and click `Save`
-
 
 **4. Update the Order**
 
 To explore our new logic for green products:
 
 1. Access the previous order, and `ADD NEW ITEM`
-
 2. Enter quantity 11, lookup product `Green`, and click `Save`.
 
 &nbsp;
