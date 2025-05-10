@@ -650,6 +650,18 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "     - Iterate blt/genai_demo_ - blt/genai_demo (add-cust)",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer/genai_demo_",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["add-cust"
+//                , "--project-name=../../../ApiLogicServer-dev/clean/ApiLogicServer/genai_demo"
+            ],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "    - Iterate blt/genai_demo__ (test - retain graphics over iterations)",
 // used to mimic iterating Genai - demo mode, to verify that graphics are not lost.
 // IMPORTANT: add docs/004_iterate_add_sales_rep.prompt first (eg, assign orders to a salesrep)
@@ -1259,7 +1271,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "     - Create servers/basic_demo (abbrev, from ai_customer_orders)",
+            "name": "     - Basic Demo - servers, using abbrev, from ai_customer_orders",
             "type": "debugpy",
             "request": "launch",
             "env": {"APILOGICSERVER_DEBUG": "True"},
@@ -1682,7 +1694,7 @@
             "cwd": "${workspaceFolder}/../../servers/sample_ai",
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
-            "args": ["sample-ai-iteration","--project_name=../../../servers/sample_ai"],
+            "args": ["add-cust"],
             "console": "integratedTerminal"
         },
         {
@@ -1774,7 +1786,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "10 - nw- NW_No_Cust",
+            "name": "10 - servers/nw- NW_No_Cust",
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/api_logic_server_cli",
@@ -1861,7 +1873,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "  - Add Northwind Customizations to NW-NoCust",
+            "name": "  - add-cust: Add Northwind Customizations to NW-NoCust",
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/api_logic_server_cli",
