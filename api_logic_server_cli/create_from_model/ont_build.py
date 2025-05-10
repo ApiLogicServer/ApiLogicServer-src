@@ -220,6 +220,8 @@ class OntBuilder(object):
             self.global_values["startSessionPath"] = "/auth/login"
         if getattr(self.global_values,"exclude_listpicker",None) is None:
             self.global_values["exclude_listpicker"] = False
+        if getattr(self.global_values,"api_endpoint",None) is None:
+            self.global_values["api_endpoint"] = self.apiEndpoint
             
         # If the application yaml has been included = we will use the values from the yaml
         if "application" in app_model:
@@ -271,7 +273,8 @@ class OntBuilder(object):
         # Generates KeyCloak or SQL Auth - if already set - do not overwrite - use rebuild=from
         self.gen_auth_components(app_path, keycloak_args, self.use_keycloak,overwrite=False)
         rv_app_config = self.gen_app_config()
-        rv_environment = self.environment_template.render(apiEndpoint=self.apiEndpoint)
+        apiEndpoint = self.global_values.api_endpoint or self.apiEndpoint
+        rv_environment = self.environment_template.render(apiEndpoint=apiEndpoint)
         write_root_file(
             app_path=app_path,
             dir_name="environments",
