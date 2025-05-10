@@ -316,6 +316,7 @@ class OntCreator(object):
     def style_guide(self) -> DotMap:
         style_guide = DotMap()
         # GLOBAL Style settings for all forms
+        style_guide.api_endpoint = "http://localhost:566/api" # "http://localhost:8080"
         style_guide.mode = "tab" # "dialog"
         style_guide.pick_style = "list"  #"combo" or"list"
         style_guide.style = "light" # "dark"
