@@ -61,7 +61,7 @@ import importlib
 import fnmatch
 from dotmap import DotMap
 import api_logic_server_cli.create_from_model.create_db_from_model as create_db_from_model
-
+import add_cust.add_cust as add_cust
 
 def is_docker() -> bool:
     """ running docker?  dir exists: /home/api_logic_server """
@@ -180,7 +180,7 @@ def delete_dir(dir_path, msg):
 
 
 def recursive_overwrite(src, dest, ignore=None):
-    """  TODO moving to api_logic_server_utils
+    """  moving to api_logic_server_utils
     copyTree, with overwrite
     thanks: https://stackoverflow.com/questions/12683834/how-to-copy-directory-recursively-in-python-and-overwrite-all
     """
@@ -335,7 +335,8 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
             log.debug(".. ..Copying nw customizations: logic, custom api, readme, tests, admin app")
             if project.nw_db_status == 'nw':
                 log.error("\n==> System Error: Unexpected customization for nw.  Please contact support.\n")
-            project.add_nw_customizations(do_security=False, do_show_messages=False)
+
+            add_cust.add_nw_customizations(project=project, do_security=False, do_show_messages=False)
             
         if project.nw_db_status in ["nw+"]:
             log.debug(".. ..Copy in nw+ customizations: readme, perform_customizations")
@@ -1541,231 +1542,6 @@ from database import <project.bind_key>_models
             create_utils.copy_md(project = self, from_doc_file = "Tutorial-3.md", to_project_file='Tutorial.md')
             # z_copy_md(project = self, from_doc_file="Tutorial-3.md", to_project_file='Tutorial.md')
 
-    '''  --> add_cust
-    samples and demos - simulate customizations - https://apilogicserver.github.io/Docs/Doc-Home/#start-install-samples-training
-        1. nw - sample code
-        2. genai_demo - GenAI (ChatGPT to create model, add rules VSC)
-        3. basic_demo - small db, no GenAI (w/ iteration)
-        4. sample_ai - CoPilot, no GenAI   (w/ iteration)
-        5. Tech AI - just an article, no automated customizations...
-    '''
-
-    def add_genai_customizations(self, do_show_messages: bool = True, do_security: bool = True):
-        """ Add customizations to genai (default creation)
-
-        0. Initial: create_project_and_overlay_prototypes() -- minor: just creates the readme
-                * When done with genai logic prompt, logic is pre-created (in logic/declare_logic.py)
-        1. Deep copy prototypes/genai_demo (adds logic and security, and custom end point)
-
-        WebGenAI DX:
-
-        0. Convention: click the Blue Button
-                * Home/Create Project
-                * Home/Open App
-                * Landing
-                * Overview[Manager]/Open
-                * Overview/GitHub
-                * App Home / Develop --> GitHub
-        0. demo --> codespaces.  Where are instructions (what is CS, how do I load/run)?
-        1. Name can be any, iff created with APILOGICPROJECT_IS_GENAI_DEMO
-        2. Bypass duplicate discovery logic iff created with APILOGICPROJECT_IS_GENAI_DEMO
-        3. TODO:
-                * cd project
-                * als add-cust  # add customizations
-                * run, and use place b2b order service - end point is not activated.
-
-        Args:
-        """
-
-        log.debug("\n\n==================================================================")
-        nw_messages = ""
-        do_security = True  # other demos can explain security, here just make it work
-        if do_security:
-            if do_show_messages:
-                nw_messages = "Add sample_ai / genai_demo customizations - enabling security"
-            self.add_auth(is_nw=True, msg=nw_messages)
-
-        # overlay genai_demo := sample_ai + sample_ai_iteration
-        nw_path = (self.api_logic_server_dir_path).\
-            joinpath('prototypes/genai_demo')  # PosixPath('/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/nw')
-        recursive_overwrite(nw_path, self.project_directory)  # '/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/tutorial/1. Instant_Creation'
-
-        if do_show_messages:
-            log.info("\nExplore key customization files:")
-            log.info(f'..api/customize_api.py')
-            log.info(f'..logic/declare_logic.py')
-            log.info(f'..security/declare_security.py\n')
-            if self.is_tutorial == False:
-                log.info(".. all customizations complete\n")
-
-
-    def add_nw_customizations(self, do_show_messages: bool = True, do_security: bool = True):
-        """ Add customizations to nw (default creation)
-
-        1. Add-sqlite-security (optionally - not used for initial creation)
-
-        2. Deep copy project_prototype_nw (adds logic)
-
-        3. Create readme files: Tutorial (copy_md), api/integration_defs/readme.md
-
-        4. Add database customizations
-
-        Args:
-        """
-
-        log.debug("\n\n==================================================================")
-        nw_messages = ""
-        if do_security:
-            if do_show_messages:
-                nw_messages = "Add northwind customizations - enabling security"
-            self.add_auth(is_nw=True, msg=nw_messages)
-
-        nw_path = (self.api_logic_server_dir_path).\
-            joinpath('prototypes/nw')  # PosixPath('/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/nw')
-        if os.path.isfile(self.project_directory_path.joinpath('ui/admin/admin.yaml')):
-            copyfile(src = self.project_directory_path.joinpath('ui/admin/admin.yaml'),
-                 dst = self.project_directory_path.joinpath('ui/admin/admin_no_customizations.yaml'))
-        recursive_overwrite(nw_path, self.project_directory)  # '/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/tutorial/1. Instant_Creation'
-
-        self.create_nw_tutorial_and_readme()
-
-        # z_copy_md(project = self, from_doc_file="Sample-Integration.md", to_project_file='integration/Sample-Integration.md')
-        create_utils.copy_md(project = self, from_doc_file = "Sample-Integration.md", to_project_file='integration/Sample-Integration.md')
-
-        fix_nw_datamodel(project_directory=self.project_directory)
-
-        if do_show_messages:
-            log.info("\nExplore key customization files:")
-            log.info(f'..api/customize_api.py')
-            log.info(f'..database/customize_models.py')
-            log.info(f'..logic/declare_logic.py')
-            log.info(f'..security/declare_security.py\n')
-            if self.is_tutorial == False:
-                log.info(".. all customizations complete\n")
-
-
-    def add_basic_demo_customizations(self, do_show_messages: bool = True):
-        """ Add customizations to basic_demo (default creation)
-
-        1. Deep copy prototypes/basic_demo (adds logic and security)
-
-        2. Create readme files: Sample-AI (copy_md), api/integration_defs/readme.md  TODO not done, fix cmts
-
-        Args:
-        """
-
-        log.debug("\n\n==================================================================")
-        nw_messages = ""
-        do_security = False  # disabled - keep clear what "activate security" means for reader
-        if do_security:
-            if do_show_messages:
-                nw_messages = "Add basic_demo customizations - enabling security"
-            self.add_auth(is_nw=True, msg=nw_messages)
-
-        nw_path = (self.api_logic_server_dir_path).\
-            joinpath('prototypes/basic_demo/customizations')  # PosixPath('/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/basic_demo/customizations')
-        recursive_overwrite(nw_path, self.project_directory) 
-
-        if do_show_messages:
-            log.info("\nExplore key customization files:")
-            log.info(f'..logic/declare_logic.py')
-            log.info(f'..security/declare_security.py\n')
-            log.info(f'Next Steps: activate security')
-            log.info(f'..ApiLogicServer add-auth --db_url=auth')
-            if self.is_tutorial == False:
-                log.info(".. complete\n")
-
-
-    def add_basic_demo_iteration(self, do_show_messages: bool = True, do_security: bool = True):
-        """ Iterate data model for basic_demo (default creation)
-
-        1. Deep copy prototypes/basic_demo/iteration (adds db, logic)
-
-        Args:
-        """
-
-        log.debug("\n\n==================================================================")
-
-        nw_path = (self.api_logic_server_dir_path).\
-            joinpath('prototypes/basic_demo/iteration')
-        recursive_overwrite(nw_path, self.project_directory)  # '/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/tutorial/1. Instant_Creation'
-        if do_show_messages:
-            log.info("\nNext Step:")
-            log.info(f'..ApiLogicServer rebuild-from-database --db_url=sqlite:///database/db.sqlite')
-            log.info(".. complete\n")
-
-
-    def add_sample_ai_customizations(self, do_show_messages: bool = True):
-        """ Add customizations to sample_ai (default creation)
-
-        1. Deep copy prototypes/sample_ai (adds logic and security)
-
-        2. Create readme files: Sample-AI (copy_md), api/integration_defs/readme.md  TODO not done, fix cmts
-
-        Args:
-        """
-
-        log.debug("\n\n==================================================================")
-        nw_messages = ""
-        do_security = False  # disabled - keep clear what "activate security" means for reader
-        if do_security:
-            if do_show_messages:
-                nw_messages = "Add sample_ai customizations - enabling security"
-            self.add_auth(is_nw=True, msg=nw_messages)
-
-        nw_path = (self.api_logic_server_dir_path).\
-            joinpath('prototypes/sample_ai')  # PosixPath('/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/nw')
-        recursive_overwrite(nw_path, self.project_directory)  # '/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/tutorial/1. Instant_Creation'
-
-        if do_show_messages:
-            log.info("\nExplore key customization files:")
-            log.info(f'..api/customize_api.py')
-            log.info(f'..logic/declare_logic.py')
-            log.info(f'..security/declare_security.py\n')
-            log.info(f'Next Steps: activate security')
-            log.info(f'..ApiLogicServer add-auth --db_url=auth')
-            if self.is_tutorial == False:
-                log.info(".. complete\n")
-
-
-    def add_sample_ai_iteration(self, do_show_messages: bool = True, do_security: bool = True):
-        """ Iterate data model for sample_ai (default creation)
-
-        1. Deep copy prototypes/sample_ai_iteration (adds db, logic)
-
-        Args:
-        """
-
-        log.debug("\n\n==================================================================")
-
-        nw_path = (self.api_logic_server_dir_path).\
-            joinpath('prototypes/sample_ai_iteration')  # PosixPath('/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/nw')
-        recursive_overwrite(nw_path, self.project_directory)  # '/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/tutorial/1. Instant_Creation'
-        if do_show_messages:
-            log.info("\nNext Step:")
-            log.info(f'..ApiLogicServer rebuild-from-database --project_name=./ --db_url=sqlite:///database/db.sqlite')
-            log.info(".. complete\n")
-
-
-    def genai_get_logic(self, prompt: str) -> list[str]:  # TODO drop old code
-        """ Get logic from ChatGPT prompt
-        Args:
-        """
-
-        prompt_array = prompt.split('\n')
-        logic_text = list()
-        line_num = 0
-        logic_lines = 0
-        writing = False
-        for each_line in prompt_array:
-            line_num += 1
-            if "Enforce" in each_line:
-                writing = True
-            elif writing:
-                logic_lines += 1
-                logic_text.append(each_line)
-        return logic_text
-
 
     def tutorial(self, msg: str="", create: str='tutorial'):
         """
@@ -1818,7 +1594,7 @@ from database import <project.bind_key>_models
         
         self.project_name = with_cust
         self.command = "add-cust"
-        self.add_nw_customizations(do_show_messages=False, do_security=False)
+        add_cust.add_nw_customizations(project = self, do_show_messages=False, do_security=False)
         self.run = save_run  # remove logic below
 
 
@@ -1831,7 +1607,7 @@ from database import <project.bind_key>_models
         
         self.project_name = with_cust
         self.command = "add-cust"
-        self.add_nw_customizations(do_show_messages=False)
+        add_cust.add_nw_customizations(project = self, do_show_messages=False)
         self.run = save_run
 
         if create != "tutorial":
