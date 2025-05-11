@@ -1,0 +1,109 @@
+openapi: 3.0.3
+info:
+  title: Customer API
+  version: 1.0.0
+  description: API for retrieving customer information, including filtering by country and pagination.
+
+servers:
+  - url: https://your-ngrok-url.ngrok-free.app/api
+
+paths:
+  /Customer:
+    get:
+      summary: List Customers
+      description: Retrieve a list of customers, optionally filtering by country, limiting results, and sorting.
+      parameters:
+        - in: query
+          name: filter[Country]
+          schema:
+            type: string
+          description: Filter customers by country name (e.g., Germany).
+        - in: query
+          name: page[limit]
+          schema:
+            type: integer
+          description: Maximum number of customers to return.
+        - in: query
+          name: page[offset]
+          schema:
+            type: integer
+          description: Number of customers to skip before starting to collect results.
+        - in: query
+          name: sort
+          schema:
+            type: string
+          description: Field to sort by (e.g., id).
+      responses:
+        '200':
+          description: A list of customers
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: Customer ID
+                        type:
+                          type: string
+                          example: Customer
+                        attributes:
+                          type: object
+                          properties:
+                            CompanyName:
+                              type: string
+                            ContactName:
+                              type: string
+                            ContactTitle:
+                              type: string
+                            Address:
+                              type: string
+                            City:
+                              type: string
+                            Region:
+                              type: string
+                            PostalCode:
+                              type: string
+                            Country:
+                              type: string
+                            Phone:
+                              type: string
+                            Fax:
+                              type: string
+                            Balance:
+                              type: number
+                            CreditLimit:
+                              type: number
+                            OrderCount:
+                              type: integer
+                            UnpaidOrderCount:
+                              type: integer
+                            Client_id:
+                              type: integer
+                            S_CheckSum:
+                              type: string
+                  meta:
+                    type: object
+                    properties:
+                      count:
+                        type: integer
+                      limit:
+                        type: integer
+                      total:
+                        type: integer
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                      next:
+                        type: string
+                      last:
+                        type: string
+
+components: {}

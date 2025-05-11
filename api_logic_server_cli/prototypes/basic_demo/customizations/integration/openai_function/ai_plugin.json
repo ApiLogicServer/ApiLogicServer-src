@@ -1,0 +1,17 @@
+{
+    "schema_version": "v1",
+    "name_for_human": "ALS NW-",
+    "name_for_model": "ALS NW",
+    "description_for_human": "Access and manage categories, customers, and more.",
+    "description_for_model": "Plugin for interacting with the API Logic Server.",
+    "auth": {
+      "type": "none"
+    },
+    "api": {
+      "type": "openapi",
+      "url": "https://tunnel_url.ngrok-free.app/api/openapi"
+    },
+    "logo_url": "https://your-logo-url/logo.png",
+    "contact_email": "support@yourdomain.com",
+    "legal_info_url": "https://yourdomain.com/legal"
+  }
