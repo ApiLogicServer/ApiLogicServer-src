@@ -1,0 +1,1731 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+      "title": "API Logic Server",
+      "description": "SAFRSAPI",
+      "termsOfService": "",
+      "version": "0.0"
+    },
+    "servers": [
+      {
+        "url": "https://2e9f-2601-644-4900-d6f0-9893-cd5c-23f8-f7a6.ngrok-free.app/api"
+      }
+    ],
+    "paths": {
+      "/Customer/": {
+        "get": {
+          "tags": [
+            "Customer"
+          ],
+          "summary": "Retrieve a collection of Customer objects",
+          "description": "Retrieve Customer from Customer",
+          "operationId": "RetrieveacollectionofCustomerobjects_0",
+          "parameters": [
+            {
+              "name": "include",
+              "in": "query",
+              "description": "Customer relationships to include (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string",
+                "default": "OrderList"
+              }
+            },
+            {
+              "name": "fields[Customer]",
+              "in": "query",
+              "description": "Customer fields to include (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string",
+                "default": "Id,CompanyName,ContactName,ContactTitle,Address,City,Region,PostalCode,Country,Phone,Fax,Balance,CreditLimit,OrderCount,UnpaidOrderCount,Client_id,S_CheckSum"
+              }
+            },
+            {
+              "name": "page[offset]",
+              "in": "query",
+              "description": "Page offset",
+              "schema": {
+                "type": "integer",
+                "format": "int64",
+                "default": 0
+              }
+            },
+            {
+              "name": "page[limit]",
+              "in": "query",
+              "description": "Max number of items",
+              "schema": {
+                "type": "integer",
+                "format": "int64",
+                "default": 10
+              }
+            },
+            {
+              "name": "sort",
+              "in": "query",
+              "description": "Sort order",
+              "schema": {
+                "type": "string",
+                "format": "string",
+                "default": "id"
+              }
+            },
+            {
+              "name": "filter[Id]",
+              "in": "query",
+              "description": "Id attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[CompanyName]",
+              "in": "query",
+              "description": "CompanyName attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[ContactName]",
+              "in": "query",
+              "description": "ContactName attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[ContactTitle]",
+              "in": "query",
+              "description": "ContactTitle attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[Address]",
+              "in": "query",
+              "description": "Address attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[City]",
+              "in": "query",
+              "description": "City attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[Region]",
+              "in": "query",
+              "description": "Region attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[PostalCode]",
+              "in": "query",
+              "description": "PostalCode attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[Country]",
+              "in": "query",
+              "description": "Country attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[Phone]",
+              "in": "query",
+              "description": "Phone attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[Fax]",
+              "in": "query",
+              "description": "Fax attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[Balance]",
+              "in": "query",
+              "description": "Balance attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[CreditLimit]",
+              "in": "query",
+              "description": "CreditLimit attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[OrderCount]",
+              "in": "query",
+              "description": "OrderCount attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[UnpaidOrderCount]",
+              "in": "query",
+              "description": "UnpaidOrderCount attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[Client_id]",
+              "in": "query",
+              "description": "Client_id attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[S_CheckSum]",
+              "in": "query",
+              "description": "S_CheckSum attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[id]",
+              "in": "query",
+              "description": "id attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter",
+              "in": "query",
+              "description": "Custom Customer filter",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "Content-Type",
+              "in": "header",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "default": "application/vnd.api+json",
+                "enum": [
+                  "application/vnd.api+json",
+                  "application/json"
+                ]
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Request fulfilled, document follows",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Customer_coll1"
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Forbidden",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_403"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Not Found",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_404"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": [
+            "Customer"
+          ],
+          "summary": "Create Customer",
+          "operationId": "CreateCustomer_0",
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "in": "header",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "default": "application/vnd.api+json",
+                "enum": [
+                  "application/vnd.api+json",
+                  "application/json"
+                ]
+              }
+            }
+          ],
+          "requestBody": {
+            "description": "Customer attributes",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Customer_inst1"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "201": {
+              "description": "Created",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Customer_inst1"
+                  }
+                }
+              }
+            },
+            "202": {
+              "description": "Accepted",
+              "content": {}
+            },
+            "403": {
+              "description": "Forbidden",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_403"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Not Found",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_404"
+                  }
+                }
+              }
+            },
+            "409": {
+              "description": "Conflict",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_409"
+                  }
+                }
+              }
+            }
+          },
+          "x-codegen-request-body-name": "POST body"
+        }
+      },
+      "/Customer/{CustomerId}/": {
+        "get": {
+          "tags": [
+            "Customer"
+          ],
+          "summary": "Retrieve Customer instance",
+          "description": "Retrieve Customer from Customer",
+          "operationId": "RetrieveCustomerinstance_0",
+          "parameters": [
+            {
+              "name": "include",
+              "in": "query",
+              "description": "Customer relationships to include (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string",
+                "default": "OrderList"
+              }
+            },
+            {
+              "name": "fields[Customer]",
+              "in": "query",
+              "description": "Customer fields to include (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string",
+                "default": "Id,CompanyName,ContactName,ContactTitle,Address,City,Region,PostalCode,Country,Phone,Fax,Balance,CreditLimit,OrderCount,UnpaidOrderCount,Client_id,S_CheckSum"
+              }
+            },
+            {
+              "name": "CustomerId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "default": "ALFKI"
+              }
+            },
+            {
+              "name": "Content-Type",
+              "in": "header",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "default": "application/vnd.api+json",
+                "enum": [
+                  "application/vnd.api+json",
+                  "application/json"
+                ]
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Request fulfilled, document follows",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Customer_inst1"
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Forbidden",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_403"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Not Found",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_404"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "delete": {
+          "tags": [
+            "Customer"
+          ],
+          "summary": "Delete Customer from Customer",
+          "operationId": "DeleteCustomerfromCustomer_0",
+          "parameters": [
+            {
+              "name": "CustomerId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "default": "ALFKI"
+              }
+            },
+            {
+              "name": "Content-Type",
+              "in": "header",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "default": "application/vnd.api+json",
+                "enum": [
+                  "application/vnd.api+json",
+                  "application/json"
+                ]
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Customer_inst1"
+                  }
+                }
+              }
+            },
+            "202": {
+              "description": "Accepted",
+              "content": {}
+            },
+            "204": {
+              "description": "Request fulfilled, nothing follows",
+              "content": {}
+            },
+            "403": {
+              "description": "Forbidden",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_403"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Not Found",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_404"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "patch": {
+          "tags": [
+            "Customer"
+          ],
+          "summary": "Update Customer",
+          "description": "Update Customer attributes",
+          "operationId": "UpdateCustomer_0",
+          "parameters": [
+            {
+              "name": "CustomerId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "default": "ALFKI"
+              }
+            },
+            {
+              "name": "Content-Type",
+              "in": "header",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "default": "application/vnd.api+json",
+                "enum": [
+                  "application/vnd.api+json",
+                  "application/json"
+                ]
+              }
+            }
+          ],
+          "requestBody": {
+            "description": "Customer attributes",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Customer_inst"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Request fulfilled, document follows",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Customer_inst1"
+                  }
+                }
+              }
+            },
+            "202": {
+              "description": "Accepted",
+              "content": {}
+            },
+            "204": {
+              "description": "No Content",
+              "content": {}
+            },
+            "403": {
+              "description": "Forbidden",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_403"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Not Found",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_404"
+                  }
+                }
+              }
+            },
+            "409": {
+              "description": "Conflict",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_409"
+                  }
+                }
+              }
+            }
+          },
+          "x-codegen-request-body-name": "PATCH body"
+        }
+      },
+      "/Customer/{CustomerId}/OrderList": {
+        "get": {
+          "tags": [
+            "Customer"
+          ],
+          "summary": "Retrieve Order from Customer.OrderList",
+          "description": "Retrieve Order items from the Customer OrderList \"to-many\" relationship",
+          "operationId": "RetrieveOrderfromCustomerOrderList_0",
+          "parameters": [
+            {
+              "name": "include",
+              "in": "query",
+              "description": "Order relationships to include (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string",
+                "default": "Order,Location,Customer,Employee,OrderList,OrderDetailList"
+              }
+            },
+            {
+              "name": "fields[Order]",
+              "in": "query",
+              "description": "Order fields to include (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string",
+                "default": "Id,CustomerId,EmployeeId,OrderDate,RequiredDate,ShippedDate,ShipVia,Freight,ShipName,ShipAddress,ShipCity,ShipRegion,ShipZip,ShipCountry,AmountTotal,Country,City,Ready,OrderDetailCount,CloneFromOrder"
+              }
+            },
+            {
+              "name": "page[offset]",
+              "in": "query",
+              "description": "Page offset",
+              "schema": {
+                "type": "integer",
+                "format": "int64",
+                "default": 0
+              }
+            },
+            {
+              "name": "page[limit]",
+              "in": "query",
+              "description": "Max number of items",
+              "schema": {
+                "type": "integer",
+                "format": "int64",
+                "default": 10
+              }
+            },
+            {
+              "name": "sort",
+              "in": "query",
+              "description": "Sort order",
+              "schema": {
+                "type": "string",
+                "format": "string",
+                "default": "id"
+              }
+            },
+            {
+              "name": "filter[Id]",
+              "in": "query",
+              "description": "Id attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[CustomerId]",
+              "in": "query",
+              "description": "CustomerId attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[EmployeeId]",
+              "in": "query",
+              "description": "EmployeeId attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[OrderDate]",
+              "in": "query",
+              "description": "OrderDate attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[RequiredDate]",
+              "in": "query",
+              "description": "RequiredDate attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[ShippedDate]",
+              "in": "query",
+              "description": "ShippedDate attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[ShipVia]",
+              "in": "query",
+              "description": "ShipVia attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[Freight]",
+              "in": "query",
+              "description": "Freight attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[ShipName]",
+              "in": "query",
+              "description": "ShipName attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[ShipAddress]",
+              "in": "query",
+              "description": "ShipAddress attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[ShipCity]",
+              "in": "query",
+              "description": "ShipCity attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[ShipRegion]",
+              "in": "query",
+              "description": "ShipRegion attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[ShipZip]",
+              "in": "query",
+              "description": "ShipZip attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[ShipCountry]",
+              "in": "query",
+              "description": "ShipCountry attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[AmountTotal]",
+              "in": "query",
+              "description": "AmountTotal attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[Country]",
+              "in": "query",
+              "description": "Country attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[City]",
+              "in": "query",
+              "description": "City attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[Ready]",
+              "in": "query",
+              "description": "Ready attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[OrderDetailCount]",
+              "in": "query",
+              "description": "OrderDetailCount attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[CloneFromOrder]",
+              "in": "query",
+              "description": "CloneFromOrder attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[id]",
+              "in": "query",
+              "description": "id attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter",
+              "in": "query",
+              "description": "Custom Order filter",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "CustomerId",
+              "in": "path",
+              "description": "Customer item",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "default": "ALFKI"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Request fulfilled, document follows",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Customer.OrderList_rel_coll"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Nothing matches the given URI",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_404"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": [
+            "Customer"
+          ],
+          "summary": "Add Order items to Customer.OrderList",
+          "description": "Add Order items to the Customer OrderList \"to-many\" relationship",
+          "operationId": "AddOrderitemstoCustomerOrderList_0",
+          "parameters": [
+            {
+              "name": "CustomerId",
+              "in": "path",
+              "description": "Customer item",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "default": "ALFKI"
+              }
+            }
+          ],
+          "requestBody": {
+            "description": "Customer.OrderList POST model",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Customer.OrderList_rel_coll"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "202": {
+              "description": "Accepted",
+              "content": {}
+            },
+            "204": {
+              "description": "No Content",
+              "content": {}
+            },
+            "404": {
+              "description": "Not Found",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_404"
+                  }
+                }
+              }
+            },
+            "409": {
+              "description": "Conflict",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_409"
+                  }
+                }
+              }
+            }
+          },
+          "x-codegen-request-body-name": "Customer.OrderList body"
+        },
+        "delete": {
+          "tags": [
+            "Customer"
+          ],
+          "summary": "Delete Order from Customer.OrderList",
+          "description": "Delete Order items from the Customer OrderList \"to-many\" relationship",
+          "operationId": "DeleteOrderfromCustomerOrderList_0",
+          "parameters": [
+            {
+              "name": "CustomerId",
+              "in": "path",
+              "description": "Customer item",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "default": "ALFKI"
+              }
+            }
+          ],
+          "requestBody": {
+            "description": "Customer.OrderList POST model",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Customer.OrderList_rel_coll"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Customer.OrderList_rel_coll"
+                  }
+                }
+              }
+            },
+            "202": {
+              "description": "Accepted",
+              "content": {}
+            },
+            "204": {
+              "description": "Request fulfilled, nothing follows",
+              "content": {}
+            },
+            "403": {
+              "description": "Forbidden",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_403"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Not Found",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_404"
+                  }
+                }
+              }
+            }
+          },
+          "x-codegen-request-body-name": "Customer.OrderList body"
+        },
+        "patch": {
+          "tags": [
+            "Customer"
+          ],
+          "summary": "Update Customer.OrderList",
+          "description": "Update the Customer OrderList \"to-many\" relationship",
+          "operationId": "UpdateCustomerOrderList_0",
+          "parameters": [
+            {
+              "name": "CustomerId",
+              "in": "path",
+              "description": "Customer item",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "default": "ALFKI"
+              }
+            }
+          ],
+          "requestBody": {
+            "description": "Customer.OrderList POST model",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Customer.OrderList_rel_coll"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Accepted",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Customer.OrderList_rel_coll"
+                  }
+                }
+              }
+            },
+            "204": {
+              "description": "No Content",
+              "content": {}
+            },
+            "403": {
+              "description": "Forbidden",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_403"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Not Found",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_404"
+                  }
+                }
+              }
+            },
+            "409": {
+              "description": "Conflict",
+              "content": {
+                "*/*": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_409"
+                  }
+                }
+              }
+            }
+          },
+          "x-codegen-request-body-name": "Customer.OrderList body"
+        }
+      },
+      "/CustomerDemographic/": {
+        "get": {
+          "tags": [
+            "CustomerDemographic"
+          ],
+          "summary": "Retrieve a collection of CustomerDemographic objects",
+          "description": "Retrieve CustomerDemographic from CustomerDemographic",
+          "operationId": "RetrieveacollectionofCustomerDemographicobjects_0",
+          "parameters": [
+            {
+              "name": "include",
+              "in": "query",
+              "description": "CustomerDemographic relationships to include (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "fields[CustomerDemographic]",
+              "in": "query",
+              "description": "CustomerDemographic fields to include (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string",
+                "default": "Id,CustomerDesc,S_CheckSum"
+              }
+            },
+            {
+              "name": "page[offset]",
+              "in": "query",
+              "description": "Page offset",
+              "schema": {
+                "type": "integer",
+                "format": "int64",
+                "default": 0
+              }
+            },
+            {
+              "name": "page[limit]",
+              "in": "query",
+              "description": "Max number of items",
+              "schema": {
+                "type": "integer",
+                "format": "int64",
+                "default": 10
+              }
+            },
+            {
+              "name": "sort",
+              "in": "query",
+              "description": "Sort order",
+              "schema": {
+                "type": "string",
+                "format": "string",
+                "default": "id"
+              }
+            },
+            {
+              "name": "filter[Id]",
+              "in": "query",
+              "description": "Id attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[CustomerDesc]",
+              "in": "query",
+              "description": "CustomerDesc attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[S_CheckSum]",
+              "in": "query",
+              "description": "S_CheckSum attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter[id]",
+              "in": "query",
+              "description": "id attribute filter (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "filter",
+              "in": "query",
+              "description": "Custom CustomerDemographic filter",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "Content-Type",
+              "in": "header",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "default": "application/vnd.api+json",
+                "enum": [
+                  "application/vnd.api+json",
+                  "application/json"
+                ]
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Request fulfilled, document follows",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/CustomerDemographic_coll1"
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Forbidden",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_403"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Not Found",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_404"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": [
+            "CustomerDemographic"
+          ],
+          "summary": "Create CustomerDemographic",
+          "operationId": "CreateCustomerDemographic_0",
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "in": "header",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "default": "application/vnd.api+json",
+                "enum": [
+                  "application/vnd.api+json",
+                  "application/json"
+                ]
+              }
+            }
+          ],
+          "requestBody": {
+            "description": "CustomerDemographic attributes",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerDemographic_inst1"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "201": {
+              "description": "Created",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/CustomerDemographic_inst1"
+                  }
+                }
+              }
+            },
+            "202": {
+              "description": "Accepted",
+              "content": {}
+            },
+            "403": {
+              "description": "Forbidden",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_403"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Not Found",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_404"
+                  }
+                }
+              }
+            },
+            "409": {
+              "description": "Conflict",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_409"
+                  }
+                }
+              }
+            }
+          },
+          "x-codegen-request-body-name": "POST body"
+        }
+      },
+      "/CustomerDemographic/{CustomerDemographicId}/": {
+        "get": {
+          "tags": [
+            "CustomerDemographic"
+          ],
+          "summary": "Retrieve CustomerDemographic instance",
+          "description": "Retrieve CustomerDemographic from CustomerDemographic",
+          "operationId": "RetrieveCustomerDemographicinstance_0",
+          "parameters": [
+            {
+              "name": "include",
+              "in": "query",
+              "description": "CustomerDemographic relationships to include (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string"
+              }
+            },
+            {
+              "name": "fields[CustomerDemographic]",
+              "in": "query",
+              "description": "CustomerDemographic fields to include (csv)",
+              "schema": {
+                "type": "string",
+                "format": "string",
+                "default": "Id,CustomerDesc,S_CheckSum"
+              }
+            },
+            {
+              "name": "CustomerDemographicId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "default": "jsonapi_id_string"
+              }
+            },
+            {
+              "name": "Content-Type",
+              "in": "header",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "default": "application/vnd.api+json",
+                "enum": [
+                  "application/vnd.api+json",
+                  "application/json"
+                ]
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Request fulfilled, document follows",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/CustomerDemographic_inst1"
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Forbidden",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_403"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Not Found",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_404"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "delete": {
+          "tags": [
+            "CustomerDemographic"
+          ],
+          "summary": "Delete CustomerDemographic from CustomerDemographic",
+          "operationId": "DeleteCustomerDemographicfromCustomerDemographic_0",
+          "parameters": [
+            {
+              "name": "CustomerDemographicId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "default": "jsonapi_id_string"
+              }
+            },
+            {
+              "name": "Content-Type",
+              "in": "header",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "default": "application/vnd.api+json",
+                "enum": [
+                  "application/vnd.api+json",
+                  "application/json"
+                ]
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/CustomerDemographic_inst1"
+                  }
+                }
+              }
+            },
+            "202": {
+              "description": "Accepted",
+              "content": {}
+            },
+            "204": {
+              "description": "Request fulfilled, nothing follows",
+              "content": {}
+            },
+            "403": {
+              "description": "Forbidden",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_403"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Not Found",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_404"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "patch": {
+          "tags": [
+            "CustomerDemographic"
+          ],
+          "summary": "Update CustomerDemographic",
+          "description": "Update CustomerDemographic attributes",
+          "operationId": "UpdateCustomerDemographic_0",
+          "parameters": [
+            {
+              "name": "CustomerDemographicId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "default": "jsonapi_id_string"
+              }
+            },
+            {
+              "name": "Content-Type",
+              "in": "header",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "default": "application/vnd.api+json",
+                "enum": [
+                  "application/vnd.api+json",
+                  "application/json"
+                ]
+              }
+            }
+          ],
+          "requestBody": {
+            "description": "CustomerDemographic attributes",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerDemographic_inst"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "Request fulfilled, document follows",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/CustomerDemographic_inst1"
+                  }
+                }
+              }
+            },
+            "202": {
+              "description": "Accepted",
+              "content": {}
+            },
+            "204": {
+              "description": "No Content",
+              "content": {}
+            },
+            "403": {
+              "description": "Forbidden",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_403"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Not Found",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_404"
+                  }
+                }
+              }
+            },
+            "409": {
+              "description": "Conflict",
+              "content": {
+                "application/vnd.api+json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/jsonapi_error_409"
+                  }
+                }
+              }
+            }
+          },
+          "x-codegen-request-body-name": "PATCH body"
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "jsonapi_error_403": {
+          "type": "object",
+          "properties": {
+            "errors": {
+              "type": "string",
+              "example": ""
+            }
+          },
+          "description": ""
+        },
+        "jsonapi_error_404": {
+          "type": "object",
+          "properties": {
+            "errors": {
+              "type": "string",
+              "example": ""
+            }
+          },
+          "description": ""
+        },
+        "jsonapi_error_409": {
+          "type": "object",
+          "properties": {
+            "errors": {
+              "type": "string",
+              "example": ""
+            }
+          },
+          "description": ""
+        },
+        "Customer_coll1": {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "string",
+              "example": ""
+            }
+          },
+          "description": "Customer get;"
+        },
+        "Customer_inst1": {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "string",
+              "example": ""
+            }
+          },
+          "description": "Customer post;"
+        },
+        "Customer_inst": {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "string",
+              "example": ""
+            }
+          },
+          "description": "Customer patch;Customer post;Customer delete;Customer patch;Customer post;Customer delete;"
+        },
+        "Customer.OrderList_rel_coll": {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "string",
+              "example": ""
+            }
+          },
+          "description": "Customer.OrderList patch relationship;Customer.OrderList post relationship;"
+        },
+        "CustomerDemographic_coll1": {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "string",
+              "example": ""
+            }
+          },
+          "description": "CustomerDemographic get;"
+        },
+        "CustomerDemographic_inst1": {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "string",
+              "example": ""
+            }
+          },
+          "description": "CustomerDemographic post;"
+        },
+        "CustomerDemographic_inst": {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "string",
+              "example": ""
+            }
+          },
+          "description": "CustomerDemographic patch;CustomerDemographic post;CustomerDemographic delete;CustomerDemographic patch;CustomerDemographic post;CustomerDemographic delete;"
+        }
+      },
+      "securitySchemes": {
+        "Bearer": {
+          "type": "apiKey",
+          "name": "Authorization",
+          "in": "header"
+        }
+      }
+    },
+    "tags": [
+      {
+        "name": "Customer"
+      }
+    ],
+    "security": [
+      {
+        "Bearer": []
+      }
+    ]
+  }
