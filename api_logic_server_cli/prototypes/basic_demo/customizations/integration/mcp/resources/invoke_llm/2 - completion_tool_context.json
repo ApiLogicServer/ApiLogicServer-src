@@ -1,0 +1,12 @@
+{
+  "tool": "json-api",
+  "method": "GET",
+  "url": "https://your-api-server/Customer",
+  "query_params": {
+    "filter[credit_limit][gt]": "4000"
+  },
+  "headers": {
+    "Accept": "application/vnd.api+json"
+  },
+  "expected_output": "List of customers with high credit limits"
+}

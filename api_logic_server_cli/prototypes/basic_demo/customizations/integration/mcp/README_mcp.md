@@ -209,9 +209,7 @@ LangChain can:
 
 &nbsp;
 
-### MCP
-
-![Intro diagram](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/mcp/MCP_Arch.png?raw=true)
+### MCP Background
 
 For more information:
 
@@ -220,4 +218,21 @@ For more information:
 - [and here](https://www.youtube.com/watch?v=1bUy-1hGZpI&t=72s)
 - and this [N8N link](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.mcptrigger/?utm_source=n8n_app&utm_medium=node_settings_modal-credential_link&utm_campaign=%40n8n%2Fn8n-nodes-langchain.mcpTriggerlangchain.mcpTriggerlangchain.mcpTrigger)
 - and this [python sdk](https://github.com/modelcontextprotocol/python-sdk)
-- 
+- and [this video](https://www.youtube.com/shorts/xdMVgZfZ1yg)
+
+
+### Internal NL Access to Corp DB: MCP / JSON:API
+
+Sample flow:
+
+1.	User enters a natural language query in the internal UI.
+2.	MCP Client Executor sends the query + schema (as prompt or tool definition) to the external LLM.
+3.	LLM returns an MCP Tool Context JSON block.
+4.	MCP Client sends the Tool Context to the MCP Server Executor.
+5.	MCP Server calls the JSON:API Endpoint that enforces business logic.
+6.	JSON:API queries the Corp DB and returns the results.
+
+![Intro diagram](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/mcp/MCP_Arch.png?raw=true)
+
+
+

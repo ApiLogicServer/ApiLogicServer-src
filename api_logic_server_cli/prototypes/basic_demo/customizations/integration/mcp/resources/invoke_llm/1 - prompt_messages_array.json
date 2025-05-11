@@ -1,0 +1,10 @@
+[
+  {
+    "role": "system",
+    "content": "You are a backend planner that translates natural language queries into JSON:API tool context blocks. You are given a resource schema and a user query. Respond only with a JSON block that specifies how to call the JSON:API using filter parameters."
+  },
+  {
+    "role": "user",
+    "content": "Schema:\n\nCustomer:\n  - id (INTEGER)\n  - name (VARCHAR)\n  - balance (DECIMAL)\n  - credit_limit (DECIMAL)\n  * Filterable: name, balance, credit_limit\n  * Example: 'List customers with credit over 5000'\n\nItem:\n  - id (INTEGER)\n  - order_id (INTEGER)\n  - product_id (INTEGER)\n  - quantity (INTEGER)\n  - amount (DECIMAL)\n  - unit_price (DECIMAL)\n  * Filterable: order_id, product_id, unit_price\n  * Relationships:\n    ↪ relates to Order\n    ↪ relates to Product\n  * Example: 'Find all items for order 42'\n\nOrder:\n  - id (INTEGER)\n  - notes (VARCHAR)\n  - customer_id (INTEGER)\n  - date_shipped (DATE)\n  - amount_total (DECIMAL)\n  * Filterable: notes, customer_id, date_shipped, amount_total\n  * Relationships:\n    ↪ relates to Customer\n  * Example: 'Get orders shipped in 2024'\n\nProduct:\n  - id (INTEGER)\n  - name (VARCHAR)\n  - unit_price (DECIMAL)\n  * Filterable: name, unit_price\n  * Example: 'Show products with price over 100'\n\n---\n\nNatural language query: 'List all customers with credit limits over 4000.'\n\nRespond with a JSON object like:\n{\n  \"tool\": \"json-api\",\n  \"method\": \"GET\",\n  \"url\": \"https://your-api-server/Customer\",\n  \"query_params\": { \"filter[credit_limit][gt]\": \"4000\" },\n  \"headers\": { \"Accept\": \"application/vnd.api+json\" },\n  \"expected_output\": \"List of customers with high credit limits\"\n}"
+  }
+]
