@@ -23,7 +23,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
 
     @app.before_request
     def before_any_request():
-        # print(f"[DEBUG] Incoming request: {request.method} {request.url} {request.headers}")
+        # print(f"[DEBUG] Incoming request: {request.method} {request.url}")
         if activate_openapi_logging := True:
             if request.content_type == 'application/json' and request.method in ['POST', 'PUT', 'PATCH']:
                 # openapi: Incoming request: PATCH http://localhost:5656/api/Customer/1/ {'data': {'attributes': {'credit_limit': 5555}, 'type': 'Customer', 'id': '1'}}
@@ -62,15 +62,30 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
 
     @app.route('/mcp_server_executor', methods=['POST'])
     def mcp_server_executor(path=None):
-        '''
-        test: the following fails with method not allowed
-
-            response_mcp_exec = requests.post(  # failing method not allowed
-                url="http://localhost:5656/mcp_server_executor",
-                headers=tool_context["headers"],  # {'Accept': 'application/vnd.api+json', 'Authorization': 'Bearer your_token'}
-                json={"filter": tool_context["filter"]}  # Send filter as JSON payload
-            )
-
+        ''' sample response printed in mcp_client_executor.py:
+        ```
+            MCP MCP Response (simulated):
+            {
+            "get_json": {
+                "filter": {
+                "filter": {
+                    "credit_limit": {
+                    "gt": 4000
+                    }
+                },
+                "headers": {
+                    "Accept": "application/vnd.api+json",
+                    "Authorization": "Bearer your_token"
+                },
+                "type": "Customer",
+                "url": "http://localhost:5656/api/Customer"
+                }
+            },
+            "name": "mcp_server_executor",
+            "openapiUrl": "TUNNEL_URL/api/openapi.json",
+            "serverUrl": "TUNNEL_URL/api"
+            }
+        ```
         '''
         get_json = request.get_json()
         mcp_json = {
