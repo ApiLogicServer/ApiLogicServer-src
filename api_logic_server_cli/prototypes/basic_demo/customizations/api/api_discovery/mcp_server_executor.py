@@ -4,6 +4,8 @@ import logging
 import os
 import json
 import io
+
+import requests
 from config.config import Args  # circular import error if at top
 
 app_logger = logging.getLogger("api_logic_server_app")
@@ -88,12 +90,15 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         ```
         '''
         get_json = request.get_json()
-        mcp_json = {
-            "name": "mcp_server_executor",
-            "get_json": get_json
-            }
-        mcp_json["serverUrl"] =  get_server_url() + '/api'
-        mcp_json["openapiUrl"] = get_server_url() + '/api/openapi.json' 
-        # return jsonify(mcp), 200, {'Content-Type': 'text/plain; charset=utf-8'}
-        return jsonify(mcp_json), 200, {'Content-Type': 'application/json; charset=utf-8'}
+        app_logger.info(f"mcp_server_executor sees mcp request: \n{json.dumps(get_json, indent=4)}")
+
+        # process verb, filter here (stub for now)
+        filter_json = get_json['filter']  # {"credit_limit": {"gt": 4000}}  # todo: bunch'o parsing here
+        
+        filter_json = {"name": "credit_limit",  "op": "gt", "val":4000}     # https://github.com/thomaxxl/safrs/wiki/JsonApi-filtering
+        filter = json.dumps(filter_json)                                    # {"name": "credit_limit",  "op": "gt",  "val": 4000}
+        get_uri = get_json['url'] + '?filter=' + filter  # get_uri = "http://localhost:5656/api/Customer?filter[credit_limit]=1000"
+        response = requests.get(url=get_uri, headers= request.headers)
+
+        return response.json(), 200, {'Content-Type': 'application/json; charset=utf-8'}
 

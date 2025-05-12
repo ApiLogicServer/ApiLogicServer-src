@@ -56,7 +56,7 @@ def query_llm_with_nl(nl_query):
     ]
 
     
-    tool_context = {  # expect this
+    tool_context = {  # expect this from the LLM
       "type": "Customer",
       "filter": {
             "credit_limit": {
@@ -89,25 +89,24 @@ def query_llm_with_nl(nl_query):
     }
     print("\ncorrected tool context:\n", json.dumps(tool_context, indent=4))
     
-    # Execute as endpoint in als
-    # Update the request to use POST instead of GET
-    response_mcp_exec = requests.post(
-        url="http://localhost:5656/mcp_server_executor",
-        headers=tool_context["headers"],  # {'Accept': 'application/vnd.api+json', 'Authorization': 'Bearer your_token'}
-        json={"filter": tool_context}  # Send filter as JSON payload
-    )
+    # Execute mcp_server_executor - endpoint in als (see api/api_discovery/mcp_server_executor.py)
 
-    # Execute as a simulated MCP executor (gets als response)
-    response = requests.get(
-        tool_context["url"],
-        headers=tool_context["headers"],
-        params=tool_context["filter"]
-    )
-    return response, response_mcp_exec
+    if use_als_mcp_server_executor := True:
+      mcp_response = requests.post(
+          url="http://localhost:5656/mcp_server_executor",
+          headers=tool_context["headers"],  # {'Accept': 'application/vnd.api+json', 'Authorization': 'Bearer your_token'}
+          json=tool_context   # json={"filter": tool_context}  # Send filter as JSON payload
+      )
+    else:  # Execute as a simulated MCP executor (gets als response)
+      mcp_response = requests.get(
+          tool_context["url"],
+          headers=tool_context["headers"],
+          params=tool_context["filter"]
+      )
+    return mcp_response
 
 if __name__ == "__main__":
     import sys
     query = sys.argv[1] if len(sys.argv) > 1 else "List customers with credit over 4000"
-    als_response, mcp_response = query_llm_with_nl(query)
-    print("\nMCP ALS Response (simulated):\n", als_response.text)
+    mcp_response = query_llm_with_nl(query)
     print("\nMCP MCP Response (simulated):\n", mcp_response.text)  # or, mcp_response.json()
