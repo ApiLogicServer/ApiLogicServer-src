@@ -89,16 +89,32 @@ def query_llm_with_nl(nl_query):
     }
     print("\ncorrected tool context:\n", json.dumps(tool_context, indent=4))
     
-    # Execute as a simulated MCP executor - this should be an endpoint in als
+    # Execute as endpoint in als
+    # Update the request to use POST instead of GET
+    response_mcp_exec = requests.post(  # failing method not allowed
+        url="http://localhost:5656/mcp_server_executor",
+        headers=tool_context["headers"],  # {'Accept': 'application/vnd.api+json', 'Authorization': 'Bearer your_token'}
+        json={"filter": tool_context["filter"]}  # Send filter as JSON payload
+    )
+    '''
+    response_mcp_exec = requests.post(
+        url="http://localhost:5656/mcp_server_executor",
+        headers=tool_context["headers"],  # {'Accept': 'application/vnd.api+json', 'Authorization': 'Bearer your_token'}
+        params=tool_context["filter"]
+    )
+    '''
+
+    # Execute as a simulated MCP executor
     response = requests.get(
         tool_context["url"],
         headers=tool_context["headers"],
         params=tool_context["filter"]
     )
-    return response.text
+    return response, response_mcp_exec
 
 if __name__ == "__main__":
     import sys
     query = sys.argv[1] if len(sys.argv) > 1 else "List customers with credit over 4000"
-    result = query_llm_with_nl(query)
-    print("\nMCP Query Result:\n", result)
+    als_response, mcp_response = query_llm_with_nl(query)
+    print("\nMCP ALS Response (simulated):\n", als_response.text)
+    print("\nMCP MCP Response (simulated):\n", mcp_response.text)  # or, mcp_response.json()
