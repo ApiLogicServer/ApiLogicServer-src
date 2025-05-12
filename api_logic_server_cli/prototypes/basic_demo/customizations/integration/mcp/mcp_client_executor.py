@@ -91,20 +91,13 @@ def query_llm_with_nl(nl_query):
     
     # Execute as endpoint in als
     # Update the request to use POST instead of GET
-    response_mcp_exec = requests.post(  # failing method not allowed
-        url="http://localhost:5656/mcp_server_executor",
-        headers=tool_context["headers"],  # {'Accept': 'application/vnd.api+json', 'Authorization': 'Bearer your_token'}
-        json={"filter": tool_context["filter"]}  # Send filter as JSON payload
-    )
-    '''
     response_mcp_exec = requests.post(
         url="http://localhost:5656/mcp_server_executor",
         headers=tool_context["headers"],  # {'Accept': 'application/vnd.api+json', 'Authorization': 'Bearer your_token'}
-        params=tool_context["filter"]
+        json={"filter": tool_context}  # Send filter as JSON payload
     )
-    '''
 
-    # Execute as a simulated MCP executor
+    # Execute as a simulated MCP executor (gets als response)
     response = requests.get(
         tool_context["url"],
         headers=tool_context["headers"],
