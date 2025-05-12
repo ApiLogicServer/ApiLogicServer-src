@@ -31,28 +31,26 @@ This exploration is changing rapidly.  For updates, replace `integration/mcp` fr
 
 &nbsp;
 
-## ALS Access via MCP 
+## Internal NL Access to Corp DB: MCP / JSON:API
 
 There are 2 projects we have used for testing:
 
 1. **NW:** In the Manager, open `samples/nw_sample_nocust`, and explore `integration/mcp`.  This has been successfully used to invoke the server, including with authorization.
-2. **GenAI_DEMO:** preferred, since has update - from Dev Source, run run config: `Create blt/genai_demo_ as IS_GENAI_DEMO`
-    1. Copy 
-    2. In the target `genai_demo-` project: 
+2. **basic_demo:** preferred, since has update - from Dev Source, run run config: `Create blt/genai_demo_ as IS_GENAI_DEMO`
+    1. Create in manager 
+    2. Run `als add-cust` to load mcp tests
+    3. Run `python integration/mcp/mcp_client_executor.py`
 
-```
-cp -R ~/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/genai_demo_ ~/dev/ApiLogicServer/ApiLogicServer-dev/servers
+Sample flow:
 
-cp -R ~/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/nw_no_cust/integration ~/dev/ApiLogicServer/ApiLogicServer-dev/servers/genai_demo_
+1. User enters a natural language query in the internal UI.
+2. MCP Client Executor sends the query + schema (as prompt or tool definition) to the external LLM.
+3. LLM returns an MCP Tool Context JSON block.
+4. MCP Client sends the Tool Context to the MCP Server Executor. (**not yet implemented** in als - uses mcp_client_executor)
+5. MCP Server calls the JSON:API Endpoint that enforces business logic.
+6. JSON:API queries the Corp DB and returns the results.
 
-cp ~/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/nw_no_cust/api/api_discovery/openapi.py ~/dev/ApiLogicServer/ApiLogicServer-dev/servers/genai_demo_/api/api_discovery/openapi.py
-
-cp ~/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/nw_no_cust/config/default.env ~/dev/ApiLogicServer/ApiLogicServer-dev/servers/genai_demo_/config/default.env
-```
-
-Local testing:
-
-1. Run `integration/mcp/3_executor_test_agent.py`
+![Intro diagram](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/mcp/MCP_Arch.png?raw=true)
 
 &nbsp;
 
@@ -219,20 +217,4 @@ For more information:
 - and this [N8N link](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.mcptrigger/?utm_source=n8n_app&utm_medium=node_settings_modal-credential_link&utm_campaign=%40n8n%2Fn8n-nodes-langchain.mcpTriggerlangchain.mcpTriggerlangchain.mcpTrigger)
 - and this [python sdk](https://github.com/modelcontextprotocol/python-sdk)
 - and [this video](https://www.youtube.com/shorts/xdMVgZfZ1yg)
-
-
-### Internal NL Access to Corp DB: MCP / JSON:API
-
-Sample flow:
-
-1.	User enters a natural language query in the internal UI.
-2.	MCP Client Executor sends the query + schema (as prompt or tool definition) to the external LLM.
-3.	LLM returns an MCP Tool Context JSON block.
-4.	MCP Client sends the Tool Context to the MCP Server Executor.
-5.	MCP Server calls the JSON:API Endpoint that enforces business logic.
-6.	JSON:API queries the Corp DB and returns the results.
-
-![Intro diagram](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/mcp/MCP_Arch.png?raw=true)
-
-
 
