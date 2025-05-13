@@ -1,0 +1,49 @@
+
+description: Flag high-value customers with recent activity and send to marketing service
+
+steps:
+  - id: fetch_2024_orders
+    server: https://erp.company.com
+    tool_context:
+      tool: json-api
+      method: GET
+      url: /Order
+      query_params:
+        filter[date_shipped][gte]: "2024-01-01"
+        filter[date_shipped][lte]: "2024-12-31"
+      headers:
+        Accept: application/vnd.api+json
+      expected_output: Orders shipped in 2024
+
+  - id: aggregate_by_customer
+    type: local_processing
+    input: fetch_2024_orders
+    operation: |
+      Group orders by customer_id and sum amount_total.
+      Return list of customer_ids with total > 10000.
+
+  - id: fetch_customer_details
+    server: https://crm.company.com
+    tool_context:
+      tool: json-api
+      method: GET
+      url: /Customer
+      query_params:
+        filter[id]: "{{ aggregate_by_customer.output.customer_ids }}"
+      headers:
+        Accept: application/vnd.api+json
+      expected_output: High-value customer details
+
+  - id: notify_marketing
+    server: https://marketing.company.com
+    tool_context:
+      tool: json-api
+      method: POST
+      url: /CampaignTrigger
+      body:
+        campaign: "VIP Outreach Q1"
+        customer_ids: "{{ aggregate_by_customer.output.customer_ids }}"
+      headers:
+        Accept: application/vnd.api+json
+        Content-Type: application/json
+      expected_output: Marketing campaign initiated
