@@ -547,7 +547,7 @@ class OntBuilder(object):
     def load_home_template(self, template_name: str, entity: any, entity_name:str, entity_favorites: any) -> str:
         template = self.get_template(template_name)
         entity_vars = self.get_entity_vars(entity_name=entity_name, entity=entity)
-        entity_vars["row_columns"] = self.get_entity_columns(entity)
+        entity_vars["row_columns"] = self.get_entity_columns(entity, entity_vars=entity_vars)
         entity_vars["has_tabs"] = False
         if template_name.endswith("_expand.html"):
             self.gen_expanded_template(entity, entity_favorites, entity_vars)
@@ -575,13 +575,14 @@ class OntBuilder(object):
             entity_vars["single_tab_panel"] = self.single_tab_panel.render(tab_vars)
             entity_vars["has_tabs"] = True
 
-    def get_entity_columns(self, entity):
+    def get_entity_columns(self, entity, entity_vars: dict = None) -> list:
         row_cols = []
-        for column in entity.columns:
-            if column.get("exclude", "false") == "true":
-                continue
-            rv = self.gen_home_columns(entity, entity, column)
-            row_cols.append(rv)
+        
+        visible_columns = entity_vars["visibleColumns"].split(";") if entity_vars else entity.columns
+        for col in visible_columns:
+            if column := find_column(entity, col):
+                rv = self.gen_home_columns(entity, entity, column)
+                row_cols.append(rv)
         return row_cols
 
     def get_entity_vars(self, entity_name:str, entity, page_name: str = "home") -> dict:
@@ -592,7 +593,7 @@ class OntBuilder(object):
         fav_column = find_column(entity,favorite)
         if page := self.get_page(page_name, entity.type):
             cols = page.visible_columns.replace(",",";",100)
-            visible_columns = page.visible_columns.replace(",",";",100)
+            visible_columns = page.visible_columns.replace(" ","",100).replace(",",";",100)
         else:
             cols = self.get_columns(entity)
             visible_columns = self.get_visible_columns(entity, True)
@@ -700,6 +701,7 @@ class OntBuilder(object):
         # Lookup real Entity Table Name Here 
         self.title_translation.append({title: entity_name})
     def gen_home_columns(self, entity, parent_entity, column):
+        # sourcery skip: low-code-quality
         col_var = self.get_column_attrs(column)
         if getattr(entity,"tab_groups",None) != None:
                 for tg in entity["tab_groups"]:
@@ -771,7 +773,7 @@ class OntBuilder(object):
         row_cols = []
         defaultValues = {}
         if page := self.get_page("new", entity.type):
-            visible_columns = page.visible_columns.replace(",",";",100).replace(" ","",100)
+            visible_columns = page.visible_columns.replace(" ","",100).replace(",",";",100)
         else:
             visible_columns = self.get_visible_columns(entity, True)
         for col in  visible_columns.split(";"):
