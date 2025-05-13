@@ -1,140 +1,73 @@
 Model Context Protocol is a way for:
 
-- LLMs to choreograph multiple MCP servers in a chain of calls.  MCPs support shared contexts and goals, enabling the LLM to use the result from 1 call to determine whether the goals has been reached, or which service is appropriate to call next.
-- Chat agents to *discover* and *call* external servers, be they databases, APIs, file systems, etc.  MCPs support shared contexts and goals, enabling the LLM
+1. LLMs to ***choreograph*** multiple MCP servers in a chain of calls - an agentic workflow. MCPs support shared contexts and goals, enabling the LLM to use the result from 1 call to determine whether the goals has been reached, or which service is appropriate to call next
+1. Chat agents to ***discover*** and ***call*** external servers, be they databases, APIs, file systems, etc. MCPs support shared contexts and goals, enabling the LLM
+1. ***Corporate database participation*** in such flows, by making key functions available as MCP calls.
+1. Chat agents to invoke ***NLM Natural Language services*** to corporate databases for improved user interfaces
 
 For tech background, see Appendix 2.
 
-This is to explore:
+&nbsp;
 
-| Explore                                                        | Status                                                                                      |
-| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| ALS Access via MCP                                             | Runs                                                                                        |
-| Nat Lang ALS Access from simple driver                         | Runs (simple query from test driver using `openai.ChatCompletion.create`)                   |
-| Nat Lang ALS Access using OpenAI Plugin                        | Ran simple ChatGPT query                                                                    |
-| Nat Lang ALS Access from LangChain                             | Blocked: import version issues                                                              |
-| Nat Lang access from Chat (eg, ChatGPT) to (tunnelled) ALS Svr | Blocked - See Appendix 1<br>* MCP unable to pre-register resource schemas inside its system |
-| ALS Svr can be choroegraphed by LLM (1 in a chain of calls)    | TBD                                                                                         |
-|                                                                |                                                                                             |
+## MCP Logic Servers
 
-A value prop might be summarized: *instantly mcp-fy your legacy DB, including critical business logic and security*.
+GenAI-Logic / API Logic Server can instantly create an API for new / existing databases, and enable you to protect them with declarative logic and security.
+
+We are extending this to provide for MCP access to the API: ***MCP Logic Servers***.
+
+> A value prop might be summarized: *instantly mcp-ify your legacy DB, ***including*** critical business logic and security*.
 
 &nbsp;
 
-## Status: Technology Exploration
+### Status: Work In Progress
 
-This is an initial experiment, without automation.  Many substantive issues need to be addressed, including but not limited to security, update, etc.
+This is an initial experiment, with a number of ToDo's: real filtering, update, etc.  That said, it might be an excellent way to explore MCP.
 
-We welcome participation in this exploration.  Please contact us via [discord](https://discord.gg/HcGxbBsgRF).
+We welcome participation in this exploration. Please contact us via [discord](https://discord.gg/HcGxbBsgRF).
 
-This exploration is changing rapidly.  For updates, replace `integration/mcp` from [integration/msp](https://github.com/ApiLogicServer/ApiLogicServer-src/tree/main/api_logic_server_cli/prototypes/nw_no_cust/integration/mcp){:target="_blank" rel="noopener"}.
-
-&nbsp;
-
-## ALS Access via MCP 
-
-There are 2 projects we have used for testing:
-
-1. **NW:** In the Manager, open `samples/nw_sample_nocust`, and explore `integration/mcp`.  This has been successfully used to invoke the server, including with authorization.
-2. **GenAI_DEMO:** preferred, since has update - from Dev Source, run run config: `Create blt/genai_demo_ as IS_GENAI_DEMO`
-    1. Copy 
-    2. In the target `genai_demo-` project: 
-
-```
-cp -R ~/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/genai_demo_ ~/dev/ApiLogicServer/ApiLogicServer-dev/servers
-
-cp -R ~/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/nw_no_cust/integration ~/dev/ApiLogicServer/ApiLogicServer-dev/servers/genai_demo_
-
-cp ~/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/nw_no_cust/api/api_discovery/openapi.py ~/dev/ApiLogicServer/ApiLogicServer-dev/servers/genai_demo_/api/api_discovery/openapi.py
-
-cp ~/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/nw_no_cust/config/default.env ~/dev/ApiLogicServer/ApiLogicServer-dev/servers/genai_demo_/config/default.env
-```
-
-Local testing:
-
-1. Run `integration/mcp/3_executor_test_agent.py`
+This exploration is changing rapidly. For updates, replace `integration/mcp` from [integration/msp](https://github.com/ApiLogicServer/ApiLogicServer-src/tree/main/api_logic_server_cli/prototypes/nw_no_cust/integration/mcp){:target="_blank" rel="noopener"}.
 
 &nbsp;
 
-## Access ALS with Nat Lang Query
-
-The goal is *Nat Lang access from Chat*.  We begin with *Nat Lang ALS Access from simple driver.*
+## Internal NL Access to Corp DB via MCP / JSON:API
 
 &nbsp;
 
-### Nat Lang ALS Access from simple driver
+### Setup
 
-Here we use a simple driver to simulate Chat access.
+There are 2 projects we have used for testing:  
 
-&nbsp;
+1. **basic_demo:** preferred, since has update - from Dev Source, run run config: `Create blt/genai_demo_ as IS_GENAI_DEMO`
+1. **NW:** In the Manager, open `samples/nw_sample_nocust`, and explore `integration/mcp`. This has been successfully used to invoke the server, including with authorization.
+1. Create in manager
+1. Run `als add-cust` to load mcp tests
+1. Run `python integration/mcp/mcp_client_executor.py`
 
-#### Tunnel to local host with ngrok
-
-Requires tunnel to local host such as [ngrok](https://ngrok.com/downloads/mac-os?tab=download), then
-
-```
-ngrok config add-authtoken <obtain from https://dashboard.ngrok.com/get-started/setup/macos>
-```
-
-then
-
-```
-ngrok http 5656
-```
-
-You should see:
-
-![ngrok](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/mcp/ngrok.png?raw=true)
-
-and note the url like: `https://tunnel_url_eg_bca3_2601.ngrok-free.app -> http://localhost:5656`
-
-We'll call it `tunnel_url`.
+You will need a ChatGPT APIKey.
 
 &nbsp;
 
-#### Use natlang_to_api
+### Sample flow:
 
-```
-pip install openai==0.28.1
-```
+![Intro diagram](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/mcp/MCP_Arch.png?raw=true)  
 
-Fix API Keys and URLS, then run `natlang_to_api.py` (gateway not required).  Observe json result.
+1. Bus User enters a natural language query in the internal UI.
 
-&nbsp;
+   * This might be similar to installed/Web ChatGPT (etc), but those *cannot* be used to access MCPs since they cannot issue http calls.  This is an internally developed app (or, perhaps an IDE tool)
+   * We are using a test version: `integration/mcp/mcp_client_executor.py`
+1. MCP Client Executor sends the query + schema (as prompt or tool definition) to the external LLM, here, ChatGPT (requires API Key).
 
-### Nat Lang ALS Access using OpenAI Plugin
+   * Tool definitions are OpenAI specific, so we are sending the schema in each prompt.  
+   * This schema is copied from `docs/db.dbml` (already created by als)
+   * Note this strongly suggests this is a **subset** of your database. 
+1. LLM returns an MCP Tool Context JSON block.
+1. MCP Client Executor sends the Tool Context to the MCP Server Executor, an endpoint in your als project
 
-Please see `integration/openai_plugin`.
-
-&nbsp;
-
-### Nat Lang ALS Access from LangChain (not working)
-
-Blocked on many import / version issues.  See `1_langchain_loader.py`.
-
-&nbsp;
-
-#### Create the MCP in Web ChatGPT
-
-In the web GPT: 
-
-Explore > Create > load mcp from `https://tunnel_url.ngrok-free.app/mcp.json`
-
-You can use this to test Nat Lang queries, tho it fails to notice the /api suffix.
-
-But this does not _run_ Nat Lang queries, since GPT is not enabled for http.  That requires yet another bridge in `api/api_discovery/openapi.py` (fetch_resource) -- coded, not tested.
+   * See `api/api_discovery/mcp_server_executor.py`
+1. MCP Server Executor calls the JSON:API Endpoint that enforces business logic.
+1. JSON:API queries the Corp DB and returns the results.
 
 &nbsp;
-
-#### Proxy for strict JSON:API
-
-Run `integration/msp/resources/proxy_server.py`.  
-
-This runs on port 6000 - use that for ngrok:
-
-```
-ngrok http 6000
-```
 
 ## Appendix 1: OpenAI Feedback
 
@@ -144,7 +77,7 @@ It appears that OpenAI is missing an enabling feature:
 
 Summary:
 
-As a developer, I have a fully functional REST API with a Swagger 2.0 spec and a proxy layer that emits strict JSON:API compliant responses. 
+As a developer, I have a fully functional REST API with a Swagger 2.0 spec and a proxy layer that emits strict JSON:API compliant responses.
 
 However, MCP fails to parse the results due to a ValueError, seemingly because the resource type ("type": "Customer") isn't known to MCP’s internal schema registry — even though it is fully defined in my Swagger spec.
 
@@ -161,9 +94,9 @@ Issue: MCP does not ingest the Swagger schema to understand new resource types o
 Request: Please support one (or more) of the following:
 
 1. Auto-ingesting Swagger (OpenAPI) specs for schema understanding
-2. Allowing users to register or upload resource types
-3. Relaxing strict JSON:API parsing to tolerate unfamiliar types that are structurally valid
-4. Benefit: This would unlock powerful real-world MCP integrations with actual APIs — enabling developers to query their real data using natural language, with minimal friction and zero backend changes.
+1. Allowing users to register or upload resource types
+1. Relaxing strict JSON:API parsing to tolerate unfamiliar types that are structurally valid
+1. Benefit: This would unlock powerful real-world MCP integrations with actual APIs — enabling developers to query their real data using natural language, with minimal friction and zero backend changes.
 
 &nbsp;
 
@@ -175,9 +108,9 @@ Info courtesy ChatGPT...
 
 ### API
 
-We currently create swagger 2 doc.  Many tools expect swagger 3.  We might use tools like Swagger Editor or APIMatic Transformer for conversion.
+We currently create swagger 2 doc. Many tools expect swagger 3. We might use tools like Swagger Editor or APIMatic Transformer for conversion.
 
-ChatGPT/MCP had difficulty with the api response not being *strict JSONPI*.  There's a jsonapi validator somewhere to verify the results are according to the jsonapi json schema.  We experimented with a proxy for translation.
+ChatGPT/MCP had difficulty with the api response not being *strict JSONPI*. There's a jsonapi validator somewhere to verify the results are according to the jsonapi json schema. We experimented with a proxy for translation.
 
 ### LangChain
 
@@ -201,17 +134,115 @@ What LangChain Does:
 LangChain can:
 
 1. Accept a question from a user
-2. Convert it into a SQL query (via GPT)
-3. Run it on your database
-4. Return and explain the result
+1. Convert it into a SQL query (via GPT)
+1. Run it on your database
+1. Return and explain the result
 
 ***See:*** `integration/mcp/1_langchain_loader.py`
 
 &nbsp;
 
-### MCP
+## Appendix 3: Access ALS with Nat Lang Query
 
-![Intro diagram](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/mcp/MCP_Arch.png?raw=true)
+We explored several alternatives:
+
+| Explore                                                        | Status                                                                                      |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| ALS Access via MCP                                             | Runs                                                                                        |
+| Nat Lang ALS Access from simple driver                         | Runs (simple query from test driver using `openai.ChatCompletion.create`)                   |
+| Nat Lang ALS Access using OpenAI Plugin                        | Ran simple ChatGPT query                                                                    |
+| Nat Lang ALS Access from LangChain                             | Blocked: import version issues                                                              |
+| Nat Lang access from Chat (eg, ChatGPT) to (tunnelled) ALS Svr | Blocked - See Appendix 1<br>* MCP unable to pre-register resource schemas inside its system |
+| ALS Svr can be choroegraphed by LLM (1 in a chain of calls)    | TBD                                                                                         |
+|                                                                |                                                                                             |
+
+This is an early attempt to use web ChatGPT for *Nat Lang access from Chat*.  We begin with *Nat Lang ALS Access from simple driver.*
+
+&nbsp;
+
+### Nat Lang ALS Access from simple driver
+
+Here we use a simple driver to simulate Chat access.
+
+&nbsp;
+
+#### Tunnel to local host with ngrok
+
+Requires tunnel to local host such as [ngrok](https://ngrok.com/downloads/mac-os?tab=download), then
+
+```
+
+ngrok config add-authtoken <obtain from https://dashboard.ngrok.com/get-started/setup/macos>
+
+```
+
+then
+
+```
+
+ngrok http 5656
+
+```
+
+You should see:
+
+![ngrok](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/mcp/ngrok.png?raw=true)
+
+and note the url like: `https://tunnel_url_eg_bca3_2601.ngrok-free.app -> http://localhost:5656`
+
+We'll call it `tunnel_url`.
+
+&nbsp;
+
+#### Use natlang_to_api
+
+```
+
+pip install openai==0.28.1
+
+```
+
+Fix API Keys and URLS, then run `natlang_to_api.py` (gateway not required). Observe json result.
+
+&nbsp;
+
+### Nat Lang ALS Access using OpenAI Plugin
+
+Please see `integration/openai_plugin`.
+
+&nbsp;
+
+### Nat Lang ALS Access from LangChain (not working)
+
+Blocked on many import / version issues. See `1_langchain_loader.py`.
+
+&nbsp;
+
+#### Create the MCP in Web ChatGPT
+
+In the web GPT:
+
+Explore > Create > load mcp from `https://tunnel_url.ngrok-free.app/mcp.json`
+
+You can use this to test Nat Lang queries, tho it fails to notice the /api suffix.
+
+But this does not _run_ Nat Lang queries, since GPT is not enabled for http. That requires yet another bridge in `api/api_discovery/openapi.py` (fetch_resource) -- coded, not tested.
+
+&nbsp;
+
+#### Proxy for strict JSON:API
+
+Run `integration/msp/resources/proxy_server.py`.
+
+This runs on port 6000 - use that for ngrok:
+
+```
+
+ngrok http 6000
+
+```
+
+## Appendix 4: MCP Background
 
 For more information:
 
@@ -220,4 +251,8 @@ For more information:
 - [and here](https://www.youtube.com/watch?v=1bUy-1hGZpI&t=72s)
 - and this [N8N link](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.mcptrigger/?utm_source=n8n_app&utm_medium=node_settings_modal-credential_link&utm_campaign=%40n8n%2Fn8n-nodes-langchain.mcpTriggerlangchain.mcpTriggerlangchain.mcpTrigger)
 - and this [python sdk](https://github.com/modelcontextprotocol/python-sdk)
+- and [this video](https://www.youtube.com/shorts/xdMVgZfZ1yg)
+
+
+
 - 
