@@ -1,12 +1,16 @@
 Model Context Protocol is a way for:
 
-1. LLMs to ***choreograph*** multiple MCP servers in a chain of calls - an agentic workflow. MCPs support shared contexts and goals, enabling the LLM to use the result from 1 call to determine whether the goals has been reached, or which service is appropriate to call next
+1. **Bus User ad hoc flows** using existing published mcp services (vs. hard-coding in IT as an endpoint; flows can be cached for repeated use)
 
-2. Chat agents to ***discover*** and ***call*** external servers, be they databases, APIs, file systems, etc. MCPs support shared contexts and goals, enabling the LLM
+    * ***Natural Language access*** to corporate databases for improved user interfaces
 
-3. ***Corporate database participation*** in such flows, by making key functions available as MCP calls.
+    * LLMs ***choreograph*** multiple MCP calls (to 1 or more MCP servers) in a chain of calls - an agentic workflow. MCPs support shared contexts and goals, enabling the LLM to use the result from 1 call to determine whether the goals has been reached, or which service is appropriate to call next
 
-4. Chat agents to invoke ***NLM Natural Language services*** to corporate databases for improved user interfaces
+3. Chat agents to ***discover*** and ***call*** external servers, be they databases, APIs, file systems, etc. MCPs support shared contexts and goals, enabling the LLM
+
+    * ***Corporate database participation*** in such flows, by making key functions available as MCP calls.
+
+
 
 For tech background, see Appendix 2.
 
@@ -73,7 +77,7 @@ You will need a ChatGPT APIKey.
 2. MCP Client Executor sends the query + schema (as prompt or tool definition) to the external LLM, here, ChatGPT (requires API Key).
 
 	* Tool definitions are OpenAI specific, so we are sending the schema in each prompt.  
-	* This schema is copied from `docs/db.dbml` (already created by als)
+	* This schema is derived from `docs/db.dbml` (already created by als)
 	* Note this strongly suggests this is a **subset** of your database. 
 
 3. LLM returns an MCP Tool Context JSON block.
@@ -86,15 +90,13 @@ You will need a ChatGPT APIKey.
 
 6. JSON:API queries the Corp DB and returns the results.
 
-  
+%nbsp;
 
-  
+## Exposing Corp DB to public MCP
+
+TBD - investigate exposing a corp db to MCP so it can be discovered and used in a choroegraphy.
 
 &nbsp;
-
-  
-
-
 
 ## Appendix 1: OpenAI Feedback
 
