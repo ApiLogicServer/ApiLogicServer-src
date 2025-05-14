@@ -80,7 +80,7 @@ class OntBuilder(object):
         self.currency_symbol_position="left" # "right"
         self.thousand_separator="," # "."
         self.decimal_separator="." # ","
-        self.date_format="LL" #not sure what this means
+        self.date_format="YYYY-DD-MM" #not sure what this means
         self.edit_on_mode = "dblclick" # edit or click
         self.include_translation = False
         self.row_height = "medium"
@@ -201,7 +201,7 @@ class OntBuilder(object):
         for setting_name, each_setting in app_model.settings.style_guide.items():
             #style guide
             self.set_style(setting_name, each_setting)
-            self.global_values[setting_name] = each_setting
+            self.global_values[setting_name] = each_setting if setting_name is not DotMap() else None
         
         '''
             # Breaking change - added to app.config.ts - values may not be on older version
@@ -210,18 +210,18 @@ class OntBuilder(object):
             applicationLocales = ["en","es"]
             startSessionPath = "/auth/login"
         '''
-        if getattr(self.global_values,"serviceType",None) is None:
+        if getattr(self.global_values,"serviceType",None) is None  or getattr(self.global_values,"serviceType",None) == DotMap():
             self.global_values["serviceType"] = "JSONAPI"
-        if getattr(self.global_values,"locale",None) is None:
-            self.global_values["locale"] =  ["en","es"]
-        if getattr(self.global_values,"applicationLocales",None) is None:
-            self.global_values["applicationLocales"] = "en"
-        if getattr(self.global_values,"startSessionPath",None) is None:
-            self.global_values["startSessionPath"] = "/auth/login"
-        if getattr(self.global_values,"exclude_listpicker",None) is None:
+        if getattr(self.global_values,"locale",None) is None or getattr(self.global_values,"locale",None) == DotMap():
+            self.global_values["locale"] =  "en"
+        if getattr(self.global_values,"applicationLocales",None) is None or getattr(self.global_values,"applicationLocales",None) == DotMap():
+            self.global_values["applicationLocales"] =  ['en','es']
+    
+        if getattr(self.global_values,"exclude_listpicker",None) is None or getattr(self.global_values,"exclude_listpicker",None) == DotMap():
             self.global_values["exclude_listpicker"] = False
-        if getattr(self.global_values,"api_endpoint",None) is None:
-            self.global_values["api_endpoint"] = self.apiEndpoint
+
+        self.global_values["startSessionPath"] = '/auth/login'
+        self.global_values["api_endpoint"] = self.apiEndpoint
             
         # If the application yaml has been included = we will use the values from the yaml
         if "application" in app_model:
@@ -323,7 +323,7 @@ class OntBuilder(object):
     def build_entity_list_from_app(self):
         entity_list = self.app_model.entities
         if "application" in self.app_model:
-            entities = []
+            entities = {}
             for app in self.app_model.application:
                 # yaml may have multiple apps = only work on the one selected app-build --app={app}
                 #if self.app != app:
@@ -334,7 +334,7 @@ class OntBuilder(object):
                         each_entity = self.app_model.entities[mi]
                         for each_entity_name, each_entity in entity_list.items():
                             if each_entity_name == mi:
-                                entities.append((mi,each_entity))
+                                entities[mi] = each_entity
             return entities
                         
         return entity_list
@@ -442,7 +442,7 @@ class OntBuilder(object):
     def build_entity_favorites(self):
         entity_favorites = []
         entity_list = self.build_entity_list_from_app()
-        for each_entity_name, each_entity in entity_list:
+        for each_entity_name, each_entity in entity_list.items():
             datatype = 'INTEGER'
             pkey_datatype = 'INTEGER'
             primary_key = each_entity["primary_key"]
@@ -508,7 +508,7 @@ class OntBuilder(object):
             
     def get_entity(self, entity_name):
         entity_list = self.build_entity_list_from_app()
-        for each_entity_name, each_entity in entity_list:
+        for each_entity_name, each_entity in entity_list.items():
             if each_entity_name == entity_name:
                 return each_entity
         
@@ -689,7 +689,7 @@ class OntBuilder(object):
                 for mg in menu_group:
                     entities = []
                     for mi in menu_group[mg]["menu_item"]:
-                        for entity_name, each_entity in entity_list:
+                        for entity_name, each_entity in entity_list.items():
                             if entity_name == mi:
                                 get_group(menu_groups, mg, each_entity)
         return menu_groups
@@ -941,7 +941,7 @@ class OntBuilder(object):
                 tab_name, tab_vars = self.get_tab_attrs(entity, parent_entity, fk_tab)
                 primaryKey = make_keys(entity["primary_key"])
                 entity_list = self.build_entity_list_from_app()
-                for each_entity_name, each_entity in entity_list:
+                for each_entity_name, each_entity in entity_list.items():
                     if each_entity_name == tab_name:
                         template = self.load_tab_template(each_entity,entity,tab_vars, primaryKey )
                         panels.append(template)
@@ -1015,7 +1015,7 @@ class OntBuilder(object):
 
         sidebarTemplate = self.sidebar_template
         # sep = ","
-        for each_entity_name, each_entity in entities:
+        for each_entity_name, each_entity in entities.items():
             name = each_entity_name
             entity_first_cap = f"{name[:1].upper()}{name[1:]}"
             var = {"entity": name, "entity_first_cap": entity_first_cap}
@@ -1097,7 +1097,7 @@ class OntBuilder(object):
             if tg.direction == "tomany":
                 var["tab_name"] = tg.resource
                 var["tab_key"] = tg.fks[0]
-                if next((e for e in entity_list if e[0] == tg.resource), None):
+                if next((e for e in entity_list if e == tg.resource), None):
                     additional_routes += f",{self.detail_route_template.render(var)}"
 
         var["additional_routes"] = additional_routes
@@ -1135,7 +1135,7 @@ class OntBuilder(object):
         menu_separator = ""
         groups = self.get_menu_group()
         if len(groups) == 0:
-            for each_entity_name, each_entity in entities:
+            for each_entity_name, each_entity in entities.items():
                 group =  getattr(each_entity, "group") or "data" 
                 get_group(groups, group, each_entity)
         
@@ -1321,7 +1321,7 @@ def gen_app_service_config(entities: any) -> str:
     sep = ""
     config = ""
     children = ""
-    for each_entity_name, each_entity in entities:
+    for each_entity_name, each_entity in entities.items():
         name = each_entity_name
         title = each_entity["label"].replace("*","") if hasattr(each_entity, "label") and each_entity.label != DotMap() else name
         child = child_template.render(title=title, name=name)

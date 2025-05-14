@@ -324,7 +324,7 @@ class OntCreator(object):
         style_guide.currency_symbol_position="left" # "right"
         style_guide.thousand_separator="," # "."
         style_guide.decimal_separator="." # ","
-        style_guide.date_format="LL" #not sure what this means
+        style_guide.date_format="YYYY-MM-DD" #not sure what this means
         style_guide.edit_on_mode = "dblclick" # edit #click
         style_guide.min_decimal_digits="2"
         style_guide.max_decimal_digits="4" 
