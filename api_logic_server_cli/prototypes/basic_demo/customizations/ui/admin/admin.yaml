@@ -1,17 +1,17 @@
 about:
-  date: May 13, 2025 17:35:46
+  date: May 13, 2025 20:12:31
   merged:
-    at: May 13, 2025 17:38:00
-    new_attributes: 'Customer.email Customer.reminder_sent Order.CreatedOn '
-    new_resources: ''
-    new_tab_groups: ''
+    at: May 13, 2025 20:15:21
+    new_attributes: 'Customer.email Order.CreatedOn '
+    new_resources: 'Email '
+    new_tab_groups: 'Customer.EmailList '
   recent_changes: works with modified safrs-react-admin
   version: 0.0.0
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
 authentication: '{system-default}'
 info:
-  number_relationships: 3
-  number_tables: 4
+  number_relationships: 4
+  number_tables: 5
 info_toggle_checked: true
 resources:
   Customer:
@@ -26,16 +26,38 @@ resources:
       type: DECIMAL
     - name: id
     - name: email
-    - name: reminder_sent
-      type: DATE
     tab_groups:
     - direction: tomany
       fks:
       - customer_id
       name: OrderList
       resource: Order
+    - direction: tomany
+      fks:
+      - customer_id
+      name: EmailList
+      resource: Email
     type: Customer
     user_key: name
+  Email:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: customer_id
+      required: true
+    - name: message
+    - name: CreatedOn
+      type: DATE
+    tab_groups:
+    - direction: toone
+      fks:
+      - customer_id
+      name: customer
+      resource: Customer
+    type: Email
+    user_key: id
   Item:
     attributes:
     - label: ' id*'
