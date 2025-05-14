@@ -1,12 +1,17 @@
 about:
-  date: May 08, 2025 07:26:46
+  date: May 13, 2025 20:12:31
+  merged:
+    at: May 13, 2025 20:15:21
+    new_attributes: 'Customer.email Order.CreatedOn '
+    new_resources: 'Email '
+    new_tab_groups: 'Customer.EmailList '
   recent_changes: works with modified safrs-react-admin
   version: 0.0.0
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
 authentication: '{system-default}'
 info:
-  number_relationships: 3
-  number_tables: 4
+  number_relationships: 4
+  number_tables: 5
 info_toggle_checked: true
 resources:
   Customer:
@@ -20,18 +25,43 @@ resources:
     - name: credit_limit
       type: DECIMAL
     - name: id
+    - name: email
     description: Defines the Customer entity with a unique name, balance, and credit
       limit.
     info_list: Defines the Customer entity with a unique name, balance, and credit
-      limit.
+      limit.    
     tab_groups:
     - direction: tomany
       fks:
       - customer_id
       name: OrderList
       resource: Order
+    - direction: tomany
+      fks:
+      - customer_id
+      name: EmailList
+      resource: Email
     type: Customer
     user_key: name
+  Email:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: customer_id
+      required: true
+    - name: message
+    - name: CreatedOn
+      type: DATE
+    tab_groups:
+    - direction: toone
+      fks:
+      - customer_id
+      name: customer
+      resource: Customer
+    type: Email
+    user_key: id
   Item:
     attributes:
     - label: ' id*'
@@ -74,6 +104,8 @@ resources:
     - name: amount_total
       type: DECIMAL
     - name: date_shipped
+      type: DATE
+    - name: CreatedOn
       type: DATE
     description: Defines the Order entity which belongs to a customer. Includes notes
       and amount total.
