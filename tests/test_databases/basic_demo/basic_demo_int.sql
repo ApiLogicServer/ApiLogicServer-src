@@ -1,6 +1,6 @@
 -- see https://www.sqlitetutorial.net/sqlite-dump/
--- sqlite3 tests/test_databases/basic_demo/basic_demo_carb.sqlite < tests/test_databases/basic_demo/basic_demo_carb.sql;
--- popd
+-- rm tests/test_databases/basic_demo/basic_demo_int.sqlite; sqlite3 tests/test_databases/basic_demo/basic_demo_int.sqlite < tests/test_databases/basic_demo/basic_demo_int.sql
+--
 
 BEGIN TRANSACTION;
 CREATE TABLE customer (
@@ -8,12 +8,14 @@ CREATE TABLE customer (
         name VARCHAR, 
         balance DECIMAL, 
         credit_limit DECIMAL, 
+        email varchar,
+        reminder_sent DATE,
         PRIMARY KEY (id)
 );
-INSERT INTO customer VALUES(1,'Alice',90,5000);
-INSERT INTO customer VALUES(2,'Bob',0,3000);
-INSERT INTO customer VALUES(3,'Charlie',220,2000);
-INSERT INTO customer VALUES(4,'Diana',0,1000);
+INSERT INTO customer VALUES(1,'Alice',90,5000, "alice@corp.org", NULL);
+INSERT INTO customer VALUES(2,'Bob',0,3000, "bob@corp.org", NULL);
+INSERT INTO customer VALUES(3,'Charlie',220,2000, "charlie@corp.org", NULL);
+INSERT INTO customer VALUES(4,'Diana',0,1000, "diana@corp.org", NULL);
 CREATE TABLE product (
         id INTEGER NOT NULL, 
         name VARCHAR, 
@@ -30,15 +32,16 @@ CREATE TABLE IF NOT EXISTS "order" (
         id INTEGER NOT NULL, 
         notes VARCHAR, 
         customer_id INTEGER NOT NULL, 
+        CreatedOn DATE,
         date_shipped DATE, 
         amount_total DECIMAL, 
         PRIMARY KEY (id), 
         FOREIGN KEY(customer_id) REFERENCES customer (id)
 );
-INSERT INTO "order" VALUES(1,'First Order',2,'2023-03-22',300);
-INSERT INTO "order" VALUES(2,'Second Order',1,NULL,90);
-INSERT INTO "order" VALUES(3,'Pending Shipment',3,NULL,220);
-INSERT INTO "order" VALUES(4,'Urgent Order',4,'2023-07-15',220);
+INSERT INTO "order" VALUES(1,'First Order',2, '2023-02-22', '2023-03-22',300);
+INSERT INTO "order" VALUES(2,'Second Order',1, '2023-02-22',NULL,90);
+INSERT INTO "order" VALUES(3,'Pending Shipment',3, '2023-01-22',NULL,220);
+INSERT INTO "order" VALUES(4,'Urgent Order',4, '2023-02-22', '2023-07-15',220);
 CREATE TABLE item (
         id INTEGER NOT NULL, 
         order_id INTEGER, 

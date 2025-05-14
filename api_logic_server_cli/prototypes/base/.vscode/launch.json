@@ -95,7 +95,8 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "  - test/basic/server_test.py",
+            "name": "Test - test/basic/server_test.py",
+// use this for test programs, eg to test the server
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}",
