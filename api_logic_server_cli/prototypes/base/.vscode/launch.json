@@ -113,7 +113,7 @@
             "request": "launch",
             "cwd": "${workspaceFolder}/ui/app",
             "runtimeExecutable": "npm",
-            "runtimeArgs": ["install"],
+            "runtimeArgs": ["install --force"],
             "console": "integratedTerminal"
         },
         {

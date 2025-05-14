@@ -487,8 +487,7 @@
             "args": [
                 "app-build",
                 "--project-name=",
-                "--app=jsonapi",
-                "--api-endpoint=Customer"
+                "--app=app1",
                 ],
             "console": "integratedTerminal"
         },
