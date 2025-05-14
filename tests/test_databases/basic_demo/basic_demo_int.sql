@@ -16,6 +16,17 @@ INSERT INTO customer VALUES(1,'Alice',90,5000, "alice@corp.org", NULL);
 INSERT INTO customer VALUES(2,'Bob',0,3000, "bob@corp.org", NULL);
 INSERT INTO customer VALUES(3,'Charlie',220,2000, "charlie@corp.org", NULL);
 INSERT INTO customer VALUES(4,'Diana',0,1000, "diana@corp.org", NULL);
+
+
+CREATE TABLE IF NOT EXISTS "email" (
+        id INTEGER NOT NULL, 
+        message VARCHAR, 
+        customer_id INTEGER NOT NULL, 
+        CreatedOn DATE,
+        PRIMARY KEY (id), 
+        FOREIGN KEY(customer_id) REFERENCES customer (id)
+);
+
 CREATE TABLE product (
         id INTEGER NOT NULL, 
         name VARCHAR, 
@@ -28,6 +39,7 @@ INSERT INTO product VALUES(2,'Widget',90, NULL);
 INSERT INTO product VALUES(3,'Thingamajig',75, NULL);
 INSERT INTO product VALUES(4,'Doodad',110, NULL);
 INSERT INTO product VALUES(5,'Green',109, 1);
+
 CREATE TABLE IF NOT EXISTS "order" (
         id INTEGER NOT NULL, 
         notes VARCHAR, 
@@ -42,6 +54,7 @@ INSERT INTO "order" VALUES(1,'First Order',2, '2023-02-22', '2023-03-22',300);
 INSERT INTO "order" VALUES(2,'Second Order',1, '2023-02-22',NULL,90);
 INSERT INTO "order" VALUES(3,'Pending Shipment',3, '2023-01-22',NULL,220);
 INSERT INTO "order" VALUES(4,'Urgent Order',4, '2023-02-22', '2023-07-15',220);
+
 CREATE TABLE item (
         id INTEGER NOT NULL, 
         order_id INTEGER, 
