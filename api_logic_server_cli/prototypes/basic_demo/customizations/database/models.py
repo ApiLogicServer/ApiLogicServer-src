@@ -10,7 +10,7 @@ from sqlalchemy.ext.declarative import declarative_base
 # Alter this file per your database maintenance policy
 #    See https://apilogicserver.github.io/Docs/Project-Rebuild/#rebuilding
 #
-# Created:  May 13, 2025 17:38:00
+# Created:  May 13, 2025 20:15:21
 # Database: sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/servers/basic_demo/database/db.sqlite
 # Dialect:  sqlite
 #
@@ -53,11 +53,11 @@ class Customer(Base):  # type: ignore
     balance : DECIMAL = Column(DECIMAL)
     credit_limit : DECIMAL = Column(DECIMAL)
     email = Column(String)
-    reminder_sent = Column(Date)
 
     # parent relationships (access parent)
 
     # child relationships (access children)
+    EmailList : Mapped[List["Email"]] = relationship(back_populates="customer")
     OrderList : Mapped[List["Order"]] = relationship(back_populates="customer")
 
 
@@ -74,6 +74,22 @@ class Product(Base):  # type: ignore
 
     # child relationships (access children)
     ItemList : Mapped[List["Item"]] = relationship(back_populates="product")
+
+
+
+class Email(Base):  # type: ignore
+    __tablename__ = 'email'
+    _s_collection_name = 'Email'  # type: ignore
+
+    id = Column(Integer, primary_key=True)
+    message = Column(String)
+    customer_id = Column(ForeignKey('customer.id'), nullable=False)
+    CreatedOn = Column(Date)
+
+    # parent relationships (access parent)
+    customer : Mapped["Customer"] = relationship(back_populates=("EmailList"))
+
+    # child relationships (access children)
 
 
 
