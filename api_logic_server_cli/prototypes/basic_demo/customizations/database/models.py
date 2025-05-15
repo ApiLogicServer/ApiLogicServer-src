@@ -1,6 +1,6 @@
 # coding: utf-8
 from sqlalchemy import DECIMAL, DateTime  # API Logic Server GenAI assist
-from sqlalchemy import Column, DECIMAL, Date, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, DECIMAL, Date, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -10,7 +10,7 @@ from sqlalchemy.ext.declarative import declarative_base
 # Alter this file per your database maintenance policy
 #    See https://apilogicserver.github.io/Docs/Project-Rebuild/#rebuilding
 #
-# Created:  May 13, 2025 20:15:21
+# Created:  May 14, 2025 10:47:47
 # Database: sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/servers/basic_demo/database/db.sqlite
 # Dialect:  sqlite
 #
@@ -53,6 +53,7 @@ class Customer(Base):  # type: ignore
     balance : DECIMAL = Column(DECIMAL)
     credit_limit : DECIMAL = Column(DECIMAL)
     email = Column(String)
+    email_opt_out = Column(Boolean)
 
     # parent relationships (access parent)
 

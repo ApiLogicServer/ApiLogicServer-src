@@ -26,6 +26,8 @@ resources:
       type: DECIMAL
     - name: id
     - name: email
+    - name: email_opt_out
+      type: BOOLEAN
     description: Defines the Customer entity with a unique name, balance, and credit
       limit.
     info_list: Defines the Customer entity with a unique name, balance, and credit
