@@ -69,26 +69,56 @@ You will need a ChatGPT APIKey.
 
 ![Intro diagram](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/mcp/MCP_Arch.png?raw=true)  
 
-1. Bus User enters a natural language query in the internal UI.
+1. MCP Client Executor Startup
 
-	* This might be similar to installed/Web ChatGPT (etc), but those *cannot* be used to access MCPs since they cannot issue http calls.  This is an internally developed app (or, perhaps an IDE tool)
-	* We are using a test version: `integration/mcp/mcp_client_executor.py`
+	* Calls *wellknown* endpoint to load schema
+	* This schema is similar to `docs/db.dbml` (already created by als)
 
-2. MCP Client Executor sends the query + schema (as prompt or tool definition) to the external LLM, here, ChatGPT (requires API Key).
+2. MCP Client Executor sends Bus User ***NL query + schema*** (as prompt or tool definition) to the external LLM, here, ChatGPT (requires API Key).  LLM returns an ***MCP Tool Context*** JSON block.
 
-	* Tool definitions are OpenAI specific, so we are sending the schema in each prompt.  
+	* An MCP Client Executor might be similar in concept to installed/Web ChatGPT (etc), but those *cannot* be used to access MCPs since they cannot issue http calls.  This is an internally developed app (or, perhaps an IDE tool)
+
+		* We are using a test version: `integration/mcp/mcp_client_executor.py`
+	* Tool definitions are OpenAI specific, so we are sending the schema (in each prompt)
+
+		* Note this strongly suggests this is a **subset** of your database.  
 	* This schema is derived from `docs/db.dbml` (already created by als)
-	* Note this strongly suggests this is a **subset** of your database. 
+ 
 
-3. LLM returns an MCP Tool Context JSON block.
+4. MCP Client Executor iterates through the Tool Context, calling the JSON:API Endpoint that enforces business logic.
 
-4. MCP Client Executor sends the Tool Context to the MCP Server Executor, an endpoint in your als project
+Here is a typical `https://localhost:5656/.well-known/mcp.json` response (not yet implemented):
 
-	* See `api/api_discovery/mcp_server_executor.py`
+```json
+{
+  "tool_type": "json-api",
+  "base_url": "https://crm.company.com",
+  "resources": [
+    {
+      "name": "Customer",
+      "path": "/Customer",
+      "methods": ["GET", "PATCH"],
+      "fields": ["id", "name", "balance", "credit_limit"],
+      "filterable": ["name", "credit_limit"],
+      "example": "List customers with credit over 5000"
+    }
+  ]
+}
+```
 
-5. MCP Server Executor calls the JSON:API Endpoint that enforces business logic.
+### Example
 
-6. JSON:API queries the Corp DB and returns the results.
+Here is a NL prompt using *basic_demo:*
+
+```
+List the orders created more than 30 days ago, and send a discount offer email to the customer for each one.
+
+Respond with a JSON array of tool context blocks using:
+- tool: 'json-api'
+- JSON:API-compliant filtering (e.g., filter[CreatedOn][lt])
+- Use {{ order.customer_id }} as a placeholder in the second step.
+- Include method, url, query_params or body, headers, expected_output.
+```
 
 %nbsp;
 

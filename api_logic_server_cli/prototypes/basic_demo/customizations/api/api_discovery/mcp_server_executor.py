@@ -65,6 +65,8 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
     @app.route('/mcp_server_executor', methods=['POST'])
     def mcp_server_executor(path=None):
         ''' sample response printed in mcp_client_executor.py:
+        FIXME - incorrect.
+        But do provide: https://localhost:5656/.well-known/mcp.json
         ```
             MCP MCP Response (simulated):
             {
