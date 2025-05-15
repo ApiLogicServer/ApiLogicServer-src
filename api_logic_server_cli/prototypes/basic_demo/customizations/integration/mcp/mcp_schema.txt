@@ -19,10 +19,19 @@ Item:
     ↪ relates to Product
   * Example: 'Find all items for order 42'
 
+Email:
+  - id (INTEGER)
+  - message (VARCHAR)
+  - customer_id (INTEGER)
+  * Relationships:
+    ↪ relates to Customer
+  * Example: 'Post an message "text" for customer 2 means POST to this resource'
+
 Order:
   - id (INTEGER)
   - notes (VARCHAR)
   - customer_id (INTEGER)
+  - CreatedOn (DATE)
   - date_shipped (DATE)
   - amount_total (DECIMAL)
   * Filterable: notes, customer_id, date_shipped, amount_total

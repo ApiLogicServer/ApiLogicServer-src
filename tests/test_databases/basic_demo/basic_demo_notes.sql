@@ -18,3 +18,17 @@ CREATE TABLE customer (
         credit_limit DECIMAL, 
         PRIMARY KEY (id)
 );
+
+
+CREATE TABLE product (
+        id INTEGER NOT NULL, 
+        name VARCHAR, 
+        unit_price DECIMAL, 
+        carbon_neutral BOOLEAN,
+        PRIMARY KEY (id)
+);
+INSERT INTO product VALUES(1,'Gadget',150, 1);
+INSERT INTO product VALUES(2,'Widget',90, NULL);
+INSERT INTO product VALUES(3,'Thingamajig',75, NULL);
+INSERT INTO product VALUES(4,'Doodad',110, NULL);
+INSERT INTO product VALUES(5,'Green',109, 1);

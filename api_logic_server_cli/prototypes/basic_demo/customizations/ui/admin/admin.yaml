@@ -26,6 +26,8 @@ resources:
       type: DECIMAL
     - name: id
     - name: email
+    - name: email_opt_out
+      type: BOOLEAN
     tab_groups:
     - direction: tomany
       fks:
