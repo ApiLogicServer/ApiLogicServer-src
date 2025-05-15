@@ -156,14 +156,15 @@ class OntBuilder(object):
             with contextlib.suppress(Exception):
                 return self.template_env.get_template(template_name)
         use_local=True 
-        if use_local:
-            with contextlib.suppress(Exception):
-                return self.local_env.get_template(template_name)
         try:
+            if use_local:
+                with contextlib.suppress(Exception):
+                    return self.local_env.get_template(template_name)
+            
             return self.env.get_template(template_name)
         except Exception as e:
             log.error(f"Error loading template {template_name} - {e}")
-            return None 
+        return None 
 
     
     def build_application(self, show_messages: bool = True):
@@ -545,7 +546,7 @@ class OntBuilder(object):
         return template.render(entity_vars)
 
     def load_home_template(self, template_name: str, entity: any, entity_name:str, entity_favorites: any) -> str:
-        template = self.get_template(template_name)
+        template = self.get_template(template_name) or self.get_template("home_template.html")
         entity_vars = self.get_entity_vars(entity_name=entity_name, entity=entity)
         entity_vars["row_columns"] = self.get_entity_columns(entity, entity_vars=entity_vars)
         entity_vars["has_tabs"] = False
@@ -656,8 +657,7 @@ class OntBuilder(object):
     
     def get_columns(self, entity) -> str:
         cols = []
-        for column in entity.columns:
-            cols.append(column.name)
+        cols.extend(column.name for column in entity.columns)
         return ";".join(cols)
     
     def get_page(self, page_name, entity_name: str) -> dict:
@@ -849,11 +849,17 @@ class OntBuilder(object):
         entity_vars = self.get_entity_vars(entity_name, entity)
         fks = get_foreign_keys(entity, favorites)
         row_cols = []
-        for column in entity.columns:
-            if column.get("exclude", "false") == "true":
-                continue
-            rv = self.gen_detail_rows(column, fks, entity)
-            row_cols.append(rv)
+        if page := self.get_page("detail", entity.type):
+            visible_columns = page.visible_columns.replace(" ","",100).replace(",",";",100)
+        else:
+            visible_columns = self.get_visible_columns(entity, True)
+        for col in  visible_columns.split(";"):
+            for column in entity.columns:
+                if col == column.name:
+                    if column.get("exclude", "false") == "true":
+                        continue
+                    rv = self.gen_detail_rows(column, fks, entity)
+                    row_cols.append(rv)
 
         entity_vars["row_columns"] = row_cols
         entity_vars["has_tabs"] = len(fks) > 0
@@ -909,12 +915,18 @@ class OntBuilder(object):
         entity_vars = self.get_entity_vars(entity.type, entity, 'detail')
         template_var |= entity_vars
         row_cols = []
-        for column in entity.columns:
-            if column.get("exclude", "false") == "true":
-                continue
-            rv = self.gen_home_columns(entity,parent_entity, column)
-            row_cols.append(rv)
-                
+        if page := self.get_page("home", entity.type):
+            visible_columns = page.visible_columns.replace(" ","",100).replace(",",";",100)
+        else:
+            visible_columns = self.get_visible_columns(entity, True)
+        for col in  visible_columns.split(";"):
+            for column in entity.columns:
+                if col == column.name:
+                    if column.get("exclude", "false") == "true":
+                        continue
+                    rv = self.gen_home_columns(entity,parent_entity, column)
+                    row_cols.append(rv)
+        template_var['visibleColumns'] = visible_columns      
         template_var["row_columns"] = row_cols
         return  tab_template.render(template_var)
 
