@@ -54,8 +54,7 @@ def discover_mcp_servers():
     try:
         with open(discovery_file_path, "r") as discovery_file:
             discovery_data = json.load(discovery_file)
-            print(f"Discovered MCP servers from {discovery_file_path}:")
-            print(json.dumps(discovery_data, indent=4))
+            print(f"\nDiscovered MCP servers from config file: {discovery_file_path}:" + json.dumps(discovery_data, indent=4))
     except FileNotFoundError:
         print(f"Discovery file not found at {discovery_file_path}.")
     except json.JSONDecodeError as e:
@@ -63,15 +62,14 @@ def discover_mcp_servers():
     
     for each_server in discovery_data["servers"]:
         discovery_url = each_server["schema_url"]
-        print(f"OpenAPI URL: {discovery_url}")
 
         # Call the OpenAPI URL to get the API schema
         try:
             response = requests.get(discovery_url)
             if response.status_code == 200:
                 api_schema = response.json()
-                print("API Schema:")
-                print(json.dumps(api_schema, indent=4))
+                print()
+                print(f"\n1. API Schema from discovery schema_url: {discovery_url}:\n" +json.dumps(api_schema, indent=4))
             else:
                 print(f"Failed to retrieve API schema from {discovery_url}: {response.status_code}")
         except requests.RequestException as e:
@@ -175,6 +173,7 @@ def query_llm_with_nl(nl_query):
           print("Failed to decode JSON from response:", tool_context_str)
           return None
 
+    print("\n2. generated tool context from LLM:\n", json.dumps(tool_context, indent=4))
     return tool_context
 
 
@@ -203,74 +202,9 @@ def process_simple_get_request(tool_context):
         )
     return mcp_response
 
-
-def process_orchestration_request(tool_context):
-    """ Process the orchestration request by executing multiple tool context blocks.
-    This function simulates the MCP Client Executor by executing the tool context blocks
-    against a live JSON:API server. It handles both GET and POST requests, and it can
-    orchestrate multiple requests based on the provided tool context.
-
-    Note the orchestration is processed by the client executor, not the server executor.
-
-    TODO: 
-
-    1. Provide disoverability - provide api/.well-known/mcp.json (returns the schema, and is-JSON:API)
-
-        * called by mcp_client_executor, typically driven by a config file
-    2. Provide a better response than just the last one
-    2. How is this a "USB", since the request was specific about JSON:API?
-    3. How is it clear to loop through the tool_context[0] and call tool_context[1]?
-    """
-    global server_url
-    context_data = {}
-    added_rows = 0
-
-    for each_block in tool_context:
-        if each_block["tool"] in ["json-api", "email"]:
-           if each_block["method"] == "GET":
-                query_params = each_block.get("query_params", {})
-                query_params = "filter[customer_id]= 5"  #  TODO: hardcode for now
-                query_param_filter = ''
-                for each_key, each_value in each_block["query_params"].items():
-                    if isinstance(each_value, dict):
-                        for sub_key, sub_value in each_value.items():
-                            query_param_filter += f"&{each_key}[{sub_key}]={sub_value}"
-                    else:
-                        query_param_filter += f"&{each_key}={each_value}"
-                # query_params = ''
-                url = server_url + "/Order"  # each_block["url"],  TODO: requires plural, leading upper
-                get_response = requests.get(
-                    url = url,
-                    headers=each_block["headers"],
-                    params=query_param_filter
-                )
-                context_data = get_response.json()['data']  # result rows...
-           elif each_block["method"] in ["POST"]:
-                add_rows = 0
-                for each_order in context_data:
-                    url = each_block["url"]
-                    # body.data
-                    json_update_data =  { 'data': {"type": "Email", 'attributes': {} } }  
-                    json_update_data_attributes = json_update_data["data"]["attributes"]
-                    json_update_data_attributes["customer_id"] = context_data[0]['attributes']["customer_id"]
-                    json_update_data_attributes["message"] = each_block["body"] 
-                    # eg: POST http://localhost:5656/api/Email {'data': {'type': 'Email', 'attributes': {'customer_id': 5, 'message': {'to': '{{ order.customer_id }}', 'subject': 'Discount for your order', 'body': 'Dear customer, you have a discount for your recent order. Thank you for shopping with us.'}}}}
-                    post_response = requests.post(  
-                        url=url,
-                        headers=each_block["headers"],
-                        json=json_update_data
-                    )
-                    add_rows += 1
-        pass
-    return post_response  # TODO: consider a better response than just the last one  
-
-
-if __name__ == "__main__":
-    import sys
-
-    schema_text = discover_mcp_servers()
-
-    # this doesn't work -- missing commands for mcp_server_executor....
+def get_user_nl_query():
+    """ Get the natural language query from the user. """
+        # this doesn't work -- missing commands for mcp_server_executor....
     default_request = "List the orders created more than 30 days ago, and post an email message to the order's customer offering a discount"
 
     default_request = "List the orders created more than 30 days ago, and send a discount email to the customer for each one."
@@ -278,7 +212,7 @@ if __name__ == "__main__":
 
     default_request = "List the orders for customer 5, and send a discount email to the customer for each one."
 
-    default_request = "List customers with credit over 4000"  # uncomment for simple get request
+    # default_request = "List customers with credit over 4000"  # uncomment for simple get request
 
     query = sys.argv[1] if len(sys.argv) > 1 else default_request
 
@@ -289,16 +223,80 @@ Respond with a JSON array of tool context blocks using:
 - Use {{ order.customer_id }} as a placeholder in the second step.
 - Include method, url, query_params or body, headers, expected_output.
 """
+    return query
 
-    tool_context = query_llm_with_nl(query)
-    
-    # process the mcp response (tool_context)
-    print("\ngenerated tool context:\n", json.dumps(tool_context, indent=4))
 
-    if isinstance(tool_context, list):  # multiple tool contexts (an orchestration)
-        mcp_response = process_orchestration_request(tool_context)
+def process_tool_context(tool_context):
+    """ Process the orchestration request by executing multiple tool context blocks.
+    This function simulates the MCP Client Executor by executing the tool context blocks
+    against a live JSON:API server. It handles both GET and POST requests, and it can
+    orchestrate multiple requests based on the provided tool context.
+
+    Note the orchestration is processed by the client executor (here), not the server executor.
+
+    Research: 
+
+    1. How is this a "USB", since the request was specific about JSON:API?
+    2. How is it clear to loop through the tool_context[0] and call tool_context[1]?
+    """
+    global server_url
+
+    if not isinstance(tool_context, list):
+        process_response = process_simple_get_request(tool_context)
     else:
-        mcp_response = process_simple_get_request(tool_context)
+        context_data = {}
+        added_rows = 0
 
-    print("\nMCP MCP Response:\n", mcp_response.text)  # or, mcp_response.json()
+        for each_block in tool_context:
+            if each_block["tool"] in ["json-api", "email"]:
+                if each_block["method"] == "GET":
+                        query_params = each_block.get("query_params", {})
+                        query_params = "filter[customer_id]= 5"  #  TODO: hardcode for now
+                        query_param_filter = ''
+                        for each_key, each_value in each_block["query_params"].items():
+                            if isinstance(each_value, dict):
+                                for sub_key, sub_value in each_value.items():
+                                    query_param_filter += f"&{each_key}[{sub_key}]={sub_value}"
+                            else:
+                                query_param_filter += f"&{each_key}={each_value}"
+                        # query_params = ''
+                        url = server_url + "/Order"  # each_block["url"],  TODO: requires plural, leading upper
+                        get_response = requests.get(
+                            url = url,
+                            headers=each_block["headers"],
+                            params=query_param_filter
+                        )
+                        context_data = get_response.json()['data']  # result rows...
+                elif each_block["method"] in ["POST"]:
+                        add_rows = 0
+                        for each_order in context_data:
+                            url = each_block["url"]
+                            # body.data
+                            json_update_data =  { 'data': {"type": "Email", 'attributes': {} } }  
+                            json_update_data_attributes = json_update_data["data"]["attributes"]
+                            json_update_data_attributes["customer_id"] = context_data[0]['attributes']["customer_id"]
+                            json_update_data_attributes["message"] = each_block["body"] 
+                            # eg: POST http://localhost:5656/api/Email {'data': {'type': 'Email', 'attributes': {'customer_id': 5, 'message': {'to': '{{ order.customer_id }}', 'subject': 'Discount for your order', 'body': 'Dear customer, you have a discount for your recent order. Thank you for shopping with us.'}}}}
+                            process_response = requests.post(  
+                                url=url,
+                                headers=each_block["headers"],
+                                json=json_update_data
+                            )
+                            add_rows += 1
+            pass
+    print("\n3. MCP Server (als) Response:\n", process_response.text)
+    return process_response 
+
+
+if __name__ == "__main__":
+    import sys
+
+    schema_text = discover_mcp_servers()                # see: 1-discovery-from-als
+
+    query = get_user_nl_query()
+
+    tool_context = query_llm_with_nl(query)             # see: 2-tool-context-from-LLM   
+
+    mcp_response = process_tool_context(tool_context)   # see: 3-MCP-server response
+
     print("\nTest complete.\n")
