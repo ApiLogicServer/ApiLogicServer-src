@@ -1,3 +1,4 @@
+import json
 import logging
 from re import X
 import shutil
@@ -68,6 +69,91 @@ class DBMLCreator(object):
         self.dbms_lines.append('// Or, https://databasediagram.com/app')
         self.dbms_lines.append('// Or, view in VSCode with extension: "DBML Live Preview"')
         self.dbms_lines.append("")
+        self.mcp_schema = \
+            {
+                "tool_type": "json-api",
+                "schema_version": "1.0",
+                "base_url": "http://localhost:5656/api",
+                "description": f"API Logic Project: {self.mod_gen.project.project_name_last_node}",
+                "resources": [
+                ]
+            }
+        
+
+    def do_process_resource(self, resource_name: str)-> bool:
+        """ filter out resources that are skipped by user, start with ab etc
+        """
+        if "ProductDetails_V" in resource_name:
+            log.debug("special table")  # should not occur (--noviews)
+        if resource_name.startswith("ab_"):
+            return False  # skip admin table: " + table_name + "\n
+        elif 'sqlite_sequence' in resource_name:
+            return False  # skip sqlite_sequence table: " + table_name + "\n
+        elif resource_name is None:
+            return False  # no class (view): " + table_name + "\n
+        elif resource_name.startswith("Ab"):
+            return False
+        return True
+
+    def dbml_descriptions(self):
+        if len(self.mod_gen.project.table_descriptions) > 0:
+            self.dbms_lines.append("Project DBML {")
+            self.dbms_lines.append("  Note: '''")
+            for each_resource_name in self.mod_gen.resource_list:
+                if self.do_process_resource(each_resource_name):
+                    each_resource : Resource = self.mod_gen.resource_list[each_resource_name]
+                    description = "missing (requires genai creation)"
+                    table_descriptions = self.mod_gen.project.table_descriptions
+                    if each_resource.table_name in table_descriptions:
+                        # als model desc's: api_logic_server_cli/sqlacodegen_wrapper/sqlacodegen/sqlacodegen/codegen.py
+                        description = table_descriptions[each_resource.table_name]
+                        description = description.replace("Table representing ", "")
+                        description = description.replace("Table storing ", "")
+                        description = description.replace("This table stores ", "")
+                        description = description.replace("This table lists ", "")
+                        description = description.replace("This table records ", "")
+                    self.dbms_lines.append(f"{each_resource_name}: {description}")
+            self.dbms_lines.append("'''")
+            self.dbms_lines.append("}")
+            self.dbms_lines.append("")
+
+    def dbml_resources(self):
+        for each_resource_name in self.mod_gen.resource_list:
+            if self.do_process_resource(each_resource_name):
+                each_resource : Resource = self.mod_gen.resource_list[each_resource_name]
+                self.dbms_lines.append(f"Table {each_resource_name} {{")
+                pk_name = each_resource.primary_key[0].name
+                for each_attr in each_resource.attributes:
+                    db_type = each_attr.db_type
+                    if 'DECIMAL' in db_type:
+                        db_type = 'DECIMAL'  # dbml parse fails with DECIMAL(10,2)
+                    pk = "[primary key]" if each_attr.name == pk_name else ""
+                    self.dbms_lines.append(f"    {each_attr.name} {db_type} {pk}")
+                self.dbms_lines.append("    }")
+                self.dbms_lines.append("")
+
+    def dbml_relationships(self):
+        for each_resource_name in self.mod_gen.resource_list:
+            if self.do_process_resource(each_resource_name):
+                each_resource : Resource = self.mod_gen.resource_list[each_resource_name]
+                for each_resource_reln in each_resource.parents:
+                    parent_attr_list = ''
+                    child_attr_list = ''
+                    attr_number = 0
+                    parent_resource = self.mod_gen.resource_list[each_resource_reln.parent_resource]
+                    for each_key_pair in each_resource_reln.parent_child_key_pairs:
+                        if parent_attr_list != '':
+                            parent_attr_list += ', '
+                        # parent_attr_list += f"{each_key_pair[0]}"  # this is very odd
+                        parent_attr_list += parent_resource.primary_key[attr_number].name
+                        if child_attr_list != '':
+                            child_attr_list += ', '
+                        child_attr_list += f"{each_key_pair[1]}"
+                    if parent_attr_list != '':
+                        reln_line = f"    Ref: {each_resource_name}.({child_attr_list}) < {each_resource_reln.parent_resource}.({parent_attr_list})"
+                        self.dbms_lines.append(reln_line)
+                        if each_resource_reln.parent_resource == 'Location':  # multi-field key example in nw
+                            debug_stop = 'good breakpoint'  # '    Ref: Order.(City, Country) < Location.(?, ?)'
 
     def create_docs_dbml_file(self):
         """ main driver - loop through resources, write admin.yaml - with backup, nw customization
@@ -91,67 +177,14 @@ class DBMLCreator(object):
         sys.path.append(self.mod_gen.project.os_cwd)
 
         if do_table_descriptions := True:
-            if len(self.mod_gen.project.table_descriptions) > 0:
-                self.dbms_lines.append("Project DBML {")
-                self.dbms_lines.append("  Note: '''")
-                for each_resource_name in self.mod_gen.resource_list:
-                    if self.do_process_resource(each_resource_name):
-                        each_resource : Resource = self.mod_gen.resource_list[each_resource_name]
-                        description = "missing (requires genai creation)"
-                        table_descriptions = self.mod_gen.project.table_descriptions
-                        if each_resource.table_name in table_descriptions:
-                            # als model desc's: api_logic_server_cli/sqlacodegen_wrapper/sqlacodegen/sqlacodegen/codegen.py
-                            description = table_descriptions[each_resource.table_name]
-                            description = description.replace("Table representing ", "")
-                            description = description.replace("Table storing ", "")
-                            description = description.replace("This table stores ", "")
-                            description = description.replace("This table lists ", "")
-                            description = description.replace("This table records ", "")
-                        self.dbms_lines.append(f"{each_resource_name}: {description}")
-                self.dbms_lines.append("'''")
-                self.dbms_lines.append("}")
-                self.dbms_lines.append("")
+            self.dbml_descriptions()
 
-
-        for each_resource_name in self.mod_gen.resource_list:
-            if self.do_process_resource(each_resource_name):
-                each_resource : Resource = self.mod_gen.resource_list[each_resource_name]
-                self.dbms_lines.append(f"Table {each_resource_name} {{")
-                pk_name = each_resource.primary_key[0].name
-                for each_attr in each_resource.attributes:
-                    db_type = each_attr.db_type
-                    if 'DECIMAL' in db_type:
-                        db_type = 'DECIMAL'  # dbml parse fails with DECIMAL(10,2)
-                    pk = "[primary key]" if each_attr.name == pk_name else ""
-                    self.dbms_lines.append(f"    {each_attr.name} {db_type} {pk}")
-                self.dbms_lines.append("    }")
-                self.dbms_lines.append("")
+        self.dbml_resources()
 
         self.dbms_lines.append("")
         self.dbms_lines.append("")
         self.dbms_lines.append("// Relationships")  # Ref: users.(id) < follows.(followed_user_id)
-        for each_resource_name in self.mod_gen.resource_list:
-            if self.do_process_resource(each_resource_name):
-                each_resource : Resource = self.mod_gen.resource_list[each_resource_name]
-                for each_resource_reln in each_resource.parents:
-                    parent_attr_list = ''
-                    child_attr_list = ''
-                    attr_number = 0
-                    parent_resource = self.mod_gen.resource_list[each_resource_reln.parent_resource]
-                    for each_key_pair in each_resource_reln.parent_child_key_pairs:
-                        if parent_attr_list != '':
-                            parent_attr_list += ', '
-                        # parent_attr_list += f"{each_key_pair[0]}"  # this is very odd
-                        parent_attr_list += parent_resource.primary_key[attr_number].name
-                        if child_attr_list != '':
-                            child_attr_list += ', '
-                        child_attr_list += f"{each_key_pair[1]}"
-                    if parent_attr_list != '':
-                        reln_line = f"    Ref: {each_resource_name}.({child_attr_list}) < {each_resource_reln.parent_resource}.({parent_attr_list})"
-                        self.dbms_lines.append(reln_line)
-                        if each_resource_reln.parent_resource == 'Location':  # multi-field key example in nw
-                            debug_stop = 'good breakpoint'  # '    Ref: Order.(City, Country) < Location.(?, ?)'
-
+        self.dbml_relationships()
         
         expose_docs_path = Path(self.mod_gen.project_directory).joinpath('docs')
         expose_docs_path.mkdir(parents=True, exist_ok=True)
@@ -162,20 +195,41 @@ class DBMLCreator(object):
 
 
 
-    def do_process_resource(self, resource_name: str)-> bool:
-        """ filter out resources that are skipped by user, start with ab etc
+    def create_mcp_json_file(self):
+        """ create docs/mcp_schema.json - create self.mcp_schema['resources'] entries like:
+
+        '''
+            {
+            "name": "Customer",
+            "path": "/Customer",
+            "methods": ["GET", "PATCH"],
+            "fields": ["id", "name", "balance", "credit_limit"],
+            "filterable": ["name", "credit_limit"],
+            "example": "List customers with credit over 5000"
+            }
+        '''        
         """
-        if "ProductDetails_V" in resource_name:
-            log.debug("special table")  # should not occur (--noviews)
-        if resource_name.startswith("ab_"):
-            return False  # skip admin table: " + table_name + "\n
-        elif 'sqlite_sequence' in resource_name:
-            return False  # skip sqlite_sequence table: " + table_name + "\n
-        elif resource_name is None:
-            return False  # no class (view): " + table_name + "\n
-        elif resource_name.startswith("Ab"):
-            return False
-        return True
+        
+        resources : list = self.mcp_schema['resources']
+        for each_resource_name in self.mod_gen.resource_list:
+            if self.do_process_resource(each_resource_name):
+                each_inserted_resource = {}
+                each_resource : Resource = self.mod_gen.resource_list[each_resource_name]
+                each_inserted_resource['name'] = each_resource.name
+                each_inserted_resource['path'] = '/' + each_resource.name
+                each_inserted_resource['methods'] = ["GET", "PATCH", "POST", "DELETE"]
+                each_inserted_resource['fields'] = []
+                for each_attr in each_resource.attributes:
+                    each_inserted_resource['fields'].append(each_attr.name)
+                each_inserted_resource['filterable'] = each_inserted_resource['fields']
+                resources.append(each_inserted_resource)
+        docs_path = Path(self.mod_gen.project_directory).joinpath('docs')
+        docs_path.mkdir(parents=True, exist_ok=True)
+        mcp_schema_path = Path(self.mod_gen.project_directory).joinpath('docs/mcp_schema.json')
+        # write self.mcp_schema dict to json file
+        with open(mcp_schema_path, 'w') as f:
+            json.dump(self.mcp_schema, f, indent=4)
+        
 
 
 def create(model_creation_services: create_from_model.ModelCreationServices):
@@ -183,4 +237,5 @@ def create(model_creation_services: create_from_model.ModelCreationServices):
     """
     dbml_creator = DBMLCreator(model_creation_services)
     dbml_creator.create_docs_dbml_file()
+    dbml_creator.create_mcp_json_file()
 
