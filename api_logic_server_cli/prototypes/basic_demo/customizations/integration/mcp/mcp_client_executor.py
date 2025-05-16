@@ -80,19 +80,116 @@ def discover_mcp_servers():
     # schema_text = json.dumps(discovery_data, indent=4)
     return json.dumps(api_schema)
 
+
+
+def query_llm_with_nl(nl_query):
+    """ 
+    Query the LLM with a natural language query and schema text to generate a tool context block.
+
+    It handles both orchestration and simple GET requests.
+    """
+
+    messages = [
+        {
+            "role": "system",
+            "content": "You are an API planner that converts natural language queries into MCP Tool Context blocks using JSON:API. Return only the tool context as JSON."
+        },
+        {
+            "role": "user",
+            "content": f"Schema:\n{schema_text}\n\nNatural language query: '{nl_query}'"
+        }
+    ]
+
+    # setup default tool_context to bypass LLM call and save 2-3 secs in testing
+    if process_complex_request := True:     # orchestration: emails to pending orders
+        tool_context = \
+            [
+                {
+                    "tool": "json-api",
+                    "method": "GET",
+                    "url": "http://localhost:5656/api/Order",
+                    "query_params": {
+                        "filter[customer_id]": 5
+                    },
+                    "headers": {
+                        "Content-Type": "application/vnd.api+json"
+                    },
+                    "expected_output": "200"
+                },
+                {
+                    "tool": "email",
+                    "method": "POST",
+                    "url": "http://localhost:5656/api/Email",
+                    "body": {
+                        "to": "{{ order.customer_id }}",
+                        "subject": "Discount for your order",
+                        "body": "Dear customer, you have a discount for your recent order. Thank you for shopping with us."
+                    },
+                    "headers": {
+                        "Content-Type": "application/json"
+                    },
+                    "expected_output": "200"
+                }
+            ]
+    else:                                   # simple get request - list customers with credit over 4000 
+        tool_context = \
+            {
+                "tool": "json-api",
+                "method": "GET",
+                "url": "http://localhost:5656/api/Customer",
+                "query_params": {
+                    "filter[credit_limit][gt]": 4000
+                },
+                "headers": {
+                    "Content-Type": "application/vnd.api+json"
+                },
+                "expected_output": {
+                    "data": [
+                        {
+                            "type": "Customer",
+                            "id": "{{ order.customer_id }}",
+                            "attributes": {
+                                "id": "{{ order.customer_id }}",
+                                "name": "string",
+                                "balance": "number",
+                                "credit_limit": "number"
+                            }
+                        }
+                    ]
+                }
+            }
+
+    # Call the OpenAI API to generate the tool context        
+    if create_tool_context_from_llm := True:  # saves 2-3 seconds...
+      response = openai.chat.completions.create(
+          model="gpt-4",
+          messages=messages,
+          temperature=0.2
+      )
+
+      # Parse the response to extract the tool context
+      tool_context_str = response.choices[0].message.content
+      try:
+          tool_context = json.loads(tool_context_str)
+      except json.JSONDecodeError:
+          print("Failed to decode JSON from response:", tool_context_str)
+          return None
+
+    return tool_context
+
+
 def process_simple_get_request(tool_context):
     # informal simple get request - fix up for als
-    print("\ngenerated tool context:\n", json.dumps(tool_context, indent=4))
-    tool_context["url"] = "http://localhost:5656/api/Customer"
-    tool_context["headers"] = {
-        "Accept": "application/vnd.api+json"
-        , "Authorization": "Bearer your_token"
-    }
-    print("\ncorrected tool context:\n", json.dumps(tool_context, indent=4))
+    if fixup_for_als := False:
+        tool_context["url"] = "http://localhost:5656/api/Customer"
+        tool_context["headers"] = {
+            "Accept": "application/vnd.api+json"
+            , "Authorization": "Bearer your_token"
+        }
     
     # Execute mcp_server_executor - endpoint in als (see api/api_discovery/mcp_server_executor.py)
 
-    if use_als_mcp_server_executor := True:
+    if use_als_mcp_server_executor := False:
         mcp_response = requests.post(
             url="http://localhost:5656/mcp_server_executor",
             headers=tool_context["headers"],  # {'Accept': 'application/vnd.api+json', 'Authorization': 'Bearer your_token'}
@@ -102,7 +199,7 @@ def process_simple_get_request(tool_context):
         mcp_response = requests.get(
             tool_context["url"],
             headers=tool_context["headers"],
-            params=tool_context["filter"]
+            params=tool_context["query_params"]
         )
     return mcp_response
 
@@ -127,8 +224,9 @@ def process_orchestration_request(tool_context):
     global server_url
     context_data = {}
     added_rows = 0
+
     for each_block in tool_context:
-        if each_block["tool"] == "json-api":
+        if each_block["tool"] in ["json-api", "email"]:
            if each_block["method"] == "GET":
                 query_params = each_block.get("query_params", {})
                 query_params = "filter[customer_id]= 5"  #  TODO: hardcode for now
@@ -147,131 +245,56 @@ def process_orchestration_request(tool_context):
                     params=query_param_filter
                 )
                 context_data = get_response.json()['data']  # result rows...
-           elif each_block["method"] == "POST":
+           elif each_block["method"] in ["POST"]:
                 add_rows = 0
                 for each_order in context_data:
-                    url = server_url + "/Email"  # each_block["url"],  TODO: requires plural, leading upper
-                    data = each_block["body"]
-                    data["data"]['type'] = 'Email'  # TODO: needs fixup
-                    post_response = requests.post(  # eg: POST http://localhost:5656/api/Email {'data': {'type': 'Email', 'attributes': {'customer_id': '5', 'message': 'asdf'}}}
+                    url = each_block["url"]
+                    # body.data
+                    json_update_data =  { 'data': {"type": "Email", 'attributes': {} } }  
+                    json_update_data_attributes = json_update_data["data"]["attributes"]
+                    json_update_data_attributes["customer_id"] = context_data[0]['attributes']["customer_id"]
+                    json_update_data_attributes["message"] = each_block["body"] 
+                    # eg: POST http://localhost:5656/api/Email {'data': {'type': 'Email', 'attributes': {'customer_id': 5, 'message': {'to': '{{ order.customer_id }}', 'subject': 'Discount for your order', 'body': 'Dear customer, you have a discount for your recent order. Thank you for shopping with us.'}}}}
+                    post_response = requests.post(  
                         url=url,
                         headers=each_block["headers"],
-                        json=each_block["body"]
+                        json=json_update_data
                     )
                     add_rows += 1
         pass
     return post_response  # TODO: consider a better response than just the last one  
 
-# Function to simulate the MCP Client Executor
-def query_llm_with_nl(nl_query):
-    messages = [
-        {
-            "role": "system",
-            "content": "You are an API planner that converts natural language queries into MCP Tool Context blocks using JSON:API. Return only the tool context as JSON."
-        },
-        {
-            "role": "user",
-            "content": f"Schema:\n{schema_text}\n\nNatural language query: '{nl_query}'"
-        }
-    ]
-
-    # setup default tool_context - orachestration or simple get request
-    if process_complex_request := True:  # orchetration: emails to pending orders
-        tool_context = \
-            [
-                {
-                    "tool": "json-api",
-                    "method": "GET",
-                    "url": "/orders",
-                    "query_params": {
-                        "filter[customer_id]": 5
-                    },
-                    "headers": {
-                        "Content-Type": "application/vnd.api+json"
-                    },
-                    "expected_output": "List of orders for customer 5"
-                },
-                {
-                    "tool": "json-api",
-                    "method": "POST",
-                    "url": "/emails",
-                    "body": {
-                        "data": {
-                            "type": "emails",
-                            "attributes": {
-                                "message": "You have received a discount for your order {{ order.customer_id }}",
-                                "customer_id": 5
-                            }
-                        }
-                    },
-                    "headers": {
-                        "Content-Type": "application/vnd.api+json"
-                    },
-                    "expected_output": "Email sent to customer 5 with discount message for each order"
-                }
-            ]
-    else:
-        tool_context = {  # expect this from the LLM
-            "type": "Customer",
-            "filter": {
-                    "credit_limit": {
-                        "gt": 4000
-                    }
-                }
-            }
-
-    if create_tool_context_from_llm := False:  # saves 2-3 seconds...
-      response = openai.chat.completions.create(
-          model="gpt-4",
-          messages=messages,
-          temperature=0.2
-      )
-
-      # Parse the response to extract the tool context
-      tool_context_str = response.choices[0].message.content
-      try:
-          tool_context = json.loads(tool_context_str)
-      except json.JSONDecodeError:
-          print("Failed to decode JSON from response:", tool_context_str)
-          return None
-
-    return tool_context
-
 
 if __name__ == "__main__":
     import sys
-    default_request = "List customers with credit over 4000"
-
-    # missing commands for mcp_server_executor....
-    default_request = "List the orders created more than 30 days ago, and post an email message to the order's customer offering a discount"
-    default_request = """
-List the orders created more than 30 days ago, and send a discount email to the customer for each one."
-
-Respond with a JSON array of tool context blocks using:
-- tool: 'json-api'
-- JSON:API-compliant filtering (e.g., filter[CreatedOn][lt])
-- Use {{ order.customer_id }} as a placeholder in the second step.
-- Include method, url, query_params or body, headers, expected_output.
-"""
-    # date range?  curl -X GET "http://localhost:5656/api/Order?filter=[{\’name\'}: {\’CreatedOn\’}, {\’op\’}: {\’gt\’}, {\’val\’}: {\’2022-05-14\’}]”
-
-    default_request = """
-List the orders for customer 5, and send a discount email to the customer for each one."
-
-Respond with a JSON array of tool context blocks using:
-- tool: 'json-api'
-- JSON:API-compliant filtering (e.g., filter[CreatedOn][lt])
-- Use {{ order.customer_id }} as a placeholder in the second step.
-- Include method, url, query_params or body, headers, expected_output.
-"""
-    query = sys.argv[1] if len(sys.argv) > 1 else default_request
 
     schema_text = discover_mcp_servers()
+
+    # this doesn't work -- missing commands for mcp_server_executor....
+    default_request = "List the orders created more than 30 days ago, and post an email message to the order's customer offering a discount"
+
+    default_request = "List the orders created more than 30 days ago, and send a discount email to the customer for each one."
+    # date range?  curl -X GET "http://localhost:5656/api/Order?filter=[{\’name\'}: {\’CreatedOn\’}, {\’op\’}: {\’gt\’}, {\’val\’}: {\’2022-05-14\’}]”
+
+    default_request = "List the orders for customer 5, and send a discount email to the customer for each one."
+
+    default_request = "List customers with credit over 4000"  # uncomment for simple get request
+
+    query = sys.argv[1] if len(sys.argv) > 1 else default_request
+
+    query += """
+Respond with a JSON array of tool context blocks using:
+- tool: 'json-api'
+- JSON:API-compliant filtering (e.g., filter[CreatedOn][lt])
+- Use {{ order.customer_id }} as a placeholder in the second step.
+- Include method, url, query_params or body, headers, expected_output.
+"""
 
     tool_context = query_llm_with_nl(query)
     
     # process the mcp response (tool_context)
     print("\ngenerated tool context:\n", json.dumps(tool_context, indent=4))
+
     if isinstance(tool_context, list):  # multiple tool contexts (an orchestration)
         mcp_response = process_orchestration_request(tool_context)
     else:
