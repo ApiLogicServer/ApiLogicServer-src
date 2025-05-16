@@ -7,7 +7,7 @@ This simulates the MCP Client Executor, which takes a natural language query and
 
 Notes:
 * See: integration/mcp/README_mcp.md
-* Steps 2 & 3 should be handled by ALS, but for now, they are included here for testing.
+* python api_logic_server_run.py
 
 hand-coded (for genai_demo)
   tool_context = {  
@@ -21,7 +21,7 @@ hand-coded (for genai_demo)
           , "Authorization": "Bearer your_token"
       }
   }
-  """
+"""
 
 import json
 import os
@@ -44,6 +44,41 @@ except FileNotFoundError:
 finally:
   print(f"Schema file loaded from {schema_file_path}.")
 
+def discover_mcp_servers():
+    """ Discover the MCP servers by calling the /api/.well-known/mcp.json endpoint.
+    This function retrieves the list of available MCP servers and their capabilities.
+    """
+    global server_url
+    # read the mcp_server_discovery.json file
+    discovery_file_path = os.path.join(os.path.dirname(__file__), "mcp_server_discovery.json")
+    try:
+        with open(discovery_file_path, "r") as discovery_file:
+            discovery_data = json.load(discovery_file)
+            print(f"Discovered MCP servers from {discovery_file_path}:")
+            print(json.dumps(discovery_data, indent=4))
+    except FileNotFoundError:
+        print(f"Discovery file not found at {discovery_file_path}.")
+    except json.JSONDecodeError as e:
+        print(f"Error decoding JSON from {discovery_file_path}: {e}")
+    
+    for each_server in discovery_data["servers"]:
+        discovery_url = each_server["schema_url"]
+        print(f"OpenAPI URL: {discovery_url}")
+
+        # Call the OpenAPI URL to get the API schema
+        try:
+            response = requests.get(discovery_url)
+            if response.status_code == 200:
+                api_schema = response.json()
+                print("API Schema:")
+                print(json.dumps(api_schema, indent=4))
+            else:
+                print(f"Failed to retrieve API schema from {discovery_url}: {response.status_code}")
+        except requests.RequestException as e:
+            print(f"Error calling OpenAPI URL: {e}")
+    # covert json to string
+    # schema_text = json.dumps(discovery_data, indent=4)
+    return json.dumps(api_schema)
 
 def process_simple_get_request(tool_context):
     # informal simple get request - fix up for als
@@ -200,14 +235,7 @@ def query_llm_with_nl(nl_query):
           print("Failed to decode JSON from response:", tool_context_str)
           return None
 
-    # process the mcp response (tool_context)
-    print("\ngenerated tool context:\n", json.dumps(tool_context, indent=4))
-    if isinstance(tool_context, list):  # multiple tool contexts (an orchestration)
-        mcp_response = process_orchestration_request(tool_context)
-    else:
-        mcp_response = process_simple_get_request(tool_context)
-
-    return mcp_response
+    return tool_context
 
 
 if __name__ == "__main__":
@@ -237,5 +265,17 @@ Respond with a JSON array of tool context blocks using:
 - Include method, url, query_params or body, headers, expected_output.
 """
     query = sys.argv[1] if len(sys.argv) > 1 else default_request
-    mcp_response = query_llm_with_nl(query)
+
+    schema_text = discover_mcp_servers()
+
+    tool_context = query_llm_with_nl(query)
+    
+    # process the mcp response (tool_context)
+    print("\ngenerated tool context:\n", json.dumps(tool_context, indent=4))
+    if isinstance(tool_context, list):  # multiple tool contexts (an orchestration)
+        mcp_response = process_orchestration_request(tool_context)
+    else:
+        mcp_response = process_simple_get_request(tool_context)
+
     print("\nMCP MCP Response:\n", mcp_response.text)  # or, mcp_response.json()
+    print("\nTest complete.\n")

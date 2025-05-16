@@ -62,7 +62,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         pass
     
 
-    @app.route('/mcp_server_executor', methods=['POST'])
+    @app.route('/mcp_server_executor', methods=['GET'])
     def mcp_server_executor(path=None):
         ''' sample response printed in mcp_client_executor.py:
         FIXME - incorrect.
@@ -104,3 +104,35 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
 
         return response.json(), 200, {'Content-Type': 'application/json; charset=utf-8'}
 
+
+    @app.route('/.well-known/mcp.json', methods=['GET'])
+    def mcp_discovery(path=None):
+        ''' called by mcp_client_executor for discovery, eg:
+        ```
+        {
+            "tool_type": "json-api",
+            "base_url": "https://crm.company.com",
+            "resources": [
+                {
+                "name": "Customer",
+                "path": "/Customer",
+                "methods": ["GET", "PATCH"],
+                "fields": ["id", "name", "balance", "credit_limit"],
+                "filterable": ["name", "credit_limit"],
+                "example": "List customers with credit over 5000"
+                }
+            ]
+        }
+        ```
+        test: curl -X GET "http://localhost:5656/.well-known/mcp.json"
+        '''
+        # return docs/mcp_schema.json
+        schema_path = os.path.join(project_dir, "docs", "mcp_schema.json")
+        try:
+            with open(schema_path, "r") as schema_file:
+                schema = json.load(schema_file)
+                return jsonify(schema), 200
+        except Exception as e:
+            app_logger.error(f"Error loading MCP schema: {e}")
+            return jsonify({"error": "MCP schema not found"}), 404
+        pass
