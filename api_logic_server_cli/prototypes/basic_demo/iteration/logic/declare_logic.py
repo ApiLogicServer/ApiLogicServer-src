@@ -119,7 +119,7 @@ def declare_logic():
         Grant.process_updates(logic_row=logic_row)
 
         did_stamping = False
-        if enable_stamping := False:  # #als:  DATE / USER STAMPING
+        if enable_stamping := True:  # #als:  DATE / USER STAMPING
             row = logic_row.row
             if logic_row.ins_upd_dlt == "ins" and hasattr(row, "CreatedOn"):
                 row.CreatedOn = datetime.datetime.now()
