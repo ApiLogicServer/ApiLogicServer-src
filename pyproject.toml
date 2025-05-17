@@ -117,7 +117,8 @@ classifiers=[
 ]
 
 [project.urls]
-Homepage = "https://apilogicserver.github.io/Docs/"
+Homepage = "https://www.genai-logic.com"
+Docs = "https://apilogicserver.github.io/Docs/Doc-Home/"
 Source = "https://github.com/ApiLogicServer/ApiLogicServer-src"
 Issues = "https://github.com/ApiLogicServer/ApiLogicServer-src/issues"
 
