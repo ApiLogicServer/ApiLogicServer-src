@@ -166,6 +166,7 @@ def add_basic_demo_customizations(project: Project, do_show_messages: bool = Tru
         log.info("\nExplore key customization files:")
         log.info(f'..logic/declare_logic.py')
         log.info(f'..security/declare_security.py\n')
+        log.info(f'Explore MCP (Model Context Protocol): https://apilogicserver.github.io/Docs/Integration-MCP/\n')
         log.info(f'Next Steps: activate security')
         log.info(f'..ApiLogicServer add-auth --db_url=auth')
         if project.is_tutorial == False:
