@@ -148,8 +148,8 @@ def declare_logic():
                                     "Order Date": row.OrderDate,
                                     #"items": [row.OrderDetailList]
                                 },
-                ins_upd_dlt="upd", wh_entity="Order",
-                msg="1. /Webhook integration.py: n8n, sending ready Order payload")  
+                                ins_upd_dlt="upd", wh_entity="Order",
+                                msg="1. /Webhook integration.py: n8n, sending ready Order payload")  
             
         logic_row.log("send_order_to_shipping - sent order to shipping and N8N/sendgrid")  # see in log      
 
