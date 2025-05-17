@@ -79,10 +79,6 @@ Created projects use standard Flask and SQLAlchemy; automation is provided by Lo
 als create --project-name=basic_demo --db-url=basic_demo
 ```
 
-<br>The self-demo provides:
-1. A quick look at logic, security and integration
-2. Integration includes Kafka and MCP (**[Model Context Protocol](https://apilogicserver.github.io/Docs/Integration-MCP/)**)
-
 <br>To create a larger project, try the pre-installed [**northwind database**](https://apilogicserver.github.io/Docs/Tutorial/) (imagine your own database here):
 
 ```
