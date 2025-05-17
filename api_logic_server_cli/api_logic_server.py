@@ -12,12 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "14.04.10"  # last public release: 14.04.00
+__version__ = "14.05.00"  # last public release: 14.04.00
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t05/16/2024 - 14.04.10: running mcp_client_executor using schema discovery from als \n"\
-    "\t05/13/2024 - 14.04.08: fix visible cols for ont, update basic_demo for email requests via mcp flow \n"\
-    "\t05/10/2024 - 14.04.05: safrs 3.1.7, add_cust reorg, MCP Testing -> basic_demo, Kafka Producer Fixes for env & test data loading \n"\
+    "\t05/16/2024 - 14.05.00: safrs 3.1.7, running mcp preview \n"\
     "\t04/27/2024 - 14.04.00: Graphics preview, Vibe install fix, Improved IDE Chat Logic, MCP Exploration \n"\
     "\t03/30/2024 - 14.03.25: WebGenAI fixes for Kafka and Keycloak \n"\
     "\t03/19/2024 - 14.03.20: licensed webgenai docker, [87] sra fix for home.js \n"\
