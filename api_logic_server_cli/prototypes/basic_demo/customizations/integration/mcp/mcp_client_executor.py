@@ -31,7 +31,7 @@ server_url = os.getenv("APILOGICSERVER_URL", "http://localhost:5656/api")
 
 # debug settings
 test_type = 'orchestration'  # 'simple_get' or 'orchestration'
-create_tool_context_from_llm = False
+create_tool_context_from_llm = True
 ''' set to False to bypass LLM call and save 2-3 secs in testing '''
 use_test_schema = False
 ''' True means bypass discovery, use hard-coded schedma file '''
