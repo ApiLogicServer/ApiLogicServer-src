@@ -11,3 +11,5 @@ Model Context Protocol is a way for:
     * ***Corporate database participation*** in such flows, by making key functions available as MCP calls.
 
 This example is [explained here](https://apilogicserver.github.io/Docs/Integration-MCP/).
+
+> Note: this sample uses multi-term filters.  These are usually OR'd together, but this example requires AND.  This is provided by `database/system/SAFRSBaseX.py` (see `return query.filter(operator.and_(*expressions)`) in `_s_filter()`), activated in `config/server_setup.py`.
