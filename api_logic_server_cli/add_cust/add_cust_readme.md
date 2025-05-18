@@ -12,3 +12,21 @@ Some should probably be deleted.
 | [**sample_ai**](https://apilogicserver.github.io/Docs/Sample-AI/)      | genai_demo using CoPilot<br>funky copies |                                            |         |               | prototypes/sample_ai/database/chatgpt/sample_ai_items.sqlite<br>todo: check readme -  rebuild-from-database --project_name=./ --db_url=sqlite:///database/db.sqlite |
 | [ai_chatgpt_agile](https://apilogicserver.github.io/Docs/Tutorial-AI/) |                                          |                                            |         |               |                                                                                                      |
 | tutorial                                                               | std web -> als                           |                                            |         |               | dropped long ago                                                                                     |
+
+
+WebGenAI DX:
+
+0. Convention: click the Blue Button
+        * Home/Create Project
+        * Home/Open App
+        * Landing
+        * Overview[Manager]/Open
+        * Overview/GitHub
+        * App Home / Develop --> GitHub
+0. demo --> codespaces.  Where are instructions (what is CS, how do I load/run)?
+1. Name can be any, iff created with APILOGICPROJECT_IS_GENAI_DEMO
+2. Bypass duplicate discovery logic iff created with APILOGICPROJECT_IS_GENAI_DEMO
+3. TODO:
+        * cd project
+        * als add-cust  # add customizations
+        * run, and use place b2b order service - end point is not activated.
