@@ -111,6 +111,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         ```
         {
             "tool_type": "json-api",
+            "schema_version": "1.0",
             "base_url": "https://crm.company.com",
             "resources": [
                 {

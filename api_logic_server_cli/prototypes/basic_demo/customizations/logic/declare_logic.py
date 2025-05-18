@@ -66,7 +66,7 @@ def declare_logic():
             logic_row (LogicRow): bundles curr/old row, with ins/upd/dlt logic
         """
         if logic_row.is_inserted(): 
-            customer = row.customer
+            customer = row.customer  # parent accessor
             if customer.email_opt_out:
                 logic_row.log("customer opted out of email")
                 return
