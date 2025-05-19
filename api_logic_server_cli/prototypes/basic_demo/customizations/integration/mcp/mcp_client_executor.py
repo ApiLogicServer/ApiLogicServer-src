@@ -109,7 +109,7 @@ def get_user_nl_query():
     query += """
 Respond with a JSON array of tool context blocks using:
 - tool: 'json-api'
-- JSON:API-compliant filtering (e.g., filter=[{"name":"date_shipped","op":"gt","val":"2023-07-14"}])
+- JSON:API custom filtering (e.g., filter=[{"name":"date_shipped","op":"gt","val":"2023-07-14"}])
 - Use {{ order.customer_id }} as a placeholder in the second step.
 - Include method, url, query_params or body, headers, expected_output.
 """
@@ -277,6 +277,9 @@ def process_tool_context(tool_context):
             else:                               # complex - "query_params": {"filter": ...
                 assert isinstance(query_params["filter"], list), "Query Params filter expected to be a list"
                 query_param_filter = 'filter=' + str(query_params["filter"])
+                # use urlencode to convert to JSON:API format...
+                # val urllib.parse.quote() or urllib.parse.urlencode()
+                # tool instructions... filtering, email etc
                 query_param_filter = query_param_filter.replace("'", '"')  # convert single quotes to double quotes
                 query_param_filter = query_param_filter.replace("None", 'null')
                 query_param_filter = query_param_filter.replace("date_created", 'CreatedOn')  # TODO - why this name?
@@ -314,7 +317,7 @@ def process_tool_context(tool_context):
                             url = url.replace("sendEmail", "Email")  # TODO name fix
                             json_update_data =  { 'data': {"type": "Email", 'attributes': {} } }  
                             json_update_data_attributes = json_update_data["data"]["attributes"]
-                            json_update_data_attributes["customer_id"] = context_data[0]['attributes']["customer_id"]
+                            json_update_data_attributes["customer_id"] = context_data[0]['attributes']["customer_id"]  # TODO - fix
                             json_update_data_attributes["message"] = each_block["body"]["message"] 
                             # eg: POST http://localhost:5656/api/Email {'data': {'type': 'Email', 'attributes': {'customer_id': 5, 'message': {'to': '{{ order.customer_id }}', 'subject': 'Discount for your order', 'body': 'Dear customer, you have a discount for your recent order. Thank you for shopping with us.'}}}}
                             mcp_response = requests.post(  
