@@ -13,6 +13,15 @@ Some should probably be deleted.
 | [ai_chatgpt_agile](https://apilogicserver.github.io/Docs/Tutorial-AI/) |                                          |                                            |         |               |                                                                                                      |
 | tutorial                                                               | std web -> als                           |                                            |         |               | dropped long ago                                                                                     |
 
+Perhaps genai_demo and basic_demo can share the same add_cust??
+* readmes are created from docs project in `create_project_and_overlay_prototypes`
+* genai begins with rules, has 1 add-cust (add_order B2B), and uses codespaces (since no CLI for add-cust)
+        * codespaces does not run rules - WG_PROJECT is false, and the exported rules are not there.
+* basic_demo has 2 add-cust (carbon_neutral and reorg)
+
+So - branch 1demo
+* Transition to BD (maybe add CodeSpaces Appendix)
+* GenAI = BasicDemo + add-cust/logic (still do 2 add-custs as for BD)
 
 WebGenAI DX:
 
