@@ -418,7 +418,8 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
             # readme now opens automatically, so use that...
             shutil.move(project.project_directory_path.joinpath('readme.md'), 
                         project.project_directory_path.joinpath('readme_standard.md'))   
-            create_utils.copy_md(project = project, from_doc_file = "Sample-Genai.md", to_project_file='readme.md')
+            # create_utils.copy_md(project = project, from_doc_file = "Sample-Genai.md", to_project_file='readme.md')
+            create_utils.copy_md(project = project, from_doc_file = "Sample-Basic-Demo.md", to_project_file='readme.md')
 
         if "postgres" or "mysql" in project.db_url:
             fixup_devops_for_postgres_mysql(project)
