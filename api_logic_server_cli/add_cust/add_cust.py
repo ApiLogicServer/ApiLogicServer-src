@@ -246,8 +246,8 @@ def add_cust(project: Project, models_py_path: Path, project_name: str):
         add_nw_customizations(project=project, do_security=False)
         log.info("\nNext step - add authentication:\n  $ ApiLogicServer add-auth --db_url=auth\n\n")
 
-    elif project_is_genai_demo and create_utils.does_file_contain(search_for="Customer", in_file=models_py_path):
-        add_genai_customizations(project=project, do_security=False)
+    # elif project_is_genai_demo and create_utils.does_file_contain(search_for="Customer", in_file=models_py_path):
+    #    add_genai_customizations(project=project, do_security=False)
 
     elif project_name == 'sample_ai' and create_utils.does_file_contain(search_for="CustomerName = Column(Text", in_file=models_py_path):
         cocktail_napkin_path = project.project_directory_path.joinpath('logic/cocktail-napkin.jpg')
@@ -257,7 +257,7 @@ def add_cust(project: Project, models_py_path: Path, project_name: str):
         else:
             add_sample_ai_iteration(project=project)
 
-    elif project_name == 'basic_demo' and create_utils.does_file_contain(search_for="Customer", in_file=models_py_path):
+    elif (project_is_genai_demo or project_name == 'basic_demo') and create_utils.does_file_contain(search_for="Customer", in_file=models_py_path):
         cocktail_napkin_path = project.project_directory_path.joinpath('logic/cocktail-napkin.jpg')
         is_customized = cocktail_napkin_path.exists()
         if not is_customized:
