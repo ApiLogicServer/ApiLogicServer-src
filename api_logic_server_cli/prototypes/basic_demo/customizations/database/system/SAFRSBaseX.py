@@ -118,7 +118,10 @@ class SAFRSBaseX(SAFRSBase, safrs.DB.Model):
                 op = getattr(operator, op_name)
                 expressions.append(op(attr, attr_val))
 
-        return query.filter(operator.and_(*expressions))
+        if len(filters) > 1:
+            return query.filter(operator.and_(*expressions))
+        else:
+            return query.filter(*expressions)
 
 
 class TestBase(Base):
