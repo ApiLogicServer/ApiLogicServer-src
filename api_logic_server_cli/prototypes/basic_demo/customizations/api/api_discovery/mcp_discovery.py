@@ -62,49 +62,6 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         pass
     
 
-    @app.route('/mcp_server_executor', methods=['GET'])
-    def mcp_server_executor(path=None):
-        ''' sample response printed in mcp_client_executor.py:
-        FIXME - incorrect.
-        But do provide: https://localhost:5656/.well-known/mcp.json
-        ```
-            MCP MCP Response (simulated):
-            {
-            "get_json": {
-                "filter": {
-                "filter": {
-                    "credit_limit": {
-                    "gt": 4000
-                    }
-                },
-                "headers": {
-                    "Accept": "application/vnd.api+json",
-                    "Authorization": "Bearer your_token"
-                },
-                "type": "Customer",
-                "url": "http://localhost:5656/api/Customer"
-                }
-            },
-            "name": "mcp_server_executor",
-            "openapiUrl": "TUNNEL_URL/api/openapi.json",
-            "serverUrl": "TUNNEL_URL/api"
-            }
-        ```
-        '''
-        get_json = request.get_json()
-        app_logger.info(f"mcp_server_executor sees mcp request: \n{json.dumps(get_json, indent=4)}")
-
-        # process verb, filter here (stub for now)
-        filter_json = get_json['filter']  # {"credit_limit": {"gt": 4000}}  # todo: bunch'o parsing here
-        
-        filter_json = {"name": "credit_limit",  "op": "gt", "val":4000}     # https://github.com/thomaxxl/safrs/wiki/JsonApi-filtering
-        filter = json.dumps(filter_json)                                    # {"name": "credit_limit",  "op": "gt",  "val": 4000}
-        get_uri = get_json['url'] + '?filter=' + filter  # get_uri = "http://localhost:5656/api/Customer?filter[credit_limit]=1000"
-        response = requests.get(url=get_uri, headers= request.headers)
-
-        return response.json(), 200, {'Content-Type': 'application/json; charset=utf-8'}
-
-
     @app.route('/.well-known/mcp.json', methods=['GET'])
     def mcp_discovery(path=None):
         ''' called by mcp_client_executor for discovery, eg:

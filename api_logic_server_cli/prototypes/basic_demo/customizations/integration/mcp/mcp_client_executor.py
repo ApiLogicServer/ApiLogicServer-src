@@ -85,22 +85,15 @@ def discover_mcp_servers():
 
 def get_user_nl_query():
     """ Get the natural language query from the user. 
+    Add instructions for the LLM to generate a tool context block.
     
     """
 
     global test_type
 
     default_request = "List the orders created more than 30 days ago, and send a discount email to the customer for each one."
-    # eg, curl -qg 'http://localhost:5656/api/Order?filter=[{"name":"date_shipped","op":"gt","val":"2023-07-14"}]'
-    # eg, curl -qg 'http://localhost:5656/api/Order?filter=[{"name":"date_shipped","op":"eq","val":null}]'
-    # eg, curl -qg 'http://localhost:5656/api/Order?filter=[{"name":"date_shipped","op":"eq","val":null},{"name":"CreatedOn","op":"lt","val":"2023-07-14"}]'
-    # eg, curl -qg 'http://localhost:5656/api/Customer?filter=[{"name":"credit_limit","op":"gt","val":"1000"}]'
 
-    # curl -qg 'http://localhost:5656/api/Order?filter=[{"name":%20"date_shipped",%20"op":%20"eq",%20"val":%20null},%20{"name":%20"CreatedOn",%20"op":%20"lt",%20"val":%20"2023-07-14"}]'
-
-    default_request = "List the orders for customer 5, and send a discount email to the customer for each one."
     default_request = "List the unshipped orders created before 2023-07-14, and send a discount email to the customer for each one."
-
     if test_type != 'orchestration':
         default_request = "List customers with credit over 1000"
 
@@ -121,6 +114,13 @@ def query_llm_with_nl(nl_query):
     Query the LLM with a natural language query and schema text to generate a tool context block.
 
     It handles both orchestration and simple GET requests.
+    
+    # eg, curl -qg 'http://localhost:5656/api/Order?filter=[{"name":"date_shipped","op":"gt","val":"2023-07-14"}]'
+    # eg, curl -qg 'http://localhost:5656/api/Order?filter=[{"name":"date_shipped","op":"eq","val":null}]'
+    # eg, curl -qg 'http://localhost:5656/api/Order?filter=[{"name":"date_shipped","op":"eq","val":null},{"name":"CreatedOn","op":"lt","val":"2023-07-14"}]'
+    # eg, curl -qg 'http://localhost:5656/api/Customer?filter=[{"name":"credit_limit","op":"gt","val":"1000"}]'
+
+    # curl -qg 'http://localhost:5656/api/Order?filter=[{"name":%20"date_shipped",%20"op":%20"eq",%20"val":%20null},%20{"name":%20"CreatedOn",%20"op":%20"lt",%20"val":%20"2023-07-14"}]'
     """
 
     global test_type, create_tool_context_from_llm

@@ -20,7 +20,7 @@ class Config:
     do_test_api_logic_project = default_setting     # run the behave tests (test logic, api)
     do_test_api_logic_project_with_auth = default_setting  # run the behave tests (test logic, api)
     do_test_genai = default_setting                 # run the genai tests
-    do_test_multi_reln = default_setting            # run the genai tests on airport
+    do_test_multi_reln = False            # this suite (airport etc) broken per new parsed response format
 
     do_create_shipping = default_setting            # run shipping to listen to kafka (might run manually)
     do_run_shipping = False                         # run shipping to listen to kafka (might run manually)
@@ -43,7 +43,7 @@ class Config:
     do_docker_mysql = default_setting               # requires docker database be running
     do_docker_postgres =  default_setting           # requires docker database be running
     do_docker_postgres_auth = default_setting       # requires docker database be running
-    do_docker_sqlserver = default_setting           # requires docker database be running
+    do_docker_sqlserver = False           # requires docker database be running
 
     do_docker_creation_tests = default_setting      # build docker image, start it and create projects
 

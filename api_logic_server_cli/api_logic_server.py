@@ -12,7 +12,7 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "14.05.03"  # last public release: 14.04.00
+__version__ = "14.05.03"  # last public release: 14.05.00
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
     "\t05/19/2024 - 14.05.03: mcp filters with working date range (AND), email stub, use basic_demo custs for genai_demo \n"\
