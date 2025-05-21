@@ -587,12 +587,14 @@ class GenAI(object):
                     shutil.copyfile(self.project.genai_repaired_response, response_file)
             is_genai_demo = False
             if os.getenv('APILOGICPROJECT_IS_GENAI_DEMO') is not None or self.project.project_name == 'genai_demo':
+                # fail safe demo - be sure AI does not fail, and that the data model names are predictable for add-cust
                 self.project.project_directory_path.joinpath('docs/project_is_genai_demo.txt').touch()
                 # and DON'T create test data (db.sqlite already set up in recursive copy)
                 project_docs_response = self.project.project_directory_path.joinpath('docs/response.json')
                 with open(project_docs_response, "w") as response_file:  # WebG uses this for wg_rules
                     json.dump(self.response_dict, response_file, indent=4)
                     pass  # not possible on create_db_models, since project paths not yet set by api_logic_server
+                # todo - consider adding MCP here for sharing readme (genai_demo, basic_demo)
 
             else:  # normal path
                 genai_svcs.rebuild_test_data_for_project(
