@@ -594,7 +594,9 @@ class GenAI(object):
                 with open(project_docs_response, "w") as response_file:  # WebG uses this for wg_rules
                     json.dump(self.response_dict, response_file, indent=4)
                     pass  # not possible on create_db_models, since project paths not yet set by api_logic_server
-                # todo - consider adding MCP here for sharing readme (genai_demo, basic_demo)
+                if add_mcp := False:  # bad idea - fails with Ont seeking email (which would be confusing)
+                    from api_logic_server_cli.add_cust import add_cust
+                    add_cust.add_basic_demo_customizations(project=self.project)
 
             else:  # normal path
                 genai_svcs.rebuild_test_data_for_project(

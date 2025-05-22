@@ -54,25 +54,6 @@ def declare_logic():
     Rule.after_flush_row_event(on_class=Order, calling=kafka_producer.send_row_to_kafka, if_condition=lambda row: row.date_shipped is not None, with_args={'topic': 'order_shipping'})
 
     # End Logic from GenAI
-
-    def send_mail(row: Email, old_row: Email, logic_row: LogicRow):
-        """ 
-
-        #als: Send N8N email message (also see discovery/integration.py)
-
-        Args:
-            row (Email): inserted Email
-            old_row (Email): n/a
-            logic_row (LogicRow): bundles curr/old row, with ins/upd/dlt logic
-        """
-        if logic_row.is_inserted(): 
-            customer = row.customer  # parent accessor
-            if customer.email_opt_out:
-                logic_row.log("customer opted out of email")
-                return
-            logic_row.log(f"send email {row.message} to {customer.email} (stub, eg use N8N")  # see in log  
-
-    Rule.after_flush_row_event(on_class=Email, calling=send_mail)  # see above
     
 
     def handle_all(logic_row: LogicRow):  # #als: TIME / DATE STAMPING, OPTIMISTIC LOCKING
