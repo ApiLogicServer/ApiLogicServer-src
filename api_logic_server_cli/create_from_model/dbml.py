@@ -75,8 +75,8 @@ class DBMLCreator(object):
                 "schema_version": "1.0",
                 "base_url": "http://localhost:5656/api",
                 "query_params": "- JSON:API custom filtering using a filter array (e.g., filter=[{\"name\":\"date_shipped\",\"op\":\"gt\",\"val\":\"2023-07-14\"}])",
-                "expected_response": "Respond with a JSON object with tool_type, schema_version, base_url, and an array of resources including: path, method, query_params array or body, headers, expected_output.",
-                "email_services": "iff email is requested, Send email by issing a POST request to the Email endpoint, setting the customer_id and message in the body.",
+                "expected_response": "Respond with a JSON object with schema_version and a resource array including: tool_type, base_url, path, method, query_params array or body, headers, expected_output.",
+                "email_services": "iff email is requested, Send email by issing a POST request to the Email endpoint, setting the subject, message and customer_id in the body.",
                 "description": f"API Logic Project: {self.mod_gen.project.project_name_last_node}",
                 "resources": [
                 ]

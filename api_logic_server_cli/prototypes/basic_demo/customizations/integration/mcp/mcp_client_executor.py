@@ -88,7 +88,7 @@ def get_user_nl_query():
     if len(sys.argv) > 1 and sys.argv[1] != 'go':
         request = sys.argv[1]
     else:
-        request = "List the unshipped orders created before 2023-07-14, and send a discount email to the customer for each one."
+        request = "List the unshipped orders created before 2023-07-14, and send a discount email (subject: 'Discount Offer') to the customer for each one."
         if test_type != 'orchestration':
             request = "List customers with credit over 1000"
     return request
@@ -120,10 +120,10 @@ def query_llm_with_nl(nl_query):
         tool_context = \
             {
                 "tool_type": "json-api",
-                "schema_version": "1.0",
                 "base_url": "http://localhost:5656/api",
                 "resources": [
                     {
+                        "name": "Order",
                         "path": "/Order",
                         "method": "GET",
                         "query_params": [
@@ -137,19 +137,17 @@ def query_llm_with_nl(nl_query):
                                 "op": "lt",
                                 "val": "2023-07-14"
                             }
-                        ],
-                        "headers": [],
-                        "expected_output": []
+                        ]
                     },
                     {
+                        "name": "Email",
                         "path": "/Email",
                         "method": "POST",
                         "body": {
-                            "customer_id": "{{ order.customer_id }}",
-                            "message": "You have a discount on your unshipped order."
-                        },
-                        "headers": [],
-                        "expected_output": []
+                            "subject": "Discount Offer",
+                            "message": "You have a new discount offer.",
+                            "customer_id": "{Order.customer_id}"
+                        }
                     }
                 ]
             }
@@ -197,8 +195,8 @@ def query_llm_with_nl(nl_query):
 
 def process_tool_context(tool_context):
     """ Process the orchestration request by executing multiple tool context blocks.
-    This function simulates the MCP Client Executor by executing the tool context blocks
-    against a live JSON:API server. It handles both GET and POST requests, and it can
+    This executes the tool context blocks against a live JSON:API server. 
+    It handles both GET and POST requests, and it can
     orchestrate multiple requests based on the provided tool context.
 
     Note the orchestration is processed by the client executor (here), not the server executor.
@@ -253,12 +251,34 @@ def process_tool_context(tool_context):
         query_param_filter = query_param_filter.replace("date_created", 'CreatedOn')  # TODO - why this name?
         return query_param_filter  # end get_query_param_filter
 
+    def move_fields(src: dict, dest: dict, context_data: dict):
+        """ Move fields from src to dest, replacing any variables with their values from context_data."""
+        for variable_name, value in src.items():
+            move_value = value
+            if move_value.startswith("{") and move_value.endswith("}"):  
+                # strip the braces, and get the name after the first dot, # eg: "{Order.customer_id}" ==> "customer_id"``
+                move_name = move_value[1:-1]  # strip the braces
+                if '.' in move_value:
+                    move_name = move_name.split('.', 1)[1]
+                move_value = context_data['attributes'][move_name]
+            dest[variable_name] = move_value
+        return dest
+
+    def print_get_response(mcp_response):
+        """ Print the response from the GET request. """
+        print("\n3. MCP Server (als) GET Response:\n", mcp_response.text)
+        orders = mcp_response.json()['data']
+        print("   id CreatedOn  customer_id")
+        print("  ", "--", "---------", " -----------")
+        for each_order in orders:
+            print("  ",  each_order["id"], each_order["attributes"]["CreatedOn"],  '  ', each_order["attributes"]["customer_id"])
+
     assert isinstance(tool_context, (dict, list)), "Tool context expected to be a dictionary"
     context_data = {}
     added_rows = 0
 
     for each_block in tool_context["resources"]:
-        if True:  # TODO - add check for "tool": "json-api"
+        if True:  # TODO - why is tool-type in each resource, as requested?
             if each_block["method"] == "GET":
                     query_param_filter = get_query_param_filter(each_block["query_params"])
                     headers = {"Content-Type": "application/vnd.api+json"}
@@ -270,13 +290,13 @@ def process_tool_context(tool_context):
                         params=query_param_filter
                     )
                     context_data = mcp_response.json()['data']  # result rows...
+                    print_get_response(mcp_response)
             elif each_block["method"] in ["POST"]:
                     for each_order in context_data:
                         url = tool_context["base_url"] + each_block["path"]
                         json_update_data =  { 'data': {"type": "Email", 'attributes': {} } }  
                         json_update_data_attributes = json_update_data["data"]["attributes"]
-                        json_update_data_attributes["customer_id"] = context_data[0]['attributes']["customer_id"]  # TODO - fix
-                        json_update_data_attributes["message"] = each_block["body"]["message"] 
+                        move_fields( src= each_block["body"], dest=json_update_data_attributes, context_data=each_order) 
                         # eg: POST http://localhost:5656/api/Email {'data': {'type': 'Email', 'attributes': {'customer_id': 5, 'message': {'to': '{{ order.customer_id }}', 'subject': 'Discount for your order', 'body': 'Dear customer, you have a discount for your recent order. Thank you for shopping with us.'}}}}
                         headers = {"Content-Type": "application/vnd.api+json"}
                         if "headers" in each_block:
@@ -288,7 +308,7 @@ def process_tool_context(tool_context):
                         )
                         added_rows += 1
         pass
-    print("\n3. MCP Server (als) Response:\n", mcp_response.text)
+    print("\n3. MCP Server (als) POST Response:\n", mcp_response.text)
     if added_rows > 0:
         print(f"...Added {added_rows} rows to the database; last row (only) shown above.")
     return mcp_response 
