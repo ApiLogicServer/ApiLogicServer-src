@@ -33,6 +33,7 @@ INSERT INTO product VALUES(5,'Green',109);
 CREATE TABLE IF NOT EXISTS "email" (
         id INTEGER NOT NULL, 
         message VARCHAR, 
+        subject VARCHAR,
         customer_id INTEGER NOT NULL, 
         CreatedOn DATE,
         PRIMARY KEY (id), 

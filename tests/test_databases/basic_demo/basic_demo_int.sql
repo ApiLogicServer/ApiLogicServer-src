@@ -17,12 +17,7 @@ INSERT INTO customer VALUES(2,'Bob',0,3000, "bob@corp.org", 0);
 INSERT INTO customer VALUES(3,'Charlie',220,2000, "charlie@corp.org", 0);
 INSERT INTO customer VALUES(4,'Diana',0,1000, "diana@corp.org", 0);
 INSERT INTO customer VALUES(5,'Silent',220,1000, "silent@corp.org", 1);
-CREATE TABLE product (
-        id INTEGER NOT NULL, 
-        name VARCHAR, 
-        unit_price DECIMAL,
-        PRIMARY KEY (id)
-);
+
 
 CREATE TABLE product (
         id INTEGER NOT NULL, 
@@ -36,6 +31,17 @@ INSERT INTO product VALUES(2,'Widget',90, NULL);
 INSERT INTO product VALUES(3,'Thingamajig',75, NULL);
 INSERT INTO product VALUES(4,'Doodad',110, NULL);
 INSERT INTO product VALUES(5,'Green',109, 1);
+
+
+CREATE TABLE IF NOT EXISTS "email" (
+        id INTEGER NOT NULL, 
+        message VARCHAR, 
+        subject VARCHAR,
+        customer_id INTEGER NOT NULL, 
+        CreatedOn DATE,
+        PRIMARY KEY (id), 
+        FOREIGN KEY(customer_id) REFERENCES customer (id)
+);
 
 CREATE TABLE IF NOT EXISTS "order" (
         id INTEGER NOT NULL, 
