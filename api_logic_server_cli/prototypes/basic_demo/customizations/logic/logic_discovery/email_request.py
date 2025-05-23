@@ -9,11 +9,7 @@ from security.system.authorization import Grant
 import logging
 from flask import jsonify
 
-
-""" Some examples below contrast a preferred approach with a more manual one """
-
 app_logger = logging.getLogger(__name__)
-
 
 def declare_logic():
     """
@@ -30,7 +26,6 @@ def declare_logic():
 
         See: https://apilogicserver.github.io/Docs/Integration-MCP/#3a-logic-request-pattern     
     """
-
 
     def send_mail(row: models.Email, old_row: models.Email, logic_row: LogicRow):
         """ 
