@@ -79,7 +79,7 @@ Created projects use standard Flask and SQLAlchemy; automation is provided by Lo
 als create --project-name=basic_demo --db-url=basic_demo
 ```
 
-<br>The self-demo provides:
+<br>The basic_demo project provides:
 1. A quick look at logic, security and integration
 2. Integration includes Kafka and MCP (**[Model Context Protocol](https://apilogicserver.github.io/Docs/Integration-MCP/)**)
 
@@ -102,7 +102,7 @@ Then, try your own databases [(db-url examples here)](https://apilogicserver.git
 
 <br>You can do this with or without signup:
 
-1. If you have signed up (see *To obtain a ChatGPT API Key*, below), this will create and open a project called `genai_demo` from `genai_demo.prompt` (available in left Explorer pane):
+1. If you have signed up (see *To obtain a ChatGPT API Key*, below), this will create a new database and project called `genai_demo`, and open the project.  It's created using `genai_demo.prompt`, visible in left Explorer pane:
 
 ```bash
 als genai --using=system/genai/examples/genai_demo/genai_demo.prompt --project-name=genai_demo
