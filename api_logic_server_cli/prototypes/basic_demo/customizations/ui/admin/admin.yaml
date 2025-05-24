@@ -49,6 +49,7 @@ resources:
       sort: true
     - name: customer_id
       required: true
+    - name: subject
     - name: message
     - name: CreatedOn
       type: DATE

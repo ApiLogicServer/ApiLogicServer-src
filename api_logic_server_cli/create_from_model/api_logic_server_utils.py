@@ -126,7 +126,10 @@ def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "R
         copyfile(src = from_doc_file_path, dst = to_file)
     
     # now remove the !!, and unindent (mkdocs features fail in a readme)
-    if to_file.exists():
+    if not to_file.exists():    # can occur if offline
+        shutil.copy(Path(get_api_logic_server_dir()).joinpath('prototypes/base').joinpath('readme.md'), 
+                    to_file)
+    else:
         with open(str(to_file), "r") as readme_file:
             readme_lines_mkdocs = readme_file.readlines()    
         readme_lines_md = []
