@@ -83,6 +83,7 @@ class Email(Base):  # type: ignore
     _s_collection_name = 'Email'  # type: ignore
 
     id = Column(Integer, primary_key=True)
+    subject = Column(String)
     message = Column(String)
     customer_id = Column(ForeignKey('customer.id'), nullable=False)
     CreatedOn = Column(Date)

@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "14.05.06"  # last public release: 14.05.00
+__version__ = "14.05.07"  # last public release: 14.05.00
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t05/23/2024 - 14.05.06: re-factored mcp with generic Post, email stub, use basic_demo custs for genai_demo \n"\
+    "\t05/23/2024 - 14.05.07: re-factored mcp with generic Post, email stub, use basic_demo custs for genai_demo \n"\
     "\t05/16/2024 - 14.05.00: safrs 3.1.7, running mcp preview \n"\
     "\t04/27/2024 - 14.04.00: Graphics preview, Vibe install fix, Improved IDE Chat Logic, MCP Exploration \n"\
     "\t03/30/2024 - 14.03.25: WebGenAI fixes for Kafka and Keycloak \n"\
@@ -100,7 +100,7 @@ if debug_value is not None:
         logging.getLogger('create_from_model.model_creation_services').setLevel(logging.DEBUG)
         
 
-log.debug("Patch to enable import of outer directories")
+# log.debug("Patch to enable import of outer directories")
 sys.path.append(get_api_logic_server_dir())  # e.g, on Docker: export PATH="/home/api_logic_server/api_logic_server_cli"
 api_logic_server_path = os.path.dirname(get_api_logic_server_dir())  # e.g: export PATH="/home/api_logic_server"
 sys.path.append(api_logic_server_path)
