@@ -1,7 +1,7 @@
 ---
-version info: 1.0 (01/11/2025)
+version info: 2.0 (05/24/2025)
 ---
-## Welcome to API Logic Server
+## Welcome to GenAI-Logic
 
 1. ***Instant microservices*** (APIs and Admin Apps) from a database or **GenAI prompt** -- 1 command
 

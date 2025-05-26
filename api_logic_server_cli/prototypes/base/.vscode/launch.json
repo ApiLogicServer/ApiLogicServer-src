@@ -108,6 +108,19 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
+            "name": "  - Run designated Python file",
+// use this for test programs, eg to test the server
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "program": "${input:inputProjectName}",
+            "redirectOutput": true,
+            "justMyCode": false,
+            "args": ["go"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
             "name": "Install Ontimize (npm install)",
             "type": "node",
             "request": "launch",
@@ -269,6 +282,14 @@
             "args": ["sys-info"],
             "justMyCode": false,
             "console": "integratedTerminal"
+        }
+    ],
+    "inputs": [
+        {
+            "id": "inputProjectName",
+            "type": "promptString",
+            "description": "Python File Name to Run",
+            "default": "integration/mcp/mcp_client_executor.py"
         }
     ]
 }

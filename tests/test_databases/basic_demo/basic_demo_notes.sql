@@ -1,4 +1,6 @@
-
+to rebuild basic basic_demo
+1. update the .sql files
+2. sh tests/test_databases/basic_demo/basic_demo.sh
 
 xxxxx  WG fails!  somehow the (unique) name got included in the pkey - sqlacodegen bug?
 CREATE TABLE customer (

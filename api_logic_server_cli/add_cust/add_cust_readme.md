@@ -25,6 +25,9 @@ Perhaps genai_demo and basic_demo can share the same add_cust??
 Would be good if GenAI was same as BD after add-cust (ie, has MCP).
 * maybe inject this in api_logic_server_cli/genai/genai.py # insert_logic_into_created_project()
 
+Manager - put basic_demo readme in manager readme>
+* Manager readme is processed for tl;dr -- Automation: Instant API, Admin App (enable UI dev, agile collaboration)
+
 WebGenAI DX:
 
 0. Convention: click the Blue Button
@@ -41,3 +44,6 @@ WebGenAI DX:
         * cd project
         * als add-cust  # add customizations
         * run, and use place b2b order service - end point is not activated.
+
+Misc:
+* proper diff for .md: https://github.com/jonathanyeung/mark-sharp/blob/HEAD/user-guide.md

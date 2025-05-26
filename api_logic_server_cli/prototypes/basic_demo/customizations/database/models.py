@@ -130,3 +130,18 @@ class Item(Base):  # type: ignore
     product : Mapped["Product"] = relationship(back_populates=("ItemList"))
 
     # child relationships (access children)
+
+
+class Mcp(Base):  # type: ignore
+    __tablename__ = 'mcp'
+    _s_collection_name = 'Mcp'  # type: ignore
+
+    id = Column(Integer, primary_key=True)
+    request = Column(String)
+    request_prompt = Column(String)
+    completion = Column(String)
+
+    # parent relationships (access parent)
+
+    # child relationships (access children)
+

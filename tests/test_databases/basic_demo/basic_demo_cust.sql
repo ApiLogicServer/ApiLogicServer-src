@@ -72,6 +72,15 @@ INSERT INTO item VALUES(2,2,2,1,90,90);
 INSERT INTO item VALUES(3,3,4,2,220,110);
 INSERT INTO item VALUES(4,4,3,4,300,75);
 INSERT INTO item VALUES(5,5,4,2,220,110);
+
+CREATE TABLE mcp (
+        id INTEGER NOT NULL, 
+        request VARCHAR, 
+        request_prompt VARCHAR,
+        completion VARCHAR, 
+        PRIMARY KEY (id)
+);
+
 COMMIT;
 
 

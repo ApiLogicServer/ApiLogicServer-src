@@ -74,9 +74,6 @@ class DBMLCreator(object):
                 "tool_type": "json-api",
                 "schema_version": "1.0",
                 "base_url": "http://localhost:5656/api",
-                "query_params": "- JSON:API custom filtering using a filter array (e.g., filter=[{\"name\":\"date_shipped\",\"op\":\"gt\",\"val\":\"2023-07-14\"}])",
-                "expected_response": "Respond with a JSON object with schema_version and a resource array including: tool_type, base_url, path, method, query_params array or body, headers, expected_output.",
-                "email_services": "iff email is requested, Send email by issing a POST request to the Email endpoint, setting the subject, message and customer_id in the body.",
                 "description": f"API Logic Project: {self.mod_gen.project.project_name_last_node}",
                 "resources": [
                 ]
@@ -198,7 +195,7 @@ class DBMLCreator(object):
 
 
 
-    def create_mcp_json_file(self):
+    def create_docs_mcp(self):
         """ create docs/mcp_schema.json - create self.mcp_schema['resources'] entries like:
 
         '''
@@ -213,6 +210,17 @@ class DBMLCreator(object):
         '''        
         """
         
+        docs_path = Path(self.mod_gen.project_directory).joinpath('docs')
+        docs_path.mkdir(parents=True, exist_ok=True)
+        mcp_learning_src = Path(create_utils.get_api_logic_server_dir()).joinpath('prototypes/manager/system/genai/mcp_learning')
+        mcp_learning_dst = Path(self.mod_gen.project_directory).joinpath('docs/mcp_learning')
+        if mcp_learning_dst.exists():
+            shutil.rmtree(mcp_learning_dst)
+        shutil.copytree(
+            src=mcp_learning_src,
+            dst=mcp_learning_dst
+        )
+
         resources : list = self.mcp_schema['resources']
         for each_resource_name in self.mod_gen.resource_list:
             if self.do_process_resource(each_resource_name):
@@ -226,9 +234,7 @@ class DBMLCreator(object):
                     each_inserted_resource['fields'].append(each_attr.name)
                 each_inserted_resource['filterable'] = each_inserted_resource['fields']
                 resources.append(each_inserted_resource)
-        docs_path = Path(self.mod_gen.project_directory).joinpath('docs')
-        docs_path.mkdir(parents=True, exist_ok=True)
-        mcp_schema_path = Path(self.mod_gen.project_directory).joinpath('docs/mcp_schema.json')
+        mcp_schema_path = Path(self.mod_gen.project_directory).joinpath('docs/mcp_learning/mcp_schema.json')
         # write self.mcp_schema dict to json file
         with open(mcp_schema_path, 'w') as f:
             json.dump(self.mcp_schema, f, indent=4)
@@ -240,5 +246,5 @@ def create(model_creation_services: create_from_model.ModelCreationServices):
     """
     dbml_creator = DBMLCreator(model_creation_services)
     dbml_creator.create_docs_dbml_file()
-    dbml_creator.create_mcp_json_file()
+    dbml_creator.create_docs_mcp()
 
