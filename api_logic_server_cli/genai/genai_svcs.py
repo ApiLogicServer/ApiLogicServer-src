@@ -924,14 +924,22 @@ def call_chatgpt(messages: List[Dict[str, str]], api_version: str, using: str) -
         log.error(f"\n\nError: ChatGPT call failed\n- please see https://apilogicserver.github.io/Docs/WebGenAI-CLI/#configuratio\n{inst}\n\n")
         sys.exit(1)
 
-def get_manager_path() -> Path:
+def get_manager_path(use_env: bool = False) -> Path:
     """ Checks cwd, parent, and grandparent for system/genai
 
     * Possibly could add cli arg later
 
+    Args:
+        use_env: bool if cannot find manager from project, use install location
+
     Returns:
         Path: Manager path (contains system/genai)
     """
+
+    if use_env:
+        result_path = Path(os.getenv("APILOGICSERVER_HOME")).joinpath('api_logic_server_cli/prototypes/manager')
+        return result_path
+
     result_path = Path(os.getcwd())  # normal case - project at manager root
     check_system_genai = result_path.joinpath('system/genai')    
     if check_system_genai.exists():
@@ -964,8 +972,8 @@ def get_manager_path() -> Path:
 
     result_path = result_path.parent  # try ancestors - this is for import testing
     check_system_genai = result_path.joinpath('system/genai')
+
     assert check_system_genai.exists(), f"Manager Directory not found: {check_system_genai}"
-    
     return result_path
 
 
