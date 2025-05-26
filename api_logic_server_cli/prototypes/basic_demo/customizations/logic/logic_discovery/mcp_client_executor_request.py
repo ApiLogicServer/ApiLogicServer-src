@@ -16,7 +16,9 @@ import json
 import os, sys
 import openai
 import requests
+from logic_bank.exec_row_logic.logic_row import LogicRow
 from logic_bank.logic_bank import Rule
+from database import models
 from logic_bank.util import ConstraintException
 
 # Set your OpenAI API key
@@ -317,17 +319,46 @@ def process_tool_context(tool_context):
     return mcp_response 
 
 
-if __name__ == "__main__":
 
-    # to run: Run Config > Run designated Python file
+def declare_logic():
+    """
+        This illustrates the request pattern.
 
-    schema_text = discover_mcp_servers()                # see: 1-discovery-from-als
+        The request pattern is a common pattern in API Logic Server, 
+        where an insert triggers service invocation, such as sending email.
+        
+        The Email table includes the columns for the email (e,g, recipient, subject, message).
+        
+        Using a request object enables you to wrap the service call with logic, eg:
+        
+        * *email requirement: do not send mail if customer has opted out*  
 
-    query = "List the orders date_shipped is null and CreatedOn before 2023-07-14, and send a discount email (subject: 'Discount Offer') to the customer for each one."
-    prompt = get_user_nl_query_and_training(query)            # set breakpoint here, view log, then step
+        See: https://apilogicserver.github.io/Docs/Integration-MCP/#3a-logic-request-pattern     
+    """
 
-    tool_context = query_llm_with_nl(schema_text, prompt)             # see: 2-tool-context-from-LLM   
 
-    mcp_response = process_tool_context(tool_context)   # see: 3-MCP-server response
+    def mcp_client_executor(row: models.Mcp, old_row: models.Mcp, logic_row: LogicRow):
+        """ 
 
-    print("\nTest complete.\n")
+        #als: create an MCP request
+
+        curl -X 'POST' 'http://localhost:5656/api/Mcp/' -H 'accept: application/vnd.api+json' -H 'Content-Type: application/json' -d '{ "data": { "attributes": {"request": "List the orders date_shipped is null and CreatedOn before 2023-07-14, and send a discount email (subject: '\''Discount Offer'\'') to the customer for each one."}, "type": "Mcp"}}'
+
+        Args:
+            row (Mcp): inserted MCP with prompt
+            old_row (Mcp): n/a
+            logic_row (LogicRow): bundles curr/old row, with ins/upd/dlt logic
+        """
+        schema_text = discover_mcp_servers()                    # see: 1-discovery-from-als
+
+        query_example = "List the orders date_shipped is null and CreatedOn before 2023-07-14, and send a discount email (subject: 'Discount Offer') to the customer for each one."
+        query = row.request
+        prompt = get_user_nl_query_and_training(query)
+
+        tool_context = query_llm_with_nl(schema_text, prompt)    # see: 2-tool-context-from-LLM   
+
+        mcp_response = process_tool_context(tool_context)       # see: 3-MCP-server response
+
+        print("\nTest complete.\n")
+
+    Rule.row_event(on_class=models.Mcp, calling=mcp_client_executor)  # see above

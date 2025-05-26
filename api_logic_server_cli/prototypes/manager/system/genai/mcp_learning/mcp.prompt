@@ -1,0 +1,29 @@
+iff email is requested, Send email by issing a POST request to the Email endpoint, setting the subject, message and customer_id in the body.
+
+format response as mcp_responseFormat.
+
+<mcp_responseFormat>
+class QueryParam(BaseModel):
+    name: str  # attribute name
+    op: str  # eq, lt, gt
+    val: str
+
+class JsonValues(BaseMopdel):
+    name: str  # name of attribute
+    value: str # value of attribute
+
+class Resource(BaseModel):
+    tool_type: str
+    base_url: str
+    path: str # specified use case or requirement name (use 'General' if missing)
+    method: str # GET, PATCH, POST or DELETE
+    body: json # data for PATCH or POST
+    query_params: List(QueryParam) # filter for GET
+
+class MCPResult(BaseModel):  # must match system/genai/prompt_inserts/response_format.prompt
+    schema_version: str
+    resources : List[Resource] # list resources
+
+Format the response as a MCPResult.
+
+</<mcp_responseFormat>

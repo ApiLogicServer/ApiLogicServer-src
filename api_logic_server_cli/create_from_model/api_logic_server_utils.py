@@ -163,12 +163,14 @@ def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "R
                         each_line = each_line[4:]
                     in_mkdocs_block_with_sections = True
                 each_line = each_line.replace('{:target="_blank" rel="noopener"}', '')
-                if each_line.startswith('![') or each_line.startswith('[!['):
+                if each_line.startswith('![') or each_line.startswith('[![') or each_line.startswith('    !['):
                     if "https://github.com/ApiLogicServer" not in each_line:     # make doc-relative urls absolute...
                         if "creates-and-runs-video" in each_line:
                             debug_stop = "good stop"
                         each_line = each_line.replace('images', 'https://github.com/ApiLogicServer/Docs/blob/main/docs/images')
                         each_line = each_line.replace('png)', 'png?raw=true)')
+                        each_line = each_line.replace('jpeg)', 'jpeg?raw=true)')
+                        each_line = each_line.replace('jpg)', 'jpg?raw=true)')
                     else:
                         pass # image is absolute - don't alter
                 readme_lines_md.append(each_line)

@@ -134,6 +134,17 @@ resources:
       resource: Item
     type: Product
     user_key: name
+  Mcp:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: request
+    - name: request_prompt
+    - name: completion
+    type: Mcp
+    user_key: id
 settings:
   HomeJS: /admin-app/home.js
   max_list_columns: 8

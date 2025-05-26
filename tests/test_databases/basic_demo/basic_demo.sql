@@ -1,7 +1,4 @@
--- not used - wg version seems to fail around unique(name) - Alice has no orders.  Needs verification.
--- this is backup example
--- sqlite3 tests/test_databases/basic_demo/basic_demo.sqlite < tests/test_databases/basic_demo/basic_demo.sql;
--- popd
+-- wg_version, plus adding mcp
 
 
 PRAGMA foreign_keys=OFF;
@@ -17,6 +14,7 @@ INSERT INTO customer VALUES(1,'Alice',90,5000);
 INSERT INTO customer VALUES(2,'Bob',0,3000);
 INSERT INTO customer VALUES(3,'Charlie',220,2000);
 INSERT INTO customer VALUES(4,'Diana',0,1000);
+
 CREATE TABLE product (
         id INTEGER NOT NULL, 
         name VARCHAR, 
@@ -27,6 +25,7 @@ INSERT INTO product VALUES(1,'Gadget',150);
 INSERT INTO product VALUES(2,'Widget',90);
 INSERT INTO product VALUES(3,'Thingamajig',75);
 INSERT INTO product VALUES(4,'Doodad',110);
+
 CREATE TABLE IF NOT EXISTS "order" (
         id INTEGER NOT NULL, 
         notes VARCHAR, 
@@ -40,6 +39,7 @@ INSERT INTO "order" VALUES(1,'First Order',2,'2023-03-22',300);
 INSERT INTO "order" VALUES(2,'Second Order',1,NULL,90);
 INSERT INTO "order" VALUES(3,'Pending Shipment',3,NULL,220);
 INSERT INTO "order" VALUES(4,'Urgent Order',4,'2023-07-15',220);
+
 CREATE TABLE item (
         id INTEGER NOT NULL, 
         order_id INTEGER, 
@@ -55,4 +55,13 @@ INSERT INTO item VALUES(1,1,1,2,300,150);
 INSERT INTO item VALUES(2,2,2,1,90,90);
 INSERT INTO item VALUES(3,3,4,2,220,110);
 INSERT INTO item VALUES(4,4,3,4,300,75);
+
+CREATE TABLE mcp (
+        id INTEGER NOT NULL, 
+        request VARCHAR, 
+        request_prompt VARCHAR,
+        completion VARCHAR, 
+        PRIMARY KEY (id)
+);
+
 COMMIT;
