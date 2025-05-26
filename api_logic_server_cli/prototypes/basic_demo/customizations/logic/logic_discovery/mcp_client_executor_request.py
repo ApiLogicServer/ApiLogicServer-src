@@ -299,7 +299,7 @@ def process_tool_context(tool_context):
             elif each_block["method"] in ["POST"]:
                     for each_order in context_data:
                         url = each_block["base_url"] + each_block["path"]
-                        json_update_data =  { 'data': {"type": "Email", 'attributes': {} } }  
+                        json_update_data =  { 'data': {"type": "SysEmail", 'attributes': {} } }  
                         json_update_data_attributes = json_update_data["data"]["attributes"]
                         move_fields( src= each_block["body"], dest=json_update_data_attributes, context_data=each_order) 
                         # eg: POST http://localhost:5656/api/Email {'data': {'type': 'Email', 'attributes': {'customer_id': 5, 'message': {'to': '{{ order.customer_id }}', 'subject': 'Discount for your order', 'body': 'Dear customer, you have a discount for your recent order. Thank you for shopping with us.'}}}}
@@ -337,12 +337,12 @@ def declare_logic():
     """
 
 
-    def mcp_client_executor(row: models.Mcp, old_row: models.Mcp, logic_row: LogicRow):
+    def mcp_client_executor(row: models.SysMcp, old_row: models.SysMcp, logic_row: LogicRow):
         """ 
 
         #als: create an MCP request
 
-        curl -X 'POST' 'http://localhost:5656/api/Mcp/' -H 'accept: application/vnd.api+json' -H 'Content-Type: application/json' -d '{ "data": { "attributes": {"request": "List the orders date_shipped is null and CreatedOn before 2023-07-14, and send a discount email (subject: '\''Discount Offer'\'') to the customer for each one."}, "type": "Mcp"}}'
+        curl -X 'POST' 'http://localhost:5656/api/SysMcp/' -H 'accept: application/vnd.api+json' -H 'Content-Type: application/json' -d '{ "data": { "attributes": {"request": "List the orders date_shipped is null and CreatedOn before 2023-07-14, and send a discount email (subject: '\''Discount Offer'\'') to the customer for each one."}, "type": "SysMcp"}}'
 
         Args:
             row (Mcp): inserted MCP with prompt
@@ -361,4 +361,4 @@ def declare_logic():
 
         print("\nTest complete.\n")
 
-    Rule.row_event(on_class=models.Mcp, calling=mcp_client_executor)  # see above
+    Rule.row_event(on_class=models.SysMcp, calling=mcp_client_executor)  # see above

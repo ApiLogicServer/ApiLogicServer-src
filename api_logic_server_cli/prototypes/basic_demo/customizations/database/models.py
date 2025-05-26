@@ -1,6 +1,6 @@
 # coding: utf-8
 from sqlalchemy import DECIMAL, DateTime  # API Logic Server GenAI assist
-from sqlalchemy import Boolean, Column, DECIMAL, Date, ForeignKey, Integer, String
+from sqlalchemy import Column, DECIMAL, Date, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -10,7 +10,7 @@ from sqlalchemy.ext.declarative import declarative_base
 # Alter this file per your database maintenance policy
 #    See https://apilogicserver.github.io/Docs/Project-Rebuild/#rebuilding
 #
-# Created:  May 14, 2025 10:47:47
+# Created:  May 25, 2025 19:10:32
 # Database: sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/servers/basic_demo/database/db.sqlite
 # Dialect:  sqlite
 #
@@ -52,14 +52,12 @@ class Customer(Base):  # type: ignore
     name = Column(String)
     balance : DECIMAL = Column(DECIMAL)
     credit_limit : DECIMAL = Column(DECIMAL)
-    email = Column(String)
-    email_opt_out = Column(Boolean)
 
     # parent relationships (access parent)
 
     # child relationships (access children)
-    EmailList : Mapped[List["Email"]] = relationship(back_populates="customer")
     OrderList : Mapped[List["Order"]] = relationship(back_populates="customer")
+    SysEmailList : Mapped[List["SysEmail"]] = relationship(back_populates="customer")
 
 
 
@@ -78,18 +76,16 @@ class Product(Base):  # type: ignore
 
 
 
-class Email(Base):  # type: ignore
-    __tablename__ = 'email'
-    _s_collection_name = 'Email'  # type: ignore
+class SysMcp(Base):  # type: ignore
+    __tablename__ = 'sys_mcp'
+    _s_collection_name = 'SysMcp'  # type: ignore
 
     id = Column(Integer, primary_key=True)
-    subject = Column(String)
-    message = Column(String)
-    customer_id = Column(ForeignKey('customer.id'), nullable=False)
-    CreatedOn = Column(Date)
+    request = Column(String)
+    request_prompt = Column(String)
+    completion = Column(String)
 
     # parent relationships (access parent)
-    customer : Mapped["Customer"] = relationship(back_populates=("EmailList"))
 
     # child relationships (access children)
 
@@ -114,6 +110,23 @@ class Order(Base):  # type: ignore
 
 
 
+class SysEmail(Base):  # type: ignore
+    __tablename__ = 'sys_email'
+    _s_collection_name = 'SysEmail'  # type: ignore
+
+    id = Column(Integer, primary_key=True)
+    message = Column(String)
+    subject = Column(String)
+    customer_id = Column(ForeignKey('customer.id'), nullable=False)
+    CreatedOn = Column(Date)
+
+    # parent relationships (access parent)
+    customer : Mapped["Customer"] = relationship(back_populates=("SysEmailList"))
+
+    # child relationships (access children)
+
+
+
 class Item(Base):  # type: ignore
     __tablename__ = 'item'
     _s_collection_name = 'Item'  # type: ignore
@@ -130,18 +143,3 @@ class Item(Base):  # type: ignore
     product : Mapped["Product"] = relationship(back_populates=("ItemList"))
 
     # child relationships (access children)
-
-
-class Mcp(Base):  # type: ignore
-    __tablename__ = 'mcp'
-    _s_collection_name = 'Mcp'  # type: ignore
-
-    id = Column(Integer, primary_key=True)
-    request = Column(String)
-    request_prompt = Column(String)
-    completion = Column(String)
-
-    # parent relationships (access parent)
-
-    # child relationships (access children)
-
