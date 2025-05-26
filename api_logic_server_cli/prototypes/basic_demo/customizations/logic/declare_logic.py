@@ -33,7 +33,7 @@ def declare_logic():
         discover_logic()
 
     # Logic from GenAI: (or, use your IDE w/ code completion)
-    from database.models import Product, Order, Item, Customer, Email
+    from database.models import Product, Order, Item, Customer, SysEmail
 
     # Ensure the customer's balance is less than their credit limit
     Rule.constraint(validate=Customer, as_condition=lambda row: row.balance <= row.credit_limit, error_msg="Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})")

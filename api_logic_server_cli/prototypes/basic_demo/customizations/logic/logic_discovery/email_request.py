@@ -27,7 +27,7 @@ def declare_logic():
         See: https://apilogicserver.github.io/Docs/Integration-MCP/#3a-logic-request-pattern     
     """
 
-    def send_mail(row: models.Email, old_row: models.Email, logic_row: LogicRow):
+    def send_mail(row: models.SysEmail, old_row: models.SysEmail, logic_row: LogicRow):
         """ 
 
         #als: Send N8N email message
@@ -44,4 +44,4 @@ def declare_logic():
                 return
             logic_row.log(f"send email {row.message} to {customer.email} (stub, eg use N8N")  # see in log  
 
-    Rule.after_flush_row_event(on_class=models.Email, calling=send_mail)  # see above
+    Rule.after_flush_row_event(on_class=models.SysEmail, calling=send_mail)  # see above

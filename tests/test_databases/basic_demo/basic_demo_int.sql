@@ -32,17 +32,6 @@ INSERT INTO product VALUES(3,'Thingamajig',75, NULL);
 INSERT INTO product VALUES(4,'Doodad',110, NULL);
 INSERT INTO product VALUES(5,'Green',109, 1);
 
-
-CREATE TABLE IF NOT EXISTS "email" (
-        id INTEGER NOT NULL, 
-        message VARCHAR, 
-        subject VARCHAR,
-        customer_id INTEGER NOT NULL, 
-        CreatedOn DATE,
-        PRIMARY KEY (id), 
-        FOREIGN KEY(customer_id) REFERENCES customer (id)
-);
-
 CREATE TABLE IF NOT EXISTS "order" (
         id INTEGER NOT NULL, 
         notes VARCHAR, 
@@ -76,7 +65,18 @@ INSERT INTO item VALUES(3,3,4,2,220,110);
 INSERT INTO item VALUES(4,4,3,4,300,75);
 INSERT INTO item VALUES(5,5,4,2,220,110);
 
-CREATE TABLE mcp (
+
+CREATE TABLE IF NOT EXISTS sys_email (
+        id INTEGER NOT NULL, 
+        message VARCHAR, 
+        subject VARCHAR,
+        customer_id INTEGER NOT NULL, 
+        CreatedOn DATE,
+        PRIMARY KEY (id), 
+        FOREIGN KEY(customer_id) REFERENCES customer (id)
+);
+
+CREATE TABLE sys_mcp (
         id INTEGER NOT NULL, 
         request VARCHAR, 
         request_prompt VARCHAR,

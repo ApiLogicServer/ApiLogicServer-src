@@ -30,15 +30,17 @@ CREATE TABLE IF NOT EXISTS "order" (
         id INTEGER NOT NULL, 
         notes VARCHAR, 
         customer_id INTEGER NOT NULL, 
+        CreatedOn DATE,
         date_shipped DATE, 
         amount_total DECIMAL, 
         PRIMARY KEY (id), 
         FOREIGN KEY(customer_id) REFERENCES customer (id)
 );
-INSERT INTO "order" VALUES(1,'First Order',2,'2023-03-22',300);
-INSERT INTO "order" VALUES(2,'Second Order',1,NULL,90);
-INSERT INTO "order" VALUES(3,'Pending Shipment',3,NULL,220);
-INSERT INTO "order" VALUES(4,'Urgent Order',4,'2023-07-15',220);
+INSERT INTO "order" VALUES(1,'First Order',2, '2023-02-22', '2023-03-22',300);
+INSERT INTO "order" VALUES(2,'Second Order',1, '2023-02-22',NULL,90);
+INSERT INTO "order" VALUES(3,'Pending Shipment',3, '2023-01-22',NULL,220);
+INSERT INTO "order" VALUES(4,'Urgent Order',4, '2023-02-22', '2023-07-15',220);
+INSERT INTO "order" VALUES(5,'Silent Shipment',5, '2023-01-22',NULL,220);
 
 CREATE TABLE item (
         id INTEGER NOT NULL, 
@@ -56,7 +58,17 @@ INSERT INTO item VALUES(2,2,2,1,90,90);
 INSERT INTO item VALUES(3,3,4,2,220,110);
 INSERT INTO item VALUES(4,4,3,4,300,75);
 
-CREATE TABLE mcp (
+CREATE TABLE IF NOT EXISTS sys_email (
+        id INTEGER NOT NULL, 
+        message VARCHAR, 
+        subject VARCHAR,
+        customer_id INTEGER NOT NULL, 
+        CreatedOn DATE,
+        PRIMARY KEY (id), 
+        FOREIGN KEY(customer_id) REFERENCES customer (id)
+);
+
+CREATE TABLE sys_mcp (
         id INTEGER NOT NULL, 
         request VARCHAR, 
         request_prompt VARCHAR,
