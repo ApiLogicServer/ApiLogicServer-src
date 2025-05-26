@@ -1,17 +1,12 @@
 about:
-  date: May 13, 2025 20:12:31
-  merged:
-    at: May 13, 2025 20:15:21
-    new_attributes: 'Customer.email Order.CreatedOn '
-    new_resources: 'Email '
-    new_tab_groups: 'Customer.EmailList '
+  date: May 26, 2025 06:57:17
   recent_changes: works with modified safrs-react-admin
   version: 0.0.0
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
 authentication: '{system-default}'
 info:
   number_relationships: 4
-  number_tables: 5
+  number_tables: 6
 info_toggle_checked: true
 resources:
   Customer:
@@ -24,10 +19,10 @@ resources:
       type: DECIMAL
     - name: credit_limit
       type: DECIMAL
-    - name: id
     - name: email
     - name: email_opt_out
-      type: BOOLEAN
+      type: Boolean
+    - name: id
     tab_groups:
     - direction: tomany
       fks:
@@ -37,30 +32,10 @@ resources:
     - direction: tomany
       fks:
       - customer_id
-      name: EmailList
-      resource: Email
+      name: SysEmailList
+      resource: SysEmail
     type: Customer
     user_key: name
-  Email:
-    attributes:
-    - label: ' id*'
-      name: id
-      search: true
-      sort: true
-    - name: customer_id
-      required: true
-    - name: subject
-    - name: message
-    - name: CreatedOn
-      type: DATE
-    tab_groups:
-    - direction: toone
-      fks:
-      - customer_id
-      name: customer
-      resource: Customer
-    type: Email
-    user_key: id
   Item:
     attributes:
     - label: ' id*'
@@ -98,11 +73,11 @@ resources:
     - name: customer_id
       required: true
     - name: notes
+    - name: CreatedOn
+      type: DATE
     - name: amount_total
       type: DECIMAL
     - name: date_shipped
-      type: DATE
-    - name: CreatedOn
       type: DATE
     tab_groups:
     - direction: tomany
@@ -134,7 +109,27 @@ resources:
       resource: Item
     type: Product
     user_key: name
-  Mcp:
+  SysEmail:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: customer_id
+      required: true
+    - name: message
+    - name: subject
+    - name: CreatedOn
+      type: DATE
+    tab_groups:
+    - direction: toone
+      fks:
+      - customer_id
+      name: customer
+      resource: Customer
+    type: SysEmail
+    user_key: id
+  SysMcp:
     attributes:
     - label: ' id*'
       name: id
@@ -143,7 +138,7 @@ resources:
     - name: request
     - name: request_prompt
     - name: completion
-    type: Mcp
+    type: SysMcp
     user_key: id
 settings:
   HomeJS: /admin-app/home.js

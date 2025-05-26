@@ -7,15 +7,12 @@ import os
 import pathlib
 from pathlib import Path
 from typing import NewType, List, Tuple, Dict
-
-import sqlalchemy
-import yaml
 from sqlalchemy import MetaData, false
 import datetime
 import api_logic_server_cli.create_from_model.model_creation_services as create_from_model
 import api_logic_server_cli.create_from_model.api_logic_server_utils as create_utils
 from dotmap import DotMap
-
+import api_logic_server_cli.genai.genai_svcs as genai_svcs
 from api_logic_server_cli.create_from_model.meta_model import Resource, ResourceAttribute, ResourceRelationship
 
 
@@ -212,7 +209,8 @@ class DBMLCreator(object):
         
         docs_path = Path(self.mod_gen.project_directory).joinpath('docs')
         docs_path.mkdir(parents=True, exist_ok=True)
-        mcp_learning_src = Path(create_utils.get_api_logic_server_dir()).joinpath('prototypes/manager/system/genai/mcp_learning')
+        # mcp_learning_src = Path(create_utils.get_api_logic_server_dir()).joinpath('prototypes/manager/system/genai/mcp_learning')
+        mcp_learning_src = genai_svcs.get_manager_path(use_env=True).joinpath('system/genai/mcp_learning')
         mcp_learning_dst = Path(self.mod_gen.project_directory).joinpath('docs/mcp_learning')
         if mcp_learning_dst.exists():
             shutil.rmtree(mcp_learning_dst)

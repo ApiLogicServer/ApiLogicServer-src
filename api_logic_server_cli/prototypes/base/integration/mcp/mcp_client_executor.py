@@ -17,9 +17,7 @@ import os, sys
 from typing import Dict, List
 import openai
 import requests
-from logic_bank.exec_row_logic.logic_row import LogicRow
 from logic_bank.logic_bank import Rule
-from database import models
 from logic_bank.util import ConstraintException
 
 # Set your OpenAI API key
@@ -87,7 +85,14 @@ def get_user_nl_query_and_training(query: str):
     else:
         training_prompt = ""
         print(f"Prompt file not found at {prompt_file_path}.")
-    return query + "\n\n" + training_prompt
+
+    # if 1 argument, use it as the query
+    query_actual = query
+    if len(sys.argv) > 1:
+        query_actual = sys.argv[1]
+        if query_actual == '':
+            query_actual = "list customers with balance over 100."
+    return query_actual + ";\n\n" + training_prompt
 
 
 def query_llm_with_nl(schema_text, nl_query):
@@ -255,10 +260,10 @@ def process_tool_context(tool_context):
             elif each_block["method"] in ["POST"]:
                     for each_order in context_data:
                         url = each_block["base_url"] + each_block["path"]
-                        json_update_data =  { 'data': {"type": each_block["path"][1:], 'attributes': {} } }  
+                        json_update_data =  { 'data': {"type": "Email", 'attributes': {} } }  
                         json_update_data_attributes = json_update_data["data"]["attributes"]
                         move_fields( src= each_block["body"], dest=json_update_data_attributes, context_data=each_order) 
-                        # eg: POST http://localhost:5656/api/SysEmail {'data': {'type': 'SysEmail', 'attributes': {'customer_id': 5, 'message': {'to': '{{ order.customer_id }}', 'subject': 'Discount for your order', 'body': 'Dear customer, you have a discount for your recent order. Thank you for shopping with us.'}}}}
+                        # eg: POST http://localhost:5656/api/Email {'data': {'type': 'Email', 'attributes': {'customer_id': 5, 'message': {'to': '{{ order.customer_id }}', 'subject': 'Discount for your order', 'body': 'Dear customer, you have a discount for your recent order. Thank you for shopping with us.'}}}}
                         headers = {"Content-Type": "application/vnd.api+json"}
                         if "headers" in each_block:
                             headers.update(each_block["headers"])
@@ -275,46 +280,17 @@ def process_tool_context(tool_context):
     return mcp_response 
 
 
+if __name__ == "__main__":
 
-def declare_logic():
-    """
-        This illustrates the request pattern.
+    # to run: Run Config > Run designated Python file
 
-        The request pattern is a common pattern in API Logic Server, 
-        where an insert triggers service invocation, such as sending email.
-        
-        The Email table includes the columns for the email (e,g, recipient, subject, message).
-        
-        Using a request object enables you to wrap the service call with logic, eg:
-        
-        * *email requirement: do not send mail if customer has opted out*  
+    schema_text = discover_mcp_servers()                # see: 1-discovery-from-als
 
-        See: https://apilogicserver.github.io/Docs/Integration-MCP/#3a-logic-request-pattern     
-    """
+    query = "list customers with balance over 100"
+    prompt = get_user_nl_query_and_training(query)            # set breakpoint here, view log, then step
 
+    tool_context = query_llm_with_nl(schema_text, prompt)             # see: 2-tool-context-from-LLM   
 
-    def mcp_client_executor(row: models.SysMcp, old_row: models.SysMcp, logic_row: LogicRow):
-        """ 
+    mcp_response = process_tool_context(tool_context)   # see: 3-MCP-server response
 
-        #als: create an MCP request
-
-        curl -X 'POST' 'http://localhost:5656/api/SysMcp/' -H 'accept: application/vnd.api+json' -H 'Content-Type: application/json' -d '{ "data": { "attributes": {"request": "List the orders date_shipped is null and CreatedOn before 2023-07-14, and send a discount email (subject: '\''Discount Offer'\'') to the customer for each one."}, "type": "SysMcp"}}'
-
-        Args:
-            row (Mcp): inserted MCP with prompt
-            old_row (Mcp): n/a
-            logic_row (LogicRow): bundles curr/old row, with ins/upd/dlt logic
-        """
-        schema_text = discover_mcp_servers()                    # see: 1-discovery-from-als
-
-        query_example = "List the orders date_shipped is null and CreatedOn before 2023-07-14, and send a discount email (subject: 'Discount Offer') to the customer for each one."
-        query = row.request
-        prompt = get_user_nl_query_and_training(query)
-
-        tool_context = query_llm_with_nl(schema_text, prompt)    # see: 2-tool-context-from-LLM   
-
-        mcp_response = process_tool_context(tool_context)       # see: 3-MCP-server response
-
-        print("\nTest complete.\n")
-
-    Rule.row_event(on_class=models.SysMcp, calling=mcp_client_executor)  # see above
+    print("\nTest complete.\n")

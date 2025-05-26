@@ -121,6 +121,19 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
+            "name": "MCP - Model Context Protocol - Client Executor",
+// a simple client to test the Model Context Protocol, default request for basic_demo
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "program": "integration/mcp/mcp_client_executor.py",
+            "redirectOutput": true,
+            "justMyCode": false,
+            "args": ["list customers with balance over 100"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
             "name": "Install Ontimize (npm install)",
             "type": "node",
             "request": "launch",
@@ -290,6 +303,12 @@
             "type": "promptString",
             "description": "Python File Name to Run",
             "default": "integration/mcp/mcp_client_executor.py"
+        },
+        {
+            "id": "inputMcpRequest",
+            "type": "promptString",
+            "description": "Request for MCP Client Executor",
+            "default": "find customers with balance over 500"
         }
     ]
 }

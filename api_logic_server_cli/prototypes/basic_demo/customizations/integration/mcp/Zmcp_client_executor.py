@@ -14,6 +14,7 @@ Notes:
 
 import json
 import os, sys
+from typing import Dict, List
 import openai
 import requests
 from logic_bank.logic_bank import Rule
@@ -44,7 +45,7 @@ def discover_mcp_servers():
     try:
         with open(discovery_file_path, "r") as discovery_file:
             discovery_data = json.load(discovery_file)
-            print(f"\nDiscovered MCP servers from config file: {discovery_file_path}:" + json.dumps(discovery_data, indent=4))
+            print(f"\n1. Discovered MCP servers from config file: {discovery_file_path}:" + json.dumps(discovery_data, indent=4))
     except FileNotFoundError:
         print(f"Discovery file not found at {discovery_file_path}.")
     except json.JSONDecodeError as e:
@@ -59,7 +60,8 @@ def discover_mcp_servers():
             if response.status_code == 200:
                 api_schema = response.json()
                 print()
-                print(f"\n1. API Schema from discovery schema_url: {discovery_url}:\n" +json.dumps(api_schema, indent=4))
+                request_print = json.dumps(api_schema, indent=4)[0:400] + '\n... etc'  # limit for readability
+                print(f"\n\nAPI Schema from discovery schema_url: {discovery_url}:\n" + request_print)
             else:
                 print(f"Failed to retrieve API schema from {discovery_url}: {response.status_code}")
         except requests.RequestException as e:
@@ -79,11 +81,16 @@ def get_user_nl_query_and_training(query: str):
     if os.path.exists(prompt_file_path):
         with open(prompt_file_path, "r") as prompt_file:
             training_prompt = prompt_file.read()
-            print(f"\nLoaded training prompt from {prompt_file_path}:\n{training_prompt}")
+            # print(f"\nLoaded training prompt from {prompt_file_path}:\n{training_prompt}")
     else:
         training_prompt = ""
         print(f"Prompt file not found at {prompt_file_path}.")
-    return query + "\n\n" + training_prompt
+
+    # if 1 argument, use it as the query
+    query_actual = query
+    if len(sys.argv) > 1:
+        query_actual = sys.argv[1]
+    return query_actual + ";\n\n" + training_prompt
 
 
 def query_llm_with_nl(schema_text, nl_query):
@@ -95,6 +102,7 @@ def query_llm_with_nl(schema_text, nl_query):
 
     global test_type, create_tool_context_from_llm
 
+    content = f"Natural language query:\n {nl_query}\nSchema:\n{schema_text}"
     messages = [
         {
             "role": "system",
@@ -102,68 +110,18 @@ def query_llm_with_nl(schema_text, nl_query):
         },
         {
             "role": "user",
-            "content": f"Schema:\n{schema_text}\n\nNatural language query: '{nl_query}'"
+            "content": f"{content}"
         }
     ]
 
-    # setup default tool_context to bypass LLM call and save 2-3 secs in testing
-    if test_type == 'orchestration':     # orchestration: emails to pending orders
+    request_print = content[0:1200] + '\n... etc'  # limit for readability
+    print("\n\n2a. LLM request:\n", request_print)
+    # print("\n2b. NL Query:\n", nl_query)
+    # print("\n2c. schema_text: (truncated) \n")
+    # schema_print = json.dumps(json.loads(schema_text), indent=4)[:400]  # limit for readability
+    # print(schema_print)
 
-        tool_context = \
-            {
-                "schema_version": "1.0",
-                "resources": [
-                    {
-                        "tool_type": "json-api",
-                        "base_url": "http://localhost:5656/api",
-                        "path": "/Order",
-                        "method": "GET",
-                        "body": "",
-                        "query_params": [
-                            {
-                                "query_param": "filter=[{\"name\":\"date_shipped\",\"op\":\"lt\",\"val\":\"2023-07-14\"},{\"name\":\"status\",\"op\":\"eq\",\"val\":\"unshipped\"}]"
-                            }
-                        ]
-                    },
-                    {
-                        "tool_type": "json-api",
-                        "base_url": "http://localhost:5656/api",
-                        "path": "/Email",
-                        "method": "POST",
-                        "body": "{\"subject\": \"Discount Offer\", \"message\": \"You have a new discount offer!\", \"customer_id\": \"{{customer_id}}\"}",
-                        "query_params": []
-                    }
-                ]
-            }
-    else:                                   # simple get request - list customers with credit over 1000 
-        tool_context = \
-            {
-                "tool_type": "json-api",
-                "schema_version": "1.0",
-                "base_url": "http://localhost:5656/api",
-                "resources": [
-                    {
-                        "path": "/Customer",
-                        "method": "GET",
-                        "query_params": [
-                            {
-                                "name": "credit_limit",
-                                "op": "gt",
-                                "val": "1000"
-                            }
-                        ]
-                    }
-                ]
-            }    # Call the OpenAI API to generate the tool context        
-    
-    if do_debug_llm := False:
-        messaages_debug = [{'role': 'system', 'content': 'You are an API planner that converts natural language queries into MCP Tool Context blocks using JSON:API. Return only the tool context as JSON.'}, {'role': 'user', 'content': 'Schema:\n{"base_url": "http://localhost:5656/api", "description": "API Logic Project: basic_demo", "email_services": "iff email is requested, Send email by issing a POST request to the Email endpoint, setting the subject, message and customer_id in the body.", "expected_response": "Respond with a JSON object with schema_version and a resource array including: tool_type, base_url, path, method, query_params array or body, headers.", "query_params": "- JSON:API custom filtering using a filter array (e.g., filter=[{\\"name\\":\\"date_shipped\\",\\"op\\":\\"gt\\",\\"val\\":\\"2023-07-14\\"}])", "resources": [{"fields": ["id", "name", "balance", "credit_limit"], "filterable": ["id", "name", "balance", "credit_limit"], "methods": ["GET", "PATCH", "POST", "DELETE"], "name": "Customer", "path": "/Customer"}, {"fields": ["id", "order_id", "product_id", "quantity", "amount", "unit_price"], "filterable": ["id", "order_id", "product_id", "quantity", "amount", "unit_price"], "methods": ["GET", "PATCH", "POST", "DELETE"], "name": "Item", "path": "/Item"}, {"fields": ["id", "notes", "customer_id", "date_shipped", "amount_total"], "filterable": ["id", "notes", "customer_id", "date_shipped", "amount_total"], "methods": ["GET", "PATCH", "POST", "DELETE"], "name": "Order", "path": "/Order"}, {"fields": ["id", "name", "unit_price"], "filterable": ["id", "name", "unit_price"], "methods": ["GET", "PATCH", "POST", "DELETE"], "name": "Product", "path": "/Product"}, {"fields": ["id", "request", "request_prompt", "completion"], "filterable": ["id", "request", "request_prompt", "completion"], "methods": ["GET", "PATCH", "POST", "DELETE"], "name": "Mcp", "path": "/Mcp"}], "schema_version": "1.0", "tool_type": "json-api"}\n\nNatural language query: \'List the unshipped orders created before 2023-07-14, and send a discount email (subject: \'Discount Offer\') to the customer for each one.\''}]
-        if messages != messaages_debug:
-            print("\n\n1. LLM request:\n", json.dumps(messages, indent=4))
-            print("\n1a. NL Query:\n", nl_query)
-            print("\n1b. schema_text: \n", json.dumps(json.loads(schema_text), indent=4))
-            raise ConstraintException("Internal Error - LLM messages is not expected value.")
-    if create_tool_context_from_llm:  # saves 2-3 seconds...
+    if create_tool_context_from_llm:  # takes 2-3 seconds...
       response = openai.chat.completions.create(
           model="gpt-4",
           messages=messages,
@@ -178,19 +136,10 @@ def query_llm_with_nl(schema_text, nl_query):
           print("Failed to decode JSON from response:", tool_context_str)
           return None
 
-    print("\n\n2a. LLM request:\n", json.dumps(messages, indent=4))
-    print("\n2b. NL Query:\n", nl_query)
-    print("\n2c. schema_text: \n", json.dumps(json.loads(schema_text), indent=4))  #schema_text[0:100])
     print("\n2d. generated tool context from LLM:\n", json.dumps(tool_context, indent=4))
 
     if "resources" not in tool_context:
         raise ConstraintException("GenAI Error - LLM response does not contain 'resources'.")
-    if do_debug_llm:
-        get_request = tool_context["resources"][0]
-        query_params = get_request.get("query_params", [])
-        if query_params['op'] == 'is_null':
-            print("\n2e. LLM generated tool context has a GET request with 'op' operator as 'is_null', which must be addressed in filter.")
-            pass
     return tool_context
 
 
@@ -270,11 +219,23 @@ def process_tool_context(tool_context):
         """ Print the response from the GET request. """
         print("\n3. MCP Server (als) GET filter(query_param_filter):\n", query_param_filter)
         print("     GET Response:\n", mcp_response.text)
-        orders = mcp_response.json()['data']
-        print("   id CreatedOn  customer_id")
-        print("  ", "--", "---------", " -----------")
-        for each_order in orders:
-            print("  ",  each_order["id"], each_order["attributes"]["CreatedOn"],  '  ', each_order["attributes"]["customer_id"])
+        results : List[Dict] = mcp_response.json()['data']
+        # print results in a table format
+        if results:
+            # Get all unique keys from all result dicts
+            keys = set()
+            for row in results:
+                if isinstance(row, dict):
+                    keys.update(row.keys())
+            keys = list(keys)
+            # Print header
+            print("\n| " + " | ".join(keys) + " |")
+            print("|" + "|".join(["---"] * len(keys)) + "|")
+            # Print rows
+            for row in results:
+                print("| " + " | ".join(str(row.get(k, "")) for k in keys) + " |")
+        else:
+            print("No results found.")
 
     assert isinstance(tool_context, (dict, list)), "Tool context expected to be a dictionary"
     context_data = {}

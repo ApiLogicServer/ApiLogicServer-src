@@ -1,5 +1,5 @@
 # coding: utf-8
-from sqlalchemy import DECIMAL, DateTime  # API Logic Server GenAI assist
+from sqlalchemy import DECIMAL, Boolean, DateTime  # API Logic Server GenAI assist
 from sqlalchemy import Column, DECIMAL, Date, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
@@ -52,7 +52,8 @@ class Customer(Base):  # type: ignore
     name = Column(String)
     balance : DECIMAL = Column(DECIMAL)
     credit_limit : DECIMAL = Column(DECIMAL)
-
+    email = Column(String)
+    email_opt_out = Column(Boolean)
     # parent relationships (access parent)
 
     # child relationships (access children)
