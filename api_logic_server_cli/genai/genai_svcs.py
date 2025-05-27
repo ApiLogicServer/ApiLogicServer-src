@@ -936,7 +936,7 @@ def get_manager_path(use_env: bool = False) -> Path:
         Path: Manager path (contains system/genai)
     """
 
-    if use_env:
+    if use_env and os.getenv("APILOGICSERVER_HOME") is not None:
         result_path = Path(os.getenv("APILOGICSERVER_HOME")).joinpath('api_logic_server_cli/prototypes/manager')
         return result_path
 
