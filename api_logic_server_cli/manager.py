@@ -117,7 +117,8 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path,
             from_docker_dir = api_logic_server_path.joinpath('prototypes/manager_docker')
             copied_path = shutil.copytree(src=from_docker_dir, dst=to_dir, dirs_exist_ok=True)
 
-        file_src = f"https://raw.githubusercontent.com/ApiLogicServer/ApiLogicServer-src/main/api_logic_server_cli//README.md"
+        # get latest readme from git (eg, has been updated since pip install)
+        file_src = f"https://raw.githubusercontent.com/ApiLogicServer/ApiLogicServer-src/main/api_logic_server_cli/prototypes/manager/README.md"
         readme_path = to_dir.joinpath('README.md')
         try:
             r = requests.get(file_src)  # , params=params)
@@ -130,6 +131,7 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path,
             pass    # just fall back to using the pip-installed version
         except:     # do NOT fail 
             pass    # just fall back to using the pip-installed version
+        create_utils.copy_md(from_doc_file='Sample-Basic-Tour.md', project = to_dir)
 
         if not samples:
             shutil.rmtree(to_dir.joinpath(f'{docker_volume}system/app_model_editor'))
