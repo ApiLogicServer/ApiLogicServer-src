@@ -92,7 +92,7 @@
 			}
 		],
 		"sqltools.useNodeRuntime": true,
-		"workbench.preferredDarkColorTheme": "Darcula Pycharm with Light GUI",
+		"workbench.preferredDarkColorTheme": "Default Dark Modern",
 		"workbench.preferredLightColorTheme": "Blue Light Theme",
 		"workbench.colorTheme": "Blue Light Theme",
 		"search.exclude": {

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import re
 import shutil
 import subprocess, os, sys
 from pathlib import Path
@@ -78,14 +79,14 @@ def get_project_directory_and_api_name(project):
         rtn_api_name, \
         rtn_merge_into_prototype
 
-def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "README.md"):
+def copy_md(project, from_doc_file: str, to_project_file: str = "README.md"):
     """ Copy readme files (and remove !!!) from:
     
     1. github (to acquire more recent version since release)
     
     2. dev docs, if exists (gold version in docs, not prototypes).
 
-    Used by Sample-AI; Sample-Integration (nw-), Tutorial, Tutorial-3 (3 projects), Sample-Basic-Demo;
+    Used by Sample-AI; Sample-Integration (nw-), Tutorial, Tutorial-3 (3 projects), Sample-Basic-Demo; Manager
 
     Removing !!! -- special handling
 
@@ -95,14 +96,18 @@ def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "R
 
     Image references are made absolute (to github).
 
-    Doc Links are not well displayed in Codespaces, so should me minimized.
+    Doc Links are made absolute.
 
     Args:
-        project (ProjectRun): project object (project name, etc)
-        from_doc_file (str): eg, Sample-Basic_Demo.md
-        to_project_file (str, optional): _description_. Defaults to "README.md".
+        project (ProjectRun or Path): project object (project name, etc)
+        from_doc_file (str): eg, Sample-Basic_Demo.md (no docs/)
+        to_project_file (str, optional): location of target. Defaults to "README.md".
     """
-    project_path = project.project_directory_path
+    if isinstance(project, Path):
+        project_path = project
+    else:
+        project_path = project.project_directory_path
+
     to_file = project_path.joinpath(to_project_file)
     docs_path = Path(get_api_logic_server_dir()).parent.parent
     from_doc_file_path = docs_path.joinpath(f'Docs/docs/{from_doc_file}')
@@ -173,6 +178,15 @@ def copy_md(project: 'ProjectRun', from_doc_file: str, to_project_file: str = "R
                         each_line = each_line.replace('jpg)', 'jpg?raw=true)')
                     else:
                         pass # image is absolute - don't alter
+                if '.md' in each_line:
+                    # replace (<name>.md) with (https://apilogicserver.github.io/Docs/<name>)
+                    each_line = re.sub(
+                        r'\(([^)]+\.md)\)',
+                        r'(https://apilogicserver.github.io/Docs/\1)',
+                        each_line
+                    )
+                    each_line = each_line.replace('.md', '')
+                    pass
                 readme_lines_md.append(each_line)
         with open(str(to_file), "w") as readme_file:
             readme_file.writelines(readme_lines_md)

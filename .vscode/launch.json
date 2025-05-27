@@ -79,6 +79,7 @@
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
+            "env": {"APILOGICSERVER_HOME": "${workspaceFolder}"},
             "args": ["start"],
             "justMyCode": false,
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
