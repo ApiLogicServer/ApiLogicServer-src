@@ -3,64 +3,11 @@ version info: 2.0 (05/24/2025)
 ---
 ## Welcome to GenAI-Logic
 
-1. ***Instant microservices*** (APIs and Admin Apps) from a database or **GenAI prompt** -- 1 command
+1. ***Instant microservices*** (APIs and Admin Apps) from a database or **GenAI prompt** -- 1 command and you are ready for MCP, Vibe and Business User Collaboration.
 
 2. ***Customize*** with **Rules** and Python in your IDE: created projects use standard Python libraries (Flask, SQLAlchemy)
 
-</br>
-
-You are in the [API Logic Server Manager](https://apilogicserver.github.io/Docs/Manager/).  This is a good place to manage projects, create notes and resources, etc.
-
-<details markdown>
-
-<summary>How to Run Projects from the Manager </summary>
-
-<br>You typically run projects by opening an IDE on the project folder, using provided Run Configurations.
-
-For a quick preview, you can also run from the Manager; there are 2 ways:
-
-1. Use ***another instance of VSCode.***  You can *examine* them in this current instance, but *run* them in their own instance.
-
-    * To do so, you probably want to acquire this extension: `Open Folder Context Menus for VS Code`. It will enable you to open the sample, tutorial or your own projects in another instance of VSCode.
-
-    * This option provides more Run/Debug options (e.g., run without security, etc),
-
-2. Or, use the Run/Debug Entry: `API Logic Server Run (run project from manager)`
-
-</details>
-</br>
-
-<details markdown>
-
-<summary>How API Logic Server provides GenAI Microservice Automation </summary>
-
-&nbsp;
-
-## Using GenAI Microservice Automation
-
-Use the CLI (Command Language Interface, in your IDE) to create projects from either existing databases, or GenAI prompts.  This creates a project you can open, run and customize in your IDE.
-
-[![GenAI Automation](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/sample-ai/copilot/genai-automation-video.png?raw=true)](https://www.youtube.com/watch?v=LSh7mqGiT0k&t=5s "Microservice Automation")
-
-&nbsp;
-
-## What Is API Logic Server
-
-It's an open source Python project consisting of a CLI to create projects, and runtime libraries to execute them.
-
-[![Architecture](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/Architecture-What-Is.png?raw=true)](https://apilogicserver.github.io/Docs/Architecture-What-Is/#runtimes-and-cli)
-
-&nbsp;
-
-## Modern Scalable Runtime Architecture
-
-Created projects use standard Flask and SQLAlchemy; automation is provided by Logic Bank (the rule engine) and SAFRS (JSON:APIs).  Scripts are provided to containerize projects, and deploy to Azure.
-
-[![Architecture - Runtime](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/Architecture-Runtime-Stack.png?raw=true)](https://apilogicserver.github.io/Docs/Architecture-What-Is/#key-runtime-components)
-
-&nbsp;
-
-</details>
+You are in the [API Logic Server Manager](https://apilogicserver.github.io/Docs/Manager/).  This is a good place to manage projects, create notes and resources, etc.  The link also provides some background on the GenAI creation process.
 
 &nbsp;
 
@@ -71,7 +18,7 @@ Created projects use standard Flask and SQLAlchemy; automation is provided by Lo
 
 <details markdown>
 
-<summary> 1. Product Tour </summary>
+<summary> 1. Product Tour - start here</summary>
 
 <br>For a self-demo, use the CLI (**Terminal > New Terminal**), and try the pre-installed [**Basic Demo**](https://apilogicserver.github.io/Docs/Sample-Basic-Demo/):
 
@@ -392,10 +339,6 @@ At the breakpoint, observe you can use standard debugger services to debug your 
 
 This simple example illustrates some significant aspects of iteration, described in the sub-sections below.
 
-<details markdown>
-
-<summary>How to Run Projects from the Manager </summary>
-
 <br>
 !!! pied-piper ":bulb: Iteration: Automatic Invocation/Ordering, Extensible, Rebuild Preserves Customizations"
 
@@ -421,8 +364,6 @@ The screenshot above illustrates that debugging logic is what you'd expect: use 
 **d. Customizations Retained**
 
 Note we rebuilt the project from our altered database, illustrating we can **iterate, while *preserving customizations.***
-
-</details>
 
 &nbsp;
 
@@ -455,169 +396,8 @@ API Logic Server also creates scripts for deployment.  While these are ***not re
 
 &nbsp;
 
-## Summary
-
-![summary](images/basic_demo/summary.jpeg)
-
-!!! pied-piper ":bulb: Instant Creation, Rules, Open Standards"
-    
-    In minutes - not days or weeks - you've used API Logic Server to convert an idea into **working software**, customized using **rule-based logic and security**, and **iterated** to meet new requirements.
-    
-    To dive deeper, you can install [API Logic Server](https://apilogicserver.github.io/Docs) and execute this demo - or create a system from your own databases.
-
-&nbsp;
-
----
-
-## Appendix: Database Schema
-
-Initial version:
-
-![basic_demo_data_model](images/basic_demo/basic_demo_data_model.jpeg)
-
-End version:
-
-![basic_demo_data_model_end](images/basic_demo/basic_demo_data_model_end.png)
-
-&nbsp;
-
-## Appendix: Quick Basic Demo
-
-This is a "cheat sheet" for experienced ALS users, e.g., to show your colleagues:
-
-```bash title="Quick Basic Demo"
-
-# Microservice Automation
-# Admin App, API, Project
-als create --project-name=basic_demo --db-url=basic_demo
-
-# Logic, Security and MCP example
-# see logic (logic/declare_logic.py, logic/cocktail-napkin.jpg);  add an Order and Item
-# see security (security/declare_security.py); compare customers, s1 vs. admin
-als add-cust
-als add-auth --db_url=auth
-
-# Python Extensibility, Kafka Integration, Rebuild Iteration
-# see logic/declare_logic.py (breakpoint for Kafka)
-# Swagger: ServicesEndPoint.OrderB2B
-als add-cust
-als rebuild-from-database --db_url=sqlite:///database/db.sqlite
-```
-
-&nbsp;
-
-## Appendix: Procedures
-
-Specific procedures for running the demo are here, so they do not interrupt the conceptual discussion above.
-
-You can use either VSCode or Pycharm.
-
-&nbsp;
-
-**1. Establish your Virtual Environment**
-
-Python employs a virtual environment for project-specific dependencies.  Create one as shown below, depending on your IDE.
-
-For VSCode:
-
-Establish your `venv`, and run it via the first pre-built Run Configuration.  To establish your venv:
-
-```bash
-python -m venv venv; venv\Scripts\activate     # win
-python3 -m venv venv; . venv/bin/activate      # mac/linux
-
-pip install -r requirements.txt
-```
-
-For PyCharm, you will get a dialog requesting to create the `venv`; say yes.
-
-See [here](https://apilogicserver.github.io/Docs/Install-Express/) for more information.
-
-&nbsp;
-
-**2. Start and Stop the Server**
-
-Both IDEs provide Run Configurations to start programs.  These are pre-built by `ApiLogicServer create`.
-
-For VSCode, start the Server with F5, Stop with Shift-F5 or the red stop button.
-
-For PyCharm, start the server with CTL-D, Stop with red stop button.
-
-&nbsp;
-
-**3. Entering a new Order**
-
-To enter a new Order:
-
-1. Click `Customer 1``
-
-2. Click `+ ADD NEW ORDER`
-
-3. Set `Notes` to "hurry", and press `SAVE AND SHOW`
-
-4. Click `+ ADD NEW ITEM`
-
-5. Enter Quantity 1, lookup "Product 1", and click `SAVE AND ADD ANOTHER`
-
-6. Enter Quantity 2000, lookup "Product 2", and click `SAVE`
-
-7. Observe the constraint error, triggered by rollups from the `Item` to the `Order` and `Customer`
-
-8. Correct the quantity to 2, and click `Save`
-
-
-**4. Update the Order**
-
-To explore our new logic for green products:
-
-1. Access the previous order, and `ADD NEW ITEM`
-
-2. Enter quantity 11, lookup product `Green`, and click `Save`.
-
-&nbsp;
-
-## Appendix: Setup Codespaces
-
-Codespaces enables you to run in the cloud: VSCode via your Browser, courtesy GitHub.  You can use codespaces on your GenAI project:
-
-__1. Open your project on GitHub__
-
-![API Logic Server Intro](images/sample-ai/genai/open-github.png)
-
-__2. Open it in Codespaces (takes a minute or 2):__
-
-![API Logic Server Intro](images/sample-ai/genai/start-codespaces.png)
-
-> You will now see your project - running in VSCode, _in the Browser._  But that's just what you _see..._
-
-> Behind the scenes, Codespaces has requisitioned a cloud machine, and loaded your project - with a _complete development environment_ - Python, your dependencies, git, etc.  
-
-> You are attached to this machine in your Browser, running VSCode.
-
-> :trophy: Pretty remarkable.
-
-__3. Start the Server and open the App in the Browser__
-
-* Use the pre-defined Launch Configuration
-
-![API Logic Server Intro](images/git-codespaces/start-codespaces.png)
-
-
-We think you'll find Codespaces pretty amazing - check it out!
-
-&nbsp;
-
-## Appendix: Obtain an OpenAI ApiKey
-
-To obtain a ChatGPT API Key
-<br>GenAI-Logic uses OpenAI, which requires an Open API Key:
-
-1. Obtain one from [here](https://platform.openai.com/account/api-keys) or [here](https://platform.openai.com/api-keys)
-
-2. Authorize payments [here](https://platform.openai.com/settings/organization/billing/overview)
-
 </details>
-</br>
+<br>
 
 <details markdown>
 
@@ -1064,6 +844,156 @@ Please see [this doc](https://apilogicserver.github.io/Docs/Sample-AI-ChatGPT/)
 
 </details>
 
+<br>
+
+
+---
+
+## Appendix: Database Schema
+
+
+<details markdown>
+
+<summary> Initial version:</summary>
+
+![basic_demo_data_model](images/basic_demo/basic_demo_data_model.jpeg)
+
+</details>
+<br>
+
+<details markdown>
+
+<summary> End version:</summary>
+
+![basic_demo_data_model_end](images/basic_demo/basic_demo_data_model_end.png)
+
+</details>
+
+&nbsp;
+
+## Appendix: Procedures
+
+Specific procedures for running the demo are here, so they do not interrupt the conceptual discussion above.
+
+You can use either VSCode or Pycharm.
+
+<details markdown>
+
+<summary> Detail Procedures</summary>
+
+&nbsp;
+
+**1. Establish your Virtual Environment**
+
+Python employs a virtual environment for project-specific dependencies.  Create one as shown below, depending on your IDE.
+
+For VSCode:
+
+Establish your `venv`, and run it via the first pre-built Run Configuration.  To establish your venv:
+
+```bash
+python -m venv venv; venv\Scripts\activate     # win
+python3 -m venv venv; . venv/bin/activate      # mac/linux
+
+pip install -r requirements.txt
+```
+
+For PyCharm, you will get a dialog requesting to create the `venv`; say yes.
+
+See [here](https://apilogicserver.github.io/Docs/Install-Express/) for more information.
+
+&nbsp;
+
+**2. Start and Stop the Server**
+
+Both IDEs provide Run Configurations to start programs.  These are pre-built by `ApiLogicServer create`.
+
+For VSCode, start the Server with F5, Stop with Shift-F5 or the red stop button.
+
+For PyCharm, start the server with CTL-D, Stop with red stop button.
+
+&nbsp;
+
+**3. Entering a new Order**
+
+To enter a new Order:
+
+1. Click `Customer 1``
+
+2. Click `+ ADD NEW ORDER`
+
+3. Set `Notes` to "hurry", and press `SAVE AND SHOW`
+
+4. Click `+ ADD NEW ITEM`
+
+5. Enter Quantity 1, lookup "Product 1", and click `SAVE AND ADD ANOTHER`
+
+6. Enter Quantity 2000, lookup "Product 2", and click `SAVE`
+
+7. Observe the constraint error, triggered by rollups from the `Item` to the `Order` and `Customer`
+
+8. Correct the quantity to 2, and click `Save`
+
+
+**4. Update the Order**
+
+To explore our new logic for green products:
+
+1. Access the previous order, and `ADD NEW ITEM`
+
+2. Enter quantity 11, lookup product `Green`, and click `Save`.
+
+</details>
+
+&nbsp;
+
+## Appendix: Setup Codespaces
+
+Codespaces enables you to run in the cloud: VSCode via your Browser, courtesy GitHub.  
+
+<details markdown>
+
+<summary> Using codespaces on your GenAI project</summary>
+
+__1. Open your project on GitHub__
+
+![API Logic Server Intro](images/sample-ai/genai/open-github.png)
+
+__2. Open it in Codespaces (takes a minute or 2):__
+
+![API Logic Server Intro](images/sample-ai/genai/start-codespaces.png)
+
+> You will now see your project - running in VSCode, _in the Browser._  But that's just what you _see..._
+
+> Behind the scenes, Codespaces has requisitioned a cloud machine, and loaded your project - with a _complete development environment_ - Python, your dependencies, git, etc.  
+
+> You are attached to this machine in your Browser, running VSCode.
+
+> :trophy: Pretty remarkable.
+
+__3. Start the Server and open the App in the Browser__
+
+* Use the pre-defined Launch Configuration
+
+![API Logic Server Intro](images/git-codespaces/start-codespaces.png)
+
+
+We think you'll find Codespaces pretty amazing - check it out!
+
+</details>
+
+&nbsp;
+
+## Appendix: Obtain an OpenAI ApiKey
+
+To obtain a ChatGPT API Key
+<br>GenAI-Logic uses OpenAI, which requires an Open API Key:
+
+1. Obtain one from [here](https://platform.openai.com/account/api-keys) or [here](https://platform.openai.com/api-keys)
+
+2. Authorize payments [here](https://platform.openai.com/settings/organization/billing/overview)
+
+</details>
 
 &nbsp;
 
@@ -1122,9 +1052,7 @@ You will be directed to the registration process.  You will also require a ChatG
 
 &nbsp;
 
-&nbsp;
-
-## Appendix: Quick Basic Demo
+## Appendix: Demo Summary
 
 This is a "cheat sheet" for experienced ALS users, e.g., to show your colleagues.
 
@@ -1140,7 +1068,7 @@ This is a "cheat sheet" for experienced ALS users, e.g., to show your colleagues
 # Admin App, API, Project
 als create --project-name=basic_demo --db-url=basic_demo
 
-# Logic and Security
+# Logic and Securityf
 # see logic (logic/declare_logic.py, logic/cocktail-napkin.jpg);  add an Order and Item
 # see security (security/declare_security.py); compare customers, s1 vs. admin
 als add-cust
@@ -1154,13 +1082,7 @@ als rebuild-from-database --db_url=sqlite:///database/db.sqlite
 ```
 
 </details>
-
-
-&nbsp;
-
-## Appendix: GenAI Demo
-
-This is a "cheat sheet" for experienced ALS users, e.g., to show your colleagues.
+<br>
 
 <details markdown>
 
