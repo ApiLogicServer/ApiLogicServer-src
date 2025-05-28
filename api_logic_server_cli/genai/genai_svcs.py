@@ -973,7 +973,10 @@ def get_manager_path(use_env: bool = False) -> Path:
     result_path = result_path.parent  # try ancestors - this is for import testing
     check_system_genai = result_path.joinpath('system/genai')
 
-    assert check_system_genai.exists(), f"Manager Directory not found: {check_system_genai}"
+    if not check_system_genai.exists():
+        if use_env:
+            result_path = Path(create_utils.get_api_logic_server_dir()).joinpath('prototypes/manager/system/genai/mcp_learning')
+        check_system_genai.exists(), f"Manager Directory not found and APILOGICSERVER_HOME not set: {check_system_genai}"
     return result_path
 
 
