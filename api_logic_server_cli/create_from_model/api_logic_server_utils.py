@@ -142,7 +142,7 @@ def copy_md(project, from_doc_file: str, to_project_file: str = "README.md"):
         db_line_num = 0
         for each_line in readme_lines_mkdocs:
             db_line_num += 1
-            if "ai-driven-automation-video" in each_line:
+            if "title: Instant Microservices" in each_line:
                 debug_str = "Good Breakpoint"
             if "from docsite" in each_line:
                 each_line = each_line.replace("from docsite", "from docsite, for readme")
