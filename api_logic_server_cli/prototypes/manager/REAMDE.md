@@ -1,64 +1,51 @@
 ---
+title: Welcome
+Description: Instant mcp-enabled microservices, standard projects, declarative business logic
 version info: 2.0 (05/24/2025)
 ---
+<style>
+  .md-typeset h1,
+  .md-content__button {
+    display: none;
+  }
+</style>
+
 ## Welcome to GenAI-Logic
 
-1. ***Instant microservices*** (APIs and Admin Apps) from a database or **GenAI prompt** -- 1 command and you are ready for MCP, Vibe and Business User Collaboration.
+1. ***Instant mcp-enabled microservices*** (APIs and Admin Apps), from a database or **GenAI prompt** -- one command and you are ready for MCP, Vibe and Business User Collaboration.
 
-2. ***Customize*** with **Rules** and Python in your IDE: created projects use standard Python libraries (Flask, SQLAlchemy)
+2. ***Customize*** with **Declarative Rules** and Python in your IDE, standard container deployment
 
-You are in the [API Logic Server Manager](https://apilogicserver.github.io/Docs/Manager/).  This is a good place to manage projects, create notes and resources, etc.  The link also provides some background on the GenAI creation process.
+You are in the [API Logic Server Manager](Manager.md).  This is a good place to manage projects, create notes and resources, etc.
 
 &nbsp;
 
 ##  Explore Creating Projects
 
-**Evaluation Guide:** click on the disclosure buttons, below.  Important: look for **readme files.**
+**Evaluation Guide:** click on the disclosure buttons, below.
 </br>
 
 <details markdown>
 
-<summary> 1. Product Tour - start here</summary>
+<summary> 1. Product Tour - Start here</summary>
 
-<br>For a self-demo, use the CLI (**Terminal > New Terminal**), and try the pre-installed [**Basic Demo**](https://apilogicserver.github.io/Docs/Sample-Basic-Demo/):
+<br>We'll illustrate [API Logic Server](https://www.genai-logic.com/product/key-features){:target="_blank" rel="noopener"} basic GenAI-Logic operation: creating projects from new or existing databases, adding logic and security, and customizing your project using your IDE and Python.
 
----
-title: Instant Microservices - with Logic and Security
-notes: gold is proto (-- doc); alert for apostrophe; links must be absolute (images relative)
-version: 0.22 from docsite 5/24/2025
----
+The entire process takes 20 minutes; usage notes:
 
-See how to build a complete database system -- in minutes instead of weeks or months:
-
-1. **An API**, and, we'll add ui and logic to make it a microservice...
-2. **Logic and Security:** multi-table constraints and derivations, role-based security, and application integration
-3. **An Admin App:** a multi-page, multi-table web app 
-4. **Customizable:** use your IDE to customize with declarative rules and standard Python
-
-&nbsp;
-
-We'll illustrate [API Logic Server](https://www.genai-logic.com/product/key-features){:target="_blank" rel="noopener"} basic GenAI-Logic operation: creating projects from new or existing databases, adding logic and security, and customizing your project using your IDE and Python.
-
-The entire process takes 20 minutes, instead of several weeks using traditional development.
-
-You can use this article in several ways:
-
-* Conceptual Overview - the main article focuses on the concepts and basic process.  Operational details are moved to the Appendix to retain focus.
-
-* Self-demo - [install](Install-Express.md){:target="_blank" rel="noopener"} and create this system yourself.
-
-* Self-demo with video - you can also use [this video](https://www.youtube.com/watch?v=sD6RFp8S6Fg) (it's the same system, but the database is created with ChatGPT).
+* Important: look for **readme files** in created projects.
+* You may find it more convenient to view this [in your Browser](Sample-Basic-Tour.md).
 
 &nbsp;
 
 ## 1. Automation: Project Creation
 
-API Logic Server can create projects from existing databases, or use GenAI to create projects with new databases.  See the sub-sections below.
+API Logic Server can create projects from existing databases, or use GenAI to create projects with new databases.  Let's see how.
 
 &nbsp;
 ### From Existing Database
 
-This project was created with a command like:
+Create the project - use the CLI (**Terminal > New Terminal**), :
 
 ```bash
 $ ApiLogicServer create --project_name=basic_demo --db_url=basic_demo
@@ -66,23 +53,32 @@ $ ApiLogicServer create --project_name=basic_demo --db_url=basic_demo
 
 > Note: the `db_url` value is [an abbreviation](https://apilogicserver.github.io/Docs/Data-Model-Examples/){:target="_blank" rel="noopener"} for a test database provided as part of the installation.  You would normally supply a SQLAlchemy URI to your existing database.
 
-This creates a project by reading your schema.  The database is Customer, Orders, Items and Product, as shown in the Appendix.
 
+<details markdown>
+
+<summary> The database is Customer, Orders, Items and Product</summary>
+
+![basic_demo_data_model](images/basic_demo/basic_demo_data_model.jpeg)
+
+</details>
+<br>
 &nbsp;
 
 ### GenAI: New Database
 
-You can create a project from a prompt using GenAI, either by [WebGenAI](WebGenAI.md), or the the [GenAI CLI](WebGenAI-CLI.md){:target="_blank" rel="noopener"} as shown here.
+You can create a project *and a new database* from a prompt using GenAI, either by:
 
-Use the GenAI CLI with or without signup:
+* [WebGenAI - in the Browser](WebGenAI.md){:target="_blank" rel="noopener"}, or
+* [GenAI - docker](WebGenAI-install.md){:target="_blank" rel="noopener"}, or 
+* [GenAI CLI](WebGenAI-CLI.md){:target="_blank" rel="noopener"} 
 
-1. If you have signed up (see *Obtain a OpenAI API Key*, below), this will create and open a project called `genai_demo` from `genai_demo.prompt` (available in left Explorer pane):
+Here we use the GenAI CLI:
+
+1. If you have signed up (see *Get an OpenAI Key*, below), this will create and open a project called `genai_demo` from `genai_demo.prompt` (available in left Explorer pane):
 
 ```bash
 als genai --using=system/genai/examples/genai_demo/genai_demo.prompt --project-name=genai_demo
 ```
-
-  
 
 2. ***Or,*** you can simulate the process (no signup) using:
 
@@ -92,14 +88,17 @@ als genai --repaired-response=system/genai/examples/genai_demo/genai_demo.respon
 
 ```
 
+For background on how it works, [click here](Sample-Genai.md#how-does-it-work){:target="_blank" rel="noopener"}.
+
 &nbsp;
+
 ## 2. Working Software Now
 
 ### Open in your IDE and Run
 
 You can open with VSCode, and run it as follows:
 
-1. **Create Virtual Environment:** as shown in the Appendix.
+1. **Create Virtual Environment:** automated in most cases; see the Appendix (Procedures / Detail Procedures) for details.
 
 2. **Start the Server:** F5 (also described in the Appendix).
 
@@ -118,12 +117,13 @@ The system creates an API with end points for each table, with filtering, sortin
 
 ![swagger](images/basic_demo/api-swagger.jpeg)
 </details>
+<br>
 
 ### Admin App
 
 It also creates an Admin App: multi-page, multi-table -- ready for **[business user agile collaboration](https://apilogicserver.github.io/Docs/Tech-AI/),** and back office data maintenance.  This complements custom UIs created with the API.
 
-You can click Customer 2, and see their Orders, and Items.
+You can click Customer Alice, and see their Orders, and Items.
 
 <details markdown>
 
@@ -137,18 +137,19 @@ You can click Customer 2, and see their Orders, and Items.
 
 In little more than a minute, you've used either
 
-* GenAI to create a database and project using Natural Language, or 
+* **GenAI** to create a database and project using Natural Language, or 
 * 1 CLI command to create a project from an existing database
 
 The project is standard Python, which you can customize in a standard IDE.
 
 This means you are ready for:
 
-* **Vibe:** instead of creating data mockups, use GenAI to create real data.  
-And, you'll have projects that are architecurally correct, with shared logic enforced in the server,
-available for both User Interfaces and services.
+* **Vibe:** 
 
+    * Instead of creating data mockups, use GenAI to create real data.
     * Use you favorite Vibe tools with your running API
+    * And, you'll have projects that are architecurally correct: shared logic enforced in the server,
+available for both User Interfaces and services.
 
 * **MCP:** your project is MCP-ready: `python integration/mcp/mcp_client_executor.py`.
 We'll explore more interesting examples below.
@@ -179,12 +180,13 @@ To add customizations, in a terminal window for your project:
 
 ```bash
 als add-cust
+als add-auth --db_url=auth
 ```
 &nbsp;
 
 ### Security: Role Based Access
 
-The `add_customizations` process above has simulated the `ApiLogicServer add-auth` command, and using your IDE to declare security in `logic/declare_logic.sh`.
+The `add_customizations` process above has simulated using your IDE to declare security in `logic/declare_logic.sh`.
 
 To see security in action:
 
@@ -237,13 +239,12 @@ To see logic in action:
 
 **2. Use the Admin App to add an Order and Item for `Customer Alice`** (see Appendix)
 
-Observe the rules firing in the console log, as shown in the next screenshot.
+Observe the rules firing in the console log - see Logic In Action, below.
 
-Logic provides significant improvements over procedural logic, as described below.
+<br>
+> 💡 Logic: Multi-table Derivations and Constraint Declarative Rules.<br>&emsp;&emsp;Declarative Rules are 40X More Concise than procedural code.<br>&emsp;&emsp;For more information, [click here](Logic-Why.md){:target="_blank" rel="noopener"}.
 
-&nbsp;
-
-!!! pied-piper ":bulb: Logic: Multi-table Derivations and Constraint Rules, 40X More Concise"
+<br>
 
 <details markdown>
 
@@ -289,10 +290,9 @@ Optionally, you can use the Behave TDD approach to define tests, and the Rules R
 Not only are spreadsheet-like rules 40X more concise, they meaningfully simplify maintenance.  Let's take an example:
 
 >> Give a 10% discount for carbon-neutral products for 10 items or more.
+<br>
 
-&nbsp;
-
-The following `add_iteration` process simulates an iteration:
+The following `add-cust` process simulates an iteration:
 
 * acquires a new database with `Product.CarbonNeutral`
 
@@ -322,8 +322,8 @@ To add this iteration, repeat the process above - in a terminal window for your 
 
 ```bash
 als add-cust
+als rebuild-from-database --db_url=sqlite:///database/db.sqlite
 ```
-&nbsp;
 
 **3. Set the breakpoint as shown in the screenshot below**
 
@@ -340,7 +340,8 @@ At the breakpoint, observe you can use standard debugger services to debug your 
 This simple example illustrates some significant aspects of iteration, described in the sub-sections below.
 
 <br>
-!!! pied-piper ":bulb: Iteration: Automatic Invocation/Ordering, Extensible, Rebuild Preserves Customizations"
+> 💡 Iteration: Automatic Invocation/Ordering, Extensible, Rebuild Preserves Customizations
+<br>
 
 **a. Dependency Automation**
 
@@ -405,7 +406,7 @@ API Logic Server also creates scripts for deployment.  While these are ***not re
 
 <br>You can do this with or without signup:
 
-1. If you have signed up (see *To obtain a ChatGPT API Key*, below), this will create a new database and project called `genai_demo`, and open the project.  It's created using `genai_demo.prompt`, visible in left Explorer pane:
+1. If you have signed up (see *Get an OpenAI Key*, below), this will create a new database and project called `genai_demo`, and open the project.  It's created using `genai_demo.prompt`, visible in left Explorer pane:
 
 ```bash
 als genai --using=system/genai/examples/genai_demo/genai_demo.prompt --project-name=genai_demo
@@ -426,20 +427,6 @@ Verify it's operating properly:
 3. Observe the constraint operating on the rollup of order amount_totals.
     * View the logic in `logic/declare_logic.py`
     * Put a breakpoint on the `as_condition`.  Observe the console log to see rule execution for this multi-table transaction.
-
-</br>
-
-
-<details markdown>
-
-<summary> To obtain a ChatGPT API Key</summary>
-
-<br>GenAI-Logic uses OpenAI, which requires an Open API Key:
-
-1. Obtain one from [here](https://platform.openai.com/account/api-keys) or [here](https://platform.openai.com/api-keys)
-2. Authorize payments [here](https://platform.openai.com/settings/organization/billing/overview)
-
-</details>
 
 </br>
 
@@ -846,42 +833,76 @@ Please see [this doc](https://apilogicserver.github.io/Docs/Sample-AI-ChatGPT/)
 
 <br>
 
+<br>
 
----
+## Appendices
 
-## Appendix: Database Schema
-
+### Procedures
 
 <details markdown>
 
-<summary> Initial version:</summary>
+<summary>Quick Basic Demo - Cheat Sheet</summary>
 
-![basic_demo_data_model](images/basic_demo/basic_demo_data_model.jpeg)
+<br>This demo creates and customizes a project, starting from a database:
+
+```bash title="Quick Basic Demo"
+
+# Microservice Automation
+# Admin App, API, Project
+als create --project-name=basic_demo --db-url=basic_demo
+
+# Logic and Securityf
+# see logic (logic/declare_logic.py, logic/cocktail-napkin.jpg);  add an Order and Item
+# see security (security/declare_security.py); compare customers, s1 vs. admin
+als add-cust
+als add-auth --db_url=auth
+
+# Python Extensibility, Kafka Integration, Rebuild Iteration
+# see logic/declare_logic.py (breakpoint for Kafka)
+# Swagger: ServicesEndPoint.OrderB2B
+als add-cust
+als rebuild-from-database --db_url=sqlite:///database/db.sqlite
+```
 
 </details>
 <br>
 
 <details markdown>
 
-<summary> End version:</summary>
+<summary>Quick GenAI Demo - Cheat Sheet</summary>
 
-![basic_demo_data_model_end](images/basic_demo/basic_demo_data_model_end.png)
+<br>This demo creates and customizes a project, starting from a prompt:
+
+```bash title="Quick GenAI Demo"
+
+# Microservice Automation from GenAI Prompt
+# Admin App, API, Project
+als genai --using=system/genai/examples/genai_demo/genai_demo.prompt
+
+# Or, Microservice Automation from Saved Response
+# Admin App, API, Project
+als genai --repaired-response=system/genai/temp/chatgpt_retry.response
+
+# Logic and Security
+#   - see logic (logic/declare_logic.py, logic/cocktail-napkin.jpg);  add an Order and Item
+#   - see security (security/declare_security.py); compare customers, s1 vs. admin
+# Python Extensibility, Kafka Integration, Rebuild Iteration
+#   - see logic/declare_logic.py (breakpoint for Kafka)
+#   - Swagger: ServicesEndPoint.OrderB2B
+als add-cust
+```
 
 </details>
-
-&nbsp;
-
-## Appendix: Procedures
-
-Specific procedures for running the demo are here, so they do not interrupt the conceptual discussion above.
-
-You can use either VSCode or Pycharm.
+<br>
 
 <details markdown>
 
 <summary> Detail Procedures</summary>
 
-&nbsp;
+<br>Specific procedures for running the demo are here, so they do not interrupt the conceptual discussion above.
+
+You can use either VSCode or Pycharm.
+
 
 **1. Establish your Virtual Environment**
 
@@ -947,7 +968,7 @@ To explore our new logic for green products:
 
 &nbsp;
 
-## Appendix: Setup Codespaces
+### Setup Codespaces
 
 Codespaces enables you to run in the cloud: VSCode via your Browser, courtesy GitHub.  
 
@@ -984,10 +1005,9 @@ We think you'll find Codespaces pretty amazing - check it out!
 
 &nbsp;
 
-## Appendix: Obtain an OpenAI ApiKey
+### Get an OpenAI ApiKey
 
-To obtain a ChatGPT API Key
-<br>GenAI-Logic uses OpenAI, which requires an Open API Key:
+<br>GenAI-Logic uses OpenAI, which requires an OpenAI Key:
 
 1. Obtain one from [here](https://platform.openai.com/account/api-keys) or [here](https://platform.openai.com/api-keys)
 
@@ -997,7 +1017,7 @@ To obtain a ChatGPT API Key
 
 &nbsp;
 
-## Explore Pre-created Samples
+### Pre-created Samples
 
 <details markdown>
 
@@ -1035,78 +1055,3 @@ ApiLogicServer create --project-name=samples/nw_sample_nocust --db-url=nw
 
 </details>
 
-&nbsp;
-
-## Explore WebGenAI
-
-In addition to the CLI examples above, you can use [WebGenAI](https://apilogicserver.github.io/Docs/WebGenAI/) - a web interface for creating projects from prompts.  You can install WebGenAI on a server, so that created projects are easy to review with colleagues.
-
-To try WebGenAI:
-
-```bash
-cd webgenai
-docker compose up
-```
-
-You will be directed to the registration process.  You will also require a ChatGPT API Key as described above.
-
-&nbsp;
-
-## Appendix: Demo Summary
-
-This is a "cheat sheet" for experienced ALS users, e.g., to show your colleagues.
-
-<details markdown>
-
-<summary>Quick Basic Demo - Instructions</summary>
-
-<br>This demo creates and customizes a project, starting from a database:
-
-```bash title="Quick Basic Demo"
-
-# Microservice Automation
-# Admin App, API, Project
-als create --project-name=basic_demo --db-url=basic_demo
-
-# Logic and Securityf
-# see logic (logic/declare_logic.py, logic/cocktail-napkin.jpg);  add an Order and Item
-# see security (security/declare_security.py); compare customers, s1 vs. admin
-als add-cust
-als add-auth --db_url=auth
-
-# Python Extensibility, Kafka Integration, Rebuild Iteration
-# see logic/declare_logic.py (breakpoint for Kafka)
-# Swagger: ServicesEndPoint.OrderB2B
-als add-cust
-als rebuild-from-database --db_url=sqlite:///database/db.sqlite
-```
-
-</details>
-<br>
-
-<details markdown>
-
-<summary>Quick GenAI Demo - Instructions</summary>
-
-<br>This demo creates and customizes a project, starting from a prompt:
-
-```bash title="Quick GenAI Demo"
-
-# Microservice Automation from GenAI Prompt
-# Admin App, API, Project
-als genai --using=system/genai/examples/genai_demo/genai_demo.prompt
-
-# Or, Microservice Automation from Saved Response
-# Admin App, API, Project
-als genai --repaired-response=system/genai/temp/chatgpt_retry.response
-
-# Logic and Security
-#   - see logic (logic/declare_logic.py, logic/cocktail-napkin.jpg);  add an Order and Item
-#   - see security (security/declare_security.py); compare customers, s1 vs. admin
-# Python Extensibility, Kafka Integration, Rebuild Iteration
-#   - see logic/declare_logic.py (breakpoint for Kafka)
-#   - Swagger: ServicesEndPoint.OrderB2B
-als add-cust
-```
-
-</details>
