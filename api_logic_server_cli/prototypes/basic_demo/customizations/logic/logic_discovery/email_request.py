@@ -16,9 +16,9 @@ def declare_logic():
         This illustrates the request pattern.
 
         The request pattern is a common pattern in API Logic Server, 
-        where an insert triggers service invocation, such as sending email.
+        where an insert into SysEmail triggers service invocation, such as sending email.
         
-        The Email table includes the columns for the email (e,g, recipient, subject, message).
+        The SysEmail table includes the columns for the email (e,g, recipient, subject, message).
         
         Using a request object enables you to wrap the service call with logic, eg:
         
