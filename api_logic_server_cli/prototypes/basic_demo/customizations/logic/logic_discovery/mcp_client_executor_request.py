@@ -281,13 +281,9 @@ def declare_logic():
         This illustrates the request pattern.
 
         The request pattern is a common pattern in API Logic Server, 
-        where an insert triggers service invocation, such as sending email.
+        where an insert triggers service invocation, such as sending email or issue mcp requests.
         
-        The Email table includes the columns for the email (e,g, recipient, subject, message).
-        
-        Using a request object enables you to wrap the service call with logic, eg:
-        
-        * *email requirement: do not send mail if customer has opted out*  
+        The SysMCP table captures the prompt (in the row); this logic executes the MCP processing. 
 
         See: https://apilogicserver.github.io/Docs/Integration-MCP/#3a-logic-request-pattern     
     """
@@ -296,9 +292,11 @@ def declare_logic():
     def mcp_client_executor(row: models.SysMcp, old_row: models.SysMcp, logic_row: LogicRow):
         """ 
 
-        #als: create an MCP request
+        #als: create an MCP request.  See https://apilogicserver.github.io/Docs/Integration-MCP/
 
-        curl -X 'POST' 'http://localhost:5656/api/SysMcp/' -H 'accept: application/vnd.api+json' -H 'Content-Type: application/json' -d '{ "data": { "attributes": {"request": "List the orders date_shipped is null and CreatedOn before 2023-07-14, and send a discount email (subject: '\''Discount Offer'\'') to the customer for each one."}, "type": "SysMcp"}}'
+        Test:
+        * `curl -X 'POST' 'http://localhost:5656/api/SysMcp/' -H 'accept: application/vnd.api+json' -H 'Content-Type: application/json' -d '{ "data": { "attributes": {"request": "List the orders date_shipped is null and CreatedOn before 2023-07-14, and send a discount email (subject: '\''Discount Offer'\'') to the customer for each one."}, "type": "SysMcp"}}'`
+        * Or, use the Admin App and insert a row into SysMCP (see `query_example`, below)
 
         Args:
             row (Mcp): inserted MCP with prompt
@@ -311,7 +309,7 @@ def declare_logic():
         query = row.request
         prompt = get_user_nl_query_and_training(query)
 
-        tool_context = query_llm_with_nl(schema_text, prompt)    # see: 2-tool-context-from-LLM   
+        tool_context = query_llm_with_nl(schema_text, prompt)   # see: 2-tool-context-from-LLM   
 
         mcp_response = process_tool_context(tool_context)       # see: 3-MCP-server response
 
