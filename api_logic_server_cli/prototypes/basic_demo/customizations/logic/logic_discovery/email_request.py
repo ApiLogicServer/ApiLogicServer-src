@@ -17,6 +17,8 @@ def declare_logic():
 
         The request pattern is a common pattern in API Logic Server, 
         where an insert into SysEmail triggers service invocation, such as sending email.
+
+        See https://apilogicserver.github.io/Docs/Integration-MCP/.
         
         The SysEmail table includes the columns for the email (e,g, recipient, subject, message).
         
