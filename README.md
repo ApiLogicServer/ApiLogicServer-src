@@ -6,7 +6,7 @@
 
 # TL;DR
 
-Create an executable project (API and Admin App) from a database or natural language prompt with 1 command, customize with declarative rules and Python in your IDE, containerize and deploy.
+Create an executable project (MCP-enabled API and Admin App) from a database or natural language prompt with 1 command; customize with declarative rules and Python in your IDE, containerize and deploy.
 
 &nbsp;
 
@@ -58,7 +58,7 @@ For Developers and their organizations seeking to **increase business agility,**
 
 API Logic Server provides ***Microservice Automation:*** create executable projects with 1 command:
 
-1. ***API Automation:*** crud for each table, with pagination, optimistic locking, filtering and sorting, and
+1. ***MCP-enabled API Automation:*** crud for each table, with pagination, optimistic locking, filtering and sorting, and
 
 2. ***App Automation:*** a multi-page, multi-table Admin App.  <br>
 
