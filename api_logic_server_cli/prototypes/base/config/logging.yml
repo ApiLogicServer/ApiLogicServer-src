@@ -87,6 +87,11 @@ loggers:
         handlers: [console]
         propagate: no
 
+    integration.mcp:   
+        level: DEBUG
+        handlers: [console]
+        propagate: no
+
     integration.n8n:   
         level: DEBUG
         handlers: [console]

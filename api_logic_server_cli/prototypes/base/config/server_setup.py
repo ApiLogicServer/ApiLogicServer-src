@@ -174,6 +174,65 @@ def get_args(flask_app: Flask) -> Args:
 #       LOGGING SETUP
 # ================================== 
 
+import site
+
+# Auto-detect venv site-packages path
+import logging
+import site
+
+venv_path = site.getsitepackages()[0]
+venv_alias = "$venv"
+
+def patch_stacktrace_formatters():
+    """
+    Patch only the formatException method of each formatter,
+    so only stacktraces are affected, not normal log lines.
+    """
+    import logging
+
+    def short_format_exception(self, exc_info):
+        result = logging.Formatter.formatException(self, exc_info)
+        lines = result.splitlines('\n')
+        line_num = 0
+        for each_line in lines:
+            follow_link = ""
+            if '1906' in each_line:
+                pass # good breakpoint
+            if venv_path in each_line:                
+                # get the string inside the double quotes
+                if '"' in each_line:
+                    follow_link = '\tFollow link: ' + each_line.split('"')[1] + ']'
+                # Replace the venv_path with venv_alias in the stacktrace line
+                each_line = each_line.replace('"' + venv_path, venv_alias)
+                each_line = each_line.replace('File ', '')  # replace project path with name
+                each_line = each_line.replace('", line ', ' @ ')
+                each_line = each_line.replace('^', '')
+                each_line = each_line.replace('\n', '')
+                lines[line_num] = each_line
+            elif '^^' in each_line:
+                lines[line_num] = ""
+            elif 'File "<string>", line' in each_line:
+                lines[line_num] = ""
+            # add spaces for 90 characters
+            if len(lines[line_num]) < 90 and lines[line_num] != "" and follow_link != "":
+                lines[line_num] = lines[line_num] + ' ' * (90 - len(lines[line_num]))
+            lines[line_num] += follow_link
+            line_num += 1
+        result = ''.join(lines)
+        return result
+    
+    # Patch the formatException method of all formatters in the root logger
+
+    root_logger = logging.getLogger()
+    for handler in root_logger.handlers:
+        fmt = handler.formatter
+        if fmt and not hasattr(fmt, "_stacktrace_patched"):
+            fmt.formatException = short_format_exception.__get__(fmt)
+            fmt._stacktrace_patched = True
+
+
+
+
 def logging_setup() -> logging.Logger:
     """
     Setup Logging
@@ -187,6 +246,10 @@ def logging_setup() -> logging.Logger:
             f.close()
     logging.config.dictConfig(config)  # log levels: notset 0, debug 10, info 20, warn 30, error 40, critical 50
     app_logger = logging.getLogger("api_logic_server_app")
+
+    if do_truncate_venv_path := True:   # use False for standard Python logging in stacktrace
+        patch_stacktrace_formatters()
+
     debug_value = os.getenv('APILOGICPROJECT_DEBUG')
     if debug_value is not None:  # > export APILOGICPROJECT_DEBUG=True
         debug_value = debug_value.upper()
