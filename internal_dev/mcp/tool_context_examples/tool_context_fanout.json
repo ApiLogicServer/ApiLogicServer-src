@@ -1,0 +1,23 @@
+[
+  {
+    "tool_type": "json-api",
+    "base_url": "https://server-a.com/api",
+    "path": "Order",
+    "method": "GET",
+    "query_params": [
+      { "name": "customer_id", "op": "eq", "val": "ALFKI" }
+    ],
+    "body": []
+  },
+  {
+    "tool_type": "json-api",
+    "base_url": "https://server-b.com/api",
+    "path": "NotifyShipping",
+    "method": "POST",
+    "body": [
+      { "name": "order_id", "value": "$0[*].id" },
+      { "name": "message", "value": "Ship order" }
+    ],
+    "query_params": []
+  }
+]

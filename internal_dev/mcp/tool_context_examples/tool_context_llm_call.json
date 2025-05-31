@@ -1,0 +1,15 @@
+// request: “Get all orders for Alice. If any are over $500, alert the sales manager.”
+[
+  {
+    "tool_type": "json-api",
+    "base_url": "https://server-a.com/api",
+    "path": "Order",
+    "method": "GET",
+    "query_params": [
+      { "name": "customer", "op": "eq", "val": "Alice" }
+    ],
+    "body": [],
+    "llm_call": true,  // <-- Indicates to pause and invoke LLM after this step
+    "llm_goal": "Check which orders for Alice are over $500 and generate alert POSTs as needed"
+  }
+]

@@ -1,0 +1,24 @@
+[
+  {
+    "tool_type": "json-api",
+    "base_url": "https://server-a.com/api",
+    "path": "Order",
+    "method": "POST",
+    "body": [
+      { "name": "customer_id", "value": "ALFKI" },
+      { "name": "amount", "value": "250" }
+    ],
+    "query_params": []
+  },
+  {
+    "tool_type": "json-api",
+    "base_url": "https://server-b.com/api",
+    "path": "NotifyOrder",
+    "method": "POST",
+    "body": [
+      { "name": "order_id", "value": "$0.id" },                // uses result from step 0
+      { "name": "message", "value": "New order created" }
+    ],
+    "query_params": []
+  }
+]
