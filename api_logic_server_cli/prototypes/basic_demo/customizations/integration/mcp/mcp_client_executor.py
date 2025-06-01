@@ -17,9 +17,7 @@ import os, sys
 from typing import Dict, List
 import openai
 import requests
-from logic_bank.exec_row_logic.logic_row import LogicRow
 from logic_bank.logic_bank import Rule
-from database import models
 from logic_bank.util import ConstraintException
 
 # Set your OpenAI API key
@@ -29,7 +27,7 @@ server_url = os.getenv("APILOGICSERVER_URL", "http://localhost:5656/api")
 
 # debug settings
 test_type = 'orchestration'  # 'simple_get' or 'orchestration'
-create_tool_context_from_llm = True
+create_tool_context_from_llm = False
 ''' set to False to bypass LLM call and save 2-3 secs in testing '''
 use_test_schema = False
 ''' True means bypass discovery, use hard-coded schedma file '''
@@ -87,7 +85,14 @@ def get_user_nl_query_and_training(query: str):
     else:
         training_prompt = ""
         print(f"Prompt file not found at {prompt_file_path}.")
-    return query + "\n\n" + training_prompt
+
+    # if 1 argument, use it as the query
+    query_actual = query
+    if len(sys.argv) > 1:
+        query_actual = sys.argv[1]
+        if query_actual == '':
+            query_actual = "list customers with balance over 100."
+    return query_actual + ";\n\n" + training_prompt
 
 
 def query_llm_with_nl(schema_text, nl_query):
@@ -119,19 +124,31 @@ def query_llm_with_nl(schema_text, nl_query):
     # print(schema_print)
 
     if create_tool_context_from_llm:  # takes 2-3 seconds...
-      response = openai.chat.completions.create(
-          model="gpt-4",
-          messages=messages,
-          temperature=0.2
-      )
+        response = openai.chat.completions.create(
+            model="gpt-4",
+            messages=messages,
+            temperature=0.2
+        )
+        tool_context_str = response.choices[0].message.content
+    else:
+        # read integration/mcp/mcp_tool_context.json
+        tool_context_file_path = os.path.join(os.path.dirname(__file__), "../../integration/mcp/mcp_tool_context.json")
+        try:    
+            with open(tool_context_file_path, "r") as tool_context_file:
+                tool_context_str = tool_context_file.read()
+                # print(f"\n\n2c. Tool context from file {tool_context_file_path}:\n" + tool_context_str)
+        except FileNotFoundError:
+            raise ConstraintException(f"Tool context file not found at {tool_context_file_path}.")
 
-      tool_context_str = response.choices[0].message.content
-      tool_context_str_no_cr = tool_context_str.replace("\n", '')  # convert single quotes to double quotes
-      try:
-          tool_context = json.loads(tool_context_str_no_cr)
-      except json.JSONDecodeError:
-          print("Failed to decode JSON from response:", tool_context_str)
-          return None
+    print("\n2c. Tool context (truncated):\n", tool_context_str[:400] + '\n... etc')  # limit for readability
+
+    
+    tool_context_str_no_cr = tool_context_str.replace("\n", '')  # convert single quotes to double quotes
+    try:
+        tool_context = json.loads(tool_context_str_no_cr)
+    except json.JSONDecodeError:
+        print("Failed to decode JSON from response:", tool_context_str)
+        return None
 
     print("\n2d. generated tool context from LLM:\n", json.dumps(tool_context, indent=4))
 
@@ -255,10 +272,10 @@ def process_tool_context(tool_context):
             elif each_block["method"] in ["POST"]:
                     for each_order in context_data:
                         url = each_block["base_url"] + each_block["path"]
-                        json_update_data =  { 'data': {"type": each_block["path"][1:], 'attributes': {} } }  
+                        json_update_data =  { 'data': {"type": "Email", 'attributes': {} } }  
                         json_update_data_attributes = json_update_data["data"]["attributes"]
                         move_fields( src= each_block["body"], dest=json_update_data_attributes, context_data=each_order) 
-                        # eg: POST http://localhost:5656/api/SysEmail {'data': {'type': 'SysEmail', 'attributes': {'customer_id': 5, 'message': {'to': '{{ order.customer_id }}', 'subject': 'Discount for your order', 'body': 'Dear customer, you have a discount for your recent order. Thank you for shopping with us.'}}}}
+                        # eg: POST http://localhost:5656/api/Email {'data': {'type': 'Email', 'attributes': {'customer_id': 5, 'message': {'to': '{{ order.customer_id }}', 'subject': 'Discount for your order', 'body': 'Dear customer, you have a discount for your recent order. Thank you for shopping with us.'}}}}
                         headers = {"Content-Type": "application/vnd.api+json"}
                         if "headers" in each_block:
                             headers.update(each_block["headers"])
@@ -275,44 +292,17 @@ def process_tool_context(tool_context):
     return mcp_response 
 
 
+if __name__ == "__main__":
 
-def declare_logic():
-    """
-        This illustrates the request pattern.
+    # to run: Run Config > Run designated Python file
 
-        The request pattern is a common pattern in API Logic Server, 
-        where an insert triggers service invocation, such as sending email or issue mcp requests.
-        
-        The SysMCP table captures the prompt (in the row); this logic executes the MCP processing. 
+    schema_text = discover_mcp_servers()                # see: 1-discovery-from-als
 
-        See: https://apilogicserver.github.io/Docs/Integration-MCP/#3a-logic-request-pattern     
-    """
+    query = "list customers with balance over 100"
+    prompt = get_user_nl_query_and_training(query)            # set breakpoint here, view log, then step
 
+    tool_context = query_llm_with_nl(schema_text, prompt)             # see: 2-tool-context-from-LLM   
 
-    def mcp_client_executor(row: models.SysMcp, old_row: models.SysMcp, logic_row: LogicRow):
-        """ 
+    mcp_response = process_tool_context(tool_context)   # see: 3-MCP-server response
 
-        #als: create an MCP request.  See https://apilogicserver.github.io/Docs/Integration-MCP/
-
-        Test:
-        * `curl -X 'POST' 'http://localhost:5656/api/SysMcp/' -H 'accept: application/vnd.api+json' -H 'Content-Type: application/json' -d '{ "data": { "attributes": {"request": "List the orders date_shipped is null and CreatedOn before 2023-07-14, and send a discount email (subject: '\''Discount Offer'\'') to the customer for each one."}, "type": "SysMcp"}}'`
-        * Or, use the Admin App and insert a row into SysMCP (see `query_example`, below)
-
-        Args:
-            row (Mcp): inserted MCP with prompt
-            old_row (Mcp): n/a
-            logic_row (LogicRow): bundles curr/old row, with ins/upd/dlt logic
-        """
-        schema_text = discover_mcp_servers()                    # see: 1-discovery-from-als
-
-        query_example = "List the orders date_shipped is null and CreatedOn before 2023-07-14, and send a discount email (subject: 'Discount Offer') to the customer for each one."
-        query = row.request
-        prompt = get_user_nl_query_and_training(query)
-
-        tool_context = query_llm_with_nl(schema_text, prompt)   # see: 2-tool-context-from-LLM   
-
-        mcp_response = process_tool_context(tool_context)       # see: 3-MCP-server response
-
-        print("\nTest complete.\n")
-
-    Rule.row_event(on_class=models.SysMcp, calling=mcp_client_executor)  # see above
+    print("\nTest complete.\n")
