@@ -27,7 +27,7 @@ openai.api_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")
 
 server_url = os.getenv("APILOGICSERVER_URL", "http://localhost:5656/api")
 
-app_logger = logging.getLogger('integration.mcp')
+log = logging.getLogger('integration.mcp')
 
 # debug settings
 test_type = 'orchestration'  # 'simple_get' or 'orchestration'
@@ -50,11 +50,11 @@ def discover_mcp_servers():
     try:
         with open(discovery_file_path, "r") as discovery_file:
             discovery_data = json.load(discovery_file)
-            print(f"\n1. Discovered MCP servers from config file: {discovery_file_path}:" + json.dumps(discovery_data, indent=4))
+            log.info(f"\n1. Discovered MCP servers from config file: {discovery_file_path}:" + json.dumps(discovery_data, indent=4))
     except FileNotFoundError:
-        print(f"Discovery file not found at {discovery_file_path}.")
+        log.info(f"Discovery file not found at {discovery_file_path}.")
     except json.JSONDecodeError as e:
-        print(f"Error decoding JSON from {discovery_file_path}: {e}")
+        log.info(f"Error decoding JSON from {discovery_file_path}: {e}")
     
     for each_server in discovery_data["servers"]:
         discovery_url = each_server["schema_url"]
@@ -64,13 +64,12 @@ def discover_mcp_servers():
             response = requests.get(discovery_url)
             if response.status_code == 200:
                 api_schema = response.json()
-                print()
                 request_print = json.dumps(api_schema, indent=4)[0:400] + '\n... etc'  # limit for readability
-                print(f"\n\nAPI Schema from discovery schema_url: {discovery_url}:\n" + request_print)
+                log.info(f"\n\nAPI Schema from discovery schema_url: {discovery_url}:\n" + request_print)
             else:
-                print(f"Failed to retrieve API schema from {discovery_url}: {response.status_code}")
+                log.info(f"Failed to retrieve API schema from {discovery_url}: {response.status_code}")
         except requests.RequestException as e:
-            print(f"Error calling OpenAPI URL: {e}")
+            log.info(f"Error calling OpenAPI URL: {e}")
     return json.dumps(api_schema)
 
 
@@ -86,10 +85,10 @@ def get_user_nl_query_and_training(query: str):
     if os.path.exists(prompt_file_path):
         with open(prompt_file_path, "r") as prompt_file:
             training_prompt = prompt_file.read()
-            # print(f"\nLoaded training prompt from {prompt_file_path}:\n{training_prompt}")
+            # log.info(f"\nLoaded training prompt from {prompt_file_path}:\n{training_prompt}")
     else:
         training_prompt = ""
-        print(f"Prompt file not found at {prompt_file_path}.")
+        log.info(f"Prompt file not found at {prompt_file_path}.")
     return query + "\n\n" + training_prompt
 
 
@@ -121,11 +120,6 @@ def query_llm_with_nl(schema_text, nl_query):
     ]
 
     request_print = content[0:1200] + '\n... etc'  # limit for readability
-    print("\n\n2a. LLM request:\n", request_print)
-    # print("\n2b. NL Query:\n", nl_query)
-    # print("\n2c. schema_text: (truncated) \n")
-    # schema_print = json.dumps(json.loads(schema_text), indent=4)[:400]  # limit for readability
-    # print(schema_print)
 
     if create_tool_context_from_llm:  # takes 2-3 seconds...
         response = openai.chat.completions.create(
@@ -140,7 +134,7 @@ def query_llm_with_nl(schema_text, nl_query):
         try:    
             with open(tool_context_file_path, "r") as tool_context_file:
                 tool_context_str = tool_context_file.read()
-                # print(f"\n\n2c. Tool context from file {tool_context_file_path}:\n" + tool_context_str)
+                # log.info(f"\n\n2c. Tool context from file {tool_context_file_path}:\n" + tool_context_str)
         except FileNotFoundError:
             raise ConstraintException(f"Tool context file not found at {tool_context_file_path}.")
 
@@ -149,10 +143,10 @@ def query_llm_with_nl(schema_text, nl_query):
     try:
         tool_context = json.loads(tool_context_str_no_cr)
     except json.JSONDecodeError:
-        print("Failed to decode JSON from response:", tool_context_str)
+        print("Failed to decode JSON from response:\n" +  tool_context_str)
         return None
 
-    print("\n2d. generated tool context from LLM:\n", json.dumps(tool_context, indent=4))
+    log.info(f"\n2d. generated tool context from LLM:\n" + json.dumps(tool_context, indent=4))
 
     if "resources" not in tool_context:
         raise ConstraintException("GenAI Error - LLM response does not contain 'resources'.")
@@ -166,7 +160,7 @@ def process_tool_context(tool_context):
     import json
     from openai import OpenAIError
 
-    print("\n3. MCP Client Executor – Starting Tool Context Execution\n")
+    log.info("\n3. MCP Client Executor – Starting Tool Context Execution\n")
     context_results = []
     ''' results from each step are appended to this list,
     which is used to resolve variables in subsequent steps. '''
@@ -231,8 +225,8 @@ def process_tool_context(tool_context):
 
     def print_get_response(query_param_filter, mcp_response):
         """ Print the response from the GET request. """
-        print("\n3. MCP Server (als) GET filter(query_param_filter):\n", query_param_filter)
-        print("     GET Response:\n", mcp_response.text)
+        log.info("\n3. MCP Server (als) GET filter(query_param_filter):\n" + query_param_filter)
+        log.info("     GET Response:\n" + mcp_response.text)
         results : List[Dict] = mcp_response.json()['data']
         # print results in a table format
         if results:
@@ -243,13 +237,13 @@ def process_tool_context(tool_context):
                     keys.update(row.keys())
             keys = list(keys)
             # Print header
-            print("\n| " + " | ".join(keys) + " |")
-            print("|" + "|".join(["---"] * len(keys)) + "|")
+            log.info("\n| " + " | ".join(keys) + " |")
+            log.info("|" + "|".join(["---"] * len(keys)) + "|")
             # Print rows
             for row in results:
-                print("| " + " | ".join(str(row.get(k, "")) for k in keys) + " |")
+                log.info("| " + " | ".join(str(row.get(k, "")) for k in keys) + " |")
         else:
-            print("No results found.")
+            log.info("No results found.")
 
     def substitute_vars(val, context, row=None, ref_index=None):
         """
@@ -386,10 +380,10 @@ Based on this, generate the next tool_context step(s) as a JSON list.
             )
             return json.loads(response.choices[0].message.content)
         except OpenAIError as e:
-            print(f"OpenAI error: {e}")
+            log.info(f"OpenAI error: {e}")
             return []
         except Exception as e:
-            print(f"Failed LLM call: {e}")
+            log.info(f"Failed LLM call: {e}")
             return []
 
     def execute_api_step(step):
@@ -406,15 +400,15 @@ Based on this, generate the next tool_context step(s) as a JSON list.
                 body['data']['attributes'].update(each_field)  # each_field is a dict, eg: {'subject': 'Discount Offer', 'message': 'You have a new discount offer', 'customer_id': '$0[*].customer_id'}
         
 
-        print(f"\n➡️  Executing {method} {url}")
-        print(f"    Query: {params}")
-        print(f"    Body: {body}")
+        log.info(f"\n➡️  Executing {method} {url}")
+        log.info(f"    Query: {params}")
+        log.info(f"    Body: {body}")
         try:
             resp = requests.request(method, url, json=body if method in ["POST", "PATCH"] else None, params=params)
             resp.raise_for_status()
             return resp.json()
         except requests.RequestException as e:
-            print(f"❌ Request failed: {e}")
+            log.info(f"❌ Request failed: {e}")
             return {}
 
     step_num = 0
@@ -422,7 +416,7 @@ Based on this, generate the next tool_context step(s) as a JSON list.
     for each_step in steps:
 
         if each_step.get("llm_call"):
-            print(f"\n🔁 LLM Call triggered at step {i}")
+            log.info(f"\n🔁 LLM Call triggered at step {i}")
             new_steps = call_llm(each_step, context_results, tool_context)
             tool_context[i+1:i+1] = new_steps
             i += 1
@@ -444,48 +438,9 @@ Based on this, generate the next tool_context step(s) as a JSON list.
             context_results.append(result)
         step_num += 1
 
-    print("\n✅ MCP Client Executor – All Steps Executed\n")
+    log.info("\n✅ MCP Client Executor – All Steps Executed\n")
 
-    assert isinstance(tool_context, (dict, list)), "Tool context expected to be a dictionary"
-    context_data = {}
-    added_rows = 0
-
-    for each_block in tool_context["resources"]: # fixme dead code?
-        if process_tool_context := True:
-            if each_block["method"] == "GET":
-                    query_param_filter = get_query_param_filter(each_block["query_params"])
-                    headers = {"Content-Type": "application/vnd.api+json"}
-                    if "headers" in each_block:
-                        headers.update(each_block["headers"])
-                    mcp_response = requests.get(
-                        url = each_block["base_url"] + each_block["path"],
-                        headers=headers,
-                        params=query_param_filter
-                    )
-                    context_data = mcp_response.json()['data']  # result rows...
-                    print_get_response(query_param_filter, mcp_response)
-            elif each_block["method"] in ["POST"]:
-                    for each_order in context_data:
-                        url = each_block["base_url"] + each_block["path"]
-                        json_update_data =  { 'data': {"type": each_block["path"][1:], 'attributes': {} } }  
-                        json_update_data_attributes = json_update_data["data"]["attributes"]
-                        move_fields( src= each_block["body"], dest=json_update_data_attributes, context_data=each_order) 
-                        # eg: POST http://localhost:5656/api/SysEmail {'data': {'type': 'SysEmail', 'attributes': {'customer_id': 5, 'message': {'to': '{{ order.customer_id }}', 'subject': 'Discount for your order', 'body': 'Dear customer, you have a discount for your recent order. Thank you for shopping with us.'}}}}
-                        headers = {"Content-Type": "application/vnd.api+json"}
-                        if "headers" in each_block:
-                            headers.update(each_block["headers"])
-                        mcp_response = requests.post(  
-                            url=url,
-                            headers=headers,
-                            json=json_update_data
-                        )
-                        added_rows += 1
-        pass
-    print("\n3. MCP Server (als) POST Response:\n", mcp_response.text)
-    if added_rows > 0:
-        print(f"...Added {added_rows} rows to the database; last row (only) shown above.")
-    return mcp_response 
-
+    return context_results 
 
 
 def declare_logic():
@@ -525,6 +480,6 @@ def declare_logic():
 
         mcp_response = process_tool_context(tool_context)       # see: 3-MCP-server response
 
-        print("\nTest complete.\n")
+        log.info("\nTest complete.\n")
 
     Rule.row_event(on_class=models.SysMcp, calling=mcp_client_executor)  # see above
