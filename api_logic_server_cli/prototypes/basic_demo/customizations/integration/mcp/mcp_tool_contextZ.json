@@ -6,20 +6,31 @@
             "base_url": "http://localhost:5656/api",
             "path": "/Order",
             "method": "GET",
-            "body": "",
+            "body": null,
             "query_params": [
                 {
-                    "query_param": "filter=[{\"name\":\"date_shipped\",\"op\":\"lt\",\"val\":\"2023-07-14\"},{\"name\":\"status\",\"op\":\"eq\",\"val\":\"unshipped\"}]"
+                    "name": "date_shipped",
+                    "op": "eq",
+                    "val": "null"
+                },
+                {
+                    "name": "CreatedOn",
+                    "op": "lt",
+                    "val": "2023-07-14"
                 }
             ]
         },
         {
             "tool_type": "json-api",
             "base_url": "http://localhost:5656/api",
-            "path": "/Email",
+            "path": "/SysEmail",
             "method": "POST",
-            "body": "{\"subject\": \"Discount Offer\", \"message\": \"You have a new discount offer!\", \"customer_id\": \"{{customer_id}}\"}",
-            "query_params": []
+            "body": {
+                "subject": "Discount Offer",
+                "message": "Dear Customer, We are offering you a special discount. Please check your account for more details.",
+                "customer_id": "{customer_id}"
+            },
+            "query_params": null
         }
     ]
 }

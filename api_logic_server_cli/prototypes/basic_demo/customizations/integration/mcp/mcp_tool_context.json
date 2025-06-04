@@ -1,36 +1,34 @@
 {
-    "schema_version": "1.0",
-    "resources": [
+  "schema_version": "1.0",
+  "resources": [
+    {
+      "tool_type": "json-api",
+      "base_url": "http://localhost:5656/api",
+      "path": "/Order",
+      "method": "GET",
+      "query_params": [
         {
-            "tool_type": "json-api",
-            "base_url": "http://localhost:5656/api",
-            "path": "/Order",
-            "method": "GET",
-            "body": null,
-            "query_params": [
-                {
-                    "name": "date_shipped",
-                    "op": "eq",
-                    "val": "null"
-                },
-                {
-                    "name": "CreatedOn",
-                    "op": "lt",
-                    "val": "2023-07-14"
-                }
-            ]
+          "name": "date_shipped",
+          "op": "eq",
+          "val": "null"
         },
         {
-            "tool_type": "json-api",
-            "base_url": "http://localhost:5656/api",
-            "path": "/SysEmail",
-            "method": "POST",
-            "body": {
-                "subject": "Discount Offer",
-                "message": "Dear Customer, We are offering you a special discount. Please check your account for more details.",
-                "customer_id": "{customer_id}"
-            },
-            "query_params": null
+          "name": "CreatedOn",
+          "op": "lt",
+          "val": "2023-07-14"
         }
-    ]
+      ]
+    },
+    {
+      "tool_type": "json-api",
+      "base_url": "http://localhost:5656/api",
+      "path": "/SysEmail",
+      "method": "POST",
+      "body": {
+        "subject": "Discount Offer",
+        "message": "You have a new discount offer",
+        "customer_id": "$0[*].customer_id"
+      }
+    }
+  ]
 }

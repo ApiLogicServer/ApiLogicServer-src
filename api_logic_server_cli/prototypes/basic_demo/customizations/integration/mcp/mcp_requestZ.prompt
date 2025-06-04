@@ -1,15 +1,6 @@
-To issue one request per row from a prior step (fan-out), use the syntax:
+Natural language query:
+ List the orders date_shipped is null and CreatedOn before 2023-07-14, and send a discount email (subject: 'Discount Offer') to the customer for each one.
 
-"$<stepIndex>[*].<fieldName>"
-
-For example, if step 0 returns orders, and you want to send a POST per customer:
-
-Before (incorrect):
-    "customer_id": "{customer_id}"
-
-After (correct):
-    "customer_id": "$0[*].customer_id"
-    
 Only if 'email' is in the Natural language query, send email by issing a POST request to the SysEmail endpoint, setting the subject, message and customer_id in the body.   DO NOT include a POST unless the word ‘email’ appears in the user query.
 
 Format response as mcp_responseFormat.
@@ -37,3 +28,7 @@ class MCPResult(BaseModel):  # must match system/genai/prompt_inserts/response_f
     resources : List[Resource] # list resources
 
 <mcp_responseFormat/>
+
+Schema:
+{"base_url": "http://localhos
+... etc

@@ -182,7 +182,11 @@ import site
 
 venv_path = site.getsitepackages()[0]
 venv_alias = "$venv"
+app_path = str(Path(__file__).parent.parent)
+app_alias = ""
+max_len = 100  # max length of a line in stacktrace
 
+# Patch stacktrace formatters to replace venv path with alias
 def patch_stacktrace_formatters():
     """
     Patch only the formatException method of each formatter,
@@ -209,13 +213,21 @@ def patch_stacktrace_formatters():
                 each_line = each_line.replace('^', '')
                 each_line = each_line.replace('\n', '')
                 lines[line_num] = each_line
+            elif app_path in each_line:
+                if '"' in each_line:
+                    follow_link = '\tFollow link: ' + each_line.split('"')[1] + ']'
+                each_line = each_line.replace('"' + app_path, app_alias)
+                each_line = each_line.replace('File ', '')
+                each_line = each_line.replace('", line ', ' @ ')
+                each_line = each_line.replace('\n', '')
+                lines[line_num] = each_line
             elif '^^' in each_line:
                 lines[line_num] = ""
             elif 'File "<string>", line' in each_line:
                 lines[line_num] = ""
             # add spaces for 90 characters
-            if len(lines[line_num]) < 90 and lines[line_num] != "" and follow_link != "":
-                lines[line_num] = lines[line_num] + ' ' * (90 - len(lines[line_num]))
+            if len(lines[line_num]) < max_len and lines[line_num] != "" and follow_link != "":
+                lines[line_num] = lines[line_num] + ' ' * (max_len - len(lines[line_num]))
             lines[line_num] += follow_link
             line_num += 1
         result = ''.join(lines)
@@ -229,8 +241,6 @@ def patch_stacktrace_formatters():
         if fmt and not hasattr(fmt, "_stacktrace_patched"):
             fmt.formatException = short_format_exception.__get__(fmt)
             fmt._stacktrace_patched = True
-
-
 
 
 def logging_setup() -> logging.Logger:

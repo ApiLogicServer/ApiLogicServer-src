@@ -1,3 +1,6 @@
+Natural language query:
+ List the orders date_shipped is null and CreatedOn before 2023-07-14, and send a discount email (subject: 'Discount Offer') to the customer for each one.
+
 To issue one request per row from a prior step (fan-out), use the syntax:
 
 "$<stepIndex>[*].<fieldName>"
@@ -29,11 +32,5 @@ class Resource(BaseModel):
     base_url: str
     path: str # specified use case or requirement name (use 'General' if missing)
     method: str # GET, PATCH, POST or DELETE
-    body: json # data for PATCH or POST
-    query_params: List(QueryParam) # filter for GET
-
-class MCPResult(BaseModel):  # must match system/genai/prompt_inserts/response_format.prompt
-    schema_version: str
-    resources : List[Resource] # list resources
-
-<mcp_responseFormat/>
+    body: json
+... etc
