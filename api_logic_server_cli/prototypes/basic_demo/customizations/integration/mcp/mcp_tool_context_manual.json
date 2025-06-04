@@ -1,0 +1,25 @@
+{
+    "schema_version": "1.0",
+    "resources": [
+        {
+            "tool_type": "json-api",
+            "base_url": "http://localhost:5656/api",
+            "path": "/Order",
+            "method": "GET",
+            "body": "",
+            "query_params": [
+                {
+                    "query_param": "filter=[{\"name\":\"date_shipped\",\"op\":\"lt\",\"val\":\"2023-07-14\"},{\"name\":\"status\",\"op\":\"eq\",\"val\":\"unshipped\"}]"
+                }
+            ]
+        },
+        {
+            "tool_type": "json-api",
+            "base_url": "http://localhost:5656/api",
+            "path": "/Email",
+            "method": "POST",
+            "body": "{\"subject\": \"Discount Offer\", \"message\": \"You have a new discount offer!\", \"customer_id\": \"{{customer_id}}\"}",
+            "query_params": []
+        }
+    ]
+}

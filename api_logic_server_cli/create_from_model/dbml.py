@@ -207,6 +207,7 @@ class DBMLCreator(object):
         '''        
         """
         
+        # copy mcp learning from manager (to enable user to extend)
         docs_path = Path(self.mod_gen.project_directory).joinpath('docs')
         docs_path.mkdir(parents=True, exist_ok=True)
         mcp_learning_src = genai_svcs.get_manager_path(use_env=True).joinpath('system/genai/mcp_learning')
