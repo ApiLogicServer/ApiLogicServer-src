@@ -152,8 +152,11 @@ def get_code_update_logic_file(rule_list: List[DotMap], logic_file_path: Path = 
             project (Project): a Project object (unless creating a logic file)
             imports (set): the set of imported classes
         """        
-        insert_logic = "\n    # Logic from GenAI: (or, use your IDE w/ code completion)\n"
-        insert_logic += translated_logic
+        insert_logic = "\n    # Logic from GenAI: (or, use your IDE with code completion)\n"
+        insert_import = translated_logic
+        if 'import \n' in translated_logic:
+            insert_import = "    # no rules"
+        insert_logic += insert_import
         insert_logic += "\n    # End Logic from GenAI\n\n"
 
         insert_point = 'discover_logic()'  # default for als`
