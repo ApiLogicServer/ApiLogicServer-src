@@ -6,7 +6,6 @@
             "base_url": "http://localhost:5656/api",
             "path": "/Order",
             "method": "GET",
-            "body": null,
             "query_params": [
                 {
                     "name": "date_shipped",
@@ -27,10 +26,9 @@
             "method": "POST",
             "body": {
                 "subject": "Discount Offer",
-                "message": "Dear Customer, We are offering you a special discount. Please check your account for more details.",
-                "customer_id": "{customer_id}"
-            },
-            "query_params": null
+                "message": "Dear customer, we are offering a discount on your next purchase. Please check your account for more details.",
+                "customer_id": "$0[*].customer_id"
+            }
         }
     ]
 }
