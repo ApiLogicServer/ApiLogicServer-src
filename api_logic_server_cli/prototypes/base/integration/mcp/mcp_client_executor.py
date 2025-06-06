@@ -86,13 +86,13 @@ def discover_mcp_servers():
     return json.dumps(api_schema)
 
 
-def get_user_nl_query_and_training(query: str):
-    """ Get the natural language query from the user. 
-    Add training for the LLM to generate a tool context block.
+def get_mcp_learning(query: str):
+    """ Get MCP learning for LLM from the mcp.prompt file. 
     
-    """
+    * Includes: fan-out & response format, and email requests.
+    * Todo: read from venv, to so that mcp_client does not need to know training. 
+    * But, also retain the oppty for user to provide additional training as well. """
 
-    global test_type
     # read file docs/mcp_learning/mcp.prompt
     prompt_file_path = os.path.join(os.path.dirname(__file__), "../../docs/mcp_learning/mcp.prompt")
     if os.path.exists(prompt_file_path):
@@ -462,7 +462,7 @@ def mcp_client_executor(query: str):
 
     schema_text = discover_mcp_servers()                    # see: 1-discovery-from-als
 
-    prompt = get_user_nl_query_and_training(query)
+    prompt = get_mcp_learning(query)
 
     tool_context = query_llm_with_nl(schema_text, prompt)   # see: 2-tool-context-from-LLM   
 
