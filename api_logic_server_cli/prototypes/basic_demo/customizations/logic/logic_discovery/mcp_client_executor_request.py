@@ -1,5 +1,5 @@
 """ 
-TBD
+Invokes MCP client executor to process MCP requests when a new SysMcp row is inserted.
 """
 
 import json
