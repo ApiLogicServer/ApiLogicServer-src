@@ -45,7 +45,7 @@ log = logging.getLogger('integration.mcp')
 # debug settings
 test_type = 'orchestration'  # 'simple_get' or 'orchestration'
 create_tool_context_from_llm = False
-''' set to False to bypass LLM call and save 2-3 secs in testing '''
+''' set to False to bypass LLM call and save 2-3 secs in testing, no API Key required. '''
 use_test_schema = False
 ''' True means bypass discovery, use hard-coded schedma file '''
 
@@ -134,10 +134,8 @@ def query_llm_with_nl(schema_text, nl_query):
 
     request_print = content[0:1200] + '\n... etc'  # limit for readability
     log.debug("\n\n2a. LLM request:\n" + request_print)
-    log.debug("\n2b. NL Query:\n" + nl_query)
-    log.debug("\n2c. schema_text: (truncated) \n")
     schema_print = json.dumps(json.loads(schema_text), indent=4)[:400]  # limit for readability
-    log.debug(schema_print)
+    # log.debug(schema_print)
 
     if create_tool_context_from_llm:  # takes 2-3 seconds...
         response = openai.chat.completions.create(
@@ -164,7 +162,7 @@ def query_llm_with_nl(schema_text, nl_query):
         print("Failed to decode JSON from response:\n" +  tool_context_str)
         return None
 
-    log.info(f"\n2d. generated tool context from LLM:\n" + json.dumps(tool_context, indent=4))
+    log.info(f"\n2b. generated tool context from LLM:\n" + json.dumps(tool_context, indent=4))
 
     if "resources" not in tool_context:
         raise ConstraintException("GenAI Error - LLM response does not contain 'resources'.")
@@ -227,19 +225,6 @@ def process_tool_context(tool_context):
             query_param_filter = query_param_filter.replace('"null"', 'null')
             # query_param_filter = query_param_filter.replace("date_created", 'CreatedOn')  # TODO - why this name?
             return query_param_filter  # end get_query_param_filter
-
-    def move_fields(src: dict, dest: dict, context_data: dict):
-        """ Move fields from src to dest, replacing any variables with their values from context_data."""
-        for variable_name, value in src.items():
-            move_value = value
-            if move_value.startswith("{") and move_value.endswith("}"):  
-                # strip the braces, and get the name after the first dot, # eg: "{Order.customer_id}" ==> "customer_id"``
-                move_name = move_value[1:-1]  # strip the braces
-                if '.' in move_value:
-                    move_name = move_name.split('.', 1)[1]
-                move_value = context_data['attributes'][move_name]
-            dest[variable_name] = move_value
-        return dest
 
     def print_get_response(query_param_filter, mcp_response):
         """ Print the response from the GET request. """
@@ -469,13 +454,12 @@ def mcp_client_executor(query: str):
 
     Test:
     * curl -X 'POST' 'http://localhost:5656/api/SysMcp/' -H 'accept: application/vnd.api+json' -H 'Content-Type: application/json' -d '{ "data": { "attributes": {"request": "List the orders date_shipped is null and CreatedOn before 2023-07-14, and send a discount email (subject: '\''Discount Offer'\'') to the customer for each one."}, "type": "SysMcp"}}'
-    * Or, use the Admin App and insert a row into SysMCP (see `query_example`, below)
+    * Or, use the Admin App and insert a row into SysMCP (see default `query`, below)
 
     Args:
-        row (Mcp): inserted MCP with prompt
-        old_row (Mcp): n/a
-        logic_row (LogicRow): bundles curr/old row, with ins/upd/dlt logic
+        query (str): The natural language query to process.
     """
+
     schema_text = discover_mcp_servers()                    # see: 1-discovery-from-als
 
     prompt = get_user_nl_query_and_training(query)
@@ -487,8 +471,7 @@ def mcp_client_executor(query: str):
     log.info("\nTest complete.\n")
 
 
-
-if __name__ == "__main__":
+if __name__ == "__main__":  # F5 to start API Logic Server
 
     logging_config = f'{project_path}/config/logging.yml'
     if os.getenv('APILOGICPROJECT_LOGGING_CONFIG'):
