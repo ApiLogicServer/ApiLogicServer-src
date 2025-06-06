@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "15.00.05"  # last public release: 15.00.00 (14.05.04)
+__version__ = "15.00.06"  # last public release: 15.00.00 (14.05.04)
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t06/05/2024 - 15.00.05: Optional shortening of stacktrace lines, fan-out w/log, s/a or POST, genai cli no rules fix \n"\
+    "\t06/05/2024 - 15.00.06: Optional shortening of stacktrace lines, fan-out w/log, s/a or POST, genai cli no rules fix \n"\
     "\t05/28/2024 - 15.00.00: MCP \n"\
     "\t05/16/2024 - 14.05.00: safrs 3.1.7, running mcp preview \n"\
     "\t04/27/2024 - 14.04.00: Graphics preview, Vibe install fix, Improved IDE Chat Logic, MCP Exploration \n"\
