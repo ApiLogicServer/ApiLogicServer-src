@@ -51,7 +51,7 @@ create_tool_context_from_llm = True
 
 
 def discover_mcp_servers() -> str:
-    """Discover MCP servers and retrieve their API learnings and schemas.
+    """Discover MCP servers (aka 'tools'), and retrieve their API learnings and schemas.
     This function performs the following steps:
     1. Reads a configuration file (`integration/mcp/mcp_server_discovery.json`) to obtain a list of available MCP servers.
     2. For each server, calls its `schema_url` endpoint to retrieve the MCP learnings_and_schema.
