@@ -1,5 +1,5 @@
 """ 
-This simulates the MCP Client Executor, 
+A basic MCP Client Executor, 
 which takes a natural language query and converts it into a tool context block:
 
 1. Discovers MCP servers (from config)
@@ -46,12 +46,12 @@ log = logging.getLogger('integration.mcp')
 # debug settings
 ################
 
-create_tool_context_from_llm = False
+create_tool_context_from_llm = True
 ''' set to False to bypass LLM call and save 2-3 secs in testing, no API Key required. '''
 
 
 def discover_mcp_servers() -> str:
-    """Discover MCP servers and retrieve their API schemas.
+    """Discover MCP servers and retrieve their API learnings and schemas.
     This function performs the following steps:
     1. Reads a configuration file (`integration/mcp/mcp_server_discovery.json`) to obtain a list of available MCP servers.
     2. For each server, calls its `schema_url` endpoint to retrieve the MCP learnings_and_schema.
@@ -77,6 +77,7 @@ def discover_mcp_servers() -> str:
     except json.JSONDecodeError as e:
         log.info(f"Error decoding JSON from {discovery_file_path}: {e}")
     
+    api_schema = {}  # initialize api_schema to an empty dict
     for each_server in discovery_data["servers"]:
         discovery_url = each_server["schema_url"]
 
@@ -84,9 +85,12 @@ def discover_mcp_servers() -> str:
         try:
             response = requests.get(discovery_url)
             if response.status_code == 200:
-                api_schema = response.json()
-                request_print = json.dumps(api_schema, indent=4)[0:400] # limit for readability
-                request_print_schema = json.dumps(api_schema.get("resources", {}), indent=4)[0:200] + '\n... etc'
+                each_schema = response.json()
+                api_schema[discovery_url] = each_schema
+                if format_for_print := False:
+                    each_schema["learning"] = each_schema['learning'].split('\n')  # split learning into a list of lines
+                request_print = json.dumps(each_schema, indent=4)[0:1200] # limit for readability
+                request_print_schema = json.dumps(each_schema.get("resources", {}), indent=4)[0:200] + '\n... etc'
                 log.info(f"\n\nLearnings and Schema from discovery schema_url: {discovery_url}:\n" + request_print)
                 log.info(f'    "resources":\n' + request_print_schema)
             else:
@@ -94,6 +98,7 @@ def discover_mcp_servers() -> str:
         except requests.RequestException as e:
             log.info(f"Error calling OpenAPI URL: {e}")
         pass
+    debug_print = json.dumps(api_schema, indent=4)
     return json.dumps(api_schema)
 
 
@@ -163,34 +168,7 @@ def query_llm_with_nl(learnings_and_schema: str, nl_query: str):
 
 
 
-def process_tool_context(tool_context: dict):
-    """Executes a sequence of API steps defined in the provided tool context, supporting variable substitution,
-    fan-out (iteration over result sets), and optional LLM-driven step generation.
-
-    The function processes each step in the 'resources' list of the tool_context dictionary. Each step may define
-    API calls (GET, POST, PATCH, etc.), query parameters, request bodies, and variable references to results from
-    previous steps. The function supports advanced features such as:
-    - Variable substitution: Allows referencing values from previous steps using patterns like '$0.email' or
-      '$1[*].customer_id' in step definitions.
-    - Fan-out: Automatically iterates over lists of results from previous steps when variable references use
-      the '[*]' pattern, executing the step for each item in the referenced result set.
-    - LLM integration: If a step specifies 'llm_call', the function invokes a language model to dynamically
-      generate additional steps based on the current context and user goal.
-    - Query parameter and body resolution: Converts step definitions into appropriate API request formats,
-      including JSON:API filter syntax for query parameters.
-      
-        tool_context (dict): A dictionary containing the workflow definition, including a 'resources' key
-            with a list of step dictionaries. Each step defines the API endpoint, method, query parameters,
-            body, and optional LLM instructions.
-        list: A list of results from each executed step, in order of execution. Each result is typically
-            the parsed JSON response from the corresponding API call.
-
-    Side Effects:
-        - Logs detailed information about each step execution, including requests, responses, and errors.
-        - May invoke external APIs and, if configured, a language model for dynamic step generation.
-
-    Example tool_context structure: see api_logic_server_cli/prototypes/base/integration/mcp/examples/mcp_tool_context.json
-    """
+def process_tool_context(tool_context):
 
     log.info("\n3. MCP Client Executor – Starting Tool Context Execution\n")
     context_results = []
