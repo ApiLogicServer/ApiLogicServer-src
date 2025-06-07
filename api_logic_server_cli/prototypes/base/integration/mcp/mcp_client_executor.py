@@ -15,8 +15,16 @@ To run:
 Notes:
 * See: integration/mcp/README_mcp.md
 * Requires ApiLogicServer: python api_logic_server_run.py
-
 """
+
+
+################
+# debug settings
+################
+
+create_tool_context_from_llm = False
+''' set to False to bypass LLM call and save 2-3 secs in testing, no API Key required. '''
+
 import os, logging, logging.config, sys
 from pathlib import Path
 from typing import Dict, List
@@ -40,14 +48,6 @@ from logic_bank.util import ConstraintException
 openai.api_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")
 
 log = logging.getLogger('integration.mcp')
-
-
-################
-# debug settings
-################
-
-create_tool_context_from_llm = True
-''' set to False to bypass LLM call and save 2-3 secs in testing, no API Key required. '''
 
 
 def discover_mcp_servers() -> str:
@@ -144,7 +144,7 @@ def query_llm_with_nl(learnings_and_schema: str, nl_query: str):
         tool_context_str = response.choices[0].message.content
     else:
         # read integration/mcp/mcp_tool_context.json
-        tool_context_file_path = os.path.join(os.path.dirname(__file__), "../../integration/mcp/examples/mcp_tool_context.json")
+        tool_context_file_path = os.path.join(os.path.dirname(__file__), "../../integration/mcp/examples/mcp_tool_context_response.json")
         try:    
             with open(tool_context_file_path, "r") as tool_context_file:
                 tool_context_str = tool_context_file.read()
