@@ -20,14 +20,15 @@ Notes:
 import os, logging, logging.config, sys
 from pathlib import Path
 from typing import Dict, List
-
 import yaml
 
 mcp_path = Path(os.path.abspath(os.path.dirname(__file__)))
 project_path = mcp_path.parent.parent
 sys.path.append(str(project_path))  # add project root to sys.path
 
+import re
 import json
+from openai import OpenAIError
 import openai
 import requests
 from logic_bank.logic_bank import Rule
@@ -38,8 +39,6 @@ from logic_bank.util import ConstraintException
 # Set your OpenAI API key
 openai.api_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")
 
-server_url = os.getenv("APILOGICSERVER_URL", "http://localhost:5656/api")
-
 log = logging.getLogger('integration.mcp')
 
 
@@ -47,21 +46,26 @@ log = logging.getLogger('integration.mcp')
 # debug settings
 ################
 
-test_type = 'orchestration'  # 'simple_get' or 'orchestration'
 create_tool_context_from_llm = False
 ''' set to False to bypass LLM call and save 2-3 secs in testing, no API Key required. '''
-use_test_schema = False
-''' True means bypass discovery, use hard-coded schedma file '''
 
-def discover_mcp_servers():
-    """ Discover the MCP servers by calling the /api/.well-known/mcp.json endpoint.
-    This function retrieves the list of available MCP servers and their capabilities.
+
+def discover_mcp_servers() -> str:
+    """Discover MCP servers and retrieve their API schemas.
+    This function performs the following steps:
+    1. Reads a configuration file (`integration/mcp/mcp_server_discovery.json`) to obtain a list of available MCP servers.
+    2. For each server, calls its `schema_url` endpoint to retrieve the MCP learnings_and_schema.
+        See: .well-known/mcp.json (see api/api_discovery/mcp_discovery.py)
+    3. Logs the discovered servers and their schemas for informational purposes.
+
+    Raises:
+        FileNotFoundError: If the discovery configuration file is not found.
+        json.JSONDecodeError: If the configuration file contains invalid JSON.
+        requests.RequestException: If there is an error making HTTP requests to the schema URLs.
+
+    Returns:
+        learnings_and_schema: str
     """
-    global server_url, use_test_schema
-
-    # create schema_text (for prompt), by reading integration/mcp/mcp_schema.txt
-
-    # find the servers - read the mcp_server_discovery.json file
 
     discovery_file_path = os.path.join(os.path.dirname(__file__), "../../integration/mcp/mcp_server_discovery.json")
     try:
@@ -107,7 +111,7 @@ def query_llm_with_nl(learnings_and_schema: str, nl_query: str):
     It handles both orchestration and simple GET requests.
     """
 
-    global test_type, create_tool_context_from_llm
+    global create_tool_context_from_llm
 
     content = f"Natural language query:\n {nl_query}\n\nLearnings_and_Schema:\n{learnings_and_schema}"
     messages = [
@@ -159,11 +163,34 @@ def query_llm_with_nl(learnings_and_schema: str, nl_query: str):
 
 
 
-def process_tool_context(tool_context):
-    import requests
-    import re
-    import json
-    from openai import OpenAIError
+def process_tool_context(tool_context: dict):
+    """Executes a sequence of API steps defined in the provided tool context, supporting variable substitution,
+    fan-out (iteration over result sets), and optional LLM-driven step generation.
+
+    The function processes each step in the 'resources' list of the tool_context dictionary. Each step may define
+    API calls (GET, POST, PATCH, etc.), query parameters, request bodies, and variable references to results from
+    previous steps. The function supports advanced features such as:
+    - Variable substitution: Allows referencing values from previous steps using patterns like '$0.email' or
+      '$1[*].customer_id' in step definitions.
+    - Fan-out: Automatically iterates over lists of results from previous steps when variable references use
+      the '[*]' pattern, executing the step for each item in the referenced result set.
+    - LLM integration: If a step specifies 'llm_call', the function invokes a language model to dynamically
+      generate additional steps based on the current context and user goal.
+    - Query parameter and body resolution: Converts step definitions into appropriate API request formats,
+      including JSON:API filter syntax for query parameters.
+      
+        tool_context (dict): A dictionary containing the workflow definition, including a 'resources' key
+            with a list of step dictionaries. Each step defines the API endpoint, method, query parameters,
+            body, and optional LLM instructions.
+        list: A list of results from each executed step, in order of execution. Each result is typically
+            the parsed JSON response from the corresponding API call.
+
+    Side Effects:
+        - Logs detailed information about each step execution, including requests, responses, and errors.
+        - May invoke external APIs and, if configured, a language model for dynamic step generation.
+
+    Example tool_context structure: see api_logic_server_cli/prototypes/base/integration/mcp/examples/mcp_tool_context.json
+    """
 
     log.info("\n3. MCP Client Executor – Starting Tool Context Execution\n")
     context_results = []
