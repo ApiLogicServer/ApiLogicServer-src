@@ -42,7 +42,11 @@ server_url = os.getenv("APILOGICSERVER_URL", "http://localhost:5656/api")
 
 log = logging.getLogger('integration.mcp')
 
+
+################
 # debug settings
+################
+
 test_type = 'orchestration'  # 'simple_get' or 'orchestration'
 create_tool_context_from_llm = False
 ''' set to False to bypass LLM call and save 2-3 secs in testing, no API Key required. '''
@@ -77,35 +81,20 @@ def discover_mcp_servers():
             response = requests.get(discovery_url)
             if response.status_code == 200:
                 api_schema = response.json()
-                request_print = json.dumps(api_schema, indent=4)[0:400] + '\n... etc'  # limit for readability
-                log.info(f"\n\nAPI Schema from discovery schema_url: {discovery_url}:\n" + request_print)
+                request_print = json.dumps(api_schema, indent=4)[0:400] # limit for readability
+                request_print_schema = json.dumps(api_schema.get("resources", {}), indent=4)[0:200] + '\n... etc'
+                log.info(f"\n\nLearnings and Schema from discovery schema_url: {discovery_url}:\n" + request_print)
+                log.info(f'    "resources":\n' + request_print_schema)
             else:
                 log.info(f"Failed to retrieve API schema from {discovery_url}: {response.status_code}")
         except requests.RequestException as e:
             log.info(f"Error calling OpenAPI URL: {e}")
+        pass
     return json.dumps(api_schema)
 
 
-def get_mcp_learning(query: str):
-    """ Get MCP learning for LLM from the mcp.prompt file. 
-    
-    * Includes: fan-out & response format, and email requests.
-    * Todo: read from venv, to so that mcp_client does not need to know training. 
-    * But, also retain the oppty for user to provide additional training as well. """
 
-    # read file docs/mcp_learning/mcp.prompt
-    prompt_file_path = os.path.join(os.path.dirname(__file__), "../../docs/mcp_learning/mcp.prompt")
-    if os.path.exists(prompt_file_path):
-        with open(prompt_file_path, "r") as prompt_file:
-            training_prompt = prompt_file.read()
-            # log.info(f"\nLoaded training prompt from {prompt_file_path}:\n{training_prompt}")
-    else:
-        training_prompt = ""
-        log.info(f"Prompt file not found at {prompt_file_path}.")
-    return query + "\n\n" + training_prompt
-
-
-def query_llm_with_nl(schema_text, nl_query):
+def query_llm_with_nl(learnings_and_schema: str, nl_query: str):
     """ 
     Query the LLM with a natural language query and schema text to generate a tool context block.
 
@@ -120,7 +109,7 @@ def query_llm_with_nl(schema_text, nl_query):
 
     global test_type, create_tool_context_from_llm
 
-    content = f"Natural language query:\n {nl_query}\nSchema:\n{schema_text}"
+    content = f"Natural language query:\n {nl_query}\n\nLearnings_and_Schema:\n{learnings_and_schema}"
     messages = [
         {
             "role": "system",
@@ -132,9 +121,9 @@ def query_llm_with_nl(schema_text, nl_query):
         }
     ]
 
-    request_print = content[0:1200] + '\n... etc'  # limit for readability
-    log.debug("\n\n2a. LLM request:\n" + request_print)
-    schema_print = json.dumps(json.loads(schema_text), indent=4)[:400]  # limit for readability
+    request_print = content[0:1400] + '\n... etc from step 1'  # limit for readability
+    log.debug("\n\n\n2a. LLM request:\n\n" + request_print)
+    schema_print = json.dumps(json.loads(learnings_and_schema), indent=4)[:400]  # limit for readability
     # log.debug(schema_print)
 
     if create_tool_context_from_llm:  # takes 2-3 seconds...
@@ -389,7 +378,7 @@ Based on this, generate the next tool_context step(s) as a JSON list.
             log.info(f"Failed LLM call: {e}")
             return []
 
-    def execute_api_step(step):
+    def execute_api_step(step, step_num):
         url = step["base_url"].rstrip("/") + "/" + step["path"].lstrip("/")
         method = step["method"].upper()
         # params = {p["name"]: p["val"] for p in step.get("query_params", [])}
@@ -403,9 +392,10 @@ Based on this, generate the next tool_context step(s) as a JSON list.
                 body['data']['attributes'].update(each_field)  # each_field is a dict, eg: {'subject': 'Discount Offer', 'message': 'You have a new discount offer', 'customer_id': '$0[*].customer_id'}
         
 
-        log.info(f"\n➡️  Executing {method} {url}")
-        log.info(f"    Query: {params}")
-        log.info(f"    Body: {body}")
+        log.info(f"\n\n➡️  MCP execute_api_step[{step_num}]:")
+        log.info(f"    Method: {method} {url}")
+        log.info(f"    Query:  {params}")
+        log.info(f"    Body:   {body}\n")
         try:
             resp = requests.request(method, url, json=body if method in ["POST", "PATCH"] else None, params=params)
             resp.raise_for_status()
@@ -433,11 +423,11 @@ Based on this, generate the next tool_context step(s) as a JSON list.
                 fan_out_list = fan_out_list["data"]
             for row in fan_out_list:
                 resolved = resolve_step(each_step, context_results, row, ref_idx)
-                result = execute_api_step(resolved)
+                result = execute_api_step(resolved, step_num)
                 context_results.append(result)
         else:
             resolved = each_step if len(context_results) == 0 else resolve_step(each_step, context_results)
-            result = execute_api_step(resolved)
+            result = execute_api_step(resolved, step_num)
             context_results.append(result)
         step_num += 1
 
@@ -460,15 +450,15 @@ def mcp_client_executor(query: str):
         query (str): The natural language query to process.
     """
 
-    schema_text = discover_mcp_servers()                    # see: 1-discovery-from-als
+    learnings_and_schema = discover_mcp_servers()                   # see: 1-discovery-from-als
 
-    prompt = get_mcp_learning(query)
+    tool_context = query_llm_with_nl(learnings_and_schema, query)   # see: 2-tool-context-from-LLM   
 
-    tool_context = query_llm_with_nl(schema_text, prompt)   # see: 2-tool-context-from-LLM   
-
-    mcp_response = process_tool_context(tool_context)       # see: 3-MCP-server response
+    mcp_response = process_tool_context(tool_context)               # see: 3-MCP-server response
 
     log.info("\nTest complete.\n")
+
+    return tool_context, mcp_response
 
 
 if __name__ == "__main__":  # F5 to start API Logic Server
