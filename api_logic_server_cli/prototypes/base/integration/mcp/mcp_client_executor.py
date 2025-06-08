@@ -476,9 +476,11 @@ if __name__ == "__main__":  # F5 to start API Logic Server
             f.close()
     logging.config.dictConfig(config)  # log levels: notset 0, debug 10, info 20, warn 30, error 40, critical 50
 
+    query = "List customers with credit_limit > 1000."
+    
     if len(sys.argv) > 1:  # if 1 non-blank argument, use it as the query
         query = sys.argv[1]
-        if query == '':
+        if query == 'mcp':
             query = "List the orders date_shipped is null and CreatedOn before 2023-07-14, and send a discount email (subject: 'Discount Offer') to the customer for each one."
 
     mcp_client_executor(query)
