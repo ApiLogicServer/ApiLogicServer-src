@@ -1,5 +1,10 @@
 about:
   date: May 26, 2025 06:57:17
+  merged:
+    at: June 07, 2025 17:52:03
+    new_attributes: 'SysMcp.customer_id SysMcp.request_prompt SysMcp.completion SysMcp.CreatedOn '
+    new_resources: ''
+    new_tab_groups: 'Customer.SysMcpList SysMcp.customer '
   recent_changes: works with modified safrs-react-admin
   version: 0.0.0
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
@@ -34,6 +39,11 @@ resources:
       - customer_id
       name: SysEmailList
       resource: SysEmail
+    - direction: tomany
+      fks:
+      - customer_id
+      name: SysMcpList
+      resource: SysMcp
     type: Customer
     user_key: name
   Item:
@@ -136,8 +146,23 @@ resources:
     - label: ' id*'
       name: id
       search: true
-      sort: true
       show_when: isInserting == false
+      sort: true
+    - name: customer_id
+      required: true
+    - name: request_prompt
+      show_when: isInserting == false
+    - name: completion
+      show_when: isInserting == false
+    - name: CreatedOn
+      show_when: isInserting == false
+      type: DATE
+    tab_groups:
+    - direction: toone
+      fks:
+      - customer_id
+      name: customer
+      resource: Customer
     type: SysMcp
     user_key: id
 settings:

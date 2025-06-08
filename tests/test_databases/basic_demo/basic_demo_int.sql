@@ -81,7 +81,10 @@ CREATE TABLE sys_mcp (
         request VARCHAR, 
         request_prompt VARCHAR,
         completion VARCHAR, 
-        PRIMARY KEY (id)
+        customer_id INTEGER NOT NULL, 
+        CreatedOn DATE,
+        PRIMARY KEY (id), 
+        FOREIGN KEY(customer_id) REFERENCES customer (id)
 );
 
 COMMIT;

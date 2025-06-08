@@ -1311,6 +1311,17 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "     - Basic Demo - rebuild-from-model",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/../../servers/basic_demo",
+            "env": {"APILOGICSERVER_DEBUG": "True", "APILOGICSERVER_HOME": "${workspaceFolder}"},
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["rebuild-from-model", "--db_url=sqlite:///database/db.sqlite"],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "5 - Create Sql/Server",
             "type": "debugpy",
             "request": "launch",
