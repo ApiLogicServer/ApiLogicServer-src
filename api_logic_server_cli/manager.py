@@ -19,6 +19,7 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path,
     1. .vscode, readme
     2. System folder (GenAI sample prompts / responses, others TBD)
     3. pre-created samples (optional)
+    4. readme (from docs: Sample-Basic-Tour.md)
 
     Example, from CLI in directory containing a `venv` (see https://apilogicserver.github.io/Docs/Manager/):
         als start
