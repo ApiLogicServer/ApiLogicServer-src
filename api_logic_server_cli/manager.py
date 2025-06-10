@@ -125,12 +125,13 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path,
             r = requests.get(file_src)  # , params=params)
             if r.status_code == 200:
                 readme_data = r.content.decode('utf-8')
-                with open(str(readme_path), "w") as readme_file:
+                with open(str(readme_path), "w", encoding="utf-8") as readme_file:
                     readme_file.write(readme_data)
         except requests.exceptions.ConnectionError as conerr: 
             # without this, windows fails if network is down
             pass    # just fall back to using the pip-installed version
-        except:     # do NOT fail 
+        except Exception as e:     # do NOT fail 
+            log.error(f'Failed to copy manager readme from installed: {e}')
             pass    # just fall back to using the pip-installed version
         create_utils.copy_md(from_doc_file='Sample-Basic-Tour.md', project = to_dir)
 
