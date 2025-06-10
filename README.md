@@ -20,7 +20,7 @@ See how **Microservice Automation** creates and runs a microservice - a multi-pa
 
 * Here is a microservice -- api and admin app -- **created / running in 5 seconds**
 
-    * It would be similar for your databases
+    * It would be similar for your own databases
 
 * Then, customize in your IDE with Python and **Logic Automation:** spreadsheet-like rules
 
