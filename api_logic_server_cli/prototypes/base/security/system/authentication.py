@@ -112,7 +112,7 @@ def configure_auth(flask_app: Flask, database: object, method_decorators: list[o
             return jsonify("Wrong username or password"), 401
         
         access_token = create_access_token(identity=user)  # serialize and encode
-        from flask import g
+        from flask import g  # see https://www.geeksforgeeks.org/when-should-flask-g-be-used/
         g.access_token = access_token
         return jsonify(access_token=access_token)
     

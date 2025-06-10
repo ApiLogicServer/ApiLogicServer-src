@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "15.00.10"  # last public release: 15.00.10 (15.00.00)
+__version__ = "15.00.11"  # last public release: 15.00.10 (15.00.00)
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t06/09/2024 - 15.00.11: MCP Security \n"\
     "\t06/08/2024 - 15.00.10: MCP, optional shortening of stacktrace lines, bugfix[92] \n"\
     "\t05/16/2024 - 14.05.00: safrs 3.1.7, running mcp preview \n"\
     "\t04/27/2024 - 14.04.00: Graphics preview, Vibe install fix, Improved IDE Chat Logic, MCP Exploration \n"\
@@ -1293,7 +1294,7 @@ from database import <project.bind_key>_models
                 "keycloak_client_id": keycloak_client_id
             }
             build.gen_auth_components(build.app_path, keycloak_args, use_keycloak=use_keycloak, overwrite=True)
-            log.info(f'\n.. ..Ontimize Keycloak setting use_keycloak={use_keycloak} for app={build.project}')
+            log.info(f'\n.. ..for Ontimize Keycloak setting, use_keycloak={use_keycloak} for app={build.project}\n')
         self.add_auth_in_progress = False
 
 
