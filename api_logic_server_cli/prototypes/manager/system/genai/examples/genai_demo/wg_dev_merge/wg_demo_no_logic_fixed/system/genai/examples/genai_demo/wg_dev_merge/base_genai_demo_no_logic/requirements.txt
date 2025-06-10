@@ -1,3 +1,0 @@
-# this includes the key libraries (Flask, SQLAlchemy, SAFRS), and the API Logic Server CLI
-
-ApiLogicServer
