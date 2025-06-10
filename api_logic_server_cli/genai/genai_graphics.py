@@ -168,7 +168,7 @@ class GenAIGraphics(object):
             with open(self.project.project_directory_path.joinpath(f'database/database_discovery/graphics_services.py'), 'a') as out_file:
                 out_file.write(rendered_result)
 
-            log.info(f'..... added db class method: {each_graphic['name']} to database_discovery')
+            log.info(f'..... added db class method: {each_graphic["name"]} to database_discovery')
         pass
 
 
@@ -201,7 +201,7 @@ class GenAIGraphics(object):
         for each_graphic in graphics:  # add each service to api/api_discovery
             cnt += 1
             server = '{server}'
-            iframe = f'iframe_{cnt} = iframe_template.format(url=f"{server}chart_graphics/{each_graphic['name']}")\n'
+            iframe = f'iframe_{cnt} = iframe_template.format(url=f"{server}chart_graphics/{each_graphic["name"]}")\n'
             iframe_templates.append(iframe)
             link = "{"+ f'iframe_{cnt}' + "}"
             iframe_links.append(f'{link}')
@@ -210,7 +210,7 @@ class GenAIGraphics(object):
             # create the dashboard service query (skip if .err file exists, create .err file if query fails)
             # typical failure: xxx
             db = f"""
-        previously_failed = Path('docs/graphics/{each_graphic['name']}.err').exists()
+        previously_failed = Path('docs/graphics/{each_graphic["name"]}.err').exists()
         if previously_failed:
             pass  # query has previously failed, so skip it
         else:
@@ -220,7 +220,7 @@ class GenAIGraphics(object):
                 dashboard{cnt} = template.render(result=results, color=color)
                 dashboard_result['{each_graphic['name']}']= dashboard{cnt}
             except Exception as e:
-                msg = f"GenAI query creation error on models.{sqlalchemy_query}.{each_graphic['name']}: "  + str(e)
+                msg = f"GenAI query creation error on models.{sqlalchemy_query}.{each_graphic["name"]}: "  + str(e)
                 dashboard_result['{each_graphic['name']}'] = msg
                 app_logger.error(msg)
                 with open('docs/graphics//{each_graphic['name']}.err', 'w') as err_file:
@@ -238,16 +238,16 @@ class GenAIGraphics(object):
             self.fix_sqlalchemy_query(each_graphic)
             template = env.get_template('html_template.jinja')
             rendered_result = template.render( **each_graphic )
-            with open(self.project.project_directory_path.joinpath(f'api/api_discovery/{each_graphic['name']}.html'), 'w') as out_file:
+            with open(self.project.project_directory_path.joinpath(f'api/api_discovery/{each_graphic["name"]}.html'), 'w') as out_file:
                 out_file.write(rendered_result)
 
-            with open(self.project.project_directory_path.joinpath(f'api/api_discovery/{each_graphic['name']}.sql'), 'w') as out_file:
+            with open(self.project.project_directory_path.joinpath(f'api/api_discovery/{each_graphic["name"]}.sql'), 'w') as out_file:
                 sql_query = "System Error: missing sql_query - check WGResult format"
                 if 'sql_query' in each_graphic:
                     sql_query = each_graphic['sql_query']
                 out_file.write(sql_query)
 
-            log.info(f'..... added dashboard query: {each_graphic['name']} to api_discovery')
+            log.info(f'..... added dashboard query: {each_graphic["name"]} to api_discovery')
         
         pass
 
