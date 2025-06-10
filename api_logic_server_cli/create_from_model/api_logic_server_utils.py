@@ -118,12 +118,19 @@ def copy_md(project, from_doc_file: str, to_project_file: str = "README.md"):
         r = requests.get(file_src)  # , params=params)
         if r.status_code == 200:
             readme_data = r.content.decode('utf-8')
-            with open(str(to_file), "w") as readme_file:
-                readme_file.write(readme_data)
+            try:
+                with open(str(to_file), "w", encoding="utf-8") as readme_file:  # encoding allows for chars like 💡
+                    readme_file.write(readme_data)
+                # log message if write fails
+                if not to_file.exists():
+                    log.error(f"Failed to write README file to {to_file}")
+            except Exception as e:
+                log.error(f"Exception occurred while writing to {to_file}: {e}")
     except requests.exceptions.ConnectionError as conerr: 
         # without this, windows fails if network is down
         pass    # just fall back to using the pip-installed version
-    except:     # do NOT fail 
+    except Exception as e:     # do NOT fail 
+        log.error(f'Manager Readme Creation from Git (docs) Failed (often due to illegal characters): {e}')
         pass    # just fall back to using the pip-installed version
 
     use_git = True  # FIXME temp debug
