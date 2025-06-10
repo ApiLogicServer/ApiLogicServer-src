@@ -20,7 +20,7 @@ See: https://apilogicserver.github.io/Docs/Integration-MCP/
 # debug settings
 ################
 
-create_tool_context_from_llm = False
+create_tool_context_from_llm = True
 ''' set to False to bypass LLM call and save 2-3 secs in testing, no API Key required. '''
 
 import os, logging, logging.config, sys
@@ -37,6 +37,8 @@ import json
 from openai import OpenAIError
 import openai
 import requests
+from flask import Flask, request, has_request_context
+
 from logic_bank.logic_bank import Rule
 from logic_bank.exec_row_logic.logic_row import LogicRow
 from database import models
@@ -403,8 +405,14 @@ Based on this, generate the next tool_context step(s) as a JSON list.
         log.info(f"    Method: {method} {url}")
         log.info(f"    Query:  {params}")
         log.info(f"    Body:   {body}\n")
+
+        headers = {}
+        if has_request_context():
+            headers = request.headers  # get headers from Flask request context
+        else:
+            log.info("Warning: No Flask request context available. secure API calls may not work as expected.")
         try:
-            resp = requests.request(method, url, json=body if method in ["POST", "PATCH"] else None, params=params)
+            resp = requests.request(method, url, headers=headers, json=body if method in ["POST", "PATCH"] else None, params=params)
             resp.raise_for_status()
             return resp.json()
         except requests.RequestException as e:
@@ -437,6 +445,16 @@ Based on this, generate the next tool_context step(s) as a JSON list.
             result = execute_api_step(resolved, step_num)
             context_results.append(result)
         step_num += 1
+
+    if print := True:  # print context (which is just the GETs)
+        log.info("\n\n4. MCP Client Executor – Context Results:")
+        for each_context_result in context_results:
+            print_print = each_context_result
+            if isinstance(each_context_result, dict):
+                each_print = json.dumps(each_context_result, indent=4)
+            print_line = f"\nStep {context_results.index(each_context_result)}\n{each_print}"
+            log.info(print_line)
+        pass
 
     log.info("\n✅ MCP Client Executor – All Steps Executed\n")
 

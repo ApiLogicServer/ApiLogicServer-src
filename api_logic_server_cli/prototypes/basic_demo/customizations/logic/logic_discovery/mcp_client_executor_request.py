@@ -43,5 +43,6 @@ def declare_logic():
             logic_row (LogicRow): bundles curr/old row, with ins/upd/dlt logic
         """
         result = mcp_client_executor.mcp_client_executor(row.request)
+        pass
 
     Rule.row_event(on_class=models.SysMcp, calling=mcp_client_executor_event)  # see above
