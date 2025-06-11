@@ -168,11 +168,12 @@ class Config:
         SECURITY_ENABLED = security_export not in ["false", "no"]  # NO SEC
         app_logger.debug(f'Security .. overridden from env variable SECURITY_ENABLED: {SECURITY_ENABLED}')
     if SECURITY_ENABLED:
-        from security.authentication_provider.sql.auth_provider import Authentication_Provider
+        from security.authentication_provider.sql.auth_provider import Authentication_Provider as SQL_Authentication_Provider
+        from security.authentication_provider.keycloak.auth_provider import Authentication_Provider as KC_Authentication_Provider
         # typically, authentication_provider is [ keycloak | sql ]
-        SECURITY_PROVIDER = Authentication_Provider if SECURITY_PROVIDER is None else SECURITY_PROVIDER
+        SECURITY_PROVIDER = KC_Authentication_Provider if "keycloak" in str(SECURITY_PROVIDER).lower() else SQL_Authentication_Provider
     
-    app_logger.info(f'config.py - security enabled: {SECURITY_ENABLED} using SECURITY_PROVIDER: {SECURITY_PROVIDER}')
+    app_logger.info(f'config.py - security enabled: {SECURITY_ENABLED} using SECURITY_PROVIDER: {str(SECURITY_PROVIDER)}\n')
 
     # Begin Multi-Database URLs (from ApiLogicServer add-db...)
     auth_db_path = str(project_path.joinpath('database/authentication_db.sqlite'))
