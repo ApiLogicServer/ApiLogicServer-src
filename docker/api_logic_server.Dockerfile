@@ -1,7 +1,7 @@
 
 # GA release -- DELETE BUILD DIRS FIRST
 
-# docker buildx build --push -f docker/api_logic_server.Dockerfile --tag apilogicserver/api_logic_server:15.00.10 -o type=image --platform=linux/arm64,linux/amd64 .
+# docker buildx build --push -f docker/api_logic_server.Dockerfile --tag apilogicserver/api_logic_server:15.00.12 -o type=image --platform=linux/arm64,linux/amd64 .
 # docker buildx build --push -f docker/api_logic_server.Dockerfile --tag apilogicserver/api_logic_server:latest -o type=image --platform=linux/arm64,linux/amd64 .
 # docker pull apilogicserver/api_logic_server:latest
 
