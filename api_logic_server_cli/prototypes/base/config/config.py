@@ -162,24 +162,17 @@ class Config:
     ''' keycloak client id '''
 
     SECURITY_ENABLED = os.getenv("SECURITY_ENABLED",False)
-    SECURITY_PROVIDER = None
+    SECURITY_PROVIDER =  os.getenv('SECURITY_PROVIDER', None)  # type: ignore # type: str
     if os.getenv('SECURITY_ENABLED'):  # e.g. export SECURITY_ENABLED=true
-        security_export = os.getenv('SECURITY_ENABLED')  # type: ignore # type: str
-        security_export = security_export.lower()  # type: ignore
-        if security_export in ["false", "no"]:  # NO SEC
-            SECURITY_ENABLED = False  # to remove env: unset SECURITY_ENABLED
-        else:
-            SECURITY_ENABLED = True
-        app_logger.debug(f'Security .. overridden from env variable: {SECURITY_ENABLED}')
+        security_export = os.getenv('SECURITY_ENABLED','false').lower()  # type: ignore # type: str
+        SECURITY_ENABLED = security_export not in ["false", "no"]  # NO SEC
+        app_logger.debug(f'Security .. overridden from env variable SECURITY_ENABLED: {SECURITY_ENABLED}')
     if SECURITY_ENABLED:
         from security.authentication_provider.sql.auth_provider import Authentication_Provider
         # typically, authentication_provider is [ keycloak | sql ]
-        SECURITY_PROVIDER = Authentication_Provider
-        app_logger.debug(f'config.py - security enabled')
-    else:
-        app_logger.info(f'config.py - security disabled')
-	
-    app_logger.info(f'SECURITY_PROVIDER={SECURITY_PROVIDER}')
+        SECURITY_PROVIDER = Authentication_Provider if SECURITY_PROVIDER is None else SECURITY_PROVIDER
+    
+    app_logger.info(f'config.py - security enabled: {SECURITY_ENABLED} using SECURITY_PROVIDER: {SECURITY_PROVIDER}')
 
     # Begin Multi-Database URLs (from ApiLogicServer add-db...)
     auth_db_path = str(project_path.joinpath('database/authentication_db.sqlite'))
