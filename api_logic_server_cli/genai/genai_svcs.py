@@ -883,7 +883,7 @@ def select_messages(messages: List[Dict], messages_out: List[Dict], message_sele
     return result
 
 
-def call_chatgpt(messages: List[Dict[str, str]], api_version: str, using: str) -> str:
+def call_chatgpt(messages: List[Dict[str, str]], api_version: str, using: str, response_as: dict=WGResult) -> str:
     """call ChatGPT with messages
 
     Args:
@@ -893,6 +893,25 @@ def call_chatgpt(messages: List[Dict[str, str]], api_version: str, using: str) -
     Returns:
         str: response from ChatGPT
     """
+
+    def admin_app_path(request_path: Path, suffix: str) -> Path:
+        '''
+        returns path = remove the last node of the path, and prepend that to _request.json
+        # Example: if request_path is /a/b/c/d/request.json, make it /a/b/c/d_request.json
+        '''
+        parent = request_path.parent
+        last_node = parent.name
+        grandparent = parent.parent
+        request_path = grandparent.joinpath(f"{last_node}_{suffix}.json")
+        request_path.parent.mkdir(parents=True, exist_ok=True)
+        return request_path
+    
+    def string_to_lines(dict_long_string: dict) -> dict:
+        result = dict_long_string
+        if isinstance(result[1]['content'], str):
+            result[1]['content'] = result[1]['content'].split('\n')
+        return result
+
     try:
         start_time = time.time()
         model = api_version
@@ -901,26 +920,46 @@ def call_chatgpt(messages: List[Dict[str, str]], api_version: str, using: str) -
             if model is None or model == "*":   # system default chatgpt model
                 model = "gpt-4o-2024-08-06"     #  33 sec
                 # model = "o3-mini"               # 130 sec
-        with open(Path(using).joinpath('request.json'), "w") as request_file:  # save for debug
-            json.dump(messages, request_file, indent=4)
+        request_path = Path(using).joinpath('request.json')
+        if 'admin_app' in str(request_path):
+            request_path = admin_app_path(request_path, 'request_raw')
+            with open(request_path, "w") as request_file:  # save for debug
+                json.dump(messages, request_file, indent=4)
+            request_path = admin_app_path(request_path, 'request')
+        messages_for_print = messages
+        # make the long string better for viewing - convert to lines.
+        messages_for_print = [msg.copy() if isinstance(msg, dict) else msg for msg in messages]
+        messages_for_print = string_to_lines(messages_for_print)  # Removed to avoid altering messages
+        with open(request_path, "w") as request_file:  # save for debug
+            json.dump(messages_for_print, request_file, indent=4)
         log.info(f'.. saved request: {using}/request.json')
         client = get_ai_client()
+        # response_format = "json_object" if wg_response else {"type": "text"}
         completion = client.beta.chat.completions.parse(
             messages=messages,
-            response_format=WGResult,
+            response_format=response_as,
             # temperature=self.project.genai_temperature,  values .1 and .7 made students / charges fail
             model=model  # for own model, use "ft:gpt-4o-2024-08-06:personal:logicbank:ARY904vS" 
         )
         log.info(f'ChatGPT ({str(int(time.time() - start_time))} secs) - response at: system/genai/temp/chatgpt_original.response')
         
         data = completion.choices[0].message.content
+
         response_dict = json.loads(data)
-        with open(Path(using).joinpath('response.json'), "w") as response_file:  # save for debug
-            json.dump(response_dict, response_file, indent=4)
-        with open(Path(using).joinpath('response.yaml'), "w") as response_file:
-            yaml.dump(response_dict, response_file, default_flow_style=False, default_style='|')
-            #yaml_string = yaml.dump(data, default_flow_style=False, default_style='|')
-            #response_dict['yaml'] = yaml_string
+        request_path = Path(using).joinpath('request.json')
+        if 'admin_app' in str(request_path):
+            request_path = admin_app_path(request_path, 'response')
+            with open(request_path, "w") as request_file:  # save for debug
+                json.dump(data, request_file, indent=4)
+        else:
+            with open(Path(using).joinpath('response.json'), "w") as response_file:  # save for debug
+                json.dump(response_dict, response_file, indent=4)
+            with open(Path(using).joinpath('response.yaml'), "w") as response_file:
+                yaml.dump(response_dict, response_file, default_flow_style=False, default_style='|')
+        request_path = Path(using).joinpath('request.json')
+        request_path = admin_app_path(request_path, 'response_raw')
+        with open(Path(request_path), "w") as response_file:  # save for debug
+            response_file.writelines(data)
         log.debug(f'.. call_chatgpt saved response: {using}/response.json')
         return data # this is a string...
     except Exception as inst:

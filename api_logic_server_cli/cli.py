@@ -751,7 +751,7 @@ def genai_logic(ctx, using, genai_version: str, retries: int, suggest: click.BOO
 @click.pass_context
 def genai_graphics(ctx, using, genai_version: str, replace_with: str):
     """
-        Adds (or suggests) logic to current project.
+        Adds graphics to current project.
     """
     global command
     project_dir = resolve_blank_project_name('')
@@ -775,6 +775,43 @@ def genai_graphics(ctx, using, genai_version: str, replace_with: str):
         exit (1)
     from api_logic_server_cli.genai.genai_graphics import GenAIGraphics
     genai_graphics = GenAIGraphics(using=using, project=project, genai_version=genai_version, replace_with=replace_with)
+    pass
+    log.info("")
+
+
+
+
+@main.command("genai-app", cls=HideDunderCommand)
+@click.option('--genai-version', 'genai_version',
+              default='gpt-4o',
+              help="Eg, gpt-3.5-turbo, gpt-4o")
+@click.pass_context
+def genai_admin_app(ctx, genai_version: str):
+    """
+        Adds a customizable react app to project
+    """
+    global command
+    project_dir = resolve_blank_project_name('')
+    project_name = Path(project_dir).name
+    project = PR.ProjectRun(command="add_security", 
+              project_name=project_name, 
+              db_url="",
+              execute=False
+              )
+    project.project_directory, project.api_name, project.merge_into_prototype = \
+        create_utils.get_project_directory_and_api_name(project)
+    project.project_directory_actual = os.path.abspath(os.getcwd())  # make path absolute, not relative (no /../)
+    project.project_directory_path = Path(project.project_directory_actual)
+    models_py_path = project.project_directory_path.joinpath('database/models.py')
+    project.abs_db_url, project.nw_db_status, project.model_file_name = \
+        create_utils.get_abs_db_url("0. Using Sample DB", project, is_auth=True)
+
+    if not models_py_path.exists():
+        log.info(f'... Error - does not appear to be a project: {str(project.project_directory_path)}')
+        log.info(f'... Typical usage - cd into project, use --project_name=. \n')
+        exit (1)
+    from api_logic_server_cli.genai.genai_admin_app import GenAIAdminApp
+    genai_admin = GenAIAdminApp(project=project, genai_version=genai_version)
     pass
     log.info("")
 
