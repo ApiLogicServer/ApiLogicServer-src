@@ -43,6 +43,7 @@ class GenAIAdminApp:
         self.api_version = genai_version
         self.project_root = project.project_directory_path
         self.dbml_path = self.project_root / "docs/db.dbml"
+        self.admin_yaml_path = self.project_root / "ui/admin/admin.yaml"
         self.discovery_path = self.project_root / "docs/mcp_learning/mcp_discovery.json"
 
         self.ui_project_path = self.project_root / "ui/react_admin"
@@ -51,13 +52,14 @@ class GenAIAdminApp:
         self.app_templates_path = genai_svcs.get_manager_path(use_env=True).joinpath('system/genai/app_templates')
         self.react_admin_template_path = self.app_templates_path / 'react-admin-template'
         self.prompts_path = self.app_templates_path / "app_learning"
-        self.system_context = utils.read_file(self.prompts_path / "admin_app_1_context.prompt.md")
         self.admin_app_learning = utils.read_file(self.prompts_path / "admin_app_learning.prompt.md")
+        self.image_url = self.prompts_path / 'Order-Page.png'
 
-        self.functionality = utils.read_file(self.prompts_path / "admin_app_2_functionality.prompt.md")
-        self.architecture = utils.read_file(self.prompts_path / "admin_app_3_architecture.prompt.md")
+        # self.functionality = utils.read_file(self.prompts_path / "admin_app_2_functionality.prompt.md")
+        # self.architecture = utils.read_file(self.prompts_path / "admin_app_3_architecture.prompt.md")
 
         self.schema = utils.read_file(self.dbml_path)
+        self.schema = utils.read_file(self.admin_yaml_path)
 
         self.resources = {}
         ''' dict keyed by resource_name (todo: relns?) '''
@@ -98,9 +100,24 @@ class GenAIAdminApp:
             # background += f'{self.architecture}  \n {self.functionality}'
             # {"role": "user", "content": f'Schema for {each_resource}: {self.resources[each_resource]}'},
             background = self.admin_app_learning
+            # image moves app gen time from 70 -> 130 secs
+            example_image_content = [
+                {
+                    "type": "text",
+                    "text": "Here is a screenshot of the desired admin app layout. Use this as a visual guide to generate a React-Admin app that mimics the layout, structure, and joins."
+                },
+                {
+                    "type": "image_url",
+                    "image_url": {
+                        "url": "https://apilogicserver.github.io/Docs/images/ui-admin/Order-Page-Learning.png"
+                        # "url": f"attachment:/{str(self.image_url)}"
+                    }
+                }
+            ]
             messages = [
                 {"role": "user", "content": "You are a helpful expert in react and JavaScript"},
                 {"role": "user", "content": background},
+                # {"role": "user", "content": example_image_content},
                 {"role": "user", "content": f'Schema:\n{self.schema}'},
                 {"role": "user", "content": f'Generate the full javascript source code for the `{each_resource}.js` React Admin file, formatted as a JSResponseFormat'}]
             save_response = self.project_root / f"docs/admin_app/{each_resource}"
@@ -111,7 +128,7 @@ class GenAIAdminApp:
             response_dict = json.loads(output)
             target_file = self.ui_src_path / f"{each_resource}.js"
             utils.write_file(target_file, response_dict['code'])
-            log.info(f"✅ Wrote: {target_file}")
+            log.info(f"\n✅ Wrote: {target_file}")
 
 
     def b_generate_app_js(self):
