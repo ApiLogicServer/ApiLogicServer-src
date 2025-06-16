@@ -374,7 +374,21 @@ def get_ontimize_apps(project_dir_path):
                         result.append(name)    
     log.debug(f"Found {len(result)} Ontimize app(s)")          
     return result
+# genai_core/fs_utils.py
 
+
+def ensure_dir(path):
+    os.makedirs(path, exist_ok=True)
+
+def write_file(path, content):
+    ensure_dir(os.path.dirname(path))
+    with open(path, 'w', encoding='utf-8') as f:
+        f.write(content)
+
+def read_file(path):
+    with open(path, 'r', encoding='utf-8') as f:
+        return f.read()
+    
 def does_file_contain(search_for: str, in_file: str) -> bool:
     """ returns True if <search_for> is <in_file> """
     with open(Path(in_file), 'r+') as fp:
