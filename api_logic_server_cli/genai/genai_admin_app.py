@@ -53,7 +53,7 @@ class GenAIAdminApp:
         self.app_templates_path = genai_svcs.get_manager_path(use_env=True).joinpath('system/genai/app_templates')
         self.react_admin_template_path = self.app_templates_path / 'react-admin-template'
         self.prompts_path = self.app_templates_path / "app_learning"
-        self.admin_app_learning = utils.read_file(self.prompts_path / "admin_app_learning.prompt.md")
+        self.admin_app_learning = utils.read_file(self.prompts_path / "Admin-App-Learning-Prompt.md")
         self.image_url = self.prompts_path / 'Order-Page.png'
 
         # self.schema = utils.read_file(self.dbml_path)

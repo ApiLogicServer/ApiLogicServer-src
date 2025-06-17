@@ -86,12 +86,10 @@ Use:
     - DO NOT start with <TabbedShowLayout>
   - <Grid container spacing={2}> for putting multiple fields on a line
 
-Be sure to include all required imports, eg:
+Be sure to include all required imports.  Use the following, plus whatever else is required:
 
 ```jsx
-import { List, Datagrid, TextField, DateField, NumberField, ReferenceField, ReferenceManyField, Show, 
-TabbedShowLayout, Tab, SimpleShowLayout, TextInput, NumberInput, DateTimeInput, ReferenceInput, SelectInput, 
-Create, SimpleForm, Edit, Filter, Pagination, BooleanField, BooleanInput } from 'react-admin';
+import { List, FunctionField, Datagrid, TextField, DateField, NumberField, ReferenceField, ReferenceManyField, Show, TabbedShowLayout, Tab, SimpleShowLayout, TextInput, NumberInput, DateTimeInput, ReferenceInput, SelectInput, Create, SimpleForm, Edit, Filter, Pagination, BooleanField, BooleanInput } from 'react-admin';
 ```
 You may add other imports, but be sure all those are included.
 
