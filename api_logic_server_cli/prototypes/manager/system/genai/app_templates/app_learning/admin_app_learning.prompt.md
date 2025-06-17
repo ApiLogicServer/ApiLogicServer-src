@@ -20,7 +20,8 @@ Each **Display Page** should:
 - Link child rows to their own display page
 
 Example:  
-- Customer Display has tab for OrderList  
+- Customer Display has tab for OrderList 
+  - The tab (with OrderList) is shown *below* all the Customer fields.
 - Each Order in the tab links to Order Display
 
 ### Automatic Joins
@@ -38,6 +39,10 @@ For foreign key fields:
 - Provide auto-complete dropdown (`<ReferenceInput>`)
 - For numeric foreign keys, use the joined string field as lookup text
 
+### Cascade Add
+
+When adding a child row as a detail in a Master / Detail,
+default the Foreign Key to the Parent (Master) Primary Key.
 
 ## Implementation
 
@@ -76,8 +81,23 @@ Use:
 - `<ReferenceField>` for foreign key displays
 - `<ReferenceInput>` for foreign key input
 - `<ReferenceManyField>` for tabbed child lists
-- `<TabbedShowLayout>` for display pages
+- For show pages
+  - Always start with <SimpleShowLayout>, followed by a <TabbedShowLayout> for related data
+    - DO NOT start with <TabbedShowLayout>
+  - <Grid container spacing={2}> for putting multiple fields on a line
 
+Be sure to include all required imports, eg:
+
+```jsx
+import { List, Datagrid, TextField, DateField, NumberField, ReferenceField, ReferenceManyField, Show, 
+TabbedShowLayout, Tab, SimpleShowLayout, TextInput, NumberInput, DateTimeInput, ReferenceInput, SelectInput, 
+Create, SimpleForm, Edit, Filter, Pagination, BooleanField, BooleanInput } from 'react-admin';
+```
+You may add other imports, but be sure all those are included.
+
+DO NOT use <EmailInput> - use <TextInput>.
+
+DO NOT put <ReferenceField> in <Datagrid>.
 
 Do **not leave any file empty**.
 
@@ -85,26 +105,43 @@ Do **not leave any file empty**.
 
 ### App Wiring
 
-In `App.js`:
-- Import each resource file using:
+Sample code for `App.js`:
+
 
 ```jsx
+import React from 'react';
+import { Admin, Resource } from 'react-admin';
+import { createTheme } from '@mui/material/styles';
+
+// import each resource
 import { CustomerList, CustomerShow, CustomerCreate, CustomerEdit } from './Customer';
-```
-
-- Register them in `<Admin>` using:
-
-```jsx
-<Resource name="Customer" list={CustomerList} show={CustomerShow} edit={CustomerEdit} create={CustomerCreate} />
-```
-
-- import data provider (pre-supplied in src):
-
-```jsx
+...
+// import the data provider
 import { dataProvider } from './dataProvider';
+
+const theme = createTheme({
+    palette: {
+        primary: { main: '#1976d2' },    // Material-UI default blue
+        secondary: { main: '#1565c0' },  // A darker blue, or choose another color
+    },
+    typography: { fontSize: 14 },
+});
+
+const App = () => {
+    return (
+        <Admin dataProvider={dataProvider}>  // register each resource...
+            <Resource name="Customer" list={CustomerList} show={CustomerShow} edit={CustomerEdit} create={CustomerCreate} />
+...
+        </Admin>
+    );
+};
+
+export default App;
 ```
 
-Do Not generate either:
+For dataProvider:
+1 - be sure it includes the braces: import { dataProvider }
+2 - Do Not generate either:
 ```jsx
 import jsonServerProvider from 'ra-data-json-server'
 const dataProvider = jsonServerProvider('http://api.example.com');

@@ -26,6 +26,7 @@ import os
 import json
 from pathlib import Path
 from openai import OpenAI
+import yaml
 import api_logic_server_cli.genai.genai_svcs as genai_svcs
 
 log = logging.getLogger(__name__)
@@ -55,11 +56,10 @@ class GenAIAdminApp:
         self.admin_app_learning = utils.read_file(self.prompts_path / "admin_app_learning.prompt.md")
         self.image_url = self.prompts_path / 'Order-Page.png'
 
-        # self.functionality = utils.read_file(self.prompts_path / "admin_app_2_functionality.prompt.md")
-        # self.architecture = utils.read_file(self.prompts_path / "admin_app_3_architecture.prompt.md")
+        # self.schema = utils.read_file(self.dbml_path)
+        self.schema_yaml = utils.read_file(self.admin_yaml_path)
+        self.schema = yaml.safe_load(self.schema_yaml)
 
-        self.schema = utils.read_file(self.dbml_path)
-        self.schema = utils.read_file(self.admin_yaml_path)
 
         self.resources = {}
         ''' dict keyed by resource_name (todo: relns?) '''
@@ -67,13 +67,11 @@ class GenAIAdminApp:
         ''' array of resource names '''
 
         shutil.copytree(self.react_admin_template_path, self.ui_project_path, dirs_exist_ok=True)
-        # shutil.rmtree("output/react_admin_app/src", ignore_errors=True)
-        # shutil.copytree("generated_src", "output/react_admin_app/src")
 
-        self.parse_resources()
+        # self.parse_resources()
         self.a_generate_resource_files()
         self.b_generate_app_js()
-        # self.c_generate_data_provider()
+        # comes from copytree, above -- self.c_generate_data_provider()
 
         log.info(f"✅ Completed in [{str(int(time.time() - self.start_time))} secs] \n\n")
 
@@ -84,24 +82,29 @@ class GenAIAdminApp:
         log.info('> npm start')
 
 
-    def parse_resources(self):
-        with open(self.discovery_path) as f:
-            discovery = json.load(f)
-        for each_resource in discovery["resources"]:
-            each_resource_name = each_resource['name']
-            self.resource_names.append(each_resource_name)
-            self.resources[each_resource_name] = each_resource
-        return self.resource_names
-
     def a_generate_resource_files(self):
-        for each_resource in self.resource_names:
-            # create messages array, put self.system_context + "\n" + self.architecture in 1st element
-            # background = f'Background: we are creating an app with this architecture and functionality:\n'
-            # background += f'{self.architecture}  \n {self.functionality}'
-            # {"role": "user", "content": f'Schema for {each_resource}: {self.resources[each_resource]}'},
-            background = self.admin_app_learning
+
+        def fix_source(raw_source: str) -> str:
+            ''' remove code occasional begin/end code markers '''
+            source_lines = raw_source.splitlines()
+            result_lines = []
+            found_start_marker = False
+            for each_line in source_lines:
+                if each_line.startswith("'''"):
+                    if each_line.startswith("```jsx") or each_line.startswith("```javascript"):
+                        result_lines = []
+                        continue
+                    else:
+                        break
+                result_lines.append(each_line)
+                
+            # return source_lines as a string
+            return "\n".join(result_lines)
+
+
+        for each_resource_name, each_resource in self.schema['resources'].items():
             # image moves app gen time from 70 -> 130 secs
-            example_image_content = [
+            example_image_content_unused = [
                 {
                     "type": "text",
                     "text": "Here is a screenshot of the desired admin app layout. Use this as a visual guide to generate a React-Admin app that mimics the layout, structure, and joins."
@@ -116,30 +119,28 @@ class GenAIAdminApp:
             ]
             messages = [
                 {"role": "user", "content": "You are a helpful expert in react and JavaScript"},
-                {"role": "user", "content": background},
+                {"role": "user", "content": self.admin_app_learning},
                 # {"role": "user", "content": example_image_content},
-                {"role": "user", "content": f'Schema:\n{self.schema}'},
-                {"role": "user", "content": f'Generate the full javascript source code for the `{each_resource}.js` React Admin file, formatted as a JSResponseFormat'}]
-            save_response = self.project_root / f"docs/admin_app/{each_resource}"
+                {"role": "user", "content": f'Schema:\n{self.schema_yaml}'},
+                {"role": "user", "content": f'Generate the full javascript source code for the `{each_resource_name}.js` React Admin file, formatted as a JSResponseFormat'}]
+            save_response = self.project_root / f"docs/admin_app/{each_resource_name}"
             output = genai_svcs.call_chatgpt(messages = messages, 
                                              api_version=self.api_version,
                                              using=save_response,
                                              response_as=JSResponseFormat)
             response_dict = json.loads(output)
-            target_file = self.ui_src_path / f"{each_resource}.js"
+            target_file = self.ui_src_path / f"{each_resource_name}.js"
+            source_code = fix_source(response_dict['code'])
             utils.write_file(target_file, response_dict['code'])
             log.info(f"\n✅ Wrote: {target_file}")
 
 
     def b_generate_app_js(self):
         messages = []
-        # background = f'Background: we are creating an app with this architecture and functinality:\n'
-        # background += f'{self.functionality}'
-        background = self.admin_app_learning
         messages = [
             {"role": "user", "content": "You are a helpful expert in react and JavaScript"},
-                {"role": "user", "content": background},
-                {"role": "user", "content": f'Schema:\n{self.schema}'},
+            {"role": "user", "content": self.admin_app_learning},
+            {"role": "user", "content": f'Schema:\n{self.schema_yaml}'},
             {"role": "user", "content": f'Generate the complete App.js that wires together the above resources. for the `app.js` React Admin file, formatted as a JSResponseFormat.'}]
         save_response = self.project_root / f"docs/admin_app/app.js"
         output = genai_svcs.call_chatgpt(messages = messages, 
@@ -151,19 +152,4 @@ class GenAIAdminApp:
         utils.write_file(target_file, response_dict['code'])
 
         log.info(f"✅ Wrote: {target_file}\n")
-
-    def z_c_generate_data_provider(self):
-        user_prompt = f"""
-{self.functionality}
-
-Generate the complete dataProvider.js for this JSON:API backend.
-"""
-        output = call_llm(
-            system=self.system_context_prompt + "\n" + self.architecture,
-            user=user_prompt,
-            temperature=0.2
-        )
-        target_file = self.ui_src_path / "dataProvider.js"
-        write_file(target_file, output)
-        log.info(f"✅ Wrote: {target_file}")
 
