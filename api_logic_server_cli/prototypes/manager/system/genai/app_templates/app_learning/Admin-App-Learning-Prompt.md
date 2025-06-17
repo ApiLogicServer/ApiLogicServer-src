@@ -84,9 +84,8 @@ Use:
 - For show pages
   - Always start with <SimpleShowLayout>, followed by a <TabbedShowLayout> for related data
     - DO NOT start with <TabbedShowLayout>
-  - <Grid container spacing={2}> for putting multiple fields on a line
 
-Be sure to include all required imports.  Use the following, plus whatever else is required:
+Be sure to include all required imports.  ALWAYS use the following AS IS, plus whatever else is required:
 
 ```jsx
 import { List, FunctionField, Datagrid, TextField, DateField, NumberField, ReferenceField, ReferenceManyField, Show, TabbedShowLayout, Tab, SimpleShowLayout, TextInput, NumberInput, DateTimeInput, ReferenceInput, SelectInput, Create, SimpleForm, Edit, Filter, Pagination, BooleanField, BooleanInput } from 'react-admin';

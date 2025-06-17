@@ -38,23 +38,23 @@ class JSResponseFormat(BaseModel):  # must match system/genai/prompt_inserts/res
 
 class GenAIAdminApp:
 
-    def __init__(self, project: Project, genai_version: OpenAI):  #  TODO: type??
+    def __init__(self, project: Project, app_name: str, schema: str, genai_version: OpenAI):  #  TODO: type??
         self.start_time = time.time()
         
         self.api_version = genai_version
         self.project_root = project.project_directory_path
         self.dbml_path = self.project_root / "docs/db.dbml"
-        self.admin_yaml_path = self.project_root / "ui/admin/admin.yaml"
+        self.admin_yaml_path = self.project_root / f"ui/admin/{schema}"
         self.discovery_path = self.project_root / "docs/mcp_learning/mcp_discovery.json"
 
-        self.ui_project_path = self.project_root / "ui/react_admin"
+        self.ui_project_path = self.project_root / f"ui/{app_name}"
         self.ui_src_path = self.ui_project_path / "src"
 
         self.app_templates_path = genai_svcs.get_manager_path(use_env=True).joinpath('system/genai/app_templates')
         self.react_admin_template_path = self.app_templates_path / 'react-admin-template'
         self.prompts_path = self.app_templates_path / "app_learning"
         self.admin_app_learning = utils.read_file(self.prompts_path / "Admin-App-Learning-Prompt.md")
-        self.image_url = self.prompts_path / 'Order-Page.png'
+        self.image_url = self.prompts_path / 'Order-Page.png'  # did not seem to help, made it 2x slower
 
         # self.schema = utils.read_file(self.dbml_path)
         self.schema_yaml = utils.read_file(self.admin_yaml_path)
@@ -90,7 +90,7 @@ class GenAIAdminApp:
             result_lines = []
             found_start_marker = False
             for each_line in source_lines:
-                if each_line.startswith("'''"):
+                if each_line.startswith("```"):
                     if each_line.startswith("```jsx") or each_line.startswith("```javascript"):
                         result_lines = []
                         continue
@@ -131,7 +131,7 @@ class GenAIAdminApp:
             response_dict = json.loads(output)
             target_file = self.ui_src_path / f"{each_resource_name}.js"
             source_code = fix_source(response_dict['code'])
-            utils.write_file(target_file, response_dict['code'])
+            utils.write_file(target_file, source_code)
             log.info(f"\n✅ Wrote: {target_file}")
 
 

@@ -4,6 +4,8 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 GenAI-Logic (`als genai-app`) then [created this project](https://apilogicserver.github.io/Docs/Admin-Vibe/).
 
+Repairs were required: search `src` for #FIXEDME.  It started but failed to run.
+
 <br>
 
 # To run the app:

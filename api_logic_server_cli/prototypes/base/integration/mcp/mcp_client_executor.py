@@ -469,7 +469,9 @@ def mcp_client_executor(query: str):
     #als: create an MCP request.  See https://apilogicserver.github.io/Docs/Integration-MCP/
 
     Test:
+    * als add-auth --provider-type=None 
     * curl -X 'POST' 'http://localhost:5656/api/SysMcp/' -H 'accept: application/vnd.api+json' -H 'Content-Type: application/json' -d '{ "data": { "attributes": {"request": "List the orders date_shipped is null and CreatedOn before 2023-07-14, and send a discount email (subject: '\''Discount Offer'\'') to the customer for each one."}, "type": "SysMcp"}}'
+
     * Or, use the Admin App and insert a row into SysMCP (see default `query`, below)
 
     Args:
