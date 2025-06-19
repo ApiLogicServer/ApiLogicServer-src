@@ -1,51 +1,57 @@
-import React from 'react';
-import { 
-    List, 
-    Datagrid, 
-    TextField, 
+import React from "react";
+import {
+    List,
+    FunctionField,
+    Datagrid,
+    TextField,
+    DateField,
     NumberField,
-    Show, 
-    SimpleShowLayout, 
-    TabbedShowLayout, 
-    Tab,
-    ReferenceManyField,
-    TextInput, 
-    Edit, 
-    SimpleForm,
-    Create,
-    NumberInput,
-    Pagination, 
-    Filter, 
     ReferenceField,
-    FunctionField
-} from 'react-admin';
-import { Grid, Box } from '@mui/material';
+    ReferenceManyField,
+    Show,
+    TabbedShowLayout,
+    Tab,
+    SimpleShowLayout,
+    TextInput,
+    NumberInput,
+    DateTimeInput,
+    ReferenceInput,
+    SelectInput,
+    Create,
+    SimpleForm,
+    Edit,
+    Filter,
+    Pagination,
+    BooleanField,
+    BooleanInput
+} from "react-admin";
 
-// Filters for the Customer list
+// Filters for the list view
 const CustomerFilter = (props) => (
     <Filter {...props}>
-        <TextInput label="Search by Company" source="CompanyName" alwaysOn />
-        <TextInput label="Search by Contact" source="ContactName" />
+        <TextInput label="Search" source="q" alwaysOn />
+        <TextInput label="Company Name" source="CompanyName" />
+        <TextInput label="Contact Name" source="ContactName" />
+        <TextInput label="City" source="City" />
+        <TextInput label="Country" source="Country" />
     </Filter>
 );
 
-// Customer List
 export const CustomerList = (props) => (
-    <List filters={<CustomerFilter />} pagination={<Pagination />} {...props}>
+    <List filters={<CustomerFilter />} {...props} perPage={7} pagination={<Pagination />}>
         <Datagrid rowClick="show">
             <TextField source="CompanyName" label="Company Name" />
             <TextField source="ContactName" label="Contact Name" />
-            <NumberField source="Balance" label="Balance" />
-            <NumberField source="CreditLimit" label="Credit Limit" />
-            <NumberField source="OrderCount" label="Order Count" />
-            <NumberField source="UnpaidOrderCount" label="Unpaid Orders" />
+            <TextField source="Address" label="Address" />
+            <TextField source="City" label="City" />
+            <TextField source="Country" label="Country" />
             <TextField source="Phone" label="Phone" />
-            <NumberField source="Id" label="ID" />
+            <TextField source="Fax" label="Fax" />
+            <NumberField source="Id" label="Customer ID"/>
         </Datagrid>
     </List>
 );
 
-// Customer Show
 export const CustomerShow = (props) => (
     <Show {...props}>
         <SimpleShowLayout>
@@ -59,18 +65,27 @@ export const CustomerShow = (props) => (
             <TextField source="Country" label="Country" />
             <TextField source="Phone" label="Phone" />
             <TextField source="Fax" label="Fax" />
-
+            <NumberField source="Balance" options={{ style: 'currency', currency: 'USD' }} label="Balance" />
+            <NumberField source="CreditLimit" options={{ style: 'currency', currency: 'USD' }} label="Credit Limit" />
+            <NumberField source="OrderCount" label="Order Count" />
+            <NumberField source="UnpaidOrderCount" label="Unpaid Orders" />
+            <NumberField source="Id" label="Customer ID" />
+            
             <TabbedShowLayout>
-                <Tab label="Placed Order List">
+                <Tab label="Orders">
                     <ReferenceManyField
+                        label="Orders"
                         reference="Order"
                         target="CustomerId"
-                        label="Placed Orders"
+                        perPage={7}
                     >
                         <Datagrid rowClick="show">
-                            <TextField source="Id" label="Order ID" />
-                            <TextField source="OrderDate" label="Order Date" />
-                            <TextField source="AmountTotal" label="Total Amount" />
+                            <TextField source="ShipName" label="Ship Name" />
+                            <DateField source="OrderDate" label="Order Date" />
+                            <DateField source="ShippedDate" label="Shipped Date" />
+                            <NumberField source="AmountTotal" label="Total Amount" options={{ style: 'currency', currency: 'USD' }}/>
+                            <BooleanField source="Ready" label="Ready" />
+                            <NumberField source="Id" label="Order ID" />
                         </Datagrid>
                     </ReferenceManyField>
                 </Tab>
@@ -79,7 +94,6 @@ export const CustomerShow = (props) => (
     </Show>
 );
 
-// Customer Create
 export const CustomerCreate = (props) => (
     <Create {...props}>
         <SimpleForm>
@@ -93,11 +107,12 @@ export const CustomerCreate = (props) => (
             <TextInput source="Country" label="Country" />
             <TextInput source="Phone" label="Phone" />
             <TextInput source="Fax" label="Fax" />
+            <NumberInput source="Balance" label="Balance" />
+            <NumberInput source="CreditLimit" label="Credit Limit" />
         </SimpleForm>
     </Create>
 );
 
-// Customer Edit
 export const CustomerEdit = (props) => (
     <Edit {...props}>
         <SimpleForm>
@@ -111,6 +126,9 @@ export const CustomerEdit = (props) => (
             <TextInput source="Country" label="Country" />
             <TextInput source="Phone" label="Phone" />
             <TextInput source="Fax" label="Fax" />
+            <NumberInput source="Balance" label="Balance" />
+            <NumberInput source="CreditLimit" label="Credit Limit" />
+            <NumberField source="Id" label="Customer ID" />
         </SimpleForm>
     </Edit>
 );

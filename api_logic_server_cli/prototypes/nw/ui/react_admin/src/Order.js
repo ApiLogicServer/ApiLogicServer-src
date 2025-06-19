@@ -1,80 +1,52 @@
-// src/Order.js
+// Order.js
 import React from 'react';
-import {
-    List,
-    Datagrid,
-    TextField,
-    DateField,
-    NumberField,
-    BooleanField,
-    ReferenceField,
-    ReferenceManyField,
-    Show,
-    TabbedShowLayout,
-    Tab,
-    SimpleShowLayout,
-    SimpleForm,
-    TextInput,
-    DateTimeInput,
-    ReferenceInput,
-    SelectInput,
-    Create,
-    Edit,
-    FunctionField,
-    Pagination,
-    Filter
-} from 'react-admin';
+import { List, Datagrid, TextField, DateField, NumberField, ReferenceField, ReferenceManyField, Show, TabbedShowLayout, Tab, SimpleShowLayout, TextInput, NumberInput, DateTimeInput, ReferenceInput, SelectInput, Create, SimpleForm, Edit, Filter, Pagination, BooleanField, BooleanInput } from 'react-admin';
 
+// Order Filter
 const OrderFilter = (props) => (
     <Filter {...props}>
-        <TextInput label="Search Ship Name" source="ShipName" alwaysOn />
-        <TextInput label="Country" source="Country" />
-        <DateTimeInput label="Order Date" source="OrderDate" />
+        <TextInput label="Search" source="q" alwaysOn />
+        <TextInput source="ShipName" />
     </Filter>
 );
 
-export const OrderList = (props) => (
-    <List {...props} filters={<OrderFilter />} perPage={7} pagination={<Pagination />}>
+// Order List
+export const OrderList = props => (
+    <List {...props} filters={<OrderFilter />} pagination={<Pagination rowsPerPageOptions={[5, 10, 25]} />}>
         <Datagrid rowClick="show">
-            <TextField source="Id" />
+            <TextField source="ShipName" label="Ship Name" />
             <DateField source="OrderDate" />
-            <TextField source="ShipName" />
-            <TextField source="ShipAddress" />
-            <TextField source="ShipCity" />
-            <TextField source="ShipCountry" />
+            <ReferenceField source="CustomerId" reference="Customer"><TextField source="CompanyName" /></ReferenceField>
+            <ReferenceField source="EmployeeId" reference="Employee"><TextField source="LastName" /></ReferenceField>
+            <NumberField source="Freight" options={{ style: 'currency', currency: 'USD' }} />
             <BooleanField source="Ready" />
-            <ReferenceField label="Customer" source="CustomerId" reference="Customer">
-                <FunctionField render={record => record ? `${record.CompanyName}` : ''} />
-            </ReferenceField>
+            <NumberField source="Id" />
         </Datagrid>
     </List>
 );
 
-export const OrderShow = (props) => (
+// Order Show
+export const OrderShow = props => (
     <Show {...props}>
         <SimpleShowLayout>
-            <TextField source="Id" />
-            <DateField source="OrderDate" />
             <TextField source="ShipName" />
+            <DateField source="OrderDate" />
+            <ReferenceField source="CustomerId" reference="Customer"><TextField source="CompanyName" /></ReferenceField>
+            <ReferenceField source="EmployeeId" reference="Employee"><TextField source="LastName" /></ReferenceField>
+            <NumberField source="AmountTotal" label="Total Amount" options={{ style: 'currency', currency: 'USD' }} />
             <TextField source="ShipAddress" />
             <TextField source="ShipCity" />
             <TextField source="ShipCountry" />
             <BooleanField source="Ready" />
-            <NumberField source="AmountTotal" options={{ style: 'currency', currency: 'USD' }} />
-            <ReferenceField label="Customer" source="CustomerId" reference="Customer">
-                <FunctionField render={record => record ? `${record.CompanyName}` : ''} />
-            </ReferenceField>
         </SimpleShowLayout>
         <TabbedShowLayout>
             <Tab label="Order Details">
-                <ReferenceManyField reference="OrderDetail" target="OrderId" label="Order Detail List">
+                <ReferenceManyField reference="OrderDetail" target="OrderId">
                     <Datagrid>
-                        <ReferenceField source="ProductId" reference="Product">
-                            <FunctionField render={record => record ? `${record.ProductName}` : ''} />
-                        </ReferenceField>
+                        <ReferenceField source="ProductId" reference="Product"><TextField source="ProductName" /></ReferenceField>
                         <NumberField source="UnitPrice" options={{ style: 'currency', currency: 'USD' }} />
                         <NumberField source="Quantity" />
-                        <NumberField source="Discount" options={{ style: 'percent' }} />
+                        <NumberField source="Discount" />
                         <NumberField source="Amount" options={{ style: 'currency', currency: 'USD' }} />
                     </Datagrid>
                 </ReferenceManyField>
@@ -83,34 +55,44 @@ export const OrderShow = (props) => (
     </Show>
 );
 
-export const OrderCreate = (props) => (
+// Order Create
+export const OrderCreate = props => (
     <Create {...props}>
         <SimpleForm>
-            <ReferenceInput source="CustomerId" reference="Customer" required>
+            <TextInput source="ShipName" />
+            <DateTimeInput source="OrderDate" />
+            <ReferenceInput label="Customer" source="CustomerId" reference="Customer">
                 <SelectInput optionText="CompanyName" />
             </ReferenceInput>
-            <DateTimeInput source="OrderDate" />
-            <TextInput source="ShipName" />
+            <ReferenceInput label="Employee" source="EmployeeId" reference="Employee">
+                <SelectInput optionText="LastName" />
+            </ReferenceInput>
+            <NumberInput source="AmountTotal" />
             <TextInput source="ShipAddress" />
             <TextInput source="ShipCity" />
             <TextInput source="ShipCountry" />
-            <BooleanField source="Ready" /> # FIXEDME - BooleanField
+            <BooleanInput source="Ready" />
         </SimpleForm>
     </Create>
 );
 
-export const OrderEdit = (props) => (
+// Order Edit
+export const OrderEdit = props => (
     <Edit {...props}>
         <SimpleForm>
-            <ReferenceInput source="CustomerId" reference="Customer" required>
+            <TextInput source="ShipName" />
+            <DateTimeInput source="OrderDate" />
+            <ReferenceInput label="Customer" source="CustomerId" reference="Customer">
                 <SelectInput optionText="CompanyName" />
             </ReferenceInput>
-            <DateTimeInput source="OrderDate" />
-            <TextInput source="ShipName" />
+            <ReferenceInput label="Employee" source="EmployeeId" reference="Employee">
+                <SelectInput optionText="LastName" />
+            </ReferenceInput>
+            <NumberInput source="AmountTotal" />
             <TextInput source="ShipAddress" />
             <TextInput source="ShipCity" />
             <TextInput source="ShipCountry" />
-            <BooleanField source="Ready" /> # FIXEDME - BooleanField
+            <BooleanInput source="Ready" />
         </SimpleForm>
     </Edit>
 );
