@@ -1174,7 +1174,7 @@ from database import <project.bind_key>_models
     @staticmethod                               
     def set_provider(from_value: str, to_value: str, config_file: str) -> None:
         """ update import statement to set provider type in config.py """
-        if from_value == to_value:
+        if from_value == to_value or to_value == "None":
             pass
             # log.debug(f'.. .. (provider type unchanged)')
         else:
@@ -1243,7 +1243,7 @@ from database import <project.bind_key>_models
         provider_note = f"Setting security provider type = {self.auth_provider_type}, @server = {self.auth_db_url} \n"
         #                    f'(was: {was_provider_type}, {is_enabled_note})\n'
 
-        if self.auth_provider_type == 'none':  # none means disable
+        if self.auth_provider_type in ['none', 'None']:  # none means disable
             if is_enabled:
                 log.info(f'\n\n.. ..Disabling security for current provider type: {was_provider_type}\n')
                 create_utils.assign_value_to_key_in_file(value=False, 

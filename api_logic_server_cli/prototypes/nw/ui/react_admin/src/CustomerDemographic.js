@@ -2,73 +2,56 @@ import React from 'react';
 import {
     List,
     Datagrid,
-    TextField,  
+    TextField,
     Show,
     SimpleShowLayout,
-    TabbedShowLayout,
-    Tab,
+    Edit,
+    SimpleForm,
     TextInput,
     Create,
-    SimpleForm,
-    Edit,
-    NumberField,
     Filter,
-    Pagination
+    Pagination,
 } from 'react-admin';
 
-/**
- * Filters for searching CustomerDemographic entities by Id.
- */
 const CustomerDemographicFilter = (props) => (
     <Filter {...props}>
-        <TextInput label="Search by Id" source="Id" alwaysOn />
+        <TextInput label="Search" source="q" alwaysOn />
+        <TextInput label="Customer Description" source="CustomerDesc" />
     </Filter>
 );
 
-/**
- * List view for CustomerDemographic.
- */
-export const CustomerDemographicList = props => (
-    <List filters={<CustomerDemographicFilter />} {...props} perPage={7} pagination={<Pagination />}>
-        <Datagrid rowClick="show" isRowSelectable={() => false}>
-            <TextField label="Id" source="Id" />
-            <TextField source="CustomerDesc" />
+export const CustomerDemographicList = (props) => (
+    <List filters={<CustomerDemographicFilter />} pagination={<Pagination perPage={7} />} {...props}>
+        <Datagrid rowClick="show">
+            <TextField source="Id" label="ID" />
+            <TextField source="CustomerDesc" label="Customer Description" />
         </Datagrid>
     </List>
 );
 
-/**
- * Show view for CustomerDemographic.
- */
-export const CustomerDemographicShow = props => (
+export const CustomerDemographicShow = (props) => (
     <Show {...props}>
         <SimpleShowLayout>
-            <NumberField source="Id" />
-            <TextField source="CustomerDesc" />
+            <TextField source="Id" label="ID" />
+            <TextField source="CustomerDesc" label="Customer Description" />
         </SimpleShowLayout>
     </Show>
 );
 
-/**
- * Form for creating a new CustomerDemographic.
- */
-export const CustomerDemographicCreate = props => (
+export const CustomerDemographicCreate = (props) => (
     <Create {...props}>
         <SimpleForm>
-            <TextInput label="Id (auto-generated)" source="Id" disabled />
-            <TextInput source="CustomerDesc" />
+            <TextInput source="Id" label="ID" />
+            <TextInput source="CustomerDesc" label="Customer Description" />
         </SimpleForm>
     </Create>
 );
 
-/**
- * Form for editing an existing CustomerDemographic.
- */
-export const CustomerDemographicEdit = props => (
+export const CustomerDemographicEdit = (props) => (
     <Edit {...props}>
         <SimpleForm>
-            <TextInput label="Id" source="Id" disabled />
-            <TextInput source="CustomerDesc" />
+            <TextInput source="Id" label="ID" disabled />
+            <TextInput source="CustomerDesc" label="Customer Description" />
         </SimpleForm>
     </Edit>
 );

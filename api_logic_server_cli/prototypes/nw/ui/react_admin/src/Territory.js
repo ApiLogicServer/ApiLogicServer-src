@@ -1,84 +1,90 @@
+// src/Territory.js
 import React from 'react';
 import {
     List,
+    Show,SelectInput,
     Datagrid,
-    TextField,
-    NumberField,
-    NumberInput,
-    TextInput,
-    Show,
     SimpleShowLayout,
     TabbedShowLayout,
     Tab,
-    Create,
-    SimpleForm,
-    Edit,
-    ReferenceManyField,
+    TextField,
+    ReferenceField,
+    FunctionField,
+    TextInput,
     ReferenceInput,
-    SelectInput,
+    Create,
+    Edit,
+    SimpleForm,
     Filter,
-    Pagination
+    NumberField,
+    BooleanField,
+    ReferenceManyField,
 } from 'react-admin';
 
-// Define filters for Territories list which include search capabilities
+// Filter component for the Territory list view
 const TerritoryFilter = (props) => (
     <Filter {...props}>
-        <TextInput label="Search" source="TerritoryDescription" alwaysOn />
-        <TextInput label="Region" source="RegionId" />
+        <TextInput label="Search by Description" source="q" alwaysOn />
     </Filter>
 );
 
-// List component to display Territories
-export const TerritoryList = props => (
-    <List {...props} filters={<TerritoryFilter />} pagination={<Pagination />}
-        sort={{ field: 'TerritoryDescription', order: 'ASC' }}>
+// TerritoryList component for displaying a list of territories
+export const TerritoryList = (props) => (
+    <List {...props} filters={<TerritoryFilter />}>
         <Datagrid rowClick="show">
             <TextField source="TerritoryDescription" label="Territory Description" />
-            <NumberField source="Id" label="ID" />
-            <NumberField source="RegionId" label="Region ID" />
+            <TextField source="Id" label="ID" />
+            <ReferenceField label="Region" source="RegionId" reference="Region">
+                <TextField source="RegionDescription" />
+            </ReferenceField>
         </Datagrid>
     </List>
 );
 
-// Show component to display details of a specific Territory
-export const TerritoryShow = props => (
+// TerritoryShow component for displaying territory details
+export const TerritoryShow = (props) => (
     <Show {...props}>
         <SimpleShowLayout>
             <TextField source="TerritoryDescription" label="Territory Description" />
-            <NumberField source="Id" label="ID" />
-            <NumberField source="RegionId" label="Region ID" />
-
-            {/* Related Employee Territories shown in a tabbed layout */}
-            <TabbedShowLayout>
-                <Tab label="Employee Territories List">
-                    <ReferenceManyField reference="EmployeeTerritory" target="TerritoryId" label="Employee Territories">
-                        <Datagrid rowClick="show">
-                            <TextField source="Id" label="ID" />
-                            <NumberField source="EmployeeId" label="Employee ID" />
-                        </Datagrid>
-                    </ReferenceManyField>
-                </Tab>
-            </TabbedShowLayout>
+            <TextField source="Id" label="ID" />
+            <ReferenceField label="Region" source="RegionId" reference="Region">
+                <TextField source="RegionDescription" />
+            </ReferenceField>
+            <ReferenceManyField
+                label="Employees in Territory"
+                reference="EmployeeTerritory"
+                target="TerritoryId"
+            >
+                <Datagrid rowClick="show">
+                    <ReferenceField label="Employee" source="EmployeeId" reference="Employee">
+                        <FunctionField render={(record) => `${record.FirstName} ${record.LastName}`} />
+                    </ReferenceField>
+                </Datagrid>
+            </ReferenceManyField>
         </SimpleShowLayout>
     </Show>
 );
 
-// Create component for adding a new territory
-export const TerritoryCreate = props => (
+// TerritoryCreate component for creating new territories
+export const TerritoryCreate = (props) => (
     <Create {...props}>
         <SimpleForm>
             <TextInput source="TerritoryDescription" label="Territory Description" />
-            <NumberInput source="RegionId" label="Region ID" />
+            <ReferenceInput label="Region" source="RegionId" reference="Region">
+                <SelectInput optionText="RegionDescription" />
+            </ReferenceInput>
         </SimpleForm>
     </Create>
 );
 
-// Edit component for modifying existing territory data
-export const TerritoryEdit = props => (
+// TerritoryEdit component for editing existing territories
+export const TerritoryEdit = (props) => (
     <Edit {...props}>
         <SimpleForm>
             <TextInput source="TerritoryDescription" label="Territory Description" />
-            <NumberInput source="RegionId" label="Region ID" />
+            <ReferenceInput label="Region" source="RegionId" reference="Region">
+                <SelectInput optionText="RegionDescription" />
+            </ReferenceInput>
         </SimpleForm>
     </Edit>
 );

@@ -3,66 +3,60 @@ import {
   List,
   Datagrid,
   TextField,
-  EditButton,
-  ShowButton,
+  ReferenceManyField,
+  Show,
   SimpleShowLayout,
   TabbedShowLayout,
   Tab,
-  Show,
+  createFilter,
   Create,
   Edit,
   SimpleForm,
   TextInput,
-  ReferenceManyField,
-  ReferenceInput,
-  SelectInput,
-  required,
-  Filter,
-  Pagination,
 } from 'react-admin';
-import { Box } from '@mui/material';
 
-const LocationFilter = (props) => (
-  <Filter {...props}>
-    <TextInput label="Search" source="q" alwaysOn />
-    <TextInput label="Country" source="country" defaultValue="" />
-  </Filter>
-);
-
-export const LocationList = props => (
-  <List filters={<LocationFilter />} pagination={<Pagination rowsPerPageOptions={[5, 10, 25, 50]} />} {...props}>
+// List Component for Location
+export const LocationList = () => (
+  <List
+    filters={<LocationFilter />}
+    perPage={7}
+    title="Location List"
+  >
     <Datagrid rowClick="show">
-      <TextField source="country" label="Country" sortable={true} />
+      <TextField source="country" label="Country" />
       <TextField source="city" label="City" />
       <TextField source="notes" label="Notes" />
-      <EditButton />
-      <ShowButton />
     </Datagrid>
   </List>
 );
 
-export const LocationShow = props => (
-  <Show {...props}>
+// Filter Component for Location
+const LocationFilter = () => (
+  <createFilter>
+    <TextInput label="Country" source="country" alwaysOn />
+    <TextInput label="City" source="city" />
+  </createFilter>
+);
+
+// Show Component for Location
+export const LocationShow = (props) => (
+  <Show {...props} title="Location Details">
+    <SimpleShowLayout>
+      <TextField source="country" label="Country" />
+      <TextField source="city" label="City" />
+      <TextField source="notes" label="Notes" />
+    </SimpleShowLayout>
     <TabbedShowLayout>
-      <Tab label="Details">
-        <SimpleShowLayout>
-          <TextField source="country" label="Country" />
-          <TextField source="city" label="City" />
-          <TextField source="notes" label="Notes" />
-        </SimpleShowLayout>
-      </Tab>
-      <Tab label="Orders">
+      <Tab label="Order List">
         <ReferenceManyField
           reference="Order"
-          target="Location"
-          label="Orders in this Location"
-          pagination={<Pagination rowsPerPageOptions={[5, 10, 25, 50]} />}
+          target="City"
+          source="City"
+          label="Orders in City"
         >
-          <Datagrid>
-            <TextField source="id" label="Order ID" />
-            <TextField source="shipName" label="Ship Name" />
-            <TextField source="orderDate" label="Order Date" />
-            <ShowButton />
+          <Datagrid rowClick="show">
+            <TextField source="ShipName" label="Ship Name" />
+            <TextField source="OrderDate" label="Order Date" />
           </Datagrid>
         </ReferenceManyField>
       </Tab>
@@ -70,21 +64,23 @@ export const LocationShow = props => (
   </Show>
 );
 
-export const LocationCreate = props => (
-  <Create {...props}>
+// Create Component for Location
+export const LocationCreate = (props) => (
+  <Create {...props} title="Create a Location">
     <SimpleForm>
-      <TextInput source="country" label="Country" validate={required()} />
-      <TextInput source="city" label="City" validate={required()} />
+      <TextInput source="country" label="Country" />
+      <TextInput source="city" label="City" />
       <TextInput source="notes" label="Notes" />
     </SimpleForm>
   </Create>
 );
 
-export const LocationEdit = props => (
-  <Edit {...props}>
+// Edit Component for Location
+export const LocationEdit = (props) => (
+  <Edit {...props} title="Edit Location">
     <SimpleForm>
-      <TextInput source="country" label="Country" validate={required()} />
-      <TextInput source="city" label="City" validate={required()} />
+      <TextInput source="country" label="Country" />
+      <TextInput source="city" label="City" />
       <TextInput source="notes" label="Notes" />
     </SimpleForm>
   </Edit>

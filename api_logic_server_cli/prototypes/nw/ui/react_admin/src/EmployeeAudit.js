@@ -1,94 +1,106 @@
-```jsx
 import React from 'react';
 import {
-  List, FunctionField, Datagrid, TextField, DateField, NumberField,
-  ReferenceField, ReferenceManyField, Show, TabbedShowLayout, Tab,
-  SimpleShowLayout, TextInput, NumberInput, DateTimeInput, ReferenceInput,
-  SelectInput, Create, SimpleForm, Edit, Filter, Pagination, BooleanField, BooleanInput
+    List,
+    Datagrid,
+    TextField,
+    DateField,
+    ReferenceField,
+    Show,
+    TabbedShowLayout,
+    Tab,
+    SimpleShowLayout,
+    Filter,
+    TextInput,
+    Create,
+    SimpleForm,
+    Edit,
+    NumberField,
+    DateTimeInput,
+    ReferenceInput,
+    SelectInput,
+    NumberInput
 } from 'react-admin';
 
+// Filters for EmployeeAudit List
+const EmployeeAuditFilter = props => (
+    <Filter {...props}>
+        <TextInput label="Search by Last Name" source="LastName" alwaysOn />
+        <ReferenceInput label="Employee" source="EmployeeId" reference="Employee" allowEmpty>
+            <SelectInput optionText="LastName" />
+        </ReferenceInput>
+    </Filter>
+);
+
 // EmployeeAudit List Component
-export const EmployeeAuditList = (props) => (
-  <List {...props} filters={<EmployeeAuditFilter />} perPage={7} pagination={<Pagination />}>
-    <Datagrid rowClick="show">
-      <TextField source="LastName" label="Last Name" />
-      <TextField source="Title" />
-      <NumberField source="Salary" options={{ style: 'currency', currency: 'USD' }} />
-      <TextField source="CreatedBy" />
-      <DateField source="CreatedOn" showTime />
-      <TextField source="UpdatedBy" />
-      <DateField source="UpdatedOn" showTime />
-    </Datagrid>
-  </List>
+export const EmployeeAuditList = props => (
+    <List filters={<EmployeeAuditFilter />} {...props} perPage={7} sort={{ field: 'LastName', order: 'ASC' }}>
+        <Datagrid rowClick="show">
+            <TextField source="LastName" label="Last Name" />
+            <TextField source="FirstName" label="First Name" />
+            <TextField source="Title" />
+            <NumberField source="Salary" options={{ style: 'currency', currency: 'USD' }} />
+            <DateField source="CreatedOn" label="Created On" />
+            <ReferenceField label="Employee" source="EmployeeId" reference="Employee">
+                <TextField source="LastName" />
+            </ReferenceField>
+        </Datagrid>
+    </List>
 );
 
 // EmployeeAudit Show Component
-export const EmployeeAuditShow = (props) => (
-  <Show {...props}>
-    <TabbedShowLayout>
-      <Tab label="Summary">
+export const EmployeeAuditShow = props => (
+    <Show {...props}>
         <SimpleShowLayout>
-          <TextField source="LastName" label="Last Name" />
-          <TextField source="Title" />
-          <NumberField source="Salary" options={{ style: 'currency', currency: 'USD' }} />
-          <TextField source="FirstName" />
-          <TextField source="CreatedBy" />
-          <DateField source="CreatedOn" showTime />
-          <TextField source="UpdatedBy" />
-          <DateField source="UpdatedOn" showTime />
-        </SimpleShowLayout>
-      </Tab>
-      <Tab label="Employee">
-        <ReferenceManyField reference="Employee" target="EmployeeId" addLabel={false}>
-          <Datagrid rowClick="show">
-            <TextField source="LastName" />
-            <TextField source="FirstName" />
+            <TextField source="LastName" label="Last Name" />
+            <TextField source="FirstName" label="First Name" />
             <TextField source="Title" />
-          </Datagrid>
-        </ReferenceManyField>
-      </Tab>
-    </TabbedShowLayout>
-  </Show>
-);
+            <NumberField source="Salary" options={{ style: 'currency', currency: 'USD' }} label="Salary" />
+            <DateField source="CreatedOn" label="Created On" />
+            <DateField source="UpdatedOn" label="Updated On" />
+            <TextField source="CreatedBy" label="Created By" />
+            <TextField source="UpdatedBy" label="Updated By" />
 
-// EmployeeAudit Filter Component (used in EmployeeAuditList)
-const EmployeeAuditFilter = (props) => (
-  <Filter {...props}>
-    <TextInput label="Search by Last Name" source="LastName" alwaysOn />
-    <TextInput label="Title" source="Title" />
-    <DateTimeInput label="Creation Date" source="CreatedOn" />
-  </Filter>
+            <TabbedShowLayout>
+                <Tab label="Related Employee">
+                    <ReferenceField label="Employee" source="EmployeeId" reference="Employee">
+                        <TextField source="LastName" />
+                    </ReferenceField>
+                </Tab>
+            </TabbedShowLayout>
+        </SimpleShowLayout>
+    </Show>
 );
 
 // EmployeeAudit Create Component
-export const EmployeeAuditCreate = (props) => (
-  <Create {...props}>
-    <SimpleForm>
-      <TextInput source="LastName" label="Last Name" />
-      <TextInput source="Title" />
-      <NumberInput source="Salary" label="Salary" />
-      <TextInput source="FirstName" />
-      <TextInput source="CreatedBy" />
-      <DateTimeInput source="CreatedOn" />
-      <TextInput source="UpdatedBy" />
-      <DateTimeInput source="UpdatedOn" />
-    </SimpleForm>
-  </Create>
+export const EmployeeAuditCreate = props => (
+    <Create {...props}>
+        <SimpleForm>
+            <TextInput source="LastName" label="Last Name" />
+            <TextInput source="FirstName" label="First Name" />
+            <TextInput source="Title" />
+            <NumberInput source="Salary" label="Salary" />
+            <ReferenceInput label="Employee" source="EmployeeId" reference="Employee">
+                <SelectInput optionText="LastName" />
+            </ReferenceInput>
+        </SimpleForm>
+    </Create>
 );
 
 // EmployeeAudit Edit Component
-export const EmployeeAuditEdit = (props) => (
-  <Edit {...props}>
-    <SimpleForm>
-      <TextInput source="LastName" label="Last Name" />
-      <TextInput source="Title" />
-      <NumberInput source="Salary" label="Salary" />
-      <TextInput source="FirstName" />
-      <TextInput source="CreatedBy" />
-      <DateTimeInput source="CreatedOn" />
-      <TextInput source="UpdatedBy" />
-      <DateTimeInput source="UpdatedOn" />
-    </SimpleForm>
-  </Edit>
+export const EmployeeAuditEdit = props => (
+    <Edit {...props}>
+        <SimpleForm>
+            <TextInput source="LastName" label="Last Name" />
+            <TextInput source="FirstName" label="First Name" />
+            <TextInput source="Title" />
+            <NumberInput source="Salary" label="Salary" />
+            <DateTimeInput source="CreatedOn" label="Created On" />
+            <DateTimeInput source="UpdatedOn" label="Updated On" />
+            <TextInput source="CreatedBy" label="Created By" />
+            <TextInput source="UpdatedBy" label="Updated By" />
+            <ReferenceInput label="Employee" source="EmployeeId" reference="Employee">
+                <SelectInput optionText="LastName" />
+            </ReferenceInput>
+        </SimpleForm>
+    </Edit>
 );
-```

@@ -1,64 +1,67 @@
-// Importing necessary components and modules from react-admin and material-ui
-import React from 'react';
-import { List, Datagrid, TextField, NumberField, Show, SimpleShowLayout, Create, SimpleForm, Edit, TextInput, ReferenceField, TabbedShowLayout, Tab, ReferenceInput, SelectInput, Pagination, Filter } from 'react-admin';
+import {
+  List,
+  Datagrid,
+  TextField,
+  NumberField,
+  Show,
+  TabbedShowLayout,
+  Tab,
+  SimpleShowLayout,
+  TextInput,
+  Create,
+  SimpleForm,
+  Edit,
+  Filter,
+  Pagination
+} from 'react-admin';
 
-// Filter component for the Shipper resource
-type FilterProps = {
-    [key: string]: any,
-};
-const ShipperFilter = (props: FilterProps) => (
-    <Filter {...props}>
-        <TextInput label="Search by Company Name" source="CompanyName" alwaysOn />
-    </Filter>
+// Define a filter component for the Shipper resource
+const ShipperFilter = (props) => (
+  <Filter {...props}>
+    <TextInput label="Search" source="q" alwaysOn />
+    <TextInput label="Company Name" source="CompanyName" />
+  </Filter>
 );
 
-// List view for Shipper resource with pagination, sorting, and filtering
-export const ShipperList = (props: any) => (
-    <List {...props} filters={<ShipperFilter />} perPage={7} pagination={<Pagination />}>
-        <Datagrid rowClick="show">
-            <TextField source="CompanyName" label="Company Name" sortable={true} />
-            <TextField source="Phone" label="Phone" />
-            <NumberField source="Id" label="ID" />
-        </Datagrid>
-    </List>
+// List view for Shipper resource
+export const ShipperList = (props) => (
+  <List {...props} filters={<ShipperFilter />} pagination={<Pagination rowsPerPage={7} />}>
+    <Datagrid rowClick="show">
+      <TextField source="CompanyName" label="Company Name"/>
+      <TextField source="Phone" label="Phone"/>
+      <NumberField source="Id" label="ID"/>
+    </Datagrid>
+  </List>
 );
 
-// Show view for Shipper resource with fields organized in a simple layout
-export const ShipperShow = (props: any) => (
-    <Show {...props} title="Shipper Details">
-        <SimpleShowLayout>
-            <TextField source="CompanyName" label="Company Name" />
-            <TextField source="Phone" label="Phone" />
-            <NumberField source="Id" label="ID" />
-            {/* Example for future tabbed relation */}
-            {/*<TabbedShowLayout>
-                <Tab label="Related Resource Example">
-                    <ReferenceField label="Custom Label" source="relationSource" reference="RelatedResource">
-                        <TextField source="fieldName" />
-                    </ReferenceField>
-                </Tab>
-            </TabbedShowLayout>*/}
-        </SimpleShowLayout>
-    </Show>
+// Show view for Shipper resource
+export const ShipperShow = (props) => (
+  <Show {...props}>
+    <SimpleShowLayout>
+      <TextField source="CompanyName" label="Company Name"/>
+      <TextField source="Phone" label="Phone"/>
+      <NumberField source="Id" label="ID"/>
+    </SimpleShowLayout>
+  </Show>
 );
 
-// Create view for adding a new Shipper
-export const ShipperCreate = (props: any) => (
-    <Create {...props} title="Create a new Shipper">
-        <SimpleForm>
-            <TextInput source="CompanyName" label="Company Name" />
-            <TextInput source="Phone" label="Phone" />
-        </SimpleForm>
-    </Create>
+// Create view for Shipper resource
+export const ShipperCreate = (props) => (
+  <Create {...props}>
+    <SimpleForm>
+      <TextInput source="CompanyName" label="Company Name"/>
+      <TextInput source="Phone" label="Phone"/>
+    </SimpleForm>
+  </Create>
 );
 
-// Edit view for editing a Shipper
-export const ShipperEdit = (props: any) => (
-    <Edit {...props} title="Edit Shipper">
-        <SimpleForm>
-            <TextInput source="CompanyName" label="Company Name" />
-            <TextInput source="Phone" label="Phone" />
-            <NumberField source="Id" label="ID" />
-        </SimpleForm>
-    </Edit>
+// Edit view for Shipper resource
+export const ShipperEdit = (props) => (
+  <Edit {...props}>
+    <SimpleForm>
+      <TextInput source="CompanyName" label="Company Name"/>
+      <TextInput source="Phone" label="Phone"/>
+      <NumberField source="Id" label="ID"/>
+    </SimpleForm>
+  </Edit>
 );

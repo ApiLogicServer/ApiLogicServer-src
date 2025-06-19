@@ -1,98 +1,98 @@
-```jsx
 import React from 'react';
 import {
     List,
-    Datagrid,
-    TextField,
-    ReferenceField,
     Show,
     SimpleShowLayout,
     TabbedShowLayout,
     Tab,
-    Create,
-    SimpleForm,
+    Datagrid,
+    TextField,
+    ReferenceField,
+    NumberField,
+    ReferenceManyField,
+    TextInput,
     ReferenceInput,
     SelectInput,
-    TextInput,
-    Edit
+    Create,
+    SimpleForm,
+    Edit,
+    Filter
 } from 'react-admin';
-import { Card, CardContent } from '@mui/material';
 
-// List view for EmployeeTerritory
-export const EmployeeTerritoryList = (props) => (
-    <List {...props}  perPage={7} title="Employee Territories">
+const EmployeeTerritoryFilter = (props) => (
+    <Filter {...props}>
+        <TextInput label="Employee" source="EmployeeId" alwaysOn />
+        <TextInput label="Territory" source="TerritoryId" alwaysOn />
+    </Filter>
+);
+
+export const EmployeeTerritoryList = props => (
+    <List filters={<EmployeeTerritoryFilter />} {...props} perPage={25} sort={{ field: 'Id', order: 'ASC' }}>
         <Datagrid rowClick="show">
             <TextField source="Id" label="ID" />
-            <ReferenceField source="TerritoryId" reference="Territory" label="Territory Description">
-                <TextField source="TerritoryDescription" />
-            </ReferenceField>
-            <ReferenceField source="EmployeeId" reference="Employee" label="Employee Last Name">
+            <ReferenceField source="EmployeeId" reference="Employee" label="Employee">
                 <TextField source="LastName" />
+            </ReferenceField>
+            <ReferenceField source="TerritoryId" reference="Territory" label="Territory">
+                <TextField source="TerritoryDescription" />
             </ReferenceField>
         </Datagrid>
     </List>
 );
 
-// Show view for EmployeeTerritory
-export const EmployeeTerritoryShow = (props) => (
-    <Show {...props} title="Employee Territory">
+export const EmployeeTerritoryShow = props => (
+    <Show {...props}>
         <SimpleShowLayout>
             <TextField source="Id" label="ID" />
-            <ReferenceField source="TerritoryId" reference="Territory" label="Territory Description">
-                <TextField source="TerritoryDescription" />
-            </ReferenceField>
-            <ReferenceField source="EmployeeId" reference="Employee" label="Employee Last Name">
+            <ReferenceField source="EmployeeId" reference="Employee" label="Employee">
                 <TextField source="LastName" />
             </ReferenceField>
-
-            {/* Tabs for related data */}
-            <Card>
-                <CardContent>
-                    <TabbedShowLayout>
-                        <Tab label="Territory">
-                            <ReferenceField source="TerritoryId" reference="Territory" label="Territory Description">
-                                <TextField source="TerritoryDescription" />
-                            </ReferenceField>
-                        </Tab>
-                        <Tab label="Employee">
-                            <ReferenceField source="EmployeeId" reference="Employee" label="Employee Last Name">
-                                <TextField source="LastName" />
-                            </ReferenceField>
-                        </Tab>
-                    </TabbedShowLayout>
-                </CardContent>
-            </Card>
+            <ReferenceField source="TerritoryId" reference="Territory" label="Territory">
+                <TextField source="TerritoryDescription" />
+            </ReferenceField>
+            <TabbedShowLayout>
+                <Tab label="Details">
+                    <ReferenceManyField label="Employee" reference="Employee" target="EmployeeId">
+                        <Datagrid>
+                            <TextField source="FirstName" label="First Name"/>
+                            <TextField source="LastName" label="Last Name"/>
+                        </Datagrid>
+                    </ReferenceManyField>
+                    <ReferenceManyField label="Territory" reference="Territory" target="TerritoryId">
+                        <Datagrid>
+                            <TextField source="TerritoryDescription" label="Description"/>
+                        </Datagrid>
+                    </ReferenceManyField>
+                </Tab>
+            </TabbedShowLayout>
         </SimpleShowLayout>
     </Show>
 );
 
-// Create view for EmployeeTerritory
-export const EmployeeTerritoryCreate = (props) => (
-    <Create {...props} title="Create a new Employee Territory">
+export const EmployeeTerritoryCreate = props => (
+    <Create {...props}>
         <SimpleForm>
-            <ReferenceInput source="TerritoryId" reference="Territory" label="Territory Description">
-                <SelectInput optionText="TerritoryDescription" />
-            </ReferenceInput>
-            <ReferenceInput source="EmployeeId" reference="Employee" label="Employee Last Name">
+            <TextInput source="Id" />
+            <ReferenceInput label="Employee" source="EmployeeId" reference="Employee">
                 <SelectInput optionText="LastName" />
             </ReferenceInput>
-            <TextInput source="Id" disabled label="ID" />
+            <ReferenceInput label="Territory" source="TerritoryId" reference="Territory">
+                <SelectInput optionText="TerritoryDescription" />
+            </ReferenceInput>
         </SimpleForm>
     </Create>
 );
 
-// Edit view for EmployeeTerritory
-export const EmployeeTerritoryEdit = (props) => (
-    <Edit {...props} title="Edit Employee Territory">
+export const EmployeeTerritoryEdit = props => (
+    <Edit {...props}>
         <SimpleForm>
-            <TextInput source="Id" disabled label="ID" />
-            <ReferenceInput source="TerritoryId" reference="Territory" label="Territory Description">
-                <SelectInput optionText="TerritoryDescription" />
-            </ReferenceInput>
-            <ReferenceInput source="EmployeeId" reference="Employee" label="Employee Last Name">
+            <TextInput source="Id" />
+            <ReferenceInput label="Employee" source="EmployeeId" reference="Employee">
                 <SelectInput optionText="LastName" />
+            </ReferenceInput>
+            <ReferenceInput label="Territory" source="TerritoryId" reference="Territory">
+                <SelectInput optionText="TerritoryDescription" />
             </ReferenceInput>
         </SimpleForm>
     </Edit>
 );
-```
