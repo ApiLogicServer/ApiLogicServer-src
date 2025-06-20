@@ -85,10 +85,13 @@ class GenAIAdminApp:
     def a_generate_resource_files(self):
 
         def fix_source(raw_source: str) -> str:
-            ''' remove code occasional begin/end code markers '''
+            ''' Remove code occasional begin/end code markers <br>
+            ToDo: lint, and repeat generation if errors detected
+            '''
             source_lines = raw_source.splitlines()
-            result_lines = []
-            found_start_marker = False
+            result_lines = ["import React from 'react';",
+                            "import { List, FunctionField, Datagrid, TextField, DateField, NumberField, ReferenceField, ReferenceManyField, Show, TabbedShowLayout, Tab, SimpleShowLayout, TextInput, NumberInput, DateTimeInput, ReferenceInput, SelectInput, Create, SimpleForm, Edit, Filter, Pagination, BooleanField, BooleanInput } from 'react-admin';  // mandatory import"]
+            found_from_react_admin = False
             for each_line in source_lines:
                 if each_line.startswith("```"):
                     if each_line.startswith("```jsx") or each_line.startswith("```javascript"):
@@ -96,7 +99,11 @@ class GenAIAdminApp:
                         continue
                     else:
                         break
-                result_lines.append(each_line)
+                if "from 'react-admin'" in each_line:  # sigh: missing imports 20% of the time - override
+                    found_from_react_admin = True
+                    continue
+                if found_from_react_admin == True:
+                    result_lines.append(each_line)
                 
             # return source_lines as a string
             return "\n".join(result_lines)

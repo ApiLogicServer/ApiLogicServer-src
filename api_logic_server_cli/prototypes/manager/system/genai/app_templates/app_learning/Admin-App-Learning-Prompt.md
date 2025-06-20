@@ -98,10 +98,11 @@ Use:
   * Always start with `<SimpleShowLayout>`, followed by a `<TabbedShowLayout>` for related data
     * DO NOT start with `<TabbedShowLayout>`
 
-Be sure to include all required imports.  ALWAYS use the following AS IS, plus whatever else is required:
+ALWAYS include these 2 imports at the top of the file, with this EXACT formatting, whether or not they are used:
 
 ```jsx
-import { List, FunctionField, Datagrid, TextField, DateField, NumberField, ReferenceField, ReferenceManyField, Show, TabbedShowLayout, Tab, SimpleShowLayout, TextInput, NumberInput, DateTimeInput, ReferenceInput, SelectInput, Create, SimpleForm, Edit, Filter, Pagination, BooleanField, BooleanInput } from 'react-admin';
+import React from 'react';
+import { List, FunctionField, Datagrid, TextField, DateField, NumberField, ReferenceField, ReferenceManyField, Show, TabbedShowLayout, Tab, SimpleShowLayout, TextInput, NumberInput, DateTimeInput, ReferenceInput, SelectInput, Create, SimpleForm, Edit, Filter, Pagination, BooleanField, BooleanInput } from 'react-admin';  // mandatory import
 ```
 You may add other imports, but be sure all those are included.
 
