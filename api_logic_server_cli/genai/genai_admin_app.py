@@ -77,7 +77,7 @@ class GenAIAdminApp:
 
         log.info(f"✅ Next Steps:\n")
         log.info('Start the API Logic Project: F5')
-        log.info('> cd ui/react-admin')
+        log.info(f'> cd ui/{app_name}')
         log.info('> npm install')
         log.info('> npm start')
 
