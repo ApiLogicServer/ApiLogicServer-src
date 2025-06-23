@@ -56,12 +56,7 @@ default the Foreign Key to the Parent (Master) Primary Key.
 ### Architecture
 
 - **Framework**: React 18 + react-admin 4.x
-- **Data Provider**: Custom `dataProvider.js` using `fetchUtils` (no external `ra-jsonapi-client`)
-
-  - Must support: `getList`, `getOne`, `getMany`, `getManyReference`, `create`, `update`, `delete`
-  - Must support: filters, joins, sorting, pagination
-
-- **Backend**: JSON:API per `mcp_discovery.json`
+- **Data Provider**: Custom pre-built in src/rav4-jsonapi-client
 - **CORS**: Ensure API allows `http://localhost:3000`
 
 ```py
@@ -116,19 +111,19 @@ Do **not leave any file empty**.
 
 ### App Wiring
 
-Sample code for `App.js`:
-
+Sample code for `App.js` (follow these guidelines EXACTLY):
 
 ```jsx
+// begin constant imports (always included) -- generate this code EXACTLY
 import React from 'react';
-import { Admin, Resource } from 'react-admin';
+import { Admin, Resource, Loading } from 'react-admin';  // val? loading
 import { createTheme } from '@mui/material/styles';
+import { useConf, loadHomeConf } from "./Config";  // val ??
+// end constant imports
 
-// import each resource
+// import each resource, e.g.
 import { CustomerList, CustomerShow, CustomerCreate, CustomerEdit } from './Customer';
 ...
-// import the data provider
-import { dataProvider } from './dataProvider';
 
 const theme = createTheme({
     palette: {
@@ -139,8 +134,32 @@ const theme = createTheme({
 });
 
 const App = () => {
-    return (
-        <Admin dataProvider={dataProvider}>  // register each resource...
+  const [conf, setConf] = React.useState({});
+  
+  React.useEffect(() => {
+    const fetchData = async () => {
+      try {
+        console.log('loading HomeConf-1')
+        const conf = await loadHomeConf()
+        setConf(conf)
+        setLoading(false);
+        console.log('AppConf0: ', conf);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        sessionStorage.removeItem("raSpa");
+      }
+    };
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return <Loading loadingPrimary="Loading..." loadingSecondary="Please wait" />;
+  }
+  const dataProvider = jsonapiClient(conf.api_root, { conf: {} }, null);
+
+  return (
+        // register each resource (do NOT generate {dataProvider(conf.api_root)}...
+        <Admin dataProvider={dataProvider} theme={theme}>
             <Resource name="Customer" list={CustomerList} show={CustomerShow} edit={CustomerEdit} create={CustomerCreate} />
 ...
         </Admin>
@@ -148,16 +167,6 @@ const App = () => {
 };
 
 export default App;
-```
-
-For dataProvider:
-
-1. be sure it includes the braces: `import { dataProvider }`
-2. Do Not generate either:
-
-```jsx
-import jsonServerProvider from 'ra-data-json-server'
-const dataProvider = jsonServerProvider('http://api.example.com');
 ```
 
 ---

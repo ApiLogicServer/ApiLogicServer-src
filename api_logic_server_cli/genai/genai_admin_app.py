@@ -53,7 +53,9 @@ class GenAIAdminApp:
         self.app_templates_path = genai_svcs.get_manager_path(use_env=True).joinpath('system/genai/app_templates')
         self.react_admin_template_path = self.app_templates_path / 'react-admin-template'
         self.prompts_path = self.app_templates_path / "app_learning"
-        self.admin_app_learning = utils.read_file(self.prompts_path / "Admin-App-Learning-Prompt.md")
+        # self.admin_app_learning = utils.read_file(self.prompts_path / "Admin-App-Learning-Prompt.md")
+        self.admin_app_resource_learning = utils.read_file(self.prompts_path / "Admin-App-Resource-Learning-Prompt.md")
+        self.admin_app_js_learning = utils.read_file(self.prompts_path / "Admin-App-js-Learning-Prompt.md")
         self.image_url = self.prompts_path / 'Order-Page.png'  # did not seem to help, made it 2x slower
 
         # self.schema = utils.read_file(self.dbml_path)
@@ -126,7 +128,7 @@ class GenAIAdminApp:
             ]
             messages = [
                 {"role": "user", "content": "You are a helpful expert in react and JavaScript"},
-                {"role": "user", "content": self.admin_app_learning},
+                {"role": "user", "content": self.admin_app_resource_learning},
                 # {"role": "user", "content": example_image_content},
                 {"role": "user", "content": f'Schema:\n{self.schema_yaml}'},
                 {"role": "user", "content": f'Generate the full javascript source code for the `{each_resource_name}.js` React Admin file, formatted as a JSResponseFormat'}]
@@ -143,10 +145,23 @@ class GenAIAdminApp:
 
 
     def b_generate_app_js(self):
+
+        def fix_app(raw_source: str) -> str:
+            ''' Remove code occasional begin/end code markers <br>
+            '''
+            source_lines = raw_source.splitlines()
+            result_lines = []
+            data_provider_import = False
+            do_fixup = False
+            for each_line in source_lines:
+                # fixes here
+                result_lines.append(each_line)                
+            return "\n".join(result_lines)  # return source_lines as a string
+
         messages = []
         messages = [
             {"role": "user", "content": "You are a helpful expert in react and JavaScript"},
-            {"role": "user", "content": self.admin_app_learning},
+            {"role": "user", "content": self.admin_app_js_learning},
             {"role": "user", "content": f'Schema:\n{self.schema_yaml}'},
             {"role": "user", "content": f'Generate the complete App.js that wires together the above resources. for the `app.js` React Admin file, formatted as a JSResponseFormat.'}]
         save_response = self.project_root / f"docs/admin_app/app.js"
@@ -156,7 +171,9 @@ class GenAIAdminApp:
                                             response_as=JSResponseFormat)
         response_dict = json.loads(output)
         target_file = self.ui_src_path / "App.js"
-        utils.write_file(target_file, response_dict['code'])
+        source_code = response_dict['code']
+        source_code = fix_app(source_code)
+        utils.write_file(target_file, source_code)
 
         log.info(f"✅ Wrote: {target_file}\n")
 
