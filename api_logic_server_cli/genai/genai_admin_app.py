@@ -141,7 +141,8 @@ class GenAIAdminApp:
                 {"role": "user", "content": "You are a helpful expert in react and JavaScript"},
                 {"role": "user", "content": self.admin_app_resource_learning},
                 # {"role": "user", "content": example_image_content},
-                {"role": "user", "content": f'Schema:\n{self.schema_yaml}'},
+                # {"role": "user", "content": f'Schema:\n{self.schema_yaml}'},
+                {"role": "user", "content": f'Schema:\n{self.schema}'},
                 {"role": "user", "content": f'Generate the full javascript source code for the `{each_resource_name}.js` React Admin file, formatted as a JSResponseFormat'}]
             save_response = self.project_root / f"docs/admin_app/{each_resource_name}"
             output = genai_svcs.call_chatgpt(messages = messages, 
@@ -173,7 +174,7 @@ class GenAIAdminApp:
         messages = [
             {"role": "user", "content": "You are a helpful expert in react and JavaScript"},
             {"role": "user", "content": self.admin_app_js_learning},
-            {"role": "user", "content": f'Schema:\n{self.schema_yaml}'},
+            {"role": "user", "content": f'Schema:\n{self.schema}'},
             {"role": "user", "content": f'Generate the complete App.js that wires together the above resources. for the `app.js` React Admin file, formatted as a JSResponseFormat.'}]
         save_response = self.project_root / f"docs/admin_app/app.js"
         output = genai_svcs.call_chatgpt(messages = messages, 
