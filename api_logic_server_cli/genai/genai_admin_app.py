@@ -43,9 +43,16 @@ class GenAIAdminApp:
         
         self.api_version = genai_version
         self.project_root = project.project_directory_path
+        self.app_templates_path = genai_svcs.get_manager_path(use_env=True).joinpath('system/genai/app_templates')
+
         self.dbml_path = self.project_root / "docs/db.dbml"
-        self.admin_yaml_path = self.project_root / f"ui/admin/{schema}"
         self.discovery_path = self.project_root / "docs/mcp_learning/mcp_discovery.json"
+
+        self.admin_yaml_path = self.project_root / f"ui/admin/{schema}"
+        self.admin_config_prompt_path = self.app_templates_path / f"app_learning/Admin-config-prompt.md"
+        self.admin_json_api_model_prompt_path = self.app_templates_path / f"app_learning/Admin-json-api-model-prompt.md"
+        assert self.admin_config_prompt_path.exists(), "sys err - self.admin_config_prompt_path"
+        assert self.admin_json_api_model_prompt_path.exists(), "sys err - self.admin_json_api_model_prompt_path"
 
         self.ui_project_path = self.project_root / f"ui/{app_name}"
         self.ui_src_path = self.ui_project_path / "src"
@@ -60,13 +67,17 @@ class GenAIAdminApp:
 
         # self.schema = utils.read_file(self.dbml_path)
         self.schema_yaml = utils.read_file(self.admin_yaml_path)
-        self.schema = yaml.safe_load(self.schema_yaml)
-
-
-        self.resources = {}
-        ''' dict keyed by resource_name (todo: relns?) '''
-        self.resource_names = []
-        ''' array of resource names '''
+        self.schema_dict = yaml.safe_load(self.schema_yaml)
+        self.admin_config_prompt = utils.read_file(self.admin_config_prompt_path)
+        self.admin_json_api_model_prompt = utils.read_file(self.admin_json_api_model_prompt_path)
+        config_prompt_parts = self.admin_config_prompt.split('<resources></resources>')
+        self.resources = self.schema_dict['resources']
+        # convert self.resources dict to text lines
+        self.resource_lines = json.dumps(self.resources, indent=4)
+        resources_dict = "\n".join([f"- {name}: {details}" for name, details in self.resources.items()])
+        config_prompt = config_prompt_parts[0] + "\n<resources>\n" + self.resource_lines + config_prompt_parts[1]
+        self.schema = config_prompt + self.admin_json_api_model_prompt
+        self.schema_lines = self.schema.split('\n')  # for debug
 
         shutil.copytree(self.react_admin_template_path, self.ui_project_path, dirs_exist_ok=True)
 
@@ -111,7 +122,7 @@ class GenAIAdminApp:
             return "\n".join(result_lines)
 
 
-        for each_resource_name, each_resource in self.schema['resources'].items():
+        for each_resource_name, each_resource in self.resources.items():
             # image moves app gen time from 70 -> 130 secs
             example_image_content_unused = [
                 {
