@@ -16,7 +16,10 @@ import { ReferenceField, ReferenceManyField } from 'react-admin';
 import { TabbedShowLayout, Tab, SimpleShowLayout, TextInput, NumberInput, DateTimeInput } from 'react-admin';
 import { ReferenceInput, SelectInput, SimpleForm, Show, Edit, Create } from 'react-admin';
 import { Filter, Pagination, BooleanField, BooleanInput, Labeled } from 'react-admin'; 
-import { Grid, Typography, Box, Divider } from '@mui/material';
+import { EditButton, DeleteButton, CreateButton } from 'react-admin';
+import { Grid, Typography, Box, Divider, Button } from '@mui/material';
+import { useRecordContext, useRedirect, Link, required } from 'react-admin';
+import AddIcon from '@mui/icons-material/Add';
 // end mandatory imports
 
 // Filter for Customer List
@@ -79,12 +82,38 @@ export const CustomerShow = (props) => {
                             <DateField source="CreatedOn" label="Created On" />
                             <NumberField source="amount_total" label="Amount Total" options={{ style: 'currency', currency: 'USD' }} />
                             <DateField source="date_shipped" label="Date Shipped" />
+                            <EditButton />
+                            <DeleteButton />
                         </Datagrid>
                     </ReferenceManyField>
+                    <AddOrderButton />
                 </Tab>
                 ...
             </TabbedShowLayout>
         </Show>
+    );
+};
+
+// Custom Add Order Button
+const AddOrderButton = () => {
+    const record = useRecordContext();
+    const redirect = useRedirect();
+    
+    const handleClick = () => {
+        // Use the newer React Admin approach for pre-filling forms
+        redirect(`/Order/create?source=${encodeURIComponent(JSON.stringify({ customer_id: record?.id }))}`);
+    };
+
+    return (
+        <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AddIcon />}
+            onClick={handleClick}
+            sx={{ mt: 2 }}
+        >
+            Add New Order
+        </Button>
     );
 };
 
@@ -162,7 +191,12 @@ For each resource (`Customer`, `Order` etc) and **fully** implement:
 Use:
 
 - `<ReferenceField>` for foreign key displays
-- `<ReferenceInput>` for foreign key input
+- `<ReferenceInput>` for foreign key input, like this (IMPORTANT: validate is on SelectInput, NEVER ReferenceInput )
+```
+<ReferenceInput source="customer_id" reference="Customer" fullWidth>
+    <SelectInput optionText="name" validate={required()} />
+</ReferenceInput>
+```
 - `<ReferenceManyField>` for tabbed child lists
 
 Use the attribute order from the schema.

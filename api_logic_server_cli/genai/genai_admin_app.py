@@ -110,7 +110,10 @@ import { ReferenceField, ReferenceManyField } from 'react-admin';
 import { TabbedShowLayout, Tab, SimpleShowLayout, TextInput, NumberInput, DateTimeInput } from 'react-admin';
 import { ReferenceInput, SelectInput, SimpleForm, Show, Edit, Create } from 'react-admin';
 import { Filter, Pagination, BooleanField, BooleanInput, Labeled } from 'react-admin'; 
-import { Grid, Typography, Box, Divider } from '@mui/material';
+import { EditButton, DeleteButton, CreateButton } from 'react-admin';
+import { Grid, Typography, Box, Divider, Button } from '@mui/material';
+import { useRecordContext, useRedirect, Link, required } from 'react-admin';
+import AddIcon from '@mui/icons-material/Add';
 // end mandatory imports
 
 // generate pages and components...
