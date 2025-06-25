@@ -97,14 +97,27 @@ class GenAIAdminApp:
 
     def a_generate_resource_files(self):
 
-        def fix_source(raw_source: str) -> str:
+        def fix_resource(raw_source: str) -> str:
             ''' Remove code occasional begin/end code markers <br>
+            And horrific override of ChatGPT refusal to generate imports AS DIRECTED!
             ToDo: lint, and repeat generation if errors detected
             '''
+            mandatory_imports = '''
+// begin MANDATORY imports (always generated EXACTLY)
+import React from 'react';
+import { List, FunctionField, Datagrid, TextField, DateField, NumberField } from 'react-admin';
+import { ReferenceField, ReferenceManyField } from 'react-admin';
+import { TabbedShowLayout, Tab, SimpleShowLayout, TextInput, NumberInput, DateTimeInput } from 'react-admin';
+import { ReferenceInput, SelectInput, SimpleForm, Show, Edit, Create } from 'react-admin';
+import { Filter, Pagination, BooleanField, BooleanInput, Labeled } from 'react-admin'; 
+import { Grid, Typography, Box, Divider } from '@mui/material';
+// end mandatory imports
+
+// generate pages and components...
+'''
             source_lines = raw_source.splitlines()
-            result_lines = ["import React from 'react';",
-                            "import { List, FunctionField, Datagrid, TextField, DateField, NumberField, ReferenceField, ReferenceManyField, Show, TabbedShowLayout, Tab, SimpleShowLayout, TextInput, NumberInput, DateTimeInput, ReferenceInput, SelectInput, Create, SimpleForm, Edit, Filter, Pagination, BooleanField, BooleanInput } from 'react-admin';  // mandatory import"]
-            found_from_react_admin = False
+            result_lines = []
+            imports_done = False
             for each_line in source_lines:
                 if each_line.startswith("```"):
                     if each_line.startswith("```jsx") or each_line.startswith("```javascript"):
@@ -112,34 +125,20 @@ class GenAIAdminApp:
                         continue
                     else:
                         break
-                if "from 'react-admin'" in each_line:  # sigh: missing imports 20% of the time - override
-                    found_from_react_admin = True
-                    continue
-                if found_from_react_admin == True:
-                    result_lines.append(each_line)
-                
+                if do_mandatory_imports := True and not imports_done and '= (props) =>' in each_line:
+                    result_lines = mandatory_imports.split('\n')
+                    imports_done = True
+                result_lines.append(each_line)              
             # return source_lines as a string
             return "\n".join(result_lines)
 
 
         for each_resource_name, each_resource in self.resources.items():
-            # image moves app gen time from 70 -> 130 secs
-            example_image_content_unused = [
-                {
-                    "type": "text",
-                    "text": "Here is a screenshot of the desired admin app layout. Use this as a visual guide to generate a React-Admin app that mimics the layout, structure, and joins."
-                },
-                {
-                    "type": "image_url",
-                    "image_url": {
-                        "url": "https://apilogicserver.github.io/Docs/images/ui-admin/Order-Page-Learning.png"
-                        # "url": f"attachment:/{str(self.image_url)}"
-                    }
-                }
-            ]
+            learning = self.admin_app_resource_learning
+            learning = learning.replace('{{resource.js}}', f'{each_resource_name}.js')
             messages = [
                 {"role": "user", "content": "You are a helpful expert in react and JavaScript"},
-                {"role": "user", "content": self.admin_app_resource_learning},
+                {"role": "user", "content": learning},
                 # {"role": "user", "content": example_image_content},
                 # {"role": "user", "content": f'Schema:\n{self.schema_yaml}'},
                 {"role": "user", "content": f'Schema:\n{self.schema}'},
@@ -151,7 +150,7 @@ class GenAIAdminApp:
                                              response_as=JSResponseFormat)
             response_dict = json.loads(output)
             target_file = self.ui_src_path / f"{each_resource_name}.js"
-            source_code = fix_source(response_dict['code'])
+            source_code = fix_resource(response_dict['code'])
             utils.write_file(target_file, source_code)
             log.info(f"\n✅ Wrote: {target_file}")
 
@@ -163,12 +162,17 @@ class GenAIAdminApp:
             '''
             source_lines = raw_source.splitlines()
             result_lines = []
-            data_provider_import = False
-            do_fixup = False
             for each_line in source_lines:
-                # fixes here
-                result_lines.append(each_line)                
-            return "\n".join(result_lines)  # return source_lines as a string
+                if each_line.startswith("```"):
+                    if each_line.startswith("```jsx") or each_line.startswith("```javascript"):
+                        result_lines = []
+                        continue
+                    else:
+                        break
+                result_lines.append(each_line)
+                
+            # return source_lines as a string
+            return "\n".join(result_lines)
 
         messages = []
         messages = [
