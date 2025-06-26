@@ -1407,6 +1407,32 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "  - Create mycircles (servers)",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True",
+                    "APILOGICSERVER_HOME": "${workspaceFolder}"},
+            "cwd": "${workspaceFolder}/api_logic_server_cli",
+            "justMyCode": false,
+            "program": "cli.py",
+            "redirectOutput": true,
+            "args": ["create","--project_name=../../../servers/mycircles",
+                    "--db_url=postgresql://postgres:p@localhost/mycircles"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "  - - mycircles (servers) - genai-app",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True", "APILOGICSERVER_HOME": "${workspaceFolder}"},
+            "cwd": "${workspaceFolder}/../../servers/mycircles",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["genai-app"
+                    , "--app-name=basic_demo_app"],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "  - Postgres - stress",
             "type": "debugpy",
             "request": "launch",
