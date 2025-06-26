@@ -38,7 +38,7 @@ class JSResponseFormat(BaseModel):  # must match system/genai/prompt_inserts/res
 
 class GenAIAdminApp:
 
-    def __init__(self, project: Project, app_name: str, schema: str, genai_version: OpenAI):  #  TODO: type??
+    def __init__(self, project: Project, app_name: str, schema: str, genai_version: str):
         self.start_time = time.time()
         
         self.api_version = genai_version
@@ -82,6 +82,7 @@ class GenAIAdminApp:
         shutil.copytree(self.react_admin_template_path, self.ui_project_path, dirs_exist_ok=True)
 
         # self.parse_resources()
+        self.standard_imports = self.read_standard_imports()
         self.a_generate_resource_files()
         self.b_generate_app_js()
         # comes from copytree, above -- self.c_generate_data_provider()
@@ -94,30 +95,36 @@ class GenAIAdminApp:
         log.info('> npm install')
         log.info('> npm start')
 
+    def read_standard_imports(self) -> List[str]:
+        '''grr
+        
+        openAI very often ignores the EXACTLY imports,<br>
+        so read them manually for later resource creation
+        '''
+        learning = self.admin_app_resource_learning.splitlines()
+        result_lines = []
+        preamble_done = False
+        for each_line in learning:
+            if '<sample-code' in each_line:
+                preamble_done = True
+                continue
+            if 'end mandatory imports' in each_line:
+                result_lines.append(each_line) 
+                result_lines.append("") 
+                break
+            if preamble_done:
+                result_lines.append(each_line)              
+        return result_lines
+
 
     def a_generate_resource_files(self):
 
-        def fix_resource(raw_source: str) -> str:
-            ''' Remove code occasional begin/end code markers <br>
-            And horrific override of ChatGPT refusal to generate imports AS DIRECTED!
+        def fix_resource(genai_app: GenAIAdminApp, raw_source: str) -> str:
+            ''' Remove occasional begin/end code markers <br>
+            And horrific override of ChatGPT refusal to generate imports AS DIRECTED!<br>
             ToDo: lint, and repeat generation if errors detected
             '''
-            mandatory_imports = '''
-// begin MANDATORY imports (always generated EXACTLY)
-import React from 'react';
-import { List, FunctionField, Datagrid, TextField, DateField, NumberField } from 'react-admin';
-import { ReferenceField, ReferenceManyField } from 'react-admin';
-import { TabbedShowLayout, Tab, SimpleShowLayout, TextInput, NumberInput, DateTimeInput } from 'react-admin';
-import { ReferenceInput, SelectInput, SimpleForm, Show, Edit, Create } from 'react-admin';
-import { Filter, Pagination, BooleanField, BooleanInput, Labeled } from 'react-admin'; 
-import { EditButton, DeleteButton, CreateButton } from 'react-admin';
-import { Grid, Typography, Box, Divider, Button } from '@mui/material';
-import { useRecordContext, useRedirect, Link, required } from 'react-admin';
-import AddIcon from '@mui/icons-material/Add';
-// end mandatory imports
 
-// generate pages and components...
-'''
             source_lines = raw_source.splitlines()
             result_lines = []
             imports_done = False
@@ -129,7 +136,7 @@ import AddIcon from '@mui/icons-material/Add';
                     else:
                         break
                 if do_mandatory_imports := True and not imports_done and '= (props) =>' in each_line:
-                    result_lines = mandatory_imports.split('\n')
+                    result_lines = list(genai_app.standard_imports)
                     imports_done = True
                 result_lines.append(each_line)              
             # return source_lines as a string
@@ -153,7 +160,7 @@ import AddIcon from '@mui/icons-material/Add';
                                              response_as=JSResponseFormat)
             response_dict = json.loads(output)
             target_file = self.ui_src_path / f"{each_resource_name}.js"
-            source_code = fix_resource(response_dict['code'])
+            source_code = fix_resource(self, response_dict['code'])
             utils.write_file(target_file, source_code)
             log.info(f"\n✅ Wrote: {target_file}")
 
