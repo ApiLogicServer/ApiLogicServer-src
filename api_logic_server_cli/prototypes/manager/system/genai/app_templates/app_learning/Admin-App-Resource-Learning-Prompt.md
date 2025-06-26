@@ -11,12 +11,12 @@ Sample code (follow these guidelines EXACTLY):
 <sample-code>
 // begin MANDATORY imports (always generated EXACTLY)
 import React from 'react';
-import { List, FunctionField, Datagrid, TextField, DateField, NumberField } from 'react-admin';
+import { List, FunctionField, Datagrid, TextField, EmailField, DateField, NumberField } from 'react-admin';
 import { ReferenceField, ReferenceManyField } from 'react-admin';
 import { TabbedShowLayout, Tab, SimpleShowLayout, TextInput, NumberInput, DateTimeInput } from 'react-admin';
 import { ReferenceInput, SelectInput, SimpleForm, Show, Edit, Create } from 'react-admin';
 import { Filter, Pagination, BooleanField, BooleanInput, Labeled } from 'react-admin'; 
-import { EditButton, DeleteButton, CreateButton } from 'react-admin';
+import { EditButton, DeleteButton, CreateButton, ShowButton } from 'react-admin';
 import { Grid, Typography, Box, Divider, Button } from '@mui/material';
 import { useRecordContext, useRedirect, Link, required } from 'react-admin';
 import AddIcon from '@mui/icons-material/Add';
