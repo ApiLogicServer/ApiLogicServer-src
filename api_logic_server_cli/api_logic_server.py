@@ -12,7 +12,7 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "15.00.26"  # last public release: 15.00.22 (15.00.12)
+__version__ = "15.00.26"  # last public release: 15.00.25 (15.00.12)
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
     "\t06/25/2024 - 15.00.26: Tech Preview: als genai-app w/ sra provider+model+grid_cascadeAdd, import fix, bug [96] \n"\
