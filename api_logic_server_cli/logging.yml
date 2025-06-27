@@ -72,8 +72,23 @@ loggers:
         handlers: [console]
         propagate: no
 
+    api_logic_server_cli.genai.genai_svcs:   
+        level: INFO
+        handlers: [console]
+        propagate: no
+
+    openai:   
+        level: WARNING
+        handlers: [console]
+        propagate: no
+
+    httpx:   
+        level: WARNING
+        handlers: [console]
+        propagate: no
+
     api_logic_server_cli.genai.genai_admin_app:   
-        level: DEBUG
+        level: INFO
         handlers: [console]
         propagate: no
 

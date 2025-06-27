@@ -81,7 +81,7 @@ try:  # this is just for WebGenAI
 
     # Add the file handler to the logger
     log.addHandler(file_handler)
-    log.setLevel(logging.DEBUG)
+    # log.setLevel(logging.DEBUG)
     
 except Exception as exc:
     pass # this is just for WebGenAI, ok to ignore error
@@ -932,7 +932,7 @@ def call_chatgpt(messages: List[Dict[str, str]], api_version: str, using: str, r
         messages_for_print = string_to_lines(messages_for_print)  # Removed to avoid altering messages
         with open(request_path, "w") as request_file:  # save for debug
             json.dump(messages_for_print, request_file, indent=4)
-        log.info(f'.. saved request: {using}/request.json')
+        log.debug(f'.. saved request: {using}/request.json')
         client = get_ai_client()
         # response_format = "json_object" if wg_response else {"type": "text"}
         completion = client.beta.chat.completions.parse(
@@ -941,7 +941,7 @@ def call_chatgpt(messages: List[Dict[str, str]], api_version: str, using: str, r
             # temperature=self.project.genai_temperature,  values .1 and .7 made students / charges fail
             model=model  # for own model, use "ft:gpt-4o-2024-08-06:personal:logicbank:ARY904vS" 
         )
-        log.info(f'ChatGPT ({str(int(time.time() - start_time))} secs) - response at: system/genai/temp/chatgpt_original.response')
+        log.debug(f'OpenAI ({str(int(time.time() - start_time))} secs) - response at: system/genai/temp/chatgpt_original.response')
         
         data = completion.choices[0].message.content
 
