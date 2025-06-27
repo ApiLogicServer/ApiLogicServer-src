@@ -783,7 +783,7 @@ def genai_graphics(ctx, using, genai_version: str, replace_with: str):
 
 @main.command("genai-app", cls=HideDunderCommand)
 @click.option('--app-name', 'app_name',
-              default='react_admin',
+              default='react_app',
               help="Name of generated app in ui/")
 @click.option('--schema',
               default='admin.yaml',

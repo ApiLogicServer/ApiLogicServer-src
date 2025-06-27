@@ -45,6 +45,11 @@ class GenAIAdminApp:
         self.project_root = project.project_directory_path
         self.app_templates_path = genai_svcs.get_manager_path(use_env=True).joinpath('system/genai/app_templates')
 
+        log.info(f'\ngenai_app here..')
+        log.info(f'..model: {schema}')
+        log.info(f'..diagnostics: docs/admin_app')
+        log.info(f'..templates: {str(self.app_templates_path)}')
+
         self.dbml_path = self.project_root / "docs/db.dbml"
         self.discovery_path = self.project_root / "docs/mcp_learning/mcp_discovery.json"
 
@@ -87,13 +92,13 @@ class GenAIAdminApp:
         self.b_generate_app_js()
         # comes from copytree, above -- self.c_generate_data_provider()
 
-        log.info(f"✅ Completed in [{str(int(time.time() - self.start_time))} secs] \n\n")
+        log.info(f"..✅ Completed in [{str(int(time.time() - self.start_time))} secs]")
 
-        log.info(f"✅ Next Steps:\n")
+        log.info(f"\n✅ Next Steps:\n")
         log.info('Start the API Logic Project: F5')
         log.info(f'> cd ui/{app_name}')
         log.info('> npm install')
-        log.info('> npm start')
+        log.info('> npm start\n')
 
     def read_standard_imports(self) -> List[str]:
         '''grr
@@ -135,7 +140,7 @@ class GenAIAdminApp:
                         continue
                     else:
                         break
-                if do_mandatory_imports := True and not imports_done and '= (props) =>' in each_line:
+                if do_mandatory_imports := True and not imports_done and ' props ' in each_line:
                     result_lines = list(genai_app.standard_imports)
                     imports_done = True
                 result_lines.append(each_line)              
@@ -162,7 +167,7 @@ class GenAIAdminApp:
             target_file = self.ui_src_path / f"{each_resource_name}.js"
             source_code = fix_resource(self, response_dict['code'])
             utils.write_file(target_file, source_code)
-            log.info(f"\n✅ Wrote: {target_file}")
+            log.info(f"..✅ Wrote: {each_resource_name}.js")
 
 
     def b_generate_app_js(self):
@@ -201,5 +206,5 @@ class GenAIAdminApp:
         source_code = fix_app(source_code)
         utils.write_file(target_file, source_code)
 
-        log.info(f"✅ Wrote: {target_file}\n")
+        log.info(f"..✅ Wrote: App.js")
 

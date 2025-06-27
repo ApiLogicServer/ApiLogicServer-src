@@ -1,0 +1,324 @@
+Failed to compile.
+
+SyntaxError: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/src/Union.js: Adjacent JSX elements must be wrapped in an enclosing tag. Did you want a JSX fragment <>...</>? (63:20)
+  61 |                             <DeleteButton />
+  62 |                         </Datagrid>
+> 63 |                     </ReferenceManyField>
+     |                     ^
+  64 |                 </Tab>
+  65 |             </TabbedShowLayout>
+  66 |         </Show>
+WARNING in ./node_modules/js-yaml/lib/js-yaml/type/binary.js 8:15-40
+Module not found: Error: Can't resolve 'buffer' in '/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/js-yaml/lib/js-yaml/type'
+
+BREAKING CHANGE: webpack < 5 used to include polyfills for node.js core modules by default.
+This is no longer the case. Verify if you need this module and configure a polyfill for it.
+
+If you want to include a polyfill, you need to:
+        - add a fallback 'resolve.fallback: { "buffer": require.resolve("buffer/") }'
+        - install 'buffer'
+If you don't want to include a polyfill, you can use an empty module like this:
+        resolve.fallback: { "buffer": false }
+
+WARNING in [eslint] 
+src/App.js
+  Line 6:10:  'useConf' is defined but never used  no-unused-vars
+
+src/Category.js
+  Line 3:16:   'FunctionField' is defined but never used                       no-unused-vars
+  Line 3:52:   'EmailField' is defined but never used                          no-unused-vars
+  Line 3:64:   'DateField' is defined but never used                           no-unused-vars
+  Line 4:10:   'ReferenceField' is defined but never used                      no-unused-vars
+  Line 4:26:   'ReferenceManyField' is defined but never used                  no-unused-vars
+  Line 5:10:   'TabbedShowLayout' is defined but never used                    no-unused-vars
+  Line 5:28:   'Tab' is defined but never used                                 no-unused-vars
+  Line 5:75:   'DateTimeInput' is defined but never used                       no-unused-vars
+  Line 6:10:   'ReferenceInput' is defined but never used                      no-unused-vars
+  Line 6:26:   'SelectInput' is defined but never used                         no-unused-vars
+  Line 7:30:   'BooleanField' is defined but never used                        no-unused-vars
+  Line 7:44:   'BooleanInput' is defined but never used                        no-unused-vars
+  Line 8:10:   'EditButton' is defined but never used                          no-unused-vars
+  Line 8:22:   'DeleteButton' is defined but never used                        no-unused-vars
+  Line 8:36:   'CreateButton' is defined but never used                        no-unused-vars
+  Line 8:50:   'ShowButton' is defined but never used                          no-unused-vars
+  Line 9:42:   'Button' is defined but never used                              no-unused-vars
+  Line 10:10:  'useRecordContext' is defined but never used                    no-unused-vars
+  Line 10:28:  'useRedirect' is defined but never used                         no-unused-vars
+  Line 10:41:  'Link' is defined but never used                                no-unused-vars
+  Line 11:8:   'AddIcon' is defined but never used                             no-unused-vars
+  Line 136:1:  Assign object to a variable before exporting as module default  import/no-anonymous-default-export
+
+src/Config.js
+  Line 296:7:   'removeDupConfs' is assigned a value but never used  no-unused-vars
+  Line 380:24:  Expected '!==' and instead saw '!='                  eqeqeq
+  Line 407:26:  Expected '===' and instead saw '=='                  eqeqeq
+  Line 526:42:  Expected '===' and instead saw '=='                  eqeqeq
+
+src/Customer.js
+  Line 3:16:   'FunctionField' is defined but never used                       no-unused-vars
+  Line 3:52:   'EmailField' is defined but never used                          no-unused-vars
+  Line 4:10:   'ReferenceField' is defined but never used                      no-unused-vars
+  Line 5:75:   'DateTimeInput' is defined but never used                       no-unused-vars
+  Line 6:10:   'ReferenceInput' is defined but never used                      no-unused-vars
+  Line 6:26:   'SelectInput' is defined but never used                         no-unused-vars
+  Line 7:30:   'BooleanField' is defined but never used                        no-unused-vars
+  Line 8:36:   'CreateButton' is defined but never used                        no-unused-vars
+  Line 8:50:   'ShowButton' is defined but never used                          no-unused-vars
+  Line 10:41:  'Link' is defined but never used                                no-unused-vars
+  Line 188:1:  Assign object to a variable before exporting as module default  import/no-anonymous-default-export
+
+src/Department.js
+  Line 3:16:   'FunctionField' is defined but never used                       no-unused-vars
+  Line 3:52:   'EmailField' is defined but never used                          no-unused-vars
+  Line 4:10:   'ReferenceField' is defined but never used                      no-unused-vars
+  Line 5:75:   'DateTimeInput' is defined but never used                       no-unused-vars
+  Line 6:10:   'ReferenceInput' is defined but never used                      no-unused-vars
+  Line 6:26:   'SelectInput' is defined but never used                         no-unused-vars
+  Line 7:10:   'Filter' is defined but never used                              no-unused-vars
+  Line 7:30:   'BooleanField' is defined but never used                        no-unused-vars
+  Line 7:44:   'BooleanInput' is defined but never used                        no-unused-vars
+  Line 8:36:   'CreateButton' is defined but never used                        no-unused-vars
+  Line 8:50:   'ShowButton' is defined but never used                          no-unused-vars
+  Line 10:41:  'Link' is defined but never used                                no-unused-vars
+  Line 10:47:  'required' is defined but never used                            no-unused-vars
+  Line 139:1:  Assign object to a variable before exporting as module default  import/no-anonymous-default-export
+
+src/Employee.js
+  Line 3:16:   'FunctionField' is defined but never used                       no-unused-vars
+  Line 5:75:   'DateTimeInput' is defined but never used                       no-unused-vars
+  Line 7:30:   'BooleanField' is defined but never used                        no-unused-vars
+  Line 7:44:   'BooleanInput' is defined but never used                        no-unused-vars
+  Line 8:36:   'CreateButton' is defined but never used                        no-unused-vars
+  Line 9:42:   'Button' is defined but never used                              no-unused-vars
+  Line 10:10:  'useRecordContext' is defined but never used                    no-unused-vars
+  Line 10:28:  'useRedirect' is defined but never used                         no-unused-vars
+  Line 10:41:  'Link' is defined but never used                                no-unused-vars
+  Line 11:8:   'AddIcon' is defined but never used                             no-unused-vars
+  Line 208:1:  Assign object to a variable before exporting as module default  import/no-anonymous-default-export
+
+src/Order.js
+  Line 3:16:   'FunctionField' is defined but never used                       no-unused-vars
+  Line 3:52:   'EmailField' is defined but never used                          no-unused-vars
+  Line 8:36:   'CreateButton' is defined but never used                        no-unused-vars
+  Line 8:50:   'ShowButton' is defined but never used                          no-unused-vars
+  Line 9:42:   'Button' is defined but never used                              no-unused-vars
+  Line 10:10:  'useRecordContext' is defined but never used                    no-unused-vars
+  Line 10:28:  'useRedirect' is defined but never used                         no-unused-vars
+  Line 10:41:  'Link' is defined but never used                                no-unused-vars
+  Line 11:8:   'AddIcon' is defined but never used                             no-unused-vars
+  Line 174:1:  Assign object to a variable before exporting as module default  import/no-anonymous-default-export
+
+src/OrderDetail.js
+  Line 3:16:   'FunctionField' is defined but never used                       no-unused-vars
+  Line 3:52:   'EmailField' is defined but never used                          no-unused-vars
+  Line 4:26:   'ReferenceManyField' is defined but never used                  no-unused-vars
+  Line 5:10:   'TabbedShowLayout' is defined but never used                    no-unused-vars
+  Line 5:28:   'Tab' is defined but never used                                 no-unused-vars
+  Line 5:51:   'TextInput' is defined but never used                           no-unused-vars
+  Line 5:75:   'DateTimeInput' is defined but never used                       no-unused-vars
+  Line 7:10:   'Filter' is defined but never used                              no-unused-vars
+  Line 7:18:   'Pagination' is defined but never used                          no-unused-vars
+  Line 7:30:   'BooleanField' is defined but never used                        no-unused-vars
+  Line 7:44:   'BooleanInput' is defined but never used                        no-unused-vars
+  Line 8:36:   'CreateButton' is defined but never used                        no-unused-vars
+  Line 8:50:   'ShowButton' is defined but never used                          no-unused-vars
+  Line 9:33:   'Divider' is defined but never used                             no-unused-vars
+  Line 9:42:   'Button' is defined but never used                              no-unused-vars
+  Line 10:10:  'useRecordContext' is defined but never used                    no-unused-vars
+  Line 10:28:  'useRedirect' is defined but never used                         no-unused-vars
+  Line 10:41:  'Link' is defined but never used                                no-unused-vars
+  Line 11:8:   'AddIcon' is defined but never used                             no-unused-vars
+  Line 196:1:  Assign object to a variable before exporting as module default  import/no-anonymous-default-export
+
+src/Product.js
+  Line 3:16:   'FunctionField' is defined but never used                       no-unused-vars
+  Line 3:52:   'EmailField' is defined but never used                          no-unused-vars
+  Line 3:64:   'DateField' is defined but never used                           no-unused-vars
+  Line 4:10:   'ReferenceField' is defined but never used                      no-unused-vars
+  Line 5:75:   'DateTimeInput' is defined but never used                       no-unused-vars
+  Line 8:36:   'CreateButton' is defined but never used                        no-unused-vars
+  Line 8:50:   'ShowButton' is defined but never used                          no-unused-vars
+  Line 10:41:  'Link' is defined but never used                                no-unused-vars
+  Line 221:1:  Assign object to a variable before exporting as module default  import/no-anonymous-default-export
+
+src/Region.js
+  Line 3:16:   'FunctionField' is defined but never used                       no-unused-vars
+  Line 3:52:   'EmailField' is defined but never used                          no-unused-vars
+  Line 3:64:   'DateField' is defined but never used                           no-unused-vars
+  Line 3:75:   'NumberField' is defined but never used                         no-unused-vars
+  Line 4:10:   'ReferenceField' is defined but never used                      no-unused-vars
+  Line 4:26:   'ReferenceManyField' is defined but never used                  no-unused-vars
+  Line 5:10:   'TabbedShowLayout' is defined but never used                    no-unused-vars
+  Line 5:28:   'Tab' is defined but never used                                 no-unused-vars
+  Line 5:62:   'NumberInput' is defined but never used                         no-unused-vars
+  Line 5:75:   'DateTimeInput' is defined but never used                       no-unused-vars
+  Line 6:10:   'ReferenceInput' is defined but never used                      no-unused-vars
+  Line 6:26:   'SelectInput' is defined but never used                         no-unused-vars
+  Line 7:30:   'BooleanField' is defined but never used                        no-unused-vars
+  Line 7:44:   'BooleanInput' is defined but never used                        no-unused-vars
+  Line 7:58:   'Labeled' is defined but never used                             no-unused-vars
+  Line 8:10:   'EditButton' is defined but never used                          no-unused-vars
+  Line 8:22:   'DeleteButton' is defined but never used                        no-unused-vars
+  Line 8:36:   'CreateButton' is defined but never used                        no-unused-vars
+  Line 8:50:   'ShowButton' is defined but never used                          no-unused-vars
+  Line 9:42:   'Button' is defined but never used                              no-unused-vars
+  Line 10:10:  'useRecordContext' is defined but never used                    no-unused-vars
+  Line 10:28:  'useRedirect' is defined but never used                         no-unused-vars
+  Line 10:41:  'Link' is defined but never used                                no-unused-vars
+  Line 11:8:   'AddIcon' is defined but never used                             no-unused-vars
+  Line 99:1:   Assign object to a variable before exporting as module default  import/no-anonymous-default-export
+
+src/Shipper.js
+  Line 3:16:   'FunctionField' is defined but never used                       no-unused-vars
+  Line 3:52:   'EmailField' is defined but never used                          no-unused-vars
+  Line 3:64:   'DateField' is defined but never used                           no-unused-vars
+  Line 3:75:   'NumberField' is defined but never used                         no-unused-vars
+  Line 4:10:   'ReferenceField' is defined but never used                      no-unused-vars
+  Line 4:26:   'ReferenceManyField' is defined but never used                  no-unused-vars
+  Line 5:10:   'TabbedShowLayout' is defined but never used                    no-unused-vars
+  Line 5:28:   'Tab' is defined but never used                                 no-unused-vars
+  Line 5:33:   'SimpleShowLayout' is defined but never used                    no-unused-vars
+  Line 5:62:   'NumberInput' is defined but never used                         no-unused-vars
+  Line 5:75:   'DateTimeInput' is defined but never used                       no-unused-vars
+  Line 6:10:   'ReferenceInput' is defined but never used                      no-unused-vars
+  Line 6:26:   'SelectInput' is defined but never used                         no-unused-vars
+  Line 7:18:   'Pagination' is defined but never used                          no-unused-vars
+  Line 7:30:   'BooleanField' is defined but never used                        no-unused-vars
+  Line 7:44:   'BooleanInput' is defined but never used                        no-unused-vars
+  Line 7:58:   'Labeled' is defined but never used                             no-unused-vars
+  Line 8:36:   'CreateButton' is defined but never used                        no-unused-vars
+  Line 8:50:   'ShowButton' is defined but never used                          no-unused-vars
+  Line 9:33:   'Divider' is defined but never used                             no-unused-vars
+  Line 9:42:   'Button' is defined but never used                              no-unused-vars
+  Line 10:10:  'useRecordContext' is defined but never used                    no-unused-vars
+  Line 10:28:  'useRedirect' is defined but never used                         no-unused-vars
+  Line 10:41:  'Link' is defined but never used                                no-unused-vars
+  Line 11:8:   'AddIcon' is defined but never used                             no-unused-vars
+  Line 115:1:  Assign object to a variable before exporting as module default  import/no-anonymous-default-export
+
+src/Supplier.js
+  Line 3:16:   'FunctionField' is defined but never used                       no-unused-vars
+  Line 3:52:   'EmailField' is defined but never used                          no-unused-vars
+  Line 3:64:   'DateField' is defined but never used                           no-unused-vars
+  Line 3:75:   'NumberField' is defined but never used                         no-unused-vars
+  Line 4:10:   'ReferenceField' is defined but never used                      no-unused-vars
+  Line 4:26:   'ReferenceManyField' is defined but never used                  no-unused-vars
+  Line 5:10:   'TabbedShowLayout' is defined but never used                    no-unused-vars
+  Line 5:28:   'Tab' is defined but never used                                 no-unused-vars
+  Line 5:62:   'NumberInput' is defined but never used                         no-unused-vars
+  Line 5:75:   'DateTimeInput' is defined but never used                       no-unused-vars
+  Line 6:10:   'ReferenceInput' is defined but never used                      no-unused-vars
+  Line 6:26:   'SelectInput' is defined but never used                         no-unused-vars
+  Line 7:30:   'BooleanField' is defined but never used                        no-unused-vars
+  Line 7:44:   'BooleanInput' is defined but never used                        no-unused-vars
+  Line 8:36:   'CreateButton' is defined but never used                        no-unused-vars
+  Line 8:50:   'ShowButton' is defined but never used                          no-unused-vars
+  Line 9:28:   'Box' is defined but never used                                 no-unused-vars
+  Line 9:42:   'Button' is defined but never used                              no-unused-vars
+  Line 10:10:  'useRecordContext' is defined but never used                    no-unused-vars
+  Line 10:28:  'useRedirect' is defined but never used                         no-unused-vars
+  Line 10:41:  'Link' is defined but never used                                no-unused-vars
+  Line 10:47:  'required' is defined but never used                            no-unused-vars
+  Line 11:8:   'AddIcon' is defined but never used                             no-unused-vars
+  Line 138:1:  Assign object to a variable before exporting as module default  import/no-anonymous-default-export
+
+src/Territory.js
+  Line 3:69:   'NumberInput' is defined but never used                         no-unused-vars
+  Line 136:1:  Assign object to a variable before exporting as module default  import/no-anonymous-default-export
+
+src/rav4-jsonapi-client/default-settings.js
+  Line 4:31:  'settings' was used before it was defined  no-use-before-define
+
+src/rav4-jsonapi-client/errors.js
+  Line 1:21:   'useNotify' is defined but never used              no-unused-vars
+  Line 18:33:  'HttpErrorHandler' was used before it was defined  no-use-before-define
+
+src/rav4-jsonapi-client/ra-jsonapi-client.js
+  Line 277:13:  'conf' is assigned a value but never used  no-unused-vars
+  Line 440:13:  'conf' is assigned a value but never used  no-unused-vars
+  Line 443:17:  'data' is assigned a value but never used  no-unused-vars
+  Line 491:13:  'conf' is assigned a value but never used  no-unused-vars
+  Line 501:13:  'conf' is assigned a value but never used  no-unused-vars
+  Line 531:15:  'conf' is assigned a value but never used  no-unused-vars
+  Line 551:3:   Unreachable code                           no-unreachable
+
+src/rav4-jsonapi-client/resourceLookup.js
+  Line 103:85:  Array.prototype.map() expects a return value from arrow function  array-callback-return
+
+ERROR in ./src/Union.js
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/src/Union.js: Adjacent JSX elements must be wrapped in an enclosing tag. Did you want a JSX fragment <>...</>? (63:20)
+
+  61 |                             <DeleteButton />
+  62 |                         </Datagrid>
+> 63 |                     </ReferenceManyField>
+     |                     ^
+  64 |                 </Tab>
+  65 |             </TabbedShowLayout>
+  66 |         </Show>
+    at constructor (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:363:19)
+    at FlowParserMixin.raise (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:6609:19)
+    at FlowParserMixin.jsxParseElementAt (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:4754:18)
+    at FlowParserMixin.jsxParseElement (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:4761:17)
+    at FlowParserMixin.parseExprAtom (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:4771:19)
+    at FlowParserMixin.parseExprSubscripts (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:11012:23)
+    at FlowParserMixin.parseUpdate (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:10997:21)
+    at FlowParserMixin.parseMaybeUnary (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:10977:23)
+    at FlowParserMixin.parseMaybeUnaryOrPrivate (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:10830:61)
+    at FlowParserMixin.parseExprOpBaseRightExpr (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:10917:34)
+    at FlowParserMixin.parseExprOpRightExpr (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:10912:21)
+    at FlowParserMixin.parseExprOp (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:10878:27)
+    at FlowParserMixin.parseExprOps (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:10839:17)
+    at FlowParserMixin.parseMaybeConditional (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:10812:23)
+    at FlowParserMixin.parseMaybeAssign (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:10765:21)
+    at /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:3510:39
+    at FlowParserMixin.tryParse (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:6918:20)
+    at FlowParserMixin.parseMaybeAssign (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:3510:18)
+    at FlowParserMixin.parseExpressionBase (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:10718:23)
+    at /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:10714:39
+    at FlowParserMixin.allowInAnd (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:12361:12)
+    at FlowParserMixin.parseExpression (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:10714:17)
+    at FlowParserMixin.jsxParseExpressionContainer (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:4644:31)
+    at FlowParserMixin.jsxParseAttributeValue (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:4616:21)
+    at FlowParserMixin.jsxParseAttribute (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:4665:38)
+    at FlowParserMixin.jsxParseOpeningElementAfterName (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:4679:28)
+    at FlowParserMixin.jsxParseOpeningElementAfterName (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:4080:18)
+    at FlowParserMixin.jsxParseOpeningElementAt (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:4674:17)
+    at FlowParserMixin.jsxParseElementAt (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:4698:33)
+    at FlowParserMixin.jsxParseElementAt (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:4710:32)
+    at FlowParserMixin.jsxParseElementAt (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:4710:32)
+    at FlowParserMixin.jsxParseElementAt (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:4710:32)
+    at FlowParserMixin.jsxParseElement (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:4761:17)
+    at FlowParserMixin.parseExprAtom (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:4771:19)
+    at FlowParserMixin.parseExprSubscripts (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:11012:23)
+    at FlowParserMixin.parseUpdate (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:10997:21)
+    at FlowParserMixin.parseMaybeUnary (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:10977:23)
+    at FlowParserMixin.parseMaybeUnaryOrPrivate (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:10830:61)
+    at FlowParserMixin.parseExprOps (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:10835:23)
+    at FlowParserMixin.parseMaybeConditional (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:10812:23)
+    at FlowParserMixin.parseMaybeAssign (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:10765:21)
+    at /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:3510:39
+    at FlowParserMixin.tryParse (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:6918:20)
+    at FlowParserMixin.parseMaybeAssign (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:3510:18)
+    at /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:10734:39
+    at FlowParserMixin.allowInAnd (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:12361:12)
+    at FlowParserMixin.parseMaybeAssignAllowIn (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:10734:17)
+    at FlowParserMixin.parseParenAndDistinguishExpression (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:11608:28)
+    at FlowParserMixin.parseParenAndDistinguishExpression (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:3603:18)
+    at FlowParserMixin.parseExprAtom (/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/nw_sample/ui/react_admin/node_modules/@babel/parser/lib/index.js:11262:23)
+
+ERROR in [eslint] 
+src/Territory.js
+  Line 12:6:     'Filter' is not defined      react/jsx-no-undef
+  Line 55:38:    'Pagination' is not defined  react/jsx-no-undef
+  Line 100:106:  'required' is not defined    no-undef
+  Line 104:83:   'required' is not defined    no-undef
+  Line 123:106:  'required' is not defined    no-undef
+  Line 127:83:   'required' is not defined    no-undef
+
+src/Union.js
+  Line 63:20:  Parsing error: Adjacent JSX elements must be wrapped in an enclosing tag. Did you want a JSX fragment <>...</>? (63:20)
+
+Search for the keywords to learn more about each error.
+
+webpack compiled with 2 errors and 2 warnings
