@@ -131,6 +131,17 @@ resources:
       resource: Customer
     type: SysEmail
     user_key: id
+  mcp-SysMcp:
+    attributes:
+    - name: request
+      type: textarea
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+      show_when: isInserting == false
+    type: SysMcp
+    user_key: id
 settings:
   HomeJS: /admin-app/home.js
   max_list_columns: 8
