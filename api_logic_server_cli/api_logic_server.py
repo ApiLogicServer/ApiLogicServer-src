@@ -1591,6 +1591,14 @@ from database import <project.bind_key>_models
             log.debug("1. Not Deleting Existing Project")
             log.debug("2. Using Existing Project")
             if self.command == "add_db":
+                check_bind_key_exists = 'DATABASE_URI_' + self.bind_key.upper()
+                config_path = self.project_directory_path / 'config/config.py'
+                bind_key_exists = create_utils.does_file_contain(in_file=config_path,
+                                                                 search_for=check_bind_key_exists)
+                if bind_key_exists:
+                    log.error(f'\nLooks like database already added')
+                    log.error(f'..`{check_bind_key_exists}` found in `config/config.py`\n\n')
+                    sys.exit(1)
                 self.abs_db_url = self.update_config_and_copy_sqlite_db(
                     f".. ..Adding Database [{self.bind_key}] to existing project")
         else:                                                                            # normal path - clone, [overlay nw]

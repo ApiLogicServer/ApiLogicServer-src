@@ -76,22 +76,6 @@ class Product(Base):  # type: ignore
     ItemList : Mapped[List["Item"]] = relationship(back_populates="product")
 
 
-
-class SysMcp(Base):  # type: ignore
-    __tablename__ = 'sys_mcp'
-    _s_collection_name = 'SysMcp'  # type: ignore
-
-    id = Column(Integer, primary_key=True)
-    request = Column(String)
-    request_prompt = Column(String)
-    completion = Column(String)
-
-    # parent relationships (access parent)
-
-    # child relationships (access children)
-
-
-
 class Order(Base):  # type: ignore
     __tablename__ = 'order'
     _s_collection_name = 'Order'  # type: ignore

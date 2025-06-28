@@ -10,6 +10,8 @@ import requests
 from logic_bank.logic_bank import Rule
 from logic_bank.exec_row_logic.logic_row import LogicRow
 from database import models
+from database.mcp_models import SysMcp as SysMcp  # type: ignore
+from sqlalchemy import Column, Integer, String, DECIMAL, Boolean
 from logic_bank.util import ConstraintException
 import integration.mcp.mcp_client_executor as mcp_client_executor
 
@@ -27,7 +29,7 @@ def declare_logic():
     """
 
 
-    def mcp_client_executor_event(row: models.SysMcp, old_row: models.SysMcp, logic_row: LogicRow):
+    def mcp_client_executor_event(row: SysMcp, old_row: SysMcp, logic_row: LogicRow):
         """ 
 
         #als: create an MCP request.  See https://apilogicserver.github.io/Docs/Integration-MCP/
@@ -45,4 +47,4 @@ def declare_logic():
         result = mcp_client_executor.mcp_client_executor(row.request)
         pass
 
-    Rule.row_event(on_class=models.SysMcp, calling=mcp_client_executor_event)  # see above
+    Rule.row_event(on_class=SysMcp, calling=mcp_client_executor_event)  # see above

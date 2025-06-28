@@ -42,6 +42,12 @@ als start --volume=ApiLogicServer
 
 sh cmd_venv.sh " ApiLogicServer create --project_name=TVF --extended_builder=$ --db_url=mssql+pyodbc://sa:Posey3861@localhost:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no"
 
+gl create --existing-db=sqlite:///gl-sample-dbs/todo_example/todos.db --mcp --vibe
+gl create --new-db-from-prompt=gl-samples-prompts/basic_demo.prompt --mcp --vibe
+
+
+
+
 Docker Manager: https://code.visualstudio.com/docs/devcontainers/containers#_trusting-your-workspace
 
   $ start docker; als start; exit
