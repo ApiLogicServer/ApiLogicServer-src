@@ -31,5 +31,13 @@ class GenMCP:
 
         shutil.copyfile(api_logic_server_path / 'templates/mcp_client_executor_request.py',
                         project.project_directory_path / 'logic/logic_discovery/mcp_client_executor_request.py')
+        
+        if admin_app:
+            lines = create_utils.read_file(path = api_logic_server_path / 'fragments/mcp_admin.yml')
+            admin_yaml_path = project.project_directory_path / 'ui/admin/admin.yaml'
+            create_utils.insert_lines_at(lines = lines,
+                                         at = 'settings:',
+                                         file_name = admin_yaml_path)
+            pass
         pass
 

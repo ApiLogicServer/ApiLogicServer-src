@@ -1,0 +1,11 @@
+  mcp-SysMcp:
+    attributes:
+    - name: request
+      type: textarea
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+      show_when: isInserting == false
+    type: SysMcp
+    user_key: id
