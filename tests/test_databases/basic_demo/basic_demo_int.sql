@@ -76,13 +76,6 @@ CREATE TABLE IF NOT EXISTS sys_email (
         FOREIGN KEY(customer_id) REFERENCES customer (id)
 );
 
-CREATE TABLE sys_mcp (
-        id INTEGER NOT NULL, 
-        request VARCHAR, 
-        request_prompt VARCHAR,
-        completion VARCHAR, 
-        PRIMARY KEY (id)
-);
 
 COMMIT;
 

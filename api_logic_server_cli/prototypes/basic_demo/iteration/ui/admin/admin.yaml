@@ -131,17 +131,6 @@ resources:
       resource: Customer
     type: SysEmail
     user_key: id
-  SysMcp:
-    attributes:
-    - label: ' id*'
-      name: id
-      search: true
-      sort: true
-    - name: request
-    - name: request_prompt
-    - name: completion
-    type: SysMcp
-    user_key: id
 settings:
   HomeJS: /admin-app/home.js
   max_list_columns: 8

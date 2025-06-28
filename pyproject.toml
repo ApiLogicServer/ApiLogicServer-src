@@ -127,3 +127,5 @@ Issues = "https://github.com/ApiLogicServer/ApiLogicServer-src/issues"
 [project.scripts]
 ApiLogicServer = "api_logic_server_cli.cli:start"
 als = "api_logic_server_cli.cli:start" 
+gl = "api_logic_server_cli.cli:start" 
+genai-logic = "api_logic_server_cli.cli:start"

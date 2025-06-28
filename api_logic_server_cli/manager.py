@@ -31,10 +31,32 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path,
         clean (bool): Overlay existing manager (projects and web_genai retained)
         open_with (str): IDE to use
         api_logic_server_path (Path): _description_
-        volume (str, optional): _description_. Defaults to "".
+        volume (str, optional): for docker. Defaults to "".
         open_manager (bool, optional): Whether to open IDE at Manager. Defaults to True.
+        samples (bool, optional): Whether to create large samples (prevent win max file length)
     """    
     
+    def create_sym_links(cli_path: Path, mgr_path: Path):
+        """
+        Creates symbolic links to sample dbs and prompts (clearer than db abbreviations).
+
+        Args:
+            cli_path (Path): loc of cli.py in the manager's venv
+            mgr_path (Path): path of manager being created
+
+        Side Effects:
+            Creates a symbolic link from 'cli_path/database/basic_demo.sqlite' to 'mgr_path/samples/dbs/basic_demo'.
+            Prints a confirmation message upon successful creation.
+
+        Raises:
+            OSError: If the symbolic link cannot be created (e.g., due to permissions or existing link).
+        """
+        
+        # create symbolic link - thanks https://www.geeksforgeeks.org/python/python-os-symlink-method/
+        os.symlink(cli_path.parent / 'database/basic_demo.sqlite', mgr_path / 'samples/dbs/basic_demo.sqlite')
+        print("Link created")
+
+
     log = logging.getLogger(__name__)
 
     project = PR.ProjectRun(command= "start", project_name='ApiLogicServer', db_url='sqlite', execute=False)
@@ -55,6 +77,7 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path,
     log.info(f"\nStarting manager at: {os.getcwd()}")  # eg, ...ApiLogicServer-dev/clean/ApiLogicServer
 
     docker_volume = ''
+    ''' normally volume " '/'  '''
     if project.is_docker:
         # volume typically /ApiLogicServer... % docker run -it --name api_logic_server --rm --net dev-network -p 5656:5656 -p 5002:5002 -v ${PWD}:/ApiLogicServer apilogicserver/api_logic_server
         if do_local_docker_test == False:   # normal path
@@ -161,7 +184,7 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path,
         codegen_logger.setLevel(codegen_logger_save_level)
     pass
 
-    # find cli in subdirectories of the lib path for manager run launches, and update run/debug config
+    # find cli in subdirectories of the lib path for manager run launches, and update `.vscode/launch.json`
     if manager_exists or project.is_docker:
         log.debug(f"    docker -- not updating .env and launch.json\n\n")
     else:
@@ -187,6 +210,7 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path,
         create_utils.replace_string_in_file(search_for = 'cli_path',
                                             replace_with=str(cli_str),
                                             in_file=vscode_launch_path)
+        create_sym_links(cli_path=cli_path, mgr_path=to_dir)
 
     if env_path.exists():
         create_utils.replace_string_in_file(search_for = 'APILOGICSERVER_AUTO_OPEN=code',
