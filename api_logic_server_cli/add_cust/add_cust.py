@@ -158,7 +158,7 @@ def add_basic_demo_customizations(project: Project, do_show_messages: bool = Tru
         # log.info(".. curl -X 'POST' 'http://localhost:5656/api/SysMcp/' -H 'accept: application/vnd.api+json' -H 'Content-Type: application/json' -d '{ \"data\": { \"attributes\": {\"request\": \"List the orders date_shipped is null and CreatedOn before 2023-07-14, and send a discount email (subject: '\\''Discount Offer'\\'') to the customer for each one.\"}, \"type\": \"SysMcp\"}}'")
         log.info('')
         log.info(f'Next Steps: activate security')
-        log.info(f'..ApiLogicServer add-auth --db_url=auth')
+        log.info(f'..genai-logic add-auth --db_url=auth')
         if project.is_tutorial == False:
             log.info(".. complete\n")
 
@@ -178,7 +178,7 @@ def add_basic_demo_iteration(project: Project, do_show_messages: bool = True, do
     create_utils.recursive_overwrite(nw_path, project.project_directory)  # ~/dev/ApiLogicServer/ApiLogicServer-dev/servers/basic_demo
     if do_show_messages:
         log.info("\nNext Step:")
-        log.info(f'..ApiLogicServer rebuild-from-database --db_url=sqlite:///database/db.sqlite')
+        log.info(f'..genai-logic rebuild-from-database --db_url=sqlite:///database/db.sqlite')
         log.info(".. complete\n")
 
 
@@ -210,7 +210,7 @@ def add_sample_ai_customizations(project: Project, do_show_messages: bool = True
         log.info(f'..logic/declare_logic.py')
         log.info(f'..security/declare_security.py\n')
         log.info(f'Next Steps: activate security')
-        log.info(f'..ApiLogicServer add-auth --db_url=auth')
+        log.info(f'..genai-logic add-auth --db_url=auth')
         if project.is_tutorial == False:
             log.info(".. complete\n")
 
@@ -230,7 +230,7 @@ def add_sample_ai_iteration(project: Project, do_show_messages: bool = True, do_
     create_utils.recursive_overwrite(nw_path, project.project_directory)  # '/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/tutorial/1. Instant_Creation'
     if do_show_messages:
         log.info("\nNext Step:")
-        log.info(f'..ApiLogicServer rebuild-from-database --project_name=./ --db_url=sqlite:///database/db.sqlite')
+        log.info(f'..genai-logic rebuild-from-database --project_name=./ --db_url=sqlite:///database/db.sqlite')
         log.info(".. complete\n")
 
 

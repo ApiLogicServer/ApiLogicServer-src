@@ -55,9 +55,9 @@ echo " "
 if [ ! -f "./database/authentication_models.py" ] 
 then
     echo "\nYou need to activate security first.  With you database running, ...\n" 
-    echo "ApiLogicServer add-auth --project_name=. --db_url=mysql+pymysql://root:p@localhost:3306/authdb, or..."
-    echo "ApiLogicServer add-auth --project_name=. --db_url=postgresql://postgres:p@localhost/authdb", or...
-    echo "ApiLogicServer add-auth --project_name=. --db_url=authdb"
+    echo "genai-logic add-auth --project_name=. --db_url=mysql+pymysql://root:p@localhost:3306/authdb, or..."
+    echo "genai-logic add-auth --project_name=. --db_url=postgresql://postgres:p@localhost/authdb", or...
+    echo "genai-logic add-auth --project_name=. --db_url=authdb"
     echo "\nRebuild your image"
     echo "\nThen, stop mysql/postgres containers to avoid port conflicts with services\n"
     exit 1

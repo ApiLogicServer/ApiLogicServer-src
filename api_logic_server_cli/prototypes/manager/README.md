@@ -352,7 +352,7 @@ The following `add-cust` process simulates an iteration:
 
 * acquires a new database with `Product.CarbonNeutral`
 
-* issues the `ApiLogicServer rebuild-from-database` command that rebuilds your project (the database models, the api), while preserving the customizations we made above.
+* issues the `genai-logic rebuild-from-database` command that rebuilds your project (the database models, the api), while preserving the customizations we made above.
 
 * acquires a revised `ui/admin/admin.yaml` that shows this new column in the admin app
 

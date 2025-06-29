@@ -794,7 +794,7 @@ def genai_graphics(ctx, using, genai_version: str, replace_with: str):
 @click.pass_context
 def genai_admin_app(ctx, app_name: str, retries: int, schema: str, genai_version: str):
     """
-        Adds a customizable react app to project
+        Creates a customizable react app in ui/, ready for vibe
     """
     global command
     project_dir = resolve_blank_project_name('')
@@ -1432,7 +1432,7 @@ def rebuild_from_database(ctx, project_name: str, db_url: str, api_name: str, no
 \b
         ex
 \b
-        ApiLogicServer rebuild-from-database --project_name=~/dev/servers/ApiLogicProject --db_url=nw
+        genai-logic rebuild-from-database --project_name=~/dev/servers/ApiLogicProject --db_url=nw
 
     """
     db_types = ""
