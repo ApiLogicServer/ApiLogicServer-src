@@ -2096,7 +2096,7 @@ def check_ports():
 
 
 def start():               # target of setup.py
-    sys.stdout.write("\nWelcome to API Logic Server " + PR.__version__ + "\n\n")
+    sys.stdout.write("\nWelcome to Genai-Logic " + PR.__version__ + "\n\n")
     hostname, local_ip = check_ports()  #  = socket.gethostname()
     # sys.stdout.write("    SQLAlchemy Database URI help: https://docs.sqlalchemy.org/en/14/core/engines.html\n")
     main(obj={})

@@ -966,7 +966,7 @@ def call_chatgpt(messages: List[Dict[str, str]], api_version: str, using: str, r
         log.error(f"\n\nError: ChatGPT call failed\n- please see https://apilogicserver.github.io/Docs/WebGenAI-CLI/#configuratio\n{inst}\n\n")
         sys.exit(1)
 
-def get_manager_path(use_env: bool = False) -> Path:
+def get_manager_path(project: object = None) -> Path:
     """ Checks cwd, parent, and grandparent for system/genai
 
     * Possibly could add cli arg later
@@ -978,46 +978,47 @@ def get_manager_path(use_env: bool = False) -> Path:
         Path: Manager path (contains system/genai)
     """
 
-    if use_env and os.getenv("APILOGICSERVER_HOME") is not None:
-        result_path = Path(os.getenv("APILOGICSERVER_HOME")).joinpath('api_logic_server_cli/prototypes/manager')
+    if project is not None:
+        result_path = project.manager_path
+        check_system_genai = result_path.joinpath('system/genai/temp')    
+        if check_system_genai.exists():
+            return result_path
         return result_path
 
     result_path = Path(os.getcwd())  # normal case - project at manager root
-    check_system_genai = result_path.joinpath('system/genai')    
+    check_system_genai = result_path.joinpath('system/genai/temp')    
     if check_system_genai.exists():
         return result_path
     
     result_path = result_path.parent  # try pwd parent
-    check_system_genai = result_path.joinpath('system/genai')
+    check_system_genai = result_path.joinpath('system/genai/temp')
     if check_system_genai.exists():
         return result_path
     
     result_path = result_path.parent  # try pwd grandparent
-    check_system_genai = result_path.joinpath('system/genai')
+    check_system_genai = result_path.joinpath('system/genai/temp')
     if check_system_genai.exists():
         return result_path
     
     result_path = result_path.parent 
-    check_system_genai = result_path.joinpath('system/genai')
+    check_system_genai = result_path.joinpath('system/genai/temp')
     if check_system_genai.exists():
         return result_path
     
     result_path = result_path.parent  
-    check_system_genai = result_path.joinpath('system/genai')
+    check_system_genai = result_path.joinpath('system/genai/temp')
     if check_system_genai.exists():
         return result_path
     
     result_path = result_path.parent  
-    check_system_genai = result_path.joinpath('system/genai')
+    check_system_genai = result_path.joinpath('system/genai/temp')
     if check_system_genai.exists():
         return result_path
 
     result_path = result_path.parent  # try ancestors - this is for import testing
-    check_system_genai = result_path.joinpath('system/genai')
+    check_system_genai = result_path.joinpath('system/genai/temp')
 
     if not check_system_genai.exists():
-        if use_env:
-            result_path = Path(create_utils.get_api_logic_server_dir()).joinpath('prototypes/manager')
         check_system_genai.exists(), f"Manager Directory not found and APILOGICSERVER_HOME not set: {check_system_genai}"
     return result_path
 
