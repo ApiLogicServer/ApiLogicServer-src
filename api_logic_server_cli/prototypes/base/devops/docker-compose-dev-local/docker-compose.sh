@@ -21,7 +21,7 @@ pwd
 if [ ! -f "./../../database/database_discovery/authentication_models.py" ] 
 then
     echo "\nYou need to activate security first.  With mysql-container running...\n" 
-    echo "ApiLogicServer add-auth --project_name=. --db_url=mysql+pymysql://root:p@localhost:3306/authdb"
+    echo "genai-logic add-auth --project_name=. --db_url=mysql+pymysql://root:p@localhost:3306/authdb"
     echo "\nRebuild your image"
     echo "\nThen, stop mysql-container\n"
     exit 1
