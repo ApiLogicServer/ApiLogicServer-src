@@ -6,7 +6,7 @@ from pathlib import Path
 import importlib
 from api_logic_server_cli.genai.genai_utils import call_chatgpt
 import requests
-import os, time
+import os, time, sys
 import datetime
 import create_from_model.api_logic_server_utils as utils
 import time
@@ -43,7 +43,7 @@ class GenAIAdminApp:
         
         self.api_version = genai_version
         self.project_root = project.project_directory_path
-        self.app_templates_path = genai_svcs.get_manager_path(use_env=True).joinpath('system/genai/app_templates')
+        self.app_templates_path = genai_svcs.get_manager_path(project=project).joinpath('system/genai/app_templates')
 
         log.info(f'\ngenai_app here..')
         log.info(f'..model: {schema}')
@@ -56,13 +56,18 @@ class GenAIAdminApp:
         self.admin_yaml_path = self.project_root / f"ui/admin/{schema}"
         self.admin_config_prompt_path = self.app_templates_path / f"app_learning/Admin-config-prompt.md"
         self.admin_json_api_model_prompt_path = self.app_templates_path / f"app_learning/Admin-json-api-model-prompt.md"
-        assert self.admin_config_prompt_path.exists(), "sys err - self.admin_config_prompt_path"
-        assert self.admin_json_api_model_prompt_path.exists(), "sys err - self.admin_json_api_model_prompt_path"
+        if not self.admin_config_prompt_path.exists():
+            log.error('\nUnable to find Manager for app_learning/Admin-config-prompt.md')
+            log.error('..Please set env variable APILOGICSERVER_HOME to manager root\n')
+            sys.exit(1)
+        if not self.admin_json_api_model_prompt_path.exists():
+            log.error('\nUnable to find Manager for app_learning/Admin-json-api-model-prompt.md')
+            log.error('..Please set env variable APILOGICSERVER_HOME to manager root\n')
+            sys.exit(1)
 
         self.ui_project_path = self.project_root / f"ui/{app_name}"
         self.ui_src_path = self.ui_project_path / "src"
 
-        self.app_templates_path = genai_svcs.get_manager_path(use_env=True).joinpath('system/genai/app_templates')
         self.react_admin_template_path = self.app_templates_path / 'react-admin-template'
         self.prompts_path = self.app_templates_path / "app_learning"
         # self.admin_app_learning = utils.read_file(self.prompts_path / "Admin-App-Learning-Prompt.md")

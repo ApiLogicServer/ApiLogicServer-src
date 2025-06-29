@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "15.00.28"  # last public release: 15.00.25 (15.00.12)
+__version__ = "15.00.30"  # last public release: 15.00.25 (15.00.12)
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t06/26/2024 - 15.00.28: Tech Preview: als genai-app w/ sra provider+model+grid_cascadeAdd, imports+, bug [96] \n"\
+    "\t06/28/2024 - 15.00.29: Tech Preview: als genai-app w/ sra provider+model+grid_cascadeAdd, imports+, bug [96] \n"\
     "\t06/10/2024 - 15.00.12: MCP Security, win fixes for readme, graphics quotes \n"\
     "\t06/08/2024 - 15.00.10: MCP, optional shortening of stacktrace lines, bugfix[92] \n"\
     "\t05/16/2024 - 14.05.00: safrs 3.1.7, running mcp preview \n"\
@@ -946,9 +946,16 @@ class ProjectRun(Project):
                     defaultInterpreterPath = self.api_logic_server_dir_path.parent.parent.parent.joinpath('clean/ApiLogicServer/venv/bin/python')
         self.default_interpreter_path = defaultInterpreterPath
         """ used to compute manager_path """
-        self.manager_path = self.default_interpreter_path.parent.parent.parent
-        log.debug(f'.. ..Manager path: {self.manager_path}')  # eg ApiLogicServer/ApiLogicServer-dev/clean/ApiLogicServer
-        log.debug(f'.. ..Interp path: manager_path / venv/bin/python')
+        self.venv_path = Path(sys.prefix) if is_docker() == False else Path('/home/api_logic_server/api_logic_server_cli')
+        self.manager_path = self.venv_path.parent
+        check_system_genai = self.manager_path.joinpath('system/genai/temp')
+        if not check_system_genai.exists():
+            self.manager_path = (self.venv_path / '../api_logic_server_cli/prototypes/manager').resolve()
+            log.debug(f'.. ..Manager path from dev env - customizations not active')  # eg ...ApiLogicServer-src/api_logic_server_cli/prototypes/manager
+        log.debug(f'.. ..Manager path: {self.manager_path}')  
+        # log.debug(f'.. ..Interp path: {self.manager_path / 'venv/bin/python'}')
+        if sys.prefix == sys.base_prefix:
+            log.warning(f'.. ..Warning - venv not being used: {self.venv_path}')
 
         self.api_logic_server_home = self.api_logic_server_dir_path.parent
 
@@ -1595,7 +1602,7 @@ from database import <project.bind_key>_models
                 config_path = self.project_directory_path / 'config/config.py'
                 bind_key_exists = create_utils.does_file_contain(in_file=config_path,
                                                                  search_for=check_bind_key_exists)
-                if bind_key_exists:
+                if bind_key_exists and self.bind_key != 'authentication':
                     log.error(f'\nLooks like database already added')
                     log.error(f'..`{check_bind_key_exists}` found in `config/config.py`\n\n')
                     sys.exit(1)
