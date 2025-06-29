@@ -447,7 +447,7 @@ def curl_test(ctx, message):
               help="App directory name")
 @click.option('--admin-app', 'admin_app',
               default='admin',
-              help="Input admin app")
+              help="Input admin app (schema)")
 @click.pass_context
 def app_create(ctx, project_name, app, admin_app):
     """
@@ -782,6 +782,9 @@ def genai_graphics(ctx, using, genai_version: str, replace_with: str):
 @click.option('--app-name', 'app_name',
               default='react_app',
               help="Name of generated app in ui/")
+@click.option('--retries',
+              default=1,
+              help="lint retries - 1 means none (see setup)")
 @click.option('--schema',
               default='admin.yaml',
               help="Model file in ui/admin/")
@@ -789,7 +792,7 @@ def genai_graphics(ctx, using, genai_version: str, replace_with: str):
               default='gpt-4o',
               help="Eg, gpt-3.5-turbo, gpt-4o")
 @click.pass_context
-def genai_admin_app(ctx, app_name: str, schema: str, genai_version: str):
+def genai_admin_app(ctx, app_name: str, retries: int, schema: str, genai_version: str):
     """
         Adds a customizable react app to project
     """
@@ -814,7 +817,7 @@ def genai_admin_app(ctx, app_name: str, schema: str, genai_version: str):
         log.info(f'... Typical usage - cd into project, use --project_name=. \n')
         exit (1)
     from api_logic_server_cli.genai.genai_admin_app import GenAIAdminApp
-    genai_admin = GenAIAdminApp(project=project, app_name=app_name, schema=schema, genai_version=genai_version)
+    genai_admin = GenAIAdminApp(project=project, app_name=app_name, schema=schema, retries=retries, genai_version=genai_version)
     pass
     log.info("")
 

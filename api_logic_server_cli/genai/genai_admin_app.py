@@ -27,6 +27,7 @@ import json
 from pathlib import Path
 from openai import OpenAI
 import yaml
+import subprocess
 import api_logic_server_cli.genai.genai_svcs as genai_svcs
 
 log = logging.getLogger(__name__)
@@ -38,10 +39,13 @@ class JSResponseFormat(BaseModel):  # must match system/genai/prompt_inserts/res
 
 class GenAIAdminApp:
 
-    def __init__(self, project: Project, app_name: str, schema: str, genai_version: str):
+    def __init__(self, project: Project, app_name: str, schema: str, genai_version: str, retries: int):
         self.start_time = time.time()
         
+        self.project = project
         self.api_version = genai_version
+        self.retries = retries
+
         self.project_root = project.project_directory_path
         self.app_templates_path = genai_svcs.get_manager_path(project=project).joinpath('system/genai/app_templates')
 
@@ -132,7 +136,6 @@ class GenAIAdminApp:
         def fix_resource(genai_app: GenAIAdminApp, raw_source: str) -> str:
             ''' Remove occasional begin/end code markers <br>
             And horrific override of ChatGPT refusal to generate imports AS DIRECTED!<br>
-            ToDo: lint, and repeat generation if errors detected
             '''
 
             source_lines = raw_source.splitlines()
@@ -145,13 +148,38 @@ class GenAIAdminApp:
                         continue
                     else:
                         break
-                if do_mandatory_imports := True and not imports_done and ' props ' in each_line:
+                if do_mandatory_imports := True and not imports_done and 'props' in each_line:
                     result_lines = list(genai_app.standard_imports)
                     imports_done = True
                 result_lines.append(each_line)              
+            parse_result = True
             # return source_lines as a string
             return "\n".join(result_lines)
 
+        def js_lint_source_code(target_file: Path):
+            # js lint target_file: npx eslint target_file.js
+            # needs: eslint
+            # needs: npm install eslint-plugin-jsdoc
+            # works manually: npx eslint /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/servers/basic_demo/ui/basic_demo_app/src/Customer.js -c .eslintrc.js
+            # failing: Value for 'config' of type 'path::String' required.\nYou're using eslint.config.js
+            config = self.project.api_logic_server_dir_path / 'tools/.eslintrc.js'
+            assert config.exists()
+            try:  
+                result = subprocess.run(
+                    ["npx", "eslint", str(target_file), '-c ' + str(config)[1:]],
+                    capture_output=True,
+                    text=True
+                )
+                if result.returncode == 0:
+                    source_code_fixed = True
+                else:
+                    log.warning(f"ESLint issues in {target_file}:\n{result.stdout}\n{result.stderr}")
+                    source_code_fixed = False
+            except Exception as e:
+                log.warning(f"Could not lint {target_file}: {e}")
+                # If linting fails, assume code is okay to proceed
+                source_code_fixed = True
+            return source_code_fixed
 
         for each_resource_name, each_resource in self.resources.items():
             learning = self.admin_app_resource_learning
@@ -159,20 +187,33 @@ class GenAIAdminApp:
             messages = [
                 {"role": "user", "content": "You are a helpful expert in react and JavaScript"},
                 {"role": "user", "content": learning},
-                # {"role": "user", "content": example_image_content},
-                # {"role": "user", "content": f'Schema:\n{self.schema_yaml}'},
                 {"role": "user", "content": f'Schema:\n{self.schema}'},
                 {"role": "user", "content": f'Generate the full javascript source code for the `{each_resource_name}.js` React Admin file, formatted as a JSResponseFormat'}]
             save_response = self.project_root / f"docs/admin_app/{each_resource_name}"
-            output = genai_svcs.call_chatgpt(messages = messages, 
-                                             api_version=self.api_version,
-                                             using=save_response,
-                                             response_as=JSResponseFormat)
-            response_dict = json.loads(output)
-            target_file = self.ui_src_path / f"{each_resource_name}.js"
-            source_code = fix_resource(self, response_dict['code'])
-            utils.write_file(target_file, source_code)
-            log.info(f"..✅ Wrote: {each_resource_name}.js")
+            retry_number = 0
+            
+            max_retries = 2
+            while retry_number <= self.retries:  # loop until lint succeeds, max retry_number times
+                retry_number += 1
+                output = genai_svcs.call_chatgpt(
+                    messages=messages,
+                    api_version=self.api_version,
+                    using=save_response,
+                    response_as=JSResponseFormat
+                )
+                response_dict = json.loads(output)
+                target_file = self.ui_src_path / f"{each_resource_name}.js"
+                source_code = fix_resource(self, response_dict['code'])
+                utils.write_file(target_file, source_code)
+                source_code_fixed = True
+                if self.retries > 1:  # 1 retry (current , per setup issues) means no lint
+                    source_code_fixed = js_lint_source_code(target_file=target_file)
+                    if source_code_fixed:
+                        break
+            if source_code_fixed:
+                log.info(f"..✅ Wrote: {each_resource_name}.js")
+            else:
+                log.warning(f"..❌ {self.retries} retries did not fix: {each_resource_name}.js")
 
 
     def b_generate_app_js(self):
