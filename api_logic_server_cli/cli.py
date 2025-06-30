@@ -12,6 +12,8 @@ To add a new arg:
     * update Project.run() 
 
 Main code is api_logic_server.py (PR)
+
+To expand commands: ctx.forward(existing_command))
 '''
 
 from contextlib import closing
@@ -778,10 +780,13 @@ def genai_graphics(ctx, using, genai_version: str, replace_with: str):
     pass
     log.info("")
 
-@main.command("genai-app", cls=HideDunderCommand)
+@main.command("genai-add-app", cls=HideDunderCommand)
 @click.option('--app-name', 'app_name',
               default='react_app',
               help="Name of generated app in ui/")
+@click.option('--vibe/--no-vibe',
+              default=True, is_flag=True,
+              help="Show vibe docs")
 @click.option('--retries',
               default=1,
               help="lint retries - 1 means none (see setup)")
@@ -792,7 +797,7 @@ def genai_graphics(ctx, using, genai_version: str, replace_with: str):
               default='gpt-4o',
               help="Eg, gpt-3.5-turbo, gpt-4o")
 @click.pass_context
-def genai_admin_app(ctx, app_name: str, retries: int, schema: str, genai_version: str):
+def genai_add_app(ctx, app_name: str, vibe: click.BOOL, retries: int, schema: str, genai_version: str):
     """
         Creates a customizable react app in ui/, ready for vibe
     """
@@ -817,7 +822,7 @@ def genai_admin_app(ctx, app_name: str, retries: int, schema: str, genai_version
         log.info(f'... Typical usage - cd into project, use --project_name=. \n')
         exit (1)
     from api_logic_server_cli.genai.genai_admin_app import GenAIAdminApp
-    genai_admin = GenAIAdminApp(project=project, app_name=app_name, schema=schema, retries=retries, genai_version=genai_version)
+    genai_admin = GenAIAdminApp(project=project, app_name=app_name, vibe=vibe, schema=schema, retries=retries, genai_version=genai_version)
     pass
     log.info("")
 
