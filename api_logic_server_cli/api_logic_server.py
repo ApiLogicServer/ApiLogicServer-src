@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "15.00.32"  # last public release: 15.00.25 (15.00.12)
+__version__ = "15.00.33"  # last public release: 15.00.25 (15.00.12)
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t06/29/2024 - 15.00.32: Tech Preview: genai-logic genai-add-app --vibe, bug [96] \n"\
+    "\t06/30/2024 - 15.00.33: Tech Preview: genai-logic genai-add-app --vibe, bug [96, 97] \n"\
     "\t06/10/2024 - 15.00.12: MCP Security, win fixes for readme, graphics quotes \n"\
     "\t06/08/2024 - 15.00.10: MCP, optional shortening of stacktrace lines, bugfix[92] \n"\
     "\t05/16/2024 - 14.05.00: safrs 3.1.7, running mcp preview \n"\
