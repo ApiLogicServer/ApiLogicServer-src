@@ -120,6 +120,11 @@ class OntCreator(object):
             if each_resource["hidden"] == True:
                 continue
             each_entity = self.create_model_entity(each_resource, resources=resources)
+            is_missing = not each_resource_name in resources
+            if is_missing:  # might occur with add-db
+                log.warning(f"\n⚠️ Warning - ont_create() finds admin.yaml resource '{each_resource_name}' - not present in database model")
+                log.warning(f"..Can occur when using multiple databases - update your ontimize app as required")
+                continue
             app_model_out.entities[each_resource_name] = each_entity
 
             app_model_out.entities[each_resource_name].columns = []
@@ -249,7 +254,7 @@ class OntCreator(object):
             if compute_type:
                 is_missing = not each_resource_name in resources
                 if is_missing:  # might occur with add-db, using wrong model
-                    sys.exit(f"Sys Err - ont_create missing resource: {each_resource_name}\n\n")
+                    sys.exit(f"❌ Sys Err - ont_create missing resource: {each_resource_name}\n\n")
                 else:
                     resource = resources[each_resource_name]
                     resource_attributes = resource.attributes
