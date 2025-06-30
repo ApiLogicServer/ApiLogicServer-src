@@ -39,7 +39,7 @@ class JSResponseFormat(BaseModel):  # must match system/genai/prompt_inserts/res
 
 class GenAIAdminApp:
 
-    def __init__(self, project: Project, app_name: str, schema: str, genai_version: str, retries: int):
+    def __init__(self, project: Project, app_name: str, vibe: bool, schema: str, genai_version: str, retries: int):
         self.start_time = time.time()
         
         self.project = project
@@ -108,6 +108,8 @@ class GenAIAdminApp:
         log.info(f'> cd ui/{app_name}')
         log.info('> npm install')
         log.info('> npm start\n')
+        if vibe:
+            log.info('\n💡 Suggestion: Customize with Vibe: https://apilogicserver.github.io/Docs/Admin-Vibe/#vibe-customization')
 
     def read_standard_imports(self) -> List[str]:
         '''grr
