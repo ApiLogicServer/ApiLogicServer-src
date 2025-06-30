@@ -53,8 +53,11 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path,
         """
         
         # create symbolic link - thanks https://www.geeksforgeeks.org/python/python-os-symlink-method/
-        os.symlink(cli_path.parent / 'database/basic_demo.sqlite', mgr_path / 'samples/dbs/basic_demo.sqlite')
-        print("Link created")
+        try:
+            os.symlink(cli_path.parent / 'database/basic_demo.sqlite', mgr_path / 'samples/db/basic_demo.sqlite')
+            print("Link created")
+        except Exception as e:
+            pass
 
 
     log = logging.getLogger(__name__)
