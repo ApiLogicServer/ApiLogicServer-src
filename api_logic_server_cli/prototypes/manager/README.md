@@ -1,14 +1,14 @@
 ---
 title: Welcome
 Description: Instant mcp-enabled microservices, standard projects, declarative business logic
-Source: docs//Sample-Basic-Tour
-version info: 15.01.00 (06/08/2025)
+Source: docs//Sample-Basic-Tour.md
+version info: 15.01.35 (07/01/2025) installed version
 Used: Manager Readme
-Instructions: Copy in Sample-Basic-Demo (Replace "We'll illustrate" up to "Explore GenAI CLI")
+Instructions: Copy in Sample-Basic-Demo (Replace "This illustrates" up to "Explore GenAI CLI")
 ---
 <style>
-  -typeset h1,
-  -content__button {
+  .md-typeset h1,
+  .md-content__button {
     display: none;
   }
 </style>
@@ -19,7 +19,7 @@ Instructions: Copy in Sample-Basic-Demo (Replace "We'll illustrate" up to "Explo
 
 2. ***Customize*** with **Declarative Rules** and Python in your IDE, standard container deployment
 
-You are in the [API Logic Server Manager](https://apilogicserver.github.io/Docs/Manager).  This is a good place to manage projects, create notes and resources, etc.
+You are in the [API Logic Server Manager](Manager.md).  This is a good place to manage projects, create notes and resources, etc.
 
 &nbsp;
 
@@ -27,7 +27,7 @@ You are in the [API Logic Server Manager](https://apilogicserver.github.io/Docs/
 
 **Evaluation Guide:** click on the disclosure buttons, below.   
 
-This illustrates basic [GenAI-Logic](https://www.genai-logic.com/product/key-features) operation: 
+This illustrates basic [GenAI-Logic](https://www.genai-logic.com/product/key-features){:target="_blank" rel="noopener"} operation: 
 
 1. Creating projects from new or existing databases, providing a MCP-enabled API and an Admin App
 2. Adding declarative logic and security, and 
@@ -36,12 +36,16 @@ This illustrates basic [GenAI-Logic](https://www.genai-logic.com/product/key-fea
 
 The entire process takes 20 minutes; usage notes:
 
-* Important: look for **readme files** in created projects.
-* You may find it more convenient to view this [in your Browser](https://apilogicserver.github.io/Docs/Sample-Basic-Tour).
+* Important: look for **readme files** in created projects
+* You may find it more convenient to view this [in your Browser](Sample-Basic-Tour.md)
+* A slide show summary is available [on our Web Site](https://www.genai-logic.com/product/tour){:target="_blank" rel="noopener"}
+
+![product-tour](images/basic_demo/product-tour.png)
+
 
 &nbsp;
 
-## 1. Automation: Project Creation
+## 1. Create and Run
 
 API Logic Server can create projects from existing databases, or use GenAI to create projects with new databases.  Let's see how.
 
@@ -51,17 +55,17 @@ API Logic Server can create projects from existing databases, or use GenAI to cr
 Create the project - use the CLI (**Terminal > New Terminal**), :
 
 ```bash
-$ ApiLogicServer create --project_name=basic_demo --db_url=basic_demo
+$ genai-logic create --project_name=basic_demo --db_url=basic_demo
 ```
 
-> Note: the `db_url` value is [an abbreviation](https://apilogicserver.github.io/Docs/Data-Model-Examples/) for a test database provided as part of the installation.  You would normally supply a SQLAlchemy URI to your existing database.
+> Note: the `db_url` value is [an abbreviation](https://apilogicserver.github.io/Docs/Data-Model-Examples/){:target="_blank" rel="noopener"} for a test database provided as part of the installation.  You would normally supply a SQLAlchemy URI to your existing database, e.g. <br>`genai-logic create  --project_name=basic_demo --db_url=sqlite:///samples/dbs/basic_demo.sqlite`.
 
 
 <details markdown>
 
 <summary> The database is Customer, Orders, Items and Product</summary>
 
-![basic_demo_data_model](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/basic_demo/basic_demo_data_model.jpeg?raw=true)
+![basic_demo_data_model](images/basic_demo/basic_demo_data_model.jpeg)
 
 </details>
 <br>
@@ -71,41 +75,38 @@ $ ApiLogicServer create --project_name=basic_demo --db_url=basic_demo
 
 You can create a project *and a new database* from a prompt using GenAI, either by:
 
-* [WebGenAI - in the Browser, via pubic website](https://apilogicserver.github.io/Docs/WebGenAI), or
-* [GenAI -         in the Browser, via docker](https://apilogicserver.github.io/Docs/WebGenAI-install), or 
-* [GenAI CLI](https://apilogicserver.github.io/Docs/WebGenAI-CLI) 
+* [WebGenAI - in the Browser, via pubic website](WebGenAI.md){:target="_blank" rel="noopener"}, or
+* [GenAI -         in the Browser, via docker](WebGenAI-install.md){:target="_blank" rel="noopener"}, or 
+* [GenAI CLI](WebGenAI-CLI.md){:target="_blank" rel="noopener"} 
 
 Here we use the GenAI CLI:
 
 1. If you have signed up (see *Get an OpenAI Key*, below), this will create and open a project called `genai_demo` from `genai_demo.prompt` (available in left Explorer pane):
 
 ```bash
-als genai --using=system/genai/examples/genai_demo/genai_demo.prompt --project-name=genai_demo
+genai-logic genai --using=system/genai/examples/genai_demo/genai_demo.prompt --project-name=genai_demo
 ```
 
 2. ***Or,*** you can simulate the process (no signup) using:
 
 ```bash
-
-als genai --repaired-response=system/genai/examples/genai_demo/genai_demo.response_example --project-name=genai_demo
-
+genai-logic genai --repaired-response=system/genai/examples/genai_demo/genai_demo.response_example --project-name=genai_demo
 ```
 
-For background on how it works, [click here](Sample-Genai#how-does-it-work).
+For background on how it works, [click here](Sample-Genai.md#how-does-it-work){:target="_blank" rel="noopener"}.
 
 &nbsp;
 
-## 2. Working Software Now
 
 ### Open in your IDE and Run
 
 You can open with VSCode, and run it as follows:
 
-1. **Create Virtual Environment:** automated in most cases; see the Appendix (Procedures / Detail Procedures) if that's not working.
+1. **Start the Server:** F5 (also described in the Appendix).
 
-2. **Start the Server:** F5 (also described in the Appendix).
+    * Your virtual environment is automatically configured in most cases; see the Appendix (Procedures / Detail Procedures) if that's not working.
 
-3. **Start the Admin App:** either use the links provided in the IDE console, or click [http://localhost:5656/](http://localhost:5656/).  The Admin App screen shown below should appear in your Browser.
+2. **Start the Admin App:** either use the links provided in the IDE console, or click [http://localhost:5656/](http://localhost:5656/).  The Admin App screen shown below should appear in your Browser.
 
 The sections below explore the system that has been created (which would be similar for your own database).
 <br><br>
@@ -118,7 +119,7 @@ The system creates an API with end points for each table, with filtering, sortin
 
 <summary>See the Swagger </summary>
 
-![swagger](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/basic_demo/api-swagger.jpeg?raw=true)
+![swagger](images/basic_demo/api-swagger.jpeg)
 </details>
 <br>
 
@@ -131,39 +132,54 @@ You can click Customer Alice, and see their Orders, and Items.
 <details markdown>
 
 <summary>See the Admin App </summary>
-![admin-app-initial](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/basic_demo/admin-app-initial.jpeg?raw=true)
+![admin-app-initial](images/basic_demo/admin-app-initial.jpeg)
 </details>
+
+
+## 2. Custom UI: GenAI, Vibe
+
+The app above is suitable for collaborative iteration to nail down the requirements, and back office data maintenance.  It's also easy to make simple customizations, using the yaml file.
+
+For more custom apps, you get complete control by generating app source code, which you can then customize in your IDE, e.g. using Vibe Natural Language:
+
+```bash
+# create react source (requires OpenAI key)
+genai-logic genai-add-app --vibe
+cd react-app
+npm install
+npm start
+```
+
+And you are ready to Vibe:
+
+* Instead of creating data mockups, you have a **running API server with real data**
+* Instead of starting from scratch, you have a **running multi-page app** 
+* And, you'll have projects that are **architecturally correct:** shared logic, enforced in the server, available for both User Interfaces and services.
+* Then, use you favorite Vibe tools with your running API
 
 <br>
 
-### MCP, Vibe, Collaboration
+```txt title='Customize using Natural Language'
+Update the Customer list to provide users an option to see results in a list, or in cards
+```
 
-In little more than a minute, you've used either
+![vibe-cards](images/basic_demo/vibe-cards.png)
 
-* **GenAI** to create a database and project using Natural Language, or 
-* 1 CLI command to create a project from an existing database
+<br>
 
-The project is standard Python, which you can customize in a standard IDE.
+## 3. MCP-Ready APIs
 
-This means you are ready for:
-
-* **MCP:** your project is MCP-ready - this will run a simple query *List customers with credit_limit > 1000* (we'll explore more interesting examples below):
+Your project is MCP-ready - this will run a simple query *List customers with credit_limit > 1000* (we'll explore more interesting examples below, including provisions for user input):
 
 ```bash
 python integration/mcp/mcp_client_executor.py
 ```
 
-* **Vibe:**  unblock UI dev
-
-    * Instead of creating data mockups, use GenAI to create real data
-    * Use you favorite Vibe tools with your running API
-    * And, you'll have projects that are architecturally correct: shared logic, enforced in the server, available for both User Interfaces and services.
-
-* **Collaboration to Get Requirements Right:** Business Users can use GenAI to create systems, and the Admin app to verify their business idea, in minutes.  And iterate.
+![mcp-retrieval](images/basic_demo/mcp-retrieval.png)
 
 <br>
 
-## 3. Declare Logic And Security
+## 4. Declare Logic And Security
 
 While API/MCP/UI automation is a great start, it's **critical to enforce logic and security.**  You do this in your IDE.  Here's how.
 
@@ -181,8 +197,8 @@ To add customizations, in a terminal window for your project:
 **2. Add Customizations**
 
 ```bash
-als add-cust
-als add-auth --db_url=auth
+genai-logic add-cust
+genai-logic add-auth --db_url=auth
 ```
 &nbsp;
 
@@ -221,7 +237,7 @@ Observe you now see fewer customers, since user `s1` has role `sales`.  This rol
 
 *  The logging in the lower panel, to assist in debugging by showing which Grants (`+ Grant:`) are applied:
 
-![security-filters](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/basic_demo/security-filters.jpeg?raw=true)
+![security-filters](images/basic_demo/security-filters.jpeg)
 
 </details>
 
@@ -244,7 +260,7 @@ To see logic in action:
 Observe the rules firing in the console log - see Logic In Action, below.
 
 <br>
-> 💡 Logic: Multi-table Derivations and Constraint Declarative Rules.<br>&emsp;&emsp;Declarative Rules are 40X More Concise than procedural code.<br>&emsp;&emsp;For more information, [click here](https://apilogicserver.github.io/Docs/Logic-Why).
+> 💡 Logic: Multi-table Derivations and Constraint Declarative Rules.<br>&emsp;&emsp;Declarative Rules are 40X More Concise than procedural code.<br>&emsp;&emsp;For more information, [click here](Logic-Why.md){:target="_blank" rel="noopener"}.
 
 <br>
 
@@ -252,9 +268,9 @@ Observe the rules firing in the console log - see Logic In Action, below.
 
 <summary>See Logic In Action </summary>
 
-<br>[Declare logic](Logic#declaring-rules) with WebGenAI, or in your IDE using code completion or Natural Language:
+<br>[Declare logic](Logic.md#declaring-rules){:target="_blank" rel="noopener"} with WebGenAI, or in your IDE using code completion or Natural Language:
 
-![Nat Lang Logic](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/sample-ai/copilot/copilot-logic-chat.png?raw=true)
+![Nat Lang Logic](images/sample-ai/copilot/copilot-logic-chat.png)
 
 **a. Chaining**
 
@@ -262,13 +278,13 @@ The screenshot below shows our logic declarations, and the logging for inserting
 
 Note that it's a `Multi-Table Transaction`, as indicated by the indentation.  This is because - like a spreadsheet - **rules automatically chain, *including across tables.***
 
-![logic-chaining](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/basic_demo/logic-chaining.jpeg?raw=true)
+![logic-chaining](images/basic_demo/logic-chaining.jpeg)
 
 **b. 40X More Concise**
 
 The 5 spreadsheet-like rules represent the same logic as 200 lines of code, [shown here](https://github.com/valhuber/LogicBank/wiki/by-code).  That's a remarkable 40X decrease in the backend half of the system.
 
-> 💡 No FrankenCode<br>Note the rules look like syntactically correct requirements.  They are not turned into piles of unmanageable "frankencode" - see [models not frankencode](https://www.genai-logic.com/faqs#h.3fe4qv21qtbs).
+> 💡 No FrankenCode<br>Note the rules look like syntactically correct requirements.  They are not turned into piles of unmanageable "frankencode" - see [models not frankencode](https://www.genai-logic.com/faqs#h.3fe4qv21qtbs){:target="_blank" rel="noopener"}.
 
 <br><br>
 
@@ -292,56 +308,50 @@ Optionally, you can use the Behave TDD approach to define tests, and the Rules R
 
 &nbsp;
 
-### Logic-Enabled MCP
+### MCP: Logic, User Interface
 
 Logic is automatically executed in your MCP-enabled API.  For example, consider the following MCP orchestration:
 
+![mcp-ui](images/basic_demo/mcp-ui.png)
+
+
+When sending email, we require ***business rules*** to ensure it respects the opt-out policy:
+
+![email request](images/integration/mcp/3a-email-logic.png)
+
+The server is automatically mcp-enabled, but we might also want an mcp user-interface client:
+
+**1. Stop the Server**
+
+**2. Create an MCP Client Executor like this:**
+
 ```
-List the orders date_shipped is null and CreatedOn before 2023-07-14,
-and send a discount email (subject: 'Discount Offer') to the customer for each one.
+genai-logic genai-add-mcp-client
 ```
 
-When sending email, we require business rules to ensure it respects the opt-out policy:
+**3. Restart the Server**
 
-![email request](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/mcp/3a-email-logic.png?raw=true)
+<br>
 
 With the server running, test it like this:
 
-1. **Stop** the Server
-
-2. **Disable Security**
-
-The MCP client executor does not currently support security (planned enhancement), so we must first disable it:
-
-```bash
-als add-auth --provider-type=none 
-```
-
-3. **Test MCP**
+1. **Test MCP**
 
 You can do this in the command line, or via the admin app.
 
-```bash
+```bash title='MCP from the command line'
 python integration/mcp/mcp_client_executor.py mcp
 ```
 
-Or, use the **Admin App:** follow step 4 on the Home page to see a Business-User-friendly example.
-
-4. **Re-enable Security**
-
-Reactivate security:
-
-```bash
-als add-auth --provider-type=sql
-```
+Or, use the **Admin App:** (shown above), and follow step 4 on the Home page to see a Business-User-friendly example.
 
 <br>
 
-For more on MCP, [click here](https://apilogicserver.github.io/Docs/Integration-MCP).
+For more on MCP, [click here](Integration-MCP.md){:target="_blank" rel="noopener"}.
 
 <br>
 
-## 4. Iterate with Rules and Python
+## 5. Iterate with Rules and Python
 
 Not only are spreadsheet-like rules 40X more concise, they meaningfully simplify maintenance.  Let's take an example:
 
@@ -377,9 +387,11 @@ To add this iteration, repeat the process above - in a terminal window for your 
 **2. Add Iteration**
 
 ```bash
-als add-cust
-als rebuild-from-database --db_url=sqlite:///database/db.sqlite
+genai-logic add-cust
+genai-logic rebuild-from-database --db_url=sqlite:///database/db.sqlite
 ```
+
+* You can ignore the warning regarding *'mcp-SysMcp' - not present*
 
 **3. Set the breakpoint as shown in the screenshot below**
 
@@ -389,7 +401,7 @@ als rebuild-from-database --db_url=sqlite:///database/db.sqlite
 
 At the breakpoint, observe you can use standard debugger services to debug your logic (examine `Item` attributes, step, etc).
 
-![logic-debugging](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/basic_demo/logic-debugging.jpeg?raw=true)
+![logic-debugging](images/basic_demo/logic-debugging.jpeg)
 
 &nbsp;
 
@@ -435,16 +447,20 @@ Of course, we all know that all businesses the world over depend on the `hello w
 
 * and, for database access, SQLAlchemy.  Note all updates from custom APIs also enforce your logic.
 
+Explore the custom API in `api/api_discovery/order_b2b.py`, and test it using swagger:
+
+![b2b_swagger](images/integration/b2b_swagger.png)
+
 &nbsp;
 
 ### Messaging With Kafka
 
-Along with APIs, messaging is another technology commonly employed for application integration.  See the screenshot below; for more information, see [Sample Integration](Sample-Integration#produce-ordershipping-message).
+Along with APIs, messaging is another technology commonly employed for application integration.  See the screenshot below; for more information, see [Sample Integration](Sample-Integration.md#produce-ordershipping-message){:target="_blank" rel="noopener"}.
 
-![order-to-shipping](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/order-to-shipping.jpg?raw=true)
+![order-to-shipping](images/integration/order-to-shipping.jpg)
 &nbsp;
 
-## 5. Deploy Containers: No Fees
+## 6. Deploy Containers: No Fees
 
 API Logic Server also creates scripts for deployment.  While these are ***not required at this demo,*** this means you can enable collaboration with Business Users:
 
@@ -452,9 +468,7 @@ API Logic Server also creates scripts for deployment.  While these are ***not re
 2. Upload to Docker Hub, and
 3. Deploy for agile collaboration.
 
-<br>
-
-<br>
+&nbsp;
 
 #  Explore GenAI CLI
 
@@ -508,9 +522,9 @@ Verify it's operating properly:
 
 2. Your created project is opened in your IDE, ready to execute and customize.  
 
-    a. Review `Tutorial`, Explore Customizations.
+    a. Review `Tutorial.md`, Explore Customizations.
 
-![GenAI Automation](system/https://github.com/ApiLogicServer/Docs/blob/main/docs/images/genai.png?raw=true)
+![GenAI Automation](system/images/genai.png)
 
 </details>
 </br>
@@ -851,7 +865,7 @@ Enforce the Check Credit requirement (do not generate check constraints):
 5. Store the Items.UnitPrice as a copy from Product.UnitPrice
 ```
 
-![copilot](system/https://github.com/ApiLogicServer/Docs/blob/main/docs/images/copilot.png?raw=true)
+![copilot](system/images/copilot.png)
 </details>
 
 <br>
@@ -1038,11 +1052,11 @@ Codespaces enables you to run in the cloud: VSCode via your Browser, courtesy Gi
 
 __1. Open your project on GitHub__
 
-![API Logic Server Intro](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/sample-ai/genai/open-github.png?raw=true)
+![API Logic Server Intro](images/sample-ai/genai/open-github.png)
 
 __2. Open it in Codespaces (takes a minute or 2):__
 
-![API Logic Server Intro](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/sample-ai/genai/start-codespaces.png?raw=true)
+![API Logic Server Intro](images/sample-ai/genai/start-codespaces.png)
 
 > You will now see your project - running in VSCode, _in the Browser._  But that's just what you _see..._
 
@@ -1056,7 +1070,7 @@ __3. Start the Server and open the App in the Browser__
 
 * Use the pre-defined Launch Configuration
 
-![API Logic Server Intro](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/git-codespaces/start-codespaces.png?raw=true)
+![API Logic Server Intro](images/git-codespaces/start-codespaces.png)
 
 
 We think you'll find Codespaces pretty amazing - check it out!
