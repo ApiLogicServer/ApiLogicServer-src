@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "15.00.34"  # last public release: 15.00.25 (15.00.12)
+__version__ = "15.00.35"  # last public release: 15.00.25 (15.00.12)
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t06/30/2024 - 15.00.34: minor bug in mgr symlink creation \n"\
+    "\t07/01/2024 - 15.00.35: minor bug in mgr symlink creation, nw cards \n"\
     "\t06/30/2024 - 15.00.33: Tech Preview: genai-logic genai-add-app --vibe, bug [96, 97] \n"\
     "\t06/10/2024 - 15.00.12: MCP Security, win fixes for readme, graphics quotes \n"\
     "\t06/08/2024 - 15.00.10: MCP, optional shortening of stacktrace lines, bugfix[92] \n"\
@@ -781,7 +781,7 @@ def fix_build_docker_image(msg, project: Project):
 
 def start_open_with(project: Project):
     """ Creation complete.  Opening {open_with} at {project_name} """
-    log.info(f'\nCreation complete - Opening {project.open_with} at {project.project_name}')
+    log.info(f'\n✅ Creation complete - Opening {project.open_with} at {project.project_name}')
     log.debug(".. See the readme for install / run instructions")
     if project.is_docker:
         log.info("... docker unable to start IDE - please run manager on local host")
@@ -1686,7 +1686,7 @@ from database import <project.bind_key>_models
                     log.info(f'    exit     # exit the Docker container ')
                     log.info(f'    code {docker_project_name}  # e.g., open VSCode on created project\n')
             else:
-                log.info(f'\nProject created at: {str(self.project_directory_path)}\n')
+                log.info(f'\n✅ Project created at: {str(self.project_directory_path)}\n')
 
                 # log.info(f'  $ ApiLogicServer run                # Run created API and Admin App, or\n')
 

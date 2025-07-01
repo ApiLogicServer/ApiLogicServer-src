@@ -1,14 +1,19 @@
 // begin MANDATORY imports (always generated EXACTLY)
-import React from 'react';
-import { List, FunctionField, Datagrid, TextField, EmailField, DateField, NumberField } from 'react-admin';
-import { ReferenceField, ReferenceManyField } from 'react-admin';
-import { TabbedShowLayout, Tab, SimpleShowLayout, TextInput, NumberInput, DateTimeInput } from 'react-admin';
-import { ReferenceInput, SelectInput, SimpleForm, Show, Edit, Create } from 'react-admin';
-import { Filter, Pagination, BooleanField, BooleanInput, Labeled } from 'react-admin'; 
-import { EditButton, DeleteButton, CreateButton, ShowButton } from 'react-admin';
-import { Grid, Typography, Box, Divider, Button } from '@mui/material';
-import { useRecordContext, useRedirect, Link, required } from 'react-admin';
+import React, { useState } from 'react';
+import { List, Datagrid, TextField, DateField, NumberField } from 'react-admin';
+import { ReferenceManyField } from 'react-admin';
+import { TabbedShowLayout, Tab, SimpleShowLayout, TextInput, NumberInput } from 'react-admin';
+import { SimpleForm, Show, Edit, Create } from 'react-admin';
+import { Filter, Pagination, BooleanInput, Labeled } from 'react-admin'; 
+import { EditButton, DeleteButton, ShowButton } from 'react-admin';
+import { Grid, Typography, Box, Divider, Button, Card, CardContent, CardActions, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { useRecordContext, useRedirect, useListContext, required } from 'react-admin';
 import AddIcon from '@mui/icons-material/Add';
+import ViewListIcon from '@mui/icons-material/ViewList';
+import ViewModuleIcon from '@mui/icons-material/ViewModule';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import PersonIcon from '@mui/icons-material/Person';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 // end mandatory imports
 
 const CustomerFilter = (props) => (
@@ -18,20 +23,134 @@ const CustomerFilter = (props) => (
     </Filter>
 );
 
-// Customer List
-export const CustomerList = (props) => (
-    <List filters={<CustomerFilter />} {...props} sort={{ field: 'CompanyName', order: 'ASC' }} pagination={<Pagination rowsPerPageOptions={[5, 10, 25]} showFirstLastButtons />}>
-        <Datagrid rowClick="show">
-            <TextField source="CompanyName" label="Company Name" />
-            <TextField source="ContactName" label="Contact Name" />
-            <TextField source="City" label="City" />
-            <TextField source="Country" label="Country" />
-            <NumberField source="Balance" label="Balance" options={{ style: 'currency', currency: 'USD' }} />
-            <EditButton />
-            <DeleteButton />
-        </Datagrid>
-    </List>
+// Customer Card View Component
+const CustomerCard = ({ record }) => (
+    <Card sx={{ 
+        minWidth: 300, 
+        maxWidth: 350, 
+        height: 280,
+        margin: 1, 
+        display: 'flex', 
+        flexDirection: 'column',
+        transition: 'transform 0.2s, box-shadow 0.2s',
+        '&:hover': {
+            transform: 'translateY(-2px)',
+            boxShadow: 3
+        }
+    }}>
+        <CardContent sx={{ flexGrow: 1, pb: 1 }}>
+            <Typography variant="h6" component="div" sx={{ 
+                mb: 2, 
+                fontWeight: 'bold',
+                color: 'primary.main',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap'
+            }}>
+                {record.CompanyName}
+            </Typography>
+            
+            <Box sx={{ mb: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
+                <PersonIcon color="action" fontSize="small" />
+                <Typography variant="body2" color="text.secondary">
+                    {record.ContactName || 'No contact name'}
+                </Typography>
+            </Box>
+            
+            <Box sx={{ mb: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
+                <LocationOnIcon color="action" fontSize="small" />
+                <Typography variant="body2" color="text.secondary">
+                    {record.City ? `${record.City}, ${record.Country || ''}` : record.Country || 'No location'}
+                </Typography>
+            </Box>
+            
+            <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                <AccountBalanceWalletIcon color="action" fontSize="small" />
+                <Typography variant="body1" sx={{ fontWeight: 'medium' }}>
+                    {record.Balance ? `$${record.Balance.toLocaleString()}` : '$0.00'}
+                </Typography>
+            </Box>
+        </CardContent>
+        
+        <CardActions sx={{ pt: 0, pb: 2, px: 2, justifyContent: 'space-between' }}>
+            <ShowButton record={record} size="small" />
+            <Box>
+                <EditButton record={record} size="small" sx={{ mr: 1 }} />
+                <DeleteButton record={record} size="small" />
+            </Box>
+        </CardActions>
+    </Card>
 );
+
+// Customer Grid View Component
+const CustomerGridView = () => {
+    const { data, isLoading } = useListContext();
+    
+    if (isLoading) return <div>Loading...</div>;
+    
+    return (
+        <Grid container spacing={2} sx={{ mt: 1 }}>
+            {data?.map(record => (
+                <Grid item key={record.id} xs={12} sm={6} md={4} lg={3}>
+                    <CustomerCard record={record} />
+                </Grid>
+            ))}
+        </Grid>
+    );
+};
+
+// View Toggle Component
+const ViewToggle = ({ viewMode, setViewMode }) => (
+    <Box sx={{ mb: 2, display: 'flex', justifyContent: 'flex-end' }}>
+        <ToggleButtonGroup
+            value={viewMode}
+            exclusive
+            onChange={(event, newViewMode) => {
+                if (newViewMode !== null) {
+                    setViewMode(newViewMode);
+                }
+            }}
+            aria-label="view mode"
+            size="small"
+        >
+            <ToggleButton value="list" aria-label="list view">
+                <ViewListIcon />
+            </ToggleButton>
+            <ToggleButton value="cards" aria-label="card view">
+                <ViewModuleIcon />
+            </ToggleButton>
+        </ToggleButtonGroup>
+    </Box>
+);
+
+// Customer List
+export const CustomerList = (props) => {
+    const [viewMode, setViewMode] = useState('list');
+    
+    return (
+        <List 
+            filters={<CustomerFilter />} 
+            {...props} 
+            sort={{ field: 'CompanyName', order: 'ASC' }} 
+            pagination={<Pagination rowsPerPageOptions={[5, 10, 25]} showFirstLastButtons />}
+        >
+            <ViewToggle viewMode={viewMode} setViewMode={setViewMode} />
+            {viewMode === 'list' ? (
+                <Datagrid rowClick="show">
+                    <TextField source="CompanyName" label="Company Name" />
+                    <TextField source="ContactName" label="Contact Name" />
+                    <TextField source="City" label="City" />
+                    <TextField source="Country" label="Country" />
+                    <NumberField source="Balance" label="Balance" options={{ style: 'currency', currency: 'USD' }} />
+                    <EditButton />
+                    <DeleteButton />
+                </Datagrid>
+            ) : (
+                <CustomerGridView />
+            )}
+        </List>
+    );
+};
 
 // Customer Show
 export const CustomerShow = (props) => (
@@ -185,9 +304,11 @@ export const CustomerEdit = (props) => (
     </Edit>
 );
 
-export default {
+const CustomerResource = {
     list: CustomerList,
     show: CustomerShow,
     create: CustomerCreate,
     edit: CustomerEdit,
 };
+
+export default CustomerResource;
