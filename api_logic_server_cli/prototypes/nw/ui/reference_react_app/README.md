@@ -1,14 +1,20 @@
-# Getting Started with Genai-Logic react-admin
+# Getting Started with Genai-Logic react apps
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).  For more information, see [README_create_react_app](README_create_react_app.md).
+GenAI-Logic (`genai-logic genai-add-app`) [docs here](https://apilogicserver.github.io/Docs/Admin-Vibe/), from `ui/admin/admin.yaml`.
 
-GenAI-Logic (`als genai-app`) then [created this project](https://apilogicserver.github.io/Docs/Admin-Vibe/).
+We then *Vibed it* to add cards:
+
+```bash
+Update the Customer list to provide users an option to see results in a list, or in cards
+```
 
 <br>
 
 # To run the app:
 
 ```bash
+# security for react apps in progress, disable for now...
+genai-logic add-auth --provider-type=None
 cd ui/react-admin
 npm install
 npm start

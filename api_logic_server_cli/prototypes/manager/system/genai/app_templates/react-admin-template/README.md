@@ -1,14 +1,13 @@
-# Getting Started with Genai-Logic react-admin
+# Getting Started with Genai-Logic react apps
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).  For more information, see [README_create_react_app](README_create_react_app.md).
+GenAI-Logic created this app (`genai-logic genai-add-app`) [(docs here)](https://apilogicserver.github.io/Docs/Admin-Vibe/), typically from `ui/admin/admin.yaml`.
 
-GenAI-Logic (`als genai-app`) then [created this project](https://apilogicserver.github.io/Docs/Admin-Vibe/).
-
-<br>
 
 # To run the app:
 
 ```bash
+# security for react apps in progress, disable for now...
+genai-logic add-auth --provider-type=None
 cd ui/react-admin
 npm install
 npm start

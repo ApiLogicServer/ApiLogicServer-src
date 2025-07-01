@@ -3,6 +3,7 @@
 # cd webgenai
 
 # docker compose up
+# for local machines, browse to: localhost:8282
 # docker compose down
 
 name: webgenai
