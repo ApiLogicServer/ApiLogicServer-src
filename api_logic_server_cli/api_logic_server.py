@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "15.00.33"  # last public release: 15.00.25 (15.00.12)
+__version__ = "15.00.34"  # last public release: 15.00.25 (15.00.12)
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t06/30/2024 - 15.00.34: minor bug in mgr symlink creation \n"\
     "\t06/30/2024 - 15.00.33: Tech Preview: genai-logic genai-add-app --vibe, bug [96, 97] \n"\
     "\t06/10/2024 - 15.00.12: MCP Security, win fixes for readme, graphics quotes \n"\
     "\t06/08/2024 - 15.00.10: MCP, optional shortening of stacktrace lines, bugfix[92] \n"\
@@ -100,6 +101,7 @@ if debug_value is not None:
         logging.getLogger('sqlacodegen_wrapper.sqlacodegen.sqlacodegen.codegen').setLevel(logging.DEBUG)
         logging.getLogger('api_logic_server_cli.sqlacodegen_wrapper.sqlacodegen_wrapper').setLevel(logging.DEBUG)
         logging.getLogger('create_from_model.model_creation_services').setLevel(logging.DEBUG)
+        logging.getLogger('api_logic_server_cli.manager').setLevel(logging.DEBUG)
         
 
 # log.debug("Patch to enable import of outer directories")
