@@ -46,18 +46,18 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path,
 
         Side Effects:
             Creates a symbolic link from 'cli_path/database/basic_demo.sqlite' to 'mgr_path/samples/dbs/basic_demo'.
-            Prints a confirmation message upon successful creation.
 
-        Raises:
-            OSError: If the symbolic link cannot be created (e.g., due to permissions or existing link).
         """
         
         # create symbolic link - thanks https://www.geeksforgeeks.org/python/python-os-symlink-method/
         try:
-            os.symlink(cli_path.parent / 'database/basic_demo.sqlite', mgr_path / 'samples/db/basic_demo.sqlite')
-            print("Link created")
+            os.symlink(cli_path.parent / 'database/basic_demo.sqlite', mgr_path / 'samples/dbs/basic_demo.sqlite')
+            os.symlink(cli_path.parent / 'database/nw-gold.sqlite', mgr_path / 'samples/dbs/nw.sqlite')
+            os.symlink(cli_path.parent / 'database/Chinook_Sqlite.sqlite', mgr_path / 'samples/dbs/chinook.sqlite')
+            os.symlink(cli_path.parent / 'database/classicmodels.sqlite', mgr_path / 'samples/dbs/classicmodels.sqlite')
+            log.debug("✅ Manager Creation - SymLink created: samples/dbs/")
         except Exception as e:
-            pass
+            log.debug(f"❌ Manager Creation - SymLink creation failed: {str(e)}")
 
 
     log = logging.getLogger(__name__)
