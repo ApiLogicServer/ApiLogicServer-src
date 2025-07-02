@@ -1,10 +1,6 @@
+App Wiring
+Sample code for react App.js (follow these guidelines EXACTLY):
 
-
-### App Wiring
-
-Sample code for react `App.js` (follow these guidelines EXACTLY):
-
-```jsx
 // begin constant imports (always included) -- generate this code EXACTLY
 import React from 'react';
 import { Admin, Resource, Loading } from 'react-admin';  // val? loading
@@ -59,13 +55,7 @@ const App = () => {
 };
 
 export default App;
-```
-
----
-
-## Response Format
-
+Response Format
 Format the response as a JSResponseFormat:
 
-class JSResponseFormat(BaseModel):  # must match system/genai/prompt_inserts/response_format.prompt
-    code : str # generated javascript code (only)
+class JSResponseFormat(BaseModel): # must match system/genai/prompt_inserts/response_format.prompt code : str # generated javascript code (only)
