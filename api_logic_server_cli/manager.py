@@ -145,21 +145,23 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path,
             copied_path = shutil.copytree(src=from_docker_dir, dst=to_dir, dirs_exist_ok=True)
 
         # get latest readme from git (eg, has been updated since pip install)
-        file_src = f"https://raw.githubusercontent.com/ApiLogicServer/ApiLogicServer-src/main/api_logic_server_cli/prototypes/manager/README.md"
+        get_readme_url = f"https://raw.githubusercontent.com/ApiLogicServer/ApiLogicServer-src/main/api_logic_server_cli/prototypes/manager/README.md"
+        #            https://github.com/ApiLogicServer/ApiLogicServer-src/main/api_logic_server_cli/prototypes/manager/README.md
         readme_path = to_dir.joinpath('README.md')
         try:
-            r = requests.get(file_src)  # , params=params)
+            r = requests.get(get_readme_url)  # , params=params)
             if r.status_code == 200:
                 readme_data = r.content.decode('utf-8')
                 with open(str(readme_path), "w", encoding="utf-8") as readme_file:
                     readme_file.write(readme_data)
+                log.debug("✅ Wrote Manager Readme from git")
         except requests.exceptions.ConnectionError as conerr: 
             # without this, windows fails if network is down
-            pass    # just fall back to using the pip-installed version
+            log.debug("❌ Manager Readme from git failed, using pip-installed version")
         except Exception as e:     # do NOT fail 
-            log.error(f'Failed to copy manager readme from installed: {e}')
+            log.error(f'❌ Manager Readme from git excp installed: {e}')
             pass    # just fall back to using the pip-installed version
-        create_utils.copy_md(from_doc_file='Sample-Basic-Tour.md', project = to_dir)
+        create_utils.copy_md(from_doc_file='Sample-Basic-Tour.md', project = to_dir)  # does this just override whatever?
 
         if not samples:
             shutil.rmtree(to_dir.joinpath(f'{docker_volume}system/app_model_editor'))
