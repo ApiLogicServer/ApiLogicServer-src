@@ -7,7 +7,7 @@ Generate the {{resource.js}} file for a React Admin application using the follow
 ### Per-Resource Files (Required)
 
 Sample code (follow these guidelines EXACTLY):
-
+```
 <sample-code>
 // begin MANDATORY imports (always generated EXACTLY)
 import React from 'react';
@@ -179,8 +179,9 @@ export default {
     create: CustomerCreate,
     edit: CustomerEdit,
 };
-
+```
 </sample-code>
+
 
 For each resource (`Customer`, `Order` etc) and **fully** implement:
     * `CustomerList`
