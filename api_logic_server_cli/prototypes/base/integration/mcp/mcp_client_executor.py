@@ -224,28 +224,6 @@ def process_tool_context(tool_context):
             # query_param_filter = query_param_filter.replace("date_created", 'CreatedOn')  # TODO - why this name?
             return query_param_filter  # end get_query_param_filter
 
-    def print_get_response(query_param_filter, mcp_response):
-        """ Print the response from the GET request. """
-        log.info("\n3. MCP Server (als) GET filter(query_param_filter):\n" + query_param_filter)
-        log.info("     GET Response:\n" + mcp_response.text)
-        results : List[Dict] = mcp_response.json()['data']
-        # print results in a table format
-        if results:
-            # Get all unique keys from all result dicts
-            keys = set()
-            for row in results:
-                if isinstance(row, dict):
-                    keys.update(row.keys())
-            keys = list(keys)
-            # Print header
-            log.info("\n| " + " | ".join(keys) + " |")
-            log.info("|" + "|".join(["---"] * len(keys)) + "|")
-            # Print rows
-            for row in results:
-                log.info("| " + " | ".join(str(row.get(k, "")) for k in keys) + " |")
-        else:
-            log.info("No results found.")
-
     def substitute_vars(val, context, row=None, ref_index=None):
         """
         Substitutes variable references in a value using a provided context.
@@ -411,7 +389,7 @@ Based on this, generate the next tool_context step(s) as a JSON list.
         if has_request_context():
             headers = request.headers  # get headers from Flask request context
         else:
-            log.info("Warning: No Flask request context available. secure API calls may not work as expected.")
+            log.info("Warning: No Flask request context available. Some API calls may not work as expected.")
         try:
             resp = requests.request(method, url, headers=headers, json=body if method in ["POST", "PATCH"] else None, params=params)
             resp.raise_for_status()
@@ -447,17 +425,75 @@ Based on this, generate the next tool_context step(s) as a JSON list.
             context_results.append(result)
         step_num += 1
 
+    def print_json_as_table(json_data, step_index):
+        """Print JSON data in table format showing only data/attributes section with column headers."""
+        if not isinstance(json_data, dict):
+            log.info(f"\nStep {step_index}: Non-dict result - {json_data}")
+            return
+            
+        # Extract data section
+        data = json_data.get('data', [])
+        if not data:
+            log.info(f"\nStep {step_index}: No data found in result")
+            return
+            
+        # Handle both single item and list of items
+        if isinstance(data, dict):
+            data = [data]
+        elif not isinstance(data, list):
+            log.info(f"\nStep {step_index}: Data is not in expected format")
+            return
+            
+        # Extract attributes from all items to get all possible columns
+        all_attributes = set()
+        attribute_rows = []
+        
+        for item in data:
+            if isinstance(item, dict) and 'attributes' in item:
+                attributes = item['attributes']
+                all_attributes.update(attributes.keys())
+                attribute_rows.append(attributes)
+            else:
+                # If no attributes section, use the item directly
+                if isinstance(item, dict):
+                    all_attributes.update(item.keys())
+                    attribute_rows.append(item)
+        
+        if not attribute_rows:
+            log.info(f"\nStep {step_index}: No attributes found in data")
+            return
+            
+        # Sort columns for consistent display
+        columns = sorted(list(all_attributes))
+        
+        # Calculate column widths
+        col_widths = {}
+        for col in columns:
+            col_widths[col] = max(len(str(col)), 
+                                max(len(str(row.get(col, ""))) for row in attribute_rows))
+        
+        # Print table header
+        log.info(f"\nStep {step_index} - Results ({len(attribute_rows)} rows):")
+        header = "| " + " | ".join(col.ljust(col_widths[col]) for col in columns) + " |"
+        separator = "|" + "|".join("-" * (col_widths[col] + 2) for col in columns) + "|"
+        
+        log.info(header)
+        log.info(separator)
+        
+        # Print table rows
+        for row in attribute_rows:
+            row_str = "| " + " | ".join(str(row.get(col, "")).ljust(col_widths[col]) for col in columns) + " |"
+            log.info(row_str)
+
     if print := True:  # print context (which is just the GETs)
         log.info("\n\n4. MCP Client Executor – Context Results:")
         for each_context_result in context_results:
-            print_print = each_context_result
-            if isinstance(each_context_result, dict):
-                each_print = json.dumps(each_context_result, indent=4)
-            print_line = f"\nStep {context_results.index(each_context_result)}\n{each_print}"
-            log.info(print_line)
+            step_index = context_results.index(each_context_result)
+            print_json_as_table(each_context_result, step_index)
         pass
 
-    log.info("\n✅ MCP Client Executor – All Steps Executed\n")
+    log.info("\n✅ MCP Client Executor – All Steps Executed - Review Results Above")
+    log.info(".. 💡 Suggestion - Copy/Paste Response to a JsonFormatter\n")
 
     return context_results 
 
