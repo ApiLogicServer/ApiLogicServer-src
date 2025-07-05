@@ -1,6 +1,11 @@
 const sla_doc =
     '<div class="MuiTypography-root jss4" style="color: rgba(0, 0, 0, 0.66)">' +
     '<div style="text-align:center">' +
+'<div class="dashboard-iframe">' +
+
+'<iframe id="iframeTargetDashboard" src="http://localhost:5656/dashboard" style="flex: 1; border: none; width: 100%; height: 200px;"></iframe>' +
+
+'</div>' +
     '<h2>Welcome to GenAI-Logic/API Logic Server - Sample</h2>' +
     '</div><br>' +
     '<h3><a class="custom" style="color: #3f51b5;"  rel="nofollow" href="https://www.genai-logic.com" target="_blank">GenAI-Logic</a> ' +

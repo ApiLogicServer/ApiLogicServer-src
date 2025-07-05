@@ -44,7 +44,7 @@ const LandingPage = () => {
 
             {/* Architecture Overview */}
             <Typography variant="h3" component="h1" gutterBottom align="center" sx={{ mb: 4 }}>
-                GenAI-Logic / API Logic Server Architecture
+                GenAI-Logic Architecture
             </Typography>
 
             <Typography variant="h6" paragraph align="center" sx={{ mb: 4, color: 'text.secondary' }}>
@@ -125,7 +125,7 @@ const LandingPage = () => {
                                 </Typography>
                                 <Typography variant="body2" paragraph>
                                     SQLAlchemy models automatically created from your database schema.
-                                    Supports SQLite, PostgreSQL, MySQL, SQL Server, and more.
+                                    Supports SQLite, PostgreSQL, MySQL, SQL Server, Oracle and more.
                                 </Typography>
                             </Box>
 
@@ -135,7 +135,7 @@ const LandingPage = () => {
                                 </Typography>
                                 <Typography variant="body2" paragraph>
                                     Declarative business rules that are 40X more concise than code.
-                                    Automatic dependency ordering and optimization.
+                                    Automatic dependency ordering and optimization.  Extensible with Python.
                                 </Typography>
                             </Box>
 
@@ -239,18 +239,6 @@ const LandingPage = () => {
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary">
                                     Swagger documentation and testing
-                                </Typography>
-                            </Box>
-                        </Grid>
-                        <Grid item xs={12} sm={6} md={3}>
-                            <Box sx={{ textAlign: 'center' }}>
-                                <Typography variant="h6">
-                                    <a href="http://localhost:5656/dashboard" target="_blank" rel="noopener noreferrer">
-                                        Dashboard
-                                    </a>
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    System overview and analytics
                                 </Typography>
                             </Box>
                         </Grid>
