@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bar Chart Example</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <canvas id="myChart" width="400" height="200"></canvas>
+    <script>
+        // Input data
+        fetch('http://localhost:5656/api/GraphicsServices/number_of_sales_per_category', {
+            method: 'POST',
+            headers: {
+            'accept': 'application/vnd.api+json',
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({}) // Add any required payload here
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(result => {
+                const labels = [];
+                const data = [];
+                const type = result.meta.result.chart_type;
+                const title = result.meta.result.title;
+                const columns = result.meta.result.columns;
+                console.log(JSON.stringify(result));
+                result.meta.result.results.forEach(item => {
+                    labels.push(item[columns[0]]);
+                    data.push(parseFloat(item[columns[1]]));
+                });
+
+                // Create the bar chart
+                const ctx = document.getElementById('myChart').getContext('2d');
+                const myChart = new Chart(ctx, {
+                    type: type,
+                    data: {
+                    labels: labels,
+                    datasets: [{
+                        label: title,
+                        data: data,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                    },
+                    options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                        position: 'top',
+                        },
+                        title: {
+                        display: true,
+                        text: title
+                        }
+                    },
+                    scales: {
+                        y: {
+                        beginAtZero: true
+                        }
+                    }
+                    }
+                });
+                })
+                .catch(error => console.error('Error fetching data:', error));
+
+    </script>
+</body>
+</html>

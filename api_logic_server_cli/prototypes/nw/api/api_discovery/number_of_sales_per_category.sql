@@ -1,0 +1,1 @@
+SELECT Category.CategoryName, COUNT(`Order.Id`) AS NumberOfSales FROM Category JOIN Product ON Product.CategoryId = Category.Id JOIN OrderDetail ON OrderDetail.ProductId = Product.Id JOIN `Order` ON `Order`.Id = OrderDetail.OrderId WHERE `Order`.ShippedDate IS NOT NULL GROUP BY Category.CategoryName ORDER BY NumberOfSales DESC;

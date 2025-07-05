@@ -1960,6 +1960,16 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "  - add-graphics: Add Northwind Grpahics to NW-NoCust",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/../../servers/NW_NoCust",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": ["genai-graphics"],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "  - Northwind NW_Collision_Test",
             "type": "debugpy",
             "request": "launch",
