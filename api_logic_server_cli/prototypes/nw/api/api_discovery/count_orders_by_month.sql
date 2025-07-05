@@ -1,0 +1,1 @@
+SELECT strftime('%Y-%m', date(`Order`.OrderDate)) AS OrderMonth, COUNT(`Order`.Id) AS OrderCount FROM `Order` WHERE `Order`.OrderDate IS NOT NULL GROUP BY OrderMonth ORDER BY OrderMonth;

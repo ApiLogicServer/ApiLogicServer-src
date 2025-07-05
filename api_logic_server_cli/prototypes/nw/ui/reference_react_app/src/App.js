@@ -4,6 +4,8 @@ import { Admin, Resource, Loading } from 'react-admin';
 import { jsonapiClient } from './rav4-jsonapi-client/ra-jsonapi-client';
 import { createTheme } from '@mui/material/styles';
 import { useConf, loadHomeConf } from './Config';
+import LandingPage from './LandingPage';
+import CustomLayout from './CustomLayout';
 // End constant imports
 
 // Import each resource
@@ -55,7 +57,12 @@ const App = () => {
     const dataProvider = jsonapiClient(conf.api_root, { conf: {} }, null);
 
     return (
-        <Admin dataProvider={dataProvider} theme={theme}>
+        <Admin 
+            dataProvider={dataProvider} 
+            theme={theme}
+            dashboard={LandingPage}
+            layout={CustomLayout}
+        >
             <Resource
                 name="Customer"
                 list={CustomerList}

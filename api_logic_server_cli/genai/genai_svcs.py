@@ -906,10 +906,11 @@ def call_chatgpt(messages: List[Dict[str, str]], api_version: str, using: str, r
         request_path.parent.mkdir(parents=True, exist_ok=True)
         return request_path
     
-    def string_to_lines(dict_long_string: dict) -> dict:
+    def string_to_lines(dict_long_string: list) -> dict:
         result = dict_long_string
-        if isinstance(result[1]['content'], str):
-            result[1]['content'] = result[1]['content'].split('\n')
+        if len(result) > 1:
+            if isinstance(result[1]['content'], str):
+                result[1]['content'] = result[1]['content'].split('\n')
         return result
 
     try:

@@ -5,11 +5,11 @@
 		}
 	],
 	"settings": {
-		"debug.console.wordWrap": false,
+		"debug.console.wornw graphsdWrap": false,
 		"workbench.editorAssociations": {
 			"*.md": "vscode.markdown.preview.editor"
 		},
-		"workbench.colorTheme": "Office Theme (Word)",
-		"workbench.preferredLightColorTheme": "Office Theme (Word)"
+		"workbench.colorTheme": "Office Theme (Excel)",
+		"workbench.preferredLightColorTheme": "Office Theme (Excel)"
 	}
 }
