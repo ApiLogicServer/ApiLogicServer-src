@@ -1,19 +1,31 @@
 #!/usr/bin/env python3
 
 ###############################################################################
+# 🚀 API Logic Server - AUTO-GENERATED MICROSERVICE
 #
-#    This file initializes and starts the API Logic Server, e.g.:
-#        $ Use your IDE Run Configurations (for debug)
-#        $ sh run.sh
-#        $ python3 api_logic_server_run.py [--help]
-#        $ gunicorn --log-level=info -b 0.0.0.0:5656 -w2 --reload api_logic_server_run:flask_app
+# This file starts a COMPLETE, WORKING microservice with:
+#   ✅ Admin Web App at http://localhost:5656 (React-based, multi-table CRUD)
+#   ✅ JSON:API endpoints at http://localhost:5656/api/* (auto-generated from database)
+#   ✅ Swagger documentation at http://localhost:5656/api
+#   ✅ Business logic engine (declarative rules)
+#   ✅ Security framework (authentication/authorization)
 #
-#    Then, access the Admin App and API via the Browser, eg:  
-#        http://api_logic_server_host:api_logic_server_port
+# 🎯 TO RUN:
+#    Press F5 in VSCode, or run: python api_logic_server_run.py
+#
+# 🌐 TO ACCESS:
+#    Admin App: http://localhost:5656
+#    API Docs:  http://localhost:5656/api
+#
+# 📝 TO CUSTOMIZE:
+#    See docs/COPILOT_GUIDE.md for GitHub Copilot guidance
+#    Logic: logic/declare_logic.py
+#    API: api/customize_api.py
+#    Security: security/declare_security.py
 #
 #    You typically do not customize this file.
 #
-#    (v api_logic_server_version, api_logic_server_created_on)
+#    (v 15.00.38, July 06, 2025 22:11:00)
 #
 #    See Main Code (at end).
 #        Use log messages to understand API and Logic activation.
