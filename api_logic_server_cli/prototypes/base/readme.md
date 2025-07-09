@@ -23,7 +23,7 @@ als add-auth --provider-type=None # to disable
 
 ---
 
-# Quick Start
+# 🚀 Quick Start
 
 **Microservice Automation Complete -- run to verify:** for **VSCode** projects except those downloaded from Web/GenAI:
 1. `Press F5 to Run` (your venv is defaulted)  
