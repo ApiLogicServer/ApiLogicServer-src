@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "15.00.39"  # last public release: 15.00.36 (15.00.12)
+__version__ = "15.00.40"  # last public release: 15.00.36 (15.00.12)
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t07/07/2024 - 15.00.39: copilot vibe, fix mgr symlink creation, nw cards, mgr readme diagnostics, mcp printer, bug[98] \n"\
+    "\t07/08/2024 - 15.00.40: copilot uSvc vibe, fix mgr symlink creation, nw cards, mgr readme diagnostics, mcp printer, bug[98] \n"\
     "\t06/30/2024 - 15.00.33: Tech Preview: genai-logic genai-add-app --vibe, bug [96, 97] \n"\
     "\t06/10/2024 - 15.00.12: MCP Security, win fixes for readme, graphics quotes \n"\
     "\t06/08/2024 - 15.00.10: MCP, optional shortening of stacktrace lines, bugfix[92] \n"\
