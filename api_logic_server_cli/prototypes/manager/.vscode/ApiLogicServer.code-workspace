@@ -9,7 +9,7 @@
 		"workbench.editorAssociations": {
 			"*.md": "vscode.markdown.preview.editor"
 		},
-		"workbench.colorTheme": "Office Theme (Word)",
-		"workbench.preferredLightColorTheme": "Office Theme (Word)"
+		"workbench.colorTheme": "Arduino",
+		"workbench.preferredLightColorTheme": "Arduino"
 	}
 }

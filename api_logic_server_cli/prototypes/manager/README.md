@@ -15,11 +15,23 @@ Instructions: Copy in Sample-Basic-Demo (Replace "This illustrates" up to "Explo
 
 # Welcome to GenAI-Logic
 
-1. ***Instant mcp-enabled microservices*** (APIs and Admin Apps), from a database or **GenAI prompt** -- one command and you are ready for MCP, Vibe and Business User Collaboration.
+## 🚀 New Users: Start Here!
+
+**Bootstrap Copilot by pasting the following into the chat:**
+```
+Please find and read all the readme files.
+```
+
+<br>
+
+## What is GenAI-Logic
+
+1. ***Instant mcp-enabled microservice creation*** (APIs and Admin Apps), from a database or **GenAI prompt** -- one command and you are ready for MCP, Vibe and Business User Collaboration.
 
 2. ***Customize*** with **Declarative Rules** and Python in your IDE, standard container deployment
 
 You are in the [API Logic Server Manager](Manager.md).  This is a good place to manage projects, create notes and resources, etc.
+
 
 &nbsp;
 
