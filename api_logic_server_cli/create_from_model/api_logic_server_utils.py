@@ -84,7 +84,7 @@ def copy_md(project, from_doc_file: str, to_project_file: str = "README.md"):
     
     1. github (to acquire more recent version since release)
     
-    2. dev docs, if exists (gold version in docs, not prototypes).
+    2. dev docs, iff exists (gold version in docs, not prototypes).
 
     Used by Sample-AI; Sample-Integration (nw-), Tutorial, Tutorial-3 (3 projects), Sample-Basic-Demo; Manager
 
@@ -192,7 +192,10 @@ def copy_md(project, from_doc_file: str, to_project_file: str = "README.md"):
                         r'(https://apilogicserver.github.io/Docs/\1)',
                         each_line
                     )
-                    each_line = each_line.replace('.md', '')
+                    if 'copilot' in each_line or 'Copilot' in each_line:  
+                        pass
+                    else:
+                        each_line = each_line.replace('.md', '')  # hmm... todo: find out why this exists
                     pass
                 readme_lines_md.append(each_line)
         with open(str(to_file), "w") as readme_file:
