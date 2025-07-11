@@ -144,8 +144,9 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path,
             from_docker_dir = api_logic_server_path.joinpath('prototypes/manager_docker')
             copied_path = shutil.copytree(src=from_docker_dir, dst=to_dir, dirs_exist_ok=True)
 
-        # get latest readme from git (eg, has been updated since pip install)
+        # get latest readme from git (eg, has been updated since pip install; must be huber not als)
         get_readme_url = f"https://raw.githubusercontent.com/ApiLogicServer/ApiLogicServer-src/main/api_logic_server_cli/prototypes/manager/README.md"
+        # get_readme_url = "https://github.com/ApiLogicServer/ApiLogicServer-src/main/api_logic_server_cli/prototypes/manager/README.md"
         #            https://github.com/ApiLogicServer/ApiLogicServer-src/main/api_logic_server_cli/prototypes/manager/README.md
         readme_path = to_dir.joinpath('README.md')
         try:

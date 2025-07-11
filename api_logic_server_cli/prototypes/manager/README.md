@@ -17,9 +17,11 @@ Instructions: Copy in Sample-Basic-Demo (Replace "This illustrates" up to "Explo
 
 ## 🚀 New Users: Start Here!
 
+> 🤖 **For GitHub Copilot Users:** See `.github/.copilot-instructions.md` for AI assistant guidance on getting started with this project.
+
 **Bootstrap Copilot by pasting the following into the chat:**
 ```
-Please find and read all the readme files.
+Please find and read `.github/.copilot-instructions.md`.
 ```
 
 <br>

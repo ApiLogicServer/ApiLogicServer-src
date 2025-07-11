@@ -25,6 +25,13 @@ als add-auth --provider-type=None # to disable
 
 # 🚀 Quick Start
 
+> 🤖 **For GitHub Copilot Users:** See `.github/.copilot-instructions.md` for AI assistant guidance on getting started with this project.
+
+**Bootstrap Copilot by pasting the following into the chat:**
+```
+Please find and read `.github/.copilot-instructions.md`.
+```
+
 **Microservice Automation Complete -- run to verify:** for **VSCode** projects except those downloaded from Web/GenAI:
 1. `Press F5 to Run` (your venv is defaulted)  
 
