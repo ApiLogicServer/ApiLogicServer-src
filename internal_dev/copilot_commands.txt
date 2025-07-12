@@ -1,0 +1,2 @@
+ok, forget this chat, and reset as if the project were first opened,
+ so I can test copilot's response for a new user.
