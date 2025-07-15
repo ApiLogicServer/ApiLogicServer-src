@@ -15,6 +15,25 @@
     },
     "debug.console.wordWrap": false,    
     "python.defaultInterpreterPath": "ApiLogicServerPython",
+    "python.terminal.activateEnvironment": true,
+    "python.terminal.activateEnvInCurrentTerminal": true,
+    "python.envFile": "${workspaceFolder}/.env",
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.extraPaths": ["ApiLogicServerVenvSitePackages"],
+    "terminal.integrated.profiles.osx": {
+        "venv": {
+            "path": "/bin/zsh",
+            "args": ["-c", "source ${workspaceFolder}/.vscode/venv_init.sh && exec zsh --no-rcs"]
+        }
+    },
+    "terminal.integrated.profiles.linux": {
+        "venv": {
+            "path": "/bin/bash",
+            "args": ["-c", "source ${workspaceFolder}/.vscode/venv_init.sh && exec bash --noprofile --norc"]
+        }
+    },
+    "terminal.integrated.defaultProfile.osx": "venv",
+    "terminal.integrated.defaultProfile.linux": "venv",
     "workbench.editorAssociations": {
         "*.md": "vscode.markdown.preview.editor"
     }

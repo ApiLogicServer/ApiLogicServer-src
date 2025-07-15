@@ -4,7 +4,7 @@
 
 BEGIN TRANSACTION;
 CREATE TABLE customer (
-        id INTEGER NOT NULL, 
+        id INTEGER PRIMARY KEY AUTOINCREMENT, 
         name VARCHAR, 
         balance DECIMAL, 
         credit_limit DECIMAL, 
@@ -19,7 +19,7 @@ INSERT INTO customer VALUES(4,'Diana',0,1000, "diana@corp.org", 0);
 INSERT INTO customer VALUES(5,'Silent',220,1000, "silent@corp.org", 1);
 
 CREATE TABLE product (
-        id INTEGER NOT NULL, 
+        id INTEGER PRIMARY KEY AUTOINCREMENT, 
         name VARCHAR, 
         unit_price DECIMAL,
         PRIMARY KEY (id)
@@ -31,7 +31,7 @@ INSERT INTO product VALUES(4,'Doodad',110);
 INSERT INTO product VALUES(5,'Green',109);
 
 CREATE TABLE IF NOT EXISTS "order" (
-        id INTEGER NOT NULL, 
+        id INTEGER PRIMARY KEY AUTOINCREMENT, 
         notes VARCHAR, 
         customer_id INTEGER NOT NULL, 
         CreatedOn DATE,
@@ -47,7 +47,7 @@ INSERT INTO "order" VALUES(4,'Urgent Order',4, '2023-02-22', '2023-07-15',220);
 INSERT INTO "order" VALUES(5,'Silent Shipment',5, '2023-01-22',NULL,220);
 
 CREATE TABLE item (
-        id INTEGER NOT NULL, 
+        id INTEGER PRIMARY KEY AUTOINCREMENT, 
         order_id INTEGER, 
         product_id INTEGER NOT NULL, 
         quantity INTEGER NOT NULL, 
@@ -64,7 +64,7 @@ INSERT INTO item VALUES(4,4,3,4,300,75);
 INSERT INTO item VALUES(5,5,4,2,220,110);
 
 CREATE TABLE IF NOT EXISTS sys_email (
-        id INTEGER NOT NULL, 
+        id INTEGER PRIMARY KEY AUTOINCREMENT, 
         message VARCHAR, 
         subject VARCHAR,
         customer_id INTEGER NOT NULL, 
