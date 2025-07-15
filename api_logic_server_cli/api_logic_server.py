@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "15.00.43"  # last public release: 15.00.41 (15.00.12)
+__version__ = "15.00.46"  # last public release: 15.00.41 (15.00.12)
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t07/11/2024 - 15.00.43: copilot vibe tweaks \n"\
+    "\t07/14/2024 - 15.00.46: venv fix, copilot vibe tweaks - creation, mcp logic, basic_demo autonums \n"\
     "\t07/10/2024 - 15.00.41: copilot vibe support for logic, UI, MCP,  bug[98] \n"\
     "\t06/30/2024 - 15.00.33: Tech Preview: genai-logic genai-add-app --vibe, bug [96, 97] \n"\
     "\t06/10/2024 - 15.00.12: MCP Security, win fixes for readme, graphics quotes \n"\
@@ -623,11 +623,12 @@ def final_project_fixup(msg, project) -> str:
 
     # **********************************
     # set python.defaultInterpreterPath
+    # yuck: https://apilogicserver.github.io/Docs/Architecture-venv-defaulting/
     # **********************************
-    do_default_interpreter_path = True  # compute startup (only) python / venv location, from creating venv (here)
-    if do_default_interpreter_path:
+    if do_default_interpreter_path := True:  # compute startup (only) python / venv location, from creating venv (here)
         defaultInterpreterPath_str = sys.executable  # python location, unless running from blt or dev-src
         defaultInterpreterPath = Path(defaultInterpreterPath_str)
+        venv_path_str = str(project.venv_path)  # project.manager_path also there...
         if 'ApiLogicServer-dev' in str(project.api_logic_server_dir_path):  # blt & dev-src are special case
             if os.name == "nt":  # cases: blt, or dev source
                 defaultInterpreterPath = project.api_logic_server_dir_path.parent.parent.parent.parent.joinpath('venv/scripts/python.exe')
@@ -647,9 +648,116 @@ def final_project_fixup(msg, project) -> str:
         create_utils.replace_string_in_file(search_for = 'ApiLogicServerPython',
                                             replace_with=defaultInterpreterPath_str,
                                             in_file=vscode_settings_path)
+        
+        # Create venv initialization script for terminal
+        venv_init_path = project.project_directory_path.joinpath('.vscode/venv_init.sh')
+        venv_activate_script = str(Path(defaultInterpreterPath_str).parent.joinpath('activate'))
+        
+        venv_init_content = f"""#!/bin/bash
+# Virtual Environment Initialization Script
+# This script activates the virtual environment for terminal use
+
+# Set DEBUG_VENV_INIT=1 to enable debug output
+DEBUG_VENV_INIT=0
+
+if [ "$DEBUG_VENV_INIT" = "1" ]; then
+    echo "=== VENV INIT DEBUG ==="
+    echo "Shell: $0"
+    echo "ZSH_VERSION: $ZSH_VERSION"
+    echo "BASH_VERSION: $BASH_VERSION"
+    echo "Current PS1: $PS1"
+    echo "VIRTUAL_ENV before: $VIRTUAL_ENV"
+fi
+
+# Source the virtual environment activation script
+if [ -f "{venv_activate_script}" ]; then
+    if [ "$DEBUG_VENV_INIT" = "1" ]; then
+        echo "Found activation script: {venv_activate_script}"
+    fi
+    source {venv_activate_script}
+    echo "Virtual environment activated: $(basename $(dirname $(dirname {venv_activate_script})))"
+    
+    if [ "$DEBUG_VENV_INIT" = "1" ]; then
+        echo "VIRTUAL_ENV after activation: $VIRTUAL_ENV"
+    fi
+    
+    # Don't let virtualenv override the prompt
+    export VIRTUAL_ENV_DISABLE_PROMPT=1
+    if [ "$DEBUG_VENV_INIT" = "1" ]; then
+        echo "Set VIRTUAL_ENV_DISABLE_PROMPT=1"
+    fi
+    
+    # Override the prompt to ensure (venv) shows
+    if [ -n "${{ZSH_VERSION}}" ]; then
+        if [ "$DEBUG_VENV_INIT" = "1" ]; then
+            echo "Setting zsh prompt"
+        fi
+        export PS1="(venv) %n@%m %1~ %# "
+    elif [ -n "${{BASH_VERSION}}" ]; then
+        if [ "$DEBUG_VENV_INIT" = "1" ]; then
+            echo "Setting bash prompt"
+        fi
+        export PS1="(venv) \\u@\\h \\W \\$ "
+    else
+        if [ "$DEBUG_VENV_INIT" = "1" ]; then
+            echo "Unknown shell - trying generic prompt"
+        fi
+        export PS1="(venv) $ "
+    fi
+    
+    if [ "$DEBUG_VENV_INIT" = "1" ]; then
+        echo "Final PS1: $PS1"
+        echo "Final VIRTUAL_ENV: $VIRTUAL_ENV"
+    fi
+    
+else
+    echo "Warning: Virtual environment activation script not found at {venv_activate_script}"
+fi
+
+if [ "$DEBUG_VENV_INIT" = "1" ]; then
+    echo "=== END DEBUG ==="
+fi
+"""
+        
+        with open(venv_init_path, 'w') as venv_init_file:
+            venv_init_file.write(venv_init_content)
+        
+        # Make the script executable
+        import stat
+        os.chmod(venv_init_path, stat.S_IRWXU | stat.S_IRGRP | stat.S_IROTH)
+        
+        # Set the site-packages path for Python analysis
+        venv_lib_dir = Path(defaultInterpreterPath_str).parent.parent.joinpath('lib')
+        site_packages_dirs = list(venv_lib_dir.glob('python*/site-packages'))
+        if site_packages_dirs:
+            venv_site_packages = str(site_packages_dirs[0])
+        else:
+            # Fallback for different structures
+            venv_site_packages = str(venv_lib_dir.joinpath('site-packages'))
+        if os.name == "nt":
+            venv_site_packages = get_windows_path_with_slashes(url=venv_site_packages)
+        create_utils.replace_string_in_file(search_for = 'ApiLogicServerVenvSitePackages',
+                                            replace_with=venv_site_packages,
+                                            in_file=vscode_settings_path)
+        
+        # Create .env file to help with virtual environment activation
+        env_file_path = project.project_directory_path.joinpath('.env')
+        venv_dir = str(Path(defaultInterpreterPath_str).parent.parent)  # Get the venv directory
+        
+        env_content = f"""# Virtual Environment Configuration
+VIRTUAL_ENV={venv_dir}
+PATH={Path(defaultInterpreterPath_str).parent}:$PATH
+PYTHONPATH={venv_site_packages}
+"""
+        with open(env_file_path, 'w') as env_file:
+            env_file.write(env_content)
+        
         log.debug(f'.. ..Updated .vscode/settings.json with "python.defaultInterpreterPath": "{defaultInterpreterPath_str}"...')
+        log.debug(f'.. ..Created .vscode/venv_init.sh for terminal venv activation...')
+        log.debug(f'.. ..Updated .vscode/settings.json with site-packages: "{venv_site_packages}"...')
+        log.debug(f'.. ..Created .env file with VIRTUAL_ENV: "{venv_dir}"...')
     else:
-        log.debug(f'.. ..Updated .vscode/settings.json NOT SET')
+        log.warning(f'.. ..Updated .vscode/settings.json NOT SET')
     return
 
 
