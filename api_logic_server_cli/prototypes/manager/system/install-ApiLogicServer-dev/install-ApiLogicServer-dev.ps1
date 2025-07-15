@@ -4,7 +4,10 @@ param(
     [String]$IDE
 )
 
-SRA="venv/lib/python3.12/site-packages/api_logic_server_cli/create_from_model/safrs-react-admin-npm-build"
+# $SRA="venv/lib/python3.12/site-packages/api_logic_server_cli/create_from_model/safrs-react-admin-npm-build"
+
+$venvPath = "venv\Lib\site-packages"
+$SRA = Join-Path $venvPath "api_logic_server_cli\create_from_model\safrs-react-admin-npm-build"
 
 if (Test-Path -Path $SRA) {
     Write-Output " "
@@ -12,7 +15,7 @@ if (Test-Path -Path $SRA) {
     Write-Output " "
 } else {
     Write-Output " "
-    Write-Output "Safrs React Admin (SRA) not found - please fix line above"
+    Write-Output "Safrs React Admin (SRA) not found - please fix line above for $SRA"
     Write-Output " "
     Exit 1
 }
@@ -28,8 +31,9 @@ if($IDE -eq "") {
     Write-Output " "
     Write-Output " IMPORTANT - create a folder, then install:"
     Write-Output "   > mkdir ApiLogicServer"
+    Write-Output "   > pip install ApiLogicServer"
     Write-Output " "
-    Write-Output "   > .\Install-ApiLogicServer-Dev [ vscode | charm | x ]"
+    Write-Output "   > .\system\install-ApiLogicServer-dev\install-ApiLogicServer-dev.ps1 vscode"
     Write-Output " "
     Exit
 }
