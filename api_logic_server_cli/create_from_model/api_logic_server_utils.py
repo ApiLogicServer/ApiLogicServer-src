@@ -405,10 +405,10 @@ def does_file_contain(search_for: str, in_file: str) -> bool:
         return found
 
 def replace_string_in_file(search_for: str, replace_with: str, in_file: str):
-    with open(Path(in_file), 'r') as file:
+    with open(Path(in_file), 'r', encoding="utf-8") as file:
         file_data = file.read()
         file_data = file_data.replace(search_for, replace_with)
-    with open(in_file, 'w') as file:
+    with open(in_file, 'w', encoding="utf-8") as file:
         file.write(file_data)
 
 def assign_value_to_key_in_file(key: str, value: any, in_file: str):

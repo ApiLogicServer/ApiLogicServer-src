@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "15.00.46"  # last public release: 15.00.41 (15.00.12)
+__version__ = "15.00.47"  # last public release: 15.00.41 (15.00.12)
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t07/14/2024 - 15.00.46: venv fix, copilot vibe tweaks - creation, mcp logic, basic_demo autonums \n"\
+    "\t07/14/2024 - 15.00.47: venv fix, copilot vibe tweaks - creation, mcp logic, basic_demo autonums \n"\
     "\t07/10/2024 - 15.00.41: copilot vibe support for logic, UI, MCP,  bug[98] \n"\
     "\t06/30/2024 - 15.00.33: Tech Preview: genai-logic genai-add-app --vibe, bug [96, 97] \n"\
     "\t06/10/2024 - 15.00.12: MCP Security, win fixes for readme, graphics quotes \n"\
@@ -744,7 +744,14 @@ fi
         env_file_path = project.project_directory_path.joinpath('.env')
         venv_dir = str(Path(defaultInterpreterPath_str).parent.parent)  # Get the venv directory
         
-        env_content = f"""# Virtual Environment Configuration
+        # Platform-specific .env file content
+        if os.name == "nt":  # Windows
+            env_content = f"""# Virtual Environment Configuration
+VIRTUAL_ENV={venv_dir}
+PYTHONPATH={venv_site_packages}
+"""
+        else:  # Unix/Linux/macOS
+            env_content = f"""# Virtual Environment Configuration
 VIRTUAL_ENV={venv_dir}
 PATH={Path(defaultInterpreterPath_str).parent}:$PATH
 PYTHONPATH={venv_site_packages}
@@ -778,7 +785,7 @@ def update_api_logic_server_run(project):
     """
     api_logic_server_run_py = f'{project.project_directory}/api_logic_server_run.py'
     config_py = f'{project.project_directory}/config/config.py'
-    create_utils.replace_string_in_file(search_for="\"api_logic_server_project_name\"",  # fix logic_bank_utils.add_python_path
+    create_utils.replace_string_in_file(search_for="api_logic_server_project_name",  # fix logic_bank_utils.add_python_path
                            replace_with='"' + os.path.basename(project.project_name) + '"',
                            in_file=api_logic_server_run_py)
     create_utils.replace_string_in_file(search_for="ApiLogicServer hello",
@@ -1186,6 +1193,9 @@ class ProjectRun(Project):
             """
             log.debug(f'.. .. ..Copying sqlite database to: database/{self.bind_key}_db.sqlite')
             db_loc = self.abs_db_url.replace("sqlite:///", "")
+            if os.name == "nt":
+                if db_loc.startswith("C:\C:"):  # windows
+                    db_loc = db_loc.replace("C:\C:", "C:")  # remove unk junk
             target_db_loc_actual = str(self.project_directory_path.joinpath(f'database/{self.bind_key}_db.sqlite'))
             # target: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/servers/NW_NoCust/database/Todo_db.sqlite
             # e.g.,   /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/servers/NW_NoCust/database
