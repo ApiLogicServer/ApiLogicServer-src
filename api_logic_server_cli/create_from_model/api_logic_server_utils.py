@@ -293,10 +293,13 @@ def get_abs_db_url(msg, project: Project, is_auth: bool = False):
             else:
                 rtn_abs_db_url = f'sqlite:///{str(project.api_logic_server_dir_path.joinpath("prototypes/sample_ai/database/chatgpt/sample_ai_items.sqlite"))}'
                 # log.info('.. using installed nw sample database')
-        else:
+        else:  # for win, might be: sqlite:////C:\\Users\\val\\dev\\ApiLogicServer\\ApiLogicServer-dev\\org_git\\ApiLogicServer-src\\api_logic_server_cli\\database\\mcp.sqlite
             url = url_to_process[10: len(url_to_process)]
+            if url_to_process.startswith('sqlite:////c:'):
+                url = url_to_process[11: len(url_to_process)]
             rtn_abs_db_url = abspath(url)
             rtn_abs_db_url = 'sqlite:///' + rtn_abs_db_url
+            pass
     elif url_to_process == 'sqlsvr-sample':  # work-around - VSCode run config arg parsing
         rtn_abs_db_url = 'mssql+pyodbc://sa:Posey3861@localhost:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'
     elif url_to_process == 'sqlsvr-nwlogic':  # work-around - VSCode run config arg parsing

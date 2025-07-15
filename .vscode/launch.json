@@ -243,6 +243,20 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "     - web_genie (full path db_url)",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "args": [
+                "create",
+                "--project-name=web_genie",
+                "--db-url=sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/tests/test_databases/sqlite-databases/web_genie/web_genie.sqlite"],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "     - genai AUTO DEALERSHIP CONVERSATION - clean/ApiLogicServer/auto_dealership",
             "type": "debugpy",
             "request": "launch",
