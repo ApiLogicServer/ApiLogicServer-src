@@ -1083,13 +1083,13 @@ def genai_iterate(ctx, project_name: str, using: str):
               help="your_code.py for additional build automation")
 @click.option('--include_tables',
               default=f'',
-              help="yml for include: exclude:")
+              help="yml for include, exclude")
 @click.option('--include-tables', 'include_tables',
               default=f'',
-              help="yml for include: exclude:")
+              help="yml for include, exclude")
 @click.option('--infer_primary_key/--no_infer_primary_key',
               default=False, is_flag=True,
-              help="xInfer primary_key for unique cols")
+              help="Infer primary_key for unique cols")
 @click.option('--infer-primary-key/--no-infer-primary-key', 'infer_primary_key',
               default=False, is_flag=True,
               help="Infer primary-key for unique cols")
@@ -1250,22 +1250,22 @@ def create(ctx, project_name: str, db_url: str, not_exposed: str, api_name: str,
               help="Swagger hostname (default is localhost)")
 @click.option('--extended_builder',
               default=f'',
-              help="your_code.py for additional build automation")
+              help="your python for additional build automation")
 @click.option('--extended-builder', 'extended_builder',
               default=f'',
-              help="your_code.py for additional build automation")
+              help="your python for additional build automation")
 @click.option('--include_tables',
               default=f'',
-              help="yml for include: exclude:")
+              help="yml for include / exclude")
 @click.option('--include-tables', 'include_tables',
               default=f'',
-              help="yml for include: exclude:")
+              help="yml for include / exclude")
 @click.option('--infer_primary_key/--no_infer_primary_key',
               default=False, is_flag=True,
-              help="Infer primary-key for unique cols")
+              help="Infer primary key for unique cols")
 @click.option('--infer-primary-key/--no-infer-primary-key', 'infer_primary_key',
               default=False, is_flag=True,
-              help="Infer primary-key for unique cols")
+              help="Unique cols infer primary key")
 @click.pass_context
 def create_and_run(ctx, project_name: str, db_url: str, not_exposed: str, api_name: str,
         from_git: str,
@@ -1280,11 +1280,13 @@ def create_and_run(ctx, project_name: str, db_url: str, not_exposed: str, api_na
         host: str,
         port: str,
         swagger_host: str,
-        favorites: str, non_favorites: str,
+        favorites: str, 
+        non_favorites: str,
         extended_builder: str,
         include_tables: str,
         multi_api: click.BOOL,
-        opt_locking: str, opt_locking_attr: str,
+        opt_locking: str, 
+        opt_locking_attr: str,
         id_column_alias: str,
         infer_primary_key: click.BOOL):
     """
