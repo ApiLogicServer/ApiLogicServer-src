@@ -93,7 +93,7 @@
 		],
 		"sqltools.useNodeRuntime": true,
 		"workbench.preferredDarkColorTheme": "Default Dark Modern",
-		"workbench.preferredLightColorTheme": "Blue Light Theme",
+		"workbench.preferredLightColorTheme": "Arduino Light",
 		"workbench.colorTheme": "Blue Light Theme",
 		"search.exclude": {
 			"**api_logic_server_cli/ApiLogicProject/": true,
