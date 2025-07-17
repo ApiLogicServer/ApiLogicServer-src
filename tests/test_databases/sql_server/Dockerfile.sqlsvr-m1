@@ -1,0 +1,61 @@
+# Dockerfile for ApiLogicServer SQL Server with NORTHWND database
+# Built for ARM64 (Apple Silicon) compatibility
+
+FROM mcr.microsoft.com/mssql/server:2022-latest
+
+# Set environment variables
+ENV ACCEPT_EULA=Y
+ENV SA_PASSWORD=Posey3861
+ENV MSSQL_PID=Developer
+
+# Copy database files
+COPY NORTHWND.mdf /var/opt/mssql/data/
+COPY NORTHWND_log.ldf /var/opt/mssql/data/
+
+# Fix permissions for database files
+USER root
+RUN chown mssql:mssql /var/opt/mssql/data/NORTHWND.mdf /var/opt/mssql/data/NORTHWND_log.ldf && \
+    chmod 644 /var/opt/mssql/data/NORTHWND.mdf /var/opt/mssql/data/NORTHWND_log.ldf
+
+# Create initialization script
+COPY <<EOF /opt/setup-northwnd.sql
+CREATE DATABASE [NORTHWND] ON 
+(FILENAME = '/var/opt/mssql/data/NORTHWND.mdf'), 
+(FILENAME = '/var/opt/mssql/data/NORTHWND_log.ldf') 
+FOR ATTACH;
+EOF
+
+# Create startup script that attaches NORTHWND database
+COPY <<EOF /opt/setup-database.sh
+#!/bin/bash
+# Start SQL Server in background
+/opt/mssql/bin/launchctl &
+
+# Wait for SQL Server to start
+sleep 30
+
+# Attach NORTHWND database
+/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "\$SA_PASSWORD" -C -i /opt/setup-northwnd.sql
+
+# Keep SQL Server running in foreground
+wait
+EOF
+
+RUN chmod +x /opt/setup-database.sh
+
+USER mssql
+
+# Use our custom startup script
+CMD ["/opt/setup-database.sh"]
+
+# Expose SQL Server port
+EXPOSE 1433
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+  CMD /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "${SA_PASSWORD}" -C -Q "SELECT 1" || exit 1
+
+# Labels
+LABEL maintainer="ApiLogicServer"
+LABEL description="SQL Server 2022 with NORTHWND database for ApiLogicServer development"
+LABEL version="2024.1"

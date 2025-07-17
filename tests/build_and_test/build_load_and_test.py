@@ -1004,7 +1004,7 @@ if Config.do_install_api_logic_server:  # verify the build process - rebuild, an
             cwd=install_api_logic_server_clean_path,
             msg = f"\nInstalling at -dev/Clean: {str(install_api_logic_server_clean_path)}")
         assert result_install.returncode == 0, f"Install failed: {result_install}"
-    else:
+    else:  # mac and linux
         python_version = sys.version_info
         assert python_version[0] >= 3 and python_version[1] in [8,9,10,11, 12], \
             f"Python {python_version[0]}.{python_version[1]} is not currently supported\n"
