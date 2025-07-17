@@ -2124,7 +2124,7 @@ if __name__ == '__main__':  # debugger & python command line start here
             "show-args" in api_logic_server_info_file_dict:
         print_args(commands, f'\nCommand Line Arguments:')
     python_version = sys.version_info
-    assert python_version[0] >= 3 and python_version[1] in [10,11,12], \
-        "... Requires Python >=3.10, !=3.11.0, !=3.11.1, 3.12"
+    assert python_version[0] >= 3 and python_version[1] in [10,11,12, 13], \
+        "... Requires Python >=3.10, !=3.11.0, !=3.11.1, 3.12, 3.13"
     main()
 

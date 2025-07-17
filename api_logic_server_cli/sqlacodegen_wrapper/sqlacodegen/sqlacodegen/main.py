@@ -8,7 +8,7 @@ import pkg_resources
 from sqlalchemy.engine import create_engine
 from sqlalchemy.schema import MetaData
 
-from sqlacodegen_wrapper.sqlacodegen_wrapper import CodeGenerator
+from .codegen import CodeGenerator
 
 
 def main(calling_args=None):

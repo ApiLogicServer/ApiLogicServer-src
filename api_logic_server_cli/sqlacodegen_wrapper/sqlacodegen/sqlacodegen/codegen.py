@@ -8,6 +8,7 @@ from collections import defaultdict
 from importlib import import_module
 from inspect import FullArgSpec  # val-311
 from keyword import iskeyword
+from typing import TYPE_CHECKING
 
 import sqlalchemy
 import sqlalchemy.exc
@@ -22,7 +23,8 @@ import yaml
 import datetime
 
 # The generic ARRAY type was introduced in SQLAlchemy 1.1
-from api_logic_server_cli.create_from_model.model_creation_services import ModelCreationServices
+if TYPE_CHECKING:
+    from api_logic_server_cli.create_from_model.model_creation_services import ModelCreationServices
 from api_logic_server_cli.create_from_model.meta_model import Resource, ResourceRelationship, ResourceAttribute
 
 log = logging.getLogger(__name__)
@@ -818,7 +820,7 @@ class CodeGenerator(object):
         """ not used by API Logic Server """
         self.noinflect = noinflect
         self.noclasses = noclasses
-        self.model_creation_services = model_creation_services  # type: ModelCreationServices
+        self.model_creation_services = model_creation_services  # type: "ModelCreationServices"
         self.generate_relationships_on = "parent"  # "child"
         """ FORMERLY, relns were genned ONLY on parent (== 'parent') """
         self.indentation = indentation

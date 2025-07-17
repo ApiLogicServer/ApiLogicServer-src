@@ -29,6 +29,7 @@ The ctor then calls `create_resource_list`, to create the `resource_list`
 
 import sys, logging, inspect, builtins, os, argparse, tempfile, atexit, shutil, io
 import traceback
+import pkg_resources
 
 import safrs
 from sqlalchemy import CHAR, Column, DateTime, Float, ForeignKey, Index, Integer, String, TIMESTAMP, Table, Text, UniqueConstraint, text
@@ -44,8 +45,11 @@ from io import StringIO
 from sqlalchemy.engine import create_engine
 from sqlalchemy.schema import MetaData
 from flask_cors import CORS
-from sqlacodegen_wrapper.sqlacodegen.sqlacodegen.codegen import CodeGenerator
-from api_logic_server_cli.create_from_model.model_creation_services import ModelCreationServices
+from .sqlacodegen.sqlacodegen.codegen import CodeGenerator
+from .sqlacodegen.sqlacodegen.main import main as codegen
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from api_logic_server_cli.create_from_model.model_creation_services import ModelCreationServices
 from pathlib import Path
 from shutil import copyfile
 import os, sys
@@ -292,7 +296,7 @@ if on_import:
             models_f.write(models)
         # atexit.register(lambda : shutil.rmtree(MODEL_DIR))
 
-    import models
+    import models  # type: ignore  # dynamically created module
 
 
 def start_api(HOST="0.0.0.0", PORT=5000):
@@ -338,7 +342,7 @@ if __name__ == "__main__":
 
 
 
-def create_models_py(model_creation_services: ModelCreationServices, abs_db_url: str, project_directory: str):
+def create_models_py(model_creation_services: "ModelCreationServices", abs_db_url: str, project_directory: str):
     """
     Create `models.py` (using sqlacodegen, via this wrapper at create_models_py() ).
 
