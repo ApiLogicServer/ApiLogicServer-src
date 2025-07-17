@@ -1,6 +1,6 @@
 {
   "name": "ontimize-app",
-  "version": "15.6.0-NEXT-2",
+  "version": "15.6.0-NEXT-7",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --port 4299",
@@ -30,7 +30,7 @@
     "@angular/router": "^15.2.10",
     "@angular/service-worker": "^15.2.10",
     "@angular/upgrade": "^15.2.10",
-    "ontimize-web-ngx": "15.6.0-next.4",
+    "ontimize-web-ngx": "15.6.0-next.7",
     "ontimize-web-ngx-charts": "15.2.0-next.3",
     "ontimize-web-ngx-filemanager": "^15.1.0-next.0",
     "ontimize-web-ngx-map": "15.0.0",
