@@ -189,6 +189,10 @@ class Config:
     # Begin Multi-Database URLs (from ApiLogicServer add-db...)
     auth_db_path = str(project_path.joinpath('database/authentication_db.sqlite'))
     SQLALCHEMY_DATABASE_URI_AUTHENTICATION = f'sqlite:///{auth_db_path}'
+    # Python 3.13+ compatibility: Convert PostgreSQL URLs to use psycopg3 (for env override)
+    if sys.version_info >= (3, 13) and SQLALCHEMY_DATABASE_URI_AUTHENTICATION.startswith('postgresql://'):
+        SQLALCHEMY_DATABASE_URI_AUTHENTICATION = SQLALCHEMY_DATABASE_URI_AUTHENTICATION.replace('postgresql://', 'postgresql+psycopg://')
+        app_logger.debug(f'config.py - converted PostgreSQL URL for Python 3.13+: {SQLALCHEMY_DATABASE_URI_AUTHENTICATION}')
     app_logger.info(f'config.py - SQLALCHEMY_DATABASE_URI_AUTHENTICATION: {SQLALCHEMY_DATABASE_URI_AUTHENTICATION}\n')
 
     # as desired, use env variable: export SQLALCHEMY_DATABASE_URI='sqlite:////Users/val/dev/servers/docker_api_logic_project/database/db.sqliteXX'
