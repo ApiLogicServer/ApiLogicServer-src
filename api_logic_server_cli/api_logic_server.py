@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "15.00.49"  # last public release: 15.00.41 (15.00.12)
+__version__ = "15.00.50"  # last public release: 15.00.41 (15.00.12)
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t07/17/2024 - 15.00.50: Python 3.13 compatibility fixes - psycopg2→psycopg3, SQLAlchemy 2.0+, pkg_resources→importlib.metadata \n"\
     "\t07/17/2024 - 15.00.49: venv fix+, ext bldr * fix, copilot vibe tweaks - creation, mcp logic, basic_demo autonums \n"\
     "\t07/10/2024 - 15.00.41: copilot vibe support for logic, UI, MCP,  bug[98] \n"\
     "\t06/30/2024 - 15.00.33: Tech Preview: genai-logic genai-add-app --vibe, bug [96, 97] \n"\
@@ -463,6 +464,13 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
         copy_sqlite = True
         if copy_sqlite == False or "sqlite" not in project.abs_db_url:
             db_uri = get_windows_path_with_slashes(project.abs_db_url)
+            
+            # Convert PostgreSQL URL for Python 3.13+ compatibility
+            import sys
+            if sys.version_info >= (3, 13) and db_uri.startswith('postgresql://'):
+                db_uri = db_uri.replace('postgresql://', 'postgresql+psycopg://')
+                log.debug(f'.. ..Converted PostgreSQL URL for Python 3.13+: {db_uri}')
+            
             create_utils.replace_string_in_file(search_for="replace_db_url",
                                 replace_with=db_uri,
                                 in_file=f'{project.project_directory}/config/config.py')
@@ -1197,8 +1205,8 @@ class ProjectRun(Project):
             log.debug(f'.. .. ..Copying sqlite database to: database/{self.bind_key}_db.sqlite')
             db_loc = self.abs_db_url.replace("sqlite:///", "")
             if os.name == "nt":
-                if db_loc.startswith("C:\C:"):  # windows
-                    db_loc = db_loc.replace("C:\C:", "C:")  # remove unk junk
+                if db_loc.startswith(r"C:\C:"):  # windows
+                    db_loc = db_loc.replace(r"C:\C:", "C:")  # remove unk junk
             target_db_loc_actual = str(self.project_directory_path.joinpath(f'database/{self.bind_key}_db.sqlite'))
             # target: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/servers/NW_NoCust/database/Todo_db.sqlite
             # e.g.,   /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/servers/NW_NoCust/database

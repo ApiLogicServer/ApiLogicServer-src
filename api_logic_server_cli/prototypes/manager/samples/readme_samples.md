@@ -31,7 +31,7 @@ genai-logic create --db_url='mssql+pyodbc://sa:Posey3861@localhost:1433/NORTHWND
 genai-logic create --project_name=oracle_hr --db_url='oracle+oracledb://hr:tiger@localhost:1521/?service_name=ORCL'
 genai-logic create --db_url=postgresql://postgres:p@10.0.0.234/postgres
 genai-logic create --project_name=my_schema --db_url=postgresql://postgres:p@localhost/my_schema
-genai-logic create --db_url=postgresql+psycopg2://postgres:password@localhost:5432/postgres?options=-csearch_path%3Dmy_db_schema
+genai-logic create --db_url=postgresql://postgres:password@localhost:5432/postgres?options=-csearch_path%3Dmy_db_schema
 genai-logic create --project_name=Chinook \
   --host=ApiLogicServer.pythonanywhere.com --port= \
   --db_url=mysql+pymysql://ApiLogicServer:@ApiLogicServer.mysql.pythonanywhere-services.com/ApiLogicServer\$Chinook

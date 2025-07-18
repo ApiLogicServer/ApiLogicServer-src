@@ -8,4 +8,10 @@ recursive-include api_logic_server_cli/fragments *.*
 include api_logic_server_cli/api_logic_server_info.yaml
 # include api_logic_server_cli/login_endpoint.txt
 include api_logic_server_cli/logging.yml
-recursive-exclude __pycache__ *.*
+prune **/__pycache__
+global-exclude *.pyc
+global-exclude *.pyo
+global-exclude *.pyd
+global-exclude *~
+global-exclude *.so
+global-exclude *.egg-info

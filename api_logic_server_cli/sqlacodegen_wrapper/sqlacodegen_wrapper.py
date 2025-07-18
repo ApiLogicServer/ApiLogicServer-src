@@ -29,7 +29,11 @@ The ctor then calls `create_resource_list`, to create the `resource_list`
 
 import sys, logging, inspect, builtins, os, argparse, tempfile, atexit, shutil, io
 import traceback
-import pkg_resources
+try:
+    from importlib.metadata import version as get_version
+except ImportError:
+    # Python < 3.8 fallback
+    from importlib_metadata import version as get_version
 
 import safrs
 from sqlalchemy import CHAR, Column, DateTime, Float, ForeignKey, Index, Integer, String, TIMESTAMP, Table, Text, UniqueConstraint, text
@@ -95,8 +99,11 @@ def get_args():
     args = parser.parse_args()
 
     if args.version:
-        version = pkg_resources.get_distribution("sqlacodegen").parsed_version # noqa: F821
-        log.debug(version.public)
+        try:
+            version_str = get_version("sqlacodegen")
+            log.debug(version_str)
+        except Exception:
+            log.debug("sqlacodegen version not found")
         exit()
     if not args.url:
         log.debug("You must supply a url\n", file=sys.stderr)
@@ -137,7 +144,7 @@ uri_info = """Examples:
   ApiLogicServer create-and-run --db_url=mssql+pyodbc://sa:Posey3861@localhost:1433/NORTHWND?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=no
   ApiLogicServer create-and-run --db_url=postgresql://postgres:p@10.0.0.234/postgres
   ApiLogicServer create --project_name=my_schema --db_url=postgresql://postgres:p@localhost/my_schema
-  ApiLogicServer create --db_url=postgresql+psycopg2://postgres:password@localhost:5432/postgres?options=-csearch_path%3Dmy_db_schema
+  ApiLogicServer create --db_url=postgresql://postgres:password@localhost:5432/postgres?options=-csearch_path%3Dmy_db_schema
   ApiLogicServer create --project_name=Chinook \
     --host=ApiLogicServer.pythonanywhere.com --port= \
     --db_url=mysql+pymysql://ApiLogicServer:***@ApiLogicServer.mysql.pythonanywhere-services.com/ApiLogicServer$Chinook
@@ -203,7 +210,13 @@ def create_models_memstring(args) -> str:
 
     if os.getenv('APILOGICSERVER_ORACLE_THICK'):
         oracledb.init_oracle_client(lib_dir=os.getenv('APILOGICSERVER_ORACLE_THICK'))
-    engine = create_engine(args.url)  # type _engine.Engine
+    
+    # For Python 3.13+, force PostgreSQL URLs to use psycopg3 dialect
+    engine_url = args.url
+    if sys.version_info >= (3, 13) and engine_url.startswith('postgresql://'):
+        engine_url = engine_url.replace('postgresql://', 'postgresql+psycopg://', 1)
+    
+    engine = create_engine(engine_url)  # type _engine.Engine
 
     metadata = MetaData()
     if os.getenv('APILOGICSERVER_ORACLE_THICK'):

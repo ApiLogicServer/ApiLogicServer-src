@@ -133,6 +133,12 @@ class Config:
     SQLALCHEMY_DATABASE_URI : typing.Optional[str] = f"replace_db_url"
     # override SQLALCHEMY_DATABASE_URI here as required
 
+    # Python 3.13+ compatibility: Convert PostgreSQL URLs to use psycopg3
+    import sys
+    if sys.version_info >= (3, 13) and SQLALCHEMY_DATABASE_URI.startswith('postgresql://'):
+        SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI.replace('postgresql://', 'postgresql+psycopg://')
+        app_logger.debug(f'config.py - converted PostgreSQL URL for Python 3.13+: {SQLALCHEMY_DATABASE_URI}')
+
     BACKTIC_AS_QUOTE = False # use backtic as quote for table names for API Bridge
     if SQLALCHEMY_DATABASE_URI.startswith("mysql") or SQLALCHEMY_DATABASE_URI.startswith("mariadb"):
         BACKTIC_AS_QUOTE = True
@@ -145,6 +151,11 @@ class Config:
     if os.getenv('SQLALCHEMY_DATABASE_URI'):  # e.g. export SECURITY_ENABLED=true
         SQLALCHEMY_DATABASE_URI = os.getenv('SQLALCHEMY_DATABASE_URI')
         app_logger.debug(f'.. overridden from env variable: {SQLALCHEMY_DATABASE_URI}')
+        
+        # Python 3.13+ compatibility: Convert PostgreSQL URLs to use psycopg3 (for env override)
+        if sys.version_info >= (3, 13) and SQLALCHEMY_DATABASE_URI.startswith('postgresql://'):
+            SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI.replace('postgresql://', 'postgresql+psycopg://')
+            app_logger.debug(f'config.py - converted PostgreSQL URL for Python 3.13+: {SQLALCHEMY_DATABASE_URI}')
 
 
     # KEYCLOAK Args

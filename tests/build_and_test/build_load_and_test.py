@@ -8,6 +8,13 @@ from pathlib import Path
 from dotmap import DotMap
 import json
 
+############################
+# before release, this runs tests/build_and_test/build_load_and_test.py... 
+# it builds the product into /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer....
+# and creates several projects into ...build_and_test/ApiLogicServer/tests
+############################
+
+
 test_folder_name = 'tests-genai'
 """ manager folder for tests """
 
