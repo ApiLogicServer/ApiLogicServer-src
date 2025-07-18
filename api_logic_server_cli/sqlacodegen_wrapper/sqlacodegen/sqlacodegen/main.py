@@ -4,7 +4,19 @@ import argparse
 import io
 import sys
 
-import pkg_resources
+try:
+    from importlib import metadata
+except ImportError:
+    # Python < 3.8
+    import pkg_resources as metadata_fallback
+    
+    class MetadataWrapper:
+        @staticmethod
+        def version(name):
+            return metadata_fallback.get_distribution(name).version
+    
+    metadata = MetadataWrapper()
+
 from sqlalchemy.engine import create_engine
 from sqlalchemy.schema import MetaData
 
@@ -30,8 +42,11 @@ def main(calling_args=None):
         args = parser.parse_args()
 
     if args.version:
-        version = pkg_resources.get_distribution('sqlacodegen').parsed_version
-        print(version.public)
+        try:
+            version = metadata.version('sqlacodegen')
+            print(version)
+        except Exception:
+            print("sqlacodegen version unknown")
         return
     if not args.url:
         print('You must supply a url\n', file=sys.stderr)
@@ -39,7 +54,12 @@ def main(calling_args=None):
         return
 
     # Use reflection to fill in the metadata
-    engine = create_engine(args.url)
+    # For Python 3.13+, force PostgreSQL URLs to use psycopg3 dialect
+    engine_url = args.url
+    if sys.version_info >= (3, 13) and engine_url.startswith('postgresql://'):
+        engine_url = engine_url.replace('postgresql://', 'postgresql+psycopg://', 1)
+    
+    engine = create_engine(engine_url)
     try:
         # dirty hack for sqlite  TODO review ApiLogicServer
         engine.execute("""PRAGMA journal_mode = OFF""")

@@ -27,7 +27,7 @@ cd $SCRIPT_DIR
 mkdir -p $SCRIPT_DIR/../../../../clean/ApiLogicServer
 cd $SCRIPT_DIR/../../../../clean/ApiLogicServer
 CLEAN_DIR=$(pwd)
-rm -r -h -s $CLEAN_DIR/*
+rm -rf $CLEAN_DIR/*
 cd $SCRIPT_DIR
 
 echo "..Installing to directories: \n....$INSTALL_DIR\n....$CLEAN_DIR\n"
