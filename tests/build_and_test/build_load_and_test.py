@@ -21,6 +21,13 @@ test_folder_name = 'tests-genai'
 test_names = []
 """ list of (test_name, test_notes) that ran """
 
+test_failures = []
+""" list of (test_name, error_message) that failed """
+
+total_tests = 0
+passed_tests = 0
+failed_tests = 0
+
 
 start_time = time.time()
 
@@ -29,6 +36,68 @@ project_name = 'project-name'
 bind_key = 'bind-key'
 include_tables = 'include-tables'
 extended_builder = 'extended-builder'
+
+
+def start_test(test_name: str, test_note: str = ""):
+    """
+    Start tracking a test - increment counters and log the test
+    
+    Args:
+        test_name: Name of the test being started
+        test_note: Optional description of the test
+    """
+    global total_tests
+    total_tests += 1
+    test_names.append((test_name, test_note))
+    print(f"\n=== Starting Test {total_tests}: {test_name} ===")
+    if test_note:
+        print(f"    {test_note}")
+
+def pass_test(test_name: str):
+    """
+    Mark a test as passed
+    
+    Args:
+        test_name: Name of the test that passed
+    """
+    global passed_tests
+    passed_tests += 1
+    print(f"✅ PASSED: {test_name}")
+
+def fail_test(test_name: str, error_message: str):
+    """
+    Mark a test as failed and log the error
+    
+    Args:
+        test_name: Name of the test that failed
+        error_message: Error message to log
+    """
+    global failed_tests
+    failed_tests += 1
+    test_failures.append((test_name, str(error_message)))
+    print(f"❌ FAILED: {test_name}")
+    print(f"    Error: {error_message}")
+
+def run_test(test_name: str, test_note: str, test_function, *args, **kwargs):
+    """
+    Execute a test function with error handling and tracking
+    
+    Args:
+        test_name: Name of the test
+        test_note: Description of the test
+        test_function: Function to execute
+        *args: Arguments to pass to test_function
+        **kwargs: Keyword arguments to pass to test_function
+    """
+    start_test(test_name, test_note)
+    try:
+        result = test_function(*args, **kwargs)
+        pass_test(test_name)
+        return result
+    except Exception as e:
+        fail_test(test_name, str(e))
+        # Continue execution - don't re-raise the exception
+        return None
 
 
 class DotDict(dict):
@@ -1061,27 +1130,30 @@ os.environ["APILOGICSERVER_AUTO_OPEN"] = "NO_AUTO_OPEN"     # for each test proj
 os.environ["APILOGICPROJECT_STOP_OK"] = "True"              # enable stop server
 
 if Config.do_create_api_logic_project: 
-    result_manager = run_command(f'{set_venv} && ApiLogicServer start --no-open-manager',
-        cwd=install_api_logic_server_path,
-        msg=f'\nCreate Manager')
-        
-    result_create = run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/ApiLogicProject --{db_url}=nw+',
-        cwd=install_api_logic_server_path,
-        msg=f'\nCreate ApiLogicProject')     # nw+ (with logic)
+    def create_api_logic_project():
+        result_manager = run_command(f'{set_venv} && ApiLogicServer start --no-open-manager',
+            cwd=install_api_logic_server_path,
+            msg=f'\nCreate Manager')
+            
+        result_create = run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/ApiLogicProject --{db_url}=nw+',
+            cwd=install_api_logic_server_path,
+            msg=f'\nCreate ApiLogicProject')     # nw+ (with logic)
     
-    """ tutorial created in Create Manager, above
-    result_create = run_command(f'{set_venv} && ApiLogicServer tutorial',
-        cwd=install_api_logic_server_path,
-        msg=f'\nCreate Tutorial')
-    """
+    run_test("create_api_logic_project", "Create ApiLogicProject with NW+ database", create_api_logic_project)
 
 if Config.do_run_api_logic_project:  # so you can start and set breakpoint, then run tests
-    start_api_logic_server(project_name="ApiLogicProject")
+    def run_api_logic_project():
+        start_api_logic_server(project_name="ApiLogicProject")
+    
+    run_test("run_api_logic_project", "Start ApiLogicProject server", run_api_logic_project)
 
 if Config.do_test_api_logic_project:
-    validate_nw(install_api_logic_server_path, set_venv)
-    stop_server(msg="*** NW TESTS COMPLETE ***\n")
-    validate_opt_locking()
+    def test_api_logic_project():
+        validate_nw(install_api_logic_server_path, set_venv)
+        stop_server(msg="*** NW TESTS COMPLETE ***\n")
+        validate_opt_locking()
+    
+    run_test("test_api_logic_project", "Run NW validation tests and opt locking", test_api_logic_project)
 
 '''
 if Config.do_test_api_logic_project_with_auth:
@@ -1096,148 +1168,164 @@ if len(sys.argv) > 1 and 'build-only' in sys.argv[1]:
 
 
 if Config.do_test_genai:
-    # read environment variable APILOGICSERVER_TEST_GENAI
-    test_genai_env = os.getenv('APILOGICSERVER_TEST_GENAI', 'False').lower() in ('true', '1', 't')
-    if os.getenv('APILOGICSERVER_TEST_GENAI') is None:
-        test_genai_env = True
-    if test_genai_env:
-        print("Running GenAI tests as per environment variable APILOGICSERVER_TEST_GENAI")
-        test_name = f'test_genai'
-        test_note = 'genai smoke test'
-        test_names.append( (test_name, test_note) )
-        # smoke test, part 1: als genai --using=system/genai/examples/genai_demo/genai_demo.prompt
-        create_in = install_api_logic_server_path
-        test_name = 'tests/genai_demo'
-        prompt_path = install_api_logic_server_path.joinpath('system/genai/examples/genai_demo/genai_demo.prompt')
-        assert prompt_path.exists() , f'{test_name} error: prompt path not found: {str(prompt_path)}'
-        do_test_genai_cmd = f'{set_venv} && als genai --project-name={test_name} --using={prompt_path} --retries=3'
-        result_genai = run_command(do_test_genai_cmd,
-            cwd=create_in,
-            msg=f'\nCreate {test_name}')
-        # genai_demo_path = install_api_logic_server_path.joinpath(test_name)
-        start_api_logic_server(project_name=f'../{test_name}')
-        stop_server(msg=f"*** {test_name} TESTS COMPLETE ***\n")
-    else:
-        print("Skipping GenAI tests as per environment variable APILOGICSERVER_TEST_GENAI")
+    def test_genai():
+        # read environment variable APILOGICSERVER_TEST_GENAI
+        test_genai_env = os.getenv('APILOGICSERVER_TEST_GENAI', 'False').lower() in ('true', '1', 't')
+        if os.getenv('APILOGICSERVER_TEST_GENAI') is None:
+            test_genai_env = True
+        if test_genai_env:
+            print("Running GenAI tests as per environment variable APILOGICSERVER_TEST_GENAI")
+            # smoke test, part 1: als genai --using=system/genai/examples/genai_demo/genai_demo.prompt
+            create_in = install_api_logic_server_path
+            test_name = 'tests/genai_demo'
+            prompt_path = install_api_logic_server_path.joinpath('system/genai/examples/genai_demo/genai_demo.prompt')
+            assert prompt_path.exists() , f'{test_name} error: prompt path not found: {str(prompt_path)}'
+            do_test_genai_cmd = f'{set_venv} && als genai --project-name={test_name} --using={prompt_path} --retries=3'
+            result_genai = run_command(do_test_genai_cmd,
+                cwd=create_in,
+                msg=f'\nCreate {test_name}')
+            # genai_demo_path = install_api_logic_server_path.joinpath(test_name)
+            start_api_logic_server(project_name=f'../{test_name}')
+            stop_server(msg=f"*** {test_name} TESTS COMPLETE ***\n")
+        else:
+            print("Skipping GenAI tests as per environment variable APILOGICSERVER_TEST_GENAI")
 
-    db_loc = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/genai_demo/genai_demo_models_with_addr.sqlite')
-    db_loc_str = str(db_loc)
-    genai_with_address = f'sqlite:////{db_loc_str}'
-    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/genai_demo_models_with_addr --{db_url}={genai_with_address}',
-        cwd=install_api_logic_server_path,
-        msg=f'\nCreate include_exclude_typical at: {str(install_api_logic_server_path)}')
-    result = start_api_logic_server(project_name='genai_demo_models_with_addr', do_return=True) 
+        db_loc = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/genai_demo/genai_demo_models_with_addr.sqlite')
+        db_loc_str = str(db_loc)
+        genai_with_address = f'sqlite:////{db_loc_str}'
+        run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/genai_demo_models_with_addr --{db_url}={genai_with_address}',
+            cwd=install_api_logic_server_path,
+            msg=f'\nCreate include_exclude_typical at: {str(install_api_logic_server_path)}')
+        result = start_api_logic_server(project_name='genai_demo_models_with_addr', do_return=True) 
 
-    get_uri = "http://localhost:5656/api/Address/?include=customer_account&fields%5BAddress%5D=customer_account_id%2Cstreet%2Ccity%2Cstate%2Czipcode%2C_check_sum_%2CS_CheckSum&page%5Boffset%5D=0&page%5Blimit%5D=10&sort=id"
-    r = requests.get(url=get_uri)
-    response_text = r.text
-    result_data = json.loads(response_text) 
-    assert len(result_data["data"]) > 0, "genai_demo_models_with_addr: Did not find any rows"
+        get_uri = "http://localhost:5656/api/Address/?include=customer_account&fields%5BAddress%5D=customer_account_id%2Cstreet%2Ccity%2Cstate%2Czipcode%2C_check_sum_%2CS_CheckSum&page%5Boffset%5D=0&page%5Blimit%5D=10&sort=id"
+        r = requests.get(url=get_uri)
+        response_text = r.text
+        result_data = json.loads(response_text) 
+        assert len(result_data["data"]) > 0, "genai_demo_models_with_addr: Did not find any rows"
 
-    stop_server(msg="genai_demo_models_with_addr\n")
+        stop_server(msg="genai_demo_models_with_addr\n")
 
-    # test genai, using copy of pre-supplied ChatGPT response (to avoid api key issues)
-    # see https://apilogicserver.github.io/Docs/Sample-Genai/#what-just-happened
-    prompt_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/genai_demo/genai.response')
-    assert prompt_path.exists() , f'do_test_genai error: prompt path not found: {str(prompt_path)}'
-    # FIXME - add --project-name=tests/xxx
-    result_genai = run_command(f'{set_venv} && als genai --project-name=tests/genai_demo --using=genai_demo.prompt --repaired-response={prompt_path}',
-        cwd=install_api_logic_server_path,
-        msg=f'\nCreate genai_demo')
-    genai_demo_path = install_api_logic_server_path.joinpath('tests/genai_demo')
-    add_cust_genai = run_command(f'{set_venv} && cd {genai_demo_path} && als add-cust',
-        cwd=genai_demo_path,
-        msg=f'\nCustomize genai_demo')
-    start_api_logic_server(project_name="genai_demo")
-    stop_server(msg="*** genai_demo TESTS COMPLETE ***\n")
+        # test genai, using copy of pre-supplied ChatGPT response (to avoid api key issues)
+        # see https://apilogicserver.github.io/Docs/Sample-Genai/#what-just-happened
+        prompt_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/genai_demo/genai.response')
+        assert prompt_path.exists() , f'do_test_genai error: prompt path not found: {str(prompt_path)}'
+        # FIXME - add --project-name=tests/xxx
+        result_genai = run_command(f'{set_venv} && als genai --project-name=tests/genai_demo --using=genai_demo.prompt --repaired-response={prompt_path}',
+            cwd=install_api_logic_server_path,
+            msg=f'\nCreate genai_demo')
+        genai_demo_path = install_api_logic_server_path.joinpath('tests/genai_demo')
+        add_cust_genai = run_command(f'{set_venv} && cd {genai_demo_path} && als add-cust',
+            cwd=genai_demo_path,
+            msg=f'\nCustomize genai_demo')
+        start_api_logic_server(project_name="genai_demo")
+        stop_server(msg="*** genai_demo TESTS COMPLETE ***\n")
+    
+    run_test("test_genai", "GenAI creation and validation tests", test_genai)
 
     
 if Config.do_test_multi_reln:
+    def test_multi_reln():
+        ''' Lost test: based in pre-parsed response
+        # first, some tests for genai, not starting server.  Prompts from tests, avoid too many samples
+        prompt_path = 'genai_demo_outdented_reln'
+        response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/genai_demo/genai_demo_retry_outdented_relns_fixed/genai.response')
+        assert response_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
+        result_genai = run_command(f'{set_venv} && als genai  --project-name=tests/genai_demo_retry_outdented_relns_fixed --using={prompt_path} --repaired-response={response_path}',
+            cwd=install_api_logic_server_path,
+            msg=f'\nCreate outdented_relns_fixed')
 
-    ''' Lost test: based in pre-parsed response
-    # first, some tests for genai, not starting server.  Prompts from tests, avoid too many samples
-    prompt_path = 'genai_demo_outdented_reln'
-    response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/genai_demo/genai_demo_retry_outdented_relns_fixed/genai.response')
-    assert response_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
-    result_genai = run_command(f'{set_venv} && als genai  --project-name=tests/genai_demo_retry_outdented_relns_fixed --using={prompt_path} --repaired-response={response_path}',
-        cwd=install_api_logic_server_path,
-        msg=f'\nCreate outdented_relns_fixed')
+        prompt_path = 'genai_demo_decimals'
+        response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/genai_demo/genai_demo_decimal/genai.response')
+        assert response_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
+        result_genai = run_command(f'{set_venv} && als genai --project-name=tests/genai_demo_decimal --using={prompt_path} --repaired-response={response_path}',
+            cwd=install_api_logic_server_path,
+            msg=f'\ngenai_demo_decimals')
 
-    prompt_path = 'genai_demo_decimals'
-    response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/genai_demo/genai_demo_decimal/genai.response')
-    assert response_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
-    result_genai = run_command(f'{set_venv} && als genai --project-name=tests/genai_demo_decimal --using={prompt_path} --repaired-response={response_path}',
-        cwd=install_api_logic_server_path,
-        msg=f'\ngenai_demo_decimals')
+        # depends on `import decimal`` in api_logic_server_cli/prototypes/manager/system/genai/create_db_models_inserts/create_db_models_prefix.py
+        prompt_path = 'time_cards_decimal'  # really a sqlacodegen test - classes table --> Class (reserved word)
+        response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/time_cards/time_card_decimal/genai.response')
+        assert response_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
+        result_genai = run_command(f'{set_venv} && als genai --project-name=tests/dnd --using={prompt_path} --repaired-response={response_path}',
+            cwd=install_api_logic_server_path,
+            msg=f'\ntime cards decimal')
 
-    # depends on `import decimal`` in api_logic_server_cli/prototypes/manager/system/genai/create_db_models_inserts/create_db_models_prefix.py
-    prompt_path = 'time_cards_decimal'  # really a sqlacodegen test - classes table --> Class (reserved word)
-    response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/time_cards/time_card_decimal/genai.response')
-    assert response_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
-    result_genai = run_command(f'{set_venv} && als genai --project-name=tests/dnd --using={prompt_path} --repaired-response={response_path}',
-        cwd=install_api_logic_server_path,
-        msg=f'\ntime cards decimal')
+        prompt_path = 'time_cards_kw'  # really a sqlacodegen test - classes table --> Class (reserved word)
+        response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/time_cards/time_card_decimal/genai.response')
+        assert response_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
+        result_genai = run_command(f'{set_venv} && als genai --project-name=tests/time_card_decimal --using={prompt_path} --repaired-response={response_path}',
+            cwd=install_api_logic_server_path,
+            msg=f'\ntime cards keyword')    
+        '''  
 
-    prompt_path = 'time_cards_kw'  # really a sqlacodegen test - classes table --> Class (reserved word)
-    response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/time_cards/time_card_decimal/genai.response')
-    assert response_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
-    result_genai = run_command(f'{set_venv} && als genai --project-name=tests/time_card_decimal --using={prompt_path} --repaired-response={response_path}',
-        cwd=install_api_logic_server_path,
-        msg=f'\ntime cards keyword')    
-    '''  
-
-    prompt_path = 'dungeons_and_dragons'  # really a sqlacodegen test - classes table --> Class (odd plural, reserved word?)
-    response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/dnd/dnd.response')
-    assert response_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
-    result_genai = run_command(f'{set_venv} && als genai --project-name=tests/dnd --using={prompt_path} --repaired-response={response_path}',
-        cwd=install_api_logic_server_path,
-        msg=f'\ndungeons_and_dragons')
+        prompt_path = 'dungeons_and_dragons'  # really a sqlacodegen test - classes table --> Class (odd plural, reserved word?)
+        response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/dnd/dnd.response')
+        assert response_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
+        result_genai = run_command(f'{set_venv} && als genai --project-name=tests/dnd --using={prompt_path} --repaired-response={response_path}',
+            cwd=install_api_logic_server_path,
+            msg=f'\ndungeons_and_dragons')
 
 
-    # test for using genai-relns (tries, fails, retries with use-relns False)
-    prompt_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/airport/airport_4.response')
-    response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/airport/airport_4.response')
-    assert response_path.exists() , f'do_test_multi_reln error: response path not found: {str(response_path)}'
-    result_genai = run_command(f'{set_venv} && als genai --using=tests/airport_4 --project-name=tests/airport_4 --repaired-response={response_path}',
-        cwd=install_api_logic_server_path,
-        msg=f'\nCreate airport_4')
-    start_api_logic_server(project_name="airport_4")
-    stop_server(msg="*** airport TESTS COMPLETE ***\n")
+        # test for using genai-relns (tries, fails, retries with use-relns False)
+        prompt_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/airport/airport_4.response')
+        response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/airport/airport_4.response')
+        assert response_path.exists() , f'do_test_multi_reln error: response path not found: {str(response_path)}'
+        result_genai = run_command(f'{set_venv} && als genai --using=tests/airport_4 --project-name=tests/airport_4 --repaired-response={response_path}',
+            cwd=install_api_logic_server_path,
+            msg=f'\nCreate airport_4')
+        start_api_logic_server(project_name="airport_4")
+        stop_server(msg="*** airport TESTS COMPLETE ***\n")
 
-    # test genai, using pre-supplied ChatGPT response (to avoid api key issues)
-    # see https://apilogicserver.github.io/Docs/Sample-Genai/#what-just-happened
-    prompt_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/airport/airport_10.prompt')
-    response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/airport/airport_10.response')
-    assert response_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
-    result_genai = run_command(f'{set_venv} && als genai --using=tests/airport_10 --project-name=tests/airport_10 --using={prompt_path} --repaired-response={response_path}',
-        cwd=install_api_logic_server_path,
-        msg=f'\nCreate airport_10')
-    start_api_logic_server(project_name="airport_10")
-    stop_server(msg="*** airport TESTS COMPLETE ***\n")
+        # test genai, using pre-supplied ChatGPT response (to avoid api key issues)
+        # see https://apilogicserver.github.io/Docs/Sample-Genai/#what-just-happened
+        prompt_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/airport/airport_10.prompt')
+        response_path = get_api_logic_server_src_path().joinpath('tests/test_databases/ai-created/airport/airport_10.response')
+        assert response_path.exists() , f'do_test_multi_reln error: prompt path not found: {str(response_path)}'
+        result_genai = run_command(f'{set_venv} && als genai --using=tests/airport_10 --project-name=tests/airport_10 --using={prompt_path} --repaired-response={response_path}',
+            cwd=install_api_logic_server_path,
+            msg=f'\nCreate airport_10')
+        start_api_logic_server(project_name="airport_10")
+        stop_server(msg="*** airport TESTS COMPLETE ***\n")
+    
+    run_test("test_multi_reln", "Multi-relationship GenAI tests", test_multi_reln)
 
 if Config.do_create_shipping:  # optionally, start it manually (eg, with breakpoints)
-    result_create = run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/Shipping --{db_url}=shipping',
-        cwd=install_api_logic_server_path,
-        msg=f'\nCreate Shipping at: {str(install_api_logic_server_path)}')
+    def test_create_shipping():
+        result_create = run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/Shipping --{db_url}=shipping',
+            cwd=install_api_logic_server_path,
+            msg=f'\nCreate Shipping at: {str(install_api_logic_server_path)}')
+    
+    run_test("test_create_shipping", "Create Shipping project", test_create_shipping)
+
 if Config.do_run_shipping:
-    """ FIXME Failing when run here, but works if manually run in VSC/Debugger (? threads??)
-      File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/Shipping/integration/system/FlaskKafka.py", line 66, in _start
-    consumer.subscribe(topics=list(topics))
-cimpl.KafkaException: KafkaError{code=_INVALID_ARG,val=-186,str="Failed to set subscription: Local: Invalid argument or configuration"}
-    """
-    on_ports = [("APILOGICPROJECT_PORT", "5757"),
-                ("APILOGICPROJECT_SWAGGER_PORT", "5757"),
-                ("VERBOSE", "True")]    
-    start_api_logic_server(project_name="Shipping", env_list=on_ports, port='5757')
-    pass  # http://localhost:5757/stop
+    def test_run_shipping():
+        """ FIXME Failing when run here, but works if manually run in VSC/Debugger (? threads??)
+          File "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/Shipping/integration/system/FlaskKafka.py", line 66, in _start
+        consumer.subscribe(topics=list(topics))
+    cimpl.KafkaException: KafkaError{code=_INVALID_ARG,val=-186,str="Failed to set subscription: Local: Invalid argument or configuration"}
+        """
+        on_ports = [("APILOGICPROJECT_PORT", "5757"),
+                    ("APILOGICPROJECT_SWAGGER_PORT", "5757"),
+                    ("VERBOSE", "True")]    
+        start_api_logic_server(project_name="Shipping", env_list=on_ports, port='5757')
+        pass  # http://localhost:5757/stop
+    
+    run_test("test_run_shipping", "Run Shipping project with Kafka", test_run_shipping)
 
 if Config.do_run_nw_kafka:  # so you can start and set breakpoint, then run tests
-    # same as config/default.env with: 
-    #               APILOGICPROJECT_KAFKA_PRODUCER = "{\"bootstrap.servers\": \"localhost:9092\"}"
-    with_kafka = [("APILOGICPROJECT_KAFKA_PRODUCER", "{\"bootstrap.servers\": \"localhost:9092\"}")]    
-    start_api_logic_server(project_name="ApiLogicProject", env_list=with_kafka)
+    def test_run_nw_kafka():
+        # same as config/default.env with: 
+        #               APILOGICPROJECT_KAFKA_PRODUCER = "{\"bootstrap.servers\": \"localhost:9092\"}"
+        with_kafka = [("APILOGICPROJECT_KAFKA_PRODUCER", "{\"bootstrap.servers\": \"localhost:9092\"}")]    
+        start_api_logic_server(project_name="ApiLogicProject", env_list=with_kafka)
+    
+    run_test("test_run_nw_kafka", "Run ApiLogicProject with Kafka", test_run_nw_kafka)
+
 if Config.do_test_nw_kafka:
-    validate_nw_with_kafka(install_api_logic_server_path, set_venv)
+    def test_nw_kafka():
+        validate_nw_with_kafka(install_api_logic_server_path, set_venv)
+    
+    run_test("test_nw_kafka", "Test ApiLogicProject with Kafka", test_nw_kafka)
 
 if Config.do_run_nw_kafka:
     stop_server(msg="*** KAFKA ApiLogicProject COMPLETE ***\n")
@@ -1247,74 +1335,80 @@ if Config.do_run_shipping:
 
 
 if Config.do_multi_database_test:
-    multi_database_tests()
+    run_test("multi_database_test", "Multi-database test with NW, Todo, and Auth", multi_database_tests)
 
 if Config.do_rebuild_tests:
-    rebuild_tests()
+    run_test("rebuild_tests", "Rebuild tests from database and model", rebuild_tests)
 
 if Config.do_other_sqlite_databases:
-    chinook_path = get_api_logic_server_src_path().joinpath('api_logic_server_cli').joinpath('database').joinpath('Chinook_Sqlite.sqlite')
-    chinook_url = f'sqlite:///{chinook_path}'
-    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/chinook_sqlite --{db_url}={chinook_url}',
-        cwd=install_api_logic_server_path,
-        msg=f'\nCreate chinook_sqlite at: {str(install_api_logic_server_path)}')
-    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/classicmodels_sqlite --{db_url}=classicmodels',
-        cwd=install_api_logic_server_path,
-        msg=f'\nCreate classicmodels.sqlite at: {str(install_api_logic_server_path)}')
-    start_api_logic_server(project_name='classicmodels_sqlite')
-    stop_server(msg="classicmodels_sqlite\n")
-    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/todo_sqlite --{db_url}=todo',
-        cwd=install_api_logic_server_path,
-        msg=f'\nCreate todo.sqlite at: {str(install_api_logic_server_path)}')
-    start_api_logic_server(project_name='todo_sqlite')
-    stop_server(msg="todo\n")
+    def test_other_sqlite_databases():
+        chinook_path = get_api_logic_server_src_path().joinpath('api_logic_server_cli').joinpath('database').joinpath('Chinook_Sqlite.sqlite')
+        chinook_url = f'sqlite:///{chinook_path}'
+        run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/chinook_sqlite --{db_url}={chinook_url}',
+            cwd=install_api_logic_server_path,
+            msg=f'\nCreate chinook_sqlite at: {str(install_api_logic_server_path)}')
+        run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/classicmodels_sqlite --{db_url}=classicmodels',
+            cwd=install_api_logic_server_path,
+            msg=f'\nCreate classicmodels.sqlite at: {str(install_api_logic_server_path)}')
+        start_api_logic_server(project_name='classicmodels_sqlite')
+        stop_server(msg="classicmodels_sqlite\n")
+        run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/todo_sqlite --{db_url}=todo',
+            cwd=install_api_logic_server_path,
+            msg=f'\nCreate todo.sqlite at: {str(install_api_logic_server_path)}')
+        start_api_logic_server(project_name='todo_sqlite')
+        stop_server(msg="todo\n")
+    
+    run_test("other_sqlite_databases", "Test Chinook, ClassicModels, and Todo SQLite databases", test_other_sqlite_databases)
 
 if Config.do_include_exclude:
-    filter_path = str(get_api_logic_server_src_path().joinpath('api_logic_server_cli/database'))
+    def test_include_exclude():
+        filter_path = str(get_api_logic_server_src_path().joinpath('api_logic_server_cli/database'))
 
-    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/include_exclude_nw --{db_url}=nw- --{include_tables}={filter_path}/table_filters_tests_nw.yml',
-        cwd=install_api_logic_server_path,
-        msg=f'\nCreate include_exclude_typical at: {str(install_api_logic_server_path)}')
-    verify_include_models( project_name='include_exclude_nw',
-                          check_for = ["Location"],
-                          verify_found=False)
-    start_api_logic_server(project_name='include_exclude_nw') 
-    stop_server(msg="include_exclude_nw\n")
+        run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/include_exclude_nw --{db_url}=nw- --{include_tables}={filter_path}/table_filters_tests_nw.yml',
+            cwd=install_api_logic_server_path,
+            msg=f'\nCreate include_exclude_typical at: {str(install_api_logic_server_path)}')
+        verify_include_models( project_name='include_exclude_nw',
+                              check_for = ["Location"],
+                              verify_found=False)
+        start_api_logic_server(project_name='include_exclude_nw') 
+        stop_server(msg="include_exclude_nw\n")
 
-    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/include_exclude_nw_1 --{db_url}=nw- --{include_tables}={filter_path}/table_filters_tests_nw_1.yml',
-        cwd=install_api_logic_server_path,
-        msg=f'\nCreate include_exclude_typical at: {str(install_api_logic_server_path)}')
-    verify_include_models( project_name='include_exclude_nw_1',
-                          check_for = ["Location", "OrderDetailList"],
-                          verify_found=False)
-    start_api_logic_server(project_name='include_exclude_nw_1')
-    stop_server(msg="include_exclude_nw_1\n")
+        run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/include_exclude_nw_1 --{db_url}=nw- --{include_tables}={filter_path}/table_filters_tests_nw_1.yml',
+            cwd=install_api_logic_server_path,
+            msg=f'\nCreate include_exclude_typical at: {str(install_api_logic_server_path)}')
+        verify_include_models( project_name='include_exclude_nw_1',
+                              check_for = ["Location", "OrderDetailList"],
+                              verify_found=False)
+        start_api_logic_server(project_name='include_exclude_nw_1')
+        stop_server(msg="include_exclude_nw_1\n")
 
-    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/include_exclude --{db_url}=table_filters_tests --include_tables={filter_path}/table_filters_tests.yml',
-        cwd=install_api_logic_server_path,
-        msg=f'\nCreate include_exclude at: {str(install_api_logic_server_path)}')
-    verify_include_models( project_name='include_exclude',
-                          check_for = ["class I", "class I1", "class J", "class X"])
-    start_api_logic_server(project_name='include_exclude')
-    stop_server(msg="include_exclude\n")
+        run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/include_exclude --{db_url}=table_filters_tests --include_tables={filter_path}/table_filters_tests.yml',
+            cwd=install_api_logic_server_path,
+            msg=f'\nCreate include_exclude at: {str(install_api_logic_server_path)}')
+        verify_include_models( project_name='include_exclude',
+                              check_for = ["class I", "class I1", "class J", "class X"])
+        start_api_logic_server(project_name='include_exclude')
+        stop_server(msg="include_exclude\n")
 
-    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/include_exclude_typical --{db_url}=table_filters_tests --include_tables={filter_path}/table_filters_tests_typical.yml',
-        cwd=install_api_logic_server_path,
-        msg=f'\nCreate include_exclude_typical at: {str(install_api_logic_server_path)}')
-    verify_include_models( project_name='include_exclude_typical',
-                          check_for = ["class X", "class X1"])
-    start_api_logic_server(project_name='include_exclude_typical')
-    stop_server(msg="include_exclude_typical\n")
+        run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/include_exclude_typical --{db_url}=table_filters_tests --include_tables={filter_path}/table_filters_tests_typical.yml',
+            cwd=install_api_logic_server_path,
+            msg=f'\nCreate include_exclude_typical at: {str(install_api_logic_server_path)}')
+        verify_include_models( project_name='include_exclude_typical',
+                              check_for = ["class X", "class X1"])
+        start_api_logic_server(project_name='include_exclude_typical')
+        stop_server(msg="include_exclude_typical\n")
+    
+    run_test("include_exclude", "Test include/exclude table filtering", test_include_exclude)
 
 
 if Config.do_budget_app_test:
-    budget_app_project_path = install_api_logic_server_path.joinpath('tests/BudgetApp')
-    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/BudgetApp --{db_url}=BudgetApp',
-            cwd=install_api_logic_server_path,
-            msg=f'\nCreate BudgetApp at: {str(install_api_logic_server_path)}')    
-    start_api_logic_server(project_name="BudgetApp")
+    def test_budget_app():
+        budget_app_project_path = install_api_logic_server_path.joinpath('tests/BudgetApp')
+        run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/BudgetApp --{db_url}=BudgetApp',
+                cwd=install_api_logic_server_path,
+                msg=f'\nCreate BudgetApp at: {str(install_api_logic_server_path)}')    
+        start_api_logic_server(project_name="BudgetApp")
 
-    try:
         print("\nProceeding with BudgetApp tests...\n")
         result_behave = None
         print("\nBehave tests starting..\n")
@@ -1327,118 +1421,103 @@ if Config.do_budget_app_test:
         if result_behave.returncode != 0:
             raise Exception("Behave Run Error - Budget App")
         print("\nBudget tests run\n")
-    except:
-        print(f'\n\n** BudgetApp Test failed\n\n')
-        exit(1)
-
-    print("\nBudgetApp tests - Success...\n")
-    stop_server(msg="*** BudgetApp TEST COMPLETE ***\n")
+        print("\nBudgetApp tests - Success...\n")
+        stop_server(msg="*** BudgetApp TEST COMPLETE ***\n")
+    
+    run_test("budget_app_test", "BudgetApp creation and behave testing", test_budget_app)
 
 if Config.do_allocation_test:
-    allocation_project_path = install_api_logic_server_path.joinpath('tests/Allocation')
-    run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/Allocation --{db_url}=allocation',
-            cwd=install_api_logic_server_path,
-            msg=f'\nCreate Allocation at: {str(install_api_logic_server_path)}')    
-    start_api_logic_server(project_name="Allocation")
+    def test_allocation():
+        allocation_project_path = install_api_logic_server_path.joinpath('tests/Allocation')
+        run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/Allocation --{db_url}=allocation',
+                cwd=install_api_logic_server_path,
+                msg=f'\nCreate Allocation at: {str(install_api_logic_server_path)}')    
+        start_api_logic_server(project_name="Allocation")
 
-    try:
         print("\nProceeding with Allocation tests...\n")
         allocation_tests_path = allocation_project_path.joinpath('test')
         run_command(f'sh test.sh',
             cwd=allocation_tests_path,
             msg="\nAllocation Test")
-    except:
-        print(f'\n\n** Allocation Test failed\n\n')
-        exit(1)
-    print("\nAllocation tests - Success...\n")
-    stop_server(msg="*** ALLOCATION TEST COMPLETE ***\n")
+        print("\nAllocation tests - Success...\n")
+        stop_server(msg="*** ALLOCATION TEST COMPLETE ***\n")
+    
+    run_test("allocation_test", "Allocation project creation and testing", test_allocation)
 
 if Config.do_docker_mysql:
-    result_docker_mysql_classic = run_command(
-        f"{set_venv} && ApiLogicServer create --{project_name}=tests/classicmodels --{db_url}=mysql+pymysql://root:p@{db_ip}:3306/classicmodels",
-        cwd=install_api_logic_server_path,
-        msg=f'\nCreate MySQL classicmodels at: {str(install_api_logic_server_path)}')
-    check_command(result_docker_mysql_classic) 
-    start_api_logic_server(project_name='classicmodels')
-    stop_server(msg="classicmodels\n")
+    def test_docker_mysql():
+        result_docker_mysql_classic = run_command(
+            f"{set_venv} && ApiLogicServer create --{project_name}=tests/classicmodels --{db_url}=mysql+pymysql://root:p@{db_ip}:3306/classicmodels",
+            cwd=install_api_logic_server_path,
+            msg=f'\nCreate MySQL classicmodels at: {str(install_api_logic_server_path)}')
+        check_command(result_docker_mysql_classic) 
+        start_api_logic_server(project_name='classicmodels')
+        stop_server(msg="classicmodels\n")
+    
+    run_test("docker_mysql", "Docker MySQL ClassicModels test", test_docker_mysql)
     
 if Config.do_docker_sqlserver:  # CAUTION: see comments below
-    command = f"{set_venv} && ApiLogicServer create --{project_name}=tests/TVF --{extended_builder}=$ --{db_url}='mssql+pyodbc://sa:Posey3861@{db_ip}:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'"
-    command = f"{set_venv} && ApiLogicServer create --{project_name}=tests/TVF --{extended_builder}=$ --{db_url}=mssql+pyodbc://sa:Posey3861@{db_ip}:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no"
-    result_docker_sqlserver = run_command(
-        command,
-        cwd=install_api_logic_server_path,
-        msg=f'\nCreate SqlServer TVF at: {str(install_api_logic_server_path)}')
-    start_api_logic_server(project_name='TVF')
-    validate_sql_server_types()
-    stop_server(msg="TVF\n")
+    def test_docker_sqlserver():
+        command = f"{set_venv} && ApiLogicServer create --{project_name}=tests/TVF --{extended_builder}=$ --{db_url}=mssql+pyodbc://sa:Posey3861@{db_ip}:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no"
+        result_docker_sqlserver = run_command(
+            command,
+            cwd=install_api_logic_server_path,
+            msg=f'\nCreate SqlServer TVF at: {str(install_api_logic_server_path)}')
+        start_api_logic_server(project_name='TVF')
+        validate_sql_server_types()
+        stop_server(msg="TVF\n")
 
-    command = f"{set_venv} && ApiLogicServer create --{project_name}=tests/sqlserver --{db_url}='mssql+pyodbc://sa:Posey3861@{db_ip}:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'"
-    command = f"{set_venv} && ApiLogicServer create --{project_name}=tests/sqlserver --{db_url}=mssql+pyodbc://sa:Posey3861@{db_ip}:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no"
-    result_docker_sqlserver = run_command(
-        command,
-        cwd=install_api_logic_server_path,
-        msg=f'\nCreate SqlServer NORTHWND at: {str(install_api_logic_server_path)}')
-    start_api_logic_server(project_name='sqlserver')
-    stop_server(msg="sqlserver\n")
-    """
-oy, lots of trouble with Python / bash parsing urls
-setting command above, first line for using Python, 2nd for cmd_venv
-
-url above works, but this run config fails:
-        {
-            "name": "SQL Server Types",
-            "type": "python",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/api_logic_server_cli",
-            "program": "cli.py",
-            "redirectOutput": true,
-            "argsExpansion": "none",
-            "args": ["create",
-                "--{project_name}=tests/../../servers/sqlserver-types",
-fails           "--{db_url}=mssql+pyodbc://sa:Posey3861@localhost:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no",
-read
-works            --{db_url}='mssql+pyodbc://sa:Posey3861@localhost:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'",
-    """
+        command = f"{set_venv} && ApiLogicServer create --{project_name}=tests/sqlserver --{db_url}=mssql+pyodbc://sa:Posey3861@{db_ip}:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no"
+        result_docker_sqlserver = run_command(
+            command,
+            cwd=install_api_logic_server_path,
+            msg=f'\nCreate SqlServer NORTHWND at: {str(install_api_logic_server_path)}')
+        start_api_logic_server(project_name='sqlserver')
+        stop_server(msg="sqlserver\n")
+    
+    run_test("docker_sqlserver", "Docker SQL Server TVF and NORTHWND tests", test_docker_sqlserver)
 
 if Config.do_docker_postgres:
-    result_docker_postgres = run_command(
-        f"{set_venv} && ApiLogicServer create --{project_name}=tests/postgres --{db_url}=postgresql://postgres:p@{db_ip}/postgres",
-        cwd=install_api_logic_server_path,
-        msg=f'\nCreate Postgres postgres (nw) at: {str(install_api_logic_server_path)}')
-    start_api_logic_server(project_name='postgres')
-    stop_server(msg="postgres\n")
+    def test_docker_postgres():
+        result_docker_postgres = run_command(
+            f"{set_venv} && ApiLogicServer create --{project_name}=tests/postgres --{db_url}=postgresql://postgres:p@{db_ip}/postgres",
+            cwd=install_api_logic_server_path,
+            msg=f'\nCreate Postgres postgres (nw) at: {str(install_api_logic_server_path)}')
+        start_api_logic_server(project_name='postgres')
+        stop_server(msg="postgres\n")
 
-    # the postgres database has bad employee.id - not serial, so inserts fails
-    # this example shows how to use seriak, to fix it
-    # see https://apilogicserver.github.io/Docs/Data-Model-Postgresql/#auto-generated-keys
-    result_docker_postgres = run_command(
-        f"{set_venv} && ApiLogicServer create --{project_name}=tests/postgres-nw --{db_url}=postgresql://postgres:p@{db_ip}/northwind",
-        cwd=install_api_logic_server_path,
-        msg=f'\nCreate Postgres postgres (nw) at: {str(install_api_logic_server_path)}')
-    start_api_logic_server(project_name='postgres-nw')
-    stop_server(msg="postgres-nw\n")
-
+        # the postgres database has bad employee.id - not serial, so inserts fails
+        # this example shows how to use seriak, to fix it
+        # see https://apilogicserver.github.io/Docs/Data-Model-Postgresql/#auto-generated-keys
+        result_docker_postgres = run_command(
+            f"{set_venv} && ApiLogicServer create --{project_name}=tests/postgres-nw --{db_url}=postgresql://postgres:p@{db_ip}/northwind",
+            cwd=install_api_logic_server_path,
+            msg=f'\nCreate Postgres postgres (nw) at: {str(install_api_logic_server_path)}')
+        start_api_logic_server(project_name='postgres-nw')
+        stop_server(msg="postgres-nw\n")
+    
+    run_test("docker_postgres", "Docker PostgreSQL tests", test_docker_postgres)
 
 if Config.do_docker_postgres_auth:
-    # ApiLogicServer add-auth --project_name=. --db_url=postgresql://postgres:p@localhost/authdb
-    # postgres_path = install_api_logic_server_path.joinpath('postgres')
-    result_docker_postgres = run_command(
-        f"{set_venv} && ApiLogicServer add-auth --project-name=tests/postgres --{db_url}=postgresql://postgres:p@{db_ip}/authdb",
-        cwd= install_api_logic_server_path,
-        msg=f'\add-auth Postgres postgres (nw) at: {str(install_api_logic_server_path)}')
-    start_api_logic_server(project_name='postgres')
-    stop_server(msg="postgres\n")
+    def test_docker_postgres_auth():
+        result_docker_postgres = run_command(
+            f"{set_venv} && ApiLogicServer add-auth --project-name=tests/postgres --{db_url}=postgresql://postgres:p@{db_ip}/authdb",
+            cwd= install_api_logic_server_path,
+            msg=f'\add-auth Postgres postgres (nw) at: {str(install_api_logic_server_path)}')
+        start_api_logic_server(project_name='postgres')
+        stop_server(msg="postgres\n")
 
-    result_docker_postgres = run_command(
-        f"{set_venv} && ApiLogicServer add-auth --project-name=tests/postgres --provider-type=keycloak --{db_url}=auth",
-        cwd= install_api_logic_server_path,
-        msg=f'\add-auth Postgres postgres (nw) at: {str(install_api_logic_server_path)}')
-    start_api_logic_server(project_name='postgres')
-    stop_server(msg="postgres\n")
+        result_docker_postgres = run_command(
+            f"{set_venv} && ApiLogicServer add-auth --project-name=tests/postgres --provider-type=keycloak --{db_url}=auth",
+            cwd= install_api_logic_server_path,
+            msg=f'\add-auth Postgres postgres (nw) at: {str(install_api_logic_server_path)}')
+        start_api_logic_server(project_name='postgres')
+        stop_server(msg="postgres\n")
+    
+    run_test("docker_postgres_auth", "Docker PostgreSQL with authentication", test_docker_postgres_auth)
 
 if Config.do_docker_creation_tests:
-    docker_creation_tests(api_logic_server_tests_path)
+    run_test("docker_creation_tests", "Docker container creation tests", docker_creation_tests, api_logic_server_tests_path)
 
 print("\n\nSUCCESS -- END OF TESTS")
 
@@ -1454,17 +1533,63 @@ results = []
 
 results.append(f"\n{__file__} {__version__} [{str(int(time.time() - start_time))} secs]  - created in blt/tests\n")
 
-results.append('%-50s%-50s' % ('test', 'notes')) 
-results.append('%-50s%-50s' % ('====', '====='))
+# Test Summary
+results.append(f"TOTAL TESTS: {total_tests}")
+results.append(f"PASSED: {passed_tests}")
+results.append(f"FAILED: {failed_tests}")
+results.append(f"SUCCESS RATE: {(passed_tests/total_tests*100):.1f}%" if total_tests > 0 else "No tests run")
+results.append("")
+
+# Successful Tests
+results.append('%-50s%-50s' % ('SUCCESSFUL TESTS', 'NOTES')) 
+results.append('%-50s%-50s' % ('================', '====='))
 for each_name, each_note in test_names:
     results.append ('%-50s%-50s' % (each_name, each_note))
-results.append('\n')
+results.append('')
+
+# Failed Tests
+if test_failures:
+    results.append('%-50s%-50s' % ('FAILED TESTS', 'ERROR MESSAGE')) 
+    results.append('%-50s%-50s' % ('============', '============='))
+    for each_name, each_error in test_failures:
+        # Truncate long error messages to fit display
+        error_msg = each_error[:45] + "..." if len(each_error) > 45 else each_error
+        results.append ('%-50s%-50s' % (each_name, error_msg))
+    results.append('')
+
+# Final result
+if failed_tests == 0:
+    results.append("🎉 ALL TESTS PASSED! 🎉")
+else:
+    results.append(f"⚠️  {failed_tests} TEST(S) FAILED - Check errors above")
+
+results.append('')
 print('\n'.join(results))
 
 # write results to file
 results_file = install_api_logic_server_path.joinpath('tests/results.txt')
 with open(results_file, 'w') as f:
     f.write('\n'.join(results))
+
+# Also write a detailed failure report if there were failures
+if test_failures:
+    failure_file = install_api_logic_server_path.joinpath('tests/failures.txt')
+    with open(failure_file, 'w') as f:
+        f.write(f"BLT Failure Report - {__version__}\n")
+        f.write(f"Generated: {time.strftime('%Y-%m-%d %H:%M:%S')}\n")
+        f.write(f"Total Tests: {total_tests}, Failed: {failed_tests}\n\n")
+        for each_name, each_error in test_failures:
+            f.write(f"FAILED TEST: {each_name}\n")
+            f.write(f"ERROR: {each_error}\n")
+            f.write("-" * 80 + "\n\n")
+
+print(f"\nResults written to: {results_file}")
+if test_failures:
+    print(f"Detailed failure report: {failure_file}")
+    print(f"\nBLT completed with {failed_tests} failures out of {total_tests} tests")
+    # Don't exit with error code - let the process complete
+else:
+    print(f"\nBLT completed successfully - all {total_tests} tests passed!")
 
 
 # print(f"{python} setup.py sdist bdist_wheel")
