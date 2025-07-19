@@ -1568,7 +1568,7 @@ print('\n'.join(results))
 
 # write results to file
 results_file = install_api_logic_server_path.joinpath('tests/results.txt')
-with open(results_file, 'w') as f:
+with open(results_file, 'w', encoding="utf-8") as f:
     f.write('\n'.join(results))
 
 # Also write a detailed failure report if there were failures

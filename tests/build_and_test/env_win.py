@@ -11,7 +11,7 @@ class Config:
 
     default_setting = True  # simplify enable / disable most
 
-    do_install_api_logic_server = default_setting   # verify build wheel and local 
+    do_install_api_logic_server = False   # verify build wheel and local 
     do_logicbank_test = ""                          # use this testpy version (or '')
     
 
@@ -24,8 +24,8 @@ class Config:
 
     do_create_shipping = default_setting            # run shipping to listen to kafka (might run manually)
     do_run_shipping = False               # run shipping to listen to kafka (might run manually)
-    do_run_nw_kafka = True               # run default project, *with* kafka
-    do_test_nw_kafka = True
+    do_run_nw_kafka = False               # run default project, *with* kafka
+    do_test_nw_kafka = False
 
 
     do_rebuild_tests = default_setting              # rebuild from model, allembic
@@ -60,6 +60,6 @@ class Config:
     winds up something like
     c:;cd C:\\Users\\val\\dev\\ApiLogicServer\\ApiLogicServer-dev\\build_and_test\\ApiLogicServer && venv\\Scripts\\activate && python -m pip install C:\\Users\\val\\dev\\ApiLogicServer\\ApiLogicServer-dev\\org_git\\ApiLogicServer-src
     '''
-    docker_database_ip = '10.0.0.77'
+    docker_database_ip = '10.0.0.249'
     ''' for virtual machine access, set this to host IP '''
 
