@@ -6,7 +6,7 @@ The created `samples/nw_sample` illustrates important customization sample code 
 
 ## Sqlite Sample Databases
 
-The `samples/db` files are symbolic links to pre-installed sqlite databases.  These allow you to explore creating projects from existing databases.
+The `samples/db` files are pre-installed sqlite databases.  These allow you to explore creating projects from existing databases.
 
 For example, create Northwind like this:
 
@@ -14,24 +14,36 @@ For example, create Northwind like this:
 genai-logic create  --project_name=nw --db_url=sqlite:///samples/dbs/nw.sqlite
 ```
 
-> Note: If the symbolic links are missing, it is probably due to permission issues, e.g., on windows you must run the Shell with Admin privileges.  You can continue using the abbeviations instead of a standard SQLAlchemy database uri.
-
 ## Database Connectivity
 
 Sample project creation commands:
 
 ```bash
-genai-logic create
-genai-logic create-and-run
-genai-logic create --db_url=sqlite:////Users/val/dev/todo_example/todos.db --project_name=todo
+# local sqlite
 genai-logic create --db_url=sqlite:///c:\genai-logic\nw.sqlite --project_name=nw
-genai-logic create --db_url=sqlite:///ai.sqlite --project_name=ai --open_with=code
-genai-logic create --db_url=mysql+pymysql://root:p@mysql-container:3306/classicmodels --project_name=/localhost/docker_db_project
-genai-logic create --db_url='mssql+pyodbc://sa:Posey3861@localhost:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'
+genai-logic create --db_url=sqlite:///samples/dbs/todos.sqlite --project_name=todo
+genai-logic create --db_url=sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/clean/ApiLogicServer/samples/dbs/todos.sqlite --project_name=todo
+
+# from localhost to mysql container
+genai-logic create --db_url=mysql+pymysql://root:p@localhost:3306/classicmodels --project_name=docker_classicmodels
+genai-logic create --db_url=mysql+pymysql://root:p@localhost:3306/Chinook --project_name=docker_chinook
+
+# from container to mysql container  replace localhost with....
+genai-logic create --db_url=mysql+pymysql://root:p@mysql-container:3306/Chinook --project_name=/localhost/docker_chinook
+
+# microsoft sql server (setup: https://apilogicserver.github.io/Docs/Install-pyodbc/)
+genai-logic create --db_url='mssql+pyodbc://sa:Posey3861@localhost:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no' --project-name=NORTHWND
+
+# oracle
 genai-logic create --project_name=oracle_hr --db_url='oracle+oracledb://hr:tiger@localhost:1521/?service_name=ORCL'
+
+# postgres
+genai-logic create --db_url=postgresql://postgres:p@localhost/northwind --project-name=nw-postgres
 genai-logic create --db_url=postgresql://postgres:p@10.0.0.234/postgres
 genai-logic create --project_name=my_schema --db_url=postgresql://postgres:p@localhost/my_schema
 genai-logic create --db_url=postgresql://postgres:password@localhost:5432/postgres?options=-csearch_path%3Dmy_db_schema
+
+# pythonanywhere
 genai-logic create --project_name=Chinook \
   --host=ApiLogicServer.pythonanywhere.com --port= \
   --db_url=mysql+pymysql://ApiLogicServer:@ApiLogicServer.mysql.pythonanywhere-services.com/ApiLogicServer\$Chinook

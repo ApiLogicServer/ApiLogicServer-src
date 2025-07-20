@@ -65,6 +65,7 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path,
                 copyfile(cli_path.parent / 'database/nw-gold.sqlite', mgr_path / 'samples/dbs/nw.sqlite')
                 copyfile(cli_path.parent / 'database/Chinook_Sqlite.sqlite', mgr_path / 'samples/dbs/chinook.sqlite')
                 copyfile(cli_path.parent / 'database/classicmodels.sqlite', mgr_path / 'samples/dbs/classicmodels.sqlite')
+                copyfile(cli_path.parent / 'database/todos.sqlite', mgr_path / 'samples/dbs/todos.sqlite')
                 log.debug("✅ Manager Creation - Created: samples/dbs/")
             except Exception as e:
                 log.debug(f"❌ Manager Creation - Copy samples/dbs creation failed: {str(e)}")
