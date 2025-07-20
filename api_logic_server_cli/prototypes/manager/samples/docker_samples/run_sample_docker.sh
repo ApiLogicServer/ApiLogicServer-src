@@ -14,8 +14,8 @@ if [ $# -eq 0 ]
     # echo "shell: $SHELL"
     echo " eg:"
     echo " "
-    echo "   > cd webgenai  # or ApiLogicServer"
-    echo "   > sh run_sample.sh nw_sample_nocust"
+    echo "   > cd ApiLogicServer # ONLY if already running under docker"
+    echo "   > sh samples/docker_samples/run_sample_docker.sh nw_sample_nocust"
     echo " "
     exit 0
 fi
@@ -26,5 +26,5 @@ if [ "$1" = "$" ]
     sample="nw_sample"
   fi
 
-cd samples/$sample
-docker run -it --rm --name api_logic_project -p 5656:5656 --env-file ./devops/docker-standard-image/env.list -v ./:/app apilogicserver/web_genai python3 /app/api_logic_server_run.py
+pushd samples/$sample
+docker run -it --rm --name api_logic_project_${sample}_$(date +%s) -p 5656:5656 --env-file ./devops/docker-standard-image/env.list -v ./:/app apilogicserver/web_genai python3 /app/api_logic_server_run.py
