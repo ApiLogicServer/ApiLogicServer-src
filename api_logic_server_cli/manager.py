@@ -36,9 +36,9 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path,
         samples (bool, optional): Whether to create large samples (prevent win max file length)
     """    
     
-    def create_sym_links(cli_path: Path, mgr_path: Path):
+    def copy_sqlite_dbs(cli_path: Path, mgr_path: Path):
         """
-        Creates symbolic links to sample dbs and prompts (clearer than db abbreviations).
+        Copy sample sqlite databases to mgr/samples/dbs (clearer than db abbreviations).
 
         Args:
             cli_path (Path): loc of cli.py in the manager's venv
@@ -48,16 +48,26 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path,
             Creates a symbolic link from 'cli_path/database/basic_demo.sqlite' to 'mgr_path/samples/dbs/basic_demo'.
 
         """
-        
-        # create symbolic link - thanks https://www.geeksforgeeks.org/python/python-os-symlink-method/
-        try:
-            os.symlink(cli_path.parent / 'database/basic_demo.sqlite', mgr_path / 'samples/dbs/basic_demo.sqlite')
-            os.symlink(cli_path.parent / 'database/nw-gold.sqlite', mgr_path / 'samples/dbs/nw.sqlite')
-            os.symlink(cli_path.parent / 'database/Chinook_Sqlite.sqlite', mgr_path / 'samples/dbs/chinook.sqlite')
-            os.symlink(cli_path.parent / 'database/classicmodels.sqlite', mgr_path / 'samples/dbs/classicmodels.sqlite')
-            log.debug("✅ Manager Creation - SymLink created: samples/dbs/")
-        except Exception as e:
-            log.debug(f"❌ Manager Creation - SymLink creation failed: {str(e)}")
+        if use_syn_link := False:
+            # could create symbolic link - thanks https://www.geeksforgeeks.org/python/python-os-symlink-method/
+            # but this fails on windows due to permissions
+            try:
+                os.symlink(cli_path.parent / 'database/basic_demo.sqlite', mgr_path / 'samples/dbs/basic_demo.sqlite')
+                os.symlink(cli_path.parent / 'database/nw-gold.sqlite', mgr_path / 'samples/dbs/nw.sqlite')
+                os.symlink(cli_path.parent / 'database/Chinook_Sqlite.sqlite', mgr_path / 'samples/dbs/chinook.sqlite')
+                os.symlink(cli_path.parent / 'database/classicmodels.sqlite', mgr_path / 'samples/dbs/classicmodels.sqlite')
+                log.debug("✅ Manager Creation - SymLink created: samples/dbs/")
+            except Exception as e:
+                log.debug(f"❌ Manager Creation - Copy samples/dbs SymLink creation failed: {str(e)}")
+        else:
+            try:
+                copyfile(cli_path.parent / 'database/basic_demo.sqlite', mgr_path / 'samples/dbs/basic_demo.sqlite')
+                copyfile(cli_path.parent / 'database/nw-gold.sqlite', mgr_path / 'samples/dbs/nw.sqlite')
+                copyfile(cli_path.parent / 'database/Chinook_Sqlite.sqlite', mgr_path / 'samples/dbs/chinook.sqlite')
+                copyfile(cli_path.parent / 'database/classicmodels.sqlite', mgr_path / 'samples/dbs/classicmodels.sqlite')
+                log.debug("✅ Manager Creation - Created: samples/dbs/")
+            except Exception as e:
+                log.debug(f"❌ Manager Creation - Copy samples/dbs creation failed: {str(e)}")
 
 
     log = logging.getLogger(__name__)
@@ -218,7 +228,7 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path,
         create_utils.replace_string_in_file(search_for = 'cli_path',
                                             replace_with=str(cli_str),
                                             in_file=vscode_launch_path)
-        create_sym_links(cli_path=cli_path, mgr_path=to_dir)
+        copy_sqlite_dbs(cli_path=cli_path, mgr_path=to_dir)
 
     if env_path.exists():
         create_utils.replace_string_in_file(search_for = 'APILOGICSERVER_AUTO_OPEN=code',
