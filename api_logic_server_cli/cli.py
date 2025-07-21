@@ -188,14 +188,16 @@ def main(ctx):
         Creation is from your database (--db-url identifies a SQLAlchemy database)
 
 \b
-        Doc: https://apilogicserver.github.io/Docs
+        Synonym to genai-logic: gail | gal
+\b
+        Doc: https://apilogicserver.github.io/Docs/Doc-Home/
         And: https://apilogicserver.github.io/Docs/Database-Connectivity/
 \b
     Suggestions:
 
 \b
-        ApiLogicServer start                                # create and manage projects
-        ApiLogicServer create --db-url= --project-name=     # defaults to Northwind sample
+        genai-logic start                                # create and manage projects
+        genai-logic create --db-url= --project-name=     # defaults to Northwind sample
     """
     pass  # all commands come through here
 
