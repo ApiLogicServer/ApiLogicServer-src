@@ -10,7 +10,7 @@ Sample code (follow these guidelines EXACTLY):
 ```
 <sample-code>
 // begin MANDATORY imports (always generated EXACTLY)
-import React from 'react';
+import React, { useState } from 'react';
 import { List, FunctionField, Datagrid, TextField, EmailField, DateField, NumberField } from 'react-admin';
 import { ReferenceField, ReferenceManyField } from 'react-admin';
 import { TabbedShowLayout, Tab, SimpleShowLayout, TextInput, NumberInput, DateTimeInput } from 'react-admin';

@@ -147,12 +147,12 @@ def query_llm_with_nl(learnings_and_schema: str, nl_query: str):
     else:
         # read integration/mcp/mcp_tool_context.json
         tool_context_file_path = os.path.join(os.path.dirname(__file__), "../../integration/mcp/examples/mcp_tool_context_response_get.json")
-        if nl_query == default_query_email:
+        if 'send email' in nl_query:
             tool_context_file_path = os.path.join(os.path.dirname(__file__), "../../integration/mcp/examples/mcp_tool_context_response.json")
         try:    
             with open(tool_context_file_path, "r") as tool_context_file:
                 tool_context_str = tool_context_file.read()
-                # log.info(f"\n\n2c. Tool context from file {tool_context_file_path}:\n" + tool_context_str)
+                log.info(f"\n\n2c. Tool context from file {tool_context_file_path}:\n" + tool_context_str)
         except FileNotFoundError:
             raise ConstraintException(f"Tool context file not found at {tool_context_file_path}.")
 

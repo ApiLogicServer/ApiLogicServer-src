@@ -1,0 +1,8 @@
+Create a table SysEmail in `database/db.sqlite` as a child of customer, 
+with columns id, message, subject, customer_id and CreatedOn.
+
+Add an after_flush event on SysEmail to produce a log message "email sent",
+unless the customer has opted out.
+
+List the orders date_shipped is null and CreatedOn before 2023-07-14, 
+and send a discount email (subject: 'Discount Offer') to the customer for each one.
