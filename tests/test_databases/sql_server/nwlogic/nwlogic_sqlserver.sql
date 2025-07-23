@@ -279,6 +279,23 @@ docker cp sqlsvr-container:/var/opt/mssql/data/nwlogic-2023316-17-50-13.bak ~/De
 docker cp sqlsvr-container:/var/opt/mssql/data/nwlogic.bak ~/Desktop/nwlogic-bkp.bak 
 */
 
+CREATE TABLE dbo.Employee_TB (
+  Employee_ID int primary key, 
+  Name varchar(50) NOT NULL, 
+  LastName varchar(100) NOT NULL, 
+  JobTitle varchar(100) NULL, 
+  Manager int NULL, 
+  HireDate datetime2 NULL, 
+  Salary numeric(10, 2) NULL, 
+  SysStartTime datetime2 GENERATED ALWAYS AS ROW START HIDDEN NOT NULL, 
+  SysEndTime datetime2 GENERATED ALWAYS AS ROW END HIDDEN NOT NULL, 
+  PERIOD FOR SYSTEM_TIME (SysStartTime, SysEndTime)
+) WITH (
+  SYSTEM_VERSIONING = ON(
+    HISTORY_TABLE = dbo.EmployeeHistory
+  )
+);
 
-
+insert into Employee_TB (Employee_ID, Name, LastName, JobTitle, HireDate, Salary)
+select Id, FirstName, LastName, Title, HireDate, Salary from Employee;
 
