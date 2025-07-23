@@ -197,6 +197,12 @@ def copy_md(project, from_doc_file: str, to_project_file: str = "README.md"):
                     else:
                         each_line = each_line.replace('.md', '')  # hmm... todo: find out why this exists
                     pass
+                if from_doc_file == 'Sample-Basic-Demo-Vibe.md' and 'title=' in each_line:
+                    # extract the quoted text after 'title=' into title
+                    match = re.search(r'title\s*=\s*["\']([^"\']+)["\']', each_line)
+                    if match:
+                        title = match.group(1)
+                    readme_lines_md.append('**' + title + ':**\n')
                 readme_lines_md.append(each_line)
         with open(str(to_file), "w") as readme_file:
             readme_file.writelines(readme_lines_md)

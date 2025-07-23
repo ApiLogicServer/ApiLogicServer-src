@@ -74,6 +74,8 @@ or in cards.
 ```
 <br>
 
+todo - diagram 
+
 **Test: verify option for cards on `http://localhost:3000`**
 
 <br>
@@ -122,6 +124,7 @@ and send a discount email (subject: 'Discount Offer') to the customer for each o
 ```
 
 <br>
+todo - diagram 
 
 **Use the Admin App to Verify the first customer has an email**
 
@@ -150,6 +153,8 @@ To test the logic:
 **1. Use the Admin App to access the first order for `Customer Alice`**
 
 **2. Edit its first item to a very high quantity**
+
+todo - diagram 
 
 The update is properly rejected because it exceeds the credit limit.  Observe the rules firing in the console log - see Logic In Action, below.
 
