@@ -60,9 +60,12 @@ import os, sys
 from pathlib import Path
 from os.path import abspath
 from api_logic_server_cli.cli_args_project import Project
-import oracledb
-
 log = logging.getLogger(__name__)
+try:
+    import oracledb
+except ImportError:
+    log.error("oracledb dll not found, Oracle support disabled")
+    oracledb = None
 
 MODEL_DIR = tempfile.mkdtemp()  # directory where the generated models.py will be saved
 on_import = False
