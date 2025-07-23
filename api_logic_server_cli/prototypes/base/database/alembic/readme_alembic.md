@@ -1,3 +1,19 @@
+You can push changes to `database/models.py' to your database automatically, or manually.
+
+<br>
+
+## Automatic
+
+Use:
+
+```bash
+python database/alembic/alembic_run.py [--non-interactive]
+```
+
+<br>
+
+## Manual
+
 The diagram below illustrates a path for enacting changes to the data model, and using [Alembic](https://alembic.sqlalchemy.org/en/latest/index.html) to automate the database changes:
 
 1. Update `database/models.py` (e.g., add columns, tables)
