@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "15.00.54"  # last public release: 15.00.52 (15.00.12)
+__version__ = "15.00.55"  # last public release: 15.00.52 (15.00.12)
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t07/23/2024 - 15.00.54: system vibe support \n"\
+    "\t07/23/2024 - 15.00.55: system vibe support - initial testing \n"\
     "\t07/20/2024 - 15.00.52: Python 3.13 compatibility fixes - psycopg2→psycopg3, SQLAlchemy 2.0+, pkg_resources→importlib.metadata.  mgr dbs \n"\
     "\t07/17/2024 - 15.00.49: venv fix+, ext bldr * fix, copilot vibe tweaks - creation, mcp logic, basic_demo autonums \n"\
     "\t07/10/2024 - 15.00.41: copilot vibe support for logic, UI, MCP,  bug[98] \n"\
@@ -390,8 +390,9 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
             nw_dir = (Path(api_logic_server_dir_str)).\
                 joinpath('prototypes/basic_demo')
             recursive_overwrite(nw_dir, project.project_directory)
-            create_utils.copy_md(project = project, from_doc_file = "Sample-Basic-Demo.md")
-            create_utils.copy_md(project = project, from_doc_file = "Sample-Basic-Demo-Vibe.md", to_project_file="README-VIBE.md")
+            os.rename(project.project_directory_path / 'readme.md', project.project_directory_path / 'readme_standard.md')
+            create_utils.copy_md(project = project, from_doc_file = "Sample-Basic-Demo.md", to_project_file = "readme.md")
+            create_utils.copy_md(project = project, from_doc_file = "Sample-Basic-Demo-Vibe.md", to_project_file="readme_vibe.md")
 
 
         if project.db_url == "mysql+pymysql://root:p@localhost:3306/classicmodels":

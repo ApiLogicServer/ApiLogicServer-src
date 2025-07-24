@@ -146,6 +146,7 @@ def copy_md(project, from_doc_file: str, to_project_file: str = "README.md"):
             readme_lines_mkdocs = readme_file.readlines()    
         readme_lines_md = []
         in_mkdocs_block = False
+        do_process_code_block_titles = False
         db_line_num = 0
         for each_line in readme_lines_mkdocs:
             db_line_num += 1
@@ -197,7 +198,9 @@ def copy_md(project, from_doc_file: str, to_project_file: str = "README.md"):
                     else:
                         each_line = each_line.replace('.md', '')  # hmm... todo: find out why this exists
                     pass
-                if from_doc_file == 'Sample-Basic-Demo-Vibe.md' and 'title=' in each_line:
+                if 'process_code_block_titles' in each_line:  # update front matter to get this
+                    do_process_code_block_titles = True
+                if do_process_code_block_titles and 'title=' in each_line:
                     # extract the quoted text after 'title=' into title
                     match = re.search(r'title\s*=\s*["\']([^"\']+)["\']', each_line)
                     if match:

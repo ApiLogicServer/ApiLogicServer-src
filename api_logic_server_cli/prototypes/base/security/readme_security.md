@@ -6,7 +6,6 @@ You can add Role Based Access Control (RBAC) to your project, providing:
 Common commands:
 
 ```bash
-```
 als add-auth --provider-type=sql --db-url=
 als add-auth --provider-type=sql --db_url=postgresql://postgres:p@localhost/authdb
 
