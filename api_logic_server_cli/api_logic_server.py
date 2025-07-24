@@ -385,7 +385,7 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
                 joinpath('prototypes/BudgetApp')
             recursive_overwrite(nw_dir, project.project_directory)
 
-        if 'basic_demo' in project.db_url:
+        if 'basic_demo' in project.db_url:  # test the url, so it works regardless of (arbitrary) project name
             log.debug(".. ..Copy in basic_demo customizations: readme, logic, tests")
             nw_dir = (Path(api_logic_server_dir_str)).\
                 joinpath('prototypes/basic_demo')
