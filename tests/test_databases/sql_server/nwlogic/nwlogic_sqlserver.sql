@@ -279,6 +279,7 @@ docker cp sqlsvr-container:/var/opt/mssql/data/nwlogic-2023316-17-50-13.bak ~/De
 docker cp sqlsvr-container:/var/opt/mssql/data/nwlogic.bak ~/Desktop/nwlogic-bkp.bak 
 */
 
+/*https://sqlspreads.com/blog/temporal-tables-in-sql-server*/
 CREATE TABLE dbo.Employee_TB (
   Employee_ID int primary key, 
   Name varchar(50) NOT NULL, 

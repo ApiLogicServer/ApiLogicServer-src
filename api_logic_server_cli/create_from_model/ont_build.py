@@ -66,7 +66,7 @@ class OntBuilder(object):
         self.app = app
         self.template_dir = template_dir # user provided custom template directory
         self.api_endpoint = api_endpoint #if None - use all endpoints
-        self.app_path = Path(self.project.project_directory_path).joinpath(f"ui/{self.app}")
+        self.app_path = Path(self.project.project_directory_path).joinpath(f"ui{os.se}{self.app}")
         t_env = self.get_environment()
         self.env = t_env[0]
         self.local_env = t_env[1]
@@ -187,8 +187,8 @@ class OntBuilder(object):
         app_model = DotMap(model_dict)
         self.app_model = app_model
         
-        from_template_dir = self.project.api_logic_server_dir_path.joinpath('prototypes/ont_app/templates')
-        to_template_dir = self.project.project_directory_path.joinpath(f'ui/{self.app}/templates')
+        from_template_dir = self.project.api_logic_server_dir_path.joinpath('prototypes{os.sep}ont_app{os.sep}templates')
+        to_template_dir = self.project.project_directory_path.joinpath(f'ui{os.sep}{self.app}{os.sep}templates')
         with contextlib.suppress(Exception):
             shutil.copytree(from_template_dir, to_template_dir, dirs_exist_ok=False)  # do not re-create default template files
         
@@ -518,7 +518,7 @@ class OntBuilder(object):
         Copy templates folder to project - this allows search local first if found
         """
         current_cli_path = self.project.api_logic_server_dir_path
-        templates_path = current_cli_path.joinpath('prototypes/ont_app/templates')
+        templates_path = current_cli_path.joinpath('prototypes{os.sep}ont_app{os.sep}templates')
         env = Environment(
             # loader=PackageLoader(package_name="APILOGICPROJECT",package_path="/ApiLogicServer/ApiLogicServer-dev/build_and_test/nw/ui/templates"),
             loader=FileSystemLoader(searchpath=f"{templates_path}")
