@@ -66,7 +66,7 @@ class OntBuilder(object):
         self.app = app
         self.template_dir = template_dir # user provided custom template directory
         self.api_endpoint = api_endpoint #if None - use all endpoints
-        self.app_path = Path(self.project.project_directory_path).joinpath(f"ui{os.se}{self.app}")
+        self.app_path = Path(self.project.project_directory_path).joinpath(f"ui{os.sep}{self.app}")
         t_env = self.get_environment()
         self.env = t_env[0]
         self.local_env = t_env[1]
