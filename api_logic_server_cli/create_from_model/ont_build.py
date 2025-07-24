@@ -518,7 +518,7 @@ class OntBuilder(object):
         Copy templates folder to project - this allows search local first if found
         """
         current_cli_path = self.project.api_logic_server_dir_path
-        templates_path = current_cli_path.joinpath('prototypes{os.sep}ont_app{os.sep}templates')
+        templates_path = current_cli_path.joinpath('prototypes/ont_app/templates')
         env = Environment(
             # loader=PackageLoader(package_name="APILOGICPROJECT",package_path="/ApiLogicServer/ApiLogicServer-dev/build_and_test/nw/ui/templates"),
             loader=FileSystemLoader(searchpath=f"{templates_path}")
