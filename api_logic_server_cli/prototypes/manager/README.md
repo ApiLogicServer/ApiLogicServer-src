@@ -2,7 +2,7 @@
 title: Welcome
 Description: Instant mcp-enabled microservices, standard projects, declarative business logic
 Source: docs//Sample-Basic-Tour.md
-version info: 15.01.35 (07/01/2025) installed version
+version info: 15.00.55 (07/24/2025) installed version
 Used: Manager Readme
 Instructions: Copy in Sample-Basic-Demo (Replace "This illustrates" up to "Explore GenAI CLI")
 ---
