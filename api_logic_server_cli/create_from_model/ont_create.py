@@ -84,12 +84,12 @@ class OntCreator(object):
             project_directory=self.project.project_directory)
         resources: Dict[str, Resource] = {name: resource for name, resource in model_creation_services.resource_list.items() if not getattr(resource, 'hidden', False)}
 
-        admin_app = Path(self.project.project_directory_path).joinpath(f'ui/admin/{self.admin_app}.yaml')
+        admin_app = Path(self.project.project_directory_path).joinpath(f'ui{os.sep}admin{os.sep}{self.admin_app}.yaml')
         if not os.path.exists(admin_app):
-            log.info(f'\nAdmin app ui/admin/{self.app} missing in project - no action taken\n')
+            log.info(f'\nAdmin app ui{os.sep}admin{os.sep}{self.app} missing in project - no action taken\n')
             exit(1)
 
-        app_path = Path(self.project.project_directory_path).joinpath(f'ui/{self.app}')
+        app_path = Path(self.project.project_directory_path).joinpath(f'ui{os.sep}{self.app}')
         app_model_path = app_path.joinpath("app_model.yaml")
         if os.path.exists(app_path):
             if self.project.command.startswith('rebuild'):
@@ -101,7 +101,7 @@ class OntCreator(object):
             os.mkdir(app_path)              
             # TODO - move ontimize seed to create - may pull from Git or Venv in future
             from_dir = self.project.api_logic_server_dir_path.joinpath('prototypes/ont_app/ontimize_seed')
-            to_dir = self.project.project_directory_path.joinpath(f'ui/{self.app}/')
+            to_dir = self.project.project_directory_path.joinpath(f'ui{os.sep}{self.app}{os.sep}')
             shutil.copytree(from_dir, to_dir, dirs_exist_ok=True)  # create default app files
 
         with open(f'{admin_app}', "r") as admin_file:  # path is admin.yaml for default url/app
@@ -176,7 +176,7 @@ class OntCreator(object):
         this_app = {
             "name": self.app,
             "description": "generated Ontimize application"
-            # this_app["template_dir"] = f"{self.app}/templates"
+            # this_app["template_dir"] = f"{self.app}{os.sep}templates"
         }
         a = {self.app: this_app }
         # MENU GROUP
