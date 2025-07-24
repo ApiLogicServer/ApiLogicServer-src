@@ -1,5 +1,6 @@
 ---
 title: Vibe MCP / Microservice
+do_process_code_block_titles: True
 version: 0.23 from docsite 7/11/2025
 ---
 <style>
@@ -60,15 +61,13 @@ Verify it as follows:
 
 ## Create a Custom React App
 
-**Create Start App**
 ```bash title="Create a custom react app"
 Create a react app.
 ```
 
 <br>
 
-**Customize - add cards**
-```txt title='Customize using Natural Language'
+```txt title='Customize using Natural Language - Add Cards'
 In the ui/react app, update the Product list to provide users an option to see results in a list,
 or in cards.
 ```
@@ -86,13 +85,6 @@ todo - diagram
 
 <br>
 
-**Create MCP Executor: process request - invokes the LLM to obtain a series of API calls to run, and runs them**
-``` bash title="Create an MCP Client Executor"
-Create the mcp client executor
-```
-<br>
-
-**Add a Table to Track Sent Emails**
 ``` bash title="Add a Table to Track Sent Emails"
 Create a table SysEmail in `database/db.sqlite` as a child of customer, 
 with columns id, message, subject, customer_id and CreatedOn.
@@ -101,7 +93,14 @@ Follow the suggestions to update the admin app.
 
 <br>
 
-**Create the email service stub using SysEmail as a Request Table**
+<br>
+
+``` bash title="Create MCP Executor: process request - invokes the LLM to obtain a series of API calls to run, and runs them"
+Create the mcp client executor
+```
+
+<br>
+
 ``` bash title="Create the email service using SysEmail as a Request Table"
 Add an after_flush event on SysEmail to produce a log message "email sent",
 unless the customer has opted out.
@@ -109,7 +108,6 @@ unless the customer has opted out.
 
 <br>
 
-**Business Logic to Honor Email Opt-out**
 ```bash title="Business Logic to Honor Email Opt-out"
 Add an after_flush event on SysEmail to produce a log message "email sent",
 unless the customer has opted out.
@@ -117,7 +115,6 @@ unless the customer has opted out.
 
 <br>
 
-**Test: restart the server/admin app - Click SysMCP >> Create New, and enter:**
 ```text title="Test the MCP Client: Click SysMCP >> Create New, and enter"
 List the orders date_shipped is null and CreatedOn before 2023-07-14, 
 and send a discount email (subject: 'Discount Offer') to the customer for each one.
