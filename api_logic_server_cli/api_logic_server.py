@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "15.00.53"  # last public release: 15.00.52 (15.00.12)
+__version__ = "15.00.54"  # last public release: 15.00.52 (15.00.12)
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t07/22/2024 - 15.00.53: system vibe support \n"\
+    "\t07/23/2024 - 15.00.54: system vibe support \n"\
     "\t07/20/2024 - 15.00.52: Python 3.13 compatibility fixes - psycopg2→psycopg3, SQLAlchemy 2.0+, pkg_resources→importlib.metadata.  mgr dbs \n"\
     "\t07/17/2024 - 15.00.49: venv fix+, ext bldr * fix, copilot vibe tweaks - creation, mcp logic, basic_demo autonums \n"\
     "\t07/10/2024 - 15.00.41: copilot vibe support for logic, UI, MCP,  bug[98] \n"\
@@ -385,7 +385,7 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
                 joinpath('prototypes/BudgetApp')
             recursive_overwrite(nw_dir, project.project_directory)
 
-        if project.db_url in ["basic_demo"]:
+        if 'basic_demo' in project.db_url:
             log.debug(".. ..Copy in basic_demo customizations: readme, logic, tests")
             nw_dir = (Path(api_logic_server_dir_str)).\
                 joinpath('prototypes/basic_demo')
