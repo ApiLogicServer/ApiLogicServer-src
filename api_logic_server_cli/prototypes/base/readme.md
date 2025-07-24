@@ -7,37 +7,35 @@
 - ✅ **JSON:API Endpoints** - REST API for all database tables at `/api/*`
 - ✅ **Swagger Documentation** - Interactive API docs at `/api`
 - ✅ **Business Logic Engine** - Declarative rules in `logic/declare_logic.py`
-- ✅ **Security Framework** - Authentication/authorization in `security/`, using
-```
-als add-auth --provider-type=sql --db-url=
-als add-auth --provider-type=sql --db_url=postgresql://postgres:p@localhost/authdb
-
-als add-auth --provider-type=keycloak --db-url=localhost
-als add-auth --provider-type=keycloak --db-url=hardened
-
-als add-auth --provider-type=None # to disable
-``` 
+- ✅ **Security Framework** - Authentication/authorization in `security/`
 - ✅ **Database Models** - SQLAlchemy ORM in `database/models.py`
 
+See readme files under api, logic and security.
+
 **🚀 Ready to Run:** This is a complete, working system. Just press F5 or run `python api_logic_server_run.py`
+
+<br>
 
 ---
 
 # 🚀 Quick Start
-
-> 🤖 **For GitHub Copilot Users:** See `.github/.copilot-instructions.md` for AI assistant guidance on getting started with this project.
 
 **Bootstrap Copilot by pasting the following into the chat:**
 ```
 Please find and read `.github/.copilot-instructions.md`.
 ```
 
+<br>
+
 **Microservice Automation Complete -- run to verify:** for **VSCode** projects except those downloaded from Web/GenAI:
 1. `Press F5 to Run` (your venv is defaulted)  
 
 &emsp;&emsp;&emsp;&emsp;For **other IDEs,** please follow the [Setup and Run](#1-setup-and-run) procedure, below.
 
-> Tip: create the sample app for customization examples: `ApiLogicServer create --project-name=nw_sample --db_url=nw+`
+<br>
+
+> 💡 **Tip:** Create the sample app for customization examples:  
+> `ApiLogicServer create --project-name=nw_sample --db_url=nw+`
 
 &nbsp;
 

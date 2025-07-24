@@ -21,7 +21,7 @@ See: https://apilogicserver.github.io/Docs/Integration-MCP/
 ################
 
 create_tool_context_from_llm = False
-''' set to False to bypass LLM call and save 2-3 secs in testing, no API Key required. '''
+''' set to False to bypass LLM call and OpenAI API Key requirement. '''
 
 import os, logging, logging.config, sys
 from pathlib import Path
@@ -144,10 +144,10 @@ def query_llm_with_nl(learnings_and_schema: str, nl_query: str):
             temperature=0.2
         )
         tool_context_str = response.choices[0].message.content
-    else:
+    else:  # this is so folks can try mcp without an OpenAI API key
         # read integration/mcp/mcp_tool_context.json
         tool_context_file_path = os.path.join(os.path.dirname(__file__), "../../integration/mcp/examples/mcp_tool_context_response_get.json")
-        if 'send email' in nl_query:
+        if 'email' in nl_query:
             tool_context_file_path = os.path.join(os.path.dirname(__file__), "../../integration/mcp/examples/mcp_tool_context_response.json")
         try:    
             with open(tool_context_file_path, "r") as tool_context_file:
