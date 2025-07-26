@@ -13,7 +13,7 @@ For example, create Northwind and basic_demo like this:
 ```bash
 genai-logic create  --project_name=nw --db_url=sqlite:///samples/dbs/nw.sqlite
 
-genai-logic create --project_name=basic_demo --db_url=sqlite:///samples/dbs/basic_demo
+genai-logic create --project_name=basic_demo --db_url=sqlite:///samples/dbs/basic_demo.sqlite
 ```
 
 ## Database Connectivity
