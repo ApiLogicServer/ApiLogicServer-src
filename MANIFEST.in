@@ -20,7 +20,3 @@ global-exclude *.egg-info
 global-exclude *.js.map
 global-exclude *.zip
 global-exclude .DS_Store
-
-# Exclude specific large directories/files
-exclude api_logic_server_cli/prototypes/manager/system/genai/examples/genai_demo/wg_dev_merge.zip
-prune api_logic_server_cli/create_from_model/safrs-react-admin-npm-build/static/js
