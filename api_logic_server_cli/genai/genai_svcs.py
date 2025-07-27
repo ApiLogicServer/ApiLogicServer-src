@@ -973,7 +973,7 @@ def get_manager_path(project: object = None) -> Path:
     * Possibly could add cli arg later
 
     Args:
-        use_env: bool if cannot find manager from project, use install location
+        project: instance of Project - best practice is caller provides, so can use install loc if cannot find manager
 
     Returns:
         Path: Manager path (contains system/genai)
@@ -984,7 +984,7 @@ def get_manager_path(project: object = None) -> Path:
         check_system_genai = result_path.joinpath('system/genai/temp')    
         if check_system_genai.exists():
             return result_path
-        return result_path
+        return result_path # todo - verify what this does (should not occur)
 
     result_path = Path(os.getcwd())  # normal case - project at manager root
     check_system_genai = result_path.joinpath('system/genai/temp')    

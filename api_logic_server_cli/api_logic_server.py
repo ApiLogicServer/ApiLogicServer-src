@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "15.00.60"  # last public release: 15.00.52 (15.00.12)
+__version__ = "15.00.61"  # last public release: 15.00.52 (15.00.12)
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t07/25/2024 - 15.00.60: confluent-kafka==2.6.0 for 3.13, system vibe support -- initial testing \n"\
+    "\t07/27/2024 - 15.00.61: no mgr fix, confluent-kafka==2.6.0 for 3.13, system vibe support -- initial testing \n"\
     "\t07/20/2024 - 15.00.52: Python 3.13 compatibility fixes - psycopg2→psycopg3, SQLAlchemy 2.0+, pkg_resources→importlib.metadata.  mgr dbs \n"\
     "\t07/17/2024 - 15.00.49: venv fix+, ext bldr * fix, copilot vibe tweaks - creation, mcp logic, basic_demo autonums \n"\
     "\t07/10/2024 - 15.00.41: copilot vibe support for logic, UI, MCP,  bug[98] \n"\
@@ -1081,8 +1081,12 @@ class ProjectRun(Project):
         self.venv_path = Path(sys.prefix) if is_docker() == False else Path('/home/api_logic_server/api_logic_server_cli')
         self.manager_path = self.venv_path.parent
         check_system_genai = self.manager_path.joinpath('system/genai/temp')
-        if not check_system_genai.exists():
-            self.manager_path = (self.venv_path / '../api_logic_server_cli/prototypes/manager').resolve()
+        if not check_system_genai.exists():  # user did not als start - use the manager in the venv
+            my_loc = os.path.abspath(__file__)
+            api_logic_server_dir_path = Path(os.path.dirname(my_loc))
+            self.manager_path = api_logic_server_dir_path / 'prototypes/manager'
+            assert self.manager_path.is_dir(), f"Manager path {self.manager_path} does not exist"
+            # self.manager_path = (self.venv_path / '../api_logic_server_cli/prototypes/manager').resolve()
             log.debug(f'.. ..Manager path from dev env - customizations not active')  # eg ...ApiLogicServer-src/api_logic_server_cli/prototypes/manager
         log.debug(f'.. ..Manager path: {self.manager_path}')  
         # log.debug(f'.. ..Interp path: {self.manager_path / 'venv/bin/python'}')
