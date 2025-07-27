@@ -42,7 +42,7 @@ class ResourceAttribute():
             if lower_name.endswith(each_non_fav):
                 self.non_favorite = True
                 break
-        if each_attribute.server_default is not None and hasattr(each_attribute.server_default.arg, 'text'):
+        if each_attribute.server_default is not None and "arg" in dir(each_attribute.server_default) and hasattr(each_attribute.server_default.arg, 'text'):
             self.default = each_attribute.server_default.arg.text
         resource.attributes.append(self)
 
