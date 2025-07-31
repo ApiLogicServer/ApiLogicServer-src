@@ -37,7 +37,15 @@ class JSResponseFormat(BaseModel):  # must match system/genai/prompt_inserts/res
     code : str # generated javascript code (only)
 
 
-class GenAIAdminApp:
+class GenAIReactApp:
+    """Create a react app:
+    1. Clones <mgr>/system/genai/app_templates/react-admin-template
+    2. For each data model class, uses creates page with list and show
+        * Uses ChatGpt with system/genai/app_templates/app_learning/Admin-App-Resource-Learning-Prompt.md
+        * Regrettably, repairs imports
+    3. Creates Admin.js
+        * Uses ChatGpt with system/genai/app_templates/app_learning/Admin-App-js-Learning-Prompt.md
+    """
 
     def __init__(self, project: Project, app_name: str, vibe: bool, schema: str, genai_version: str, retries: int):
         self.start_time = time.time()
