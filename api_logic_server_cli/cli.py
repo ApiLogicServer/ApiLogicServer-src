@@ -823,8 +823,8 @@ def genai_add_app(ctx, app_name: str, vibe: click.BOOL, retries: int, schema: st
         log.info(f'... Error - does not appear to be a project: {str(project.project_directory_path)}')
         log.info(f'... Typical usage - cd into project, use --project_name=. \n')
         exit (1)
-    from api_logic_server_cli.genai.genai_admin_app import GenAIAdminApp
-    genai_admin = GenAIAdminApp(project=project, app_name=app_name, vibe=vibe, schema=schema, retries=retries, genai_version=genai_version)
+    from api_logic_server_cli.genai.genai_react_app import GenAIReactApp
+    genai_react = GenAIReactApp(project=project, app_name=app_name, vibe=vibe, schema=schema, retries=retries, genai_version=genai_version)
     pass
     log.info("")
 
