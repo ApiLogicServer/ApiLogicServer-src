@@ -8,6 +8,8 @@ If you create sum, count or formula LogicBank rules, you MUST create a correspon
 
 Use only the methods provided below.
 
+IMPORTANT: Keep it simple! Use the built-in Rule methods with their parameters (like if_condition) rather than creating custom functions. The Rule methods are designed to handle common patterns directly.
+
 
 class Rule:
     """ Invoke these functions to declare rules """
@@ -131,6 +133,11 @@ class Rule:
                               if_condition: any = None,
                               when_condition: any = None,
                               with_args: dict = None):
+        """
+        Events are triggered after database flush for integration (Kafka, etc.)
+        
+        IMPORTANT: Use this simple pattern - do NOT create custom functions unless absolutely necessary.
+        Use if_condition parameter for conditional logic instead of writing custom event handlers.
 
         Example:
             Prompt:
@@ -145,6 +152,13 @@ class Rule:
                 Rule.after_flush_row_event(on_class=Product, calling=kafka_producer.send_row_to_kafka,
                                if_condition=lambda row: row.is_complete is True,
                                with_args={"topic": "ready_to_ship"})
+
+        Args:
+            on_class: The model class to watch for changes
+            calling: Use kafka_producer.send_row_to_kafka for Kafka integration
+            if_condition: Lambda function to specify when the event should trigger
+            with_args: Dictionary with parameters like {"topic": "topic_name"}
+        """
 
 
 Expanded example:
@@ -309,6 +323,19 @@ Non-null (or required) constraints require an update to the data model - for exa
 Required (must-have) related parent constraints require an update to the data model - for example:
     Prompt: Each Item must have a valid entry in the Product table.
     Response: product_id = Column(ForeignKey('product.id'), nullable=False)
+
+CRITICAL: For event handling (Kafka integration, etc.), do NOT create custom event functions.
+Use Rule.after_flush_row_event with if_condition parameter instead.
+
+WRONG (do not do this):
+    def my_custom_kafka_function(row, old_row, logic_row):
+        # custom logic here
+    Rule.commit_row_event(on_class=Order, calling=my_custom_kafka_function)
+
+RIGHT (do this instead):
+    Rule.after_flush_row_event(on_class=Order, calling=kafka_producer.send_row_to_kafka,
+                               if_condition=lambda row: row.date_shipped is not None,
+                               with_args={"topic": "order_shipping"})
 
 logic should create python files in logic/logic_discovery, 
 and cross-check/use attribute names in database/models.py

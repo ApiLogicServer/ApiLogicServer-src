@@ -1,5 +1,6 @@
 import datetime
 from decimal import Decimal
+from integration.kafka import kafka_producer
 from logic_bank.exec_row_logic.logic_row import LogicRow
 from logic_bank.extensions.rule_extensions import RuleExtension
 from logic_bank.logic_bank import Rule
@@ -10,7 +11,10 @@ import logging
 from flask import jsonify
 
 
-""" Best practice: create logic files for each use case """
+""" 
+Best practice: create logic files for each use case, 
+named for the use case (eg, check_credit.py) 
+"""
 
 app_logger = logging.getLogger(__name__)
 
