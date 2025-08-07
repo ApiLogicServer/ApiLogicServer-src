@@ -1334,7 +1334,7 @@
             "cwd": "${workspaceFolder}/../../servers/basic_demo",
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
             "redirectOutput": true,
-            "args": ["genai-app"
+            "args": ["genai-add-app"
                     , "--app-name=basic_demo_app"],
             "console": "integratedTerminal"
         },

@@ -143,7 +143,7 @@ class GenAIReactApp:
 
     def a_generate_resource_files(self):
 
-        def fix_resource(genai_app: GenAIAdminApp, raw_source: str) -> str:
+        def fix_resource(genai_app: GenAIReactApp, raw_source: str) -> str:
             ''' Remove occasional begin/end code markers <br>
             And horrific override of ChatGPT refusal to generate imports AS DIRECTED!<br>
             '''
