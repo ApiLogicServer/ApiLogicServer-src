@@ -20,23 +20,21 @@ INSERT INTO customer VALUES(5,'Silent',220,1000, "silent@corp.org", 1);
 CREATE TABLE product (
         id INTEGER PRIMARY KEY AUTOINCREMENT, 
         name VARCHAR, 
-        unit_price DECIMAL,
-        PRIMARY KEY (id)
+        unit_price DECIMAL
 );
 INSERT INTO product VALUES(1,'Gadget',150);
 INSERT INTO product VALUES(2,'Widget',90);
-INSERT INTO product VALUES(3,'Thingamajig',75);
+INSERT INTO product VALUES(3,'Thingamajig',5075);
 INSERT INTO product VALUES(4,'Doodad',110);
 INSERT INTO product VALUES(5,'Green',109);
 
-CREATE TABLE IF NOT EXISTS "order" (
+CREATE TABLE "order" (
         id INTEGER PRIMARY KEY AUTOINCREMENT, 
         notes VARCHAR, 
         customer_id INTEGER NOT NULL, 
         CreatedOn DATE,
         date_shipped DATE, 
         amount_total DECIMAL, 
-        PRIMARY KEY (id), 
         FOREIGN KEY(customer_id) REFERENCES customer (id)
 );
 INSERT INTO "order" VALUES(1,'First Order',2, '2023-02-22', '2023-03-22',300);
@@ -52,7 +50,6 @@ CREATE TABLE item (
         quantity INTEGER NOT NULL, 
         amount DECIMAL, 
         unit_price DECIMAL, 
-        PRIMARY KEY (id), 
         FOREIGN KEY(order_id) REFERENCES "order" (id), 
         FOREIGN KEY(product_id) REFERENCES product (id)
 );
