@@ -1,0 +1,35 @@
+<o-form-layout-manager attr="Product" mode="tab" title="PRODUCT">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="ProductTable" 
+            service="Product" 
+            entity="Product" 
+            title="PRODUCT"
+            keys="id"
+            columns="name;unit_price;id" 
+            header-actions="R;D"
+            visible-columns="name;unit_price;id"  
+            sort-columns="name" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #name attr="name" title=" name" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #unit_price attr="unit_price" title="unit_price" type="real" min-decimal-digits="2" max-decimal-digits="4" min="0" max="1000000.0000" content-align="center"></o-table-column>
+            
+            <o-table-column #id attr="id" title="id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

@@ -1,0 +1,30 @@
+{
+    "tool_type": "json-api",
+    "schema_version": "1.0",
+    "base_url": "http://localhost:5656/api",
+    "description": "API Logic Project: basic_demo",
+    "resources": [
+        {
+            "name": "SysMcp",
+            "path": "/SysMcp",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "request",
+                "request_prompt",
+                "completion"
+            ],
+            "filterable": [
+                "id",
+                "request",
+                "request_prompt",
+                "completion"
+            ]
+        }
+    ]
+}

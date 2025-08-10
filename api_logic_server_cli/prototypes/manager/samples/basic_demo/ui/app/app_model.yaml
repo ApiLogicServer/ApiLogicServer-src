@@ -1,0 +1,303 @@
+about:
+  date: August 09, 2025 08:12:46
+  recent_changes: works with modified safrs-react-admin
+  version: 0.0.0
+api_root: '{http_type}://{swagger_host}:{port}/{api}'
+application:
+  app:
+    description: generated Ontimize application
+    menu_group:
+      data:
+        icon: edit_square
+        menu_item:
+          Customer:
+            icon: edit_square
+            menu_name: Customer
+            menu_title: Customer
+            page:
+              detail:
+                columns: name,balance,credit_limit,email,email_opt_out,id
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: Customer
+                typescript_name: detail_component.jinja
+                visible_columns: name,balance,credit_limit,email,email_opt_out,id
+              home:
+                columns: name,balance,credit_limit,email,email_opt_out,id
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: Customer
+                typescript_name: home_template.jinja
+                visible_columns: name,balance,credit_limit,email,email_opt_out,id
+              new:
+                columns: name,balance,credit_limit,email,email_opt_out,id
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: Customer
+                typescript_name: new_component.jinja
+                visible_columns: name,balance,credit_limit,email,email_opt_out,id
+            template_name: module.jinja
+          Item:
+            icon: edit_square
+            menu_name: Item
+            menu_title: Item
+            page:
+              detail:
+                columns: id,order_id,product_id,quantity,amount,unit_price
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: Item
+                typescript_name: detail_component.jinja
+                visible_columns: id,order_id,product_id,quantity,amount,unit_price
+              home:
+                columns: id,order_id,product_id,quantity,amount,unit_price
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: Item
+                typescript_name: home_template.jinja
+                visible_columns: id,order_id,product_id,quantity,amount,unit_price
+              new:
+                columns: id,order_id,product_id,quantity,amount,unit_price
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: Item
+                typescript_name: new_component.jinja
+                visible_columns: id,order_id,product_id,quantity,amount,unit_price
+            template_name: module.jinja
+          Order:
+            icon: edit_square
+            menu_name: Order
+            menu_title: Order
+            page:
+              detail:
+                columns: id,customer_id,notes,CreatedOn,amount_total,date_shipped
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: Order
+                typescript_name: detail_component.jinja
+                visible_columns: id,customer_id,notes,CreatedOn,amount_total,date_shipped
+              home:
+                columns: id,customer_id,notes,CreatedOn,amount_total,date_shipped
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: Order
+                typescript_name: home_template.jinja
+                visible_columns: id,customer_id,notes,CreatedOn,amount_total,date_shipped
+              new:
+                columns: id,customer_id,notes,CreatedOn,amount_total,date_shipped
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: Order
+                typescript_name: new_component.jinja
+                visible_columns: id,customer_id,notes,CreatedOn,amount_total,date_shipped
+            template_name: module.jinja
+          Product:
+            icon: edit_square
+            menu_name: Product
+            menu_title: Product
+            page:
+              detail:
+                columns: name,unit_price,id
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: Product
+                typescript_name: detail_component.jinja
+                visible_columns: name,unit_price,id
+              home:
+                columns: name,unit_price,id
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: Product
+                typescript_name: home_template.jinja
+                visible_columns: name,unit_price,id
+              new:
+                columns: name,unit_price,id
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: Product
+                typescript_name: new_component.jinja
+                visible_columns: name,unit_price,id
+            template_name: module.jinja
+        menu_name: data
+        menu_title: data
+        opened: true
+    name: app
+authentication: '{system-default}'
+entities:
+  Customer:
+    columns:
+    - label: ' name*'
+      name: name
+      search: true
+      sort: true
+      template: text
+      type: VARCHAR
+    - name: balance
+      type: DECIMAL
+    - name: credit_limit
+      type: DECIMAL
+    - name: email
+      template: text
+      type: VARCHAR
+    - name: email_opt_out
+      type: Boolean
+    - name: id
+      template: integer
+      type: INTEGER
+    favorite: name
+    hidden: {}
+    label: Customer
+    primary_key:
+    - id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - customer_id
+      name: OrderList
+      resource: Order
+    type: Customer
+  Item:
+    columns:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+      template: integer
+      type: INTEGER
+    - name: order_id
+      template: integer
+      type: INTEGER
+    - name: product_id
+      required: true
+      template: integer
+      type: INTEGER
+    - name: quantity
+      required: true
+      template: integer
+      type: INTEGER
+    - name: amount
+      type: DECIMAL
+    - name: unit_price
+      type: DECIMAL
+    favorite: id
+    hidden: {}
+    label: Item
+    primary_key:
+    - id
+    tab_groups:
+    - direction: toone
+      fks:
+      - order_id
+      name: order
+      resource: Order
+    - direction: toone
+      fks:
+      - product_id
+      name: product
+      resource: Product
+    type: Item
+  Order:
+    columns:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+      template: integer
+      type: INTEGER
+    - name: customer_id
+      required: true
+      template: integer
+      type: INTEGER
+    - name: notes
+      template: text
+      type: VARCHAR
+    - name: CreatedOn
+      type: DATE
+    - name: amount_total
+      type: DECIMAL
+    - name: date_shipped
+      type: DATE
+    favorite: id
+    hidden: {}
+    label: Order
+    primary_key:
+    - id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - order_id
+      name: ItemList
+      resource: Item
+    - direction: toone
+      fks:
+      - customer_id
+      name: customer
+      resource: Customer
+    type: Order
+  Product:
+    columns:
+    - label: ' name*'
+      name: name
+      search: true
+      sort: true
+      template: text
+      type: VARCHAR
+    - name: unit_price
+      type: DECIMAL
+    - name: id
+      template: integer
+      type: INTEGER
+    favorite: name
+    hidden: {}
+    label: Product
+    primary_key:
+    - id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - product_id
+      name: ItemList
+      resource: Item
+    type: Product
+settings:
+  HomeJS: /admin-app/home.js
+  max_list_columns: 8
+  style_guide:
+    api_endpoint: http://localhost:5656/api
+    applicationLocales:
+    - en
+    - es
+    currency_symbol: $
+    currency_symbol_position: left
+    date_format: YYYY-MM-DD
+    decimal_max: '1000000000'
+    decimal_min: '0'
+    decimal_separator: .
+    edit_on_mode: dblclick
+    exclude_listpicker: false
+    include_translation: false
+    keycloak_client_id: alsclient
+    keycloak_realm: kcals
+    keycloak_url: http://localhost:8080
+    locale: en
+    max_decimal_digits: '4'
+    min_decimal_digits: '2'
+    mode: tab
+    pick_style: list
+    serviceType: JSONAPI
+    startSessionPath: /auth/login
+    style: light
+    thousand_separator: ','
+    use_keycloak: false
