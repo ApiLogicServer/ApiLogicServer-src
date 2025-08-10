@@ -194,7 +194,7 @@
             "justMyCode": false,
             "program": "api_logic_server_run.py",
             "redirectOutput": true,
-            "console": "internalConsole",
+            "console": "integratedTerminal",
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
