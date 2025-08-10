@@ -9,8 +9,8 @@ CREATE TABLE customer (
         balance DECIMAL, 
         credit_limit DECIMAL, 
         email varchar,
-        email_opt_out BOOLEAN,
-        PRIMARY KEY (id)
+        email_opt_out BOOLEAN
+        
 );
 INSERT INTO customer VALUES(1,'Alice',90,5000, "alice@corp.org", 0);
 INSERT INTO customer VALUES(2,'Bob',0,3000, "bob@corp.org", 0);
@@ -23,23 +23,21 @@ CREATE TABLE product (
         id INTEGER PRIMARY KEY AUTOINCREMENT, 
         name VARCHAR, 
         unit_price DECIMAL, 
-        carbon_neutral BOOLEAN,
-        PRIMARY KEY (id)
+        carbon_neutral BOOLEAN
 );
 INSERT INTO product VALUES(1,'Gadget',150, 1);
 INSERT INTO product VALUES(2,'Widget',90, NULL);
-INSERT INTO product VALUES(3,'Thingamajig',75, NULL);
+INSERT INTO product VALUES(3,'Thingamajig',5075, NULL);
 INSERT INTO product VALUES(4,'Doodad',110, NULL);
 INSERT INTO product VALUES(5,'Green',109, 1);
 
-CREATE TABLE IF NOT EXISTS "order" (
+CREATE TABLE "order" (
         id INTEGER PRIMARY KEY AUTOINCREMENT, 
         notes VARCHAR, 
         customer_id INTEGER NOT NULL, 
         CreatedOn DATE,
         date_shipped DATE, 
         amount_total DECIMAL, 
-        PRIMARY KEY (id), 
         FOREIGN KEY(customer_id) REFERENCES customer (id)
 );
 INSERT INTO "order" VALUES(1,'First Order',2, '2023-02-22', '2023-03-22',300);
@@ -55,7 +53,6 @@ CREATE TABLE item (
         quantity INTEGER NOT NULL, 
         amount DECIMAL, 
         unit_price DECIMAL, 
-        PRIMARY KEY (id), 
         FOREIGN KEY(order_id) REFERENCES "order" (id), 
         FOREIGN KEY(product_id) REFERENCES product (id)
 );
@@ -66,13 +63,12 @@ INSERT INTO item VALUES(4,4,3,4,300,75);
 INSERT INTO item VALUES(5,5,4,2,220,110);
 
 
-CREATE TABLE IF NOT EXISTS sys_email (
+CREATE TABLE sys_email (
         id INTEGER PRIMARY KEY AUTOINCREMENT, 
         message VARCHAR, 
         subject VARCHAR,
         customer_id INTEGER NOT NULL, 
         CreatedOn DATE,
-        PRIMARY KEY (id), 
         FOREIGN KEY(customer_id) REFERENCES customer (id)
 );
 
