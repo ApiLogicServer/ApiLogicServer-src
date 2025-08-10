@@ -30,7 +30,7 @@ genai-logic create --db_url=sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServ
 genai-logic create --db_url=mysql+pymysql://root:p@localhost:3306/classicmodels --project_name=docker_classicmodels
 genai-logic create --db_url=mysql+pymysql://root:p@localhost:3306/Chinook --project_name=docker_chinook
 
-# from container to mysql container  replace localhost with....
+# from container to mysql container -- replace localhost with container name...
 genai-logic create --db_url=mysql+pymysql://root:p@mysql-container:3306/Chinook --project_name=/localhost/docker_chinook
 
 # microsoft sql server (setup: https://apilogicserver.github.io/Docs/Install-pyodbc/)
