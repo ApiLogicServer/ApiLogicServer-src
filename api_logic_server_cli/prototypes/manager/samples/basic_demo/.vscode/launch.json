@@ -1,0 +1,314 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "ApiLogicServer",
+            "type": "debugpy",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICPROJECT_LOGGING_CONFIG": "config/logging.yml",
+                "APILOGICPROJECT_STOP_OK": "True",
+                "APILOGICPROJECT_DEBUG": "False"},
+            "request": "launch",
+            "program": "api_logic_server_run.py",
+            "redirectOutput": true,
+            "justMyCode": false,
+            "args": ["--flask_host=localhost", "--port=5656", "--swagger_port=5656", "--swagger_host=localhost", "--verbose=False"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "ApiLogicServer DEBUG",
+            "type": "debugpy",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "EXPERIMENT": "",
+                "PYTHONHASHSEED": "0", 
+                "APILOGICPROJECT_LOGGING_CONFIG": "config/logging.yml",
+                "APILOGICPROJECT_STOP_OK": "True",
+                "APILOGICPROJECT_DEBUG": "False"},
+            "request": "launch",
+            "program": "api_logic_server_run.py",
+            "redirectOutput": true,
+            "justMyCode": false,
+            "args": ["--flask_host=localhost", "--port=5656", "--swagger_port=5656", "--swagger_host=localhost", "--verbose=False"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - API Logic Server - VERBOSE",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "program": "api_logic_server_run.py",
+            "redirectOutput": true,
+            "env": {
+                "PYTHONPATH": "", 
+                "APILOGICPROJECT_VERBOSE": "True",
+                "PYTHONHASHSEED": "0", 
+                "OPT_LOCKING": "optional"
+            },
+            "justMyCode": false,
+            "args": ["--flask_host=localhost", "--port=5656", "--swagger_port=5656", "--swagger_host=localhost", "--verbose=True"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - No Security ApiLogicServer (e.g., simpler swagger)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "api_logic_server_run.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": ["--flask_host=localhost", "--port=5656", "--swagger_port=5656", "--swagger_host=localhost", "--verbose=False"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - No Security ApiLogicServer VERBOSE",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "api_logic_server_run.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "OPT_LOCKING": "optional",
+                "APILOGICPROJECT_VERBOSE": "True"},
+            "justMyCode": false,
+            "args": ["--flask_host=localhost", "--port=5656", "--swagger_port=5656", "--swagger_host=localhost", "--verbose=False"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "Test - test/basic/server_test.py",
+// use this for test programs, eg to test the server
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "program": "test/basic/server_test.py",
+            "redirectOutput": true,
+            "justMyCode": false,
+            "args": ["go"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - Run designated Python file",
+// use this for test programs, eg to test the server
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "program": "${input:inputProjectName}",
+            "redirectOutput": true,
+            "justMyCode": false,
+            "args": ["go"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "MCP - Model Context Protocol - Client Executor",
+// a simple client to test the Model Context Protocol, default request for basic_demo
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "program": "integration/mcp/mcp_client_executor.py",
+            "redirectOutput": true,
+            "justMyCode": false,
+            "args": ["list customers with balance over 100"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "Install Ontimize (npm install)",
+            "type": "node",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/ui/app",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": ["install --force"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "  - Start Ontimize (npm start)",
+            "type": "node",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/ui/app",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": ["start"],
+            "restart": true,
+            "timeout": 30000,
+            "console": "integratedTerminal",
+            "env": {
+                "NODE_ENV": "development"
+            }
+        },
+        {
+            "name": "  - Rebuild app from altered model (overwrites app)",
+            "type": "node-terminal",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "command": "als app-build --app=app"
+        },
+        {
+            "name": "Behave Run",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"SECURITY_ENABLED": "True"},
+            "cwd": "${workspaceFolder}/test/api_logic_server_behave",
+            "program": "${workspaceFolder}/test/api_logic_server_behave/behave_run.py",
+            "redirectOutput": true,
+            "args": [ "--outfile=${workspaceFolder}/test/api_logic_server_behave/logs/behave.log"],
+            "justMyCode": false,            
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - Behave No Security",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"SECURITY_ENABLED": "False"},
+            "cwd": "${workspaceFolder}/test/api_logic_server_behave",
+            "program": "${workspaceFolder}/test/api_logic_server_behave/behave_run.py",
+            "redirectOutput": true,
+            "args": [ "--outfile=${workspaceFolder}/test/api_logic_server_behave/logs/behave.log"],
+            "justMyCode": false,            
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - Behave Scenario",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/test/api_logic_server_behave",
+            "program": "${workspaceFolder}/test/api_logic_server_behave/behave_run.py",
+            "redirectOutput": true,
+            "args": [ "--outfile=${workspaceFolder}/test/api_logic_server_behave/logs/behave.log",
+                "--name=Clone Existing Order"],
+            "justMyCode": false,            
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "  - Behave Logic Report",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/test/api_logic_server_behave",
+            "program": "${workspaceFolder}/test/api_logic_server_behave/behave_logic_report.py",
+            "redirectOutput": true,
+            "justMyCode": false,            
+            "args": ["run"
+                ,"--prepend_wiki=reports/Behave Logic Report Intro.md"
+                ,"--wiki=reports/Behave Logic Report.md"
+            ],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "REBUILD TEST DATA 1",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"SECURITY_ENABLED": "True"},
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/database/test_data/response2code.py",
+            "redirectOutput": true,
+            "args": ["--test-data"
+                    , "--response=docs/response.json"
+                    ],
+            "justMyCode": false,            
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "REBUILD TEST DATA 2 ",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"SECURITY_ENABLED": "True"},
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/database/test_data/test_data_code.py",
+            "redirectOutput": true,
+            "justMyCode": false,            
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "Rebuild Test Data Z",
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"SECURITY_ENABLED": "True"},
+            "cwd": "${workspaceFolder}/test/api_logic_server_behave",
+            "program": "${workspaceFolder}/docs/test_data/create_test_data.py",
+            "redirectOutput": true,
+            // "args": [ "--outfile=${workspaceFolder}/test/api_logic_server_behave/logs/behave.log"],
+            "justMyCode": false,            
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "Python: Module",
+            "type": "debugpy",
+            "request": "launch",
+            "redirectOutput": true,
+            "justMyCode": false,            
+            "module": "enter-your-module-name"
+        },
+        {
+            "name": "Python: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "redirectOutput": true,
+            "justMyCode": false,            
+            "console": "internalConsole"
+        },
+        {
+            "name": "db-debug - explore SQLAlchemy",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "program": "database/db_debug/db_debug.py",
+            "redirectOutput": true,
+            "justMyCode": false,            
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "Sys Info",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "program": "venv_setup/py.py",
+            "redirectOutput": true,
+            "args": ["sys-info"],
+            "justMyCode": false,
+            "console": "integratedTerminal"
+        }
+    ],
+    "inputs": [
+        {
+            "id": "inputProjectName",
+            "type": "promptString",
+            "description": "Python File Name to Run",
+            "default": "integration/mcp/mcp_client_executor.py"
+        },
+        {
+            "id": "inputMcpRequest",
+            "type": "promptString",
+            "description": "Request for MCP Client Executor",
+            "default": "find customers with balance over 500"
+        }
+    ]
+}

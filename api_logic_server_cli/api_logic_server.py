@@ -12,11 +12,11 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "15.00.65"  # last public release: 15.00.52 (15.00.12)
+__version__ = "15.01.00"  # last public release: 15.00.65
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t08/09/2024 - 15.01.00: improved vibe instructions \n"\
     "\t08/06/2024 - 15.00.65: instructions for custom API endpoints, behave testing \n"\
-    "\t07/30/2024 - 15.00.62: rename for clarity, no mgr fix, confluent-kafka==2.6.0 for 3.13, system vibe support -- initial testing \n"\
     "\t07/20/2024 - 15.00.52: Python 3.13 compatibility fixes - psycopg2→psycopg3, SQLAlchemy 2.0+, pkg_resources→importlib.metadata.  mgr dbs \n"\
     "\t07/17/2024 - 15.00.49: venv fix+, ext bldr * fix, copilot vibe tweaks - creation, mcp logic, basic_demo autonums \n"\
     "\t07/10/2024 - 15.00.41: copilot vibe support for logic, UI, MCP,  bug[98] \n"\

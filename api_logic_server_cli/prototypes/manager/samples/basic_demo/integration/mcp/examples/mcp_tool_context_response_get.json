@@ -1,0 +1,18 @@
+{
+    "schema_version": "1.0",
+    "resources": [
+        {
+            "tool_type": "json-api",
+            "base_url": "http://localhost:5656/api",
+            "path": "/Customer",
+            "method": "GET",
+            "query_params": [
+                {
+                    "name": "credit_limit",
+                    "op": "gt",
+                    "val": "1000"
+                }
+            ]
+        }
+    ]
+}

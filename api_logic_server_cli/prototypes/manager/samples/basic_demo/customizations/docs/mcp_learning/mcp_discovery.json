@@ -1,0 +1,108 @@
+{
+  "base_url": "http://localhost:5656/api",
+  "authorization_url": "http://localhost:5656/api/auth/login",
+  "description": "API Logic Project: basic_demo",
+  "learning": "To issue one request per row from a prior step (fan-out), use the syntax:\n\n\"$<stepIndex>[*].<fieldName>\"\n\nFor example, if step 0 returns orders, and you want to send a POST per customer:\n\nBefore (incorrect):\n    \"customer_id\": \"{customer_id}\"\n\nAfter (correct):\n    \"customer_id\": \"$0[*].customer_id\"\n    \nOnly if 'email' is in the Natural language query, send email by issing a POST request to the SysEmail endpoint, setting the subject, message and customer_id in the body.   DO NOT include a POST unless the word \u2018email\u2019 appears in the user query.\n\nFormat response as mcp_responseFormat.\n\n<mcp_responseFormat>\nclass QueryParam(BaseModel):\n    name: str  # attribute name\n    op: str  # eq, lt, gt\n    val: str\n\nclass JsonValues(BaseMopdel):\n    name: str  # name of attribute\n    value: str # value of attribute\n\nclass Resource(BaseModel):\n    tool_type: str\n    base_url: str\n    path: str # specified use case or requirement name (use 'General' if missing)\n    method: str # GET, PATCH, POST or DELETE\n    body: json # data for PATCH or POST\n    query_params: List(QueryParam) # filter for GET\n\nclass MCPResult(BaseModel):  # must match system/genai/prompt_inserts/response_format.prompt\n    schema_version: str\n    resources : List[Resource] # list resources\n\n<mcp_responseFormat/>\n",
+  "resources": [
+    {
+      "fields": [
+        "id",
+        "name",
+        "balance",
+        "credit_limit",
+        "email",
+        "email_opt_out"
+      ],
+      "filterable": [
+        "id",
+        "name",
+        "balance",
+        "credit_limit",
+        "email",
+        "email_opt_out"
+      ],
+      "methods": [
+        "GET",
+        "PATCH",
+        "POST",
+        "DELETE"
+      ],
+      "name": "Customer",
+      "path": "/Customer"
+    },
+    {
+      "fields": [
+        "id",
+        "order_id",
+        "product_id",
+        "quantity",
+        "amount",
+        "unit_price"
+      ],
+      "filterable": [
+        "id",
+        "order_id",
+        "product_id",
+        "quantity",
+        "amount",
+        "unit_price"
+      ],
+      "methods": [
+        "GET",
+        "PATCH",
+        "POST",
+        "DELETE"
+      ],
+      "name": "Item",
+      "path": "/Item"
+    },
+    {
+      "fields": [
+        "id",
+        "notes",
+        "customer_id",
+        "CreatedOn",
+        "date_shipped",
+        "amount_total"
+      ],
+      "filterable": [
+        "id",
+        "notes",
+        "customer_id",
+        "CreatedOn",
+        "date_shipped",
+        "amount_total"
+      ],
+      "methods": [
+        "GET",
+        "PATCH",
+        "POST",
+        "DELETE"
+      ],
+      "name": "Order",
+      "path": "/Order"
+    },
+    {
+      "fields": [
+        "id",
+        "name",
+        "unit_price"
+      ],
+      "filterable": [
+        "id",
+        "name",
+        "unit_price"
+      ],
+      "methods": [
+        "GET",
+        "PATCH",
+        "POST",
+        "DELETE"
+      ],
+      "name": "Product",
+      "path": "/Product"
+    }
+  ],
+  "schema_version": "1.0",
+  "tool_type": "json-api"
+}

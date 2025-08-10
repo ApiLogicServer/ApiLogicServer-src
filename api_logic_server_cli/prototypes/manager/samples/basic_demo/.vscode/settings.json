@@ -1,0 +1,40 @@
+{
+    "cSpell.words": [
+        "APILOGICSERVER",
+        "sqlalchemy",
+        "backref",
+        "cascade_backrefs",
+        "proxied",
+        "redef",
+        "jsonapi",
+        "jsonify",
+        "sqltypes"
+    ],
+    "[Log]": {
+        "editor.wordWrap": "off"
+    },
+    "debug.console.wordWrap": false,    
+    "python.defaultInterpreterPath": "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/bin/python",
+    "python.terminal.activateEnvironment": true,
+    "python.terminal.activateEnvInCurrentTerminal": true,
+    "python.envFile": "${workspaceFolder}/.env",
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.extraPaths": ["/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.13/site-packages"],
+    "terminal.integrated.profiles.osx": {
+        "venv": {
+            "path": "/bin/zsh",
+            "args": ["-c", "source ${workspaceFolder}/.vscode/venv_init.sh && exec zsh --no-rcs"]
+        }
+    },
+    "terminal.integrated.profiles.linux": {
+        "venv": {
+            "path": "/bin/bash",
+            "args": ["-c", "source ${workspaceFolder}/.vscode/venv_init.sh && exec bash --noprofile --norc"]
+        }
+    },
+    "terminal.integrated.defaultProfile.osx": "venv",
+    "terminal.integrated.defaultProfile.linux": "venv",
+    "workbench.editorAssociations": {
+        "*.md": "vscode.markdown.preview.editor"
+    }
+}

@@ -1,0 +1,33 @@
+
+# cd <project>  
+# sh ./devops/docker-standard-image/docker-compose.sh
+# --> builds, runs at localhost:5656
+
+# docker-compose -f devops/docker-standard-image/docker-compose-standard-image.yml up
+# docker-compose -f devops/docker-standard-image/docker-compose-standard-image.yml down
+
+# if you have run docker compose up (above), you must run docker compose down to run directly:
+# docker run -it --rm --name api_logic_project -p 5656:5656  --env-file ./devops/docker-standard-image/env.list -v ./:/app apilogicserver/api_logic_server python3 /app/api_logic_server_run.py
+
+services:
+  api-logic-server:
+    image: apilogicserver/api_logic_server
+    container_name: api_logic_project
+    environment:
+      - APILOGICPROJECT_VERBOSE=false
+      - APILOGICPROJECT_SECURITY_ENABLED=false
+      - APILOGICPROJECT_KEYCLOAK_REALM=kcals
+      # use your IP, below....
+      - APILOGICPROJECT_KEYCLOAK_BASE_URL=http://10.0.0.249:8080/realms/kcals
+      - APILOGICPROJECT_KEYCLOAK_BASE=http://10.0.0.249:8080
+      - APILOGICPROJECT_KEYCLOAK_CLIENT_ID=alsclient
+    env_file:
+      - ./env.list
+    volumes:
+      - ./../..:/app
+    ports:
+      - 5656:5656
+    command: python3 /app/api_logic_server_run.py
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
