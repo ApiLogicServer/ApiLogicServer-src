@@ -194,7 +194,8 @@
             "justMyCode": false,
             "program": "api_logic_server_run.py",
             "redirectOutput": true,
-            "console": "integratedTerminal"
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
         },
         {
             "name": "App Model Editor - Prepare",
