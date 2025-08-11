@@ -1,10 +1,10 @@
 ## Pre-built samples
 
-See https://apilogicserver.github.io/Docs/Data-Model-Examples/
+See https://apilogicserver.github.io/Docs/Data-Model-Examples/.  The Manager contains the following pre-built samples:
 
-* The created `samples/nw_sample` illustrates important customization sample code - a key part of training.  **Search for #als.**
+* `samples/nw_sample` illustrates important customization sample code - a key part of training.  **Search for #als to find customization samples.**
 
-* The created `samples/nw_sample_nocust` is the same database, but without customizations.  With no customizations, the default nw example illustrates the **level of automation you should expect for your own projects.**
+* `samples/nw_sample_nocust` is the same database, but without customizations.  With no customizations, the default nw example illustrates the **level of automation you should expect for your own projects.**
 
 * `basic_demo` is the pre-built demo tutorial.  You can r**ebuild it using the readme's.**
 
