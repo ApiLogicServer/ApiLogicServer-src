@@ -2,7 +2,13 @@
 
 See https://apilogicserver.github.io/Docs/Data-Model-Examples/
 
-The created `samples/nw_sample` illustrates important customization sample code - a key part of training.  Search for #als.
+* The created `samples/nw_sample` illustrates important customization sample code - a key part of training.  **Search for #als.**
+
+* The created `samples/nw_sample_nocust` is the same database, but without customizations.  With no customizations, the default nw example illustrates the **level of automation you should expect for your own projects.**
+
+* `basic_demo` is the pre-built demo tutorial.  You can r**ebuild it using the readme's.**
+
+<br>
 
 ## Sqlite Sample Databases
 
@@ -15,6 +21,7 @@ genai-logic create  --project_name=nw --db_url=sqlite:///samples/dbs/nw.sqlite
 
 genai-logic create --project_name=basic_demo --db_url=sqlite:///samples/dbs/basic_demo.sqlite
 ```
+<br>
 
 ## Database Connectivity
 
@@ -51,9 +58,11 @@ genai-logic create --project_name=Chinook \
   --db_url=mysql+pymysql://ApiLogicServer:@ApiLogicServer.mysql.pythonanywhere-services.com/ApiLogicServer\$Chinook
 ```
 
+<br>
+
 ## Docker Databases
 
-You probably don't need _all_ these, but here's how you start the docker databases (schema details below):
+You probably don't need _all_ these, but here's how you start the docker databases:
 
 ```
 docker network create dev-network  # only required once
@@ -66,5 +75,3 @@ docker run --name sqlsvr-container --net dev-network -p 1433:1433 -d apilogicser
 
 docker run --name sqlsvr-container --net dev-network -p 1433:1433 -d apilogicserver/sqlsvr-m1:latest  # Mac M1
 ```
-
-
