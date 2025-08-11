@@ -10,7 +10,7 @@
 			"*.md": "vscode.markdown.preview.editor"
 		},
     	"debug.console.wordWrap": false,
-		"workbench.colorTheme": "Word (Light)",
-		"workbench.preferredLightColorTheme": "Word (Light)"
+		"workbench.colorTheme": "Arduino Light",
+		"workbench.preferredLightColorTheme": "Arduino Light"
 	}
 }
