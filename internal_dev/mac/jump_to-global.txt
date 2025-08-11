@@ -1,0 +1,33 @@
+-- AppleScript to jump to dev source
+
+-- Unique bit of the target window's title from the Window menu:
+set targetSubstring to "ApiLogicServerDev"
+
+tell application "System Events"
+	-- if exists application process "Code" then
+	tell application process "Code"
+		set frontmost to true
+		
+		-- remember the current (pre-switch) front window
+		set oldWin to window 1
+		set oldName to name of oldWin
+		
+		-- switch to the target window via Window menu (fast, minimal flicker)
+		set itemsList to name of menu items of menu 1 of menu bar item "Window" of menu bar 1
+		repeat with t in itemsList
+			set tText to t as text
+			if tText contains targetSubstring then
+				click menu item tText of menu 1 of menu bar item "Window" of menu bar 1
+				exit repeat
+			end if
+		end repeat
+		
+		-- minimize the previous window (but only if it wasn't already the target)
+		-- if oldName does not contain targetSubstring then
+			-- try
+				-- set value of attribute "AXMinimized" of oldWin to true
+			-- end try
+		-- end if
+	end tell
+	-- end if
+end tell

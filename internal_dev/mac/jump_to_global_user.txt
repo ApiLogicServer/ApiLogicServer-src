@@ -1,0 +1,83 @@
+property debugMode : false
+property debugFile : "/tmp/vscode_window_debug.txt"
+property excludedSubstrings : {"ApiLogicServerDev", "Docs", "Manager_workspace"}
+
+on dbg(msg)
+	if debugMode then
+		try
+			do shell script "printf %s " & quoted form of (msg & linefeed) & " >> " & quoted form of debugFile
+		end try
+	end if
+end dbg
+
+on containsAny(t, L)
+	repeat with s in L
+		if t contains (s as text) then return true
+	end repeat
+	return false
+end containsAny
+
+on codeProcessName()
+	tell application "System Events"
+		if (exists application process "Code") then return "Code"
+		if (exists application process "Visual Studio Code") then return "Visual Studio Code"
+	end tell
+	return missing value
+end codeProcessName
+
+-- reset log if debugging
+if debugMode then try
+	do shell script "echo '--- VSCode switch debug ---' > " & quoted form of debugFile
+end try
+
+tell application "Visual Studio Code" to activate
+delay 0.25
+
+set pName to codeProcessName()
+if pName is missing value then return
+my dbg("Process: " & pName)
+
+tell application "System Events"
+	tell application process pName
+		set frontmost to true
+		delay 0.05
+		set winMenu to menu 1 of menu bar item "Window" of menu bar 1
+		set itemsList to name of menu items of winMenu
+		my dbg("Menu: " & itemsList as text)
+
+		set anchors to {"Bring All to Front", "Arrange in Front", "Switch Window…", "Switch Window..."}
+		set cmdEnd to 0
+		repeat with i from 1 to (count of itemsList)
+			if (item i of itemsList) is in anchors then set cmdEnd to i
+		end repeat
+		my dbg("Anchor index: " & (cmdEnd as text))
+
+		if cmdEnd < (count of itemsList) then
+			set windowItems to (items (cmdEnd + 1) thru (count of itemsList) of itemsList)
+		else
+			set windowItems to itemsList
+		end if
+		my dbg("Window items: " & (windowItems as text))
+
+		set clickedName to missing value
+		repeat with i from (count of windowItems) to 1 by -1
+			set tText to item i of windowItems as text
+			if tText ≠ "" and tText is not missing value and (my containsAny(tText, excludedSubstrings) is false) then
+				set clickedName to tText
+				exit repeat
+			end if
+		end repeat
+		my dbg("Target: " & (clickedName as text))
+
+		if clickedName is missing value then return
+
+		try
+			set mi to (first menu item of winMenu whose name is clickedName)
+			perform action "AXPress" of mi
+			my dbg("AXPress done")
+		on error errMsg
+			my dbg("AXPress failed: " & errMsg & " ; using click()")
+			click menu item clickedName of winMenu
+		end try
+	end tell
+end tell
