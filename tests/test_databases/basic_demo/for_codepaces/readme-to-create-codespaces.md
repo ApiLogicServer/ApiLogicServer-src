@@ -1,19 +1,27 @@
-# GenAI-Logic API Logic Server - Auto-Generated Microservice
+# GenAI-Logic basic_demo
+
+Use this to explore the`basic_demo`, created from [this procedure](https://apilogicserver.github.io/Docs/Sample-Basic-Demo-Vibe/).
 
 **🎯 What's Automatically Created:**
 - ✅ **Admin Web App** - Multi-page React app at `http://localhost:5656`
-    * Customize at `ui/admin/admin.yaml`
-    * You can also create a fully customizabe react app: `gail genai-add-app --app-name=react-app --vibe`
-- ✅ **JSON:API Endpoints** - REST API for all database tables at `/api/*`
+    * See the automatic Admin App at `ui/admin/admin.yaml`
+    * And, see the customized react app: `ui/my-react-app-cards`
+- ✅ **JSON:API Endpoints** - REST API for all database tables at `/api/*` (mcp enabled)
 - ✅ **Swagger Documentation** - Interactive API docs at `/api`
-- ✅ **Business Logic Engine** - Declarative rules in `logic/declare_logic.py`
+- ✅ **Business Logic Engine** - Declarative rules in `logic/logic_discovery`
+    * See `check_credit.py` and `app_integration.py`
+    * Contrast to `logic/procedural`
 - ✅ **Security Framework** - Authentication/authorization in `security/`
 - ✅ **Database Models** - SQLAlchemy ORM in `database/models.py`
 
 See readme files under api, logic and security.
 
 **🚀 Ready to Run:** This is a complete, working system. Just press F5 or run `python api_logic_server_run.py`
+- In the Admin App, access Customer `Alice`, order 2
+    * Change the quantity to a very large value - observe the constraint
+    * Lookup product *Thingamajig* - constraint **(rule) is re-used** for this transaction
 
+**Standard Automatic Readme,** shown below.
 <br>
 
 ---
