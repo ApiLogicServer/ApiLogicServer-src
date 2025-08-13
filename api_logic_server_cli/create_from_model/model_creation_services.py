@@ -848,7 +848,7 @@ class ModelCreationServices(object):
                     resource_attribute = ResourceAttribute(each_attribute=each_attribute,
                                                             resource=resource, resource_class=resource_class)
                 resource.compute_primary_key(metadata=self.metadata, resource_class=resource_class)
-                for rel_name, rel in resource_class._s_relationships.items():
+                for rel_name, rel in resource_class._s_relationships.items():  # no property Staff1
                     # relation = {}
                     # relation["direction"] = "toone" if rel.direction == MANYTOONE else "tomany"
                     if rel.direction == ONETOMANY:  # process only parents of this child

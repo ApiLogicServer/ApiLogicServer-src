@@ -8,14 +8,14 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
         * api/expose_api_models.py for a safrs api  - using introspected models.py
     * Special provisions for NW Sample, to show customizations.
     * See end for key_module_map() quick links
-;
+
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "15.01.01"  # last public release: 15.00.65
+__version__ = "15.01.02"  # last public release: 15.00.65
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t08/13/2024 - 15.01.01: pyodbc fix in blt \n"\
+    "\t08/13/2024 - 15.01.02: Id vs ID in codegen (parent_accessor_from_fk: [#100]), pyodbc fix in blt \n"\
     "\t08/09/2024 - 15.01.00: improved vibe instructions \n"\
     "\t08/06/2024 - 15.00.65: instructions for custom API endpoints, behave testing \n"\
     "\t07/20/2024 - 15.00.52: Python 3.13 compatibility fixes - psycopg2→psycopg3, SQLAlchemy 2.0+, pkg_resources→importlib.metadata.  mgr dbs \n"\

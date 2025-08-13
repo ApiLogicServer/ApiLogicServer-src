@@ -463,7 +463,9 @@ class ManyToOneRelationship(Relationship):
 
         if child_cls in ['Flight', 'Employee', 'TabGroup', 'CharacterClass'] and \
             parent_cls in ['Airport', 'Department', 'Entity', 'Class']:
-            debug_stop = "interesting breakpoint"  #  Launch config 8...   -- Create servers/airport from MODEL
+            debug_stop = "interesting breakpoint"  
+            #  Launch config 8...   -- Create servers/airport from MODEL
+            #  Launch config 5...   -- Create OUKashrusSystem (Id *and* ID)
         column_names = _get_column_names(constraint)
         colname = column_names[0]
         tablename = constraint.elements[0].column.table.name
@@ -473,11 +475,11 @@ class ManyToOneRelationship(Relationship):
         if len(column_names) > 1 :      # multi-column - use tablename
             self.preferred_name = inflect_engine.singular_noun(tablename) or tablename
         else:                           # single column - use column name but without '_id'
-            if ( colname.endswith('_id') or colname.endswith('_Id') ):  # eg arrival_airport_id
+            if ( colname.endswith('_id') or colname.endswith('_Id') or colname.endswith('_ID') ):  # eg arrival_airport_id
                 self.preferred_name = colname[:-3]
                 parent_accessor_from_fk = True
                 pass  # TODO - alert: can "lowercase" parent accessor (see classic models employee )
-            elif ( colname.endswith('id') or colname.endswith('Id') ):  # eg WorksForDepartmentId
+            elif ( colname.endswith('id') or colname.endswith('Id')  or colname.endswith('ID') ):  # eg WorksForDepartmentId
                 self.preferred_name = colname[:-2]
                 parent_accessor_from_fk = True
             else:
@@ -494,7 +496,7 @@ class ManyToOneRelationship(Relationship):
         # Handle self referential relationships
         if child_cls == parent_cls:
             # self.preferred_name = 'parent' if not colname.endswith('_id') else colname[:-3]
-            if colname.endswith("id") or colname.endswith("Id"):
+            if colname.endswith("id") or colname.endswith("Id")or colname.endswith("ID"):
                 self.preferred_name = colname[:-2]
             else:
                 self.preferred_name = "parent"  # hmm, why not just table name
@@ -531,6 +533,7 @@ class ManyToOneRelationship(Relationship):
 
         if multi_reln_count > 0:  # disambiguate multi_reln between same 2 tables (tricky!)
             # key cases are nw (Dept/Employee) and ai/airport (Flight/Airport) and app_model_editor (Entity/TabGroup)
+            # https://apilogicserver.github.io/Docs/Data-Model-Classes/#multi-reln
             if parent_accessor_from_fk:
                 pass  # parent_accessor_name is already unique (eg, Employee.WorksForDepartment)
                 self.child_accessor_name += str(multi_reln_count)
