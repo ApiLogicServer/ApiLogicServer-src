@@ -8,6 +8,20 @@
 # ApiLogicServer create --project_name=sqlserver \
     --db_url='mssql+pyodbc://sa:Posey3861@localhost:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'
 
+docker exec -it sqlsvr-container bash
+
+# fails - sqlcmd missing; 
+sqlcmd -S localhost -U sa -P 'posey3861'
+# fails - not root
+apt-get update
+ACCEPT_EULA=Y apt-get install -y mssql-tools unixodbc-dev
+# so, use this 
+docker exec -u 0 -it sqlsvr-container bash
+# that didn't work, so try sqlcmd locally:
+sqlcmd -S localhost,1433 -U sa -P 'posey3861'
+
+# connect from local terminal
+sqlcmd -S localhost,1433 -U sa -P 'Posey3861' -C
 
 
 # ref: https://medium.com/geekculture/docker-express-running-a-local-sql-server-on-your-m1-mac-8bbc22c49dc9

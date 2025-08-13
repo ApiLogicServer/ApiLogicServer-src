@@ -1,0 +1,135 @@
+
+-- Create Database
+CREATE DATABASE OUKashrusSystem;
+GO
+
+USE OUKashrusSystem;
+GO
+
+-- Regions Table
+CREATE TABLE Regions (
+    RegionID INT IDENTITY(1,1) PRIMARY KEY,
+    RegionCode NVARCHAR(20) NOT NULL UNIQUE,
+    RegionName NVARCHAR(100) NOT NULL,
+    CountryCode NVARCHAR(10) DEFAULT 'US',
+    Description NVARCHAR(255),
+    IsActive BIT NOT NULL DEFAULT 1,
+    CreatedAt DATETIME2 NOT NULL DEFAULT GETDATE(),
+    UpdatedAt DATETIME2 NOT NULL DEFAULT GETDATE()
+);
+GO
+-- Staff Table (OU Personnel)
+CREATE TABLE Staff (
+    StaffId INT IDENTITY(1,1) PRIMARY KEY,
+    EmployeeCode NVARCHAR(50) UNIQUE NOT NULL,
+    FirstName NVARCHAR(100) NOT NULL,
+    LastName NVARCHAR(100) NOT NULL,
+    FullName AS (FirstName + ' ' + LastName) PERSISTED,
+    Department NVARCHAR(100) NOT NULL,
+    Title NVARCHAR(100),
+    Email NVARCHAR(255),
+    Phone NVARCHAR(50),
+    Specialty NVARCHAR(200),
+    WorkloadLevel NVARCHAR(20), -- Light, Medium, Heavy
+    RegionID INT,
+    IsActive BIT NOT NULL DEFAULT 1,
+    CreatedDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    ModifiedDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    FOREIGN KEY (RegionID) REFERENCES Regions(RegionID)
+);
+GO
+
+============================
+
+als create --project-name=dashboard --db-url='mssql+pyodbc://sa:Posey3861@localhost:1433/OUKashrusSystem?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'
+
+Welcome to Genai-Logic 15.01.00
+
+Traceback (most recent call last):
+  File "/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 2522, in get_property
+    return self._props[key]
+           ~~~~~~~~~~~^^^^^
+KeyError: 'Staff1'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/bin/als", line 8, in <module>
+    sys.exit(start())
+             ^^^^^^^
+  File "/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py", line 2114, in start
+    main(obj={})
+  File "/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/click/core.py", line 1442, in __call__
+    return self.main(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/click/core.py", line 1363, in main
+    rv = self.invoke(ctx)
+         ^^^^^^^^^^^^^^^^
+  File "/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/click/core.py", line 1830, in invoke
+    return _process_result(sub_ctx.command.invoke(sub_ctx))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/click/core.py", line 1226, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/click/core.py", line 794, in invoke
+    return callback(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/click/decorators.py", line 34, in new_func
+    return f(get_current_context(), *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py", line 1126, in create
+    PR.ProjectRun(command="create", project_name=project_name, db_url=db_url, api_name=api_name,
+  File "/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/api_logic_server_cli/api_logic_server.py", line 1140, in __init__
+    self.create_project()
+  File "/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/api_logic_server_cli/api_logic_server.py", line 1856, in create_project
+    model_creation_services = ModelCreationServices(project = self,   # Create database/models.py from db
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/api_logic_server_cli/create_from_model/model_creation_services.py", line 132, in __init__
+    self.resource_list = self.create_model_classes_and_resource_list()
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/api_logic_server_cli/create_from_model/model_creation_services.py", line 921, in create_model_classes_and_resource_list
+    return_resource_list = self.resource_list_from_safrs_metadata(models_name=models_name)  # whether created or used, build resource_list
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/api_logic_server_cli/create_from_model/model_creation_services.py", line 851, in resource_list_from_safrs_metadata
+    for rel_name, rel in resource_class._s_relationships.items():
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/sqlalchemy/ext/hybrid.py", line 1139, in __get__
+    return self._expr_comparator(owner)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/sqlalchemy/ext/hybrid.py", line 1445, in expr_comparator
+    comparator(owner),
+    ^^^^^^^^^^^^^^^^^
+  File "/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/sqlalchemy/ext/hybrid.py", line 1414, in _expr
+    return ExprComparator(cls, expr(cls), self)
+                               ^^^^^^^^^
+  File "/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/safrs/base.py", line 593, in _s_relationships
+    rels = {rel.key: rel for rel in cls.__mapper__.relationships if cls._s_check_perm(rel.key)}
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/sqlalchemy/util/langhelpers.py", line 1338, in __get__
+    obj.__dict__[self.__name__] = result = self.fget(obj)
+                                           ^^^^^^^^^^^^^^
+  File "/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 3201, in relationships
+    return self._filter_properties(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 3225, in _filter_properties
+    self._check_configure()
+  File "/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 2401, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 4218, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 4259, in _do_configure_registries
+    mapper._post_configure_properties()
+  File "/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 2418, in _post_configure_properties
+    prop.init()
+  File "/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/sqlalchemy/orm/interfaces.py", line 595, in init
+    self.do_init()
+  File "/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/sqlalchemy/orm/relationships.py", line 1660, in do_init
+    self._generate_backref()
+  File "/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/sqlalchemy/orm/relationships.py", line 2144, in _generate_backref
+    self._add_reverse_property(self.back_populates)
+  File "/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/sqlalchemy/orm/relationships.py", line 1591, in _add_reverse_property
+    other = self.mapper.get_property(key, _configure_mappers=False)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/tylerband/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.12/site-packages/sqlalchemy/orm/mapper.py", line 2524, in get_property
+    raise sa_exc.InvalidRequestError(
+sqlalchemy.exc.InvalidRequestError: Mapper 'Mapper[Application(Applications)]' has no property 'Staff1'.  If this property was indicated from other mappers or configure events, ensure registry.configure() has been called.
