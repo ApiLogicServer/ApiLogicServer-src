@@ -23,6 +23,11 @@ sqlcmd -S localhost,1433 -U sa -P 'posey3861'
 # connect from local terminal
 sqlcmd -S localhost,1433 -U sa -P 'Posey3861' -C
 
+# process a sql file
+sqlcmd -S localhost,1433 -U sa -P 'Posey3861' -i tests/test_databases/sql_server/OUKashrusSystem/NCRCDashbaord_SCHEMA_AND_DATA.sql
+
+SELECT name FROM sys.databases;
+
 
 # ref: https://medium.com/geekculture/docker-express-running-a-local-sql-server-on-your-m1-mac-8bbc22c49dc9
 # https://www.linkedin.com/in/merken/
