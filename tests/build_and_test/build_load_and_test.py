@@ -1106,7 +1106,7 @@ if Config.do_install_api_logic_server:  # verify the build process - rebuild, an
             msg=f'\nInstall testpy logicbank')
 
     pyodbc = 'pyodbc==4.0.34'   # pre python 3.12
-    pyodbc = 'pyodbc==5.1.0'     # python 3.12 upgrade pyodbc==4.0.34 --> pyodbc==5.0.1
+    pyodbc = 'pyodbc==5.2.0'     # python 3.12 upgrade pyodbc==4.0.34 --> pyodbc==5.0.1
     if platform in["win32", "linux"]:  # val: FIXME
         print("mac only")
     else:  # upgrade pyodbc==4.0.34 --> pyodbc==5.0.0
