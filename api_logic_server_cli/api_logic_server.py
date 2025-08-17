@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "15.01.02"  # last public release: 15.00.65
+__version__ = "15.01.03"  # last public release: 15.00.65
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t08/17/2024 - 15.01.03: LogicBanl 01.30, with fix for copy_children[19] \n"\
     "\t08/13/2024 - 15.01.02: Id vs ID in codegen (parent_accessor_from_fk: [#100]), pyodbc fix in blt \n"\
     "\t08/09/2024 - 15.01.00: improved vibe instructions \n"\
     "\t08/06/2024 - 15.00.65: instructions for custom API endpoints, behave testing \n"\
