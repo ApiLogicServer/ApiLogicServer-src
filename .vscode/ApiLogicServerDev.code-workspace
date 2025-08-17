@@ -100,8 +100,7 @@
 			"**api_logic_server_cli/create_from_model/safrs-react-admin-npm-build": true
 		},
 		"window.autoDetectColorScheme": true,
-		"workbench.editorAssociations": {
-		},
+		"workbench.editorAssociations": {},
 		"[python]": {
 			"editor.defaultFormatter": "ms-python.black-formatter"
 		},
