@@ -2,19 +2,6 @@
 
 Use this to explore the`basic_demo`, created from [this procedure](https://apilogicserver.github.io/Docs/Sample-Basic-Demo-Vibe/).
 
-**🎯 What's Automatically Created:**
-- ✅ **Admin Web App** - Multi-page React app at `http://localhost:5656`
-    * See the automatic Admin App at `ui/admin/admin.yaml`
-    * And, see the customized react app: `ui/my-react-app-cards`
-- ✅ **JSON:API Endpoints** - REST API for all database tables at `/api/*` (mcp enabled)
-- ✅ **Swagger Documentation** - Interactive API docs at `/api`
-- ✅ **Business Logic Engine** - Declarative rules in `logic/logic_discovery`
-    * See `check_credit.py` and `app_integration.py`
-    * Contrast to `logic/procedural`
-- ✅ **Security Framework** - Authentication/authorization in `security/`
-- ✅ **Database Models** - SQLAlchemy ORM in `database/models.py`
-
-See readme files under api, logic and security.
 
 **🚀 Ready to Run:** This is a complete, working system. 
 - **To Run:**
@@ -30,12 +17,28 @@ See readme files under api, logic and security.
     * Change the quantity to a very large value - observe the constraint
     * Lookup product *Thingamajig* - constraint **(rule) is re-used** for this transaction
 
-**Standard Automatic Readme,** shown below.
 <br>
+
+**🎯 What's Automatically Created:**
+- ✅ **Admin Web App** - Multi-page React app at `http://localhost:5656`
+    * See the automatic Admin App at `ui/admin/admin.yaml`
+    * And, see the customized react app: `ui/my-react-app-cards`
+- ✅ **JSON:API Endpoints** - REST API for all database tables at `/api/*` (mcp enabled)
+- ✅ **Swagger Documentation** - Interactive API docs at `/api`
+- ✅ **Business Logic Engine** - Declarative rules in `logic/logic_discovery`
+    * See `check_credit.py` and `app_integration.py`
+    * Contrast to `logic/procedural`
+- ✅ **Security Framework** - Authentication/authorization in `security/`
+- ✅ **Database Models** - SQLAlchemy ORM in `database/models.py`
+
+See readme files under api, logic and security.
+
+**Standard Automatic Readme,** shown below.
+<br><br>
 
 ---
 
-# 🚀 Quick Start
+# 🚀 Quick Start - How This Project Was Created
 
 **Bootstrap Copilot by pasting the following into the chat:**
 ```
