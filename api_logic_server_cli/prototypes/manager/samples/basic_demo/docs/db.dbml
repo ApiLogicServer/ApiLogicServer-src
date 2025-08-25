@@ -2,13 +2,42 @@
 // Or, https://databasediagram.com/app
 // Or, view in VSCode with extension: "DBML Live Preview"
 
-Table SysMcp {
+Table Customer {
     id INTEGER [primary key]
-    request VARCHAR 
-    request_prompt VARCHAR 
-    completion VARCHAR 
+    name VARCHAR 
+    balance DECIMAL 
+    credit_limit DECIMAL 
+    email VARCHAR 
+    email_opt_out BOOLEAN 
+    }
+
+Table Item {
+    id INTEGER [primary key]
+    order_id INTEGER 
+    product_id INTEGER 
+    quantity INTEGER 
+    amount DECIMAL 
+    unit_price DECIMAL 
+    }
+
+Table Order {
+    id INTEGER [primary key]
+    notes VARCHAR 
+    customer_id INTEGER 
+    CreatedOn DATE 
+    date_shipped DATE 
+    amount_total DECIMAL 
+    }
+
+Table Product {
+    id INTEGER [primary key]
+    name VARCHAR 
+    unit_price DECIMAL 
     }
 
 
 
 // Relationships
+    Ref: Item.(order_id) < Order.(id)
+    Ref: Item.(product_id) < Product.(id)
+    Ref: Order.(customer_id) < Customer.(id)
