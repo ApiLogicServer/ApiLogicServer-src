@@ -2,7 +2,9 @@
 
 GenAI-Logic created this app (`genai-logic genai-add-app`) [(docs here)](https://apilogicserver.github.io/Docs/Admin-Vibe/), typically from `ui/admin/admin.yaml`.
 
-We then use CoPilot to add cards, as described in `readme_vibe.md`:
+Use it as a reference example.
+
+We then used CoPilot to add cards, as described in `readme_vibe.md`:
 
 ![cards](product-cards.png)
 
