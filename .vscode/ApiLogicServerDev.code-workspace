@@ -93,7 +93,7 @@
 		],
 		"sqltools.useNodeRuntime": true,
 		"workbench.preferredDarkColorTheme": "Default Dark Modern",
-		"workbench.preferredLightColorTheme": "GenAI-Logic Green Theme",
+		"workbench.preferredLightColorTheme": "IntelliJ IDEA New UI Light",
 		"workbench.colorTheme": "GenAI-Logic Green Theme",
 		"search.exclude": {
 			"**api_logic_server_cli/ApiLogicProject/": true,
