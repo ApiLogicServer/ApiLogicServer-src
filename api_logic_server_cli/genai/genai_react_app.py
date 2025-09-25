@@ -38,7 +38,7 @@ class JSResponseFormat(BaseModel):  # must match system/genai/prompt_inserts/res
 
 
 class GenAIReactApp:
-    """Create a react app:
+    """Create a react app (called from cli#genai_add_app):
     1. Clones <mgr>/system/genai/app_templates/react-admin-template
     2. For each data model class, uses creates page with list and show
         * Uses ChatGpt with system/genai/app_templates/app_learning/Admin-App-Resource-Learning-Prompt.md
@@ -48,6 +48,28 @@ class GenAIReactApp:
     """
 
     def __init__(self, project: Project, app_name: str, vibe: bool, schema: str, genai_version: str, retries: int):
+        """
+        Initialize the GenAI React App generator (called from cli#genai_add_app, cwd is root or project):
+        Args:
+            project (Project): The project instance containing project configuration and paths.
+            app_name (str): The name of the React app to generate.
+            vibe (bool): Flag indicating whether to suggest Vibe customization.
+            schema (str): The schema/model name in `ui/admin` used for generating the app.  CLI defaults to `ui/admin/admin.yaml` 
+            genai_version (str): The version of the GenAI API to use.
+            retries (int): Number of retries for generation steps.
+        Side Effects:
+            - Sets up various paths and reads template/configuration files required for app generation.
+            - Copies the React admin template to the target UI project directory.
+            - Generates resource files and main app JS file as driven by schema
+                * Uses ChatGpt with system/genai/app_templates/app_learning/Admin-App-Resource-Learning-Prompt.md
+                * Regrettably, repairs imports
+            - Generates Creates Admin.js
+                * Uses ChatGpt with system/genai/app_templates/app_learning/Admin-App-js-Learning-Prompt.md
+            - Logs progress and next steps for the user.
+            - Exits the program if required template files are missing.
+        Raises:
+            SystemExit: If required template files are not found in the expected locations.
+        """
         self.start_time = time.time()
         
         self.project = project
