@@ -206,7 +206,7 @@ def main(ctx):
             if current_path.joinpath('system/genai/reference').is_dir():
                 sys.stdout.write("    For doc, see https://apilogicserver.github.io/Docs/Manager \n\n\n")
             else:
-                sys.stdout.write("    Suggestion: ApiLogicServer start \n\n\n")
+                sys.stdout.write("    Suggestion: genai-logic start \n\n\n")
      
 
 @main.command("start")
@@ -801,8 +801,23 @@ def genai_graphics(ctx, using, genai_version: str, replace_with: str):
 @click.pass_context
 def genai_add_app(ctx, app_name: str, vibe: click.BOOL, retries: int, schema: str, genai_version: str):
     """
-        Creates a customizable react app in ui/, ready for vibe
+        Add customizable react app in ui/ for current project, ready for vibe.
+
+        Example:
+            genai-logic genai-add-app --app-name=myapp --vibe --schema=admin.yaml
+
+        This command generates a React app in the ui/ directory of your current project,
+        using the specified schema file (default: ui/admin/admin.yaml).
+
+        The --vibe flag enables vibe documentation integration.
+
+        Use --retries to specify the number of lint retries.
+
+        Use --genai-version to specify the LLM version (e.g., gpt-4o).
+
+
     """
+
     global command
     project_dir = resolve_blank_project_name('')
     project_name = Path(project_dir).name
