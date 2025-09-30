@@ -8,7 +8,7 @@
             "name": "1. GENAI - Create genai_logic demo project",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "cwd": "${workspaceFolder}",
             "env": {
@@ -27,7 +27,7 @@
             "name": "  - 1.1  GENAI - Iterate (first, add prompt to system/genai/temp/<project>)",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "cwd": "${workspaceFolder}",
             "env": {
@@ -46,7 +46,7 @@
             "name": "  - 1.2  GENAI - Retry from repaired chatgpt response",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "cwd": "${workspaceFolder}",
             "env": {
@@ -66,7 +66,7 @@
             "name": "  - 1.3  GENAI - Retry from repaired model",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "cwd": "${workspaceFolder}",
             "env": {
@@ -87,7 +87,7 @@
             "name": "  - 1.4  GENAI - Postgresql",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "cwd": "${workspaceFolder}",
             "env": {
@@ -107,7 +107,7 @@
             "name": "  - 1.5  GENAI - repaired-response=genai_demo.response_example",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "cwd": "${workspaceFolder}",
             "env": {
@@ -128,7 +128,7 @@
             "name": "ApiLogicServer Create",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "cwd": "${workspaceFolder}",
             "env": {
@@ -148,7 +148,7 @@
             "name": "  - ApiLogicServer Create nw_sample_nocust",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "cwd": "${workspaceFolder}",
             "env": {
@@ -167,7 +167,7 @@
             "name": "  - ApiLogicServer Create nw_sample With Customizations",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "cwd": "${workspaceFolder}",
             "env": {
@@ -243,7 +243,7 @@
             "name": "Internal - GenAI smoke test - genai_demo (with informal logic)",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "cwd": "${workspaceFolder}",
             "env": {
@@ -263,7 +263,7 @@
 //  typical start for suggestiosn - just the model
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "cwd": "${workspaceFolder}",
             "env": {
@@ -283,7 +283,7 @@
 // typical next step - suggest logic
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "cwd": "${workspaceFolder}/genai_demo_no_logic",
             "env": {
@@ -303,7 +303,7 @@
 // typical next step - explore rules for supplied logic
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "cwd": "${workspaceFolder}/genai_demo_no_logic",
             "env": {
@@ -323,7 +323,7 @@
 // typical next step - explore rules for supplied logic
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "cwd": "${workspaceFolder}/genai_demo_no_logic",
             "env": {
@@ -343,7 +343,7 @@
 // typical next step - activate suggested logic created above
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "cwd": "${workspaceFolder}",
             "env": {
@@ -363,7 +363,7 @@
 // Simulate WebG: cp docs/genai_demo_no_logic_003.prompt docs/logic/active_rules.json
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "cwd": "${workspaceFolder}",
             "env": {
@@ -383,7 +383,7 @@
             "name": "  - GenAI - FixUp f0 genai_demo_with_logic (setup in readme) - upd model and test data from logic",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "cwd": "${workspaceFolder}",
             "env": {
@@ -406,7 +406,7 @@
 // note; can't use pre-installed nw - this relies on docs files
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "cwd": "${workspaceFolder}/genai_demo_fixup_required",
             "env": {
@@ -425,7 +425,7 @@
             "name": "  - GenAI - FixUp f2 - rebuild from response -> genai_demo_with_logic_fixed",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "cwd": "${workspaceFolder}",
             "env": {
@@ -448,7 +448,7 @@
 // typical step - iterate the model, now with logic
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "cwd": "${workspaceFolder}/genai_demo_no_logic",
             "env": {
@@ -508,7 +508,7 @@
 // iterate from WebG suggestions -- GenAI - no logic, then remove suffix from ...genai_demo/genai_demo_iteration/logic/active_rules_webg.json
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "cwd": "${workspaceFolder}",
             "env": {
@@ -529,7 +529,7 @@
 // see system/genai/examples/genai_demo/multiple_logic_files/docs
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "cwd": "${workspaceFolder}/genai_demo_no_logic",
             "env": {
@@ -548,7 +548,7 @@
 // typical next step - rebuild
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "cwd": "${workspaceFolder}/genai_demo_no_logic",
             "env": {
@@ -566,7 +566,7 @@
             "name": "  - GenAI - no logic - rebuild fixed up project",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "cwd": "${workspaceFolder}",
             "env": {
@@ -586,7 +586,7 @@
             "name": "  - GenAI informal logic - emp_depts",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "cwd": "${workspaceFolder}",
             "env": {
@@ -607,7 +607,7 @@
             "request": "launch",
             "env": {"APILOGICSERVER_DEBUG": "True"},
             "cwd": "${workspaceFolder}",
-            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "args": ["genai", "--test-data-rows=4", "--temperature=0.7",
                 "--using=${workspaceFolder}/system/genai/examples/students_classes_informal_iteration",
@@ -621,7 +621,7 @@
             "env": {"APILOGICSERVER_DEBUG": "True"},
             "cwd": "${workspaceFolder}/system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed",
             "justMyCode": false,
-            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "args": ["genai-utils", "--import-genai"
                 , "--using=../wg_demo_no_logic_fixed"
@@ -636,7 +636,7 @@
             "env": {"APILOGICSERVER_DEBUG": "True"},
             "cwd": "${workspaceFolder}/system/genai/examples/genai_demo/wg_dev_merge/dev_demo_no_logic_fixed",
             "justMyCode": false,
-            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "args": ["genai-utils", "--import-genai"
                 . "--import-resume"
@@ -649,7 +649,7 @@
             "name": "  - retry repaired-response",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "cwd": "${workspaceFolder}",
             "env": {
@@ -669,7 +669,7 @@
             "name": "  - retry conversation",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/venv/lib/python3.12/site-packages/api_logic_server_cli/cli.py",
+            "program": "${workspaceFolder}/venv/lib/python3.13/site-packages/api_logic_server_cli/cli.py",
             "redirectOutput": true,
             "cwd": "${workspaceFolder}",
             "env": {

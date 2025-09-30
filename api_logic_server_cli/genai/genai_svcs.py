@@ -310,8 +310,8 @@ def rebuild_test_data_for_project(response: str = 'docs/response.json',
     run_file = project_path.joinpath('database/test_data/test_data_code.py')
     run_file = str(Path(run_file).resolve()) 
 
-    subprocess.check_output([python_loc,run_file,'--test-data','--response=docs/response.json'] , 
-                            cwd=cwd,shell=False, env=os.environ.copy())
+    test_data_result = subprocess.check_output([python_loc,run_file,'--test-data','--response=docs/response.json'] , 
+                            cwd=cwd, shell=False, env=os.environ.copy())
     # subprocess.check_output([python_loc,run_file,'--test-data','--response', 'docs/response.json'] , cwd=cwd,shell=True)
     # result = create_utils.run_commiand(f'{python_loc} {run_file}', 
     #                                  msg="\Running Test Data Builder...",
@@ -374,6 +374,8 @@ def fix_model_lines(model: DotMap, use_relns: bool = True, post_error: str = Non
 
     Args:
         model (Model): the model
+        use_relns (bool, optional): whether to use relns. Defaults to True.
+        post_error (str, optional): genai uses to stop creation in api_logic_server_cli. Defaults to None.
 
     Returns:
         stlist[str]: the model class lines, fixed up (in place)
@@ -449,7 +451,7 @@ def fix_model_lines(model: DotMap, use_relns: bool = True, post_error: str = Non
             # each_line = each_line.replace(':', '(Base):')  # sometimes it forgets the Base
             if 'Base' not in each_line:
                 log.debug(f'.. fix_and_write_model_file detects class with no Base - raise excp to trigger retry')
-                if post_error is not None:
+                if post_error is not None:  # see GenAI instance variable
                     post_error = "ChatGPT Response contains class with no Base: " + each_line
         if 'relationship(' in each_line and use_relns == False:
             # airport4 fails with could not determine join condition between parent/child tables on relationship Airport.flights
