@@ -68,7 +68,7 @@ dependencies = [
         "PyMySQL==1.0.3", 
         "oracledb==2.1.2",
         "requests==2.31.0",
-        "gunicorn==20.1.0",
+        "gunicorn==22.0.0",
         # "psycopg2-binary==2.9.5",
         "psycopg2-binary>=2.9.5; python_version < '3.13'",
         "psycopg[binary]>=3.1.0; python_version >= '3.13'",

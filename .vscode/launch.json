@@ -1143,7 +1143,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "    - retry repaired-response BASELESS CLASSES",
+            "name": "    - retry repaired-response BASELESS CLASSES (auto dealer)",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
@@ -1161,6 +1161,27 @@
                 "--retries=-1",
                 "--project-name=bad_response_test_errors_project",
                 "--repaired-response=${workspaceFolder}/tests/test_databases/ai-created/auto_dealership/auto_baseless_models/response.json"],
+            "console": "internalConsole",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "    - retry repaired-response BASELESS CLASSES (genai_demo Issue 101)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/api_logic_server_cli/cli.py",
+            "redirectOutput": true,
+            "cwd": "${workspaceFolder}/../../build_and_test/ApiLogicServer",
+            "env": {
+                "PYTHONPATH": "", 
+                "SECURITY_ENABLED": "False", 
+                "PYTHONHASHSEED": "0", 
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "args": [ "genai",
+                "--retries=-1",
+                "--project-name=retry_genai_demo_baseless_classes",
+                "--repaired-response=${workspaceFolder}/tests/test_databases/ai-created/retry_genai_demo_baseless_classes/chatgpt_retry.response"],
             "console": "internalConsole",
             "internalConsoleOptions": "openOnSessionStart"
         },

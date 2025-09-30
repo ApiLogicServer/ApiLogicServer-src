@@ -65,6 +65,15 @@ class GenAI(object):
         """        
 
         self.project = project  # als project info (cli args etc)
+        self.post_error = ""
+        """ eg, records error in current retry iteration.<br>
+        if response contains table defs, save_prompt_messages_to_system_genai_temp_project raises an exception to trigger retry """
+        self.prompt = ""
+        """ `--using` - can come from file or text argument """
+        self.logic_enabled = True
+        """ K_LogicBankOff is used for initial creation, where we don't want un-reviewed logic (no longer used) """
+
+        self.messages = self.get_prompt_messages()  # compute self.messages, from file, dir or text argument
 
 
     def create_db_models(self):   # main driver
@@ -100,6 +109,9 @@ class GenAI(object):
         developer then can use CoPilot to create logic (Rule.) from the prompt (or just code completion)
 
         see key_module_map() for key methods
+
+        Note the same `pr` instance variable is used for all 3 tries, 
+        so (re)initialization that would normally occur in `init()` is in here.
 
         https://platform.openai.com/finetune/ftjob-2i1wkh4t4l855NKCovJeHExs?filter=all
         """        
@@ -165,12 +177,10 @@ class GenAI(object):
         self.project.from_model = f'system/genai/temp/create_db_models.py' # we always write the model to this file
         self.ensure_system_dir_exists()  # ~ manager, so we can write to system/genai/temp
         delete_temp_files(self)
-        self.post_error = ""
-        """ eg, if response contains table defs, save_prompt_messages_to_system_genai_temp_project raises an exception to trigger retry """
+
+        self.post_error = ""  # re-initialize the instance
         self.prompt = ""
-        """ `--using` - can come from file or text argument """
         self.logic_enabled = True
-        """ K_LogicBankOff is used for initial creation, where we don't want un-reviewed logic """
 
         self.messages = self.get_prompt_messages()  # compute self.messages, from file, dir or text argument
 
@@ -585,33 +595,34 @@ class GenAI(object):
             elif not response_file.exists():
                 if Path(self.project.genai_repaired_response).is_file():
                     shutil.copyfile(self.project.genai_repaired_response, response_file)
-            is_genai_demo = False
-            if os.getenv('APILOGICPROJECT_IS_GENAI_DEMO') is not None or self.project.project_name == 'genai_demo':
-                # fail safe demo - be sure AI does not fail, and that the data model names are predictable for add-cust
-                self.project.project_directory_path.joinpath('docs/project_is_genai_demo.txt').touch()
-                # and DON'T create test data (db.sqlite already set up in recursive copy)
-                project_docs_response = self.project.project_directory_path.joinpath('docs/response.json')
-                with open(project_docs_response, "w") as response_file:  # WebG uses this for wg_rules
-                    json.dump(self.response_dict, response_file, indent=4)
-                    pass  # not possible on create_db_models, since project paths not yet set by api_logic_server
-                if add_mcp := False:  # bad idea - fails with Ont seeking email (which would be confusing)
-                    from api_logic_server_cli.add_cust import add_cust
-                    add_cust.add_basic_demo_customizations(project=self.project)
-
-            else:  # normal path
-                genai_svcs.rebuild_test_data_for_project(
-                    use_project_path = self.project.project_directory_path, 
-                    project = self.project,
-                    use_existing_response = True,
-                    response = response_file)
-
         except:  # intentional try/catch/bury - it's just docs, so don't fail
             import traceback
             log.error(f"\n\nERROR creating genai project docs: {docs_dir}\n\n{traceback.format_exc()}")
+
+        
+        is_genai_demo = False
+        if os.getenv('APILOGICPROJECT_IS_GENAI_DEMO') is not None or self.project.project_name == 'genai_demo':
+            # fail safe demo - be sure AI does not fail, and that the data model names are predictable for add-cust
+            self.project.project_directory_path.joinpath('docs/project_is_genai_demo.txt').touch()
+            # and DON'T create test data (db.sqlite already set up in recursive copy)
+            project_docs_response = self.project.project_directory_path.joinpath('docs/response.json')
+            with open(project_docs_response, "w") as response_file:  # WebG uses this for wg_rules
+                json.dump(self.response_dict, response_file, indent=4)
+                pass  # not possible on create_db_models, since project paths not yet set by api_logic_server
+            if add_mcp := False:  # bad idea - fails with Ont seeking email (which would be confusing)
+                from api_logic_server_cli.add_cust import add_cust
+                add_cust.add_basic_demo_customizations(project=self.project)
+        else:  # normal path
+            genai_svcs.rebuild_test_data_for_project(
+                use_project_path = self.project.project_directory_path, 
+                project = self.project,
+                use_existing_response = True,
+                response = response_file)
+
         genai_graphics = GenAIGraphics(project=self.project, 
-                                       replace_with='!new-wg',
-                                       using=None, 
-                                       genai_version=self.project.genai_version)
+                                    replace_with='!new-wg',
+                                    using=None, 
+                                    genai_version=self.project.genai_version)
 
     def save_prompt_messages_to_system_genai_temp_project(self):
         """
@@ -713,7 +724,7 @@ def genai_cli_with_retry(using: str, db_url: str, repaired_response: str, genai_
 
     try_number = 1
     genai_use_relns = use_relns
-    """ if 'unable to determine join condition', we retry this with False """
+    """ if 'unable to determine join condition', we (WebGenAI?) retry this with False """
     if repaired_response != "":
         try_number = retries  # if not calling GenAI, no need to retry:
     failed = False

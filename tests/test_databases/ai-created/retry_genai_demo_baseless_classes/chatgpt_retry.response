@@ -1,0 +1,142 @@
+{
+    "models": [
+        {
+            "classname": "Customer",
+            "code": "class Customer:\n    Id = Column(Integer, primary_key=True, autoincrement=True)\n    Name = Column(String)\n    CreditLimit = Column(Decimal)\n    Balance = Column(Decimal)\n    OrderList : Mapped[List[\"Order\"]] = relationship(back_populates=\"Customer\")",
+            "description": "Represents customers in the system. Holds balance and credit limit information.",
+            "name": "Customer"
+        },
+        {
+            "classname": "Order",
+            "code": "class Order:\n    Id = Column(Integer, primary_key=True, autoincrement=True)\n    CustomerId = Column(ForeignKey('customer.Id'))\n    AmountTotal = Column(Decimal)\n    DateShipped = Column(DateTime, nullable=True)\n    Notes = Column(String)\n    Customer : Mapped[\"Customer\"] = relationship(back_populates=\"OrderList\")\n    ItemList : Mapped[List[\"Item\"]] = relationship(back_populates=\"Order\")",
+            "description": "Represents orders placed by customers, includes amount total and shipping date.",
+            "name": "Order"
+        },
+        {
+            "classname": "Item",
+            "code": "class Item:\n    Id = Column(Integer, primary_key=True, autoincrement=True)\n    OrderId = Column(ForeignKey('order.Id'))\n    ProductId = Column(ForeignKey('product.Id'))\n    Quantity = Column(Integer)\n    UnitPrice = Column(Decimal)\n    Amount = Column(Decimal)\n    Order : Mapped[\"Order\"] = relationship(back_populates=\"ItemList\")\n    Product : Mapped[\"Product\"] = relationship(back_populates=\"ItemList\")",
+            "description": "Represents line items within orders, includes product, quantity, and unit price.",
+            "name": "Item"
+        },
+        {
+            "classname": "Product",
+            "code": "class Product:\n    Id = Column(Integer, primary_key=True, autoincrement=True)\n    Name = Column(String)\n    UnitPrice = Column(Decimal)\n    ItemList : Mapped[List[\"Item\"]] = relationship(back_populates=\"Product\")",
+            "description": "Represents products available for sale, includes unit price.",
+            "name": "Product"
+        }
+    ],
+    "rules": [
+        {
+            "name": "Customer Balance Calculation",
+            "description": "Derive customer's balance as the sum of their order totals where orders are not shipped.",
+            "use_case": "Check Credit",
+            "entity": "Customer",
+            "code": "Rule.sum(derive=Customer.Balance, as_sum_of=Order.AmountTotal, where=lambda row: row.DateShipped is None)"
+        },
+        {
+            "name": "Order Amount Total Calculation",
+            "description": "Derive order amount total as the sum of its item amounts.",
+            "use_case": "Check Credit",
+            "entity": "Order",
+            "code": "Rule.sum(derive=Order.AmountTotal, as_sum_of=Item.Amount)"
+        },
+        {
+            "name": "Item Amount Calculation",
+            "description": "Derive item amount based on its quantity and unit price.",
+            "use_case": "Check Credit",
+            "entity": "Item",
+            "code": "Rule.formula(derive=Item.Amount, as_expression=lambda row: row.Quantity * row.UnitPrice)"
+        },
+        {
+            "name": "Copy Unit Price from Product",
+            "description": "Copy the unit price from product to item.",
+            "use_case": "Check Credit",
+            "entity": "Item",
+            "code": "Rule.copy(derive=Item.UnitPrice, from_parent=Product.UnitPrice)"
+        },
+        {
+            "name": "Customer Credit Constraint",
+            "description": "Ensure customer's balance does not exceed their credit limit.",
+            "use_case": "Check Credit",
+            "entity": "Customer",
+            "code": "Rule.constraint(validate=Customer, as_condition=lambda row: row.Balance <= row.CreditLimit, error_msg=\"balance ({row.Balance}) exceeds credit ({row.CreditLimit})\")"
+        },
+        {
+            "name": "Order Shipping Kafka Event",
+            "description": "Send order information to Kafka when order is shipped.",
+            "use_case": "App Integration",
+            "entity": "Order",
+            "code": "Rule.after_flush_row_event(on_class=Order, calling=kafka_producer.send_row_to_kafka, if_condition=lambda row: row.DateShipped is not None, with_args={\"topic\": \"order_shipping\"})"
+        }
+    ],
+    "graphics": [],
+    "test_data": "# Customer Test Data\ncustomer1 = Customer(Id=1, Name=\"John Doe\", CreditLimit=Decimal('1000.00'), Balance=Decimal('500.00'))\ncustomer2 = Customer(Id=2, Name=\"Jane Smith\", CreditLimit=Decimal('1500.00'), Balance=Decimal('800.00'))\ncustomer3 = Customer(Id=3, Name=\"Jim Brown\", CreditLimit=Decimal('2000.00'), Balance=Decimal('1200.00'))\ncustomer4 = Customer(Id=4, Name=\"Lisa White\", CreditLimit=Decimal('2500.00'), Balance=Decimal('1800.00'))\n\n# Order Test Data\norder1 = Order(Id=1, CustomerId=1, AmountTotal=Decimal('200.00'), DateShipped=None, Notes=\"Urgent\")\norder2 = Order(Id=2, CustomerId=1, AmountTotal=Decimal('150.00'), DateShipped=datetime(2023, 3, 20), Notes=\"Regular\")\norder3 = Order(Id=3, CustomerId=2, AmountTotal=Decimal('320.00'), DateShipped=datetime(2023, 4, 5), Notes=\"Expedited\")\norder4 = Order(Id=4, CustomerId=3, AmountTotal=Decimal('430.00'), DateShipped=None, Notes=\"Hold\")\n\n# Item Test Data\nitem1 = Item(Id=1, OrderId=1, ProductId=1, Quantity=5, UnitPrice=Decimal('10.00'), Amount=Decimal('50.00'))\nitem2 = Item(Id=2, OrderId=2, ProductId=2, Quantity=3, UnitPrice=Decimal('20.00'), Amount=Decimal('60.00'))\nitem3 = Item(Id=3, OrderId=3, ProductId=3, Quantity=7, UnitPrice=Decimal('15.00'), Amount=Decimal('105.00'))\nitem4 = Item(Id=4, OrderId=4, ProductId=4, Quantity=2, UnitPrice=Decimal('25.00'), Amount=Decimal('50.00'))\n\n# Product Test Data\nproduct1 = Product(Id=1, Name=\"Widget\", UnitPrice=Decimal('10.00'))\nproduct2 = Product(Id=2, Name=\"Gadget\", UnitPrice=Decimal('20.00'))\nproduct3 = Product(Id=3, Name=\"Thingamajig\", UnitPrice=Decimal('15.00'))\nproduct4 = Product(Id=4, Name=\"Doodad\", UnitPrice=Decimal('25.00'))",
+    "test_data_rows": [
+        {
+            "test_data_row_variable": "customer1",
+            "code": "customer1 = Customer(Id=1, Name=\"John Doe\", CreditLimit=Decimal('1000.00'), Balance=Decimal('500.00'))"
+        },
+        {
+            "test_data_row_variable": "customer2",
+            "code": "customer2 = Customer(Id=2, Name=\"Jane Smith\", CreditLimit=Decimal('1500.00'), Balance=Decimal('800.00'))"
+        },
+        {
+            "test_data_row_variable": "customer3",
+            "code": "customer3 = Customer(Id=3, Name=\"Jim Brown\", CreditLimit=Decimal('2000.00'), Balance=Decimal('1200.00'))"
+        },
+        {
+            "test_data_row_variable": "customer4",
+            "code": "customer4 = Customer(Id=4, Name=\"Lisa White\", CreditLimit=Decimal('2500.00'), Balance=Decimal('1800.00'))"
+        },
+        {
+            "test_data_row_variable": "order1",
+            "code": "order1 = Order(Id=1, CustomerId=1, AmountTotal=Decimal('200.00'), DateShipped=None, Notes=\"Urgent\")"
+        },
+        {
+            "test_data_row_variable": "order2",
+            "code": "order2 = Order(Id=2, CustomerId=1, AmountTotal=Decimal('150.00'), DateShipped=datetime(2023, 3, 20), Notes=\"Regular\")"
+        },
+        {
+            "test_data_row_variable": "order3",
+            "code": "order3 = Order(Id=3, CustomerId=2, AmountTotal=Decimal('320.00'), DateShipped=datetime(2023, 4, 5), Notes=\"Expedited\")"
+        },
+        {
+            "test_data_row_variable": "order4",
+            "code": "order4 = Order(Id=4, CustomerId=3, AmountTotal=Decimal('430.00'), DateShipped=None, Notes=\"Hold\")"
+        },
+        {
+            "test_data_row_variable": "item1",
+            "code": "item1 = Item(Id=1, OrderId=1, ProductId=1, Quantity=5, UnitPrice=Decimal('10.00'), Amount=Decimal('50.00'))"
+        },
+        {
+            "test_data_row_variable": "item2",
+            "code": "item2 = Item(Id=2, OrderId=2, ProductId=2, Quantity=3, UnitPrice=Decimal('20.00'), Amount=Decimal('60.00'))"
+        },
+        {
+            "test_data_row_variable": "item3",
+            "code": "item3 = Item(Id=3, OrderId=3, ProductId=3, Quantity=7, UnitPrice=Decimal('15.00'), Amount=Decimal('105.00'))"
+        },
+        {
+            "test_data_row_variable": "item4",
+            "code": "item4 = Item(Id=4, OrderId=4, ProductId=4, Quantity=2, UnitPrice=Decimal('25.00'), Amount=Decimal('50.00'))"
+        },
+        {
+            "test_data_row_variable": "product1",
+            "code": "product1 = Product(Id=1, Name=\"Widget\", UnitPrice=Decimal('10.00'))"
+        },
+        {
+            "test_data_row_variable": "product2",
+            "code": "product2 = Product(Id=2, Name=\"Gadget\", UnitPrice=Decimal('20.00'))"
+        },
+        {
+            "test_data_row_variable": "product3",
+            "code": "product3 = Product(Id=3, Name=\"Thingamajig\", UnitPrice=Decimal('15.00'))"
+        },
+        {
+            "test_data_row_variable": "product4",
+            "code": "product4 = Product(Id=4, Name=\"Doodad\", UnitPrice=Decimal('25.00'))"
+        }
+    ],
+    "test_data_sqlite": "INSERT INTO Customer (Id, Name, CreditLimit, Balance) VALUES (1, 'John Doe', 1000.00, 500.00);\nINSERT INTO Customer (Id, Name, CreditLimit, Balance) VALUES (2, 'Jane Smith', 1500.00, 800.00);\nINSERT INTO Customer (Id, Name, CreditLimit, Balance) VALUES (3, 'Jim Brown', 2000.00, 1200.00);\nINSERT INTO Customer (Id, Name, CreditLimit, Balance) VALUES (4, 'Lisa White', 2500.00, 1800.00);\n\nINSERT INTO Order (Id, CustomerId, AmountTotal, DateShipped, Notes) VALUES (1, 1, 200.00, NULL, 'Urgent');\nINSERT INTO Order (Id, CustomerId, AmountTotal, DateShipped, Notes) VALUES (2, 1, 150.00, '2023-03-20', 'Regular');\nINSERT INTO Order (Id, CustomerId, AmountTotal, DateShipped, Notes) VALUES (3, 2, 320.00, '2023-04-05', 'Expedited');\nINSERT INTO Order (Id, CustomerId, AmountTotal, DateShipped, Notes) VALUES (4, 3, 430.00, NULL, 'Hold');\n\nINSERT INTO Item (Id, OrderId, ProductId, Quantity, UnitPrice, Amount) VALUES (1, 1, 1, 5, 10.00, 50.00);\nINSERT INTO Item (Id, OrderId, ProductId, Quantity, UnitPrice, Amount) VALUES (2, 2, 2, 3, 20.00, 60.00);\nINSERT INTO Item (Id, OrderId, ProductId, Quantity, UnitPrice, Amount) VALUES (3, 3, 3, 7, 15.00, 105.00);\nINSERT INTO Item (Id, OrderId, ProductId, Quantity, UnitPrice, Amount) VALUES (4, 4, 4, 2, 25.00, 50.00);\n\nINSERT INTO Product (Id, Name, UnitPrice) VALUES (1, 'Widget', 10.00);\nINSERT INTO Product (Id, Name, UnitPrice) VALUES (2, 'Gadget', 20.00);\nINSERT INTO Product (Id, Name, UnitPrice) VALUES (3, 'Thingamajig', 15.00);\nINSERT INTO Product (Id, Name, UnitPrice) VALUES (4, 'Doodad', 25.00);",
+    "name": "CustomerOrdersSystem"
+}
