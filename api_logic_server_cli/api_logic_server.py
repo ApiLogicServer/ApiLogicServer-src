@@ -12,7 +12,7 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "15.01.05"  # last public release: 15.00.65
+__version__ = "15.01.05"  # last public release: 15.01.03
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
     "\t09/27/2024 - 15.01.05: Error reporting for bad test data rebuild [101], Minor fix to ensure react-app cards have links \n"\
