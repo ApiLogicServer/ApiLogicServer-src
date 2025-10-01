@@ -1,0 +1,94 @@
+Hints: use autonum keys (for all tables - including for link/join/junction/intersection tables), allow nulls, foreign keys, no check constraints.
+
+CRITICAL: Auto-Detect Implied Relationships from Business Logic
+
+When analyzing user requirements, automatically detect and create foreign key relationships for these patterns:
+
+1. **Copy/Reference Operations**: 
+   - "copy from Entity" → requires foreign key to that Entity
+   - "Item unit_price is copied from Product" → Item needs ProductId foreign key
+   - "Store X as copy from Y" → create relationship from X's table to Y's table
+
+2. **Aggregation Operations**:
+   - "sum of ChildEntity.field" → Parent needs one-to-many relationship to Child
+   - "count of ChildEntity" → Parent needs one-to-many relationship to Child
+   - "Customer balance = sum of Order amounts" → Customer already has relationship, but Order needs CustomerId
+
+3. **Calculation Operations**:
+   - "Entity1.field * Entity2.field" → if entities are different, check if relationship needed
+   - "Item amount = quantity * unit_price" → if unit_price comes from Product, need ProductId FK
+
+4. **Hierarchical Language**:
+   - "Entity belongs to ParentEntity" → Entity needs ParentEntityId foreign key
+   - "ParentEntity has many ChildEntity" → Child needs ParentEntityId foreign key
+   - "Entity is associated with OtherEntity" → one needs foreign key to other
+
+5. **Business Context Clues**:
+   - Items typically belong to Products (need ProductId)
+   - Orders typically belong to Customers (need CustomerId) 
+   - LineItems/OrderDetails typically belong to both Orders and Products
+   - Invoices typically belong to Customers
+   - Payments typically belong to Invoices or Orders
+
+**Implementation Rules**:
+- When creating a class, scan ALL business requirements for references to that class
+- If another entity "copies from", "references", "belongs to", or "calculates using" this class, create the foreign key
+- Always create the foreign key column AND the SQLAlchemy relationship() mappings
+- For copy operations specifically: Child.derive_field copied from Parent.source_field → Child needs ParentId FK
+
+**Auto-Detection Examples**:
+```
+User says: "Item unit_price is copied from Product unit_price"
+Auto-detect: Item class needs ProductId foreign key + Product relationship
+Generate: 
+  class Item:
+    ProductId = Column(ForeignKey('product.Id'))
+    Product : Mapped["Product"] = relationship(back_populates="ItemList")
+  class Product:  
+    ItemList : Mapped[List["Item"]] = relationship(back_populates="Product")
+```
+
+```
+User says: "Order total = sum of Item amounts"  
+Auto-detect: Order already implies relationship to Item
+Ensure: Item has OrderId foreign key (likely already implied by "Item" being child of "Order")
+```
+
+```
+User says: "Customer balance = sum of Order amounts"
+Auto-detect: Customer needs one-to-many relationship to Order
+Ensure: Order has CustomerId foreign key + Customer relationship
+```
+
+Be sure to create classes, never tables.
+Class names are singular, and first letter is capitalized.
+
+If you create sum, count or formula Logic Bank rules, then you MUST create a corresponding column in the data model.
+
+Remember that SQLite DateTime type only accepts Python datetime and date objects as input, 
+this means you can not enter string attributes where a date or datetime object is expected.
+
+Don't install additional packages.
+Don't use the faker pip package.
+
+When creating SQLAlchemy data model classes, follow these guidelines carefully:
+* Use foreign key columns instead of relationship names for the data.  
+* Do not specify nullable unless explicitly specified.
+* Do not use unique unless explicitly specified.
+* Do not use Float unless explicitly specified.
+* Generate the classes ONLY.
+* Do NOT generate imports.
+* Do NOT generate connect statements.
+* Do NOT generate engines.
+* **CRITICAL**: After generating all classes, review business requirements again and ensure ALL implied foreign keys are created.
+
+Create multiple rows of test data for each table, and follow these guidelines carefully:
+* Create separate objects for each test data row, not in arrays. 
+* Be sure to initialize derived attributes for test data rows - including all sums and counts, but do not rely on Logic Bank,
+and do not generate db.execute statements.
+* Do not create arrays of test data.
+* Do not create a function to load test data.  
+* Do not print the test data. 
+* Use double quotes " for strings.
+* For test data, format dates as date(year, month, day).
+* **CRITICAL**: Test data MUST populate all foreign key fields with valid references to ensure referential integrity.
