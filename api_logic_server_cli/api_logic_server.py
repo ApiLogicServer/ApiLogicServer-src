@@ -12,26 +12,27 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "15.01.05"  # last public release: 15.01.03
+__version__ = "15.01.06"  # last public release: 15.01.03
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t09/27/2024 - 15.01.05: Error reporting for bad test data rebuild [101], Minor fix to ensure react-app cards have links \n"\
-    "\t08/17/2024 - 15.01.03: LogicBan 01.30, with fix for copy_children[19] \n"\
-    "\t08/13/2024 - 15.01.02: Id vs ID in codegen (parent_accessor_from_fk: [#100]), pyodbc fix in blt \n"\
-    "\t08/09/2024 - 15.01.00: improved vibe instructions \n"\
-    "\t08/06/2024 - 15.00.65: instructions for custom API endpoints, behave testing \n"\
-    "\t07/20/2024 - 15.00.52: Python 3.13 compatibility fixes - psycopg2→psycopg3, SQLAlchemy 2.0+, pkg_resources→importlib.metadata.  mgr dbs \n"\
-    "\t07/17/2024 - 15.00.49: venv fix+, ext bldr * fix, copilot vibe tweaks - creation, mcp logic, basic_demo autonums \n"\
-    "\t07/10/2024 - 15.00.41: copilot vibe support for logic, UI, MCP,  bug[98] \n"\
-    "\t06/30/2024 - 15.00.33: Tech Preview: genai-logic genai-add-app --vibe, bug [96, 97] \n"\
-    "\t06/10/2024 - 15.00.12: MCP Security, win fixes for readme, graphics quotes \n"\
-    "\t06/08/2024 - 15.00.10: MCP, optional shortening of stacktrace lines, bugfix[92] \n"\
-    "\t05/16/2024 - 14.05.00: safrs 3.1.7, running mcp preview \n"\
-    "\t04/27/2024 - 14.04.00: Graphics preview, Vibe install fix, Improved IDE Chat Logic, MCP Exploration \n"\
-    "\t03/30/2024 - 14.03.25: WebGenAI fixes for Kafka and Keycloak \n"\
-    "\t03/19/2024 - 14.03.20: licensed webgenai docker, [87] sra fix for home.js \n"\
-    "\t02/26/2024 - 14.03.14: [85: reserved words], genai_demo fixes \n"\
-    "\t01/17/2024 - 14.02.20: WebGenAI support, genai_demo \n"\
+    "\t10/06/2025 - 15.01.06: Incorrect dbml reln arrows [102] \n"\
+    "\t09/27/2025 - 15.01.05: Error reporting for bad test data rebuild [101], Minor fix to ensure react-app cards have links \n"\
+    "\t08/17/2025 - 15.01.03: LogicBan 01.30, with fix for copy_children[19] \n"\
+    "\t08/13/2025 - 15.01.02: Id vs ID in codegen (parent_accessor_from_fk: [#100]), pyodbc fix in blt \n"\
+    "\t08/09/2025 - 15.01.00: improved vibe instructions \n"\
+    "\t08/06/2025 - 15.00.65: instructions for custom API endpoints, behave testing \n"\
+    "\t07/20/2025 - 15.00.52: Python 3.13 compatibility fixes - psycopg2→psycopg3, SQLAlchemy 2.0+, pkg_resources→importlib.metadata.  mgr dbs \n"\
+    "\t07/17/2025 - 15.00.49: venv fix+, ext bldr * fix, copilot vibe tweaks - creation, mcp logic, basic_demo autonums \n"\
+    "\t07/10/2025 - 15.00.41: copilot vibe support for logic, UI, MCP,  bug[98] \n"\
+    "\t06/30/2025 - 15.00.33: Tech Preview: genai-logic genai-add-app --vibe, bug [96, 97] \n"\
+    "\t06/10/2025 - 15.00.12: MCP Security, win fixes for readme, graphics quotes \n"\
+    "\t06/08/2025 - 15.00.10: MCP, optional shortening of stacktrace lines, bugfix[92] \n"\
+    "\t05/16/2025 - 14.05.00: safrs 3.1.7, running mcp preview \n"\
+    "\t04/27/2025 - 14.04.00: Graphics preview, Vibe install fix, Improved IDE Chat Logic, MCP Exploration \n"\
+    "\t03/30/2025 - 14.03.25: WebGenAI fixes for Kafka and Keycloak \n"\
+    "\t03/19/2025 - 14.03.20: licensed webgenai docker, [87] sra fix for home.js \n"\
+    "\t02/26/2025 - 14.03.14: [85: reserved words], genai_demo fixes \n"\
+    "\t01/17/2025 - 14.02.20: WebGenAI support, genai_demo \n"\
     "\t01/06/2024 - 14.01.00: N8N, Rebuild test data, Fixup, Project Import, Improved reporting of missing attributes, Simplified RowDictMaper  \n"\
     "\t11/18/2024 - 12.02.00: genai: 'qualified any' now supported in logic training \n"\
     "\t10/31/2024 - 12.01.00: genai: informal rules (eg, Sum of employee salaries cannot exceed department budget) \n"\

@@ -147,7 +147,7 @@ class DBMLCreator(object):
                             child_attr_list += ', '
                         child_attr_list += f"{each_key_pair[1]}"
                     if parent_attr_list != '':
-                        reln_line = f"    Ref: {each_resource_name}.({child_attr_list}) < {each_resource_reln.parent_resource}.({parent_attr_list})"
+                        reln_line = f"    Ref: {each_resource_name}.({child_attr_list}) > {each_resource_reln.parent_resource}.({parent_attr_list})"
                         self.dbms_lines.append(reln_line)
                         if each_resource_reln.parent_resource == 'Location':  # multi-field key example in nw
                             debug_stop = 'good breakpoint'  # '    Ref: Order.(City, Country) < Location.(?, ?)'
