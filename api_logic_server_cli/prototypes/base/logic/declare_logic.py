@@ -18,9 +18,11 @@ declare_logic_message = "ALERT:  *** No Rules Yet ***"  # printed in api_logic_s
 def declare_logic():
     ''' Declarative multi-table derivations and constraints, extensible with Python.
  
-    Brief background: see readme_declare_logic.md
+    Brief background: see readme_declare_logic.md 
     
-    Your Code Goes Here - Use code completion (Rule.) to declare rules
+    Your Code Goes Here (best practice: logic files in `api_logic_server_cli/prototypes/base/logic/logic_discovery`)
+    
+    Use code completion (Rule.) to declare rules
     '''
 
     if os.environ.get("WG_PROJECT"):

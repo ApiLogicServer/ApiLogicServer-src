@@ -21,6 +21,8 @@ app_logger = logging.getLogger(__name__)
 
 def declare_logic():
     """
+    Use code completion (Rule.) to declare rules, or
+
     Use GenAI to convert Natural Language into logic, paste here.  See readme_logic_discovery_readme.md for an example.
     
     Sample logic:
