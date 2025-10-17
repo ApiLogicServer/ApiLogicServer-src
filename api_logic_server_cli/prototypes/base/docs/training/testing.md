@@ -378,6 +378,36 @@ From these rules, generate test scenarios that verify:
 - Email notifications triggered
 - Integration actions
 
+**F. DELETE Operations (Often Forgotten!):**
+- Deleting `OrderDetail` → decreases `Order.AmountTotal` → decreases `Customer.Balance`
+- Deleting `Order` → removes from `Customer.Balance` aggregate
+- Verify aggregates adjust **downward** correctly (not just upward)
+
+**G. WHERE Clause Bidirectional Testing (Critical!):**
+- Test both **adding** and **removing** rows from aggregate:
+  - Setting `Order.ShippedDate = today` → excludes from balance (WHERE fails)
+  - Setting `Order.ShippedDate = None` → includes in balance (WHERE passes)
+- WHERE clauses should work **both directions** (not just one-way)
+
+**H. All CRUD Operations:**
+- **POST (Create)** - New entities trigger rules
+- **PATCH (Update)** - Modified entities trigger recalculation
+- **DELETE (Delete)** - Removed entities adjust aggregates downward
+- **GET (Read)** - Verify all changes applied correctly
+
+**CRITICAL: Don't just test happy path!** Test:
+- ✅ Good order (passes constraint)
+- ✅ Bad order (exceeds credit - rejected)
+- ✅ Quantity increase (balance increases)
+- ✅ Quantity decrease (balance decreases)
+- ✅ Product change (re-copy unit_price)
+- ✅ Customer change (both balances adjust)
+- ✅ Ship order (exclude from balance)
+- ✅ **Unship order** (include back in balance) ← Often missed!
+- ✅ **Delete item** (balance decreases) ← Often missed!
+
+**Common Mistake:** Only testing POST and PATCH, forgetting DELETE and WHERE bidirectionality.
+
 ### Step 3: Create .feature Files
 
 Create `test/api_logic_server_behave/features/<feature_name>.feature`:
@@ -913,6 +943,26 @@ Documentation showing:
 - ✅ Complete traceability from requirement to execution
 
 ## Common Bugs and Solutions
+
+### 🚨 CRITICAL: Top 5 Test Creation Bugs (Read First!)
+
+When AI generates tests from `docs/training/testing.md`, these are the **most common bugs** that cause immediate failure:
+
+**1. Wrong Filter Format** → `filter[name]=value` not `filter="name eq 'value'"`  
+**2. Circular Imports** → Never import from `logic/`, `database/`, `integration/` in test files  
+**3. Null-Unsafe Constraints** → Always check `row.field is None or ...` before comparisons  
+**4. Wrong Step Execution** → Use `context.execute_steps('when Step')` not `step_impl.execute_step()`  
+**5. Reusing Test Data** → Always create fresh entities with unique names (timestamps)
+
+**Quick Checklist Before Running Tests:**
+- [ ] Used `filter[column]=value` format for all API queries
+- [ ] Only imported: `behave`, `requests`, `test_utils` (no app modules)
+- [ ] All constraints handle `None`: `row.x is None or row.y is None or row.x < row.y`
+- [ ] Used `context.execute_steps()` for step reuse
+- [ ] Created fresh test data with `f"{name} {int(time.time()*1000)}"`
+- [ ] Restarted server after changing `logic/declare_logic.py`
+
+**See detailed fixes below ↓**
 
 ### Debugging with Scenario Logic Logs
 
@@ -1646,6 +1696,351 @@ def get_or_create_test_customer(name="Test Customer", balance=0, credit_limit=10
 - ✅ Each scenario gets completely new entities
 - ✅ Tests must be independent and repeatable
 
+### Bug #3b: Incorrect SAFRS/JSON:API Filter Format
+
+**Symptom:**
+```
+AssertionError: Failed to get customer: {"errors": [{"title": "Validation Error: Invalid filter format (see https://github.com/thomaxxl/safrs/wiki)", "detail": "Validation Error: Invalid filter format", "code": "400"}]}
+```
+
+**Cause:** Using wrong filter syntax for SAFRS/JSON:API queries
+
+**Root Cause:**
+```python
+# ❌ WRONG - OData-style filter (not supported by SAFRS)
+response = requests.get(f"{base_url}/Customer",
+                       params={"filter": "name eq 'Alice'"})
+
+# ❌ WRONG - Simple key=value (not JSON:API compliant)
+response = requests.get(f"{base_url}/Customer",
+                       params={"name": "Alice"})
+```
+
+**The Fix - Use JSON:API filter format:**
+```python
+# ✅ CORRECT - SAFRS/JSON:API filter syntax
+response = requests.get(f"{base_url}/Customer",
+                       params={"filter[name]": "Alice"})
+
+# ✅ CORRECT - Filter by multiple fields
+response = requests.get(f"{base_url}/Customer",
+                       params={
+                           "filter[name]": "Alice",
+                           "filter[balance]": 0
+                       })
+
+# ✅ CORRECT - Filter with foreign key
+response = requests.get(f"{base_url}/Order",
+                       params={"filter[customer_id]": 10})
+```
+
+**Pattern for All Filters:**
+- Format: `filter[column_name]` = value
+- Use actual column name from `database/models.py`
+- Works for strings, numbers, booleans
+- Multiple filters = AND condition
+
+**Common Filters:**
+```python
+# By ID
+params={"filter[id]": customer_id}
+
+# By name (exact match)
+params={"filter[name]": "Alice"}
+
+# By foreign key
+params={"filter[customer_id]": customer_id}
+
+# Multiple conditions (AND)
+params={
+    "filter[date_shipped]": None,  # NULL check
+    "filter[customer_id]": 10
+}
+```
+
+**CRITICAL for AI:**
+- ❌ Don't use OData syntax: `filter="name eq 'Alice'"`
+- ❌ Don't use simple params: `name="Alice"`
+- ✅ Always use: `filter[column_name]=value`
+- ✅ Check `database/models.py` for exact column names
+
+### Bug #3c: Circular Import from Test Files
+
+**Symptom:**
+```
+ImportError: cannot import name 'LogicRow' from partially initialized module 'logic_bank.exec_row_logic.logic_row' (most likely due to a circular import)
+```
+
+**Cause:** Test step files importing application modules that trigger circular dependencies
+
+**Root Cause:**
+```python
+# ❌ WRONG - Importing logic/integration modules in test files
+# File: features/steps/app_integration.py
+from behave import *
+import requests
+import integration.kafka.kafka_producer as kafka_producer  # ← Circular import!
+
+@when('Order Created and Shipped')
+def step_impl(context):
+    # Test should work through API, not import internal modules
+```
+
+**Why This Happens:**
+- Test files run in behave context (not Flask)
+- Logic/integration modules expect Flask application context
+- Importing them causes circular dependency in Logic Bank
+- Tests should be **black box** - only use REST API
+
+**The Fix - Test Through API Only:**
+```python
+# ✅ CORRECT - Test through REST API
+# File: features/steps/app_integration.py
+from behave import *
+import requests
+import test_utils
+# No imports from logic/, integration/, database/
+
+@when('Order Created and Shipped')
+def step_impl(context):
+    # Create order via API (triggers Kafka logic automatically)
+    order_data = {
+        "data": {
+            "type": "Order",
+            "attributes": {
+                "notes": "Test order",
+                "date_shipped": "2025-10-17"  # Triggers Kafka rule
+            },
+            "relationships": {
+                "customer": {"data": {"type": "Customer", "id": context.customer_id}}
+            }
+        }
+    }
+    response = requests.post(f"{base_url}/Order", json=order_data)
+    # Logic fires automatically - no need to import kafka_producer
+
+@then('Order Sent to Kafka Topic')
+def step_impl(context):
+    # Verify through API - check order has date_shipped (triggers rule)
+    response = requests.get(f"{base_url}/Order/{context.order_id}")
+    order = response.json()["data"]["attributes"]
+    assert order["date_shipped"] is not None, "Should trigger Kafka rule"
+```
+
+**Safe Imports for Test Files:**
+```python
+# ✅ Safe - Testing framework
+from behave import *
+import requests
+import json
+
+# ✅ Safe - Test utilities
+import test_utils  # Only imports from features/steps/
+
+# ❌ AVOID - Application modules
+# import database.models  # Triggers SQLAlchemy setup
+# import logic.declare_logic  # Triggers Logic Bank  
+# import integration.kafka.kafka_producer  # Circular import
+# import api.customize_api  # Requires Flask context
+```
+
+**CRITICAL for AI:**
+- ✅ Tests are **black box** - use REST API only
+- ✅ Only import: behave, requests, test_utils
+- ❌ Never import from: logic/, database/, integration/, api/
+- ✅ Business logic fires automatically through API
+- ✅ Verify behavior through API responses, not internal state
+
+### Bug #3d: Incorrect Behave Step Execution Pattern
+
+**Symptom:**
+```
+AttributeError: 'function' object has no attribute 'execute_step'
+  File "features/steps/check_credit.py", line 156, in step_impl
+    step_impl.execute_step(context, 'when', 'Good Order Placed')
+AttributeError: 'function' object has no attribute 'execute_step'
+```
+
+**Cause:** Using non-existent `step_impl.execute_step()` method
+
+**Root Cause:**
+```python
+# ❌ WRONG - execute_step doesn't exist
+@when('Item Quantity Increased')
+def step_impl(context):
+    # Try to reuse another step
+    step_impl.execute_step(context, 'when', 'Good Order Placed')  # ← No such method!
+    
+    # Then modify the quantity
+    # ...
+```
+
+**The Fix - Use context.execute_steps():**
+```python
+# ✅ CORRECT - context.execute_steps() is the Behave API
+@when('Item Quantity Increased')
+def step_impl(context):
+    """Create order and then increase item quantity"""
+    # Reuse another step
+    context.execute_steps('when Good Order Placed')
+    
+    # Store initial item quantity
+    context.original_quantity = 2
+    context.new_quantity = 5
+    
+    # Update item quantity
+    item_id = context.item["id"]
+    update_data = {
+        "data": {
+            "type": "Item",
+            "id": item_id,
+            "attributes": {"quantity": context.new_quantity}
+        }
+    }
+    response = requests.patch(f"{base_url}/Item/{item_id}", json=update_data)
+    # ...
+```
+
+**Proper Behave Step Reuse:**
+```python
+# ✅ Single step (string with step type)
+context.execute_steps('when Good Order Placed')
+context.execute_steps('given Customer Account: Alice')
+
+# ✅ Multiple steps (multi-line string)
+context.execute_steps('''
+    given Customer Account: Alice
+    when Good Order Placed
+''')
+
+# ✅ With parameters
+context.execute_steps(f'when Item quantity set to {new_qty}')
+```
+
+**Why This Matters:**
+- `context.execute_steps()` is the official Behave API
+- Allows step reuse without code duplication
+- Maintains proper Behave context and hooks
+- Steps can build on each other
+
+**CRITICAL for AI:**
+- ❌ Don't use: `step_impl.execute_step(context, 'when', 'Step')`
+- ✅ Always use: `context.execute_steps('when Step')`
+- ✅ String argument must match step definition exactly
+- ✅ Include step type: 'given', 'when', or 'then'
+
+### Bug #3e: Null-Unsafe Constraint Rules
+
+**Symptom:**
+```
+AssertionError: Failed to create order: {"errors": [{"title": "'<=' not supported between instances of 'decimal.Decimal' and 'NoneType'", "detail": "'<=' not supported between instances of 'decimal.Decimal' and 'NoneType'", "code": "500"}]}
+```
+
+**Cause:** Constraint rule doesn't handle `None` values for nullable fields
+
+**Root Cause:**
+```python
+# ❌ WRONG - Fails when balance or credit_limit is None
+Rule.constraint(
+    validate=Customer,
+    as_condition=lambda row: row.balance <= row.credit_limit,
+    error_msg="Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})"
+)
+
+# Problem: If balance=None or credit_limit=None, comparison raises TypeError
+```
+
+**Why This Happens:**
+- Database allows NULL for balance/credit_limit (nullable fields)
+- Python can't compare `Decimal(100) <= None`
+- Constraint fires on every Customer update (including inserts)
+- New customers may have NULL balance before first order
+
+**The Fix - Null-Safe Constraints:**
+```python
+# ✅ CORRECT - Handles None values gracefully
+Rule.constraint(
+    validate=Customer,
+    as_condition=lambda row: (
+        row.balance is None or 
+        row.credit_limit is None or 
+        row.balance <= row.credit_limit
+    ),
+    error_msg="Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})"
+)
+
+# Logic: Allow if balance is None OR credit_limit is None OR balance <= credit_limit
+# Only enforces constraint when both values exist
+```
+
+**Pattern for Null-Safe Comparisons:**
+```python
+# ✅ Numeric comparison
+as_condition=lambda row: (
+    row.value is None or 
+    row.threshold is None or 
+    row.value <= row.threshold
+)
+
+# ✅ String comparison
+as_condition=lambda row: (
+    row.status is None or 
+    row.status in ['pending', 'approved']
+)
+
+# ✅ Date comparison
+as_condition=lambda row: (
+    row.start_date is None or 
+    row.end_date is None or 
+    row.start_date <= row.end_date
+)
+
+# ✅ Multiple conditions
+as_condition=lambda row: (
+    # Allow if any value is None
+    row.balance is None or 
+    row.credit_limit is None or
+    # Or if both exist and constraint met
+    (row.balance <= row.credit_limit and row.balance >= 0)
+)
+```
+
+**Check Database Schema:**
+```python
+# In database/models.py
+class Customer(Base):
+    balance = Column(Decimal)  # ← Nullable! Can be None
+    credit_limit = Column(Decimal)  # ← Nullable! Can be None
+    
+    # vs
+    
+    name = Column(String, nullable=False)  # ← Not nullable, never None
+```
+
+**When to Use Null-Safe Constraints:**
+- ✅ **Always** for nullable numeric/date fields
+- ✅ When database schema allows NULL
+- ✅ For aggregate columns (may be NULL initially)
+- ✅ For optional fields (credit_limit, discount, etc.)
+
+**When Not Needed:**
+- Fields marked `nullable=False` in models
+- Primary keys (never NULL)
+- Required foreign keys
+
+**CRITICAL for AI:**
+- ✅ **Always** check if fields are nullable before writing constraints
+- ✅ Use `None` checks first: `row.field is None or ...`
+- ✅ Test with NULL values to catch this bug
+- ❌ Don't assume all fields have values
+- ✅ Check `database/models.py` for nullable columns
+
+**Impact:**
+- Bug prevents **ANY** order creation when constraint is null-unsafe
+- Occurs during initial order insert (before items added)
+- All tests fail with cryptic TypeError
+- **Must restart server** after fixing constraint in `logic/declare_logic.py`
+
 ### Bug #4: Assertion Failures with Wrong Expected Values
 
 **Symptom:**
@@ -1734,6 +2129,285 @@ def step_impl(context):
 ```
 
 **Why:** The 2nd argument to `test_utils.prt()` controls Logic Log file naming
+
+### Bug #6: JSON:API Relationships vs Direct Foreign Keys - Optimistic Locking Issue
+
+**Symptom:** 
+```
+AssertionError: Sorry, row altered by another user
+```
+
+Or tests fail with optimistic locking errors when creating relationships.
+
+**Cause:** Using JSON:API relationships format for foreign keys can trigger optimistic locking validation on newly-created rows that haven't been "loaded_as_persistent" yet.
+
+**Root Cause:**
+```python
+# ❌ WRONG - JSON:API relationships (can cause opt locking issues)
+order_data = {
+    "data": {
+        "type": "Order",
+        "attributes": {
+            "notes": "Test order"
+        },
+        "relationships": {
+            "customer": {
+                "data": {"type": "Customer", "id": context.customer_id}
+            }
+        }
+    }
+}
+response = requests.post(f"{base_url}/Order", json=order_data)
+```
+
+**The Issue:**
+1. When you POST a Customer, it gets created with balance=0
+2. Customer never goes through "loaded_as_persistent" event (it was just inserted)
+3. Then POST an Order with relationships → triggers Customer update via sum rule
+4. Optimistic locking checks if Customer changed, but Customer wasn't "loaded" first
+5. Opt locking fails: "Sorry, row altered by another user"
+
+**The Fix - Use Direct Foreign Keys in Attributes:**
+```python
+# ✅ CORRECT - Direct FK in attributes (avoids opt locking issues)
+order_data = {
+    "data": {
+        "type": "Order",
+        "attributes": {
+            "customer_id": int(context.customer_id),  # Direct FK
+            "notes": "Test order",
+            "date_shipped": None  # Be explicit about nullable fields
+        }
+    }
+}
+response = requests.post(f"{base_url}/Order", json=order_data)
+
+# ✅ CORRECT - Item with direct FKs
+item_data = {
+    "data": {
+        "type": "Item",
+        "attributes": {
+            "order_id": int(context.order_id),    # Direct FK
+            "product_id": int(product_id),         # Direct FK
+            "quantity": 2
+        }
+    }
+}
+response = requests.post(f"{base_url}/Item", json=item_data)
+```
+
+**Pattern for PATCH (Updates) - Also Use Attributes:**
+```python
+# ✅ CORRECT - Change customer using attributes
+update_data = {
+    "data": {
+        "type": "Order",
+        "id": order_id,
+        "attributes": {
+            "customer_id": int(new_customer_id)  # Direct FK in attributes
+        }
+    }
+}
+response = requests.patch(f"{base_url}/Order/{order_id}", json=update_data)
+
+# ✅ CORRECT - Change product using attributes
+update_data = {
+    "data": {
+        "type": "Item",
+        "id": item_id,
+        "attributes": {
+            "product_id": int(new_product_id)  # Direct FK in attributes
+        }
+    }
+}
+response = requests.patch(f"{base_url}/Item/{item_id}", json=update_data)
+```
+
+**Why This Works:**
+- SAFRS/JSON:API supports BOTH relationships and direct FKs in attributes
+- Direct FK approach is simpler and more straightforward
+- Avoids triggering complex relationship validation logic
+- Bypasses opt locking issues with newly-created parent rows
+- Matches pattern used in working test suites
+
+**CRITICAL for AI:**
+- ❌ Don't use `"relationships": {"customer": {"data": {...}}}` in POST/PATCH
+- ✅ Always use `"attributes": {"customer_id": int(id)}` format
+- ✅ Convert ID to int: `int(context.customer_id)` (JSON returns strings)
+- ✅ Be explicit about nullable fields: `"date_shipped": None`
+- ✅ Use direct FKs for both POST (create) and PATCH (update) operations
+
+**When to Use Each Format:**
+- **Direct FK (attributes):** For tests, simpler code, avoiding opt locking
+- **Relationships:** For UI clients that need full JSON:API compliance (not typically tests)
+
+### Bug #7: Missing DELETE and WHERE Bidirectional Scenarios
+
+**Symptom:** Test suite passes but doesn't validate complete CRUD operations
+
+**Cause:** Tests only cover POST (create) and PATCH (update), missing DELETE and WHERE clause bidirectionality
+
+**Root Cause:**
+Many test suites only test the "happy path" of creating and updating entities, but forget to test:
+1. **DELETE operations** - Do aggregates adjust downward when entities are deleted?
+2. **WHERE clause both ways** - Does the WHERE condition work when both adding AND removing rows?
+
+**Missing Scenarios:**
+
+```gherkin
+# ❌ INCOMPLETE - Only tests one direction
+Feature: Check Credit
+
+  Scenario: Good Order
+    When Good Order Placed
+    Then Balance Increased
+  
+  Scenario: Order Shipped
+    When Order is Shipped
+    Then Balance Decreased
+  
+  # Missing: What happens when you UN-ship? Delete an item?
+```
+
+**Complete Test Suite Should Include:**
+
+```gherkin
+# ✅ COMPLETE - Tests all CRUD + bidirectional WHERE
+Feature: Check Credit
+
+  Scenario: Good Order (POST)
+    Given Customer Account: Alice
+    When Good Order Placed
+    Then Balance Increased
+  
+  Scenario: Item Quantity Change (PATCH)
+    Given Customer with Order
+    When Item Quantity Increased
+    Then Balance Adjusted Up
+  
+  Scenario: Order Shipped (WHERE - exclude)
+    Given Customer with Unshipped Order
+    When Order is Shipped
+    Then Balance Decreased (order excluded from sum)
+  
+  Scenario: Reset Shipped (WHERE - include) ← Often missed!
+    Given Customer with Shipped Order
+    When Order Marked as Unshipped
+    Then Balance Increased Back (order included in sum again)
+  
+  Scenario: Delete Item (DELETE) ← Often missed!
+    Given Customer with Order containing 2 items
+    When Item is Deleted
+    Then Order Total Decreased
+    Then Customer Balance Decreased
+```
+
+**DELETE Operation Implementation:**
+
+```python
+@when('Item is Deleted from Order')
+def step_impl(context):
+    """Delete an item and verify aggregates adjust downward"""
+    # Setup: Create order with 2 items (done in Given step)
+    
+    # Capture state before deletion
+    order_total_before = get_order_total(context.order_id)
+    customer_balance_before = get_customer_balance(context.customer_id)
+    
+    # DELETE the item
+    response = requests.delete(f"{base_url}/Item/{context.second_item_id}")
+    assert response.status_code in [200, 204], \
+        f"Failed to delete item: {response.text}"
+    
+    # Important: Save item amount for verification
+    context.deleted_item_amount = context.second_item_amount
+
+@then('Order Total and Balance Decreased')
+def step_impl(context):
+    """Verify DELETE cascaded through aggregates"""
+    # Get updated values
+    order_total_after = get_order_total(context.order_id)
+    customer_balance_after = get_customer_balance(context.customer_id)
+    
+    # Verify both aggregates decreased
+    assert order_total_after == order_total_before - context.deleted_item_amount
+    assert customer_balance_after == customer_balance_before - context.deleted_item_amount
+```
+
+**WHERE Clause Bidirectional Implementation:**
+
+```python
+@when('Order Marked as Unshipped')
+def step_impl(context):
+    """Test WHERE clause works in reverse (setting to None)"""
+    # First ship the order (exclude from balance)
+    ship_data = {
+        "data": {
+            "type": "Order",
+            "id": context.order_id,
+            "attributes": {
+                "date_shipped": datetime.date.today().isoformat()
+            }
+        }
+    }
+    response = requests.patch(f"{base_url}/Order/{context.order_id}", json=ship_data)
+    
+    # Verify balance decreased (order excluded)
+    balance_after_ship = get_customer_balance(context.customer_id)
+    assert balance_after_ship < context.initial_balance
+    
+    # NOW un-ship it (set back to None)
+    unship_data = {
+        "data": {
+            "type": "Order",
+            "id": context.order_id,
+            "attributes": {
+                "date_shipped": None  # Back to None
+            }
+        }
+    }
+    response = requests.patch(f"{base_url}/Order/{context.order_id}", json=unship_data)
+
+@then('Balance Increased Back')
+def step_impl(context):
+    """Verify WHERE clause includes order again"""
+    balance_after_unship = get_customer_balance(context.customer_id)
+    
+    # Balance should be back to including the order
+    expected_balance = context.initial_balance + context.order_amount
+    assert balance_after_unship == expected_balance
+```
+
+**Why These Scenarios Matter:**
+
+1. **DELETE operations are common** - Users delete items, orders get cancelled
+2. **WHERE clauses are bidirectional** - Orders can be shipped AND unshipped (mistakes happen)
+3. **Aggregates must adjust down** - Not just increase, but also decrease correctly
+4. **Real-world edge cases** - Production systems encounter these scenarios
+
+**CRITICAL for AI:**
+- ❌ Don't only test POST and PATCH
+- ✅ Test all CRUD: POST, PATCH, DELETE, GET
+- ✅ Test WHERE clause both ways (add AND remove from condition)
+- ✅ Verify aggregates adjust both up AND down
+- ✅ Include edge cases: un-shipping, deletion, cancellation
+
+**How to Identify Missing Scenarios:**
+
+1. **Check your WHERE clauses** - For each WHERE, test both true→false AND false→true
+2. **Check your aggregates** - Test increasing AND decreasing the aggregate
+3. **Check CRUD coverage** - Do you have at least one DELETE test?
+4. **Look at production bugs** - What scenarios caused issues in production?
+
+**Test Coverage Checklist:**
+
+For each rule type, ensure you have:
+- ✅ **Sum rules:** Test add child, update child, DELETE child
+- ✅ **Formula rules:** Test value increase, value decrease
+- ✅ **Copy rules:** Test change parent (re-copy)
+- ✅ **Constraint rules:** Test pass AND fail
+- ✅ **WHERE clauses:** Test include AND exclude (both directions)
+- ✅ **Event rules:** Test condition true AND false
 
 ## Summary
 
