@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "15.01.06"  # last public release: 15.01.03
+__version__ = "15.01.16"  # last public release: 15.01.03
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t10/16/2025 - 15.01.06: Initial draft - create behave tests from rules \n"\
     "\t10/06/2025 - 15.01.06: Incorrect dbml reln arrows [102] \n"\
     "\t09/27/2025 - 15.01.05: Error reporting for bad test data rebuild [101], Minor fix to ensure react-app cards have links \n"\
     "\t08/17/2025 - 15.01.03: LogicBan 01.30, with fix for copy_children[19] \n"\

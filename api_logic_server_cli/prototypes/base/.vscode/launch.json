@@ -180,7 +180,7 @@
             "name": "  - Behave No Security",
             "type": "debugpy",
             "request": "launch",
-            "env": {"SECURITY_ENABLED": "False"},
+            // now picked up from config: "env": {"SECURITY_ENABLED": "False"},
             "cwd": "${workspaceFolder}/test/api_logic_server_behave",
             "program": "${workspaceFolder}/test/api_logic_server_behave/behave_run.py",
             "redirectOutput": true,

@@ -1,0 +1,72 @@
+Feature: About Sample # features/about.feature:6
+
+  Scenario: Transaction Processing                           # features/about.feature:8
+    Given Sample Database                                    # features/steps/about.py:8
+    When Transactions are submitted                          # features/steps/about.py:12
+    Then Enforce business policies with Logic (rules + code) # features/steps/about.py:16
+
+Feature: App Integration # features/app_integration.feature:1
+
+  Scenario: Kafka Message on Ship                   # features/app_integration.feature:3
+    Given Test customer with unshipped order        # features/steps/check_credit.py:212
+    When Order date_shipped set to today            # features/steps/check_credit.py:408
+    Then Kafka message sent to order_shipping topic # features/steps/check_credit.py:600
+
+  Scenario: No Kafka Message When Unshipped  # features/app_integration.feature:8
+    Given Test customer with shipped order   # features/steps/check_credit.py:233
+    When Order date_shipped set to None      # features/steps/check_credit.py:436
+    Then No Kafka message sent               # features/steps/check_credit.py:608
+
+Feature: Check Credit # features/check_credit.feature:1
+
+  Scenario: Good Order - Basic Chain                               # features/check_credit.feature:3
+    Given Test customer with balance 0 and credit 1000             # features/steps/check_credit.py:15
+    When New order placed with 1 item (qty 10, product price 5.00) # features/steps/check_credit.py:269
+    Then Customer balance is 50                                    # features/steps/check_credit.py:486
+    Then Constraint passes                                         # features/steps/check_credit.py:496
+
+  Scenario: Bad Order - Exceeds Credit                              # features/check_credit.feature:9
+    Given Test customer with balance 950 and credit 1000            # features/steps/check_credit.py:15
+    When New order placed with 1 item (qty 20, product price 10.00) # features/steps/check_credit.py:269
+    Then Rejected per Check Credit                                  # features/steps/check_credit.py:503
+
+  Scenario: Alter Item Qty - Chain Up                    # features/check_credit.feature:14
+    Given Test customer with existing order (balance 50) # features/steps/check_credit.py:46
+    When Item quantity changed from 10 to 20             # features/steps/check_credit.py:320
+    Then Customer balance is 100                         # features/steps/check_credit.py:486
+    Then Order amount_total is 100                       # features/steps/check_credit.py:513
+
+  Scenario: Change Product on Item                                  # features/check_credit.feature:20
+    Given Test customer with order containing product at price 5.00 # features/steps/check_credit.py:73
+    When Item product changed to product at price 10.00             # features/steps/check_credit.py:347
+    Then Item unit_price updates to 10                              # features/steps/check_credit.py:522
+    Then Item amount recalculates                                   # features/steps/check_credit.py:531
+    Then Order amount_total updates                                 # features/steps/check_credit.py:541
+    Then Customer balance updates                                   # features/steps/check_credit.py:548
+
+  Scenario: Change Customer on Order               # features/check_credit.feature:28
+    Given Test customer A with order (balance 50)  # features/steps/check_credit.py:96
+    And Test customer B with balance 0             # features/steps/check_credit.py:118
+    When Order moved from customer A to customer B # features/steps/check_credit.py:382
+    Then Customer A balance is 0                   # features/steps/check_credit.py:555
+    Then Customer B balance is 50                  # features/steps/check_credit.py:564
+
+  Scenario: Set Shipped - Where Clause                    # features/check_credit.feature:35
+    Given Test customer with unshipped order (balance 50) # features/steps/check_credit.py:129
+    When Order date_shipped set to today                  # features/steps/check_credit.py:408
+    Then Customer balance is 0                            # features/steps/check_credit.py:486
+    Then Kafka message sent                               # features/steps/check_credit.py:591
+
+  Scenario: Reset Shipped - Where Clause               # features/check_credit.feature:41
+    Given Test customer with shipped order (balance 0) # features/steps/check_credit.py:150
+    When Order date_shipped set to None                # features/steps/check_credit.py:436
+    Then Customer balance is 50                        # features/steps/check_credit.py:486
+
+  Scenario: Delete Item - Aggregates Down             # features/check_credit.feature:46
+    Given Test customer with order containing 2 items # features/steps/check_credit.py:182
+    When One item is deleted                          # features/steps/check_credit.py:462
+    Then Order amount_total decreased                 # features/steps/check_credit.py:573
+    Then Customer balance decreased                   # features/steps/check_credit.py:582
+
+&nbsp;&nbsp;
+/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/basic_demo/test/api_logic_server_behave/behave_run.py completed at October 16, 2025 20:54:12
