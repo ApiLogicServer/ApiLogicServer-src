@@ -92,19 +92,34 @@ def show_logic(scenario: str, logic_logs_dir: str):
         with open(logic_file_name) as logic:
             logic_lines = logic.readlines()
         is_logic_log = True
-        for each_logic_line in logic_lines:
+        last_rules_start = -1
+        last_rules_end = -1
+        
+        # First, find the LAST "These Rules Fired" section
+        for i, each_logic_line in enumerate(logic_lines):
+            if "These Rules Fired" in each_logic_line:
+                last_rules_start = i + 1  # Start collecting from next line
+                last_rules_end = -1  # Reset end marker to find the next COMPLETE
+            elif last_rules_start > 0 and last_rules_end == -1:
+                if 'Logic Phase:' in each_logic_line and 'COMPLETE' in each_logic_line:
+                    last_rules_end = i
+                    
+        # Now process the file, collecting logic log and extracting the last rules section
+        for i, each_logic_line in enumerate(logic_lines):
             each_logic_line = remove_trailer(each_logic_line)
+            
             if is_logic_log:
-                if "Rules Fired" in each_logic_line:
+                if "These Rules Fired" in each_logic_line:
                     is_logic_log = False
-                    continue
                 else:
                     logic_log.append(each_logic_line)
-            else:
-                if 'logic_logger - INFO' in each_logic_line:
-                    pass
-                    break
-                wiki_data.append(each_logic_line + "  ")
+            
+            # Extract rules from the last "These Rules Fired" section
+            if last_rules_start <= i < last_rules_end:
+                # Skip empty lines
+                if each_logic_line.strip():
+                    wiki_data.append(each_logic_line + "  ")
+        
         wiki_data.append("```")
         wiki_data.append(f'**Logic Log** in Scenario: {scenario}')
         wiki_data.append("```")

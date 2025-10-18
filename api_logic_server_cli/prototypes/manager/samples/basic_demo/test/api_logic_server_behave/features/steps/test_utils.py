@@ -3,6 +3,7 @@ import json
 from dotmap import DotMap
 import sys, os
 from pathlib import Path
+from urllib.parse import quote
 
 __version__ = '0.0.1'  # keycloak support
 
@@ -29,7 +30,10 @@ def prt(msg: any, test: str= None) -> None:
         test_val = test[0:25]
     if "Server Log: Behave Run Successfully Completed" in msg:
         debug_stop = 'good breakpoint'
-    msg_url = f'http://localhost:5656/server_log?msg={msg}&test={test}&dir=test/api_logic_server_behave/logs/scenario_logic_logs'
+    # URL-encode msg and test to handle special characters, newlines, spaces, etc.
+    msg_encoded = quote(str(msg))
+    test_encoded = quote(str(test)) if test else 'None'
+    msg_url = f'http://localhost:5656/server_log?msg={msg_encoded}&test={test_encoded}&dir=test/api_logic_server_behave/logs/scenario_logic_logs'
     r = requests.get(msg_url)
 
 
