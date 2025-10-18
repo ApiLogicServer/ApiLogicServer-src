@@ -1,244 +1,172 @@
-# Test Suite Overview - basic_demo (CORRECTED)
+# Test Suite Overview
 
-**Version:** Corrected implementation using proper data types and test data management
+## Test Files Created
 
-## Critical Fixes Applied
+### 1. check_credit.feature (6 scenarios)
+Tests core credit checking logic and rule chains:
 
-### What Was Wrong:
-❌ Used fictional string IDs: `'CUST-1'`, `'CUST-A'`, `'PROD-B'`
-❌ Database expects INTEGER IDs: `1`, `2`, `3`
-❌ Tests failed with "NotFoundError" and "invalid literal for int()"
-❌ Hardcoded assumptions that don't work for arbitrary databases
+- ✅ **Good Order Placed** - Complete dependency chain (copy → formula → sum → sum → constraint)
+- ✅ **Bad Order Exceeds Credit** - Constraint rejection on insert
+- ✅ **Alter Item Quantity to Exceed Credit** - Constraint rejection on update
+- ✅ **Change Product on Item** - Copy rule re-execution + chain propagation
+- ✅ **Change Customer on Order** - Both parent balances adjust (THE CRITICAL BUG test)
+- ✅ **Delete Item Adjusts Balance** - Aggregate adjustment downward
 
-### What's Fixed:
-✅ Created `test_data_helpers.py` - query or create test data programmatically
-✅ All IDs are INTEGER (read from `database/models.py`)
-✅ Tests work with empty OR populated database
-✅ Follows workflow from `docs/training/testing.md`
+### 2. order_lifecycle.feature (3 scenarios)
+Tests WHERE clause bidirectional behavior and DELETE operations:
 
-## Rules Being Tested
+- ✅ **Set Order Shipped Excludes from Balance** - WHERE clause exclusion
+- ✅ **Reset Shipped Includes in Balance** - WHERE clause inclusion (reverse direction)
+- ✅ **Delete Order Adjusts Balance** - Complete order deletion
 
-From `logic/logic_discovery/check_credit.py` and `logic/logic_discovery/app_integration.py`:
+## Implementation Quality
 
-1. **Constraint**: Customer.balance <= credit_limit
-2. **Sum**: Customer.balance = sum(Order.amount_total where date_shipped is None)
-3. **Sum**: Order.amount_total = sum(Item.amount)
-4. **Formula**: Item.amount = quantity * unit_price
-5. **Copy**: Item.unit_price = Product.unit_price
-6. **Event**: Send to Kafka when Order.date_shipped is not None
+All tests follow the **6 CRITICAL RULES** from `docs/training/testing.md`:
 
-## Test Scenarios (10 total)
+### ✅ Rule #1: Read Database Schema First
+- Used Integer IDs (not strings)
+- Identified aggregates: `Customer.balance`, `Order.amount_total`, `Item.amount`
+- Used exact column names from models.py
 
-### check_credit.feature (8 scenarios)
+### ✅ Rule #2: Direct FK Format
+- All POST/PATCH use `"customer_id": int(id)` in attributes
+- No relationships format (prevents optimistic locking errors)
 
-1. **Good Order - Basic Chain** - Tests complete dependency chain
-2. **Bad Order - Exceeds Credit** - Tests constraint validation
-3. **Alter Item Qty - Chain Up** - Tests formula + sum propagation
-4. **Change Product on Item** ⚠️ **CRITICAL BUG TEST** - FK change re-copies unit_price
-5. **Change Customer on Order** ⚠️ **CRITICAL BUG TEST** - Adjusts both old and new parent balances
-6. **Set Shipped - Where Clause** - Tests exclusion from aggregate
-7. **Reset Shipped - Where Clause** - Tests inclusion in aggregate
-8. **Delete Item - Aggregates Down** - Tests delete cascade reaggregation
+### ✅ Rule #3: Mandatory Test Code Patterns
+- **Filter format**: JSON:API standard (not used in these tests, but ready)
+- **Fresh test data**: `f"Test Customer {int(time.time() * 1000)}"`
+- **Convert IDs to int**: All helpers return `int(result['data']['id'])`
+- **No circular imports**: Only `behave`, `requests`, `test_utils`
+- **Execute steps**: Using `context.execute_steps()` pattern (when needed)
+- **Null-safe constraints**: Constraint in logic includes None checks
 
-### app_integration.feature (2 scenarios)
+### ✅ Rule #4: Complete CRUD + WHERE Coverage
+- **CREATE (POST)**: Good Order Placed
+- **UPDATE (PATCH)**: Item quantity, product change, customer change, shipped flag
+- **DELETE**: Delete item, delete order
+- **WHERE bidirectional**: Ship order (exclude), unship order (include)
+- **Constraint pass/fail**: Good order (pass), bad order (fail)
 
-9. **Kafka Message on Ship** - Tests event when condition True
-10. **No Kafka Message When Unshipped** - Tests event when condition False
+### ✅ Rule #5: Security & Environment Awareness
+- Checked `config/default.env`: `SECURITY_ENABLED = false`
+- Using `test_utils.login()` which returns `{}` when security disabled
 
-## Test Data Strategy
+### ✅ Rule #6: Logic Logging for Documentation
+- Every WHEN step includes `test_utils.prt(f'\n{scenario_name}\n', scenario_name)`
+- Second argument critical for scenario grouping in reports
 
-**Key Innovation:** `test_data_helpers.py` module provides:
+## Helper Functions
+
+Created clean, single-responsibility helpers:
 
 ```python
-get_or_create_test_customer(name, balance, credit_limit) -> int
-get_or_create_test_product(name, unit_price) -> int
+create_test_customer(name, credit_limit) -> int
+create_test_product(name, unit_price) -> int
 create_test_order(customer_id, notes) -> int
 create_test_item(order_id, product_id, quantity) -> int
 get_customer(customer_id) -> dict
-get_order(order_id) -> dict
-get_item(item_id) -> dict
 ```
 
-**All functions return INTEGER IDs, not strings!**
+All helpers:
+- ✅ Return **int** IDs (not strings)
+- ✅ Use **direct FK format** in attributes
+- ✅ Keep it simple (no circular dependencies)
+- ✅ Create entities only (test steps create relationships)
 
-### Comparison:
+## Test Coverage
 
-| Aspect | Initial (Broken) | Corrected |
-|--------|-----------------|-----------|
-| Customer ID | `'CUST-1'` (string) | `1` (integer from helper) |
-| Product ID | `'PROD-A'` (string) | `1` (integer from helper) |
-| Test Data | Assumed exists | Created via `get_or_create_*()` |
-| Database State | Required pre-seeded | Works with empty database |
-| Reusability | Only works for one DB | Works for ANY project |
+### Rules Tested:
+1. ✅ `Rule.constraint` - Credit limit validation
+2. ✅ `Rule.sum` (with WHERE) - Customer.balance
+3. ✅ `Rule.sum` - Order.amount_total
+4. ✅ `Rule.formula` - Item.amount
+5. ✅ `Rule.copy` - Item.unit_price from Product
+6. ⚠️ `Rule.after_flush_row_event` - Kafka (not tested yet - see note below)
 
-## Prerequisites
+### Critical Patterns Tested:
+- ✅ Dependency chains (grandchild → child → parent)
+- ✅ Foreign key changes (both parents adjust)
+- ✅ WHERE clause bidirectional (include/exclude)
+- ✅ DELETE operations (aggregate down)
+- ✅ Constraint on insert and update
+- ✅ Copy rule re-execution
 
-### 1. Server Running Without Security
+## Next Steps
 
+### 1. Start the Server
 ```bash
+# Option A: Use VS Code Launch Configuration "ApiLogicServer" (F5)
+# Option B: Run from terminal
 python api_logic_server_run.py
-# Should print: "ALERT:  *** Security Not Enabled ***"
 ```
 
-### 2. Launch Configuration Correct
-
-Check `.vscode/launch.json`:
-```json
-{
-    "name": "Behave Run",
-    "env": {"SECURITY_ENABLED": "False"}  // ← Must match server!
-}
-```
-
-### 3. No Manual Test Data Required!
-
-Tests auto-create data using `test_data_helpers.py`
-
-## How to Run
-
-### Option 1: VS Code
-- Select **"Behave Run"** from debug dropdown
-- Press F5
-
-### Option 2: Terminal
+### 2. Run the Test Suite
 ```bash
+# Use VS Code Launch Configuration "Behave Run"
+# Or from terminal:
 cd test/api_logic_server_behave
-python behave_run.py
+behave
 ```
 
-### View Results
-- Console: Pass/fail summary
-- `logs/behave.log`: Detailed output
-- `logs/scenario_logic_logs/*.log`: Logic execution trace per scenario
-
-### Generate Report
+### 3. Check Test Results
 ```bash
+# View test summary
+cat test/api_logic_server_behave/logs/behave.log
+
+# View individual scenario logic logs
+ls -la test/api_logic_server_behave/logs/scenario_logic_logs/
+```
+
+### 4. Generate Documentation
+```bash
+# Use VS Code Launch Configuration "Behave Report"
+# Or from terminal:
+cd test/api_logic_server_behave
 python behave_logic_report.py run
-```
-Output: `reports/Behave Logic Report.md`
 
-## Coverage Analysis
-
-### All 6 Rules Tested
-✅ Constraint (scenario 2)
-✅ Sum with where clause (scenarios 1, 6, 7)
-✅ Sum without where (scenarios 1, 3, 4, 5, 8)
-✅ Formula (scenarios 1, 3, 4)
-✅ Copy (scenarios 1, 4)
-✅ Event (scenarios 9, 10)
-
-### All Critical Patterns Tested
-✅ Basic rule execution
-✅ Dependency chains (Item → Order → Customer)
-✅ **Foreign key changes** (scenarios 4, 5) - **THE 2 CRITICAL BUGS!**
-✅ Where clause inclusion/exclusion (scenarios 6, 7)
-✅ Constraint success/failure (scenarios 1, 2)
-✅ Event conditional firing (scenarios 9, 10)
-✅ Delete cascade (scenario 8)
-
-## Key Learnings from This Exercise
-
-### From `docs/training/testing.md`:
-
-1. **Always read `database/models.py` FIRST**
-   - Discovered Customer.id, Order.id, Product.id, Item.id are all INTEGER
-   - Prevented string ID bugs
-
-2. **Never invent fictional IDs**
-   - Created `test_data_helpers.py` to query or create programmatically
-   - Tests work regardless of database state
-
-3. **Use correct data types everywhere**
-   - All customer_id, product_id, order_id are integers in API calls
-   - JSON payloads use integer IDs: `{"customer_id": 1}` not `{"customer_id": "CUST-1"}`
-
-4. **Test the 2 critical bugs AI-generated code misses**
-   - Scenario 4: Product FK change → unit_price re-copies from NEW product
-   - Scenario 5: Customer FK change → balances adjust on BOTH old and new customers
-
-5. **Include docstrings for Logic Report**
-   - Every `@when` step explains what's being tested
-   - Highlights which rules fire and why
-
-## Files in This Test Suite
-
-```
-test/api_logic_server_behave/
-├── features/
-│   ├── check_credit.feature           # 8 scenarios (CORRECTED - no string IDs)
-│   ├── app_integration.feature        # 2 scenarios (CORRECTED)
-│   └── steps/
-│       ├── check_credit.py            # NEW CORRECTED implementation
-│       ├── test_data_helpers.py       # NEW helper module
-│       ├── test_utils.py              # Login, logging utilities
-│       └── check_credit_OLD_BROKEN.py # Original broken version (backup)
-├── logs/
-│   ├── behave.log                     # Test run output
-│   └── scenario_logic_logs/           # Logic trace per scenario
-├── reports/
-│   └── Behave Logic Report.md         # Generated documentation
-└── TEST_SUITE_OVERVIEW.md             # This file
+# View report
+cat test/api_logic_server_behave/reports/Behave\ Logic\ Report.md
 ```
 
-## Using This Pattern for Other Projects
+## Note on Kafka Testing
 
-To create tests for a different project, follow this workflow:
-
-### Step 1: Understand Schema
-```bash
-# Read database/models.py
-# Note: ID data types, column names, relationships
-```
-
-### Step 2: Understand Rules
-```bash
-# Read logic/declare_logic.py and logic/logic_discovery/*.py
-# Note: Rules to test, tables involved, critical patterns
-```
-
-### Step 3: Create Test Data Helpers
+The Kafka integration rule is not tested yet:
 ```python
-# Create test_data_helpers.py
-# Functions to query or create test entities with correct data types
+Rule.after_flush_row_event(on_class=Order, 
+                          calling=kafka_producer.send_row_to_kafka,
+                          if_condition=lambda row: row.date_shipped is not None)
 ```
 
-### Step 4: Write Feature Files
-```gherkin
-# Use natural language, correct data types from Step 1
-Given Test customer with balance 0 and credit 1000  # Not "Customer CUST-1"
-```
+**Reason**: Kafka testing requires:
+- Kafka broker running
+- Mocking/verification of Kafka messages
+- More complex test infrastructure
 
-### Step 5: Implement Steps
-```python
-# Use helpers from Step 3, not hardcoded IDs
-customer_id = get_or_create_test_customer(...)  # Returns int, not string!
-```
+**Recommendation**: Add Kafka tests later if integration testing is needed. Current tests focus on core business logic correctness.
 
-### Step 6: Run and Verify
-```bash
-python behave_run.py
-# Check logs/, fix any failures
-python behave_logic_report.py run
-# Review reports/
-```
+## Test Data Strategy
 
-## Common Bugs to Avoid
+Tests use **fresh test data creation** (not pre-seeded data):
+- ✅ Unique names with timestamps prevent contamination
+- ✅ Tests are idempotent (can run multiple times)
+- ✅ No dependencies on specific database state
+- ✅ Works with empty database
 
-See `docs/training/testing.md` - "Common Bugs and Solutions" section for complete guide.
+## Expected Test Results
 
-**Top 3:**
-1. **Wrong data types** - Check models.py before writing ANY test code
-2. **Invented IDs** - Always query or create programmatically
-3. **Security mismatch** - Launch config `SECURITY_ENABLED` must match `default.env`
+All 9 scenarios should **PASS** ✅ if:
+- Server is running on `http://localhost:5656`
+- Security is disabled (`SECURITY_ENABLED = false`)
+- Database is accessible
+- Logic rules are loaded from `logic/declare_logic.py`
 
-## Success Criteria
+## Documentation Features
 
-Tests are correct when:
-- ✅ Run successfully with empty database (auto-create data)
-- ✅ Run successfully with populated database (reuse data)
-- ✅ All IDs are correct data types (integers, not strings)
-- ✅ All critical patterns tested (FK changes, where clauses, chains)
-- ✅ Logic logs generated (docstrings + test_utils.prt())
-- ✅ Can be used as template for other projects
+When you run the Behave Report, you'll see:
+- 📋 **Test scenarios** with Given/When/Then
+- 📝 **Logic documentation** from docstrings
+- 🔍 **Rules used** in each scenario
+- 📊 **Logic log** showing rule execution trace
+- ✅ **Complete traceability** from requirement to execution
 
-This test suite now meets all criteria! 🎉
+This demonstrates the **44X advantage** - transparent logic with complete audit trail!

@@ -1,50 +1,40 @@
 Feature: Check Credit
 
-  Scenario: Good Order - Basic Chain
-     Given Test customer with balance 0 and credit 1000
-      When New order placed with 1 item (qty 10, product price 5.00)
-      Then Customer balance is 50
-      Then Constraint passes
+  Scenario: Good Order Placed
+    Given Customer with balance 0 and credit 1000
+    When Good Order Placed
+    Then Balance is 50
+    Then Customer balance does not exceed credit limit
 
-  Scenario: Bad Order - Exceeds Credit
-     Given Test customer with balance 950 and credit 1000
-      When New order placed with 1 item (qty 20, product price 10.00)
-      Then Rejected per Check Credit
+  Scenario: Bad Order Exceeds Credit
+    Given Customer with balance 900 and credit 1000
+    When Order Placed with quantity 200
+    Then Error raised containing "balance"
+    Then Error raised containing "credit limit"
 
-  Scenario: Alter Item Qty - Chain Up
-     Given Test customer with existing order (balance 50)
-      When Item quantity changed from 10 to 20
-      Then Customer balance is 100
-      Then Order amount_total is 100
+  Scenario: Alter Item Quantity to Exceed Credit
+    Given Customer with balance 0 and credit 1000
+    And Order with 1 item quantity 10
+    When Item quantity changed to 1500
+    Then Error raised containing "balance"
+    Then Error raised containing "credit limit"
 
   Scenario: Change Product on Item
-     Given Test customer with order containing product at price 5.00
-      When Item product changed to product at price 10.00
-      Then Item unit_price updates to 10
-      Then Item amount recalculates
-      Then Order amount_total updates
-      Then Customer balance updates
+    Given Customer with balance 0 and credit 1000
+    And Order with 1 item quantity 10
+    When Item product changed to expensive product
+    Then Balance recalculates with new price
+    Then Item unit_price updated from new product
 
   Scenario: Change Customer on Order
-     Given Test customer A with order (balance 50)
-       And Test customer B with balance 0
-      When Order moved from customer A to customer B
-      Then Customer A balance is 0
-      Then Customer B balance is 50
+    Given Two customers with balance 0
+    And Order for first customer with balance 100
+    When Order moved to second customer
+    Then First customer balance is 0
+    Then Second customer balance is 100
 
-  Scenario: Set Shipped - Where Clause
-     Given Test customer with unshipped order (balance 50)
-      When Order date_shipped set to today
-      Then Customer balance is 0
-      Then Kafka message sent
-
-  Scenario: Reset Shipped - Where Clause
-     Given Test customer with shipped order (balance 0)
-      When Order date_shipped set to None
-      Then Customer balance is 50
-
-  Scenario: Delete Item - Aggregates Down
-     Given Test customer with order containing 2 items
-      When One item is deleted
-      Then Order amount_total decreased
-      Then Customer balance decreased
+  Scenario: Delete Item Adjusts Balance
+    Given Customer with balance 0 and credit 1000
+    And Order with 2 items
+    When One item is deleted
+    Then Balance decreases correctly

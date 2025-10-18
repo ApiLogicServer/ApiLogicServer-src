@@ -1,613 +1,496 @@
 from behave import *
 import requests
 import test_utils
-import test_data_helpers
-import json
-from dotmap import DotMap
-import datetime
+from decimal import Decimal
+import time
 
-logic_logs_dir = "logs/scenario_logic_logs"
+base_url = "http://localhost:5656/api"
 
-# ====================
-# GIVEN steps
-# ====================
+# ============================================================================
+# GIVEN Steps - Setup test data
+# ============================================================================
 
-@given('Test customer with balance {balance:d} and credit {credit:d}')
+@given('Customer with balance {balance:d} and credit {credit:d}')
 def step_impl(context, balance, credit):
     """
-    Create or get test customer with specified balance and credit limit.
-    
-    NOTE: balance is an aggregate (sum of orders). If balance > 0, we create
-    a filler order to reach that balance.
+    Create customer with specified balance and credit limit.
+    Balance is an aggregate - must create orders to reach it.
     """
-    print(f"DEBUG GIVEN: Creating customer with balance={balance}, credit={credit}")
-    customer_id = test_data_helpers.get_or_create_test_customer(
-        name=f"Test Cust {balance}",
-        balance=0,  # Always starts at 0
-        credit_limit=credit
-    )
-    print(f"DEBUG GIVEN: Got customer_id={customer_id}, type={type(customer_id)}")
+    # Step 1: Create customer (balance defaults to 0)
+    customer_name = f"Test Customer {int(time.time() * 1000)}"
+    customer_id = create_test_customer(customer_name, credit)
     
-    # If balance > 0, create filler order to reach it
+    # Step 2: If balance > 0, create filler order to reach it
     if balance > 0:
-        print(f"DEBUG GIVEN: Creating filler order to reach balance={balance}")
-        product_id = test_data_helpers.get_or_create_test_product(
-            name="Filler Product",
-            unit_price=1.00
-        )
-        order_id = test_data_helpers.create_test_order(customer_id, "Filler order")
-        test_data_helpers.create_test_item(order_id, product_id, quantity=balance)
-        print(f"DEBUG GIVEN: Created filler order_id={order_id} with amount={balance}")
+        product_id = create_test_product("Filler Product", unit_price=1.00)
+        order_id = create_test_order(customer_id, "Filler order")
+        create_test_item(order_id, product_id, quantity=balance)
+        # Now customer.balance = balance (computed by rules)
     
     context.customer_id = customer_id
     context.initial_balance = balance
+    context.credit_limit = credit
 
 
-@given('Test customer with existing order (balance {balance:d})')
-def step_impl(context, balance):
-    """Create customer with an existing order that results in the specified balance"""
-    # Create customer
-    customer_id = test_data_helpers.get_or_create_test_customer(
-        name="Test Cust with Order",
-        balance=0,
-        credit_limit=1000
-    )
+@given('Order with 1 item quantity {quantity:d}')
+def step_impl(context, quantity):
+    """
+    Create order with single item at specified quantity.
+    """
+    product_id = create_test_product("Test Product", unit_price=5.00)
+    order_id = create_test_order(context.customer_id, "Test order")
+    item_id = create_test_item(order_id, product_id, quantity)
     
-    # Create product
-    product_id = test_data_helpers.get_or_create_test_product(
-        name="Test Product",
-        unit_price=5.00
-    )
-    
-    # Create order with item to reach desired balance
-    order_id = test_data_helpers.create_test_order(customer_id, "Test Order")
-    item_id = test_data_helpers.create_test_item(order_id, product_id, quantity=10)  # 10 * 5 = 50
-    
-    context.customer_id = customer_id
+    context.product_id = product_id
     context.order_id = order_id
     context.item_id = item_id
-    context.product_id = product_id
-    context.initial_balance = balance
+    context.original_quantity = quantity
 
 
-@given('Test customer with order containing product at price {price:f}')
-def step_impl(context, price):
-    """Create customer with order containing a specific product"""
-    customer_id = test_data_helpers.get_or_create_test_customer(
-        name="Test Cust Product Change",
-        balance=0,
-        credit_limit=1000
-    )
-    
-    product_id = test_data_helpers.get_or_create_test_product(
-        name=f"Product ${price}",
-        unit_price=price
-    )
-    
-    order_id = test_data_helpers.create_test_order(customer_id, "Product Test Order")
-    item_id = test_data_helpers.create_test_item(order_id, product_id, quantity=10)
-    
-    context.customer_id = customer_id
-    context.order_id = order_id
-    context.item_id = item_id
-    context.product_id = product_id
-
-
-@given('Test customer A with order (balance {balance:d})')
-def step_impl(context, balance):
-    """Create customer A with an order"""
-    customer_a_id = test_data_helpers.get_or_create_test_customer(
-        name="Customer A",
-        balance=0,
-        credit_limit=1000
-    )
-    
-    product_id = test_data_helpers.get_or_create_test_product(
-        name="Test Product",
-        unit_price=5.00
-    )
-    
-    order_id = test_data_helpers.create_test_order(customer_a_id, "Order for A")
-    item_id = test_data_helpers.create_test_item(order_id, product_id, quantity=10)  # 50 balance
-    
-    context.customer_a_id = customer_a_id
-    context.customer_b_id = None
-    context.order_id = order_id
-
-
-@given('Test customer B with balance {balance:d}')
-def step_impl(context, balance):
-    """Create customer B"""
-    customer_b_id = test_data_helpers.get_or_create_test_customer(
-        name="Customer B",
-        balance=balance,
-        credit_limit=1000
-    )
-    context.customer_b_id = customer_b_id
-
-
-@given('Test customer with unshipped order (balance {balance:d})')
-def step_impl(context, balance):
-    """Create customer with unshipped order"""
-    customer_id = test_data_helpers.get_or_create_test_customer(
-        name="Test Cust Unshipped",
-        balance=0,
-        credit_limit=1000
-    )
-    
-    product_id = test_data_helpers.get_or_create_test_product(
-        name="Test Product",
-        unit_price=5.00
-    )
-    
-    order_id = test_data_helpers.create_test_order(customer_id, "Unshipped Order")
-    item_id = test_data_helpers.create_test_item(order_id, product_id, quantity=10)  # 50 balance
-    
-    context.customer_id = customer_id
-    context.order_id = order_id
-
-
-@given('Test customer with shipped order (balance {balance:d})')
-def step_impl(context, balance):
-    """Create customer with shipped order"""
-    customer_id = test_data_helpers.get_or_create_test_customer(
-        name="Test Cust Shipped",
-        balance=balance,
-        credit_limit=1000
-    )
-    
-    product_id = test_data_helpers.get_or_create_test_product(
-        name="Test Product",
-        unit_price=5.00
-    )
-    
-    order_id = test_data_helpers.create_test_order(customer_id, "Shipped Order")
-    item_id = test_data_helpers.create_test_item(order_id, product_id, quantity=10)
-    
-    # Ship it
-    patch_uri = f'http://localhost:5656/api/Order/{order_id}/'
-    patch_data = {
-        "data": {
-            "attributes": {"date_shipped": datetime.date.today().isoformat()},
-            "type": "Order",
-            "id": order_id
-        }
-    }
-    requests.patch(url=patch_uri, json=patch_data, headers=test_utils.login())
-    
-    context.customer_id = customer_id
-    context.order_id = order_id
-
-
-@given('Test customer with order containing 2 items')
+@given('Two customers with balance 0')
 def step_impl(context):
-    """Create customer with order containing 2 items"""
-    customer_id = test_data_helpers.get_or_create_test_customer(
-        name="Test Cust 2 Items",
-        balance=0,
-        credit_limit=1000
-    )
+    """
+    Create two customers for testing order transfers.
+    """
+    customer1_name = f"Test Customer 1 {int(time.time() * 1000)}"
+    customer2_name = f"Test Customer 2 {int(time.time() * 1000)}"
     
-    product_id = test_data_helpers.get_or_create_test_product(
-        name="Test Product",
-        unit_price=5.00
-    )
+    context.customer1_id = create_test_customer(customer1_name, 1000)
+    context.customer2_id = create_test_customer(customer2_name, 1000)
+
+
+@given('Order for first customer with balance {balance:d}')
+def step_impl(context, balance):
+    """
+    Create order for first customer reaching specified balance.
+    """
+    product_id = create_test_product("Transfer Product", unit_price=1.00)
+    order_id = create_test_order(context.customer1_id, "Order to transfer")
+    create_test_item(order_id, product_id, quantity=balance)
     
-    order_id = test_data_helpers.create_test_order(customer_id, "Two Items Order")
-    item1_id = test_data_helpers.create_test_item(order_id, product_id, quantity=10)
-    item2_id = test_data_helpers.create_test_item(order_id, product_id, quantity=10)
+    context.order_id = order_id
+    context.transfer_balance = balance
+
+
+@given('Order with 2 items')
+def step_impl(context):
+    """
+    Create order with two items for delete testing.
+    """
+    product1_id = create_test_product("Product 1", unit_price=10.00)
+    product2_id = create_test_product("Product 2", unit_price=20.00)
+    order_id = create_test_order(context.customer_id, "Order with 2 items")
     
-    context.customer_id = customer_id
+    item1_id = create_test_item(order_id, product1_id, quantity=5)  # 50
+    item2_id = create_test_item(order_id, product2_id, quantity=3)  # 60
+    
     context.order_id = order_id
     context.item1_id = item1_id
     context.item2_id = item2_id
-    
-    # Save initial state
-    customer = test_data_helpers.get_customer(customer_id)
-    order = test_data_helpers.get_order(order_id)
-    context.initial_balance = customer['balance']
-    context.initial_amount_total = order['amount_total']
+    context.expected_balance_after_delete = Decimal('60')  # After deleting item1
 
 
-@given('Test customer with unshipped order')
+# ============================================================================
+# WHEN Steps - Actions
+# ============================================================================
+
+@when('Good Order Placed')
 def step_impl(context):
-    """Create customer with unshipped order for Kafka testing"""
-    customer_id = test_data_helpers.get_or_create_test_customer(
-        name="Test Kafka Cust",
-        balance=0,
-        credit_limit=1000
-    )
-    
-    product_id = test_data_helpers.get_or_create_test_product(
-        name="Test Product",
-        unit_price=5.00
-    )
-    
-    order_id = test_data_helpers.create_test_order(customer_id, "Kafka Test Order")
-    item_id = test_data_helpers.create_test_item(order_id, product_id, quantity=10)
-    
-    context.customer_id = customer_id
-    context.order_id = order_id
-
-
-@given('Test customer with shipped order')
-def step_impl(context):
-    """Create customer with shipped order for Kafka testing"""
-    customer_id = test_data_helpers.get_or_create_test_customer(
-        name="Test Kafka Cust Shipped",
-        balance=0,
-        credit_limit=1000
-    )
-    
-    product_id = test_data_helpers.get_or_create_test_product(
-        name="Test Product",
-        unit_price=5.00
-    )
-    
-    order_id = test_data_helpers.create_test_order(customer_id, "Kafka Shipped Order")
-    item_id = test_data_helpers.create_test_item(order_id, product_id, quantity=10)
-    
-    # Ship it
-    patch_uri = f'http://localhost:5656/api/Order/{order_id}/'
-    patch_data = {
-        "data": {
-            "attributes": {"date_shipped": datetime.date.today().isoformat()},
-            "type": "Order",
-            "id": order_id
-        }
-    }
-    requests.patch(url=patch_uri, json=patch_data, headers=test_utils.login())
-    
-    context.customer_id = customer_id
-    context.order_id = order_id
-
-
-# ====================
-# WHEN steps
-# ====================
-
-@when('New order placed with 1 item (qty {qty:d}, product price {price:f})')
-def step_impl(context, qty, price):
     """
-    Place new order with one item.
+    Place an order with quantity that fits within credit limit.
     
-    Tests the complete dependency chain:
+    This tests the complete dependency chain:
     - Item.unit_price copied from Product.unit_price (Rule.copy)
     - Item.amount = quantity * unit_price (Rule.formula)
-    - Order.amount_total = sum(Item.amount) (Rule.sum)
-    - Customer.balance = sum(Order.amount_total where not shipped) (Rule.sum with where)
+    - Order.amount_total = Sum(Item.amount) (Rule.sum)
+    - Customer.balance = Sum(Order.amount_total where not shipped) (Rule.sum with WHERE)
+    - Customer.balance <= credit_limit (Rule.constraint)
     
     > **Key Takeaway:** One transaction triggers multiple chained rules automatically
     """
-    scenario_name = 'New Order Placed'
-    test_utils.prt(f'\n{scenario_name}... testing complete chain\n', scenario_name)
+    scenario_name = 'Good Order Placed'
+    test_utils.prt(f'\n{scenario_name}\n', scenario_name)
     
-    print(f"DEBUG WHEN: customer_id={context.customer_id}, qty={qty}, price={price}")
+    # Create product and order
+    product_id = create_test_product("Widget", unit_price=5.00)
+    order_id = create_test_order(context.customer_id, "Good order")
+    item_id = create_test_item(order_id, product_id, quantity=10)
     
-    # Create product with specified price
-    product_id = test_data_helpers.get_or_create_test_product(
-        name=f"Product ${price}",
-        unit_price=price
-    )
-    print(f"DEBUG WHEN: Created product_id={product_id}")
-    
-    # Create order (without items - add them separately)
-    order_id = test_data_helpers.create_test_order(context.customer_id, "Test Order")
-    print(f"DEBUG WHEN: Created order_id={order_id}")
-    
-    # Create item (triggers the full chain of rules) - may fail due to constraint!
-    try:
-        item_id = test_data_helpers.create_test_item(order_id, product_id, quantity=qty)
-        print(f"DEBUG WHEN: Created item_id={item_id}")
-        # Success
-        context.response = type('obj', (object,), {'status_code': 200, 'text': ''})()
-        context.order_id = order_id
-        context.item_id = item_id
-    except Exception as e:
-        # Constraint violation (expected for "Bad Order" scenario)
-        print(f"DEBUG WHEN: Item creation failed (constraint): {str(e)}")
-        # Extract status code and error message
-        error_msg = str(e)
-        if "400" in error_msg:
-            context.response = type('obj', (object,), {
-                'status_code': 400,
-                'text': error_msg
-            })()
-        else:
-            raise  # Re-raise if it's not a constraint error
+    context.order_id = order_id
+    context.item_id = item_id
+    context.expected_balance = Decimal('50')  # 10 * 5.00
 
 
-@when('Item quantity changed from {old_qty:d} to {new_qty:d}')
-def step_impl(context, old_qty, new_qty):
+@when('Order Placed with quantity {quantity:d}')
+def step_impl(context, quantity):
     """
-    Change item quantity.
+    Attempt to place order that exceeds credit limit.
     
-    Tests dependency chain propagation:
-    - Item.amount recalculates (Formula)
-    - Order.amount_total updates (Sum)
-    - Customer.balance updates (Sum)
+    This tests the constraint rule:
+    - Customer.balance would exceed credit_limit
+    - Transaction should be rejected
     
-    > **Key Takeaway:** Changing child attribute cascades up to grandparent
+    > **Key Takeaway:** Constraints prevent invalid data automatically
     """
-    scenario_name = 'Alter Item Qty'
-    test_utils.prt(f'\n{scenario_name}... testing chain up\n', scenario_name)
+    scenario_name = 'Bad Order Exceeds Credit'
+    test_utils.prt(f'\n{scenario_name}\n', scenario_name)
     
-    patch_uri = f'http://localhost:5656/api/Item/{context.item_id}/'
-    patch_data = {
+    product_id = create_test_product("Expensive Widget", unit_price=1.00)
+    order_uri = f"{base_url}/Order/"
+    
+    post_data = {
         "data": {
-            "attributes": {"quantity": new_qty},
-            "type": "Item",
-            "id": context.item_id
+            "type": "Order",
+            "attributes": {
+                "customer_id": int(context.customer_id),
+                "notes": "Order exceeding credit",
+                "date_shipped": None
+            }
         }
     }
-    r = requests.patch(url=patch_uri, json=patch_data, headers=test_utils.login())
+    
+    # Create order first
+    r = requests.post(url=order_uri, json=post_data, headers=test_utils.login())
+    
+    if r.status_code >= 200 and r.status_code < 300:
+        order_id = int(r.json()['data']['id'])
+        
+        # Now try to add item that exceeds credit
+        item_uri = f"{base_url}/Item/"
+        item_data = {
+            "data": {
+                "type": "Item",
+                "attributes": {
+                    "order_id": int(order_id),
+                    "product_id": int(product_id),
+                    "quantity": quantity
+                }
+            }
+        }
+        
+        r = requests.post(url=item_uri, json=item_data, headers=test_utils.login())
+    
     context.response = r
 
 
-@when('Item product changed to product at price {new_price:f}')
-def step_impl(context, new_price):
+@when('Item quantity changed to {new_quantity:d}')
+def step_impl(context, new_quantity):
     """
-    Change product on an item (foreign key change).
+    Alter existing item quantity to exceed credit limit.
     
-    **Critical Bug Prevented:**
-    - Item.unit_price re-copies from NEW product (Rule.copy)
-    - Item.amount recalculates with new price (Rule.formula)
-    - Order.amount_total updates (Rule.sum)
-    - Customer.balance updates (Rule.sum)
+    This tests:
+    - PATCH operation triggers recalculation
+    - Constraint checked on update (not just insert)
     
-    > **Key Takeaway:** FK change triggers re-copy from new parent, chain propagates up
+    > **Key Takeaway:** Rules enforce constraints on all operations
+    """
+    scenario_name = 'Alter Item Quantity to Exceed Credit'
+    test_utils.prt(f'\n{scenario_name}\n', scenario_name)
+    
+    item_uri = f"{base_url}/Item/{context.item_id}/"
+    patch_data = {
+        "data": {
+            "type": "Item",
+            "id": str(context.item_id),
+            "attributes": {
+                "quantity": new_quantity
+            }
+        }
+    }
+    
+    r = requests.patch(url=item_uri, json=patch_data, headers=test_utils.login())
+    context.response = r
+
+
+@when('Item product changed to expensive product')
+def step_impl(context):
+    """
+    Change product_id on item to test copy rule re-execution.
+    
+    This tests:
+    - Item.unit_price re-copies from new Product
+    - Item.amount recalculates with new unit_price
+    - Order.amount_total updates
+    - Customer.balance updates
+    
+    > **Key Takeaway:** Foreign key changes trigger complete rule chain
     """
     scenario_name = 'Change Product on Item'
-    test_utils.prt(f'\n{scenario_name}... testing FK change\n', scenario_name)
+    test_utils.prt(f'\n{scenario_name}\n', scenario_name)
     
-    # Create new product with new price
-    new_product_id = test_data_helpers.get_or_create_test_product(
-        name=f"Product ${new_price}",
-        unit_price=new_price
-    )
+    # Create expensive product
+    expensive_product_id = create_test_product("Expensive Product", unit_price=15.00)
     
-    patch_uri = f'http://localhost:5656/api/Item/{context.item_id}/'
+    item_uri = f"{base_url}/Item/{context.item_id}/"
     patch_data = {
         "data": {
-            "attributes": {"product_id": new_product_id},  # INTEGER ID!
             "type": "Item",
-            "id": context.item_id
+            "id": str(context.item_id),
+            "attributes": {
+                "product_id": int(expensive_product_id)
+            }
         }
     }
-    r = requests.patch(url=patch_uri, json=patch_data, headers=test_utils.login())
+    
+    r = requests.patch(url=item_uri, json=patch_data, headers=test_utils.login())
     context.response = r
-    context.new_product_id = new_product_id
+    context.expensive_product_id = expensive_product_id
+    context.new_expected_balance = Decimal('150')  # 10 items * 15.00
 
 
-@when('Order moved from customer A to customer B')
+@when('Order moved to second customer')
 def step_impl(context):
     """
-    Move order to different customer (foreign key change).
+    Change customer_id on order to test both parent adjustments.
     
-    **Critical Bug Prevented:**
-    - OLD customer A balance decreases (removes order amount)
-    - NEW customer B balance increases (adds order amount)
+    This tests THE CRITICAL BUG that procedural code misses:
+    - Original customer balance decreases
+    - New customer balance increases
+    - Rules engine handles BOTH automatically
     
-    > **Key Takeaway:** FK change adjusts BOTH old and new parent aggregates
+    > **Key Takeaway:** Declarative rules adjust both old and new parents
     """
     scenario_name = 'Change Customer on Order'
-    test_utils.prt(f'\n{scenario_name}... testing FK change both parents\n', scenario_name)
+    test_utils.prt(f'\n{scenario_name}\n', scenario_name)
     
-    patch_uri = f'http://localhost:5656/api/Order/{context.order_id}/'
+    order_uri = f"{base_url}/Order/{context.order_id}/"
     patch_data = {
         "data": {
-            "attributes": {"customer_id": context.customer_b_id},  # INTEGER ID!
             "type": "Order",
-            "id": context.order_id
+            "id": str(context.order_id),
+            "attributes": {
+                "customer_id": int(context.customer2_id)
+            }
         }
     }
-    r = requests.patch(url=patch_uri, json=patch_data, headers=test_utils.login())
-    context.response = r
-
-
-@when('Order date_shipped set to today')
-def step_impl(context):
-    """
-    Set ship date on order.
     
-    Tests where clause condition:
-    - Order excluded from Customer.balance (where date_shipped is None)
-    - Balance decreases by order amount
-    - Kafka event fires (if_condition met)
-    
-    > **Key Takeaway:** Where clause dynamically includes/excludes from aggregate
-    """
-    scenario_name = 'Set Shipped'
-    test_utils.prt(f'\n{scenario_name}... testing where clause exclusion\n', scenario_name)
-    
-    patch_uri = f'http://localhost:5656/api/Order/{context.order_id}/'
-    today = datetime.date.today().isoformat()
-    patch_data = {
-        "data": {
-            "attributes": {"date_shipped": today},
-            "type": "Order",
-            "id": context.order_id
-        }
-    }
-    r = requests.patch(url=patch_uri, json=patch_data, headers=test_utils.login())
-    context.response = r
-
-
-@when('Order date_shipped set to None')
-def step_impl(context):
-    """
-    Clear ship date on order.
-    
-    Tests where clause condition:
-    - Order included in Customer.balance (where date_shipped is None)
-    - Balance increases by order amount
-    
-    > **Key Takeaway:** Where clause condition change triggers reaggregation
-    """
-    scenario_name = 'Reset Shipped'
-    test_utils.prt(f'\n{scenario_name}... testing where clause inclusion\n', scenario_name)
-    
-    patch_uri = f'http://localhost:5656/api/Order/{context.order_id}/'
-    patch_data = {
-        "data": {
-            "attributes": {"date_shipped": None},
-            "type": "Order",
-            "id": context.order_id
-        }
-    }
-    r = requests.patch(url=patch_uri, json=patch_data, headers=test_utils.login())
+    r = requests.patch(url=order_uri, json=patch_data, headers=test_utils.login())
     context.response = r
 
 
 @when('One item is deleted')
 def step_impl(context):
     """
-    Delete one item from order.
+    Delete item to test aggregate adjustment downward.
     
-    Tests cascade down:
+    This tests DELETE operation (often forgotten):
     - Item deleted
-    - Order.amount_total decreases (Sum reaggregates)
-    - Customer.balance decreases (Sum reaggregates)
+    - Order.amount_total decreases
+    - Customer.balance decreases
     
-    > **Key Takeaway:** Delete triggers reaggregation up the chain
+    > **Key Takeaway:** DELETE operations adjust aggregates downward automatically
     """
-    scenario_name = 'Delete Item'
-    test_utils.prt(f'\n{scenario_name}... testing delete cascade\n', scenario_name)
+    scenario_name = 'Delete Item Adjusts Balance'
+    test_utils.prt(f'\n{scenario_name}\n', scenario_name)
     
-    delete_uri = f'http://localhost:5656/api/Item/{context.item1_id}/'
-    r = requests.delete(url=delete_uri, headers=test_utils.login())
+    item_uri = f"{base_url}/Item/{context.item1_id}/"
+    r = requests.delete(url=item_uri, headers=test_utils.login())
     context.response = r
 
 
-# ====================
-# THEN steps
-# ====================
+# ============================================================================
+# THEN Steps - Assertions
+# ============================================================================
 
-@then('Customer balance is {expected_balance:d}')
+@then('Balance is {expected_balance:d}')
 def step_impl(context, expected_balance):
-    """Verify customer balance matches expected value"""
-    customer = test_data_helpers.get_customer(context.customer_id)
-    actual_balance = float(customer['balance'])
-    print(f"DEBUG: customer_id={context.customer_id}, actual_balance={actual_balance}, expected={expected_balance}, type(actual)={type(actual_balance)}, type(expected)={type(expected_balance)}")
-    assert abs(actual_balance - expected_balance) < 0.01, \
-        f'Customer balance should be {expected_balance}, got {actual_balance}'
+    """Verify customer balance equals expected value"""
+    customer = get_customer(context.customer_id)
+    actual_balance = Decimal(str(customer['balance']))
+    expected = Decimal(str(expected_balance))
+    
+    assert actual_balance == expected, \
+        f"Expected balance {expected}, got {actual_balance}"
 
 
-@then('Constraint passes')
+@then('Customer balance does not exceed credit limit')
 def step_impl(context):
-    """Verify request succeeded (constraint passed)"""
-    assert context.response.status_code <= 300, \
-        f'Request should succeed, got {context.response.status_code}: {context.response.text}'
+    """Verify constraint is satisfied"""
+    customer = get_customer(context.customer_id)
+    balance = Decimal(str(customer['balance']))
+    credit_limit = Decimal(str(customer['credit_limit']))
+    
+    assert balance <= credit_limit, \
+        f"Balance {balance} exceeds credit limit {credit_limit}"
 
 
-@then('Rejected per Check Credit')
-def step_impl(context):
-    """Verify request rejected due to credit limit constraint"""
-    assert context.response.status_code > 300, \
-        f'Request should fail due to credit limit'
+@then('Error raised containing "{text}"')
+def step_impl(context, text):
+    """Verify error response contains expected text"""
+    assert context.response.status_code >= 400, \
+        f"Expected error status, got {context.response.status_code}"
+    
     response_text = context.response.text.lower()
-    assert 'credit' in response_text or 'balance' in response_text or 'exceeds' in response_text, \
-        f'Error should mention credit limit: {context.response.text}'
+    assert text.lower() in response_text, \
+        f"Expected '{text}' in error message, got: {context.response.text}"
 
 
-@then('Order amount_total is {expected_total:d}')
-def step_impl(context, expected_total):
-    """Verify order amount_total matches expected value"""
-    order = test_data_helpers.get_order(context.order_id)
-    actual_total = float(order['amount_total'])
-    assert actual_total == expected_total, \
-        f'Order amount_total should be {expected_total}, got {actual_total}'
-
-
-@then('Item unit_price updates to {expected_price:d}')
-def step_impl(context, expected_price):
-    """Verify item unit_price copied from new product"""
-    item = test_data_helpers.get_item(context.item_id)
-    actual_price = float(item['unit_price'])
-    assert actual_price == expected_price, \
-        f'Item unit_price should be {expected_price}, got {actual_price}'
-
-
-@then('Item amount recalculates')
+@then('Balance recalculates with new price')
 def step_impl(context):
-    """Verify item amount was recalculated (formula fired)"""
-    item = test_data_helpers.get_item(context.item_id)
-    expected_amount = item['quantity'] * item['unit_price']
-    actual_amount = float(item['amount'])
-    assert actual_amount == expected_amount, \
-        f'Item amount should be {expected_amount}, got {actual_amount}'
+    """Verify balance updated with new product price"""
+    customer = get_customer(context.customer_id)
+    actual_balance = Decimal(str(customer['balance']))
+    
+    assert actual_balance == context.new_expected_balance, \
+        f"Expected balance {context.new_expected_balance}, got {actual_balance}"
 
 
-@then('Order amount_total updates')
+@then('Item unit_price updated from new product')
 def step_impl(context):
-    """Verify order amount_total updated (sum reaggregated)"""
-    order = test_data_helpers.get_order(context.order_id)
-    assert order['amount_total'] is not None, 'Order amount_total should be calculated'
+    """Verify unit_price copied from new product"""
+    item_uri = f"{base_url}/Item/{context.item_id}/"
+    r = requests.get(url=item_uri, headers=test_utils.login())
+    item = r.json()['data']['attributes']
+    
+    item_unit_price = Decimal(str(item['unit_price']))
+    expected_price = Decimal('15.00')
+    
+    assert item_unit_price == expected_price, \
+        f"Expected unit_price {expected_price}, got {item_unit_price}"
 
 
-@then('Customer balance updates')
-def step_impl(context):
-    """Verify customer balance updated (sum reaggregated)"""
-    customer = test_data_helpers.get_customer(context.customer_id)
-    assert customer['balance'] is not None, 'Customer balance should be calculated'
-
-
-@then('Customer A balance is {expected_balance:d}')
-def step_impl(context, expected_balance):
-    """Verify customer A balance after FK change"""
-    customer = test_data_helpers.get_customer(context.customer_a_id)
-    actual_balance = float(customer['balance'])
+@then('First customer balance is {expected:d}')
+def step_impl(context, expected):
+    """Verify first customer balance after order transfer"""
+    customer = get_customer(context.customer1_id)
+    actual_balance = Decimal(str(customer['balance']))
+    expected_balance = Decimal(str(expected))
+    
     assert actual_balance == expected_balance, \
-        f'Customer A balance should be {expected_balance}, got {actual_balance}'
+        f"First customer: expected balance {expected_balance}, got {actual_balance}"
 
 
-@then('Customer B balance is {expected_balance:d}')
-def step_impl(context, expected_balance):
-    """Verify customer B balance after FK change"""
-    customer = test_data_helpers.get_customer(context.customer_b_id)
-    actual_balance = float(customer['balance'])
+@then('Second customer balance is {expected:d}')
+def step_impl(context, expected):
+    """Verify second customer balance after order transfer"""
+    customer = get_customer(context.customer2_id)
+    actual_balance = Decimal(str(customer['balance']))
+    expected_balance = Decimal(str(expected))
+    
     assert actual_balance == expected_balance, \
-        f'Customer B balance should be {expected_balance}, got {actual_balance}'
+        f"Second customer: expected balance {expected_balance}, got {actual_balance}"
 
 
-@then('Order amount_total decreased')
+@then('Balance decreases correctly')
 def step_impl(context):
-    """Verify order amount decreased after delete"""
-    order = test_data_helpers.get_order(context.order_id)
-    actual_total = float(order['amount_total'])
-    assert actual_total < context.initial_amount_total, \
-        f'Order amount_total should decrease from {context.initial_amount_total}, got {actual_total}'
+    """Verify balance decreased after item deletion"""
+    customer = get_customer(context.customer_id)
+    actual_balance = Decimal(str(customer['balance']))
+    
+    assert actual_balance == context.expected_balance_after_delete, \
+        f"Expected balance {context.expected_balance_after_delete}, got {actual_balance}"
 
 
-@then('Customer balance decreased')
-def step_impl(context):
-    """Verify customer balance decreased after delete"""
-    customer = test_data_helpers.get_customer(context.customer_id)
-    actual_balance = float(customer['balance'])
-    assert actual_balance < context.initial_balance, \
-        f'Customer balance should decrease from {context.initial_balance}, got {actual_balance}'
+# ============================================================================
+# Helper Functions (Follow Rule #1 - No circular imports!)
+# ============================================================================
+
+def create_test_customer(name: str, credit_limit: int) -> int:
+    """
+    Create customer with specified credit limit.
+    Balance defaults to 0 (it's an aggregate).
+    
+    Returns:
+        int: Customer ID (converted from JSON string)
+    """
+    customer_uri = f"{base_url}/Customer/"
+    post_data = {
+        "data": {
+            "type": "Customer",
+            "attributes": {
+                "name": name,
+                "credit_limit": credit_limit,
+                "email_opt_out": False
+            }
+        }
+    }
+    
+    r = requests.post(url=customer_uri, json=post_data, headers=test_utils.login())
+    result = r.json()
+    return int(result['data']['id'])  # CRITICAL: Convert to int!
 
 
-@then('Kafka message sent')
-def step_impl(context):
-    """Verify Kafka event fired (check logic log)"""
-    # In real scenario, would check Kafka consumer or mock
-    # For now, just verify request succeeded
-    assert context.response.status_code <= 300, \
-        f'Order ship should succeed, got {context.response.status_code}'
+def create_test_product(name: str, unit_price: float) -> int:
+    """
+    Create product with specified unit price.
+    
+    Returns:
+        int: Product ID (converted from JSON string)
+    """
+    product_uri = f"{base_url}/Product/"
+    post_data = {
+        "data": {
+            "type": "Product",
+            "attributes": {
+                "name": name,
+                "unit_price": unit_price
+            }
+        }
+    }
+    
+    r = requests.post(url=product_uri, json=post_data, headers=test_utils.login())
+    result = r.json()
+    return int(result['data']['id'])  # CRITICAL: Convert to int!
 
 
-@then('Kafka message sent to order_shipping topic')
-def step_impl(context):
-    """Verify Kafka message sent to specific topic"""
-    # In real scenario, verify topic and message content
-    assert context.response.status_code <= 300, \
-        f'Order ship should succeed, got {context.response.status_code}'
+def create_test_order(customer_id: int, notes: str) -> int:
+    """
+    Create order for customer.
+    amount_total defaults to 0 (it's an aggregate).
+    
+    Returns:
+        int: Order ID (converted from JSON string)
+    """
+    order_uri = f"{base_url}/Order/"
+    post_data = {
+        "data": {
+            "type": "Order",
+            "attributes": {
+                "customer_id": int(customer_id),  # Direct FK format
+                "notes": notes,
+                "date_shipped": None
+            }
+        }
+    }
+    
+    r = requests.post(url=order_uri, json=post_data, headers=test_utils.login())
+    result = r.json()
+    return int(result['data']['id'])  # CRITICAL: Convert to int!
 
 
-@then('No Kafka message sent')
-def step_impl(context):
-    """Verify Kafka event did NOT fire"""
-    # In real scenario, verify no message in Kafka
-    assert context.response.status_code <= 300, \
-        f'Order unship should succeed, got {context.response.status_code}'
+def create_test_item(order_id: int, product_id: int, quantity: int) -> int:
+    """
+    Create item for order.
+    unit_price will be copied from product.
+    amount will be calculated by formula.
+    
+    Returns:
+        int: Item ID (converted from JSON string)
+    """
+    item_uri = f"{base_url}/Item/"
+    post_data = {
+        "data": {
+            "type": "Item",
+            "attributes": {
+                "order_id": int(order_id),    # Direct FK format
+                "product_id": int(product_id), # Direct FK format
+                "quantity": quantity
+            }
+        }
+    }
+    
+    r = requests.post(url=item_uri, json=post_data, headers=test_utils.login())
+    result = r.json()
+    return int(result['data']['id'])  # CRITICAL: Convert to int!
+
+
+def get_customer(customer_id: int) -> dict:
+    """
+    Retrieve customer by ID.
+    
+    Returns:
+        dict: Customer attributes
+    """
+    customer_uri = f"{base_url}/Customer/{customer_id}/"
+    r = requests.get(url=customer_uri, headers=test_utils.login())
+    return r.json()['data']['attributes']
