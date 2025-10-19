@@ -1,3 +1,6 @@
+The tests here were created by the AI Assistant.  Contrast the the nw_sample, which contains manually created tests.
+
+
 # API Logic Server Testing Guide
 
 ## Overview
@@ -48,6 +51,26 @@ python behave_run.py
 # Use "Behave Run" configuration (F5)
 # In Debug Console, select "Behave Run" from dropdown (not server log)
 ```
+
+### Running Specific Tests
+
+You can run specific features or scenarios using behave's command-line options:
+
+```bash
+# Run a specific feature file
+behave features/check_credit.feature
+
+# Run a specific scenario by name
+behave -n "Good Order - Basic Chain"
+
+# Run scenarios matching a pattern
+behave -n ".*credit.*"
+
+# Run with tags (if you've tagged scenarios with @smoke, @wip, etc.)
+behave --tags=smoke
+```
+
+**Note**: When using `behave` directly (not `behave_run.py`), logic logs still generate in `logs/scenario_logic_logs/`, but the wrapper provides additional error checking.
 
 ### Alternative: Basic Server Tests
 
@@ -205,6 +228,29 @@ def step_impl(context):
     assert final_state.calculated_field == expected_value
 ```
 
+**Understanding the `context` Object:**
+
+The `context` object in Behave is shared across all steps in a scenario, making it perfect for passing data between Given/When/Then steps:
+
+```python
+# Store values in GIVEN steps
+context.customer_id = 123
+context.initial_balance = 1000
+
+# Access in WHEN steps  
+order_data = {"customer_id": context.customer_id, "amount": 500}
+
+# Verify in THEN steps
+assert context.response.status_code == 200
+```
+
+**Common context patterns:**
+- `context.customer_id`, `context.order_id`, etc. - Store entity IDs
+- `context.initial_balance`, `context.before_amount` - Capture "before" state
+- `context.response` - Store API response for later assertions
+- `context.auth_header` - Store authentication token
+- `context.expected_error` - Store expected error for negative tests
+
 ## 🤖 For GitHub Copilot
 
 When generating tests for API Logic Server projects:
@@ -354,10 +400,35 @@ delete_url = f"{base_url}/{EntityName}/{entity_id}/"
 
 ## 📊 Test Reports and Logging
 
-- **Logic Reports**: Generated in `reports/` showing which rules executed
-- **Behave Output**: Standard BDD test results with pass/fail status
-- **Logic Logs**: Detailed rule execution in `logs/scenario_logic_logs/`
-- **Server Logs**: API request/response details and errors
+### Viewing Test Output
+
+After running tests, you can view results in multiple locations:
+
+- **Console Output**: Real-time pass/fail status during test execution
+- **Behave Log**: `logs/behave.log` - Detailed test execution output
+- **Scenario Logic Logs**: `logs/scenario_logic_logs/*.log` - One file per scenario showing rule execution
+- **Server Logs**: API request/response details and errors in server console
+
+### Generating Logic Reports
+
+To create a comprehensive markdown report showing which rules executed in each scenario:
+
+```bash
+# From test/api_logic_server_behave directory
+python behave_logic_report.py run
+```
+
+This generates `reports/Behave Logic Report.md` containing:
+- **Test Scenarios**: All executed scenarios with descriptions
+- **Logic Documentation**: Step docstrings explaining what each test validates
+- **Rules Fired**: Which business logic rules executed during each scenario
+- **Disclosure Areas**: Expandable sections showing detailed logic traces
+
+The report is useful for:
+- Understanding which rules are tested by which scenarios
+- Documenting test coverage for business stakeholders
+- Debugging rule execution order and dependencies
+- Verifying that expected rules actually fired
 
 ## 🔍 Debugging Tests
 
