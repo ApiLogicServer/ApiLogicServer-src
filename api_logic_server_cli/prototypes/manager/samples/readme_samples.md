@@ -6,7 +6,7 @@ See https://apilogicserver.github.io/Docs/Data-Model-Examples/.  The Manager con
 
 * `samples/nw_sample_nocust` is the same database, but without customizations.  With no customizations, the default nw example illustrates the **level of automation you should expect for your own projects.**
 
-* `samples/basic_demo` is the pre-built demo tutorial.  You can r**ebuild it using the readme's.**
+* `samples/basic_demo_sample` is the pre-built demo tutorial.  You can r**ebuild it using the readme's, either by cli (`README.md`) or natural language (`readme_vibe.md`).**
 
 <br>
 
