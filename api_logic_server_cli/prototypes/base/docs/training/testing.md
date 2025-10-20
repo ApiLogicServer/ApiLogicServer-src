@@ -8,40 +8,6 @@
 > 
 > This document focuses on Phase 2 testing (using custom business APIs) and the critical patterns AI must follow to generate correct tests.
 
-## 🚨 URGENT ANTI-PATTERNS - READ FIRST! 🚨
-
-**These errors cause 80% of test failures. ALWAYS avoid:**
-
-1. **❌ NON-NULL-SAFE CONSTRAINTS** → Tests fail with `TypeError`
-   ```python
-   # WRONG:  lambda row: row.balance <= row.credit_limit
-   # RIGHT:  lambda row: row.balance is None or row.credit_limit is None or row.balance <= row.credit_limit
-   ```
-
-2. **❌ TESTING CONSTRAINTS VIA B2B APIs** → Constraints may not be enforced
-   ```python
-   # WRONG:  Expecting B2B API to fail on constraint violation
-   # RIGHT:  Test constraints using direct CRUD Item creation
-   ```
-
-3. **❌ NOT INITIALIZING CONTEXT VARIABLES** → `AttributeError` in subsequent steps
-   ```python
-   # WRONG:  Only setting context.order_id on success
-   # RIGHT:  Always set context.order_id = None on failure
-   ```
-
-4. **❌ NO ERROR HANDLING IN API CALLS** → `KeyError` when API fails
-   ```python
-   # WRONG:  context.order_id = int(r.json()['data']['id'])
-   # RIGHT:  if r.status_code < 300 and 'data' in r.json(): ...
-   ```
-
-5. **❌ FORGETTING TEST REPEATABILITY** → Tests fail on second run
-   ```python
-   # WRONG:  Using existing customer "Alice"
-   # RIGHT:  Using unique name "Alice {timestamp}"
-   ```
-
 ## CRITICAL: Test Generation Workflow
 
 **When user says "create tests from rules", follow this EXACT sequence:**
@@ -449,99 +415,6 @@ def step_impl(context):
         return  # Skip gracefully
 ```
 
-### Rule #12: Null-Safe Constraint Handling ⚠️ URGENT
-```python
-# ❌ WRONG - Not null-safe, fails with None values
-Rule.constraint(validate=Customer, 
-               as_condition=lambda row: row.balance <= row.credit_limit)
-
-# ✅ CORRECT - Null-safe constraint (MANDATORY pattern)
-Rule.constraint(validate=Customer, 
-               as_condition=lambda row: row.balance is None or row.credit_limit is None or row.balance <= row.credit_limit,
-               error_msg="Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})")
-```
-
-**Why This Matters:**
-- Constraints can fail with `TypeError` when comparing `None` values
-- **ALWAYS** add null checks: `row.field is None or`
-- This pattern prevents constraint evaluation errors during testing
-
-### Rule #13: B2B API vs CRUD Constraint Testing ⚠️ URGENT
-```python
-# ❌ WRONG - Expecting B2B API to enforce constraints
-@when('B2B order placed for customer with low credit limit')
-def step_impl(context):
-    # B2B APIs may handle transactions differently
-    # Constraint might not be enforced at API level
-    
-@then('Order creation should fail')
-def step_impl(context):
-    assert not context.order_created  # This might FAIL!
-
-# ✅ CORRECT - Test constraints via CRUD operations
-@when('Item added that would exceed credit limit')
-def step_impl(context):
-    # Direct Item creation will properly trigger constraint
-    item_data = {"data": {"attributes": {"quantity": 5, "product_id": 2}}}
-    r = requests.post('/api/Item/', json=item_data)
-    context.item_creation_failed = (r.status_code >= 400)
-    
-@then('Item creation should fail')
-def step_impl(context):
-    assert context.item_creation_failed  # This WILL work
-```
-
-**Critical Insight:**
-- **B2B APIs** may bypass constraint checking or handle it differently
-- **CRUD APIs** properly enforce LogicBank constraints
-- Test constraints using **Phase 1 (CRUD)** approach, not Phase 2 (B2B)
-
-### Rule #14: Error Handling in Step Definitions ⚠️ URGENT
-```python
-# ❌ WRONG - No error handling for API failures
-@given('Order exists for test customer')
-def step_impl(context):
-    r = requests.post('/api/Order/', json=order_data)
-    context.order_id = int(r.json()['data']['id'])  # KeyError if API fails!
-
-# ✅ CORRECT - Proper error handling
-@given('Order exists for test customer')
-def step_impl(context):
-    r = requests.post('/api/Order/', json=order_data)
-    if r.status_code < 300 and 'data' in r.json():
-        context.order_id = int(r.json()['data']['id'])
-    else:
-        test_utils.prt(f"Order creation failed: {r.text}", "Setup Error")
-        context.order_id = None
-```
-
-**Why This Matters:**
-- API calls can fail for various reasons (constraints, validation, etc.)
-- **ALWAYS** check `r.status_code` and `'data' in r.json()`
-- Set context variables to safe defaults when operations fail
-
-### Rule #15: Context Variable Initialization ⚠️ URGENT
-```python
-# ✅ MANDATORY - Initialize ALL context variables in Background/Given steps
-@given('the system is ready for testing')
-def step_impl(context):
-    """Initialize test environment"""
-    # Initialize ALL possible context variables
-    context.customer_map = {}
-    context.order_id = None
-    context.item_id = None
-    context.customer_id = None
-    context.order_created = False
-    context.item_creation_failed = False  # Don't forget new variables!
-    context.last_response = None
-```
-
-**Critical Pattern:**
-- Initialize **EVERY** context variable that any step might use
-- Set them to safe defaults (`None`, `False`, `{}`, `[]`)
-- Add new variables when adding new step definitions
-- This prevents `AttributeError: 'Context' object has no attribute 'variable_name'`
-
 ## Complete Phase 2 Example
 
 ### .feature File
@@ -635,11 +508,6 @@ def step_impl(context, expected):
 | "row altered by another user" | Use direct FK: `"customer_id": int(id)` |
 | "circular import" | Remove imports from logic/, database/ |
 | "empty logic log" | Add `test_utils.prt(msg, scenario_name)` |
-| **⚠️ "KeyError: 'data'"** | **API failed - check `r.status_code < 300` first** |
-| **⚠️ "AttributeError: 'Context' object has no attribute..."** | **Initialize ALL context variables in @given steps** |
-| **⚠️ "TypeError: '>' not supported between instances of 'NoneType' and 'int'"** | **Make constraints null-safe: `row.field is None or ...`** |
-| **⚠️ "Order creation should have failed" (constraint test)** | **Test constraints via CRUD, not B2B APIs** |
-| **⚠️ "Assertion Failed: Constraint failed: customer balance is X"** | **B2B APIs may bypass constraints - use Phase 1 testing** |
 
 ## Test Generation Workflow
 
