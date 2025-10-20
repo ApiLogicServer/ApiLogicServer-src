@@ -1,0 +1,11 @@
+Checking Diana balance = 300 - 2025-10-20 11:28:01,736 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10a00ee00) (sqlalchemy before_flush)			 - 2025-10-20 11:28:01,741 - logic_logger - INFO
+..Customer[None] {Insert - client} id: None, name: TestCustomer 1760984881739, balance: 0, credit_limit: 3000, email: None, email_opt_out: None  row: 0x10a1907d0  session: 0x10a00ee00  ins_upd_dlt: ins, initial: ins - 2025-10-20 11:28:01,741 - logic_logger - INFO
+..Customer[None] {server aggregate_defaults: balance } id: None, name: TestCustomer 1760984881739, balance: 0, credit_limit: 3000, email: None, email_opt_out: None  row: 0x10a1907d0  session: 0x10a00ee00  ins_upd_dlt: ins, initial: ins - 2025-10-20 11:28:01,741 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10a00ee00)   										 - 2025-10-20 11:28:01,741 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10a00ee00)   										 - 2025-10-20 11:28:01,741 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2025-10-20 11:28:01,741 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10a00ee00))       	 - 2025-10-20 11:28:01,742 - logic_logger - INFO

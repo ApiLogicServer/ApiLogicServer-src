@@ -1,0 +1,2 @@
+Error getting customer balance: {"errors": [{"title": "NotFoundError Invalid \"Customer\" ID \"None\"", "detail": "NotFoundError Invalid \"Customer\" ID \"None\"", "code": "404"}]}
+ - 2025-10-20 08:59:10,592 - logic_logger - INFO

@@ -1,0 +1,2 @@
+Item creation correctly failed: {"errors": [{"title": "Customer balance (1470.0000000000) exceeds credit limit (1000.0000000000)", "detail": {"model": "Customer", "error_attributes": []}, "code": "2001"}]}
+ - 2025-10-20 10:00:28,448 - logic_logger - INFO

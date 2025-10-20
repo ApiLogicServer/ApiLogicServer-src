@@ -1,0 +1,20 @@
+
+Delete Item Reduces Order Total and Customer Balance
+ - 2025-10-20 11:28:01,758 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10a00ff00) (sqlalchemy before_flush)			 - 2025-10-20 11:28:01,759 - logic_logger - INFO
+..Item[150] {Delete - client} id: 150, order_id: 134, product_id: 2, quantity: 3, amount: 270.0000000000, unit_price: 90.0000000000  row: 0x10a262450  session: 0x10a00ff00  ins_upd_dlt: dlt, initial: dlt - 2025-10-20 11:28:01,760 - logic_logger - INFO
+....Order[134] {Update - Adjusting order: amount_total} id: 134, notes: Multi-item test order, customer_id: 168, CreatedOn: 2025-10-20, date_shipped: None, amount_total:  [570.0000000000-->] 300.0000000000  row: 0x10a2639d0  session: 0x10a00ff00  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:28:01,760 - logic_logger - INFO
+......Customer[168] {Update - Adjusting customer: balance} id: 168, name: TestCustomer 1760984881739, balance:  [570.0000000000-->] 300.0000000000, credit_limit: 3000.0000000000, email: None, email_opt_out: None  row: 0x10a261e50  session: 0x10a00ff00  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:28:01,760 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10a00ff00)   										 - 2025-10-20 11:28:01,760 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10a00ff00)   										 - 2025-10-20 11:28:01,761 - logic_logger - INFO
+....Order[134] {AfterFlush Event} id: 134, notes: Multi-item test order, customer_id: 168, CreatedOn: 2025-10-20, date_shipped: None, amount_total:  [570.0000000000-->] 300.0000000000  row: 0x10a2639d0  session: 0x10a00ff00  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:28:01,761 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2025-10-20 11:28:01,761 - logic_logger - INFO
+  Customer		## - 2025-10-20 11:28:01,761 - logic_logger - INFO
+    1. Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x108fed080>)		## - 2025-10-20 11:28:01,761 - logic_logger - INFO
+  Order		## - 2025-10-20 11:28:01,761 - logic_logger - INFO
+    2. RowEvent Order.send_order_to_shipping() 		## - 2025-10-20 11:28:01,761 - logic_logger - INFO
+    3. Derive <class 'database.models.Order'>.amount_total as Sum(Item.amount Where  - None)		## - 2025-10-20 11:28:01,761 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10a00ff00))       	 - 2025-10-20 11:28:01,761 - logic_logger - INFO

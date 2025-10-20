@@ -1,0 +1,12 @@
+
+Setup Order - 3 Widget and 2 Gadget
+ - 2025-10-20 10:38:03,433 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10a298380) (sqlalchemy before_flush)			 - 2025-10-20 10:38:03,435 - logic_logger - INFO
+..Customer[113] {Update - client} id: 113, name: TestCustomer 1760981883429, balance: 0E-10, credit_limit: 3000.0000000000, email: None, email_opt_out: None  row: 0x10a280050  session: 0x10a298380  ins_upd_dlt: upd, initial: upd - 2025-10-20 10:38:03,435 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10a298380)   										 - 2025-10-20 10:38:03,435 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10a298380)   										 - 2025-10-20 10:38:03,435 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2025-10-20 10:38:03,435 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10a298380))       	 - 2025-10-20 10:38:03,435 - logic_logger - INFO

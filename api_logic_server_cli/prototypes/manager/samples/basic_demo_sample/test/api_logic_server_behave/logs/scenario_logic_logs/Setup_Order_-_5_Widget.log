@@ -1,0 +1,41 @@
+
+Setup Order - 5 Widget
+ - 2025-10-20 11:28:01,676 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10a00f130) (sqlalchemy before_flush)			 - 2025-10-20 11:28:01,678 - logic_logger - INFO
+..Customer[165] {Update - client} id: 165, name: Bob 1760984881672, balance: 0E-10, credit_limit: 2000.0000000000, email: None, email_opt_out: None  row: 0x10a067650  session: 0x10a00f130  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:28:01,678 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10a00f130)   										 - 2025-10-20 11:28:01,678 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10a00f130)   										 - 2025-10-20 11:28:01,679 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2025-10-20 11:28:01,679 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10a00f130))       	 - 2025-10-20 11:28:01,679 - logic_logger - INFO
+Logic Phase:		ROW LOGIC IGNORE RE-RAISE(session=0x10a00f130) (sqlalchemy before_flush)			 - 2025-10-20 11:28:01,679 - logic_logger - DEBUG
+
+Logic Phase:		ROW LOGIC		(session=0x10a00f130) (sqlalchemy before_flush)			 - 2025-10-20 11:28:01,679 - logic_logger - INFO
+..Product[2] {Update - client} id: 2, name: Widget, unit_price: 90.0000000000, carbon_neutral: None  row: 0x10a26ee40  session: 0x10a00f130  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:28:01,679 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: Test order, customer_id: 165, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10a1917d0  session: 0x10a00f130  ins_upd_dlt: ins, initial: ins - 2025-10-20 11:28:01,679 - logic_logger - INFO
+..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: Test order, customer_id: 165, CreatedOn: 2025-10-20 11:28:01.679735, date_shipped: None, amount_total: None  row: 0x10a1917d0  session: 0x10a00f130  ins_upd_dlt: ins, initial: ins - 2025-10-20 11:28:01,679 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: Test order, customer_id: 165, CreatedOn: 2025-10-20 11:28:01.679735, date_shipped: None, amount_total: 0  row: 0x10a1917d0  session: 0x10a00f130  ins_upd_dlt: ins, initial: ins - 2025-10-20 11:28:01,679 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 5, amount: None, unit_price: None  row: 0x10a190650  session: 0x10a00f130  ins_upd_dlt: ins, initial: ins - 2025-10-20 11:28:01,679 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 5, amount: None, unit_price: 90.0000000000  row: 0x10a190650  session: 0x10a00f130  ins_upd_dlt: ins, initial: ins - 2025-10-20 11:28:01,680 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 5, amount: 450.0000000000, unit_price: 90.0000000000  row: 0x10a190650  session: 0x10a00f130  ins_upd_dlt: ins, initial: ins - 2025-10-20 11:28:01,680 - logic_logger - INFO
+..Item[None] {TODO DB adjust_from_inserted/adopted_child adjusts Derive <class 'database.models.Order'>.amount_total as Sum(Item.amount Where  - None)} id: None, order_id: None, product_id: None, quantity: 5, amount: 450.0000000000, unit_price: 90.0000000000  row: 0x10a190650  session: 0x10a00f130  ins_upd_dlt: ins, initial: ins - 2025-10-20 11:28:01,680 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: Test order, customer_id: 165, CreatedOn: 2025-10-20 11:28:01.679735, date_shipped: None, amount_total:  [0-->] 450.0000000000  row: 0x10a1917d0  session: 0x10a00f130  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:28:01,680 - logic_logger - INFO
+......Customer[165] {Update - Adjusting customer: balance} id: 165, name: Bob 1760984881672, balance:  [0E-10-->] 450.0000000000, credit_limit: 2000.0000000000, email: None, email_opt_out: None  row: 0x10a067650  session: 0x10a00f130  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:28:01,680 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10a00f130)   										 - 2025-10-20 11:28:01,680 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10a00f130)   										 - 2025-10-20 11:28:01,681 - logic_logger - INFO
+..Order[132] {AfterFlush Event} id: 132, notes: Test order, customer_id: 165, CreatedOn: 2025-10-20 11:28:01.679735, date_shipped: None, amount_total: 450.0000000000  row: 0x10a1917d0  session: 0x10a00f130  ins_upd_dlt: ins, initial: ins - 2025-10-20 11:28:01,681 - logic_logger - INFO
+..Order[132] {Sending Order to Shipping [Note: **Kafka not enabled** ]} id: 132, notes: Test order, customer_id: 165, CreatedOn: 2025-10-20 11:28:01.679735, date_shipped: None, amount_total: 450.0000000000  row: 0x10a1917d0  session: 0x10a00f130  ins_upd_dlt: ins, initial: ins - 2025-10-20 11:28:01,681 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2025-10-20 11:28:01,681 - logic_logger - INFO
+  Customer		## - 2025-10-20 11:28:01,681 - logic_logger - INFO
+    1. Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x108fed080>)		## - 2025-10-20 11:28:01,681 - logic_logger - INFO
+  Item		## - 2025-10-20 11:28:01,681 - logic_logger - INFO
+    2. Derive <class 'database.models.Item'>.amount as Formula (1): <function>		## - 2025-10-20 11:28:01,681 - logic_logger - INFO
+    3. Derive <class 'database.models.Item'>.unit_price as Copy(product.unit_price)		## - 2025-10-20 11:28:01,681 - logic_logger - INFO
+  Order		## - 2025-10-20 11:28:01,681 - logic_logger - INFO
+    4. Derive <class 'database.models.Order'>.amount_total as Sum(Item.amount Where  - None)		## - 2025-10-20 11:28:01,681 - logic_logger - INFO
+    5. RowEvent Order.send_order_to_shipping() 		## - 2025-10-20 11:28:01,681 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10a00f130))       	 - 2025-10-20 11:28:01,681 - logic_logger - INFO

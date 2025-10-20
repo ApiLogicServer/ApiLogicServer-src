@@ -1,28 +1,19 @@
 
 The following rules have been activated
- - 2025-10-17 20:02:27,797 - logic_logger - DEBUG
-Rule Bank[0x10a632cf0] (loaded 2025-10-17 20:00:14.506411)		##   - 2025-10-17 20:02:27,798 - logic_logger - INFO
-Mapped Class[Customer] rules:		##   - 2025-10-17 20:02:27,798 - logic_logger - INFO
-  Constraint Function: None 		##   - 2025-10-17 20:02:27,798 - logic_logger - INFO
-  Constraint Function: None 		##   - 2025-10-17 20:02:27,798 - logic_logger - INFO
-  Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x10a750ea0>)		##   - 2025-10-17 20:02:27,798 - logic_logger - INFO
-Mapped Class[SysEmail] rules:		##   - 2025-10-17 20:02:27,798 - logic_logger - INFO
-  RowEvent SysEmail.send_mail() 		##   - 2025-10-17 20:02:27,798 - logic_logger - INFO
-Mapped Class[Order] rules:		##   - 2025-10-17 20:02:27,798 - logic_logger - INFO
-  Derive <class 'database.models.Order'>.amount_total as Sum(Item.amount Where  - None)		##   - 2025-10-17 20:02:27,798 - logic_logger - INFO
-  RowEvent Order.send_row_to_kafka() 		##   - 2025-10-17 20:02:27,798 - logic_logger - INFO
-Mapped Class[Item] rules:		##   - 2025-10-17 20:02:27,798 - logic_logger - INFO
-  Derive <class 'database.models.Item'>.amount as Formula (1): Rule.formula(derive=Item.amount, as_expression=la [...]		##   - 2025-10-17 20:02:27,798 - logic_logger - INFO
-  Derive <class 'database.models.Item'>.unit_price as Copy(product.unit_price)		##   - 2025-10-17 20:02:27,798 - logic_logger - INFO
-Logic Bank - 13 rules loaded - 2025-10-17 20:02:27,798 - logic_logger - INFO
-Logic Bank - 13 rules loaded - 2025-10-17 20:02:27,798 - logic_logger - INFO
-
-Logic Phase:		ROW LOGIC		(session=0x10b6825d0) (sqlalchemy before_flush)			 - 2025-10-17 20:02:27,802 - logic_logger - INFO
-..Customer[None] {Insert - client} id: None, name: Test Customer 1760756547799, balance: None, credit_limit: 1000, email: None, email_opt_out: False  row: 0x10b708d50  session: 0x10b6825d0  ins_upd_dlt: ins, initial: ins - 2025-10-17 20:02:27,803 - logic_logger - INFO
-..Customer[None] {server aggregate_defaults: balance } id: None, name: Test Customer 1760756547799, balance: 0, credit_limit: 1000, email: None, email_opt_out: False  row: 0x10b708d50  session: 0x10b6825d0  ins_upd_dlt: ins, initial: ins - 2025-10-17 20:02:27,803 - logic_logger - INFO
-Logic Phase:		COMMIT LOGIC		(session=0x10b6825d0)   										 - 2025-10-17 20:02:27,803 - logic_logger - INFO
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10b6825d0)   										 - 2025-10-17 20:02:27,804 - logic_logger - INFO
-
-These Rules Fired (see Logic Phases, above, for actual order):		## - 2025-10-17 20:02:27,804 - logic_logger - INFO
-
-Logic Phase:		COMPLETE(session=0x10b6825d0))       	 - 2025-10-17 20:02:27,804 - logic_logger - INFO
+ - 2025-10-20 08:59:10,304 - logic_logger - DEBUG
+Rule Bank[0x10893ecf0] (loaded 2025-10-20 08:49:47.292946)		##   - 2025-10-20 08:59:10,304 - logic_logger - INFO
+Mapped Class[Customer] rules:		##   - 2025-10-20 08:59:10,304 - logic_logger - INFO
+  Constraint Function: None 		##   - 2025-10-20 08:59:10,304 - logic_logger - INFO
+  Constraint Function: None 		##   - 2025-10-20 08:59:10,304 - logic_logger - INFO
+  Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where # Derive the customer's balance as the sum of order totals where not yet shipped.		##   - 2025-10-20 08:59:10,304 - logic_logger - INFO
+    Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x108a1ccc0>)		##   - 2025-10-20 08:59:10,304 - logic_logger - INFO
+Mapped Class[SysEmail] rules:		##   - 2025-10-20 08:59:10,304 - logic_logger - INFO
+  RowEvent SysEmail.send_mail() 		##   - 2025-10-20 08:59:10,304 - logic_logger - INFO
+Mapped Class[Order] rules:		##   - 2025-10-20 08:59:10,304 - logic_logger - INFO
+  Derive <class 'database.models.Order'>.amount_total as Sum(Item.amount Where  - None)		##   - 2025-10-20 08:59:10,304 - logic_logger - INFO
+  RowEvent Order.send_order_to_shipping() 		##   - 2025-10-20 08:59:10,304 - logic_logger - INFO
+Mapped Class[Item] rules:		##   - 2025-10-20 08:59:10,304 - logic_logger - INFO
+  Derive <class 'database.models.Item'>.amount as Formula (1): <function>		##   - 2025-10-20 08:59:10,304 - logic_logger - INFO
+  Derive <class 'database.models.Item'>.unit_price as Copy(product.unit_price)		##   - 2025-10-20 08:59:10,305 - logic_logger - INFO
+Logic Bank - 14 rules loaded - 2025-10-20 08:59:10,305 - logic_logger - INFO
+Logic Bank - 14 rules loaded - 2025-10-20 08:59:10,305 - logic_logger - INFO

@@ -1,78 +1,7 @@
-# Behave Creates Executable Test Suite, Documentation
+This report combines:
+* Behave log (lists Features, test Scenarios, results), with embedded
+* Logic showing rules executed, and how they operated
 
-You can optionally use the Behave test framework to:
-
-1. **Create and Run an Executable Test Suite:** in your IDE, create test definitions (similar to what is shown in the report below), and Python code to execute tests.  You can then execute your test suite with 1 command.
-
-2. **Requirements and Test Documentation:** as shown below, you can then create a wiki report that documents your requirements, and the tests (**Scenarios**) that confirm their proper operation.
-
-   * **Logic Documentation:** the report integrates your logic, including a logic report showing your logic (rules and Python), and a Logic Log that shows exactly how the rules executed.  Logic Doc can further contribute to Agile Collaboration.
-
-<figure><img src="https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/behave/behave-summary.png"  height="600"></figure>
-
-
-
-[Behave](https://behave.readthedocs.io/en/stable/tutorial.html) is a framework for defining and executing tests.  It is based on [TDD (Test Driven Development)](http://dannorth.net/introducing-bdd/), an Agile approach for defining system requirements as executable tests.
-
-&nbsp;&nbsp;
-
-# Using Behave
-
-<figure><img src="https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/behave/TDD-ide.png?raw=true"></figure>
-
-Behave is pre-installed with API Logic Server.  Use it as shown above:
-
-1. Create `.feature` files to define ***Scenarios*** (aka tests) for ***Features*** (aka Stories)
-
-2. Code `.py` files to implement Scenario tests
-
-3. Run Test Suite: Launch Configuration `Behave Run`.  This runs all your Scenarios, and produces a summary report of your Features and the test results.
-
-4. Report: Launch Configuration `Behave Report` to create the wiki file shown at the top of this page.
-
-These steps are further defined, below.  Explore the samples in the sample project.
-
-&nbsp;&nbsp;
-
-## 1. Create `.feature` file to define Scenario
-
-Feature (aka Story) files are designed to promote IT / business user collaboration.  
-
-&nbsp;&nbsp;
-
-## 2. Code `.py` file to implement test
-
-Implement your tests in Python.  Here, the tests are largely _read existing data_, _run transaction_, and _test results_, using the API.  You can obtain the URLs from the swagger.
-
-Key points:
-
-* Link your scenario / implementations with annotations, as shown for _Order Placed with excessive quantity_.
-
-* Include the `test_utils.prt()` call; be sure to use specify the scenario name as the 2nd argument.  This is what drives the name of the Logic Log file, discussed below.
-
-* Optionally, include a Python docstring on your `when` implementation as shown above, delimited by `"""` strings (see _"Familiar logic pattern"_ in the screen shot, above). If provided, this will be written into the wiki report.
-
-* Important: the system assumes the following line identifies the scenario_name; be sure to include it.
-
-&nbsp;&nbsp;
-
-## 3. Run Test Suite: Launch Configuration `Behave Run`
-
-You can now execute your Test Suite.  Run the `Behave Run` Launch Configuration, and Behave will run all of the tests, producing the outputs (`behave.log` and `<scenario.logs>` shown above.
-
-* Windows users will need to run `Windows Behave Run`
-
-* You can run just 1 scenario using `Behave Scenario`
-
-* You can set breakpoints in your tests
-
-The server must be running for these tests.  Use the Launch Configuration `ApiLogicServer`, or `python api_logic_server_run.py`.  The latter does not run the debugger, which you may find more convenient since changes to your test code won't restart the server.
-
-&nbsp;&nbsp;
-
-## 4. Report: Launch Configuration `Behave Report'
-
-Run this to create the wiki reports from the logs in step 3.
 
 
 &nbsp;
@@ -106,44 +35,39 @@ Run this to create the wiki reports from the logs in step 3.
 ```
 
 The following rules have been activate
- - 2025-10-17 20:02:27,797 - logic_logger - DEBU
-Rule Bank[0x10a632cf0] (loaded 2025-10-17 20:00:14.506411
+ - 2025-10-20 08:59:10,304 - logic_logger - DEBU
+Rule Bank[0x10893ecf0] (loaded 2025-10-20 08:49:47.292946
 Mapped Class[Customer] rules
   Constraint Function: None
   Constraint Function: None
-  Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x10a750ea0>
+  Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where # Derive the customer's balance as the sum of order totals where not yet shipped
+    Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x108a1ccc0>
 Mapped Class[SysEmail] rules
   RowEvent SysEmail.send_mail()
 Mapped Class[Order] rules
   Derive <class 'database.models.Order'>.amount_total as Sum(Item.amount Where  - None
-  RowEvent Order.send_row_to_kafka()
+  RowEvent Order.send_order_to_shipping()
 Mapped Class[Item] rules
-  Derive <class 'database.models.Item'>.amount as Formula (1): Rule.formula(derive=Item.amount, as_expression=la [...
+  Derive <class 'database.models.Item'>.amount as Formula (1): <function
   Derive <class 'database.models.Item'>.unit_price as Copy(product.unit_price
-Logic Bank - 13 rules loaded - 2025-10-17 20:02:27,798 - logic_logger - INF
-Logic Bank - 13 rules loaded - 2025-10-17 20:02:27,798 - logic_logger - INF
-
-Logic Phase:		ROW LOGIC		(session=0x10b6825d0) (sqlalchemy before_flush)			 - 2025-10-17 20:02:27,802 - logic_logger - INF
-..Customer[None] {Insert - client} id: None, name: Test Customer 1760756547799, balance: None, credit_limit: 1000, email: None, email_opt_out: False  row: 0x10b708d50  session: 0x10b6825d0  ins_upd_dlt: ins, initial: ins - 2025-10-17 20:02:27,803 - logic_logger - INF
-..Customer[None] {server aggregate_defaults: balance } id: None, name: Test Customer 1760756547799, balance: 0, credit_limit: 1000, email: None, email_opt_out: False  row: 0x10b708d50  session: 0x10b6825d0  ins_upd_dlt: ins, initial: ins - 2025-10-17 20:02:27,803 - logic_logger - INF
-Logic Phase:		COMMIT LOGIC		(session=0x10b6825d0)   										 - 2025-10-17 20:02:27,803 - logic_logger - INF
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10b6825d0)   										 - 2025-10-17 20:02:27,804 - logic_logger - INF
-
+Logic Bank - 14 rules loaded - 2025-10-20 08:59:10,305 - logic_logger - INF
+Logic Bank - 14 rules loaded - 2025-10-20 08:59:10,305 - logic_logger - INF
 ```
 </details>
   
 &nbsp;
 &nbsp;
-## Feature: Check Credit  
+## Feature: Order Processing with Business Logic  
   
 &nbsp;
 &nbsp;
-### Scenario: Good Order Placed
-&emsp;  Scenario: Good Order Placed  
-&emsp;&emsp;    Given Customer with balance 0 and credit 1000  
-&emsp;&emsp;    When Good Order Placed  
-&emsp;&emsp;    Then Balance is 50  
-&emsp;&emsp;    Then Customer balance does not exceed credit limit  
+### Scenario: Good Order Placed via B2B API
+&emsp;  Scenario: Good Order Placed via B2B API  
+&emsp;&emsp;    Given Customer "Alice" with balance 0 and credit limit 1000  
+&emsp;&emsp;    When B2B order placed for "Alice" with 5 Widget  
+&emsp;&emsp;    Then Customer balance should be 450  
+    And Order amount_total should be 450  
+    And Order created successfully  
 <details markdown>
 <summary>Tests - and their logic - are transparent.. click to see Logic</summary>
 
@@ -152,57 +76,41 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10b6825d0)   										 - 2025-10-17 
 &nbsp;
 
 
-**Logic Doc** for scenario: Good Order Placed
-   
-Place an order with quantity that fits within credit limit.
-
-This tests the complete dependency chain:
-- Item.unit_price copied from Product.unit_price (Rule.copy)
-- Item.amount = quantity * unit_price (Rule.formula)
-- Order.amount_total = Sum(Item.amount) (Rule.sum)
-- Customer.balance = Sum(Order.amount_total where not shipped) (Rule.sum with WHERE)
-- Customer.balance <= credit_limit (Rule.constraint)
-
-> **Key Takeaway:** One transaction triggers multiple chained rules automatically
-
-
-&nbsp;
-&nbsp;
-
-
-**Rules Used** in Scenario: Good Order Placed
+**Rules Used** in Scenario: Good Order Placed via B2B API
 ```
   Customer  
-    1. Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x10a750ea0>)  
+    1. Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x108fed080>)  
   Item  
-    2. Derive <class 'database.models.Item'>.amount as Formula (1): Rule.formula(derive=Item.amount, as_expression=la [...]  
+    2. Derive <class 'database.models.Item'>.amount as Formula (1): <function>  
     3. Derive <class 'database.models.Item'>.unit_price as Copy(product.unit_price)  
   Order  
     4. Derive <class 'database.models.Order'>.amount_total as Sum(Item.amount Where  - None)  
-    5. RowEvent Order.send_row_to_kafka()   
+    5. RowEvent Order.send_order_to_shipping()   
 ```
-**Logic Log** in Scenario: Good Order Placed
+**Logic Log** in Scenario: Good Order Placed via B2B API
 ```
 
-Good Order Place
- - 2025-10-17 20:02:27,808 - logic_logger - INF
+Good Order Placed via B2B AP
+ - 2025-10-20 11:28:01,655 - logic_logger - INF
 
-Logic Phase:		ROW LOGIC		(session=0x10b681450) (sqlalchemy before_flush)			 - 2025-10-17 20:02:27,810 - logic_logger - INF
-..Product[None] {Insert - client} id: None, name: Widget, unit_price: 5  row: 0x10b03a970  session: 0x10b681450  ins_upd_dlt: ins, initial: ins - 2025-10-17 20:02:27,810 - logic_logger - INF
-Logic Phase:		COMMIT LOGIC		(session=0x10b681450)   										 - 2025-10-17 20:02:27,810 - logic_logger - INF
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10b681450)   										 - 2025-10-17 20:02:27,811 - logic_logger - INF
+Logic Phase:		ROW LOGIC		(session=0x10a00e250) (sqlalchemy before_flush)			 - 2025-10-20 11:28:01,657 - logic_logger - INF
+..Customer[164] {Update - client} id: 164, name: Alice 1760984881645, balance: 0E-10, credit_limit: 1000.0000000000, email: None, email_opt_out: None  row: 0x10a261fd0  session: 0x10a00e250  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:28:01,657 - logic_logger - INF
+Logic Phase:		COMMIT LOGIC		(session=0x10a00e250)   										 - 2025-10-20 11:28:01,657 - logic_logger - INF
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10a00e250)   										 - 2025-10-20 11:28:01,657 - logic_logger - INF
 
 ```
 </details>
   
 &nbsp;
 &nbsp;
-### Scenario: Bad Order Exceeds Credit
-&emsp;  Scenario: Bad Order Exceeds Credit  
-&emsp;&emsp;    Given Customer with balance 900 and credit 1000  
-&emsp;&emsp;    When Order Placed with quantity 200  
-&emsp;&emsp;    Then Error raised containing "balance"  
-&emsp;&emsp;    Then Error raised containing "credit limit"  
+### Scenario: Item Quantity Update Recalculates Amounts
+&emsp;  Scenario: Item Quantity Update Recalculates Amounts  
+&emsp;&emsp;    Given Customer "Bob" with balance 0 and credit limit 2000  
+    And Order exists for "Bob" with 5 Widget  
+&emsp;&emsp;    When Item quantity changed to 10  
+&emsp;&emsp;    Then Item amount should be 900  
+    And Order amount_total should be 900  
+    And Customer balance should be 900  
 <details markdown>
 <summary>Tests - and their logic - are transparent.. click to see Logic</summary>
 
@@ -211,55 +119,44 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10b681450)   										 - 2025-10-17 
 &nbsp;
 
 
-**Logic Doc** for scenario: Bad Order Exceeds Credit
-   
-Attempt to place order that exceeds credit limit.
-
-This tests the constraint rule:
-- Customer.balance would exceed credit_limit
-- Transaction should be rejected
-
-> **Key Takeaway:** Constraints prevent invalid data automatically
-
-
-&nbsp;
-&nbsp;
-
-
-**Rules Used** in Scenario: Bad Order Exceeds Credit
+**Rules Used** in Scenario: Item Quantity Update Recalculates Amounts
 ```
   Customer  
-    1. Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x10a750ea0>)  
+    1. Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x108fed080>)  
   Item  
-    2. Derive <class 'database.models.Item'>.amount as Formula (1): Rule.formula(derive=Item.amount, as_expression=la [...]  
-    3. Derive <class 'database.models.Item'>.unit_price as Copy(product.unit_price)  
+    2. Derive <class 'database.models.Item'>.amount as Formula (1): <function>  
   Order  
+    3. RowEvent Order.send_order_to_shipping()   
     4. Derive <class 'database.models.Order'>.amount_total as Sum(Item.amount Where  - None)  
-    5. RowEvent Order.send_row_to_kafka()   
 ```
-**Logic Log** in Scenario: Bad Order Exceeds Credit
+**Logic Log** in Scenario: Item Quantity Update Recalculates Amounts
 ```
 
-Bad Order Exceeds Credi
- - 2025-10-17 20:02:27,851 - logic_logger - INF
+Item Quantity Update Recalculates Amount
+ - 2025-10-20 11:28:01,686 - logic_logger - INF
 
-Logic Phase:		ROW LOGIC		(session=0x10b0a48d0) (sqlalchemy before_flush)			 - 2025-10-17 20:02:27,852 - logic_logger - INF
-..Product[None] {Insert - client} id: None, name: Expensive Widget, unit_price: 1  row: 0x10b03acf0  session: 0x10b0a48d0  ins_upd_dlt: ins, initial: ins - 2025-10-17 20:02:27,853 - logic_logger - INF
-Logic Phase:		COMMIT LOGIC		(session=0x10b0a48d0)   										 - 2025-10-17 20:02:27,853 - logic_logger - INF
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10b0a48d0)   										 - 2025-10-17 20:02:27,853 - logic_logger - INF
+Logic Phase:		ROW LOGIC		(session=0x10a00dd00) (sqlalchemy before_flush)			 - 2025-10-20 11:28:01,688 - logic_logger - INF
+..Item[148] {Update - client} id: 148, order_id: 132, product_id: 2, quantity:  [5-->] 10, amount: 450.0000000000, unit_price: 90.0000000000  row: 0x10a262350  session: 0x10a00dd00  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:28:01,688 - logic_logger - INF
+..Item[148] {Formula amount} id: 148, order_id: 132, product_id: 2, quantity:  [5-->] 10, amount:  [450.0000000000-->] 900.0000000000, unit_price: 90.0000000000  row: 0x10a262350  session: 0x10a00dd00  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:28:01,688 - logic_logger - INF
+....Order[132] {Update - Adjusting order: amount_total} id: 132, notes: Test order, customer_id: 165, CreatedOn: 2025-10-20, date_shipped: None, amount_total:  [450.0000000000-->] 900.0000000000  row: 0x10a2616d0  session: 0x10a00dd00  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:28:01,689 - logic_logger - INF
+......Customer[165] {Update - Adjusting customer: balance} id: 165, name: Bob 1760984881672, balance:  [450.0000000000-->] 900.0000000000, credit_limit: 2000.0000000000, email: None, email_opt_out: None  row: 0x10a263ad0  session: 0x10a00dd00  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:28:01,689 - logic_logger - INF
+Logic Phase:		COMMIT LOGIC		(session=0x10a00dd00)   										 - 2025-10-20 11:28:01,689 - logic_logger - INF
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10a00dd00)   										 - 2025-10-20 11:28:01,689 - logic_logger - INF
+....Order[132] {AfterFlush Event} id: 132, notes: Test order, customer_id: 165, CreatedOn: 2025-10-20, date_shipped: None, amount_total:  [450.0000000000-->] 900.0000000000  row: 0x10a2616d0  session: 0x10a00dd00  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:28:01,690 - logic_logger - INF
 
 ```
 </details>
   
 &nbsp;
 &nbsp;
-### Scenario: Alter Item Quantity to Exceed Credit
-&emsp;  Scenario: Alter Item Quantity to Exceed Credit  
-&emsp;&emsp;    Given Customer with balance 0 and credit 1000  
-    And Order with 1 item quantity 10  
-&emsp;&emsp;    When Item quantity changed to 1500  
-&emsp;&emsp;    Then Error raised containing "balance"  
-&emsp;&emsp;    Then Error raised containing "credit limit"  
+### Scenario: Change Order Customer Adjusts Both Balances
+&emsp;  Scenario: Change Order Customer Adjusts Both Balances  
+&emsp;&emsp;    Given Customer "Charlie" with balance 0 and credit limit 1500  
+    And Customer "Diana" with balance 0 and credit limit 2000  
+    And Order exists for "Charlie" with 2 Gadget  
+&emsp;&emsp;    When Order customer changed to "Diana"  
+&emsp;&emsp;    Then Customer "Charlie" balance should be 0  
+    And Customer "Diana" balance should be 300  
 <details markdown>
 <summary>Tests - and their logic - are transparent.. click to see Logic</summary>
 
@@ -268,57 +165,39 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10b0a48d0)   										 - 2025-10-17 
 &nbsp;
 
 
-**Logic Doc** for scenario: Alter Item Quantity to Exceed Credit
-   
-Alter existing item quantity to exceed credit limit.
-
-This tests:
-- PATCH operation triggers recalculation
-- Constraint checked on update (not just insert)
-
-> **Key Takeaway:** Rules enforce constraints on all operations
-
-
-&nbsp;
-&nbsp;
-
-
-**Rules Used** in Scenario: Alter Item Quantity to Exceed Credit
+**Rules Used** in Scenario: Change Order Customer Adjusts Both Balances
 ```
   Customer  
-    1. Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x10a750ea0>)  
-  Item  
-    2. Derive <class 'database.models.Item'>.amount as Formula (1): Rule.formula(derive=Item.amount, as_expression=la [...]  
-    3. Derive <class 'database.models.Item'>.unit_price as Copy(product.unit_price)  
+    1. Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x108fed080>)  
   Order  
-    4. Derive <class 'database.models.Order'>.amount_total as Sum(Item.amount Where  - None)  
-    5. RowEvent Order.send_row_to_kafka()   
+    2. RowEvent Order.send_order_to_shipping()   
 ```
-**Logic Log** in Scenario: Alter Item Quantity to Exceed Credit
+**Logic Log** in Scenario: Change Order Customer Adjusts Both Balances
 ```
 
-Alter Item Quantity to Exceed Credi
- - 2025-10-17 20:02:27,884 - logic_logger - INF
+Change Order Customer Adjusts Both Balance
+ - 2025-10-20 11:28:01,723 - logic_logger - INF
 
-Logic Phase:		ROW LOGIC		(session=0x10b71a470) (sqlalchemy before_flush)			 - 2025-10-17 20:02:27,885 - logic_logger - INF
-..Item[8] {Update - client} id: 8, order_id: 9, product_id: 9, quantity:  [10-->] 1500, amount: 50.0000000000, unit_price: 5.0000000000  row: 0x10b893a50  session: 0x10b71a470  ins_upd_dlt: upd, initial: upd - 2025-10-17 20:02:27,886 - logic_logger - INF
-..Item[8] {Formula amount} id: 8, order_id: 9, product_id: 9, quantity:  [10-->] 1500, amount:  [50.0000000000-->] 7500.0000000000, unit_price: 5.0000000000  row: 0x10b893a50  session: 0x10b71a470  ins_upd_dlt: upd, initial: upd - 2025-10-17 20:02:27,886 - logic_logger - INF
-....Order[9] {Update - Adjusting order: amount_total} id: 9, notes: Test order, customer_id: 8, CreatedOn: 2025-10-17, date_shipped: None, amount_total:  [50.0000000000-->] 7500.0000000000  row: 0x10b8b8550  session: 0x10b71a470  ins_upd_dlt: upd, initial: upd - 2025-10-17 20:02:27,886 - logic_logger - INF
-......Customer[8] {Update - Adjusting customer: balance} id: 8, name: Test Customer 1760756547867, balance:  [50.0000000000-->] 7500.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: False  row: 0x10b8b9150  session: 0x10b71a470  ins_upd_dlt: upd, initial: upd - 2025-10-17 20:02:27,887 - logic_logger - INF
-......Customer[8] {Constraint Failure: Customer balance (7500.0000000000) exceeds credit limit (1000.0000000000)} id: 8, name: Test Customer 1760756547867, balance:  [50.0000000000-->] 7500.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: False  row: 0x10b8b9150  session: 0x10b71a470  ins_upd_dlt: upd, initial: upd - 2025-10-17 20:02:27,887 - logic_logger - INF
+Logic Phase:		ROW LOGIC		(session=0x10a00d9d0) (sqlalchemy before_flush)			 - 2025-10-20 11:28:01,725 - logic_logger - INF
+..Order[133] {Update - client} id: 133, notes: Test order, customer_id:  [166-->] 167, CreatedOn: 2025-10-20, date_shipped: None, amount_total: 300.0000000000  row: 0x109ffe8d0  session: 0x10a00d9d0  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:28:01,725 - logic_logger - INF
+....Customer[167] {Update - Adjusting customer: balance, balance} id: 167, name: Diana 1760984881704, balance:  [0E-10-->] 300.0000000000, credit_limit: 2000.0000000000, email: None, email_opt_out: None  row: 0x10a282650  session: 0x10a00d9d0  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:28:01,726 - logic_logger - INF
+....Customer[166] {Update - Adjusting Old customer} id: 166, name: Charlie 1760984881701, balance:  [300.0000000000-->] 0E-10, credit_limit: 1500.0000000000, email: None, email_opt_out: None  row: 0x10a281cd0  session: 0x10a00d9d0  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:28:01,726 - logic_logger - INF
+Logic Phase:		COMMIT LOGIC		(session=0x10a00d9d0)   										 - 2025-10-20 11:28:01,727 - logic_logger - INF
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10a00d9d0)   										 - 2025-10-20 11:28:01,727 - logic_logger - INF
+..Order[133] {AfterFlush Event} id: 133, notes: Test order, customer_id:  [166-->] 167, CreatedOn: 2025-10-20, date_shipped: None, amount_total: 300.0000000000  row: 0x109ffe8d0  session: 0x10a00d9d0  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:28:01,727 - logic_logger - INF
 
 ```
 </details>
   
 &nbsp;
 &nbsp;
-### Scenario: Change Product on Item
-&emsp;  Scenario: Change Product on Item  
-&emsp;&emsp;    Given Customer with balance 0 and credit 1000  
-    And Order with 1 item quantity 10  
-&emsp;&emsp;    When Item product changed to expensive product  
-&emsp;&emsp;    Then Balance recalculates with new price  
-&emsp;&emsp;    Then Item unit_price updated from new product  
+### Scenario: Delete Item Reduces Order Total and Customer Balance
+&emsp;  Scenario: Delete Item Reduces Order Total and Customer Balance  
+&emsp;&emsp;    Given Customer "TestCustomer" with balance 0 and credit limit 3000  
+    And Order exists for "TestCustomer" with 3 Widget and 2 Gadget  
+&emsp;&emsp;    When First item deleted  
+&emsp;&emsp;    Then Order amount_total should be 300  
+    And Customer balance should be 300  
 <details markdown>
 <summary>Tests - and their logic - are transparent.. click to see Logic</summary>
 
@@ -327,184 +206,39 @@ Logic Phase:		ROW LOGIC		(session=0x10b71a470) (sqlalchemy before_flush)			 - 20
 &nbsp;
 
 
-**Logic Doc** for scenario: Change Product on Item
-   
-Change product_id on item to test copy rule re-execution.
-
-This tests:
-- Item.unit_price re-copies from new Product
-- Item.amount recalculates with new unit_price
-- Order.amount_total updates
-- Customer.balance updates
-
-> **Key Takeaway:** Foreign key changes trigger complete rule chain
-
-
-&nbsp;
-&nbsp;
-
-
-**Rules Used** in Scenario: Change Product on Item
+**Rules Used** in Scenario: Delete Item Reduces Order Total and Customer Balance
 ```
   Customer  
-    1. Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x10a750ea0>)  
-  Item  
-    2. Derive <class 'database.models.Item'>.amount as Formula (1): Rule.formula(derive=Item.amount, as_expression=la [...]  
-    3. Derive <class 'database.models.Item'>.unit_price as Copy(product.unit_price)  
+    1. Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x108fed080>)  
   Order  
-    4. Derive <class 'database.models.Order'>.amount_total as Sum(Item.amount Where  - None)  
-    5. RowEvent Order.send_row_to_kafka()   
+    2. RowEvent Order.send_order_to_shipping()   
+    3. Derive <class 'database.models.Order'>.amount_total as Sum(Item.amount Where  - None)  
 ```
-**Logic Log** in Scenario: Change Product on Item
+**Logic Log** in Scenario: Delete Item Reduces Order Total and Customer Balance
 ```
 
-Change Product on Ite
- - 2025-10-17 20:02:27,907 - logic_logger - INF
+Delete Item Reduces Order Total and Customer Balanc
+ - 2025-10-20 11:28:01,758 - logic_logger - INF
 
-Logic Phase:		ROW LOGIC		(session=0x10b719e10) (sqlalchemy before_flush)			 - 2025-10-17 20:02:27,908 - logic_logger - INF
-..Product[None] {Insert - client} id: None, name: Expensive Product, unit_price: 15  row: 0x10b88f930  session: 0x10b719e10  ins_upd_dlt: ins, initial: ins - 2025-10-17 20:02:27,908 - logic_logger - INF
-Logic Phase:		COMMIT LOGIC		(session=0x10b719e10)   										 - 2025-10-17 20:02:27,908 - logic_logger - INF
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10b719e10)   										 - 2025-10-17 20:02:27,908 - logic_logger - INF
+Logic Phase:		ROW LOGIC		(session=0x10a00ff00) (sqlalchemy before_flush)			 - 2025-10-20 11:28:01,759 - logic_logger - INF
+..Item[150] {Delete - client} id: 150, order_id: 134, product_id: 2, quantity: 3, amount: 270.0000000000, unit_price: 90.0000000000  row: 0x10a262450  session: 0x10a00ff00  ins_upd_dlt: dlt, initial: dlt - 2025-10-20 11:28:01,760 - logic_logger - INF
+....Order[134] {Update - Adjusting order: amount_total} id: 134, notes: Multi-item test order, customer_id: 168, CreatedOn: 2025-10-20, date_shipped: None, amount_total:  [570.0000000000-->] 300.0000000000  row: 0x10a2639d0  session: 0x10a00ff00  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:28:01,760 - logic_logger - INF
+......Customer[168] {Update - Adjusting customer: balance} id: 168, name: TestCustomer 1760984881739, balance:  [570.0000000000-->] 300.0000000000, credit_limit: 3000.0000000000, email: None, email_opt_out: None  row: 0x10a261e50  session: 0x10a00ff00  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:28:01,760 - logic_logger - INF
+Logic Phase:		COMMIT LOGIC		(session=0x10a00ff00)   										 - 2025-10-20 11:28:01,760 - logic_logger - INF
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10a00ff00)   										 - 2025-10-20 11:28:01,761 - logic_logger - INF
+....Order[134] {AfterFlush Event} id: 134, notes: Multi-item test order, customer_id: 168, CreatedOn: 2025-10-20, date_shipped: None, amount_total:  [570.0000000000-->] 300.0000000000  row: 0x10a2639d0  session: 0x10a00ff00  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:28:01,761 - logic_logger - INF
 
 ```
 </details>
   
 &nbsp;
 &nbsp;
-### Scenario: Change Customer on Order
-&emsp;  Scenario: Change Customer on Order  
-&emsp;&emsp;    Given Two customers with balance 0  
-    And Order for first customer with balance 100  
-&emsp;&emsp;    When Order moved to second customer  
-&emsp;&emsp;    Then First customer balance is 0  
-&emsp;&emsp;    Then Second customer balance is 100  
-<details markdown>
-<summary>Tests - and their logic - are transparent.. click to see Logic</summary>
-
-
-&nbsp;
-&nbsp;
-
-
-**Logic Doc** for scenario: Change Customer on Order
-   
-Change customer_id on order to test both parent adjustments.
-
-This tests THE CRITICAL BUG that procedural code misses:
-- Original customer balance decreases
-- New customer balance increases
-- Rules engine handles BOTH automatically
-
-> **Key Takeaway:** Declarative rules adjust both old and new parents
-
-
-&nbsp;
-&nbsp;
-
-
-**Rules Used** in Scenario: Change Customer on Order
-```
-  Customer  
-    1. Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x10a750ea0>)  
-  Item  
-    2. Derive <class 'database.models.Item'>.amount as Formula (1): Rule.formula(derive=Item.amount, as_expression=la [...]  
-    3. Derive <class 'database.models.Item'>.unit_price as Copy(product.unit_price)  
-  Order  
-    4. Derive <class 'database.models.Order'>.amount_total as Sum(Item.amount Where  - None)  
-    5. RowEvent Order.send_row_to_kafka()   
-```
-**Logic Log** in Scenario: Change Customer on Order
-```
-
-Change Customer on Orde
- - 2025-10-17 20:02:27,938 - logic_logger - INF
-
-Logic Phase:		ROW LOGIC		(session=0x10b71a690) (sqlalchemy before_flush)			 - 2025-10-17 20:02:27,939 - logic_logger - INF
-..Order[11] {Update - client} id: 11, notes: Order to transfer, customer_id:  [10-->] 11, CreatedOn: 2025-10-17, date_shipped: None, amount_total: 100.0000000000  row: 0x10b8932d0  session: 0x10b71a690  ins_upd_dlt: upd, initial: upd - 2025-10-17 20:02:27,939 - logic_logger - INF
-....Customer[11] {Update - Adjusting customer: balance, balance} id: 11, name: Test Customer 2 1760756547919, balance:  [0E-10-->] 100.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: False  row: 0x10b76ab50  session: 0x10b71a690  ins_upd_dlt: upd, initial: upd - 2025-10-17 20:02:27,940 - logic_logger - INF
-....Customer[10] {Update - Adjusting Old customer} id: 10, name: Test Customer 1 1760756547919, balance:  [100.0000000000-->] 0E-10, credit_limit: 1000.0000000000, email: None, email_opt_out: False  row: 0x10b7699d0  session: 0x10b71a690  ins_upd_dlt: upd, initial: upd - 2025-10-17 20:02:27,940 - logic_logger - INF
-Logic Phase:		COMMIT LOGIC		(session=0x10b71a690)   										 - 2025-10-17 20:02:27,940 - logic_logger - INF
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10b71a690)   										 - 2025-10-17 20:02:27,941 - logic_logger - INF
-..Order[11] {AfterFlush Event} id: 11, notes: Order to transfer, customer_id:  [10-->] 11, CreatedOn: 2025-10-17, date_shipped: None, amount_total: 100.0000000000  row: 0x10b8932d0  session: 0x10b71a690  ins_upd_dlt: upd, initial: upd - 2025-10-17 20:02:27,941 - logic_logger - INF
-..Order[11] {Sending Order to Kafka topic 'order_shipping' [Note: **Kafka not enabled** ]} id: 11, notes: Order to transfer, customer_id:  [10-->] 11, CreatedOn: 2025-10-17, date_shipped: None, amount_total: 100.0000000000  row: 0x10b8932d0  session: 0x10b71a690  ins_upd_dlt: upd, initial: upd - 2025-10-17 20:02:27,941 - logic_logger - INF
-
-```
-</details>
-  
-&nbsp;
-&nbsp;
-### Scenario: Delete Item Adjusts Balance
-&emsp;  Scenario: Delete Item Adjusts Balance  
-&emsp;&emsp;    Given Customer with balance 0 and credit 1000  
-    And Order with 2 items  
-&emsp;&emsp;    When One item is deleted  
-&emsp;&emsp;    Then Balance decreases correctly  
-<details markdown>
-<summary>Tests - and their logic - are transparent.. click to see Logic</summary>
-
-
-&nbsp;
-&nbsp;
-
-
-**Logic Doc** for scenario: Delete Item Adjusts Balance
-   
-Delete item to test aggregate adjustment downward.
-
-This tests DELETE operation (often forgotten):
-- Item deleted
-- Order.amount_total decreases
-- Customer.balance decreases
-
-> **Key Takeaway:** DELETE operations adjust aggregates downward automatically
-
-
-&nbsp;
-&nbsp;
-
-
-**Rules Used** in Scenario: Delete Item Adjusts Balance
-```
-  Customer  
-    1. Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x10a750ea0>)  
-  Item  
-    2. Derive <class 'database.models.Item'>.amount as Formula (1): Rule.formula(derive=Item.amount, as_expression=la [...]  
-    3. Derive <class 'database.models.Item'>.unit_price as Copy(product.unit_price)  
-  Order  
-    4. Derive <class 'database.models.Order'>.amount_total as Sum(Item.amount Where  - None)  
-    5. RowEvent Order.send_row_to_kafka()   
-```
-**Logic Log** in Scenario: Delete Item Adjusts Balance
-```
-
-Delete Item Adjusts Balanc
- - 2025-10-17 20:02:27,970 - logic_logger - INF
-
-Logic Phase:		ROW LOGIC		(session=0x10b0a48d0) (sqlalchemy before_flush)			 - 2025-10-17 20:02:27,971 - logic_logger - INF
-..Item[11] {Delete - client} id: 11, order_id: 12, product_id: 13, quantity: 5, amount: 50.0000000000, unit_price: 10.0000000000  row: 0x10b76a7d0  session: 0x10b0a48d0  ins_upd_dlt: dlt, initial: dlt - 2025-10-17 20:02:27,971 - logic_logger - INF
-....Order[12] {Update - Adjusting order: amount_total} id: 12, notes: Order with 2 items, customer_id: 12, CreatedOn: 2025-10-17, date_shipped: None, amount_total:  [110.0000000000-->] 60.0000000000  row: 0x10b8b9550  session: 0x10b0a48d0  ins_upd_dlt: upd, initial: upd - 2025-10-17 20:02:27,972 - logic_logger - INF
-......Customer[12] {Update - Adjusting customer: balance} id: 12, name: Test Customer 1760756547946, balance:  [110.0000000000-->] 60.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: False  row: 0x10b8b82d0  session: 0x10b0a48d0  ins_upd_dlt: upd, initial: upd - 2025-10-17 20:02:27,972 - logic_logger - INF
-Logic Phase:		COMMIT LOGIC		(session=0x10b0a48d0)   										 - 2025-10-17 20:02:27,972 - logic_logger - INF
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10b0a48d0)   										 - 2025-10-17 20:02:27,973 - logic_logger - INF
-....Order[12] {AfterFlush Event} id: 12, notes: Order with 2 items, customer_id: 12, CreatedOn: 2025-10-17, date_shipped: None, amount_total:  [110.0000000000-->] 60.0000000000  row: 0x10b8b9550  session: 0x10b0a48d0  ins_upd_dlt: upd, initial: upd - 2025-10-17 20:02:27,973 - logic_logger - INF
-....Order[12] {Sending Order to Kafka topic 'order_shipping' [Note: **Kafka not enabled** ]} id: 12, notes: Order with 2 items, customer_id: 12, CreatedOn: 2025-10-17, date_shipped: None, amount_total:  [110.0000000000-->] 60.0000000000  row: 0x10b8b9550  session: 0x10b0a48d0  ins_upd_dlt: upd, initial: upd - 2025-10-17 20:02:27,973 - logic_logger - INF
-
-```
-</details>
-  
-&nbsp;
-&nbsp;
-## Feature: Order Lifecycle  
-  
-&nbsp;
-&nbsp;
-### Scenario: Set Order Shipped Excludes from Balance
-&emsp;  Scenario: Set Order Shipped Excludes from Balance  
-&emsp;&emsp;    Given Customer with balance 0 and credit 1000  
-    And Order with balance 100  
+### Scenario: Ship Order Excludes from Balance (WHERE exclude)
+&emsp;  Scenario: Ship Order Excludes from Balance (WHERE exclude)  
+&emsp;&emsp;    Given Customer "ShipTest" with balance 0 and credit limit 5000  
+    And Order exists for "ShipTest" with 10 Widget  
 &emsp;&emsp;    When Order is shipped  
-&emsp;&emsp;    Then Balance is 0  
-&emsp;&emsp;    Then Order excluded from balance aggregate  
+&emsp;&emsp;    Then Customer balance should be 0  
 <details markdown>
 <summary>Tests - and their logic - are transparent.. click to see Logic</summary>
 
@@ -513,54 +247,37 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10b0a48d0)   										 - 2025-10-17 
 &nbsp;
 
 
-**Logic Doc** for scenario: Set Order Shipped Excludes from Balance
-   
-Set date_shipped on order to exclude from balance.
-
-This tests WHERE clause exclusion:
-- Before: date_shipped = None → included in Customer.balance
-- After: date_shipped = today → excluded from Customer.balance
-
-> **Key Takeaway:** WHERE clause conditions work bidirectionally
-
-
-&nbsp;
-&nbsp;
-
-
-**Rules Used** in Scenario: Set Order Shipped Excludes from Balance
+**Rules Used** in Scenario: Ship Order Excludes from Balance (WHERE exclude)
 ```
   Customer  
-    1. Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x10a750ea0>)  
+    1. Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x108fed080>)  
   Order  
-    2. RowEvent Order.send_row_to_kafka()   
+    2. RowEvent Order.send_order_to_shipping()   
 ```
-**Logic Log** in Scenario: Set Order Shipped Excludes from Balance
+**Logic Log** in Scenario: Ship Order Excludes from Balance (WHERE exclude)
 ```
 
-Set Order Shipped Excludes from Balanc
- - 2025-10-17 20:02:27,992 - logic_logger - INF
+Ship Order Excludes from Balance (WHERE exclude
+ - 2025-10-20 11:28:01,785 - logic_logger - INF
 
-Logic Phase:		ROW LOGIC		(session=0x10b719040) (sqlalchemy before_flush)			 - 2025-10-17 20:02:27,994 - logic_logger - INF
-..Order[13] {Update - client} id: 13, notes: Lifecycle order, customer_id: 13, CreatedOn: 2025-10-17, date_shipped:  [None-->] 2024-01-15 00:00:00, amount_total: 100.0000000000  row: 0x10b768fd0  session: 0x10b719040  ins_upd_dlt: upd, initial: upd - 2025-10-17 20:02:27,995 - logic_logger - INF
-....Customer[13] {Update - Adjusting customer: balance} id: 13, name: Test Customer 1760756547976, balance:  [100.0000000000-->] 0E-10, credit_limit: 1000.0000000000, email: None, email_opt_out: False  row: 0x10b8b9750  session: 0x10b719040  ins_upd_dlt: upd, initial: upd - 2025-10-17 20:02:27,995 - logic_logger - INF
-Logic Phase:		COMMIT LOGIC		(session=0x10b719040)   										 - 2025-10-17 20:02:27,995 - logic_logger - INF
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10b719040)   										 - 2025-10-17 20:02:27,996 - logic_logger - INF
-..Order[13] {AfterFlush Event} id: 13, notes: Lifecycle order, customer_id: 13, CreatedOn: 2025-10-17, date_shipped:  [None-->] 2024-01-15 00:00:00, amount_total: 100.0000000000  row: 0x10b768fd0  session: 0x10b719040  ins_upd_dlt: upd, initial: upd - 2025-10-17 20:02:27,996 - logic_logger - INF
-..Order[13] {Sending Order to Kafka topic 'order_shipping' [Note: **Kafka not enabled** ]} id: 13, notes: Lifecycle order, customer_id: 13, CreatedOn: 2025-10-17, date_shipped:  [None-->] 2024-01-15 00:00:00, amount_total: 100.0000000000  row: 0x10b768fd0  session: 0x10b719040  ins_upd_dlt: upd, initial: upd - 2025-10-17 20:02:27,996 - logic_logger - INF
+Logic Phase:		ROW LOGIC		(session=0x10a00fac0) (sqlalchemy before_flush)			 - 2025-10-20 11:28:01,788 - logic_logger - INF
+..Order[135] {Update - client} id: 135, notes: Test order, customer_id: 169, CreatedOn: 2025-10-20, date_shipped:  [None-->] 2025-10-20 00:00:00, amount_total: 900.0000000000  row: 0x10a067550  session: 0x10a00fac0  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:28:01,788 - logic_logger - INF
+....Customer[169] {Update - Adjusting customer: balance} id: 169, name: ShipTest 1760984881769, balance:  [900.0000000000-->] 0E-10, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10a2813d0  session: 0x10a00fac0  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:28:01,788 - logic_logger - INF
+Logic Phase:		COMMIT LOGIC		(session=0x10a00fac0)   										 - 2025-10-20 11:28:01,788 - logic_logger - INF
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10a00fac0)   										 - 2025-10-20 11:28:01,789 - logic_logger - INF
+..Order[135] {AfterFlush Event} id: 135, notes: Test order, customer_id: 169, CreatedOn: 2025-10-20, date_shipped:  [None-->] 2025-10-20 00:00:00, amount_total: 900.0000000000  row: 0x10a067550  session: 0x10a00fac0  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:28:01,789 - logic_logger - INF
 
 ```
 </details>
   
 &nbsp;
 &nbsp;
-### Scenario: Reset Shipped Includes in Balance
-&emsp;  Scenario: Reset Shipped Includes in Balance  
-&emsp;&emsp;    Given Customer with balance 0 and credit 1000  
-    And Order with balance 100 marked shipped  
-&emsp;&emsp;    When Order unshipped  
-&emsp;&emsp;    Then Balance is 100  
-&emsp;&emsp;    Then Order included in balance aggregate  
+### Scenario: Unship Order Includes in Balance (WHERE include)
+&emsp;  Scenario: Unship Order Includes in Balance (WHERE include)  
+&emsp;&emsp;    Given Customer "UnshipTest" with balance 0 and credit limit 5000  
+    And Shipped order exists for "UnshipTest" with 5 Gadget  
+&emsp;&emsp;    When Order is unshipped  
+&emsp;&emsp;    Then Customer balance should be 750  
 <details markdown>
 <summary>Tests - and their logic - are transparent.. click to see Logic</summary>
 
@@ -569,58 +286,111 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10b719040)   										 - 2025-10-17 
 &nbsp;
 
 
-**Logic Doc** for scenario: Reset Shipped Includes in Balance
-   
-Reset date_shipped to None to include order in balance.
-
-This tests WHERE clause inclusion (reverse direction):
-- Before: date_shipped = "2024-01-15" → excluded from balance
-- After: date_shipped = None → included in balance
-
-> **Key Takeaway:** WHERE clauses work both directions (not just one-way)
-
-
-&nbsp;
-&nbsp;
-
-
-**Rules Used** in Scenario: Reset Shipped Includes in Balance
+**Rules Used** in Scenario: Unship Order Includes in Balance (WHERE include)
 ```
   Customer  
-    1. Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x10a750ea0>)  
+    1. Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x108fed080>)  
+  Order  
+    2. RowEvent Order.send_order_to_shipping()   
+```
+**Logic Log** in Scenario: Unship Order Includes in Balance (WHERE include)
+```
+
+Unship Order Includes in Balance (WHERE include
+ - 2025-10-20 11:28:01,812 - logic_logger - INF
+
+Logic Phase:		ROW LOGIC		(session=0x10a00f790) (sqlalchemy before_flush)			 - 2025-10-20 11:28:01,813 - logic_logger - INF
+..Order[136] {Update - client} id: 136, notes: Test order, customer_id: 170, CreatedOn: 2025-10-20, date_shipped:  [2025-10-20-->] None, amount_total: 750.0000000000  row: 0x10a280cd0  session: 0x10a00f790  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:28:01,813 - logic_logger - INF
+....Customer[170] {Update - Adjusting customer: balance} id: 170, name: UnshipTest 1760984881794, balance:  [0E-10-->] 750.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10a2829d0  session: 0x10a00f790  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:28:01,814 - logic_logger - INF
+Logic Phase:		COMMIT LOGIC		(session=0x10a00f790)   										 - 2025-10-20 11:28:01,814 - logic_logger - INF
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10a00f790)   										 - 2025-10-20 11:28:01,814 - logic_logger - INF
+..Order[136] {AfterFlush Event} id: 136, notes: Test order, customer_id: 170, CreatedOn: 2025-10-20, date_shipped:  [2025-10-20-->] None, amount_total: 750.0000000000  row: 0x10a280cd0  session: 0x10a00f790  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:28:01,814 - logic_logger - INF
+
+```
+</details>
+  
+&nbsp;
+&nbsp;
+### Scenario: Exceed Credit Limit Rejected (Constraint FAIL)
+&emsp;  Scenario: Exceed Credit Limit Rejected (Constraint FAIL)  
+&emsp;&emsp;    Given Customer "LimitTest" with balance 0 and credit limit 500  
+&emsp;&emsp;    When B2B order placed for "LimitTest" with 10 Gadget  
+&emsp;&emsp;    Then Order creation should fail  
+    And Error message should contain "credit limit"  
+<details markdown>
+<summary>Tests - and their logic - are transparent.. click to see Logic</summary>
+
+
+&nbsp;
+&nbsp;
+
+
+**Rules Used** in Scenario: Exceed Credit Limit Rejected (Constraint FAIL)
+```
+```
+**Logic Log** in Scenario: Exceed Credit Limit Rejected (Constraint FAIL)
+```
+
+Exceed Credit Limit Rejected (Constraint FAIL
+ - 2025-10-20 11:28:01,824 - logic_logger - INF
+
+Logic Phase:		ROW LOGIC		(session=0x10a00fdf0) (sqlalchemy before_flush)			 - 2025-10-20 11:28:01,825 - logic_logger - INF
+..Customer[171] {Update - client} id: 171, name: LimitTest 1760984881819, balance: 0E-10, credit_limit: 500.0000000000, email: None, email_opt_out: None  row: 0x10a262a50  session: 0x10a00fdf0  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:28:01,825 - logic_logger - INF
+Logic Phase:		COMMIT LOGIC		(session=0x10a00fdf0)   										 - 2025-10-20 11:28:01,826 - logic_logger - INF
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10a00fdf0)   										 - 2025-10-20 11:28:01,826 - logic_logger - INF
+
+```
+</details>
+  
+&nbsp;
+&nbsp;
+### Scenario: Carbon Neutral Discount Applied (Custom Logic)
+&emsp;  Scenario: Carbon Neutral Discount Applied (Custom Logic)  
+&emsp;&emsp;    Given Customer "GreenBuyer" with balance 0 and credit limit 2000  
+&emsp;&emsp;    When B2B order placed for "GreenBuyer" with 10 carbon neutral Gadget  
+&emsp;&emsp;    Then Item amount should be 1350  
+    And Order amount_total should be 1350  
+    And Customer balance should be 1350  
+<details markdown>
+<summary>Tests - and their logic - are transparent.. click to see Logic</summary>
+
+
+&nbsp;
+&nbsp;
+
+
+**Rules Used** in Scenario: Carbon Neutral Discount Applied (Custom Logic)
+```
+  Customer  
+    1. Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x108fed080>)  
   Item  
-    2. Derive <class 'database.models.Item'>.amount as Formula (1): Rule.formula(derive=Item.amount, as_expression=la [...]  
+    2. Derive <class 'database.models.Item'>.amount as Formula (1): <function>  
     3. Derive <class 'database.models.Item'>.unit_price as Copy(product.unit_price)  
   Order  
     4. Derive <class 'database.models.Order'>.amount_total as Sum(Item.amount Where  - None)  
-    5. RowEvent Order.send_row_to_kafka()   
+    5. RowEvent Order.send_order_to_shipping()   
 ```
-**Logic Log** in Scenario: Reset Shipped Includes in Balance
+**Logic Log** in Scenario: Carbon Neutral Discount Applied (Custom Logic)
 ```
 
-Reset Shipped Includes in Balanc
- - 2025-10-17 20:02:28,020 - logic_logger - INF
+Carbon Neutral Discount Applied (Custom Logic
+ - 2025-10-20 11:28:01,834 - logic_logger - INF
 
-Logic Phase:		ROW LOGIC		(session=0x10b71a580) (sqlalchemy before_flush)			 - 2025-10-17 20:02:28,022 - logic_logger - INF
-..Order[14] {Update - client} id: 14, notes: Shipped order, customer_id: 14, CreatedOn: 2025-10-17, date_shipped:  [2024-01-15-->] None, amount_total: 100.0000000000  row: 0x10b8b8650  session: 0x10b71a580  ins_upd_dlt: upd, initial: upd - 2025-10-17 20:02:28,022 - logic_logger - INF
-....Customer[14] {Update - Adjusting customer: balance} id: 14, name: Test Customer 1760756548001, balance:  [0E-10-->] 100.0000000000, credit_limit: 1000.0000000000, email: None, email_opt_out: False  row: 0x10b8ba150  session: 0x10b71a580  ins_upd_dlt: upd, initial: upd - 2025-10-17 20:02:28,022 - logic_logger - INF
-Logic Phase:		COMMIT LOGIC		(session=0x10b71a580)   										 - 2025-10-17 20:02:28,022 - logic_logger - INF
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10b71a580)   										 - 2025-10-17 20:02:28,023 - logic_logger - INF
-..Order[14] {AfterFlush Event} id: 14, notes: Shipped order, customer_id: 14, CreatedOn: 2025-10-17, date_shipped:  [2024-01-15-->] None, amount_total: 100.0000000000  row: 0x10b8b8650  session: 0x10b71a580  ins_upd_dlt: upd, initial: upd - 2025-10-17 20:02:28,023 - logic_logger - INF
-..Order[14] {Sending Order to Kafka topic 'order_shipping' [Note: **Kafka not enabled** ]} id: 14, notes: Shipped order, customer_id: 14, CreatedOn: 2025-10-17, date_shipped:  [2024-01-15-->] None, amount_total: 100.0000000000  row: 0x10b8b8650  session: 0x10b71a580  ins_upd_dlt: upd, initial: upd - 2025-10-17 20:02:28,023 - logic_logger - INF
+Logic Phase:		ROW LOGIC		(session=0x10a00fac0) (sqlalchemy before_flush)			 - 2025-10-20 11:28:01,836 - logic_logger - INF
+..Customer[172] {Update - client} id: 172, name: GreenBuyer 1760984881829, balance: 0E-10, credit_limit: 2000.0000000000, email: None, email_opt_out: None  row: 0x10a191a50  session: 0x10a00fac0  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:28:01,836 - logic_logger - INF
+Logic Phase:		COMMIT LOGIC		(session=0x10a00fac0)   										 - 2025-10-20 11:28:01,836 - logic_logger - INF
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10a00fac0)   										 - 2025-10-20 11:28:01,836 - logic_logger - INF
 
 ```
 </details>
   
 &nbsp;
 &nbsp;
-### Scenario: Delete Order Adjusts Balance
-&emsp;  Scenario: Delete Order Adjusts Balance  
-&emsp;&emsp;    Given Customer with balance 0 and credit 1000  
-    And Order with balance 150  
-&emsp;&emsp;    When Order is deleted  
-&emsp;&emsp;    Then Balance is 0  
-&emsp;&emsp;    Then Customer has no orders  
+### Scenario: Product Unit Price Copied to Item
+&emsp;  Scenario: Product Unit Price Copied to Item  
+&emsp;&emsp;    Given Customer "PriceCopy" with balance 0 and credit limit 3000  
+&emsp;&emsp;    When B2B order placed for "PriceCopy" with 1 Green  
+&emsp;&emsp;    Then Item unit_price should be 109  
 <details markdown>
 <summary>Tests - and their logic - are transparent.. click to see Logic</summary>
 
@@ -629,44 +399,78 @@ Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10b71a580)   										 - 2025-10-17 
 &nbsp;
 
 
-**Logic Doc** for scenario: Delete Order Adjusts Balance
-   
-Delete entire order to test aggregate adjustment.
-
-This tests DELETE operation:
-- Order deleted
-- Customer.balance updated (order removed from sum)
-
-> **Key Takeaway:** DELETE operations adjust aggregates automatically
-
-
-&nbsp;
-&nbsp;
-
-
-**Rules Used** in Scenario: Delete Order Adjusts Balance
+**Rules Used** in Scenario: Product Unit Price Copied to Item
 ```
   Customer  
-    1. Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x10a750ea0>)  
+    1. Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x108fed080>)  
+  Item  
+    2. Derive <class 'database.models.Item'>.amount as Formula (1): <function>  
+    3. Derive <class 'database.models.Item'>.unit_price as Copy(product.unit_price)  
   Order  
-    2. RowEvent Order.send_row_to_kafka()   
+    4. Derive <class 'database.models.Order'>.amount_total as Sum(Item.amount Where  - None)  
+    5. RowEvent Order.send_order_to_shipping()   
 ```
-**Logic Log** in Scenario: Delete Order Adjusts Balance
+**Logic Log** in Scenario: Product Unit Price Copied to Item
 ```
 
-Delete Order Adjusts Balanc
- - 2025-10-17 20:02:28,044 - logic_logger - INF
+Product Unit Price Copied to Ite
+ - 2025-10-20 11:28:01,856 - logic_logger - INF
 
-Logic Phase:		ROW LOGIC		(session=0x10b71a690) (sqlalchemy before_flush)			 - 2025-10-17 20:02:28,045 - logic_logger - INF
-..Order[15] {Delete - client} id: 15, notes: Lifecycle order, customer_id: 15, CreatedOn: 2025-10-17, date_shipped: None, amount_total: 150.0000000000  row: 0x10b8930d0  session: 0x10b71a690  ins_upd_dlt: dlt, initial: dlt - 2025-10-17 20:02:28,045 - logic_logger - INF
-....Customer[15] {Update - Adjusting customer: balance} id: 15, name: Test Customer 1760756548028, balance:  [150.0000000000-->] 0E-10, credit_limit: 1000.0000000000, email: None, email_opt_out: False  row: 0x10b7690d0  session: 0x10b71a690  ins_upd_dlt: upd, initial: upd - 2025-10-17 20:02:28,046 - logic_logger - INF
-Logic Phase:		COMMIT LOGIC		(session=0x10b71a690)   										 - 2025-10-17 20:02:28,046 - logic_logger - INF
-Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10b71a690)   										 - 2025-10-17 20:02:28,047 - logic_logger - INF
-..Order[15] {AfterFlush Event} id: 15, notes: Lifecycle order, customer_id: 15, CreatedOn: 2025-10-17, date_shipped: None, amount_total: 150.0000000000  row: 0x10b8930d0  session: 0x10b71a690  ins_upd_dlt: dlt, initial: dlt - 2025-10-17 20:02:28,047 - logic_logger - INF
-..Order[15] {Sending Order to Kafka topic 'order_shipping' [Note: **Kafka not enabled** ]} id: 15, notes: Lifecycle order, customer_id: 15, CreatedOn: 2025-10-17, date_shipped: None, amount_total: 150.0000000000  row: 0x10b8930d0  session: 0x10b71a690  ins_upd_dlt: dlt, initial: dlt - 2025-10-17 20:02:28,047 - logic_logger - INF
+Logic Phase:		ROW LOGIC		(session=0x10a00f240) (sqlalchemy before_flush)			 - 2025-10-20 11:28:01,858 - logic_logger - INF
+..Customer[173] {Update - client} id: 173, name: PriceCopy 1760984881852, balance: 0E-10, credit_limit: 3000.0000000000, email: None, email_opt_out: None  row: 0x10a2802d0  session: 0x10a00f240  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:28:01,858 - logic_logger - INF
+Logic Phase:		COMMIT LOGIC		(session=0x10a00f240)   										 - 2025-10-20 11:28:01,858 - logic_logger - INF
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10a00f240)   										 - 2025-10-20 11:28:01,858 - logic_logger - INF
+
+```
+</details>
+  
+&nbsp;
+&nbsp;
+### Scenario: Change Product Updates Unit Price (FK Change)
+&emsp;  Scenario: Change Product Updates Unit Price (FK Change)  
+&emsp;&emsp;    Given Customer "ProductChange" with balance 0 and credit limit 5000  
+    And Order exists for "ProductChange" with 2 Widget  
+&emsp;&emsp;    When Item product changed to "Gadget"  
+&emsp;&emsp;    Then Item unit_price should be 150  
+    And Item amount should be 300  
+    And Order amount_total should be 300  
+<details markdown>
+<summary>Tests - and their logic - are transparent.. click to see Logic</summary>
+
+
+&nbsp;
+&nbsp;
+
+
+**Rules Used** in Scenario: Change Product Updates Unit Price (FK Change)
+```
+  Customer  
+    1. Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x108fed080>)  
+  Item  
+    2. Derive <class 'database.models.Item'>.amount as Formula (1): <function>  
+    3. Derive <class 'database.models.Item'>.unit_price as Copy(product.unit_price)  
+  Order  
+    4. Derive <class 'database.models.Order'>.amount_total as Sum(Item.amount Where  - None)  
+    5. RowEvent Order.send_order_to_shipping()   
+```
+**Logic Log** in Scenario: Change Product Updates Unit Price (FK Change)
+```
+
+Change Product Updates Unit Price (FK Change
+ - 2025-10-20 11:28:01,882 - logic_logger - INF
+
+Logic Phase:		ROW LOGIC		(session=0x10a00f460) (sqlalchemy before_flush)			 - 2025-10-20 11:28:01,885 - logic_logger - INF
+..Item[156] {Update - client} id: 156, order_id: 139, product_id:  [2-->] 1, quantity: 2, amount: 180.0000000000, unit_price: 90.0000000000  row: 0x10a262350  session: 0x10a00f460  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:28:01,885 - logic_logger - INF
+..Item[156] {copy_rules for role: product - unit_price} id: 156, order_id: 139, product_id:  [2-->] 1, quantity: 2, amount: 180.0000000000, unit_price:  [90.0000000000-->] 150.0000000000  row: 0x10a262350  session: 0x10a00f460  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:28:01,885 - logic_logger - INF
+..Item[156] {Formula amount} id: 156, order_id: 139, product_id:  [2-->] 1, quantity: 2, amount:  [180.0000000000-->] 300.0000000000, unit_price:  [90.0000000000-->] 150.0000000000  row: 0x10a262350  session: 0x10a00f460  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:28:01,885 - logic_logger - INF
+....Order[139] {Update - Adjusting order: amount_total} id: 139, notes: Test order, customer_id: 174, CreatedOn: 2025-10-20, date_shipped: None, amount_total:  [180.0000000000-->] 300.0000000000  row: 0x10a261dd0  session: 0x10a00f460  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:28:01,886 - logic_logger - INF
+......Customer[174] {Update - Adjusting customer: balance} id: 174, name: ProductChange 1760984881868, balance:  [180.0000000000-->] 300.0000000000, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10a064250  session: 0x10a00f460  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:28:01,886 - logic_logger - INF
+Logic Phase:		COMMIT LOGIC		(session=0x10a00f460)   										 - 2025-10-20 11:28:01,886 - logic_logger - INF
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10a00f460)   										 - 2025-10-20 11:28:01,887 - logic_logger - INF
+....Order[139] {AfterFlush Event} id: 139, notes: Test order, customer_id: 174, CreatedOn: 2025-10-20, date_shipped: None, amount_total:  [180.0000000000-->] 300.0000000000  row: 0x10a261dd0  session: 0x10a00f460  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:28:01,887 - logic_logger - INF
 
 ```
 </details>
   
 &nbsp;&nbsp;  
-/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/basic_demo/test/api_logic_server_behave/behave_run.py completed at October 17, 2025 20:02:2  
+/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/basic_demo_2/test/api_logic_server_behave/behave_run.py completed at October 20, 2025 11:28:0  

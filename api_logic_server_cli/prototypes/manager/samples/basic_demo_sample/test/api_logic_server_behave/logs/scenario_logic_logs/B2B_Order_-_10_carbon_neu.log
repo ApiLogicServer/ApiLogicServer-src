@@ -1,0 +1,41 @@
+
+B2B Order - 10 carbon neutral Gadget
+ - 2025-10-20 11:25:04,716 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10a00fbd0) (sqlalchemy before_flush)			 - 2025-10-20 11:25:04,718 - logic_logger - INFO
+..Customer[161] {Update - client} id: 161, name: GreenBuyer 1760984704712, balance: 0E-10, credit_limit: 2000.0000000000, email: None, email_opt_out: None  row: 0x109fffad0  session: 0x10a00fbd0  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:25:04,718 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10a00fbd0)   										 - 2025-10-20 11:25:04,718 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10a00fbd0)   										 - 2025-10-20 11:25:04,718 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2025-10-20 11:25:04,718 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10a00fbd0))       	 - 2025-10-20 11:25:04,718 - logic_logger - INFO
+Logic Phase:		ROW LOGIC IGNORE RE-RAISE(session=0x10a00fbd0) (sqlalchemy before_flush)			 - 2025-10-20 11:25:04,719 - logic_logger - DEBUG
+
+Logic Phase:		ROW LOGIC		(session=0x10a00fbd0) (sqlalchemy before_flush)			 - 2025-10-20 11:25:04,719 - logic_logger - INFO
+..Product[1] {Update - client} id: 1, name: Gadget, unit_price: 150.0000000000, carbon_neutral: True  row: 0x10a26f770  session: 0x10a00fbd0  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:25:04,719 - logic_logger - INFO
+..Order[None] {Insert - client} id: None, notes: Carbon neutral order, customer_id: 161, CreatedOn: None, date_shipped: None, amount_total: None  row: 0x10a2631d0  session: 0x10a00fbd0  ins_upd_dlt: ins, initial: ins - 2025-10-20 11:25:04,719 - logic_logger - INFO
+..Order[None] {early_row_event_all_classes - handle_all did stamping} id: None, notes: Carbon neutral order, customer_id: 161, CreatedOn: 2025-10-20 11:25:04.719377, date_shipped: None, amount_total: None  row: 0x10a2631d0  session: 0x10a00fbd0  ins_upd_dlt: ins, initial: ins - 2025-10-20 11:25:04,719 - logic_logger - INFO
+..Order[None] {server aggregate_defaults: amount_total } id: None, notes: Carbon neutral order, customer_id: 161, CreatedOn: 2025-10-20 11:25:04.719377, date_shipped: None, amount_total: 0  row: 0x10a2631d0  session: 0x10a00fbd0  ins_upd_dlt: ins, initial: ins - 2025-10-20 11:25:04,719 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: None, quantity: 10, amount: None, unit_price: None  row: 0x10a065b50  session: 0x10a00fbd0  ins_upd_dlt: ins, initial: ins - 2025-10-20 11:25:04,719 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: None, quantity: 10, amount: None, unit_price: 150.0000000000  row: 0x10a065b50  session: 0x10a00fbd0  ins_upd_dlt: ins, initial: ins - 2025-10-20 11:25:04,719 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: None, quantity: 10, amount: 1350.000000000000033306690739, unit_price: 150.0000000000  row: 0x10a065b50  session: 0x10a00fbd0  ins_upd_dlt: ins, initial: ins - 2025-10-20 11:25:04,719 - logic_logger - INFO
+..Item[None] {TODO DB adjust_from_inserted/adopted_child adjusts Derive <class 'database.models.Order'>.amount_total as Sum(Item.amount Where  - None)} id: None, order_id: None, product_id: None, quantity: 10, amount: 1350.000000000000033306690739, unit_price: 150.0000000000  row: 0x10a065b50  session: 0x10a00fbd0  ins_upd_dlt: ins, initial: ins - 2025-10-20 11:25:04,719 - logic_logger - INFO
+....Order[None] {Update - Adjusting order: amount_total} id: None, notes: Carbon neutral order, customer_id: 161, CreatedOn: 2025-10-20 11:25:04.719377, date_shipped: None, amount_total:  [0-->] 1350.000000000000033306690739  row: 0x10a2631d0  session: 0x10a00fbd0  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:25:04,719 - logic_logger - INFO
+......Customer[161] {Update - Adjusting customer: balance} id: 161, name: GreenBuyer 1760984704712, balance:  [0E-10-->] 1350.000000000000033306690739, credit_limit: 2000.0000000000, email: None, email_opt_out: None  row: 0x109fffad0  session: 0x10a00fbd0  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:25:04,720 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10a00fbd0)   										 - 2025-10-20 11:25:04,720 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10a00fbd0)   										 - 2025-10-20 11:25:04,720 - logic_logger - INFO
+..Order[128] {AfterFlush Event} id: 128, notes: Carbon neutral order, customer_id: 161, CreatedOn: 2025-10-20 11:25:04.719377, date_shipped: None, amount_total: 1350.000000000000033306690739  row: 0x10a2631d0  session: 0x10a00fbd0  ins_upd_dlt: ins, initial: ins - 2025-10-20 11:25:04,720 - logic_logger - INFO
+..Order[128] {Sending Order to Shipping [Note: **Kafka not enabled** ]} id: 128, notes: Carbon neutral order, customer_id: 161, CreatedOn: 2025-10-20 11:25:04.719377, date_shipped: None, amount_total: 1350.000000000000033306690739  row: 0x10a2631d0  session: 0x10a00fbd0  ins_upd_dlt: ins, initial: ins - 2025-10-20 11:25:04,720 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2025-10-20 11:25:04,721 - logic_logger - INFO
+  Customer		## - 2025-10-20 11:25:04,721 - logic_logger - INFO
+    1. Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x108fed080>)		## - 2025-10-20 11:25:04,721 - logic_logger - INFO
+  Item		## - 2025-10-20 11:25:04,721 - logic_logger - INFO
+    2. Derive <class 'database.models.Item'>.amount as Formula (1): <function>		## - 2025-10-20 11:25:04,721 - logic_logger - INFO
+    3. Derive <class 'database.models.Item'>.unit_price as Copy(product.unit_price)		## - 2025-10-20 11:25:04,721 - logic_logger - INFO
+  Order		## - 2025-10-20 11:25:04,721 - logic_logger - INFO
+    4. Derive <class 'database.models.Order'>.amount_total as Sum(Item.amount Where  - None)		## - 2025-10-20 11:25:04,721 - logic_logger - INFO
+    5. RowEvent Order.send_order_to_shipping() 		## - 2025-10-20 11:25:04,721 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10a00fbd0))       	 - 2025-10-20 11:25:04,721 - logic_logger - INFO

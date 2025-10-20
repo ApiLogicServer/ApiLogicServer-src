@@ -1,0 +1,11 @@
+Checking customer balance = 1350 - 2025-10-20 11:28:01,850 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10a00f020) (sqlalchemy before_flush)			 - 2025-10-20 11:28:01,853 - logic_logger - INFO
+..Customer[None] {Insert - client} id: None, name: PriceCopy 1760984881852, balance: 0, credit_limit: 3000, email: None, email_opt_out: None  row: 0x10a190550  session: 0x10a00f020  ins_upd_dlt: ins, initial: ins - 2025-10-20 11:28:01,853 - logic_logger - INFO
+..Customer[None] {server aggregate_defaults: balance } id: None, name: PriceCopy 1760984881852, balance: 0, credit_limit: 3000, email: None, email_opt_out: None  row: 0x10a190550  session: 0x10a00f020  ins_upd_dlt: ins, initial: ins - 2025-10-20 11:28:01,853 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10a00f020)   										 - 2025-10-20 11:28:01,853 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10a00f020)   										 - 2025-10-20 11:28:01,854 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2025-10-20 11:28:01,854 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10a00f020))       	 - 2025-10-20 11:28:01,854 - logic_logger - INFO

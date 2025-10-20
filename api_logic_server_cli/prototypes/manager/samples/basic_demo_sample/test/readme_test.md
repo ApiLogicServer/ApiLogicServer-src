@@ -1,6 +1,3 @@
-The tests here were created by the AI Assistant.  Contrast the the nw_sample, which contains manually created tests.
-
-
 # API Logic Server Testing Guide
 
 ## Overview

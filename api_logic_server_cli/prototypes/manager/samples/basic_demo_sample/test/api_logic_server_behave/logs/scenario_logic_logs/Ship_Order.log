@@ -1,0 +1,18 @@
+
+Ship Order
+ - 2025-10-20 11:25:04,671 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x10a00e690) (sqlalchemy before_flush)			 - 2025-10-20 11:25:04,672 - logic_logger - INFO
+..Order[126] {Update - client} id: 126, notes: Test order, customer_id: 158, CreatedOn: 2025-10-20, date_shipped:  [None-->] 2025-10-20 00:00:00, amount_total: 900.0000000000  row: 0x10a263650  session: 0x10a00e690  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:25:04,672 - logic_logger - INFO
+....Customer[158] {Update - Adjusting customer: balance} id: 158, name: ShipTest 1760984704657, balance:  [900.0000000000-->] 0E-10, credit_limit: 5000.0000000000, email: None, email_opt_out: None  row: 0x10a262a50  session: 0x10a00e690  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:25:04,673 - logic_logger - INFO
+Logic Phase:		COMMIT LOGIC		(session=0x10a00e690)   										 - 2025-10-20 11:25:04,673 - logic_logger - INFO
+Logic Phase:		AFTER_FLUSH LOGIC	(session=0x10a00e690)   										 - 2025-10-20 11:25:04,673 - logic_logger - INFO
+..Order[126] {AfterFlush Event} id: 126, notes: Test order, customer_id: 158, CreatedOn: 2025-10-20, date_shipped:  [None-->] 2025-10-20 00:00:00, amount_total: 900.0000000000  row: 0x10a263650  session: 0x10a00e690  ins_upd_dlt: upd, initial: upd - 2025-10-20 11:25:04,673 - logic_logger - INFO
+
+These Rules Fired (see Logic Phases, above, for actual order):		## - 2025-10-20 11:25:04,673 - logic_logger - INFO
+  Customer		## - 2025-10-20 11:25:04,673 - logic_logger - INFO
+    1. Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x108fed080>)		## - 2025-10-20 11:25:04,673 - logic_logger - INFO
+  Order		## - 2025-10-20 11:25:04,673 - logic_logger - INFO
+    2. RowEvent Order.send_order_to_shipping() 		## - 2025-10-20 11:25:04,674 - logic_logger - INFO
+
+Logic Phase:		COMPLETE(session=0x10a00e690))       	 - 2025-10-20 11:25:04,674 - logic_logger - INFO

@@ -1,73 +1,79 @@
 Feature: About Sample # features/about.feature:6
 
   Scenario: Transaction Processing                           # features/about.feature:8
-    Given Sample Database                                    # features/steps/about.py:8
-    When Transactions are submitted                          # features/steps/about.py:12
-    Then Enforce business policies with Logic (rules + code) # features/steps/about.py:16
+    Given Sample Database                                    # features/steps/about_steps.py:3
+    When Transactions are submitted                          # features/steps/about_steps.py:8
+    Then Enforce business policies with Logic (rules + code) # features/steps/about_steps.py:13
 
-Feature: Check Credit # features/check_credit.feature:1
+Feature: Order Processing with Business Logic # features/order_processing.feature:1
 
-  Scenario: Good Order Placed                          # features/check_credit.feature:3
-    Given Customer with balance 0 and credit 1000      # features/steps/check_credit.py:13
-    When Good Order Placed                             # features/steps/check_credit.py:97
-    Then Balance is 50                                 # features/steps/check_credit.py:295
-    Then Customer balance does not exceed credit limit # features/steps/check_credit.py:306
+  Scenario: Good Order Placed via B2B API                       # features/order_processing.feature:6
+    Given Customer "Alice" with balance 0 and credit limit 1000 # features/steps/order_processing_steps.py:22
+    When B2B order placed for "Alice" with 5 Widget             # features/steps/order_processing_steps.py:255
+    Then Customer balance should be 450                         # features/steps/order_processing_steps.py:451
+    And Order amount_total should be 450                        # features/steps/order_processing_steps.py:483
+    And Order created successfully                              # features/steps/order_processing_steps.py:536
 
-  Scenario: Bad Order Exceeds Credit                # features/check_credit.feature:9
-    Given Customer with balance 900 and credit 1000 # features/steps/check_credit.py:13
-    When Order Placed with quantity 200             # features/steps/check_credit.py:124
-    Then Error raised containing "balance"          # features/steps/check_credit.py:317
-    Then Error raised containing "credit limit"     # features/steps/check_credit.py:317
+  Scenario: Item Quantity Update Recalculates Amounts         # features/order_processing.feature:13
+    Given Customer "Bob" with balance 0 and credit limit 2000 # features/steps/order_processing_steps.py:22
+    And Order exists for "Bob" with 5 Widget                  # features/steps/order_processing_steps.py:116
+    When Item quantity changed to 10                          # features/steps/order_processing_steps.py:308
+    Then Item amount should be 900                            # features/steps/order_processing_steps.py:502
+    And Order amount_total should be 900                      # features/steps/order_processing_steps.py:483
+    And Customer balance should be 900                        # features/steps/order_processing_steps.py:451
 
-  Scenario: Alter Item Quantity to Exceed Credit  # features/check_credit.feature:15
-    Given Customer with balance 0 and credit 1000 # features/steps/check_credit.py:13
-    And Order with 1 item quantity 10             # features/steps/check_credit.py:35
-    When Item quantity changed to 1500            # features/steps/check_credit.py:176
-    Then Error raised containing "balance"        # features/steps/check_credit.py:317
-    Then Error raised containing "credit limit"   # features/steps/check_credit.py:317
+  Scenario: Change Order Customer Adjusts Both Balances           # features/order_processing.feature:21
+    Given Customer "Charlie" with balance 0 and credit limit 1500 # features/steps/order_processing_steps.py:22
+    And Customer "Diana" with balance 0 and credit limit 2000     # features/steps/order_processing_steps.py:22
+    And Order exists for "Charlie" with 2 Gadget                  # features/steps/order_processing_steps.py:116
+    When Order customer changed to "Diana"                        # features/steps/order_processing_steps.py:331
+    Then Customer "Charlie" balance should be 0                   # features/steps/order_processing_steps.py:466
+    And Customer "Diana" balance should be 300                    # features/steps/order_processing_steps.py:466
 
-  Scenario: Change Product on Item                 # features/check_credit.feature:22
-    Given Customer with balance 0 and credit 1000  # features/steps/check_credit.py:13
-    And Order with 1 item quantity 10              # features/steps/check_credit.py:35
-    When Item product changed to expensive product # features/steps/check_credit.py:205
-    Then Balance recalculates with new price       # features/steps/check_credit.py:328
-    Then Item unit_price updated from new product  # features/steps/check_credit.py:338
+  Scenario: Delete Item Reduces Order Total and Customer Balance       # features/order_processing.feature:29
+    Given Customer "TestCustomer" with balance 0 and credit limit 3000 # features/steps/order_processing_steps.py:22
+    And Order exists for "TestCustomer" with 3 Widget and 2 Gadget     # features/steps/order_processing_steps.py:61
+    When First item deleted                                            # features/steps/order_processing_steps.py:356
+    Then Order amount_total should be 300                              # features/steps/order_processing_steps.py:483
+    And Customer balance should be 300                                 # features/steps/order_processing_steps.py:451
 
-  Scenario: Change Customer on Order              # features/check_credit.feature:29
-    Given Two customers with balance 0            # features/steps/check_credit.py:50
-    And Order for first customer with balance 100 # features/steps/check_credit.py:62
-    When Order moved to second customer           # features/steps/check_credit.py:241
-    Then First customer balance is 0              # features/steps/check_credit.py:352
-    Then Second customer balance is 100           # features/steps/check_credit.py:363
+  Scenario: Ship Order Excludes from Balance (WHERE exclude)       # features/order_processing.feature:36
+    Given Customer "ShipTest" with balance 0 and credit limit 5000 # features/steps/order_processing_steps.py:22
+    And Order exists for "ShipTest" with 10 Widget                 # features/steps/order_processing_steps.py:116
+    When Order is shipped                                          # features/steps/order_processing_steps.py:369
+    Then Customer balance should be 0                              # features/steps/order_processing_steps.py:451
 
-  Scenario: Delete Item Adjusts Balance           # features/check_credit.feature:36
-    Given Customer with balance 0 and credit 1000 # features/steps/check_credit.py:13
-    And Order with 2 items                        # features/steps/check_credit.py:75
-    When One item is deleted                      # features/steps/check_credit.py:271
-    Then Balance decreases correctly              # features/steps/check_credit.py:374
+  Scenario: Unship Order Includes in Balance (WHERE include)         # features/order_processing.feature:42
+    Given Customer "UnshipTest" with balance 0 and credit limit 5000 # features/steps/order_processing_steps.py:22
+    And Shipped order exists for "UnshipTest" with 5 Gadget          # features/steps/order_processing_steps.py:173
+    When Order is unshipped                                          # features/steps/order_processing_steps.py:393
+    Then Customer balance should be 750                              # features/steps/order_processing_steps.py:451
 
-Feature: Order Lifecycle # features/order_lifecycle.feature:1
+  Scenario: Exceed Credit Limit Rejected (Constraint FAIL)         # features/order_processing.feature:48
+    Given Customer "LimitTest" with balance 0 and credit limit 500 # features/steps/order_processing_steps.py:22
+    When B2B order placed for "LimitTest" with 10 Gadget           # features/steps/order_processing_steps.py:255
+    Then Order creation should fail                                # features/steps/order_processing_steps.py:543
+    And Error message should contain "credit limit"                # features/steps/order_processing_steps.py:549
 
-  Scenario: Set Order Shipped Excludes from Balance  # features/order_lifecycle.feature:3
-    Given Customer with balance 0 and credit 1000    # features/steps/check_credit.py:13
-    And Order with balance 100                       # features/steps/order_lifecycle.py:13
-    When Order is shipped                            # features/steps/order_lifecycle.py:60
-    Then Balance is 0                                # features/steps/check_credit.py:295
-    Then Order excluded from balance aggregate       # features/steps/order_lifecycle.py:141
+  Scenario: Carbon Neutral Discount Applied (Custom Logic)               # features/order_processing.feature:54
+    Given Customer "GreenBuyer" with balance 0 and credit limit 2000     # features/steps/order_processing_steps.py:22
+    When B2B order placed for "GreenBuyer" with 10 carbon neutral Gadget # features/steps/order_processing_steps.py:202
+    Then Item amount should be 1350                                      # features/steps/order_processing_steps.py:502
+    And Order amount_total should be 1350                                # features/steps/order_processing_steps.py:483
+    And Customer balance should be 1350                                  # features/steps/order_processing_steps.py:451
 
-  Scenario: Reset Shipped Includes in Balance     # features/order_lifecycle.feature:10
-    Given Customer with balance 0 and credit 1000 # features/steps/check_credit.py:13
-    And Order with balance 100 marked shipped     # features/steps/order_lifecycle.py:28
-    When Order unshipped                          # features/steps/order_lifecycle.py:89
-    Then Balance is 100                           # features/steps/check_credit.py:295
-    Then Order included in balance aggregate      # features/steps/order_lifecycle.py:152
+  Scenario: Product Unit Price Copied to Item                       # features/order_processing.feature:61
+    Given Customer "PriceCopy" with balance 0 and credit limit 3000 # features/steps/order_processing_steps.py:22
+    When B2B order placed for "PriceCopy" with 1 Green              # features/steps/order_processing_steps.py:255
+    Then Item unit_price should be 109                              # features/steps/order_processing_steps.py:521
 
-  Scenario: Delete Order Adjusts Balance          # features/order_lifecycle.feature:17
-    Given Customer with balance 0 and credit 1000 # features/steps/check_credit.py:13
-    And Order with balance 150                    # features/steps/order_lifecycle.py:13
-    When Order is deleted                         # features/steps/order_lifecycle.py:118
-    Then Balance is 0                             # features/steps/check_credit.py:295
-    Then Customer has no orders                   # features/steps/order_lifecycle.py:163
+  Scenario: Change Product Updates Unit Price (FK Change)               # features/order_processing.feature:66
+    Given Customer "ProductChange" with balance 0 and credit limit 5000 # features/steps/order_processing_steps.py:22
+    And Order exists for "ProductChange" with 2 Widget                  # features/steps/order_processing_steps.py:116
+    When Item product changed to "Gadget"                               # features/steps/order_processing_steps.py:416
+    Then Item unit_price should be 150                                  # features/steps/order_processing_steps.py:521
+    And Item amount should be 300                                       # features/steps/order_processing_steps.py:502
+    And Order amount_total should be 300                                # features/steps/order_processing_steps.py:483
 
 &nbsp;&nbsp;
-/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/basic_demo/test/api_logic_server_behave/behave_run.py completed at October 17, 2025 20:02:28
+/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/basic_demo_2/test/api_logic_server_behave/behave_run.py completed at October 20, 2025 11:28:01

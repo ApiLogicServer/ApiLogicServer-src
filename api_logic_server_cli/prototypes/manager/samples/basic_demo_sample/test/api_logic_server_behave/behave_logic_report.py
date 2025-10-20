@@ -182,15 +182,21 @@ def main(behave_log: str, scenario_logs: str, wiki: str, prepend_wiki: str):
 
     just_saw_then = False
     current_scenario = ""
+    previous_scenario = ""
     for each_line in contents:
         if just_saw_then and each_line == "\n":
             show_logic(scenario=current_scenario, logic_logs_dir=scenario_logs)
-        just_saw_then = False
+            just_saw_then = False
+            previous_scenario = ""
         if each_line.startswith("Feature"):
             wiki_data.append("&nbsp;")
             wiki_data.append("&nbsp;")
             each_line = "## " + each_line
         if each_line.startswith("  Scenario"):
+            # Before starting new scenario, show logic for previous one if we saw Then
+            if just_saw_then and previous_scenario:
+                show_logic(scenario=previous_scenario, logic_logs_dir=scenario_logs)
+            just_saw_then = False
             each_line = tab + each_line
         if each_line.startswith("    Given") or \
                 each_line.startswith("    When") or \
@@ -206,6 +212,7 @@ def main(behave_log: str, scenario_logs: str, wiki: str, prepend_wiki: str):
         each_line = each_line.rstrip()
         if "Scenario" in each_line:
             current_scenario = each_line[18:]
+            previous_scenario = current_scenario
             wiki_data.append("&nbsp;")
             wiki_data.append("&nbsp;")
             wiki_data.append("### " + each_line[8:])
@@ -213,6 +220,10 @@ def main(behave_log: str, scenario_logs: str, wiki: str, prepend_wiki: str):
         each_line = each_line + "  "  # wiki for "new line"
         
         wiki_data.append(each_line)
+    
+    # Show logic for the last scenario if we saw Then
+    if just_saw_then and current_scenario:
+        show_logic(scenario=current_scenario, logic_logs_dir=scenario_logs)
 
     with open(wiki, 'w') as rpt:
         rpt.write('\n'.join(wiki_data))

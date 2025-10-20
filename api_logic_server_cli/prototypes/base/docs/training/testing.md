@@ -185,6 +185,8 @@ def step_impl(context, name, balance):
 
 **Behave matches steps by FIRST pattern that fits. More specific patterns MUST come before general ones.**
 
+**Example 1: Carbon Neutral Products**
+
 ```python
 # ❌ WRONG ORDER - General pattern matches first, specific never runs!
 @when('B2B order placed for "{customer_name}" with {quantity:d} {product_name}')
@@ -211,13 +213,50 @@ def step_impl_general(context, customer_name, quantity, product_name):
     ...
 ```
 
+**Example 2: Multi-Item Orders**
+
+```python
+# ❌ WRONG ORDER - Single-item pattern matches "3 Widget and 2 Gadget"
+@given('Order exists for "{customer_name}" with {quantity:d} {product_name}')
+def step_impl_single(context, customer_name, quantity, product_name):
+    # This matches FIRST!
+    # product_name = "Widget and 2 Gadget" (treats "and 2 Gadget" as part of name)
+    # Creates only 1 item, context.item_ids never set properly
+    ...
+
+@given('Order exists for "{customer_name}" with {qty1:d} {product1} and {qty2:d} {product2}')
+def step_impl_multi(context, customer_name, qty1, product1, qty2, product2):
+    # NEVER REACHED! Single-item pattern above matched first
+    ...
+
+# ✅ CORRECT ORDER - Multi-item pattern first!
+@given('Order exists for "{customer_name}" with {qty1:d} {product1} and {qty2:d} {product2}')
+def step_impl_multi(context, customer_name, qty1, product1, qty2, product2):
+    # This matches first for "3 Widget and 2 Gadget"
+    # Creates 2 items, sets context.item_ids = [id1, id2]
+    ...
+
+@given('Order exists for "{customer_name}" with {quantity:d} {product_name}')
+def step_impl_single(context, customer_name, quantity, product_name):
+    # Only matches if "and" not present
+    ...
+```
+
 **Why This Matters:**
 - Wrong order → context.item_id not set → "Then Item amount" step fails with "item_id not set in context"
 - Behave doesn't warn about unreachable patterns
 - **ALWAYS order from most specific to most general**
 
+**Specificity Rules:**
+- More literal text = more specific ("and", "carbon neutral")
+- More parameters = more specific
+- Tighter type constraints = more specific
+
 **Anti-Pattern Alert:**
 Using `context.execute_steps()` to reuse step logic can cause context propagation issues. Instead, duplicate the implementation for specific patterns (DRY doesn't apply to Behave steps with context dependencies).
+
+**Debugging Tip:**
+If a step seems to execute but context variables aren't set, check if a MORE GENERAL pattern exists ABOVE it in the file.
 
 ### Rule #1: Read database/models.py First
 ```python

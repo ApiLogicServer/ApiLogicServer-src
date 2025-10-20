@@ -1,0 +1,8 @@
+
+Add Item Exceeding Credit Limit
+ - 2025-10-20 08:59:10,579 - logic_logger - INFO
+
+Logic Phase:		ROW LOGIC		(session=0x109afa7a0) (sqlalchemy before_flush)			 - 2025-10-20 08:59:10,581 - logic_logger - INFO
+..Item[None] {Insert - client} id: None, order_id: None, product_id: 2, quantity: 5, amount: None, unit_price: None  row: 0x109eca2d0  session: 0x109afa7a0  ins_upd_dlt: ins, initial: ins - 2025-10-20 08:59:10,581 - logic_logger - INFO
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: None, product_id: 2, quantity: 5, amount: None, unit_price: 90.0000000000  row: 0x109eca2d0  session: 0x109afa7a0  ins_upd_dlt: ins, initial: ins - 2025-10-20 08:59:10,581 - logic_logger - INFO
+..Item[None] {Formula amount} id: None, order_id: None, product_id: 2, quantity: 5, amount: 450.0000000000, unit_price: 90.0000000000  row: 0x109eca2d0  session: 0x109afa7a0  ins_upd_dlt: ins, initial: ins - 2025-10-20 08:59:10,582 - logic_logger - INFO
