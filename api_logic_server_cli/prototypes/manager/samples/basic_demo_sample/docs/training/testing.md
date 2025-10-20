@@ -142,6 +142,83 @@ def step_impl(context, qty):
 
 ## The 6 Critical Rules (Read FIRST!)
 
+### Rule #0: TEST REPEATABILITY (MOST CRITICAL!) ⚠️
+
+**TESTS MODIFY THE DATABASE. Tests MUST be repeatable and restartable.**
+
+```python
+# ❌ WRONG - Reuses contaminated data
+@given('Customer "Bob" with balance {balance:d}')
+def step_impl(context, name, balance):
+    r = requests.get(f'/api/Customer/?filter[name]=Bob')
+    if r.json()['data']:
+        customer = r.json()['data'][0]  # REUSES Bob - balance accumulated!
+
+# ✅ CORRECT - Always creates fresh data with timestamp
+@given('Customer "Bob" with balance {balance:d}')
+def step_impl(context, name, balance):
+    unique_name = f"Bob {int(time.time() * 1000)}"  # ALWAYS unique!
+    post_data = {
+        "data": {
+            "type": "Customer",
+            "attributes": {
+                "name": unique_name,
+                "balance": balance,
+                "credit_limit": limit
+            }
+        }
+    }
+    r = requests.post(f'/api/Customer/', json=post_data)
+    context.customer_id = int(r.json()['data']['id'])
+    context.customer_name = unique_name  # Save for later use
+```
+
+**Critical Patterns:**
+- **NEVER reuse existing customers/orders** - always create fresh
+- **Use timestamps** in names: `f"Bob {int(time.time() * 1000)}"`
+- **Match exact database names** - "Widget" not "Widgets"
+- **Don't assume clean state** - tests may run after failures
+- **Track name mappings** for multi-customer tests (see Rule #8)
+- **Understand DERIVED vs ADDED aggregates** (see Rule #9)
+
+### Rule #0.5: BEHAVE STEP ORDERING (Pattern Matching!) ⚠️
+
+**Behave matches steps by FIRST pattern that fits. More specific patterns MUST come before general ones.**
+
+```python
+# ❌ WRONG ORDER - General pattern matches first, specific never runs!
+@when('B2B order placed for "{customer_name}" with {quantity:d} {product_name}')
+def step_impl_general(context, customer_name, quantity, product_name):
+    # This matches "carbon neutral Widget" as product_name="carbon neutral Widget"
+    # The specific carbon neutral step below NEVER executes!
+    ...
+
+@when('B2B order placed for "{customer_name}" with {quantity:d} carbon neutral {product_name}')
+def step_impl_carbon_neutral(context, customer_name, quantity, product_name):
+    # NEVER REACHED because general pattern above matched first
+    ...
+
+# ✅ CORRECT ORDER - Specific pattern first!
+@when('B2B order placed for "{customer_name}" with {quantity:d} carbon neutral {product_name}')
+def step_impl_carbon_neutral(context, customer_name, quantity, product_name):
+    # This matches first for "carbon neutral Widget"
+    # Sets context.item_id correctly
+    ...
+
+@when('B2B order placed for "{customer_name}" with {quantity:d} {product_name}')
+def step_impl_general(context, customer_name, quantity, product_name):
+    # Only matches if "carbon neutral" not present
+    ...
+```
+
+**Why This Matters:**
+- Wrong order → context.item_id not set → "Then Item amount" step fails with "item_id not set in context"
+- Behave doesn't warn about unreachable patterns
+- **ALWAYS order from most specific to most general**
+
+**Anti-Pattern Alert:**
+Using `context.execute_steps()` to reuse step logic can cause context propagation issues. Instead, duplicate the implementation for specific patterns (DRY doesn't apply to Behave steps with context dependencies).
+
 ### Rule #1: Read database/models.py First
 ```python
 # Check: ID types (Integer vs String), column names, aggregates
@@ -237,21 +314,68 @@ else:
     order_data = r.json()  # Direct format
 ```
 
-### Rule #8: Use Actual Database Values ⚠️ NEW
+### Rule #8: Customer Name Mapping for Multi-Customer Tests ⚠️ NEW
 ```python
-# ALWAYS check actual product prices before writing tests!
-# ❌ WRONG - assuming prices
-add_order_args = {
-    "Items": [{"Name": "Widget", "QuantityOrdered": 400 // 10}]  # Assumes $10
-}
+# When tests involve MULTIPLE customers, track the mapping!
+@given('Customer "{customer_name}" with balance {balance:d}')
+def step_impl(context, customer_name, balance, limit):
+    unique_name = f"{customer_name} {int(time.time() * 1000)}"
+    # ... create customer ...
+    
+    # Track mapping for later lookups
+    if not hasattr(context, 'customer_map'):
+        context.customer_map = {}
+    context.customer_map[customer_name] = {'id': customer_id, 'unique_name': unique_name}
 
-# ✅ CORRECT - verified with: sqlite3 db.sqlite "SELECT name, unit_price FROM product;"
-add_order_args = {
-    "Items": [{"Name": "Widget", "QuantityOrdered": 360 // 90}]  # Widget = $90
-}
+# Then later, when checking specific customer:
+@then('Customer "{customer_name}" balance should be {expected:d}')
+def step_impl(context, customer_name, expected):
+    # ✅ CORRECT - Use ID from mapping
+    customer_info = context.customer_map[customer_name]
+    r = requests.get(f'/api/Customer/{customer_info["id"]}/')
+    
+    # ❌ WRONG - Query by original name (won't find "Bob 1729...")
+    r = requests.get(f'/api/Customer/?filter[name]={customer_name}')
 ```
 
-### Rule #9: Step Definitions Must Match Feature Files ⚠️ NEW
+### Rule #9: Understand DERIVED Aggregates ⚠️ NEW
+```python
+# Customer.balance is DERIVED from orders, not ADDED to!
+Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, 
+         where=lambda row: row.date_shipped is None)
+
+# ❌ WRONG expectations:
+# Given Customer "Charlie" with existing balance 220
+# And Order for 180
+# Then balance should be 310  # WRONG! Thinks 220 + 90 (after delete)
+
+# ✅ CORRECT expectations:
+# Given Customer "Charlie" with balance 0
+# And Order for 180
+# Then balance should be 90  # After deleting one item
+# The "existing balance 220" is REPLACED by sum of orders (180)!
+```
+
+### Rule #10: Verify Actual Database Values FIRST ⚠️ NEW
+```python
+# ALWAYS check actual product prices/flags before writing test expectations!
+
+# Check prices:
+# sqlite3 db.sqlite "SELECT name, unit_price, carbon_neutral FROM Product;"
+
+# Widget=90, Gadget=150, Green=109
+
+# ❌ WRONG - Assumed Widget=$100
+# Expected: 10 * 100 = 1000
+
+# ✅ CORRECT - Verified Widget=$90  
+# Expected: 10 * 90 = 900
+
+# For carbon neutral discount (10% off when qty >= 10):
+# Expected: 10 * 90 * 0.9 = 810
+```
+
+### Rule #11: Step Definitions Must Match Feature Files ⚠️ NEW
 ```python
 # Feature file:
 Given Customer "Alice" with balance 0 and credit limit 1000
