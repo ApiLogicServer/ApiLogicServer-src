@@ -56,6 +56,33 @@ Custom API exists in api/api_discovery/?
 # 4. Match to business rules (which rules does it test?)
 ```
 
+**CRITICAL - Custom API Calling Convention:**
+
+Custom APIs require **BOTH** `"method"` and `"args"` in the `meta` object:
+
+```python
+# ✅ CORRECT - Has both "method" and "args"
+{
+    "meta": {
+        "method": "OrderB2B",    # ← REQUIRED!
+        "args": {
+            "data": { ... }
+        }
+    }
+}
+
+# ❌ WRONG - Missing "method" field
+{
+    "meta": {
+        "args": {
+            "data": { ... }
+        }
+    }
+}
+```
+
+Without the `"method"` field, the API call will fail with a 500 error.
+
 **Example Discovery - OrderB2B:**
 ```python
 # api/api_discovery/order_b2b_service.py

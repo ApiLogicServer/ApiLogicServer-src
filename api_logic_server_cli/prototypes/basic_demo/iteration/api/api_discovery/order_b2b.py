@@ -57,27 +57,31 @@ class ServicesEndPoint(safrs.JABase):
         See: https://apilogicserver.github.io/Docs/Sample-Integration/
         Test with swagger, or, from command line:
 
+        CRITICAL: Custom API calls require BOTH "method" and "args" in meta object:
+
         $(venv) ApiLogicServer login --user=admin --password=p
         $(venv) ApiLogicServer curl "'POST' 'http://localhost:5656/api/ServicesEndPoint/OrderB2B'" --data '
-        {"meta": {"args": {"order": {
-            "Account": "Customer 1",
-            "Notes": "Please Rush",
-            "Items": [
-                {
-                "Name": "Product A",
-                "QuantityOrdered": 1
-                },
-                {
-                "Name": "Product B",
-                "QuantityOrdered": 2
-                },
-                {
-                "Name": "Product B",
-                "QuantityOrdered": 2
-                }
+        {"meta": {
+            "method": "OrderB2B",
+            "args": {"order": {
+                "Account": "Customer 1",
+                "Notes": "Please Rush",
+                "Items": [
+                    {
+                    "Name": "Product A",
+                    "QuantityOrdered": 1
+                    },
+                    {
+                    "Name": "Product B",
+                    "QuantityOrdered": 2
+                    },
+                    {
+                    "Name": "Product B",
+                    "QuantityOrdered": 2
+                    }
                 ]
-            }
-        }}}'
+            }}
+        }}'
 
         """
 
