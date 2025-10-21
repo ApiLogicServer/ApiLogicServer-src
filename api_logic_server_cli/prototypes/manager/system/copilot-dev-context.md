@@ -92,9 +92,9 @@ This document contains **everything** you need to understand the system:
 ## 👤 Current Maintainer
 
 **Val Huber**
-- **Wang Labs PACE**: Designed and led the business rules architecture, co-invented (with Ron Ross) the declarative rules paradigm and execution engine
-- **Versata**: CTO, evolved and scaled the rules technology to Fortune 500 deployments
-- **API Logic Server**: Architect and lead developer, modernizing proven patterns for cloud-native Python/React stack
+- **Wang Labs PACE**: Designed and led the business rules architecture, co-invented (in parallel with Ron Ross) the declarative rules paradigm and execution engine
+- **Versata**: CTO, designed and lead scaling the rules technology to J2EE and the web
+- **API Logic Server**: Architect and lead developer, modernizing proven patterns for cloud-native Python/React stack, the use of GenAI, and current IDEs/deployment practices.
 
 **Expertise:** 40+ years leading business rules technology evolution - inventor of declarative multi-table derivations, constraint propagation, and rule execution engines.
 
