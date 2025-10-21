@@ -183,20 +183,35 @@ def main(behave_log: str, scenario_logs: str, wiki: str, prepend_wiki: str):
     just_saw_then = False
     current_scenario = ""
     for each_line in contents:
-        if just_saw_then and each_line == "\n":
+        # Show logic when we hit a blank line after assertions OR when starting a new scenario
+        if just_saw_then and (each_line == "\n" or each_line.startswith("  Scenario")):
             show_logic(scenario=current_scenario, logic_logs_dir=scenario_logs)
-        just_saw_then = False
+            just_saw_then = False
+            
         if each_line.startswith("Feature"):
             wiki_data.append("&nbsp;")
             wiki_data.append("&nbsp;")
             each_line = "## " + each_line
+            
         if each_line.startswith("  Scenario"):
+            # Extract scenario name for logic lookup
+            current_scenario = each_line.strip().replace("Scenario: ", "").replace("  ", " ").strip()
+            wiki_data.append("&nbsp;")
+            wiki_data.append("&nbsp;")
+            wiki_data.append("### " + each_line[2:])  # Add scenario header
             each_line = tab + each_line
+            
         if each_line.startswith("    Given") or \
                 each_line.startswith("    When") or \
-                each_line.startswith("    Then"):
-            if each_line.startswith("    Then"):
+                each_line.startswith("    Then") or \
+                each_line.startswith("    And"):
+            if each_line.startswith("    Then") or each_line.startswith("    And"):
                 just_saw_then = True
+            # Add subtle formatting to keywords
+            for keyword in ["Given", "When", "Then", "And"]:
+                if f"    {keyword} " in each_line:
+                    each_line = each_line.replace(f"    {keyword} ", f"    **{keyword}** ")
+                    break
             each_line = tab + tab + each_line
 
         each_line = each_line[:-1]
@@ -204,15 +219,14 @@ def main(behave_log: str, scenario_logs: str, wiki: str, prepend_wiki: str):
         if debug_loc > 0:
             each_line = each_line[0 : debug_loc]
         each_line = each_line.rstrip()
-        if "Scenario" in each_line:
-            current_scenario = each_line[18:]
-            wiki_data.append("&nbsp;")
-            wiki_data.append("&nbsp;")
-            wiki_data.append("### " + each_line[8:])
 
         each_line = each_line + "  "  # wiki for "new line"
         
         wiki_data.append(each_line)
+
+    # Show logic for the last scenario
+    if current_scenario and just_saw_then:
+        show_logic(scenario=current_scenario, logic_logs_dir=scenario_logs)
 
     with open(wiki, 'w') as rpt:
         rpt.write('\n'.join(wiki_data))
