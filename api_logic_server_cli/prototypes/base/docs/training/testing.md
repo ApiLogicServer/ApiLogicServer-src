@@ -19,10 +19,22 @@ Step 1c. Scan api/api_discovery/*.py → Discover custom APIs (PHASE 2!)
 Step 2.  Decide Phase 1 vs Phase 2 → Based on custom API existence
 Step 3.  Generate .feature files → Business language scenarios
 Step 4.  Implement steps/*.py → Using discovered APIs or CRUD
-Step 5.  Run tests → python behave_run.py
+Step 5.  SUGGEST how to run tests (DO NOT run automatically)
 ```
 
 **DO NOT skip Step 1c!** Custom APIs change the entire testing approach.
+
+**DO NOT run tests automatically!** Instead, suggest this workflow:
+
+```bash
+# 1. Start the server (in separate terminal or background)
+python api_logic_server_run.py
+
+# 2. Run the tests (in another terminal)
+python test/api_logic_server_behave/behave_run.py
+```
+
+**Why manual execution?** Tests require a running server. The AI cannot manage multiple terminals or background processes reliably.
 
 ## Phase 1 vs Phase 2: The Core Decision
 
