@@ -193,90 +193,19 @@ def main(behave_log: str, scenario_logs: str, wiki: str, prepend_wiki: str):
             wiki_data.append("&nbsp;")
             each_line = "## " + each_line
         if each_line.startswith("  Scenario"):
-            # Before starting new scenario, show logic for previous one if we saw Then
-            if just_saw_then and previous_scenario:
-                show_logic(scenario=previous_scenario, logic_logs_dir=scenario_logs)
-            just_saw_then = False
-            each_line = tab + each_line
-        if each_line.startswith("    Given") or \
-                each_line.startswith("    When") or \
-                each_line.startswith("    Then"):
-            if each_line.startswith("    Then"):
-                just_saw_then = True
-            each_line = tab + tab + each_line
-
-        each_line = each_line[:-1]
-        debug_loc = each_line.find(behave_debug_info)
-        if debug_loc > 0:
-            each_line = each_line[0 : debug_loc]
-        each_line = each_line.rstrip()
-        if "Scenario" in each_line:
+            # Extract scenario name for logic lookup
             current_scenario = each_line[18:]
-            previous_scenario = current_scenario
             wiki_data.append("&nbsp;")
             wiki_data.append("&nbsp;")
-            wiki_data.append("### " + each_line[8:])
-
-        each_line = each_line + "  "  # wiki for "new line"
-        
-        wiki_data.append(each_line)
-    
-    # Show logic for the last scenario if we saw Then
-    if just_saw_then and current_scenario:
-        show_logic(scenario=current_scenario, logic_logs_dir=scenario_logs)
-
-    with open(wiki, 'w') as rpt:
-        rpt.write('\n'.join(wiki_data))
-    wiki_full_path = Path(wiki).absolute()
-    print(f'Wiki Output: {wiki_full_path}\n\n')
-
-
-
-def print_args(args, msg):
-    print(msg)
-    for each_arg in args:
-        print(f'  {each_arg}')
-    print(" ")
-
-
-@click.group()
-@click.pass_context
-def cli(ctx):
-    """
-    Combine behave.log and scenario_logic_logs to create Behave Logic Report
-
-    """
-    pass
-
-
-@cli.command("run")
-@click.pass_context
-@click.option('--behave_log',
-              default=f'logs/behave.log',  # cwd set to test/api_logic_server_behave
-              # prompt="Log from behave test suite run [behave.log]",
-              help="Help")
-@click.option('--scenario_logs',
-              default=f'logs/scenario_logic_logs',
-              # prompt="Logic Log directory from ",
-              help="Help")
-@click.option('--wiki',
-              default=f'reports/Behave Logic Report.md',
-              # prompt="Log from behave test suite run [api_logic_server_behave]",
-              help="Help")
-@click.option('--prepend_wiki',
-              default=f'reports/Behave Logic Report Intro micro.md',
-              # prompt="Log from behave test suite run [Behave Logic Report Intro]",
-              help="Help")
-def run(ctx, behave_log: str, scenario_logs: str, wiki: str, prepend_wiki: str):
-    main(behave_log = behave_log, scenario_logs = scenario_logs, wiki = wiki, prepend_wiki = prepend_wiki)
-
-
-if __name__ == '__main__':  # debugger & python command line start here
-    # eg: python api_logic_server_cli/cli.py create --project_name=~/Desktop/test_project
-    # unix: python api_logic_server_cli/cli.py create --project_name=/home/ApiLogicProject
-
-    print(f'\nBehave Logic Report 1.1, started at {os.getcwd()}')
-    commands = sys.argv
-    if len(sys.argv) > 1:
-        print_args(commands, f'\n\nCommand Line Arguments:')
-    cli()
+            # Remove the debug info (# features/...) from the scenario name
+            debug_loc = current_scenario.find(behave_debug_info)
+            if debug_loc > 0:
+                current_scenario = current_scenario[0:debug_loc].strip()
+            wiki_data.append("&nbsp;")
+            wiki_data.append("&nbsp;")
+            # Remove debug info from header line too
+            header_line = each_line[2:]
+            debug_loc = header_line.find(behave_debug_info)
+            if debug_loc > 0:
+                header_line = header_line[0:debug_loc].rstrip()
+            wiki_data.append("### " + header_line)  # Add scenario header

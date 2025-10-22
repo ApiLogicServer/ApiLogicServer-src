@@ -198,18 +198,7 @@ def main(behave_log: str, scenario_logs: str, wiki: str, prepend_wiki: str):
             current_scenario = each_line.strip().replace("Scenario: ", "").replace("  ", " ").strip()
             wiki_data.append("&nbsp;")
             wiki_data.append("&nbsp;")
-            # Remove the debug info (# features/...) from the scenario name
-            debug_loc = current_scenario.find(behave_debug_info)
-            if debug_loc > 0:
-                current_scenario = current_scenario[0:debug_loc].strip()
-            wiki_data.append("&nbsp;")
-            wiki_data.append("&nbsp;")
-            # Remove debug info from header line too
-            header_line = each_line[2:]
-            debug_loc = header_line.find(behave_debug_info)
-            if debug_loc > 0:
-                header_line = header_line[0:debug_loc].rstrip()
-            wiki_data.append("### " + header_line)  # Add scenario header
+            wiki_data.append("### " + each_line[2:])  # Add scenario header
             each_line = tab + each_line
             
         if each_line.startswith("    Given") or \
