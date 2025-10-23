@@ -77,15 +77,31 @@ This document contains **everything** you need to understand the system:
 - **Manager-level `.copilot-instructions.md`** - How to CREATE projects (in workspace root)
   - **Location:** `prototypes/manager/.github/.copilot-instructions.md`
   - **Size:** ~86 lines
+  - **Scope:** Creating projects ONLY (3 methods: existing DB, GenAI, new DB)
   - **Purpose:** Instructions for creating new projects with `genai-logic create` commands
-  - Sample databases and project creation workflows
+  - **Does NOT contain:** Project customization, logic patterns, testing, security, etc.
 
 ### For Working Within Created Projects:
 - **Project-level `.copilot-instructions.md`** - How to EXTEND/CUSTOMIZE projects (auto-generated in each project)
   - **Location:** `prototypes/base/.github/.copilot-instructions.md` (template)
   - **Size:** ~740 lines
-  - **Purpose:** Complete architecture guide for EACH created project - key services, customization points, testing, deployment
+  - **Scope:** Complete architecture guide for EACH created project
+  - **Purpose:** 13 Main Services (what AI can do in a project):
+    1. **Run Project** - F5 debug, `api_logic_server_run.py`
+    2. **Adding Business Logic** - Translate NL → LogicBank rules (sums, formulas, constraints, events)
+    3. **Discovery Systems** - Auto-load logic from `logic/logic_discovery/*.py`, APIs from `api/api_discovery/*.py`
+    4. **Automated Testing** - Behave tests with BLT reports (requirements traceability)
+    5. **Adding MCP** - Enable MCP client UI with `genai-logic genai-add-mcp-client`
+    6. **Configuring Admin UI** - Edit `ui/admin/admin.yaml` for customization
+    7. **Create React Apps** - `genai-logic genai-add-app` for custom UIs
+    8. **Security - RBAC** - `als add-auth` for SQL/Keycloak, `security/declare_security.py` for grants
+    9. **Custom API Endpoints** - Add routes in `api/customize_api.py`
+    10. **B2B Integration APIs** - Complex endpoints with Row Dict Mappers for partner integration
+    11. **Customize Models** - Add tables, attributes, derived fields
+    12. **Adding Events** - Row events for integrations (Kafka, webhooks, etc.)
+    13. **Critical Patterns** - React component best practices, null-safe constraints, test repeatability
   - ⚠️ **CRITICAL:** These are TWO DIFFERENT FILES - never replace the per-project version with the manager version!
+  - 🚨 **PROPAGATION PROBLEM:** Changes to project-level instructions must be carefully copied to `prototypes/base/.github/.copilot-instructions.md`
 - **`docs/training/logic_bank_api.prompt`** - LogicBank API reference (Rosetta Stone for rules)
 - **`docs/training/testing.md`** - Behave testing guide (1755 lines, read BEFORE creating tests)
 

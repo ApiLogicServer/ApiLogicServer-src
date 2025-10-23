@@ -19,10 +19,37 @@ Step 1c. Scan api/api_discovery/*.py → Discover custom APIs (PHASE 2!)
 Step 2.  Decide Phase 1 vs Phase 2 → Based on custom API existence
 Step 3.  Generate .feature files → Business language scenarios
 Step 4.  Implement steps/*.py → Using discovered APIs or CRUD
-Step 5.  Run tests → python behave_run.py
+Step 4b. VERIFY STEP ORDERING → Multi-item BEFORE single-item (Rule #0.5!)
+Step 5.  SUGGEST how to run tests (DO NOT run automatically)
 ```
 
+**CRITICAL PRE-TEST CHECKLIST:**
+- [ ] Step 1c completed? (Custom APIs discovered)
+- [ ] **Database values verified?** (Rule #10: Run SQL to check actual prices/flags)
+  - [ ] `sqlite3 db.sqlite "SELECT name, unit_price, carbon_neutral FROM product;"`
+  - [ ] Don't assume product attributes - verify BEFORE writing expectations!
+- [ ] **Step ordering verified?** (Most specific → Most general)
+  - [ ] @when patterns: carbon neutral > multi-item > single-item
+  - [ ] @given patterns: multi-item > single-item
+  - [ ] Use `grep -n "@when('.*with" steps/*.py` to verify order
+- [ ] Test data uses timestamps? (Rule #0: Repeatability)
+- [ ] Security config read? (SECURITY_ENABLED value)
+
 **DO NOT skip Step 1c!** Custom APIs change the entire testing approach.
+
+**DO NOT skip Step 4b!** Wrong step ordering causes silent failures with balance=0.
+
+**DO NOT run tests automatically!** Instead, suggest this workflow:
+
+```bash
+# 1. Start the server (in separate terminal or background)
+python api_logic_server_run.py
+
+# 2. Run the tests (in another terminal)
+python test/api_logic_server_behave/behave_run.py
+```
+
+**Why manual execution?** Tests require a running server. The AI cannot manage multiple terminals or background processes reliably.
 
 ## Phase 1 vs Phase 2: The Core Decision
 
@@ -213,7 +240,7 @@ def step_impl_general(context, customer_name, quantity, product_name):
     ...
 ```
 
-**Example 2: Multi-Item Orders**
+**Example 2: Multi-Item Orders (GIVEN pattern)**
 
 ```python
 # ❌ WRONG ORDER - Single-item pattern matches "3 Widget and 2 Gadget"
@@ -240,6 +267,51 @@ def step_impl_multi(context, customer_name, qty1, product1, qty2, product2):
 def step_impl_single(context, customer_name, quantity, product_name):
     # Only matches if "and" not present
     ...
+```
+
+**Example 3: Multi-Item Orders (WHEN pattern) - Real Bug Found!**
+
+```python
+# ❌ WRONG ORDER - Causes silent failure with balance=0 instead of expected value
+@when('B2B order placed for "{customer_name}" with {quantity:d} {product_name}')
+def step_impl_single(context, customer_name, quantity, product_name):
+    # This matches "3 Widget and 2 Gadget" FIRST!
+    # product_name becomes "Widget and 2 Gadget" (entire string)
+    # OrderB2B API tries to find product "Widget and 2 Gadget" → fails
+    # Returns 200 but no order created → customer balance stays 0
+    # Test fails: "expected 570, got 0.0"
+    ...
+
+@when('B2B order placed for "{customer_name}" with {qty1:d} {product1} and {qty2:d} {product2}')
+def step_impl_multi(context, customer_name, qty1, product1, qty2, product2):
+    # NEVER REACHED! Single-item pattern matched first
+    ...
+
+# ✅ CORRECT ORDER - Multi-item pattern MUST come before single-item
+@when('B2B order placed for "{customer_name}" with {qty1:d} {product1} and {qty2:d} {product2}')
+def step_impl_multi(context, customer_name, qty1, product1, qty2, product2):
+    # Now matches "3 Widget and 2 Gadget" correctly
+    # Creates order with 2 items, balance = 570
+    ...
+
+@when('B2B order placed for "{customer_name}" with {quantity:d} {product_name}')
+def step_impl_single(context, customer_name, quantity, product_name):
+    # Now only matches single product patterns
+    ...
+```
+
+**CRITICAL FILE ORGANIZATION:**
+Within each decorator type (@given, @when, @then), organize patterns like this:
+
+```python
+# For @when patterns:
+@when('... with {qty:d} carbon neutral {product}')  # Most specific (3+ keywords)
+@when('... with {qty1:d} {p1} and {qty2:d} {p2}')  # More specific (multi-param + "and")
+@when('... with {quantity:d} {product_name}')      # General (fewest keywords)
+
+# For @given patterns:
+@given('... with {qty1:d} {p1} and {qty2:d} {p2}')  # More specific (multi-param + "and")
+@given('... with {quantity:d} {product_name}')      # General (fewer params)
 ```
 
 **Why This Matters:**
@@ -401,19 +473,28 @@ Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total,
 ```python
 # ALWAYS check actual product prices/flags before writing test expectations!
 
-# Check prices:
-# sqlite3 db.sqlite "SELECT name, unit_price, carbon_neutral FROM Product;"
+# Check prices AND flags:
+# sqlite3 db.sqlite "SELECT name, unit_price, carbon_neutral FROM product;"
 
-# Widget=90, Gadget=150, Green=109
+# Results:
+# 1|Gadget|150|1        ← carbon_neutral = 1 (TRUE)
+# 2|Widget|90|          ← carbon_neutral = NULL (not carbon neutral!)
+# 3|Thingamajig|5075|
+# 4|Doodad|110|
+# 5|Green|109|1         ← carbon_neutral = 1 (TRUE)
 
-# ❌ WRONG - Assumed Widget=$100
-# Expected: 10 * 100 = 1000
+# ❌ WRONG - Assumed Widget is carbon neutral
+# Scenario: Carbon Neutral Discount
+#   When B2B order placed with 10 carbon neutral Widget
+#   Then balance should be 810  # Expected 10 * 90 * 0.9 = 810
+# FAILS: Widget is NOT carbon neutral → no discount → balance = 900
 
-# ✅ CORRECT - Verified Widget=$90  
-# Expected: 10 * 90 = 900
+# ✅ CORRECT - Verified Gadget IS carbon neutral (flag = 1)
+# Scenario: Carbon Neutral Discount
+#   When B2B order placed with 10 carbon neutral Gadget
+#   Then balance should be 1350  # Correct: 10 * 150 * 0.9 = 1350
 
-# For carbon neutral discount (10% off when qty >= 10):
-# Expected: 10 * 90 * 0.9 = 810
+# CRITICAL: Don't assume product attributes - VERIFY with SQL first!
 ```
 
 ### Rule #11: Step Definitions Must Match Feature Files ⚠️ NEW
@@ -433,7 +514,7 @@ def step_impl(context, customer_name):  # Missing balance and limit parameters!
     limit = 1000
 ```
 
-### Rule #10: Always Initialize Context Variables ⚠️ NEW
+### Rule #12: Always Initialize Context Variables ⚠️ NEW
 ```python
 # ✅ CORRECT - prevents KeyError in subsequent steps
 @when('B2B order placed')
@@ -547,6 +628,43 @@ def step_impl(context, expected):
 | "row altered by another user" | Use direct FK: `"customer_id": int(id)` |
 | "circular import" | Remove imports from logic/, database/ |
 | "empty logic log" | Add `test_utils.prt(msg, scenario_name)` |
+| **"balance: expected 570, got 0.0"** | **Step ordering issue (Rule #0.5)! Multi-item pattern after single-item** |
+| **"context has no attribute 'item_id'"** | **Step ordering issue! Specific pattern defined after general pattern** |
+| "Order created but no items" | Check if wrong step matched (print debug in step) |
+
+### Debugging Step Ordering Issues
+
+**Symptom**: Test passes WHEN step but THEN assertions fail with unexpected values (often 0 or None).
+
+**Diagnosis**:
+1. **Check which step executed**: Look at test output for line numbers
+   ```
+   When B2B order placed for "Kevin" with 3 Widget and 2 Gadget # line=261
+   ```
+   If line 261 is single-item but you expected line 320 (multi-item), wrong pattern matched!
+
+2. **Verify database**: Check if records were actually created
+   ```bash
+   sqlite3 db.sqlite "SELECT * FROM 'order' WHERE customer_id = X;"
+   sqlite3 db.sqlite "SELECT * FROM item WHERE order_id = Y;"
+   ```
+
+3. **Check step file organization**: Count literal keywords in each pattern
+   ```python
+   # line 202: "carbon neutral" = 2 keywords (most specific)
+   # line 261: {quantity:d} {product_name} = 0 keywords (general)
+   # line 320: {qty1} {p1} "and" {qty2} {p2} = 1 keyword (more specific)
+   ```
+   Line 320 MUST come BEFORE line 261!
+
+**Quick Fix**:
+```bash
+# Find all @when patterns in your steps file
+grep -n "@when('.*with.*{" features/steps/*.py
+
+# Reorder so patterns with MORE keywords/parameters come FIRST
+# Rule: Most specific → Most general (top to bottom)
+```
 
 ## Test Generation Workflow
 
@@ -591,3 +709,83 @@ def step_impl(context, expected):
 
 **The Magic:** Users built OrderB2B for partners → Same API provides natural test scenarios!
 
+## Automated Step Ordering Verification
+
+**Command to verify step ordering in your test files:**
+
+```bash
+# List all @when patterns with line numbers (should be ordered specific→general)
+cd test/api_logic_server_behave
+grep -n "@when('.*with.*{" features/steps/*.py
+
+# Expected output (line numbers ascending = correct order):
+# 202: @when('... with {qty:d} carbon neutral {product}')  # Most specific
+# 265: @when('... with {qty1:d} {p1} and {qty2:d} {p2}')    # More specific  
+# 318: @when('... with {quantity:d} {product_name}')        # General
+
+# If multi-item (line 265) comes AFTER single-item (line 318) = WRONG!
+```
+
+**Python script to auto-check ordering** (add to test directory):
+
+```python
+#!/usr/bin/env python3
+"""Verify Behave step ordering for multi-param patterns."""
+import re, sys
+from pathlib import Path
+
+def check_step_order(steps_file):
+    """Check if multi-item patterns come before single-item patterns."""
+    with open(steps_file) as f:
+        lines = f.readlines()
+    
+    issues = []
+    when_patterns = []
+    
+    for i, line in enumerate(lines, 1):
+        if match := re.match(r"@when\('.*with.*\{", line):
+            # Count parameters and keywords
+            param_count = line.count('{')
+            has_and = ' and ' in line
+            has_special_keyword = any(k in line for k in ['carbon neutral', 'shipped'])
+            
+            specificity = param_count + (2 if has_and else 0) + (3 if has_special_keyword else 0)
+            when_patterns.append((i, specificity, line.strip()))
+    
+    # Check if patterns are in descending specificity order
+    for i in range(len(when_patterns) - 1):
+        curr_line, curr_spec, curr_text = when_patterns[i]
+        next_line, next_spec, next_text = when_patterns[i + 1]
+        
+        if next_spec > curr_spec:
+            issues.append(f"❌ Line {next_line} (specificity={next_spec}) should come BEFORE line {curr_line} (specificity={curr_spec})")
+            issues.append(f"   More specific: {next_text}")
+            issues.append(f"   Less specific: {curr_text}")
+    
+    return issues
+
+if __name__ == '__main__':
+    steps_dir = Path('features/steps')
+    all_issues = []
+    
+    for steps_file in steps_dir.glob('*_steps.py'):
+        issues = check_step_order(steps_file)
+        if issues:
+            all_issues.extend([f"\n{steps_file}:"] + issues)
+    
+    if all_issues:
+        print("Step Ordering Issues Found:")
+        print('\n'.join(all_issues))
+        sys.exit(1)
+    else:
+        print("✅ All step patterns correctly ordered (specific → general)")
+        sys.exit(0)
+```
+
+**Usage:**
+```bash
+cd test/api_logic_server_behave
+python check_step_order.py  # Run before committing tests
+```
+
+This automation prevents Rule #0.5 violations across ALL databases and projects!

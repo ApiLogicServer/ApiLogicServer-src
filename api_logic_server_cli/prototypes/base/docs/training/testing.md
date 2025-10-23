@@ -25,6 +25,9 @@ Step 5.  SUGGEST how to run tests (DO NOT run automatically)
 
 **CRITICAL PRE-TEST CHECKLIST:**
 - [ ] Step 1c completed? (Custom APIs discovered)
+- [ ] **Database values verified?** (Rule #10: Run SQL to check actual prices/flags)
+  - [ ] `sqlite3 db.sqlite "SELECT name, unit_price, carbon_neutral FROM product;"`
+  - [ ] Don't assume product attributes - verify BEFORE writing expectations!
 - [ ] **Step ordering verified?** (Most specific → Most general)
   - [ ] @when patterns: carbon neutral > multi-item > single-item
   - [ ] @given patterns: multi-item > single-item
@@ -470,19 +473,28 @@ Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total,
 ```python
 # ALWAYS check actual product prices/flags before writing test expectations!
 
-# Check prices:
-# sqlite3 db.sqlite "SELECT name, unit_price, carbon_neutral FROM Product;"
+# Check prices AND flags:
+# sqlite3 db.sqlite "SELECT name, unit_price, carbon_neutral FROM product;"
 
-# Widget=90, Gadget=150, Green=109
+# Results:
+# 1|Gadget|150|1        ← carbon_neutral = 1 (TRUE)
+# 2|Widget|90|          ← carbon_neutral = NULL (not carbon neutral!)
+# 3|Thingamajig|5075|
+# 4|Doodad|110|
+# 5|Green|109|1         ← carbon_neutral = 1 (TRUE)
 
-# ❌ WRONG - Assumed Widget=$100
-# Expected: 10 * 100 = 1000
+# ❌ WRONG - Assumed Widget is carbon neutral
+# Scenario: Carbon Neutral Discount
+#   When B2B order placed with 10 carbon neutral Widget
+#   Then balance should be 810  # Expected 10 * 90 * 0.9 = 810
+# FAILS: Widget is NOT carbon neutral → no discount → balance = 900
 
-# ✅ CORRECT - Verified Widget=$90  
-# Expected: 10 * 90 = 900
+# ✅ CORRECT - Verified Gadget IS carbon neutral (flag = 1)
+# Scenario: Carbon Neutral Discount
+#   When B2B order placed with 10 carbon neutral Gadget
+#   Then balance should be 1350  # Correct: 10 * 150 * 0.9 = 1350
 
-# For carbon neutral discount (10% off when qty >= 10):
-# Expected: 10 * 90 * 0.9 = 810
+# CRITICAL: Don't assume product attributes - VERIFY with SQL first!
 ```
 
 ### Rule #11: Step Definitions Must Match Feature Files ⚠️ NEW
