@@ -75,10 +75,17 @@ This document contains **everything** you need to understand the system:
 
 ### For Creating New Projects:
 - **Manager-level `.copilot-instructions.md`** - How to CREATE projects (in workspace root)
-- Sample databases and `genai-logic create` / `genai-logic genai` commands
+  - **Location:** `prototypes/manager/.github/.copilot-instructions.md`
+  - **Size:** ~86 lines
+  - **Purpose:** Instructions for creating new projects with `genai-logic create` commands
+  - Sample databases and project creation workflows
 
 ### For Working Within Created Projects:
 - **Project-level `.copilot-instructions.md`** - How to EXTEND/CUSTOMIZE projects (auto-generated in each project)
+  - **Location:** `prototypes/base/.github/.copilot-instructions.md` (template)
+  - **Size:** ~740 lines
+  - **Purpose:** Complete architecture guide for EACH created project - key services, customization points, testing, deployment
+  - ⚠️ **CRITICAL:** These are TWO DIFFERENT FILES - never replace the per-project version with the manager version!
 - **`docs/training/logic_bank_api.prompt`** - LogicBank API reference (Rosetta Stone for rules)
 - **`docs/training/testing.md`** - Behave testing guide (1755 lines, read BEFORE creating tests)
 
@@ -110,11 +117,14 @@ This document contains **everything** you need to understand the system:
 1. **Read [Architecture-Internals.md](https://apilogicserver.github.io/Docs/Architecture-Internals/)** for complete technical context
 2. Identify which documentation to consult based on task:
    - Framework development → Architecture-Internals.md
-   - Project creation → Manager-level `.copilot-instructions.md`
-   - Project customization → Project-level `.copilot-instructions.md`
+   - Project creation → Manager-level `.copilot-instructions.md` (86 lines, in prototypes/manager/)
+   - Project customization → Project-level `.copilot-instructions.md` (740 lines, in prototypes/base/)
    - Adding logic → `docs/training/logic_bank_api.prompt`
    - Creating tests → `docs/training/testing.md`
-3. When role unclear, ask: "Are you testing as a user or working on internals?"
+3. **CRITICAL:** Never confuse the two `.copilot-instructions.md` files:
+   - Manager version = how to CREATE projects (small, workspace-level)
+   - Project version = how to CUSTOMIZE projects (large, per-project with architecture details)
+4. When role unclear, ask: "Are you testing as a user or working on internals?"
 
 ### Key Principles:
 - **Assume deep technical expertise** - Technology refined over 40+ years

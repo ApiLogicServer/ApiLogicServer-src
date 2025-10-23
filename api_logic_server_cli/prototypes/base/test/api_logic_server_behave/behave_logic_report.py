@@ -95,14 +95,43 @@ def show_logic(scenario: str, logic_logs_dir: str):
         last_rules_start = -1
         last_rules_end = -1
         
-        # First, find the LAST "These Rules Fired" section
-        for i, each_logic_line in enumerate(logic_lines):
-            if "These Rules Fired" in each_logic_line:
-                last_rules_start = i + 1  # Start collecting from next line
-                last_rules_end = -1  # Reset end marker to find the next COMPLETE
-            elif last_rules_start > 0 and last_rules_end == -1:
-                if 'Logic Phase:' in each_logic_line and 'COMPLETE' in each_logic_line:
-                    last_rules_end = i
+        # Find ALL "These Rules Fired" sections and choose the one with the most rules
+        rules_sections = []
+        i = 0
+        while i < len(logic_lines):
+            if "These Rules Fired" in logic_lines[i]:
+                start_pos = i + 1
+                # Find the end of this rules section
+                end_pos = start_pos
+                while end_pos < len(logic_lines):
+                    if 'Logic Phase:' in logic_lines[end_pos] and 'COMPLETE' in logic_lines[end_pos]:
+                        break
+                    end_pos += 1
+                
+                # Count non-empty rule lines in this section (after removing trailers)
+                rule_count = 0
+                for j in range(start_pos, end_pos):
+                    line = remove_trailer(logic_lines[j]).strip()
+                    if line and not line.startswith('Logic Phase:'):
+                        rule_count += 1
+                
+                rules_sections.append({
+                    'start': start_pos,
+                    'end': end_pos,
+                    'rule_count': rule_count
+                })
+                i = end_pos
+            else:
+                i += 1
+        
+        # Choose the section with the most rules
+        if rules_sections:
+            best_section = max(rules_sections, key=lambda x: x['rule_count'])
+            last_rules_start = best_section['start']
+            last_rules_end = best_section['end']
+        else:
+            last_rules_start = -1
+            last_rules_end = -1
                     
         # Now process the file, collecting logic log and extracting the last rules section
         for i, each_logic_line in enumerate(logic_lines):
@@ -182,47 +211,27 @@ def main(behave_log: str, scenario_logs: str, wiki: str, prepend_wiki: str):
 
     just_saw_then = False
     current_scenario = ""
+    previous_scenario = ""
     for each_line in contents:
-        # Show logic when we hit a blank line after assertions OR when starting a new scenario
-        if just_saw_then and (each_line == "\n" or each_line.startswith("  Scenario")):
+        if just_saw_then and each_line == "\n":
             show_logic(scenario=current_scenario, logic_logs_dir=scenario_logs)
             just_saw_then = False
-            
+            previous_scenario = ""
         if each_line.startswith("Feature"):
             wiki_data.append("&nbsp;")
             wiki_data.append("&nbsp;")
             each_line = "## " + each_line
-            
         if each_line.startswith("  Scenario"):
-            # Extract scenario name for logic lookup
-            current_scenario = each_line.strip().replace("Scenario: ", "").replace("  ", " ").strip()
-            wiki_data.append("&nbsp;")
-            wiki_data.append("&nbsp;")
-            # Remove the debug info (# features/...) from the scenario name
-            debug_loc = current_scenario.find(behave_debug_info)
-            if debug_loc > 0:
-                current_scenario = current_scenario[0:debug_loc].strip()
-            wiki_data.append("&nbsp;")
-            wiki_data.append("&nbsp;")
-            # Remove debug info from header line too
-            header_line = each_line[2:]
-            debug_loc = header_line.find(behave_debug_info)
-            if debug_loc > 0:
-                header_line = header_line[0:debug_loc].rstrip()
-            wiki_data.append("### " + header_line)  # Add scenario header
+            # Before starting new scenario, show logic for previous one if we saw Then
+            if just_saw_then and previous_scenario:
+                show_logic(scenario=previous_scenario, logic_logs_dir=scenario_logs)
+            just_saw_then = False
             each_line = tab + each_line
-            
         if each_line.startswith("    Given") or \
                 each_line.startswith("    When") or \
-                each_line.startswith("    Then") or \
-                each_line.startswith("    And"):
-            if each_line.startswith("    Then") or each_line.startswith("    And"):
+                each_line.startswith("    Then"):
+            if each_line.startswith("    Then"):
                 just_saw_then = True
-            # Add subtle formatting to keywords
-            for keyword in ["Given", "When", "Then", "And"]:
-                if f"    {keyword} " in each_line:
-                    each_line = each_line.replace(f"    {keyword} ", f"    **{keyword}** ")
-                    break
             each_line = tab + tab + each_line
 
         each_line = each_line[:-1]
@@ -230,13 +239,19 @@ def main(behave_log: str, scenario_logs: str, wiki: str, prepend_wiki: str):
         if debug_loc > 0:
             each_line = each_line[0 : debug_loc]
         each_line = each_line.rstrip()
+        if "Scenario" in each_line:
+            current_scenario = each_line[18:]
+            previous_scenario = current_scenario
+            wiki_data.append("&nbsp;")
+            wiki_data.append("&nbsp;")
+            wiki_data.append("### " + each_line[8:])
 
         each_line = each_line + "  "  # wiki for "new line"
         
         wiki_data.append(each_line)
-
-    # Show logic for the last scenario
-    if current_scenario and just_saw_then:
+    
+    # Show logic for the last scenario if we saw Then
+    if just_saw_then and current_scenario:
         show_logic(scenario=current_scenario, logic_logs_dir=scenario_logs)
 
     with open(wiki, 'w') as rpt:
