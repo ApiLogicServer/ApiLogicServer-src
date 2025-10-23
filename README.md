@@ -4,7 +4,7 @@
 [![Latest Version](https://img.shields.io/pypi/v/apilogicserver.svg)](https://pypi.python.org/pypi/apilogicserver/)
 [![Supported Python versions](https://img.shields.io/pypi/pyversions/apilogicserver.svg)](https://pypi.python.org/pypi/apilogicserver/)
 
-**Transform 30-40 years of backend development requests into 3-4 days** with GenAI-powered microservice automation.
+**Create instant microservices from your database or natural language prompt** - working API + Admin App + Logic in 5 seconds, with 40X code reduction through declarative rules.
 
 Create **instant microservices** (MCP-enabled API + Admin App + Business Logic) from your database or a natural language prompt:
 
@@ -42,7 +42,7 @@ python api_logic_server_run.py
 - 🔐 **Security** - Row-level authorization, JWT authentication
 - 🐳 **Docker-ready** - Pre-configured containers for deployment
 
-**[📖 4-minute video demo](https://www.youtube.com/watch?v=7I33Fa9Ulos)** | **[📚 Full Documentation](https://apilogicserver.github.io/Docs/)** | **[🏠 Home](https://www.genai-logic.com)**
+**[📖 8-minute video demo](https://www.youtube.com/watch?v=Z4_NJIm5rFs&t=323s)** | **[📚 Full Documentation](https://apilogicserver.github.io/Docs/)** | **[🏠 Home](https://www.genai-logic.com)**
 
 ---
 
@@ -65,16 +65,68 @@ python api_logic_server_run.py
 
 ---
 
-## 💡 Use Cases
+## 💡 When to Use API Logic Server
 
-- **🔌 Application Integration** - Instant APIs for legacy databases
-- **⚡ Rapid Prototyping** - Working backend in minutes, not weeks
+### ✅ Ideal Use Cases
+
+API Logic Server excels at **data-centric business applications** where the complexity is in multi-table calculations, constraints, and derivations:
+
+- **🔌 Application Integration** - Instant APIs for legacy databases (modernization without rewrite)
+- **⚡ Rapid Prototyping** - Working backend in minutes for validation
 - **🤖 GenAI Backends** - Natural language → working microservice
 - **🏢 Backoffice Apps** - Admin dashboards for data maintenance
 - **🔗 Microservices** - Decompose monoliths with instant services
+- **📊 Business Rule Automation** - Complex calculations, cascading updates, constraint checking
+- **🔄 CRUD-Heavy Applications** - Order management, inventory, customer systems
+- **🏛️ Legacy Modernization** - MCP-enable existing databases, create modern API layer while legacy apps continue running
+
+**Sweet Spot:** Applications where business logic complexity >> UI complexity
+
+### ⚠️ Not Recommended For
+
+API Logic Server is optimized for data-centric business logic, but **less suited** for:
+
+- **Real-time streaming systems** - Use Kafka/Flink for high-throughput event processing
+- **Complex UI/UX interactions** - Works great as the backend, but not a UI framework
+- **Machine learning pipelines** - Use TensorFlow/PyTorch for ML workflows
+- **Low-level system programming** - Traditional languages better suited
+- **Document/content management** - Use specialized CMS platforms
+- **Simple static websites** - Overkill for basic content delivery
+
+**For these scenarios, traditional approaches are more appropriate.** API Logic Server can still serve as the backend for hybrid architectures.
 
 ---
 
+
+## ❓ Frequently Asked Questions
+
+**Q: How is this different from low-code platforms (Retool, OutSystems, Hasura)?**
+
+A: Unlike pure low-code platforms, API Logic Server generates **standard Python projects you own, extend and deploy**. Screen creation is by vibe tools rather than screen painting. Unlike API generators, it includes sophisticated multi-table logic automation (40X code reduction). **[Read detailed comparison →](https://medium.com/@valjhuber/declarative-genai-the-architecture-behind-enterprise-vibe-automation-1b8a4fe4fbd7)**
+
+**Q: Isn't this just vendor lock-in?**
+
+A: It's **free and open source**. The declarative rules sit on top of standard (readable, version-controlled) Python — you can always drop down to procedural code. If you ever need to migrate away, you can either keep using the rules engine (it's just a library) or replace declarative rules with equivalent procedural code using standard SQLAlchemy events.
+
+**Q: Can I customize the generated app?**
+
+A: **Absolutely.** You can override the UI, extend APIs, and plug in your own logic — using standard Python, SQLAlchemy, and any Vibe tool. The generated project is a starting point, not a black box. **[See customization patterns →](https://apilogicserver.github.io/Docs/Logic/)**
+
+**Q: What happens when logic doesn't fit the declarative model?**
+
+A: The declarative engine handles **over 95%** of typical business logic (calculations, validations, cascading updates). For complex workflows, state machines, or external integrations, you write standard Python event handlers that coexist with declarative rules. The engine calls your code at the right time — no conflict, full extensibility.
+
+**Q: How long does it take developers to become productive?**
+
+A: Developers can start writing rules immediately using natural language, and the DSL syntax is intuitive. Understanding the engine's optimization strategies (pruning, chaining) takes a few days of practice. **Most teams are fully productive within a week.**
+
+**Q: What if I have questions or need help?**
+
+A: Join our **[Discord community](https://discord.gg/fNRTTVFT)** for real-time help, check **[GitHub Discussions](https://github.com/ApiLogicServer/ApiLogicServer-src/discussions)**, or browse the **[comprehensive documentation](https://apilogicserver.github.io/Docs/)**.
+
+**[→ More FAQs in detailed article](https://medium.com/@valjhuber/declarative-genai-the-architecture-behind-enterprise-vibe-automation-1b8a4fe4fbd7#faqs)**
+
+---
 ## 🏗️ Architecture
 
 ```
@@ -223,11 +275,11 @@ python behave_logic_report.py
 
 ---
 
-## 🎬 Video Overview (4 min)
+## 🎬 Video Overview (8 min)
 
 See how **Microservice Automation** creates and runs a microservice - a multi-page app and an API:
 
-[![GenAI Automation](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/sample-ai/copilot/genai-automation-video.png)](https://www.youtube.com/watch?v=7I33Fa9Ulos "Microservice Automation")
+[![GenAI Automation](https://raw.githubusercontent.com/ApiLogicServer/Docs/main/docs/images/sample-ai/copilot/genai-automation-video.png)](https://www.youtube.com/watch?v=Z4_NJIm5rFs&t=323s "Microservice Automation")
 
 ---
 
@@ -406,6 +458,25 @@ Built on the shoulders of giants:
 
 ---
 
+
+## 📝 In-Depth Articles
+
+These Medium articles provide comprehensive context on architecture, use cases, and the reasoning behind API Logic Server:
+
+| Article | Topic | Key Insights |
+|---------|-------|--------------|
+| **[Welcome to GenAI-Logic](https://medium.com/@valjhuber/welcome-to-genai-logic-a610ba14bd72)** | Vision & Overview | Big picture: Does GenAI deliver business agility? Start here for context. |
+| **[Declarative GenAI Architecture](https://medium.com/@valjhuber/declarative-genai-the-architecture-behind-enterprise-vibe-automation-1b8a4fe4fbd7)** | Technical Deep Dive | NL → DSL → Engines pattern, FrankenCode problem, **includes FAQ section** |
+| **[Declarative Logic: Living in a Procedural World](https://medium.com/@valjhuber/declarative-logic-living-in-a-procedural-world-6c5b20552c6b)** | Architecture Philosophy | How declarative rules work in Python, the paradox resolved |
+| **[Living With Logic in the Enterprise](https://medium.com/@valjhuber/living-with-logic-7e202782d0c5)** | Production Patterns | Debugging, testing, performance, customization in real deployments |
+| **[Business User / IT Collaboration](https://medium.com/@valjhuber/declarative-genai-business-user-it-collaboration-c5547776ff7d)** | Team Dynamics | How logic acts as a contract between business and IT |
+| **[Vibe an MCP Server](https://medium.com/@valjhuber/vibe-an-mcp-server-declarative-genai-logic-dec16719c004)** | MCP Integration | Creating MCP-enabled services with natural language |
+| **[Probabilistic and Deterministic Logic](https://medium.com/@valjhuber/probabilistic-and-deterministic-logic-9a38f98d24a8)** | AI + Rules | Engineering reliability into agentic systems (AI at runtime + rules) |
+| **[Enterprise Vibe Automation](https://medium.com/@valjhuber/enterprise-vibe-automation-b40c8f750a1d)** | GenAI Workflows | Full-stack automation from prompts |
+
+**These articles represent significant research and real-world experience** - they address common questions, architectural decisions, and lessons learned from 40+ years of declarative technology evolution.
+
+---
 ## 📞 Connect
 
 - **🏠 Home:** [genai-logic.com](https://www.genai-logic.com)

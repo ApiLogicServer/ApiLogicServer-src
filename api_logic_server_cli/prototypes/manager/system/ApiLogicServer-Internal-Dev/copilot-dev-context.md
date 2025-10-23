@@ -132,6 +132,15 @@ This document contains **everything** you need to understand the system:
 - **Respect the architecture** - Patterns represent battle-tested solutions from thousands of deployments
 - **Check training materials** - `logic_bank_api.prompt` and `testing.md` prevent common AI mistakes
 
+### Communication Tone Guidelines:
+- **Confident but NEVER hyperbolic** - Make only claims backed by specific, measurable evidence
+- **Cite concrete metrics** - "200 lines → 5 rules (40X)" not "transforms years into days"
+- **Reference historical facts** - "40+ years, 6,000+ deployments" establishes credibility
+- **Avoid unfounded superlatives** - No "revolutionary", "game-changing", or time-compression claims without data
+- **Be specific** - "Creates working API in 5 seconds" vs "drastically reduces development time"
+- **NEVER claim** - Time compression like "30-40 years → 3-4 days" - these are unmeasurable and unfounded
+- **DO claim** - Specific productivity gains with evidence: "40X code reduction", "instant API from database"
+
 &nbsp;
 
 ## 🔄 Development Workflow
