@@ -25,10 +25,10 @@ source venv/bin/activate                 # windows: venv\Scripts\activate
 python -m pip install ApiLogicServer
 
 # Start the Manager (opens readme with instructions)
-ApiLogicServer start
+genai-logic start
 
 # Create project from your database (or use sample)
-ApiLogicServer create --project_name=my_app --db_url=
+genai-logic create --project_name=my_app --db_url=
 
 # Run it
 cd my_app
@@ -37,10 +37,13 @@ python api_logic_server_run.py
 
 **What you get in 5 seconds:**
 - 🚀 **JSON:API** - Endpoints for every table with filtering, pagination, related data
-- 📱 **Admin App** - Multi-page React app with automatic joins
+- 📱 **Instant Admin App UI** - Multi-page React app with automatic joins (runs immediately)
+- 🎨 **Custom Apps via API** - Use the API with your favorite vibe tools (Cursor, Bolt, Lovable, etc.) OR leverage GenAI-Logic training for Copilot to build custom UIs ([see this article](https://medium.com/@valjhuber/enterprise-vibe-automation-b40c8f750a1d))
 - 🧠 **Logic Engine** - Spreadsheet-like rules (40X more concise than code)
 - 🔐 **Security** - Row-level authorization, JWT authentication
 - 🐳 **Docker-ready** - Pre-configured containers for deployment
+
+**Mix and match:** Use the instant Admin App for backoffice tasks AND build custom UIs with vibe tools for advanced features like cards and maps - all powered by the same logic-enabled API.
 
 **[📖 8-minute video demo](https://www.youtube.com/watch?v=Z4_NJIm5rFs&t=323s)** | **[📚 Full Documentation](https://apilogicserver.github.io/Docs/)** | **[🏠 Home](https://www.genai-logic.com)**
 
@@ -58,8 +61,8 @@ python api_logic_server_run.py
 | Traditional Approach | API Logic Server |
 |---------------------|------------------|
 | Weeks to create API endpoints | **5 seconds** (automated) |
-| 200+ lines of update logic code | **5 rules** (40X reduction) |
-| Manual screen painting | **Automated** from data model |
+| 200+ lines of update logic code | **5 rules** (40X reduction - to see an A/B Comparision, [click here](https://github.com/ApiLogicServer/basic_demo/blob/main/logic/procedural/declarative-vs-procedural-comparison.md) |
+| Manual screen painting | **Automated** from data model, plus vibe-enabled custom UIs |
 | Hard to integrate systems | **MCP-enabled** APIs |
 | Opaque procedural code | **Declarative** living documentation |
 
@@ -161,21 +164,27 @@ A: Join our **[Discord community](https://discord.gg/fNRTTVFT)** for real-time h
 
 ```
 my_app/
-├── api/                    # JSON:API endpoints
+├── api/                    # JSON:API endpoints (for Admin App AND custom UIs)
 │   ├── expose_api_models.py
 │   └── customize_api.py    # Add custom endpoints
-├── ui/admin/              # Admin App
+├── ui/admin/              # Instant Admin App (ready to run)
 │   └── admin.yaml         # Declare UI behavior
-├── logic/                 # Business Logic
+├── logic/                 # Business Logic (enforced on ALL API calls)
 │   └── declare_logic.py   # Spreadsheet-like rules
 ├── security/              # Authentication & Authorization
 │   └── declare_security.py
 ├── database/              # SQLAlchemy models
 │   └── models.py
 ├── tests/                 # BDD tests (Behave)
+├── docs/
+│   └── training/          # GenAI-Logic training for Copilot
 └── devops/
     └── docker/            # Deployment configs
 ```
+
+**Two UI approaches (use both!):**
+1. **Instant Admin App** - Runs immediately for backoffice/internal users
+2. **Custom UIs** - Build with vibe tools (Cursor, Bolt, etc.) OR use GenAI-Logic Copilot training to create React/Vue/Angular apps that consume the API
 
 ---
 
@@ -231,7 +240,7 @@ GET /api/Customer?filter[Balance][$gt]=1000&sort=-Balance&page[size]=10
 
 #### Create from Natural Language
 ```bash
-ApiLogicServer genai --using=prompt.txt
+genai-logic genai --using=prompt.txt
 ```
 
 **Example prompt:**
@@ -262,7 +271,7 @@ Every created project includes:
 **Automated test generation** from your rules:
 ```bash
 # Generate Behave tests from declared logic
-ApiLogicServer add-tests
+genai-logic add-tests
 
 # Run tests
 behave
