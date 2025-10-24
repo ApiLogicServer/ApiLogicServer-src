@@ -32,6 +32,9 @@ Step 5.  SUGGEST how to run tests (DO NOT run automatically)
   - [ ] @when patterns: carbon neutral > multi-item > single-item
   - [ ] @given patterns: multi-item > single-item
   - [ ] Use `grep -n "@when('.*with" steps/*.py` to verify order
+- [ ] **Clear scenario language?** (Rule #13: Action-oriented wording)
+  - [ ] Use "Order is created" not "Order exists" (shows when rules fire)
+  - [ ] Makes test flow obvious: setup → action → verify
 - [ ] Test data uses timestamps? (Rule #0: Repeatability)
 - [ ] Security config read? (SECURITY_ENABLED value)
 
@@ -167,7 +170,7 @@ def step_impl(context, qty):
     r = requests.patch(url=patch_uri, json=patch_data)
 ```
 
-## The 6 Critical Rules (Read FIRST!)
+## The Critical Rules (Read FIRST!)
 
 ### Rule #0: TEST REPEATABILITY (MOST CRITICAL!) ⚠️
 
@@ -535,6 +538,40 @@ def step_impl(context):
         return  # Skip gracefully
 ```
 
+### Rule #13: Use Clear, Action-Oriented Scenario Language ⚠️ NEW
+```gherkin
+# ❌ AMBIGUOUS - "exists" is passive, doesn't show when balance changes
+Scenario: Ship Order Excludes from Balance
+  Given Customer "Charlie" with balance 0 and credit limit 2000
+  And Order exists for "Charlie" with 2 Widget
+  When Order is shipped
+  Then Customer balance should be 0
+
+# Question: How can Charlie have balance 0 AND an order for widgets?
+# Answer: The order EXISTS at test start, but balance calculation is unclear
+
+# ✅ CLEAR - "is created" shows action that triggers rule
+Scenario: Ship Order Excludes from Balance
+  Given Customer "Charlie" with balance 0 and credit limit 2000
+  And Order is created for "Charlie" with 2 Widget  # Action! Balance becomes 180
+  When Order is shipped                              # Action! Balance drops to 0
+  Then Customer balance should be 0                  # Verification
+
+# Now it's obvious:
+# 1. Customer starts with balance 0
+# 2. Creating unshipped order → rule fires → balance becomes 180
+# 3. Shipping order → WHERE clause excludes it → balance drops to 0
+
+# More examples:
+# ❌ "And Shipped order exists for..."
+# ✅ "And Shipped order is created for..."
+
+# Why this matters:
+# - Shows WHEN rules fire (on creation, not just existence)
+# - Makes test flow obvious (setup → action → verify)
+# - Clarifies that declarative rules execute automatically on changes
+```
+
 ## Complete Phase 2 Example
 
 ### .feature File
@@ -631,6 +668,8 @@ def step_impl(context, expected):
 | **"balance: expected 570, got 0.0"** | **Step ordering issue (Rule #0.5)! Multi-item pattern after single-item** |
 | **"context has no attribute 'item_id'"** | **Step ordering issue! Specific pattern defined after general pattern** |
 | "Order created but no items" | Check if wrong step matched (print debug in step) |
+| **"expected 810, got 900"** (carbon neutral) | **Rule #10: Verify actual database values! Check product flags with SQL first** |
+| **"How can balance be 0 with an order?"** | **Rule #13: Use "is created" not "exists" - shows when rules fire** |
 
 ### Debugging Step Ordering Issues
 
