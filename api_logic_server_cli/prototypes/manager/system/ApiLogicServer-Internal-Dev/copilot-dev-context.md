@@ -159,6 +159,186 @@ This document contains **everything** you need to understand the system:
 
 &nbsp;
 
+## 🤖 GenAI Prompt Engineering Architecture
+
+### Overview: ChatGPT Project Creation Pipeline
+
+The `genai-logic create` command uses **fine-tuned ChatGPT** to translate natural language requirements into complete working projects. The system uses **prompt engineering** to surround user input with structured instructions.
+
+### Key Locations
+
+**Prompt Templates:** `system/genai/prompt_inserts/`
+```
+├── sqlite_inserts.prompt                    # Main orchestrator for DB creation
+├── sqlite_inserts_model_test_hints.prompt   # SQLAlchemy class generation rules
+├── logic_inserts.prompt                     # LogicBank rule generation
+├── logic_translate.prompt                   # NL → LogicBank translation (existing DB)
+├── graphics.prompt                          # Dashboard chart generation
+├── response_format.prompt                   # WGResult Pydantic schema
+└── web_genai.prompt                         # WebGenAI-specific (15+ tables)
+```
+
+**Training Examples:** `org_git/ApiLogicServer-src/tests/genai_tests/logic_training/`
+```
+├── genai_demo.prompt                        # Check Credit + No Empty Orders
+├── ready_flag.prompt                        # Ready Flag pattern (3 use cases)
+├── emp_depts.prompt                         # Chain Up: sum salaries, constrain budget
+├── graduate.prompt                          # Cardinality: counts with thresholds
+├── products.prompt                          # Qualified Any: severity checks
+├── honor_society.prompt                     # Complex cardinality with qualified counts
+└── *.txt / *_corrected_prompt.txt           # Expected outputs and corrections
+```
+
+**Test Examples:** `system/genai/examples/`
+```
+├── genai_demo/                              # Complete example with iterations
+├── airport/                                 # Complex 10+ table system
+├── emp_depts/                               # Simple aggregation pattern
+└── time_tracking_billing/                   # Real-world scenario
+```
+
+### The Prompt Assembly Process
+
+**User Input:**
+```
+Create a system with customers, orders, items and products.
+
+Use case: Check Credit
+1. Customer.balance <= credit_limit
+2. Customer.balance = Sum(Order.amount_total where date_shipped is null)
+3. Order.amount_total = Sum(Item.amount)
+4. Item.amount = quantity * unit_price
+5. Item.unit_price = copy from Product.unit_price
+```
+
+**System Surrounds With:**
+
+1. **Model Generation Instructions** (`sqlite_inserts_model_test_hints.prompt`):
+   - Use autonum keys for ALL tables (including junction tables)
+   - Create classes, never tables (Class names singular, capitalized)
+   - **CRITICAL:** "If you create sum, count or formula Logic Bank rules, then you MUST create a corresponding column in the data model"
+   - No check constraints (logic uses rules instead)
+   - Foreign key columns (not relationship names) for test data
+
+2. **Logic Generation Instructions** (`logic_inserts.prompt`):
+   - "Use LogicBank to enforce these requirements (do not generate check constraints)"
+   - "be sure to update the data model and *all* test data with any attributes used in the logic"
+
+3. **Response Structure** (`response_format.prompt`):
+   ```python
+   class WGResult(BaseModel):
+       models: List[Model]              # SQLAlchemy classes
+       rules: List[Rule]                # LogicBank declarations
+       test_data: str                   # Python test data creation
+       test_data_rows: List[TestDataRow]
+       test_data_sqlite: str            # INSERT statements
+       graphics: List[Graphic]          # Dashboard queries
+       name: str                        # Suggested project name
+   ```
+
+**Result:** ChatGPT returns structured JSON with models, rules, and test data that:
+- Has `Customer.balance`, `Order.amount_total`, `Order.item_count` columns created automatically
+- Contains LogicBank rules for all derivations
+- Includes test data with derived attributes pre-initialized
+
+### Key Insight: Model + Logic Co-Generation
+
+**Unlike existing database projects**, GenAI creation can **modify the data model** to support logic:
+
+- **Derived attributes materialize:** `Customer.balance`, `Order.amount_total`, `Product.total_ordered`
+- **Count columns appear:** `Order.item_count` for existence checks
+- **Qualified counts split:** `Product.notice_count` + `Product.severity_five_count`
+
+This is why the training examples emphasize:
+> "If you create sum, count or formula Logic Bank rules, then you MUST create a corresponding column in the data model."
+
+### Training Pattern Categories
+
+The `logic_training/` examples teach ChatGPT these patterns:
+
+1. **Chain Up (Aggregation → Constraint)**
+   - `emp_depts`: Department.total_salary = sum(Employee.salary); salary <= budget
+   - `genai_demo`: Customer.balance = sum(orders); balance <= credit_limit
+
+2. **Counts as Existence Checks**
+   - `genai_demo`: Order.item_count = count(Items); can't ship if == 0
+   - Creates both derivation AND validation
+
+3. **Cardinality Patterns (Qualified Any)**
+   - `products`: Total notices + severity 5 notices; constraint if orderable
+   - `graduate`: Probation count + sick days; constraint for graduation
+   - Pattern: Multiple counts (total + qualified) with complex conditions
+
+4. **Ready Flag**
+   - `ready_flag`: Multi-use-case with conditional aggregations
+   - Customer.balance only sums orders where `ready == True AND date_shipped is None`
+   - Product.total_ordered only sums items where `ready == True`
+
+5. **Chain Down (Copy/Formula)**
+   - Item.unit_price = copy(Product.unit_price)
+   - Item.ready = Order.ready (formula propagation)
+
+### CLI Commands Using This System
+
+**Create from natural language:**
+```bash
+genai-logic create --project-name=my_system --using="<natural language>"
+# Internally: assembles prompts → ChatGPT → parses WGResult → generates project
+```
+
+**Translate logic (existing DB):**
+```bash
+genai-logic logic-translate --project-name=. --using-file=docs/logic
+# Uses logic_translate.prompt to convert NL in docs/logic → rules in logic/logic_discovery/
+```
+
+### Fine-Tuning Files
+
+**Training Data:** `logic_training/ft.jsonl`
+- JSONL format for ChatGPT fine-tuning
+- Generated from prompt/response pairs
+- ~374KB with all pattern examples
+
+**Script:** `logic_training/create_json_l.py`
+- Converts `*.prompt` + `*.txt` → JSONL entries
+- Format: system message, user message (prompt), assistant message (response)
+
+### Common Pitfalls (Why Corrections Exist)
+
+Several `*_corrected_prompt.txt` files show typical AI mistakes:
+
+1. **Wrong cardinality:**
+   - `airport.prompt`: Asked for "airplane's passengers" but meant "flight's passengers"
+   - AI can't count passengers on an Airplane (no direct relationship)
+   - Correction: Count passengers on Flight, constrain by Airplane.seating_capacity
+
+2. **Constraint depends on derived flag:**
+   - `products.prompt` initially: "product is orderable IF no severity 5 notices"
+   - Problem: Makes orderable a derived value, then uses it in constraint
+   - Correction: "RAISE ERROR if orderable == True AND has severity 5 notices"
+   - Pattern: Flag is input, constraint uses it (not derived from constraint conditions)
+
+3. **Negative condition logic:**
+   - Must use: `not(row.flag and bad_condition)`
+   - Not: `row.flag → requires good_condition` (harder for AI to translate)
+
+### Why This Architecture?
+
+**Traditional GenAI code generation problems:**
+- Generates 200+ lines of procedural code
+- Misses corner cases (foreign key changes, cascading updates)
+- Creates technical debt (unmaintainable spaghetti)
+
+**Declarative GenAI solution:**
+- Generates **specifications** (5 rules), not code (200 lines)
+- Rules executed by proven engine (40+ years, 6,000+ deployments)
+- Engine handles ALL change paths automatically (no corner cases missed)
+- Natural language → DSL → Runtime engine (not NL → procedural code)
+
+**Critical difference:** The AI doesn't need to "think through" all possible change paths. It translates requirements to rules, and the engine provides correctness guarantee through automatic dependency analysis and chaining.
+
+&nbsp;
+
 ## 🔄 Development Workflow
 
 **Source Repository:** https://github.com/ApiLogicServer/ApiLogicServer-src

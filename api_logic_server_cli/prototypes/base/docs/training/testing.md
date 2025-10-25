@@ -389,17 +389,64 @@ Scenario: Exceed Credit (Constraint FAIL - negative test)
 
 **CRITICAL:** Check `logic/declare_logic.py` for custom Python logic affecting calculations (e.g., discounts, adjustments) before writing constraint test expectations!
 
-### Rule #5: Security Configuration
-```python
-# Read config/default.env FIRST
-SECURITY_ENABLED = False  # or True
+### Rule #5: Security Configuration - JWT Authentication
 
-# Match in test code
-if SECURITY_ENABLED == False:
-    headers = {}  # Empty
-else:
-    headers = test_utils.login()
+**CRITICAL:** When `SECURITY_ENABLED=True`, tests MUST obtain JWT token and include Authorization header.
+
+```python
+from pathlib import Path
+import os
+from dotenv import load_dotenv
+
+# Load config to check SECURITY_ENABLED
+config_path = Path(__file__).parent.parent.parent.parent.parent / 'config' / 'default.env'
+load_dotenv(config_path)
+
+# Cache for auth token (obtained once per test session)
+_auth_token = None
+
+def get_auth_token():
+    """Login and get JWT token if security is enabled"""
+    global _auth_token
+    
+    if _auth_token is not None:
+        return _auth_token
+    
+    # Login with default admin credentials
+    login_url = f'{BASE_URL}/api/auth/login'
+    login_data = {'username': 'admin', 'password': 'p'}
+    
+    response = requests.post(login_url, json=login_data)
+    if response.status_code == 200:
+        _auth_token = response.json().get('access_token')
+        return _auth_token
+    else:
+        raise Exception(f"Login failed: {response.status_code}")
+
+def get_headers():
+    """Get headers including auth token if security is enabled"""
+    security_enabled = os.getenv('SECURITY_ENABLED', 'false').lower() not in ['false', 'no']
+    
+    headers = {'Content-Type': 'application/json'}
+    
+    if security_enabled:
+        token = get_auth_token()
+        if token:
+            headers['Authorization'] = f'Bearer {token}'
+    
+    return headers
+
+# Use in ALL API requests
+response = requests.post(url=api_url, json=data, headers=get_headers())
+response = requests.get(url=api_url, headers=get_headers())
+response = requests.patch(url=api_url, json=data, headers=get_headers())
 ```
+
+**Key Points:**
+- Tests DO NOT automatically include auth - you must code the pattern above
+- Token is cached globally to avoid repeated login calls
+- Works for both `SECURITY_ENABLED=True` and `SECURITY_ENABLED=False`
+- See complete example: `test/api_logic_server_behave/features/steps/order_processing_steps.py`
 
 ### Rule #6: Logic Logging
 ```python

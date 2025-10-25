@@ -1,6 +1,7 @@
 ---
 title: Instant Microservices - with Logic and Security
 notes: gold is proto (-- doc); alert for apostrophe
+do_process_code_block_titles: True
 version: 0.23 from docsite, for readme 7/11/2025
 ---
 <style>
@@ -18,8 +19,13 @@ This illustrates basic [GenAI-Logic](https://www.genai-logic.com/product/key-fea
 2. Adding declarative logic and security, and 
 3. Customizing your project using your IDE and Python<br><br>
 
-> 🤖 **Bootstrap Copilot by pasting the following into the chat:**
-```
+**🤖 Two Ways to Explore:**
+
+* **Self-Paced:** Follow the sections below at your own speed
+* **AI-Guided Tour:** Say to Copilot: *"Guide me through basic_demo"*
+
+**Bootstrap Copilot:**
+```bash title='🤖 Bootstrap Copilot by pasting the following into the chat'
 Please find and read `.github/.copilot-instructions.md`.
 ```
 
@@ -152,9 +158,10 @@ And you are ready to Vibe:
 * Instead of creating data mockups, you have a **running API server with real data**
 * Instead of starting from scratch, you have a **running multi-page app** 
 * And, you'll have projects that are **architecturally correct:** shared logic, enforced in the server, available for both User Interfaces and services.
-* Then, use you favorite Vibe tools with your running API
+* Then, use you favorite Vibe tools with your running API:
 
 
+**Customize using Natural Language:**
 ```txt title='Customize using Natural Language'
 In the ui/react app, Update the Product list to provide users an option to see results in a list, or in cards.
 ```
@@ -294,7 +301,7 @@ Note that it's a `Multi-Table Transaction`, as indicated by the indentation.  Th
 
 **b. 40X More Concise**
 
-The 5 spreadsheet-like rules represent the same logic as 200 lines of code, [shown here](https://github.com/valhuber/LogicBank/wiki/by-code).  That's a remarkable 40X decrease in the backend half of the system.
+The 5 spreadsheet-like rules represent the same logic as 200 lines of code, [shown here](https://apilogicserver.github.io/Docs/https://github.com/ApiLogicServer/basic_demo/blob/main/logic/procedural/declarative-vs-procedural-comparison).  That's a remarkable 40X decrease in the backend half of the system.
 
 > 💡 No FrankenCode<br>Note the rules look like syntactically correct requirements.  They are not turned into piles of unmanageable "frankencode" - see [models not frankencode](https://www.genai-logic.com/faqs#h.3fe4qv21qtbs).
 
@@ -358,6 +365,7 @@ Or, use the command line.
 > Since the CLI does not pass an auth token, 
 you must first stop the server and disable security.
 
+**MCP from the command line:**
 ```bash title='MCP from the command line'
 python integration/mcp/mcp_client_executor.py mcp
 ```

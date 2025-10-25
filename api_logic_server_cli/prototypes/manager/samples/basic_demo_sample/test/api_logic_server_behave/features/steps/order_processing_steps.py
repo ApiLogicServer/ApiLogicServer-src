@@ -11,12 +11,55 @@ import requests
 import test_utils
 import time
 from decimal import Decimal
+import os
+from dotenv import load_dotenv
+from pathlib import Path
 
 BASE_URL = 'http://localhost:5656'
 
+# Load config to check SECURITY_ENABLED
+config_path = Path(__file__).parent.parent.parent.parent.parent / 'config' / 'default.env'
+load_dotenv(config_path)
+
+# Cache for auth token (obtained once per test session)
+_auth_token = None
+
+def get_auth_token():
+    """Login and get JWT token if security is enabled"""
+    global _auth_token
+    
+    if _auth_token is not None:
+        return _auth_token
+    
+    # Login with default admin credentials
+    login_url = f'{BASE_URL}/api/auth/login'
+    login_data = {
+        'username': 'admin',
+        'password': 'p'
+    }
+    
+    try:
+        response = requests.post(login_url, json=login_data)
+        if response.status_code == 200:
+            _auth_token = response.json().get('access_token')
+            return _auth_token
+        else:
+            raise Exception(f"Login failed: {response.status_code} - {response.text}")
+    except Exception as e:
+        raise Exception(f"Failed to obtain auth token: {e}")
+
 def get_headers():
-    """Security is disabled per config/default.env"""
-    return {}
+    """Get headers including auth token if security is enabled"""
+    security_enabled = os.getenv('SECURITY_ENABLED', 'false').lower() not in ['false', 'no']
+    
+    headers = {'Content-Type': 'application/json'}
+    
+    if security_enabled:
+        token = get_auth_token()
+        if token:
+            headers['Authorization'] = f'Bearer {token}'
+    
+    return headers
 
 
 # ==============================================================================

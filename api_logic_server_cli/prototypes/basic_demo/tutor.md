@@ -1,3 +1,12 @@
+---
+title: AI Guided Tour Instructions
+Description: Message in a bottle for AI assistants - how to conduct hands-on guided tours
+Source: org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/basic_demo/tutor.md
+Propagation: BLT copies to Manager samples/basic_demo_sample/tutor.md
+Usage: AI reads this when user says "Guide me through basic_demo"
+version: 1.0 (10/24/2025)
+---
+
 # AI Guided Tour: basic_demo Walkthrough
 
 **Purpose:** Instructions for AI assistants conducting hands-on guided tours with basic_demo.
