@@ -4,9 +4,22 @@ Description: Message in a bottle for AI assistants - how to conduct hands-on gui
 Source: org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/basic_demo/tutor.md
 Propagation: BLT copies to Manager samples/basic_demo_sample/tutor.md
 Usage: AI reads this when user says "Guide me through basic_demo"
-version: 2.0 (10/25/2025)
+version: 2.1 (10/25/2025)
 last_updated: 2025-10-25
 changelog: |
+  v2.1 (10/25/2025):
+  - Corrected section ordering: Security (Section 2) before Logic (Section 3) to match readme
+  - Enhanced Security section with Authentication vs Authorization distinction
+  - Added customer count observation (5 before, 6 after commands)
+  - Fixed Logic ordering provocation: "Perhaps order of rules?" → "No, procedural approach"
+  - Clarified file organization: declare_logic.py vs logic_discovery/*.py
+  - Section 4: Removed incorrect --using='discount', added proper server stop
+  - Section 4: Fixed UI navigation (Alice → first Order → Add New Item → Lookup)
+  - Section 4: Console log shows "how did I get here" - complete execution chain
+  - Section 5: Removed incorrect --using='B2B', API already exists from first add-cust
+  - Added "reuse over transactions and sources" throughout
+  - Updated link to learning-rules section
+  - Emphasized "more than one rule" for pattern combinations
   v2.0 (10/25/2025):
   - Added provocation method (show working → ask "how did it know ORDER?" → explain dependency discovery)
   - Added spreadsheet analogy for dependency discovery (Excel formulas for multi-table databases)
@@ -70,6 +83,8 @@ Sound good? Let's start the server..."
 **Key Points:** 
 - Set expectation of "walk first, deep dives later"
 - ❌ **Never assume server is already running**
+- ❌ **Don't offer option menus** - guide users through the specific experience following readme flow
+- ✅ **Emphasize automatic generation** - stress that entire microservice was created from database introspection
 - Keep responses SHORT - one idea per interaction (users often have Copilot in side panel with limited vertical space)
 
 ---
@@ -109,34 +124,42 @@ Open that in your browser - you'll see the admin app."
 **Explore the Admin UI:**
 
 ```
-"This is a freshly created project - like what you'd get from your own database.
+"What you're looking at was created automatically - this ENTIRE web application 
+was generated just by introspecting your database schema.
 
-Click on Customer, then click one (like Alice).
+Try this now:
+1. Click on 'Customer' in the left menu
+2. Click on a customer (like Alice) to see their details  
+3. See the Orders list at the bottom? Click an order to drill down
+4. See the Items? Notice how it shows Product NAME, not just an ID number
 
-See the Orders list at the bottom? Click an order - see the Items?
-
-Notice: Item shows Product NAME, not just ID. Automatic join."
+This is what's worth noting: Complete CRUD operations, automatic relationships,
+search and filtering - all generated. No configuration files, no manual endpoint creation,
+no UI components to build."
 ```
 
 **Key Insight:**
-- Multi-page, multi-table UI
+- Multi-page, multi-table UI with complete CRUD operations
 - Parent-child-grandchild relationships (Customer → Orders → Items)
-- Automatic joins (shows product name)
-- **All from database discovery - zero code**
+- Automatic joins (shows product name, not just foreign key IDs)
+- Responsive design works on desktop and mobile
+- **All from database introspection - zero manual coding**
 
 **Explore the API:**
 
 ```
-"Click Home in the left menu, then click the Swagger link.
+"Now let's see the API that's powering this:
+1. Click 'Home' in the left menu
+2. Click the 'Swagger' link  
+3. Scroll through - every table has full CRUD endpoints automatically
 
-Scroll through - every table has endpoints.
-
-This is JSON:API with filtering, sorting, pagination, optimistic locking, and logic enforcement.
+The system introspected your schema and generated a complete, working microservice with 
+JSON:API standard endpoints, filtering, sorting, pagination, and automatic relationship handling.
 
 Also generated: an MCP (Model Context Protocol) server in integration/mcp/ - 
 that's for Claude Desktop integration, lets AI agents query your data and invoke operations.
 
-Your project is ready for custom app dev - use your favorite tools, or built-in Copilot app builders."
+That's a decent start, but here's the thing - this is a fresh project with no business logic yet."
 ```
 
 **What to Park:**
@@ -146,73 +169,142 @@ Your project is ready for custom app dev - use your favorite tools, or built-in 
 
 ---
 
-### **Section 4: Logic and Security (15 min) - THE CRITICAL SECTION**
+### **Section 2: Security (8 min)**
 
-**Follow readme.md Section 4**
+**Follow readme.md Section 4 (Security first, then Logic)**
 
-#### **Part A: Demonstrate the Need for Logic (2 min)**
+#### **Part A: Add Security (3 min)**
 
-**What to Say:**
-```
-"In the admin app, go back to a Customer with orders.
-
-Click an order, change an Item quantity, and save.
-
-Look at the Order total - did it update?
-Look at the Customer balance - did it change?
-
-[They'll say no]
-
-Exactly. No business logic yet - this is a fresh project.
-
-In a real system, you'd want:
-- Item amount = quantity × price
-- Order total = sum of items
-- Customer balance = sum of orders
-
-Let me show you how to add that with declarative rules..."
-```
-
-#### **Part B: Add Logic Using add-cust (3 min)**
-
-**CRITICAL: Use add-cust for check credit logic**
+**CRITICAL: Use add-cust and add-auth**
 
 **What to Say:**
 ```
-"I'll run a command that adds the check credit logic.
+"Let's add security and logic to this project.
 
-This uses genai-logic add-cust with no parameters - it adds the first customization example."
+First, in the admin app, go to Customers - count how many you see. [They'll see 5]
+
+Now stop the server (Red Stop button or Shift-F5).
+
+Run these two commands:"
 ```
 
-**Run the command:**
+**Run the commands:**
 ```bash
 genai-logic add-cust
+genai-logic add-auth --db_url=auth
 ```
 
-**Why add-cust?**
+**Why these commands?**
 - ✅ Handles schema variations (different column names, etc.)
 - ✅ Restores database integrity (fixes any broken data from earlier changes)
-- ✅ Demonstrates working logic immediately
+- ✅ Demonstrates working logic and security immediately
 - ❌ Don't use natural language during tour - too error-prone with unknown schemas
 
 **What NOT to mention:**
 - Internal details about DB restore
 - Schema complexity
-- Just focus on: "This adds the check credit logic"
+- Just focus on: "This adds role-based security and check credit logic"
 
-**After command completes:**
+**After commands complete:**
 
 ```
-"Done! The logic is now active.
+"Done! Security and logic are now active.
 
-Now let's see it in action..."
+Restart the server (F5).
+
+[Wait for them to say 'ok' or confirm server is running]"
 ```
 
-#### **Part C: See Rules Fire First (5 min)**
+#### **Part B: Demonstrate Security (5 min)**
+
+**Show Login Required:**
+```
+"Go to the admin app - refresh the page.
+
+Notice what changed? Login is now required.
+
+Login with:
+- Username: admin
+- Password: p
+
+Click on Customers.
+
+Click the first customer (ALFKI) to see the detail - notice the sales_rep field.
+
+Go back to the list - see all 6 customers? That's one more than before.
+
+[Wait for confirmation]
+
+Now logout (upper right) and login as:
+- Username: s1  
+- Password: p
+
+Click Customers again - now you only see 3 customers.
+
+[Wait for them to observe this]
+
+Same app, different user, filtered data automatically."
+```
+
+**Show the Security Code:**
+```
+"Open security/declare_security.py and find the Grant for Customer.
+
+See this line?
+
+    filter=lambda : models.Customer.sales_rep == Security.current_user().id
+
+One declarative Grant statement filters the entire Customer table for sales reps.
+
+This is RBAC - Role-Based Access Control. This worked because user s1 has role 'sales'.
+
+This Grant works for:
+- Admin UI (what you just saw)
+- API endpoints (try Swagger with different users)
+- Any query through the system
+
+Pattern: Declare once, enforces everywhere.
+
+[Wait for them to absorb this]"
+```
+
+**Authentication vs Authorization:**
+```
+"Important distinction:
+
+**Authentication** verifies user/password and returns their roles.
+- User s1 logs in → system verifies password → returns role 'sales'
+
+**Authorization (RBAC)** uses those roles to control access.
+- User has role 'sales' → Grant filters data based on that role
+
+Authentication can use different providers:
+- SQL (what this example uses) - good for early development
+- Keycloak (industry standard) - for production
+- Your own custom authentication provider
+
+The key: Your Grant declarations stay the same regardless of authentication provider.
+
+See security/readme_security.md for Keycloak setup and custom providers.
+
+Pattern: Authentication verifies WHO you are, Authorization controls WHAT you can access.
+
+[Pause - let them ask questions if they have any]"
+```
+
+---
+
+### **Section 3: Logic (12 min) - THE CRITICAL SECTION**
+
+**Follow readme.md Section 4 (Logic portion)**
+
+#### **Part A: Observe Logic in Action (5 min)**
 
 **STOP HERE - The Provocation:**
 ```
-"Now let's see logic in action.
+"Now let's see the business logic in action.
+
+Make sure you're logged in as admin (logout/login if you're still s1).
 
 Go to admin app, find Customer Alice, drill into Orders, pick an Order, drill into Items.
 Change an Item quantity to 100 and save.
@@ -226,64 +318,101 @@ NOW look at the console - see the Logic Bank log?
 👉 THIS IS YOUR DEBUGGING TOOL - you'll use it constantly."
 ```
 
-**The Key Provocation (THIS IS THE CRITICAL MOMENT):**
+**Observe What Happened:**
 ```
-"Look at the pattern in the log:
+"Look at the Logic Bank log in VS Code console.
+
+Notice what happened:
 - Item.amount updated
 - Order.amount_total updated  
 - Customer.balance updated
 - ERROR: balance exceeds credit limit
 
-Notice the ORDER - Item FIRST, then Order, THEN Customer.
-
-Here's the KEY question:
-
-👉 How did it know to do Order adjustment AFTER the Item.amount derivation?
-👉 Did YOU write code to specify that sequence?
-👉 Did YOU write code to update Order when Item changed?
-👉 Did YOU write code to update Customer when Order changed?
-
-[Let them think - this is THE insight moment]
-
-"You didn't. That's automatic dependency ordering.
-The engine analyzed what depends on what, built a dependency graph, and executed in the right sequence.
-
-You just saw something that would take 200+ lines of procedural code:
-- Handle insert/update/delete for Items
-- Find parent Order and recalc total
-- Find parent Customer and recalc balance
-- Check constraint
-- Handle all FK changes (item moves to different order, order moves to different customer)
-
-All automatic. Zero code from you."
+The key observation: Logic is now running automatically when you change data."
 ```
 
-#### **Part D: Now Show the Rules (3 min)**
+#### **Part D: Show the Rules (3 min)**
 
 **Open the Logic File:**
 
 ```
-"Open: logic/declare_logic.py - scroll to the check credit rules section.
+"Now let's see the actual rules that made this happen:
 
-See those 5 rules you just watched fire? 
+Open logic/declare_logic.py and look for the comment '# Logic from GenAI:'.
 
-[Point them out briefly - don't read each one yet]
+See those 5 rules between the GenAI comments? That's what you just watched execute:
+- Customer balance constraint (the error you saw)
+- Customer balance sum (sum of orders)
+- Order amount_total sum (sum of items) 
+- Item amount formula (quantity × price)
+- Item unit_price copy (from product)
 
-Customer.balance constraint: Check balance doesn't exceed credit
-Customer.balance sum: Balance = sum of orders not shipped
-Order.amount_total sum: Order total = sum of items
-Item.amount formula: Item amount (we'll customize this in a minute)
-Item.unit_price copy: Copy unit price from product
+This is declarative - you say WHAT, engine figures out WHEN and ORDER."
+```
 
-This is declarative - you say WHAT, engine figures out WHEN and ORDER.
+**Provoke Question 1: Ordering**
 
-That automatic chaining you just saw? The engine analyzed these 5 rules, 
-discovered Item.amount depends on quantity/price, Order.amount_total depends on Item.amount,
-Customer.balance depends on Order.amount_total, constraint depends on balance.
+```
+"Notice the ordering in the console log - Item first, then Order, then Customer.
 
-Built the dependency graph. Executed in order. Automatically.
+How do you suppose that happened? Perhaps the order of the rules?
 
-👉 Think of it like Excel formulas for multi-table databases:
+[Natural pause for them to think]
+
+No, that's a procedural approach - rules are declarative.
+
+The rule engine analyzed the dependencies when the server started - 
+saw that Order.amount_total depends on Item.amount, Customer.balance depends on 
+Order.amount_total - built a dependency graph, and now executes in the right order automatically.
+
+**What this means for you? Simpler Maintenance.** No more archaeology to find insertion points. 
+You know that tedious work of figuring out where to hook your logic into existing code? 
+Instead, you just add or alter rules, and the engine works out the sequence at startup."
+```
+
+**Provoke Question 2: Invocation**
+
+```
+"Now another question: Where were these rules called from?
+
+You changed Item quantity in the UI - what code explicitly invoked these rules?
+
+[Natural pause]
+
+None. The engine does automatic invocation.
+
+**What this means for you? Quality.** If the rule is declared, you can be confident it will 
+be called, in the right order, for every change. No missing calls, no wrong sequence, 
+no forgotten edge cases."
+```
+
+**Provoke Question 3: Reuse**
+
+```
+"One more thing to notice: These rules aren't specific to insert, update, or delete operations.
+
+**Automatic Reuse.** The logic applies to all operations automatically.
+
+**What this means for you?** Reduces your work from 200 lines to 5, just as a spreadsheet does. 
+You don't need to code all the check-for-changes logic. You declare the formula once, it works everywhere.
+
+**This is the key to unlocking the value:** Learn to 'think spreadsheet' - declare what should be true, 
+not how to make it true. The rules engine handles the ordering, invocation, and reuse. 
+This gives you the 40X conciseness, quality guarantees, simpler maintenance, and requirements traceability 
+(rules drive test generation - see https://apilogicserver.github.io/Docs/Behave-Creation/).
+
+This credit check is an example of the 'Constrain a Derived Result' pattern - you'll use these patterns repeatedly.
+
+When you're ready to dive deeper: https://apilogicserver.github.io/Docs/Logic/#learning-rules
+
+See the A/B comparison at logic/declarative-vs-procedural-comparison.md - 
+it shows the actual code difference."
+```
+
+**Excel Analogy**
+
+```
+"Think of it like Excel formulas for multi-table databases:
    - In Excel: cell C1 = A1 + B1, cell D1 = C1 * 2
    - Change A1 → C1 recalcs → D1 recalcs
    - You don't call the formulas, they just fire when inputs change
@@ -304,12 +433,9 @@ Spreadsheet thinking, but for relational data."
 ```
 "So you saw the add-cust command add logic for this tour.
 
-Why add-cust instead of just typing rules?
-- You're new to the product, so debugging would be difficult
-- Your database might have different column names (AI generates varied schemas)
-- add-cust uses a known reference schema that works reliably
+To speed things up and avoid confusing errors, we created the logic for you. 
 
-In YOUR projects, you have THREE ways to add rules:
+In real life, you have TWO ways to add rules:
 
 1. **Logic Discovery (RECOMMENDED)** - Describe requirements in natural language:
    'Customer balance equals sum of order totals for unshipped orders'
@@ -317,8 +443,10 @@ In YOUR projects, you have THREE ways to add rules:
    
    AI generates the rules for YOUR schema, whatever column names you have.
    Creates logic/logic_discovery/your_use_case.py
+   
+   Rules auto-activate when server restarts (discovery folder is auto-loaded).
 
-2. **IDE Code Completion** - Type 'Rule.' and see all patterns:
+2. **IDE Code Completion** - Type 'Rule.' in logic/declare_logic.py and see all patterns:
    - Rule.formula
    - Rule.sum
    - Rule.constraint
@@ -326,14 +454,16 @@ In YOUR projects, you have THREE ways to add rules:
    
    Use this when you know exactly what you want and want full control.
 
-3. **Chat Assistance** - Ask me to add/modify rules interactively
+**Best Practice for file organization:**
 
-**Best Practice:** Use discovery to generate initial rules, organize by use case:
-- logic/logic_discovery/check_credit.py
-- logic/logic_discovery/pricing_rules.py
-- logic/logic_discovery/approval_workflow.py
+- **logic/declare_logic.py** - Your main rules file (what we showed you)
+- **logic/logic_discovery/*.py** - Auto-generated rules by use case:
+  - logic/logic_discovery/check_credit.py
+  - logic/logic_discovery/pricing_rules.py
+  - logic/logic_discovery/approval_workflow.py
 
-Each file represents one business requirement. Self-documenting, easy to find.
+Each discovery file represents one business requirement. Self-documenting, easy to find.
+Both locations work - discovery files load automatically at startup.
 
 The key: You declare WHAT, engine handles WHEN and ORDER.
 
@@ -363,7 +493,7 @@ Here's your reference guide - open this now:"
 
 **Show the Patterns Table:**
 
-https://apilogicserver.github.io/Docs/Logic/#rule-patterns
+https://apilogicserver.github.io/Docs/Logic/#learning-rules
 
 ```
 "Scroll to the Rule Patterns table. See these 5 key patterns:
@@ -395,7 +525,10 @@ Two rules:
 
 See the pattern? Count something, use count in constraint.
 
-Same for:
+Notice it often takes more than one rule to satisfy a requirement. Combining rules is a key skill - 
+you'll see this in many patterns.
+
+Same pattern applies to:
 - Students need minimum credits
 - Products need required notices
 - Shipments must have packages
@@ -405,77 +538,15 @@ Pattern recognition is the key skill here."
 
 ---
 
-### **Section 3: Security (5 min)**
-
-**Follow readme.md Section 3**
-
-**Note:** Security was pre-configured when you ran `genai-logic add-auth` (or it may be built into this sample).
-
-**What to Emphasize:**
-```
-"Section 3 - Security. We're 15 minutes in - doing great!
-
-Let me show you role-based filtering first, THEN we'll look at how it's declared.
-
-Log out from admin, log in as s1/p (sales role).
-
-Go to Customers. How many do you see now?
-
-[Wait - they'll say 3 instead of 6]
-
-That's role-based filtering. User s1 only sees customers assigned to them.
-
-Now let's see HOW that's declared..."
-```
-
-**Open the Security File:**
-```
-"Open: security/declare_security.py - scroll to the sales role grants section.
-
-See this grant?
-
-    Grant(on_entity=models.Customer,
-          to_role=Roles.sales,
-          filter=lambda : models.Customer.SalesRepId == Security.current_user().id)
-
-Read it like English:
-- ON Customer entity
-- TO sales role  
-- FILTER where SalesRepId matches current user
-
-That's declarative security. One grant = automatic filtering across:
-- API calls
-- Admin UI
-- Any client
-
-Compare this to traditional approach:
-- Middleware checks on every endpoint
-- UI logic to hide/show
-- Query modifications everywhere
-
-Here? One declaration. Works everywhere."
-```
-
-**The Teaching Moment:**
-```
-"This is the pattern: declare WHAT access, system enforces WHERE needed.
-
-Just like logic rules - you don't call them, they enforce automatically.
-
-Security + Logic = declarative backend. Both automatic, both reusable.
-
-If this is moving too fast, let me know - we can slow down or dive deeper."
-```
-
----
-
 ### **Section 4: Iterate with Python (8 min)**
 
-**Follow readme.md Section 4 (Green parts)**
+**Follow readme.md Section 5**
 
 **What to Emphasize:**
 ```
 "Section 4 - mixing rules with Python for complex logic.
+
+New requirement: Give a 10% discount for carbon-neutral products for 10 items or more.
 
 We're going to:
 1. Add a schema change (CarbonNeutral column)
@@ -483,16 +554,27 @@ We're going to:
 3. Add discount logic mixing rules + Python
 4. Debug it with breakpoints
 
-First, run this command to add the discount customization (this is add-cust #2):
-genai-logic add-cust --using='discount'
+First, stop the server (Red Stop button or Shift-F5).
 
-[Wait for it to complete]
+Now run these commands:"
+```
 
-Now rebuild models from the changed database:
+**Run the commands:**
+```bash
+genai-logic add-cust
 genai-logic rebuild-from-database --db_url=sqlite:///database/db.sqlite
+```
 
-This regenerated database/models.py to include the new CarbonNeutral column.
-Notice: no manual schema changes, no migrations to write - it handles schema evolution cleanly."
+**After commands complete:**
+```
+"Done! This:
+- Updated database with Product.CarbonNeutral column
+- Rebuilt models.py to include the new column
+- Updated logic/declare_logic.py with the discount logic
+
+Notice: no manual schema changes, no migrations to write - it handles schema evolution cleanly.
+
+You can ignore the warning about 'mcp-SysMcp' - not present."
 ```
 
 **Set Breakpoint and Debug:**
@@ -501,12 +583,19 @@ Notice: no manual schema changes, no migrations to write - it handles schema evo
 
 Set a breakpoint on the line with 'if row.Product.CarbonNeutral...'
 
-Now go to admin app, find a GREEN product (Product ID 1 or 5 - they have CarbonNeutral=1).
-Add an Order Item with quantity 12.
+Start the server (F5).
+
+Now go to admin app, login as admin.
+
+Find Customer Alice, drill into her first Order, and click 'Add New Item'.
+
+Use the Lookup function to select a Green product (Product ID 1 or 5).
+
+Set quantity to 12 and save.
 
 Breakpoint hits!
 
-👉 Look at VS Code LOCALS pane (bottom left).
+👉 Look at VS Code LOCALS pane (left side).
 👉 See row, row.quantity, row.Product, row.Product.CarbonNeutral?
 
 This is live debugging with real data. Not magic - transparent Python code you can step through.
@@ -540,6 +629,8 @@ Check the Item amount - it got the discount automatically."
 3. **Debugging Transparency**:
    - Set breakpoints, inspect locals, use debug console
    - Not a black box - you SEE the data, STEP through logic
+   - Check the console log - see the rules that already fired
+   - Answers "how did I get here?" - the complete execution chain
    - This is how you'll diagnose issues in YOUR projects
 
 The pattern: Use rules for 90% (sums, copies, formulas), use Python for complex 10% (conditionals, API calls).
@@ -577,13 +668,8 @@ Handles real-world evolution without breaking things."
 
 First: CUSTOM APIs for partner integrations.
 
-Run this command to add a B2B order endpoint (this is add-cust #3):
-genai-logic add-cust --using='B2B'
-
-[Wait for completion]
-
-This added api/api_discovery/order_b2b.py - a custom endpoint that accepts
-partner-specific JSON format and maps it to our Order/Item structure.
+The first add-cust command already created api/api_discovery/order_b2b.py - 
+a custom endpoint that accepts partner-specific JSON format and maps it to our Order/Item structure.
 
 Let's test it..."
 ```
@@ -601,8 +687,8 @@ See the response? Order created with Items, rules fired automatically.
 Now check the logic log in VS Code console - see all those 'Logic Bank' lines?
 
 👉 The custom API mapped partner format to our models
-👉 Rules enforced automatically (balance, totals, credit check)
-👉 Zero duplication of logic
+👉 Rules enforced automatically - whether from UI app or custom API
+👉 Zero duplication of logic - reuse over transactions and sources
 
 This is the pattern for integrations:
 - Custom endpoint for partner format

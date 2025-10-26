@@ -1,3 +1,15 @@
+---
+title: Context Restoration for BLT Manager Workspace
+Description: Re-establishes AI assistant context after BLT regenerates workspace
+Source: ApiLogicServer-src/prototypes/manager/system/ApiLogicServer-Internal-Dev/copilot-dev-context.md
+Propagation: BLT process → Manager workspace
+Usage: AI assistants read this to understand project structure, development workflow, and recent additions
+version: 2.0
+changelog:
+  - 2.0 (Oct 2025) - Added AI-Guided Training section (tutor.md v2.0, OBX improvements, design philosophy)
+  - 1.0 (Initial) - Established workspace structure, GenAI prompt engineering, development workflow
+---
+
 # Context Restoration: BLT Manager Workspace
 
 **Purpose:** This file re-establishes AI assistant context after BLT runs regenerate this workspace.
@@ -109,6 +121,50 @@ This document contains **everything** you need to understand the system:
 - **[API Logic Server Documentation](https://apilogicserver.github.io/Docs/Doc-Home/)** - Complete user guide
 - **[Installation Guide](https://apilogicserver.github.io/Docs/Install/)** - Setup procedures
 - **[Tutorial](https://apilogicserver.github.io/Docs/Tutorial/)** - Step-by-step learning
+
+### For AI-Guided Training (New Feature):
+- **`basic_demo/tutor.md`** - AI assistant guide for conducting 30-45 min hands-on tour
+  - **Version:** 2.0 (762 lines, October 2025)
+  - **Purpose:** "Message in a bottle" for AI assistants - enables guided discovery learning
+  - **Method:** Provocation-based (e.g., "how did it know ORDER has a foreign key to Customer?")
+  - **Philosophy:** Users learn by DOING (hands-on tour), not reading docs or taking quizzes (Versata approach)
+  - **Structure:** 9 sections with timing checkpoints (15 min, 35 min), concrete metrics (48 vs 200+ lines)
+  - **Key Additions in v2.0:** Spreadsheet analogy, procedural comparison (BUG FIX examples), context for schema commands, three ways to add logic (Discovery/IDE/Chat), MCP server integration
+  - **Location:** `prototypes/basic_demo/tutor.md` (template), propagates to created `basic_demo` projects
+  - **Invocation:** User says "Guide me through basic_demo" → AI reads tutor.md → conducts tour
+  
+- **Design Philosophy - Why Provocation Over Instruction:**
+  - **Problem with traditional training:** PowerPoint → quiz/assessment approach tests memorization, not understanding
+  - **Versata insight:** "Stop killing people with PowerPoint; identify critical skills, design lab to DO it"
+  - **Discovery learning:** Ask provocative questions that force pattern recognition ("How did it know ORDER references CUSTOMER?")
+  - **"Aha moments" over rote learning:** User discovers foreign keys exist, then learns they're essential for multi-table logic
+  - **Spreadsheet analogy:** Excel user understands formulas → multi-table database is "Excel for related tables"
+  - **AI as training partner DURING the lab:** Not quiz after, not docs before - real-time guidance while doing
+  - **Result:** 30-45 min hands-on experience creates deeper understanding than hours of documentation reading
+
+- **v1.0 → v2.0 Evolution (Battle-Tested Refinements):**
+  - **v1.0 (595 lines):** Initial design based on architecture understanding
+  - **Live testing:** User spent "several hours with your cousin testing and revising" actual tours
+  - **v2.0 (+506 net lines):** Added based on what users actually needed during tours:
+    - **Spreadsheet analogy** - Non-technical users needed familiar mental model
+    - **Procedural comparison** - Show 48 vs 200+ lines WITH concrete BUG FIX examples (not just line counts)
+    - **Context for commands** - Why `add-cust` exists (schema variability, new users discover structure)
+    - **Three ways to add logic** - Discovery file (recommended), IDE autocomplete, or Chat
+    - **Timing checkpoints** - 15 min at Security, 35 min at Q&A (helps pace the tour)
+    - **MCP server mention** - Claude Desktop integration for external AI access
+    - **Best practices** - `logic/logic_discovery/` organization pattern
+    - **Short response guidance** - "One idea per interaction" prevents overwhelming new users
+  - **Key learning:** Initial version was too instruction-heavy, v2.0 adds more context and concrete examples
+
+- **OBX (Out-of-Box Experience) Design** - Manager → Project flow optimization (October 2025):
+  - **Manager README:** "🚀 First Time Here? Start with basic_demo" section (clear default path)
+  - **Manager .copilot-instructions.md:** "CRITICAL: ALWAYS start" directive (no choices, single path)
+  - **Project README:** "🤖 Ready to Explore? Recommended: Guide me through" (guided tour as primary option)
+  - **Project .copilot-instructions.md:** "🎯 Most Common Next Steps" (5 succinct items at top)
+  - **Goal:** Eliminate friction/choice paralysis, make basic_demo → guided tour the clear default
+  - **Problem addressed:** Users didn't automatically know to start with basic_demo, didn't default to guided tour
+  - **Solution:** Strengthen every touch point in the journey to push toward the optimal path
+  - **Flow:** Install → Open Manager → Create basic_demo → Auto-opens → "Guide me through" → 30-45 min tour
 
 &nbsp;
 
