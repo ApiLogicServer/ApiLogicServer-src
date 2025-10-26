@@ -254,18 +254,18 @@ Constraint: customer balance cannot exceed credit limit.
 ```
 
 **Result:** Working microservice with logic in 10 seconds!
-
 #### AI-Assisted Development
-Every created project includes:
-- 🤖 **Copilot instructions** (`.copilot-instructions.md`)
-- 📚 **Training materials** (`docs/training/`)
+
+Every created project includes **AI tutoring** to help you get oriented and productive quickly:
+
+- 🤖 **Copilot instructions** (`.copilot-instructions.md`) - When you open a project, Copilot presents a friendly welcome message explaining what's already built and what you can do next. Ask Copilot to "read instructions" anytime for guidance.
+- 📚 **Training materials** (`docs/training/`) - Comprehensive guides for all features
 - 🔍 **Logic from natural language** (translate English → rules)
 
 ```python
 # Paste into Copilot: "Create logic for check credit"
 # Copilot generates the 5 rules above!
 ```
-
 ### 4️⃣ Living Documentation
 
 **Automated test generation** from your rules:
