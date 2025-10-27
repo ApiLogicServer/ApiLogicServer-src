@@ -129,19 +129,32 @@ def show_logic(scenario: str, logic_logs_dir: str):
             best_section = max(rules_sections, key=lambda x: x['rule_count'])
             last_rules_start = best_section['start']
             last_rules_end = best_section['end']
+            # Find where the "These Rules Fired" line is (one line before rules start)
+            rules_fired_line = last_rules_start - 1
+            # Now search backwards to find the beginning of this logic section
+            logic_start_line = rules_fired_line - 1
+            while logic_start_line > 0:
+                line = logic_lines[logic_start_line].strip()
+                # Look for the start marker (usually after a blank line following "COMPLETE")
+                if 'Logic Phase:' in logic_lines[logic_start_line] and 'ROW LOGIC' in logic_lines[logic_start_line]:
+                    # Found the start of the logic section
+                    # Go back one more to include the header line (scenario name)
+                    if logic_start_line > 0 and logic_lines[logic_start_line-1].strip():
+                        logic_start_line -= 1
+                    break
+                logic_start_line -= 1
         else:
             last_rules_start = -1
             last_rules_end = -1
+            logic_start_line = 0
                     
-        # Now process the file, collecting logic log and extracting the last rules section
+        # Now process the file, collecting logic log and extracting the rules section
         for i, each_logic_line in enumerate(logic_lines):
             each_logic_line = remove_trailer(each_logic_line)
             
-            if is_logic_log:
-                if "These Rules Fired" in each_logic_line:
-                    is_logic_log = False
-                else:
-                    logic_log.append(each_logic_line)
+            # Collect logic log from the best section
+            if rules_sections and logic_start_line <= i < rules_fired_line:
+                logic_log.append(each_logic_line)
             
             # Extract rules from the last "These Rules Fired" section
             if last_rules_start <= i < last_rules_end:
