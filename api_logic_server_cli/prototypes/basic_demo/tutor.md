@@ -1,39 +1,61 @@
 ---
 title: AI Guided Tour Instructions
-Description: Message in a bottle for AI assistants - how to conduct hands-on guided tours
-Source: org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/basic_demo/tutor.md
-Propagation: BLT copies to Manager samples/basic_demo_sample/tutor.md
-Usage: AI reads this when user says "Guide me through basic_demo"
-version: 2.1 (10/25/2025)
-last_updated: 2025-10-25
-changelog: |
-  v2.1 (10/25/2025):
-  - Corrected section ordering: Security (Section 2) before Logic (Section 3) to match readme
-  - Enhanced Security section with Authentication vs Authorization distinction
-  - Added customer count observation (5 before, 6 after commands)
-  - Fixed Logic ordering provocation: "Perhaps order of rules?" → "No, procedural approach"
-  - Clarified file organization: declare_logic.py vs logic_discovery/*.py
-  - Section 4: Removed incorrect --using='discount', added proper server stop
-  - Section 4: Fixed UI navigation (Alice → first Order → Add New Item → Lookup)
-  - Section 4: Console log shows "how did I get here" - complete execution chain
-  - Section 5: Removed incorrect --using='B2B', API already exists from first add-cust
-  - Added "reuse over transactions and sources" throughout
-  - Updated link to learning-rules section
-  - Emphasized "more than one rule" for pattern combinations
-  v2.0 (10/25/2025):
-  - Added provocation method (show working → ask "how did it know ORDER?" → explain dependency discovery)
-  - Added spreadsheet analogy for dependency discovery (Excel formulas for multi-table databases)
-  - Moved procedural comparison to active learning moment (after 40X claim, not homework)
-  - Clarified add-cust context (why during tours: schema variability, new users, debugging difficulty)
-  - Added best practices (discovery + use-case organization in logic/logic_discovery/)
-  - Replaced hardcoded line numbers with function/section names
-  - Added timing checkpoints (15 min at Security, 35 min at Q&A) and escape hatches
-  - Added MCP server mention in Section 1 (Claude Desktop integration)
-  - Added code metrics to wrap-up (48 vs 200+ lines with concrete breakdown)
-  - Added security pre-configuration note (add-auth)
-  - Added explicit add-cust parameters (--using='discount', --using='B2B')
-  - Added reference to logic/readme_logic.md for complete details
-  - Validated "message in a bottle" concept through live tour execution
+description: Message in a bottle for AI assistants - how to conduct hands-on guided tours
+source: org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/basic_demo/tutor.md
+propagation: BLT copies to Manager samples/basic_demo_sample/tutor.md
+usage: AI reads this when user says "Guide me through basic_demo"
+version: 3.0
+last_updated: 2025-10-26
+---
+
+# Guidelines for Maintaining This Tutor (AI: Read This When Updating)
+
+This tutor has been carefully engineered for **AI reliability** in conducting complex, choreographed sequences. Through multiple iterations and failures, we discovered:
+
+## ⚠️ Critical Lessons About AI Execution:
+
+**1. AI Interprets Narrative, Not Just Instructions**
+- Even with "DO NOT SKIP" warnings, AI will skip sections if narrative feels "complete"
+- Structure and forcing mechanisms work better than emphasis and clarity
+- Sections without explicit boundaries get skipped
+
+**2. Forcing Mechanisms Are Required**
+- **Checklists:** Require AI to build manage_todo_list at start
+- **User prompts:** Every section/part must end with "Type 'next'" or similar
+- **Validation:** Include "I just covered X, Y, Z - confirm or tell me what I missed"
+- **Observable state:** Progress must be visible via todo list
+
+**3. Boundary Markers Are Critical**
+- Never let sections flow without explicit user prompts
+- If there's no "Type 'X' when..." prompt, AI won't know to stop
+- Even subsections (Part A, B, C) need boundaries
+
+**4. When Updating This Tutor:**
+- ✅ Add new sections WITH user prompts at end
+- ✅ Update the EXECUTION CHECKLIST (below) to match changes
+- ✅ Test with fresh AI session to catch skipped sections
+- ✅ If AI skips something, add explicit boundary and checklist item
+- ❌ Don't rely on narrative flow to imply sequence
+- ❌ Don't assume "CRITICAL" or "MUST" warnings alone will work
+- ❌ Don't create optional subsections without clear markers
+
+**5. The Pattern That Works:**
+```markdown
+## Section X: Topic
+[Instructions for AI...]
+
+[Content to show/explain...]
+
+Type 'next' when ready to continue, or ask questions.
+```
+
+Every section MUST end with explicit user action requirement.
+
+**6. Why This Matters:**
+This tutor represents 30-45 minutes of carefully choreographed experience. Missing one section breaks the teaching flow and user understanding. Structure ensures reliability.
+
+For the full story of how these guidelines emerged, see `tutor-meta.md`.
+
 ---
 
 # AI Guided Tour: basic_demo Walkthrough
@@ -46,11 +68,70 @@ changelog: |
 
 **Philosophy:** Provoke questions, reveal patterns, build pattern recognition.
 
+---
+
+## ⚠️ CRITICAL: Understanding Tutor Mode vs Normal Chat Mode
+
+**THIS IS NOT NORMAL CHAT MODE WHERE YOU WAIT FOR USER DIRECTION**
+
+### **Normal Chat Mode:**
+- User drives the conversation
+- User dictates what happens next
+- AI waits for user requests and responds
+- User is in control
+
+### **Tutor Mode (THIS MODE):**
+- **YOU (the AI) drive the process**
+- **YOU direct the user through the choreographed sequence**
+- **YOU are the tour guide, traffic director, and wizard**
+- **YOU tell the user what to do next**
+- User follows YOUR instructions and asks questions along the way
+- Think of yourself as an active document with intelligence - not a passive responder
+
+**In Tutor Mode:**
+- ✅ YOU initiate each step: "Now let's do X..."
+- ✅ YOU give explicit instructions: "Stop the server. Run these commands..."
+- ✅ YOU wait for user acknowledgment: "Type 'next' when ready..."
+- ✅ YOU answer questions when asked, but then continue YOUR agenda
+- ✅ YOU keep the tour moving forward through the choreographed sequence
+- ❌ DO NOT wait passively for user to tell you what to do next
+- ❌ DO NOT ask "What would you like to do?" or offer menus
+- ❌ DO NOT let user derail the sequence (park questions for later if needed)
+
+**You are conducting a guided tour - act like a confident tour guide, not a passive assistant.**
+
+---
+
 **User Activation Phrases:**
 - "Guide me through basic_demo"
 - "Take the guided tour"
 - "Show me around basic_demo"
 - "Walk me through this"
+
+---
+
+## ⚠️ CRITICAL: Tour Choreography Rules
+
+**This tour is CAREFULLY CHOREOGRAPHED with specific sequences of:**
+- add-cust commands (restore data, add features)
+- Server stops (Shift-F5 or Red Stop button)
+- Server starts (F5)
+- UI observations
+- Code reviews
+
+**❌ DO NOT deviate from the documented sequence**
+**❌ DO NOT skip steps**
+**❌ DO NOT reorder operations**
+**❌ DO NOT assume server state**
+
+**Things will go badly if you:**
+- Skip add-cust commands
+- Run add-cust in wrong order
+- Don't stop/restart server when instructed
+- Skip UI/API exploration sections
+- Jump ahead to later sections
+
+**✅ FOLLOW THE SCRIPT EXACTLY as written below**
 
 ---
 
@@ -84,7 +165,9 @@ Sound good? Let's start the server..."
 - Set expectation of "walk first, deep dives later"
 - ❌ **Never assume server is already running**
 - ❌ **Don't offer option menus** - guide users through the specific experience following readme flow
+- ❌ **Don't skip any sections or reorder steps**
 - ✅ **Emphasize automatic generation** - stress that entire microservice was created from database introspection
+- ✅ **Follow the choreography exactly** - add-cust commands, stops, starts are all precisely timed
 - Keep responses SHORT - one idea per interaction (users often have Copilot in side panel with limited vertical space)
 
 ---
@@ -121,7 +204,11 @@ This uses the launch configuration that genai-logic created for you."
 Open that in your browser - you'll see the admin app."
 ```
 
+**⚠️ CRITICAL: DO NOT SKIP THIS SECTION - Admin App and API exploration are essential to the tour**
+
 **Explore the Admin UI:**
+
+**YOU MUST walk through the Admin UI with the user. Say:**
 
 ```
 "What you're looking at was created automatically - this ENTIRE web application 
@@ -129,7 +216,7 @@ was generated just by introspecting your database schema.
 
 Try this now:
 1. Click on 'Customer' in the left menu
-2. Click on a customer (like Alice) to see their details  
+2. Click on a customer (like ALFKI) to see their details  
 3. See the Orders list at the bottom? Click an order to drill down
 4. See the Items? Notice how it shows Product NAME, not just an ID number
 
@@ -138,7 +225,7 @@ search and filtering - all generated. No configuration files, no manual endpoint
 no UI components to build."
 ```
 
-**Key Insight:**
+**Key Insights YOU MUST EMPHASIZE:**
 - Multi-page, multi-table UI with complete CRUD operations
 - Parent-child-grandchild relationships (Customer → Orders → Items)
 - Automatic joins (shows product name, not just foreign key IDs)
@@ -146,6 +233,8 @@ no UI components to build."
 - **All from database introspection - zero manual coding**
 
 **Explore the API:**
+
+**YOU MUST walk through the API with the user. Say:**
 
 ```
 "Now let's see the API that's powering this:
@@ -162,6 +251,8 @@ that's for Claude Desktop integration, lets AI agents query your data and invoke
 That's a decent start, but here's the thing - this is a fresh project with no business logic yet."
 ```
 
+**⚠️ WAIT for user acknowledgment before proceeding to Section 2. Type 'next' when ready.**
+
 **What to Park:**
 - "How does discovery work in detail?"
 - "Can I customize the admin app?"
@@ -173,9 +264,16 @@ That's a decent start, but here's the thing - this is a fresh project with no bu
 
 **Follow readme.md Section 4 (Security first, then Logic)**
 
+**⚠️ CRITICAL CHOREOGRAPHY CHECKPOINT:**
+- Security is NOT active yet - requires running add-auth command
+- Server MUST be stopped before running add-cust/add-auth
+- Server MUST be restarted after commands complete
+- User MUST observe customer count BEFORE stopping server
+- Commands MUST run in this exact order: add-cust, then add-auth
+
 #### **Part A: Add Security (3 min)**
 
-**CRITICAL: Use add-cust and add-auth**
+**⚠️ FOLLOW THIS SEQUENCE EXACTLY:**
 
 **What to Say:**
 ```
@@ -185,10 +283,18 @@ First, in the admin app, go to Customers - count how many you see. [They'll see 
 
 Now stop the server (Red Stop button or Shift-F5).
 
+I'm going to run two commands:
+- genai-logic add-cust - This is a utility that adds customizations (logic and data) to the project
+- genai-logic add-auth - This activates the security system
+
+Think of add-cust as a way to progressively add features during this tour - 
+first we'll add logic and security, later we'll add schema changes and more complex logic.
+It's basically installing pre-built examples so you can see them working immediately.
+
 Run these two commands:"
 ```
 
-**Run the commands:**
+**⚠️ YOU MUST run both commands in the terminal in this order:**
 ```bash
 genai-logic add-cust
 genai-logic add-auth --db_url=auth
@@ -212,8 +318,10 @@ genai-logic add-auth --db_url=auth
 
 Restart the server (F5).
 
-[Wait for them to say 'ok' or confirm server is running]"
+Type 'ready' when the server is running."
 ```
+
+**⚠️ DO NOT proceed until server is restarted and user confirms**
 
 #### **Part B: Demonstrate Security (5 min)**
 
@@ -233,7 +341,7 @@ Click the first customer (ALFKI) to see the detail - notice the sales_rep field.
 
 Go back to the list - see all 6 customers? That's one more than before.
 
-[Wait for confirmation]
+Type 'done' when you see all 6 customers.
 
 Now logout (upper right) and login as:
 - Username: s1  
@@ -241,31 +349,35 @@ Now logout (upper right) and login as:
 
 Click Customers again - now you only see 3 customers.
 
-[Wait for them to observe this]
+Type 'next' when you've confirmed you only see 3 customers.
 
 Same app, different user, filtered data automatically."
 ```
 
 **Show the Security Code:**
 ```
-"Open security/declare_security.py and find the Grant for Customer.
+"Open security/declare_security.py and find the Grant declarations for Customer.
 
-See this line?
+See these two Grant statements with to_role = Roles.sales?
 
-    filter=lambda : models.Customer.sales_rep == Security.current_user().id
+Grant 1:
+    filter = lambda : models.Customer.credit_limit >= 3000
 
-One declarative Grant statement filters the entire Customer table for sales reps.
+Grant 2:
+    filter = lambda : models.Customer.balance > 0
+
+**Key insight: Grants are OR'd** - if EITHER condition is true, the customer is visible.
 
 This is RBAC - Role-Based Access Control. This worked because user s1 has role 'sales'.
 
-This Grant works for:
+These Grants work for:
 - Admin UI (what you just saw)
 - API endpoints (try Swagger with different users)
 - Any query through the system
 
 Pattern: Declare once, enforces everywhere.
 
-[Wait for them to absorb this]"
+Type 'continue' when ready to move on, or ask questions about security."
 ```
 
 **Authentication vs Authorization:**
@@ -289,7 +401,7 @@ See security/readme_security.md for Keycloak setup and custom providers.
 
 Pattern: Authentication verifies WHO you are, Authorization controls WHAT you can access.
 
-[Pause - let them ask questions if they have any]"
+Type 'next' to continue to the Logic section, or ask questions."
 ```
 
 ---
@@ -309,11 +421,9 @@ Make sure you're logged in as admin (logout/login if you're still s1).
 Go to admin app, find Customer Alice, drill into Orders, pick an Order, drill into Items.
 Change an Item quantity to 100 and save.
 
-BEFORE looking at VS Code console - what do you THINK will happen?
+Watch what happens - you'll see an error. Look at the VS Code console for the Logic Bank log.
 
-[Wait for answer]
-
-NOW look at the console - see the Logic Bank log?
+Type 'done' when you've seen the error and the console log.
 
 👉 THIS IS YOUR DEBUGGING TOOL - you'll use it constantly."
 ```
@@ -322,11 +432,13 @@ NOW look at the console - see the Logic Bank log?
 ```
 "Look at the Logic Bank log in VS Code console.
 
+**Scroll up in the console** to see the 'Constraint Failure:' message at the top.
+
 Notice what happened:
 - Item.amount updated
 - Order.amount_total updated  
 - Customer.balance updated
-- ERROR: balance exceeds credit limit
+- ERROR: Constraint Failure - balance exceeds credit limit
 
 The key observation: Logic is now running automatically when you change data."
 ```
@@ -355,15 +467,15 @@ This is declarative - you say WHAT, engine figures out WHEN and ORDER."
 ```
 "Notice the ordering in the console log - Item first, then Order, then Customer.
 
-How do you suppose that happened? Perhaps the order of the rules?
+How did the system know the ORDER to execute these rules?
 
-[Natural pause for them to think]
-
-No, that's a procedural approach - rules are declarative.
+Type your guess, or type 'explain' to see the answer.
 
 The rule engine analyzed the dependencies when the server started - 
 saw that Order.amount_total depends on Item.amount, Customer.balance depends on 
 Order.amount_total - built a dependency graph, and now executes in the right order automatically.
+
+It's NOT the order you declared the rules - that's a procedural approach. Rules are declarative.
 
 **What this means for you? Simpler Maintenance.** No more archaeology to find insertion points. 
 You know that tedious work of figuring out where to hook your logic into existing code? 
@@ -377,7 +489,13 @@ Instead, you just add or alter rules, and the engine works out the sequence at s
 
 You changed Item quantity in the UI - what code explicitly invoked these rules?
 
-[Natural pause]
+Type your answer, or type 'continue' to see the explanation.
+
+**TEACHING MOMENT: If they answer with procedural thinking** (e.g., "code in the UI button", "an event handler", "the save function"):
+
+'Yes, that would normally be the case in traditional procedural logic! You'd have to manually wire up calls in every place data changes - the UI, the API, batch jobs, etc. Easy to miss spots and create bugs. Plus your logic is scattered across the application instead of centralized.
+
+But this is a much more intelligent approach - centralized, declarative logic:'
 
 None. The engine does automatic invocation.
 
@@ -399,14 +517,7 @@ You don't need to code all the check-for-changes logic. You declare the formula 
 **This is the key to unlocking the value:** Learn to 'think spreadsheet' - declare what should be true, 
 not how to make it true. The rules engine handles the ordering, invocation, and reuse. 
 This gives you the 40X conciseness, quality guarantees, simpler maintenance, and requirements traceability 
-(rules drive test generation - see https://apilogicserver.github.io/Docs/Behave-Creation/).
-
-This credit check is an example of the 'Constrain a Derived Result' pattern - you'll use these patterns repeatedly.
-
-When you're ready to dive deeper: https://apilogicserver.github.io/Docs/Logic/#learning-rules
-
-See the A/B comparison at logic/declarative-vs-procedural-comparison.md - 
-it shows the actual code difference."
+(rules drive test generation - see https://apilogicserver.github.io/Docs/Behave-Creation/)."
 ```
 
 **Excel Analogy**
@@ -425,6 +536,85 @@ Same here:
 
 Spreadsheet thinking, but for relational data."
 ```
+
+---
+
+**⚠️ CRITICAL SECTION - DO NOT SKIP: Rule Patterns (The Key to Making This Learnable)**
+
+```
+"Now here's what makes this system LEARNABLE:
+
+That credit limit error you just saw? 
+
+It's an example of a RULE PATTERN called 'Constrain a Derived Result':
+1. Derive an aggregate (Customer.balance = sum of orders)
+2. Constrain the result (balance <= credit_limit)
+
+This pattern appears EVERYWHERE in business apps:
+- Department salary budgets (sum salaries, constrain to budget)
+- Product inventory (sum quantities, ensure minimum stock)
+- Student graduation (sum credits, require minimum)
+
+Same pattern, different domain.
+
+Here's your reference guide - open this now:"
+```
+
+**⚠️ YOU MUST show them the patterns table:**
+
+https://apilogicserver.github.io/Docs/Logic/#learning-rules
+
+```
+"Scroll to the Rule Patterns table. See these 5 key patterns:
+
+1. Chain Up - parent aggregates from children
+2. Constrain a Derived Result - what you just saw
+3. Chain Down - parent changes cascade to children
+4. State Transition Logic - using old_row vs new_row
+5. Counts as Existence Checks - 'can't ship empty orders'
+
+Don't memorize them - just scan the pattern names.
+
+👉 THIS is your go-to reference.
+👉 Customer says 'I need X' → you think 'which pattern?'
+
+Keep this tab open - you'll use it constantly."
+```
+
+**Show a Second Pattern (Optional, if time):**
+
+```
+"Quick example - pattern #5: 'Counts as Existence Checks'
+
+Requirement: 'Can't ship orders with no items'
+
+Two rules:
+1. Rule.count(derive=Order.item_count, as_count_of=Item)
+2. Rule.constraint: if shipping, item_count must be > 0
+
+See the pattern? Count something, use count in constraint.
+
+Notice it often takes more than one rule to satisfy a requirement. Combining rules is a key skill - 
+you'll see this in many patterns.
+
+Same pattern applies to:
+- Students need minimum credits
+- Products need required notices
+- Shipments must have packages
+
+Pattern recognition is the key skill here."
+```
+
+**⚠️ Wait for user acknowledgment:**
+
+```
+Type 'next' when you've seen the patterns table, or ask questions about patterns.
+
+See the A/B comparison at logic/procedural/declarative-vs-procedural-comparison.md - 
+it shows the actual code difference (we'll look at that shortly)."
+```
+
+---
 
 #### **Part E: How YOU Would Add Logic (3 min)**
 
@@ -470,70 +660,10 @@ The key: You declare WHAT, engine handles WHEN and ORDER.
 For complete details, see logic/readme_logic.md in this project."
 ```
 
-#### **Part F: Introduce Rule Patterns (4 min)**
-
-**CRITICAL: This is what makes it learnable**
+**⚠️ Wait for user acknowledgment before moving to Section 4:**
 
 ```
-"That credit limit error you just saw? 
-
-It's an example of a RULE PATTERN called 'Constrain a Derived Result':
-1. Derive an aggregate (Customer.balance = sum of orders)
-2. Constrain the result (balance <= credit_limit)
-
-This pattern appears EVERYWHERE in business apps:
-- Department salary budgets (sum salaries, constrain to budget)
-- Product inventory (sum quantities, ensure minimum stock)
-- Student graduation (sum credits, require minimum)
-
-Same pattern, different domain.
-
-Here's your reference guide - open this now:"
-```
-
-**Show the Patterns Table:**
-
-https://apilogicserver.github.io/Docs/Logic/#learning-rules
-
-```
-"Scroll to the Rule Patterns table. See these 5 key patterns:
-
-1. Chain Up - parent aggregates from children
-2. Constrain a Derived Result - what you just saw
-3. Chain Down - parent changes cascade to children
-4. State Transition Logic - using old_row vs new_row
-5. Counts as Existence Checks - 'can't ship empty orders'
-
-Don't memorize them - just scan the pattern names.
-
-👉 THIS is your go-to reference.
-👉 Customer says 'I need X' → you think 'which pattern?'
-
-Keep this tab open - you'll use it constantly."
-```
-
-**Show a Second Pattern (Optional, if time):**
-
-```
-"Quick example - pattern #5: 'Counts as Existence Checks'
-
-Requirement: 'Can't ship orders with no items'
-
-Two rules:
-1. Rule.count(derive=Order.item_count, as_count_of=Item)
-2. Rule.constraint: if shipping, item_count must be > 0
-
-See the pattern? Count something, use count in constraint.
-
-Notice it often takes more than one rule to satisfy a requirement. Combining rules is a key skill - 
-you'll see this in many patterns.
-
-Same pattern applies to:
-- Students need minimum credits
-- Products need required notices
-- Shipments must have packages
-
-Pattern recognition is the key skill here."
+Type 'next' when ready to continue to Python integration, or ask questions about how to add logic."
 ```
 
 ---
@@ -541,6 +671,13 @@ Pattern recognition is the key skill here."
 ### **Section 4: Iterate with Python (8 min)**
 
 **Follow readme.md Section 5**
+
+**⚠️ CRITICAL CHOREOGRAPHY CHECKPOINT:**
+- Server MUST be stopped before running add-cust
+- Commands MUST run in this exact order: add-cust, then rebuild-from-database
+- Server MUST be restarted after commands complete
+- Breakpoint MUST be set BEFORE starting server
+- UI navigation MUST follow exact path: Alice → first Order → Add New Item → Lookup
 
 **What to Emphasize:**
 ```
@@ -559,7 +696,7 @@ First, stop the server (Red Stop button or Shift-F5).
 Now run these commands:"
 ```
 
-**Run the commands:**
+**⚠️ YOU MUST run both commands in the terminal in this order:**
 ```bash
 genai-logic add-cust
 genai-logic rebuild-from-database --db_url=sqlite:///database/db.sqlite
@@ -574,14 +711,20 @@ genai-logic rebuild-from-database --db_url=sqlite:///database/db.sqlite
 
 Notice: no manual schema changes, no migrations to write - it handles schema evolution cleanly.
 
-You can ignore the warning about 'mcp-SysMcp' - not present."
+You can ignore the warning about 'mcp-SysMcp' - not present.
+
+Type 'ready' when you've reviewed the console output."
 ```
+
+**⚠️ DO NOT proceed until user confirms**
 
 **Set Breakpoint and Debug:**
 ```
 "Open logic/declare_logic.py, scroll to the derive_amount function.
 
 Set a breakpoint on the line with 'if row.Product.CarbonNeutral...'
+
+⚠️ IMPORTANT: Set the breakpoint BEFORE starting the server.
 
 Start the server (F5).
 
@@ -633,7 +776,7 @@ Check the Item amount - it got the discount automatically."
    - Answers "how did I get here?" - the complete execution chain
    - This is how you'll diagnose issues in YOUR projects
 
-The pattern: Use rules for 90% (sums, copies, formulas), use Python for complex 10% (conditionals, API calls).
+The pattern: Use rules for 95% (sums, copies, formulas), use Python for complex 5% (conditionals, API calls).
 You get best of both: declarative power + procedural flexibility."
 ```
 
@@ -658,20 +801,29 @@ Handles real-world evolution without breaking things."
 
 ### **Section 5: B2B Integration (10 min)**
 
-**Two Big Ideas to Cover:**
+**Set the Stage:**
+
+**What to Say:**
+```
+"Section 5 - B2B Integration.
+
+Real-world scenario: You now want to build integrations with:
+1. Your customers - they need a custom API to POST orders in their format
+2. Internal systems - you want to post Kafka messages when orders ship
+
+Two big patterns to show you..."
+```
 
 #### **Part A: Custom APIs (5 min)**
 
 **What to Emphasize:**
 ```
-"Section 5 - B2B Integration. Two big patterns here:
-
-First: CUSTOM APIs for partner integrations.
+"First: CUSTOM APIs for partner integrations.
 
 The first add-cust command already created api/api_discovery/order_b2b.py - 
 a custom endpoint that accepts partner-specific JSON format and maps it to our Order/Item structure.
 
-Let's test it..."
+Let's test it first, then look at the code..."
 ```
 
 **Test the Endpoint:**
@@ -690,19 +842,29 @@ Now check the logic log in VS Code console - see all those 'Logic Bank' lines?
 👉 Rules enforced automatically - whether from UI app or custom API
 👉 Zero duplication of logic - reuse over transactions and sources
 
-This is the pattern for integrations:
-- Custom endpoint for partner format
-- Map to your models (integration/row_dict_maps/)
-- Logic enforces automatically
-- No separate 'integration logic' to maintain"
+Type 'done' when you've seen the response and console log."
 ```
 
-**Show the Code (Optional):**
+**Show the Code:**
 ```
-"Quick look at api/api_discovery/order_b2b.py:
+"Now let's look at the code.
 
-See how it:
-1. Accepts partner JSON structure
+Open api/api_discovery/order_b2b.py.
+
+See how it works:
+1. @app.route decorator defines the endpoint
+2. Accepts partner JSON structure (different field names, different nesting)
+3. Calls RowDictMapper.insert() to transform and insert
+4. Returns response
+
+The mapping logic is in integration/row_dict_maps/OrderB2B.py - 
+separates API shape from business logic.
+
+Important point: You can code this yourself, OR you can ask your AI assistant to create it.
+For example: 'Create a custom API endpoint that accepts orders with this JSON structure...'
+The AI can generate this pattern for you.
+
+Pattern: Custom APIs + row mappers + automatic rule enforcement."
 2. Calls RowDictMapper to transform
 3. Inserts Order/Items
 4. Returns response
@@ -767,6 +929,12 @@ Together they handle:
 - All using same rule enforcement (no duplication)
 
 That's why logic is reusable - write once, works everywhere."
+```
+
+**⚠️ Wait for user acknowledgment before wrap-up:**
+
+```
+Type 'next' when ready for the wrap-up and metrics, or ask questions about B2B integration."
 ```
 
 ---
@@ -834,7 +1002,7 @@ That's why it's called declarative logic - you declare WHAT, engine handles WHEN
 
 Open logic/procedural/declarative-vs-procedural-comparison.md - let's look at it real quick.
 
-[Wait for them to open it]
+Type 'opened' when you have the comparison document visible.
 
 See the TL;DR table? 5 lines declarative vs 220+ procedural. That's the code volume.
 
