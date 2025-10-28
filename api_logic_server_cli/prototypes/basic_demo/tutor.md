@@ -4,8 +4,8 @@ description: Message in a bottle for AI assistants - how to conduct hands-on gui
 source: org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/basic_demo/tutor.md
 propagation: BLT copies to Manager samples/basic_demo_sample/tutor.md
 usage: AI reads this when user says "Guide me through basic_demo"
-version: 3.1
-last_updated: 2025-10-27 6:00 PM
+version: 3.2
+last_updated: 2025-10-28 10:00 AM
 ---
 
 # Guidelines for Maintaining This Tutor (AI: Read This When Updating)
@@ -232,7 +232,7 @@ Try this now:
 1. Click on 'Customer' in the left menu
 2. Click on a customer (like Alice) to see their details  
 3. See the Orders list at the bottom? Click an order to drill down
-4. See the Items? Notice how it shows Product NAME, not just an ID number
+4. See the Items? Notice how it shows Product NAME, not just an ID number.  Automatic Joins.
 
 This is what's worth noting: Complete CRUD operations, automatic relationships,
 search and filtering - all generated. No configuration files, no manual endpoint creation,
@@ -349,11 +349,7 @@ Login with:
 - Username: admin
 - Password: p
 
-Click on Customers.
-
-Click the first customer (ALFKI) to see the detail - notice the sales_rep field.
-
-Go back to the list - see all 5 customers? That's the same as before.
+Click on Customers - see all 5 customers? That's the same as before.
 
 Type 'done' when you see all 5 customers.
 
@@ -435,7 +431,7 @@ Make sure you're logged in as admin (logout/login if you're still s1).
 Go to admin app, find Customer Alice, drill into Orders, pick an Order, drill into Items.
 Change an Item quantity to 100 and save.
 
-Watch what happens - you'll see an error. Look at the VS Code console for the Logic Bank log.
+Watch what happens - you'll see an error. Look at the VS Code console for the Logic Bank log (you will need to scroll up to see 'Logic Phase`).
 
 Type 'done' when you've seen the error and the console log.
 
@@ -444,12 +440,7 @@ Type 'done' when you've seen the error and the console log.
 
 **Observe What Happened:**
 ```
-"Look at the Logic Bank log in VS Code console.
-
-**Scroll up in the console** to see the 'Logic Phase:' header and the indented list of rules that executed, 
-ending with the 'Constraint Failure:' message at the bottom.
-
-Notice what happened:
+"Observe the Logic Bank log ('Logic Phase:') in VS Code console:
 - Item.amount updated
 - Order.amount_total updated  
 - Customer.balance updated

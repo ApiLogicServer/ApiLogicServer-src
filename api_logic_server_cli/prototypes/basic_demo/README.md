@@ -31,7 +31,7 @@ Please find and read `.github/.copilot-instructions.md`.
 
 <br>
 
-The entire process takes 20 minutes; usage notes:
+The entire process takes 45 minutes; usage notes:
 
 * Important: look for **readme files** in created projects
 * You may find it more convenient to view this [in your Browser](https://apilogicserver.github.io/Docs/Sample-Basic-Tour)
