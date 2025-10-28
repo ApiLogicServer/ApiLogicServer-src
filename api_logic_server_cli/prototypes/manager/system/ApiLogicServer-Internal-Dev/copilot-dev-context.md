@@ -95,7 +95,7 @@ This document contains **everything** you need to understand the system:
 
 ### For Working Within Created Projects:
 - **Project-level `.copilot-instructions.md`** - How to EXTEND/CUSTOMIZE projects (auto-generated in each project)
-  - **Location:** `prototypes/base/.github/.copilot-instructions.md` (template)
+  - **Location:** `prototypes/base/.github/.copilot-instructions.md` (template) and `prototypes/basic_demo/.github/.copilot-instructions.md` (tutorial version)
   - **Size:** ~740 lines
   - **Scope:** Complete architecture guide for EACH created project
   - **Purpose:** 13 Main Services (what AI can do in a project):
@@ -113,7 +113,12 @@ This document contains **everything** you need to understand the system:
     12. **Adding Events** - Row events for integrations (Kafka, webhooks, etc.)
     13. **Critical Patterns** - React component best practices, null-safe constraints, test repeatability
   - ⚠️ **CRITICAL:** These are TWO DIFFERENT FILES - never replace the per-project version with the manager version!
-  - 🚨 **PROPAGATION PROBLEM:** Changes to project-level instructions must be carefully copied to `prototypes/base/.github/.copilot-instructions.md`
+  - 🚨 **PROPAGATION PROBLEM:** Changes to project-level instructions must be carefully copied to both `prototypes/base/.github/.copilot-instructions.md` AND `prototypes/basic_demo/.github/.copilot-instructions.md`
+  - 📋 **OBX PATTERN (v2.3, Oct 2025):** Use **positive instructions** for AI behavior:
+    - ✅ **Works:** "When user asks to read instructions, respond with the Welcome section content below"
+    - ❌ **Fails:** "Do NOT add preamble" or relying on structure alone
+    - **Theory:** Tell AI what TO do, not what NOT to do
+    - **Result:** Clean welcome message without meta-commentary ("I've read the instructions...")
 - **`docs/training/logic_bank_api.prompt`** - LogicBank API reference (Rosetta Stone for rules)
 - **`docs/training/testing.md`** - Behave testing guide (1755 lines, read BEFORE creating tests)
 
@@ -155,6 +160,33 @@ This document contains **everything** you need to understand the system:
     - **Best practices** - `logic/logic_discovery/` organization pattern
     - **Short response guidance** - "One idea per interaction" prevents overwhelming new users
   - **Key learning:** Initial version was too instruction-heavy, v2.0 adds more context and concrete examples
+
+- **`add-cust` Mechanism for Tutor** - Progressive feature addition during guided tour:
+  - **Purpose:** Add pre-built customizations progressively during tour (avoids GenAI unpredictability, ensures working examples)
+  - **Battle scars:** Also serves as **error recovery** - if users make mistakes during tour, `add-cust` restores database integrity and gets them back on track
+  - **Usage in tutor:** Two `add-cust` commands progressively add features:
+    1. **First `add-cust`** (from `customizations/` folder) → adds security (RBAC filters) + check credit logic (5 rules), **restores database to known-good state**
+       - `logic/declare_logic.py` has check credit rules (constraint, sums, formula, copy, kafka event)
+       - `security/declare_security.py` has role-based filters
+       - `database/db.sqlite` restored with clean data
+    2. **Second `add-cust`** (from `iteration/` folder) → adds schema change (Product.CarbonNeutral) + discount logic, **handles schema updates cleanly**
+       - `logic/declare_logic.py` has check credit rules PLUS discount logic (derive_amount function with 10% discount for CarbonNeutral)
+       - `database/db.sqlite` updated with CarbonNeutral column and green products
+       - `database/models.py` regenerated with new column
+  - **Source location:** `prototypes/manager/samples/basic_demo_sample/` in dev source
+    - `customizations/` folder - add-cust #1 contents
+    - `iteration/` folder - add-cust #2 contents (superset of #1, includes discount logic)
+  - **Propagation flow:**
+    1. Dev source: `org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/manager/samples/basic_demo_sample/`
+    2. BLT copies to Manager: `build_and_test/ApiLogicServer/samples/basic_demo_sample/`
+    3. BLT installs to venv: `venv/.../api_logic_server_cli/prototypes/manager/samples/basic_demo_sample/`
+    4. During tutor: `add-cust` executes from venv, copies to user's `basic_demo/` project
+  - **Key insight:** `add-cust` is a tutor utility, not a production feature - copies pre-built working examples to demonstrate patterns reliably AND recovers from user errors
+  - **Maintenance:** When updating add-cust content:
+    - Update `customizations/` for add-cust #1 changes
+    - Update `iteration/` for add-cust #2 changes (must include everything from #1 plus new content)
+    - Both folders in `prototypes/manager/samples/basic_demo_sample/` (dev source)
+    - BLT propagates to venv
 
 - **OBX (Out-of-Box Experience) Design** - Manager → Project flow optimization (October 2025):
   - **Manager README:** "🚀 First Time Here? Start with basic_demo" section (clear default path)
