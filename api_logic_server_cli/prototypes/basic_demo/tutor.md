@@ -4,8 +4,8 @@ description: Message in a bottle for AI assistants - how to conduct hands-on gui
 source: org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/basic_demo/tutor.md
 propagation: BLT copies to Manager samples/basic_demo_sample/tutor.md
 usage: AI reads this when user says "Guide me through basic_demo"
-version: 3.0
-last_updated: 2025-10-26
+version: 3.1
+last_updated: 2025-10-27 6:00 PM
 ---
 
 # Guidelines for Maintaining This Tutor (AI: Read This When Updating)
@@ -149,6 +149,12 @@ For the full story of how these guidelines emerged, see `tutor-meta.md`.
 
 ### **Introduction (2 min)**
 
+**⚠️ WHEN USER SAYS "guide me through" or similar activation phrase:**
+
+First, if you haven't already presented the Welcome section from `.github/.copilot-instructions.md`, present it now.
+
+Then continue with:
+
 **What to Say:**
 ```
 "I'll guide you through basic_demo - a 20-minute hands-on exploration.
@@ -182,8 +188,12 @@ Sound good? Let's start the server..."
 
 Press F5 (or use Run menu → Start Debugging).
 
-This uses the launch configuration that genai-logic created for you."
+This uses the launch configuration that genai-logic created for you.
+
+Let me know when the server is running (you'll see output in the terminal)."
 ```
+
+**⚠️ STOP HERE - WAIT for user to confirm server started before continuing**
 
 **Why F5:**
 - ✅ Uses proper `.vscode/launch.json` configuration (first config is default)
@@ -201,10 +211,14 @@ This uses the launch configuration that genai-logic created for you."
 ```
 "Great! Server is running at http://localhost:5656
 
-Open that in your browser - you'll see the admin app."
+Open that in your browser - you'll see the admin app.
+
+Type 'go' to continue the guided tour, or 'no' if you'd prefer to explore on your own."
 ```
 
 **⚠️ CRITICAL: DO NOT SKIP THIS SECTION - Admin App and API exploration are essential to the tour**
+
+**⚠️ WAIT FOR USER CONSENT:** Only proceed to "Explore the Admin UI" after user types 'go' or similar affirmative response. If they decline, exit tutorial mode and switch to normal chat assistance.
 
 **Explore the Admin UI:**
 
@@ -216,7 +230,7 @@ was generated just by introspecting your database schema.
 
 Try this now:
 1. Click on 'Customer' in the left menu
-2. Click on a customer (like ALFKI) to see their details  
+2. Click on a customer (like Alice) to see their details  
 3. See the Orders list at the bottom? Click an order to drill down
 4. See the Items? Notice how it shows Product NAME, not just an ID number
 
@@ -239,7 +253,7 @@ no UI components to build."
 ```
 "Now let's see the API that's powering this:
 1. Click 'Home' in the left menu
-2. Click the 'Swagger' link  
+2. Click the 'Swagger' link (it's item 2)
 3. Scroll through - every table has full CRUD endpoints automatically
 
 The system introspected your schema and generated a complete, working microservice with 
@@ -339,9 +353,9 @@ Click on Customers.
 
 Click the first customer (ALFKI) to see the detail - notice the sales_rep field.
 
-Go back to the list - see all 6 customers? That's one more than before.
+Go back to the list - see all 5 customers? That's the same as before.
 
-Type 'done' when you see all 6 customers.
+Type 'done' when you see all 5 customers.
 
 Now logout (upper right) and login as:
 - Username: s1  
@@ -432,7 +446,8 @@ Type 'done' when you've seen the error and the console log.
 ```
 "Look at the Logic Bank log in VS Code console.
 
-**Scroll up in the console** to see the 'Constraint Failure:' message at the top.
+**Scroll up in the console** to see the 'Logic Phase:' header and the indented list of rules that executed, 
+ending with the 'Constraint Failure:' message at the bottom.
 
 Notice what happened:
 - Item.amount updated
@@ -625,35 +640,41 @@ it shows the actual code difference (we'll look at that shortly)."
 
 To speed things up and avoid confusing errors, we created the logic for you. 
 
-In real life, you have TWO ways to add rules:
+In real life, YOU add rules using TWO methods:
 
-1. **Logic Discovery (RECOMMENDED)** - Describe requirements in natural language:
+**METHOD 1: Natural Language (RECOMMENDED)** - Tell AI what you need:
    'Customer balance equals sum of order totals for unshipped orders'
    'Balance must not exceed credit limit'
    
    AI generates the rules for YOUR schema, whatever column names you have.
-   Creates logic/logic_discovery/your_use_case.py
    
-   Rules auto-activate when server restarts (discovery folder is auto-loaded).
+   **Example:** Open logic/declare_logic.py and look at the natural language comments 
+   between '# Logic from GenAI' markers. These nat lang requirements translate directly 
+   to the 5 rules you just saw execute. This is Method 1 in action - requirements as code.
 
-2. **IDE Code Completion** - Type 'Rule.' in logic/declare_logic.py and see all patterns:
+**METHOD 2: IDE Code Completion** - Type 'Rule.' and see all patterns:
    - Rule.formula
    - Rule.sum
    - Rule.constraint
    - Rule.copy
    
-   Use this when you know exactly what you want and want full control.
+   Use when you know exactly what you want and want full control.
 
-**Best Practice for file organization:**
+**WHERE to put the rules? Two locations:**
 
-- **logic/declare_logic.py** - Your main rules file (what we showed you)
-- **logic/logic_discovery/*.py** - Auto-generated rules by use case:
-  - logic/logic_discovery/check_credit.py
-  - logic/logic_discovery/pricing_rules.py
-  - logic/logic_discovery/approval_workflow.py
+**logic/declare_logic.py** - Main rules file (what we showed you today)
+   - All rules in one place
+   - Good for simple projects
 
-Each discovery file represents one business requirement. Self-documenting, easy to find.
-Both locations work - discovery files load automatically at startup.
+**logic/logic_discovery/*.py** - Organized by use case:
+   - logic/logic_discovery/check_credit.py
+   - logic/logic_discovery/pricing_rules.py
+   - logic/logic_discovery/approval_workflow.py
+   - Each file = one business requirement
+   - Self-documenting, easy to find
+   - Discovery files auto-load at startup
+
+**Both methods (natural language OR IDE) work in EITHER location.**
 
 The key: You declare WHAT, engine handles WHEN and ORDER.
 
@@ -686,10 +707,13 @@ Type 'next' when ready to continue to Python integration, or ask questions about
 New requirement: Give a 10% discount for carbon-neutral products for 10 items or more.
 
 We're going to:
-1. Add a schema change (CarbonNeutral column)
-2. Rebuild models from database
-3. Add discount logic mixing rules + Python
-4. Debug it with breakpoints
+1. Update the schema and database/models.py to add CarbonNeutral column
+   (In real life, I can help you make schema changes, or you can do it yourself as described here:
+   https://apilogicserver.github.io/Docs/Database-Changes/)
+2. Add discount logic mixing rules + Python
+3. Debug it with breakpoints
+
+For this tour, we'll use add-cust to make the changes quickly.
 
 First, stop the server (Red Stop button or Shift-F5).
 
@@ -708,8 +732,6 @@ genai-logic rebuild-from-database --db_url=sqlite:///database/db.sqlite
 - Updated database with Product.CarbonNeutral column
 - Rebuilt models.py to include the new column
 - Updated logic/declare_logic.py with the discount logic
-
-Notice: no manual schema changes, no migrations to write - it handles schema evolution cleanly.
 
 You can ignore the warning about 'mcp-SysMcp' - not present.
 
@@ -849,10 +871,10 @@ Type 'done' when you've seen the response and console log."
 ```
 "Now let's look at the code.
 
-Open api/api_discovery/order_b2b.py.
+Open [`api/api_discovery/order_b2b.py`](api/api_discovery/order_b2b.py).
 
 See how it works:
-1. @app.route decorator defines the endpoint
+1. Uses api.expose_object(ServicesEndPoint) to register the API class
 2. Accepts partner JSON structure (different field names, different nesting)
 3. Calls RowDictMapper.insert() to transform and insert
 4. Returns response
@@ -860,17 +882,13 @@ See how it works:
 The mapping logic is in integration/row_dict_maps/OrderB2B.py - 
 separates API shape from business logic.
 
+**Key insight: The API code is short (30 lines) because the logic is automatically reused.**
+No duplication - the same balance check, discount calculation, and totals that work in the UI 
+automatically apply here. This is why you can support multiple channels without multiplying your code.
+
 Important point: You can code this yourself, OR you can ask your AI assistant to create it.
 For example: 'Create a custom API endpoint that accepts orders with this JSON structure...'
 The AI can generate this pattern for you.
-
-Pattern: Custom APIs + row mappers + automatic rule enforcement."
-2. Calls RowDictMapper to transform
-3. Inserts Order/Items
-4. Returns response
-
-The mapping is in integration/row_dict_maps/OrderB2B.py - 
-separates API shape from business logic.
 
 Pattern: Custom APIs + row mappers + automatic rule enforcement."
 ```
@@ -941,6 +959,8 @@ Type 'next' when ready for the wrap-up and metrics, or ask questions about B2B i
 
 ### **Post-Tour: Wrap-Up & Metrics (5 min)**
 
+#### **Part 1: What We Saw**
+
 **The Transition:**
 ```
 "Okay, you just walked around the block.
@@ -956,12 +976,22 @@ Quick recap of what you SAW:
 ✅ Custom APIs (B2B OrderB2B endpoint with partner format)
 ✅ Logic Extensions (Kafka send_order_to_shipping pattern)
 
-Now here's the question that ties it all together:
+Type 'next' when ready for the underlying tech advantage, or ask questions about what we saw."
+```
+
+**⚠️ DO NOT proceed until user types 'next'**
+
+---
+
+#### **Part 2: The Code Metrics**
+
+**The Code Metrics Reveal:**
+```
+"Now here's the question that ties it all together:
 
 👉 How much custom code was actually introduced?"
 ```
 
-**The Code Metrics Reveal:**
 ```
 "Let's count. Open logic/declare_logic.py:
 
