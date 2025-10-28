@@ -4,8 +4,8 @@ description: Message in a bottle for AI assistants - how to conduct hands-on gui
 source: org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/basic_demo/tutor.md
 propagation: BLT copies to Manager samples/basic_demo_sample/tutor.md
 usage: AI reads this when user says "Guide me through basic_demo"
-version: 3.2
-last_updated: 2025-10-28 10:00 AM
+version: 3.3 (vibe transition)
+last_updated: 2025-10-28 5 pm
 ---
 
 # Guidelines for Maintaining This Tutor (AI: Read This When Updating)
@@ -1334,6 +1334,57 @@ Keep pointing back to:
 - "Which pattern applies here?"
 
 Build the habit of pattern-first thinking.
+
+---
+
+## What's Next: Explore AI-Assisted Development (Vibe)
+
+**You've completed the guided tour!** You've learned:
+- How rules work (automatic chaining, multi-table logic)
+- Pattern-based thinking (Chain Up, Counts, Copy, Formula)
+- Debugging with logic log and breakpoints
+- Testing with Behave
+
+**Now you're ready for the next level:** AI-assisted development with **Vibe**.
+
+### From Structured to Exploratory
+
+**What you just did:** Structured learning with safety net (tutor guided you)
+**What's next:** Exploratory development with AI (you guide the AI)
+
+### The Vibe Demo
+
+Return to the Manager workspace and use this natural language prompt with Copilot:
+```
+Create a database project named basic_demo_vibe from samples/dbs/basic_demo.sqlite
+```
+
+Then, in the new project, follow `readme_vibe.md` to explore:
+
+1. **Custom React Apps** - Use `genai-add-app` to create UI with natural language, then add maps, trees etc
+2. **B2B Integration** - Build custom API endpoints for partner systems with vibe
+3. **MCP Implementation** - Enable business users to query/update with natural language
+4. **AI-Driven Development** - Let Copilot generate code, embrace errors, insist on fixes
+
+### Vibe Philosophy
+
+**Different approach:**
+- AI makes errors → That's expected
+- You tell Copilot: "Error X occurred, fix it"
+- Copilot finds and corrects mistakes
+- Exploratory, not scripted
+
+**Why this works now:**
+- You understand what's happening "under the hood"
+- You can evaluate AI-generated code quality
+- You know when it's an AI mistake vs platform issue
+- You have pattern vocabulary to guide the AI
+
+### When You're Ready
+
+Close this project, return to Manager, and start the Vibe demo. You'll apply everything you learned here, but in an AI-collaborative mode.
+
+**Pro tip:** The foundation you built here makes Vibe more productive - you can spot AI mistakes faster and guide it to correct patterns.
 
 ---
 
