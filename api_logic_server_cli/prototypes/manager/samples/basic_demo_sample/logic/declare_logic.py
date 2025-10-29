@@ -6,7 +6,6 @@ from logic_bank.logic_bank import Rule
 from logic_bank.logic_bank import DeclareRule
 import database.models as models
 import api.system.opt_locking.opt_locking as opt_locking
-from integration.row_dict_maps.OrderShipping import OrderShipping
 from security.system.authorization import Grant, Security
 from logic.load_verify_rules import load_verify_rules
 import integration.kafka.kafka_producer as kafka_producer
@@ -35,34 +34,6 @@ def declare_logic():
     # Logic from GenAI: (or, use your IDE w/ code completion)
     from database.models import Product, Order, Item, Customer
 
-    # Ensure the customer's balance is less than their credit limit
-    Rule.constraint(validate=Customer, as_condition=lambda row: row.balance <= row.credit_limit, error_msg="Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})")
-
-    # Derive the customer's balance as the sum of order totals where not yet shipped.
-    Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None)
-
-    # Derive the order's total amount from the sum of item amounts.
-    Rule.sum(derive=Order.amount_total, as_sum_of=Item.amount)
-
-
-    # ************   Python Customization Example ****************
-
-    # Calculate item amount based on quantity and unit price.
-    # Formerly, we had this rule:
-    #       Rule.formula(derive=Item.amount, as_expression=lambda row: row.quantity * row.unit_price)
-    # If the derivation were more complex, we could use a Python function, like this:
-    def derive_amount(row: models.Item, old_row: models.Item, logic_row: LogicRow):
-        amount = row.quantity * row.unit_price
-        product = row.product
-        if product.carbon_neutral == True and row.quantity >= 10:
-           amount = amount * Decimal(0.9)  # breakpoint here
-        return amount
-
-    # 4. Items.Amount = Quantity * UnitPrice
-    Rule.formula(derive=models.Item.amount, calling=derive_amount)
-
-    # Copy unit price from product to item.
-    Rule.copy(derive=Item.unit_price, from_parent=Product.unit_price)
 
 
     # ************   Python Customization Example ****************
