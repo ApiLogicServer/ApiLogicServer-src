@@ -29,7 +29,7 @@ This is a record of how we created the system using CoPilot Chat (*Vibe*).
 ## Initialize CoPilot
 
 ```
-Please find and read `.github/.copilot-instructions.md`.
+Please load `.github/.copilot-instructions.md`.
 ```
 
 <br>
@@ -48,7 +48,7 @@ Create a database project from samples/dbs/basic_demo.sqlite
 The project should automatically open a new window in VSCode.  Again, open CoPilot and bootstrap it with: <br>
 
 ```bash title="Initialize CoPilot"
-Please find and read `.github/.copilot-instructions.md`**.
+Please load `.github/.copilot-instructions.md`**.
 ```
 
 Verify it as follows:

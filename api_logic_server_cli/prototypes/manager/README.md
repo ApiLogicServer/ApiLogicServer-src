@@ -21,7 +21,7 @@ Instructions: Copy in Sample-Basic-Demo (Replace "This illustrates" up to "Explo
 
 **Bootstrap Copilot by pasting the following into the chat:**
 ```
-Please find and read `.github/.copilot-instructions.md`.
+Please load `.github/.copilot-instructions.md`.
 ```
 
 <br>

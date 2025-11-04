@@ -19,7 +19,7 @@ This illustrates [GenAI-Logic](https://apilogicserver.github.io/Docs/Sample-Basi
 
 **🤖 Bootstrap Copilot by pasting the following into the chat:**
 ``` bash title='🤖 Bootstrap Copilot by pasting the following into the chat'
-Please find and read `.github/.copilot-instructions.md`.
+Please load `.github/.copilot-instructions.md`.
 ```
 
 <br>
@@ -102,7 +102,7 @@ The project should automatically open a new window in VSCode. <br>
 
 **🤖 Again, bootstrap Copilot by pasting the following into the chat:**
 ``` bash title='🤖 Again, bootstrap Copilot by pasting the following into the chat'
-Please find and read `.github/.copilot-instructions.md`.
+Please load `.github/.copilot-instructions.md`.
 ```
 
 Run it as follows:

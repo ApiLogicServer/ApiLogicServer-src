@@ -12,10 +12,11 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "15.02.10"  # last public release: 15.02.07
+__version__ = "15.03.01"  # last public release: 15.03.00
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t10/28/2025 - 15.02.10: Tutor 3.3 (working, vibe transtion) \n"\
+    "\t11/04/2025 - 15.03.01: Fix Manager/Copilot startup \n"\
+    "\t10/29/2025 - 15.03.00: Stable Tutor 3.3 (working, vibe transtion) \n"\
     "\t10/26/2025 - 15.02.07: Clarify order created for ship test, security fixes [105], tutor 2.1 \n"\
     "\t10/22/2025 - 15.02.03: Copilot test creation from rules and custom APIs with issues [103, 104] \n"\
     "\t10/06/2025 - 15.01.06: Incorrect dbml reln arrows [102] \n"\
