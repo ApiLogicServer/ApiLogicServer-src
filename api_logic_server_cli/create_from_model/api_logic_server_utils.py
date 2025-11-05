@@ -84,7 +84,7 @@ def copy_md(project, from_doc_file: str, to_project_file: str = "README.md"):
     
     1. github (to acquire more recent version since release)
     
-    2. dev docs, iff exists (gold version in docs, not prototypes).
+    2. dev docs, iff exists (**gold version in docs, not prototypes**).
 
     Used by Sample-AI; Sample-Integration (nw-), Tutorial, Tutorial-3 (3 projects), Sample-Basic-Demo; Manager
 
@@ -97,6 +97,8 @@ def copy_md(project, from_doc_file: str, to_project_file: str = "README.md"):
     Image references are made absolute (to github).
 
     Doc Links are made absolute.
+
+    See: https://apilogicserver.github.io/Docs/Architecture-Internals/#docs-used-in-project-creation
 
     Args:
         project (ProjectRun or Path): project object (project name, etc)

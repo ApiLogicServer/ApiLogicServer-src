@@ -47,7 +47,12 @@ def declare_logic():
 
             Use case: App Integration
                 1. Send the Order to Kafka topic 'order_shipping' if the date_shipped is not None.
+    
     Also, using logic/logic_discovery is a Best Practice - see logic/readme_logic.md
+
+    The 5 *declarative* lines below represent the same logic as 200 lines of *declarative* Python
+        1. To view the AI procedural/declarative comparison, [click here](https://github.com/ApiLogicServer/ApiLogicServer-src/blob/main/api_logic_server_cli/prototypes/basic_demo/logic/procedural/declarative-vs-procedural-comparison.md)
+        2. Consider a 100 table system: 1,000 rules vs. 40,000 lines of code
     '''
     from database.models import Product, Order, Item, Customer, SysEmail
 

@@ -11,7 +11,10 @@ app_logger = logging.getLogger(__name__)
 
 def declare_logic():
     """
-    Check Credit Use Case Logic
+
+    The 5 *declarative* lines below represent the same logic as 200 lines of *declarative* Python
+        1. To view the AI procedural/declarative comparison, [click here](https://github.com/ApiLogicServer/ApiLogicServer-src/blob/main/api_logic_server_cli/prototypes/basic_demo/logic/procedural/declarative-vs-procedural-comparison.md)
+        2. Consider a 100 table system: 1,000 rules vs. 40,000 lines of code
     
     Natural Language Requirements:
     1. The Customer's balance is less than the credit limit
