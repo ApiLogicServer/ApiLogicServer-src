@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "15.03.06"  # last public release: 15.03.02
+__version__ = "15.04.00"  # last public release: 15.03.02
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t11/06/2025 - 15.03.06: Nat lang Copilot data access, fix Manager/Copilot startup, finding venv in project \n"\
+    "\t11/08/2025 - 15.04.00: Nat lang Copilot data access, fix Manager/Copilot startup, finding venv in project \n"\
     "\t10/29/2025 - 15.03.00: Stable Tutor 3.3 (working, vibe transtion) \n"\
     "\t10/26/2025 - 15.02.07: Clarify order created for ship test, security fixes [105], tutor 2.1 \n"\
     "\t10/22/2025 - 15.02.03: Copilot test creation from rules and custom APIs with issues [103, 104] \n"\
@@ -402,6 +402,7 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
             os.rename(project.project_directory_path / 'readme.md', project.project_directory_path / 'readme_standard.md')
             create_utils.copy_md(project = project, from_doc_file = "Sample-Basic-Demo.md", to_project_file = "readme.md")
             create_utils.copy_md(project = project, from_doc_file = "Sample-Basic-Demo-Vibe.md", to_project_file="readme_vibe.md")
+            create_utils.copy_md(project = project, from_doc_file = "Integration-MCP-AI-Example.md", to_project_file="readme_ai_mcp.md")
 
 
         if project.db_url == "mysql+pymysql://root:p@localhost:3306/classicmodels":
