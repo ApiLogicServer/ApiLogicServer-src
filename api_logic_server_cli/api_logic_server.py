@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "15.04.00"  # last public release: 15.03.02
+__version__ = "15.04.01"  # last public release: 15.04.00
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t11/01/2025 - 15.04.01: Allow for demo_ai_mcp then tutorial \n"\
     "\t11/08/2025 - 15.04.00: Nat lang Copilot data access, fix Manager/Copilot startup, finding venv in project \n"\
     "\t10/29/2025 - 15.03.00: Stable Tutor 3.3 (working, vibe transtion) \n"\
     "\t10/26/2025 - 15.02.07: Clarify order created for ship test, security fixes [105], tutor 2.1 \n"\

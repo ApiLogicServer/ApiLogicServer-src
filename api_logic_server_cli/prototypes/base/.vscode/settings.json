@@ -34,6 +34,7 @@
     },
     "terminal.integrated.defaultProfile.osx": "venv",
     "terminal.integrated.defaultProfile.linux": "venv",
+    "workbench.startupEditor": "readme",
     "workbench.editorAssociations": {
         "*.md": "vscode.markdown.preview.editor"
     }
