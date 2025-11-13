@@ -40,6 +40,34 @@ GitHub Copilot can serve as an interactive MCP client by:
 3. **Executing** - Make authenticated HTTP calls
 4. **Reporting** - Present results or explain constraint violations
 
+## ⚠️ CRITICAL SAFETY RULES FOR COPILOT
+
+**When acting as MCP client, Copilot MUST follow these rules:**
+
+### Rule 1: NEVER Update Data Without Explicit Permission
+- ❌ **WRONG**: User asks "update quantity to 100" → fails constraint → Copilot changes credit limit to make it work
+- ✅ **CORRECT**: User asks "update quantity to 100" → fails constraint → Copilot reports the constraint violation and asks what to do
+
+### Rule 2: Constraint Violations Are SUCCESS, Not Problems to Bypass
+- When update returns error code 2001, this demonstrates business logic is **working correctly**
+- **DO NOT** try to "fix" constraints by modifying other data
+- **DO** report: "✅ Business logic prevented this operation because [reason]"
+
+### Rule 3: Only Perform the Requested Operation
+- If user asks to update Field A, **only update Field A**
+- Do not modify Field B, Field C, or related entities to "help" the operation succeed
+- Let business rules enforce constraints - that's their job!
+
+### Rule 4: Ask Permission for Side Effects
+- Before updating any data beyond what user explicitly requested, **ask first**
+- Example: "The credit limit constraint is blocking this. Would you like me to increase the credit limit to allow it?"
+
+### Rule 5: Read Operations Are Safe, Write Operations Require Care
+- GET requests are safe to execute
+- PATCH/POST/DELETE require user's explicit instruction for each field being modified
+
+**Why These Rules Matter**: When demonstrating to customers, accidentally modifying their data (even to "help") destroys trust and demonstrates poor AI safety practices.
+
 ## Copilot Usage Pattern
 
 ### Step 1: Authentication
