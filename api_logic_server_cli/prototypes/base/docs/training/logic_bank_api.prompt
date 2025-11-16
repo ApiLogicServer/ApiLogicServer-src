@@ -1,5 +1,8 @@
 Here is the simplified API for LogicBank:
 
+PREREQUISITE: For general patterns (event handler signatures, logging, request pattern, anti-patterns),
+see docs/training/logic_bank_patterns.prompt
+
 Translate the user prompt into a series of calls to Rule methods, described here.
 
 Do not generate import statements.

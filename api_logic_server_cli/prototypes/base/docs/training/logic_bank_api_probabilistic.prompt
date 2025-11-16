@@ -1,0 +1,700 @@
+---
+title: LogicBank Probabilistic Rules API (AI Value Computation)
+description: Training document for translating natural language into probabilistic value computation rules
+source: Generic training for ApiLogicServer projects with probabilistic rules
+usage: AI assistants read this to generate probabilistic + deterministic rules implementations
+version: 1.6
+prerequisites:
+  - docs/training/logic_bank_patterns.prompt (general patterns - event signatures, logging, request pattern)
+  - docs/training/logic_bank_api.prompt (deterministic rule APIs)
+changelog:
+  - 1.6 (Nov 15, 2025): Emphasized Alembic as standard approach, automatic detection of AI patterns
+  - 1.5 (Nov 14, 2025): Refactored - extracted general patterns to logic_bank_patterns.prompt (50% size reduction)
+  - 1.4 (Nov 14, 2025): Replaced error-recovery instructions with explicit positive patterns
+  - 1.3 (Nov 14, 2025): Use introspection-based compute_ai_value() utility
+  - 1.2 (Nov 14, 2025): Added CRITICAL section on actual Rule API syntax
+  - 1.1 (Nov 14, 2025): Use template file instead of handoff.md, YAML test context
+  - 1.0 (Nov 13, 2025): Initial version with Rule.ai_decision API design
+---
+
+# PREREQUISITES - READ THESE FIRST
+
+Before using this file, you MUST read these foundation documents:
+
+1. **docs/training/logic_bank_patterns.prompt** - General LogicBank patterns
+   - Event handler signatures (row, old_row, logic_row)
+   - Logging with logic_row.log()
+   - Request Pattern with new_logic_row()
+   - Rule API syntax reference
+   - Common anti-patterns
+
+2. **docs/training/logic_bank_api.prompt** - Deterministic rule APIs
+   - Rule.sum(), Rule.count(), Rule.formula(), Rule.constraint(), etc.
+   - Complete API signatures and examples
+
+This file contains ONLY AI-specific probabilistic patterns.
+
+=============================================================================
+🤖 AUTOMATIC DETECTION: When to Generate Probabilistic Logic
+=============================================================================
+
+WHEN YOU SEE these patterns in user's natural language prompt, AUTOMATICALLY 
+create complete AI value computation infrastructure:
+
+✅ Trigger Phrases:
+   - "use AI to select/choose..."
+   - "optimize using AI..."
+   - "AI should decide..."
+   - "intelligently select based on..."
+   - "considering [multiple factors] choose..."
+   - "IF [condition] THEN use AI to [select/compute]..."
+
+✅ What to Generate AUTOMATICALLY (complete working implementation):
+   1. **CRITICAL**: Check if sys_xxx_req table exists in DATABASE (not just models.py)
+      - Run: sqlite3 database/db.sqlite ".tables" | grep -i sys_xxx_req
+      - If table missing → MUST generate and run Alembic migration
+      - ❌ WRONG: Assuming table exists because model is in models.py
+      - ✅ CORRECT: Verify actual database table existence
+   
+   2. If table does NOT exist in database:
+      a. Verify SysXxxReq model exists in database/models.py (add if missing)
+      b. Add relationships to parent models (bidirectional)
+      c. **MANDATORY**: Tell user to run Alembic migration commands:
+         ```
+         cd database
+         alembic revision --autogenerate -m "Add SysXxxReq audit table"
+         alembic upgrade head
+         ```
+      d. **DO NOT proceed** with logic generation until user confirms migration ran
+   
+   3. After database table confirmed:
+      a. Logic files with conditional formula + event handler
+      b. AI request handler using compute_ai_value() utility
+      c. Update ui/admin/admin.yaml with SysXxxReq resource
+
+✅ Example User Prompt:
+   "Item unit_price: IF Product has suppliers, use AI to select optimal 
+    supplier based on cost and lead time, ELSE copy from Product.unit_price"
+
+✅ You MUST Follow This Sequence:
+
+STEP 1 - DATABASE VERIFICATION (MANDATORY):
+   ```bash
+   sqlite3 database/db.sqlite ".tables" | grep -i sys_supplier_req
+   ```
+   - If no output → Table missing, need migration
+   - If output shows table → Proceed to STEP 3
+
+STEP 2 - MIGRATION REQUIRED (if table missing):
+   ⚠️ **STOP AND TELL USER**:
+   ```
+   CRITICAL: SysSupplierReq table does not exist in database.
+   
+   I cannot run Alembic migrations because:
+   - Virtual environment location varies per system
+   - I don't have access to run migration commands
+   
+   YOU must run these commands:
+   
+   cd database
+   alembic revision --autogenerate -m "Add SysSupplierReq audit table"
+   alembic upgrade head
+   
+   Then confirm migration succeeded before I continue generating logic.
+   ```
+   
+   ❌ DO NOT attempt to run alembic commands (venv access issues)
+   ❌ DO NOT generate logic files until user confirms migration ran
+   ❌ DO NOT assume table exists because model is in models.py
+   ✅ DO provide clear migration commands for user to execute
+
+STEP 3 - GENERATE LOGIC (only after table exists):
+   - Conditional formula on Item.unit_price
+   - Early event handler that creates SysSupplierReq
+   - AI handler that calls compute_ai_value()
+   - Copies AI result back to Item.unit_price
+   - Update ui/admin/admin.yaml
+
+This verification is MANDATORY - works for ANY project structure.
+
+=============================================================================
+REQUIRED PATTERN: Conditional Formula with AI
+=============================================================================
+
+When user says "IF product has suppliers THEN use AI ELSE use default", use this exact pattern:
+
+# Step 1: Register early event handler (fires BEFORE formula)
+Rule.early_row_event(
+    on_class=models.Item,
+    calling=lambda row, old_row, logic_row: ItemUnitPriceFromSupplier(row, logic_row)
+)
+
+# Step 2: Formula that preserves AI-set value or uses default
+Rule.formula(
+    derive=models.Item.unit_price,
+    as_expression=lambda row: (
+        row.product.unit_price if row.product.count_suppliers == 0
+        else row.unit_price  # Preserve value set by event handler
+    )
+)
+
+# Step 3: Event handler that creates request and copies AI result
+def ItemUnitPriceFromSupplier(item_row: models.Item, logic_row: LogicRow):
+    if not logic_row.is_inserted() or item_row.product.count_suppliers == 0:
+        return
+    
+    # Create request using new_logic_row (pass CLASS not instance)
+    supplier_req_logic_row = logic_row.new_logic_row(models.SysSupplierReq)
+    supplier_req = supplier_req_logic_row.row  # Get the instance AFTER creation
+    
+    # Set request context
+    supplier_req.item_id = item_row.id
+    supplier_req.product_id = item_row.product_id
+    
+    # Insert triggers AI handler
+    supplier_req_logic_row.insert(reason="AI supplier selection request")
+    
+    # CRITICAL: Copy AI result to target row
+    item_row.unit_price = supplier_req.chosen_unit_price
+
+CRITICAL - Must copy AI result to target row:
+✅ Pass CLASS to new_logic_row: new_logic_row(models.SysSupplierReq)
+✅ Get instance from .row property: supplier_req = supplier_req_logic_row.row
+✅ Insert using logic_row: supplier_req_logic_row.insert()
+✅ **Copy AI result to target: item_row.unit_price = supplier_req.chosen_unit_price**
+
+Why: AI populates request table (SysSupplierReq.chosen_unit_price), but target table 
+(Item.unit_price) is separate. No automatic propagation - event handler MUST copy explicitly.
+
+# For Request Pattern details, see docs/training/logic_bank_patterns.prompt PATTERN 3
+
+# For Rule API syntax, see docs/training/logic_bank_patterns.prompt PATTERN 4
+# For Event handler signatures, see docs/training/logic_bank_patterns.prompt PATTERN 1
+# For Logging patterns, see docs/training/logic_bank_patterns.prompt PATTERN 2
+
+=============================================================================
+AI-SPECIFIC: compute_ai_value() Type Handling
+=============================================================================
+
+The compute_ai_value() utility automatically handles type conversion for AI responses.
+
+NOTE: For general type handling patterns in LogicBank, see docs/training/logic_bank_patterns.prompt PATTERN 7.
+
+This utility automatically converts AI response values to correct database types:
+- Foreign keys (_id fields) → int
+- Monetary fields (_price, _cost, _amount) → Decimal
+- Other numeric fields → float or int based on column type
+
+You don't need manual type conversion when using compute_ai_value().
+
+---
+
+```plaintext
+Here is the API for LogicBank Probabilistic Rules (AI Value Computation):
+
+Translate user prompts about AI-computed values into probabilistic rules using the introspection-based pattern.
+
+This extends the deterministic LogicBank rules with probabilistic value computation capabilities.
+Use this when computing values requires contextual reasoning that cannot be expressed as simple formulas.
+
+---
+
+Implementation Pattern: Introspection-Based Utility
+
+ALWAYS use the logic/system/ai_value_computation.py utility for AI value computation:
+
+from logic.system.ai_value_computation import compute_ai_value
+
+def ai_handler(row: models.SysXxxReq, old_row, logic_row: LogicRow):
+    """AI computes optimal value from candidates."""
+    if not logic_row.is_inserted():
+        return
+    
+    compute_ai_value(
+        row=row,                              # Request table row (SysSupplierReq, etc.)
+        logic_row=logic_row,                  # For logging and DB operations
+        candidates='relationship.path',       # e.g., 'product.ProductSupplierList'
+        optimize_for='natural language goal', # e.g., 'fastest reliable delivery'
+        fallback='min:field_name'            # e.g., 'min:unit_cost', 'max:rating', 'first'
+    )
+
+Rule.early_row_event(on_class=models.SysXxxReq, calling=ai_handler)
+
+What compute_ai_value() does automatically:
+- Discovers candidate objects via relationship navigation (row.product.ProductSupplierList)
+- Introspects all candidate fields (supplier_id, supplier_name, unit_cost, lead_time_days, region, etc.)
+- Introspects request table chosen_* columns (chosen_supplier_id, chosen_unit_price)
+- Maps AI response to result columns (chosen_supplier_id ← supplier_id, chosen_unit_price ← unit_cost)
+- Loads test context from config/ai_test_context.yaml
+- Calls OpenAI with structured prompt
+- Handles fallback when no API key (selects based on fallback strategy)
+- Stores complete audit trail (request, reason, created_on)
+        
+        Example 1: Supplier Selection
+            Prompt:
+                Choose the best supplier for this item considering cost, lead time, 
+                and current world conditions. Optimize for fastest delivery when 
+                disruptions are present. [store in SysSupplierReq]
+            
+            Response (user code in logic/logic_discovery/check_credit.py):
+                from logic.system.ai_value_computation import compute_ai_value
+                
+                def supplier_id_from_ai(row: models.SysSupplierReq, old_row, logic_row: LogicRow):
+                    """AI selects optimal supplier based on cost, lead time, and world conditions."""
+                    if not logic_row.is_inserted():
+                        return
+                    
+                    compute_ai_value(
+                        row=row,
+                        logic_row=logic_row,
+                        candidates='product.ProductSupplierList',
+                        optimize_for='fastest reliable delivery while keeping costs reasonable',
+                        fallback='min:unit_cost'
+                    )
+                
+                Rule.early_row_event(on_class=models.SysSupplierReq, calling=supplier_id_from_ai)
+            
+            What gets introspected automatically:
+                - Candidates: supplier_id, supplier_name, unit_cost, lead_time_days, region
+                - Results: chosen_supplier_id (← supplier_id), chosen_unit_price (← unit_cost)
+                - Test context: world_conditions from config/ai_test_context.yaml
+
+        Example 2: Dynamic Pricing
+            Prompt:
+                Set the optimal price for this product considering competitor prices,
+                current inventory levels, and demand forecast. Optimize for profit 
+                while maintaining competitive position. Store reasoning in pricing_reason.
+            
+            Response:
+                Rule.ai_decision(
+                    derive=Product.current_price,
+                    from_candidates=lambda row: [
+                        {'price': p} 
+                        for p in range(int(row.cost * 1.1), int(row.cost * 2.0), 5)
+                    ],
+                    optimize_for=['profit_margin', 'competitive_position'],
+                    considering={
+                        'competitor_avg': row.competitor_avg_price,
+                        'inventory_level': row.stock_quantity,
+                        'demand_trend': row.demand_forecast
+                    },
+                    reasoning_to=Product.pricing_reason
+                )
+
+        Example 3: Route Optimization
+            Prompt:
+                Choose the best delivery route considering current traffic, weather 
+                conditions, and delivery urgency. Optimize for fastest delivery time.
+                Store the reasoning in route_reason.
+            
+            Response:
+                Rule.ai_decision(
+                    derive=Delivery.chosen_route_id,
+                    from_candidates=lambda row: [
+                        {'id': r.id, 
+                         'distance_miles': r.distance_miles, 
+                         'typical_minutes': r.typical_minutes,
+                         'toll_cost': r.toll_cost}
+                        for r in row.destination.AvailableRouteList
+                    ],
+                    optimize_for=['delivery_time', 'fuel_cost'],
+                    considering={
+                        'traffic': 'current heavy on I-95',
+                        'weather': row.weather_conditions,
+                        'priority': row.priority_level
+                    },
+                    reasoning_to=Delivery.route_reason
+                )
+
+        Example 4: Staff Assignment
+            Prompt:
+                Assign the best qualified staff member to this project considering
+                their skills, current workload, and project requirements. Optimize
+                for project success probability. Store reasoning in assignment_reason.
+            
+            Response:
+                Rule.ai_decision(
+                    derive=Project.assigned_staff_id,
+                    from_candidates=lambda row: [
+                        {'id': s.id,
+                         'skill_match': s.skill_score_for_project(row),
+                         'availability': s.available_hours,
+                         'experience_years': s.years_experience}
+                        for s in StaffMember.query.filter_by(available=True).all()
+                    ],
+                    optimize_for=['skill_match', 'availability'],
+                    considering={
+                        'project_complexity': row.complexity_rating,
+                        'deadline': row.due_date,
+                        'budget': row.budget_constraint
+                    },
+                    reasoning_to=Project.assignment_reason
+                )
+
+        Args:
+            derive: <class.attribute> where the chosen candidate ID (or value) will be stored
+            from_candidates: lambda returning list of dicts. Each dict must have:
+                - 'id' or the value being selected (for derive column)
+                - factor names matching those in optimize_for
+                - any other contextual attributes AI should consider
+            optimize_for: list of factor names to optimize (in priority order)
+                First item is highest priority. AI will balance all factors.
+            considering: dict of contextual conditions for AI to reason about
+                Keys are condition names, values are either:
+                - String literals: 'Suez Canal blocked'
+                - Row attribute references: row.weather_conditions
+                - Computed values: row.calculate_urgency()
+            reasoning_to: optional <class.attribute> where AI explanation will be stored
+                Use this for governance, audit trails, and explainability
+            request_to: optional <class.attribute> where the full AI request will be stored
+                Includes the complete prompt sent to the LLM for reproducibility
+            model: OpenAI model to use (default: gpt-4o-2024-08-06)
+                Can specify different models for different cost/quality tradeoffs
+        
+        Notes:
+            - AI decisions are only invoked when the rule's derived column is accessed
+            - Automatically inherits transaction context and rollback behavior
+            - Falls back gracefully: if API unavailable, selects first candidate
+            - Response format is always structured JSON for reliable parsing
+            - Full audit trail stored in request_to and reasoning_to columns
+        """
+        return AiDecision(derive=derive,
+                         from_candidates=from_candidates,
+                         optimize_for=optimize_for,
+                         considering=considering,
+                         reasoning_to=reasoning_to,
+                         request_to=request_to,
+                         model=model)
+
+
+Integration with Deterministic Rules:
+
+Probabilistic rules work seamlessly with deterministic rules in the same logic flow:
+
+    Prompt:
+        When an item is added to an order, choose the best supplier using AI,
+        then calculate the item amount as quantity * unit_price,
+        then update the order total as sum of item amounts,
+        then update the customer balance as sum of unshipped order totals,
+        then validate that customer balance does not exceed credit limit.
+
+    Response:
+        # Probabilistic: AI chooses supplier and sets unit_price
+        Rule.ai_decision(
+            derive=SysSupplierReq.chosen_supplier_id,
+            from_candidates=lambda row: [
+                {'id': ps.supplier_id, 'cost': float(ps.unit_cost), 
+                 'lead_time_days': ps.lead_time_days}
+                for ps in row.product.ProductSupplierList
+            ],
+            optimize_for=['lead_time_days', 'cost'],
+            considering={'world_conditions': 'Suez Canal blocked'},
+            reasoning_to=SysSupplierReq.reason
+        )
+        
+        # Deterministic: calculations cascade automatically
+        Rule.formula(derive=Item.amount, 
+                    as_expression=lambda row: row.quantity * row.unit_price)
+        Rule.sum(derive=Order.amount_total, as_sum_of=Item.amount)
+        Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total,
+                where=lambda row: row.date_shipped is None)
+        
+        # Deterministic: validation (guardrail for AI decision)
+        Rule.constraint(validate=Customer,
+                       as_condition=lambda row: row.balance <= row.credit_limit,
+                       error_msg="Customer balance exceeds credit limit")
+
+The key insight: AI makes the probabilistic decision (supplier choice), 
+then deterministic rules cascade and validate automatically.
+If AI's choice violates constraints, transaction rolls back - no special code needed.
+
+
+Common Patterns:
+
+1. Request Pattern (Required):
+   ALWAYS create a SysXxxReq table to capture AI requests/responses for audit.
+   This is mandatory for governance, explainability, and debugging.
+   
+   Convention - Sys{Domain}Req table structure:
+   - Name: Sys{Domain}Req (e.g., SysSupplierReq, SysPricingReq, SysRouteReq)
+   - chosen_{domain}_id: FK to selected entity (e.g., chosen_supplier_id)
+   - request: String(2000) - full AI prompt sent
+   - reason: String(500) - AI's explanation
+   - created_on: DateTime - timestamp
+   - Context FKs: Links to triggering entities (e.g., item_id, product_id)
+   
+   Table Generation Logic:
+   a) Check if Sys{Domain}Req exists in database/models.py
+   b) If exists and matches convention → Use it (generate logic only)
+   c) If exists but wrong structure → ERROR with clear message (fail fast)
+   d) If doesn't exist → Create model + generate Alembic migration
+   e) Add relationships to other models (Item, Product, Supplier)
+   
+   =============================================================================
+   CRITICAL: Production-Ready Database Schema Changes via Alembic
+   =============================================================================
+   
+   When Sys{Domain}Req model doesn't exist, use this STANDARD workflow:
+   
+   ✅ Step 1: Add SQLAlchemy model to database/models.py with relationships:
+   
+   class SysSupplierReq(Base):
+       __tablename__ = "sys_supplier_req"
+       _s_collection_name = 'SysSupplierReq'
+       
+       id = Column(Integer, primary_key=True)
+       item_id = Column(Integer, ForeignKey("item.id"), index=True, nullable=True)
+       product_id = Column(Integer, ForeignKey("product.id"), index=True, nullable=False)
+       chosen_supplier_id = Column(Integer, ForeignKey("supplier.id"))
+       chosen_unit_price : DECIMAL = Column(DECIMAL)
+       request = Column(String(2000))
+       reason = Column(String(500))
+       created_on = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
+       
+       # parent relationships
+       item : Mapped["Item"] = relationship(back_populates="SysSupplierReqList")
+       product : Mapped["Product"] = relationship(back_populates="SysSupplierReqList")
+       chosen_supplier : Mapped["Supplier"] = relationship()
+   
+   ✅ Step 2: Add child relationships to parent models:
+   
+   # In Product class:
+   SysSupplierReqList : Mapped[List["SysSupplierReq"]] = relationship(back_populates="product")
+   
+   # In Item class:
+   SysSupplierReqList : Mapped[List["SysSupplierReq"]] = relationship(back_populates="item")
+   
+   ✅ Step 3: Generate Alembic migration (DO NOT manually create SQL):
+   
+   ```bash
+   cd database
+   alembic revision --autogenerate -m "Add sys_supplier_req table for AI audit"
+   ```
+   
+   This creates: database/alembic/versions/xxxxx_add_sys_supplier_req_table.py
+   
+   ⚠️ CRITICAL: Review and clean the generated migration file:
+   
+   # Alembic --autogenerate detects ALL differences between models.py and database
+   # You MUST manually review and edit the generated file:
+   
+   1. KEEP: CREATE TABLE sys_supplier_req statement
+   2. REMOVE: Any ALTER TABLE on existing tables (unrelated changes)
+   3. SIMPLIFY downgrade(): Just DROP TABLE sys_supplier_req
+   
+   Example cleaned migration:
+   
+   ```python
+   def upgrade():
+       op.create_table('sys_supplier_req',
+           sa.Column('id', sa.Integer(), nullable=False),
+           sa.Column('item_id', sa.Integer(), nullable=True),
+           sa.Column('product_id', sa.Integer(), nullable=False),
+           sa.Column('chosen_supplier_id', sa.Integer(), nullable=True),
+           sa.Column('chosen_unit_price', sa.DECIMAL(), nullable=True),
+           sa.Column('request', sa.String(length=2000), nullable=True),
+           sa.Column('reason', sa.String(length=500), nullable=True),
+           sa.Column('created_on', sa.DateTime(), nullable=False),
+           sa.ForeignKeyConstraint(['chosen_supplier_id'], ['supplier.id']),
+           sa.ForeignKeyConstraint(['item_id'], ['item.id']),
+           sa.ForeignKeyConstraint(['product_id'], ['product.id']),
+           sa.PrimaryKeyConstraint('id')
+       )
+   
+   def downgrade():
+       op.drop_table('sys_supplier_req')
+   ```
+   
+   ✅ Step 4: Apply migration to update database schema:
+   
+   ```bash
+   alembic upgrade head
+   ```
+   
+   This is PRODUCTION-READY:
+   - ✅ Version controlled (migration file in git)
+   - ✅ Reversible (alembic downgrade)
+   - ✅ Team-friendly (others run same migration)
+   - ✅ Staged deployment (dev → test → prod)
+   - ✅ Audit trail (history of schema changes)
+   
+   ✅ Step 5: Update ui/admin/admin.yaml to add SysSupplierReq resource
+   
+   ✅ Step 6: User restarts server (to load new model and migration)
+   
+   =============================================================================
+   Common Alembic Issues & Solutions
+   =============================================================================
+   
+   Issue: "Target database is not up to date"
+   Solution: Database schema doesn't match Alembic's tracking. Run:
+     ```bash
+     alembic stamp head
+     ```
+     This tells Alembic "database is current" and allows new migrations.
+   
+   Issue: "Table already exists"
+   Solution: Database has tables but Alembic history is empty. Either:
+     a) Use `alembic stamp head` to mark current state
+     b) Drop conflicting tables and re-run migration
+   
+   Issue: "No config file 'alembic.ini' found"
+   Solution: Must run alembic commands from database/ directory:
+     ```bash
+     cd database
+     alembic revision --autogenerate -m "message"
+     ```
+   
+   Issue: "python: command not found"
+   Solution: Activate virtual environment first:
+     ```bash
+     source venv/bin/activate  # Linux/Mac
+     venv\Scripts\activate     # Windows
+     ```
+   
+   Why NOT Raw SQL?
+   ❌ Raw SQL (CREATE TABLE...) is demo/testing only - NOT production-ready
+   ❌ No version control
+   ❌ No rollback capability
+   ❌ Team members must manually sync
+   ❌ No deployment history
+   
+   ✅ Alembic migrations are the STANDARD approach for any real project
+   
+   Error Handling for Mismatched Tables:
+   If SysXxxReq exists but doesn't match convention, FAIL with:
+   
+   "Error: Cannot implement AI logic. SysXxxReq table exists but doesn't match required convention.
+   
+   Expected fields: chosen_xxx_id, request, reason, created_on
+   Found fields: [list actual fields]
+   
+   Resolution options:
+   1. Rename existing table fields to match convention
+   2. Specify different table name: [store in MyCustomAudit]
+   3. Drop existing SysXxxReq table
+   
+   Please fix and re-run your request."
+   
+   Benefits: Complete audit trail, governance, debugging, reproducibility
+
+2. Test Context from YAML:
+   Support testing and demos via config/ai_test_context.yaml:
+   
+   # config/ai_test_context.yaml
+   world_conditions: 'ship aground in Suez Canal'
+   market_conditions: null
+   traffic_conditions: null
+   weather_conditions: null
+   
+   Usage in generated code:
+   import yaml
+   from pathlib import Path
+   
+   world_conditions = 'normal operations'
+   try:
+       config_dir = Path(__file__).parent.parent.parent / 'config'
+       context_file = config_dir / 'ai_test_context.yaml'
+       if context_file.exists():
+           with open(context_file, 'r') as f:
+               test_context = yaml.safe_load(f)
+               world_conditions = test_context.get('world_conditions') or 'normal operations'
+   except Exception as e:
+       app_logger.debug(f"Could not load AI test context: {e}")
+   
+   This enables:
+   - Reproducible testing
+   - Demo scenarios without code changes
+   - Version-controlled test conditions
+   - Easy toggle between test/production
+   - Clean separation from application config
+
+3. Fallback Strategy (API Key Missing):
+   Always provide graceful degradation when OpenAI unavailable.
+   
+   Infer fallback from user's optimization criteria:
+   - "optimize for cost" → fallback to min(candidates, key=lambda c: c['cost'])
+   - "optimize for speed/time" → fallback to min(candidates, key=lambda c: c['lead_time'])
+   - "optimize for reliability" → fallback to max(candidates, key=lambda c: c['rating'])
+   - No optimization specified → fallback to candidates[0] (first available)
+   
+   Generated pattern:
+   api_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")
+   if not api_key:
+       reasoning = "Fallback: no API key available, using [inferred strategy]"
+       chosen = [apply inferred fallback logic]
+       row.reason = reasoning
+       return chosen
+   
+   Store fallback reasoning in audit trail for transparency.
+
+4. Scope Validation:
+   Probabilistic rules are for VALUE COMPUTATION and SELECTION.
+   
+   Valid patterns:
+   ✅ "choose/select X from Y based on Z"
+   ✅ "compute/calculate/set X considering Y"
+   ✅ "determine X by evaluating Y options"
+   
+   Invalid patterns (MUST ERROR):
+   ❌ "ensure X is Y" (enforcement, not computation)
+   ❌ "make X happen" (action, not decision)
+   ❌ "predict X" (without selection context)
+   ❌ "guarantee X" (too vague/subjective)
+   
+   Error for invalid requests:
+   "Error: Cannot implement '[requirement]'
+   
+   Reason: This is not a computable value or selection decision.
+   
+   Probabilistic rules can:
+   ✅ Select from concrete candidates (suppliers, routes, prices)
+   ✅ Choose based on measurable factors (cost, time, distance)
+   ✅ Compute specific values (price, quantity, score)
+   
+   They cannot:
+   ❌ Ensure subjective states ('happy', 'satisfied')
+   ❌ Make open-ended predictions without candidates
+   ❌ Enforce unmeasurable qualities
+   
+   Please reformulate as a selection or computation."
+
+
+Error Handling:
+
+The Rule.ai_decision automatically handles:
+- Missing API key: falls back to first candidate
+- API timeout: falls back with logged warning  
+- Invalid JSON response: retries once, then fallback
+- No candidates provided: raises clear error
+- Constraint violations: normal LogicBank rollback
+
+You do NOT need to write error handling code - it's built into the rule.
+
+
+IMPLEMENTATION REFERENCE:
+
+The Rule.ai_value() API is not yet implemented in LogicBank.
+Until it is, use the MANUAL PATTERN from the template file.
+
+See: docs/training/template_probabilistic_rules.py
+
+This template shows the complete working pattern with:
+- Request Pattern (SysXxxReq audit table)
+- Conditional logic (when to invoke AI)
+- AI event handler (OpenAI integration)
+- Graceful fallbacks (no API key handling)
+- Test context loading (from YAML)
+- Error handling
+- Complete audit trail
+
+Copy relevant sections from the template and adapt to your specific use case.
+
+The template is structured in 4 clear sections:
+1. Deterministic Guardrails (constraints)
+2. Deterministic Calculations (sums, formulas)
+3. Conditional Logic (decides when AI runs)
+4. AI Event Handler (probabilistic decision)
+
+Each section has detailed comments explaining the pattern and showing working code.
+```

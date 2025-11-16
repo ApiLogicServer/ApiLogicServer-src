@@ -20,13 +20,15 @@ INSERT INTO customer VALUES(5,'Silent',220,1000, "silent@corp.org", 1);
 CREATE TABLE product (
         id INTEGER PRIMARY KEY AUTOINCREMENT, 
         name VARCHAR, 
+        count_suppliers INTEGER,
         unit_price DECIMAL
 );
-INSERT INTO product VALUES(1,'Gadget',150);
-INSERT INTO product VALUES(2,'Widget',90);
-INSERT INTO product VALUES(3,'Thingamajig',5075);
-INSERT INTO product VALUES(4,'Doodad',110);
-INSERT INTO product VALUES(5,'Green',109);
+INSERT INTO product VALUES(1,'Gadget',0,150);
+INSERT INTO product VALUES(2,'Widget',0,90);
+INSERT INTO product VALUES(3,'Thingamajig',0,5075);
+INSERT INTO product VALUES(4,'Doodad',0,110);
+INSERT INTO product VALUES(5,'Green',0,109);
+INSERT INTO product VALUES(6,'Egyptian Cotton Sheets',2,200);
 
 CREATE TABLE "order" (
         id INTEGER PRIMARY KEY AUTOINCREMENT, 
@@ -58,6 +60,30 @@ INSERT INTO item VALUES(2,2,2,1,90,90);
 INSERT INTO item VALUES(3,3,4,2,220,110);
 INSERT INTO item VALUES(4,4,3,4,300,75);
 INSERT INTO item VALUES(5,5,4,2,220,110);
+
+CREATE TABLE supplier (
+	id INTEGER NOT NULL, 
+	name VARCHAR, 
+	contact_name VARCHAR, 
+	phone VARCHAR, 
+	email VARCHAR, region VARCHAR, 
+	PRIMARY KEY (id)
+);
+INSERT INTO supplier VALUES(1,'Genuine Sheets','Mr. Sheets',NULL,NULL,'Near East');
+INSERT INTO supplier VALUES(2,'Sheets for Less','Sam SheetSplitter',NULL,NULL,'New Jersey');
+CREATE TABLE product_supplier (
+	id INTEGER NOT NULL, 
+	product_id INTEGER, 
+	supplier_id INTEGER, 
+	supplier_part_number VARCHAR, 
+	unit_cost DECIMAL, 
+	lead_time_days INTEGER, 
+	PRIMARY KEY (id), 
+	FOREIGN KEY(product_id) REFERENCES product (id), 
+	FOREIGN KEY(supplier_id) REFERENCES supplier (id)
+);
+INSERT INTO product_supplier VALUES(1,6,2,'1',205,2);
+INSERT INTO product_supplier VALUES(2,6,1,'1',105,1);
 
 
 COMMIT;
