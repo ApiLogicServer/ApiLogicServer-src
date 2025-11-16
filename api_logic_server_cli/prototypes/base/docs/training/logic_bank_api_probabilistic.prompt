@@ -3,26 +3,14 @@ title: LogicBank Probabilistic Rules API (AI Value Computation)
 description: Training document for translating natural language into probabilistic value computation rules
 source: Generic training for ApiLogicServer projects with probabilistic rules
 usage: AI assistants read this to generate probabilistic + deterministic rules implementations
-version: 2.3
+version: 2.4
 prerequisites:
   - docs/training/genai_logic_patterns.md (CRITICAL import patterns, auto-discovery fixes)
   - docs/training/logic_bank_patterns.prompt (general patterns - event signatures, logging, request pattern)
   - docs/training/logic_bank_api.prompt (deterministic rule APIs)
 changelog:
+  - 2.4 (Nov 16, 2025): CLARIFIED - Circular import warning applies only to main declare_logic.py, discovery files are safe with module-level imports
   - 2.3 (Nov 16, 2025): Clarified auto_discovery.py is AUTO-GENERATED (don't modify, already correct)
-  - 2.2 (Nov 16, 2025): CRITICAL FIX - Auto-discovery must skip __init__.py files (AttributeError fix)
-  - 2.1 (Nov 16, 2025): CRITICAL FIX - Clarified Alembic migration is FULLY AUTOMATIC by Copilot (no user intervention)
-  - 2.0 (Nov 16, 2025): CRITICAL FIXES from demo prep - circular imports, auto-discovery recursion, path resolution
-  - 1.9 (Nov 16, 2025): Removed logicZ references for universal applicability, consolidated redundant sections
-  - 1.8 (Nov 16, 2025): CRITICAL - Mandatory modular structure, separate AI handler files, reference implementation pattern
-  - 1.7 (Nov 16, 2025): Emphasized Alembic as standard approach, automatic detection of AI patterns fixes
-  - 1.6 (Nov 15, 2025): Emphasized Alembic as standard approach, automatic detection of AI patterns
-  - 1.5 (Nov 14, 2025): Refactored - extracted general patterns to logic_bank_patterns.prompt (50% size reduction)
-  - 1.4 (Nov 14, 2025): Replaced error-recovery instructions with explicit positive patterns
-  - 1.3 (Nov 14, 2025): Use introspection-based compute_ai_value() utility
-  - 1.2 (Nov 14, 2025): Added CRITICAL section on actual Rule API syntax
-  - 1.1 (Nov 14, 2025): Use template file instead of handoff.md, YAML test context
-  - 1.0 (Nov 13, 2025): Initial version with Rule.ai_decision API design
 ---
 
 # PREREQUISITES - READ THESE FIRST
@@ -30,7 +18,7 @@ changelog:
 Before using this file, you MUST read these foundation documents in order:
 
 1. **docs/training/genai_logic_patterns.md** - CRITICAL patterns learned from demo prep
-   - ⚠️ Circular import avoidance (import Rule inside declare_logic ONLY)
+   - ⚠️ Circular import avoidance (applies to main logic/declare_logic.py ONLY, not discovery files)
    - ⚠️ Path resolution with .resolve() for YAML files
    - LogicBank triggered insert pattern
    - Common anti-patterns that cause server startup failures
@@ -54,18 +42,31 @@ This file contains ONLY AI-specific probabilistic patterns.
 
 These errors occurred during demo prep testing and MUST be avoided:
 
-**ERROR 1: Circular Import - "Session is already flushing" not detected**
-❌ Problem: Importing LogicBank at module level
+**ERROR 1: Circular Import - "Session is already flushing" (applies to main declare_logic.py ONLY)**
+❌ Problem: Importing LogicBank at module level IN MAIN logic/declare_logic.py
 ```python
-from logic_bank.logic_bank import Rule  # ❌ At module level
+# In logic/declare_logic.py (main file)
+from logic_bank.logic_bank import Rule  # ❌ At module level in main file
 ```
 
-✅ Solution: Import ONLY inside functions
+✅ Solution for main declare_logic.py: Import inside function
 ```python
-import database.models as models  # ✅ At module level
+# In logic/declare_logic.py (main file)
+from database import models  # ✅ At module level
 
 def declare_logic():
-    from logic_bank.logic_bank import Rule  # ✅ Inside function
+    from logic_bank.logic_bank import Rule  # ✅ Inside function in main file
+```
+
+✅ Discovery files (logic_discovery/*.py) are SAFE with module-level imports:
+```python
+# In logic/logic_discovery/check_credit.py or supplier_selection.py
+from logic_bank.logic_bank import Rule  # ✅ Safe in discovery files
+from logic_bank.exec_row_logic.logic_row import LogicRow  # ✅ Safe in discovery files  
+from database import models  # ✅ Preferred pattern
+
+def declare_logic():
+    # Rules here
 ```
 
 **ERROR 2: Auto-Discovery Structure Requirements**
@@ -287,7 +288,7 @@ Generated: Auto-generated from natural language by GitHub Copilot
 
 from logic_bank.exec_row_logic.logic_row import LogicRow
 from logic_bank.logic_bank import Rule
-from database import models
+from database import models  # Preferred: consistent with PDL pattern
 
 
 def declare_logic():
