@@ -3,11 +3,16 @@ title: LogicBank Probabilistic Rules API (AI Value Computation)
 description: Training document for translating natural language into probabilistic value computation rules
 source: Generic training for ApiLogicServer projects with probabilistic rules
 usage: AI assistants read this to generate probabilistic + deterministic rules implementations
-version: 1.6
+version: 2.0
 prerequisites:
+  - docs/training/genai_logic_patterns.md (CRITICAL import patterns, auto-discovery fixes)
   - docs/training/logic_bank_patterns.prompt (general patterns - event signatures, logging, request pattern)
   - docs/training/logic_bank_api.prompt (deterministic rule APIs)
 changelog:
+  - 2.0 (Nov 16, 2025): CRITICAL FIXES from demo prep - circular imports, auto-discovery recursion, path resolution
+  - 1.9 (Nov 16, 2025): Removed logicZ references for universal applicability, consolidated redundant sections
+  - 1.8 (Nov 16, 2025): CRITICAL - Mandatory modular structure, separate AI handler files, reference implementation pattern
+  - 1.7 (Nov 16, 2025): Emphasized Alembic as standard approach, automatic detection of AI patterns fixes
   - 1.6 (Nov 15, 2025): Emphasized Alembic as standard approach, automatic detection of AI patterns
   - 1.5 (Nov 14, 2025): Refactored - extracted general patterns to logic_bank_patterns.prompt (50% size reduction)
   - 1.4 (Nov 14, 2025): Replaced error-recovery instructions with explicit positive patterns
@@ -19,20 +24,78 @@ changelog:
 
 # PREREQUISITES - READ THESE FIRST
 
-Before using this file, you MUST read these foundation documents:
+Before using this file, you MUST read these foundation documents in order:
 
-1. **docs/training/logic_bank_patterns.prompt** - General LogicBank patterns
+1. **docs/training/genai_logic_patterns.md** - CRITICAL patterns learned from demo prep
+   - ⚠️ Circular import avoidance (import Rule inside declare_logic ONLY)
+   - ⚠️ Auto-discovery recursive scanning (fix for subdirectories)
+   - ⚠️ Path resolution with .resolve() for YAML files
+   - LogicBank triggered insert pattern
+   - Common anti-patterns that cause server startup failures
+
+2. **docs/training/logic_bank_patterns.prompt** - General LogicBank patterns
    - Event handler signatures (row, old_row, logic_row)
    - Logging with logic_row.log()
    - Request Pattern with new_logic_row()
    - Rule API syntax reference
-   - Common anti-patterns
 
-2. **docs/training/logic_bank_api.prompt** - Deterministic rule APIs
+3. **docs/training/logic_bank_api.prompt** - Deterministic rule APIs
    - Rule.sum(), Rule.count(), Rule.formula(), Rule.constraint(), etc.
    - Complete API signatures and examples
 
 This file contains ONLY AI-specific probabilistic patterns.
+
+=============================================================================
+🚨 CRITICAL FIXES FROM DEMO PREP (Nov 16, 2025)
+=============================================================================
+
+These errors occurred during demo prep testing and MUST be avoided:
+
+**ERROR 1: Circular Import - "Session is already flushing" not detected**
+❌ Problem: Importing LogicBank at module level
+```python
+from logic_bank.logic_bank import Rule  # ❌ At module level
+```
+
+✅ Solution: Import ONLY inside functions
+```python
+import database.models as models  # ✅ At module level
+
+def declare_logic():
+    from logic_bank.logic_bank import Rule  # ✅ Inside function
+```
+
+**ERROR 2: Auto-Discovery Not Recursive**
+❌ Problem: ai_requests/ subdirectory not scanned
+```python
+spec = importlib.util.spec_from_file_location("module.name", logic_path.joinpath(file))
+# ❌ Uses parent logic_path instead of actual file location
+```
+
+✅ Solution: Use actual file path from os.walk
+```python
+root_path = Path(root)  # ✅ Get actual subdirectory
+file_path = root_path / file  # ✅ Build complete path
+spec = importlib.util.spec_from_file_location("module.name", file_path)
+```
+
+**ERROR 3: Path Resolution for YAML Files**
+❌ Problem: Path(__file__).parent creates relative path
+```python
+context_file = config_dir / 'ai_test_context.yaml'
+if context_file.exists():  # ❌ May fail on relative paths
+```
+
+✅ Solution: Use .resolve() for absolute paths
+```python
+current_file = Path(__file__).resolve()  # ✅ Absolute path
+project_root = current_file.parent.parent.parent.parent
+context_file = project_root / 'config' / 'ai_test_context.yaml'
+if context_file.exists():
+    with open(str(context_file), 'r') as f:  # ✅ Convert to string
+```
+
+**See docs/training/genai_logic_patterns.md for complete patterns.**
 
 =============================================================================
 🤖 AUTOMATIC DETECTION: When to Generate Probabilistic Logic
@@ -50,27 +113,55 @@ create complete AI value computation infrastructure:
    - "IF [condition] THEN use AI to [select/compute]..."
 
 ✅ What to Generate AUTOMATICALLY (complete working implementation):
+   
+   0. **CRITICAL FILE STRUCTURE** - Modular architecture (production pattern):
+      ```
+      logic/
+        logic_discovery/
+          check_credit.py              # Deterministic rules + conditional event handler
+          ai_requests/                 # ← SEPARATE DIRECTORY for AI handlers
+            __init__.py                # Empty file for Python package
+            supplier_selection.py      # AI-specific handler with compute_ai_value()
+        system/                        # ← Reusable utilities
+          __init__.py                  # Empty file
+          ai_value_computation.py      # ← Reusable introspection utility
+      ```
+      
+      ⚠️ **MANDATORY**: 
+      - ✅ DO create separate ai_requests/ directory for AI handlers
+      - ✅ DO create logic/system/ directory if it doesn't exist
+      - ✅ DO implement ai_value_computation.py using introspection pattern
+      - ❌ DO NOT put everything in one file
+      - ❌ DO NOT inline AI handler in check_credit.py
+   
    1. **CRITICAL**: Check if sys_xxx_req table exists in DATABASE (not just models.py)
       - Run: sqlite3 database/db.sqlite ".tables" | grep -i sys_xxx_req
-      - If table missing → MUST generate and run Alembic migration
+      - If table missing → Add model and run Alembic migration
       - ❌ WRONG: Assuming table exists because model is in models.py
-      - ✅ CORRECT: Verify actual database table existence
+      - ✅ CORRECT: Verify actual database table existence, create if missing
    
-   2. If table does NOT exist in database:
-      a. Verify SysXxxReq model exists in database/models.py (add if missing)
+   2. If table does NOT exist in database - DO ALL THESE STEPS:
+      a. Add SysXxxReq model to database/models.py (include datetime import!)
       b. Add relationships to parent models (bidirectional)
-      c. **MANDATORY**: Tell user to run Alembic migration commands:
+      c. **RUN ALEMBIC MIGRATION** - Use run_in_terminal tool:
+         ```bash
+         cd database && alembic revision --autogenerate -m "Add SysXxxReq audit table"
          ```
-         cd database
-         alembic revision --autogenerate -m "Add SysXxxReq audit table"
+         Then EDIT the migration file to remove ALTER TABLE commands, then:
+         ```bash
          alembic upgrade head
          ```
-      d. **DO NOT proceed** with logic generation until user confirms migration ran
+      d. After migration completes, proceed to step 3
    
-   3. After database table confirmed:
-      a. Logic files with conditional formula + event handler
-      b. AI request handler using compute_ai_value() utility
-      c. Update ui/admin/admin.yaml with SysXxxReq resource
+   3. After database table exists (either already there or just created):
+      a. **Implement logic/system/ai_value_computation.py** if not present (see template)
+      b. Create logic/logic_discovery/check_credit.py (deterministic rules + conditional handler)
+      c. Create logic/logic_discovery/ai_requests/__init__.py (empty file)
+      d. Create logic/logic_discovery/ai_requests/supplier_selection.py (AI handler with compute_ai_value())
+      e. Create config/ai_test_context.yaml for reproducible testing
+      f. Update ui/admin/admin.yaml with SysXxxReq resource
+      g. ALL rule registrations MUST be inside declare_logic() function
+      h. Utility files (ai_value_computation.py) have NO declare_logic() function
 
 ✅ Example User Prompt:
    "Item unit_price: IF Product has suppliers, use AI to select optimal 
@@ -85,43 +176,294 @@ STEP 1 - DATABASE VERIFICATION (MANDATORY):
    - If no output → Table missing, need migration
    - If output shows table → Proceed to STEP 3
 
-STEP 2 - MIGRATION REQUIRED (if table missing):
-   ⚠️ **STOP AND TELL USER**:
-   ```
-   CRITICAL: SysSupplierReq table does not exist in database.
+STEP 2 - MODEL AND MIGRATION REQUIRED (if table missing):
    
-   I cannot run Alembic migrations because:
-   - Virtual environment location varies per system
-   - I don't have access to run migration commands
+   Add SysXxxReq model to database/models.py and run Alembic migration.
    
-   YOU must run these commands:
+   **See "Common Patterns" section below for complete Alembic migration workflow** including:
+   - Model structure with datetime import
+   - Migration generation and editing (remove ALTER TABLE operations)
+   - Common issues and solutions
    
-   cd database
-   alembic revision --autogenerate -m "Add SysSupplierReq audit table"
-   alembic upgrade head
-   
-   Then confirm migration succeeded before I continue generating logic.
-   ```
-   
-   ❌ DO NOT attempt to run alembic commands (venv access issues)
-   ❌ DO NOT generate logic files until user confirms migration ran
-   ❌ DO NOT assume table exists because model is in models.py
-   ✅ DO provide clear migration commands for user to execute
+   Quick steps:
+   1. Add model class to database/models.py (include `import datetime`)
+   2. Add bidirectional relationships to parent models
+   3. Run: `cd database && alembic revision --autogenerate -m "Add SysXxxReq audit table"`
+   4. **EDIT migration file** to remove ALTER TABLE operations
+   5. Run: `cd database && alembic upgrade head`
 
-STEP 3 - GENERATE LOGIC (only after table exists):
-   - Conditional formula on Item.unit_price
-   - Early event handler that creates SysSupplierReq
-   - AI handler that calls compute_ai_value()
-   - Copies AI result back to Item.unit_price
-   - Update ui/admin/admin.yaml
+STEP 3 - IMPLEMENT AI_VALUE_COMPUTATION.PY UTILITY (CRITICAL):
+   
+   ⚠️ **MANDATORY**: Before generating ANY AI logic, check if logic/system/ai_value_computation.py exists
+   
+   ```bash
+   test -f logic/system/ai_value_computation.py && echo "EXISTS" || echo "MISSING"
+   ```
+   
+   If MISSING, you MUST implement the introspection-based compute_ai_value() utility:
+   
+   **Required Capabilities**:
+   - ✅ Introspection-based candidate discovery via SQLAlchemy relationships
+   - ✅ Automatic field mapping from candidates to result columns
+   - ✅ OpenAI API integration with structured prompts
+   - ✅ YAML test context loading from config/ai_test_context.yaml
+   - ✅ Graceful fallback strategies (min/max/first) when no API key
+   - ✅ Type conversion (Decimal for money, int for IDs)
+   - ✅ Complete audit trail generation
+   
+   **Implementation Pattern**: See template_probabilistic_rules.py for reference implementation
+   
+   ✅ Create logic/system/ directory if it doesn't exist
+   ✅ Create logic/system/__init__.py (empty file)
+   ✅ Implement compute_ai_value() function with introspection logic
 
-This verification is MANDATORY - works for ANY project structure.
+STEP 4 - GENERATE LOGIC FILES (only after utility exists):
+   
+   a. Create logic/logic_discovery/check_credit.py
+      - Deterministic rules (constraint, sums, formulas)
+      - Only add Rule.count() if user explicitly requests it (e.g., "Product.count_suppliers = count of ProductSupplier")
+      - Assumes Product.count_suppliers exists in schema if referenced in conditional logic
+      - Null-safe constraint and formulas
+      - Conditional event handler (ItemUnitPriceFromSupplier)
+      - Conditional formula (preserves AI value or uses default)
+   
+   b. Create logic/logic_discovery/ai_requests/__init__.py (empty file)
+   
+   c. Create logic/logic_discovery/ai_requests/supplier_selection.py
+      - Import compute_ai_value from logic.system.ai_value_computation
+      - declare_logic() function with Rule.early_row_event registration
+      - AI handler function that calls compute_ai_value()
+      - Use relationship navigation: 'product.ProductSupplierList'
+      - Specify optimize_for and fallback strategies
+   
+   d. Create config/ai_test_context.yaml
+      - world_conditions for reproducible testing
+      - Other context fields as needed
+   
+   e. Update ui/admin/admin.yaml
+      - Add SysSupplierReq resource with all fields
+
+This verification and file structure is MANDATORY - works for ANY project structure.
+
+=============================================================================
+REQUIRED FILE STRUCTURE: Modular Architecture (Production Pattern)
+=============================================================================
+
+**CRITICAL**: Always generate this EXACT file structure for probabilistic logic:
+
+File 1: logic/logic_discovery/check_credit.py
+```python
+"""
+Check Credit Logic - Declarative Rules with Probabilistic AI Supplier Selection
+
+Natural Language Requirements:
+[... copy user's requirements ...]
+
+Generated: Auto-generated from natural language by GitHub Copilot
+"""
+
+from logic_bank.exec_row_logic.logic_row import LogicRow
+from logic_bank.logic_bank import Rule
+from database import models
+
+
+def declare_logic():
+    """
+    Declarative rules for Check Credit use case.
+    
+    Combines deterministic rules (sums, formulas, constraints) with 
+    probabilistic AI value computation (supplier selection).
+    """
+    
+    # Rule 1: Constraint with null-safety
+    Rule.constraint(
+        validate=models.Customer,
+        as_condition=lambda row: row.balance is None or row.credit_limit is None or row.balance <= row.credit_limit,
+        error_msg="Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})"
+    )
+    
+    # Rule 2: Customer balance = sum of unshipped orders
+    Rule.sum(
+        derive=models.Customer.balance,
+        as_sum_of=models.Order.amount_total,
+        where=lambda row: row.date_shipped is None
+    )
+    
+    # Rule 3: Order amount_total = sum of items
+    Rule.sum(
+        derive=models.Order.amount_total,
+        as_sum_of=models.Item.amount
+    )
+    
+    # Rule 4: Item amount = quantity * unit_price (null-safe)
+    Rule.formula(
+        derive=models.Item.amount,
+        as_expression=lambda row: row.quantity * (row.unit_price or 0)
+    )
+    
+    # Rule 5a: Early event - triggers AI if suppliers exist
+    # NOTE: Assumes Product.count_suppliers exists in database schema
+    #       If user specifies count rule, add it here
+    Rule.early_row_event(
+        on_class=models.Item,
+        calling=lambda row, old_row, logic_row: ItemUnitPriceFromSupplier(row, logic_row)
+    )
+    
+    # Rule 5b: Conditional formula - AI value or default
+    # Uses Product.count_suppliers from database schema
+    Rule.formula(
+        derive=models.Item.unit_price,
+        as_expression=lambda row: (
+            row.product.unit_price if row.product.count_suppliers == 0
+            else row.unit_price  # Preserve AI-set value
+        )
+    )
+
+
+def ItemUnitPriceFromSupplier(item_row: models.Item, logic_row: LogicRow):
+    """
+    Conditional AI logic: IF product has suppliers THEN use AI ELSE skip.
+    
+    This creates SysSupplierReq using Request Pattern, which triggers
+    the AI handler in ai_requests/supplier_selection.py
+    """
+    if not logic_row.is_inserted():
+        return
+    
+    if item_row.product.count_suppliers == 0:
+        logic_row.log(f"Item - Product has no suppliers, using default unit_price")
+        return
+    
+    logic_row.log(f"Item - Product has {item_row.product.count_suppliers} suppliers, invoking AI")
+    
+    # Request Pattern
+    supplier_req_logic_row = logic_row.new_logic_row(models.SysSupplierReq)
+    supplier_req = supplier_req_logic_row.row
+    
+    supplier_req.item_id = item_row.id
+    supplier_req.product_id = item_row.product_id
+    
+    supplier_req_logic_row.insert(reason="AI supplier selection request")
+    
+    # CRITICAL: Copy AI result
+    item_row.unit_price = supplier_req.chosen_unit_price
+    logic_row.log(f"Item - AI selected supplier, unit_price set to {item_row.unit_price}")
+```
+
+File 2: logic/logic_discovery/ai_requests/__init__.py
+```python
+# Empty file - makes this a Python package
+```
+
+File 3: logic/logic_discovery/ai_requests/supplier_selection.py
+```python
+"""
+AI Supplier Selection Handler - Probabilistic Value Computation
+
+Uses introspection-based compute_ai_value() utility to automatically:
+- Navigate product.ProductSupplierList relationship
+- Introspect all candidate fields
+- Call OpenAI with structured prompt
+- Map AI response to SysSupplierReq result columns
+- Handle graceful fallback when no API key
+- Store complete audit trail
+
+This AI handler fires when SysSupplierReq is inserted via Request Pattern.
+"""
+
+from logic_bank.exec_row_logic.logic_row import LogicRow
+from logic_bank.logic_bank import Rule
+from database import models
+from logic.system.ai_value_computation import compute_ai_value
+
+
+def declare_logic():
+    """
+    Register AI supplier selection handler.
+    
+    Fires on SysSupplierReq insert, uses introspection-based utility
+    to automatically discover candidates and compute optimal selection.
+    """
+    Rule.early_row_event(
+        on_class=models.SysSupplierReq,
+        calling=supplier_id_from_ai
+    )
+
+
+def supplier_id_from_ai(row: models.SysSupplierReq, old_row, logic_row: LogicRow):
+    """
+    AI selects optimal supplier based on cost, lead time, and world conditions.
+    
+    Uses compute_ai_value() utility which automatically:
+    - Navigates row.product.ProductSupplierList to get candidates
+    - Introspects ProductSupplier columns: supplier_id, unit_cost, lead_time_days
+    - Introspects Supplier columns via relationship: name, region
+    - Introspects SysSupplierReq result columns: chosen_supplier_id, chosen_unit_price
+    - Maps AI response: chosen_supplier_id ← supplier_id, chosen_unit_price ← unit_cost
+    - Loads world_conditions from config/ai_test_context.yaml
+    - Calls OpenAI with structured prompt
+    - Handles fallback: min:unit_cost when no API key
+    - Stores complete audit trail
+    """
+    if not logic_row.is_inserted():
+        return
+    
+    logic_row.log(f"SysSupplierReq - AI supplier selection starting")
+    
+    # Introspection-based AI value computation
+    compute_ai_value(
+        row=row,
+        logic_row=logic_row,
+        candidates='product.ProductSupplierList',
+        optimize_for='fastest reliable delivery while keeping costs reasonable, considering world conditions like supply chain disruptions',
+        fallback='min:unit_cost'
+    )
+    
+    logic_row.log(f"SysSupplierReq - AI selection complete: supplier_id={row.chosen_supplier_id}, unit_price={row.chosen_unit_price}")
+```
+
+File 4: logic/system/__init__.py
+```python
+# Empty file - makes this a Python package
+```
+
+File 5: logic/system/ai_value_computation.py
+**CRITICAL**: Implement this utility with introspection-based pattern:
+  
+This utility provides introspection-based AI value computation with:
+- Automatic candidate discovery via SQLAlchemy relationships
+- Dynamic column introspection for field mapping
+- OpenAI API integration with structured prompts
+- Graceful fallback strategies (min/max/first)
+- YAML test context loading from config/ai_test_context.yaml
+- Complete audit trail generation with type conversion
+
+See template_probabilistic_rules.py for implementation reference.
+
+File 6: config/ai_test_context.yaml
+```yaml
+# AI Test Context - Enables reproducible AI testing
+world_conditions: 'ship aground in Suez Canal'
+market_conditions: null
+traffic_conditions: null
+weather_conditions: null
+```
+
+⚠️ **WHY THIS STRUCTURE IS MANDATORY**:
+1. **Separation of Concerns**: Business logic separate from AI handlers
+2. **Reusability**: ai_value_computation.py works for ANY AI selection scenario
+3. **Testability**: Test context YAML enables reproducible testing
+4. **Maintainability**: Clear file organization, easy to find and update
+5. **Discovery System**: auto_discovery.py finds and loads all logic files automatically
 
 =============================================================================
 REQUIRED PATTERN: Conditional Formula with AI
 =============================================================================
 
 When user says "IF product has suppliers THEN use AI ELSE use default", use this exact pattern:
+
+NOTE: This pattern ASSUMES Product.count_suppliers exists in the database schema.
+      Only add Rule.count() if user explicitly requests it in natural language.
 
 # Step 1: Register early event handler (fires BEFORE formula)
 Rule.early_row_event(
@@ -130,6 +472,7 @@ Rule.early_row_event(
 )
 
 # Step 2: Formula that preserves AI-set value or uses default
+# Assumes Product.count_suppliers exists in schema
 Rule.formula(
     derive=models.Item.unit_price,
     as_expression=lambda row: (
@@ -140,6 +483,7 @@ Rule.formula(
 
 # Step 3: Event handler that creates request and copies AI result
 def ItemUnitPriceFromSupplier(item_row: models.Item, logic_row: LogicRow):
+    # Assumes Product.count_suppliers exists in database schema
     if not logic_row.is_inserted() or item_row.product.count_suppliers == 0:
         return
     
@@ -201,34 +545,67 @@ Use this when computing values requires contextual reasoning that cannot be expr
 
 Implementation Pattern: Introspection-Based Utility
 
-ALWAYS use the logic/system/ai_value_computation.py utility for AI value computation:
+**CRITICAL**: ALWAYS use the logic/system/ai_value_computation.py utility for AI value computation.
+
+This utility provides introspection-based AI value computation and should be implemented
+following the pattern in template_probabilistic_rules.py if not already present.
+
+Basic usage pattern (in separate AI handler file):
+
+```python
+# File: logic/logic_discovery/ai_requests/supplier_selection.py
 
 from logic.system.ai_value_computation import compute_ai_value
+from logic_bank.exec_row_logic.logic_row import LogicRow
+from logic_bank.logic_bank import Rule
+from database import models
 
-def ai_handler(row: models.SysXxxReq, old_row, logic_row: LogicRow):
-    """AI computes optimal value from candidates."""
+
+def declare_logic():
+    """Register AI handler on SysSupplierReq insert."""
+    Rule.early_row_event(on_class=models.SysSupplierReq, calling=supplier_id_from_ai)
+
+
+def supplier_id_from_ai(row: models.SysSupplierReq, old_row, logic_row: LogicRow):
+    """AI computes optimal supplier selection."""
     if not logic_row.is_inserted():
         return
+    
+    logic_row.log("AI supplier selection starting")
     
     compute_ai_value(
         row=row,                              # Request table row (SysSupplierReq, etc.)
         logic_row=logic_row,                  # For logging and DB operations
-        candidates='relationship.path',       # e.g., 'product.ProductSupplierList'
-        optimize_for='natural language goal', # e.g., 'fastest reliable delivery'
-        fallback='min:field_name'            # e.g., 'min:unit_cost', 'max:rating', 'first'
+        candidates='product.ProductSupplierList',  # Relationship path to candidates
+        optimize_for='fastest reliable delivery while keeping costs reasonable',
+        fallback='min:unit_cost'             # Strategy when no API key
     )
+    
+    logic_row.log(f"AI selection complete: supplier_id={row.chosen_supplier_id}")
+```
 
-Rule.early_row_event(on_class=models.SysXxxReq, calling=ai_handler)
+What compute_ai_value() does automatically (introspection-based pattern):
+- ✅ Discovers candidate objects via relationship navigation (row.product.ProductSupplierList)
+- ✅ Introspects ALL candidate fields via SQLAlchemy (supplier_id, supplier_name, unit_cost, lead_time_days, region, etc.)
+- ✅ Introspects related entity attributes (supplier.name, supplier.region)
+- ✅ Introspects request table chosen_* columns (chosen_supplier_id, chosen_unit_price)
+- ✅ Maps AI response to result columns (chosen_supplier_id ← supplier_id, chosen_unit_price ← unit_cost)
+- ✅ Handles naming variations (unit_price ↔ unit_cost)
+- ✅ Loads test context from config/ai_test_context.yaml
+- ✅ Calls OpenAI API with structured JSON prompt
+- ✅ Handles fallback when no API key (min/max/first strategies)
+- ✅ Converts types properly (Decimal for money, int for IDs)
+- ✅ Stores complete audit trail (request JSON, reason, created_on)
 
-What compute_ai_value() does automatically:
-- Discovers candidate objects via relationship navigation (row.product.ProductSupplierList)
-- Introspects all candidate fields (supplier_id, supplier_name, unit_cost, lead_time_days, region, etc.)
-- Introspects request table chosen_* columns (chosen_supplier_id, chosen_unit_price)
-- Maps AI response to result columns (chosen_supplier_id ← supplier_id, chosen_unit_price ← unit_cost)
-- Loads test context from config/ai_test_context.yaml
-- Calls OpenAI with structured prompt
-- Handles fallback when no API key (selects based on fallback strategy)
-- Stores complete audit trail (request, reason, created_on)
+**Why NOT write AI logic inline:**
+❌ Manual field serialization (error-prone)
+❌ Hardcoded field names (breaks when schema changes)
+❌ No introspection (miss new columns)
+❌ Duplicate OpenAI integration code
+❌ No test context support
+❌ Inconsistent audit trails
+
+✅ compute_ai_value() handles ALL of this automatically via introspection
         
         Example 1: Supplier Selection
             Prompt:

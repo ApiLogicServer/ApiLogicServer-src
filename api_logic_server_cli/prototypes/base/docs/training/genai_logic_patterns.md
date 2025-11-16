@@ -5,20 +5,46 @@
 
 ---
 
-## 1. Critical Imports
+## 1. Critical Imports - AVOID CIRCULAR IMPORTS
 
-### ✅ CORRECT:
+### ⚠️ CRITICAL: Import LogicBank ONLY Inside Functions
+
+**Problem:** Importing `LogicRow`, `Rule` at module level causes circular import errors during auto-discovery.
+
+### ❌ WRONG (causes circular import):
 ```python
+# At module level - DO NOT DO THIS
+from logic_bank.exec_row_logic.logic_row import LogicRow
 from logic_bank.logic_bank import Rule
+from database import models
+
+def declare_logic():
+    Rule.formula(...)  # ❌ Circular import error
 ```
 
-### ❌ WRONG:
+### ✅ CORRECT (import inside functions):
 ```python
-from logic_bank.rule_bank.rule_bank import RuleBank  # Internal class
-from logic_bank.extensions.rule_extensions import Rule  # Wrong module
+# At module level - only non-LogicBank imports
+import database.models as models
+
+def declare_logic():
+    from logic_bank.logic_bank import Rule  # ✅ Import inside function
+    
+    Rule.formula(derive=models.Item.unit_price, calling=my_formula)
+
+def my_formula(row, old_row, logic_row):  # ✅ No type hints on logic_row
+    from logic.ai_requests.handler import get_ai_value  # ✅ Import when needed
+    return get_ai_value(row, logic_row)
 ```
 
-**Why:** `Rule` from `logic_bank.logic_bank` is the public API. `RuleBank` is internal implementation.
+**Why:** LogicBank's auto-discovery imports modules during initialization. Module-level LogicBank imports create circular dependencies that fail with "cannot import name 'LogicRow' from partially initialized module".
+
+**Pattern for All Logic Files:**
+1. ✅ Import `database.models as models` at module level
+2. ✅ Import `Rule` inside `declare_logic()` function
+3. ✅ Import other logic modules inside functions where used
+4. ✅ No type hints on `logic_row` parameters (avoid `LogicRow` import)
+5. ✅ Import external libraries (OpenAI, yaml, etc.) inside functions that use them
 
 ---
 
@@ -135,23 +161,65 @@ def declare_logic():
 
 ---
 
-## 4. Auto-Discovery System
+## 4. Auto-Discovery System - RECURSIVE SCANNING REQUIRED
 
-LogicBank's auto-discovery scans `logic/logic_discovery/` recursively and calls `declare_logic()` in each module.
+### ⚠️ CRITICAL: Auto-Discovery Must Scan Subdirectories
+
+**Problem:** Default auto_discovery.py only scans immediate directory, not subdirectories like `ai_requests/`.
+
+### ❌ WRONG (misses subdirectories):
+```python
+def discover_logic():
+    for root, dirs, files in os.walk(logic_path):
+        for file in files:
+            spec = importlib.util.spec_from_file_location("module.name", logic_path.joinpath(file))
+            # ❌ Uses logic_path instead of actual file location
+```
+
+### ✅ CORRECT (recursive with proper paths):
+```python
+def discover_logic():
+    """Discover additional logic in this directory and subdirectories"""
+    import os
+    logic = []
+    logic_path = Path(__file__).parent
+    for root, dirs, files in os.walk(logic_path):
+        root_path = Path(root)  # ✅ Use actual subdirectory path
+        for file in files:
+            if file.endswith(".py") and not file.endswith("auto_discovery.py") and not file.startswith("__"):
+                file_path = root_path / file  # ✅ Build complete path
+                spec = importlib.util.spec_from_file_location("module.name", file_path)
+                logic.append(str(file_path))
+                try:
+                    each_logic_file = importlib.util.module_from_spec(spec)
+                    spec.loader.exec_module(each_logic_file)
+                    if hasattr(each_logic_file, 'declare_logic'):
+                        each_logic_file.declare_logic()
+                except Exception as e:
+                    app_logger.error(f"Error loading logic from {file_path}: {e}")
+                    raise
+```
+
+**Key Fixes:**
+1. ✅ Use `root_path = Path(root)` to get actual subdirectory path
+2. ✅ Build complete path: `file_path = root_path / file`
+3. ✅ Check for `declare_logic` existence with `hasattr()`
+4. ✅ Skip `__init__.py` and `auto_discovery.py` files
+5. ✅ Wrap in try/except to catch import errors with context
 
 **Requirements:**
 1. Module must be in `logic/logic_discovery/` or subfolder
 2. Module must have `declare_logic()` function
 3. Function registers rules when called
 
-**Example:**
-```python
-# logic/logic_discovery/ai_requests/my_handler.py
-
-def declare_logic():
-    """Auto-discovery calls this to register rules"""
-    Rule.early_row_event(on_class=models.MyTable, calling=my_event_handler)
-    # Rules are now registered
+**Example Structure:**
+```
+logic/logic_discovery/
+  check_credit.py          # ✅ Discovered
+  app_integration.py       # ✅ Discovered
+  ai_requests/             # ✅ Subdirectory scanned
+    __init__.py            # ✅ Skipped
+    supplier_selection.py  # ✅ Discovered
 ```
 
 ---

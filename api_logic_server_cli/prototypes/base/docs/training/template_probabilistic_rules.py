@@ -3,7 +3,7 @@ TEMPLATE: Probabilistic + Deterministic Rules Implementation
 
 ⚠️ COMPREHENSIVE DOCUMENTATION:
 For detailed documentation, see:
-- docs/training/genai_logic_patterns.md - Universal framework patterns
+- docs/training/genai_logic_patterns.md - Universal framework patterns (CRITICAL IMPORT PATTERNS)
 - docs/training/probabilistic_logic_guide.md - Probabilistic logic implementation
 
 This file provides a working code reference for copy/paste.
@@ -21,20 +21,20 @@ KEY PATTERNS:
 3. get_XXX_from_ai() - encapsulates Request Pattern, returns computed value
 4. Auto-discovery scans logic_discovery/ recursively (including ai_requests/)
 
-⚠️ CRITICAL IMPORTS:
-- ALWAYS use: from logic_bank.logic_bank import Rule
-- NEVER use: from logic_bank.rule_bank.rule_bank import RuleBank
-- NEVER use: from logic_bank.extensions.rule_extensions import Rule
+⚠️ CRITICAL IMPORTS (Nov 16, 2025 - Demo Prep Learning):
+- ✅ ALWAYS import Rule INSIDE declare_logic() function (avoid circular imports)
+- ✅ ALWAYS import models at module level only: import database.models as models
+- ✅ NEVER import LogicRow, Rule at module level
+- ❌ NEVER use: from logic_bank.rule_bank.rule_bank import RuleBank
+- ❌ NEVER use: from logic_bank.extensions.rule_extensions import Rule
 
 This is a working reference implementation showing the complete pattern.
 """
 
 import database.models as models
-from logic_bank.exec_row_logic.logic_row import LogicRow
-from logic_bank.logic_bank import Rule  # ⚠️ CRITICAL: Use this import, not RuleBank
-from logic.logic_discovery.ai_requests.supplier_selection import get_supplier_price_from_ai
 
 def declare_logic():
+    from logic_bank.logic_bank import Rule  # ✅ Import inside function to avoid circular imports
     """
     TEMPLATE STRUCTURE:
     1. Deterministic rules (constraints, sums, formulas)
