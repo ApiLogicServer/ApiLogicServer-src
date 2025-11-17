@@ -8,7 +8,18 @@ For detailed documentation, see:
 
 This file provides a working code reference for copy/paste.
 
-version: 1.1: 11/16/2025 - No request pattern leakage
+version: 1.2: 11/17/2025 - CRITICAL: Modern OpenAI API (v1.0.0+)
+
+⚠️ CRITICAL: OpenAI API Version
+This template uses the MODERN OpenAI API (v1.0.0+):
+  from openai import OpenAI
+  client = OpenAI(api_key=api_key)
+  response = client.chat.completions.create(...)
+
+DO NOT use the old deprecated API:
+  import openai
+  openai.api_key = api_key  # ❌ OLD
+  response = openai.ChatCompletion.create(...)  # ❌ DEPRECATED
 
 ---
 
@@ -31,6 +42,17 @@ KEY PATTERNS:
 - ❌ NEVER use: from logic_bank.extensions.rule_extensions import Rule
 
 This is a working reference implementation showing the complete pattern.
+
+⚠️ CRITICAL: OpenAI API Version
+This template uses the MODERN OpenAI API (v1.0.0+):
+  from openai import OpenAI
+  client = OpenAI(api_key=api_key)
+  response = client.chat.completions.create(...)
+
+DO NOT use the old deprecated API:
+  import openai
+  openai.api_key = api_key  # ❌ OLD
+  response = openai.ChatCompletion.create(...)  # ❌ DEPRECATED
 """
 
 import database.models as models

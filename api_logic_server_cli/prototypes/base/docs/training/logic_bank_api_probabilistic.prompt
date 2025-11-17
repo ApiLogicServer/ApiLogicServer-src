@@ -3,12 +3,13 @@ title: LogicBank Probabilistic Rules API (AI Value Computation)
 description: Training document for translating natural language into probabilistic value computation rules
 source: Generic training for ApiLogicServer projects with probabilistic rules
 usage: AI assistants read this to generate probabilistic + deterministic rules implementations
-version: 2.7
+version: 2.8
 prerequisites:
   - docs/training/genai_logic_patterns.md (CRITICAL import patterns, auto-discovery fixes)
   - docs/training/logic_bank_patterns.prompt (general patterns - event signatures, logging, request pattern)
   - docs/training/logic_bank_api.prompt (deterministic rule APIs)
 changelog (note to AI: this changelog should be update if you make changes):
+  - 2.8 (Nov 17, 2025): CRITICAL - Updated OpenAI API to modern v1.0.0+ pattern (from openai import OpenAI, client.chat.completions.create)
   - 2.7 (Nov 17, 2025): Fixed migration workflow - added admin.yaml update as step 7, removed .link() from examples, added Decimal handling pattern
   - 2.6 (Nov 17, 2025): functions, not events for item price, no leakage
   - 2.5 (Nov 16, 2025): functions, not events for item price
@@ -42,6 +43,22 @@ This file contains ONLY AI-specific probabilistic patterns.
 =============================================================================
 ⚡ QUICK REFERENCE: Correct Pattern - Formula with calling= (READ THIS FIRST)
 =============================================================================
+
+**CRITICAL: Modern OpenAI API (v1.0.0+)**
+
+❌ OLD API (deprecated, will fail):
+```python
+import openai
+openai.api_key = api_key
+response = openai.ChatCompletion.create(...)  # ❌ Not supported in openai>=1.0.0
+```
+
+✅ NEW API (correct pattern):
+```python
+from openai import OpenAI
+client = OpenAI(api_key=api_key)
+response = client.chat.completions.create(...)  # ✅ Modern API
+```
 
 **When implementing AI value computation, use THIS functional pattern:**
 
