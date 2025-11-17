@@ -8,6 +8,8 @@ For detailed documentation, see:
 
 This file provides a working code reference for copy/paste.
 
+version: 1.0
+
 ---
 
 ARCHITECTURE:
@@ -70,26 +72,27 @@ def declare_logic():
     # ========================================
     
     # Rule 5b: Item unit_price - Conditional formula with AI integration
-    def ItemUnitPriceFromSupplier(row: models.Item, old_row: models.Item, logic_row: LogicRow):
+    def ItemUnitPriceFromSupplier(row: models.Item, old_row: models.Item, logic_row):
         """
         Conditional formula: determines Item.unit_price based on supplier availability.
         - IF Product has NO suppliers → copy from Product.unit_price
-        - IF Product has suppliers → call AI to compute optimal price
+        - IF Product has suppliers → invoke AI via Request Pattern
         
-        KEY PATTERN: Call reusable AI handler that returns computed value
+        KEY PATTERN: Use Request Pattern to trigger AI, return computed value
         """
         if row.product.count_suppliers == 0:
             logic_row.log(f"Item - Product has no suppliers, using product.unit_price")
             return row.product.unit_price
         
-        # Product has suppliers - use AI to get optimal supplier price
-        return get_supplier_price_from_ai(
-            row=row,
-            logic_row=logic_row,
-            candidates='product.ProductSupplierList',
-            optimize_for='fastest reliable delivery while keeping costs reasonable',
-            fallback='min:unit_cost'
-        )
+        # Product has suppliers - create audit request to trigger AI
+        logic_row.log(f"Item - Product has {row.product.count_suppliers} suppliers, invoking AI")
+        supplier_req_logic_row = logic_row.new_logic_row(models.SysSupplierReq)
+        supplier_req = supplier_req_logic_row.row
+        supplier_req_logic_row.link(to_parent=logic_row)
+        supplier_req.product_id = row.product_id
+        supplier_req.item_id = row.id
+        supplier_req_logic_row.insert(reason="AI supplier selection request")
+        return supplier_req.chosen_unit_price  # Functional: return computed value
     
     Rule.formula(derive=models.Item.unit_price, calling=ItemUnitPriceFromSupplier)
     
@@ -117,36 +120,64 @@ KEY ARCHITECTURE DECISIONS:
 # ========================================
 
 """
-def supplier_id_from_ai(row: models.SysSupplierReq, old_row, logic_row: LogicRow):
-        AI selects optimal supplier based on cost, lead time, and world conditions.
-        Uses introspection-based utility to automatically discover candidate fields.
-        
-        Implementation uses compute_ai_value() utility which:
-        - Automatically introspects candidate fields from ProductSupplier model
-        - Handles API key check with graceful fallback
-        - Loads test context from config/ai_test_context.yaml
-        - Populates audit fields (chosen_supplier_id, chosen_unit_price, reason)
-        - Returns None (audit details stored in row)
-        """
-        if not logic_row.is_inserted():
-            return
-        
-        from logic.system.ai_value_computation import compute_ai_value
-        
-        compute_ai_value(
-            row=row,
-            logic_row=logic_row,
-            candidates='product.ProductSupplierList',
-            optimize_for='fastest reliable delivery while keeping costs reasonable',
-            fallback='min:unit_cost'
-        )
+def supplier_id_from_ai(row: models.SysSupplierReq, old_row, logic_row):
+    '''
+    AI selects optimal supplier based on cost, lead time, and world conditions.
+    Fires when SysSupplierReq record is inserted via Request Pattern.
+    
+    Populates audit fields:
+    - chosen_supplier_id: Selected supplier ID
+    - chosen_unit_price: Price from selected supplier
+    - reason: AI's explanation for the choice
+    - fallback_used: True if AI unavailable (uses min cost)
+    '''
+    if not logic_row.is_inserted():
+        return
+    
+    product = row.product
+    if not product or product.count_suppliers == 0:
+        logic_row.log("No suppliers available for product")
+        return
+    
+    # Load test context for reproducible testing
+    test_context = _load_test_context(logic_row)
+    world_conditions = test_context.get('world_conditions', 'normal operations')
+    
+    # Get list of candidate suppliers with their details
+    candidates = []
+    for ps in product.ProductSupplierList:
+        candidates.append({
+            'supplier_id': ps.supplier_id,
+            'supplier_name': ps.supplier.company_name,
+            'unit_cost': float(ps.unit_cost),
+            'lead_time_days': ps.lead_time_days,
+            'location': ps.supplier.region
+        })
+    
+    # Call OpenAI API (with fallback to min cost if no API key)
+    api_key = os.environ.get('OPENAI_API_KEY')
+    if not api_key:
+        logic_row.log("No OpenAI API key - using fallback (min cost)")
+        min_supplier = min(candidates, key=lambda s: s['unit_cost'])
+        row.chosen_supplier_id = min_supplier['supplier_id']
+        row.chosen_unit_price = Decimal(str(min_supplier['unit_cost']))
+        row.reason = "Fallback: minimum cost supplier (no API key)"
+        row.fallback_used = True
+        return
+    
+    # Make AI request (see full implementation in ai_requests/supplier_selection.py)
+    ai_result = _call_openai_structured(candidates, world_conditions, api_key, logic_row)
+    
+    # Populate audit fields with AI decision
+    row.chosen_supplier_id = ai_result['chosen_supplier_id']
+    row.chosen_unit_price = Decimal(str(ai_result['chosen_unit_price']))
+    row.reason = ai_result['reason']
+    row.fallback_used = False
 
 def declare_logic():
-    # Register AI event handler
-    Rule.early_row_event(
-        on_class=models.SysSupplierReq,
-        calling=supplier_id_from_ai
-    )
+    from logic_bank.logic_bank import Rule
+    # Register AI event handler - fires on SysSupplierReq insert
+    Rule.early_row_event(on_class=models.SysSupplierReq, calling=supplier_id_from_ai)
 """
 
 # ========================================
@@ -160,15 +191,17 @@ NEW ARCHITECTURE (Post-Refactoring):
    - Reusable AI handlers: logic/logic_discovery/ai_requests/supplier_selection.py
    - Framework utilities: logic/system/ai_value_computation.py
 
-2. AI AS VALUE COMPUTATION
-   - get_supplier_price_from_ai() returns the computed value (unit_price)
-   - Audit details (supplier_id, reason) remain in request table
-   - Encapsulates Request Pattern implementation
+2. FUNCTIONAL FORMULA PATTERN
+   - Rule.formula(calling=function) - function returns computed value
+   - Conditional logic: if count == 0 then default else invoke AI
+   - Uses Request Pattern: insert audit record triggers AI event handler
+   - Returns value from populated audit record (chosen_unit_price)
 
-3. FORMULA PATTERN
-   - Rule.formula(calling=function) - function returns value
-   - Conditional logic: if count == 0 then default else call AI
-   - Clean abstraction - formula doesn't know about Request Pattern
+3. REQUEST PATTERN FOR AI INVOCATION
+   - Formula creates SysSupplierReq audit record using logic_row.new_logic_row()
+   - Insert triggers early_row_event handler (supplier_id_from_ai)
+   - Handler populates audit fields (chosen_supplier_id, chosen_unit_price, reason)
+   - Formula returns the computed value from audit record
 
 4. LOGICBANK TRIGGERED INSERT PATTERN (CRITICAL)
    - Use logic_row.new_logic_row(models.SysSupplierReq) to create audit record
@@ -191,13 +224,14 @@ NEW ARCHITECTURE (Post-Refactoring):
    
    See: https://apilogicserver.github.io/Docs/Logic-Use/#in-logic
 
-4. AUTO-DISCOVERY
+5. AUTO-DISCOVERY
    - Scans logic/logic_discovery/ recursively
    - AI handlers in ai_requests/ subfolder
    - Each module has declare_logic() to self-register
 
-5. REUSABILITY
-   - Multiple use cases can call get_supplier_price_from_ai()
-   - AI handler is testable independently
+6. REUSABILITY
+   - Multiple use cases can use same Request Pattern with SysSupplierReq
+   - AI handler (supplier_id_from_ai) is testable independently
    - Easy to add more AI handlers (price_optimization, route_selection, etc.)
+   - Each handler follows same pattern: early_row_event on audit table
 """

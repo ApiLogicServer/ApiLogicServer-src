@@ -1,3 +1,7 @@
+---
+version: 1.0
+---
+
 # GenAI Logic Patterns - Universal Guide
 
 **Scope:** Framework-level patterns for integrating AI into business logic using LogicBank.  
@@ -108,49 +112,55 @@ logic/
 
 **Use Case Logic (check_credit.py):**
 ```python
-from logic.ai_requests.supplier_selection import get_supplier_price_from_ai
+from logic.logic_discovery.ai_requests.supplier_selection import get_supplier_price_from_ai
 
 def ItemUnitPriceFromSupplier(row, old_row, logic_row):
     """Conditional formula - use AI when suppliers exist"""
     if row.product.count_suppliers == 0:
         return row.product.unit_price  # Fallback
     
-    # Call reusable AI handler
-    return get_supplier_price_from_ai(
-        row=row,
-        logic_row=logic_row,
-        candidates='product.ProductSupplierList',
-        optimize_for='fastest reliable delivery',
-        fallback='min:unit_cost'
-    )
+    # Call reusable AI handler (encapsulates Request Pattern)
+    logic_row.log(f"Item - Product has {row.product.count_suppliers} suppliers, invoking AI")
+    return get_supplier_price_from_ai(row=row, logic_row=logic_row)
 
 Rule.formula(derive=models.Item.unit_price, calling=ItemUnitPriceFromSupplier)
 ```
 
 **AI Handler (ai_requests/supplier_selection.py):**
 ```python
-def get_supplier_price_from_ai(row, logic_row, candidates, optimize_for, fallback):
-    """Reusable AI handler - creates audit record and returns value"""
-    # Create audit record using triggered insert
-    audit_logic_row = logic_row.new_logic_row(models.SysSupplierReq)
-    audit_record = audit_logic_row.row
-    audit_logic_row.link(to_parent=logic_row)
-    audit_record.product_id = row.product_id
-    audit_logic_row.insert(reason="AI Request")
-    return audit_record.chosen_unit_price  # Populated by event
+def get_supplier_price_from_ai(row, logic_row):
+    """
+    Returns optimal supplier price using AI selection.
+    Encapsulates Request Pattern - creates audit record, triggers AI, returns computed value.
+    """
+    # Create audit record using LogicBank triggered insert (Request Pattern)
+    supplier_req_logic_row = logic_row.new_logic_row(models.SysSupplierReq)
+    supplier_req = supplier_req_logic_row.row
+    supplier_req_logic_row.link(to_parent=logic_row)
+    supplier_req.product_id = row.product_id
+    supplier_req.item_id = row.id
+    
+    # Insert triggers supplier_id_from_ai event handler which populates chosen_* fields
+    supplier_req_logic_row.insert(reason="AI supplier selection request")
+    
+    # Return value populated by event handler
+    return supplier_req.chosen_unit_price
 
-def ai_event_handler(row, old_row, logic_row):
-    """Event handler - runs DURING formula, populates audit fields"""
-    if logic_row.is_inserted():
-        # AI computation here
-        result = compute_optimal_supplier(...)
-        row.chosen_supplier_id = result.supplier_id
-        row.chosen_unit_price = result.unit_price
-        row.reason = result.reason
+def supplier_id_from_ai(row, old_row, logic_row):
+    """Event handler - fires on SysSupplierReq insert, populates audit fields"""
+    if not logic_row.is_inserted():
+        return
+    
+    # Get candidates, call AI, populate row fields
+    # (Full implementation in actual file)
+    row.chosen_supplier_id = ai_result['chosen_supplier_id']
+    row.chosen_unit_price = Decimal(str(ai_result['chosen_unit_price']))
+    row.reason = ai_result['reason']
 
 def declare_logic():
     """Self-register event handler for auto-discovery"""
-    Rule.early_row_event(on_class=models.SysSupplierReq, calling=ai_event_handler)
+    from logic_bank.logic_bank import Rule
+    Rule.early_row_event(on_class=models.SysSupplierReq, calling=supplier_id_from_ai)
 ```
 
 **Benefits:**

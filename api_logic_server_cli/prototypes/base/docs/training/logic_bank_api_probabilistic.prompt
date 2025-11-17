@@ -3,12 +3,13 @@ title: LogicBank Probabilistic Rules API (AI Value Computation)
 description: Training document for translating natural language into probabilistic value computation rules
 source: Generic training for ApiLogicServer projects with probabilistic rules
 usage: AI assistants read this to generate probabilistic + deterministic rules implementations
-version: 2.4
+version: 2.5
 prerequisites:
   - docs/training/genai_logic_patterns.md (CRITICAL import patterns, auto-discovery fixes)
   - docs/training/logic_bank_patterns.prompt (general patterns - event signatures, logging, request pattern)
   - docs/training/logic_bank_api.prompt (deterministic rule APIs)
 changelog:
+  - 2.5 (Nov 16, 2025): functions, not events for item price
   - 2.4 (Nov 16, 2025): CLARIFIED - Circular import warning applies only to main declare_logic.py, discovery files are safe with module-level imports
   - 2.3 (Nov 16, 2025): Clarified auto_discovery.py is AUTO-GENERATED (don't modify, already correct)
 ---
@@ -37,57 +38,68 @@ Before using this file, you MUST read these foundation documents in order:
 This file contains ONLY AI-specific probabilistic patterns.
 
 =============================================================================
-⚡ QUICK REFERENCE: Correct Request Pattern (READ THIS FIRST)
+⚡ QUICK REFERENCE: Correct Pattern - Formula with calling= (READ THIS FIRST)
 =============================================================================
 
-**When implementing AI value computation, use THIS pattern (verified from LogicZ):**
+**When implementing AI value computation, use THIS functional pattern:**
 
 ```python
-# Step 1: Early event on TARGET table (Item, not SysSupplierReq)
-Rule.early_row_event(
-    on_class=models.Item,  # ✅ TARGET table
-    calling=lambda row, old_row, logic_row: ItemUnitPriceFromSupplier(row, logic_row)
-)
+# In check_credit.py - Simple formula calls function
+from logic.logic_discovery.ai_requests.supplier_selection import get_supplier_price_from_ai
 
-# Step 2: Formula PRESERVES value (doesn't compute it)
-Rule.formula(
-    derive=models.Item.unit_price,
-    as_expression=lambda row: (
-        row.product.unit_price if row.product.count_suppliers == 0
-        else row.unit_price  # ✅ PRESERVE value set by event
-    )
-)
+Rule.formula(derive=models.Item.unit_price, calling=ItemUnitPriceFromSupplier)
 
-# Step 3: Event handler - Create request, trigger AI, copy result
-def ItemUnitPriceFromSupplier(item_row: models.Item, logic_row: LogicRow):
-    if not logic_row.is_inserted() or item_row.product.count_suppliers == 0:
-        return
+def ItemUnitPriceFromSupplier(row: models.Item, old_row: models.Item, logic_row):
+    """Formula computes unit_price: AI if suppliers exist, else copy from product."""
+    if row.product.count_suppliers == 0:
+        return row.product.unit_price  # No suppliers - use default
     
+    # Product has suppliers - call AI function (encapsulates Request Pattern)
+    logic_row.log(f"Item - Product has {row.product.count_suppliers} suppliers, invoking AI")
+    return get_supplier_price_from_ai(row=row, logic_row=logic_row)
+```
+
+```python
+# In ai_requests/supplier_selection.py - Reusable AI handler
+def get_supplier_price_from_ai(row, logic_row):
+    """Returns optimal supplier price using AI. Encapsulates Request Pattern."""
     # ✅ Pass CLASS (not instance)
     supplier_req_logic_row = logic_row.new_logic_row(models.SysSupplierReq)
     
     # ✅ Access via .row property
     supplier_req = supplier_req_logic_row.row
     
+    # ✅ Link to parent (optional but recommended)
+    supplier_req_logic_row.link(to_parent=logic_row)
+    
     # Set context
-    supplier_req.item_id = item_row.id
-    supplier_req.product_id = item_row.product_id
+    supplier_req.product_id = row.product_id
+    supplier_req.item_id = row.id
     
-    # ✅ Explicit insert (triggers AI)
-    supplier_req_logic_row.insert(reason="AI supplier selection")
+    # ✅ Explicit insert (triggers AI handler on SysSupplierReq)
+    supplier_req_logic_row.insert(reason="AI supplier selection request")
     
-    # ✅ CRITICAL: Copy result back
-    item_row.unit_price = supplier_req.chosen_unit_price
+    # ✅ Return computed value (functional style)
+    return supplier_req.chosen_unit_price
+
+def declare_logic():
+    from logic_bank.logic_bank import Rule
+    Rule.early_row_event(on_class=models.SysSupplierReq, calling=supplier_id_from_ai)
 ```
 
+**Why This Pattern is Better:**
+- ✅ **Separation of concerns** - Formula doesn't know about Request Pattern
+- ✅ **Functional** - Pure function returns value (no side effects)
+- ✅ **Reusable** - Multiple formulas can call get_supplier_price_from_ai()
+- ✅ **Testable** - Can mock the AI function independently
+- ✅ **Clean abstraction** - Formula treats AI like any function call
+- ✅ **Scannable** - Formula code reduced from 15 lines to 3 lines
+
 **❌ NEVER:**
-- Return AI value from formula (handler never fires)
 - Pass instance to new_logic_row() (TypeError)
 - Access attributes on LogicRow wrapper (AttributeError)
 - Use session.add/flush (bypasses LogicBank)
-- Forget to copy result back (silent failure)
-
-**Reference**: LogicZ at /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/PDL/logicZ/logic_discovery/check_credit.py
+- Mutate input row as side effect (use return instead)
 
 **Detailed patterns with failure modes documented below ⬇️**
 
@@ -203,7 +215,7 @@ Rule.formula(
 **What happens**: Formula executes but AI handler never fires, no audit trail created.
 **Error**: Silent failure - no SysSupplierReq records, unit_price has wrong value
 **Why it fails**: Formula should PRESERVE value, not COMPUTE it via AI
-**Fix**: Use early_row_event + formula preserving pattern (see CORRECT PATTERN below)
+**Fix**: Use Rule.formula with calling= pattern (see CORRECT PATTERN below)
 
 **FAILURE #2: Pass Instance to new_logic_row()**
 ```python
@@ -265,20 +277,23 @@ test_context = _load_test_context(logic_row)  # Never reached in tests
 **Why it fails**: Test context should override API key check
 **Fix**: Check test context FIRST, then API key (see ai_value_computation.py)
 
-**✅ CORRECT PATTERN: Request Pattern (Verified from LogicZ)**
+**✅ CORRECT PATTERN: Formula with calling= (Functional Approach)**
 
-This pattern has been verified working in production:
+This pattern uses Rule.formula with calling= for cleaner, functional-style code:
 
-1. **Early event on TARGET table** (Item, not SysSupplierReq)
-2. **Pass CLASS to new_logic_row()** - `logic_row.new_logic_row(models.SysSupplierReq)`
-3. **Access instance via .row** - `supplier_req = supplier_req_logic_row.row`
-4. **Set context fields** - `supplier_req.item_id = item_row.id`
-5. **Explicit insert** - `supplier_req_logic_row.insert(reason="...")`
-6. **Copy result back** - `item_row.unit_price = supplier_req.chosen_unit_price`
-7. **Formula preserves value** - `else row.unit_price` (not compute it)
+1. **Single formula rule** - `Rule.formula(derive=models.Item.unit_price, calling=ItemUnitPriceFromSupplier)`
+2. **Function returns value** - Pure function with no side effects
+3. **Pass CLASS to new_logic_row()** - `logic_row.new_logic_row(models.SysSupplierReq)`
+4. **Access instance via .row** - `supplier_req = supplier_req_logic_row.row`
+5. **Set context fields** - `supplier_req.item_id = row.id`
+6. **Explicit insert** - `supplier_req_logic_row.insert(reason="...")`
+7. **Return computed value** - `return supplier_req.chosen_unit_price` (functional style)
 
-**Reference**: See LogicZ implementation at:
-/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/PDL/logicZ/logic_discovery/check_credit.py
+**Why This is Better:**
+- Declarative functional programming - system manages execution
+- Pure function reduces side effects
+- Single rule instead of event + formula
+- More idiomatic LogicBank
 
 =============================================================================
 
@@ -531,62 +546,28 @@ def declare_logic():
         as_expression=lambda row: row.quantity * row.unit_price
     )
     
-    # Rule 5a: Early event ON TARGET TABLE (Item) - triggers Request Pattern
+    # Rule 5: Item unit_price - Formula with calling= (functional approach)
     # NOTE: Assumes Product.count_suppliers exists in database schema
     #       If user explicitly requests count rule, add it here
-    Rule.early_row_event(
-        on_class=models.Item,  # ✅ On TARGET table (not SysSupplierReq)
-        calling=lambda row, old_row, logic_row: ItemUnitPriceFromSupplier(row, logic_row)
-    )
-    
-    # Rule 5b: Conditional formula - preserves AI value or uses default
-    Rule.formula(
-        derive=models.Item.unit_price,
-        as_expression=lambda row: (
-            row.product.unit_price if row.product.count_suppliers == 0
-            else row.unit_price  # ✅ Preserve value set by event handler
-        )
-    )
+    Rule.formula(derive=models.Item.unit_price, calling=ItemUnitPriceFromSupplier)
 
 
-def ItemUnitPriceFromSupplier(item_row: models.Item, logic_row: LogicRow):
+def ItemUnitPriceFromSupplier(row: models.Item, old_row: models.Item, logic_row):
     """
-    Request Pattern: Create audit record, trigger AI, copy result.
+    Formula computes unit_price: AI if suppliers exist, else copy from product.
     
-    ✅ This implements the CORRECT pattern that:
-    1. Creates SysSupplierReq audit record via LogicBank
-    2. Triggers AI handler on insert (registered in supplier_selection.py)
-    3. Copies AI result back to Item.unit_price
-    
-    REFERENCE: Matches LogicZ implementation
+    ✅ This implements the clean functional pattern:
+    1. Simple conditional logic
+    2. Calls reusable AI function that returns value
+    3. Formula doesn't know about Request Pattern implementation
     """
-    # Skip if not insert or product has no suppliers
-    if not logic_row.is_inserted() or item_row.product.count_suppliers == 0:
-        return
+    # No suppliers - use product's default price
+    if row.product.count_suppliers == 0:
+        return row.product.unit_price
     
-    app_logger.debug(f"Item - Product has {item_row.product.count_suppliers} suppliers, invoking AI")
-    
-    # ✅ Step 1: Create request using LogicBank (pass CLASS not instance)
-    supplier_req_logic_row = logic_row.new_logic_row(models.SysSupplierReq)
-    
-    # ✅ Step 2: Access instance via .row property
-    supplier_req = supplier_req_logic_row.row
-    
-    # ✅ Step 3: Set request context (FK relationships)
-    supplier_req.item_id = item_row.id
-    supplier_req.product_id = item_row.product_id
-    
-    # ✅ Step 4: Explicit insert triggers AI handler on SysSupplierReq
-    supplier_req_logic_row.insert(reason="AI supplier selection request")
-    
-    # ✅ Step 5: CRITICAL - Copy AI result back to target row
-    item_row.unit_price = supplier_req.chosen_unit_price
-    
-    app_logger.debug(f"Item - AI selected supplier {supplier_req.chosen_supplier_id}, "
-                    f"unit_price: {supplier_req.chosen_unit_price}")
-
-
-app_logger.debug("Check Credit logic with AI supplier selection loaded")
+    # Product has suppliers - call AI function (encapsulates Request Pattern)
+    logic_row.log(f"Item - Product has {row.product.count_suppliers} suppliers, invoking AI")
+    return get_supplier_price_from_ai(row=row, logic_row=logic_row)
 ```
 
 File 2: logic/logic_discovery/ai_requests/__init__.py
@@ -742,69 +723,67 @@ supplier_req_logic_row.insert(reason="...")
 Error: AI runs but Item.unit_price remains unset
 
 =============================================================================
-✅ CORRECT PATTERN: Request Pattern (from LogicZ reference)
+✅ CORRECT PATTERN: Formula with calling= (Functional Approach)
 =============================================================================
 
-When user says "IF product has suppliers THEN use AI ELSE use default", use this exact pattern:
+When user says "IF product has suppliers THEN use AI ELSE use default", use this functional pattern:
 
 NOTE: This pattern ASSUMES Product.count_suppliers exists in the database schema.
       Only add Rule.count() if user explicitly requests it in natural language.
 
-# Step 1: Register early event handler ON TARGET TABLE (fires BEFORE formula)
-Rule.early_row_event(
-    on_class=models.Item,  # ✅ Event on ITEM (not SysSupplierReq)
-    calling=lambda row, old_row, logic_row: ItemUnitPriceFromSupplier(row, logic_row)
-)
+# Single formula computes unit_price by calling function
+Rule.formula(derive=models.Item.unit_price, calling=ItemUnitPriceFromSupplier)
 
-# Step 2: Formula that preserves AI-set value or uses default
-Rule.formula(
-    derive=models.Item.unit_price,
-    as_expression=lambda row: (
-        row.product.unit_price if row.product.count_suppliers == 0
-        else row.unit_price  # ✅ Preserve value set by event handler
-    )
-)
-
-# Step 3: Event handler implements Request Pattern
-def ItemUnitPriceFromSupplier(item_row: models.Item, logic_row: LogicRow):
-    """Request Pattern: Create audit record, trigger AI, copy result."""
-    if not logic_row.is_inserted() or item_row.product.count_suppliers == 0:
-        return
+# In check_credit.py - Formula calls reusable AI function
+def ItemUnitPriceFromSupplier(row: models.Item, old_row: models.Item, logic_row):
+    """Formula computes unit_price: AI if suppliers exist, else copy from product."""
+    if row.product.count_suppliers == 0:
+        return row.product.unit_price  # No suppliers - use default
     
-    # ✅ Step 3a: Create request using new_logic_row (pass CLASS not instance)
+    # Product has suppliers - call AI function (encapsulates Request Pattern)
+    logic_row.log(f"Item - Product has {row.product.count_suppliers} suppliers, invoking AI")
+    return get_supplier_price_from_ai(row=row, logic_row=logic_row)
+
+
+# In ai_requests/supplier_selection.py - Reusable AI handler function
+def get_supplier_price_from_ai(row, logic_row):
+    """Returns optimal supplier price. Encapsulates Request Pattern."""
+    # ✅ Step 1: Create request using new_logic_row (pass CLASS not instance)
     supplier_req_logic_row = logic_row.new_logic_row(models.SysSupplierReq)
     
-    # ✅ Step 3b: Access instance via .row property
+    # ✅ Step 2: Access instance via .row property
     supplier_req = supplier_req_logic_row.row
     
-    # ✅ Step 3c: Set request context
-    supplier_req.item_id = item_row.id
-    supplier_req.product_id = item_row.product_id
+    # ✅ Step 3: Link to parent (optional but recommended)
+    supplier_req_logic_row.link(to_parent=logic_row)
     
-    # ✅ Step 3d: Explicit insert triggers AI handler on SysSupplierReq
+    # ✅ Step 4: Set request context
+    supplier_req.product_id = row.product_id
+    supplier_req.item_id = row.id
+    
+    # ✅ Step 5: Explicit insert triggers AI handler on SysSupplierReq
     supplier_req_logic_row.insert(reason="AI supplier selection request")
     
-    # ✅ Step 3e: CRITICAL - Copy AI result to target row
-    item_row.unit_price = supplier_req.chosen_unit_price
+    # ✅ Step 6: Return computed value (functional style)
+    return supplier_req.chosen_unit_price
 
 ✅ CRITICAL SUCCESS REQUIREMENTS:
-1. ✅ Early event on TARGET table (Item), not request table (SysSupplierReq)
-2. ✅ Pass CLASS to new_logic_row: new_logic_row(models.SysSupplierReq)
-3. ✅ Get instance from .row property: supplier_req = supplier_req_logic_row.row
-4. ✅ Call explicit insert: supplier_req_logic_row.insert(reason="...")
-5. ✅ Copy AI result to target: item_row.unit_price = supplier_req.chosen_unit_price
-6. ✅ Formula preserves value: else row.unit_price (not compute it)
+1. ✅ Formula calls get_supplier_price_from_ai() function (separation of concerns)
+2. ✅ AI function encapsulates Request Pattern (reusable across formulas)
+3. ✅ Function signature: (row, old_row, logic_row) for formula, (row, logic_row) for AI function
+4. ✅ Pass CLASS to new_logic_row: new_logic_row(models.SysSupplierReq)
+5. ✅ Get instance from .row property: supplier_req = supplier_req_logic_row.row
+6. ✅ Call explicit insert: supplier_req_logic_row.insert(reason="...")
+7. ✅ Return computed value (no side effects on row)
 
-Why This Pattern Works:
-- Early event on Item fires when Item is inserted
-- Creates SysSupplierReq audit record via LogicBank (not session.add)
-- Explicit insert() triggers AI handler registered on SysSupplierReq
-- AI handler populates chosen_supplier_id, chosen_unit_price
-- Event handler copies result back to Item.unit_price
-- Formula preserves the value set by event handler
-
-Reference Implementation:
-See: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/PDL/logicZ/logic_discovery/check_credit.py
+Why This Pattern is Better:
+- Separation of concerns - formula doesn't know about Request Pattern
+- Reusable - multiple formulas can call get_supplier_price_from_ai()
+- Testable - can mock AI function independently
+- Scannable - formula reduced from 15 lines to 3 lines
+- Declarative functional programming - pure function returns value
+- Cleaner semantics - "unit_price IS this function's result"
+- More idiomatic LogicBank pattern
 
 # For Request Pattern details, see docs/training/logic_bank_patterns.prompt PATTERN 3
 
