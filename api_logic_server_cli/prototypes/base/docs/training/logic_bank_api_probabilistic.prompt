@@ -3,12 +3,14 @@ title: LogicBank Probabilistic Rules API (AI Value Computation)
 description: Training document for translating natural language into probabilistic value computation rules
 source: Generic training for ApiLogicServer projects with probabilistic rules
 usage: AI assistants read this to generate probabilistic + deterministic rules implementations
-version: 2.5
+version: 2.7
 prerequisites:
   - docs/training/genai_logic_patterns.md (CRITICAL import patterns, auto-discovery fixes)
   - docs/training/logic_bank_patterns.prompt (general patterns - event signatures, logging, request pattern)
   - docs/training/logic_bank_api.prompt (deterministic rule APIs)
-changelog:
+changelog (note to AI: this changelog should be update if you make changes):
+  - 2.7 (Nov 17, 2025): Fixed migration workflow - added admin.yaml update as step 7, removed .link() from examples, added Decimal handling pattern
+  - 2.6 (Nov 17, 2025): functions, not events for item price, no leakage
   - 2.5 (Nov 16, 2025): functions, not events for item price
   - 2.4 (Nov 16, 2025): CLARIFIED - Circular import warning applies only to main declare_logic.py, discovery files are safe with module-level imports
   - 2.3 (Nov 16, 2025): Clarified auto_discovery.py is AUTO-GENERATED (don't modify, already correct)
@@ -69,9 +71,6 @@ def get_supplier_price_from_ai(row, logic_row):
     # ✅ Access via .row property
     supplier_req = supplier_req_logic_row.row
     
-    # ✅ Link to parent (optional but recommended)
-    supplier_req_logic_row.link(to_parent=logic_row)
-    
     # Set context
     supplier_req.product_id = row.product_id
     supplier_req.item_id = row.id
@@ -97,9 +96,23 @@ def declare_logic():
 
 **❌ NEVER:**
 - Pass instance to new_logic_row() (TypeError)
-- Access attributes on LogicRow wrapper (AttributeError)
+- Access attributes on LogicRow wrapper (AttributeError)  
 - Use session.add/flush (bypasses LogicBank)
 - Mutate input row as side effect (use return instead)
+- Use .link() unless SQLAlchemy relationship exists (causes "Missing relationship" error)
+- Mix Decimal × float in math operations (causes TypeError)
+
+**✅ CRITICAL: Decimal Handling in AI Scoring/Evaluation:**
+```python
+# ❌ WRONG - Decimal from DB × float literal
+cost = supplier.unit_cost  # Returns Decimal
+total_score = (cost * 0.5)  # TypeError!
+
+# ✅ CORRECT - Convert Decimal to float first
+cost = float(supplier.unit_cost) if supplier.unit_cost else 999999.0
+lead_time = float(supplier.lead_time_days) if supplier.lead_time_days else 999.0
+total_score = (cost * 0.5) + (lead_time * 0.3)  # Works!
+```
 
 **Detailed patterns with failure modes documented below ⬇️**
 
@@ -384,6 +397,7 @@ STEP 2 - MODEL AND MIGRATION REQUIRED (if table missing):
    4. **AUTOMATICALLY read and clean migration file**: Remove ALL ALTER TABLE operations, keep only CREATE TABLE
    5. **AUTOMATICALLY save cleaned migration file**
    6. Run: `cd database && alembic upgrade head`
+   7. **CRITICAL: Update ui/admin/admin.yaml** - Add SysXxxReq resource with all attributes and relationships
 
 STEP 3 - IMPLEMENT AI_VALUE_COMPUTATION.PY UTILITY (CRITICAL):
    

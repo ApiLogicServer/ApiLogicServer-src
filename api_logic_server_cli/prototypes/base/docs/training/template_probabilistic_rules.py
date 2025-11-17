@@ -8,7 +8,7 @@ For detailed documentation, see:
 
 This file provides a working code reference for copy/paste.
 
-version: 1.0
+version: 1.1: 11/16/2025 - No request pattern leakage
 
 ---
 
@@ -73,26 +73,14 @@ def declare_logic():
     
     # Rule 5b: Item unit_price - Conditional formula with AI integration
     def ItemUnitPriceFromSupplier(row: models.Item, old_row: models.Item, logic_row):
-        """
-        Conditional formula: determines Item.unit_price based on supplier availability.
-        - IF Product has NO suppliers → copy from Product.unit_price
-        - IF Product has suppliers → invoke AI via Request Pattern
+        """Formula computes unit_price: AI if suppliers exist, else copy from product."""
+        from logic.logic_discovery.ai_requests.supplier_selection import get_supplier_price_from_ai
         
-        KEY PATTERN: Use Request Pattern to trigger AI, return computed value
-        """
         if row.product.count_suppliers == 0:
-            logic_row.log(f"Item - Product has no suppliers, using product.unit_price")
             return row.product.unit_price
         
-        # Product has suppliers - create audit request to trigger AI
         logic_row.log(f"Item - Product has {row.product.count_suppliers} suppliers, invoking AI")
-        supplier_req_logic_row = logic_row.new_logic_row(models.SysSupplierReq)
-        supplier_req = supplier_req_logic_row.row
-        supplier_req_logic_row.link(to_parent=logic_row)
-        supplier_req.product_id = row.product_id
-        supplier_req.item_id = row.id
-        supplier_req_logic_row.insert(reason="AI supplier selection request")
-        return supplier_req.chosen_unit_price  # Functional: return computed value
+        return get_supplier_price_from_ai(row=row, logic_row=logic_row)
     
     Rule.formula(derive=models.Item.unit_price, calling=ItemUnitPriceFromSupplier)
     
@@ -103,13 +91,14 @@ The AI handler lives in a separate module for reusability:
 Location: logic/logic_discovery/ai_requests/supplier_selection.py
 
 This module contains:
-1. get_supplier_price_from_ai() - Function that returns computed value
+1. get_supplier_price_from_ai() - Function that encapsulates Request Pattern, returns computed value
 2. supplier_id_from_ai() - Event handler that populates audit fields
 3. declare_logic() - Self-registers the event handler
 
 KEY ARCHITECTURE DECISIONS:
 - AI handler is reusable across multiple use cases
-- Encapsulates Request Pattern implementation details
+- Request Pattern implementation is HIDDEN in get_supplier_price_from_ai()
+- Formula ONLY calls get_supplier_price_from_ai() - NO Request Pattern details
 - Returns computed value (price), audit details stay in request table
 - Auto-discovered and registered by logic_discovery system
 """
@@ -120,6 +109,32 @@ KEY ARCHITECTURE DECISIONS:
 # ========================================
 
 """
+def declare_logic():
+    from logic_bank.logic_bank import Rule
+    Rule.early_row_event(on_class=models.SysSupplierReq, calling=supplier_id_from_ai)
+
+def get_supplier_price_from_ai(row, logic_row):
+    '''
+    Returns optimal supplier price using AI. Encapsulates Request Pattern.
+    
+    This function hides Request Pattern implementation from the formula.
+    Creates SysSupplierReq audit record, triggers AI handler, returns computed price.
+    '''
+    # Create audit request using LogicBank API
+    supplier_req_logic_row = logic_row.new_logic_row(models.SysSupplierReq)
+    supplier_req = supplier_req_logic_row.row
+    supplier_req_logic_row.link(to_parent=logic_row)
+    
+    # Set request context
+    supplier_req.product_id = row.product_id
+    supplier_req.item_id = row.id
+    
+    # Explicit insert triggers AI handler (supplier_id_from_ai)
+    supplier_req_logic_row.insert(reason="AI supplier selection request")
+    
+    # Return computed value
+    return supplier_req.chosen_unit_price
+
 def supplier_id_from_ai(row: models.SysSupplierReq, old_row, logic_row):
     '''
     AI selects optimal supplier based on cost, lead time, and world conditions.
