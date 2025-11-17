@@ -270,8 +270,12 @@ def add_cust(project: Project, models_py_path: Path, project_name: str):
             add_basic_demo_customizations(project=project)
             check_credit_path = project.project_directory_path.joinpath('logic/logic_discovery/check_credit.py')
             if check_credit_path.exists():
-                check_credit_path.unlink()
-                log.debug(f'.. .. ..Deleted logic_discovery/check_credit.py (from readme_ai_mcp)')
+                check_credit_path.rename(check_credit_path.with_suffix('.pyZ'))
+                log.debug(f'.. .. ..Renamed logic_discovery/check_credit.py to .pyZ (from readme_ai_mcp)')
+            supplier_selection_path = project.project_directory_path.joinpath('logic/logic_discovery/ai_requests/supplier_selection.py')
+            if supplier_selection_path.exists():
+                supplier_selection_path.rename(supplier_selection_path.with_suffix('.pyZ'))
+                log.debug(f'.. .. ..Renamed logic_discovery/ai_requests/supplier_selection.py to .pyZ (from readme_ai_mcp)')
         else:
             add_basic_demo_iteration(project=project)
 
