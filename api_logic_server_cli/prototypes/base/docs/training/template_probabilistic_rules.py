@@ -98,10 +98,12 @@ def declare_logic():
         """Formula computes unit_price: AI if suppliers exist, else copy from product."""
         from logic.logic_discovery.ai_requests.supplier_selection import get_supplier_price_from_ai
         
-        if row.product.count_suppliers == 0:
-            return row.product.unit_price
+        # ⚠️ CRITICAL: Assign relationship to variable FIRST to avoid phantom dependencies
+        product = row.product
+        if product.count_suppliers == 0:
+            return product.unit_price
         
-        logic_row.log(f"Item - Product has {row.product.count_suppliers} suppliers, invoking AI")
+        # Minimal logging - compute_ai_value() stores complete audit trail in request/reason/result columns
         return get_supplier_price_from_ai(row=row, logic_row=logic_row)
     
     Rule.formula(derive=models.Item.unit_price, calling=ItemUnitPriceFromSupplier)

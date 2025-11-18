@@ -70,11 +70,15 @@ Rule.formula(derive=models.Item.unit_price, calling=ItemUnitPriceFromSupplier)
 
 def ItemUnitPriceFromSupplier(row: models.Item, old_row: models.Item, logic_row):
     """Formula computes unit_price: AI if suppliers exist, else copy from product."""
-    if row.product.count_suppliers == 0:
-        return row.product.unit_price  # No suppliers - use default
+    # ⚠️ CRITICAL: Assign relationship to variable first (see logic_bank_patterns.prompt PATTERN 5)
+    # ❌ NEVER: if not row.product: - creates phantom 'product:' dependency
+    # ✅ ALWAYS: Access attributes directly without boolean relationship checks
+    product = row.product
+    if product.count_suppliers == 0:
+        return product.unit_price  # No suppliers - use default
     
     # Product has suppliers - call AI function (encapsulates Request Pattern)
-    logic_row.log(f"Item - Product has {row.product.count_suppliers} suppliers, invoking AI")
+    logic_row.log(f"Item - Product has {product.count_suppliers} suppliers, invoking AI")
     return get_supplier_price_from_ai(row=row, logic_row=logic_row)
 ```
 
@@ -592,12 +596,14 @@ def ItemUnitPriceFromSupplier(row: models.Item, old_row: models.Item, logic_row)
     2. Calls reusable AI function that returns value
     3. Formula doesn't know about Request Pattern implementation
     """
+    # ⚠️ CRITICAL: Assign relationship to variable - prevents phantom dependency
+    product = row.product
     # No suppliers - use product's default price
-    if row.product.count_suppliers == 0:
-        return row.product.unit_price
+    if product.count_suppliers == 0:
+        return product.unit_price
     
     # Product has suppliers - call AI function (encapsulates Request Pattern)
-    logic_row.log(f"Item - Product has {row.product.count_suppliers} suppliers, invoking AI")
+    logic_row.log(f"Item - Product has {product.count_suppliers} suppliers, invoking AI")
     return get_supplier_price_from_ai(row=row, logic_row=logic_row)
 ```
 
@@ -768,11 +774,13 @@ Rule.formula(derive=models.Item.unit_price, calling=ItemUnitPriceFromSupplier)
 # In check_credit.py - Formula calls reusable AI function
 def ItemUnitPriceFromSupplier(row: models.Item, old_row: models.Item, logic_row):
     """Formula computes unit_price: AI if suppliers exist, else copy from product."""
-    if row.product.count_suppliers == 0:
-        return row.product.unit_price  # No suppliers - use default
+    # ⚠️ CRITICAL: Assign relationship to variable - prevents phantom dependency
+    product = row.product
+    if product.count_suppliers == 0:
+        return product.unit_price  # No suppliers - use default
     
     # Product has suppliers - call AI function (encapsulates Request Pattern)
-    logic_row.log(f"Item - Product has {row.product.count_suppliers} suppliers, invoking AI")
+    logic_row.log(f"Item - Product has {product.count_suppliers} suppliers, invoking AI")
     return get_supplier_price_from_ai(row=row, logic_row=logic_row)
 
 
@@ -887,7 +895,7 @@ def supplier_id_from_ai(row: models.SysSupplierReq, old_row, logic_row: LogicRow
         fallback='min:unit_cost'             # Strategy when no API key
     )
     
-    logic_row.log(f"AI selection complete: supplier_id={row.chosen_supplier_id}")
+    # ⚠️ NO VERBOSE LOGGING: All details already stored in row.request, row.reason, and result columns
 ```
 
 What compute_ai_value() does automatically (introspection-based pattern):
