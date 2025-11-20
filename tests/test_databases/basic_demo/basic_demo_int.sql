@@ -73,8 +73,8 @@ CREATE TABLE supplier (
 	email VARCHAR, region VARCHAR, 
 	PRIMARY KEY (id)
 );
-INSERT INTO supplier VALUES(1,'Genuine Sheets','Mr. Sheets',NULL,NULL,'Near East');
-INSERT INTO supplier VALUES(2,'Sheets for Less','Sam SheetSplitter',NULL,NULL,'New Jersey');
+INSERT INTO supplier VALUES(1,'Genuine Sheets of Cairo','Mr. Sheets',NULL,NULL,'Near East');
+INSERT INTO supplier VALUES(2,'Sheets for Less of NJ','Sam SheetSplitter',NULL,NULL,'New Jersey');
 CREATE TABLE product_supplier (
 	id INTEGER NOT NULL, 
 	product_id INTEGER, 
