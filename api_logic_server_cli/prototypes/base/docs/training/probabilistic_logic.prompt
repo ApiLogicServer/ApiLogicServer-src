@@ -3,15 +3,12 @@ title: LogicBank Probabilistic Rules API (AI Value Computation)
 description: Training document for translating natural language into probabilistic value computation rules
 source: Generic training for ApiLogicServer projects with probabilistic rules
 usage: AI assistants read this to generate probabilistic + deterministic rules implementations
-version: 3.1
-date: November 20, 2025
+version: 3.0
+date: November 21, 2025
 prerequisites:
   - docs/training/genai_logic_patterns.md (CRITICAL import patterns, auto-discovery)
   - docs/training/logic_bank_patterns.prompt (event signatures, logging, request pattern)
   - docs/training/logic_bank_api.prompt (deterministic rule APIs)
-changelog:
-  - 3.1 (Nov 20, 2025): Removed populate_ai_values dependency, added three-step pattern (test context → API key → fallback)
-  - 3.0 (Nov 17, 2025): Major streamlining
 ---
 
 # AI Value Computation Pattern
@@ -42,18 +39,10 @@ When you see these patterns in user's natural language prompt, AUTOMATICALLY cre
 
 When triggered, automatically generate:
 - SysXxxReq model (if not exists) + Alembic migration
-- logic/logic_discovery/check_credit.py (business logic with deterministic + AI rules)
-- logic/logic_discovery/ai_requests/supplier_selection.py (AI handler with three-step pattern)
-- config/ai_test_context.yaml (test context for reproducible testing)
-- Update ui/admin/admin.yaml (add SysXxxReq resource)
-
-**CRITICAL: Generated AI handler MUST include:**
-1. ✅ Test context loading (_load_test_context helper)
-2. ✅ API key check with graceful fallback
-3. ✅ Complete audit trail (request, reason, fallback_used)
-4. ✅ Type conversions (Decimal for money, int for IDs)
-5. ✅ Clear TODO markers for OpenAI integration
-6. ✅ No external utility dependencies (works immediately)
+- logic/logic_discovery/check_credit.py (business logic)
+- logic/logic_discovery/ai_requests/supplier_selection.py (AI handler)
+- config/ai_test_context.yaml (test context)
+- Update ui/admin/admin.yaml
 
 =============================================================================
 🚨 CRITICAL FIXES FROM DEMO PREP (Nov 16, 2025)
@@ -183,6 +172,23 @@ IF Product has no suppliers, THEN copy from Product.unit_price
 **File: logic/logic_discovery/check_credit.py**
 
 ```python
+"""
+Check Credit Use Case - Business Logic Rules
+
+Natural Language Requirements:
+1. The Customer's balance is less than the credit limit
+2. The Customer's balance is the sum of the Order amount_total where date_shipped is null
+3. The Order's amount_total is the sum of the Item amount
+4. The Item amount is the quantity * unit_price
+5. The Product count suppliers is the sum of the Product Suppliers
+6. Use AI to Set Item field unit_price by finding the optimal Product Supplier
+   based on cost, lead time, and world conditions
+
+version: 3.0
+date: November 21, 2025
+source: docs/training/probabilistic_logic.prompt
+"""
+
 from logic_bank.logic_bank import Rule
 from database import models
 
@@ -240,14 +246,28 @@ def set_item_unit_price_from_supplier(row: models.Item, old_row: models.Item, lo
 
 **File: logic/logic_discovery/ai_requests/supplier_selection.py**
 
+⚠️ **IMPORTANT:** There is NO pre-built `populate_ai_values()` utility in LogicBank.
+You must implement the AI selection logic directly as shown below.
+
 ```python
+"""
+AI Supplier Selection - Probabilistic Logic Handler
+
+This module implements AI-driven supplier selection based on cost, lead time,
+and world conditions. It uses the Request Pattern for full audit trails.
+
+See: https://apilogicserver.github.io/Docs/Logic-Using-AI/
+
+version: 3.0
+date: November 21, 2025
+source: docs/training/probabilistic_logic.prompt
+"""
+
 from logic_bank.exec_row_logic.logic_row import LogicRow
 from logic_bank.logic_bank import Rule
 from database import models
 from decimal import Decimal
-from pathlib import Path
 import os
-import yaml
 
 def declare_logic():
     """
@@ -264,90 +284,139 @@ def select_supplier_via_ai(row: models.SysSupplierReq, old_row, logic_row: Logic
     
     This AI handler gets called automatically when SysSupplierReq is inserted,
     populating AI Results: chosen_supplier_id and chosen_unit_price.
+    
+    Strategy:
+    1. Check for test context first (for reproducible testing)
+    2. If no test context and API key exists, call OpenAI
+    3. If no API key, use fallback (min cost)
     """
     if not logic_row.is_inserted():
         return
     
-    # Get product and its suppliers
+    # Get candidates (suppliers for this product)
     product = row.product
-    suppliers = product.ProductSupplierList
+    suppliers = product.ProductSupplierList if product else []
     
-    if not suppliers or len(suppliers) == 0:
+    if not suppliers:
         logic_row.log("No suppliers available for AI selection")
         row.fallback_used = True
         return
     
-    # STEP 1: Check for test context FIRST (for reproducible testing)
-    test_context = _load_test_context(logic_row)
+    # Check for test context first (BEFORE API key check)
+    from pathlib import Path
+    import yaml
     
-    if test_context and 'selected_supplier_id' in test_context:
-        # Use test context for deterministic testing
-        selected_supplier_id = test_context['selected_supplier_id']
-        selected_supplier = next((s for s in suppliers if s.supplier_id == selected_supplier_id), None)
-        
-        if selected_supplier:
-            logic_row.log(f"Using test context: supplier_id={selected_supplier_id}")
-            row.chosen_supplier_id = selected_supplier.supplier_id
-            row.chosen_unit_price = selected_supplier.unit_cost
-            row.reason = f"Test context selection: {selected_supplier.supplier.name}"
-            row.request = f"Test mode - world conditions: {test_context.get('world_conditions', 'normal')}"
-            row.fallback_used = False
-            return
+    config_dir = Path(__file__).resolve().parent.parent.parent.parent / 'config'
+    context_file = config_dir / 'ai_test_context.yaml'
     
-    # STEP 2: Check for OpenAI API key
-    api_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")
+    selected_supplier = None
     
-    if not api_key:
-        # No API key - use fallback (minimum cost)
-        logic_row.log("No OpenAI API key - using fallback strategy (min cost)")
-        selected_supplier = min(suppliers, key=lambda s: float(s.unit_cost) if s.unit_cost else 999999.0)
+    if context_file.exists():
+        with open(str(context_file), 'r') as f:
+            test_context = yaml.safe_load(f)
+            if test_context and 'selected_supplier_id' in test_context:
+                supplier_id = test_context['selected_supplier_id']
+                selected_supplier = next((s for s in suppliers if s.supplier_id == supplier_id), None)
+                if selected_supplier:
+                    logic_row.log(f"Using test context: supplier {supplier_id}")
+                    row.reason = f"Test context selection (world: {test_context.get('world_conditions', 'normal')})"
+                    row.fallback_used = False
+    
+    # If no test context, try AI (check for API key)
+    if not selected_supplier:
+        api_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")
+        if api_key:
+            try:
+                # Call OpenAI API with structured prompt
+                from openai import OpenAI
+                import json
+                
+                client = OpenAI(api_key=api_key)
+                
+                # Build candidate data for prompt
+                candidate_data = []
+                for supplier in suppliers:
+                    candidate_data.append({
+                        'supplier_id': supplier.supplier_id,
+                        'supplier_name': supplier.supplier.name if supplier.supplier else 'Unknown',
+                        'unit_cost': float(supplier.unit_cost) if supplier.unit_cost else 0.0,
+                        'lead_time_days': supplier.lead_time_days if hasattr(supplier, 'lead_time_days') else None
+                    })
+                
+                world_conditions = test_context.get('world_conditions', 'normal conditions') if 'test_context' in locals() else 'normal conditions'
+                
+                prompt = f"""
+You are a supply chain optimization expert. Select the best supplier from the candidates below.
+
+World Conditions: {world_conditions}
+
+Optimization Goal: fastest reliable delivery while keeping costs reasonable
+
+Candidates:
+{yaml.dump(candidate_data, default_flow_style=False)}
+
+Respond with ONLY valid JSON in this exact format (no markdown, no code blocks):
+{{
+    "chosen_supplier_id": <id>,
+    "chosen_unit_price": <price>,
+    "reason": "<brief explanation>"
+}}
+"""
+                
+                logic_row.log(f"Calling OpenAI API with {len(candidate_data)} candidates")
+                
+                response = client.chat.completions.create(
+                    model="gpt-4o-2024-08-06",
+                    messages=[
+                        {"role": "system", "content": "You are a supply chain expert. Respond with valid JSON only."},
+                        {"role": "user", "content": prompt}
+                    ],
+                    temperature=0.7
+                )
+                
+                response_text = response.choices[0].message.content.strip()
+                logic_row.log(f"OpenAI response: {response_text}")
+                
+                # Parse JSON response
+                ai_result = json.loads(response_text)
+                
+                # Find the selected supplier
+                selected_supplier = next((s for s in suppliers if s.supplier_id == ai_result['chosen_supplier_id']), None)
+                if selected_supplier:
+                    row.reason = ai_result.get('reason', 'AI selection')
+                    row.fallback_used = False
+                else:
+                    logic_row.log(f"AI selected invalid supplier_id {ai_result['chosen_supplier_id']}, using fallback")
+                    selected_supplier = min(suppliers, key=lambda s: float(s.unit_cost) if s.unit_cost else 999999.0)
+                    row.reason = "Fallback: AI returned invalid supplier"
+                    row.fallback_used = True
+                    
+            except Exception as e:
+                logic_row.log(f"OpenAI API error: {e}, using fallback")
+                selected_supplier = min(suppliers, key=lambda s: float(s.unit_cost) if s.unit_cost else 999999.0)
+                row.reason = f"Fallback: API error ({str(e)[:50]})"
+                row.fallback_used = True
+        else:
+            # No API key - use fallback strategy (min cost)
+            logic_row.log("No API key, using fallback: minimum cost")
+            selected_supplier = min(suppliers, key=lambda s: float(s.unit_cost) if s.unit_cost else 999999.0)
+            row.reason = "Fallback: minimum cost supplier (no API key)"
+            row.fallback_used = True
+    
+    # Populate AI results
+    if selected_supplier:
         row.chosen_supplier_id = selected_supplier.supplier_id
         row.chosen_unit_price = selected_supplier.unit_cost
-        row.reason = "Fallback: Selected minimum cost supplier"
-        row.request = "No API key available"
-        row.fallback_used = True
-        return
-    
-    # STEP 3: Call OpenAI API for intelligent selection
-    # (This is where you'd implement OpenAI integration)
-    # For now, use intelligent fallback
-    logic_row.log("AI selection using OpenAI API")
-    
-    # TODO: Replace with actual OpenAI API call
-    # For production, implement: _select_supplier_via_openai(row, suppliers, logic_row)
-    
-    selected_supplier = min(suppliers, key=lambda s: float(s.unit_cost) if s.unit_cost else 999999.0)
-    row.chosen_supplier_id = selected_supplier.supplier_id
-    row.chosen_unit_price = selected_supplier.unit_cost
-    row.reason = f"Selected {selected_supplier.supplier.name} based on cost optimization"
-    row.request = f"Optimize for: fastest reliable delivery, {len(suppliers)} candidates"
-    row.fallback_used = False
-
-def _load_test_context(logic_row: LogicRow):
-    """Load test context from config/ai_test_context.yaml if it exists"""
-    try:
-        current_file = Path(__file__).resolve()
-        project_root = current_file.parent.parent.parent.parent
-        context_file = project_root / 'config' / 'ai_test_context.yaml'
-        
-        if context_file.exists():
-            with open(str(context_file), 'r') as f:
-                context = yaml.safe_load(f)
-                logic_row.log(f"Loaded test context from {context_file.name}")
-                return context
-    except Exception as e:
-        logic_row.log(f"Could not load test context: {e}")
-    
-    return None
+        logic_row.log(f"Selected supplier {selected_supplier.supplier_id} with price {selected_supplier.unit_cost}")
 
 def get_supplier_selection_from_ai(product_id: int, item_id: int, logic_row: LogicRow) -> models.SysSupplierReq:
     """
-    Typically called from Item (Receiver) early event 
-    to get AI results from chosen ProductSupplier (Provider).
-
+    Wrapper function called from Item (Receiver) early event.
+    
     See: https://apilogicserver.github.io/Docs/Logic-Using-AI/
 
     1. Creates SysSupplierReq and inserts it (triggering AI event that populates chosen_* fields)
+    2. Returns populated object
     
     This wrapper hides Request Pattern implementation details.
     See https://apilogicserver.github.io/Docs/Logic/#rule-patterns.
@@ -368,7 +437,7 @@ def get_supplier_selection_from_ai(product_id: int, item_id: int, logic_row: Log
     # 3. Insert triggers early event which populates AI values
     supplier_req_logic_row.insert(reason="AI supplier selection request")
     
-    # 4. Log filled request object for visibility (use request's logic_row to show proper row details)
+    # 4. Log filled request object for visibility
     supplier_req_logic_row.log(f"AI Results from filled request")
     
     # 5. Return populated object (chosen_* fields now set by AI)
@@ -376,6 +445,28 @@ def get_supplier_selection_from_ai(product_id: int, item_id: int, logic_row: Log
 ```
 
 ## Key Patterns
+
+### Key Implementation Points
+
+**Test Context Priority:**
+- ALWAYS check test context BEFORE API key
+- Enables reproducible testing without API calls
+- File: `config/ai_test_context.yaml`
+
+**Fallback Strategy:**
+- When no suppliers: Set `fallback_used = True`, return early
+- When no test context and no API key: Use min cost
+- When no test context but have API key: Call API (or fallback for demo)
+
+**Type Handling:**
+- Foreign keys (IDs): Must be `int` not `Decimal`
+- Prices: Can be `Decimal`
+- Use `float()` for comparisons: `float(s.unit_cost)`
+
+**Path Resolution:**
+- Use `Path(__file__).resolve()` for absolute paths
+- Navigate up from `logic/logic_discovery/ai_requests/` to project root
+- Then down to `config/ai_test_context.yaml`
 
 ### Request Pattern
 
@@ -420,72 +511,6 @@ product_id = Column(ForeignKey('product.id'))
 chosen_supplier_id = Column(ForeignKey('supplier.id'))
 chosen_unit_price = Column(DECIMAL)
 ```
-
-### AI Selection Implementation Pattern
-
-The AI selection handler follows a three-step pattern:
-
-**STEP 1: Check Test Context First** (for reproducible testing)
-```python
-test_context = _load_test_context(logic_row)
-if test_context and 'selected_supplier_id' in test_context:
-    # Use test context - enables deterministic testing without API
-    selected_supplier_id = test_context['selected_supplier_id']
-    selected_supplier = next(s for s in suppliers if s.supplier_id == selected_supplier_id)
-    row.chosen_supplier_id = selected_supplier.supplier_id
-    row.chosen_unit_price = selected_supplier.unit_cost
-    row.fallback_used = False
-    return
-```
-
-**STEP 2: Check for API Key** (production AI)
-```python
-api_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")
-if not api_key:
-    # No API key - use intelligent fallback (e.g., minimum cost)
-    selected_supplier = min(suppliers, key=lambda s: float(s.unit_cost or 999999))
-    row.chosen_supplier_id = selected_supplier.supplier_id
-    row.chosen_unit_price = selected_supplier.unit_cost
-    row.fallback_used = True
-    return
-```
-
-**STEP 3: Call OpenAI API** (when available)
-```python
-# TODO: Implement OpenAI integration here
-# For now, use intelligent fallback
-selected_supplier = min(suppliers, key=lambda s: float(s.unit_cost or 999999))
-row.chosen_supplier_id = selected_supplier.supplier_id
-row.chosen_unit_price = selected_supplier.unit_cost
-row.fallback_used = False
-```
-
-**Helper Function: Load Test Context**
-```python
-def _load_test_context(logic_row: LogicRow):
-    """Load test context from config/ai_test_context.yaml if it exists"""
-    try:
-        current_file = Path(__file__).resolve()
-        project_root = current_file.parent.parent.parent.parent
-        context_file = project_root / 'config' / 'ai_test_context.yaml'
-        
-        if context_file.exists():
-            with open(str(context_file), 'r') as f:
-                context = yaml.safe_load(f)
-                logic_row.log(f"Loaded test context from {context_file.name}")
-                return context
-    except Exception as e:
-        logic_row.log(f"Could not load test context: {e}")
-    return None
-```
-
-**Why This Pattern:**
-✅ Test context checked FIRST - enables reproducible testing
-✅ No external dependencies - works immediately after generation
-✅ Graceful fallback - works without OpenAI API key
-✅ Complete audit trail - tracks request, reason, fallback status
-✅ Type safety - proper Decimal/int conversions
-✅ Clear extension points - TODO markers for OpenAI integration
 
 =============================================================================
 🚨 REQUEST PATTERN FAILURE MODES (Learned from Production Debugging)
@@ -582,6 +607,59 @@ if not api_key:
 ```
 
 Why: Tests should run consistently without requiring OpenAI API key. Test context is explicitly provided configuration that should override API calls.
+
+=============================================================================
+🚨 CRITICAL: Model Relationship Checklist
+=============================================================================
+
+When adding SysXxxReq audit table, **ONLY add relationships where FKs exist:**
+
+✅ **DO add relationships:**
+1. Parent models referenced by FKs in SysXxxReq
+   - Example: `product_id` FK → Add to `Product` class
+   - Example: `item_id` FK → Add to `Item` class
+   - Example: `chosen_supplier_id` FK → Add to `Supplier` class
+
+2. SysXxxReq model itself (parent relationships)
+   - Bidirectional: `back_populates` for standard FKs
+   - Unidirectional: `foreign_keys=[...]` for non-standard FKs
+
+❌ **DO NOT add relationships:**
+1. Models with no FK to/from SysXxxReq
+   - Example: `ProductSupplier` has no FK to `SysSupplierReq`
+   - Example: `Order` has no FK to `SysSupplierReq`
+   - **Adding relationships without FKs causes NoForeignKeysError**
+
+**Verification Before Adding Relationship:**
+```python
+# Before adding relationship to Model X, verify:
+# 1. Does SysXxxReq have FK to Model X? OR
+# 2. Does Model X have FK to SysXxxReq?
+# If NO to both → DO NOT add relationship
+```
+
+**Common Mistake:**
+```python
+# ❌ WRONG - ProductSupplier has no FK relationship to SysSupplierReq
+class ProductSupplier(Base):
+    SysSupplierReqList : Mapped[List["SysSupplierReq"]] = relationship(...)
+# This will cause: NoForeignKeysError at server startup
+```
+
+**Correct Pattern:**
+```python
+# ✅ CORRECT - Only add where FK exists
+class Product(Base):  # Has FK from SysSupplierReq.product_id
+    SysSupplierReqList : Mapped[List["SysSupplierReq"]] = relationship(back_populates="product")
+
+class Item(Base):  # Has FK from SysSupplierReq.item_id
+    SysSupplierReqList : Mapped[List["SysSupplierReq"]] = relationship(back_populates="item")
+
+class Supplier(Base):  # Has FK from SysSupplierReq.chosen_supplier_id
+    SysSupplierReqList : Mapped[List["SysSupplierReq"]] = relationship(foreign_keys="SysSupplierReq.chosen_supplier_id")
+
+# ✅ DO NOT add relationship to ProductSupplier (no FK exists)
+```
 
 ### OpenAI API (v1.0.0+)
 

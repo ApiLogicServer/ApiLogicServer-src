@@ -5,10 +5,17 @@ This template provides a clean reference implementation for AI value computation
 alongside deterministic rules, using the Request Pattern with early events.
 
 Pattern: Early event with wrapper function that returns populated request object
-Version: 3.0
-Date: November 20, 2025
+version: 3.0
+date: November 21, 2025
+source: docs/training/probabilistic_template.py
 
 See docs/training/probabilistic_logic.prompt for complete documentation.
+
+IMPORTANT: When generating code from this template, include version tracking
+in generated files (supplier_selection.py, check_credit.py) with:
+  version: 3.0
+  date: [current date]
+  source: docs/training/probabilistic_logic.prompt
 """
 
 import database.models as models
@@ -44,6 +51,8 @@ def set_item_unit_price_from_supplier(row: models.Item, old_row: models.Item, lo
     """
     Early event: Sets unit_price using AI if suppliers exist, else copy from product.
     
+    Fires on insert AND when product_id changes (same semantics as copy rule).
+    
     Pattern:
     1. Check condition (suppliers available?)
     2. Call wrapper function
@@ -51,7 +60,8 @@ def set_item_unit_price_from_supplier(row: models.Item, old_row: models.Item, lo
     """
     from logic.logic_discovery.ai_requests.supplier_selection import get_supplier_selection_from_ai
     
-    if not logic_row.is_inserted():
+    # Process on insert OR when product_id changes
+    if not (logic_row.is_inserted() or row.product_id != old_row.product_id):
         return
     
     product = row.product
@@ -78,75 +88,188 @@ Location: logic/logic_discovery/ai_requests/supplier_selection.py
 
 This module contains:
 1. declare_logic() - Registers early event on SysSupplierReq
-2. select_supplier_via_ai() - AI handler that calls populate_ai_values()
+2. select_supplier_via_ai() - AI handler that implements supplier selection
 3. get_supplier_selection_from_ai() - Wrapper that hides Request Pattern
+
+version: 3.0
+date: November 21, 2025
+source: docs/training/probabilistic_template.py
 """
 
 from logic_bank.exec_row_logic.logic_row import LogicRow
 from logic_bank.logic_bank import Rule
 from database import models
-# from logic.system.populate_ai_values import populate_ai_values
-#
-# def declare_logic():
-#     """
-#     Register early event on SysSupplierReq to populate chosen_* fields via AI.
-#     
-#     This Request Pattern approach provides full audit trails and separation of concerns.
-#     See: https://apilogicserver.github.io/Docs/Logic/#rule-patterns
-#     """
-#     Rule.early_row_event(on_class=models.SysSupplierReq, calling=select_supplier_via_ai)
-#
-# def select_supplier_via_ai(row: models.SysSupplierReq, old_row, logic_row: LogicRow):
-#     """
-#     Early event (called via insert from wrapper) to populate chosen_* fields via AI.
-#     
-#     This AI handler gets called automatically when SysSupplierReq is inserted,
-#     populating AI Results: chosen_supplier_id and chosen_unit_price.
-#     """
-#     if not logic_row.is_inserted():
-#         return
-#     
-#     populate_ai_values(
-#         row=row,
-#         logic_row=logic_row,
-#         candidates='product.ProductSupplierList',
-#         optimize_for='fastest reliable delivery while keeping costs reasonable',
-#         fallback='min:unit_cost'
-#     )
-#
-# def get_supplier_selection_from_ai(product_id: int, item_id: int, logic_row: LogicRow) -> models.SysSupplierReq:
-#     """
-#     Typically called from Item (Receiver) early event 
-#     to get AI results from chosen ProductSupplier (Provider).
-# 
-#     See: https://apilogicserver.github.io/Docs/Logic-Using-AI/
-# 
-#     1. Creates SysSupplierReq and inserts it (triggering AI event that populates chosen_* fields)
-#     
-#     This wrapper hides Request Pattern implementation details.
-#     See https://apilogicserver.github.io/Docs/Logic/#rule-patterns.
-# 
-#     Returns populated SysSupplierReq object with:
-#     - Standard AI Audit: request, reason, created_on, fallback_used
-#     - Parent Context Links: item_id, product_id
-#     - AI Results: chosen_supplier_id, chosen_unit_price
-#     """
-#     # 1. Create request row using parent's logic_row
-#     supplier_req_logic_row = logic_row.new_logic_row(models.SysSupplierReq)
-#     supplier_req = supplier_req_logic_row.row
-#     
-#     # 2. Set parent context (FK links)
-#     supplier_req.product_id = product_id
-#     supplier_req.item_id = item_id
-#     
-#     # 3. Insert triggers early event which populates AI values
-#     supplier_req_logic_row.insert(reason="AI supplier selection request")
-#     
-#     # 4. Log filled request object for visibility (use request's logic_row to show proper row details)
-#     supplier_req_logic_row.log(f"AI Results from filled request")
-#     
-#     # 5. Return populated object (chosen_* fields now set by AI)
-#     return supplier_req
+from decimal import Decimal
+import os
+
+def declare_logic():
+    """
+    Register early event on SysSupplierReq to populate chosen_* fields via AI.
+    
+    This Request Pattern approach provides full audit trails and separation of concerns.
+    See: https://apilogicserver.github.io/Docs/Logic/#rule-patterns
+    """
+    Rule.early_row_event(on_class=models.SysSupplierReq, calling=select_supplier_via_ai)
+
+def select_supplier_via_ai(row: models.SysSupplierReq, old_row, logic_row: LogicRow):
+    """
+    Early event (called via insert from wrapper) to populate chosen_* fields via AI.
+    
+    This AI handler gets called automatically when SysSupplierReq is inserted,
+    populating AI Results: chosen_supplier_id and chosen_unit_price.
+    """
+    if not logic_row.is_inserted():
+        return
+    
+    # Get candidates (suppliers for this product)
+    product = row.product
+    suppliers = product.ProductSupplierList if product else []
+    
+    if not suppliers:
+        logic_row.log("No suppliers available for AI selection")
+        row.fallback_used = True
+        return
+    
+    # Check for test context first (BEFORE API key check)
+    from pathlib import Path
+    import yaml
+    
+    config_dir = Path(__file__).resolve().parent.parent.parent.parent / 'config'
+    context_file = config_dir / 'ai_test_context.yaml'
+    
+    selected_supplier = None
+    
+    if context_file.exists():
+        with open(str(context_file), 'r') as f:
+            test_context = yaml.safe_load(f)
+            if test_context and 'selected_supplier_id' in test_context:
+                supplier_id = test_context['selected_supplier_id']
+                selected_supplier = next((s for s in suppliers if s.supplier_id == supplier_id), None)
+                if selected_supplier:
+                    logic_row.log(f"Using test context: supplier {supplier_id}")
+                    row.reason = f"Test context selection (world: {test_context.get('world_conditions', 'normal')})"
+                    row.fallback_used = False
+    
+    # If no test context, try AI (check for API key)
+    if not selected_supplier:
+        api_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")
+        if api_key:
+            try:
+                # Call OpenAI API with structured prompt
+                from openai import OpenAI
+                import json
+                
+                client = OpenAI(api_key=api_key)
+                
+                # Build candidate data for prompt
+                candidate_data = []
+                for supplier in suppliers:
+                    candidate_data.append({
+                        'supplier_id': supplier.supplier_id,
+                        'supplier_name': supplier.supplier.name if supplier.supplier else 'Unknown',
+                        'unit_cost': float(supplier.unit_cost) if supplier.unit_cost else 0.0,
+                        'lead_time_days': supplier.lead_time_days if hasattr(supplier, 'lead_time_days') else None
+                    })
+                
+                world_conditions = test_context.get('world_conditions', 'normal conditions') if 'test_context' in locals() else 'normal conditions'
+                
+                prompt = f"""
+You are a supply chain optimization expert. Select the best supplier from the candidates below.
+
+World Conditions: {world_conditions}
+
+Optimization Goal: fastest reliable delivery while keeping costs reasonable
+
+Candidates:
+{yaml.dump(candidate_data, default_flow_style=False)}
+
+Respond with ONLY valid JSON in this exact format (no markdown, no code blocks):
+{{
+    "chosen_supplier_id": <id>,
+    "chosen_unit_price": <price>,
+    "reason": "<brief explanation>"
+}}
+"""
+                
+                logic_row.log(f"Calling OpenAI API with {len(candidate_data)} candidates")
+                
+                response = client.chat.completions.create(
+                    model="gpt-4o-2024-08-06",
+                    messages=[
+                        {"role": "system", "content": "You are a supply chain expert. Respond with valid JSON only."},
+                        {"role": "user", "content": prompt}
+                    ],
+                    temperature=0.7
+                )
+                
+                response_text = response.choices[0].message.content.strip()
+                logic_row.log(f"OpenAI response: {response_text}")
+                
+                # Parse JSON response
+                ai_result = json.loads(response_text)
+                
+                # Find the selected supplier
+                selected_supplier = next((s for s in suppliers if s.supplier_id == ai_result['chosen_supplier_id']), None)
+                if selected_supplier:
+                    row.reason = ai_result.get('reason', 'AI selection')
+                    row.fallback_used = False
+                else:
+                    logic_row.log(f"AI selected invalid supplier_id {ai_result['chosen_supplier_id']}, using fallback")
+                    selected_supplier = min(suppliers, key=lambda s: float(s.unit_cost) if s.unit_cost else 999999.0)
+                    row.reason = "Fallback: AI returned invalid supplier"
+                    row.fallback_used = True
+                    
+            except Exception as e:
+                logic_row.log(f"OpenAI API error: {e}, using fallback")
+                selected_supplier = min(suppliers, key=lambda s: float(s.unit_cost) if s.unit_cost else 999999.0)
+                row.reason = f"Fallback: API error ({str(e)[:50]})"
+                row.fallback_used = True
+        else:
+            # No API key - use fallback strategy (min cost)
+            logic_row.log("No API key, using fallback: minimum cost")
+            selected_supplier = min(suppliers, key=lambda s: float(s.unit_cost) if s.unit_cost else 999999.0)
+            row.reason = "Fallback: minimum cost supplier (no API key)"
+            row.fallback_used = True
+    
+    # Populate AI results
+    if selected_supplier:
+        row.chosen_supplier_id = selected_supplier.supplier_id
+        row.chosen_unit_price = selected_supplier.unit_cost
+        logic_row.log(f"Selected supplier {selected_supplier.supplier_id} with price {selected_supplier.unit_cost}")
+
+def get_supplier_selection_from_ai(product_id: int, item_id: int, logic_row: LogicRow) -> models.SysSupplierReq:
+    """
+    Typically called from Item (Receiver) early event 
+    to get AI results from chosen ProductSupplier (Provider).
+
+    See: https://apilogicserver.github.io/Docs/Logic-Using-AI/
+
+    1. Creates SysSupplierReq and inserts it (triggering AI event that populates chosen_* fields)
+    
+    This wrapper hides Request Pattern implementation details.
+    See https://apilogicserver.github.io/Docs/Logic/#rule-patterns.
+
+    Returns populated SysSupplierReq object with:
+    - Standard AI Audit: request, reason, created_on, fallback_used
+    - Parent Context Links: item_id, product_id
+    - AI Results: chosen_supplier_id, chosen_unit_price
+    """
+    # 1. Create request row using parent's logic_row
+    supplier_req_logic_row = logic_row.new_logic_row(models.SysSupplierReq)
+    supplier_req = supplier_req_logic_row.row
+    
+    # 2. Set parent context (FK links)
+    supplier_req.product_id = product_id
+    supplier_req.item_id = item_id
+    
+    # 3. Insert triggers early event which populates AI values
+    supplier_req_logic_row.insert(reason="AI supplier selection request")
+    
+    # 4. Log filled request object for visibility
+    supplier_req_logic_row.log(f"AI Results from filled request")
+    
+    # 5. Return populated object (chosen_* fields now set by AI)
+    return supplier_req
 
 
 """
