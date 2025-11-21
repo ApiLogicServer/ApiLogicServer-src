@@ -139,10 +139,13 @@ from database import models
 #     supplier_req.product_id = product_id
 #     supplier_req.item_id = item_id
 #     
-#     # 3. Insert triggers early event which calls populate_ai_values
+#     # 3. Insert triggers early event which populates AI values
 #     supplier_req_logic_row.insert(reason="AI supplier selection request")
 #     
-#     # 4. Return populated object (chosen_* fields now set by AI)
+#     # 4. Log filled request object for visibility (use request's logic_row to show proper row details)
+#     supplier_req_logic_row.log(f"AI Results from filled request")
+#     
+#     # 5. Return populated object (chosen_* fields now set by AI)
 #     return supplier_req
 
 
