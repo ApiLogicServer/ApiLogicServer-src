@@ -5,7 +5,7 @@ This template provides a clean reference implementation for AI value computation
 alongside deterministic rules, using the Request Pattern with early events.
 
 Pattern: Early event with wrapper function that returns populated request object
-version: 3.0
+version: 3.1 - proper initialization of ai_request data
 date: November 21, 2025
 source: docs/training/probabilistic_template.py
 
@@ -59,6 +59,10 @@ def set_item_unit_price_from_supplier(row: models.Item, old_row: models.Item, lo
     3. Extract needed value from returned object
     """
     from logic.logic_discovery.ai_requests.supplier_selection import get_supplier_selection_from_ai
+    
+    # Skip on delete (old_row is None) - CRITICAL: Check this FIRST
+    if logic_row.is_deleted():
+        return
     
     # Process on insert OR when product_id changes
     if not (logic_row.is_inserted() or row.product_id != old_row.product_id):
@@ -126,6 +130,8 @@ def select_supplier_via_ai(row: models.SysSupplierReq, old_row, logic_row: Logic
     suppliers = product.ProductSupplierList if product else []
     
     if not suppliers:
+        row.request = f"Select supplier for {product.name if product else 'unknown product'} - No suppliers available"
+        row.reason = "No suppliers exist for this product"
         logic_row.log("No suppliers available for AI selection")
         row.fallback_used = True
         return
@@ -146,8 +152,11 @@ def select_supplier_via_ai(row: models.SysSupplierReq, old_row, logic_row: Logic
                 supplier_id = test_context['selected_supplier_id']
                 selected_supplier = next((s for s in suppliers if s.supplier_id == supplier_id), None)
                 if selected_supplier:
+                    candidate_summary = ', '.join([f"{s.supplier.name if s.supplier else 'Unknown'}(${s.unit_cost})" for s in suppliers])
+                    world = test_context.get('world_conditions', 'normal conditions')
+                    row.request = f"Select supplier for {product.name}: Candidates=[{candidate_summary}], World={world}"
+                    row.reason = f"TEST MODE: Selected {selected_supplier.supplier.name if selected_supplier.supplier else 'supplier'} (${selected_supplier.unit_cost}) - world: {world}"
                     logic_row.log(f"Using test context: supplier {supplier_id}")
-                    row.reason = f"Test context selection (world: {test_context.get('world_conditions', 'normal')})"
                     row.fallback_used = False
     
     # If no test context, try AI (check for API key)
@@ -191,6 +200,10 @@ Respond with ONLY valid JSON in this exact format (no markdown, no code blocks):
 }}
 """
                 
+                # Populate request field with actual prompt summary
+                candidate_list = ', '.join([c['supplier_name'] + '($' + str(c['unit_cost']) + ')' for c in candidate_data])
+                row.request = f"AI Prompt: Product={product.name}, World={world_conditions}, Candidates={len(candidate_data)}: {candidate_list}"
+                
                 logic_row.log(f"Calling OpenAI API with {len(candidate_data)} candidates")
                 
                 response = client.chat.completions.create(
@@ -211,29 +224,37 @@ Respond with ONLY valid JSON in this exact format (no markdown, no code blocks):
                 # Find the selected supplier
                 selected_supplier = next((s for s in suppliers if s.supplier_id == ai_result['chosen_supplier_id']), None)
                 if selected_supplier:
-                    row.reason = ai_result.get('reason', 'AI selection')
+                    supplier_name = selected_supplier.supplier.name if selected_supplier.supplier else 'Unknown'
+                    row.reason = f"AI: {supplier_name} (${selected_supplier.unit_cost}) - {ai_result.get('reason', 'No reason provided')}"
                     row.fallback_used = False
                 else:
                     logic_row.log(f"AI selected invalid supplier_id {ai_result['chosen_supplier_id']}, using fallback")
                     selected_supplier = min(suppliers, key=lambda s: float(s.unit_cost) if s.unit_cost else 999999.0)
-                    row.reason = "Fallback: AI returned invalid supplier"
+                    fallback_name = selected_supplier.supplier.name if selected_supplier.supplier else 'Unknown'
+                    row.reason = f"Fallback: {fallback_name} (${selected_supplier.unit_cost}) - AI returned invalid supplier"
                     row.fallback_used = True
                     
             except Exception as e:
                 logic_row.log(f"OpenAI API error: {e}, using fallback")
                 selected_supplier = min(suppliers, key=lambda s: float(s.unit_cost) if s.unit_cost else 999999.0)
-                row.reason = f"Fallback: API error ({str(e)[:50]})"
+                fallback_name = selected_supplier.supplier.name if selected_supplier.supplier else 'Unknown'
+                candidate_summary = ', '.join([f"{s.supplier.name if s.supplier else 'Unknown'}(${s.unit_cost})" for s in suppliers])
+                row.request = f"Select supplier for {product.name}: Candidates=[{candidate_summary}] - API ERROR"
+                row.reason = f"Fallback: {fallback_name} (${selected_supplier.unit_cost}) - API error: {str(e)[:100]}"
                 row.fallback_used = True
         else:
             # No API key - use fallback strategy (min cost)
             logic_row.log("No API key, using fallback: minimum cost")
             selected_supplier = min(suppliers, key=lambda s: float(s.unit_cost) if s.unit_cost else 999999.0)
-            row.reason = "Fallback: minimum cost supplier (no API key)"
+            fallback_name = selected_supplier.supplier.name if selected_supplier.supplier else 'Unknown'
+            candidate_summary = ', '.join([f"{s.supplier.name if s.supplier else 'Unknown'}(${s.unit_cost})" for s in suppliers])
+            row.request = f"Select supplier for {product.name}: Candidates=[{candidate_summary}] - NO API KEY"
+            row.reason = f"Fallback: {fallback_name} (${selected_supplier.unit_cost}) - minimum cost (no API key)"
             row.fallback_used = True
     
     # Populate AI results
     if selected_supplier:
-        row.chosen_supplier_id = selected_supplier.supplier_id
+        row.chosen_supplier_id = int(selected_supplier.supplier_id)  # Must be int for SQLite FK
         row.chosen_unit_price = selected_supplier.unit_cost
         logic_row.log(f"Selected supplier {selected_supplier.supplier_id} with price {selected_supplier.unit_cost}")
 
@@ -266,7 +287,8 @@ def get_supplier_selection_from_ai(product_id: int, item_id: int, logic_row: Log
     supplier_req_logic_row.insert(reason="AI supplier selection request")
     
     # 4. Log filled request object for visibility
-    supplier_req_logic_row.log(f"AI Results from filled request")
+    logic_row.log(f"AI Request: {supplier_req.request}")
+    logic_row.log(f"AI Results: supplier_id={supplier_req.chosen_supplier_id}, price={supplier_req.chosen_unit_price}, reason={supplier_req.reason}")
     
     # 5. Return populated object (chosen_* fields now set by AI)
     return supplier_req

@@ -370,6 +370,37 @@ def ai_event_populates_multiple_fields(row, old_row, logic_row):
 - Is event checking `logic_row.is_inserted()`?
 - Is event handler using `early_row_event` (not `row_event`)?
 
+### Issue: `request` and `reason` fields contain generic/incomplete data
+**Problem:** Audit trail lacks actionable details for debugging/compliance
+**Solution:** Populate fields in AI handler (where data exists) with complete information:
+```python
+# ✅ CORRECT - In AI handler, populate with full context
+candidate_summary = ', '.join([f"{s.supplier.name}(${s.unit_cost})" for s in suppliers])
+row.request = f"Select supplier for {product.name}: Candidates=[{candidate_summary}], World={world}"
+row.reason = f"AI: {supplier_name} (${price}) - {ai_explanation}"
+
+# ❌ WRONG - Generic constants with no business context
+row.request = "Select supplier"
+row.reason = "AI selection"
+```
+**Key:** Include supplier names, prices, world conditions - not just IDs
+
+### Issue: "AttributeError: 'NoneType' object has no attribute 'product_id'" on delete
+**Problem:** Early events fire on delete but `old_row` is None
+**Solution:** Check `is_deleted()` FIRST before accessing `old_row`:
+```python
+def my_early_event(row, old_row, logic_row):
+    # ✅ CORRECT - Check delete first
+    if logic_row.is_deleted():
+        return
+    
+    # Now safe to access old_row
+    if row.product_id != old_row.product_id:
+        # handle change
+        pass
+```
+**Rule:** ALL early events that access `old_row` MUST check `is_deleted()` first
+
 ### Issue: "Session is already flushing" error
 **Solution:** Use LogicBank triggered insert pattern:
 ```python

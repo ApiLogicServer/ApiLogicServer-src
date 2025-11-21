@@ -3,7 +3,7 @@ title: LogicBank Probabilistic Rules API (AI Value Computation)
 description: Training document for translating natural language into probabilistic value computation rules
 source: Generic training for ApiLogicServer projects with probabilistic rules
 usage: AI assistants read this to generate probabilistic + deterministic rules implementations
-version: 3.0
+version: 3.1 - proper initialization of ai_request data
 date: November 21, 2025
 prerequisites:
   - docs/training/genai_logic_patterns.md (CRITICAL import patterns, auto-discovery)
@@ -45,10 +45,10 @@ When triggered, automatically generate:
 - Update ui/admin/admin.yaml
 
 =============================================================================
-🚨 CRITICAL FIXES FROM DEMO PREP (Nov 16, 2025)
+🚨 CRITICAL FIXES FROM PRODUCTION DEBUGGING (Nov 16-21, 2025)
 =============================================================================
 
-These errors occurred during demo prep testing and MUST be avoided:
+These errors occurred during demo prep and production testing and MUST be avoided:
 
 **ERROR 1: Circular Import - "Session is already flushing"**
 
@@ -121,6 +121,115 @@ project_root = current_file.parent.parent.parent.parent
 context_file = project_root / 'config' / 'ai_test_context.yaml'
 if context_file.exists():
     with open(str(context_file), 'r') as f:  # ✅ Convert to string
+```
+
+**ERROR 4: Missing `is_deleted()` Check in Early Events (Nov 21, 2025)**
+
+❌ Problem: Early events fire on delete, but `old_row` is None
+```python
+def set_item_unit_price_from_supplier(row: models.Item, old_row: models.Item, logic_row):
+    # Process on insert OR when product_id changes
+    if not (logic_row.is_inserted() or row.product_id != old_row.product_id):  # ❌ CRASH on delete
+        return
+```
+
+✅ Solution: Check `is_deleted()` FIRST, before accessing `old_row`
+```python
+def set_item_unit_price_from_supplier(row: models.Item, old_row: models.Item, logic_row):
+    from logic.logic_discovery.ai_requests.supplier_selection import get_supplier_selection_from_ai
+    
+    # Skip on delete (old_row is None) - CHECK THIS FIRST
+    if logic_row.is_deleted():
+        return
+    
+    # Now safe to access old_row
+    if not (logic_row.is_inserted() or row.product_id != old_row.product_id):
+        return
+```
+
+**Rule**: ALL early events that access `old_row` MUST check `is_deleted()` first.
+
+**ERROR 5: Incomplete Audit Trail - Empty `request` and Brief `reason` Fields (Nov 21, 2025)**
+
+❌ Problem: Request and reason fields not fully populated with actual data
+```python
+# In wrapper function
+supplier_req.request = f"Select optimal supplier for {product_name}"  # ❌ Generic, no context
+# In AI handler  
+row.reason = "Test context selection"  # ❌ Missing details
+```
+
+**What happens**: SysSupplierReq records lack actionable audit trail
+**Impact**: Cannot debug AI decisions, no visibility into what candidates were considered
+**Business problem**: Compliance, explainability, debugging impossible
+
+✅ Solution: Populate `request` with FULL context in AI handler (where data exists)
+```python
+# In AI handler (select_supplier_via_ai) - NOT in wrapper
+def select_supplier_via_ai(row: models.SysSupplierReq, old_row, logic_row: LogicRow):
+    """
+    Populate request and reason fields with COMPLETE information:
+    - request: Full context (product, candidates with prices, world conditions)
+    - reason: Decision details (selected supplier name, price, full AI explanation)
+    """
+    product = row.product
+    suppliers = product.ProductSupplierList if product else []
+    
+    # Build candidate summary for request field
+    candidate_summary = ', '.join([
+        f"{s.supplier.name if s.supplier else 'Unknown'}(${s.unit_cost})" 
+        for s in suppliers
+    ])
+    
+    # TEST CONTEXT case
+    if test_context:
+        world = test_context.get('world_conditions', 'normal conditions')
+        row.request = f"Select supplier for {product.name}: Candidates=[{candidate_summary}], World={world}"
+        row.reason = f"TEST MODE: Selected {selected_supplier.supplier.name} (${selected_supplier.unit_cost}) - world: {world}"
+    
+    # AI CALL case
+    elif api_key:
+        # Populate BEFORE calling AI
+        row.request = f"AI Prompt: Product={product.name}, World={world_conditions}, Candidates={len(candidate_data)}: {candidate_summary}"
+        
+        # After AI responds
+        supplier_name = selected_supplier.supplier.name if selected_supplier.supplier else 'Unknown'
+        row.reason = f"AI: {supplier_name} (${selected_supplier.unit_cost}) - {ai_result.get('reason', 'No reason provided')}"
+    
+    # FALLBACK case
+    else:
+        row.request = f"Select supplier for {product.name}: Candidates=[{candidate_summary}] - NO API KEY"
+        fallback_name = selected_supplier.supplier.name if selected_supplier.supplier else 'Unknown'
+        row.reason = f"Fallback: {fallback_name} (${selected_supplier.unit_cost}) - minimum cost (no API key)"
+```
+
+**Key Points:**
+- ✅ `request` shows WHAT was asked (product, all candidates, world context)
+- ✅ `reason` shows WHY decision was made (selected supplier details, AI explanation)
+- ✅ Both fields populated in AI handler (has access to all data)
+- ✅ Includes supplier NAMES and PRICES (not just IDs)
+- ✅ Different patterns for test/AI/fallback modes
+- ❌ DO NOT populate in wrapper (doesn't have candidate data)
+
+**Wrapper function should:**
+```python
+def get_supplier_selection_from_ai(product_id: int, item_id: int, logic_row: LogicRow):
+    supplier_req_logic_row = logic_row.new_logic_row(models.SysSupplierReq)
+    supplier_req = supplier_req_logic_row.row
+    
+    # Set parent context (FK links)
+    # Note: request/reason populated by AI event handler with actual data
+    supplier_req.product_id = product_id
+    supplier_req.item_id = item_id
+    
+    # Insert triggers AI handler which populates request/reason
+    supplier_req_logic_row.insert(reason="AI supplier selection request")
+    
+    # Log results for visibility
+    logic_row.log(f"AI Request: {supplier_req.request}")
+    logic_row.log(f"AI Results: supplier_id={supplier_req.chosen_supplier_id}, price={supplier_req.chosen_unit_price}, reason={supplier_req.reason}")
+    
+    return supplier_req
 ```
 
 See docs/training/genai_logic_patterns.md for complete patterns.
@@ -203,6 +312,10 @@ def set_item_unit_price_from_supplier(row: models.Item, old_row: models.Item, lo
     Fires on insert AND when product_id changes (same semantics as copy rule).
     """
     from logic.logic_discovery.ai_requests.supplier_selection import get_supplier_selection_from_ai
+    
+    # Skip on delete (old_row is None) - CRITICAL: Check this FIRST
+    if logic_row.is_deleted():
+        return
     
     # Process on insert OR when product_id changes
     if not (logic_row.is_inserted() or row.product_id != old_row.product_id):
@@ -298,6 +411,8 @@ def select_supplier_via_ai(row: models.SysSupplierReq, old_row, logic_row: Logic
     suppliers = product.ProductSupplierList if product else []
     
     if not suppliers:
+        row.request = f"Select supplier for {product.name if product else 'unknown product'} - No suppliers available"
+        row.reason = "No suppliers exist for this product"
         logic_row.log("No suppliers available for AI selection")
         row.fallback_used = True
         return
@@ -306,8 +421,9 @@ def select_supplier_via_ai(row: models.SysSupplierReq, old_row, logic_row: Logic
     from pathlib import Path
     import yaml
     
-    config_dir = Path(__file__).resolve().parent.parent.parent.parent / 'config'
-    context_file = config_dir / 'ai_test_context.yaml'
+    current_file = Path(__file__).resolve()
+    project_root = current_file.parent.parent.parent.parent
+    context_file = project_root / 'config' / 'ai_test_context.yaml'
     
     selected_supplier = None
     
@@ -318,8 +434,12 @@ def select_supplier_via_ai(row: models.SysSupplierReq, old_row, logic_row: Logic
                 supplier_id = test_context['selected_supplier_id']
                 selected_supplier = next((s for s in suppliers if s.supplier_id == supplier_id), None)
                 if selected_supplier:
+                    # Build candidate summary for request field
+                    candidate_summary = ', '.join([f"{s.supplier.name if s.supplier else 'Unknown'}(${s.unit_cost})" for s in suppliers])
+                    world = test_context.get('world_conditions', 'normal conditions')
+                    row.request = f"Select supplier for {product.name}: Candidates=[{candidate_summary}], World={world}"
+                    row.reason = f"TEST MODE: Selected {selected_supplier.supplier.name if selected_supplier.supplier else 'supplier'} (${selected_supplier.unit_cost}) - world: {world}"
                     logic_row.log(f"Using test context: supplier {supplier_id}")
-                    row.reason = f"Test context selection (world: {test_context.get('world_conditions', 'normal')})"
                     row.fallback_used = False
     
     # If no test context, try AI (check for API key)
@@ -363,6 +483,10 @@ Respond with ONLY valid JSON in this exact format (no markdown, no code blocks):
 }}
 """
                 
+                # Populate request field with actual prompt summary
+                candidate_list = ', '.join([c['supplier_name'] + '($' + str(c['unit_cost']) + ')' for c in candidate_data])
+                row.request = f"AI Prompt: Product={product.name}, World={world_conditions}, Candidates={len(candidate_data)}: {candidate_list}"
+                
                 logic_row.log(f"Calling OpenAI API with {len(candidate_data)} candidates")
                 
                 response = client.chat.completions.create(
@@ -383,29 +507,37 @@ Respond with ONLY valid JSON in this exact format (no markdown, no code blocks):
                 # Find the selected supplier
                 selected_supplier = next((s for s in suppliers if s.supplier_id == ai_result['chosen_supplier_id']), None)
                 if selected_supplier:
-                    row.reason = ai_result.get('reason', 'AI selection')
+                    supplier_name = selected_supplier.supplier.name if selected_supplier.supplier else 'Unknown'
+                    row.reason = f"AI: {supplier_name} (${selected_supplier.unit_cost}) - {ai_result.get('reason', 'No reason provided')}"
                     row.fallback_used = False
                 else:
                     logic_row.log(f"AI selected invalid supplier_id {ai_result['chosen_supplier_id']}, using fallback")
                     selected_supplier = min(suppliers, key=lambda s: float(s.unit_cost) if s.unit_cost else 999999.0)
-                    row.reason = "Fallback: AI returned invalid supplier"
+                    fallback_name = selected_supplier.supplier.name if selected_supplier.supplier else 'Unknown'
+                    row.reason = f"Fallback: {fallback_name} (${selected_supplier.unit_cost}) - AI returned invalid supplier"
                     row.fallback_used = True
                     
             except Exception as e:
                 logic_row.log(f"OpenAI API error: {e}, using fallback")
                 selected_supplier = min(suppliers, key=lambda s: float(s.unit_cost) if s.unit_cost else 999999.0)
-                row.reason = f"Fallback: API error ({str(e)[:50]})"
+                fallback_name = selected_supplier.supplier.name if selected_supplier.supplier else 'Unknown'
+                candidate_summary = ', '.join([f"{s.supplier.name if s.supplier else 'Unknown'}(${s.unit_cost})" for s in suppliers])
+                row.request = f"Select supplier for {product.name}: Candidates=[{candidate_summary}] - API ERROR"
+                row.reason = f"Fallback: {fallback_name} (${selected_supplier.unit_cost}) - API error: {str(e)[:100]}"
                 row.fallback_used = True
         else:
             # No API key - use fallback strategy (min cost)
             logic_row.log("No API key, using fallback: minimum cost")
             selected_supplier = min(suppliers, key=lambda s: float(s.unit_cost) if s.unit_cost else 999999.0)
-            row.reason = "Fallback: minimum cost supplier (no API key)"
+            fallback_name = selected_supplier.supplier.name if selected_supplier.supplier else 'Unknown'
+            candidate_summary = ', '.join([f"{s.supplier.name if s.supplier else 'Unknown'}(${s.unit_cost})" for s in suppliers])
+            row.request = f"Select supplier for {product.name}: Candidates=[{candidate_summary}] - NO API KEY"
+            row.reason = f"Fallback: {fallback_name} (${selected_supplier.unit_cost}) - minimum cost (no API key)"
             row.fallback_used = True
     
     # Populate AI results
     if selected_supplier:
-        row.chosen_supplier_id = selected_supplier.supplier_id
+        row.chosen_supplier_id = int(selected_supplier.supplier_id)  # Must be int for SQLite FK
         row.chosen_unit_price = selected_supplier.unit_cost
         logic_row.log(f"Selected supplier {selected_supplier.supplier_id} with price {selected_supplier.unit_cost}")
 
@@ -431,14 +563,16 @@ def get_supplier_selection_from_ai(product_id: int, item_id: int, logic_row: Log
     supplier_req = supplier_req_logic_row.row
     
     # 2. Set parent context (FK links)
+    # Note: request/reason fields populated by AI event handler with actual prompt/candidate data
     supplier_req.product_id = product_id
     supplier_req.item_id = item_id
     
-    # 3. Insert triggers early event which populates AI values
+    # 3. Insert triggers early event which populates AI values (chosen_* fields, request, reason)
     supplier_req_logic_row.insert(reason="AI supplier selection request")
     
     # 4. Log filled request object for visibility
-    supplier_req_logic_row.log(f"AI Results from filled request")
+    logic_row.log(f"AI Request: {supplier_req.request}")
+    logic_row.log(f"AI Results: supplier_id={supplier_req.chosen_supplier_id}, price={supplier_req.chosen_unit_price}, reason={supplier_req.reason}")
     
     # 5. Return populated object (chosen_* fields now set by AI)
     return supplier_req
