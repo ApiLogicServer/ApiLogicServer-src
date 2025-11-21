@@ -21,6 +21,8 @@ This is a complete, working microservice auto-generated from a database schema -
 **First, we'll briefly explore what's automatically created. Then I'll show you how I can help you customize it - adding logic, security, and API endpoints.**
 
 
-**Ready to explore?** Open `tutor.md` and tell me "guide me through" to begin the interactive tutorial.
+**Ready to explore?** Just say me "guide me through" to begin the interactive tutorial.
+
+**Or, self-demo?** Open `readme_ai_mcp.md` to explore logic, ai and mcp.
 
 ---
