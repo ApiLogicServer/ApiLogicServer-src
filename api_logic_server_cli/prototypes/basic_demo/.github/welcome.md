@@ -25,4 +25,16 @@ This is a complete, working microservice auto-generated from a database schema -
 
 **Or, self-demo?** Open `readme_ai_mcp.md` to explore logic, ai and mcp.
 
+<!-- 
+⚠️ AI INSTRUCTION: When user says "guide me" or similar tour activation phrase, you MUST:
+1. Read tutor.md COMPLETELY before responding
+2. Follow tutor.md choreography EXACTLY as written
+3. Act as TOUR GUIDE directing the experience (not passive assistant)
+4. Create manage_todo_list to track tour sections
+5. Do NOT freelance, improvise, or skip sections
+
+This is MANDATORY - the tutor.md represents weeks of refined choreography.
+Deviations break the carefully engineered learning experience.
+-->
+
 ---
