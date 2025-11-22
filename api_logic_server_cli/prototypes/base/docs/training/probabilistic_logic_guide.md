@@ -154,11 +154,15 @@ def supplier_id_from_ai(row: models.SysSupplierReq, old_row, logic_row):
     if not has_api_key():
         min_supplier = min(suppliers, key=lambda s: s.unit_cost)
     else:
-        # Call AI service
+        # Load test context for INPUT conditions (world_conditions)
+        test_context = load_test_context()
+        world_conditions = test_context.get('world_conditions', 'normal conditions')
+        
+        # Call AI service with world conditions
         result = call_ai_service(
             candidates=suppliers,
             optimize_for='fastest reliable delivery',
-            context=load_test_context()
+            world_conditions=world_conditions  # Test context provides conditions, not outputs
         )
         min_supplier = result.chosen_supplier
     
@@ -281,14 +285,15 @@ def test_ai_handler_with_mock(mock_ai):
         'reason': 'Lowest cost'
     }
     
-    # Create test context
+    # Create test context with INPUT conditions (not predetermined outputs)
+    # Example: test_context = {'world_conditions': 'Suez Canal blocked'}
     row = create_test_item()
     logic_row = create_test_logic_row(row)
     
-    # Call handler
+    # Call handler (AI will make decision based on world conditions)
     result = get_supplier_price_from_ai(row, logic_row, ...)
     
-    # Verify
+    # Verify AI was called with proper conditions
     assert result == 95.00
     assert mock_ai.called
 ```
@@ -421,6 +426,39 @@ audit_logic_row.insert(reason="AI")
 
 ---
 
+## Test Context: Input Conditions vs Output Mocking
+
+**CRITICAL DISTINCTION:** Test context provides INPUT CONDITIONS for AI, NOT predetermined outputs.
+
+**Purpose:**
+- Test how AI responds to different scenarios (e.g., "Suez Canal blocked")
+- Verify AI considers world conditions in its decision-making
+- Enable repeatable testing with varying conditions
+
+**Example Test Context (config/ai_test_context.yaml):**
+```yaml
+# ✅ CORRECT - Provides input conditions
+world_conditions: "Suez Canal blocked, alternate routes required"
+
+# ❌ WRONG - Predetermines outputs (defeats AI testing)
+# selected_supplier_id: 2  # Don't do this!
+```
+
+**How It Works:**
+1. Load test context for `world_conditions`
+2. Pass conditions to AI prompt
+3. AI makes decision based on those conditions
+4. Verify AI selected appropriate supplier given the conditions
+
+**Testing Strategy:**
+- **Normal conditions:** AI should optimize for cost
+- **Disrupted conditions:** AI should prioritize reliability/alternate routes
+- **No API key:** System uses fallback (min cost)
+
+**Key Insight:** Test context lets you verify AI adapts to different scenarios WITHOUT mocking the AI itself.
+
+---
+
 ## Summary
 
 **Probabilistic Logic Pattern:**
@@ -433,6 +471,7 @@ audit_logic_row.insert(reason="AI")
 **Key Benefits:**
 - Seamless integration with deterministic rules
 - Full audit trail of AI decisions
+- Test context for scenario-based testing
 - Graceful fallback when AI unavailable
 - Testable at multiple levels
 - Reusable AI handlers across use cases

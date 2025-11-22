@@ -5,7 +5,7 @@ This template provides a clean reference implementation for AI value computation
 alongside deterministic rules, using the Request Pattern with early events.
 
 Pattern: Early event with wrapper function that returns populated request object
-version: 3.1 - proper initialization of ai_request data
+version: 3.0
 date: November 21, 2025
 source: docs/training/probabilistic_template.py
 
@@ -136,31 +136,24 @@ def select_supplier_via_ai(row: models.SysSupplierReq, old_row, logic_row: Logic
         row.fallback_used = True
         return
     
-    # Check for test context first (BEFORE API key check)
+    # Load test context for world conditions (not for predetermined supplier selection)
     from pathlib import Path
     import yaml
     
     config_dir = Path(__file__).resolve().parent.parent.parent.parent / 'config'
     context_file = config_dir / 'ai_test_context.yaml'
     
-    selected_supplier = None
-    
+    test_context = {}
     if context_file.exists():
         with open(str(context_file), 'r') as f:
-            test_context = yaml.safe_load(f)
-            if test_context and 'selected_supplier_id' in test_context:
-                supplier_id = test_context['selected_supplier_id']
-                selected_supplier = next((s for s in suppliers if s.supplier_id == supplier_id), None)
-                if selected_supplier:
-                    candidate_summary = ', '.join([f"{s.supplier.name if s.supplier else 'Unknown'}(${s.unit_cost})" for s in suppliers])
-                    world = test_context.get('world_conditions', 'normal conditions')
-                    row.request = f"Select supplier for {product.name}: Candidates=[{candidate_summary}], World={world}"
-                    row.reason = f"TEST MODE: Selected {selected_supplier.supplier.name if selected_supplier.supplier else 'supplier'} (${selected_supplier.unit_cost}) - world: {world}"
-                    logic_row.log(f"Using test context: supplier {supplier_id}")
-                    row.fallback_used = False
+            test_context = yaml.safe_load(f) or {}
     
-    # If no test context, try AI (check for API key)
-    if not selected_supplier:
+    world_conditions = test_context.get('world_conditions', 'normal conditions')
+    
+    selected_supplier = None
+    
+    # Try AI (check for API key)
+    if True:  # Always try AI unless no key
         api_key = os.getenv("APILOGICSERVER_CHATGPT_APIKEY")
         if api_key:
             try:
@@ -179,8 +172,6 @@ def select_supplier_via_ai(row: models.SysSupplierReq, old_row, logic_row: Logic
                         'unit_cost': float(supplier.unit_cost) if supplier.unit_cost else 0.0,
                         'lead_time_days': supplier.lead_time_days if hasattr(supplier, 'lead_time_days') else None
                     })
-                
-                world_conditions = test_context.get('world_conditions', 'normal conditions') if 'test_context' in locals() else 'normal conditions'
                 
                 prompt = f"""
 You are a supply chain optimization expert. Select the best supplier from the candidates below.
@@ -201,10 +192,10 @@ Respond with ONLY valid JSON in this exact format (no markdown, no code blocks):
 """
                 
                 # Populate request field with actual prompt summary
-                candidate_list = ', '.join([c['supplier_name'] + '($' + str(c['unit_cost']) + ')' for c in candidate_data])
-                row.request = f"AI Prompt: Product={product.name}, World={world_conditions}, Candidates={len(candidate_data)}: {candidate_list}"
+                candidate_summary = ', '.join([f"{c['supplier_name']}(${c['unit_cost']})" for c in candidate_data])
+                row.request = f"Select supplier for {product.name}: Candidates=[{candidate_summary}], World={world_conditions}"
                 
-                logic_row.log(f"Calling OpenAI API with {len(candidate_data)} candidates")
+                logic_row.log(f"Calling OpenAI API with {len(candidate_data)} candidates, world conditions: {world_conditions}")
                 
                 response = client.chat.completions.create(
                     model="gpt-4o-2024-08-06",
@@ -225,7 +216,7 @@ Respond with ONLY valid JSON in this exact format (no markdown, no code blocks):
                 selected_supplier = next((s for s in suppliers if s.supplier_id == ai_result['chosen_supplier_id']), None)
                 if selected_supplier:
                     supplier_name = selected_supplier.supplier.name if selected_supplier.supplier else 'Unknown'
-                    row.reason = f"AI: {supplier_name} (${selected_supplier.unit_cost}) - {ai_result.get('reason', 'No reason provided')}"
+                    row.reason = f"Selected {supplier_name} (${selected_supplier.unit_cost}) - {ai_result.get('reason', 'No reason provided')}"
                     row.fallback_used = False
                 else:
                     logic_row.log(f"AI selected invalid supplier_id {ai_result['chosen_supplier_id']}, using fallback")
