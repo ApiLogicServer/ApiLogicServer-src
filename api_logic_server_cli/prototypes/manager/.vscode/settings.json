@@ -20,5 +20,6 @@
     "workbench.editorAssociations": {
         "*.md": "vscode.markdown.preview.editor"
     },
+    "workbench.startupEditor": "readme",
     "workbench.colorTheme": "Arduino Light"
 }

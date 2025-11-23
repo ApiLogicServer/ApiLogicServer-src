@@ -3,7 +3,7 @@ title: LogicBank Probabilistic Rules API (AI Value Computation)
 description: Training document for translating natural language into probabilistic value computation rules
 source: Generic training for ApiLogicServer projects with probabilistic rules
 usage: AI assistants read this to generate probabilistic + deterministic rules implementations
-version: 3.0
+version: 3.1
 date: November 21, 2025
 prerequisites:
   - docs/training/genai_logic_patterns.md (CRITICAL import patterns, auto-discovery)
@@ -445,14 +445,20 @@ def select_supplier_via_ai(row: models.SysSupplierReq, old_row, logic_row: Logic
                 
                 client = OpenAI(api_key=api_key)
                 
-                # Build candidate data for prompt
+                # Build candidate data for prompt - include ALL supplier fields for AI decision
                 candidate_data = []
                 for supplier in suppliers:
+                    supplier_obj = supplier.supplier
                     candidate_data.append({
                         'supplier_id': supplier.supplier_id,
-                        'supplier_name': supplier.supplier.name if supplier.supplier else 'Unknown',
+                        'supplier_name': supplier_obj.name if supplier_obj else 'Unknown',
+                        'supplier_region': supplier_obj.region if supplier_obj else None,
+                        'supplier_contact': supplier_obj.contact_name if supplier_obj else None,
+                        'supplier_phone': supplier_obj.phone if supplier_obj else None,
+                        'supplier_email': supplier_obj.email if supplier_obj else None,
                         'unit_cost': float(supplier.unit_cost) if supplier.unit_cost else 0.0,
-                        'lead_time_days': supplier.lead_time_days if hasattr(supplier, 'lead_time_days') else None
+                        'lead_time_days': supplier.lead_time_days if hasattr(supplier, 'lead_time_days') else None,
+                        'supplier_part_number': supplier.supplier_part_number if hasattr(supplier, 'supplier_part_number') else None
                     })
                 
                 prompt = f"""
@@ -473,8 +479,11 @@ Respond with ONLY valid JSON in this exact format (no markdown, no code blocks):
 }}
 """
                 
-                # Populate request field with actual prompt summary
-                candidate_summary = ', '.join([f"{c['supplier_name']}(${c['unit_cost']})" for c in candidate_data])
+                # Populate request field with actual prompt summary including key fields
+                candidate_summary = ', '.join([
+                    f"{c['supplier_name']}(${c['unit_cost']}, {c['supplier_region'] or 'unknown region'}, {c['lead_time_days'] or '?'}days)" 
+                    for c in candidate_data
+                ])
                 row.request = f"Select supplier for {product.name}: Candidates=[{candidate_summary}], World={world_conditions}"
                 
                 logic_row.log(f"Calling OpenAI API with {len(candidate_data)} candidates, world conditions: {world_conditions}")
@@ -785,8 +794,10 @@ class Product(Base):  # Has FK from SysSupplierReq.product_id
 class Item(Base):  # Has FK from SysSupplierReq.item_id
     SysSupplierReqList : Mapped[List["SysSupplierReq"]] = relationship(back_populates="item")
 
-class Supplier(Base):  # Has FK from SysSupplierReq.chosen_supplier_id
-    SysSupplierReqList : Mapped[List["SysSupplierReq"]] = relationship(foreign_keys="SysSupplierReq.chosen_supplier_id")
+# ✅ DO NOT add relationship to Supplier for chosen_supplier_id
+#    - This is an AI result field (not standard parent-child relationship)
+#    - Access via SysSupplierReq.chosen_supplier (unidirectional) is sufficient
+#    - Adding reverse relationship causes NoForeignKeysError
 
 # ✅ DO NOT add relationship to ProductSupplier (no FK exists)
 ```
