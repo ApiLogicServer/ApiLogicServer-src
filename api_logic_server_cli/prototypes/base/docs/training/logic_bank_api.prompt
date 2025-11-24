@@ -20,17 +20,18 @@ Use only the methods provided below.
 
 IMPORTANT: Keep it simple! Use the built-in Rule methods with their parameters (like if_condition) rather than creating custom functions. The Rule methods are designed to handle common patterns directly.
 
-CRITICAL: Follow the FORMATTING GUIDELINE below (lines 23-31) - keep simple rules on single line for scannability.
+CRITICAL: Keep simple rules on ONE LINE (no exceptions). Goal: Visual scannability - see rule count at a glance.
 
-FORMATTING GUIDELINE: Keep rules compact and scannable.
-- Simple rules: Single line preferred, but max about 150.
-- Complex rules: Multi-line is fine, but keep parameters together
-- Goal: Visual scannability - see rule count at a glance
-
-Example:
+✅ CORRECT - One rule per line:
     Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total, where=lambda row: row.date_shipped is None)
     Rule.constraint(validate=Customer, as_condition=lambda row: row.balance <= row.credit_limit, error_msg="balance exceeds credit")
     Rule.formula(derive=Item.amount, as_expression=lambda row: row.quantity * row.unit_price)
+
+❌ WRONG - Don't split simple rules:
+    Rule.sum(
+        derive=Customer.balance,
+        as_sum_of=Order.amount_total
+    )
 
 
 class Rule:
