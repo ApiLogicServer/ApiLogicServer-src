@@ -12,7 +12,7 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "16.00.03"  # last public release: 15.04.01
+__version__ = "16.00.03"  # last public release: 16.00.03
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
     "\t11/25/2025 - 16.00.03: Probabalistic logic (w/ fallback, cand*) - see basic_demo/readme_ai_mcp.md \n"\
