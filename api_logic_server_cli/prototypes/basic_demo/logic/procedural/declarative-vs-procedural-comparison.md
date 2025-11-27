@@ -9,7 +9,7 @@
 
 We asked **GitHub Copilot** to generate business logic code from natural language requirements.
 
-It generated **220 lines of procedural code**.
+It generated **220 lines of procedural code** (to see it, [click here](https://github.com/ApiLogicServer/ApiLogicServer-src/blob/main/api_logic_server_cli/prototypes/basic_demo/logic/procedural/credit_service.py)).
 
 We asked: **"What if the order's customer_id changes?"**  
 Copilot found a critical bug and fixed it.
