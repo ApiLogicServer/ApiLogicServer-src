@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "16.00.03"  # last public release: 16.00.03
+__version__ = "16.00.04"  # last public release: 16.00.03
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t12/10/2025 - 16.00.04: Probabalistic logic (w/ fallback, cand*) - see basic_demo/readme_ai_mcp.md \n"\
     "\t11/25/2025 - 16.00.03: Probabalistic logic (w/ fallback, cand*) - see basic_demo/readme_ai_mcp.md \n"\
     "\t11/12/2025 - 15.04.03: Copilot rules on updates, tighter basic_demo startup, allow for demo_ai_mcp/then tutorial \n"\
     "\t11/08/2025 - 15.04.00: Nat lang Copilot data access, fix Manager/Copilot startup, finding venv in project \n"\

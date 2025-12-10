@@ -217,6 +217,7 @@ def create_models_memstring(args) -> str:
     # For Python 3.13+, force PostgreSQL URLs to use psycopg3 dialect
     engine_url = args.url
     if sys.version_info >= (3, 13) and engine_url.startswith('postgresql://'):
+        # dev must pip install psycopg==3.2.13, pip install psycopg-binary==3.2.13
         engine_url = engine_url.replace('postgresql://', 'postgresql+psycopg://', 1)
     
     engine = create_engine(engine_url)  # type _engine.Engine

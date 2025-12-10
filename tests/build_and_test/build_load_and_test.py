@@ -894,9 +894,60 @@ def validate_opt_locking():
 
 def validate_sql_server_types():
     """
-    Verify sql server types and extended builder
+    Verify sql server types and extended builder, including autoincrement
     See https://valhuber.github.io/ApiLogicServer/Project-Builders/
     """
+
+    # add an Employee (reports_to =1, last_name=LN, first_name=FN),
+    # then update it (last_name=LNU)
+    # then delete it
+    
+    # 1. Add a new Employee
+    post_uri = "http://localhost:5656/api/Employee/"
+    post_data = {
+        "data": {
+            "type": "Employee",
+            "attributes": {
+                "Name": "FN LN"
+            }
+        }
+    }
+    r = requests.post(url=post_uri, json=post_data)
+    response_text = r.text
+    status_code = r.status_code
+    if status_code > 300:
+        raise Exception(f'POST Employee failed - status_code = {status_code}, with response text {r.text}')
+    result_data = json.loads(response_text)
+    new_employee_id = result_data["data"]["attributes"]["Id"]
+    assert result_data["data"]["attributes"]["Name"] == "FN LN", "Employee creation failed: Name mismatch"
+    
+    # 2. Update the Employee
+    patch_uri = f"http://localhost:5656/api/Employee/{new_employee_id}/"
+    patch_data = {
+        "data": {
+            "type": "Employee",
+            "id": str(new_employee_id),
+            "attributes": {
+                "Name": "LNU"
+            }
+        }
+    }
+    r = requests.patch(url=patch_uri, json=patch_data)
+    response_text = r.text
+    status_code = r.status_code
+    if status_code > 300:
+        raise Exception(f'PATCH Employee failed - status_code = {status_code}, with response text {r.text}')
+    result_data = json.loads(response_text)
+    assert result_data["data"]["attributes"]["Name"] == "LNU", "Employee update failed: Name not updated"
+    
+    # 3. Delete the Employee
+    delete_uri = f"http://localhost:5656/api/Employee/{new_employee_id}/"
+    r = requests.delete(url=delete_uri)
+    status_code = r.status_code
+    if status_code > 300:
+        raise Exception(f'DELETE Employee failed - status_code = {status_code}, with response text {r.text}')
+
+
     post_uri = "http://localhost:5656/api/udfEmployeeInLocation/udfEmployeeInLocation"
     args = {
         "location": "Sweden"

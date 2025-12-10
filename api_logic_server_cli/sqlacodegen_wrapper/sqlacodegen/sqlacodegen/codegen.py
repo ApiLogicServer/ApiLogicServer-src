@@ -1204,6 +1204,7 @@ else:
             column.index = True
             kwarg.append('index')
 
+        autoincrement = False
         if Computed and isinstance(column.server_default, Computed):
             expression = self._get_compiled_expression(column.server_default.sqltext)
 
@@ -1214,17 +1215,24 @@ else:
             server_default = 'Computed({!r}{})'.format(expression, persist_arg)
 
         elif column.server_default:
+            # tests:
+            #   SQL Server Types [TVF].         server_default is Identity(start=1, increment=1) sqlalchemy.sql.schema.Identity
+            #   6 - Create Postgres (servers)   server_default is DefaultClause:  sqlalchemy.sql.schema.DefaultClause
+            # dev must pip install psycopg==3.2.13, pip install psycopg-binary==3.2.13
             # The quote escaping does not cover pathological cases but should mostly work FIXME SqlSvr no .arg
             # not used for postgres/mysql; for sqlite, text is '0'
-            if not hasattr( column.server_default, 'arg' ):
-                server_default = 'server_default=text("{0}")'.format('0')
-            else:
+            if hasattr( column.server_default, 'arg' ):
+                pass # employee_id = Column(Integer, server_default=text("nextval('employees_employee_id_seq'::regclass)"), primary_key=True)
                 default_expr = self._get_compiled_expression(column.server_default.arg)
                 if '\n' in default_expr:
                     server_default = 'server_default=text("""\\\n{0}""")'.format(default_expr)
                 else:
                     default_expr = default_expr.replace('"', '\\"')
                     server_default = 'server_default=text("{0}")'.format(default_expr)
+            elif isinstance(column.server_default, sqlalchemy.sql.schema.Identity):  # sqlsvr is different
+                autoincrement = True # EmployeeId = Column(Integer, primary_key=True, autoincrement=True)       
+            else:
+                server_default = 'server_default=text("{0}")'.format('0')
 
         comment = getattr(column, 'comment', None)
         if (column.name + "") == "xx_id":
@@ -1235,18 +1243,25 @@ else:
             debug_stop = "render column breakpoint"
         rendered_col_type = self.render_column_type(column.type) if render_coltype else ""
         rendered_name = repr(column.name) if do_show_name else ""
+        """
+        The {0} gets replaced by whatever is passed to .format(). 
+        In this case, it's the result of ', '.join(...) 
+        which joins together all the column attributes (name, type, constraints, defaults, etc.) with commas.
+        eg. Column(Integer, primary_key=True), Column(String(8000))
+        """
         render_result = 'Column({0})'.format(', '.join(
             ([repr(column.name)] if do_show_name else []) +
             ([self.render_column_type(column.type)] if render_coltype else []) +
             [self.render_constraint(x) for x in dedicated_fks] +
             [repr(x) for x in column.constraints] +
             ([server_default] if server_default else []) +
+            (['autoincrement=True'] if autoincrement else []) + 
             ['{0}={1}'.format(k, repr(getattr(column, k))) for k in kwarg] +
             (['comment={!r}'.format(comment)] if comment and not self.nocomments else []) + 
             (['quote = True'] if self.model_creation_services.project.quote else [])
             ))
         
-        """
+        """ old version without quote = True
                 return 'Column({0})'.format(', '.join(
                     ([repr(column.name)] if show_name else []) +
                     ([self.render_column_type(column.type)] if render_coltype else []) +

@@ -1424,6 +1424,7 @@
             "justMyCode": false,
             "program": "cli.py",
             "redirectOutput": true,
+//      genai-logic create --db_url=postgresql://postgres:p@localhost/northwind --project-name=nw-postgres
             "args": ["create","--project_name=../../../servers/postgres-nw",
                 "--db_url=postgresql://postgres:p@localhost/northwind"],
             "console": "integratedTerminal"

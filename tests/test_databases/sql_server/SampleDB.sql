@@ -159,6 +159,10 @@ RETURN
       Location LIKE @location and Name like @Name
 go
 
+CREATE TABLE EmpAutoNum (
+    EmployeeId INT IDENTITY(1,1) PRIMARY KEY,
+    Name NVARCHAR(255) NOT NULL
+);
 
 CREATE FUNCTION [dbo].[fn_Get_COD111]
 (

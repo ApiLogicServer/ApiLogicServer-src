@@ -1,4 +1,8 @@
 # test:
+
+INSERT INTO EmpAutoNum (Name) VALUES ('Alice');
+
+
 SELECT * FROM udfEmployeeInLocation('Sweden');
 
 SELECT * FROM udfEmployeeInLocationWithName('Sweden', 'John');
