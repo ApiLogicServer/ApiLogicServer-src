@@ -4,9 +4,11 @@
 --     Create a new database named Northwind.db.
 --     Copy and paste the SQL below into the query window.
 --     Execute the script to create the Northwind database.
--- Or:
---     Run the following command in a terminal window.
---     mysql
+-- Or use docker:
+--     docker cp tests/test_databases/mysql_test_databases/Northwind.sql mysql-container:/tmp/Northwind.sql
+--     docker exec -it mysql-container bash
+--     mysql -u root -pp
+--     source /tmp/Northwind.sql
 --     Copy and paste the SQL below into the terminal window to create the Northwind database.
 
 CREATE DATABASE IF NOT EXISTS Northwind;

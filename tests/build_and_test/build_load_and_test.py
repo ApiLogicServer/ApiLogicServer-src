@@ -892,10 +892,72 @@ def validate_opt_locking():
     return
 
 
+def validate_autoinsert(arg_attr_last_name: str = None, arg_attr_first_name: str = None, arg_attr_id: str = None):
+    """
+    Verify autoincrement columns work correctly
+    
+    Test sequence:
+        - Add an EmpAutoNum (Name='Alice')
+        - Update the EmpAutoNum (Name='Alice Updated')
+        - Delete the EmpAutoNum
+    """
+
+    attr_last_name = arg_attr_last_name if arg_attr_last_name else 'lastName'
+    attr_first_name = arg_attr_first_name if arg_attr_first_name else 'firstName'
+    attr_id = arg_attr_id if arg_attr_id else 'employeeNumber'
+    
+    # 1. Add a new EmpAutoNum
+    post_uri = "http://localhost:5656/api/Employee/"
+    post_data = {
+        "data": {
+            "type": "Employee",
+            "attributes": {
+                attr_first_name: "Alice",
+                attr_last_name: "Gallinat"
+            }
+        }
+    }
+    r = requests.post(url=post_uri, json=post_data)
+    response_text = r.text
+    status_code = r.status_code
+    if status_code > 300:
+        raise Exception(f'POST Employee failed - status_code = {status_code}, with response text {r.text}')
+    result_data = json.loads(response_text)
+    new_employee_id = result_data["data"]["attributes"][attr_id]
+    assert result_data["data"]["attributes"][attr_first_name] == "Alice", "Employee creation failed: Name mismatch"
+    
+    # 2. Update the EmpAutoNum
+    patch_uri = f"http://localhost:5656/api/Employee/{new_employee_id}/"
+    patch_data = {
+        "data": {
+            "type": "Employee",
+            "id": str(new_employee_id),
+            "attributes": {
+                attr_first_name: "Alice_upd"
+            }
+        }
+    }
+    r = requests.patch(url=patch_uri, json=patch_data)
+    response_text = r.text
+    status_code = r.status_code
+    if status_code > 300:
+        raise Exception(f'PATCH EmpAutoNum failed - status_code = {status_code}, with response text {r.text}')
+    result_data = json.loads(response_text)
+    assert result_data["data"]["attributes"][attr_first_name] == "Alice_upd", "Employee update failed: Name not updated"
+    
+    # 3. Delete the EmpAutoNum
+    delete_uri = f"http://localhost:5656/api/Employee/{new_employee_id}/"
+    r = requests.delete(url=delete_uri)
+    status_code = r.status_code
+    if status_code > 300:
+        raise Exception(f'DELETE Employee failed - status_code = {status_code}, with response text {r.text}')
+    
+    print(f"validate_autoinsert: Successfully created, updated, and deleted Employee with ID {new_employee_id}")
+
 def validate_sql_server_types():
     """
-    Verify sql server types and extended builder, including autoincrement
-    See https://valhuber.github.io/ApiLogicServer/Project-Builders/
+    Verify MS SqlServer types and extended builder, including autoincrement
+    See https://apilogicserver.github.io/Docs/Project-Builders/ 
     """
 
     # add an Employee (reports_to =1, last_name=LN, first_name=FN),
@@ -1498,6 +1560,15 @@ if Config.do_allocation_test:
 if Config.do_docker_mysql:
     def test_docker_mysql():
         result_docker_mysql_classic = run_command(
+            f"{set_venv} && ApiLogicServer create --{project_name}=tests/mysql-northwind --{db_url}=mysql+pymysql://root:p@{db_ip}:3306/Northwind",
+            cwd=install_api_logic_server_path,
+            msg=f'\nCreate MySQL northwind at: {str(install_api_logic_server_path)}')
+        check_command(result_docker_mysql_classic) 
+        start_api_logic_server(project_name='mysql-northwind')
+        validate_autoinsert(arg_attr_last_name='LastName', arg_attr_first_name='FirstName', arg_attr_id='EmployeeID')
+        stop_server(msg="mysql-northwind\n")
+
+        result_docker_mysql_classic = run_command(
             f"{set_venv} && ApiLogicServer create --{project_name}=tests/classicmodels --{db_url}=mysql+pymysql://root:p@{db_ip}:3306/classicmodels",
             cwd=install_api_logic_server_path,
             msg=f'\nCreate MySQL classicmodels at: {str(install_api_logic_server_path)}')
@@ -1530,13 +1601,6 @@ if Config.do_docker_sqlserver:  # CAUTION: see comments below
 
 if Config.do_docker_postgres:
     def test_docker_postgres():
-        result_docker_postgres = run_command(
-            f"{set_venv} && ApiLogicServer create --{project_name}=tests/postgres --{db_url}=postgresql://postgres:p@{db_ip}/postgres",
-            cwd=install_api_logic_server_path,
-            msg=f'\nCreate Postgres postgres (nw) at: {str(install_api_logic_server_path)}')
-        start_api_logic_server(project_name='postgres')
-        stop_server(msg="postgres\n")
-
         # the postgres database has bad employee.id - not serial, so inserts fails
         # this example shows how to use seriak, to fix it
         # see https://apilogicserver.github.io/Docs/Data-Model-Postgresql/#auto-generated-keys
@@ -1545,7 +1609,16 @@ if Config.do_docker_postgres:
             cwd=install_api_logic_server_path,
             msg=f'\nCreate Postgres postgres (nw) at: {str(install_api_logic_server_path)}')
         start_api_logic_server(project_name='postgres-nw')
+        validate_autoinsert(arg_attr_last_name='last_name', arg_attr_first_name='first_name', arg_attr_id='employee_id')
         stop_server(msg="postgres-nw\n")
+
+        result_docker_postgres = run_command(
+            f"{set_venv} && ApiLogicServer create --{project_name}=tests/postgres --{db_url}=postgresql://postgres:p@{db_ip}/postgres",
+            cwd=install_api_logic_server_path,
+            msg=f'\nCreate Postgres postgres (nw) at: {str(install_api_logic_server_path)}')
+        start_api_logic_server(project_name='postgres')
+        stop_server(msg="postgres\n")
+
     
     run_test("docker_postgres", "Docker PostgreSQL tests", test_docker_postgres)
 

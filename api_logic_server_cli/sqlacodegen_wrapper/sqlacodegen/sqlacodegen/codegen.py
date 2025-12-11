@@ -1241,6 +1241,8 @@ else:
             log.debug(f"render_column show name is true: {column.table.name}.{column.name}")  # researching why
         if column.name == "credit_limit" and column.table.name == "customers":
             debug_stop = "render column breakpoint"
+        if column.name == "photo" and column.table.name == "employees":
+            debug_stop = "render column breakpoint"
         rendered_col_type = self.render_column_type(column.type) if render_coltype else ""
         rendered_name = repr(column.name) if do_show_name else ""
         """

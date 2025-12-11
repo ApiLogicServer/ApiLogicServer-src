@@ -34,6 +34,7 @@ genai-logic create --db_url=sqlite:///samples/dbs/todos.sqlite --project_name=to
 genai-logic create --db_url=sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/clean/ApiLogicServer/samples/dbs/todos.sqlite --project_name=todo
 
 # from localhost to mysql container
+genai-logic create --db_url=mysql+pymysql://root:p@localhost:3306/Northwind --project_name=mysql-northwind
 genai-logic create --db_url=mysql+pymysql://root:p@localhost:3306/classicmodels --project_name=docker_classicmodels
 genai-logic create --db_url=mysql+pymysql://root:p@localhost:3306/Chinook --project_name=docker_chinook
 

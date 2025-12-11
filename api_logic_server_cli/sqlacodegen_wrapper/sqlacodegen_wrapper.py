@@ -132,7 +132,7 @@ def fix_generated(code, args):
         code = code.replace(bad_import,"# " + bad_import)
         code = code.replace(line1, line1 + bad_import + "\n")
         # code = code.replace("Column(Image)","Column(Text)")  FAILS - incompatible type
-    if "postgres" in args.url:
+    if fix_postgress_largebinary := False and "postgres" in args.url:
         code = code.replace("Column(LargeBinary)","Column(Text)")
 
     # Column(IMAGE)
