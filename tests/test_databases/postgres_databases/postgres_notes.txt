@@ -5,10 +5,10 @@ docker exec -it postgresql-container bash
 
 psql -h localhost -U postgres
 
-\c Northwind;
+\c northwind;
 
--- in docker container/terminal
--- psql--username=postgres
+-- in docker container/terminal, or docker exec -it postgresql-container bash
+-- psql --username=postgres
 -- \l
 -- \dt
 
