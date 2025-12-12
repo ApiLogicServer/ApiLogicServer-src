@@ -39,9 +39,12 @@
 # updating database image
 
 # docker commit postgresql-container postgres-image
-# docker tag postgres-image apilogicserver/postgres:version2.2.0
-# docker push apilogicserver/postgres:version2.2.0
+# docker tag postgres-image apilogicserver/postgres:version2.3.3
+# docker push apilogicserver/postgres:version2.3.3
+
 # repeat for latest...
+# docker tag postgres-image apilogicserver/postgres:latest
+# docker push apilogicserver/postgres:latest
 
 # thanks - https://medium.com/@stevenlandow/persist-share-dev-mysql-data-in-a-docker-image-with-commit-f9aa9910be0a
 

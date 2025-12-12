@@ -30,10 +30,12 @@
 # Now convert container to image, and push to docker hub
 
 # docker commit mysql-container mysql-image
-# docker tag mysql-image apilogicserver/mysql8.0:version1.0.14
-# docker push apilogicserver/mysql8.0:version1.0.14
+# docker tag mysql-image apilogicserver/mysql8.0:version1.0.15
+# docker push apilogicserver/mysql8.0:version1.0.15
 #   
 # and tag/push latest
+# docker tag mysql-image apilogicserver/mysql8.0:latest
+# docker push apilogicserver/mysql8.0:latest
 
 # docker run --name mysql-container-sam --net dev-network -p 3306:3306 -d -e MYSQL_ROOT_PASSWORD=p apilogicserver/mysam
 
