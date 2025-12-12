@@ -1,6 +1,6 @@
 import json
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, DECIMAL, Date, ForeignKey, Integer, String
+from sqlalchemy import Column, DECIMAL, Date, ForeignKey, Integer, String, and_
 from safrs import SAFRSBase, ValidationError
 from flask_login import UserMixin
 import safrs, flask_sqlalchemy
@@ -119,7 +119,7 @@ class SAFRSBaseX(SAFRSBase, safrs.DB.Model):
                 expressions.append(op(attr, attr_val))
 
         if len(filters) > 1:
-            return query.filter(operator.and_(*expressions))
+            return query.filter(and_(*expressions))
         else:
             return query.filter(*expressions)
 
