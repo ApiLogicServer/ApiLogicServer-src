@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "16.00.07"  # last public release: 16.00.04
+__version__ = "16.00.08"  # last public release: 16.00.04
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t01/05/2026 - 16.00.07: no pandas, for win11 Python 3.13 install \n"\
+    "\t01/05/2026 - 16.00.08: no pandas, for win11 Python 3.13 install \n"\
     "\t12/11/2025 - 16.00.04: bug fix [106] - SqlServer autoinsert \n"\
     "\t11/25/2025 - 16.00.03: Probabalistic logic (w/ fallback, cand*) - see basic_demo/readme_ai_mcp.md \n"\
     "\t11/12/2025 - 15.04.03: Copilot rules on updates, tighter basic_demo startup, allow for demo_ai_mcp/then tutorial \n"\
