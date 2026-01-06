@@ -265,7 +265,7 @@ def print_byte_string(msg, byte_string):
         print (line)
 
 def check_command(command_result, special_message: str=""):
-    """Ensure command_result does not contain 'error', 'not found', etc
+    """Ensure command_result does not contain 'error', 'not found', etc, and return code is 0
 
     Args:
         command_result (_type_): from run_command
@@ -281,6 +281,15 @@ def check_command(command_result, special_message: str=""):
             result_stdout = str(command_result.stdout)
         if command_result.stderr is not None:
             result_stderr = str(command_result.stderr)
+
+    # Check return code first
+    if command_result is not None and command_result.returncode != 0:
+        print(f"\n\n==> Command failed with return code {command_result.returncode}")
+        print_byte_string("\n\n==> Command Failed - Console Log:", command_result.stdout)
+        print_byte_string("\n\n==> Error Log:", command_result.stderr)
+        if special_message != "":
+            print(f'{special_message}')
+        raise ValueError(f"Command failed with return code {command_result.returncode}")
 
     if "Trace" in result_stderr or \
         "Error" in result_stderr or \
@@ -366,6 +375,24 @@ def start_api_logic_server(project_name: str, env_list = None, port: str='5656',
     install_api_logic_server_path = get_servers_build_and_test_path().joinpath("ApiLogicServer")
     path = install_api_logic_server_path.joinpath(f'tests/{project_name}')
     print(f'\n\nStarting Server tests/{project_name}... from  {install_api_logic_server_path}\venv\n')
+    
+    # Validate that database/models.py exists and has substantial content
+    models_file = path.joinpath('database/models.py')
+    if not models_file.exists():
+        error_msg = f"VALIDATION FAILED: database/models.py not found in {path}"
+        print(f"\n❌ {error_msg}\n")
+        raise FileNotFoundError(error_msg)
+    
+    with open(models_file, 'r') as f:
+        line_count = len(f.readlines())
+    
+    if line_count < 100:
+        error_msg = f"VALIDATION FAILED: database/models.py only has {line_count} lines, expected >100 lines. Project may not have been created properly."
+        print(f"\n❌ {error_msg}\n")
+        raise ValueError(error_msg)
+    
+    print(f"✓ Validated database/models.py exists with {line_count} lines")
+    
     pipe = None
     return_str = None
     
@@ -1643,7 +1670,10 @@ if Config.do_docker_postgres_auth:
 if Config.do_docker_creation_tests:
     run_test("docker_creation_tests", "Docker container creation tests", docker_creation_tests, api_logic_server_tests_path)
 
-print("\n\nSUCCESS -- END OF TESTS")
+if failed_tests == 0:
+    print("\n\n✅ SUCCESS -- ALL TESTS PASSED")
+else:
+    print(f"\n\n⚠️  END OF TESTS - {failed_tests} FAILURES DETECTED")
 
 print('\n\nRun & verify >1 Order: pushd ../../../../build_and_test/ApiLogicServer/Shipping\n')
 
@@ -1710,10 +1740,12 @@ if test_failures:
 print(f"\nResults written to: {results_file}")
 if test_failures:
     print(f"Detailed failure report: {failure_file}")
-    print(f"\nBLT completed with {failed_tests} failures out of {total_tests} tests")
-    # Don't exit with error code - let the process complete
+    print(f"\n⚠️  BLT completed with {failed_tests} failures out of {total_tests} tests")
+    print(f"\nExiting with error code 1 due to test failures")
+    sys.exit(1)  # Exit with error code to indicate failure
 else:
-    print(f"\nBLT completed successfully - all {total_tests} tests passed!")
+    print(f"\n✅ BLT completed successfully - all {total_tests} tests passed!")
+    sys.exit(0)  # Exit cleanly
 
 
 # print(f"{python} setup.py sdist bdist_wheel")
