@@ -144,7 +144,7 @@ def copy_md(project, from_doc_file: str, to_project_file: str = "README.md"):
         shutil.copy(Path(get_api_logic_server_dir()).joinpath('prototypes/base').joinpath('readme.md'), 
                     to_file)
     else:
-        with open(str(to_file), "r") as readme_file:
+        with open(str(to_file), "r", encoding='utf-8') as readme_file:
             readme_lines_mkdocs = readme_file.readlines()    
         readme_lines_md = []
         in_mkdocs_block = False
@@ -209,7 +209,7 @@ def copy_md(project, from_doc_file: str, to_project_file: str = "README.md"):
                         title = match.group(1)
                     readme_lines_md.append('**' + title + ':**\n')
                 readme_lines_md.append(each_line)
-        with open(str(to_file), "w") as readme_file:
+        with open(str(to_file), "w", encoding='utf-8') as readme_file:
             readme_file.writelines(readme_lines_md)
     pass
 
