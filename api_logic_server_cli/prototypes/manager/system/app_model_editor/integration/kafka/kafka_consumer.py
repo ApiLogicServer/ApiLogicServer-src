@@ -7,7 +7,13 @@ Alter this file to add handlers for consuming kafka topics
 """
 
 from config.config import Args
-from confluent_kafka import Producer, KafkaException, Consumer
+try:
+    from confluent_kafka import Producer, KafkaException, Consumer
+except ImportError:
+    Producer = None
+    KafkaException = None
+    Consumer = None
+    # Kafka support not available on this platform
 import signal
 import logging
 import json

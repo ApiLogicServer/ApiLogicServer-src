@@ -7,7 +7,13 @@ Alter this file to add handlers for consuming kafka topics
 """
 
 from config.config import Args
-from confluent_kafka import Producer, KafkaException, Consumer
+try:
+    from confluent_kafka import Producer, KafkaException, Consumer
+except ImportError:
+    Producer = None
+    KafkaException = None
+    Consumer = None
+    # Kafka support not available on this platform
 import signal
 import logging
 import json
@@ -20,7 +26,10 @@ from integration.system.FlaskKafka import FlaskKafka
 conf = None
 
 logger = logging.getLogger('integration.kafka')
-logger.debug("kafka_consumer imported")
+if Consumer is not None:
+    logger.fatal("SEVERE WARNING - KAFKA NOT AVAILABLE - DISABLED")
+else:
+    logger.debug("kafka_consumer imported")
 
 
 def kafka_consumer(safrs_api: safrs.SAFRSAPI = None):

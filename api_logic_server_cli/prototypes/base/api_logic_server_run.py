@@ -78,7 +78,11 @@ from flask import Flask, redirect, send_from_directory, send_file
 from flask_cors import CORS
 import ui.admin.admin_loader as AdminLoader
 from security.system.authentication import configure_auth
-import oracledb
+try:
+    import oracledb
+except ImportError:
+    oracledb = None
+    # Oracle support not available on this platform
 
 if os.getenv("EXPERIMENT") == '+':
     app_logger = logging.getLogger("api_logic_server_app")

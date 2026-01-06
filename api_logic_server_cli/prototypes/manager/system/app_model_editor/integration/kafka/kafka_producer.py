@@ -10,7 +10,12 @@ You do not normally need to alter this file
 
 """
 from config.config import Args
-from confluent_kafka import Producer
+try:
+    from confluent_kafka import Producer, KafkaException
+except ImportError:
+    Producer = None
+    KafkaException = None
+    # Kafka support not available on this platform
 import socket
 import logging
 from logic_bank.exec_row_logic.logic_row import LogicRow

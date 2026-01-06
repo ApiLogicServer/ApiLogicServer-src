@@ -3,7 +3,13 @@ import threading, time
 import logging
 import sys
 import signal
-from confluent_kafka import Producer, KafkaException, Consumer
+try:
+    from confluent_kafka import Producer, KafkaException, Consumer
+except ImportError:
+    Producer = None
+    KafkaException = None
+    Consumer = None
+    # Kafka support not available on this platform
 
 ####
 # adapted from and thanks to: https://pypi.org/project/flask-kafka

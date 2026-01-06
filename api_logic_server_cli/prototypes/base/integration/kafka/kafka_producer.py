@@ -10,13 +10,17 @@ You do not normally need to alter this file
 
 """
 from config.config import Args
-from confluent_kafka import Producer
+try:
+    from confluent_kafka import Producer, KafkaException
+except ImportError:
+    Producer = None
+    KafkaException = None
+    # Kafka support not available on this platform
 import socket
 import logging, os
 from logic_bank.exec_row_logic.logic_row import LogicRow
 from integration.system.RowDictMapper import RowDictMapper
 from flask import jsonify
-from confluent_kafka import Producer, KafkaException
 import api.system.api_utils as api_utils
 
 producer = None
@@ -26,7 +30,10 @@ conf = None
 """ filled from config (KAFKA_CONNECT) """
 
 logger = logging.getLogger('integration.n8n')
-logger.debug("kafka_connect imported")
+if Producer is not None:
+    logger.fatal("SEVERE WARNING - KAFKA NOT AVAILABLE - DISABLED")
+else:
+    logger.debug("kafka_connnect imported")
 
 def kafka_producer():
     """

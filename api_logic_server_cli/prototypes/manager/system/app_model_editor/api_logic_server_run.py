@@ -62,7 +62,11 @@ from flask_cors import CORS
 import ui.admin.admin_loader as AdminLoader
 from security.system.authentication import configure_auth
 import database.multi_db as multi_db
-import oracledb
+try:
+    import oracledb
+except ImportError:
+    oracledb = None
+    # Oracle support not available on this platform
 import integration.kafka.kafka_producer as kafka_producer
 import integration.kafka.kafka_consumer as kafka_consumer
 
