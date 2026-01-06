@@ -31,7 +31,7 @@ conf = None
 
 logger = logging.getLogger('integration.n8n')
 if Producer is not None:
-    logger.fatal("SEVERE WARNING - KAFKA NOT AVAILABLE - DISABLED")
+    logger.fatal("SEVERE WARNING - KAFKA NOT AVAILABLE FOR IMPORT - DISABLED")
 else:
     logger.debug("kafka_connnect imported")
 

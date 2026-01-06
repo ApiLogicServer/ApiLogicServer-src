@@ -30,7 +30,10 @@ conf = None
 """ filled from config (KAFKA_CONNECT) """
 
 logger = logging.getLogger('integration.n8n')
-logger.debug("kafka_connect imported")
+if Producer is not None:
+    logger.fatal("SEVERE WARNING - KAFKA NOT AVAILABLE FOR IMPORT - DISABLED")
+else:
+    logger.debug("kafka_connect imported")
 
 def kafka_producer():
     """

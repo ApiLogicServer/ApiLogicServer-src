@@ -27,7 +27,7 @@ conf = None
 
 logger = logging.getLogger('integration.kafka')
 if Consumer is not None:
-    logger.fatal("SEVERE WARNING - KAFKA NOT AVAILABLE - DISABLED")
+    logger.fatal("SEVERE WARNING - KAFKA NOT AVAILABLE FOR IMPORT - DISABLED")
 else:
     logger.debug("kafka_consumer imported")
 

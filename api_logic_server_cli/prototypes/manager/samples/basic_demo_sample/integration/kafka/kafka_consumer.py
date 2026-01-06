@@ -26,7 +26,10 @@ from integration.system.FlaskKafka import FlaskKafka
 conf = None
 
 logger = logging.getLogger('integration.kafka')
-logger.debug("kafka_consumer imported")
+if Consumer is not None:
+    logger.fatal("SEVERE WARNING - KAFKA NOT AVAILABLE FOR IMPORT - DISABLED")
+else:
+    logger.debug("kafka_consumer imported")
 
 
 def kafka_consumer(safrs_api: safrs.SAFRSAPI = None):
