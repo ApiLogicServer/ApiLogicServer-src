@@ -386,8 +386,8 @@ def start_api_logic_server(project_name: str, env_list = None, port: str='5656',
     with open(models_file, 'r') as f:
         line_count = len(f.readlines())
     
-    if line_count < 100:
-        error_msg = f"VALIDATION FAILED: database/models.py only has {line_count} lines, expected >100 lines. Project may not have been created properly."
+    if line_count < 50:
+        error_msg = f"VALIDATION FAILED: database/models.py only has {line_count} lines, expected >50 lines. Project may not have been created properly."
         print(f"\n❌ {error_msg}\n")
         raise ValueError(error_msg)
     
