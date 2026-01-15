@@ -1,7 +1,7 @@
 ---
 # LogicBank API Reference
-# Version: 1.0.1
-# Last Updated: November 17, 2025
+# Version: 1.0.2
+# Last Updated: January 15, 2026
 # Description: The Logic Rosetta Stone: simplified API for creating declarative business logic rules
 ---
 
@@ -9,6 +9,33 @@ Here is the simplified API for LogicBank:
 
 PREREQUISITE: For general patterns (event handler signatures, logging, request pattern, anti-patterns),
 see docs/training/logic_bank_patterns.prompt
+
+=============================================================================
+🗂️ CRITICAL: Directory Structure Inference from Natural Language
+=============================================================================
+
+**Pattern Recognition:**
+- Context phrases ("When X", "For Y") → directory: logic/logic_discovery/x/
+- Use case phrases ("Use case: Z") → file: z.py
+- No context phrase → single file (flat structure OK)
+
+**Naming:** Convert to snake_case, remove articles
+- "When Placing Orders" → place_order/
+- "Requirement: Check Credit" → check_credit.py
+- "Use case: App Integration" → app_integration.py
+
+**Example:**
+```
+Prompt: "When Placing Orders, implement Requirement: Check Credit... Use case: App Integration..."
+
+Structure:
+  logic/logic_discovery/place_order/
+    __init__.py              ← always create (empty file for auto-discovery)
+    check_credit.py
+    app_integration.py
+```
+
+=============================================================================
 
 Translate the user prompt into a series of calls to Rule methods, described here.
 
@@ -360,5 +387,68 @@ RIGHT (do this instead):
                                if_condition=lambda row: row.date_shipped is not None,
                                with_args={"topic": "order_shipping"})
 
-logic should create python files in logic/logic_discovery, 
-and cross-check/use attribute names in database/models.py
+=============================================================================
+🗂️ FILE ORGANIZATION: Complete Example with Directory Structure
+=============================================================================
+
+When given a prompt with context phrase and multiple use cases, create organized structure:
+
+Example Prompt:
+```
+When Placing Orders, implement Requirement: Check Credit:
+
+1. The Customer's balance is less than the credit limit
+2. The Customer's balance is the sum of the Order amount_total where date_shipped is null
+3. The Order's amount_total is the sum of the Item amount
+4. The Item amount is the quantity * unit_price
+5. The Product count_suppliers is the sum of the Product Suppliers
+6. Item unit_price copied from the Product
+
+Use case: App Integration
+
+1. Send the Order to Kafka topic 'order_shipping' if the date_shipped is not None.
+```
+
+Response Structure:
+```
+logic/logic_discovery/
+  place_order/
+    __init__.py
+    check_credit.py
+    app_integration.py
+```
+
+File: logic/logic_discovery/place_order/__init__.py
+```python
+# Empty file - makes this a Python package for auto-discovery
+```
+
+File: logic/logic_discovery/place_order/check_credit.py
+```python
+"""
+Check Credit Use Case - Business Logic Rules
+
+Natural Language Requirements:
+1. The Customer's balance is less than the credit limit
+2. The Customer's balance is the sum of the Order amount_total where date_shipped is null
+3. The Order's amount_total is the sum of the Item amount
+4. The Item amount is the quantity * unit_price
+5. The Product count_suppliers is the sum of the Product Suppliers
+6. Item unit_price copied from the Product
+
+version: 1.0
+date: [Current Date]
+"""
+
+from logic_bank.logic_bank import Rule
+from database import models
+
+
+def declare_logic():
+    """Business logic rules for Check Credit use case."""
+    
+    Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None)
+    Rule.sum(derive=models.Order.amount_total, as_sum_of=models.Item.amount)
+    Rule.formula(derive=models.Item.amount, as_expression=lambda row: row.quantity * row.unit_price)
+    Rule.copy(derive=models.Item.unit_price, from_parent=models.Product.unit_price)
+    Rule.count(derive=models.Product.count_suppliers, as_count_of=mod
