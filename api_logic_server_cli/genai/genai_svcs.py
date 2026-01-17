@@ -921,8 +921,8 @@ def call_chatgpt(messages: List[Dict[str, str]], api_version: str, using: str, r
         if model == "":  # default from CLI is '', meaning fall back to env variable or system default...
             model = os.getenv("APILOGICSERVER_CHATGPT_MODEL")
             if model is None or model == "*":   # system default chatgpt model
-                model = "gpt-4o-2024-08-06"     #  33 sec
-                # model = "o3-mini"               # 130 sec
+                model = "gpt-4o"                #  24 sec
+                # model = "o1"                    #  48 sec
         request_path = Path(using).joinpath('request.json')
         if 'admin_app' in str(request_path):
             request_path = admin_app_path(request_path, 'request_raw')
