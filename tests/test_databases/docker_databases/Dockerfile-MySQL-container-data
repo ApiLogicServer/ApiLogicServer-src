@@ -30,8 +30,8 @@
 # Now convert container to image, and push to docker hub
 
 # docker commit mysql-container mysql-image
-# docker tag mysql-image apilogicserver/mysql8.0:version1.0.15
-# docker push apilogicserver/mysql8.0:version1.0.15
+# docker tag mysql-image apilogicserver/mysql8.0:version1.0.16
+# docker push apilogicserver/mysql8.0:version1.0.16
 #   
 # and tag/push latest
 # docker tag mysql-image apilogicserver/mysql8.0:latest
