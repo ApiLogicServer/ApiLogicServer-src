@@ -21,7 +21,7 @@ def declare_logic():
     2. The Customer's balance is the sum of the Order amount_total where date_shipped is null
     3. The Order's amount_total is the sum of the Item amount
     4. The Item amount is the quantity * unit_price
-    5. The Item unit_price is copied from the Product unit_price
+    5. The Item unit_price is from the Product unit_price
     """
     
     Rule.constraint(validate=models.Customer, as_condition=lambda row: row.balance <= row.credit_limit, error_msg="Customer balance exceeds credit limit")                    
