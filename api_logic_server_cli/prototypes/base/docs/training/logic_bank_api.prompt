@@ -15,24 +15,26 @@ see docs/training/logic_bank_patterns.prompt
 =============================================================================
 
 **Pattern Recognition:**
-- Context phrases ("When X", "For Y") → directory: logic/logic_discovery/x/
-- Use case phrases ("Use case: Z") → file: z.py
+- Context phrases ("When X", "For Y", "On Z") → directory: logic/logic_discovery/x/
+- After context, each colon-terminated phrase → file: phrase.py
+- Prefixes like "Use case:", "Requirement:" are optional (just noise words)
 - No context phrase → single file (flat structure OK)
 
 **Naming:** Convert to snake_case, remove articles
-- "When Placing Orders" → place_order/
-- "Requirement: Check Credit" → check_credit.py
-- "Use case: App Integration" → app_integration.py
+- "When Placing Orders" / "On Placing Orders" → place_order/
+- "Check Credit:" → check_credit.py
+- "Use case: App Integration:" → app_integration.py
 
-**Example:**
+**Examples:**
 ```
-Prompt: "When Placing Orders, implement Requirement: Check Credit... Use case: App Integration..."
+Prompt: "When Placing Orders, Check Credit: ... App Integration: ..."
+Result: logic/logic_discovery/place_order/{__init__.py, check_credit.py, app_integration.py}
 
-Structure:
-  logic/logic_discovery/place_order/
-    __init__.py              ← always create (empty file for auto-discovery)
-    check_credit.py
-    app_integration.py
+Prompt: "For Customer Management, Validate Credit: ... Calculate Loyalty: ..."
+Result: logic/logic_discovery/customer_management/{__init__.py, validate_credit.py, calculate_loyalty.py}
+
+Prompt: "Check Credit: ..." (no context)
+Result: logic/logic_discovery/check_credit.py (flat)
 ```
 
 =============================================================================
