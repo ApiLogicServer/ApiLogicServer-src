@@ -16,7 +16,7 @@ def declare_logic():
         1. To view the AI procedural/declarative comparison, [click here](https://github.com/ApiLogicServer/ApiLogicServer-src/blob/main/api_logic_server_cli/prototypes/basic_demo/logic/procedural/declarative-vs-procedural-comparison.md)
         2. Consider a 100 table system: 1,000 rules vs. 40,000 lines of code
     
-    Natural Language Requirements:
+    On Placing Orders, Check Credit:
     1. The Customer's balance is less than the credit limit
     2. The Customer's balance is the sum of the Order amount_total where date_shipped is null
     3. The Order's amount_total is the sum of the Item amount
