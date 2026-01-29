@@ -482,4 +482,4 @@ def declare_logic():
     Rule.sum(derive=models.Order.amount_total, as_sum_of=models.Item.amount)
     Rule.formula(derive=models.Item.amount, as_expression=lambda row: row.quantity * row.unit_price)
     Rule.copy(derive=models.Item.unit_price, from_parent=models.Product.unit_price)
-    Rule.count(derive=models.Product.count_suppliers, as_count_of=mod
+    Rule.count(derive=models.Product.count_suppliers, as_count_of=models.ProductSupplier)
