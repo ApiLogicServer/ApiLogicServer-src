@@ -1,9 +1,31 @@
 ---
 # LogicBank API Reference
-# Version: 1.0.2
-# Last Updated: January 15, 2026
+# Version: 1.0.3
+# Last Updated: January 29, 2026
 # Description: The Logic Rosetta Stone: simplified API for creating declarative business logic rules
 ---
+
+=============================================================================
+💎 CORE PRINCIPLE: Path-Independent Rules = Automatic Reuse
+=============================================================================
+
+**What you're really doing:** Distilling path-independent rules from path-dependent logic.
+
+**Path-dependent (procedural):** Separate code for each execution path
+- Add item → recalc amounts
+- Change quantity → recalc amounts  
+- Change customer → adjust both balances
+- Ship order → adjust balance
+- Delete item → recalc amounts
+
+**Path-independent (declarative):** ONE rule works for ALL paths
+```python
+Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None)
+```
+
+**Automatic reuse over use cases:** Whereas reuse is typically a high-order design skill, declarative rules provide *automatic reuse* - write the relationship once, it works for insert/update/delete/parent changes. No use case explosion.
+
+=============================================================================
 
 Here is the simplified API for LogicBank:
 
@@ -11,7 +33,7 @@ PREREQUISITE: For general patterns (event handler signatures, logging, request p
 see docs/training/logic_bank_patterns.prompt
 
 =============================================================================
-🗂️ CRITICAL: Directory Structure Inference from Natural Language
+🗂️ CRITICAL: Directory Structure = Requirements Traceability
 =============================================================================
 
 **Pattern Recognition:**
@@ -24,6 +46,13 @@ see docs/training/logic_bank_patterns.prompt
 - "When Placing Orders" / "On Placing Orders" → place_order/
 - "Check Credit:" → check_credit.py
 - "Use case: App Integration:" → app_integration.py
+
+**Requirements Traceability:** File structure provides direct link from use case to implementation
+```
+Prompt: "On Placing Orders, Check Credit: ..."
+Result: logic/logic_discovery/place_order/check_credit.py
+Trace:  Use Case Name → File Path → Rules → Logic Report
+```
 
 **Examples:**
 ```
