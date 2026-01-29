@@ -81,7 +81,7 @@ Copilot reads the MCP schema and responds to a natural-language instruction such
 
 **Step 2: Declare Logic:**
 ```bash title='Step 2: Declare Logic'
-Use case: Check Credit    
+on Placing Orders, Check Credit    
     1. The Customer's balance is less than the credit limit
     2. The Customer's balance is the sum of the Order amount_total where date_shipped is null
     3. The Order's amount_total is the sum of the Item amount
@@ -335,7 +335,7 @@ Different kinds of logic naturally call for different tools, as in this unified 
 
 **Declare Logic: Deterministic and Probabilistic:**
 ```bash title='Declare Logic: Deterministic and Probabilistic'
-Use case: Check Credit:
+on Placing Orders, Check Credit:
 
 1. The Customer's balance is less than the credit limit
 2. The Customer's balance is the sum of the Order amount_total where date_shipped is null

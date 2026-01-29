@@ -23,7 +23,7 @@ def declare_logic():
         
     Use Logic Bank to enforce these requirements:
     
-    Enforce the Check Credit requirement (do not generate check constraints):
+    Enforce on Placing Orders, Check Credit requirement (do not generate check constraints):
     1. Customer.balance <= credit_limit
     2. Customer.balance = Sum(Order.amount_total where date_shipped is null)
     3. Order.amount_total = Sum(Item.mount)

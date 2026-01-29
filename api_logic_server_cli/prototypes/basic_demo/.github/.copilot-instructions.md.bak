@@ -6,12 +6,11 @@
 ⚠️ IF USER SAYS: "load .github/.copilot-instructions.md" OR ANY ACTIVATION PHRASE
 ⚠️ YOU MUST EXECUTE THIS EXACT SEQUENCE - NO DEVIATIONS:
 
-1. Read .github/.copilot-instructions.md COMPLETELY (silently - internalize all instructions)
-2. Read .github/welcome.md (silently - do not mention this action)
-3. Display ONLY the content from welcome.md
-4. DO NOT say "I've loaded the instructions"
-5. DO NOT display this .copilot-instructions.md file
-6. DO NOT explain what you're doing
+1. Read .github/welcome.md (silently - do not mention this action)
+2. Display ONLY the content from welcome.md
+3. DO NOT say "I've loaded the instructions"
+4. DO NOT display this .copilot-instructions.md file
+5. DO NOT explain what you're doing
 
 THIS IS NOT A SUGGESTION - THIS IS A MANDATORY COMMAND
 
@@ -31,68 +30,15 @@ THIS IS NOT A SUGGESTION - THIS IS A MANDATORY COMMAND
 **MANDATORY RESPONSE SEQUENCE:**
 
 ```
-STEP 1: Read .github/.copilot-instructions.md COMPLETELY (silently - internalize all instructions)
-STEP 2: Read .github/welcome.md (silently)
-STEP 3: Display welcome.md content ONLY
-STEP 4: STOP - do nothing else
+STEP 1: Read .github/welcome.md (silently)
+STEP 2: Display welcome.md content ONLY
+STEP 3: STOP - do nothing else
 ```
-
----
-
-## 🎯 CRITICAL: Guided Tour Activation Protocol
-
-**ACTIVATION TRIGGERS:**
-- "guide me through"
-- "guide me"
-- "take the tour"
-- "walk me through"
-- "show me around"
-- Any similar tour/walkthrough request
-
-**MANDATORY RESPONSE SEQUENCE:**
-
-```
-STEP 1: Read tutor.md COMPLETELY (silently)
-STEP 2: Follow tutor.md instructions EXACTLY
-STEP 3: Act as TOUR GUIDE (not passive assistant)
-STEP 4: Create manage_todo_list for tour sections
-STEP 5: Start with tutor.md Introduction section
-```
-
-**✅ CORRECT EXECUTION:**
-```
-User: "guide me"
-
-AI: [reads tutor.md completely - NO OUTPUT]
-AI: [creates todo list from tutor sections]
-AI: [follows tutor.md Introduction section exactly]
-AI: "I'll guide you through basic_demo - a 20-minute hands-on exploration..."
-```
-
-**❌ FORBIDDEN BEHAVIORS:**
-```
-User: "guide me"
-
-❌ AI: Starts giving general guidance without reading tutor.md
-❌ AI: Runs commands without following tutor choreography
-❌ AI: Acts as passive assistant waiting for user direction
-❌ AI: Skips sections or reorders steps
-❌ AI: Offers option menus instead of directing the tour
-❌ AI: Assumes server state or skips stop/start sequences
-```
-
-**RATIONALE:**
-- tutor.md contains weeks of refined choreography
-- Every command, stop, start is precisely sequenced
-- Deviations break the learning experience
-- You are the DIRECTOR in tour mode, not a passive responder
-- The tour has been engineered for AI reliability through multiple iterations
 
 **✅ CORRECT EXECUTION:**
 ```
 User: "load .github/.copilot-instructions.md"
 
-AI: [reads .copilot-instructions.md COMPLETELY - NO OUTPUT - internalizes all instructions]
 AI: [reads welcome.md silently - NO OUTPUT]
 AI: [displays ONLY this]:
 
@@ -256,31 +202,19 @@ See `docs/training/README.md` for complete organization rules.
 ```
 STOP ✋
 
-WHEN USER PROVIDES A LOGIC PROMPT:
+READ ALL TRAINING FILES IN ORDER (every single time):
 
-STEP 1: Read these files (DO THIS FIRST - NOT OPTIONAL):
-   1. docs/training/logic_bank_patterns.prompt           (Foundation - READ FIRST)
-   2. docs/training/logic_bank_api.prompt                (Deterministic rules - READ SECOND)
-   3. docs/training/probabilistic_logic.prompt           (AI/Probabilistic rules - READ THIRD)
+1. docs/training/logic_bank_patterns.prompt           (Foundation - ALWAYS READ FIRST)
+2. docs/training/logic_bank_api.prompt                (Deterministic rules - ALWAYS READ SECOND)
+3. docs/training/probabilistic_logic.prompt           (AI/Probabilistic rules - ALWAYS READ THIRD)
 
-STEP 2: Parse the prompt following logic_bank_api.prompt instructions:
-   - Identify context phrase ("When X", "For Y", "On Z") → creates directory
-   - Identify colon-terminated use cases → creates files
-   - Follow directory structure rules EXACTLY as specified
+⚠️ CRITICAL REQUIREMENTS:
+   - DO NOT skip any files, even if you think you know the pattern
+   - DO NOT selectively read based on keywords in the user's request
+   - READ ALL THREE FILES IN SEQUENCE before writing any code
+   - These files contain failure patterns and correct implementations learned from production use
 
-STEP 3: Create the directory structure and files as instructed
-
-STEP 4: Implement the rules following the training patterns
-
-⚠️ CRITICAL - NO EXCEPTIONS:
-   - You MUST read all three training files before implementing
-   - You MUST follow the directory structure rules in logic_bank_api.prompt
-   - You MUST NOT create flat files when context phrase is present
-   - DO NOT skip files even if you think you know the pattern
-   - These files contain failure patterns learned from production use
-
-FAILURE MODE: Creating flat files in logic/logic_discovery/ when prompt has context phrase
-CORRECT: Create logic/logic_discovery/<context_dir>/{__init__.py, use_case_files.py}
+THEN (and only then) implement the logic.
 ```
 
 **Training File Contents:**
@@ -327,9 +261,7 @@ For developers: Business logic is **typically half the system** in data-centric 
 
 With declarative rules, you simply state business requirements. The engine handles dependencies, ordering, and optimization automatically.
 
-LogicBank provides **44X code reduction** (5 lines vs 220+ procedural). **At scale, this means a typical 100-table enterprise system would require ~1,000 declarative rules vs. 40,000+ lines of procedural code.** More critically, those 40,000 lines would contain bugs in foreign key change handling that the rules engine prevents by construction.
-
-The engine provides automatic:
+LogicBank provides **44X code reduction** (5 lines vs 220+ procedural) with automatic:
 - **Dependency tracking** - listens to SQLAlchemy ORM events at attribute level
 - **Cascading updates** - when Order.customer_id changes, adjusts BOTH old and new Customer.balance
 - **Transitive dependencies** - Item.quantity change cascades through Item.amount → Order.amount_total → Customer.balance

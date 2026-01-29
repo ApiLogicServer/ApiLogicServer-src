@@ -15,7 +15,7 @@ This describes how to use Logic; for more information, [see here](https://apilog
 You can provide prompts like this to CoPilot.  This is a good approach for new users:
 
 ```text title="Declare Logic in Natural Language"
-Create Business Logic for Use Case = Check Credit:  
+Create Business Logic for on Placing Orders, Check Credit:  
     1. The Customer's balance is less than the credit limit
     2. The Customer's balance is the sum of the Order amount_total where date_shipped is null
     3. The Order's amount_total is the sum of the Item amount

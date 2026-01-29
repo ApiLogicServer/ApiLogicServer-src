@@ -1,7 +1,9 @@
 ---
 title: Vibe MCP / Microservice
 do_process_code_block_titles: True
-version: 0.23 from docsite, for readme 7/11/2025
+version: 1.1 from docsite, for readme 10/28/2025
+Propagation: Build copies to api_logic_server_cli/prototypes/basic_demo/readme_vibe → BLT copies to Manager samples/basic_demo_sample/readme_vibe
+Guided_Tour: See tutor for AI guided tour instructions (user says "Guide me through basic_demo")
 ---
 <style>
   -typeset h1,
@@ -19,8 +21,20 @@ This illustrates [GenAI-Logic](https://apilogicserver.github.io/Docs/Sample-Basi
 
 **🤖 Bootstrap Copilot by pasting the following into the chat:**
 ``` bash title='🤖 Bootstrap Copilot by pasting the following into the chat'
-Please load `.github/.copilot-instructions.md`.
+Please load `.github/.copilot-instructions.md`
 ```
+
+> **Important:** be sure CoPilot is in "Agent" Mode.  "Ask" will not work.  Also, we get consistently good results with `Claude Sonnet 4.5`.
+
+<br>
+
+**How to Use This Demo:**
+
+This demo teaches AI-assisted development patterns. Each step is a **natural language prompt** you copy/paste into Copilot chat. The prompts are self-documenting - they explain what they do.
+
+**Vibe Philosophy:** AI makes errors. That's expected. When something fails, tell Copilot: *"Error X occurred, fix it"*. Copilot is exceptionally good at finding and correcting its own mistakes.
+
+**Recommended Path:** If you're new to GenAI-Logic, start with the [Standard Demo](https://apilogicserver.github.io/Docs/Sample-Basic-Demo) (creates `basic_demo` with guided tutor) to learn platform fundamentals. Then return here to explore AI-assisted development with `basic_demo_vibe`.
 
 <br>
 
@@ -30,10 +44,18 @@ Please load `.github/.copilot-instructions.md`.
 
 <br>Here we will use Vibe to:
 
-1. Create a project from an existing database, providing a MCP-enabled API and an Admin App
-2. Create a custom (React) client
-3. Create an MCP Client, and
-4. Add declarative logic and security<br><br>
+1. **[Create From Existing DB](#1-create-from-existing-db)** - Provides a MCP-enabled API and an Admin App
+   - [Project Opens: Run](#1a-project-opens-run) - Launch and verify your system
+
+2. **[Custom UI: GenAI, Vibe](#2-custom-ui-genai-vibe)** - Create a custom (React) client
+
+3. **[Declare Business Logic](#3-declare-business-logic)** - Add rules with natural language
+
+4. **[Enterprise Connectivity: B2B](#4-enterprise-connectivity-b2b)** - Create integration endpoints
+
+5. **[MCP: Logic, User Interface](#5-mcp-logic-user-interface)** - Implement Model Context Protocol
+
+6. **[Iterate: Rules and Python](#6-iterate-rules-and-python)** - Advanced customization patterns<br><br>
 
 Pre-reqs:
 
@@ -48,7 +70,7 @@ The entire process takes 20 minutes; usage notes:
 
 * Most find it **more convenient** to view this in your Browser; [click here](https://apilogicserver.github.io/Docs/Sample-Basic-Tour)
 * A slide show summary is available [on our Web Site](https://www.genai-logic.com/product/tour)
-* Important: look for **readme files** in created projects
+* Tip: look for **readme files** in created projects
 
 ![product-tour](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/basic_demo/product-tour.png?raw=true)
 
@@ -58,16 +80,16 @@ The entire process takes 20 minutes; usage notes:
 
 ## 1. Create From Existing DB
 
-**Create a project from an existing database (open the disclure box for details):**
-```bash title="Create a project from an existing database (open the disclure box for details)"
-Create a database project from samples/dbs/basic_demo.sqlite
+**Create a project from an existing database (open the disclosure box for details):**
+```bash title="Create a project from an existing database (open the disclosure box for details)"
+Create a database project named basic_demo_vibe from samples/dbs/basic_demo.sqlite
 ```
 
 <details markdown>
 
-<summary> The database is Customer, Orders, Items and Product; you can also create the dataase</summary>
+<summary> The database is Customer, Orders, Items and Product; you can also create the database</summary>
 
-![existing datbase](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/vscode/vibe/create-project.png?raw=true)
+![existing database](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/vscode/vibe/create-project.png?raw=true)
 
 **Or, create a *new* database** with this prompt:
 ```bash
@@ -113,9 +135,9 @@ Run it as follows:
 
 <details markdown>
 
-<summary>API: filtering, sorting, pagination, optimistic locking and related data access - see the Swagger </summary>
+<summary>API: filtering, sorting, pagination, optimistic locking,related data access... see Swagger </summary>
 
-Your API is MCP enabled, and ready for custom app dev.  For more information, [click here](https://apilogicserver.github.io/Docs/API-Self-Serve/).
+Your API is MCP enabled, and ready for custom app dev.  For more information, [click here](https://apilogicserver.github.io/Docs/API-Self-Serve).
 
 ![swagger](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/basic_demo/api-swagger.jpeg?raw=true)
 </details>
@@ -232,7 +254,7 @@ Note that it's a `Multi-Table Transaction`, as indicated by the indentation.  Th
 
 <br>
 
-## 4. Enterprise Connectivity - B2B
+## 4. Enterprise Connectivity: B2B
 
 To fit our system into the Value Chain,
 we need a custom API to accept orders from B2B partners, and forward paid orders to shipping via Kafka.
@@ -282,11 +304,12 @@ Follow the suggestions to update the admin app.
 
 **3. Create an MCP Client Executor to process MCP Requests:**
 
-**Create an MCP Client Executor (dont run yet):**
+**Create an MCP Client Executor (don:**
 ``` bash title="Create an MCP Client Executor (don't run yet)"
-genai-logic genai-add-mcp-client
+Create the mcp client executor
 ```
-This enables the user interface for MCP.  MCP Clients accept MCP Requests, invoke the LLM to obtain a series of API calls to run, and runs them.  For more on MCP, [click here](https://apilogicserver.github.io/Docs/Integration-MCP).
+
+MCP Clients accept MCP Requests, invoke the LLM to obtain a series of API calls to run, and runs them.  For more on MCP, [click here](https://apilogicserver.github.io/Docs/Integration-MCP).
 
 <br>
 
@@ -348,6 +371,6 @@ to the customer for each one.
 
 <br>
 
-## 6. Iterate with Rules and Python
+## 6. Iterate: Rules and Python
 
 This is addressed in the related CLI-based demo - to continue, [click here](Sample-Basic-Demo#5-iterate-with-rules-and-python).

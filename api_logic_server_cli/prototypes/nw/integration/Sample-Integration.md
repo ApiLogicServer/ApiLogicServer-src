@@ -1,6 +1,7 @@
 ---
 title: Declarative Application Integration
-version: 10.3.0 from install
+notes: gold docsite, 2100 words (goal: 1500)
+version: 10.03.01 from docsite, for readme
 ---
 
 # Purpose
@@ -23,7 +24,8 @@ The **Northwind API Logic Server** provides APIs *and logic* for both transactio
 
 The **Shipping API Logic Server** listens on kafka, and processes the message.<br><br>
 
-![overview](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/overview.jpg?raw=true)
+![overview](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/integration.png?raw=true)
+
 &nbsp;
 
 **Self-serve APIs, Shared Logic**
@@ -84,27 +86,30 @@ To run the ApiLogicProject app:
 One command has created meaningful elements of our system:
 <br><br>
 
-!!! pied-piper ":bulb: Instant Self-Serve API - ad hoc integration - and Admin App"
 
-    ### API: Ad hoc Integration
+&nbsp;
+**Key Takeways - Instant Self-Serve API - ad hoc integration - and Admin App**
+&nbsp;
 
-    The system creates an API with end points for each table, providing filtering, sorting, pagination, optimistic locking and related data access.
-    
-    The API is [**self-serve**](https://apilogicserver.github.io/Docs/API-Self-Serve/): consumers can select their own attributes and related data, eliminating reliance on custom API development.  In this sample, our self-serve API meets our needs for Ad Hoc Integration, and Custom UI Dev.
+### API: Ad hoc Integration
 
-    <img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/api-swagger.jpeg?raw=true">
+The system creates an API with end points for each table, providing filtering, sorting, pagination, optimistic locking and related data access.
 
-    ### Admin App: Order Entry UI
+The API is [**self-serve**](https://apilogicserver.github.io/Docs/API-Self-Serve/): consumers can select their own attributes and related data, eliminating reliance on custom API development.  In this sample, our self-serve API meets our needs for Ad Hoc Integration, and Custom UI Dev.
 
-    The `create` command also creates an Admin App: multi-page, multi-table with automatic joins -- ready for **[business user agile collaboration](https://apilogicserver.github.io/Docs/Tech-AI/),** and back office data maintenance.  This complements custom UIs you can create with the API.
+<img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/api-swagger.jpeg?raw=true">
 
-    You can click the first Customer, and see their Orders, and Items.
+### Admin App: Order Entry UI
 
-    <img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/admin-app-initial.jpeg?raw=true">
+The `create` command also creates an Admin App: multi-page, multi-table with automatic joins -- ready for **[business user agile collaboration](https://apilogicserver.github.io/Docs/Tech-AI/),** and back office data maintenance.  This complements custom UIs you can create with the API.
 
-    !!! pied-piper ":bulb: 1 Command: Ad Hoc Integration Complete"
+You can click the first Customer, and see their Orders, and Items.
 
-        With 1 command, we have created an executable project that completes our ad hoc integration with a self-serve API.  We have also unblocked custom UI development.
+<img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/admin-app-initial.jpeg?raw=true">
+
+!!! pied-piper ":bulb: 1 Command: Ad Hoc Integration Complete"
+
+    With 1 command, we have created an executable project that completes our ad hoc integration with a self-serve API.  We have also unblocked custom UI development.
 
 &nbsp;
 
@@ -235,45 +240,48 @@ Note the automation for **automatic joins** (Product Name, not ProductId) and **
 
 &nbsp;
 
-### Declare Check Credit Logic
+### on Placing Orders, Check Credit Logic
 
 Such logic (multi-table derivations and constraints) is a significant portion of a system, typically nearly half.  API Logic server provides **spreadsheet-like rules** that dramatically simplify and accelerate logic development.
 
-!!! pied-piper ":bulb: Logic: Multi-table Derivation and Constraint Rules, 40X More Concise"
 
-    #### IDE: Declare and Debug
+&nbsp;
+**Key Takeways - Logic: Multi-table Derivations and Constraint Rules, 40X More Concise**
+&nbsp;
 
-    The 5 check credit rules are shown below.  
+#### IDE: Declare and Debug
 
-    !!! pied-piper ":bulb: Rules are 40X More Concise Than Code"
-    
-        Rules are 40X more concise than legacy code, as [shown here](https://github.com/valhuber/LogicBank/wiki/by-code){:target="_blank" rel="noopener"}.
-    
-    Rules are declared in Python, simplified with IDE code completion.  The `add-cust` process above has simulated the process of using your IDE to declare logic.
-    
-    Observe rules can be debugged using standard logging and the debugger:
+The 5 check credit rules are shown below.  
 
-    <img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/logic-chaining.jpeg?raw=true">
+!!! pied-piper ":bulb: Rules are 40X More Concise Than Code"
 
-    Rules operate by handling SQLAlchemy events, so apply to all ORM access, whether by the api engine, or your custom code.  Once declared, you don't need to remember to call them, which promotes quality.
+    Rules are 40X more concise than legacy code, as [shown here](https://apilogicserver.github.io/Docs/https://github.com/ApiLogicServer/basic_demo/blob/main/logic/procedural/declarative-vs-procedural-comparison).
 
-    The rules shown above prevented the too-big order with *multi-table logic* to copy the Product Price, compute the Amount, roll it up to the AmountTotal and Balance, and check the CreditLimit.  
-    
-    These same rules also govern changing orders, deleting them, picking different parts - about 9 transactions, all automated.  Implementing all this by hand would otherwise require about 200 lines of code.<br><br>
-    
-    
-    #### Agility, Quality
+Rules are declared in Python, simplified with IDE code completion.  The `add-cust` process above has simulated the process of using your IDE to declare logic.
 
-    Rules are a unique and significant innovation, providing meaningful improvements over procedural logic:
+Observe rules can be debugged using standard logging and the debugger:
 
-    | CHARACTERISTIC | PROCEDURAL | DECLARATIVE | WHY IT MATTERS |
-    | :--- |:---|:---|:---|
-    | **Reuse** | Not Automatic | Automatic - all Use Cases | **40X Code Reduction** |
-    | **Invocation** | Passive - only if called  | Active - call not required | Quality |
-    | **Ordering** | Manual | Automatic | Agile Maintenance |
-    | **Optimizations** |Manual | Automatic | Agile Design |
+<img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/logic-chaining.jpeg?raw=true">
 
-    > For more on rules, [click here](https://apilogicserver.github.io/Docs/Logic-Why/){:target="_blank" rel="noopener"}.
+Rules operate by handling SQLAlchemy events, so apply to all ORM access, whether by the api engine, or your custom code.  Once declared, you don't need to remember to call them, which promotes quality.
+
+The rules shown above prevented the too-big order with *multi-table logic* to copy the Product Price, compute the Amount, roll it up to the AmountTotal and Balance, and check the CreditLimit.  
+
+These same rules also govern changing orders, deleting them, picking different parts - about 9 transactions, all automated.  Implementing all this by hand would otherwise require about 200 lines of code.<br><br>
+
+
+#### Agility, Quality
+
+Rules are a unique and significant innovation, providing meaningful improvements over procedural logic:
+
+| CHARACTERISTIC | PROCEDURAL | DECLARATIVE | WHY IT MATTERS |
+| :--- |:---|:---|:---|
+| **Reuse** | Not Automatic | Automatic - all Use Cases | **40X Code Reduction** |
+| **Invocation** | Passive - only if called  | Active - call not required | Quality |
+| **Ordering** | Manual | Automatic | Agile Maintenance |
+| **Optimizations** |Manual | Automatic | Agile Design |
+
+> For more on rules, [click here](https://apilogicserver.github.io/Docs/Logic-Why/).
 
 &nbsp;
 
@@ -289,13 +297,16 @@ To see security in action:
 
 &nbsp;
 
-!!! pied-piper ":bulb: Row-Level Security: Customers Filtered"
 
-    #### Login, Row Filtering
+&nbsp;
+**Key Takeways - Row-Level Security: Customers Filtered**
+&nbsp;
 
-    Declarative row-level security ensures that users see only the rows authorized for their roles.  Observe you now see only customer ALFKI, per the security declared below.  Note the console log at the bottom shows how the filter worked.
+#### Login, Row Filtering
 
-    <img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/security-filters.jpg?raw=true">
+Declarative row-level security ensures that users see only the rows authorized for their roles.  Observe you now see only customer ALFKI, per the security declared below.  Note the console log at the bottom shows how the filter worked.
+
+<img src="https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/security-filters.jpg?raw=true">
 
 &nbsp;
 
@@ -328,7 +339,10 @@ The main task here is to ***map*** a B2B payload onto our logic-enabled SQLAlche
 
 ![dict to row](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/dict-to-row.jpg?raw=true)
 
-!!! pied-piper ":bulb: Custom Endpoint - 7 lines of code"
+
+&nbsp;
+**Key Takeways - Custom Endpoint - 7 lines of code**
+&nbsp;
 
     So, our custom endpoint required about 7 lines of code, along with the API specification on the right.  Note the logic is automatically factored out, and re-used for all APIs, both custom and self-serve.
 
@@ -355,7 +369,10 @@ Just as you can customize apis, you can complement rule-based logic using Python
 
 ![send order to shipping](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/order-to-shipping.jpg?raw=true)
 
-!!! pied-piper ":bulb: Extensible Rules, Kafka Message Produced"
+
+&nbsp;
+**Key Takeways - Extensible Rules, Kafka Message Produced**
+&nbsp;
 
     Rule-based logic is extensible with Python, here producing a Kafka message with 20 lines of code.
 
@@ -363,7 +380,7 @@ Just as you can customize apis, you can complement rule-based logic using Python
 
 ## 4. Consuming Messages
 
-The Shipping system illustrates how to consume messages.  This system was [created from AI](Tutorial-AI.md), here customized to add message consumption.
+The Shipping system illustrates how to consume messages.  This system was [created from AI](https://apilogicserver.github.io/Docs/Tutorial-AI), here customized to add message consumption.
 
 &nbsp;
 

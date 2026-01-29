@@ -1,6 +1,6 @@
 -- informal English
 
-Use Logic Bank to enforce the Check Credit requirement (do not generate check constraints):
+Use Logic Bank to enforce on Placing Orders, Check Credit requirement (do not generate check constraints):
 1. The customer's balance must not exceed the credit limit.
 2. The customer's balance is the sum of all unshipped orders.
 3. The order amount total is the sum of all item amounts.

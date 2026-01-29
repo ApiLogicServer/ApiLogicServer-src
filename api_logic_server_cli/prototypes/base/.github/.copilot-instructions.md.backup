@@ -256,31 +256,19 @@ See `docs/training/README.md` for complete organization rules.
 ```
 STOP ✋
 
-WHEN USER PROVIDES A LOGIC PROMPT:
+READ ALL TRAINING FILES IN ORDER (every single time):
 
-STEP 1: Read these files (DO THIS FIRST - NOT OPTIONAL):
-   1. docs/training/logic_bank_patterns.prompt           (Foundation - READ FIRST)
-   2. docs/training/logic_bank_api.prompt                (Deterministic rules - READ SECOND)
-   3. docs/training/probabilistic_logic.prompt           (AI/Probabilistic rules - READ THIRD)
+1. docs/training/logic_bank_patterns.prompt           (Foundation - ALWAYS READ FIRST)
+2. docs/training/logic_bank_api.prompt                (Deterministic rules - ALWAYS READ SECOND)
+3. docs/training/probabilistic_logic.prompt           (AI/Probabilistic rules - ALWAYS READ THIRD)
 
-STEP 2: Parse the prompt following logic_bank_api.prompt instructions:
-   - Identify context phrase ("When X", "For Y", "On Z") → creates directory
-   - Identify colon-terminated use cases → creates files
-   - Follow directory structure rules EXACTLY as specified
+⚠️ CRITICAL REQUIREMENTS:
+   - DO NOT skip any files, even if you think you know the pattern
+   - DO NOT selectively read based on keywords in the user's request
+   - READ ALL THREE FILES IN SEQUENCE before writing any code
+   - These files contain failure patterns and correct implementations learned from production use
 
-STEP 3: Create the directory structure and files as instructed
-
-STEP 4: Implement the rules following the training patterns
-
-⚠️ CRITICAL - NO EXCEPTIONS:
-   - You MUST read all three training files before implementing
-   - You MUST follow the directory structure rules in logic_bank_api.prompt
-   - You MUST NOT create flat files when context phrase is present
-   - DO NOT skip files even if you think you know the pattern
-   - These files contain failure patterns learned from production use
-
-FAILURE MODE: Creating flat files in logic/logic_discovery/ when prompt has context phrase
-CORRECT: Create logic/logic_discovery/<context_dir>/{__init__.py, use_case_files.py}
+THEN (and only then) implement the logic.
 ```
 
 **Training File Contents:**

@@ -183,7 +183,7 @@ Note the automation for **automatic joins** (Product Name, not ProductId) and **
 
 &nbsp;
 
-### 3.b Customize Logic: Declare Check Credit Rules
+### 3.b Customize Logic: on Placing Orders, Check Credit
 
 Such logic (multi-table derivations and constraints) is a significant portion of a system, typically nearly half.  API Logic server provides **spreadsheet-like rules** that dramatically simplify and accelerate logic development.
 
