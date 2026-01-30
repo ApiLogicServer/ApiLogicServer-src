@@ -123,6 +123,20 @@ User: "load .github/.copilot-instructions.md"
 
 ---
 
+## 📖 Content Organization Protocol
+
+**WHEN USER ASKS: "how do rules work" or "explain the rules engine"**
+**PRIMARY ANSWER**: Provide the **"How the Rules Engine Works"** 3-phase overview below:
+  1. Authoring (AI-assisted, human-reviewed)
+  2. Engine Initialization (Deterministic analysis)
+  3. Runtime Enforcement (Commit-time)
+
+**FOLLOW-UP OFFER**: After showing the 3 phases, offer: "Would you like more detail on any specific aspect?"
+
+**NEVER**: Respond with generic "Key Concepts" or custom explanations - use the specific 3-phase content from this file.
+
+---
+
 ## Capabilities Reference
 
 When user asks "what can I do here", list these capabilities:
@@ -318,22 +332,42 @@ Use case: App Integration
     1. Send Order to Kafka when date_shipped changes to non-null
 ```
 
+**How the Rules Engine Works:**
+
+**1. Authoring (AI-assisted, human-reviewed)**
+- You express business intent in natural language (via Copilot or any AI assistant)
+- The AI translates intent into a declarative DSL, under human review
+- Distills path-dependent logic into data-bound rules (table invariants) for automatic re-use
+- Resolves ambiguity using schema and relationships (e.g., copy vs reference)
+- Produces readable rules developers can inspect, edit, debug and version
+
+*This is where AI helps — authoring, not execution.*
+
+**2. Engine Initialization (Deterministic analysis)**
+- On startup, the non-RETE rule engine loads all rules
+- It computes dependencies deterministically from Rule types (derivations, constraints, actions)
+- Execution order is derived once, not from code paths
+
+No compilation. No dependencies-from-pattern-matching. No inference from runtime behavior.
+
+**3. Runtime Enforcement (Commit-time)**
+- Rules execute at transaction commit via SQLAlchemy commit events
+- All writes — APIs, workflows, UIs, agents — pass through the same rule set
+- Dependencies are already known; execution is deterministic and efficient
+- **No rule is "called." No path can bypass enforcement.**
+- Non-RETE optimizations: pruning, adjustment logic, delta-based aggregations
+- **Cascading via old_row tracking** - When Order.customer_id changes, adjusts BOTH old and new Customer.balance
+
+**The Key Developer Insight:**
+
+You declare invariants on data. You don't wire rules into flows. Invocation is automatic, on commit. The engine enforces them — everywhere, automatically, at commit.
+
 **Why Declarative Rules Matter:**
 
-For developers: Business logic is **typically half the system** in data-centric applications. The real pain with procedural code isn't just volume (200+ lines vs 5 rules) - it's **maintenance**:
-- **Finding insertion points** - you must analyze existing code to figure out where new logic goes
+LogicBank provides **44X code reduction** (5 lines vs 220+ procedural) with:
 - **Automatic ordering** - add rules anywhere that makes sense, confident they'll run in the right order
 - **Understanding intent** - you see WHAT it does (business rules) vs HOW (procedural steps)
-
-With declarative rules, you simply state business requirements. The engine handles dependencies, ordering, and optimization automatically.
-
-LogicBank provides **44X code reduction** (5 lines vs 220+ procedural). **At scale, this means a typical 100-table enterprise system would require ~1,000 declarative rules vs. 40,000+ lines of procedural code.** More critically, those 40,000 lines would contain bugs in foreign key change handling that the rules engine prevents by construction.
-
-The engine provides automatic:
-- **Dependency tracking** - listens to SQLAlchemy ORM events at attribute level
-- **Cascading updates** - when Order.customer_id changes, adjusts BOTH old and new Customer.balance
-- **Transitive dependencies** - Item.quantity change cascades through Item.amount → Order.amount_total → Customer.balance
-- **Optimized execution** - uses deltas, not re-aggregation; automatic pruning
+- **Maintenance** - no need to find insertion points or trace execution paths
 
 **Why the Rules Engine is a Correctness Guarantee:**
 
@@ -341,22 +375,7 @@ The "2 critical bugs" that even AI-generated procedural code missed:
 1. **Changing Order.customer_id** - procedural code failed to adjust BOTH the old and new customer balances
 2. **Changing Item.product_id** - procedural code failed to re-copy the unit_price from the new product
 
-These bugs illustrate why declarative rules are **mandatory, not optional**:
-
-**Dependency Chains:** In the logic above, `Customer.balance` has transitive dependencies:
-- Direct: `Order.amount_total`, `Order.date_shipped`
-- Through Order: `Item.amount` (affects Order.amount_total)
-- Through Item: `Item.quantity`, `Item.unit_price` (affect Item.amount)
-- Through Product: `Product.unit_price` (copied to Item.unit_price)
-
-**Automatic Completeness:** The declarative rules engine:
-- Listens to **SQLAlchemy ORM events** at the attribute level
-- When `Order.customer_id` changes, **automatically adjusts both old and new customer balances**
-- When `Item.product_id` changes, **automatically re-copies from the new product**
-- Uses **dependency ordering** to fire rules in correct sequence
-- Applies **optimized chaining** (uses deltas, not re-aggregation)
-
-**Why Procedural Code Fails:** Even AI-generated procedural code requires explicit handlers for EVERY possible change path. It's easy to miss:
+These bugs illustrate why declarative rules are **mandatory, not optional**. Even AI-generated procedural code requires explicit handlers for EVERY possible change path. It's easy to miss:
 - Foreign key changes affecting multiple parents
 - Transitive dependencies through multiple tables
 - Where clause conditions that include/exclude rows
