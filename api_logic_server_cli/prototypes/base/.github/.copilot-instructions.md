@@ -265,6 +265,19 @@ changelog:
 - AI procedural code: 220 lines, 2 bugs (missed 8 change paths)
 - Declarative rules: 5 lines, 0 bugs (engine handles all 9 paths)
 
+**The 9 Transaction Paths** (design once, govern all pathos - automatic re-use- coverage with declarative rules):
+1. **Insert Order** → updates Customer.balance
+2. **Insert Item** → updates Item.amount, Order.amount_total, Customer.balance  
+3. **Update Item.quantity** → recalculates Item.amount, Order.amount_total, Customer.balance
+4. **Update Item.unit_price** → recalculates Item.amount, Order.amount_total, Customer.balance
+5. **Update Item.product_id** → copies new Product.unit_price, recalculates amounts
+6. **Update Item.order_id** → adjusts **both** old and new Order totals, **both** Customers
+7. **Delete Item** → adjusts Order.amount_total, Customer.balance
+8. **Update Order.customer_id** → adjusts **both** old and new Customer.balance
+9. **Update Order.date_shipped** → includes/excludes from Customer.balance calculation
+
+**Why declarative wins:** Rules are defined on the **data** (Customer, Order, Item), not on specific transactions. The engine automatically applies them to ALL change paths. Procedural code must explicitly handle each scenario - easy to miss cases like reassigning items between orders (#6).
+
 **Real enterprise system (100 tables):**
 - 80 tables with business logic
 - 12 rules per table average = **960 rules total**
