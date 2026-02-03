@@ -6,6 +6,38 @@ purpose: Bootstrap context for both developers (in IDE) and evaluators (AI-drive
 version: 3.1
 ---
 
+---
+
+## 🏗️ What You Get (Auto-Generated Infrastructure)
+
+The created project came from: `genai-logic create --project_name=... --db_url=...`
+
+**It's a complete, production-ready microservice:**
+
+✅ **Enterprise JSON:API** - Standard REST with filtering, sorting, pagination, and relationships  
+✅ **Production Admin UI** - Full CRUD interface at `/admin-app` with multi-table forms  
+✅ **SQLAlchemy Models** - Auto-generated from database schema in `database/models.py`  
+✅ **API Endpoints** - Auto-discovered REST endpoints for all tables in `api/customize_api.py`  
+✅ **Containerized** - Docker/Kubernetes ready with `devops/docker/` configuration  
+✅ **AI-Enabled (MCP)** - Discoverable metadata at `/.well-known/mcp.json` for Copilot/ChatGPT  
+
+**Created in ~5 seconds** - Working API server + Admin UI + Models from the database.
+
+---
+
+## 🎨 What You Do (Customization & Extension)
+
+Now extend this generated foundation:
+
+**Business Logic** - Add declarative rules (5 lines, not 200+ procedural code)  
+**Custom APIs** - Add endpoints in `api/api_discovery/` for complex business transactions  
+**Security** - Add RBAC with `genai-logic add-auth`  
+**React Apps** - Create custom UIs with `genai-logic genai-add-app --vibe`  
+**Integration** - Add Kafka events, webhooks, B2B APIs  
+**Testing** - Create Behave tests with requirements traceability  
+
+---
+
 # About This File
 
 **You are reading the bootstrap for context engineering materials.**

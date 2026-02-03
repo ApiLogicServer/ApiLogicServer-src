@@ -464,6 +464,15 @@ Several `*_corrected_prompt.txt` files show typical AI mistakes:
 - Critical smoke test before pushing to GitHub
 - Results in `tests/results.txt` and `tests/failures.txt`
 
+**Propagating Changes to Source:**
+- **Copilot Instructions:** Use `system/ApiLogicServer-Internal-Dev/propagate_copilot_changes.py`
+  - Copies changes from `tests/ApiLogicProject/.github/.copilot-instructions.md` → source prototype
+  - Usage: `python3 build_and_test/ApiLogicServer/system/ApiLogicServer-Internal-Dev/propagate_copilot_changes.py`
+  - Extracts sections between title and "Key Technical Points"
+  - Ensures edits propagate to future project creations
+- **README Files:** Manual update required in Docs repo (see above)
+- **Other Files:** Copy manually or create similar propagation scripts in `system/ApiLogicServer-Internal-Dev/`
+
 &nbsp;
 
 ---
