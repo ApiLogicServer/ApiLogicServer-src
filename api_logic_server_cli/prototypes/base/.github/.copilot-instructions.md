@@ -1,12 +1,17 @@
 ---
-title: Context Engineering for GenAI-Logic Projects
-description: AI-generated technical documentation for AI assistants
-created_by: AI (Claude 4.5) through code inspection, system operation analysis, and Socratic training with Val Huber
-purpose: Bootstrap context for both developers (in IDE) and evaluators (AI-driven evaluation)
-version: 3.1
+version: 3.2
 ---
 
 ---
+
+## What is this?
+This is Context Engineering for GenAI-Logic Projects (created into each project). 
+
+It is AI-generated technical documentation for AI assistants, created_by: AI (Claude 4.5) through code inspection, system operation analysis, and Socratic training with Val Huber.
+
+It is used as bootstrap context for both developers (in IDE), and evaluators (AI-driven evaluation).
+
+<br>
 
 ## 🏗️ What You Get (Auto-Generated Infrastructure)
 
@@ -37,6 +42,42 @@ Now extend this generated foundation:
 **Testing** - Create Behave tests with requirements traceability  
 
 ---
+
+## Quick Start: See It Work
+
+**Prompt 1: Create Project**
+```bash
+genai-logic create --project_name=basic_demo --db_url=sqlite:///samples/dbs/basic_demo.sqlite
+```
+
+**Result:** Complete project you open in your IDE (VS Code, PyCharm, etc.) with:
+
+- Working JSON:API server with filtering, pagination, sorting
+- Admin UI for data management  
+- SQLAlchemy models auto-generated from your database
+- Container-ready for deployment
+- Ready to run in ~5 seconds - vibe custom apps, etc...
+
+**Prompt 2: Add Business Logic**
+```text
+On Placing Orders, Check Credit:
+1. The Customer's balance is less than the credit limit
+2. The Customer's balance is the sum of the Order amount_total where date_shipped is null
+3. The Order's amount_total is the sum of the Item amount
+4. The Item amount is the quantity * unit_price
+5. The Product count suppliers is the sum of the Product Suppliers
+6. Use AI to Set Item field unit_price by finding the optimal Product Supplier 
+   based on cost, lead time, and world conditions
+
+Use case: App Integration
+1. Send the Order to Kafka topic 'order_shipping' if the date_shipped is not None.
+```
+**Result:** Creates equivalent of 200+ lines of procedural code (want to know more about that?)
+
+Next: Ask me anything - common questions, how it works, what to try next...
+
+---
+
 
 # About This File
 
@@ -749,15 +790,18 @@ CORRECT: Create logic/logic_discovery/<context_dir>/{__init__.py, use_case_files
 **Example Natural Language Logic for basic_demo:**
 
 ```text
-Use case: Check Credit    
-    1. Customer balance ≤ credit limit
-    2. Customer balance = sum of unshipped Order amount_total
-    3. Order amount_total = sum of Item amount
-    4. Item amount = quantity × unit_price
-    5. Item unit_price = copied from Product unit_price
+on Placing Orders, Check Credit:
+
+1. The Customer's balance is less than the credit limit
+2. The Customer's balance is the sum of the Order amount_total where date_shipped is null
+3. The Order's amount_total is the sum of the Item amount
+4. The Item amount is the quantity * unit_price
+5. The Product count suppliers is the sum of the Product Suppliers
+6. Use AI to Set Item field unit_price by finding the optimal Product Supplier 
+                                          based on cost, lead time, and world conditions
 
 Use case: App Integration
-    1. Send Order to Kafka when date_shipped changes to non-null
+1. Send the Order to Kafka topic 'order_shipping' if the date_shipped is not None.
 ```
 
 **How the Rules Engine Works:**
