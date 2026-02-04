@@ -1,11 +1,8 @@
----
-version: 3.2
----
 
 ---
 
 ## What is this?
-This is Context Engineering for GenAI-Logic Projects (created into each project). 
+This is Context Engineering for GenAI-Logic Projects (created into each project) - version 3.3. 
 
 It is AI-generated technical documentation for AI assistants, created_by: AI (Claude 4.5) through code inspection, system operation analysis, and Socratic training with Val Huber.
 
