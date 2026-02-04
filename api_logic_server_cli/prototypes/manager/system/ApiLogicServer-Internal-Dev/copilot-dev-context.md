@@ -4,10 +4,11 @@ Description: Re-establishes AI assistant context after BLT regenerates workspace
 Source: ApiLogicServer-src/prototypes/manager/system/ApiLogicServer-Internal-Dev/copilot-dev-context.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this to understand project structure, development workflow, and recent additions
-version: 2.0
+version: 2.1
 changelog:
+  - 2.1 (Feb 2026) - Eval AI from RS
   - 2.0 (Oct 2025) - Added AI-Guided Training section (tutor.md v2.0, OBX improvements, design philosophy)
-  - 1.0 (Initial) - Established workspace structure, GenAI prompt engineering, development workflow
+  - 1.0 (Initial) -  Established workspace structure, GenAI prompt engineering, development workflow
 ---
 
 # Context Restoration: BLT Manager Workspace
@@ -215,6 +216,80 @@ This document contains **everything** you need to understand the system:
 - **API Logic Server**: Architect and lead developer, modernizing proven patterns for cloud-native Python/React stack, the use of GenAI, and current IDEs/deployment practices.
 
 **Expertise:** 40+ years leading business rules technology evolution - inventor of declarative multi-table derivations, constraint propagation, and rule execution engines.
+
+&nbsp;
+
+## 🌐 AI-Based Evaluation - Context Engineering Export
+
+**Purpose:** Making internal Context Engineering (CE) materials publicly available for external AI-assisted evaluation.
+
+### The Architecture
+
+**The Rosetta Stone (RS)** - LogicBank API reference embedded in project-level `.copilot-instructions.md`:
+- **Source:** `org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/base/.github/.copilot-instructions.md`
+- **Size:** ~740 lines (includes complete LogicBank rule syntax, patterns, testing guide references)
+- **Propagation:** Copied to every created project's `.github/.copilot-instructions.md`
+- **Purpose:** Trains AI assistants working within projects to correctly translate NL → LogicBank rules
+
+### Exporting CE Materials for Online Evaluation
+
+**Script:** `org_git/Docs/sync_ce_to_docs.sh`
+
+**What it does:**
+1. **Copies bootstrap:** `.copilot-instructions.md` → `Eval-copilot-instructions.md` (includes RS)
+2. **Copies 12 training files:** `docs/training/*.md` → `Eval-*.md`
+   - logic_bank_patterns.md, logic_bank_api.md, testing.md, probabilistic_logic.md, etc.
+3. **Transforms references:** Internal links `docs/training/*.md` → `Eval-*.md`
+4. **Places in Docs:** `org_git/Docs/docs/` → Published at `apilogicserver.github.io/Docs/`
+
+**Result:** 2,599+ lines of CE materials accessible online without requiring installation.
+
+### The Evaluation Workflow
+
+**Bootstrap prompt** (from `org_git/Docs/docs/Eval.md`):
+```
+I'm evaluating GenAI-Logic. Here are the resources:
+1. https://www.genai-logic.com
+2. https://apilogicserver.github.io/Docs/Eval-copilot-instructions/
+3. https://apilogicserver.github.io/Docs/Integration-MCP-AI-Example/
+
+Help me understand what this actually does - I want facts, not sales pitch.
+```
+
+**What happens:**
+1. User's AI reads `Eval-copilot-instructions.md` (contains Rosetta Stone + architecture)
+2. AI follows links to other `Eval-*.md` files as needed (patterns, testing, etc.)
+3. AI analyzes materials and forms independent technical conclusions
+4. AI answers user's specific questions (not a canned pitch)
+
+### Why This Works
+
+**Independent AI analysis, not vendor persuasion:**
+- External AIs (Claude, ChatGPT, Gemini) analyze the same technical materials
+- They reach consistent conclusions (4.8-5.0 stars on InfoQ challenge)
+- Conclusions emerge from observable architecture, not marketing claims
+- If claims were false ("cows jump over the moon"), AI would reject them
+
+**The CE materials are credible because:**
+- Created through Socratic process (Val showed artifacts, AI analyzed/questioned)
+- Contain senior-level technical reasoning (dependency graphs, failure modes, trade-offs)
+- Survived active AI scrutiny during creation
+- Focus on facts (40X code reduction, 200 lines → 5 rules) not hyperbole
+
+### Maintenance Workflow
+
+**When updating CE materials:**
+1. **Edit source:** `ApiLogicServer-src/prototypes/base/.github/.copilot-instructions.md` or `docs/training/*.md`
+2. **Test locally:** BLT creates projects with updated CE
+3. **Sync to Docs:** Run `cd org_git/Docs && ./sync_ce_to_docs.sh`
+4. **Verify:** Check `git diff docs/Eval-*.md`
+5. **Commit to Docs:** `git add docs/Eval-*.md && git commit`
+6. **Publish:** Docs site rebuild makes materials available online
+
+**Critical distinction:**
+- **Internal use:** CE materials train AI assistants working *within* projects
+- **External use:** Same materials enable prospects to evaluate GenAI-Logic *through* their AI
+- **Same content, dual purpose:** Context engineering for internal productivity + external credibility
 
 &nbsp;
 
