@@ -291,6 +291,50 @@ Help me understand what this actually does - I want facts, not sales pitch.
 - **External use:** Same materials enable prospects to evaluate GenAI-Logic *through* their AI
 - **Same content, dual purpose:** Context engineering for internal productivity + external credibility
 
+### Pull-Based Documentation Strategy (Feb 2025)
+
+**Problem solved:** Initial approach pushed 1745 lines at evaluators ("drink from fire hose"). ChatGPT truncated responses mid-evaluation. Users needed control over discovery pace.
+
+**Core Strategy: ONE SCREEN + AI AS GUIDE**
+
+**Architecture:**
+1. **Eval-welcome.md** (~40 lines) - Minimal entry point
+   - Two prompts (Prompt 1: infrastructure, Prompt 2: logic)
+   - Closes with: "I have some key concepts you'll probably want to explore. Just ask."
+   - No detailed explanations, FAQs, or resource lists
+   
+2. **Evaluation Checklist** (in `.copilot-instructions.md`) - Structured discovery system
+   - 15 items grouped: Core Understanding → Key Features → Hands-On → Deep Dives → Critical Questions
+   - First item: "What IS this?" - Explains 4 layers (Infrastructure gen → Rules engine → Context Engineering → AI Codegen)
+   - Critical for addressing "is it AI or infrastructure?" confusion
+   
+3. **AI as Docent** - Museum guide pattern
+   - User asks → AI shows checklist
+   - User picks item → AI retrieves relevant content (via content mapping)
+   - After each item: Mark as ☑, ask "What else have you got for me?"
+   - AI adapts suggestions based on role (architect vs developer)
+
+**Implementation:**
+- **Menu item #12** in capabilities list: "Explore evaluation concepts" 
+- **Content mapping** directs AI to specific sections (Admin UI TL;DR, API overview, FAQ answers, etc.)
+- **Checklist tracking** maintains progress visibility
+
+**Why This Works:**
+- **Pull-based:** User controls depth through questions (not pushed a 1745-line document)
+- **Layered disclosure:** Surface (one screen) → Structure (checklist) → Content (item-by-item) → Reference (full doc)
+- **Trust through agency:** User sees what's available, chooses what to explore, controls pacing
+- **Discovery not prescription:** Curiosity-driven for web evaluators, task-driven for IDE developers
+- **AI maintains momentum:** Checklist provides structure, content mapping ensures consistent answers
+
+**Entry Paths:**
+- **Web evaluators:** Eval.md bootstrap → "Show me Eval-welcome" → curiosity-driven exploration
+- **IDE developers:** Menu item #12 in capabilities list → task-driven query
+- **Both:** Lead to same checklist system, different motivations
+
+**Key Insight:** Explicit prompts work better than implicit protocols. "Start with a quick overview by showing me [URL]" beats "FIRST RESPONSE PROTOCOL" sections.
+
+**Lesson Learned:** User agency beats comprehensive reference. Let evaluators control their learning journey instead of forcing march through all content.
+
 &nbsp;
 
 ## 🤖 AI Assistant Quick Reference
