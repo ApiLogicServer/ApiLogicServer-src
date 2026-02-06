@@ -1,0 +1,223 @@
+about:
+  date: February 05, 2026 17:04:34
+  recent_changes: works with modified safrs-react-admin
+  version: 0.0.0
+api_root: '{http_type}://{swagger_host}:{port}/{api}'
+authentication: '{system-default}'
+info:
+  number_relationships: 8
+  number_tables: 7
+info_toggle_checked: true
+resources:
+  Customer:
+    attributes:
+    - label: ' name*'
+      name: name
+      search: true
+      sort: true
+    - name: balance
+      type: DECIMAL
+    - name: credit_limit
+      type: DECIMAL
+    - name: email
+    - name: email_opt_out
+      type: Boolean
+    - name: id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - customer_id
+      name: OrderList
+      resource: Order
+    type: Customer
+    user_key: name
+  Item:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: order_id
+    - name: product_id
+      required: true
+    - name: quantity
+      required: true
+    - name: amount
+      type: DECIMAL
+    - name: unit_price
+      type: DECIMAL
+    tab_groups:
+    - direction: toone
+      fks:
+      - order_id
+      name: order
+      resource: Order
+    - direction: toone
+      fks:
+      - product_id
+      name: product
+      resource: Product
+    type: Item
+    user_key: id
+  Order:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: customer_id
+      required: true
+    - name: notes
+    - name: CreatedOn
+      type: DATE
+    - name: amount_total
+      type: DECIMAL
+    - name: date_shipped
+      type: DATE
+    tab_groups:
+    - direction: tomany
+      fks:
+      - order_id
+      name: ItemList
+      resource: Item
+    - direction: toone
+      fks:
+      - customer_id
+      name: customer
+      resource: Customer
+    type: Order
+    user_key: id
+  Product:
+    attributes:
+    - label: ' name*'
+      name: name
+      search: true
+      sort: true
+    - name: count_suppliers
+    - name: unit_price
+      type: DECIMAL
+    - name: id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - product_id
+      name: ItemList
+      resource: Item
+    - direction: tomany
+      fks:
+      - product_id
+      name: ProductSupplierList
+      resource: ProductSupplier
+    type: Product
+    user_key: name
+  ProductSupplier:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: product_id
+    - name: supplier_id
+    - name: supplier_part_number
+    - name: unit_cost
+      type: DECIMAL
+    - name: lead_time_days
+    tab_groups:
+    - direction: toone
+      fks:
+      - product_id
+      name: product
+      resource: Product
+    - direction: toone
+      fks:
+      - supplier_id
+      name: supplier
+      resource: Supplier
+    type: ProductSupplier
+    user_key: id
+  Supplier:
+    attributes:
+    - label: ' name*'
+      name: name
+      search: true
+      sort: true
+    - name: contact_name
+    - name: phone
+    - name: email
+    - name: region
+    - name: id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - supplier_id
+      name: ProductSupplierList
+      resource: ProductSupplier
+    type: Supplier
+    user_key: name
+  SysSupplierReq:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: item_id
+    - name: product_id
+      required: true
+    - name: chosen_supplier_id
+    - name: chosen_unit_price
+      type: DECIMAL
+    - name: request
+    - name: reason
+    - name: created_on
+      type: DATETIME
+    - name: fallback_used
+      type: Boolean
+    tab_groups:
+    - direction: toone
+      fks:
+      - item_id
+      name: item
+      resource: Item
+    - direction: toone
+      fks:
+      - product_id
+      name: product
+      resource: Product
+    - direction: toone
+      fks:
+      - chosen_supplier_id
+      name: chosen_supplier
+      resource: Supplier
+    type: SysSupplierReq
+    user_key: id
+settings:
+  HomeJS: /admin-app/home.js
+  max_list_columns: 8
+  style_guide:
+    applicationLocales:
+    - en
+    - es
+    currency_symbol: $
+    currency_symbol_position: left
+    date_format: LL
+    decimal_max: '1000000000'
+    decimal_min: '2'
+    decimal_separator: .
+    detail_mode: tab
+    edit_on_mode: dblclick
+    exclude_listpicker: false
+    include_translation: 'false'
+    keycloak_client_id: alsclient
+    keycloak_realm: kcals
+    keycloak_url: http://localhost:8080
+    locale: en
+    max_decimal_digits: '4'
+    min_decimal_digits: '2'
+    new_mode: dialog
+    pick_style: list
+    row_height: small,
+    serviceType: JSONAPI
+    startSessionPath: /auth/login
+    style: light
+    thousand_separator: ','
+    use_keycloak: 'false'

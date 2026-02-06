@@ -1,0 +1,60 @@
+<o-form #ProductSupplierForm attr="ProductSupplier_form_insert" service="ProductSupplier" entity="ProductSupplier"
+keys="id" fxLayout="column" show-header="yes" header-actions="I"
+horizontal-scroll="yes"
+after-insert-mode="new" class="standalone-form-container" >
+
+<o-row attr="row1" layout-align="start stretch">
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+    
+        <o-integer-input #id attr="id" label=" id" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-list-picker 
+        attr="product_id"
+        service="Product" 
+        entity="ProductType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="no" 
+        enabled="yes" 
+        filter="yes"
+        value-column="id" 
+        value-column-type="INTEGER"  
+        keys="id" 
+        columns="id;product_id;name" 
+        title="product_id"
+        visible-columns="id;name" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-list-picker 
+        attr="supplier_id"
+        service="Supplier" 
+        entity="SupplierType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="no" 
+        enabled="yes" 
+        filter="yes"
+        value-column="id" 
+        value-column-type="INTEGER"  
+        keys="id" 
+        columns="id;supplier_id;name" 
+        title="supplier_id"
+        visible-columns="id;name" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-text-input #supplier_part_number attr="supplier_part_number" label="supplier_part_number" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-real-input #unit_cost attr="unit_cost" label="unit_cost" min-decimal-digits="2" max-decimal-digits="4" min="0" max="1000000000" fxFlex="20%" class="form-field"></o-real-input>
+      
+        <o-integer-input #lead_time_days attr="lead_time_days" label="lead_time_days" type="integer" editable="no" required="no" ></o-integer-input>
+      
+</div>
+</o-row>
+
+<div layout-padding></div>
+
+</o-form>

@@ -1,0 +1,97 @@
+<div class="container">
+<o-form-container breadcrumb="yes" breadcrumb-label-columns="name" breadcrumb-separator=", " class="fill-form">
+      <o-form #form attr="Supplier_form_edit" 
+        service="Supplier" 
+        entity="Supplier" 
+        fxLayout="column" 
+        show-header="yes" 
+        header-actions="R;U;D"
+        #oDetailForm keys="id" 
+        keys-sql-types="INTEGER" 
+        show-header-navigation="yes"
+        (onDataLoaded)="onDataLoaded($event)">
+
+  <o-row attr="row1" layout-align="start stretch">
+    <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+      
+      <o-text-input #name attr="name" label=" name" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #contact_name attr="contact_name" label="contact_name" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #phone attr="phone" label="phone" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #email attr="email" label="email" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #region attr="region" label="region" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-integer-input #id attr="id" label="id" type="integer" editable="no" required="no" ></o-integer-input>
+      
+    </div>
+  </o-row>
+      
+      <mat-tab-group fxFill>
+        
+        <mat-tab label="PRODUCTSUPPLIER-supplier_id">
+    <div layout-padding>
+      <o-table 
+        attr="ProductSupplierTable" 
+        service="ProductSupplier" 
+        entity="ProductSupplier" 
+        keys="id"
+        parent-keys="supplier_id:id"
+        columns="id;product_id;supplier_id;supplier_part_number;unit_cost;lead_time_days"  
+        horizontal-scroll="yes"
+        detail-form-route="ProductSupplier" 
+        edit-form-route="ProductSupplier"
+        visible-columns="id;product_id;supplier_id;supplier_part_number;unit_cost;lead_time_days"  
+        sort-columns="id" 
+        query-rows="25" 
+        quick-filter="yes"
+        row-height="medium" 
+        select-all-checkbox="true" 
+        pageable="yes"  
+        auto-adjust="true" 
+        virtual-scroll="yes" 
+        insert-button="yes" 
+        delete-button="yes" 
+        fixed-header="true" 
+        class="vertical-padding-8"
+        edition-mode="dblclick" 
+        horizontal-scroll="yes" class="fill-form">
+        
+          <o-table-column #id attr="id" title=" id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+          <o-table-column attr="product_id" title="product_id">
+    <o-table-cell-renderer-service attr="product_id" 
+        service="Product" entity="ProductType" columns="id;name"
+        parent-keys="id:product_id"
+        value-column="name" keys="product_id"
+        visible-columns="name" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column attr="supplier_id" title="supplier_id">
+    <o-table-cell-renderer-service attr="supplier_id" 
+        service="Supplier" entity="SupplierType" columns="id;name"
+        parent-keys="id:supplier_id"
+        value-column="name" keys="supplier_id"
+        visible-columns="name" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column #supplier_part_number attr="supplier_part_number" title="supplier_part_number" editable="no" required="no" content-align="left"></o-table-column>
+        
+          <o-table-column #unit_cost attr="unit_cost" title="unit_cost" type="real" min-decimal-digits="2" max-decimal-digits="4" min="0" max="1000000.0000" content-align="center"></o-table-column>
+        
+          <o-table-column #lead_time_days attr="lead_time_days" title="lead_time_days" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
+      </o-table>
+    </div>
+</mat-tab>
+        
+      </mat-tab-group>
+      
+    </o-form>
+  </o-form-container>
+</div>

@@ -1,0 +1,41 @@
+<o-form-layout-manager attr="Supplier" mode="tab" title="SUPPLIER">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="SupplierTable" 
+            service="Supplier" 
+            entity="Supplier" 
+            title="SUPPLIER"
+            keys="id"
+            columns="name;contact_name;phone;email;region;id" 
+            header-actions="R;D"
+            visible-columns="name;contact_name;phone;email;region;id"  
+            sort-columns="name" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #name attr="name" title=" name" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #contact_name attr="contact_name" title="contact_name" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #phone attr="phone" title="phone" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #email attr="email" title="email" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #region attr="region" title="region" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #id attr="id" title="id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>
