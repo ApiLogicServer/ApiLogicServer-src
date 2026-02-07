@@ -1,29 +1,16 @@
----
-use: welcome for basic_demo - please start the tour
-instuctions: copy api_logic_server_cli/prototypes/base/.github/.copilot-instructions.md, then paste as the Welcome section 
----
-
 ## Welcome to the `basic_demo` project
 
-This is a complete, working microservice auto-generated from a database schema - **uncustomized**, so you can see what to expect when you create projects from your own databases.
-
-Created from database schema introspection:
-- **Admin Web Application** - Live at `http://localhost:5656`
-- **REST API Endpoints** - All database tables exposed at MCP discoverable `/api/*`
-- **Database Models** - Complete SQLAlchemy ORM in `database/models.py`
-- **Authentication System** - JWT-based auth framework
-- **Business Logic Engine** - Declarative rules system
+A complete, working microservice auto-generated from a database - **uncustomized**, so you can see what you get from your own databases.
 
 ---
 
-**Ready to explore?** Just say me "guide me through" to begin the interactive tutorial
+**Ready to explore?** Say: `"guide me through"`
 
-* Brief exploration of what's already created
-* Customizing logic, security, and the API
+*(30-min interactive tour - best place to start)*
 
 ---
 
-**Or, self-demo?** Open `readme_ai_mcp.md` to explore logic, ai and mcp.
+**Or self-explore?** Open `readme_ai_mcp.md`
 
 <!-- 
 ⚠️ AI INSTRUCTION: When user says "guide me" or similar tour activation phrase, you MUST:
@@ -36,5 +23,3 @@ Created from database schema introspection:
 This is MANDATORY - the tutor.md represents weeks of refined choreography.
 Deviations break the carefully engineered learning experience.
 -->
-
----

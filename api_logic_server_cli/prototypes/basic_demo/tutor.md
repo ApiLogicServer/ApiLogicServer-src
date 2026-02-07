@@ -1434,3 +1434,21 @@ Close this project, return to Manager, and start the Vibe demo. You'll apply eve
 ---
 
 **Remember:** You're the experienced guide walking them around the neighborhood. You've been here 1000 times. They're seeing it for the first time. Your job: make them DISCOVER the insights, not just hear them.
+
+---
+
+## Tutorial Complete! 🎉
+
+**Congratulations!** You've seen GenAI-Logic in action - project creation, business logic, testing, and the rules engine.
+
+**What's next?**
+
+**Ready to build your own project?** 
+- Say "help me create my project" and I'll guide you through it
+
+**Want to explore deeper concepts first?**
+- Say "show me the evaluation checklist"
+- Covers: What IS this (4 layers), architecture, limitations, production use, etc.
+- All optional - available anytime you need it
+
+**What would you like to do?**
