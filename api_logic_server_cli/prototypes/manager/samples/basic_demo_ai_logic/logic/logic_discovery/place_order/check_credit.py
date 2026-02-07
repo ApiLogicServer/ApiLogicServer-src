@@ -6,28 +6,48 @@ Natural Language Requirements:
 2. The Customer's balance is the sum of the Order amount_total where date_shipped is null
 3. The Order's amount_total is the sum of the Item amount
 4. The Item amount is the quantity * unit_price
-5. The Product count_suppliers is the sum of the Product Suppliers
+5. The Product count suppliers is the sum of the Product Suppliers
 6. Use AI to Set Item field unit_price by finding the optimal Product Supplier
    based on cost, lead time, and world conditions
 
 version: 3.0
-date: February 5, 2026
-source: docs/training/probabilistic_logic.md (AI Rules)
+date: November 25, 2025
+source: docs/training/probabilistic_logic.prompt
+"""
+
+from logic_bank.logic_bank import Rule
+from logic_bank.exec_row_logic.logic_row import LogicRow
+from database import models
+
+
+def declare_logic():
+    """
+    Declarative rules for Check Credit use case.
+    
+    Combines deterministic rules (sum, formula, constraint) with AI-driven
+    supplier selection for optimal pricing.
+    """
+    
+    # Rule 1: Customer balance must not exceed credit limit
+    Rule.constraint(validate=models.Customer, as_condition=lambda row: row.balance <= row.credit_limit, error_msg="balance ({row.balance}) exceeds credit ({row.credit_limit})")
+    
+    # Rule 2: Customer balance = sum of unshipped Order amount_total
+    Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None)
+    
+    # Rule 3: Order amount_total = sum of Item amount
+    Rule.sum(derive=models.Order.amount_total, as_sum_of=models.Item.amount)
     
     # Rule 4: Item amount = quantity * unit_price
     Rule.formula(derive=models.Item.amount, as_expression=lambda row: row.quantity * row.unit_price)
     
-    # Rule 5: Product count_suppliers = count of ProductSuppliers
+    # Rule 5: Product count_suppliers = count of ProductSupplier
     Rule.count(derive=models.Product.count_suppliers, as_count_of=models.ProductSupplier)
-    
-    # Rule 1: Customer balance <= credit_limit (constraint)
-    Rule.constraint(validate=models.Customer, as_condition=lambda row: row.balance <= row.credit_limit, error_msg="balance ({row.balance}) exceeds credit limit ({row.credit_limit})")
     
     # Rule 6: AI-driven unit_price selection (early event pattern)
     Rule.early_row_event(on_class=models.Item, calling=set_item_unit_price_from_supplier)
 
 
-def set_item_unit_price_from_supplier(row: models.Item, old_row: models.Item, logic_row):
+def set_item_unit_price_from_supplier(row: models.Item, old_row: models.Item, logic_row: LogicRow):
     """
     Early event: Sets unit_price using AI if suppliers exist, else uses fallback.
     
@@ -46,7 +66,7 @@ def set_item_unit_price_from_supplier(row: models.Item, old_row: models.Item, lo
     product = row.product
     
     # FALLBACK LOGIC when AI shouldn't/can't run:
-    # Strategy: Try reasonable default (copy from parent matching field), else fail-fast
+    # Strategy: Try reasonable default (copy from parent.unit_price), else fail-fast
     if product.count_suppliers == 0:
         # Reasonable default: copy from parent.unit_price (matching field name)
         if hasattr(product, 'unit_price') and product.unit_price is not None:
@@ -71,4 +91,3 @@ def set_item_unit_price_from_supplier(row: models.Item, old_row: models.Item, lo
     
     # Extract AI-selected value
     row.unit_price = supplier_req.chosen_unit_price
-    logic_row.log(f"Set unit_price to {row.unit_price} from AI supplier selection")

@@ -1,5 +1,5 @@
 """
-AI Supplier Selection - AI Rules Handler
+AI Supplier Selection - Probabilistic Logic Handler
 
 This module implements AI-driven supplier selection based on cost, lead time,
 and world conditions. It uses the Request Pattern for full audit trails.
@@ -7,8 +7,9 @@ and world conditions. It uses the Request Pattern for full audit trails.
 See: https://apilogicserver.github.io/Docs/Logic-Using-AI/
 
 version: 3.0
-date: February 5, 2026
-source: docs/training/probabilistic_logic.md (AI Rules)
+date: November 25, 2025
+source: docs/training/probabilistic_logic.prompt
+"""
 
 from logic_bank.exec_row_logic.logic_row import LogicRow
 from logic_bank.logic_bank import Rule
@@ -58,7 +59,7 @@ def select_supplier_via_ai(row: models.SysSupplierReq, old_row, logic_row: Logic
     import yaml
     
     current_file = Path(__file__).resolve()
-    project_root = current_file.parent.parent.parent.parent.parent
+    project_root = current_file.parent.parent.parent.parent
     context_file = project_root / 'config' / 'ai_test_context.yaml'
     
     test_context = {}
@@ -142,7 +143,7 @@ Respond with ONLY valid JSON in this exact format (no markdown, no code blocks):
             selected_supplier = next((s for s in suppliers if s.supplier_id == ai_result['chosen_supplier_id']), None)
             if selected_supplier:
                 supplier_name = selected_supplier.supplier.name if selected_supplier.supplier else 'Unknown'
-                row.reason = f"AI: {supplier_name} (${selected_supplier.unit_cost}) - {ai_result.get('reason', 'No reason provided')}"
+                row.reason = f"Selected {supplier_name} (${selected_supplier.unit_cost}) - {ai_result.get('reason', 'No reason provided')}"
                 row.fallback_used = False
             else:
                 logic_row.log(f"AI selected invalid supplier_id {ai_result['chosen_supplier_id']}, using fallback")
