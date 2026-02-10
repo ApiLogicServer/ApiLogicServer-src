@@ -4,16 +4,26 @@ We have many demos: northwind, genai, sample_ai, basic_demo, tutorial.
 
 Some should probably be deleted.
 
-| Demo                                                                   | td:dr                                    | Iterations                                 | manager | tests         | database                                                                                             |
-| ---------------------------------------------------------------------- | ---------------------------------------- | ------------------------------------------ | ------- | ------------- | ---------------------------------------------------------------------------------------------------- |
-| [**NW**](https://apilogicserver.github.io/Docs/Tutorial/)              | - customizations<br>- larger project     |                                            |         |               | database/nw-gold.sqlite                                                                              |
-| **genai_demo**                                                         | - WebGenAI                               | codespaces??<br>add-auth                   | y       | y<br>add-cust | prototypes/manager/system/genai/examples/genai_demo/genai_demo.response_example                      |
-| **basic_demo**                                                         | 1. Instant<br>2. Logic <br>3. Python     | 1. add-cust<br>2. add-auth <br>3. add-cust | y       |               | starts as basic_demo, then adds enail, created_on, carbon_neutral<br>tests/test_databases/basic_demo/basic_demo.sql -> database/basic_demo.sqlite |
-| [**sample_ai_mcp**](https://apilogicserver.github.io/Docs/Integration-MCP-AI-Example)      | basic_demo using CoPilot<br>full AI existing db|                   mcp<br>agentic                         |         |               | test_databases/basic_demo/basic_demo.sql -> mgr/samples/dbs/basic_demo.sqlite |
-[**sample_ai**](https://apilogicserver.github.io/Docs/Sample-AI/)      | genai_demo using CoPilot<br>funky copies |                                            |         |               | prototypes/sample_ai/database/chatgpt/sample_ai_items.sqlite<br>todo: check readme -  rebuild-from-database --project_name=./ --db_url=sqlite:///database/db.sqlite |
-| [ai_chatgpt_agile](https://apilogicserver.github.io/Docs/Tutorial-AI/) |                                          |                                            |         |               |                                                                                                      |
-| tutorial                                                               | std web -> als                           |                                            |         |               | dropped long ago                                                                                     |
+| Demo                                                                                  | td:dr                                           | Iterations                                 | manager | tests         | database                                                                                                                                                                                |     |
+| ------------------------------------------------------------------------------------- | ----------------------------------------------- | ------------------------------------------ | ------- | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --- |
+| [**NW**](https://apilogicserver.github.io/Docs/Tutorial/)                             | - customizations<br>- larger project            |                                            |         |               | database/nw-gold.sqlite                                                                                                                                                                 |     |
+| **genai_demo**                                                                        | - WebGenAI                                      | codespaces??<br>add-auth                   | y       | y<br>add-cust | prototypes/manager/system/genai/examples/genai_demo/genai_demo.response_example                                                                                                         |     |
+| **basic_demo**                                                                        | 1. Instant<br>2. Logic <br>3. Python            | 1. add-cust<br>2. add-auth <br>3. add-cust | y       |               | starts as mgr -> basic_demo, then adds email, created_on, carbon_neutral<br>tests/test_databases/basic_demo/basic_demo.sql -> database/basic_demo.sqlite<br>- includes suppliers (only) |     |
+| [**sample_ai_mcp**](https://apilogicserver.github.io/Docs/Integration-MCP-AI-Example) | basic_demo using CoPilot<br>full AI existing db | mcp<br>agentic                             |         |               | test_databases/basic_demo/basic_demo.sql -> mgr/samples/dbs/basic_demo.sqlite                                                                                                           |     |
+| [**sample_ai**](https://apilogicserver.github.io/Docs/Sample-AI/)                     | genai_demo using CoPilot<br>funky copies        |                                            |         |               | prototypes/sample_ai/database/chatgpt/sample_ai_items.sqlite<br>todo: check readme -  rebuild-from-database --project_name=./ --db_url=sqlite:///database/db.sqlite                     |     |
+| [ai_chatgpt_agile](https://apilogicserver.github.io/Docs/Tutorial-AI/)                |                                                 |                                            |         |               |                                                                                                                                                                                         |     |
+| tutorial                                                                              | std web -> als                                  |                                            |         |               | dropped long ago                                                                                                                                                                        |     |
 
+What we want (to reinforce home page)
+	0. mgr -> basic_demo (fail-safe, tutorial)
+	1. basic_demo_ai_mcp_copilot - first part of sample_ai_mcp
+	2. basic_demo_ai_rules_suppliers - 2nd part
+	3. basic_demo_mcp_sendmail
+	4. basic_demo_vibe
+	5. genai_demo - IDE genai
+	6. WebG
+Mgr readme (Sample-Basic-Tour.md) - why is that so long??  replace with this table?
+* compare to Sample-Basic-Demo.md - what is lost if this is all there is?
 Recall Fail-Safe Demo
 * if genai, update models & rules in api_logic_server_cli/genai/genai.py # insert_logic_into_created_project() 
 
