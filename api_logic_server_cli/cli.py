@@ -1709,8 +1709,8 @@ def add_cust(ctx, bind_key_url_separator: str, api_name: str, project_name: str)
     models_py_path = project.project_directory_path.joinpath('database/models.py')
 
     if use_add_cust := True:
-        import api_logic_server_cli.add_cust.add_cust as add_cust
-        add_cust.add_cust(project=project, project_name=project_name, models_py_path=models_py_path)
+        import api_logic_server_cli.sample_mgr.add_cust as sample_mgr
+        sample_mgr.add_cust(project=project, project_name=project_name, models_py_path=models_py_path)
         pass
     else:
         log.debug(f"\ncli[add-cust] models_py_path={models_py_path}")

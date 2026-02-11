@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "16.01.22"  # last public release: 16.00.09
+__version__ = "16.01.24"  # last public release: 16.00.09
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t02/10/2026 - 16.01.24: sample-rework \n"\
     "\t02/06/2026 - 16.01.22: save nl logic by use-case/reqmt, logic operation, docent, demo fix \n"\
     "\t01/06/2026 - 16.01.03: win11 Python 3.13 fixes for panda, oracle, kafka, postgres \n"\
     "\t12/11/2025 - 16.00.04: bug fix [106] - SqlServer autoinsert \n"\
@@ -82,7 +83,7 @@ import importlib
 import fnmatch
 from dotmap import DotMap
 import api_logic_server_cli.create_from_model.create_db_from_model as create_db_from_model
-import add_cust.add_cust as add_cust
+import sample_mgr.add_cust as sample_mgr
 
 def is_docker() -> bool:
     """ running docker?  dir exists: /home/api_logic_server """
@@ -304,6 +305,7 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
     """
 
     import tempfile
+    import sample_mgr.basic_demo_setup as basic_demo_setup
     cloned_from = project.from_git
     tmpdirname = ""
     with tempfile.TemporaryDirectory() as tmpdirname:
@@ -358,7 +360,7 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
             if project.nw_db_status == 'nw':
                 log.error("\n==> System Error: Unexpected customization for nw.  Please contact support.\n")
 
-            add_cust.add_nw_customizations(project=project, do_security=False, do_show_messages=False)
+            sample_mgr.add_nw_customizations(project=project, do_security=False, do_show_messages=False)
             
         if project.nw_db_status in ["nw+"]:
             log.debug(".. ..Copy in nw+ customizations: readme, perform_customizations")
@@ -400,14 +402,18 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
             recursive_overwrite(nw_dir, project.project_directory)
 
         if 'basic_demo' in project.db_url:  # test the url, so it works regardless of (arbitrary) project name
-            log.debug(".. ..Copy in basic_demo customizations: readme, logic, tests")
-            nw_dir = (Path(api_logic_server_dir_str)).\
-                joinpath('prototypes/basic_demo')
-            recursive_overwrite(nw_dir, project.project_directory)
-            os.rename(project.project_directory_path / 'readme.md', project.project_directory_path / 'readme_standard.md')
-            create_utils.copy_md(project = project, from_doc_file = "Sample-Basic-Demo.md", to_project_file = "readme.md")
-            create_utils.copy_md(project = project, from_doc_file = "Sample-Basic-Demo-Vibe.md", to_project_file="readme_vibe.md")
-            create_utils.copy_md(project = project, from_doc_file = "Integration-MCP-AI-Example.md", to_project_file="readme_ai_mcp.md")
+            if old_code := False:
+                log.debug(".. ..Copy in basic_demo customizations: readme, logic, tests")
+                nw_dir = (Path(api_logic_server_dir_str)).\
+                    joinpath('prototypes/basic_demo')
+                recursive_overwrite(nw_dir, project.project_directory)
+                os.rename(project.project_directory_path / 'readme.md', project.project_directory_path / 'readme_standard.md')
+                create_utils.copy_md(project = project, from_doc_file = "Sample-Basic-Demo.md", to_project_file = "readme.md")
+                create_utils.copy_md(project = project, from_doc_file = "Sample-Basic-Demo-Vibe.md", to_project_file="readme_vibe.md")
+                create_utils.copy_md(project = project, from_doc_file = "Integration-MCP-AI-Example.md", to_project_file="readme_ai_mcp.md")
+            else:
+                basic_demo_setup.basic_demo_setup(project=project, 
+                                                  api_logic_server_dir_str=api_logic_server_dir_str)
 
 
         if project.db_url == "mysql+pymysql://root:p@localhost:3306/classicmodels":
@@ -1641,7 +1647,7 @@ from database import <project.bind_key>_models
         
         self.project_name = with_cust
         self.command = "add-cust"
-        add_cust.add_nw_customizations(project = self, do_show_messages=False, do_security=False)
+        sample_mgr.add_nw_customizations(project = self, do_show_messages=False, do_security=False)
         self.run = save_run  # remove logic below
 
 
@@ -1654,7 +1660,7 @@ from database import <project.bind_key>_models
         
         self.project_name = with_cust
         self.command = "add-cust"
-        add_cust.add_nw_customizations(project = self, do_show_messages=False)
+        sample_mgr.add_nw_customizations(project = self, do_show_messages=False)
         self.run = save_run
 
         if create != "tutorial":

@@ -1307,6 +1307,66 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "     - Basic Demo/basic_demo_ai_mcp_copilot",
+// prepare DBs: sh tests/test_databases/basic_demo/basic_demo.sh
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True", "APILOGICSERVER_HOME": "${workspaceFolder}"},
+            "cwd": "${workspaceFolder}/api_logic_server_cli",
+            "program": "cli.py",
+            "redirectOutput": true,
+            "args": ["create",
+            "--infer_primary_key",
+            "--project_name=../../../servers/basic_demo_ai_mcp_copilot",
+                "--db_url=basic_demo"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "     - Basic Demo/basic_demo_mcp_sendmail - Integration-MCP (send Mail)",
+// prepare DBs: sh tests/test_databases/basic_demo/basic_demo.sh
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True", "APILOGICSERVER_HOME": "${workspaceFolder}"},
+            "cwd": "${workspaceFolder}/api_logic_server_cli",
+            "program": "cli.py",
+            "redirectOutput": true,
+            "args": ["create",
+            "--infer_primary_key",
+            "--project_name=../../../servers/basic_demo_mcp_sendmail",
+                "--db_url=basic_demo"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "     - Basic Demo/basic_demo_vibe - ",
+// prepare DBs: sh tests/test_databases/basic_demo/basic_demo.sh
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True", "APILOGICSERVER_HOME": "${workspaceFolder}"},
+            "cwd": "${workspaceFolder}/api_logic_server_cli",
+            "program": "cli.py",
+            "redirectOutput": true,
+            "args": ["create",
+            "--infer_primary_key",
+            "--project_name=../../../servers/basic_demo_vibe",
+                "--db_url=basic_demo"],
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "     - Basic Demo/basic_demo_mcp_send_email - ",
+// prepare DBs: sh tests/test_databases/basic_demo/basic_demo.sh
+            "type": "debugpy",
+            "request": "launch",
+            "env": {"APILOGICSERVER_DEBUG": "True", "APILOGICSERVER_HOME": "${workspaceFolder}"},
+            "cwd": "${workspaceFolder}/api_logic_server_cli",
+            "program": "cli.py",
+            "redirectOutput": true,
+            "args": ["create",
+            "--infer_primary_key",
+            "--project_name=../../../servers/basic_demo_mcp_send_email",
+                "--db_url=basic_demo"],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "     - Basic Demo - servers, using abbrev",
 // prepare DBs: sh tests/test_databases/basic_demo/basic_demo.sh
             "type": "debugpy",

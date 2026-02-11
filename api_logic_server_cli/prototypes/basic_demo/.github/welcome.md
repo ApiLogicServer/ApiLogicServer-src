@@ -10,7 +10,7 @@ A complete, working microservice auto-generated from a database - **uncustomized
 
 ---
 
-**Or self-explore?** Open `readme_ai_mcp.md`
+**Or self-explore?** Open `readme.md`
 
 <!-- 
 ⚠️ AI INSTRUCTION: When user says "guide me" or similar tour activation phrase, you MUST:
