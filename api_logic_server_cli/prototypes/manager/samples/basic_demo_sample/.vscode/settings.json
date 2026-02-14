@@ -14,7 +14,7 @@
         "editor.wordWrap": "off"
     },
     "debug.console.wordWrap": false,    
-    "python.defaultInterpreterPath": "/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/bin/python",
+    "python.defaultInterpreterPath": "~/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/bin/python",
     "python.terminal.activateEnvironment": true,
     "python.terminal.activateEnvInCurrentTerminal": true,
     "python.envFile": "${workspaceFolder}/.env",

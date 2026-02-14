@@ -1363,7 +1363,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "     - Basic Demo/basic_demo_mcp_send_email - ",
+            "name": "     - Basic Demo/basic_demo_ai_rules_supplier - ",
 // prepare DBs: sh tests/test_databases/basic_demo/basic_demo.sh
             "type": "debugpy",
             "request": "launch",
@@ -1373,7 +1373,7 @@
             "redirectOutput": true,
             "args": ["create",
             "--infer_primary_key",
-            "--project_name=../../../servers/basic_demo_mcp_send_email",
+            "--project_name=../../../servers/basic_demo_ai_rules_supplier",
                 "--db_url=basic_demo"],
             "console": "integratedTerminal"
         },
