@@ -178,7 +178,7 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path,
         
         create_utils.copy_md(from_doc_file='Sample-Basic-Tour.md', project = to_dir)  # fixme delete old code
         create_utils.copy_md(from_doc_file='Manager-readme.md', project = to_dir)     # override api_logic_server_cli/prototypes/manager/README.md from git
-        create_utils.copy_md(from_doc_file='Sample-Basic-Demo-Vibe.md', project = to_dir, to_project_file='readme_vibe.md')  # 
+        # create_utils.copy_md(from_doc_file='Sample-Basic-Demo-Vibe.md', project = to_dir, to_project_file='readme_vibe.md')  # 
 
         if not samples:
             shutil.rmtree(to_dir.joinpath(f'{docker_volume}system/app_model_editor'))
