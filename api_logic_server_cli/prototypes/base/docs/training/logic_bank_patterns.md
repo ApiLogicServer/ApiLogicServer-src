@@ -10,6 +10,7 @@ related:
   - logic_bank_api_probabilistic.prompt (AI/probabilistic rule API)
 changelog:
   - 1.0 (Nov 14, 2025): Extracted general patterns from probabilistic prompt for reuse
+  - 1.1 (Feb 16, 2026): Request Object Pattern
 ---
 
 # LogicBank Patterns - The Hitchhiker's Guide
@@ -125,10 +126,54 @@ Note the indentation (dots) showing call depth!
 ---
 
 =============================================================================
-PATTERN 3: Request Pattern with new_logic_row()
+PATTERN 3: Request Pattern (ROP) - Integration Services
 =============================================================================
 
-Use the Request Pattern for audit trails, workflows, and AI integration.
+**📚 Full Documentation**: See `docs/training/RequestObjectPattern.md` for comprehensive guide
+
+**Quick Definition:**
+The Request Pattern is a table design for integration services with automatic audit:
+- **Request fields** = user input (e.g., product_id, hs_code_id, value_amount)
+- **Response fields** = computed output (e.g., chosen_supplier_id, duty_amount, reason)
+- **early_row_event** = performs integration service (AI, external API, calculations)
+
+**When to Use:**
+✅ AI decisions (supplier selection, pricing, routing)
+✅ External API calls (payment gateways, shipping carriers)
+✅ Messaging/Email services (Kafka, SMTP with templating)
+✅ Complex calculations requiring audit (customs, tax, compliance)
+
+**Recognition Signal in Prompts:**
+- "calculate/determine/select [X] when [Y] is given"
+- Integration service needed
+- Compliance/audit domain
+
+**Architecture:**
+```
+User/API → Insert with request fields only
+         ↓
+   early_row_event fires (integration service logic)
+         ↓
+   Populates response fields
+         ↓
+   Automatic audit trail persisted
+```
+
+**Benefits:**
+- Single source of truth (works from API, Admin UI, batch, tests)
+- Automatic audit trail for compliance
+- Governed by deterministic rules
+- Testable without API/HTTP
+- No duplication
+
+**Anti-Pattern:**
+❌ Fat API services with business logic (bypasses rules engine, no audit, duplication)
+
+---
+
+**Technical Implementation with new_logic_row():**
+
+Use `new_logic_row()` to create Request Pattern instances in event handlers.
 
 ✅ CORRECT: Pass MODEL CLASS to new_logic_row
 ```python
