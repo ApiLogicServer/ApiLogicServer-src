@@ -20,6 +20,7 @@ Step 2.  Decide Phase 1 vs Phase 2 → Based on custom API existence
 Step 3.  Generate .feature files → Business language scenarios
 Step 4.  Implement steps/*.py → Using discovered APIs or CRUD
 Step 4b. VERIFY STEP ORDERING → Multi-item BEFORE single-item (Rule #0.5!)
+Step 4c. ADD LOGIC LOG INTEGRATION → prt once in Given, does_file_contain in Then
 Step 5.  SUGGEST how to run tests (DO NOT run automatically)
 ```
 
@@ -37,6 +38,7 @@ Step 5.  SUGGEST how to run tests (DO NOT run automatically)
   - [ ] Makes test flow obvious: setup → action → verify
 - [ ] Test data uses timestamps? (Rule #0: Repeatability)
 - [ ] Security config read? (SECURITY_ENABLED value)
+- [ ] **Logic log prt called only once per scenario?** (in Given, before first API call — NEVER in When/Then)
 
 **DO NOT skip Step 1c!** Custom APIs change the entire testing approach.
 
@@ -875,3 +877,158 @@ python check_step_order.py  # Run before committing tests
 ```
 
 This automation prevents Rule #0.5 violations across ALL databases and projects!
+
+## Logic Log Integration (Rules Report)
+
+Every scenario can capture the LogicBank rules trace into a per-scenario log file and then verify it in `Then` steps. This produces a "rules report" that proves each rule fired correctly — not just that the final values are right.
+
+### How the Mechanism Works
+
+The server exposes a `/server_log` endpoint (implemented in `api/system/api_utils.py`). Calling it with `?msg=...&test=<name>` invokes `add_file_handler(logic_logger, test, log_path)` which:
+
+1. **Removes** all existing handlers from `logic_logger`
+2. **Deletes** the existing log file if present (`os.remove`)
+3. Creates a new empty file at `test/api_logic_server_behave/logs/scenario_logic_logs/<name>.log`
+4. Attaches a new `FileHandler` — all subsequent `logic_logger` output goes there
+
+`test_utils.prt(msg, scenario_name)` is the test-side helper that calls this endpoint.
+
+### THE CRITICAL RULE: prt Must Only Be Called Once Per Scenario
+
+**Every `prt(msg, scenario_name)` call wipes and recreates the log file.** Calling it again in `When` or `Then` steps permanently destroys all logic traces written between the first call and the new one.
+
+```
+Given step:  prt(msg, scenario_name)    ← OPENS the log, server traces go here ✓
+             POST /Order                 ← logic trace appended to file ✓
+When step:   POST /LineItem              ← logic trace appended to file ✓
+Then step:   prt(msg, scenario_name)    ← ⚠️  DELETES the file! All traces lost ✗
+Then step:   does_file_contain(...)     ← file is now empty ✗
+```
+
+### Correct Pattern
+
+```
+Given step:  prt(msg, scenario_name)    ← ONE prt call per scenario, before first API call
+             POST order                 ← logic_logger → file ✓
+When step:   POST line item             ← logic_logger → file ✓  (NO prt here)
+Then step:   does_file_contain(...)     ← file still has full trace ✓  (NO prt here)
+Then step:   does_file_contain(...)     ← still fine ✓
+```
+
+### Implementation
+
+#### Step 1 — Add helpers for scenario name and log path
+
+```python
+import re
+from pathlib import Path
+
+_behave_dir = Path(__file__).parent.parent.parent  # steps → features → api_logic_server_behave
+
+def get_truncated_scenario_name(scenario_name: str) -> str:
+    """Return a filesystem-safe name <= 25 chars for use as the logic log filename."""
+    safe = re.sub(r'[\s()/\\]', '_', scenario_name)
+    return safe[:25]
+
+def logic_log_file(scenario_name: str) -> str:
+    """Return the absolute path to the per-scenario logic log file."""
+    return str(_behave_dir / "logs" / "scenario_logic_logs" / f"{scenario_name}.log")
+```
+
+**Use absolute paths.** `does_file_contain` resolves against the process cwd, which may differ from where the file is written.
+
+#### Step 2 — Call prt ONCE in the Given step, before the first API call
+
+```python
+@given('a SurtaxOrder for {country} to {province} ...')
+def step_create_order(context, country, province, ...):
+    scenario_name = get_truncated_scenario_name(context.scenario.name)
+    context.scenario_name = scenario_name
+    # Open the per-scenario log BEFORE any API call.
+    # Must be called ONLY ONCE per scenario — calling it again wipes the file.
+    test_utils.prt(f'\n\n\n{scenario_name} - starting test\n\n', scenario_name)
+
+    # First API call — logic trace goes into the log
+    r = requests.post(f"{HOST}/api/SurtaxOrder", ...)
+```
+
+#### Step 3 — No prt calls in When or Then steps
+
+```python
+@when('a line item is added with hs_code {hs_code} ...')
+def step_add_line_item(context, hs_code, ...):
+    # DO NOT call test_utils.prt here — it would wipe the log
+    r = requests.post(f"{HOST}/api/SurtaxLineItem", ...)
+
+@then('the line item customs_value is {expected}')
+def step_assert_field(context, expected):
+    # DO NOT call test_utils.prt here — it would wipe the log
+    actual = ...
+    assert actual == float(expected), ...
+```
+
+#### Step 4 — Discover the actual logic trace strings
+
+Before writing `Then Logic` steps, find the **exact** strings that `logic_logger.debug(...)` emits. Two ways:
+
+1. Read the rule functions in `logic/logic_discovery/` and search for `logic_logger.debug(` calls.
+2. Run one manual test request with the server console visible and look for the debug lines.
+
+Example strings from CBSA rules:
+```
+"Surtax Applicable: True"
+"Surtax Applicable: False"
+"Surtax Amount: 125000.0000 (Applicable: True)"
+"PST/HST Rate: 0.1300"
+"Formula customs_value"
+"Adjusting surtax_order: total_customs_value, total_surtax"
+```
+
+#### Step 5 — Write logic-verification Then steps using does_file_contain
+
+```python
+@then('Logic computes surtax applicable True for post-cutoff date')
+def step_logic_surtax_true(context):
+    log_file = logic_log_file(context.scenario_name)
+    test_utils.does_file_contain(
+        log_file, "Surtax Applicable: True",
+        f"Logic Log missing 'Surtax Applicable: True' in {log_file}"
+    )
+
+@then('Logic computes surtax_amount {amount} from customs_value times surtax_rate')
+def step_logic_surtax_amount(context, amount):
+    log_file = logic_log_file(context.scenario_name)
+    test_utils.does_file_contain(
+        log_file, f"Surtax Amount: {amount}",
+        f"Logic Log missing 'Surtax Amount: {amount}' in {log_file}"
+    )
+```
+
+#### Step 6 — Add logic-verification steps to the feature file
+
+```gherkin
+  Scenario: Surtax applies for post-cutoff ship date with surtax country
+    Given a SurtaxOrder for Germany to Ontario ...
+    When a line item is added ...
+    Then the line item customs_value is 500000.00
+    And  the line item surtax_amount is 125000.00
+    And  the order surtax_applicable is True
+    Then Logic computes surtax applicable True for post-cutoff date
+    Then Logic computes surtax_amount 125000 from customs_value times surtax_rate
+    Then Logic computes PST/HST rate copied from province
+    Then Logic rolls up line totals to order
+```
+
+### Common Mistakes
+
+| Mistake | Symptom | Fix |
+|---|---|---|
+| Call `prt(msg, scenario_name)` in a Then step | Log file contains only the Then-step message; all logic traces gone | Remove all `prt` calls from Then and When steps |
+| Call `prt` again in the When step | Logic traces from the Given POST are lost | Remove `prt` from When step |
+| Use relative path in `logic_log_file()` | `FileNotFoundError` or always-failing `does_file_contain` | Use `Path(__file__).parent...` to build absolute path |
+| Verify a string not emitted by the rule | Step always fails even when rule fires | Read rule source or observe server console first |
+| Scenario name truncation mismatch | `does_file_contain` looks for the wrong filename | Use the same `get_truncated_scenario_name()` helper everywhere |
+
+### Summary
+
+> **One `prt` per scenario, in the `Given` step, before any API call. Never in `When` or `Then`.**

@@ -383,6 +383,7 @@ Help me understand what this actually does - I want facts, not sales pitch.
 - Generates LogicBank rules (sums, formulas, constraints)
 - Generates test data
 - Returns structured JSON (WGResult with models, rules, test_data)
+- Note: this is PE (prompt engineering); the items above are CE (Context Engineering built into projects)
 
 **Example Input:**
 ```
