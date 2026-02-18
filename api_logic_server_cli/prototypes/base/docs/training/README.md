@@ -52,17 +52,33 @@ This directory contains training materials for ApiLogicServer with GenAI integra
 
 ---
 
+### Subsystem Creation - Architectural Principles
+**File:** `subsystem_creation.md`  
+**Scope:** Creating complete subsystems with multiple tables and business logic  
+**Topics:**
+- Data model principles (autoincrement, derived columns, naming conventions)
+- Logic architecture (rules >> events, calculations in formulas)
+- Request Pattern vs Custom API (when to use which)
+- Common mistakes and anti-patterns
+- Concrete examples from real failures
+
+**Use this when:** Creating multiple related tables with business logic (customs, billing, inventory, HR subsystems).
+
+---
+
 ## Quick Navigation
 
 **I want to...**
 
+- **Create a subsystem** (multiple tables + logic) → `subsystem_creation.md`
 - **Understand LogicBank + AI patterns** → `genai_logic_patterns.md`
 - **Implement AI rules in my project** → `probabilistic_logic_guide.md`
 - **Copy working code** → `template_probabilistic_rules.py`
 - **Fix import errors** → `genai_logic_patterns.md` (Section 1)
 - **Fix "Session is already flushing"** → `genai_logic_patterns.md` (Section 2)
-- **Add audit trails** → `probabilistic_logic_guide.md` (Section 2)
+- **Add audit trails** → `probabilistic_logic_guide.md` (Section 2) or `subsystem_creation.md` (Part 3)
 - **Test AI rules** → `probabilistic_logic_guide.md` (Section 4)
+- **Understand Request Pattern** → `RequestObjectPattern.md` or `subsystem_creation.md` (Part 3)
 
 ---
 

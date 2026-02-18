@@ -1,11 +1,12 @@
 ---
 title: Context Restoration for BLT Manager Workspace
-Description: Re-establishes AI assistant context after BLT regenerates workspace
+Description: Enables Copilot to be a co-designer for many GenAI-Logic features
 Source: ApiLogicServer-src/prototypes/manager/system/ApiLogicServer-Internal-Dev/copilot-dev-context.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this to understand project structure, development workflow, and recent additions
-version: 2.1
+version: 2.2
 changelog:
+  - 2.2 (Feb 2026) - Subsystem creation - use rules, data model hints 
   - 2.1 (Feb 2026) - Eval AI from RS
   - 2.0 (Oct 2025) - Added AI-Guided Training section (tutor.md v2.0, OBX improvements, design philosophy)
   - 1.0 (Initial) -  Established workspace structure, GenAI prompt engineering, development workflow
@@ -337,6 +338,103 @@ Help me understand what this actually does - I want facts, not sales pitch.
 
 &nbsp;
 
+## 🤖 AI Integration Architecture - Four Distinct Modes
+
+**API Logic Server uses AI in four distinct ways:**
+
+### 1. Manager Context Engineering (Claude/Copilot)
+**Purpose:** AI assistance for **creating projects**  
+**Location:** Manager workspace `.copilot-instructions.md` (~86 lines)  
+**What it does:** Guides AI to help developers:
+- Create projects from existing databases
+- Create projects from natural language (via GenAI CLI)
+- Create projects from scratch
+- Navigate Manager workspace structure
+
+**Example:** User asks "Create a project from my Postgres database" → Copilot guides through `genai-logic create` command
+
+### 2. Project Context Engineering (Claude/Copilot)
+**Purpose:** AI assistance for **customizing projects** after creation  
+**Location:** Per-project `.copilot-instructions.md` (~740 lines) + `docs/training/` folder  
+**What it does:** Guides AI to help developers:
+- Add business logic (translate NL → LogicBank rules)
+- Add custom API endpoints
+- Reorganize database schemas (Alembic migrations)
+- Configure Admin UI, security, testing
+- Create React apps
+
+**Example:** User asks "Add a rule that Customer.balance = sum of unpaid orders" → Copilot translates to LogicBank formula
+
+**Key Materials:**
+- Rosetta Stone: Complete LogicBank API reference (sums, formulas, constraints, events)
+- Training files: logic_bank_api.md, testing.md, subsystem_creation.md, RequestObjectPattern.md
+- Pattern library: Discovery systems, Request Pattern, null-safe constraints
+
+### 3. GenAI CLI Services (OpenAI Fine-Tuned ChatGPT)
+**Purpose:** Automated project **generation from natural language prompts**  
+**Technology:** Fine-tuned ChatGPT (not Claude)  
+**Commands:**
+- `genai-logic create --using="natural language"` - Generate complete project from prompt
+- `genai-logic logic-translate --using-file=docs/logic` - Generate rules from NL requirements
+
+**What it does:** Transforms natural language → working projects:
+- Parses NL requirements
+- Generates SQLAlchemy models (with derived columns for rules)
+- Generates LogicBank rules (sums, formulas, constraints)
+- Generates test data
+- Returns structured JSON (WGResult with models, rules, test_data)
+
+**Example Input:**
+```
+Create a system with customers, orders, items and products.
+Check Credit: Customer.balance = sum of unpaid orders, 
+balance must not exceed credit_limit.
+```
+
+**Example Output:** Complete project with 4 tables, 5 rules, working API, Admin UI, test data
+
+**Key Insight:** Generates **specifications** (rules), not procedural code. Rules executed by proven engine.
+
+**Prompt Engineering:**
+- Templates: `system/genai/prompt_inserts/` (sqlite_inserts.prompt, logic_inserts.prompt, etc.)
+- Training examples: `org_git/ApiLogicServer-src/tests/genai_tests/logic_training/`
+- Fine-tuning data: logic_training/ft.jsonl
+
+### 4. AI Rules in Running Systems (Probabilistic Logic)
+**Purpose:** **Runtime AI-powered business rules** in deployed applications  
+**Technology:** OpenAI/Claude/etc. called from LogicBank formulas  
+**Location:** Project `logic/` folder  
+
+**What it does:** Business rules that invoke AI for decisions:
+- Conditional formulas: `if condition → call AI, else → deterministic calculation`
+- AI handlers: Reusable functions that call LLM APIs
+- Request Pattern: Audit trails for AI decisions (SysXxxReq tables)
+
+**Example:**
+```python
+Rule.formula(
+    derive=models.Order.freight_estimate,
+    calling=lambda row, old_row, logic_row:
+        call_ai_for_freight(row) if row.is_international 
+        else row.weight * standard_rate
+)
+```
+
+**Key Materials:**
+- `docs/training/probabilistic_logic_guide.md` - Implementation patterns
+- `docs/training/genai_logic_patterns.md` - Framework integration
+- Request Pattern for audit trails
+
+**Use Cases:**
+- Dynamic pricing based on market conditions
+- Risk assessment for loan approvals
+- Fraud detection scores
+- Freight cost estimation for unusual routes
+
+---
+
+&nbsp;
+
 ## 🤖 AI Assistant Quick Reference
 
 ### Two Working Modes:
@@ -583,6 +681,68 @@ Several `*_corrected_prompt.txt` files show typical AI mistakes:
 - Critical smoke test before pushing to GitHub
 - Results in `tests/results.txt` and `tests/failures.txt`
 
+**🎯 CRITICAL: Prototype System & Project Creation**
+
+**How Projects Are Created:**
+
+When you run `genai-logic create`, the CLI reads **templates (prototypes)** from the installed package:
+
+```
+venv/lib/python3.13/site-packages/api_logic_server_cli/
+├── prototypes/
+│   ├── base/                    # Template for all projects (genai-logic create)
+│   │   ├── .github/
+│   │   │   └── .copilot-instructions.md    # 740+ lines - Context Engineering
+│   │   ├── logic/
+│   │   ├── api/
+│   │   ├── database/
+│   │   └── docs/training/       # Universal training materials
+│   ├── basic_demo/              # Special tutorial project template
+│   │   ├── .github/
+│   │   │   └── .copilot-instructions.md    # Tutorial-specific version
+│   │   └── tutor.md             # AI-guided tour
+│   └── manager/                 # Manager workspace template
+│       ├── .github/
+│       │   └── .copilot-instructions.md    # 86 lines - Creating projects
+│       └── samples/basic_demo_sample/      # add-cust content
+```
+
+**The Flow:**
+1. **Dev Source:** `org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/`
+2. **BLT Install:** Copies to `venv/lib/.../api_logic_server_cli/prototypes/`
+3. **Runtime:** `genai-logic create` reads from **venv location**, copies to new project
+4. **Result:** New project contains `.copilot-instructions.md` + `docs/training/` from venv prototypes
+
+**Why This Matters:**
+
+- ✅ **Immediate testing:** Edit venv prototypes → test instantly with `genai-logic create`
+- ✅ **No BLT required:** Changes in venv take effect immediately for project creation
+- ⚠️ **Temporary:** Changes in venv lost on next BLT run (must propagate to dev source)
+
+**Pattern Propagation Impact:**
+
+Your architectural choices in prototypes become templates for all future projects:
+- ✅ **Proven patterns propagate:** Get schema design, logic architecture, or API patterns right once → all created projects benefit
+- ❌ **Anti-patterns replicate:** Mistakes in prototypes (no autoincrement, procedural events, custom APIs without audit) copy to every new project
+- 🎯 **Training material updates spread:** Improve CE in prototypes/base/docs/training/ → all new projects get better guidance
+
+**Development Workflow for CE Changes:**
+
+1. **Quick iteration (NOW):**
+   - Edit: `venv/lib/.../api_logic_server_cli/prototypes/base/.github/.copilot-instructions.md`
+   - Test: `genai-logic create --project-name=test_project --db_url=...`
+   - Validate: Check if CE improvements work in new project
+
+2. **Permanent propagation (LATER):**
+   - Copy changes to: `org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/base/.github/.copilot-instructions.md`
+   - Run BLT: Reinstalls to venv, propagates everywhere
+   - Commit to GitHub: Survives future BLT runs
+
+**Special Cases:**
+- **basic_demo:** Has its own prototype with tutorial-specific CE (must update separately)
+- **docs/training/:** Universal materials, same for all projects (update in prototypes/base/)
+- **README files:** Exception - come from Docs repo via copy_md(), NOT from prototypes
+
 **Propagating Changes to Source:**
 - **Copilot Instructions:** Use `system/ApiLogicServer-Internal-Dev/propagate_copilot_changes.py`
   - Copies changes from `tests/ApiLogicProject/.github/.copilot-instructions.md` → source prototype
@@ -597,3 +757,4 @@ Several `*_corrected_prompt.txt` files show typical AI mistakes:
 ---
 
 **📖 Remember:** This file provides orientation. For comprehensive technical understanding, read **[Architecture-Internals.md](https://apilogicserver.github.io/Docs/Architecture-Internals/)** - it's written for both AI assistants and human collaborators.
+
