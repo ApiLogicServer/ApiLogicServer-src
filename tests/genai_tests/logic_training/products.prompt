@@ -1,3 +1,3 @@
 Products have Notices, with severity 0-5.
 
-Raise and error if product is orderable == True and there are any severity 5 Notices, or more than 3 Notices.
+Raise an error if product is orderable == True and there are any severity 5 Notices, or more than 3 Notices.

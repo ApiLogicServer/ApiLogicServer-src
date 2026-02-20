@@ -76,3 +76,11 @@ docker run --name sqlsvr-container --net dev-network -p 1433:1433 -d apilogicser
 
 docker run --name sqlsvr-container --net dev-network -p 1433:1433 -d apilogicserver/sqlsvr-m1:latest  # Mac M1
 ```
+
+<br>
+
+## Creating Projects with GenAI
+
+```
+genai-logic genai --using=samples/prompts/genai_demo.prompt
+```
