@@ -14,4 +14,8 @@ ApiLogicServer create --project_name=/localhost/postgres --db_url=postgresql://p
 
 ApiLogicServer create --project_name=/localhost/sqlserver --db_url='mssql+pyodbc://sa:Posey3861@sqlsvr-container:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no'
 
-echo "\n\ndocker-commands compete"
+echo "\n\ndocker-commands compete - to run...\n"
+echo "cd ~/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/dockers/; docker run -it --name api_logic_server_local --rm --net dev-network -p 5656:5656 -p 5002:5002 -v ${PWD}:/ApiLogicServer apilogicserver/api_logic_server_local"
+echo "cd ApiLogicServer"
+echo "cd classicmodels"
+echo "python api_logic_server_run.py"
