@@ -685,11 +685,14 @@ def final_project_fixup(msg, project) -> str:
                                             replace_with=defaultInterpreterPath_str,
                                             in_file=vscode_settings_path)
         
-        # Create venv initialization script for terminal
-        venv_init_path = project.project_directory_path.joinpath('.vscode/venv_init.sh')
-        venv_activate_script = str(Path(defaultInterpreterPath_str).parent.joinpath('activate'))
-        
-        venv_init_content = f"""#!/bin/bash
+        if False:  # venv_init.sh no longer needed: python.terminal.activateEnvironment=true handles terminal activation
+            # (also, the custom terminal profile that sourced this script broke on paths with spaces)
+            pass
+        if False:
+            venv_init_path = project.project_directory_path.joinpath('.vscode/venv_init.sh')
+        venv_activate_script = str(Path(defaultInterpreterPath_str).parent.joinpath('activate'))  # kept for reference
+        if False:
+            venv_init_content = f"""#!/bin/bash
 # Virtual Environment Initialization Script
 # This script activates the virtual environment for terminal use
 
@@ -755,12 +758,12 @@ if [ "$DEBUG_VENV_INIT" = "1" ]; then
 fi
 """
         
-        with open(venv_init_path, 'w') as venv_init_file:
-            venv_init_file.write(venv_init_content)
-        
-        # Make the script executable
-        import stat
-        os.chmod(venv_init_path, stat.S_IRWXU | stat.S_IRGRP | stat.S_IROTH)
+            with open(venv_init_path, 'w') as venv_init_file:
+                venv_init_file.write(venv_init_content)
+            
+            # Make the script executable
+            import stat
+            os.chmod(venv_init_path, stat.S_IRWXU | stat.S_IRGRP | stat.S_IROTH)
         
         # Set the site-packages path for Python analysis
         venv_lib_dir = Path(defaultInterpreterPath_str).parent.parent.joinpath('lib')
@@ -776,31 +779,32 @@ fi
                                             replace_with=venv_site_packages,
                                             in_file=vscode_settings_path)
         
-        # Create .env file to help with virtual environment activation
-        env_file_path = project.project_directory_path.joinpath('.env')
-        venv_dir = str(Path(defaultInterpreterPath_str).parent.parent)  # Get the venv directory
-        
-        # Platform-specific .env file content
-        if os.name == "nt":  # Windows
-            env_content = f"""# Virtual Environment Configuration
-VIRTUAL_ENV={venv_dir}
-PYTHONPATH={venv_site_packages}
-"""
-        else:  # Unix/Linux/macOS
-            env_content = f"""# Virtual Environment Configuration
-VIRTUAL_ENV={venv_dir}
-PATH={Path(defaultInterpreterPath_str).parent}:$PATH
-PYTHONPATH={venv_site_packages}
-"""
-        with open(env_file_path, 'w') as env_file:
-            env_file.write(env_content)
-        
-        log.debug(f'.. ..Updated .vscode/settings.json with "python.defaultInterpreterPath": "{defaultInterpreterPath_str}"...')
-        log.debug(f'.. ..Created .vscode/venv_init.sh for terminal venv activation...')
-        log.debug(f'.. ..Updated .vscode/settings.json with site-packages: "{venv_site_packages}"...')
-        log.debug(f'.. ..Created .env file with VIRTUAL_ENV: "{venv_dir}"...')
-    else:
-        log.warning(f'.. ..Updated .vscode/settings.json NOT SET')
+        if create_env_file := False:  # env settings are in config/default.env
+            # Create .env file to help with virtual environment activation
+            env_file_path = project.project_directory_path.joinpath('.env')
+            venv_dir = str(Path(defaultInterpreterPath_str).parent.parent)  # Get the venv directory
+            
+            # Platform-specific .env file content
+            if os.name == "nt":  # Windows
+                env_content = f"""# Virtual Environment Configuration
+    VIRTUAL_ENV={venv_dir}
+    PYTHONPATH={venv_site_packages}
+    """
+            else:  # Unix/Linux/macOS
+                env_content = f"""# Virtual Environment Configuration
+    VIRTUAL_ENV={venv_dir}
+    PATH={Path(defaultInterpreterPath_str).parent}:$PATH
+    PYTHONPATH={venv_site_packages}
+    """
+            with open(env_file_path, 'w') as env_file:
+                env_file.write(env_content)
+            
+            log.debug(f'.. ..Updated .vscode/settings.json with "python.defaultInterpreterPath": "{defaultInterpreterPath_str}"...')
+            log.debug(f'.. ..Created .vscode/venv_init.sh for terminal venv activation...')
+            log.debug(f'.. ..Updated .vscode/settings.json with site-packages: "{venv_site_packages}"...')
+            log.debug(f'.. ..Created .env file with VIRTUAL_ENV: "{venv_dir}"...')
+        else:
+            log.warning(f'.. ..Updated .vscode/settings.json NOT SET')
     return
 
 
