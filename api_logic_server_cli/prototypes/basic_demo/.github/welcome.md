@@ -10,6 +10,12 @@ A complete, working microservice auto-generated from a database - **uncustomized
 
 ---
 
+**What can I help you with?**
+
+Ask me to ***'show me what you can help me with'***.
+
+---
+
 **Or self-explore?** Open `readme.md`
 
 <!-- 
