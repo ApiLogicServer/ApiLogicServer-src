@@ -828,10 +828,15 @@ Your architectural choices in prototypes become templates for all future project
 
 **Development Workflow for CE Changes:**
 
-1. **Quick iteration (NOW):**
-   - Edit: `venv/lib/.../api_logic_server_cli/prototypes/base/.github/.copilot-instructions.md`
-   - Test: `genai-logic create --project-name=test_project --db_url=...`
-   - Validate: Check if CE improvements work in new project
+1. **Quick iteration / venv test (NOW):**
+   Edit directly in the installed venv — changes take effect immediately, no BLT required.  This applies to any file under `venv/lib/python3.13/site-packages/api_logic_server_cli/`, including:
+   - Prototypes: `prototypes/base/.github/.copilot-instructions.md`, `prototypes/base/.vscode/launch.json`, `prototypes/base/.vscode/settings.json`, etc.
+   - Generator: `api_logic_server.py`
+   - Any other CLI source file
+
+   Test: `genai-logic create --project-name=test_project --db_url=...`
+
+   ⚠️ **Risk:** Changes in venv are lost on next BLT run.  Propagate back to `org_git/ApiLogicServer-src/` before running BLT.
 
 2. **Permanent propagation (LATER):**
    - Copy changes to: `org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/base/.github/.copilot-instructions.md`
