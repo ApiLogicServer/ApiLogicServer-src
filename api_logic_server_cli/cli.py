@@ -203,10 +203,12 @@ def main(ctx):
 
     if not ctx.invoked_subcommand:  # no command, per invoke_without_command=True
             current_path = Path(os.getcwd())
-            if current_path.joinpath('system/genai/reference').is_dir():
+            if current_path.joinpath('system/genai/reference').is_dir(): # in mgr - help info
                 sys.stdout.write("    For doc, see https://apilogicserver.github.io/Docs/Manager \n\n\n")
-            else:
-                sys.stdout.write("    Suggestion: genai-logic start \n\n\n")
+            else:  # not mgr... if empty, then presume just installed - suggest create mgr
+                non_venv = [e for e in current_path.iterdir() if e.name != 'venv']
+                if len(non_venv) == 0:
+                    sys.stdout.write("    Suggestion - if you've not already created the Manager: genai-logic start \n\n\n")
      
 
 @main.command("start")

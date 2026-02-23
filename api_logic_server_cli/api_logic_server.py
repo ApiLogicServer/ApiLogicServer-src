@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "16.01.34"  # last public release: 16.00.28
+__version__ = "16.01.37"  # last public release: 16.00.28
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t02/22/2026 - 16.01.34: sample-rework, int, mgr, webg, subsystem creation (rules, data model), behave rule log \n"\
+    "\t02/22/2026 - 16.01.37: sample-rework, int, mgr, webg, subsystem creation (rules, data model), behave rule log \n"\
     "\t02/06/2026 - 16.01.22: save nl logic by use-case/reqmt, logic operation, docent, demo fix \n"\
     "\t01/06/2026 - 16.01.03: win11 Python 3.13 fixes for panda, oracle, kafka, postgres \n"\
     "\t12/11/2025 - 16.00.04: bug fix [106] - SqlServer autoinsert \n"\
@@ -778,7 +778,8 @@ fi
         create_utils.replace_string_in_file(search_for = 'ApiLogicServerVenvSitePackages',
                                             replace_with=venv_site_packages,
                                             in_file=vscode_settings_path)
-        
+
+
         if create_env_file := False:  # env settings are in config/default.env
             # Create .env file to help with virtual environment activation
             env_file_path = project.project_directory_path.joinpath('.env')

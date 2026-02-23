@@ -439,8 +439,8 @@ Rule.formula(
 ## 🤖 AI Assistant Quick Reference
 
 ### Two Working Modes:
-- **Author-Val** (Developer/Maintainer) - Working on framework internals, debugging, testing
-- **User-Val** (Simulating End Users) - Testing product workflows, creating demos, validating UX
+- **Developer/Maintainer** - You working on framework internals, debugging, testing
+- **Simulating End Users** - You testing product workflows, creating demos, validating UX
 
 ### Context Establishment Protocol:
 1. **Read [Architecture-Internals.md](https://apilogicserver.github.io/Docs/Architecture-Internals/)** for complete technical context
@@ -453,7 +453,7 @@ Rule.formula(
 3. **CRITICAL:** Never confuse the two `.copilot-instructions.md` files:
    - Manager version = how to CREATE projects (small, workspace-level)
    - Project version = how to CUSTOMIZE projects (large, per-project with architecture details)
-4. When role unclear, ask: "Are you testing as a user or working on internals?"
+4. When your role is unclear, I'll ask: "Are you simulating an end user or working on internals?"
 
 ### Key Principles:
 - **Assume deep technical expertise** - Technology refined over 40+ years
@@ -670,9 +670,9 @@ ApiLogicServer/          ← Manager (owns the venv)
 
 **Why:** venv setup is a frequent source of user error and confusion — wrong Python version, missing activation, packages installed in the wrong environment. The shared-venv design eliminates that entire class of problem: users install once into the Manager's venv, and every child project inherits it automatically. There is nothing per-project to install, activate, or get wrong.
 
-**How it's wired:** The generator writes `python.defaultInterpreterPath: "${workspaceFolder}/../venv/bin/python"` (Mac/Linux) or the Windows equivalent into each project's `.vscode/settings.json`. The `"python"` key in `launch.json` is set to the same absolute path so F5 always uses the Manager's venv regardless of the interpreter picker cache.
+**How it's wired:** The generator writes `python.defaultInterpreterPath: "${workspaceFolder}/../venv/bin/python"` (Mac/Linux) or the Windows equivalent into each project's `.vscode/settings.json`. The `"python"` key in each server launch config in `.vscode/launch.json` is the literal VS Code variable `${command:python.interpreterPath}` — no generator substitution needed. VS Code resolves this at runtime from the workspace's selected interpreter (driven by `python.defaultInterpreterPath`), making it fully platform-agnostic.
 
-**When it doesn't apply:** If a project is moved outside the Manager directory (iCloud Drive, copied to another machine, different path depth), the relative `../venv` no longer resolves. The fix is to set the `"python"` key in `launch.json` to the absolute path of the target venv — per machine. This is the root cause of the cross-machine F5 failures documented in `env_fixes.md`.
+**When it doesn't apply:** If a project is nested more than one level below the Manager (e.g., `Manager/custom_apps/my_project/`), the `../venv` reference in `settings.json`'s `python.defaultInterpreterPath` resolves incorrectly. The user must manually adjust it to the correct depth (e.g., `"${workspaceFolder}/../../venv/bin/python"`). Since `launch.json` derives its interpreter via `${command:python.interpreterPath}` from `settings.json`, fixing `settings.json` is sufficient — no separate `launch.json` edit needed. Documented in `Project-Env.md`.
 
 ### The one rule: get the venv Python binary right — everything else follows
 
@@ -720,13 +720,19 @@ Step 3 is just a normal Python import — it works because **the venv Python bin
 
 The `except` fallback (tries `APILOGICSERVER_HOME` → `args.api_logic_server_home` → `HOME`) handles environments where the CLI is **not** installed in the venv (certain Azure/Docker configs). Not the normal dev case.
 
-### Deliberate design decision: do NOT pin `"python"` in `launch.json`
+### Design decision: pin `"python"` in `launch.json` using `${command:python.interpreterPath}` (Feb 2026)
 
-It is tempting to add `"python": "/path/to/venv/bin/python"` to the `ApiLogicServer` launch config to guarantee F5 always uses the right interpreter — and this does fix the new-machine / moved-project failure. However, the `"python"` key in `launch.json` is **authoritative and overrides the picker**. If a user creates a local `venv/` inside their project and selects it in the status bar, F5 would silently continue using the hardcoded Manager path, ignoring their choice entirely. They would have to manually edit `launch.json` to fix it — a non-obvious action.
+> **Reversed from earlier note.** Testing confirmed that `python.defaultInterpreterPath` alone does not reliably drive F5 on new or moved projects — the picker cache is empty, VS Code falls back to system Python, and `import flask_sqlalchemy` fails.
 
-Since users commonly create per-project venvs, this trade-off is wrong. The current approach — `python.defaultInterpreterPath` in `settings.json` as a **default only** — is correct: it pre-selects the Manager venv out of the box, but the picker wins if the user changes it. The one-time cost of clicking the status bar on a new machine is acceptable and self-explanatory.
+All five server launch configs in `prototypes/base/.vscode/launch.json` use the literal VS Code variable `"python": "${command:python.interpreterPath}"` — no generator substitution. VS Code resolves this at runtime from the workspace's selected interpreter (which comes from `python.defaultInterpreterPath` in `settings.json`).
 
-**Do not add a `"python"` key to `launch.json` templates.**
+**Why this works cross-platform:** `${command:python.interpreterPath}` derives from `python.defaultInterpreterPath`, which is already substituted with the platform-correct path at creation time in `settings.json`. No `bin` vs `Scripts` distinction needed in `launch.json`.
+
+**Why not `sys.executable`:** `sys.executable` is the absolute path of the Python used to run the generator — baked in at creation time, breaks on any other machine.
+
+**Subfolder caveat:** If `settings.json`'s `python.defaultInterpreterPath` is wrong (project nested deeper than one level below the Manager), `${command:python.interpreterPath}` will also resolve incorrectly. Fix `settings.json` — `launch.json` follows automatically. Documented in `Project-Env.md`.
+
+**Do add `"python": "${command:python.interpreterPath}"` to all server launch configs in `launch.json` templates** — no generator substitution needed; the value is a literal VS Code variable.
 
 ### Known cosmetic issue: `python.analysis.extraPaths` in pre-created samples
 
@@ -780,6 +786,17 @@ This understanding should be reflected in two source files in `org_git/ApiLogicS
 - Creates ~18 test projects with validation
 - Critical smoke test before pushing to GitHub
 - Results in `tests/results.txt` and `tests/failures.txt`
+
+**⚠️ Post-BLT: warm the bytecode cache (Python 3.13 + oracledb 2.5+)**
+
+After BLT reinstalls packages, the first `genai-logic` invocation takes 20-30s while Python compiles `.pyc` files for new Cython extensions (oracledb, sqlalchemy). On macOS this is compounded by Gatekeeper verifying new `.so` files. Run this once after BLT to pre-warm everything:
+```sh
+python -m compileall venv/lib/python3.13/site-packages/api_logic_server_cli/ \
+  venv/lib/python3.13/site-packages/sqlalchemy/ \
+  venv/lib/python3.13/site-packages/oracledb/ \
+  -q -x "fragments|genai/reference"
+```
+After this, `genai-logic` starts instantly. Only needed once per BLT.
 
 **🎯 CRITICAL: Prototype System & Project Creation**
 
@@ -887,7 +904,7 @@ In `.vscode/settings.json`:
 
 Also: delete root `.env` if present (all lines are commented out but `python.envFile` warning is annoying).
 
-In `.vscode/launch.json` — add `"python": "${workspaceFolder}/../venv/bin/python"` to each server configuration (`ApiLogicServer`, `ApiLogicServer DEBUG`, verbose variants). `python.defaultInterpreterPath` in settings is NOT sufficient for F5 — the `"python"` key in launch.json is required and **confirmed working (Feb 2026)**.
+In `.vscode/launch.json` — add `"python": "${command:python.interpreterPath}"` to each server configuration (`ApiLogicServer`, `ApiLogicServer DEBUG`, verbose variants). `python.defaultInterpreterPath` in settings is NOT sufficient for F5 — the `"python"` key in launch.json is required and **confirmed working (Feb 2026)**. The `${command:python.interpreterPath}` variable derives from `python.defaultInterpreterPath` at runtime; no hardcoded path, no platform issues.
 
 Open a **new terminal** after saving — existing terminals retain the old broken profile.
 
