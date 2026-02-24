@@ -14,6 +14,8 @@ See https://apilogicserver.github.io/Docs/Data-Model-Examples/.  The Manager con
 
 The `samples/db` files are pre-installed sqlite databases.  These allow you to explore creating projects from existing databases.
 
+**Note — `empty.sqlite` is not here.** New domain projects should use `starter.sqlite` instead. It contains a single `sys_scalar` table (runtime-configurable settings: `discount_rate`, `tax_rate`, etc.) that serves as a useful seed for domain projects. Keep the table and add your domain columns, or use it as a trigger in the AI prompt. See `samples/dbs/readme_dbs.md` for details.
+
 For example, create Northwind and basic_demo like this:
 
 ```bash

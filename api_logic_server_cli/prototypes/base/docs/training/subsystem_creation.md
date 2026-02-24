@@ -370,6 +370,36 @@ def CalculateDuty():
 # Logic governed by rules engine, automatic audit
 ```
 
+### Mistake #4: Unnecessary rebuild-from-database (and venv search)
+
+**Context:** You're adding logic to a newly-created project that includes a Request table (e.g., `SysSupplierReq`).
+
+**❌ WRONG - Assume model is missing, search for venv:**
+```
+# AI looks for venv, tries to activate it...
+# AI runs: genai-logic rebuild-from-database
+# ...all unnecessary overhead
+```
+
+**✅ CORRECT - Check models.py first:**
+```bash
+grep -n 'class SysSupplierReq' database/models.py
+# → line 160: class SysSupplierReq(Base):
+# Model already exists — no rebuild needed
+```
+
+**Why this happens:**
+- `genai-logic create` already introspects the **full database** and generates all models
+- If `sys_supplier_req` was in the database at creation time, `SysSupplierReq` is already in `models.py`
+- `rebuild-from-database` is only needed when you add NEW tables/columns **after** the project was created
+
+**Key rule:** Writing logic files (`.py` files in `logic/logic_discovery/`) is **pure file editing** — no venv activation required. Only CLI commands (`genai-logic rebuild-from-database`, running the server) need the venv.
+
+**Decision tree:**
+1. Need to write/edit a logic file? → Just edit the file. No venv needed.
+2. New table added to DB after project creation? → `rebuild-from-database` (needs venv).
+3. Model class already in `models.py`? → Skip rebuild entirely.
+
 ---
 
 ## Quick Reference
