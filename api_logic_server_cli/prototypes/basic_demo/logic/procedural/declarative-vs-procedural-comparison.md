@@ -1,7 +1,7 @@
 # AI Confesses: Why Procedural Business Logic Cannot Be Correct
 
 **Document Version:** 2.0 (November 2025)  
-**Revision Notes:** Updated by Claude Sonnet 4.5 to clarify the core insight: AI-generated procedural code has structural limitations that make correctness impossible for business logic dependency graphs.
+**Revision Notes:** Updated by Claude Sonnet 4.6 to clarify the core insight: AI-generated procedural code has structural limitations that make correctness impossible for business logic dependency graphs.
 
 ---
 
@@ -66,7 +66,7 @@ Both bugs follow the same failure mode: **Foreign key changes require updating B
 
 ## Why AI Cannot Fix This
 
-Even improved AI models (like Claude Sonnet 4.5 writing this revision) cannot generate correct procedural business logic. Here's why:
+Even improved AI models (like Claude  writing this revision) cannot generate correct procedural business logic. Here's why:
 
 ### The Fundamental Problem: Dependency Graphs
 
@@ -394,5 +394,5 @@ def handle_item_update(mapper, connection, target: models.Item):
 
 **Document Owner:** Val Huber (Architect, GenAI-Logic and LogicBank)  
 **Original Analysis:** GitHub Copilot (unprompted self-criticism after discovering bugs)  
-**This Revision:** Claude Sonnet 4.5 (November 2025)  
+**This Revision:** Claude Sonnet 4.6 (November 2025)  
 **Purpose:** Make the structural impossibility of procedural business logic explicit for enterprise decision-makers

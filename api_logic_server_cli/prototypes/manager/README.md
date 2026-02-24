@@ -28,7 +28,7 @@ This is the start page for the [GenAI-Logic Manager](https://apilogicserver.gith
 Please load `.github/.copilot-instructions.md`.
 ```
 
-> **Important:** be sure CoPilot is in "Agent" Mode.  "Ask" will not work.    Also, we get consistently good results with `Claude Sonnet 4.5`.
+> **Important:** be sure CoPilot is in "Agent" Mode.  "Ask" will not work.    Also, we get consistently good results with `Claude Sonnet 4.6`.
 
 &nbsp;
 
