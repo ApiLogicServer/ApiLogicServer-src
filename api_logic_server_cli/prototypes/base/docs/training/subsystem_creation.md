@@ -193,6 +193,22 @@ Rule.early_row_event(on_class=models.CustomsEntry, calling=lookup_surtax_rate)
 
 **Key distinction:** Event *sets* the rate, formula *uses* the rate to calculate amounts.
 
+### Fire-and-Forget Events vs. Request Pattern — Choosing the Right Tool
+
+Both are implemented as event handlers on insert, but they serve different purposes:
+
+| Aspect | Fire-and-Forget Event | Request Pattern |
+|---|---|---|
+| **Event type** | `commit_row_event` | `early_row_event` |
+| **Response fields** | None — no output written back | Row has output fields (`status`, `result_id`, etc.) populated by the handler |
+| **Caller gets result** | No — fire and forget | Yes — caller inserts request row, then reads response fields back |
+| **Use case** | Side effect: send email, push to Kafka, write to log | Integration service with return value: AI selection, external API call, duty calculation |
+| **Example** | `SysEmail` insert → `commit_row_event` sends email | `SysSupplierReq` insert → `early_row_event` calls AI, writes `chosen_supplier_id` back |
+
+**Quick rule:**
+- Caller doesn't need a result back? → **fire-and-forget** `commit_row_event`
+- Caller needs a result (status, ID, calculated value)? → **Request Pattern** `early_row_event` with response fields
+
 ---
 
 ## Part 3: Complex Inserts - Request Pattern vs Custom API

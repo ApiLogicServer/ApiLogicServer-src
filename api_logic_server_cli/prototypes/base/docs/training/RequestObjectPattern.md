@@ -9,6 +9,15 @@ The **Request Pattern** is a database table design where:
 
 **Far preferable to creating a service** — better encapsulation. Logic stays in the rules layer, not scattered across API endpoints. The API is a thin wrapper that just inserts the row.
 
+### Is this the Request Pattern?
+
+| Situation | Pattern? |
+|---|---|
+| `SysSupplierReq` insert → `early_row_event` → populates `chosen_supplier_id` → caller reads it back | ✅ Yes — classic Request Pattern |
+| `SysEmail` insert → `commit_row_event` → sends email, no response fields | ❌ No — this is a **fire-and-forget event handler**. The `Sys`-prefix table is just a trigger; there's no result returned to the caller |
+
+**The defining characteristic is response fields read back by the caller.** If the caller inserts and never reads back a result, it's a fire-and-forget event — not the Request Pattern.
+
 ### Common Use Cases
 - AI/LLM calls (supplier selection, pricing)
 - Email / Kafka / external API calls
@@ -93,7 +102,7 @@ def populate_duty_calculation(row: models.DutyCalculation, old_row, logic_row):
     row.total_amount    = row.duty_amount + row.tax_amount
 ```
 
-For **side-effect only** (email, Kafka) use `after_flush_row_event` instead — same signature, fires after flush.
+For **side-effect only** (email, Kafka) — where the caller never reads a result back — use `after_flush_row_event` instead. This is a related but simpler pattern (**fire-and-forget**), not the full Request Pattern.
 
 ---
 
