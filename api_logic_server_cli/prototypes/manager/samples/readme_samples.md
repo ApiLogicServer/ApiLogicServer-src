@@ -86,3 +86,9 @@ docker run --name sqlsvr-container --net dev-network -p 1433:1433 -d apilogicser
 ```
 genai-logic genai --using=samples/prompts/genai_demo.prompt
 ```
+
+<br>
+
+## Extend Context Engineering
+
+Drag `samples/extend_context_engineering/instructions` into your `.github` folder.  This will bootstrap some orientation training, and illustrates how you can **extend the Context Engineering.**
