@@ -14,7 +14,7 @@
         "editor.wordWrap": "off"
     },
     "debug.console.wordWrap": false,    
-    "python.defaultInterpreterPath": "${workspaceFolder}/../venv/bin/python",
+    "python.defaultInterpreterPath": "ApiLogicServerPython",
     "python.terminal.activateEnvironment": true,
     "python.terminal.activateEnvInCurrentTerminal": true,
     "python.analysis.autoImportCompletions": true,

@@ -470,6 +470,34 @@ python api_logic_server_run.py
 ---
 
 =============================================================================
+PATTERN 8: Event Dependency Awareness
+=============================================================================
+
+Before writing any event that sets a value, ask: **"Does any rule depend on this value?"
+
+| Answer | Use |
+|--------|-----|
+| YES — a formula/sum/constraint depends on it | `Rule.early_row_event` (fires before derivations) |
+| NO — pure side effect (Kafka, email, audit) | `Rule.after_flush_row_event` or `Rule.commit_row_event` |
+
+**Why it matters:** Formulas and sums run *after* events. If your event sets a value that
+a formula consumes, using the wrong event type means the formula runs on the old value —
+silently, no error, wrong results.
+
+```python
+# ✅ Sets unit_price BEFORE Item.amount formula runs
+Rule.early_row_event(on_class=models.Item, calling=set_unit_price)
+
+# ✅ Sends to Kafka AFTER all rules and constraints complete
+Rule.after_flush_row_event(on_class=models.Order, calling=kafka_producer.send_row_to_kafka, ...)
+
+# ❌ Wrong for setting unit_price — formula already ran with old value
+Rule.row_event(on_class=models.Item, calling=set_unit_price)
+```
+
+---
+
+=============================================================================
 SUMMARY: Quick Reference
 =============================================================================
 
@@ -479,7 +507,8 @@ SUMMARY: Quick Reference
 4. **Rule APIs**: Check logic_bank_api.prompt for correct parameters
 5. **Anti-patterns**: No get_logic_row(), no calling=False, no app_logger in rules
 6. **Type handling**: int for FKs, Decimal for money
-7. **Testing**: logic_row.log(), check old_row, use is_inserted/updated/deleted
+7. **Event dependencies**: early_row_event if a rule depends on the value you're setting
+8. **Testing**: logic_row.log(), check old_row, use is_inserted/updated/deleted
 
 For rule-specific APIs and examples:
 - Deterministic rules → docs/training/logic_bank_api.prompt

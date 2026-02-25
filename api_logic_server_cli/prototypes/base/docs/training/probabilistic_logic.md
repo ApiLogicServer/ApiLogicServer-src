@@ -247,6 +247,10 @@ When user says "Use AI to Set <Receiver> field by finding optimal <Provider>":
 3. **Wrapper returns object** - Returns populated request object (not scalar)
 4. **Event extracts values** - `row.unit_price = req.chosen_unit_price`
 
+**⚠️ CRITICAL: use `early_row_event` — `unit_price` is consumed by `Rule.formula(Item.amount)`**
+
+`Rule.formula` runs *after* events. Wrong event type → formula uses old/null price → wrong amounts, wrong balance, wrong credit check — silently. See PATTERN 8 in `docs/training/logic_bank_patterns.md`.
+
 ## Fallback Strategy
 
 **CRITICAL:** AI rules need fallback logic for cases when AI shouldn't/can't run.

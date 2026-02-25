@@ -1,7 +1,7 @@
 # AI Confesses: Why Procedural Business Logic Cannot Be Correct
 
-**Document Version:** 2.0 (November 2025)  
-**Revision Notes:** Updated by Claude Sonnet 4.6 to clarify the core insight: AI-generated procedural code has structural limitations that make correctness impossible for business logic dependency graphs.
+**Document Version:** 2.1 (February 2026)  
+**Revision Notes:** v2.1 adds The Balanced View section: AI is genuinely powerful; dependency handling (spatial and temporal) is its structural weakness; LogicBank complements exactly that weakness. Adds temporal ordering bug class (`row_event` vs `early_row_event`) as concrete example.
 
 ---
 
@@ -66,7 +66,7 @@ Both bugs follow the same failure mode: **Foreign key changes require updating B
 
 ## Why AI Cannot Fix This
 
-Even improved AI models (like Claude  writing this revision) cannot generate correct procedural business logic. Here's why:
+Even improved AI models (like Claude Sonnet 4.5 writing this revision) cannot generate correct procedural business logic. Here's why:
 
 ### The Fundamental Problem: Dependency Graphs
 
@@ -212,6 +212,77 @@ def declare_logic():
 
 ---
 
+## The Balanced View: AI Strengths, AI Weaknesses, and the Right Complement
+
+### AI Is Genuinely Powerful — And Dependency Issues Are Real
+
+Two camps have formed around AI-generated code:
+
+**Camp 1 — "It's a panacea":**  
+Screen generation, UI scaffolding, boilerplate, documentation — AI is strikingly good at these. New developers produce working UI in minutes. Requirements translate to running code in hours. The productivity leap is real and large.
+
+**Camp 2 — "It's dangerous":**  
+AI-generated business logic has subtle dependency bugs (as this document demonstrates). Bugs appear only under specific change paths. Systems that pass basic testing fail in production. The correctness gap is real and serious.
+
+**Both camps are right.**
+
+The error is treating AI as uniform — excellent or terrible across the board. The reality is more precise:
+
+| AI Strength | AI Weakness |
+|---|---|
+| Natural language → specifications | Dependency graph analysis |
+| Screen / UI generation | Proving completeness |
+| Boilerplate and scaffolding | Temporal ordering of computations |
+| Documentation and explanation | All-change-path coverage |
+| Pattern recognition | Transitive cascade correctness |
+
+The key is not choosing between AI and rules — it is **pairing AI with systems whose strengths cover AI's structural weaknesses**.
+
+---
+
+### The Temporal Dimension: A New Dependency Bug Class
+
+The cross-table dependency bugs (FK changes, old/new parent updates) have been documented above.  
+There is a second, subtler class: **temporal ordering within the rule engine itself**.
+
+**Concrete example — `row_event` vs. `early_row_event`:**
+
+When AI generated the supplier-selection rule (Rule 6), it used `Rule.row_event`:
+
+```python
+# AI-generated (WRONG):
+Rule.copy(derive=models.Item.unit_price, from_parent=models.Product.unit_price)  # sets default
+Rule.formula(derive=models.Item.amount, as_expression=lambda row: row.quantity * row.unit_price)
+Rule.row_event(on_class=models.Item, calling=select_optimal_supplier_price)  # fires AFTER rules
+```
+
+**What happens:**
+```
+Item inserted
+  → Rule.copy sets unit_price from Product         ← product default price
+  → Rule.formula: amount = quantity × unit_price   ← computed on DEFAULT price ✓ wrong
+  → row_event fires: AI selects supplier price     ← TOO LATE — amount already computed
+  → amount is never corrected                       ← silent wrong value propagates up
+```
+
+The system doesn't crash. Credit checking passes. The wrong supplier price flows silently into `Order.amount_total` and `Customer.balance`.
+
+**The correct version:**
+```python
+# Correct:
+Rule.early_row_event(on_class=models.Item, calling=set_item_unit_price_from_supplier)  # fires FIRST
+Rule.formula(derive=models.Item.amount, as_expression=lambda row: row.quantity * row.unit_price)
+```
+
+`early_row_event` declares: *"this is a root input to the dependency graph — set it before any rules fire."*  
+`row_event` assumes: *"this is a leaf output — fire after all rules complete."*
+
+**Why AI gets this wrong:** AI reasons about each rule locally ("set unit_price here, compute amount there") without analyzing whether `unit_price` is an **input node** or **output node** in the dependency graph. The dependency graph determines ordering; local reasoning cannot.
+
+**The pattern:** This is the same failure mode as the cross-table bugs — AI cannot reason from the full dependency graph. The spatial dimension (which tables/rows to update) and the temporal dimension (when inputs must be available) are both properties of the dependency graph that AI cannot derive from local reasoning alone.
+
+---
+
 ## Why This Matters for Enterprise AI
 
 ### The GenAI-Logic Insight
@@ -225,7 +296,7 @@ def declare_logic():
 **AI fails at:**
 - Handling dependency graphs
 - Proving completeness
-- Ensuring correctness
+- Ensuring correctness (spatial and temporal)
 - Managing complex state
 
 ### The Solution: AI + Declarative Rules
@@ -321,6 +392,16 @@ And correctness is non-negotiable for enterprise business logic.
 
 ---
 
+**The balanced reality:**  
+AI is strikingly powerful — screen generation, scaffolding, NL→specification translation are genuine productivity leaps. Dependency handling (spatial: which rows to update; temporal: when inputs must be available) is AI's structural weakness — not a temporary capability gap, but a consequence of local reasoning on a global problem.
+
+The answer is not to avoid AI. It is to pair AI with systems whose strengths cover that weakness.  
+LogicBank provides the dependency graph analysis, ordering, and correctness guarantee that AI cannot.
+
+> **Not AI vs. Rules — AI and Rules together.**
+
+---
+
 ## Appendix: The Procedural Code (With Bugs)
 
 For reference, here's the actual AI-generated procedural code (simplified excerpt showing the bug patterns):
@@ -394,5 +475,6 @@ def handle_item_update(mapper, connection, target: models.Item):
 
 **Document Owner:** Val Huber (Architect, GenAI-Logic and LogicBank)  
 **Original Analysis:** GitHub Copilot (unprompted self-criticism after discovering bugs)  
-**This Revision:** Claude Sonnet 4.6 (November 2025)  
+**v2.0 Revision:** Claude Sonnet 4.5 (November 2025)  
+**v2.1 Revision:** Claude Sonnet 4.6 (February 2026) — added temporal dimension, balanced view  
 **Purpose:** Make the structural impossibility of procedural business logic explicit for enterprise decision-makers
