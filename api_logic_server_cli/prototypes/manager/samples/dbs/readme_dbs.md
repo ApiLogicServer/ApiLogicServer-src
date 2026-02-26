@@ -9,3 +9,9 @@ genai-logic create  --project_name=nw --db_url=sqlite:///samples/dbs/nw.sqlite
 
 genai-logic create --project_name=basic_demo --db_url=sqlite:///samples/dbs/basic_demo.sqlite
 ```
+
+Or, create database with just a scalar table, and then use [Subsystem Creation](https://apilogicserver.github.io/Docs/Project-Structure/#subsystem-creation-in-proj) in the created project:
+
+```bash
+genai-logic create  --project_name=customs_app --db_url=sqlite:///samples/dbs/starter.sqlite
+```
