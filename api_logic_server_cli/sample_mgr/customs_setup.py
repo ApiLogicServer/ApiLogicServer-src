@@ -18,15 +18,13 @@ Many samples are built from basic_demo - here, setup sample-specific readmes etc
 Called from main driver (api_logic_server_cli/api_logic_server) create_project_and_overlay_prototypes()
 '''
 
-def nw_setup(project: Project, api_logic_server_dir_str: str):
+def customs_setup(project: Project, api_logic_server_dir_str: str):
     """ for nw- (e.g., integration sample)
         1. add readme (per proj name)
 
     """
-    log.debug(".. ..Copy in nw- customizations: readme")
-    basic_demo_dir = (Path(api_logic_server_dir_str)).joinpath('prototypes/nw_no_cust')
-    create_utils.recursive_overwrite(basic_demo_dir, project.project_directory)
+    log.debug(".. ..Copy in customs customizations: integration readme")
 
-    if project.project_name_last_node == "nw_integration":  
+    if project.project_name_last_node == "customs_demo":  
         os.rename(project.project_directory_path / 'readme.md', project.project_directory_path / 'readme_standard.md')
-        create_utils.copy_md(project = project, from_doc_file = "Sample-Integration.md", to_project_file = "readme.md")
+        create_utils.copy_md(project = project, from_doc_file = "Customs-readme.md", to_project_file = "readme.md")
