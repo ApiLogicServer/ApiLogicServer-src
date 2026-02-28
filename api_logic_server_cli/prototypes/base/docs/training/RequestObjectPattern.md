@@ -20,8 +20,7 @@ The **Request Pattern** is a database table design where:
 
 ### Common Use Cases
 - AI/LLM calls (supplier selection, pricing)
-- Email / Kafka / external API calls
-- Complex calculations (duties, taxes)
+- Email / Kafka / external API calls (fire-and-forget side effects with optional inputs)
 
 ---
 
@@ -46,80 +45,107 @@ Apply this pattern when: *"user provides input → system performs integration s
 ❌ Don't use when:
 - Simple CRUD with no computation
 - Pure read-only queries
+- **Domain data entry where LogicBank rules handle derivation.** If inserting a `CustomsEntry` and rules automatically compute `duty_amount`, `tax_amount`, etc. — the insert IS the operation. No `Sys*` wrapper table is needed or correct. Adding one forces `early_row_event + session.flush()` inside a flush cycle → nested flush errors.
 
 ---
 
 ## Model Structure
 
+Example: `SysEmail` — caller provides recipient context; event sends email (or skips if opted out).
+
 ```python
-class DutyCalculation(Base):
-    __tablename__ = 'duty_calculation'
-    _s_collection_name = 'DutyCalculation'
+class SysEmail(Base):
+    __tablename__ = 'sys_email'
+    _s_collection_name = 'SysEmail'
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    id          = Column(Integer, primary_key=True, autoincrement=True)
 
-    # Request fields (user provides on insert)
-    hs_code_id       = Column(Integer, ForeignKey('hs_code.id'), nullable=False)
-    origin_country_id = Column(Integer, ForeignKey('country.id'), nullable=False)
-    value_amount     = Column(DECIMAL(15, 2), nullable=False)
+    # Request fields (caller provides on insert)
+    customer_id = Column(Integer, ForeignKey('customer.id'), nullable=False)
+    subject     = Column(String(200), nullable=False)
+    message     = Column(String(2000), nullable=False)
+    CreatedOn   = Column(DateTime, default=datetime.now)
 
-    # Response fields (populated by row event)
-    duty_rate        = Column(DECIMAL(5, 2))
-    duty_amount      = Column(DECIMAL(15, 2))
-    tax_amount       = Column(DECIMAL(15, 2))
-    total_amount     = Column(DECIMAL(15, 2))
-    program_applied  = Column(String(100))
-    created_date     = Column(DateTime, default=datetime.now)
+    # No response fields — fire-and-forget; email is sent as a side effect
+    customer    = relationship("Customer")
+```
+
+Example with response field: `SysSupplierReq` — AI selects supplier, writes `chosen_supplier_id` back so the calling formula can read it:
+
+```python
+class SysSupplierReq(Base):
+    __tablename__ = 'sys_supplier_req'
+    _s_collection_name = 'SysSupplierReq'
+
+    id                  = Column(Integer, primary_key=True, autoincrement=True)
+
+    # Request fields
+    product_id          = Column(Integer, ForeignKey('product.id'), nullable=False)
+
+    # Response fields (populated by early_row_event)
+    chosen_supplier_id  = Column(Integer, ForeignKey('supplier.id'))
+    chosen_unit_price   = Column(DECIMAL)
+    reason              = Column(String)
 ```
 
 ---
 
 ## Row Event Implementation
 
+**Fire-and-forget** (`SysEmail` — no response fields, side-effect only):
+
 ```python
-Rule.early_row_event(
-    on_class=models.DutyCalculation,
-    calling=populate_duty_calculation
+Rule.after_flush_row_event(
+    on_class=models.SysEmail,
+    calling=send_email_if_not_opted_out
 )
 
-def populate_duty_calculation(row: models.DutyCalculation, old_row, logic_row):
+def send_email_if_not_opted_out(row: models.SysEmail, old_row, logic_row):
     if not logic_row.is_inserted():
         return
-
-    # 1. Look up reference data
-    tariff = logic_row.session.query(models.TariffRate).filter(
-        models.TariffRate.hs_code_id == row.hs_code_id,
-        models.TariffRate.origin_country_id == row.origin_country_id
-    ).first()
-    if not tariff:
-        raise ValueError(f"No tariff found for hs_code {row.hs_code_id}")
-
-    # 2. Populate response fields
-    row.duty_rate       = tariff.duty_rate
-    row.program_applied = tariff.program_name
-    row.duty_amount     = Decimal(str(row.value_amount)) * tariff.duty_rate / 100
-    row.tax_amount      = Decimal(str(row.value_amount)) * tariff.additional_tax / 100
-    row.total_amount    = row.duty_amount + row.tax_amount
+    if row.customer.email_opt_out:
+        logic_row.log(f"Email skipped — {row.customer.name} opted out")
+        return
+    logic_row.log(f"email sent to {row.customer.email}: {row.subject}")
+    # email_service.send(to=row.customer.email, subject=row.subject, body=row.message)
 ```
 
-For **side-effect only** (email, Kafka) — where the caller never reads a result back — use `after_flush_row_event` instead. This is a related but simpler pattern (**fire-and-forget**), not the full Request Pattern.
+**With response fields** (`SysSupplierReq` — AI result read back by caller):
+
+```python
+Rule.early_row_event(
+    on_class=models.SysSupplierReq,
+    calling=select_supplier_via_ai
+)
+
+def select_supplier_via_ai(row: models.SysSupplierReq, old_row, logic_row):
+    if not logic_row.is_inserted():
+        return
+    # call AI, populate response fields
+    result = ai_service.choose_supplier(product_id=row.product_id)
+    row.chosen_supplier_id = result.supplier_id
+    row.chosen_unit_price  = result.unit_price
+    row.reason             = result.rationale
+```
 
 ---
 
-## Thin API Wrapper
+## Thin API Wrapper (optional)
+
+For fire-and-forget (email), the Admin App insert IS sufficient — no API wrapper needed.
+
+For cases where a REST caller needs a named endpoint that reads response fields back:
 
 ```python
-@app.route('/api/DutyCalculatorEndpoint/CalculateDuty', methods=['POST'])
-def calculate_duty():
-    data = request.json
-    row = models.DutyCalculation(
-        hs_code_id=data['hs_code_id'],
-        origin_country_id=data['origin_country_id'],
-        value_amount=data['value_amount']
-    )
+@app.route('/api/SysSupplierReqEndpoint/SelectSupplier', methods=['POST'])
+def select_supplier():
+    data = request.json['meta']['args']['data']
+    row = models.SysSupplierReq(product_id=data['product_id'])
     session.add(row)
-    session.commit()  # early_row_event fires here, populates response fields
-    return jsonify({'total_amount': float(row.total_amount), 'program': row.program_applied})
+    session.commit()  # early_row_event fires, populates chosen_supplier_id etc.
+    return jsonify({'supplier_id': row.chosen_supplier_id,
+                    'unit_price': float(row.chosen_unit_price),
+                    'reason': row.reason})
 ```
 
 ❌ **Anti-pattern:** Logic in the API service. This bypasses the rules engine, breaks Admin UI support, duplicates logic across entry points, and loses the audit trail.

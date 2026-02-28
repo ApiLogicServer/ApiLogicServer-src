@@ -11,6 +11,26 @@ Read this when creating **multiple related tables with business logic** - for ex
 
 ---
 
+## Governing Principle: Prompt Spec = Floor, Not Ceiling
+
+**This is the most important principle in this guide.**
+
+When a prompt provides an explicit column list, table spec, or FK wiring — interpret it as the **minimum anchor**: the fields the author needed to specify to ensure correct structure. It is **not a complete design**.
+
+The prompt author is a domain expert. They wrote only what they needed to control. They omitted fields they consider "obvious" — standard rate/amount/date columns for the domain, validation constraints, audit fields. Treat omissions as **"expected by a domain expert"**, not as **"not required"**.
+
+**Always apply domain knowledge to flesh out beyond the spec:**
+- Add domain-standard fields the spec didn't mention (e.g., `base_duty_rate` on a tariff HS code table, `effective_date` on a rate table)
+- Add `Rule.constraint` for `quantity > 0` and `unit_price`/`unit_value > 0` on any line item — always, without being asked
+- Add `Rule.sum` for every numeric child column that rolls up to a header — always
+- Add audit/traceability columns where domain convention expects them
+
+**The failure mode to avoid:** receiving `HSCodeRate (hs_code PK, surtax_rate)` and implementing exactly two columns, stopping there. A CBSA tariff code table without `base_duty_rate` is incomplete by domain standards — the spec listed what it needed to anchor, not everything the table needs.
+
+> *Explicit specs buy structural correctness (FK wiring, table names). Domain knowledge buys completeness (fields, constraints, rules). Both must be active simultaneously.*
+
+---
+
 ## Part 1: Data Model Principles
 
 ### Always Use Autoincrement Primary Keys
@@ -84,6 +104,54 @@ class CustomsEntry(Base):       # Singular, capitalized, CamelCase
 class Customers(Base):          # Plural - wrong!
 class customs_entry(Base):      # Lowercase class - wrong!
 ```
+
+### Lookup References: Use FK Integers, Not String Codes
+
+When the prompt supplies lookup values as codes or names ("province code", "country of origin", "hs code", "customer name"), the transactional table stores these as **FK integer columns pointing to the lookup table's autonum `id`**. The string code/name stays only on the lookup table parent row.
+
+**Gate — apply this when:** the value identifies a known lookup entity (country, province, HS code, product, customer).  
+**Don't apply when:** the value is free text (description, notes, broker name, address line).
+
+**✅ CORRECT — FK integers on the transactional table:**
+```python
+class SurtaxOrder(Base):
+    __tablename__ = 'surtax_order'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+
+    # Lookup references — FK integers, NOT string codes
+    country_origin_id = Column(ForeignKey('country_origin.id'), nullable=False)
+    province_id       = Column(ForeignKey('province.id'), nullable=False)
+
+    # Free text — String is correct here
+    importer_name = Column(String(200))
+    notes         = Column(String)
+
+    # Relationships — enable Rule.copy to traverse to parent columns
+    country_origin : Mapped["CountryOrigin"] = relationship(back_populates="SurtaxOrderList")
+    province       : Mapped["Province"]      = relationship(back_populates="SurtaxOrderList")
+
+class SurtaxLineItem(Base):
+    __tablename__ = 'surtax_line_item'
+    id             = Column(Integer, primary_key=True, autoincrement=True)
+    surtax_order_id = Column(ForeignKey('surtax_order.id'), nullable=False)
+    hs_code_id      = Column(ForeignKey('hs_code_rate.id'), nullable=False)  # FK, not String
+
+    hs_code_rate : Mapped["HSCodeRate"] = relationship(back_populates="SurtaxLineItemList")
+```
+
+**❌ WRONG — string codes stored directly on the transactional row:**
+```python
+class SurtaxOrder(Base):
+    country_of_origin = Column(String)  # ← "DE", "US" stored as text
+    province_code     = Column(String)  # ← "ON", "BC" stored as text
+    # No relationships → Rule.copy impossible → forces early_row_event + session.query()
+```
+
+**Why this matters:**
+- FK relationships are what `Rule.copy` traverses: `Rule.copy(derive=SurtaxLineItem.surtax_rate, from_parent=HSCodeRate.surtax_rate)` requires `hs_code_id FK → HSCodeRate.id`
+- Text code storage = no parent relationship = no `Rule.copy` = forced `early_row_event + session.query()` = nested-flush risk
+- Admin App auto-generates FK dropdowns for free — users pick from a list rather than typing codes
+- Referential integrity enforced at the DB level
 
 ---
 
@@ -418,14 +486,80 @@ grep -n 'class SysSupplierReq' database/models.py
 
 ---
 
+## Part 5: Seed Data
+
+### Canonical Approach — `alp_init.py` (Flask context + LogicBank active)
+
+The framework ships `database/test_data/alp_init.py`. This is the correct seed pattern for AI-generated projects: runs with Flask app context so LogicBank rules fire on insert — all computed columns populated correctly, no duplicated calculation logic.
+
+It already has the required path fix at line 4:
+```python
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))  # ensure project root on path
+```
+
+**Run from project root:**
+```bash
+cd /path/to/your_project
+PROJECT_DIR=$(pwd) python database/test_data/alp_init.py
+# Then open the Admin App at http://localhost:5656/
+```
+
+The framework also ships `database/test_data/test_data_preamble.py` which uses `TestBase + LogicBank.activate()` (no Flask) — a valid alternative, but it writes to `database/test_data/db.sqlite` (test copy), not the live `database/db.sqlite`. Change `db_url` if using for live seeding.
+
+> **Note:** `als genai-utils --rebuild-test-data` is for **WebGenAI projects only** — it reads `docs/*.response` JSON files generated by the WebGenAI pipeline. It is not a general seed tool and will not work for AI-generated or hand-crafted projects.
+
+### How It Works — The Two-Step Mechanism
+
+`models.py` already has a conditional base class switch used by `test_data_preamble.py`:
+```python
+if os.getenv('APILOGICPROJECT_NO_FLASK') is None:
+    Base = SAFRSBaseX   # requires Flask + SAFRS
+else:
+    Base = TestBase     # plain declarative_base() — no Flask needed
+```
+
+`test_data_preamble.py` activates LogicBank explicitly after creating the session:
+```python
+os.environ["APILOGICPROJECT_NO_FLASK"] = "1"  # Step 1: swap to TestBase
+# ... create engine, session ...
+LogicBank.activate(session=session, activator=declare_logic.declare_logic)  # Step 2: rules active
+```
+
+**Both steps are required.** The common failure is setting step 1 without step 2:
+```python
+os.environ["APILOGICPROJECT_NO_FLASK"] = "1"  # ← TestBase active
+# LogicBank.activate() never called  ← rules SILENT
+session.add(entry)  # all computed fields remain 0
+```
+
+`alp_init.py` uses the Flask context instead — equivalent result, different mechanism.
+
+### Common Failures
+
+| Error | Root cause | Fix |
+|---|---|---|
+| `ModuleNotFoundError: No module named 'config'` | Project root not on `sys.path` | Ensure `sys.path.insert(0, str(Path(__file__).parent.parent.parent))` is the first lines — `alp_init.py` already has this |
+| All computed fields are 0 | `APILOGICPROJECT_NO_FLASK=1` set but `LogicBank.activate()` never called | Add `LogicBank.activate(session=session, activator=declare_logic.declare_logic)` after session creation |
+| Seed amounts drift from actual rules | Pre-computed values in raw sqlite3 script not updated when rules change | Use `alp_init.py` pattern instead — rules compute the values |
+| Shell heredoc garbled (`cmdand heredoc>`) | Terminal tool mangles multi-line heredocs | Write a `.py` file with `create_file`, then run `python script.py` — never `sqlite3 db << 'SQL'` |
+
+---
+
 ## Quick Reference
 
 **When creating subsystems with multiple tables and business logic:**
+
+0. **Spec = Floor, Not Ceiling:**
+   - Prompt column lists are the *minimum anchor* — flesh out with domain-standard fields
+   - Always add `Rule.constraint` for `quantity > 0` and `unit_price`/`unit_value > 0` on line items
+   - Always add `Rule.sum` for every numeric child column that rolls up to a header
+   - Domain expert omissions = "obvious to them" — not "excluded"
 
 1. **Data Models:**
    - `autoincrement=True` on all primary keys
    - Create columns for derived values
    - Singular capitalized class names
+   - Lookup references: FK integers (`province_id FK → Province.id`), not string codes
 
 2. **Business Logic:**
    - Try HARD to use formulas first
@@ -433,9 +567,16 @@ grep -n 'class SysSupplierReq' database/models.py
    - Calculations in formulas, not events (even complex conditionals)
 
 3. **Complex Inserts:**
-   - Request Pattern (SysXxxReq + early_row_event)
+   - Direct domain insert — LogicBank rules derive everything
+   - NOT `Sys*` wrapper tables (Request Pattern = integration side-effects only)
    - NOT custom API services with embedded logic
 
-4. **Ask for detailed guidance:**
+4. **Seed Data + Admin App:**
+   - Use `alp_init.py` with path fix — Flask + LogicBank active → correct computed values
+   - Never shell heredocs — write a `.py` file with `create_file`, then run it
+   - `APILOGICPROJECT_NO_FLASK=1` = LogicBank suppressed = zero computed fields
+   - After seeding, open Admin App at `http://localhost:5656/` — this IS the runnable UI
+
+5. **Ask for detailed guidance:**
    - "Should I read subsystem creation guidelines?"
    - When uncertain, consult before implementing

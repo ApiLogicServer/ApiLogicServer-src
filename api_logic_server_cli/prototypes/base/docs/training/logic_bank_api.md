@@ -358,15 +358,54 @@ Response:
                     as_condition=lambda row: row.class_5_felony_count == 0 and row.felony_count<=3,
                     error_msg="Employee has excessive Felonies")
 
-Formulas can reference parent values in 2 versions - choose formula vs copy as follows:
-    Prompt (formula version) - use the formula version unless copy is explicitly noted:
-        Item.ready = Order.ready
-    Response
-        Rule.formula(derive=Item.ready, as_expression=lambda row: row.order.ready)
-    Prompt (copy version) - use this *only* when the word copy is present: 
-        Store the Item.unit_price as a copy from Product.unit_price
-    Response
-        Rule.copy(derive=Item.ready, from_parent=Order.ready)
+Formulas can reference parent values in 2 versions - choose formula vs copy based on propagation behavior:
+
+    Rule.formula (LIVE REFERENCE) - parent changes propagate to children automatically.
+        Use when the child must always reflect the current parent value.
+        LogicBank tracks the dependency; if the parent attribute changes, all affected children re-derive.
+        Example:
+            Prompt:  Item.ready = Order.ready
+            Response:
+                Rule.formula(derive=Item.ready, as_expression=lambda row: row.order.ready)
+
+    Rule.copy (SNAPSHOT) - captures the parent value at the time the child row is inserted/updated.
+        Subsequent parent changes do NOT cascade to existing child rows.
+        Use when the value must be frozen at transaction time (e.g., price locked at order entry).
+        Example:
+            Prompt:  Store the Item.unit_price as a copy from Product.unit_price
+            Response:
+                Rule.copy(derive=Item.unit_price, from_parent=Product.unit_price)
+
+    DEFAULT: Use Rule.copy unless you have a specific reason for live propagation.
+        Rule.copy is the safer default: wrong choice is visible (stale value) and correctable.
+        Rule.formula as wrong default silently re-derives historical records when reference data changes — a data integrity risk.
+
+    Design guidance - choose based on intent:
+        DEFAULT (ambiguous prompt)              → Rule.copy   (snapshot, safe default)
+        "Always reflect current parent value"  → Rule.formula (live reference, propagates)
+        "Lock value at time of transaction"     → Rule.copy   (snapshot, no propagation)
+        "Word copy is present in prompt"        → Rule.copy
+
+    This applies equally to transactional parents AND lookup/reference tables:
+        # Snapshot rate - locks rate at the time the line item is entered (default/preferred)
+        Rule.copy(derive=SurtaxLineItem.surtax_rate, from_parent=HSCodeRate.surtax_rate)
+        # Live rate - updates children if reference table rate changes (explicit escalation)
+        Rule.formula(derive=SurtaxLineItem.surtax_amount,
+                     as_expression=lambda row: row.customs_value * row.hs_code_rate.surtax_rate)
+
+    GENERATED FILE CONVENTION: Add one TODO comment per file at the top of declare_logic()
+    to prompt the developer to confirm copy vs formula choices:
+        def declare_logic():
+            # TODO: Review parent-value rules below.
+            #   Rule.copy  = snapshot (value frozen at transaction time, no cascade on parent change) ← default
+            #   Rule.formula referencing row.parent.attr = live (re-derives if parent changes)
+            #   Change Rule.copy → Rule.formula where live propagation is required.
+            Rule.copy(derive=Item.unit_price, from_parent=Product.unit_price)
+            ...
+
+    ANTI-PATTERN: Do NOT use early_row_event + session.query() to look up parent/reference values.
+        This is invisible to the LogicBank dependency graph - parent changes will NOT re-derive children.
+        Use Rule.copy (snapshot) or Rule.formula (live) instead.
 
 Formulas can use Python conditions:
     Prompt: Item amount is price * quantity, with a 10% discount for gold products
