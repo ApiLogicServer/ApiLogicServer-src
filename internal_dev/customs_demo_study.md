@@ -332,6 +332,45 @@ This means there is **no CE fix** for `base_duty_rate` — the implicit template
 
 ---
 
+## Validation Test — New Release (`customs_demo`)
+
+Created from `starter.sqlite` using the v3.8 release with all CE fixes applied. The v4 prompt (including `base_duty_rate`, explicit `quantity/unit_of_measure/unit_price`, and `customs_value = quantity × unit_price`) was used.
+
+### Key Metric Comparison (all iterations)
+
+| Metric | `ce_fix` | `v2` | `v3` | **new release** | `customs_app` (reference) |
+|---|---|---|---|---|---|
+| Total rules | 10 | 13 | 11 | **16** ✅ | 16 |
+| `Rule.copy` | 0 | 3 | 3 | **1** (+1 formula-copy) | 2 |
+| `Rule.formula` | 5 | 6 | 4 | **7** ✅ | 7 |
+| `Rule.sum` | 4 | 3 | 3 | **5** ✅ | 5 |
+| `Rule.constraint` | 0 | 1 | 1 | **3** ✅ | 3 |
+| `Rule.early_row_event` | 1 | 0 | 0 | **0** ✅ | 0 |
+| `base_duty_rate` present | ❌ | ❌ | ❌ | **✅** | ✅ |
+| `quantity × unit_price` model | N/A | ✅ | ❌ (scalar) | **✅** | ✅ |
+
+### Result: Functionally at par with the reference ✅
+
+16 rules — identical total to `customs_app`. All three constraints firing. All five sums present. `base_duty_rate` present. `qty × unit_price` model correct. Zero `early_row_event + session.query()` anti-pattern.
+
+The CE study paid off: every root cause fix validated across the iteration chain produces a result equivalent to the hand-crafted reference.
+
+### Differences from reference (refinements, not correctness failures)
+
+| Priority | Difference | Impact |
+|---|---|---|
+| **High** | `Float` vs `DECIMAL` for monetary/rate columns | Floating-point drift in production |
+| **High** | `surtax_applicable` on line item (N formulas) vs order header (1 formula) | Efficiency + single-responsibility |
+| **Medium** | No `to_date()` helper / session fallback in `surtax_applicable` formula | Brittle if `ship_date` stored as `Date` object |
+| **Medium** | `entry_date` absent from `SurtaxOrder` | Loses per-entry ship-date consistency check |
+| **Low** | Relationship names use class-name casing (`.SurtaxOrder`) vs snake_case | Convention only |
+
+### Seed data conflict identified
+
+`copilot-instructions.md` v3.8 step 6 said: *"create `database/test_data/<name>_seed.py` using plain `DeclarativeBase` models (not SAFRS models — seed scripts run outside Flask context)"* — directly contradicting the CE canonical of `alp_init.py` with Flask context active. Running outside Flask context suppresses LogicBank → all computed fields are zero. **Fixed in `copilot-instructions.md` (customs_demo + org_git/prototypes/base + venv/prototypes/base).**
+
+---
+
 ## Open Items
 
 | Item | Status |
@@ -341,8 +380,11 @@ This means there is **no CE fix** for `base_duty_rate` — the implicit template
 | Validation test — `customs_demo_v2` | ✅ Complete |
 | Add CE principle: "spec = floor not ceiling" | ✅ Added to `subsystem_creation.md` — propagated to org_git, venv, customs_demo_v2/v3 |
 | Validation test — `customs_demo_v3` | ✅ Complete — spec=floor works for generic elaboration; domain-specific gaps need prompt fixes |
-| Add `base_duty_rate` to prompt — `HSCodeRate (hs_code PK, base_duty_rate, surtax_rate)` | ⏳ Next iteration (v4) |
-| Add `quantity`, `unit_of_measure`, `unit_price` to prompt — remove ambiguous "customs value" | ⏳ Next iteration (v4) |
-| Add `surtax_applicable` flag pattern to prompt (pre-cutoff support) | ⏳ Optional — design choice |
+| Add `base_duty_rate` + `quantity/unit_of_measure/unit_price` to prompt | ✅ Validated in new release — 16 rules, at par with reference |
+| Validation test — new release (`customs_demo`) | ✅ Complete — 16 rules, functionally at par with `customs_app` |
+| Fix seed data instruction in `copilot-instructions.md` | ✅ Fixed — propagated to org_git, venv, customs_demo |
+| `Float` → `Numeric`/`DECIMAL` for financial columns (CE or prompt default) | ⏳ Next CE iteration |
+| `surtax_applicable` placement: line item → order header (design doc) | ⏳ Optional — add note to `subsystem_creation.md` |
+| Add `surtax_applicable` flag pattern to prompt (pre-cutoff historical data support) | ⏳ Optional — design choice |
 | Optimize prompt (remove explicit FK hints — test CE-only) | ⏳ After domain-specific fields verified |
 | `basic_demo_ai_rules-supplier` in org_git — old `logic_bank_api.md` | ⏳ Low priority; auto-corrects on next BLT |
