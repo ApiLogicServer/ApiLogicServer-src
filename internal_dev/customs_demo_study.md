@@ -4,6 +4,35 @@
 
 ---
 
+## Origin: What Launched This Study
+
+**Phase 1 — `customs_app` (seemed solid):**  
+Built a hand-crafted CBSA surtax reference implementation (`customs_app`). The underlying database had been seeded from a `basic_demo`-derived schema that still contained `Customer → Order → Item`, `Product.unit_price`, etc. Results were excellent — 16 declarative rules, correct schema, clean architecture. CE was judged adequate.
+
+**Phase 2 — `customs_demo_plus` (the mess):**  
+Attempted to reproduce the result from clean `starter.sqlite` — a blank-slate database with no `basic_demo` artifacts. The AI produced a dramatically worse result: wrong schema, no `Rule.copy`, procedural fallbacks, Request Pattern misapplication. The CE that "worked" for `customs_app` was not actually adequate — it had been riding the `basic_demo` schema as invisible few-shot examples.
+
+**Phase 3 — this study:**  
+Systematic iteration to identify root causes, fix CE, and validate with the methodology below until a clean `starter.sqlite` project matched `customs_app`'s 16-rule result.
+
+---
+
+## Key Takeaways
+
+1. **Bad prompt from a discarded path needed removal.** `subsystem_creation.md` had been written from a failed iteration and documented wrong patterns as `✅ CORRECT` — the `SysCustomsReq` wrapper, `early_row_event + session.query()` rate lookup, 3-column province model. Any AI reading it faithfully would reproduce those failures. CE can actively mislead. *(In fairness: this was a joint human+AI authoring mistake — we're only partly human.)*
+
+2. **The ghost of `basic_demo` had unexpected depth.** AI will infer patterns from anything in scope — not just explicit instructions, but schema artifacts in the working database. `basic_demo`'s `Order → Item → Product.unit_price` structure silently guided the AI toward header/detail design, flat reference tables, and `Rule.copy`. When that ghost was removed, the CE's real coverage became visible. **AI is an aggressive pattern-matcher: it will use every signal it can find, intended or not.**
+
+3. **Generalize `basic_demo` principles explicitly into CE.** The solution was not to restore the ghost — it was to make the implicit explicit: header/detail schema hint in the prompt, flat reference table principle in `subsystem_creation.md`, `Rule.copy` as default in `logic_bank_api.md`. What `basic_demo` had been providing for free is now provided by deliberate CE.
+
+4. **Significant discovery — treat the prompt as a floor, not a ceiling.** When a prompt provides an explicit column/table spec, AI switches from architect mode (apply domain knowledge) to builder mode (implement exactly what's described). This suppresses domain-standard fields and constraints the prompt author assumed were obvious. The fix — the `spec = floor` principle added to `subsystem_creation.md` — reframes the spec as a minimum anchor and restores autonomous domain reasoning. This is the most generalizable finding: it applies to any domain, not just customs.
+
+5. **The validation methodology compounds.** The gen → compare-against-reference → analyze → fix-CE → repeat loop with a fixed reference implementation as ground truth is what made all of this tractable. Without `customs_app` as a yardstick, iteration would have been guesswork.
+
+6. **Ghost context is not limited to database schemas — it includes existing code and documentation.** The `customs_demo` readme explicitly described "16 declarative rules" with a breakdown by type and named `duty` (implying `base_duty_rate`). When Copilot generated the logic file, that readme was in context — making it impossible to know whether the AI inferred correctly from the prompt+CE, or simply transcribed from the readme. **Be mindful of everything lying around in the project**: readmes, existing logic files, prior-iteration code. Any of it can act as an implicit few-shot example, for better or worse.
+
+---
+
 ## What Went Wrong
 
 The `customs_demo_plus` project (CBSA Steel Surtax, created from `starter.sqlite`) produced significantly worse results than `customs_app` — which had been created from a database seeded with `basic_demo` schema artifacts.
@@ -371,6 +400,53 @@ The CE study paid off: every root cause fix validated across the iteration chain
 
 ---
 
+## Validation Test — `customs_demo_v1a` (clean context, no readme ghost)
+
+Created from `starter.sqlite` with **Prompt B only** (the readme prompt). The `customs_demo` readme was **not** in the Copilot context — deliberate clean-room test to determine whether `customs_demo`'s 16-rule result came from the CE or from the readme acting as a ghost.
+
+### Session Issues Encountered
+
+Three process failures occurred before any logic was written — all confirming known CE gaps:
+
+| # | Issue | Root cause | Impact |
+|---|---|---|---|
+| 1 | Venv error — AI tried to create a new venv | `../venv/bin/activate` search didn't find the shared manager venv at grandparent level | ~3 min delay |
+| 2 | Heredoc terminal corruption | `sqlite3 ... << 'SQL'` here-doc garbled by terminal tool | Schema creation failed; switched to Python script |
+| 3 | `alp_init.py` file-exists error | `create_file` rejected because template already exists; then first `replace_string_in_file` had wrong `sys.path` setup | Two extra edit rounds |
+
+Issues 1 and 2 are recurring CE failures — the venv search depth and the heredoc ban are both documented in `subsystem_creation.md` but not yet reliably followed.
+
+### Key Metric Comparison
+
+| Metric | `v1a` (no readme) | `customs_demo` (with readme) | `customs_app` (reference) |
+|---|---|---|---|
+| Total rules | 21 | 16 | 16 |
+| `Rule.copy` | 1 (duty rate only) | 1 (+1 formula-copy) | 2 |
+| `Rule.constraint` | **0** | 3 ✅ | 3 |
+| Province design | **3 columns** (`gst_rate`, `pst_rate`, `hst_rate`) | 1 column ✅ | 1 column |
+| `CountryOrigin` FK table | **❌** (embedded in HS code rule) | ✅ | ✅ |
+| `quantity × unit_price` model | **❌** (`customs_value` is input) | ✅ | ✅ |
+| Duty rate field on HS table | ✅ `mfn_duty_rate` present | ✅ `base_duty_rate` present | ✅ |
+| `alp_init.py` Flask context seed | ✅ | ✅ | ❌ (outside Flask) |
+
+### Verdict: the readme WAS a ghost for the structural wins in `customs_demo`
+
+Without the readme in context, v1a regresses to near-v3 quality on schema and constraints. The CE alone (Prompt B + v3.8 CE) does NOT produce: single-column province, `CountryOrigin` FK table, `quantity × unit_price` model, or constraints.
+
+What the CE alone **does** reliably produce:
+- Header/detail structure (`CustomsEntry → SurtaxLineItem`) ✅ — schema hint works
+- Flat rate field on HS code table (`mfn_duty_rate`) ✅ — flat reference table principle works
+- `Rule.copy` for duty rate ✅ — `logic_bank_api.md` default works
+- `alp_init.py` Flask context for seed data ✅ — seed data CE fix works
+
+**Conclusion:** `customs_demo`'s 16-rule result was powered by the readme's explicit description ("16 declarative rules", "duty", breakdown by type) acting as a ghost — not by the CE alone. The study's v3 conclusion that "there is no CE fix for `base_duty_rate`" was correct. The readme was the confounding variable.
+
+### Bonus finding: domain accuracy correction
+
+v1a identified a factual error in `customs_app` (reference): the reference marks Germany, Japan, and China as `surtax_applicable=True`. PC 2025-0917 is a targeted US retaliatory surtax — only US-origin goods attract the 25% levy. v1a correctly modeled this by embedding country-of-origin into the HS code rules. An interesting case of the AI catching a domain error in the "gold standard" reference.
+
+---
+
 ## Open Items
 
 | Item | Status |
@@ -380,11 +456,12 @@ The CE study paid off: every root cause fix validated across the iteration chain
 | Validation test — `customs_demo_v2` | ✅ Complete |
 | Add CE principle: "spec = floor not ceiling" | ✅ Added to `subsystem_creation.md` — propagated to org_git, venv, customs_demo_v2/v3 |
 | Validation test — `customs_demo_v3` | ✅ Complete — spec=floor works for generic elaboration; domain-specific gaps need prompt fixes |
-| Add `base_duty_rate` + `quantity/unit_of_measure/unit_price` to prompt | ✅ Validated in new release — 16 rules, at par with reference |
-| Validation test — new release (`customs_demo`) | ✅ Complete — 16 rules, functionally at par with `customs_app` |
+| Add `base_duty_rate` + `quantity/unit_of_measure/unit_price` to prompt | ✅ Validated in new release (`customs_demo`) — readme was the ghost |
+| Validation test — new release (`customs_demo`) | ✅ Complete — 16 rules (readme-assisted); v1a confirms CE alone = ~v3 quality |
+| Validation test — `customs_demo_v1a` (clean context) | ✅ Complete — confirms readme was ghost; CE produces header/detail + flat ref table + `Rule.copy` + `alp_init.py`; NOT province/FK/qty×price/constraints |
 | Fix seed data instruction in `copilot-instructions.md` | ✅ Fixed — propagated to org_git, venv, customs_demo |
+| v4 prompt (explicit province + FK + qty×price) to close remaining gaps without readme | ⏳ Next iteration — now the true clean test |
+| Venv search depth — grandparent shared venv not found reliably | ⏳ CE fix needed in `copilot-instructions.md` |
 | `Float` → `Numeric`/`DECIMAL` for financial columns (CE or prompt default) | ⏳ Next CE iteration |
 | `surtax_applicable` placement: line item → order header (design doc) | ⏳ Optional — add note to `subsystem_creation.md` |
-| Add `surtax_applicable` flag pattern to prompt (pre-cutoff historical data support) | ⏳ Optional — design choice |
-| Optimize prompt (remove explicit FK hints — test CE-only) | ⏳ After domain-specific fields verified |
 | `basic_demo_ai_rules-supplier` in org_git — old `logic_bank_api.md` | ⏳ Low priority; auto-corrects on next BLT |
