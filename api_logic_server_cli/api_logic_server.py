@@ -424,9 +424,6 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
 
         if project.project_name_last_node.startswith("customs_demo"):
             log.debug(".. ..Copy in customs_demo: readme")
-            nw_dir = (Path(api_logic_server_dir_str)).\
-                joinpath('prototypes/nw_no_cust')
-            recursive_overwrite(nw_dir, project.project_directory)
             customs_demo_setup.customs_setup(project=project, 
                               api_logic_server_dir_str=api_logic_server_dir_str)
 

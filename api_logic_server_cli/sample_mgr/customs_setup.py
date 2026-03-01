@@ -25,6 +25,6 @@ def customs_setup(project: Project, api_logic_server_dir_str: str):
     """
     log.debug(".. ..Copy in customs customizations: integration readme")
 
-    if project.project_name_last_node == "customs_demo":  
+    if project.project_name_last_node.startswith("customs_demo"): 
         os.rename(project.project_directory_path / 'readme.md', project.project_directory_path / 'readme_standard.md')
         create_utils.copy_md(project = project, from_doc_file = "Customs-readme.md", to_project_file = "readme.md")
