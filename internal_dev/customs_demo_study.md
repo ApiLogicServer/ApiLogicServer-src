@@ -447,6 +447,57 @@ v1a identified a factual error in `customs_app` (reference): the reference marks
 
 ---
 
+## Validation Test — `customs_demo_v1` (clean context, anti-ghost readme, Mar 1 2026)
+
+Created from `starter.sqlite`. Readme updated with OBX-pattern body blockquote (`> 🤖 AI GENERATION NOTE: ...`) directing AI to CE files. **Copilot confirmed it did not use the readme** — first fully clean-context run using the revised CE (FK integers section, spec=floor, seed data fix).
+
+### Key Metric Comparison
+
+| Metric | `v1` (anti-ghost) | `v1a` (no readme) | `customs_app` (reference) |
+|---|---|---|---|
+| Total rules | **16** | 21 | 16–17 |
+| `Rule.copy` | 2 ✅ | 1 | 2 |
+| `Rule.constraint` | 3 ✅ | 0 | 3 |
+| `early_row_event + session.query()` | **0** ✅ | — | 0 |
+| Province design | **3 columns** (`gst_rate`, `pst_rate`, `hst_rate`) ❌ | 3 columns ❌ | 1 column |
+| `CountryOrigin` FK table | ✅ | ❌ | ✅ |
+| `to_date()` datetime safety | ❌ | ❌ | ✅ |
+| `surtax_applicable` on header | ❌ (per line item) | — | ✅ |
+| `entry_date` on header | ❌ | ❌ | ✅ |
+| B2B `SubmitEntry` endpoint | ✅ (beyond reference) | ❌ | ❌ |
+| Admin UI configured for CBSA tables | ✅ | — | ❌ |
+| CETA/CPTPP exemptions correct | ✅ | ✅ | ❌ |
+| Seed data uses Flask context | ✅ | ✅ | ❌ |
+
+### What the FK integers CE fix achieved
+
+No `early_row_event + session.query()` anywhere — the primary failure mode of every prior clean-context run is gone. `CountryOrigin` and `ProvinceTaxRate` are proper FK-linked parent tables. `Rule.copy` traverses the FK relationship correctly (2 copies match reference). Rule count (16) matches reference for the first time in a clean-context run.
+
+### What spec=floor achieved
+
+Three clear examples of autonomous domain reasoning beyond the prompt:
+- `surtax_rate_override` nullable column on `CountryOrigin` — per-country rate deviation not in the prompt
+- CETA/CPTPP exemptions in seed data (Germany=exempt, Japan=exempt) — reference gets this *wrong* (all countries = 25%)
+- B2B `SubmitEntry` endpoint + `CustomsEntryMapper` — entirely beyond prompt scope
+
+### Still failing (prompt-level, as study predicted)
+
+**Province 3-column design persists** — `gst_rate`, `pst_rate`, `hst_rate` columns returned again. The phrase "provincial sales tax or HST where applicable" continues to trigger conditional/multi-column design. CE cannot fix this — it requires a prompt-level phrase: `"Province has a single pre-combined tax_rate column (e.g., Ontario=0.13, BC=0.12)"`.
+
+**`country_id` per line item, not on header** — the normalization issue. Province is correctly on the header; country splits per line. Root cause: "country of origin" appears in the same prompt list as "hs codes" (which are correctly per-line), so the AI colocalizes them. Fix: prompt must explicitly assign country to the header — e.g., `"Each CustomsEntry has a single country_origin_id FK on the header"`.
+
+**`to_date()` missing** — persists across every clean run. This is a CE gap, not a prompt issue: prompt authors won't think to specify it. Must be added to `logic_bank_api.md` or `subsystem_creation.md` as a standing rule for date-comparison formulas.
+
+### New finding: anti-ghost readme blockquote works
+
+The OBX-pattern body blockquote (`> 🤖 AI GENERATION NOTE`) successfully prevented readme pollution. Copilot confirmed it did not use the readme — the first clean confirmation that the blockquote technique works. Front matter alone (`Do NOT use`) had failed; the visible body instruction succeeds, consistent with OBX pattern theory (positive instruction in a scanned position > negative instruction in metadata).
+
+### Bonus finding: AI correctly caught reference domain error (confirmed again)
+
+v1a finding confirmed: reference has all countries `surtax_applicable=True` including Germany and Japan. v1 again correctly modeled CETA/CPTPP exemptions. The "gold standard" reference is wrong on this point; the AI is reasoning correctly from domain knowledge with spec=floor active.
+
+---
+
 ## Open Items
 
 | Item | Status |
@@ -460,8 +511,12 @@ v1a identified a factual error in `customs_app` (reference): the reference marks
 | Validation test — new release (`customs_demo`) | ✅ Complete — 16 rules (readme-assisted); v1a confirms CE alone = ~v3 quality |
 | Validation test — `customs_demo_v1a` (clean context) | ✅ Complete — confirms readme was ghost; CE produces header/detail + flat ref table + `Rule.copy` + `alp_init.py`; NOT province/FK/qty×price/constraints |
 | Fix seed data instruction in `copilot-instructions.md` | ✅ Fixed — propagated to org_git, venv, customs_demo |
-| v4 prompt (explicit province + FK + qty×price) to close remaining gaps without readme | ⏳ Next iteration — now the true clean test |
+| Anti-ghost readme blockquote (OBX pattern) | ✅ Implemented and confirmed working in `customs_demo_v1` — front matter alone failed; body blockquote succeeds |
+| Validation test — `customs_demo_v1` (anti-ghost, Mar 1 2026) | ✅ Complete — FK integers fix eliminates `early_row_event`; spec=floor produces beyond-prompt domain reasoning; 16 rules matches reference; province 3-column + `to_date()` + country-on-header remain |
 | Venv search depth — grandparent shared venv not found reliably | ⏳ CE fix needed in `copilot-instructions.md` |
 | `Float` → `Numeric`/`DECIMAL` for financial columns (CE or prompt default) | ⏳ Next CE iteration |
-| `surtax_applicable` placement: line item → order header (design doc) | ⏳ Optional — add note to `subsystem_creation.md` |
+| `to_date()` datetime safety — missing in all clean runs | ⏳ CE fix needed in `logic_bank_api.md` or `subsystem_creation.md`: "normalize date columns before comparison" |
+| Province prompt fix: single `tax_rate` phrase | ⏳ v2 prompt — add: `"Province has a single pre-combined tax_rate column"` |
+| Country-on-header prompt fix: `country_origin_id` on `CustomsEntry` | ⏳ v2 prompt — add: `"Each CustomsEntry has a single country_origin_id FK on the header"` |
+| `surtax_applicable` placement: line item → order header | ⏳ Follows from country-on-header fix; 3NF issue resolves when country is on header |
 | `basic_demo_ai_rules-supplier` in org_git — old `logic_bank_api.md` | ⏳ Low priority; auto-corrects on next BLT |
