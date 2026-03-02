@@ -520,3 +520,4 @@ v1a finding confirmed: reference has all countries `surtax_applicable=True` incl
 | Country-on-header prompt fix: `country_origin_id` on `CustomsEntry` | ⏳ v2 prompt — add: `"Each CustomsEntry has a single country_origin_id FK on the header"` |
 | `surtax_applicable` placement: line item → order header | ⏳ Follows from country-on-header fix; 3NF issue resolves when country is on header |
 | `basic_demo_ai_rules-supplier` in org_git — old `logic_bank_api.md` | ⏳ Low priority; auto-corrects on next BLT |
+| Ghost of `basic_demo` — make patterns explicit | ✅ Created `docs/training/sample_app.md` — explicit few-shot reference for all 5 rule patterns with canonical Customer/Order/Item/Product examples + domain translation table; propagated to org_git, venv |

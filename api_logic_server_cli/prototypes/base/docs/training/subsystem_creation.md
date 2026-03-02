@@ -1,5 +1,9 @@
 # Subsystem Creation - Architectural Principles
 
+> **Before starting:** Read `docs/training/sample_app.md` for canonical LogicBank rule patterns
+> (`Rule.sum`, `Rule.formula`, `Rule.copy`, `Rule.constraint`) with concrete worked examples,
+> a dependency-chain walkthrough, and ordering notes for rules vs events/AI-Rules.
+
 ## When to Use This Guide
 
 Read this when creating **multiple related tables with business logic** - for example:
