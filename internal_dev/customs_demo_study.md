@@ -514,7 +514,7 @@ v1a finding confirmed: reference has all countries `surtax_applicable=True` incl
 | Anti-ghost readme blockquote (OBX pattern) | ✅ Implemented and confirmed working in `customs_demo_v1` — front matter alone failed; body blockquote succeeds |
 | Validation test — `customs_demo_v1` (anti-ghost, Mar 1 2026) | ✅ Complete — FK integers fix eliminates `early_row_event`; spec=floor produces beyond-prompt domain reasoning; 16 rules matches reference; province 3-column + `to_date()` + country-on-header remain |
 | Venv search depth — grandparent shared venv not found reliably | ⏳ CE fix needed in `copilot-instructions.md` |
-| `Float` → `Numeric`/`DECIMAL` for financial columns (CE or prompt default) | ⏳ Next CE iteration |
+| `Float` → `Numeric`/`DECIMAL` for financial columns (CE or prompt default) | ✅ Added to `subsystem_creation.md` — `Numeric(15,2)` for amounts, `Numeric(8,6)`/`Numeric(7,4)` for rates; propagated to org_git, venv, customs_demo_v1 |
 | `to_date()` datetime safety — missing in all clean runs | ⏳ CE fix needed in `logic_bank_api.md` or `subsystem_creation.md`: "normalize date columns before comparison" |
 | Province prompt fix: single `tax_rate` phrase | ⏳ v2 prompt — add: `"Province has a single pre-combined tax_rate column"` |
 | Country-on-header prompt fix: `country_origin_id` on `CustomsEntry` | ⏳ v2 prompt — add: `"Each CustomsEntry has a single country_origin_id FK on the header"` |

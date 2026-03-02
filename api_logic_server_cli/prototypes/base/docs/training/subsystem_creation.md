@@ -155,6 +155,52 @@ class SurtaxOrder(Base):
 
 ---
 
+### Use DECIMAL/Numeric for Monetary and Rate Columns
+
+Never use `Float` for money amounts or rates. `Float` uses IEEE 754 binary representation — it **cannot represent most decimal fractions exactly**, causing silent rounding drift that compounds across multi-row calculations. For financial and regulatory systems this is incorrect by definition.
+
+Use SQLAlchemy `Numeric(precision, scale)` instead:
+
+| Column type | Recommended type | Example |
+|---|---|---|
+| Monetary amounts | `Numeric(15, 2)` | `customs_value`, `duty_amount`, `total_tax` |
+| Rates stored as fractions (0.25 = 25%) | `Numeric(8, 6)` | `surtax_rate = 0.250000`, `tax_rate = 0.130000` |
+| Rates stored as percentages (25.0 = 25%) | `Numeric(7, 4)` | `surtax_rate = 25.0000`, `tax_rate = 13.0000` |
+
+**✅ CORRECT:**
+```python
+from sqlalchemy import Numeric
+
+class SurtaxLineItem(Base):
+    customs_value   = Column(Numeric(15, 2), nullable=False)  # monetary amount
+    duty_amount     = Column(Numeric(15, 2))                  # derived by rule
+    surtax_amount   = Column(Numeric(15, 2))                  # derived by rule
+    pst_hst_amount  = Column(Numeric(15, 2))                  # derived by rule
+
+class HSCodeRate(Base):
+    base_duty_rate  = Column(Numeric(8, 6))   # e.g. 0.050000 = 5%
+    surtax_rate     = Column(Numeric(8, 6))   # e.g. 0.250000 = 25%
+```
+
+**❌ WRONG:**
+```python
+class SurtaxLineItem(Base):
+    customs_value  = Column(Float)   # ← binary floating-point, not exact decimal
+    duty_amount    = Column(Float)   # ← drift accumulates across line items
+```
+
+**In formulas** — normalize with `Decimal` to prevent mixed-type drift:
+```python
+from decimal import Decimal
+
+# Safe: Decimal × Decimal
+Rule.formula(derive=models.SurtaxLineItem.duty_amount,
+    as_expression=lambda row: row.customs_value * row.hs_code_rate.base_duty_rate
+        if row.customs_value and row.hs_code_rate else Decimal(0))
+```
+
+---
+
 ## Part 2: Business Logic Architecture
 
 ### The Golden Rule: Try HARD to Use Rules First
@@ -560,6 +606,8 @@ session.add(entry)  # all computed fields remain 0
    - Create columns for derived values
    - Singular capitalized class names
    - Lookup references: FK integers (`province_id FK → Province.id`), not string codes
+   - Monetary amounts: `Numeric(15, 2)` — never `Float` (binary drift in financial calculations)
+   - Rates as fractions: `Numeric(8, 6)`; rates as percentages: `Numeric(7, 4)`
 
 2. **Business Logic:**
    - Try HARD to use formulas first
