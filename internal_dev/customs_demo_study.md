@@ -498,6 +498,124 @@ v1a finding confirmed: reference has all countries `surtax_applicable=True` incl
 
 ---
 
+## Validation Test — `customs_demo_v2_bd` (basic_demo in CE, Mar 2 2026)
+
+Created from `starter.sqlite`. Variable: **`basic_demo` added to CE context** to test whether explicit `basic_demo` patterns in CE (via `sample_app.md`) produce better results than v1 (which had `sample_app.md` but no `basic_demo` ghost).
+
+### Key Metric Comparison
+
+| Metric | `v1` (anti-ghost, no bd) | `v2_bd` (basic_demo in CE) | `customs_app` (reference) |
+|---|---|---|---|
+| Total rules | 16 ✅ | **11** ❌ | 16 |
+| `Rule.copy` | 2 ✅ | **0** ❌ | 2 |
+| `Rule.early_row_event` | 0 ✅ | **2** ❌ (regression) | 0 |
+| `Rule.formula` | 7 | **7** ✅ | 7 |
+| `Rule.sum` | 5 | **4** | 5 |
+| `Rule.constraint` | 3 ✅ | **2** | 3 |
+| FK integers (province, country, HS) | ✅ integer FKs | **❌ text codes** (regression) | ✅ |
+| Province design | 3 columns ❌ | **3 columns** ❌ | 1 column |
+| Multi-file directory structure | ❌ (single file) | **✅** (4 files) | single file |
+| `base_duty_rate` on HS table | ❌ | **❌** | ✅ |
+
+### What v2_bd got right
+- **Multi-file directory structure** — 4 focused files (`resolve_province_taxes.py`, `resolve_surtax_eligibility.py`, `calculate_amounts.py`, `aggregate_totals.py`) inside a `calculate_steel_surtax_duties/` subdirectory, matching training-convention one-use-case-per-file pattern ✅
+- **Per-country surtax override** (`surtax_override_pct`) — domain reasoning beyond the prompt ✅
+- **Per-line exemption reason** (`exemption_reason` TEXT) — audit trail field ✅
+- **Constraints present** (2 of 3) ✅
+
+### Regressions vs v1
+
+| Regression | v1 result | v2_bd result | Root cause |
+|---|---|---|---|
+| FK integers — TEXT codes returned | Integer FKs ✅ | `province_code TEXT`, `country_of_origin TEXT`, `hs_code TEXT` | unknown — FK integers CE guidance ignored |
+| `early_row_event + session.query()` | 0 ✅ | 2 (province tax copy + surtax eligibility) | TEXT codes make `Rule.copy` impossible → AI falls back to `early_row_event` |
+| `Rule.copy` | 2 ✅ | 0 | Follows from text FK regression |
+| Rule count | 16 ✅ | 11 | Fewer rules needed when copy/sum replaced by event code |
+
+### Root cause analysis
+
+The FK integers regression is the primary failure — everything else cascades from it:
+- Text codes (`country_of_origin = "DE"`, `province_code = "ON"`) make `Rule.copy` traversal impossible (no parent relationship)
+- Without `Rule.copy`, AI falls back to `early_row_event + session.query()` to look up rates
+- This reduces formal rule count (logic hidden inside events vs declared rules)
+- Province 3-column design persists independently of FK issue
+
+**Why did basic_demo in CE not help FK integers?** `sample_app.md` documents the `Customer/Order/Item/Product` pattern with integer FKs, and `subsystem_creation.md` has an explicit section on FK integers. Yet v2_bd stored text codes. This is non-deterministic — v1 (same CE, no basic_demo ghost) got FK integers correct. Possible factors: prompt phrasing ("country of origin", "province code" sound like string identifiers), context window interference from the `basic_demo` entity names pulling AI toward a different structural analogy.
+
+**Province 3-column**: Persists across all clean-context runs (v1, v1a, v2_bd). Only fixed when the prompt explicitly names the single `tax_rate` column. CE cannot overcome prompt phrasing here.
+
+### Assessment: basic_demo in CE is not the fix
+
+Adding `sample_app.md` (which contains the explicit basic_demo patterns) to CE did not reproduce the gains from having basic_demo as a database ghost. V1 (without basic_demo ghost, with anti-ghost readme) outperforms v2_bd on every structural metric. The ghost was a **context injection** (database schema + existing code patterns visible to the AI at generation time) — not just pattern documentation.
+
+The FK integers fix in CE works non-deterministically: it succeeded in v1, failed in v2_bd with the same CE. Province single `tax_rate` requires the prompt fix — the CE fix has never succeeded for it across any run.
+
+### Remaining priority actions (unchanged from v1 study)
+
+1. Prompt: `"Province has a single pre-combined tax_rate column (e.g., Ontario=0.13, BC=0.12)"` — province fix
+2. Prompt: `"Each CustomsEntry has a single country_origin_id FK on the header"` — country-on-header fix
+3. CE: `to_date()` datetime safety — add to `logic_bank_api.md`; present in `customs_ref` bug docs but never generated in clean context
+
+---
+
+## Validation Test — `customs_demo_v3_no_bd` (no basic_demo in CE, reverted CE, Mar 2 2026)
+
+Created from `starter.sqlite`. Variables: (1) `sample_app.md` reference **removed** from `subsystem_creation.md` (reverting to v1 CE baseline); (2) same v1 prompt (no province/country-on-header fixes yet). Tests whether the regression in v2_bd was caused by `sample_app.md` being in CE, and confirms revert restores v1 baseline.
+
+### Key Metric Comparison
+
+| Metric | `v2_bd` (bd in CE) | `v3_no_bd` (reverted) | `v1` (baseline) | `customs_app` (ref) |
+|---|---|---|---|---|
+| Total rules | 11 ❌ | **9** ❌ | 16 ✅ | 16 |
+| `Rule.copy` | 0 ❌ | **1** | 2 | 2 |
+| `Rule.early_row_event` | 2 ❌ | **2** ❌ | 0 ✅ | 0 |
+| `Rule.formula` | 7 | **6** | 7 | 7 |
+| `Rule.sum` | 4 | **3** | 5 | 5 |
+| `Rule.constraint` | 2 | **0** ❌ | 3 ✅ | 3 |
+| FK integers (province, country, HS) | text ❌ | **mixed** | integer ✅ | integer ✅ |
+| Province design | 3-column ❌ | **2-column (gst+pst)** ❌ | 3-column ❌ | 1-column |
+| `HSCodeRate` table | ❌ | **❌** | ✅ | ✅ |
+| `base_duty_rate` present | ❌ | **❌** | ❌ | ✅ |
+| Seed data uses Flask context | ✅ | **✅** | ✅ | ❌ |
+
+### What v3_no_bd got right
+- **FK province relationship** — `province_id` FK → `ProvinceTaxRate` correct; `Rule.copy` traverses it ✅
+- **Flask/LogicBank seed** — `cbsa_surtax_seed.py` runs inside app context; all computed totals auto-populated and correct ✅
+- **`early_row_event` for province copy** produces a `Rule.copy(derive=CustomsEntry.province_code, from_parent=ProvinceTaxRate.province_code)` — a partial FK win
+- **Per-line `country_id` FK** present, though accessed via `early_row_event` not `Rule.copy`
+
+### Regressions vs v1 — revert did NOT restore v1 baseline
+
+| Issue | v1 result | v3_no_bd result |
+|---|---|---|
+| Rule count | 16 ✅ | 9 ❌ |
+| `early_row_event` | 0 ✅ | 2 ❌ |
+| `Rule.constraint` | 3 ✅ | 0 ❌ |
+| `HSCodeRate` table | ✅ | ❌ |
+
+### Root cause analysis — what changed between v1 and v3_no_bd?
+
+The CE is effectively the same (v1 baseline restored). The prompt is the same. Yet v3_no_bd scores significantly worse than v1 on rule count, events, and constraints.
+
+**The most likely explanation: non-determinism.** Claude's generation is stochastic — the v1 result (16 rules, 0 events, 3 constraints) was a good draw; v3_no_bd is a worse draw from the same distribution. The CE raises the floor but does not eliminate variance.
+
+Supporting evidence:
+- `v1` score (16/0/3) appears to be near the top of what the current CE can produce
+- `v3_no_bd` score (9/2/0) is closer to the historical `ce_fix` baseline (~10 rules) — a regression toward the mean
+- Province design varies (3-column in v1 vs 2-column in v3_no_bd) despite identical prompt phrasing — pure non-determinism
+- `HSCodeRate` present in v1, absent in v3_no_bd — same prompt, different structural inference
+
+### Updated study conclusion: variance is the remaining problem
+
+The CE fixes collectively raised the **expected** result from ~10 rules with anti-patterns to ~13-16 rules without anti-patterns. But individual runs vary significantly. The study has been measuring peaks (best draws) as validation points — the actual distribution is wider.
+
+**Implication for next steps:**
+- Province and country-on-header **prompt fixes** remain high-priority because they address *systematic* failures (every run gets them wrong). Prompt fixes reduce variance for specific schema decisions.
+- `to_date()` CE fix addresses a *systematic* missing pattern (never generated in any clean run).
+- `HSCodeRate` and `base_duty_rate` require prompt anchoring — CE spec=floor cannot supply CBSA-specific domain knowledge (confirmed again in v3).
+
+---
+
 ## Open Items
 
 | Item | Status |
@@ -513,11 +631,15 @@ v1a finding confirmed: reference has all countries `surtax_applicable=True` incl
 | Fix seed data instruction in `copilot-instructions.md` | ✅ Fixed — propagated to org_git, venv, customs_demo |
 | Anti-ghost readme blockquote (OBX pattern) | ✅ Implemented and confirmed working in `customs_demo_v1` — front matter alone failed; body blockquote succeeds |
 | Validation test — `customs_demo_v1` (anti-ghost, Mar 1 2026) | ✅ Complete — FK integers fix eliminates `early_row_event`; spec=floor produces beyond-prompt domain reasoning; 16 rules matches reference; province 3-column + `to_date()` + country-on-header remain |
+| Validation test — `customs_demo_v2_bd` (basic_demo in CE, Mar 2 2026) | ✅ Complete — basic_demo in CE does NOT restore ghost gains; FK integers regression vs v1; `early_row_event` returns; multi-file structure correct; province 3-column persists |
+| Revert `sample_app.md` from active CE (`subsystem_creation.md` blockquote removed) | ✅ Done — propagated to org_git, venv |
+| Validation test — `customs_demo_v3_no_bd` (reverted CE, no bd, Mar 2 2026) | ✅ Complete — revert did NOT restore v1 baseline; 9 rules / 2 events / 0 constraints — worse than v2_bd; confirms stochastic variance is the remaining problem; province fix + to_date() + HSCodeRate remain systematic gaps |
 | Venv search depth — grandparent shared venv not found reliably | ⏳ CE fix needed in `copilot-instructions.md` |
 | `Float` → `Numeric`/`DECIMAL` for financial columns (CE or prompt default) | ✅ Added to `subsystem_creation.md` — `Numeric(15,2)` for amounts, `Numeric(8,6)`/`Numeric(7,4)` for rates; propagated to org_git, venv, customs_demo_v1 |
 | `to_date()` datetime safety — missing in all clean runs | ⏳ CE fix needed in `logic_bank_api.md` or `subsystem_creation.md`: "normalize date columns before comparison" |
-| Province prompt fix: single `tax_rate` phrase | ⏳ v2 prompt — add: `"Province has a single pre-combined tax_rate column"` |
-| Country-on-header prompt fix: `country_origin_id` on `CustomsEntry` | ⏳ v2 prompt — add: `"Each CustomsEntry has a single country_origin_id FK on the header"` |
+| Province prompt fix: single `tax_rate` phrase | ⏳ **Next test (v3)** — add: `"Province has a single pre-combined tax_rate column (e.g., Ontario=0.13, BC=0.12)"` — CE cannot fix this; persists in v1, v1a, v2_bd |
+| Country-on-header prompt fix: `country_origin_id` on `CustomsEntry` | ⏳ **Next test (v3)** — add: `"Each CustomsEntry has a single country_origin_id FK on the header"` |
 | `surtax_applicable` placement: line item → order header | ⏳ Follows from country-on-header fix; 3NF issue resolves when country is on header |
+| FK integers non-determinism | ⏳ v1 succeeded; v2_bd regressed with same CE. Investigate prompt phrasing trigger ("province code", "country of origin" → string identifiers). May need prompt-level fix in addition to CE. |
 | `basic_demo_ai_rules-supplier` in org_git — old `logic_bank_api.md` | ⏳ Low priority; auto-corrects on next BLT |
 | Ghost of `basic_demo` — make patterns explicit | ✅ Created `docs/training/sample_app.md` — explicit few-shot reference for all 5 rule patterns with canonical Customer/Order/Item/Product examples + domain translation table; propagated to org_git, venv |
