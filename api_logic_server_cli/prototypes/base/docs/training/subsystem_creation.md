@@ -105,10 +105,108 @@ class Customers(Base):          # Plural - wrong!
 class customs_entry(Base):      # Lowercase class - wrong!
 ```
 
+### Create Lookup Tables for Rates, Classifications, and Schedules
+
+**Default to lookup tables whenever domain data is classifiable, rate-driven, or schedule-defined.**
+
+This is the most commonly missed structural decision. When a prompt describes eligibility rules, tax rates, or schedule membership, the instinct is to store those as boolean flags or hardcoded constants on the transactional row. This is wrong — it belongs in a lookup table.
+
+**Create a lookup table when:**
+- A value could change over time (tax rate, surtax rate, threshold)
+- Membership in a set needs to be enforced (HS codes in a tariff schedule, country eligibility)
+- A classification drives downstream logic (province → tax rate, HS code → surtax rate)
+- You find yourself writing `if row.country_code == "CN"` or `is_subject_steel = True` as user-entered flags
+
+**❌ WRONG — booleans and constants instead of lookup tables:**
+```python
+# Transactional row carries classification flags — no enforcement, no maintainability
+class CustomsEntry(Base):
+    is_subject_steel    = Column(Integer)   # user enters True/False manually
+    is_subject_aluminum = Column(Integer)   # no link to actual schedule
+    # Rate hardcoded in Python: _SURTAX_RATE = 0.25
+```
+
+**✅ CORRECT — lookup tables own the classification and rates:**
+```python
+class HsCodeSchedule(Base):
+    """SOR/2025-154 Schedule — seeded with all listed HS codes"""
+    __tablename__ = 'hs_code_schedule'
+    id              = Column(Integer, primary_key=True, autoincrement=True)
+    hs_code         = Column(String, nullable=False, unique=True)
+    is_subject_steel    = Column(Integer, server_default=text("0"))
+    is_subject_aluminum = Column(Integer, server_default=text("0"))
+    surtax_rate     = Column(Numeric(8, 6), server_default=text("0.25"))
+    description     = Column(String)
+
+class CustomsEntry(Base):
+    hs_code_id      = Column(ForeignKey('hs_code_schedule.id'), nullable=False)
+    # Rule.copy derives these — no manual flags, schedule enforced by FK
+    is_subject_steel    = Column(Integer)
+    is_subject_aluminum = Column(Integer)
+    surtax_rate         = Column(Numeric(8, 6))
+
+    hs_code_schedule : Mapped["HsCodeSchedule"] = relationship(...)
+```
+
+```python
+# Logic: copy from lookup, then use in formulas
+Rule.copy(derive=models.CustomsEntry.is_subject_steel,
+          from_parent=models.HsCodeSchedule.is_subject_steel)
+Rule.copy(derive=models.CustomsEntry.surtax_rate,
+          from_parent=models.HsCodeSchedule.surtax_rate)
+```
+
+**Benefits:**
+- ✅ Schedule changes = data updates, not code changes
+- ✅ `Rule.copy` derives flags automatically — no manual entry, no errors
+- ✅ Admin UI shows FK dropdown — users pick from valid HS codes, can't mistype
+- ✅ Rate changes (e.g. 25% → 30%) = one row update, all entries recalculate automatically
+- ✅ Referential integrity enforced at DB level
+
+**Common lookup tables by domain:**
+
+| Domain | Lookup tables to create |
+|---|---|
+| Customs / tariff | `HsCodeRate`, `CountryRate`, `ProvinceTax` |
+| CN 25-28 surtax | `HsCodeSchedule` (Parts 1 & 2 of SOR/2025-154) |
+| Billing / invoicing | `ProductRate`, `TaxJurisdiction` |
+| HR / payroll | `BenefitPlan`, `TaxBracket`, `Department` |
+
+**Seeding:** Lookup tables must be seeded with known values in `alp_init.py`. They are reference data, not transactional data.
+
+**Jurisdiction/rate lookup tables — single `tax_rate` column:**  
+When creating a province, state, tax zone, or country rate table, use a **single pre-combined `tax_rate` column** per row. The row encodes the jurisdiction's combined obligation — Ontario 0.13 (HST), BC 0.12 (GST+PST), Alberta 0.05 (GST only). Never split into `gst_rate`, `pst_rate`, `hst_rate`, `tax_type` columns to model *why* rates differ by jurisdiction.
+
+The phrase **"sales tax or HST where applicable"** or **"VAT where applicable"** in a prompt describes *rate variation across jurisdictions* — it is not an instruction to create multiple columns. One row per jurisdiction, one `tax_rate` column:
+
+```python
+# ✅ CORRECT — single combined rate per jurisdiction
+class Province(Base):
+    __tablename__ = 'province'
+    id            = Column(Integer, primary_key=True, autoincrement=True)
+    province_code = Column(String(2), unique=True, nullable=False)  # natural key
+    province_name = Column(String(100))
+    tax_rate      = Column(Numeric(8, 4), nullable=False)  # e.g. 0.13 for Ontario HST
+
+# ❌ WRONG — conditional columns instead of combined rate
+class Province(Base):
+    gst_rate  = Column(Numeric)   # 5% everywhere — redundant
+    pst_rate  = Column(Numeric)   # varies or 0
+    hst_rate  = Column(Numeric)   # 13% or 15% or 0
+    tax_type  = Column(String)    # "HST" / "GST+PST" — logic in data, not rules
+```
+
+---
+
 ### Lookup References: Use FK Integers, Not String Codes
 
 When the prompt supplies lookup values as codes or names ("province code", "country of origin", "hs code", "customer name"), the transactional table stores these as **FK integer columns pointing to the lookup table's autonum `id`**. The string code/name stays only on the lookup table parent row.
-
+> **🔑 FK inventory belongs in schema design, not logic authoring.**  
+> Before writing any DDL, scan the domain spec for every phrase that identifies a lookup entity (country, province, HS code, product, classification). For each one, name the integer FK column and add it to the DDL now. Once `models.py` is generated with those FK columns, SQLAlchemy creates the relationship and `Rule.copy` works naturally.  
+> **If you find a `String` code column during logic writing, step 4b was skipped** — add the FK column via DDL + `rebuild-from-database`, then wire `Rule.copy`.
+>
+> **🚨 FK SCAN — verification before writing any Rule.copy:**  
+> For each lookup value used in a lambda, confirm that the transactional table has an integer FK column to the lookup table (not a `String` code). A `String` column means the FK inventory step was skipped; fix the schema first.
 **Gate — apply this when:** the value identifies a known lookup entity (country, province, HS code, product, customer).  
 **Don't apply when:** the value is free text (description, notes, broker name, address line).
 
@@ -152,6 +250,82 @@ class SurtaxOrder(Base):
 - Text code storage = no parent relationship = no `Rule.copy` = forced `early_row_event + session.query()` = nested-flush risk
 - Admin App auto-generates FK dropdowns for free — users pick from a list rather than typing codes
 - Referential integrity enforced at the DB level
+
+---
+
+### SysConfig: Runtime-Configurable System Constants
+
+`starter.sqlite` ships with a `sys_config` table containing one system row. Use it for **rates, thresholds, and dates that would otherwise be hardcoded Python constants** — so they can be changed at runtime without touching code.
+
+> **� Constant extraction belongs in schema design, not logic authoring.**  
+> Before writing any DDL, scan the domain spec for every rate, threshold, and regulatory date (e.g. `0.25`, `5000.0`, `'2025-12-26'`) and add each as a named `SysConfig` column. Once `models.py` is generated, those columns exist and the wiring steps below work naturally.  
+> **If you find literals during logic writing, schema design was incomplete** — add the missing column via `ALTER TABLE sys_config ADD COLUMN ...` + `rebuild-from-database`, then replace the literal.
+>
+> **🚨 LITERAL SCAN — verification before finalising any logic file:**  
+> Search every `Rule.formula` / `Rule.constraint` lambda for numeric or date literals.  
+> Any literal that represents a **rate, threshold, or regulatory date** (e.g. `0.05`, `0.25`, `5000.0`, `'2025-12-26'`) **must not stay in the lambda** — it means the constant extraction step was skipped; fix the schema, then wire it.  
+> Literals that are pure arithmetic constants (e.g. `100` in a percentage conversion) are fine to leave.
+
+**❌ WRONG — hardcoded Python constants:**
+```python
+_SURTAX_RATE   = 0.25       # change requires code edit + redeploy
+_LOW_VALUE_CAD = 5_000.0
+_EFFECTIVE_DATE = "2025-07-31"
+```
+
+**✅ CORRECT — columns on `sys_config`, copied to transactional rows:**
+
+**Step 1: Add domain columns to `SysConfig` in `models.py`:**
+```python
+class SysConfig(Base):
+    __tablename__ = 'sys_config'
+    id              = Column(Integer, primary_key=True, autoincrement=True)
+    name            = Column(Text, server_default=text("'system'"))
+    surtax_rate     = Column(Numeric(8, 6), server_default=text("0.25"))
+    low_value_cad   = Column(Numeric(15, 2), server_default=text("5000.0"))
+    effective_date  = Column(Text, server_default=text("'2025-07-31'"))
+```
+
+**Step 2: Add FK to the transactional header table + copy columns down:**
+```python
+class CustomsDeclaration(Base):
+    sys_config_id   = Column(ForeignKey('sys_config.id'), server_default=text("1"))
+    # Copied from SysConfig — LB owns the dependency
+    surtax_rate     = Column(Numeric(8, 6))
+    low_value_cad   = Column(Numeric(15, 2))
+    effective_date  = Column(Text)
+
+    sys_config : Mapped["SysConfig"] = relationship(back_populates="CustomsDeclarationList")
+```
+
+**Step 3: `Rule.copy` brings values down — LB tracks the dependency:**
+```python
+Rule.copy(derive=models.CustomsDeclaration.surtax_rate,
+          from_parent=models.SysConfig.surtax_rate)
+Rule.copy(derive=models.CustomsDeclaration.low_value_cad,
+          from_parent=models.SysConfig.low_value_cad)
+Rule.copy(derive=models.CustomsDeclaration.effective_date,
+          from_parent=models.SysConfig.effective_date)
+```
+
+**Step 4: Entry-level formulas reference the declaration's copied values:**
+```python
+Rule.formula(derive=models.CustomsEntry.cn2528_surtax_amount,
+    as_expression=lambda row: row.value_for_duty * row.declaration.surtax_rate
+        if row.cn2528_applicable else Decimal(0))
+```
+
+**Why FK + Rule.copy — not a session query or module-level cache:**
+
+| Approach | DB reads | LB tracking | Rate change propagates |
+|---|---|---|---|
+| `session.query(SysConfig)` in formula | 1/txn (session cache) | ❌ hidden from LB | ❌ requires app restart |
+| Module-level cache | 1/app lifetime | ❌ hidden from LB | ❌ requires app restart |
+| **FK + `Rule.copy`** | 1/txn (session cache) | ✅ LB sees dependency | ✅ updating `sys_config` row re-fires all affected rules |
+
+The FK approach costs nothing in performance (SQLAlchemy session cache — one DB read per transaction regardless of how many rules access it) and gains full LB dependency tracking. If the surtax rate changes from 25% to 30%, update the `sys_config` row and every affected declaration recalculates automatically.
+
+**Seeding:** The `alp_init.py` seed script should insert one `sys_config` row with current system values. The FK `server_default=text("1")` means new transactional rows auto-point to it — no user action required.
 
 ---
 
@@ -208,6 +382,76 @@ Rule.formula(derive=models.SurtaxLineItem.duty_amount,
 **Priority hierarchy:**
 1. **Declarative rules** (formulas, sums, counts, constraints) - ALWAYS TRY FIRST
 2. **Events** (before/after/commit events) - fallback when rules can't handle it
+
+### Working Values: Use Model Columns, Not Helper Functions
+
+**This is the most common AI mistake when implementing complex logic.**
+
+When a formula requires intermediate calculations (proof acceptability, eligibility checks, conditional flags), the instinct is to write a helper function:
+
+```python
+# ❌ WRONG — helper function hides dependencies from LogicBank
+def _steel_proof_acceptable(row) -> bool:
+    if not row.com_proof_provided:
+        return False
+    proof = (row.com_proof_type or "").lower()
+    return proof in {"mill_cert", "technical_cert"}
+
+Rule.formula(derive=models.CustomsEntry.cn2528_applicable,
+    as_expression=lambda row: _steel_proof_acceptable(row) and ...)
+```
+
+**Why this breaks:** LogicBank scans the expression body (lambda or `calling=` function) for `row.<attr>` references to build its dependency graph. The lambda above contains only `_steel_proof_acceptable(row)` — LB sees **zero dependencies**. When `row.com_proof_type` or `row.com_proof_provided` changes, LB does not know to re-fire this rule. The derived value silently stays stale.
+
+**The fix: make every working value an actual model column + `Rule.formula`.**
+
+```python
+# ✅ CORRECT — each working value is a real Column + Rule.formula
+
+# Step 1: Add columns to model
+class CustomsEntry(Base):
+    # ... input fields ...
+    steel_proof_acceptable  = Column(Integer, server_default=text("0"))  # working value
+    alum_proof_acceptable   = Column(Integer, server_default=text("0"))  # working value
+    cn2528_pre_exempt       = Column(Integer, server_default=text("0"))  # working value
+    cn2528_applicable       = Column(Integer, server_default=text("0"))  # final result
+    cn2528_surtax_amount    = Column(Numeric(15, 2), server_default=text("0"))
+
+# Step 2: Declare each working value as a Rule.formula
+# LB scans each lambda, builds a proper dependency chain
+Rule.formula(derive=models.CustomsEntry.steel_proof_acceptable,
+    as_expression=lambda row: (
+        1 if row.com_proof_provided and (row.com_proof_type or "").lower() in {"mill_cert", "technical_cert"}
+        else 0
+    ))
+
+Rule.formula(derive=models.CustomsEntry.cn2528_pre_exempt,
+    as_expression=lambda row: (
+        1 if row.is_subject_steel and not row.steel_proof_acceptable  # ← LB sees this dependency
+        else 0
+    ))
+
+Rule.formula(derive=models.CustomsEntry.cn2528_applicable,
+    as_expression=lambda row: (
+        1 if row.cn2528_pre_exempt                                     # ← LB sees this dependency
+            and row.declaration.candidate_cn2528_value > 5000
+        else 0
+    ))
+
+Rule.formula(derive=models.CustomsEntry.cn2528_surtax_amount,
+    as_expression=lambda row: row.value_for_duty * Decimal("0.25")
+        if row.cn2528_applicable else Decimal(0))
+```
+
+**Benefits:**
+- ✅ LB tracks every dependency — rules re-fire correctly on any input change
+- ✅ Working values are inspectable on the row (visible in Admin UI, API, tests)
+- ✅ Each step is independently testable
+- ✅ Dependency chain is explicit and auditable
+
+**Rule of thumb:** If you feel like writing a helper function called from a rule expression, that function's return value should instead be a model `Column` derived by its own `Rule.formula`.
+
+---
 
 ### Calculations Belong in Formulas, Not Events
 
@@ -605,11 +849,14 @@ session.add(entry)  # all computed fields remain 0
    - `autoincrement=True` on all primary keys
    - Create columns for derived values
    - Singular capitalized class names
-   - Lookup references: FK integers (`province_id FK → Province.id`), not string codes
+   - **Lookup tables for rates, schedules, classifications** — seed with known values; transactional rows reference via FK
+   - **`sys_config` for system constants** (rates, thresholds, dates) — FK + `Rule.copy` to transactional header; never hardcode as Python constants
+   - Lookup references: FK integers (`hs_code_id FK → HsCodeSchedule.id`), not string codes or boolean flags
    - Monetary amounts: `Numeric(15, 2)` — never `Float` (binary drift in financial calculations)
    - Rates as fractions: `Numeric(8, 6)`; rates as percentages: `Numeric(7, 4)`
 
 2. **Business Logic:**
+   - Working values = model columns + `Rule.formula` — never helper functions called from rule expressions
    - Try HARD to use formulas first
    - Events only for: audit, integration, lookups that set values
    - Calculations in formulas, not events (even complex conditionals)
