@@ -910,6 +910,49 @@ No numeric/date literals in lambdas ✅. `Decimal()` wrapping throughout ✅. `e
 
 ---
 
+## Why Front-Loading Produced This Clean Design
+
+### The Causal Chain
+
+The key architectural win in v5 — rates in lookup tables, never hardcoded, accessed only via `Rule.copy` — is a **direct consequence of front-loading schema decisions before DDL**.
+
+The core insight is that the AI, if allowed to jump straight to DDL, defaults to the path of least resistance: inline constants and generic columns. The CE strategy interrupts that by forcing two explicit inventory steps *before* any schema can be written:
+
+**Step 4a — Constant extraction (before DDL):**  
+The AI must enumerate every rate, threshold, and date from the spec and assign each to a named `SysConfig` column. This forces the question: *where does `effective_date` live?* The answer becomes a schema column, not a `date(2025, 12, 26)` literal in a lambda.
+
+**Step 4b — FK inventory (before DDL):**  
+The AI must enumerate every lookup-entity phrase in the spec and name the FK column that will wire the transactional table to it. This forces the question: *where does `surtax_rate` live?* The answer becomes `HsCodeRate.surtax_rate` with a FK relationship, not a `0.25` literal in a formula.
+
+By the time DDL is written, the rates have already been assigned a home in a lookup table. The logic phase then has no choice but to use `Rule.copy` to access them — which is exactly the right mechanism.
+
+### The Resulting Architecture
+
+![v5 schema — clean separation of concerns](customs_demo_v5.png)
+
+The schema diagram above captures the outcome: every rate value is owned by a lookup table, every transactional table carries only FK references and copied mirror columns, and the formula rules operate purely on those copied values with no embedded constants.
+
+| Concern | Where it lives | Access mechanism |
+|---|---|---|
+| Tariff & surtax rates | `HsCodeRate` (per HS code) | `Rule.copy` → `SurtaxLineItem` |
+| Provincial tax rate | `Province` (single `tax_rate` per province) | `Rule.copy` → `CustomsEntry` |
+| Program metadata & effective date | `SysConfig` (domain columns) | `Rule.copy` → `CustomsEntry` |
+| Surtax applicability by country | `CountryRate` (0/1 flag) | `Rule.copy` → `SurtaxLineItem` |
+| All calculation logic | Formula rules over copied values | `Rule.formula` |
+| Aggregation | Roll-up sums | `Rule.sum` |
+
+This is textbook separation of concerns: **configuration data in lookup tables, computation in rules, zero hardcoded values** — and it emerged from a *simple, unchanged natural-language prompt* purely because the CE gates forced the schema to be structured correctly first.
+
+### Why This Matters for CE Design
+
+The earlier approach (pre-Step 4a/4b) treated constant extraction and FK wiring as *logic-phase reminders* — scan for literals after the rules are written. That was too late: by the time the AI scans for literals, the schema is already frozen with generic columns and text FKs. The scan finds nothing wrong because there's nothing to copy *from*.
+
+Front-loading flips the dependency: the schema inventory creates the lookup columns; the FK inventory creates the integer FKs; only then is DDL written; and the subsequent logic phase naturally produces `Rule.copy` chains rather than hardcoded lambdas. The literal and FK scans at the end of the logic phase become light verification, not the primary mechanism.
+
+**The principle is general:** any time CE needs the AI to place a value in a specific column, the instruction must appear *before* DDL, not after. Post-DDL instructions can only find what's missing; pre-DDL instructions shape what gets created.
+
+---
+
 ## Open Items
 
 | Item | Status |
