@@ -78,6 +78,22 @@ Use only the methods provided below.
 
 IMPORTANT: Keep it simple! Use the built-in Rule methods with their parameters (like if_condition) rather than creating custom functions. The Rule methods are designed to handle common patterns directly.
 
+CRITICAL - DEPENDENCY TRACKING: LogicBank scans the expression body for `row.<attr>` references to build its dependency graph and determine when rules must re-fire. This applies to ALL expression forms — lambdas (`as_expression=`, `as_condition=`, `where=`) AND named calling functions (`calling=`). LB scans the actual function/lambda body directly. This means:
+  1. ALL row attribute references must appear directly in the lambda or calling function body —
+     not hidden inside helper functions called from there.
+     ❌ WRONG:  as_expression=lambda row: _my_helper(row)          # LB sees zero dependencies
+     ❌ WRONG:  calling=my_func  where my_func calls _helper(row)  # LB sees only my_func's body
+     ✅ CORRECT: as_expression=lambda row: row.qty * row.unit_price  # LB sees qty, unit_price
+     ✅ CORRECT: calling function that directly references row.attr1, row.attr2, etc.
+  2. For complex logic with intermediate working values, create them as ACTUAL MODEL ATTRIBUTES
+     with their own Rule.formula declarations. This makes the value inspectable AND gives LB
+     a proper dependency chain between attributes.
+     Example: instead of a helper that tests proof acceptability, add a `steel_proof_acceptable`
+     Column to the model and derive it with Rule.formula — then reference `row.steel_proof_acceptable`
+     in the downstream rule.
+  3. Parent attribute references (row.parent.attr) ARE supported in lambdas and calling functions —
+     LB tracks cross-table dependencies correctly when the reference appears in the scanned body.
+
 CRITICAL: Keep simple rules on ONE LINE (no exceptions). Goal: Visual scannability - see rule count at a glance.
 
 ✅ CORRECT - One rule per line:
