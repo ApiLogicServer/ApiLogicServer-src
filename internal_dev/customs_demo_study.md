@@ -953,6 +953,110 @@ Front-loading flips the dependency: the schema inventory creates the lookup colu
 
 ---
 
+## Validation Test — `customs_demo_v6` (Mar 7 2026 — verify v5 baseline holds)
+
+Variable: **same simple prompt + same CE suite as v5** — run to verify the v5 result is repeatable. No CE or prompt changes between v5 and v6.
+
+### Schema — `database/models.py`
+
+| Table | Notes |
+|---|---|
+| `HsCodeRate` | PK integer; `hs_code TEXT unique`, `base_duty_rate DECIMAL(8,6)` ✅; **no `surtax_rate`** (moved to CountryOrigin — country-based model) |
+| `CountryOrigin` | PK integer; `country_code TEXT unique`, `country_name TEXT`, `surtax_rate DECIMAL(8,6)` ✅ — continuous multiplier (0.0=exempt, 0.25=full) vs v5's 0/1 flag |
+| `Province` | ✅ PK integer; `province_code TEXT unique`, `province_name TEXT`, single `tax_rate DECIMAL(8,6)` — no gst/pst/hst split |
+| `SysConfig` | ✅ **WIRED** — domain columns: `surtax_effective_date TEXT`, `program_code TEXT`, `order_reference TEXT` (+ template `discount_rate`, `tax_rate`, `notes`) |
+| `CustomsEntry` | `province_id FK → province.id` ✅; `sys_config_id FK → sys_config.id` ✅; mirror columns `province_tax_rate`, `surtax_effective_date`, `surtax_active`; `DECIMAL(15,2)` totals ✅ |
+| `SurtaxLineItem` | `hs_code_id FK → hs_code_rate.id` ✅; `country_origin_id FK → country_origin.id` ✅; mirror columns `base_duty_rate`, `surtax_rate`, `surtax_applicable`; `DECIMAL` throughout ✅ |
+
+### Logic — `logic/logic_discovery/cbsa_surtax/`
+
+Two-file subdirectory structure: `calculate_line_duties.py` + `roll_up_entry_totals.py` + `__init__.py`. Total: **18 rules** (4 copy + 7 formula + 5 sum + 2 constraint).
+
+**`calculate_line_duties.py`** (line-item rules):
+| Rule | Detail |
+|---|---|
+| `Rule.copy` | `base_duty_rate` ← HsCodeRate.base_duty_rate |
+| `Rule.copy` | `surtax_rate` ← CountryOrigin.surtax_rate |
+| `Rule.formula` | `surtax_applicable` = 1 if entry.surtax_active AND surtax_rate > 0 |
+| `Rule.formula` | `base_duty_amount` = customs_value × base_duty_rate |
+| `Rule.formula` | `surtax_amount` = customs_value × surtax_rate (if surtax_applicable else 0) |
+| `Rule.formula` | `duty_paid_value` = customs_value + base_duty_amount + surtax_amount |
+| `Rule.formula` | `provincial_tax_amount` = duty_paid_value × entry.province_tax_rate |
+| `Rule.formula` | `line_total` = base_duty_amount + surtax_amount + provincial_tax_amount |
+| `Rule.constraint` | `customs_value > 0` |
+| `Rule.constraint` | `quantity > 0` |
+
+**`roll_up_entry_totals.py`** (entry-level rules):
+| Rule | Detail |
+|---|---|
+| `Rule.copy` | `surtax_effective_date` ← SysConfig.surtax_effective_date |
+| `Rule.copy` | `province_tax_rate` ← Province.tax_rate |
+| `Rule.formula` | `surtax_active` = 1 if ship_date >= surtax_effective_date |
+| `Rule.sum` × 5 | `total_customs_value`, `total_base_duty`, `total_surtax`, `total_provincial_tax`, `grand_total_duties` |
+
+No `Rule.early_row_event` ✅. No hardcoded date/rate literals ✅. `Decimal()` wrapping throughout ✅.
+
+### Test Data — `database/test_data/alp_init.py`
+
+5 entries / 10 line items. All scenarios covered:
+
+| Entry | Country | Surtax? | Province | Scenario |
+|---|---|---|---|---|
+| CBSA-2025-DE-001 | Germany (DE) | ❌ CETA exempt | ON (13%) | base duty only + HST |
+| CBSA-2026-US-001 | United States (US) | ✅ 25% | BC (12%) | base duty + surtax + PST/GST |
+| CBSA-2025-JP-001 | Japan (JP) | ❌ CPTPP exempt | AB (5%) | base duty only + GST |
+| CBSA-2026-CN-001 | China (CN) | ✅ 25% | ON (13%) | 3 line items; base duty + surtax + HST |
+| CBSA-2025-US-BEFORE | US pre-effective-date | ❌ ship_date < 2025-12-26 | BC | **new in v6** — date-gate scenario, no surtax even for US |
+
+Flask context active ✅. All computed totals auto-populated on commit ✅.
+
+### Key Metric Comparison
+
+| Metric | `v5` (Mar 7 — CE validated) | **v6** (Mar 7 — verify run) | ref |
+|---|---|---|---|
+| Total rules | 20 | **18** | 16 |
+| `Rule.copy` | 6 | **4** | 2 |
+| `Rule.formula` | 6 | **7** | 7 ✅ |
+| `Rule.sum` | 6 | **5** ✅ | 5 |
+| `Rule.constraint` | 2 | **2** ✅ | 3 |
+| `Rule.early_row_event` | 0 ✅ | **0** ✅ | 0 |
+| Province design | single `tax_rate` ✅ | **single `tax_rate`** ✅ | 1-column |
+| FK integers | all 3 FK ✅ | **all 3 FK** ✅ | FK |
+| `SysConfig` wired | ✅ | **✅** | — |
+| Hardcoded date/rate literals | 0 ✅ | **0** ✅ | — |
+| Multi-file logic | ✅ subdirectory | **✅ subdirectory** | — |
+| `base_duty_rate` on HS table | ✅ | **✅** | ✅ |
+| CETA/CPTPP exemptions correct | ✅ | **✅** (DE=0.0, JP=0.0) | ❌ |
+| Pre-effective-date scenario | ❌ | **✅ explicit entry** | — |
+
+### Design differences v5 → v6 (minor variations, not regressions)
+
+| Difference | v5 | v6 | Assessment |
+|---|---|---|---|
+| `CountryOrigin.surtax_applicable` vs `surtax_rate` | 0/1 flag (`surtax_applicable INTEGER`) | DECIMAL multiplier (`surtax_rate DECIMAL(8,6)`) | v6 richer — supports fractional rates; both valid for PC 2025-0917 flat 25% |
+| `HsCodeRate.surtax_rate` | Present ✅ | Absent — moved to CountryOrigin | v6 more domain-accurate (PC 2025-0917 surtax is country-based, not HS-code-based); v5 more flexible for HS-code-level rates |
+| `Rule.copy` count (6 vs 4) | Copies more SysConfig mirror fields (`program_code`, `order_number`, etc.) | Copies only computationally-needed fields (`surtax_effective_date`, `province_tax_rate`) | v6 is leaner; both correct |
+| `Rule.formula` count (6 vs 7) | `line_total` absent or rolled into sum | Explicit `line_total` formula (base_duty + surtax + provincial_tax) | v6 is cleaner — explicit line subtotal |
+| Test data entries | 4 entries / 8 lines | 5 entries / 10 lines | v6 adds pre-effective-date scenario |
+| `surtax_active` placement | Per line item or header | On `CustomsEntry` header (formula); per-line `surtax_applicable` derived from it | v6 matches `customs_app` reference design |
+
+### Assessment
+
+**Baseline confirmed — v6 is structurally equivalent to v5.** Both runs from the same simple prompt + CE suite produce:
+- All FK relationships wired (province_id, hs_code_id, country_origin_id) ✅
+- Single `tax_rate` province design ✅
+- SysConfig wired with domain columns ✅
+- 0 `early_row_event` / 0 `session.query()` lookups ✅
+- `base_duty_rate` on HsCodeRate ✅
+- 0 hardcoded date/rate literals ✅
+- Multi-file logic subdirectory ✅
+
+The minor differences (CountryOrigin flag vs multiplier, fewer Rule.copy in v6, 5th test entry) are non-deterministic design choices within the valid solution space — neither is wrong. v6's `surtax_rate DECIMAL` on CountryOrigin is arguably more accurate than v5's 0/1 flag for a domain where rates could vary.
+
+**CE strategy stability confirmed:** the v5 result is not a one-off lucky draw. Two successive runs from the same CE produce equivalent quality. The CE has raised the floor to a stable plateau.
+
+---
+
 ## Open Items
 
 | Item | Status |
@@ -979,6 +1083,7 @@ Front-loading flips the dependency: the schema inventory creates the lookup colu
 | Province prompt fix: single `tax_rate` phrase | ✅ Validated in `customs_demo_v4` — `Province.tax_rate` single combined rate confirmed ✅ |
 | Province CE fix: jurisdiction lookup single `tax_rate` rule | ✅ Added to `subsystem_creation.md` and validated in v5 — simple prompt produces single `tax_rate` without any prompt hint |
 | Validation test — `customs_demo_v5` (Mar 7 2026 — simple prompt + full CE) | ✅ Complete — CE strategy fully validated; 20 rules, all FK wired, SysConfig wired, 0 literals, 0 events; meets or exceeds v4 from simple prompt alone |
+| Validation test — `customs_demo_v6` (Mar 7 2026 — verify v5 baseline holds) | ✅ Complete — baseline confirmed; 18 rules, all FK wired, SysConfig wired, 0 literals, 0 events; structurally equivalent to v5; CE plateau is stable across successive runs |
 | Country prompt fix: `country_id` FK on `SurtaxLineItem` | ✅ Validated in `customs_demo_v4` — `CountryRate` table + `country_id FK` on line item ✅; per-line-item country design is structurally sound (supports mixed-country entries) |
 | FK integers — lookup table FK wiring | ✅ Resolved in `customs_demo_v4` — explicit FK schema in prompt produces all 3 FK relationships; `early_row_event` eliminated |
 | `sys_config` literal scan — not reliably applied | ⏳ v4 hardcodes `date(2025,12,26)` in `Rule.constraint` despite literal-scan CE callout; consider "scan before writing first Rule" instruction earlier in `subsystem_creation.md` logic section |
