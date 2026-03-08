@@ -1,4 +1,4 @@
-This system was createby by:
+This system (v6) was created by:
 
 1. genai-logic create --project_name=customs_demo --db_url=sqlite:///samples/dbs/starter.sqlite
 2. In the created project, provide these to your AI Assistant:
