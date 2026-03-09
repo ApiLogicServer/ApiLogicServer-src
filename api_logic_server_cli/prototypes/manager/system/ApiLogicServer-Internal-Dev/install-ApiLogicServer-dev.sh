@@ -7,7 +7,7 @@ contains()
     (*) false;;
   esac
 
-sra="venv/lib/python3.12/site-packages/api_logic_server_cli/create_from_model/safrs-react-admin-npm-build"
+sra="venv/lib/python3.13/site-packages/api_logic_server_cli/create_from_model/safrs-react-admin-npm-build"
 if [ -d $src ] 
 then
     echo "\n(SRA location verified)\n" 
@@ -35,10 +35,11 @@ if [ $# -eq 0 ]
     echo " "
     # echo "shell: $SHELL"
     echo "Installs ApiLogicServer Dev Src and safrs-react-admin on $ostype (version 7.0.15)\n"
-    echo "   .. vscode option creates venv, and starts vscode on workspace"
+    echo "  .. vscode option creates venv, and starts vscode on workspace"
     echo "  .. See: https://apilogicserver.github.io/Docs/Architecture-Internals"
-    echo "  .. Installer Version 14.05.04"
+    echo "  .. Installer Version 14.05.04 - copies sra from mgr venv -> dev src"
     echo " "
+    echo "   > cd manager # you are probably already there"
     echo "   > sh system/install-ApiLogicServer-dev/install-ApiLogicServer-dev.sh [ vscode | charm | x ]"
     echo " "
     exit 0
@@ -54,7 +55,7 @@ if [ $# -eq 0 ]
     set -x
     mkdir ApiLogicServer-dev
     cd ApiLogicServer-dev
-    mkdir servers    # good place to create ApiLogicProjects
+    mkdir servers    # good place to create test ApiLogicProjects
     mkdir build_and_test
     mkdir org_git  # git clones from org ApiLogicServer here
     cd org_git
@@ -76,6 +77,7 @@ if [ $# -eq 0 ]
     fi
     
     git clone https://github.com/ApiLogicServer/ApiLogicServer-src.git
+    
     cd ApiLogicServer-src
     echo "\ncopying $sra --> ApiLogicServer"
     cp -r ../../../$sra api_logic_server_cli/create_from_model/safrs-react-admin-npm-build
