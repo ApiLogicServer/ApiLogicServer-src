@@ -253,6 +253,82 @@ class SurtaxOrder(Base):
 
 ---
 
+### Allocate Pattern: Junction Tables Must Be in the DDL
+
+> **🔑 Allocate junction tables belong in schema design, not logic authoring.**
+> Before writing any DDL, scan the domain spec for distribution/allocation phrases (see signal list below). If found, the DDL must include junction tables with the three-role pattern. Once `models.py` is generated from those tables, `Allocate` has rows to create into and `Rule.copy`/`Rule.formula` companion rules work naturally.
+> **If you find yourself writing `Rule.copy` + `Rule.formula` to derive values on rows that don't exist yet, the Allocate scan was skipped** — add the junction table(s) via DDL + `rebuild-from-database`, then use `Allocate`.
+>
+> **🚨 ALLOCATE SCAN — verification before writing any DDL:**
+> Scan the domain prompt for ANY of these phrases:
+> - "distribute/allocate/split [amount/cost/charge] to [departments/accounts/recipients]"
+> - "when a [charge/cost/payment] is received, distribute to..."
+> - "each [dept/recipient] covers X% of the cost"
+> - "charges flow to departments, then to GL accounts" ← signals CASCADE allocation
+> - "allocate [payment/budget/bonus] to [orders/employees]"
+> - "apply payment to invoices/orders [oldest/priority] first"
+>
+> **If ANY phrase matches → add junction tables to the DDL NOW:**
+
+**The three-role pattern — always three tables:**
+
+| Role | What it is | Key columns |
+|------|-----------|-------------|
+| **Provider** | The row being inserted that triggers allocation | `amount` (total to distribute) |
+| **Recipient** | Existing rows that define how to split | `percent` or `amount_owed` |
+| **Allocation** (junction) | Created by `Allocate` for each recipient | `amount` (derived), FK→Provider, FK→Recipient |
+
+**Single-level example — Charge → Departments:**
+```sql
+-- Provider: charge (already exists)
+-- Recipient: project_funding_line (already exists)
+-- Junction — ADD THIS:
+CREATE TABLE charge_dept_allocation (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    charge_id INTEGER REFERENCES charge(id),
+    project_funding_line_id INTEGER REFERENCES project_funding_line(id),
+    department_id INTEGER,
+    percent REAL,        -- derived by Rule.copy
+    amount REAL          -- derived by Rule.formula
+);
+```
+
+**Cascade example — Charge → Departments → GL Accounts (two junction tables):**
+```sql
+-- Level-1 junction (charge → dept):
+CREATE TABLE charge_dept_allocation (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    charge_id INTEGER REFERENCES charge(id),
+    project_funding_line_id INTEGER REFERENCES project_funding_line(id),
+    department_id INTEGER,
+    percent REAL,
+    amount REAL
+);
+
+-- Level-2 junction (dept allocation → GL account):
+CREATE TABLE charge_gl_allocation (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    charge_dept_allocation_id INTEGER REFERENCES charge_dept_allocation(id),
+    dept_charge_definition_line_id INTEGER REFERENCES dept_charge_definition_line(id),
+    gl_account_id INTEGER,
+    percent REAL,
+    amount REAL
+);
+```
+
+**Signal → table count mapping:**
+
+| Signal phrase | Junction tables needed |
+|---|---|
+| "distribute charges to departments" | 1 (charge → dept allocation) |
+| "charges flow to departments, then to GL accounts" | 2 (cascade: + dept → GL allocation) |
+| "allocate payment to orders, oldest first" | 1 (payment → payment allocation) |
+| "budget allocated to depts, then each dept to its G/L" | 2 (cascade) |
+
+**► Full Allocate reference:** `docs/training/allocate.md`
+
+---
+
 ### SysConfig: Runtime-Configurable System Constants
 
 `starter.sqlite` ships with a `sys_config` table containing one system row. Use it for **rates, thresholds, and dates that would otherwise be hardcoded Python constants** — so they can be changed at runtime without touching code.

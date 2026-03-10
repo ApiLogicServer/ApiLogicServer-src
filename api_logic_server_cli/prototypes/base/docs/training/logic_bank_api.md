@@ -544,155 +544,37 @@ def declare_logic():
 💳 EXTENDED RULE: Allocate (Provider → Recipients)
 =============================================================================
 
+**► Full reference: `docs/training/allocate.md` — READ THAT FILE for all variants, examples, and pitfalls.**
+
 **Pattern:** A Provider allocates an amount to a list of Recipients, creating Allocation (junction) rows.
+Common in ~1/3 of applications. Supports both draining (payment→orders) and proportional (charge→depts→GL) variants,
+including cascade (two-level) allocation.
 
-**Occurrence:** Common in ~1/3 of applications.
-Examples: payments to orders, budgets to departments, bonuses to employees, benefits to time periods, resources to incidents.
+**Wiki:** https://github.com/valhuber/LogicBank/wiki/Sample-Project---Allocation
 
-**Signal phrases in prompt:**
-- "allocate [payment/budget/bonus] to [orders/departments/employees]"
-- "distribute [payment] across [recipients] [oldest/priority] first"
-- "apply [payment] to outstanding [orders] until exhausted"
+**🚨 DETECTION — use Allocate (not copy+formula) when:**
+- An insert must automatically *create* allocation child rows
+- "distribute/allocate/split [amount] to [recipients]" appears in the prompt
+- "charges flow to departments, then to GL accounts" (cascade)
+- "each dept covers X% of the cost"
 
 **Required import:**
 ```python
 from logic_bank.extensions.allocate import Allocate
 ```
 
-**Data model required — 3 roles:**
-
-| Role | Example table | Key columns |
-|------|--------------|-------------|
-| Provider | Payment | Amount, AmountUnAllocated |
-| Recipient | Order | AmountOwed (or equivalent) |
-| Allocation (junction) | PaymentAllocation | AmountAllocated, FK→Provider, FK→Recipient |
-
-**IMPORTANT — default attribute names:** The built-in `while_calling_allocator_default` expects these exact names on the Provider:
-- `Amount` — the total amount to allocate
-- `AmountUnAllocated` — tracks remaining amount (initialized from Amount on first allocation)
-And this name on the Allocation row:
-- `AmountAllocated` — the amount allocated to each recipient
-
-If your schema uses different names, supply a custom `while_calling_allocator` function.
-
-**🚨 PITFALL — `server_default` on `AmountUnAllocated` breaks allocation:**
-
-The allocator initializes `AmountUnAllocated` from `Amount` only when it is `None`. If the DDL column has `DEFAULT 0` (or `server_default=text("0")` in models), SQLAlchemy sets it to `0` before `Allocate` fires — so `min(0, AmountOwed) = 0` and nothing is allocated.
-
-**Fix:** Add an `early_row_event` to explicitly initialize it on insert:
-```python
-def init_amount_unallocated(row: models.Payment, old_row: models.Payment, logic_row: LogicRow):
-    if logic_row.ins_upd_dlt == "ins":
-        row.AmountUnAllocated = row.Amount
-
-# In declare_logic() — MUST be declared before Allocate:
-Rule.early_row_event(on_class=models.Payment, calling=init_amount_unallocated)
-```
-
-**Always include this `early_row_event` when `AmountUnAllocated` has a database default of 0.**
-
-**Required companion rules (must accompany Allocate):**
-
-```python
-# 1. AmountAllocated = min(what payment has left, what order still owes)
-Rule.formula(derive=models.PaymentAllocation.AmountAllocated,
-    as_expression=lambda row: min(row.Payment.AmountUnAllocated, row.Order.AmountOwed))
-
-# 2. Order.AmountPaid = sum of its PaymentAllocations
-Rule.sum(derive=models.Order.AmountPaid, as_sum_of=models.PaymentAllocation.AmountAllocated)
-
-# 3. Order.AmountOwed = AmountTotal - AmountPaid
-Rule.formula(derive=models.Order.AmountOwed,
-    as_expression=lambda row: row.AmountTotal - row.AmountPaid)
-
-# 4. Customer.Balance = sum of their Order.AmountOwed
-Rule.sum(derive=models.Customer.Balance, as_sum_of=models.Order.AmountOwed)
-```
-
-**The recipients function — returns ordered list of recipient rows:**
-
-```python
-def unpaid_orders(provider: LogicRow):
-    """Returns provider's Customer's Orders where AmountOwed > 0, oldest first."""
-    customer = provider.row.Customer
-    return provider.session.query(models.Order)\
-        .filter(models.Order.AmountOwed > 0, models.Order.CustomerId == customer.Id)\
-        .order_by(models.Order.OrderDate).all()
-```
-
-**The Allocate declaration:**
-
+**Minimal declaration:**
 ```python
 Allocate(provider=models.Payment,
-         recipients=unpaid_orders,
-         creating_allocation=models.PaymentAllocation)
+         recipients=unpaid_orders,           # function returning list of recipient rows
+         creating_allocation=models.PaymentAllocation,
+         while_calling_allocator=my_allocator)  # optional; omit to use default (AmountUnAllocated pattern)
 ```
 
-**Complete example:**
-
-Prompt:
-```
-I have Customer, Order, and Payment tables.
-Allocate payments to customer orders, oldest unpaid order first.
-Track allocations in a PaymentAllocation table.
-```
-
-Response — add to database via DDL + rebuild-from-database:
-```sql
-CREATE TABLE PaymentAllocation (
-    Id INTEGER PRIMARY KEY AUTOINCREMENT,
-    AmountAllocated DECIMAL DEFAULT 0,
-    OrderId INTEGER REFERENCES "Order"(Id) ON UPDATE CASCADE ON DELETE CASCADE,
-    PaymentId INTEGER REFERENCES Payment(Id) ON UPDATE CASCADE ON DELETE CASCADE
-);
--- Also add to Payment if not present:
--- AmountUnAllocated DECIMAL
--- Also add to Order if not present:
--- AmountPaid DECIMAL DEFAULT 0
--- AmountOwed DECIMAL DEFAULT 0
-```
-
-Response — logic file `logic/logic_discovery/allocate_payment.py`:
-```python
-from logic_bank.logic_bank import Rule
-from logic_bank.extensions.allocate import Allocate
-from logic_bank.exec_row_logic.logic_row import LogicRow
-from database import models
-from decimal import Decimal
-
-
-def unpaid_orders(provider: LogicRow):
-    """Returns provider's Customer's Orders where AmountOwed > 0, oldest first."""
-    customer = provider.row.Customer
-    return provider.session.query(models.Order)\
-        .filter(models.Order.AmountOwed > 0, models.Order.CustomerId == customer.Id)\
-        .order_by(models.Order.OrderDate).all()
-
-
-def init_amount_unallocated(row: models.Payment, old_row: models.Payment, logic_row: LogicRow):
-    """Required: server_default=0 prevents allocator's own init; set explicitly on insert."""
-    if logic_row.ins_upd_dlt == "ins":
-        row.AmountUnAllocated = row.Amount
-
-
-def declare_logic():
-    Rule.early_row_event(on_class=models.Payment, calling=init_amount_unallocated)  # see PITFALL note above
-    Rule.formula(derive=models.PaymentAllocation.AmountAllocated, as_expression=lambda row: min(Decimal(row.Payment.AmountUnAllocated), Decimal(row.Order.AmountOwed)))
-    Rule.sum(derive=models.Order.AmountPaid, as_sum_of=models.PaymentAllocation.AmountAllocated)
-    Rule.formula(derive=models.Order.AmountOwed, as_expression=lambda row: row.AmountTotal - row.AmountPaid)
-    Rule.sum(derive=models.Customer.Balance, as_sum_of=models.Order.AmountOwed)
-    Allocate(provider=models.Payment, recipients=unpaid_orders, creating_allocation=models.PaymentAllocation)
-```
-
-**How it executes (rule chaining):**
-1. Inserting a `Payment` triggers `Allocate`
-2. `Allocate` calls `unpaid_orders()` → gets sorted recipient list
-3. For each Order: creates a `PaymentAllocation` row → rule chaining fires automatically:
-   - Formula derives `AmountAllocated`
-   - Sum adjusts `Order.AmountPaid`
-   - Formula re-derives `Order.AmountOwed`
-   - Sum adjusts `Customer.Balance`
-4. `Payment.AmountUnAllocated` decremented after each allocation; loop stops when exhausted
+**► See `docs/training/allocate.md` for:**
+- Variant A — Classic draining (Payment → Orders), including `AmountUnAllocated` pitfall
+- Variant B — Proportional percent-based (Charge → Departments)
+- Variant C — Cascade two-level (Charge → Depts → GL Accounts), complete working example
 
 =============================================================================
 🔄 AFTER DATABASE SCHEMA CHANGES: Rebuild to Sync Admin App and DBML Diagram
