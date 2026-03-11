@@ -541,6 +541,17 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "     - Create servers/allo_dept_gl",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/api_logic_server_cli",
+            "env": {"APILOGICSERVER_DEBUG": "True"},
+            "program": "cli.py",
+            "redirectOutput": true,
+            "args": ["create","--project_name=../../../servers/allo_dept_gl","--db_url=sqlite:///prototypes/manager/samples/dbs/starter.sqlite"],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "     - Create servers/nw- (new IDE) -- nw-",
             "type": "debugpy",
             "request": "launch",

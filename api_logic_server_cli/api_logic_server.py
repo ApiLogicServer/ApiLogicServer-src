@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "16.02.07"  # last public release: 16.02.05
+__version__ = "16.02.08"  # last public release: 16.02.05
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t03/08/2026 - 16.02.07  govt allocation \n"\
+    "\t03/10/2026 - 16.02.08  Dept->GL Allo -> mgr \n"\
     "\t03/08/2026 - 16.02.06  Subsystem dependencies ce fix with working storage attrs, LB parser \n"\
     "\t03/03/2026 - 16.02.03: customs_demo -> Manager, many basic_demo ghost fixes, readme, sample fix \n"\
     "\t02/26/2026 - 16.01.42: sample-rework, int, mgr, webg, subsystem creation (rules, data model), behave rule log \n"\
@@ -311,6 +311,7 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
     import sample_mgr.basic_demo_setup as basic_demo_setup
     import sample_mgr.nw_setup as nw_setup
     import sample_mgr.customs_setup as customs_demo_setup
+    import sample_mgr.allo_dept_gl_setup as allo_dept_gl_setup
     cloned_from = project.from_git
     tmpdirname = ""
     with tempfile.TemporaryDirectory() as tmpdirname:
@@ -427,6 +428,11 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
         if project.project_name_last_node.startswith("customs_demo"):
             log.debug(".. ..Copy in customs_demo: readme")
             customs_demo_setup.customs_setup(project=project, 
+                              api_logic_server_dir_str=api_logic_server_dir_str)
+
+        if project.project_name_last_node.startswith("allo_dept_gl"):
+            log.debug(".. ..Copy in allo_dept_gl: readme")
+            allo_dept_gl_setup.allo_dept_gl_setup(project=project, 
                               api_logic_server_dir_str=api_logic_server_dir_str)
 
         if project.db_url == "mysql+pymysql://root:p@localhost:3306/classicmodels":
