@@ -1,0 +1,437 @@
+about:
+  date: March 12, 2026 19:47:33
+  merged:
+    at: March 12, 2026 19:52:22
+    new_attributes: ''
+    new_resources: 'Charge Contractor Project ChargeDeptAllocation Department DeptChargeDefinition
+      ProjectFundingLine ChargeGlAllocation DeptChargeDefinitionLine GlAccount ProjectFundingDefinition
+      SysProjectReq '
+    new_tab_groups: ''
+  recent_changes: works with modified safrs-react-admin
+  version: 0.0.0
+api_root: '{http_type}://{swagger_host}:{port}/{api}'
+authentication: '{system-default}'
+info:
+  number_relationships: 0
+  number_tables: 1
+info_toggle_checked: true
+resources:
+  Charge:
+    attributes:
+    - label: ' description*'
+      name: description
+      search: true
+      sort: true
+    - name: contractor_id
+    - name: project_id
+    - name: project_description
+    - name: amount
+      required: true
+    - name: total_distributed_amount
+    - name: charge_date
+    - name: id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - charge_id
+      name: ChargeDeptAllocationList
+      resource: ChargeDeptAllocation
+    - direction: toone
+      fks:
+      - contractor_id
+      name: contractor
+      resource: Contractor
+    - direction: toone
+      fks:
+      - project_id
+      name: project
+      resource: Project
+    type: Charge
+    user_key: description
+  ChargeDeptAllocation:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: charge_id
+      required: true
+    - name: department_id
+    - name: dept_charge_definition_id
+    - name: project_funding_line_id
+      required: true
+    - name: percent
+    - name: amount
+    tab_groups:
+    - direction: tomany
+      fks:
+      - charge_dept_allocation_id
+      name: ChargeGlAllocationList
+      resource: ChargeGlAllocation
+    - direction: toone
+      fks:
+      - charge_id
+      name: charge
+      resource: Charge
+    - direction: toone
+      fks:
+      - department_id
+      name: department
+      resource: Department
+    - direction: toone
+      fks:
+      - dept_charge_definition_id
+      name: dept_charge_definition
+      resource: DeptChargeDefinition
+    - direction: toone
+      fks:
+      - project_funding_line_id
+      name: project_funding_line
+      resource: ProjectFundingLine
+    type: ChargeDeptAllocation
+    user_key: id
+  ChargeGlAllocation:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: charge_dept_allocation_id
+      required: true
+    - name: dept_charge_definition_line_id
+      required: true
+    - name: gl_account_id
+    - name: percent
+    - name: amount
+    tab_groups:
+    - direction: toone
+      fks:
+      - charge_dept_allocation_id
+      name: charge_dept_allocation
+      resource: ChargeDeptAllocation
+    - direction: toone
+      fks:
+      - dept_charge_definition_line_id
+      name: dept_charge_definition_line
+      resource: DeptChargeDefinitionLine
+    - direction: toone
+      fks:
+      - gl_account_id
+      name: gl_account
+      resource: GlAccount
+    type: ChargeGlAllocation
+    user_key: id
+  Contractor:
+    attributes:
+    - label: ' name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+    - name: notes
+    - name: id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - contractor_id
+      name: ChargeList
+      resource: Charge
+    - direction: tomany
+      fks:
+      - contractor_id
+      name: SysProjectReqList
+      resource: SysProjectReq
+    type: Contractor
+    user_key: name
+  Department:
+    attributes:
+    - label: ' name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+    - name: notes
+    - name: id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - department_id
+      name: ChargeDeptAllocationList
+      resource: ChargeDeptAllocation
+    - direction: tomany
+      fks:
+      - department_id
+      name: DeptChargeDefinitionList
+      resource: DeptChargeDefinition
+    - direction: tomany
+      fks:
+      - department_id
+      name: GlAccountList
+      resource: GlAccount
+    - direction: tomany
+      fks:
+      - department_id
+      name: ProjectFundingLineList
+      resource: ProjectFundingLine
+    type: Department
+    user_key: name
+  DeptChargeDefinition:
+    attributes:
+    - label: ' name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+    - name: department_id
+      required: true
+    - name: total_percent
+    - name: is_active
+    - name: notes
+    - name: id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - dept_charge_definition_id
+      name: ChargeDeptAllocationList
+      resource: ChargeDeptAllocation
+    - direction: tomany
+      fks:
+      - dept_charge_definition_id
+      name: DeptChargeDefinitionLineList
+      resource: DeptChargeDefinitionLine
+    - direction: tomany
+      fks:
+      - dept_charge_definition_id
+      name: ProjectFundingLineList
+      resource: ProjectFundingLine
+    - direction: toone
+      fks:
+      - department_id
+      name: department
+      resource: Department
+    type: DeptChargeDefinition
+    user_key: name
+  DeptChargeDefinitionLine:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: dept_charge_definition_id
+      required: true
+    - name: gl_account_id
+      required: true
+    - name: percent
+      required: true
+    - name: notes
+    tab_groups:
+    - direction: tomany
+      fks:
+      - dept_charge_definition_line_id
+      name: ChargeGlAllocationList
+      resource: ChargeGlAllocation
+    - direction: toone
+      fks:
+      - dept_charge_definition_id
+      name: dept_charge_definition
+      resource: DeptChargeDefinition
+    - direction: toone
+      fks:
+      - gl_account_id
+      name: gl_account
+      resource: GlAccount
+    type: DeptChargeDefinitionLine
+    user_key: id
+  GlAccount:
+    attributes:
+    - label: ' name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+    - name: department_id
+      required: true
+    - name: account_number
+      required: true
+    - name: notes
+    - name: id
+    - name: total_allocated
+    tab_groups:
+    - direction: tomany
+      fks:
+      - gl_account_id
+      name: ChargeGlAllocationList
+      resource: ChargeGlAllocation
+    - direction: tomany
+      fks:
+      - gl_account_id
+      name: DeptChargeDefinitionLineList
+      resource: DeptChargeDefinitionLine
+    - direction: toone
+      fks:
+      - department_id
+      name: department
+      resource: Department
+    type: GlAccount
+    user_key: name
+  Project:
+    attributes:
+    - label: ' name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+    - name: project_funding_definition_id
+    - name: total_charges
+    - name: notes
+    - name: id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - project_id
+      name: ChargeList
+      resource: Charge
+    - direction: tomany
+      fks:
+      - matched_project_id
+      name: SysProjectReqList
+      resource: SysProjectReq
+    - direction: toone
+      fks:
+      - project_funding_definition_id
+      name: project_funding_definition
+      resource: ProjectFundingDefinition
+    type: Project
+    user_key: name
+  ProjectFundingDefinition:
+    attributes:
+    - label: ' name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+    - name: total_percent
+    - name: is_active
+    - name: notes
+    - name: id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - project_funding_definition_id
+      name: ProjectList
+      resource: Project
+    - direction: tomany
+      fks:
+      - project_funding_definition_id
+      name: ProjectFundingLineList
+      resource: ProjectFundingLine
+    type: ProjectFundingDefinition
+    user_key: name
+  ProjectFundingLine:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: department_id
+      required: true
+    - name: dept_charge_definition_id
+      required: true
+    - name: project_funding_definition_id
+      required: true
+    - name: percent
+      required: true
+    - name: notes
+    tab_groups:
+    - direction: tomany
+      fks:
+      - project_funding_line_id
+      name: ChargeDeptAllocationList
+      resource: ChargeDeptAllocation
+    - direction: toone
+      fks:
+      - department_id
+      name: department
+      resource: Department
+    - direction: toone
+      fks:
+      - dept_charge_definition_id
+      name: dept_charge_definition
+      resource: DeptChargeDefinition
+    - direction: toone
+      fks:
+      - project_funding_definition_id
+      name: project_funding_definition
+      resource: ProjectFundingDefinition
+    type: ProjectFundingLine
+    user_key: id
+  SysConfig:
+    attributes:
+    - label: ' name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+    - name: discount_rate
+    - name: tax_rate
+    - name: notes
+    - name: id
+    type: SysConfig
+    user_key: name
+  SysProjectReq:
+    attributes:
+    - label: ' project_description*'
+      name: project_description
+      search: true
+      sort: true
+    - name: contractor_id
+    - name: matched_project_id
+    - name: confidence
+    - name: reason
+    - name: request
+    - name: created_on
+    - name: id
+    tab_groups:
+    - direction: toone
+      fks:
+      - contractor_id
+      name: contractor
+      resource: Contractor
+    - direction: toone
+      fks:
+      - matched_project_id
+      name: matched_project
+      resource: Project
+    type: SysProjectReq
+    user_key: project_description
+settings:
+  HomeJS: /admin-app/home.js
+  max_list_columns: 8
+  style_guide:
+    applicationLocales:
+    - en
+    - es
+    currency_symbol: $
+    currency_symbol_position: left
+    date_format: LL
+    decimal_max: '1000000000'
+    decimal_min: '2'
+    decimal_separator: .
+    detail_mode: tab
+    edit_on_mode: dblclick
+    exclude_listpicker: false
+    include_translation: 'false'
+    keycloak_client_id: alsclient
+    keycloak_realm: kcals
+    keycloak_url: http://localhost:8080
+    locale: en
+    max_decimal_digits: '4'
+    min_decimal_digits: '2'
+    new_mode: dialog
+    pick_style: list
+    row_height: small,
+    serviceType: JSONAPI
+    startSessionPath: /auth/login
+    style: light
+    thousand_separator: ','
+    use_keycloak: 'false'

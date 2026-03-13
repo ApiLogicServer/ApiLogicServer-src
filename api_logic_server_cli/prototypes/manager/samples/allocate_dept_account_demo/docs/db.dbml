@@ -1,0 +1,138 @@
+// Copy this text, paste to https://dbdiagram.io/d
+// Or, https://databasediagram.com/app
+// Or, view in VSCode with extension: "DBML Live Preview"
+
+Table Charge {
+    id INTEGER [primary key]
+    project_id INTEGER 
+    contractor_id INTEGER 
+    project_description TEXT 
+    amount NUMERIC(15, 2) 
+    total_distributed_amount NUMERIC(15, 2) 
+    description TEXT 
+    charge_date TEXT 
+    }
+
+Table Contractor {
+    id INTEGER [primary key]
+    name TEXT 
+    notes TEXT 
+    }
+
+Table Project {
+    id INTEGER [primary key]
+    name TEXT 
+    project_funding_definition_id INTEGER 
+    total_charges NUMERIC(15, 2) 
+    notes TEXT 
+    }
+
+Table ChargeDeptAllocation {
+    id INTEGER [primary key]
+    charge_id INTEGER 
+    project_funding_line_id INTEGER 
+    department_id INTEGER 
+    dept_charge_definition_id INTEGER 
+    percent NUMERIC(7, 4) 
+    amount NUMERIC(15, 2) 
+    }
+
+Table Department {
+    id INTEGER [primary key]
+    name TEXT 
+    notes TEXT 
+    }
+
+Table DeptChargeDefinition {
+    id INTEGER [primary key]
+    department_id INTEGER 
+    name TEXT 
+    total_percent NUMERIC(7, 4) 
+    is_active INTEGER 
+    notes TEXT 
+    }
+
+Table ProjectFundingLine {
+    id INTEGER [primary key]
+    project_funding_definition_id INTEGER 
+    department_id INTEGER 
+    dept_charge_definition_id INTEGER 
+    percent NUMERIC(7, 4) 
+    notes TEXT 
+    }
+
+Table ChargeGlAllocation {
+    id INTEGER [primary key]
+    charge_dept_allocation_id INTEGER 
+    dept_charge_definition_line_id INTEGER 
+    gl_account_id INTEGER 
+    percent NUMERIC(7, 4) 
+    amount NUMERIC(15, 2) 
+    }
+
+Table DeptChargeDefinitionLine {
+    id INTEGER [primary key]
+    dept_charge_definition_id INTEGER 
+    gl_account_id INTEGER 
+    percent NUMERIC(7, 4) 
+    notes TEXT 
+    }
+
+Table GlAccount {
+    id INTEGER [primary key]
+    department_id INTEGER 
+    account_number TEXT 
+    name TEXT 
+    total_allocated NUMERIC(15, 2) 
+    notes TEXT 
+    }
+
+Table ProjectFundingDefinition {
+    id INTEGER [primary key]
+    name TEXT 
+    total_percent NUMERIC(7, 4) 
+    is_active INTEGER 
+    notes TEXT 
+    }
+
+Table SysConfig {
+    id INTEGER [primary key]
+    name TEXT 
+    discount_rate FLOAT 
+    tax_rate FLOAT 
+    notes TEXT 
+    }
+
+Table SysProjectReq {
+    id INTEGER [primary key]
+    contractor_id INTEGER 
+    project_description TEXT 
+    matched_project_id INTEGER 
+    confidence FLOAT 
+    reason TEXT 
+    request TEXT 
+    created_on TEXT 
+    }
+
+
+
+// Relationships
+    Ref: Charge.(contractor_id) > Contractor.(id)
+    Ref: Charge.(project_id) > Project.(id)
+    Ref: Project.(project_funding_definition_id) > ProjectFundingDefinition.(id)
+    Ref: ChargeDeptAllocation.(charge_id) > Charge.(id)
+    Ref: ChargeDeptAllocation.(department_id) > Department.(id)
+    Ref: ChargeDeptAllocation.(dept_charge_definition_id) > DeptChargeDefinition.(id)
+    Ref: ChargeDeptAllocation.(project_funding_line_id) > ProjectFundingLine.(id)
+    Ref: DeptChargeDefinition.(department_id) > Department.(id)
+    Ref: ProjectFundingLine.(department_id) > Department.(id)
+    Ref: ProjectFundingLine.(dept_charge_definition_id) > DeptChargeDefinition.(id)
+    Ref: ProjectFundingLine.(project_funding_definition_id) > ProjectFundingDefinition.(id)
+    Ref: ChargeGlAllocation.(charge_dept_allocation_id) > ChargeDeptAllocation.(id)
+    Ref: ChargeGlAllocation.(dept_charge_definition_line_id) > DeptChargeDefinitionLine.(id)
+    Ref: ChargeGlAllocation.(gl_account_id) > GlAccount.(id)
+    Ref: DeptChargeDefinitionLine.(dept_charge_definition_id) > DeptChargeDefinition.(id)
+    Ref: DeptChargeDefinitionLine.(gl_account_id) > GlAccount.(id)
+    Ref: GlAccount.(department_id) > Department.(id)
+    Ref: SysProjectReq.(contractor_id) > Contractor.(id)
+    Ref: SysProjectReq.(matched_project_id) > Project.(id)
