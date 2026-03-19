@@ -329,6 +329,51 @@ CREATE TABLE charge_gl_allocation (
 
 ---
 
+### Request Pattern: Schema Consequences Before Writing DDL
+
+> **🔑 Request Pattern schema decisions belong in schema design, not logic authoring.**  
+> Before writing any DDL, if the domain spec involves AI matching, external API calls, email, or Kafka messages — enumerate the `Sys*` table columns and any adjustments to the triggering table now. Once `models.py` is generated from the correct schema, all fields exist and the handler can populate them naturally.  
+> **If you find missing audit columns or a NOT NULL FK that the handler needs to set post-insert, schema design was incomplete** — add the columns via DDL + `rebuild-from-database`.
+>
+> **🚨 REQUEST PATTERN SCAN — verification before writing any DDL:**  
+> If step 3 of the workflow identified a Request Pattern, confirm ALL of the following before writing any `CREATE TABLE`:
+>
+> **`Sys*` request table — three column groups required:**
+>
+> | Group | Columns | Notes |
+> |---|---|---|
+> | Input fields | What the caller provides | e.g. `contractor_id`, `project_description` |
+> | Response fields | What the handler writes back | e.g. `matched_project_id`, `confidence`, `reason` |
+> | **Audit fields** | **`request TEXT`** and **`created_on TEXT`** | Full AI prompt sent + ISO timestamp — always include both |
+>
+> **Triggering table adjustments:**  
+> If the handler resolves a normally-required FK *after* the row is inserted (e.g. AI matches `project_id` from a free-text description), that FK **must be nullable** and a `*_description TEXT` input column must exist on the triggering table:
+>
+> ```sql
+> -- ✅ CORRECT — project_id nullable so handler can set it after insert
+> CREATE TABLE charge (
+>     id                  INTEGER PRIMARY KEY AUTOINCREMENT,
+>     project_id          INTEGER REFERENCES project(id),   -- nullable: AI fills this in
+>     project_description TEXT,                              -- AI input field
+>     contractor_id       INTEGER REFERENCES contractor(id),
+>     amount              NUMERIC(15,2) NOT NULL,
+>     ...
+> );
+> ```
+> ```sql
+> -- ❌ WRONG — NOT NULL blocks insert before handler runs
+> project_id INTEGER NOT NULL REFERENCES project(id),
+> -- ❌ WRONG — missing description means handler has nothing to match on
+> ```
+>
+> **Checklist — must all be YES before writing DDL:**
+> - [ ] `Sys*` table has `request TEXT` (AI prompt audit)
+> - [ ] `Sys*` table has `created_on TEXT` (timestamp)
+> - [ ] Every FK the handler sets post-insert is **nullable** on the triggering table
+> - [ ] A `*_description TEXT` input column exists for each AI-matched FK
+
+---
+
 ### SysConfig: Runtime-Configurable System Constants
 
 `starter.sqlite` ships with a `sys_config` table containing one system row. Use it for **rates, thresholds, and dates that would otherwise be hardcoded Python constants** — so they can be changed at runtime without touching code.
