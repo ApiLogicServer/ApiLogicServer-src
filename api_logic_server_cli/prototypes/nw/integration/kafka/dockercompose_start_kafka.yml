@@ -14,13 +14,11 @@
 # start als, and run the sample trans (see integration_services_readme.md -- test it)
 #
 
-version: "3"
-
 services:
 
   kafka:
     restart: always
-    image: docker.io/bitnami/kafka:latest
+    image: apache/kafka:3.7.0
     volumes:
       - ./.volumes/kafka/data:/integration/kafka/volume
     ports:
@@ -28,15 +26,15 @@ services:
       - 9093:9093
     container_name: broker1
     environment:
-      KAFKA_ENABLE_KRAFT: yes
-      KAFKA_CFG_NODE_ID: 1
-      KAFKA_CFG_PROCESS_ROLES: 'broker,controller'
-      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
-      KAFKA_CFG_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
-      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://broker1:9092
-      KAFKA_CFG_BROKER_ID: 1
-      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: '1@broker1:9093'
-      ALLOW_PLAINTEXT_LISTENER: yes
-      KAFKA_KRAFT_CLUSTER_ID: r4zt_wrqTRuT7W2NJsB_GA
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@localhost:9093'
+      CLUSTER_ID: r4zt_wrqTRuT7W2NJsB_GA
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1

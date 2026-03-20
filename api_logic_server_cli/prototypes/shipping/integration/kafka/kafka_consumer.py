@@ -7,7 +7,13 @@ Alter this file to add handlers for consuming kafka topics
 """
 
 from config.config import Args
-from confluent_kafka import Producer, KafkaException, Consumer
+try:
+    from confluent_kafka import Producer, KafkaException, Consumer
+except ImportError:
+    Producer = None
+    KafkaException = None
+    Consumer = None
+    # Kafka support not available on this platform
 import signal
 import logging
 import json
@@ -20,7 +26,10 @@ from integration.row_dict_maps.OrderToShip import OrderToShip
 conf = None
 
 logger = logging.getLogger('integration.kafka')
-logger.debug("kafka_consumer imported")
+if Consumer is None:
+    logger.fatal("SEVERE WARNING - KAFKA NOT AVAILABLE FOR IMPORT - DISABLED")
+else:
+    logger.debug("kafka_consumer imported")
 
 
 def kafka_consumer(safrs_api: safrs.SAFRSAPI = None):
@@ -44,16 +53,6 @@ def kafka_consumer(safrs_api: safrs.SAFRSAPI = None):
     INTERRUPT_EVENT = Event()
 
     bus = FlaskKafka(interrupt_event=INTERRUPT_EVENT, conf=conf, safrs_api=safrs_api)
-    
-    bus.run()  # Kafka consumption, threading, handler annotations
-
-    logger.debug(f'Kafka Listener thread activated {bus}')
-
-    '''   Your Code Goes Here
-    
-    #als: consume Kafka messages
-    '''
-
 
     @bus.handle('order_shipping')
     def order_shipping(msg: object, safrs_api: safrs.SAFRSAPI):
@@ -92,3 +91,7 @@ def kafka_consumer(safrs_api: safrs.SAFRSAPI = None):
     @bus.handle('another_topic')
     def another_topic_handler(msg: object, safrs_api: safrs.SAFRSAPI):
         print("consumed key: {}, message:{} from another_topic topic consumer".format(msg.key(),msg.value()))
+
+    bus.run()  # Kafka consumption, threading, handler annotations — MUST be after handler decorators
+
+    logger.debug(f'Kafka Listener thread activated {bus}')

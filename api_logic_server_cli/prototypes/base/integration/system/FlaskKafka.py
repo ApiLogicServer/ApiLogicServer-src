@@ -76,7 +76,7 @@ class FlaskKafka():
                 break
     
             msg = consumer.poll(1.0)
-            logger.debug(f' - KafkaConnect._start - consuming consumer.poll(1.0): {msg}')
+            logger.debug(f' - KafkaConnect._start - consuming consumer.poll(1.0): {msg}') if msg else None
             if msg is None:
                 continue
             if msg.error():

@@ -4,7 +4,7 @@ from pathlib import Path
 import os
 import typing
 from dotenv import load_dotenv
-import logging
+import logging, logging.config
 from enum import Enum
 import socket
 import json
@@ -43,6 +43,7 @@ class OptLocking(ExtendedEnum):
 
 basedir = path.abspath(path.dirname(__file__))
 load_dotenv(path.join(basedir, "default.env"))
+project_path = Path(__file__).parent.parent
 app_logger = logging.getLogger('api_logic_server_app')
 
 def is_docker() -> bool:
@@ -87,11 +88,9 @@ class Config:
     FLASK_ENV = environ.get("FLASK_ENV")
     DEBUG = environ.get("DEBUG")
 
-    running_at = Path(__file__)
-    project_abs_dir = running_at.parent.absolute()
-
     # Database
-    SQLALCHEMY_DATABASE_URI : typing.Optional[str] = f"sqlite:///../database/db.sqlite"
+    db_path = str(project_path.joinpath('database/db.sqlite'))
+    SQLALCHEMY_DATABASE_URI : typing.Optional[str] = f"sqlite:///{db_path}"
     # override SQLALCHEMY_DATABASE_URI here as required
 
     app_logger.debug(f'config.py - SQLALCHEMY_DATABASE_URI: {SQLALCHEMY_DATABASE_URI}')
@@ -101,34 +100,41 @@ class Config:
         SQLALCHEMY_DATABASE_URI = os.getenv('SQLALCHEMY_DATABASE_URI')
         app_logger.debug(f'.. overridden from env variable: {SQLALCHEMY_DATABASE_URI}')
 
-    SECURITY_ENABLED = False  # you must also: ApiLogicServer add-db --db_url=auth --bind_key=authentication
-    SECURITY_PROVIDER = None
+    # KEYCLOAK Args
+    # als add-auth --provider-type=keycloak --db-url=localhost
+    kc_base = os.getenv('KEYCLOAK_BASE','https://localhost:8080')
+    KEYCLOAK_REALM =  os.getenv('KEYCLOAK_REALM','kcals')
+    KEYCLOAK_BASE = os.getenv('KEYCLOAK_BASE',f'{kc_base}')
+    KEYCLOAK_BASE_URL = os.getenv('KEYCLOAK_BASE_URL',f'{kc_base}/realms/{KEYCLOAK_REALM}')
+    KEYCLOAK_CLIENT_ID = os.getenv('KEYCLOAK_CLIENT_ID','alsclient')
+
+    SECURITY_ENABLED = os.getenv("SECURITY_ENABLED", False)
+    SECURITY_PROVIDER =  os.getenv('SECURITY_PROVIDER', None)  # type: ignore # type: str
     if os.getenv('SECURITY_ENABLED'):  # e.g. export SECURITY_ENABLED=true
-        security_export = os.getenv('SECURITY_ENABLED')  # type: ignore # type: str
-        security_export = security_export.lower()  # type: ignore
-        if security_export in ["false", "no"]:  # NO SEC
-            SECURITY_ENABLED = False
-        else:
-            SECURITY_ENABLED = True
-        app_logger.debug(f'Security .. overridden from env variable: {SECURITY_ENABLED}')
+        security_export = os.getenv('SECURITY_ENABLED','false').lower().strip()  # type: ignore # type: str
+        SECURITY_ENABLED = security_export not in ["false", "no"]  # NO SEC
+        app_logger.debug(f'Security .. overridden from env variable SECURITY_ENABLED: {SECURITY_ENABLED}')
     if SECURITY_ENABLED:
-        from security.authentication_provider.sql.auth_provider import Authentication_Provider
-        SECURITY_PROVIDER = Authentication_Provider
-        app_logger.debug(f'config.py - security enabled')
-    else:
-        app_logger.info(f'config.py - security disabled')
+        from security.authentication_provider.sql.auth_provider import Authentication_Provider as SQL_Authentication_Provider
+        from security.authentication_provider.keycloak.auth_provider import Authentication_Provider as KC_Authentication_Provider
+        # typically, authentication_provider is [ keycloak | sql ]
+        SECURITY_PROVIDER = KC_Authentication_Provider if "keycloak" in str(SECURITY_PROVIDER).lower() else SQL_Authentication_Provider
+    app_logger.info(f'config.py - security enabled: {SECURITY_ENABLED} using SECURITY_PROVIDER: {str(SECURITY_PROVIDER)}\n')
 
     # Begin Multi-Database URLs (from ApiLogicServer add-db...)
-
-
-    SQLALCHEMY_DATABASE_URI_AUTHENTICATION = 'sqlite:///../database/authentication_db.sqlite'
+    auth_db_path = str(project_path.joinpath('database/authentication_db.sqlite'))
+    SQLALCHEMY_DATABASE_URI_AUTHENTICATION = f'sqlite:///{auth_db_path}'
     app_logger.info(f'config.py - SQLALCHEMY_DATABASE_URI_AUTHENTICATION: {SQLALCHEMY_DATABASE_URI_AUTHENTICATION}\n')
 
-    # as desired, use env variable: export SQLALCHEMY_DATABASE_URI='sqlite:////Users/val/dev/servers/docker_api_logic_project/database/db.sqliteXX'
     if os.getenv('SQLALCHEMY_DATABASE_URI_AUTHENTICATION'):
         SQLALCHEMY_DATABASE_URI_AUTHENTICATION = os.getenv('SQLALCHEMY_DATABASE_URI_AUTHENTICATION')  # type: ignore # type: str
         app_logger.debug(f'.. overridden from env variable: SQLALCHEMY_DATABASE_URI_AUTHENTICATION')
 
+    # Single Page App (SPA) Landing Page Database
+    landing_db_path = project_path.joinpath('database/db_spa.sqlite')
+    SQLALCHEMY_DATABASE_URI_LANDING = f'sqlite:///{landing_db_path}'
+    if landing_db_path.exists():
+        app_logger.info(f'config.py - SQLALCHEMY_DATABASE_URI_LANDING: {SQLALCHEMY_DATABASE_URI_LANDING}\n')
 
     # End Multi-Database URLs (from ApiLogicServer add-db...)
 
@@ -136,10 +142,31 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     PROPAGATE_EXCEPTIONS = False
 
-    KAFKA_PRODUCER = '{"bootstrap.servers": "localhost:9092"}'  #  , "client.id": "aaa.b.c.d"}'
-    KAFKA_PRODUCER = None  # comment out to enable Kafka producer
-    KAFKA_CONSUMER = '{"bootstrap.servers": "localhost:9092", "group.id": "als-default-group1", "auto.offset.reset":"smallest"}'
-    # KAFKA_CONSUMER = None  # comment out to enable Kafka consumer
+    # N8N Webhook Args (for testing)
+    # see https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.webhook/
+    wh_scheme = "http"
+    wh_server = "localhost"  # or cloud.n8n.io...
+    wh_port = 5678
+    wh_endpoint = "webhook-test"  # This comes from the WebHook node in n8n
+    wh_path = "002fa0e8-f7aa-4e04-b4e3-e81aa29c6e69"  # This comes from the WebHook node in n8n
+    wh_token = "YWRtaW46cA=="  # base64 encoded username:password (e.g. admin:password)
+    N8N_PRODUCER = {"authorization": f"Basic {wh_token}", "n8n_url": f'"{wh_scheme}://{wh_server}:{wh_port}/{wh_endpoint}/{wh_path}"'}
+    N8N_PRODUCER = None  # comment out to enable N8N producer
+    # See integration/n8n/n8n_readme.md for more details
+
+    KAFKA_PRODUCER = None
+    KAFKA_CONSUMER = None
+    KAFKA_CONSUMER_GROUP = None
+    KAFKA_SERVER = None
+    KAFKA_SERVER = os.getenv('KAFKA_SERVER', None)  # 'localhost:9092' if running locally
+    if KAFKA_SERVER is not None and KAFKA_SERVER != "None" and KAFKA_SERVER != "":
+        app_logger.info(f'config.py - KAFKA_SERVER: {KAFKA_SERVER}')
+        KAFKA_PRODUCER = os.getenv('KAFKA_PRODUCER', {"bootstrap.servers": f"{KAFKA_SERVER}"})
+        KAFKA_CONSUMER_GROUP = os.getenv('KAFKA_CONSUMER_GROUP')
+        if KAFKA_CONSUMER_GROUP is not None:
+            KAFKA_CONSUMER = os.getenv('KAFKA_CONSUMER', {"bootstrap.servers": f"{KAFKA_SERVER}", "group.id": f"{KAFKA_CONSUMER_GROUP}", "enable.auto.commit": "false", "auto.offset.reset": "earliest"})
+    else:
+        app_logger.info(f'config.py - KAFKA_SERVER: {KAFKA_SERVER} - not set, no kafka producer/consumer')
 
     OPT_LOCKING = "optional"
     if os.getenv('OPT_LOCKING'):  # e.g. export OPT_LOCKING=required
@@ -203,6 +230,18 @@ class Args():
         self.http_scheme = Config.CREATED_HTTP_SCHEME
         self.kafka_producer = Config.KAFKA_PRODUCER
         self.kafka_consumer = Config.KAFKA_CONSUMER
+        self.kafka_consumer_group = Config.KAFKA_CONSUMER_GROUP
+        self.keycloak_base = Config.KEYCLOAK_BASE
+        self.keycloak_realm = Config.KEYCLOAK_REALM
+        self.keycloak_base_url = Config.KEYCLOAK_BASE_URL
+        self.keycloak_client_id = Config.KEYCLOAK_CLIENT_ID
+        self.wh_scheme = Config.wh_scheme
+        self.wh_server = Config.wh_server
+        self.wh_port = Config.wh_port
+        self.wh_endpoint = Config.wh_endpoint
+        self.wh_path = Config.wh_path
+        self.wh_token = Config.wh_token
+        self.n8n_producer = Config.N8N_PRODUCER
 
         self.verbose = False
         self.create_and_run = False
@@ -361,9 +400,11 @@ class Args():
     @property
     def kafka_producer(self) -> dict:
         """ kafka connect string """
-        if "KAFKA_PRODUCER" in self.flask_app.config:
-            if self.flask_app.config["KAFKA_PRODUCER"] is not None:
-                return json.loads(self.flask_app.config["KAFKA_PRODUCER"])
+        if "KAFKA_PRODUCER" in self.flask_app.config and self.flask_app.config["KAFKA_PRODUCER"] is not None:
+            value = self.flask_app.config["KAFKA_PRODUCER"]
+            if isinstance(value, dict):
+                return value
+            return json.loads(value)
         return None
     
     @kafka_producer.setter
@@ -373,14 +414,119 @@ class Args():
     @property
     def kafka_consumer(self) -> dict:
         """ kafka enable consumer """
-        if "KAFKA_CONSUMER" in self.flask_app.config:
-            if self.flask_app.config["KAFKA_CONSUMER"] is not None:
-                return json.loads(self.flask_app.config["KAFKA_CONSUMER"])
+        if "KAFKA_CONSUMER" in self.flask_app.config and self.flask_app.config["KAFKA_CONSUMER"] is not None:
+            value = self.flask_app.config["KAFKA_CONSUMER"]
+            if isinstance(value, dict):
+                return value
+            return json.loads(value)
         return None
     
     @kafka_consumer.setter
     def kafka_consumer(self, a: str):
         self.flask_app.config["KAFKA_CONSUMER"] = a
+
+    @property
+    def kafka_consumer_group(self) -> dict:
+        """ kafka consumer group """
+        if "KAFKA_CONSUMER_GROUP" in self.flask_app.config:
+            if self.flask_app.config["KAFKA_CONSUMER_GROUP"] is not None:
+                return self.flask_app.config["KAFKA_CONSUMER_GROUP"]
+        return None
+
+    @kafka_consumer_group.setter
+    def kafka_consumer_group(self, a: str):
+        self.flask_app.config["KAFKA_CONSUMER_GROUP"] = a
+
+    @property
+    def n8n_producer(self) -> dict:
+        """ n8n connect string """
+        if "N8N_PRODUCER" in self.flask_app.config:
+            if self.flask_app.config["N8N_PRODUCER"] is not None:
+                value = self.flask_app.config["N8N_PRODUCER"]
+                if isinstance(value, dict):
+                    return value
+                return json.loads(value)
+        return None
+
+    @n8n_producer.setter
+    def n8n_producer(self, a: str):
+        self.flask_app.config["N8N_PRODUCER"] = a
+
+    # WebHook Args (used by N8N producer - see n8n_producer above)
+    @property
+    def wh_scheme(self) -> str:
+        return self.flask_app.config["WH_SCHEME"]
+    @wh_scheme.setter
+    def wh_scheme(self, a: str):
+        self.flask_app.config["WH_SCHEME"] = a
+
+    @property
+    def wh_server(self) -> str:
+        return self.flask_app.config["WH_SERVER"]
+    @wh_server.setter
+    def wh_server(self, a: str):
+        self.flask_app.config["WH_SERVER"] = a
+
+    @property
+    def wh_port(self) -> str:
+        return self.flask_app.config["WH_PORT"]
+    @wh_port.setter
+    def wh_port(self, a: str):
+        self.flask_app.config["WH_PORT"] = a
+
+    @property
+    def wh_endpoint(self) -> str:
+        return self.flask_app.config["WH_ENDPOINT"]
+    @wh_endpoint.setter
+    def wh_endpoint(self, a: str):
+        self.flask_app.config["WH_ENDPOINT"] = a
+
+    @property
+    def wh_path(self) -> str:
+        return self.flask_app.config["WH_PATH"]
+    @wh_path.setter
+    def wh_path(self, a: str):
+        self.flask_app.config["WH_PATH"] = a
+
+    @property
+    def wh_token(self) -> str:
+        return self.flask_app.config["WH_TOKEN"]
+    @wh_token.setter
+    def wh_token(self, a: str):
+        self.flask_app.config["WH_TOKEN"] = a
+
+    # KEYCLOAK ARGS
+    @property
+    def keycloak_realm(self) -> str:
+        return self.flask_app.config["KEYCLOAK_REALM"]
+
+    @keycloak_realm.setter
+    def keycloak_realm(self, realm):
+        self.flask_app.config["KEYCLOAK_REALM"] = realm
+
+    @property
+    def keycloak_base(self) -> str:
+        return self.flask_app.config["KEYCLOAK_BASE"]
+
+    @keycloak_base.setter
+    def keycloak_base(self, base):
+        self.flask_app.config["KEYCLOAK_BASE"] = base
+
+    @property
+    def keycloak_base_url(self) -> str:
+        return self.flask_app.config["KEYCLOAK_BASE_URL"]
+
+    @keycloak_base_url.setter
+    def keycloak_base_url(self, base):
+        self.flask_app.config["KEYCLOAK_BASE_URL"] = base
+
+    @property
+    def keycloak_client_id(self) -> str:
+        return self.flask_app.config["KEYCLOAK_CLIENT_ID"]
+
+    @keycloak_client_id.setter
+    def keycloak_client_id(self, base):
+        self.flask_app.config["KEYCLOAK_CLIENT_ID"] = base
 
     def __str__(self) -> str:
         rtn =  f'.. flask_host: {self.flask_host}, port: {self.port}, \n'\

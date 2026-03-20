@@ -29,7 +29,7 @@ producer = None
 conf = None
 """ filled from config (KAFKA_CONNECT) """
 
-logger = logging.getLogger('integration.n8n')
+logger = logging.getLogger('integration.kafka')
 if Producer is None:
     logger.fatal("SEVERE WARNING - KAFKA NOT AVAILABLE FOR IMPORT - DISABLED")
 else:
@@ -110,7 +110,7 @@ def send_kafka_message(kafka_topic: str, kafka_key: str = None, msg: str="", jso
             root_name = logic_row.name
 
     if kafka_key is None:
-        kafka_key = get_primary_key(logic_row) 
+        kafka_key = str(get_primary_key(logic_row))
 
     log_msg = msg if msg != "" else f"Sending {root_name} to Kafka topic '{kafka_topic}'" 
 
@@ -118,11 +118,16 @@ def send_kafka_message(kafka_topic: str, kafka_key: str = None, msg: str="", jso
     log_msg = log_msg
     if producer:  # enabled in config/config.py?
         try:
-            producer.produce(value=json_string, topic="order_shipping", key=kafka_key)
+            producer.produce(value=json_string, topic=kafka_topic, key=kafka_key)
+            outstanding = producer.flush(timeout=10)  # ensure message is actually sent (not just buffered)
+            if outstanding > 0:
+                logger.error(f"kafka_producer#send_kafka_message: {outstanding} messages NOT delivered to topic '{kafka_topic}'")
+            else:
+                logger.debug(f"kafka_producer#send_kafka_message: delivered to topic '{kafka_topic}'")
             if logic_row:
                 logic_row.log(log_msg)
         except KafkaException as ke:
-            logger.error("kafka_producer#send_kafka_message error: {ke}") 
+            logger.error(f"kafka_producer#send_kafka_message error: {ke}") 
     else:
         log_msg += " [Note: **Kafka not enabled** ]"
     if logic_row is not None:

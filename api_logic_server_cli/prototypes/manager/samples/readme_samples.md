@@ -81,6 +81,14 @@ docker run --name sqlsvr-container --net dev-network -p 1433:1433 -d apilogicser
 
 <br>
 
+## Creating Projects with Copilot
+
+```
+create project allo_dept_gl from samples/prompts/allocation.prompt.md
+```
+
+<br>
+
 ## Creating Projects with GenAI
 
 ```

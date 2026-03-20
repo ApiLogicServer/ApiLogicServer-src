@@ -53,10 +53,6 @@ def kafka_consumer(safrs_api: safrs.SAFRSAPI = None):
     INTERRUPT_EVENT = Event()
 
     bus = FlaskKafka(interrupt_event=INTERRUPT_EVENT, conf=conf, safrs_api=safrs_api)
-    
-    bus.run()  # Kafka consumption, threading, handler annotations
-
-    logger.debug(f'Kafka Listener thread activated {bus}')
 
     '''   Your Code Goes Here
     
@@ -64,6 +60,13 @@ def kafka_consumer(safrs_api: safrs.SAFRSAPI = None):
 
     @bus.handle('order_shipping')
     def order_shipping(msg: object, safrs_api: safrs.SAFRSAPI):
+        ...
 
+    NOTE: bus.run() MUST be called after all @bus.handle() decorators are defined,
+    so that handlers are registered before the Kafka thread starts.
     '''
+
+    bus.run()  # Kafka consumption, threading, handler annotations — MUST be after handler decorators
+
+    logger.debug(f'Kafka Listener thread activated {bus}')
 
