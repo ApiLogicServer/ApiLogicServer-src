@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "16.03.06"  # last public release: 16.03.05
+__version__ = "16.03.07"  # last public release: 16.03.05
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t03/21/2026 - 16.03.06  LB with allow_event_nesting, Kafka integration, demo cleanup  \n"\
+    "\t03/21/2026 - 16.03.07  LB with allow_event_nesting, Kafka integration, demo cleanup  \n"\
     "\t03/12/2026 - 16.03.02  NL Allocation Demo (Dept->GL), LB/SQLAlchemy version  \n"\
     "\t03/08/2026 - 16.02.06  Subsystem dependencies ce fix with working storage attrs, LB parser \n"\
     "\t03/03/2026 - 16.02.03: customs_demo -> Manager, many basic_demo ghost fixes, readme, sample fix \n"\

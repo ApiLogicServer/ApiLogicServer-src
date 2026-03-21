@@ -84,7 +84,11 @@ docker run --name sqlsvr-container --net dev-network -p 1433:1433 -d apilogicser
 ## Creating Projects with Copilot
 
 ```
-create project allo_dept_gl from samples/prompts/allocation.prompt.md
+create demo_allo_dept_gl from samples/prompts/allocation.prompt
+
+create project customs_cbsa from samples/prompts/customs_cbsa.prompt.md
+
+create project customs_cn_25_28 from samples/prompts/customs_cn_25_28.prompt
 ```
 
 <br>
