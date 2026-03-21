@@ -39,6 +39,12 @@ Would be good if GenAI was same as BD after add-cust (ie, has MCP).
 Manager - put basic_demo readme in manager readme>
 * Manager readme is processed for tl;dr -- Automation: Instant API, Admin App (enable UI dev, agile collaboration)
 
+GenAI-Logic (ApiLogicServer) DX:
+
+1. `als start` the manager
+2. Follow directions (in table) to create a demo project
+3. demo projects have their specific readme's - see create_readme
+
 WebGenAI DX:
 
 0. Convention: click the Blue Button

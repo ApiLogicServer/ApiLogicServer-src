@@ -340,7 +340,8 @@ def run_command(cmd: str, msg: str = "", new_line: bool=False,
         if 'mssql' in cmd_to_run:
             debug_string = 'nice breakpoint'
         # result_b = subprocess.run(cmd, cwd=cwd, shell=True, stderr=subprocess.STDOUT)
-        result = subprocess.run(cmd_to_run, cwd=cwd, shell=True, capture_output=True)
+        cmd_timeout = 120 if 'mssql' in cmd_to_run else None
+        result = subprocess.run(cmd_to_run, cwd=cwd, shell=True, capture_output=True, timeout=cmd_timeout)
         if show_output:
             print_byte_string(f'{msg} Output:', result.stdout)
         special_message = msg
@@ -355,6 +356,10 @@ def run_command(cmd: str, msg: str = "", new_line: bool=False,
                 print_byte_string("\n\n==> run_command Console Log:", result.stdout)
                 print_byte_string("\n\n==> Error Log:", result.stderr)
                 raise ValueError("Traceback detected")
+    except subprocess.TimeoutExpired:
+        print(f'\n\n*** Command timed out after {cmd_timeout}s on {cmd}')
+        print(f'    Often caused by docker DBs not running - check SQL Server container is up')
+        raise ValueError(f"Command timed out (>{cmd_timeout}s) - is SQL Server docker container running?")
     except Exception as err:
         print(f'\n\n*** Failed {err} on {cmd}')
         tbe = traceback.TracebackException.from_exception(err)
@@ -1606,23 +1611,79 @@ if Config.do_docker_mysql:
     run_test("docker_mysql", "Docker MySQL ClassicModels test", test_docker_mysql)
     
 if Config.do_docker_sqlserver:  # CAUTION: see comments below
-    def test_docker_sqlserver():
-        command = f"{set_venv} && ApiLogicServer create --{project_name}=tests/TVF --{extended_builder}=$ --{db_url}=mssql+pyodbc://sa:Posey3861@{db_ip}:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no"
-        result_docker_sqlserver = run_command(
-            command,
-            cwd=install_api_logic_server_path,
-            msg=f'\nCreate SqlServer TVF at: {str(install_api_logic_server_path)}')
-        start_api_logic_server(project_name='TVF')
-        validate_sql_server_types()
-        stop_server(msg="TVF\n")
+    def check_sqlserver_health():
+        """Verify SQL Server is reachable and log memory stats before running SQL Server tests."""
+        import subprocess as _sp
+        print("\n\n==> SQL Server pre-flight check...")
+        try:
+            result = _sp.run(
+                ['docker', 'exec', 'sqlsvr-container',
+                 '/opt/mssql-tools18/bin/sqlcmd',
+                 '-S', 'localhost', '-U', 'sa', '-P', 'Posey3861', '-C',
+                 '-Q', "SELECT name, value_in_use FROM sys.configurations WHERE name = 'max server memory (MB)'"],
+                capture_output=True, timeout=15)
+            if result.returncode != 0:
+                err = result.stderr.decode('utf-8', errors='replace')
+                raise RuntimeError(f"SQL Server pre-flight failed (rc={result.returncode}): {err}")
+            out = result.stdout.decode('utf-8', errors='replace')
+            # Extract memory value for display
+            for line in out.splitlines():
+                if 'max server memory' in line or 'value_in_use' in line or line.strip().lstrip('-'):
+                    print(f"   {line}")
+        except _sp.TimeoutExpired:
+            raise RuntimeError("SQL Server pre-flight timed out (15s) - container may be down or OOM")
+        # Also show container live memory usage
+        try:
+            stats = _sp.run(['docker', 'stats', 'sqlsvr-container', '--no-stream', '--format',
+                             'MEM: {{.MemUsage}} / CPU: {{.CPUPerc}}'],
+                            capture_output=True, timeout=10)
+            print(f"   Docker stats: {stats.stdout.decode('utf-8', errors='replace').strip()}")
+        except Exception:
+            pass
+        print("==> SQL Server pre-flight OK\n")
 
-        command = f"{set_venv} && ApiLogicServer create --{project_name}=tests/sqlserver --{db_url}=mssql+pyodbc://sa:Posey3861@{db_ip}:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no"
-        result_docker_sqlserver = run_command(
-            command,
-            cwd=install_api_logic_server_path,
-            msg=f'\nCreate SqlServer NORTHWND at: {str(install_api_logic_server_path)}')
-        start_api_logic_server(project_name='sqlserver')
-        stop_server(msg="sqlserver\n")
+    def dump_sqlserver_docker_logs():
+        """Print recent SQL Server container logs - useful when a test fails."""
+        import subprocess as _sp
+        print("\n==> Recent SQL Server docker logs (errors only):")
+        try:
+            result = _sp.run(
+                ['docker', 'logs', 'sqlsvr-container', '--since', '10m'],
+                capture_output=True, timeout=10)
+            log_text = result.stderr.decode('utf-8', errors='replace')
+            for line in log_text.splitlines():
+                if any(k in line for k in ('Error', 'error', '701', 'OOM', 'memory', 'Warning')):
+                    print(f"   {line}")
+        except Exception as ex:
+            print(f"   (could not retrieve docker logs: {ex})")
+        print()
+
+    def test_docker_sqlserver():
+        check_sqlserver_health()
+        try:
+            command = f"{set_venv} && ApiLogicServer create --{project_name}=tests/TVF --{extended_builder}=$ --{db_url}=mssql+pyodbc://sa:Posey3861@{db_ip}:1433/SampleDB?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no"
+            result_docker_sqlserver = run_command(
+                command,
+                cwd=install_api_logic_server_path,
+                msg=f'\nCreate SqlServer TVF at: {str(install_api_logic_server_path)}')
+            start_api_logic_server(project_name='TVF')
+            validate_sql_server_types()
+            stop_server(msg="TVF\n")
+        except Exception:
+            dump_sqlserver_docker_logs()
+            raise
+
+        try:
+            command = f"{set_venv} && ApiLogicServer create --{project_name}=tests/sqlserver --{db_url}=mssql+pyodbc://sa:Posey3861@{db_ip}:1433/NORTHWND?driver=ODBC+Driver+18+for+SQL+Server&trusted_connection=no&Encrypt=no"
+            result_docker_sqlserver = run_command(
+                command,
+                cwd=install_api_logic_server_path,
+                msg=f'\nCreate SqlServer NORTHWND at: {str(install_api_logic_server_path)}')
+            start_api_logic_server(project_name='sqlserver')
+            stop_server(msg="sqlserver\n")
+        except Exception:
+            dump_sqlserver_docker_logs()
+            raise
     
     run_test("docker_sqlserver", "Docker SQL Server TVF and NORTHWND tests", test_docker_sqlserver)
 

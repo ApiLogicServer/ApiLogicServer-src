@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "16.03.04"  # last public release: 16.02.05
+__version__ = "16.03.05"  # last public release: 16.02.05
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t03/19/2026 - 16.03.04  LB with allow_event_nesting, Kafka integration  \n"\
+    "\t03/20/2026 - 16.03.05  LB with allow_event_nesting, Kafka integration, demo cleanup  \n"\
     "\t03/12/2026 - 16.03.02  NL Allocation Demo (Dept->GL), LB/SQLAlchemy version  \n"\
     "\t03/08/2026 - 16.02.06  Subsystem dependencies ce fix with working storage attrs, LB parser \n"\
     "\t03/03/2026 - 16.02.03: customs_demo -> Manager, many basic_demo ghost fixes, readme, sample fix \n"\
@@ -309,10 +309,7 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
     """
 
     import tempfile
-    import sample_mgr.basic_demo_setup as basic_demo_setup
-    import sample_mgr.nw_setup as nw_setup
-    import sample_mgr.customs_setup as customs_demo_setup
-    import sample_mgr.allo_dept_gl_setup as allo_dept_gl_setup
+    import sample_mgr.create_readme as create_readme
     cloned_from = project.from_git
     tmpdirname = ""
     with tempfile.TemporaryDirectory() as tmpdirname:
@@ -380,8 +377,6 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
             nw_dir = (Path(api_logic_server_dir_str)).\
                 joinpath('prototypes/nw_no_cust')
             recursive_overwrite(nw_dir, project.project_directory)
-            nw_setup.nw_setup(project=project, 
-                              api_logic_server_dir_str=api_logic_server_dir_str)
 
 
         if project.nw_db_status in ["nw", "nw+", "nw-"]:
@@ -422,19 +417,11 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
                 create_utils.copy_md(project = project, from_doc_file = "Sample-Basic-Demo-Vibe.md", to_project_file="readme_vibe.md")
                 create_utils.copy_md(project = project, from_doc_file = "Integration-MCP-AI-Example.md", to_project_file="readme_ai_mcp.md")
             else:
-                basic_demo_setup.basic_demo_setup(project=project, 
-                                                  api_logic_server_dir_str=api_logic_server_dir_str)
+                pass
+                # create_readme.create_readme(project=project, api_logic_server_dir_str=api_logic_server_dir_str)
+                # basic_demo_setup.basic_demo_setup(project=project, api_logic_server_dir_str=api_logic_server_dir_str)
 
-
-        if project.project_name_last_node.startswith("customs_demo"):
-            log.debug(".. ..Copy in customs_demo: readme")
-            customs_demo_setup.customs_setup(project=project, 
-                              api_logic_server_dir_str=api_logic_server_dir_str)
-
-        if project.project_name_last_node.startswith("allo_dept_gl"):
-            log.debug(".. ..Copy in allo_dept_gl: readme")
-            allo_dept_gl_setup.allo_dept_gl_setup(project=project, 
-                              api_logic_server_dir_str=api_logic_server_dir_str)
+        create_readme.create_readme(project=project, api_logic_server_dir_str=api_logic_server_dir_str)
 
         if project.db_url == "mysql+pymysql://root:p@localhost:3306/classicmodels":
             log.debug(".. ..Copy in classicmodels customizations")
