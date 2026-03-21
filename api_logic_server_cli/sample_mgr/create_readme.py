@@ -54,6 +54,7 @@ def read_mgr_readme(project: Project) -> list[tuple[str, str]]:
         if in_front_matter and ':' in stripped and 'demo' in stripped:
             key, _, value = stripped.partition(':')
             result.append((key.strip(), value.strip()))
+            log.debug(f".. .. ..Parsed front-matter: '{key.strip()}' -> '{value.strip()}'")
     return result
 
 
@@ -74,15 +75,22 @@ def create_readme(project: Project, api_logic_server_dir_str: str):
     """
     log.debug(f".. ..Copy in readme for {project.project_name_last_node}")
     demo_readme_list = read_mgr_readme(project=project)
+    
+    # Sort by demo_name length descending - check more specific names first
+    # e.g., "basic_demo_mcp" before "basic_demo" to avoid incorrect startswith() matches
+    demo_readme_list = sorted(demo_readme_list, key=lambda x: len(x[0]), reverse=True)
+    
+    # DEBUG: Show what we're checking
+    log.debug(f".. ..Checking project '{project.project_name_last_node}' against demo list: {demo_readme_list}")
 
     demo_created = False
     for demo_name, demo_readme in demo_readme_list:
         if project.project_name_last_node.startswith(demo_name): 
             os.rename(project.project_directory_path / 'readme.md', project.project_directory_path / 'readme_standard.md')
-            create_utils.copy_md(project = project, from_doc_file = demo_readme, to_project_file = "readme.md")
+            create_utils.copy_md(project = project, from_doc_file = f"{demo_readme}.md", to_project_file = "readme.md")
             demo_created = True
-            # print(f".. ..Project name {project.project_name_last_node} matched {demo_name}, created {demo_readme}")
+            log.debug(f".. ..Project name {project.project_name_last_node} matched {demo_name}, created {demo_readme}")
             break
     if not demo_created:
         pass
-        # print(f".. ..No matching demo readme found for {project.project_name_last_node}\ndemo_readme_list={demo_readme_list}")
+        log.debug(f".. ..No matching demo readme found for {project.project_name_last_node}\ndemo_readme_list={demo_readme_list}")
