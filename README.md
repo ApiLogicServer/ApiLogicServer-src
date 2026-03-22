@@ -4,7 +4,7 @@
 [![Latest Version](https://img.shields.io/pypi/v/apilogicserver.svg)](https://pypi.python.org/pypi/apilogicserver/)
 [![Supported Python versions](https://img.shields.io/pypi/pyversions/apilogicserver.svg)](https://pypi.python.org/pypi/apilogicserver/)
 
-**Create instant microservices from your database or natural language prompt** - working API + Admin App + Logic in 5 seconds, with 40X code reduction through declarative rules.
+**Create instant microservices from your database or natural language prompt** - working API + Admin App + Logic in 5 seconds, with 40X code reduction through declarative business rules.
 
 Create **instant microservices** (MCP-enabled API + Admin App + Business Logic) from your database or a natural language prompt:
 
@@ -54,7 +54,7 @@ python api_logic_server_run.py
 **Built on 40+ years of proven technology** (Wang PACE → Versata → API Logic Server):
 - **6,000+ production deployments** validated the declarative approach
 - **Fortune 500 companies** relied on this architecture for mission-critical systems
-- Now **open source** and **modernized** for cloud-native Python/React stack
+- Now **free to use** and **modernized** for cloud-native Python/React stack
 
 ### The Problem It Solves
 
@@ -109,7 +109,7 @@ A: Unlike pure low-code platforms, API Logic Server generates **standard Python 
 
 **Q: Isn't this just vendor lock-in?**
 
-A: It's **free and open source**. The declarative rules sit on top of standard (readable, version-controlled) Python — you can always drop down to procedural code. If you ever need to migrate away, you can either keep using the rules engine (it's just a library) or replace declarative rules with equivalent procedural code using standard SQLAlchemy events.
+A: It's **free to use** (Apache 2.0 + Commons Clause — free for internal use, not for resale). The declarative rules sit on top of standard (readable, version-controlled) Python — you can always drop down to procedural code. If you ever need to migrate away, you can either keep using the rules engine (it's just a library) or replace declarative rules with equivalent procedural code using standard SQLAlchemy events.
 
 **Q: Can I customize the generated app?**
 
