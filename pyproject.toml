@@ -103,7 +103,7 @@ requires-python = ">=3.10"
 # zip_safe=False
 # platforms="any"
 readme = "README.md"
-license = "BSD-3-Clause"
+license = "Apache-2.0 WITH Commons-Clause"
 classifiers=[
 "Development Status :: 5 - Production/Stable",
 "Environment :: Web Environment",
