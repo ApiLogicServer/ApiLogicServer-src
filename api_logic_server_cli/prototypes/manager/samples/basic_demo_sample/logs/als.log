@@ -1,0 +1,252 @@
+
+API Logic Project Server Setup (basic_demo_sample) Starting with CLI args: 
+.. api_logic_server_run.py, --flask_host=localhost, --port=5656, --swagger_port=5656, --swagger_host=localhost, --verbose=False
+
+Created August 03, 2024 09:34:01 at /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/basic_demo_sample
+
+Data Model Loaded, customizing...
+..discovered models: []
+LogicBank Activation - declare_logic.py
+..discovered logic: ['use_case.py', 'mcp_client_executor_request.py', 'app_integration.py', 'check_credit.py']
+
+The following rules have been loaded
+Rule Bank[0x10909e7b0] (loaded 2026-03-21 16:20:38.091526)
+Mapped Class[SysMcp] rules:
+  RowEvent SysMcp.mcp_client_executor_event() 
+Mapped Class[Order] rules:
+  RowEvent Order.send_row_to_kafka() 
+  Derive <class 'database.models.Order'>.amount_total as Sum(Item.amount Where  - None)
+  RowEvent Order.send_order_to_shipping() 
+Mapped Class[Customer] rules:
+  Constraint Function: None 
+  Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x10b26e840>)
+Mapped Class[Item] rules:
+  Derive <class 'database.models.Item'>.amount as Formula (-1): Rule.formula(derive=models.Item.amount, as_expres [...]
+  Derive <class 'database.models.Item'>.unit_price as Copy(product.unit_price)
+
+The following attributes have been referenced
+
+..Order.amount_total: aggregate derivation
+..Item.amount: sum derived from
+..Customer.balance: constraint
+..Customer.credit_limit: constraint
+..Customer.balance: aggregate derivation
+..Order.date_shipped: aggregate where clause
+..Order.amount_total: sum derived from
+..Item.quantity: - formula
+..Item.unit_price: - formula
+..Item.unit_price: parent copy derivation
+..Product.unit_price: parent copy from
+
+The following rules have been activated
+Rule Bank[0x10909e7b0] (loaded 2026-03-21 16:20:38.091526)
+Mapped Class[SysMcp] rules:
+  RowEvent SysMcp.mcp_client_executor_event() 
+Mapped Class[Order] rules:
+  RowEvent Order.send_row_to_kafka() 
+  Derive <class 'database.models.Order'>.amount_total as Sum(Item.amount Where  - None)
+  RowEvent Order.send_order_to_shipping() 
+Mapped Class[Customer] rules:
+  Constraint Function: None 
+  Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x10b26e840>)
+Mapped Class[Item] rules:
+  Derive <class 'database.models.Item'>.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]
+  Derive <class 'database.models.Item'>.unit_price as Copy(product.unit_price)
+Logic Bank 1.31.00 - 13 rules loaded
+Exposing /Customer
+Exposing /Item
+Exposing /Order
+Exposing /Product
+Exposing /SysEmail
+Declare   API - api/expose_api_models, endpoint for each table on localhost:5656, customizing...
+Exposing /SysMcp
+..discovered services: ['ontimize_api.py', 'system.py', 'mcp_expose_api_models.py', 'order_b2b_service.py', 'mcp_discovery.py', 'new_service.py', 'newer_service.py']
+Kafka Consumer not activated
+
+API Logic Project loaded (not WSGI), version: 15.00.65
+.. startup message: normal start
+ (running locally at flask_host: localhost)
+
+API Logic Project (name: basic_demo_sample) starting:
+..Explore data and API at http_scheme://swagger_host:port http://localhost:5656   *
+.... with flask_host: localhost
+.... and  swagger_port: 5656
+
+Alert: These following are **Critical** to unlocking value for project: basic_demo_sample:
+.. see logic.declare_logic.py       -- 
+.. see security.declare_security.py -- ALERT:  *** Security Not Enabled ***
+
+
+*************************************************************************
+*   Startup Instructions: Open your Browser at: http://localhost:5656   *
+*************************************************************************
+
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://localhost:5656
+[33mPress CTRL+C to quit[0m
+ * Restarting with stat
+
+API Logic Project Server Setup (basic_demo_sample) Starting with CLI args: 
+.. api_logic_server_run.py, --flask_host=localhost, --port=5656, --swagger_port=5656, --swagger_host=localhost, --verbose=False
+
+Created August 03, 2024 09:34:01 at /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/basic_demo_sample
+
+Data Model Loaded, customizing...
+..discovered models: []
+LogicBank Activation - declare_logic.py
+..discovered logic: ['use_case.py', 'mcp_client_executor_request.py', 'app_integration.py', 'check_credit.py']
+
+The following rules have been loaded
+Rule Bank[0x10da3c1a0] (loaded 2026-03-21 16:20:39.280031)
+Mapped Class[SysMcp] rules:
+  RowEvent SysMcp.mcp_client_executor_event() 
+Mapped Class[Order] rules:
+  RowEvent Order.send_row_to_kafka() 
+  Derive <class 'database.models.Order'>.amount_total as Sum(Item.amount Where  - None)
+  RowEvent Order.send_order_to_shipping() 
+Mapped Class[Customer] rules:
+  Constraint Function: None 
+  Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x10fc59580>)
+Mapped Class[Item] rules:
+  Derive <class 'database.models.Item'>.amount as Formula (-1): Rule.formula(derive=models.Item.amount, as_expres [...]
+  Derive <class 'database.models.Item'>.unit_price as Copy(product.unit_price)
+
+The following attributes have been referenced
+
+..Order.amount_total: aggregate derivation
+..Item.amount: sum derived from
+..Customer.balance: constraint
+..Customer.credit_limit: constraint
+..Customer.balance: aggregate derivation
+..Order.date_shipped: aggregate where clause
+..Order.amount_total: sum derived from
+..Item.quantity: - formula
+..Item.unit_price: - formula
+..Item.unit_price: parent copy derivation
+..Product.unit_price: parent copy from
+
+The following rules have been activated
+Rule Bank[0x10da3c1a0] (loaded 2026-03-21 16:20:39.280031)
+Mapped Class[SysMcp] rules:
+  RowEvent SysMcp.mcp_client_executor_event() 
+Mapped Class[Order] rules:
+  RowEvent Order.send_row_to_kafka() 
+  Derive <class 'database.models.Order'>.amount_total as Sum(Item.amount Where  - None)
+  RowEvent Order.send_order_to_shipping() 
+Mapped Class[Customer] rules:
+  Constraint Function: None 
+  Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x10fc59580>)
+Mapped Class[Item] rules:
+  Derive <class 'database.models.Item'>.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]
+  Derive <class 'database.models.Item'>.unit_price as Copy(product.unit_price)
+Logic Bank 1.31.00 - 13 rules loaded
+Exposing /Customer
+Exposing /Item
+Exposing /Order
+Exposing /Product
+Exposing /SysEmail
+Declare   API - api/expose_api_models, endpoint for each table on localhost:5656, customizing...
+Exposing /SysMcp
+..discovered services: ['ontimize_api.py', 'system.py', 'mcp_expose_api_models.py', 'order_b2b_service.py', 'mcp_discovery.py', 'new_service.py', 'newer_service.py']
+Kafka Consumer not activated
+
+API Logic Project loaded (not WSGI), version: 15.00.65
+.. startup message: normal start
+ (running locally at flask_host: localhost)
+
+API Logic Project (name: basic_demo_sample) starting:
+..Explore data and API at http_scheme://swagger_host:port http://localhost:5656   *
+.... with flask_host: localhost
+.... and  swagger_port: 5656
+
+Alert: These following are **Critical** to unlocking value for project: basic_demo_sample:
+.. see logic.declare_logic.py       -- 
+.. see security.declare_security.py -- ALERT:  *** Security Not Enabled ***
+
+
+*************************************************************************
+*   Startup Instructions: Open your Browser at: http://localhost:5656   *
+*************************************************************************
+
+ * Debugger is active!
+ * Debugger PIN: 181-904-377
+API Logic Server - Start Default App - redirect /admin-app/index.html
+127.0.0.1 - - [21/Mar/2026 16:20:44] "[32mGET / HTTP/1.1[0m" 302 -
+127.0.0.1 - - [21/Mar/2026 16:20:44] "GET /admin-app/index.html HTTP/1.1" 200 -
+127.0.0.1 - - [21/Mar/2026 16:20:44] "GET /admin-app/manifest.json HTTP/1.1" 200 -
+127.0.0.1 - - [21/Mar/2026 16:20:45] "GET /admin-app/static/css/main.a6dcf785.css HTTP/1.1" 200 -
+127.0.0.1 - - [21/Mar/2026 16:20:45] "GET /admin-app/static/js/main.671002cd.js HTTP/1.1" 200 -
+127.0.0.1 - - [21/Mar/2026 16:20:45] "GET /ui/admin/admin.yaml?v=1774135245396 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Mar/2026 16:20:45] "GET /admin-app/index.html HTTP/1.1" 200 -
+127.0.0.1 - - [21/Mar/2026 16:20:45] "GET /admin-app/manifest.json HTTP/1.1" 200 -
+127.0.0.1 - - [21/Mar/2026 16:20:45] "GET /admin-app/manifest.json HTTP/1.1" 200 -
+127.0.0.1 - - [21/Mar/2026 16:20:45] "[36mGET /admin-app/static/js/main.671002cd.js HTTP/1.1[0m" 304 -
+127.0.0.1 - - [21/Mar/2026 16:20:45] "[36mGET /admin-app/static/css/main.a6dcf785.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [21/Mar/2026 16:20:45] "GET /ui/admin/admin.yaml?v=1774135245700 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Mar/2026 16:20:45] "GET /admin-app/home.js HTTP/1.1" 200 -
+127.0.0.1 - - [21/Mar/2026 16:20:49] "GET /api/Customer?include=&page[limit]=25&page[number]=1&page[offset]=0&page[size]=25&sort=name HTTP/1.1" 200 -
+127.0.0.1 - - [21/Mar/2026 16:20:49] "GET /api/Customer?include=&page[limit]=25&page[number]=1&page[offset]=0&page[size]=25&sort=-id HTTP/1.1" 200 -
+127.0.0.1 - - [21/Mar/2026 16:20:51] "GET /api/Customer/1?include=OrderList,SysEmailList,OrderList,SysEmailList&page[limit]=2 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Mar/2026 16:20:51] "GET /api/Customer/1?include=OrderList,SysEmailList,OrderList,SysEmailList&page[limit]=2 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Mar/2026 16:20:51] "GET /api/Order?filter[customer_id]=1&page[limit]=25&page[offset]=0&sort=-id&include=ItemList,customer,ItemList,customer HTTP/1.1" 200 -
+127.0.0.1 - - [21/Mar/2026 16:20:51] "GET /api/Customer/1?include=OrderList,SysEmailList,OrderList,SysEmailList&page[limit]=2 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Mar/2026 16:20:55] "GET /api/Order/7?include=ItemList,customer,ItemList,customer&page[limit]=2 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Mar/2026 16:20:55] "GET /api/Customer/1?include=OrderList,SysEmailList,OrderList,SysEmailList&page[limit]=2 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Mar/2026 16:20:55] "GET /api/Customer/1?include=OrderList,SysEmailList,OrderList,SysEmailList&page[limit]=2 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Mar/2026 16:20:55] "GET /api/Order/7?include=ItemList,customer,ItemList,customer&page[limit]=2 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Mar/2026 16:20:55] "GET /api/Item?filter[order_id]=7&page[limit]=25&page[offset]=0&sort=-id&include=order,product,order,product HTTP/1.1" 200 -
+127.0.0.1 - - [21/Mar/2026 16:20:55] "GET /api/Customer/1?include=OrderList,SysEmailList,OrderList,SysEmailList&page[limit]=2 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Mar/2026 16:20:56] "GET /api/Product/2?include=ItemList,ItemList&page[limit]=2 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Mar/2026 16:20:56] "GET /api/Product/1?include=ItemList,ItemList&page[limit]=2 HTTP/1.1" 200 -
+127.0.0.1 - - [21/Mar/2026 16:20:59] "GET /api/Product?include=&page[limit]=25&page[number]=1&page[offset]=0&page[size]=25&sort=-id HTTP/1.1" 200 -
+127.0.0.1 - - [21/Mar/2026 16:20:59] "GET /api/Order?include=customer,customer&page[limit]=25&page[number]=1&page[offset]=0&page[size]=25&sort=-id HTTP/1.1" 200 -
+127.0.0.1 - - [21/Mar/2026 16:20:59] "GET /api/Order?filter[id]=7&include=customer,customer&page[limit]=10&page[number]=1&page[offset]=0&page[size]=10&sort=id HTTP/1.1" 200 -
+127.0.0.1 - - [21/Mar/2026 16:20:59] "GET /api/Product?filter[id]=1&include=&page[limit]=10&page[number]=1&page[offset]=0&page[size]=10&sort=name HTTP/1.1" 200 -
+
+Logic Phase:		ROW LOGIC		(session=0x110606150) (sqlalchemy before_flush)			
+..Item[9] {Update - client} id: 9, order_id: 7, product_id: 1, quantity:  [3-->] 344444, amount: 450, unit_price: 150  row: 0x1105ebad0  session: 0x110606150  ins_upd_dlt: upd, initial: upd
+..Item[9] {Formula amount} id: 9, order_id: 7, product_id: 1, quantity:  [3-->] 344444, amount:  [450-->] 51666600, unit_price: 150  row: 0x1105ebad0  session: 0x110606150  ins_upd_dlt: upd, initial: upd
+....Order[7] {Update - Adjusting order: amount_total} id: 7, notes: RUSH order for Q4 promotion, customer_id: 1, CreatedOn: None, date_shipped: None, amount_total:  [900.0000000000-->] 51667050.0000000000  row: 0x1106944d0  session: 0x110606150  ins_upd_dlt: upd, initial: upd
+......Customer[1] {Update - Adjusting customer: balance} id: 1, name: Alice, balance:  [1890.0000000000-->] 51668040.0000000000, credit_limit: 5000.0000000000, email: alice@corp.org, email_opt_out: False  row: 0x110694dd0  session: 0x110606150  ins_upd_dlt: upd, initial: upd
+......Customer[1] {Constraint Failure: Customer balance exceeds credit limit} id: 1, name: Alice, balance:  [1890.0000000000-->] 51668040.0000000000, credit_limit: 5000.0000000000, email: alice@corp.org, email_opt_out: False  row: 0x110694dd0  session: 0x110606150  ins_upd_dlt: upd, initial: upd
+
+These Rules Fired (see Logic Phases, above, for actual order):		##
+  Customer		##
+    1. Constraint Function: None 		##
+    2. Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x10fc59580>)		##
+  Item		##
+    3. Derive <class 'database.models.Item'>.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]		##
+  Order		##
+    4. Derive <class 'database.models.Order'>.amount_total as Sum(Item.amount Where  - None)		##
+
+Traceback (most recent call last):
+  $venv/safrs/safrs_api.py @ 674, in method_wrapper                                                 	Follow link: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.13/site-packages/safrs/safrs_api.py]    result = fun(*args, **kwargs)
+  $venv/safrs/jsonapi.py @ 324, in patch                                                            	Follow link: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.13/site-packages/safrs/jsonapi.py]    instance = self._patch_instance(data, id)
+  $venv/safrs/jsonapi.py @ 360, in _patch_instance                                                  	Follow link: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.13/site-packages/safrs/jsonapi.py]    instance._s_patch(**attributes)
+  $venv/safrs/base.py @ 485, in _s_patch                                                            	Follow link: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.13/site-packages/safrs/base.py]    safrs.DB.session.commit()
+  $venv/sqlalchemy/orm/scoping.py @ 597, in commit                                                  	Follow link: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.13/site-packages/sqlalchemy/orm/scoping.py]    return self._proxied.commit()
+  $venv/sqlalchemy/orm/session.py @ 2030, in commit                                                 	Follow link: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.13/site-packages/sqlalchemy/orm/session.py]    trans.commit(_to_root=True)
+  $venv/sqlalchemy/orm/state_changes.py @ 137, in _go                                               	Follow link: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.13/site-packages/sqlalchemy/orm/state_changes.py]    ret_value = fn(self, *arg, **kw)
+  $venv/sqlalchemy/orm/session.py @ 1311, in commit                                                 	Follow link: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.13/site-packages/sqlalchemy/orm/session.py]    self._prepare_impl()
+  $venv/sqlalchemy/orm/state_changes.py @ 137, in _go                                               	Follow link: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.13/site-packages/sqlalchemy/orm/state_changes.py]    ret_value = fn(self, *arg, **kw)
+  $venv/sqlalchemy/orm/session.py @ 1286, in _prepare_impl                                          	Follow link: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.13/site-packages/sqlalchemy/orm/session.py]    self.session.flush()
+  $venv/sqlalchemy/orm/session.py @ 4331, in flush                                                  	Follow link: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.13/site-packages/sqlalchemy/orm/session.py]    self._flush(objects)
+  $venv/sqlalchemy/orm/session.py @ 4359, in _flush                                                 	Follow link: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.13/site-packages/sqlalchemy/orm/session.py]    self.dispatch.before_flush(self, flush_context, objects)
+  $venv/sqlalchemy/event/attr.py @ 387, in __call__                                                 	Follow link: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.13/site-packages/sqlalchemy/event/attr.py]    fn(*args, **kw)
+  $venv/logic_bank/exec_trans_logic/listeners.py @ 65, in before_flush                              	Follow link: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.13/site-packages/logic_bank/exec_trans_logic/listeners.py]    logic_row.update(reason="client")
+  $venv/logic_bank/exec_row_logic/logic_row.py @ 1268, in update                                    	Follow link: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.13/site-packages/logic_bank/exec_row_logic/logic_row.py]    self._adjust_parent_aggregates()  # parent chaining (sum / count adjustments)
+  $venv/logic_bank/exec_row_logic/logic_row.py @ 1188, in _adjust_parent_aggregates                 	Follow link: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.13/site-packages/logic_bank/exec_row_logic/logic_row.py]    parent_adjuster.save_altered_parents(do_not_adjust_list=do_not_adjust_list)  # iff req'd (altered only)
+  $venv/logic_bank/exec_row_logic/logic_row.py @ 1425, in save_altered_parents                      	Follow link: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.13/site-packages/logic_bank/exec_row_logic/logic_row.py]    parent_logic_row.update(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        reason="Adjusting " + self.parent_role_name + ": " + self.adjusting_attributes)
+  $venv/logic_bank/exec_row_logic/logic_row.py @ 1268, in update                                    	Follow link: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.13/site-packages/logic_bank/exec_row_logic/logic_row.py]    self._adjust_parent_aggregates()  # parent chaining (sum / count adjustments)
+  $venv/logic_bank/exec_row_logic/logic_row.py @ 1188, in _adjust_parent_aggregates                 	Follow link: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.13/site-packages/logic_bank/exec_row_logic/logic_row.py]    parent_adjuster.save_altered_parents(do_not_adjust_list=do_not_adjust_list)  # iff req'd (altered only)
+  $venv/logic_bank/exec_row_logic/logic_row.py @ 1425, in save_altered_parents                      	Follow link: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.13/site-packages/logic_bank/exec_row_logic/logic_row.py]    parent_logic_row.update(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        reason="Adjusting " + self.parent_role_name + ": " + self.adjusting_attributes)
+  $venv/logic_bank/exec_row_logic/logic_row.py @ 1269, in update                                    	Follow link: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.13/site-packages/logic_bank/exec_row_logic/logic_row.py]    self._constraints()
+  $venv/logic_bank/exec_row_logic/logic_row.py @ 792, in _constraints                               	Follow link: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.13/site-packages/logic_bank/exec_row_logic/logic_row.py]    each_constraint.execute(self)
+  $venv/logic_bank/rule_type/constraint.py @ 87, in execute                                         	Follow link: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/venv/lib/python3.13/site-packages/logic_bank/rule_type/constraint.py]    ll.constraint_event(message=msg, logic_row=logic_row, constraint=self)
+  /config/server_setup.py @ 382, in constraint_handler                                              	Follow link: /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer/samples/basic_demo_sample/config/server_setup.py]    raise ValidationErrorExt(message=message, detail=detail)
+config.server_setup.ValidationErrorExt
+127.0.0.1 - - [21/Mar/2026 16:21:05] "[31m[1mPATCH /api/Item/9 HTTP/1.1[0m" 400 -
