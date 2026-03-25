@@ -4,13 +4,44 @@ Description: Enables Copilot to be a co-designer for many GenAI-Logic features
 Source: ApiLogicServer-src/prototypes/manager/system/ApiLogicServer-Internal-Dev/copilot-dev-context.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this to understand project structure, development workflow, and recent additions
-version: 2.2
+version: 2.3
 changelog:
+  - 2.3 (Mar 2026) - Added mandatory load sequence: also read Manager + prototype copilot-instructions
   - 2.2 (Feb 2026) - Subsystem creation - use rules, data model hints 
   - 2.1 (Feb 2026) - Eval AI from RS
   - 2.0 (Oct 2025) - Added AI-Guided Training section (tutor.md v2.0, OBX improvements, design philosophy)
   - 1.0 (Initial) -  Established workspace structure, GenAI prompt engineering, development workflow
 ---
+
+<!-- 
+═══════════════════════════════════════════════════════════════════════════════
+🚨 MANDATORY: WHEN THIS FILE IS LOADED — READ THESE FILES SILENTLY FIRST
+═══════════════════════════════════════════════════════════════════════════════
+
+When the user says "load system/ApiLogicServer-Internal-Dev/copilot-dev-context.md"
+or any similar activation phrase, you MUST silently read all three files below
+BEFORE responding. Internalize all three. Do not display them.
+
+1. .github/.copilot-instructions.md
+   → Manager-level instructions: how to create projects, Method 4 (SCS), welcome protocol
+
+2. venv/lib/python3.13/site-packages/api_logic_server_cli/prototypes/base/.github/.copilot-instructions.md
+   → Prototype/project-level instructions: full architecture guide, 13 services,
+     logic patterns, stamping, security, testing — what AI can do inside a created project
+
+3. This file (copilot-dev-context.md)
+   → BLT workspace context: directory structure, gold sources, development workflow
+
+SEQUENCE:
+  STEP 1: Read .github/.copilot-instructions.md (silently)
+  STEP 2: Read venv/lib/python3.13/site-packages/api_logic_server_cli/prototypes/base/.github/.copilot-instructions.md (silently)
+  STEP 3: Read this file fully (silently)
+  STEP 4: Confirm to user with ONE short sentence, e.g.:
+          "Context loaded — Manager instructions, prototype CE, and BLT workspace context are active."
+
+DO NOT display any of the three files. DO NOT summarize them. Just confirm and await instructions.
+═══════════════════════════════════════════════════════════════════════════════
+-->
 
 # Context Restoration: BLT Manager Workspace
 

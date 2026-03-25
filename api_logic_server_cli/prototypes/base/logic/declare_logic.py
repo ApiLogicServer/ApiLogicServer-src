@@ -8,6 +8,7 @@ import database.models as models
 import api.system.opt_locking.opt_locking as opt_locking
 from security.system.authorization import Grant, Security
 from logic.load_verify_rules import load_verify_rules
+from config.config import Config
 import integration.kafka.kafka_producer as kafka_producer
 import logging
 
@@ -61,8 +62,8 @@ def declare_logic():
                 row.CreatedOn = datetime.datetime.now()
                 did_stamping = True
             if logic_row.ins_upd_dlt == "ins" and hasattr(row, "CreatedBy"):
-                row.CreatedBy = Security.current_user().id
-                #    if Config.SECURITY_ENABLED == True else 'public'
+                row.CreatedBy = Security.current_user().id \
+                    if Config.SECURITY_ENABLED == True else 'public'
                 did_stamping = True
             if logic_row.ins_upd_dlt == "upd" and hasattr(row, "UpdatedOn"):
                 row.UpdatedOn = datetime.datetime.now()
