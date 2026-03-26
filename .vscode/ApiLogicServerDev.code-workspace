@@ -92,7 +92,7 @@
 			}
 		],
 		"sqltools.useNodeRuntime": true,
-		"workbench.preferredDarkColorTheme": "Default Dark Modern",
+		"workbench.preferredDarkColorTheme": "Dark Modern",
 		"workbench.preferredLightColorTheme": "IntelliJ IDEA New UI Light",
 		"workbench.colorTheme": "GenAI-Logic Green Theme",
 		"search.exclude": {
