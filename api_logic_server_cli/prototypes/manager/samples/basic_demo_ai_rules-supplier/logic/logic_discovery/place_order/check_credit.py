@@ -1,18 +1,20 @@
 """
-Check Credit Use Case - Business Logic Rules
+    On Placing Orders, Requirement Check Credit:
 
-Natural Language Requirements:
-1. The Customer's balance is less than the credit limit
-2. The Customer's balance is the sum of the Order amount_total where date_shipped is null
-3. The Order's amount_total is the sum of the Item amount
-4. The Item amount is the quantity * unit_price
-5. The Product count suppliers is the sum of the Product Suppliers
-6. Use AI to Set Item field unit_price by finding the optimal Product Supplier
-   based on cost, lead time, and world conditions
+    1. The Customer's balance is less than the credit limit
+    2. The Customer's balance is the sum of the Order amount_total where date_shipped is null
+    3. The Order's amount_total is the sum of the Item amount
+    4. The Item amount is the quantity * unit_price
+    5. The Product count suppliers is the sum of the Product Suppliers
+    6. Use AI to Set Item field unit_price by finding the optimal Product Supplier based on cost, lead time, and world conditions
 
-version: 3.0
-date: November 25, 2025
-source: docs/training/probabilistic_logic.prompt
+    Requirement: App Integration
+
+    1. Publish the Order to Kafka topic 'order_shipping' if the date_shipped is not None
+
+version: 3.1
+date: Mar 30, 2026
+source: docs/Sample-ai-rules.md
 """
 
 from logic_bank.logic_bank import Rule
@@ -22,7 +24,7 @@ from database import models
 
 def declare_logic():
     """
-    Declarative rules for Check Credit use case.
+    Declarative Data Rules for Check Credit requirement.
     
     Combines deterministic rules (sum, formula, constraint) with AI-driven
     supplier selection for optimal pricing.
