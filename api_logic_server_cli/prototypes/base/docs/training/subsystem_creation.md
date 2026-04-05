@@ -659,6 +659,8 @@ def send_kafka_message(row: models.Order, old_row, logic_row):
 Rule.commit_row_event(on_class=models.Order, calling=send_kafka_message)
 ```
 
+> **Kafka Ingest (EAI) — use a 2-message design.** When *consuming* from Kafka (not just publishing), resist the temptation to save the raw payload and parse it in a single transaction. A failed parse mid-flush **poisons the SQLAlchemy session** — you cannot commit the blob after an exception in the same session. Instead: (1) consumer saves the raw XML/JSON blob to a `ShipmentXml`-style row and commits; (2) a `row_event` on that insert publishes to a second topic; (3) a second consumer parses and persists in its own transaction. Kafka becomes the durable commit boundary — the blob is always saved, and parse failures are fully isolated.
+
 3. **Lookups That Set Values** (early_row_event pattern):
 ```python
 def lookup_surtax_rate(row: models.CustomsEntry, old_row, logic_row):
