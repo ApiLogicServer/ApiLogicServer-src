@@ -21,6 +21,8 @@ samples and demos - simulate customizations - https://apilogicserver.github.io/D
     4. sample_ai - CoPilot, no GenAI   (w/ iteration)
     5. Tech AI - just an article, no automated customizations...
 
+typically called from dli: def add_cust(...)
+
 Note: many require: rebuild-from-database --project_name=./ --db_url=sqlite:///database/db.sqlite
 '''
 
@@ -128,8 +130,6 @@ def add_basic_demo_customizations(project: Project, do_show_messages: bool = Tru
     """ Add customizations to basic_demo (default creation)
 
     1. Deep copy prototypes/basic_demo (adds logic and security)
-
-    2. Create readme files: Sample-AI (copy_md), api/integration_defs/readme.md  TODO not done, fix cmts
 
     Args:
     """

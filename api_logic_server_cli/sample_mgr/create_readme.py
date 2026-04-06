@@ -64,14 +64,14 @@ def create_readme(project: Project, api_logic_server_dir_str: str):
     Called from main driver (api_logic_server_cli/api_logic_server) create_project_and_overlay_prototypes()<br>
 
     Manager_readme contains front-matter like this, that maps demo name to its readme:<br>
-    demo_customs: customs_readme.md<br>
-    demo_kafka: Sample-Integration.md<br>
-    demo_allo: Sample_Allo_Dept_GL_readme.md<br>
-    basic_demo_ai_rules: Sample-ai-rules.md<br>
-    basic_demo_mcp: Sample-Basic-Demo-MCP-Send-Email.md<br>
-    basic_demo_vibe: Sample-Basic-Demo-Vibe.md<br>
-    basic_demo_ai_mcp: Sample-ai-mcp.md<br>
-    basic_demo: Sample-Basic-Demo.md<br>
+    demo_customs: Customs-readme
+    demo_kafka: Sample-Integration
+    demo_allo: Sample_Allo_Dept_GL_readme
+    demo_ai_rules: Sample-ai-rules
+    demo_mcp_send: Sample-Basic-Demo-MCP-Send-Email
+    demo_vibe: Sample-Basic-Demo-Vibe
+    demo_copilot_mcp_discovery: Sample-ai-mcp
+    basic_demo: Sample-Basic-Demo
     """
     log.debug(f".. ..Copy in readme for {project.project_name_last_node}")
     demo_readme_list = read_mgr_readme(project=project)
