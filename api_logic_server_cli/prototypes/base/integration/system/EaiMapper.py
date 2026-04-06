@@ -19,7 +19,18 @@ Usage in a generated mapper (e.g. integration/XyzMapper.py):
 
 See docs/training/eai_consume.md for full pattern documentation.
 
-version: 1.0  (April 2026)
+Design note — why this file exists, and why it is not sufficient alone:
+  EXISTS:      Provides the named 3-tier contract (Tier 1/2/3), type coercion,
+               XML namespace stripping, and FK column validation — boilerplate that
+               would otherwise be reinvented (badly) in every custom mapper.
+               Its presence also guides AI generation: the CE can say "use the
+               3-tier contract" rather than leaving AI to invent an ad-hoc approach.
+  NOT ENOUGH:  Per-topic facts — parent/child model classes, child array key,
+               EXCEPTIONS dicts, TAG_ROUTING (XML), FK lookup config — are
+               domain-specific and must live in a thin XyzMapper.py per pipeline.
+               EaiMapper supplies the engine; XyzMapper supplies the config.
+
+version: 1.1  (April 2026)
 """
 
 import re

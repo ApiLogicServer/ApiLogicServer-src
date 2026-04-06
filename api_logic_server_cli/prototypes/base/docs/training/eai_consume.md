@@ -10,7 +10,7 @@ related:
   - logic_bank_patterns.md (row_event, commit_row_event)
   - logic_bank_api.md (full rule API)
 changelog:
-  - 1.0 (April 4, 2026): Initial — extracted from FedEx/CIMCorp release_elmo production project
+  - 1.0 (April 4, 2026): Initial — extracted from a production customs/logistics EAI project
 ---
 
 # EAI Consume Pattern — Kafka + XML/JSON → DB
@@ -19,9 +19,9 @@ changelog:
 🌍 REAL-WORLD EXAMPLE — Why This Matters
 =============================================================================
 
-FedEx/CIMCorp ISDC customs shipment consume (`release_elmo`):
+Production customs/logistics EAI consume (confidential client):
 - Oracle DDL, 7 tables, 130+ columns
-- CIMCorp canonical XML format, published to Kafka topic `isdc`
+- Canonical XML format, published to Kafka topic
 - Required: parse XML → persist Shipment + Piece + ShipmentParty + ShipmentCommodity rows
 
 | Approach | Elapsed | Effort |
@@ -188,10 +188,10 @@ def _publish_xyz(row: models.XyzMessage, old_row, logic_row: LogicRow):
     producer.flush(timeout=10)
 
 def declare_logic():
-    Rule.row_event(on_class=models.XyzMessage, calling=_publish_xyz)
+    Rule.after_flush_row_event(on_class=models.XyzMessage, calling=_publish_xyz)
 ```
 
-> **Why no inline parse?** The `row_event` fires inside SQLAlchemy's `before_flush`. Any new rows added to the session mid-flush will not receive a fresh LogicBank rule pass — Copy and Formula rules will not fire. Tx 2 (consumer 2 or `/consume_debug`) commits independently in a clean `before_flush`, so all rules fire correctly.
+> **Why `after_flush_row_event`, not `row_event`?** `row_event` fires during `before_flush` — before SQLite/Postgres assigns the autoincrement `id`. Publishing `key=str(row.id)` at that point sends the string `'None'`, causing Consumer 2 to crash on `int(key)`. `after_flush_row_event` fires after the flush assigns the id, so the key is always a valid integer. Additionally, any new rows added to the session mid-flush (inside `row_event`) miss the fresh LogicBank rule pass — Copy and Formula rules will not fire for those rows. Tx 2 (consumer 2 or `/consume_debug`) commits independently in a clean `before_flush`, so all rules fire correctly.
 
 ### 4. Mapper (`integration/XyzMapper.py`) — see 3-tier contract below
 
@@ -447,7 +447,13 @@ the commit happens in a fresh transaction (not inside a `row_event` `before_flus
 7. In `config/default.env`, add/uncomment `APILOGICPROJECT_KAFKA_CONSUMER` and `APILOGICPROJECT_KAFKA_PRODUCER`
 8. Run `bash test/xyz_reset.sh` — creates topics + clears log
 9. Start server
-10. Publish sample message (edit a key field to vary each run); verify DB as above
+10. Publish sample message — use `jq -c .` to compact JSON to a single line (kafka-console-producer sends one Kafka message per input line):
+    ```bash
+    jq -c . docs/sample_data/sample_xyz.json | \
+      docker exec -i broker1 /opt/kafka/bin/kafka-console-producer.sh \
+      --bootstrap-server localhost:9092 --topic xyz
+    ```
+    Edit a key field (e.g. Account) to a different valid value between runs so each run creates a distinct row. Verify DB as above.
 
 ---
 
@@ -467,8 +473,8 @@ set -e
 if [ -f logs/als.log ]; then > logs/als.log && echo "Log cleared."; fi
 
 # Delete + recreate topics so consumer offsets start fresh
-docker exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --topic xyz --delete || true
-docker exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --topic xyz_processed --delete || true
+docker exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --topic xyz --delete --if-exists || true
+docker exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --topic xyz_processed --delete --if-exists || true
 sleep 2
 docker exec broker1 /opt/kafka/bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic xyz
 docker exec broker1 /opt/kafka/bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic xyz_processed
