@@ -69,6 +69,7 @@ def create_readme(project: Project, api_logic_server_dir_str: str):
     demo_allo: Sample_Allo_Dept_GL_readme
     demo_ai_rules: Sample-ai-rules
     demo_mcp_send: Sample-Basic-Demo-MCP-Send-Email
+    demo_eai: Sample-Basic-EAI
     demo_vibe: Sample-Basic-Demo-Vibe
     demo_copilot_mcp_discovery: Sample-ai-mcp
     basic_demo: Sample-Basic-Demo
