@@ -805,11 +805,20 @@ This understanding should be reflected in two source files in `org_git/ApiLogicS
 - **Gold source:** `org_git/Docs/docs/` - NOT ApiLogicServer-src prototypes
 - **Affected:** readme_vibe.md, readme_ai_mcp.md, Tutorial.md, Sample-Integration.md, etc.
 - **Why:** Users read docs without installing; copy_md() fetches from Docs on project creation
+- **copy_md() transformations** (mkdocs → standard markdown):
+  - Relative image paths `images/foo.png` → full GitHub raw URLs
+  - `!!! pied-piper` / `!!! note` admonitions → `>` blockquotes or plain text
+  - `{:target="_blank"}` link attributes stripped
+  - Result written to project `readme.md` on project creation
+- **Source file naming:** Docs source filename = project readme source, declared in front matter `source:` field
+  - e.g., `org_git/Docs/docs/Sample-Basic-EAI.md` → `demo_eai/readme.md`
+  - e.g., `org_git/Docs/docs/Sample-Basic-Demo.md` → `basic_demo/readme.md`
+- **Editing rule:** Always edit the Docs source in **mkdocs format** — never edit the generated `readme.md` for permanent changes (it is overwritten on project creation)
 - **Workflow for README changes:**
-  1. Edit in `org_git/Docs/docs/` (e.g., Sample-Basic-Demo.md)
+  1. Edit in `org_git/Docs/docs/` (e.g., `Sample-Basic-EAI.md`) using mkdocs syntax
   2. Test locally (mkdocs serve)
   3. Commit to Docs repo
-  4. Run BLT - copy_md() will fetch updated docs
+  4. Run BLT - copy_md() will fetch updated docs and regenerate readme.md
   5. Test generated projects have correct READMEs
 
 **BLT (Build-Load-Test):**

@@ -8,7 +8,7 @@ imports each one, and calls module.register(bus) to wire up @bus.handle decorato
 
 Usage (in kafka_consumer.py — called before bus.run()):
 
-    from integration.kafka.kafka_discovery.auto_discovery import discover_topic_handlers
+    from integration.kafka.kafka_subscribe_discovery.auto_discovery import discover_topic_handlers
     discover_topic_handlers(bus)
 
 Each topic file must expose a single function:
@@ -56,9 +56,9 @@ def discover_topic_handlers(bus) -> list:
             if hasattr(module, 'register'):
                 module.register(bus)
                 discovered.append(file)
-                logger.debug(f'kafka_discovery: registered {file}')
+                logger.debug(f'kafka_subscribe_discovery: registered {file}')
             else:
-                logger.warning(f'kafka_discovery: {file} has no register(bus) function — skipped')
+                logger.warning(f'kafka_subscribe_discovery: {file} has no register(bus) function — skipped')
 
-    logger.info(f'kafka_discovery: discovered topic handlers: {discovered}')
+    logger.info(f'kafka_subscribe_discovery: discovered topic handlers: {discovered}')
     return discovered

@@ -15,7 +15,7 @@ Both functions apply the same 3-tier mapping contract:
 
 Usage in a generated mapper (e.g. integration/XyzMapper.py):
 
-    from integration.system.EaiMapper import populate_row, populate_row_from_dict
+    from integration.system.EaiSubscribeMapper import populate_row, populate_row_from_dict
 
 See docs/training/eai_consume.md for full pattern documentation.
 
@@ -28,7 +28,7 @@ Design note — why this file exists, and why it is not sufficient alone:
   NOT ENOUGH:  Per-topic facts — parent/child model classes, child array key,
                EXCEPTIONS dicts, TAG_ROUTING (XML), FK lookup config — are
                domain-specific and must live in a thin XyzMapper.py per pipeline.
-               EaiMapper supplies the engine; XyzMapper supplies the config.
+               EaiSubscribeMapper supplies the engine; XyzMapper supplies the config.
 
 version: 1.1  (April 2026)
 """

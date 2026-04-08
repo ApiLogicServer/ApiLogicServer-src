@@ -135,5 +135,45 @@ def send_kafka_message(kafka_topic: str, kafka_key: str = None, msg: str="", jso
     logger.debug(f'\n\n{log_msg}\n{json_string}')
 
 
+def publish_kafka_message(topic: str, logic_row: LogicRow, mapper=None):
+    """
+    Publish a message to a Kafka topic using the EAI publish pattern.
+
+    Args:
+        topic:      Kafka topic name
+        logic_row:  the LogicRow being processed
+        mapper:     optional publish mapper module from kafka_publish_discovery/
+                    (must expose row_to_dict(row) → dict and import EaiPublishMapper).
+                    If None, sends primary key only: {"id": 42}
+    """
+    import json
+
+    if mapper is not None:
+        payload = mapper.row_to_dict(logic_row.row)
+    else:
+        payload = get_primary_key(logic_row)
+
+    json_string = json.dumps(payload, default=str)
+    kafka_key = str(get_primary_key(logic_row))
+    log_msg = f"publish_kafka_message: topic='{topic}', key={kafka_key}"
+
+    if producer:
+        try:
+            producer.produce(value=json_string, topic=topic, key=kafka_key)
+            outstanding = producer.flush(timeout=10)
+            if outstanding > 0:
+                logger.error(f"publish_kafka_message: {outstanding} messages NOT delivered to topic '{topic}'")
+            else:
+                logger.debug(f"publish_kafka_message: delivered to topic '{topic}'")
+        except KafkaException as ke:
+            logger.error(f"publish_kafka_message error: {ke}")
+    else:
+        log_msg += " [Note: **Kafka not enabled**]"
+
+    if logic_row is not None:
+        logic_row.log(log_msg)
+    logger.debug(f'\n\n{log_msg}\n{json_string}')
+
+
 def send_row_to_kafka(row: object, old_row: object, logic_row: LogicRow, with_args: dict):
     send_kafka_message(logic_row=logic_row, kafka_topic=with_args["topic"])

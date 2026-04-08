@@ -95,18 +95,18 @@ class XyzMessage(Base):
 commits successfully (Tx 2). On parse failure Tx 2 rolls back — blob stays `False`,
 queryable for retry: `SELECT * FROM xyz_message WHERE is_processed = 0`.
 
-### 2. Topic handler file (`integration/kafka/kafka_discovery/xyz.py`)
+### 2. Topic handler file (`integration/kafka/kafka_subscribe_discovery/xyz.py`)
 
-Drop this file in `kafka_discovery/` — it is auto-discovered at server start,
+Drop this file in `kafka_subscribe_discovery/` — it is auto-discovered at server start,
 no edits to `kafka_consumer.py` required. Add a 2nd consumer by adding a 2nd file.
 
 ```python
-# integration/kafka/kafka_discovery/xyz.py
+# integration/kafka/kafka_subscribe_discovery/xyz.py
 import json
 import logging
 import safrs
 from database import models
-from integration.system.EaiMapper import resolve_lookups
+from integration.system.EaiSubscribeMapper import resolve_lookups
 
 logger = logging.getLogger('integration.kafka')
 
@@ -150,7 +150,7 @@ def process_xyz_payload(payload: str, session, blob_id: int = None):
 
 
 def register(bus):
-    """Called by kafka_discovery/auto_discovery.py before bus.run()."""
+    """Called by kafka_subscribe_discovery/auto_discovery.py before bus.run()."""
 
     @bus.handle('xyz')
     def xyz(msg, safrs_api):
@@ -258,9 +258,9 @@ Compound-field (when uniqueness requires multiple columns): `(lookup_model, [(co
  'EmployeeId')
 ```
 
-**In the topic handler file (`kafka_discovery/xyz.py`):**
+**In the topic handler file (`kafka_subscribe_discovery/xyz.py`):**
 ```python
-from integration.system.EaiMapper import resolve_lookups
+from integration.system.EaiSubscribeMapper import resolve_lookups
 
 # Parent-level lookups — applied to parent_row
 XYZ_PARENT_LOOKUPS = [
@@ -315,7 +315,7 @@ XYZ_CHILD_KEY = 'Items'   # key in raw payload that holds the child array
 # integration/XyzMapper.py
 import xml.etree.ElementTree as ET
 from database import models
-from integration.system.EaiMapper import populate_row, _local
+from integration.system.EaiSubscribeMapper import populate_row, _local
 
 TAG_ROUTING = {
     "xyz":    (models.XyzParent, {}),           # section tag → (ModelClass, overrides)
@@ -344,7 +344,7 @@ def parse(payload: str, exceptions: dict = None) -> tuple:
 # integration/XyzMapper.py  (JSON variant)
 import json
 from database import models
-from integration.system.EaiMapper import populate_row_from_dict
+from integration.system.EaiSubscribeMapper import populate_row_from_dict
 
 TAG_ROUTING = {
     "xyz":    (models.XyzParent, {}),
@@ -419,7 +419,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         file_path = request.args.get('file')
         if not file_path:
             return jsonify({"success": False, "message": "Missing ?file= parameter"})
-        from integration.kafka.kafka_discovery.xyz import process_xyz_payload
+        from integration.kafka.kafka_subscribe_discovery.xyz import process_xyz_payload
         try:
             payload = Path(file_path).read_text()
             _, blob = process_xyz_payload(payload, safrs.DB.session)
@@ -510,16 +510,16 @@ If no sample message exists, generate one from the schema.
 
 Generate:
 1. XyzMessage blob table (add to database/db.sqlite and models.py)
-2. integration/kafka/kafka_discovery/xyz.py — topic handler file with:
+2. integration/kafka/kafka_subscribe_discovery/xyz.py — topic handler file with:
    - module docstring containing: (a) Basic Design — numbered list of files + what each one does (see example below), (b) the creating prompt used to generate it, (c) debug test instructions and test file locations, (d) how to enable Kafka via config/default.env including `bash test/xyz_reset.sh` to reset topics + log between runs
    - Basic Design example:
      ```
      Basic Design:
-       1. integration/kafka/kafka_discovery/xyz.py  - xyz
+       1. integration/kafka/kafka_subscribe_discovery/xyz.py  - xyz
             reads message, inserts raw payload into XyzMessage blob (Tx 1)
        2. logic/logic_discovery/xyz_consume.py
             insert → publishes payload to topic: xyz_processed
-       3. integration/kafka/kafka_discovery/xyz.py  - xyz_processed
+       3. integration/kafka/kafka_subscribe_discovery/xyz.py  - xyz_processed
             parses payload → domain rows (lookups + LogicBank rules) (Tx 2)
        4. api/api_discovery/xyz_kafka_consume_debug.py
             /consume_debug/xyz bypasses Kafka, calls same parse function directly
