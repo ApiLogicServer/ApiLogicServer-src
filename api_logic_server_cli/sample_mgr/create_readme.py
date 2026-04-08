@@ -95,3 +95,11 @@ def create_readme(project: Project, api_logic_server_dir_str: str):
     if not demo_created:
         pass
         log.debug(f".. ..No matching demo readme found for {project.project_name_last_node}\ndemo_readme_list={demo_readme_list}")
+
+    if project.project_name_last_node.startswith('demo_eai'):
+        proto_dir = Path(api_logic_server_dir_str).joinpath('prototypes/demo_eai')
+        if proto_dir.exists():
+            log.debug(f".. ..Overlaying demo_eai prototype for {project.project_name_last_node}")
+            shutil.copytree(str(proto_dir), project.project_directory, dirs_exist_ok=True)
+        else:
+            log.warning(f".. ..demo_eai prototype not found at {proto_dir}")
