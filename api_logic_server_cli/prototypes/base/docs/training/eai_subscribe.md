@@ -291,7 +291,7 @@ XYZ_CHILD_KEY = 'Items'   # key in raw payload that holds the child array
                 resolve_lookups(parent_row, raw, XYZ_PARENT_LOOKUPS, session)
                 for child_row, child_src in zip(extras, raw.get(XYZ_CHILD_KEY, [])):
                     resolve_lookups(child_row, child_src, XYZ_CHILD_LOOKUPS, session)
-                session.merge(parent_row)
+                session.add(parent_row)  # 🚨 NEVER session.merge — see note below
                 if extras:
                     session.add_all(extras)
                 if blob_id:
@@ -305,6 +305,13 @@ XYZ_CHILD_KEY = 'Items'   # key in raw payload that holds the child array
 
 > **XML payloads:** replace `json.loads(payload)` with `ET.fromstring(payload)`.
 > `resolve_lookups` accepts both `dict` and `ET.Element` as `source`.
+
+> 🚨 **NEVER use `session.merge` for incoming messages.** `session.merge` upserts — if the
+> PK is already in the SQLAlchemy identity map (e.g. Kafka offset replayed on restart), it fires
+> as an UPDATE. LogicBank then re-triggers change propagation to all children on every subsequent
+> `session.flush()`, creating an unbounded duplicate-row loop. Always use `session.add(parent_row)`
+> with children pre-attached to relationship lists — LogicBank sees each row as a clean insert
+> and rules fire exactly once.
 
 ---
 
@@ -452,6 +459,12 @@ the commit happens in a fresh transaction (not inside a `row_event` `before_flus
     jq -c . docs/sample_data/sample_xyz.json | \
       docker exec -i broker1 /opt/kafka/bin/kafka-console-producer.sh \
       --bootstrap-server localhost:9092 --topic xyz
+    ```
+    ⚠️ **Python docstring rule:** When embedding this command in a module docstring, write it as a
+    **single line** — no `\` continuation. `\` inside a Python docstring becomes `\\` in source,
+    which is not a shell line continuation and breaks copy-paste from the editor.
+    ```
+    jq -c . docs/sample_data/sample_xyz.json | docker exec -i broker1 /opt/kafka/bin/kafka-console-producer.sh --bootstrap-server localhost:9092 --topic xyz
     ```
     Edit a key field (e.g. Account) to a different valid value between runs so each run creates a distinct row. Verify DB as above.
 

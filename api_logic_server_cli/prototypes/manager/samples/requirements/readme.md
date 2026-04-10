@@ -3,6 +3,9 @@
   Added: BLT 16.x (Apr 9, 2026)
   Propagation: part of proto/manager — present in every Manager workspace after BLT
 -->
+
+&nbsp;
+
 # Executable Requirements
 
 **Executable Requirements** means the requirements document IS the build spec — not a handoff artifact that gets "interpreted," but a file the AI reads and executes directly, then writes back an audit trail of what it decided.

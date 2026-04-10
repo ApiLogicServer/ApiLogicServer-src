@@ -52,7 +52,7 @@ Use by-example publish (shaped message, not key-only).
 
 ```bash
 # No Kafka required — test via consume_debug endpoint:
-curl 'http://localhost:5656/consume_debug/order_b2b?file=integration/kafka/message_formats/order_b2b.json'
+curl 'http://localhost:5656/consume_debug/order_b2b?file=docs/requirements/Order-EAI/message_formats/order_b2b.json'
 
 # Verify:
 sqlite3 database/db.sqlite "SELECT * FROM order_b2b_message; SELECT * FROM 'order'; SELECT * FROM item;"
