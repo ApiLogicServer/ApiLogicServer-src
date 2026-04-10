@@ -1,0 +1,8 @@
+{
+  "Account": "Alice",
+  "Notes": "Kafka order from sales",
+  "Items": [
+    { "Name": "Widget",  "QuantityOrdered": 1 },
+    { "Name": "Gadget",  "QuantityOrdered": 2 }
+  ]
+}

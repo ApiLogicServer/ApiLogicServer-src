@@ -32,5 +32,6 @@ Ask me to ***'show me what you can help me with'*** for a complete list of servi
 6. **Add automated tests** - Create Behave scenarios for requirements traceability
 7. **Integrate with other systems** - Add Kafka events, webhooks, or B2B APIs
 8. **Understand the architecture** - Explore what was auto-generated and why
+9. **Implement Executable Requirements** - Copy a requirements set into `docs/requirements/<name>/`, say "implement reqs <name>", and I execute the spec end-to-end with an ad-libs audit report
 
 Ready to customize your project?

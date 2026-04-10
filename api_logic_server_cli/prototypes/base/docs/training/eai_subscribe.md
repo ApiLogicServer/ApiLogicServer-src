@@ -445,7 +445,7 @@ the commit happens in a fresh transaction (not inside a `row_event` `before_flus
 *Live Kafka:*
 6. Start Kafka (idempotent — safe if already running): `docker compose -f integration/kafka/dockercompose_start_kafka.yml up -d`
 7. In `config/default.env`, add/uncomment `APILOGICPROJECT_KAFKA_CONSUMER` and `APILOGICPROJECT_KAFKA_PRODUCER`
-8. Run `bash test/xyz_reset.sh` — creates topics + clears log
+8. Run `bash integration/kafka/xyz_reset.sh` — creates topics + clears log
 9. Start server
 10. Publish sample message — use `jq -c .` to compact JSON to a single line (kafka-console-producer sends one Kafka message per input line):
     ```bash
@@ -457,15 +457,15 @@ the commit happens in a fresh transaction (not inside a `row_event` `before_flus
 
 ---
 
-## Kafka Reset Script (`test/xyz_reset.sh`)
+## Kafka Reset Script (`integration/kafka/xyz_reset.sh`)
 
-Generate one reset script per topic — named after the topic, lives in `test/` (not auto-discovered).
+Generate one reset script per topic — named after the topic, lives in `integration/kafka/` (not auto-discovered).
 The script resets Kafka topics and the log file only; it does **not** clear the DB.
 
 ```bash
 #!/usr/bin/env bash
-# test/xyz_reset.sh — reset Kafka topics and log for the xyz pipeline.
-# Run from project root: bash test/xyz_reset.sh
+# integration/kafka/xyz_reset.sh — reset Kafka topics and log for the xyz pipeline.
+# Run from project root: bash integration/kafka/xyz_reset.sh
 
 set -e
 
@@ -511,7 +511,7 @@ If no sample message exists, generate one from the schema.
 Generate:
 1. XyzMessage blob table (add to database/db.sqlite and models.py)
 2. integration/kafka/kafka_subscribe_discovery/xyz.py — topic handler file with:
-   - module docstring containing: (a) Basic Design — numbered list of files + what each one does (see example below), (b) the creating prompt used to generate it, (c) debug test instructions and test file locations, (d) how to enable Kafka via config/default.env including `bash test/xyz_reset.sh` to reset topics + log between runs
+   - module docstring containing: (a) Basic Design — numbered list of files + what each one does (see example below), (b) the creating prompt used to generate it, (c) debug test instructions and test file locations, (d) how to enable Kafka via config/default.env including `bash integration/kafka/xyz_reset.sh` to reset topics + log between runs
    - Basic Design example:
      ```
      Basic Design:
@@ -532,7 +532,7 @@ Generate:
 5. docs/sample_data/sample_xyz.xml — minimal sample message
 6. api/api_discovery/xyz_kafka_consume_debug.py — one file per topic, auto-discovered by api_discovery; calls `process_xyz_payload()` directly (env-var gated, no Kafka required)
 7. ui/admin/admin.yaml — add XyzMessage section; set payload field as `type: textarea`
-8. test/xyz_reset.sh — bash script to delete+recreate Kafka topics and truncate log (see § Kafka Reset Script)
+8. integration/kafka/xyz_reset.sh — bash script to delete+recreate Kafka topics and truncate log (see § Kafka Reset Script)
 
 Example admin.yaml entry for the blob table:
 ```yaml
