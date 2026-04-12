@@ -78,6 +78,7 @@ KAFKA_CONSUMER_GROUP = customs_demo-group1
 **Start Kafka, then reset and send:**
 ```bash
 docker compose -f integration/kafka/dockercompose_start_kafka.yml up -d
+
 # F5 to start the server
 
 sh integration/kafka/isdc_reset.sh

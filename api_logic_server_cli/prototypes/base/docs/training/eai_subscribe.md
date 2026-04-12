@@ -179,17 +179,22 @@ def register(bus):
 def _publish_xyz(row: models.XyzMessage, old_row, logic_row: LogicRow):
     if not logic_row.is_inserted or not row.payload:
         return
-    from integration.kafka.kafka_producer import producer
-    if producer is None:
+    import integration.kafka.kafka_producer as kafka_producer
+    if kafka_producer.producer is None:
         # Kafka not configured — /consume_debug does Tx 2 directly; nothing to do here
         logic_row.log("_publish_xyz: Kafka not configured — skipping publish")
         return
-    producer.produce(topic='xyz_processed', key=str(row.id), value=row.payload.encode('utf-8'))
-    producer.flush(timeout=10)
+    kafka_producer.producer.produce(topic='xyz_processed', key=str(row.id), value=row.payload.encode('utf-8'))
+    kafka_producer.producer.flush(timeout=10)
 
 def declare_logic():
     Rule.after_flush_row_event(on_class=models.XyzMessage, calling=_publish_xyz)
 ```
+
+> **Do not import producer by value.**
+> `from integration.kafka.kafka_producer import producer` captures a stale snapshot (often `None`
+> before startup wiring finishes). Always import the module and read `kafka_producer.producer`
+> at call time inside the row-event function.
 
 > **Why `after_flush_row_event`, not `row_event`?** `row_event` fires during `before_flush` — before SQLite/Postgres assigns the autoincrement `id`. Publishing `key=str(row.id)` at that point sends the string `'None'`, causing Consumer 2 to crash on `int(key)`. `after_flush_row_event` fires after the flush assigns the id, so the key is always a valid integer. Additionally, any new rows added to the session mid-flush (inside `row_event`) miss the fresh LogicBank rule pass — Copy and Formula rules will not fire for those rows. Tx 2 (consumer 2 or `/consume_debug`) commits independently in a clean `before_flush`, so all rules fire correctly.
 
