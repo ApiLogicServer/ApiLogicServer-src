@@ -313,16 +313,20 @@ XYZ_CHILD_KEY = 'Items'   # key in raw payload that holds the child array
 > and rules fire exactly once.
 
 > 🚨 **Always attach child rows via the parent relationship, not `session.add(child)` with only FK set.**
+> This is a mandatory rule, not a style preference.
 > `parent_row.ChildList.append(child_row)` causes SQLAlchemy to set the FK automatically and
 > LogicBank to see the insert in proper parent-child context. A standalone `session.add(child_row)`
-> with only a raw FK column set can trigger a "Missing Parent" constraint error during flush.
-> This applies equally in `row_event` callbacks that create derived child rows during Tx 2.
+> with only a raw FK column set can trigger a "Missing Parent" constraint error during flush,
+> even when the FK value itself is correct.
+> This applies equally in `row_event` / matching / enrichment callbacks that create derived child rows during Tx 2.
 
-> **Idempotency / replay:** If a `xyz_processed` message is replayed (consumer restart, offset
-> reset), Tx 2 will attempt to re-parse and re-insert rows that may already exist. Guard against
-> duplicates with a deterministic replace or skip strategy — check `is_processed` on the blob
-> before processing, or use a unique constraint on a natural key and catch `IntegrityError`.
-> Never use `session.merge` as the idempotency mechanism (see above).
+> **Idempotency / replay (insert-only default):** If a `xyz_processed` message is replayed
+> (consumer restart, offset reset), Tx 2 can attempt to insert domain rows that already exist.
+> The default policy is **insert-only**:
+> - Reject duplicates with an explicit error (do not mutate existing domain rows)
+> - Keep blob rows for audit/retry (`is_processed` indicates successful Tx 2)
+> - Never use `session.merge` or delete-and-reinsert as an idempotency mechanism
+> If a project truly needs upsert semantics, it must be explicitly specified and tested.
 
 ---
 
@@ -464,7 +468,7 @@ the commit happens in a fresh transaction (not inside a `row_event` `before_flus
 6. Start Kafka (idempotent — safe if already running): `docker compose -f integration/kafka/dockercompose_start_kafka.yml up -d`
 7. In `config/default.env`, add/uncomment `APILOGICPROJECT_KAFKA_CONSUMER` and `APILOGICPROJECT_KAFKA_PRODUCER`
 8. Run `bash integration/kafka/xyz_reset.sh` — creates topics + clears log
-9. Start server
+9. Start server (or restart if already running before reset)
 10. Publish sample message — use `jq -c .` to compact JSON to a single line (kafka-console-producer sends one Kafka message per input line):
     ```bash
     jq -c . docs/sample_data/sample_xyz.json | \
@@ -478,6 +482,11 @@ the commit happens in a fresh transaction (not inside a `row_event` `before_flus
     jq -c . docs/sample_data/sample_xyz.json | docker exec -i broker1 /opt/kafka/bin/kafka-console-producer.sh --bootstrap-server localhost:9092 --topic xyz
     ```
     Edit a key field (e.g. Account) to a different valid value between runs so each run creates a distinct row. Verify DB as above.
+
+**Cardinality sanity check:**
+- After one successful run, validate expected parent/child counts derived from the sample payload and any declarative enrichment/matching rules.
+- Put exact counts in the project requirements or regression test for that pipeline; do not hardcode domain-specific counts in generic training.
+- Add a regression test that asserts duplicate payloads are rejected under insert-only policy.
 
 ---
 

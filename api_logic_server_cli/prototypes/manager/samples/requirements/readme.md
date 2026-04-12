@@ -87,3 +87,15 @@ AI reads `docs/requirements/Order-EAI/requirements.md`, builds the system, and w
 Update `requirements.md` to clarify anything flagged red, then re-run.
 
 > **What you just did:** a PM-authored spec drove a full system build — Kafka consumer, custom API, business logic, test fixtures — with a reviewable audit trail. No ambiguous handoff, no interpretation gap.
+
+**Step 5 — Test:**
+
+- add these to `config/default.env':
+
+```
+APILOGICPROJECT_KAFKA_CONSUMER = {"bootstrap.servers": "localhost:9092", "group.id": "demo-eai-order-group"}
+APILOGICPROJECT_KAFKA_PRODUCER = {"bootstrap.servers": "localhost:9092"}
+```
+
+- start Docker: `demo_eai_exec_reqmts % docker compose -f integration/kafka/dockercompose_start_kafka.yml up -d`
+- send order to kafka: curl "http://localhost:5656/consume_debug/order_b2b?file=docs/requirements/Order-EAI/message_formats/order_b2b.json"

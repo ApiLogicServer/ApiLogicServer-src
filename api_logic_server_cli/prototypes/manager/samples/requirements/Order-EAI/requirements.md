@@ -48,12 +48,16 @@ When `date_shipped` is set on an Order, publish to topic `order_shipping`.
 Message format: `message_formats/order_shipping.json`  
 Use by-example publish (shaped message, not key-only).
 
-## 5. Acceptance
 
-```bash
-# No Kafka required — test via consume_debug endpoint:
-curl 'http://localhost:5656/consume_debug/order_b2b?file=docs/requirements/Order-EAI/message_formats/order_b2b.json'
+## 5. Test
 
-# Verify:
-sqlite3 database/db.sqlite "SELECT * FROM order_b2b_message; SELECT * FROM 'order'; SELECT * FROM item;"
+- Docker is optional: add these to `config/default.env':
+
 ```
+APILOGICPROJECT_KAFKA_CONSUMER = {"bootstrap.servers": "localhost:9092", "group.id": "demo-eai-order-group"}
+APILOGICPROJECT_KAFKA_PRODUCER = {"bootstrap.servers": "localhost:9092"}
+```
+
+- start Docker: `demo_eai_exec_reqmts % docker compose -f integration/kafka/dockercompose_start_kafka.yml up -d`
+
+- test order: curl "http://localhost:5656/consume_debug/order_b2b?file=docs/requirements/Order-EAI/message_formats/order_b2b.json"
