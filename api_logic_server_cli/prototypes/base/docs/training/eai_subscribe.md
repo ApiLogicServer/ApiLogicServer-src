@@ -518,6 +518,15 @@ echo "Kafka topics reset."
 #   Kafka tracks the last-read offset per consumer group, so reusing a group name
 #   skips messages already seen by that group.
 #
+#   Clone/rename guidance:
+#   For copied projects, set KAFKA_CONSUMER_GROUP in config/default.env to a
+#   project-unique name. Reusing an inherited group across multiple running
+#   services can trigger rebalancing and inconsistent test results.
+#
+#   Runtime stability check:
+#   Keep exactly one API server process during consume tests. Multiple app
+#   instances in the same group may fight over partitions.
+#
 # Re-run without full reset:
 #   Edit docs/sample_data/sample_xyz.json and change a key field (e.g. AccountId)
 #   to a different valid value before each publish so each run creates a distinct row.

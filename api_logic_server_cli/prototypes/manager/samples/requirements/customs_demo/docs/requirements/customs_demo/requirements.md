@@ -14,6 +14,9 @@ genai-logic create  --project_name=customs_demo --db_url=sqlite:///samples/requi
 # in created project, get and implement the requirements
 $ cp -r ../samples/requirements/customs_demo/. .
 
+# ask Copilot to create the system
+implement req docs/requirements/customs_demo
+
 ```
 
 
@@ -70,6 +73,7 @@ KAFKA_CONSUMER_GROUP = customs_demo-group1
 ```
 
 > Without these the Kafka consumer will not activate.
+> If this project was cloned or renamed, use a fresh project-unique group value instead of reusing an inherited one.
 
 **Start Kafka, then reset and send:**
 ```bash
@@ -80,6 +84,11 @@ sh integration/kafka/isdc_reset.sh
 
 python test/send_isdc.py
 ```
+
+**Runtime stability checks before declaring failure:**
+- Keep exactly one API server process running during the test.
+- Reset Kafka topics/log between reruns with `sh integration/kafka/isdc_reset.sh`.
+- If the topic appears idle, inspect consumer-group assignment before changing code.
 
 > **`test/send_isdc.py` is generated automatically by Step 2** — `eai_subscribe.md` artifact #9.
 
