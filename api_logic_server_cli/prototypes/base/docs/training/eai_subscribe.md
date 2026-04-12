@@ -489,7 +489,29 @@ the commit happens in a fresh transaction (not inside a `row_event` `before_flus
 
 *Live Kafka:*
 6. Start Kafka (idempotent — safe if already running): `docker compose -f integration/kafka/dockercompose_start_kafka.yml up -d`
-7. In `config/default.env`, add/uncomment `APILOGICPROJECT_KAFKA_CONSUMER` and `APILOGICPROJECT_KAFKA_PRODUCER`
+7. In `config/default.env`, add/uncomment `APILOGICPROJECT_KAFKA_CONSUMER` and `APILOGICPROJECT_KAFKA_PRODUCER`.
+    Use the **full 6-key form** — the 2-key shortcut omits settings that cause silent consume failures:
+    ```
+    KAFKA_SERVER = localhost:9092
+    KAFKA_CONSUMER_GROUP = <project>-group1
+    APILOGICPROJECT_KAFKA_CONSUMER = "{\"bootstrap.servers\": \"localhost:9092\", \"group.id\": \"<project>-group1\", \"auto.offset.reset\": \"earliest\", \"enable.auto.commit\": \"false\", \"session.timeout.ms\": \"6000\", \"heartbeat.interval.ms\": \"2000\"}"
+    APILOGICPROJECT_KAFKA_PRODUCER = "{\"bootstrap.servers\": \"localhost:9092\"}"
+    ```
+    Use a project-specific value for `<project>` (example: `customs_demo`).
+    > **Why `session.timeout.ms: 6000`?** The default (45 s) means stale consumer sessions from a
+    > prior server run hold the partition assignment for up to 45 s after the process dies. During
+    > that window the new server's consumer polls but receives nothing (no active member).
+    > Set `session.timeout.ms` low (≥ `heartbeat.interval.ms × 3`) so the partition is re-assigned
+    > quickly. `6000 / 2000` (3 × multiplier) is the safe minimum.
+    >
+    > **Why `auto.offset.reset: earliest`?** Without it, confluent-kafka defaults to `latest` — the
+    > consumer only sees messages published *after* it first subscribes. Any message published before
+    > subscribe completes is silently skipped.
+    >
+    > **`APILOGICPROJECT_KAFKA_CONSUMER` overrides `Config.KAFKA_CONSUMER`** via Flask's
+    > `from_prefixed_env()`. For local tests, prefer only `KAFKA_SERVER` + `KAFKA_CONSUMER_GROUP`.
+    > If you explicitly set `APILOGICPROJECT_KAFKA_CONSUMER`, you own all keys; omitting any key
+    > loses its default value.
 8. Run `bash integration/kafka/xyz_reset.sh` — creates topics + clears log
 9. For insert-only pipelines, clear domain tables between repeat test runs (optional helper: `integration/kafka/xyz_reset_db.sh`) so replay duplicates do not masquerade as parser failures.
 10. Start server (or restart if already running before reset)

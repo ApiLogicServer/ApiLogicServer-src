@@ -68,8 +68,12 @@ class FlaskKafka():
 
         topics = self.handlers.keys()
         logger.info(f" - FlaskKafka._start: begin polling (v {__version__}), with \n -- conf: {self.conf} \n -- topics: {topics}")
-        consumer = Consumer(self.conf)
-        consumer.subscribe(topics=list(topics))
+        try:
+            consumer = Consumer(self.conf)
+            consumer.subscribe(topics=list(topics))
+        except Exception as e:
+            logger.critical(f"FlaskKafka._start: Consumer init/subscribe failed: {e}", exc_info=True)
+            return
         while True and len(topics) > 0:
             if self.interrupt_event.is_set():
                 logger.info("Kafka thread interrupted")
@@ -80,7 +84,7 @@ class FlaskKafka():
             if msg is None:
                 continue
             if msg.error():
-                pass  # Handle errors as needed
+                logger.warning(f" - FlaskKafka: msg.error() on topic {msg.topic()}: {msg.error()}")
             else:
                 self._run_handlers(msg)  # accrued per annotations
 
