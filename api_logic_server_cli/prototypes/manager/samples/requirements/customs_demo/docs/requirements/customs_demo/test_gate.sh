@@ -8,7 +8,14 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 cd "$ROOT_DIR"
 
-PYTHON_BIN="${PYTHON_BIN:-python}"
+MANAGER_PYTHON="$ROOT_DIR/../venv/bin/python"
+if [[ -n "${PYTHON_BIN:-}" ]]; then
+  PYTHON_BIN="$PYTHON_BIN"
+elif [[ -x "$MANAGER_PYTHON" ]]; then
+  PYTHON_BIN="$MANAGER_PYTHON"
+else
+  PYTHON_BIN="python"
+fi
 SERVER_URL="http://localhost:5656"
 SAMPLE1="docs/requirements/customs_demo/message_formats/MDE-CDV-HVS-WR-Rev260328.xml"
 SAMPLE2="docs/requirements/customs_demo/message_formats/MDE-CDV-HVS-WR-Rev260328-another.xml"
@@ -90,10 +97,30 @@ assert_counts() {
   return 0
 }
 
+wait_for_counts() {
+  local timeout_secs="$1"
+  local expected_ship="$2"
+  local expected_piece="$3"
+  local expected_party="$4"
+  local expected_comm="$5"
+  local expected_xml_total="$6"
+  local expected_xml_proc="$7"
+
+  local tries=$((timeout_secs * 2))
+  for _ in $(seq 1 "$tries"); do
+    if assert_counts "$expected_ship" "$expected_piece" "$expected_party" "$expected_comm" "$expected_xml_total" "$expected_xml_proc" >/dev/null 2>&1; then
+      return 0
+    fi
+    sleep 0.5
+  done
+  return 1
+}
+
 require_cmd curl
 require_cmd docker
 require_cmd sqlite3
 command -v "$PYTHON_BIN" >/dev/null 2>&1 || fail "Python executable not found: $PYTHON_BIN"
+echo "Using Python: $PYTHON_BIN"
 [[ -f "$SAMPLE1" ]] || fail "Missing sample file: $SAMPLE1"
 [[ -f "$SAMPLE2" ]] || fail "Missing sample file: $SAMPLE2"
 
@@ -143,18 +170,23 @@ SERVER_PID=$!
 wait_for_server || fail "Server did not restart in time"
 curl -s -o /dev/null "$SERVER_URL/" || fail "Server endpoint not reachable before Kafka publish"
 "$PYTHON_BIN" test/send_isdc.py
-sleep 2
 
 
 echo "== [6/6] Kafka-path assertions =="
 # One Kafka message -> 1 shipment, 1 piece, 3 parties (C,S,I), 1 commodity, 1 blob processed.
-if assert_counts 1 1 3 1 1 1; then
+if wait_for_counts 20 1 1 3 1 1 1 && assert_counts 1 1 3 1 1 1; then
   echo "PASS: Kafka phase"
 else
+  assert_counts 1 1 3 1 1 1 || true
+  tail -n 60 logs/test_gate_server.log || true
   if [[ "$KAFKA_PHASE_REQUIRED" == "true" ]]; then
     fail "Kafka phase failed and KAFKA_PHASE_REQUIRED=true"
   fi
-  echo "WARN: Kafka phase did not reach expected counts in this environment; debug phase is green."
+  echo "WARN: Kafka phase did not reach expected counts in this environment; debug phase is green (overall result is PARTIAL PASS)."
 fi
 
-echo "PASS: customs_demo XR test gate (debug + Kafka)"
+if [[ "$KAFKA_PHASE_REQUIRED" == "true" ]]; then
+  echo "PASS: customs_demo XR test gate (debug + Kafka)"
+else
+  echo "PASS: customs_demo XR test gate (debug required, Kafka best-effort)"
+fi

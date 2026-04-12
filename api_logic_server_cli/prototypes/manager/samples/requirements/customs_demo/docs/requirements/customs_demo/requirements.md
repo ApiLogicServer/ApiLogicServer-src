@@ -14,6 +14,9 @@ genai-logic create  --project_name=customs_demo --db_url=sqlite:///samples/requi
 # in created project, get and implement the requirements
 $ cp -r ../samples/requirements/customs_demo/. .
 
+# use the shared Manager venv (do not create a local project .venv)
+source ../venv/bin/activate
+
 # ask Copilot to create the system
 implement req docs/requirements/customs_demo
 
