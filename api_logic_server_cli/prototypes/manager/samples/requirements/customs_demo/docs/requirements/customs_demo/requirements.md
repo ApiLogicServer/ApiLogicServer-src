@@ -33,6 +33,11 @@ Parse and persist to the database using the field mappings in
 `message_formats/Classify_Entity_Details.csv`.
 
 Use `message_formats/MDE-CDV-HVS-WR-Rev260328.xml` as the reference message.
+
+Important mapping note (prevent PK collisions):
+- In this payload, party OID fields may carry placeholder value `0` for multiple rows.
+- If mapped to local primary-key columns (e.g. `ShipmentParty.shipment_party_oid_nbr`),
+  normalize placeholder IDs to `None` so DB autoincrement assigns unique PK values.
 ```
 
 **Verify:** `F5`, then:
@@ -90,6 +95,8 @@ python test/send_isdc.py
 - Keep exactly one API server process running during the test.
 - Reset Kafka topics/log between reruns with `sh integration/kafka/isdc_reset.sh`.
 - If the topic appears idle, inspect consumer-group assignment before changing code.
+- For insert-only reruns, also clear domain/blob tables first:
+    `sh integration/kafka/isdc_reset_db.sh`
 
 > **`test/send_isdc.py` is generated automatically by Step 2** — `eai_subscribe.md` artifact #9.
 

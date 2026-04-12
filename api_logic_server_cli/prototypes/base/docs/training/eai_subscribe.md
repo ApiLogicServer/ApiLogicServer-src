@@ -3,13 +3,14 @@ title: EAI Consume Pattern — Kafka + XML/JSON → DB
 description: Two-message Kafka consume pattern with generic by-name XML/JSON mapper. Covers blob-row bridge, 3-tier mapping contract, local debug mode, and generated test data.
 source: Generic training for ApiLogicServer projects with GenAI integration
 usage: AI assistants read this when detecting Kafka consume, EAI, or XML/JSON-to-DB patterns in a user prompt
-version: 1.0
+version: 1.1
 date: April 4, 2026
 related:
   - subsystem_creation.md (Kafka outbound, row_event patterns)
   - logic_bank_patterns.md (row_event, commit_row_event)
   - logic_bank_api.md (full rule API)
 changelog:
+    - 1.1 (April 12, 2026): Added source-PK normalization rule for placeholder external IDs (e.g. 0), plus insert-only rerun DB-reset guidance
   - 1.0 (April 4, 2026): Initial — extracted from a production customs/logistics EAI project
 ---
 
@@ -177,7 +178,7 @@ def register(bus):
 
 ```python
 def _publish_xyz(row: models.XyzMessage, old_row, logic_row: LogicRow):
-    if not logic_row.is_inserted or not row.payload:
+    if not logic_row.is_inserted() or not row.payload:
         return
     import integration.kafka.kafka_producer as kafka_producer
     if kafka_producer.producer is None:
@@ -324,6 +325,23 @@ XYZ_CHILD_KEY = 'Items'   # key in raw payload that holds the child array
 > with only a raw FK column set can trigger a "Missing Parent" constraint error during flush,
 > even when the FK value itself is correct.
 > This applies equally in `row_event` / matching / enrichment callbacks that create derived child rows during Tx 2.
+
+> 🚨 **Normalize placeholder external IDs before assigning local PK columns.**
+> Partner payloads frequently carry sentinel IDs (`0`, empty string) in fields that look like IDs
+> but are not globally unique in your local table. If such a field maps to a local PK, treat
+> sentinel/non-unique values as *not provided*:
+> - set the PK attribute to `None`
+> - let DB autoincrement assign the local primary key
+>
+> Real failure case: both consignee and shipper carried `PARTY_OID_NBR=0`; mapping that value
+> directly into `shipment_party_oid_nbr` caused `UNIQUE constraint failed` and rolled back Tx 2.
+>
+> Example normalization:
+> ```python
+> populate_row(party_row, section, exceptions=XYZ_EXCEPTIONS)
+> if party_row.shipment_party_oid_nbr in (0, None):
+>     party_row.shipment_party_oid_nbr = None
+> ```
 
 > **Idempotency / replay (insert-only default):** If a `xyz_processed` message is replayed
 > (consumer restart, offset reset), Tx 2 can attempt to insert domain rows that already exist.
@@ -473,10 +491,13 @@ the commit happens in a fresh transaction (not inside a `row_event` `before_flus
 6. Start Kafka (idempotent — safe if already running): `docker compose -f integration/kafka/dockercompose_start_kafka.yml up -d`
 7. In `config/default.env`, add/uncomment `APILOGICPROJECT_KAFKA_CONSUMER` and `APILOGICPROJECT_KAFKA_PRODUCER`
 8. Run `bash integration/kafka/xyz_reset.sh` — creates topics + clears log
-9. Start server (or restart if already running before reset)
-10. Publish sample message — use `jq -c .` to compact JSON to a single line (kafka-console-producer sends one Kafka message per input line):
+9. For insert-only pipelines, clear domain tables between repeat test runs (optional helper: `integration/kafka/xyz_reset_db.sh`) so replay duplicates do not masquerade as parser failures.
+10. Start server (or restart if already running before reset)
+11. Publish sample message — use `jq -c .` to compact JSON to a single line (kafka-console-producer sends one Kafka message per input line):
     ```bash
     jq -c . docs/sample_data/sample_xyz.json | \
+    ⚠️ XML payloads: `kafka-console-producer` also treats each input line as a separate message.
+    If publishing XML through console-producer, first collapse to a single line (or use a producer script/library) to avoid flooding the topic with partial XML fragments.
       docker exec -i broker1 /opt/kafka/bin/kafka-console-producer.sh \
       --bootstrap-server localhost:9092 --topic xyz
     ```

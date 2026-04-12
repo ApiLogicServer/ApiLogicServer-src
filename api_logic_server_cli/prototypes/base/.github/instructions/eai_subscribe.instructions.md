@@ -13,3 +13,5 @@ applyTo: "**/kafka_subscribe_discovery/**"
 	- Run exactly one API server process during Kafka consume testing
 	- Use a project-unique `KAFKA_CONSUMER_GROUP` after project renames/clones
 	- If lookup/reference data must survive reruns, clear ingest tables only
+	- Normalize placeholder external IDs mapped to local PKs (e.g., `0` → `None`) so DB autoincrement assigns unique local keys
+	- For insert-only pipelines, clear domain tables between reruns (or vary business keys) to avoid replay duplicates appearing as parser failures
