@@ -105,6 +105,9 @@ def copy_md(project, from_doc_file: str, to_project_file: str = "README.md"):
         from_doc_file (str): eg, Sample-Basic_Demo.md (no docs/)
         to_project_file (str, optional): location of target. Defaults to "README.md".
     """
+
+    exceptions = ['webgenai/README.md', 'samples/requirements']  # mgr readmes to itself - do not fix
+
     if isinstance(project, Path):
         project_path = project
     else:
@@ -189,17 +192,24 @@ def copy_md(project, from_doc_file: str, to_project_file: str = "README.md"):
                     else:
                         pass # image is absolute - don't alter
                 if '.md' in each_line:
-                    # replace (<name>.md) with (https://apilogicserver.github.io/Docs/<name>)
-                    each_line = re.sub(
-                        r'\(([^)]+\.md)\)',
-                        r'(https://apilogicserver.github.io/Docs/\1)',
-                        each_line
-                    )
-                    if 'copilot' in each_line or 'Copilot' in each_line:  
+                    is_exception = False
+                    for each_exception in exceptions:
+                        if each_exception in each_line:
+                            is_exception = True
+                    if is_exception:
                         pass
                     else:
-                        each_line = each_line.replace('.md', '')  # hmm... todo: find out why this exists
-                    pass
+                        # replace (<name>.md) with (https://apilogicserver.github.io/Docs/<name>)
+                        each_line = re.sub(
+                            r'\(([^)]+\.md)\)',
+                            r'(https://apilogicserver.github.io/Docs/\1)',
+                            each_line
+                        )
+                        if 'copilot' in each_line or 'Copilot' in each_line:  
+                            pass
+                        else:
+                            each_line = each_line.replace('.md', '')  # hmm... todo: find out why this exists
+                        pass
                 if 'process_code_block_titles' in each_line:  # update front matter to get this
                     do_process_code_block_titles = True
                 if do_process_code_block_titles and 'title=' in each_line:

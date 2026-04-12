@@ -170,7 +170,7 @@ def register(bus):
             try:
                 process_xyz_payload(msg.value().decode('utf-8'), session, blob_id=blob_id)
             except Exception as e:
-                logger.error(f"xyz_processed parse error: {e}")  # blob stays is_processed=False
+                logger.exception(f"xyz_processed parse error")  # blob stays is_processed=False; full traceback logged
 ```
 
 ### 3. Row event bridge (`logic/logic_discovery/xyz_consume.py`)
@@ -291,16 +291,15 @@ XYZ_CHILD_KEY = 'Items'   # key in raw payload that holds the child array
                 resolve_lookups(parent_row, raw, XYZ_PARENT_LOOKUPS, session)
                 for child_row, child_src in zip(extras, raw.get(XYZ_CHILD_KEY, [])):
                     resolve_lookups(child_row, child_src, XYZ_CHILD_LOOKUPS, session)
+                    parent_row.ChildList.append(child_row)  # 🚨 attach via relationship — NOT session.add(child_row); see note below
                 session.add(parent_row)  # 🚨 NEVER session.merge — see note below
-                if extras:
-                    session.add_all(extras)
                 if blob_id:
                     blob = session.get(models.XyzMessage, blob_id)
                     if blob:
                         blob.is_processed = True
                 session.commit()
             except Exception as e:
-                logger.error(f"xyz_processed parse error: {e}")
+                logger.exception(f"xyz_processed parse error")  # blob stays is_processed=False; full traceback logged
 ```
 
 > **XML payloads:** replace `json.loads(payload)` with `ET.fromstring(payload)`.
@@ -312,6 +311,18 @@ XYZ_CHILD_KEY = 'Items'   # key in raw payload that holds the child array
 > `session.flush()`, creating an unbounded duplicate-row loop. Always use `session.add(parent_row)`
 > with children pre-attached to relationship lists — LogicBank sees each row as a clean insert
 > and rules fire exactly once.
+
+> 🚨 **Always attach child rows via the parent relationship, not `session.add(child)` with only FK set.**
+> `parent_row.ChildList.append(child_row)` causes SQLAlchemy to set the FK automatically and
+> LogicBank to see the insert in proper parent-child context. A standalone `session.add(child_row)`
+> with only a raw FK column set can trigger a "Missing Parent" constraint error during flush.
+> This applies equally in `row_event` callbacks that create derived child rows during Tx 2.
+
+> **Idempotency / replay:** If a `xyz_processed` message is replayed (consumer restart, offset
+> reset), Tx 2 will attempt to re-parse and re-insert rows that may already exist. Guard against
+> duplicates with a deterministic replace or skip strategy — check `is_processed` on the blob
+> before processing, or use a unique constraint on a natural key and catch `IntegrityError`.
+> Never use `session.merge` as the idempotency mechanism (see above).
 
 ---
 

@@ -75,7 +75,7 @@
         },
 
         {
-            "name": "1 - ApiLogicServer Start (no clean)",
+            "name": "1 - GenAI-Logic Manager Start (no clean)",
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
@@ -88,7 +88,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "     - ApiLogicServer Start (Clean)",
+            "name": "     - GenAI-Logic Manager Start (Clean)",
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
@@ -99,7 +99,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "     - ApiLogicServer Start (Clean - no-samples)",
+            "name": "     - GenAI-Logic Manager Start (Clean - no-samples)",
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
@@ -110,7 +110,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "     - Start (Clean, no-open-manager)",
+            "name": "     - GenAI-Logic ManagerStart (Clean, no-open-manager)",
             "type": "debugpy",
             "request": "launch",
             "cwd": "${workspaceFolder}/../../clean/ApiLogicServer",
