@@ -37,16 +37,33 @@ Feature: B2B Order Integration
 
 ## 3. Kafka Subscribe — Inbound orders from sales channel
 
-Subscribe to topic `order_b2b` (JSON).  
-Message format: `message_formats/order_b2b.json`  
-Use the 2-message pattern (save blob first, parse in second transaction).  
-Apply the same field mappings as the B2B API above.
+```gherkin
+Feature: Kafka Subscribe Order Integration
+
+  Scenario: Accept inbound orders from sales channel
+    Given an inbound order message in JSON format (message_formats/order_b2b.json)
+    When the message is received from Kafka topic order_b2b
+    Then use the 2-message pattern
+    And save the raw payload as a blob in the first transaction
+    And parse and persist the order in the second transaction
+    And map Account to Customer by name
+    And map Items.Name to Product by name
+    And map Items.QuantityOrdered to Item.quantity
+    And create the order with all Check Credit rules enforced
+```
 
 ## 4. Kafka Publish — Notify shipping on dispatch
 
-When `date_shipped` is set on an Order, publish to topic `order_shipping`.  
-Message format: `message_formats/order_shipping.json`  
-Use by-example publish (shaped message, not key-only).
+```gherkin
+Feature: Kafka Publish Shipping Notification
+
+  Scenario: Notify shipping when an order is dispatched
+    Given an Order exists
+    When date_shipped is set
+    Then publish to Kafka topic order_shipping
+    And use message_formats/order_shipping.json as the message shape
+    And use by-example publish rather than key-only publish
+```
 
 
 ## 5. Test
