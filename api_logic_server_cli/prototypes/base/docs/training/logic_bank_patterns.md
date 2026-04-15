@@ -500,6 +500,15 @@ Before writing any event that sets a value, ask: **"Does any rule depend on this
 | YES — a formula/sum/constraint depends on it | `Rule.early_row_event` (fires before derivations) |
 | NO — pure side effect (Kafka, email, audit) | `Rule.after_flush_row_event` or `Rule.commit_row_event` |
 
+**Valid Rule event methods (complete list):**
+
+| Use case | Method |
+|----------|--------|
+| Set value before formulas/constraints run | `Rule.early_row_event` |
+| Append child rows during parent insert | `Rule.row_event` |
+| Kafka publish / side-effect after flush | `Rule.after_flush_row_event` |
+| Post-commit finalization | `Rule.commit_row_event` |
+
 **Event firing order — two rules:**
 
 | Scope | Order |
@@ -543,6 +552,7 @@ SUMMARY: Quick Reference
 6. **Type handling**: int for FKs, Decimal for money
 7. **Event dependencies**: early_row_event if a rule depends on the value you're setting
 8. **Testing**: logic_row.log(), check old_row, use is_inserted/updated/deleted
+9. **Valid event methods**: early_row_event, row_event, after_flush_row_event, commit_row_event
 
 For rule-specific APIs and examples:
 - Deterministic rules → docs/training/logic_bank_api.prompt

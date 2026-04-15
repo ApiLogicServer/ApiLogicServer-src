@@ -411,6 +411,10 @@ def parse(payload: str, exceptions: dict = None) -> tuple:
     return parent, extras
 ```
 
+> **Date column values:** `populate_row()` / `populate_row_from_dict()` set column values via `setattr`.
+> For `date`-typed columns the value must be a Python `datetime.date` object.
+> In any custom value-conversion function, use `datetime.strptime(text, '%Y-%m-%d').date()` — not a raw ISO string.
+
 ---
 
 ## Sample Data Generation (when no sample message exists)
