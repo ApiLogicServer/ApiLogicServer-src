@@ -4,38 +4,7 @@ The following is a reproducible step-by-step prompt sequence to recreate this pr
 Each step is a copy-pasteable prompt with a verification checkpoint before proceeding.
 
 
-### Step 1 — Create project and load schema
-
-Already done, by:
-
-```bash
-# A - Create the project
-genai-logic create  --project_name=customs_demo --db_url=sqlite:///samples/requirements/customs_demo/database/customs.sqlite
-
-# B - in created project, get and implement the requirements
-$ cp -r ../samples/requirements/customs_demo/. .
-
-# C - use the shared Manager venv (do not create a local project .venv)
-source ../venv/bin/activate
-
-# D - required hardening for delete integrity (no orphans after parent delete via API):
-in database/models.py, add ORM relationship cascade on Shipment child lists
-(pattern: relationship(cascade="all, delete", back_populates="...")).
-Apply to:
-   Shipment.PieceList
-   Shipment.ShipmentCommodityList
-   Shipment.SpecialHandlingList
-   Shipment.ShipmentPartyList
-
-# E - ask Copilot to create the system
-implement req docs/requirements/customs_demo
-
-```
-
-
----
-
-### Step 2 — Subscribe to Kafka and persist shipments
+### Step 1 — Subscribe to Kafka and persist shipments
 
 ```
 Read `docs/training/eai_subscribe.md`, then:
@@ -79,7 +48,7 @@ Behavioral acceptance checks (must pass):
 
 ---
 
-### Step 3 — Phase 2: Importer matching
+### Step 2 — Importer matching
 
 ```
 Logic discovery: Shipment matching (Phase 2).
@@ -102,7 +71,7 @@ ShipmentParty writes atomically with the parent Shipment.
 
 ---
 
-### Step 4 — Live Kafka end-to-end test
+### Step 3 — Live Kafka end-to-end test
 
 **Required: set Kafka env vars in `config/default.env`:**
 ```
