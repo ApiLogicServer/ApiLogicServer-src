@@ -13,6 +13,7 @@ import create_from_model.api_logic_server_utils as create_utils
 log = logging.getLogger('create_from_model.model_creation_services')
 
 def read_mgr_readme(project: Project) -> list[tuple[str, str]]:
+    """ reads Docs/docs/Manager-readme.md from git """
     if isinstance(project, Path):
         project_path = project
     else:
