@@ -12,7 +12,7 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "16.04.16"  # last public release: 16.03.07
+__version__ = "16.04.16"  # last public release: 16.04.15
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
     "\t04/15/2026 - 16.04.16  EAI/Kafka CE pub/sub automation, demo_eai, xr, session.merge bug, mgr readme, ins only  \n"\
