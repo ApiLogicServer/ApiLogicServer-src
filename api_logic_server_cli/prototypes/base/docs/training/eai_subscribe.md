@@ -3,14 +3,15 @@ title: EAI Consume Pattern — Kafka + XML/JSON → DB
 description: Two-message Kafka consume pattern with generic by-name XML/JSON mapper. Covers blob-row bridge, 3-tier mapping contract, local debug mode, and generated test data.
 source: Generic training for ApiLogicServer projects with GenAI integration
 usage: AI assistants read this when detecting Kafka consume, EAI, or XML/JSON-to-DB patterns in a user prompt
-version: 1.1
+version: 1.2
 date: April 4, 2026
 related:
   - subsystem_creation.md (Kafka outbound, row_event patterns)
   - logic_bank_patterns.md (row_event, commit_row_event)
   - logic_bank_api.md (full rule API)
 changelog:
-    - 1.1 (April 12, 2026): Added source-PK normalization rule for placeholder external IDs (e.g. 0), plus insert-only rerun DB-reset guidance
+  - 1.2 (April 15, 2026): Added mandatory is_processed guard to Artifact 3 row-event bridge template; without it the debug path triggers a spurious Kafka re-publish that crashes Consumer 2 on UNIQUE constraint (bug caught by customs_demo implementation)
+  - 1.1 (April 12, 2026): Added source-PK normalization rule for placeholder external IDs (e.g. 0), plus insert-only rerun DB-reset guidance
   - 1.0 (April 4, 2026): Initial — extracted from a production customs/logistics EAI project
 ---
 
@@ -180,6 +181,10 @@ def register(bus):
 def _publish_xyz(row: models.XyzMessage, old_row, logic_row: LogicRow):
     if not logic_row.is_inserted() or not row.payload:
         return
+    if row.is_processed:
+        # debug path: process_xyz_payload() already ran Tx 2 inline (blob created with is_processed=True)
+        # do NOT re-publish — Consumer 2 would attempt a duplicate insert and crash on UNIQUE constraint
+        return
     import integration.kafka.kafka_producer as kafka_producer
     if kafka_producer.producer is None:
         # Kafka not configured — /consume_debug does Tx 2 directly; nothing to do here
@@ -191,6 +196,15 @@ def _publish_xyz(row: models.XyzMessage, old_row, logic_row: LogicRow):
 def declare_logic():
     Rule.after_flush_row_event(on_class=models.XyzMessage, calling=_publish_xyz)
 ```
+
+> 🚨 **`is_processed` guard is mandatory in the row-event bridge.**
+> The debug path (`/consume_debug/xyz`) calls `process_xyz_payload()` directly and creates the blob
+> with `is_processed=True` in the same Tx. Without the guard, `after_flush_row_event` fires anyway,
+> publishes to `xyz_processed`, and Consumer 2 attempts a duplicate insert — crashing on a UNIQUE
+> constraint. The test gate passes despite this because the crash is caught by Consumer 2's `except`
+> block, but the bug is real and reproducible in production.
+> The Kafka path creates the blob with `is_processed` unset (falsy), so the guard does not suppress
+> legitimate publishes.
 
 > **Do not import producer by value.**
 > `from integration.kafka.kafka_producer import producer` captures a stale snapshot (often `None`
