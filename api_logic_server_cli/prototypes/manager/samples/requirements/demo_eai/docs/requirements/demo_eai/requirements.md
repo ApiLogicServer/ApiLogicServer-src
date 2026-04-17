@@ -10,10 +10,10 @@
 # A - Create project from existing database
 genai-logic create --project_name=demo_eai --db_url=sqlite:///samples/dbs/basic_demo.sqlite
 
-# B - in created project, get these requirements
+# B - In created project, get these requirements
 $ cp -r ../samples/requirements/demo-eai/ .
 
-# C - create system from requirements
+# C - Imoplement these requirements
 implement requirements docs/requirements/demo_eai
 ```
 
