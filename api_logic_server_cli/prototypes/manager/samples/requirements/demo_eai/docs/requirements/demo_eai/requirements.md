@@ -4,19 +4,6 @@
   Executable Requirements spec — say "implement requirements docs/requirements/demo_eai" to run
 -->
 
-# demo-eai requirements
-
-```bash title="Establish Initial State, Execute Requirements"
-# A - Create project from existing database
-genai-logic create --project_name=demo_eai --db_url=sqlite:///samples/dbs/basic_demo.sqlite
-
-# B - In created project, get these requirements
-$ cp -r ../samples/requirements/demo-eai/ .
-
-# C - Imoplement these requirements
-implement requirements docs/requirements/demo_eai
-```
-
 ## 1. Business Logic — Check Credit
 
 ```gherkin
