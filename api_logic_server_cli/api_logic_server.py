@@ -1365,66 +1365,73 @@ from database import <project.bind_key>_models
 
 
     def add_auth(self, msg: str, is_nw: bool = False):
-        """add authentication models to project -- update config (not via multi-db support)
+        """Activate security in an existing project, or switch/disable provider.
 
-        As of 10.04.50, projects are created with full security, but not activated.
-        1. This means you just need to alter config.config.py to:
-            * Activate: just set SECURITY_ENABLED = True
-            * Switching providers (sql, keycloak): ...authentication_provider.sql.auth_provider
-        2. It is more complex to alter the sql database
-            * Change url
-            * Change model to match your db
+        Projects are created with security infrastructure in place but NOT activated
+        (SECURITY_ENABLED = False in config/default.env, provider import defaulting to sql).
+        This method does the activation work:
+
+          1. Sets SECURITY_ENABLED = True in config/default.env.
+          2. Rewrites the authentication_provider import in config/config.py to point at
+             the requested provider (sql or keycloak).
+          3. For keycloak: sets kc_base URL in config.py.
+          4. For sql with a custom DB URL: calls add_auth_model() to wire in the auth DB
+             via multi-db support (add-db flow).
+          5. For northwind (nw / nw+): overwrites declare_security.py with the nw sample
+             grants; for all other projects, leaves the user's declare_security.py alone.
+          6. For Ontimize apps in the project: regenerates auth components.
+
+        Called from:
+          - CLI:  `genai-logic add-auth --provider-type=keycloak|sql|None`
+          - create_project() during nw / nw+ project creation (is_nw=True)
 
         Args:
-            msg (str): eg: ApiLogicProject customizable project created.  Adding Security:")
-            is_nw (bool): is northwind, which means we add the nw security logic
-            provider_type (str): sql or keycloak
+            msg (str): Human-readable context string logged at entry, e.g.
+                       "ApiLogicProject customizable project created.  Adding Security:"
+                       Pass "" to suppress logging (used in non-interactive flows).
+            is_nw (bool): True when called from create_project() for northwind — causes
+                          the nw sample declare_security.py to be copied into the project.
         """
         if self.add_auth_in_progress:
             return
         self.add_auth_in_progress = True
 
         if self.auth_provider_type == '':
-            self.auth_provider_type = 'sql'  # nw+ defaulting
+            # nw+ create_project() calls add_auth() without setting provider_type;
+            # default to sql so the import rewrite has a valid target.
+            self.auth_provider_type = 'sql'
 
         database_path = self.project_directory_path.joinpath("database")
         use_keycloak = False
         if msg != "":
             log.info(msg + f" to project: {str(database_path.parent)}")
-            if is_nw or "ApiLogicProject customizable project created" in msg:
-                pass
-            else:
-                pass
-                # log.info(".. docs: https://apilogicserver.github.io/Docs/Security-Activation")
-            if self.auth_provider_type == 'sql':  # eg, add-auth cli command
-                pass
-                # log.debug("  1. ApiLogicServer add-db --db_url=auth --bind_key=authentication")
-            elif self.auth_provider_type == 'keycloak':
+            if self.auth_provider_type == 'keycloak':
                 use_keycloak = True
-                pass
-                # log.info(".. for keycloak")
-                # log.info(".. docs: https://apilogicserver.github.io/Docs/Security-Activation")
 
         config_file = f'{self.project_directory}/config/config.py'
         env_file    = f'{self.project_directory}/config/default.env'
+
+        # Detect current state so we know what needs to change.
         is_enabled = create_utils.does_file_contain(search_for="SECURITY_ENABLED = True",
                                         in_file=env_file)
         is_sql = create_utils.does_file_contain(search_for="authentication_provider.sql.auth_provider import",
                                         in_file=config_file)
-        was_provider_type = "sql" if is_sql else "keycloak"
+        was_provider_type = "sql" if is_sql else "keycloak"  # what config.py currently imports
+
+        # Expand convenience aliases to real URLs/paths.
         if self.auth_provider_type == 'keycloak':
-            if self.auth_db_url in[ 'hardened' ]:
+            if self.auth_db_url in ['hardened']:
                 self.auth_db_url = "https://kc.hardened.be"
             elif self.auth_db_url in ['auth', 'localhost', 'local']:
                 self.auth_db_url = "http://localhost:8080"
         elif self.auth_provider_type == 'sql':
-            if self.auth_db_url in[ 'auth' ]:
+            if self.auth_db_url in ['auth']:
                 self.auth_db_url = "'sqlite:///../database/authentication_db.sqlite'  #"
 
         provider_note = f"Setting security provider type = {self.auth_provider_type}, @server = {self.auth_db_url} \n"
-        #                    f'(was: {was_provider_type}, {is_enabled_note})\n'
 
-        if self.auth_provider_type in ['none', 'None']:  # none means disable
+        # --provider-type=None means "disable security" — set flag and exit.
+        if self.auth_provider_type in ['none', 'None']:
             if is_enabled:
                 log.info(f'\n\n.. ..Disabling security for current provider type: {was_provider_type}\n')
                 create_utils.assign_value_to_key_in_file(value=False, 
@@ -1434,15 +1441,19 @@ from database import <project.bind_key>_models
                 log.info(f'\n.. .. ..No action taken - already disabled for current provider type: {was_provider_type}\n')
             return
 
-        is_northwind = is_nw or self.nw_db_status in ["nw", "nw+"]  # nw_db_status altered in create_project
-        if is_northwind:  # is_nw or self.nw_db_status ==  "nw":
+        # Northwind projects get sample RBAC grants copied from the nw prototype.
+        # All other projects keep whatever the developer has in declare_security.py.
+        # is_nw flag  → called from create_project() during nw/nw+ creation
+        # nw_db_status → set earlier in create_project(); handles `genai-logic add-auth`
+        #                run manually on an already-created nw project
+        is_northwind = is_nw or self.nw_db_status in ["nw", "nw+"]
+        if is_northwind:
             if msg != "":
-                if msg != "":
-                    log.debug("\n.. Adding Sample authorization to security/declare_security.py")
-                nw_declare_security_py_path = self.api_logic_server_dir_path.\
-                    joinpath('prototypes/nw/security/declare_security.py')
-                declare_security_py_path = self.project_directory_path.joinpath('security/declare_security.py')
-                shutil.copyfile(nw_declare_security_py_path, declare_security_py_path)
+                log.debug("\n.. Adding Sample authorization to security/declare_security.py")
+            nw_declare_security_py_path = self.api_logic_server_dir_path.\
+                joinpath('prototypes/nw/security/declare_security.py')
+            declare_security_py_path = self.project_directory_path.joinpath('security/declare_security.py')
+            shutil.copyfile(nw_declare_security_py_path, declare_security_py_path)
         else:
             if msg != "":
                 log.info("\n.. Authorization is declared in security/declare_security.py")
@@ -1452,10 +1463,14 @@ from database import <project.bind_key>_models
                     key="SECURITY_ENABLED", value=True)                    
         self.set_provider(from_value=was_provider_type, to_value=self.auth_provider_type, config_file=config_file)
         if self.auth_provider_type == "keycloak":
-            use_keycloak =True
+            use_keycloak = True
+            # Write the resolved KC base URL into config.py (kc_base variable).
             create_utils.assign_value_to_key_in_file(in_file=config_file, \
                         key="    kc_base", value=self.auth_db_url)                    
         else:
+            # SQL provider: if a non-default auth DB URL was supplied, wire it in via the
+            # multi-db add-db flow (add_auth_model).  The default sqlite path is already
+            # present in config.py from project creation, so skip the call for that case.
             if self.auth_db_url != "'sqlite:///../database/authentication_db.sqlite'  #":
                 self.add_auth_model(msg=msg, is_nw=is_nw)
         
