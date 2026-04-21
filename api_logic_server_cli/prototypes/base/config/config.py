@@ -173,12 +173,29 @@ class Config:
     ''' keycloak client id '''
 
     SECURITY_ENABLED = os.getenv("SECURITY_ENABLED",False)
-    SECURITY_PROVIDER =  os.getenv('SECURITY_PROVIDER', None)  # type: ignore # type: str
+    SECURITY_PROVIDER =  os.getenv('SECURITY_PROVIDER', None)  # type: ignore # type: str  ← STRING here; overwritten as a class below
     if os.getenv('SECURITY_ENABLED'):  # e.g. export SECURITY_ENABLED=true
         security_export = os.getenv('SECURITY_ENABLED','false').lower().strip()  # type: ignore # type: str
         SECURITY_ENABLED = security_export not in ["false", "no"]  # NO SEC
         app_logger.debug(f'Security .. overridden from env variable SECURITY_ENABLED: {SECURITY_ENABLED}')
     if SECURITY_ENABLED:
+        # *** HOW SECURITY_PROVIDER WORKS — do not reorder these lines ***
+        # SECURITY_PROVIDER starts as a STRING from os.getenv() above (e.g. "keycloak" or "sql",
+        # or None if not set).  The ternary below reads that string to select one of the two
+        # hardcoded classes, then OVERWRITES SECURITY_PROVIDER with that class reference.
+        # Order matters: the ternary must come after the os.getenv() call, not before.
+        #
+        # NOTE — user-provided class via env var is NOT implemented:
+        # The original design intent was that SECURITY_PROVIDER could be an arbitrary class
+        # (hence the # type: ignore annotation).  In practice the ternary only distinguishes
+        # "keycloak" vs everything-else (→ sql); there is no code path that imports and uses
+        # a custom class name supplied through the env var.  This has not been tested.
+        #
+        # The two imports below are intentionally different (sql + keycloak) in the prototype default.
+        # `genai-logic add-auth --provider-type=X` calls set_provider(), which uses str.replace() to
+        # rewrite the matching import line (the one containing the from-provider path string).  After
+        # a switch both aliases resolve to the target provider; the alias names become misleading
+        # (SQL_Authentication_Provider may import from keycloak) but are functionally equivalent.
         from security.authentication_provider.sql.auth_provider import Authentication_Provider as SQL_Authentication_Provider
         from security.authentication_provider.keycloak.auth_provider import Authentication_Provider as KC_Authentication_Provider
         # typically, authentication_provider is [ keycloak | sql ]
