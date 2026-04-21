@@ -7,7 +7,7 @@ SCRIPT_DIR="$(pwd)"
 
 echo "..Script dir: $SCRIPT_DIR"
 
-cd $SCRIPT_DIR/../../../../build_and_test/ApiLogicServer
+cd $SCRIPT_DIR/../../../../build_and_test/genai-logic
 INSTALL_DIR=$(pwd)
 
 echo "..Install dir: $INSTALL_DIR"

@@ -10,8 +10,8 @@ import json
 
 ############################
 # before release, this runs tests/build_and_test/build_load_and_test.py... 
-# it builds the product into /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/ApiLogicServer....
-# and creates several projects into ...build_and_test/ApiLogicServer/tests
+# it builds the product into /Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-logic....
+# and creates several projects into ...build_and_test/genai-logic/tests
 ############################
 
 
@@ -377,7 +377,7 @@ def start_api_logic_server(project_name: str, env_list = None, port: str='5656',
     import stat
 
     global stdout, stderr
-    install_api_logic_server_path = get_servers_build_and_test_path().joinpath("ApiLogicServer")
+    install_api_logic_server_path = get_servers_build_and_test_path().joinpath("genai-logic")
     path = install_api_logic_server_path.joinpath(f'tests/{project_name}')
     print(f'\n\nStarting Server tests/{project_name}... from  {install_api_logic_server_path}\venv\n')
     
@@ -492,7 +492,7 @@ def multi_database_tests():
     print(f'\nMulti-Database Tests')
 
     current_path = Path(os.path.abspath(__file__))
-    install_api_logic_server_path = get_servers_build_and_test_path().joinpath("ApiLogicServer")
+    install_api_logic_server_path = get_servers_build_and_test_path().joinpath("genai-logic")
     api_logic_project_path = install_api_logic_server_path.joinpath('MultiDB')
 
     result_create = run_command(f'{set_venv} && ApiLogicServer create --{project_name}=tests/MultiDB --{db_url}=nw-',
@@ -530,7 +530,7 @@ def rebuild_tests():
     print(f'Rebuild tests')
 
     current_path = Path(os.path.abspath(__file__))
-    install_api_logic_server_path = get_servers_build_and_test_path().joinpath("ApiLogicServer")
+    install_api_logic_server_path = get_servers_build_and_test_path().joinpath("genai-logic")
     api_logic_project_path = install_api_logic_server_path.joinpath('tests/Rebuild')
     admin_merge_yaml_path = api_logic_project_path.joinpath('ui').joinpath('admin').joinpath('admin-merge.yaml')
     new_model_path = current_path.parent.parent.joinpath('rebuild_tests').joinpath('models.py')
@@ -608,7 +608,7 @@ def delete_build_directories(install_api_logic_server_path):
     # delete_dir(dir_path=str(get_api_logic_server_src_path().joinpath('clean')), msg="delete clean ")
     try:
         os.mkdir(install_api_logic_server_path, mode = 0o777)
-        os.mkdir(install_api_logic_server_path.parent.parent.joinpath('clean/ApiLogicServer'), mode = 0o777)
+        os.mkdir(install_api_logic_server_path.parent.parent.joinpath('clean/genai-logic'), mode = 0o777)
         os.mkdir(install_api_logic_server_path.joinpath('dockers'), mode = 0o777)
         os.mkdir(install_api_logic_server_path.joinpath('dockers/ApiLogicServer'), mode = 0o777) # for testing docker manager
     except Exception as e:
@@ -843,7 +843,7 @@ def validate_opt_locking():
         return self.location   '''
 
     current_path = Path(os.path.abspath(__file__))
-    install_api_logic_server_path = get_servers_build_and_test_path().joinpath("ApiLogicServer")
+    install_api_logic_server_path = get_servers_build_and_test_path().joinpath("genai-logic")
     api_logic_project_path = install_api_logic_server_path.joinpath('tests/web_genie')
 
     rel_path = 'tests/test_databases/sqlite-databases/web_genie/web_genie.sqlite'
@@ -1093,12 +1093,12 @@ elif platform.startswith("linux"):
 else:
     print("unknown platform")
 
-install_api_logic_server_path = get_servers_build_and_test_path().joinpath("ApiLogicServer") 
-""" eg, build_and_test/ApiLogicServer """
-install_api_logic_server_clean_path = install_api_logic_server_path.parent.parent.joinpath("clean/ApiLogicServer")
-""" eg, clean/ApiLogicServer"""
+install_api_logic_server_path = get_servers_build_and_test_path().joinpath("genai-logic") 
+""" eg, build_and_test/genai-logic """
+install_api_logic_server_clean_path = install_api_logic_server_path.parent.parent.joinpath("clean/genai-logic")
+""" eg, clean/genai-logic"""
 api_logic_project_path = install_api_logic_server_path.joinpath(f'tests/ApiLogicProject')
-""" eg, build_and_test/ApiLogicServer/ApiLogicProject """
+""" eg, build_and_test/genai-logic/ApiLogicProject """
 api_logic_server_tests_path = Path(os.path.abspath(__file__)).parent.parent
 """ eg, ApiLogicServer-src/tests """
 api_logic_server_main_path = get_api_logic_server_src_path().\

@@ -19,13 +19,13 @@ SCRIPT_DIR="$(pwd)"
 
 echo "..Script directory: $SCRIPT_DIR"
 
-cd $SCRIPT_DIR/../../../../build_and_test/ApiLogicServer
+cd $SCRIPT_DIR/../../../../build_and_test/genai-logic
 INSTALL_DIR=$(pwd)
 # rm -r $INSTALL_DIR/*
 cd $SCRIPT_DIR
 
-mkdir -p $SCRIPT_DIR/../../../../clean/ApiLogicServer
-cd $SCRIPT_DIR/../../../../clean/ApiLogicServer
+mkdir -p $SCRIPT_DIR/../../../../clean/genai-logic
+cd $SCRIPT_DIR/../../../../clean/genai-logic
 CLEAN_DIR=$(pwd)
 rm -rf $CLEAN_DIR/*
 cd $SCRIPT_DIR

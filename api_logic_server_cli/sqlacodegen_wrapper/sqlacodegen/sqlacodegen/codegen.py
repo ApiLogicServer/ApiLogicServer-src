@@ -1224,7 +1224,11 @@ else:
             if hasattr( column.server_default, 'arg' ):
                 pass # employee_id = Column(Integer, server_default=text("nextval('employees_employee_id_seq'::regclass)"), primary_key=True)
                 default_expr = self._get_compiled_expression(column.server_default.arg)
-                if '\n' in default_expr:
+                if isinstance(column.type, Boolean) and default_expr in ('0', '1'):
+                    # Boolean + SQLite 0/1 default: emit Python default= to avoid LogicBank
+                    # evaluating text("0") as a truthy TextClause object (ALS bug fix)
+                    server_default = 'default={0}'.format('False' if default_expr == '0' else 'True')
+                elif '\n' in default_expr:
                     server_default = 'server_default=text("""\\\n{0}""")'.format(default_expr)
                 else:
                     default_expr = default_expr.replace('"', '\\"')
