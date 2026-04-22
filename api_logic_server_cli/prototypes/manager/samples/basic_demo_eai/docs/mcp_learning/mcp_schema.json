@@ -1,0 +1,182 @@
+{
+    "tool_type": "json-api",
+    "schema_version": "1.0",
+    "base_url": "http://localhost:5656/api",
+    "description": "API Logic Project: demo_eai",
+    "resources": [
+        {
+            "name": "Customer",
+            "path": "/Customer",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "name",
+                "balance",
+                "credit_limit",
+                "email",
+                "email_opt_out"
+            ],
+            "filterable": [
+                "id",
+                "name",
+                "balance",
+                "credit_limit",
+                "email",
+                "email_opt_out"
+            ]
+        },
+        {
+            "name": "Item",
+            "path": "/Item",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "order_id",
+                "product_id",
+                "quantity",
+                "amount",
+                "unit_price"
+            ],
+            "filterable": [
+                "id",
+                "order_id",
+                "product_id",
+                "quantity",
+                "amount",
+                "unit_price"
+            ]
+        },
+        {
+            "name": "Order",
+            "path": "/Order",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "notes",
+                "customer_id",
+                "CreatedOn",
+                "date_shipped",
+                "amount_total"
+            ],
+            "filterable": [
+                "id",
+                "notes",
+                "customer_id",
+                "CreatedOn",
+                "date_shipped",
+                "amount_total"
+            ]
+        },
+        {
+            "name": "Product",
+            "path": "/Product",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "name",
+                "count_suppliers",
+                "unit_price"
+            ],
+            "filterable": [
+                "id",
+                "name",
+                "count_suppliers",
+                "unit_price"
+            ]
+        },
+        {
+            "name": "OrderB2bMessage",
+            "path": "/OrderB2bMessage",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "received_at",
+                "payload",
+                "is_processed"
+            ],
+            "filterable": [
+                "id",
+                "received_at",
+                "payload",
+                "is_processed"
+            ]
+        },
+        {
+            "name": "ProductSupplier",
+            "path": "/ProductSupplier",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "product_id",
+                "supplier_id",
+                "supplier_part_number",
+                "unit_cost",
+                "lead_time_days"
+            ],
+            "filterable": [
+                "id",
+                "product_id",
+                "supplier_id",
+                "supplier_part_number",
+                "unit_cost",
+                "lead_time_days"
+            ]
+        },
+        {
+            "name": "Supplier",
+            "path": "/Supplier",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "name",
+                "contact_name",
+                "phone",
+                "email",
+                "region"
+            ],
+            "filterable": [
+                "id",
+                "name",
+                "contact_name",
+                "phone",
+                "email",
+                "region"
+            ]
+        }
+    ]
+}

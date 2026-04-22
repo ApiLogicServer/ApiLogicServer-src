@@ -1,0 +1,44 @@
+# Start Kafka (KRaft mode, single broker, no Zookeeper)
+#
+# Start (returns immediately):
+#   docker compose -f integration/kafka/dockercompose_start_kafka.yml up -d
+#   (omit -d to keep terminal attached and monitor broker log)
+#
+# Stop:
+#   docker compose -f integration/kafka/dockercompose_start_kafka.yml down
+#
+# After starting, reset topics for a specific pipeline (creates topics + clears log):
+#   bash test/<topic>_reset.sh
+#
+# Useful inspection commands (run from host):
+#   docker exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list
+#
+#   docker exec broker1 /opt/kafka/bin/kafka-console-consumer.sh \
+#     --bootstrap-server localhost:9092 --topic <topic> --from-beginning --group fresh-group-1
+#   (increment group number each time to re-read from beginning)
+#
+
+services:
+
+  kafka:
+    restart: always
+    image: apache/kafka:3.7.0
+    volumes:
+      - ./.volumes/kafka/data:/integration/kafka/volume
+    ports:
+      - 9092:9092
+      - 9093:9093
+    container_name: broker1
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@localhost:9093'
+      CLUSTER_ID: r4zt_wrqTRuT7W2NJsB_GA
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
