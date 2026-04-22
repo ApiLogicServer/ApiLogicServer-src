@@ -11,7 +11,12 @@ import traceback
 from flask import jsonify
 import json
 from integration.row_dict_maps.Customer_Orders import Customer_Orders
-from confluent_kafka import Producer, KafkaException
+try:
+    from confluent_kafka import Producer, KafkaException
+except ImportError:
+    Producer = None
+    KafkaException = None
+    # Kafka support not available on this platform (e.g. Windows/ARM — no C compiler)
 import integration.kafka.kafka_producer as kafka_producer
 from integration.n8n.n8n_producer import send_n8n_message
 from config.config import Config

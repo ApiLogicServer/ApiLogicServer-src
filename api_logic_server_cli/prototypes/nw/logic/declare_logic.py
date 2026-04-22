@@ -10,7 +10,12 @@ from security.system.authorization import Grant, Security
 import logging
 from flask import jsonify
 from integration.row_dict_maps.OrderShipping import OrderShipping
-from confluent_kafka import Producer, KafkaException
+try:
+    from confluent_kafka import Producer, KafkaException
+except ImportError:
+    Producer = None
+    KafkaException = None
+    # Kafka support not available on this platform (e.g. Windows/ARM — no C compiler)
 import integration.kafka.kafka_producer as kafka_producer
 from integration.n8n.n8n_producer import send_n8n_message
 from config.config import Config

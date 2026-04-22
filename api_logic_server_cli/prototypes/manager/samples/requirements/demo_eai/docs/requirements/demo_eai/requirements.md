@@ -75,15 +75,15 @@ Feature: Row-Level Security
     Then only return customers where credit_limit >= 3000 or balance > 0
 ```
 
-## 6. Test
+## 6. How to Test
 
-- Docker is optional: add these to `config/default.env':
-
+- Test without Kafka (debug endpoint bypasses Kafka entirely):
 ```
-APILOGICPROJECT_KAFKA_CONSUMER = {"bootstrap.servers": "localhost:9092", "group.id": "demo-eai-order-group"}
-APILOGICPROJECT_KAFKA_PRODUCER = {"bootstrap.servers": "localhost:9092"}
+curl "http://localhost:5656/consume_debug/order_b2b?file=docs/requirements/demo_eai/message_formats/order_b2b.json"
 ```
 
-- start Docker: `demo_eai_exec_reqmts % docker compose -f integration/kafka/dockercompose_start_kafka.yml up -d`
-
-- test order: curl "http://localhost:5656/consume_debug/order_b2b?file=docs/requirements/demo_eai/message_formats/order_b2b.json"
+- Kafka is optional. To test with live Kafka:
+  1. Start Docker: `docker compose -f integration/kafka/dockercompose_start_kafka.yml up -d`
+  2. Reset topics: `bash integration/kafka/order_b2b_reset.sh`
+  3. Restart the server (after Docker is up, so it picks up Kafka env vars and subscribes to topics)
+  4. Send a test message using the curl command above
