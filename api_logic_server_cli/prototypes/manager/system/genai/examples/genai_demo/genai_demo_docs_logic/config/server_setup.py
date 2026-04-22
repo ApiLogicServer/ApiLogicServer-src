@@ -195,6 +195,9 @@ class ValidationErrorExt(ValidationError):
         self.api_code = api_code
         self.detail: TypedDict = detail
 
+    def __str__(self):
+        return self.message
+
 
 def validate_db_uri(flask_app):
     """

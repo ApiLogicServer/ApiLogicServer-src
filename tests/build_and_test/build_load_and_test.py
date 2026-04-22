@@ -590,7 +590,7 @@ def verify_include_models( project_name : str ='include_exclude',
     Returns:
         bool: True means all found
     """
-    model_file_str = str(get_servers_build_and_test_path().joinpath(f'ApiLogicServer/tests/{project_name}/database/models.py'))
+    model_file_str = str(get_servers_build_and_test_path().joinpath(f'genai-logic/tests/{project_name}/database/models.py'))
     for each_term in check_for:
         is_in_file = does_file_contain(in_file = model_file_str, search_for=each_term)
         if verify_found and not is_in_file:
@@ -655,7 +655,7 @@ def docker_creation_tests(api_logic_server_tests_path):
         msg=f'\nTag ApiLogicServer Docker Container at: {str(api_logic_server_home_path)}')
     
     src = api_logic_server_tests_path.joinpath('creation_tests').joinpath('docker-commands.sh')
-    dest = get_servers_build_and_test_path().joinpath('ApiLogicServer').joinpath('dockers')
+    dest = get_servers_build_and_test_path().joinpath('genai-logic').joinpath('dockers')
     shutil.copy(src, dest)
     assert os.path.isfile(dest / 'docker-commands.sh'), \
         'Internal error - docker-commands.sh not found in creation_tests'

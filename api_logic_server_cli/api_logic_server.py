@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "17.00.00"  # last public release: 16.04.18
+__version__ = "17.00.01"  # last public release: 16.04.18
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t04/21/2026 - 17.00.01  NL rbac grants  \n"\
     "\t04/21/2026 - 17.00.00  EAI/Kafka CE pub/sub automation (see demo_eai, fix issue 110), executable requirements  \n"\
     "\t04/17/2026 - 16.04.18  EAI/Kafka CE pub/sub automation, demo_eai, xr, session.merge bug, mgr readme, ins only, demo-eai  \n"\
     "\t03/26/2026 - 16.03.07  LB with allow_event_nesting, Kafka integration fixes, demo cleanup, log file  \n"\
@@ -1468,7 +1469,11 @@ from database import <project.bind_key>_models
             create_utils.assign_value_to_key_in_file(in_file=config_file, \
                         key="    kc_base", value=self.auth_db_url)                    
         else:
-            # SQL provider: if a non-default auth DB URL was supplied, wire it in via the
+            # SQL provider: write 'sql' so the ternary in config.py picks SQL_Authentication_Provider
+            # (prototype default is 'keycloak'; must override it explicitly for SQL).
+            create_utils.assign_value_to_key_in_file(in_file=config_file, \
+                        key="    SECURITY_PROVIDER", value="sql")
+            # if a non-default auth DB URL was supplied, wire it in via the
             # multi-db add-db flow (add_auth_model).  The default sqlite path is already
             # present in config.py from project creation, so skip the call for that case.
             if self.auth_db_url != "'sqlite:///../database/authentication_db.sqlite'  #":

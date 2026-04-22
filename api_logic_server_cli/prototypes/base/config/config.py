@@ -173,7 +173,7 @@ class Config:
     ''' keycloak client id '''
 
     SECURITY_ENABLED = os.getenv("SECURITY_ENABLED",False)
-    SECURITY_PROVIDER =  os.getenv('SECURITY_PROVIDER', None)  # type: ignore # type: str  ← STRING here; overwritten as a class below
+    SECURITY_PROVIDER =  os.getenv('SECURITY_PROVIDER', 'keycloak')  # type: ignore # type: str  ← STRING here; overwritten as a class below
     if os.getenv('SECURITY_ENABLED'):  # e.g. export SECURITY_ENABLED=true
         security_export = os.getenv('SECURITY_ENABLED','false').lower().strip()  # type: ignore # type: str
         SECURITY_ENABLED = security_export not in ["false", "no"]  # NO SEC
