@@ -50,6 +50,7 @@ Feature: Kafka Subscribe Order Integration
     And create the order with all Check Credit rules enforced
 ```
 
+
 ## 4. Kafka Publish — Notify shipping on dispatch
 
 ```gherkin
@@ -64,7 +65,13 @@ Feature: Kafka Publish Shipping Notification
 ```
 
 
-## 5. Test
+## 5. Security
+
+```gherkin
+sales role sees only customers with credit_limit ≥ 3000 or positive balance
+```
+
+## 6. Test
 
 - Docker is optional: add these to `config/default.env':
 
