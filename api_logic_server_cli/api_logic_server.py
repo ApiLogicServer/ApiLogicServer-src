@@ -364,7 +364,7 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
 
         if project.nw_db_status in ["nw", "nw+"]:
             log.debug(".. ..Copying nw customizations: logic, custom api, readme, tests, admin app")
-            if project.nw_db_status == 'nw':
+            if project.nw_db_status == 'nw':  # nw gets converted to nw-, so this should not occur
                 log.error("\n==> System Error: Unexpected customization for nw.  Please contact support.\n")
 
             sample_mgr.add_nw_customizations(project=project, do_security=False, do_show_messages=False)
@@ -386,7 +386,7 @@ def create_project_and_overlay_prototypes(project: 'ProjectRun', msg: str) -> st
             project.insert_tutorial_into_readme()
 
         if project.db_url in ['shipping', 'Shipping']:
-            log.debug(".. ..Copy in oracle customizations: sa_pydb")
+            log.debug(".. ..Copy in shipping customizations: sa_pydb")
             nw_dir = (Path(api_logic_server_dir_str)).\
                 joinpath('prototypes/shipping')
             recursive_overwrite(nw_dir, project.project_directory)
