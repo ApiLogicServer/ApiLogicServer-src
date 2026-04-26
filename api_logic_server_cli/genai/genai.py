@@ -610,7 +610,7 @@ class GenAI(object):
                 json.dump(self.response_dict, response_file, indent=4)
                 pass  # not possible on create_db_models, since project paths not yet set by api_logic_server
             if add_mcp := False:  # bad idea - fails with Ont seeking email (which would be confusing)
-                from api_logic_server_cli.sample_mgr import add_cust as sample_mgr
+                from api_logic_server_cli.clone_and_overlay_prototypes import add_cust as sample_mgr
                 sample_mgr.add_basic_demo_customizations(project=self.project)
         else:  # normal path
             genai_svcs.rebuild_test_data_for_project(

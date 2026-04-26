@@ -3,7 +3,7 @@ title: Sample_Basic_EAI
 do_process_code_block_titles: True
 version: 1.8 from docsite, for readme, for readme 4/21/2026 - message_formats auto-included in prototype, xr
 source: docs/Sample-Basic-EAI
-Propagation: see api_logic_server_cli/sample_mgr/create_readme.py
+Propagation: see api_logic_server_cli/clone_and_overlay_prototypes/create_readme.py
 ---
 <style>
   -typeset h1,

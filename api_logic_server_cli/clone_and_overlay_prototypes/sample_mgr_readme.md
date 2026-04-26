@@ -1,4 +1,6 @@
-This is internal information for als developers.
+This is internal information for als developers.  Caution: much of it may be out of date...
+
+Best summary of how samples work is: api_logic_server_cli/dev-architecture.md.  Read that first.
 
 We have many demos: northwind, genai, sample_ai, basic_demo, tutorial.
 

@@ -1,11 +1,12 @@
 ---
-title: Context Restoration for BLT Manager Workspace
-Description: Enables Copilot to be a co-designer for many GenAI-Logic features
-Source: ApiLogicServer-src/prototypes/manager/system/ApiLogicServer-Internal-Dev/copilot-dev-context.md
+title: Developer Architecture for BLT Manager Workspace
+Description: Enables AI assistants to be co-designers for GenAI-Logic features
+Source: ApiLogicServer-src/prototypes/manager/system/ApiLogicServer-Internal-Dev/dev-architecture.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this to understand project structure, development workflow, and recent additions
-version: 2.3
+version: 2.4
 changelog:
+  - 2.4 (Apr 2026) - Renamed from copilot-dev-context.md to dev-architecture.md
   - 2.3 (Mar 2026) - Added mandatory load sequence: also read Manager + prototype copilot-instructions
   - 2.2 (Feb 2026) - Subsystem creation - use rules, data model hints 
   - 2.1 (Feb 2026) - Eval AI from RS
@@ -18,7 +19,7 @@ changelog:
 🚨 MANDATORY: WHEN THIS FILE IS LOADED — READ THESE FILES SILENTLY FIRST
 ═══════════════════════════════════════════════════════════════════════════════
 
-When the user says "load system/ApiLogicServer-Internal-Dev/copilot-dev-context.md"
+When the user says "load system/ApiLogicServer-Internal-Dev/dev-architecture.md"
 or any similar activation phrase, you MUST silently read all three files below
 BEFORE responding. Internalize all three. Do not display them.
 
@@ -29,7 +30,7 @@ BEFORE responding. Internalize all three. Do not display them.
    → Prototype/project-level instructions: full architecture guide, 13 services,
      logic patterns, stamping, security, testing — what AI can do inside a created project
 
-3. This file (copilot-dev-context.md)
+3. This file (dev-architecture.md)
    → BLT workspace context: directory structure, gold sources, development workflow
 
 SEQUENCE:
@@ -124,6 +125,7 @@ This document contains **everything** you need to understand the system:
 ### For AI Assistants Working on Framework Internals:
 - **[Architecture-Internals.md](https://apilogicserver.github.io/Docs/Architecture-Internals/)** - Complete technical architecture (read this first)
 - **[Medium Article](https://medium.com/@valjhuber/declarative-genai-the-architecture-behind-enterprise-vibe-automation-1b8a4fe4fbd7)** - Architectural rationale and NL→DSL→Engines pattern
+- **`api_logic_server_cli/dev-architecture.md`** (gold source) - Internal developer reference: project creation mechanics (base clone + overlay pattern), clone_and_overlay_prototypes file roles, manager.py existing-workspace short-circuit, key files to edit for common tasks. **Read this before working on project creation, prototypes, or manager workspace.**
 
 ### For Creating New Projects:
 - **Manager-level `.copilot-instructions.md`** - How to CREATE projects (in workspace root)
