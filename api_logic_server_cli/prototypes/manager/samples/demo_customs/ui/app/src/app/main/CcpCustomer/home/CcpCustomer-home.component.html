@@ -1,0 +1,81 @@
+<o-form-layout-manager attr="CcpCustomer" mode="dialog" title="CCPCUSTOMER">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="CcpCustomerTable" 
+            service="CcpCustomer" 
+            entity="CcpCustomer" 
+            title="CCPCUSTOMER"
+            keys="id"
+            columns="name;address1;address2;city;state;country;postal;business_nbr;gst_reg;duty_bill_to_acct_nbr;payor_location;weight;export_country;foreign_trade_zone;discounts;last_modified_nm;data_form;profile_ref_nbr;po_box;phone_nbr;id;duty_bill_to_cd;customeroid;dpi;broker_cd;rod" 
+            header-actions="R;D"
+            visible-columns="name;address1;address2;city;state;country;postal;business_nbr;gst_reg;duty_bill_to_acct_nbr;payor_location;weight;export_country;foreign_trade_zone;discounts;last_modified_nm;data_form;profile_ref_nbr;po_box;phone_nbr;id;duty_bill_to_cd;customeroid;dpi;broker_cd;rod"  
+            sort-columns="name" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #name attr="name" title=" name" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #address1 attr="address1" title="address1" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #address2 attr="address2" title="address2" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #city attr="city" title="city" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #state attr="state" title="state" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #country attr="country" title="country" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #postal attr="postal" title="postal" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #business_nbr attr="business_nbr" title="business_nbr" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #gst_reg attr="gst_reg" title="gst_reg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #duty_bill_to_acct_nbr attr="duty_bill_to_acct_nbr" title="duty_bill_to_acct_nbr" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #payor_location attr="payor_location" title="payor_location" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #weight attr="weight" title="weight" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #export_country attr="export_country" title="export_country" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #foreign_trade_zone attr="foreign_trade_zone" title="foreign_trade_zone" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #discounts attr="discounts" title="discounts" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #last_modified_nm attr="last_modified_nm" title="last_modified_nm" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #data_form attr="data_form" title="data_form" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #profile_ref_nbr attr="profile_ref_nbr" title="profile_ref_nbr" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #po_box attr="po_box" title="po_box" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #phone_nbr attr="phone_nbr" title="phone_nbr" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #id attr="id" title="id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #duty_bill_to_cd attr="duty_bill_to_cd" title="duty_bill_to_cd" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #customeroid attr="customeroid" title="customeroid" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #dpi attr="dpi" title="dpi" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #broker_cd attr="broker_cd" title="broker_cd" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #rod attr="rod" title="rod" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

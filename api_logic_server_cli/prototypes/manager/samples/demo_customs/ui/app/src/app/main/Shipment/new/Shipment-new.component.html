@@ -1,0 +1,214 @@
+<o-form #ShipmentForm attr="Shipment_form_insert" service="Shipment" entity="Shipment"
+keys="local_shipment_oid_nbr" fxLayout="column" show-header="yes" header-actions="I"
+horizontal-scroll="yes"
+after-insert-mode="new" class="standalone-form-container" >
+
+<o-row attr="row1" layout-align="start stretch">
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+    
+        <o-integer-input #local_shipment_oid_nbr attr="local_shipment_oid_nbr" label=" local_shipment_oid_nbr" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #awb_nbr attr="awb_nbr" label="awb_nbr" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-currency-input #base_charge_amt attr="base_charge_amt" title="base_charge_amt" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator="," decimal-separator="."></o-currency-input>
+      
+        <o-text-input #cargo_desc attr="cargo_desc" label="cargo_desc" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #cargo_qty attr="cargo_qty" label="cargo_qty" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #cash_in_advance_flg attr="cash_in_advance_flg" label="cash_in_advance_flg" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ci_seq_nbr attr="ci_seq_nbr" label="ci_seq_nbr" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #comat_flg attr="comat_flg" label="comat_flg" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #consolidated_freight_flg attr="consolidated_freight_flg" label="consolidated_freight_flg" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #container_nbr attr="container_nbr" label="container_nbr" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-date-input #create_dt attr="create_dt" value-type="string" label="create_dt" enabled="yes" required="no" format="YYYY-MM-DD" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #csa_flg attr="csa_flg" label="csa_flg" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #customer_seq_nbr attr="customer_seq_nbr" label="customer_seq_nbr" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #customs_clearance_entry_flg attr="customs_clearance_entry_flg" label="customs_clearance_entry_flg" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #deleted_flg attr="deleted_flg" label="deleted_flg" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #dest_eec_flg attr="dest_eec_flg" label="dest_eec_flg" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #dim_height_qty attr="dim_height_qty" label="dim_height_qty" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-integer-input #dim_length_qty attr="dim_length_qty" label="dim_length_qty" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-real-input #dim_wgt attr="dim_wgt" label="dim_wgt" min-decimal-digits="2" max-decimal-digits="4" min="0" max="1000000000" fxFlex="20%" class="form-field"></o-real-input>
+      
+        <o-integer-input #dim_width_qty attr="dim_width_qty" label="dim_width_qty" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #dim_shipment_flg attr="dim_shipment_flg" label="dim_shipment_flg" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #dutiable_flg attr="dutiable_flg" label="dutiable_flg" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #duty_bill_to_acct_nbr attr="duty_bill_to_acct_nbr" label="duty_bill_to_acct_nbr" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #duty_cash_flg attr="duty_cash_flg" label="duty_cash_flg" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #duty_credit_card_flg attr="duty_credit_card_flg" label="duty_credit_card_flg" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #export_license_flg attr="export_license_flg" label="export_license_flg" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #fda_confirmation_flg attr="fda_confirmation_flg" label="fda_confirmation_flg" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #carrier_assigned_mawb_nbr attr="carrier_assigned_mawb_nbr" label="carrier_assigned_mawb_nbr" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-currency-input #freight_charge_amt attr="freight_charge_amt" title="freight_charge_amt" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator="," decimal-separator="."></o-currency-input>
+      
+        <o-integer-input #ftsr_nbr attr="ftsr_nbr" label="ftsr_nbr" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #hal_flg attr="hal_flg" label="hal_flg" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #hal_phone_nbr attr="hal_phone_nbr" label="hal_phone_nbr" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #handling_unit_qty attr="handling_unit_qty" label="handling_unit_qty" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-integer-input #hawb_serial_nbr attr="hawb_serial_nbr" label="hawb_serial_nbr" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-date-input #input_tmstp attr="input_tmstp" value-type="string" label="input_tmstp" enabled="yes" required="no" format="YYYY-MM-DD" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #keyer_nm attr="keyer_nm" label="keyer_nm" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #last_modified_nm attr="last_modified_nm" label="last_modified_nm" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-date-input #last_modified_tmstp attr="last_modified_tmstp" value-type="string" label="last_modified_tmstp" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-integer-input #meter_nbr attr="meter_nbr" label="meter_nbr" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #oda_charge_flg attr="oda_charge_flg" label="oda_charge_flg" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #opa_charge_flg attr="opa_charge_flg" label="opa_charge_flg" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #origin_loc_city_nm attr="origin_loc_city_nm" label="origin_loc_city_nm" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #origin_eec_flg attr="origin_eec_flg" label="origin_eec_flg" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #piece_qty attr="piece_qty" label="piece_qty" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #pkg_mark_desc attr="pkg_mark_desc" label="pkg_mark_desc" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #prior_notice_nbr attr="prior_notice_nbr" label="prior_notice_nbr" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ramp_transfer_flg attr="ramp_transfer_flg" label="ramp_transfer_flg" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #rod_flg attr="rod_flg" label="rod_flg" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #rpl_flg attr="rpl_flg" label="rpl_flg" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #sdl_flg attr="sdl_flg" label="sdl_flg" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #sed_exempt_nbr attr="sed_exempt_nbr" label="sed_exempt_nbr" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #shipment_control_nbr attr="shipment_control_nbr" label="shipment_control_nbr" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-date-input #ship_dt attr="ship_dt" value-type="string" label="ship_dt" enabled="yes" required="no" format="YYYY-MM-DD" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #shipment_desc attr="shipment_desc" label="shipment_desc" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #shipment_id_nbr attr="shipment_id_nbr" label="shipment_id_nbr" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #shipper_reference_desc attr="shipper_reference_desc" label="shipper_reference_desc" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-currency-input #split_billing_address_amt attr="split_billing_address_amt" title="split_billing_address_amt" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator="," decimal-separator="."></o-currency-input>
+      
+        <o-real-input #split_billing_kilo_wgt attr="split_billing_kilo_wgt" label="split_billing_kilo_wgt" min-decimal-digits="2" max-decimal-digits="4" min="0" max="1000000000" fxFlex="20%" class="form-field"></o-real-input>
+      
+        <o-text-input #spu_flg attr="spu_flg" label="spu_flg" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-real-input #total_wgt attr="total_wgt" label="total_wgt" min-decimal-digits="2" max-decimal-digits="4" min="0" max="1000000000" fxFlex="20%" class="form-field"></o-real-input>
+      
+        <o-text-input #tracking_id_nbr attr="tracking_id_nbr" label="tracking_id_nbr" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #tracking_id_qual_nbr attr="tracking_id_qual_nbr" label="tracking_id_qual_nbr" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-date-input #transaction_seq_tmstp attr="transaction_seq_tmstp" value-type="string" label="transaction_seq_tmstp" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-integer-input #trprt_bill_to_acct_nbr attr="trprt_bill_to_acct_nbr" label="trprt_bill_to_acct_nbr" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #trprt_credit_card_flg attr="trprt_credit_card_flg" label="trprt_credit_card_flg" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #value_changed_flg attr="value_changed_flg" label="value_changed_flg" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #weekday_delivery_flg attr="weekday_delivery_flg" label="weekday_delivery_flg" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #xtn_nbr attr="xtn_nbr" label="xtn_nbr" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #dest_loc_city_nm attr="dest_loc_city_nm" label="dest_loc_city_nm" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #aci_download_flg attr="aci_download_flg" label="aci_download_flg" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-date-input #etl_tmstp attr="etl_tmstp" value-type="string" label="etl_tmstp" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #split_shipment_flg attr="split_shipment_flg" label="split_shipment_flg" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #eci_flg attr="eci_flg" label="eci_flg" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #ci_image_flg attr="ci_image_flg" label="ci_image_flg" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #duplicate_shipment_record_flg attr="duplicate_shipment_record_flg" label="duplicate_shipment_record_flg" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #oga_shipment_flg attr="oga_shipment_flg" label="oga_shipment_flg" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-currency-input #cad_value_amt attr="cad_value_amt" title="cad_value_amt" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator="," decimal-separator="."></o-currency-input>
+      
+        <o-integer-input #transaction_nbr attr="transaction_nbr" label="transaction_nbr" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-date-input #ci_image_tmstp attr="ci_image_tmstp" value-type="string" label="ci_image_tmstp" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #automation_ci_flg attr="automation_ci_flg" label="automation_ci_flg" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #iid_flg attr="iid_flg" label="iid_flg" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-currency-input #carriage_value_amt attr="carriage_value_amt" title="carriage_value_amt" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator="," decimal-separator="."></o-currency-input>
+      
+        <o-currency-input #customs_value_amt attr="customs_value_amt" title="customs_value_amt" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator="," decimal-separator="."></o-currency-input>
+      
+        <o-currency-input #dest_customs_value_amt attr="dest_customs_value_amt" title="dest_customs_value_amt" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator="," decimal-separator="."></o-currency-input>
+      
+        <o-currency-input #local_customs_value_amt attr="local_customs_value_amt" title="local_customs_value_amt" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator="," decimal-separator="."></o-currency-input>
+      
+        <o-text-input #active_flg attr="active_flg" label="active_flg" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-date-input #entry_dt attr="entry_dt" value-type="string" label="entry_dt" enabled="yes" required="no" format="YYYY-MM-DD" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #admissibility_mode attr="admissibility_mode" label="admissibility_mode" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #prev_admissibility_mode attr="prev_admissibility_mode" label="prev_admissibility_mode" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #cargocontrolnbr attr="cargocontrolnbr" label="cargocontrolnbr" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #portofexit attr="portofexit" label="portofexit" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #portofentry attr="portofentry" label="portofentry" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #warehousecode attr="warehousecode" label="warehousecode" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-real-input #surface_intl_shipment_nbr attr="surface_intl_shipment_nbr" label="surface_intl_shipment_nbr" min-decimal-digits="2" max-decimal-digits="4" min="0" max="1000000000" fxFlex="20%" class="form-field"></o-real-input>
+      
+        <o-text-input #contract_wgt_type_cd attr="contract_wgt_type_cd" label="contract_wgt_type_cd" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #customs_clearance_cd attr="customs_clearance_cd" label="customs_clearance_cd" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #dang_goods_cd attr="dang_goods_cd" label="dang_goods_cd" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #data_entry_location_cd attr="data_entry_location_cd" label="data_entry_location_cd" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #dest_customs_currency_cd attr="dest_customs_currency_cd" label="dest_customs_currency_cd" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #dest_location_cd attr="dest_location_cd" label="dest_location_cd" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+</div>
+</o-row>
+
+<div layout-padding></div>
+
+</o-form>

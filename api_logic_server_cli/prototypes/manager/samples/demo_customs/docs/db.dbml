@@ -1,0 +1,347 @@
+// Copy this text, paste to https://dbdiagram.io/d
+// Or, https://databasediagram.com/app
+// Or, view in VSCode with extension: "DBML Live Preview"
+
+Table CcpCustomer {
+    id INTEGER [primary key]
+    name VARCHAR(50) 
+    address1 VARCHAR(50) 
+    address2 VARCHAR(50) 
+    city VARCHAR(30) 
+    state VARCHAR(10) 
+    country VARCHAR(3) 
+    postal VARCHAR(15) 
+    business_nbr VARCHAR(20) 
+    gst_reg VARCHAR(20) 
+    duty_bill_to_acct_nbr INTEGER 
+    duty_bill_to_cd VARCHAR(1) 
+    payor_location VARCHAR(5) 
+    weight VARCHAR(10) 
+    export_country VARCHAR(3) 
+    foreign_trade_zone VARCHAR(5) 
+    discounts VARCHAR(10) 
+    last_modified_nm VARCHAR(20) 
+    data_form VARCHAR(10) 
+    customeroid INTEGER 
+    profile_ref_nbr INTEGER 
+    dpi VARCHAR(1) 
+    po_box VARCHAR(1) 
+    phone_nbr VARCHAR(20) 
+    broker_cd VARCHAR(5) 
+    rod VARCHAR(1) 
+    }
+
+Table Piece {
+    local_piece_oid_nbr INTEGER [primary key]
+    local_shipment_oid_nbr INTEGER 
+    arrival_port_cd VARCHAR(5) 
+    awb_type_cd VARCHAR(1) 
+    awb_format_cd VARCHAR(1) 
+    contract_wgt_type_cd VARCHAR(1) 
+    customs_value_amt DECIMAL 
+    decln_oid_nbr INTEGER 
+    decln_status_cd VARCHAR(1) 
+    dest_location_cd VARCHAR(5) 
+    dim_wgt DECIMAL 
+    final_dest_cd VARCHAR(5) 
+    form_type_cd VARCHAR(4) 
+    harmonized_tariff_nbr VARCHAR(20) 
+    ipd_doc_nbr VARCHAR(12) 
+    last_foreign_port_cd VARCHAR(5) 
+    last_modified_location_cd VARCHAR(5) 
+    last_modified_nm VARCHAR(35) 
+    manifest_status_cd VARCHAR(2) 
+    manifest_tmstp DATETIME 
+    payment_option_cd VARCHAR(1) 
+    payor_account_nbr INTEGER 
+    payor_account_type_cd VARCHAR(1) 
+    piece_qty INTEGER 
+    piece_status_cd VARCHAR(1) 
+    piece_type_cd VARCHAR(1) 
+    port_of_export_cd VARCHAR(5) 
+    port_of_unlading_cd VARCHAR(5) 
+    rih_clearance_loc_cd VARCHAR(5) 
+    shipper_reference_desc VARCHAR(35) 
+    split_billing_business_cd VARCHAR(12) 
+    split_billing_address_amt DECIMAL 
+    split_billing_kilo_wgt DECIMAL 
+    split_billing_currency_cd VARCHAR(3) 
+    total_wgt DECIMAL 
+    total_wgt_uom_cd VARCHAR(3) 
+    tracking_nbr VARCHAR(12) 
+    transaction_seq_tmstp DATETIME 
+    variable_pct INTEGER 
+    xref_nbr VARCHAR(12) 
+    etl_tmstp DATETIME 
+    shipment_type_cd INTEGER 
+    split_seq_nbr INTEGER 
+    piece_deleted_flg VARCHAR(1) 
+    piece_seq_nbr INTEGER 
+    piece_movement_flg VARCHAR(1) 
+    }
+
+Table Shipment {
+    local_shipment_oid_nbr INTEGER [primary key]
+    awb_nbr VARCHAR(20) 
+    base_charge_amt DECIMAL 
+    cargo_desc VARCHAR(45) 
+    cargo_qty INTEGER 
+    cash_in_advance_flg VARCHAR(1) 
+    ci_seq_nbr VARCHAR(1) 
+    comat_flg VARCHAR(1) 
+    consolidated_freight_flg VARCHAR(1) 
+    container_nbr VARCHAR(10) 
+    contract_wgt_type_cd VARCHAR(1) 
+    create_dt DATE 
+    csa_flg VARCHAR(1) 
+    customer_seq_nbr INTEGER 
+    customs_clearance_cd VARCHAR(1) 
+    customs_clearance_entry_flg VARCHAR(1) 
+    dang_goods_cd VARCHAR(1) 
+    data_entry_location_cd VARCHAR(5) 
+    deleted_flg VARCHAR(1) 
+    dest_customs_currency_cd VARCHAR(3) 
+    dest_eec_flg VARCHAR(1) 
+    dest_location_cd VARCHAR(5) 
+    dest_loc_cntry_cd VARCHAR(2) 
+    dim_height_qty INTEGER 
+    dim_length_qty INTEGER 
+    dim_wgt DECIMAL 
+    dim_width_qty INTEGER 
+    dim_shipment_flg VARCHAR(1) 
+    discharge_location_cd VARCHAR(4) 
+    drop_dscnt_cd VARCHAR(1) 
+    dutiable_flg VARCHAR(1) 
+    duty_bill_to_acct_nbr INTEGER 
+    duty_bill_to_cd VARCHAR(1) 
+    duty_cash_flg VARCHAR(1) 
+    duty_credit_card_flg VARCHAR(1) 
+    ecs_filing_status_cd VARCHAR(1) 
+    export_country_cd VARCHAR(2) 
+    export_license_flg VARCHAR(1) 
+    fda_confirmation_flg VARCHAR(1) 
+    carrier_assigned_mawb_nbr VARCHAR(12) 
+    planned_clearance_location_cd VARCHAR(5) 
+    form_type_cd VARCHAR(4) 
+    free_domicile_cd VARCHAR(1) 
+    freight_charge_amt DECIMAL 
+    ftsr_nbr INTEGER 
+    goods_class_cd VARCHAR(2) 
+    hal_flg VARCHAR(1) 
+    hal_phone_nbr VARCHAR(20) 
+    handling_unit_qty INTEGER 
+    hawb_serial_nbr INTEGER 
+    input_tmstp DATE 
+    intermediate_consignee_cd VARCHAR(1) 
+    invoice_cd VARCHAR(1) 
+    keyed_currency_cd VARCHAR(3) 
+    keyer_nm VARCHAR(12) 
+    last_modified_nm VARCHAR(35) 
+    last_modified_tmstp DATETIME 
+    local_customs_currency_cd VARCHAR(3) 
+    manuf_orig_cntry_cd VARCHAR(2) 
+    manifest_status_cd VARCHAR(2) 
+    mde_source_cd VARCHAR(1) 
+    meter_nbr INTEGER 
+    oda_charge_flg VARCHAR(1) 
+    opa_charge_flg VARCHAR(1) 
+    origin_loc_city_nm VARCHAR(35) 
+    origin_loc_cntry_cd VARCHAR(2) 
+    origin_eec_flg VARCHAR(1) 
+    origin_location_cd VARCHAR(5) 
+    package_movement_scan_cd VARCHAR(1) 
+    packaging_type_cd VARCHAR(3) 
+    piece_qty INTEGER 
+    pkg_mark_desc VARCHAR(35) 
+    prior_notice_nbr VARCHAR(30) 
+    ramp_transfer_flg VARCHAR(1) 
+    record_status_cd VARCHAR(1) 
+    rod_flg VARCHAR(1) 
+    rpl_flg VARCHAR(1) 
+    sdl_flg VARCHAR(1) 
+    sed_cd VARCHAR(1) 
+    sed_exempt_nbr VARCHAR(2) 
+    service_cd VARCHAR(5) 
+    service_type_cd VARCHAR(2) 
+    shipment_control_nbr VARCHAR(25) 
+    ship_dt DATE 
+    shipment_desc VARCHAR(200) 
+    shipment_id_nbr INTEGER 
+    shipper_reference_desc VARCHAR(35) 
+    split_billing_address_amt DECIMAL 
+    split_billing_kilo_wgt DECIMAL 
+    spu_flg VARCHAR(1) 
+    total_wgt DECIMAL 
+    total_wgt_uom_cd VARCHAR(3) 
+    tracking_id_nbr VARCHAR(20) 
+    tracking_id_qual_nbr VARCHAR(30) 
+    transaction_seq_tmstp DATETIME 
+    trprt_bill_to_acct_nbr INTEGER 
+    trprt_bill_to_cd VARCHAR(1) 
+    trprt_credit_card_flg VARCHAR(1) 
+    tran_data_source_cd VARCHAR(2) 
+    unassign_reason_cd VARCHAR(4) 
+    unloading_usa_port_cd VARCHAR(5) 
+    value_changed_flg VARCHAR(1) 
+    weekday_delivery_flg VARCHAR(1) 
+    xtn_nbr VARCHAR(32) 
+    dest_loc_city_nm VARCHAR(35) 
+    final_import_clearance_loc_cd VARCHAR(5) 
+    image_folder_id_cd VARCHAR(20) 
+    aci_download_flg VARCHAR(1) 
+    broker_dest_loc_cd VARCHAR(5) 
+    visa_trans_cd VARCHAR(2) 
+    etl_tmstp DATETIME 
+    split_shipment_flg VARCHAR(1) 
+    shipment_type_cd INTEGER 
+    entry_category_type_cd VARCHAR(3) 
+    eci_flg VARCHAR(1) 
+    ci_image_flg VARCHAR(1) 
+    trprt_bill_to_pymt_method_cd INTEGER 
+    duplicate_shipment_record_flg VARCHAR(1) 
+    oga_shipment_flg VARCHAR(1) 
+    cad_value_amt DECIMAL 
+    transaction_nbr INTEGER 
+    ci_image_tmstp DATETIME 
+    iid_master_cd VARCHAR(4) 
+    iid_classify_cd VARCHAR(8) 
+    automation_ci_flg VARCHAR(1) 
+    iid_flg VARCHAR(1) 
+    carriage_value_amt DECIMAL 
+    customs_value_amt DECIMAL 
+    dest_customs_value_amt DECIMAL 
+    local_customs_value_amt DECIMAL 
+    active_flg VARCHAR(1) 
+    entry_dt DATE 
+    admissibility_mode VARCHAR(1) 
+    prev_admissibility_mode VARCHAR(1) 
+    cargocontrolnbr VARCHAR(22) 
+    portofexit VARCHAR(6) 
+    portofentry VARCHAR(6) 
+    warehousecode VARCHAR(6) 
+    surface_intl_shipment_nbr NUMERIC 
+    }
+
+Table ShipmentCommodity {
+    local_shipment_oid_nbr INTEGER [primary key]
+    sequence_nbr INTEGER 
+    clearance_country_cd VARCHAR(2) 
+    commodity_desc VARCHAR(300) 
+    commodity_wgt DECIMAL 
+    commodity_wgt_uom_cd VARCHAR(3) 
+    customs_value_amt DECIMAL 
+    export_cargo_control_nbr VARCHAR(6) 
+    export_license_expr_dt DATE 
+    export_license_nbr VARCHAR(12) 
+    harmonized_tariff_nbr VARCHAR(20) 
+    hazardous_material_cd VARCHAR(4) 
+    last_modified_nm VARCHAR(35) 
+    last_modified_tmstp DATETIME 
+    origin_country_cd VARCHAR(2) 
+    oversize_flg VARCHAR(1) 
+    piece_qty INTEGER 
+    package_qty INTEGER 
+    tariff_source_cd VARCHAR(1) 
+    etl_tmstp DATETIME 
+    shipment_type_cd INTEGER 
+    commodity_currency_cd VARCHAR(3) 
+    unit_of_measure_cd VARCHAR(3) 
+    classification_status_desc VARCHAR(200) 
+    classification_status_cd VARCHAR(10) 
+    part_expiration_dt DATE 
+    }
+
+Table ShipmentParty {
+    shipment_party_oid_nbr INTEGER [primary key]
+    local_shipment_oid_nbr INTEGER 
+    shipment_party_type_cd VARCHAR(1) 
+    clearance_location_cd VARCHAR(5) 
+    address_qty INTEGER 
+    broker_id_cd VARCHAR(4) 
+    city_nm VARCHAR(35) 
+    contact_phone_nbr VARCHAR(20) 
+    country_cd VARCHAR(2) 
+    country_sub_entity_cd VARCHAR(9) 
+    customer_acct_nbr INTEGER 
+    customs_id_cd VARCHAR(18) 
+    customs_self_assessment_flg VARCHAR(1) 
+    company_nm VARCHAR(70) 
+    contact_nm VARCHAR(35) 
+    email_nm VARCHAR(255) 
+    last_modified_nm VARCHAR(35) 
+    last_modified_tmstp DATETIME 
+    postal_cd VARCHAR(15) 
+    state_cd VARCHAR(2) 
+    etl_tmstp DATETIME 
+    shipment_type_cd INTEGER 
+    csa_business_nbr VARCHAR(25) 
+    local_piece_oid_nbr INTEGER 
+    piece_shpmt_type_cd INTEGER 
+    split_seq_nbr INTEGER 
+    business_nbr VARCHAR(15) 
+    cfia_payor_nm VARCHAR(35) 
+    cfia_account_nbr VARCHAR(15) 
+    fax_nbr VARCHAR(15) 
+    pref_cont_mthd_cd VARCHAR(2) 
+    additional_contact_flg VARCHAR(1) 
+    }
+
+Table SpecialHandling {
+    id INTEGER [primary key]
+    oid_nbr INTEGER 
+    oid_type_cd VARCHAR(1) 
+    special_handling_cd VARCHAR(5) 
+    etl_tmstp DATETIME 
+    shipment_type_cd INTEGER 
+    }
+
+Table SysConfig {
+    id INTEGER [primary key]
+    name TEXT 
+    discount_rate FLOAT 
+    tax_rate FLOAT 
+    notes TEXT 
+    }
+
+Table VirtualRouteLeg {
+    id INTEGER [primary key]
+    virtual_route_nbr VARCHAR(6) 
+    virtual_route_dt DATE 
+    virtual_route_leg_nbr INTEGER 
+    leg_dest_loc_cd VARCHAR(5) 
+    leg_orig_loc_cd VARCHAR(5) 
+    arrival_gmt_tmstp DATETIME 
+    arrival_local_tmstp DATETIME 
+    broker_complete_flg VARCHAR(1) 
+    conveyance_type_cd VARCHAR(2) 
+    customs_complete_flg VARCHAR(1) 
+    depart_gmt_tmstp DATETIME 
+    depart_local_tmstp DATETIME 
+    leg_origin_country_cd VARCHAR(2) 
+    leg_dest_country_cd VARCHAR(2) 
+    sched_arrival_dt DATE 
+    sched_route_leg_orig_loc_cd VARCHAR(5) 
+    sched_route_leg_dest_loc_cd VARCHAR(5) 
+    sched_route_departure_dt DATE 
+    sched_route_leg_dptr_dt DATE 
+    sched_route_nbr VARCHAR(8) 
+    sort_dt DATE 
+    tail_nbr VARCHAR(8) 
+    us_process_cd VARCHAR(1) 
+    virtual_route_locked_flg VARCHAR(1) 
+    flight_nbr_obs VARCHAR(6) 
+    download_flg VARCHAR(1) 
+    carrier_cd VARCHAR(4) 
+    etl_tmstp DATETIME 
+    eta_tmstp DATETIME 
+    in_range_tmstp DATETIME 
+    }
+
+
+
+// Relationships
+    Ref: Piece.(local_shipment_oid_nbr) > Shipment.(local_shipment_oid_nbr)
+    Ref: ShipmentCommodity.(local_shipment_oid_nbr) > Shipment.(local_shipment_oid_nbr)
+    Ref: ShipmentParty.(local_piece_oid_nbr) > Piece.(local_piece_oid_nbr)
+    Ref: ShipmentParty.(local_shipment_oid_nbr) > Shipment.(local_shipment_oid_nbr)
+    Ref: SpecialHandling.(oid_nbr) > Shipment.(local_shipment_oid_nbr)

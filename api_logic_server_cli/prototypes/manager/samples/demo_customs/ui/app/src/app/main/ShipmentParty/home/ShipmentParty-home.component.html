@@ -1,0 +1,107 @@
+<o-form-layout-manager attr="ShipmentParty" mode="tab" title="SHIPMENTPARTY">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="ShipmentPartyTable" 
+            service="ShipmentParty" 
+            entity="ShipmentParty" 
+            title="SHIPMENTPARTY"
+            keys="shipment_party_oid_nbr"
+            columns="shipment_party_oid_nbr;local_piece_oid_nbr;local_shipment_oid_nbr;address_qty;city_nm;contact_phone_nbr;customer_acct_nbr;customs_self_assessment_flg;company_nm;contact_nm;email_nm;last_modified_nm;last_modified_tmstp;etl_tmstp;csa_business_nbr;split_seq_nbr;business_nbr;cfia_payor_nm;cfia_account_nbr;fax_nbr;additional_contact_flg;shipment_party_type_cd;clearance_location_cd;broker_id_cd;country_cd;country_sub_entity_cd;customs_id_cd;postal_cd;state_cd;shipment_type_cd;piece_shpmt_type_cd;pref_cont_mthd_cd" 
+            header-actions="R;D"
+            visible-columns="shipment_party_oid_nbr;local_piece_oid_nbr;local_shipment_oid_nbr;address_qty;city_nm;contact_phone_nbr;customer_acct_nbr;customs_self_assessment_flg;company_nm;contact_nm;email_nm;last_modified_nm;last_modified_tmstp;etl_tmstp;csa_business_nbr;split_seq_nbr;business_nbr;cfia_payor_nm;cfia_account_nbr;fax_nbr;additional_contact_flg;shipment_party_type_cd;clearance_location_cd;broker_id_cd;country_cd;country_sub_entity_cd;customs_id_cd;postal_cd;state_cd;shipment_type_cd;piece_shpmt_type_cd;pref_cont_mthd_cd"  
+            sort-columns="shipment_party_oid_nbr" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #shipment_party_oid_nbr attr="shipment_party_oid_nbr" title=" shipment_party_oid_nbr" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column attr="local_piece_oid_nbr" title="local_piece_oid_nbr">
+    <o-table-cell-renderer-service attr="local_piece_oid_nbr" 
+        service="Piece" entity="PieceType" columns="local_piece_oid_nbr;local_piece_oid_nbr"
+        parent-keys="shipment_party_oid_nbr:local_piece_oid_nbr"
+        value-column="local_piece_oid_nbr" keys="local_piece_oid_nbr"
+        visible-columns="local_piece_oid_nbr" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column attr="local_shipment_oid_nbr" title="local_shipment_oid_nbr">
+    <o-table-cell-renderer-service attr="local_shipment_oid_nbr" 
+        service="Shipment" entity="ShipmentType" columns="local_shipment_oid_nbr;local_shipment_oid_nbr"
+        parent-keys="shipment_party_oid_nbr:local_shipment_oid_nbr"
+        value-column="local_shipment_oid_nbr" keys="local_shipment_oid_nbr"
+        visible-columns="local_shipment_oid_nbr" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #address_qty attr="address_qty" title="address_qty" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #city_nm attr="city_nm" title="city_nm" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #contact_phone_nbr attr="contact_phone_nbr" title="contact_phone_nbr" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #customer_acct_nbr attr="customer_acct_nbr" title="customer_acct_nbr" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #customs_self_assessment_flg attr="customs_self_assessment_flg" title="customs_self_assessment_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #company_nm attr="company_nm" title="company_nm" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #contact_nm attr="contact_nm" title="contact_nm" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #email_nm attr="email_nm" title="email_nm" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #last_modified_nm attr="last_modified_nm" title="last_modified_nm" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #last_modified_tmstp attr="last_modified_tmstp" title="last_modified_tmstp" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #etl_tmstp attr="etl_tmstp" title="etl_tmstp" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #csa_business_nbr attr="csa_business_nbr" title="csa_business_nbr" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #split_seq_nbr attr="split_seq_nbr" title="split_seq_nbr" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #business_nbr attr="business_nbr" title="business_nbr" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #cfia_payor_nm attr="cfia_payor_nm" title="cfia_payor_nm" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #cfia_account_nbr attr="cfia_account_nbr" title="cfia_account_nbr" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #fax_nbr attr="fax_nbr" title="fax_nbr" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #additional_contact_flg attr="additional_contact_flg" title="additional_contact_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #shipment_party_type_cd attr="shipment_party_type_cd" title="shipment_party_type_cd" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #clearance_location_cd attr="clearance_location_cd" title="clearance_location_cd" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #broker_id_cd attr="broker_id_cd" title="broker_id_cd" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #country_cd attr="country_cd" title="country_cd" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #country_sub_entity_cd attr="country_sub_entity_cd" title="country_sub_entity_cd" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #customs_id_cd attr="customs_id_cd" title="customs_id_cd" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #postal_cd attr="postal_cd" title="postal_cd" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #state_cd attr="state_cd" title="state_cd" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #shipment_type_cd attr="shipment_type_cd" title="shipment_type_cd" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #piece_shpmt_type_cd attr="piece_shpmt_type_cd" title="piece_shpmt_type_cd" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #pref_cont_mthd_cd attr="pref_cont_mthd_cd" title="pref_cont_mthd_cd" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

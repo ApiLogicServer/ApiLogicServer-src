@@ -1,0 +1,509 @@
+about:
+  date: April 29, 2026 13:52:58
+  recent_changes: works with modified safrs-react-admin
+  version: 0.0.0
+api_root: '{http_type}://{swagger_host}:{port}/{api}'
+authentication: '{system-default}'
+info:
+  number_relationships: 5
+  number_tables: 8
+info_toggle_checked: true
+resources:
+  CcpCustomer:
+    attributes:
+    - label: ' name*'
+      name: name
+      search: true
+      sort: true
+    - name: address1
+    - name: address2
+    - name: city
+    - name: state
+    - name: country
+    - name: postal
+    - name: business_nbr
+    - name: gst_reg
+    - name: duty_bill_to_acct_nbr
+    - name: payor_location
+    - name: weight
+    - name: export_country
+    - name: foreign_trade_zone
+    - name: discounts
+    - name: last_modified_nm
+    - name: data_form
+    - name: profile_ref_nbr
+    - name: po_box
+    - name: phone_nbr
+    - name: id
+    - name: duty_bill_to_cd
+    - name: customeroid
+    - name: dpi
+    - name: broker_cd
+    - name: rod
+    type: CcpCustomer
+    user_key: name
+  Piece:
+    attributes:
+    - label: ' local_piece_oid_nbr*'
+      name: local_piece_oid_nbr
+      search: true
+      sort: true
+    - name: local_shipment_oid_nbr
+    - name: customs_value_amt
+    - name: decln_oid_nbr
+    - name: dim_wgt
+    - name: harmonized_tariff_nbr
+    - name: ipd_doc_nbr
+    - name: last_modified_nm
+    - name: manifest_tmstp
+      type: DATETIME
+    - name: payor_account_nbr
+    - name: piece_qty
+    - name: shipper_reference_desc
+    - name: split_billing_address_amt
+    - name: split_billing_kilo_wgt
+    - name: total_wgt
+    - name: tracking_nbr
+    - name: transaction_seq_tmstp
+      type: DATETIME
+    - name: variable_pct
+    - name: xref_nbr
+    - name: etl_tmstp
+      type: DATETIME
+    - name: split_seq_nbr
+    - name: piece_deleted_flg
+    - name: piece_seq_nbr
+    - name: piece_movement_flg
+    - name: arrival_port_cd
+    - name: awb_type_cd
+    - name: awb_format_cd
+    - name: contract_wgt_type_cd
+    - name: decln_status_cd
+    - name: dest_location_cd
+    - name: final_dest_cd
+    - name: form_type_cd
+    - name: last_foreign_port_cd
+    - name: last_modified_location_cd
+    - name: manifest_status_cd
+    - name: payment_option_cd
+    - name: payor_account_type_cd
+    - name: piece_status_cd
+    - name: piece_type_cd
+    - name: port_of_export_cd
+    - name: port_of_unlading_cd
+    - name: rih_clearance_loc_cd
+    - name: split_billing_business_cd
+    - name: split_billing_currency_cd
+    - name: total_wgt_uom_cd
+    - name: shipment_type_cd
+    tab_groups:
+    - direction: tomany
+      fks:
+      - local_piece_oid_nbr
+      name: ShipmentPartyList
+      resource: ShipmentParty
+    - direction: toone
+      fks:
+      - local_shipment_oid_nbr
+      name: shipment
+      resource: Shipment
+    type: Piece
+    user_key: local_piece_oid_nbr
+  Shipment:
+    attributes:
+    - label: ' local_shipment_oid_nbr*'
+      name: local_shipment_oid_nbr
+      search: true
+      sort: true
+    - name: awb_nbr
+    - name: base_charge_amt
+    - name: cargo_desc
+    - name: cargo_qty
+    - name: cash_in_advance_flg
+    - name: ci_seq_nbr
+    - name: comat_flg
+    - name: consolidated_freight_flg
+    - name: container_nbr
+    - name: create_dt
+      type: DATE
+    - name: csa_flg
+    - name: customer_seq_nbr
+    - name: customs_clearance_entry_flg
+    - name: deleted_flg
+    - name: dest_eec_flg
+    - name: dim_height_qty
+    - name: dim_length_qty
+    - name: dim_wgt
+    - name: dim_width_qty
+    - name: dim_shipment_flg
+    - name: dutiable_flg
+    - name: duty_bill_to_acct_nbr
+    - name: duty_cash_flg
+    - name: duty_credit_card_flg
+    - name: export_license_flg
+    - name: fda_confirmation_flg
+    - name: carrier_assigned_mawb_nbr
+    - name: freight_charge_amt
+    - name: ftsr_nbr
+    - name: hal_flg
+    - name: hal_phone_nbr
+    - name: handling_unit_qty
+    - name: hawb_serial_nbr
+    - name: input_tmstp
+      type: DATE
+    - name: keyer_nm
+    - name: last_modified_nm
+    - name: last_modified_tmstp
+      type: DATETIME
+    - name: meter_nbr
+    - name: oda_charge_flg
+    - name: opa_charge_flg
+    - name: origin_loc_city_nm
+    - name: origin_eec_flg
+    - name: piece_qty
+    - name: pkg_mark_desc
+    - name: prior_notice_nbr
+    - name: ramp_transfer_flg
+    - name: rod_flg
+    - name: rpl_flg
+    - name: sdl_flg
+    - name: sed_exempt_nbr
+    - name: shipment_control_nbr
+    - name: ship_dt
+      type: DATE
+    - name: shipment_desc
+    - name: shipment_id_nbr
+    - name: shipper_reference_desc
+    - name: split_billing_address_amt
+    - name: split_billing_kilo_wgt
+    - name: spu_flg
+    - name: total_wgt
+    - name: tracking_id_nbr
+    - name: tracking_id_qual_nbr
+    - name: transaction_seq_tmstp
+      type: DATETIME
+    - name: trprt_bill_to_acct_nbr
+    - name: trprt_credit_card_flg
+    - name: value_changed_flg
+    - name: weekday_delivery_flg
+    - name: xtn_nbr
+    - name: dest_loc_city_nm
+    - name: aci_download_flg
+    - name: etl_tmstp
+      type: DATETIME
+    - name: split_shipment_flg
+    - name: eci_flg
+    - name: ci_image_flg
+    - name: duplicate_shipment_record_flg
+    - name: oga_shipment_flg
+    - name: cad_value_amt
+    - name: transaction_nbr
+    - name: ci_image_tmstp
+      type: DATETIME
+    - name: automation_ci_flg
+    - name: iid_flg
+    - name: carriage_value_amt
+    - name: customs_value_amt
+    - name: dest_customs_value_amt
+    - name: local_customs_value_amt
+    - name: active_flg
+    - name: entry_dt
+      type: DATE
+    - name: admissibility_mode
+    - name: prev_admissibility_mode
+    - name: cargocontrolnbr
+    - name: portofexit
+    - name: portofentry
+    - name: warehousecode
+    - name: surface_intl_shipment_nbr
+    - name: contract_wgt_type_cd
+    - name: customs_clearance_cd
+    - name: dang_goods_cd
+    - name: data_entry_location_cd
+    - name: dest_customs_currency_cd
+    - name: dest_location_cd
+    - name: dest_loc_cntry_cd
+    - name: discharge_location_cd
+    - name: drop_dscnt_cd
+    - name: duty_bill_to_cd
+    - name: ecs_filing_status_cd
+    - name: export_country_cd
+    - name: planned_clearance_location_cd
+    - name: form_type_cd
+    - name: free_domicile_cd
+    - name: goods_class_cd
+    - name: intermediate_consignee_cd
+    - name: invoice_cd
+    - name: keyed_currency_cd
+    - name: local_customs_currency_cd
+    - name: manuf_orig_cntry_cd
+    - name: manifest_status_cd
+    - name: mde_source_cd
+    - name: origin_loc_cntry_cd
+    - name: origin_location_cd
+    - name: package_movement_scan_cd
+    - name: packaging_type_cd
+    - name: record_status_cd
+    - name: sed_cd
+    - name: service_cd
+    - name: service_type_cd
+    - name: total_wgt_uom_cd
+    - name: trprt_bill_to_cd
+    - name: tran_data_source_cd
+    - name: unassign_reason_cd
+    - name: unloading_usa_port_cd
+    - name: final_import_clearance_loc_cd
+    - name: image_folder_id_cd
+    - name: broker_dest_loc_cd
+    - name: visa_trans_cd
+    - name: shipment_type_cd
+    - name: entry_category_type_cd
+    - name: trprt_bill_to_pymt_method_cd
+    - name: iid_master_cd
+    - name: iid_classify_cd
+    tab_groups:
+    - direction: tomany
+      fks:
+      - local_shipment_oid_nbr
+      name: PieceList
+      resource: Piece
+    - direction: tomany
+      fks:
+      - local_shipment_oid_nbr
+      name: ShipmentCommodityList
+      resource: ShipmentCommodity
+    - direction: tomany
+      fks:
+      - local_shipment_oid_nbr
+      name: ShipmentPartyList
+      resource: ShipmentParty
+    - direction: tomany
+      fks:
+      - oid_nbr
+      name: SpecialHandlingList
+      resource: SpecialHandling
+    type: Shipment
+    user_key: local_shipment_oid_nbr
+  ShipmentCommodity:
+    attributes:
+    - label: ' local_shipment_oid_nbr*'
+      name: local_shipment_oid_nbr
+      search: true
+      sort: true
+    - name: local_shipment_oid_nbr
+    - name: sequence_nbr
+    - name: commodity_desc
+    - name: commodity_wgt
+    - name: customs_value_amt
+    - name: export_cargo_control_nbr
+    - name: export_license_expr_dt
+      type: DATE
+    - name: export_license_nbr
+    - name: harmonized_tariff_nbr
+    - name: last_modified_nm
+    - name: last_modified_tmstp
+      type: DATETIME
+    - name: oversize_flg
+    - name: piece_qty
+    - name: package_qty
+    - name: etl_tmstp
+      type: DATETIME
+    - name: classification_status_desc
+    - name: part_expiration_dt
+      type: DATE
+    - name: clearance_country_cd
+    - name: commodity_wgt_uom_cd
+    - name: hazardous_material_cd
+    - name: origin_country_cd
+    - name: tariff_source_cd
+    - name: shipment_type_cd
+    - name: commodity_currency_cd
+    - name: unit_of_measure_cd
+    - name: classification_status_cd
+    tab_groups:
+    - direction: toone
+      fks:
+      - local_shipment_oid_nbr
+      name: shipment
+      resource: Shipment
+    type: ShipmentCommodity
+    user_key: local_shipment_oid_nbr
+  ShipmentParty:
+    attributes:
+    - label: ' shipment_party_oid_nbr*'
+      name: shipment_party_oid_nbr
+      search: true
+      sort: true
+    - name: local_piece_oid_nbr
+    - name: local_shipment_oid_nbr
+    - name: address_qty
+    - name: city_nm
+    - name: contact_phone_nbr
+    - name: customer_acct_nbr
+    - name: customs_self_assessment_flg
+    - name: company_nm
+    - name: contact_nm
+    - name: email_nm
+    - name: last_modified_nm
+    - name: last_modified_tmstp
+      type: DATETIME
+    - name: etl_tmstp
+      type: DATETIME
+    - name: csa_business_nbr
+    - name: split_seq_nbr
+    - name: business_nbr
+    - name: cfia_payor_nm
+    - name: cfia_account_nbr
+    - name: fax_nbr
+    - name: additional_contact_flg
+    - name: shipment_party_type_cd
+    - name: clearance_location_cd
+    - name: broker_id_cd
+    - name: country_cd
+    - name: country_sub_entity_cd
+    - name: customs_id_cd
+    - name: postal_cd
+    - name: state_cd
+    - name: shipment_type_cd
+    - name: piece_shpmt_type_cd
+    - name: pref_cont_mthd_cd
+    tab_groups:
+    - direction: toone
+      fks:
+      - local_piece_oid_nbr
+      name: piece
+      resource: Piece
+    - direction: toone
+      fks:
+      - local_shipment_oid_nbr
+      name: shipment
+      resource: Shipment
+    type: ShipmentParty
+    user_key: shipment_party_oid_nbr
+  SpecialHandling:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: oid_nbr
+    - name: etl_tmstp
+      type: DATETIME
+    - name: oid_type_cd
+    - name: special_handling_cd
+    - name: shipment_type_cd
+    tab_groups:
+    - direction: toone
+      fks:
+      - oid_nbr
+      name: shipment
+      resource: Shipment
+    type: SpecialHandling
+    user_key: id
+  ShipmentXml:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: received_at
+      type: DATETIME
+    - name: is_processed
+    - name: payload
+      type: textarea
+    type: ShipmentXml
+    user_key: id
+  SysConfig:
+    attributes:
+    - label: ' name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+    - name: discount_rate
+    - name: tax_rate
+    - name: notes
+    - name: id
+    type: SysConfig
+    user_key: name
+  VirtualRouteLeg:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: virtual_route_nbr
+    - name: virtual_route_dt
+      type: DATE
+    - name: virtual_route_leg_nbr
+    - name: arrival_gmt_tmstp
+      type: DATETIME
+    - name: arrival_local_tmstp
+      type: DATETIME
+    - name: broker_complete_flg
+    - name: customs_complete_flg
+    - name: depart_gmt_tmstp
+      type: DATETIME
+    - name: depart_local_tmstp
+      type: DATETIME
+    - name: sched_arrival_dt
+      type: DATE
+    - name: sched_route_departure_dt
+      type: DATE
+    - name: sched_route_leg_dptr_dt
+      type: DATE
+    - name: sched_route_nbr
+    - name: sort_dt
+      type: DATE
+    - name: tail_nbr
+    - name: virtual_route_locked_flg
+    - name: flight_nbr_obs
+    - name: download_flg
+    - name: etl_tmstp
+      type: DATETIME
+    - name: eta_tmstp
+      type: DATETIME
+    - name: in_range_tmstp
+      type: DATETIME
+    - name: leg_dest_loc_cd
+    - name: leg_orig_loc_cd
+    - name: conveyance_type_cd
+    - name: leg_origin_country_cd
+    - name: leg_dest_country_cd
+    - name: sched_route_leg_orig_loc_cd
+    - name: sched_route_leg_dest_loc_cd
+    - name: us_process_cd
+    - name: carrier_cd
+    type: VirtualRouteLeg
+    user_key: id
+settings:
+  HomeJS: /admin-app/home.js
+  max_list_columns: 8
+  style_guide:
+    applicationLocales:
+    - en
+    - es
+    currency_symbol: $
+    currency_symbol_position: left
+    date_format: LL
+    decimal_max: '1000000000'
+    decimal_min: '2'
+    decimal_separator: .
+    detail_mode: tab
+    edit_on_mode: dblclick
+    exclude_listpicker: false
+    include_translation: 'false'
+    keycloak_client_id: alsclient
+    keycloak_realm: kcals
+    keycloak_url: http://localhost:8080
+    locale: en
+    max_decimal_digits: '4'
+    min_decimal_digits: '2'
+    new_mode: dialog
+    pick_style: list
+    row_height: small,
+    serviceType: JSONAPI
+    startSessionPath: /auth/login
+    style: light
+    thousand_separator: ','
+    use_keycloak: 'false'

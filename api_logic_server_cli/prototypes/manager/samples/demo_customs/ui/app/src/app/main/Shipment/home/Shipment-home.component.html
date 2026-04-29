@@ -1,0 +1,229 @@
+<o-form-layout-manager attr="Shipment" mode="tab" title="SHIPMENT">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="ShipmentTable" 
+            service="Shipment" 
+            entity="Shipment" 
+            title="SHIPMENT"
+            keys="local_shipment_oid_nbr"
+            columns="local_shipment_oid_nbr;awb_nbr;base_charge_amt;cargo_desc;cargo_qty;cash_in_advance_flg;ci_seq_nbr;comat_flg;consolidated_freight_flg;container_nbr;create_dt;csa_flg;customer_seq_nbr;customs_clearance_entry_flg;deleted_flg;dest_eec_flg;dim_height_qty;dim_length_qty;dim_wgt;dim_width_qty;dim_shipment_flg;dutiable_flg;duty_bill_to_acct_nbr;duty_cash_flg;duty_credit_card_flg;export_license_flg;fda_confirmation_flg;carrier_assigned_mawb_nbr;freight_charge_amt;ftsr_nbr;hal_flg;hal_phone_nbr;handling_unit_qty;hawb_serial_nbr;input_tmstp;keyer_nm;last_modified_nm;last_modified_tmstp;meter_nbr;oda_charge_flg;opa_charge_flg;origin_loc_city_nm;origin_eec_flg;piece_qty;pkg_mark_desc;prior_notice_nbr;ramp_transfer_flg;rod_flg;rpl_flg;sdl_flg;sed_exempt_nbr;shipment_control_nbr;ship_dt;shipment_desc;shipment_id_nbr;shipper_reference_desc;split_billing_address_amt;split_billing_kilo_wgt;spu_flg;total_wgt;tracking_id_nbr;tracking_id_qual_nbr;transaction_seq_tmstp;trprt_bill_to_acct_nbr;trprt_credit_card_flg;value_changed_flg;weekday_delivery_flg;xtn_nbr;dest_loc_city_nm;aci_download_flg;etl_tmstp;split_shipment_flg;eci_flg;ci_image_flg;duplicate_shipment_record_flg;oga_shipment_flg;cad_value_amt;transaction_nbr;ci_image_tmstp;automation_ci_flg;iid_flg;carriage_value_amt;customs_value_amt;dest_customs_value_amt;local_customs_value_amt;active_flg;entry_dt;admissibility_mode;prev_admissibility_mode;cargocontrolnbr;portofexit;portofentry;warehousecode;surface_intl_shipment_nbr;contract_wgt_type_cd;customs_clearance_cd;dang_goods_cd;data_entry_location_cd;dest_customs_currency_cd;dest_location_cd;dest_loc_cntry_cd,discharge_location_cd,drop_dscnt_cd,duty_bill_to_cd,ecs_filing_status_cd,export_country_cd,planned_clearance_location_cd,form_type_cd,free_domicile_cd,goods_class_cd,intermediate_consignee_cd,invoice_cd,keyed_currency_cd,local_customs_currency_cd,manuf_orig_cntry_cd,manifest_status_cd,mde_source_cd,origin_loc_cntry_cd,origin_location_cd,package_movement_scan_cd,packaging_type_cd,record_status_cd,sed_cd,service_cd,service_type_cd,total_wgt_uom_cd,trprt_bill_to_cd,tran_data_source_cd,unassign_reason_cd,unloading_usa_port_cd,final_import_clearance_loc_cd,image_folder_id_cd,broker_dest_loc_cd,visa_trans_cd,shipment_type_cd,entry_category_type_cd,trprt_bill_to_pymt_method_cd,iid_master_cd,iid_classify_cd" 
+            header-actions="R;D"
+            visible-columns="local_shipment_oid_nbr;awb_nbr;base_charge_amt;cargo_desc;cargo_qty;cash_in_advance_flg;ci_seq_nbr;comat_flg;consolidated_freight_flg;container_nbr;create_dt;csa_flg;customer_seq_nbr;customs_clearance_entry_flg;deleted_flg;dest_eec_flg;dim_height_qty;dim_length_qty;dim_wgt;dim_width_qty;dim_shipment_flg;dutiable_flg;duty_bill_to_acct_nbr;duty_cash_flg;duty_credit_card_flg;export_license_flg;fda_confirmation_flg;carrier_assigned_mawb_nbr;freight_charge_amt;ftsr_nbr;hal_flg;hal_phone_nbr;handling_unit_qty;hawb_serial_nbr;input_tmstp;keyer_nm;last_modified_nm;last_modified_tmstp;meter_nbr;oda_charge_flg;opa_charge_flg;origin_loc_city_nm;origin_eec_flg;piece_qty;pkg_mark_desc;prior_notice_nbr;ramp_transfer_flg;rod_flg;rpl_flg;sdl_flg;sed_exempt_nbr;shipment_control_nbr;ship_dt;shipment_desc;shipment_id_nbr;shipper_reference_desc;split_billing_address_amt;split_billing_kilo_wgt;spu_flg;total_wgt;tracking_id_nbr;tracking_id_qual_nbr;transaction_seq_tmstp;trprt_bill_to_acct_nbr;trprt_credit_card_flg;value_changed_flg;weekday_delivery_flg;xtn_nbr;dest_loc_city_nm;aci_download_flg;etl_tmstp;split_shipment_flg;eci_flg;ci_image_flg;duplicate_shipment_record_flg;oga_shipment_flg;cad_value_amt;transaction_nbr;ci_image_tmstp;automation_ci_flg;iid_flg;carriage_value_amt;customs_value_amt;dest_customs_value_amt;local_customs_value_amt;active_flg;entry_dt;admissibility_mode;prev_admissibility_mode;cargocontrolnbr;portofexit;portofentry;warehousecode;surface_intl_shipment_nbr;contract_wgt_type_cd;customs_clearance_cd;dang_goods_cd;data_entry_location_cd;dest_customs_currency_cd;dest_location_cd;dest_loc_cntry_cd,discharge_location_cd,drop_dscnt_cd,duty_bill_to_cd,ecs_filing_status_cd,export_country_cd,planned_clearance_location_cd,form_type_cd,free_domicile_cd,goods_class_cd,intermediate_consignee_cd,invoice_cd,keyed_currency_cd,local_customs_currency_cd,manuf_orig_cntry_cd,manifest_status_cd,mde_source_cd,origin_loc_cntry_cd,origin_location_cd,package_movement_scan_cd,packaging_type_cd,record_status_cd,sed_cd,service_cd,service_type_cd,total_wgt_uom_cd,trprt_bill_to_cd,tran_data_source_cd,unassign_reason_cd,unloading_usa_port_cd,final_import_clearance_loc_cd,image_folder_id_cd,broker_dest_loc_cd,visa_trans_cd,shipment_type_cd,entry_category_type_cd,trprt_bill_to_pymt_method_cd,iid_master_cd,iid_classify_cd"  
+            sort-columns="local_shipment_oid_nbr" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #local_shipment_oid_nbr attr="local_shipment_oid_nbr" title=" local_shipment_oid_nbr" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #awb_nbr attr="awb_nbr" title="awb_nbr" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #base_charge_amt attr="base_charge_amt" title="base_charge_amt" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator=","decimal-separator="."></o-table-column>
+            
+            <o-table-column #cargo_desc attr="cargo_desc" title="cargo_desc" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #cargo_qty attr="cargo_qty" title="cargo_qty" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #cash_in_advance_flg attr="cash_in_advance_flg" title="cash_in_advance_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ci_seq_nbr attr="ci_seq_nbr" title="ci_seq_nbr" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #comat_flg attr="comat_flg" title="comat_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #consolidated_freight_flg attr="consolidated_freight_flg" title="consolidated_freight_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #container_nbr attr="container_nbr" title="container_nbr" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #create_dt attr="create_dt" title="create_dt" type="DATE" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #csa_flg attr="csa_flg" title="csa_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #customer_seq_nbr attr="customer_seq_nbr" title="customer_seq_nbr" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #customs_clearance_entry_flg attr="customs_clearance_entry_flg" title="customs_clearance_entry_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #deleted_flg attr="deleted_flg" title="deleted_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #dest_eec_flg attr="dest_eec_flg" title="dest_eec_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #dim_height_qty attr="dim_height_qty" title="dim_height_qty" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #dim_length_qty attr="dim_length_qty" title="dim_length_qty" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #dim_wgt attr="dim_wgt" title="dim_wgt" type="real" min-decimal-digits="2" max-decimal-digits="4" min="0" max="1000000.0000" content-align="center"></o-table-column>
+            
+            <o-table-column #dim_width_qty attr="dim_width_qty" title="dim_width_qty" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #dim_shipment_flg attr="dim_shipment_flg" title="dim_shipment_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #dutiable_flg attr="dutiable_flg" title="dutiable_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #duty_bill_to_acct_nbr attr="duty_bill_to_acct_nbr" title="duty_bill_to_acct_nbr" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #duty_cash_flg attr="duty_cash_flg" title="duty_cash_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #duty_credit_card_flg attr="duty_credit_card_flg" title="duty_credit_card_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #export_license_flg attr="export_license_flg" title="export_license_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #fda_confirmation_flg attr="fda_confirmation_flg" title="fda_confirmation_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #carrier_assigned_mawb_nbr attr="carrier_assigned_mawb_nbr" title="carrier_assigned_mawb_nbr" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #freight_charge_amt attr="freight_charge_amt" title="freight_charge_amt" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator=","decimal-separator="."></o-table-column>
+            
+            <o-table-column #ftsr_nbr attr="ftsr_nbr" title="ftsr_nbr" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #hal_flg attr="hal_flg" title="hal_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #hal_phone_nbr attr="hal_phone_nbr" title="hal_phone_nbr" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #handling_unit_qty attr="handling_unit_qty" title="handling_unit_qty" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #hawb_serial_nbr attr="hawb_serial_nbr" title="hawb_serial_nbr" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #input_tmstp attr="input_tmstp" title="input_tmstp" type="DATE" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #keyer_nm attr="keyer_nm" title="keyer_nm" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #last_modified_nm attr="last_modified_nm" title="last_modified_nm" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #last_modified_tmstp attr="last_modified_tmstp" title="last_modified_tmstp" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #meter_nbr attr="meter_nbr" title="meter_nbr" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #oda_charge_flg attr="oda_charge_flg" title="oda_charge_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #opa_charge_flg attr="opa_charge_flg" title="opa_charge_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #origin_loc_city_nm attr="origin_loc_city_nm" title="origin_loc_city_nm" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #origin_eec_flg attr="origin_eec_flg" title="origin_eec_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #piece_qty attr="piece_qty" title="piece_qty" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #pkg_mark_desc attr="pkg_mark_desc" title="pkg_mark_desc" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #prior_notice_nbr attr="prior_notice_nbr" title="prior_notice_nbr" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ramp_transfer_flg attr="ramp_transfer_flg" title="ramp_transfer_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #rod_flg attr="rod_flg" title="rod_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #rpl_flg attr="rpl_flg" title="rpl_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #sdl_flg attr="sdl_flg" title="sdl_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #sed_exempt_nbr attr="sed_exempt_nbr" title="sed_exempt_nbr" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #shipment_control_nbr attr="shipment_control_nbr" title="shipment_control_nbr" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ship_dt attr="ship_dt" title="ship_dt" type="DATE" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #shipment_desc attr="shipment_desc" title="shipment_desc" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #shipment_id_nbr attr="shipment_id_nbr" title="shipment_id_nbr" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #shipper_reference_desc attr="shipper_reference_desc" title="shipper_reference_desc" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #split_billing_address_amt attr="split_billing_address_amt" title="split_billing_address_amt" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator=","decimal-separator="."></o-table-column>
+            
+            <o-table-column #split_billing_kilo_wgt attr="split_billing_kilo_wgt" title="split_billing_kilo_wgt" type="real" min-decimal-digits="2" max-decimal-digits="4" min="0" max="1000000.0000" content-align="center"></o-table-column>
+            
+            <o-table-column #spu_flg attr="spu_flg" title="spu_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #total_wgt attr="total_wgt" title="total_wgt" type="real" min-decimal-digits="2" max-decimal-digits="4" min="0" max="1000000.0000" content-align="center"></o-table-column>
+            
+            <o-table-column #tracking_id_nbr attr="tracking_id_nbr" title="tracking_id_nbr" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #tracking_id_qual_nbr attr="tracking_id_qual_nbr" title="tracking_id_qual_nbr" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #transaction_seq_tmstp attr="transaction_seq_tmstp" title="transaction_seq_tmstp" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #trprt_bill_to_acct_nbr attr="trprt_bill_to_acct_nbr" title="trprt_bill_to_acct_nbr" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #trprt_credit_card_flg attr="trprt_credit_card_flg" title="trprt_credit_card_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #value_changed_flg attr="value_changed_flg" title="value_changed_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #weekday_delivery_flg attr="weekday_delivery_flg" title="weekday_delivery_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #xtn_nbr attr="xtn_nbr" title="xtn_nbr" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #dest_loc_city_nm attr="dest_loc_city_nm" title="dest_loc_city_nm" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #aci_download_flg attr="aci_download_flg" title="aci_download_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #etl_tmstp attr="etl_tmstp" title="etl_tmstp" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #split_shipment_flg attr="split_shipment_flg" title="split_shipment_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #eci_flg attr="eci_flg" title="eci_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #ci_image_flg attr="ci_image_flg" title="ci_image_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #duplicate_shipment_record_flg attr="duplicate_shipment_record_flg" title="duplicate_shipment_record_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #oga_shipment_flg attr="oga_shipment_flg" title="oga_shipment_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #cad_value_amt attr="cad_value_amt" title="cad_value_amt" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator=","decimal-separator="."></o-table-column>
+            
+            <o-table-column #transaction_nbr attr="transaction_nbr" title="transaction_nbr" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #ci_image_tmstp attr="ci_image_tmstp" title="ci_image_tmstp" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #automation_ci_flg attr="automation_ci_flg" title="automation_ci_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #iid_flg attr="iid_flg" title="iid_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #carriage_value_amt attr="carriage_value_amt" title="carriage_value_amt" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator=","decimal-separator="."></o-table-column>
+            
+            <o-table-column #customs_value_amt attr="customs_value_amt" title="customs_value_amt" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator=","decimal-separator="."></o-table-column>
+            
+            <o-table-column #dest_customs_value_amt attr="dest_customs_value_amt" title="dest_customs_value_amt" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator=","decimal-separator="."></o-table-column>
+            
+            <o-table-column #local_customs_value_amt attr="local_customs_value_amt" title="local_customs_value_amt" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator=","decimal-separator="."></o-table-column>
+            
+            <o-table-column #active_flg attr="active_flg" title="active_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #entry_dt attr="entry_dt" title="entry_dt" type="DATE" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #admissibility_mode attr="admissibility_mode" title="admissibility_mode" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #prev_admissibility_mode attr="prev_admissibility_mode" title="prev_admissibility_mode" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #cargocontrolnbr attr="cargocontrolnbr" title="cargocontrolnbr" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #portofexit attr="portofexit" title="portofexit" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #portofentry attr="portofentry" title="portofentry" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #warehousecode attr="warehousecode" title="warehousecode" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #surface_intl_shipment_nbr attr="surface_intl_shipment_nbr" title="surface_intl_shipment_nbr" type="real" min-decimal-digits="2" max-decimal-digits="4" min="0" max="1000000.0000" content-align="center"></o-table-column>
+            
+            <o-table-column #contract_wgt_type_cd attr="contract_wgt_type_cd" title="contract_wgt_type_cd" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #customs_clearance_cd attr="customs_clearance_cd" title="customs_clearance_cd" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #dang_goods_cd attr="dang_goods_cd" title="dang_goods_cd" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #data_entry_location_cd attr="data_entry_location_cd" title="data_entry_location_cd" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #dest_customs_currency_cd attr="dest_customs_currency_cd" title="dest_customs_currency_cd" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #dest_location_cd attr="dest_location_cd" title="dest_location_cd" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

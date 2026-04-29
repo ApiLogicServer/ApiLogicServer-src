@@ -1,0 +1,88 @@
+<o-form-layout-manager attr="ShipmentCommodity" mode="tab" title="SHIPMENTCOMMODITY">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="ShipmentCommodityTable" 
+            service="ShipmentCommodity" 
+            entity="ShipmentCommodity" 
+            title="SHIPMENTCOMMODITY"
+            keys="local_shipment_oid_nbr;sequence_nbr"
+            columns="local_shipment_oid_nbr;sequence_nbr;commodity_desc;commodity_wgt;customs_value_amt;export_cargo_control_nbr;export_license_expr_dt;export_license_nbr;harmonized_tariff_nbr;last_modified_nm;last_modified_tmstp;oversize_flg;piece_qty;package_qty;etl_tmstp;classification_status_desc;part_expiration_dt;clearance_country_cd;commodity_wgt_uom_cd;hazardous_material_cd;origin_country_cd;tariff_source_cd;shipment_type_cd;commodity_currency_cd;unit_of_measure_cd;classification_status_cd" 
+            header-actions="R;D"
+            visible-columns="local_shipment_oid_nbr;sequence_nbr;commodity_desc;commodity_wgt;customs_value_amt;export_cargo_control_nbr;export_license_expr_dt;export_license_nbr;harmonized_tariff_nbr;last_modified_nm;last_modified_tmstp;oversize_flg;piece_qty;package_qty;etl_tmstp;classification_status_desc;part_expiration_dt;clearance_country_cd;commodity_wgt_uom_cd;hazardous_material_cd;origin_country_cd;tariff_source_cd;shipment_type_cd;commodity_currency_cd;unit_of_measure_cd;classification_status_cd"  
+            sort-columns="local_shipment_oid_nbr" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column attr="local_shipment_oid_nbr" title="local_shipment_oid_nbr">
+    <o-table-cell-renderer-service attr="local_shipment_oid_nbr" 
+        service="Shipment" entity="ShipmentType" columns="local_shipment_oid_nbr;local_shipment_oid_nbr"
+        parent-keys="local_shipment_oid_nbr:local_shipment_oid_nbr"
+        value-column="local_shipment_oid_nbr" keys="local_shipment_oid_nbr"
+        visible-columns="local_shipment_oid_nbr" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #sequence_nbr attr="sequence_nbr" title="sequence_nbr" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #commodity_desc attr="commodity_desc" title="commodity_desc" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #commodity_wgt attr="commodity_wgt" title="commodity_wgt" type="real" min-decimal-digits="2" max-decimal-digits="4" min="0" max="1000000.0000" content-align="center"></o-table-column>
+            
+            <o-table-column #customs_value_amt attr="customs_value_amt" title="customs_value_amt" type="currency" editable="no" required="no" currency-symbol="$" currency-symbol-position="left" thousand-separator=","decimal-separator="."></o-table-column>
+            
+            <o-table-column #export_cargo_control_nbr attr="export_cargo_control_nbr" title="export_cargo_control_nbr" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #export_license_expr_dt attr="export_license_expr_dt" title="export_license_expr_dt" type="DATE" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #export_license_nbr attr="export_license_nbr" title="export_license_nbr" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #harmonized_tariff_nbr attr="harmonized_tariff_nbr" title="harmonized_tariff_nbr" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #last_modified_nm attr="last_modified_nm" title="last_modified_nm" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #last_modified_tmstp attr="last_modified_tmstp" title="last_modified_tmstp" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #oversize_flg attr="oversize_flg" title="oversize_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #piece_qty attr="piece_qty" title="piece_qty" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #package_qty attr="package_qty" title="package_qty" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #etl_tmstp attr="etl_tmstp" title="etl_tmstp" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #classification_status_desc attr="classification_status_desc" title="classification_status_desc" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #part_expiration_dt attr="part_expiration_dt" title="part_expiration_dt" type="DATE" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #clearance_country_cd attr="clearance_country_cd" title="clearance_country_cd" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #commodity_wgt_uom_cd attr="commodity_wgt_uom_cd" title="commodity_wgt_uom_cd" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #hazardous_material_cd attr="hazardous_material_cd" title="hazardous_material_cd" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #origin_country_cd attr="origin_country_cd" title="origin_country_cd" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #tariff_source_cd attr="tariff_source_cd" title="tariff_source_cd" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #shipment_type_cd attr="shipment_type_cd" title="shipment_type_cd" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #commodity_currency_cd attr="commodity_currency_cd" title="commodity_currency_cd" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #unit_of_measure_cd attr="unit_of_measure_cd" title="unit_of_measure_cd" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #classification_status_cd attr="classification_status_cd" title="classification_status_cd" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

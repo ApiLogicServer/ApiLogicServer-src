@@ -1,0 +1,48 @@
+<o-form-layout-manager attr="SpecialHandling" mode="tab" title="SPECIALHANDLING">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="SpecialHandlingTable" 
+            service="SpecialHandling" 
+            entity="SpecialHandling" 
+            title="SPECIALHANDLING"
+            keys="id"
+            columns="id;oid_nbr;etl_tmstp;oid_type_cd;special_handling_cd;shipment_type_cd" 
+            header-actions="R;D"
+            visible-columns="id;oid_nbr;etl_tmstp;oid_type_cd;special_handling_cd;shipment_type_cd"  
+            sort-columns="id" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #id attr="id" title=" id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column attr="oid_nbr" title="oid_nbr">
+    <o-table-cell-renderer-service attr="oid_nbr" 
+        service="Shipment" entity="ShipmentType" columns="local_shipment_oid_nbr;local_shipment_oid_nbr"
+        parent-keys="id:oid_nbr"
+        value-column="local_shipment_oid_nbr" keys="oid_nbr"
+        visible-columns="local_shipment_oid_nbr" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #etl_tmstp attr="etl_tmstp" title="etl_tmstp" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #oid_type_cd attr="oid_type_cd" title="oid_type_cd" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #special_handling_cd attr="special_handling_cd" title="special_handling_cd" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #shipment_type_cd attr="shipment_type_cd" title="shipment_type_cd" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

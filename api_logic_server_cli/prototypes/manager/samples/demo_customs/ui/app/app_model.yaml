@@ -1,0 +1,1349 @@
+about:
+  date: April 29, 2026 13:52:58
+  recent_changes: works with modified safrs-react-admin
+  version: 0.0.0
+api_root: '{http_type}://{swagger_host}:{port}/{api}'
+application:
+  app:
+    description: generated Ontimize application
+    menu_group:
+      data:
+        icon: edit_square
+        menu_item:
+          CcpCustomer:
+            icon: edit_square
+            menu_name: CcpCustomer
+            menu_title: CcpCustomer
+            page:
+              detail:
+                columns: name,address1,address2,city,state,country,postal,business_nbr,gst_reg,duty_bill_to_acct_nbr,payor_location,weight,export_country,foreign_trade_zone,discounts,last_modified_nm,data_form,profile_ref_nbr,po_box,phone_nbr,id,duty_bill_to_cd,customeroid,dpi,broker_cd,rod
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: CcpCustomer
+                typescript_name: detail_component.jinja
+                visible_columns: name,address1,address2,city,state,country,postal,business_nbr,gst_reg,duty_bill_to_acct_nbr,payor_location,weight,export_country,foreign_trade_zone,discounts,last_modified_nm,data_form,profile_ref_nbr,po_box,phone_nbr,id,duty_bill_to_cd,customeroid,dpi,broker_cd,rod
+              home:
+                columns: name,address1,address2,city,state,country,postal,business_nbr,gst_reg,duty_bill_to_acct_nbr,payor_location,weight,export_country,foreign_trade_zone,discounts,last_modified_nm,data_form,profile_ref_nbr,po_box,phone_nbr,id,duty_bill_to_cd,customeroid,dpi,broker_cd,rod
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: CcpCustomer
+                typescript_name: home_template.jinja
+                visible_columns: name,address1,address2,city,state,country,postal,business_nbr,gst_reg,duty_bill_to_acct_nbr,payor_location,weight,export_country,foreign_trade_zone,discounts,last_modified_nm,data_form,profile_ref_nbr,po_box,phone_nbr,id,duty_bill_to_cd,customeroid,dpi,broker_cd,rod
+              new:
+                columns: name,address1,address2,city,state,country,postal,business_nbr,gst_reg,duty_bill_to_acct_nbr,payor_location,weight,export_country,foreign_trade_zone,discounts,last_modified_nm,data_form,profile_ref_nbr,po_box,phone_nbr,id,duty_bill_to_cd,customeroid,dpi,broker_cd,rod
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: CcpCustomer
+                typescript_name: new_component.jinja
+                visible_columns: name,address1,address2,city,state,country,postal,business_nbr,gst_reg,duty_bill_to_acct_nbr,payor_location,weight,export_country,foreign_trade_zone,discounts,last_modified_nm,data_form,profile_ref_nbr,po_box,phone_nbr,id,duty_bill_to_cd,customeroid,dpi,broker_cd,rod
+            template_name: module.jinja
+          Piece:
+            icon: edit_square
+            menu_name: Piece
+            menu_title: Piece
+            page:
+              detail:
+                columns: local_piece_oid_nbr,local_shipment_oid_nbr,customs_value_amt,decln_oid_nbr,dim_wgt,harmonized_tariff_nbr,ipd_doc_nbr,last_modified_nm,manifest_tmstp,payor_account_nbr,piece_qty,shipper_reference_desc,split_billing_address_amt,split_billing_kilo_wgt,total_wgt,tracking_nbr,transaction_seq_tmstp,variable_pct,xref_nbr,etl_tmstp,split_seq_nbr,piece_deleted_flg,piece_seq_nbr,piece_movement_flg,arrival_port_cd,awb_type_cd,awb_format_cd,contract_wgt_type_cd,decln_status_cd,dest_location_cd,final_dest_cd,form_type_cd,last_foreign_port_cd,last_modified_location_cd,manifest_status_cd,payment_option_cd,payor_account_type_cd,piece_status_cd,piece_type_cd,port_of_export_cd,port_of_unlading_cd,rih_clearance_loc_cd,split_billing_business_cd,split_billing_currency_cd,total_wgt_uom_cd,shipment_type_cd
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: Piece
+                typescript_name: detail_component.jinja
+                visible_columns: local_piece_oid_nbr,local_shipment_oid_nbr,customs_value_amt,decln_oid_nbr,dim_wgt,harmonized_tariff_nbr,ipd_doc_nbr,last_modified_nm,manifest_tmstp,payor_account_nbr,piece_qty,shipper_reference_desc,split_billing_address_amt,split_billing_kilo_wgt,total_wgt,tracking_nbr,transaction_seq_tmstp,variable_pct,xref_nbr,etl_tmstp,split_seq_nbr,piece_deleted_flg,piece_seq_nbr,piece_movement_flg,arrival_port_cd,awb_type_cd,awb_format_cd,contract_wgt_type_cd,decln_status_cd,dest_location_cd,final_dest_cd,form_type_cd,last_foreign_port_cd,last_modified_location_cd,manifest_status_cd,payment_option_cd,payor_account_type_cd,piece_status_cd,piece_type_cd,port_of_export_cd,port_of_unlading_cd,rih_clearance_loc_cd,split_billing_business_cd,split_billing_currency_cd,total_wgt_uom_cd,shipment_type_cd
+              home:
+                columns: local_piece_oid_nbr,local_shipment_oid_nbr,customs_value_amt,decln_oid_nbr,dim_wgt,harmonized_tariff_nbr,ipd_doc_nbr,last_modified_nm,manifest_tmstp,payor_account_nbr,piece_qty,shipper_reference_desc,split_billing_address_amt,split_billing_kilo_wgt,total_wgt,tracking_nbr,transaction_seq_tmstp,variable_pct,xref_nbr,etl_tmstp,split_seq_nbr,piece_deleted_flg,piece_seq_nbr,piece_movement_flg,arrival_port_cd,awb_type_cd,awb_format_cd,contract_wgt_type_cd,decln_status_cd,dest_location_cd,final_dest_cd,form_type_cd,last_foreign_port_cd,last_modified_location_cd,manifest_status_cd,payment_option_cd,payor_account_type_cd,piece_status_cd,piece_type_cd,port_of_export_cd,port_of_unlading_cd,rih_clearance_loc_cd,split_billing_business_cd,split_billing_currency_cd,total_wgt_uom_cd,shipment_type_cd
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: Piece
+                typescript_name: home_template.jinja
+                visible_columns: local_piece_oid_nbr,local_shipment_oid_nbr,customs_value_amt,decln_oid_nbr,dim_wgt,harmonized_tariff_nbr,ipd_doc_nbr,last_modified_nm,manifest_tmstp,payor_account_nbr,piece_qty,shipper_reference_desc,split_billing_address_amt,split_billing_kilo_wgt,total_wgt,tracking_nbr,transaction_seq_tmstp,variable_pct,xref_nbr,etl_tmstp,split_seq_nbr,piece_deleted_flg,piece_seq_nbr,piece_movement_flg,arrival_port_cd,awb_type_cd,awb_format_cd,contract_wgt_type_cd,decln_status_cd,dest_location_cd,final_dest_cd,form_type_cd,last_foreign_port_cd,last_modified_location_cd,manifest_status_cd,payment_option_cd,payor_account_type_cd,piece_status_cd,piece_type_cd,port_of_export_cd,port_of_unlading_cd,rih_clearance_loc_cd,split_billing_business_cd,split_billing_currency_cd,total_wgt_uom_cd,shipment_type_cd
+              new:
+                columns: local_piece_oid_nbr,local_shipment_oid_nbr,customs_value_amt,decln_oid_nbr,dim_wgt,harmonized_tariff_nbr,ipd_doc_nbr,last_modified_nm,manifest_tmstp,payor_account_nbr,piece_qty,shipper_reference_desc,split_billing_address_amt,split_billing_kilo_wgt,total_wgt,tracking_nbr,transaction_seq_tmstp,variable_pct,xref_nbr,etl_tmstp,split_seq_nbr,piece_deleted_flg,piece_seq_nbr,piece_movement_flg,arrival_port_cd,awb_type_cd,awb_format_cd,contract_wgt_type_cd,decln_status_cd,dest_location_cd,final_dest_cd,form_type_cd,last_foreign_port_cd,last_modified_location_cd,manifest_status_cd,payment_option_cd,payor_account_type_cd,piece_status_cd,piece_type_cd,port_of_export_cd,port_of_unlading_cd,rih_clearance_loc_cd,split_billing_business_cd,split_billing_currency_cd,total_wgt_uom_cd,shipment_type_cd
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: Piece
+                typescript_name: new_component.jinja
+                visible_columns: local_piece_oid_nbr,local_shipment_oid_nbr,customs_value_amt,decln_oid_nbr,dim_wgt,harmonized_tariff_nbr,ipd_doc_nbr,last_modified_nm,manifest_tmstp,payor_account_nbr,piece_qty,shipper_reference_desc,split_billing_address_amt,split_billing_kilo_wgt,total_wgt,tracking_nbr,transaction_seq_tmstp,variable_pct,xref_nbr,etl_tmstp,split_seq_nbr,piece_deleted_flg,piece_seq_nbr,piece_movement_flg,arrival_port_cd,awb_type_cd,awb_format_cd,contract_wgt_type_cd,decln_status_cd,dest_location_cd,final_dest_cd,form_type_cd,last_foreign_port_cd,last_modified_location_cd,manifest_status_cd,payment_option_cd,payor_account_type_cd,piece_status_cd,piece_type_cd,port_of_export_cd,port_of_unlading_cd,rih_clearance_loc_cd,split_billing_business_cd,split_billing_currency_cd,total_wgt_uom_cd,shipment_type_cd
+            template_name: module.jinja
+          Shipment:
+            icon: edit_square
+            menu_name: Shipment
+            menu_title: Shipment
+            page:
+              detail:
+                columns: local_shipment_oid_nbr,awb_nbr,base_charge_amt,cargo_desc,cargo_qty,cash_in_advance_flg,ci_seq_nbr,comat_flg,consolidated_freight_flg,container_nbr,create_dt,csa_flg,customer_seq_nbr,customs_clearance_entry_flg,deleted_flg,dest_eec_flg,dim_height_qty,dim_length_qty,dim_wgt,dim_width_qty,dim_shipment_flg,dutiable_flg,duty_bill_to_acct_nbr,duty_cash_flg,duty_credit_card_flg,export_license_flg,fda_confirmation_flg,carrier_assigned_mawb_nbr,freight_charge_amt,ftsr_nbr,hal_flg,hal_phone_nbr,handling_unit_qty,hawb_serial_nbr,input_tmstp,keyer_nm,last_modified_nm,last_modified_tmstp,meter_nbr,oda_charge_flg,opa_charge_flg,origin_loc_city_nm,origin_eec_flg,piece_qty,pkg_mark_desc,prior_notice_nbr,ramp_transfer_flg,rod_flg,rpl_flg,sdl_flg,sed_exempt_nbr,shipment_control_nbr,ship_dt,shipment_desc,shipment_id_nbr,shipper_reference_desc,split_billing_address_amt,split_billing_kilo_wgt,spu_flg,total_wgt,tracking_id_nbr,tracking_id_qual_nbr,transaction_seq_tmstp,trprt_bill_to_acct_nbr,trprt_credit_card_flg,value_changed_flg,weekday_delivery_flg,xtn_nbr,dest_loc_city_nm,aci_download_flg,etl_tmstp,split_shipment_flg,eci_flg,ci_image_flg,duplicate_shipment_record_flg,oga_shipment_flg,cad_value_amt,transaction_nbr,ci_image_tmstp,automation_ci_flg,iid_flg,carriage_value_amt,customs_value_amt,dest_customs_value_amt,local_customs_value_amt,active_flg,entry_dt,admissibility_mode,prev_admissibility_mode,cargocontrolnbr,portofexit,portofentry,warehousecode,surface_intl_shipment_nbr,contract_wgt_type_cd,customs_clearance_cd,dang_goods_cd,data_entry_location_cd,dest_customs_currency_cd,dest_location_cd,dest_loc_cntry_cd,discharge_location_cd,drop_dscnt_cd,duty_bill_to_cd,ecs_filing_status_cd,export_country_cd,planned_clearance_location_cd,form_type_cd,free_domicile_cd,goods_class_cd,intermediate_consignee_cd,invoice_cd,keyed_currency_cd,local_customs_currency_cd,manuf_orig_cntry_cd,manifest_status_cd,mde_source_cd,origin_loc_cntry_cd,origin_location_cd,package_movement_scan_cd,packaging_type_cd,record_status_cd,sed_cd,service_cd,service_type_cd,total_wgt_uom_cd,trprt_bill_to_cd,tran_data_source_cd,unassign_reason_cd,unloading_usa_port_cd,final_import_clearance_loc_cd,image_folder_id_cd,broker_dest_loc_cd,visa_trans_cd,shipment_type_cd,entry_category_type_cd,trprt_bill_to_pymt_method_cd,iid_master_cd,iid_classify_cd
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: Shipment
+                typescript_name: detail_component.jinja
+                visible_columns: local_shipment_oid_nbr,awb_nbr,base_charge_amt,cargo_desc,cargo_qty,cash_in_advance_flg,ci_seq_nbr,comat_flg,consolidated_freight_flg,container_nbr,create_dt,csa_flg,customer_seq_nbr,customs_clearance_entry_flg,deleted_flg,dest_eec_flg,dim_height_qty,dim_length_qty,dim_wgt,dim_width_qty,dim_shipment_flg,dutiable_flg,duty_bill_to_acct_nbr,duty_cash_flg,duty_credit_card_flg,export_license_flg,fda_confirmation_flg,carrier_assigned_mawb_nbr,freight_charge_amt,ftsr_nbr,hal_flg,hal_phone_nbr,handling_unit_qty,hawb_serial_nbr,input_tmstp,keyer_nm,last_modified_nm,last_modified_tmstp,meter_nbr,oda_charge_flg,opa_charge_flg,origin_loc_city_nm,origin_eec_flg,piece_qty,pkg_mark_desc,prior_notice_nbr,ramp_transfer_flg,rod_flg,rpl_flg,sdl_flg,sed_exempt_nbr,shipment_control_nbr,ship_dt,shipment_desc,shipment_id_nbr,shipper_reference_desc,split_billing_address_amt,split_billing_kilo_wgt,spu_flg,total_wgt,tracking_id_nbr,tracking_id_qual_nbr,transaction_seq_tmstp,trprt_bill_to_acct_nbr,trprt_credit_card_flg,value_changed_flg,weekday_delivery_flg,xtn_nbr,dest_loc_city_nm,aci_download_flg,etl_tmstp,split_shipment_flg,eci_flg,ci_image_flg,duplicate_shipment_record_flg,oga_shipment_flg,cad_value_amt,transaction_nbr,ci_image_tmstp,automation_ci_flg,iid_flg,carriage_value_amt,customs_value_amt,dest_customs_value_amt,local_customs_value_amt,active_flg,entry_dt,admissibility_mode,prev_admissibility_mode,cargocontrolnbr,portofexit,portofentry,warehousecode,surface_intl_shipment_nbr,contract_wgt_type_cd,customs_clearance_cd,dang_goods_cd,data_entry_location_cd,dest_customs_currency_cd,dest_location_cd,dest_loc_cntry_cd,discharge_location_cd,drop_dscnt_cd,duty_bill_to_cd,ecs_filing_status_cd,export_country_cd,planned_clearance_location_cd,form_type_cd,free_domicile_cd,goods_class_cd,intermediate_consignee_cd,invoice_cd,keyed_currency_cd,local_customs_currency_cd,manuf_orig_cntry_cd,manifest_status_cd,mde_source_cd,origin_loc_cntry_cd,origin_location_cd,package_movement_scan_cd,packaging_type_cd,record_status_cd,sed_cd,service_cd,service_type_cd,total_wgt_uom_cd,trprt_bill_to_cd,tran_data_source_cd,unassign_reason_cd,unloading_usa_port_cd,final_import_clearance_loc_cd,image_folder_id_cd,broker_dest_loc_cd,visa_trans_cd,shipment_type_cd,entry_category_type_cd,trprt_bill_to_pymt_method_cd,iid_master_cd,iid_classify_cd
+              home:
+                columns: local_shipment_oid_nbr,awb_nbr,base_charge_amt,cargo_desc,cargo_qty,cash_in_advance_flg,ci_seq_nbr,comat_flg,consolidated_freight_flg,container_nbr,create_dt,csa_flg,customer_seq_nbr,customs_clearance_entry_flg,deleted_flg,dest_eec_flg,dim_height_qty,dim_length_qty,dim_wgt,dim_width_qty,dim_shipment_flg,dutiable_flg,duty_bill_to_acct_nbr,duty_cash_flg,duty_credit_card_flg,export_license_flg,fda_confirmation_flg,carrier_assigned_mawb_nbr,freight_charge_amt,ftsr_nbr,hal_flg,hal_phone_nbr,handling_unit_qty,hawb_serial_nbr,input_tmstp,keyer_nm,last_modified_nm,last_modified_tmstp,meter_nbr,oda_charge_flg,opa_charge_flg,origin_loc_city_nm,origin_eec_flg,piece_qty,pkg_mark_desc,prior_notice_nbr,ramp_transfer_flg,rod_flg,rpl_flg,sdl_flg,sed_exempt_nbr,shipment_control_nbr,ship_dt,shipment_desc,shipment_id_nbr,shipper_reference_desc,split_billing_address_amt,split_billing_kilo_wgt,spu_flg,total_wgt,tracking_id_nbr,tracking_id_qual_nbr,transaction_seq_tmstp,trprt_bill_to_acct_nbr,trprt_credit_card_flg,value_changed_flg,weekday_delivery_flg,xtn_nbr,dest_loc_city_nm,aci_download_flg,etl_tmstp,split_shipment_flg,eci_flg,ci_image_flg,duplicate_shipment_record_flg,oga_shipment_flg,cad_value_amt,transaction_nbr,ci_image_tmstp,automation_ci_flg,iid_flg,carriage_value_amt,customs_value_amt,dest_customs_value_amt,local_customs_value_amt,active_flg,entry_dt,admissibility_mode,prev_admissibility_mode,cargocontrolnbr,portofexit,portofentry,warehousecode,surface_intl_shipment_nbr,contract_wgt_type_cd,customs_clearance_cd,dang_goods_cd,data_entry_location_cd,dest_customs_currency_cd,dest_location_cd,dest_loc_cntry_cd,discharge_location_cd,drop_dscnt_cd,duty_bill_to_cd,ecs_filing_status_cd,export_country_cd,planned_clearance_location_cd,form_type_cd,free_domicile_cd,goods_class_cd,intermediate_consignee_cd,invoice_cd,keyed_currency_cd,local_customs_currency_cd,manuf_orig_cntry_cd,manifest_status_cd,mde_source_cd,origin_loc_cntry_cd,origin_location_cd,package_movement_scan_cd,packaging_type_cd,record_status_cd,sed_cd,service_cd,service_type_cd,total_wgt_uom_cd,trprt_bill_to_cd,tran_data_source_cd,unassign_reason_cd,unloading_usa_port_cd,final_import_clearance_loc_cd,image_folder_id_cd,broker_dest_loc_cd,visa_trans_cd,shipment_type_cd,entry_category_type_cd,trprt_bill_to_pymt_method_cd,iid_master_cd,iid_classify_cd
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: Shipment
+                typescript_name: home_template.jinja
+                visible_columns: local_shipment_oid_nbr,awb_nbr,base_charge_amt,cargo_desc,cargo_qty,cash_in_advance_flg,ci_seq_nbr,comat_flg,consolidated_freight_flg,container_nbr,create_dt,csa_flg,customer_seq_nbr,customs_clearance_entry_flg,deleted_flg,dest_eec_flg,dim_height_qty,dim_length_qty,dim_wgt,dim_width_qty,dim_shipment_flg,dutiable_flg,duty_bill_to_acct_nbr,duty_cash_flg,duty_credit_card_flg,export_license_flg,fda_confirmation_flg,carrier_assigned_mawb_nbr,freight_charge_amt,ftsr_nbr,hal_flg,hal_phone_nbr,handling_unit_qty,hawb_serial_nbr,input_tmstp,keyer_nm,last_modified_nm,last_modified_tmstp,meter_nbr,oda_charge_flg,opa_charge_flg,origin_loc_city_nm,origin_eec_flg,piece_qty,pkg_mark_desc,prior_notice_nbr,ramp_transfer_flg,rod_flg,rpl_flg,sdl_flg,sed_exempt_nbr,shipment_control_nbr,ship_dt,shipment_desc,shipment_id_nbr,shipper_reference_desc,split_billing_address_amt,split_billing_kilo_wgt,spu_flg,total_wgt,tracking_id_nbr,tracking_id_qual_nbr,transaction_seq_tmstp,trprt_bill_to_acct_nbr,trprt_credit_card_flg,value_changed_flg,weekday_delivery_flg,xtn_nbr,dest_loc_city_nm,aci_download_flg,etl_tmstp,split_shipment_flg,eci_flg,ci_image_flg,duplicate_shipment_record_flg,oga_shipment_flg,cad_value_amt,transaction_nbr,ci_image_tmstp,automation_ci_flg,iid_flg,carriage_value_amt,customs_value_amt,dest_customs_value_amt,local_customs_value_amt,active_flg,entry_dt,admissibility_mode,prev_admissibility_mode,cargocontrolnbr,portofexit,portofentry,warehousecode,surface_intl_shipment_nbr,contract_wgt_type_cd,customs_clearance_cd,dang_goods_cd,data_entry_location_cd,dest_customs_currency_cd,dest_location_cd,dest_loc_cntry_cd,discharge_location_cd,drop_dscnt_cd,duty_bill_to_cd,ecs_filing_status_cd,export_country_cd,planned_clearance_location_cd,form_type_cd,free_domicile_cd,goods_class_cd,intermediate_consignee_cd,invoice_cd,keyed_currency_cd,local_customs_currency_cd,manuf_orig_cntry_cd,manifest_status_cd,mde_source_cd,origin_loc_cntry_cd,origin_location_cd,package_movement_scan_cd,packaging_type_cd,record_status_cd,sed_cd,service_cd,service_type_cd,total_wgt_uom_cd,trprt_bill_to_cd,tran_data_source_cd,unassign_reason_cd,unloading_usa_port_cd,final_import_clearance_loc_cd,image_folder_id_cd,broker_dest_loc_cd,visa_trans_cd,shipment_type_cd,entry_category_type_cd,trprt_bill_to_pymt_method_cd,iid_master_cd,iid_classify_cd
+              new:
+                columns: local_shipment_oid_nbr,awb_nbr,base_charge_amt,cargo_desc,cargo_qty,cash_in_advance_flg,ci_seq_nbr,comat_flg,consolidated_freight_flg,container_nbr,create_dt,csa_flg,customer_seq_nbr,customs_clearance_entry_flg,deleted_flg,dest_eec_flg,dim_height_qty,dim_length_qty,dim_wgt,dim_width_qty,dim_shipment_flg,dutiable_flg,duty_bill_to_acct_nbr,duty_cash_flg,duty_credit_card_flg,export_license_flg,fda_confirmation_flg,carrier_assigned_mawb_nbr,freight_charge_amt,ftsr_nbr,hal_flg,hal_phone_nbr,handling_unit_qty,hawb_serial_nbr,input_tmstp,keyer_nm,last_modified_nm,last_modified_tmstp,meter_nbr,oda_charge_flg,opa_charge_flg,origin_loc_city_nm,origin_eec_flg,piece_qty,pkg_mark_desc,prior_notice_nbr,ramp_transfer_flg,rod_flg,rpl_flg,sdl_flg,sed_exempt_nbr,shipment_control_nbr,ship_dt,shipment_desc,shipment_id_nbr,shipper_reference_desc,split_billing_address_amt,split_billing_kilo_wgt,spu_flg,total_wgt,tracking_id_nbr,tracking_id_qual_nbr,transaction_seq_tmstp,trprt_bill_to_acct_nbr,trprt_credit_card_flg,value_changed_flg,weekday_delivery_flg,xtn_nbr,dest_loc_city_nm,aci_download_flg,etl_tmstp,split_shipment_flg,eci_flg,ci_image_flg,duplicate_shipment_record_flg,oga_shipment_flg,cad_value_amt,transaction_nbr,ci_image_tmstp,automation_ci_flg,iid_flg,carriage_value_amt,customs_value_amt,dest_customs_value_amt,local_customs_value_amt,active_flg,entry_dt,admissibility_mode,prev_admissibility_mode,cargocontrolnbr,portofexit,portofentry,warehousecode,surface_intl_shipment_nbr,contract_wgt_type_cd,customs_clearance_cd,dang_goods_cd,data_entry_location_cd,dest_customs_currency_cd,dest_location_cd,dest_loc_cntry_cd,discharge_location_cd,drop_dscnt_cd,duty_bill_to_cd,ecs_filing_status_cd,export_country_cd,planned_clearance_location_cd,form_type_cd,free_domicile_cd,goods_class_cd,intermediate_consignee_cd,invoice_cd,keyed_currency_cd,local_customs_currency_cd,manuf_orig_cntry_cd,manifest_status_cd,mde_source_cd,origin_loc_cntry_cd,origin_location_cd,package_movement_scan_cd,packaging_type_cd,record_status_cd,sed_cd,service_cd,service_type_cd,total_wgt_uom_cd,trprt_bill_to_cd,tran_data_source_cd,unassign_reason_cd,unloading_usa_port_cd,final_import_clearance_loc_cd,image_folder_id_cd,broker_dest_loc_cd,visa_trans_cd,shipment_type_cd,entry_category_type_cd,trprt_bill_to_pymt_method_cd,iid_master_cd,iid_classify_cd
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: Shipment
+                typescript_name: new_component.jinja
+                visible_columns: local_shipment_oid_nbr,awb_nbr,base_charge_amt,cargo_desc,cargo_qty,cash_in_advance_flg,ci_seq_nbr,comat_flg,consolidated_freight_flg,container_nbr,create_dt,csa_flg,customer_seq_nbr,customs_clearance_entry_flg,deleted_flg,dest_eec_flg,dim_height_qty,dim_length_qty,dim_wgt,dim_width_qty,dim_shipment_flg,dutiable_flg,duty_bill_to_acct_nbr,duty_cash_flg,duty_credit_card_flg,export_license_flg,fda_confirmation_flg,carrier_assigned_mawb_nbr,freight_charge_amt,ftsr_nbr,hal_flg,hal_phone_nbr,handling_unit_qty,hawb_serial_nbr,input_tmstp,keyer_nm,last_modified_nm,last_modified_tmstp,meter_nbr,oda_charge_flg,opa_charge_flg,origin_loc_city_nm,origin_eec_flg,piece_qty,pkg_mark_desc,prior_notice_nbr,ramp_transfer_flg,rod_flg,rpl_flg,sdl_flg,sed_exempt_nbr,shipment_control_nbr,ship_dt,shipment_desc,shipment_id_nbr,shipper_reference_desc,split_billing_address_amt,split_billing_kilo_wgt,spu_flg,total_wgt,tracking_id_nbr,tracking_id_qual_nbr,transaction_seq_tmstp,trprt_bill_to_acct_nbr,trprt_credit_card_flg,value_changed_flg,weekday_delivery_flg,xtn_nbr,dest_loc_city_nm,aci_download_flg,etl_tmstp,split_shipment_flg,eci_flg,ci_image_flg,duplicate_shipment_record_flg,oga_shipment_flg,cad_value_amt,transaction_nbr,ci_image_tmstp,automation_ci_flg,iid_flg,carriage_value_amt,customs_value_amt,dest_customs_value_amt,local_customs_value_amt,active_flg,entry_dt,admissibility_mode,prev_admissibility_mode,cargocontrolnbr,portofexit,portofentry,warehousecode,surface_intl_shipment_nbr,contract_wgt_type_cd,customs_clearance_cd,dang_goods_cd,data_entry_location_cd,dest_customs_currency_cd,dest_location_cd,dest_loc_cntry_cd,discharge_location_cd,drop_dscnt_cd,duty_bill_to_cd,ecs_filing_status_cd,export_country_cd,planned_clearance_location_cd,form_type_cd,free_domicile_cd,goods_class_cd,intermediate_consignee_cd,invoice_cd,keyed_currency_cd,local_customs_currency_cd,manuf_orig_cntry_cd,manifest_status_cd,mde_source_cd,origin_loc_cntry_cd,origin_location_cd,package_movement_scan_cd,packaging_type_cd,record_status_cd,sed_cd,service_cd,service_type_cd,total_wgt_uom_cd,trprt_bill_to_cd,tran_data_source_cd,unassign_reason_cd,unloading_usa_port_cd,final_import_clearance_loc_cd,image_folder_id_cd,broker_dest_loc_cd,visa_trans_cd,shipment_type_cd,entry_category_type_cd,trprt_bill_to_pymt_method_cd,iid_master_cd,iid_classify_cd
+            template_name: module.jinja
+          ShipmentCommodity:
+            icon: edit_square
+            menu_name: ShipmentCommodity
+            menu_title: ShipmentCommodity
+            page:
+              detail:
+                columns: local_shipment_oid_nbr,sequence_nbr,commodity_desc,commodity_wgt,customs_value_amt,export_cargo_control_nbr,export_license_expr_dt,export_license_nbr,harmonized_tariff_nbr,last_modified_nm,last_modified_tmstp,oversize_flg,piece_qty,package_qty,etl_tmstp,classification_status_desc,part_expiration_dt,clearance_country_cd,commodity_wgt_uom_cd,hazardous_material_cd,origin_country_cd,tariff_source_cd,shipment_type_cd,commodity_currency_cd,unit_of_measure_cd,classification_status_cd
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: ShipmentCommodity
+                typescript_name: detail_component.jinja
+                visible_columns: local_shipment_oid_nbr,sequence_nbr,commodity_desc,commodity_wgt,customs_value_amt,export_cargo_control_nbr,export_license_expr_dt,export_license_nbr,harmonized_tariff_nbr,last_modified_nm,last_modified_tmstp,oversize_flg,piece_qty,package_qty,etl_tmstp,classification_status_desc,part_expiration_dt,clearance_country_cd,commodity_wgt_uom_cd,hazardous_material_cd,origin_country_cd,tariff_source_cd,shipment_type_cd,commodity_currency_cd,unit_of_measure_cd,classification_status_cd
+              home:
+                columns: local_shipment_oid_nbr,sequence_nbr,commodity_desc,commodity_wgt,customs_value_amt,export_cargo_control_nbr,export_license_expr_dt,export_license_nbr,harmonized_tariff_nbr,last_modified_nm,last_modified_tmstp,oversize_flg,piece_qty,package_qty,etl_tmstp,classification_status_desc,part_expiration_dt,clearance_country_cd,commodity_wgt_uom_cd,hazardous_material_cd,origin_country_cd,tariff_source_cd,shipment_type_cd,commodity_currency_cd,unit_of_measure_cd,classification_status_cd
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: ShipmentCommodity
+                typescript_name: home_template.jinja
+                visible_columns: local_shipment_oid_nbr,sequence_nbr,commodity_desc,commodity_wgt,customs_value_amt,export_cargo_control_nbr,export_license_expr_dt,export_license_nbr,harmonized_tariff_nbr,last_modified_nm,last_modified_tmstp,oversize_flg,piece_qty,package_qty,etl_tmstp,classification_status_desc,part_expiration_dt,clearance_country_cd,commodity_wgt_uom_cd,hazardous_material_cd,origin_country_cd,tariff_source_cd,shipment_type_cd,commodity_currency_cd,unit_of_measure_cd,classification_status_cd
+              new:
+                columns: local_shipment_oid_nbr,sequence_nbr,commodity_desc,commodity_wgt,customs_value_amt,export_cargo_control_nbr,export_license_expr_dt,export_license_nbr,harmonized_tariff_nbr,last_modified_nm,last_modified_tmstp,oversize_flg,piece_qty,package_qty,etl_tmstp,classification_status_desc,part_expiration_dt,clearance_country_cd,commodity_wgt_uom_cd,hazardous_material_cd,origin_country_cd,tariff_source_cd,shipment_type_cd,commodity_currency_cd,unit_of_measure_cd,classification_status_cd
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: ShipmentCommodity
+                typescript_name: new_component.jinja
+                visible_columns: local_shipment_oid_nbr,sequence_nbr,commodity_desc,commodity_wgt,customs_value_amt,export_cargo_control_nbr,export_license_expr_dt,export_license_nbr,harmonized_tariff_nbr,last_modified_nm,last_modified_tmstp,oversize_flg,piece_qty,package_qty,etl_tmstp,classification_status_desc,part_expiration_dt,clearance_country_cd,commodity_wgt_uom_cd,hazardous_material_cd,origin_country_cd,tariff_source_cd,shipment_type_cd,commodity_currency_cd,unit_of_measure_cd,classification_status_cd
+            template_name: module.jinja
+          ShipmentParty:
+            icon: edit_square
+            menu_name: ShipmentParty
+            menu_title: ShipmentParty
+            page:
+              detail:
+                columns: shipment_party_oid_nbr,local_piece_oid_nbr,local_shipment_oid_nbr,address_qty,city_nm,contact_phone_nbr,customer_acct_nbr,customs_self_assessment_flg,company_nm,contact_nm,email_nm,last_modified_nm,last_modified_tmstp,etl_tmstp,csa_business_nbr,split_seq_nbr,business_nbr,cfia_payor_nm,cfia_account_nbr,fax_nbr,additional_contact_flg,shipment_party_type_cd,clearance_location_cd,broker_id_cd,country_cd,country_sub_entity_cd,customs_id_cd,postal_cd,state_cd,shipment_type_cd,piece_shpmt_type_cd,pref_cont_mthd_cd
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: ShipmentParty
+                typescript_name: detail_component.jinja
+                visible_columns: shipment_party_oid_nbr,local_piece_oid_nbr,local_shipment_oid_nbr,address_qty,city_nm,contact_phone_nbr,customer_acct_nbr,customs_self_assessment_flg,company_nm,contact_nm,email_nm,last_modified_nm,last_modified_tmstp,etl_tmstp,csa_business_nbr,split_seq_nbr,business_nbr,cfia_payor_nm,cfia_account_nbr,fax_nbr,additional_contact_flg,shipment_party_type_cd,clearance_location_cd,broker_id_cd,country_cd,country_sub_entity_cd,customs_id_cd,postal_cd,state_cd,shipment_type_cd,piece_shpmt_type_cd,pref_cont_mthd_cd
+              home:
+                columns: shipment_party_oid_nbr,local_piece_oid_nbr,local_shipment_oid_nbr,address_qty,city_nm,contact_phone_nbr,customer_acct_nbr,customs_self_assessment_flg,company_nm,contact_nm,email_nm,last_modified_nm,last_modified_tmstp,etl_tmstp,csa_business_nbr,split_seq_nbr,business_nbr,cfia_payor_nm,cfia_account_nbr,fax_nbr,additional_contact_flg,shipment_party_type_cd,clearance_location_cd,broker_id_cd,country_cd,country_sub_entity_cd,customs_id_cd,postal_cd,state_cd,shipment_type_cd,piece_shpmt_type_cd,pref_cont_mthd_cd
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: ShipmentParty
+                typescript_name: home_template.jinja
+                visible_columns: shipment_party_oid_nbr,local_piece_oid_nbr,local_shipment_oid_nbr,address_qty,city_nm,contact_phone_nbr,customer_acct_nbr,customs_self_assessment_flg,company_nm,contact_nm,email_nm,last_modified_nm,last_modified_tmstp,etl_tmstp,csa_business_nbr,split_seq_nbr,business_nbr,cfia_payor_nm,cfia_account_nbr,fax_nbr,additional_contact_flg,shipment_party_type_cd,clearance_location_cd,broker_id_cd,country_cd,country_sub_entity_cd,customs_id_cd,postal_cd,state_cd,shipment_type_cd,piece_shpmt_type_cd,pref_cont_mthd_cd
+              new:
+                columns: shipment_party_oid_nbr,local_piece_oid_nbr,local_shipment_oid_nbr,address_qty,city_nm,contact_phone_nbr,customer_acct_nbr,customs_self_assessment_flg,company_nm,contact_nm,email_nm,last_modified_nm,last_modified_tmstp,etl_tmstp,csa_business_nbr,split_seq_nbr,business_nbr,cfia_payor_nm,cfia_account_nbr,fax_nbr,additional_contact_flg,shipment_party_type_cd,clearance_location_cd,broker_id_cd,country_cd,country_sub_entity_cd,customs_id_cd,postal_cd,state_cd,shipment_type_cd,piece_shpmt_type_cd,pref_cont_mthd_cd
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: ShipmentParty
+                typescript_name: new_component.jinja
+                visible_columns: shipment_party_oid_nbr,local_piece_oid_nbr,local_shipment_oid_nbr,address_qty,city_nm,contact_phone_nbr,customer_acct_nbr,customs_self_assessment_flg,company_nm,contact_nm,email_nm,last_modified_nm,last_modified_tmstp,etl_tmstp,csa_business_nbr,split_seq_nbr,business_nbr,cfia_payor_nm,cfia_account_nbr,fax_nbr,additional_contact_flg,shipment_party_type_cd,clearance_location_cd,broker_id_cd,country_cd,country_sub_entity_cd,customs_id_cd,postal_cd,state_cd,shipment_type_cd,piece_shpmt_type_cd,pref_cont_mthd_cd
+            template_name: module.jinja
+          SpecialHandling:
+            icon: edit_square
+            menu_name: SpecialHandling
+            menu_title: SpecialHandling
+            page:
+              detail:
+                columns: id,oid_nbr,etl_tmstp,oid_type_cd,special_handling_cd,shipment_type_cd
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: SpecialHandling
+                typescript_name: detail_component.jinja
+                visible_columns: id,oid_nbr,etl_tmstp,oid_type_cd,special_handling_cd,shipment_type_cd
+              home:
+                columns: id,oid_nbr,etl_tmstp,oid_type_cd,special_handling_cd,shipment_type_cd
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: SpecialHandling
+                typescript_name: home_template.jinja
+                visible_columns: id,oid_nbr,etl_tmstp,oid_type_cd,special_handling_cd,shipment_type_cd
+              new:
+                columns: id,oid_nbr,etl_tmstp,oid_type_cd,special_handling_cd,shipment_type_cd
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: SpecialHandling
+                typescript_name: new_component.jinja
+                visible_columns: id,oid_nbr,etl_tmstp,oid_type_cd,special_handling_cd,shipment_type_cd
+            template_name: module.jinja
+          SysConfig:
+            icon: edit_square
+            menu_name: SysConfig
+            menu_title: SysConfig
+            page:
+              detail:
+                columns: name,discount_rate,tax_rate,notes,id
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: SysConfig
+                typescript_name: detail_component.jinja
+                visible_columns: name,discount_rate,tax_rate,notes,id
+              home:
+                columns: name,discount_rate,tax_rate,notes,id
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: SysConfig
+                typescript_name: home_template.jinja
+                visible_columns: name,discount_rate,tax_rate,notes,id
+              new:
+                columns: name,discount_rate,tax_rate,notes,id
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: SysConfig
+                typescript_name: new_component.jinja
+                visible_columns: name,discount_rate,tax_rate,notes,id
+            template_name: module.jinja
+          VirtualRouteLeg:
+            icon: edit_square
+            menu_name: VirtualRouteLeg
+            menu_title: VirtualRouteLeg
+            page:
+              detail:
+                columns: id,virtual_route_nbr,virtual_route_dt,virtual_route_leg_nbr,arrival_gmt_tmstp,arrival_local_tmstp,broker_complete_flg,customs_complete_flg,depart_gmt_tmstp,depart_local_tmstp,sched_arrival_dt,sched_route_departure_dt,sched_route_leg_dptr_dt,sched_route_nbr,sort_dt,tail_nbr,virtual_route_locked_flg,flight_nbr_obs,download_flg,etl_tmstp,eta_tmstp,in_range_tmstp,leg_dest_loc_cd,leg_orig_loc_cd,conveyance_type_cd,leg_origin_country_cd,leg_dest_country_cd,sched_route_leg_orig_loc_cd,sched_route_leg_dest_loc_cd,us_process_cd,carrier_cd
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: VirtualRouteLeg
+                typescript_name: detail_component.jinja
+                visible_columns: id,virtual_route_nbr,virtual_route_dt,virtual_route_leg_nbr,arrival_gmt_tmstp,arrival_local_tmstp,broker_complete_flg,customs_complete_flg,depart_gmt_tmstp,depart_local_tmstp,sched_arrival_dt,sched_route_departure_dt,sched_route_leg_dptr_dt,sched_route_nbr,sort_dt,tail_nbr,virtual_route_locked_flg,flight_nbr_obs,download_flg,etl_tmstp,eta_tmstp,in_range_tmstp,leg_dest_loc_cd,leg_orig_loc_cd,conveyance_type_cd,leg_origin_country_cd,leg_dest_country_cd,sched_route_leg_orig_loc_cd,sched_route_leg_dest_loc_cd,us_process_cd,carrier_cd
+              home:
+                columns: id,virtual_route_nbr,virtual_route_dt,virtual_route_leg_nbr,arrival_gmt_tmstp,arrival_local_tmstp,broker_complete_flg,customs_complete_flg,depart_gmt_tmstp,depart_local_tmstp,sched_arrival_dt,sched_route_departure_dt,sched_route_leg_dptr_dt,sched_route_nbr,sort_dt,tail_nbr,virtual_route_locked_flg,flight_nbr_obs,download_flg,etl_tmstp,eta_tmstp,in_range_tmstp,leg_dest_loc_cd,leg_orig_loc_cd,conveyance_type_cd,leg_origin_country_cd,leg_dest_country_cd,sched_route_leg_orig_loc_cd,sched_route_leg_dest_loc_cd,us_process_cd,carrier_cd
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: VirtualRouteLeg
+                typescript_name: home_template.jinja
+                visible_columns: id,virtual_route_nbr,virtual_route_dt,virtual_route_leg_nbr,arrival_gmt_tmstp,arrival_local_tmstp,broker_complete_flg,customs_complete_flg,depart_gmt_tmstp,depart_local_tmstp,sched_arrival_dt,sched_route_departure_dt,sched_route_leg_dptr_dt,sched_route_nbr,sort_dt,tail_nbr,virtual_route_locked_flg,flight_nbr_obs,download_flg,etl_tmstp,eta_tmstp,in_range_tmstp,leg_dest_loc_cd,leg_orig_loc_cd,conveyance_type_cd,leg_origin_country_cd,leg_dest_country_cd,sched_route_leg_orig_loc_cd,sched_route_leg_dest_loc_cd,us_process_cd,carrier_cd
+              new:
+                columns: id,virtual_route_nbr,virtual_route_dt,virtual_route_leg_nbr,arrival_gmt_tmstp,arrival_local_tmstp,broker_complete_flg,customs_complete_flg,depart_gmt_tmstp,depart_local_tmstp,sched_arrival_dt,sched_route_departure_dt,sched_route_leg_dptr_dt,sched_route_nbr,sort_dt,tail_nbr,virtual_route_locked_flg,flight_nbr_obs,download_flg,etl_tmstp,eta_tmstp,in_range_tmstp,leg_dest_loc_cd,leg_orig_loc_cd,conveyance_type_cd,leg_origin_country_cd,leg_dest_country_cd,sched_route_leg_orig_loc_cd,sched_route_leg_dest_loc_cd,us_process_cd,carrier_cd
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: VirtualRouteLeg
+                typescript_name: new_component.jinja
+                visible_columns: id,virtual_route_nbr,virtual_route_dt,virtual_route_leg_nbr,arrival_gmt_tmstp,arrival_local_tmstp,broker_complete_flg,customs_complete_flg,depart_gmt_tmstp,depart_local_tmstp,sched_arrival_dt,sched_route_departure_dt,sched_route_leg_dptr_dt,sched_route_nbr,sort_dt,tail_nbr,virtual_route_locked_flg,flight_nbr_obs,download_flg,etl_tmstp,eta_tmstp,in_range_tmstp,leg_dest_loc_cd,leg_orig_loc_cd,conveyance_type_cd,leg_origin_country_cd,leg_dest_country_cd,sched_route_leg_orig_loc_cd,sched_route_leg_dest_loc_cd,us_process_cd,carrier_cd
+            template_name: module.jinja
+        menu_name: data
+        menu_title: data
+        opened: true
+    name: app
+authentication: '{system-default}'
+entities:
+  CcpCustomer:
+    columns:
+    - label: ' name*'
+      name: name
+      search: true
+      sort: true
+      template: text
+      type: VARCHAR
+    - name: address1
+      template: text
+      type: VARCHAR
+    - name: address2
+      template: text
+      type: VARCHAR
+    - name: city
+      template: text
+      type: VARCHAR
+    - name: state
+      template: text
+      type: VARCHAR
+    - name: country
+      template: text
+      type: VARCHAR
+    - name: postal
+      template: text
+      type: VARCHAR
+    - name: business_nbr
+      template: text
+      type: VARCHAR
+    - name: gst_reg
+      template: text
+      type: VARCHAR
+    - name: duty_bill_to_acct_nbr
+      template: integer
+      type: INTEGER
+    - name: payor_location
+      template: text
+      type: VARCHAR
+    - name: weight
+      template: text
+      type: VARCHAR
+    - name: export_country
+      template: text
+      type: VARCHAR
+    - name: foreign_trade_zone
+      template: text
+      type: VARCHAR
+    - name: discounts
+      template: text
+      type: VARCHAR
+    - name: last_modified_nm
+      template: text
+      type: VARCHAR
+    - name: data_form
+      template: text
+      type: VARCHAR
+    - name: profile_ref_nbr
+      template: integer
+      type: INTEGER
+    - name: po_box
+      template: text
+      type: VARCHAR
+    - name: phone_nbr
+      template: text
+      type: VARCHAR
+    - name: id
+      template: integer
+      type: INTEGER
+    - name: duty_bill_to_cd
+      template: text
+      type: VARCHAR
+    - name: customeroid
+      template: integer
+      type: INTEGER
+    - name: dpi
+      template: text
+      type: VARCHAR
+    - name: broker_cd
+      template: text
+      type: VARCHAR
+    - name: rod
+      template: text
+      type: VARCHAR
+    favorite: name
+    hidden: {}
+    label: CcpCustomer
+    primary_key:
+    - id
+    type: CcpCustomer
+  Piece:
+    columns:
+    - label: ' local_piece_oid_nbr*'
+      name: local_piece_oid_nbr
+      search: true
+      sort: true
+      template: integer
+      type: INTEGER
+    - name: local_shipment_oid_nbr
+      template: integer
+      type: INTEGER
+    - name: customs_value_amt
+      template: real
+      type: DECIMAL
+    - name: decln_oid_nbr
+      template: integer
+      type: INTEGER
+    - name: dim_wgt
+      template: real
+      type: DECIMAL
+    - name: harmonized_tariff_nbr
+      template: text
+      type: VARCHAR
+    - name: ipd_doc_nbr
+      template: text
+      type: VARCHAR
+    - name: last_modified_nm
+      template: text
+      type: VARCHAR
+    - name: manifest_tmstp
+      type: DATETIME
+    - name: payor_account_nbr
+      template: integer
+      type: INTEGER
+    - name: piece_qty
+      template: integer
+      type: INTEGER
+    - name: shipper_reference_desc
+      template: text
+      type: VARCHAR
+    - name: split_billing_address_amt
+      template: real
+      type: DECIMAL
+    - name: split_billing_kilo_wgt
+      template: real
+      type: DECIMAL
+    - name: total_wgt
+      template: real
+      type: DECIMAL
+    - name: tracking_nbr
+      template: text
+      type: VARCHAR
+    - name: transaction_seq_tmstp
+      type: DATETIME
+    - name: variable_pct
+      template: integer
+      type: INTEGER
+    - name: xref_nbr
+      template: text
+      type: VARCHAR
+    - name: etl_tmstp
+      type: DATETIME
+    - default: '0'
+      name: split_seq_nbr
+      template: integer
+      type: INTEGER
+    - name: piece_deleted_flg
+      template: text
+      type: VARCHAR
+    - name: piece_seq_nbr
+      template: integer
+      type: INTEGER
+    - name: piece_movement_flg
+      template: text
+      type: VARCHAR
+    - name: arrival_port_cd
+      template: text
+      type: VARCHAR
+    - name: awb_type_cd
+      template: text
+      type: VARCHAR
+    - name: awb_format_cd
+      template: text
+      type: VARCHAR
+    - name: contract_wgt_type_cd
+      template: text
+      type: VARCHAR
+    - name: decln_status_cd
+      template: text
+      type: VARCHAR
+    - name: dest_location_cd
+      template: text
+      type: VARCHAR
+    - name: final_dest_cd
+      template: text
+      type: VARCHAR
+    - name: form_type_cd
+      template: text
+      type: VARCHAR
+    - name: last_foreign_port_cd
+      template: text
+      type: VARCHAR
+    - name: last_modified_location_cd
+      template: text
+      type: VARCHAR
+    - name: manifest_status_cd
+      template: text
+      type: VARCHAR
+    - name: payment_option_cd
+      template: text
+      type: VARCHAR
+    - name: payor_account_type_cd
+      template: text
+      type: VARCHAR
+    - name: piece_status_cd
+      template: text
+      type: VARCHAR
+    - name: piece_type_cd
+      template: text
+      type: VARCHAR
+    - name: port_of_export_cd
+      template: text
+      type: VARCHAR
+    - name: port_of_unlading_cd
+      template: text
+      type: VARCHAR
+    - name: rih_clearance_loc_cd
+      template: text
+      type: VARCHAR
+    - name: split_billing_business_cd
+      template: text
+      type: VARCHAR
+    - name: split_billing_currency_cd
+      template: text
+      type: VARCHAR
+    - name: total_wgt_uom_cd
+      template: text
+      type: VARCHAR
+    - name: shipment_type_cd
+      template: integer
+      type: INTEGER
+    favorite: local_piece_oid_nbr
+    hidden: {}
+    label: Piece
+    primary_key:
+    - local_piece_oid_nbr
+    tab_groups:
+    - direction: tomany
+      fks:
+      - local_piece_oid_nbr
+      name: ShipmentPartyList
+      resource: ShipmentParty
+    - direction: toone
+      fks:
+      - local_shipment_oid_nbr
+      name: shipment
+      resource: Shipment
+    type: Piece
+  Shipment:
+    columns:
+    - label: ' local_shipment_oid_nbr*'
+      name: local_shipment_oid_nbr
+      search: true
+      sort: true
+      template: integer
+      type: INTEGER
+    - name: awb_nbr
+      template: text
+      type: VARCHAR
+    - name: base_charge_amt
+      template: real
+      type: DECIMAL
+    - name: cargo_desc
+      template: text
+      type: VARCHAR
+    - name: cargo_qty
+      template: integer
+      type: INTEGER
+    - name: cash_in_advance_flg
+      template: text
+      type: VARCHAR
+    - name: ci_seq_nbr
+      template: text
+      type: VARCHAR
+    - name: comat_flg
+      template: text
+      type: VARCHAR
+    - name: consolidated_freight_flg
+      template: text
+      type: VARCHAR
+    - name: container_nbr
+      template: text
+      type: VARCHAR
+    - name: create_dt
+      type: DATE
+    - name: csa_flg
+      template: text
+      type: VARCHAR
+    - name: customer_seq_nbr
+      template: integer
+      type: INTEGER
+    - name: customs_clearance_entry_flg
+      template: text
+      type: VARCHAR
+    - name: deleted_flg
+      template: text
+      type: VARCHAR
+    - name: dest_eec_flg
+      template: text
+      type: VARCHAR
+    - name: dim_height_qty
+      template: integer
+      type: INTEGER
+    - name: dim_length_qty
+      template: integer
+      type: INTEGER
+    - name: dim_wgt
+      template: real
+      type: DECIMAL
+    - name: dim_width_qty
+      template: integer
+      type: INTEGER
+    - name: dim_shipment_flg
+      template: text
+      type: VARCHAR
+    - name: dutiable_flg
+      template: text
+      type: VARCHAR
+    - name: duty_bill_to_acct_nbr
+      template: integer
+      type: INTEGER
+    - name: duty_cash_flg
+      template: text
+      type: VARCHAR
+    - default: '''N'''
+      name: duty_credit_card_flg
+      template: text
+      type: VARCHAR
+    - name: export_license_flg
+      template: text
+      type: VARCHAR
+    - name: fda_confirmation_flg
+      template: text
+      type: VARCHAR
+    - name: carrier_assigned_mawb_nbr
+      template: text
+      type: VARCHAR
+    - name: freight_charge_amt
+      template: real
+      type: DECIMAL
+    - name: ftsr_nbr
+      template: integer
+      type: INTEGER
+    - name: hal_flg
+      template: text
+      type: VARCHAR
+    - name: hal_phone_nbr
+      template: text
+      type: VARCHAR
+    - name: handling_unit_qty
+      template: integer
+      type: INTEGER
+    - name: hawb_serial_nbr
+      template: integer
+      type: INTEGER
+    - name: input_tmstp
+      type: DATE
+    - name: keyer_nm
+      template: text
+      type: VARCHAR
+    - name: last_modified_nm
+      template: text
+      type: VARCHAR
+    - name: last_modified_tmstp
+      type: DATETIME
+    - name: meter_nbr
+      template: integer
+      type: INTEGER
+    - name: oda_charge_flg
+      template: text
+      type: VARCHAR
+    - name: opa_charge_flg
+      template: text
+      type: VARCHAR
+    - name: origin_loc_city_nm
+      template: text
+      type: VARCHAR
+    - name: origin_eec_flg
+      template: text
+      type: VARCHAR
+    - name: piece_qty
+      template: integer
+      type: INTEGER
+    - name: pkg_mark_desc
+      template: text
+      type: VARCHAR
+    - name: prior_notice_nbr
+      template: text
+      type: VARCHAR
+    - name: ramp_transfer_flg
+      template: text
+      type: VARCHAR
+    - default: '''N'''
+      name: rod_flg
+      template: text
+      type: VARCHAR
+    - name: rpl_flg
+      template: text
+      type: VARCHAR
+    - name: sdl_flg
+      template: text
+      type: VARCHAR
+    - name: sed_exempt_nbr
+      template: text
+      type: VARCHAR
+    - name: shipment_control_nbr
+      template: text
+      type: VARCHAR
+    - name: ship_dt
+      type: DATE
+    - name: shipment_desc
+      template: text
+      type: VARCHAR
+    - name: shipment_id_nbr
+      template: integer
+      type: INTEGER
+    - name: shipper_reference_desc
+      template: text
+      type: VARCHAR
+    - name: split_billing_address_amt
+      template: real
+      type: DECIMAL
+    - name: split_billing_kilo_wgt
+      template: real
+      type: DECIMAL
+    - name: spu_flg
+      template: text
+      type: VARCHAR
+    - name: total_wgt
+      template: real
+      type: DECIMAL
+    - name: tracking_id_nbr
+      template: text
+      type: VARCHAR
+    - name: tracking_id_qual_nbr
+      template: text
+      type: VARCHAR
+    - name: transaction_seq_tmstp
+      type: DATETIME
+    - name: trprt_bill_to_acct_nbr
+      template: integer
+      type: INTEGER
+    - default: '''N'''
+      name: trprt_credit_card_flg
+      template: text
+      type: VARCHAR
+    - name: value_changed_flg
+      template: text
+      type: VARCHAR
+    - name: weekday_delivery_flg
+      template: text
+      type: VARCHAR
+    - name: xtn_nbr
+      template: text
+      type: VARCHAR
+    - name: dest_loc_city_nm
+      template: text
+      type: VARCHAR
+    - name: aci_download_flg
+      template: text
+      type: VARCHAR
+    - name: etl_tmstp
+      type: DATETIME
+    - name: split_shipment_flg
+      template: text
+      type: VARCHAR
+    - default: '''N'''
+      name: eci_flg
+      template: text
+      type: VARCHAR
+    - default: '''N'''
+      name: ci_image_flg
+      template: text
+      type: VARCHAR
+    - default: '''N'''
+      name: duplicate_shipment_record_flg
+      template: text
+      type: VARCHAR
+    - default: '''N'''
+      name: oga_shipment_flg
+      template: text
+      type: VARCHAR
+    - name: cad_value_amt
+      template: real
+      type: DECIMAL
+    - name: transaction_nbr
+      template: integer
+      type: INTEGER
+    - name: ci_image_tmstp
+      type: DATETIME
+    - name: automation_ci_flg
+      template: text
+      type: VARCHAR
+    - name: iid_flg
+      template: text
+      type: VARCHAR
+    - name: carriage_value_amt
+      template: real
+      type: DECIMAL
+    - name: customs_value_amt
+      template: real
+      type: DECIMAL
+    - name: dest_customs_value_amt
+      template: real
+      type: DECIMAL
+    - name: local_customs_value_amt
+      template: real
+      type: DECIMAL
+    - default: '''Y'''
+      name: active_flg
+      template: text
+      type: VARCHAR
+    - name: entry_dt
+      type: DATE
+    - name: admissibility_mode
+      template: text
+      type: VARCHAR
+    - name: prev_admissibility_mode
+      template: text
+      type: VARCHAR
+    - name: cargocontrolnbr
+      template: text
+      type: VARCHAR
+    - name: portofexit
+      template: text
+      type: VARCHAR
+    - name: portofentry
+      template: text
+      type: VARCHAR
+    - name: warehousecode
+      template: text
+      type: VARCHAR
+    - name: surface_intl_shipment_nbr
+      template: real
+      type: NUMERIC
+    - name: contract_wgt_type_cd
+      template: text
+      type: VARCHAR
+    - name: customs_clearance_cd
+      template: text
+      type: VARCHAR
+    - name: dang_goods_cd
+      template: text
+      type: VARCHAR
+    - name: data_entry_location_cd
+      template: text
+      type: VARCHAR
+    - name: dest_customs_currency_cd
+      template: text
+      type: VARCHAR
+    - name: dest_location_cd
+      template: text
+      type: VARCHAR
+    - name: dest_loc_cntry_cd
+      template: text
+      type: VARCHAR
+    - name: discharge_location_cd
+      template: text
+      type: VARCHAR
+    - name: drop_dscnt_cd
+      template: text
+      type: VARCHAR
+    - name: duty_bill_to_cd
+      template: text
+      type: VARCHAR
+    - name: ecs_filing_status_cd
+      template: text
+      type: VARCHAR
+    - name: export_country_cd
+      template: text
+      type: VARCHAR
+    - name: planned_clearance_location_cd
+      template: text
+      type: VARCHAR
+    - name: form_type_cd
+      template: text
+      type: VARCHAR
+    - name: free_domicile_cd
+      template: text
+      type: VARCHAR
+    - name: goods_class_cd
+      template: text
+      type: VARCHAR
+    - name: intermediate_consignee_cd
+      template: text
+      type: VARCHAR
+    - name: invoice_cd
+      template: text
+      type: VARCHAR
+    - name: keyed_currency_cd
+      template: text
+      type: VARCHAR
+    - name: local_customs_currency_cd
+      template: text
+      type: VARCHAR
+    - name: manuf_orig_cntry_cd
+      template: text
+      type: VARCHAR
+    - name: manifest_status_cd
+      template: text
+      type: VARCHAR
+    - name: mde_source_cd
+      template: text
+      type: VARCHAR
+    - name: origin_loc_cntry_cd
+      template: text
+      type: VARCHAR
+    - name: origin_location_cd
+      template: text
+      type: VARCHAR
+    - name: package_movement_scan_cd
+      template: text
+      type: VARCHAR
+    - name: packaging_type_cd
+      template: text
+      type: VARCHAR
+    - name: record_status_cd
+      template: text
+      type: VARCHAR
+    - name: sed_cd
+      template: text
+      type: VARCHAR
+    - name: service_cd
+      template: text
+      type: VARCHAR
+    - name: service_type_cd
+      template: text
+      type: VARCHAR
+    - name: total_wgt_uom_cd
+      template: text
+      type: VARCHAR
+    - name: trprt_bill_to_cd
+      template: text
+      type: VARCHAR
+    - name: tran_data_source_cd
+      template: text
+      type: VARCHAR
+    - name: unassign_reason_cd
+      template: text
+      type: VARCHAR
+    - name: unloading_usa_port_cd
+      template: text
+      type: VARCHAR
+    - name: final_import_clearance_loc_cd
+      template: text
+      type: VARCHAR
+    - name: image_folder_id_cd
+      template: text
+      type: VARCHAR
+    - name: broker_dest_loc_cd
+      template: text
+      type: VARCHAR
+    - name: visa_trans_cd
+      template: text
+      type: VARCHAR
+    - name: shipment_type_cd
+      template: integer
+      type: INTEGER
+    - name: entry_category_type_cd
+      template: text
+      type: VARCHAR
+    - name: trprt_bill_to_pymt_method_cd
+      template: integer
+      type: INTEGER
+    - name: iid_master_cd
+      template: text
+      type: VARCHAR
+    - name: iid_classify_cd
+      template: text
+      type: VARCHAR
+    favorite: local_shipment_oid_nbr
+    hidden: {}
+    label: Shipment
+    primary_key:
+    - local_shipment_oid_nbr
+    tab_groups:
+    - direction: tomany
+      fks:
+      - local_shipment_oid_nbr
+      name: PieceList
+      resource: Piece
+    - direction: tomany
+      fks:
+      - local_shipment_oid_nbr
+      name: ShipmentCommodityList
+      resource: ShipmentCommodity
+    - direction: tomany
+      fks:
+      - local_shipment_oid_nbr
+      name: ShipmentPartyList
+      resource: ShipmentParty
+    - direction: tomany
+      fks:
+      - oid_nbr
+      name: SpecialHandlingList
+      resource: SpecialHandling
+    type: Shipment
+  ShipmentCommodity:
+    columns:
+    - label: ' local_shipment_oid_nbr*'
+      name: local_shipment_oid_nbr
+      search: true
+      sort: true
+      template: integer
+      type: INTEGER
+    - name: sequence_nbr
+      template: integer
+      type: INTEGER
+    - name: commodity_desc
+      template: text
+      type: VARCHAR
+    - name: commodity_wgt
+      template: real
+      type: DECIMAL
+    - name: customs_value_amt
+      template: real
+      type: DECIMAL
+    - name: export_cargo_control_nbr
+      template: text
+      type: VARCHAR
+    - name: export_license_expr_dt
+      type: DATE
+    - name: export_license_nbr
+      template: text
+      type: VARCHAR
+    - name: harmonized_tariff_nbr
+      template: text
+      type: VARCHAR
+    - name: last_modified_nm
+      template: text
+      type: VARCHAR
+    - name: last_modified_tmstp
+      type: DATETIME
+    - name: oversize_flg
+      template: text
+      type: VARCHAR
+    - name: piece_qty
+      template: integer
+      type: INTEGER
+    - name: package_qty
+      template: integer
+      type: INTEGER
+    - name: etl_tmstp
+      type: DATETIME
+    - name: classification_status_desc
+      template: text
+      type: VARCHAR
+    - name: part_expiration_dt
+      type: DATE
+    - name: clearance_country_cd
+      template: text
+      type: VARCHAR
+    - name: commodity_wgt_uom_cd
+      template: text
+      type: VARCHAR
+    - name: hazardous_material_cd
+      template: text
+      type: VARCHAR
+    - name: origin_country_cd
+      template: text
+      type: VARCHAR
+    - name: tariff_source_cd
+      template: text
+      type: VARCHAR
+    - name: shipment_type_cd
+      template: integer
+      type: INTEGER
+    - name: commodity_currency_cd
+      template: text
+      type: VARCHAR
+    - name: unit_of_measure_cd
+      template: text
+      type: VARCHAR
+    - name: classification_status_cd
+      template: text
+      type: VARCHAR
+    favorite: local_shipment_oid_nbr
+    hidden: {}
+    label: ShipmentCommodity
+    primary_key:
+    - local_shipment_oid_nbr
+    - sequence_nbr
+    tab_groups:
+    - direction: toone
+      fks:
+      - local_shipment_oid_nbr
+      name: shipment
+      resource: Shipment
+    type: ShipmentCommodity
+  ShipmentParty:
+    columns:
+    - label: ' shipment_party_oid_nbr*'
+      name: shipment_party_oid_nbr
+      search: true
+      sort: true
+      template: integer
+      type: INTEGER
+    - name: local_piece_oid_nbr
+      template: integer
+      type: INTEGER
+    - name: local_shipment_oid_nbr
+      template: integer
+      type: INTEGER
+    - name: address_qty
+      template: integer
+      type: INTEGER
+    - name: city_nm
+      template: text
+      type: VARCHAR
+    - name: contact_phone_nbr
+      template: text
+      type: VARCHAR
+    - name: customer_acct_nbr
+      template: integer
+      type: INTEGER
+    - name: customs_self_assessment_flg
+      template: text
+      type: VARCHAR
+    - name: company_nm
+      template: text
+      type: VARCHAR
+    - name: contact_nm
+      template: text
+      type: VARCHAR
+    - name: email_nm
+      template: text
+      type: VARCHAR
+    - name: last_modified_nm
+      template: text
+      type: VARCHAR
+    - name: last_modified_tmstp
+      type: DATETIME
+    - name: etl_tmstp
+      type: DATETIME
+    - name: csa_business_nbr
+      template: text
+      type: VARCHAR
+    - name: split_seq_nbr
+      template: integer
+      type: INTEGER
+    - name: business_nbr
+      template: text
+      type: VARCHAR
+    - name: cfia_payor_nm
+      template: text
+      type: VARCHAR
+    - name: cfia_account_nbr
+      template: text
+      type: VARCHAR
+    - name: fax_nbr
+      template: text
+      type: VARCHAR
+    - default: '''N'''
+      name: additional_contact_flg
+      template: text
+      type: VARCHAR
+    - name: shipment_party_type_cd
+      template: text
+      type: VARCHAR
+    - name: clearance_location_cd
+      template: text
+      type: VARCHAR
+    - name: broker_id_cd
+      template: text
+      type: VARCHAR
+    - name: country_cd
+      template: text
+      type: VARCHAR
+    - name: country_sub_entity_cd
+      template: text
+      type: VARCHAR
+    - name: customs_id_cd
+      template: text
+      type: VARCHAR
+    - name: postal_cd
+      template: text
+      type: VARCHAR
+    - name: state_cd
+      template: text
+      type: VARCHAR
+    - name: shipment_type_cd
+      template: integer
+      type: INTEGER
+    - name: piece_shpmt_type_cd
+      template: integer
+      type: INTEGER
+    - name: pref_cont_mthd_cd
+      template: text
+      type: VARCHAR
+    favorite: shipment_party_oid_nbr
+    hidden: {}
+    label: ShipmentParty
+    primary_key:
+    - shipment_party_oid_nbr
+    tab_groups:
+    - direction: toone
+      fks:
+      - local_piece_oid_nbr
+      name: piece
+      resource: Piece
+    - direction: toone
+      fks:
+      - local_shipment_oid_nbr
+      name: shipment
+      resource: Shipment
+    type: ShipmentParty
+  SpecialHandling:
+    columns:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+      template: integer
+      type: INTEGER
+    - name: oid_nbr
+      template: integer
+      type: INTEGER
+    - name: etl_tmstp
+      type: DATETIME
+    - name: oid_type_cd
+      template: text
+      type: VARCHAR
+    - name: special_handling_cd
+      template: text
+      type: VARCHAR
+    - name: shipment_type_cd
+      template: integer
+      type: INTEGER
+    favorite: id
+    hidden: {}
+    label: SpecialHandling
+    primary_key:
+    - id
+    tab_groups:
+    - direction: toone
+      fks:
+      - oid_nbr
+      name: shipment
+      resource: Shipment
+    type: SpecialHandling
+  SysConfig:
+    columns:
+    - default: '''system'''
+      label: ' name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+      template: text
+      type: TEXT
+    - default: '0.05'
+      name: discount_rate
+      template: real
+      type: FLOAT
+    - default: '0.10'
+      name: tax_rate
+      template: real
+      type: FLOAT
+    - name: notes
+      template: text
+      type: TEXT
+    - name: id
+      template: integer
+      type: INTEGER
+    favorite: name
+    hidden: {}
+    label: SysConfig
+    primary_key:
+    - id
+    type: SysConfig
+  VirtualRouteLeg:
+    columns:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+      template: integer
+      type: INTEGER
+    - name: virtual_route_nbr
+      template: text
+      type: VARCHAR
+    - name: virtual_route_dt
+      type: DATE
+    - name: virtual_route_leg_nbr
+      template: integer
+      type: INTEGER
+    - name: arrival_gmt_tmstp
+      type: DATETIME
+    - name: arrival_local_tmstp
+      type: DATETIME
+    - name: broker_complete_flg
+      template: text
+      type: VARCHAR
+    - name: customs_complete_flg
+      template: text
+      type: VARCHAR
+    - name: depart_gmt_tmstp
+      type: DATETIME
+    - name: depart_local_tmstp
+      type: DATETIME
+    - name: sched_arrival_dt
+      type: DATE
+    - name: sched_route_departure_dt
+      type: DATE
+    - name: sched_route_leg_dptr_dt
+      type: DATE
+    - name: sched_route_nbr
+      template: text
+      type: VARCHAR
+    - name: sort_dt
+      type: DATE
+    - name: tail_nbr
+      template: text
+      type: VARCHAR
+    - name: virtual_route_locked_flg
+      template: text
+      type: VARCHAR
+    - name: flight_nbr_obs
+      template: text
+      type: VARCHAR
+    - name: download_flg
+      template: text
+      type: VARCHAR
+    - name: etl_tmstp
+      type: DATETIME
+    - name: eta_tmstp
+      type: DATETIME
+    - name: in_range_tmstp
+      type: DATETIME
+    - name: leg_dest_loc_cd
+      template: text
+      type: VARCHAR
+    - name: leg_orig_loc_cd
+      template: text
+      type: VARCHAR
+    - name: conveyance_type_cd
+      template: text
+      type: VARCHAR
+    - name: leg_origin_country_cd
+      template: text
+      type: VARCHAR
+    - name: leg_dest_country_cd
+      template: text
+      type: VARCHAR
+    - name: sched_route_leg_orig_loc_cd
+      template: text
+      type: VARCHAR
+    - name: sched_route_leg_dest_loc_cd
+      template: text
+      type: VARCHAR
+    - name: us_process_cd
+      template: text
+      type: VARCHAR
+    - name: carrier_cd
+      template: text
+      type: VARCHAR
+    favorite: id
+    hidden: {}
+    label: VirtualRouteLeg
+    primary_key:
+    - id
+    type: VirtualRouteLeg
+settings:
+  HomeJS: /admin-app/home.js
+  max_list_columns: 8
+  style_guide:
+    api_endpoint: http://localhost:5656/api
+    applicationLocales:
+    - en
+    - es
+    currency_symbol: $
+    currency_symbol_position: left
+    date_format: YYYY-MM-DD
+    decimal_max: '1000000000'
+    decimal_min: '0'
+    decimal_separator: .
+    edit_on_mode: dblclick
+    exclude_listpicker: false
+    include_translation: false
+    keycloak_client_id: alsclient
+    keycloak_realm: kcals
+    keycloak_url: http://localhost:8080
+    locale: en
+    max_decimal_digits: '4'
+    min_decimal_digits: '2'
+    mode: tab
+    pick_style: list
+    serviceType: JSONAPI
+    startSessionPath: /auth/login
+    style: light
+    thousand_separator: ','
+    use_keycloak: false

@@ -1,0 +1,142 @@
+
+1. Discovered MCP servers from config file: integration/mcp/../../integration/mcp/mcp_server_discovery.json:{
+    "servers": [
+        {
+            "name": "API Logic Server: basic_demo",
+            "base_url": "http://localhost:5656",
+            "schema_url": "http://localhost:5656/.well-known/mcp.json"
+        }
+    ]
+}
+
+
+Learnings and Schema from discovery schema_url: http://localhost:5656/.well-known/mcp.json:
+{
+    "base_url": "http://localhost:5656/api",
+    "description": "API Logic Project: basic_demo",
+    "learning": "To issue one request per row from a prior step (fan-out), use the syntax:\n\n\"$<stepIndex>[*].<fieldName>\"\n\nFor example, if step 0 returns orders, and you want to send a POST per customer:\n\nBefore (incorrect):\n    \"customer_id\": \"{customer_id}\"\n\nAfter (correct):\n    \"customer_id\": \"$0[*].customer_id\"\n    \nOnly if 'email' is in the Natural language query, send email by issing a POST request to the SysEmail endpoint, setting the subject, message and customer_id in the body.   DO NOT include a POST unless the word \u2018email\u2019 appears in the user query.\n\nFormat response as mcp_responseFormat.\n\n<mcp_responseFormat>\nclass QueryParam(BaseModel):\n    name: str  # attribute name\n    op: str  # eq, lt, gt\n    val: str\n\nclass JsonValues(BaseMopdel):\n    name: str  # name of attribute\n    value: str # value of attribute\n\nclass Resource(BaseModel):\n    tool_type: str\n    base_url: str\n    path: str # specified use case or requirement name (use 'General' if missing)\n    method: str # GET, PATCH, POST or DELETE\n    body: json # data for P
+    "resources":
+[
+    {
+        "fields": [
+            "id",
+            "name",
+            "balance",
+            "credit_limit",
+            "email",
+            "email_opt_out"
+        ],
+        "filterable": [
+... etc
+
+
+
+2a. LLM request:
+
+Natural language query:
+ List the orders date_shipped is null and CreatedOn before 2023-07-14, and send a discount email (subject: 'Discount Offer') to the customer for each one.
+
+Learnings_and_Schema:
+{"http://localhost:5656/.well-known/mcp.json": {"base_url": "http://localhost:5656/api", "description": "API Logic Project: basic_demo", "learning": "To issue one request per row from a prior step (fan-out), use the syntax:\n\n\"$<stepIndex>[*].<fieldName>\"\n\nFor example, if step 0 returns orders, and you want to send a POST per customer:\n\nBefore (incorrect):\n    \"customer_id\": \"{customer_id}\"\n\nAfter (correct):\n    \"customer_id\": \"$0[*].customer_id\"\n    \nOnly if 'email' is in the Natural language query, send email by issing a POST request to the SysEmail endpoint, setting the subject, message and customer_id in the body.   DO NOT include a POST unless the word \u2018email\u2019 appears in the user query.\n\nFormat response as mcp_responseFormat.\n\n<mcp_responseFormat>\nclass QueryParam(BaseModel):\n    name: str  # attribute name\n    op: str  # eq, lt, gt\n    val: str\n\nclass JsonValues(BaseMopdel):\n    name: str  # name of attribute\n    value: str # value of attribute\n\nclass Resource(BaseModel):\n    tool_type: str\n    base_url: str\n    path: str # specified use case or requirement name (use 'General' if missing)\n    method: str # GET, PATCH, POST or
+... etc from step 1
+
+2b. generated tool context from LLM:
+{
+    "schema_version": "1.0",
+    "resources": [
+        {
+            "tool_type": "json-api",
+            "base_url": "http://localhost:5656/api",
+            "path": "/Order",
+            "method": "GET",
+            "query_params": [
+                {
+                    "name": "date_shipped",
+                    "op": "eq",
+                    "val": "null"
+                },
+                {
+                    "name": "CreatedOn",
+                    "op": "lt",
+                    "val": "2023-07-14"
+                }
+            ]
+        },
+        {
+            "tool_type": "json-api",
+            "base_url": "http://localhost:5656/api",
+            "path": "/SysEmail",
+            "method": "POST",
+            "body": {
+                "subject": "Discount Offer",
+                "message": "Dear customer, we are offering a discount on your next purchase. Please check your account for more details.",
+                "customer_id": "$0[*].customer_id"
+            }
+        }
+    ]
+}
+
+3. MCP Client Executor – Starting Tool Context Execution
+
+
+
+➡️  MCP execute_api_step[0]:
+    Method: GET http://localhost:5656/api/Order
+    Query:  filter=[{"name": "date_shipped", "op": "eq", "val": null}, {"name": "CreatedOn", "op": "lt", "val": "2023-07-14"}]
+    Body:   {}
+
+Warning: No Flask request context available. secure API calls may not work as expected.
+
+
+➡️  MCP execute_api_step[1]:
+    Method: POST http://localhost:5656/api/SysEmail
+    Query:  filter=[]
+    Body:   {'data': {'type': 'SysEmail', 'attributes': {'subject': 'Discount Offer', 'message': 'Dear customer, we are offering a discount on your next purchase. Please check your account for more details.', 'customer_id': 1}}}
+
+Warning: No Flask request context available. secure API calls may not work as expected.
+
+
+➡️  MCP execute_api_step[1]:
+    Method: POST http://localhost:5656/api/SysEmail
+    Query:  filter=[]
+    Body:   {'data': {'type': 'SysEmail', 'attributes': {'subject': 'Discount Offer', 'message': 'Dear customer, we are offering a discount on your next purchase. Please check your account for more details.', 'customer_id': 3}}}
+
+Warning: No Flask request context available. secure API calls may not work as expected.
+
+
+➡️  MCP execute_api_step[1]:
+    Method: POST http://localhost:5656/api/SysEmail
+    Query:  filter=[]
+    Body:   {'data': {'type': 'SysEmail', 'attributes': {'subject': 'Discount Offer', 'message': 'Dear customer, we are offering a discount on your next purchase. Please check your account for more details.', 'customer_id': 5}}}
+
+Warning: No Flask request context available. secure API calls may not work as expected.
+
+
+4. MCP Client Executor – Context Results:
+
+Step 0 - Results (3 rows):
+| CreatedOn  | amount_total | customer_id | date_shipped | notes            |
+|------------|--------------|-------------|--------------|------------------|
+| 2023-02-22 | 90.0         | 1           | None         | Second Order     |
+| 2023-01-22 | 220.0        | 3           | None         | Pending Shipment |
+| 2023-01-22 | 220.0        | 5           | None         | Silent Shipment  |
+
+Step 1 - Results (1 rows):
+| CreatedOn  | customer_id | message                                                                                                      | subject        |
+|------------|-------------|--------------------------------------------------------------------------------------------------------------|----------------|
+| 2025-07-02 | 1           | Dear customer, we are offering a discount on your next purchase. Please check your account for more details. | Discount Offer |
+
+Step 2 - Results (1 rows):
+| CreatedOn  | customer_id | message                                                                                                      | subject        |
+|------------|-------------|--------------------------------------------------------------------------------------------------------------|----------------|
+| 2025-07-02 | 3           | Dear customer, we are offering a discount on your next purchase. Please check your account for more details. | Discount Offer |
+
+Step 3 - Results (1 rows):
+| CreatedOn  | customer_id | message                                                                                                      | subject        |
+|------------|-------------|--------------------------------------------------------------------------------------------------------------|----------------|
+| 2025-07-02 | 5           | Dear customer, we are offering a discount on your next purchase. Please check your account for more details. | Discount Offer |
+
+✅ MCP Client Executor – All Steps Executed - Review Results Above
+.. 💡 Suggestion - Copy/Paste Response to a JsonFormatter
+
+Test complete.

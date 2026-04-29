@@ -1,0 +1,91 @@
+<o-form-layout-manager attr="VirtualRouteLeg" mode="dialog" title="VIRTUALROUTELEG">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="VirtualRouteLegTable" 
+            service="VirtualRouteLeg" 
+            entity="VirtualRouteLeg" 
+            title="VIRTUALROUTELEG"
+            keys="id"
+            columns="id;virtual_route_nbr;virtual_route_dt;virtual_route_leg_nbr;arrival_gmt_tmstp;arrival_local_tmstp;broker_complete_flg;customs_complete_flg;depart_gmt_tmstp;depart_local_tmstp;sched_arrival_dt;sched_route_departure_dt;sched_route_leg_dptr_dt;sched_route_nbr;sort_dt;tail_nbr;virtual_route_locked_flg;flight_nbr_obs;download_flg;etl_tmstp;eta_tmstp;in_range_tmstp;leg_dest_loc_cd;leg_orig_loc_cd;conveyance_type_cd;leg_origin_country_cd;leg_dest_country_cd;sched_route_leg_orig_loc_cd;sched_route_leg_dest_loc_cd;us_process_cd;carrier_cd" 
+            header-actions="R;D"
+            visible-columns="id;virtual_route_nbr;virtual_route_dt;virtual_route_leg_nbr;arrival_gmt_tmstp;arrival_local_tmstp;broker_complete_flg;customs_complete_flg;depart_gmt_tmstp;depart_local_tmstp;sched_arrival_dt;sched_route_departure_dt;sched_route_leg_dptr_dt;sched_route_nbr;sort_dt;tail_nbr;virtual_route_locked_flg;flight_nbr_obs;download_flg;etl_tmstp;eta_tmstp;in_range_tmstp;leg_dest_loc_cd;leg_orig_loc_cd;conveyance_type_cd;leg_origin_country_cd;leg_dest_country_cd;sched_route_leg_orig_loc_cd;sched_route_leg_dest_loc_cd;us_process_cd;carrier_cd"  
+            sort-columns="id" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #id attr="id" title=" id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #virtual_route_nbr attr="virtual_route_nbr" title="virtual_route_nbr" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #virtual_route_dt attr="virtual_route_dt" title="virtual_route_dt" type="DATE" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #virtual_route_leg_nbr attr="virtual_route_leg_nbr" title="virtual_route_leg_nbr" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-column #arrival_gmt_tmstp attr="arrival_gmt_tmstp" title="arrival_gmt_tmstp" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #arrival_local_tmstp attr="arrival_local_tmstp" title="arrival_local_tmstp" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #broker_complete_flg attr="broker_complete_flg" title="broker_complete_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #customs_complete_flg attr="customs_complete_flg" title="customs_complete_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #depart_gmt_tmstp attr="depart_gmt_tmstp" title="depart_gmt_tmstp" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #depart_local_tmstp attr="depart_local_tmstp" title="depart_local_tmstp" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #sched_arrival_dt attr="sched_arrival_dt" title="sched_arrival_dt" type="DATE" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #sched_route_departure_dt attr="sched_route_departure_dt" title="sched_route_departure_dt" type="DATE" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #sched_route_leg_dptr_dt attr="sched_route_leg_dptr_dt" title="sched_route_leg_dptr_dt" type="DATE" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #sched_route_nbr attr="sched_route_nbr" title="sched_route_nbr" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #sort_dt attr="sort_dt" title="sort_dt" type="DATE" editable="no" required="no" ></o-table-column>
+            
+            <o-table-column #tail_nbr attr="tail_nbr" title="tail_nbr" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #virtual_route_locked_flg attr="virtual_route_locked_flg" title="virtual_route_locked_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #flight_nbr_obs attr="flight_nbr_obs" title="flight_nbr_obs" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #download_flg attr="download_flg" title="download_flg" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #etl_tmstp attr="etl_tmstp" title="etl_tmstp" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #eta_tmstp attr="eta_tmstp" title="eta_tmstp" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #in_range_tmstp attr="in_range_tmstp" title="in_range_tmstp" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #leg_dest_loc_cd attr="leg_dest_loc_cd" title="leg_dest_loc_cd" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #leg_orig_loc_cd attr="leg_orig_loc_cd" title="leg_orig_loc_cd" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #conveyance_type_cd attr="conveyance_type_cd" title="conveyance_type_cd" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #leg_origin_country_cd attr="leg_origin_country_cd" title="leg_origin_country_cd" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #leg_dest_country_cd attr="leg_dest_country_cd" title="leg_dest_country_cd" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #sched_route_leg_orig_loc_cd attr="sched_route_leg_orig_loc_cd" title="sched_route_leg_orig_loc_cd" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #sched_route_leg_dest_loc_cd attr="sched_route_leg_dest_loc_cd" title="sched_route_leg_dest_loc_cd" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #us_process_cd attr="us_process_cd" title="us_process_cd" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-column #carrier_cd attr="carrier_cd" title="carrier_cd" editable="no" required="no" content-align="left"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

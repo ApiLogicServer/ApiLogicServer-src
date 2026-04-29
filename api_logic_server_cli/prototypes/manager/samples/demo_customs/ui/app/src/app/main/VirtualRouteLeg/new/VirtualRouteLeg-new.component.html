@@ -1,0 +1,76 @@
+<o-form #VirtualRouteLegForm attr="VirtualRouteLeg_form_insert" service="VirtualRouteLeg" entity="VirtualRouteLeg"
+keys="id" fxLayout="column" show-header="yes" header-actions="I"
+horizontal-scroll="yes"
+after-insert-mode="new" class="standalone-form-container" >
+
+<o-row attr="row1" layout-align="start stretch">
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+    
+        <o-integer-input #id attr="id" label=" id" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-text-input #virtual_route_nbr attr="virtual_route_nbr" label="virtual_route_nbr" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-date-input #virtual_route_dt attr="virtual_route_dt" value-type="string" label="virtual_route_dt" enabled="yes" required="no" format="YYYY-MM-DD" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-integer-input #virtual_route_leg_nbr attr="virtual_route_leg_nbr" label="virtual_route_leg_nbr" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-date-input #arrival_gmt_tmstp attr="arrival_gmt_tmstp" value-type="string" label="arrival_gmt_tmstp" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-date-input #arrival_local_tmstp attr="arrival_local_tmstp" value-type="string" label="arrival_local_tmstp" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #broker_complete_flg attr="broker_complete_flg" label="broker_complete_flg" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #customs_complete_flg attr="customs_complete_flg" label="customs_complete_flg" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-date-input #depart_gmt_tmstp attr="depart_gmt_tmstp" value-type="string" label="depart_gmt_tmstp" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-date-input #depart_local_tmstp attr="depart_local_tmstp" value-type="string" label="depart_local_tmstp" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-date-input #sched_arrival_dt attr="sched_arrival_dt" value-type="string" label="sched_arrival_dt" enabled="yes" required="no" format="YYYY-MM-DD" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-date-input #sched_route_departure_dt attr="sched_route_departure_dt" value-type="string" label="sched_route_departure_dt" enabled="yes" required="no" format="YYYY-MM-DD" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-date-input #sched_route_leg_dptr_dt attr="sched_route_leg_dptr_dt" value-type="string" label="sched_route_leg_dptr_dt" enabled="yes" required="no" format="YYYY-MM-DD" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #sched_route_nbr attr="sched_route_nbr" label="sched_route_nbr" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-date-input #sort_dt attr="sort_dt" value-type="string" label="sort_dt" enabled="yes" required="no" format="YYYY-MM-DD" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #tail_nbr attr="tail_nbr" label="tail_nbr" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #virtual_route_locked_flg attr="virtual_route_locked_flg" label="virtual_route_locked_flg" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #flight_nbr_obs attr="flight_nbr_obs" label="flight_nbr_obs" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #download_flg attr="download_flg" label="download_flg" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-date-input #etl_tmstp attr="etl_tmstp" value-type="string" label="etl_tmstp" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-date-input #eta_tmstp attr="eta_tmstp" value-type="string" label="eta_tmstp" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-date-input #in_range_tmstp attr="in_range_tmstp" value-type="string" label="in_range_tmstp" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #leg_dest_loc_cd attr="leg_dest_loc_cd" label="leg_dest_loc_cd" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #leg_orig_loc_cd attr="leg_orig_loc_cd" label="leg_orig_loc_cd" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #conveyance_type_cd attr="conveyance_type_cd" label="conveyance_type_cd" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #leg_origin_country_cd attr="leg_origin_country_cd" label="leg_origin_country_cd" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #leg_dest_country_cd attr="leg_dest_country_cd" label="leg_dest_country_cd" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #sched_route_leg_orig_loc_cd attr="sched_route_leg_orig_loc_cd" label="sched_route_leg_orig_loc_cd" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #sched_route_leg_dest_loc_cd attr="sched_route_leg_dest_loc_cd" label="sched_route_leg_dest_loc_cd" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #us_process_cd attr="us_process_cd" label="us_process_cd" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #carrier_cd attr="carrier_cd" label="carrier_cd" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+</div>
+</o-row>
+
+<div layout-padding></div>
+
+</o-form>

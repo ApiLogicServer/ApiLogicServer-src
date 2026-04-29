@@ -1,0 +1,43 @@
+<o-form #SpecialHandlingForm attr="SpecialHandling_form_insert" service="SpecialHandling" entity="SpecialHandling"
+keys="id" fxLayout="column" show-header="yes" header-actions="I"
+horizontal-scroll="yes"
+after-insert-mode="new" class="standalone-form-container" >
+
+<o-row attr="row1" layout-align="start stretch">
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+    
+        <o-integer-input #id attr="id" label=" id" type="integer" editable="no" required="no" ></o-integer-input>
+      
+        <o-list-picker 
+        attr="oid_nbr"
+        service="Shipment" 
+        entity="ShipmentType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="no" 
+        enabled="yes" 
+        filter="yes"
+        value-column="local_shipment_oid_nbr" 
+        value-column-type="INTEGER"  
+        keys="local_shipment_oid_nbr" 
+        columns="local_shipment_oid_nbr;oid_nbr;local_shipment_oid_nbr" 
+        title="oid_nbr"
+        visible-columns="local_shipment_oid_nbr;local_shipment_oid_nbr" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-date-input #etl_tmstp attr="etl_tmstp" value-type="string" label="etl_tmstp" editable="no" required="no" format="YYYY-MM-DD hh:mm:ss" fxFlex="20%" class="form-field"></o-date-input>
+      
+        <o-text-input #oid_type_cd attr="oid_type_cd" label="oid_type_cd" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #special_handling_cd attr="special_handling_cd" label="special_handling_cd" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #shipment_type_cd attr="shipment_type_cd" label="shipment_type_cd" type="integer" editable="no" required="no" ></o-integer-input>
+      
+</div>
+</o-row>
+
+<div layout-padding></div>
+
+</o-form>
