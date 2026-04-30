@@ -1,33 +1,42 @@
 """
-CLVS Eligibility Rules.
-Scenario: Shipment at or below the LVS threshold is eligible for the CLVS Program.
-
-Conditions (all must be true):
-  1. Imported by an authorised CLVS courier (entry_category_type_cd == 'CLV')
-  2. Estimated value for duty <= CAD $3,300  (cad_value_amt)
-  3. Does not contain prohibited/controlled/regulated goods (dang_goods_cd is null/empty)
-  4. Released at a CBSA-designated customs office (portofentry is not null)
-
-Derived flag: clvs_eligible_flg (1=eligible, 0=not eligible)
+Scenario: Shipment at or below the LVS threshold is eligible
+  Given a shipment imported by an authorized CLVS courier
+  And the shipment has an estimated value for duty not exceeding CAD $3,300
+  And the shipment has no prohibited commodity lines (ShipmentCommodity.is_prohibited = 1)
+  And the shipment is released at a CBSA-designated customs office
+  When the shipment eligibility is evaluated
+  Then the shipment shall be eligible for the CLVS Program
+  And set the clvs_reason as a comma delimited list of short all reasons why failed (or blank)
 """
+
 from logic_bank.logic_bank import Rule
 from database import models
 
-_CLVS_THRESHOLD = 3300.0
-_CLVS_COURIER_CD = "CLV"
+
+def _clvs_reasons(row, old_row, logic_row):
+    reasons = []
+    if float(row.local_customs_value_amt or 0) > 3300:
+        reasons.append("value exceeds CAD $3,300")
+    if row.prohibited_commodity_count and row.prohibited_commodity_count > 0:
+        reasons.append(f"{row.prohibited_commodity_count} prohibited commodity line(s)")
+    if row.service_type_cd != '04':
+        reasons.append("not a CLVS-authorized courier (service_type_cd != 04)")
+    if row.dest_loc_cntry_cd != 'CA':
+        reasons.append("destination is not Canada")
+    return ", ".join(reasons)
+
+
+def _clvs_eligible(row, old_row, logic_row):
+    return 0 if _clvs_reasons(row, old_row, logic_row) else 1
+
+
+def _clvs_reason_str(row, old_row, logic_row):
+    return _clvs_reasons(row, old_row, logic_row)
 
 
 def declare_logic():
-    Rule.formula(
-        derive=models.Shipment.clvs_eligible_flg,
-        as_expression=lambda row: (
-            "Y"
-            if (
-                row.entry_category_type_cd == _CLVS_COURIER_CD
-                and (row.cad_value_amt is None or float(row.cad_value_amt) <= _CLVS_THRESHOLD)
-                and not row.dang_goods_cd
-                and row.portofentry
-            )
-            else "N"
-        ),
-    )
+    Rule.count(derive=models.Shipment.prohibited_commodity_count,
+               as_count_of=models.ShipmentCommodity,
+               where=lambda row: row.is_prohibited == 1)
+    Rule.formula(derive=models.Shipment.clvs_eligible, calling=_clvs_eligible)
+    Rule.formula(derive=models.Shipment.clvs_reason,   calling=_clvs_reason_str)

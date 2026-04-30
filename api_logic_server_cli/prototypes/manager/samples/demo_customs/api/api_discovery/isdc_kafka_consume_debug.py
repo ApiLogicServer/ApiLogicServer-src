@@ -1,11 +1,10 @@
 """
-Debug endpoint for the isdc Kafka consume pipeline.
-Enabled when APILOGICPROJECT_CONSUME_DEBUG=true (set in config/default.env).
+Debug endpoint for the ISDC Kafka consume pipeline (no Kafka required).
+
+Enabled by: APILOGICPROJECT_CONSUME_DEBUG=true  (default in config/default.env)
 
 Usage:
   curl 'http://localhost:5656/consume_debug/isdc?file=docs/requirements/customs_demo/message_formats/MDE-CDV-HVS-WR-Rev260328.xml'
-
-Returns JSON with success, awb_nbr, piece/party/commodity/special-handling counts.
 """
 
 import logging
@@ -24,6 +23,10 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
 
     @app.route('/consume_debug/isdc')
     def consume_debug_isdc():
+        """Debug the isdc consume pipeline without Kafka.
+        Enable with: APILOGICPROJECT_CONSUME_DEBUG=true
+        curl 'http://localhost:5656/consume_debug/isdc?file=<path-to-xml>'
+        """
         file_path = request.args.get('file')
         if not file_path:
             return jsonify({"success": False, "message": "Missing ?file= parameter"}), 400
@@ -31,19 +34,17 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         from integration.kafka.kafka_subscribe_discovery.isdc import process_isdc_payload
         try:
             payload = Path(file_path).read_text()
-            shipment, blob = process_isdc_payload(payload, safrs.DB.session)
+            parent_row, blob, counts = process_isdc_payload(payload, safrs.DB.session)
             return jsonify({
-                "success": True,
-                "topic": "isdc",
-                "blob_id": blob.id,
-                "local_shipment_oid_nbr": shipment.local_shipment_oid_nbr,
-                "awb_nbr": shipment.awb_nbr,
-                "pieces": len(shipment.PieceList),
-                "parties": len(shipment.ShipmentPartyList),
-                "commodities": len(shipment.ShipmentCommodityList),
-                "special_handling": len(shipment.SpecialHandlingList),
-                "file": file_path,
+                "success":     True,
+                "topic":       "isdc",
+                "blob_id":     blob.id,
+                "file":        file_path,
+                "awb_nbr":     parent_row.awb_nbr,
+                "pieces":      counts["pieces"],
+                "parties":     counts["parties"],
+                "commodities": counts["commodities"],
             })
         except Exception as e:
-            app_logger.exception(f"consume_debug/isdc error")
+            app_logger.error(f"consume_debug/isdc: {e}")
             return jsonify({"success": False, "topic": "isdc", "error": str(e)}), 500

@@ -1,6 +1,6 @@
 ---
 # LogicBank API Reference
-# Version: 1.0.5
+# Version: 1.0.16
 # Last Updated: April 27, 2026
 # Description: The Logic Rosetta Stone: simplified API for creating declarative business logic rules
 ---
@@ -93,6 +93,150 @@ CRITICAL - DEPENDENCY TRACKING: LogicBank scans the expression body for `row.<at
      in the downstream rule.
   3. Parent attribute references (row.parent.attr) ARE supported in lambdas and calling functions —
      LB tracks cross-table dependencies correctly when the reference appears in the scanned body.
+
+CRITICAL - HOW TO WIRE A FUNCTION INTO A RULE:
+
+  When your logic needs more than one line, write a function and wire it with `calling=`:
+
+  ```python
+  def my_func(row, old_row, logic_row):
+      return row.qty * row.unit_price   # reference row.attr DIRECTLY here
+  Rule.formula(derive=models.Item.amount, calling=my_func)
+  ```
+
+  Use `as_expression=` ONLY for a literal inline lambda with no function call:
+  ```python
+  Rule.formula(derive=models.Item.amount, as_expression=lambda row: row.qty * row.unit_price)
+  ```
+
+  These two forms are equivalent. Every other form is wrong:
+  ```python
+  # BROKEN — looks right, silently never re-fires:
+  Rule.formula(derive=models.Item.amount, as_expression=lambda row: my_func(row))
+  ```
+  LB scans the lambda body `my_func(row)` and finds zero `row.attr` references,
+  so it never knows to re-fire the rule when qty or unit_price change.
+
+  ✅ CORRECT — multi-condition eligibility with a reasons list, using calling= for BOTH formulas:
+  ```python
+  def _eligible_reason(row, old_row, logic_row):
+      reasons = []
+      if row.customer_approved != 'Y':
+          reasons.append("not approved")
+      if row.amount_total > row.credit_limit:
+          reasons.append(f"amount {row.amount_total} exceeds credit {row.credit_limit}")
+      if row.restricted_item_count > 0:
+          reasons.append("contains restricted items")
+      return ", ".join(reasons)
+
+  def _eligible_flag(row, old_row, logic_row):
+      return 'N' if row.eligible_reason else 'Y'
+
+  Rule.formula(derive=models.Order.eligible_reason, calling=_eligible_reason)
+  Rule.formula(derive=models.Order.eligible, calling=_eligible_flag)
+  ```
+
+  Note: _eligible_flag references row.eligible_reason directly — LB sees that dependency.
+  Note: both functions reference row.attr DIRECTLY — no nested helper functions.
+
+CRITICAL — ONE VALUE PER FORMULA:
+  A Rule.formula calling function must return exactly one value — the column named in derive=.
+  Setting other row attributes as side-effects inside the function is WRONG:
+
+  ❌ WRONG — side-effect assignment to a second column inside one formula:
+  ```python
+  def _compute_clvs(row, old_row, logic_row):
+      reasons = []
+      if float(row.local_customs_value_amt) > 3300:
+          reasons.append("value exceeds threshold")
+      row.clvs_reason = ", ".join(reasons)   # ← WRONG: side-effect, not tracked by LB
+      row.clvs_eligible = 1 if not reasons else 0
+      return row.clvs_eligible               # ← only clvs_eligible re-fires; clvs_reason is silently stale
+
+  Rule.formula(derive=models.Shipment.clvs_eligible, calling=_compute_clvs)
+  # clvs_reason is never re-derived when inputs change — LogicBank does not know about it
+  ```
+
+  ✅ CORRECT — one Rule.formula per derived column:
+  ```python
+  def _clvs_eligible(row, old_row, logic_row):
+      return 1 if not _reasons(row) else 0
+
+  def _clvs_reason(row, old_row, logic_row):
+      return ", ".join(_reasons(row))
+
+  def _reasons(row):                          # shared helper — called directly from each function body
+      reasons = []
+      if float(row.local_customs_value_amt or 0) > 3300:
+          reasons.append("value exceeds threshold")
+      if row.prohibited_commodity_count > 0:
+          reasons.append(f"{row.prohibited_commodity_count} prohibited line(s)")
+      return reasons
+
+  Rule.formula(derive=models.Shipment.clvs_eligible, calling=_clvs_eligible)
+  Rule.formula(derive=models.Shipment.clvs_reason,   calling=_clvs_reason)
+  ```
+  Both functions reference row.attr DIRECTLY — LB sees the dependencies on both rules.
+  Note: _clvs_eligible calls _reasons(row) — LB scans _clvs_eligible's body and sees
+  row.local_customs_value_amt and row.prohibited_commodity_count via the helper. However,
+  for maximum LB visibility, each function should reference row.attr directly (not via helper).
+  The safe pattern: reference the SAME intermediate columns from each function body directly.
+
+  ❌ WRONG — shared helper called from as_expression: LB sees zero dependencies on BOTH rules:
+  ```python
+  def _reasons(row): ...          # helper — LB does NOT scan this
+  def _eligible(row): return 'N' if _reasons(row) else 'Y'   # LB does NOT scan this
+  def _reason_str(row): return ", ".join(_reasons(row))       # LB does NOT scan this
+
+  Rule.formula(derive=models.Order.eligible,
+               as_expression=lambda row: _eligible(row))      # LB sees no row.attr refs
+  Rule.formula(derive=models.Order.eligible_reason,
+               as_expression=lambda row: _reason_str(row))    # LB sees no row.attr refs
+  ```
+
+CRITICAL - DOCSTRINGS: COPY THE REQUIREMENT, NOTHING ELSE:
+  The docstring for a logic file must contain ONLY the requirement text, copied verbatim.
+  Do NOT add anything beyond the requirement — no field mappings, no implementation notes,
+  no "Uses early_row_event", no "on every insert", no numbered eligibility conditions,
+  no restatement or paraphrase of the requirement in your own words.
+
+  Why: anything you add becomes a spec you then code to. Wrong additions cause wrong rules:
+  - "Uses early_row_event" → you write an event instead of Rule.formula
+  - "dang_goods_cd blank/null" → you check a parent flag instead of Rule.count on child table
+  - "on every insert" → you write an event instead of a reactive formula
+
+  ✅ CORRECT docstring — requirement text only:
+  ```python
+  """
+  Scenario: Shipment at or below the LVS threshold is eligible
+    Given a shipment imported by an authorized CLVS courier
+    ...
+  """
+  ```
+
+  ❌ WRONG docstring — adds implementation notes that drive incorrect code:
+  ```python
+  """
+  Sets clvs_eligible on every insert.
+  Eligibility conditions:
+    1. service_type_cd in CLVS_SERVICE_TYPES   ← invented field mapping
+    2. dang_goods_cd blank/null                 ← wrong: should be Rule.count on child table
+  Uses early_row_event so values are set before formula/constraint rules.  ← wrong rule type
+  """
+  ```
+
+  ❌ ALSO WRONG — looks neutral but smuggles field mappings into the docstring:
+  ```python
+  """
+  Rules derived from CLVS program requirements (Canada Customs):
+    - Duty value must not exceed CAD $3,300
+    - No prohibited commodity lines
+    - Shipment must be destined for Canada (dest_loc_cntry_cd = 'CA')   ← now you'll hardcode this
+    - Carrier must be designated CLVS courier (service_type_cd = '04')  ← and this
+  """
+  ```
+  Any restatement or paraphrase — even a neutral-looking summary — violates this rule.
+  The requirement text already contains everything needed. Copy it verbatim; add nothing.
 
 CRITICAL: Keep simple rules on ONE LINE (no exceptions). Goal: Visual scannability - see rule count at a glance.
 
@@ -296,6 +440,21 @@ Equivalent expanded example using informal syntax:
                         error_msg="Customer balance ({row.balance}) exceeds credit limit ({row.credit_limit})")
 
 
+PREFER Rule.sum/count OVER CODE — always reactive to child data changes
+
+Whenever a requirement involves an aggregate over child rows (sum, count, any, none,
+more than, at least), declare a Rule.sum or Rule.count column. Code that computes the
+same value (session.query, len(list comprehension), sum(list comprehension)) produces
+the right answer at insert time but silently goes stale when child rows are later
+inserted, updated, or deleted. The rule re-fires automatically on every write path;
+the code does not.
+
+This applies everywhere the aggregate value is used:
+  - as a constraint condition
+  - as a formula input
+  - as a condition inside a row_event reasons-list
+  - as a flag derived from the aggregate
+
 Intermediate sum/count values require a new column, with a LogicBank sum/count rule.  For example:
 
 Prompt:
@@ -399,6 +558,67 @@ These phrasings are all the same problem: "does at least one child row satisfy a
 The formula is then fully reactive: insert/update/delete of any LineItem re-derives
 controlled_item_count, which re-derives has_no_controlled_goods, which re-derives any
 downstream eligibility flags — all automatically, on every write path.
+
+CRITICAL - PARENT FLAGS vs CHILD COUNTS: When a condition is about child rows, ALWAYS use
+Rule.count — never check a parent-level summary flag that "represents" the child condition.
+
+DETECTION HEURISTIC — apply this BEFORE writing any rule:
+  KEY INSIGHT: plural nouns in requirements ("goods", "items", "commodities", "lines") mean
+  CHILD ROWS. "Has no prohibited goods" = count child rows, not read a parent flag.
+
+  MANDATORY STEPS:
+  1. Identify the plural noun in the requirement
+  2. Find the corresponding child table in the model (ShipmentCommodity, LineItem, etc.)
+  3. Use Rule.count on that child table — the child attribute name need not match the
+     requirement word exactly; pick the most relevant flag/code column on the child table
+  4. Reference the derived count in your formula — never reference the parent flag directly
+
+  PARENT FLAGS ARE WRONG even when they exist and the name seems to match:
+  A flag like dang_goods_cd on the parent is an ETL/EDI snapshot — LogicBank does NOT
+  re-fire when child rows change. It goes silently stale. Use the child count instead.
+
+  Only if NO child table exists at all → a parent-level flag or formula is appropriate.
+
+❌ WRONG — checking parent-level flags that summarize child rows:
+    # "dang_goods_cd" is a shipment-level ETL flag — if ShipmentCommodity.is_controlled changes,
+    # this formula does NOT re-fire. Controlled-goods status is silently stale.
+    Rule.formula(derive=Shipment.clvs_eligible,
+                 calling=lambda row, old_row, logic_row:
+                     'N' if row.dang_goods_cd or row.oga_shipment_flg == 'Y' else 'Y')
+
+✅ CORRECT — Rule.count makes child-row dependency explicit and reactive:
+    Rule.count(derive=Shipment.controlled_item_count, as_count_of=ShipmentCommodity,
+               where=lambda row: row.is_controlled == 1)
+    # Now clvs_eligible re-fires whenever any ShipmentCommodity.is_controlled changes:
+    Rule.formula(derive=Shipment.clvs_eligible,
+                 calling=_clvs_eligible)   # references row.controlled_item_count directly
+
+The child table IS the authoritative source. The parent flag is a stale snapshot.
+Even if the parent flag exists and is named suggestively — use the child count.
+
+ALSO APPLIES inside row_event / calling= functions:
+  A row_event that checks a child-row condition as part of a multi-condition evaluation
+  (e.g. a reasons-list) is still subject to the same rule. The count column feeds the
+  event; it does not replace it.
+
+  ❌ WRONG — session.query() inside a row_event; goes stale when child rows change:
+      def _evaluate(row, old_row, logic_row):
+          prohibited = logic_row.session.query(ShipmentCommodity)\
+              .filter(ShipmentCommodity.local_shipment_oid_nbr == row.local_shipment_oid_nbr,
+                      ShipmentCommodity.is_prohibited == 1).count()
+          if prohibited > 0:
+              reasons.append(f"{prohibited} prohibited commodity line(s)")
+
+  ✅ CORRECT — Rule.count maintains the column; row_event just reads it:
+      Rule.count(derive=Shipment.prohibited_commodity_count,
+                 as_count_of=ShipmentCommodity, where=lambda row: row.is_prohibited == 1)
+
+      def _evaluate(row, old_row, logic_row):
+          if row.prohibited_commodity_count > 0:
+              reasons.append(f"{row.prohibited_commodity_count} prohibited commodity line(s)")
+
+  The event is now reactive: inserting or updating a ShipmentCommodity re-fires the count,
+  which re-fires the row_event, keeping eligibility current on every write path.
 
 Formulas can reference parent values in 2 versions - choose formula vs copy based on propagation behavior:
 

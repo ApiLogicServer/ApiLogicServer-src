@@ -1,6 +1,6 @@
 # Ad-Libs Report — customs_demo
 
-**1 item needs your review. 7 FYIs — standard patterns, no action needed.**
+**3 items need your review. 6 FYIs — standard patterns, no action needed.**
 
 ---
 
@@ -8,16 +8,17 @@
 
 | Location | Issue | Action |
 |---|---|---|
-| `integration/IsdcMapper.py` `TAG_ROUTING` | `ns2:virtualRouteLegs` rows are inserted standalone (no FK to `Shipment` in the schema). Assumed this is correct and stored them via `session.add(leg)` without parent attachment. | Verify `virtual_route_leg` table has no `local_shipment_oid_nbr` FK and standalone insert is the intended behavior. |
+| `logic/logic_discovery/clvs_eligibility.py` | "Authorized CLVS courier" mapped to `service_type_cd == '04'` — spec names the condition but not the field/value | Confirm `service_type_cd = '04'` is the correct CLVS service-type identifier, or replace with the correct field/value |
+| `logic/logic_discovery/clvs_eligibility.py` | "CBSA-designated customs office" mapped to `dest_loc_cntry_cd == 'CA'` — spec names the condition but not the field/value | Confirm `dest_loc_cntry_cd = 'CA'` captures this condition, or replace with a lookup against a designated-offices table |
+| `logic/logic_discovery/shipment_matching.py` | "High confidence columns" from `CcpCustomer → ShipmentParty` were inferred from column name matching; no explicit mapping table was provided | Review the field mapping in `_match_importer()` and confirm or adjust which CcpCustomer columns are copied to ShipmentParty |
 
 ---
 
 ## 🟡 FYI
 
-- `integration/IsdcMapper.py` — Sections skipped (no matching table in schema): `ns2:mawbAsgmt`, `ns2:mawb`, `ns2:currencies`, `ns2:extraData`. Standard pattern: unmapped sections are silently ignored.
-- `integration/IsdcMapper.py` — `PARTY_OID_NBR=0` normalized to `None` for both consignee and shipper (both carry sentinel value `0` in the reference XML). This follows the mandatory SOURCE-PK normalization rule from `eai_subscribe.md` to prevent UNIQUE constraint failures.
-- `integration/kafka/kafka_subscribe_discovery/isdc.py` — `ISDC_DUPLICATE_POLICY=replace` set as default (per requirements: "default `replace` for this project"). Controlled via env var; `fail` policy available for insert-only testing.
-- `integration/kafka/kafka_subscribe_discovery/isdc.py` — Replace policy uses `session.delete(existing); session.flush()` before reinsert, relying on `ON DELETE CASCADE` on child FKs. The ORM cascade added in `database/models.py` (`cascade="all, delete"`) ensures SQLAlchemy-side cascade aligns with the DB-level cascade.
-- `logic/logic_discovery/isdc_consume.py` — `is_processed` guard on the `after_flush_row_event` bridge (mandatory per `eai_subscribe.md` v1.2 — prevents spurious re-publish on the debug path).
-- `logic/logic_discovery/shipment_matching.py` — Uses `Rule.row_event` (not `early_row_event`) as specified in requirements, so the new `ShipmentParty` row is written atomically with the parent `Shipment` in `before_flush`.
-- `config/default.env` — `KAFKA_SERVER = localhost:9092` and `KAFKA_CONSUMER_GROUP = customs_demo-group1` uncommented for Step 3. Use a fresh group name if project is cloned.
+- `integration/IsdcMapper.py` — Tier 1 auto-mapping handles ~90% of fields; `ISDC_EXCEPTIONS` dict is empty (no remaps needed for standard CIMCorp field names)
+- `integration/kafka/kafka_subscribe_discovery/isdc.py` — 2-message design applied (blob Tx 1 → row_event publishes → parse Tx 2); standard pattern per eai_subscribe.md
+- `integration/kafka/kafka_subscribe_discovery/isdc.py` — replace-on-duplicate policy: `session.delete(existing)` + `session.flush()` before reinsert; relies on ORM `cascade="all, delete"` set on Shipment relationships
+- `logic/logic_discovery/isdc_consume.py` — `is_processed` guard added to row-event bridge to prevent spurious re-publish on the debug path (would crash Consumer 2 on UNIQUE constraint)
+- `integration/kafka/kafka_subscribe_discovery/isdc.py` — SOURCE-PK normalization: `PARTY_OID_NBR == 0` → `None`; both consignee and shipper carry sentinel `0` in the reference payload
+- `logic/logic_discovery/clvs_eligibility.py` — `Rule.count` used for `prohibited_commodity_count` (not `session.query`) so the count re-fires reactively on any `ShipmentCommodity.is_prohibited` change; parent ETL flag `dang_goods_cd` was intentionally not used (stale snapshot, not maintained by LogicBank)

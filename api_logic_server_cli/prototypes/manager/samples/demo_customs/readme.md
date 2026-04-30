@@ -92,7 +92,7 @@ This context of this project is to add processing for an existing database.  Thi
 genai-logic create  --project_name=demo_customs --db_url=sqlite:///samples/requirements/customs_demo/database/customs.sqlite
 
 # B - in created project, get the requirements
-$ cp -r ../samples/requirements/customs_demo/. .
+$ cp -rv ../samples/requirements/customs_demo/. . | wc -l
 
 # C - use the shared Manager venv (do not create a local project .venv)
 source ../venv/bin/activate

@@ -1,30 +1,45 @@
 """
-Send a test CIMCorpShipment XML message to the `isdc` Kafka topic.
+Send a sample ISDC XML message to the Kafka topic 'isdc'.
 
-Requires a running Kafka broker and server started with KAFKA_SERVER configured.
-Run from project root: python test/send_isdc.py
+Requires Kafka running (docker compose -f integration/kafka/dockercompose_start_kafka.yml up -d)
+and KAFKA_SERVER set in config/default.env or environment.
 
-To repeat without collision, the replace policy (ISDC_DUPLICATE_POLICY=replace) handles
-duplicate LOCAL_SHIPMENT_OID_NBR automatically.  For insert-only testing set ISDC_DUPLICATE_POLICY=fail.
-
-Reset between runs:
-  bash integration/kafka/isdc_reset.sh   # reset Kafka topics + truncate log
-  bash integration/kafka/isdc_reset_db.sh  # clear domain + blob tables
+Usage (from project root):
+    python test/send_isdc.py
+    python test/send_isdc.py --file docs/requirements/customs_demo/message_formats/MDE-CDV-HVS-WR-Rev260328-another.xml
 """
 
+import argparse
+import os
+import sys
 from pathlib import Path
 
-try:
-    from confluent_kafka import Producer
-except ImportError:
-    raise SystemExit("confluent-kafka not installed. Run: pip install confluent-kafka")
+# Add project root to path
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
-SAMPLE_FILE = "docs/requirements/customs_demo/message_formats/MDE-CDV-HVS-WR-Rev260328.xml"
-KAFKA_SERVER = "localhost:9092"
-TOPIC = "isdc"
+DEFAULT_XML = "docs/requirements/customs_demo/message_formats/MDE-CDV-HVS-WR-Rev260328.xml"
 
-payload = Path(SAMPLE_FILE).read_text()
-producer = Producer({"bootstrap.servers": KAFKA_SERVER})
-producer.produce(TOPIC, value=payload.encode("utf-8"))
-producer.flush(timeout=10)
-print(f"Sent {len(payload)} bytes to topic '{TOPIC}' from {SAMPLE_FILE}")
+
+def main():
+    parser = argparse.ArgumentParser(description="Send ISDC XML to Kafka topic isdc")
+    parser.add_argument("--file", default=DEFAULT_XML, help="XML file to send")
+    parser.add_argument("--topic", default="isdc", help="Kafka topic (default: isdc)")
+    args = parser.parse_args()
+
+    kafka_server = os.getenv("KAFKA_SERVER", "localhost:9092")
+
+    try:
+        from confluent_kafka import Producer
+    except ImportError:
+        print("confluent_kafka not installed. Run: pip install confluent-kafka")
+        sys.exit(1)
+
+    payload = Path(args.file).read_text()
+    producer = Producer({"bootstrap.servers": kafka_server})
+    producer.produce(topic=args.topic, value=payload.encode("utf-8"))
+    producer.flush(timeout=10)
+    print(f"Sent {len(payload)} bytes to topic '{args.topic}' from {args.file}")
+
+
+if __name__ == "__main__":
+    main()

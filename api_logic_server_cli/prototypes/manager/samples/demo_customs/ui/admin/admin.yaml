@@ -1,5 +1,5 @@
 about:
-  date: April 29, 2026 13:52:58
+  date: April 30, 2026 11:40:14
   recent_changes: works with modified safrs-react-admin
   version: 0.0.0
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
@@ -400,19 +400,6 @@ resources:
       resource: Shipment
     type: SpecialHandling
     user_key: id
-  ShipmentXml:
-    attributes:
-    - label: ' id*'
-      name: id
-      search: true
-      sort: true
-    - name: received_at
-      type: DATETIME
-    - name: is_processed
-    - name: payload
-      type: textarea
-    type: ShipmentXml
-    user_key: id
   SysConfig:
     attributes:
     - label: ' name*'
@@ -475,6 +462,19 @@ resources:
     - name: us_process_cd
     - name: carrier_cd
     type: VirtualRouteLeg
+    user_key: id
+  ShipmentXml:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: received_at
+      type: DATETIME
+    - name: is_processed
+    - name: payload
+      type: textarea
+    type: ShipmentXml
     user_key: id
 settings:
   HomeJS: /admin-app/home.js

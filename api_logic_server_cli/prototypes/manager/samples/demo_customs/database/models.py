@@ -11,7 +11,7 @@ from sqlalchemy.ext.declarative import declarative_base
 # Alter this file per your database maintenance policy
 #    See https://apilogicserver.github.io/Docs/Project-Rebuild/#rebuilding
 #
-# Created:  April 29, 2026 13:52:58
+# Created:  April 30, 2026 11:40:14
 # Database: sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-logic/demo_customs/database/db.sqlite
 # Dialect:  sqlite
 #
@@ -42,6 +42,21 @@ if os.getenv('APILOGICPROJECT_NO_FLASK') is None or os.getenv('APILOGICPROJECT_N
 else:
     Base = TestBase     # ensure proper types, so rules work for data loading
     print('*** Models.py Using TestBase ***')
+
+
+
+class ShipmentXml(Base):  # type: ignore
+    __tablename__ = 'shipment_xml'
+    _s_collection_name = 'ShipmentXml'  # type: ignore
+
+    id           = Column(Integer, primary_key=True)
+    received_at  = Column(DateTime, default=datetime.utcnow)
+    payload      = Column(Text, nullable=False)
+    is_processed = Column(Boolean, default=False)
+
+    # parent relationships (access parent)
+
+    # child relationships (access children)
 
 
 
@@ -225,6 +240,9 @@ class Shipment(Base):  # type: ignore
     portofentry = Column(String(6))
     warehousecode = Column(String(6))
     surface_intl_shipment_nbr = Column(Numeric)
+    prohibited_commodity_count = Column(Integer, server_default=text("0"))
+    clvs_eligible              = Column(Integer, server_default=text("0"))
+    clvs_reason                = Column(Text)
 
     # parent relationships (access parent)
 
@@ -233,21 +251,6 @@ class Shipment(Base):  # type: ignore
     ShipmentCommodityList : Mapped[List["ShipmentCommodity"]] = relationship(cascade="all, delete", back_populates="shipment")
     SpecialHandlingList : Mapped[List["SpecialHandling"]] = relationship(cascade="all, delete", back_populates="shipment")
     ShipmentPartyList : Mapped[List["ShipmentParty"]] = relationship(cascade="all, delete", back_populates="shipment")
-
-
-
-class ShipmentXml(Base):  # type: ignore
-    __tablename__ = 'shipment_xml'
-    _s_collection_name = 'ShipmentXml'  # type: ignore
-
-    id           = Column(Integer, primary_key=True)
-    received_at  = Column(DateTime, default=datetime.utcnow)
-    payload      = Column(Text, nullable=False)
-    is_processed = Column(Boolean, default=False)
-
-    # parent relationships (access parent)
-
-    # child relationships (access children)
 
 
 
@@ -398,6 +401,7 @@ class ShipmentCommodity(Base):  # type: ignore
     classification_status_desc = Column(String(200))
     classification_status_cd = Column(String(10))
     part_expiration_dt = Column(Date)
+    is_prohibited      = Column(Integer, server_default=text("0"))
     allow_client_generated_ids = True
 
     # parent relationships (access parent)

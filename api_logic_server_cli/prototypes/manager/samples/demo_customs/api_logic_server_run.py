@@ -32,8 +32,8 @@
 #
 ###############################################################################
 
-api_logic_server__version = '17.00.04'
-api_logic_server_created__on = 'April 29, 2026 13:52:58'
+api_logic_server__version = '17.00.06'
+api_logic_server_created__on = 'April 30, 2026 11:40:14'
 api_logic_server__host = 'localhost'
 api_logic_server__port = '5656'
 
@@ -119,7 +119,7 @@ server_setup.api_logic_server_setup(flask_app, args)
 AdminLoader.admin_events(flask_app = flask_app, args = args, validation_error = ValidationError)
 
 if __name__ == "__main__":
-    msg = f'API Logic Project loaded (not WSGI), version: 17.00.04\n'
+    msg = f'API Logic Project loaded (not WSGI), version: 17.00.06\n'
     msg += f'.. startup message: {start_up_message}\n'
     if server_setup.is_docker():
         msg += f' (running from docker container at flask_host: {args.flask_host} - may require refresh)\n'
@@ -152,7 +152,7 @@ if __name__ == "__main__":
 
     flask_app.run(host=args.flask_host, threaded=True, port=args.port)
 else:
-    msg = f'API Logic Project Loaded (WSGI), version 17.00.04\n'
+    msg = f'API Logic Project Loaded (WSGI), version 17.00.06\n'
     msg += f'.. startup message: {start_up_message}\n'
 
     if server_setup.is_docker():

@@ -71,7 +71,20 @@ ShipmentParty writes atomically with the parent Shipment.
 
 ---
 
-### Step 3 — Live Kafka end-to-end test
+### Step 3 - CVLS Eligibility
+
+```
+Scenario: Shipment at or below the LVS threshold is eligible
+  Given a shipment imported by an authorized CLVS courier
+  And the shipment has an estimated value for duty not exceeding CAD $3,300
+  And the shipment has no prohibited commodity lines (ShipmentCommodity.is_prohibited = 1)
+  And the shipment is released at a CBSA-designated customs office
+  When the shipment eligibility is evaluated
+  Then the shipment shall be eligible for the CLVS Program
+  And set the clvs_reason as a comma delimited list of short all reasons why failed (or blank)
+  ```
+
+### Step 4 — Live Kafka end-to-end test
 
 **Required: set Kafka env vars in `config/default.env`:**
 ```

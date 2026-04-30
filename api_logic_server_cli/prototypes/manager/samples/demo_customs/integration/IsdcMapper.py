@@ -1,153 +1,96 @@
 """
-IsdcMapper — XML mapper for the CIMCorpShipment / isdc Kafka topic.
+ISDC XML Mapper — CIMCorpShipment → Shipment domain graph.
 
-Maps ns2:CIMCorpShipment XML sections to:
-  Shipment        ← ns2:shipment  (parent)
-  ShipmentParty   ← ns2:consignee, ns2:shipper
-  Piece           ← ns2:piece
-  ShipmentCommodity ← ns2:commodities
-  SpecialHandling ← ns2:specialHandlingCodes
-  VirtualRouteLeg ← ns2:virtualRouteLegs  (stored as-is, no FK to Shipment)
+Parses the CIMCorpShipment XML format (Kafka topic: isdc) into a Shipment parent row
+plus child rows (ShipmentParty, Piece, ShipmentCommodity, SpecialHandling, VirtualRouteLeg).
 
-Sections skipped (no matching table): ns2:mawbAsgmt, ns2:mawb, ns2:currencies, ns2:extraData
+Mapping contract (3-tier):
+  Tier 1: lowercase(XML_FIELD_NAME) → model column name  (handles ~90% of fields)
+  Tier 2: ISDC_EXCEPTIONS dict       → skip (None) or remap (str)
+  Tier 3: custom_mapping callback    → extraData key-value block → Shipment attributes
+
+SOURCE-PK normalization: PARTY_OID_NBR == 0 is a sentinel placeholder.
+  Both consignee and shipper carry PARTY_OID_NBR=0 in typical payloads.
+  Normalised to None so DB autoincrement assigns unique PKs.
 """
 
 import xml.etree.ElementTree as ET
 from database import models
 from integration.system.EaiSubscribeMapper import populate_row, _local
 
-# Fields that require special handling — skip or remap
-SHIPMENT_EXCEPTIONS: dict = {
-    "LOCAL_SHIPMENT_OID_NBR": None,   # used as PK — set via custom callback, not auto
+# ExtraData <dataName> → Shipment column
+_EXTRA_DATA_MAP = {
+    "AdmissibilityModeNm":     "admissibility_mode",
+    "PrevAdmissibilityModeNm": "prev_admissibility_mode",
+    "CargoControlNbr":         "cargocontrolnbr",
+    "PortOfExitNm":            "portofexit",
+    "PortOfEntryNm":           "portofentry",
+    "WarehouseCd":             "warehousecode",
+    "SurfaceIntlShipmentNbr":  "surface_intl_shipment_nbr",
 }
 
-PARTY_EXCEPTIONS: dict = {
-    "PARTY_OID_NBR": None,   # sentinel placeholder; PK normalized to None in custom callback
-    "LOCAL_SHIPMENT_OID_NBR": None,   # FK set by parent relationship append
+# Tier 2 exceptions — fields that cannot be auto-mapped by lowercase alone
+ISDC_EXCEPTIONS: dict[str, str | None] = {
+    # No remaps needed — Tier 1 handles all standard fields in the CIMCorp schema
 }
 
-PIECE_EXCEPTIONS: dict = {
-    "LOCAL_PIECE_OID_NBR": None,      # PK — set via custom callback
-    "LOCAL_SHIPMENT_OID_NBR": None,   # FK set by parent relationship append
-}
-
-COMMODITY_EXCEPTIONS: dict = {
-    "LOCAL_SHIPMENT_OID_NBR": None,   # FK set by parent relationship append
-}
-
-SPECIAL_HANDLING_EXCEPTIONS: dict = {
-    "OID_NBR": None,   # FK set by parent relationship append
-}
-
-VIRTUAL_ROUTE_LEG_EXCEPTIONS: dict = {}
-
-
-def _find_local(element, local_name: str):
-    """Find first child whose local name (namespace stripped) matches local_name."""
-    for child in element:
-        if _local(child.tag) == local_name:
-            return child
-    return None
-
-
-def _shipment_custom(row: models.Shipment, element):
-    """Set shipment PK from LOCAL_SHIPMENT_OID_NBR element."""
-    el = _find_local(element, "LOCAL_SHIPMENT_OID_NBR")
-    if el is not None and el.text:
-        try:
-            row.local_shipment_oid_nbr = int(el.text)
-        except (ValueError, TypeError):
-            pass
-
-
-def _piece_custom(row: models.Piece, element):
-    """Set piece PK from LOCAL_PIECE_OID_NBR; normalize 0 → None."""
-    el = _find_local(element, "LOCAL_PIECE_OID_NBR")
-    if el is not None and el.text:
-        try:
-            val = int(el.text)
-            row.local_piece_oid_nbr = None if val == 0 else val
-        except (ValueError, TypeError):
-            row.local_piece_oid_nbr = None
-
-
-def _party_custom(row: models.ShipmentParty, element):
-    """Normalize PARTY_OID_NBR sentinel 0 → None so autoincrement assigns PK."""
-    el = _find_local(element, "PARTY_OID_NBR")
-    if el is not None and el.text:
-        try:
-            val = int(el.text)
-            row.shipment_party_oid_nbr = None if val == 0 else val
-        except (ValueError, TypeError):
-            row.shipment_party_oid_nbr = None
-    else:
-        row.shipment_party_oid_nbr = None
-    # Map SHIPMENT_PARTY_TYPE_CD (already handled by Tier 1 auto, but ensure it's set)
-    el2 = _find_local(element, "SHIPMENT_PARTY_TYPE_CD")
-    if el2 is not None and el2.text:
-        row.shipment_party_type_cd = el2.text.strip()
-
-
-def _commodity_sequence(row: models.ShipmentCommodity, element):
-    el = element.find("SEQUENCE_NBR")
-    if el is not None and el.text:
-        try:
-            row.sequence_nbr = int(el.text)
-        except (ValueError, TypeError):
-            pass
-
-
-# Section tag → (model class, exceptions, custom callback)
+# XML section tag → model class (shipment handled specially as parent)
 TAG_ROUTING = {
-    "shipment":            (models.Shipment,           SHIPMENT_EXCEPTIONS,       _shipment_custom),
-    "consignee":           (models.ShipmentParty,      PARTY_EXCEPTIONS,          _party_custom),
-    "shipper":             (models.ShipmentParty,      PARTY_EXCEPTIONS,          _party_custom),
-    "piece":               (models.Piece,              PIECE_EXCEPTIONS,          _piece_custom),
-    "commodities":         (models.ShipmentCommodity,  COMMODITY_EXCEPTIONS,      _commodity_sequence),
-    "specialHandlingCodes":(models.SpecialHandling,    SPECIAL_HANDLING_EXCEPTIONS, None),
-    "virtualRouteLegs":    (models.VirtualRouteLeg,    VIRTUAL_ROUTE_LEG_EXCEPTIONS, None),
-}
-
-# Sections whose rows are attached to shipment.ChildList
-SHIPMENT_CHILDREN = {
-    "consignee":           "ShipmentPartyList",
-    "shipper":             "ShipmentPartyList",
-    "piece":               "PieceList",
-    "commodities":         "ShipmentCommodityList",
-    "specialHandlingCodes":"SpecialHandlingList",
+    "shipment":             models.Shipment,
+    "consignee":            models.ShipmentParty,
+    "shipper":              models.ShipmentParty,
+    "piece":                models.Piece,
+    "commodities":          models.ShipmentCommodity,
+    "specialHandlingCodes": models.SpecialHandling,
+    "virtualRouteLegs":     models.VirtualRouteLeg,
 }
 
 
 def parse(payload: str, exceptions: dict = None) -> tuple:
     """
-    Parse CIMCorpShipment XML.
+    Returns (shipment_row, list[child_rows]) — plain model instances, NOT tuples.
 
-    Returns:
-        (shipment_row, extras)
-        - shipment_row: models.Shipment with child lists populated via relationship
-        - extras: list of models.VirtualRouteLeg rows (no FK to Shipment in schema)
+    child_rows contains: ShipmentParty (×2), Piece, ShipmentCommodity(s),
+    SpecialHandling(s), VirtualRouteLeg(s).
+    Caller attaches each child to the appropriate parent list.
     """
+    exc = exceptions if exceptions is not None else ISDC_EXCEPTIONS
     root = ET.fromstring(payload)
-    shipment_row = None
+    parent = None
     extras = []
 
     for section in root:
         tag = _local(section.tag)
+        if tag == "extraData":
+            continue   # processed below after parent is built
         if tag not in TAG_ROUTING:
             continue
-        model_class, exc, custom_fn = TAG_ROUTING[tag]
-        row = model_class()
-        populate_row(row, section, exceptions=exc, custom=custom_fn)
 
-        if tag == "shipment":
-            shipment_row = row
-        elif tag in SHIPMENT_CHILDREN and shipment_row is not None:
-            child_list = getattr(shipment_row, SHIPMENT_CHILDREN[tag])
-            child_list.append(row)
-        elif tag == "virtualRouteLegs":
+        model_class = TAG_ROUTING[tag]
+        row = model_class()
+        populate_row(row, section, exceptions=exc)
+
+        # SOURCE-PK normalization: sentinel PARTY_OID_NBR=0 → None (let DB assign PK)
+        if model_class is models.ShipmentParty:
+            if getattr(row, 'shipment_party_oid_nbr', 0) in (0, None, "0"):
+                row.shipment_party_oid_nbr = None
+
+        if model_class is models.Shipment:
+            parent = row
+        else:
             extras.append(row)
 
-    if shipment_row is None:
-        raise ValueError("IsdcMapper.parse: no <ns2:shipment> section found in payload")
+    # Apply extraData key-value pairs back onto the parent Shipment
+    if parent is not None:
+        for section in root:
+            if _local(section.tag) != "extraData":
+                continue
+            name_el = section.find("dataName")
+            val_el  = section.find("dataValue")
+            if name_el is None or val_el is None:
+                continue
+            col = _EXTRA_DATA_MAP.get(name_el.text or "")
+            if col and hasattr(parent, col) and val_el.text:
+                setattr(parent, col, val_el.text)
 
-    return shipment_row, extras
+    return parent, extras
