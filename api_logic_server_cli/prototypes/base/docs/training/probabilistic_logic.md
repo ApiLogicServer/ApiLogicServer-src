@@ -501,10 +501,13 @@ Respond with ONLY valid JSON in this exact format (no markdown, no code blocks):
                     temperature=0.7
                 )
                 
-                response_text = response.choices[0].message.content.strip()
+                response_text = (response.choices[0].message.content or "").strip()
+                # GPT-4o sometimes wraps JSON in ```json ... ``` despite instructions — strip fences
+                if response_text.startswith('```'):
+                    lines = response_text.split('\n')
+                    response_text = '\n'.join(lines[1:-1]).strip()
                 logic_row.log(f"OpenAI response: {response_text}")
-                
-                # Parse JSON response
+
                 ai_result = json.loads(response_text)
                 
                 # Find the selected supplier
