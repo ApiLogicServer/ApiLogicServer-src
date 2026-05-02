@@ -39,7 +39,14 @@ api_logic_server__port = 'api_logic_server_port'
 
 start_up_message = "normal start"
 
-import os, logging, logging.config, sys, yaml  # failure here means venv probably not set
+import sys, os  # export APILOGICPROJECT_DEBUG=True && python3 api_logic_server_run.py
+if os.environ.get("APILOGICPROJECT_DEBUG", "False") == "True":
+    # to verify - export APILOGICPROJECT_DEBUG=True && python3 api_logic_server_run.py
+    # consider running from manager: genai-logic run <project>
+    print(f"\nPython interpreter: {sys.executable}\n")
+
+import logging, logging.config, yaml  # failure here means venv probably not set
+
 from flask_sqlalchemy import SQLAlchemy
 import json
 from pathlib import Path
@@ -60,6 +67,22 @@ declare_logic_message = ""
 declare_security_message = "ALERT:  *** Security Not Enabled ***"
 
 os.chdir(project_dir)  # so admin app can find images, code
+
+# rotate log on startup: als.log -> als.log.1 (keeps one prior run)
+_log_file = Path(project_dir) / "logs" / "als.log"
+if _log_file.exists():
+    _log_file.replace(_log_file.with_suffix(".log.1"))
+_log_file.parent.mkdir(exist_ok=True)
+from datetime import datetime as _dt
+_log_file.write_text(
+    f"=== Server Start: {_dt.now().strftime('%Y-%m-%d %H:%M:%S')} ===\n"
+    f"    Project : {project_name}\n"
+    f"    Version : {api_logic_server__version}\n"
+    f"    Python  : {sys.executable}\n"
+    f"    Dir     : {project_dir}\n"
+    f"{'=' * 50}\n\n"
+)
+
 import api.system.api_utils as api_utils
 logic_logger_activate_debug = False
 """ True prints all rules on startup """
