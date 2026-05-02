@@ -1,5 +1,6 @@
 from api_logic_server_cli.cli_args_project import Project
 from pathlib import Path
+import click
 import sqlalchemy
 from sqlalchemy.orm import Session
 from sqlalchemy.ext.declarative import declarative_base
@@ -248,6 +249,10 @@ def add_cust(project: Project, models_py_path: Path, project_name: str):
         project_is_genai_demo = True
     
     project.abs_db_url, project.nw_db_status, project.model_file_name = create_utils.get_abs_db_url("0. Using Sample DB", project)
+    
+    if '_sample' in project_name:
+        raise click.UsageError("Samples are already customized - run add-cust from a created project, not a Manager sample (no action taken)")
+
     if create_utils.does_file_contain(search_for="CategoryTableNameTest", in_file=models_py_path):
         add_nw_customizations(project=project, do_security=False)
         log.info("\nNext step - add authentication:\n  $ ApiLogicServer add-auth --db_url=auth\n\n")
@@ -262,8 +267,7 @@ def add_cust(project: Project, models_py_path: Path, project_name: str):
             add_sample_ai_customizations(project=project)
         else:
             add_sample_ai_iteration(project=project)
-
-    elif (project_is_genai_demo or project_name == 'basic_demo') and create_utils.does_file_contain(search_for="Customer", in_file=models_py_path):
+    elif ((project_is_genai_demo or 'basic_demo' in project_name) and create_utils.does_file_contain(search_for="Customer", in_file=models_py_path)):
         cocktail_napkin_path = project.project_directory_path.joinpath('logic/cocktail-napkin.jpg')
         is_customized = cocktail_napkin_path.exists()
         if not is_customized:
@@ -280,4 +284,4 @@ def add_cust(project: Project, models_py_path: Path, project_name: str):
             add_basic_demo_iteration(project=project)
 
     else:
-        raise Exception("Customizations are northwind/genai-specific - models.py has neither CategoryTableNameTest nor Customer")
+        raise click.UsageError("Customizations are northwind/genai-specific - models.py has neither CategoryTableNameTest nor Customer (no action taken)")

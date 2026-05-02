@@ -1,12 +1,19 @@
 ## Pre-built samples
 
-See https://apilogicserver.github.io/Docs/Data-Model-Examples/.  The Manager contains the following pre-built samples:
+See https://apilogicserver.github.io/Docs/Data-Model-Examples/.  The Manager includes the following pre-built samples:
 
 * `samples/nw_sample` illustrates important customization sample code - a key part of training.  **Search for #als to find customization samples.**
 
 * `samples/nw_sample_nocust` is the same database, but without customizations.  With no customizations, the default nw example illustrates the **level of automation you should expect for your own projects.**
 
 * `samples/basic_demo_sample` is the pre-built demo tutorial.  You can r**ebuild it using the readme's, either by cli (`README.md`) or natural language (`readme_vibe.md`).**
+
+Other samples are *reference implementations* of the Strategic Use Cases.  They are not meant to be customized.  You can run them:
+
+```bash title="To Run Pre-built samples"
+# cd samples/basic_demo_sample && python api_logic_server_run.py
+genai-logic run --project-name=samples/basic_demo_sample
+```
 
 <br>
 
