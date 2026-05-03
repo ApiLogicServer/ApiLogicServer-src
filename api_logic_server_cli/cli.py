@@ -1977,12 +1977,11 @@ def rebuild_from_model(ctx, project_name: str, db_url: str, api_name: str, not_e
 
 @main.command("run", cls=HideDunderCommand)
 @click.option('--project_name',
-              default=f'{last_created_project_name}',
+              default=f'',
               help="Project to run")
 @click.option('--project-name', 'project_name',
-              default=f'{last_created_project_name}',
-              prompt="Project to run",
-              help="Project location")
+              default=f'',
+              help="Project to run (default: current directory)")
 @click.option('--host',
               default=f'localhost',
               help="Server hostname (default is localhost)")
@@ -2006,14 +2005,15 @@ def run_api(ctx, project_name: str, host: str="localhost", port: str="5656", swa
 
 \b
             ApiLogicServer run --project_name=/localhost/ApiLogicProject
-            ApiLogicServer run --project_name=    # runs last-created project
+            ApiLogicServer run --project_name=.  # runs project in current directory
+            ApiLogicServer run                   # runs project in current directory
     """
     global command
     command = "run-api"
     proj_dir = project_name
     if proj_dir == "":
-        proj_dir = last_created_project_name
-        # print(f'Blank - using last created project: {proj_dir}')
+        proj_dir = os.getcwd()
+        print(f'No --project-name given, using cwd: {proj_dir}')
     else:
         proj_dir = os.path.abspath(f'{create_utils.resolve_home(project_name)}')
         # print(f'Running specified project: {proj_dir}')
