@@ -10,7 +10,7 @@ inflect==5.0.2
 inflection==0.5.1
 python-dotenv==0.15.0
 email-validator==1.1.1
-cryptography>=43.0.0
+cryptography>=43.0.0; platform_system != 'Windows' or platform_machine != 'ARM64'
 rsa
 PyMySQL==1.0.3
 oracledb==2.1.2; python_version < '3.13'

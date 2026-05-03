@@ -70,9 +70,15 @@ os.chdir(project_dir)  # so admin app can find images, code
 
 # rotate log on startup: als.log -> als.log.1 (keeps one prior run)
 _log_file = Path(project_dir) / "logs" / "als.log"
-if _log_file.exists():
-    _log_file.replace(_log_file.with_suffix(".log.1"))
 _log_file.parent.mkdir(exist_ok=True)
+if _log_file.exists():
+    _log_backup = _log_file.with_suffix(".log.1")
+    try:
+        if _log_backup.exists():
+            _log_backup.unlink()  # Remove old backup
+        _log_file.rename(_log_backup)
+    except (OSError, PermissionError):
+        pass  # Skip rotation if file is locked (e.g., debugger restart)
 from datetime import datetime as _dt
 _log_file.write_text(
     f"=== Server Start: {_dt.now().strftime('%Y-%m-%d %H:%M:%S')} ===\n"
