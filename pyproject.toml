@@ -63,7 +63,7 @@ dependencies = [
         # https://stackoverflow.com/questions/71354710/cryptography-package-is-required-for-sha256-password-or-caching-sha2-password
         # "PyMySQL==1.0.3[rsa]", 
         # "PyMySQL==1.0.3+rsa",
-        "cryptography>=43.0.0",
+        "cryptography>=43.0.0; platform_system != 'Windows' or platform_machine != 'ARM64'",
         "rsa",
         "PyMySQL==1.0.3", 
         "oracledb==2.1.2; python_version < '3.13'",

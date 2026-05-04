@@ -418,7 +418,7 @@ def read_file(path):
     
 def does_file_contain(search_for: str, in_file: str) -> bool:
     """ returns True if <search_for> is <in_file> """
-    with open(Path(in_file), 'r+') as fp:
+    with open(Path(in_file), 'r+', encoding="utf-8") as fp:
         file_lines = fp.readlines()  # lines is list of lines, each element '...\n'
         found = False
         insert_line = 0
@@ -436,7 +436,7 @@ def replace_string_in_file(search_for: str, replace_with: str, in_file: str):
         file.write(file_data)
 
 def assign_value_to_key_in_file(key: str, value: any, in_file: str):
-    with open(Path(in_file), 'r') as file:
+    with open(Path(in_file), 'r', encoding="utf-8") as file:
         file_data = file.read()
         lines = file_data.split("\n")
         count = 1
@@ -448,13 +448,13 @@ def assign_value_to_key_in_file(key: str, value: any, in_file: str):
                 else:
                    lines[i] = f"{key} = '{value}'"
         file_data = "\n".join(lines)
-    with open(in_file, 'w') as file:
+    with open(in_file, 'w', encoding="utf-8") as file:
         file.write(file_data)
 
 
 def insert_lines_at(lines: str, at: str, file_name: str, after: bool = False):
     """ insert <lines> into file_name after line with <str> """
-    with open(Path(file_name), 'r+') as fp:
+    with open(Path(file_name), 'r+', encoding="utf-8") as fp:
         file_lines = fp.readlines()  # lines is list of lines, each element '...\n'
         found = False
         insert_line = 0

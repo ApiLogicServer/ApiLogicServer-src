@@ -1171,6 +1171,13 @@ if Config.do_install_api_logic_server:  # verify the build process - rebuild, an
     delete_dir(dir_path=str(install_api_logic_server_path), msg=f"delete install: {install_api_logic_server_path} ")    
     delete_dir(dir_path=str(install_api_logic_server_clean_path), msg=f"delete clean: {install_api_logic_server_clean_path} ")
     delete_build_directories(install_api_logic_server_path)
+    
+    # Recreate directories after deletion
+    if not os.path.isdir(install_api_logic_server_path):
+        os.makedirs(install_api_logic_server_path)
+    
+    if not os.path.isdir(install_api_logic_server_clean_path):
+        os.makedirs(install_api_logic_server_clean_path)
 
     if venv_with_python:  # windows only (sigh... never found way to set venv with Python on Ubuntu)
         api_logic_server_home_path = api_logic_server_tests_path.parent
