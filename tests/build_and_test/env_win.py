@@ -11,7 +11,7 @@ class Config:
 
     default_setting = True  # simplify enable / disable most
 
-    do_install_api_logic_server = False   # verify build wheel and local 
+    do_install_api_logic_server = True   # verify build wheel and local 
     do_logicbank_test = ""                          # use this testpy version (or '')
     
 
