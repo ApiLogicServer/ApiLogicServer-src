@@ -132,6 +132,12 @@ def find_valid_python_name() -> str:
             return "python"
     elif find_by == "os":
         if platform in ["darwin", "linux"]:
+            for py in ['python3.13', 'python3.12', 'python3.11', 'python3']:
+                try:
+                    subprocess.check_output(f'{py} --version', shell=True, stderr=subprocess.STDOUT)
+                    return py
+                except Exception:
+                    pass
             return 'python3'
         else:
             return 'python'
