@@ -126,7 +126,7 @@ else:
 
 flask_app = Flask("API Logic Server", template_folder='ui/templates')  # templates to load ui/admin/admin.yaml
 
-CORS(flask_app, resources=[{r"/api/*": {"origins": "*"}},{r"/ontimizeweb/*": {"origins": "*"}}],
+CORS(flask_app, resources=[{r"/api/.*": {"origins": "*"}},{r"/ontimizeweb/.*": {"origins": "*"}}],
      allow_headers=["Content-Type", "Authorization", "Access-Control-Allow-Credentials"],supports_credentials=True)
 
 args = server_setup.get_args(flask_app)                        # creation defaults
