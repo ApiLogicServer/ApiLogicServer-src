@@ -64,7 +64,7 @@ log = logging.getLogger(__name__)
 try:
     import oracledb
 except ImportError:
-    log.error("oracledb dll not found, Oracle support disabled")
+    log.debug("oracledb dll not found, Oracle support disabled")
     oracledb = None
 
 MODEL_DIR = tempfile.mkdtemp()  # directory where the generated models.py will be saved

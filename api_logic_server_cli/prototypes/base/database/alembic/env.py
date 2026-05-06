@@ -4,6 +4,36 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
 from alembic import context
+from alembic.operations import ops as alembic_ops
+
+
+_SQLITE_SAFE_TABLE_OPS = (
+    alembic_ops.AddColumnOp,
+    alembic_ops.CreateIndexOp,
+    alembic_ops.DropIndexOp,
+)
+
+def _filter_unsupported_sqlite_ops(context, revision, directives):
+    """For SQLite, keep only table-level ops that work without batch mode.
+
+    Whitelist: AddColumnOp, CreateIndexOp, DropIndexOp.
+    Everything else on an existing table (AlterColumnOp, DropColumnOp,
+    DropConstraintOp, CreateForeignKeyOp, etc.) requires batch mode which
+    breaks on the NW database due to views and self-referential FKs.
+
+    CREATE TABLE / DROP TABLE are top-level ops and are unaffected.
+    Non-SQLite databases are unaffected."""
+    if context.connection.dialect.name != 'sqlite':
+        return
+    for script in directives:
+        if script.upgrade_ops is None:
+            continue
+        for modify_op in script.upgrade_ops.ops:
+            if isinstance(modify_op, alembic_ops.ModifyTableOps):
+                modify_op.ops[:] = [
+                    op for op in modify_op.ops
+                    if isinstance(op, _SQLITE_SAFE_TABLE_OPS)
+                ]
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -65,7 +95,8 @@ def run_migrations_online():
 
     with connectable.connect() as connection:
         context.configure(
-            connection=connection, target_metadata=target_metadata
+            connection=connection, target_metadata=target_metadata,
+            process_revision_directives=_filter_unsupported_sqlite_ops,
         )
 
         with context.begin_transaction():

@@ -18,7 +18,10 @@ import requests  # not working - 404
 import json
 import sys
 import time
-from jwt.algorithms import RSAAlgorithm
+try:
+    from jwt.algorithms import RSAAlgorithm
+except ImportError:
+    RSAAlgorithm = None  # cryptography not available (e.g., Windows ARM64)
 from flask import g
 
 

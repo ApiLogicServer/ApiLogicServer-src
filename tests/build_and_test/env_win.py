@@ -32,7 +32,7 @@ class Config:
 
     do_multi_database_test = default_setting        # add-db todo, add-auth
 
-    do_allocation_test = default_setting            # create / run / test allocation project
+    do_allocation_test = False              # requires sh/curl (not available on Windows)
 
     do_budget_app_test = default_setting            # insert_parent test
 
@@ -60,6 +60,6 @@ class Config:
     winds up something like
     c:;cd C:\\Users\\val\\dev\\ApiLogicServer\\ApiLogicServer-dev\\build_and_test\\ApiLogicServer && venv\\Scripts\\activate && python -m pip install C:\\Users\\val\\dev\\ApiLogicServer\\ApiLogicServer-dev\\org_git\\ApiLogicServer-src
     '''
-    docker_database_ip = '10.0.0.249'
+    docker_database_ip = '10.0.0.154'
     ''' for virtual machine access, set this to host IP '''
 
