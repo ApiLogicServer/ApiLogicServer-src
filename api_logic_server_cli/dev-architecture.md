@@ -106,3 +106,13 @@ else:
 - **Propagate to gold source** before running BLT — venv is wiped on reinstall  
   Path: `org_git/ApiLogicServer-src/api_logic_server_cli/`
 - **Always sync both** when making changes: edit gold source → copy to venv (or vice versa)
+
+## windows
+
+Common fixes are for byte codes.
+
+Also, the app_model_editor exceeds file nest depth, so blt deletes it.  After that, run this to ignore false change indications:
+
+```
+git checkout -- api_logic_server_cli/prototypes/manager/system/app_model_editor/
+```
