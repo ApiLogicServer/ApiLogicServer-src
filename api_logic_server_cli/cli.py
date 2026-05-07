@@ -2017,8 +2017,8 @@ def run_api(ctx, project_name: str, host: str="localhost", port: str="5656", swa
     else:
         proj_dir = os.path.abspath(f'{create_utils.resolve_home(project_name)}')
         # print(f'Running specified project: {proj_dir}')
-    run_file = f'{proj_dir}/api_logic_server_run.py '  # alert: sending args makes it hang: {host} {port} {swagger_host}
-    create_utils.run_command(f'python {run_file}', msg="Run Created ApiLogicServer Project", new_line=True)
+    run_file = os.path.join(proj_dir, 'api_logic_server_run.py')  # alert: sending args makes it hang: {host} {port} {swagger_host}
+    create_utils.run_command(f'{sys.executable} {run_file}', msg="Run Created ApiLogicServer Project", new_line=True)
     print("run complete")
 
 
