@@ -45,7 +45,7 @@ class Config:
     do_docker_postgres_auth = default_setting       # requires docker database be running
     do_docker_sqlserver = False           # requires docker database be running
 
-    do_docker_creation_tests = default_setting      # build docker image, start it and create projects
+    do_docker_creation_tests = False      # build docker image, start it and create projects
 
 
 
@@ -61,7 +61,7 @@ class Config:
     winds up something like
     f:;cd C:\\Users\\val\\dev\\ApiLogicServer\\ApiLogicServer-dev\\build_and_test\\ApiLogicServer && venv\\Scripts\\activate && python -m pip install C:\\Users\\val\\dev\\ApiLogicServer\\ApiLogicServer-dev\\org_git\\ApiLogicServer-src
     '''
-    docker_database_ip = '10.0.0.77'
+    docker_database_ip = '10.0.0.154'
     ''' for virtual machine access, set this to host IP '''
 
 

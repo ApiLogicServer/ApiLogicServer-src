@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "Bash(git branch *)",
-      "Bash(git pull *)"
+      "Bash(git pull *)",
+      "Bash(find /home/parallels/dev/genai-logic/ApiLogicServer-dev -name \"*.log\" -newer /home/parallels/dev/genai-logic/ApiLogicServer-dev/org_git/ApiLogicServer-src/internal_dev/code_base/Security_fixes_may_2026.md 2>/dev/null | head -20)",
+      "Read(//home/parallels/dev/genai-logic/ApiLogicServer-dev/**)",
+      "Bash(ls -lt /home/parallels/dev/genai-logic/ApiLogicServer-dev/build_and_test/ 2>/dev/null | head -20)",
+      "Read(//home/parallels/dev/genai-logic/ApiLogicServer-dev/build_and_test/**)"
     ]
   }
 }

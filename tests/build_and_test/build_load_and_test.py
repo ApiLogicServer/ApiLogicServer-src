@@ -258,6 +258,17 @@ def stop_server(msg: str, port: str='5656'):
         r = requests.get(url = URL, params = PARAMS)
     except:
         print("..")
+    # Give the server up to 5s to exit cleanly (closes DB connections gracefully).
+    # Only force-kill if it's still holding the port — avoids leaving broken postgres
+    # connections that slow down subsequent server startups (configure_auth hangs).
+    if platform != "win32":
+        import socket as _sock
+        for _ in range(5):
+            time.sleep(1)
+            with _sock.socket(_sock.AF_INET, _sock.SOCK_STREAM) as _s:
+                if _s.connect_ex(('localhost', int(port))) != 0:
+                    return   # clean exit — port already free
+        subprocess.run(f"lsof -ti:{port} | xargs kill -9 2>/dev/null", shell=True, capture_output=True)
 
 def print_run_output(msg, input):
     print(f'\n{msg}')
@@ -406,7 +417,19 @@ def start_api_logic_server(project_name: str, env_list = None, port: str='5656',
     
     pipe = None
     return_str = None
-    
+
+    # Wait for the port to be free before starting a new server (previous server may not have
+    # fully released the port yet after stop_server() — Flask reloader holds it for ~10s).
+    import socket as _socket
+    for _wait in range(20):
+        with _socket.socket(_socket.AF_INET, _socket.SOCK_STREAM) as _s:
+            if _s.connect_ex(('localhost', int(port))) != 0:
+                break
+        print(f".. Port {port} still in use, waiting... ({_wait+1}s)")
+        time.sleep(1)
+    else:
+        print(f".. Warning: port {port} still in use after 20s — proceeding anyway")
+
     if platform == "win32":
         start_cmd = ['powershell.exe', f'{str(path)}\\run.ps1 x']
     else:
@@ -414,6 +437,14 @@ def start_api_logic_server(project_name: str, env_list = None, port: str='5656',
         # start_cmd = ['sh', f'{str(path)}/run x']
         start_cmd = [f'{str(path)}/run.sh', 'calling']
         print(f'start_api_logic_server() - start_cmd[0]: {start_cmd[0]}')
+
+    # Fixed-location log: build_and_test/genai-logic/tests/server_logs/<project>.log
+    # Overwritten each run so there is always exactly one log per project to check.
+    server_logs_dir = install_api_logic_server_path / 'tests' / 'server_logs'
+    server_logs_dir.mkdir(parents=True, exist_ok=True)
+    log_name = project_name.replace('/', '_') + '.log'
+    server_log_path = server_logs_dir / log_name
+    server_log_file = open(server_log_path, 'w')
 
     try:
         my_env = os.environ.copy()
@@ -427,23 +458,40 @@ def start_api_logic_server(project_name: str, env_list = None, port: str='5656',
             pipe = subprocess.Popen(start_cmd, cwd=install_api_logic_server_path, env=my_env,
                                     stdout=stdout, stderr=stderr)
         else:
-            pipe = subprocess.Popen(start_cmd, cwd=install_api_logic_server_path, env=my_env)  #, stderr=subprocess.PIPE)
+            pipe = subprocess.Popen(start_cmd, cwd=install_api_logic_server_path, env=my_env,
+                                    stdout=server_log_file, stderr=subprocess.STDOUT)
     except:
         print(f"\nsubprocess.Popen failed trying to start server.. with command: \n {start_cmd}")
-        # what = pipe.stderr.readline()
         raise
-    print(f'\n.. Server started - server: {project_name}\n')
+    print(f'\n.. Server started (pid={pipe.pid}) log: {server_log_path}\n')
     URL = f"http://localhost:{port}/hello_world?user=ApiLogicServer"
     print(f"\n.. Waiting for server to start for: {URL}")
-    time.sleep(10) 
-
+    max_wait = 30
+    for _elapsed in range(max_wait):
+        time.sleep(1)
+        if pipe.poll() is not None:
+            print(f"\n❌ Server process exited (rc={pipe.poll()}) after {_elapsed+1}s — {project_name}")
+            break
+        try:
+            requests.get(url=URL, timeout=2)
+            print(f"\n.. Server ready after {_elapsed + 1}s: {project_name}\n")
+            server_log_file.close()
+            return return_str
+        except Exception:
+            pass
+    # Failed — print server output for diagnosis
+    server_log_file.close()
+    print(f"\n=== Server log ({server_log_path}) — last 40 lines ===")
     try:
-        print("\n.. Proceeding...\n")
-        r = requests.get(url = URL)
-    except:
-        print(f".. Ping failed on {project_name}")
-        if do_return == False:
-            raise
+        with open(server_log_path) as _f:
+            lines = _f.readlines()
+        print(''.join(lines[-40:]))
+    except Exception as _e:
+        print(f"  (could not read log: {_e})")
+    print(f"=== end server log ===\n")
+    print(f".. Ping failed on {project_name} after {max_wait}s  process alive: {pipe.poll() is None}")
+    if do_return == False:
+        raise Exception(f"HTTPConnectionPool(host='localhost', port={port}): Max retries exceeded with url: /hello_world?user=ApiLogicServer (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port={port}): Failed to establish a new connection: [Errno 111] Connection refused\"))")
     return return_str
 
 def does_file_contain(in_file: str, search_for: str) -> bool:
@@ -1297,13 +1345,13 @@ if Config.do_create_api_logic_project:
             cwd=install_api_logic_server_path,
             msg=f'\nCreate ApiLogicProject')     # nw+ (with logic)
     
-    run_test("create_api_logic_project", "Create ApiLogicProject with NW+ database", create_api_logic_project)
+    run_test("ApiLogicProject", "Create ApiLogicProject with NW+ database", create_api_logic_project)
 
 if Config.do_run_api_logic_project:  # so you can start and set breakpoint, then run tests
     def run_api_logic_project():
         start_api_logic_server(project_name="ApiLogicProject")
     
-    run_test("run_api_logic_project", "Start ApiLogicProject server", run_api_logic_project)
+    run_test("ApiLogicProject-run", "Start ApiLogicProject server", run_api_logic_project)
 
 if Config.do_test_api_logic_project:
     def test_api_logic_project():
@@ -1311,7 +1359,7 @@ if Config.do_test_api_logic_project:
         stop_server(msg="*** NW TESTS COMPLETE ***\n")
         validate_opt_locking()
     
-    run_test("test_api_logic_project", "Run NW validation tests and opt locking", test_api_logic_project)
+    run_test("ApiLogicProject-test", "Run NW validation tests and opt locking", test_api_logic_project)
 
 '''
 if Config.do_test_api_logic_project_with_auth:
@@ -1379,7 +1427,7 @@ if Config.do_test_genai:
         start_api_logic_server(project_name="genai_demo")
         stop_server(msg="*** genai_demo TESTS COMPLETE ***\n")
     
-    run_test("test_genai", "GenAI creation and validation tests", test_genai)
+    run_test("genai_demo", "GenAI creation and validation tests", test_genai)
 
     
 if Config.do_test_multi_reln:
@@ -1445,7 +1493,7 @@ if Config.do_test_multi_reln:
         start_api_logic_server(project_name="airport_10")
         stop_server(msg="*** airport TESTS COMPLETE ***\n")
     
-    run_test("test_multi_reln", "Multi-relationship GenAI tests", test_multi_reln)
+    run_test("genai_demo-multi_reln", "Multi-relationship GenAI tests", test_multi_reln)
 
 if Config.do_create_shipping:  # optionally, start it manually (eg, with breakpoints)
     def test_create_shipping():
@@ -1453,7 +1501,7 @@ if Config.do_create_shipping:  # optionally, start it manually (eg, with breakpo
             cwd=install_api_logic_server_path,
             msg=f'\nCreate Shipping at: {str(install_api_logic_server_path)}')
     
-    run_test("test_create_shipping", "Create Shipping project", test_create_shipping)
+    run_test("Shipping", "Create Shipping project", test_create_shipping)
 
 if Config.do_run_shipping:
     def test_run_shipping():
@@ -1468,7 +1516,7 @@ if Config.do_run_shipping:
         start_api_logic_server(project_name="Shipping", env_list=on_ports, port='5757')
         pass  # http://localhost:5757/stop
     
-    run_test("test_run_shipping", "Run Shipping project with Kafka", test_run_shipping)
+    run_test("Shipping-kafka", "Run Shipping project with Kafka", test_run_shipping)
 
 if Config.do_run_nw_kafka:  # so you can start and set breakpoint, then run tests
     def test_run_nw_kafka():
@@ -1477,13 +1525,13 @@ if Config.do_run_nw_kafka:  # so you can start and set breakpoint, then run test
         with_kafka = [("APILOGICPROJECT_KAFKA_PRODUCER", "{\"bootstrap.servers\": \"localhost:9092\"}")]    
         start_api_logic_server(project_name="ApiLogicProject", env_list=with_kafka)
     
-    run_test("test_run_nw_kafka", "Run ApiLogicProject with Kafka", test_run_nw_kafka)
+    run_test("ApiLogicProject-kafka-run", "Run ApiLogicProject with Kafka", test_run_nw_kafka)
 
 if Config.do_test_nw_kafka:
     def test_nw_kafka():
         validate_nw_with_kafka(install_api_logic_server_path, set_venv)
     
-    run_test("test_nw_kafka", "Test ApiLogicProject with Kafka", test_nw_kafka)
+    run_test("ApiLogicProject-kafka-test", "Test ApiLogicProject with Kafka", test_nw_kafka)
 
 if Config.do_run_nw_kafka:
     stop_server(msg="*** KAFKA ApiLogicProject COMPLETE ***\n")
@@ -1493,10 +1541,10 @@ if Config.do_run_shipping:
 
 
 if Config.do_multi_database_test:
-    run_test("multi_database_test", "Multi-database test with NW, Todo, and Auth", multi_database_tests)
+    run_test("MultiDB", "Multi-database test with NW, Todo, and Auth", multi_database_tests)
 
 if Config.do_rebuild_tests:
-    run_test("rebuild_tests", "Rebuild tests from database and model", rebuild_tests)
+    run_test("Rebuild", "Rebuild tests from database and model", rebuild_tests)
 
 if Config.do_other_sqlite_databases:
     def test_other_sqlite_databases():
@@ -1516,7 +1564,7 @@ if Config.do_other_sqlite_databases:
         start_api_logic_server(project_name='todo_sqlite')
         stop_server(msg="todo\n")
     
-    run_test("other_sqlite_databases", "Test Chinook, ClassicModels, and Todo SQLite databases", test_other_sqlite_databases)
+    run_test("chinook-classicmodels-todo", "Test Chinook, ClassicModels, and Todo SQLite databases", test_other_sqlite_databases)
 
 if Config.do_include_exclude:
     def test_include_exclude():
@@ -1582,7 +1630,7 @@ if Config.do_budget_app_test:
         print("\nBudgetApp tests - Success...\n")
         stop_server(msg="*** BudgetApp TEST COMPLETE ***\n")
     
-    run_test("budget_app_test", "BudgetApp creation and behave testing", test_budget_app)
+    run_test("BudgetApp", "BudgetApp creation and behave testing", test_budget_app)
 
 if Config.do_allocation_test:
     def test_allocation():
@@ -1600,7 +1648,7 @@ if Config.do_allocation_test:
         print("\nAllocation tests - Success...\n")
         stop_server(msg="*** ALLOCATION TEST COMPLETE ***\n")
     
-    run_test("allocation_test", "Allocation project creation and testing", test_allocation)
+    run_test("Allocation", "Allocation project creation and testing", test_allocation)
 
 if Config.do_docker_mysql:
     def test_docker_mysql():
@@ -1621,7 +1669,7 @@ if Config.do_docker_mysql:
         start_api_logic_server(project_name='classicmodels')
         stop_server(msg="classicmodels\n")
     
-    run_test("docker_mysql", "Docker MySQL ClassicModels test", test_docker_mysql)
+    run_test("mysql-northwind", "Docker MySQL ClassicModels test", test_docker_mysql)
     
 if Config.do_docker_sqlserver:  # CAUTION: see comments below
     def check_sqlserver_health():
@@ -1698,7 +1746,7 @@ if Config.do_docker_sqlserver:  # CAUTION: see comments below
             dump_sqlserver_docker_logs()
             raise
     
-    run_test("docker_sqlserver", "Docker SQL Server TVF and NORTHWND tests", test_docker_sqlserver)
+    run_test("sqlserver", "Docker SQL Server TVF and NORTHWND tests", test_docker_sqlserver)
 
 if Config.do_docker_postgres:
     def test_docker_postgres():
@@ -1721,7 +1769,7 @@ if Config.do_docker_postgres:
         stop_server(msg="postgres\n")
 
     
-    run_test("docker_postgres", "Docker PostgreSQL tests", test_docker_postgres)
+    run_test("postgres-nw+postgres", "Docker PostgreSQL tests", test_docker_postgres)
 
 if Config.do_docker_postgres_auth:
     def test_docker_postgres_auth():
@@ -1733,16 +1781,16 @@ if Config.do_docker_postgres_auth:
         stop_server(msg="postgres\n")
 
         result_docker_postgres = run_command(
-            f"{set_venv} && ApiLogicServer add-auth --project-name=tests/postgres --provider-type=keycloak --{db_url}=auth",
+            f"{set_venv} && ApiLogicServer add-auth --project-name=tests/postgres --provider-type=keycloak --{db_url}=http://{db_ip}:8080",
             cwd= install_api_logic_server_path,
             msg=f'\add-auth Postgres postgres (nw) at: {str(install_api_logic_server_path)}')
         start_api_logic_server(project_name='postgres')
         stop_server(msg="postgres\n")
     
-    run_test("docker_postgres_auth", "Docker PostgreSQL with authentication", test_docker_postgres_auth)
+    run_test("postgres-auth", "Docker PostgreSQL with authentication", test_docker_postgres_auth)
 
 if Config.do_docker_creation_tests:
-    run_test("docker_creation_tests", "Docker container creation tests", docker_creation_tests, api_logic_server_tests_path)
+    run_test("docker-creation", "Docker container creation tests", docker_creation_tests, api_logic_server_tests_path)
 
 if failed_tests == 0:
     print("\n\n✅ SUCCESS -- ALL TESTS PASSED")

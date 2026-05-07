@@ -28,7 +28,7 @@ LogicBank>=1.30.01
 PyMySQL>=1.1.1
 # pyodbc==4.0.34
 cryptography>=46.0.7; platform_machine != 'aarch64'
-cryptography>=43.0.0; platform_machine == 'aarch64'
+cryptography>=46.0.7,<47; platform_machine == 'aarch64'
 rsa
 requests>=2.33.0
 chardet<6

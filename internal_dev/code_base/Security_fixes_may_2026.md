@@ -52,15 +52,24 @@
 
 ## ARM / aarch64 Notes
 
-`cryptography` on `aarch64` is kept at `>=43.0.0` (not bumped to `>=46.0.7`) due to known
-build issues on ARM machines. All other platforms use `>=46.0.7`.
+`cryptography` on `aarch64` is capped at `<47` because 47.x and 48.x crash with `SIGILL`
+(Illegal Instruction) on Parallels ARM VMs. Root cause: the Rust-compiled extension in 47+
+uses SIMD instructions that the Parallels-virtualized ARM CPU does not expose, even though the
+binary is valid aarch64. `cryptography 46.0.7` is the highest version confirmed safe and also
+covers CVE-2026-34073 and CVE-2026-39892.
 
 Relevant lines in `pyproject.toml` and `requirements-no-cli.txt` files:
 
 ```
 cryptography>=46.0.7; platform_machine != 'aarch64'
-cryptography>=43.0.0; platform_machine == 'aarch64'
+cryptography>=46.0.7,<47; platform_machine == 'aarch64'
 ```
+
+The crash manifests as `Illegal instruction (core dumped)` immediately on server start with no
+Python output — it happens during `flask_jwt_extended` → `jwt` → `cryptography.hazmat.primitives.asymmetric.ec`
+import chain, before logging is initialized. Diagnosed with `python -c "import faulthandler; faulthandler.enable(); exec(...)"`.
+
+**Fix 5 — Ubuntu ARM BLT: cryptography 47+ SIGILL on Parallels aarch64 VM**
 
 ---
 
@@ -175,6 +184,23 @@ foreign keys, and dropped columns. The generated migration contained `alter_colu
 table-modifying ops (alter, drop column, drop/create constraint, FK changes) are silently
 dropped from the generated migration script. `CREATE TABLE` and `DROP TABLE` are top-level
 ops and are unaffected. Non-SQLite databases are unaffected.
+
+### Fix 6 — BLT `docker_postgres_auth` fails: port 5656 not released before next server start
+
+**File:** `tests/build_and_test/build_load_and_test.py`
+
+**Root cause:** `stop_server()` sends an HTTP `/stop` signal but does not wait for the OS
+to release port 5656. Flask's development reloader holds the port briefly after shutdown.
+The `docker_postgres_auth` test runs `add-auth` (~2s) and then immediately starts a new
+server — just fast enough to collide with the previous server still holding the port. The new
+server exits with "Address already in use", so the 10-second ping gets Connection Refused.
+
+**Fix:** Added a port-free poll (up to 10 seconds, 1s interval) at the top of
+`start_api_logic_server()`, just before `subprocess.Popen`. If the port is already free,
+there is zero added delay. Only on slow machines (ARM/VM) where port release lags does it
+briefly wait.
+
+---
 
 ### Fix 4 — `allocation_test` disabled on Windows (`sh test.sh` not available)
 
