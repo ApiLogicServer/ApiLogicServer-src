@@ -38,17 +38,18 @@ include_tables = 'include-tables'
 extended_builder = 'extended-builder'
 
 
-def start_test(test_name: str, test_note: str = ""):
+def start_test(test_name: str, test_note: str = "", folders: str = ""):
     """
     Start tracking a test - increment counters and log the test
-    
+
     Args:
         test_name: Name of the test being started
         test_note: Optional description of the test
+        folders: Optional comma-separated list of tests/ folders created
     """
     global total_tests
     total_tests += 1
-    test_names.append((test_name, test_note))
+    test_names.append((test_name, test_note, folders))
     print(f"\n=== Starting Test {total_tests}: {test_name} ===")
     if test_note:
         print(f"    {test_note}")
@@ -78,18 +79,19 @@ def fail_test(test_name: str, error_message: str):
     print(f"❌ FAILED: {test_name}")
     print(f"    Error: {error_message}")
 
-def run_test(test_name: str, test_note: str, test_function, *args, **kwargs):
+def run_test(test_name: str, test_note: str, test_function, *args, folders: str = "", **kwargs):
     """
     Execute a test function with error handling and tracking
-    
+
     Args:
         test_name: Name of the test
         test_note: Description of the test
         test_function: Function to execute
+        folders: Comma-separated list of tests/ folders created by this test
         *args: Arguments to pass to test_function
         **kwargs: Keyword arguments to pass to test_function
     """
-    start_test(test_name, test_note)
+    start_test(test_name, test_note, folders)
     try:
         result = test_function(*args, **kwargs)
         pass_test(test_name)
@@ -456,7 +458,7 @@ def start_api_logic_server(project_name: str, env_list = None, port: str='5656',
             debug_stop = 'Nice breakpoint'
         if 'ApiLogicProject' in project_name:
             pipe = subprocess.Popen(start_cmd, cwd=install_api_logic_server_path, env=my_env,
-                                    stdout=stdout, stderr=stderr)
+                                    stdout=server_log_file, stderr=subprocess.STDOUT)
         else:
             pipe = subprocess.Popen(start_cmd, cwd=install_api_logic_server_path, env=my_env,
                                     stdout=server_log_file, stderr=subprocess.STDOUT)
@@ -491,7 +493,7 @@ def start_api_logic_server(project_name: str, env_list = None, port: str='5656',
     print(f"=== end server log ===\n")
     print(f".. Ping failed on {project_name} after {max_wait}s  process alive: {pipe.poll() is None}")
     if do_return == False:
-        raise Exception(f"HTTPConnectionPool(host='localhost', port={port}): Max retries exceeded with url: /hello_world?user=ApiLogicServer (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port={port}): Failed to establish a new connection: [Errno 111] Connection refused\"))")
+        raise Exception(f"Server {project_name} failed to start on port {port} within {max_wait}s")
     return return_str
 
 def does_file_contain(in_file: str, search_for: str) -> bool:
@@ -1345,13 +1347,15 @@ if Config.do_create_api_logic_project:
             cwd=install_api_logic_server_path,
             msg=f'\nCreate ApiLogicProject')     # nw+ (with logic)
     
-    run_test("ApiLogicProject", "Create ApiLogicProject with NW+ database", create_api_logic_project)
+    run_test("create_api_logic_project", "Create ApiLogicProject with NW+ database", create_api_logic_project,
+             folders="ApiLogicProject")
 
 if Config.do_run_api_logic_project:  # so you can start and set breakpoint, then run tests
     def run_api_logic_project():
         start_api_logic_server(project_name="ApiLogicProject")
     
-    run_test("ApiLogicProject-run", "Start ApiLogicProject server", run_api_logic_project)
+    run_test("run_api_logic_project", "Start ApiLogicProject server", run_api_logic_project,
+             folders="ApiLogicProject")
 
 if Config.do_test_api_logic_project:
     def test_api_logic_project():
@@ -1359,7 +1363,8 @@ if Config.do_test_api_logic_project:
         stop_server(msg="*** NW TESTS COMPLETE ***\n")
         validate_opt_locking()
     
-    run_test("ApiLogicProject-test", "Run NW validation tests and opt locking", test_api_logic_project)
+    run_test("test_api_logic_project", "Run NW validation tests and opt locking", test_api_logic_project,
+             folders="ApiLogicProject")
 
 '''
 if Config.do_test_api_logic_project_with_auth:
@@ -1427,7 +1432,8 @@ if Config.do_test_genai:
         start_api_logic_server(project_name="genai_demo")
         stop_server(msg="*** genai_demo TESTS COMPLETE ***\n")
     
-    run_test("genai_demo", "GenAI creation and validation tests", test_genai)
+    run_test("test_genai", "GenAI creation and validation tests", test_genai,
+             folders="genai_demo, genai_demo_models_with_addr")
 
     
 if Config.do_test_multi_reln:
@@ -1493,7 +1499,8 @@ if Config.do_test_multi_reln:
         start_api_logic_server(project_name="airport_10")
         stop_server(msg="*** airport TESTS COMPLETE ***\n")
     
-    run_test("genai_demo-multi_reln", "Multi-relationship GenAI tests", test_multi_reln)
+    run_test("test_multi_reln", "Multi-relationship GenAI tests", test_multi_reln,
+             folders="dnd, airport_4, airport_10")
 
 if Config.do_create_shipping:  # optionally, start it manually (eg, with breakpoints)
     def test_create_shipping():
@@ -1501,7 +1508,8 @@ if Config.do_create_shipping:  # optionally, start it manually (eg, with breakpo
             cwd=install_api_logic_server_path,
             msg=f'\nCreate Shipping at: {str(install_api_logic_server_path)}')
     
-    run_test("Shipping", "Create Shipping project", test_create_shipping)
+    run_test("test_create_shipping", "Create Shipping project", test_create_shipping,
+             folders="Shipping")
 
 if Config.do_run_shipping:
     def test_run_shipping():
@@ -1516,7 +1524,8 @@ if Config.do_run_shipping:
         start_api_logic_server(project_name="Shipping", env_list=on_ports, port='5757')
         pass  # http://localhost:5757/stop
     
-    run_test("Shipping-kafka", "Run Shipping project with Kafka", test_run_shipping)
+    run_test("test_run_shipping", "Run Shipping project with Kafka", test_run_shipping,
+             folders="Shipping")
 
 if Config.do_run_nw_kafka:  # so you can start and set breakpoint, then run tests
     def test_run_nw_kafka():
@@ -1525,13 +1534,15 @@ if Config.do_run_nw_kafka:  # so you can start and set breakpoint, then run test
         with_kafka = [("APILOGICPROJECT_KAFKA_PRODUCER", "{\"bootstrap.servers\": \"localhost:9092\"}")]    
         start_api_logic_server(project_name="ApiLogicProject", env_list=with_kafka)
     
-    run_test("ApiLogicProject-kafka-run", "Run ApiLogicProject with Kafka", test_run_nw_kafka)
+    run_test("test_run_nw_kafka", "Run ApiLogicProject with Kafka", test_run_nw_kafka,
+             folders="ApiLogicProject")
 
 if Config.do_test_nw_kafka:
     def test_nw_kafka():
         validate_nw_with_kafka(install_api_logic_server_path, set_venv)
     
-    run_test("ApiLogicProject-kafka-test", "Test ApiLogicProject with Kafka", test_nw_kafka)
+    run_test("test_nw_kafka", "Test ApiLogicProject with Kafka", test_nw_kafka,
+             folders="ApiLogicProject")
 
 if Config.do_run_nw_kafka:
     stop_server(msg="*** KAFKA ApiLogicProject COMPLETE ***\n")
@@ -1541,10 +1552,12 @@ if Config.do_run_shipping:
 
 
 if Config.do_multi_database_test:
-    run_test("MultiDB", "Multi-database test with NW, Todo, and Auth", multi_database_tests)
+    run_test("multi_database_test", "Multi-database test with NW, Todo, and Auth", multi_database_tests,
+             folders="MultiDB")
 
 if Config.do_rebuild_tests:
-    run_test("Rebuild", "Rebuild tests from database and model", rebuild_tests)
+    run_test("rebuild_tests", "Rebuild tests from database and model", rebuild_tests,
+             folders="Rebuild")
 
 if Config.do_other_sqlite_databases:
     def test_other_sqlite_databases():
@@ -1564,7 +1577,8 @@ if Config.do_other_sqlite_databases:
         start_api_logic_server(project_name='todo_sqlite')
         stop_server(msg="todo\n")
     
-    run_test("chinook-classicmodels-todo", "Test Chinook, ClassicModels, and Todo SQLite databases", test_other_sqlite_databases)
+    run_test("other_sqlite_databases", "Test Chinook, ClassicModels, and Todo SQLite databases", test_other_sqlite_databases,
+             folders="chinook_sqlite, classicmodels_sqlite, todo_sqlite")
 
 if Config.do_include_exclude:
     def test_include_exclude():
@@ -1604,7 +1618,8 @@ if Config.do_include_exclude:
         start_api_logic_server(project_name='include_exclude_typical')
         stop_server(msg="include_exclude_typical\n")
     
-    run_test("include_exclude", "Test include/exclude table filtering", test_include_exclude)
+    run_test("include_exclude", "Test include/exclude table filtering", test_include_exclude,
+             folders="include_exclude_nw, include_exclude_nw_1, include_exclude, include_exclude_typical")
 
 
 if Config.do_budget_app_test:
@@ -1630,7 +1645,8 @@ if Config.do_budget_app_test:
         print("\nBudgetApp tests - Success...\n")
         stop_server(msg="*** BudgetApp TEST COMPLETE ***\n")
     
-    run_test("BudgetApp", "BudgetApp creation and behave testing", test_budget_app)
+    run_test("budget_app_test", "BudgetApp creation and behave testing", test_budget_app,
+             folders="BudgetApp")
 
 if Config.do_allocation_test:
     def test_allocation():
@@ -1648,7 +1664,8 @@ if Config.do_allocation_test:
         print("\nAllocation tests - Success...\n")
         stop_server(msg="*** ALLOCATION TEST COMPLETE ***\n")
     
-    run_test("Allocation", "Allocation project creation and testing", test_allocation)
+    run_test("allocation_test", "Allocation project creation and testing", test_allocation,
+             folders="Allocation")
 
 if Config.do_docker_mysql:
     def test_docker_mysql():
@@ -1669,7 +1686,8 @@ if Config.do_docker_mysql:
         start_api_logic_server(project_name='classicmodels')
         stop_server(msg="classicmodels\n")
     
-    run_test("mysql-northwind", "Docker MySQL ClassicModels test", test_docker_mysql)
+    run_test("docker_mysql", "Docker MySQL ClassicModels test", test_docker_mysql,
+             folders="mysql-northwind, classicmodels")
     
 if Config.do_docker_sqlserver:  # CAUTION: see comments below
     def check_sqlserver_health():
@@ -1746,7 +1764,8 @@ if Config.do_docker_sqlserver:  # CAUTION: see comments below
             dump_sqlserver_docker_logs()
             raise
     
-    run_test("sqlserver", "Docker SQL Server TVF and NORTHWND tests", test_docker_sqlserver)
+    run_test("docker_sqlserver", "Docker SQL Server TVF and NORTHWND tests", test_docker_sqlserver,
+             folders="TVF, sqlserver")
 
 if Config.do_docker_postgres:
     def test_docker_postgres():
@@ -1769,7 +1788,8 @@ if Config.do_docker_postgres:
         stop_server(msg="postgres\n")
 
     
-    run_test("postgres-nw+postgres", "Docker PostgreSQL tests", test_docker_postgres)
+    run_test("docker_postgres", "Docker PostgreSQL tests", test_docker_postgres,
+             folders="postgres-nw, postgres")
 
 if Config.do_docker_postgres_auth:
     def test_docker_postgres_auth():
@@ -1787,10 +1807,12 @@ if Config.do_docker_postgres_auth:
         start_api_logic_server(project_name='postgres')
         stop_server(msg="postgres\n")
     
-    run_test("postgres-auth", "Docker PostgreSQL with authentication", test_docker_postgres_auth)
+    run_test("docker_postgres_auth", "Docker PostgreSQL with authentication", test_docker_postgres_auth,
+             folders="postgres")
 
 if Config.do_docker_creation_tests:
-    run_test("docker-creation", "Docker container creation tests", docker_creation_tests, api_logic_server_tests_path)
+    run_test("docker_creation_tests", "Docker container creation tests", docker_creation_tests, api_logic_server_tests_path,
+             folders="dockers/ApiLogicServer")
 
 if failed_tests == 0:
     print("\n\n✅ SUCCESS -- ALL TESTS PASSED")
@@ -1817,20 +1839,22 @@ results.append(f"SUCCESS RATE: {(passed_tests/total_tests*100):.1f}%" if total_t
 results.append("")
 
 # Successful Tests
-results.append('%-50s%-50s' % ('SUCCESSFUL TESTS', 'NOTES')) 
-results.append('%-50s%-50s' % ('================', '====='))
-for each_name, each_note in test_names:
-    results.append ('%-50s%-50s' % (each_name, each_note))
+results.append('%-28s%-35s%-s' % ('SUCCESSFUL TESTS', 'NOTES', 'FOLDERS'))
+results.append('%-28s%-35s%-s' % ('================', '=====', '======='))
+for each_tuple in test_names:
+    each_name, each_note = each_tuple[0], each_tuple[1]
+    each_folders = each_tuple[2] if len(each_tuple) > 2 else ""
+    display_note = (each_note[:32] + "..") if len(each_note) > 34 else each_note
+    results.append('%-28s%-35s%-s' % (each_name, display_note, each_folders))
 results.append('')
 
 # Failed Tests
 if test_failures:
-    results.append('%-50s%-50s' % ('FAILED TESTS', 'ERROR MESSAGE')) 
-    results.append('%-50s%-50s' % ('============', '============='))
+    results.append('%-28s%-s' % ('FAILED TESTS', 'ERROR MESSAGE'))
+    results.append('%-28s%-s' % ('============', '============='))
     for each_name, each_error in test_failures:
-        # Truncate long error messages to fit display
-        error_msg = each_error[:45] + "..." if len(each_error) > 45 else each_error
-        results.append ('%-50s%-50s' % (each_name, error_msg))
+        error_msg = each_error[:60] + "..." if len(each_error) > 60 else each_error
+        results.append('%-28s%-s' % (each_name, error_msg))
     results.append('')
 
 # Final result
