@@ -1,6 +1,6 @@
 import { MenuRootItem } from 'ontimize-web-ngx';
 
-import { CcpCustomerCardComponent } from './CcpCustomer-card/CcpCustomer-card.component';
+import { CustomerCardComponent } from './Customer-card/Customer-card.component';
 
 import { PieceCardComponent } from './Piece-card/Piece-card.component';
 
@@ -24,7 +24,7 @@ export const MENU_CONFIG: MenuRootItem[] = [
     id: 'data', name: ' data', icon: 'remove_red_eye', opened: true,
     items: [
     
-        { id: 'CcpCustomer', name: 'CCPCUSTOMER', icon: 'view_list', route: '/main/CcpCustomer' }
+        { id: 'Customer', name: 'CUSTOMER', icon: 'view_list', route: '/main/Customer' }
     
         ,{ id: 'Piece', name: 'PIECE', icon: 'view_list', route: '/main/Piece' }
     
@@ -50,7 +50,7 @@ export const MENU_CONFIG: MenuRootItem[] = [
 
 export const MENU_COMPONENTS = [
 
-    CcpCustomerCardComponent
+    CustomerCardComponent
 
     ,PieceCardComponent
 

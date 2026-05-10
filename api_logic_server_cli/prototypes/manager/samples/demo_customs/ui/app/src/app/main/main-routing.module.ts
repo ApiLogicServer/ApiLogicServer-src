@@ -13,7 +13,7 @@ export const routes: Routes = [
         { path: 'settings', loadChildren: () => import('./settings/settings.module').then(m => m.SettingsModule) },
       
     
-        { path: 'CcpCustomer', loadChildren: () => import('./CcpCustomer/CcpCustomer.module').then(m => m.CcpCustomerModule) },
+        { path: 'Customer', loadChildren: () => import('./Customer/Customer.module').then(m => m.CustomerModule) },
     
         { path: 'Piece', loadChildren: () => import('./Piece/Piece.module').then(m => m.PieceModule) },
     

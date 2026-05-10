@@ -5,7 +5,6 @@ Create a fully functional application and database
  Customs Tariff program code 25267A to calculate duties and taxes 
  including provincial sales tax or HST where applicable when 
  hs codes, country of origin, customs value, and province code and ship date >= '2025-12-26' 
- and create runnable ui with examples from Germany, US, Japan and China" 
- this prompt created the tables in db.sqlite.
+ and create runnable ui with examples from Germany (CETA — exempt), US (CUSMA — exempt), Japan (CPTPP — exempt), and China (subject, 25%)
   Transactions are received as a CustomsEntry with multiple 
 SurtaxLineItems, one per imported product HS code.

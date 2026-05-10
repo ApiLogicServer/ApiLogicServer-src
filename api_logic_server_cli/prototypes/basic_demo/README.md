@@ -24,10 +24,11 @@ This illustrates basic [GenAI-Logic](https://www.genai-logic.com/product/key-fea
 * **Self-Paced:** Follow the sections below at your own speed
 * **AI-Guided Tour:** Say to Copilot: *"Guide me through basic_demo"*
 
-**Bootstrap Copilot:**
-```bash title='🤖 Bootstrap Copilot by pasting the following into the chat'
+**🤖 Bootstrap your AI assistant:**
+```bash title='🤖 Bootstrap your AI assistant by pasting the following into the chat'
 Please load `.github/.copilot-instructions.md`.
 ```
+> Use Agent mode (not Ask). Works with GitHub Copilot or Claude Code extension — we get consistently good results with Claude Sonnet 4.6.
 
 <br>
 

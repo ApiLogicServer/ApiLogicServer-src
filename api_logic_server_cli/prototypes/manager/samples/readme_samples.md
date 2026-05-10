@@ -11,7 +11,7 @@ See https://apilogicserver.github.io/Docs/Data-Model-Examples/.  The Manager inc
 Other samples are *reference implementations* of the Strategic Use Cases.  They are not meant to be customized.  You can run them:
 
 ```bash title="To Run Pre-built samples"
-# cd samples/basic_demo_sample && python api_logic_server_run.py
+# cd samples/basic_demo_sample && genai-logic run
 genai-logic run --project-name=samples/basic_demo_sample
 ```
 
@@ -88,19 +88,23 @@ docker run --name sqlsvr-container --net dev-network -p 1433:1433 -d apilogicser
 
 <br>
 
-## Creating Projects with Copilot
+## Creating Projects with AI
+
+Execute these from the Manager using Claude Code terminal.   They use Context Engineering.
 
 ```
-create demo_allo_dept_gl from samples/prompts/allocation.prompt
+implement demo_allo_dept_gl from samples/prompts/allocation.prompt
 
-create project customs_cbsa from samples/prompts/customs_cbsa.prompt.md
+implement project customs_cbsa from samples/prompts/customs_cbsa.prompt.md
 
-create project customs_cn_25_28 from samples/prompts/customs_cn_25_28.prompt
+implement project customs_cn_25_28 from samples/prompts/customs_cn_25_28.prompt
 ```
 
 <br>
 
 ## Creating Projects with GenAI
+
+You can create projects with AI via the CLI.  This requires an OpenAI key:
 
 ```
 genai-logic genai --using=samples/prompts/genai_demo.prompt

@@ -1,5 +1,5 @@
 about:
-  date: April 30, 2026 11:40:14
+  date: May 10, 2026 12:30:15
   recent_changes: works with modified safrs-react-admin
   version: 0.0.0
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
@@ -9,7 +9,7 @@ info:
   number_tables: 8
 info_toggle_checked: true
 resources:
-  CcpCustomer:
+  Customer:
     attributes:
     - label: ' name*'
       name: name
@@ -40,7 +40,7 @@ resources:
     - name: dpi
     - name: broker_cd
     - name: rod
-    type: CcpCustomer
+    type: Customer
     user_key: name
   Piece:
     attributes:
@@ -413,6 +413,19 @@ resources:
     - name: id
     type: SysConfig
     user_key: name
+  ShipmentXml:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: received_at
+      type: DATETIME
+    - name: is_processed
+    - name: payload
+      type: textarea
+    type: ShipmentXml
+    user_key: id
   VirtualRouteLeg:
     attributes:
     - label: ' id*'
@@ -462,19 +475,6 @@ resources:
     - name: us_process_cd
     - name: carrier_cd
     type: VirtualRouteLeg
-    user_key: id
-  ShipmentXml:
-    attributes:
-    - label: ' id*'
-      name: id
-      search: true
-      sort: true
-    - name: received_at
-      type: DATETIME
-    - name: is_processed
-    - name: payload
-      type: textarea
-    type: ShipmentXml
     user_key: id
 settings:
   HomeJS: /admin-app/home.js

@@ -1,4 +1,4 @@
-export const SERVICE_CONFIG ={ 'CcpCustomer': { 'path': '/CcpCustomer' }
+export const SERVICE_CONFIG ={ 'Customer': { 'path': '/Customer' }
 ,'Piece': { 'path': '/Piece' }
 ,'Shipment': { 'path': '/Shipment' }
 ,'ShipmentCommodity': { 'path': '/ShipmentCommodity' }

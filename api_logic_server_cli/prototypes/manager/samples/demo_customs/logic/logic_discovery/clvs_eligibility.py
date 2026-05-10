@@ -13,30 +13,29 @@ from logic_bank.logic_bank import Rule
 from database import models
 
 
-def _clvs_reasons(row, old_row, logic_row):
+def _reasons(row):
     reasons = []
     if float(row.local_customs_value_amt or 0) > 3300:
         reasons.append("value exceeds CAD $3,300")
-    if row.prohibited_commodity_count and row.prohibited_commodity_count > 0:
+    if row.prohibited_commodity_count > 0:
         reasons.append(f"{row.prohibited_commodity_count} prohibited commodity line(s)")
-    if row.service_type_cd != '04':
-        reasons.append("not a CLVS-authorized courier (service_type_cd != 04)")
-    if row.dest_loc_cntry_cd != 'CA':
-        reasons.append("destination is not Canada")
-    return ", ".join(reasons)
+    return reasons
 
 
 def _clvs_eligible(row, old_row, logic_row):
-    return 0 if _clvs_reasons(row, old_row, logic_row) else 1
+    return 1 if not _reasons(row) else 0
 
 
-def _clvs_reason_str(row, old_row, logic_row):
-    return _clvs_reasons(row, old_row, logic_row)
+def _clvs_reason(row, old_row, logic_row):
+    return ", ".join(_reasons(row))
 
 
 def declare_logic():
-    Rule.count(derive=models.Shipment.prohibited_commodity_count,
-               as_count_of=models.ShipmentCommodity,
+    # TODO: Review parent-value rules below.
+    #   Rule.copy  = snapshot (value frozen at transaction time, no cascade on parent change) ← default
+    #   Rule.formula referencing row.parent.attr = live (re-derives if parent changes)
+    #   Change Rule.copy → Rule.formula where live propagation is required.
+    Rule.count(derive=models.Shipment.prohibited_commodity_count, as_count_of=models.ShipmentCommodity,
                where=lambda row: row.is_prohibited == 1)
     Rule.formula(derive=models.Shipment.clvs_eligible, calling=_clvs_eligible)
-    Rule.formula(derive=models.Shipment.clvs_reason,   calling=_clvs_reason_str)
+    Rule.formula(derive=models.Shipment.clvs_reason, calling=_clvs_reason)

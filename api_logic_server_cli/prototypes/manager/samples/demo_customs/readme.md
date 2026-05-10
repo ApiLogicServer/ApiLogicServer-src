@@ -2,7 +2,7 @@
 title: Customs EAI
 notes: gold source is docs
 source: docs/Customs-readme
-version: 1.1 from docsite, for readme, for readme 4/15/2026
+version: 1.2 from docsite, for readme, for readme 5/5/2026
 ---
 <style>
   -typeset h1,
@@ -13,30 +13,95 @@ version: 1.1 from docsite, for readme, for readme 4/15/2026
 
 # Customs Demo
 
-**Bootstrap Copilot by pasting the following into the chat:**
-```
-Please load `.github/.copilot-instructions.md`.
-```
+![summary](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/customs_demo/summary.png?raw=true)
 
 &nbsp;
 
+<details markdown>
+
+<summary>Executable Requirements - Governance By Architecture, At Scale</summary>
+
+![summary](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/architecture/gov-at-scale.png?raw=true)
+
+&nbsp;
+
+**The Underlying Logic Architecture**
+
+![summary](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/architecture/logic-architecture-exec.png?raw=true)
+<br>
+
+</details>
+
+&nbsp;
+
+<details markdown>
+
+<summary>Claude Code CLI Instructions - how to build this project</summary>
+
+<br>
+
+```bash title="Establish Initial State, Execute Requirements"
+# A - Create the project (already done, typically from Manager)
+genai-logic create  --project_name=demo_customs --db_url=sqlite:///samples/requirements/customs_demo/database/customs.sqlite
+
+# B - use the shared Manager venv (do not create a local project .venv)
+! source ../venv/bin/activate
+
+# C - activate Claude Code in the VSCode terminal
+! claude
+
+# D - load context engineering to teach claude about rules, GenAI-Logic
+Please load `.github/.copilot-instructions.md`.
+
+# E - in created project, get the requirements (win: Copy-Item -Path "..\samples\requirements\customs_demo\*" -Destination "." -Recurse -Force -Verbose 4>&1).Count)
+! cp -rv ../samples/requirements/customs_demo/. . | wc -l
+
+# F - required hardening for delete integrity (no orphans after parent delete via API):
+in database/models.py, add ORM relationship cascade on Shipment child lists
+(pattern: relationship(cascade="all, delete", back_populates="...")).
+Apply to:
+   Shipment.PieceList
+   Shipment.ShipmentCommodityList
+   Shipment.SpecialHandlingList
+   Shipment.ShipmentPartyList
+
+# G - ask Coding Agent to create the system by implementing the requirements
+implement requirements docs/requirements/customs_demo
+```
+
+</details>
+
+&nbsp;
+
+---
+
 ## Executive Summary
 
-This system ingests customs shipment data from a Kafka message broker, matches shipments to known importers, and persists a complete, governed shipment record — with full REST API, audit trail, and Admin UI included. 
+This is a proof of what changes when business logic is governed by architecture, not discipline — built to the scope and standards of a real enterprise integration, in 2 days.
 
-**Delivery Speed**<br>
-It was built in 2 days by one engineer using GenAI-Logic's Executable 
-Requirements workflow: a plain-English requirements document was compiled into a running, 
-governed system. The primary inputs were an existing database schema, an XML field-mapping 
-spreadsheet, and a sample message.
+**Delivery Speed — 2 Days, Not Months**<br>
+Built in 2 days by one engineer. The scope — Kafka 2-message pipeline, XML parsing, 7-table persistence, importer matching, CLVS eligibility rules, REST API, Admin UI, and standard enterprise delivery standards — is not a toy project. A traditional team would scope this in weeks and deliver in months.
 
-A comparable conventional project covers significant scope: Kafka pipeline, XML parsing, 7-table persistence, importer matching, REST API, Admin UI, and standard enterprise delivery. Curious what that would take to build traditionally? Give your AI this requirements document and ask for an estimate — then compare.
+Curious what your team would estimate? Give your AI this requirements document and ask.
 
-**Governance**<br>
-The deeper value is not speed alone. Business rules are enforced by architecture on every 
-path — API, UI, agent, or new endpoint — without developer discipline required. A new 
-developer, a new agent, a new integration: all inherit the same rules automatically. Governed 
-by architecture, not discipline.
+**Business Inputs — Not Technical Specs**<br>
+Traditional delivery starts from *technical* inputs: schema DDL, API specs, field-mapping logic expressed in developer terms. This started from *business* inputs — artifacts the business team already owned.
+
+A plain-English requirements document. An existing database schema. An XML field-mapping spreadsheet. A sample message. GenAI-Logic's Executable Requirements workflow compiled these directly into a running, governed system — no translation layer required.
+
+Speed is not a tradeoff against governance here. Both are consequences of the same thing: declarative rules replace procedural code, so the system is both faster to build and impossible to bypass.
+
+**Governance — No Bypass**<br>
+Business rules are enforced at the commit point — every transaction, every source, automatically. Not because developers remembered. Because there is no other path.
+
+A new developer, a new agent, a new integration: all inherit the same rules automatically. Governed by architecture, not discipline.
+
+**Governance — At Scale**<br>
+Governance by developer discipline fails at scale — routinely, and at significant cost. Rules get missed. New endpoints, new agents, new integrations don't inherit them. The larger the system, the more paths, and the more paths, the more misses.
+
+Governance by architecture doesn't degrade. Rules enforced at the commit point run on every transaction, regardless of source — API, UI, agent, or integration added three years later. That guarantee doesn't erode as the system grows.
+
+AI makes this available at org-wide scale. Requirements your teams already produce — plain English, Gherkin, regulation text — become the input. GenAI-Logic compiles them into enforced rules. The same workflow, every project, every team.
 
 > For the full story on **Executable Requirements**, [click here](https://apilogicserver.github.io/Docs/executable-requirements).
 
@@ -44,9 +109,7 @@ by architecture, not discipline.
 
 ## Project Overview
 
-This system is a prototype for a rewrite of the following, using Kafka instead of JMS, and sqlite:
-
-![summary](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/customs_demo/summary_flow.png?raw=true)
+You can examine the Shipment database to verify parties created by matching:
 
 ![summary](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/customs_demo/shipment.png?raw=true)
 
@@ -60,7 +123,7 @@ An enterprise integration (EAI) microservice that ingests CIMCorp/ISDC customs s
 **Outputs**:
 - Working Kafka consumer pipeline: `isdc` → `ShipmentXml` → `isdc_processed` → DB tables  
 - JSON:API for all tables, Admin UI, declarative logic engine
-- Matching: look up the matching CcpCustomer
+- Matching: look up the matching Customer
     - found: set `Shipment.trprt_bill_to_acct_nbr == CcpCustomer.duty_bill_to_acct_nbr` and create a `ShipmentParty` row
     - no match: log a warning, do nothing.
 
@@ -79,42 +142,17 @@ An enterprise integration (EAI) microservice that ingests CIMCorp/ISDC customs s
     * `/consume_debug/isdc` bypasses Kafka — calls the same parser directly (no Kafka required for dev/test)
 5. Matching: `logic/logic_discovery/shipment_matching.py` — `early_row_event` on Shipment insert
     * Looks up `CcpCustomer` by `duty_bill_to_acct_nbr == trprt_bill_to_acct_nbr`
-    * Match found: creates a `ShipmentParty` importer row; no match: logs a warning
+    * Match found: creates a `ShipmentParty` importer row; (if no match, logs a warning)
+5. CLVS: `logic/logic_discovery/clvs_eligibility.py` - computes eligibility
+
 
 &nbsp;
 
-## Creation Instructions
+---
 
-This context of this project is to add processing for an existing database.  This recreates that state, and then uses **Executable Requirements** (Step E - for more information,  to create the functionality.
+## Appendices
 
-```bash title="Establish Initial State, Execute Requirements"
-# A - Create the project (already done)
-genai-logic create  --project_name=demo_customs --db_url=sqlite:///samples/requirements/customs_demo/database/customs.sqlite
-
-# B - in created project, get the requirements
-$ cp -rv ../samples/requirements/customs_demo/. . | wc -l
-
-# C - use the shared Manager venv (do not create a local project .venv)
-source ../venv/bin/activate
-
-# D - required hardening for delete integrity (no orphans after parent delete via API):
-in database/models.py, add ORM relationship cascade on Shipment child lists
-(pattern: relationship(cascade="all, delete", back_populates="...")).
-Apply to:
-   Shipment.PieceList
-   Shipment.ShipmentCommodityList
-   Shipment.SpecialHandlingList
-   Shipment.ShipmentPartyList
-
-# E - ask Copilot to create the system by implementing the requirements
-implement req docs/requirements/customs_demo
-```
-
-&nbsp;
-
-# Appendices
-
-## 2-message Pattern
+### 2-message Pattern
 
 **Duplicate policy** — default is `replace`: an existing `Shipment` graph is deleted (ORM cascade) and the new parsed graph inserted. Set env var `ISDC_DUPLICATE_POLICY=fail` to raise an error on duplicate `LOCAL_SHIPMENT_OID_NBR` instead.
 
@@ -126,7 +164,7 @@ The 2-message design solves this cleanly: Kafka acts as the durable commit bound
 
 &nbsp;
 
-## Replace and Match Example
+### Replace and Match Example
 
 ```bash title="Process Shipment - no match"
 curl 'http://localhost:5656/consume_debug/isdc?file=docs/requirements/customs_demo/message_formats/demo-01-no-match.xml'

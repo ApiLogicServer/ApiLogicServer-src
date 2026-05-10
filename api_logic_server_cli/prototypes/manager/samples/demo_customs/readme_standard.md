@@ -29,10 +29,11 @@ See readme files under api, logic and security.
 
 # 🚀 Quick Start
 
-**Bootstrap Copilot by pasting the following into the chat:**
+**🤖 Bootstrap your AI assistant** by pasting the following into the chat:
 ```
 Please load `.github/.copilot-instructions.md`.
 ```
+> Use Agent mode (not Ask). Works with GitHub Copilot or Claude Code extension — we get consistently good results with Claude Sonnet 4.6.
 
 <br>
 

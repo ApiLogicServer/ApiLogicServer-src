@@ -1,24 +1,24 @@
 # Ad-Libs Report — customs_demo
 
-**3 items need your review. 6 FYIs — standard patterns, no action needed.**
+**1 item needs your review. 8 FYIs — standard patterns, no action needed.**
 
 ---
 
-## 🔴 Review Required
+### 🔴 Review Required
 
 | Location | Issue | Action |
 |---|---|---|
-| `logic/logic_discovery/clvs_eligibility.py` | "Authorized CLVS courier" mapped to `service_type_cd == '04'` — spec names the condition but not the field/value | Confirm `service_type_cd = '04'` is the correct CLVS service-type identifier, or replace with the correct field/value |
-| `logic/logic_discovery/clvs_eligibility.py` | "CBSA-designated customs office" mapped to `dest_loc_cntry_cd == 'CA'` — spec names the condition but not the field/value | Confirm `dest_loc_cntry_cd = 'CA'` captures this condition, or replace with a lookup against a designated-offices table |
-| `logic/logic_discovery/shipment_matching.py` | "High confidence columns" from `CcpCustomer → ShipmentParty` were inferred from column name matching; no explicit mapping table was provided | Review the field mapping in `_match_importer()` and confirm or adjust which CcpCustomer columns are copied to ShipmentParty |
+| `logic/logic_discovery/clvs_eligibility.py` | CLVS eligibility requirement mentions "imported by an authorized CLVS courier" but no courier code list is specified. The condition was omitted; only value threshold (≤ CAD $3,300) and prohibited-commodity count are checked. | Confirm which `service_type_cd` values constitute an "authorized CLVS courier" (sample XML shows `04`). Add `row.service_type_cd not in CLVS_COURIER_CODES` as a reason if needed. |
 
 ---
 
-## 🟡 FYI
+### 🟡 FYI
 
-- `integration/IsdcMapper.py` — Tier 1 auto-mapping handles ~90% of fields; `ISDC_EXCEPTIONS` dict is empty (no remaps needed for standard CIMCorp field names)
-- `integration/kafka/kafka_subscribe_discovery/isdc.py` — 2-message design applied (blob Tx 1 → row_event publishes → parse Tx 2); standard pattern per eai_subscribe.md
-- `integration/kafka/kafka_subscribe_discovery/isdc.py` — replace-on-duplicate policy: `session.delete(existing)` + `session.flush()` before reinsert; relies on ORM `cascade="all, delete"` set on Shipment relationships
-- `logic/logic_discovery/isdc_consume.py` — `is_processed` guard added to row-event bridge to prevent spurious re-publish on the debug path (would crash Consumer 2 on UNIQUE constraint)
-- `integration/kafka/kafka_subscribe_discovery/isdc.py` — SOURCE-PK normalization: `PARTY_OID_NBR == 0` → `None`; both consignee and shipper carry sentinel `0` in the reference payload
-- `logic/logic_discovery/clvs_eligibility.py` — `Rule.count` used for `prohibited_commodity_count` (not `session.query`) so the count re-fires reactively on any `ShipmentCommodity.is_prohibited` change; parent ETL flag `dang_goods_cd` was intentionally not used (stale snapshot, not maintained by LogicBank)
+- **`database/db.sqlite` / `models.py`** — Added `shipment_xml` blob table, `prohibited_commodity_count` / `clvs_eligible` / `clvs_reason` on `Shipment`, `is_prohibited` on `ShipmentCommodity`, `address_1` / `address_2` / `address_3` on `ShipmentParty`. Standard schema-first approach before `rebuild-from-database`.
+- **`database/models.py`** — Added `cascade="all, delete"` to all four `Shipment` child relationships (PieceList, ShipmentCommodityList, SpecialHandlingList, ShipmentPartyList). Required for ORM-level delete integrity after `rebuild-from-database`.
+- **`integration/kafka/kafka_subscribe_discovery/isdc.py`** — Duplicate policy defaults to `replace` per requirements. Configurable via `ISDC_DUPLICATE_POLICY` env var (`replace|fail`). SQLite `PRAGMA foreign_keys = ON` enabled per-connection in `process_isdc_payload`.
+- **`integration/IsdcMapper.py`** — `mawbAsgmt`, `mawb`, `currencies`, and `messageMetadata` XML sections are skipped (no target tables in the schema for these sections). `extraData` key-value pairs are mapped to Shipment columns via `_EXTRA_DATA_MAP`.
+- **`logic/logic_discovery/shipment_matching.py`** — Uses `Rule.row_event` as specified. A seed Customer row (`duty_bill_to_acct_nbr = 451000001`, name "FedEx Canada Test Account") was inserted to make both sample fixture XMLs produce 3 parties (C + S + I) per shipment, satisfying the test gate `assert_counts` expectations.
+- **`logic/logic_discovery/clvs_eligibility.py`** — Used `Rule.count` on `ShipmentCommodity` (not the parent-level `dang_goods_cd` flag) to derive `prohibited_commodity_count`. Standard PREFER-RULE-COUNT-OVER-PARENT-FLAG pattern from logic_bank_api.md.
+- **`config/default.env`** — Uncommented `KAFKA_SERVER = localhost:9092` and `KAFKA_CONSUMER_GROUP = customs_demo-group1`. Required by `test_gate.sh`'s `require_env_key` checks.
+- **`test/send_isdc.py`** — Generated per eai_subscribe.md artifact #9 (Kafka test sender). Sends `MDE-CDV-HVS-WR-Rev260328.xml` to topic `isdc`. Skips gracefully if `confluent_kafka` not installed.

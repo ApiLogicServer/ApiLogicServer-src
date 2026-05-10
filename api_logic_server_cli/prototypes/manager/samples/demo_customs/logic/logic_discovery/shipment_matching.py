@@ -1,57 +1,38 @@
 """
-Logic discovery: Shipment matching (Phase 2).
-
-On Shipment insert, look up the matching CcpCustomer using:
-    Shipment.trprt_bill_to_acct_nbr == CcpCustomer.duty_bill_to_acct_nbr
+On Shipment insert, look up the matching Customer using:
+    Shipment.trprt_bill_to_acct_nbr == Customer.duty_bill_to_acct_nbr
 
 If no match: log a warning, do nothing.
-If match found: create a ShipmentParty row, matching high confidence columns
-from CcpCustomer to ShipmentParty.
-Use Rule.row_event (not early_row_event) — fires before_flush so the new
-ShipmentParty writes atomically with the parent Shipment.
+If match found: create a ShipmentParty row with shipment_party_type_cd="I" (importer).
 """
-
-import logging
 
 from logic_bank.logic_bank import Rule
 from logic_bank.exec_row_logic.logic_row import LogicRow
 from database import models
 
-app_logger = logging.getLogger("api_logic_server_app")
 
-
-def _match_importer(row: models.Shipment, old_row, logic_row: LogicRow):
+def _match_importer(row: models.Shipment, old_row: models.Shipment, logic_row: LogicRow):
     if not logic_row.is_inserted():
         return
-    if not row.trprt_bill_to_acct_nbr:
+    # Extract to local variable before session.query to avoid LB scanner confusion
+    trprt_acct = row.trprt_bill_to_acct_nbr
+    if not trprt_acct:
         return
-
     session = logic_row.session
-    ccp = (
-        session.query(models.CcpCustomer)
-        .filter(models.CcpCustomer.duty_bill_to_acct_nbr == row.trprt_bill_to_acct_nbr)
-        .first()
-    )
-    if ccp is None:
-        app_logger.warning(
-            f"shipment_matching: no CcpCustomer match for trprt_bill_to_acct_nbr={row.trprt_bill_to_acct_nbr}"
-        )
+    customer = session.query(models.Customer).filter(
+        models.Customer.duty_bill_to_acct_nbr == trprt_acct
+    ).first()
+    if customer is None:
+        logic_row.log(f"shipment_matching: no customer for trprt_bill_to_acct_nbr={trprt_acct}")
         return
-
     party = models.ShipmentParty()
-    party.shipment_party_type_cd = "I"   # Importer
-    party.company_nm             = ccp.name
-    party.city_nm                = ccp.city
-    party.state_cd               = ccp.state
-    party.country_cd             = ccp.country
-    party.postal_cd              = ccp.postal
-    party.contact_phone_nbr      = ccp.phone_nbr
-    party.customs_id_cd          = ccp.business_nbr
-    party.customer_acct_nbr      = ccp.duty_bill_to_acct_nbr
-    party.broker_id_cd           = ccp.broker_cd
-
+    party.shipment_party_type_cd = 'I'
+    party.company_nm = customer.name
+    party.country_cd = customer.country
+    party.customer_acct_nbr = customer.customeroid
+    party.business_nbr = customer.business_nbr
     row.ShipmentPartyList.append(party)
-    logic_row.log(f"shipment_matching: matched CcpCustomer id={ccp.id} → ShipmentParty type=I")
+    logic_row.log(f"shipment_matching: created importer party for customer={customer.name}")
 
 
 def declare_logic():

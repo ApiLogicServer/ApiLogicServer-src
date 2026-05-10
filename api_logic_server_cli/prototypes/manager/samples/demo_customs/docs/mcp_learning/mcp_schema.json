@@ -5,8 +5,8 @@
     "description": "API Logic Project: demo_customs",
     "resources": [
         {
-            "name": "CcpCustomer",
-            "path": "/CcpCustomer",
+            "name": "Customer",
+            "path": "/Customer",
             "methods": [
                 "GET",
                 "PATCH",
@@ -324,7 +324,10 @@
                 "portofexit",
                 "portofentry",
                 "warehousecode",
-                "surface_intl_shipment_nbr"
+                "surface_intl_shipment_nbr",
+                "prohibited_commodity_count",
+                "clvs_eligible",
+                "clvs_reason"
             ],
             "filterable": [
                 "local_shipment_oid_nbr",
@@ -465,7 +468,10 @@
                 "portofexit",
                 "portofentry",
                 "warehousecode",
-                "surface_intl_shipment_nbr"
+                "surface_intl_shipment_nbr",
+                "prohibited_commodity_count",
+                "clvs_eligible",
+                "clvs_reason"
             ]
         },
         {
@@ -503,7 +509,8 @@
                 "unit_of_measure_cd",
                 "classification_status_desc",
                 "classification_status_cd",
-                "part_expiration_dt"
+                "part_expiration_dt",
+                "is_prohibited"
             ],
             "filterable": [
                 "local_shipment_oid_nbr",
@@ -531,7 +538,8 @@
                 "unit_of_measure_cd",
                 "classification_status_desc",
                 "classification_status_cd",
-                "part_expiration_dt"
+                "part_expiration_dt",
+                "is_prohibited"
             ]
         },
         {
@@ -575,7 +583,10 @@
                 "cfia_account_nbr",
                 "fax_nbr",
                 "pref_cont_mthd_cd",
-                "additional_contact_flg"
+                "additional_contact_flg",
+                "address_1",
+                "address_2",
+                "address_3"
             ],
             "filterable": [
                 "shipment_party_oid_nbr",
@@ -609,7 +620,32 @@
                 "cfia_account_nbr",
                 "fax_nbr",
                 "pref_cont_mthd_cd",
-                "additional_contact_flg"
+                "additional_contact_flg",
+                "address_1",
+                "address_2",
+                "address_3"
+            ]
+        },
+        {
+            "name": "ShipmentXml",
+            "path": "/ShipmentXml",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "received_at",
+                "payload",
+                "is_processed"
+            ],
+            "filterable": [
+                "id",
+                "received_at",
+                "payload",
+                "is_processed"
             ]
         },
         {

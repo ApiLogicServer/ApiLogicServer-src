@@ -1,107 +1,91 @@
 """
-ISDC Kafka Consumer — CIMCorpShipment XML → Shipment domain graph.
+ISDC Kafka Consumer — CIMCorp Shipment XML → Domain DB
 
 Basic Design:
-  1. integration/kafka/kafka_subscribe_discovery/isdc.py  (this file)
-       Consumer 1: reads raw message, saves to ShipmentXml blob (Tx 1)
+  1. integration/kafka/kafka_subscribe_discovery/isdc.py  - isdc consumer
+       reads message, inserts raw payload into ShipmentXml blob (Tx 1)
   2. logic/logic_discovery/isdc_consume.py
-       after_flush_row_event: blob insert → publishes payload to topic isdc_processed
-  3. integration/kafka/kafka_subscribe_discovery/isdc.py  (Consumer 2: isdc_processed)
-       Parses XML → Shipment domain graph, applies duplicate policy, commits (Tx 2)
+       insert → publishes payload to topic: isdc_processed
+  3. integration/kafka/kafka_subscribe_discovery/isdc.py  - isdc_processed consumer
+       parses payload → domain rows (Tx 2); replace-on-duplicate by default
   4. api/api_discovery/isdc_kafka_consume_debug.py
-       /consume_debug/isdc  — bypasses Kafka, calls process_isdc_payload() directly
+       /consume_debug/isdc bypasses Kafka, calls same parse function directly
 
-Duplicate policy (env: ISDC_DUPLICATE_POLICY, default "replace"):
-  replace — delete existing Shipment + cascade children, reinsert parsed graph
-  fail    — raise ValueError on duplicate LOCAL_SHIPMENT_OID_NBR
+Creating prompt:
+  Subscribe to Kafka topic `isdc` (CIMCorp XML). Parse and persist to
+  Shipment + Piece + ShipmentParty + ShipmentCommodity + SpecialHandling +
+  VirtualRouteLeg using field mappings in message_formats/Classify_Entity_Details.csv.
 
-Debug (no Kafka required):
-  export APILOGICPROJECT_CONSUME_DEBUG=true  (already set in config/default.env)
-  F5 to start server, then:
+Debug test (no Kafka required):
   curl 'http://localhost:5656/consume_debug/isdc?file=docs/requirements/customs_demo/message_formats/MDE-CDV-HVS-WR-Rev260328.xml'
 
 Live Kafka:
-  Uncomment KAFKA_SERVER + KAFKA_CONSUMER_GROUP in config/default.env:
-    KAFKA_SERVER = localhost:9092
-    KAFKA_CONSUMER_GROUP = customs_demo-group1
-  docker compose -f integration/kafka/dockercompose_start_kafka.yml up -d
-  bash integration/kafka/isdc_reset.sh
-  python test/send_isdc.py
+  1. Edit config/default.env: uncomment KAFKA_SERVER + KAFKA_CONSUMER_GROUP
+  2. docker compose -f integration/kafka/dockercompose_start_kafka.yml up -d
+  3. bash integration/kafka/isdc_reset.sh
+  4. python api_logic_server_run.py
+  5. python test/send_isdc.py
 
-Test files:
-  docs/requirements/customs_demo/message_formats/MDE-CDV-HVS-WR-Rev260328.xml  (primary)
-  docs/requirements/customs_demo/message_formats/MDE-CDV-HVS-WR-Rev260328-another.xml
+Duplicate policy (env var ISDC_DUPLICATE_POLICY):
+  replace (default) — delete + reinsert on same LOCAL_SHIPMENT_OID_NBR
+  fail             — raise error on duplicate
+
+SQLite FK enforcement: enabled per-connection in process_isdc_payload.
 """
 
 import logging
 import os
 import safrs
 from database import models
-from sqlalchemy import event
-from sqlalchemy.engine import Engine
-import sqlite3
+from integration.IsdcMapper import parse
 
 logger = logging.getLogger('integration.kafka')
 
-_DUPLICATE_POLICY = os.getenv('ISDC_DUPLICATE_POLICY', 'replace').lower()
-
-# Enable SQLite FK enforcement so ON DELETE CASCADE fires on db-level deletes
-@event.listens_for(Engine, "connect")
-def _set_sqlite_pragma(dbapi_connection, connection_record):
-    if isinstance(dbapi_connection, sqlite3.Connection):
-        cursor = dbapi_connection.cursor()
-        cursor.execute("PRAGMA foreign_keys=ON")
-        cursor.close()
+DUPLICATE_POLICY = os.environ.get('ISDC_DUPLICATE_POLICY', 'replace').lower()
 
 
 def process_isdc_payload(payload: str, session, blob_id: int = None):
     """
-    Parse ISDC XML payload → persist Shipment domain graph.
-    Called by both Consumer 2 (Kafka) and /consume_debug (no-Kafka debug).
+    Parse CIMCorp XML payload, persist domain rows, mark blob processed.
 
-    blob_id=None  → debug path: creates blob inline in this Tx (is_processed=True)
-    blob_id set   → Kafka path: fetches existing blob and flips is_processed=True
+    blob_id=None (debug path): blob created inside this function in the same Tx.
+    blob_id set  (Kafka path): existing blob fetched and is_processed set to True.
     """
-    from integration.IsdcMapper import parse
+    # Enable FK enforcement for this connection (SQLite)
+    session.execute(safrs.DB.text("PRAGMA foreign_keys = ON"))
 
-    parent_row, extras = parse(payload)
-    if parent_row is None:
-        raise ValueError("No <ns2:shipment> element found in ISDC payload")
+    shipment_row, children = parse(payload)
 
-    # Guard: parse() must return plain model rows
-    for row in extras:
-        if not hasattr(row, '__tablename__'):
-            raise TypeError(f"parse() must return list[model_instance]; got {type(row).__name__}")
-
-    # Attach child rows via parent relationships (mandatory — standalone session.add raises Missing Parent)
-    for row in extras:
-        if isinstance(row, models.Piece):
-            parent_row.PieceList.append(row)
-        elif isinstance(row, models.ShipmentCommodity):
-            parent_row.ShipmentCommodityList.append(row)
-        elif isinstance(row, models.SpecialHandling):
-            parent_row.SpecialHandlingList.append(row)
-        elif isinstance(row, models.ShipmentParty):
-            parent_row.ShipmentPartyList.append(row)
-        elif isinstance(row, models.VirtualRouteLeg):
-            session.add(row)   # VirtualRouteLeg has no FK to Shipment
-
-    # Duplicate policy
-    existing = session.get(models.Shipment, parent_row.local_shipment_oid_nbr)
-    if existing is not None:
-        if _DUPLICATE_POLICY == 'fail':
-            raise ValueError(
-                f"Duplicate shipment: LOCAL_SHIPMENT_OID_NBR={parent_row.local_shipment_oid_nbr} "
-                f"(set ISDC_DUPLICATE_POLICY=replace to overwrite)"
-            )
-        # replace: delete existing graph (ORM cascade removes children), flush, then insert
-        logger.info(f"process_isdc_payload: replacing existing shipment {parent_row.local_shipment_oid_nbr}")
+    # Duplicate handling
+    pk = shipment_row.local_shipment_oid_nbr
+    existing = session.get(models.Shipment, pk) if pk else None
+    if existing:
+        if DUPLICATE_POLICY == 'fail':
+            raise ValueError(f"Duplicate shipment: LOCAL_SHIPMENT_OID_NBR={pk}")
+        # replace: delete cascades to Piece, ShipmentParty, ShipmentCommodity, SpecialHandling
         session.delete(existing)
         session.flush()
 
-    session.add(parent_row)
+    # Attach children via relationships (mandatory per eai_subscribe.md)
+    for piece in children['pieces']:
+        shipment_row.PieceList.append(piece)
 
-    if blob_id is not None:
+    for party in children['parties']:
+        shipment_row.ShipmentPartyList.append(party)
+
+    for commodity in children['commodities']:
+        shipment_row.ShipmentCommodityList.append(commodity)
+
+    for sh in children['special_handling']:
+        shipment_row.SpecialHandlingList.append(sh)
+
+    session.add(shipment_row)
+
+    # VirtualRouteLeg has no FK to Shipment — add directly
+    for leg in children['route_legs']:
+        session.add(leg)
+
+    if blob_id:
         blob = session.get(models.ShipmentXml, blob_id)
         if blob:
             blob.is_processed = True
@@ -111,11 +95,16 @@ def process_isdc_payload(payload: str, session, blob_id: int = None):
 
     session.commit()
 
-    pieces      = len([r for r in extras if isinstance(r, models.Piece)])
-    parties     = len([r for r in extras if isinstance(r, models.ShipmentParty)])
-    commodities = len([r for r in extras if isinstance(r, models.ShipmentCommodity)])
-
-    return parent_row, blob, {"pieces": pieces, "parties": parties, "commodities": commodities}
+    awb = shipment_row.awb_nbr
+    pieces = len(children['pieces'])
+    parties = len(children['parties'])
+    commodities = len(children['commodities'])
+    return shipment_row, blob, {
+        'awb_nbr': awb,
+        'pieces': pieces,
+        'parties': parties,
+        'commodities': commodities,
+    }
 
 
 def register(bus):
@@ -123,20 +112,27 @@ def register(bus):
 
     @bus.handle('isdc')
     def isdc(msg, safrs_api):
-        """Consumer 1: save raw XML blob, commit. row_event publishes to isdc_processed."""
+        """Consumer 1: save blob, commit. row_event publishes to isdc_processed."""
         with safrs_api.app.app_context():
             session = safrs.DB.session
-            blob = models.ShipmentXml(payload=msg.value().decode('utf-8'), is_processed=False)
+            blob = models.ShipmentXml(
+                payload=msg.value().decode('utf-8'),
+                is_processed=False,
+            )
             session.add(blob)
-            session.commit()   # blob.id assigned; after_flush_row_event publishes to isdc_processed
+            session.commit()
 
     @bus.handle('isdc_processed')
     def isdc_processed(msg, safrs_api):
-        """Consumer 2: parse XML + persist domain graph, mark blob processed (Tx 2)."""
+        """Consumer 2: parse + persist domain rows, mark blob processed (Tx 2)."""
         with safrs_api.app.app_context():
             session = safrs.DB.session
             blob_id = int(msg.key().decode('utf-8')) if msg.key() else None
             try:
-                process_isdc_payload(msg.value().decode('utf-8'), session, blob_id=blob_id)
+                process_isdc_payload(
+                    msg.value().decode('utf-8'),
+                    session,
+                    blob_id=blob_id,
+                )
             except Exception:
                 logger.exception(f"isdc_processed parse error (blob_id={blob_id})")

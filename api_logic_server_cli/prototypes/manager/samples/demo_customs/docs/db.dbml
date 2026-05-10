@@ -2,7 +2,7 @@
 // Or, https://databasediagram.com/app
 // Or, view in VSCode with extension: "DBML Live Preview"
 
-Table CcpCustomer {
+Table Customer {
     id INTEGER [primary key]
     name VARCHAR(50) 
     address1 VARCHAR(50) 
@@ -220,6 +220,9 @@ Table Shipment {
     portofentry VARCHAR(6) 
     warehousecode VARCHAR(6) 
     surface_intl_shipment_nbr NUMERIC 
+    prohibited_commodity_count INTEGER 
+    clvs_eligible INTEGER 
+    clvs_reason TEXT 
     }
 
 Table ShipmentCommodity {
@@ -249,6 +252,7 @@ Table ShipmentCommodity {
     classification_status_desc VARCHAR(200) 
     classification_status_cd VARCHAR(10) 
     part_expiration_dt DATE 
+    is_prohibited INTEGER 
     }
 
 Table ShipmentParty {
@@ -284,6 +288,16 @@ Table ShipmentParty {
     fax_nbr VARCHAR(15) 
     pref_cont_mthd_cd VARCHAR(2) 
     additional_contact_flg VARCHAR(1) 
+    address_1 TEXT 
+    address_2 TEXT 
+    address_3 TEXT 
+    }
+
+Table ShipmentXml {
+    id INTEGER [primary key]
+    received_at DATETIME 
+    payload TEXT 
+    is_processed INTEGER 
     }
 
 Table SpecialHandling {

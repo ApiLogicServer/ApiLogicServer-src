@@ -1,7 +1,6 @@
 # coding: utf-8
 from sqlalchemy import DECIMAL, DateTime  # API Logic Server GenAI assist
-from sqlalchemy import Boolean, Column, DECIMAL, Date, DateTime, Float, ForeignKey, Integer, Numeric, String, Text, text
-from datetime import datetime
+from sqlalchemy import Column, DECIMAL, Date, DateTime, Float, ForeignKey, Integer, Numeric, String, Text, text
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -11,7 +10,7 @@ from sqlalchemy.ext.declarative import declarative_base
 # Alter this file per your database maintenance policy
 #    See https://apilogicserver.github.io/Docs/Project-Rebuild/#rebuilding
 #
-# Created:  April 30, 2026 11:40:14
+# Created:  May 10, 2026 12:36:18
 # Database: sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-logic/demo_customs/database/db.sqlite
 # Dialect:  sqlite
 #
@@ -45,24 +44,9 @@ else:
 
 
 
-class ShipmentXml(Base):  # type: ignore
-    __tablename__ = 'shipment_xml'
-    _s_collection_name = 'ShipmentXml'  # type: ignore
-
-    id           = Column(Integer, primary_key=True)
-    received_at  = Column(DateTime, default=datetime.utcnow)
-    payload      = Column(Text, nullable=False)
-    is_processed = Column(Boolean, default=False)
-
-    # parent relationships (access parent)
-
-    # child relationships (access children)
-
-
-
-class CcpCustomer(Base):  # type: ignore
-    __tablename__ = 'ccp_customer'
-    _s_collection_name = 'CcpCustomer'  # type: ignore
+class Customer(Base):  # type: ignore
+    __tablename__ = 'customer'
+    _s_collection_name = 'Customer'  # type: ignore
 
     id = Column(Integer, primary_key=True)
     name = Column(String(50))
@@ -241,8 +225,8 @@ class Shipment(Base):  # type: ignore
     warehousecode = Column(String(6))
     surface_intl_shipment_nbr = Column(Numeric)
     prohibited_commodity_count = Column(Integer, server_default=text("0"))
-    clvs_eligible              = Column(Integer, server_default=text("0"))
-    clvs_reason                = Column(Text)
+    clvs_eligible = Column(Integer, server_default=text("0"))
+    clvs_reason = Column(Text)
 
     # parent relationships (access parent)
 
@@ -251,6 +235,21 @@ class Shipment(Base):  # type: ignore
     ShipmentCommodityList : Mapped[List["ShipmentCommodity"]] = relationship(cascade="all, delete", back_populates="shipment")
     SpecialHandlingList : Mapped[List["SpecialHandling"]] = relationship(cascade="all, delete", back_populates="shipment")
     ShipmentPartyList : Mapped[List["ShipmentParty"]] = relationship(cascade="all, delete", back_populates="shipment")
+
+
+
+class ShipmentXml(Base):  # type: ignore
+    __tablename__ = 'shipment_xml'
+    _s_collection_name = 'ShipmentXml'  # type: ignore
+
+    id = Column(Integer, primary_key=True)
+    received_at = Column(DateTime)
+    payload = Column(Text, nullable=False)
+    is_processed = Column(Integer, server_default=text("0"))
+
+    # parent relationships (access parent)
+
+    # child relationships (access children)
 
 
 
@@ -401,7 +400,7 @@ class ShipmentCommodity(Base):  # type: ignore
     classification_status_desc = Column(String(200))
     classification_status_cd = Column(String(10))
     part_expiration_dt = Column(Date)
-    is_prohibited      = Column(Integer, server_default=text("0"))
+    is_prohibited = Column(Integer, server_default=text("0"))
     allow_client_generated_ids = True
 
     # parent relationships (access parent)
@@ -465,6 +464,9 @@ class ShipmentParty(Base):  # type: ignore
     fax_nbr = Column(String(15))
     pref_cont_mthd_cd = Column(String(2))
     additional_contact_flg = Column(String(1), server_default=text("'N'"))
+    address_1 = Column(Text)
+    address_2 = Column(Text)
+    address_3 = Column(Text)
 
     # parent relationships (access parent)
     piece : Mapped["Piece"] = relationship(back_populates=("ShipmentPartyList"))

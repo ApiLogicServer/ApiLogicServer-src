@@ -1,0 +1,222 @@
+about:
+  date: May 10, 2026 12:13:48
+  merged:
+    at: May 10, 2026 12:14:11
+    new_attributes: 'SysConfig.effective_date SysConfig.program_code SysConfig.pc_number '
+    new_resources: 'CountryOrigin CustomsEntry Province HsCodeRate SurtaxLineItem '
+    new_tab_groups: 'SysConfig.CustomsEntryList '
+  recent_changes: works with modified safrs-react-admin
+  version: 0.0.0
+api_root: '{http_type}://{swagger_host}:{port}/{api}'
+authentication: '{system-default}'
+info:
+  number_relationships: 0
+  number_tables: 1
+info_toggle_checked: true
+resources:
+  CountryOrigin:
+    attributes:
+    - label: ' country_name*'
+      name: country_name
+      required: true
+      search: true
+      sort: true
+    - name: country_code
+      required: true
+    - name: surtax_rate
+      required: true
+    - name: id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - country_origin_id
+      name: CustomsEntryList
+      resource: CustomsEntry
+    type: CountryOrigin
+    user_key: country_name
+  CustomsEntry:
+    attributes:
+    - label: ' importer_name*'
+      name: importer_name
+      search: true
+      sort: true
+    - name: country_origin_id
+      required: true
+    - name: province_id
+      required: true
+    - name: sys_config_id
+    - name: entry_number
+      required: true
+    - name: ship_date
+      required: true
+    - name: effective_date
+    - name: program_code
+    - name: pc_number
+    - name: country_surtax_rate
+    - name: province_tax_rate
+    - name: surtax_applicable
+      required: true
+    - name: total_customs_value
+      required: true
+    - name: total_duty_amount
+      required: true
+    - name: total_surtax_amount
+      required: true
+    - name: duty_paid_value
+      required: true
+    - name: sales_tax_amount
+      required: true
+    - name: total_tax_due
+      required: true
+    - name: id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - customs_entry_id
+      name: SurtaxLineItemList
+      resource: SurtaxLineItem
+    - direction: toone
+      fks:
+      - country_origin_id
+      name: country_origin
+      resource: CountryOrigin
+    - direction: toone
+      fks:
+      - province_id
+      name: province
+      resource: Province
+    - direction: toone
+      fks:
+      - sys_config_id
+      name: sys_config
+      resource: SysConfig
+    type: CustomsEntry
+    user_key: importer_name
+  HsCodeRate:
+    attributes:
+    - label: ' description*'
+      name: description
+      search: true
+      sort: true
+    - name: hs_code
+      required: true
+    - name: base_duty_rate
+      required: true
+    - name: is_steel_derivative
+      required: true
+    - name: id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - hs_code_id
+      name: SurtaxLineItemList
+      resource: SurtaxLineItem
+    type: HsCodeRate
+    user_key: description
+  Province:
+    attributes:
+    - label: ' province_name*'
+      name: province_name
+      required: true
+      search: true
+      sort: true
+    - name: province_code
+      required: true
+    - name: tax_rate
+      required: true
+    - name: id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - province_id
+      name: CustomsEntryList
+      resource: CustomsEntry
+    type: Province
+    user_key: province_name
+  SurtaxLineItem:
+    attributes:
+    - label: ' description*'
+      name: description
+      search: true
+      sort: true
+    - name: customs_entry_id
+      required: true
+    - name: hs_code_id
+      required: true
+    - name: customs_value
+      required: true
+    - name: base_duty_rate
+    - name: country_surtax_rate
+    - name: surtax_applicable
+      required: true
+    - name: base_duty_amount
+      required: true
+    - name: surtax_amount
+      required: true
+    - name: id
+    tab_groups:
+    - direction: toone
+      fks:
+      - customs_entry_id
+      name: customs_entry
+      resource: CustomsEntry
+    - direction: toone
+      fks:
+      - hs_code_id
+      name: hs_code
+      resource: HsCodeRate
+    type: SurtaxLineItem
+    user_key: description
+  SysConfig:
+    attributes:
+    - label: ' name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+    - name: discount_rate
+    - name: tax_rate
+    - name: notes
+    - name: id
+    - name: effective_date
+    - name: program_code
+    - name: pc_number
+    tab_groups:
+    - direction: tomany
+      fks:
+      - sys_config_id
+      name: CustomsEntryList
+      resource: CustomsEntry
+    type: SysConfig
+    user_key: name
+settings:
+  HomeJS: /admin-app/home.js
+  max_list_columns: 8
+  style_guide:
+    applicationLocales:
+    - en
+    - es
+    currency_symbol: $
+    currency_symbol_position: left
+    date_format: LL
+    decimal_max: '1000000000'
+    decimal_min: '2'
+    decimal_separator: .
+    detail_mode: tab
+    edit_on_mode: dblclick
+    exclude_listpicker: false
+    include_translation: 'false'
+    keycloak_client_id: alsclient
+    keycloak_realm: kcals
+    keycloak_url: http://localhost:8080
+    locale: en
+    max_decimal_digits: '4'
+    min_decimal_digits: '2'
+    new_mode: dialog
+    pick_style: list
+    row_height: small,
+    serviceType: JSONAPI
+    startSessionPath: /auth/login
+    style: light
+    thousand_separator: ','
+    use_keycloak: 'false'

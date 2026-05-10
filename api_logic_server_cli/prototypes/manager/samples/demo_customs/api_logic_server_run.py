@@ -32,8 +32,8 @@
 #
 ###############################################################################
 
-api_logic_server__version = '17.00.06'
-api_logic_server_created__on = 'April 30, 2026 11:40:14'
+api_logic_server__version = '17.00.19'
+api_logic_server_created__on = 'May 10, 2026 12:30:15'
 api_logic_server__host = 'localhost'
 api_logic_server__port = '5656'
 
@@ -46,6 +46,7 @@ if os.environ.get("APILOGICPROJECT_DEBUG", "False") == "True":
     print(f"\nPython interpreter: {sys.executable}\n")
 
 import logging, logging.config, yaml  # failure here means venv probably not set
+
 from flask_sqlalchemy import SQLAlchemy
 import json
 from pathlib import Path
@@ -66,6 +67,28 @@ declare_logic_message = ""
 declare_security_message = "ALERT:  *** Security Not Enabled ***"
 
 os.chdir(project_dir)  # so admin app can find images, code
+
+# rotate log on startup: als.log -> als.log.1 (keeps one prior run)
+_log_file = Path(project_dir) / "logs" / "als.log"
+_log_file.parent.mkdir(exist_ok=True)
+if _log_file.exists():
+    _log_backup = _log_file.with_suffix(".log.1")
+    try:
+        if _log_backup.exists():
+            _log_backup.unlink()  # Remove old backup
+        _log_file.rename(_log_backup)
+    except (OSError, PermissionError):
+        pass  # Skip rotation if file is locked (e.g., debugger restart)
+from datetime import datetime as _dt
+_log_file.write_text(
+    f"=== Server Start: {_dt.now().strftime('%Y-%m-%d %H:%M:%S')} ===\n"
+    f"    Project : {project_name}\n"
+    f"    Version : {api_logic_server__version}\n"
+    f"    Python  : {sys.executable}\n"
+    f"    Dir     : {project_dir}\n"
+    f"{'=' * 50}\n\n"
+)
+
 import api.system.api_utils as api_utils
 logic_logger_activate_debug = False
 """ True prints all rules on startup """
@@ -125,7 +148,7 @@ server_setup.api_logic_server_setup(flask_app, args)
 AdminLoader.admin_events(flask_app = flask_app, args = args, validation_error = ValidationError)
 
 if __name__ == "__main__":
-    msg = f'API Logic Project loaded (not WSGI), version: 17.00.06\n'
+    msg = f'API Logic Project loaded (not WSGI), version: 17.00.19\n'
     msg += f'.. startup message: {start_up_message}\n'
     if server_setup.is_docker():
         msg += f' (running from docker container at flask_host: {args.flask_host} - may require refresh)\n'
@@ -158,7 +181,7 @@ if __name__ == "__main__":
 
     flask_app.run(host=args.flask_host, threaded=True, port=args.port)
 else:
-    msg = f'API Logic Project Loaded (WSGI), version 17.00.06\n'
+    msg = f'API Logic Project Loaded (WSGI), version 17.00.19\n'
     msg += f'.. startup message: {start_up_message}\n'
 
     if server_setup.is_docker():

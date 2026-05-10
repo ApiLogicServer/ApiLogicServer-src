@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Reset ISDC domain tables for repeatable XR/CE test runs.
+# Reset ISDC domain tables for repeatable test runs.
 # Run from project root: bash integration/kafka/isdc_reset_db.sh
 
 set -e

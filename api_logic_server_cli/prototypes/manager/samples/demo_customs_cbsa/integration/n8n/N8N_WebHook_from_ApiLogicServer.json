@@ -1,0 +1,394 @@
+{
+  "name": "WebHook from ApiLogicServer",
+  "nodes": [
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        920,
+        0
+      ],
+      "id": "37d950b1-e8bb-4c43-8d5c-2c4ef238e632",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "content": "ApiLogicServer calls the Webhook using a logic rule on Insert - send different emails using SendGrid based on type"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -420,
+        -20
+      ],
+      "id": "2617783e-ae85-4e56-816b-eb871146ce2c",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.headers.wh_entity }}",
+                    "rightValue": "Employee",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Employee"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "32eaf447-bd76-48b3-b684-db8fff587e75",
+                    "leftValue": "={{ $json.headers.wh_entity }}",
+                    "rightValue": "Customer",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Customer"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b3cae18a-ee33-413d-b342-fd39bc6bcb0d",
+                    "leftValue": "={{ $json.headers.wh_entity }}",
+                    "rightValue": "Order",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Order"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        260,
+        0
+      ],
+      "id": "450d7beb-cd8c-48b3-86d5-33d919863d80",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "resource": "mail",
+        "fromEmail": "info@genai-logic.com",
+        "fromName": "Tyler Band",
+        "toEmail": "={{ $json.data.email }}",
+        "subject": "Test",
+        "contentValue": "=Welcome EMAIL to {{ $json.data.Email }} for Entity {{ $json.headers.wh_entity }}\n{{ $json.data.LastName }} {{ $json.data.FirstName }}\n{{ $json.data.Title }}\n{{ $json.data.Address }}\n{{ $json.data.City }} {{ $json.data.PostalCode }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.sendGrid",
+      "typeVersion": 1,
+      "position": [
+        720,
+        -180
+      ],
+      "id": "ccc1e5ae-523c-4687-9bee-08bbf1dd12cd",
+      "name": "SendGrid Employee",
+      "credentials": {
+        "sendGridApi": {
+          "id": "Jo176FB10nmOOVHa",
+          "name": "SendGrid account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "mail",
+        "fromEmail": "info@genai-logic.com",
+        "fromName": "Tyler Band",
+        "toEmail": "={{ $json.data.email }}",
+        "subject": "Test",
+        "contentValue": "=EMAIL for Entity {{ $json.headers.wh_entity }} from ApiLogicServer\nName: {{ $json.data.CompanyName }}\nAddress: \n{{ $json.data.Address }}\n{{ $json.data.City }} {{ $json.data.PostalCode }} {{ $json.data.Country }}\nPhone: {{ $json.data.Phone }}\nCustomer ID: {{ $json.data.Id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.sendGrid",
+      "typeVersion": 1,
+      "position": [
+        580,
+        0
+      ],
+      "id": "8ee21216-861d-4161-900f-476fd4f6146d",
+      "name": "SendGrid Customer",
+      "credentials": {
+        "sendGridApi": {
+          "id": "Jo176FB10nmOOVHa",
+          "name": "SendGrid account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "mail",
+        "fromEmail": "info@genai-logic.com",
+        "fromName": "Tyler Band",
+        "toEmail": "={{ $json.data.email }}",
+        "subject": "Test",
+        "contentValue": "=Test EMAIL for Entity {{ $json.headers.wh_entity }} from ApiLogicServer\nOrder Date: {{ $json.data[\"Order Date\"] }}\nOrder Id {{ $json.data[\"Order Id\"] }} Total ${{ $json.data[\"Order Total\"] }}\nName on Order: {{ $json.data[\"Customer Name\"] }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.sendGrid",
+      "typeVersion": 1,
+      "position": [
+        580,
+        220
+      ],
+      "id": "017c78ad-360c-4a92-b668-261278d32398",
+      "name": "SendGrid Order",
+      "credentials": {
+        "sendGridApi": {
+          "id": "Jo176FB10nmOOVHa",
+          "name": "SendGrid account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7c3eaac8-c469-4f96-923b-4f9c77946453",
+              "leftValue": "={{ $json.headers.wh_state }}",
+              "rightValue": "ins",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        460,
+        -140
+      ],
+      "id": "dca6455f-a439-443c-8391-d8a85f664821",
+      "name": "If Inserted"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n\n  item.json.data = JSON.parse(item.json.body)\n  item.json.data.email = \"tyler.band@aimicroservice.org\";\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        80,
+        0
+      ],
+      "id": "13a89d57-4248-4f1d-8bfc-38381ef62f46",
+      "name": "Convert Body to JSON"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "002fa0e8-f7aa-4e04-b4e3-e81aa29c6e69",
+        "authentication": "basicAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -140,
+        0
+      ],
+      "id": "019b4be0-7043-4ca6-84e1-e6364d482bde",
+      "name": "Webhook from ApiLogicServer",
+      "webhookId": "002fa0e8-f7aa-4e04-b4e3-e81aa29c6e69",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "h9GtMBSAuNe0F2wW",
+          "name": "Basic Auth credential"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Respond to Webhook": {
+      "main": [
+        []
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "If Inserted",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "SendGrid Customer",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "SendGrid Order",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SendGrid Employee": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SendGrid Customer": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SendGrid Order": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Inserted": {
+      "main": [
+        [
+          {
+            "node": "SendGrid Employee",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert Body to JSON": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook from ApiLogicServer": {
+      "main": [
+        [
+          {
+            "node": "Convert Body to JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "2c9c2ee8-4d7b-4d4c-87c8-bc5229a460af",
+  "meta": {
+    "instanceId": "0b4446ffa01d8d457453f727df1e129603cc16296fab60e155d7bf4ea4ba2a50"
+  },
+  "id": "2jaWeJIoLn8K7IRs",
+  "tags": [
+    {
+      "createdAt": "2024-12-17T19:42:11.359Z",
+      "updatedAt": "2024-12-17T19:42:11.359Z",
+      "id": "lQ0qDvs9q1zBv9Vn",
+      "name": "webhook sendgrid"
+    }
+  ]
+}
