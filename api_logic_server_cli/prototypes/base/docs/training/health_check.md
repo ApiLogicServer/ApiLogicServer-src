@@ -69,6 +69,14 @@ than a 10-table project with 3 rules.
 Count SQLAlchemy model classes in `database/models.py` that are mapped to real
 domain tables (exclude `SysConfig`, auth tables, and any class beginning with `Sys`).
 
+**Exclude lookup tables:** tables with ≤ 2 non-PK columns are narrow reference or junction
+tables (e.g. Region, Territory, Shipper, Union) that rarely have rules and would dilute
+the score. Exclude them from the denominator and list them as `excluded (lookup)` in the
+Coverage Detail section.
+
+This threshold is intentionally conservative — a 3-column table (e.g. Department with
+name + budget) may legitimately have rules and stays in the count.
+
 ### Step 3 — Compute
 
 ```
@@ -85,7 +93,7 @@ coverage_score = weighted_rules / table_count
 | 1.0–1.9 | 🟠 Thin | Mostly constraints only, or low rule density |
 | < 1.0 | 🔴 Weak | Project is largely procedural; rules barely present |
 
-`demo_customs_cbsa` reference: `(3×3 + 8×2 + 2×1) / 5 = 29/5 = 5.8` — Strong.
+`demo_customs_cbsa` reference: `(3×3 + 6×2 + 8×2 + 2×1) / 5 = 39/5 = 7.8` — Strong.
 
 ---
 
@@ -252,7 +260,18 @@ See `docs/training/governance.md` for full policy, thresholds, and manager roll-
 ## Report Format
 
 ```
-## 🩺 Project Vital Signs
+## 🩺 Project Governance Report
+
+## Summary
+
+| Project | Tables | Wtd Rules | Coverage | Integrity | Red Flag | Profile |
+|---|---|---|---|---|---|---|
+| <project_name> | 5 | 29 | **5.8** | **94** | — | 🟡 Strong coverage, 2 findings |
+
+> **Coverage** = weighted rules / domain tables (sum/count=3, formula/copy=2, constraint=1). Target ≥ 3.0 for mature projects.  
+> **Integrity** = 100 minus demerits for anti-patterns: broken dependency tracking, procedural aggregates replacing rules, events that should be rules. Target ≥ 95.  
+> **Red Flag** = 🚨 if ≥ 10 FK tables and zero sum/count rules — team has evidently not adopted aggregation rules.  
+> See `docs/training/governance.md` for full scoring guide.
 
 **Coverage Score: 5.8**  (29 weighted rules / 5 tables)   ✅ Strong
 **Integrity Score: 94**  (2 demerits, 0 reviewed)

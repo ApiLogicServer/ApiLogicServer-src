@@ -18,6 +18,39 @@ Use this document to:
 
 ---
 
+## Sample Project Governance Report Policy
+
+The Manager workspace includes pre-built sample projects (under `samples/`) that
+serve as reference implementations and demonstrations. Health check reports for
+these samples follow a specific policy:
+
+**Samples are authentic system outputs — findings are reported, not fixed.**
+
+- `samples/portfolio_governance_report.md` — cross-project summary, run against all samples
+- `samples/nw_sample/nw_sample_governance_report.md` — per-project report (with rules)
+- `samples/nw_sample_nocust/nw_sample_nocust_governance_report.md` — per-project report (baseline)
+
+These reports show what the health check finds on real generated projects, including
+genuine findings. They are illustrative artifacts — the point is to demonstrate the
+health check in action, not to show a perfect score.
+
+**Do NOT fix sample logic files to improve their health check scores.** If the
+health check finds a real issue in a sample (missing `__init__.py`, rules in
+`declare_logic.py`, broken dependency tracking), that finding should appear in the
+report. It is honest evidence of what the system generates and what the health check
+catches. Fixing the issue silently undermines both the sample's authenticity and the
+health check's credibility.
+
+**To update a sample:** rebuild it from source (`genai-logic create` or
+`rebuild-from-database`), verify it runs correctly, then store the rebuilt version.
+The health check reports are then regenerated against the new version.
+
+**The nw_sample reports live in prototype overlays** (`prototypes/nw/` and
+`prototypes/nw_no_cust/`) so they survive BLT regeneration. Do not hand-edit them
+in the BLT workspace — changes will be lost on next BLT run.
+
+---
+
 ## 🚨 Red Flags
 
 Red flags are binary alerts — not scores. They signal a project that may need
