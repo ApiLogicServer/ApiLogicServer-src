@@ -1075,3 +1075,40 @@ Create a fully functional application and database
    - After completing a subsystem, create `docs/domain_automations/<use_case_name>.md`
    - Include: created date, tables, rule counts, and the verbatim prompt
    - Multiple subsystems → multiple files; the folder is the project's automation index
+
+7. **Executable Requirements Ad-Lib Report:**
+   - If running an 'implement reqs' workflow, you MUST create the `docs/requirements/<name>/ad-libs.md` report and Diagnostic Appendix. Do NOT skip this.
+
+   **Ad-libs report format — write to `docs/requirements/<name>/ad-libs.md` and summarize in chat:**
+   *(You must generate this exact markdown file at the end of the `implement reqs` sequence)*
+
+   Assign every decision a severity tier:
+   - 🔴 **Review required** — AI guessed something the spec didn't cover (type codes, skipped sections, assumed FK values). Dev MUST verify.
+   - 🟡 **FYI** — standard pattern applied (2-message design, after_flush_row_event, is_processed flag, etc.). Almost certainly correct; no action needed.
+
+   Format:
+   ```markdown
+   ## Ad-Libs Report
+   **N items need your review. M FYIs — standard patterns, no action needed.**
+
+   ### 🔴 Review Required
+   | Location | Issue | Action |
+   |---|---|---|
+   | file.py | [what was guessed] | [what to check/confirm] |
+
+   ### 🟡 FYI
+   - [file] — [one-line description of standard decision]
+
+   ### 🟢 Diagnostic Appendix (For Engine Tuning)
+   | Metric | Value |
+   |---|---|
+   | Strategy Used | [Brief summary of the architectural strategy applied] |
+   | CE Files Loaded | [List exactly which docs/training/*.md files you read] |
+   | Todo List Created | [Yes/No - Did you plan out the AST before coding?] |
+   | Long-Run Diagnostics | [Any anomalies, token pressures, or context drops noticed] |
+   ```
+
+
+8. **Business Logic Patterns:**
+   - NEVER ad-lib business logic or missing conditions that are not explicitly defined in the spec.
+   - For derived flags or totals (like `clvs_eligible`), ALWAYS use declarative `Rule.formula` or `Rule.count` derivations instead of imperative `Rule.row_event` loops. `row_event` is for side effects (like sending an email or matching a record), NOT formulas.

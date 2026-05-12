@@ -114,10 +114,7 @@ from integration.system.EaiSubscribeMapper import resolve_lookups
 logger = logging.getLogger('integration.kafka')
 
 # Field mapping exceptions for xyz topic — None=skip, str=remap to that column name
-XYZ_EXCEPTIONS: dict[str, str | None] = {
-    # "FIELD_NAME": None,          # skip
-    # "FIELD_NAME": "col_name",    # remap
-}
+# Note: EXCEPTIONS dicts must be defined per-model inside XyzMapper.py, NOT here in the consumer.
 
 # Lookup dicts — omit if no lookups needed (see § Lookup Resolution)
 XYZ_PARENT_LOOKUPS = []   # e.g. [(models.Customer, models.Customer.Id, 'AccountId', 'CustomerId')]
@@ -135,7 +132,7 @@ def process_xyz_payload(payload: str, session, blob_id: int = None):
     """
     from integration.XyzMapper import parse
     raw = json.loads(payload)
-    parent_row, detail_rows = parse(payload, exceptions=XYZ_EXCEPTIONS)
+    parent_row, detail_rows = parse(payload, )
     # Guard: parse() must return plain model rows, not (row, src_dict) tuples
     if detail_rows and not hasattr(detail_rows[0], '__tablename__'):
         raise TypeError(f"parse() must return list[model_instance]; got {type(detail_rows[0]).__name__} — check XyzMapper.parse() return value")
@@ -238,10 +235,7 @@ With multiple consumers each listener has its own dict — no conflicts.
 
 ```python
 # in kafka_consumer.py — co-located with the listener
-XYZ_EXCEPTIONS: dict[str, str | None] = {
-    "FIELD_NAME": None,          # None  = skip this field entirely
-    "FIELD_NAME": "col_name",    # str   = remap to this column name
-}
+# Note: EXCEPTIONS dicts must be defined per-model inside XyzMapper.py, NOT here in the consumer.
 ```
 
 ### Tier 3 — Custom callback (escape hatch for complex logic)
@@ -293,7 +287,7 @@ XYZ_PARENT_LOOKUPS = [
     # add more as needed
 ]
 
-# Child-level lookups — applied to each row in extras
+# Child-level lookups — applied to each row in children
 XYZ_CHILD_LOOKUPS = [
     (models.Product, models.Product.ProductName, 'Name', 'product_id'),
 ]
@@ -311,10 +305,10 @@ XYZ_CHILD_KEY = 'Items'   # key in raw payload that holds the child array
             blob_id = int(msg.key().decode('utf-8')) if msg.key() else None
             try:
                 payload = msg.value().decode('utf-8')
-                parent_row, extras = parse(payload, exceptions=XYZ_EXCEPTIONS)
+                parent_row, children = parse(payload, )
                 raw = json.loads(payload)           # cheap second parse for lookup values
                 resolve_lookups(parent_row, raw, XYZ_PARENT_LOOKUPS, session)
-                for child_row, child_src in zip(extras, raw.get(XYZ_CHILD_KEY, [])):
+                for child_row, child_src in zip(children, raw.get(XYZ_CHILD_KEY, [])):
                     resolve_lookups(child_row, child_src, XYZ_CHILD_LOOKUPS, session)
                     parent_row.ChildList.append(child_row)  # 🚨 attach via relationship — NOT session.add(child_row); see note below
                 session.add(parent_row)  # 🚨 NEVER session.merge — see note below
@@ -357,7 +351,7 @@ XYZ_CHILD_KEY = 'Items'   # key in raw payload that holds the child array
 >
 > Example normalization:
 > ```python
-> populate_row(party_row, section, exceptions=XYZ_EXCEPTIONS)
+> populate_row(party_row, section, )
 > if party_row.shipment_party_oid_nbr in (0, None):
 >     party_row.shipment_party_oid_nbr = None
 > ```
@@ -388,10 +382,10 @@ TAG_ROUTING = {
 }
 
 def parse(payload: str, exceptions: dict = None) -> tuple:
-    """Returns (parent_row, list[child_model_instance]) — plain model rows, NOT tuples."""
+    """Returns (parent_row, dict[str, list[model_instance]]) — plain model rows, NOT tuples."""
     root = ET.fromstring(payload)
     parent = models.XyzParent()
-    extras = []
+    children = []
     for section in root:
         tag = _local(section.tag)           # strip XML namespace
         if tag not in TAG_ROUTING:
@@ -399,13 +393,13 @@ def parse(payload: str, exceptions: dict = None) -> tuple:
         model_class, overrides = TAG_ROUTING[tag]
         row = model_class()
         populate_row(row, section, exceptions=exceptions, overrides=overrides)
-        extras.append(row)   # ← plain model instance; caller zips with raw payload for lookups
-    return parent, extras
+        children.append(row)   # ← plain model instance; caller zips with raw payload for lookups
+    return parent, children
 ```
 
-> **`parse()` return contract:** always return `(parent_row, list[child_model_instance])` — plain
+> **`parse()` return contract:** always return `(parent_row, dict[str, list[model_instance]])` — plain
 > model rows. Never return `(row, src_dict)` tuples. The caller (`process_xyz_payload`) zips
-> `extras` with the raw payload's child array to call `resolve_lookups()` per child.
+> `children` with the raw payload's child array to call `resolve_lookups()` per child.
 
 **JSON format** (flat parent dict + child array — most common case):
 ```python
@@ -428,7 +422,7 @@ _CHILD_EXCEPTIONS = {
 
 
 def parse(payload: str, exceptions: dict = None) -> tuple:
-    """Returns (parent_row, list[child_model_instance]) — plain model rows, NOT tuples."""
+    """Returns (parent_row, dict[str, list[model_instance]]) — plain model rows, NOT tuples."""
     data = json.loads(payload)
 
     parent_row = models.XyzParent()
@@ -443,7 +437,7 @@ def parse(payload: str, exceptions: dict = None) -> tuple:
     return parent_row, child_rows
 ```
 
-> **`parse()` return contract:** always return `(parent_row, list[child_model_instance])` — plain
+> **`parse()` return contract:** always return `(parent_row, dict[str, list[model_instance]])` — plain
 > model rows. Never return `(row, src_dict)` tuples. The caller (`process_xyz_payload`) zips
 > `child_rows` with `raw.get(XYZ_CHILD_KEY, [])` to call `resolve_lookups()` per child.
 
@@ -700,4 +694,9 @@ For XML payloads with multiple section tags mapping to different tables:
 - If **sample XML exists**: read section tag local-names, match to model classes by name,
   generate `TAG_ROUTING` automatically
 - If **no sample XML**: generate sample first (see above), then generate `TAG_ROUTING`
-- Child rows with no FK to parent go in `extras` list (returned separately from `parse()`)
+- Child rows natively map to a named `children` dictionary (e.g. `{"pieces": [...], "parties": [...]}`) to avoid isinstance dispatch in the caller.
+
+> **CONSUMER ROLLBACKS:** NEVER call `session.rollback()` in your Kafka consumer's `except` block. The outer framework or test harness relies on explicit rollbacks. Adding it manually masks errors and poisons the session.
+> **API DEBUG GUARD:** In `api/api_discovery/*_kafka_consume_debug.py`, your endpoint MUST include a guard: `if not os.getenv('CONSUME_DEBUG'): return 'Debug disabled', 403`.
+> **TEST PUBLISHERS:** Your test script (`test/send_xyz.py`) MUST use `confluent_kafka.Producer` to construct and send messages. Do NOT use `subprocess.run` calling `docker exec`.
+> **NO RE-PARSING:** Do NOT call `ET.fromstring(payload)` inside the consumer listener. The `XyzMapper.parse` method is the only place parsing should occur.
