@@ -11,7 +11,7 @@ When user says **"implement project `<name>` from `<prompt-file>`"** (or similar
 2. Run: `source venv/bin/activate && genai-logic create --project-name=<name> --db_url=sqlite:///samples/dbs/starter.sqlite`
 3. Read these files silently (do NOT display them):
    - `<name>/.github/.copilot-instructions.md`
-   - `<name>/docs/training/subsystem_creation.md`
+   - `<name>/docs/training/implement_requirements.md`
    - `<name>/docs/training/logic_bank_api.md`
    - `<name>/docs/training/logic_bank_patterns.md`
    - `<name>/docs/training/RequestObjectPattern.md`

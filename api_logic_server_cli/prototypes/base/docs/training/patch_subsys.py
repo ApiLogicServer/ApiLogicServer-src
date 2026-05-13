@@ -1,6 +1,6 @@
 import re
 
-with open('/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/base/docs/training/subsystem_creation.md', 'r') as f:
+with open('/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/base/docs/training/implement_requirements.md', 'r') as f:
     text = f.read()
 
 rule = """
@@ -12,7 +12,7 @@ rule = """
 if "8. **Business Logic Patterns:**" not in text:
     text += "\n" + rule
 
-with open('/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/base/docs/training/subsystem_creation.md', 'w') as f:
+with open('/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/base/docs/training/implement_requirements.md', 'w') as f:
     f.write(text)
 
-print("subsystem_creation.md patched")
+print("implement_requirements.md patched")

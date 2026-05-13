@@ -400,7 +400,7 @@ Help me understand what this actually does - I want facts, not sales pitch.
 
 **Key Materials:**
 - Rosetta Stone: Complete LogicBank API reference (sums, formulas, constraints, events)
-- Training files: logic_bank_api.md, testing.md, subsystem_creation.md, RequestObjectPattern.md
+- Training files: logic_bank_api.md, testing.md, implement_requirements.md, RequestObjectPattern.md
 - Pattern library: Discovery systems, Request Pattern, null-safe constraints
 
 ### 3. GenAI CLI Services (OpenAI Fine-Tuned ChatGPT)

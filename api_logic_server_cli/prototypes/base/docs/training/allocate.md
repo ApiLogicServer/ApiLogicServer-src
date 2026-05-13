@@ -92,7 +92,7 @@ from logic_bank.extensions.allocate import Allocate
 | Recipient | Order / ProjectFundingLine / DeptChargeDefinitionLine | AmountOwed or percent |
 | Allocation (junction) | PaymentAllocation / ChargeDeptAllocation | AmountAllocated / amount, FK→Provider, FK→Recipient |
 
-**► DB design conventions for junction tables — apply ALL rules from `docs/training/subsystem_creation.md`:**
+**► DB design conventions for junction tables — apply ALL rules from `docs/training/implement_requirements.md`:**
 - `id INTEGER PRIMARY KEY AUTOINCREMENT` on every table
 - `Numeric(15,2)` for monetary `amount` columns — never `Float` or `REAL`
 - `Numeric(7,4)` for `percent` columns stored as whole numbers (e.g. 50.0 = 50%)

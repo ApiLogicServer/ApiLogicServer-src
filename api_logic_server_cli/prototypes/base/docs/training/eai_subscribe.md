@@ -6,7 +6,7 @@ usage: AI assistants read this when detecting Kafka consume, EAI, or XML/JSON-to
 version: 1.2
 date: April 4, 2026
 related:
-  - subsystem_creation.md (Kafka outbound, row_event patterns)
+  - implement_requirements.md (Kafka outbound, row_event patterns)
   - logic_bank_patterns.md (row_event, commit_row_event)
   - logic_bank_api.md (full rule API)
 changelog:
