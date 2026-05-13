@@ -113,8 +113,7 @@ from integration.system.EaiSubscribeMapper import resolve_lookups
 
 logger = logging.getLogger('integration.kafka')
 
-# Field mapping exceptions for xyz topic — None=skip, str=remap to that column name
-# Note: EXCEPTIONS dicts must be defined per-model inside XyzMapper.py, NOT here in the consumer.
+# Lookup dicts and exceptions live here, co-located with the consumer that owns them.
 
 # Lookup dicts — omit if no lookups needed (see § Lookup Resolution)
 XYZ_PARENT_LOOKUPS = []   # e.g. [(models.Customer, models.Customer.Id, 'AccountId', 'CustomerId')]
@@ -132,7 +131,7 @@ def process_xyz_payload(payload: str, session, blob_id: int = None):
     """
     from integration.XyzMapper import parse
     raw = json.loads(payload)
-    parent_row, detail_rows = parse(payload, )
+    parent_row, detail_rows = parse(payload)
     # Guard: parse() must return plain model rows, not (row, src_dict) tuples
     if detail_rows and not hasattr(detail_rows[0], '__tablename__'):
         raise TypeError(f"parse() must return list[model_instance]; got {type(detail_rows[0]).__name__} — check XyzMapper.parse() return value")
@@ -234,8 +233,9 @@ Passed into `parse()` as an argument; the mapper forwards it to `populate_row()`
 With multiple consumers each listener has its own dict — no conflicts.
 
 ```python
-# in kafka_consumer.py — co-located with the listener
-# Note: EXCEPTIONS dicts must be defined per-model inside XyzMapper.py, NOT here in the consumer.
+# Exceptions dicts for XML topics go in the consumer file, co-located with the listener.
+# For JSON topics with a dedicated mapper, define _PARENT_EXCEPTIONS / _CHILD_EXCEPTIONS
+# in XyzMapper.py and use them directly (no need to pass via parse()).
 ```
 
 ### Tier 3 — Custom callback (escape hatch for complex logic)
@@ -382,7 +382,7 @@ TAG_ROUTING = {
 }
 
 def parse(payload: str, exceptions: dict = None) -> tuple:
-    """Returns (parent_row, dict[str, list[model_instance]]) — plain model rows, NOT tuples."""
+    """Returns (parent_row, list[model_instance]) — plain model rows, NOT (row, src_dict) tuples."""
     root = ET.fromstring(payload)
     parent = models.XyzParent()
     children = []
@@ -397,9 +397,9 @@ def parse(payload: str, exceptions: dict = None) -> tuple:
     return parent, children
 ```
 
-> **`parse()` return contract:** always return `(parent_row, dict[str, list[model_instance]])` — plain
-> model rows. Never return `(row, src_dict)` tuples. The caller (`process_xyz_payload`) zips
-> `children` with the raw payload's child array to call `resolve_lookups()` per child.
+> **`parse()` return contract:** always return `(parent_row, list[model_instance])` — plain model rows,
+> never `(row, src_dict)` tuples. The caller (`process_xyz_payload`) zips the children list with the
+> raw payload's child array to call `resolve_lookups()` per child.
 
 **JSON format** (flat parent dict + child array — most common case):
 ```python
@@ -422,7 +422,7 @@ _CHILD_EXCEPTIONS = {
 
 
 def parse(payload: str, exceptions: dict = None) -> tuple:
-    """Returns (parent_row, dict[str, list[model_instance]]) — plain model rows, NOT tuples."""
+    """Returns (parent_row, list[model_instance]) — plain model rows, NOT (row, src_dict) tuples."""
     data = json.loads(payload)
 
     parent_row = models.XyzParent()
@@ -694,9 +694,12 @@ For XML payloads with multiple section tags mapping to different tables:
 - If **sample XML exists**: read section tag local-names, match to model classes by name,
   generate `TAG_ROUTING` automatically
 - If **no sample XML**: generate sample first (see above), then generate `TAG_ROUTING`
-- Child rows natively map to a named `children` dictionary (e.g. `{"pieces": [...], "parties": [...]}`) to avoid isinstance dispatch in the caller.
+- Child rows are returned as a flat list from `parse()` — the caller zips them with the raw payload's child array for lookup resolution.
 
-> **CONSUMER ROLLBACKS:** NEVER call `session.rollback()` in your Kafka consumer's `except` block. The outer framework or test harness relies on explicit rollbacks. Adding it manually masks errors and poisons the session.
-> **API DEBUG GUARD:** In `api/api_discovery/*_kafka_consume_debug.py`, your endpoint MUST include a guard: `if not os.getenv('CONSUME_DEBUG'): return 'Debug disabled', 403`.
-> **TEST PUBLISHERS:** Your test script (`test/send_xyz.py`) MUST use `confluent_kafka.Producer` to construct and send messages. Do NOT use `subprocess.run` calling `docker exec`.
-> **NO RE-PARSING:** Do NOT call `ET.fromstring(payload)` inside the consumer listener. The `XyzMapper.parse` method is the only place parsing should occur.
+> **CONSUMER ROLLBACKS:** NEVER call `session.rollback()` in a Kafka consumer's `except` block. The framework relies on implicit rollbacks; adding one manually masks errors and poisons the session.
+
+> **DEBUG ENDPOINT GUARD:** The `add_service()` function in `api/api_discovery/*_kafka_consume_debug.py` must return immediately if `APILOGICPROJECT_CONSUME_DEBUG` is not set — the endpoint should not be registered at all in production. Use `if not os.getenv('APILOGICPROJECT_CONSUME_DEBUG'): return` at the top of `add_service()`, not inside the route handler.
+
+> **TEST PUBLISHERS:** Test scripts that send messages to Kafka MUST use `confluent_kafka.Producer` directly. Do NOT use `subprocess.run` calling `docker exec kafka-console-producer` — it is fragile and sends one message per input line, which breaks multi-line payloads.
+
+> **NO RE-PARSING:** Never call `ET.fromstring(payload)` or `json.loads(payload)` inside a Kafka consumer listener. All parsing must go through `XyzMapper.parse()` — the mapper is the only place parsing occurs.
