@@ -13,6 +13,12 @@ Read this when creating **multiple related tables with business logic** - for ex
 
 ## Governing Principle: Prompt Spec = Floor, Not Ceiling
 
+**Mandatory Step 0: Plan Before Coding (Create a Todo List)**
+Before generating any database schema or DDL, you MUST create a structured plan (use `manage_todo_list` if available, or write out a checklist). Your plan must explicitly inventory:
+1. Which lookup tables are missing but implied by the domain?
+2. Which derived columns (sums, formulas) need to be added to support downstream LogicBank rules?
+If you skip this planning step, you will be forced into procedural workarounds later.
+
 **This is the most important principle in this guide.**
 
 When a prompt provides an explicit column list, table spec, or FK wiring — interpret it as the **minimum anchor**: the fields the author needed to specify to ensure correct structure. It is **not a complete design**.
@@ -1069,3 +1075,168 @@ Create a fully functional application and database
    - After completing a subsystem, create `docs/domain_automations/<use_case_name>.md`
    - Include: created date, tables, rule counts, and the verbatim prompt
    - Multiple subsystems → multiple files; the folder is the project's automation index
+
+7. **Executable Requirements Ad-Lib Report:**
+   - If running an 'implement reqs' workflow, you MUST create the `docs/requirements/<name>/ad-libs.md` report and Diagnostic Appendix. Do NOT skip this.
+
+   **⛔ PLANNING GATE — two mandatory phases before writing a single line of code:**
+
+   This is the discipline that separates correct implementations from broken ones.
+   Gemini skips this and discovers missing columns mid-implementation, causing error loops.
+   Claude does this naturally — read everything, assess globally, then code with full knowledge.
+
+   ---
+
+   **Phase 1 — Schema Impact Assessment**
+
+   Files read in this phase (in order):
+   ```
+   1. docs/requirements/<name>/requirements.md        — ALL steps, completely
+   2. docs/requirements/<name>/message_formats/*      — every sample file
+   3. database/models.py                              — current columns on every affected table
+   ```
+
+   Assess across ALL steps simultaneously — do not assess one step at a time:
+   - EAI / Kafka consume present (any step)? → blob table needed
+   - Rule.sum or Rule.count needed (any step)? → derived columns needed on parent table
+   - row_event side-effects (matching, enrichment)? → note pattern, no schema change
+   - Any requirement references a column not yet in models.py? → add it now
+
+   **Produce one complete DDL change list covering ALL steps.**
+   Run DDL + `rebuild-from-database` ONCE before writing any logic or mapper files.
+   ❌ NEVER discover a missing column while writing a logic file — that causes an error loop.
+
+   ---
+
+   **Phase 2 — CE / Pattern Assessment**
+
+   Files read in this phase (in order):
+   ```
+   1. docs/training/eai_subscribe.md                 — if EAI detected in Phase 1
+   2. docs/training/logic_bank_api.md                — rule type selection
+   3. docs/training/logic_bank_patterns.md           — anti-patterns, calling= wiring
+   ```
+
+   For each requirement step, identify:
+   - Rule types needed: sum / count / formula / row_event / after_flush_row_event
+   - Which CE anti-patterns apply (parent flag vs child count, as_expression vs calling=, etc.)
+   - EAI: confirm 2-message design, all 8 artifacts, named dict return from mapper
+
+   ---
+
+   **Write the Pre-Coding Analysis to ad-libs.md NOW** (before any code).
+   The format is in the Diagnostic Appendix section below — fill in Phase 1 and Phase 2 findings.
+
+   **⚠️ EXACT OUTPUT FORMAT — do not invent your own structure.**
+   Write `docs/requirements/<name>/ad-libs.md` using this template verbatim.
+   Fill in the Pre-Coding Analysis BEFORE coding. Complete the rest at the end.
+   Every section heading, every table column, every placeholder must appear exactly as shown.
+
+   Severity tiers:
+   - 🔴 **Review required** — AI guessed something the spec didn't cover. Dev MUST verify.
+   - 🟡 **FYI** — standard pattern applied. Almost certainly correct; no action needed.
+
+   ---
+   *(begin template — copy everything below this line into the file)*
+
+   ## Ad-Libs Report
+   **N items need your review. M FYIs — standard patterns, no action needed.**
+
+   ---
+
+   ### 🟢 Diagnostic Appendix
+
+   #### Pre-Coding Analysis
+   *(written before any code — both phases completed in order)*
+
+   **Phase 1 — Schema Impact Assessment**
+   Files read: `requirements.md` (all steps), `message_formats/*` (all files), `database/models.py`
+
+   | Step | Signal |
+   |---|---|
+   | Step 1 — [title] | [EAI detected / Rule.sum needed / Rule.count needed / Rule.row_event / no schema change] |
+   | Step 2 — [title] | [signal] |
+
+   DDL change list *(one row per change — covers ALL steps, run once before any coding)*:
+
+   | Table | Change | Reason |
+   |---|---|---|
+   | [table] | ADD COLUMN [col] [type] | Step N — [rule type] |
+   | [table] | CREATE TABLE [name] | Step N — EAI blob table |
+
+   *If no DDL needed: "None — all required columns already present in models.py"*
+
+   **Phase 2 — CE / Pattern Assessment**
+   Files read: `eai_subscribe.md` *(if EAI)*, `logic_bank_api.md`, `logic_bank_patterns.md`
+
+   | Step | Rule Plan |
+   |---|---|
+   | Step 1 — [title] | [Rule.count(derive=X) + Rule.formula(derive=Y, derive=Z)] |
+   | Step 2 — [title] | [2-message EAI — 8 artifacts confirmed] |
+
+   Anti-patterns confirmed clear:
+   - [ ] No parent flag where Rule.count on child table is correct
+   - [ ] No `as_expression=lambda row: my_func(row)` — using `calling=my_func`
+   - [ ] No `session.query()` inside formula or row_event
+   - [ ] EAI: named dict return from mapper confirmed, 2-message design confirmed
+
+   **Implementation Plan** *(ordered steps written before any file was changed)*:
+
+   | Step | What was planned |
+   |---|---|
+   | 1 | [e.g. "Run DDL + rebuild-from-database — ShipmentXml blob table, prohibited_commodity_count"] |
+   | 2 | [e.g. "Write IsdcMapper.py — read sample XML first to identify sections"] |
+   | 3 | [e.g. "Write isdc.py — 2-message design, named dict unpack from mapper"] |
+   | 4 | [e.g. "Write clvs_eligibility.py — Rule.count + two Rule.formula"] |
+   | 5 | [e.g. "Write shipment_matching.py — Rule.row_event, lookup by duty_bill_to_acct_nbr"] |
+
+   ---
+
+   #### Execution Metrics
+
+   | Metric | Value |
+   |---|---|
+   | Strategy Used | [Brief summary of architectural strategy] |
+   | CE Files Loaded | [Exact list of docs/training/*.md files read] |
+   | Schema Read First | [Yes — models.py read before any logic or mapper / No] |
+   | Sample Data Read | [Yes — message_formats/* read before mapper / No] |
+   | Subagent Used | [Yes — N tools, ~M min / No — single pass] |
+   | Self-Verification | [Yes — server started, debug endpoint tested, logs checked / No] |
+   | Lightweight Checks Used | [Yes — curl + logs/als.log per phase / No] |
+   | Gate Test Run Count | [N — 1 = final verification only; >1 = used diagnostically] |
+   | Gate Test Purpose | [Final verification / Diagnostic] |
+   | Error Correction Loops | [N — "None" if zero] |
+   | Long-Run Diagnostics | [Anomalies, token pressure, context drops — "None" if clean] |
+
+   **Error Correction Loops** *(one block per loop; delete section if none)*:
+
+   ```
+   Loop 1:
+     Symptom:   [what failed or was wrong]
+     Diagnosis: [how root cause was found — e.g. "read logs/als.log"]
+     Fix:       [what changed]
+     Time:      [~N min]
+     Root cause type: [CE gap / model hallucination / missing read (schema/sample/training)]
+   ```
+   *If no loops: "None — implementation passed on first run."*
+
+   ---
+
+   ### 🔴 Review Required
+   | Location | Issue | Action |
+   |---|---|---|
+   | [file.py] | [what was guessed or assumed] | [what dev must check or confirm] |
+
+   *If none: "None — all decisions were specified or followed standard patterns."*
+
+   ---
+
+   ### 🟡 FYI
+   - `[file]` — [one-line description of standard decision made]
+
+   *(end template)*
+
+
+8. **Business Logic Patterns:**
+   - NEVER ad-lib business logic or missing conditions that are not explicitly defined in the spec.
+   - For derived flags or totals (like `clvs_eligible`), ALWAYS use declarative `Rule.formula` or `Rule.count` derivations instead of imperative `Rule.row_event` loops. `row_event` is for side effects (like sending an email or matching a record), NOT formulas.
