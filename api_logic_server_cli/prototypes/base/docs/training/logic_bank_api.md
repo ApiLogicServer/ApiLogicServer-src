@@ -669,6 +669,20 @@ Formulas can reference parent values in 2 versions - choose formula vs copy base
         This is invisible to the LogicBank dependency graph - parent changes will NOT re-derive children.
         Use Rule.copy (snapshot) or Rule.formula (live) instead.
 
+CRITICAL — NEVER derive a foreign key column with Rule.formula (or Rule.copy):
+    FK columns drive SQLAlchemy relationship resolution. If LogicBank re-derives an FK
+    mid-transaction it conflicts with how SQLAlchemy manages object identity and relationship
+    loading, producing unpredictable behavior.
+
+    ❌ WRONG — deriving an FK column with a rule:
+        Rule.formula(derive=models.Item.product_id, as_expression=lambda row: ...)
+        Rule.copy(derive=models.Item.product_id, from_parent=...)
+
+    ✅ CORRECT — set FK values in an early_row_event, which fires before the rule engine runs:
+        def set_product_id(row, old_row, logic_row):
+            row.product_id = ...   # safe: relationships not yet resolved
+        Rule.early_row_event(on_class=models.Item, calling=set_product_id)
+
 Formulas can use Python conditions:
     Prompt: Item amount is price * quantity, with a 10% discount for gold products
     Response:
