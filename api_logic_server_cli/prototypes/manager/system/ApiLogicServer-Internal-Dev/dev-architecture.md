@@ -964,6 +964,85 @@ build_and_test/ApiLogicServer/
 
 &nbsp;
 
+## 🏛️ Governance Layer (May 2026)
+
+Three generated report types that together provide full traceability from NL requirements through to test execution. All generated from code — no manual documentation effort.
+
+### The Three Reports
+
+**1. Logic Flow** (`logic_flow_<req>.md`) — "what does this system do?"
+- Audience: developer onboarding, code review, stakeholder communication
+- Content: NL spec (from module docstring) + inline SVG diagram + numbered rule summary
+- Generator: `system/ApiLogicServer-Internal-Dev/logic_diagram_gv.py`
+- Output: `docs/requirements/<req>/logic_flow_<req>.md` (scoped) or `docs/requirements/logic_flow_<project>.md` (full)
+- SVG artifacts in: `docs/requirements/<req>/logic_diagrams/`
+- Trigger: `python system/ApiLogicServer-Internal-Dev/logic_diagram_gv.py <project> [<req>]`
+  or: `python docs/training/logic_diagrams/generate_logic_diagram.py [<req>]` (from project)
+
+**2. Vital Signs** (`health_check.md`) — "is it implemented correctly?"
+- Audience: developer self-check, AI-assisted code review
+- Checks: rule adoption, dependency tracking, docstring hygiene, missing `calling=` docstrings
+- Trigger: say "vital signs" or "health check" to AI in project context
+- Training: `docs/training/health_check.md`
+
+**3. Behave Test Reports** — "did it work as specified?"
+- Audience: QA, compliance, traceability proof
+- Content: requirement → test → rules fired → execution trace
+- Training: `docs/training/testing.md`
+
+### Key Convention: `calling=` Function Docstrings
+
+Every function wired via `Rule.formula(calling=my_func)` or `Rule.early_row_event(calling=my_func)` **MUST** have a one-line docstring:
+
+```python
+def _clvs_eligible(row, old_row, logic_row):
+    """Derive clvs_eligible: 1 if shipment meets all CLVS criteria, else 0."""
+    ...
+```
+
+- **Why:** The first docstring line appears in Logic Flow diagrams and Vital Signs reports
+- **Without it:** diagram shows only the function name — no intent visible
+- **With it:** `clvs_eligible = _clvs_eligible(row) — "1 if shipment meets all CLVS criteria"`
+- **Vital Signs:** flags missing docstrings as ⚠️ `-1` finding
+- **CE source:** `docs/training/logic_bank_api.md` — "CRITICAL — DOCSTRING ON EVERY calling= FUNCTION"
+
+### Logic Diagram Generator — Key Design Decisions
+
+After a BLT or on a new machine, these decisions need to be re-established:
+
+- **Output structure:** `docs/requirements/<req>/logic_flow_<req>.md` + `logic_diagrams/*.svg`
+- **Left ports (`_w`):** copy, sum, count — hierarchy flow lane (left side of tables)
+- **Right ports (`_e`):** formula cross-table deps — derivation lane (right side of tables)
+- **Intra-table arcs:** Graphviz silently drops self-loop edges on spline layouts. Solution: record as `// INTRA:table:src:dst:seq:idx` comments in `.dot`, inject as SVG bezier paths in post-processor. Multiple arcs fan out at staggered bulge distances (22, 46, 70px).
+- **`rankdir=TB`:** parents at top (`rank=min`), trigger/children at bottom (`rank=max`)
+- **Legend removed from diagram:** rule summary carried in `logic_flow_*.md` instead
+- **NL spec source:** module-level docstring of each `logic/logic_discovery/*.py` file (via `ast.get_docstring`)
+- **Requires:** `brew install graphviz` (macOS) — one-time install, not in venv
+
+### File Locations (post-BLT)
+
+```
+system/ApiLogicServer-Internal-Dev/
+  logic_diagram_gv.py              ← generator (Manager tool — not per-project)
+  dev-architecture.md              ← this file
+
+prototypes/base/docs/training/
+  logic_diagrams/
+    logic_diagram.md               ← reading guide (v1.4)
+    generate_logic_diagram.py      ← per-project convenience wrapper
+  logic_bank_api.md                ← includes calling= docstring CRITICAL rule
+  health_check.md                  ← includes missing-docstring vital sign check
+
+prototypes/manager/system/ApiLogicServer-Internal-Dev/
+  logic_diagram_gv.py              ← propagated here by BLT (same as above)
+```
+
+**Gold source for generator:** `org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/manager/system/ApiLogicServer-Internal-Dev/logic_diagram_gv.py`
+
+**After BLT:** generator is reinstalled to venv automatically. Per-project docs (`logic_diagram.md`, `generate_logic_diagram.py`) are propagated to all created projects via `prototypes/base/docs/training/logic_diagrams/`.
+
+&nbsp;
+
 ---
 
 **📖 Remember:** This file provides orientation. For comprehensive technical understanding, read **[Architecture-Internals.md](https://apilogicserver.github.io/Docs/Architecture-Internals/)** - it's written for both AI assistants and human collaborators.

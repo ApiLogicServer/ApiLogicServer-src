@@ -1,16 +1,17 @@
 """
 Convenience wrapper — generate the logic diagram for this project.
 
-Usage (from the project root or docs/ folder):
-    python docs/generate_logic_diagram.py              # full diagram
-    python docs/generate_logic_diagram.py check_credit # scoped to one requirement
+Usage (from anywhere inside the project):
+    python docs/training/logic_diagrams/generate_logic_diagram.py              # full diagram
+    python docs/training/logic_diagrams/generate_logic_diagram.py check_credit # scoped
 """
 import sys
 from pathlib import Path
 
 # Locate the generator relative to this file
-this_dir    = Path(__file__).resolve().parent          # project/docs/
-project_dir = this_dir.parent                          # project/
+# This file: <project>/docs/training/logic_diagrams/generate_logic_diagram.py
+this_dir    = Path(__file__).resolve().parent          # project/docs/training/logic_diagrams/
+project_dir = this_dir.parent.parent.parent            # project/
 manager_dir = project_dir.parent                       # Manager root
 
 gen = manager_dir / "system" / "ApiLogicServer-Internal-Dev" / "logic_diagram_gv.py"
