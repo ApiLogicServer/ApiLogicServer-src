@@ -1,15 +1,13 @@
 """
-Debug endpoint for the ISDC consume pipeline (no Kafka required).
-Enabled when APILOGICPROJECT_CONSUME_DEBUG is set (default true in config/default.env).
+Debug endpoint for ISDC EAI consume pipeline (no Kafka required).
+Enabled when APILOGICPROJECT_CONSUME_DEBUG is set in config/default.env.
 
 Usage:
   curl 'http://localhost:5656/consume_debug/isdc?file=docs/requirements/customs_demo/message_formats/MDE-CDV-HVS-WR-Rev260328.xml'
 """
-
 import logging
 import os
 from pathlib import Path
-
 import safrs
 from flask import request, jsonify
 
@@ -27,17 +25,20 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         """
         file_path = request.args.get('file')
         if not file_path:
-            return jsonify({"success": False, "message": "Missing ?file= parameter"}), 400
+            return jsonify({"success": False, "message": "Missing ?file= parameter"})
         from integration.kafka.kafka_subscribe_discovery.isdc import process_isdc_payload
         try:
             payload = Path(file_path).read_text()
-            shipment_row, blob, summary = process_isdc_payload(payload, safrs.DB.session)
+            shipment_row, blob = process_isdc_payload(payload, safrs.DB.session)
             return jsonify({
                 "success": True,
                 "topic": "isdc",
                 "blob_id": blob.id,
                 "file": file_path,
-                **summary,
+                "awb_nbr": shipment_row.awb_nbr,
+                "pieces": len(shipment_row.PieceList),
+                "parties": len(shipment_row.ShipmentPartyList),
+                "commodities": len(shipment_row.ShipmentCommodityList),
             })
         except Exception as e:
             app_logger.exception(f"consume_debug/isdc: {e}")

@@ -1,0 +1,54 @@
+<o-form-layout-manager attr="CustomsOffice" mode="tab" title="CUSTOMSOFFICE">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="CustomsOfficeTable" 
+            service="CustomsOffice" 
+            entity="CustomsOffice" 
+            title="CUSTOMSOFFICE"
+            keys="id"
+            columns="name;customs_region_id;office_code;province;city;Type;clvs_release;sufferance_warehouse;id" 
+            header-actions="R;D"
+            visible-columns="name;customs_region_id;office_code;province;city;Type;clvs_release;sufferance_warehouse;id"  
+            sort-columns="name" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #name attr="name" title=" name" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column attr="customs_region_id" title="customs_region_id">
+    <o-table-cell-renderer-service attr="customs_region_id" 
+        service="CustomsRegion" entity="CustomsRegionType" columns="id;region_name"
+        parent-keys="id:customs_region_id"
+        value-column="region_name" keys="customs_region_id"
+        visible-columns="region_name" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+            
+            <o-table-column #office_code attr="office_code" title="office_code" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #province attr="province" title="province" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #city attr="city" title="city" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #Type attr="Type" title="Type" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #clvs_release attr="clvs_release" title="clvs_release" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+            
+            <o-table-column #sufferance_warehouse attr="sufferance_warehouse" title="sufferance_warehouse" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+            
+            <o-table-column #id attr="id" title="id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

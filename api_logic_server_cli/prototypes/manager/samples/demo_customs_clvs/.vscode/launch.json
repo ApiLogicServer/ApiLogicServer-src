@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "ApiLogicServer",
+            "name": "Run Project (start server)",
             "type": "debugpy",
             "python": "${command:python.interpreterPath}",
             "cwd": "${workspaceFolder}",
@@ -24,7 +24,7 @@
             "internalConsoleOptions": "openOnSessionStart"
         },
         {
-            "name": "ApiLogicServer DEBUG",
+            "name": "Run Project DEBUG",
             "type": "debugpy",
             "python": "${command:python.interpreterPath}",
             "cwd": "${workspaceFolder}",
@@ -34,7 +34,7 @@
                 "PYTHONHASHSEED": "0", 
                 "APILOGICPROJECT_LOGGING_CONFIG": "config/logging.yml",
                 "APILOGICPROJECT_STOP_OK": "True",
-                "APILOGICPROJECT_DEBUG": "False"},
+                "APILOGICPROJECT_DEBUG": "True"},
             "request": "launch",
             "program": "api_logic_server_run.py",
             "redirectOutput": true,

@@ -137,6 +137,30 @@ see Hall Passes below.
 Docstring contains implementation notes, field mappings, or AI paraphrase beyond
 the verbatim requirement text. (See Docstring Hygiene section.)
 
+#### -1: Missing docstring on calling= function
+A function wired via `calling=` has no docstring (or an empty one).
+The first docstring line appears in logic flow diagrams and reports — without it,
+the diagram shows only the function name with no indication of what it derives.
+
+Detection: find all `Rule.formula(... calling=<func>)` and `Rule.early_row_event(... calling=<func>)`,
+then check each `<func>` for a non-empty one-line docstring.
+
+Fix: add `"""Derive <column>: <brief description>."""` as the first line of each function.
+
+Example fix:
+```python
+# Before (flagged):
+def _clvs_eligible(row, old_row, logic_row):
+    if row.service_type_cd != CLVS_SERVICE_TYPE:
+        return 0
+
+# After (clean):
+def _clvs_eligible(row, old_row, logic_row):
+    """Derive clvs_eligible: 1 if shipment meets all CLVS criteria, else 0."""
+    if row.service_type_cd != CLVS_SERVICE_TYPE:
+        return 0
+```
+
 #### -2: Logic in `declare_logic.py` instead of discovery files
 Rules declared directly in `logic/declare_logic.py` rather than in `logic/logic_discovery/` files.
 Discovery files provide requirements traceability (use-case name → file → rules → logic report)

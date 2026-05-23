@@ -1,4 +1,8 @@
-export const SERVICE_CONFIG ={ 'Customer': { 'path': '/Customer' }
+export const SERVICE_CONFIG ={ 'ControlledRegulatedGood': { 'path': '/ControlledRegulatedGood' }
+,'Customer': { 'path': '/Customer' }
+,'CustomsOffice': { 'path': '/CustomsOffice' }
+,'CustomsRegion': { 'path': '/CustomsRegion' }
+,'GovtDept': { 'path': '/GovtDept' }
 ,'Piece': { 'path': '/Piece' }
 ,'Shipment': { 'path': '/Shipment' }
 ,'ShipmentCommodity': { 'path': '/ShipmentCommodity' }

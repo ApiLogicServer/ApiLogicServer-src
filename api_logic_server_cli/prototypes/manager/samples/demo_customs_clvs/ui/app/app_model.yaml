@@ -1,5 +1,5 @@
 about:
-  date: May 10, 2026 12:30:15
+  date: May 22, 2026 18:00:23
   recent_changes: works with modified safrs-react-admin
   version: 0.0.0
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
@@ -10,6 +10,36 @@ application:
       data:
         icon: edit_square
         menu_item:
+          ControlledRegulatedGood:
+            icon: edit_square
+            menu_name: ControlledRegulatedGood
+            menu_title: ControlledRegulatedGood
+            page:
+              detail:
+                columns: description,govt_dept_id,category,hs_code,clvs_reason,id
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: ControlledRegulatedGood
+                typescript_name: detail_component.jinja
+                visible_columns: description,govt_dept_id,category,hs_code,clvs_reason,id
+              home:
+                columns: description,govt_dept_id,category,hs_code,clvs_reason,id
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: ControlledRegulatedGood
+                typescript_name: home_template.jinja
+                visible_columns: description,govt_dept_id,category,hs_code,clvs_reason,id
+              new:
+                columns: description,govt_dept_id,category,hs_code,clvs_reason,id
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: ControlledRegulatedGood
+                typescript_name: new_component.jinja
+                visible_columns: description,govt_dept_id,category,hs_code,clvs_reason,id
+            template_name: module.jinja
           Customer:
             icon: edit_square
             menu_name: Customer
@@ -39,6 +69,96 @@ application:
                 title: Customer
                 typescript_name: new_component.jinja
                 visible_columns: name,address1,address2,city,state,country,postal,business_nbr,gst_reg,duty_bill_to_acct_nbr,payor_location,weight,export_country,foreign_trade_zone,discounts,last_modified_nm,data_form,profile_ref_nbr,po_box,phone_nbr,id,duty_bill_to_cd,customeroid,dpi,broker_cd,rod
+            template_name: module.jinja
+          CustomsOffice:
+            icon: edit_square
+            menu_name: CustomsOffice
+            menu_title: CustomsOffice
+            page:
+              detail:
+                columns: name,customs_region_id,office_code,province,city,Type,clvs_release,sufferance_warehouse,id
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: CustomsOffice
+                typescript_name: detail_component.jinja
+                visible_columns: name,customs_region_id,office_code,province,city,Type,clvs_release,sufferance_warehouse,id
+              home:
+                columns: name,customs_region_id,office_code,province,city,Type,clvs_release,sufferance_warehouse,id
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: CustomsOffice
+                typescript_name: home_template.jinja
+                visible_columns: name,customs_region_id,office_code,province,city,Type,clvs_release,sufferance_warehouse,id
+              new:
+                columns: name,customs_region_id,office_code,province,city,Type,clvs_release,sufferance_warehouse,id
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: CustomsOffice
+                typescript_name: new_component.jinja
+                visible_columns: name,customs_region_id,office_code,province,city,Type,clvs_release,sufferance_warehouse,id
+            template_name: module.jinja
+          CustomsRegion:
+            icon: edit_square
+            menu_name: CustomsRegion
+            menu_title: CustomsRegion
+            page:
+              detail:
+                columns: region_name,region_key,regional_hq,id
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: CustomsRegion
+                typescript_name: detail_component.jinja
+                visible_columns: region_name,region_key,regional_hq,id
+              home:
+                columns: region_name,region_key,regional_hq,id
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: CustomsRegion
+                typescript_name: home_template.jinja
+                visible_columns: region_name,region_key,regional_hq,id
+              new:
+                columns: region_name,region_key,regional_hq,id
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: CustomsRegion
+                typescript_name: new_component.jinja
+                visible_columns: region_name,region_key,regional_hq,id
+            template_name: module.jinja
+          GovtDept:
+            icon: edit_square
+            menu_name: GovtDept
+            menu_title: GovtDept
+            page:
+              detail:
+                columns: name,authority,id
+                include_children: true
+                page_name: detail
+                template_name: detail_template.html
+                title: GovtDept
+                typescript_name: detail_component.jinja
+                visible_columns: name,authority,id
+              home:
+                columns: name,authority,id
+                include_children: true
+                page_name: home
+                template_name: home_template.html
+                title: GovtDept
+                typescript_name: home_template.jinja
+                visible_columns: name,authority,id
+              new:
+                columns: name,authority,id
+                include_children: true
+                page_name: new
+                template_name: new_template.html
+                title: GovtDept
+                typescript_name: new_component.jinja
+                visible_columns: name,authority,id
             template_name: module.jinja
           Piece:
             icon: edit_square
@@ -106,29 +226,29 @@ application:
             menu_title: ShipmentCommodity
             page:
               detail:
-                columns: local_shipment_oid_nbr,sequence_nbr,commodity_desc,commodity_wgt,customs_value_amt,export_cargo_control_nbr,export_license_expr_dt,export_license_nbr,harmonized_tariff_nbr,last_modified_nm,last_modified_tmstp,oversize_flg,piece_qty,package_qty,etl_tmstp,classification_status_desc,part_expiration_dt,clearance_country_cd,commodity_wgt_uom_cd,hazardous_material_cd,origin_country_cd,tariff_source_cd,shipment_type_cd,commodity_currency_cd,unit_of_measure_cd,classification_status_cd
+                columns: local_shipment_oid_nbr,controlled_regulated_goods_id,sequence_nbr,commodity_desc,commodity_wgt,customs_value_amt,export_cargo_control_nbr,export_license_expr_dt,export_license_nbr,harmonized_tariff_nbr,last_modified_nm,last_modified_tmstp,oversize_flg,piece_qty,package_qty,etl_tmstp,classification_status_desc,part_expiration_dt,clearance_country_cd,commodity_wgt_uom_cd,hazardous_material_cd,origin_country_cd,tariff_source_cd,shipment_type_cd,commodity_currency_cd,unit_of_measure_cd,classification_status_cd
                 include_children: true
                 page_name: detail
                 template_name: detail_template.html
                 title: ShipmentCommodity
                 typescript_name: detail_component.jinja
-                visible_columns: local_shipment_oid_nbr,sequence_nbr,commodity_desc,commodity_wgt,customs_value_amt,export_cargo_control_nbr,export_license_expr_dt,export_license_nbr,harmonized_tariff_nbr,last_modified_nm,last_modified_tmstp,oversize_flg,piece_qty,package_qty,etl_tmstp,classification_status_desc,part_expiration_dt,clearance_country_cd,commodity_wgt_uom_cd,hazardous_material_cd,origin_country_cd,tariff_source_cd,shipment_type_cd,commodity_currency_cd,unit_of_measure_cd,classification_status_cd
+                visible_columns: local_shipment_oid_nbr,controlled_regulated_goods_id,sequence_nbr,commodity_desc,commodity_wgt,customs_value_amt,export_cargo_control_nbr,export_license_expr_dt,export_license_nbr,harmonized_tariff_nbr,last_modified_nm,last_modified_tmstp,oversize_flg,piece_qty,package_qty,etl_tmstp,classification_status_desc,part_expiration_dt,clearance_country_cd,commodity_wgt_uom_cd,hazardous_material_cd,origin_country_cd,tariff_source_cd,shipment_type_cd,commodity_currency_cd,unit_of_measure_cd,classification_status_cd
               home:
-                columns: local_shipment_oid_nbr,sequence_nbr,commodity_desc,commodity_wgt,customs_value_amt,export_cargo_control_nbr,export_license_expr_dt,export_license_nbr,harmonized_tariff_nbr,last_modified_nm,last_modified_tmstp,oversize_flg,piece_qty,package_qty,etl_tmstp,classification_status_desc,part_expiration_dt,clearance_country_cd,commodity_wgt_uom_cd,hazardous_material_cd,origin_country_cd,tariff_source_cd,shipment_type_cd,commodity_currency_cd,unit_of_measure_cd,classification_status_cd
+                columns: local_shipment_oid_nbr,controlled_regulated_goods_id,sequence_nbr,commodity_desc,commodity_wgt,customs_value_amt,export_cargo_control_nbr,export_license_expr_dt,export_license_nbr,harmonized_tariff_nbr,last_modified_nm,last_modified_tmstp,oversize_flg,piece_qty,package_qty,etl_tmstp,classification_status_desc,part_expiration_dt,clearance_country_cd,commodity_wgt_uom_cd,hazardous_material_cd,origin_country_cd,tariff_source_cd,shipment_type_cd,commodity_currency_cd,unit_of_measure_cd,classification_status_cd
                 include_children: true
                 page_name: home
                 template_name: home_template.html
                 title: ShipmentCommodity
                 typescript_name: home_template.jinja
-                visible_columns: local_shipment_oid_nbr,sequence_nbr,commodity_desc,commodity_wgt,customs_value_amt,export_cargo_control_nbr,export_license_expr_dt,export_license_nbr,harmonized_tariff_nbr,last_modified_nm,last_modified_tmstp,oversize_flg,piece_qty,package_qty,etl_tmstp,classification_status_desc,part_expiration_dt,clearance_country_cd,commodity_wgt_uom_cd,hazardous_material_cd,origin_country_cd,tariff_source_cd,shipment_type_cd,commodity_currency_cd,unit_of_measure_cd,classification_status_cd
+                visible_columns: local_shipment_oid_nbr,controlled_regulated_goods_id,sequence_nbr,commodity_desc,commodity_wgt,customs_value_amt,export_cargo_control_nbr,export_license_expr_dt,export_license_nbr,harmonized_tariff_nbr,last_modified_nm,last_modified_tmstp,oversize_flg,piece_qty,package_qty,etl_tmstp,classification_status_desc,part_expiration_dt,clearance_country_cd,commodity_wgt_uom_cd,hazardous_material_cd,origin_country_cd,tariff_source_cd,shipment_type_cd,commodity_currency_cd,unit_of_measure_cd,classification_status_cd
               new:
-                columns: local_shipment_oid_nbr,sequence_nbr,commodity_desc,commodity_wgt,customs_value_amt,export_cargo_control_nbr,export_license_expr_dt,export_license_nbr,harmonized_tariff_nbr,last_modified_nm,last_modified_tmstp,oversize_flg,piece_qty,package_qty,etl_tmstp,classification_status_desc,part_expiration_dt,clearance_country_cd,commodity_wgt_uom_cd,hazardous_material_cd,origin_country_cd,tariff_source_cd,shipment_type_cd,commodity_currency_cd,unit_of_measure_cd,classification_status_cd
+                columns: local_shipment_oid_nbr,controlled_regulated_goods_id,sequence_nbr,commodity_desc,commodity_wgt,customs_value_amt,export_cargo_control_nbr,export_license_expr_dt,export_license_nbr,harmonized_tariff_nbr,last_modified_nm,last_modified_tmstp,oversize_flg,piece_qty,package_qty,etl_tmstp,classification_status_desc,part_expiration_dt,clearance_country_cd,commodity_wgt_uom_cd,hazardous_material_cd,origin_country_cd,tariff_source_cd,shipment_type_cd,commodity_currency_cd,unit_of_measure_cd,classification_status_cd
                 include_children: true
                 page_name: new
                 template_name: new_template.html
                 title: ShipmentCommodity
                 typescript_name: new_component.jinja
-                visible_columns: local_shipment_oid_nbr,sequence_nbr,commodity_desc,commodity_wgt,customs_value_amt,export_cargo_control_nbr,export_license_expr_dt,export_license_nbr,harmonized_tariff_nbr,last_modified_nm,last_modified_tmstp,oversize_flg,piece_qty,package_qty,etl_tmstp,classification_status_desc,part_expiration_dt,clearance_country_cd,commodity_wgt_uom_cd,hazardous_material_cd,origin_country_cd,tariff_source_cd,shipment_type_cd,commodity_currency_cd,unit_of_measure_cd,classification_status_cd
+                visible_columns: local_shipment_oid_nbr,controlled_regulated_goods_id,sequence_nbr,commodity_desc,commodity_wgt,customs_value_amt,export_cargo_control_nbr,export_license_expr_dt,export_license_nbr,harmonized_tariff_nbr,last_modified_nm,last_modified_tmstp,oversize_flg,piece_qty,package_qty,etl_tmstp,classification_status_desc,part_expiration_dt,clearance_country_cd,commodity_wgt_uom_cd,hazardous_material_cd,origin_country_cd,tariff_source_cd,shipment_type_cd,commodity_currency_cd,unit_of_measure_cd,classification_status_cd
             template_name: module.jinja
           ShipmentParty:
             icon: edit_square
@@ -256,6 +376,51 @@ application:
     name: app
 authentication: '{system-default}'
 entities:
+  ControlledRegulatedGood:
+    columns:
+    - label: ' description*'
+      name: description
+      required: true
+      search: true
+      sort: true
+      template: text
+      type: TEXT
+    - name: govt_dept_id
+      required: true
+      template: integer
+      type: INTEGER
+    - name: category
+      required: true
+      template: text
+      type: TEXT
+    - name: hs_code
+      required: true
+      template: text
+      type: TEXT
+    - name: clvs_reason
+      required: true
+      template: text
+      type: TEXT
+    - name: id
+      template: integer
+      type: INTEGER
+    favorite: description
+    hidden: {}
+    label: ControlledRegulatedGood
+    primary_key:
+    - id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - controlled_regulated_goods_id
+      name: ShipmentCommodityList
+      resource: ShipmentCommodity
+    - direction: toone
+      fks:
+      - govt_dept_id
+      name: govt_dept
+      resource: GovtDept
+    type: ControlledRegulatedGood
   Customer:
     columns:
     - label: ' name*'
@@ -345,6 +510,120 @@ entities:
     primary_key:
     - id
     type: Customer
+  CustomsOffice:
+    columns:
+    - label: ' name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+      template: text
+      type: TEXT
+    - name: customs_region_id
+      required: true
+      template: integer
+      type: INTEGER
+    - name: office_code
+      required: true
+      template: text
+      type: TEXT
+    - name: province
+      required: true
+      template: text
+      type: TEXT
+    - name: city
+      required: true
+      template: text
+      type: TEXT
+    - name: Type
+      required: true
+      template: text
+      type: TEXT
+    - default: '0'
+      name: clvs_release
+      required: true
+      template: integer
+      type: INTEGER
+    - default: '0'
+      name: sufferance_warehouse
+      required: true
+      template: integer
+      type: INTEGER
+    - name: id
+      template: integer
+      type: INTEGER
+    favorite: name
+    hidden: {}
+    label: CustomsOffice
+    primary_key:
+    - id
+    tab_groups:
+    - direction: toone
+      fks:
+      - customs_region_id
+      name: customs_region
+      resource: CustomsRegion
+    type: CustomsOffice
+  CustomsRegion:
+    columns:
+    - label: ' region_name*'
+      name: region_name
+      required: true
+      search: true
+      sort: true
+      template: text
+      type: TEXT
+    - name: region_key
+      required: true
+      template: text
+      type: TEXT
+    - name: regional_hq
+      required: true
+      template: text
+      type: TEXT
+    - name: id
+      template: integer
+      type: INTEGER
+    favorite: region_name
+    hidden: {}
+    label: CustomsRegion
+    primary_key:
+    - id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - customs_region_id
+      name: CustomsOfficeList
+      resource: CustomsOffice
+    type: CustomsRegion
+  GovtDept:
+    columns:
+    - label: ' name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+      template: text
+      type: TEXT
+    - name: authority
+      required: true
+      template: text
+      type: TEXT
+    - name: id
+      template: integer
+      type: INTEGER
+    favorite: name
+    hidden: {}
+    label: GovtDept
+    primary_key:
+    - id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - govt_dept_id
+      name: ControlledRegulatedGoodList
+      resource: ControlledRegulatedGood
+    type: GovtDept
   Piece:
     columns:
     - label: ' local_piece_oid_nbr*'
@@ -960,6 +1239,9 @@ entities:
       sort: true
       template: integer
       type: INTEGER
+    - name: controlled_regulated_goods_id
+      template: integer
+      type: INTEGER
     - name: sequence_nbr
       template: integer
       type: INTEGER
@@ -1038,6 +1320,11 @@ entities:
     - local_shipment_oid_nbr
     - sequence_nbr
     tab_groups:
+    - direction: toone
+      fks:
+      - controlled_regulated_goods_id
+      name: controlled_regulated_goods
+      resource: ControlledRegulatedGood
     - direction: toone
       fks:
       - local_shipment_oid_nbr

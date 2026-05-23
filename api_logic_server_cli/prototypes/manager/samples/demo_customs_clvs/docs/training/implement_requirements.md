@@ -1225,14 +1225,29 @@ Create a fully functional application and database
    ### 🔴 Review Required
    | Location | Issue | Action |
    |---|---|---|
-   | [file.py] | [what was guessed or assumed] | [what dev must check or confirm] |
+   | `logic/logic_discovery/[file.py]:NN` | [what was guessed or assumed] | [what dev must check or confirm] |
+
+   **CRITICAL: every row MUST cite the exact file path and line number.**
+   Entries without a file reference are not actionable and will be rejected.
+   Examples of correct Location values:
+   - `logic/logic_discovery/clvs_eligibility.py:42` — specific line
+   - `logic/logic_discovery/shipment_matching.py:15-28` — line range
+   - `database/models.py` — whole-file decision (no line needed)
+   - `integration/row_dict_maps/IsdcMapper.py:88` — mapper decision
 
    *If none: "None — all decisions were specified or followed standard patterns."*
 
    ---
 
    ### 🟡 FYI
-   - `[file]` — [one-line description of standard decision made]
+   - `logic/logic_discovery/[file.py]:NN` — [one-line description of standard decision made]
+
+   **CRITICAL: every FYI MUST cite the exact file path.**
+   Format: `` `path/to/file.py:NN` — description ``
+   The file reference tells the developer exactly where to look if they want to verify.
+   Examples:
+   - `` `logic/logic_discovery/clvs_eligibility.py:12` — used Decimal('3300') for threshold comparison ``
+   - `` `integration/row_dict_maps/IsdcMapper.py` — ShipmentCommodity composite PK workaround: inserted via parent.ShipmentCommodityList.append() to avoid UNIQUE constraint on (local_shipment_oid_nbr, sequence_nbr) ``
 
    *(end template)*
 

@@ -1,0 +1,92 @@
+<div class="container">
+<o-form-container breadcrumb="yes" breadcrumb-label-columns="region_name" breadcrumb-separator=", " class="fill-form">
+      <o-form #form attr="CustomsRegion_form_edit" 
+        service="CustomsRegion" 
+        entity="CustomsRegion" 
+        fxLayout="column" 
+        show-header="yes" 
+        header-actions="R;U;D"
+        #oDetailForm keys="id" 
+        keys-sql-types="INTEGER" 
+        show-header-navigation="yes"
+        (onDataLoaded)="onDataLoaded($event)">
+
+  <o-row attr="row1" layout-align="start stretch">
+    <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+      
+      <o-text-input #region_name attr="region_name" label=" region_name" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #region_key attr="region_key" label="region_key" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-text-input #regional_hq attr="regional_hq" label="regional_hq" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+      <o-integer-input #id attr="id" label="id" type="integer" editable="no" required="no" ></o-integer-input>
+      
+    </div>
+  </o-row>
+      
+      <mat-tab-group fxFill>
+        
+        <mat-tab label="CUSTOMSOFFICE-customs_region_id">
+    <div layout-padding>
+      <o-table 
+        attr="CustomsOfficeTable" 
+        service="CustomsOffice" 
+        entity="CustomsOffice" 
+        keys="id"
+        parent-keys="customs_region_id:id"
+        columns="name;customs_region_id;office_code;province;city;Type;clvs_release;sufferance_warehouse;id"  
+        horizontal-scroll="yes"
+        detail-form-route="CustomsOffice" 
+        edit-form-route="CustomsOffice"
+        visible-columns="name;customs_region_id;office_code;province;city;Type;clvs_release;sufferance_warehouse;id"  
+        sort-columns="name" 
+        query-rows="25" 
+        quick-filter="yes"
+        row-height="medium" 
+        select-all-checkbox="true" 
+        pageable="yes"  
+        auto-adjust="true" 
+        virtual-scroll="yes" 
+        insert-button="yes" 
+        delete-button="yes" 
+        fixed-header="true" 
+        class="vertical-padding-8"
+        edition-mode="dblclick" 
+        horizontal-scroll="yes" class="fill-form">
+        
+          <o-table-column #name attr="name" title=" name" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column attr="customs_region_id" title="customs_region_id">
+    <o-table-cell-renderer-service attr="customs_region_id" 
+        service="CustomsRegion" entity="CustomsRegionType" columns="id;region_name"
+        parent-keys="id:customs_region_id"
+        value-column="region_name" keys="customs_region_id"
+        visible-columns="region_name" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column #office_code attr="office_code" title="office_code" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #province attr="province" title="province" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #city attr="city" title="city" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #Type attr="Type" title="Type" editable="no" required="yes" content-align="left"></o-table-column>
+        
+          <o-table-column #clvs_release attr="clvs_release" title="clvs_release" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+        
+          <o-table-column #sufferance_warehouse attr="sufferance_warehouse" title="sufferance_warehouse" type="integer" editable="no" required="yes" content-align="center"></o-table-column>
+        
+          <o-table-column #id attr="id" title="id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+        
+        <o-table-paginator page-size-options="25;50;100"></o-table-paginator>
+      </o-table>
+    </div>
+</mat-tab>
+        
+      </mat-tab-group>
+      
+    </o-form>
+  </o-form-container>
+</div>

@@ -13,7 +13,15 @@ export const routes: Routes = [
         { path: 'settings', loadChildren: () => import('./settings/settings.module').then(m => m.SettingsModule) },
       
     
+        { path: 'ControlledRegulatedGood', loadChildren: () => import('./ControlledRegulatedGood/ControlledRegulatedGood.module').then(m => m.ControlledRegulatedGoodModule) },
+    
         { path: 'Customer', loadChildren: () => import('./Customer/Customer.module').then(m => m.CustomerModule) },
+    
+        { path: 'CustomsOffice', loadChildren: () => import('./CustomsOffice/CustomsOffice.module').then(m => m.CustomsOfficeModule) },
+    
+        { path: 'CustomsRegion', loadChildren: () => import('./CustomsRegion/CustomsRegion.module').then(m => m.CustomsRegionModule) },
+    
+        { path: 'GovtDept', loadChildren: () => import('./GovtDept/GovtDept.module').then(m => m.GovtDeptModule) },
     
         { path: 'Piece', loadChildren: () => import('./Piece/Piece.module').then(m => m.PieceModule) },
     

@@ -359,11 +359,11 @@
         entity="ShipmentCommodity" 
         keys="local_shipment_oid_nbr;sequence_nbr"
         parent-keys="local_shipment_oid_nbr:local_shipment_oid_nbr"
-        columns="local_shipment_oid_nbr;sequence_nbr;commodity_desc;commodity_wgt;customs_value_amt;export_cargo_control_nbr;export_license_expr_dt;export_license_nbr;harmonized_tariff_nbr;last_modified_nm;last_modified_tmstp;oversize_flg;piece_qty;package_qty;etl_tmstp;classification_status_desc;part_expiration_dt;clearance_country_cd;commodity_wgt_uom_cd;hazardous_material_cd;origin_country_cd;tariff_source_cd;shipment_type_cd;commodity_currency_cd;unit_of_measure_cd;classification_status_cd"  
+        columns="local_shipment_oid_nbr;controlled_regulated_goods_id;sequence_nbr;commodity_desc;commodity_wgt;customs_value_amt;export_cargo_control_nbr;export_license_expr_dt;export_license_nbr;harmonized_tariff_nbr;last_modified_nm;last_modified_tmstp;oversize_flg;piece_qty;package_qty;etl_tmstp;classification_status_desc;part_expiration_dt;clearance_country_cd;commodity_wgt_uom_cd;hazardous_material_cd;origin_country_cd;tariff_source_cd;shipment_type_cd;commodity_currency_cd;unit_of_measure_cd;classification_status_cd"  
         horizontal-scroll="yes"
         detail-form-route="ShipmentCommodity" 
         edit-form-route="ShipmentCommodity"
-        visible-columns="local_shipment_oid_nbr;sequence_nbr;commodity_desc;commodity_wgt;customs_value_amt;export_cargo_control_nbr;export_license_expr_dt;export_license_nbr;harmonized_tariff_nbr;last_modified_nm;last_modified_tmstp;oversize_flg;piece_qty;package_qty;etl_tmstp;classification_status_desc;part_expiration_dt;clearance_country_cd;commodity_wgt_uom_cd;hazardous_material_cd;origin_country_cd;tariff_source_cd;shipment_type_cd;commodity_currency_cd;unit_of_measure_cd;classification_status_cd"  
+        visible-columns="local_shipment_oid_nbr;controlled_regulated_goods_id;sequence_nbr;commodity_desc;commodity_wgt;customs_value_amt;export_cargo_control_nbr;export_license_expr_dt;export_license_nbr;harmonized_tariff_nbr;last_modified_nm;last_modified_tmstp;oversize_flg;piece_qty;package_qty;etl_tmstp;classification_status_desc;part_expiration_dt;clearance_country_cd;commodity_wgt_uom_cd;hazardous_material_cd;origin_country_cd;tariff_source_cd;shipment_type_cd;commodity_currency_cd;unit_of_measure_cd;classification_status_cd"  
         sort-columns="local_shipment_oid_nbr" 
         query-rows="25" 
         quick-filter="yes"
@@ -385,6 +385,15 @@
         parent-keys="local_shipment_oid_nbr:local_shipment_oid_nbr"
         value-column="local_shipment_oid_nbr" keys="local_shipment_oid_nbr"
         visible-columns="local_shipment_oid_nbr" separator=" - " width="680px">
+    </o-table-cell-renderer-service>
+</o-table-column>
+        
+          <o-table-column attr="controlled_regulated_goods_id" title="controlled_regulated_goods_id">
+    <o-table-cell-renderer-service attr="controlled_regulated_goods_id" 
+        service="ControlledRegulatedGood" entity="ControlledRegulatedGoodType" columns="id;description"
+        parent-keys="local_shipment_oid_nbr:controlled_regulated_goods_id"
+        value-column="description" keys="controlled_regulated_goods_id"
+        visible-columns="description" separator=" - " width="680px">
     </o-table-cell-renderer-service>
 </o-table-column>
         

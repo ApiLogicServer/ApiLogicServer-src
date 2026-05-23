@@ -1,14 +1,43 @@
 about:
-  date: May 10, 2026 12:30:15
+  date: May 22, 2026 18:00:23
   recent_changes: works with modified safrs-react-admin
   version: 0.0.0
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
 authentication: '{system-default}'
 info:
-  number_relationships: 5
-  number_tables: 8
+  number_relationships: 8
+  number_tables: 12
 info_toggle_checked: true
 resources:
+  ControlledRegulatedGood:
+    attributes:
+    - label: ' description*'
+      name: description
+      required: true
+      search: true
+      sort: true
+    - name: govt_dept_id
+      required: true
+    - name: category
+      required: true
+    - name: hs_code
+      required: true
+    - name: clvs_reason
+      required: true
+    - name: id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - controlled_regulated_goods_id
+      name: ShipmentCommodityList
+      resource: ShipmentCommodity
+    - direction: toone
+      fks:
+      - govt_dept_id
+      name: govt_dept
+      resource: GovtDept
+    type: ControlledRegulatedGood
+    user_key: description
   Customer:
     attributes:
     - label: ' name*'
@@ -41,6 +70,74 @@ resources:
     - name: broker_cd
     - name: rod
     type: Customer
+    user_key: name
+  CustomsOffice:
+    attributes:
+    - label: ' name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+    - name: customs_region_id
+      required: true
+    - name: office_code
+      required: true
+    - name: province
+      required: true
+    - name: city
+      required: true
+    - name: Type
+      required: true
+    - name: clvs_release
+      required: true
+    - name: sufferance_warehouse
+      required: true
+    - name: id
+    tab_groups:
+    - direction: toone
+      fks:
+      - customs_region_id
+      name: customs_region
+      resource: CustomsRegion
+    type: CustomsOffice
+    user_key: name
+  CustomsRegion:
+    attributes:
+    - label: ' region_name*'
+      name: region_name
+      required: true
+      search: true
+      sort: true
+    - name: region_key
+      required: true
+    - name: regional_hq
+      required: true
+    - name: id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - customs_region_id
+      name: CustomsOfficeList
+      resource: CustomsOffice
+    type: CustomsRegion
+    user_key: region_name
+  GovtDept:
+    attributes:
+    - label: ' name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+    - name: authority
+      required: true
+    - name: id
+    tab_groups:
+    - direction: tomany
+      fks:
+      - govt_dept_id
+      name: ControlledRegulatedGoodList
+      resource: ControlledRegulatedGood
+    type: GovtDept
     user_key: name
   Piece:
     attributes:
@@ -290,6 +387,7 @@ resources:
       name: local_shipment_oid_nbr
       search: true
       sort: true
+    - name: controlled_regulated_goods_id
     - name: local_shipment_oid_nbr
     - name: sequence_nbr
     - name: commodity_desc
@@ -321,6 +419,11 @@ resources:
     - name: unit_of_measure_cd
     - name: classification_status_cd
     tab_groups:
+    - direction: toone
+      fks:
+      - controlled_regulated_goods_id
+      name: controlled_regulated_goods
+      resource: ControlledRegulatedGood
     - direction: toone
       fks:
       - local_shipment_oid_nbr
@@ -413,19 +516,6 @@ resources:
     - name: id
     type: SysConfig
     user_key: name
-  ShipmentXml:
-    attributes:
-    - label: ' id*'
-      name: id
-      search: true
-      sort: true
-    - name: received_at
-      type: DATETIME
-    - name: is_processed
-    - name: payload
-      type: textarea
-    type: ShipmentXml
-    user_key: id
   VirtualRouteLeg:
     attributes:
     - label: ' id*'
@@ -475,6 +565,19 @@ resources:
     - name: us_process_cd
     - name: carrier_cd
     type: VirtualRouteLeg
+    user_key: id
+  ShipmentXml:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: received_at
+      type: DATETIME
+    - name: is_processed
+    - name: payload
+      type: textarea
+    type: ShipmentXml
     user_key: id
 settings:
   HomeJS: /admin-app/home.js

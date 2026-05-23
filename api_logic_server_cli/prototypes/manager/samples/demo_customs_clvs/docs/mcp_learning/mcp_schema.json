@@ -2,8 +2,54 @@
     "tool_type": "json-api",
     "schema_version": "1.0",
     "base_url": "http://localhost:5656/api",
-    "description": "API Logic Project: demo_customs",
+    "description": "API Logic Project: demo_customs_clvs",
     "resources": [
+        {
+            "name": "ControlledRegulatedGood",
+            "path": "/ControlledRegulatedGood",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "govt_dept_id",
+                "category",
+                "hs_code",
+                "description",
+                "clvs_reason"
+            ],
+            "filterable": [
+                "id",
+                "govt_dept_id",
+                "category",
+                "hs_code",
+                "description",
+                "clvs_reason"
+            ]
+        },
+        {
+            "name": "GovtDept",
+            "path": "/GovtDept",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "name",
+                "authority"
+            ],
+            "filterable": [
+                "id",
+                "name",
+                "authority"
+            ]
+        },
         {
             "name": "Customer",
             "path": "/Customer",
@@ -68,6 +114,60 @@
                 "phone_nbr",
                 "broker_cd",
                 "rod"
+            ]
+        },
+        {
+            "name": "CustomsOffice",
+            "path": "/CustomsOffice",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "customs_region_id",
+                "office_code",
+                "name",
+                "province",
+                "city",
+                "Type",
+                "clvs_release",
+                "sufferance_warehouse"
+            ],
+            "filterable": [
+                "id",
+                "customs_region_id",
+                "office_code",
+                "name",
+                "province",
+                "city",
+                "Type",
+                "clvs_release",
+                "sufferance_warehouse"
+            ]
+        },
+        {
+            "name": "CustomsRegion",
+            "path": "/CustomsRegion",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "region_key",
+                "region_name",
+                "regional_hq"
+            ],
+            "filterable": [
+                "id",
+                "region_key",
+                "region_name",
+                "regional_hq"
             ]
         },
         {
@@ -325,9 +425,10 @@
                 "portofentry",
                 "warehousecode",
                 "surface_intl_shipment_nbr",
-                "prohibited_commodity_count",
                 "clvs_eligible",
-                "clvs_reason"
+                "clvs_reason",
+                "prohibited_commodity_count",
+                "controlled_commodity_count"
             ],
             "filterable": [
                 "local_shipment_oid_nbr",
@@ -469,9 +570,10 @@
                 "portofentry",
                 "warehousecode",
                 "surface_intl_shipment_nbr",
-                "prohibited_commodity_count",
                 "clvs_eligible",
-                "clvs_reason"
+                "clvs_reason",
+                "prohibited_commodity_count",
+                "controlled_commodity_count"
             ]
         },
         {
@@ -486,6 +588,7 @@
             "fields": [
                 "local_shipment_oid_nbr",
                 "sequence_nbr",
+                "controlled_regulated_goods_id",
                 "clearance_country_cd",
                 "commodity_desc",
                 "commodity_wgt",
@@ -515,6 +618,7 @@
             "filterable": [
                 "local_shipment_oid_nbr",
                 "sequence_nbr",
+                "controlled_regulated_goods_id",
                 "clearance_country_cd",
                 "commodity_desc",
                 "commodity_wgt",
@@ -583,10 +687,7 @@
                 "cfia_account_nbr",
                 "fax_nbr",
                 "pref_cont_mthd_cd",
-                "additional_contact_flg",
-                "address_1",
-                "address_2",
-                "address_3"
+                "additional_contact_flg"
             ],
             "filterable": [
                 "shipment_party_oid_nbr",
@@ -620,10 +721,7 @@
                 "cfia_account_nbr",
                 "fax_nbr",
                 "pref_cont_mthd_cd",
-                "additional_contact_flg",
-                "address_1",
-                "address_2",
-                "address_3"
+                "additional_contact_flg"
             ]
         },
         {

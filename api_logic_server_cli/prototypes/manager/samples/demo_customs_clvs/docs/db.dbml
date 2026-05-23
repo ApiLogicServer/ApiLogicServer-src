@@ -2,6 +2,21 @@
 // Or, https://databasediagram.com/app
 // Or, view in VSCode with extension: "DBML Live Preview"
 
+Table ControlledRegulatedGood {
+    id INTEGER [primary key]
+    govt_dept_id INTEGER 
+    category TEXT 
+    hs_code TEXT 
+    description TEXT 
+    clvs_reason TEXT 
+    }
+
+Table GovtDept {
+    id INTEGER [primary key]
+    name TEXT 
+    authority TEXT 
+    }
+
 Table Customer {
     id INTEGER [primary key]
     name VARCHAR(50) 
@@ -29,6 +44,25 @@ Table Customer {
     phone_nbr VARCHAR(20) 
     broker_cd VARCHAR(5) 
     rod VARCHAR(1) 
+    }
+
+Table CustomsOffice {
+    id INTEGER [primary key]
+    customs_region_id INTEGER 
+    office_code TEXT 
+    name TEXT 
+    province TEXT 
+    city TEXT 
+    Type TEXT 
+    clvs_release INTEGER 
+    sufferance_warehouse INTEGER 
+    }
+
+Table CustomsRegion {
+    id INTEGER [primary key]
+    region_key TEXT 
+    region_name TEXT 
+    regional_hq TEXT 
     }
 
 Table Piece {
@@ -220,14 +254,16 @@ Table Shipment {
     portofentry VARCHAR(6) 
     warehousecode VARCHAR(6) 
     surface_intl_shipment_nbr NUMERIC 
-    prohibited_commodity_count INTEGER 
     clvs_eligible INTEGER 
     clvs_reason TEXT 
+    prohibited_commodity_count INTEGER 
+    controlled_commodity_count INTEGER 
     }
 
 Table ShipmentCommodity {
     local_shipment_oid_nbr INTEGER [primary key]
     sequence_nbr INTEGER 
+    controlled_regulated_goods_id INTEGER 
     clearance_country_cd VARCHAR(2) 
     commodity_desc VARCHAR(300) 
     commodity_wgt DECIMAL 
@@ -288,9 +324,6 @@ Table ShipmentParty {
     fax_nbr VARCHAR(15) 
     pref_cont_mthd_cd VARCHAR(2) 
     additional_contact_flg VARCHAR(1) 
-    address_1 TEXT 
-    address_2 TEXT 
-    address_3 TEXT 
     }
 
 Table ShipmentXml {
@@ -354,7 +387,10 @@ Table VirtualRouteLeg {
 
 
 // Relationships
+    Ref: ControlledRegulatedGood.(govt_dept_id) > GovtDept.(id)
+    Ref: CustomsOffice.(customs_region_id) > CustomsRegion.(id)
     Ref: Piece.(local_shipment_oid_nbr) > Shipment.(local_shipment_oid_nbr)
+    Ref: ShipmentCommodity.(controlled_regulated_goods_id) > ControlledRegulatedGood.(id)
     Ref: ShipmentCommodity.(local_shipment_oid_nbr) > Shipment.(local_shipment_oid_nbr)
     Ref: ShipmentParty.(local_piece_oid_nbr) > Piece.(local_piece_oid_nbr)
     Ref: ShipmentParty.(local_shipment_oid_nbr) > Shipment.(local_shipment_oid_nbr)

@@ -1,0 +1,43 @@
+<o-form #ControlledRegulatedGoodForm attr="ControlledRegulatedGood_form_insert" service="ControlledRegulatedGood" entity="ControlledRegulatedGood"
+keys="id" fxLayout="column" show-header="yes" header-actions="I"
+horizontal-scroll="yes"
+after-insert-mode="new" class="standalone-form-container" >
+
+<o-row attr="row1" layout-align="start stretch">
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex fxLayoutGap="14px">
+    
+        <o-text-input #description attr="description" label=" description" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-list-picker 
+        attr="govt_dept_id"
+        service="GovtDept" 
+        entity="GovtDeptType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="yes" 
+        enabled="yes" 
+        filter="yes"
+        value-column="id" 
+        value-column-type="INTEGER"  
+        keys="id" 
+        columns="id;govt_dept_id;name" 
+        title="govt_dept_id"
+        visible-columns="id;name" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
+        <o-text-input #category attr="category" label="category" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #hs_code attr="hs_code" label="hs_code" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-text-input #clvs_reason attr="clvs_reason" label="clvs_reason" enabled="yes" required="yes" fxFlex="20%" class="form-field"></o-text-input>
+      
+        <o-integer-input #id attr="id" label="id" type="integer" editable="no" required="no" ></o-integer-input>
+      
+</div>
+</o-row>
+
+<div layout-padding></div>
+
+</o-form>

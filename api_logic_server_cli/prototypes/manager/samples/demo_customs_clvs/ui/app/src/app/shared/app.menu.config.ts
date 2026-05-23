@@ -1,6 +1,14 @@
 import { MenuRootItem } from 'ontimize-web-ngx';
 
+import { ControlledRegulatedGoodCardComponent } from './ControlledRegulatedGood-card/ControlledRegulatedGood-card.component';
+
 import { CustomerCardComponent } from './Customer-card/Customer-card.component';
+
+import { CustomsOfficeCardComponent } from './CustomsOffice-card/CustomsOffice-card.component';
+
+import { CustomsRegionCardComponent } from './CustomsRegion-card/CustomsRegion-card.component';
+
+import { GovtDeptCardComponent } from './GovtDept-card/GovtDept-card.component';
 
 import { PieceCardComponent } from './Piece-card/Piece-card.component';
 
@@ -24,7 +32,15 @@ export const MENU_CONFIG: MenuRootItem[] = [
     id: 'data', name: ' data', icon: 'remove_red_eye', opened: true,
     items: [
     
-        { id: 'Customer', name: 'CUSTOMER', icon: 'view_list', route: '/main/Customer' }
+        { id: 'ControlledRegulatedGood', name: 'CONTROLLEDREGULATEDGOOD', icon: 'view_list', route: '/main/ControlledRegulatedGood' }
+    
+        ,{ id: 'Customer', name: 'CUSTOMER', icon: 'view_list', route: '/main/Customer' }
+    
+        ,{ id: 'CustomsOffice', name: 'CUSTOMSOFFICE', icon: 'view_list', route: '/main/CustomsOffice' }
+    
+        ,{ id: 'CustomsRegion', name: 'CUSTOMSREGION', icon: 'view_list', route: '/main/CustomsRegion' }
+    
+        ,{ id: 'GovtDept', name: 'GOVTDEPT', icon: 'view_list', route: '/main/GovtDept' }
     
         ,{ id: 'Piece', name: 'PIECE', icon: 'view_list', route: '/main/Piece' }
     
@@ -50,7 +66,15 @@ export const MENU_CONFIG: MenuRootItem[] = [
 
 export const MENU_COMPONENTS = [
 
-    CustomerCardComponent
+    ControlledRegulatedGoodCardComponent
+
+    ,CustomerCardComponent
+
+    ,CustomsOfficeCardComponent
+
+    ,CustomsRegionCardComponent
+
+    ,GovtDeptCardComponent
 
     ,PieceCardComponent
 

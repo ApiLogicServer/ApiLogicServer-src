@@ -1,32 +1,47 @@
+#!/usr/bin/env python
 """
-Send one ISDC sample XML message to the `isdc` Kafka topic.
-Run from project root: python test/send_isdc.py
+Send a sample ISDC shipment XML to the Kafka topic.
+Requires KAFKA_SERVER to be set in config/default.env or environment.
 
-Requires KAFKA_SERVER set in config/default.env (or env).
+Usage (from project root):
+  python test/send_isdc.py
 """
-
 import os
 import sys
+import time
 from pathlib import Path
 
-SAMPLE = "docs/requirements/customs_demo/message_formats/MDE-CDV-HVS-WR-Rev260328.xml"
-TOPIC = "isdc"
+# ---------------------------------------------------------------------------
+# Locate and load config/default.env to get KAFKA_SERVER
+# ---------------------------------------------------------------------------
+project_root = Path(__file__).parent.parent
+env_file = project_root / "config" / "default.env"
+kafka_server = os.getenv("KAFKA_SERVER", "localhost:9092")
+if env_file.exists():
+    for line in env_file.read_text().splitlines():
+        line = line.strip()
+        if line.startswith("#") or "=" not in line:
+            continue
+        key, _, val = line.partition("=")
+        key = key.strip()
+        val = val.strip().strip('"')
+        if key == "KAFKA_SERVER" and not os.getenv("KAFKA_SERVER"):
+            kafka_server = val
 
-def main():
-    try:
-        from confluent_kafka import Producer
-    except ImportError:
-        print("confluent_kafka not installed — skipping Kafka test send")
-        sys.exit(0)
+sample_file = project_root / "docs" / "requirements" / "customs_demo" / "message_formats" / "MDE-CDV-HVS-WR-Rev260328.xml"
+if not sample_file.exists():
+    print(f"ERROR: sample file not found: {sample_file}", file=sys.stderr)
+    sys.exit(1)
 
-    kafka_server = os.environ.get('KAFKA_SERVER', 'localhost:9092')
-    producer = Producer({'bootstrap.servers': kafka_server})
+payload = sample_file.read_bytes()
 
-    payload = Path(SAMPLE).read_text()
-    producer.produce(TOPIC, value=payload.encode('utf-8'))
-    producer.flush(timeout=10)
-    print(f"Sent 1 message to topic '{TOPIC}' ({len(payload)} bytes)")
+try:
+    from confluent_kafka import Producer
+except ImportError:
+    print("ERROR: confluent_kafka not installed. Run: pip install confluent-kafka", file=sys.stderr)
+    sys.exit(1)
 
-
-if __name__ == '__main__':
-    main()
+producer = Producer({"bootstrap.servers": kafka_server})
+producer.produce(topic="isdc", value=payload)
+producer.flush(timeout=15)
+print(f"Sent {len(payload)} bytes to topic 'isdc' on {kafka_server}")

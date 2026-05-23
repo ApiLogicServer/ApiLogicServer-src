@@ -1,0 +1,37 @@
+<o-form-layout-manager attr="CustomsRegion" mode="tab" title="CUSTOMSREGION">
+    <div fxFill fxLayout="column" fxLayoutAlign="start">
+        <o-table 
+            attr="CustomsRegionTable" 
+            service="CustomsRegion" 
+            entity="CustomsRegion" 
+            title="CUSTOMSREGION"
+            keys="id"
+            columns="region_name;region_key;regional_hq;id" 
+            header-actions="R;D"
+            visible-columns="region_name;region_key;regional_hq;id"  
+            sort-columns="region_name" 
+            query-rows="20" 
+            quick-filter="yes"
+            row-height="medium" 
+            select-all-checkbox="true" 
+            pageable="yes"  
+            auto-adjust="true" 
+            virtual-scroll="yes" 
+            edition-mode="dblclick"
+            horizontal-scroll="yes"
+            show-title="yes"
+            export-button="yes">
+            
+            <o-table-column #region_name attr="region_name" title=" region_name" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #region_key attr="region_key" title="region_key" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #regional_hq attr="regional_hq" title="regional_hq" editable="no" required="yes" content-align="left"></o-table-column>
+            
+            <o-table-column #id attr="id" title="id" type="integer" editable="no" required="no" content-align="center"></o-table-column>
+            
+            <o-table-context-menu></o-table-context-menu>
+            <o-table-paginator page-size-options="24;48;96"></o-table-paginator>
+        </o-table>
+    </div>
+</o-form-layout-manager>

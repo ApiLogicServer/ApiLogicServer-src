@@ -10,8 +10,8 @@ from sqlalchemy.ext.declarative import declarative_base
 # Alter this file per your database maintenance policy
 #    See https://apilogicserver.github.io/Docs/Project-Rebuild/#rebuilding
 #
-# Created:  May 10, 2026 12:36:18
-# Database: sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-logic/demo_customs/database/db.sqlite
+# Created:  May 22, 2026 18:06:08
+# Database: sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-logic/demo_customs_clvs/database/db.sqlite
 # Dialect:  sqlite
 #
 # mypy: ignore-errors
@@ -78,6 +78,37 @@ class Customer(Base):  # type: ignore
     # parent relationships (access parent)
 
     # child relationships (access children)
+
+
+
+class CustomsRegion(Base):  # type: ignore
+    __tablename__ = 'customs_region'
+    _s_collection_name = 'CustomsRegion'  # type: ignore
+
+    id = Column(Integer, primary_key=True)
+    region_key = Column(Text, nullable=False, unique=True)
+    region_name = Column(Text, nullable=False)
+    regional_hq = Column(Text, nullable=False)
+
+    # parent relationships (access parent)
+
+    # child relationships (access children)
+    CustomsOfficeList : Mapped[List["CustomsOffice"]] = relationship(back_populates="customs_region")
+
+
+
+class GovtDept(Base):  # type: ignore
+    __tablename__ = 'govt_dept'
+    _s_collection_name = 'GovtDept'  # type: ignore
+
+    id = Column(Integer, primary_key=True)
+    name = Column(Text, nullable=False, unique=True)
+    authority = Column(Text, nullable=False)
+
+    # parent relationships (access parent)
+
+    # child relationships (access children)
+    ControlledRegulatedGoodList : Mapped[List["ControlledRegulatedGood"]] = relationship(back_populates="govt_dept")
 
 
 
@@ -224,16 +255,19 @@ class Shipment(Base):  # type: ignore
     portofentry = Column(String(6))
     warehousecode = Column(String(6))
     surface_intl_shipment_nbr = Column(Numeric)
-    prohibited_commodity_count = Column(Integer, server_default=text("0"))
     clvs_eligible = Column(Integer, server_default=text("0"))
-    clvs_reason = Column(Text)
+    clvs_reason = Column(Text, server_default=text("''"))
+    prohibited_commodity_count = Column(Integer, server_default=text("0"))
+    controlled_commodity_count = Column(Integer, server_default=text("0"))
 
     # parent relationships (access parent)
 
     # child relationships (access children)
     PieceList : Mapped[List["Piece"]] = relationship(cascade="all, delete", back_populates="shipment")
-    ShipmentCommodityList : Mapped[List["ShipmentCommodity"]] = relationship(cascade="all, delete", back_populates="shipment")
     SpecialHandlingList : Mapped[List["SpecialHandling"]] = relationship(cascade="all, delete", back_populates="shipment")
+    # ShipmentCommodity: composite PK includes FK — cascade="all,delete" would null FK before delete (fails for PK cols).
+    # Use passive_deletes='all' so DB ON DELETE CASCADE handles deletion.
+    ShipmentCommodityList : Mapped[List["ShipmentCommodity"]] = relationship(passive_deletes='all', back_populates="shipment")
     ShipmentPartyList : Mapped[List["ShipmentParty"]] = relationship(cascade="all, delete", back_populates="shipment")
 
 
@@ -243,7 +277,7 @@ class ShipmentXml(Base):  # type: ignore
     _s_collection_name = 'ShipmentXml'  # type: ignore
 
     id = Column(Integer, primary_key=True)
-    received_at = Column(DateTime)
+    received_at = Column(DateTime, server_default=text("CURRENT_TIMESTAMP"))
     payload = Column(Text, nullable=False)
     is_processed = Column(Integer, server_default=text("0"))
 
@@ -311,6 +345,46 @@ class VirtualRouteLeg(Base):  # type: ignore
 
 
 
+class ControlledRegulatedGood(Base):  # type: ignore
+    __tablename__ = 'controlled_regulated_goods'
+    _s_collection_name = 'ControlledRegulatedGood'  # type: ignore
+
+    id = Column(Integer, primary_key=True)
+    govt_dept_id = Column(ForeignKey('govt_dept.id'), nullable=False)
+    category = Column(Text, nullable=False)
+    hs_code = Column(Text, nullable=False)
+    description = Column(Text, nullable=False)
+    clvs_reason = Column(Text, nullable=False)
+
+    # parent relationships (access parent)
+    govt_dept : Mapped["GovtDept"] = relationship(back_populates=("ControlledRegulatedGoodList"))
+
+    # child relationships (access children)
+    ShipmentCommodityList : Mapped[List["ShipmentCommodity"]] = relationship(back_populates="controlled_regulated_goods")
+
+
+
+class CustomsOffice(Base):  # type: ignore
+    __tablename__ = 'customs_office'
+    _s_collection_name = 'CustomsOffice'  # type: ignore
+
+    id = Column(Integer, primary_key=True)
+    customs_region_id = Column(ForeignKey('customs_region.id'), nullable=False)
+    office_code = Column(Text, nullable=False, unique=True)
+    name = Column(Text, nullable=False)
+    province = Column(Text, nullable=False)
+    city = Column(Text, nullable=False)
+    type = Column(Text, nullable=False)
+    clvs_release = Column(Integer, server_default=text("0"), nullable=False)
+    sufferance_warehouse = Column(Integer, server_default=text("0"), nullable=False)
+
+    # parent relationships (access parent)
+    customs_region : Mapped["CustomsRegion"] = relationship(back_populates=("CustomsOfficeList"))
+
+    # child relationships (access children)
+
+
+
 class Piece(Base):  # type: ignore
     __tablename__ = 'piece'
     _s_collection_name = 'Piece'  # type: ignore
@@ -370,12 +444,31 @@ class Piece(Base):  # type: ignore
 
 
 
+class SpecialHandling(Base):  # type: ignore
+    __tablename__ = 'special_handling'
+    _s_collection_name = 'SpecialHandling'  # type: ignore
+
+    id = Column(Integer, primary_key=True)
+    oid_nbr = Column(ForeignKey('shipment.local_shipment_oid_nbr', ondelete='CASCADE'))
+    oid_type_cd = Column(String(1))
+    special_handling_cd = Column(String(5))
+    etl_tmstp = Column(DateTime)
+    shipment_type_cd = Column(Integer)
+
+    # parent relationships (access parent)
+    shipment : Mapped["Shipment"] = relationship(back_populates=("SpecialHandlingList"))
+
+    # child relationships (access children)
+
+
+
 class ShipmentCommodity(Base):  # type: ignore
     __tablename__ = 'shipment_commodity'
     _s_collection_name = 'ShipmentCommodity'  # type: ignore
 
     local_shipment_oid_nbr = Column(ForeignKey('shipment.local_shipment_oid_nbr', ondelete='CASCADE'), primary_key=True, nullable=False)
     sequence_nbr = Column(Integer, primary_key=True, nullable=False)
+    controlled_regulated_goods_id = Column(ForeignKey('controlled_regulated_goods.id'))
     clearance_country_cd = Column(String(2))
     commodity_desc = Column(String(300))
     commodity_wgt : DECIMAL = Column(DECIMAL(12, 4))
@@ -404,25 +497,8 @@ class ShipmentCommodity(Base):  # type: ignore
     allow_client_generated_ids = True
 
     # parent relationships (access parent)
+    controlled_regulated_goods : Mapped["ControlledRegulatedGood"] = relationship(back_populates=("ShipmentCommodityList"))
     shipment : Mapped["Shipment"] = relationship(back_populates=("ShipmentCommodityList"))
-
-    # child relationships (access children)
-
-
-
-class SpecialHandling(Base):  # type: ignore
-    __tablename__ = 'special_handling'
-    _s_collection_name = 'SpecialHandling'  # type: ignore
-
-    id = Column(Integer, primary_key=True)
-    oid_nbr = Column(ForeignKey('shipment.local_shipment_oid_nbr', ondelete='CASCADE'))
-    oid_type_cd = Column(String(1))
-    special_handling_cd = Column(String(5))
-    etl_tmstp = Column(DateTime)
-    shipment_type_cd = Column(Integer)
-
-    # parent relationships (access parent)
-    shipment : Mapped["Shipment"] = relationship(back_populates=("SpecialHandlingList"))
 
     # child relationships (access children)
 
@@ -464,9 +540,6 @@ class ShipmentParty(Base):  # type: ignore
     fax_nbr = Column(String(15))
     pref_cont_mthd_cd = Column(String(2))
     additional_contact_flg = Column(String(1), server_default=text("'N'"))
-    address_1 = Column(Text)
-    address_2 = Column(Text)
-    address_3 = Column(Text)
 
     # parent relationships (access parent)
     piece : Mapped["Piece"] = relationship(back_populates=("ShipmentPartyList"))

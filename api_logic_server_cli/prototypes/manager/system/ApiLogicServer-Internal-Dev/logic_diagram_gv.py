@@ -612,60 +612,7 @@ def build_dot(rules, project_name, fk_edges, fk_parents, req_label=None):
               f'[label="{kind}", color="{C_EVENT}", style=dashed, '
               f'arrowhead=open, penwidth=1.2, fontcolor="{C_EVENT}", constraint=false]')
 
-    # ── legend ────────────────────────────────────────────────────────────────
-    w('')
-    w('  // ── legend ──────────────────────────────────────────────────────────')
-    legend_rows = ""
-    for seq, r in enumerate(chain_rules, 1):
-        t = r["type"]
-        # Show the actual rule in natural form, strip table prefix for brevity
-        def short(dotted):
-            parts = dotted.split('.')
-            return parts[-1] if len(parts) > 1 else dotted
-
-        if t == "copy":
-            desc = f"{seq}. {short(r['derive'])} = copy({short(r['source'])})"
-            style = f'COLOR="{C_FLOW}"'
-        elif t == "formula":
-            calling = r.get("calling", "")
-            expr = r.get("expr", "")
-            if calling:
-                fn = calling.split(".")[-1]
-                desc = f"{seq}. {short(r['derive'])} = {fn}(row)"
-            elif expr:
-                e = expr if len(expr) <= 35 else expr[:32] + "..."
-                desc = f"{seq}. {short(r['derive'])} = {e}"
-            else:
-                deps = list(dict.fromkeys(short(d) for d in r['deps']))[:3]
-                desc = f"{seq}. {short(r['derive'])} = f({', '.join(deps)})"
-            style = f'COLOR="{C_FLOW}"'
-        elif t == "sum":
-            src_col = short(r['source'])
-            dst_col = short(r['derive'])
-            desc = f"{seq}. {dst_col} = sum({src_col})"
-            style = f'COLOR="{C_FLOW}"'
-        elif t == "count":
-            src_cls = _clean(r['source'])
-            dst_col = short(r['derive'])
-            desc = f"{seq}. {dst_col} = count({src_cls})"
-            style = f'COLOR="{C_FLOW}"'
-        else:
-            continue
-        legend_rows += f'<TR><TD ALIGN="LEFT"><FONT {style}>{desc}</FONT></TD></TR>'
-
-    for r in rules:
-        if r["type"] == "constraint":
-            legend_rows += (f'<TR><TD ALIGN="LEFT">'
-                            f'<FONT COLOR="{C_CONSTRAINT}">constraint: {r["entity"]}'
-                            f'</FONT></TD></TR>')
-
-    if legend_rows:
-        leg = (f'<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="3" BGCOLOR="#f9f9f9">'
-               f'<TR><TD ALIGN="LEFT"><B>Rules</B></TD></TR>'
-               f'{legend_rows}</TABLE>>')
-        w(f'  legend [label={leg}, shape=plaintext]')
-        # Place legend at same rank as trigger/children (bottom) — no centre interference
-        w(f'  {{ rank=max; legend }}')
+    # Legend removed — rule summary is in logic_flow_*.md instead
 
     w('}')
     return "\n".join(lines)
@@ -685,7 +632,7 @@ def build_logic_flow_md(rules, files, project_name, svg_path, ranks,
         * calling= rules: func_name + first docstring line (or mechanical fallback)
       - Generation timestamp
     """
-    from datetime import date
+    from datetime import datetime
 
     import ast as _ast
 
@@ -800,7 +747,7 @@ def build_logic_flow_md(rules, files, project_name, svg_path, ranks,
 {rule_block}
 
 ---
-_Generated {date.today()}_
+_Generated {datetime.now().strftime('%Y-%m-%d %H:%M')}_
 """
     return md
 

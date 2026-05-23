@@ -33,6 +33,25 @@
         separator=" - " width="680px" class="form-field">
 </o-list-picker>
       
+      <o-list-picker 
+        attr="controlled_regulated_goods_id"
+        service="ControlledRegulatedGood" 
+        entity="ControlledRegulatedGoodType"
+        fxFlex="30" 
+        query-on-init="no" 
+        query-on-bind="yes" 
+        required="no" 
+        enabled="yes" 
+        filter="yes"
+        value-column="id" 
+        value-column-type="INTEGER"  
+        keys="id" 
+        columns="id;controlled_regulated_goods_id;description" 
+        title="controlled_regulated_goods_id"
+        visible-columns="id;description" 
+        separator=" - " width="680px" class="form-field">
+</o-list-picker>
+      
       <o-integer-input #sequence_nbr attr="sequence_nbr" label="sequence_nbr" type="integer" editable="no" required="no" ></o-integer-input>
       
       <o-text-input #commodity_desc attr="commodity_desc" label="commodity_desc" enabled="yes" required="no" fxFlex="20%" class="form-field"></o-text-input>
