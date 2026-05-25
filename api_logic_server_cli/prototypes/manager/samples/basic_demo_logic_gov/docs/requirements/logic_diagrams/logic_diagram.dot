@@ -1,0 +1,42 @@
+digraph logic {
+  graph [rankdir=TB, fontname="Helvetica", fontsize=13,
+         label=<<B>Logic Diagram — basic_demo</B>>, labelloc=t,
+         pad=0.6, nodesep=0.9, ranksep=1.1, bgcolor="white",
+         splines=spline]
+  node  [fontname="Helvetica", fontsize=11, shape=plaintext]
+  edge  [fontname="Helvetica", fontsize=10]
+
+  // ── trigger ─────────────────────────────────────────────────────
+  TRIGGER [label=<<TABLE BORDER="2" CELLBORDER="0" CELLPADDING="5" BGCOLOR="#e8f5e9" COLOR="#27ae60"><TR><TD><FONT COLOR="#27ae60"><B>&#9889; Item inserted</B></FONT></TD></TR></TABLE>>, shape=plaintext]
+
+  // ── schema layer ──────────────────────────────────────────────────
+  Customer [label=<<TABLE BORDER="3" CELLBORDER="0" CELLSPACING="0" COLOR="#c0392b"><TR><TD COLSPAN="3" BGCOLOR="#4a6fa5"><FONT COLOR="white"><B> Customer </B></FONT></TD></TR><TR><TD PORT="Customer_balance_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Customer_balance" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> balance </FONT></TD><TD PORT="Customer_balance_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR></TABLE>>]
+  Item [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#4a6fa5"><TR><TD COLSPAN="3" BGCOLOR="#4a6fa5"><FONT COLOR="white"><B> Item </B></FONT></TD></TR><TR><TD PORT="Item_amount_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Item_amount" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> amount </FONT> <FONT COLOR="#e67e22" POINT-SIZE="9">= quantity * unit_price</FONT></TD><TD PORT="Item_amount_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR><TR><TD PORT="Item_quantity_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Item_quantity" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> quantity </FONT></TD><TD PORT="Item_quantity_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR><TR><TD PORT="Item_unit_price_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Item_unit_price" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> unit_price </FONT></TD><TD PORT="Item_unit_price_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR></TABLE>>]
+  Order [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#4a6fa5"><TR><TD COLSPAN="3" BGCOLOR="#4a6fa5"><FONT COLOR="white"><B> Order </B></FONT></TD></TR><TR><TD PORT="Order_amount_total_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Order_amount_total" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> amount_total </FONT></TD><TD PORT="Order_amount_total_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR></TABLE>>]
+  Product [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#4a6fa5"><TR><TD COLSPAN="3" BGCOLOR="#4a6fa5"><FONT COLOR="white"><B> Product </B></FONT></TD></TR><TR><TD PORT="Product_unit_price_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Product_unit_price" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> unit_price </FONT></TD><TD PORT="Product_unit_price_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR></TABLE>>]
+  // ── rank groupings ────────────────────────────────────────────────
+  { rank=min; Product; Customer }
+  { rank=same; Order }
+  { rank=max; Item; TRIGGER }
+
+  // ── FK relationships ───────────────────────────────────────────
+  Item -> Order [color="#e0e0e0", style=solid, arrowhead=none, arrowtail=crow, dir=both, penwidth=0.7, constraint=false, weight=1]
+  Item -> Product [color="#e0e0e0", style=solid, arrowhead=none, arrowtail=crow, dir=both, penwidth=0.7, constraint=false, weight=1]
+  Order -> Customer [color="#e0e0e0", style=solid, arrowhead=none, arrowtail=crow, dir=both, penwidth=0.7, constraint=false, weight=1]
+
+  // ── trigger edge ──────────────────────────────────────────────
+  TRIGGER -> Item [color="#27ae60", style=bold, arrowhead=vee, penwidth=2, weight=10]
+
+  // ── logic edges ────────────────────────────────────────────────────
+  Product:Product_unit_price_w -> Item:Item_unit_price_w [label="1", color="#444444", fontcolor="#444444", arrowhead=vee, penwidth=1.8, weight=8]
+  // INTRA:Item:unit_price:amount:2:0
+  Item:Item_amount_w -> Order:Order_amount_total_w [label="3", color="#444444", fontcolor="#444444", arrowhead=vee, penwidth=2, style=dashed, weight=8]
+  Order:Order_amount_total_w -> Customer:Customer_balance_w [label="4", color="#444444", fontcolor="#444444", arrowhead=vee, penwidth=2, style=dashed, weight=8]
+
+  // ── events (right cluster) ─────────────────────────────────────
+  subgraph cluster_events {
+    style=invis
+    evt_send_row_to_kafka [label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" BGCOLOR="#e8f5e9" COLOR="#27ae60"><TR><TD><FONT COLOR="#27ae60" POINT-SIZE="10">&#9889; send_row_to_kafka</FONT></TD></TR></TABLE>>, shape=plaintext]
+  }
+  Order -> evt_send_row_to_kafka [label="after_flush", color="#27ae60", style=dashed, arrowhead=open, penwidth=1.2, fontcolor="#27ae60", constraint=false]
+}

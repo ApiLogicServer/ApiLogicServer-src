@@ -1,0 +1,128 @@
+{
+    "tool_type": "json-api",
+    "schema_version": "1.0",
+    "base_url": "http://localhost:5656/api",
+    "description": "API Logic Project: basic_demo",
+    "resources": [
+        {
+            "name": "Customer",
+            "path": "/Customer",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "name",
+                "email",
+                "credit_limit",
+                "balance"
+            ],
+            "filterable": [
+                "id",
+                "name",
+                "email",
+                "credit_limit",
+                "balance"
+            ]
+        },
+        {
+            "name": "Item",
+            "path": "/Item",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "order_id",
+                "product_id",
+                "quantity",
+                "unit_price",
+                "amount"
+            ],
+            "filterable": [
+                "id",
+                "order_id",
+                "product_id",
+                "quantity",
+                "unit_price",
+                "amount"
+            ]
+        },
+        {
+            "name": "Order",
+            "path": "/Order",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "customer_id",
+                "date_ordered",
+                "date_shipped",
+                "notes",
+                "amount_total"
+            ],
+            "filterable": [
+                "id",
+                "customer_id",
+                "date_ordered",
+                "date_shipped",
+                "notes",
+                "amount_total"
+            ]
+        },
+        {
+            "name": "Product",
+            "path": "/Product",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "name",
+                "unit_price"
+            ],
+            "filterable": [
+                "id",
+                "name",
+                "unit_price"
+            ]
+        },
+        {
+            "name": "SysConfig",
+            "path": "/SysConfig",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "name",
+                "discount_rate",
+                "tax_rate",
+                "notes"
+            ],
+            "filterable": [
+                "id",
+                "name",
+                "discount_rate",
+                "tax_rate",
+                "notes"
+            ]
+        }
+    ]
+}

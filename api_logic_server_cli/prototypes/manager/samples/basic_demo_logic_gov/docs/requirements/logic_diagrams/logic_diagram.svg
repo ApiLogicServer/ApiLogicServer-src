@@ -1,0 +1,142 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="584pt" height="494pt" viewBox="0.00 0.00 584.00 494.00">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(43.2 450.82)">
+<title>logic</title>
+<polygon fill="white" stroke="none" points="-43.2,43.2 -43.2,-450.82 540.47,-450.82 540.47,43.2 -43.2,43.2" />
+<text xml:space="preserve" text-anchor="start" x="153.38" y="-392.27" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="13.00">Logic Diagram — basic_demo</text>
+<g id="clust4" class="cluster">
+<title>cluster_events</title>
+</g>
+
+<g id="node1" class="node">
+<title>TRIGGER</title>
+<polygon fill="#e8f5e9" stroke="none" points="87.27,-23.5 87.27,-56.5 187.77,-56.5 187.77,-23.5 87.27,-23.5" />
+<text xml:space="preserve" text-anchor="start" x="96.27" y="-38.05" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="#27ae60">⚡ Item inserted</text>
+<polygon fill="none" stroke="#27ae60" stroke-width="2" points="88.27,-24.5 88.27,-55.5 186.77,-55.5 186.77,-24.5 88.27,-24.5" />
+</g>
+
+<g id="node3" class="node">
+<title>Item</title>
+<polygon fill="#4a6fa5" stroke="none" points="334.77,-59 334.77,-75 488.27,-75 488.27,-59 334.77,-59" />
+<text xml:space="preserve" text-anchor="start" x="397.27" y="-63.55" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> Item </text>
+<polygon fill="#b8cce8" stroke="none" points="334.77,-41 334.77,-59 341.77,-59 341.77,-41 334.77,-41" />
+<text xml:space="preserve" text-anchor="start" x="336.77" y="-47" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="341.77,-41 341.77,-59 481.27,-59 481.27,-41 341.77,-41" />
+<text xml:space="preserve" text-anchor="start" x="344.77" y="-46.55" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> amount </text>
+<text xml:space="preserve" text-anchor="start" x="386.77" y="-46.55" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<text xml:space="preserve" text-anchor="start" x="389.77" y="-46.55" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#e67e22">= quantity * unit_price</text>
+<polygon fill="#b8cce8" stroke="none" points="481.27,-41 481.27,-59 488.27,-59 488.27,-41 481.27,-41" />
+<text xml:space="preserve" text-anchor="start" x="483.27" y="-47" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="334.77,-23 334.77,-41 341.77,-41 341.77,-23 334.77,-23" />
+<text xml:space="preserve" text-anchor="start" x="336.77" y="-29" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="341.77,-23 341.77,-41 481.27,-41 481.27,-23 341.77,-23" />
+<text xml:space="preserve" text-anchor="start" x="344.77" y="-29" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> quantity </text>
+<polygon fill="#b8cce8" stroke="none" points="481.27,-23 481.27,-41 488.27,-41 488.27,-23 481.27,-23" />
+<text xml:space="preserve" text-anchor="start" x="483.27" y="-29" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="334.77,-5 334.77,-23 341.77,-23 341.77,-5 334.77,-5" />
+<text xml:space="preserve" text-anchor="start" x="336.77" y="-11" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="341.77,-5 341.77,-23 481.27,-23 481.27,-5 341.77,-5" />
+<text xml:space="preserve" text-anchor="start" x="344.77" y="-11" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> unit_price </text>
+<polygon fill="#b8cce8" stroke="none" points="481.27,-5 481.27,-23 488.27,-23 488.27,-5 481.27,-5" />
+<text xml:space="preserve" text-anchor="start" x="483.27" y="-11" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="none" stroke="#4a6fa5" points="333.77,-4 333.77,-76 489.27,-76 489.27,-4 333.77,-4" />
+</g>
+
+<g id="edge4" class="edge">
+<title>TRIGGER-&gt;Item</title>
+<path fill="none" stroke="#27ae60" stroke-width="2" d="M195.58,-40C234.95,-40 274.32,-40 313.69,-40" />
+<polygon fill="#27ae60" stroke="#27ae60" stroke-width="2" points="323.47,-40 313.47,-44.5 320.9,-40.5 313.47,-40.5 313.47,-40 313.47,-39.5 320.9,-39.5 313.47,-35.5 323.47,-40" />
+</g>
+
+<g id="node2" class="node">
+<title>Customer</title>
+<polygon fill="#4a6fa5" stroke="none" points="46.77,-331.5 46.77,-347.5 110.27,-347.5 110.27,-331.5 46.77,-331.5" />
+<text xml:space="preserve" text-anchor="start" x="49.64" y="-336.05" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> Customer </text>
+<polygon fill="#b8cce8" stroke="none" points="46.77,-313.5 46.77,-331.5 53.77,-331.5 53.77,-313.5 46.77,-313.5" />
+<text xml:space="preserve" text-anchor="start" x="48.77" y="-319.5" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="53.77,-313.5 53.77,-331.5 103.27,-331.5 103.27,-313.5 53.77,-313.5" />
+<text xml:space="preserve" text-anchor="start" x="56.77" y="-319.5" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> balance </text>
+<polygon fill="#b8cce8" stroke="none" points="103.27,-313.5 103.27,-331.5 110.27,-331.5 110.27,-313.5 103.27,-313.5" />
+<text xml:space="preserve" text-anchor="start" x="105.27" y="-319.5" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="none" stroke="#c0392b" stroke-width="3" points="45.27,-312 45.27,-349 111.77,-349 111.77,-312 45.27,-312" />
+</g>
+
+<g id="node4" class="node">
+<title>Order</title>
+<polygon fill="#4a6fa5" stroke="none" points="96.39,-194.25 96.39,-210.25 184.64,-210.25 184.64,-194.25 96.39,-194.25" />
+<text xml:space="preserve" text-anchor="start" x="122.52" y="-198.8" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> Order </text>
+<polygon fill="#b8cce8" stroke="none" points="96.39,-176.25 96.39,-194.25 103.39,-194.25 103.39,-176.25 96.39,-176.25" />
+<text xml:space="preserve" text-anchor="start" x="98.39" y="-182.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="103.39,-176.25 103.39,-194.25 177.64,-194.25 177.64,-176.25 103.39,-176.25" />
+<text xml:space="preserve" text-anchor="start" x="106.39" y="-182.25" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> amount_total </text>
+<polygon fill="#b8cce8" stroke="none" points="177.64,-176.25 177.64,-194.25 184.64,-194.25 184.64,-176.25 177.64,-176.25" />
+<text xml:space="preserve" text-anchor="start" x="179.64" y="-182.25" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="none" stroke="#4a6fa5" points="95.39,-175.25 95.39,-211.25 185.64,-211.25 185.64,-175.25 95.39,-175.25" />
+</g>
+
+<g id="edge1" class="edge">
+<title>Item-&gt;Order</title>
+<path fill="none" stroke="#e0e0e0" stroke-width="0.7" d="M316.42,-65.4C278.52,-77.93 235.84,-95.77 201.52,-120 181.94,-133.82 164.85,-155.38 153.78,-171.35" />
+<polygon fill="#e0e0e0" stroke="#e0e0e0" stroke-width="0.7" points="316.21,-65.47 327.1,-66.69 321.19,-63.87 325.5,-62.48 325.5,-62.48 325.5,-62.48 321.19,-63.87 324.34,-58.12 316.21,-65.47" />
+</g>
+
+<g id="edge6" class="edge">
+<title>Item:Item_amount_w-&gt;Order:Order_amount_total_w</title>
+<path fill="none" stroke="#444444" stroke-width="2" stroke-dasharray="5,2" d="M333.77,-50C269.27,-50 270.68,-101.36 213.52,-131.25 169.65,-154.19 111.04,-126.71 101.3,-163.17" />
+<polygon fill="#444444" stroke="#444444" stroke-width="2" points="100.17,-172.83 96.86,-162.38 99.97,-170.23 100.83,-162.84 101.33,-162.9 101.82,-162.95 100.97,-170.34 105.8,-163.41 100.17,-172.83" />
+<text xml:space="preserve" text-anchor="middle" x="231.66" y="-121.75" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#444444">3</text>
+</g>
+
+<g id="node5" class="node">
+<title>Product</title>
+<polygon fill="#4a6fa5" stroke="none" points="388.27,-331.5 388.27,-347.5 460.77,-347.5 460.77,-331.5 388.27,-331.5" />
+<text xml:space="preserve" text-anchor="start" x="400.52" y="-336.05" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> Product </text>
+<polygon fill="#b8cce8" stroke="none" points="388.27,-313.5 388.27,-331.5 395.27,-331.5 395.27,-313.5 388.27,-313.5" />
+<text xml:space="preserve" text-anchor="start" x="390.27" y="-319.5" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="395.27,-313.5 395.27,-331.5 453.77,-331.5 453.77,-313.5 395.27,-313.5" />
+<text xml:space="preserve" text-anchor="start" x="398.27" y="-319.5" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> unit_price </text>
+<polygon fill="#b8cce8" stroke="none" points="453.77,-313.5 453.77,-331.5 460.77,-331.5 460.77,-313.5 453.77,-313.5" />
+<text xml:space="preserve" text-anchor="start" x="455.77" y="-319.5" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="none" stroke="#4a6fa5" points="387.27,-312.5 387.27,-348.5 461.77,-348.5 461.77,-312.5 387.27,-312.5" />
+</g>
+
+<g id="edge2" class="edge">
+<title>Item-&gt;Product</title>
+<path fill="none" stroke="#e0e0e0" stroke-width="0.7" d="M413.73,-90.09C416.62,-154.12 421.54,-263.35 423.58,-308.75" />
+<polygon fill="#e0e0e0" stroke="#e0e0e0" stroke-width="0.7" points="413.73,-90.05 417.77,-79.86 413.49,-84.82 413.29,-80.3 413.29,-80.3 413.29,-80.3 413.49,-84.82 408.78,-80.27 413.73,-90.05" />
+</g>
+
+<g id="edge3" class="edge">
+<title>Order-&gt;Customer</title>
+<path fill="none" stroke="#e0e0e0" stroke-width="0.7" d="M77.83,-206.35C50.43,-215.09 20.87,-229.99 4.52,-255.25 -8.88,-275.95 12.63,-295.54 35.86,-309.39" />
+<polygon fill="#e0e0e0" stroke="#e0e0e0" stroke-width="0.7" points="77.59,-206.42 88.46,-207.89 82.61,-204.94 86.95,-203.65 86.95,-203.65 86.95,-203.65 82.61,-204.94 85.9,-199.27 77.59,-206.42" />
+</g>
+
+<g id="edge7" class="edge">
+<title>Order:Order_amount_total_w-&gt;Customer:Customer_balance_w</title>
+<path fill="none" stroke="#444444" stroke-width="2" stroke-dasharray="5,2" d="M95.39,-185.25C39.49,-185.25 48.58,-243.61 50.09,-300.12" />
+<polygon fill="#444444" stroke="#444444" stroke-width="2" points="50.23,-310.06 45.59,-300.13 49.7,-307.51 49.59,-300.07 50.09,-300.06 50.59,-300.06 50.7,-307.49 54.59,-300 50.23,-310.06" />
+<text xml:space="preserve" text-anchor="middle" x="51.45" y="-257" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#444444">4</text>
+</g>
+
+<g id="node6" class="node">
+<title>evt_send_row_to_kafka</title>
+<polygon fill="#e8f5e9" stroke="none" points="194.77,-316.38 194.77,-344.62 306.27,-344.62 306.27,-316.38 194.77,-316.38" />
+<text xml:space="preserve" text-anchor="start" x="201.77" y="-327.12" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">⚡ send_row_to_kafka</text>
+<polygon fill="none" stroke="#27ae60" points="194.77,-316.38 194.77,-344.62 306.27,-344.62 306.27,-316.38 194.77,-316.38" />
+</g>
+
+<g id="edge8" class="edge">
+<title>Order-&gt;evt_send_row_to_kafka</title>
+<path fill="none" stroke="#27ae60" stroke-width="1.2" stroke-dasharray="5,2" d="M157.28,-214.86C176.68,-238.71 208.62,-277.98 229.61,-303.8" />
+<polygon fill="#27ae60" stroke="#27ae60" stroke-width="1.2" points="235.89,-311.51 226.09,-306.59 233.58,-308.83 229.5,-303.81 229.58,-303.75 229.65,-303.69 233.73,-308.7 233.07,-300.91 235.89,-311.51" />
+<text xml:space="preserve" text-anchor="middle" x="221.69" y="-257" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">after_flush</text>
+</g>
+
+<g id="edge5" class="edge">
+<title>Product:Product_unit_price_w-&gt;Item:Item_unit_price_w</title>
+<path fill="none" stroke="#444444" stroke-width="1.8" d="M391.77,-312.5C391.77,-181.71 210.87,-24.5 321.71,-14.5" />
+<polygon fill="#444444" stroke="#444444" stroke-width="1.8" points="331.58,-14.09 321.77,-19 328.79,-14.61 321.6,-14.91 321.59,-14.51 321.57,-14.11 328.76,-13.81 321.4,-10.01 331.58,-14.09" />
+<text xml:space="preserve" text-anchor="middle" x="367.39" y="-189.38" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#444444">1</text>
+</g>
+<path d="M489.27,-11.0 C511.27,-11.0 511.27,-46.55 489.27,-46.55" stroke="#445544" stroke-width="1.2" stroke-dasharray="4,3" fill="none" /><polygon points="489.27,-46.55 493.27,-50.55 493.27,-42.55" stroke="#445544" fill="#445544" /><text x="514.3" y="-24.8" font-family="Helvetica,sans-Serif" font-size="10" fill="#445544">2</text></g>
+</svg>

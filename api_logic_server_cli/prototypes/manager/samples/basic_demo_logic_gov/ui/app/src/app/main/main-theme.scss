@@ -1,0 +1,56 @@
+@use '@angular/material'as mat;
+@use 'sass:map';
+
+@mixin main-theme($theme) {
+  $primary: map.get($theme, color, primary);
+  $accent: map-get($theme, color, accent);
+  $warn: map-get($theme, color, warn);
+  $background: map-get($theme, color, background);
+  $foreground: map-get($theme, color, foreground);
+  $typography: map-get($theme, typography);
+
+  .container {
+    background-color: mat.get-color-from-palette($background, card);
+  }
+
+  .branches-card-branches-amount,
+  .employees-card-employees-amount,
+  .o-card-menu-item [ngx-charts-bar-label] text.textDataLabel {
+    font-size: mat.font-size($typography, headline-5);
+    font-weight: 600;
+  }
+
+  .o-card-menu-item {
+    .textDataLabel {
+      font-family: mat.font-family($typography);
+    }
+  }
+
+  .card-title {
+    color: mat.get-color-from-palette($foreground, text);
+    font-size: mat.font-size($typography, subtitle-1);
+    font-weight: mat.font-weight($typography, subtitle-1);
+    margin: 12px 0;
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  .branches-card-branches-amount,
+  .employees-card-employees-amount {
+    color: mat.get-color-from-palette($primary);
+
+  }
+
+  .o-card-menu-item div ngx-charts-bar-horizontal .textDataLabel {
+    fill: mat.get-color-from-palette($primary);
+    font-family: mat.font-family($typography);
+  }
+
+  .theme-option-background {
+    .mat-icon.mat-accent {
+      color: mat.get-color-from-palette($accent, 900);
+    }
+  }
+}

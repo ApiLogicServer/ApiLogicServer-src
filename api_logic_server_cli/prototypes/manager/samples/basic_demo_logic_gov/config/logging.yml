@@ -1,0 +1,126 @@
+version: 1
+# notset 0, debug 10, info 20, warn 30, error 40, critical 50
+
+formatters:
+    simple:
+        format: "%(name)s - %(lineno)d -  %(message)s"
+        format: "%(message)s"
+
+    complex:
+        format: "%(asctime)s - %(name)s - %(lineno)d -  %(message)s"
+
+
+handlers:
+    console:
+        class: logging.StreamHandler
+        level: DEBUG
+        formatter: simple
+
+    file:
+        class: logging.handlers.RotatingFileHandler
+        filename: logs/als.log
+        maxBytes: 2097152
+        backupCount: 1
+        level: DEBUG
+        formatter: simple
+
+root:
+  level: INFO
+  handlers: [console, file]
+
+loggers:
+
+    api.expose_api_models:   
+#        level: DEBUG
+        handlers: [console, file]
+        propagate: no
+
+    logic_logger:
+        level: DEBUG
+        handlers: [console, file]
+        propagate: no
+
+    engine_logger:
+#        level: DEBUG
+        handlers: [console, file]
+        propagate: no
+
+    api_logic_server_app:
+        level: INFO
+        handlers: [console, file]
+        propagate: no
+
+    safrs:
+        level: DEBUG
+        handlers: [console, file]
+        propagate: no
+
+    sqlalchemy.engine:
+#        level: DEBUG
+        handlers: [console, file]
+        propagate: no
+
+    api.system.opt_locking:
+        level: INFO
+        handlers: [console, file]
+        propagate: no
+
+    api.customize_api:   
+#        level: DEBUG
+        handlers: [console, file]
+        propagate: no
+
+    database.customize_models:   
+#        level: DEBUG
+        handlers: [console, file]
+        propagate: no
+
+    logic.declare_logic:   
+#        level: DEBUG
+        handlers: [console, file]
+        propagate: no
+
+    security.declare_security:   
+#        level: DEBUG
+        handlers: [console, file]
+        propagate: no
+
+    integration.kafka:   
+        level: DEBUG
+        handlers: [console, file]
+        propagate: no
+
+    integration.mcp:   
+        level: DEBUG
+        handlers: [console, file]
+        propagate: no
+
+    integration.n8n:   
+        level: DEBUG
+        handlers: [console, file]
+        propagate: no
+
+    security.system.authentication:   
+#        level: DEBUG
+        handlers: [console, file]
+        propagate: no
+
+    security.system.authorization:   
+        level: WARNING
+        handlers: [console, file]
+        propagate: no
+
+    security.authentication_provider.sql.auth_provider:   
+        level: INFO
+        handlers: [console, file]
+        propagate: no
+
+    ui.admin.admin_loader:   
+#        level: DEBUG
+        handlers: [console, file]
+        propagate: no
+
+    util:   
+        level: INFO
+        handlers: [console, file]
+        propagate: no
