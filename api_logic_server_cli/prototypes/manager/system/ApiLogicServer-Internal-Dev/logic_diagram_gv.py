@@ -362,13 +362,22 @@ def build_dot(rules, project_name, fk_edges, fk_parents, req_label=None):
     if req_label:
         title += f"  [{req_label}]"
 
+    # Choose layout direction based on table count.
+    # TB (top-to-bottom): good for small diagrams — wide ranks, compact height.
+    # LR (left-to-right): better for large diagrams — hierarchy flows left→right,
+    #   fewer nodes share a rank, so the diagram is tall rather than very wide.
+    n_tables = len(involved_tables)
+    rankdir  = 'LR' if n_tables > 6 else 'TB'
+    nodesep  = 0.35 if rankdir == 'LR' else 0.9
+    ranksep  = 0.7 if rankdir == 'LR' else 1.1
+
     lines = []
     w = lines.append
 
     w('digraph logic {')
-    w(f'  graph [rankdir=TB, fontname="Helvetica", fontsize=13,')
+    w(f'  graph [rankdir={rankdir}, fontname="Helvetica", fontsize=13,')
     w(f'         label=<<B>{title}</B>>, labelloc=t,')
-    w(f'         pad=0.6, nodesep=0.9, ranksep=1.1, bgcolor="white",')
+    w(f'         pad=0.4, nodesep={nodesep:.2f}, ranksep={ranksep:.2f}, bgcolor="white",')
     w(f'         splines=spline]')
     w(f'  node  [fontname="Helvetica", fontsize=11, shape=plaintext]')
     w(f'  edge  [fontname="Helvetica", fontsize=10]')
@@ -756,7 +765,7 @@ _Generated {datetime.now().strftime('%Y-%m-%d %H:%M')}_
 
 def _postprocess_svg(svg_path: Path, dot_path: Path = None):
     """
-    Two fixes applied to the rendered SVG:
+    Three fixes applied to the rendered SVG:
 
     1. Feed-annotation text ("→col(n)") — move outside node right edge.
        Graphviz renders HTML table cell content inside the bounding box; we
@@ -764,6 +773,9 @@ def _postprocess_svg(svg_path: Path, dot_path: Path = None):
 
     2. Intra-table arcs (sentinel colour #445544) — replace the big Graphviz
        self-loop path with a tight bezier that curves within the node, going
+
+    3. Viewbox crop — recompute viewBox/width/height from the actual drawn
+       element bounds so excess Graphviz pad whitespace is eliminated.
        from the source row's right edge up to the dest row's right edge.
     """
     import xml.etree.ElementTree as ET
@@ -927,8 +939,31 @@ def _postprocess_svg(svg_path: Path, dot_path: Path = None):
 
         tightened += 1
 
-    if moved_text or tightened:
-        tree.write(svg_path, encoding='unicode', xml_declaration=False)
+    # ── crop viewBox to remove Graphviz pad whitespace ────────────────────────
+
+    # Graphviz pad=0.4in = 28.8pt on every side.  Crop it down to a small border
+    # by shrinking the viewBox inward and reducing width/height to match.
+    # We work in Graphviz's own coordinate system (no transform manipulation needed).
+    try:
+        orig_w = float(root.get('width',  '0').replace('pt',''))
+        orig_h = float(root.get('height', '0').replace('pt',''))
+        vb     = root.get('viewBox', '').split()
+        if len(vb) == 4 and orig_w > 0 and orig_h > 0:
+            vx, vy, vw, vh = float(vb[0]), float(vb[1]), float(vb[2]), float(vb[3])
+            KEEP = 10.0   # pt border to keep on each side (was 28.8)
+            TRIM = 28.8 - KEEP   # how much to trim per side
+            new_vx = vx + TRIM
+            new_vy = vy + TRIM
+            new_vw = vw - 2 * TRIM
+            new_vh = vh - 2 * TRIM
+            if new_vw > 0 and new_vh > 0:
+                root.set('viewBox', f'{new_vx:.2f} {new_vy:.2f} {new_vw:.2f} {new_vh:.2f}')
+                root.set('width',  f'{new_vw:.0f}pt')
+                root.set('height', f'{new_vh:.0f}pt')
+    except (ValueError, AttributeError):
+        pass
+
+    tree.write(svg_path, encoding='unicode', xml_declaration=False)
 
     return moved_text, tightened
 
