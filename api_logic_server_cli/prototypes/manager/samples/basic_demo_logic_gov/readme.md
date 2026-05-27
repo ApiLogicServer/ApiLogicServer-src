@@ -54,11 +54,13 @@ Then open: http://localhost:5656 (no login required — security is not enabled 
 
 ## Why Rules Matter
 
+**The AI-alone problem:** AI can generate procedural code fast. Here is [what Copilot produced](logic/procedural/credit_service.py) from the requirements above — **~200 lines of code you didn't write, don't fully understand, and now have to maintain.** That's the definition of technical debt at generation speed. Developers have a word for it: *FrankenCode*.
+
+Worse: the [A/B comparison](logic/procedural/declarative-vs-procedural-comparison.md) documents that **Copilot's code has 2 subtle bugs** that ordinary testing won't catch — both are FK re-parenting scenarios (reassign an order to a different customer, or an item to a different product) that procedural code silently misses.
+
+GenAI-Logic uses [context engineering](docs/training/logic_bank_api.md) to make AI generate **declarative rules instead**: [5 executable lines](logic/logic_discovery/place_order/check_credit.py) — code a developer can read, review, own, and trust.
+
 Business logic — multi-table derivations, constraints, and side-effects like messaging — is typically **40–50% of coding and debugging effort**. Versata measured this across production deployments: declarative rules required writing only 3% of equivalent procedural code.
-
-Standard AI can generate *procedural* code: here is [what Copilot produced](logic/procedural/credit_service.py) from the same requirements above — **~200 lines, with 2 subtle bugs** (documented in the [A/B comparison](logic/procedural/declarative-vs-procedural-comparison.md)).
-
-GenAI-Logic uses [context engineering](docs/training/logic_bank_api.md) to make AI generate **declarative rules instead**: [5 executable lines](logic/logic_discovery/place_order/check_credit.py).
 
 The reduction matters because of these structural properties:
 
@@ -76,15 +78,13 @@ These properties are what make rules a governance mechanism, not just a style pr
 
 ## Governance Reports
 
-Rules are the foundation, but governance also requires visibility — that the logic is correct, complete, and tested. These reports provide that. And because rules are structured and machine-readable, the system can generate tests directly from them — a downstream consequence of the rules themselves being unambiguous.
+Rules are machine-readable declarations. That makes three things possible that aren't possible with procedural code:
 
-Every developer insists on a database diagram — you cannot engage with a system you cannot visualize. The same is true for logic. Without a logic diagram, onboarding means reading code to reconstruct dependency chains mentally; supporting or maintaining an unfamiliar system means drawing it by hand before you can reason about consequences. The logic diagram here is auto-generated from the rules, so it cannot drift from the code. It is the logic equivalent of a db diagram — and just as essential.
-
-| NL Command | Artifact | Description |
+| NL Command | Artifact | What you get |
 |---|---|---|
-| `create logic diagram` | [Logic Diagram](docs/requirements/logic_flow_basic_demo.md) | Requirements, logic diagram, and rules summary — db diagram for logic |
-| `health check` | [Governance Report](docs/requirements/health_check.md) | Coverage + integrity scores — manage 1 project, or a portfolio |
-| `create tests` | [Behave Tests](test/api_logic_server_behave/reports/Behave%20Logic%20Report.md) | 7 scenarios, 100% pass — generated from the rules; report shows log of each rule execution |
+| `create logic diagram` | [Logic Diagram](docs/requirements/logic_flow_basic_demo.md) | Scoped per requirement — ask for "check credit" and get that dependency chain as an SVG. A 100-table system stays readable because you never diagram everything at once. Auto-generated from the rules, so it can't drift. |
+| `health check` | [Governance Report](docs/requirements/health_check.md) | Coverage and integrity scores per project. Same command works across a portfolio — comparable scores, consistent criteria. |
+| `create tests` | [Behave Tests](test/api_logic_server_behave/reports/Behave%20Logic%20Report.md) | AI reads the rules, infers what needs verifying, and writes the test scenarios. On execution, the runtime logic log is embedded in the report — requirement → rule → test → execution trace in one artifact. |
 
 &nbsp;
 
