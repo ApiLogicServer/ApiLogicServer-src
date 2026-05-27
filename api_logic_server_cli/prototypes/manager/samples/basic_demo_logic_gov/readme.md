@@ -54,6 +54,8 @@ Then open: http://localhost:5656 (no login required — security is not enabled 
 
 ## Why Rules Matter
 
+![why-rules](docs/graphics/why-rules.png)
+
 **The AI-alone problem:** AI can generate procedural code fast. Here is [what Copilot produced](logic/procedural/credit_service.py) from the requirements above — **~200 lines of code you didn't write, don't fully understand, and now have to maintain.** That's the definition of technical debt at generation speed. Developers have a word for it: *FrankenCode*.
 
 Worse: the [A/B comparison](logic/procedural/declarative-vs-procedural-comparison.md) documents that **Copilot's code has 2 subtle bugs** that ordinary testing won't catch — both are FK re-parenting scenarios (reassign an order to a different customer, or an item to a different product) that procedural code silently misses.
