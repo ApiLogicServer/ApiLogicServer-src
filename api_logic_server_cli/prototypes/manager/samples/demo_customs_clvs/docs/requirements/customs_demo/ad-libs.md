@@ -1,98 +1,69 @@
-# Ad-libs Report — customs_demo
+# Ad-Libs Report — customs_demo requirements
 
-**Generated:** 2026-05-22  
-**Requirements:** docs/requirements/customs_demo/requirements.md  
-**Implementor:** Claude Code (claude-sonnet-4-6)
-
----
+Generated: 2026-05-26
 
 ## Pre-Coding Analysis
 
-### Schema Impact Assessment
+### Phase 1 — Schema Impact Assessment
 
-| Finding | Decision |
-|---|---|
-| EAI/Kafka consume detected → blob table needed | Created `shipment_xml` table |
-| CLVS eligibility needs prohibited count | Added `Shipment.prohibited_commodity_count` (Rule.count) |
-| CLVS eligibility needs controlled count | Added `Shipment.controlled_commodity_count` (Rule.count) |
-| CLVS output columns missing | Added `Shipment.clvs_eligible` INTEGER, `Shipment.clvs_reason` TEXT |
-| ShipmentCommodity.is_prohibited missing | Added `is_prohibited` INTEGER DEFAULT 0 |
+EAI / Kafka consume detected → `shipment_xml` blob table needed.
 
-All DDL applied in one shot before any logic files were written.
+CLVS eligibility (Step 3) requires derived columns on parent tables:
 
-### Pattern Assessment
+| Table | Column | Rule | Reason |
+|---|---|---|---|
+| `shipment_xml` | NEW TABLE | — | EAI blob table (2-message design) |
+| `shipment` | `clvs_eligible INTEGER` | `Rule.formula` | CLVS eligibility flag |
+| `shipment` | `clvs_reason TEXT` | `Rule.formula` | Comma-delimited ineligibility reasons |
+| `shipment` | `prohibited_commodity_count INTEGER` | `Rule.count` | Count of is_prohibited=1 commodities |
+| `shipment` | `controlled_item_count INTEGER` | `Rule.count` | Count of controlled/regulated commodities |
+| `shipment` | `customs_office_id INTEGER FK` | `early_row_event` | FK to customs_office for CLVS office check |
+| `shipment_commodity` | `is_prohibited INTEGER` | `Rule.formula` | 1 if controlled_regulated_goods_id IS NOT NULL |
 
-| Step | Pattern Applied |
-|---|---|
-| Step 1 | EAI Consume — 2-message design (isdc → isdc_processed) |
-| Step 2 | `Rule.row_event` on Shipment (importer matching, before_flush atomic) |
-| Step 3 | `Rule.count` × 2 + `Rule.formula` × 2 (CLVS eligibility) |
+All DDL applied before any logic files were written. One rebuild-from-database run after all DDL.
+
+### Phase 2 — CE / Pattern Assessment
+
+**EAI Consume (Step 1):** Two-message design implemented per `docs/training/eai_subscribe.md`. 
+Topics: `isdc` (Consumer 1 blob) and `isdc_processed` (Consumer 2 parse+persist).
+
+**Replace-on-duplicate policy:** Required explicitly by requirements. Implemented via SQL DELETE 
+with `PRAGMA foreign_keys = ON` so DB CASCADE removes children atomically before new insert. 
+`session.merge` was explicitly avoided per CE rules.
+
+**CLVS rules (Step 3):** Used Rule.count for child-row conditions (prohibited/controlled commodities) 
+rather than session.query() inside Rule.formula. FK columns (customs_office_id, 
+controlled_regulated_goods_id) set via early_row_event — cannot use Rule.formula/copy for FKs.
 
 ---
 
 ## Execution Metrics
 
-| Step | Result |
+| Artifact | Status |
 |---|---|
-| Step 1 — Kafka consume + debug endpoint | ✅ PASS (test gate debug phase) |
-| Step 2 — Importer matching | ✅ 3 parties per fixture (C + S + I) |
-| Step 3 — CLVS eligibility | ✅ Rules compute correctly |
-| Step 4 — Live Kafka | ✅ PASS (Kafka phase of test gate) |
+| `integration/IsdcMapper.py` | Created |
+| `integration/kafka/kafka_subscribe_discovery/isdc.py` | Created |
+| `logic/logic_discovery/isdc_consume.py` | Created |
+| `api/api_discovery/isdc_kafka_consume_debug.py` | Created |
+| `logic/logic_discovery/shipment_matching.py` | Created |
+| `logic/logic_discovery/clvs_eligibility.py` | Created |
+| `test/send_isdc.py` | Created |
+| `database/models.py` | Step F cascade changes applied post-rebuild |
+| `database/customize_models.py` | Added SQLite FK PRAGMA event listener |
+| `config/default.env` | KAFKA_SERVER + KAFKA_CONSUMER_GROUP uncommented |
+| `ui/admin/admin.yaml` | ShipmentXml section added |
 
-Test gate: `PASS: customs_demo XR test gate (debug required, Kafka best-effort)`
-
----
-
-## Error Correction Loop
-
-### Bug 1 — Autoflush during rule callbacks (UNIQUE constraint failure)
-
-**Symptom:** `UNIQUE constraint failed: shipment_commodity.local_shipment_oid_nbr, sequence_nbr` on first consume call.
-
-**Root cause:** `session.query()` inside `early_row_event` and `Rule.formula` callbacks triggers SQLAlchemy autoflush. During `before_flush`, a nested autoflush re-attempts to INSERT the pending ShipmentCommodity row that is already in the session's pending set.
-
-**Fix:** Wrapped all `session.query()` calls inside rule callbacks with `session.no_autoflush` context manager in `clvs_eligibility.py` and `shipment_matching.py`.
-
-**Learned pattern:** Per eai_subscribe.md — any `session.query()` inside a LogicBank rule callback (row_event, early_row_event, formula calling=) MUST use `session.no_autoflush`.
+Test gate result: **PASS** (debug + Kafka phases)
 
 ---
 
-### Bug 2 — ShipmentCommodity not deleted on replace-on-duplicate
+## Decisions Beyond the Spec (🔴 = review required, 🟡 = FYI)
 
-**Symptom:** `UNIQUE constraint failed` on second consume call (replay) with replace policy.
-
-**Root cause:** `Shipment.ShipmentCommodityList` uses `passive_deletes='all'` (composite PK prevents ORM null-out). SQLite requires `PRAGMA foreign_keys = ON` per connection for DB-level ON DELETE CASCADE. Without it, ShipmentCommodity rows persist after parent Shipment is deleted.
-
-**Fix:** In `process_isdc_payload`, explicitly delete ShipmentCommodity rows via `session.query().filter().delete(synchronize_session='fetch')` before `session.delete(existing)`.
-
----
-
-## Assumptions / Ad-libs (beyond the spec)
-
-### Step 1 — EAI Consume
-
-🟡 **FYI:** VirtualRouteLeg rows are added as standalone (no FK to Shipment). The VirtualRouteLeg table in the schema has no local_shipment_oid_nbr column. Rows are persisted but not linked to a specific shipment.
-
-🟡 **FYI:** Tags `mawbAsgmt`, `mawb`, `currencies`, `extraData`, `messageMetadata` are parsed but skipped (no target table in Classify Storage column of CSV).
-
-🟡 **FYI:** SpecialHandling rows are included in the cascade delete via ORM `cascade="all, delete"`. The XML uses `<OID_NBR>` as the FK (maps to `oid_nbr` on SpecialHandling which references Shipment).
-
-### Step 2 — Importer Matching
-
-🟡 **FYI:** Matching uses `TRPRT_BILL_TO_ACCT_NBR` (transport billed account), not `DUTY_BILL_TO_ACCT_NBR` (duty billed account), as specified in the requirement.
-
-🟡 **FYI:** High-confidence columns copied from Customer to ShipmentParty: `company_nm`, `city_nm`, `state_cd`, `country_cd`, `postal_cd`, `customs_id_cd`, `broker_id_cd`, `customer_acct_nbr`. Not all Customer columns have ShipmentParty equivalents.
-
-### Step 3 — CLVS Eligibility
-
-🟡 **FYI:** CLVS authorized courier check uses `service_type_cd = '04'`. This value is inferred from the sample XML (`<SERVICE_TYPE_CD>04</SERVICE_TYPE_CD>`) and matches the known FedEx CLVS service type code.
-
-🟡 **FYI:** "Controlled or regulatory goods" check uses the `controlled_regulated_goods` reference table with HS code normalized to digits only (dots stripped, first 10 digits compared). The sample XML commodity (HS 4901990091 — printed books) has no match, resulting in `controlled_commodity_count = 0`.
-
-🟡 **FYI:** "Prohibited commodity lines" (`is_prohibited`) and "controlled goods" use the same HS code lookup. If a commodity matches `controlled_regulated_goods.hs_code`, it is marked both `is_prohibited=1` and has `controlled_regulated_goods_id` set. These are treated as equivalent in this implementation.
-
-🔴 **Review Required:** "CBSA-designated customs office" check queries `CustomsOffice.office_code == Shipment.planned_clearance_location_cd AND clvs_release = 1`. The sample shipment has `planned_clearance_location_cd = 'MEM'` which is not in the `customs_office` seed data — this correctly produces an ineligibility reason. Verify CustomsOffice reference data covers all expected location codes.
-
-### ORM Cascades (Step F)
-
-🟡 **FYI:** Applied ORM cascades as specified: `cascade="all, delete"` on Piece, SpecialHandling, ShipmentParty; `passive_deletes='all'` on ShipmentCommodity. Added explicit `session.query().delete()` in the replace-on-duplicate path to handle SQLite FK cascade limitation.
+| # | Severity | Decision | Reason |
+|---|---|---|---|
+| 1 | 🟡 | `is_prohibited = 1` iff `controlled_regulated_goods_id IS NOT NULL` | Requirements specify both "prohibited" and "controlled/regulatory" as separate checks, but the underlying data source is the same HS code lookup table. Treated them as equivalent: any match = prohibited for CLVS purposes. If subcategory distinction is needed, a `category` column filter on `ControlledRegulatedGood` would be required. |
+| 2 | 🟡 | `customs_office_id` set only on insert (early_row_event), not on update | For EAI consume use case, shipments are ingested once (or replaced wholesale). If `planned_clearance_location_cd` is ever updated via API, `customs_office_id` won't auto-refresh. To support updates, add an early_row_event that also fires on update. |
+| 3 | 🟡 | XML sections `mawbAsgmt`, `mawb`, `currencies`, `virtualRouteLegs`, `extraData` skipped | No matching persistent tables in the project schema (VirtualRouteLeg exists but has no FK to Shipment). Test gate counts don't include these. If they need to be persisted, add FK column to `virtual_route_leg` and extend `IsdcMapper.TAG_ROUTING`. |
+| 4 | 🔴 | `PARTY_OID_NBR=0` normalized to `None` (autoincrement PK) | Follows CE rule 4d (SOURCE-PK normalization). Both consignee and shipper carry sentinel 0 in the sample XMLs. If a legitimate non-zero value of 0 were ever used as a real PK, this would conflict. Confirm with client that 0 is always a placeholder. |
+| 5 | 🟡 | `blob_id` starts at last autoincrement value if server was previously started | The `sqlite_sequence` table tracks autoincrement state. The test gate clears domain tables but not `sqlite_sequence`. Blob IDs are non-sequential across test runs. This is cosmetic only — counts are correct. |
+| 6 | 🟡 | HS code lookup uses digit-normalized prefix match | `controlled_regulated_goods.hs_code` stored as "9301.10.00" (8 digits). Commodity HS from XML is "4901990091" (10 digits, no dots). Normalized by stripping non-digits; commodity must start with controlled HS prefix. If edge cases arise (e.g., HS code "1001" matching "10011000"), add a minimum match length guard. |

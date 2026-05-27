@@ -125,7 +125,7 @@ This document contains **everything** you need to understand the system:
 ### For AI Assistants Working on Framework Internals:
 - **[Architecture-Internals.md](https://apilogicserver.github.io/Docs/Architecture-Internals/)** - Complete technical architecture (read this first)
 - **[Medium Article](https://medium.com/@valjhuber/declarative-genai-the-architecture-behind-enterprise-vibe-automation-1b8a4fe4fbd7)** - Architectural rationale and NL→DSL→Engines pattern
-- **`api_logic_server_cli/dev-architecture.md`** (gold source) - Internal developer reference: project creation mechanics (base clone + overlay pattern), clone_and_overlay_prototypes file roles, manager.py existing-workspace short-circuit, key files to edit for common tasks. **Read this before working on project creation, prototypes, or manager workspace.**
+- **`api_logic_server_cli/cli-internals.md`** (gold source) - Internal developer reference: project creation mechanics (base clone + overlay pattern), clone_and_overlay_prototypes file roles, manager.py existing-workspace short-circuit, key files to edit for common tasks. **Read this before working on project creation, prototypes, or manager workspace.**
 
 ### For Creating New Projects:
 - **Manager-level `.copilot-instructions.md`** - How to CREATE projects (in workspace root)
@@ -1040,6 +1040,27 @@ prototypes/manager/system/ApiLogicServer-Internal-Dev/
 **Gold source for generator:** `org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/manager/system/ApiLogicServer-Internal-Dev/logic_diagram_gv.py`
 
 **After BLT:** generator is reinstalled to venv automatically. Per-project docs (`logic_diagram.md`, `generate_logic_diagram.py`) are propagated to all created projects via `prototypes/base/docs/training/logic_diagrams/`.
+
+### Dependency Security Scanning
+
+**Tool:** `pip-audit` — scans installed packages against known CVE databases.
+
+**Run from Manager root (output to file):**
+```bash
+venv/bin/pip-audit 2>&1 | tee pip-audit-report.txt
+```
+
+**When to run:** before any BLT / release cut, or after bumping a dependency.
+
+**Where fixes go:**
+- `org_git/ApiLogicServer-src/requirements.txt` — dev install
+- `org_git/ApiLogicServer-src/pyproject.toml` — published package (keep in sync with requirements.txt)
+- `org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/base/venv_setup/requirements-no-cli.txt` — base prototype (propagates to all created projects via BLT)
+- All other `venv_setup/requirements-no-cli.txt` files in `prototypes/manager/samples/*/` — bump these too (use `grep -rln` + `sed -i`)
+
+**Last scan (2026-05-26):** 5 vulnerabilities in 2 packages:
+- `pip 25.1.1` — 4 CVEs (CVE-2025-8869, CVE-2026-1703, CVE-2026-3219, CVE-2026-6357); fix: `pip 26.1`
+- `python-dotenv 0.15.0` — CVE-2026-28684; fixed → bumped to `1.2.2` in all requirements files
 
 &nbsp;
 

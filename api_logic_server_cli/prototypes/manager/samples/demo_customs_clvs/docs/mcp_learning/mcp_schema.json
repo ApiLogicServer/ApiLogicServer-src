@@ -428,7 +428,8 @@
                 "clvs_eligible",
                 "clvs_reason",
                 "prohibited_commodity_count",
-                "controlled_commodity_count"
+                "controlled_item_count",
+                "customs_office_id"
             ],
             "filterable": [
                 "local_shipment_oid_nbr",
@@ -573,7 +574,8 @@
                 "clvs_eligible",
                 "clvs_reason",
                 "prohibited_commodity_count",
-                "controlled_commodity_count"
+                "controlled_item_count",
+                "customs_office_id"
             ]
         },
         {

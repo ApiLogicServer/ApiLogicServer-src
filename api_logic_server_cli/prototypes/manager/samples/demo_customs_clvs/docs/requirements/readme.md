@@ -1,4 +1,13 @@
-# docs/requirements/
+# docs/requirements/ — demo_customs_clvs
+
+## Implemented: customs_demo (2026-05-26)
+
+Steps 1–4 implemented. Test gate: **PASS** (debug + Kafka).  
+Ad-libs: `docs/requirements/customs_demo/ad-libs.md`
+
+---
+
+# docs/requirements/ (original)
 
 Place your **Executable Requirements (XRD)** here, then say **"implement reqs"** to AI.
 

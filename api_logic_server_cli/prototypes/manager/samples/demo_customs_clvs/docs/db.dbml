@@ -257,7 +257,8 @@ Table Shipment {
     clvs_eligible INTEGER 
     clvs_reason TEXT 
     prohibited_commodity_count INTEGER 
-    controlled_commodity_count INTEGER 
+    controlled_item_count INTEGER 
+    customs_office_id INTEGER 
     }
 
 Table ShipmentCommodity {
@@ -390,6 +391,7 @@ Table VirtualRouteLeg {
     Ref: ControlledRegulatedGood.(govt_dept_id) > GovtDept.(id)
     Ref: CustomsOffice.(customs_region_id) > CustomsRegion.(id)
     Ref: Piece.(local_shipment_oid_nbr) > Shipment.(local_shipment_oid_nbr)
+    Ref: Shipment.(customs_office_id) > CustomsOffice.(id)
     Ref: ShipmentCommodity.(controlled_regulated_goods_id) > ControlledRegulatedGood.(id)
     Ref: ShipmentCommodity.(local_shipment_oid_nbr) > Shipment.(local_shipment_oid_nbr)
     Ref: ShipmentParty.(local_piece_oid_nbr) > Piece.(local_piece_oid_nbr)

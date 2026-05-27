@@ -10,7 +10,7 @@ from sqlalchemy.ext.declarative import declarative_base
 # Alter this file per your database maintenance policy
 #    See https://apilogicserver.github.io/Docs/Project-Rebuild/#rebuilding
 #
-# Created:  May 22, 2026 18:06:08
+# Created:  May 26, 2026 08:11:00
 # Database: sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-logic/demo_customs_clvs/database/db.sqlite
 # Dialect:  sqlite
 #
@@ -109,6 +109,120 @@ class GovtDept(Base):  # type: ignore
 
     # child relationships (access children)
     ControlledRegulatedGoodList : Mapped[List["ControlledRegulatedGood"]] = relationship(back_populates="govt_dept")
+
+
+
+class ShipmentXml(Base):  # type: ignore
+    __tablename__ = 'shipment_xml'
+    _s_collection_name = 'ShipmentXml'  # type: ignore
+
+    id = Column(Integer, primary_key=True)
+    received_at = Column(DateTime)
+    payload = Column(Text, nullable=False)
+    is_processed = Column(Integer, server_default=text("0"))
+
+    # parent relationships (access parent)
+
+    # child relationships (access children)
+
+
+
+class SysConfig(Base):  # type: ignore
+    __tablename__ = 'sys_config'
+    _s_collection_name = 'SysConfig'  # type: ignore
+
+    id = Column(Integer, primary_key=True)
+    name = Column(Text, server_default=text("'system'"), nullable=False)
+    discount_rate = Column(Float, server_default=text("0.05"))
+    tax_rate = Column(Float, server_default=text("0.10"))
+    notes = Column(Text)
+
+    # parent relationships (access parent)
+
+    # child relationships (access children)
+
+
+
+class VirtualRouteLeg(Base):  # type: ignore
+    __tablename__ = 'virtual_route_leg'
+    _s_collection_name = 'VirtualRouteLeg'  # type: ignore
+
+    id = Column(Integer, primary_key=True)
+    virtual_route_nbr = Column(String(6))
+    virtual_route_dt = Column(Date)
+    virtual_route_leg_nbr = Column(Integer)
+    leg_dest_loc_cd = Column(String(5))
+    leg_orig_loc_cd = Column(String(5))
+    arrival_gmt_tmstp = Column(DateTime)
+    arrival_local_tmstp = Column(DateTime)
+    broker_complete_flg = Column(String(1))
+    conveyance_type_cd = Column(String(2))
+    customs_complete_flg = Column(String(1))
+    depart_gmt_tmstp = Column(DateTime)
+    depart_local_tmstp = Column(DateTime)
+    leg_origin_country_cd = Column(String(2))
+    leg_dest_country_cd = Column(String(2))
+    sched_arrival_dt = Column(Date)
+    sched_route_leg_orig_loc_cd = Column(String(5))
+    sched_route_leg_dest_loc_cd = Column(String(5))
+    sched_route_departure_dt = Column(Date)
+    sched_route_leg_dptr_dt = Column(Date)
+    sched_route_nbr = Column(String(8))
+    sort_dt = Column(Date)
+    tail_nbr = Column(String(8))
+    us_process_cd = Column(String(1))
+    virtual_route_locked_flg = Column(String(1))
+    flight_nbr_obs = Column(String(6))
+    download_flg = Column(String(1))
+    carrier_cd = Column(String(4))
+    etl_tmstp = Column(DateTime)
+    eta_tmstp = Column(DateTime)
+    in_range_tmstp = Column(DateTime)
+
+    # parent relationships (access parent)
+
+    # child relationships (access children)
+
+
+
+class ControlledRegulatedGood(Base):  # type: ignore
+    __tablename__ = 'controlled_regulated_goods'
+    _s_collection_name = 'ControlledRegulatedGood'  # type: ignore
+
+    id = Column(Integer, primary_key=True)
+    govt_dept_id = Column(ForeignKey('govt_dept.id'), nullable=False)
+    category = Column(Text, nullable=False)
+    hs_code = Column(Text, nullable=False)
+    description = Column(Text, nullable=False)
+    clvs_reason = Column(Text, nullable=False)
+
+    # parent relationships (access parent)
+    govt_dept : Mapped["GovtDept"] = relationship(back_populates=("ControlledRegulatedGoodList"))
+
+    # child relationships (access children)
+    ShipmentCommodityList : Mapped[List["ShipmentCommodity"]] = relationship(back_populates="controlled_regulated_goods")
+
+
+
+class CustomsOffice(Base):  # type: ignore
+    __tablename__ = 'customs_office'
+    _s_collection_name = 'CustomsOffice'  # type: ignore
+
+    id = Column(Integer, primary_key=True)
+    customs_region_id = Column(ForeignKey('customs_region.id'), nullable=False)
+    office_code = Column(Text, nullable=False, unique=True)
+    name = Column(Text, nullable=False)
+    province = Column(Text, nullable=False)
+    city = Column(Text, nullable=False)
+    type = Column(Text, nullable=False)
+    clvs_release = Column(Integer, server_default=text("0"), nullable=False)
+    sufferance_warehouse = Column(Integer, server_default=text("0"), nullable=False)
+
+    # parent relationships (access parent)
+    customs_region : Mapped["CustomsRegion"] = relationship(back_populates=("CustomsOfficeList"))
+
+    # child relationships (access children)
+    ShipmentList : Mapped[List["Shipment"]] = relationship(back_populates="customs_office")
 
 
 
@@ -258,130 +372,17 @@ class Shipment(Base):  # type: ignore
     clvs_eligible = Column(Integer, server_default=text("0"))
     clvs_reason = Column(Text, server_default=text("''"))
     prohibited_commodity_count = Column(Integer, server_default=text("0"))
-    controlled_commodity_count = Column(Integer, server_default=text("0"))
+    controlled_item_count = Column(Integer, server_default=text("0"))
+    customs_office_id = Column(ForeignKey('customs_office.id'))
 
     # parent relationships (access parent)
+    customs_office : Mapped["CustomsOffice"] = relationship(back_populates=("ShipmentList"))
 
     # child relationships (access children)
     PieceList : Mapped[List["Piece"]] = relationship(cascade="all, delete", back_populates="shipment")
-    SpecialHandlingList : Mapped[List["SpecialHandling"]] = relationship(cascade="all, delete", back_populates="shipment")
-    # ShipmentCommodity: composite PK includes FK — cascade="all,delete" would null FK before delete (fails for PK cols).
-    # Use passive_deletes='all' so DB ON DELETE CASCADE handles deletion.
     ShipmentCommodityList : Mapped[List["ShipmentCommodity"]] = relationship(passive_deletes='all', back_populates="shipment")
+    SpecialHandlingList : Mapped[List["SpecialHandling"]] = relationship(cascade="all, delete", back_populates="shipment")
     ShipmentPartyList : Mapped[List["ShipmentParty"]] = relationship(cascade="all, delete", back_populates="shipment")
-
-
-
-class ShipmentXml(Base):  # type: ignore
-    __tablename__ = 'shipment_xml'
-    _s_collection_name = 'ShipmentXml'  # type: ignore
-
-    id = Column(Integer, primary_key=True)
-    received_at = Column(DateTime, server_default=text("CURRENT_TIMESTAMP"))
-    payload = Column(Text, nullable=False)
-    is_processed = Column(Integer, server_default=text("0"))
-
-    # parent relationships (access parent)
-
-    # child relationships (access children)
-
-
-
-class SysConfig(Base):  # type: ignore
-    __tablename__ = 'sys_config'
-    _s_collection_name = 'SysConfig'  # type: ignore
-
-    id = Column(Integer, primary_key=True)
-    name = Column(Text, server_default=text("'system'"), nullable=False)
-    discount_rate = Column(Float, server_default=text("0.05"))
-    tax_rate = Column(Float, server_default=text("0.10"))
-    notes = Column(Text)
-
-    # parent relationships (access parent)
-
-    # child relationships (access children)
-
-
-
-class VirtualRouteLeg(Base):  # type: ignore
-    __tablename__ = 'virtual_route_leg'
-    _s_collection_name = 'VirtualRouteLeg'  # type: ignore
-
-    id = Column(Integer, primary_key=True)
-    virtual_route_nbr = Column(String(6))
-    virtual_route_dt = Column(Date)
-    virtual_route_leg_nbr = Column(Integer)
-    leg_dest_loc_cd = Column(String(5))
-    leg_orig_loc_cd = Column(String(5))
-    arrival_gmt_tmstp = Column(DateTime)
-    arrival_local_tmstp = Column(DateTime)
-    broker_complete_flg = Column(String(1))
-    conveyance_type_cd = Column(String(2))
-    customs_complete_flg = Column(String(1))
-    depart_gmt_tmstp = Column(DateTime)
-    depart_local_tmstp = Column(DateTime)
-    leg_origin_country_cd = Column(String(2))
-    leg_dest_country_cd = Column(String(2))
-    sched_arrival_dt = Column(Date)
-    sched_route_leg_orig_loc_cd = Column(String(5))
-    sched_route_leg_dest_loc_cd = Column(String(5))
-    sched_route_departure_dt = Column(Date)
-    sched_route_leg_dptr_dt = Column(Date)
-    sched_route_nbr = Column(String(8))
-    sort_dt = Column(Date)
-    tail_nbr = Column(String(8))
-    us_process_cd = Column(String(1))
-    virtual_route_locked_flg = Column(String(1))
-    flight_nbr_obs = Column(String(6))
-    download_flg = Column(String(1))
-    carrier_cd = Column(String(4))
-    etl_tmstp = Column(DateTime)
-    eta_tmstp = Column(DateTime)
-    in_range_tmstp = Column(DateTime)
-
-    # parent relationships (access parent)
-
-    # child relationships (access children)
-
-
-
-class ControlledRegulatedGood(Base):  # type: ignore
-    __tablename__ = 'controlled_regulated_goods'
-    _s_collection_name = 'ControlledRegulatedGood'  # type: ignore
-
-    id = Column(Integer, primary_key=True)
-    govt_dept_id = Column(ForeignKey('govt_dept.id'), nullable=False)
-    category = Column(Text, nullable=False)
-    hs_code = Column(Text, nullable=False)
-    description = Column(Text, nullable=False)
-    clvs_reason = Column(Text, nullable=False)
-
-    # parent relationships (access parent)
-    govt_dept : Mapped["GovtDept"] = relationship(back_populates=("ControlledRegulatedGoodList"))
-
-    # child relationships (access children)
-    ShipmentCommodityList : Mapped[List["ShipmentCommodity"]] = relationship(back_populates="controlled_regulated_goods")
-
-
-
-class CustomsOffice(Base):  # type: ignore
-    __tablename__ = 'customs_office'
-    _s_collection_name = 'CustomsOffice'  # type: ignore
-
-    id = Column(Integer, primary_key=True)
-    customs_region_id = Column(ForeignKey('customs_region.id'), nullable=False)
-    office_code = Column(Text, nullable=False, unique=True)
-    name = Column(Text, nullable=False)
-    province = Column(Text, nullable=False)
-    city = Column(Text, nullable=False)
-    type = Column(Text, nullable=False)
-    clvs_release = Column(Integer, server_default=text("0"), nullable=False)
-    sufferance_warehouse = Column(Integer, server_default=text("0"), nullable=False)
-
-    # parent relationships (access parent)
-    customs_region : Mapped["CustomsRegion"] = relationship(back_populates=("CustomsOfficeList"))
-
-    # child relationships (access children)
 
 
 
@@ -444,24 +445,6 @@ class Piece(Base):  # type: ignore
 
 
 
-class SpecialHandling(Base):  # type: ignore
-    __tablename__ = 'special_handling'
-    _s_collection_name = 'SpecialHandling'  # type: ignore
-
-    id = Column(Integer, primary_key=True)
-    oid_nbr = Column(ForeignKey('shipment.local_shipment_oid_nbr', ondelete='CASCADE'))
-    oid_type_cd = Column(String(1))
-    special_handling_cd = Column(String(5))
-    etl_tmstp = Column(DateTime)
-    shipment_type_cd = Column(Integer)
-
-    # parent relationships (access parent)
-    shipment : Mapped["Shipment"] = relationship(back_populates=("SpecialHandlingList"))
-
-    # child relationships (access children)
-
-
-
 class ShipmentCommodity(Base):  # type: ignore
     __tablename__ = 'shipment_commodity'
     _s_collection_name = 'ShipmentCommodity'  # type: ignore
@@ -499,6 +482,24 @@ class ShipmentCommodity(Base):  # type: ignore
     # parent relationships (access parent)
     controlled_regulated_goods : Mapped["ControlledRegulatedGood"] = relationship(back_populates=("ShipmentCommodityList"))
     shipment : Mapped["Shipment"] = relationship(back_populates=("ShipmentCommodityList"))
+
+    # child relationships (access children)
+
+
+
+class SpecialHandling(Base):  # type: ignore
+    __tablename__ = 'special_handling'
+    _s_collection_name = 'SpecialHandling'  # type: ignore
+
+    id = Column(Integer, primary_key=True)
+    oid_nbr = Column(ForeignKey('shipment.local_shipment_oid_nbr', ondelete='CASCADE'))
+    oid_type_cd = Column(String(1))
+    special_handling_cd = Column(String(5))
+    etl_tmstp = Column(DateTime)
+    shipment_type_cd = Column(Integer)
+
+    # parent relationships (access parent)
+    shipment : Mapped["Shipment"] = relationship(back_populates=("SpecialHandlingList"))
 
     # child relationships (access children)
 

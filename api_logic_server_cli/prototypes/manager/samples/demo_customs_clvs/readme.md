@@ -54,7 +54,7 @@ claude
 Please load `.github/.copilot-instructions.md`.
 
 # E - in created project, get the requirements (win: Copy-Item -Path "..\samples\requirements\customs_demo\*" -Destination "." -Recurse -Force -Verbose 4>&1).Count)
-! cp -rv ../samples/requirements/customs_demo/. . | wc -l
+! cp -rv ../samples/requirements/customs_demo_clvs/. . | wc -l
 
 # F - required hardening for delete integrity (no orphans after parent delete via API):
 in database/models.py, add ORM relationship cascade on Shipment child lists.

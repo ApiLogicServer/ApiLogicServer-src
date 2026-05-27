@@ -1,9 +1,8 @@
 """
-Debug endpoint for ISDC EAI consume pipeline (no Kafka required).
-Enabled when APILOGICPROJECT_CONSUME_DEBUG is set in config/default.env.
+Debug endpoint for the isdc Kafka consume pipeline (no Kafka required).
 
-Usage:
-  curl 'http://localhost:5656/consume_debug/isdc?file=docs/requirements/customs_demo/message_formats/MDE-CDV-HVS-WR-Rev260328.xml'
+Enable with: APILOGICPROJECT_CONSUME_DEBUG=true (already set in config/default.env)
+curl 'http://localhost:5656/consume_debug/isdc?file=docs/requirements/customs_demo/message_formats/MDE-CDV-HVS-WR-Rev260328.xml'
 """
 import logging
 import os
@@ -20,7 +19,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
 
     @app.route('/consume_debug/isdc')
     def consume_debug_isdc():
-        """Debug the ISDC consume pipeline without Kafka.
+        """Debug the isdc consume pipeline without Kafka.
         curl 'http://localhost:5656/consume_debug/isdc?file=docs/requirements/customs_demo/message_formats/MDE-CDV-HVS-WR-Rev260328.xml'
         """
         file_path = request.args.get('file')
@@ -29,16 +28,16 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         from integration.kafka.kafka_subscribe_discovery.isdc import process_isdc_payload
         try:
             payload = Path(file_path).read_text()
-            shipment_row, blob = process_isdc_payload(payload, safrs.DB.session)
+            shipment, blob = process_isdc_payload(payload, safrs.DB.session)
             return jsonify({
                 "success": True,
                 "topic": "isdc",
                 "blob_id": blob.id,
+                "awb_nbr": shipment.awb_nbr,
+                "pieces": len(shipment.PieceList),
+                "parties": len(shipment.ShipmentPartyList),
+                "commodities": len(shipment.ShipmentCommodityList),
                 "file": file_path,
-                "awb_nbr": shipment_row.awb_nbr,
-                "pieces": len(shipment_row.PieceList),
-                "parties": len(shipment_row.ShipmentPartyList),
-                "commodities": len(shipment_row.ShipmentCommodityList),
             })
         except Exception as e:
             app_logger.exception(f"consume_debug/isdc: {e}")

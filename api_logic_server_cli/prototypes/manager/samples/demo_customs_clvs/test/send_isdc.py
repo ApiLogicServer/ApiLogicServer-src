@@ -1,47 +1,57 @@
-#!/usr/bin/env python
 """
-Send a sample ISDC shipment XML to the Kafka topic.
-Requires KAFKA_SERVER to be set in config/default.env or environment.
+Send one CIMCorp shipment XML to the isdc Kafka topic (live Kafka test).
 
-Usage (from project root):
-  python test/send_isdc.py
+Requires Kafka running and KAFKA_SERVER set in config/default.env.
+Run from project root: python test/send_isdc.py
+
+Uses confluent_kafka.Producer directly (NOT docker exec kafka-console-producer
+which breaks multi-line XML by treating each line as a separate message).
 """
 import os
 import sys
-import time
 from pathlib import Path
 
-# ---------------------------------------------------------------------------
-# Locate and load config/default.env to get KAFKA_SERVER
-# ---------------------------------------------------------------------------
-project_root = Path(__file__).parent.parent
-env_file = project_root / "config" / "default.env"
-kafka_server = os.getenv("KAFKA_SERVER", "localhost:9092")
-if env_file.exists():
-    for line in env_file.read_text().splitlines():
+PROJECT_ROOT = Path(__file__).parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
+
+
+def load_env():
+    env_path = PROJECT_ROOT / 'config' / 'default.env'
+    env = {}
+    for line in env_path.read_text().splitlines():
         line = line.strip()
-        if line.startswith("#") or "=" not in line:
+        if line.startswith('#') or '=' not in line:
             continue
-        key, _, val = line.partition("=")
-        key = key.strip()
-        val = val.strip().strip('"')
-        if key == "KAFKA_SERVER" and not os.getenv("KAFKA_SERVER"):
-            kafka_server = val
+        key, _, val = line.partition('=')
+        env[key.strip()] = val.strip().strip('"')
+    return env
 
-sample_file = project_root / "docs" / "requirements" / "customs_demo" / "message_formats" / "MDE-CDV-HVS-WR-Rev260328.xml"
-if not sample_file.exists():
-    print(f"ERROR: sample file not found: {sample_file}", file=sys.stderr)
-    sys.exit(1)
 
-payload = sample_file.read_bytes()
+def main():
+    env = load_env()
+    kafka_server = env.get('KAFKA_SERVER', 'localhost:9092')
 
-try:
-    from confluent_kafka import Producer
-except ImportError:
-    print("ERROR: confluent_kafka not installed. Run: pip install confluent-kafka", file=sys.stderr)
-    sys.exit(1)
+    try:
+        from confluent_kafka import Producer
+    except ImportError:
+        print("ERROR: confluent_kafka not installed. Run: pip install confluent-kafka")
+        sys.exit(1)
 
-producer = Producer({"bootstrap.servers": kafka_server})
-producer.produce(topic="isdc", value=payload)
-producer.flush(timeout=15)
-print(f"Sent {len(payload)} bytes to topic 'isdc' on {kafka_server}")
+    sample_file = PROJECT_ROOT / 'docs' / 'requirements' / 'customs_demo' / 'message_formats' / 'MDE-CDV-HVS-WR-Rev260328.xml'
+    payload = sample_file.read_text(encoding='utf-8')
+
+    producer = Producer({'bootstrap.servers': kafka_server})
+
+    def delivery_report(err, msg):
+        if err:
+            print(f"Delivery failed: {err}")
+        else:
+            print(f"Delivered to {msg.topic()} [{msg.partition()}] offset={msg.offset()}")
+
+    producer.produce('isdc', value=payload.encode('utf-8'), callback=delivery_report)
+    producer.flush(timeout=15)
+    print(f"Sent {len(payload)} bytes to topic 'isdc' via {kafka_server}")
+
+
+if __name__ == '__main__':
+    main()

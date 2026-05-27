@@ -15,7 +15,7 @@ Scenario: Shipment at or below the LVS threshold is eligible
 ```
 
 ```
-Row-event bridge: ShipmentXml insert → publish to isdc_processed Kafka topic.
+isdc_consume — row-event bridge: ShipmentXml insert → publish to isdc_processed.
 ```
 
 ```
@@ -35,12 +35,14 @@ ShipmentParty writes atomically with the parent Shipment.
 
 ## Rules
 
-1. `clvs_reason = _clvs_reason(row)` — Derive clvs_reason: comma-delimited CLVS ineligibility reasons (blank if eligible).
+1. `is_prohibited = 1 if controlled_regulated_goods_id is not None ...`
 2. `clvs_eligible = _clvs_eligible(row)` — Derive clvs_eligible: 1 if shipment meets all CLVS criteria, else 0.
-3. `prohibited_commodity_count = count(ShipmentCommodity where is_prohibited)`
-4. `controlled_commodity_count = count(ShipmentCommodity where controlled_regulated_goods_id)`
-E. `ShipmentCommodity` → `_resolve_hs_controlled` (early) — Resolve controlled_regulated_goods_id and is_prohibited from HS code lookup on insert.
+3. `clvs_reason = _clvs_reason(row)` — Derive clvs_reason: comma-delimited list of CLVS ineligibility reasons (blank if eligible).
+4. `prohibited_commodity_count = count(ShipmentCommodity where is_prohibited)`
+5. `controlled_item_count = count(ShipmentCommodity where controlled_regulated_goods_id)`
+E. `Shipment` → `_set_customs_office` (early) — Set customs_office_id FK from planned_clearance_location_cd on insert.
+E. `ShipmentCommodity` → `_set_controlled_goods` (early) — Set controlled_regulated_goods_id FK by matching HS code first 10 digits.
 E. `ShipmentXml` → `_publish_isdc` (after_flush)
 
 ---
-_Generated 2026-05-22 18:29_
+_Generated 2026-05-26 08:20_
