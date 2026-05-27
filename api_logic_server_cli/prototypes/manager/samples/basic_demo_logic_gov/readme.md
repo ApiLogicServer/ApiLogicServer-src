@@ -78,7 +78,7 @@ These properties are what make rules a governance mechanism, not just a style pr
 
 ## Governance Reports
 
-Rules are machine-readable declarations. That makes three things possible that aren't possible with procedural code:
+Every developer insists on a database diagram — you can't engage with a system you can't visualize. The same is true for logic. Rules are machine-readable declarations, which makes three things possible that aren't possible with procedural code:
 
 | NL Command | Artifact | What you get |
 |---|---|---|
