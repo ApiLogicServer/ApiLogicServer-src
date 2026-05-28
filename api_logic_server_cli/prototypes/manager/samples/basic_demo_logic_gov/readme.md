@@ -68,7 +68,7 @@ The reduction matters because of these structural properties:
 
 | Property | Procedural Code | Declarative Rules |
 |---|---|---|
-| **Auditability** | Intent buried in implementation — maintainers see *how*, not *what* | **The rule is the requirement** — business and tech read the same artifact, no translation gap |
+| **Auditability** | 40x more code — every change means archaeology over twisted code paths | **The rule is the requirement** — business and tech read the same artifact, no translation gap |
 | **Correctness** | [A/B test](logic/procedural/declarative-vs-procedural-comparison.md) uncovered 2 bugs in Copilot-generated code | **Automatic reuse over all change paths** (insert, update, delete, FK reassignment) |
 | **Maintainability** | Adding logic requires finding every call site and insertion point | **Auto-ordered** at startup via dependency graph — add a rule anywhere, engine places it correctly |
 | **Enforcement** | Must be explicitly called — can be bypassed or forgotten | **No bypass** — listens to `before_flush`, every ORM write runs rules automatically |
