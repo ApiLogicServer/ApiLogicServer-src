@@ -1,29 +1,207 @@
-# AI Confesses: Why Procedural Business Logic Cannot Be Correct
+# Declarative Rules vs. Procedural Logic: A Reproducible Comparison
 
-**Document Version:** 2.1 (February 2026)  
-**Revision Notes:** v2.1 adds The Balanced View section: AI is genuinely powerful; dependency handling (spatial and temporal) is its structural weakness; LogicBank complements exactly that weakness. Adds temporal ordering bug class (`row_event` vs `early_row_event`) as concrete example.
-
----
-
-## What Happened Here
-
-We asked **GitHub Copilot** to generate business logic code from natural language requirements.
-
-It generated **220 lines of procedural code** (to see it, [click here](https://github.com/ApiLogicServer/ApiLogicServer-src/blob/main/api_logic_server_cli/prototypes/basic_demo/logic/procedural/credit_service.py)).
-
-We asked: **"What if the order's customer_id changes?"**  
-Copilot found a critical bug and fixed it.
-
-We asked: **"What if the item's product_id changes?"**  
-Copilot found another critical bug.
-
-Then, **unprompted**, Copilot wrote a comprehensive analysis explaining why procedural code—even AI-generated—cannot be correct for business logic.
-
-**What follows is that analysis, enhanced by Claude Sonnet 4.5 to make the structural impossibility explicit.**
+**Author:** Val Huber (Architect, GenAI-Logic and LogicBank)
+**Date:** May 2026
 
 ---
 
-## The Experiment
+## The result in one line
+
+Asked to implement the same order-management logic, an AI assistant's procedural code
+carried real bugs that ordinary testing did not catch. The declarative version — five rules
+— did not have them. This document shows the bugs, why they happen, and why the gap widens
+as systems grow.
+
+---
+
+## The requirements
+
+Common order-management logic:
+
+- Copy `unit_price` from Product to Item.
+- `Item.amount = quantity × unit_price`.
+- `Order.amount_total = sum of Item.amount`.
+- `Customer.balance = sum of unshipped Order.amount_total`.
+- `Customer.balance` must not exceed `Customer.credit_limit`.
+
+An AI assistant was asked to implement these as procedural code, without rules. It produced
+**Total: ~200 lines, multiple bugs, unverifiable completeness.**
+roughly ~200 lines of ORM event handlers. The same requirements were then implemented
+declaratively as 5 LogicBank rules.
+
+---
+
+## The two bugs
+
+Both bugs share one shape — common, and easy to miss in review.
+
+**Bug 1 — `Order.customer_id` changes.** When an order moves from Customer A to Customer B,
+the procedural code updated Customer B's balance (the new parent) but failed to decrement
+Customer A's (the old parent). Customer A is left with an inflated balance, and credit
+checks on A are now wrong.
+
+**Bug 2 — `Item.product_id` changes.** When an item's product changes, the code did not
+re-copy `unit_price` from the new product. The item keeps the old price, and the error
+propagates up into the order total and the customer balance.
+
+Both are **foreign-key re-parenting** bugs: when a row's parent changes, *both* the old and
+the new parent need adjustment, and the procedural code handled only the new side. The happy
+path looks correct, which is exactly why these survive code review and unit tests — and then
+corrupt derived totals in production.
+
+---
+
+## Why this gets worse as systems grow
+
+The two bugs are instances of a pattern that matters more than either bug alone.
+
+A derivation graph turns one stored change into many downstream effects. Each derived value,
+each aggregate that rolls up across a foreign key, each conditional rollup (such as *sum of
+orders **where** unshipped*) adds **change paths** — the distinct update, delete, and
+re-parent cases that must each be handled to keep derived data correct.
+
+Change paths grow faster than dependencies, because re-parenting, deletes, and conditional
+aggregation each multiply the cases. A modest graph that allows re-parenting can carry more
+risk than a deeper graph that is purely additive.
+
+So the more dependencies a system has, and the more they nest across tables, the more change
+paths exist — and the more likely it is that hand-written code, including AI-generated code,
+misses some. This is a rising curve, not a cliff: for trivial graphs either approach is fine;
+as nesting and fan-out grow, the gap widens between code that must enumerate every path by
+hand and an engine that derives the paths from the rules.
+
+This is a fact about practice, not a theorem. Procedural code *can* handle these paths — the
+LogicBank engine is itself procedural code that does. The point is that doing it correctly
+per application, by hand, gets steadily harder and less reliable as the graph grows, while an
+engine solves it once for every project.
+
+---
+
+## The declarative version
+
+Five rules, expressing the requirements directly:
+
+```python
+def declare_logic():
+    Rule.copy(derive=Item.unit_price, from_parent=Product.unit_price)
+    Rule.formula(derive=Item.amount,
+                 as_expression=lambda row: row.quantity * row.unit_price)
+    Rule.sum(derive=Order.amount_total, as_sum_of=Item.amount)
+    Rule.sum(derive=Customer.balance, as_sum_of=Order.amount_total,
+             where=lambda row: row.date_shipped is None)
+    Rule.constraint(validate=Customer,
+                    as_condition=lambda row: row.balance <= row.credit_limit,
+                    error_msg="Customer balance exceeds credit limit")
+```
+
+These five rules pass the re-parenting cases because the engine derives the dependency graph
+and propagates changes in both directions automatically. There is no old-parent adjustment to
+write — or to forget — because no change-path handling is written at all. Change a rule, and
+its new meaning is enforced on every path automatically: no hunting down the insert case, the
+delete case, and the re-parent case and hoping all of them got fixed.
+
+---
+
+## The proof: same tests, both implementations
+
+The evidence is not the argument — it is the test suite run against both versions. The
+repository's Behave suite exercises insert, update, re-parent, delete, ship, and unship paths.
+
+| Scenario                                  | Declarative (LogicBank) | Procedural (as generated, pre-fix) |
+| ----------------------------------------- | ----------------------- | ---------------------------------- |
+| Good order — balance updated              | ✅ pass                 | ✅ pass                            |
+| Exceed credit limit — rejected            | ✅ pass                 | ✅ pass                            |
+| Item quantity change — recalculates       | ✅ pass                 | ✅ pass                            |
+| Delete item — reduces order total         | ✅ pass                 | ✅ pass                            |
+| Ship order — excluded from balance        | ✅ pass                 | ✅ pass                            |
+| Re-parent order (`customer_id` change)    | ✅ pass                 | ❌ **fail — old parent stale**     |
+| Change item product (`product_id` change) | ✅ pass                 | ❌ **fail — stale unit_price**     |
+
+The last two rows are the point. Everything above them passes on both sides — which is
+precisely why these bugs are dangerous, since ordinary testing exercises the happy path and
+stops there.
+
+---
+
+## Why this matters at enterprise scale
+
+The single-project result is the brick; governance across a portfolio is the wall.
+
+When derived-data logic is hand-written, every project re-implements the same change-path
+handling — each one an independent chance to reintroduce the re-parenting class of bug — and
+there is no tractable way to audit hundreds of services for it. When the logic is declarative,
+two things become possible that otherwise are not: change-path correctness is handled once in
+the engine, and the rules are inspectable as data, so an automated governance report can score
+coverage and flag anti-patterns across the whole portfolio.
+
+Declarative logic is not merely terser — it is **auditable**. And auditability is what turns
+good practice on one team into something measurable across the organization.
+
+---
+
+## Scope of the evidence
+
+This was an informal experiment, reported as observed. Two things should accompany it before
+it is cited as a benchmark: the full ~200line procedural implementation and its test harness
+committed to the repo, so every cell in the table above is reproducible; and any performance
+figures measured in this project rather than borrowed. The engine guarantees that derivations
+*propagate* completely given the rules — it does not guarantee the rules express the right
+intent; a wrong `where` clause is still a wrong rule.
+
+---
+
+## Appendix A: The procedural code (excerpt)
+
+A representative excerpt, showing the re-parenting handling that had to be added after probing:
+
+```python
+def handle_item_update(mapper, connection, target: models.Item):
+    session = Session.object_session(target)
+    old_item = session.query(models.Item).get(target.id)
+
+    # product change: re-copy unit_price (added after probing — Bug 2)
+    if old_item and old_item.product_id != target.product_id:
+        ProceduralBusinessLogic.copy_unit_price_from_product(target, session)
+
+    ProceduralBusinessLogic.calculate_item_amount(target)
+
+    # order re-parent: must fix OLD order/customer too (added after probing)
+    if old_item and old_item.order_id != target.order_id:
+        old_order = session.query(models.Order).get(old_item.order_id)
+        if old_order:
+            ProceduralBusinessLogic.calculate_order_total(old_order, session)
+            old_customer = session.query(models.Customer).get(old_order.customer_id)
+            if old_customer:
+                ProceduralBusinessLogic.update_customer_balance(old_customer, session)
+
+    # new order/customer
+    if target.order_id:
+        order = session.query(models.Order).get(target.order_id)
+        if order:
+            ProceduralBusinessLogic.calculate_order_total(order, session)
+            customer = session.query(models.Customer).get(order.customer_id)
+            if customer:
+                ProceduralBusinessLogic.update_customer_balance(customer, session)
+```
+
+This is one event handler. A full implementation needs the equivalent for
+`handle_item_insert`, `handle_item_delete`, `handle_order_update`, `handle_order_delete`,
+`handle_product_update`, and more — each carrying the same old-parent/new-parent burden.
+
+---
+
+## Appendix B: AI-generated analysis (preserved as an artifact)
+
+> **Note: how this was created** The text below was generated by an AI assistant (Claude) while
+> working in this repository, after it identified the second bug — not written or requested by
+> the author. The assistant also had prior exposure to LogicBank rules concepts in its working
+> context. It is preserved verbatim as a record of what the tool produced. Its stronger claims
+> (for example, that procedural logic "cannot be correct," or that this is a structural
+> "impossibility") are not endorsed here and were not independently investigated; read them as
+> the assistant's framing. The verified results are in the body above.
+
+
+### The Experiment
 
 **Goal:** Compare two approaches to implementing the same business requirements:
 1. **Declarative rules** using LogicBank
@@ -38,33 +216,33 @@ Then, **unprompted**, Copilot wrote a comprehensive analysis explaining why proc
 
 **Results:**
 - **Declarative:** 5 rules, 0 bugs
-- **Procedural:** 220+ lines, 2 critical bugs (discovered only after prompting)
+- **Procedural:** ~200 lines, 2 critical bugs (discovered only after prompting)
 
 ---
 
-## The Critical Bugs
+### The Critical Bugs
 
-### Bug 1: Order.customer_id Change
+#### Bug 1: Order.customer_id Change
 **Problem:** When an order moves from Customer A to Customer B:
 - Procedural code updated Customer B's balance (new parent) ✅
 - Procedural code **failed to adjust Customer A's balance** (old parent) ❌
 
 **Why this matters:** Customer A's balance is now incorrect. Credit limit checks will fail.
 
-### Bug 2: Item.product_id Change  
+#### Bug 2: Item.product_id Change  
 **Problem:** When an item's product changes from Product X to Product Y:
 - Procedural code should re-copy unit_price from Product Y
 - Procedural code **failed to update the unit_price** ❌
 
 **Why this matters:** Item is priced incorrectly. Order total and customer balance are wrong.
 
-### The Pattern
+#### The Pattern
 
 Both bugs follow the same failure mode: **Foreign key changes require updating BOTH old and new parents**, but procedural code only handles one direction.
 
 ---
 
-## Why AI Cannot Fix This
+### Why AI Cannot Fix This
 
 Even improved AI models (like Claude Sonnet 4.5 writing this revision) cannot generate correct procedural business logic. Here's why:
 
@@ -86,7 +264,7 @@ Customer.balance = sum(Order.amount_total where date_shipped IS NULL)
 Customer.balance ≤ Customer.credit_limit
 ```
 
-### Change Paths Procedural Code Must Handle
+#### Change Paths Procedural Code Must Handle
 
 For this simple 5-rule system, here are just SOME of the change paths:
 
@@ -98,7 +276,7 @@ For this simple 5-rule system, here are just SOME of the change paths:
 6. `Order.date_shipped` changes → if now NULL, add to balance; if was NULL, remove from balance
 7. `Product.unit_price` changes → update all Items using this product → cascade through all affected Orders and Customers
 
-### Why AI Fails
+#### Why AI Fails
 
 **AI generates code sequentially**, creating functions for each operation:
 - `calculate_item_amount()`
@@ -113,7 +291,7 @@ For this simple 5-rule system, here are just SOME of the change paths:
 
 **Even asking "what if X changes?"** only finds bugs for that specific X. We'd need to ask about EVERY attribute in EVERY table.
 
-### The Structural Challenge
+#### The Structural Challenge
 
 This is not about code quality or AI capability. **Procedural code for dependency graphs becomes prohibitively complex** because it must:
 - Handle all change paths with explicit code for each path
@@ -124,9 +302,9 @@ This is not about code quality or AI capability. **Procedural code for dependenc
 
 ---
 
-## The Declarative Solution
+### The Declarative Solution
 
-### The Rules (5 Lines)
+#### The Rules (5 Lines)
 
 ```python
 def declare_logic():
@@ -149,7 +327,7 @@ def declare_logic():
                    error_msg="Customer balance exceeds credit limit")
 ```
 
-### How The Engine Provides Correctness Guarantee
+#### How The Engine Provides Correctness Guarantee
 
 **1. Automatic Dependency Discovery**
 - Engine analyzes rules to build dependency graph
@@ -179,7 +357,7 @@ def declare_logic():
 - Automatic rollback on constraint violations
 - No partial updates or inconsistent state
 
-### The Correctness Guarantee
+#### The Correctness Guarantee
 
 **Because the engine:**
 - Discovers all dependencies automatically
@@ -194,11 +372,11 @@ def declare_logic():
 
 ---
 
-## The Numbers
+### The Numbers
 
 | Metric | Declarative (LogicBank) | Procedural (AI-Generated) |
 |--------|------------------------|---------------------------|
-| **Lines of Code** | 5 rules | 220+ lines |
+| **Lines of Code** | 5 rules | ~200 lines |
 | **Critical Bugs** | 0 | 2 (discovered after prompting) |
 | **Change Paths Handled** | ALL (automatically) | Some (must code explicitly) |
 | **Completeness Proof** | Yes (dependency graph) | No (cannot prove) |
@@ -206,15 +384,15 @@ def declare_logic():
 | **Maintainability** | Self-documenting | "Franken-Code" |
 | **Business Alignment** | Rules = Requirements | Implementation obscures intent |
 
-**Code Reduction:** 44X (220 lines → 5 rules)  
+**Code Reduction:** 44X (~200) lines → 5 rules)  
 **Bug Reduction:** 0 bugs vs. 2 bugs (discovered only after prompting)  
 **Completeness:** Automatic (vs. requires manual verification)
 
 ---
 
-## The Balanced View: AI Strengths, AI Weaknesses, and the Right Complement
+### The Balanced View: AI Strengths, AI Weaknesses, and the Right Complement
 
-### AI Is Genuinely Powerful — And Dependency Issues Are Real
+#### AI Is Genuinely Powerful — And Dependency Issues Are Real
 
 Two camps have formed around AI-generated code:
 
@@ -240,7 +418,7 @@ The key is not choosing between AI and rules — it is **pairing AI with systems
 
 ---
 
-### The Temporal Dimension: A New Dependency Bug Class
+#### The Temporal Dimension: A New Dependency Bug Class
 
 The cross-table dependency bugs (FK changes, old/new parent updates) have been documented above.  
 There is a second, subtler class: **temporal ordering within the rule engine itself**.
@@ -283,9 +461,9 @@ Rule.formula(derive=models.Item.amount, as_expression=lambda row: row.quantity *
 
 ---
 
-## Why This Matters for Enterprise AI
+### Why This Matters for Enterprise AI
 
-### The GenAI-Logic Insight
+#### The GenAI-Logic Insight
 
 **AI is transformative for:**
 - Translating natural language to specifications
@@ -299,7 +477,7 @@ Rule.formula(derive=models.Item.amount, as_expression=lambda row: row.quantity *
 - Ensuring correctness (spatial and temporal)
 - Managing complex state
 
-### The Solution: AI + Declarative Rules
+#### The Solution: AI + Declarative Rules
 
 **GenAI-Logic approach:**
 1. **AI translates** natural language requirements → LogicBank rules (DSL)
@@ -311,7 +489,7 @@ Rule.formula(derive=models.Item.amount, as_expression=lambda row: row.quantity *
 - Correctness of declarative rules
 - Enterprise governance without manual coding
 
-### The Alternative (AI Alone)
+#### The Alternative (AI Alone)
 
 **Current tools (Cursor, Claude, Copilot standalone):**
 1. AI translates natural language → procedural code
@@ -323,7 +501,7 @@ Rule.formula(derive=models.Item.amount, as_expression=lambda row: row.quantity *
 
 ---
 
-## For Copilot Users
+### For Copilot Users
 
 **Current state:**
 - Copilot generates code brilliantly
@@ -344,7 +522,7 @@ Rule.formula(derive=models.Item.amount, as_expression=lambda row: row.quantity *
 **Key benefit:**  
 The same AI assistant (Copilot) that today generates buggy procedural code can instead generate correct declarative rules - **when given the right framework and training materials.** The `.copilot-instructions.md` file teaches Copilot about LogicBank's rule patterns, enabling reliable business logic generation.
 
-### For Enterprise Developers
+#### For Enterprise Developers
 
 **Key insight:**  
 > **Business logic is not a coding problem. It's a dependency graph problem.**
@@ -358,7 +536,7 @@ The same AI assistant (Copilot) that today generates buggy procedural code can i
 
 ---
 
-## Conclusion: AI's Confession
+### Conclusion: AI's Confession
 
 This document began with AI (GitHub Copilot) generating procedural code that had critical bugs.
 
@@ -379,7 +557,7 @@ When prompted about edge cases, Copilot discovered its own bugs and—unprompted
 - Enable AI to generate specifications (not procedural code)
 
 **The evidence:**
-- 5 rules vs. 220 lines (44X reduction)
+- 5 rules vs. ~220 lines (40X reduction)
 - 0 bugs vs. 2+ bugs (discovered only after prompting)
 - Automatic enforcement vs. manual verification required
 
@@ -455,26 +633,12 @@ def handle_item_update(mapper, connection, target: models.Item):
 - `handle_product_update()`
 - etc.
 
-**Total: 220+ lines, multiple bugs, unverifiable completeness.**
-
+**Total: ~200 lines, multiple bugs, unverifiable completeness.**
 ---
 
 ## Resources
 
-**Try it yourself:**
 - [GenAI-Logic Installation](https://apilogicserver.github.io/Docs/Install-Express/)
-- [This Project on GitHub](https://github.com/ApiLogicServer/basic_demo)
-- [Complete Documentation](https://apilogicserver.github.io/Docs/)
-
-**Background:**
-- [Architecture Internals](https://apilogicserver.github.io/Docs/Architecture-Internals/)
+- [This project on GitHub](https://github.com/ApiLogicServer/basic_demo)
 - [LogicBank Rules API](https://apilogicserver.github.io/Docs/Logic/)
-- [40-Year Technology Lineage](https://medium.com/@valjhuber/declarative-genai-the-architecture-behind-enterprise-vibe-automation-1b8a4fe4fbd7)
-
----
-
-**Document Owner:** Val Huber (Architect, GenAI-Logic and LogicBank)  
-**Original Analysis:** GitHub Copilot (unprompted self-criticism after discovering bugs)  
-**v2.0 Revision:** Claude Sonnet 4.5 (November 2025)  
-**v2.1 Revision:** Claude Sonnet 4.6 (February 2026) — added temporal dimension, balanced view  
-**Purpose:** Make the structural impossibility of procedural business logic explicit for enterprise decision-makers
+- [Governance / Health Check](https://apilogicserver.github.io/Docs/IDE-Health-Check/)
