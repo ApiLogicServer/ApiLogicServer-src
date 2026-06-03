@@ -84,7 +84,7 @@ def create_expose_api_models(model_creation_services: create_from_model.ModelCre
         result_apis += '        - And post/patch/update (including logic enforcement) \n\n'
         result_apis += '        Invoked at server startup (api_logic_server_run) \n\n'
         result_apis += '        You typically do not customize this file \n'
-        result_apis += '        - See https://apilogicserver.github.io/Docs/Tutorial/#customize-and-debug \n'
+        result_apis += '        - See https://apilogicserver.github.io/Docs/Sample-Basic-Demo/#api-customization-standard \n'
         result_apis += '    """\n'
 
         sys.path.append(model_creation_services.project.os_cwd)

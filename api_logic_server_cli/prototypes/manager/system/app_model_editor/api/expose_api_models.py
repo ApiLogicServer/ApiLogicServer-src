@@ -21,7 +21,7 @@ def expose_models(api, method_decorators = []):
         Invoked at server startup (api_logic_server_run) 
 
         You typically do not customize this file 
-        - See https://apilogicserver.github.io/Docs/Tutorial/#customize-and-debug 
+        - See https://apilogicserver.github.io/Docs/Sample-Basic-Demo/#api-customization-standard 
     """
     api.expose_object(database.models.Entity, method_decorators= method_decorators)
     api.expose_object(database.models.EntityAttr, method_decorators= method_decorators)

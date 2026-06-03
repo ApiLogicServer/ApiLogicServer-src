@@ -20,12 +20,17 @@ On Placing Orders, Check Credit
 
 ## Rules
 
+**Check Credit**
+
 1. `unit_price = copy(unit_price)`
 2. `amount = quantity * unit_price`
 3. `amount_total = sum(amount)`
 4. `balance = sum(amount_total where date_shipped)`
-C. constraint: `Customer`
-E. `Order` → `send_row_to_kafka` (after_flush)
+5. `Customer constraint: balance < credit_limit`
+
+**App Integration**
+
+1. `Order` → `send_row_to_kafka` (after_flush)
 
 ---
 _Generated 2026-05-23 07:36_

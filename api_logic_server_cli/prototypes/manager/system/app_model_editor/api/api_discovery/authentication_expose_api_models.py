@@ -22,7 +22,7 @@ def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_deco
         Invoked at server startup (api_logic_server_run) 
 
         You typically do not customize this file 
-        - See https://apilogicserver.github.io/Docs/Tutorial/#customize-and-debug 
+        - See https://apilogicserver.github.io/Docs/Sample-Basic-Demo/#api-customization-standard 
     """
 
     provider_name = str(Config.SECURITY_PROVIDER)

@@ -36,7 +36,7 @@ def expose_models(api, method_decorators = []):
         Invoked at server startup (api_logic_server_run -> config/server_setup)
 
         You typically do not customize this file
-        - See https://apilogicserver.github.io/Docs/Tutorial/#customize-and-debug
+        - See https://apilogicserver.github.io/Docs/Sample-Basic-Demo/#api-customization-standard
     """
 
     debug_inspect_list = inspect.getmembers(database.models)
