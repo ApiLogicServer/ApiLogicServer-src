@@ -593,21 +593,40 @@ ApiLogicServer rebuild-from-database --project_name=<YourProject> --db_url=<same
 | Artifact | Location | What changes |
 |---|---|---|
 | SQLAlchemy models | `database/models.py` | New tables/columns added as classes/attributes |
-| Admin app | `ui/admin/admin.yaml` | New tables appear as sections; new columns appear in grids/forms |
+| Admin app (merge) | `ui/admin/admin-merge.yaml` | New tables/columns — NOT written directly to `admin.yaml` |
 | DBML diagram | `docs/db.dbml` | New tables and relationships reflected; paste to dbdiagram.io |
 
-**IMPORTANT — Copilot customizations are preserved:**
-- `rebuild-from-database` does NOT overwrite `logic/`, `api/customize_api.py`, or other user-edited files
-- It only regenerates `database/models.py`, `ui/admin/admin.yaml`, and `docs/db.dbml`
-- Any prior manual edits to `admin.yaml` (e.g., hiding columns, reordering) will be reset — re-apply them after rebuild
+**IMPORTANT — admin.yaml is user-owned:**
+- `rebuild-from-database` never overwrites `admin.yaml` directly — it writes `admin-merge.yaml` instead
+- `admin.yaml` is designed to be customized (column order, labels, search/sort, hiding fields)
+- After rebuild, if `admin-merge.yaml` exists, offer the user a swap with this message:
+
+  ⛔ NEVER copy admin-merge.yaml to admin.yaml without explicit user confirmation — no exceptions.
+
+  ---
+  📋 **Admin UI update available**
+
+  `rebuild-from-database` generated `ui/admin/admin-merge.yaml` — a fresh Admin UI config
+  reflecting your updated schema (new tables, new columns). It does NOT overwrite `admin.yaml`
+  directly because you may have customized it.
+
+  Your options:
+  - **Replace** — I'll back up `admin.yaml` → `admin.yaml.bak`, then copy `admin-merge.yaml` → `admin.yaml`. Fastest path; any prior customizations will need to be re-applied.
+  - **Merge manually** — open both files side-by-side and copy the new sections you want. Preserves your customizations.
+
+  Want me to do the backup and replace?
+  ---
+
+- If user says yes: copy `admin.yaml` → `admin.yaml.bak`, then copy `admin-merge.yaml` → `admin.yaml`
+- If user says no: remind them `admin-merge.yaml` is waiting whenever they're ready
 
 **Typical post-schema-change workflow:**
 ```
 1. Apply DDL (e.g., sqlite3 db.sqlite "ALTER TABLE ...")
-2. ApiLogicServer rebuild-from-database --project_name=X --db_url=Y
+2. genai-logic rebuild-from-database --db_url=sqlite:///database/db.sqlite
 3. Verify: database/models.py has new class/attribute
-4. Verify: ui/admin/admin.yaml has new section/field
-5. Verify: docs/db.dbml shows new table/relationship
+4. Verify: docs/db.dbml shows new table/relationship
+5. Offer admin.yaml swap (see above) — backup + replace, or leave for manual merge
 6. Add logic rules in logic/logic_discovery/<name>.py
 ```
 
