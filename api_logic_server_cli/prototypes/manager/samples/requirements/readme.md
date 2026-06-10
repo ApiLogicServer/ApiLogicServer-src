@@ -10,7 +10,7 @@
 
 **Executable Requirements** means the requirements document IS the build spec — not a handoff artifact that gets "interpreted," but a file the AI reads and executes directly, then writes back an audit trail of what it decided.
 
-For full docs, [click here](api_logic_server_cli/prototypes/manager/samples/requirements/readme.md).
+For full docs, [click here](https://apilogicserver.github.io/Docs/Exec-Reqmts/).
 
 ## How it works
 
