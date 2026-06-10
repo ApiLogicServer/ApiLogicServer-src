@@ -811,7 +811,8 @@ Natural Language Requirements:
 6. Item unit_price copied from the Product
 
 version: 1.0
-date: [Current Date]
+created: [ISO datetime, e.g. 2026-06-09T14:30:00]
+created_by: [AI model, e.g. claude-sonnet-4-6] ([user email])
 """
 
 from logic_bank.logic_bank import Rule

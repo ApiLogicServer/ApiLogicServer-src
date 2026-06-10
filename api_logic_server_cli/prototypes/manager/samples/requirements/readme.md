@@ -23,6 +23,7 @@ docs/requirements/<name>/
 
 Say `implement reqs <name>` in Copilot Agent mode. AI reads the spec, builds the system, and writes `ad-libs.md` alongside.
 
+
 ## PM / Dev scenario
 
 | Who | Does what |
