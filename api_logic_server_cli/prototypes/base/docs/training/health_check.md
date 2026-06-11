@@ -1,6 +1,6 @@
 ---
 title: Project Health Check — Vital Signs
-version: 1.4 (June 2026) — added schema checks: tables with no primary key, FK columns with no covering index
+version: 1.7 (June 2026) — Effective LOC: hardcoded baselines for all api/api_discovery/ scaffold stubs; integration/system, integration/mcp, integration/n8n now framework-infrastructure (0)
 usage: AI reads this when user asks for vital signs / health check
 overhead: zero until invoked — file is read on demand only
 governance: see docs/training/governance.md — thresholds, red flags, score ranges, manager roll-up
@@ -12,8 +12,9 @@ Inspired by the Versata Automation Analyzer. Produces two scores plus red flag d
 1. **Coverage Score** — rules per object, weighted by rule power
 2. **Integrity Score** — demerits for anti-patterns, credits for reviews
 3. **Red Flag check** — binary alert for governance-level issues (see governance.md)
+4. **Effective LOC** — how much code the project actually adds beyond the generated scaffold, broken down per table
 
-Report all three, all findings with file:line, and offer to fix each one.
+Report all of these, all findings with file:line, and offer to fix each one.
 
 **Governance policy, score reference ranges, and manager roll-up guidance:**  
 → `docs/training/governance.md`
@@ -44,6 +45,7 @@ STEP 3: Scan for @health-check annotations (reviewed files / suppressed lines / 
 STEP 4: Compute Coverage Score
 STEP 5: Compute Integrity Score
 STEP 6: Check Red Flag (see below) — read docs/training/governance.md for full policy
+STEP 6b: Compute Effective LOC (see below)
 STEP 7: Present report (format below)
 STEP 8: Offer to fix each unreviewed finding
 ```
@@ -97,6 +99,128 @@ coverage_score = weighted_rules / table_count
 | < 1.0 | 🔴 Weak | Project is largely procedural; rules barely present |
 
 `demo_customs_cbsa` reference: `(3×3 + 6×2 + 8×2 + 2×1) / 5 = 39/5 = 7.8` — Strong.
+
+---
+
+## Effective Lines of Code
+
+**Purpose:** Quantify how much code the project actually adds on top of the
+generated scaffold — and show where it lives, table by table. This is the
+"40X less code" claim made measurable for *this specific project*.
+
+### Baseline: hardcoded scaffold LOC
+
+Every project starts from the same generated scaffold (the output of
+`genai-logic create` before any customization). Most scaffold files —
+`api/system/`, `database/system/`, `security/authentication_provider/`,
+`test/api_logic_server_behave/`, etc. — are framework infrastructure that
+projects never add to or rename; they're simply excluded from this metric.
+
+A small set of scaffold files are *designed to be customized in place*. For
+these, the table below records their **as-generated line count**. No external
+`scaffold/` directory is needed — these numbers are constants.
+
+| File | Baseline LOC |
+|---|---|
+| `api/customize_api.py` | 63 |
+| `api/expose_api_models.py` | 51 |
+| `api/api_discovery/auto_discovery.py` | 27 |
+| `api/api_discovery/ontimize_api.py` | 494 |
+| `api/api_discovery/system.py` | 77 |
+| `api/api_discovery/mcp_discovery.py` | 97 |
+| `api/api_discovery/new_service.py` | 20 |
+| `api/api_discovery/newer_service.py` | 20 |
+| `database/customize_models.py` | 19 |
+| `logic/declare_logic.py` | 91 |
+| `logic/logic_discovery/auto_discovery.py` | 51 |
+| `logic/logic_discovery/use_case.py` | 22 |
+| `security/declare_security.py` | 48 |
+| `integration/kafka/kafka_producer.py` | 179 |
+| `integration/kafka/kafka_consumer.py` | 61 |
+| `integration/kafka/kafka_subscribe_discovery/auto_discovery.py` | 64 |
+| `ui/admin/admin_loader.py` | 217 |
+
+**`database/models.py` is excluded entirely** from this metric — it's generated
+from the database schema, not hand-written, and its size varies with schema size
+rather than developer effort.
+
+### Step 1 — Effective LOC per file
+
+For every `.py` file in the project (excluding `database/models.py`,
+`__pycache__`, and `logs/`):
+
+```
+if the file's path is in the baseline table above:
+    effective_lines = max(0, project_file_lines - baseline_lines)
+elif the file is under a "framework infrastructure" path
+     (api/system/, database/system/, database/alembic/, database/database_discovery/,
+      database/test_data/, database/db_debug/, security/system/,
+      security/authentication_provider/, test/api_logic_server_behave/,
+      integration/system/, integration/mcp/, integration/n8n/,
+      integration/kafka/kafka_publish_discovery/__init__.py,
+      devops/, venv_setup/, docs/training/, api_logic_server_run.py, config/*):
+    effective_lines = 0   # framework code, never counted
+else:
+    effective_lines = project_file_lines   # new file (logic_discovery, api_discovery
+                                            # service files beyond the baseline table,
+                                            # integration mappers, custom UI, etc.) — counts in full
+```
+
+Sum `effective_lines` across all files → **Total Effective LOC**.
+
+This isolates *added or changed* lines: scaffold stub files left untouched
+contribute 0 (their line count equals the baseline); files customized in place
+(e.g. `api/customize_api.py`, `security/declare_security.py`) count only the
+growth beyond the baseline; new files anywhere outside the framework-infrastructure
+paths — most notably `logic/logic_discovery/**/*.py` and `api/api_discovery/**/*.py` —
+count in full.
+
+### Step 2 — Per-table breakdown
+
+For each domain table from the Coverage Detail table list:
+
+1. Find every file under `logic/logic_discovery/**/*.py` whose source contains
+   `models.<Table>` (a reference to that table's mapped class).
+2. Sum that file's **effective_lines** (from Step 1) into the table's total.
+
+A file that references multiple tables (e.g. a multi-table formula or
+constraint) contributes its full effective LOC to **each** table it references.
+This is intentional — it answers "how much logic governs this table?", not
+"which file owns this table?" — totals across tables will exceed the
+logic_discovery subtotal when files are shared across tables.
+
+### Step 3 — Cross-cutting bucket
+
+```
+logic_discovery_effective_loc = sum(effective_lines for all logic/logic_discovery/**/*.py)
+cross_cutting_loc = total_effective_loc - logic_discovery_effective_loc
+```
+
+`cross_cutting_loc` covers custom API endpoints (`api/api_discovery/`),
+security declarations, Kafka/EAI integration, custom UI, and config changes —
+code that supports the system but isn't attributable to a single table's
+business rules. Report as one line, not per-table.
+
+### Reporting
+
+```
+Total Effective LOC: 412   (vs scaffold baseline; database/models.py excluded)
+  logic_discovery:   268
+  cross-cutting:     144   (api_discovery, security, integration, ui, config)
+
+Per-table (logic_discovery LOC referencing each table — overlapping by design):
+  CustomsEntry      142
+  SurtaxLineItem    118
+  HsCodeRate         34
+  CountryOrigin      28
+  Province           12
+```
+
+**Trend matters more than absolute size.** A shrinking Effective LOC alongside
+a stable or rising Coverage Score means logic is being *consolidated into rules*
+(replacing procedural code) — the direction the architecture rewards. A growing
+Effective LOC with a flat Coverage Score may mean procedural code is accumulating
+outside the rules engine — cross-check against Integrity Score findings.
 
 ---
 
@@ -319,23 +443,37 @@ See `docs/training/governance.md` for full policy, thresholds, and manager roll-
 
 ## Summary
 
-| Project | Tables | Wtd Rules | Coverage | Integrity | Red Flag | Profile |
-|---|---|---|---|---|---|---|
-| <project_name> | 5 | 29 | **5.8** | **94** | — | 🟡 Strong coverage, 2 findings |
+| Project | Tables | Wtd Rules | Coverage | Integrity | Red Flag | Effective LOC | Profile |
+|---|---|---|---|---|---|---|---|
+| <project_name> | 5 | 29 | **5.8** | **94** | — | 412 | 🟡 Strong coverage, 2 findings |
 
 > **Coverage** = weighted rules / domain tables (sum/count=3, formula/copy=2, constraint=1). Target ≥ 3.0 for mature projects.  
 > **Integrity** = 100 minus demerits for anti-patterns: broken dependency tracking, procedural aggregates replacing rules, events that should be rules. Target ≥ 95.  
 > **Red Flag** = 🚨 if ≥ 10 FK tables and zero sum/count rules — team has evidently not adopted aggregation rules.  
+> **Effective LOC** = project `.py` lines added/changed vs the generated scaffold (`database/models.py` excluded). See per-table breakdown below.  
 > See `docs/training/governance.md` for full scoring guide.
 
 **Coverage Score: 5.8**  (29 weighted rules / 5 tables)   ✅ Strong
 **Integrity Score: 94**  (2 demerits, 0 reviewed)
 **Red Flag: none**  (3 aggregation rules, 5 FK tables)
+**Effective LOC: 412**  (vs scaffold baseline; database/models.py excluded)
 
 ────────────────────────────────────────
 COVERAGE DETAIL
   Tables: CustomsEntry (5), SurtaxLineItem (4), HsCodeRate (0), ...
   Rules:  3× sum, 8× formula, 6× copy, 2× constraint
+
+EFFECTIVE LOC DETAIL
+  Total Effective LOC: 412
+    logic_discovery: 268
+    cross-cutting:   144  (api_discovery, security, integration, ui, config)
+
+  Per-table (logic_discovery LOC referencing each table):
+    CustomsEntry      142
+    SurtaxLineItem    118
+    HsCodeRate         34
+    CountryOrigin      28
+    Province           12
 
 INTEGRITY FINDINGS
   🔴 -3  logic/logic_discovery/clvs_eligibility.py:41
