@@ -1,6 +1,6 @@
 # coding: utf-8
 from sqlalchemy import DECIMAL, DateTime  # API Logic Server GenAI assist
-from sqlalchemy import Column, Float, ForeignKey, Integer, Numeric, Text, text
+from sqlalchemy import Column, Date, Float, ForeignKey, Integer, Numeric, String, Text, text
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -10,8 +10,8 @@ from sqlalchemy.ext.declarative import declarative_base
 # Alter this file per your database maintenance policy
 #    See https://apilogicserver.github.io/Docs/Project-Rebuild/#rebuilding
 #
-# Created:  May 10, 2026 12:14:11
-# Database: sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-logic/customs_cbsa/database/db.sqlite
+# Created:  June 10, 2026 14:57:34
+# Database: sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-logic/demo_customs_surtax/database/db.sqlite
 # Dialect:  sqlite
 #
 # mypy: ignore-errors
@@ -49,9 +49,10 @@ class CountryOrigin(Base):  # type: ignore
     _s_collection_name = 'CountryOrigin'  # type: ignore
 
     id = Column(Integer, primary_key=True)
-    country_code = Column(Text, nullable=False, unique=True)
-    country_name = Column(Text, nullable=False)
-    surtax_rate = Column(Numeric(8, 6), server_default=text("0.250000"), nullable=False)
+    country_code = Column(String(2), nullable=False)
+    country_name = Column(String(100), nullable=False)
+    trade_agreement = Column(String(20))
+    surtax_rate = Column(Numeric(8, 6), server_default=text("0"), nullable=False)
 
     # parent relationships (access parent)
 
@@ -65,9 +66,9 @@ class HsCodeRate(Base):  # type: ignore
     _s_collection_name = 'HsCodeRate'  # type: ignore
 
     id = Column(Integer, primary_key=True)
-    hs_code = Column(Text, nullable=False, unique=True)
-    description = Column(Text)
-    base_duty_rate = Column(Numeric(8, 6), server_default=text("0.000000"), nullable=False)
+    hs_code = Column(String(10), nullable=False)
+    description = Column(String(200))
+    base_duty_rate = Column(Numeric(8, 6), server_default=text("0"), nullable=False)
     is_steel_derivative = Column(Integer, server_default=text("1"), nullable=False)
 
     # parent relationships (access parent)
@@ -82,9 +83,9 @@ class Province(Base):  # type: ignore
     _s_collection_name = 'Province'  # type: ignore
 
     id = Column(Integer, primary_key=True)
-    province_code = Column(Text(2), nullable=False)
-    province_name = Column(Text, nullable=False)
-    tax_rate = Column(Numeric(8, 4), nullable=False)
+    province_code = Column(String(2), nullable=False)
+    province_name = Column(String(100), nullable=False)
+    tax_rate = Column(Numeric(8, 4), server_default=text("0"), nullable=False)
 
     # parent relationships (access parent)
 
@@ -102,9 +103,12 @@ class SysConfig(Base):  # type: ignore
     discount_rate = Column(Float, server_default=text("0.05"))
     tax_rate = Column(Float, server_default=text("0.10"))
     notes = Column(Text)
-    effective_date = Column(Text, server_default=text("'2025-12-26'"))
-    program_code = Column(Text, server_default=text("'25267A'"))
     pc_number = Column(Text, server_default=text("'2025-0917'"))
+    program_code = Column(Text, server_default=text("'25267A'"))
+    order_title = Column(Text, server_default=text("'Steel Derivative Goods Surtax Order'"))
+    order_date = Column(Date, server_default=text("'2025-12-11'"))
+    legal_authority = Column(Text, server_default=text("'Subsection 53(2) and paragraph 79(a) of the Customs Tariff'"))
+    effective_date = Column(Date, server_default=text("'2025-12-26'"))
 
     # parent relationships (access parent)
 
@@ -118,24 +122,25 @@ class CustomsEntry(Base):  # type: ignore
     _s_collection_name = 'CustomsEntry'  # type: ignore
 
     id = Column(Integer, primary_key=True)
-    entry_number = Column(Text, nullable=False)
-    importer_name = Column(Text)
-    ship_date = Column(Text, nullable=False)
-    sys_config_id = Column(ForeignKey('sys_config.id'), server_default=text("1"))
+    entry_number = Column(String(30), nullable=False)
+    importer_name = Column(String(100), nullable=False)
+    ship_date = Column(Date, nullable=False)
     country_origin_id = Column(ForeignKey('country_origin.id'), nullable=False)
     province_id = Column(ForeignKey('province.id'), nullable=False)
-    effective_date = Column(Text)
-    program_code = Column(Text)
-    pc_number = Column(Text)
-    country_surtax_rate = Column(Numeric(8, 6))
-    province_tax_rate = Column(Numeric(8, 4))
-    surtax_applicable = Column(Integer, server_default=text("0"), nullable=False)
-    total_customs_value = Column(Numeric(15, 2), server_default=text("0"), nullable=False)
-    total_duty_amount = Column(Numeric(15, 2), server_default=text("0"), nullable=False)
-    total_surtax_amount = Column(Numeric(15, 2), server_default=text("0"), nullable=False)
-    duty_paid_value = Column(Numeric(15, 2), server_default=text("0"), nullable=False)
-    sales_tax_amount = Column(Numeric(15, 2), server_default=text("0"), nullable=False)
-    total_tax_due = Column(Numeric(15, 2), server_default=text("0"), nullable=False)
+    sys_config_id = Column(ForeignKey('sys_config.id'), server_default=text("1"), nullable=False)
+    effective_date = Column(Date)
+    program_code = Column(String(20))
+    pc_number = Column(String(20))
+    country_surtax_rate = Column(Numeric(8, 6), server_default=text("0"))
+    province_tax_rate = Column(Numeric(8, 4), server_default=text("0"))
+    surtax_applicable = Column(Integer, server_default=text("0"))
+    total_customs_value = Column(Numeric(15, 2), server_default=text("0"))
+    total_duty_amount = Column(Numeric(15, 2), server_default=text("0"))
+    total_surtax_amount = Column(Numeric(15, 2), server_default=text("0"))
+    duty_paid_value = Column(Numeric(15, 2), server_default=text("0"))
+    sales_tax_amount = Column(Numeric(15, 2), server_default=text("0"))
+    total_tax_due = Column(Numeric(15, 2), server_default=text("0"))
+    notes = Column(String(200))
 
     # parent relationships (access parent)
     country_origin : Mapped["CountryOrigin"] = relationship(back_populates=("CustomsEntryList"))
@@ -154,13 +159,14 @@ class SurtaxLineItem(Base):  # type: ignore
     id = Column(Integer, primary_key=True)
     customs_entry_id = Column(ForeignKey('customs_entry.id'), nullable=False)
     hs_code_id = Column(ForeignKey('hs_code_rate.id'), nullable=False)
-    description = Column(Text)
-    customs_value = Column(Numeric(15, 2), nullable=False)
-    base_duty_rate = Column(Numeric(8, 6))
-    country_surtax_rate = Column(Numeric(8, 6))
-    surtax_applicable = Column(Integer, server_default=text("0"), nullable=False)
-    base_duty_amount = Column(Numeric(15, 2), server_default=text("0"), nullable=False)
-    surtax_amount = Column(Numeric(15, 2), server_default=text("0"), nullable=False)
+    line_number = Column(Integer, server_default=text("1"), nullable=False)
+    description = Column(String(200))
+    customs_value = Column(Numeric(15, 2), server_default=text("0"), nullable=False)
+    base_duty_rate = Column(Numeric(8, 6), server_default=text("0"))
+    is_steel_derivative = Column(Integer, server_default=text("1"))
+    surtax_applicable = Column(Integer, server_default=text("0"))
+    base_duty_amount = Column(Numeric(15, 2), server_default=text("0"))
+    surtax_amount = Column(Numeric(15, 2), server_default=text("0"))
 
     # parent relationships (access parent)
     customs_entry : Mapped["CustomsEntry"] = relationship(back_populates=("SurtaxLineItemList"))

@@ -3,8 +3,8 @@
 # intended for use in portal cli - not to be run on your local machine.
 
 projectname="apilogicserver_project"  # project directory
-resourcename="customscbsa"  # lower case, only
-resourcegroup="customscbsa_rg"
+resourcename="democustomssurtax"  # lower case, only
+resourcegroup="democustomssurtax_rg"
 dockerrepositoryname="apilogicserver"  # change this to your DockerHub Repository
 githubaccount="apilogicserver"         # change this to your GitHub account
 version="1.0.0"
@@ -14,8 +14,8 @@ version="1.0.0"
 # which uses: https://github.com/Azure-Samples/multicontainerwordpress
 
 # login to Azure Portal CLI (substitute your github account for apilogicserver)
-# git clone https://github.com/apilogicserver/customscbsa.git
-# cd customscbsa
+# git clone https://github.com/apilogicserver/democustomssurtax.git
+# cd democustomssurtax
 # sh devops/docker-compose-dev-azure/azure-deploy.sh
 
 echo " "
@@ -79,9 +79,9 @@ az appservice plan create --name myAppServicePlan --resource-group $resourcegrou
 az container create --resource-group $resourcegroup --name ${projectname} --image ${dockerrepositoryname}/${resourcename}:latest --dns-name-label ${resourcename} --ports 5656 --environment-variables 'VERBOSE'='True'  'APILOGICPROJECT_CLIENT_URI'='//{resourcename}.westus.azurecontainer.io:5656'
 
 # or, issue commands like these (fix the git repo name) directly in portal, or local az cli
-az group create --name customscbsa_rg --location "westus"
-az appservice plan create --name myAppServicePlan --resource-group customscbsa_rg --sku S1 --is-linux
-az container create --resource-group customscbsa_rg --name customscbsa --image apilogicserver/customscbsa:latest --dns-name-label customscbsa --ports 5656 --environment-variables 'VERBOSE'='True'  'APILOGICPROJECT_CLIENT_URI'='//customscbsa.westus.azurecontainer.io:5656'
+az group create --name democustomssurtax_rg --location "westus"
+az appservice plan create --name myAppServicePlan --resource-group democustomssurtax_rg --sku S1 --is-linux
+az container create --resource-group democustomssurtax_rg --name democustomssurtax --image apilogicserver/democustomssurtax:latest --dns-name-label democustomssurtax --ports 5656 --environment-variables 'VERBOSE'='True'  'APILOGICPROJECT_CLIENT_URI'='//democustomssurtax.westus.azurecontainer.io:5656'
 
 # e.g.: az container create --resource-group aicustomerorders_rg --name aicustomerorders --image apilogicserver/aicustomerorders:latest --dns-name-label aicustomerorders --ports 5656 --environment-variables VERBOSE=True APILOGICPROJECT_CLIENT_URI=//aicustomerorders.westus.azurecontainer.io:5656
 

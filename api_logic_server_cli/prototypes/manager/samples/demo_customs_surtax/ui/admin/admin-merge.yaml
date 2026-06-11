@@ -1,8 +1,9 @@
 about:
-  date: May 10, 2026 12:13:48
+  date: June 10, 2026 14:49:58
   merged:
-    at: May 10, 2026 12:14:11
-    new_attributes: 'SysConfig.effective_date SysConfig.program_code SysConfig.pc_number '
+    at: June 10, 2026 14:57:34
+    new_attributes: 'SysConfig.pc_number SysConfig.program_code SysConfig.order_title
+      SysConfig.order_date SysConfig.legal_authority SysConfig.effective_date '
     new_resources: 'CountryOrigin CustomsEntry Province HsCodeRate SurtaxLineItem '
     new_tab_groups: 'SysConfig.CustomsEntryList '
   recent_changes: works with modified safrs-react-admin
@@ -23,6 +24,7 @@ resources:
       sort: true
     - name: country_code
       required: true
+    - name: trade_agreement
     - name: surtax_rate
       required: true
     - name: id
@@ -38,6 +40,7 @@ resources:
     attributes:
     - label: ' importer_name*'
       name: importer_name
+      required: true
       search: true
       sort: true
     - name: country_origin_id
@@ -45,29 +48,26 @@ resources:
     - name: province_id
       required: true
     - name: sys_config_id
+      required: true
     - name: entry_number
       required: true
     - name: ship_date
       required: true
+      type: DATE
     - name: effective_date
+      type: DATE
     - name: program_code
     - name: pc_number
     - name: country_surtax_rate
     - name: province_tax_rate
     - name: surtax_applicable
-      required: true
     - name: total_customs_value
-      required: true
     - name: total_duty_amount
-      required: true
     - name: total_surtax_amount
-      required: true
     - name: duty_paid_value
-      required: true
     - name: sales_tax_amount
-      required: true
     - name: total_tax_due
-      required: true
+    - name: notes
     - name: id
     tab_groups:
     - direction: tomany
@@ -143,16 +143,15 @@ resources:
       required: true
     - name: hs_code_id
       required: true
+    - name: line_number
+      required: true
     - name: customs_value
       required: true
     - name: base_duty_rate
-    - name: country_surtax_rate
+    - name: is_steel_derivative
     - name: surtax_applicable
-      required: true
     - name: base_duty_amount
-      required: true
     - name: surtax_amount
-      required: true
     - name: id
     tab_groups:
     - direction: toone
@@ -178,9 +177,14 @@ resources:
     - name: tax_rate
     - name: notes
     - name: id
-    - name: effective_date
-    - name: program_code
     - name: pc_number
+    - name: program_code
+    - name: order_title
+    - name: order_date
+      type: DATE
+    - name: legal_authority
+    - name: effective_date
+      type: DATE
     tab_groups:
     - direction: tomany
       fks:

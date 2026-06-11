@@ -2,7 +2,7 @@
     "tool_type": "json-api",
     "schema_version": "1.0",
     "base_url": "http://localhost:5656/api",
-    "description": "API Logic Project: customs_cbsa",
+    "description": "API Logic Project: demo_customs_surtax",
     "resources": [
         {
             "name": "CountryOrigin",
@@ -17,12 +17,14 @@
                 "id",
                 "country_code",
                 "country_name",
+                "trade_agreement",
                 "surtax_rate"
             ],
             "filterable": [
                 "id",
                 "country_code",
                 "country_name",
+                "trade_agreement",
                 "surtax_rate"
             ]
         },
@@ -40,9 +42,9 @@
                 "entry_number",
                 "importer_name",
                 "ship_date",
-                "sys_config_id",
                 "country_origin_id",
                 "province_id",
+                "sys_config_id",
                 "effective_date",
                 "program_code",
                 "pc_number",
@@ -54,16 +56,17 @@
                 "total_surtax_amount",
                 "duty_paid_value",
                 "sales_tax_amount",
-                "total_tax_due"
+                "total_tax_due",
+                "notes"
             ],
             "filterable": [
                 "id",
                 "entry_number",
                 "importer_name",
                 "ship_date",
-                "sys_config_id",
                 "country_origin_id",
                 "province_id",
+                "sys_config_id",
                 "effective_date",
                 "program_code",
                 "pc_number",
@@ -75,7 +78,8 @@
                 "total_surtax_amount",
                 "duty_paid_value",
                 "sales_tax_amount",
-                "total_tax_due"
+                "total_tax_due",
+                "notes"
             ]
         },
         {
@@ -115,9 +119,12 @@
                 "discount_rate",
                 "tax_rate",
                 "notes",
-                "effective_date",
+                "pc_number",
                 "program_code",
-                "pc_number"
+                "order_title",
+                "order_date",
+                "legal_authority",
+                "effective_date"
             ],
             "filterable": [
                 "id",
@@ -125,9 +132,12 @@
                 "discount_rate",
                 "tax_rate",
                 "notes",
-                "effective_date",
+                "pc_number",
                 "program_code",
-                "pc_number"
+                "order_title",
+                "order_date",
+                "legal_authority",
+                "effective_date"
             ]
         },
         {
@@ -167,10 +177,11 @@
                 "id",
                 "customs_entry_id",
                 "hs_code_id",
+                "line_number",
                 "description",
                 "customs_value",
                 "base_duty_rate",
-                "country_surtax_rate",
+                "is_steel_derivative",
                 "surtax_applicable",
                 "base_duty_amount",
                 "surtax_amount"
@@ -179,10 +190,11 @@
                 "id",
                 "customs_entry_id",
                 "hs_code_id",
+                "line_number",
                 "description",
                 "customs_value",
                 "base_duty_rate",
-                "country_surtax_rate",
+                "is_steel_derivative",
                 "surtax_applicable",
                 "base_duty_amount",
                 "surtax_amount"

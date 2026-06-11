@@ -1,157 +1,190 @@
-<!--
-  readme.md — GenAI-Logic / ApiLogicServer prototype base template
-  Version: 3.14  (Apr 9, 2026) — in sync with .github/.copilot-instructions.md
-  Propagation: copied as-is into every created project (no marker substitution)
-    - Demo-named projects (basic_demo, demo_eai, …): this becomes readme_standard.md;
-      a demo-specific readme is fetched from Docs repo via create_readme.py
-    - Generic projects (e.g. elmo): this IS the readme
-  Markers: none — no xxx-style substitution placeholders in this file
--->
-# GenAI-Logic API Logic Server - Auto-Generated Microservice
+---
+title: Customs EAI
+notes: gold source is docs
+source: docs/Customs-readme
+version: 1.2 from docsite, for readme, for readme 5/5/2026
+---
+<style>
+  -typeset h1,
+  -content__button {
+    display: none;
+  }
+</style>
 
-**🎯 What's Automatically Created:**
-- ✅ **Admin Web App** - Multi-page React app at `http://localhost:5656`
-    * Customize at `ui/admin/admin.yaml`
-    * You can also create a fully customizabe react app: `gail genai-add-app --app-name=react-app --vibe`
-- ✅ **JSON:API Endpoints** - REST API for all database tables at `/api/*`
-- ✅ **Swagger Documentation** - Interactive API docs at `/api`
-- ✅ **Business Logic Engine** - Declarative rules in `logic/declare_logic.py`
-- ✅ **Security Framework** - Authentication/authorization in `security/`
-- ✅ **Database Models** - SQLAlchemy ORM in `database/models.py`
+# Customs Demo
 
-See readme files under api, logic and security.
+![summary](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/customs_demo/summary.png?raw=true)
 
-**🚀 Ready to Run:** This is a complete, working system. Just press F5 or run `python api_logic_server_run.py`
+&nbsp;
+
+<details markdown>
+
+<summary>Executable Requirements - Governance By Architecture, At Scale</summary>
+
+![summary](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/architecture/gov-at-scale.png?raw=true)
+
+&nbsp;
+
+**The Underlying Logic Architecture**
+
+![summary](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/architecture/logic-architecture-exec.png?raw=true)
+<br>
+
+</details>
+
+&nbsp;
+
+<details markdown>
+
+<summary>Claude Code CLI Instructions - how to build this project</summary>
 
 <br>
+
+```bash title="Establish Initial State, Execute Requirements"
+# A - Create the project (already done, typically from Manager)
+genai-logic create  --project_name=demo_customs --db_url=sqlite:///samples/requirements/customs_demo/database/customs.sqlite
+
+# B - activate Claude Code in the VSCode terminal
+claude
+
+# C - use the shared Manager venv (do not create a local project .venv)
+! source ../venv/bin/activate
+
+# D - load context engineering to teach claude about rules, GenAI-Logic
+Please load `.github/.copilot-instructions.md`.
+
+# E - in created project, get the requirements (win: Copy-Item -Path "..\samples\requirements\customs_demo\*" -Destination "." -Recurse -Force -Verbose 4>&1).Count)
+! cp -rv ../samples/requirements/customs_demo_clvs/. . | wc -l
+
+# F - required hardening for delete integrity (no orphans after parent delete via API):
+in database/models.py, add ORM relationship cascade on Shipment child lists.
+Apply as follows (NOTE: ShipmentCommodityList is a special case):
+
+   Shipment.PieceList          → relationship(cascade="all, delete", back_populates="shipment")
+   Shipment.SpecialHandlingList → relationship(cascade="all, delete", back_populates="shipment")
+   Shipment.ShipmentPartyList  → relationship(cascade="all, delete", back_populates="shipment")
+
+   Shipment.ShipmentCommodityList → relationship(passive_deletes='all', back_populates="shipment")
+   # ⚠️  ShipmentCommodity has a composite PK where the FK (local_shipment_oid_nbr) is also
+   # part of the PK. cascade="all, delete" causes SQLAlchemy to null-out the FK before
+   # deleting — which fails for PK columns (any database, not SQLite-specific).
+   # passive_deletes='all' bypasses ORM cascade and delegates to the DB-level
+   # ON DELETE CASCADE on the FK column.
+   # SQLite extra: also requires PRAGMA foreign_keys = ON per connection;
+   # PostgreSQL/MySQL enforce FK cascades by default.
+   # Note: perhaps simpler to alter db design for single-field pkey
+
+# G - ask Coding Agent to create the system by implementing the requirements
+implement requirements docs/requirements/customs_demo
+```
+
+</details>
+
+&nbsp;
 
 ---
 
-# 🚀 Quick Start
+## Executive Summary
 
-**🤖 Bootstrap your AI assistant** by pasting the following into the chat:
+This is a proof of what changes when business logic is governed by architecture, not discipline — built to the scope and standards of a real enterprise integration, in 2 days.
+
+**Delivery Speed — 2 Days, Not Months**<br>
+Built in 2 days by one engineer. The scope — Kafka 2-message pipeline, XML parsing, 7-table persistence, importer matching, CLVS eligibility rules, REST API, Admin UI, and standard enterprise delivery standards — is not a toy project. A traditional team would scope this in weeks and deliver in months.
+
+Curious what your team would estimate? Give your AI this requirements document and ask.
+
+**Business Inputs — Not Technical Specs**<br>
+Traditional delivery starts from *technical* inputs: schema DDL, API specs, field-mapping logic expressed in developer terms. This started from *business* inputs — artifacts the business team already owned.
+
+A plain-English requirements document. An existing database schema. An XML field-mapping spreadsheet. A sample message. GenAI-Logic's Executable Requirements workflow compiled these directly into a running, governed system — no translation layer required.
+
+Speed is not a tradeoff against governance here. Both are consequences of the same thing: declarative rules replace procedural code, so the system is both faster to build and impossible to bypass.
+
+**Governance — No Bypass**<br>
+Business rules are enforced at the commit point — every transaction, every source, automatically. Not because developers remembered. Because there is no other path.
+
+A new developer, a new agent, a new integration: all inherit the same rules automatically. Governed by architecture, not discipline.
+
+**Governance — At Scale**<br>
+Governance by developer discipline fails at scale — routinely, and at significant cost. Rules get missed. New endpoints, new agents, new integrations don't inherit them. The larger the system, the more paths, and the more paths, the more misses.
+
+Governance by architecture doesn't degrade. Rules enforced at the commit point run on every transaction, regardless of source — API, UI, agent, or integration added three years later. That guarantee doesn't erode as the system grows.
+
+AI makes this available at org-wide scale. Requirements your teams already produce — plain English, Gherkin, regulation text — become the input. GenAI-Logic compiles them into enforced rules. The same workflow, every project, every team.
+
+**Measuring Adoption — the Governance Report**<br>
+Governance by architecture only holds if teams are actually using rules. GenAI-Logic includes a built-in health check (`vital signs`) that produces a **Governance Report** scoring each project on two dimensions: *Coverage* (weighted rules per domain table — are the right tables governed?) and *Integrity* (anti-pattern detection — is the rule code correct?). A portfolio leaderboard makes adoption visible across teams without reading a line of code. The same tool that enforces rules also measures whether they're being used.
+
+> For the full story on **Executable Requirements**, [click here](https://apilogicserver.github.io/Docs/executable-requirements).  
+> For **Project Governance Report**, [click here](https://apilogicserver.github.io/Docs/IDE-Health-Check).
+
+&nbsp;
+
+## Project Overview
+
+You can examine the Shipment database to verify parties created by matching:
+
+![summary](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/customs_demo/shipment.png?raw=true)
+
+An enterprise integration (EAI) microservice that ingests CIMCorp/ISDC customs shipment data from a Kafka topic, parses the canonical XML format, and persists the resulting shipment records — with full REST API, Admin UI, and a declarative business logic layer ready for governance rules.
+
+**Inputs** (in `docs/elmo_creation/`):
+- Database — 7 tables, 130+ columns
+- XML-to-DB field mapping (`Classify Entity Details.csv`)
+- Sample message (`sample_data/MDE-CDV-HVS-WR-Rev260328.xml`)
+
+**Outputs**:
+- Working Kafka consumer pipeline: `isdc` → `ShipmentXml` → `isdc_processed` → DB tables  
+- JSON:API for all tables, Admin UI, declarative logic engine
+- Matching: look up the matching Customer
+    - found: set `Shipment.trprt_bill_to_acct_nbr == CcpCustomer.duty_bill_to_acct_nbr` and create a `ShipmentParty` row
+    - no match: log a warning, do nothing.
+
+&nbsp;
+
+## Basic Design - 2 transaction message processing
+
+1. `integration/kafka/kafka_subscribe_discovery/isdc.py` - isdc
+    * reads message, inserts into `ShipmentXml` (Tx 1)
+    * this ensures messages are saved, even if the xml contains errors
+2. `logic/logic_discovery/isdc_consume.py`
+    * ShipmentXml insert → publishes raw payload to topic: `isdc_processed`
+3. `integration/kafka/kafka_subscribe_discovery/isdc.py` - isdc_processed
+    * parses xml → database tables (Tx 2)
+4. `api/api_discovery/isdc_kafka_consume_debug.py`
+    * `/consume_debug/isdc` bypasses Kafka — calls the same parser directly (no Kafka required for dev/test)
+5. Matching: `logic/logic_discovery/shipment_matching.py` — `early_row_event` on Shipment insert
+    * Looks up `CcpCustomer` by `duty_bill_to_acct_nbr == trprt_bill_to_acct_nbr`
+    * Match found: creates a `ShipmentParty` importer row; (if no match, logs a warning)
+5. CLVS: `logic/logic_discovery/clvs_eligibility.py` - computes eligibility
+
+
+&nbsp;
+
+---
+
+## Appendices
+
+### 2-message Pattern
+
+**Duplicate policy** — default is `replace`: an existing `Shipment` graph is deleted (ORM cascade) and the new parsed graph inserted. Set env var `ISDC_DUPLICATE_POLICY=fail` to raise an error on duplicate `LOCAL_SHIPMENT_OID_NBR` instead.
+
+**Design note — why 2 messages?** The original design used 1 message: receive XML, save `ShipmentXml`, parse into DB tables — all in one transaction. The 2-message design now in place was adopted after reviewing production reliability requirements.
+
+The key advantage is **transaction isolation**. A tempting alternative to 2 messages is a try/catch in the single transaction: always save `ShipmentXml`, best-effort parse the DB tables. This breaks down in SQLAlchemy: a failed flush (e.g. parser error mid-parse) **poisons the session** — you can't commit the blob in the same session after an exception. You'd need two explicit back-to-back transactions, plus a third to write the error back to `ShipmentXml`. That's messy and fragile.
+
+The 2-message design solves this cleanly: Kafka acts as the durable commit boundary between ingestion and processing. The blob is always saved (transaction 1), and a parse failure only affects transaction 2 — no session gymnastics, and back-pressure decoupling is a free bonus.
+
+&nbsp;
+
+### Replace and Match Example
+
+```bash title="Process Shipment - no match"
+curl 'http://localhost:5656/consume_debug/isdc?file=docs/requirements/customs_demo/message_formats/demo-01-no-match.xml'
 ```
-Please load `.github/.copilot-instructions.md`.
+
+Verify the Shipment data, then
+
+```bash title="Process Shipment Replacement - match"
+curl 'http://localhost:5656/consume_debug/isdc?file=docs/requirements/customs_demo/message_formats/demo-02-match-replace.xml'
 ```
-> Use Agent mode (not Ask). Works with GitHub Copilot or Claude Code extension — we get consistently good results with Claude Sonnet 4.6.
-
-<br>
-
-**Microservice Automation Complete -- run to verify:** for **VSCode** projects except those downloaded from Web/GenAI:
-1. `Press F5 to Run` (your venv is defaulted)  
-
-&emsp;&emsp;&emsp;&emsp;For **other IDEs,** please follow the [Setup and Run](#1-setup-and-run) procedure, below.
-
-<br>
-
-> 💡 **Tip:** Create the sample app for customization examples:  
-> `ApiLogicServer create --project-name=nw_sample --db_url=nw+`
-
-&nbsp;
-
-# Using this readme
-
-This readme contains the following sections:
-
-
-| Section                  | Info                               |
-|:-------------------------|:-----------------------------------|
-| [1. Setup and Run](#1-setup-and-run) | Information about API Logic Server, and setting up your venv     |
-| [2. Key Customization Files](#2-key-customization-files) | Quick idea of the key files you'll alter        |
-| [3. Deployment](#3-deployment) | Deploy early previews to the cloud - enable team collaboration     |
-| [4. Project Requirements](#4-project-requirements)     | Options for capturing requirements |
-| [5. Project Information](#5-project-information)                | Creation dates, versions          |
-
-&nbsp;
-
-# 1. Setup and Run
-
-**VSCode:** press F5 (venv is pre-configured). For other IDEs, activate the venv first:
-```bash
-source venv/bin/activate   # windows: venv\Scripts\activate
-```
-
-## 1.1 Run
-
-The `ApiLogicServer create` command creates Run Configurations for PyCharm and VSCode:
-
-* For PyCharm, press Ctl-D
-* For VSCode, &nbsp;press F5:
-
-![Start Project](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/tutorial/2-apilogicproject-nutshell.png?raw=true)
-
-As shown above:
-
-1. Use the pre-supplied Run Configurations; use either...
-    * `ApiLogicServer` to run [with security](https://apilogicserver.github.io/Docs/Security-Swagger/)
-    * `ApiLogicServer - No Security` (simplifies use of Swagger)
-2. Click the url in the console to start the Admin App
-    * Use it to explore your **data** (shown below)
-    * And your **API** (via Swagger)
-
-![Admin App](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/ui-admin/run-admin-app.png?raw=true)
-
-
-&nbsp;
-
-# 2. Key Customization Files
-
-Your project is ready to run, but it's likely you'll want to customize it - declare logic, new endpoints, etc.
-
-
-The ___Key Customization Files___ listed in the table below are created as stubs, intended for you to add customizations that extend the created API, Logic and Web App.
-
-* Since they are separate files, the project can be
-[rebuilt](https://apilogicserver.github.io/Docs/Project-Rebuild/) (e.g., synchronized with a revised schema), preserving your customizations.
-
-<br>
-
-| Directory | Usage                         | Key Customization File             | Typical Customization                                                                 |
-|:-------------- |:------------------------------|:-----------------------------------|:--------------------------------------------------------------------------------------|
-| ```api``` | **JSON:API**<br>*Ready to Run*                    | ```api/customize_api.py```         | Add new end points / services                                                         |
-| ```ui``` | **Multi-Page Admin App**<br>*Ready to Run*  | ```ui/admin/admin.yaml```          | Control field display - order, captions etc.                                          |
-| ```database``` | SQLAlchemy Data Model Classes | ```database/customize_models.py``` | Add derived attributes, and relationships missing in the schema                       |
-| ```logic``` | **Transactional Logic**<br>spreadsheet-like rules   | ```logic/declare_logic.py```       | Declare multi-table derivations, constraints, and Python events such as send mail / messages |
-| ```security``` | Authentication, Authorization   | ```security/declare_security.py```          | Control login, role-based row access         |
-| ```integration``` | EAI / Kafka Pipelines | ```integration/kafka/kafka_subscribe_discovery/readme.md``` | Start here for existing pipelines; see handler `.py` files for design, debug, and test instructions |
-| ```docs/requirements``` | XRD Specs & Audit Trail | ```docs/requirements/<name>/requirements.md``` + ```ad-libs.md``` | What was spec'd and what AI decided — read before touching integration code |
-| ```test``` | Behave Test Suite              | ```test/api_logic_server_behave/features```          | Declare and implement [Behave Tests](https://apilogicserver.github.io/Docs/Behave/)                                          |
-
-<br>
-
-Notes:
-
-1. API Logic Server **CLI** provides commands you can use to ugrade your project, e.g., to add security.  See the next section.
-2. You will observe the project is small.  That is because the app, logic and api are represented as **models:**
-    * The [web app](ui/admin/admin.yaml) is a YAML file (about 150 lines - no html or JavaScript)
-    * The [api](api/expose_api_models.py) is essentially 1 line per data model (table)
-
-&nbsp;
-
-# 3. Deployment
-
-The `devops` directory contains several scripts for creating container images, testing them, and deploying them.
-
-Since API Logic Server creates working software (UI, API), you can do this after creating your project, to [collaborate with your team](https://apilogicserver.github.io/Docs/DevOps-Containers-Preview/).
-
-&nbsp;
-
-# 4. Project Requirements
-
-Optionally, you can **document requirements** as part of an **executable test plan**.  Test plan execution creates documentation (in markdown), including **requirements traceability** into implementation.  [See example here](test/api_logic_server_behave/reports/Behave%20Logic%20Report%20Sample.md).
-
-&nbsp;
-
-# 5. Project Information
-
-This API Logic Project was created with the `ApiLogicServer create` command.
-For information on Managing API Logic Projects, [click here](https://apilogicserver.github.io/Docs/Project-Structure).
-
-| About                    | Info                               |
-|:-------------------------|:-----------------------------------|
-| API Logic Server Version | 15.00.38           |
-| Execution begins with    | `api_logic_server_run.py`          |
-
-
-&nbsp;
-

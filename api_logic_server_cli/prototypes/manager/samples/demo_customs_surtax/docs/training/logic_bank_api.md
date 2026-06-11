@@ -139,6 +139,34 @@ CRITICAL - HOW TO WIRE A FUNCTION INTO A RULE:
   Note: _eligible_flag references row.eligible_reason directly — LB sees that dependency.
   Note: both functions reference row.attr DIRECTLY — no nested helper functions.
 
+CRITICAL — DOCSTRING ON EVERY calling= FUNCTION:
+  Every function wired via calling= MUST have a one-line docstring summarising what it derives.
+  The first line is used in logic flow diagrams and vital-signs reports — make it count.
+
+  Format: """Derive <column>: <brief plain-English description of the value and key conditions>."""
+
+  ✅ CORRECT:
+  ```python
+  def _clvs_eligible(row, old_row, logic_row):
+      """Derive clvs_eligible: 1 if shipment meets all CLVS criteria, else 0."""
+      ...
+
+  def _clvs_reason(row, old_row, logic_row):
+      """Derive clvs_reason: comma-delimited list of CLVS ineligibility reasons (blank if eligible)."""
+      ...
+  ```
+
+  ❌ WRONG — no docstring:
+  ```python
+  def _clvs_eligible(row, old_row, logic_row):
+      if row.service_type_cd != CLVS_SERVICE_TYPE:
+          return 0
+  ```
+
+  WHY: Without a docstring the logic flow diagram shows only the function name.
+  With one it shows: `clvs_eligible = _clvs_eligible(row) — "1 if shipment meets all CLVS criteria"`
+  Developers reading the diagram immediately understand intent without opening the file.
+
 CRITICAL — ONE VALUE PER FORMULA:
   A Rule.formula calling function must return exactly one value — the column named in derive=.
   Setting other row attributes as side-effects inside the function is WRONG:
@@ -669,6 +697,20 @@ Formulas can reference parent values in 2 versions - choose formula vs copy base
         This is invisible to the LogicBank dependency graph - parent changes will NOT re-derive children.
         Use Rule.copy (snapshot) or Rule.formula (live) instead.
 
+CRITICAL — NEVER derive a foreign key column with Rule.formula (or Rule.copy):
+    FK columns drive SQLAlchemy relationship resolution. If LogicBank re-derives an FK
+    mid-transaction it conflicts with how SQLAlchemy manages object identity and relationship
+    loading, producing unpredictable behavior.
+
+    ❌ WRONG — deriving an FK column with a rule:
+        Rule.formula(derive=models.Item.product_id, as_expression=lambda row: ...)
+        Rule.copy(derive=models.Item.product_id, from_parent=...)
+
+    ✅ CORRECT — set FK values in an early_row_event, which fires before the rule engine runs:
+        def set_product_id(row, old_row, logic_row):
+            row.product_id = ...   # safe: relationships not yet resolved
+        Rule.early_row_event(on_class=models.Item, calling=set_product_id)
+
 Formulas can use Python conditions:
     Prompt: Item amount is price * quantity, with a 10% discount for gold products
     Response:
@@ -769,7 +811,8 @@ Natural Language Requirements:
 6. Item unit_price copied from the Product
 
 version: 1.0
-date: [Current Date]
+created: [ISO datetime, e.g. 2026-06-09T14:30:00]
+created_by: [AI model, e.g. claude-sonnet-4-6] ([user email])
 """
 
 from logic_bank.logic_bank import Rule

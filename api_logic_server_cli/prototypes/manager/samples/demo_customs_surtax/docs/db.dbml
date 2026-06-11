@@ -4,22 +4,23 @@
 
 Table CountryOrigin {
     id INTEGER [primary key]
-    country_code TEXT 
-    country_name TEXT 
+    country_code VARCHAR(2) 
+    country_name VARCHAR(100) 
+    trade_agreement VARCHAR(20) 
     surtax_rate NUMERIC(8, 6) 
     }
 
 Table CustomsEntry {
     id INTEGER [primary key]
-    entry_number TEXT 
-    importer_name TEXT 
-    ship_date TEXT 
-    sys_config_id INTEGER 
+    entry_number VARCHAR(30) 
+    importer_name VARCHAR(100) 
+    ship_date DATE 
     country_origin_id INTEGER 
     province_id INTEGER 
-    effective_date TEXT 
-    program_code TEXT 
-    pc_number TEXT 
+    sys_config_id INTEGER 
+    effective_date DATE 
+    program_code VARCHAR(20) 
+    pc_number VARCHAR(20) 
     country_surtax_rate NUMERIC(8, 6) 
     province_tax_rate NUMERIC(8, 4) 
     surtax_applicable INTEGER 
@@ -29,12 +30,13 @@ Table CustomsEntry {
     duty_paid_value NUMERIC(15, 2) 
     sales_tax_amount NUMERIC(15, 2) 
     total_tax_due NUMERIC(15, 2) 
+    notes VARCHAR(200) 
     }
 
 Table Province {
     id INTEGER [primary key]
-    province_code TEXT(2) 
-    province_name TEXT 
+    province_code VARCHAR(2) 
+    province_name VARCHAR(100) 
     tax_rate NUMERIC(8, 4) 
     }
 
@@ -44,15 +46,18 @@ Table SysConfig {
     discount_rate FLOAT 
     tax_rate FLOAT 
     notes TEXT 
-    effective_date TEXT 
-    program_code TEXT 
     pc_number TEXT 
+    program_code TEXT 
+    order_title TEXT 
+    order_date DATE 
+    legal_authority TEXT 
+    effective_date DATE 
     }
 
 Table HsCodeRate {
     id INTEGER [primary key]
-    hs_code TEXT 
-    description TEXT 
+    hs_code VARCHAR(10) 
+    description VARCHAR(200) 
     base_duty_rate NUMERIC(8, 6) 
     is_steel_derivative INTEGER 
     }
@@ -61,10 +66,11 @@ Table SurtaxLineItem {
     id INTEGER [primary key]
     customs_entry_id INTEGER 
     hs_code_id INTEGER 
-    description TEXT 
+    line_number INTEGER 
+    description VARCHAR(200) 
     customs_value NUMERIC(15, 2) 
     base_duty_rate NUMERIC(8, 6) 
-    country_surtax_rate NUMERIC(8, 6) 
+    is_steel_derivative INTEGER 
     surtax_applicable INTEGER 
     base_duty_amount NUMERIC(15, 2) 
     surtax_amount NUMERIC(15, 2) 
