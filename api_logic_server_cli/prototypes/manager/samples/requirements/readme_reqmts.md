@@ -1,6 +1,7 @@
 <!--
-  src: api_logic_server_cli/prototypes/manager/samples/requirements/readme.md
+  src: api_logic_server_cli/prototypes/manager/samples/requirements/readme_reqmnts.md
   Added: BLT 16.x (Apr 9, 2026)
+  Revsied: 6/11/2016
   Propagation: part of proto/manager — present in every Manager workspace after BLT
 -->
 
@@ -10,7 +11,11 @@
 
 **Executable Requirements** means the requirements document IS the build spec — not a handoff artifact that gets "interpreted," but a file the AI reads and executes directly, then writes back an audit trail of what it decided.
 
+These are typically used to iteratively add requirements to an existing project using `implement reqs`.
+
 For full docs, [click here](https://apilogicserver.github.io/Docs/Exec-Reqmts/).
+
+&nbsp;
 
 ## How it works
 
@@ -37,6 +42,8 @@ Say `implement reqs <name>` in Copilot Agent mode. AI reads the spec, builds the
 
 The rinse-and-repeat loop is the point — each cycle tightens the spec and narrows the AI's decision space.
 
+&nbsp;
+
 ## What belongs in requirements.md
 
 - **What to build** — tables, handlers, APIs, logic rules
@@ -46,9 +53,11 @@ The rinse-and-repeat loop is the point — each cycle tightens the spec and narr
 
 What to leave out: implementation details, file names, framework choices — let the AI decide those and read the ad-libs to see what it chose.
 
-## Try it — Order-EAI walkthrough
+&nbsp;
 
-`Order-EAI/` — B2B order intake via Kafka, with custom API endpoint and outbound shipping notification. Run it end-to-end in under 10 minutes.
+## Try it — demo_eai walkthrough
+
+`demo_eai/` — B2B order intake via Kafka, with custom API endpoint and outbound shipping notification. Run it end-to-end in under 10 minutes.
 
 **Step 1 — Create the project** (in the Manager terminal):
 
@@ -61,7 +70,7 @@ Open the created project in VS Code.
 **Step 2 — Copy the requirements set** (from a terminal inside the created project):
 
 ```bash
-cp -r ../samples/requirements/Order-EAI  docs/requirements/Order-EAI
+cp -r ../samples/requirements/demo_eai  docs/requirements/demo_eai
 ```
 
 > `docs/requirements/` already exists in every created project — no need to create it.
@@ -75,10 +84,10 @@ Please load `.github/.copilot-instructions.md`.
 Then:
 
 ```
-implement reqs Order-EAI
+implement reqs demo_eai
 ```
 
-AI reads `docs/requirements/Order-EAI/requirements.md`, builds the system, and writes `docs/requirements/Order-EAI/ad-libs.md`.
+AI reads `docs/requirements/demo_eai/requirements.md`, builds the system, and writes `docs/requirements/demo_eai/ad-libs.md`.
 
 **Step 4 — Review the audit trail** in `ad-libs.md`:
 
@@ -99,4 +108,4 @@ APILOGICPROJECT_KAFKA_PRODUCER = {"bootstrap.servers": "localhost:9092"}
 ```
 
 - start Docker: `demo_eai_exec_reqmts % docker compose -f integration/kafka/dockercompose_start_kafka.yml up -d`
-- send order to kafka: curl "http://localhost:5656/consume_debug/order_b2b?file=docs/requirements/Order-EAI/message_formats/order_b2b.json"
+- send order to kafka: curl "http://localhost:5656/consume_debug/order_b2b?file=docs/requirements/demo_eai/message_formats/order_b2b.json"
