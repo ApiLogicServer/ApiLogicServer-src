@@ -1,0 +1,368 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1074pt" height="703pt" viewBox="18.80 18.80 1074.40 703.40">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(28.8 712.35)">
+<title>logic</title>
+<polygon fill="white" stroke="none" points="-28.8,28.8 -28.8,-712.35 1083.05,-712.35 1083.05,28.8 -28.8,28.8" />
+<text xml:space="preserve" text-anchor="start" x="376.38" y="-668.2" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="13.00">Logic Diagram — allocate_dept_account_demo</text>
+<g id="clust6" class="cluster">
+<title>cluster_events</title>
+</g>
+
+<g id="node1" class="node">
+<title>TRIGGER</title>
+<polygon fill="#e8f5e9" stroke="none" points="865.5,-253.55 865.5,-286.55 1046.25,-286.55 1046.25,-253.55 865.5,-253.55" />
+<text xml:space="preserve" text-anchor="start" x="874.5" y="-268.1" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="#27ae60">⚡ ChargeGlAllocation inserted</text>
+<polygon fill="none" stroke="#27ae60" stroke-width="2" points="866.5,-254.55 866.5,-285.55 1045.25,-285.55 1045.25,-254.55 866.5,-254.55" />
+</g>
+
+<g id="node4" class="node">
+<title>ChargeGlAllocation</title>
+<polygon fill="#4a6fa5" stroke="none" points="870.12,-179.05 870.12,-195.05 1041.62,-195.05 1041.62,-179.05 870.12,-179.05" />
+<text xml:space="preserve" text-anchor="start" x="901.5" y="-183.6" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> ChargeGlAllocation </text>
+<polygon fill="#b8cce8" stroke="none" points="870.12,-161.05 870.12,-179.05 877.12,-179.05 877.12,-161.05 870.12,-161.05" />
+<text xml:space="preserve" text-anchor="start" x="872.12" y="-167.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="877.12,-161.05 877.12,-179.05 1034.62,-179.05 1034.62,-161.05 877.12,-161.05" />
+<text xml:space="preserve" text-anchor="start" x="880.12" y="-166.6" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> amount </text>
+<text xml:space="preserve" text-anchor="start" x="922.12" y="-166.6" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<text xml:space="preserve" text-anchor="start" x="925.12" y="-166.6" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#e67e22">= (            charge_dept_a...</text>
+<polygon fill="#b8cce8" stroke="none" points="1034.62,-161.05 1034.62,-179.05 1041.62,-179.05 1041.62,-161.05 1034.62,-161.05" />
+<text xml:space="preserve" text-anchor="start" x="1036.62" y="-167.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="870.12,-143.05 870.12,-161.05 877.12,-161.05 877.12,-143.05 870.12,-143.05" />
+<text xml:space="preserve" text-anchor="start" x="872.12" y="-149.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="877.12,-143.05 877.12,-161.05 1034.62,-161.05 1034.62,-143.05 877.12,-143.05" />
+<text xml:space="preserve" text-anchor="start" x="880.12" y="-149.05" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> charge_dept_allocation </text>
+<polygon fill="#b8cce8" stroke="none" points="1034.62,-143.05 1034.62,-161.05 1041.62,-161.05 1041.62,-143.05 1034.62,-143.05" />
+<text xml:space="preserve" text-anchor="start" x="1036.62" y="-149.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="870.12,-125.05 870.12,-143.05 877.12,-143.05 877.12,-125.05 870.12,-125.05" />
+<text xml:space="preserve" text-anchor="start" x="872.12" y="-131.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="877.12,-125.05 877.12,-143.05 1034.62,-143.05 1034.62,-125.05 877.12,-125.05" />
+<text xml:space="preserve" text-anchor="start" x="880.12" y="-131.05" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> percent </text>
+<polygon fill="#b8cce8" stroke="none" points="1034.62,-125.05 1034.62,-143.05 1041.62,-143.05 1041.62,-125.05 1034.62,-125.05" />
+<text xml:space="preserve" text-anchor="start" x="1036.62" y="-131.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="none" stroke="#4a6fa5" points="869.12,-124.05 869.12,-196.05 1042.62,-196.05 1042.62,-124.05 869.12,-124.05" />
+</g>
+
+<g id="edge14" class="edge">
+<title>TRIGGER-&gt;ChargeGlAllocation</title>
+<path fill="none" stroke="#27ae60" stroke-width="2" d="M955.88,-249.81C955.88,-237.23 955.88,-224.65 955.88,-212.07" />
+<polygon fill="#27ae60" stroke="#27ae60" stroke-width="2" points="955.88,-202.45 960.38,-212.45 956.38,-205.01 956.38,-212.45 955.88,-212.45 955.38,-212.45 955.38,-205.01 951.38,-212.45 955.88,-202.45" />
+</g>
+
+<g id="node2" class="node">
+<title>Charge</title>
+<polygon fill="#4a6fa5" stroke="none" points="884,-401.05 884,-417.05 1027.75,-417.05 1027.75,-401.05 884,-401.05" />
+<text xml:space="preserve" text-anchor="start" x="933.75" y="-405.6" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> Charge </text>
+<polygon fill="#b8cce8" stroke="none" points="884,-383.05 884,-401.05 891,-401.05 891,-383.05 884,-383.05" />
+<text xml:space="preserve" text-anchor="start" x="886" y="-389.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="891,-383.05 891,-401.05 1020.75,-401.05 1020.75,-383.05 891,-383.05" />
+<text xml:space="preserve" text-anchor="start" x="894" y="-389.05" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> total_distributed_amount </text>
+<polygon fill="#b8cce8" stroke="none" points="1020.75,-383.05 1020.75,-401.05 1027.75,-401.05 1027.75,-383.05 1020.75,-383.05" />
+<text xml:space="preserve" text-anchor="start" x="1022.75" y="-389.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="884,-365.05 884,-383.05 891,-383.05 891,-365.05 884,-365.05" />
+<text xml:space="preserve" text-anchor="start" x="886" y="-371.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="891,-365.05 891,-383.05 1020.75,-383.05 1020.75,-365.05 891,-365.05" />
+<text xml:space="preserve" text-anchor="start" x="894" y="-371.05" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> amount </text>
+<polygon fill="#b8cce8" stroke="none" points="1020.75,-365.05 1020.75,-383.05 1027.75,-383.05 1027.75,-365.05 1020.75,-365.05" />
+<text xml:space="preserve" text-anchor="start" x="1022.75" y="-371.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="none" stroke="#4a6fa5" points="883,-364.05 883,-418.05 1028.75,-418.05 1028.75,-364.05 883,-364.05" />
+</g>
+
+<g id="node8" class="node">
+<title>Project</title>
+<polygon fill="#4a6fa5" stroke="none" points="415,-310.05 415,-326.05 505.5,-326.05 505.5,-310.05 415,-310.05" />
+<text xml:space="preserve" text-anchor="start" x="438.5" y="-314.6" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> Project </text>
+<polygon fill="#b8cce8" stroke="none" points="415,-292.05 415,-310.05 422,-310.05 422,-292.05 415,-292.05" />
+<text xml:space="preserve" text-anchor="start" x="417" y="-298.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="422,-292.05 422,-310.05 498.5,-310.05 498.5,-292.05 422,-292.05" />
+<text xml:space="preserve" text-anchor="start" x="425" y="-298.05" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> total_charges </text>
+<polygon fill="#b8cce8" stroke="none" points="498.5,-292.05 498.5,-310.05 505.5,-310.05 505.5,-292.05 498.5,-292.05" />
+<text xml:space="preserve" text-anchor="start" x="500.5" y="-298.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="none" stroke="#4a6fa5" points="414,-291.05 414,-327.05 506.5,-327.05 506.5,-291.05 414,-291.05" />
+</g>
+
+<g id="edge1" class="edge">
+<title>Charge-&gt;Project</title>
+<path fill="none" stroke="#e0e0e0" stroke-width="0.7" d="M898.07,-427.33C877.63,-439.99 854.25,-454.03 832.5,-466.05 747.12,-513.26 699.99,-526.2 613.5,-481.05 563.56,-454.99 579.88,-418.2 542.5,-376.05 527.58,-359.23 508.24,-343.11 492.17,-330.89" />
+<polygon fill="#e0e0e0" stroke="#e0e0e0" stroke-width="0.7" points="897.95,-427.4 908.81,-425.94 902.39,-424.64 906.24,-422.24 906.24,-422.24 906.24,-422.24 902.39,-424.64 904.06,-418.3 897.95,-427.4" />
+</g>
+
+<g id="edge19" class="edge">
+<title>Charge:Charge_amount_w-&gt;Project:Project_total_charges_w</title>
+<path fill="none" stroke="#444444" stroke-width="2" stroke-dasharray="5,2" d="M887.5,-364.05C887.5,-262.9 456.18,-191.62 420.8,-278.97" />
+<polygon fill="#444444" stroke="#444444" stroke-width="2" points="418.96,-288.66 416.41,-277.99 418.94,-286.05 420.34,-278.74 420.83,-278.84 421.32,-278.93 419.93,-286.24 425.25,-279.68 418.96,-288.66" />
+<text xml:space="preserve" text-anchor="middle" x="707.88" y="-289.71" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#444444">9</text>
+</g>
+
+<g id="node13" class="node">
+<title>evt_identify_project_for_charge</title>
+<polygon fill="#e8f5e9" stroke="none" points="86.38,-530.93 86.38,-559.18 230.12,-559.18 230.12,-530.93 86.38,-530.93" />
+<text xml:space="preserve" text-anchor="start" x="93.38" y="-541.68" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">⚡ identify_project_for_charge</text>
+<polygon fill="none" stroke="#27ae60" points="86.38,-530.93 86.38,-559.18 230.12,-559.18 230.12,-530.93 86.38,-530.93" />
+</g>
+
+<g id="edge23" class="edge">
+<title>Charge-&gt;evt_identify_project_for_charge</title>
+<path fill="none" stroke="#27ae60" stroke-width="1.2" stroke-dasharray="5,2" d="M948.02,-421.78C933.23,-479.07 892.12,-598.92 802.25,-627.05 722.19,-652.12 697.05,-634.53 613.5,-627.05 577.9,-623.87 371.25,-585.29 249.29,-562.2" />
+<polygon fill="#27ae60" stroke="#27ae60" stroke-width="1.2" points="239.56,-560.36 250.22,-557.8 243.05,-560.92 249.4,-562.12 249.38,-562.22 249.36,-562.32 243.02,-561.11 248.55,-566.64 239.56,-560.36" />
+<text xml:space="preserve" text-anchor="middle" x="578" y="-625.4" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">early</text>
+</g>
+
+<g id="node14" class="node">
+<title>evt_check_active_funding</title>
+<polygon fill="#e8f5e9" stroke="none" points="97.62,-591.93 97.62,-620.18 218.88,-620.18 218.88,-591.93 97.62,-591.93" />
+<text xml:space="preserve" text-anchor="start" x="104.62" y="-602.68" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">⚡ check_active_funding</text>
+<polygon fill="none" stroke="#27ae60" points="97.62,-591.93 97.62,-620.18 218.88,-620.18 218.88,-591.93 97.62,-591.93" />
+</g>
+
+<g id="edge24" class="edge">
+<title>Charge-&gt;evt_check_active_funding</title>
+<path fill="none" stroke="#27ae60" stroke-width="1.2" stroke-dasharray="5,2" d="M942.15,-422.02C921.14,-468.03 874.22,-551.67 802.25,-576.05 750.15,-593.71 397.81,-601.95 237.91,-604.82" />
+<polygon fill="#27ae60" stroke="#27ae60" stroke-width="1.2" points="228.19,-604.99 238.11,-600.31 231.73,-604.83 238.19,-604.71 238.19,-604.81 238.19,-604.91 231.73,-605.03 238.27,-609.31 228.19,-604.99" />
+<text xml:space="preserve" text-anchor="middle" x="578" y="-597.17" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">early</text>
+</g>
+
+<g id="node3" class="node">
+<title>ChargeDeptAllocation</title>
+<polygon fill="#4a6fa5" stroke="none" points="622.5,-447.05 622.5,-463.05 793.25,-463.05 793.25,-447.05 622.5,-447.05" />
+<text xml:space="preserve" text-anchor="start" x="646.75" y="-451.6" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> ChargeDeptAllocation </text>
+<polygon fill="#b8cce8" stroke="none" points="622.5,-429.05 622.5,-447.05 629.5,-447.05 629.5,-429.05 622.5,-429.05" />
+<text xml:space="preserve" text-anchor="start" x="624.5" y="-435.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="629.5,-429.05 629.5,-447.05 786.25,-447.05 786.25,-429.05 629.5,-429.05" />
+<text xml:space="preserve" text-anchor="start" x="632.5" y="-434.6" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> amount </text>
+<text xml:space="preserve" text-anchor="start" x="674.5" y="-434.6" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<text xml:space="preserve" text-anchor="start" x="677.5" y="-434.6" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#e67e22">= (            charge.amount...</text>
+<polygon fill="#b8cce8" stroke="none" points="786.25,-429.05 786.25,-447.05 793.25,-447.05 793.25,-429.05 786.25,-429.05" />
+<text xml:space="preserve" text-anchor="start" x="788.25" y="-435.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="622.5,-411.05 622.5,-429.05 629.5,-429.05 629.5,-411.05 622.5,-411.05" />
+<text xml:space="preserve" text-anchor="start" x="624.5" y="-417.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="629.5,-411.05 629.5,-429.05 786.25,-429.05 786.25,-411.05 629.5,-411.05" />
+<text xml:space="preserve" text-anchor="start" x="632.5" y="-417.05" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> charge </text>
+<polygon fill="#b8cce8" stroke="none" points="786.25,-411.05 786.25,-429.05 793.25,-429.05 793.25,-411.05 786.25,-411.05" />
+<text xml:space="preserve" text-anchor="start" x="788.25" y="-417.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="622.5,-393.05 622.5,-411.05 629.5,-411.05 629.5,-393.05 622.5,-393.05" />
+<text xml:space="preserve" text-anchor="start" x="624.5" y="-399.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="629.5,-393.05 629.5,-411.05 786.25,-411.05 786.25,-393.05 629.5,-393.05" />
+<text xml:space="preserve" text-anchor="start" x="632.5" y="-399.05" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> percent </text>
+<polygon fill="#b8cce8" stroke="none" points="786.25,-393.05 786.25,-411.05 793.25,-411.05 793.25,-393.05 786.25,-393.05" />
+<text xml:space="preserve" text-anchor="start" x="788.25" y="-399.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="none" stroke="#4a6fa5" points="621.5,-392.05 621.5,-464.05 794.25,-464.05 794.25,-392.05 621.5,-392.05" />
+</g>
+
+<g id="edge3" class="edge">
+<title>ChargeDeptAllocation-&gt;Charge</title>
+<path fill="none" stroke="#e0e0e0" stroke-width="0.7" d="M812,-405.55C817.15,-404.65 822.25,-403.81 827.25,-403.05 842.65,-400.71 859.17,-398.75 875.05,-397.14" />
+<polygon fill="#e0e0e0" stroke="#e0e0e0" stroke-width="0.7" points="812.14,-405.52 801.5,-402.86 806.99,-406.45 802.53,-407.25 802.53,-407.25 802.53,-407.25 806.99,-406.45 803.09,-411.72 812.14,-405.52" />
+</g>
+
+<g id="edge18" class="edge">
+<title>ChargeDeptAllocation:ChargeDeptAllocation_amount_w-&gt;Charge:Charge_total_distributed_amount_w</title>
+<path fill="none" stroke="#444444" stroke-width="2" stroke-dasharray="5,2" d="M621.5,-438.05C608.16,-438.05 612.91,-458.78 622.5,-468.05 651.21,-495.82 765.12,-482.78 802.25,-468.05 843.77,-451.59 835.88,-402.55 870.71,-393.5" />
+<polygon fill="#444444" stroke="#444444" stroke-width="2" points="880.58,-392.34 871.17,-397.98 878.09,-393.13 870.71,-394 870.65,-393.51 870.59,-393.01 877.98,-392.14 870.12,-389.04 880.58,-392.34" />
+<text xml:space="preserve" text-anchor="middle" x="829.88" y="-450.26" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#444444">8</text>
+</g>
+
+<g id="node5" class="node">
+<title>DeptChargeDefinition</title>
+<polygon fill="#4a6fa5" stroke="none" points="61.62,-47.05 61.62,-63.05 254.88,-63.05 254.88,-47.05 61.62,-47.05" />
+<text xml:space="preserve" text-anchor="start" x="98.25" y="-51.6" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> DeptChargeDefinition </text>
+<polygon fill="#b8cce8" stroke="none" points="61.62,-29.05 61.62,-47.05 68.62,-47.05 68.62,-29.05 61.62,-29.05" />
+<text xml:space="preserve" text-anchor="start" x="63.62" y="-35.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="68.62,-29.05 68.62,-47.05 247.88,-47.05 247.88,-29.05 68.62,-29.05" />
+<text xml:space="preserve" text-anchor="start" x="71.62" y="-35.05" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> total_percent </text>
+<polygon fill="#b8cce8" stroke="none" points="247.88,-29.05 247.88,-47.05 254.88,-47.05 254.88,-29.05 247.88,-29.05" />
+<text xml:space="preserve" text-anchor="start" x="249.88" y="-35.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="61.62,-11.05 61.62,-29.05 68.62,-29.05 68.62,-11.05 61.62,-11.05" />
+<text xml:space="preserve" text-anchor="start" x="63.62" y="-17.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="68.62,-11.05 68.62,-29.05 247.88,-29.05 247.88,-11.05 68.62,-11.05" />
+<text xml:space="preserve" text-anchor="start" x="71.62" y="-16.6" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> is_active </text>
+<text xml:space="preserve" text-anchor="start" x="118.88" y="-16.6" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<text xml:space="preserve" text-anchor="start" x="121.88" y="-16.6" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#e67e22">= 1 if total_percent == Decim...</text>
+<polygon fill="#b8cce8" stroke="none" points="247.88,-11.05 247.88,-29.05 254.88,-29.05 254.88,-11.05 247.88,-11.05" />
+<text xml:space="preserve" text-anchor="start" x="249.88" y="-17.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="none" stroke="#4a6fa5" points="60.62,-10.05 60.62,-64.05 255.88,-64.05 255.88,-10.05 60.62,-10.05" />
+</g>
+
+<g id="edge4" class="edge">
+<title>ChargeDeptAllocation-&gt;DeptChargeDefinition</title>
+<path fill="none" stroke="#e0e0e0" stroke-width="0.7" d="M661.58,-381.37C629.71,-349.67 585.26,-307.74 542.5,-275.05 433.14,-191.46 293.3,-110.47 216.38,-67.91" />
+<polygon fill="#e0e0e0" stroke="#e0e0e0" stroke-width="0.7" points="661.36,-381.14 665.25,-391.39 665.06,-384.84 668.26,-388.04 668.26,-388.04 668.26,-388.04 665.06,-384.84 671.61,-385.03 661.36,-381.14" />
+</g>
+
+<g id="node10" class="node">
+<title>ProjectFundingLine</title>
+<polygon fill="#4a6fa5" stroke="none" points="403.5,-411.05 403.5,-427.05 517,-427.05 517,-411.05 403.5,-411.05" />
+<text xml:space="preserve" text-anchor="start" x="405.5" y="-415.6" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> ProjectFundingLine </text>
+<polygon fill="#b8cce8" stroke="none" points="403.5,-393.05 403.5,-411.05 427.67,-411.05 427.67,-393.05 403.5,-393.05" />
+<text xml:space="preserve" text-anchor="start" x="414.08" y="-399.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="427.67,-393.05 427.67,-411.05 492.83,-411.05 492.83,-393.05 427.67,-393.05" />
+<text xml:space="preserve" text-anchor="start" x="430.67" y="-399.05" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> percent </text>
+<polygon fill="#b8cce8" stroke="none" points="492.83,-393.05 492.83,-411.05 517,-411.05 517,-393.05 492.83,-393.05" />
+<text xml:space="preserve" text-anchor="start" x="503.42" y="-399.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="none" stroke="#4a6fa5" points="402.5,-392.05 402.5,-428.05 518,-428.05 518,-392.05 402.5,-392.05" />
+</g>
+
+<g id="edge5" class="edge">
+<title>ChargeDeptAllocation-&gt;ProjectFundingLine</title>
+<path fill="none" stroke="#e0e0e0" stroke-width="0.7" d="M627.87,-384.1C615.05,-378.71 601.65,-374.06 588.5,-371.05 557.53,-363.98 523.11,-375.76 497.89,-388.18" />
+<polygon fill="#e0e0e0" stroke="#e0e0e0" stroke-width="0.7" points="627.72,-384.03 635.07,-392.17 632.51,-386.13 636.66,-387.95 636.66,-387.95 636.66,-387.95 632.51,-386.13 638.68,-383.92 627.72,-384.03" />
+</g>
+
+<g id="edge8" class="edge">
+<title>ChargeGlAllocation-&gt;ChargeDeptAllocation</title>
+<path fill="none" stroke="#e0e0e0" stroke-width="0.7" d="M890.55,-206.36C878.99,-215.92 867.47,-226.36 857.5,-237.05 827.79,-268.93 828.66,-283.39 802.25,-318.05 784.03,-341.96 762.37,-367.63 744.51,-388.15" />
+<polygon fill="#e0e0e0" stroke="#e0e0e0" stroke-width="0.7" points="890.58,-206.33 901.18,-203.53 894.65,-203.04 898.17,-200.18 898.17,-200.18 898.17,-200.18 894.65,-203.04 895.52,-196.54 890.58,-206.33" />
+</g>
+
+<g id="node6" class="node">
+<title>DeptChargeDefinitionLine</title>
+<polygon fill="#4a6fa5" stroke="none" points="387,-47.05 387,-63.05 533.5,-63.05 533.5,-47.05 387,-47.05" />
+<text xml:space="preserve" text-anchor="start" x="389" y="-51.6" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> DeptChargeDefinitionLine </text>
+<polygon fill="#b8cce8" stroke="none" points="387,-29.05 387,-47.05 422.17,-47.05 422.17,-29.05 387,-29.05" />
+<text xml:space="preserve" text-anchor="start" x="403.08" y="-35.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="422.17,-29.05 422.17,-47.05 498.33,-47.05 498.33,-29.05 422.17,-29.05" />
+<text xml:space="preserve" text-anchor="start" x="425.17" y="-35.05" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> percent </text>
+<polygon fill="#b8cce8" stroke="none" points="498.33,-29.05 498.33,-47.05 533.5,-47.05 533.5,-29.05 498.33,-29.05" />
+<text xml:space="preserve" text-anchor="start" x="514.42" y="-35.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="none" stroke="#4a6fa5" points="386,-28.05 386,-64.05 534.5,-64.05 534.5,-28.05 386,-28.05" />
+</g>
+
+<g id="edge9" class="edge">
+<title>ChargeGlAllocation-&gt;DeptChargeDefinitionLine</title>
+<path fill="none" stroke="#e0e0e0" stroke-width="0.7" d="M851.46,-136.17C759.53,-114.94 626.98,-84.33 542.49,-64.81" />
+<polygon fill="#e0e0e0" stroke="#e0e0e0" stroke-width="0.7" points="851.37,-136.15 860.1,-142.78 856.47,-137.33 860.88,-138.35 860.88,-138.35 860.88,-138.35 856.47,-137.33 862.12,-134.01 851.37,-136.15" />
+</g>
+
+<g id="node7" class="node">
+<title>GlAccount</title>
+<polygon fill="#4a6fa5" stroke="none" points="110.75,-198.05 110.75,-214.05 205.75,-214.05 205.75,-198.05 110.75,-198.05" />
+<text xml:space="preserve" text-anchor="start" x="127.5" y="-202.6" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> GlAccount </text>
+<polygon fill="#b8cce8" stroke="none" points="110.75,-180.05 110.75,-198.05 117.75,-198.05 117.75,-180.05 110.75,-180.05" />
+<text xml:space="preserve" text-anchor="start" x="112.75" y="-186.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="117.75,-180.05 117.75,-198.05 198.75,-198.05 198.75,-180.05 117.75,-180.05" />
+<text xml:space="preserve" text-anchor="start" x="120.75" y="-186.05" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> total_allocated </text>
+<polygon fill="#b8cce8" stroke="none" points="198.75,-180.05 198.75,-198.05 205.75,-198.05 205.75,-180.05 198.75,-180.05" />
+<text xml:space="preserve" text-anchor="start" x="200.75" y="-186.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="none" stroke="#4a6fa5" points="109.75,-179.05 109.75,-215.05 206.75,-215.05 206.75,-179.05 109.75,-179.05" />
+</g>
+
+<g id="edge10" class="edge">
+<title>ChargeGlAllocation-&gt;GlAccount</title>
+<path fill="none" stroke="#e0e0e0" stroke-width="0.7" d="M851.08,-125.93C843.08,-125.05 835.08,-124.69 827.25,-125.05 611.11,-135.06 557.33,-144.27 342.5,-170.05 299.4,-175.23 250.79,-182.45 214.48,-188.13" />
+<polygon fill="#e0e0e0" stroke="#e0e0e0" stroke-width="0.7" points="851.06,-125.93 860.35,-131.76 856.24,-126.65 860.73,-127.27 860.73,-127.27 860.73,-127.27 856.24,-126.65 861.58,-122.84 851.06,-125.93" />
+</g>
+
+<g id="edge17" class="edge">
+<title>ChargeGlAllocation:ChargeGlAllocation_amount_w-&gt;GlAccount:GlAccount_total_allocated_w</title>
+<path fill="none" stroke="#444444" stroke-width="2" stroke-dasharray="5,2" d="M869.12,-170.05C864.28,-170.05 222.78,-173.27 126.33,-177.9" />
+<polygon fill="#444444" stroke="#444444" stroke-width="2" points="116.68,-178.82 126.2,-173.39 119.18,-178.08 126.58,-177.37 126.63,-177.87 126.68,-178.37 119.27,-179.07 127.06,-182.35 116.68,-178.82" />
+<text xml:space="preserve" text-anchor="middle" x="578" y="-173.7" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#444444">7</text>
+</g>
+
+<g id="edge16" class="edge">
+<title>DeptChargeDefinitionLine:DeptChargeDefinitionLine_percent_w-&gt;ChargeGlAllocation:ChargeGlAllocation_percent_w</title>
+<path fill="none" stroke="#444444" stroke-width="1.8" d="M404.58,-28.05C404.58,33.24 481.3,-25.57 542.5,-29.05 658.41,-35.65 692.21,-19.77 802.25,-56.8 817.13,-61.81 820.75,-64.64 832.5,-75.05 846.01,-87.02 845.72,-93.38 857.5,-107.05 860.58,-110.63 864.18,-112.32 867.2,-114.06" />
+<polygon fill="#444444" stroke="#444444" stroke-width="1.8" points="872.44,-122.21 863.24,-116.24 870.58,-120.07 866.69,-114.02 867.03,-113.8 867.36,-113.58 871.26,-119.63 870.81,-111.36 872.44,-122.21" />
+<text xml:space="preserve" text-anchor="middle" x="707.88" y="-58.55" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#444444">2</text>
+</g>
+
+<g id="edge11" class="edge">
+<title>DeptChargeDefinitionLine-&gt;DeptChargeDefinition</title>
+<path fill="none" stroke="#e0e0e0" stroke-width="0.7" d="M368.18,-54.27C363.05,-54.58 357.96,-54.84 353,-55.05 323.97,-56.28 292.58,-54.65 263.69,-51.95" />
+<polygon fill="#e0e0e0" stroke="#e0e0e0" stroke-width="0.7" points="367.87,-54.29 378.13,-58.15 373.09,-53.96 377.61,-53.67 377.61,-53.67 377.61,-53.67 373.09,-53.96 377.56,-49.16 367.87,-54.29" />
+</g>
+
+<g id="edge20" class="edge">
+<title>DeptChargeDefinitionLine:DeptChargeDefinitionLine_percent_w-&gt;DeptChargeDefinition:DeptChargeDefinition_total_percent_w</title>
+<path fill="none" stroke="#444444" stroke-width="2" stroke-dasharray="5,2" d="M386,-38.05C330.11,-38.05 319.36,-61.34 263.88,-68.05 174.64,-78.85 126.24,-130.55 61.62,-68.05 56.23,-62.84 52.37,-54 52.39,-47.26" />
+<polygon fill="#444444" stroke="#444444" stroke-width="2" points="59,-39.87 55.69,-50.32 57.67,-42.11 52.71,-47.66 52.34,-47.33 51.96,-46.99 56.92,-41.45 48.98,-44.33 59,-39.87" />
+<text xml:space="preserve" text-anchor="middle" x="347.75" y="-45.47" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#444444">10</text>
+</g>
+
+<g id="edge12" class="edge">
+<title>DeptChargeDefinitionLine-&gt;GlAccount</title>
+<path fill="none" stroke="#e0e0e0" stroke-width="0.7" d="M367.99,-27.52C359.03,-28.81 350.36,-31.48 342.5,-36.05 323.06,-47.37 332.42,-63.23 317.5,-80.05 282.48,-119.55 232.09,-153.99 197.64,-175.09" />
+<polygon fill="#e0e0e0" stroke="#e0e0e0" stroke-width="0.7" points="368.01,-27.51 378.37,-31.11 373.22,-27.05 377.74,-26.65 377.74,-26.65 377.74,-26.65 373.22,-27.05 377.57,-22.15 368.01,-27.51" />
+</g>
+
+<g id="node9" class="node">
+<title>ProjectFundingDefinition</title>
+<polygon fill="#4a6fa5" stroke="none" points="61.62,-411.05 61.62,-427.05 254.88,-427.05 254.88,-411.05 61.62,-411.05" />
+<text xml:space="preserve" text-anchor="start" x="89.25" y="-415.6" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> ProjectFundingDefinition </text>
+<polygon fill="#b8cce8" stroke="none" points="61.62,-393.05 61.62,-411.05 68.62,-411.05 68.62,-393.05 61.62,-393.05" />
+<text xml:space="preserve" text-anchor="start" x="63.62" y="-399.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="68.62,-393.05 68.62,-411.05 247.88,-411.05 247.88,-393.05 68.62,-393.05" />
+<text xml:space="preserve" text-anchor="start" x="71.62" y="-399.05" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> total_percent </text>
+<polygon fill="#b8cce8" stroke="none" points="247.88,-393.05 247.88,-411.05 254.88,-411.05 254.88,-393.05 247.88,-393.05" />
+<text xml:space="preserve" text-anchor="start" x="249.88" y="-399.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#b8cce8" stroke="none" points="61.62,-375.05 61.62,-393.05 68.62,-393.05 68.62,-375.05 61.62,-375.05" />
+<text xml:space="preserve" text-anchor="start" x="63.62" y="-381.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="#dbe4f0" stroke="none" points="68.62,-375.05 68.62,-393.05 247.88,-393.05 247.88,-375.05 68.62,-375.05" />
+<text xml:space="preserve" text-anchor="start" x="71.62" y="-380.6" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e"> is_active </text>
+<text xml:space="preserve" text-anchor="start" x="118.88" y="-380.6" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<text xml:space="preserve" text-anchor="start" x="121.88" y="-380.6" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#e67e22">= 1 if total_percent == Decim...</text>
+<polygon fill="#b8cce8" stroke="none" points="247.88,-375.05 247.88,-393.05 254.88,-393.05 254.88,-375.05 247.88,-375.05" />
+<text xml:space="preserve" text-anchor="start" x="249.88" y="-381.05" font-family="Helvetica,sans-Serif" font-size="11.00"> </text>
+<polygon fill="none" stroke="#4a6fa5" points="60.62,-374.05 60.62,-428.05 255.88,-428.05 255.88,-374.05 60.62,-374.05" />
+</g>
+
+<g id="edge2" class="edge">
+<title>Project-&gt;ProjectFundingDefinition</title>
+<path fill="none" stroke="#e0e0e0" stroke-width="0.7" d="M419.51,-337.19C405.42,-348.32 390.07,-361.84 378,-376.05 363.69,-392.91 372.16,-408.03 353,-419.05 324.3,-435.56 289.19,-436.8 256.77,-432.03" />
+<polygon fill="#e0e0e0" stroke="#e0e0e0" stroke-width="0.7" points="419.53,-337.18 430.2,-334.64 423.68,-333.98 427.27,-331.22 427.27,-331.22 427.27,-331.22 423.68,-333.98 424.7,-327.51 419.53,-337.18" />
+</g>
+
+<g id="edge15" class="edge">
+<title>ProjectFundingLine:ProjectFundingLine_percent_w-&gt;ChargeDeptAllocation:ChargeDeptAllocation_percent_w</title>
+<path fill="none" stroke="#444444" stroke-width="1.8" d="M415.58,-392.05C415.58,-304.36 520.26,-393.68 609.57,-401.51" />
+<polygon fill="#444444" stroke="#444444" stroke-width="1.8" points="619.31,-401.95 609.12,-406 616.49,-402.23 609.3,-401.9 609.32,-401.5 609.34,-401.1 616.52,-401.43 609.52,-397.01 619.31,-401.95" />
+<text xml:space="preserve" text-anchor="middle" x="578" y="-399.08" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#444444">1</text>
+</g>
+
+<g id="edge6" class="edge">
+<title>ProjectFundingLine-&gt;DeptChargeDefinition</title>
+<path fill="none" stroke="#e0e0e0" stroke-width="0.7" d="M416.09,-382.34C402.35,-371.76 388.11,-358.68 378,-344.05 329.53,-273.93 366.44,-231.84 317.5,-162.05 290.16,-123.07 247.21,-90.23 212.95,-68" />
+<polygon fill="#e0e0e0" stroke="#e0e0e0" stroke-width="0.7" points="415.88,-382.18 421.22,-391.75 420.08,-385.3 423.72,-388 423.72,-388 423.72,-388 420.08,-385.3 426.59,-384.53 415.88,-382.18" />
+</g>
+
+<g id="edge7" class="edge">
+<title>ProjectFundingLine-&gt;ProjectFundingDefinition</title>
+<path fill="none" stroke="#e0e0e0" stroke-width="0.7" d="M384.6,-417.18C374,-417.96 363.23,-418.62 353,-419.05 323.97,-420.28 292.58,-418.65 263.69,-415.95" />
+<polygon fill="#e0e0e0" stroke="#e0e0e0" stroke-width="0.7" points="384.49,-417.19 394.8,-420.91 389.7,-416.78 394.22,-416.44 394.22,-416.44 394.22,-416.44 389.7,-416.78 394.11,-411.93 384.49,-417.19" />
+</g>
+
+<g id="edge21" class="edge">
+<title>ProjectFundingLine:ProjectFundingLine_percent_w-&gt;ProjectFundingDefinition:ProjectFundingDefinition_total_percent_w</title>
+<path fill="none" stroke="#444444" stroke-width="2" stroke-dasharray="5,2" d="M402.5,-402.05C380.5,-402.05 375,-401.86 353,-401.8 348.33,-401.79 347.09,-400.95 342.5,-401.8 305.69,-408.64 300.69,-425.22 263.88,-432.05 219.69,-440.26 93.93,-463.3 61.62,-432.05 56.23,-426.84 52.37,-418 52.39,-411.26" />
+<polygon fill="#444444" stroke="#444444" stroke-width="2" points="59,-403.87 55.69,-414.32 57.67,-406.11 52.71,-411.66 52.34,-411.33 51.96,-410.99 56.92,-405.45 48.98,-408.33 59,-403.87" />
+<text xml:space="preserve" text-anchor="middle" x="347.75" y="-403.55" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#444444">11</text>
+</g>
+
+<g id="node11" class="node">
+<title>SysProjectReq</title>
+<polygon fill="#4a6fa5" stroke="none" points="911.88,-74.05 911.88,-90.05 999.88,-90.05 999.88,-74.05 911.88,-74.05" />
+<text xml:space="preserve" text-anchor="start" x="913.88" y="-78.6" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00" fill="white"> SysProjectReq </text>
+<polygon fill="#dbe4f0" stroke="none" points="939.21,-58.05 939.21,-74.05 972.54,-74.05 972.54,-58.05 939.21,-58.05" />
+<text xml:space="preserve" text-anchor="start" x="952.88" y="-63.05" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1a1a2e">  </text>
+<polygon fill="none" stroke="#4a6fa5" points="910.88,-57.05 910.88,-91.05 1000.88,-91.05 1000.88,-57.05 910.88,-57.05" />
+</g>
+
+<g id="edge13" class="edge">
+<title>SysProjectReq-&gt;Project</title>
+<path fill="none" stroke="#e0e0e0" stroke-width="0.7" d="M893.23,-84.98C880,-89.85 867.13,-96.88 857.5,-107.05 794.69,-173.4 874.69,-249.39 802.25,-305.05 718.92,-369.09 587.21,-346.25 514.27,-326.22" />
+<polygon fill="#e0e0e0" stroke="#e0e0e0" stroke-width="0.7" points="893.15,-85 904.06,-86.15 898.13,-83.37 902.43,-81.95 902.43,-81.95 902.43,-81.95 898.13,-83.37 901.25,-77.6 893.15,-85" />
+</g>
+
+<g id="node12" class="node">
+<title>evt__identify_project</title>
+<polygon fill="#e8f5e9" stroke="none" points="109.25,-469.93 109.25,-498.18 207.25,-498.18 207.25,-469.93 109.25,-469.93" />
+<text xml:space="preserve" text-anchor="start" x="116.25" y="-480.68" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">⚡ _identify_project</text>
+<polygon fill="none" stroke="#27ae60" points="109.25,-469.93 109.25,-498.18 207.25,-498.18 207.25,-469.93 109.25,-469.93" />
+</g>
+
+<g id="edge22" class="edge">
+<title>SysProjectReq-&gt;evt__identify_project</title>
+<path fill="none" stroke="#27ae60" stroke-width="1.2" stroke-dasharray="5,2" d="M903.12,-79.99C885.99,-84.63 868.51,-92.78 857.5,-107.05 808.67,-170.39 876.99,-399.6 832.5,-466.05 824.15,-478.52 816.85,-477.6 802.25,-481.05 596.99,-529.66 344.42,-508.14 226.22,-493.54" />
+<polygon fill="#27ae60" stroke="#27ae60" stroke-width="1.2" points="216.31,-492.29 226.8,-489.08 219.83,-492.64 226.25,-493.45 226.23,-493.55 226.22,-493.65 219.81,-492.84 225.67,-498.01 216.31,-492.29" />
+<text xml:space="preserve" text-anchor="middle" x="578" y="-511.74" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#27ae60">early</text>
+</g>
+<path d="M794.25,-399.05 C816.25,-399.05 816.25,-434.6 794.25,-434.6" stroke="#445544" stroke-width="1.2" stroke-dasharray="4,3" fill="none" /><polygon points="794.25,-434.6 798.25,-438.6 798.25,-430.6" stroke="#445544" fill="#445544" /><text x="819.2" y="-412.8" font-family="Helvetica,sans-Serif" font-size="10" fill="#445544">3</text><path d="M1042.62,-131.05 C1064.62,-131.05 1064.62,-166.6 1042.62,-166.6" stroke="#445544" stroke-width="1.2" stroke-dasharray="4,3" fill="none" /><polygon points="1042.62,-166.6 1046.62,-170.6 1046.62,-162.6" stroke="#445544" fill="#445544" /><text x="1067.6" y="-144.8" font-family="Helvetica,sans-Serif" font-size="10" fill="#445544">4</text><path d="M255.88,-35.05 C277.88,-35.05 277.88,-16.6 255.88,-16.6" stroke="#445544" stroke-width="1.2" stroke-dasharray="4,3" fill="none" /><polygon points="255.88,-16.6 259.88,-20.6 259.88,-12.600000000000001" stroke="#445544" fill="#445544" /><text x="280.9" y="-21.8" font-family="Helvetica,sans-Serif" font-size="10" fill="#445544">5</text><path d="M255.88,-399.05 C277.88,-399.05 277.88,-380.6 255.88,-380.6" stroke="#445544" stroke-width="1.2" stroke-dasharray="4,3" fill="none" /><polygon points="255.88,-380.6 259.88,-384.6 259.88,-376.6" stroke="#445544" fill="#445544" /><text x="280.9" y="-385.8" font-family="Helvetica,sans-Serif" font-size="10" fill="#445544">6</text></g>
+</svg>

@@ -1,6 +1,6 @@
 ---
 title: Project Health Check — Vital Signs
-version: 1.3 (May 2026)
+version: 1.4 (June 2026) — added schema checks: tables with no primary key, FK columns with no covering index
 usage: AI reads this when user asks for vital signs / health check
 overhead: zero until invoked — file is read on demand only
 governance: see docs/training/governance.md — thresholds, red flags, score ranges, manager roll-up
@@ -37,6 +37,9 @@ Report all three, all findings with file:line, and offer to fix each one.
 STEP 1: Read ALL files in logic/logic_discovery/**/*.py
 STEP 1b: Read logic/declare_logic.py — check for rules declared outside discovery (demerit if found)
 STEP 2: Read database/models.py — count mapped table classes and tables with incoming FKs
+STEP 2b: Schema checks via sqlite3 against database/db.sqlite:
+         - PRAGMA table_info(<table>) for each mapped table — flag tables with no primary key
+         - PRAGMA foreign_key_list(<table>) + PRAGMA index_list(<table>) — flag FK columns with no covering index
 STEP 3: Scan for @health-check annotations (reviewed files / suppressed lines / red-flag-suppress)
 STEP 4: Compute Coverage Score
 STEP 5: Compute Integrity Score
@@ -137,6 +140,30 @@ see Hall Passes below.
 Docstring contains implementation notes, field mappings, or AI paraphrase beyond
 the verbatim requirement text. (See Docstring Hygiene section.)
 
+#### -1: Missing docstring on calling= function
+A function wired via `calling=` has no docstring (or an empty one).
+The first docstring line appears in logic flow diagrams and reports — without it,
+the diagram shows only the function name with no indication of what it derives.
+
+Detection: find all `Rule.formula(... calling=<func>)` and `Rule.early_row_event(... calling=<func>)`,
+then check each `<func>` for a non-empty one-line docstring.
+
+Fix: add `"""Derive <column>: <brief description>."""` as the first line of each function.
+
+Example fix:
+```python
+# Before (flagged):
+def _clvs_eligible(row, old_row, logic_row):
+    if row.service_type_cd != CLVS_SERVICE_TYPE:
+        return 0
+
+# After (clean):
+def _clvs_eligible(row, old_row, logic_row):
+    """Derive clvs_eligible: 1 if shipment meets all CLVS criteria, else 0."""
+    if row.service_type_cd != CLVS_SERVICE_TYPE:
+        return 0
+```
+
 #### -2: Logic in `declare_logic.py` instead of discovery files
 Rules declared directly in `logic/declare_logic.py` rather than in `logic/logic_discovery/` files.
 Discovery files provide requirements traceability (use-case name → file → rules → logic report)
@@ -146,6 +173,34 @@ the correct fix.
 Detection: `Rule.` declarations present in `logic/declare_logic.py` (beyond the template stub).
 
 #### -1: Missing `__init__.py` in logic subdirectory
+
+#### -3: Table with no primary key
+A mapped table class in `database/models.py` with no `primary_key=True` column.
+ApiLogicServer's `rebuild-from-database` always generates `id = Column(Integer, primary_key=True)`,
+so this normally only happens via hand-edited `models.py`, a source view, or a legacy table
+with a composite/missing key. SQLAlchemy relationship resolution, optimistic locking, and
+JSON:API resource identity all depend on a single-column PK — treat this as a structural defect.
+
+Detection: `PRAGMA table_info(<table>)` (via `sqlite3 database/db.sqlite`) shows no column
+with `pk > 0`, for any table backing a mapped class.
+
+Fix: add an `id INTEGER PRIMARY KEY AUTOINCREMENT` column via DDL + `rebuild-from-database`,
+or — if the table has a legitimate natural/composite key — document the exception with
+`@health-check: reviewed`.
+
+#### -1: Foreign key column with no covering index
+An FK column (`*_id` referencing another table's PK) with no index. SQLite/SQLAlchemy do
+**not** auto-create an index on FK columns (unlike some other databases). Unindexed FKs mean
+every parent lookup, `Rule.sum`/`Rule.count` aggregation, and cascade delete on that
+relationship does a full table scan on the child table — fine at demo scale, a real cost
+once child tables grow.
+
+Detection: for each FK reported by `PRAGMA foreign_key_list(<table>)`, check
+`PRAGMA index_list(<table>)` (and `PRAGMA index_info(<index>)` for each index) for an index
+whose first column is the FK column. If none found → flag.
+
+Fix: `CREATE INDEX ix_<table>_<fk_column> ON <table>(<fk_column>);` then
+`rebuild-from-database` to keep `models.py`/DBML in sync.
 
 ### Hall Passes (no demerit)
 
@@ -291,11 +346,19 @@ INTEGRITY FINDINGS
          docstring contains implementation note: "Uses early_row_event"
          → Fix: replace with verbatim requirement text only
 
+  🔴 -3  database/models.py: ShipmentLeg
+         table 'shipment_leg' has no primary key (PRAGMA table_info shows no pk column)
+         → Fix: add `id INTEGER PRIMARY KEY AUTOINCREMENT` via DDL + rebuild-from-database
+
+  🟡 -1  database/models.py: SurtaxLineItem.customs_entry_id
+         FK column 'customs_entry_id' on 'surtax_line_item' has no covering index
+         → Fix: CREATE INDEX ix_surtax_line_item_customs_entry_id ON surtax_line_item(customs_entry_id)
+
   ✅  +0  logic/logic_discovery/shipment_matching.py
          @health-check reviewed 2026-05-10 by val (row-lookup)
 
 ────────────────────────────────────────
-2 findings need attention. Want me to fix them?
+4 findings need attention. Want me to fix them?
 ```
 
 ---
@@ -313,6 +376,8 @@ For each finding, when user says "fix it" or "fix them all":
 | Side-effect formula | Split into one `Rule.formula` per derived column |
 | Missing __init__.py | Create empty file |
 | Docstring with implementation notes | Replace with verbatim requirement text only |
+| Table with no primary key | Add `id INTEGER PRIMARY KEY AUTOINCREMENT` via DDL + rebuild-from-database (or document exception with @health-check: reviewed if a natural/composite key is intentional) |
+| FK column with no covering index | `CREATE INDEX ix_<table>_<fk_column> ON <table>(<fk_column>);` then rebuild-from-database |
 
 Always show before/after and explain *why* the original was wrong.
 

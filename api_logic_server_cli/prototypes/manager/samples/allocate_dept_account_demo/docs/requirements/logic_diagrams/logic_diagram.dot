@@ -1,0 +1,73 @@
+digraph logic {
+  graph [rankdir=LR, fontname="Helvetica", fontsize=13,
+         label=<<B>Logic Diagram — allocate_dept_account_demo</B>>, labelloc=t,
+         pad=0.4, nodesep=0.35, ranksep=0.70, bgcolor="white",
+         splines=spline]
+  node  [fontname="Helvetica", fontsize=11, shape=plaintext]
+  edge  [fontname="Helvetica", fontsize=10]
+
+  // ── trigger ─────────────────────────────────────────────────────
+  TRIGGER [label=<<TABLE BORDER="2" CELLBORDER="0" CELLPADDING="5" BGCOLOR="#e8f5e9" COLOR="#27ae60"><TR><TD><FONT COLOR="#27ae60"><B>&#9889; ChargeGlAllocation inserted</B></FONT></TD></TR></TABLE>>, shape=plaintext]
+
+  // ── schema layer ──────────────────────────────────────────────────
+  Charge [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#4a6fa5"><TR><TD COLSPAN="3" BGCOLOR="#4a6fa5"><FONT COLOR="white"><B> Charge </B></FONT></TD></TR><TR><TD PORT="Charge_total_distributed_amount_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Charge_total_distributed_amount" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> total_distributed_amount </FONT></TD><TD PORT="Charge_total_distributed_amount_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR><TR><TD PORT="Charge_amount_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Charge_amount" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> amount </FONT></TD><TD PORT="Charge_amount_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR></TABLE>>]
+  ChargeDeptAllocation [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#4a6fa5"><TR><TD COLSPAN="3" BGCOLOR="#4a6fa5"><FONT COLOR="white"><B> ChargeDeptAllocation </B></FONT></TD></TR><TR><TD PORT="ChargeDeptAllocation_amount_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="ChargeDeptAllocation_amount" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> amount </FONT> <FONT COLOR="#e67e22" POINT-SIZE="9">= (
+            charge.amount...</FONT></TD><TD PORT="ChargeDeptAllocation_amount_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR><TR><TD PORT="ChargeDeptAllocation_charge_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="ChargeDeptAllocation_charge" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> charge </FONT></TD><TD PORT="ChargeDeptAllocation_charge_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR><TR><TD PORT="ChargeDeptAllocation_percent_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="ChargeDeptAllocation_percent" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> percent </FONT></TD><TD PORT="ChargeDeptAllocation_percent_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR></TABLE>>]
+  ChargeGlAllocation [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#4a6fa5"><TR><TD COLSPAN="3" BGCOLOR="#4a6fa5"><FONT COLOR="white"><B> ChargeGlAllocation </B></FONT></TD></TR><TR><TD PORT="ChargeGlAllocation_amount_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="ChargeGlAllocation_amount" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> amount </FONT> <FONT COLOR="#e67e22" POINT-SIZE="9">= (
+            charge_dept_a...</FONT></TD><TD PORT="ChargeGlAllocation_amount_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR><TR><TD PORT="ChargeGlAllocation_charge_dept_allocation_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="ChargeGlAllocation_charge_dept_allocation" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> charge_dept_allocation </FONT></TD><TD PORT="ChargeGlAllocation_charge_dept_allocation_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR><TR><TD PORT="ChargeGlAllocation_percent_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="ChargeGlAllocation_percent" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> percent </FONT></TD><TD PORT="ChargeGlAllocation_percent_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR></TABLE>>]
+  DeptChargeDefinition [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#4a6fa5"><TR><TD COLSPAN="3" BGCOLOR="#4a6fa5"><FONT COLOR="white"><B> DeptChargeDefinition </B></FONT></TD></TR><TR><TD PORT="DeptChargeDefinition_total_percent_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="DeptChargeDefinition_total_percent" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> total_percent </FONT></TD><TD PORT="DeptChargeDefinition_total_percent_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR><TR><TD PORT="DeptChargeDefinition_is_active_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="DeptChargeDefinition_is_active" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> is_active </FONT> <FONT COLOR="#e67e22" POINT-SIZE="9">= 1 if total_percent == Decim...</FONT></TD><TD PORT="DeptChargeDefinition_is_active_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR></TABLE>>]
+  DeptChargeDefinitionLine [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#4a6fa5"><TR><TD COLSPAN="3" BGCOLOR="#4a6fa5"><FONT COLOR="white"><B> DeptChargeDefinitionLine </B></FONT></TD></TR><TR><TD PORT="DeptChargeDefinitionLine_percent_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="DeptChargeDefinitionLine_percent" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> percent </FONT></TD><TD PORT="DeptChargeDefinitionLine_percent_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR></TABLE>>]
+  GlAccount [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#4a6fa5"><TR><TD COLSPAN="3" BGCOLOR="#4a6fa5"><FONT COLOR="white"><B> GlAccount </B></FONT></TD></TR><TR><TD PORT="GlAccount_total_allocated_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="GlAccount_total_allocated" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> total_allocated </FONT></TD><TD PORT="GlAccount_total_allocated_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR></TABLE>>]
+  Project [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#4a6fa5"><TR><TD COLSPAN="3" BGCOLOR="#4a6fa5"><FONT COLOR="white"><B> Project </B></FONT></TD></TR><TR><TD PORT="Project_total_charges_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Project_total_charges" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> total_charges </FONT></TD><TD PORT="Project_total_charges_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR></TABLE>>]
+  ProjectFundingDefinition [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#4a6fa5"><TR><TD COLSPAN="3" BGCOLOR="#4a6fa5"><FONT COLOR="white"><B> ProjectFundingDefinition </B></FONT></TD></TR><TR><TD PORT="ProjectFundingDefinition_total_percent_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="ProjectFundingDefinition_total_percent" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> total_percent </FONT></TD><TD PORT="ProjectFundingDefinition_total_percent_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR><TR><TD PORT="ProjectFundingDefinition_is_active_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="ProjectFundingDefinition_is_active" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> is_active </FONT> <FONT COLOR="#e67e22" POINT-SIZE="9">= 1 if total_percent == Decim...</FONT></TD><TD PORT="ProjectFundingDefinition_is_active_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR></TABLE>>]
+  ProjectFundingLine [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#4a6fa5"><TR><TD COLSPAN="3" BGCOLOR="#4a6fa5"><FONT COLOR="white"><B> ProjectFundingLine </B></FONT></TD></TR><TR><TD PORT="ProjectFundingLine_percent_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="ProjectFundingLine_percent" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> percent </FONT></TD><TD PORT="ProjectFundingLine_percent_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR></TABLE>>]
+  SysProjectReq [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#4a6fa5"><TR><TD COLSPAN="3" BGCOLOR="#4a6fa5"><FONT COLOR="white"><B> SysProjectReq </B></FONT></TD></TR><TR><TD></TD><TD BGCOLOR="#dbe4f0"><FONT COLOR="#1a1a2e">  </FONT></TD><TD></TD></TR></TABLE>>]
+  // ── rank groupings ────────────────────────────────────────────────
+  { rank=min; ProjectFundingDefinition; GlAccount; DeptChargeDefinition }
+  { rank=same; Project; DeptChargeDefinitionLine; ProjectFundingLine }
+  { rank=same; Charge; SysProjectReq }
+  { rank=same; ChargeDeptAllocation }
+  { rank=max; ChargeGlAllocation; TRIGGER }
+
+  // ── FK relationships ───────────────────────────────────────────
+  Charge -> Project [color="#e0e0e0", style=solid, arrowhead=none, arrowtail=crow, dir=both, penwidth=0.7, constraint=false, weight=1]
+  Project -> ProjectFundingDefinition [color="#e0e0e0", style=solid, arrowhead=none, arrowtail=crow, dir=both, penwidth=0.7, constraint=false, weight=1]
+  ChargeDeptAllocation -> Charge [color="#e0e0e0", style=solid, arrowhead=none, arrowtail=crow, dir=both, penwidth=0.7, constraint=false, weight=1]
+  ChargeDeptAllocation -> DeptChargeDefinition [color="#e0e0e0", style=solid, arrowhead=none, arrowtail=crow, dir=both, penwidth=0.7, constraint=false, weight=1]
+  ChargeDeptAllocation -> ProjectFundingLine [color="#e0e0e0", style=solid, arrowhead=none, arrowtail=crow, dir=both, penwidth=0.7, constraint=false, weight=1]
+  ProjectFundingLine -> DeptChargeDefinition [color="#e0e0e0", style=solid, arrowhead=none, arrowtail=crow, dir=both, penwidth=0.7, constraint=false, weight=1]
+  ProjectFundingLine -> ProjectFundingDefinition [color="#e0e0e0", style=solid, arrowhead=none, arrowtail=crow, dir=both, penwidth=0.7, constraint=false, weight=1]
+  ChargeGlAllocation -> ChargeDeptAllocation [color="#e0e0e0", style=solid, arrowhead=none, arrowtail=crow, dir=both, penwidth=0.7, constraint=false, weight=1]
+  ChargeGlAllocation -> DeptChargeDefinitionLine [color="#e0e0e0", style=solid, arrowhead=none, arrowtail=crow, dir=both, penwidth=0.7, constraint=false, weight=1]
+  ChargeGlAllocation -> GlAccount [color="#e0e0e0", style=solid, arrowhead=none, arrowtail=crow, dir=both, penwidth=0.7, constraint=false, weight=1]
+  DeptChargeDefinitionLine -> DeptChargeDefinition [color="#e0e0e0", style=solid, arrowhead=none, arrowtail=crow, dir=both, penwidth=0.7, constraint=false, weight=1]
+  DeptChargeDefinitionLine -> GlAccount [color="#e0e0e0", style=solid, arrowhead=none, arrowtail=crow, dir=both, penwidth=0.7, constraint=false, weight=1]
+  SysProjectReq -> Project [color="#e0e0e0", style=solid, arrowhead=none, arrowtail=crow, dir=both, penwidth=0.7, constraint=false, weight=1]
+
+  // ── trigger edge ──────────────────────────────────────────────
+  TRIGGER -> ChargeGlAllocation [color="#27ae60", style=bold, arrowhead=vee, penwidth=2, weight=10]
+
+  // ── logic edges ────────────────────────────────────────────────────
+  ProjectFundingLine:ProjectFundingLine_percent_w -> ChargeDeptAllocation:ChargeDeptAllocation_percent_w [label="1", color="#444444", fontcolor="#444444", arrowhead=vee, penwidth=1.8, weight=8]
+  DeptChargeDefinitionLine:DeptChargeDefinitionLine_percent_w -> ChargeGlAllocation:ChargeGlAllocation_percent_w [label="2", color="#444444", fontcolor="#444444", arrowhead=vee, penwidth=1.8, weight=8]
+  // INTRA:ChargeDeptAllocation:percent:amount:3:0
+  // INTRA:ChargeGlAllocation:percent:amount:4:0
+  // INTRA:DeptChargeDefinition:total_percent:is_active:5:0
+  // INTRA:ProjectFundingDefinition:total_percent:is_active:6:0
+  ChargeGlAllocation:ChargeGlAllocation_amount_w -> GlAccount:GlAccount_total_allocated_w [label="7", color="#444444", fontcolor="#444444", arrowhead=vee, penwidth=2, style=dashed, weight=8]
+  ChargeDeptAllocation:ChargeDeptAllocation_amount_w -> Charge:Charge_total_distributed_amount_w [label="8", color="#444444", fontcolor="#444444", arrowhead=vee, penwidth=2, style=dashed, weight=8]
+  Charge:Charge_amount_w -> Project:Project_total_charges_w [label="9", color="#444444", fontcolor="#444444", arrowhead=vee, penwidth=2, style=dashed, weight=8]
+  DeptChargeDefinitionLine:DeptChargeDefinitionLine_percent_w -> DeptChargeDefinition:DeptChargeDefinition_total_percent_w [label="10", color="#444444", fontcolor="#444444", arrowhead=vee, penwidth=2, style=dashed, weight=8]
+  ProjectFundingLine:ProjectFundingLine_percent_w -> ProjectFundingDefinition:ProjectFundingDefinition_total_percent_w [label="11", color="#444444", fontcolor="#444444", arrowhead=vee, penwidth=2, style=dashed, weight=8]
+
+  // ── events (right cluster) ─────────────────────────────────────
+  subgraph cluster_events {
+    style=invis
+    evt__identify_project [label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" BGCOLOR="#e8f5e9" COLOR="#27ae60"><TR><TD><FONT COLOR="#27ae60" POINT-SIZE="10">&#9889; _identify_project</FONT></TD></TR></TABLE>>, shape=plaintext]
+    evt_identify_project_for_charge [label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" BGCOLOR="#e8f5e9" COLOR="#27ae60"><TR><TD><FONT COLOR="#27ae60" POINT-SIZE="10">&#9889; identify_project_for_charge</FONT></TD></TR></TABLE>>, shape=plaintext]
+    evt_check_active_funding [label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" BGCOLOR="#e8f5e9" COLOR="#27ae60"><TR><TD><FONT COLOR="#27ae60" POINT-SIZE="10">&#9889; check_active_funding</FONT></TD></TR></TABLE>>, shape=plaintext]
+  }
+  SysProjectReq -> evt__identify_project [label="early", color="#27ae60", style=dashed, arrowhead=open, penwidth=1.2, fontcolor="#27ae60", constraint=false]
+  Charge -> evt_identify_project_for_charge [label="early", color="#27ae60", style=dashed, arrowhead=open, penwidth=1.2, fontcolor="#27ae60", constraint=false]
+  Charge -> evt_check_active_funding [label="early", color="#27ae60", style=dashed, arrowhead=open, penwidth=1.2, fontcolor="#27ae60", constraint=false]
+}
