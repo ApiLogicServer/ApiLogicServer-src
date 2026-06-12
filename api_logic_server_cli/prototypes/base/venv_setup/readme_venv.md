@@ -2,10 +2,10 @@
 
 This folder contains scripts to set up your Python environment after cloning a project from git.
 
-> **Tip:** If you cloned this project into the ApiLogicServer Manager folder, you can run it
+> **Tip:** If you cloned this project into the GenAI-Logic Manager folder, you can run it
 > directly without any venv setup:
 > ```
-> als run --project-name=<your-project>
+> genai-logic run
 > ```
 
 ## Option 1 — Symlink to Manager venv (Mac/Linux, recommended)
