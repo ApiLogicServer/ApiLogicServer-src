@@ -1,10 +1,13 @@
 Hygiene
     SlimGen
     /Docs -> /genAI
+
 RoadMap
-    React Data Provider
-    Deployment
     Virtual Derivations
+    Deployment
+    Partner for Process Logic
+    React Data Provider
+    Multiple Constraints
 
 Existing Systems Initiative - way more existing systems than new ones
 
@@ -22,24 +25,6 @@ Existing Systems Initiative - way more existing systems than new ones
                 6.	Returns balance → formats reply:
                     → “Customer ALFKI has a balance of $23,000.”
                 7.	Sends reply message into Slack thread
-
-    Thoughts:
-        MCP
-            - Blockers, but value in marketing
-            - Need a compelling example (GPT: check credit as multi-mcp flow... good grief)
-            - Interesting contrast: deterministic work flow vs non-deterministic AI flow
-                - several N8N demos might be truly compelling
-        NLQ - explore
-            - compelling value?  get some feedback
-            - security
-            - update
-            - pruning the openapi
-            - Mgmt
-                - how does user know about the various 'functions'
-                - how does org make functions available
-        Demos
-            - Not too fancy - excessive tech can be confusing / distracting (does this apply to NL API Creation?)
-            - Must clarify leverage logic & security (vs just api)
 
 
 Sales / Mktg
@@ -63,25 +48,12 @@ These have already been vetted by Customers / Prod Mgmt (we know they are valuab
 
     Add Security to WebG?
 
-    Python 3.13
-
-    Rule Event/Condition Actions (ECA when order shipped, send order to Kafka and n8n email to manager, Nat Lang)
-
     API Entity Actions (set <field> = <value>... toggle on_hold, ship, etc)
 
     Clean up custom endpoint 'extra methods'
 
-    Nat Lang Copy, Allocate (apply Payment to Outstanding Orders, Bonus to Dept members, ...)
-
-    Rules by UseCase (discovery)
-
-    Example: AIDev (show what's possible, eg, cursor)
-
 
 Further Out
-
-    Test Case Creation - can we create the BLT tests used for SampleDB?
-        Longer term, probably best done with Design Partners per their actual practice.
 
     Background: (Semi) Automated Deployment Services - SaaS...?  Configure...
         Accrue such assets as we work with customers to deploy...
