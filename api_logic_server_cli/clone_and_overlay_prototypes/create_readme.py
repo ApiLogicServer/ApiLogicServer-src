@@ -66,6 +66,7 @@ def create_readme(project: Project, api_logic_server_dir_str: str):
 
     Manager_readme contains front-matter like this, that maps demo name to its readme:<br>
     demo_customs: Customs-readme
+    demo_customs_surtax: Customs-readme-surtax
     demo_kafka: Sample-Integration
     demo_allo: Sample_Allo_Dept_GL_readme
     demo_ai_rules: Sample-ai-rules

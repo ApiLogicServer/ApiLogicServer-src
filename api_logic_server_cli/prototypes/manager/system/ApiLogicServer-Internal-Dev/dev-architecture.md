@@ -4,8 +4,9 @@ Description: Enables AI assistants to be co-designers for GenAI-Logic features
 Source: ApiLogicServer-src/prototypes/manager/system/ApiLogicServer-Internal-Dev/dev-architecture.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this to understand project structure, development workflow, and recent additions
-version: 2.4
+version: 2.5
 changelog:
+  - 2.5 (Jun 2026) - Added Demo readme mapping (Manager-readme.md front-matter / create_readme.py) gotcha section
   - 2.4 (Apr 2026) - Renamed from copilot-dev-context.md to dev-architecture.md
   - 2.3 (Mar 2026) - Added mandatory load sequence: also read Manager + prototype copilot-instructions
   - 2.2 (Feb 2026) - Subsystem creation - use rules, data model hints 
@@ -822,6 +823,24 @@ This understanding should be reflected in two source files in `org_git/ApiLogicS
   3. Commit to Docs repo
   4. Run BLT - copy_md() will fetch updated docs and regenerate readme.md
   5. Test generated projects have correct READMEs
+
+**🚨 Demo readme mapping (`Manager-readme.md` front-matter) — ⚠️ tricky, easy to get wrong:**
+- Demo projects (`demo_customs_clvs`, `demo_customs_surtax`, `demo_allo_*`, `basic_demo_*`, etc.) get a **project-specific** readme instead of the generic one — driven entirely by data, not code
+- **`org_git/Docs/docs/Manager-readme.md`** front-matter has a table of `<prefix>: <readme-basename>` lines, e.g.:
+  ```yaml
+  demo_customs: Customs-readme
+  demo_customs_surtax: Customs-readme-surtax
+  demo_allo: Sample_Allo_Dept_GL_readme
+  basic_demo: Sample-Basic-Demo
+  ```
+- **`create_readme.py`** (`read_mgr_readme()` + `create_readme()`) reads this table, **sorts by prefix length descending**, and uses the **first prefix where `project_name.startswith(prefix)`** — renames the project's `readme.md` → `readme_standard.md`, then `copy_md()`s `<readme-basename>.md` over it
+- **The trap:** `startswith()` matching means a new project whose name extends an existing prefix (e.g. `demo_customs_surtax` extends `demo_customs`) will **silently** match the old, shorter prefix's readme — wrong content, no error. This is exactly how `demo_customs_surtax` ended up with the CLVS readme for months.
+- **Checklist when adding a demo whose name extends an existing prefix:**
+  1. Create its specific gold readme in `org_git/Docs/docs/<New-Readme>.md`
+  2. Add a **new, longer** prefix line to `Manager-readme.md` (e.g. `demo_customs_surtax: Customs-readme-surtax`) — do **not** rename/remove the shorter existing entry, other projects may rely on it as a fallback
+  3. No code change needed in `create_readme.py` — length-descending sort + first-match-wins already prefers the more specific entry
+  4. Regenerate the affected project's `readme.md` (via `copy_md()`, or by hand-applying its mkdocs→markdown transforms) and verify the new mapping resolves
+- **See also:** [Architecture-Internals.md#docs-used-in-project-creation](https://apilogicserver.github.io/Docs/Architecture-Internals/#docs-used-in-project-creation)
 
 **BLT (Build-Load-Test):**
 - Rebuilds API Logic Server from dev source
