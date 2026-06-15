@@ -5,6 +5,21 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "API Logic Server Run (run project from manager)",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/${input:runProjectName}",
+            "env": {
+                "PYTHONHASHSEED": "0",
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "program": "api_logic_server_run.py",
+            "redirectOutput": true,
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
             "name": "1. GENAI - Create genai_logic demo project",
             "type": "debugpy",
             "request": "launch",
@@ -180,21 +195,6 @@
                 "--project-name=samples/nw_sample",
                 "--db-url=nw+"],
             "console": "internalConsole",
-            "internalConsoleOptions": "openOnSessionStart"
-        },
-        {
-            "name": "API Logic Server Run (run project from manager)",
-            "type": "debugpy",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/${input:runProjectName}",
-            "env": {
-                "PYTHONHASHSEED": "0", 
-                "APILOGICSERVER_DEBUG": "False",
-                "OPT_LOCKING": "optional"},
-            "justMyCode": false,
-            "program": "api_logic_server_run.py",
-            "redirectOutput": true,
-            "console": "integratedTerminal",
             "internalConsoleOptions": "openOnSessionStart"
         },
         {

@@ -1101,6 +1101,11 @@ Create a fully functional application and database
    - Rule.sum or Rule.count needed (any step)? → derived columns needed on parent table
    - row_event side-effects (matching, enrichment)? → note pattern, no schema change
    - Any requirement references a column not yet in models.py? → add it now
+   - Does the requirement describe something already represented by an existing
+     table (e.g. "past due letters" → `SysEmail`, "current rates" → `SysConfig`)?
+     → reuse that table (add a column to it if needed, e.g. `SysEmail.resolved`)
+     instead of inventing a new standalone column. Scan `models.py` for existing
+     `Sys*`/infrastructure tables before designing new ones.
 
    **Produce one complete DDL change list covering ALL steps.**
    Run DDL + `rebuild-from-database` ONCE before writing any logic or mapper files.
