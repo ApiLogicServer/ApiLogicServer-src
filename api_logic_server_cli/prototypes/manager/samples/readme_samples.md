@@ -93,6 +93,8 @@ docker run --name sqlsvr-container --net dev-network -p 1433:1433 -d apilogicser
 Execute these from the Manager using Claude Code terminal.   They use Context Engineering.
 
 ```
+implement project basic_demo from samples/prompts/genai_demo.prompt
+
 implement demo_allo_dept_gl from samples/prompts/allocation.prompt
 
 implement project customs_cbsa from samples/prompts/customs_cbsa.prompt.md
