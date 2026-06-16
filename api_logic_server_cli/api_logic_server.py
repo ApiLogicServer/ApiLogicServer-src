@@ -12,9 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "17.00.35"  # last public release: 17.00.34
+__version__ = "17.00.36"  # last public release: 17.00.34
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
+    "\t06/16/2026 - 17.00.36  codespaces mgr (tech preview) \n"\
     "\t06/11/2026 - 17.00.35  logic report / flow diagram, cvls with hazmat, basic_demo_logic_gov, sec & raw logic fixes \n"\
     "\t05/14/2026 - 17.00.24  gov rpt, ad-lib with approach (fair gemini), sample names \n"\
     "\t05/10/2026 - 17.00.19  demo_customs += cvls (reasons), lb formatting, venv/run debug updates, win-linux bld/vul \n"\
