@@ -1,0 +1,17 @@
+## ⚠️ Codespaces: ApiLogicServer is pre-installed globally — no venv
+This devcontainer is built `FROM apilogicserver/api_logic_server`, which already has
+`ApiLogicServer` (and `als`, `genai-logic`, `logicbank`, `safrs`, `Flask`, etc.) installed
+at `/usr/local/bin/python`.
+
+- Do NOT create a `venv/` or `.venv/`, do NOT `pip install ApiLogicServer` — it's already there.
+- Just run `als` / `genai-logic` / `python` directly — they resolve to the global install.
+- If a command appears "not found," the issue is PATH/shell state, not a missing install —
+  check `which als` / `which python` (should be `/usr/local/bin/...`) before assuming
+  anything needs installing.
+- If a debug/run session shows missing modules (e.g. `ModuleNotFoundError: No module
+  named 'yaml'`) that work fine from a plain terminal, check for a stray
+  `/workspaces/<repo>/.venv` or `venv` that VS Code is auto-activating
+  (`python.terminal.activateEnvironment`). **Delete the stray venv** —
+  do not `pip install` into it.
+
+---

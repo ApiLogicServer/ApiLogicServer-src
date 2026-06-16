@@ -1,0 +1,45 @@
+{
+    // Codespaces launch configs — trimmed to what works in the single-workspace layout.
+    // Two configs only:
+    //   1. "API Logic Server Run" — F5 default; prompts for project folder name
+    //      e.g. type "samples/basic_demo_sample" at the prompt
+    //   2. "Python: Current File" — open any api_logic_server_run.py in Explorer, hit F5
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "API Logic Server Run (run project from manager)",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/${input:runProjectName}",
+            "env": {
+                "PYTHONHASHSEED": "0",
+                "APILOGICSERVER_DEBUG": "False",
+                "OPT_LOCKING": "optional"},
+            "justMyCode": false,
+            "program": "api_logic_server_run.py",
+            "python": "${command:python.interpreterPath}",
+            "redirectOutput": true,
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "Python: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "cwd": "${fileDirname}",
+            "python": "${command:python.interpreterPath}",
+            "redirectOutput": true,
+            "justMyCode": false,
+            "console": "integratedTerminal"
+        }
+    ],
+    "inputs": [
+        {
+            "id": "runProjectName",
+            "type": "promptString",
+            "description": "Project folder to run (e.g. samples/basic_demo_sample)",
+            "default": "samples/basic_demo_sample"
+        }
+    ]
+}
