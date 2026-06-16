@@ -170,6 +170,8 @@ def main():
     readme = re.sub(r"^---\n.*?\n---\n", "", readme, count=1, flags=re.DOTALL)
     # Strip <style>...</style>
     readme = re.sub(r"<style>.*?</style>\n?", "", readme, count=1, flags=re.DOTALL)
+    # Strip any leading blank lines left by the above
+    readme = readme.lstrip("\n")
     print("  ✅ Front matter and style block stripped")
 
     # Inject Codespaces + browser notes after OBX heading (idempotent)
