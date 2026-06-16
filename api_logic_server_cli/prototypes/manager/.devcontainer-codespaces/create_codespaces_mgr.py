@@ -180,8 +180,9 @@ def main():
         cs_note = (
             "\n"
             "> **Codespaces:** This workspace runs in GitHub Codespaces — a cloud VS Code "
-            "environment, no local install needed. New to Codespaces? See "
-            "[GitHub Codespaces docs](https://docs.github.com/en/codespaces).\n"
+            "environment, no local install needed. "
+            "[Open a codespace](https://codespaces.new/ApiLogicServer/codespaces_mgr) "
+            "or see the [GitHub Codespaces docs](https://docs.github.com/en/codespaces).\n"
             ">\n"
             "> **Browser:** Use Chrome or Edge — Safari has known compatibility issues "
             "with VS Code in the browser.\n"
