@@ -1,19 +1,15 @@
 ---
-title: Customs EAI
+title: CBSA Steel Derivative Goods Surtax
 notes: gold source is docs
-source: docs/Customs-readme
-version: 1.2 from docsite, for readme, for readme 5/5/2026
+source: docs/Customs-readme-surtax
+version: 1.0 from docsite, for readme, for readme 6/13/2026
 ---
-<style>
-  -typeset h1,
-  -content__button {
-    display: none;
-  }
-</style>
 
-# Customs Demo
+# CBSA Steel Derivative Goods Surtax
 
-![summary](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/customs_demo/summary.png?raw=true)
+**Audience:** Technical GenAI-Logic evaluators
+
+**Project:** CBSA Steel Derivative Goods Surtax Order calculator (PC Number 2025-0917, program code 25267A)
 
 &nbsp;
 
@@ -21,14 +17,9 @@ version: 1.2 from docsite, for readme, for readme 5/5/2026
 
 <summary>Executable Requirements - Governance By Architecture, At Scale</summary>
 
-![summary](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/architecture/gov-at-scale.png?raw=true)
+<br>This demo creates an entire subsystem — database, API, business logic, and Admin App — from a single natural language prompt, using Method 4 (System Creation Services).
 
-&nbsp;
-
-**The Underlying Logic Architecture**
-
-![summary](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/architecture/logic-architecture-exec.png?raw=true)
-<br>
+Unlike the Customs CLVS demo (which starts from an existing database and adds relationship/logic fixes), this project is generated **fresh, end-to-end, from the prompt alone**. The prompt is the requirement; Context Engineering ensures the result is enterprise-class — governed, auditable, and correct — not just a working demo.
 
 </details>
 
@@ -36,155 +27,120 @@ version: 1.2 from docsite, for readme, for readme 5/5/2026
 
 <details markdown>
 
-<summary>Claude Code CLI Instructions - how to build this project</summary>
+<summary>Claude Code CLI Instructions</summary>
 
-<br>
+<br>Execute these steps from the Manager, using the Claude Code terminal.
 
-```bash title="Establish Initial State, Execute Requirements"
-# A - Create the project (already done, typically from Manager)
-genai-logic create  --project_name=demo_customs --db_url=sqlite:///samples/requirements/customs_demo/database/customs.sqlite
+**A. Activate Claude Code**
 
-# B - activate Claude Code in the VSCode terminal
-claude
+Open the Claude Code terminal in the Manager.
 
-# C - use the shared Manager venv (do not create a local project .venv)
+**B. Activate the venv**
+
+```bash title='🤖 Paste into the terminal'
 ! source ../venv/bin/activate
-
-# D - load context engineering to teach claude about rules, GenAI-Logic
-Please load `.github/.copilot-instructions.md`.
-
-# E - in created project, get the requirements (win: Copy-Item -Path "..\samples\requirements\customs_demo\*" -Destination "." -Recurse -Force -Verbose 4>&1).Count)
-! cp -rv ../samples/requirements/customs_demo_clvs/. . | wc -l
-
-# F - required hardening for delete integrity (no orphans after parent delete via API):
-in database/models.py, add ORM relationship cascade on Shipment child lists.
-Apply as follows (NOTE: ShipmentCommodityList is a special case):
-
-   Shipment.PieceList          → relationship(cascade="all, delete", back_populates="shipment")
-   Shipment.SpecialHandlingList → relationship(cascade="all, delete", back_populates="shipment")
-   Shipment.ShipmentPartyList  → relationship(cascade="all, delete", back_populates="shipment")
-
-   Shipment.ShipmentCommodityList → relationship(passive_deletes='all', back_populates="shipment")
-   # ⚠️  ShipmentCommodity has a composite PK where the FK (local_shipment_oid_nbr) is also
-   # part of the PK. cascade="all, delete" causes SQLAlchemy to null-out the FK before
-   # deleting — which fails for PK columns (any database, not SQLite-specific).
-   # passive_deletes='all' bypasses ORM cascade and delegates to the DB-level
-   # ON DELETE CASCADE on the FK column.
-   # SQLite extra: also requires PRAGMA foreign_keys = ON per connection;
-   # PostgreSQL/MySQL enforce FK cascades by default.
-   # Note: perhaps simpler to alter db design for single-field pkey
-
-# G - ask Coding Agent to create the system by implementing the requirements
-implement requirements docs/requirements/customs_demo
 ```
+
+**C. Implement the project from the prompt**
+
+```text title='🤖 Paste this into the Claude Code chat (Agent mode, Claude Sonnet 4.6 recommended)'
+implement project demo_customs_surtax from samples/prompts/customs_cbsa.prompt
+```
+
+This single instruction drives Method 4 (System Creation Services) end-to-end:
+
+1. Loads Context Engineering (`.github/.copilot-instructions.md`)
+2. Creates the project (`genai-logic create --project_name=demo_customs_surtax ...`), generating the database, models, API, and Admin App from the prompt
+3. Translates the prompt's business rules into declarative `logic/logic_discovery` rules (not procedural FrankenCode)
+4. Generates seed test data and runs the test suite
+5. Writes `docs/requirements/readme` (provenance) and `docs/requirements/ad-libs` (every assumption made beyond the prompt spec)
 
 </details>
 
 &nbsp;
 
----
+## The Prompt
 
-## Executive Summary
-
-This is a proof of what changes when business logic is governed by architecture, not discipline — built to the scope and standards of a real enterprise integration, in 2 days.
-
-**Delivery Speed — 2 Days, Not Months**<br>
-Built in 2 days by one engineer. The scope — Kafka 2-message pipeline, XML parsing, 7-table persistence, importer matching, CLVS eligibility rules, REST API, Admin UI, and standard enterprise delivery standards — is not a toy project. A traditional team would scope this in weeks and deliver in months.
-
-Curious what your team would estimate? Give your AI this requirements document and ask.
-
-**Business Inputs — Not Technical Specs**<br>
-Traditional delivery starts from *technical* inputs: schema DDL, API specs, field-mapping logic expressed in developer terms. This started from *business* inputs — artifacts the business team already owned.
-
-A plain-English requirements document. An existing database schema. An XML field-mapping spreadsheet. A sample message. GenAI-Logic's Executable Requirements workflow compiled these directly into a running, governed system — no translation layer required.
-
-Speed is not a tradeoff against governance here. Both are consequences of the same thing: declarative rules replace procedural code, so the system is both faster to build and impossible to bypass.
-
-**Governance — No Bypass**<br>
-Business rules are enforced at the commit point — every transaction, every source, automatically. Not because developers remembered. Because there is no other path.
-
-A new developer, a new agent, a new integration: all inherit the same rules automatically. Governed by architecture, not discipline.
-
-**Governance — At Scale**<br>
-Governance by developer discipline fails at scale — routinely, and at significant cost. Rules get missed. New endpoints, new agents, new integrations don't inherit them. The larger the system, the more paths, and the more paths, the more misses.
-
-Governance by architecture doesn't degrade. Rules enforced at the commit point run on every transaction, regardless of source — API, UI, agent, or integration added three years later. That guarantee doesn't erode as the system grows.
-
-AI makes this available at org-wide scale. Requirements your teams already produce — plain English, Gherkin, regulation text — become the input. GenAI-Logic compiles them into enforced rules. The same workflow, every project, every team.
-
-**Measuring Adoption — the Governance Report**<br>
-Governance by architecture only holds if teams are actually using rules. GenAI-Logic includes a built-in health check (`vital signs`) that produces a **Governance Report** scoring each project on two dimensions: *Coverage* (weighted rules per domain table — are the right tables governed?) and *Integrity* (anti-pattern detection — is the rule code correct?). A portfolio leaderboard makes adoption visible across teams without reading a line of code. The same tool that enforces rules also measures whether they're being used.
-
-> For the full story on **Executable Requirements**, [click here](https://apilogicserver.github.io/Docs/executable-requirements).  
-> For **Project Governance Report**, [click here](https://apilogicserver.github.io/Docs/IDE-Health-Check).
-
-&nbsp;
-
-## Project Overview
-
-You can examine the Shipment database to verify parties created by matching:
-
-![summary](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/integration/customs_demo/shipment.png?raw=true)
-
-An enterprise integration (EAI) microservice that ingests CIMCorp/ISDC customs shipment data from a Kafka topic, parses the canonical XML format, and persists the resulting shipment records — with full REST API, Admin UI, and a declarative business logic layer ready for governance rules.
-
-**Inputs** (in `docs/elmo_creation/`):
-- Database — 7 tables, 130+ columns
-- XML-to-DB field mapping (`Classify Entity Details.csv`)
-- Sample message (`sample_data/MDE-CDV-HVS-WR-Rev260328.xml`)
-
-**Outputs**:
-- Working Kafka consumer pipeline: `isdc` → `ShipmentXml` → `isdc_processed` → DB tables  
-- JSON:API for all tables, Admin UI, declarative logic engine
-- Matching: look up the matching Customer
-    - found: set `Shipment.trprt_bill_to_acct_nbr == CcpCustomer.duty_bill_to_acct_nbr` and create a `ShipmentParty` row
-    - no match: log a warning, do nothing.
-
-&nbsp;
-
-## Basic Design - 2 transaction message processing
-
-1. `integration/kafka/kafka_subscribe_discovery/isdc.py` - isdc
-    * reads message, inserts into `ShipmentXml` (Tx 1)
-    * this ensures messages are saved, even if the xml contains errors
-2. `logic/logic_discovery/isdc_consume.py`
-    * ShipmentXml insert → publishes raw payload to topic: `isdc_processed`
-3. `integration/kafka/kafka_subscribe_discovery/isdc.py` - isdc_processed
-    * parses xml → database tables (Tx 2)
-4. `api/api_discovery/isdc_kafka_consume_debug.py`
-    * `/consume_debug/isdc` bypasses Kafka — calls the same parser directly (no Kafka required for dev/test)
-5. Matching: `logic/logic_discovery/shipment_matching.py` — `early_row_event` on Shipment insert
-    * Looks up `CcpCustomer` by `duty_bill_to_acct_nbr == trprt_bill_to_acct_nbr`
-    * Match found: creates a `ShipmentParty` importer row; (if no match, logs a warning)
-5. CLVS: `logic/logic_discovery/clvs_eligibility.py` - computes eligibility
-
-
-&nbsp;
-
----
-
-## Appendices
-
-### 2-message Pattern
-
-**Duplicate policy** — default is `replace`: an existing `Shipment` graph is deleted (ORM cascade) and the new parsed graph inserted. Set env var `ISDC_DUPLICATE_POLICY=fail` to raise an error on duplicate `LOCAL_SHIPMENT_OID_NBR` instead.
-
-**Design note — why 2 messages?** The original design used 1 message: receive XML, save `ShipmentXml`, parse into DB tables — all in one transaction. The 2-message design now in place was adopted after reviewing production reliability requirements.
-
-The key advantage is **transaction isolation**. A tempting alternative to 2 messages is a try/catch in the single transaction: always save `ShipmentXml`, best-effort parse the DB tables. This breaks down in SQLAlchemy: a failed flush (e.g. parser error mid-parse) **poisons the session** — you can't commit the blob in the same session after an exception. You'd need two explicit back-to-back transactions, plus a third to write the error back to `ShipmentXml`. That's messy and fragile.
-
-The 2-message design solves this cleanly: Kafka acts as the durable commit boundary between ingestion and processing. The blob is always saved (transaction 1), and a parse failure only affects transaction 2 — no session gymnastics, and back-pressure decoupling is a free bonus.
-
-&nbsp;
-
-### Replace and Match Example
-
-```bash title="Process Shipment - no match"
-curl 'http://localhost:5656/consume_debug/isdc?file=docs/requirements/customs_demo/message_formats/demo-01-no-match.xml'
+```text title='Prompt: samples/prompts/customs_cbsa.prompt'
+Create a fully functional application and database
+ for CBSA Steel Derivative Goods Surtax Order PC Number: 2025-0917 
+ on 2025-12-11 and annexed Steel Derivative Goods Surtax Order 
+ under subsection 53(2) and paragraph 79(a) of the 
+ Customs Tariff program code 25267A to calculate duties and taxes 
+ including provincial sales tax or HST where applicable when 
+ hs codes, country of origin, customs value, and province code and ship date >= '2025-12-26' 
+ and create runnable ui with examples from Germany (CETA — exempt), US (CUSMA — exempt), Japan (CPTPP — exempt), and China (subject, 25%)
+  Transactions are received as a CustomsEntry with multiple 
+SurtaxLineItems, one per imported product HS code.
 ```
 
-Verify the Shipment data, then
+&nbsp;
 
-```bash title="Process Shipment Replacement - match"
-curl 'http://localhost:5656/consume_debug/isdc?file=docs/requirements/customs_demo/message_formats/demo-02-match-replace.xml'
-```
+## Domain Summary
+
+Transactions are `CustomsEntry` records with one or more `SurtaxLineItem` rows (one per HS code).
+
+### Tax calculation chain
+
+| Step | Rule | Table |
+|---|---|---|
+| 1 | Copy `effective_date`, `program_code`, `pc_number` from `SysConfig` | `CustomsEntry` |
+| 2 | Copy `country_surtax_rate` from `CountryOrigin` | `CustomsEntry` |
+| 3 | Copy `province_tax_rate` from `Province` | `CustomsEntry` |
+| 4 | `surtax_applicable = 1` when `ship_date >= effective_date` AND `country_surtax_rate > 0` | `CustomsEntry` |
+| 5 | Copy `base_duty_rate`, `is_steel_derivative` from `HsCodeRate` | `SurtaxLineItem` |
+| 6 | `surtax_applicable = 1` when entry `surtax_applicable == 1` AND `is_steel_derivative == 1` | `SurtaxLineItem` |
+| 7 | `base_duty_amount = customs_value * base_duty_rate` | `SurtaxLineItem` |
+| 8 | `surtax_amount = customs_value * country_surtax_rate` (if line `surtax_applicable`) | `SurtaxLineItem` |
+| 9 | Sum `total_customs_value`, `total_duty_amount`, `total_surtax_amount` | `CustomsEntry` |
+| 10 | `duty_paid_value = total_customs_value + total_duty_amount + total_surtax_amount` | `CustomsEntry` |
+| 11 | `sales_tax_amount = duty_paid_value * province_tax_rate` | `CustomsEntry` |
+| 12 | `total_tax_due = total_duty_amount + total_surtax_amount + sales_tax_amount` | `CustomsEntry` |
+
+### Example countries in seed data
+
+| Country | Agreement | Surtax rate |
+|---|---|---|
+| Germany (DE) | CETA | 0% |
+| United States (US) | CUSMA | 0% |
+| Japan (JP) | CPTPP | 0% |
+| China (CN) | — | 25% |
+
+### Provinces in seed data
+
+| Province | Tax rate (pre-combined GST/PST/HST) |
+|---|---|
+| Ontario (ON) | 13% |
+| Alberta (AB) | 5% |
+| British Columbia (BC) | 12% |
+| Nova Scotia (NS) | 15% |
+| Manitoba (MB) | 12% |
+
+&nbsp;
+
+## Results: System, Test Suite and Report
+
+### System: API, Database, Logic, Admin App
+
+The GenAI-Logic `create` command builds a complete, runnable project: the JSON:API server (with Swagger), a full CRUD Admin App, and 18 declarative rules in `logic/logic_discovery/cbsa_steel_surtax.py` implementing the tax calculation chain above.
+
+### Test Suite and Report
+
+The GenAI-Logic `create` command also builds test services and Context Engineering. These enable the LLM to generate tests that prove the code works, and to produce readable test reports that elucidate the logic.
+
+&nbsp;
+
+## How it Works
+
+### Authoring
+
+1. Copilot loads Context Engineering (`.github/.copilot-instructions.md`, `docs/training`)
+2. Invokes `genai-logic create --project_name=demo_customs_surtax ...` to scaffold the project — database, models, API, Admin App — all runnable, but no logic yet
+3. Copilot then, under the guidance of Context Engineering:
+    * Translates the prompt's business rules into declarative rules (`logic/logic_discovery`, *not FrankenCode*)
+    * Generates seed test data (with values initialized per rules)
+    * Runs the test suite
+
+### Execution
+
+Execution uses deterministic runtime engines (ORM, API, Logic) — no probabilistic AI calls at runtime. The result is correct by architecture, auditable to regulators, and maintainable by a single developer.

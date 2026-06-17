@@ -1,7 +1,7 @@
 
 # GA release -- DELETE BUILD DIRS FIRST
 
-# docker buildx build --push -f docker/api_logic_server.Dockerfile --tag apilogicserver/api_logic_server:17.0.18 -o type=image --platform=linux/arm64,linux/amd64 .
+# docker buildx build --push -f docker/api_logic_server.Dockerfile --tag apilogicserver/api_logic_server:17.0.37 -o type=image --platform=linux/arm64,linux/amd64 .
 # docker buildx build --push -f docker/api_logic_server.Dockerfile --tag apilogicserver/api_logic_server:latest -o type=image --platform=linux/arm64,linux/amd64 .
 # docker pull apilogicserver/api_logic_server:latest
 
@@ -89,7 +89,8 @@ COPY . .
 USER root
 RUN chmod +x bin/ApiLogicServer \
     && chmod a+rwx -R api_logic_server_cli/api_logic_server_info.yaml \
-    && chmod +x bin/py
+    && chmod +x bin/py \
+    && chmod -R a+rX api_logic_server_cli/prototypes/
 RUN mkdir -p /home/api_logic_project \
     && chown -R api_logic_server /home/api_logic_project
 USER api_logic_server
