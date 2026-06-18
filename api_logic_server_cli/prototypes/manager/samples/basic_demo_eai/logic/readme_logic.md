@@ -1,5 +1,23 @@
 This describes how to use Logic; for more information, [see here](https://apilogicserver.github.io/Docs/Logic-Why).
 
+## What are Rules?
+
+Rules enforce business policy — multi-table derivations, constraints, and actions like messaging. They are Python functions in `logic/logic_discovery/` — readable, version-controlled, and owned like any other source file.
+
+But unlike procedural code, rules are *declarative* — which has important implications:
+
+| Property | What it means | Why it matters |
+|---|---|---|
+| **Auto-reused** | `Customer.balance = sum of unpaid orders` — declared once, enforced over every change path | No per-path handlers to write or miss |
+| **Auto-invoked** | Rules fire at every commit, from every caller — you never call them | Can't be forgotten, can't be bypassed |
+| **Auto-ordered** | The engine computes dependency order at startup | Add a rule anywhere, it finds its place |
+
+If it helps: think of a spreadsheet — `B10 = SUM(B1:B9)`, and every recalculation just happens. Rules work the same way for database transactions.
+
+Taken together: 40x less code to write, maintain, and debug — see the [A/B test](https://github.com/ApiLogicServer/basic_demo/blob/main/logic/procedural/declarative-vs-procedural-comparison.md) for the reproducible comparison.
+
+&nbsp;
+
 > What is Logic: Multi-table Derivation and Constraint Rules, Extensible with Python
 > <br>Rules are:
 > <br>1. **Declared** in your IDE - 40X more concise
