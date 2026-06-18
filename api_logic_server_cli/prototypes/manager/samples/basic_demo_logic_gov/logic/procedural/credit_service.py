@@ -4,6 +4,12 @@ from src.models.northwind import Customer, Order, OrderDetail, Product
 from typing import Dict, Any, Optional
 from decimal import Decimal
 
+# If you're like me, you open this file, and your shoulders sag.  5 requirements, 200 lines? Ugh.
+#
+# Can you even tell what this does? 
+# 
+# And there's a bug in here. Do you really want to go hunt it down?
+
 class CreditService:
     """Service class for credit checking business logic"""
     
