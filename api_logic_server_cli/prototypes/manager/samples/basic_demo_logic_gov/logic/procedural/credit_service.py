@@ -6,9 +6,13 @@ from decimal import Decimal
 
 # If you're like me, you open this file, and your shoulders sag.  5 requirements, 200 lines? Ugh.
 #
-# Can you even tell what this does? 
-# 
+# Can you even tell what this does?
+#
 # And there's a bug in here. Do you really want to go hunt it down?
+#
+# Note: this is a pre-built reference copy, kept here for browsing. Generating
+# a project from the prompt yourself will produce an equivalent file, possibly
+# under a different project name.
 
 class CreditService:
     """Service class for credit checking business logic"""

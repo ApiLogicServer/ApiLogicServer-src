@@ -7,6 +7,11 @@ On Placing Orders, Check Credit
     5. The Item unit_price is copied from the Product unit_price
 """
 
+# Same requirements as logic/procedural/credit_service.py — 5 declarative rules here vs ~200 lines there, with 0 bugs vs 2.
+# (This is a pre-built reference copy — see that file for the note on generating your own.)
+
+# Ask your AI Assistant: What are Rules?
+
 from logic_bank.logic_bank import Rule
 from database import models
 
