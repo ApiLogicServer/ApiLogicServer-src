@@ -174,24 +174,23 @@ def main():
     readme = readme.lstrip("\n")
     print("  ✅ Front matter and style block stripped")
 
-    # Inject Codespaces + browser notes after OBX heading (idempotent)
-    # Sentinel: "## 🚀 First Time Here?" — update if heading ever changes
+    # Inject Codespaces + browser notes inside "See it work" (idempotent)
+    # Sentinel: "<summary>⚡ See it work — 5 minute first look</summary>" — update if this line ever changes
     if "Use Chrome or Edge" not in readme:
+        old_summary = "<summary>⚡ See it work — 5 minute first look</summary>"
+        new_summary = "<summary>⚡ See it work — 5 minutes, no install</summary>"
         cs_note = (
-            "\n"
-            "> **Codespaces:** This workspace runs in GitHub Codespaces — a cloud VS Code "
-            "environment, no local install needed. "
-            "[Open a codespace](https://codespaces.new/ApiLogicServer/codespaces_mgr) "
-            "or see the [GitHub Codespaces docs](https://docs.github.com/en/codespaces).\n"
-            ">\n"
-            "> **Browser:** Use Chrome or Edge — Safari has known compatibility issues "
-            "with VS Code in the browser.\n"
+            "\n&nbsp;\n\n"
+            "You're already running in GitHub Codespaces — a cloud VS Code environment "
+            "in your browser. Nothing to install. (Use Chrome or Edge — Safari has known "
+            "compatibility issues with VS Code in the browser.)\n"
         )
-        readme = readme.replace(
-            "## 🚀 First Time Here?\n",
-            "## 🚀 First Time Here?\n" + cs_note,
-            1,
-        )
+        if old_summary not in readme:
+            raise SystemExit(
+                f"ERROR: sentinel line not found in README.md — update this script's "
+                f"old_summary string to match: {old_summary!r}"
+            )
+        readme = readme.replace(old_summary, new_summary + cs_note, 1)
         print("  ✅ Codespaces + browser notes injected")
     else:
         print("  (notes already present, skipped)")
