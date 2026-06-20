@@ -4,13 +4,17 @@
 [![Latest Version](https://img.shields.io/pypi/v/apilogicserver.svg)](https://pypi.python.org/pypi/apilogicserver/)
 [![Supported Python versions](https://img.shields.io/pypi/pyversions/apilogicserver.svg)](https://pypi.python.org/pypi/apilogicserver/)
 
-One prompt builds a working API, Admin App, and database — then you declare business logic in 5 rules instead of writing 200 lines of code to enforce it. Same engine, same project, no separate tooling.
+One prompt — or your existing database — builds a working API and Admin App, then you declare business logic in **5 readable rules instead of 200 lines of AI-generated code** to enforce it.
+
+On opening the project (or using Codespaces, below), the readme provides a First Time tour.  You'll see that enforcement yourself in a few minutes: those rules run at **one commit point**, no matter which path the transaction came in on — API, MCP, agent, Kafka. **No bypass.**
+
+And you're not reading alone: your AI assistant is a partner throughout. Ask it anything — architecture, rules, debugging, deployment, or how the system works.
 
 ## See it work — no install
 
 **[Open in GitHub Codespaces →](https://codespaces.new/ApiLogicServer/codespaces_mgr)**
 
-This opens a ready-to-go Manager workspace in your browser — no local Python, no clone, nothing to install. Inside, the README walks you through a 5-minute guided demo: one prompt creates a real project, you trigger a business rule, then open the 200-line procedural version side-by-side with the 5-line declarative version that replaces it.
+This opens a ready-to-go Manager workspace in your browser — no local Python, no clone, nothing to install. Inside, the README walks you through a short guided demo: one prompt creates a real project, you trigger a business rule, then open the 200-line procedural version side-by-side with the 5-line declarative version that replaces it.
 
 If you'd rather work locally, see [Quick Start](#-quick-start-local-install) below.
 
