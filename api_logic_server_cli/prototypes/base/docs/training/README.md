@@ -87,9 +87,9 @@ This directory contains training materials for ApiLogicServer with GenAI integra
 This directory also contains:
 
 - **API Documentation:**
-  - `logic_bank_api.prompt` - LogicBank API reference
-  - `logic_bank_api_probabilistic.prompt` - Probabilistic extensions
-  - `logic_bank_patterns.prompt` - Pattern library
+  - `logic_bank_api.md` - LogicBank API reference
+  - `probabilistic_logic.md` - Probabilistic extensions
+  - `logic_bank_patterns.md` - Pattern library
 
 - **Admin App Documentation:**
   - `admin_app_1_context.prompt.md` - Admin app context

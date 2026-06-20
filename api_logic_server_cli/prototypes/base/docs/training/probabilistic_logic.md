@@ -7,8 +7,8 @@ version: 3.1
 date: November 21, 2025
 prerequisites:
   - docs/training/genai_logic_patterns.md (CRITICAL import patterns, auto-discovery)
-  - docs/training/logic_bank_patterns.prompt (event signatures, logging, request pattern)
-  - docs/training/logic_bank_api.prompt (deterministic rule APIs)
+  - docs/training/logic_bank_patterns.md (event signatures, logging, request pattern)
+  - docs/training/logic_bank_api.md (deterministic rule APIs)
 ---
 
 # AI Value Computation Pattern
@@ -20,8 +20,8 @@ This document describes how to implement probabilistic logic (AI-driven value co
 Read these foundation documents first:
 
 1. **docs/training/genai_logic_patterns.md** - Import patterns, auto-discovery
-2. **docs/training/logic_bank_patterns.prompt** - Event signatures, logging, Request Pattern
-3. **docs/training/logic_bank_api.prompt** - Deterministic rule APIs
+2. **docs/training/logic_bank_patterns.md** - Event signatures, logging, Request Pattern
+3. **docs/training/logic_bank_api.md** - Deterministic rule APIs
 
 =============================================================================
 🤖 AUTOMATIC DETECTION: When to Generate Probabilistic Logic
@@ -299,7 +299,7 @@ Natural Language Requirements:
 
 version: 3.0
 date: November 21, 2025
-source: docs/training/probabilistic_logic.prompt
+source: docs/training/probabilistic_logic.md
 """
 
 from logic_bank.logic_bank import Rule
@@ -377,7 +377,7 @@ See: https://apilogicserver.github.io/Docs/Logic-Using-AI/
 
 version: 3.0
 date: November 21, 2025
-source: docs/training/probabilistic_logic.prompt
+source: docs/training/probabilistic_logic.md
 """
 
 from logic_bank.exec_row_logic.logic_row import LogicRow
@@ -1084,5 +1084,5 @@ When implementing AI logic:
 
 ---
 
-For detailed LogicBank patterns, see docs/training/logic_bank_patterns.prompt
-For deterministic rules, see docs/training/logic_bank_api.prompt
+For detailed LogicBank patterns, see docs/training/logic_bank_patterns.md
+For deterministic rules, see docs/training/logic_bank_api.md

@@ -30,7 +30,7 @@ Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, wh
 Here is the simplified API for LogicBank:
 
 PREREQUISITE: For general patterns (event handler signatures, logging, request pattern, anti-patterns),
-see docs/training/logic_bank_patterns.prompt
+see docs/training/logic_bank_patterns.md
 
 =============================================================================
 🗂️ CRITICAL: Directory Structure = Requirements Traceability

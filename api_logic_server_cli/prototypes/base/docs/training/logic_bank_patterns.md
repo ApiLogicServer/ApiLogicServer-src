@@ -6,8 +6,8 @@ usage: AI assistants read this for general LogicBank patterns across ALL rule ty
 version: 1.0
 date: Nov 14, 2025
 related: 
-  - logic_bank_api.prompt (deterministic rule API)
-  - logic_bank_api_probabilistic.prompt (AI/probabilistic rule API)
+  - logic_bank_api.md (deterministic rule API)
+  - probabilistic_logic.md (AI/probabilistic rule API)
 changelog:
   - 1.0 (Nov 14, 2025): Extracted general patterns from probabilistic prompt for reuse
   - 1.1 (Feb 16, 2026): Request Object Pattern
@@ -19,8 +19,8 @@ This document contains general patterns for working with LogicBank rules.
 These patterns apply to ALL rule types (deterministic and probabilistic).
 
 For specific rule APIs, see:
-- `docs/training/logic_bank_api.prompt` - Deterministic rules (sum, count, formula, constraint, etc.)
-- `docs/training/logic_bank_api_probabilistic.prompt` - Probabilistic rules (AI value computation)
+- `docs/training/logic_bank_api.md` - Deterministic rules (sum, count, formula, constraint, etc.)
+- `docs/training/probabilistic_logic.md` - Probabilistic rules (AI value computation)
 
 ---
 
@@ -237,7 +237,7 @@ COMMON USE CASES:
 PATTERN 4: Rule API Syntax Reference
 =============================================================================
 
-Always consult docs/training/logic_bank_api.prompt for complete API details.
+Always consult docs/training/logic_bank_api.md for complete API details.
 
 COMMON PARAMETERS BY RULE TYPE:
 
@@ -581,7 +581,7 @@ SUMMARY: Quick Reference
 1. **Event handlers**: def handler(row, old_row, logic_row) - ALL THREE
 2. **Logging**: Use logic_row.log() not app_logger
 3. **Request Pattern**: new_logic_row(ModelClass) returns LogicRow with .row
-4. **Rule APIs**: Check logic_bank_api.prompt for correct parameters
+4. **Rule APIs**: Check logic_bank_api.md for correct parameters
 5. **Anti-patterns**: No get_logic_row(), no calling=False, no app_logger in rules
 6. **Type handling**: int for FKs, Decimal for money
 7. **Rules over events**: derived values → Rule.formula/sum/count; events → side effects only
@@ -589,8 +589,8 @@ SUMMARY: Quick Reference
 9. **Valid event methods**: early_row_event, row_event, after_flush_row_event, commit_row_event
 
 For rule-specific APIs and examples:
-- Deterministic rules → docs/training/logic_bank_api.prompt
-- Probabilistic rules → docs/training/logic_bank_api_probabilistic.prompt
+- Deterministic rules → docs/training/logic_bank_api.md
+- Probabilistic rules → docs/training/probabilistic_logic.md
 
 ---
 
