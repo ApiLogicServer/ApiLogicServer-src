@@ -30,6 +30,19 @@ What the sync does:
 codespaces_mgr) rather than from any README front matter, since that's the file Val
 actually bumps for a real release:
     org_git/ApiLogicServer-src/api_logic_server_cli/api_logic_server.py  (__version__ = "...")
+
+CAUTION — this script does NOT cover the whole CE delivery path into a live Codespace:
+    .devcontainer/For_VSCode.dockerfile -> FROM apilogicserver/api_logic_server (Docker Hub)
+This base image bakes in api_logic_server_cli/prototypes/ via `COPY . .` straight from
+org_git/ApiLogicServer-src at image-build time (see docker/api_logic_server.Dockerfile),
+built/pushed manually with `docker buildx build --push ...` — NOT by BLT, NOT by this
+script. So a Codespace gets CE from two independent places that can disagree:
+  - committed samples/*/.github/.copilot-instructions.md in this repo  -> refreshed by --release/--push
+  - CE baked into the apilogicserver/api_logic_server image (used if the user runs
+    `genai-logic create` live inside the Codespace) -> stale until that image is rebuilt+pushed
+A gold-source CE edit (prototypes/base or prototypes/manager) needs: BLT (refresh local
+venv + regenerate samples) AND a manual docker buildx rebuild+push of the base image,
+before a fresh Codespace is guaranteed to see it everywhere.
 """
 
 import sys
