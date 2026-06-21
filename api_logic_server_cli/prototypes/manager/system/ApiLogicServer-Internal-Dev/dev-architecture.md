@@ -4,8 +4,9 @@ Description: Enables AI assistants to be co-designers for GenAI-Logic features
 Source: ApiLogicServer-src/prototypes/manager/system/ApiLogicServer-Internal-Dev/dev-architecture.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this to understand project structure, development workflow, and recent additions
-version: 2.7
+version: 2.8
 changelog:
+  - 2.8 (Jun 2026) - Flagged base-vs-basic_demo CE drift incident: write/test new CE in base first, basic_demo is a copy not the source
   - 2.7 (Jun 2026) - Noted clean/genai-logic as a BLT output sibling (pristine baseline, not for working in)
   - 2.6 (Jun 2026) - Added "Sibling Workspace: codespaces_mgr (cs-mgr)" section - how it's generated from .devcontainer-codespaces/, what's excluded, and why its Manager CE has extra Active Project / name-collision guards
   - 2.5 (Jun 2026) - Added Demo readme mapping (Manager-readme.md front-matter / create_readme.py) gotcha section
@@ -178,6 +179,7 @@ This document contains **everything** you need to understand the system:
     13. **Critical Patterns** - React component best practices, null-safe constraints, test repeatability
   - ⚠️ **CRITICAL:** These are TWO DIFFERENT FILES - never replace the per-project version with the manager version!
   - 🚨 **PROPAGATION PROBLEM:** Changes to project-level instructions must be carefully copied to both `prototypes/base/.github/.copilot-instructions.md` AND `prototypes/basic_demo/.github/.copilot-instructions.md`
+  - 🪤 **`base` is the one that matters — `basic_demo` is only a testing/tutorial convenience.** Real-world incident (Jun 2026): a governance/A-B-test answer block existed only in `basic_demo` — added there during CE drafting/testing — and was never ported to `base`. Everyone validating the answer kept testing against `basic_demo` (the easy, fast-to-load file) and got "excellent" results for months, while every real customer project (created from `base`) silently lacked the content. **When drafting or testing new CE content, write/verify it in `base` first** — `basic_demo` should only ever be a copy of what's already proven in `base`, never the original.
   - 📋 **OBX PATTERN (v2.3, Oct 2025):** Use **positive instructions** for AI behavior:
     - ✅ **Works:** "When user asks to read instructions, respond with the Welcome section content below"
     - ❌ **Fails:** "Do NOT add preamble" or relying on structure alone
