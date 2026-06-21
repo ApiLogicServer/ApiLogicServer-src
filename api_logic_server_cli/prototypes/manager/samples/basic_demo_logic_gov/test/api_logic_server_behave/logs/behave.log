@@ -1,0 +1,46 @@
+Feature: About Sample # features/about.feature:6
+
+  Scenario: Transaction Processing                           # features/about.feature:8
+    Given Sample Database                                    # features/steps/about.py:8
+    When Transactions are submitted                          # features/steps/about.py:12
+    Then Enforce business policies with Logic (rules + code) # features/steps/about.py:16
+
+Feature: Check Credit Rules # features/check_credit.feature:1
+
+  Scenario: Good Order - balance updated  # features/check_credit.feature:3
+    Given Customer with credit limit 1000 # features/steps/check_credit_steps.py:23
+    When Order is placed with 2 Chai      # features/steps/check_credit_steps.py:68
+    Then Customer balance is 36.0         # features/steps/check_credit_steps.py:109
+
+  Scenario: Exceed Credit Limit - rejected         # features/check_credit.feature:8
+    Given Customer with credit limit 20            # features/steps/check_credit_steps.py:23
+    When Order is placed with 2 Chai               # features/steps/check_credit_steps.py:68
+    Then Order is rejected with credit limit error # features/steps/check_credit_steps.py:117
+
+  Scenario: Item Quantity Change - recalculates  # features/check_credit.feature:13
+    Given Customer with credit limit 1000        # features/steps/check_credit_steps.py:23
+    And Order is placed with 2 Chai              # features/steps/check_credit_steps.py:44
+    When Item quantity changed to 5              # features/steps/check_credit_steps.py:73
+    Then Item amount is 90.0                     # features/steps/check_credit_steps.py:122
+    Then Order amount_total is 90.0              # features/steps/check_credit_steps.py:130
+
+  Scenario: Delete Item - reduces order total   # features/check_credit.feature:20
+    Given Customer with credit limit 1000       # features/steps/check_credit_steps.py:23
+    And Order is placed with 2 Chai and 1 Chang # features/steps/check_credit_steps.py:39
+    When Item is deleted                        # features/steps/check_credit_steps.py:82
+    Then Order amount_total is 19.0             # features/steps/check_credit_steps.py:130
+
+  Scenario: Ship Order - excluded from balance  # features/check_credit.feature:26
+    Given Customer with credit limit 1000       # features/steps/check_credit_steps.py:23
+    And Order is placed with 2 Chai             # features/steps/check_credit_steps.py:44
+    When Order is shipped                       # features/steps/check_credit_steps.py:89
+    Then Customer balance is 0.0                # features/steps/check_credit_steps.py:109
+
+  Scenario: Unship Order - included in balance  # features/check_credit.feature:32
+    Given Customer with credit limit 1000       # features/steps/check_credit_steps.py:23
+    And Shipped order is created with 2 Chai    # features/steps/check_credit_steps.py:49
+    When Order is unshipped                     # features/steps/check_credit_steps.py:98
+    Then Customer balance is 36.0               # features/steps/check_credit_steps.py:109
+
+&nbsp;&nbsp;
+/Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-logic/basic_demo/test/api_logic_server_behave/behave_run.py completed at May 23, 2026 07:42:46

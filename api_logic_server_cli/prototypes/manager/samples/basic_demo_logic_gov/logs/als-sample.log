@@ -1,0 +1,32 @@
+# LogicBank logs every rule that fires:
+#   - row state (changes visible)
+#   - indentation shows multi-row chaining
+#
+# This is a similar log from the check_credit example.
+#
+# Context Engineering makes AI aware of rules, and this logging
+#   - this enables it to provide useful diagnosis
+#
+# And, you can use your debugger.
+
+Logic Phase:		COMPLETE(session=0x10ebb79b0))
+127.0.0.1 - - [20/Jun/2026 19:08:06] "[35m[1mPOST /api/Order/ HTTP/1.1[0m" 201 -
+
+Logic Phase:		ROW LOGIC		(session=0x10ec88160) (sqlalchemy before_flush)			
+..Item[None] {Insert - client} id: None, order_id: 7, product_id: 3, quantity: 1, amount: None, unit_price: None  row: 0x10ec2a9d0  session: 0x10ec88160  ins_upd_dlt: ins, initial: ins
+..Item[None] {copy_rules for role: product - unit_price} id: None, order_id: 7, product_id: 3, quantity: 1, amount: None, unit_price: 5075.0000000000  row: 0x10ec2a9d0  session: 0x10ec88160  ins_upd_dlt: ins, initial: ins
+..Item[None] {Formula amount} id: None, order_id: 7, product_id: 3, quantity: 1, amount: 5075.0000000000, unit_price: 5075.0000000000  row: 0x10ec2a9d0  session: 0x10ec88160  ins_upd_dlt: ins, initial: ins
+....Order[7] {Update - Adjusting order: amount_total} id: 7, notes: None, customer_id: 2, CreatedOn: None, date_shipped: None, amount_total:  [0E-10-->] 5075.0000000000  row: 0x10ec5e4d0  session: 0x10ec88160  ins_upd_dlt: upd, initial: upd
+......Customer[2] {Update - Adjusting customer: balance} id: 2, name: Bob, balance:  [0E-10-->] 5075.0000000000, credit_limit: 3000.0000000000, email: bob@corp.org, email_opt_out: False  row: 0x10ec5edd0  session: 0x10ec88160  ins_upd_dlt: upd, initial: upd
+......Customer[2] {Constraint Failure: balance (5075.0000000000) exceeds credit limit (3000.0000000000)} id: 2, name: Bob, balance:  [0E-10-->] 5075.0000000000, credit_limit: 3000.0000000000, email: bob@corp.org, email_opt_out: False  row: 0x10ec5edd0  session: 0x10ec88160  ins_upd_dlt: upd, initial: upd
+
+These Rules Fired (see Logic Phases, above, for actual order):		##
+  Customer		##
+    1. Derive <class 'database.models.Customer'>.balance as Sum(Order.amount_total Where Rule.sum(derive=models.Customer.balance, as_sum_of=models.Order.amount_total, where=lambda row: row.date_shipped is None) - <function declare_logic.<locals>.<lambda> at 0x10d6502c0>)		##
+    2. Constraint Function: None 		##
+  Item		##
+    3. Derive <class 'database.models.Item'>.unit_price as Copy(product.unit_price)		##
+    4. Derive <class 'database.models.Item'>.amount as Formula (1): Rule.formula(derive=models.Item.amount, as_expres [...]		##
+  Order		##
+    5. Derive <class 'database.models.Order'>.amount_total as Sum(Item.amount Where  - None)		##
+balance (5075.0000000000) exceeds credit limit (3000.0000000000)

@@ -3,11 +3,17 @@
 Recreate the codespaces_mgr checkout from this local-mgr + Codespaces-only overrides.
 
 Usage (from this Manager root):
-    python3 .devcontainer-codespaces/create_codespaces_mgr.py /path/to/org_git/codespaces_mgr [--dry-run]
+    python3 .devcontainer-codespaces/create_codespaces_mgr.py /path/to/org_git/codespaces_mgr [--dry-run|--push|--release]
 
+    (no flag) : sync files into target, leave staged for manual review (does NOT commit/push)
     --dry-run : show what would be copied, apply no changes
+    --push    : sync + commit + push to the target repo's `dev` branch (day-to-day update)
+    --release : sync + commit + push to `dev`, then merge dev->main, tag main with the
+                gold-source product version, bump .devcontainer/devcontainer.json (triggers
+                the repo's "Configuration change" prebuild refresh), push main + tag,
+                and leave the target checked out on `dev`.
 
-What it does:
+What the sync does:
     1. Copy a scoped subset of local-mgr -> target (see SYNC_PATHS below).
        Excludes basic_demo/, scaffold/, tests/, dockers/, demo_customs/, demo_eai/, venv/.
        (.devcontainer-codespaces/ IS synced — it becomes .devcontainer/ in step 2)
@@ -19,12 +25,17 @@ What it does:
        - .vscode/settings.json -> python.defaultInterpreterPath -> /usr/local/bin/python
        - .vscode/launch.json  -> replaced with Codespaces-trimmed 2-config version
        - samples/*/. vscode/settings.json -> same interpreter patch
-    3. Leaves target staged for review/commit (does NOT commit or push)
+
+--release reads the product version from this sibling file (under org_git/, alongside
+codespaces_mgr) rather than from any README front matter, since that's the file Val
+actually bumps for a real release:
+    org_git/ApiLogicServer-src/api_logic_server_cli/api_logic_server.py  (__version__ = "...")
 """
 
 import sys
 import re
 import shutil
+import subprocess
 from pathlib import Path
 
 # ── paths ────────────────────────────────────────────────────────────────────
@@ -53,6 +64,12 @@ COPY_EXCLUDES = {
     ".git", "venv", ".venv", "__pycache__", "logs", ".DS_Store", ".devcontainer",
 }
 
+# Curated files that live inside an otherwise-excluded directory (e.g. logs/) — copied
+# individually after the main sync since COPY_EXCLUDES skips their parent wholesale.
+EXTRA_FILES = [
+    "samples/basic_demo_logic_gov/logs/als-sample.log",
+]
+
 # ── helpers ──────────────────────────────────────────────────────────────────
 
 def ignore_fn(dir_, names):
@@ -77,6 +94,43 @@ def copy_path(src: Path, dst: Path, dry_run: bool):
         print(f"  ✅ {src.name}")
 
 
+def find_gold_version(target: Path) -> str:
+    """Read __version__ from ApiLogicServer-src/api_logic_server_cli/api_logic_server.py.
+
+    Located via target's own org_git/ ancestor — target (codespaces_mgr) is always a
+    sibling of ApiLogicServer-src under org_git/, regardless of where local-mgr lives.
+    """
+    org_git = None
+    for ancestor in [target] + list(target.parents):
+        if ancestor.name == "org_git":
+            org_git = ancestor
+            break
+    if org_git is None:
+        raise SystemExit(
+            f"ERROR: {target} is not under an org_git/ directory — "
+            "can't locate ApiLogicServer-src as a sibling."
+        )
+    candidate = org_git / "ApiLogicServer-src" / "api_logic_server_cli" / "api_logic_server.py"
+    if not candidate.exists():
+        raise SystemExit(f"ERROR: expected gold-source version file not found: {candidate}")
+    text = candidate.read_text()
+    m = re.search(r'__version__\s*=\s*"([^"]+)"', text)
+    if not m:
+        raise SystemExit(f"ERROR: no __version__ line found in {candidate}")
+    return m.group(1)
+
+
+def run_git(args, cwd: Path, check=True):
+    print(f"  $ git {' '.join(args)}")
+    result = subprocess.run(["git"] + args, cwd=cwd, capture_output=True, text=True)
+    if result.stdout.strip():
+        print("    " + result.stdout.strip().replace("\n", "\n    "))
+    if check and result.returncode != 0:
+        print("    " + result.stderr.strip().replace("\n", "\n    "))
+        raise SystemExit(f"ERROR: git {' '.join(args)} failed (exit {result.returncode})")
+    return result
+
+
 def patch_interpreter(path: Path):
     """Replace any python.defaultInterpreterPath value with /usr/local/bin/python."""
     text = path.read_text()
@@ -95,15 +149,27 @@ def patch_interpreter(path: Path):
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: create_codespaces_mgr.py /path/to/org_git/codespaces_mgr [--dry-run]")
+        print("Usage: create_codespaces_mgr.py /path/to/org_git/codespaces_mgr [--dry-run|--push|--release]")
         sys.exit(1)
 
     target  = Path(sys.argv[1]).resolve()
     dry_run = "--dry-run" in sys.argv
+    push    = "--push" in sys.argv
+    release = "--release" in sys.argv
 
     if not (target / ".git").exists():
         print(f"ERROR: {target} does not look like a git checkout (no .git) — refusing.")
         sys.exit(1)
+
+    if push or release:
+        status = run_git(["status", "--porcelain"], cwd=target).stdout
+        if status.strip():
+            raise SystemExit(
+                f"ERROR: {target} has uncommitted changes before the sync even starts — "
+                "commit, stash, or discard them first, then re-run."
+            )
+        run_git(["checkout", "dev"], cwd=target)
+        run_git(["pull", "--ff-only", "origin", "dev"], cwd=target)
 
     print(f"Source (local-mgr): {SRC_ROOT}")
     print(f"Target (codespaces_mgr): {target}")
@@ -115,6 +181,8 @@ def main():
     print("Step 1: Syncing scoped subset...")
     for p in SYNC_PATHS:
         copy_path(SRC_ROOT / p, target / p, dry_run)
+    for f in EXTRA_FILES:
+        copy_path(SRC_ROOT / f, target / f, dry_run)
 
     if dry_run:
         print("\nDry run complete — no overrides applied.")
@@ -175,22 +243,23 @@ def main():
     print("  ✅ Front matter and style block stripped")
 
     # Inject Codespaces + browser notes inside "See it work" (idempotent)
-    # Sentinel: "<summary>⚡ See it work — 5 minute first look</summary>" — update if this line ever changes
+    # Match on the stable "<summary>⚡ See it work" prefix — the text after the
+    # em-dash is gold-source copy (org_git/Docs) and changes independently of this script.
+    summary_re = re.compile(r"<summary>⚡ See it work[^<]*</summary>")
     if "Use Chrome or Edge" not in readme:
-        old_summary = "<summary>⚡ See it work — 5 minute first look</summary>"
-        new_summary = "<summary>⚡ See it work — 5 minutes, no install</summary>"
         cs_note = (
             "\n&nbsp;\n\n"
             "You're already running in GitHub Codespaces — a cloud VS Code environment "
             "in your browser. Nothing to install. (Use Chrome or Edge — Safari has known "
             "compatibility issues with VS Code in the browser.)\n"
         )
-        if old_summary not in readme:
+        match = summary_re.search(readme)
+        if not match:
             raise SystemExit(
-                f"ERROR: sentinel line not found in README.md — update this script's "
-                f"old_summary string to match: {old_summary!r}"
+                "ERROR: no '<summary>⚡ See it work...</summary>' line found in README.md — "
+                "update this script's summary_re pattern to match the current heading."
             )
-        readme = readme.replace(old_summary, new_summary + cs_note, 1)
+        readme = readme[:match.end()] + cs_note + readme[match.end():]
         print("  ✅ Codespaces + browser notes injected")
     else:
         print("  (notes already present, skipped)")
@@ -216,9 +285,78 @@ def main():
         if patch_interpreter(f):
             print(f"  ✅ {f.parent.parent.name}")
 
+    if not push and not release:
+        print()
+        print("Done. Review changes in target, then commit and push:")
+        print(f"  cd {target} && git status")
+        return
+
+    # ── Step 3: commit + push to dev ─────────────────────────────────────────
     print()
-    print("Done. Review changes in target, then commit and push:")
-    print(f"  cd {target} && git status")
+    print("Step 3: Committing + pushing to dev...")
+    run_git(["add", "-A"], cwd=target)
+    status = run_git(["status", "--porcelain"], cwd=target).stdout
+    if not status.strip():
+        print("  (nothing changed — dev already up to date with local-mgr)")
+    else:
+        gold_version = find_gold_version(target)
+        run_git(["commit", "-m", f"Sync from local-mgr (gold v{gold_version})"], cwd=target)
+        run_git(["push", "origin", "dev"], cwd=target)
+        print("  ✅ pushed to dev")
+
+    if not release:
+        print()
+        print(f"Done — {target} is on dev, pushed. Re-run with --release to publish to main.")
+        return
+
+    # ── Step 4: release — merge to main, tag, bump prebuild trigger ─────────
+    print()
+    print("Step 4: Releasing — merging dev -> main...")
+    gold_version = find_gold_version(target)
+    existing_tags = run_git(["tag", "-l"], cwd=target).stdout.split()
+    tag_already_exists = gold_version in existing_tags
+    if tag_already_exists:
+        print(
+            f"  (gold version '{gold_version}' already tagged — releasing content-only "
+            f"changes without a new version tag)"
+        )
+
+    run_git(["checkout", "main"], cwd=target)
+    run_git(["pull", "--ff-only", "origin", "main"], cwd=target)
+    merge = run_git(["merge", "dev", "--no-edit"], cwd=target, check=False)
+    if merge.returncode != 0:
+        raise SystemExit(
+            "ERROR: merge dev -> main failed (likely a conflict). Repo is left mid-merge on "
+            "main — resolve manually, or `git merge --abort` and re-run --release.\n"
+            + merge.stderr
+        )
+
+    # Touch devcontainer.json to fire the prebuild trigger. This line is disposable —
+    # it's NOT the version record (the git tag is); the next ordinary --push overwrites
+    # this file wholesale from local-mgr's untouched copy, which is fine, since this
+    # comment's only job is to differ from main's current content at release time.
+    devcontainer_json = target / ".devcontainer" / "devcontainer.json"
+    text = devcontainer_json.read_text()
+    bump_re = re.compile(r'^// prebuild trigger bump: .*\n', re.MULTILINE)
+    text = bump_re.sub("", text)
+    text = f"// prebuild trigger bump: release {gold_version}\n" + text
+    devcontainer_json.write_text(text)
+    run_git(["add", ".devcontainer/devcontainer.json"], cwd=target)
+    run_git(["commit", "-m", f"Release {gold_version}: bump devcontainer.json to refresh prebuild"], cwd=target)
+
+    run_git(["push", "origin", "main"], cwd=target)
+    if not tag_already_exists:
+        run_git(["tag", gold_version], cwd=target)
+        run_git(["push", "origin", gold_version], cwd=target)
+
+    run_git(["checkout", "dev"], cwd=target)
+    run_git(["merge", "main", "--no-edit"], cwd=target)
+    run_git(["push", "origin", "dev"], cwd=target)
+
+    print()
+    print(f"✅ Released {gold_version}: dev -> main merged, tagged, pushed.")
+    print(f"   {target} is left on dev.")
+    print("   Prebuild refresh should start automatically (devcontainer.json changed on main).")
 
 
 if __name__ == "__main__":

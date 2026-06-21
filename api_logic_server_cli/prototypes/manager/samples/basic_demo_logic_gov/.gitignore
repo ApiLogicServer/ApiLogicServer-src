@@ -8,4 +8,5 @@ test/api_logic_server_behave/scenario_logic_logs/
 devops/docker-compose-dev-local-nginx/www
 devops/docker-compose-dev-azure-nginx/www
 .vscode/settings.json
-logs/
+logs/*
+!logs/als-sample.log
