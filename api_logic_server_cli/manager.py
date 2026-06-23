@@ -178,7 +178,30 @@ def create_manager(clean: bool, open_with: str, api_logic_server_path: Path,
         
         create_utils.copy_md(from_doc_file='Sample-Basic-Tour.md', project = to_dir)  # fixme delete old code
         create_utils.copy_md(from_doc_file='Manager-readme.md', project = to_dir)     # override api_logic_server_cli/prototypes/manager/README.md from git
-        # create_utils.copy_md(from_doc_file='Sample-Basic-Demo-Vibe.md', project = to_dir, to_project_file='readme_vibe.md')  # 
+        # create_utils.copy_md(from_doc_file='Sample-Basic-Demo-Vibe.md', project = to_dir, to_project_file='readme_vibe.md')  #
+
+        # The Manager-readme.md front matter is machine config (read_mgr_readme() in
+        # create_readme.py parses it to find demo->readme mappings) - but it's ugly noise
+        # for a human opening the local README.md. Comment it out here, local-mgr only;
+        # gold Docs/docs/Manager-readme.md keeps real YAML front matter since that's what
+        # read_mgr_readme() actually parses (gold is fetched independently, not from this file).
+        readme_path = to_dir.joinpath('README.md')
+        if readme_path.exists():
+            with open(str(readme_path), 'r', encoding='utf-8') as f:
+                readme_lines = f.readlines()
+            if readme_lines and readme_lines[0].strip() == '---':
+                end_idx = None
+                for idx in range(1, len(readme_lines)):
+                    if readme_lines[idx].strip() == '---':
+                        end_idx = idx
+                        break
+                if end_idx is not None:
+                    front_matter = readme_lines[1:end_idx]
+                    rest = readme_lines[end_idx + 1:]
+                    new_lines = ['<!--\n'] + front_matter + ['-->\n'] + rest
+                    with open(str(readme_path), 'w', encoding='utf-8') as f:
+                        f.writelines(new_lines)
+                    log.debug("✅ Manager README.md front matter commented out (local-mgr cosmetic only)")
 
         if not samples:
             shutil.rmtree(to_dir.joinpath(f'{docker_volume}system/app_model_editor'))

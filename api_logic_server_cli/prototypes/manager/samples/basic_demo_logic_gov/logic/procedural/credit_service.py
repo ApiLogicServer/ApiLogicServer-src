@@ -10,6 +10,16 @@ from decimal import Decimal
 #
 # And there's a bug in here. Do you really want to go hunt it down?
 #
+# The bug: nothing here handles an Order moving to a different Customer, or an
+# OrderDetail moving to a different Order — both old and new parents need their
+# totals recalculated, and this code only ever touches the current row's parent.
+# This is the same re-parenting class of bug documented in
+# logic/procedural/declarative-vs-procedural-comparison.md.
+#
+# The performance issue: calculate_customer_balance() and calculate_order_amount_total()
+# re-query and recompute every unshipped order's total from its line items on every call —
+# an N+1 query pattern with no caching, even when nothing relevant has changed.
+#
 # Note: this is a pre-built reference copy, kept here for browsing. Generating
 # a project from the prompt yourself will produce an equivalent file, possibly
 # under a different project name.
