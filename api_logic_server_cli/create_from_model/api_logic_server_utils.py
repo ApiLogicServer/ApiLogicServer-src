@@ -217,7 +217,11 @@ def copy_md(project, from_doc_file: str, to_project_file: str = "README.md"):
                     match = re.search(r'title\s*=\s*["\']([^"\']+)["\']', each_line)
                     if match:
                         title = match.group(1)
-                    readme_lines_md.append('**' + title + ':**\n')
+                        label_line = '**' + title + ':**\n'
+                        # skip if the author already hand-wrote this exact label just above the fence
+                        prior_non_blank = next((line for line in reversed(readme_lines_md) if line.strip()), '')
+                        if prior_non_blank.strip() != label_line.strip():
+                            readme_lines_md.append(label_line)
                 readme_lines_md.append(each_line)
         with open(str(to_file), "w", encoding='utf-8') as readme_file:
             readme_file.writelines(readme_lines_md)
