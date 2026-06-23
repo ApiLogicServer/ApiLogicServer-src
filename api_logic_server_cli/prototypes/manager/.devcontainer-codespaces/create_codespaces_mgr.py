@@ -74,7 +74,7 @@ SYNC_PATHS = [
 ]
 
 COPY_EXCLUDES = {
-    ".git", "venv", ".venv", "__pycache__", "logs", ".DS_Store", ".devcontainer",
+    ".git", "venv", ".venv", "__pycache__", "logs", ".DS_Store", ".devcontainer", ".obsidian",
 }
 
 # Curated files that live inside an otherwise-excluded directory (e.g. logs/) — copied
@@ -255,10 +255,11 @@ def main():
     readme = readme.lstrip("\n")
     print("  ✅ Front matter and style block stripped")
 
-    # Inject Codespaces + browser notes inside "See it work" (idempotent)
-    # Match on the stable "<summary>⚡ See it work" prefix — the text after the
-    # em-dash is gold-source copy (org_git/Docs) and changes independently of this script.
-    summary_re = re.compile(r"<summary>⚡ See it work[^<]*</summary>")
+    # Inject Codespaces + browser notes inside the first "see it work" collapsible
+    # section (idempotent). Match on the lightning-bolt-prefixed <summary> — the
+    # exact wording after ⚡ is gold-source copy (org_git/Docs) and changes
+    # independently of this script, so anchor on the emoji prefix, not the wording.
+    summary_re = re.compile(r"<summary>⚡[^<]*</summary>")
     if "Use Chrome or Edge" not in readme:
         cs_note = (
             "\n&nbsp;\n\n"
@@ -269,7 +270,7 @@ def main():
         match = summary_re.search(readme)
         if not match:
             raise SystemExit(
-                "ERROR: no '<summary>⚡ See it work...</summary>' line found in README.md — "
+                "ERROR: no '<summary>⚡...</summary>' line found in README.md — "
                 "update this script's summary_re pattern to match the current heading."
             )
         readme = readme[:match.end()] + cs_note + readme[match.end():]
