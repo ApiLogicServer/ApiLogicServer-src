@@ -77,6 +77,7 @@ if [ $# -eq 0 ]
     fi
     
     git clone https://github.com/ApiLogicServer/ApiLogicServer-src.git
+    git clone https://github.com/valhuber/LogicBank
     
     cd ApiLogicServer-src
     echo "\ncopying $sra --> ApiLogicServer"
