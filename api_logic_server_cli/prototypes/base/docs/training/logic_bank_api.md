@@ -1,8 +1,13 @@
 ---
 # LogicBank API Reference
-# Version: 1.0.16
-# Last Updated: April 27, 2026
+# Version: 1.0.17
+# Last Updated: June 27, 2026
 # Description: The Logic Rosetta Stone: simplified API for creating declarative business logic rules
+# Changelog:
+#   1.0.17 (Jun 2026) - Documented child_role_name on Rule.sum/count/copy (LogicBank 1.31.04) -
+#     required to disambiguate 2+ relationships between the same parent/child classes. See
+#     "CRITICAL — child_role_name REQUIRED..." section and LogicBank's
+#     system/LogicBank-Internal-Dev/multi-relationship-bug.md for the underlying fix.
 ---
 
 =============================================================================
@@ -284,7 +289,7 @@ class Rule:
     """ Invoke these functions to declare rules """
 
     @staticmethod
-    def sum(derive: Column, as_sum_of: any, where: any = None, insert_parent: bool=False):
+    def sum(derive: Column, as_sum_of: any, where: any = None, child_role_name: str = "", insert_parent: bool=False):
         """
         Derive parent column as sum of designated child column, optional where
 
@@ -299,13 +304,14 @@ class Rule:
             derive: name of parent <class.attribute> being derived
             as_sum_of: name of child <class.attribute> being summed
             where: optional where clause, designates which child rows are summed.  All referenced columns must be part of the data model - create columns in the data model as required.  Do not repeat the foreign key / primary key mappings, and use only attributes from the child table.
+            child_role_name: REQUIRED if the parent and child classes are related by 2+ relationships (e.g. Employee.works_for_dept and Employee.on_loan_dept, both pointing at Department) - names the SQLAlchemy relationship attribute on the CHILD class (e.g. "works_for_dept") that this sum should follow. Omit only when there is exactly one relationship between the two classes - LogicBank raises "Ambiguous Relationship" if omitted and 2+ exist.
             insert_parent: create parent if it does not exist.  Do not use unless directly requested.
         """
-        return Sum(derive, as_sum_of, where, insert_parent)
+        return Sum(derive, as_sum_of, where, child_role_name, insert_parent)
 
 
     @staticmethod
-    def count(derive: Column, as_count_of: object, where: any = None, str = "", insert_parent: bool=False):
+    def count(derive: Column, as_count_of: object, where: any = None, child_role_name: str = "", insert_parent: bool=False):
         """
         Derive parent column as count of designated child rows
 
@@ -320,9 +326,10 @@ class Rule:
             derive: name of parent <class.attribute> being derived
             as_count_of: name of child <class> being counted
             where: optional where clause, designates which child rows are counted.  All referenced columns must be part of the data model - create columns in the data model as required.  Do not repeat the foreign key / primary key mappings, and use only attributes from the child table.
+            child_role_name: REQUIRED if the parent and child classes are related by 2+ relationships - see Rule.sum's child_role_name for the full explanation; same disambiguation rule applies here.
             insert_parent: create parent if it does not exist.  Do not use unless directly requested.
         """
-        return Count(derive, as_count_of, where, insert_parent)
+        return Count(derive, as_count_of, where, child_role_name, insert_parent)
 
 
     @staticmethod
@@ -380,7 +387,7 @@ class Rule:
 
 
     @staticmethod
-    def copy(derive: Column, from_parent: any):
+    def copy(derive: Column, from_parent: any, child_role_name: str = ""):
         """
         Copy declares child column copied from parent column.
 
@@ -393,8 +400,9 @@ class Rule:
         Args:
             derive: <class.attribute> being copied into
             from_parent: <parent-class.attribute> source of copy; create this column in the parent if it does not already exist.
+            child_role_name: REQUIRED if the parent and child classes are related by 2+ relationships - names the SQLAlchemy relationship attribute on the CHILD class to follow. See Rule.sum's child_role_name for the full explanation.
         """
-        return Copy(derive=derive, from_parent=from_parent)
+        return Copy(derive=derive, from_parent=from_parent, child_role_name=child_role_name)
 
 
     @staticmethod
@@ -710,6 +718,30 @@ CRITICAL — NEVER derive a foreign key column with Rule.formula (or Rule.copy):
         def set_product_id(row, old_row, logic_row):
             row.product_id = ...   # safe: relationships not yet resolved
         Rule.early_row_event(on_class=models.Item, calling=set_product_id)
+
+CRITICAL — child_role_name REQUIRED when 2+ relationships connect the same parent/child classes:
+    If a child class has more than one relationship to the same parent class (e.g. an Employee
+    that can be "assigned to" one Department and "on loan to" another), Rule.sum/count/copy
+    cannot infer which relationship to follow — you MUST pass child_role_name to disambiguate.
+    Omitting it raises "Ambiguous Relationship" at rule-declaration time (fail-fast, not silent).
+
+    child_role_name is the SQLAlchemy relationship attribute name on the CHILD class (not the
+    parent), e.g. "works_for_dept" or "on_loan_dept" — whatever the relationship() is named in
+    the child's model class.
+
+    Example — Department <-> Employee via two distinct relationships:
+        Prompt:
+            Employee.works_for_dept and Employee.on_loan_dept both reference Department.
+            Department.works_for_salary_total = sum of Employee.salary where works_for_dept.
+            Department.on_loan_salary_total = sum of Employee.salary where on_loan_dept.
+        Response:
+            Rule.sum(derive=Department.works_for_salary_total, as_sum_of=Employee.salary,
+                     child_role_name="works_for_dept")
+            Rule.sum(derive=Department.on_loan_salary_total, as_sum_of=Employee.salary,
+                     child_role_name="on_loan_dept")
+
+    Same parameter, same rule, on Rule.count and Rule.copy. Single-relationship cases (the
+    overwhelming majority) omit child_role_name entirely — it is only needed when ambiguity exists.
 
 Formulas can use Python conditions:
     Prompt: Item amount is price * quantity, with a 10% discount for gold products

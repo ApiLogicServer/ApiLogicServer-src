@@ -6,9 +6,11 @@ from logic_bank.logic_bank import Rule
 from database import models
 import logging
 
+import hashlib
 import sqlalchemy
 from sqlalchemy import inspect
 from sqlalchemy import event
+from sqlalchemy.exc import NoInspectionAvailable
 from safrs import SAFRSBase
 
 from safrs.util import classproperty
@@ -32,6 +34,15 @@ def opt_locking_setup(session):
         checksum_value = checksum_row(instance)
         logger.debug(f'checksum_value: {checksum_value}')
         setattr(instance, "_check_sum_property", checksum_value)
+
+    @event.listens_for(session, 'after_flush')
+    def receive_after_flush(session, flush_context):
+        "stamp CheckSum on newly inserted rows (symmetry with the get path - else POST returns null CheckSum)"
+        for instance in session.new:
+            try:
+                setattr(instance, "_check_sum_property", checksum_row(instance))
+            except NoInspectionAvailable:
+                pass  # not a mapped SQLAlchemy instance
 
 def checksum(list_arg: list) -> str:
     """
@@ -64,9 +75,9 @@ def checksum(list_arg: list) -> str:
                     real_tuple.append(dict_hash)
                 else:
                     real_tuple.append(each_entry)
-    result = hash(tuple(real_tuple))
-    # print(f'checksum[{result}] from row: {list_arg})')
-    result = str(result)  # maxint 870744036720833075 https://stackoverflow.com/questions/47188449/json-max-int-number
+    # hash() is seed/build/platform-dependent (PYTHONHASHSEED) - not stable across processes/replicas.
+    # sha256 over the normalized repr is deterministic everywhere, and is never persisted (read-time only).
+    result = hashlib.sha256(repr(tuple(real_tuple)).encode()).hexdigest()
     return result
 
 def checksum_row(row: object) -> str:

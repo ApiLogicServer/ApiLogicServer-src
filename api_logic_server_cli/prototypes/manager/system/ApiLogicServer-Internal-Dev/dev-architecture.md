@@ -4,8 +4,10 @@ Description: Enables AI assistants to be co-designers for GenAI-Logic features
 Source: ApiLogicServer-src/prototypes/manager/system/ApiLogicServer-Internal-Dev/dev-architecture.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this to understand project structure, development workflow, and recent additions
-version: 2.10
+version: 2.12
 changelog:
+  - 2.12 (Jun 2026) - LogicBank 1.31.04 multi-relationship fix: child_role_name now works correctly on Rule.sum/count/copy (and link()) when 2+ relationships connect the same parent/child classes. Documented in prototypes/base/docs/training/logic_bank_api.md (user-facing CE) - was previously undocumented even though the parameter existed. See "Multi-Relationship Fix (LogicBank)" section
+  - 2.11 (Jun 2026) - opt_locking.py: fixed non-deterministic hash() checksum (sha256) and null S_CheckSum on POST (after_flush stamping) - see "Optimistic Locking Fixes" section
   - 2.10 (Jun 2026) - Noted LogicBank's own internals-doc system (CLAUDE.md + system/LogicBank-Internal-Dev/dev-architecture.md, bug investigation docs, release-management.md) now exists in the org_git/LogicBank sibling clone, and cross-references this file + prototypes/base CE
   - 2.9 (Jun 2026) - Documented org_git/ sibling-clone convention; install-ApiLogicServer-dev.sh now also clones LogicBank (rule engine source) as a sibling for dev visibility — not yet wired to pip -e or venv override
   - 2.8 (Jun 2026) - Flagged base-vs-basic_demo CE drift incident: write/test new CE in base first, basic_demo is a copy not the source
@@ -1124,6 +1126,46 @@ venv/bin/pip-audit 2>&1 | tee pip-audit-report.txt
 **Last scan (2026-05-26):** 5 vulnerabilities in 2 packages:
 - `pip 25.1.1` — 4 CVEs (CVE-2025-8869, CVE-2026-1703, CVE-2026-3219, CVE-2026-6357); fix: `pip 26.1`
 - `python-dotenv 0.15.0` — CVE-2026-28684; fixed → bumped to `1.2.2` in all requirements files
+
+&nbsp;
+
+### Optimistic Locking Fixes (Jun 2026) — GitHub #113, #114
+
+**Gold source:** `org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/base/api/system/opt_locking/opt_locking.py`
+
+Two bugs reported against the same ~30-line block, fixed together:
+
+**#113 — non-deterministic checksum.** `checksum()` used Python's built-in `hash()`, which is seed/build/platform-dependent for `str`/`bytes` (`PYTHONHASHSEED`). Different processes (replicas, restarts, mixed-arch nodes, Python minor-version bumps) compute different checksums for the same row → spurious `409 Sorry, row altered by another user` on valid updates. The repo's `PYTHONHASHSEED=0` pin in `run.sh`/`launch.json` only covers entrypoints ALS controls — lost under gunicorn/uvicorn/k8s/custom Docker `CMD`.
+- **Fix:** `checksum()` now uses `hashlib.sha256(repr(tuple(real_tuple)).encode()).hexdigest()` — deterministic everywhere, no `PYTHONHASHSEED` dependency. No migration: the checksum is computed at read-time only, never persisted.
+
+**#114 — `S_CheckSum` null on POST (insert) responses.** The checksum is stamped exclusively by a `loaded_as_persistent` SQLAlchemy event listener, which structurally cannot fire for a row created in the same request (SAFRS's POST response re-fetch hits a row already in the session's identity map — it triggers `refresh`, not `loaded_as_persistent`). Result: `S_CheckSum` is `null` in the `201` body, while a subsequent `GET` on the same row returns a populated checksum. Under `opt_locking=required`, a client that echoes the POST response on its first `PATCH`/`DELETE` gets a spurious lock failure — it must round-trip an extra `GET` first.
+- **Fix:** Added an `after_flush` listener inside `opt_locking_setup()` that stamps `_check_sum_property` on every instance in `session.new`, mirroring the existing read-time listener. `_check_sum_property` is an unmapped Python attribute (not a column), so it survives the subsequent commit-expiration and is present when SAFRS re-serializes the row. Guarded with `except NoInspectionAvailable` for non-mapped objects that might land in `session.new`.
+- **Known minor inefficiency (not a bug):** `after_flush` fires on every flush cycle within a transaction (e.g. LogicBank multi-pass derivation), so a still-new row's checksum gets recomputed redundantly across cycles. Functionally correct — the final pre-commit flush sees fully-derived values — just extra work. Not worth optimizing unless profiling shows it matters.
+
+**Propagation:** Fixed in `prototypes/base/` gold source only. Next BLT run reinstalls to venv and regenerates all sample/test projects with the fix automatically — no other files to touch.
+
+&nbsp;
+
+### Multi-Relationship Fix (LogicBank) — Jun 2026
+
+**Gold source:** `org_git/LogicBank` (sibling clone) — fix landed in commit `92954a7` (1.31.03) and `38f2287` (1.31.04, cleanup). Pin already bumped: `requirements.txt`, `pyproject.toml` → `LogicBank>=1.31.04`. `prototypes/base/venv_setup/requirements-no-cli.txt` still pins `>=1.30.01` — bump this too on next dependency pass (same pattern as the pip-audit fixes above: grep + sed across all `requirements-no-cli.txt` files).
+
+**Bug:** `Rule.sum` (and related: `Rule.count`, `Rule.copy`, `Rule.formula` cascade, `LogicRow.link()`) could silently pick the wrong relationship — or crash — when a child class has 2+ relationships to the same parent class (e.g. `Employee.works_for_dept` and `Employee.on_loan_dept`, both → `Department`). Root causes (multiple, found incrementally — see LogicBank's own `system/LogicBank-Internal-Dev/multi-relationship-bug.md`, v4.1, GitHub issue #20, for the full investigation trail):
+- `Sum` never honored an explicit `child_role_name` (only `Count` did) — always fell through to relationship auto-detection, which raised "Ambiguous Relationship" or silently matched the wrong one.
+- `get_child_role_name()` only matched legacy `backref`, not SQLAlchemy 2.0 `back_populates`/`key`.
+- A null-but-legitimately-optional parent FK (e.g. no `on_loan` assignment) crashed the aggregate adjustor instead of being treated as "nothing to adjust."
+- `get_referring_children()` reset its accumulator *inside* the per-relationship loop, so only the last-declared `Rule.formula` role ever cascaded correctly — the other was silently dead.
+- `Rule.copy` and `LogicRow.link()` had no `child_role_name` parameter at all — no way to disambiguate.
+
+**Fix:** All of the above now correctly honor `child_role_name` (added to `Copy`/`link()`, fixed precedence in `Sum`), match `back_populates`/`key`, distinguish "FK validly null" from "FK references a missing parent," and reset the referring-children accumulator once per role, not per loop iteration. New regression suite: `examples/multi_relns/` in LogicBank (21 tests, dedicated Department/Employee model with two distinct relationships).
+
+**CE gap closed:** `child_role_name` existed on `Rule.sum`/`count` for a long time but was **never documented** in the user-facing Rosetta Stone (`prototypes/base/docs/training/logic_bank_api.md`) — an AI assistant translating an NL prompt with multiple relationships between the same two classes had no CE guidance to reach for it, and would hit "Ambiguous Relationship" with no idea why. Added:
+- `child_role_name` parameter docs on `Rule.sum`, `Rule.count`, `Rule.copy` docstrings
+- A new "CRITICAL — child_role_name REQUIRED..." callout with a worked Department/Employee example (mirrors the LogicBank test fixture), placed after the FK-derivation anti-pattern section
+
+**Propagation:** `logic_bank_api.md` is universal CE (same file for all created projects) — already in `prototypes/base/docs/training/`, no further propagation needed beyond the usual BLT reinstall. Bump the stray `requirements-no-cli.txt` pin (see above) on the next dependency-sync pass.
+
+**Sample/test code for this pattern:** `org_git/LogicBank/examples/multi_relns/` — dedicated Department/Employee fixture with two distinct relationships (`works_for_dept`, `on_loan_dept`), exercising `Rule.sum`/`count`/`copy`/`formula`/`link()` disambiguation across 21 tests (`tests/test_sum_count.py`, `test_copy_ambiguous.py`, `test_formula_cascade.py`, `test_null_optional_fk.py`, `test_reparent.py`, `test_delete.py`, `test_link_disambiguation.py`). `logic/rules_bank.py` is the working declaration this CE example was distilled from — read it directly for the full picture (live-formula cascade on both roles, copy with disambiguator) when the doc's single worked example isn't enough.
 
 &nbsp;
 
