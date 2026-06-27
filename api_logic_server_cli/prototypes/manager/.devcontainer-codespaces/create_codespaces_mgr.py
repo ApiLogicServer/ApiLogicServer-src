@@ -25,6 +25,13 @@ What the sync does:
        - .vscode/settings.json -> python.defaultInterpreterPath -> /usr/local/bin/python
        - .vscode/launch.json  -> replaced with Codespaces-trimmed 2-config version
        - samples/*/. vscode/settings.json -> same interpreter patch
+       - broken-link check: every [text](link) in synced *.md is verified against the
+         just-synced target tree (i.e. what a Codespaces user actually has, not
+         local-mgr's own samples/, which may differ — see local-mgr-is-user-truth).
+         A bare https://apilogicserver.github.io/Docs/... link is the accepted fallback
+         for samples not pre-built into cs-mgr, and is checked live (HEAD request).
+         Anything resolving to neither aborts the push (--push/--release only; plain
+         sync-no-flag mode does not check, since nothing is being published).
 
 --release reads the product version from this sibling file (under org_git/, alongside
 codespaces_mgr) rather than from any README front matter, since that's the file Val
@@ -49,6 +56,8 @@ import sys
 import re
 import shutil
 import subprocess
+import urllib.request
+import urllib.error
 from pathlib import Path
 
 # ── paths ────────────────────────────────────────────────────────────────────
@@ -142,6 +151,63 @@ def run_git(args, cwd: Path, check=True):
         print("    " + result.stderr.strip().replace("\n", "\n    "))
         raise SystemExit(f"ERROR: git {' '.join(args)} failed (exit {result.returncode})")
     return result
+
+
+MD_LINK_RE = re.compile(r'\[[^\]]*\]\(([^)\s]+)\)')
+DOCS_URL_PREFIX = "https://apilogicserver.github.io/Docs/"
+
+
+def _url_exists(url: str) -> bool:
+    req = urllib.request.Request(url, method="HEAD", headers={"User-Agent": "create_codespaces_mgr.py"})
+    try:
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            return resp.status < 400
+    except urllib.error.HTTPError as e:
+        return e.code < 400
+    except Exception:
+        return False
+
+
+def check_broken_links(target: Path) -> list:
+    """Scan target/README.md for [text](link) targets and verify each one actually
+    resolves - against the filesystem for local/relative links, or live (HEAD
+    request) for https://apilogicserver.github.io/Docs/... links.
+
+    `target` is the just-synced codespaces_mgr checkout - i.e. what a Codespaces user
+    actually has (see local-mgr-is-user-truth memory: this is NOT the same tree as
+    local-mgr's own samples/, which can differ - that mismatch is exactly what caused
+    the bug this check exists to catch).
+
+    Excluded as out of scope (a separate, pre-existing convention, not a same-repo
+    relative link at all - resolved by the mkdocs site at build time, never meant to
+    resolve on a filesystem): bare page references with no file extension, e.g.
+    "Logic#declaring-rules" or "../Integration-MCP/".
+
+    Returns a list of (file, link) tuples for anything that fails to resolve.
+    """
+    broken = []
+    readme = target / "README.md"
+    if not readme.exists():
+        return broken
+    text = readme.read_text(errors="ignore")
+    for link in MD_LINK_RE.findall(text):
+        if link.startswith(("#", "mailto:")):
+            continue
+        if link.startswith(DOCS_URL_PREFIX):
+            if not _url_exists(link):
+                broken.append((readme, link))
+            continue
+        if link.startswith(("http://", "https://")):
+            continue  # other external links (GitHub images, raw URLs, etc.) - not this check's job
+        link_path = link.split("#")[0]
+        if not link_path:
+            continue  # pure same-page anchor, e.g. "#section"
+        if "." not in Path(link_path).name and not link_path.endswith("/"):
+            continue  # bare mkdocs page reference (no extension) - resolved by the site, not the filesystem
+        local_target = (readme.parent / link_path).resolve()
+        if not local_target.exists():
+            broken.append((readme, link))
+    return broken
 
 
 def patch_interpreter(path: Path):
@@ -304,6 +370,20 @@ def main():
         print("Done. Review changes in target, then commit and push:")
         print(f"  cd {target} && git status")
         return
+
+    # ── Step 2h: broken-link check (local first, Docs URL fallback) ──────────
+    print()
+    print("Step 2h: Checking for broken links (local samples/, else apilogicserver.github.io/Docs/)...")
+    broken = check_broken_links(target)
+    if broken:
+        print(f"  ❌ {len(broken)} broken link(s) found:")
+        for md_file, link in broken:
+            print(f"     {md_file.relative_to(target)}: {link}")
+        raise SystemExit(
+            "ERROR: broken links found in synced markdown - fix in local-mgr (or its "
+            "gold Docs source) before pushing to cs-mgr. See list above."
+        )
+    print("  ✅ no broken links")
 
     # ── Step 3: commit + push to dev ─────────────────────────────────────────
     print()

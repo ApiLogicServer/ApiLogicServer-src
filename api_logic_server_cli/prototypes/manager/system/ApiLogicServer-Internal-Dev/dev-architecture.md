@@ -4,8 +4,9 @@ Description: Enables AI assistants to be co-designers for GenAI-Logic features
 Source: ApiLogicServer-src/prototypes/manager/system/ApiLogicServer-Internal-Dev/dev-architecture.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this to understand project structure, development workflow, and recent additions
-version: 2.12
+version: 2.13
 changelog:
+  - 2.13 (Jun 2026) - Added README.md broken-link check to create_codespaces_mgr.py (Step 2h, gates --push/--release). First 2 attempts were unusable (236, then still-noisy false positives) until scope was narrowed to README.md only - see "README Broken-Link Check" section for the false-positive traps and what actually works
   - 2.12 (Jun 2026) - LogicBank 1.31.04 multi-relationship fix: child_role_name now works correctly on Rule.sum/count/copy (and link()) when 2+ relationships connect the same parent/child classes. Documented in prototypes/base/docs/training/logic_bank_api.md (user-facing CE) - was previously undocumented even though the parameter existed. See "Multi-Relationship Fix (LogicBank)" section
   - 2.11 (Jun 2026) - opt_locking.py: fixed non-deterministic hash() checksum (sha256) and null S_CheckSum on POST (after_flush stamping) - see "Optimistic Locking Fixes" section
   - 2.10 (Jun 2026) - Noted LogicBank's own internals-doc system (CLAUDE.md + system/LogicBank-Internal-Dev/dev-architecture.md, bug investigation docs, release-management.md) now exists in the org_git/LogicBank sibling clone, and cross-references this file + prototypes/base CE
@@ -1166,6 +1167,33 @@ Two bugs reported against the same ~30-line block, fixed together:
 **Propagation:** `logic_bank_api.md` is universal CE (same file for all created projects) — already in `prototypes/base/docs/training/`, no further propagation needed beyond the usual BLT reinstall. Bump the stray `requirements-no-cli.txt` pin (see above) on the next dependency-sync pass.
 
 **Sample/test code for this pattern:** `org_git/LogicBank/examples/multi_relns/` — dedicated Department/Employee fixture with two distinct relationships (`works_for_dept`, `on_loan_dept`), exercising `Rule.sum`/`count`/`copy`/`formula`/`link()` disambiguation across 21 tests (`tests/test_sum_count.py`, `test_copy_ambiguous.py`, `test_formula_cascade.py`, `test_null_optional_fk.py`, `test_reparent.py`, `test_delete.py`, `test_link_disambiguation.py`). `logic/rules_bank.py` is the working declaration this CE example was distilled from — read it directly for the full picture (live-formula cascade on both roles, copy with disambiguator) when the doc's single worked example isn't enough.
+
+&nbsp;
+
+---
+
+### README Broken-Link Check (create_codespaces_mgr.py) — Jun 2026
+
+**Gold source:** `org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/manager/.devcontainer-codespaces/create_codespaces_mgr.py` — new `check_broken_links()`, gates Step 3 (commit+push) when run with `--push`/`--release`. Plain sync-only mode (no flag) does not check, since nothing is being published.
+
+**Why this exists:** a README.md link review (replacing TODO placeholders with real paths) kept producing links that looked plausible but pointed at files that don't exist in **this** Manager (`build_and_test/genai-logic`, the BLT-built "local mgr") — wrong sample directory name, missing `.md` extension, stale Docs site path. Manual review missed several; a mechanical check catches all of them.
+
+**Critical scoping lesson — two failed attempts before this worked:**
+1. **First attempt:** scanned every `*.md` under the synced target, flagged any non-`samples/`-prefixed relative link as out of scope. Wrong on both axes — excluded genuine local links elsewhere in README.md, and the "out of scope" carve-out was supposed to be for mkdocs bare-page references (`Logic#anchor`), not all non-`samples/` paths.
+2. **Second attempt:** scanned every `*.md` in the **entire local-mgr tree** (`target.rglob("*.md")`). Produced 236 hits — almost all false positives from `tests/`, `dockers/`, `system/` content: directories `create_codespaces_mgr.py` never even syncs to cs-mgr (see `SYNC_PATHS`/`COPY_EXCLUDES` at the top of that file), plus genuinely pre-existing, out-of-scope gaps (ungenerated Behave reports, images not yet created, mkdocs bare-page anchors like `../Integration-MCP/`).
+3. **What actually works:** scope the check to **`README.md` only** — that's the actual ask ("check this readme"), not a repo-wide link audit. Against just README.md the same logic produces 5-6 genuine hits, zero noise.
+
+**What the check does (current, working version):** for every `[text](link)` in `README.md`:
+- `https://apilogicserver.github.io/Docs/...` → live HEAD request; 404 = broken.
+- starts with `http://`/`https://` (anything else) → skipped, not this check's job (GitHub image URLs, etc.).
+- bare page reference with no file extension and no trailing `/` (e.g. `Logic#declaring-rules`) → skipped; mkdocs resolves these at site-build time, they were never meant to resolve on a filesystem.
+- everything else (`samples/...`, `genai_demo_fixup_required/...`, etc.) → must exist relative to README.md's own directory, or it's broken.
+
+**One known non-fixable false positive:** `genai_demo_fixup_required/docs/fixup/` (README.md line ~628) — this is a forward reference to output the *reader* generates by running an earlier command in the same walkthrough (`genai-logic genai --repaired-response=...`), not a pre-built sample. The checker can't distinguish "doesn't exist yet because you haven't run the command" from "broken" — left as a known, accepted gap rather than chased further.
+
+**Recurring fix pattern found while clearing real hits:** README links sometimes point at `samples/prompts/*.prompt` (missing the `.md` LogicBank/ApiLogicServer-src actually writes — `*.prompt.md`), or at an older/renamed sample directory (`customs_demo` → `customs_demo_clvs`, `readme.md` → `readme_reqmts.md`). Don't assume a broken `samples/...` link means the sample is missing — check for a name-drift sibling first.
+
+**See also:** [[project_local_mgr_is_user_truth]] memory — verify against `build_and_test/genai-logic`, not `clean/ApiLogicServer` (a different, stale BLT output), when checking "does this file exist for users."
 
 &nbsp;
 

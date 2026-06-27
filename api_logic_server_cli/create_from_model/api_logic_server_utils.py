@@ -199,16 +199,29 @@ def copy_md(project, from_doc_file: str, to_project_file: str = "README.md"):
                     if is_exception:
                         pass
                     else:
-                        # replace (<name>.md) with (https://apilogicserver.github.io/Docs/<name>)
-                        each_line = re.sub(
-                            r'\(([^)]+\.md)\)',
-                            r'(https://apilogicserver.github.io/Docs/\1)',
-                            each_line
-                        )
-                        if 'copilot' in each_line or 'Copilot' in each_line:  
-                            pass
-                        else:
-                            each_line = each_line.replace('.md', '')  # hmm... todo: find out why this exists
+                        # replace (<name>.md) with (https://apilogicserver.github.io/Docs/<name>), and
+                        # (for non-copilot lines) drop the now-redundant '.md' from the visible [label] -
+                        # but leave samples/...md links completely alone: those are local-relative paths
+                        # into the Manager's own pre-built samples/ tree, not Docs site pages. Without
+                        # this guard, every README link to a pre-built sample readme (e.g.
+                        # samples/basic_demo_eai/readme.md) gets silently rewritten to a nonexistent
+                        # Docs URL on every Manager creation/refresh.
+                        keep_md_label = 'copilot' in each_line or 'Copilot' in each_line
+                        def _md_link_sub(m):
+                            target = m.group(1)
+                            if target.startswith('samples/'):
+                                return m.group(0)  # leave [label](samples/...md) untouched, label and all
+                            new_target = f'https://apilogicserver.github.io/Docs/{target}'
+                            return f'({new_target})'
+                        each_line = re.sub(r'\(([^)]+\.md)\)', _md_link_sub, each_line)
+                        if not keep_md_label:
+                            # strip '.md' from labels/text outside of samples/...md targets (hmm...
+                            # todo: find out why this exists) - segment on samples/...md spans so the
+                            # blanket strip can't reach inside a path we're protecting above
+                            parts = re.split(r'(samples/[^\s)]*\.md)', each_line)
+                            for i in range(0, len(parts), 2):  # even indices = outside protected spans
+                                parts[i] = parts[i].replace('.md', '')
+                            each_line = ''.join(parts)
                         pass
                 if 'process_code_block_titles' in each_line:  # update front matter to get this
                     do_process_code_block_titles = True
