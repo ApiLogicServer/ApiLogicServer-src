@@ -156,6 +156,15 @@ def run_git(args, cwd: Path, check=True):
 MD_LINK_RE = re.compile(r'\[[^\]]*\]\(([^)\s]+)\)')
 DOCS_URL_PREFIX = "https://apilogicserver.github.io/Docs/"
 
+# Links that are intentionally not present at sync time - not bugs. Currently just the
+# Executable Requirements walkthrough's forward-reference to output the *reader* generates
+# by running an earlier command in the same section (genai-logic genai --repaired-response=...),
+# not a pre-built sample. Add new entries here only after confirming the same way (it doesn't
+# exist because the reader hasn't run the command yet, not because the link is wrong).
+ACCEPTED_BROKEN_LINKS = {
+    "genai_demo_fixup_required/docs/fixup/",
+}
+
 
 def _url_exists(url: str) -> bool:
     req = urllib.request.Request(url, method="HEAD", headers={"User-Agent": "create_codespaces_mgr.py"})
@@ -191,6 +200,8 @@ def check_broken_links(target: Path) -> list:
         return broken
     text = readme.read_text(errors="ignore")
     for link in MD_LINK_RE.findall(text):
+        if link in ACCEPTED_BROKEN_LINKS:
+            continue
         if link.startswith(("#", "mailto:")):
             continue
         if link.startswith(DOCS_URL_PREFIX):

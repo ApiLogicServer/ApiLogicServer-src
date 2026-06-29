@@ -1107,6 +1107,51 @@ Create a fully functional application and database
      instead of inventing a new standalone column. Scan `models.py` for existing
      `Sys*`/infrastructure tables before designing new ones.
 
+   **🚨 Per-clause FK inventory — a multi-condition Scenario hides one lookup per clause:**
+   A Gherkin `Scenario` with several `Given`/`And` lines is not one signal to check once —
+   it is N separate signals, one per line. Walk every `Given`/`And` clause individually and
+   ask "does this clause name a lookup entity?" — do not stop after the first or
+   most-obviously-phrased lookup clause and assume the rest are plain conditions.
+
+   Lookup-entity phrasing is not limited to "lookup using..." — these all name the same
+   pattern (a transactional row classified by membership in some reference table):
+   - "...using first ten digits of the harmonized tariff number" (explicit "lookup")
+   - "...released at a CBSA-**designated** customs office" (adjective + named entity = lookup, no FK column exists yet)
+   - "...by an **authorized** CLVS courier" (adjective + role = may be a lookup OR a fixed code list — check if a table already models it)
+
+   For each clause that names a lookup entity, confirm there is (or add) an integer FK column
+   on the transactional table pointing at that lookup's table — same check as the FK inventory
+   table below, just applied per-clause instead of once per requirement.
+
+   **If the database already exists** (rebuild-from-existing-db, not System Creation Services
+   from scratch), also check whether the lookup table is already present and seeded —
+   `grep` `models.py` and the live schema for a plausible table name before concluding "needs
+   new schema." A lookup table can be fully populated with real data and still have **zero**
+   transactional tables pointing an FK at it — its presence is not evidence the FK was wired.
+
+   **Real failure case:** A 5-condition CLVS eligibility Scenario had Check 4 ("lookup using
+   first ten digits...") correctly given an FK (`controlled_regulated_goods_id`), while Check 5
+   ("released at a CBSA-designated customs office") was implemented as a comment-only
+   placeholder — even though the `customs_office` lookup table existed in the database with
+   104 seeded rows, and `clvs_release` was the exact flag the clause needed. The FK inventory
+   ran once, against the most obviously-phrased clause, and never revisited the others.
+
+   **🚨 Catching the clause is not the same as wiring it correctly — the FK is still the
+   default, even when a snapshot value is what the rule actually needs.** A second
+   implementation of the same Check 5 clause *did* catch the lookup (per-clause scan
+   worked), but then added a denormalized snapshot column (`Shipment.clvs_release`,
+   populated via `early_row_event` querying `CustomsOffice` and copying the flag) instead
+   of the integer FK (`customs_office_id`) — reasoning that the eligibility flag shouldn't
+   retroactively change if the office's CLVS status changes later. That snapshot-vs-live
+   reasoning is legitimate (see the Rule.copy-vs-Rule.formula guidance in
+   `logic_bank_api.md`), but it answers the wrong question: snapshot-vs-live is about how
+   the *value* propagates, not about whether the *FK* exists. Skipping the FK gives up the
+   navigable relationship to `CustomsOffice` (which office was this? — no longer
+   answerable from `Shipment` alone) for no benefit, since the FK and the snapshot column
+   can coexist. **Add the FK regardless of which snapshot/live choice you make for the
+   value.** If there is a genuine reason to skip the FK, that is an ad-lib — write it in
+   `ad-libs.md` explicitly, do not just add the snapshot column silently.
+
    **Produce one complete DDL change list covering ALL steps.**
    Run DDL + `rebuild-from-database` ONCE before writing any logic or mapper files.
    ❌ NEVER discover a missing column while writing a logic file — that causes an error loop.

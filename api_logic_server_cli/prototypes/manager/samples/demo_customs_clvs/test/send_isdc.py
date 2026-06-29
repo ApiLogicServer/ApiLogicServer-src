@@ -1,57 +1,37 @@
 """
-Send one CIMCorp shipment XML to the isdc Kafka topic (live Kafka test).
+Send a CIMCorp ISDC XML message to the Kafka 'isdc' topic.
+Used for Step 4 (Live Kafka end-to-end test).
 
-Requires Kafka running and KAFKA_SERVER set in config/default.env.
-Run from project root: python test/send_isdc.py
-
-Uses confluent_kafka.Producer directly (NOT docker exec kafka-console-producer
-which breaks multi-line XML by treating each line as a separate message).
+Usage (from project root, with Kafka running):
+    python test/send_isdc.py
+    python test/send_isdc.py docs/requirements/customs_demo/message_formats/MDE-CDV-LVS-1.xml
 """
+
 import os
 import sys
-from pathlib import Path
 
-PROJECT_ROOT = Path(__file__).parent.parent
-sys.path.insert(0, str(PROJECT_ROOT))
+try:
+    from confluent_kafka import Producer
+except ImportError:
+    print('ERROR: confluent_kafka not installed. Run: pip install confluent_kafka')
+    sys.exit(1)
 
+DEFAULT_FILE = 'docs/requirements/customs_demo/message_formats/MDE-CDV-HVS-WR-Rev260328.xml'
+TOPIC = 'isdc'
 
-def load_env():
-    env_path = PROJECT_ROOT / 'config' / 'default.env'
-    env = {}
-    for line in env_path.read_text().splitlines():
-        line = line.strip()
-        if line.startswith('#') or '=' not in line:
-            continue
-        key, _, val = line.partition('=')
-        env[key.strip()] = val.strip().strip('"')
-    return env
+kafka_server = os.getenv('KAFKA_SERVER', 'localhost:9092')
+xml_file = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_FILE
 
+print(f'send_isdc: broker={kafka_server}, file={xml_file}, topic={TOPIC}')
 
-def main():
-    env = load_env()
-    kafka_server = env.get('KAFKA_SERVER', 'localhost:9092')
+with open(xml_file, 'rb') as fh:
+    xml_bytes = fh.read()
 
-    try:
-        from confluent_kafka import Producer
-    except ImportError:
-        print("ERROR: confluent_kafka not installed. Run: pip install confluent-kafka")
-        sys.exit(1)
+producer = Producer({'bootstrap.servers': kafka_server})
+producer.produce(TOPIC, value=xml_bytes)
+outstanding = producer.flush(timeout=15)
+if outstanding > 0:
+    print(f'ERROR: {outstanding} messages not delivered')
+    sys.exit(1)
 
-    sample_file = PROJECT_ROOT / 'docs' / 'requirements' / 'customs_demo' / 'message_formats' / 'MDE-CDV-HVS-WR-Rev260328.xml'
-    payload = sample_file.read_text(encoding='utf-8')
-
-    producer = Producer({'bootstrap.servers': kafka_server})
-
-    def delivery_report(err, msg):
-        if err:
-            print(f"Delivery failed: {err}")
-        else:
-            print(f"Delivered to {msg.topic()} [{msg.partition()}] offset={msg.offset()}")
-
-    producer.produce('isdc', value=payload.encode('utf-8'), callback=delivery_report)
-    producer.flush(timeout=15)
-    print(f"Sent {len(payload)} bytes to topic 'isdc' via {kafka_server}")
-
-
-if __name__ == '__main__':
-    main()
+print(f'send_isdc: delivered {len(xml_bytes)} bytes to topic {TOPIC!r}')

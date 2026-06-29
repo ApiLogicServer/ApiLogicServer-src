@@ -1,69 +1,86 @@
-# Ad-Libs Report — customs_demo requirements
+# Ad-Libs Report — customs_demo
 
-Generated: 2026-05-26
+**Created:** 2026-06-29  
+**Created by:** claude-sonnet-4-6 (valjhuber@gmail.com)
+
+---
 
 ## Pre-Coding Analysis
 
-### Phase 1 — Schema Impact Assessment
+### Schema Impact Assessment
 
-EAI / Kafka consume detected → `shipment_xml` blob table needed.
+All DDL changes were applied in one batch before writing any logic or mapper files.
 
-CLVS eligibility (Step 3) requires derived columns on parent tables:
+**New tables:**
+- `shipment_xml` — EAI blob table for 2-message design
 
-| Table | Column | Rule | Reason |
-|---|---|---|---|
-| `shipment_xml` | NEW TABLE | — | EAI blob table (2-message design) |
-| `shipment` | `clvs_eligible INTEGER` | `Rule.formula` | CLVS eligibility flag |
-| `shipment` | `clvs_reason TEXT` | `Rule.formula` | Comma-delimited ineligibility reasons |
-| `shipment` | `prohibited_commodity_count INTEGER` | `Rule.count` | Count of is_prohibited=1 commodities |
-| `shipment` | `controlled_item_count INTEGER` | `Rule.count` | Count of controlled/regulated commodities |
-| `shipment` | `customs_office_id INTEGER FK` | `early_row_event` | FK to customs_office for CLVS office check |
-| `shipment_commodity` | `is_prohibited INTEGER` | `Rule.formula` | 1 if controlled_regulated_goods_id IS NOT NULL |
+**New columns on existing tables:**
+- `sys_config`: `clvs_lvs_threshold REAL DEFAULT 3300.0`, `clvs_service_type_cd TEXT DEFAULT '04'`
+- `shipment`: `sys_config_id INTEGER FK`, `clvs_lvs_threshold REAL`, `clvs_service_type_cd TEXT`, `customs_office_id INTEGER FK (nullable)`, `clvs_eligible INTEGER DEFAULT 0`, `clvs_reason TEXT DEFAULT ''`, `controlled_item_count INTEGER DEFAULT 0`, `prohibited_item_count INTEGER DEFAULT 0`
+- `shipment_commodity`: `is_controlled INTEGER DEFAULT 0`, `is_prohibited INTEGER DEFAULT 0`
 
-All DDL applied before any logic files were written. One rebuild-from-database run after all DDL.
+**FK inventory (Step 4b):**
+- `shipment.customs_office_id` → `customs_office(id)` — nullable (CLVS office assigned by early_row_event lookup)
+- `shipment.sys_config_id` → `sys_config(id)` — for Rule.copy of regulatory constants
 
-### Phase 2 — CE / Pattern Assessment
+### EAI Pattern Assessment
 
-**EAI Consume (Step 1):** Two-message design implemented per `docs/training/eai_subscribe.md`. 
-Topics: `isdc` (Consumer 1 blob) and `isdc_processed` (Consumer 2 parse+persist).
-
-**Replace-on-duplicate policy:** Required explicitly by requirements. Implemented via SQL DELETE 
-with `PRAGMA foreign_keys = ON` so DB CASCADE removes children atomically before new insert. 
-`session.merge` was explicitly avoided per CE rules.
-
-**CLVS rules (Step 3):** Used Rule.count for child-row conditions (prohibited/controlled commodities) 
-rather than session.query() inside Rule.formula. FK columns (customs_office_id, 
-controlled_regulated_goods_id) set via early_row_event — cannot use Rule.formula/copy for FKs.
+EAI Consume present → 2-message design applied:
+- Consumer 1 (`isdc`): saves raw XML blob, commits Tx 1
+- `after_flush_row_event` on `ShipmentXml`: publishes `{"id": N}` to `isdc_processed`
+- Consumer 2 (`isdc_processed`): calls `process_isdc_payload()`, marks blob `is_processed=1`, commits Tx 2
+- `/consume_debug/isdc` debug endpoint (gated by `APILOGICPROJECT_CONSUME_DEBUG=true`)
 
 ---
 
-## Execution Metrics
+## Execution Decisions (Ad-Libs)
 
-| Artifact | Status |
-|---|---|
-| `integration/IsdcMapper.py` | Created |
-| `integration/kafka/kafka_subscribe_discovery/isdc.py` | Created |
-| `logic/logic_discovery/isdc_consume.py` | Created |
-| `api/api_discovery/isdc_kafka_consume_debug.py` | Created |
-| `logic/logic_discovery/shipment_matching.py` | Created |
-| `logic/logic_discovery/clvs_eligibility.py` | Created |
-| `test/send_isdc.py` | Created |
-| `database/models.py` | Step F cascade changes applied post-rebuild |
-| `database/customize_models.py` | Added SQLite FK PRAGMA event listener |
-| `config/default.env` | KAFKA_SERVER + KAFKA_CONSUMER_GROUP uncommented |
-| `ui/admin/admin.yaml` | ShipmentXml section added |
+### 🟡 FYI — `PARTY_OID_NBR=0` normalization applied to both consignee and shipper
 
-Test gate result: **PASS** (debug + Kafka phases)
+**Why:** The XML carries `PARTY_OID_NBR=0` for both parties. If mapped to `shipment_party_oid_nbr` (the PK), both rows would collide on the same PK value 0. Normalized to `None` via `_normalize_party_oid` custom callback so DB autoincrement assigns unique PKs.
+
+### 🟡 FYI — `is_prohibited` derived from `hazardous_material_cd` field
+
+**Why:** Requirements distinguish "prohibited commodity lines" from "controlled/regulatory goods". The requirements specify `ShipmentCommodity.is_prohibited = 1` but do not specify its source. Interpreted as: prohibited if `hazardous_material_cd` is non-null/non-empty on the commodity row (mapped from XML `HAZARDOUS_MATERIAL_CD` by Tier 1 auto-map). The `ControlledRegulatedGoods` lookup sets `is_controlled` only.
+
+### 🟡 FYI — customs office matched by `PLANNED_CLEARANCE_LOCATION_CD`
+
+**Why:** Requirements say "released at a CBSA-designated customs office". The `customs_office` table uses 4-digit CBSA port codes (e.g. `0704`). The LVS test fixture has `PLANNED_CLEARANCE_LOCATION_CD=0704` which matches. The HVS fixture has `PLANNED_CLEARANCE_LOCATION_CD=MEM` (IATA 3-letter code) which does not match any CBSA code, so those shipments have `customs_office_id=NULL` and are CLVS-ineligible. This is expected behavior for high-value shipments.
+
+### 🟡 FYI — ControlledRegulatedGoods matched by HS code prefix (first 10 significant digits)
+
+**Why:** Requirements say "lookup using first ten digits of the harmonized tariff number". The XML carries `harmonized_tariff_nbr` with decimal separators (e.g. `4901990091`). The match uses `hs_code LIKE prefix%` where `prefix` is the first 10 digits after stripping periods. The sample HS code 4901990091 (books) does not match any controlled goods in the seed data (which starts at 93xx for firearms).
+
+### 🟡 FYI — `Rule.copy` used for SysConfig constants (snapshot, not live propagation)
+
+**Why:** `clvs_lvs_threshold` and `clvs_service_type_cd` are copied from `SysConfig` at insert time. If the threshold is updated in `SysConfig`, existing `Shipment` rows retain the threshold that was current at ingest time. This is the conservative default per the CE — use Rule.formula for live propagation only if explicitly required.
+
+### 🟡 FYI — Cascade settings re-applied after every `rebuild-from-database`
+
+**Why:** `genai-logic rebuild-from-database` regenerates `database/models.py` and overwrites ORM relationship `cascade` settings. The Step F cascade settings (`cascade="all, delete"` on PieceList/SpecialHandlingList/ShipmentPartyList and `passive_deletes='all'` on ShipmentCommodityList) must be re-applied each time rebuild-from-database is run. This is a known limitation of the rebuild workflow.
+
+### 🟡 FYI — `passive_deletes='all'` on ShipmentCommodityList requires PRAGMA
+
+**Why:** `ShipmentCommodity` has a composite PK where the FK is part of the PK. `cascade="all, delete"` would null the FK before delete (failing for PK columns). `passive_deletes='all'` delegates to DB-level `ON DELETE CASCADE`. SQLite only enforces FK cascades when `PRAGMA foreign_keys = ON` is set per connection — `process_isdc_payload` does this before any `session.delete(existing_shipment)`.
+
+### 🟡 FYI — session.query used instead of relationship for customs_office lookup in formulas
+
+**Why:** Per CE rule: after `early_row_event` sets `customs_office_id`, the `row.customs_office` SQLAlchemy relationship attribute may not reflect the FK just set (stale within same flush). The formula `_reasons()` function uses `session.query(CustomsOffice).get(row.customs_office_id)` instead.
 
 ---
 
-## Decisions Beyond the Spec (🔴 = review required, 🟡 = FYI)
+## Files Created
 
-| # | Severity | Decision | Reason |
-|---|---|---|---|
-| 1 | 🟡 | `is_prohibited = 1` iff `controlled_regulated_goods_id IS NOT NULL` | Requirements specify both "prohibited" and "controlled/regulatory" as separate checks, but the underlying data source is the same HS code lookup table. Treated them as equivalent: any match = prohibited for CLVS purposes. If subcategory distinction is needed, a `category` column filter on `ControlledRegulatedGood` would be required. |
-| 2 | 🟡 | `customs_office_id` set only on insert (early_row_event), not on update | For EAI consume use case, shipments are ingested once (or replaced wholesale). If `planned_clearance_location_cd` is ever updated via API, `customs_office_id` won't auto-refresh. To support updates, add an early_row_event that also fires on update. |
-| 3 | 🟡 | XML sections `mawbAsgmt`, `mawb`, `currencies`, `virtualRouteLegs`, `extraData` skipped | No matching persistent tables in the project schema (VirtualRouteLeg exists but has no FK to Shipment). Test gate counts don't include these. If they need to be persisted, add FK column to `virtual_route_leg` and extend `IsdcMapper.TAG_ROUTING`. |
-| 4 | 🔴 | `PARTY_OID_NBR=0` normalized to `None` (autoincrement PK) | Follows CE rule 4d (SOURCE-PK normalization). Both consignee and shipper carry sentinel 0 in the sample XMLs. If a legitimate non-zero value of 0 were ever used as a real PK, this would conflict. Confirm with client that 0 is always a placeholder. |
-| 5 | 🟡 | `blob_id` starts at last autoincrement value if server was previously started | The `sqlite_sequence` table tracks autoincrement state. The test gate clears domain tables but not `sqlite_sequence`. Blob IDs are non-sequential across test runs. This is cosmetic only — counts are correct. |
-| 6 | 🟡 | HS code lookup uses digit-normalized prefix match | `controlled_regulated_goods.hs_code` stored as "9301.10.00" (8 digits). Commodity HS from XML is "4901990091" (10 digits, no dots). Normalized by stripping non-digits; commodity must start with controlled HS prefix. If edge cases arise (e.g., HS code "1001" matching "10011000"), add a minimum match length guard. |
+| File | Purpose |
+|------|---------|
+| `integration/IsdcMapper.py` | CIMCorp XML → SQLAlchemy model graph |
+| `integration/kafka/kafka_subscribe_discovery/isdc.py` | Consumer 1+2 + `process_isdc_payload` |
+| `logic/logic_discovery/isdc_consume.py` | `after_flush_row_event` bridge (blob → isdc_processed) |
+| `api/api_discovery/isdc_kafka_consume_debug.py` | Debug endpoint `/consume_debug/isdc` |
+| `logic/logic_discovery/shipment_matching.py` | Step 2: importer party creation |
+| `logic/logic_discovery/clvs_eligibility.py` | Step 3: CLVS eligibility rules |
+| `ui/admin/admin.yaml` | Added ShipmentXml section |
+| `test/send_isdc.py` | Kafka test publisher |
+| `docs/requirements/isdc_consume/requirements.md` | Traceability anchor |
+| `docs/requirements/shipment_matching/requirements.md` | Traceability anchor |
+| `docs/requirements/clvs_eligibility/requirements.md` | Traceability anchor |

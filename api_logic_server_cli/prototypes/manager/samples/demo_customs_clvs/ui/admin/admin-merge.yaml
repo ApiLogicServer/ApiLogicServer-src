@@ -1,11 +1,14 @@
 about:
-  date: May 26, 2026 08:00:07
+  date: June 29, 2026 12:22:36
   merged:
-    at: May 26, 2026 08:11:01
-    new_attributes: 'Shipment.customs_office_id Shipment.clvs_eligible Shipment.clvs_reason
-      Shipment.prohibited_commodity_count Shipment.controlled_item_count ShipmentCommodity.is_prohibited '
+    at: June 29, 2026 13:47:02
+    new_attributes: 'Shipment.customs_office_id Shipment.sys_config_id Shipment.clvs_eligible
+      Shipment.clvs_reason Shipment.controlled_item_count Shipment.prohibited_item_count
+      Shipment.clvs_lvs_threshold Shipment.clvs_service_type_cd SysConfig.clvs_lvs_threshold
+      SysConfig.clvs_service_type_cd ShipmentCommodity.is_controlled ShipmentCommodity.is_prohibited '
     new_resources: 'ShipmentXml '
-    new_tab_groups: 'CustomsOffice.ShipmentList Shipment.customs_office '
+    new_tab_groups: 'CustomsOffice.ShipmentList Shipment.customs_office Shipment.sys_config
+      SysConfig.ShipmentList '
   recent_changes: works with modified safrs-react-admin
   version: 0.0.0
 api_root: '{http_type}://{swagger_host}:{port}/{api}'
@@ -370,10 +373,13 @@ resources:
     - name: iid_master_cd
     - name: iid_classify_cd
     - name: customs_office_id
+    - name: sys_config_id
     - name: clvs_eligible
     - name: clvs_reason
-    - name: prohibited_commodity_count
     - name: controlled_item_count
+    - name: prohibited_item_count
+    - name: clvs_lvs_threshold
+    - name: clvs_service_type_cd
     tab_groups:
     - direction: tomany
       fks:
@@ -400,6 +406,11 @@ resources:
       - customs_office_id
       name: customs_office
       resource: CustomsOffice
+    - direction: toone
+      fks:
+      - sys_config_id
+      name: sys_config
+      resource: SysConfig
     type: Shipment
     user_key: local_shipment_oid_nbr
   ShipmentCommodity:
@@ -439,6 +450,7 @@ resources:
     - name: commodity_currency_cd
     - name: unit_of_measure_cd
     - name: classification_status_cd
+    - name: is_controlled
     - name: is_prohibited
     tab_groups:
     - direction: toone
@@ -549,6 +561,14 @@ resources:
     - name: tax_rate
     - name: notes
     - name: id
+    - name: clvs_lvs_threshold
+    - name: clvs_service_type_cd
+    tab_groups:
+    - direction: tomany
+      fks:
+      - sys_config_id
+      name: ShipmentList
+      resource: Shipment
     type: SysConfig
     user_key: name
   VirtualRouteLeg:

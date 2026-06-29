@@ -10,7 +10,7 @@ from sqlalchemy.ext.declarative import declarative_base
 # Alter this file per your database maintenance policy
 #    See https://apilogicserver.github.io/Docs/Project-Rebuild/#rebuilding
 #
-# Created:  May 26, 2026 08:11:00
+# Created:  June 29, 2026 13:47:02
 # Database: sqlite:////Users/val/dev/ApiLogicServer/ApiLogicServer-dev/build_and_test/genai-logic/demo_customs_clvs/database/db.sqlite
 # Dialect:  sqlite
 #
@@ -117,7 +117,7 @@ class ShipmentXml(Base):  # type: ignore
     _s_collection_name = 'ShipmentXml'  # type: ignore
 
     id = Column(Integer, primary_key=True)
-    received_at = Column(DateTime)
+    received_at = Column(DateTime, server_default=text("CURRENT_TIMESTAMP"))
     payload = Column(Text, nullable=False)
     is_processed = Column(Integer, server_default=text("0"))
 
@@ -136,10 +136,13 @@ class SysConfig(Base):  # type: ignore
     discount_rate = Column(Float, server_default=text("0.05"))
     tax_rate = Column(Float, server_default=text("0.10"))
     notes = Column(Text)
+    clvs_lvs_threshold = Column(Float, server_default=text("3300.0"))
+    clvs_service_type_cd = Column(Text, server_default=text("'04'"))
 
     # parent relationships (access parent)
 
     # child relationships (access children)
+    ShipmentList : Mapped[List["Shipment"]] = relationship(back_populates="sys_config")
 
 
 
@@ -369,14 +372,18 @@ class Shipment(Base):  # type: ignore
     portofentry = Column(String(6))
     warehousecode = Column(String(6))
     surface_intl_shipment_nbr = Column(Numeric)
+    sys_config_id = Column(ForeignKey('sys_config.id'), server_default=text("1"))
+    clvs_lvs_threshold = Column(Float, server_default=text("3300.0"))
+    clvs_service_type_cd = Column(Text, server_default=text("'04'"))
+    customs_office_id = Column(ForeignKey('customs_office.id'))
     clvs_eligible = Column(Integer, server_default=text("0"))
     clvs_reason = Column(Text, server_default=text("''"))
-    prohibited_commodity_count = Column(Integer, server_default=text("0"))
     controlled_item_count = Column(Integer, server_default=text("0"))
-    customs_office_id = Column(ForeignKey('customs_office.id'))
+    prohibited_item_count = Column(Integer, server_default=text("0"))
 
     # parent relationships (access parent)
     customs_office : Mapped["CustomsOffice"] = relationship(back_populates=("ShipmentList"))
+    sys_config : Mapped["SysConfig"] = relationship(back_populates=("ShipmentList"))
 
     # child relationships (access children)
     PieceList : Mapped[List["Piece"]] = relationship(cascade="all, delete", back_populates="shipment")
@@ -476,6 +483,7 @@ class ShipmentCommodity(Base):  # type: ignore
     classification_status_desc = Column(String(200))
     classification_status_cd = Column(String(10))
     part_expiration_dt = Column(Date)
+    is_controlled = Column(Integer, server_default=text("0"))
     is_prohibited = Column(Integer, server_default=text("0"))
     allow_client_generated_ids = True
 

@@ -425,11 +425,14 @@
                 "portofentry",
                 "warehousecode",
                 "surface_intl_shipment_nbr",
+                "sys_config_id",
+                "clvs_lvs_threshold",
+                "clvs_service_type_cd",
+                "customs_office_id",
                 "clvs_eligible",
                 "clvs_reason",
-                "prohibited_commodity_count",
                 "controlled_item_count",
-                "customs_office_id"
+                "prohibited_item_count"
             ],
             "filterable": [
                 "local_shipment_oid_nbr",
@@ -571,11 +574,42 @@
                 "portofentry",
                 "warehousecode",
                 "surface_intl_shipment_nbr",
+                "sys_config_id",
+                "clvs_lvs_threshold",
+                "clvs_service_type_cd",
+                "customs_office_id",
                 "clvs_eligible",
                 "clvs_reason",
-                "prohibited_commodity_count",
                 "controlled_item_count",
-                "customs_office_id"
+                "prohibited_item_count"
+            ]
+        },
+        {
+            "name": "SysConfig",
+            "path": "/SysConfig",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "name",
+                "discount_rate",
+                "tax_rate",
+                "notes",
+                "clvs_lvs_threshold",
+                "clvs_service_type_cd"
+            ],
+            "filterable": [
+                "id",
+                "name",
+                "discount_rate",
+                "tax_rate",
+                "notes",
+                "clvs_lvs_threshold",
+                "clvs_service_type_cd"
             ]
         },
         {
@@ -615,6 +649,7 @@
                 "classification_status_desc",
                 "classification_status_cd",
                 "part_expiration_dt",
+                "is_controlled",
                 "is_prohibited"
             ],
             "filterable": [
@@ -645,6 +680,7 @@
                 "classification_status_desc",
                 "classification_status_cd",
                 "part_expiration_dt",
+                "is_controlled",
                 "is_prohibited"
             ]
         },
@@ -772,30 +808,6 @@
                 "special_handling_cd",
                 "etl_tmstp",
                 "shipment_type_cd"
-            ]
-        },
-        {
-            "name": "SysConfig",
-            "path": "/SysConfig",
-            "methods": [
-                "GET",
-                "PATCH",
-                "POST",
-                "DELETE"
-            ],
-            "fields": [
-                "id",
-                "name",
-                "discount_rate",
-                "tax_rate",
-                "notes"
-            ],
-            "filterable": [
-                "id",
-                "name",
-                "discount_rate",
-                "tax_rate",
-                "notes"
             ]
         },
         {

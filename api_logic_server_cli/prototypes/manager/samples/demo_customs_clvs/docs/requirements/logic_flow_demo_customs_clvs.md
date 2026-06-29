@@ -15,11 +15,15 @@ Scenario: Shipment at or below the LVS threshold is eligible
 ```
 
 ```
-isdc_consume — row-event bridge: ShipmentXml insert → publish to isdc_processed.
+Subscribe to Kafka topic `isdc`. Each message is a CIMCorp shipment XML.
+...
+(Step 1 — EAI row_event bridge: after ShipmentXml insert, publish blob.id to isdc_processed)
 ```
 
 ```
 Logic discovery: Shipment matching (Phase 2).
+
+Create `logic/logic_discovery/shipment_matching.py`.
 
 On Shipment insert, look up the matching Customer using:
     Shipment.trprt_bill_to_acct_nbr == Customer.duty_bill_to_acct_nbr
@@ -35,14 +39,15 @@ ShipmentParty writes atomically with the parent Shipment.
 
 ## Rules
 
-1. `is_prohibited = 1 if controlled_regulated_goods_id is not None ...`
-2. `clvs_eligible = _clvs_eligible(row)` — Derive clvs_eligible: 1 if shipment meets all CLVS criteria, else 0.
-3. `clvs_reason = _clvs_reason(row)` — Derive clvs_reason: comma-delimited list of CLVS ineligibility reasons (blank if eligible).
-4. `prohibited_commodity_count = count(ShipmentCommodity where is_prohibited)`
-5. `controlled_item_count = count(ShipmentCommodity where controlled_regulated_goods_id)`
-E. `Shipment` → `_set_customs_office` (early) — Set customs_office_id FK from planned_clearance_location_cd on insert.
-E. `ShipmentCommodity` → `_set_controlled_goods` (early) — Set controlled_regulated_goods_id FK by matching HS code first 10 digits.
-E. `ShipmentXml` → `_publish_isdc` (after_flush)
+1. `clvs_lvs_threshold = copy(clvs_lvs_threshold)`
+2. `clvs_service_type_cd = copy(clvs_service_type_cd)`
+3. `clvs_eligible = _clvs_eligible(row)` — Derive clvs_eligible: 1 if shipment meets all CLVS criteria, else 0.
+4. `clvs_reason = _clvs_reason(row)` — Derive clvs_reason: comma-delimited list of CLVS ineligibility reasons (blank if eligible).
+5. `controlled_item_count = count(ShipmentCommodity where is_controlled)`
+6. `prohibited_item_count = count(ShipmentCommodity where is_prohibited)`
+E. `ShipmentCommodity` → `_set_commodity_flags` (early) — Set is_controlled and is_prohibited by HS code lookup before Rule.count aggregates.
+E. `Shipment` → `_set_customs_office` (early) — Set customs_office_id by looking up PLANNED_CLEARANCE_LOCATION_CD in customs_office.
+E. `ShipmentXml` → `_publish_isdc_processed` (after_flush) — Publish ShipmentXml.id to isdc_processed topic so Consumer 2 can parse the blob.
 
 ---
-_Generated 2026-05-26 08:20_
+_Generated 2026-06-29 15:23_

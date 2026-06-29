@@ -254,11 +254,24 @@ Table Shipment {
     portofentry VARCHAR(6) 
     warehousecode VARCHAR(6) 
     surface_intl_shipment_nbr NUMERIC 
+    sys_config_id INTEGER 
+    clvs_lvs_threshold FLOAT 
+    clvs_service_type_cd TEXT 
+    customs_office_id INTEGER 
     clvs_eligible INTEGER 
     clvs_reason TEXT 
-    prohibited_commodity_count INTEGER 
     controlled_item_count INTEGER 
-    customs_office_id INTEGER 
+    prohibited_item_count INTEGER 
+    }
+
+Table SysConfig {
+    id INTEGER [primary key]
+    name TEXT 
+    discount_rate FLOAT 
+    tax_rate FLOAT 
+    notes TEXT 
+    clvs_lvs_threshold FLOAT 
+    clvs_service_type_cd TEXT 
     }
 
 Table ShipmentCommodity {
@@ -289,6 +302,7 @@ Table ShipmentCommodity {
     classification_status_desc VARCHAR(200) 
     classification_status_cd VARCHAR(10) 
     part_expiration_dt DATE 
+    is_controlled INTEGER 
     is_prohibited INTEGER 
     }
 
@@ -343,14 +357,6 @@ Table SpecialHandling {
     shipment_type_cd INTEGER 
     }
 
-Table SysConfig {
-    id INTEGER [primary key]
-    name TEXT 
-    discount_rate FLOAT 
-    tax_rate FLOAT 
-    notes TEXT 
-    }
-
 Table VirtualRouteLeg {
     id INTEGER [primary key]
     virtual_route_nbr VARCHAR(6) 
@@ -392,6 +398,7 @@ Table VirtualRouteLeg {
     Ref: CustomsOffice.(customs_region_id) > CustomsRegion.(id)
     Ref: Piece.(local_shipment_oid_nbr) > Shipment.(local_shipment_oid_nbr)
     Ref: Shipment.(customs_office_id) > CustomsOffice.(id)
+    Ref: Shipment.(sys_config_id) > SysConfig.(id)
     Ref: ShipmentCommodity.(controlled_regulated_goods_id) > ControlledRegulatedGood.(id)
     Ref: ShipmentCommodity.(local_shipment_oid_nbr) > Shipment.(local_shipment_oid_nbr)
     Ref: ShipmentParty.(local_piece_oid_nbr) > Piece.(local_piece_oid_nbr)

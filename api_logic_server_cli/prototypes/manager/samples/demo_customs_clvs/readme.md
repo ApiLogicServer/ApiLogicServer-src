@@ -76,6 +76,7 @@ Apply as follows (NOTE: ShipmentCommodityList is a special case):
 
 # G - ask Coding Agent to create the system by implementing the requirements
 implement requirements docs/requirements/customs_demo
+/export docs/requirements/transcript_creation
 ```
 
 </details>

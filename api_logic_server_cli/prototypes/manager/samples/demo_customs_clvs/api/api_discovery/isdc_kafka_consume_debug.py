@@ -1,44 +1,65 @@
 """
-Debug endpoint for the isdc Kafka consume pipeline (no Kafka required).
+Debug endpoint for ISDC Kafka consume pipeline.
+Gated by APILOGICPROJECT_CONSUME_DEBUG env var.
 
-Enable with: APILOGICPROJECT_CONSUME_DEBUG=true (already set in config/default.env)
-curl 'http://localhost:5656/consume_debug/isdc?file=docs/requirements/customs_demo/message_formats/MDE-CDV-HVS-WR-Rev260328.xml'
+Usage:
+    curl 'http://localhost:5656/consume_debug/isdc?file=docs/requirements/customs_demo/message_formats/MDE-CDV-HVS-WR-Rev260328.xml'
+    curl 'http://localhost:5656/consume_debug/isdc' -d @payload.xml -H 'Content-Type: text/xml'
 """
-import logging
+
 import os
-from pathlib import Path
-import safrs
+import logging
 from flask import request, jsonify
+import safrs
 
 app_logger = logging.getLogger("api_logic_server_app")
 
+_DEBUG_ENABLED = os.getenv('APILOGICPROJECT_CONSUME_DEBUG', 'false').lower() not in ('false', '0', 'no', '')
 
-def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_decorators=[]):
-    if not os.getenv('APILOGICPROJECT_CONSUME_DEBUG'):
+
+def add_service(app, api, project_dir, swagger_host: str, PORT: str, method_decorators=None):
+
+    if not _DEBUG_ENABLED:
         return
 
-    @app.route('/consume_debug/isdc')
+    @app.route('/consume_debug/isdc', methods=['GET', 'POST'])
     def consume_debug_isdc():
-        """Debug the isdc consume pipeline without Kafka.
-        curl 'http://localhost:5656/consume_debug/isdc?file=docs/requirements/customs_demo/message_formats/MDE-CDV-HVS-WR-Rev260328.xml'
         """
-        file_path = request.args.get('file')
-        if not file_path:
-            return jsonify({"success": False, "message": "Missing ?file= parameter"})
-        from integration.kafka.kafka_subscribe_discovery.isdc import process_isdc_payload
+        Debug ISDC XML consume — bypasses Kafka, same parse+persist logic as Consumer 2.
+        GET  ?file=<relative-path>   — read XML from file
+        POST  body                   — XML as request body
+        """
         try:
-            payload = Path(file_path).read_text()
-            shipment, blob = process_isdc_payload(payload, safrs.DB.session)
-            return jsonify({
-                "success": True,
-                "topic": "isdc",
-                "blob_id": blob.id,
-                "awb_nbr": shipment.awb_nbr,
-                "pieces": len(shipment.PieceList),
-                "parties": len(shipment.ShipmentPartyList),
-                "commodities": len(shipment.ShipmentCommodityList),
-                "file": file_path,
-            })
-        except Exception as e:
-            app_logger.exception(f"consume_debug/isdc: {e}")
-            return jsonify({"success": False, "topic": "isdc", "error": str(e)}), 500
+            if request.method == 'POST':
+                xml_text = request.data.decode('utf-8')
+            else:
+                file_param = request.args.get('file')
+                if not file_param:
+                    return jsonify({'success': False, 'error': 'Provide ?file= or POST XML body'}), 400
+                xml_path = os.path.join(project_dir, file_param)
+                with open(xml_path, 'r', encoding='utf-8') as fh:
+                    xml_text = fh.read()
+
+            db = safrs.DB
+            session = db.session
+
+            from integration.kafka.kafka_subscribe_discovery.isdc import process_isdc_payload
+            blob_needed = True
+            from database import models
+            blob = models.ShipmentXml(payload=xml_text)
+            session.add(blob)
+            session.flush()
+
+            summary = process_isdc_payload(xml_text, session)
+            blob.is_processed = 1
+            session.commit()
+
+            return jsonify(summary)
+
+        except Exception as exc:
+            app_logger.error(f'consume_debug/isdc error: {exc}', exc_info=True)
+            try:
+                safrs.DB.session.rollback()
+            except Exception:
+                pass
+            return jsonify({'success': False, 'error': str(exc)}), 500

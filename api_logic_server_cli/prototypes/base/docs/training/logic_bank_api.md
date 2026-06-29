@@ -1,9 +1,23 @@
 ---
 # LogicBank API Reference
-# Version: 1.0.17
-# Last Updated: June 27, 2026
+# Version: 1.0.19
+# Last Updated: June 29, 2026
 # Description: The Logic Rosetta Stone: simplified API for creating declarative business logic rules
 # Changelog:
+#   1.0.19 (Jun 2026) - Added guidance: after an early_row_event sets an FK column, do not read
+#     the FK's relationship attribute later in the same transaction (e.g. row.customs_office) -
+#     query the lookup table directly via session.query(...).get(fk_value) instead. The
+#     relationship is not guaranteed fresh within the same flush that just set the FK, so a
+#     downstream calling= function can silently see None/stale data and skip a reasons-list
+#     check even though the FK column itself is correct. Found via demo_customs_clvs rebuild:
+#     a non-CLVS-designated office (clvs_release=0) was incorrectly derived as eligible because
+#     row.customs_office evaluated None right after _set_customs_office's early_row_event set
+#     customs_office_id.
+#   1.0.18 (Jun 2026) - Closed gap in PARENT FLAGS vs CHILD COUNTS section: when a child's own
+#     flag column (e.g. is_controlled) is derived from a lookup, it must be set via
+#     Rule.early_row_event, not Rule.row_event/commit_row_event - otherwise Rule.count's where=
+#     evaluates against the column's stale default. Found via demo_customs_clvs correction
+#     (Wynford); the example already existed but never specified which event type to use.
 #   1.0.17 (Jun 2026) - Documented child_role_name on Rule.sum/count/copy (LogicBank 1.31.04) -
 #     required to disambiguate 2+ relationships between the same parent/child classes. See
 #     "CRITICAL — child_role_name REQUIRED..." section and LogicBank's
@@ -631,6 +645,70 @@ DETECTION HEURISTIC — apply this BEFORE writing any rule:
 
 The child table IS the authoritative source. The parent flag is a stale snapshot.
 Even if the parent flag exists and is named suggestively — use the child count.
+
+CRITICAL — if the child's flag column (e.g. `is_controlled`) is ITSELF derived from a lookup
+(not present on the raw insert), set it via `Rule.early_row_event` on the CHILD class —
+never `Rule.row_event` or `Rule.commit_row_event`. `Rule.count`'s `where=` evaluates during
+Phase 3a (Row Logic), which runs immediately after early events but BEFORE row/commit events.
+If the flag is set too late, the count silently sums/counts using the flag's default (usually
+0/None) instead of the looked-up value — no error, just a wrong, stale aggregate on every insert.
+
+  ❌ WRONG — row_event fires after Row Logic; Rule.count already evaluated `is_controlled`
+  using its column default:
+      def _match_controlled_goods(row, old_row, logic_row):
+          match = logic_row.session.query(ControlledRegulatedGood).filter_by(hs_code=...).first()
+          row.is_controlled = 1 if match else 0
+      Rule.row_event(on_class=models.ShipmentCommodity, calling=_match_controlled_goods)
+      Rule.count(derive=models.Shipment.controlled_item_count, as_count_of=models.ShipmentCommodity,
+                 where=lambda row: row.is_controlled == 1)   # always counts 0 — is_controlled not set yet
+
+  ✅ CORRECT — early_row_event sets the flag before Row Logic (and the count) runs:
+      def _match_controlled_goods(row, old_row, logic_row):
+          """Lookup ControlledRegulatedGood by HS-code prefix; set is_controlled before Rule.count aggregates."""
+          match = logic_row.session.query(models.ControlledRegulatedGood).filter_by(hs_code=...).first()
+          row.is_controlled = 1 if match else 0
+      Rule.early_row_event(on_class=models.ShipmentCommodity, calling=_match_controlled_goods)
+      Rule.count(derive=models.Shipment.controlled_item_count, as_count_of=models.ShipmentCommodity,
+                 where=lambda row: row.is_controlled == 1)   # now sees the correct, just-set value
+
+  This is the same early-vs-row distinction as the FK-lookup case above (`_set_product_id`) —
+  it just shows up less obviously here because the consumer is a `Rule.count.where=` instead
+  of a sibling `Rule.formula`.
+
+CRITICAL — after an early_row_event sets an FK column, do NOT read the FK's relationship
+attribute later in the same transaction — query the lookup table directly by the FK value
+instead. Setting `row.customs_office_id = office.id` in an `early_row_event` does not
+guarantee `row.customs_office` (the SQLAlchemy relationship) is refreshed within the same
+flush — it can still reflect the pre-update state (typically `None`), so a downstream
+`Rule.formula` that branches on `row.customs_office.some_flag` silently evaluates against
+stale/missing data, even though the FK column itself is correct.
+
+  ❌ WRONG — relationship attribute read in the same flush that set the FK; not guaranteed fresh:
+      def _reasons(row):
+          if row.customs_office_id is None:
+              reasons.append("no office")
+          else:
+              office = row.customs_office          # ← may not reflect the FK just set above
+              if office is not None and office.clvs_release != 1:
+                  reasons.append("not CLVS-designated")
+      REAL FAILURE CASE: a Shipment with a valid, non-CLVS office (clvs_release=0) was
+      incorrectly derived as clvs_eligible=1 — `row.customs_office` evaluated `None` even
+      though `customs_office_id` was correctly set moments earlier by `_set_customs_office`'s
+      `early_row_event`, so the `office is not None` guard short-circuited and the
+      ineligibility reason was never added.
+
+  ✅ CORRECT — query the lookup table directly by the FK value already on the row:
+      def _reasons(row, logic_row):
+          if row.customs_office_id is None:
+              reasons.append("no office")
+          else:
+              office = logic_row.session.query(models.CustomsOffice).get(row.customs_office_id)
+              if office is not None and office.clvs_release != 1:
+                  reasons.append("not CLVS-designated")
+
+  This applies anywhere a `calling=` function or `early_row_event` reads a parent row through
+  a relationship attribute that was populated earlier in the same transaction — prefer a direct
+  `session.query(...).get(fk_value)` over `row.<relationship_name>` whenever the FK was just set.
 
 ALSO APPLIES inside row_event / calling= functions:
   A row_event that checks a child-row condition as part of a multi-condition evaluation

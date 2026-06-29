@@ -1,107 +1,123 @@
 """
-IsdcMapper — CIMCorp Shipment XML → DB mapper for the isdc Kafka topic.
+CIMCorp ISDC XML Mapper
+========================
+Parses ns2:CIMCorpShipment XML into SQLAlchemy model graph.
 
-Basic Design:
-  1. integration/kafka/kafka_subscribe_discovery/isdc.py  - isdc consumer
-       reads message, inserts raw payload into ShipmentXml blob (Tx 1)
-  2. logic/logic_discovery/isdc_consume.py
-       insert → publishes payload to topic: isdc_processed
-  3. integration/kafka/kafka_subscribe_discovery/isdc.py  - isdc_processed consumer
-       parses payload → domain rows (LogicBank rules fire in Tx 2)
-  4. api/api_discovery/isdc_kafka_consume_debug.py
-       /consume_debug/isdc bypasses Kafka, calls same parse function directly
+TAG_ROUTING:
+  ns2:shipment              → Shipment (parent row)
+  ns2:consignee             → ShipmentParty (type C)
+  ns2:shipper               → ShipmentParty (type S)
+  ns2:piece                 → Piece
+  ns2:commodities           → ShipmentCommodity (repeating)
+  ns2:specialHandlingCodes  → SpecialHandling (repeating)
+  ns2:extraData             → Shipment key-value overlay
+  ns2:currencies, ns2:mawbAsgmt, ns2:mawb, ns2:virtualRouteLegs, ns2:messageMetadata → skip
 
-XML sections → tables:
-  ns2:shipment          → Shipment (parent)
-  ns2:consignee         → ShipmentParty (attached to PieceList[0] or shipment)
-  ns2:shipper           → ShipmentParty
-  ns2:piece             → Piece
-  ns2:commodities       → ShipmentCommodity
-  ns2:specialHandlingCodes → SpecialHandling
-  (mawbAsgmt, mawb, currencies, virtualRouteLegs, extraData, messageMetadata skipped)
+SOURCE-PK normalization:
+  ShipmentParty.PARTY_OID_NBR = 0  →  set to None (DB autoincrement assigns PK)
 """
+
 import re
 import xml.etree.ElementTree as ET
-from database import models
-from integration.system.EaiSubscribeMapper import populate_row, _local
 
-# Tier 2 exceptions: None=skip, str=remap to model column name
-SHIPMENT_EXCEPTIONS = {
-    'FEDEX_ASSIGNED_MAWB_NBR': 'carrier_assigned_mawb_nbr',
+from integration.system.EaiSubscribeMapper import populate_row
+
+# Maps ns2:extraData dataName → Shipment column name
+_EXTRA_DATA_MAP = {
+    'AdmissibilityModeNm':  'admissibility_mode',
+    'CargoControlNbr':       'cargocontrolnbr',
+    'PortOfEntryNm':         'portofentry',
+    'WarehouseCode':         'warehousecode',
 }
 
-PARTY_EXCEPTIONS = {
-    'PARTY_OID_NBR': None,      # handled in custom_mapping (normalize 0 → None)
-    'OID_NBR': 'local_shipment_oid_nbr',
-    'OID_TYPE_CD': None,
-    'ADDRESS_1': None,
-    'ADDRESS_2': None,
+# Tier 2 exception dicts ─────────────────────────────────────────────────────
+
+_SHIPMENT_EXCEPTIONS = {}   # Tier 1 auto-map sufficient for all shipment fields
+
+_PARTY_EXCEPTIONS = {
+    'PARTY_OID_NBR': 'shipment_party_oid_nbr',  # auto-map gives wrong column name
+    'OID_NBR':       None,                       # FK set via relationship
 }
 
-COMMODITY_EXCEPTIONS = {
-    'COMMODITY_OID_NBR': None,  # skip — no matching column
+_PIECE_EXCEPTIONS = {
+    'LOCAL_SHIPMENT_OID_NBR': None,  # FK set via relationship
 }
 
-PIECE_EXCEPTIONS = {}
+_COMMODITY_EXCEPTIONS = {
+    'COMMODITY_OID_NBR': None,  # no column
+    # LOCAL_SHIPMENT_OID_NBR is kept: auto-maps to local_shipment_oid_nbr (composite PK part)
+}
 
-SPECIAL_HANDLING_EXCEPTIONS = {}
-
-# Sections to skip entirely (no matching table or handled separately)
-_SKIP_TAGS = frozenset({
-    'messageMetadata', 'mawbAsgmt', 'mawb', 'currencies',
-    'virtualRouteLegs', 'extraData',
-})
-
-
-def _custom_party(row: models.ShipmentParty, section, logic_row=None):
-    """Normalize PARTY_OID_NBR=0 → None so autoincrement assigns unique PK."""
-    raw_oid = section.find('PARTY_OID_NBR')
-    val = int(raw_oid.text) if (raw_oid is not None and raw_oid.text and raw_oid.text.strip()) else 0
-    row.shipment_party_oid_nbr = None if val == 0 else val
+_SPECIAL_HANDLING_EXCEPTIONS = {
+    'OID_NBR':      None,   # FK set via relationship (oid_nbr)
+    'OID_TYPE_CD':  None,   # informational only
+}
 
 
-def parse(payload: str, exceptions: dict = None) -> tuple:
+def _local(tag: str) -> str:
+    return re.sub(r"\{[^}]*\}", "", tag)
+
+
+def _normalize_party_oid(row, element):
+    """Normalize PARTY_OID_NBR sentinel 0 → None so DB autoincrement assigns PK."""
+    if row.shipment_party_oid_nbr == 0:
+        row.shipment_party_oid_nbr = None
+
+
+def _apply_extra_data(shipment_row, element):
+    """Map ns2:extraData key-value pairs to Shipment columns."""
+    name_el = element.find('dataName')
+    value_el = element.find('dataValue')
+    if name_el is None or value_el is None:
+        return
+    name = (name_el.text or '').strip()
+    value = (value_el.text or '').strip() or None
+    col = _EXTRA_DATA_MAP.get(name)
+    if col and hasattr(shipment_row, col):
+        setattr(shipment_row, col, value)
+
+
+def parse(xml_text: str):
     """
-    Parse CIMCorp shipment XML into (shipment_row, []).
+    Parse CIMCorp XML text and return a Shipment row with children attached.
 
-    Children (Piece, ShipmentParty, ShipmentCommodity, SpecialHandling) are
-    pre-attached to the shipment's relationship lists.  Returns an empty flat
-    list because the caller loop has nothing left to zip.
+    Children are appended via relationship (not session.add) per EAI CE rule 4b.
+    Caller is responsible for session.add(shipment_row) and session.flush().
     """
-    root = ET.fromstring(payload)
-    shipment = models.Shipment()
-    first_piece = None  # piece row for piece-level party FK
+    from database import models
 
-    for section in root:
-        tag = _local(section.tag)
-        if tag in _SKIP_TAGS:
-            continue
+    root = ET.fromstring(xml_text)
+    shipment_row = models.Shipment()
+
+    for element in root:
+        tag = _local(element.tag)
 
         if tag == 'shipment':
-            populate_row(shipment, section, exceptions=SHIPMENT_EXCEPTIONS)
-
-        elif tag == 'piece':
-            piece = models.Piece()
-            populate_row(piece, section, exceptions=PIECE_EXCEPTIONS)
-            shipment.PieceList.append(piece)
-            if first_piece is None:
-                first_piece = piece
+            populate_row(shipment_row, element, _SHIPMENT_EXCEPTIONS)
 
         elif tag in ('consignee', 'shipper'):
             party = models.ShipmentParty()
-            populate_row(party, section, exceptions=PARTY_EXCEPTIONS)
-            _custom_party(party, section)
-            # Consignee/shipper are shipment-level parties (local_piece_oid_nbr stays None)
-            shipment.ShipmentPartyList.append(party)
+            populate_row(party, element, _PARTY_EXCEPTIONS, custom=_normalize_party_oid)
+            shipment_row.ShipmentPartyList.append(party)
+
+        elif tag == 'piece':
+            piece = models.Piece()
+            populate_row(piece, element, _PIECE_EXCEPTIONS)
+            shipment_row.PieceList.append(piece)
 
         elif tag == 'commodities':
             commodity = models.ShipmentCommodity()
-            populate_row(commodity, section, exceptions=COMMODITY_EXCEPTIONS)
-            shipment.ShipmentCommodityList.append(commodity)
+            populate_row(commodity, element, _COMMODITY_EXCEPTIONS)
+            shipment_row.ShipmentCommodityList.append(commodity)
 
         elif tag == 'specialHandlingCodes':
             sh = models.SpecialHandling()
-            populate_row(sh, section, exceptions=SPECIAL_HANDLING_EXCEPTIONS)
-            shipment.SpecialHandlingList.append(sh)
+            populate_row(sh, element, _SPECIAL_HANDLING_EXCEPTIONS)
+            shipment_row.SpecialHandlingList.append(sh)
 
-    return shipment, []
+        elif tag == 'extraData':
+            _apply_extra_data(shipment_row, element)
+
+        # skip: messageMetadata, mawbAsgmt, mawb, currencies, virtualRouteLegs
+
+    return shipment_row
