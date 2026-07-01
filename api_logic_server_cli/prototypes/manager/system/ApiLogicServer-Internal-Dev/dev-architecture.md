@@ -4,8 +4,9 @@ Description: Enables AI assistants to be co-designers for GenAI-Logic features
 Source: ApiLogicServer-src/prototypes/manager/system/ApiLogicServer-Internal-Dev/dev-architecture.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this to understand project structure, development workflow, and recent additions
-version: 2.13
+version: 2.14
 changelog:
+  - 2.14 (Jul 2026) - Type hierarchy pattern: STI vs joined/concrete CTI comparison, GL preference for STI, CE location pointers (project CE step 4d, manager CE 4d checklist)
   - 2.13 (Jun 2026) - Added README.md broken-link check to create_codespaces_mgr.py (Step 2h, gates --push/--release). First 2 attempts were unusable (236, then still-noisy false positives) until scope was narrowed to README.md only - see "README Broken-Link Check" section for the false-positive traps and what actually works
   - 2.12 (Jun 2026) - LogicBank 1.31.04 multi-relationship fix: child_role_name now works correctly on Rule.sum/count/copy (and link()) when 2+ relationships connect the same parent/child classes. Documented in prototypes/base/docs/training/logic_bank_api.md (user-facing CE) - was previously undocumented even though the parameter existed. See "Multi-Relationship Fix (LogicBank)" section
   - 2.11 (Jun 2026) - opt_locking.py: fixed non-deterministic hash() checksum (sha256) and null S_CheckSum on POST (after_flush stamping) - see "Optimistic Locking Fixes" section
@@ -1194,6 +1195,31 @@ Two bugs reported against the same ~30-line block, fixed together:
 **Recurring fix pattern found while clearing real hits:** README links sometimes point at `samples/prompts/*.prompt` (missing the `.md` LogicBank/ApiLogicServer-src actually writes — `*.prompt.md`), or at an older/renamed sample directory (`customs_demo` → `customs_demo_clvs`, `readme.md` → `readme_reqmts.md`). Don't assume a broken `samples/...` link means the sample is missing — check for a name-drift sibling first.
 
 **See also:** [[project_local_mgr_is_user_truth]] memory — verify against `build_and_test/genai-logic`, not `clean/ApiLogicServer` (a different, stale BLT output), when checking "does this file exist for users."
+
+&nbsp;
+
+---
+
+### Type Hierarchy Pattern (Jul 2026)
+
+Three standard approaches exist for modeling entity subtypes (e.g. Employee → Hourly, Salaried, Commissioned):
+
+| Approach | Description | Tradeoff |
+|---|---|---|
+| **STI — Single Table Inheritance** | One table, all columns, `type TEXT` discriminator, subtype columns nullable | Simple queries/inserts; table gets wide; subtype cols sparse |
+| **Joined CTI** | Base table + per-subtype tables joined by FK | Normalized; requires joins + custom API endpoints for insert/list |
+| **Concrete CTI** | Fully separate table per subtype, no shared base | No joins; shared columns duplicated; no unified "all employees" query |
+
+**GenAI-Logic prefers STI** because the full stack works without customization:
+- `GET /api/Employee/` returns all subtypes in one call — no joins, no custom endpoint
+- `POST /api/Employee/` with a `type` value inserts any subtype in one call
+- Admin UI `show_when: type == 'hourly'` hides/shows subtype fields — no split UI sections needed
+- LogicBank rules on the base class fire for all subtypes; rules on a subtype class are automatically scoped
+- Joined/concrete CTI require custom API endpoints for insert and list — significant extra effort for no practical gain in this stack
+
+**Key constraint:** any column that participates in a cross-subtype aggregate (e.g. `Department.total_payroll = sum of Employee.weekly_pay`) must live on the **base** table, not only on a subtype table.
+
+**CE location:** project CE `Step 4d` (type hierarchy scan, before DDL) + manager CE STEP 4 checklist item `4d`. Detection phrase: "X are Y with Z" / "X is a type of Y" / "subtypes of Y include X, Z".
 
 &nbsp;
 
