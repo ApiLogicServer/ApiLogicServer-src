@@ -13,7 +13,11 @@ import create_from_model.api_logic_server_utils as create_utils
 log = logging.getLogger('create_from_model.model_creation_services')
 
 def read_mgr_readme(project: Project) -> list[tuple[str, str]]:
-    """ reads Docs/docs/Manager-readme.md from git """
+    """ reads Docs/docs/Manager-readme.md from git
+
+    Front matter may be delimited either by '---' (YAML style) or by
+    '<!--' / '-->' (HTML comment style, current in Manager-readme.md) - both are recognized.
+    """
     if isinstance(project, Path):
         project_path = project
     else:
@@ -46,12 +50,14 @@ def read_mgr_readme(project: Project) -> list[tuple[str, str]]:
     result: list[tuple[str, str]] = []
     for line in lines:
         stripped = line.strip()
-        if stripped == '---':
+        if stripped in ('---', '<!--'):
             if not in_front_matter:
                 in_front_matter = True
                 continue
             else:
-                break   # end of front-matter
+                break   # end of front-matter (closing ---)
+        if stripped == '-->':
+            break   # end of front-matter (closing --> for HTML-comment style)
         if in_front_matter and ':' in stripped and 'demo' in stripped:
             key, _, value = stripped.partition(':')
             result.append((key.strip(), value.strip()))
