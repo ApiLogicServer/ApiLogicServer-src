@@ -1,0 +1,64 @@
+// Copy this text, paste to https://dbdiagram.io/d
+// Or, https://databasediagram.com/app
+// Or, view in VSCode with extension: "DBML Live Preview"
+
+Table CommissionOrder {
+    id INTEGER [primary key]
+    employee_id INTEGER 
+    amount NUMERIC(15, 2) 
+    customer_name TEXT 
+    }
+
+Table Employee {
+    id INTEGER [primary key]
+    Type TEXT 
+    name TEXT 
+    dept_id INTEGER 
+    sys_config_id INTEGER 
+    max_hourly_weekly_salary NUMERIC(15, 2) 
+    military_stipend_rate_per_year FLOAT 
+    salary NUMERIC(15, 2) 
+    hours_worked FLOAT 
+    hourly_rate FLOAT 
+    union_id INTEGER 
+    union_dues NUMERIC(15, 2) 
+    base_salary NUMERIC(15, 2) 
+    commission_total NUMERIC(15, 2) 
+    is_military INTEGER 
+    branch TEXT 
+    rank TEXT 
+    service_years INTEGER 
+    military_stipend FLOAT 
+    total_compensation NUMERIC(15, 2) 
+    }
+
+Table Department {
+    id INTEGER [primary key]
+    name TEXT 
+    budget NUMERIC(15, 2) 
+    total_salary NUMERIC(15, 2) 
+    }
+
+Table SysConfig {
+    id INTEGER [primary key]
+    name TEXT 
+    discount_rate FLOAT 
+    tax_rate FLOAT 
+    notes TEXT 
+    max_hourly_weekly_salary NUMERIC(15, 2) 
+    military_stipend_rate_per_year FLOAT 
+    }
+
+Table LaborUnion {
+    id INTEGER [primary key]
+    name TEXT 
+    dues_rate FLOAT 
+    }
+
+
+
+// Relationships
+    Ref: CommissionOrder.(employee_id) > Employee.(id)
+    Ref: Employee.(dept_id) > Department.(id)
+    Ref: Employee.(sys_config_id) > SysConfig.(id)
+    Ref: Employee.(union_id) > LaborUnion.(id)

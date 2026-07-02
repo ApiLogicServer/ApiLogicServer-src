@@ -1,0 +1,54 @@
+# First, build image: sh devops/docker-image/build_image.sh .
+
+# ALERT - this is a pre-configured for the sqlite databases
+# see https://apilogicserver.github.io/Docs/Database-Docker/#classicmodels-mysql-docker
+# docker build -f Dockerfile -t apilogicserver/ontimizeweb --rm .
+# cd <project>  
+# sh ./ui/app/docker compose -f docker-compose-ontimize.yml up -d
+# --> builds, runs at localhost/ontimize, and logs to console
+
+version: "3.5"
+
+services:
+
+    sqlite3:
+      # hmm... runs, but not access; SQLAlchemy syntax for sqlite service?  (it's just files below)
+      image: nouchka/sqlite3:latest
+      stdin_open: true
+      tty: true
+      volumes:
+        - ../../database/:/root/db/
+      # thanks: https://stackoverflow.com/questions/65811608/how-to-connect-flask-app-to-sqlite-db-running-in-docker
+
+    apilogicserver:
+        image: apilogicserver/ontimize_repos
+        environment:
+          - APILOGICPROJECT_VERBOSE=true
+          - SECURITY_ENABLED=true
+          ## todid - use default database uri's:
+          - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI=sqlite:///../database/db.sqlite
+          - APILOGICPROJECT_SQLALCHEMY_DATABASE_URI_AUTHENTICATION=sqlite:///../database/authentication_db.sqlite
+        expose:
+          - 5656
+        ports:
+          - 5656:5656
+        volumes:
+          # local:path-in-container
+          - ../:/app
+          - ../../database/:/my/sqlite/path/
+    ontimizeweb:
+        image: apilogicserver/ontimizeweb
+        container_name: ontimizeweb
+        expose:
+          - 80
+        ports:
+          - 80:80
+        volumes:
+          # local:path-in-container
+          #- ../ui/app/nginx:/etc/nginx  
+          - ../app/dist:/usr/share/nginx/html
+        depends_on:
+          - apilogicserver
+        environment:
+          - NODE_ENV=production
+

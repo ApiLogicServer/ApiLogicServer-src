@@ -1,0 +1,154 @@
+{
+    "tool_type": "json-api",
+    "schema_version": "1.0",
+    "base_url": "http://localhost:5656/api",
+    "description": "API Logic Project: demo_emp_types",
+    "resources": [
+        {
+            "name": "CommissionOrder",
+            "path": "/CommissionOrder",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "employee_id",
+                "amount",
+                "customer_name"
+            ],
+            "filterable": [
+                "id",
+                "employee_id",
+                "amount",
+                "customer_name"
+            ]
+        },
+        {
+            "name": "Employee",
+            "path": "/Employee",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "Type",
+                "name",
+                "dept_id",
+                "sys_config_id",
+                "max_hourly_weekly_salary",
+                "military_stipend_rate_per_year",
+                "salary",
+                "hours_worked",
+                "hourly_rate",
+                "union_id",
+                "union_dues",
+                "base_salary",
+                "commission_total",
+                "is_military",
+                "branch",
+                "rank",
+                "service_years",
+                "military_stipend",
+                "total_compensation"
+            ],
+            "filterable": [
+                "id",
+                "Type",
+                "name",
+                "dept_id",
+                "sys_config_id",
+                "max_hourly_weekly_salary",
+                "military_stipend_rate_per_year",
+                "salary",
+                "hours_worked",
+                "hourly_rate",
+                "union_id",
+                "union_dues",
+                "base_salary",
+                "commission_total",
+                "is_military",
+                "branch",
+                "rank",
+                "service_years",
+                "military_stipend",
+                "total_compensation"
+            ]
+        },
+        {
+            "name": "Department",
+            "path": "/Department",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "name",
+                "budget",
+                "total_salary"
+            ],
+            "filterable": [
+                "id",
+                "name",
+                "budget",
+                "total_salary"
+            ]
+        },
+        {
+            "name": "SysConfig",
+            "path": "/SysConfig",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "name",
+                "discount_rate",
+                "tax_rate",
+                "notes",
+                "max_hourly_weekly_salary",
+                "military_stipend_rate_per_year"
+            ],
+            "filterable": [
+                "id",
+                "name",
+                "discount_rate",
+                "tax_rate",
+                "notes",
+                "max_hourly_weekly_salary",
+                "military_stipend_rate_per_year"
+            ]
+        },
+        {
+            "name": "LaborUnion",
+            "path": "/LaborUnion",
+            "methods": [
+                "GET",
+                "PATCH",
+                "POST",
+                "DELETE"
+            ],
+            "fields": [
+                "id",
+                "name",
+                "dues_rate"
+            ],
+            "filterable": [
+                "id",
+                "name",
+                "dues_rate"
+            ]
+        }
+    ]
+}

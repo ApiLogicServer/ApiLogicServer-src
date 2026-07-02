@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales by Region</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            overflow: hidden;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            box-sizing: border-box;
+        }
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="salesChart" width="200" height="200"></canvas>
+    <script>
+        const labels = [];
+        const data = [];
+        result = {{ result | tojson }};
+        console.log(result);
+        const type = result.chart_type;
+        const title = result.title;
+        const columns = result.columns;
+        console.log(JSON.stringify(result));
+        result.results.forEach(item => {
+            labels.push(item[columns[0]]);
+            data.push(parseFloat(item[columns[1]]));
+        });
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        const salesChart = new Chart(ctx, {
+            type: type,
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: title,
+                    data: data,
+                    backgroundColor: {{ color | tojson }},
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
