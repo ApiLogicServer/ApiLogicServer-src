@@ -1212,6 +1212,12 @@ if not os.path.isdir(install_api_logic_server_clean_path):
     os.makedirs(install_api_logic_server_clean_path)
 
 # fails if server left running.  You can stop it with the Admin App at http://localhost:5656/
+import socket as _pre_check_socket
+with _pre_check_socket.socket(_pre_check_socket.AF_INET, _pre_check_socket.SOCK_STREAM) as _pre_s:
+    if _pre_s.connect_ex(('localhost', 5656)) == 0:
+        print("\n❌ ERROR: Port 5656 is already in use. Stop the server before running tests.")
+        print("   You can stop it at http://localhost:5656/admin-app or via: lsof -ti:5656 | xargs kill -9")
+        exit(1)
 
 debug_script = False
 if debug_script:

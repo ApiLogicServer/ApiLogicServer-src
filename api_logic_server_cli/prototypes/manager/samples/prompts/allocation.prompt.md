@@ -1,3 +1,5 @@
+// to create: implement demo_allo_dept_gl from samples/prompts/allocation.prompt.md
+
 Departments own a series of General Ledger Accounts.
 
 Departments also own Department Charge Definitions — each defines what percent
