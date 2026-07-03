@@ -1,4 +1,29 @@
-# Logic Flow — demo_customs_clvs
+# Logic Flow — samples/demo_customs_clvs
+
+<table>
+<tr valign="top">
+<td width="65%">
+
+![logic flow](logic_diagrams/logic_diagram.svg)
+
+</td>
+<td width="35%">
+
+### Rules
+
+1. `clvs_lvs_threshold = copy(clvs_lvs_threshold)`<br>
+2. `clvs_service_type_cd = copy(clvs_service_type_cd)`<br>
+3. `clvs_eligible = _clvs_eligible(row)` — Derive clvs_eligible: 1 if shipment meets all CLVS criteria, else 0.<br>
+4. `clvs_reason = _clvs_reason(row)` — Derive clvs_reason: comma-delimited list of CLVS ineligibility reasons (blank if eligible).<br>
+5. `controlled_item_count = count(ShipmentCommodity where is_controlled)`<br>
+6. `prohibited_item_count = count(ShipmentCommodity where is_prohibited)`<br>
+E. `ShipmentCommodity` → `_set_commodity_flags` (early) — Set is_controlled and is_prohibited by HS code lookup before Rule.count aggregates.<br>
+E. `Shipment` → `_set_customs_office` (early) — Set customs_office_id by looking up PLANNED_CLEARANCE_LOCATION_CD in customs_office.<br>
+E. `ShipmentXml` → `_publish_isdc_processed` (after_flush) — Publish ShipmentXml.id to isdc_processed topic so Consumer 2 can parse the blob.
+
+</td>
+</tr>
+</table>
 
 ## Requirements
 
@@ -35,19 +60,5 @@ Use Rule.row_event (not early_row_event) — fires before_flush so the new
 ShipmentParty writes atomically with the parent Shipment.
 ```
 
-![logic flow](logic_diagrams/logic_diagram.svg)
-
-## Rules
-
-1. `clvs_lvs_threshold = copy(clvs_lvs_threshold)`
-2. `clvs_service_type_cd = copy(clvs_service_type_cd)`
-3. `clvs_eligible = _clvs_eligible(row)` — Derive clvs_eligible: 1 if shipment meets all CLVS criteria, else 0.
-4. `clvs_reason = _clvs_reason(row)` — Derive clvs_reason: comma-delimited list of CLVS ineligibility reasons (blank if eligible).
-5. `controlled_item_count = count(ShipmentCommodity where is_controlled)`
-6. `prohibited_item_count = count(ShipmentCommodity where is_prohibited)`
-E. `ShipmentCommodity` → `_set_commodity_flags` (early) — Set is_controlled and is_prohibited by HS code lookup before Rule.count aggregates.
-E. `Shipment` → `_set_customs_office` (early) — Set customs_office_id by looking up PLANNED_CLEARANCE_LOCATION_CD in customs_office.
-E. `ShipmentXml` → `_publish_isdc_processed` (after_flush) — Publish ShipmentXml.id to isdc_processed topic so Consumer 2 can parse the blob.
-
 ---
-_Generated 2026-06-29 15:23_
+_Generated 2026-07-03 07:39_

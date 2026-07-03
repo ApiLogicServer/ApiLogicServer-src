@@ -1,6 +1,6 @@
 digraph logic {
   graph [rankdir=TB, fontname="Helvetica", fontsize=13,
-         label=<<B>Logic Diagram — demo_customs_clvs</B>>, labelloc=t,
+         label=<<B>Logic Diagram — samples/demo_customs_clvs</B>>, labelloc=t,
          pad=0.4, nodesep=0.90, ranksep=1.10, bgcolor="white",
          splines=spline]
   node  [fontname="Helvetica", fontsize=11, shape=plaintext]

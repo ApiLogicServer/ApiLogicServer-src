@@ -1,13 +1,13 @@
 digraph logic {
   graph [rankdir=LR, fontname="Helvetica", fontsize=13,
-         label=<<B>Logic Diagram — allocate_dept_account_demo</B>>, labelloc=t,
+         label=<<B>Logic Diagram — samples/allocate_dept_account_demo</B>>, labelloc=t,
          pad=0.4, nodesep=0.35, ranksep=0.70, bgcolor="white",
          splines=spline]
   node  [fontname="Helvetica", fontsize=11, shape=plaintext]
   edge  [fontname="Helvetica", fontsize=10]
 
   // ── trigger ─────────────────────────────────────────────────────
-  TRIGGER [label=<<TABLE BORDER="2" CELLBORDER="0" CELLPADDING="5" BGCOLOR="#e8f5e9" COLOR="#27ae60"><TR><TD><FONT COLOR="#27ae60"><B>&#9889; ChargeGlAllocation inserted</B></FONT></TD></TR></TABLE>>, shape=plaintext]
+  TRIGGER [label=<<TABLE BORDER="2" CELLBORDER="0" CELLPADDING="5" BGCOLOR="#e8f5e9" COLOR="#27ae60"><TR><TD><FONT COLOR="#27ae60"><B>&#9889; ChargeDeptAllocation inserted</B></FONT></TD></TR></TABLE>>, shape=plaintext]
 
   // ── schema layer ──────────────────────────────────────────────────
   Charge [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#4a6fa5"><TR><TD COLSPAN="3" BGCOLOR="#4a6fa5"><FONT COLOR="white"><B> Charge </B></FONT></TD></TR><TR><TD PORT="Charge_total_distributed_amount_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Charge_total_distributed_amount" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> total_distributed_amount </FONT></TD><TD PORT="Charge_total_distributed_amount_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR><TR><TD PORT="Charge_amount_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Charge_amount" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> amount </FONT></TD><TD PORT="Charge_amount_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR></TABLE>>]
@@ -23,11 +23,11 @@ digraph logic {
   ProjectFundingLine [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#4a6fa5"><TR><TD COLSPAN="3" BGCOLOR="#4a6fa5"><FONT COLOR="white"><B> ProjectFundingLine </B></FONT></TD></TR><TR><TD PORT="ProjectFundingLine_percent_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="ProjectFundingLine_percent" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> percent </FONT></TD><TD PORT="ProjectFundingLine_percent_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR></TABLE>>]
   SysProjectReq [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#4a6fa5"><TR><TD COLSPAN="3" BGCOLOR="#4a6fa5"><FONT COLOR="white"><B> SysProjectReq </B></FONT></TD></TR><TR><TD></TD><TD BGCOLOR="#dbe4f0"><FONT COLOR="#1a1a2e">  </FONT></TD><TD></TD></TR></TABLE>>]
   // ── rank groupings ────────────────────────────────────────────────
-  { rank=min; ProjectFundingDefinition; GlAccount; DeptChargeDefinition }
-  { rank=same; Project; DeptChargeDefinitionLine; ProjectFundingLine }
+  { rank=min; GlAccount; DeptChargeDefinition; ProjectFundingDefinition }
+  { rank=same; DeptChargeDefinitionLine; ProjectFundingLine; Project }
   { rank=same; Charge; SysProjectReq }
-  { rank=same; ChargeDeptAllocation }
-  { rank=max; ChargeGlAllocation; TRIGGER }
+  { rank=same; ChargeDeptAllocation; TRIGGER }
+  { rank=max; ChargeGlAllocation }
 
   // ── FK relationships ───────────────────────────────────────────
   Charge -> Project [color="#e0e0e0", style=solid, arrowhead=none, arrowtail=crow, dir=both, penwidth=0.7, constraint=false, weight=1]
@@ -45,7 +45,7 @@ digraph logic {
   SysProjectReq -> Project [color="#e0e0e0", style=solid, arrowhead=none, arrowtail=crow, dir=both, penwidth=0.7, constraint=false, weight=1]
 
   // ── trigger edge ──────────────────────────────────────────────
-  TRIGGER -> ChargeGlAllocation [color="#27ae60", style=bold, arrowhead=vee, penwidth=2, weight=10]
+  TRIGGER -> ChargeDeptAllocation [color="#27ae60", style=bold, arrowhead=vee, penwidth=2, weight=10]
 
   // ── logic edges ────────────────────────────────────────────────────
   ProjectFundingLine:ProjectFundingLine_percent_w -> ChargeDeptAllocation:ChargeDeptAllocation_percent_w [label="1", color="#444444", fontcolor="#444444", arrowhead=vee, penwidth=1.8, weight=8]

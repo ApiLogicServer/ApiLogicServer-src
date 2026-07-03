@@ -1,4 +1,26 @@
-# Logic Flow — basic_demo
+# Logic Flow — samples/basic_demo_logic_gov
+
+<table>
+<tr valign="top">
+<td width="65%">
+
+![logic flow](logic_diagrams/logic_diagram.svg)
+
+</td>
+<td width="35%">
+
+### Rules
+
+1. `unit_price = copy(unit_price)`<br>
+2. `amount = quantity * unit_price`<br>
+3. `amount_total = sum(amount)`<br>
+4. `balance = sum(amount_total where date_shipped)`<br>
+C. constraint: `Customer`<br>
+E. `Order` → `send_row_to_kafka` (after_flush)
+
+</td>
+</tr>
+</table>
 
 ## Requirements
 
@@ -16,21 +38,5 @@ On Placing Orders, Check Credit
     5. The Item unit_price is copied from the Product unit_price
 ```
 
-![logic flow](logic_diagrams/logic_diagram.svg)
-
-## Rules
-
-**Check Credit**
-
-1. `unit_price = copy(unit_price)`
-2. `amount = quantity * unit_price`
-3. `amount_total = sum(amount)`
-4. `balance = sum(amount_total where date_shipped)`
-5. `Customer constraint: balance < credit_limit`
-
-**App Integration**
-
-1. `Order` → `send_row_to_kafka` (after_flush)
-
 ---
-_Generated 2026-05-23 07:36_
+_Generated 2026-07-03 07:39_

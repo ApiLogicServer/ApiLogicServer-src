@@ -1,6 +1,6 @@
 # demo_emp_types — Provenance
 
-**Prompt:** `samples/prompts/emp_types.prompt.md`
+**Prompt:** `docs/requirements/prompt.md` (verbatim copy of the originating prompt; original source: `samples/prompts/emp_types.prompt.md`)
 **Created:** 2026-07-01
 **AI model:** claude-sonnet-5
 **User:** valjhuber@gmail.com

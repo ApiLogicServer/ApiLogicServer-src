@@ -1,6 +1,6 @@
 digraph logic {
   graph [rankdir=TB, fontname="Helvetica", fontsize=13,
-         label=<<B>Logic Diagram — samples/basic_demo_logic_gov</B>>, labelloc=t,
+         label=<<B>Logic Diagram — samples/basic_demo_eai</B>>, labelloc=t,
          pad=0.4, nodesep=0.90, ranksep=1.10, bgcolor="white",
          splines=spline]
   node  [fontname="Helvetica", fontsize=11, shape=plaintext]
@@ -13,9 +13,10 @@ digraph logic {
   Customer [label=<<TABLE BORDER="3" CELLBORDER="0" CELLSPACING="0" COLOR="#c0392b"><TR><TD COLSPAN="3" BGCOLOR="#4a6fa5"><FONT COLOR="white"><B> Customer </B></FONT></TD></TR><TR><TD PORT="Customer_balance_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Customer_balance" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> balance </FONT></TD><TD PORT="Customer_balance_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR></TABLE>>]
   Item [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#4a6fa5"><TR><TD COLSPAN="3" BGCOLOR="#4a6fa5"><FONT COLOR="white"><B> Item </B></FONT></TD></TR><TR><TD PORT="Item_amount_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Item_amount" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> amount </FONT> <FONT COLOR="#e67e22" POINT-SIZE="9">= quantity * unit_price</FONT></TD><TD PORT="Item_amount_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR><TR><TD PORT="Item_quantity_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Item_quantity" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> quantity </FONT></TD><TD PORT="Item_quantity_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR><TR><TD PORT="Item_unit_price_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Item_unit_price" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> unit_price </FONT></TD><TD PORT="Item_unit_price_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR></TABLE>>]
   Order [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#4a6fa5"><TR><TD COLSPAN="3" BGCOLOR="#4a6fa5"><FONT COLOR="white"><B> Order </B></FONT></TD></TR><TR><TD PORT="Order_amount_total_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Order_amount_total" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> amount_total </FONT></TD><TD PORT="Order_amount_total_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR></TABLE>>]
+  OrderB2bMessage [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#4a6fa5"><TR><TD COLSPAN="3" BGCOLOR="#4a6fa5"><FONT COLOR="white"><B> OrderB2bMessage </B></FONT></TD></TR><TR><TD></TD><TD BGCOLOR="#dbe4f0"><FONT COLOR="#1a1a2e">  </FONT></TD><TD></TD></TR></TABLE>>]
   Product [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" COLOR="#4a6fa5"><TR><TD COLSPAN="3" BGCOLOR="#4a6fa5"><FONT COLOR="white"><B> Product </B></FONT></TD></TR><TR><TD PORT="Product_unit_price_w" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD><TD PORT="Product_unit_price" ALIGN="LEFT" BGCOLOR="#dbe4f0" CELLPADDING="3"><FONT COLOR="#1a1a2e"> unit_price </FONT></TD><TD PORT="Product_unit_price_e" WIDTH="6" HEIGHT="18" BGCOLOR="#b8cce8"> </TD></TR></TABLE>>]
   // ── rank groupings ────────────────────────────────────────────────
-  { rank=min; Product; Customer }
+  { rank=min; Customer; OrderB2bMessage; Product }
   { rank=same; Order }
   { rank=max; Item; TRIGGER }
 
@@ -36,7 +37,9 @@ digraph logic {
   // ── events (right cluster) ─────────────────────────────────────
   subgraph cluster_events {
     style=invis
-    evt_send_row_to_kafka [label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" BGCOLOR="#e8f5e9" COLOR="#27ae60"><TR><TD><FONT COLOR="#27ae60" POINT-SIZE="10">&#9889; send_row_to_kafka</FONT></TD></TR></TABLE>>, shape=plaintext]
+    evt__send_order_to_kafka [label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" BGCOLOR="#e8f5e9" COLOR="#27ae60"><TR><TD><FONT COLOR="#27ae60" POINT-SIZE="10">&#9889; _send_order_to_kafka</FONT></TD></TR></TABLE>>, shape=plaintext]
+    evt__publish_order_b2b [label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" BGCOLOR="#e8f5e9" COLOR="#27ae60"><TR><TD><FONT COLOR="#27ae60" POINT-SIZE="10">&#9889; _publish_order_b2b</FONT></TD></TR></TABLE>>, shape=plaintext]
   }
-  Order -> evt_send_row_to_kafka [label="after_flush", color="#27ae60", style=dashed, arrowhead=open, penwidth=1.2, fontcolor="#27ae60", constraint=false]
+  Order -> evt__send_order_to_kafka [label="after_flush", color="#27ae60", style=dashed, arrowhead=open, penwidth=1.2, fontcolor="#27ae60", constraint=false]
+  OrderB2bMessage -> evt__publish_order_b2b [label="after_flush", color="#27ae60", style=dashed, arrowhead=open, penwidth=1.2, fontcolor="#27ae60", constraint=false]
 }

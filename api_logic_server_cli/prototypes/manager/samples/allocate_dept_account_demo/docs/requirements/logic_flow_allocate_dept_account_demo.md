@@ -1,4 +1,42 @@
-# Logic Flow — allocate_dept_account_demo
+# Logic Flow — samples/allocate_dept_account_demo
+
+<table>
+<tr valign="top">
+<td width="65%">
+
+![logic flow](logic_diagrams/logic_diagram.svg)
+
+</td>
+<td width="35%">
+
+### Rules
+
+1. `percent = copy(percent)`<br>
+2. `percent = copy(percent)`<br>
+3. `amount = (<br>
+            charge.amount * percent / Decimal(100)<br>
+            if charge and percent is not None<br>
+            else Decimal(0)<br>
+        )`<br>
+4. `amount = (<br>
+            charge_dept_allocation.amount * percent / Decimal(100)<br>
+            if charge_dept_allocation and percent is not None<br>
+            else Decimal(0)<br>
+        )`<br>
+5. `is_active = 1 if total_percent == Decimal("100") else 0`<br>
+6. `is_active = 1 if total_percent == Decimal("100") else 0`<br>
+7. `total_allocated = sum(amount)`<br>
+8. `total_distributed_amount = sum(amount)`<br>
+9. `total_charges = sum(amount)`<br>
+10. `total_percent = sum(percent)`<br>
+11. `total_percent = sum(percent)`<br>
+E. `SysProjectReq` → `_identify_project` (early) — Fires when a SysProjectReq is inserted.<br>
+E. `Charge` → `identify_project_for_charge` (early) — Early event on Charge: if project_id is missing but project_description is set,<br>
+E. `Charge` → `check_active_funding` (early)
+
+</td>
+</tr>
+</table>
 
 ## Requirements
 
@@ -55,26 +93,5 @@ version: 1.0
 date: March 12, 2026
 ```
 
-![logic flow](logic_diagrams/logic_diagram.svg)
-
-## Rules
-
-1. `percent = copy(percent)`
-2. `percent = copy(percent)`
-3. `amount = (
-            charge.amount * percent / Decimal...`
-4. `amount = (
-            charge_dept_allocation.amount * p...`
-5. `is_active = 1 if total_percent == Decimal("100"`
-6. `is_active = 1 if total_percent == Decimal("100"`
-7. `total_allocated = sum(amount)`
-8. `total_distributed_amount = sum(amount)`
-9. `total_charges = sum(amount)`
-10. `total_percent = sum(percent)`
-11. `total_percent = sum(percent)`
-E. `SysProjectReq` → `_identify_project` (early) — Fires when a SysProjectReq is inserted.
-E. `Charge` → `identify_project_for_charge` (early) — Early event on Charge: if project_id is missing but project_description is set,
-E. `Charge` → `check_active_funding` (early)
-
 ---
-_Generated 2026-06-10 15:21_
+_Generated 2026-07-03 07:39_

@@ -84,7 +84,7 @@ Every developer insists on a database diagram — you can't engage with a system
 
 | NL Command | Artifact | What you get |
 |---|---|---|
-| `create logic diagram` | [Logic Diagram](docs/requirements/logic_flow_basic_demo.md) | Scoped per requirement — ask for "check credit" and get that dependency chain as an SVG. A 100-table system stays readable because you never diagram everything at once. Auto-generated from the rules, so it can't drift. |
+| `create logic diagram` | [Logic Diagram](docs/requirements/logic_flow_basic_demo_logic_gov.md) | Scoped per requirement — ask for "check credit" and get that dependency chain as an SVG. A 100-table system stays readable because you never diagram everything at once. Auto-generated from the rules, so it can't drift. |
 | `health check` | [Governance Report](docs/requirements/health_check.md) | Coverage and integrity scores per project. Same command works across a portfolio — comparable scores, consistent criteria. |
 | `create tests` | [Behave Tests](test/api_logic_server_behave/reports/Behave%20Logic%20Report.md) | AI reads the rules, infers what needs verifying, and writes the test scenarios. On execution, the runtime logic log is embedded in the report — requirement → rule → test → execution trace in one artifact. |
 

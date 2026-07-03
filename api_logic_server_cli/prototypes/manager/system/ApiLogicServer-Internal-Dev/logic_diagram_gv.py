@@ -22,6 +22,14 @@ Output:
 Requires: graphviz dot binary (brew install graphviz)
 
 Changelog:
+  1.3 - STI subtype grouping: tables with 2+ show_when discriminator groups in
+        ui/admin/admin.yaml (e.g. Employee: Type=hourly, Type=commissioned,
+        military=yes) now group those columns together with a tinted
+        background + small divider label within the SAME table box — no
+        separate boxes, no edge redirection. Shared columns render first,
+        each subtype group's columns follow, in admin.yaml's first-seen
+        order. All existing formula/copy/sum arcs are untouched (still
+        addressed by table:column port, unaffected by grouping).
   1.2 - Uniform dark-grey logic arrows (style distinguishes type, not colour)
         Explicit left/right port boxes flanking each attribute name
         Intra-table formula shown as annotation on column, not self-loop
@@ -60,6 +68,11 @@ C_FK            = "#e0e0e0"   # very faint FK lines
 # Formula annotation colour on column cell
 C_FORMULA_ANN   = "#e67e22"   # orange text annotation inside column
 
+# STI subtype grouping — subtle tints, one per discriminator group, cycled if >4.
+# Shared (non-subtype) columns keep the default C_COL_FILL.
+C_SUBTYPE_TINTS = ["#fdf3e0", "#e6f3ea", "#f0e6f5", "#e6eef8"]
+C_SUBTYPE_LABEL = "#7a5c00"   # muted brown-gold text for the subtype group header row
+
 
 # ── regex ─────────────────────────────────────────────────────────────────────
 _RE_SUM     = re.compile(r'Rule\.sum\s*\([^)]*derive\s*=\s*([^\s,)]+)[^)]*as_sum_of\s*=\s*([^\s,)]+)([^)]*\))', re.DOTALL)
@@ -75,6 +88,11 @@ _RE_ROW_ATTR = re.compile(r'row\.([A-Za-z_][A-Za-z0-9_]*)')
 
 # DBML: Ref: Child.(fk_col) > Parent.(id)
 _RE_DBML_REF = re.compile(r'Ref:\s*(\w+)\.\((\w+)\)\s*>\s*(\w+)\.\((\w+)\)')
+
+# admin.yaml: resource block header, attribute name, and show_when discriminator
+_RE_ADMIN_RESOURCE  = re.compile(r'^  (\w+):\s*$')
+_RE_ADMIN_ATTR_NAME = re.compile(r'^\s*-\s*name:\s*(\w+)\s*$')
+_RE_ADMIN_SHOW_WHEN = re.compile(r'show_when:\s*record\["(\w+)"\]\s*==\s*"(\w+)"')
 
 _SKIP_ATTRS = {'order', 'customer', 'product', 'item', 'supplier',
                'order_list', 'item_list', 'product_supplier_list',
@@ -138,6 +156,75 @@ def parse_dbml(project_dir: Path):
         fk_edges.append((child, child_col, parent, parent_col))
         fk_parents[child].add(parent)
     return fk_edges, fk_parents
+
+
+# ── admin.yaml STI subtype parser ──────────────────────────────────────────────
+
+def parse_admin_subtypes(project_dir: Path):
+    """
+    Detect Single Table Inheritance subtype groupings from ui/admin/admin.yaml's
+    show_when entries — the same source the CE uses to hide/show subtype-specific
+    fields in the Admin UI (record["Type"] == "hourly", record["military"] == "yes").
+
+    Returns: table -> discriminator -> [col, col, ...]
+      e.g. {"Employee": {"Type=hourly": ["hourly_rate", "union_dues", ...],
+                          "Type=commissioned": ["base_salary", "commission_total"],
+                          "military=yes": ["branch", "rank", "service_years", ...]}}
+
+    A table with 2+ distinct discriminator groups is treated as STI; a single
+    group (or none) is not enough to justify grouping in the diagram.
+    """
+    admin_path = project_dir / "ui" / "admin" / "admin.yaml"
+    if not admin_path.exists():
+        return {}
+
+    subtypes = defaultdict(lambda: defaultdict(list))
+    current_resource = None
+    current_attr = None
+    in_resources = False
+    in_attributes = False
+
+    for raw_line in admin_path.read_text(encoding="utf-8").splitlines():
+        if raw_line == 'resources:':
+            in_resources = True
+            continue
+        if not in_resources:
+            continue
+
+        m = _RE_ADMIN_RESOURCE.match(raw_line)
+        if m:
+            current_resource = m.group(1)
+            in_attributes = False
+            continue
+
+        if current_resource is None:
+            continue
+
+        stripped = raw_line.strip()
+        if stripped == 'attributes:':
+            in_attributes = True
+            continue
+        if stripped in ('tab_groups:',) or (stripped.endswith(':') and not stripped.startswith('-')
+                                             and raw_line.startswith('    ')):
+            in_attributes = False
+
+        if not in_attributes:
+            continue
+
+        m = _RE_ADMIN_ATTR_NAME.match(raw_line)
+        if m:
+            current_attr = m.group(1)
+            continue
+
+        m = _RE_ADMIN_SHOW_WHEN.search(raw_line)
+        if m and current_attr:
+            discrim, value = m.groups()
+            key = f"{discrim}={value}"
+            subtypes[current_resource][key].append(current_attr)
+
+    # Only keep tables with 2+ distinct discriminator groups — a single group
+    # isn't a meaningful STI grouping for diagram purposes.
+    return {t: dict(groups) for t, groups in subtypes.items() if len(groups) >= 2}
 
 
 def topo_rank(tables, fk_parents, all_fk_parents=None):
@@ -357,12 +444,32 @@ def infer_trigger(rules, fk_parents):
 
 # ── DOT builder ───────────────────────────────────────────────────────────────
 
-def build_dot(rules, project_name, fk_edges, fk_parents, req_label=None):
+def build_dot(rules, project_name, fk_edges, fk_parents, req_label=None, subtypes=None):
 
     involved_tables  = tables_in_rules(rules)
     table_cols, intra_formula = cols_in_rules(rules)
     constraint_tbls  = {r["entity"] for r in rules if r["type"] == "constraint"}
     event_rules      = [r for r in rules if r["type"] == "event"]
+    subtypes         = subtypes or {}
+
+    # ── STI subtype column grouping (single box, tinted rows) ────────────────
+    # col_group[(table, col)] -> discriminator key (e.g. "Type=hourly"), only
+    # for columns belonging to a detected subtype group. Columns not in the
+    # map are "shared" and keep the default row colour. Group order is by
+    # first appearance in admin.yaml — stable across regenerations.
+    col_group  = {}     # (table, col) -> discrim_key
+    group_tint = {}     # (table, discrim_key) -> hex colour
+    group_order = defaultdict(list)   # table -> [discrim_key, ...] in first-seen order
+    for table, groups in subtypes.items():
+        if table not in involved_tables:
+            continue
+        for i, (discrim_key, cols) in enumerate(groups.items()):
+            tint = C_SUBTYPE_TINTS[i % len(C_SUBTYPE_TINTS)]
+            group_tint[(table, discrim_key)] = tint
+            group_order[table].append(discrim_key)
+            for c in cols:
+                if c in table_cols.get(table, []):
+                    col_group[(table, c)] = discrim_key
 
     visible_fks = [(c, cc, p, pc) for (c, cc, p, pc) in fk_edges
                    if c in involved_tables and p in involved_tables]
@@ -421,9 +528,18 @@ def build_dot(rules, project_name, fk_edges, fk_parents, req_label=None):
     # Each column row: [narrow port_w cell][attr name — with formula annotation][narrow port_e cell]
     w('  // ── schema layer ──────────────────────────────────────────────────')
     for table in sorted(involved_tables):
-        cols         = table_cols.get(table, [])
+        all_cols     = table_cols.get(table, [])
         border_color = C_CONSTRAINT if table in constraint_tbls else C_TABLE_FILL
         border_width = 3 if table in constraint_tbls else 1
+
+        # Reorder so shared columns come first, then each subtype group's
+        # columns together (in first-seen admin.yaml order) — this is what
+        # makes the tinted-row grouping visually contiguous instead of
+        # scattered through the column list.
+        shared_cols = [c for c in all_cols if (table, c) not in col_group]
+        cols = list(shared_cols)
+        for discrim_key in group_order.get(table, []):
+            cols += [c for c in all_cols if col_group.get((table, c)) == discrim_key]
 
         # header spans all 3 columns
         col_rows = (f'<TR>'
@@ -450,10 +566,26 @@ def build_dot(rules, project_name, fk_edges, fk_parents, req_label=None):
                 for dep in plain_intra_deps:
                     feeds_map[dep].append((seq_r, dst_short))
 
+        prev_group = None
         for c in cols:
             port   = _port(f"{table}.{c}")
             port_w = port + "_w"
             port_e = port + "_e"
+
+            # STI subtype grouping: insert a thin divider row when entering a
+            # new (or the first) subtype group, and tint this row's cell.
+            this_group = col_group.get((table, c))
+            if this_group != prev_group and this_group is not None:
+                divider_label = this_group.replace('=', ': ')
+                divider_tint  = group_tint.get((table, this_group), C_COL_FILL)
+                col_rows += (
+                    f'<TR><TD BGCOLOR="{border_color}"></TD>'
+                    f'<TD BGCOLOR="{divider_tint}" CELLPADDING="2">'
+                    f'<FONT COLOR="{C_SUBTYPE_LABEL}" POINT-SIZE="9"><B> {divider_label} </B></FONT></TD>'
+                    f'<TD BGCOLOR="{border_color}"></TD></TR>'
+                )
+            prev_group = this_group
+            row_fill = group_tint.get((table, this_group), C_COL_FILL) if this_group else C_COL_FILL
 
             # formula annotation — prefer "= _func(row)" for calling= rules,
             # fall back to "= f(a, b)" for inline lambdas with few deps
@@ -489,7 +621,7 @@ def build_dot(rules, project_name, fk_edges, fk_parents, req_label=None):
             col_rows += (
                 f'<TR>'
                 f'<TD PORT="{port_w}" WIDTH="6" HEIGHT="18" BGCOLOR="{C_PORT_FILL}"> </TD>'
-                f'<TD PORT="{port}" ALIGN="LEFT" BGCOLOR="{C_COL_FILL}" CELLPADDING="3">'
+                f'<TD PORT="{port}" ALIGN="LEFT" BGCOLOR="{row_fill}" CELLPADDING="3">'
                 f'<FONT COLOR="{C_COL_FONT}"> {c} </FONT>{ann}</TD>'
                 f'<TD PORT="{port_e}" WIDTH="6" HEIGHT="18" BGCOLOR="{C_PORT_FILL}"> </TD>'
                 f'</TR>'
@@ -1027,6 +1159,7 @@ def generate(project_name: str, requirement: str = None, manager_root: Path = No
         sys.exit(1)
 
     fk_edges, fk_parents = parse_dbml(project_dir)
+    subtypes = parse_admin_subtypes(project_dir)
     files = find_logic_files(project_dir, requirement)
     if not files:
         print(f"No logic files found matching '{requirement}'")
@@ -1037,7 +1170,7 @@ def generate(project_name: str, requirement: str = None, manager_root: Path = No
         print("No rules found.")
         sys.exit(0)
 
-    dot_src = build_dot(rules, project_name, fk_edges, fk_parents, req_label=requirement)
+    dot_src = build_dot(rules, project_name, fk_edges, fk_parents, req_label=requirement, subtypes=subtypes)
 
     # ── output layout ──────────────────────────────────────────────────────────
     # Scoped:  docs/requirements/<requirement>/

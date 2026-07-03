@@ -27,6 +27,10 @@ This is a delivered sample (`samples/demo_emp_types`), which can also rebuild as
 
 &nbsp;
 
+![types](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/database/entity_types_dgm.png?raw=true)
+
+&nbsp;
+
 ## What This Illustrates
 
 Two independent classification axes on the same entity — in this case `Employee`:
