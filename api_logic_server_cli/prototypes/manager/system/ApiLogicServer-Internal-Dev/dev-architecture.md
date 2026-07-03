@@ -4,8 +4,23 @@ Description: Enables AI assistants to be co-designers for GenAI-Logic features
 Source: ApiLogicServer-src/prototypes/manager/system/ApiLogicServer-Internal-Dev/dev-architecture.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this to understand project structure, development workflow, and recent additions
-version: 2.14
+version: 2.16
 changelog:
+  - 2.16 (Jul 2026) - Noted nw_sample doubles as Val's manual pre-release LogicBank
+    regression test, not just a teaching/demo project - patterns that look like tech debt
+    (declare_logic.py monolith, as_exp= string param, custom calling= Kafka function,
+    wildcard imports, the Ready/cascade-add pattern) may be deliberately preserved to
+    exercise specific LB code paths across releases. Do not modify nw_sample's domain
+    logic without checking with Val first. See samples/nw_sample/review.md ("Also: LB
+    Regression Test").
+  - 2.15 (Jul 2026) - Ready Flag pattern (Training Pattern Categories #4): documented the
+    underlying engineering reason it exists - min-cardinality constraints ("Order must have
+    Items") can't be reliably enforced at insert time through SAFRS due to cascade-add PK
+    timing (parent PK is DB-computed, not stamped into children until flush). Ready defers
+    the cardinality check to an explicit later state transition; the workaround was then
+    recognized as better UX independent of the technical constraint. See samples/nw_sample/
+    review.md for the full writeup, samples/nw_sample/logic/declare_logic.py:187-195 for
+    the code.
   - 2.14 (Jul 2026) - Type hierarchy pattern: STI vs joined/concrete CTI comparison, GL preference for STI, CE location pointers (project CE step 4d, manager CE 4d checklist)
   - 2.13 (Jun 2026) - Added README.md broken-link check to create_codespaces_mgr.py (Step 2h, gates --push/--release). First 2 attempts were unusable (236, then still-noisy false positives) until scope was narrowed to README.md only - see "README Broken-Link Check" section for the false-positive traps and what actually works
   - 2.12 (Jun 2026) - LogicBank 1.31.04 multi-relationship fix: child_role_name now works correctly on Rule.sum/count/copy (and link()) when 2+ relationships connect the same parent/child classes. Documented in prototypes/base/docs/training/logic_bank_api.md (user-facing CE) - was previously undocumented even though the parameter existed. See "Multi-Relationship Fix (LogicBank)" section
@@ -676,6 +691,39 @@ The `logic_training/` examples teach ChatGPT these patterns:
    - `ready_flag`: Multi-use-case with conditional aggregations
    - Customer.balance only sums orders where `ready == True AND date_shipped is None`
    - Product.total_ordered only sums items where `ready == True`
+   - **Why `Ready` exists — min-cardinality vs. SAFRS cascade-add timing:** `Ready` was
+     originally an engineering workaround, not a pure UX choice. Minimum-cardinality
+     constraints ("an Order must have at least one Item") are supported via
+     `Rule.commit_row_event` — but reliably enforcing them **at insert time**, through
+     SAFRS, has never worked cleanly. When a client posts a parent + children in one
+     nested request (Order + Items), the parent's PK is DB-computed (autoincrement).
+     Each child needs that PK **cascade-added** — stamped into its own FK column — before
+     it counts as "attached." The PK isn't assigned until flush, and SAFRS's nested-insert
+     handling + LogicBank's row-logic timing don't reliably line up to guarantee the
+     child-count check runs after cascade-add has stamped every child, while still early
+     enough to reject the transaction atomically. (`nw_sample`'s own code comment
+     confirms half of this: "the after_flush event makes Order.Id available" — even the
+     parent's own PK isn't visible to rule code until after flush.)
+     **The resolution:** don't enforce cardinality at insert — defer the check to an
+     explicit, later state transition (`Ready`, or shipping). See
+     `samples/nw_sample/logic/declare_logic.py:187-195` (`do_not_ship_empty_orders`, a
+     commit event gated on `Ready == True` or `ShippedDate is not None`, checked against a
+     reactive `Rule.count`). What started as a workaround for this SAFRS/cascade-add
+     limitation was then recognized as better UX in its own right — orders naturally want
+     a draft/staging phase before being finalized for shipping. Full writeup:
+     `samples/nw_sample/review.md` ("Origin Story: Min-Cardinality Constraints and Why
+     Ready Exists").
+   - **`nw_sample` doubles as Val's manual pre-release regression test for LogicBank
+     itself** (run before every LB release) — not just a teaching/demo project. This
+     means patterns in `nw_sample`'s domain code that look like tech debt (single large
+     `declare_logic.py` instead of `logic_discovery/`, `as_exp=` string param, custom
+     `calling=` Kafka function, wildcard imports) may be **deliberately preserved to keep
+     exercising specific LogicBank code paths/timing across releases** — not oversights
+     to clean up. Same likely applies to the `Ready`/cascade-add pattern above and to
+     `test/api_logic_server_behave/features/place_order.feature`'s scenarios (probably
+     the actual pass/fail gate, not just documentation). Do not modify `nw_sample`'s
+     domain logic, models, or admin.yaml without checking with Val first — see
+     `samples/nw_sample/review.md` ("Also: LB Regression Test") for the full caveat.
 
 5. **Chain Down (Copy/Formula)**
    - Item.unit_price = copy(Product.unit_price)
