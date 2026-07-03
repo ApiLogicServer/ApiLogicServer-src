@@ -1,9 +1,17 @@
 ---
 # LogicBank API Reference
-# Version: 1.0.19
-# Last Updated: June 29, 2026
+# Version: 1.0.20
+# Last Updated: July 2, 2026
 # Description: The Logic Rosetta Stone: simplified API for creating declarative business logic rules
 # Changelog:
+#   1.0.20 (Jul 2026) - Corrected/completed DEPENDENCY TRACKING section per LogicBank's own
+#     dependency-scanning.md analysis (org_git/LogicBank/system/LogicBank-Internal-Dev/):
+#     calling= functions ARE scanned by parse_dependencies() exactly like as_expression lambdas
+#     (inspect.getsource() + token scan) - this was already correctly documented (items 1-3), not
+#     a gap. Added item 4: old_row.<attr> references are NEVER tracked as dependencies (only
+#     row.<attr> is), regardless of expression form - a real, previously undocumented gap. Also
+#     tightened health_check.md's "Broken dependency tracking" demerit wording to attribute the
+#     failure to the textual/shallow scan (helper delegation), not to calling= itself.
 #   1.0.19 (Jun 2026) - Added guidance: after an early_row_event sets an FK column, do not read
 #     the FK's relationship attribute later in the same transaction (e.g. row.customs_office) -
 #     query the lookup table directly via session.query(...).get(fk_value) instead. The
@@ -112,6 +120,17 @@ CRITICAL - DEPENDENCY TRACKING: LogicBank scans the expression body for `row.<at
      in the downstream rule.
   3. Parent attribute references (row.parent.attr) ARE supported in lambdas and calling functions —
      LB tracks cross-table dependencies correctly when the reference appears in the scanned body.
+  4. `old_row.<attr>` references are NEVER tracked as dependencies, even when they appear directly
+     in the scanned body (unlike `row.<attr>`, which is tracked whether it's in a lambda or a
+     calling= function). If a rule's *only* reference to an attribute is via `old_row.X` — no
+     `row.X` anywhere in the same function — the dependency graph does not know this rule depends
+     on `X`, which can affect pruning/ordering decisions.
+     ❌ RISK: `def f(row, old_row, logic_row): return row.qty - old_row.qty`  — only `qty` (via `row.qty`)
+        is tracked; if a hypothetical rule referenced `old_row.other_attr` with no `row.other_attr`
+        anywhere in the body, that dependency would be invisible.
+     ✅ SAFE: ensure every attribute the rule's correctness depends on also appears at least once
+        as `row.<attr>` in the same function body — even a no-op reference is enough to register
+        the dependency.
 
 CRITICAL - HOW TO WIRE A FUNCTION INTO A RULE:
 

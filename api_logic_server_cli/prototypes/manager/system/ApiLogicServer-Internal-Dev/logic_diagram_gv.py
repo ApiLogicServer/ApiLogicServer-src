@@ -896,6 +896,7 @@ def _postprocess_svg(svg_path: Path, dot_path: Path = None):
     )
 
     tightened = 0
+    max_intra_x = 0.0   # track rightmost extent reached by injected arcs + labels
     for (table, src_col, dst_col, seq, arc_idx) in intra_directives:
         if table not in node_geom:
             continue
@@ -920,7 +921,6 @@ def _postprocess_svg(svg_path: Path, dot_path: Path = None):
         path_el.set('d', d)
         path_el.set('stroke', INTRA)
         path_el.set('stroke-width', '1.2')
-        path_el.set('stroke-dasharray', '4,3')
         path_el.set('fill', 'none')
 
         s = 4
@@ -929,13 +929,17 @@ def _postprocess_svg(svg_path: Path, dot_path: Path = None):
         poly_el.set('stroke', INTRA)
         poly_el.set('fill', INTRA)
 
+        label_x = base_x + bulge + 3
         text_el = ET.SubElement(graph_g, f'{{{SVG}}}text')
-        text_el.set('x', str(round(base_x + bulge + 3, 1)))
+        text_el.set('x', str(round(label_x, 1)))
         text_el.set('y', str(round(mid_y + 4, 1)))
         text_el.set('font-family', 'Helvetica,sans-Serif')
         text_el.set('font-size', '10')
         text_el.set('fill', INTRA)
         text_el.text = str(seq)
+
+        # reserve room for the label text (~7pt per digit, generous for 1-2 digit seq numbers)
+        max_intra_x = max(max_intra_x, label_x + 7 * len(str(seq)))
 
         tightened += 1
 
@@ -956,6 +960,12 @@ def _postprocess_svg(svg_path: Path, dot_path: Path = None):
             new_vy = vy + TRIM
             new_vw = vw - 2 * TRIM
             new_vh = vh - 2 * TRIM
+            # Injected intra-table arcs (and their labels) can extend past graphviz's
+            # own right edge, since graphviz never laid them out — widen the canvas
+            # to cover them instead of letting the crop clip them off.
+            if max_intra_x > 0:
+                needed_w = (max_intra_x - vx) + KEEP
+                new_vw = max(new_vw, needed_w)
             if new_vw > 0 and new_vh > 0:
                 root.set('viewBox', f'{new_vx:.2f} {new_vy:.2f} {new_vw:.2f} {new_vh:.2f}')
                 root.set('width',  f'{new_vw:.0f}pt')
@@ -1032,7 +1042,8 @@ def generate(project_name: str, requirement: str = None, manager_root: Path = No
     involved_tables = tables_in_rules(rules)
     ranks = topo_rank(involved_tables, fk_parents, all_fk_parents=fk_parents)
 
-    flow_name = f"logic_flow_{requirement}.md" if requirement else f"logic_flow_{project_name}.md"
+    project_basename = Path(project_name).name   # strip any subdirectory prefix (e.g. "samples/demo_emp_types")
+    flow_name = f"logic_flow_{requirement}.md" if requirement else f"logic_flow_{project_basename}.md"
     flow_path = req_dir / flow_name
     # SVG ref is relative from flow_path to svg_path
     svg_rel   = f"logic_diagrams/{svg_path.name}"

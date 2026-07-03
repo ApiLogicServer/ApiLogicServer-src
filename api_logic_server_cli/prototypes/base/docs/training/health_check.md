@@ -1,6 +1,12 @@
 ---
 title: Project Health Check — Vital Signs
-version: 1.7 (June 2026) — Effective LOC: hardcoded baselines for all api/api_discovery/ scaffold stubs; integration/system, integration/mcp, integration/n8n now framework-infrastructure (0)
+version: 1.8 (July 2026) — Corrected "Broken dependency tracking" demerit: calling= itself is scanned correctly (not inherently suspect); clarified the actual failure is helper-hidden refs, and added the old_row.<attr>-never-tracked gap (see logic_bank_api.md v1.0.20)
+# Changelog:
+#   1.8 (Jul 2026) - Broken dependency tracking demerit reworded per LogicBank's own
+#     dependency-scanning.md: calling= functions are scanned exactly like as_expression lambdas
+#     (not a gap); real gaps are (a) helper-hidden row.attr refs (shallow/textual scan, doesn't
+#     follow calls) and (b) old_row.<attr> is never tracked as a dependency, only row.<attr> is.
+#   1.7 (June 2026) — Effective LOC: hardcoded baselines for all api/api_discovery/ scaffold stubs; integration/system, integration/mcp, integration/n8n now framework-infrastructure (0)
 usage: AI reads this when user asks for vital signs / health check
 overhead: zero until invoked — file is read on demand only
 governance: see docs/training/governance.md — thresholds, red flags, score ranges, manager roll-up
@@ -251,9 +257,16 @@ An event handler function whose body:
 Detection heuristic: event body has `row.<attr> =` assignment AND no external I/O (no Kafka, no HTTP, no session.query for lookup).
 
 #### -2: Broken dependency tracking
+LB's scan is textual/shallow (`inspect.getsource()` + token match on the function's own body) —
+it does not follow calls into helper functions. `calling=` itself is scanned correctly and is
+NOT inherently suspect; the failure mode is specifically when a scanned body's only `row.attr`
+references are hidden one level down, in a helper it calls.
 - `as_expression=lambda row: my_func(row)` — wraps a function; LB sees no `row.attr` refs
-- `calling=` function body has no direct `row.attr` refs (all hidden in a helper)
+- `calling=` function body has no direct `row.attr` refs (all hidden in a helper it calls)
 - Side-effect assignment inside a formula: `row.other_col = ...` inside a `calling=` function
+- Rule's only reference to an attribute is `old_row.X` with no `row.X` anywhere in the same
+  body — `old_row.<attr>` is never tracked as a dependency (only `row.<attr>` is), regardless
+  of expression form
 
 #### -1: Raw query in row_event (non-lookup)
 `session.query()` inside a row_event that computes an aggregate or iterates over
