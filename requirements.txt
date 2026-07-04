@@ -5,7 +5,7 @@ safrs>=3.1.7
 PyJWT>=2.12.0
 python-dateutil==2.8.2
 logicbankutils==0.6.0
-LogicBank>=1.31.04
+LogicBank>=1.31.05
 inflect==5.0.2
 inflection==0.5.1
 python-dotenv==1.2.2
