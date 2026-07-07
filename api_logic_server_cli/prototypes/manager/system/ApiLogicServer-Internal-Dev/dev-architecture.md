@@ -4,8 +4,13 @@ Description: Enables AI assistants to be co-designers for GenAI-Logic features
 Source: ApiLogicServer-src/prototypes/manager/system/ApiLogicServer-Internal-Dev/dev-architecture.md
 Propagation: BLT process → Manager workspace
 Usage: AI assistants read this to understand project structure, development workflow, and recent additions
-version: 2.16
+version: 2.17
 changelog:
+  - 2.17 (Jul 2026) - Two fixes found live-debugging basic_demo: (1) opt_locking checksum
+    mismatch on Decimal/float round-trip (false-positive lock failures on every Item update);
+    (2) removed serverReadyAction from prototypes/base/.vscode/launch.json - unreliable on
+    first F5 in a fresh VS Code window, retained only in prototypes/manager/.vscode/launch.json
+    where the Manager's long-lived warm window makes it reliable
   - 2.16 (Jul 2026) - Noted nw_sample doubles as Val's manual pre-release LogicBank
     regression test, not just a teaching/demo project - patterns that look like tech debt
     (declare_logic.py monolith, as_exp= string param, custom calling= Kafka function,
@@ -1201,6 +1206,41 @@ Two bugs reported against the same ~30-line block, fixed together:
 - **Known minor inefficiency (not a bug):** `after_flush` fires on every flush cycle within a transaction (e.g. LogicBank multi-pass derivation), so a still-new row's checksum gets recomputed redundantly across cycles. Functionally correct — the final pre-commit flush sees fully-derived values — just extra work. Not worth optimizing unless profiling shows it matters.
 
 **Propagation:** Fixed in `prototypes/base/` gold source only. Next BLT run reinstalls to venv and regenerates all sample/test projects with the fix automatically — no other files to touch.
+
+&nbsp;
+
+### Optimistic Locking — Decimal/float checksum mismatch (Jul 2026)
+
+**Gold source:** `org_git/ApiLogicServer-src/api_logic_server_cli/prototypes/base/api/system/opt_locking/opt_locking.py`
+
+**Bug:** every PATCH to a row containing a `DECIMAL`/`Numeric` column (e.g. `Item.amount`, `Item.unit_price`) failed optimistic locking — `409 Sorry, row altered by another user` — even with a single user, zero concurrency, and no intervening write. Reproduced live in `basic_demo`: PATCH `Item.quantity` failed 3 times in a row across two browsers; DB confirmed no other writer touched the row.
+
+**Root cause:** `checksum()` hashes `repr(tuple(column_values))`. The GET-time read path (`checksum_row`, live ORM instance) returns `float` for a `DECIMAL` column (e.g. `300.0`); LogicBank's `old_row` snapshot at PATCH time (`checksum_old_row`) returns `Decimal` (e.g. `Decimal('300')`). `Decimal('300') == 300.0` is `True`, but `repr()` differs (`'300.0'` vs `"Decimal('300')"`), so `checksum()` — which hashes on `repr()`, not equality — produced two different hashes for the identical value. Confirmed directly: hashing `(6, 6, 1, 2, 300.0, 150.0)` vs `(6, 6, 1, 2, Decimal('300'), Decimal('150'))` gives different SHA256 output, and the "wrong" hash exactly matched the `old_row_checksum` logged in the failing request.
+
+**Fix:** in `checksum()`, normalize any `Decimal` entry to `float` before appending to the hashed tuple:
+```python
+if isinstance(each_entry, Decimal):
+    real_tuple.append(float(each_entry))
+```
+Placed as the first branch in the existing `isinstance` chain (before `list`/`set`/`dict`), in the same three locations `#113`/`#114` were fixed: `basic_demo/api/system/opt_locking/opt_locking.py` (test project), the venv-installed `prototypes/base` copy, and this `org_git/ApiLogicServer-src` gold source.
+
+**Verified:** restarted `basic_demo`, confirmed GET → PATCH → GET → PATCH round-trips return `200` with correct rule cascades (amount/amount_total/balance recalculated), zero opt-lock errors.
+
+**Propagation:** Fixed in `prototypes/base/` gold source. Next BLT reinstalls to venv and regenerates sample/test projects automatically. Sample-project pre-baked copies under `prototypes/manager/samples/*/api/system/opt_locking/opt_locking.py` are downstream snapshots (not templates) — not patched individually; only worth doing if a specific sample project is being actively used/demoed and hits this.
+
+&nbsp;
+
+### F5 Simple Browser auto-open (`serverReadyAction`) — Manager-only (Jul 2026)
+
+**Symptom:** F5 ("Run Project (start server)") reliably auto-opens Simple Browser in the **Manager** workspace. In a **freshly opened project workspace** (new VS Code window), the same launch config sometimes opens Simple Browser to "server not available" on the very first F5 — one manual refresh then works, and every subsequent F5 in that same window is fine from then on.
+
+**Root cause — ruled out, then confirmed:** Not a cold Python/venv issue (venv already warm, no first-run `.pyc` compile tax) and not interpreter resolution (correct venv interpreter already selected in the fresh window). Traced `api_logic_server_run.py`: all app setup (`server_setup.api_logic_server_setup()` — model discovery, LogicBank rule bank init, admin loader) completes *before* `flask_app.run(...)`; `use_reloader` is off (no `debug=True`), so there's no second reloader-fork process either — by the time Werkzeug prints "Running on http://...", the app is fully warm and the socket is genuinely ready. The gap is in VS Code itself: `serverReadyAction` opens Simple Browser the instant its regex matches the debug-console stream, with no retry if that first connection loses the race. A freshly opened window's debug-console/output-channel pipeline has enough one-time startup latency (extension host, debug adapter, output streaming all spinning up for the first time in that window) that the very first F5 can occasionally win the regex-match race before the OS-level listener is truly ready to accept — a long-lived, already-warm window (the Manager, after its first-ever F5) doesn't pay that latency again, so it stays reliable indefinitely. Matches the observed pattern exactly.
+
+**Fix:** removed the `serverReadyAction` block from all 5 server-launch configs (`Run Project (start server)`, `Run Project DEBUG`, VERBOSE, No Security, No Security VERBOSE) in `prototypes/base/.vscode/launch.json` (gold source + venv + `basic_demo`). **Left untouched:** Manager root `.vscode/launch.json` and `prototypes/manager/.vscode/launch.json` (venv + org_git) — the Manager window is the one place the warm-window assumption holds, by design.
+
+**User-facing effect:** F5 in any created/sample project starts the server without auto-opening Simple Browser; user opens it manually once (readme/CE already documents the URL). No more "server not available" on first F5 in a new project window.
+
+**Not fixable from this codebase's side** — Werkzeug already prints "Running on" only once genuinely bound with full app init done first. Any future fix would have to live in VS Code's `serverReadyAction` retry behavior, not here.
 
 &nbsp;
 

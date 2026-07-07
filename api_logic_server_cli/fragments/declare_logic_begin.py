@@ -2,10 +2,12 @@ import datetime
 from decimal import Decimal
 from logic_bank.exec_row_logic.logic_row import LogicRow
 from logic_bank.extensions.rule_extensions import RuleExtension
+from logic_bank.extensions.allocate import Allocate
 from logic_bank.logic_bank import Rule
 import database.models as models
 import api.system.opt_locking.opt_locking as opt_locking
 from security.system.authorization import Grant, Security
+import integration.kafka.kafka_producer as kafka_producer
 import logging
 
 logger = logging.getLogger(__name__)

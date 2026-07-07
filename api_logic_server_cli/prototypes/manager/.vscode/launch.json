@@ -17,7 +17,11 @@
             "program": "api_logic_server_run.py",
             "redirectOutput": true,
             "console": "integratedTerminal",
-            "internalConsoleOptions": "openOnSessionStart"
+            "internalConsoleOptions": "openOnSessionStart",
+            "serverReadyAction": {
+                "action": "openIntegratedBrowser",
+                "pattern": "http://localhost:(\\d+)"
+            }
         },
         {
             "name": "1. GENAI - Create genai_logic demo project",

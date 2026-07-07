@@ -60,7 +60,13 @@ def checksum(list_arg: list) -> str:
             if each_entry is None:
                 real_tuple.append(13)
             else:
-                if isinstance(each_entry, list):
+                if isinstance(each_entry, Decimal):
+                    # normalize Decimal to float - avoids false-positive opt lock failures when
+                    # the same numeric value round-trips as Decimal on one read path (LogicBank
+                    # old_row) and float on another (fresh ORM load) - repr() differs even though
+                    # the values are ==, so the un-normalized hash would differ too
+                    real_tuple.append(float(each_entry))
+                elif isinstance(each_entry, list):
                     list_hash = checksum(each_entry)
                     real_tuple.append(list_hash)
                 elif isinstance(each_entry, set):

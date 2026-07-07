@@ -163,11 +163,25 @@ def get_code_update_logic_file(rule_list: List[DotMap], logic_file_path: Path = 
         if utils.does_file_contain(in_file=logic_file_path, search_for='# Logic from GenAI'):
             insert_point = '# Logic from GenAI'
 
-        utils.insert_lines_at(lines=insert_logic, 
-                            file_name=logic_file_path, 
-                            at=insert_point, 
+        utils.insert_lines_at(lines=insert_logic,
+                            file_name=logic_file_path,
+                            at=insert_point,
                             after=True)
-        
+
+        # als create's plain declare_logic.py has no `Rule` (or kafka_producer) import -
+        # GenAI-inserted rules below reference both, so ensure they're present (idempotent).
+        if logic_file_path is not None:
+            if not utils.does_file_contain(in_file=logic_file_path, search_for='from logic_bank.logic_bank import Rule'):
+                utils.insert_lines_at(lines='from logic_bank.logic_bank import Rule\n',
+                                    file_name=logic_file_path,
+                                    at='import logging',
+                                    after=False)
+            if 'kafka_producer.' in translated_logic and not utils.does_file_contain(in_file=logic_file_path, search_for='import integration.kafka.kafka_producer'):
+                utils.insert_lines_at(lines='import integration.kafka.kafka_producer as kafka_producer\n',
+                                    file_name=logic_file_path,
+                                    at='import logging',
+                                    after=False)
+
         if 'Rule' not in imports:
             return
         if logic_file_path is None:  # this needs review for WebGenAI

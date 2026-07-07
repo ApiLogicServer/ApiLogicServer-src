@@ -12,10 +12,10 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "17.02.02"  # last public release: 17.02.00
+__version__ = "17.02.04"  # last public release: 17.02.02
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t07/03/2026 - 17.02.02  entity types diagram, LB 1.31.05 evt bug \n"\
+    "\t07/06/2026 - 17.02.04  entity types diagram, LB 1.31.05 evt bug, admin home page fixes, simple browser \n"\
     "\t06/29/2026 - 17.01.06  codespaces mgr, LogicBank[34] multi-reln/opt-lock fixes, clvs training \n"\
     "\t06/21/2026 - 17.01.03  codespaces mgr (tech preview, chmod, readme) \n"\
     "\t06/11/2026 - 17.00.35  logic report / flow diagram, cvls with hazmat, basic_demo_logic_gov, sec & raw logic fixes \n"\
@@ -428,14 +428,23 @@ def final_project_fixup(msg, project) -> str:
         venv_path_str = str(project.venv_path)  # project.manager_path also there...
         if 'ApiLogicServer-dev' in str(project.api_logic_server_dir_path):  # blt & dev-src are special case
             if os.name == "nt":  # cases: blt, or dev source
-                defaultInterpreterPath = project.api_logic_server_dir_path.parent.parent.parent.parent.joinpath('venv/scripts/python.exe')
+                guessed_interpreter_path = project.api_logic_server_dir_path.parent.parent.parent.parent.joinpath('venv/scripts/python.exe')
                 if 'org_git' in str(project.api_logic_server_dir_path):  # running from dev-source
-                    defaultInterpreterPath = project.api_logic_server_dir_path.parent.parent.parent.joinpath('build_and_test/ApiLogicServer/venv/scripts/python.exe')
+                    # NOTE: 'ApiLogicServer' below is the historical BLT workspace name under build_and_test/ -
+                    # it may not match the workspace actually in use (e.g. renamed to 'genai-logic').
+                    # Only trust this guess if it resolves to a real interpreter; otherwise keep sys.executable.
+                    guessed_interpreter_path = project.api_logic_server_dir_path.parent.parent.parent.joinpath('build_and_test/ApiLogicServer/venv/scripts/python.exe')
             else:  # running from blt, or dev-src?
-                defaultInterpreterPath = project.api_logic_server_dir_path.parent.parent.parent.parent.joinpath('bin/python')
+                guessed_interpreter_path = project.api_logic_server_dir_path.parent.parent.parent.parent.joinpath('bin/python')
                 if 'org_git' in str(project.api_logic_server_dir_path):  # running from dev-source
-                    defaultInterpreterPath = project.api_logic_server_dir_path.parent.parent.parent.joinpath('build_and_test/ApiLogicServer/venv/bin/python')
-            defaultInterpreterPath_str = str(defaultInterpreterPath)
+                    # NOTE: 'ApiLogicServer' below is the historical BLT workspace name under build_and_test/ -
+                    # it may not match the workspace actually in use (e.g. renamed to 'genai-logic').
+                    # Only trust this guess if it resolves to a real interpreter; otherwise keep sys.executable.
+                    guessed_interpreter_path = project.api_logic_server_dir_path.parent.parent.parent.joinpath('build_and_test/ApiLogicServer/venv/bin/python')
+            if guessed_interpreter_path.exists():
+                defaultInterpreterPath = guessed_interpreter_path
+                defaultInterpreterPath_str = str(defaultInterpreterPath)
+            # else: guessed workspace name doesn't exist (e.g. BLT workspace renamed) - keep sys.executable default
         # ApiLogicServerPython
         vscode_settings_path = (project.project_directory_path).joinpath('.vscode/settings.json')
         project.defaultInterpreterPath = defaultInterpreterPath

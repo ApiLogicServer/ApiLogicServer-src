@@ -156,6 +156,10 @@ if __name__ == "__main__":
         app_logger.info(f'*   Startup Instructions: Open your Browser at: {start_up_message}')    
         app_logger.info(f'*************************************************************************\n')    
 
+    from datetime import datetime as _dt
+    print("\n\n\n")
+    print(f"Server restarted: {_dt.now().strftime('%Y-%m-%d %H:%M:%S')}")
+
     flask_app.run(host=args.flask_host, threaded=True, port=args.port)
 else:
     msg = f'API Logic Project Loaded (WSGI), version 16.01.19\n'
