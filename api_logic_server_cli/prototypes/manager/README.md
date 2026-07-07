@@ -11,6 +11,7 @@ demo_kafka: Sample-Integration
 demo_allo: Sample_Allo_Dept_GL_readme
 demo_ai_rules: Sample-ai-rules
 demo_mcp_send: Sample-Basic-Demo-MCP-Send-Email
+demo_emp_types: Sample-Types
 demo_eai: Sample-Basic-EAI
 demo_vibe: Sample-Basic-Demo-Vibe
 demo_copilot_mcp_discovery: Sample-ai-mcp
@@ -89,7 +90,7 @@ On Placing Orders, Check Credit
     5. The Item unit_price is copied from the Product unit_price
 
 Use case: App Integration
-    1. Publish the Order to Kafka topic 'order_shipping' if the date_shipped is not None.
+    1. Publish the Order to Kafka topic 'order_shipping' when the date_shipped is not None.
 ```
 
 <details markdown>
@@ -103,12 +104,12 @@ The prompt above starts from an existing database — the common real-world case
 
 &nbsp;
 
-Most code generators produce code you then have to own. This one produces *models* — executable, maintainable:
+You've probably seen AI generate code before. The difference here: this produces *models*, not code — each artifact declares structure or policy rather than procedure, so there's no logic buried in the wiring:
 
 1. **Data model** — `database/models.py`
 2. **Full JSONAPI** — Swagger, pagination, optimistic locking (`api/expose_api_models.py` — 52 lines, zero per-table code)
 3. **Admin App** — multi-table, with navigations and lookups (`ui/admin/admin.yaml`)
-4. **Business logic** — `logic/logic_discovery/place_order/check_credit.py`
+4. **Business logic** — `logic/logic_discovery/place_order/check_credit.py` *(more on this in step 5)*
 
 Each small, readable, yours. Plain Python — standard tooling applies.
 
@@ -130,11 +131,28 @@ Security is opt-in, not default — bootstrap RBAC anytime with `genai-logic add
 <details markdown>
 <summary>&emsp;&emsp;3. Trigger the logic</summary>
 
-<br>In the Admin App, open Order 2 / Alice, edit the Widget item:
+<br>In the Admin App, open an **unshipped** Order for Alice, edit the Widget item:
 
 ```
 Change the quantity to a very large number. Save.
 ```
+
+<details markdown>
+<summary>&emsp;&emsp;&emsp;&emsp;Detail Instructions -- Screen Shots</summary>
+
+<br>Alter the quantity for an *unshipped* item:
+
+1. Show the Customer List
+2. Show the first Customer
+3. Show first Order
+4. Edit the Item
+5. Set the quantity
+
+![credit-check](https://github.com/ApiLogicServer/Docs/blob/main/docs/images/basic_demo/credit-check.png?raw=true?raw=true)
+
+</details>
+
+<br>
 
 The save fails - note the dialog box. But, *why...?*
 
@@ -164,9 +182,11 @@ Notice: you didn't *place* an order, you *edited* one — and the rule still cau
 <details markdown>
 <summary>&emsp;&emsp;5. Now let's see... what's really going on with the logic?</summary>
 
-<br>Open [procedural/credit_service.py](samples/basic_demo_logic_gov/logic/procedural/credit_service.py) — real, AI-generated code for the credit-check requirement.
+<br>Let's compare 2 approaches for implementing the check-credit requirement:
 
-Then open [logic_discovery/place_order/check_credit.py](samples/basic_demo_logic_gov/logic/logic_discovery/place_order/check_credit.py) — same requirement, same AI.  5 rules. No bugs.
+* Compare **standard AI-generated code** - open [procedural/credit_service.py](samples/basic_demo_logic_gov/logic/procedural/credit_service.py)
+
+* With the **rule-based version** - open [logic_discovery/place_order/check_credit.py](samples/basic_demo_logic_gov/logic/logic_discovery/place_order/check_credit.py) - same requirement, same AI.  5 rules. No bugs.
 
 Well, *that's* different... what's up with that? Ask your AI:
 
@@ -187,7 +207,7 @@ But unlike procedural code, they're **declarative**:
 | **Auto-invoked** | Rules fire at every commit, from every caller — you never call them | Can't be forgotten, can't be bypassed |
 | **Auto-ordered** | The engine computes dependency order at startup | Add a rule anywhere, it finds its place |
 
-Think of a spreadsheet: `B10 = SUM(B1:B9)`, and every recalculation just happens. Rules work the same way for database transactions — that's what makes 5 declarative rules replace ~200 lines of procedural code with zero missed paths, as you just saw above.
+Think of a spreadsheet: `B10 = SUM(B1:B9)` isn't called, it *reacts* — change any input cell, it recalculates. Rules react the same way to changes in what they depend on — that's what makes 5 declarative rules replace ~200 lines of procedural code with zero missed paths, as you just saw above.
 
 Full writeup: [declarative/procedural comparison](samples/basic_demo_logic_gov/logic/procedural/declarative-vs-procedural-comparison.md).
 
@@ -195,7 +215,7 @@ Full writeup: [declarative/procedural comparison](samples/basic_demo_logic_gov/l
 
 <br>
 
-> But here's the part that matters beyond line count: with procedural code, even if you find the right passage — how do you know it's called for every transaction source? API, MCP, agent, Kafka, a future caller you haven't written yet? With thousands of code paths, you can't know. That's not a testing gap; it's a representation problem. <br><br>Rules solve it structurally — declared once, fired at one commit point, from every caller, with no bypass possible. The 40x reduction in code isn't the point. The verifiable coverage is: ***you can read the rules, and trust they are being enforced.  Always.***
+> But here's the part that matters beyond line count: with procedural code, even if you find the right passage — how do you know it's called for *every* transaction source? API, MCP, agent, Kafka, a future caller you haven't written yet? With thousands of code paths, you can't know. That's not a testing gap; it's a representation problem. <br><br>Rules solve it structurally — declared once, fired at one commit point, from every caller, with no bypass possible. The 40x reduction in code isn't the point. The verifiable coverage is: ***you can read the rules, and trust they are being enforced.  Always.***
 
 <br>
 
@@ -231,9 +251,13 @@ Notice what just happened — two things, easy to miss:
 
 <br>
 
-Quick recap: you created a system from prompt, ran it, triggered a rule, watched it chain across three tables, driven by 5 lines of code, then asked your AI to add a new one — in plain English.  So... how does this scale up to enterprise-class systems?
+Quick recap: you created a system from prompt, ran it, triggered a rule, watched it chain across three tables, driven by 5 lines of code, then added a new one from one sentence — without touching the existing rules.
 
-**We add key *enterprise architecture:***
+That's the second distinction from AI-generated code: the business logic is *rules*, not procedures. A procedure answers "what happens when X?" — so every new path needs a new procedure. A rule declares a fact about data — it's automatically re-used over every path, including ones that don't exist yet. Step 5 showed this working; step 6 showed it not breaking when you added one. That property is what scales.
+
+How does this lead to enterprise-class systems?
+
+**We add key *enterprise architecture* integration:**
 
 - **Enterprise Integration (EAI)** — the demo above showed ***Publish** the Order to Kafka topic*. For the **subscribe** side, see [samples/basic_demo_eai/readme.md](samples/basic_demo_eai/readme.md): B2B orders from partner systems, via a Custom API or Kafka subscriber, including *lookups* so partners send `"Account": "Alice"` (not internal IDs).
 
@@ -850,63 +874,6 @@ Please see [this doc](https://apilogicserver.github.io/Docs/Sample-AI-ChatGPT/)
 
 ## Procedures
 
-<details markdown>
-
-<summary>Quick Basic Demo - Cheat Sheet</summary>
-
-<br>This demo creates and customizes a project, starting from a database:
-
-
-**Quick Basic Demo:**
-```bash title="Quick Basic Demo"
-
-# Microservice Automation
-# Admin App, API, Project
-genai-logic create --project-name=basic_demo --db-url=basic_demo
-
-# Logic and Security
-# see logic (logic/declare_logic.py, logic/cocktail-napkin.jpg);  add an Order and Item
-# see security (security/declare_security.py); compare customers, s1 vs. admin
-genai-logic add-cust
-genai-logic add-auth --db_url=auth
-
-# Python Extensibility, Kafka Integration, Rebuild Iteration
-# see logic/declare_logic.py (breakpoint for Kafka)
-# Swagger: ServicesEndPoint.OrderB2B
-genai-logic add-cust
-genai-logic rebuild-from-database --db_url=sqlite:///database/db.sqlite
-```
-
-</details>
-<br>
-
-<details markdown>
-
-<summary>Quick GenAI Demo - Cheat Sheet</summary>
-
-<br>This demo creates and customizes a project, starting from a prompt:
-
-**Quick GenAI Demo:**
-```bash title="Quick GenAI Demo"
-
-# Microservice Automation from GenAI Prompt
-# Admin App, API, Project
-genai-logic genai --using=system/genai/examples/genai_demo/genai_demo.prompt
-
-# Or, Microservice Automation from Saved Response
-# Admin App, API, Project
-genai-logic genai --repaired-response=system/genai/temp/chatgpt_retry.response
-
-# Logic and Security
-#   - see logic (logic/declare_logic.py, logic/cocktail-napkin.jpg);  add an Order and Item
-#   - see security (security/declare_security.py); compare customers, s1 vs. admin
-# Python Extensibility, Kafka Integration, Rebuild Iteration
-#   - see logic/declare_logic.py (breakpoint for Kafka)
-#   - Swagger: ServicesEndPoint.OrderB2B
-genai-logic add-cust
-```
-
-</details>
 <br>
 
 <details markdown>
