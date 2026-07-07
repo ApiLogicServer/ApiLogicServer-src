@@ -1,7 +1,7 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.194.0/containers/docker-existing-dockerfile
 {
-	"name": "Existing Dockerfile",
+	"name": "GenAI-Logic Docker",
 
 	// Sets the run context to one level up instead of the .devcontainer folder.
 	"context": "..",
@@ -41,13 +41,11 @@
 	},
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// portsAttributes/forwardPorts above handle port visibility natively - no manual
+	// `gh codespace ports visibility` call needed (setup.sh, features.github-cli removed
+	// Jul 2026 - dead weight, and the manual port call 404'd since the tunnel port isn't
+	// registered yet at postAttachCommand time anyway).
 	"forwardPorts": [5656],
-	
-	"features": {
-		"github-cli": "latest"
-	  }
-
-	// "postAttachCommand": "/bin/bash .devcontainer/setup.sh"
 
 	// Uncomment the next line to run commands after the container is created - for example installing curl.
 	// "postCreateCommand": "apt-get update && apt-get install -y curl",

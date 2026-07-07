@@ -11,13 +11,6 @@ echo " "
 echo "     $ IMPORTANT: cd to your docker volume (e.g., cd /ApiLogicServer)"
 echo " "
 
-if [[ -z "${CODESPACES}" ]]; then
-  LOAD_GIT="Not Codespaces"
-else
-  echo "Now: gh codespace ports visibility 5656:public -c $CODESPACE_NAME"
-  gh codespace ports visibility 5656:public -c $CODESPACE_NAME
-fi
-
 if [[ -z "${APILOGICSERVER_GIT}" ]]; then
   LOAD_GIT="No APILOGICSERVER_GIT"
 else

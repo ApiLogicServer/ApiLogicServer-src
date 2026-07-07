@@ -115,6 +115,8 @@ Each small, readable, yours. Plain Python — standard tooling applies.
 
 Security is opt-in, not default — bootstrap RBAC anytime with `genai-logic add-auth`.
 
+> This prompt adds a column (`notes`) and several derived columns (`balance`, `amount_total`, `amount`) on top of the starting schema — each needs `ui/admin/admin.yaml` refreshed to display correctly. Your AI assistant should offer this automatically; if the Admin App looks incomplete or stale in step 2, just say **"rebuild the admin app"** and it will regenerate and offer to apply the update.
+
 </details>
 
 <br>
@@ -123,6 +125,8 @@ Security is opt-in, not default — bootstrap RBAC anytime with `genai-logic add
 <summary>&emsp;&emsp;2. Run it — F5, then open the Admin App</summary>
 
 <br>Press F5 using "API Logic Server Run (run project from manager)", and open the Admin App. Explore the API via Swagger, browse the data, and follow the relationships — all auto-generated from the data model.
+
+> **Running in Codespaces?** A browser tab/window may auto-open when the server starts — that's expected in Codespaces, not a bug. Just close the extra tab and use the one you want.
 
 </details>
 
