@@ -1,22 +1,19 @@
-# Declarative vs. Procedural Business Logic: A Comprehensive Comparison
+# Declarative vs. Procedural Business Logic: A Comparison
 
 <br>
 
 ## Foreword
 
-This document presents a real-world A/B comparison of two approaches to implementing the **same business logic requirements.**  We asked AI to generate both a **procedural** implementation using conventional code, and a **declarative** implementation using the LogicBank rules engine. 
+This document compares two approaches to implementing the **same business logic requirements**: a **procedural** implementation using conventional event-handler code, and a **declarative** implementation using the LogicBank rules engine. Both were written by AI, from the same requirements.
 
-This experiment highlights fundamental differences between the two approaches, and what they mean for building reliable, maintainable systems.  It's important, because business logic typically represents *nearly half the effort* in database projects. 
+Business logic typically represents nearly half the effort in database projects, so how AI handles it matters. Asked to produce logic with no further guidance, AI defaults to procedural code — event handlers, session queries, manual cascades — because that's the pattern it's seen most in training. This example surfaces what that costs:
 
-When asked to produce logic, AI (by itself) defaults to procedural code — because that’s all it knows. This study uncovered two critical problems with that approach:
-1. **Quality:** The AI-generated procedural code contained subtle but serious bugs, even for just five rules—falling far short of basic reliability.
-2.	**Maintainability:** The procedural implementation exploded to over 200 lines — more than 40X the size of its declarative equivalent — creating “Franken-Code” that is brittle, opaque, and costly to maintain.
+1. **Quality.** The procedural version contained real bugs — not typos, but missed cases in exactly the kind of multi-table cascade this system needs to get right.
+2. **Size.** The procedural version ran to ~220 lines; the declarative version expressed the same requirements in 5 rules.
 
-By contrast, the declarative approach was error free, and 5 Python statements.
+The declarative version had neither bug.
 
-The answer isn’t to reject AI. Its speed and simplicity are transformative. The key is to **teach AI about declarative rules** so it can produce concise, expressive rules instead of hundreds of lines of brittle procedural code. These rules are then executed by an **automated runtime engine** (like LogicBank), ensuring correctness, scalability, and maintainability — while preserving the velocity that makes AI so valuable.
-
-By combining AI with declarative automation, GenAI-Logic delivers the best of both worlds: rapid development and enterprise-grade governance.
+The lesson isn't "don't use AI for logic" — AI's speed here is real and worth keeping. It's that AI needs to be pointed at the right target: a small, declarative rule vocabulary that an engine (LogicBank) executes and orders automatically, instead of open-ended procedural code that AI has to get right by hand across every change path.
 
 ![visually](declarative-vs-procedural-comparison.png)
 
@@ -24,59 +21,28 @@ By combining AI with declarative automation, GenAI-Logic delivers the best of bo
 
 ### Deeper Dive
 
-[GenAI-Logic](https://www.genai-logic.com) is free and open source, so you can install it to explore declarative logic - [click here](https://apilogicserver.github.io/Docs/Install-Express/).  This project is available in github - [click here](https://github.com/ApiLogicServer/basic_demo/blob/main/logic/declarative-vs-procedural-comparison.md).
+[GenAI-Logic](https://www.genai-logic.com) is free and open source, so you can install it to explore declarative logic - [click here](https://apilogicserver.github.io/Docs/Install-Express/). This project is available on GitHub - [click here](https://github.com/ApiLogicServer/basic_demo/blob/main/logic/declarative-vs-procedural-comparison.md).
 
 <br>
 
 ### How this Document Was Created
 
-We created this document from the following scenario:
-
 1. Built the `basic_demo` project [as described here](https://apilogicserver.github.io/Docs/Sample-Basic-Demo/).
-2. We asked CoPilot to **rebuild the logic *using a procedural approach*** - that is, without the LogicBank rule engine (part of GenAI-Logic).
-    * Resulting Procedural Logic: `logic/procedural_logic.py`
+2. Asked Copilot to **rebuild the logic using a procedural approach** — without the LogicBank rule engine.
+    * Resulting procedural logic: `logic/procedural_logic.py`
     * Declarative logic: `logic/declare_logic.py` (*with LogicBank,* [below](#business-requirements))
-3. We asked Copilot: **what would happen if the orders' customer-id were changed?**
-    * Copilot accepted this as a serious error, and made the bug fix.
-4. We then asked Copilot: *what if the items' product-id were changed?*
-    * Copilot became agitated at finding yet another serious bug...
-    * It fixed it, and - ***unprompted* - provided the following analysis** of *Declarative vs Procedural Business Logic.*
+3. Asked Copilot: **what would happen if an order's customer changed?**
+    * Copilot found a real gap and fixed it: the old customer's balance was never adjusted, only the new one's.
+4. Asked Copilot: **what if an item's product changed?**
+    * Same shape of bug, second instance: the item kept the old product's price. Copilot fixed it and — unprompted — wrote up an analysis of why this class of bug keeps happening.
 
 <br>
 
-> Here's the Copilot analysis, in its own words.
+> **A note on that analysis.** Generated on the spot, right after finding its own second bug, Copilot's first draft read like it had just discovered fire — "44X reduction," "fundamentally superior," checkmarks and X's stacked across seven straight sections, no hedge anywhere. The underlying observations were sound; the delivery wasn't. What follows keeps the substance and drops the exclamation marks.
 
 <br>
-
-
-## TL;DR
-
-**LogicBank declarative rules provide a 44X reduction in code complexity** compared to traditional procedural implementations:
-
-| Aspect | LogicBank Declarative | Procedural Code |
-|--------|----------------------|-----------------|
-| **Lines of Code** | 5 lines | 220+ lines |
-| **Complexity** | Simple rule declarations | Complex event handling |
-| **Maintenance** | Self-documenting business logic | Implementation details obscure logic |
-| **Performance** | Built-in optimization & pruning | Multiple queries, N+1 problems |
-| **Error Handling** | Automatic cascading | Manual event management |
-| **Business Alignment** | Rules match requirements | Code doesn't reflect business intent |
-
-**Bottom Line**: Declarative business logic eliminates complexity while providing better performance, maintainability, and business alignment.
-
----
-
-## Overview
-
-This document compares two approaches to implementing business logic in enterprise applications:
-- **Declarative Logic** using LogicBank rules
-- **Traditional Procedural Logic** using event handlers
-
-The comparison is based on implementing the same business requirements using both approaches in an order management system.
 
 ## Business Requirements
-
-Our test case implements these common business rules:
 
 1. **Copy unit_price from Product to Item**
 2. **Calculate Item amount = quantity × unit_price**
@@ -88,7 +54,7 @@ Our test case implements these common business rules:
 
 ## Code Comparison
 
-### LogicBank Declarative Rules (~5 lines)
+### LogicBank Declarative Rules (5 lines)
 
 ```python
 # Business logic expressed as simple, readable rules
@@ -112,10 +78,10 @@ def declare_logic():
                    error_msg="Customer balance exceeds credit limit")
 ```
 
-### Procedural Implementation (~220 lines)
+### Procedural Implementation (~220 lines total; one handler shown)
 
 ```python
-# Complex event handling with manual cascading
+# Manual event handling with manual cascading
 def handle_item_update(mapper, connection, target: models.Item):
     session = Session.object_session(target)
     
@@ -125,14 +91,14 @@ def handle_item_update(mapper, connection, target: models.Item):
     # Validate quantity
     ProceduralBusinessLogic.validate_item_quantity(target)
     
-    # Handle product changes (CRITICAL BUG FIX)
+    # Handle product changes (bug found on probing — see below)
     if old_item and old_item.product_id != target.product_id:
         ProceduralBusinessLogic.copy_unit_price_from_product(target, session)
     
     # Recalculate item amount
     ProceduralBusinessLogic.calculate_item_amount(target)
     
-    # Handle order changes (another potential bug!)
+    # Handle order changes (a second instance of the same bug class)
     if old_item and old_item.order_id != target.order_id:
         # Update OLD order total
         old_order = session.query(models.Order).get(old_item.order_id)
@@ -155,141 +121,44 @@ def handle_item_update(mapper, connection, target: models.Item):
                 ProceduralBusinessLogic.validate_credit_limit(customer)
 ```
 
+This is one event handler. A complete implementation needs equivalents for insert, delete, and the corresponding handlers on `Order` and `Product` — each carrying the same old-parent/new-parent burden.
+
+## The Two Bugs
+
+Both bugs share one shape: **when a row's parent changes, both the old and the new parent need adjustment** — and the first-draft procedural code only ever handled the new one.
+
+- **Order reparented to a new customer.** The new customer's balance updated correctly. The old customer's did not — left inflated, with credit checks against it now wrong.
+- **Item reparented to a new product.** The item kept the old product's price instead of picking up the new one, so the amount, the order total, and the customer balance were all quietly wrong.
+
+Neither bug was visible on the happy path. Insert an order, ship it, add a normal item — everything passes. The bugs only show up on the specific re-parenting cases, which is exactly why they survive a quick review and only surface once something in production actually reassigns a row to a different parent.
+
+The declarative version doesn't dodge this by being cleverer — it doesn't have old-parent/new-parent handling to write or forget, because the engine derives the dependency graph and adjusts both sides automatically. There's no reparenting branch to miss because there's no reparenting branch at all.
+
 ## Detailed Comparison
 
-### 1. **Code Volume**
-| Aspect | LogicBank | Procedural |
-|--------|-----------|------------|
-| Lines of Code | ~5 | ~220 |
-| Complexity | Simple rule declarations | Complex event handling |
-| Ratio | **44X MORE CONCISE** | Baseline |
+| Dimension | LogicBank (declarative) | Procedural (as generated) |
+|---|---|---|
+| **Lines of code** | 5 | ~220 |
+| **Reparenting bugs** | 0 — engine adjusts both old and new parent automatically | 2 — found only after specifically probing for them |
+| **Adding a rule later** | New rule, dependency order resolved automatically; existing rules untouched | New handler branch, must be checked against every existing branch for ordering/interaction |
+| **Reading the logic** | Each rule states an invariant about data — readable in isolation | Business intent is interleaved with session queries and old/new-value tracking |
+| **Performance** | Rules fire only when a dependent attribute actually changes, and adjust by delta rather than recomputing (LogicBank's documented pruning/adjustment behavior) | Recomputes via fresh queries per handler; no such optimization unless hand-written |
+| **Testing** | Each rule is independently inspectable via the rule engine's execution log | Must exercise the full handler chain, including both reparenting cases, to catch the same bugs found here |
 
-### 2. **Maintainability**
+The performance row describes LogicBank's engine behavior generally, not something separately benchmarked in this example — noted so it isn't confused with the two measured items above it (line count, bug count).
 
-**LogicBank:**
-- ✅ Rules are self-documenting
-- ✅ Business logic is immediately recognizable
-- ✅ Changes are localized to specific rules
-- ✅ Easy to add new rules without affecting existing ones
+## Why This Matters as Systems Grow
 
-**Procedural:**
-- ❌ Business logic buried in implementation details
-- ❌ Hard to understand the complete business flow
-- ❌ Changes require understanding entire event chain
-- ❌ Risk of breaking existing functionality
+Two bugs in one 220-line file is a data point, not a proof. But the *shape* of the bugs generalizes: every derived value, every aggregate that rolls up across a foreign key, adds change paths — the update/delete/reparent cases that must each be handled by hand to keep derived data correct. Change paths grow faster than the underlying dependencies do, because reparenting and conditional aggregation each multiply the cases a human (or an AI) has to enumerate correctly.
 
-### 3. **Error Handling & Edge Cases**
-
-**LogicBank:**
-- ✅ Automatic handling of all change scenarios
-- ✅ Built-in transaction rollback
-- ✅ No need to manually track old/new values
-- ✅ Automatic cascade management
-
-**Procedural:**
-- ❌ Manual handling of every edge case
-- ❌ Comments like "CRITICAL BUG FIX" indicate complexity
-- ❌ Must manually track old values for comparison
-- ❌ Easy to miss scenarios (product changes, order moves, etc.)
-
-### 4. **Performance**
-
-**LogicBank:**
-- ✅ **Pruning**: Rules only fire when dependent attributes change
-- ✅ **Optimization**: Uses SQL "adjustment" updates vs full recalculations
-- ✅ **Minimal SQL**: Optimized query patterns
-- ✅ **No N+1 problems**: Intelligent batching
-
-**Procedural:**
-- ❌ Multiple queries per operation
-- ❌ Potential N+1 problems
-- ❌ Full recalculations even for minor changes
-- ❌ No automatic optimization
-
-### 5. **Debugging & Observability**
-
-**LogicBank:**
-- ✅ Clear rule execution logs
-- ✅ Shows rule chains and dependencies
-- ✅ Easy to trace business logic flow
-- ✅ Built-in logging with row state changes
-
-**Procedural:**
-- ❌ Hard to trace through event handlers
-- ❌ Must manually add logging
-- ❌ Difficult to understand execution flow
-- ❌ Error messages don't relate to business rules
-
-### 6. **Testing**
-
-**LogicBank:**
-- ✅ Test individual rules independently
-- ✅ Clear rule execution reports
-- ✅ Behave testing integration
-- ✅ Rules map directly to test scenarios
-
-**Procedural:**
-- ❌ Must test entire event chain
-- ❌ Hard to isolate specific logic
-- ❌ Complex test setup required
-- ❌ Brittle tests that break with changes
-
-### 7. **Business Alignment**
-
-**LogicBank:**
-- ✅ Rules read like business requirements
-- ✅ Business users can understand the logic
-- ✅ Direct mapping from requirements to code
-- ✅ Self-documenting business policies
-
-**Procedural:**
-- ❌ Implementation details obscure business logic
-- ❌ Business users cannot read the code
-- ❌ No clear mapping from requirements
-- ❌ Business logic scattered across handlers
-
-## Real-World Impact
-
-### Development Time
-- **LogicBank**: Write rules once, they work everywhere
-- **Procedural**: Must consider every possible scenario upfront
-
-### Risk Management
-- **LogicBank**: Automatic handling reduces risk of bugs
-- **Procedural**: High risk of missing edge cases
-
-### Team Productivity
-- **LogicBank**: New team members can quickly understand rules
-- **Procedural**: Requires deep understanding of event system
-
-### Business Agility
-- **LogicBank**: Easy to modify rules as business changes
-- **Procedural**: Changes require extensive testing and validation
+This is a fact about practice, not a theorem — procedural code *can* handle these paths correctly; LogicBank's own engine is procedural code that does. The difference is that the engine solves it once, for every project that uses it, while each hand-written implementation is a fresh chance to miss a case — as this one did, twice, in a system with only 5 requirements.
 
 ## Conclusion
 
-The comparison demonstrates that **LogicBank provides a 44X reduction in code complexity** while delivering:
+Same requirements, same AI, two implementations: 5 declarative rules with no bugs found, versus ~220 lines of procedural code with two real ones — both instances of the same missed-reparenting pattern, both invisible until specifically probed for.
 
-- **Better Maintainability**: Rules are self-documenting and easy to modify
-- **Higher Quality**: Automatic handling eliminates common bugs
-- **Better Performance**: Built-in optimizations and pruning
-- **Business Alignment**: Rules directly express business requirements
-- **Faster Development**: Write less code, get more functionality
-
-### The LogicBank Advantage
-
-> **"Logic is declarative, not procedural"**
-
-LogicBank represents a fundamental shift from asking **"How do I implement this?"** to **"What do I want to happen?"**
-
-This declarative approach:
-1. **Eliminates the complexity** of manual event handling
-2. **Reduces maintenance burden** through automatic rule management
-3. **Improves business alignment** with readable, requirements-based rules
-4. **Accelerates development** with dramatically less code
-
-The evidence is clear: **Declarative business logic is not just more concise—it's fundamentally superior for enterprise application development.**
+That's the concrete case for pointing AI at declarative rules for business logic specifically, not at procedural code generation generally. AI's strength elsewhere — UI, boilerplate, translating requirements into a first draft — isn't in question here. What this example shows is narrower and more useful: for logic with cross-table dependencies, giving AI a small declarative vocabulary and letting an engine handle ordering and completeness produced a correct result where letting AI write the ordering and completeness by hand did not.
 
 ---
 
-*This comparison is based on actual implementations in the API Logic Server project, demonstrating real-world benefits of declarative business logic.*
+*This comparison is based on an actual AI-generated implementation in the API Logic Server project. It's one example, not a benchmark — see the fuller writeup and reproducible test results in [`basic_demo_logic_gov`](../../../basic_demo_logic_gov/logic/procedural/declarative-vs-procedural-comparison.md) for the same comparison with a committed Behave test suite.*
