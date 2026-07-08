@@ -19,7 +19,7 @@ This GenAI-Logic project implements **MCP Server Executor** architecture - provi
 │  GenAI-Logic Server             │  MCP Server Executor
 │  (Flask + LogicBank)            │  - Business logic enforcement
 │                                 │  - Constraint validation
-│  Endpoints:                     │  - Declarative rules (44X reduction)
+│  Endpoints:                     │  - Declarative rules (~40X reduction)
 │  - /api/auth/login              │  - Schema metadata
 │  - /api/{Entity}                │
 │  - /.well-known/mcp.json        │
@@ -254,7 +254,7 @@ Rule.sum(derive=models.Order.AmountTotal,
 
 These rules:
 - Execute automatically on INSERT/UPDATE/DELETE
-- Provide **44X code reduction** vs. traditional procedural code
+- Provide **~40X code reduction** vs. traditional procedural code
 - Enforce multi-table constraints
 - Chain automatically (Order → Customer balance)
 
@@ -301,7 +301,7 @@ For Microsoft presentation:
 
 1. **Position correctly**: "GenAI-Logic implements MCP Server Executor - the valuable business logic layer"
 2. **Show constraint violations**: "Error 2001 is the success - logic is working!"
-3. **Demonstrate declarative rules**: "44X code reduction with automatic multi-table chaining"
+3. **Demonstrate declarative rules**: "~40X code reduction with automatic multi-table chaining"
 4. **Use Copilot as client**: "AI assistant translates natural language to authenticated API calls"
 5. **Highlight enterprise architecture**: "HTTP-based, JWT auth, horizontally scalable"
 
