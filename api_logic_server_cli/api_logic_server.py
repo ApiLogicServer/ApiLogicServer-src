@@ -12,34 +12,17 @@ ApiLogicServer CLI: given a database url, create [and run] customizable ApiLogic
 Called from api_logic_server_cli.py, by instantiating the ProjectRun object.
 '''
 
-__version__ = "17.02.06"  # last public release: 17.02.05
+__version__ = "17.02.07"  # last public release: 17.02.06
 recent_changes = \
     f'\n\nRecent Changes:\n' +\
-    "\t07/07/2026 - 17.02.06  entity types diagram, LB 1.31.05 evt bug, admin home page fixes, simple browser (mgr) \n"\
-    "\t06/29/2026 - 17.01.06  codespaces mgr, LogicBank[34] multi-reln/opt-lock fixes, clvs training \n"\
-    "\t06/21/2026 - 17.01.03  codespaces mgr (tech preview, chmod, readme) \n"\
+    "\t07/10/2026 - 17.02.07  entity types diagram, LB 1.31.05 evt bug, admin home page fixes, simple browser (mgr), count inits \n"\
     "\t06/11/2026 - 17.00.35  logic report / flow diagram, cvls with hazmat, basic_demo_logic_gov, sec & raw logic fixes \n"\
     "\t05/14/2026 - 17.00.24  gov rpt, ad-lib with approach (fair gemini), sample names \n"\
-    "\t05/10/2026 - 17.00.19  demo_customs += cvls (reasons), lb formatting, venv/run debug updates, win-linux bld/vul \n"\
-    "\t04/22/2026 - 17.00.03  NL rbac grants, bug fixes  \n"\
     "\t04/21/2026 - 17.00.00  EAI/Kafka CE pub/sub automation (see demo_eai, fix issue 110), executable requirements  \n"\
-    "\t04/17/2026 - 16.04.18  EAI/Kafka CE pub/sub automation, demo_eai, xr, session.merge bug, mgr readme, ins only, demo-eai  \n"\
-    "\t03/26/2026 - 16.03.07  LB with allow_event_nesting, Kafka integration fixes, demo cleanup, log file  \n"\
-    "\t03/12/2026 - 16.03.02  NL Allocation Demo (Dept->GL), LB/SQLAlchemy version  \n"\
-    "\t03/08/2026 - 16.02.06  Subsystem dependencies ce fix with working storage attrs, LB parser \n"\
-    "\t03/03/2026 - 16.02.03: customs_demo -> Manager, many basic_demo ghost fixes, readme, sample fix \n"\
-    "\t02/26/2026 - 16.01.42: sample-rework, int, mgr, webg, subsystem creation (rules, data model), behave rule log \n"\
     "\t02/06/2026 - 16.01.22: save nl logic by use-case/reqmt, logic operation, docent, demo fix \n"\
     "\t01/06/2026 - 16.01.03: win11 Python 3.13 fixes for panda, oracle, kafka, postgres \n"\
     "\t12/11/2025 - 16.00.04: bug fix [106] - SqlServer autoinsert \n"\
     "\t11/25/2025 - 16.00.03: Probabalistic logic (w/ fallback, cand*) - see basic_demo/readme_ai_mcp.md \n"\
-    "\t11/12/2025 - 15.04.03: Copilot rules on updates, tighter basic_demo startup, allow for demo_ai_mcp/then tutorial \n"\
-    "\t11/08/2025 - 15.04.00: Nat lang Copilot data access, fix Manager/Copilot startup, finding venv in project \n"\
-    "\t10/29/2025 - 15.03.00: Stable Tutor 3.3 (working, vibe transtion) \n"\
-    "\t10/26/2025 - 15.02.07: Clarify order created for ship test, security fixes [105], tutor 2.1 \n"\
-    "\t10/22/2025 - 15.02.03: Copilot test creation from rules and custom APIs with issues [103, 104] \n"\
-    "\t10/06/2025 - 15.01.06: Incorrect dbml reln arrows [102] \n"\
-    "\t09/27/2025 - 15.01.05: Error reporting for bad test data rebuild [101], Minor fix to ensure react-app cards have links \n"\
     "\t08/17/2025 - 15.01.03: LogicBan 01.30, with fix for copy_children[19] \n"\
     "\t08/13/2025 - 15.01.02: Id vs ID in codegen (parent_accessor_from_fk: [#100]), pyodbc fix in blt \n"\
     "\t08/09/2025 - 15.01.00: improved vibe instructions \n"\

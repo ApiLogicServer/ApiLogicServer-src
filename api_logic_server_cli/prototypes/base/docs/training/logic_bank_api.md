@@ -1,9 +1,38 @@
 ---
 # LogicBank API Reference
-# Version: 1.0.20
-# Last Updated: July 2, 2026
+# Version: 1.0.22
+# Last Updated: July 10, 2026
 # Description: The Logic Rosetta Stone: simplified API for creating declarative business logic rules
 # Changelog:
+#   1.0.22 (Jul 2026) - Added step 7 + a full "initialize derived columns for pre-existing rows"
+#     section to the AFTER DATABASE SCHEMA CHANGES workflow. Real case: adding basic_demo's
+#     Customer.order_count/past_due_letter_count (Rule.count) via ALTER TABLE left existing
+#     Customer rows NULL for both columns (never recomputed retroactively); the very first
+#     unrelated PastDueLetter insert crashed with `'>' not supported between NoneType/NoneType`
+#     in the Insert-Only Constraints pattern's row.order_count > old_row.order_count comparison.
+#     This generalizes beyond that one pattern: ANY Rule.sum/count/formula added to a table with
+#     existing rows leaves them stale/NULL until next touched - not just a constraint-comparison
+#     risk. Documents 3 fixes (no-op UPDATE to trigger real derivation; one-time backfill SQL;
+#     null-safe `or 0` as a stopgap only) and when this applies (SCS iterations on an
+#     already-seeded db like basic_demo, not fresh empty-schema projects).
+#   1.0.21 (Jul 2026) - Documented Rule.constraint's `calling=` parameter (was already accepted by
+#     the method signature but silently dropped in the return Constraint(...) call - now wired
+#     through). Added new "Insert-Only Constraints (Grandfather Clauses)" section: a Codespaces
+#     session's AI assistant correctly diagnosed that a child-side Rule.constraint referencing a
+#     parent count re-validates ALL pre-existing sibling rows when the count changes (documented,
+#     correct cascade behavior) - but never discovered Rule.constraint(calling=...) or
+#     logic_row.is_inserted(), so it fell back to a manual Rule.row_event + raised
+#     ConstraintException instead, losing native constraint semantics (HTTP 400 became 500).
+#     Documents the better pattern: put the constraint on the PARENT, gated on
+#     `row.count_attr > old_row.count_attr` (a child was just added this transaction) - avoids
+#     touching the child class or needing is_inserted() at all, and generalizes past 0->1 to any
+#     n->n+1 increase. See struggles.md (build_and_test/genai-logic) for the original transcript.
+#     Also added "ADJUSTMENT ASSUMES THE STARTING VALUE IS ALREADY CORRECT" caveat: Rule.sum/count
+#     are delta adjustments (current_count + 1), not recomputations - if the stored aggregate is
+#     already wrong (bad migration, manual SQL edit, bulk import bypassing the rule engine), an
+#     adjustment carries the error forward rather than fixing it, and there is no built-in
+#     repair/resync mechanism. Directly relevant to the new section above, whose
+#     row.count > old_row.count comparison presumes the count was correct going in.
 #   1.0.20 (Jul 2026) - Corrected/completed DEPENDENCY TRACKING section per LogicBank's own
 #     dependency-scanning.md analysis (org_git/LogicBank/system/LogicBank-Internal-Dev/):
 #     calling= functions ARE scanned by parse_dependencies() exactly like as_expression lambdas
@@ -385,13 +414,19 @@ class Rule:
         Args:
             validate: name of mapped <class>
             as_condition: lambda, passed row (simple constraints).  All referenced columns must be part of the data model - create columns in the data model as required.  Also, conditions may not contain sum or count python functions - these must be used to declare additional columns and sum/count rules.
+            calling: function, passed (row, old_row, logic_row) - use INSTEAD OF as_condition when the
+                condition needs old_row (e.g. to compare a before/after value) or logic_row (e.g.
+                logic_row.is_inserted() / is_updated() / is_deleted(), to scope the check to how THIS
+                row was changed). as_condition's lambda receives only `row` - it cannot see old_row or
+                logic_row at all. See "Insert-Only Constraints (Grandfather Clauses)" below for the
+                canonical use case.
             error_msg: string, with {row.attribute} replacements
             error_attributes: list of attributes
 
         """
         if error_attributes is None:
             error_attributes = []
-        return Constraint(validate=validate, as_condition=as_condition,
+        return Constraint(validate=validate, calling=calling, as_condition=as_condition,
                           error_attributes=error_attributes, error_msg=error_msg)
 
 
@@ -753,6 +788,146 @@ ALSO APPLIES inside row_event / calling= functions:
   The event is now reactive: inserting or updating a ShipmentCommodity re-fires the count,
   which re-fires the row_event, keeping eligibility current on every write path.
 
+=============================================================================
+🚧 Insert-Only Constraints (Grandfather Clauses)
+=============================================================================
+
+PATTERN: "Block NEW child rows once a condition holds, but do NOT retroactively
+invalidate EXISTING child rows that predate the condition." This is common for
+policy changes that should apply going forward, not retroactively — e.g.
+"customers with unresolved past-due letters cannot place new orders" (existing
+orders stay valid; only new ones are blocked).
+
+WHY A PLAIN Rule.constraint(as_condition=...) ON THE CHILD FAILS HERE:
+  When a parent's Rule.count/Rule.sum changes, LogicBank re-validates EVERY
+  child row referencing that parent attribute in a constraint — including
+  pre-existing rows the current transaction never touched. This is correct,
+  documented engine behavior (it's what makes constraints reliably reactive
+  in general) — but it means a constraint like:
+
+      Rule.constraint(validate=Order,
+                      as_condition=lambda row: row.customer.past_due_letter_count == 0,
+                      error_msg="...")
+
+  fails the very FIRST time a past-due letter is added to a customer who
+  already has orders — every one of that customer's pre-existing orders gets
+  re-checked and rejected in the same transaction, even though none of them
+  were touched. `as_condition`'s lambda only receives `row` — it has no way
+  to tell "this row is being freshly inserted right now" from "this row is
+  being re-validated because a parent aggregate changed."
+
+✅ CORRECT — put the constraint on the PARENT, gated on the CHILD COUNT INCREASING:
+  Do not try to detect "is this child row new" on the child at all. Instead,
+  add a second Rule.count for the child being restricted (e.g. order_count),
+  and declare the constraint on the PARENT using Rule.constraint(calling=...) —
+  which (unlike as_condition) receives `old_row`, so it can compare the
+  count's value immediately before and after this transaction:
+
+      Rule.count(derive=models.Customer.order_count, as_count_of=models.Order)
+      Rule.count(derive=models.Customer.past_due_letter_count, as_count_of=models.PastDueLetter,
+                 where=lambda row: row.resolved == False)
+
+      def _no_new_orders_with_unresolved_letters(row, old_row, logic_row):
+          """Constraint: block a new Order when the customer has unresolved past-due letters;
+          existing orders are not retroactively invalidated when a letter is added."""
+          return not (row.order_count > old_row.order_count and row.past_due_letter_count > 0)
+
+      Rule.constraint(validate=models.Customer, calling=_no_new_orders_with_unresolved_letters,
+                      error_msg="Cannot place new orders while past-due letters are unresolved")
+
+  WHY THIS WORKS — the key insight is `row.order_count > old_row.order_count`,
+  not `row.order_count > 0`:
+  - Inserting a new Order increments Customer.order_count in this same
+    transaction → `order_count > old_row.order_count` is True → constraint
+    correctly evaluates whether to block it.
+  - Inserting a new PastDueLetter increments Customer.past_due_letter_count,
+    which independently re-fires this same constraint (any Customer update
+    re-checks all of Customer's constraints) — but `order_count` did NOT
+    change in that event, so `order_count > old_row.order_count` is False,
+    and the constraint passes. Existing orders are never touched or
+    re-validated by this design — the constraint lives on Customer, not Order.
+  - Generalizes beyond "0 → 1": any n → n+1 increase in order_count while
+    past_due_letter_count > 0 is caught, including a customer who resolves a
+    letter and later accumulates a new one.
+
+  This is the more general insight worth internalizing: a parent's own rules
+  can react not just to a child aggregate's CURRENT value, but to HOW that
+  aggregate CHANGED this transaction (old_row.count vs row.count) — letting
+  you distinguish "a child was just added" from "some other child attribute
+  changed" without ever touching the child class or needing is_inserted()
+  on it at all.
+
+WHEN YOU DO NEED is_inserted()/is_updated()/is_deleted() INSIDE A CONSTRAINT:
+  Some requirements genuinely need to know how THIS row (not a count) was
+  changed — e.g. "a new row must satisfy X, but an update to an existing row
+  is exempt." For those, use Rule.constraint(calling=...) directly on the
+  row in question — `calling=` is the only constraint form with logic_row
+  access, so it's the only form that can call logic_row.is_inserted():
+
+      def _new_rows_must_be_pre_approved(row, old_row, logic_row):
+          """Constraint: newly-inserted rows must be pre-approved; existing rows are grandfathered."""
+          return not (logic_row.is_inserted() and not row.pre_approved)
+
+      Rule.constraint(validate=models.SomeClass, calling=_new_rows_must_be_pre_approved,
+                      error_msg="New rows must be pre-approved")
+
+  NOTE: which rows get re-validated on commit is not limited to rows the
+  caller directly touched. It's every row SQLAlchemy marks dirty/new/deleted,
+  PLUS every row whose formula/constraint references an attribute on a
+  parent that changed this transaction (the cascade mechanism above). Don't
+  assume "only rows I touched will be re-checked" — verify against this rule
+  whenever a constraint references a parent/aggregate attribute.
+
+⚠️ CRITICAL — ADJUSTMENT ASSUMES THE STARTING VALUE IS ALREADY CORRECT:
+  Rule.sum/Rule.count are performance-optimized as DELTA adjustments, not
+  recomputations — see "How does this perform at scale?" in this project's
+  .copilot-instructions.md: inserting a child does `current_count + 1`, NOT
+  `SELECT COUNT(*) FROM children`. This is O(1) per change instead of O(n)
+  over the table, and it applies to every Rule.sum/Rule.count automatically.
+
+  The direct consequence: if an aggregate is ALREADY WRONG (bad migration,
+  manual SQL edit, a bug in an earlier version of the rules, a restore from
+  a backup taken mid-transaction), adjusting it does NOT self-correct the
+  error — it carries the wrong value forward. Adding a child to a
+  Customer.order_count that's already off by one produces a count that is
+  STILL off by one, just one higher. The engine has no mechanism to detect
+  or repair this — it only ever adjusts from the value already in the
+  database, it never re-derives from scratch.
+
+  This matters most for the pattern immediately above (`row.order_count >
+  old_row.order_count`): that comparison is only meaningful if `order_count`
+  was correct before this transaction. If the stored count is wrong, the
+  comparison is still internally consistent (it correctly detects "a child
+  was just added"), but the absolute values feeding any other logic that
+  reads the count directly (e.g. `row.order_count > 0` elsewhere) will be
+  wrong until the underlying data is repaired.
+
+  THERE IS NO BUILT-IN REPAIR/RESYNC MECHANISM — recovering from a wrong
+  aggregate requires an application-level fix OUTSIDE the rule engine: e.g.
+  a one-time script that recomputes the column directly
+  (`UPDATE customer SET order_count = (SELECT COUNT(*) FROM "order" WHERE
+  customer_id = customer.id)`), run once to re-establish ground truth. From
+  that point forward, ongoing adjustments will again be correct. Do not
+  attempt to "fix" a wrong count by inserting/deleting rows to nudge it —
+  that changes real data to work around a derived-column bug.
+
+  WHEN THIS RISK IS HIGHEST: data loaded via bulk import/ETL that bypasses
+  the rule engine (e.g. direct INSERT statements, not ORM inserts that go
+  through session.commit()); manual DB edits during debugging; upgrading a
+  project whose rules changed the definition of what a count/sum includes
+  (e.g. a `where=` clause was added or changed) without re-deriving existing
+  rows under the new definition.
+
+  THE MOST COMMON TRIGGER IN PRACTICE: adding a brand-new Rule.sum/count/formula
+  column via `rebuild-from-database` to a table that already has rows (e.g. a
+  System Creation Services iteration on an already-seeded database). See
+  "AFTER DATABASE SCHEMA CHANGES" below — step 7 and the "initialize derived
+  columns for pre-existing rows" section — for the concrete fix. This is not
+  a rare edge case: it will happen on the very next write to ANY row that
+  hasn't been touched since the new column was added, including via an
+  entirely unrelated table's insert (see the real failure case documented
+  there — a PastDueLetter insert crashed on a stale Customer.order_count).
+
 Formulas can reference parent values in 2 versions - choose formula vs copy based on propagation behavior:
 
     Rule.formula (LIVE REFERENCE) - parent changes propagate to children automatically.
@@ -1046,7 +1221,67 @@ ApiLogicServer rebuild-from-database --project_name=<YourProject> --db_url=<same
 4. Verify: docs/db.dbml shows new table/relationship
 5. Offer admin.yaml swap (see above) — backup + replace, or leave for manual merge
 6. Add logic rules in logic/logic_discovery/<name>.py
+7. ⚠️ If any new rule is Rule.sum/Rule.count/Rule.formula ON A TABLE THAT ALREADY
+   HAS ROWS — initialize the new column for those existing rows (see below).
+   Do NOT skip this even if the new rule "looks like" it only matters going forward.
 ```
+
+**⚠️ CRITICAL — initialize derived columns for pre-existing rows (NOT just new-project checklist item):**
+
+`Rule.sum`/`Rule.count`/`Rule.formula` only derive a value when the row (or a row in its
+dependency chain) is INSERTED or UPDATED. A brand-new derived column added via `ALTER TABLE`
+to a table that already has rows is `NULL` (or its column default) for every existing row —
+it is NOT retroactively computed by the rule engine. This is the same underlying fact as the
+"Adjustment Assumes the Starting Value Is Already Correct" caveat above, but it applies more
+broadly than aggregate adjustment: it's true for `Rule.formula` too, and it applies every
+single time a new derived column is added to a table with existing data — not just when
+using the Insert-Only Constraints pattern.
+
+**REAL FAILURE CASE:** Adding `Customer.order_count`/`Customer.past_due_letter_count` (both
+`Rule.count`) via `ALTER TABLE` to an existing `basic_demo` database, then declaring
+`Rule.constraint(calling=...)` comparing `row.order_count > old_row.order_count` — the very
+first POST to an unrelated table (`PastDueLetter`) crashed with
+`'>' not supported between instances of 'NoneType' and 'NoneType'`, because pre-existing
+Customer rows had never been touched since the `ALTER TABLE`, so both columns were still
+`NULL`. Fixed with null-safe defaults (`row.order_count or 0`), but the better fix is to
+never let the column be `NULL` for existing rows in the first place.
+
+**THE FIX — pick ONE of these, do it right after `rebuild-from-database`, before writing rules that read the new column:**
+
+1. **Best: trigger a no-op UPDATE on every existing parent row**, so LogicBank derives the
+   column via its normal insert/update path (guarantees correctness — reuses the ACTUAL rule
+   logic, not a hand-written approximation of it):
+   ```python
+   # one-time script, run once after adding the new Rule.count/sum, via the API or a
+   # Flask-context script (see database/test_data/alp_init.py pattern) — NOT raw SQL:
+   for customer in session.query(models.Customer).all():
+       customer.name = customer.name  # no-op attribute touch — still triggers rule re-derivation
+   session.commit()
+   ```
+
+2. **Acceptable: a one-time raw-SQL backfill**, if the derivation is simple enough to
+   hand-write correctly (e.g. a straightforward `COUNT(*)`/`SUM(...)` matching the rule's
+   `where=` clause exactly):
+   ```sql
+   UPDATE customer SET order_count = (SELECT COUNT(*) FROM "order" WHERE customer_id = customer.id);
+   UPDATE customer SET past_due_letter_count =
+       (SELECT COUNT(*) FROM past_due_letter WHERE customer_id = customer.id AND resolved = 0);
+   ```
+   Risk: this duplicates the rule's logic by hand — if the `where=` clause is later changed,
+   this backfill SQL silently goes out of sync. Prefer option 1 when practical.
+
+3. **Minimum — null-safe defensively, if backfill isn't possible right now:** any rule that
+   reads a possibly-NULL derived column (especially in a comparison like `row.count >
+   old_row.count`) must guard with `or 0`. This avoids the crash but does NOT fix the
+   underlying wrong/absent value — existing rows still show `order_count: null` in the API
+   until they're next touched. Use this as a stopgap, not a substitute for options 1/2.
+
+**When this applies:** every time `rebuild-from-database` (or a manual DDL + rebuild) adds a
+`Rule.sum`/`Rule.count`/`Rule.formula` column to a table with pre-existing rows — this
+includes System Creation Services iterations on an already-seeded database (like
+`basic_demo`), not just brand-new schemas. New-project workflows starting from an empty/seed
+database don't hit this (no pre-existing rows to be stale) — but any iteration that adds
+logic to an already-populated table does.
 
 **Example — after adding a PaymentAllocation table:**
 ```bash
